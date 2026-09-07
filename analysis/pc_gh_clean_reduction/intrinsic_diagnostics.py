@@ -74,8 +74,16 @@ def geometry(u):
     return g,gu,curvature,q
 
 
-def diagnostics(u,spacing,order):
+def diagnostics(u,spacing,order,physical_operator='repeated'):
+    assert physical_operator in ['repeated','direct']
     D=lambda f,d:derivative(f,d,spacing,order)
+    def DD(f,d,e):
+        if f.shape[-1-d]==1 or f.shape[-1-e]==1:return np.zeros_like(f)
+        if d!=e:return D(D(f,e),d)
+        coeff={2:[-2.,1.],4:[-2.5,4/3,-1/12],6:[-49/18,1.5,-.15,1/90]}[order]
+        out=coeff[0]*f
+        for j,c in enumerate(coeff[1:],1):out=out+c*(np.roll(f,j,axis=-1-d)+np.roll(f,-j,axis=-1-d))
+        return out/spacing[d]**2
     w=u[0];alpha=w*u[1];kval=u[10];shape=w.shape
     assert np.isfinite(u).all() and np.all(w>0)
     g,gu,a,q=geometry(u)
@@ -85,7 +93,17 @@ def diagnostics(u,spacing,order):
         for j in range(3):
             for k in range(3):low[i,j,k]=(dg[j,i,k]+dg[k,i,j]-dg[i,j,k])/2
     gam=np.einsum('ir...,rjk...->ijk...',gu,low)
-    dgam=np.array([D(gam,d) for d in range(3)])
+    if physical_operator=='direct':
+        ddg=np.array([[DD(g,d,e) for e in range(3)] for d in range(3)])
+        dgu=-np.einsum('ir...,drs...,sj...->dij...',gu,dg,gu)
+        dlow=np.empty((3,3,3,3,*shape))
+        for d in range(3):
+            for i in range(3):
+                for j in range(3):
+                    for k in range(3):dlow[d,i,j,k]=(ddg[d,j,i,k]+ddg[d,k,i,j]-ddg[d,i,j,k])/2
+        dgam=np.einsum('dir...,rjk...->dijk...',dgu,low)+np.einsum('ir...,drjk...->dijk...',gu,dlow)
+        da=np.array([D(a,d) for d in range(3)])
+    else:dgam=np.array([D(gam,d) for d in range(3)])
     ricci=np.zeros_like(g)
     for i in range(3):
         for j in range(3):
@@ -93,7 +111,7 @@ def diagnostics(u,spacing,order):
                 ricci[i,j]+=dgam[k,k,i,j]-dgam[j,k,i,k]
                 for l in range(3):ricci[i,j]+=gam[k,k,l]*gam[l,i,j]-gam[k,j,l]*gam[l,i,k]
     dw=np.array([D(w,d) for d in range(3)])
-    hessian=np.array([[D(dw[j],i) for j in range(3)] for i in range(3)])
+    hessian=np.array([[DD(w,i,j) if physical_operator=='direct' else D(dw[j],i) for j in range(3)] for i in range(3)])
     hessian-=np.einsum('kij...,k...->ij...',gam,dw)
     mix=np.einsum('ik...,kj...->ij...',gu,a)
     physical_h=(2/3)*kval*kval-np.einsum('ij...,ji...->...',mix,mix)
@@ -102,7 +120,9 @@ def diagnostics(u,spacing,order):
     m=np.array([-(2/3)*D(kval,i) for i in range(3)])
     for i in range(3):
         for j in range(3):
-            m[i]+=D(mix[j,i],j)
+            if physical_operator=='direct':
+                for k in range(3):m[i]+=dgu[j,j,k]*a[k,i]+gu[j,k]*da[j,k,i]
+            else:m[i]+=D(mix[j,i],j)
             for k in range(3):m[i]+=gam[j,j,k]*mix[k,i]-gam[k,j,i]*mix[j,k]
     contraction=np.einsum('ji...,j...->i...',mix,dw)
     physical_m=m-3*contraction/w

@@ -69,6 +69,9 @@ class PcGh {
   void IntrinsicInitialData(ParameterInput *pin, bool restart);
   void ValidateIntrinsic(const char *stage, bool check_rhs);
   bool intrinsic_stage_dump = false;
+  bool intrinsic_diagnostics = false;
+  int intrinsic_diagnostic_dcycle = 1;
+  template<int Stencil> void WriteIntrinsicDiagnostics(Driver *driver, int stage);
   void DumpIntrinsicStage(Driver *driver, int stage, const char *operation,
                           bool ghosts_valid, bool include_rhs);
   void IntrinsicToADM();

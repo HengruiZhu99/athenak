@@ -10,11 +10,13 @@
 #include <limits>
 #include <set>
 #include <sstream>
+#include <vector>
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
 #endif
 #include "pc_gh/pc_gh.hpp"
 #include "pc_gh/intrinsic_finite_difference.hpp"
+#include "pc_gh/intrinsic_physical_constraints.hpp"
 #include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "globals.hpp"
@@ -64,7 +66,8 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   // Reject unimplemented paths rather than accepting an ignored legacy setting.
   const std::set<std::string> allowed = {"formulation", "spatial_order", "shift_eta",
     "kappa", "reduction_rate", "reduction_profile", "dissipation", "research_dt_ceiling",
-    "intrinsic_stage_dump", "restart_layout", "restart_layout_version", "restart_layout_fields",
+    "intrinsic_stage_dump", "intrinsic_diagnostics", "intrinsic_diagnostic_dcycle",
+    "restart_layout", "restart_layout_version", "restart_layout_fields",
     "restart_untagged_layout", "restart_tracker_state", "project_gauge_constraints", "project_reduction_constraints"};
   for (const auto &block : pin->block) {
     if (block.block_name != "pc_gh") continue;
@@ -87,6 +90,9 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
     IntrinsicError("initial mesh qualification requires rk3");
   opt = {};
   intrinsic_stage_dump = pin->GetOrAddBoolean("pc_gh", "intrinsic_stage_dump", false);
+  intrinsic_diagnostics = pin->GetOrAddBoolean("pc_gh", "intrinsic_diagnostics", false);
+  intrinsic_diagnostic_dcycle = pin->GetOrAddInteger("pc_gh", "intrinsic_diagnostic_dcycle", 1);
+  if (intrinsic_diagnostic_dcycle < 1) IntrinsicError("diagnostic cadence must be positive");
   opt.coherent_transfer = "none";
   opt.spatial_order = pin->GetOrAddInteger("pc_gh", "spatial_order", 6);
   opt.fd_stencil = opt.spatial_order/2+1;
@@ -307,6 +313,140 @@ void PcGh::DumpIntrinsicStage(Driver *driver, int stage, const char *operation,
   if (std::fclose(file)!=0) ok=false;
   if (!ok) IntrinsicError("failed writing stage dump " + name.str());
 }
+
+template<int Stencil>
+void PcGh::WriteIntrinsicDiagnostics(Driver *driver, int stage) {
+  if (!intrinsic_diagnostics || (driver && stage != driver->nexp_stages)) return;
+  const int cycle=pmy_pack->pmesh->ncycle+(driver ? 1 : 0);
+  if (driver && cycle%intrinsic_diagnostic_dcycle != 0) return;
+  const double time=pmy_pack->pmesh->time+(driver ? pmy_pack->pmesh->dt : 0);
+  const auto &a=pmy_pack->pmesh->mb_indcs;
+  const int nm=pmy_pack->nmb_thispack;
+  const int nk=u0.extent_int(2),nj=u0.extent_int(3),ni=u0.extent_int(4);
+  const int dimensions=pmy_pack->pmesh->three_d ? 3 : (pmy_pack->pmesh->multi_d ? 2 : 1);
+  // Materialize on already synchronized state ghosts. Direct Dxx/Dxy reaches
+  // at most three cells in each direction, including mixed-derivative corners.
+  DvceArray5D<Real> material("intrinsic diagnostic primary geometry",nm,58,nk,nj,ni);
+  DvceArray5D<Real> values("intrinsic diagnostics",nm,89,a.nx3,a.nx2,a.nx1);
+  auto state=u0; auto size=pmy_pack->pmb->mb_size.d_view;
+  par_for("intrinsic diagnostic materialization",DevExeSpace(),0,nm-1,
+    0,nk-1,0,nj-1,0,ni-1,KOKKOS_LAMBDA(int m,int k,int j,int i) {
+      double u[50]; for (int n=0;n<50;++n) u[n]=state(m,n,k,j,i);
+      intrinsic::BaseGeometry<double> g; intrinsic::BuildBaseGeometry(u,g);
+      material(m,0,k,j,i)=u[0]; material(m,1,k,j,i)=u[1]; material(m,2,k,j,i)=u[10];
+      for (int b=0;b<3;++b) for (int c=0;c<3;++c) {
+        material(m,3+3*b+c,k,j,i)=g.metric[b][c];
+        material(m,12+3*b+c,k,j,i)=g.curvature[b][c];
+        for (int d=0;d<3;++d) material(m,21+9*d+3*b+c,k,j,i)=g.gradient[d][b][c];
+      }
+      material(m,48,k,j,i)=u[0]; material(m,49,k,j,i)=u[0]*u[1];
+      for (int f=2;f<10;++f) material(m,48+f,k,j,i)=u[f];
+    });
+  int is=a.is,js=a.js,ks=a.ks;
+  par_for("intrinsic primary physical and reduction diagnostics",DevExeSpace(),0,nm-1,
+    a.ks,a.ke,a.js,a.je,a.is,a.ie,KOKKOS_LAMBDA(int m,int k,int j,int i) {
+      Real idx[3]={1/size(m).dx1,1/size(m).dx2,1/size(m).dx3}; double physical[7];
+      intrinsic::PhysicalConstraints<Stencil>(material,m,k,j,i,idx,dimensions,physical);
+      for (int n=0;n<7;++n) values(m,n,k-ks,j-js,i-is)=physical[n];
+      values(m,7,k-ks,j-js,i-is)=state(m,19,k,j,i);
+      for (int d=0;d<3;++d) values(m,8+d,k-ks,j-js,i-is)=state(m,16+d,k,j,i);
+      const int pairs[3][2]={{0,1},{0,2},{1,2}};
+      const int symmetric[6]={0,1,2,4,5,8};
+      for (int d=0;d<3;++d) for (int f=0;f<10;++f) {
+        int n=f==0 ? 20+d : (f==1 ? 23+d : (f<7 ? 26+5*d+f-2 : 41+3*d+f-7));
+        values(m,11+10*d+f,k-ks,j-js,i-is)=state(m,n,k,j,i)
+          -(d<dimensions ? Dx<Stencil>(d,idx,material,m,48+f,k,j,i) : 0);
+      }
+      for (int pair=0;pair<3;++pair) {
+        int d=pairs[pair][0],e=pairs[pair][1];
+        for (int f=0;f<10;++f) {
+          int nd=f==0 ? 20+d : (f==1 ? 23+d : (f<7 ? 26+5*d+f-2 : 41+3*d+f-7));
+          int ne=f==0 ? 20+e : (f==1 ? 23+e : (f<7 ? 26+5*e+f-2 : 41+3*e+f-7));
+          values(m,41+10*pair+f,k-ks,j-js,i-is)=
+            (d<dimensions ? Dx<Stencil>(d,idx,state,m,ne,k,j,i) : 0)
+            -(e<dimensions ? Dx<Stencil>(e,idx,state,m,nd,k,j,i) : 0);
+        }
+        for (int c=0;c<6;++c) values(m,71+6*pair+c,k-ks,j-js,i-is)=
+          (d<dimensions ? Dx<Stencil>(d,idx,material,m,21+9*e+symmetric[c],k,j,i) : 0)
+          -(e<dimensions ? Dx<Stencil>(e,idx,material,m,21+9*d+symmetric[c],k,j,i) : 0);
+      }
+    });
+  auto h=Kokkos::create_mirror_view_and_copy(HostMemSpace(),values);
+  auto &sizes=pmy_pack->pmb->mb_size; sizes.template sync<HostMemSpace>();
+  auto &gids=pmy_pack->pmb->mb_gid; gids.template sync<HostMemSpace>();
+  // Per component: L1 integral, squared L2 integral, max absolute, signed
+  // winner, gid,k,j,i,x,y,z. Final entries carry actual volume and cell count.
+  constexpr int stride=11,count=89*stride+2;
+  std::vector<double> local(count,0),all(count*global_variable::nranks);
+  for (int n=0;n<89;++n) local[n*stride+2]=-1;
+  int bad=0;
+  for (int m=0;m<nm;++m) {
+    const auto &b=sizes.h_view(m); double dv=b.dx1*b.dx2*b.dx3;
+    for (int k=0;k<a.nx3;++k) for (int j=0;j<a.nx2;++j) for (int i=0;i<a.nx1;++i) {
+      local[count-2]+=dv; local[count-1]+=1;
+      for (int n=0;n<89;++n) {
+        double v=h(m,n,k,j,i),av=std::abs(v); int p=n*stride;
+        if (!std::isfinite(v)) {
+          if (!bad) std::cerr << "Nonfinite intrinsic diagnostic component " << n
+            << " gid=" << gids.h_view(m) << " kji=" << k << "," << j << "," << i << std::endl;
+          bad=1;
+        }
+        local[p]+=av*dv; local[p+1]+=v*v*dv;
+        if (av>local[p+2] || (av==local[p+2] && gids.h_view(m)<local[p+4])) {
+          local[p+2]=av; local[p+3]=v; local[p+4]=gids.h_view(m);
+          local[p+5]=k; local[p+6]=j; local[p+7]=i;
+          local[p+8]=CellCenterX(i,a.nx1,b.x1min,b.x1max);
+          local[p+9]=CellCenterX(j,a.nx2,b.x2min,b.x2max);
+          local[p+10]=CellCenterX(k,a.nx3,b.x3min,b.x3max);
+        }
+      }
+    }
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE,&bad,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
+  MPI_Gather(local.data(),count,MPI_DOUBLE,all.data(),count,MPI_DOUBLE,0,MPI_COMM_WORLD);
+#else
+  all=local;
+#endif
+  if (bad) IntrinsicError("nonfinite physical/reduction diagnostic");
+  if (global_variable::my_rank!=0) return;
+  double volume=0,cells=0;
+  for (int rank=0;rank<global_variable::nranks;++rank) {
+    volume+=all[rank*count+count-2]; cells+=all[rank*count+count-1];
+  }
+  std::vector<std::string> names={"H","Mx","My","Mz","alpha_Mx","alpha_My","alpha_Mz",
+    "C","Zx","Zy","Zz"};
+  const char *families[10]={"w","alpha","a","c","b","d","e","betax","betay","betaz"};
+  for (const char *dir : {"x","y","z"}) for (auto family : families)
+    names.push_back(std::string("E_")+dir+"_"+family);
+  for (const char *dir : {"xy","xz","yz"}) for (auto family : families)
+    names.push_back(std::string("Omega_")+dir+"_"+family);
+  for (const char *dir : {"xy","xz","yz"}) for (const char *ij : {"xx","xy","xz","yy","yz","zz"})
+    names.push_back(std::string("OmegaQ_")+dir+"_"+ij);
+  std::string filename="intrinsic-diagnostics-c"+std::to_string(cycle)+"-s"+std::to_string(stage)+".csv";
+  FILE *file=std::fopen(filename.c_str(),"wx");
+  if (!file) IntrinsicError("cannot exclusively create " + filename);
+  std::fprintf(file,"cycle,time,stage,region,component,volume,cells,L1_integral,L2_integral,RMS,maximum,signed_at_max,gid,logical_level,k,j,i,x,y,z\n");
+  for (int n=0;n<89;++n) {
+    double l1=0,l2=0; int best=n*stride;
+    for (int rank=0;rank<global_variable::nranks;++rank) {
+      int p=rank*count+n*stride; l1+=all[p]; l2+=all[p+1];
+      if (all[p+2]>all[best+2] || (all[p+2]==all[best+2] && all[p+4]<all[best+4])) best=p;
+    }
+    int gid=static_cast<int>(all[best+4]);
+    if (!std::isfinite(l1) || !std::isfinite(l2)) IntrinsicError("nonfinite diagnostic norm");
+    std::fprintf(file,"%d,%.17g,%d,full,%s,%.17g,%.0f,%.17g,%.17g,%.17g,%.17g,%.17g,%d,%d,%.0f,%.0f,%.0f,%.17g,%.17g,%.17g\n",
+      cycle,time,stage,names[n].c_str(),volume,cells,l1,std::sqrt(l2),std::sqrt(l2/volume),
+      all[best+2],all[best+3],gid,pmy_pack->pmesh->lloc_eachmb[gid].level,
+      all[best+5],all[best+6],all[best+7],all[best+8],all[best+9],all[best+10]);
+  }
+  bool failed=std::ferror(file); if (std::fclose(file)!=0) failed=true;
+  if (failed) IntrinsicError("failed writing " + filename);
+}
+
+template void PcGh::WriteIntrinsicDiagnostics<2>(Driver *,int);
+template void PcGh::WriteIntrinsicDiagnostics<3>(Driver *,int);
+template void PcGh::WriteIntrinsicDiagnostics<4>(Driver *,int);
 
 void PcGh::IntrinsicToADM() {
   auto state=u0;

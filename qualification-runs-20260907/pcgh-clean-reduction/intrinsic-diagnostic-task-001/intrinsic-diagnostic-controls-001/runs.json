@@ -1,0 +1,58 @@
+[
+  {
+    "name": "invalid-cadence",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-diagnostic-controls-001/invalid-cadence/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seed-multi.rst"
+    ],
+    "returncode": 1,
+    "status": "PASS",
+    "input_sha256": "93d20bc569178851884630bfe7b4671011c88e808adf79884f84df5256f2be16",
+    "restart_sha256": "484d23325f6b29f3a619c8649ae41433a479cd88049111866fcb5640dc0019e7"
+  },
+  {
+    "name": "full",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-diagnostic-controls-001/full/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "status": "PASS",
+    "input_sha256": "e8d3983fdb14ab4085dd2e649814260fe0a7c3dc94ab44f2e4ea95fa5e1b1b2c",
+    "restart_sha256": "484d23325f6b29f3a619c8649ae41433a479cd88049111866fcb5640dc0019e7"
+  },
+  {
+    "name": "resumed",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-diagnostic-controls-001/resumed/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-diagnostic-controls-001/full/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "status": "PASS",
+    "input_sha256": "e8d3983fdb14ab4085dd2e649814260fe0a7c3dc94ab44f2e4ea95fa5e1b1b2c",
+    "restart_sha256": "a674f6287df3a449dbaa8840b79db698f6fb78840aa94b4f76e6e242b655111a"
+  },
+  {
+    "name": "collision",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-diagnostic-controls-001/collision/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seed-multi.rst"
+    ],
+    "returncode": 1,
+    "status": "PASS",
+    "input_sha256": "e8d3983fdb14ab4085dd2e649814260fe0a7c3dc94ab44f2e4ea95fa5e1b1b2c",
+    "restart_sha256": "484d23325f6b29f3a619c8649ae41433a479cd88049111866fcb5640dc0019e7"
+  }
+]

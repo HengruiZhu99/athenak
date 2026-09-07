@@ -492,5 +492,33 @@
     "halo_radius": "order/2 in each active direction; insufficient FD6 radius2 must give nonfinite diagnostic in guarded fixture",
     "scope": "compiled prospective physical diagnostic kernel only; no production task hookup yet",
     "additional_fixture": "Oblique curved unimodular warped metric with R[g]=-2(fprime)^2, A=0, variable w/rho/K; same thresholds"
+  },
+  "intrinsic_diagnostic_task": {
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "dimensions": [
+      2,
+      3
+    ],
+    "ranks": [
+      1,
+      2
+    ],
+    "dt": 0.0001,
+    "steps": 1,
+    "norm_tolerance": 2e-12,
+    "components": 89,
+    "checks": [
+      "diagnostic on/off float64 evolution bitwise",
+      "all component norms against independent periodic primary-jet physical oracle",
+      "full actual volume and cell count",
+      "signed maxima evaluated at reported gid/local indices and physical coordinates",
+      "initial restart state and final synchronized state",
+      "unchanged legacy restart controls"
+    ],
+    "scope": "uniform periodic full-region histories, no excision or refinement qualification"
   }
 }

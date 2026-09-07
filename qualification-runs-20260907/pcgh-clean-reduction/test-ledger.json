@@ -574,6 +574,15 @@
       "status": "PASS",
       "evidence": "intrinsic-physical-stencil-001",
       "scope": "612 final analytic points, oblique shear and nonzero conformal Ricci fixtures; FD2/4/6 H/M convergence and insufficient-halo controls; CPU compiled diagnostic, not task-integrated"
+    },
+    "intrinsic_diagnostic_task_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-diagnostic-task-001",
+      "scope": "Serial and verified two-rank 89-component global histories, twelve initial/final comparisons each; max error 1.142e-13; neutral evolution; cadence/restart/output controls; 19 legacy restart controls"
+    },
+    "intrinsic_diagnostic_task_CUDA": {
+      "status": "NOT_RUN",
+      "scope": "New physical/materialization/history task not yet built or tested on CUDA"
     }
   }
 }

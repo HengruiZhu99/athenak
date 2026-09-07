@@ -493,3 +493,21 @@ valid ghost checks and duplicate-write controls. The verified binary is
 all 337 source manifest entries match the preceding production source.
 Evidence: `intrinsic-stage-cuda-001/`. Earlier pending statements are historical.
 No new evolution equation is enabled by the physical diagnostic header.
+
+## In-process physical and reduction histories
+
+The intrinsic synchronized constraint task now computes and globally aggregates
+all 89 physical/GH/reduction/curl components when `intrinsic_diagnostics=true`.
+The independent primary physical stencil operates on valid materialized geometry
+halos. CSV observations retain actual volume, component norms, signed maxima,
+block/level/local indices and physical coordinates with explicit cycle/stage.
+Exclusive file creation preserves prior epochs; diagnostic cadence is explicit.
+
+Serial and two-rank FD2/4/6 2D/3D initial/final checks agree with the independent
+89-component oracle to 1.142e-13. Diagnostic on/off is bitwise neutral. Cadence,
+restart history/state continuity and collision controls pass, as do all 19 legacy
+restart controls and the historical offline diagnostic regression. See
+`analysis/pc_gh_clean_reduction/INTRINSIC_DIAGNOSTIC_TASK.md` and evidence
+`intrinsic-diagnostic-task-001/`. CUDA validation of this new task is not run.
+Only the full uniform-periodic region is implemented here; excised regions,
+intrinsic interfaces and physical convergence/puncture/binary gates remain open.

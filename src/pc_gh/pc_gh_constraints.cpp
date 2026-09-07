@@ -69,6 +69,7 @@ Real MinimumSymmetricEigenvalue(Real a00, Real a01, Real a02,
 template <int FD_STENCIL>
 TaskStatus PcGh::CalcConstraints(Driver *pdriver, int stage) {
   if (IsIntrinsic()) { ValidateIntrinsic("diagnostic state", false);
+    WriteIntrinsicDiagnostics<FD_STENCIL>(pdriver, stage);
     return TaskStatus::complete; }
   if (opt.reduction_monitor && stage != kHybridDiagnosticStage) BeginReductionTransfer(-2);
   if (pdriver != nullptr && stage != pdriver->nexp_stages) return TaskStatus::complete;
