@@ -644,6 +644,16 @@
       "status": "PASS",
       "evidence": "intrinsic-smr-evolution-001/diagnostic-check.json",
       "scope": "78 reduction/intrinsic/raw-Q curl RMS and maximum components at final time in all8 runs match independent leaf stencils to8.54e-15."
+    },
+    "intrinsic_smr_stage_budget": {
+      "status": "PASS",
+      "evidence": "intrinsic-smr-stage-budget-001",
+      "scope": "Two RK steps, both transfer arms: old-executable neutrality, serial/MPI bitwise budgets, exact active/primary invariance, exclusive-write and19 legacy restart checks. Not convergence qualification."
+    },
+    "intrinsic_smr_rhs_family_attribution": {
+      "status": "PASS",
+      "evidence": "intrinsic-smr-stage-budget-001/rhs-family-located/results.json",
+      "scope": "Actual PointRHS+FD/KO agrees with recorded RHS4.2e-15; ghost-family counterfactual sum1.4e-17. p/S cause sampled immediate C RHS correction; no long-time causal claim."
     }
   }
 }

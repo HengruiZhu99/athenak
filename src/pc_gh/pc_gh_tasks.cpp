@@ -280,7 +280,11 @@ TaskStatus PcGh::Prolongate(Driver *pdriver, int stage) {
     pbval_u->ProlongateCC(u0, coarse_u0, true);
   }
   if (monitor) EndReductionTransfer(1);
+  if (IsIntrinsic() && pmy_pack->pmesh->multilevel)
+    DumpIntrinsicStage(pdriver, stage, "pre-coherent", true, false);
   CompleteCoherentTransfer(11);
+  if (IsIntrinsic() && pmy_pack->pmesh->multilevel)
+    DumpIntrinsicStage(pdriver, stage, "post-coherent", true, false);
   return TaskStatus::complete;
 }
 

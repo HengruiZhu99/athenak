@@ -595,3 +595,15 @@ decreasing total constraint norms are not qualification. Full evidence and
 limitations are in `analysis/pc_gh_clean_reduction/INTRINSIC_SMR_EVOLUTION.md`.
 Next is synchronized operation-level attribution during evolution; physical
 and puncture/binary gates remain incomplete.
+
+## Synchronized reconstruction-to-RHS budget
+
+Opt-in refined-stage snapshots now bracket coherent reconstruction. Serial and
+two-rank checks show bitwise neutrality and identical signed budgets. A compiled
+same-state replay matches recorded RHS to 4.2e-15, then isolates auxiliary-ghost
+contributions: at the strongest sampled fine-block corner C RHS correction,
+p and S contribute -3.7091e-4 and -1.6421e-4, summing to -5.3512e-4. The four-family
+sum closes to 1.4e-17. This confirms an immediate reconstruction-to-GH source
+change, not the cause of the previous convergence failure. Next is the scalar
+p transfer commutator at that identified corner. Evidence and limits are in
+`analysis/pc_gh_clean_reduction/INTRINSIC_SMR_STAGE_BUDGET.md`.

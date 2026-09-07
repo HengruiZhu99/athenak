@@ -1,0 +1,27 @@
+### WARNING in /Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/load_balance.cpp at line 83
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 2 x 2 x 1 MeshBlocks
+Total number of MeshBlocks = 7
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 2
+  Rank = 0: 3 MeshBlocks, cost = 3
+  Rank = 1: 4 MeshBlocks, cost = 4
+Load Balancing:
+  Maximum normalized cost = 1.33333, Average = 1.16667
+
+Setup complete, executing task list(s)...
+
+elapsed=4.057442e-02 cycle=0 time=0.000000e+00 dt=1.250000e-04
+elapsed=1.168310e-01 cycle=1 time=1.250000e-04 dt=1.250000e-04
+elapsed=1.939766e-01 cycle=2 time=2.500000e-04 dt=1.250000e-04
+
+Terminating on cycle limit
+time=2.500000e-04 cycle=2
+tlim=2.000000e-02 nlim=2
+
+MeshBlock-cycles = 14
+cpu time used  = 1.534195e-01
+zone-cycles/cpu_second = 5.840196e+03
+particle-updates/cpu_second = 0.000000e+00
