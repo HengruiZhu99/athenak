@@ -25,11 +25,12 @@ def run(name,text,expect=None,extra=()):
 
 for key in ['project_gauge_constraints','project_reduction_constraints']:
  run(key,t.replace('<pc_gh>',f'<pc_gh>\n{key} = true'),'both projections off')
+run('unsupported-tracker-metadata',t.replace('<pc_gh>','<pc_gh>\nrestart_tracker_state = true'),'tracker restart state is not supported')
 run('outflow',t.replace('ix1_bc = periodic','ix1_bc = outflow').replace('ox1_bc = periodic','ox1_bc = outflow'),'uniform periodic boundaries')
 run('legacy-pgen',t.replace('intrinsic_smooth','pc_gh_minkowski'),'initial data must be')
 run('legacy-option',t.replace('<pc_gh>','<pc_gh>\ngauge = harmonic'),'unsupported option gauge')
 run('negative-ko',t.replace('dissipation = 0.3','dissipation = -0.3'),'rates must be finite')
-run('unknown-rate',t.replace('reduction_profile = constant','reduction_profile = invalid'),'reduction_profile must be')
+run('unknown-rate',t.replace('reduction_profile = constant','reduction_profile = invalid').replace('reduction_profile = lapse_scaled','reduction_profile = invalid'),'reduction_profile must be')
 run('rk4',t.replace('integrator = rk3','integrator = rk4'),'requires rk3')
 run('history',t+'\n<output2>\nfile_type = hst\ndt = 0.1\n','history diagnostics are not integrated')
 run('legacy-constraints',t+'\n<output2>\nfile_type = bin\nvariable = pcgh_con\ndt = 0.1\n','only complete intrinsic state')

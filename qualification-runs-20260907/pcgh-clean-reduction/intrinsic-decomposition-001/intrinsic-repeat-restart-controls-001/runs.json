@@ -1,0 +1,173 @@
+[
+  {
+    "name": "project_gauge_constraints",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/project_gauge_constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "both projections off",
+    "status": "PASS",
+    "wall_seconds": 0.00603795051574707
+  },
+  {
+    "name": "project_reduction_constraints",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/project_reduction_constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "both projections off",
+    "status": "PASS",
+    "wall_seconds": 0.0059049129486083984
+  },
+  {
+    "name": "unsupported-tracker-metadata",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/unsupported-tracker-metadata/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "tracker restart state is not supported",
+    "status": "PASS",
+    "wall_seconds": 0.005892753601074219
+  },
+  {
+    "name": "outflow",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/outflow/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "uniform periodic boundaries",
+    "status": "PASS",
+    "wall_seconds": 0.005907297134399414
+  },
+  {
+    "name": "legacy-pgen",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/legacy-pgen/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "initial data must be",
+    "status": "PASS",
+    "wall_seconds": 0.00597691535949707
+  },
+  {
+    "name": "legacy-option",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/legacy-option/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "unsupported option gauge",
+    "status": "PASS",
+    "wall_seconds": 0.005925893783569336
+  },
+  {
+    "name": "negative-ko",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/negative-ko/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "rates must be finite",
+    "status": "PASS",
+    "wall_seconds": 0.005814075469970703
+  },
+  {
+    "name": "unknown-rate",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/unknown-rate/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "reduction_profile must be",
+    "status": "PASS",
+    "wall_seconds": 0.0051860809326171875
+  },
+  {
+    "name": "rk4",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/rk4/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "requires rk3",
+    "status": "PASS",
+    "wall_seconds": 0.006086826324462891
+  },
+  {
+    "name": "history",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/history/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "history diagnostics are not integrated",
+    "status": "PASS",
+    "wall_seconds": 0.0060350894927978516
+  },
+  {
+    "name": "legacy-constraints",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/legacy-constraints/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "only complete intrinsic state",
+    "status": "PASS",
+    "wall_seconds": 0.004886150360107422
+  },
+  {
+    "name": "invalid-state",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/invalid-state/used.athinput"
+    ],
+    "returncode": 1,
+    "expected_message": "invalid state/RHS or hyperbolicity domain",
+    "status": "PASS",
+    "wall_seconds": 0.005758047103881836
+  },
+  {
+    "name": "restart-to-legacy",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/restart-to-legacy/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-constant-004/fd6-2d/rst/legacy_equivalence.00001.rst",
+      "pc_gh/formulation=legacy"
+    ],
+    "returncode": 1,
+    "expected_message": "incompatible PC-GH restart",
+    "status": "PASS",
+    "wall_seconds": 0.006085872650146484
+  },
+  {
+    "name": "state-output",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-controls-001/state-output/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.012060880661010742
+  }
+]

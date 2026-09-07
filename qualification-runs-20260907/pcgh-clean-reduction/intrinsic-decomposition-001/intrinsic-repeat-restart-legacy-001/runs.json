@@ -1,0 +1,260 @@
+[
+  {
+    "name": "full",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/full.athinput"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.009857177734375
+  },
+  {
+    "name": "split",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/split.athinput"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.010192155838012695
+  },
+  {
+    "name": "continued",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/split/rst/legacy_equivalence.00001.rst",
+      "time/tlim=0.0002",
+      "time/nlim=2"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.009315967559814453
+  },
+  {
+    "name": "untagged-rejected",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/untagged.rst",
+      "-n"
+    ],
+    "returncode": 1,
+    "expected_message": "untagged PC-GH restart",
+    "status": "PASS",
+    "wall_seconds": 0.0052280426025390625
+  },
+  {
+    "name": "wrong-declaration",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/untagged.rst",
+      "-n",
+      "pc_gh/restart_untagged_layout=intrinsic_pcgh50"
+    ],
+    "returncode": 1,
+    "expected_message": "untagged PC-GH restart",
+    "status": "PASS",
+    "wall_seconds": 0.004897117614746094
+  },
+  {
+    "name": "untagged-declared",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/untagged.rst",
+      "pc_gh/restart_untagged_layout=legacy_pcgh55",
+      "time/tlim=0.0002",
+      "time/nlim=2"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.010027170181274414
+  },
+  {
+    "name": "reject-restart_layout",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/bad-restart_layout.rst",
+      "-n"
+    ],
+    "returncode": 1,
+    "expected_message": "unknown or inconsistent",
+    "status": "PASS",
+    "wall_seconds": 0.00521397590637207
+  },
+  {
+    "name": "reject-relabel-restart_layout",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/bad-restart_layout.rst",
+      "-n",
+      "pc_gh/restart_layout=legacy_pcgh55"
+    ],
+    "returncode": 1,
+    "expected_message": "unknown or inconsistent",
+    "status": "PASS",
+    "wall_seconds": 0.005074262619018555
+  },
+  {
+    "name": "reject-restart_layout_version",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/bad-restart_layout_version.rst",
+      "-n"
+    ],
+    "returncode": 1,
+    "expected_message": "unknown or inconsistent",
+    "status": "PASS",
+    "wall_seconds": 0.01019287109375
+  },
+  {
+    "name": "reject-relabel-restart_layout_version",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/bad-restart_layout_version.rst",
+      "-n",
+      "pc_gh/restart_layout_version=1"
+    ],
+    "returncode": 1,
+    "expected_message": "unknown or inconsistent",
+    "status": "PASS",
+    "wall_seconds": 0.005151987075805664
+  },
+  {
+    "name": "reject-restart_layout_fields",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/bad-restart_layout_fields.rst",
+      "-n"
+    ],
+    "returncode": 1,
+    "expected_message": "unknown or inconsistent",
+    "status": "PASS",
+    "wall_seconds": 0.020291805267333984
+  },
+  {
+    "name": "reject-relabel-restart_layout_fields",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/bad-restart_layout_fields.rst",
+      "-n",
+      "pc_gh/restart_layout_fields=55"
+    ],
+    "returncode": 1,
+    "expected_message": "unknown or inconsistent",
+    "status": "PASS",
+    "wall_seconds": 0.005101203918457031
+  },
+  {
+    "name": "reject-partial",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/partial.rst",
+      "-n"
+    ],
+    "returncode": 1,
+    "expected_message": "incomplete PC-GH restart",
+    "status": "PASS",
+    "wall_seconds": 0.005429983139038086
+  },
+  {
+    "name": "reject-formulation",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/split/rst/legacy_equivalence.00001.rst",
+      "-n",
+      "pc_gh/formulation=intrinsic_clean"
+    ],
+    "returncode": 1,
+    "expected_message": "incompatible PC-GH restart",
+    "status": "PASS",
+    "wall_seconds": 0.0052509307861328125
+  },
+  {
+    "name": "reject-cli-metadata",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/split/rst/legacy_equivalence.00001.rst",
+      "-n",
+      "pc_gh/restart_layout_fields=50"
+    ],
+    "returncode": 1,
+    "expected_message": "cannot be overridden",
+    "status": "PASS",
+    "wall_seconds": 0.005811929702758789
+  },
+  {
+    "name": "reject-input-metadata",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/split/rst/legacy_equivalence.00001.rst",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/override.athinput",
+      "-n"
+    ],
+    "returncode": 1,
+    "expected_message": "cannot be overridden",
+    "status": "PASS",
+    "wall_seconds": 0.005541801452636719
+  },
+  {
+    "name": "reject-untagged-intrinsic",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/untagged.rst",
+      "-n",
+      "pc_gh/restart_untagged_layout=legacy_pcgh55",
+      "pc_gh/formulation=intrinsic_clean"
+    ],
+    "returncode": 1,
+    "expected_message": "incompatible PC-GH restart",
+    "status": "PASS",
+    "wall_seconds": 0.020486831665039062
+  },
+  {
+    "name": "tagged-inspection",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/split/rst/legacy_equivalence.00001.rst",
+      "-n"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.040940046310424805
+  },
+  {
+    "name": "reject-intrinsic-legacy-options",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-repeat-restart-legacy-001/full.athinput",
+      "pc_gh/formulation=intrinsic_clean"
+    ],
+    "returncode": 1,
+    "expected_message": "unsupported option gauge",
+    "status": "PASS",
+    "wall_seconds": 0.010468721389770508
+  }
+]

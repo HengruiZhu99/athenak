@@ -62,12 +62,15 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   const std::set<std::string> allowed = {"formulation", "spatial_order", "shift_eta",
     "kappa", "reduction_rate", "reduction_profile", "dissipation", "research_dt_ceiling",
     "restart_layout", "restart_layout_version", "restart_layout_fields",
-    "restart_untagged_layout", "project_gauge_constraints", "project_reduction_constraints"};
+    "restart_untagged_layout", "restart_tracker_state", "project_gauge_constraints", "project_reduction_constraints"};
   for (const auto &block : pin->block) {
     if (block.block_name != "pc_gh") continue;
     for (const auto &line : block.line)
       if (!allowed.count(line.param_name)) IntrinsicError("unsupported option " + line.param_name);
   }
+  if (pin->DoesParameterExist("pc_gh", "restart_tracker_state")
+      && pin->GetBoolean("pc_gh", "restart_tracker_state"))
+    IntrinsicError("tracker restart state is not supported");
   if (pmy_pack->pmesh->multilevel || !pmy_pack->pmesh->strictly_periodic)
     IntrinsicError("mesh integration currently requires uniform periodic boundaries");
   for (const auto &block : pin->block) {

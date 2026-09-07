@@ -1,0 +1,680 @@
+[
+  {
+    "name": "fd2-2d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.4178149700164795,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd2-2d-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.4880859851837158,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd2-2d-seeded-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-seeded-single/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.024567842483520508,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd2-2d-seeded-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-seeded-multi/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.15047883987426758,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd2-2d-resume",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.13518118858337402,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd2-2d-serial-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-serial-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.012258768081665039,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd4-2d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.012234926223754883,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd4-2d-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.14978837966918945,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd4-2d-seeded-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-seeded-single/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.024508953094482422,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd4-2d-seeded-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-seeded-multi/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.150634765625,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd4-2d-resume",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.14665722846984863,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd4-2d-serial-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-serial-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.02435779571533203,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd6-2d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.024538040161132812,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd6-2d-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.14422607421875,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd6-2d-seeded-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-seeded-single/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.02376389503479004,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd6-2d-seeded-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-seeded-multi/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.14018511772155762,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd6-2d-resume",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.14413094520568848,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd6-2d-serial-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-serial-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-2d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.012555122375488281,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd2-3d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.048438072204589844,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd2-3d-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.24965381622314453,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd2-3d-seeded-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-seeded-single/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.09096193313598633,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd2-3d-seeded-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-seeded-multi/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.21081805229187012,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd2-3d-resume",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.20136427879333496,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd2-3d-serial-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-serial-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd2-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.09079909324645996,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd4-3d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.08774018287658691,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd4-3d-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.2644319534301758,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd4-3d-seeded-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-seeded-single/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.08971023559570312,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd4-3d-seeded-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-seeded-multi/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.26707911491394043,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd4-3d-resume",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.20320892333984375,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd4-3d-serial-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-serial-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd4-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.0780801773071289,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd6-3d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.04870104789733887,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd6-3d-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.261202335357666,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd6-3d-seeded-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seeded-single/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seed-single.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.07679510116577148,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  },
+  {
+    "name": "fd6-3d-seeded-multi",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seeded-multi/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seed-multi.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.267667293548584,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd6-3d-resume",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 2,
+    "reported_ranks": [
+      "2"
+    ],
+    "wall_seconds": 0.2038571834564209,
+    "status": "PASS",
+    "binary_sha256": "1270e63ce45ba50ce8d62ebd0d25eba4dc72ea596e9f44cd7dfd22103cfeffbf"
+  },
+  {
+    "name": "fd6-3d-serial-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-serial-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-mpi-seeded-002/fd6-3d-seeded-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.09082603454589844,
+    "status": "PASS",
+    "binary_sha256": "6699de17a35d2b03fc3eb00952935e18e6e1ae23aa204d62d6cd579aba8748a6"
+  }
+]

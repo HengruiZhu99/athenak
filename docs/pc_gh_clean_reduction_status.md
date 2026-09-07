@@ -403,3 +403,31 @@ analysis/pc_gh_clean_reduction/INTRINSIC_MESH.md for exact scope and limitations
 No physical gate is promoted. Integrated MPI/CUDA and multiple-block tests,
 independent H/M/reduction/curl diagnostics, coherent intrinsic refinement and
 physical boundaries still precede puncture qualification.
+
+## Intrinsic multiple-block and snapshot diagnostic checkpoint
+
+CPU serial and two-rank MPI now pass FD2/4/6 in 2D/3D with 4/8 blocks at fixed
+global resolution, including all 50 ghost-cell values over three steps.
+Maximum single-block disagreement is 1.681e-18; same-rank and two-to-one-rank
+restart continuations are bitwise identical. Rank counts are verified.
+
+An independent global-periodic snapshot analysis now measures physical H/M
+from primaries alone, all 30 reductions/curls and raw Q-curl, with full-volume
+component norms and signed maximum locations. Separate H and M convergence
+on an analytic curved conformal/shear fixture recovers the expected FD orders.
+This is not yet the production diagnostic task or a physical evolution gate.
+
+The isolated integrated CUDA build and its queued test controller are still
+active; no CUDA result is claimed. See
+analysis/pc_gh_clean_reduction/INTRINSIC_DECOMPOSITION.md and the controller
+status evidence before continuing the existing processes. Physical diagnostics
+in the task graph, intrinsic refinement/physical boundaries and puncture/binary
+qualification remain unfinished.
+
+The asymmetric per-field oblique restart fixture strengthens permutation coverage
+and found a repeated-restart metadata rejection. Accepting the reader-generated
+false tracker marker repairs it while true tracker state remains rejected.
+All six asymmetric two-rank comparisons, including ghosts and subsequent
+rank-changing restarts, are now bitwise equal to serial. The original failure is
+preserved. The running CUDA snapshot predates this parser-only correction and
+needs its follow-up check before any latest-code GPU claim.

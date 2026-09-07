@@ -1,0 +1,302 @@
+[
+  {
+    "name": "fd2-2d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd2-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.024676799774169922,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd2-2d-multi",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd2-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.024358034133911133,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd2-2d-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd2-2d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd2-2d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.012325048446655273,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd4-2d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd4-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.02422809600830078,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd4-2d-multi",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd4-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.02362513542175293,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd4-2d-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd4-2d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd4-2d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.024613142013549805,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd6-2d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd6-2d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.024528980255126953,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd6-2d-multi",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd6-2d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.024518966674804688,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd6-2d-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd6-2d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd6-2d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.012295246124267578,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd2-3d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd2-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.08020210266113281,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd2-3d-multi",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd2-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.14063811302185059,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd2-3d-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd2-3d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd2-3d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.08740687370300293,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd4-3d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd4-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.0852811336517334,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd4-3d-multi",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd4-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.15062999725341797,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd4-3d-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd4-3d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd4-3d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.07537317276000977,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd6-3d-single",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd6-3d-single/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.0483548641204834,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd6-3d-multi",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd6-3d-multi/used.athinput"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.13700413703918457,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  },
+  {
+    "name": "fd6-3d-resume",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-mesh-final-source-002/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd6-3d-resume/used.athinput",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-decomposition-serial-001/fd6-3d-multi/rst/legacy_equivalence.00001.rst"
+    ],
+    "returncode": 0,
+    "expected_ranks": 1,
+    "reported_ranks": [
+      "1"
+    ],
+    "wall_seconds": 0.0850820541381836,
+    "status": "PASS",
+    "binary_sha256": "37662754206a8e4d86b32ee400fd44415967343029816469fd43213fa1a988ab"
+  }
+]

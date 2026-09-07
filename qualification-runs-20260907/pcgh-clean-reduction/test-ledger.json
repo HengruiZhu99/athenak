@@ -494,6 +494,41 @@
       "status": "PASS",
       "evidence": "intrinsic-mesh-001/intrinsic-mesh-legacy-restart-003",
       "scope": "19 legacy restart controls, bitwise continuation"
+    },
+    "intrinsic_decomposition_serial": {
+      "status": "PASS",
+      "evidence": "intrinsic-decomposition-001/intrinsic-decomposition-serial-001/results.json",
+      "scope": "FD2/4/6 2D/3D fixed global grid, 4/8 blocks, all 50 fields and all ghosts over three steps; bitwise restart"
+    },
+    "intrinsic_decomposition_MPI": {
+      "status": "PASS",
+      "evidence": "intrinsic-decomposition-001/intrinsic-decomposition-mpi-001/results.json",
+      "scope": "Verified two ranks with Kokkos bounds checks; same-rank and two-to-one-rank restart continuation"
+    },
+    "intrinsic_snapshot_physical_diagnostics": {
+      "status": "PASS",
+      "evidence": "intrinsic-decomposition-001/intrinsic-snapshot-diagnostics-003/results.json",
+      "scope": "Independent H and M analytic FD convergence; auxiliary/GH independence and all 30 reductions/curls; global-periodic offline operator"
+    },
+    "intrinsic_mesh_CUDA_integration": {
+      "status": "NOT_RUN",
+      "evidence": "intrinsic-decomposition-001/cuda-pending/controller-status-002.txt",
+      "scope": "Isolated CUDA build and waiting test controller live; no GPU result yet"
+    },
+    "intrinsic_repeat_restart_before_fix": {
+      "status": "FAIL",
+      "evidence": "intrinsic-decomposition-001/intrinsic-decomposition-mpi-seeded-001/runs.json",
+      "scope": "Second intrinsic restart rejects reader-generated false tracker-state metadata"
+    },
+    "intrinsic_asymmetric_decomposition_MPI": {
+      "status": "PASS",
+      "evidence": "intrinsic-decomposition-001/intrinsic-decomposition-mpi-seeded-002/results.json",
+      "scope": "Six independently phased 50-field fixtures; bitwise fields/ghosts/repeated restart/rank-change; axis-swap negative control"
+    },
+    "intrinsic_repeat_restart_guards": {
+      "status": "PASS",
+      "evidence": "intrinsic-decomposition-001/intrinsic-repeat-restart-controls-002/results.json",
+      "scope": "14 controls including rejection of true tracker metadata; false marker continuation is covered by the asymmetric suite"
     }
   }
 }
