@@ -153,7 +153,7 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
     ncc_tosend += (pmy_mesh->pmb_pack->pz4c->nz4c);
   }
   if (pmy_mesh->pmb_pack->ppcgh != nullptr) {
-    ncc_tosend += (pmy_mesh->pmb_pack->ppcgh->npcgh);
+    ncc_tosend += (pmy_mesh->pmb_pack->ppcgh->EvolvedVariables());
   }
 
   // Step 2. (InitRecvAMR)
@@ -414,7 +414,7 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
     ncc_tosend += (pmy_mesh->pmb_pack->pz4c->nz4c);
   }
   if (pmy_mesh->pmb_pack->ppcgh != nullptr) {
-    ncc_tosend += (pmy_mesh->pmb_pack->ppcgh->npcgh);
+    ncc_tosend += (pmy_mesh->pmb_pack->ppcgh->EvolvedVariables());
   }
 
   // Step 2. (PackAndSendAMR)
@@ -566,7 +566,7 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
   }
   if (ppcgh != nullptr) {
     PackAMRBuffersCC(ppcgh->u0, ppcgh->coarse_u0, ncc_sent, nfc_sent);
-    ncc_sent += ppcgh->npcgh;
+    ncc_sent += ppcgh->EvolvedVariables();
   }
 
   // Step 4. (PackAndSendAMR)
@@ -861,7 +861,7 @@ void MeshRefinement::ClearRecvAndUnpackAMR() {
   }
   if (ppcgh != nullptr) {
     UnpackAMRBuffersCC(ppcgh->u0, ppcgh->coarse_u0, ncc_recv, nfc_recv);
-    ncc_recv += ppcgh->npcgh;
+    ncc_recv += ppcgh->EvolvedVariables();
   }
 #endif
   return;

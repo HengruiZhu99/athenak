@@ -112,7 +112,7 @@ MeshRefinement::MeshRefinement(Mesh *pm, ParameterInput *pin) :
     ncc_tosend += (pm->pmb_pack->pz4c->nz4c);
   }
   if (pm->pmb_pack->ppcgh != nullptr) {
-    ncc_tosend += (pm->pmb_pack->ppcgh->npcgh);
+    ncc_tosend += (pm->pmb_pack->ppcgh->EvolvedVariables());
   }
   int nmb = std::max((pm->pmb_pack->nmb_thispack), (pm->nmb_maxperrank));
   auto &indcs = pm->mb_indcs;

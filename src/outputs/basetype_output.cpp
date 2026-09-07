@@ -675,10 +675,11 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     }
 
     // PC-GH variables
-    for (int v = 0; v < pc_gh::PcGh::npcgh; ++v) {
-      if (variable.compare("pcgh") == 0 ||
-          variable.compare(pc_gh::PcGh::PcGhNames[v]) == 0) {
-        outvars.emplace_back(pc_gh::PcGh::PcGhNames[v], v, &(pm->pmb_pack->ppcgh->u0));
+    if (auto *ppcgh = pm->pmb_pack->ppcgh) {
+      for (int v = 0; v < ppcgh->EvolvedVariables(); ++v) {
+        if (variable.compare("pcgh") == 0 || variable.compare(ppcgh->StateName(v)) == 0) {
+          outvars.emplace_back(ppcgh->StateName(v), v, &(ppcgh->u0));
+        }
       }
     }
     for (int v = 0; v < pc_gh::PcGh::ncon; ++v) {

@@ -24,6 +24,7 @@ TaskStatus PcGh::CopyU(Driver *pdriver, int stage) {
   reduction_monitor_stage = stage;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = pmy_pack->nmb_thispack;
+  int const nvars = EvolvedVariables();
   if (stage == 1) {
     for (auto &operation : transfer_reduction_change) operation.fill(0.0);
   }
@@ -45,7 +46,7 @@ TaskStatus PcGh::CopyU(Driver *pdriver, int stage) {
       auto state = u0;
       auto accumulator = u1;
       par_for("PC-GH RK4 register accumulation", DevExeSpace(),
-      0, nmb - 1, 0, npcgh - 1,
+      0, nmb - 1, 0, nvars - 1,
       indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
       KOKKOS_LAMBDA(int m, int n, int k, int j, int i) {
         accumulator(m, n, k, j, i) += delta*state(m, n, k, j, i);
@@ -61,6 +62,7 @@ TaskStatus PcGh::ExpRKUpdate(Driver *pdriver, int stage) {
   BeginStateBudget(-10);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = pmy_pack->nmb_thispack;
+  int const nvars = EvolvedVariables();
   Real const gam0 = pdriver->gam0[stage - 1];
   Real const gam1 = pdriver->gam1[stage - 1];
   Real const beta_dt = pdriver->beta[stage - 1]*pmy_pack->pmesh->dt;
@@ -71,7 +73,7 @@ TaskStatus PcGh::ExpRKUpdate(Driver *pdriver, int stage) {
   auto accumulator = u1;
   auto source = u_rhs;
   par_for("PC-GH RK update", DevExeSpace(),
-  0, nmb - 1, 0, npcgh - 1,
+  0, nmb - 1, 0, nvars - 1,
   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
   KOKKOS_LAMBDA(int m, int n, int k, int j, int i) {
     state(m, n, k, j, i) = gam0*state(m, n, k, j, i)

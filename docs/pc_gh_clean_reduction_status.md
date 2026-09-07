@@ -367,3 +367,20 @@ See analysis/pc_gh_clean_reduction/RESTART_LAYOUT.md for compatibility changes.
 MPI/CUDA, multilevel and tracker restart coverage remains open. The next work
 is actual 50-field mesh/storage/task integration with protected restart identity
 and coherent intrinsic transfer. No physical gate is promoted.
+
+## Layout consumer preparation checkpoint
+
+Storage allocation, boundary receive counts, RK registers, restart payload sizes,
+load-balance packing counts and evolved output selection now obtain their field
+count from the allocated PcGh layout. Restart metadata also uses that immutable
+object identity. Legacy equation indices remain unchanged; intrinsic mesh mode
+is still rejected before allocation. Its task dispatch, diagnostic definitions,
+initial data and transfer reconstruction remain to be implemented.
+
+All 19 serial restart controls pass with bitwise continuation. Six FD2/4/6,
+2D/3D one-step legacy comparisons against the collision-source executable are
+bitwise equal. Evidence and exact build/source/binary/input hashes are in
+qualification-runs-20260907/pcgh-clean-reduction/layout-consumers-001.
+The changed MPI packing paths are not runtime-tested in this checkpoint.
+No evolution gate is promoted. Next: uniform periodic intrinsic allocation and
+task dispatch, with explicit rejection of unsupported numerical/diagnostic paths.

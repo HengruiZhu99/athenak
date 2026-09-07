@@ -80,7 +80,7 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
   if (pz4c != nullptr) {
     nz4c = pz4c->nz4c;
   } else if (ppcgh != nullptr) {
-    npcgh = ppcgh->npcgh;
+    npcgh = ppcgh->EvolvedVariables();
   } else if (padm != nullptr) {
     nadm = padm->nadm;
   }
@@ -175,7 +175,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     nco = pz4c->ptracker.size();
     nhorizon = pz4c->phorizon_dump.size();
   } else if (ppcgh != nullptr) {
-    npcgh = ppcgh->npcgh;
+    npcgh = ppcgh->EvolvedVariables();
     nco = ppcgh->ptracker.size();
   } else if (padm != nullptr) {
     nadm = padm->nadm;
@@ -224,7 +224,7 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
 
   // Serialize the actual allocated module layout, not user-overridable labels.
   if (ppcgh != nullptr) {
-    pc_gh::WriteStateLayout(pin, pc_gh::LayoutForFormulation("legacy"));
+    pc_gh::WriteStateLayout(pin, ppcgh->AllocatedLayout());
   }
 
   // create string holding input parameters (copy of input file)

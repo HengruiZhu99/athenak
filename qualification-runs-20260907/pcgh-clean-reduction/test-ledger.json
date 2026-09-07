@@ -464,6 +464,11 @@
       "status": "PASS",
       "evidence": "restart-layout-001/attempt-005/results.json",
       "scope": "19 actual process controls; tagged/declared-untagged resume bitwise equal; immutable header before overrides; fresh intrinsic mode rejected"
+    },
+    "layout_consumers_serial": {
+      "status": "PASS",
+      "evidence": "layout-consumers-001",
+      "scope": "Layout access for storage/RK/communication/I/O; 19 restart controls and six legacy one-step CPU comparisons; intrinsic mode still disabled; MPI/CUDA packing not rerun"
     }
   }
 }

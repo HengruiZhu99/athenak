@@ -104,9 +104,9 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
   int const ncells2 = (indcs.nx2 > 1) ? indcs.nx2 + 2*indcs.ng : 1;
   int const ncells3 = (indcs.nx3 > 1) ? indcs.nx3 + 2*indcs.ng : 1;
 
-  Kokkos::realloc(u0, nmb, npcgh, ncells3, ncells2, ncells1);
-  Kokkos::realloc(u1, nmb, npcgh, ncells3, ncells2, ncells1);
-  Kokkos::realloc(u_rhs, nmb, npcgh, ncells3, ncells2, ncells1);
+  Kokkos::realloc(u0, nmb, EvolvedVariables(), ncells3, ncells2, ncells1);
+  Kokkos::realloc(u1, nmb, EvolvedVariables(), ncells3, ncells2, ncells1);
+  Kokkos::realloc(u_rhs, nmb, EvolvedVariables(), ncells3, ncells2, ncells1);
   Kokkos::realloc(u_con, nmb, ncon, ncells3, ncells2, ncells1);
   Kokkos::realloc(transfer_reduction_before, nmb, 9, ncells3, ncells2, ncells1);
   Kokkos::realloc(transfer_reduction_after, nmb, 9, ncells3, ncells2, ncells1);
@@ -119,7 +119,7 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     int const nccells1 = indcs.cnx1 + 2*indcs.ng;
     int const nccells2 = (indcs.cnx2 > 1) ? indcs.cnx2 + 2*indcs.ng : 1;
     int const nccells3 = (indcs.cnx3 > 1) ? indcs.cnx3 + 2*indcs.ng : 1;
-    Kokkos::realloc(coarse_u0, nmb, npcgh, nccells3, nccells2, nccells1);
+    Kokkos::realloc(coarse_u0, nmb, EvolvedVariables(), nccells3, nccells2, nccells1);
     Kokkos::realloc(coarse_u_weyl, nmb, 2, nccells3, nccells2, nccells1);
   }
 
@@ -362,7 +362,7 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     pbval_residual->InitializeBuffers(npcgh);
   }
   pbval_u = new MeshBoundaryValuesCC(ppack, pin, true);
-  pbval_u->InitializeBuffers(npcgh);
+  pbval_u->InitializeBuffers(EvolvedVariables());
   pbval_weyl = new MeshBoundaryValuesCC(ppack, pin, true);
   pbval_weyl->InitializeBuffers(2);
 

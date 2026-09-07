@@ -132,7 +132,7 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
   if (pz4c != nullptr) {
     nz4c = pz4c->nz4c;
   } else if (ppcgh != nullptr) {
-    npcgh = ppcgh->npcgh;
+    npcgh = ppcgh->EvolvedVariables();
   } else if (padm != nullptr) {
     nadm = padm->nadm;
   }

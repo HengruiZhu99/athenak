@@ -170,7 +170,7 @@ void PcGh::QueuePcGhTasks() {
 }
 
 TaskStatus PcGh::InitRecv(Driver *, int) {
-  return pbval_u->InitRecv(npcgh);
+  return pbval_u->InitRecv(EvolvedVariables());
 }
 
 TaskStatus PcGh::ClearRecv(Driver *, int) {
@@ -365,7 +365,7 @@ TaskStatus PcGh::PrepareProjectionExchange(Driver *pdriver, int stage) {
   if (status != TaskStatus::complete) return status;
   status = pbval_u->ClearRecv();
   if (status != TaskStatus::complete) return status;
-  return pbval_u->InitRecv(npcgh);
+  return pbval_u->InitRecv(EvolvedVariables());
 }
 
 TaskStatus PcGh::BoundaryRHS(Driver *, int) {

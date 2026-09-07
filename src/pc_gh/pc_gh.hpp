@@ -19,6 +19,7 @@
 #include "athena_tensor.hpp"
 #include "bvals/bvals.hpp"
 #include "parameter_input.hpp"
+#include "pc_gh/state_layout.hpp"
 
 class MeshBlockPack;
 class Driver;
@@ -57,6 +58,12 @@ class PcGh {
 
   static_assert(npcgh == 55, "PC-GH state ABI must contain exactly 55 fields");
   static char const * const PcGhNames[npcgh];
+
+  // Generic storage/communication consumers must use the allocated layout.
+  // npcgh and PcGhNames remain the legacy equation/initial-data ABI.
+  int EvolvedVariables() const { return state_layout_.fields; }
+  const StateLayout &AllocatedLayout() const { return state_layout_; }
+  const char *StateName(int v) const { return PcGhNames[v]; }
 
   enum : int {
     I_CON_CPERP,
@@ -374,6 +381,7 @@ class PcGh {
   std::array<std::array<Real, 8>, 7> transfer_reduction_change{};
 
  private:
+  const StateLayout state_layout_ = LayoutForFormulation("legacy");
   MeshBoundaryValuesCC *pbval_residual = nullptr;
   DvceArray5D<Real> transfer_residual, coarse_transfer_residual;
   HostArray5D<Real> state_budget_before;
