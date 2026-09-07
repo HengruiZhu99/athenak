@@ -44,3 +44,6 @@ Seven smooth nonlinear periodic off-constraint seeds, all 55 rows and active cel
 
 ## CUDA legacy controls resource reservation
 Build independent source snapshots on della-vis1 with four CPU build jobs, sequential builds. Test one 8^3 or 8^2 block at a time, one A100, estimated <1GiB GPU memory, maximum one RK3 step per fixture. Maximum 600 seconds per launched test group. Occupancy sampled 3496MiB/40960MiB, 0% utilization; recheck immediately before execution. No performance claim and no unrelated process changes. Serial equivalence first; MPI/transfer/restart controls remain separate.
+
+## Signed state-budget writer oracle (before execution)
+Test every field and ghost cell on 2D and 3D one-block fixtures against independently indexed signed increments, tolerance 2e-15 absolute; require stored same-cell subtraction exactly, and an exactly zero no-op increment. Test truncated payload rejection. Explicitly label both ghost-validity flags unasserted. Output is chronological native-endian binary with an endian marker and explicit active ranges; no memory-layout assumption. A state increment does not by itself supply a reduction/curl causal budget.

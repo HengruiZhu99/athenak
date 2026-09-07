@@ -6,7 +6,7 @@
       "id": 0,
       "name": "provenance and unchanged legacy",
       "status": "NOT_RUN",
-      "remaining": "compiled legacy equivalence and one-step controls"
+      "remaining": "archived transfer discriminator plus serial/MPI/restart controls; sampled CPU/CUDA kernel and one-step equivalence complete"
     },
     {
       "id": 1,
@@ -72,6 +72,38 @@
       "evidence": "legacy-cpu-zero-001.json",
       "max_normalized_error": 0,
       "collision_lapse_target_required": true
+    },
+    "legacy_cpu_one_step": {
+      "status": "PASS",
+      "max_normalized_error": 0,
+      "evidence": "legacy-cpu-one-step-001.json"
+    },
+    "legacy_cuda_zero_step": {
+      "status": "PASS",
+      "max_normalized_error": 5.52302678914764e-17,
+      "evidence": "cuda-legacy-001/cuda-zero-001/results.json"
+    },
+    "legacy_cuda_one_step": {
+      "status": "PASS",
+      "max_normalized_error": 3.619566073604605e-17,
+      "old_control_patch": "CUDA host-this view capture only",
+      "evidence": "cuda-legacy-001/cuda-one-step-001/results.json"
+    },
+    "state_budget_cpu": {
+      "status": "PASS",
+      "scope": "signed fine-array state increments including ghosts, 2D/3D; coarse array and independent constraint budgets not implemented",
+      "evidence": "state-budget-cpu-001.json",
+      "fixture_correction": "reader originally expected two records; corrected to include five actual initialization task records, all zero. Numerical tolerance unchanged."
+    },
+    "short_halo_floating_screen": {
+      "status": "FAIL",
+      "scope": "raw floating spectral threshold flags near neutral modes; diagnostic limitation, not established instability",
+      "evidence": "short-halo-floating-001.json"
+    },
+    "short_halo_exact_tt": {
+      "status": "PASS",
+      "scope": "FD6 no-KO periodic two-block spatial operator has distinct real nonpositive eigenvalues at block sizes 8,16; no uniform energy/AMR/full-system claim",
+      "evidence": "short-halo-exact-003.json"
     }
   }
 }

@@ -1,6 +1,6 @@
 # Clean intrinsic reduction implementation status
 
-2026-09-07. Work in progress. No new evolution or qualification claim.
+2026-09-07. Work in progress. Only one-step legacy controls have evolved; no new-formulation qualification claim.
 
 The remote source was fetched at `62945657b4f2828a481abb5e7708e0e3e06dbd8d`,
 exactly the independently verified SHA. The requested new branch
@@ -37,9 +37,8 @@ must account for that convention and cannot reinterpret legacy L.
 Della access works using the preserved multiplexed ControlPath. Initial occupancy:
 A100-PCIE-40GB, 40960 MiB total, 3496 MiB occupied, 0% sampled utilization; no
 user Slurm jobs. This does not imply the occupied memory is available. Scheduler
-gputest reports a 15-day limit and heterogeneous GPU node types. No remote build
-or evolution launched yet. Inspect occupancy and exact requested node resources
-again before allocation. User authorization permits direct vis1 testing or up to
+gputest reports a 15-day limit and heterogeneous GPU node types. Resource use is recorded separately for the completed small CUDA controls. Inspect
+occupancy and exact requested node resources again before each new allocation. User authorization permits direct vis1 testing or up to
 eight 80GB A100s through gputest; request only resources needed by each staged test.
 
 ## Legacy equivalence checkpoint
@@ -62,14 +61,35 @@ Both invalid-input tests pass. CPU raw outputs/builds are preserved outside Git
 under `../pcgh-clean-reduction-tests-20260907`; compact results and complete source
 manifests are in the dated evidence directory.
 
-Independent CUDA builds are running sequentially on Della in
+Independent CUDA builds and controls have completed in
 `/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-legacy`.
-The build controller was confirmed live as PID 143849, with the collision build
-at 33%. Its exit status will be written to `build.exit`. Do not restart merely
-because observation expires; inspect that controller/log and exit status first.
-No CUDA oracle or one-step control has executed yet. The source snapshots are
-isolated and do not change the read-only legacy control or any older calculation.
+Six zero-step fixtures match to normalized error at most 5.53e-17; six actual
+RK3 one-step fixtures match to at most 3.62e-17 (frozen tolerance 2e-12).
+The CPU one-step counterparts match exactly. The old-source CUDA one-step
+executable includes only the view-capture repair required to avoid host-this
+access; its patch, complete source manifest, executable hashes, inputs and raw
+output hashes are retained. The exact unpatched CUDA executable is preserved.
+The CUDA build and test controller exit files both contain zero. Raw CSVs remain
+outside Git; compact records are in `cuda-legacy-001` in the evidence directory.
+These comparisons do not exercise MPI, AMR, restart, or a physical solution.
 
-Next: complete those CUDA/one-step comparisons and the archived transfer
-discriminator, implement full coherent transfer with valid stencil support and
-signed operation diagnostics, then intrinsic map and complete kernel oracles.
+An opt-in `state_budget` writer now records before/after/signed increments for
+all fine-array state components, including ghost cells, at existing operation
+brackets and before post-RK validation. CPU 2D/3D independent-index fixtures,
+no-op records and truncated-record rejection pass. The writer explicitly makes
+no ghost-validity assertion. It does not yet record the coarse buffer, separate
+GH from algebraic correction, or compute independent constraint increments;
+these limitations prevent calling it a complete causal budget.
+
+A proposed shifted derivative-ghost stencil was screened in a periodic TT toy
+subsystem. Floating-point eigenvalues flagged tiny positive roots near neutral
+modes, including the uniform control. Exact rational FD6 spatial matrices for
+two blocks of 8 or 16 cells have distinct real nonpositive eigenvalues and a
+constant kernel. This resolves those no-KO toy flags without changing a numerical
+tolerance. It does not establish a uniform energy bound, KO/RK stability,
+multidimensional/AMR stability, or a complete transfer repair. Both raw flags and
+exact polynomials are preserved; no production halo operator changed.
+
+Next: complete the archived transfer discriminator and implement full coherent
+transfer with valid stencil support and signed operation diagnostics, then the
+intrinsic map and complete kernel oracles. Gates 1--5 remain unpassed.

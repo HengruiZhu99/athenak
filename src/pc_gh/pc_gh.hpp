@@ -234,6 +234,8 @@ class PcGh {
   void MeasureReductionTransfer(bool save_before, int operation);
   void BeginReductionTransfer(int operation);
   void EndReductionTransfer(int operation);
+  void BeginStateBudget(int operation);
+  void EndStateBudget(int operation);
   void WriteReductionSample(DvceArray5D<Real> norms, int operation, bool before);
 
   TaskStatus CopyU(Driver *pdriver, int stage);
@@ -307,6 +309,8 @@ class PcGh {
     Real research_dt_ceiling;
     bool hybrid_monitor;
     bool reduction_monitor;
+    bool state_budget;
+    int state_budget_dcycle;
     std::string reduction_monitor_file;
     Real dissipation;
     bool project_gauge_constraints;
@@ -366,6 +370,10 @@ class PcGh {
   std::array<std::array<Real, 8>, 7> transfer_reduction_change{};
 
  private:
+  HostArray5D<Real> state_budget_before;
+  bool state_budget_pending = false;
+  int state_budget_operation = 0;
+  long long state_budget_event = 0;
   void BindVariables(DvceArray5D<Real> state, Variables &vars);
   void LoadGaugeA0Table();
   void ValidateGaugeA0Domain();

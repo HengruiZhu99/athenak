@@ -83,6 +83,18 @@
       "scope": "all active cells, nonlinear RHS, algebraic+GH reset, auxiliary projection, uniform one-step RK3; independent builds same test adapter",
       "negative_control": "newer default direct_product projection must differ from collision source in L for resolved nonlinear product fixtures",
       "promotion": "Gate 0 still requires transfer discriminator and resource/source/input/restart manifests"
+    },
+    "state_budget_oracle": {
+      "status": "NOT_RUN",
+      "scope": "production snapshot/writer; every active and ghost 55-field component on one 2D/3D block; signed known changes and no-op",
+      "abs_tolerance": 2e-15,
+      "exact_requirements": [
+        "stored delta equals after-before for finite data",
+        "no-op delta exactly zero",
+        "before storage does not alias serial state",
+        "truncated records rejected"
+      ],
+      "ghost_validity": "explicitly unasserted; no derivative constraint interpretation"
     }
   }
 }

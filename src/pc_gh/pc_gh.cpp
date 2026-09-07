@@ -240,8 +240,14 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  opt.state_budget = pin->GetOrAddBoolean("pc_gh", "state_budget", false);
+  opt.state_budget_dcycle = pin->GetOrAddInteger("pc_gh", "state_budget_dcycle", 1);
+  if (opt.state_budget_dcycle < 1) {
+    std::cerr << "### FATAL ERROR: state_budget_dcycle must be positive\n";
+    std::exit(EXIT_FAILURE);
+  }
   opt.reduction_monitor = pin->GetOrAddBoolean("pc_gh", "reduction_monitor", false)
-      || opt.hybrid_monitor;
+      || opt.hybrid_monitor || opt.state_budget;
   opt.reduction_monitor_file = pin->GetOrAddString("pc_gh", "reduction_monitor_file",
       pin->GetString("job", "basename") + ".pcgh-reduction.csv");
   if ((opt.reduction_system != "legacy" && opt.reduction_system != "advective")

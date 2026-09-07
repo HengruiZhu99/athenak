@@ -58,6 +58,7 @@ TaskStatus PcGh::CopyU(Driver *pdriver, int stage) {
 }
 
 TaskStatus PcGh::ExpRKUpdate(Driver *pdriver, int stage) {
+  BeginStateBudget(-10);
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = pmy_pack->nmb_thispack;
   Real const gam0 = pdriver->gam0[stage - 1];
@@ -78,6 +79,7 @@ TaskStatus PcGh::ExpRKUpdate(Driver *pdriver, int stage) {
                          + beta_dt*source(m, n, k, j, i);
   });
   Kokkos::fence();
+  EndStateBudget(-10);
   ValidateState("post-RK update", false, false);
   if (opt.reduction_follow_trackers) {
     for (std::size_t n=0; n<ptracker.size(); ++n) {

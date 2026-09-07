@@ -1,0 +1,19 @@
+{
+  "purpose": "clean-reduction Gate 0 legacy equivalence only",
+  "branch": "codex/pcgh-clean-reduction-transfer-20260907",
+  "base": "745e59540b141ad751a62258ee868967b4951454",
+  "created_utc": "2026-09-07T14:09:06.537860+00:00",
+  "remote_root": "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-legacy",
+  "resources": {
+    "build_jobs": 4,
+    "test_gpu_count": 1,
+    "estimated_test_gpu_memory_GiB": 1,
+    "test_steps_max": 1,
+    "test_wall_limit_seconds": 600
+  },
+  "source_manifests": [
+    "current-legacy-build-source.json",
+    "collision-legacy-build-source.json"
+  ],
+  "authorization": "user allows direct della-vis1 tests; inspect occupancy immediately before test"
+}

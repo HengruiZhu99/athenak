@@ -551,6 +551,7 @@ void PcGh::MeasureReductionTransfer(bool save_before, int operation) {
 }
 
 void PcGh::BeginReductionTransfer(int operation) {
+  if (operation >= 0) BeginStateBudget(operation);
   switch (opt.fd_stencil) {
     case 2: MeasureReductionTransfer<2>(true, operation); break;
     case 3: MeasureReductionTransfer<3>(true, operation); break;
@@ -560,6 +561,7 @@ void PcGh::BeginReductionTransfer(int operation) {
 }
 
 void PcGh::EndReductionTransfer(int operation) {
+  if (operation >= 0) EndStateBudget(operation);
   switch (opt.fd_stencil) {
     case 2: MeasureReductionTransfer<2>(false, operation); break;
     case 3: MeasureReductionTransfer<3>(false, operation); break;

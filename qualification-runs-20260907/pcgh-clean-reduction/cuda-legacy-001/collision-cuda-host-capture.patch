@@ -1,0 +1,22 @@
+--- a/src/pc_gh/pc_gh_update.cpp
++++ b/src/pc_gh/pc_gh_update.cpp
+@@ -47,13 +47,16 @@
+   Real const gam1 = pdriver->gam1[stage - 1];
+   Real const beta_dt = pdriver->beta[stage - 1]*pmy_pack->pmesh->dt;
+ 
++  auto state = u0;
++  auto accumulator = u1;
++  auto source = u_rhs;
+   par_for("PC-GH RK update", DevExeSpace(),
+   0, nmb - 1, 0, npcgh - 1,
+   indcs.ks, indcs.ke, indcs.js, indcs.je, indcs.is, indcs.ie,
+   KOKKOS_LAMBDA(int m, int n, int k, int j, int i) {
+-    u0(m, n, k, j, i) = gam0*u0(m, n, k, j, i)
+-                         + gam1*u1(m, n, k, j, i)
+-                         + beta_dt*u_rhs(m, n, k, j, i);
++    state(m, n, k, j, i) = gam0*state(m, n, k, j, i)
++                         + gam1*accumulator(m, n, k, j, i)
++                         + beta_dt*source(m, n, k, j, i);
+   });
+   Kokkos::fence();
+   ValidateState("post-RK update", false, false);
