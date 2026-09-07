@@ -74,3 +74,13 @@ and stages 1--3, exactly one post-projection correction at the final stage, and
 bitwise unchanged primary/active entries within each correction bracket. This
 checks task integration only; the arbitrary seed is not a physical solution and
 one step cannot establish stability or convergence.
+
+## CUDA transfer build/resource plan
+Build an isolated snapshot of production commit 40e0bc1f with CUDA AMPERE80,
+MPI enabled and Kokkos bounds checks, using four CPU compilation jobs on
+Della-vis1. No GPU evolution in the build controller. Next operator tests use
+one A100, <=15 blocks and estimated <1 GiB GPU memory per rank, first one rank,
+then two ranks sharing the authorized GPU if the single-rank checks pass.
+Recheck free memory immediately before those tests. Last occupancy before build:
+3559/40960 MiB, 0% utilization. Do not alter unrelated processes. Use the same
+120-second process bound and frozen 2e-12 component tolerance; no long evolution.

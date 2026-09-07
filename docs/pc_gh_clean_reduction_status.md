@@ -120,3 +120,12 @@ configurations are retained. Historical 2D restriction still averages cells.
 Next: CUDA validation, varying-residual/curl convergence and complete coupled
 operator analysis, then boundary/regridding/restart completion. Constant-residual
 and single-step checks do not pass Gate 1 or authorize physical promotion.
+
+The isolated CUDA/MPI transfer build has started on Della at
+`/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001`,
+source snapshot `40e0bc1fc6e8f5dd0c474ed7d5d127060ea44937`. All 3965 snapshot
+file hashes were independently verified before compilation. Controller PID
+385334 was confirmed live at 6%; tool session 64564 observes it. Configuration
+succeeded. Inspect that controller and `build.exit` before taking any restart
+action. This build controller launches no GPU tests; new CUDA transfer checks
+remain NOT_RUN until actual results are collected.
