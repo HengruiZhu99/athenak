@@ -1,5 +1,5 @@
 // AthenaK astrophysical plasma code, 3-clause BSD License (LICENSE).
-// Initial uniform periodic mesh integration of the independent 50-field system.
+// Periodic fixed-topology mesh integration of the independent 50-field system.
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -66,7 +66,7 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   // Reject unimplemented paths rather than accepting an ignored legacy setting.
   const std::set<std::string> allowed = {"formulation", "spatial_order", "shift_eta",
     "kappa", "reduction_rate", "reduction_profile", "dissipation", "research_dt_ceiling",
-    "intrinsic_stage_dump", "intrinsic_diagnostics", "intrinsic_diagnostic_dcycle",
+    "coherent_transfer", "intrinsic_stage_dump", "intrinsic_diagnostics", "intrinsic_diagnostic_dcycle",
     "restart_layout", "restart_layout_version", "restart_layout_fields",
     "restart_untagged_layout", "restart_tracker_state", "project_gauge_constraints", "project_reduction_constraints"};
   for (const auto &block : pin->block) {
@@ -77,8 +77,8 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   if (pin->DoesParameterExist("pc_gh", "restart_tracker_state")
       && pin->GetBoolean("pc_gh", "restart_tracker_state"))
     IntrinsicError("tracker restart state is not supported");
-  if (pmy_pack->pmesh->multilevel || !pmy_pack->pmesh->strictly_periodic)
-    IntrinsicError("mesh integration currently requires uniform periodic boundaries");
+  if (pmy_pack->pmesh->adaptive || !pmy_pack->pmesh->strictly_periodic)
+    IntrinsicError("mesh integration requires fixed topology and periodic boundaries");
   for (const auto &block : pin->block) {
     if (block.block_name.rfind("output", 0) != 0) continue;
     const auto type = pin->GetString(block.block_name, "file_type");
@@ -93,7 +93,9 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   intrinsic_diagnostics = pin->GetOrAddBoolean("pc_gh", "intrinsic_diagnostics", false);
   intrinsic_diagnostic_dcycle = pin->GetOrAddInteger("pc_gh", "intrinsic_diagnostic_dcycle", 1);
   if (intrinsic_diagnostic_dcycle < 1) IntrinsicError("diagnostic cadence must be positive");
-  opt.coherent_transfer = "none";
+  opt.coherent_transfer = pin->GetOrAddString("pc_gh", "coherent_transfer", "none");
+  if (opt.coherent_transfer != "none" && opt.coherent_transfer != "residual_shifted")
+    IntrinsicError("coherent_transfer must be none or residual_shifted");
   opt.spatial_order = pin->GetOrAddInteger("pc_gh", "spatial_order", 6);
   opt.fd_stencil = opt.spatial_order/2+1;
   if ((opt.spatial_order != 2 && opt.spatial_order != 4 && opt.spatial_order != 6)
@@ -120,6 +122,20 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   Kokkos::realloc(u0, nm, EvolvedVariables(), nk, nj, ni);
   Kokkos::realloc(u1, nm, EvolvedVariables(), nk, nj, ni);
   Kokkos::realloc(u_rhs, nm, EvolvedVariables(), nk, nj, ni);
+  if (pmy_pack->pmesh->multilevel) {
+    int ci = a.cnx1+2*a.ng, cj = a.cnx2 > 1 ? a.cnx2+2*a.ng : 1;
+    int ck = a.cnx3 > 1 ? a.cnx3+2*a.ng : 1;
+    Kokkos::realloc(coarse_u0, nm, EvolvedVariables(), ck, cj, ci);
+    Kokkos::realloc(coarse_u_weyl, nm, 2, ck, cj, ci);
+  }
+  if (opt.coherent_transfer == "residual_shifted") {
+    Kokkos::realloc(transfer_residual, nm, EvolvedVariables(), nk, nj, ni);
+    Kokkos::realloc(coarse_transfer_residual, coarse_u0.extent_int(0),
+        coarse_u0.extent_int(1), coarse_u0.extent_int(2),
+        coarse_u0.extent_int(3), coarse_u0.extent_int(4));
+    pbval_residual = new MeshBoundaryValuesCC(pmy_pack, pin, true);
+    pbval_residual->InitializeBuffers(EvolvedVariables());
+  }
   // No legacy tensor views or legacy diagnostic storage are bound to these arrays.
   pbval_u = new MeshBoundaryValuesCC(pmy_pack, pin, true);
   pbval_u->InitializeBuffers(EvolvedVariables());

@@ -544,3 +544,16 @@ This supports competing truncation terms without fitting an exponent. The
 original KO0.3 per-field Richardson limitation remains. See
 `analysis/pc_gh_clean_reduction/INTRINSIC_TRANSFER_TARGET.md` for scope and the
 concrete remaining transfer changes. No physical gate is promoted.
+
+## Static periodic intrinsic transfer integration
+
+The previous helper-only limitation is superseded: intrinsic residual transfer
+now uses 50-field fine/coarse buffers and reconstructs p/l/S/B ghost slots from
+the actual primary potentials. Static periodic topology is enabled explicitly;
+uniform default behavior remains unchanged. FD2/4/6 2D/3D CPU serial/two-rank
+checks pass primary/active invariance and full stored-state backend agreement.
+Legacy transfer and restart controls pass; wrong-fixture launch failures are
+preserved. These are integration checks only. Signed interface budgets,
+interface convergence, repeated injection and CUDA qualification remain next;
+no puncture or binary promotion is justified. See the appended production
+checkpoint in `analysis/pc_gh_clean_reduction/INTRINSIC_TRANSFER_TARGET.md`.

@@ -2,14 +2,15 @@
 
 Matches restart.cpp's native POD stream: RegionSize=9 doubles,
 RegionIndcs=19 int32, LogicalLocation=4 int32, IOWrapperSizeT=uint64.
-This deliberately rejects other physics, refinement and per-rank restart files.
+This rejects other physics and per-rank restart files. Refinement decoding
+requires an explicit opt-in; global-array and periodic-wrap helpers stay uniform.
 """
 from pathlib import Path
 import struct
 import numpy as np
 
 
-def read_restart(path):
+def read_restart(path, *, allow_refinement=False):
     raw=Path(path).read_bytes()
     marker=b'<par_end>\n';pos=raw.index(marker)+len(marker)
     header=raw[:pos].decode();blocks={};section=None
@@ -29,7 +30,9 @@ def read_restart(path):
     mb=np.frombuffer(raw,dtype='=i4',count=19,offset=pos).copy();pos+=76
     time,dt,cycle=struct.unpack_from('=ddi',raw,pos);pos+=20
     locations=np.frombuffer(raw,dtype='=i4',count=4*nmb,offset=pos).reshape(nmb,4).copy();pos+=16*nmb
-    assert np.all(locations[:,3]==level),'not a uniform mesh'
+    assert np.all(locations[:,3]>=level),'invalid leaf level'
+    if not allow_refinement:
+        assert np.all(locations[:,3]==level),'not a uniform mesh'
     pos+=4*nmb  # costs
     block_bytes,=struct.unpack_from('=Q',raw,pos);pos+=8
     ng,nx,ny,nz=mb[:4];shape=(nmb,50,nz+2*ng if nz>1 else 1,ny+2*ng if ny>1 else 1,nx+2*ng)
@@ -37,14 +40,16 @@ def read_restart(path):
     assert len(raw)==pos+nmb*block_bytes,'unsupported extra state, ABI or per-rank layout'
     state=np.frombuffer(raw,dtype='=f8',offset=pos).reshape(shape).copy()
     assert np.isfinite(state).all()
-    assert nmb==np.prod(mesh[1:4]//mb[1:4])
+    if not allow_refinement:
+        assert nmb==np.prod(mesh[1:4]//mb[1:4])
     for axis in range(1,4):
         if mesh[axis]>1:
             assert all(blocks['mesh'][f'{side}x{axis}_bc']=='periodic' for side in ['i','o']), 'not periodic'
-    return dict(header=blocks,locations=locations,state=state,mesh=mesh,mb=mb,domain=domain,time=time,dt=dt,cycle=cycle)
+    return dict(root_level=level,header=blocks,locations=locations,state=state,mesh=mesh,mb=mb,domain=domain,time=time,dt=dt,cycle=cycle)
 
 
 def global_state(data):
+    assert np.all(data['locations'][:,3]==data['root_level']), 'global array requires uniform mesh'
     nx,ny,nz=data['mesh'][1:4];mb=data['mb'];ng,bx,by,bz=mb[:4]
     result=np.empty((50,nz,ny,nx));seen=np.zeros((nz,ny,nx),dtype=np.int8)
     for m,(x,y,z,_) in enumerate(data['locations']):
@@ -59,6 +64,7 @@ def global_state(data):
 
 def ghost_error(data,reference):
     """Every stored cell, including repeated faces/edges/corners, against global wrap."""
+    assert np.all(data['locations'][:,3]==data['root_level']), 'ghost wrap requires uniform mesh'
     nx,ny,nz=data['mesh'][1:4];ng,bx,by,bz=data['mb'][:4];maximum=0.
     for m,(x,y,z,_) in enumerate(data['locations']):
         iz=(z*bz+np.arange(data['state'].shape[2])-(ng if bz>1 else 0))%nz

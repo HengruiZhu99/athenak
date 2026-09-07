@@ -8,6 +8,7 @@
 #include "mesh/meshblock_pack.hpp"
 #include "pc_gh/pc_gh.hpp"
 #include "pc_gh/transfer_target.hpp"
+#include "pc_gh/intrinsic_transfer_target.hpp"
 
 namespace pc_gh {
 
@@ -21,14 +22,18 @@ void PcGh::TransferResidualGhosts() {
   const int nmb = pmy_pack->nmb_thispack;
   const int nk = state.extent_int(2), nj = state.extent_int(3);
   const int ni = state.extent_int(4);
+  const bool intrinsic_layout = IsIntrinsic();
+  const int first_aux = intrinsic_layout ? intrinsic::P : I_P1;
+  const int nvars = EvolvedVariables();
   const bool collision = opt.lapse_projection_target == "collision_factorized";
   Kokkos::deep_copy(residual,state);
-  par_for("PC-GH source residual",DevExeSpace(),0,nmb-1,I_P1,npcgh-1,
+  par_for("PC-GH source residual",DevExeSpace(),0,nmb-1,first_aux,nvars-1,
   0,nk-1,0,nj-1,0,ni-1,KOKKOS_LAMBDA(int m,int n,int k,int j,int i) {
     Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                    1.0/size.d_view(m).dx3};
-    residual(m,n,k,j,i) -= LegacyBoundaryTransferTarget<ORDER>(
-        state,m,n,k,j,i,idx,collision,ind,bcs);
+    residual(m,n,k,j,i) -= intrinsic_layout
+        ? intrinsic::IntrinsicTransferTarget<ORDER>(state,m,n,k,j,i,idx)
+        : LegacyBoundaryTransferTarget<ORDER>(state,m,n,k,j,i,idx,collision,ind,bcs);
   });
   Kokkos::fence();
   // A separate communicator avoids interacting with in-flight ordinary transfers.
@@ -37,7 +42,7 @@ void PcGh::TransferResidualGhosts() {
   if (pmy_pack->pmesh->multilevel) {
     pmy_pack->pmesh->pmr->RestrictCC(transfer_residual,coarse_transfer_residual,true);
   }
-  pbval_residual->InitRecv(npcgh);
+  pbval_residual->InitRecv(nvars);
   pbval_residual->PackAndSendCC(transfer_residual,coarse_transfer_residual);
   while (pbval_residual->RecvAndUnpackCC(transfer_residual,coarse_transfer_residual)
          != TaskStatus::complete) {}
@@ -60,14 +65,16 @@ void PcGh::TransferResidualGhosts() {
   while (pbval_residual->ClearRecv() != TaskStatus::complete) {}
   // Preserve all active G and every primary, including transferred primary ghosts.
   // Reconstruct fine OR coarse leaf ghosts from that leaf's actual primary state.
-  par_for("PC-GH residual ghost reconstruction",DevExeSpace(),0,nmb-1,I_P1,npcgh-1,
+  par_for("PC-GH residual ghost reconstruction",DevExeSpace(),0,nmb-1,first_aux,nvars-1,
   0,nk-1,0,nj-1,0,ni-1,KOKKOS_LAMBDA(int m,int n,int k,int j,int i) {
     if (i >= ind.is && i <= ind.ie && j >= ind.js && j <= ind.je
         && k >= ind.ks && k <= ind.ke) return;
     Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                    1.0/size.d_view(m).dx3};
-    state(m,n,k,j,i) = LegacyBoundaryTransferTarget<ORDER>(
-        state,m,n,k,j,i,idx,collision,ind,bcs)+residual(m,n,k,j,i);
+    const Real target = intrinsic_layout
+        ? intrinsic::IntrinsicTransferTarget<ORDER>(state,m,n,k,j,i,idx)
+        : LegacyBoundaryTransferTarget<ORDER>(state,m,n,k,j,i,idx,collision,ind,bcs);
+    state(m,n,k,j,i) = target+residual(m,n,k,j,i);
   });
   Kokkos::fence();
 }

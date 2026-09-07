@@ -614,6 +614,16 @@
       "status": "PASS",
       "evidence": "intrinsic-transfer-target-001/intrinsic-KO-vector-001/results.json",
       "scope": "Fixed order6/order7 rho error prediction: residual .04462, alignment .999935, KO response order6.944; original KO.3 per-field alignment failure remains"
+    },
+    "intrinsic_static_transfer_integration": {
+      "status": "PASS",
+      "evidence": "intrinsic-transfer-integration-001",
+      "scope": "FD2/4/6 2D/3D static periodic initial-transfer invariance; serial/two-rank full stored state bitwise; uniform one-step bitwise previous binary; two refined one-step finite controls. No intrinsic transfer accuracy/convergence or CUDA qualification."
+    },
+    "intrinsic_transfer_legacy_fixture_mismatch": {
+      "status": "FAIL",
+      "evidence": "intrinsic-transfer-integration-001/intrinsic-integration-legacy-transfer-001",
+      "scope": "Wrong problem generator rejected all six cases before transfer. Correct transfer_mesh_oracle build passes all six in 002; failure retained."
     }
   }
 }

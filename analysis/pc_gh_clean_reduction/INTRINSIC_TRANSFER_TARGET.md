@@ -91,3 +91,46 @@ python3 -W error analysis/pc_gh_clean_reduction/check_KO_error_vectors.py \
   --with-ko KO03_RUN/fd6-signed-differences.npz \
   --without-ko KO0_RUN/fd6-signed-differences.npz --output NEW_VECTOR_CHECK
 ```
+
+## Production integration checkpoint
+
+The target is now called by `TransferResidualGhosts` for intrinsic states.
+Auxiliary loops begin at 20, use the runtime field count 50, and private fine
+and coarse residual buffers and their communicator also carry 50 fields.
+Static periodic refinement is enabled for explicit `coherent_transfer=none`
+and `residual_shifted` comparisons. The default remains `none`; adaptive and
+nonperiodic intrinsic meshes are rejected. The residual path preserves every
+primary and all active auxiliaries; only stored auxiliary ghosts are rebuilt.
+No independent Q field, GH reset or auxiliary projection was added.
+
+CPU integration checks at FD2/4/6 in 2D/3D use 7/15 leaves with one refinement
+level. All six matched initial-state comparisons preserve every stored primary
+and active state exactly. All 12 serial/two-rank stored arrays agree bitwise.
+Auxiliary ghost changes reach 0.00123547 (FD6 2D); these corrections are measured,
+not assumed small or beneficial. The available-halo closure can also alter
+same-level ghosts, so exact same-level commutation is not claimed.
+
+Two FD6 2D one-step SMR controls reach t=0.001 with finite state. The uniform
+one-step default is bitwise equal to the previous diagnostic executable.
+The 19 legacy restart controls and six legacy static transfer controls pass.
+An initial legacy test used the wrong problem generator and all six runs
+aborted before transfer; its logs/results remain beside the corrected fixture.
+A separate mistargeted parent-directory launch failed for missing input and is
+also preserved. Neither failure is represented as a numerical instability.
+
+Evidence: `qualification-runs-20260907/pcgh-clean-reduction/intrinsic-transfer-integration-001/`.
+Exact binaries and large restart arrays remain outside Git under
+`/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/`; source hashes,
+input files, binary hashes and raw inventories are in the evidence directory.
+The `intrinsic-transfer-source-001/athena-serial` and `athena-mpi` copies are the
+exact intrinsic executables; `athena-legacy-transfer` has a different problem
+generator. The integration runner accepts `--binary`, `--template`, `--output`
+and optional `--ranks 2 --mpiexec /opt/homebrew/bin/mpiexec`. The template is
+`intrinsic-time-convergence-001/dt0.001/used.athinput` under that external root.
+Its output directory must have no existing case directories.
+
+Remaining: independent signed before/after residual and curl budgets, interface
+accuracy and convergence, repeated-exchange injection, refined restart
+continuity and CUDA checks. The refined restart reader is opt-in decoding only;
+its uniform global-array/wrap helpers still reject nonuniform leaves. No
+intrinsic interface accuracy, physical convergence or black-hole gate is passed.
