@@ -374,6 +374,21 @@
       "status": "PASS",
       "evidence": "intrinsic-base-exact-001.json",
       "scope": "Direct independent-S gradient equals J*S exactly"
+    },
+    "intrinsic_symbol_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-symbol-001/cpu/results.json",
+      "scope": "52 full compiled symbol cases, including admitted coincidences and detection of excluded defect; numerical sampled-domain check"
+    },
+    "intrinsic_symbol_CUDA": {
+      "status": "PASS",
+      "evidence": "intrinsic-symbol-001/cuda/results.json",
+      "scope": "52 full compiled symbol cases, including admitted coincidences and detection of excluded defect; numerical sampled-domain check"
+    },
+    "intrinsic_symbol_backend": {
+      "status": "PASS",
+      "evidence": "intrinsic-symbol-001/backend.json",
+      "scope": "2652 identical point inputs; 52 complete matrices"
     }
   }
 }

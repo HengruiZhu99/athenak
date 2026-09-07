@@ -1,0 +1,134 @@
+0 admitted PASS 8.634381393297419
+1 admitted PASS 8.633500448404584
+2 admitted PASS 8.633496560899918
+3 admitted PASS 8.200557264036043
+4 admitted PASS 8.633496482259936
+5 admitted PASS 8.633492693352345
+6 admitted PASS 8.633593711874173
+7 admitted PASS 10.982693585192452
+8 admitted PASS 10.877826738054024
+9 admitted PASS 10.876795781090127
+10 admitted PASS 10.876785369149324
+11 admitted PASS 10.876774957243828
+12 admitted PASS 10.875744353380053
+13 admitted PASS 10.77440908006024
+14 admitted PASS 8.387678736082165
+15 admitted PASS 8.337345248360913
+16 admitted PASS 8.336851158676373
+17 admitted PASS 8.336846168793375
+18 admitted PASS 8.336841178928797
+19 admitted PASS 8.336347273578545
+20 admitted PASS 8.287857425472628
+21 admitted PASS 34.47551951713859
+22 admitted PASS 34.10195724030608
+23 admitted PASS 34.098284130502556
+24 admitted PASS 33.870730478482734
+25 admitted PASS 34.09820994318335
+26 admitted PASS 34.09453807593178
+27 admitted PASS 33.73343933418919
+28 admitted PASS 42.56242741100655
+29 admitted PASS 42.0790860521538
+30 admitted PASS 42.074330388166864
+31 admitted PASS 42.07428235890808
+32 admitted PASS 42.07423432980308
+33 admitted PASS 42.069480215593835
+34 admitted PASS 41.60163917666063
+35 admitted PASS 40.546367593081534
+36 admitted PASS 40.07884346720259
+37 admitted PASS 40.0742422139415
+38 admitted PASS 40.074195744011746
+39 admitted PASS 40.07414927422901
+40 admitted PASS 40.069549495748014
+41 admitted PASS 39.61677560090609
+42 separated PASS 818.9110556482344
+43 separated PASS 32.99788848323657
+44 separated PASS 56.20223104980749
+45 separated PASS 11.429799346229725
+46 separated PASS 29.09427098328062
+47 separated PASS 20.588459609004396
+48 boundary_approach PASS 182.0777852641939
+49 boundary_approach PASS 2005.4556470204777
+50 boundary_approach PASS 20242.32936320256
+51 excluded PASS None
+{
+  "status": "PASS",
+  "cases": 52,
+  "compiled_points": 2652,
+  "ladders": [
+    {
+      "name": "lapse_longitudinal-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_longitudinal-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_transverse-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_transverse-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "light_shift-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "light_shift-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    }
+  ],
+  "max_block_error": 3.869108424590724e-15,
+  "max_image_error": 1.5836344255445324e-15,
+  "excluded_control": {
+    "case": 51,
+    "kind": "excluded",
+    "ladder": null,
+    "offset": null,
+    "alpha": 2.0,
+    "w": 0.5,
+    "sigma": 1.0,
+    "block_error": 7.010330580306304e-16,
+    "image_error": 1.0242940873640844e-15,
+    "nullities": [
+      {
+        "value": -1.0336088868350666,
+        "expected": 10,
+        "actual": 9
+      },
+      {
+        "value": 0.0,
+        "expected": 30,
+        "actual": 30
+      },
+      {
+        "value": 1.0336088868350666,
+        "expected": 10,
+        "actual": 9
+      }
+    ],
+    "eigenspace_complete": false,
+    "max_projector_norm": null,
+    "projector_eigen_error": 0.0,
+    "projector_algebra_error": 0.0,
+    "raw_projector_algebra_error": 0.0,
+    "status": "PASS"
+  },
+  "wall_seconds": 0.7067360877990723,
+  "binary_sha256": "d2adb7b1cdae531d4a1f809742ab4741c8cd6e70aed311881bf61a0c5ed3de71",
+  "input_sha256": "0c1db925b1eb6d1e0d7f9aad08b7f97b4b929632f2910a66361e21694b0b26b9",
+  "matrix_sha256": "21ff10ab22d53f2b2034d0b4c5a7608344024b34818f34bd63b2da814ae702b8",
+  "command": [
+    "analysis-only replay",
+    "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-symbol-cuda-raw-001"
+  ],
+  "scope": "compiled full-symbol numerical checks; compact-subset theorem remains the separate analytical proof, not a puncture-uniform claim"
+}

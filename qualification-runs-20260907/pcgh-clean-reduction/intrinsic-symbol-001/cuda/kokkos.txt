@@ -1,0 +1,43 @@
+  Kokkos Version: 4.4.0
+Compiler:
+  KOKKOS_COMPILER_GNU: 1150
+  KOKKOS_COMPILER_NVCC: 1260
+Architecture:
+  CPU architecture: none
+  Default Device: N6Kokkos4CudaE
+  GPU architecture: AMPERE80
+  platform: 64bit
+Atomics:
+Vectorization:
+  KOKKOS_ENABLE_PRAGMA_IVDEP: no
+  KOKKOS_ENABLE_PRAGMA_LOOPCOUNT: no
+  KOKKOS_ENABLE_PRAGMA_UNROLL: no
+  KOKKOS_ENABLE_PRAGMA_VECTOR: no
+Memory:
+Options:
+  KOKKOS_ENABLE_ASM: yes
+  KOKKOS_ENABLE_CXX17: yes
+  KOKKOS_ENABLE_CXX20: no
+  KOKKOS_ENABLE_CXX23: no
+  KOKKOS_ENABLE_CXX26: no
+  KOKKOS_ENABLE_DEBUG_BOUNDS_CHECK: yes
+  KOKKOS_ENABLE_HWLOC: no
+  KOKKOS_ENABLE_LIBDL: yes
+Host Serial Execution Space:
+  KOKKOS_ENABLE_SERIAL: yes
+
+Serial Runtime Configuration:
+Device Execution Space:
+  KOKKOS_ENABLE_CUDA: yes
+Cuda Options:
+  KOKKOS_ENABLE_CUDA_LAMBDA: yes
+  KOKKOS_ENABLE_CUDA_LDG_INTRINSIC: yes
+  KOKKOS_ENABLE_CUDA_RELOCATABLE_DEVICE_CODE: no
+  KOKKOS_ENABLE_CUDA_UVM: no
+  KOKKOS_ENABLE_CXX11_DISPATCH_LAMBDA: yes
+  KOKKOS_ENABLE_IMPL_CUDA_MALLOC_ASYNC: yes
+
+Cuda Runtime Configuration:
+macro  KOKKOS_ENABLE_CUDA      : defined
+macro  CUDA_VERSION          = 12060 = version 12.6
+Kokkos::Cuda[ 0 ] NVIDIA A100-PCIE-40GB capability 8.0, Total Global Memory: 39.52 GiB, Shared Memory per Block: 48 KiB : Selected

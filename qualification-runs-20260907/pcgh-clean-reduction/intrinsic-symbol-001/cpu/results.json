@@ -1,0 +1,82 @@
+{
+  "status": "PASS",
+  "cases": 52,
+  "compiled_points": 2652,
+  "ladders": [
+    {
+      "name": "lapse_longitudinal-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_longitudinal-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_transverse-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_transverse-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "light_shift-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "light_shift-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    }
+  ],
+  "max_block_error": 3.8705491395767484e-15,
+  "max_image_error": 1.5821738655308187e-15,
+  "excluded_control": {
+    "case": 51,
+    "kind": "excluded",
+    "ladder": null,
+    "offset": null,
+    "alpha": 2.0,
+    "w": 0.5,
+    "sigma": 1.0,
+    "block_error": 6.186879746272502e-16,
+    "image_error": 1.0244813641116176e-15,
+    "nullities": [
+      {
+        "value": -1.0336088868350666,
+        "expected": 10,
+        "actual": 9
+      },
+      {
+        "value": 0.0,
+        "expected": 30,
+        "actual": 30
+      },
+      {
+        "value": 1.0336088868350666,
+        "expected": 10,
+        "actual": 9
+      }
+    ],
+    "eigenspace_complete": false,
+    "max_projector_norm": null,
+    "projector_eigen_error": 0.0,
+    "projector_algebra_error": 0.0,
+    "raw_projector_algebra_error": 0.0,
+    "status": "PASS"
+  },
+  "wall_seconds": 0.7080409526824951,
+  "binary_sha256": "e9ec00ee4ea59751e7865a6701ad26079d7396cbce962eb3b7e8c4a23f05afea",
+  "input_sha256": "0c1db925b1eb6d1e0d7f9aad08b7f97b4b929632f2910a66361e21694b0b26b9",
+  "matrix_sha256": "93088e28bee4be0e29ddb3be1ed7746bca446b950347ff6b74518d8886521f1f",
+  "command": [
+    "analysis-only replay",
+    "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-symbol-cpu-001"
+  ],
+  "scope": "compiled full-symbol numerical checks; compact-subset theorem remains the separate analytical proof, not a puncture-uniform claim"
+}

@@ -209,3 +209,29 @@ J/Hessian oracle. This changes evaluation order, not continuum equations or
 true Jet differentiation. Retain 2e-11 complete RHS/matrix and 2e-12 physical/map
 tolerances. Repeat CPU oracles and original/instrumented/probe/default/optimized
 CUDA controls on identical input, before any promotion.
+
+### Compiled full-symbol coincidence and conditioning checks
+
+Use the actual 50-row point kernel. At each state subtract its zero-jet source
+from all 50 oblique basis-jet responses. Hold non-diagonal metric, shift and
+nonzero curvature/GH/auxiliary fields fixed along each crossing ladder. At
+alpha=0.8 and 1.4, test relative w offsets +/-1e-2,+/-1e-4,+/-1e-6,0 around
+w=1/alpha, w=1/sqrt(2alpha), and w=sqrt(4/[alpha(6+alpha)]). Add six inner/
+transition random states and an alpha=1.8,1.98,1.998,2 sequence at w=0.5.
+
+Require full image and analytical 20-block agreement <=2e-11 normalized.
+Group exactly coincident analytic eigenvalues at relative tolerance 1e-10.
+Determine nullities by SVD cutoff 1e-11*(1+||P-beta.n I||2); require all analytic
+multiplicities, total 50, except the excluded alpha=2 negative control, where
+nonzero eigenspaces must have dimension 9 rather than 10. Require normalized
+eigenprojector residual <=2e-9 and projector completeness/idempotence/
+orthogonality <=2e-7. Use actual full 50-field left/right subspaces, not only
+the wave block. For admitted crossing ladders screen max projector norms at
+all offsets against four times the max norm at +/-1e-2: at most three families
+merge, with allowance for finite offset variation. This is a finite numerical
+screen, not an independent uniform-bound theorem. The excluded-boundary ladder
+has no uniform projector-norm pass criterion. Preserve raw matrices externally
+with hashes and record all failures before any correction.
+
+Projector algebra errors use ||sum(P)-I||/(1+sum||P||) and
+||P_i P_j-delta_ij P_i||/(1+||P_i||||P_j||). Retain unscaled errors too.

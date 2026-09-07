@@ -216,5 +216,27 @@
     "physical_cases": 128,
     "physical_tolerance": 2e-12,
     "promotion_requires_unresolved_CUDA_failure_fixed": true
+  },
+  "compiled_symbol_coincidences": {
+    "alphas": [
+      0.8,
+      1.4
+    ],
+    "relative_offsets": [
+      -0.01,
+      -0.0001,
+      -1e-06,
+      0,
+      1e-06,
+      0.0001,
+      0.01
+    ],
+    "matrix_tolerance": 2e-11,
+    "svd_cutoff": "1e-11*(1+norm2(A))",
+    "group_tolerance": 1e-10,
+    "projector_residual": 2e-09,
+    "projector_algebra": 2e-07,
+    "finite_ladder_norm_factor": 4,
+    "excluded_alpha2_negative_control": true
   }
 }

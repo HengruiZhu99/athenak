@@ -284,3 +284,21 @@ identities, full Fourier/transient and discrete operator/RK/KO checks, restart a
 50-field transfer integration remain unfinished. Physical qualification has not
 started. The next action is full-symbol conditioning/coincidence and subsidiary
 checks using the compiled kernel before enabling an evolution mode.
+
+
+## Full compiled symbol checkpoint
+
+CPU and A100 checks pass all 52 sampled full-symbol cases, including the three
+admitted speed coincidences. The CPU/CUDA matrix difference is 4.864e-16.
+Complete eigenspaces and spectral projector algebra pass the frozen numerical
+criteria. Projector norms remain bounded along each admitted crossing ladder;
+they grow toward the excluded alpha=2,w=0.5 endpoint, where both nonzero
+eigenspaces have dimension 9 rather than multiplicity 10, as predicted.
+That negative-control PASS records detection of a defect, not an admitted state.
+See analysis/pc_gh_clean_reduction/INTRINSIC_SYMBOL.md for scope and reproduction.
+
+The local pseudoinverse warning was isolated and the equivalent SVD image
+projector passes warnings-as-errors replay without altering raw matrices or
+thresholds. No physical or full operator gate is promoted. Next is an independent
+compiled subsidiary-law check with nonzero curvature, GH, reductions and curls,
+then full Fourier/transient/discrete checks before mesh integration.

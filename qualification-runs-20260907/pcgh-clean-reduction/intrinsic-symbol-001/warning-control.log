@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/check_intrinsic_symbol.py", line 69, in <module>
+    image_error=norm(A-mm(mm(Y,np.linalg.pinv(Y)),A))/(1+an)
+  File "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/lib/python3.9/site-packages/numpy/linalg/_linalg.py", line 2220, in pinv
+    res = matmul(transpose(vt), multiply(s[..., newaxis], transpose(u)))
+  File "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/lib/python3.9/site-packages/numpy/linalg/_linalg.py", line 3220, in matmul
+    return _core_matmul(x1, x2)
+RuntimeWarning: divide by zero encountered in matmul

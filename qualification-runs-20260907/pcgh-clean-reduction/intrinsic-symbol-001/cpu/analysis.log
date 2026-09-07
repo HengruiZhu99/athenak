@@ -1,0 +1,134 @@
+0 admitted PASS 8.634381393297645
+1 admitted PASS 8.633500448382254
+2 admitted PASS 8.63349656122162
+3 admitted PASS 8.200557264036043
+4 admitted PASS 8.633496483476973
+5 admitted PASS 8.633492693342545
+6 admitted PASS 8.633593711874289
+7 admitted PASS 10.982693585192418
+8 admitted PASS 10.877826738054049
+9 admitted PASS 10.87679578109009
+10 admitted PASS 10.87678536914931
+11 admitted PASS 10.876774957243837
+12 admitted PASS 10.875744353380034
+13 admitted PASS 10.774409080060213
+14 admitted PASS 8.387678736082156
+15 admitted PASS 8.337345248360919
+16 admitted PASS 8.336851158676373
+17 admitted PASS 8.336846168793373
+18 admitted PASS 8.336841178928806
+19 admitted PASS 8.33634727357854
+20 admitted PASS 8.28785742547261
+21 admitted PASS 34.47551951713827
+22 admitted PASS 34.101957240335274
+23 admitted PASS 34.098284133442604
+24 admitted PASS 33.870730478482905
+25 admitted PASS 34.0982099449582
+26 admitted PASS 34.09453807593301
+27 admitted PASS 33.733439334189086
+28 admitted PASS 42.56242741100681
+29 admitted PASS 42.079086052153315
+30 admitted PASS 42.074330388167546
+31 admitted PASS 42.074282358908064
+32 admitted PASS 42.07423432980273
+33 admitted PASS 42.06948021559366
+34 admitted PASS 41.60163917666039
+35 admitted PASS 40.54636759308144
+36 admitted PASS 40.07884346720285
+37 admitted PASS 40.07424221394159
+38 admitted PASS 40.074195744011774
+39 admitted PASS 40.0741492742291
+40 admitted PASS 40.069549495748085
+41 admitted PASS 39.61677560090598
+42 separated PASS 818.9110556479282
+43 separated PASS 32.997888483236444
+44 separated PASS 56.20223104980718
+45 separated PASS 11.429799346229743
+46 separated PASS 29.094270983280467
+47 separated PASS 20.588459609004452
+48 boundary_approach PASS 182.07778526419307
+49 boundary_approach PASS 2005.4556470186174
+50 boundary_approach PASS 20242.32936324017
+51 excluded PASS None
+{
+  "status": "PASS",
+  "cases": 52,
+  "compiled_points": 2652,
+  "ladders": [
+    {
+      "name": "lapse_longitudinal-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_longitudinal-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_transverse-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "lapse_transverse-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "light_shift-a0.8",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    },
+    {
+      "name": "light_shift-a1.4",
+      "max_norm_ratio": 1.0,
+      "status": "PASS"
+    }
+  ],
+  "max_block_error": 3.8705491395767484e-15,
+  "max_image_error": 1.5821738655308187e-15,
+  "excluded_control": {
+    "case": 51,
+    "kind": "excluded",
+    "ladder": null,
+    "offset": null,
+    "alpha": 2.0,
+    "w": 0.5,
+    "sigma": 1.0,
+    "block_error": 6.186879746272502e-16,
+    "image_error": 1.0244813641116176e-15,
+    "nullities": [
+      {
+        "value": -1.0336088868350666,
+        "expected": 10,
+        "actual": 9
+      },
+      {
+        "value": 0.0,
+        "expected": 30,
+        "actual": 30
+      },
+      {
+        "value": 1.0336088868350666,
+        "expected": 10,
+        "actual": 9
+      }
+    ],
+    "eigenspace_complete": false,
+    "max_projector_norm": null,
+    "projector_eigen_error": 0.0,
+    "projector_algebra_error": 0.0,
+    "raw_projector_algebra_error": 0.0,
+    "status": "PASS"
+  },
+  "wall_seconds": 0.7080409526824951,
+  "binary_sha256": "e9ec00ee4ea59751e7865a6701ad26079d7396cbce962eb3b7e8c4a23f05afea",
+  "input_sha256": "0c1db925b1eb6d1e0d7f9aad08b7f97b4b929632f2910a66361e21694b0b26b9",
+  "matrix_sha256": "93088e28bee4be0e29ddb3be1ed7746bca446b950347ff6b74518d8886521f1f",
+  "command": [
+    "analysis-only replay",
+    "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-symbol-cpu-001"
+  ],
+  "scope": "compiled full-symbol numerical checks; compact-subset theorem remains the separate analytical proof, not a puncture-uniform claim"
+}
