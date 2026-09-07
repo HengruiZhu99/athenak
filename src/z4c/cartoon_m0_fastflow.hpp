@@ -7,6 +7,7 @@
 
 #include <array>
 #include <cstdio>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,8 @@ namespace z4c {
 
 struct M0AdmSample {
   bool valid = false;
+  Real spacing = 0.0;
+  int error = 1;  // 0 valid, 1 unavailable stencil, 2 nonfinite fields
   std::array<Real, 6> metric{};
   std::array<Real, 6> curvature{};
   std::array<Real, 18> metric_derivative{};
@@ -28,6 +31,7 @@ struct M0AdmSample {
 struct M0SurfacePoint {
   bool valid = false;
   Real expansion = 0.0;
+  Real ingoing_expansion = 0.0;
   Real flow_residual = 0.0;
   Real area_factor = 0.0;  // dA/(dtheta dphi)
   Real spin_integrand_z = 0.0;
@@ -35,6 +39,11 @@ struct M0SurfacePoint {
 
 struct M0CandidateSummary {
   bool converged = false;
+  bool verified = false;
+  Real epsilon_inf = 0.0;
+  Real ingoing_min = 0.0, ingoing_max = 0.0;
+  Real spacing = 0.0;
+  int iterations = 0;
   std::string branch;
   std::string failure = "not_run";
   Real center_z = 0.0;
@@ -59,16 +68,14 @@ struct M0AxisSample {
 };
 
 //! Rotate physical-Cartesian covariant tensors from phi=0 to arbitrary phi.
-M0AdmSample RotateM0AdmSample(const M0AdmSample &sample, Real phi);
+M0AdmSample RotateM0AdmSample(const M0AdmSample& sample, Real phi);
 
 //! Direct, flow-independent outgoing expansion evaluation for F=r-h(theta).
-M0SurfacePoint EvaluateM0SurfacePoint(Real theta, Real radius,
-                                      Real radius_theta,
-                                      Real radius_theta_theta,
-                                      const M0AdmSample &sample);
+M0SurfacePoint EvaluateM0SurfacePoint(Real theta, Real radius, Real radius_theta,
+                                      Real radius_theta_theta, const M0AdmSample& sample);
 Real M0HorizonMass(Real area, Real spin_z);
-bool SelectM0AxisLapseMinimum(const std::vector<M0AxisSample> &samples,
-                              int sign, Real *center_z, Real *lapse);
+bool SelectM0AxisLapseMinimum(const std::vector<M0AxisSample>& samples, int sign,
+                              Real* center_z, Real* lapse);
 
 //! Candidate-specific fresh-sphere radii.  The origin sphere encloses the
 //! lapse minima with the requested margin, while equal-radius mirror spheres
@@ -79,32 +86,51 @@ Real M0DisjointPairInitialRadius(Real configured_radius, Real pair_fraction,
                                  Real plus_center_z, Real minus_center_z);
 
 //! Deterministic accepted-candidate selection. Returns -1 on failure.
-int SelectM0Single(const std::vector<M0CandidateSummary> &candidates);
-bool SelectM0MirrorPair(const std::vector<M0CandidateSummary> &candidates,
-                        Real relative_tolerance, int *plus, int *minus);
-bool ValidateM0RestartState(const Z4cM0FastFlowRestartState &state, int lmax,
-                            std::string *reason);
+int SelectM0Single(const std::vector<M0CandidateSummary>& candidates);
+bool SelectM0MirrorPair(const std::vector<M0CandidateSummary>& candidates,
+                        Real relative_tolerance, int* plus, int* minus);
+bool ValidateM0RestartState(const Z4cM0FastFlowRestartState& state, int lmax,
+                            std::string* reason);
 std::vector<M0CandidateSummary> RestoreM0Candidates(
-    const Z4cM0FastFlowRestartState &state, int lmax,
-    const std::vector<Real> &weights, const std::vector<Real> &y0);
-Real MinimumM0SelectedRadius(const std::vector<M0CandidateSummary> &candidates,
-                             const std::vector<int> &selected);
-Real M0SelectedCenterZ(const std::vector<M0CandidateSummary> &candidates,
-                       const std::vector<int> &selected);
+    const Z4cM0FastFlowRestartState& state, int lmax, const std::vector<Real>& weights,
+    const std::vector<Real>& y0);
+Real MinimumM0SelectedRadius(const std::vector<M0CandidateSummary>& candidates,
+                             const std::vector<int>& selected);
+Real M0SelectedCenterZ(const std::vector<M0CandidateSummary>& candidates,
+                       const std::vector<int>& selected);
+
+// Geometry callbacks are independent of grid centering and surface optimization.
+using M0GeometrySampler =
+    std::function<std::vector<M0AdmSample>(const std::vector<std::array<Real, 2>>&)>;
+struct M0SolveOptions {
+  int lmax = 4, ntheta = 12, iterations = 300, backtracks = 24;
+  Real flow_scale = 1.0, newton_switch = 0.1;
+  Real epsilon2 = 1.e-6, epsilon_inf = 1.e-5, displacement = 0.1;
+};
+M0CandidateSummary AssessM0Surface(const M0GeometrySampler&, int ntheta,
+                                   const M0CandidateSummary&);
+M0CandidateSummary PreferM0Recentered(const M0CandidateSummary&,
+                                      const M0CandidateSummary&);
+M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
+                                  const M0SolveOptions& options,
+                                  const std::string& branch, Real center, Real radius,
+                                  const std::vector<Real>& seed = {});
 
 //! Cartoon-only implementation composed by FastFlow; it is not a second public finder.
 class CartoonM0FastFlow {
  public:
-  CartoonM0FastFlow(MeshBlockPack *pack, ParameterInput *pin, int horizon);
+  CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin, int horizon);
   ~CartoonM0FastFlow();
   bool ShouldSearch(int cycle, Real time) const;
-  void Find(int cycle, Real time);
+  void Find(int cycle, Real time, bool force = false);
   void Write(int cycle, Real time);
 
   // nvcc requires a member function enclosing an extended KOKKOS_LAMBDA to be
   // publicly accessible.  Keep only the two kernel-launching samplers public;
   // they remain implementation details of the composed Cartoon finder.
   M0AdmSample SampleAdm(Real rho, Real z) const;
+  std::vector<M0AdmSample> SampleAdmBatch(
+      const std::vector<std::array<Real, 2>>& points) const;
   M0AxisSample SampleAxisLapse(Real z) const;
 
   bool Found() const { return found_; }
@@ -122,14 +148,18 @@ class CartoonM0FastFlow {
   Real StopTime() const { return stop_time_; }
 
  private:
-  M0CandidateSummary SearchCandidate(const std::string &branch, Real center_z,
+  M0CandidateSummary SearchCandidate(const std::string& branch, Real center_z,
                                      Real fresh_initial_radius,
-                                     const std::vector<Real> &warm_start);
+                                     const std::vector<Real>& warm_start);
   void Restore();
   void Capture();
 
-  MeshBlockPack *pack_;
-  ParameterInput *pin_;
+  M0SolveOptions solve_options_;
+  int radius_count_ = 8;
+  Real radius_min_ = 0.0;
+  std::vector<M0CandidateSummary> last_good_;
+  MeshBlockPack* pack_;
+  ParameterInput* pin_;
   int horizon_;
   int lmax_;
   int ntheta_;
@@ -161,7 +191,7 @@ class CartoonM0FastFlow {
   int last_search_cycle_ = -1;
   Real last_search_time_ = 0.0;
   Real time_first_found_ = -1.0;
-  FILE *output_ = nullptr;
+  FILE* output_ = nullptr;
 };
 
 }  // namespace z4c

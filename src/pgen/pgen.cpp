@@ -925,6 +925,15 @@ void ProblemGenerator::OutputErrors(ParameterInput *pin, Mesh *pm) {
 //! user-defined problem generator function compiled with the code.
 
 void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart) {
+  if (is_restart && pin->GetOrAddBoolean("fastflow", "horizon_only", false)) {
+    if (user_bcs) {
+      std::cerr << "horizon_only requires built-in boundary conditions" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    // The restored fields are authoritative. No initial-data library or
+    // evolution stopping/output callbacks are needed for frozen analysis.
+    return;
+  }
 #if USER_PROBLEM_ENABLED
   // call user-defined problem generator (if USER_PROBLEM_ENABLED macro defined at build)
   UserProblem(pin, is_restart);

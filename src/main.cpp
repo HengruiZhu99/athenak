@@ -42,6 +42,8 @@
 #include "driver/driver.hpp"
 #include "utils/utils.hpp"
 #include "z4c/z4c_restart.hpp"
+#include "z4c/frozen_mots.hpp"
+#include <filesystem>
 
 #if defined(ATHENA_Z4C_KERNEL_TESTS)
 #include "../tst/unit/z4c/cartoon_production_kernel_test.hpp"
@@ -449,9 +451,17 @@ int main(int argc, char *argv[]) {
   // Construct Driver and Outputs. Actual outputs (including initial conditions) are made
   // in Driver.Initialize(). Add wall clock timer to Driver if necessary.
 
+  const bool horizon_only = pinput->GetOrAddBoolean("fastflow", "horizon_only", false);
+  if (horizon_only) {
+    if (!res_flag || run_dir.empty())
+      throw std::runtime_error("horizon_only requires -r checkpoint and a fresh -d directory");
+    namespace fs = std::filesystem;
+    if (global_variable::my_rank == 0 && fs::exists(run_dir) && !fs::is_empty(run_dir))
+      throw std::runtime_error("horizon_only output directory must be empty");
+  }
   ChangeRunDir(run_dir);
   Driver* pdriver = new Driver(pinput, pmesh, wtlim, &timer);
-  Outputs* pout = new Outputs(pinput, pmesh);
+  Outputs* pout = horizon_only ? nullptr : new Outputs(pinput, pmesh);
 
   //--- Step 7. --------------------------------------------------------------------------
   // Execute Driver.
@@ -459,9 +469,13 @@ int main(int argc, char *argv[]) {
   //    2. TaskList(s) executed in Driver::Execute()
   //    3. Any final analysis or diagnostics run in Driver::Finalize()
 
-  pdriver->Initialize(pmesh, pinput, pout, res_flag);
-  pdriver->Execute(pmesh, pinput, pout);
-  pdriver->Finalize(pmesh, pinput, pout);
+  if (horizon_only) {
+    z4c::RunFrozenMots(pmesh, pdriver, pinput);
+  } else {
+    pdriver->Initialize(pmesh, pinput, pout, res_flag);
+    pdriver->Execute(pmesh, pinput, pout);
+    pdriver->Finalize(pmesh, pinput, pout);
+  }
 
   //--- Step 8. -------------------------------------------------------------------------
   // clean up, and terminate

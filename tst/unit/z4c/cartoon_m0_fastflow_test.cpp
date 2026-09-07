@@ -131,6 +131,74 @@ int main() {
   int minus = -1;
   assert(z4c::SelectM0MirrorPair(candidates, 1.0e-12, &plus, &minus));
   assert(plus == 1 && minus == 2);
+  // End-to-end production optimizer on exact data, including scales for
+  // which the old fixed flow parameter made a negative radius in one step.
+  for(double m : {1.0,0.1,0.01}) for(double translation : {0.0,2.3}) {
+    auto exact=[m,translation](const std::vector<std::array<Real,2>> &points) {
+      std::vector<z4c::M0AdmSample> samples;
+      for(auto p:points) {
+        const double x=p[0],z=p[1]-translation*m,r=std::hypot(x,z);
+        const double psi=1+m/(2*r),value=std::pow(psi,4);
+        z4c::M0AdmSample sample;sample.valid=true;
+        sample.metric={value,0,0,value,0,value};
+        const double dr=-2*m*std::pow(psi,3)/(r*r);
+        for(int d=0;d<3;++d)for(int c:{0,3,5})
+          sample.metric_derivative[d*6+c]=dr*(d==0?x/r:d==2?z/r:0);
+        samples.push_back(sample);
+      }
+      return samples;
+    };
+    z4c::M0SolveOptions opt;
+    for(double factor:{0.9,1.1,1.5}) {
+      const auto solved=z4c::SolveM0Surface(exact,opt,"analytic",translation*m,.5*m*factor);
+      assert(solved.verified);
+      Close(solved.mean_radius,.5*m,1.e-5*m);
+      Close(solved.area,16*kPi*m*m,1.e-7*m*m);
+    }
+    opt.iterations=1;
+    const auto stopped=z4c::SolveM0Surface(exact,opt,"analytic",translation*m,.8*m);
+    assert(!stopped.verified);
+    // Re-evaluate precisely the returned coefficients: metadata is the same iterate.
+    auto again=z4c::AssessM0Surface(exact,opt.ntheta,stopped);
+    Close(again.direct_residual,stopped.direct_residual,0);
+    Close(again.area,stopped.area,0);
+    auto good=stopped;good.verified=true;good.converged=true;
+    auto failed=stopped;failed.center_z+=m;failed.coefficients[0]*=0.8;
+    auto retained=z4c::PreferM0Recentered(good,failed);
+    assert(retained.verified && retained.coefficients==good.coefficients);
+    Close(retained.center_z,good.center_z,0);
+  }
+  // A coordinate stretch of Schwarzschild has an ellipsoidal, non-spherical MOTS.
+  auto stretched=[](const std::vector<std::array<Real,2>> &points) {
+    std::vector<z4c::M0AdmSample> values;
+    const double stretch=1.3;
+    for(auto p:points) {
+      const double r=std::hypot(p[0],stretch*p[1]),psi=1+0.5/r;
+      z4c::M0AdmSample v;v.valid=true;
+      v.metric={std::pow(psi,4),0,0,std::pow(psi,4),0,stretch*stretch*std::pow(psi,4)};
+      for(int d:{0,2})for(int c:{0,3,5})
+        v.metric_derivative[d*6+c]=-2*std::pow(psi,3)/(r*r*r)*
+          (d==0?p[0]:stretch*stretch*p[1])*(c==5?stretch*stretch:1);
+      values.push_back(v);
+    }
+    return values;
+  };
+  z4c::M0SolveOptions distorted_options;
+  distorted_options.lmax=20;distorted_options.ntheta=44;
+  const auto distorted=z4c::SolveM0Surface(stretched,distorted_options,"ellipsoid",0,0.55);
+  assert(distorted.verified);
+  Close(distorted.area,16*kPi,1.e-6);
+
+  z4c::M0SolveOptions flat_opt;
+  auto flat_sampler=[flat](const std::vector<std::array<Real,2>> &p) {
+    return std::vector<z4c::M0AdmSample>(p.size(),flat);
+  };
+  assert(!z4c::SolveM0Surface(flat_sampler,flat_opt,"flat",0,1).verified);
+  auto unequal=candidates;
+  unequal[1].direct_residual=1.e-8;unequal[2].direct_residual=2.e-8;
+  assert(z4c::SelectM0MirrorPair(unequal,1.e-3,&plus,&minus));
+  unequal[1].center_z=unequal[2].center_z=0;
+  assert(!z4c::SelectM0MirrorPair(unequal,1.e-3,&plus,&minus));
   candidates[2].converged = false;
   assert(!z4c::SelectM0MirrorPair(candidates, 1.0e-12, &plus, &minus));
 

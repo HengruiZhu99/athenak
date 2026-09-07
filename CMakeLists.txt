@@ -1753,6 +1753,7 @@ if (Athena_BUILD_UNIT_TESTS)
       athena_z4c_cartoon_m0_fastflow_unit_test
       tst/unit/z4c/cartoon_m0_fastflow_test.cpp
       src/z4c/cartoon_m0_fastflow.cpp)
+  target_compile_options(athena_z4c_cartoon_m0_fastflow_unit_test PRIVATE -UNDEBUG)
   target_compile_definitions(
       athena_z4c_cartoon_m0_fastflow_unit_test
       PRIVATE ATHENA_CARTOON_M0_MATH_ONLY=1)

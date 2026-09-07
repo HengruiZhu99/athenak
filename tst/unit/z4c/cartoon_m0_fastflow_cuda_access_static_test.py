@@ -32,6 +32,7 @@ def main() -> int:
     for declaration in (
         "M0AdmSample SampleAdm(Real rho, Real z) const;",
         "M0AxisSample SampleAxisLapse(Real z) const;",
+        "std::vector<M0AdmSample> SampleAdmBatch(",
     ):
         require(public.count(declaration) == 1,
                 f"nvcc kernel-enclosing method is not public: {declaration}")
@@ -42,15 +43,15 @@ def main() -> int:
             "unrelated FastFlow implementation methods escaped private access")
 
     definitions = tuple(re.finditer(
-        r"(?:M0AdmSample|M0AxisSample) CartoonM0FastFlow::"
-        r"(?P<name>SampleAdm|SampleAxisLapse)\([^)]*\) const \{(?P<body>.*?)\n\}",
+        r"(?:M0AdmSample|M0AxisSample|std::vector<M0AdmSample>) CartoonM0FastFlow::"
+        r"(?P<name>SampleAdm|SampleAxisLapse|SampleAdmBatch)\([^)]*\) const \{(?P<body>.*?)\n\}",
         source, re.DOTALL))
-    require(len(definitions) == 2 and
+    require(len(definitions) == 3 and
             {match.group("name") for match in definitions} ==
-            {"SampleAdm", "SampleAxisLapse"},
+            {"SampleAdm", "SampleAxisLapse", "SampleAdmBatch"},
             "kernel-launching sampler definition inventory changed")
     require(all("KOKKOS_LAMBDA" in match.group("body") for match in definitions) and
-            source.count("KOKKOS_LAMBDA") == 2,
+            source.count("KOKKOS_LAMBDA") == 3,
             "KOKKOS_LAMBDA launch inventory changed")
     print("Cartoon m=0 FastFlow CUDA access static checks passed")
     return 0

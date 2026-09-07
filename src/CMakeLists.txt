@@ -7,6 +7,7 @@
 # list of files to be compiled into executable name
 add_executable(
     athena
+        z4c/frozen_mots.cpp
         main.cpp
         globals.cpp
         parameter_input.cpp

@@ -161,7 +161,9 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
         "cartoon_origin_lapse_radius_factor_0",
         "cartoon_pair_disjoint_fraction_0",
         "cartoon_center_z_0", "cartoon_axis_search_bound_0",
-        "cartoon_axis_search_samples_0"};
+        "cartoon_axis_search_samples_0", "horizon_only", "mots_radius_count",
+        "mots_radius_min", "mots_epsilon2", "mots_epsilon_inf",
+        "mots_newton_switch", "mots_backtracks", "mots_displacement"};
     for (const auto &block : pin->block) {
       if (block.block_name != "fastflow") continue;
       for (const auto &parameter : block.line) {

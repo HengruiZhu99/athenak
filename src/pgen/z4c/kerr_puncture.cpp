@@ -102,7 +102,7 @@ void FillPhysicalAdmViews(MeshBlockPack *pack,
   Kokkos::deep_copy(pack->pz4c->u0, 0.0);
   par_for(
       "initialize Kerr puncture ADM fields", DevExeSpace(), 0, nmb - 1,
-      bounds.ks, bounds.ke, bounds.js, bounds.je, bounds.is, bounds.ie,
+      0, bounds.n3-1, 0, bounds.n2-1, 0, bounds.n1-1,
       KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
         // Evaluate this common expression before the compile-time map branch.
         // NVCC rejects an extended host/device lambda when a captured view or
@@ -173,7 +173,7 @@ void FillPhysicalAdmViews(MeshBlockPack *pack,
     const int ng = indices.ng;
     par_for(
         "derive Kerr puncture ADM axis ghosts", DevExeSpace(), 0, nmb - 1,
-        0, adm::ADM::I_ADM_PSI4, bounds.ks, bounds.ke, bounds.js, bounds.je,
+        0, adm::ADM::I_ADM_PSI4, 0, bounds.n3-1, 0, bounds.n2-1,
         KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
           if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
               !z4c::FillCenteredAdmAxisGhostLine<Centering>(
@@ -184,7 +184,7 @@ void FillPhysicalAdmViews(MeshBlockPack *pack,
     par_for(
         "derive Kerr puncture gauge axis ghosts", DevExeSpace(), 0, nmb - 1,
         z4c::Z4c::I_Z4C_ALPHA, z4c::Z4c::I_Z4C_BETAZ,
-        bounds.ks, bounds.ke, bounds.js, bounds.je,
+        0, bounds.n3-1, 0, bounds.n2-1,
         KOKKOS_LAMBDA(const int m, const int n, const int k, const int j) {
           if (mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis &&
               !z4c::FillCenteredZ4cAxisGhostLine<Centering>(
