@@ -235,3 +235,20 @@ with hashes and record all failures before any correction.
 
 Projector algebra errors use ||sum(P)-I||/(1+sum||P||) and
 ||P_i P_j-delta_ij P_i||/(1+||P_i||||P_j||). Retain unscaled errors too.
+
+
+### Compiled nonlinear subsidiary-law check
+
+Use 12 deterministic smooth cubic local 50-field polynomials with nonzero
+curvature/GH fields, independent auxiliary reductions and curls, and true shift
+gradients differing from stored B. Include z=0.05,0.2,0.3,0.7 and alpha=0.7,1,1.3.
+Use lambda=alpha*(1+0.2*x-0.15*y+0.1*z), eta=2, kappa=1. Independently form
+E, its gradient, Omega and its gradient from exact polynomial jets. Differentiate
+the compiled configuration time derivatives and auxiliary RHS by fourth-order
+centered differences at h=0.02,0.01,0.005. Require all 30 reductions and 30
+independent curl components to match Lie transport minus damping (including
+dlambda wedge E) with finest normalized max error <=1e-7. Require aggregate
+max-error order >=3.5 on both halvings when the coarser error exceeds 1e-10.
+Retain all component errors. Negative controls omit true-shift stretching or
+omit dlambda wedge E; each must differ from the correct target by >1e-5.
+This is a local continuum identity test, not evolution or a discrete mesh law.

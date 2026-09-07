@@ -302,3 +302,19 @@ projector passes warnings-as-errors replay without altering raw matrices or
 thresholds. No physical or full operator gate is promoted. Next is an independent
 compiled subsidiary-law check with nonzero curvature, GH, reductions and curls,
 then full Fourier/transient/discrete checks before mesh integration.
+
+
+## Nonlinear subsidiary checkpoint
+
+Exact arbitrary-function reduction, curl, Cartan and raw metric curl identities
+pass. Independent spatial differentiation of the compiled CPU/A100 RHS on 12
+nonlinear cubic fields also passes for all 30 reduction and 30 curl components.
+It includes nonzero curvature, C/Z, true shift gradients and variable
+lapse-scaled damping. Fourth-order residual decay reaches 1.424e-9 for reductions
+and 7.913e-9 for curls; backend output disagreement is 5.471e-16. Negative controls
+are discriminating. See analysis/pc_gh_clean_reduction/INTRINSIC_SUBSIDIARY.md.
+
+This establishes sampled compiled continuum identities alongside the exact
+formal law, not a mesh or evolution result. No physical gate is promoted.
+Next is the full Minkowski Fourier operator with sources, neutral/Jordan and
+transient behavior, then coupled discrete RK/KO checks and mesh integration.

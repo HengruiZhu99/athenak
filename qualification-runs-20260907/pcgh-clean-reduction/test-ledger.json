@@ -389,6 +389,26 @@
       "status": "PASS",
       "evidence": "intrinsic-symbol-001/backend.json",
       "scope": "2652 identical point inputs; 52 complete matrices"
+    },
+    "intrinsic_subsidiary_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-subsidiary-001/cpu/results.json",
+      "scope": "30 reductions and 30 curl components on 12 cubic local jets; fourth-order independent RHS differentiation"
+    },
+    "intrinsic_subsidiary_CUDA": {
+      "status": "PASS",
+      "evidence": "intrinsic-subsidiary-001/cuda/results.json",
+      "scope": "30 reductions and 30 curl components on 12 cubic local jets; fourth-order independent RHS differentiation"
+    },
+    "intrinsic_subsidiary_exact": {
+      "status": "PASS",
+      "evidence": "intrinsic-subsidiary-001/exact.json",
+      "scope": "Arbitrary-function reduction/curl/Cartan and five-chart raw metric curl identities"
+    },
+    "intrinsic_subsidiary_backend": {
+      "status": "PASS",
+      "evidence": "intrinsic-subsidiary-001/backend.json",
+      "scope": "444 identical input points; 128 output components"
     }
   }
 }
