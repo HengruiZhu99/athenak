@@ -11,6 +11,24 @@
 
 namespace {
 using PC = pc_gh::PcGh;
+// Independent index-count oracle: each reflected tensor index contributes -1.
+int Parity(int n,int axis) {
+  const int first[6]={0,0,0,1,1,2}, second[6]={0,1,2,1,2,2};
+  int count=0, tensor=-1;
+  if (n>=PC::I_GTXX && n<=PC::I_GTZZ) tensor=n-PC::I_GTXX;
+  if (n>=PC::I_ATXX && n<=PC::I_ATZZ) tensor=n-PC::I_ATXX;
+  if (n>=PC::I_Q1XX && n<=PC::I_Q3ZZ) {
+    tensor=(n-PC::I_Q1XX)%6;count+=((n-PC::I_Q1XX)/6==axis);
+  }
+  if (tensor>=0) count+=(first[tensor]==axis)+(second[tensor]==axis);
+  for (int start : {PC::I_ZX,PC::I_BETAX,PC::I_P1,PC::I_L1}) {
+    if (n>=start && n<start+3) count+=(n-start==axis);
+  }
+  if (n>=PC::I_B11 && n<=PC::I_B33) {
+    count+=((n-PC::I_B11)/3==axis)+((n-PC::I_B11)%3==axis);
+  }
+  return count%2?-1:1;
+}
 void Ordinary(Mesh *mesh) {
   auto *pc = mesh->pmb_pack->ppcgh;
   while (pc->pbval_u->ClearSend() != TaskStatus::complete) {}
@@ -20,7 +38,13 @@ void Ordinary(Mesh *mesh) {
   pc->pbval_u->PackAndSendCC(pc->u0,pc->coarse_u0);
   while (pc->pbval_u->RecvAndUnpackCC(pc->u0,pc->coarse_u0)
          != TaskStatus::complete) {}
+  if (!mesh->strictly_periodic) {
+    pc->pbval_u->Z4cBCs(mesh->pmb_pack,pc->pbval_u->u_in,pc->u0,pc->coarse_u0);
+  }
   if (mesh->multilevel) pc->pbval_u->ProlongateCC(pc->u0,pc->coarse_u0,true);
+  if (!mesh->strictly_periodic) {
+    pc->pbval_u->Z4cBCs(mesh->pmb_pack,pc->pbval_u->u_in,pc->u0,pc->coarse_u0);
+  }
   while (pc->pbval_u->ClearSend() != TaskStatus::complete) {}
   while (pc->pbval_u->ClearRecv() != TaskStatus::complete) {}
 }
@@ -32,10 +56,23 @@ void Final(ParameterInput *pin, Mesh *mesh) {
   int nmb = mesh->pmb_pack->nmb_thispack;
   bool three = mesh->three_d;
   const auto profile=pin->GetOrAddString("problem","residual_profile","constant");
-  if (profile != "constant" && profile != "smooth") {
+  if (profile != "constant" && profile != "smooth" && profile != "boundary_linear") {
     throw std::runtime_error("unknown residual fixture profile");
   }
   const bool smooth=profile == "smooth";
+  const bool linear=profile == "boundary_linear";
+  const Real lengths[3]={1.0,1.3,1.7};
+  Real anchors[3]={};
+  DualArray2D<int> parity("independent fixture parity",PC::npcgh,3);
+  for (int axis=0; axis<3; ++axis) {
+    if (linear && mesh->mesh_bcs[2*axis]==BoundaryFlag::reflect
+        && mesh->mesh_bcs[2*axis+1]==BoundaryFlag::reflect) {
+      throw std::runtime_error("linear parity fixture requires at most one reflecting face per axis");
+    }
+    anchors[axis]=mesh->mesh_bcs[2*axis+1]==BoundaryFlag::reflect?lengths[axis]:0;
+    for (int n=0; n<PC::npcgh; ++n) parity.h_view(n,axis)=Parity(n,axis);
+  }
+  Kokkos::deep_copy(parity.d_view,parity.h_view);
   par_for("transfer primary seed",DevExeSpace(),0,nmb-1,0,state.extent_int(2)-1,
   0,state.extent_int(3)-1,0,state.extent_int(4)-1,
   KOKKOS_LAMBDA(int m,int k,int j,int i) {
@@ -65,7 +102,14 @@ void Final(ParameterInput *pin, Mesh *mesh) {
     Real y=size.d_view(m).x2min+(j-ind.js+.5)*size.d_view(m).dx2;
     Real z=three?size.d_view(m).x3min+(k-ind.ks+.5)*size.d_view(m).dx3:0;
     Real phase=6.283185307179586*(x+y/1.3+z/1.7);
-    state(m,n,k,j,i) += .001*(n-PC::I_P1+1)*(smooth?std::sin(phase+.13*n):1);
+    Real seed=smooth?std::sin(phase+.13*n):1;
+    if (linear) {
+      Real position[3]={x,y,z};
+      for (int axis=0; axis<(three?3:2); ++axis) {
+        if (parity.d_view(n,axis)<0) seed*=(position[axis]-anchors[axis])/lengths[axis];
+      }
+    }
+    state(m,n,k,j,i) += .001*(n-PC::I_P1+1)*seed;
   });
   Kokkos::fence();
   // Compute shifted differentiation weights independently from Lagrange products.
@@ -92,6 +136,7 @@ void Final(ParameterInput *pin, Mesh *mesh) {
     for (int m=0; m<nmb; ++m) {
       Real error_before=0, error_after=0, fixed_change=0;
       int ghosts=0;
+      Real reflection_before=0,reflection_after=0;
       Real ghost_square_before=0, ghost_square_after=0;
       Real ghost_component_before[33]={}, ghost_component_after[33]={};
       auto sz=size.h_view(m);
@@ -105,11 +150,32 @@ void Final(ParameterInput *pin, Mesh *mesh) {
       for (int k=0; k<state.extent_int(2); ++k) {
         for (int j=0; j<state.extent_int(3); ++j) {
           for (int i=0; i<state.extent_int(4); ++i) {
+            int mirror[3]={i,j,k};
+            int lower[3]={ind.is,ind.js,ind.ks}, upper[3]={ind.ie,ind.je,ind.ke};
+            bool reflected[3]={};
+            for (int axis=0; axis<3; ++axis) {
+              if (state.extent_int(4-axis)==1) continue;
+              auto bcs=mesh->pmb_pack->pmb->mb_bcs.h_view;
+              if (mirror[axis]<lower[axis] && bcs(m,2*axis)==BoundaryFlag::reflect) {
+                mirror[axis]=2*lower[axis]-1-mirror[axis];reflected[axis]=true;
+              } else if (mirror[axis]>upper[axis] && bcs(m,2*axis+1)==BoundaryFlag::reflect) {
+                mirror[axis]=2*upper[axis]+1-mirror[axis];reflected[axis]=true;
+              }
+            }
+            int ri=mirror[0],rj=mirror[1],rk=mirror[2];
             bool active=i>=ind.is && i<=ind.ie && j>=ind.js && j<=ind.je
                         && k>=ind.ks && k<=ind.ke;
             for (int n=0; n<PC::npcgh; ++n) {
               if (!std::isfinite(before(m,n,k,j,i)) || !std::isfinite(after(m,n,k,j,i))) {
                 throw std::runtime_error("nonfinite transfer fixture state");
+              }
+              int reference_sign=1;
+              for (int axis=0; axis<3; ++axis) if (reflected[axis]) reference_sign*=Parity(n,axis);
+              if (reflected[0] || reflected[1] || reflected[2]) {
+                reflection_before=std::max(reflection_before,std::abs(
+                    before(m,n,k,j,i)-reference_sign*before(m,n,rk,rj,ri)));
+                reflection_after=std::max(reflection_after,std::abs(
+                    after(m,n,k,j,i)-reference_sign*after(m,n,rk,rj,ri)));
               }
               if (active || n<PC::I_P1) {
                 fixed_change=std::max(fixed_change,std::abs(after(m,n,k,j,i)-before(m,n,k,j,i)));
@@ -122,20 +188,20 @@ void Final(ParameterInput *pin, Mesh *mesh) {
               else if (n<PC::I_L1) {direction=(n-PC::I_Q1XX)/6;primary=PC::I_GTXX+(n-PC::I_Q1XX)%6;}
               else if (n<PC::I_B11) {direction=n-PC::I_L1;primary=PC::I_W;lapse=true;}
               else {direction=(n-PC::I_B11)/3;primary=PC::I_BETAX+(n-PC::I_B11)%3;}
-              int position=direction==0?i:(direction==1?j:k);
+              int position=direction==0?ri:(direction==1?rj:rk);
               int extent=state.extent_int(4-direction);
               long double target=0;
               if (extent>1) {
                 int start=std::max(0,std::min(position-order/2,extent-order-1));
                 for (int node=0; node<=order; ++node) {
                   int offset=start+node-position;
-                  int ii=i+(direction==0?offset:0), jj=j+(direction==1?offset:0);
-                  int kk=k+(direction==2?offset:0);
+                  int ii=ri+(direction==0?offset:0), jj=rj+(direction==1?offset:0);
+                  int kk=rk+(direction==2?offset:0);
                   long double value=before(m,primary,kk,jj,ii);
                   if (lapse) {
                     long double rho=before(m,PC::I_RHO,kk,jj,ii);
                     value=pc->opt.lapse_projection_target=="collision_factorized"
-                        ? 2*(before(m,PC::I_W,k,j,i)*rho+before(m,PC::I_RHO,k,j,i)*value)
+                        ? 2*(before(m,PC::I_W,rk,rj,ri)*rho+before(m,PC::I_RHO,rk,rj,ri)*value)
                         : 2*rho*value;
                   }
                   target+=weights[position-start][node]*value;
@@ -143,7 +209,17 @@ void Final(ParameterInput *pin, Mesh *mesh) {
                 auto sz=size.h_view(m);
                 target/=direction==0?sz.dx1:(direction==1?sz.dx2:sz.dx3);
               }
-              target+=.001*(n-PC::I_P1+1)*(smooth?std::sin(phase_at(k,j,i)+.13*n):1);
+              Real seed=smooth?std::sin(phase_at(rk,rj,ri)+.13*n):1;
+              if (linear) {
+                Real position[3]={sz.x1min+(ri-ind.is+.5)*sz.dx1,
+                    sz.x2min+(rj-ind.js+.5)*sz.dx2,
+                    three?sz.x3min+(rk-ind.ks+.5)*sz.dx3:0};
+                for (int axis=0; axis<(three?3:2); ++axis) {
+                  if (Parity(n,axis)<0) seed*=(position[axis]-anchors[axis])/lengths[axis];
+                }
+              }
+              target+=.001*(n-PC::I_P1+1)*seed;
+              target*=reference_sign;
               Real delta_before=before(m,n,k,j,i)-target;
               Real delta_after=after(m,n,k,j,i)-target;
               ghost_component_before[n-PC::I_P1]=std::max(
@@ -190,6 +266,20 @@ void Final(ParameterInput *pin, Mesh *mesh) {
             Real expected=smooth?.001*(
                 frequency[a]*(nb-PC::I_P1+1)*std::cos(phase_at(k,j,i)+.13*nb)
                -frequency[b]*(na-PC::I_P1+1)*std::cos(phase_at(k,j,i)+.13*na)):0;
+            if (linear) {
+              Real position[3]={sz.x1min+(i-ind.is+.5)*sz.dx1,
+                  sz.x2min+(j-ind.js+.5)*sz.dx2,
+                  three?sz.x3min+(k-ind.ks+.5)*sz.dx3:0};
+              auto exact_derivative=[&](int n,int axis) {
+                if ((axis==2 && !three) || Parity(n,axis)>0) return 0.0;
+                Real value=.001*(n-PC::I_P1+1)/lengths[axis];
+                for (int d=0; d<(three?3:2); ++d) {
+                  if (d!=axis && Parity(n,d)<0) value*=(position[d]-anchors[d])/lengths[d];
+                }
+                return value;
+              };
+              expected=exact_derivative(nb,a)-exact_derivative(na,b);
+            }
             Real cb=derivative(before,nb,a,k,j,i)-derivative(before,na,b,k,j,i)-expected;
             Real ca=derivative(after,nb,a,k,j,i)-derivative(after,na,b,k,j,i)-expected;
             int tensor=3*family+(a==0?b-1:2);
@@ -206,13 +296,15 @@ void Final(ParameterInput *pin, Mesh *mesh) {
           << ",\"level\":" << mesh->pmb_pack->pmb->mb_lev.h_view(m)
           << ",\"ghost_components\":" << ghosts << ",\"fixed_change\":" << fixed_change
           << ",\"profile\":\"" << profile << "\""
+          << ",\"reflection_error_before\":" << reflection_before
+          << ",\"reflection_error_after\":" << reflection_after
           << ",\"before_reference_residual_error\":" << error_before
           << ",\"after_reference_residual_error\":" << error_after
           << ",\"ghost_component_volume\":" << ghosts*volume
           << ",\"ghost_error_square_before\":" << ghost_square_before
           << ",\"ghost_error_square_after\":" << ghost_square_after
           << ",\"active_volume\":" << ind.nx1*ind.nx2*ind.nx3*volume;
-      if (!smooth) out << ",\"before_constant_residual_error\":" << error_before
+      if (!smooth && !linear) out << ",\"before_constant_residual_error\":" << error_before
                        << ",\"after_constant_residual_error\":" << error_after;
       auto array=[&](const char *name,const Real *values,int count=11) {
         out << ",\"" << name << "\":[";

@@ -1,0 +1,187 @@
+[
+  {
+    "name": "outflow-smr-e2",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/outflow-smr-e2",
+      "--boundary",
+      "outflow",
+      "--extrap-order",
+      "2",
+      "--ranks",
+      "1",
+      "--smr"
+    ],
+    "returncode": 0,
+    "wall_seconds": 2.1963253021240234,
+    "status": "FAIL"
+  },
+  {
+    "name": "reflect-uniform-e2",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/reflect-uniform-e2",
+      "--boundary",
+      "reflect",
+      "--extrap-order",
+      "2",
+      "--ranks",
+      "1"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.8625648021697998,
+    "status": "PASS"
+  },
+  {
+    "name": "reflect-smr-e2",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/reflect-smr-e2",
+      "--boundary",
+      "reflect",
+      "--extrap-order",
+      "2",
+      "--ranks",
+      "1",
+      "--smr"
+    ],
+    "returncode": 0,
+    "wall_seconds": 2.1834959983825684,
+    "status": "FAIL"
+  },
+  {
+    "name": "mixed-uniform-e2",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/mixed-uniform-e2",
+      "--boundary",
+      "mixed",
+      "--extrap-order",
+      "2",
+      "--ranks",
+      "1"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.8533401489257812,
+    "status": "PASS"
+  },
+  {
+    "name": "mixed-smr-e2",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/mixed-smr-e2",
+      "--boundary",
+      "mixed",
+      "--extrap-order",
+      "2",
+      "--ranks",
+      "1",
+      "--smr"
+    ],
+    "returncode": 0,
+    "wall_seconds": 2.1803340911865234,
+    "status": "FAIL"
+  },
+  {
+    "name": "outflow-uniform-e3",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/outflow-uniform-e3",
+      "--boundary",
+      "outflow",
+      "--extrap-order",
+      "3",
+      "--ranks",
+      "1"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.8451361656188965,
+    "status": "PASS"
+  },
+  {
+    "name": "outflow-smr-e3",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/outflow-smr-e3",
+      "--boundary",
+      "outflow",
+      "--extrap-order",
+      "3",
+      "--ranks",
+      "1",
+      "--smr"
+    ],
+    "returncode": 0,
+    "wall_seconds": 2.275424003601074,
+    "status": "FAIL"
+  },
+  {
+    "name": "outflow-uniform-e4",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/outflow-uniform-e4",
+      "--boundary",
+      "outflow",
+      "--extrap-order",
+      "4",
+      "--ranks",
+      "1"
+    ],
+    "returncode": 0,
+    "wall_seconds": 0.9126458168029785,
+    "status": "FAIL"
+  },
+  {
+    "name": "outflow-smr-e4",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/bin/python",
+      "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/run_transfer_mesh.py",
+      "--binary",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "--output",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/boundary-transfer-001/outflow-smr-e4",
+      "--boundary",
+      "outflow",
+      "--extrap-order",
+      "4",
+      "--ranks",
+      "1",
+      "--smr"
+    ],
+    "returncode": 0,
+    "wall_seconds": 2.230477809906006,
+    "status": "FAIL"
+  }
+]

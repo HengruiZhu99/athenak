@@ -117,3 +117,30 @@ positive generator rates >1e-10 or RK eigenvalue modulus >1+1e-9. Near-neutral
 floating flags require independent resolution, as before. This is a necessary
 TT subsystem test, not a full Einstein/AMR stability proof. A failed result
 blocks downstream promotion but not correction of the transfer/KO construction.
+
+## Physical-boundary residual transfer (frozen before execution)
+Add outflow extrapolation of E and reflection via the mirrored-primary derivative
+with full auxiliary tensor parity. Periodic transfer is unchanged. Preserve all
+primaries and active auxiliaries exactly. Test FD2/4/6, 2D/3D, uniform and the
+same 7/15-leaf refinement maps, with all-outflow, all-reflecting, and mixed faces.
+Use the constant residual fixture and independent index-count parity plus
+long-double derivative oracle. Require max ghost residual error <=2e-12 and
+reflection parity error <=2e-12 for every state component, including corners;
+repeat three exchanges. Constant odd-parity residuals are a discrete boundary
+fixture, not smooth physical data: do not claim physical curl convergence from
+this test. Start extrap_order=2, then independently exercise 3/4 for outflow.
+The parser must reject user/inflow/unsupported boundaries, adaptive topology,
+and nonlegacy layouts for this option. Existing one-step periodic controls must
+still pass. CPU/MPI operator runs retain 120-second per-process limits.
+
+## Compatible reflecting residual fixture (before execution)
+The nonzero constant odd-parity residual has a jump at a reflecting plane.
+Near an intersecting refinement interface, polynomial interpolation of that
+odd extension does not reproduce a constant; retain this as finite injection,
+not an exact-preservation success. Add a separate compatible multi-affine seed
+for mixed faces: for each odd tensor axis multiply E_n by (x-x_ref)/L, where
+x_ref is that axis's reflecting plane; even axes contribute one. Each axis has
+at most one reflecting face, so this polynomial obeys reflection exactly and
+linear outflow extrapolation. Require the unchanged 2e-12 absolute residual
+and parity limits, all fields and ghosts, FD2/4/6 and uniform/refined 2D/3D.
+This does not erase the failed discontinuous constant-residual fixture.

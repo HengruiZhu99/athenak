@@ -15,7 +15,9 @@ parser.add_argument('--smr', action='store_true')
 parser.add_argument('--ranks', type=int, default=1)
 parser.add_argument('--block-n', type=int, default=8)
 parser.add_argument('--orders', type=int, nargs='+', default=[2, 4, 6])
-parser.add_argument('--profile', choices=['constant', 'smooth'], default='constant')
+parser.add_argument('--profile', choices=['constant', 'smooth','boundary_linear'], default='constant')
+parser.add_argument('--boundary', choices=['periodic','outflow','reflect','mixed'], default='periodic')
+parser.add_argument('--extrap-order',type=int,default=2)
 args = parser.parse_args()
 args.output.mkdir(parents=True, exist_ok=False)
 results = []
@@ -43,6 +45,11 @@ x3min = 0.2125
 x3max = 0.6375
 level = 1
 '''
+        if args.boundary != 'periodic':
+            flags = [args.boundary]*6 if args.boundary != 'mixed' else ['reflect','outflow','outflow','reflect','reflect','outflow']
+            for face,flag in zip(['ix1','ox1','ix2','ox2','ix3','ox3'],flags):
+                content = content.replace(f'{face}_bc = periodic',f'{face}_bc = {flag}')
+        content = content.replace('<pc_gh>',f'<pc_gh>\nextrap_order = {args.extrap_order}')
         content = content.replace('<problem>', f'<problem>\nresidual_profile = {args.profile}')
         used = folder/'used_input.athinput'
         used.write_text(content)
@@ -53,7 +60,7 @@ level = 1
         with (folder/'run.log').open('w') as log:
             run = subprocess.run(command, cwd=folder, stdout=log,
                                  stderr=subprocess.STDOUT, timeout=120)
-        row = dict(order=order, dimension=dim, smr=args.smr, ranks=args.ranks, profile=args.profile, block_n=args.block_n, command=command,
+        row = dict(order=order, dimension=dim, smr=args.smr, ranks=args.ranks, profile=args.profile, boundary=args.boundary, extrap_order=args.extrap_order, block_n=args.block_n, command=command,
                    returncode=run.returncode, wall_seconds=time.time()-start,
                    binary_sha256=hashlib.sha256(args.binary.read_bytes()).hexdigest(),
                    input_sha256=hashlib.sha256(used.read_bytes()).hexdigest())
@@ -64,8 +71,9 @@ level = 1
             row['max_fixed_change'] = max(r['fixed_change'] for r in records)
             row['max_residual_error'] = max(r.get('after_reference_residual_error', r.get('after_constant_residual_error')) for r in records)
             row['blocks'] = len(records)//3
+            row['reflection_error'] = max(r.get('reflection_error_after',0) for r in records)
             row['invariance_status'] = 'PASS' if row['max_fixed_change'] == 0 else 'FAIL'
-            row['status'] = ('PASS' if row['max_fixed_change'] == 0 and row['max_residual_error'] <= 2e-12 else 'FAIL') if args.profile == 'constant' or not args.smr else 'NOT_RUN'
+            row['status'] = ('PASS' if row['max_fixed_change'] == 0 and row['max_residual_error'] <= 2e-12 and row['reflection_error'] <= 2e-12 else 'FAIL') if args.profile != 'smooth' or not args.smr else 'NOT_RUN'
             if args.profile == 'smooth' and args.smr:
                 row['status_note'] = 'convergence gate evaluated by resolution ladder, not this single mesh'
         else:

@@ -24,3 +24,8 @@ Operation 2 still combines algebraic and GH projections as in the historical
 bracket. These are stated remaining diagnostic gaps, not complete causal budgets.
 File appending requires a fresh output directory for an unambiguous run epoch.
 Targeted fixtures only: complete state snapshots can become large in evolution.
+
+Operation 13 records the opt-in physical boundary completion after prolongation.
+It can change ghost primaries and auxiliaries; active entries remain fixed. The
+following 11/12 bracket is the auxiliary-only residual correction. Neither
+bracket currently asserts ghost-valid flags or records coarse buffers.

@@ -174,6 +174,70 @@
       "evidence": "halo-ko-coupling-003.json",
       "scope": "necessary periodic TT eigen/RK screen with actual KO ghost correction and exact neutral quotient; no uniform transient bound or full interface proof",
       "nonzero_tangency_defect": true
+    },
+    "boundary-outflow-uniform-001": {
+      "status": "FAIL",
+      "evidence": "boundary-outflow-uniform-001",
+      "scope": "Original residual arithmetic exceeded frozen 2e-12 tolerance in 3D FD4/6."
+    },
+    "boundary-outflow-uniform-002": {
+      "status": "PASS",
+      "evidence": "boundary-outflow-uniform-002",
+      "scope": "Centered arithmetic matches projection; shifted weights use differences."
+    },
+    "boundary-transfer-001": {
+      "status": "FAIL",
+      "evidence": "boundary-transfer-001",
+      "scope": "Physical corners stale after prolongation; preserved before correction."
+    },
+    "boundary-transfer-002": {
+      "status": "FAIL",
+      "evidence": "boundary-transfer-002",
+      "scope": "Physical completion repairs default outflow and parity; incompatible constant odd residual and cubic outflow checks still fail."
+    },
+    "boundary-compatible-uniform-001": {
+      "status": "PASS",
+      "evidence": "boundary-compatible-uniform-001",
+      "scope": "Independent parity-compatible multiaffine residual; all six cases."
+    },
+    "boundary-compatible-smr-001": {
+      "status": "PASS",
+      "evidence": "boundary-compatible-smr-001",
+      "scope": "Independent parity-compatible multiaffine residual; all six cases."
+    },
+    "boundary-regression-mpi-outflow-smr-001": {
+      "status": "PASS",
+      "evidence": "boundary-regression-mpi-outflow-smr-001/results.json",
+      "scope": "Six operator fixtures, three exchanges; no physical qualification"
+    },
+    "boundary-regression-mpi-compatible-smr-001": {
+      "status": "PASS",
+      "evidence": "boundary-regression-mpi-compatible-smr-001/results.json",
+      "scope": "Six operator fixtures, three exchanges; no physical qualification"
+    },
+    "boundary-regression-serial-periodic-uniform-001": {
+      "status": "PASS",
+      "evidence": "boundary-regression-serial-periodic-uniform-001/results.json",
+      "scope": "Six operator fixtures, three exchanges; no physical qualification"
+    },
+    "boundary-regression-serial-periodic-smr-001": {
+      "status": "PASS",
+      "evidence": "boundary-regression-serial-periodic-smr-001/results.json",
+      "scope": "Six operator fixtures, three exchanges; no physical qualification"
+    },
+    "boundary-regression-mpi-compatible-uniform-001": {
+      "status": "PASS",
+      "evidence": "boundary-regression-mpi-compatible-uniform-001/results.json",
+      "scope": "Six operator fixtures, three exchanges; no physical qualification"
+    },
+    "cuda_transfer_initial_build": {
+      "status": "FAIL",
+      "evidence": "cuda-transfer-accessfix-001/initial-failure-build.log",
+      "reason": "NVCC extended lambda enclosing member must be public; no GPU tests ran."
+    },
+    "cuda_transfer_accessfix": {
+      "status": "NOT_RUN",
+      "scope": "Repaired build active; source 40e0bc1f plus access-only patch, excludes newer boundary changes."
     }
   }
 }

@@ -234,6 +234,8 @@ class PcGh {
   void MeasureReductionTransfer(bool save_before, int operation);
   void BeginReductionTransfer(int operation);
   void EndReductionTransfer(int operation);
+  // NVCC extended lambdas require a publicly accessible enclosing method.
+  template <int ORDER> void TransferResidualGhosts();
   void CompleteCoherentTransfer(int operation);
   void BeginStateBudget(int operation);
   void EndStateBudget(int operation);
@@ -372,7 +374,6 @@ class PcGh {
   std::array<std::array<Real, 8>, 7> transfer_reduction_change{};
 
  private:
-  template <int ORDER> void TransferResidualGhosts();
   MeshBoundaryValuesCC *pbval_residual = nullptr;
   DvceArray5D<Real> transfer_residual, coarse_transfer_residual;
   HostArray5D<Real> state_budget_before;

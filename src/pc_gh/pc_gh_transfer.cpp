@@ -16,6 +16,7 @@ void PcGh::TransferResidualGhosts() {
   auto state = u0;
   auto residual = transfer_residual;
   auto size = pmy_pack->pmb->mb_size;
+  auto bcs = pmy_pack->pmb->mb_bcs;
   auto ind = pmy_pack->pmesh->mb_indcs;
   const int nmb = pmy_pack->nmb_thispack;
   const int nk = state.extent_int(2), nj = state.extent_int(3);
@@ -26,8 +27,8 @@ void PcGh::TransferResidualGhosts() {
   0,nk-1,0,nj-1,0,ni-1,KOKKOS_LAMBDA(int m,int n,int k,int j,int i) {
     Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                    1.0/size.d_view(m).dx3};
-    residual(m,n,k,j,i) -= LegacyTransferTarget<ORDER>(
-        state,m,n,k,j,i,idx,collision);
+    residual(m,n,k,j,i) -= LegacyBoundaryTransferTarget<ORDER>(
+        state,m,n,k,j,i,idx,collision,ind,bcs);
   });
   Kokkos::fence();
   // A separate communicator avoids interacting with in-flight ordinary transfers.
@@ -40,8 +41,20 @@ void PcGh::TransferResidualGhosts() {
   pbval_residual->PackAndSendCC(transfer_residual,coarse_transfer_residual);
   while (pbval_residual->RecvAndUnpackCC(transfer_residual,coarse_transfer_residual)
          != TaskStatus::complete) {}
+  if (!pmy_pack->pmesh->strictly_periodic) {
+    // Residuals carry exactly the same reflection tensor parity as auxiliaries.
+    // Outflow extrapolates E; it does not extrapolate an independently reset G.
+    pbval_residual->Z4cBCs(pmy_pack,pbval_residual->u_in,transfer_residual,
+                           coarse_transfer_residual);
+  }
   if (pmy_pack->pmesh->multilevel) {
     pbval_residual->ProlongateCC(transfer_residual,coarse_transfer_residual,true);
+  }
+  if (!pmy_pack->pmesh->strictly_periodic) {
+    // Prolongation changes tangential ghosts after the first physical fill.
+    // Refresh physical faces/edges/corners from these newly available values.
+    pbval_residual->Z4cBCs(pmy_pack,pbval_residual->u_in,transfer_residual,
+                           coarse_transfer_residual);
   }
   while (pbval_residual->ClearSend() != TaskStatus::complete) {}
   while (pbval_residual->ClearRecv() != TaskStatus::complete) {}
@@ -53,14 +66,21 @@ void PcGh::TransferResidualGhosts() {
         && k >= ind.ks && k <= ind.ke) return;
     Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                    1.0/size.d_view(m).dx3};
-    state(m,n,k,j,i) = LegacyTransferTarget<ORDER>(
-        state,m,n,k,j,i,idx,collision)+residual(m,n,k,j,i);
+    state(m,n,k,j,i) = LegacyBoundaryTransferTarget<ORDER>(
+        state,m,n,k,j,i,idx,collision,ind,bcs)+residual(m,n,k,j,i);
   });
   Kokkos::fence();
 }
 
 void PcGh::CompleteCoherentTransfer(int operation) {
   if (opt.coherent_transfer == "none") return;
+  if (!pmy_pack->pmesh->strictly_periodic) {
+    // Complete primary physical corners after ordinary prolongation. Record
+    // this independently from the auxiliary-only correction below.
+    BeginStateBudget(13);
+    pbval_u->Z4cBCs(pmy_pack,pbval_u->u_in,u0,coarse_u0);
+    EndStateBudget(13);
+  }
   BeginStateBudget(operation);
   switch (opt.spatial_order) {
     case 2: TransferResidualGhosts<2>(); break;

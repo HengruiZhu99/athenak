@@ -53,3 +53,42 @@ so it is still second order. The failure outputs precede the corrected results.
 Remaining before promotion: spatially varying and finite residual injection,
 complete curl/tangency/operation budgets, boundary parity/outflow, regrid/restart,
 CUDA, coupled amplification/stability, stage-policy effects and full convergence.
+
+## Physical boundary completion and retained failures
+
+The opt-in legacy residual transfer now admits periodic, outflow and reflecting
+faces on fixed meshes. It completes physical boundary values after ordinary
+prolongation (operation 13), then transfers residuals with their tensor parity,
+completes residual physical corners after prolongation, and reconstructs auxiliary
+ghosts. Operation 13 may change ghost primaries; operations 11/12 preserve all
+primaries and all active entries. No bulk equation or projection policy changed.
+Reflection reconstruction folds coordinates to the interior mirror and applies
+the auxiliary tensor parity. Centered target arithmetic matches the existing
+projection; shifted targets use differences to reduce cancellation.
+
+The first physical-boundary matrix failed because prolongation left physical
+corners stale. Both pre-fix and post-fix results remain archived. The corrected
+operator passes all FD2/4/6, 2D/3D default outflow and compatible mixed reflection/
+outflow fixtures on uniform and refined meshes. The latter seeds all 33 residual
+components with independently defined parity-compatible multiaffine polynomials.
+Its serial refined maximum residual error is 2.24e-13 and parity error 3.47e-18.
+Two-rank MPI with bounds checking passes the same compatible fixtures and default
+outflow refinement. Periodic uniform/refined serial regression also passes.
+
+Two negative controls remain FAIL at their frozen 2e-12 tolerance. Nonzero
+constant odd residuals have discontinuous reflected extensions; their refined
+interpolation errors cannot be interpreted as smooth exact-preservation errors.
+The separate compatible fixture addresses that ambiguity without deleting the
+failure. Cubic outflow extrapolation in 3D amplifies encoded residual roundoff
+above tolerance (up to 6.16e-11); it is not qualified. Default extrapolation order
+2 and order 3 passed the tested constant residual checks. No tolerance was raised.
+
+The original CUDA transfer build failed: NVCC requires the member enclosing an
+extended lambda to be public. The access-only correction is rebuilding in the
+same owned remote directory, with original failure logs and source manifest
+preserved. New controllers are build PID 605504 and test PID 625235; the latter
+waits for success and checks GPU occupancy. This snapshot is 40e0bc1f plus the
+recorded access patch, not this newer boundary implementation. GPU transfer tests
+remain NOT_RUN until actual results are collected. Full Gate 1 and all physical
+gates remain unpassed; dynamic regrid/restart, complete causal budgets and coupled
+amplification still require work. The intrinsic 50-field kernel is not yet present.

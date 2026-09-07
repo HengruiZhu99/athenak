@@ -330,10 +330,20 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
     std::exit(EXIT_FAILURE);
   }
   if (opt.coherent_transfer == "residual_shifted") {
-    if (!ppack->pmesh->strictly_periodic || ppack->pmesh->adaptive
+    bool supported_boundary=true;
+    for (int axis=0; axis<3; ++axis) {
+      if ((axis==1 && !ppack->pmesh->multi_d)
+          || (axis==2 && !ppack->pmesh->three_d)) continue;
+      for (int face=2*axis; face<=2*axis+1; ++face) {
+        auto flag=ppack->pmesh->mesh_bcs[face];
+        supported_boundary=supported_boundary && (flag==BoundaryFlag::periodic
+            || flag==BoundaryFlag::outflow || flag==BoundaryFlag::reflect);
+      }
+    }
+    if (!supported_boundary || ppack->pmesh->adaptive
         || opt.reduction_system != "legacy") {
-      std::cerr << "### FATAL ERROR: residual_shifted currently requires periodic "
-                << "fixed topology and legacy fields\n";
+      std::cerr << "### FATAL ERROR: residual_shifted currently requires periodic, "
+                << "outflow or reflecting boundaries, fixed topology and legacy fields\n";
       std::exit(EXIT_FAILURE);
     }
     transfer_residual = DvceArray5D<Real>("transfer residual",nmb,npcgh,

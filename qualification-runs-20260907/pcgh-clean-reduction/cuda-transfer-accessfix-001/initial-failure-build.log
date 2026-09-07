@@ -1,0 +1,271 @@
+[  1%] Building CXX object kokkos/simd/src/CMakeFiles/kokkossimd.dir/Kokkos_SIMD_dummy.cpp.o
+[  1%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_CPUDiscovery.cpp.o
+[  2%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_Abort.cpp.o
+[  2%] Built target AlwaysCheckGit
+[  3%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_Command_Line_Parsing.cpp.o
+[  4%] Linking CXX static library libkokkossimd.a
+[  4%] Built target kokkossimd
+[  5%] Building CXX object kokkos/CMakeFiles/impl_git_version.dir/__/generated/Kokkos_Version_Info.cpp.o
+[  5%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_Core.cpp.o
+[  6%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_Error.cpp.o
+[  6%] Linking CXX static library libimpl_git_version.a
+[  6%] Built target impl_git_version
+[  6%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_ExecPolicy.cpp.o
+[  7%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_HostBarrier.cpp.o
+[  7%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_HostSpace.cpp.o
+[  8%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_HostSpace_deepcopy.cpp.o
+[  8%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_HostThreadTeam.cpp.o
+[  9%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_MemoryPool.cpp.o
+[  9%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_Profiling.cpp.o
+[ 10%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_SharedAlloc.cpp.o
+[ 10%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_Stacktrace.cpp.o
+[ 11%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/impl/Kokkos_hwloc.cpp.o
+[ 11%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/Cuda/Kokkos_CudaSpace.cpp.o
+[ 12%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/Cuda/Kokkos_Cuda_Instance.cpp.o
+[ 12%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/Cuda/Kokkos_Cuda_Task.cpp.o
+[ 13%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/Serial/Kokkos_Serial.cpp.o
+[ 13%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/Serial/Kokkos_Serial_Task.cpp.o
+[ 14%] Building CXX object kokkos/core/src/CMakeFiles/kokkoscore.dir/__/__/tpls/desul/src/Lock_Array_CUDA.cpp.o
+[ 14%] Linking CXX static library libkokkoscore.a
+[ 14%] Built target kokkoscore
+[ 15%] Building CXX object kokkos/containers/src/CMakeFiles/kokkoscontainers.dir/impl/Kokkos_UnorderedMap_impl.cpp.o
+[ 15%] Linking CXX static library libkokkoscontainers.a
+[ 15%] Built target kokkoscontainers
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/parameter_input.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/main.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/globals.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/bvals/bvals.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/bvals/bvals.cpp(240): warning #177-D: variable "npart" was declared but never referenced
+    int npart = pmy_part->nprtcl_thispack;
+        ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/bvals/buffs_cc.cpp.o
+[ 18%] Building CXX object src/CMakeFiles/athena.dir/bvals/buffs_fc.cpp.o
+[ 18%] Building CXX object src/CMakeFiles/athena.dir/bvals/bvals_cc.cpp.o
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/bvals/bvals_fc.cpp.o
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/bvals/bvals_part.cpp.o
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/bvals/bvals_tasks.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/bvals/bvals_part.cpp(353): warning #20178-D: Implicit capture of 'this' in extended lambda expression
+        int p = sendlist.d_view(n).prtcl_indx;
+                ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/bvals/bvals_part.cpp(472): warning #20178-D: Implicit capture of 'this' in extended lambda expression
+        if (n < nprtcl_send) {
+                ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/bvals/bvals_part.cpp(353): warning #20178-D: Implicit capture of 'this' in extended lambda expression
+        int p = sendlist.d_view(n).prtcl_indx;
+                ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/bvals/bvals_part.cpp(472): warning #20178-D: Implicit capture of 'this' in extended lambda expression
+        if (n < nprtcl_send) {
+                ^
+
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/bvals/flux_correct_cc.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/bvals/flux_correct_fc.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/bvals/prolongation.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/bvals/prolong_prims.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/bvals/physics/hydro_bcs.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/bvals/physics/bfield_bcs.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/bvals/physics/radiation_bcs.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/bvals/physics/z4c_bcs.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/coordinates/adm.cpp.o
+[ 25%] Building CXX object src/CMakeFiles/athena.dir/coordinates/coordinates.cpp.o
+[ 25%] Building CXX object src/CMakeFiles/athena.dir/coordinates/excision.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/diffusion/conduction.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/diffusion/resistivity.cpp.o
+[ 27%] Building CXX object src/CMakeFiles/athena.dir/diffusion/viscosity.cpp.o
+[ 27%] Building CXX object src/CMakeFiles/athena.dir/driver/driver.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd_fluxes.cpp.o
+[ 29%] Building CXX object src/CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd_fofc.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/eos/eos.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/eos/ideal_hyd.cpp.o
+[ 31%] Building CXX object src/CMakeFiles/athena.dir/eos/ideal_mhd.cpp.o
+[ 31%] Building CXX object src/CMakeFiles/athena.dir/eos/isothermal_hyd.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/eos/isothermal_mhd.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/eos/ideal_srhyd.cpp.o
+[ 33%] Building CXX object src/CMakeFiles/athena.dir/eos/ideal_grhyd.cpp.o
+[ 33%] Building CXX object src/CMakeFiles/athena.dir/eos/ideal_srmhd.cpp.o
+[ 34%] Building CXX object src/CMakeFiles/athena.dir/eos/ideal_grmhd.cpp.o
+[ 34%] Building CXX object src/CMakeFiles/athena.dir/eos/primitive-solver/eos_compose.cpp.o
+[ 35%] Building CXX object src/CMakeFiles/athena.dir/eos/primitive-solver/eos_hybrid.cpp.o
+[ 35%] Building CXX object src/CMakeFiles/athena.dir/eos/primitive-solver/piecewise_polytrope.cpp.o
+[ 36%] Building CXX object src/CMakeFiles/athena.dir/eos/primitive-solver/unit_system.cpp.o
+[ 36%] Building CXX object src/CMakeFiles/athena.dir/geodesic-grid/geodesic_grid.cpp.o
+[ 37%] Building CXX object src/CMakeFiles/athena.dir/geodesic-grid/spherical_grid.cpp.o
+[ 37%] Building CXX object src/CMakeFiles/athena.dir/geodesic-grid/gauss_legendre.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/utils/spherical_harm.hpp(38): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("SWSphericalHarm") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    k1 = std::max(0, m-s);
+         ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/utils/spherical_harm.hpp(39): warning #20013-D: calling a constexpr __host__ function("min") from a __host__ __device__ function("SWSphericalHarm") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    k2 = std::min(l+m,l-s);
+         ^
+
+[ 38%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro.cpp.o
+[ 38%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_fluxes.cpp.o
+[ 39%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_fofc.cpp.o
+[ 39%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_newdt.cpp.o
+[ 40%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_tasks.cpp.o
+[ 40%] Building CXX object src/CMakeFiles/athena.dir/hydro/hydro_update.cpp.o
+[ 41%] Building CXX object src/CMakeFiles/athena.dir/ion-neutral/ion-neutral.cpp.o
+[ 41%] Building CXX object src/CMakeFiles/athena.dir/ion-neutral/ion-neutral_tasks.cpp.o
+[ 42%] Building CXX object src/CMakeFiles/athena.dir/mesh/build_tree.cpp.o
+[ 42%] Building CXX object src/CMakeFiles/athena.dir/mesh/load_balance.cpp.o
+[ 43%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh.cpp.o
+[ 44%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock.cpp.o
+[ 44%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o
+[ 45%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock_tree.cpp.o
+[ 45%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o
+[ 46%] Building CXX object src/CMakeFiles/athena.dir/mesh/refinement_criteria.cpp.o
+[ 46%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd.cpp.o
+[ 47%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_corner_e.cpp.o
+[ 47%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_ct.cpp.o
+[ 48%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_fluxes.cpp.o
+[ 48%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_fofc.cpp.o
+[ 49%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_newdt.cpp.o
+[ 49%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_tasks.cpp.o
+[ 50%] Building CXX object src/CMakeFiles/athena.dir/mhd/mhd_update.cpp.o
+[ 50%] Building CXX object src/CMakeFiles/athena.dir/outputs/io_wrapper.cpp.o
+[ 51%] Building CXX object src/CMakeFiles/athena.dir/outputs/outputs.cpp.o
+[ 51%] Building CXX object src/CMakeFiles/athena.dir/outputs/basetype_output.cpp.o
+[ 52%] Building CXX object src/CMakeFiles/athena.dir/outputs/cartgrid.cpp.o
+[ 52%] Building CXX object src/CMakeFiles/athena.dir/outputs/derived_variables.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1446): warning #20013-D: calling a constexpr __host__ function("min") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                E_uu[a][b] += g_uu(a,c) * g_uu(b,d) * E_dd(std::min(c,d), std::max(c,d));
+                                                           ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1446): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                E_uu[a][b] += g_uu(a,c) * g_uu(b,d) * E_dd(std::min(c,d), std::max(c,d));
+                                                                          ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1447): warning #20013-D: calling a constexpr __host__ function("min") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                B_uu[a][b] += g_uu(a,c) * g_uu(b,d) * B_dd(std::min(c,d), std::max(c,d));
+                                                           ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1447): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                B_uu[a][b] += g_uu(a,c) * g_uu(b,d) * B_dd(std::min(c,d), std::max(c,d));
+                                                                          ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1454): warning #20013-D: calling a constexpr __host__ function("min") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            Kretschmann += 8.0 * (E_dd(std::min(a,b), std::max(a,b)) * E_uu[a][b] -
+                                       ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1454): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+            Kretschmann += 8.0 * (E_dd(std::min(a,b), std::max(a,b)) * E_uu[a][b] -
+                                                      ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1455): warning #20013-D: calling a constexpr __host__ function("min") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                                  B_dd(std::min(a,b), std::max(a,b)) * B_uu[a][b]);
+                                       ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1455): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                                  B_dd(std::min(a,b), std::max(a,b)) * B_uu[a][b]);
+                                                      ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1476): warning #20013-D: calling a constexpr __host__ function("min") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                  P_u(a) -= eps_uuu[a][b][c] * E_dd(std::min(b,m1), std::max(b,m1)) * g_uu(m1,l1) * B_dd(std::min(c,l1), std::max(c,l1));
+                                                    ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1476): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                  P_u(a) -= eps_uuu[a][b][c] * E_dd(std::min(b,m1), std::max(b,m1)) * g_uu(m1,l1) * B_dd(std::min(c,l1), std::max(c,l1));
+                                                                    ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1476): warning #20013-D: calling a constexpr __host__ function("min") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                  P_u(a) -= eps_uuu[a][b][c] * E_dd(std::min(b,m1), std::max(b,m1)) * g_uu(m1,l1) * B_dd(std::min(c,l1), std::max(c,l1));
+                                                                                                         ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1476): warning #20013-D: calling a constexpr __host__ function("max") from a __host__ __device__ function("operator()") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+                  P_u(a) -= eps_uuu[a][b][c] * E_dd(std::min(b,m1), std::max(b,m1)) * g_uu(m1,l1) * B_dd(std::min(c,l1), std::max(c,l1));
+                                                                                                                         ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/athena_tensor.hpp(459): warning #940-D: missing return statement at end of non-void function "AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]"
+    }
+    ^
+          detected during instantiation of "Real &AthenaPointTensor<T, sym, ndim, 3>::operator()(int, int, int) [with T=Real, sym=TensorSymm::SYM2, ndim=3]" at line 1259 of /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1446): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::min<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1446): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1447): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::min<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1447): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1454): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::min<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1454): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1455): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::min<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1455): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1476): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::min<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1476): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1476): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::min<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/derived_variables.cpp(1476): warning #20013-D: calling a constexpr __host__ function("const T1 &  ::std::max<int> (const T1 &, const T1 &)") from a __host__ __device__ function("BaseTypeOutput::ComputeDerivedVariable(   ::std::__cxx11::basic_string<char,     ::std::char_traits<char> , ::std::allocator<char> > ,     ::Mesh *)::[lambda(int, int, int, int) (instance 22)]::operator () const") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+
+[ 53%] Building CXX object src/CMakeFiles/athena.dir/outputs/binary.cpp.o
+[ 53%] Building CXX object src/CMakeFiles/athena.dir/outputs/eventlog.cpp.o
+[ 54%] Building CXX object src/CMakeFiles/athena.dir/outputs/formatted_table.cpp.o
+[ 54%] Building CXX object src/CMakeFiles/athena.dir/outputs/history.cpp.o
+[ 55%] Building CXX object src/CMakeFiles/athena.dir/outputs/restart.cpp.o
+[ 55%] Building CXX object src/CMakeFiles/athena.dir/outputs/spherical_surface.cpp.o
+[ 56%] Building CXX object src/CMakeFiles/athena.dir/outputs/coarsened_binary.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/coarsened_binary.cpp(300): warning #177-D: variable "bin_slice" was declared but never referenced
+    bool bin_slice = (out_params.slice1 || out_params.slice2 || out_params.slice3);
+         ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 56%] Building CXX object src/CMakeFiles/athena.dir/outputs/track_prtcl.cpp.o
+[ 57%] Building CXX object src/CMakeFiles/athena.dir/outputs/vtk_mesh.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/track_prtcl.cpp(54): warning #20178-D: Implicit capture of 'this' in extended lambda expression
+      if (pi(PTAG,p) < ntrack) {
+                       ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/outputs/track_prtcl.cpp(54): warning #20178-D: Implicit capture of 'this' in extended lambda expression
+      if (pi(PTAG,p) < ntrack) {
+                       ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+[ 58%] Building CXX object src/CMakeFiles/athena.dir/outputs/vtk_prtcl.cpp.o
+[ 58%] Building CXX object src/CMakeFiles/athena.dir/particles/particles.cpp.o
+[ 59%] Building CXX object src/CMakeFiles/athena.dir/particles/particles_pushers.cpp.o
+[ 59%] Building CXX object src/CMakeFiles/athena.dir/particles/particles_tasks.cpp.o
+[ 60%] Building CXX object src/CMakeFiles/athena.dir/outputs/pdf.cpp.o
+[ 60%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh.cpp.o
+[ 61%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_adm.cpp.o
+[ 61%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_calcrhs.cpp.o
+[ 62%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_constraints.cpp.o
+[ 62%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_transfer.cpp.o
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/pc_gh/pc_gh_transfer.cpp(26): error: The enclosing parent function ("TransferResidualGhosts") for an extended __host__ __device__ lambda cannot have private or protected access within its class
+                                     (int m,int n,int k,int j,int i) {
+                                     ^
+
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/pc_gh/pc_gh_transfer.cpp(51): error: The enclosing parent function ("TransferResidualGhosts") for an extended __host__ __device__ lambda cannot have private or protected access within its class
+                                     (int m,int n,int k,int j,int i) {
+                                     ^
+
+2 errors detected in the compilation of "/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src/pc_gh/pc_gh_transfer.cpp".
+gmake[2]: *** [src/CMakeFiles/athena.dir/build.make:1353: src/CMakeFiles/athena.dir/pc_gh/pc_gh_transfer.cpp.o] Error 2
+gmake[2]: *** Waiting for unfinished jobs....
+gmake[1]: *** [CMakeFiles/Makefile2:373: src/CMakeFiles/athena.dir/all] Error 2
+gmake: *** [Makefile:136: all] Error 2

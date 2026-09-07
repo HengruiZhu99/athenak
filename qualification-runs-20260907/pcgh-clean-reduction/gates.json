@@ -142,5 +142,27 @@
     },
     "curl_roundoff_floor": 2e-12,
     "scope": "fixed topology actual mesh transfer only; no evolution or full stability"
+  },
+  "boundary_transfer": {
+    "status": "NOT_RUN",
+    "ghost_residual_abs": 2e-12,
+    "reflection_parity_abs": 2e-12,
+    "fixed_entries": 0,
+    "boundaries": [
+      "outflow",
+      "reflect",
+      "mixed"
+    ],
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "dimensions": [
+      2,
+      3
+    ],
+    "repetitions": 3,
+    "scope": "constant residual and exact discrete boundary parity; not physical curl convergence"
   }
 }

@@ -1,0 +1,14 @@
+--- a/src/pc_gh/pc_gh.hpp
++++ b/src/pc_gh/pc_gh.hpp
+@@ -371,8 +371,10 @@
+   // Columns are {Rw,RQ,Ralpha,RB,curl(p),curl(Q),curl(L),curl(B)}.
+   std::array<std::array<Real, 8>, 7> transfer_reduction_change{};
+ 
++ public:
++  template <int ORDER> void TransferResidualGhosts();
++
+  private:
+-  template <int ORDER> void TransferResidualGhosts();
+   MeshBoundaryValuesCC *pbval_residual = nullptr;
+   DvceArray5D<Real> transfer_residual, coarse_transfer_residual;
+   HostArray5D<Real> state_budget_before;
