@@ -1,0 +1,172 @@
+{
+  "status": "PASS",
+  "scope": "Periodic tensor-factor transfer model; not a finite-block AMR qualification.",
+  "command": [
+    "clang++",
+    "-std=c++17",
+    "-O2",
+    "-shared",
+    "-fPIC",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src",
+    "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/transfer_probe.cpp",
+    "-o",
+    "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/transfer-algebra-001/transfer_probe.dylib"
+  ],
+  "compiled_normalized_error": 1.7979851144308076e-16,
+  "source_sha256": "e0ad2abebdabad361b9f90c2c71464336ab2d43e589e536d07744b01f300fbcd",
+  "rows": [
+    {
+      "order": 2,
+      "dimension": 2,
+      "n": 8,
+      "normalized_residual_identity_error": 3.910420932222906e-17,
+      "independent_transfer_injection_max": 0.2862724815917696,
+      "reconstructed_gradient_curl_max": 1.7763568394002505e-15
+    },
+    {
+      "order": 2,
+      "dimension": 2,
+      "n": 16,
+      "normalized_residual_identity_error": 5.307976007986029e-17,
+      "independent_transfer_injection_max": 0.40283958107556894,
+      "reconstructed_gradient_curl_max": 5.329070518200751e-15
+    },
+    {
+      "order": 2,
+      "dimension": 2,
+      "n": 32,
+      "normalized_residual_identity_error": 6.270851195951942e-17,
+      "independent_transfer_injection_max": 0.12073271501165088,
+      "reconstructed_gradient_curl_max": 1.0658141036401503e-14
+    },
+    {
+      "order": 2,
+      "dimension": 3,
+      "n": 8,
+      "normalized_residual_identity_error": 3.670373460546231e-17,
+      "independent_transfer_injection_max": 0.2653969836693963,
+      "reconstructed_gradient_curl_max": 1.3322676295501878e-15
+    },
+    {
+      "order": 2,
+      "dimension": 3,
+      "n": 16,
+      "normalized_residual_identity_error": 4.884819110598842e-17,
+      "independent_transfer_injection_max": 0.3811089673106994,
+      "reconstructed_gradient_curl_max": 7.105427357601002e-15
+    },
+    {
+      "order": 2,
+      "dimension": 3,
+      "n": 32,
+      "normalized_residual_identity_error": 6.298284082512394e-17,
+      "independent_transfer_injection_max": 0.12000516129082497,
+      "reconstructed_gradient_curl_max": 1.5987211554602254e-14
+    },
+    {
+      "order": 4,
+      "dimension": 2,
+      "n": 8,
+      "normalized_residual_identity_error": 4.2995618819819394e-17,
+      "independent_transfer_injection_max": 0.29779079696413135,
+      "reconstructed_gradient_curl_max": 1.4654943925052066e-14
+    },
+    {
+      "order": 4,
+      "dimension": 2,
+      "n": 16,
+      "normalized_residual_identity_error": 4.894399698660779e-17,
+      "independent_transfer_injection_max": 0.3346049665639935,
+      "reconstructed_gradient_curl_max": 5.950795411990839e-14
+    },
+    {
+      "order": 4,
+      "dimension": 2,
+      "n": 32,
+      "normalized_residual_identity_error": 6.695691914033416e-17,
+      "independent_transfer_injection_max": 0.028243078128236065,
+      "reconstructed_gradient_curl_max": 2.922107000813412e-13
+    },
+    {
+      "order": 4,
+      "dimension": 3,
+      "n": 8,
+      "normalized_residual_identity_error": 4.968621991633101e-17,
+      "independent_transfer_injection_max": 0.30855457083001936,
+      "reconstructed_gradient_curl_max": 2.1316282072803006e-14
+    },
+    {
+      "order": 4,
+      "dimension": 3,
+      "n": 16,
+      "normalized_residual_identity_error": 5.707538383412255e-17,
+      "independent_transfer_injection_max": 0.31916796070302816,
+      "reconstructed_gradient_curl_max": 5.623279619726418e-14
+    },
+    {
+      "order": 4,
+      "dimension": 3,
+      "n": 32,
+      "normalized_residual_identity_error": 6.924002834399176e-17,
+      "independent_transfer_injection_max": 0.02821680700202995,
+      "reconstructed_gradient_curl_max": 3.503863865716994e-13
+    },
+    {
+      "order": 6,
+      "dimension": 2,
+      "n": 8,
+      "normalized_residual_identity_error": 3.9998913840878485e-17,
+      "independent_transfer_injection_max": 0.3082250113275188,
+      "reconstructed_gradient_curl_max": 3.1530333899354446e-14
+    },
+    {
+      "order": 6,
+      "dimension": 2,
+      "n": 16,
+      "normalized_residual_identity_error": 4.8647607264244165e-17,
+      "independent_transfer_injection_max": 0.31947315294723144,
+      "reconstructed_gradient_curl_max": 9.547918011776346e-14
+    },
+    {
+      "order": 6,
+      "dimension": 2,
+      "n": 32,
+      "normalized_residual_identity_error": 6.690650268200853e-17,
+      "independent_transfer_injection_max": 0.018022578946975926,
+      "reconstructed_gradient_curl_max": 4.929390229335695e-13
+    },
+    {
+      "order": 6,
+      "dimension": 3,
+      "n": 8,
+      "normalized_residual_identity_error": 4.9664265973738444e-17,
+      "independent_transfer_injection_max": 0.33941002791302116,
+      "reconstructed_gradient_curl_max": 2.930988785010413e-14
+    },
+    {
+      "order": 6,
+      "dimension": 3,
+      "n": 16,
+      "normalized_residual_identity_error": 5.873086370693002e-17,
+      "independent_transfer_injection_max": 0.30398838539839945,
+      "reconstructed_gradient_curl_max": 1.6608936448392342e-13
+    },
+    {
+      "order": 6,
+      "dimension": 3,
+      "n": 32,
+      "normalized_residual_identity_error": 6.922077047495558e-17,
+      "independent_transfer_injection_max": 0.018000122199227354,
+      "reconstructed_gradient_curl_max": 6.235012506294879e-13
+    }
+  ],
+  "exclusions": [
+    "finite-block restriction",
+    "MPI",
+    "CUDA",
+    "halo support",
+    "coupled amplification",
+    "evolution",
+    "production communication linkage"
+  ]
+}

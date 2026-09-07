@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "scope": "symbolic and point-jet checks only; no PDE evolution",
+  "python": "3.9.6",
+  "numpy": "2.0.2",
+  "sympy": "1.14.0",
+  "checks": [
+    {
+      "check": "check_identities.py",
+      "returncode": 0
+    },
+    {
+      "check": "characteristics.py",
+      "returncode": 0
+    },
+    {
+      "check": "exact_flat_symbol.py",
+      "returncode": 0
+    },
+    {
+      "check": "check_geometric_equivalence.py",
+      "returncode": 0
+    },
+    {
+      "check": "check_full_symbol.py",
+      "returncode": 0
+    },
+    {
+      "check": "symmetrizer_search.py",
+      "returncode": 0
+    },
+    {
+      "check": "symmetrizer_certificate.py",
+      "returncode": 0
+    },
+    {
+      "check": "check_flat_fourier.py",
+      "returncode": 0
+    }
+  ]
+}

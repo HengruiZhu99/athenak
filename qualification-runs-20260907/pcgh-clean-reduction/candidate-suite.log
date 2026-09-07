@@ -1,0 +1,347 @@
+
+=== check_identities.py ===
+{
+  "intrinsic_det_metric": true,
+  "intrinsic_curvature_trace": true,
+  "intrinsic_metric_gradient_traces": 5,
+  "arbitrary_function_reduction_identity": true,
+  "arbitrary_function_curl_identity_with_variable_rate": true,
+  "GLM_isolated_symmetric_symbol": true,
+  "GLM_characteristic_polynomial": "v*(-c_d + v)*(c_d + v)*(-c_h + v)**2*(c_h + v)**2",
+  "TT_symmetrizer_necessary_relation": "Eq(h22, h11*w**2/4)",
+  "lifted_TT_zero_mode": "Matrix([[1], [lambda/(2*alpha)], [0]])",
+  "weighted_TT_lapse_rate_symmetric_block": true,
+  "status": "PASS: exact SymPy identities, no evolution"
+}
+
+
+=== characteristics.py ===
+{
+  "scalar_characteristic_polynomial": "(-alpha*w + z)**2*(alpha*w + z)**2*(-2*alpha*w**2 + z**2)*(S*alpha**2*w**2 + 3*z**2 - 4)/3",
+  "vector_characteristic_polynomial": "(z**2 - 1)*(-alpha**2*w**2 + z**2)",
+  "tensor_characteristic_polynomial": "-alpha**2*w**2 + z**2",
+  "generic_scalar_square_free_annihilator": true,
+  "explicit_S1_scalar_characteristics_verified": true,
+  "explicit_S1_scalar_characteristic_determinant": "4*sqrt(6)*w**2*sqrt(-alpha*w + 2)*sqrt(alpha*w + 2)/sqrt(alpha)",
+  "coincidence_square_free_checks": [
+    "lapse_longitudinal_shift",
+    "light_shift",
+    "lapse_transverse_shift"
+  ],
+  "S1_squared_projector_denominators": [
+    "1",
+    "3",
+    "3*(alpha - 2)",
+    "4",
+    "4*(alpha - 2)",
+    "alpha - 2",
+    "w*(alpha - 2)"
+  ],
+  "w0_fixed_rho_scalar_jordan_block_sizes": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "w0_fixed_rho_scalar_matrix": [
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "4/3"
+    ],
+    [
+      "0",
+      "0",
+      "0",
+      "-1",
+      "0",
+      "0",
+      "1",
+      "0"
+    ]
+  ]
+}
+
+
+=== exact_flat_symbol.py ===
+PASS: exact flat matrices and SO(3) infinitesimal covariance
+
+
+=== check_geometric_equivalence.py ===
+{
+  "samples": 128,
+  "seed": 20260906,
+  "max_normalized_error": 5.769291208467016e-16,
+  "max_absolute_error": 8.881784197001252e-16,
+  "physical_rows": [
+    "K",
+    "Cperp",
+    "Ahat(5)",
+    "Z(3)"
+  ],
+  "nonzero_GH_constraints": true,
+  "method": "independent physical-metric Ricci, Hessian, Codazzi jets; no time evolution"
+}
+
+
+=== check_full_symbol.py ===
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/check_full_symbol.py:60: RuntimeWarning: divide by zero encountered in matmul
+  err=np.max(abs(P@Y-Y@B20))/(1+np.max(abs(P@Y)))
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/check_full_symbol.py:60: RuntimeWarning: overflow encountered in matmul
+  err=np.max(abs(P@Y-Y@B20))/(1+np.max(abs(P@Y)))
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/check_full_symbol.py:60: RuntimeWarning: invalid value encountered in matmul
+  err=np.max(abs(P@Y-Y@B20))/(1+np.max(abs(P@Y)))
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/lib/python3.9/site-packages/numpy/linalg/_linalg.py:3220: RuntimeWarning: divide by zero encountered in matmul
+  return _core_matmul(x1, x2)
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/lib/python3.9/site-packages/numpy/linalg/_linalg.py:3220: RuntimeWarning: overflow encountered in matmul
+  return _core_matmul(x1, x2)
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/venv/lib/python3.9/site-packages/numpy/linalg/_linalg.py:3220: RuntimeWarning: invalid value encountered in matmul
+  return _core_matmul(x1, x2)
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/check_full_symbol.py:65: RuntimeWarning: divide by zero encountered in matmul
+  res=np.max(abs(P-Y@Yinv@P))/(1+np.max(abs(P)))
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/check_full_symbol.py:65: RuntimeWarning: overflow encountered in matmul
+  res=np.max(abs(P-Y@Yinv@P))/(1+np.max(abs(P)))
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/check_full_symbol.py:65: RuntimeWarning: invalid value encountered in matmul
+  res=np.max(abs(P-Y@Yinv@P))/(1+np.max(abs(P)))
+{
+  "samples": 48,
+  "seed": 20260906,
+  "full_rhs_normal_block_max_normalized_error": 4.051773566926235e-15,
+  "full_symbol_image_max_normalized_error": 6.998990226852656e-15,
+  "spectrum_max_normalized_error": 2.9836564356590928e-15,
+  "status": "PASS: point-jet oracle, not production linkage or evolution"
+}
+
+
+=== symmetrizer_search.py ===
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:42: RuntimeWarning: divide by zero encountered in matmul
+  M=R[a].T@R[b];H.append((M+M.T)/2);labels.append(f'{label}_{a}_{b}')
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:42: RuntimeWarning: overflow encountered in matmul
+  M=R[a].T@R[b];H.append((M+M.T)/2);labels.append(f'{label}_{a}_{b}')
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:42: RuntimeWarning: invalid value encountered in matmul
+  M=R[a].T@R[b];H.append((M+M.T)/2);labels.append(f'{label}_{a}_{b}')
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:53: RuntimeWarning: divide by zero encountered in matmul
+  A=np.stack([np.concatenate([(h@P-P.T@h).ravel() for P in Ps]) for h in H],axis=1)
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:53: RuntimeWarning: overflow encountered in matmul
+  A=np.stack([np.concatenate([(h@P-P.T@h).ravel() for P in Ps]) for h in H],axis=1)
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:53: RuntimeWarning: invalid value encountered in matmul
+  A=np.stack([np.concatenate([(h@P-P.T@h).ravel() for P in Ps]) for h in H],axis=1)
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:72: RuntimeWarning: divide by zero encountered in matmul
+  'max_original_floating_symmetry_residual':float(np.max(abs(A@Ns))) if ns else 0.}
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:72: RuntimeWarning: overflow encountered in matmul
+  'max_original_floating_symmetry_residual':float(np.max(abs(A@Ns))) if ns else 0.}
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:72: RuntimeWarning: invalid value encountered in matmul
+  'max_original_floating_symmetry_residual':float(np.max(abs(A@Ns))) if ns else 0.}
+{
+  "exact_SO3_covariance_verified": true,
+  "exact_invariant_ansatz_rank": 47,
+  "unknown_invariant_weights": 47,
+  "independent_linear_weights": 8,
+  "forced_zero_diagonal_indices": [
+    19
+  ],
+  "max_original_floating_symmetry_residual": 3.552713678800501e-15,
+  "status": "NO_POSITIVE_INVARIANT_SYMMETRIZER: exact zero quadratic coefficient"
+}
+
+
+=== symmetrizer_certificate.py ===
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:42: RuntimeWarning: divide by zero encountered in matmul
+  M=R[a].T@R[b];H.append((M+M.T)/2);labels.append(f'{label}_{a}_{b}')
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:42: RuntimeWarning: overflow encountered in matmul
+  M=R[a].T@R[b];H.append((M+M.T)/2);labels.append(f'{label}_{a}_{b}')
+/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/candidate-suite/analysis/symmetrizer_search.py:42: RuntimeWarning: invalid value encountered in matmul
+  M=R[a].T@R[b];H.append((M+M.T)/2);labels.append(f'{label}_{a}_{b}')
+{
+  "identity": "H[19,19] = sum coefficient*(H P_direction - P_direction.T H)[row,column]",
+  "scope": "all SO(3)-invariant symmetric matrices in the complete 47-dimensional ansatz",
+  "independent_equations": 39,
+  "terms": [
+    {
+      "direction": 0,
+      "row": 0,
+      "column": 16,
+      "coefficient": "1/4"
+    },
+    {
+      "direction": 0,
+      "row": 0,
+      "column": 26,
+      "coefficient": "1/8"
+    },
+    {
+      "direction": 0,
+      "row": 1,
+      "column": 16,
+      "coefficient": "-3/4"
+    },
+    {
+      "direction": 0,
+      "row": 1,
+      "column": 26,
+      "coefficient": "-3/8"
+    },
+    {
+      "direction": 0,
+      "row": 2,
+      "column": 16,
+      "coefficient": "1/2"
+    },
+    {
+      "direction": 0,
+      "row": 2,
+      "column": 23,
+      "coefficient": "-1/2"
+    },
+    {
+      "direction": 0,
+      "row": 10,
+      "column": 16,
+      "coefficient": "-3/4"
+    },
+    {
+      "direction": 0,
+      "row": 10,
+      "column": 26,
+      "coefficient": "-3/8"
+    },
+    {
+      "direction": 0,
+      "row": 16,
+      "column": 19,
+      "coefficient": "1"
+    },
+    {
+      "direction": 0,
+      "row": 19,
+      "column": 23,
+      "coefficient": "1"
+    }
+  ],
+  "verified_exactly": true
+}
+
+
+=== check_flat_fourier.py ===
+{
+  "exact_reduction_operator_identity": true,
+  "exact_reduction_manifold_invariance": true,
+  "GLM90_closed_constraint_block_identity": true,
+  "GLM_seven_field_polynomial": "(lambda + z)*(c_d**2*k**2 + (kappa_c + z)*(kappa_d + z))*(c_h**2*k**2 + (kappa_c + z)*(lambda + z))**2",
+  "GLM90_full_characteristic_polynomial": "(k**2 + z**2)**2*(2*k**2 + z**2)*(lambda + z)**10*(c_d**2*k**2 + (kappa_c + z)*(kappa_d + z))**10*(c_h**2*k**2 + (kappa_c + z)*(lambda + z))**20*(k**2 + kappa*z + z**2)**3*(k**2 + 2*kappa*z + z**2)*(eta*z + k**2 + z**2)**3",
+  "constrained_characteristic_polynomial": "(k**2 + z**2)**2*(2*k**2 + z**2)*(k**2 + kappa*z + z**2)**3*(k**2 + 2*kappa*z + z**2)*(eta*z + k**2 + z**2)**3",
+  "full_characteristic_polynomial": "(k**2 + z**2)**2*(2*k**2 + z**2)*(lambda + z)**30*(k**2 + kappa*z + z**2)**3*(k**2 + 2*kappa*z + z**2)*(eta*z + k**2 + z**2)**3",
+  "conclusion": "For lambda,eta,kappa >= 0, no positive-real-part Fourier eigenvalue for any real k. Neutral/Jordan/transient behavior is not excluded.",
+  "scope": "Minkowski linearization at alpha=w=1, S=1; not a variable-background or discrete-interface theorem"
+}
+
+{
+  "status": "PASS",
+  "scope": "symbolic and point-jet checks only; no PDE evolution",
+  "python": "3.9.6",
+  "numpy": "2.0.2",
+  "sympy": "1.14.0",
+  "checks": [
+    {
+      "check": "check_identities.py",
+      "returncode": 0
+    },
+    {
+      "check": "characteristics.py",
+      "returncode": 0
+    },
+    {
+      "check": "exact_flat_symbol.py",
+      "returncode": 0
+    },
+    {
+      "check": "check_geometric_equivalence.py",
+      "returncode": 0
+    },
+    {
+      "check": "check_full_symbol.py",
+      "returncode": 0
+    },
+    {
+      "check": "symmetrizer_search.py",
+      "returncode": 0
+    },
+    {
+      "check": "symmetrizer_certificate.py",
+      "returncode": 0
+    },
+    {
+      "check": "check_flat_fourier.py",
+      "returncode": 0
+    }
+  ]
+}

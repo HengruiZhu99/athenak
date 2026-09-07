@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "frozen_before_new_evolution": true,
+  "gates": [
+    {"id": 0, "name": "provenance and unchanged legacy", "status": "NOT_RUN", "remaining": "compiled legacy equivalence and one-step controls"},
+    {"id": 1, "name": "operators and complete interfaces", "status": "NOT_RUN"},
+    {"id": 2, "name": "smooth and forced-constraint evolution", "status": "NOT_RUN"},
+    {"id": 3, "name": "fixed-layout single puncture 20M", "status": "NOT_RUN"},
+    {"id": 4, "name": "original fine-core stress 6M", "status": "NOT_RUN"},
+    {"id": 5, "name": "moving puncture and matched binary", "status": "NOT_RUN"}
+  ],
+  "fixtures": {
+    "original_candidate_suite": {"status": "PASS", "scope": "eight pinned algebra and point-jet checks; no compiled/evolution implication"},
+    "cpu_transfer_algebra": {
+      "status": "NOT_RUN",
+      "normalization": "max absolute mismatch divided by 1+max absolute reconstructed target+max absolute transferred residual",
+      "tolerance": 2e-12,
+      "scope": "periodic tensor-factor operator model; excludes finite-block MPI/halo/interface evolution",
+      "orders": [2, 4, 6],
+      "dimensions": [2, 3],
+      "coarse_n": [8, 16, 32],
+      "families": ["w", "alpha=rho*w", "s[5]", "beta[3]"],
+      "negative_control": "independent component transfer must inject resolved reductions for at least one fixture of each FD order"
+    }
+  }
+}
