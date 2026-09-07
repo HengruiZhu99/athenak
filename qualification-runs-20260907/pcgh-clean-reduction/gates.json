@@ -120,5 +120,27 @@
       "single octant static refinement"
     ],
     "scope": "CPU Serial periodic operator; no promotion from this fixture alone"
+  },
+  "varying_residual_transfer": {
+    "status": "NOT_RUN",
+    "block_n": [
+      8,
+      16,
+      32
+    ],
+    "order": 6,
+    "primary_active_invariance": 0,
+    "uniform_residual_tolerance": 2e-12,
+    "uniform_curl_min_rate": 5.5,
+    "smr_residual_min_rate": {
+      "2": 1.7,
+      "3": 4.5
+    },
+    "smr_curl_min_rate": {
+      "2": 0.8,
+      "3": 3.5
+    },
+    "curl_roundoff_floor": 2e-12,
+    "scope": "fixed topology actual mesh transfer only; no evolution or full stability"
   }
 }

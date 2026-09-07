@@ -84,3 +84,36 @@ then two ranks sharing the authorized GPU if the single-rank checks pass.
 Recheck free memory immediately before those tests. Last occupancy before build:
 3559/40960 MiB, 0% utilization. Do not alter unrelated processes. Use the same
 120-second process bound and frozen 2e-12 component tolerance; no long evolution.
+
+## Varying-residual transfer/curl ladder (frozen before execution)
+Use the same periodic topology (4/8 uniform leaves; 7/15 static refined leaves),
+but double cells per block 8,16,32 at fixed block boundaries and physical domain.
+FD6, four ghosts, three exchanges, no evolution. Seed each legacy auxiliary with
+E_n=0.001*(n-I_P1+1)*sin(2*pi*(x+y/1.3+z/1.7)+0.13*n), with z omitted in 2D.
+The primaries remain the previous nonconstant fixture. Compare residual ghosts
+against their analytic E and curls on all active cells against analytic dE.
+The factorized legacy lapse curl includes its discrete product-rule error and
+must remain separately identifiable as family 7; do not silently subtract it.
+Require exact primary/active invariance. Uniform ghost residual errors must be
+<=2e-12; uniform curl errors should converge at FD6 order (minimum rate 5.5).
+For static interfaces expect second-order residual interpolation in 2D and
+fifth-order in 3D; minimum successive max-error rates 1.7 and 4.5, respectively.
+One derivative can lower interface max curl order: minimum rates 0.8 (2D) and
+3.5 (3D), unless the component reaches the 2e-12 roundoff floor. Compute rates
+for each repeated exchange and retain every component/failure. Ghost norms count
+overlapping block halos and are not physical-volume constraint norms. Active
+curl coordinate-volume norms cover every leaf without excision. At the largest
+3D mesh, estimated working memory <8 GiB; each fixture remains bounded to 120s.
+
+## Full ghost-consumer TT/KO falsification (before execution)
+The earlier toy added a global KO matrix but omitted reconstruction at KO's
+auxiliary ghost consumers. For the same-level two-block periodic TT subsystem,
+include K_D*h in v_t and K_KO*h in q_t, obtained from the actual shifted ghost
+target minus the owner's centered target at every consumed ghost. E=q-Dh then
+has E_t=-lambda*E+KO*E+K_KO*h. This is a semidiscrete tangency defect, not the
+candidate's continuum source mixing. Test blocks 8,16,32,64; FD2/4/6; KO 0 and
+0.3; lambda=1; SSPRK3 dt=0.2*h. Retain the full-width control. Flag normalized
+positive generator rates >1e-10 or RK eigenvalue modulus >1+1e-9. Near-neutral
+floating flags require independent resolution, as before. This is a necessary
+TT subsystem test, not a full Einstein/AMR stability proof. A failed result
+blocks downstream promotion but not correction of the transfer/KO construction.

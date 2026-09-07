@@ -148,6 +148,32 @@
       "status": "PASS",
       "evidence": "transfer-task-step-001/results.json",
       "scope": "finite single step and correction bracket placement/invariance only"
+    },
+    "varying_transfer_ladder": {
+      "status": "PASS",
+      "evidence": "varying-transfer-002/convergence.json",
+      "scope": "all 33 legacy residual and 33 curl components in a fixed periodic smooth fixture, three exchanges; no coupled time evolution",
+      "2D_residual_rates": [
+        1.996522326355508,
+        1.9991308435596038
+      ],
+      "3D_residual_rates": [
+        4.97659013426671,
+        4.987637818984842
+      ],
+      "uniform_ghost_error": "roundoff; no convergence-rate inference",
+      "remaining": "boundary/regrid/restart and complete coupled amplification/stability"
+    },
+    "halo_ko_raw_spectral_flags": {
+      "status": "FAIL",
+      "evidence": "halo-ko-coupling-001.json",
+      "scope": "31 floating near-neutral flags; no established exponential instability"
+    },
+    "halo_ko_neutral_quotient": {
+      "status": "PASS",
+      "evidence": "halo-ko-coupling-003.json",
+      "scope": "necessary periodic TT eigen/RK screen with actual KO ghost correction and exact neutral quotient; no uniform transient bound or full interface proof",
+      "nonzero_tangency_defect": true
     }
   }
 }

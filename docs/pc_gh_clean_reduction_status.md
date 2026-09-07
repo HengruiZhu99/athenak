@@ -129,3 +129,40 @@ file hashes were independently verified before compilation. Controller PID
 succeeded. Inspect that controller and `build.exit` before taking any restart
 action. This build controller launches no GPU tests; new CUDA transfer checks
 remain NOT_RUN until actual results are collected.
+
+## Variable residual and curl convergence checkpoint
+
+Added a smooth off-reduction operator fixture with analytic curls. Fixed physical
+block boundaries and 7/15-leaf refinement maps are retained while cells per block
+increase 8 -> 16 -> 32. All 33 residual and all 33 curl components meet the frozen
+thresholds over three exchanges. 2D refined ghost residual rates are 1.997/1.999;
+3D rates are 4.977/4.988. Active curl rates reflect one derivative of interpolation
+error: approximately first order in 2D and fourth order in 3D. Uniform curls
+approach sixth order; uniform residual ghosts are at roundoff, so their apparent
+negative rates are not meaningful convergence estimates.
+
+These measurements improve on the ordinary transfer in this controlled fixture,
+with the actual primaries fixed. Ghost residual comparisons use the declared
+shifted target, not an independent physical solution. Active curl errors use the
+analytic seeded curl, retaining the legacy factorized-lapse product-rule error.
+The 2D averaging restriction remains a substantive order limitation, not a claim
+of FD6 interface accuracy. The aggregate first pass and the subsequent complete
+component pass are both retained, with binary/source hashes and per-run durations.
+A plot is `varying-transfer-002/convergence.png` in the dated evidence directory.
+
+No evolution stability, puncture regularity, full Gate 1 or intrinsic-system
+qualification is implied. Next substantive work is physical boundary completion
+and coupled transfer/RK/KO behavior. The independently launched CUDA/MPI build
+of snapshot 40e0bc1f remains separate from these newer CPU-only diagnostics.
+
+The necessary TT model now includes reconstruction at KO auxiliary consumers.
+This exposes K_Q*h in the discrete reduction equation, absent from the earlier
+KO screen. The FD6 smooth-mode defect approaches fifth order. Raw near-neutral
+spectral flags are preserved; the quotient by analytically invariant neutral
+h/v modes has no growing-mode/RK flags in the tested matrices. This does not
+bound nonnormal growth or qualify the full Einstein/interface evolution.
+
+Della test controller PID 479693 (tool session 78343) is confirmed live and waits
+on build PID 385334. It checks the build exit, source hashes and >=4 GiB free GPU
+memory before each group. Only successful single-rank uniform/refined groups
+permit two-rank groups. No CUDA transfer result exists yet at this checkpoint.
