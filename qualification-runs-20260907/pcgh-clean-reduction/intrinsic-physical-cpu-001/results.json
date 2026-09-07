@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "samples": 128,
+  "tolerance": 2e-12,
+  "max_normalized_error": 4.515124438705401e-16,
+  "worst_index": [
+    54,
+    8
+  ],
+  "row_errors": [
+    4.047446640686082e-16,
+    4.082148622911864e-16,
+    2.5744552091584975e-16,
+    1.4491061215753035e-16,
+    1.750090715726762e-16,
+    2.9611137958914733e-16,
+    1.6877966507209968e-16,
+    3.7617424571643044e-16,
+    4.515124438705401e-16,
+    2.5598599750598694e-16
+  ],
+  "rows": [
+    "K",
+    "C",
+    "Ahat_xx",
+    "Ahat_xy",
+    "Ahat_xz",
+    "Ahat_yy",
+    "Ahat_yz",
+    "Zx",
+    "Zy",
+    "Zz"
+  ],
+  "nonzero_GH_constraints": true,
+  "wall_seconds": 0.0912468433380127,
+  "command": [
+    "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-intrinsic-map/intrinsic_rhs",
+    "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-physical-cpu-001/input.txt",
+    "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-physical-cpu-001/output.txt",
+    "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-physical-cpu-001/kokkos.txt"
+  ],
+  "binary_sha256": "2c43a9eb61771aa28f073b82adfbb107761f6f61f2ffea682f1a90472364da24",
+  "input_sha256": "ca39f2ed9813ca4adbcc1e218f311bddce2ad20f8d650b1a098f0d2dab87176e",
+  "reference_sha256": "c6ac8732045690e6f2b388ab1281072a62472c8d4da71f8951900c1c4fc51ed8",
+  "scope": "independent physical-metric oracle on reduction, not evolution"
+}

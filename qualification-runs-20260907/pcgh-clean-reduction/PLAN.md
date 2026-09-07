@@ -168,3 +168,26 @@ GH fields and reduction errors. Require determinant, inverse, curvature and Q
 trace identities <=2e-12 after scaling. Reject explicit non-SPD, non-unit-det,
 traceful A/Q and nonpositive w/rho states; rejected conversion leaves output
 unchanged. Conversion is not restart integration, and no evolution mode is added.
+
+### Complete intrinsic point kernel (frozen before compiled comparison)
+
+Compare all 50 RHS rows, ten complete configuration sources, lower-triangular
+chart rate, and their three true directional derivatives to the pinned nonlinear
+Python oracle with its identical C-infinity switch. Use 24 seeded non-diagonal
+off-reduction states with nonzero K/A/C/Z/B, independent jets, switch z values
+0.05,0.1,0.100001,0.2,0.3,0.499999,0.5,0.8, and multiple positive alpha/w.
+Use normalized |compiled-reference|/(1+|reference|)<=2e-11 for all outputs.
+Also compare full 50x50 derivative matrices for eight oblique normals by applying
+all 50 basis jets and subtracting the zero-jet source, at the same tolerance.
+Record individual row/column discrepancies; no eigenspectrum substitutes for
+entrywise comparison. Parameters lambda, eta, kappa vary independently. This is
+a kernel oracle, not grid evolution, hyperbolicity proof, or gate promotion.
+
+### Compiled physical GH oracle (frozen before run)
+
+Use the pinned independent physical-metric Ricci/Hessian/Codazzi oracle on its
+128 seeded smooth finite-radius reduction-satisfying jets with nonzero C/Z.
+Compare compiled K,C,Ahat[5],Z[3] after subtracting primary advection at normalized
+error |a-b|/(1+|a|+|b|)<=2e-12, with matched kappa=1, eta=2, lambda=1.
+This checks ten physical primary rows; configuration gauge and auxiliary rows
+remain covered by the complete off-reduction point-jet oracle, not this test.

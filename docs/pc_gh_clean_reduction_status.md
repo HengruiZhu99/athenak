@@ -251,3 +251,18 @@ or characteristic qualification. Next implementation work is the complete
 configuration sources and their true chain-rule derivatives, followed by all
 curvature/GH/auxiliary rows and independent point-jet comparison. No new bulk
 evolution may be promoted past unfinished operator and oracle gates.
+
+## Complete intrinsic point kernel checkpoint
+
+All 50 continuum point-RHS rows are now implemented in intrinsic_rhs.hpp, using
+complete configuration-source directional differentiation. CPU source/jet and
+full matrix comparisons pass, as does the independent physical GH primary-row
+oracle with nonzero C/Z. This kernel is not integrated into mesh evolution.
+
+CUDA remains FAIL: the original combined diagnostic returns NaNs. Memory
+checking reports zero errors; additional diagnostic stores change the result
+to agreement with CPU. A smaller probe also shows a finite but discrepant K
+row. The cause is unresolved, so no CUDA or evolution promotion follows. All
+outputs, source/build manifests and probes are retained; all controllers are
+terminal. The prioritized next action is to isolate this diagnostic-layout
+dependence before grid integration. See analysis/pc_gh_clean_reduction/INTRINSIC_RHS.md.

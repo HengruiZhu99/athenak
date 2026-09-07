@@ -299,6 +299,31 @@
       "status": "PASS",
       "evidence": "intrinsic-map-exact-001.json",
       "scope": "explicit inverse, determinant, trace and tangent-inverse symbolic identities"
+    },
+    "intrinsic_RHS_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-rhs-cpu-001/results.json",
+      "scope": "All 50 rows, complete sources/true jets, eight full principal matrices; no evolution"
+    },
+    "intrinsic_physical_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-physical-cpu-001/results.json",
+      "scope": "128 independent physical Ricci/Hessian/Codazzi jets, ten primary rows with nonzero C/Z"
+    },
+    "intrinsic_RHS_CUDA_original": {
+      "status": "FAIL",
+      "evidence": "intrinsic-rhs-cuda-001/results.json",
+      "scope": "Original combined diagnostic returns NaNs; memory checker reports zero errors; unresolved harness/kernel code-generation dependence"
+    },
+    "intrinsic_RHS_CUDA_instrumented": {
+      "status": "PASS",
+      "evidence": "intrinsic-rhs-cuda-001/diagnostic-comparison.json",
+      "scope": "Instrumented diagnostic only; original CUDA kernel harness remains FAIL"
+    },
+    "intrinsic_RHS_CUDA_probe_K": {
+      "status": "FAIL",
+      "evidence": "intrinsic-rhs-cuda-001/diagnostic-comparison.json",
+      "scope": "Finite K values disagree with CPU in smaller probe"
     }
   }
 }

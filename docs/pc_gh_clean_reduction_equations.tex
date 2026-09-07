@@ -6,7 +6,7 @@
 This record currently covers only the compiled intrinsic geometry and
 finite-radius state map. The full candidate evolution equations remain in the
 pinned mathematical reference (commit
-\texttt{7ef9c61c0c2bd12a46b28f334a53a1aabcd1842e}); they are not yet implemented.
+\texttt{7ef9c61c0c2bd12a46b28f334a53a1aabcd1842e}); a complete continuum point kernel now exists, but is not connected to mesh evolution. Its CPU oracle passes and its original CUDA diagnostic fails with NaNs; qualification remains open.
 For $s=(a,c,b,d,e)$ define
 \[
  T=\begin{pmatrix}e^a&0&0\\b&e^c&0\\d&e&e^{-a-c}\end{pmatrix},\qquad
