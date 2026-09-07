@@ -50,7 +50,7 @@ void PcGhSommerfeld(DvceArray5D<Real> state, DvceArray5D<Real> state_rhs,
                                     1.0/size.d_view(m).dx2,
                                     1.0/size.d_view(m).dx3};
   Real const normal[3] = {x*inv_radius, y*inv_radius, z*inv_radius};
-  for (int n = 0; n < PcGh::npcgh; ++n) {
+  for (int n = 0; n < state.extent_int(1); ++n) {
     Real radial_derivative = 0.0;
     for (int d = 0; d < 3; ++d) {
       // Inactive dimensions have one cell and no derivative halo.
@@ -59,7 +59,8 @@ void PcGhSommerfeld(DvceArray5D<Real> state, DvceArray5D<Real> state_rhs,
           d, inverse_spacing, state, m, n, k, j, i);
     }
     state_rhs(m, n, k, j, i) = -radial_derivative
-        - (state(m, n, k, j, i) - FlatPcGhValue(n))*inv_radius;
+        - (state(m, n, k, j, i) - (state.extent_int(1) == 50
+           ? (n<2 ? 1.0 : 0.0) : FlatPcGhValue(n)))*inv_radius;
   }
 }
 

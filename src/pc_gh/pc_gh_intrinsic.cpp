@@ -1,5 +1,5 @@
 // AthenaK astrophysical plasma code, 3-clause BSD License (LICENSE).
-// Periodic fixed-topology mesh integration of the independent 50-field system.
+// Fixed-topology mesh integration of the independent 50-field system.
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -64,7 +64,7 @@ const char *PcGh::StateName(int v) const {
 
 void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   // Reject unimplemented paths rather than accepting an ignored legacy setting.
-  const std::set<std::string> allowed = {"formulation", "spatial_order", "shift_eta",
+  const std::set<std::string> allowed = {"formulation", "spatial_order", "shift_eta", "extrap_order",
     "kappa", "reduction_rate", "reduction_profile", "dissipation", "research_dt_ceiling",
     "intrinsic_restriction", "coherent_transfer", "intrinsic_stage_dump", "intrinsic_diagnostics", "intrinsic_diagnostic_dcycle",
     "restart_layout", "restart_layout_version", "restart_layout_fields",
@@ -77,8 +77,14 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   if (pin->DoesParameterExist("pc_gh", "restart_tracker_state")
       && pin->GetBoolean("pc_gh", "restart_tracker_state"))
     IntrinsicError("tracker restart state is not supported");
-  if (pmy_pack->pmesh->adaptive || !pmy_pack->pmesh->strictly_periodic)
-    IntrinsicError("mesh integration requires fixed topology and periodic boundaries");
+  if (pmy_pack->pmesh->adaptive)
+    IntrinsicError("mesh integration requires fixed topology");
+  for (int d=0;d<3;++d) {
+    auto lo=pmy_pack->pmesh->mesh_bcs[2*d];
+    auto hi=pmy_pack->pmesh->mesh_bcs[2*d+1];
+    if (lo != hi || (lo != BoundaryFlag::periodic && lo != BoundaryFlag::outflow))
+      IntrinsicError("intrinsic boundaries must be paired periodic or outflow faces");
+  }
   for (const auto &block : pin->block) {
     if (block.block_name.rfind("output", 0) != 0) continue;
     const auto type = pin->GetString(block.block_name, "file_type");
@@ -89,6 +95,11 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   if (pin->GetOrAddString("time", "integrator", "rk3") != "rk3")
     IntrinsicError("initial mesh qualification requires rk3");
   opt = {};
+  // The shared outflow helper is component-wise polynomial extrapolation over
+  // the actual view extent. Intrinsic reflection/inflow paths remain prohibited.
+  opt.extrap_order=pin->GetOrAddInteger("pc_gh", "extrap_order", 2);
+  if (opt.extrap_order<2 || opt.extrap_order>4)
+    IntrinsicError("extrap_order must be 2, 3 or 4");
   intrinsic_stage_dump = pin->GetOrAddBoolean("pc_gh", "intrinsic_stage_dump", false);
   intrinsic_diagnostics = pin->GetOrAddBoolean("pc_gh", "intrinsic_diagnostics", false);
   intrinsic_diagnostic_dcycle = pin->GetOrAddInteger("pc_gh", "intrinsic_diagnostic_dcycle", 1);
@@ -103,6 +114,8 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   opt.coherent_transfer = pin->GetOrAddString("pc_gh", "coherent_transfer", "none");
   if (opt.coherent_transfer != "none" && opt.coherent_transfer != "residual_shifted")
     IntrinsicError("coherent_transfer must be none or residual_shifted");
+  if (!pmy_pack->pmesh->strictly_periodic && opt.coherent_transfer != "none")
+    IntrinsicError("physical-boundary puncture screens currently require ordinary transfer");
   opt.spatial_order = pin->GetOrAddInteger("pc_gh", "spatial_order", 6);
   opt.fd_stencil = opt.spatial_order/2+1;
   if ((opt.spatial_order != 2 && opt.spatial_order != 4 && opt.spatial_order != 6)
@@ -153,8 +166,12 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
 void PcGh::IntrinsicInitialData(ParameterInput *pin, bool restart) {
   if (restart) return;
   const auto name = pin->GetString("problem", "pgen_name");
-  if (name != "intrinsic_minkowski" && name != "intrinsic_smooth")
-    IntrinsicError("initial data must be intrinsic_minkowski or intrinsic_smooth");
+  bool puncture=name == "intrinsic_puncture";
+  if (name != "intrinsic_minkowski" && name != "intrinsic_smooth" && !puncture)
+    IntrinsicError("unsupported intrinsic initial data");
+  double mass=puncture ? pin->GetOrAddReal("problem", "mass", 1) : 1;
+  if (puncture && (!pmy_pack->pmesh->three_d || !std::isfinite(mass) || mass<=0))
+    IntrinsicError("puncture data require three dimensions and positive finite mass");
   double amplitude = name == "intrinsic_smooth" ?
     pin->GetOrAddReal("problem", "amplitude", 0.001) : 0;
   if (!std::isfinite(amplitude)) IntrinsicError("nonfinite initial amplitude");
@@ -175,6 +192,18 @@ void PcGh::IntrinsicInitialData(ParameterInput *pin, bool restart) {
         for (int n=0;n<50;++n)
           h(m,n,k,j,i)=(n<2 ? 1.0 : 0.0)
             +amplitude*std::sin(phase+0.17*n)/(1+0.03*n);
+        if (puncture) {
+          // Time-symmetric Schwarzschild wormhole: psi=1+M/(2r),
+          // w=psi^-2, alpha=w, rho=1, g=I, K=A=C=Z=beta=0.
+          // The analytic gradient below avoids division by r; no floor is used.
+          double radius=std::sqrt(x*x+y*y+z*z), den=radius+0.5*mass;
+          h(m,0,k,j,i)=(radius/den)*(radius/den);
+          double xyz[3]={x,y,z};
+          for (int d=0;d<3;++d) {
+            h(m,20+d,k,j,i)=mass*xyz[d]/(den*den*den);
+            h(m,23+d,k,j,i)=h(m,20+d,k,j,i);
+          }
+        }
       }
   Kokkos::deep_copy(u0,h);
 }

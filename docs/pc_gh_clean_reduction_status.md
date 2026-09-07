@@ -618,3 +618,7 @@ is bitwise neutral. This identifies a specific numerical mismatch feeding the
 previous p-to-C RHS correction; it does not prove the later convergence failure's
 cause. Next is a coverage-checked interpolation/derivative compatibility control.
 See `analysis/pc_gh_clean_reduction/INTRINSIC_P_COMMUTATOR.md`.
+
+## User-directed puncture continuation
+
+Interface investigation stopped at user request. Findings and unfinished control preserved; next work is uniform/SMR puncture evolution followed by binary. See [campaign plan](../analysis/pc_gh_clean_reduction/INTRINSIC_PUNCTURE_CAMPAIGN.md).

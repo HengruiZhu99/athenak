@@ -10,7 +10,7 @@ import struct
 import numpy as np
 
 
-def read_restart(path, *, allow_refinement=False):
+def read_restart(path, *, allow_refinement=False, allow_outflow=False):
     raw=Path(path).read_bytes()
     marker=b'<par_end>\n';pos=raw.index(marker)+len(marker)
     header=raw[:pos].decode();blocks={};section=None
@@ -44,7 +44,7 @@ def read_restart(path, *, allow_refinement=False):
         assert nmb==np.prod(mesh[1:4]//mb[1:4])
     for axis in range(1,4):
         if mesh[axis]>1:
-            assert all(blocks['mesh'][f'{side}x{axis}_bc']=='periodic' for side in ['i','o']), 'not periodic'
+            assert all(blocks['mesh'][f'{side}x{axis}_bc'] in (('periodic','outflow') if allow_outflow else ('periodic',)) for side in ['i','o']), 'unsupported boundary'
     return dict(root_level=level,header=blocks,locations=locations,state=state,mesh=mesh,mb=mb,domain=domain,time=time,dt=dt,cycle=cycle)
 
 
