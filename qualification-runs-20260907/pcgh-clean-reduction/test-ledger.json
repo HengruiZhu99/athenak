@@ -624,6 +624,11 @@
       "status": "FAIL",
       "evidence": "intrinsic-transfer-integration-001/intrinsic-integration-legacy-transfer-001",
       "scope": "Wrong problem generator rejected all six cases before transfer. Correct transfer_mesh_oracle build passes all six in 002; failure retained."
+    },
+    "intrinsic_interface_accuracy": {
+      "status": "FAIL",
+      "evidence": "intrinsic-interface-budget-001",
+      "scope": "Negative accuracy comparison: n32 reconstructed intrinsic curl RMS11.70x ordinary; coarse-corner maximum near constant. Exploratory RMS-decrease screen passes but is not a qualification gate. Exact-ghost FD6 diagnostic and exact restriction-bias checks pass."
     }
   }
 }

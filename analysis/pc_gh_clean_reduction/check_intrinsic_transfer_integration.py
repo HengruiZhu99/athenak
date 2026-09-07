@@ -5,17 +5,22 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 import numpy as np
 from intrinsic_restart import read_restart
-p=argparse.ArgumentParser();p.add_argument('--binary',type=Path,required=True);p.add_argument('--template',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--ranks',type=int,default=1);p.add_argument('--mpiexec',default='/opt/homebrew/bin/mpiexec');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--binary',type=Path,required=True);p.add_argument('--template',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--ranks',type=int,default=1);p.add_argument('--mpiexec',default='/opt/homebrew/bin/mpiexec');p.add_argument('--block-n',type=int,default=8);p.add_argument('--orders',type=int,nargs='+',default=[2,4,6]);p.add_argument('--dimensions',type=int,nargs='+',default=[2,3]);a=p.parse_args()
 a.output.mkdir(exist_ok=True)
 results=[]
-for order in (2,4,6):
- for dim in (2,3):
+for order in a.orders:
+ for dim in a.dimensions:
   pair=[]
   for mode in ('none','residual_shifted'):
    run=a.output/f'fd{order}-{dim}d-{mode}';run.mkdir()
    text=a.template.read_text().replace('spatial_order = 6',f'spatial_order = {order}').replace('nlim = 20','nlim = 0').replace('intrinsic_diagnostics = true','intrinsic_diagnostics = false').replace('<pc_gh>',f'<pc_gh>\ncoherent_transfer = {mode}')
    if dim==3:
     mesh,tail=text.split('<meshblock>');text=mesh.replace('nx3 = 1','nx3 = 16')+'<meshblock>'+tail.replace('nx3 = 1','nx3 = 8')
+   mesh,tail=text.split('<meshblock>')
+   for axis in range(1,dim+1):
+    mesh=mesh.replace(f'nx{axis} = 16',f'nx{axis} = {2*a.block_n}')
+    tail=tail.replace(f'nx{axis} = 8',f'nx{axis} = {a.block_n}')
+   text=mesh+'<meshblock>'+tail
    text+='\n<mesh_refinement>\nrefinement = static\n<refined_region1>\nx1min = 0.125\nx1max = 0.375\nx2min = 0.1625\nx2max = 0.4875\nx3min = 0.2125\nx3max = 0.6375\nlevel = 1\n'
    used=run/'used.athinput';used.write_text(text);start=time.monotonic()
    with (run/'run.log').open('w') as log:

@@ -1,0 +1,47 @@
+{
+  "binary_sha256": "cb5fa908a4dbaa09016410c134c9ea7afbf348b992a7190f3988e7a2b7c31dc6",
+  "runs": [
+    {
+      "order": 6,
+      "dimension": 2,
+      "mode": "none",
+      "ranks": 1,
+      "command": [
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-transfer-source-001/athena-serial",
+        "-i",
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-interface-budget-001/n32/fd6-2d-none/used.athinput"
+      ],
+      "returncode": 0,
+      "seconds": 0.025558208,
+      "leaves": 7,
+      "levels": [
+        1,
+        2
+      ],
+      "input_sha256": "8343b291701363ab4c623b3561410e01a730dc6ee0862b7953bc93e40d60810b"
+    },
+    {
+      "order": 6,
+      "dimension": 2,
+      "mode": "residual_shifted",
+      "ranks": 1,
+      "command": [
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-transfer-source-001/athena-serial",
+        "-i",
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-interface-budget-001/n32/fd6-2d-residual_shifted/used.athinput"
+      ],
+      "returncode": 0,
+      "seconds": 0.047559167,
+      "leaves": 7,
+      "levels": [
+        1,
+        2
+      ],
+      "input_sha256": "de2275c5518ee3ad1cf1e07736daf77fb31420ba04642a3ee091991216de59ad",
+      "primary_change": 0.0,
+      "active_change": 0.0,
+      "auxiliary_ghost_change": 0.0002943439753717559,
+      "status": "PASS_INVARIANCE_ONLY"
+    }
+  ]
+}

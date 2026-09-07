@@ -557,3 +557,16 @@ preserved. These are integration checks only. Signed interface budgets,
 interface convergence, repeated injection and CUDA qualification remain next;
 no puncture or binary promotion is justified. See the appended production
 checkpoint in `analysis/pc_gh_clean_reduction/INTRINSIC_TRANSFER_TARGET.md`.
+
+## Negative intrinsic interface accuracy evidence
+
+The first signed analytic interface comparison finds increased intrinsic and
+Q-curl error after residual reconstruction. At fixed physical interfaces and
+FD6 block sizes 8/16/32, reconstructed curl RMS converges near order one, while
+coarse corner-layer maxima are nearly constant. Ordinary transfer has smaller
+errors. Exact-ghost diagnostic controls recover sixth order. The actual coarse
+ghosts match the 2D four-cell-average restriction bias to 2.22e-16, identifying
+a low-order input to reconstruction. This does not yet prove the complete
+corner mechanism. The repair is not qualified; next is an isolated higher-order
+intrinsic 2D restriction control. All failures and signed data are retained in
+`analysis/pc_gh_clean_reduction/INTRINSIC_INTERFACE_BUDGET.md` and its evidence.
