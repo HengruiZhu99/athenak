@@ -1,0 +1,17 @@
+{
+  "pid": 934896,
+  "started_unix": 1788799775.757378,
+  "configure": [
+    "cmake",
+    "-S",
+    "source/analysis/pc_gh_clean_reduction/compiled",
+    "-B",
+    "build",
+    "-DKokkos_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/kokkos",
+    "-DATHENA_CONFIG_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build",
+    "-DATHENA_SOURCE_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src",
+    "-DCMAKE_CXX_COMPILER=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/kokkos/bin/nvcc_wrapper",
+    "-DCMAKE_CXX_FLAGS=-I/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/include"
+  ],
+  "input_sha256": "77635938d39d9719ccbf3afeaf1f4564cf00c2c8dbe0f86c8f9a9fb4b5b17741"
+}

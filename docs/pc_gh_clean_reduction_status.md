@@ -266,3 +266,21 @@ row. The cause is unresolved, so no CUDA or evolution promotion follows. All
 outputs, source/build manifests and probes are retained; all controllers are
 terminal. The prioritized next action is to isolate this diagnostic-layout
 dependence before grid integration. See analysis/pc_gh_clean_reduction/INTRINSIC_RHS.md.
+
+## CUDA point-kernel repair checkpoint
+
+The optimized CUDA failure is resolved in the new geometry construction.
+BaseGeometry computes only the quantities consumed by the RHS, with Q evaluated
+by an exactly equivalent direct tangent formula. It retains complete true Jet
+derivatives. CPU and CUDA original/instrumented/probe/-O3/permuted-input checks
+pass, including all 50 rows and eight full matrices. The independent physical
+GH oracle, map regression and memory checker also pass. Kernel stack allocation
+fell from 23904 to 9088 bytes. The prior construction's failures remain recorded;
+no specific compiler bug is claimed proved.
+
+The complete point kernel is now CPU/CUDA checked on the stated sample domain.
+It remains separate from mesh evolution; characteristic conditioning, subsidiary
+identities, full Fourier/transient and discrete operator/RK/KO checks, restart and
+50-field transfer integration remain unfinished. Physical qualification has not
+started. The next action is full-symbol conditioning/coincidence and subsidiary
+checks using the compiled kernel before enabling an evolution mode.

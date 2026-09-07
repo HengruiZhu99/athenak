@@ -1,4 +1,4 @@
-# Complete intrinsic point kernel: CPU verified, CUDA failure open
+# Complete intrinsic point kernel: CPU/CUDA verified after geometry repair
 
 `intrinsic_rhs.hpp` evaluates all 50 rows of the pinned intrinsic candidate.
 `intrinsic_sources.hpp` contains the ten complete configuration sources and
@@ -31,7 +31,7 @@ oracle compares K,C,Ahat[5],Z[3] on reduction with nonzero GH fields and passes
 2e-12 at 4.52e-16. Its physical inverse powers occur only in the independent
 finite-radius oracle, not in the candidate kernel.
 
-CUDA compilation and execution completed, but the original combined diagnostic
+In the first implementation, CUDA compilation and execution completed, but the original combined diagnostic
 returns NaNs throughout the nonconstant outputs. This is FAIL. Compute Sanitizer
 memcheck reports zero errors; this does not rule out all undefined behavior or
 code-generation problems. A smaller two-kernel probe and a combined diagnostic
@@ -46,9 +46,8 @@ original executable remain at
 `/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-rhs-001`.
 Original source tar/manifest predate additional probe/debug CMake targets.
 The original binary is `build/intrinsic_rhs`; probes are separate executables.
-Next action: isolate the diagnostic-layout dependence under controlled compiler
-and initialization checks, preserving original and instrumented outputs. Do not
-claim a compiler bug solely from the present observations.
+Those observations motivated the controls and repair below; they did not establish
+a compiler bug. Original failures and binaries remain preserved.
 
 Reproduce the CPU check with the standalone CMake directory used by the map,
 then run `check_intrinsic_rhs.py --binary ... --reference .../candidate.py
@@ -64,3 +63,34 @@ uses this new kernel yet. Legacy equations, projections and task timing remain
 unchanged by this checkpoint. Full subsidiary/characteristic/Fourier and coupled
 numerical qualification remains required; matching matrices is not itself a
 bounded-projector or finite-time stability proof.
+
+## Geometry repair and current status
+
+Host Valgrind finds no uninitialized/invalid accesses in 432 pure point calls
+(using an explicit annotations-only shim). Device input readback remains valid
+before/after the failing original kernel. Original default, -O3, ptxas-O0 and
+indexed-loop variants fail; -G passes. These are optimization-sensitive failures,
+not proof of a specific compiler defect.
+
+The repaired RHS uses BaseGeometry, storing only T/inverse, metric/inverse, Ahat,
+A and Q. It computes Q directly as dT*T^T+T*dT^T using independent S, rather than
+building full Jacobian/Hessian arrays that the RHS does not consume. Forward Jet
+differentiation still includes true chart derivatives and independent dS. An
+exact symbolic check proves equivalence to J*S. The full map/J/Hessian oracle
+remains unchanged and passes. No continuum equation, gauge coefficient, rate,
+projection, floor or tolerance changed.
+
+The original uninstrumented CUDA harness now passes all 432 points and eight
+complete matrices: source/jet error <=1.65e-15, matrix error <=1.63e-15, and
+CPU/CUDA error <=1.28e-15. The prior discrepant probe, instrumented kernel, -O3
+and permuted input all pass. The 128-case independent physical GH oracle passes
+on CUDA at 6.67e-16. Memory checking reports zero errors and its output also
+passes; the 106-case CUDA map output is unchanged. Compiled kernel stack usage
+decreases from 23904 to 9088 bytes (register count remains 255). This is an
+algebraically equivalent construction that removes the observed failure; the
+precise underlying optimization defect is not identified.
+
+All new GPU controllers are terminal. The repair source/binaries are isolated at
+/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-base-001.
+Next work is full characteristic/subsidiary/Fourier and numerical integration
+qualification. The kernel is still not an enabled mesh evolution mode.

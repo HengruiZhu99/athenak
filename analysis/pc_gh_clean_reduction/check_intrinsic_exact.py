@@ -14,6 +14,8 @@ g=t*t.T;inv=it.T*it
 assert zero(g*inv-s.eye(3)) and s.simplify(g.det()-1)==0
 v=s.symbols('v:5');x=s.zeros(3)
 for qi,vi in zip(q,v):x+=g.diff(qi)*vi
+direct=s.Matrix([[s.exp(a)*v[0],0,0],[v[2],s.exp(c)*v[1],0],[v[3],v[4],-s.exp(-a-c)*(v[0]+v[1])]])
+assert zero(direct*t.T+t*direct.T-x)
 w=s.simplify(it*x*it.T);ell=s.zeros(3)
 for i in range(3):
  for j in range(i+1):ell[i,j]=w[i,j]/(2 if i==j else 1)
@@ -23,5 +25,5 @@ assert zero(recovered-s.Matrix(v))
 ah=s.symbols('A:5');curv=s.Matrix([[ah[0],ah[1],ah[2]],[ah[1],ah[3],ah[4]],[ah[2],ah[4],-ah[0]-ah[3]]])
 assert s.simplify(s.trace(inv*t*curv*t.T))==0
 assert s.simplify(s.trace(inv*x))==0
-out={'status':'PASS','exact':['two-sided triangular inverse','metric inverse','unit determinant','arbitrary curvature trace','arbitrary independent gradient trace','five-component tangent inverse'],'scope':'exact real chart identities; not a bounded-condition or puncture theorem'}
+out={'status':'PASS','exact':['two-sided triangular inverse','metric inverse','unit determinant','arbitrary curvature trace','arbitrary independent gradient trace','five-component tangent inverse','direct independent-S gradient equals J*S'],'scope':'exact real chart identities; not a bounded-condition or puncture theorem'}
 args.output.write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out,indent=2))

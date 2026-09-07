@@ -1,0 +1,5 @@
+# Executed in the preserved intrinsic-rhs-001 remote directory.
+g++ -std=c++17 -g -O0 -I. -Isource/src intrinsic_host_probe.cpp -o intrinsic_host_probe
+valgrind --track-origins=yes --error-exitcode=99 --log-file=host-valgrind-002.log ./intrinsic_host_probe input.txt host-probe-output-002.txt 432
+# Kokkos_Core.hpp in this directory is the committed annotations-only shim.
+# Actual Kokkos CPU/CUDA comparisons are separate compiled targets.

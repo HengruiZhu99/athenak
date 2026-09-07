@@ -191,3 +191,21 @@ Compare compiled K,C,Ahat[5],Z[3] after subtracting primary advection at normali
 error |a-b|/(1+|a|+|b|)<=2e-12, with matched kappa=1, eta=2, lambda=1.
 This checks ten physical primary rows; configuration gauge and auxiliary rows
 remain covered by the complete off-reduction point-jet oracle, not this test.
+
+### CUDA discrepancy compiler controls
+
+Keep the exact preserved 432 input rows, original uninstrumented kernel/harness
+and 2e-11 threshold. Compare default compilation with ptxas optimization disabled
+and explicit -O3, in distinct build directories. Run the pure point header under
+host Valgrind with a documented annotation-only shim (real Kokkos CPU/CUDA tests
+remain separate). Preserve every result; a passing instrumented/optimized variant
+does not erase a failing supported build or prove a compiler bug. No evolution.
+
+### Smaller geometry construction repair
+
+Replace unused explicit J/Hessian construction in the RHS by direct Q=dT*T^T+
+T*dT^T with dT defined by independent S. Keep full map geometry and its explicit
+J/Hessian oracle. This changes evaluation order, not continuum equations or
+true Jet differentiation. Retain 2e-11 complete RHS/matrix and 2e-12 physical/map
+tolerances. Repeat CPU oracles and original/instrumented/probe/default/optimized
+CUDA controls on identical input, before any promotion.

@@ -1,0 +1,22 @@
+-- The CXX compiler identification is GNU 11.5.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/kokkos/bin/nvcc_wrapper - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found CUDAToolkit: /usr/local/cuda-12.6/targets/x86_64-linux/include (found version "12.6.85")
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Enabled Kokkos devices: SERIAL;CUDA
+CMake Warning at /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/kokkos/KokkosConfigCommon.cmake:59 (MESSAGE):
+  The installed Kokkos configuration does not support CXX extensions.
+  Forcing -DCMAKE_CXX_EXTENSIONS=Off
+Call Stack (most recent call first):
+  /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/kokkos/KokkosConfig.cmake:43 (INCLUDE)
+  CMakeLists.txt:4 (find_package)
+
+
+-- Configuring done (3.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-base-001/build

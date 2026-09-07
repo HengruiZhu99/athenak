@@ -18,9 +18,13 @@ enum Index : int {
 static_assert(B+9 == nvar);
 
 template<typename T>
-struct Geometry {
+struct BaseGeometry {
   T tri[3][3], inverse_tri[3][3], metric[3][3], inverse_metric[3][3];
   T ahat[3][3], curvature[3][3], gradient[3][3][3];
+};
+
+template<typename T>
+struct Geometry : BaseGeometry<T> {
   T jacobian[5][3][3], hessian[5][5][3][3];
 };
 
@@ -29,6 +33,45 @@ KOKKOS_INLINE_FUNCTION
 void SymmetricTraceFree(const T *v, T a[3][3]) {
   a[0][0]=v[0]; a[0][1]=a[1][0]=v[1]; a[0][2]=a[2][0]=v[2];
   a[1][1]=v[3]; a[1][2]=a[2][1]=v[4]; a[2][2]=-v[0]-v[3];
+}
+
+// Geometry needed by the complete RHS, without materializing J/Hessian arrays.
+// Q is the directional differential of T*T^T at independent S. Applying Jet
+// to this function retains both true chart derivatives and independent dS.
+template<typename T>
+KOKKOS_INLINE_FUNCTION
+void BuildBaseGeometry(const T u[nvar], BaseGeometry<T> &o) {
+  using std::exp;
+  const T a=u[CHART], c=u[CHART+1], b=u[CHART+2];
+  const T d=u[CHART+3], e=u[CHART+4];
+  for (int i=0;i<3;++i) for (int j=0;j<3;++j) {
+    o.tri[i][j]=0; o.inverse_tri[i][j]=0;
+  }
+  o.tri[0][0]=exp(a); o.tri[1][1]=exp(c); o.tri[2][2]=exp(-a-c);
+  o.tri[1][0]=b; o.tri[2][0]=d; o.tri[2][1]=e;
+  auto &it=o.inverse_tri;
+  it[0][0]=exp(-a); it[1][1]=exp(-c); it[2][2]=exp(a+c);
+  it[1][0]=-b*it[0][0]*it[1][1]; it[2][1]=-e*it[1][1]*it[2][2];
+  it[2][0]=(b*e*it[1][1]-d)*it[0][0]*it[2][2];
+  SymmetricTraceFree(u+AHAT,o.ahat);
+  for (int i=0;i<3;++i) for (int j=0;j<3;++j) {
+    o.metric[i][j]=o.inverse_metric[i][j]=o.curvature[i][j]=0;
+    for (int r=0;r<3;++r) {
+      o.metric[i][j]+=o.tri[i][r]*o.tri[j][r];
+      o.inverse_metric[i][j]+=it[r][i]*it[r][j];
+      for (int t=0;t<3;++t) o.curvature[i][j]+=o.tri[i][r]*o.ahat[r][t]*o.tri[j][t];
+    }
+  }
+  for (int k=0;k<3;++k) {
+    T dt[3][3]={};
+    dt[0][0]=o.tri[0][0]*u[S+5*k]; dt[1][1]=o.tri[1][1]*u[S+5*k+1];
+    dt[2][2]=-o.tri[2][2]*(u[S+5*k]+u[S+5*k+1]);
+    dt[1][0]=u[S+5*k+2]; dt[2][0]=u[S+5*k+3]; dt[2][1]=u[S+5*k+4];
+    for (int i=0;i<3;++i) for (int j=0;j<3;++j) {
+      o.gradient[k][i][j]=0;
+      for (int r=0;r<3;++r) o.gradient[k][i][j]+=dt[i][r]*o.tri[j][r]+o.tri[i][r]*dt[j][r];
+    }
+  }
 }
 
 template<typename T>

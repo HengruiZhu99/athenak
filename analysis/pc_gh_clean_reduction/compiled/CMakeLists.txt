@@ -9,7 +9,7 @@ add_executable(intrinsic_rhs intrinsic_rhs.cpp)
 target_link_libraries(intrinsic_rhs PRIVATE Kokkos::kokkos)
 target_include_directories(intrinsic_rhs PRIVATE ../../../src)
 # Diagnostic controls retained for the unresolved CUDA combined-harness failure.
-foreach(name intrinsic_probe intrinsic_debug)
+foreach(name intrinsic_probe intrinsic_debug intrinsic_hostinspect intrinsic_probe128 intrinsic_indexed intrinsic_loadorder)
   add_executable(${name} EXCLUDE_FROM_ALL ${name}.cpp)
   target_link_libraries(${name} PRIVATE Kokkos::kokkos)
   target_include_directories(${name} PRIVATE ../../../src)

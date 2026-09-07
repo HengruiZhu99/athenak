@@ -20,7 +20,7 @@ KOKKOS_INLINE_FUNCTION T GaugePlateau(T z) {
 template<typename T>
 KOKKOS_INLINE_FUNCTION
 void ConfigurationSources(const T u[nvar], T eta, T f[10], T ell[3][3]) {
-  Geometry<T> geo; BuildGeometry(u,geo);
+  BaseGeometry<T> geo; BuildBaseGeometry(u,geo);
   T alpha=u[W]*u[RHO], theta=u[B]+u[B+4]+u[B+8];
   T fg[3][3]={}, wave[3][3]={}, td[3][3]={};
   for (int i=0;i<3;++i) for (int j=0;j<3;++j) {

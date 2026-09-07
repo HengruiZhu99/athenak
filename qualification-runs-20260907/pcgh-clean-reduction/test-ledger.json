@@ -324,6 +324,56 @@
       "status": "FAIL",
       "evidence": "intrinsic-rhs-cuda-001/diagnostic-comparison.json",
       "scope": "Finite K values disagree with CPU in smaller probe"
+    },
+    "intrinsic_host_valgrind": {
+      "status": "PASS",
+      "evidence": "intrinsic-cuda-controls-001/host-valgrind-002.log",
+      "scope": "432 points under host Valgrind, annotations-only shim; not GPU memory proof"
+    },
+    "intrinsic_old_compiler_controls": {
+      "status": "FAIL",
+      "evidence": "intrinsic-cuda-controls-001/compiler-results.json",
+      "scope": "Original construction fails at default, ptxas0 and -O3"
+    },
+    "intrinsic_old_device_debug": {
+      "status": "PASS",
+      "evidence": "intrinsic-cuda-controls-001/device-debug-results.json",
+      "scope": "-G control only; indexed-loop control still fails"
+    },
+    "intrinsic_base_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-base-cpu-001/results.json",
+      "scope": "Complete point/source/jet and eight full principal matrices"
+    },
+    "intrinsic_base_CUDA": {
+      "status": "PASS",
+      "evidence": "intrinsic-base-cuda-001/results.json",
+      "scope": "Repaired original uninstrumented kernel; exact CPU input, full reference matrices"
+    },
+    "intrinsic_base_physical_CUDA": {
+      "status": "PASS",
+      "evidence": "intrinsic-base-cuda-001/physical-oracle-results.json",
+      "scope": "128 independent physical GH jets with nonzero C/Z"
+    },
+    "intrinsic_base_CUDA_regressions": {
+      "status": "PASS",
+      "evidence": "intrinsic-base-cuda-001/regression-results.json",
+      "scope": "Previously discrepant probe, instrumented kernel, -O3 and input permutation"
+    },
+    "intrinsic_base_CUDA_memcheck": {
+      "status": "PASS",
+      "evidence": "intrinsic-base-cuda-001/sanitizer-results.json",
+      "scope": "Zero memory-check errors AND output meets oracle tolerance"
+    },
+    "intrinsic_base_map_CUDA": {
+      "status": "PASS",
+      "evidence": "intrinsic-base-cuda-001/map-results.json",
+      "scope": "106 states; unchanged map outputs compared with earlier CUDA map"
+    },
+    "intrinsic_base_exact": {
+      "status": "PASS",
+      "evidence": "intrinsic-base-exact-001.json",
+      "scope": "Direct independent-S gradient equals J*S exactly"
     }
   }
 }

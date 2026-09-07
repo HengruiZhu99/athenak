@@ -1,0 +1,48 @@
+[
+  {
+    "label": "ptxas0",
+    "configure": [
+      "cmake",
+      "-S",
+      "source/analysis/pc_gh_clean_reduction/compiled",
+      "-B",
+      "build-ptxas0",
+      "-DKokkos_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/kokkos",
+      "-DATHENA_CONFIG_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build",
+      "-DATHENA_SOURCE_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src",
+      "-DCMAKE_CXX_COMPILER=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/kokkos/bin/nvcc_wrapper",
+      "-DCMAKE_CXX_FLAGS=-I/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/include -Xptxas=-O0"
+    ],
+    "configure_exit": 0,
+    "build_exit": 0,
+    "run_exit": 0,
+    "binary_sha256": "891b3f40bc7d761246b625cef61a93300541f75cfd5a73a5a8244bd02ffde680",
+    "finite": false,
+    "max_error": null,
+    "status": "FAIL",
+    "wall_seconds": 26.569352388381958
+  },
+  {
+    "label": "release",
+    "configure": [
+      "cmake",
+      "-S",
+      "source/analysis/pc_gh_clean_reduction/compiled",
+      "-B",
+      "build-release",
+      "-DKokkos_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build/kokkos",
+      "-DATHENA_CONFIG_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/build",
+      "-DATHENA_SOURCE_DIR=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/src",
+      "-DCMAKE_CXX_COMPILER=/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-transfer-001/source/kokkos/bin/nvcc_wrapper",
+      "-DCMAKE_CXX_FLAGS=-I/usr/local/openmpi/cuda-12.6/4.1.6/nvhpc2411/include -O3"
+    ],
+    "configure_exit": 0,
+    "build_exit": 0,
+    "run_exit": 0,
+    "binary_sha256": "65bc4aba3b3cbd9c339ff57748e912d4936260335e2faaea9c6e9272f328b7b8",
+    "finite": false,
+    "max_error": null,
+    "status": "FAIL",
+    "wall_seconds": 29.329950094223022
+  }
+]

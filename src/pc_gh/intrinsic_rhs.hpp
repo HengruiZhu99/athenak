@@ -6,20 +6,19 @@ namespace pc_gh::intrinsic {
 KOKKOS_INLINE_FUNCTION
 void PointRHS(const double u[nvar], const double du[3][nvar], double lambda,
               double eta, double kappa, double rhs[nvar]) {
-  Geometry<double> geo; BuildGeometry(u,geo);
+  BaseGeometry<double> geo; BuildBaseGeometry(u,geo);
   auto &g=geo.metric; auto &gu=geo.inverse_metric; auto &a=geo.curvature;
   auto &q=geo.gradient;
   const double w=u[W], rho=u[RHO], alpha=w*rho, kval=u[K], c=u[C];
   const double theta=u[B]+u[B+4]+u[B+8];
-  double dg[3][3][3], dgu[3][3][3], da[3][3][3], dq[3][3][3][3];
+  double dgu[3][3][3], da[3][3][3], dq[3][3][3][3];
   double df[3][10], f[10], ell[3][3];
   ConfigurationSources(u,eta,f,ell);
   for (int k=0;k<3;++k) {
     Jet state[nvar];
     for (int n=0;n<nvar;++n) state[n]={u[n],du[k][n]};
-    Geometry<Jet> jet; BuildGeometry(state,jet);
+    BaseGeometry<Jet> jet; BuildBaseGeometry(state,jet);
     for (int i=0;i<3;++i) for (int j=0;j<3;++j) {
-      dg[k][i][j]=jet.metric[i][j].derivative;
       dgu[k][i][j]=jet.inverse_metric[i][j].derivative;
       da[k][i][j]=jet.curvature[i][j].derivative;
       for (int r=0;r<3;++r) dq[k][r][i][j]=jet.gradient[r][i][j].derivative;
