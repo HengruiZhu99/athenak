@@ -451,7 +451,7 @@ int main(int argc, char *argv[]) {
   // Construct Driver and Outputs. Actual outputs (including initial conditions) are made
   // in Driver.Initialize(). Add wall clock timer to Driver if necessary.
 
-  const bool horizon_only = pinput->GetOrAddBoolean("fastflow", "horizon_only", false);
+  const bool horizon_only = (pinput->DoesParameterExist("fastflow", "horizon_only") && pinput->GetBoolean("fastflow", "horizon_only"));
   if (horizon_only) {
     if (!res_flag || run_dir.empty())
       throw std::runtime_error("horizon_only requires -r checkpoint and a fresh -d directory");

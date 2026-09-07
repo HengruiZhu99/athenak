@@ -52,7 +52,8 @@ maximum-radius settings control the bounded search. No tolerance is changed
 in response to failure.
 
 At least `2*lmax+4` angular points are used; independent dense verification uses
-`4*ntheta+3` Gauss points, plus an all-angle radius check including poles. The
+`4*ntheta+3` Gauss points, plus a dense radius check including poles. Expansion at the poles uses its
+analytic m=0 limit and participates in epsilon_inf. The
 m=0 basis enforces pole regularity. Surface CSVs store outgoing/ingoing expansion
 on the dense grid. The history `direct_residual` is now epsilon_2 normalized by
 area radius; `epsilon_inf` uses the same radius. `solver_converged` and `verified`

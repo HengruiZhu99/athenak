@@ -126,9 +126,11 @@ M0SurfacePoint EvaluateM0SurfacePoint(const Real theta, const Real radius,
                                       const M0AdmSample& sample) {
   M0SurfacePoint result;
   if (!sample.valid || !std::isfinite(radius) || radius <= 0.0) return result;
-  const Real st = std::sin(theta);
+  const bool pole = theta == 0.0 || theta == kPi;
+  const Real st = pole ? 0.0 : std::sin(theta);
   const Real ct = std::cos(theta);
-  if (!(st > 0.0)) return result;
+  if ((!pole && !(st > 0.0)) || (pole && std::abs(radius_theta) > 1.e-12 * radius))
+    return result;
   Real g[3][3], curvature[3][3], inverse[3][3];
   for (int a = 0; a < 3; ++a) {
     for (int b = 0; b < 3; ++b) {
@@ -161,7 +163,7 @@ M0SurfacePoint EvaluateM0SurfacePoint(const Real theta, const Real radius,
   }
   ddtheta[0][0] = -2.0 * x * z / std::pow(radius, 4);
   ddtheta[0][2] = ddtheta[2][0] = (x * x - z * z) / std::pow(radius, 4);
-  ddtheta[1][1] = z / (x * radius * radius);
+  ddtheta[1][1] = pole ? 0.0 : z / (x * radius * radius);
   ddtheta[2][2] = 2.0 * x * z / std::pow(radius, 4);
   Real dF[3], ddF[3][3], upper[3]{};
   for (int a = 0; a < 3; ++a) {
@@ -170,6 +172,15 @@ M0SurfacePoint EvaluateM0SurfacePoint(const Real theta, const Real radius,
       ddF[a][b] = ddr[a][b] - radius_theta * ddtheta[a][b] -
                   radius_theta_theta * dtheta[a] * dtheta[b];
     }
+  }
+  if (pole) {
+    // Smooth m=0 graph: h'=0 and both transverse Hessian components
+    // approach (r-h'')/r^2. Avoid the 0 * cot(theta) indeterminacy.
+    dF[0] = dF[1] = 0.0;
+    dF[2] = ct;
+    for (int a = 0; a < 3; ++a)
+      for (int b = 0; b < 3; ++b) ddF[a][b] = 0.0;
+    ddF[0][0] = ddF[1][1] = (radius - radius_theta_theta) * invr * invr;
   }
   for (int a = 0; a < 3; ++a)
     for (int b = 0; b < 3; ++b) upper[a] += inverse[a][b] * dF[b];
@@ -216,7 +227,8 @@ M0SurfacePoint EvaluateM0SurfacePoint(const Real theta, const Real radius,
       h22 += tangent_phi[a] * tangent_phi[b] * g[a][b];
     }
   const Real det_h = h11 * h22 - h12 * h12;
-  if (!std::isfinite(det_h) || det_h <= 0.0 || !std::isfinite(result.expansion)) {
+  if (!std::isfinite(det_h) || (!pole && det_h <= 0.0) ||
+      !std::isfinite(result.expansion)) {
     return M0SurfacePoint{};
   }
   result.area_factor = std::sqrt(det_h);
@@ -492,10 +504,23 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
       }
       r += seed.coefficients[l] * std::sqrt((2 * l + 1) / (4 * kPi)) * p;
     }
+    s.minimum_radius = std::min(s.minimum_radius, r);
     if (!(r > 0) || !std::isfinite(r)) {
       s.failure = "invalid_radius";
       return out;
     }
+  }
+  // Include the analytic pole limits in epsilon_infinity, even though
+  // Gauss quadrature has no endpoint weights.
+  for (int pole = 0; pole < 2; ++pole) {
+    std::array<Real, 3> h{};
+    for (int l = 0; l < dim; ++l) {
+      const Real y = std::sqrt((2 * l + 1) / (4 * kPi)) * ((pole && l % 2) ? -1 : 1);
+      h[0] += seed.coefficients[l] * y;
+      h[2] -= 0.5 * l * (l + 1) * seed.coefficients[l] * y;
+    }
+    shapes.push_back(h);
+    positions.push_back({0.0, seed.center_z + (pole ? -1 : 1) * h[0]});
   }
   const auto geometry = sample(positions);
   if (geometry.size() != positions.size()) {
@@ -528,6 +553,19 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     for (int l = 0; l < dim; ++l)
       out.projection[l] +=
           2 * kPi * q[n].second * point.flow_residual * basis[n * dim + l];
+  }
+  for (int pole = 0; pole < 2; ++pole) {
+    const auto& h = shapes[count + pole];
+    const auto point =
+        EvaluateM0SurfacePoint(pole ? kPi : 0.0, h[0], 0.0, h[2], geometry[count + pole]);
+    if (!point.valid) {
+      s.failure = "invalid_pole_geometry";
+      return out;
+    }
+    s.epsilon_inf = std::max(s.epsilon_inf, std::abs(point.expansion));
+    s.ingoing_min = std::min(s.ingoing_min, point.ingoing_expansion);
+    s.ingoing_max = std::max(s.ingoing_max, point.ingoing_expansion);
+    s.spacing = std::max(s.spacing, geometry[count + pole].spacing);
   }
   const Real ra = std::sqrt(s.area / (4 * kPi));
   s.direct_residual = ra * std::sqrt(s.direct_residual / s.area);

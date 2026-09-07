@@ -925,7 +925,7 @@ void ProblemGenerator::OutputErrors(ParameterInput *pin, Mesh *pm) {
 //! user-defined problem generator function compiled with the code.
 
 void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart) {
-  if (is_restart && pin->GetOrAddBoolean("fastflow", "horizon_only", false)) {
+  if (is_restart && (pin->DoesParameterExist("fastflow", "horizon_only") && pin->GetBoolean("fastflow", "horizon_only"))) {
     if (user_bcs) {
       std::cerr << "horizon_only requires built-in boundary conditions" << std::endl;
       std::exit(EXIT_FAILURE);

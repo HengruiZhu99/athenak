@@ -29,6 +29,11 @@ int main() {
       0.7, radius, 0.0, 0.0, flat);
   assert(sphere.valid);
   Close(sphere.expansion, 2.0 / radius, 2.0e-14);
+  for(double pole:{0.0,kPi}) {
+    const auto point=z4c::EvaluateM0SurfacePoint(pole,radius,0.0,0.0,flat);
+    assert(point.valid);Close(point.expansion,2.0/radius,2.e-14);
+    Close(point.ingoing_expansion,-2.0/radius,2.e-14);
+  }
   Close(sphere.area_factor, radius * radius * std::sin(0.7), 2.0e-14);
   Close(sphere.spin_integrand_z, 0.0, 0.0);
   auto spinning = flat;
@@ -155,6 +160,11 @@ int main() {
       Close(solved.mean_radius,.5*m,1.e-5*m);
       Close(solved.area,16*kPi*m*m,1.e-7*m*m);
     }
+    auto flow_only=opt;
+    flow_only.newton_switch=1.e-12;
+    flow_only.iterations=1000;
+    const auto flowed=z4c::SolveM0Surface(exact,flow_only,"flow",translation*m,.55*m);
+    assert(flowed.verified);
     opt.iterations=1;
     const auto stopped=z4c::SolveM0Surface(exact,opt,"analytic",translation*m,.8*m);
     assert(!stopped.verified);
