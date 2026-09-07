@@ -9,8 +9,21 @@
 #include "pc_gh/pc_gh.hpp"
 #include "pc_gh/transfer_target.hpp"
 #include "pc_gh/intrinsic_transfer_target.hpp"
+#include "pc_gh/intrinsic_restriction.hpp"
 
 namespace pc_gh {
+
+void PcGh::RestrictIntrinsic2D(DvceArray5D<Real> &state, DvceArray5D<Real> &coarse) {
+  auto u=state,cu=coarse;
+  const auto a=pmy_pack->pmesh->mb_indcs;
+  par_for("intrinsic point restriction 2D",DevExeSpace(),0,pmy_pack->nmb_thispack-1,
+    0,EvolvedVariables()-1,a.cjs,a.cje,a.cis,a.cie,
+    KOKKOS_LAMBDA(int m,int n,int j,int i) {
+      cu(m,n,a.cks,j,i)=intrinsic::PointRestrict2D(u,m,n,a.ks,2*j-a.cjs,
+          2*i-a.cis,a.is,a.ie,a.js,a.je);
+    });
+}
+
 
 template <int ORDER>
 void PcGh::TransferResidualGhosts() {
@@ -40,7 +53,9 @@ void PcGh::TransferResidualGhosts() {
   // Restrict the residual itself: E_c = R_E E_f, then prolong/interchange E.
   // The private coarse buffer stores E in auxiliary slots, not physical G.
   if (pmy_pack->pmesh->multilevel) {
-    pmy_pack->pmesh->pmr->RestrictCC(transfer_residual,coarse_transfer_residual,true);
+    if (intrinsic_point_restriction)
+      RestrictIntrinsic2D(transfer_residual,coarse_transfer_residual);
+    else pmy_pack->pmesh->pmr->RestrictCC(transfer_residual,coarse_transfer_residual,true);
   }
   pbval_residual->InitRecv(nvars);
   pbval_residual->PackAndSendCC(transfer_residual,coarse_transfer_residual);

@@ -264,7 +264,8 @@ TaskStatus PcGh::RestrictU(Driver *pdriver, int stage) {
       && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0);
   if (monitor) BeginReductionTransfer(0);
   if (pmy_pack->pmesh->multilevel) {
-    pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+    if (intrinsic_point_restriction) RestrictIntrinsic2D(u0, coarse_u0);
+    else pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
   }
   if (monitor) EndReductionTransfer(0);
   return TaskStatus::complete;
@@ -299,7 +300,8 @@ TaskStatus PcGh::RestrictProjection(Driver *pdriver, int stage) {
       && (pmy_pack->pmesh->ncycle + 1) % opt.boundedness_dcycle == 0));
   if (active) {
     if (monitor) BeginReductionTransfer(4);
-    pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+    if (intrinsic_point_restriction) RestrictIntrinsic2D(u0, coarse_u0);
+    else pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
     if (monitor) EndReductionTransfer(4);
   }
   return TaskStatus::complete;

@@ -70,6 +70,8 @@ class PcGh {
   void ValidateIntrinsic(const char *stage, bool check_rhs);
   bool intrinsic_stage_dump = false;
   bool intrinsic_diagnostics = false;
+  bool intrinsic_point_restriction = false;
+  void RestrictIntrinsic2D(DvceArray5D<Real> &state, DvceArray5D<Real> &coarse);
   int intrinsic_diagnostic_dcycle = 1;
   template<int Stencil> void WriteIntrinsicDiagnostics(Driver *driver, int stage);
   void DumpIntrinsicStage(Driver *driver, int stage, const char *operation,

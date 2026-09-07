@@ -1,0 +1,47 @@
+{
+  "binary_sha256": "af63c53a38bfc285403c9b9cef7dcc0982e0960ec602fe951f9a3f35cc1b75c8",
+  "runs": [
+    {
+      "order": 6,
+      "dimension": 2,
+      "mode": "none",
+      "ranks": 1,
+      "command": [
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+        "-i",
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-point-restrict-001/n16/fd6-2d-none/used.athinput"
+      ],
+      "returncode": 0,
+      "seconds": 0.013610999999999998,
+      "leaves": 7,
+      "levels": [
+        1,
+        2
+      ],
+      "input_sha256": "c406d27c6e1c6d70a7815d28ddfb6f96d101782813a6feb5d3289eaf01a229f7"
+    },
+    {
+      "order": 6,
+      "dimension": 2,
+      "mode": "residual_shifted",
+      "ranks": 1,
+      "command": [
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+        "-i",
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-point-restrict-001/n16/fd6-2d-residual_shifted/used.athinput"
+      ],
+      "returncode": 0,
+      "seconds": 0.024867916999999996,
+      "leaves": 7,
+      "levels": [
+        1,
+        2
+      ],
+      "input_sha256": "f54e4d7c9f9b6e4e8a607697020a15b5946313b2dc816580e130d6c9933349d2",
+      "primary_change": 0.0,
+      "active_change": 0.0,
+      "auxiliary_ghost_change": 7.712417555789746e-06,
+      "status": "PASS_INVARIANCE_ONLY"
+    }
+  ]
+}

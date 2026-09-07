@@ -85,3 +85,54 @@ budgets. Run `check_intrinsic_interface_oracle.py --output <new directory>` and
 --output <new JSON>` for the independent checks. All used the external venv
 Python with `-W error`. `plot_intrinsic_interface_budget.py --results <analysis
 results.json> --output <png>` generates the visually checked figure.
+
+## Isolated six-point restriction control
+
+`intrinsic_restriction=point6_2d` now selects tensor degree-five point-value
+restriction for intrinsic fine state and private residual buffers. The default
+is `legacy`; no shared MeshRefinement operator or legacy equation changed.
+The option rejects 3D and blocks smaller than six active cells. It uses six
+active source points per direction, shifting at block edges so that restriction
+never reads unsynchronized new-stage ghosts. The scalar midpoint weights are
+`[3,-25,150,150,-25,3]/256`; at the first coarse center they are
+`[63,315,-210,126,-45,7]/256`, reversed at the opposite end. These follow from
+Lagrange interpolation, reproduced directly in the helper. The edge absolute
+weight sum is 766/256 per axis: polynomial accuracy does not imply contractivity
+or coupled interface stability.
+
+The actual compiled helper passes 12,420 coarse-sample monomial comparisons
+(degree 0–5 in each direction, nx6/8/16/32) with maximum 5.552e-16, against a
+2e-12 bound. A source accessor returns NaN for any non-active read; no such
+read survives the check. All six matched CPU mesh cases preserve active state
+and primaries exactly. The n8 two-rank arrays match serial bit for bit. Default
+uniform one-step and static residual transfer match the previous executable
+bitwise; 19 legacy restart controls and the new 3D rejection check pass.
+
+With this restriction, full-area errors become:
+
+| Group RMS error | n8 | n16 | n32 |
+|---|---:|---:|---:|
+| Reduction, either arm | 1.386e-6 | 5.946e-8 | 2.620e-9 |
+| Intrinsic curl, ordinary | 9.072e-7 | 3.971e-8 | 1.759e-9 |
+| Intrinsic curl, reconstructed | 1.238e-5 | 5.723e-7 | 2.594e-8 |
+| Q-curl, ordinary | 1.542e-6 | 6.671e-8 | 2.940e-9 |
+| Q-curl, reconstructed | 1.866e-5 | 8.533e-7 | 3.851e-8 |
+
+Coarse-corner reconstructed intrinsic curl maxima are now 5.835e-6, 6.088e-7,
+7.056e-8, removing the previously near-constant defect in this control. Full RMS
+rates are about 4.5, while coarse-corner maxima approach order three. This is
+consistent with remaining transfer truncation and multiple derivatives; it is
+not a claim of FD6 interface convergence. Residual reconstruction still makes
+curl RMS 14.75 times larger than ordinary transfer at n32 with the same improved
+restriction. Both restrictions were changed together for U and E, so this
+control identifies their combined effect, not an isolated attribution to only
+one buffer. The previous negative baseline is retained unchanged.
+
+Evidence is `qualification-runs-20260907/pcgh-clean-reduction/intrinsic-point-restrict-001/`;
+raw files and exact binaries reside under the same named external test directory.
+Its `source/manifest.json` hashes the tested production tree and serial/MPI/unit
+executables. Use the same runner with `template.athinput` and `--block-n 8/16/32
+--orders 6 --dimensions 2`, then the existing analytic budget analyzer. No CUDA,
+repeated-stage injection, physical convergence or puncture gate is claimed.
+Next isolate the remaining prolongation/residual reconstruction error using the
+same signed diagnostics, then test repeated synchronized transfers and evolution.

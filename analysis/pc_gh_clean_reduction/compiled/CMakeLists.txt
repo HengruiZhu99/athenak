@@ -23,3 +23,6 @@ target_include_directories(intrinsic_constraints PRIVATE ../../../src "${ATHENA_
 add_executable(intrinsic_transfer intrinsic_transfer.cpp)
 target_link_libraries(intrinsic_transfer PRIVATE Kokkos::kokkos)
 target_include_directories(intrinsic_transfer PRIVATE ../../../src "${ATHENA_CONFIG_DIR}" "${ATHENA_SOURCE_DIR}")
+add_executable(intrinsic_restriction intrinsic_restriction.cpp)
+target_link_libraries(intrinsic_restriction PRIVATE Kokkos::kokkos)
+target_include_directories(intrinsic_restriction PRIVATE ../../../src "${ATHENA_CONFIG_DIR}" "${ATHENA_SOURCE_DIR}")

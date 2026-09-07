@@ -629,6 +629,11 @@
       "status": "FAIL",
       "evidence": "intrinsic-interface-budget-001",
       "scope": "Negative accuracy comparison: n32 reconstructed intrinsic curl RMS11.70x ordinary; coarse-corner maximum near constant. Exploratory RMS-decrease screen passes but is not a qualification gate. Exact-ghost FD6 diagnostic and exact restriction-bias checks pass."
+    },
+    "intrinsic_point_restriction_control": {
+      "status": "PASS",
+      "evidence": "intrinsic-point-restrict-001",
+      "scope": "Compiled tensor polynomial tests and matched initial CPU mesh control: corner defect improves; n8 serial/MPI bitwise and default/legacy regressions pass. Residual reconstruction remains14.75x ordinary curl RMS at n32. No interface stability or physical qualification."
     }
   }
 }

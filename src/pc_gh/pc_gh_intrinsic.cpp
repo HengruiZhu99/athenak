@@ -66,7 +66,7 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   // Reject unimplemented paths rather than accepting an ignored legacy setting.
   const std::set<std::string> allowed = {"formulation", "spatial_order", "shift_eta",
     "kappa", "reduction_rate", "reduction_profile", "dissipation", "research_dt_ceiling",
-    "coherent_transfer", "intrinsic_stage_dump", "intrinsic_diagnostics", "intrinsic_diagnostic_dcycle",
+    "intrinsic_restriction", "coherent_transfer", "intrinsic_stage_dump", "intrinsic_diagnostics", "intrinsic_diagnostic_dcycle",
     "restart_layout", "restart_layout_version", "restart_layout_fields",
     "restart_untagged_layout", "restart_tracker_state", "project_gauge_constraints", "project_reduction_constraints"};
   for (const auto &block : pin->block) {
@@ -93,6 +93,13 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
   intrinsic_diagnostics = pin->GetOrAddBoolean("pc_gh", "intrinsic_diagnostics", false);
   intrinsic_diagnostic_dcycle = pin->GetOrAddInteger("pc_gh", "intrinsic_diagnostic_dcycle", 1);
   if (intrinsic_diagnostic_dcycle < 1) IntrinsicError("diagnostic cadence must be positive");
+  const auto restriction = pin->GetOrAddString("pc_gh", "intrinsic_restriction", "legacy");
+  if (restriction != "legacy" && restriction != "point6_2d")
+    IntrinsicError("intrinsic_restriction must be legacy or point6_2d");
+  intrinsic_point_restriction = restriction == "point6_2d";
+  if (intrinsic_point_restriction && (!pmy_pack->pmesh->two_d
+      || pmy_pack->pmesh->mb_indcs.nx1 < 6 || pmy_pack->pmesh->mb_indcs.nx2 < 6))
+    IntrinsicError("point6_2d requires 2D blocks with at least six active cells per axis");
   opt.coherent_transfer = pin->GetOrAddString("pc_gh", "coherent_transfer", "none");
   if (opt.coherent_transfer != "none" && opt.coherent_transfer != "residual_shifted")
     IntrinsicError("coherent_transfer must be none or residual_shifted");

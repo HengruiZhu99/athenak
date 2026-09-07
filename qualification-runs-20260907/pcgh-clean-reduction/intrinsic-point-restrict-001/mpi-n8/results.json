@@ -1,0 +1,53 @@
+{
+  "binary_sha256": "380cef0dc1cca6b3fd719cab138fd42c75864ed076099536a46801e9f20dab6e",
+  "runs": [
+    {
+      "order": 6,
+      "dimension": 2,
+      "mode": "none",
+      "ranks": 2,
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+        "-i",
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-point-restrict-001/mpi-n8/fd6-2d-none/used.athinput"
+      ],
+      "returncode": 0,
+      "seconds": 0.5434827919999999,
+      "leaves": 7,
+      "levels": [
+        1,
+        2
+      ],
+      "input_sha256": "cf4fe87b1e428af4e38cf23d202865f0ac644b101217c05e041481f12935e45c"
+    },
+    {
+      "order": 6,
+      "dimension": 2,
+      "mode": "residual_shifted",
+      "ranks": 2,
+      "command": [
+        "/opt/homebrew/bin/mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+        "-i",
+        "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-point-restrict-001/mpi-n8/fd6-2d-residual_shifted/used.athinput"
+      ],
+      "returncode": 0,
+      "seconds": 0.14131112499999998,
+      "leaves": 7,
+      "levels": [
+        1,
+        2
+      ],
+      "input_sha256": "f84aaaef30f08ce6043292a099710ab39065178d2014fcf137d657bcc1430ba4",
+      "primary_change": 0.0,
+      "active_change": 0.0,
+      "auxiliary_ghost_change": 0.00011833213989082415,
+      "status": "PASS_INVARIANCE_ONLY"
+    }
+  ]
+}

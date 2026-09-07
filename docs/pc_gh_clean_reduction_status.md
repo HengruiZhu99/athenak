@@ -570,3 +570,16 @@ a low-order input to reconstruction. This does not yet prove the complete
 corner mechanism. The repair is not qualified; next is an isolated higher-order
 intrinsic 2D restriction control. All failures and signed data are retained in
 `analysis/pc_gh_clean_reduction/INTRINSIC_INTERFACE_BUDGET.md` and its evidence.
+
+## Intrinsic 2D point-restriction control
+
+An explicit six-point active-source restriction option removes the observed
+near-constant coarse-corner curl defect in the same analytic initial fixture.
+Full RMS now converges around order 4.5 and corner maxima approach order three.
+The compiled polynomial, serial/two-rank, default-bitwise and legacy restart
+checks pass. Residual reconstruction remains worse than ordinary transfer with
+this improved restriction (finest curl RMS 14.75x). Defaults remain unchanged;
+this is an isolated experimental operator, not an interface or evolution
+qualification. Remaining work starts with the residual/prolongation error and
+repeated synchronized injection. Exact results and binaries are indexed in the
+`intrinsic-point-restrict-001` evidence directory.
