@@ -622,3 +622,5 @@ See `analysis/pc_gh_clean_reduction/INTRINSIC_P_COMMUTATOR.md`.
 ## User-directed puncture continuation
 
 Interface investigation stopped at user request. Findings and unfinished control preserved; next work is uniform/SMR puncture evolution followed by binary. See [campaign plan](../analysis/pc_gh_clean_reduction/INTRINSIC_PUNCTURE_CAMPAIGN.md).
+
+Initial intrinsic puncture screens reached 2M on uniform32/64 and 120-leaf SMR; third-resolution convergence and the 20M screen are ongoing. The .5--1M Hamiltonian annulus has not improved in the first refinement. Binary initial data and the archived 1464-leaf geometry are prepared only. See [puncture results](../qualification-runs-20260907/pcgh-clean-reduction/puncture-001/REPORT.md).

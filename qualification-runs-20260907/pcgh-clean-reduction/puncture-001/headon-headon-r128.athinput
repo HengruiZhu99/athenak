@@ -1,0 +1,118 @@
+<job>
+basename = intrinsic_headon_r128
+
+<mesh>
+
+nghost = 4
+nx1 = 32
+x1min = -128
+x1max = 128
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 32
+x2min = -128
+x2max = 128
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 32
+x3min = -128
+x3max = 128
+ix3_bc = outflow
+ox3_bc = outflow
+
+
+<meshblock>
+
+nx1 = 8
+nx2 = 8
+nx3 = 8
+
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = 0.2
+nlim = -1
+tlim = 100
+ndiag = 25
+<pc_gh>
+formulation = intrinsic_clean
+spatial_order = 6
+extrap_order = 2
+shift_eta = 2
+kappa = 1
+reduction_rate = 1
+reduction_profile = lapse_scaled
+dissipation = 0.3
+coherent_transfer = none
+project_gauge_constraints = false
+project_reduction_constraints = false
+intrinsic_diagnostics = true
+intrinsic_diagnostic_dcycle = 100
+<mesh_refinement>
+refinement = static
+num_levels = 8
+max_nmb_per_rank = 1800
+
+<refined_region1>
+
+level = 7
+x1min = -3.0
+x1max = -2.0
+x2min = -0.5
+x2max = 0.5
+x3min = -0.5
+x3max = 0.5
+
+
+<refined_region2>
+
+level = 7
+x1min = 2.0
+x1max = 3.0
+x2min = -0.5
+x2max = 0.5
+x3min = -0.5
+x3max = 0.5
+
+
+<refined_region3>
+
+level = 1
+x1min = -64.0
+x1max = 64.0
+x2min = -64.0
+x2max = 64.0
+x3min = -64.0
+x3max = 64.0
+
+
+<refined_region4>
+
+level = 2
+x1min = -48.0
+x1max = 48.0
+x2min = -48.0
+x2max = 48.0
+x3min = -48.0
+x3max = 48.0
+
+
+<refined_region5>
+
+level = 3
+x1min = -16.0
+x1max = 16.0
+x2min = -16.0
+x2max = 16.0
+x3min = -16.0
+x3max = 16.0
+
+
+<problem>
+pgen_name = intrinsic_headon
+mass = 1
+separation = 5
+<output1>
+file_type = rst
+dt = 1

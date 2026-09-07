@@ -166,10 +166,14 @@ void PcGh::InitializeIntrinsic(ParameterInput *pin) {
 void PcGh::IntrinsicInitialData(ParameterInput *pin, bool restart) {
   if (restart) return;
   const auto name = pin->GetString("problem", "pgen_name");
-  bool puncture=name == "intrinsic_puncture";
+  bool binary=name == "intrinsic_headon";
+  bool puncture=name == "intrinsic_puncture" || binary;
   if (name != "intrinsic_minkowski" && name != "intrinsic_smooth" && !puncture)
     IntrinsicError("unsupported intrinsic initial data");
   double mass=puncture ? pin->GetOrAddReal("problem", "mass", 1) : 1;
+  double separation=binary ? pin->GetOrAddReal("problem", "separation", 5) : 0;
+  if (binary && (!std::isfinite(separation) || separation<=0))
+    IntrinsicError("head-on separation must be finite and positive");
   if (puncture && (!pmy_pack->pmesh->three_d || !std::isfinite(mass) || mass<=0))
     IntrinsicError("puncture data require three dimensions and positive finite mass");
   double amplitude = name == "intrinsic_smooth" ?
@@ -202,6 +206,22 @@ void PcGh::IntrinsicInitialData(ParameterInput *pin, bool restart) {
           for (int d=0;d<3;++d) {
             h(m,20+d,k,j,i)=mass*xyz[d]/(den*den*den);
             h(m,23+d,k,j,i)=h(m,20+d,k,j,i);
+          }
+          if (binary) {
+            // Equal bare masses M/2 at +/-separation/2, zero momentum/spin.
+            // TwoPunctures' elliptic correction is identically zero for these
+            // time-symmetric data: exact Brill-Lindquist psi is sufficient.
+            double psi=1, gradient[3]={0,0,0};
+            for (int sign : {-1,1}) {
+              double dx[3]={x-sign*separation/2,y,z};
+              double r=std::sqrt(dx[0]*dx[0]+dx[1]*dx[1]+dx[2]*dx[2]);
+              if (r==0) IntrinsicError("a cell center coincides with a puncture");
+              psi+=mass/(4*r);
+              for (int d=0;d<3;++d) gradient[d]+=mass*dx[d]/(2*r*r*r);
+            }
+            h(m,0,k,j,i)=1/(psi*psi);
+            for (int d=0;d<3;++d)
+              h(m,20+d,k,j,i)=h(m,23+d,k,j,i)=gradient[d]/(psi*psi*psi);
           }
         }
       }
