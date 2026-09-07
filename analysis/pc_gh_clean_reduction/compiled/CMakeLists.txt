@@ -14,3 +14,6 @@ foreach(name intrinsic_probe intrinsic_debug intrinsic_hostinspect intrinsic_pro
   target_link_libraries(${name} PRIVATE Kokkos::kokkos)
   target_include_directories(${name} PRIVATE ../../../src)
 endforeach()
+add_executable(intrinsic_stencil intrinsic_stencil.cpp)
+target_link_libraries(intrinsic_stencil PRIVATE Kokkos::kokkos)
+target_include_directories(intrinsic_stencil PRIVATE ../../../src "${ATHENA_CONFIG_DIR}" "${ATHENA_SOURCE_DIR}")

@@ -334,3 +334,17 @@ The local SciPy expm warning is retained as an analysis failure; unchanged CPU
 outputs pass Linux replay, and the A100 batch passes there. No warning or failed
 physical state was hidden. No evolution gate is promoted. Next is coupled
 RK3/KO operator analysis, then intrinsic mesh/transfer/restart integration.
+
+## Intrinsic finite-difference consumer checkpoint
+
+A reusable intrinsic 50-field Dx/KO RHS consumer is now implemented and checked
+on CPU/A100 for FD2/4/6, 2D/3D and KO off/on. All 60 full-symbol cases pass;
+12000 compiled points per backend give maximum symbol error 3.259e-11 and
+backend disagreement 6.662e-16. Coupled uniform 50-field RK3 matrix powers have
+minimum temporal order 2.9721, sampled radius <=1 and discrete reduction closure
+to roundoff. See analysis/pc_gh_clean_reduction/INTRINSIC_DISCRETE.md for limits.
+
+The routine is not enabled in mesh evolution. Uniform Fourier checks do not
+cover halo arrays, nonconforming interfaces or variable backgrounds. Next is
+explicit 50-field mesh/task/restart integration and coherent transfer testing.
+No smooth-evolution, single-puncture or binary gate is promoted.

@@ -290,5 +290,39 @@
     ],
     "exponential_tolerance": 2e-09,
     "transient_norm": "reported, not a contractivity gate"
+  },
+  "intrinsic_FD_RK": {
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "dimensions": [
+      2,
+      3
+    ],
+    "spacing": [
+      0.125,
+      0.2,
+      0.3
+    ],
+    "KO": [
+      0,
+      0.3
+    ],
+    "mode_scales": [
+      0,
+      0.2,
+      0.8,
+      1.6,
+      "pi"
+    ],
+    "amplitude": 1e-05,
+    "matrix_tolerance": 2e-08,
+    "rk_stage_tolerance": 2e-12,
+    "spectral_radius_tolerance": 1e-12,
+    "time_order_min": 2.8,
+    "roundoff_guard": 1e-10,
+    "reduction_closure_tolerance": 2e-11
   }
 }

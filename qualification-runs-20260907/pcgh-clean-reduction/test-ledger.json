@@ -434,6 +434,26 @@
       "status": "FAIL",
       "evidence": "intrinsic-fourier-001/local-expm-warning.log",
       "scope": "Local SciPy matrix product warning interrupts analysis; saved CPU outputs subsequently pass Linux replay"
+    },
+    "intrinsic_stencil_CPU": {
+      "status": "PASS",
+      "evidence": "intrinsic-stencil-001/cpu/results.json",
+      "scope": "60 full linearizations of actual intrinsic Dx/KO consumer, 12000 plane-wave points"
+    },
+    "intrinsic_stencil_CUDA": {
+      "status": "PASS",
+      "evidence": "intrinsic-stencil-001/cuda/results.json",
+      "scope": "60 full linearizations of actual intrinsic Dx/KO consumer, 12000 plane-wave points"
+    },
+    "intrinsic_uniform_RK_KO": {
+      "status": "PASS",
+      "evidence": "intrinsic-stencil-001/cuda/cases.json",
+      "scope": "Coupled 50-field uniform Fourier RK3 powers, temporal order, closure and sampled spectra; not interfaces or nonlinear evolution"
+    },
+    "intrinsic_stencil_backend": {
+      "status": "PASS",
+      "evidence": "intrinsic-stencil-001/backend.json",
+      "scope": "Identical input CPU/A100 output comparison"
     }
   }
 }

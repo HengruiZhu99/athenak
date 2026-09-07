@@ -273,3 +273,27 @@ contractivity threshold. Require compiled/reference exponential agreement and
 C exp(tA)=exp(-lambda*t) C residual <=2e-9 normalized; the exact polynomial,
 not floating neutral-root signs, determines spectral stability. Do not promote
 this constant-background check to an interface/RK or puncture theorem.
+
+
+### Intrinsic finite-difference consumer and coupled RK3/KO
+
+Add a reusable 50-field RHS consumer using the existing Dx<2/3/4> and signed,
+normalized Diss<2/3/4> on active directions, without projection. At Minkowski,
+verify its full linearized symbol for FD2/4/6, dimensions 2/3, spacings
+(0.125,0.2,0.3), KO=0/0.3, and theta=(v,0.7v,-0.4v) with
+v=0,0.2,0.8,1.6,pi. Inactive theta remains nonzero to detect unintended reads.
+Use centered +/-1e-5 state amplitudes and phases 0,pi/2 for all 50 columns.
+Require normalized error <=2e-8 against the previously compiled exact-checked
+Minkowski J/P matrices with analytic Dx/KO symbols. This finite-amplitude
+threshold includes O(amplitude^2) nonlinear and O(roundoff/amplitude) errors;
+it is not a change to point-jet oracle tolerances.
+
+For all 60 coupled 50x50 operators, use dt=0.2*min(active spacing)/sqrt(2),
+RK3 coefficients from driver.cpp, and report spectral radius using the exact
+Fourier polynomial at modified k and scalar KO shift. Require radius<=1+1e-12.
+Check the three-stage matrix equals I+dt*A+(dt*A)^2/2+(dt*A)^3/6 to 2e-12.
+At common t=0.5 with ceiling-adjusted dt,dt/2,dt/4, compare full matrix powers
+to exp(t*A); require order>=2.8 on both halvings unless coarser error<=1e-10.
+Require C*RK=R(dt*(q-lambda))*C to normalized 2e-11. Record actual power and
+exponential norms, not only eigenvalues. These are uniform constant-coefficient
+checks; nonconforming interfaces and nonlinear evolution remain separate gates.
