@@ -92,9 +92,10 @@ void Final(ParameterInput *pin, Mesh *mesh) {
 }  // namespace
 
 void ProblemGenerator::UserProblem(ParameterInput *pin, bool restart) {
-  if (restart || global_variable::nranks!=1 || pmy_mesh_->multilevel
+  if (restart) return;  // Resume the saved state without refilling the oracle fixture.
+  if (global_variable::nranks!=1 || pmy_mesh_->multilevel
       || pmy_mesh_->pmb_pack->nmb_thispack!=1) {
-    throw std::runtime_error("legacy oracle requires one uniform block, no restart");
+    throw std::runtime_error("legacy oracle initialization requires one uniform block");
   }
   pgen_final_func=Final;
   Fill(pmy_mesh_,3);

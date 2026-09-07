@@ -348,3 +348,22 @@ The routine is not enabled in mesh evolution. Uniform Fourier checks do not
 cover halo arrays, nonconforming interfaces or variable backgrounds. Next is
 explicit 50-field mesh/task/restart integration and coherent transfer testing.
 No smooth-evolution, single-puncture or binary gate is promoted.
+
+## Restart identity and continuation checkpoint
+
+New legacy restarts carry an explicit layout name/version/count. Saved metadata
+is captured before input/CLI overrides; incompatible or relabeled headers fail
+before payload reading. Untagged files now require an explicit collision-layout
+declaration after provenance validation. The intrinsic 50-field identity is
+reserved but its mesh mode remains disabled.
+
+A real serial continuation test found a preexisting 1.298e-7 mismatch caused by
+an extra restart initialization projection (signed active Q change 1.339e-3).
+Skipping that extra reset only on restart makes tagged and declared-untagged
+continuations bitwise identical to uninterrupted evolution. Fresh runs are
+unchanged. All 19 serial controls pass; failures and raw evidence are retained.
+See analysis/pc_gh_clean_reduction/RESTART_LAYOUT.md for compatibility changes.
+
+MPI/CUDA, multilevel and tracker restart coverage remains open. The next work
+is actual 50-field mesh/storage/task integration with protected restart identity
+and coherent intrinsic transfer. No physical gate is promoted.

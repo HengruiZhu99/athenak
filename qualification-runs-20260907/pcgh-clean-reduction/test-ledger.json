@@ -454,6 +454,16 @@
       "status": "PASS",
       "evidence": "intrinsic-stencil-001/backend.json",
       "scope": "Identical input CPU/A100 output comparison"
+    },
+    "legacy_restart_continuity_before_repair": {
+      "status": "FAIL",
+      "evidence": "restart-layout-001/pre-fix-continuity.json",
+      "scope": "Actual split run differs by 1.298e-7; signed initial algebraic projection changes Q by 1.339e-3"
+    },
+    "restart_layout_and_continuity_serial": {
+      "status": "PASS",
+      "evidence": "restart-layout-001/attempt-005/results.json",
+      "scope": "19 actual process controls; tagged/declared-untagged resume bitwise equal; immutable header before overrides; fresh intrinsic mode rejected"
     }
   }
 }

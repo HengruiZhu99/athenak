@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/check_restart_layout.py", line 25, in <module>
+    full=initial('full',2);split=initial('split',1)
+  File "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/check_restart_layout.py", line 24, in initial
+    f=a.output/(name+'.athinput');f.write_text(text);return run(name,['-i',str(f.resolve())])
+  File "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/check_restart_layout.py", line 19, in run
+    (a.output/'runs.json').write_text(json.dumps(records,indent=2)+'\n');assert ok,(name,log[-3000:]);return d
+AssertionError: ('full', '\nRoot grid = 1 x 1 x 1 MeshBlocks\nTotal number of MeshBlocks = 1\nNumber of logical  levels of refinement = 0 (1 levels total)\nNumber of physical levels of refinement = 0 (1 levels total)\nNumber of parallel ranks = 1\n### FATAL ERROR: lapse_projection_target must be direct_product, or collision_factorized with reduction_system=legacy\n')

@@ -312,7 +312,7 @@ void Driver::ExecuteTaskList(Mesh *pm, std::string tl, int stage) {
 
 void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool res_flag) {
   //---- Step 1.  Set conserved variables in ghost zones for all physics
-  InitBoundaryValuesAndPrimitives(pmesh);
+  InitBoundaryValuesAndPrimitives(pmesh, res_flag);
 
   //---- Step 2.  Compute time step (if problem involves time evolution)
   hydro::Hydro *phydro = pmesh->pmb_pack->phydro;
@@ -563,7 +563,7 @@ Real Driver::UpdateWallClock() {
 //! \brief Sets boundary conditions on conserved and initializes primitives.  Used both
 //! on initialization, and when new MBs created with AMR.
 
-void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
+void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm, bool preserve_pcgh_restart) {
   // Note: with MPI, sends on ALL MBs must be complete before receives execute
 
   // Initialize Z4c
@@ -591,7 +591,10 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) ppcgh->RecvU(this, 0);
     (void) ppcgh->ApplyPhysicalBCs(this, 0);
     (void) ppcgh->Prolongate(this, 0);
-    (void) ppcgh->EnforceAlgebraicConstraints(this, 0);
+    // Checkpoints contain the completed stage state. A new algebraic/GH reset
+    // here changes that state: final auxiliary reconstruction need not have
+    // trace-free Q under a discrete derivative. Keep restart continuation exact.
+    if (!preserve_pcgh_restart) (void) ppcgh->EnforceAlgebraicConstraints(this, 0);
     ppcgh->PcGhToADM(pm->pmb_pack);
     switch (ppcgh->opt.fd_stencil) {
       case 2:

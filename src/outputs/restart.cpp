@@ -29,6 +29,7 @@
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
 #include "pc_gh/pc_gh.hpp"
+#include "pc_gh/state_layout.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 //#include "outputs.hpp"
@@ -219,6 +220,11 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
   // compatible by treating a missing flag as false.
   if (ppcgh != nullptr && nco > 0) {
     pin->SetBoolean("pc_gh", "restart_tracker_state", true);
+  }
+
+  // Serialize the actual allocated module layout, not user-overridable labels.
+  if (ppcgh != nullptr) {
+    pc_gh::WriteStateLayout(pin, pc_gh::LayoutForFormulation("legacy"));
   }
 
   // create string holding input parameters (copy of input file)

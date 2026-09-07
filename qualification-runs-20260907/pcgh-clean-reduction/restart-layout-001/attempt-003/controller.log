@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/check_restart_layout.py", line 39, in <module>
+    run('wrong-declaration',['-r',untagged,'-n','pc_gh/restart_untagged_layout=intrinsic_pcgh50'],'untagged PC-GH restart')
+  File "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/check_restart_layout.py", line 19, in run
+    (a.output/'runs.json').write_text(json.dumps(records,indent=2)+'\n');assert ok,(name,log[-3000:]);return d
+AssertionError: ('wrong-declaration', "### FATAL ERROR in /Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/parameter_input.cpp at line 390\nParameter 'restart_untagged_layout' in block 'pc_gh' on command line not found\n")

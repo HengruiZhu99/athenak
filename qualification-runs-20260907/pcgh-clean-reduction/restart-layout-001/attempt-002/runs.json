@@ -1,0 +1,40 @@
+[
+  {
+    "name": "full",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/layout-restart-002/full.athinput"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.012531042098999023
+  },
+  {
+    "name": "split",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-i",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/layout-restart-002/split.athinput"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.012511968612670898
+  },
+  {
+    "name": "continued",
+    "command": [
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/src/athena",
+      "-r",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/layout-restart-002/split/rst/legacy_equivalence.00001.rst",
+      "time/tlim=0.0002",
+      "time/nlim=2"
+    ],
+    "returncode": 0,
+    "expected_message": null,
+    "status": "PASS",
+    "wall_seconds": 0.011924028396606445
+  }
+]

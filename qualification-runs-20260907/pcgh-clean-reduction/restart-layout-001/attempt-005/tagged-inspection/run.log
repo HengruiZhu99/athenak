@@ -1,0 +1,106 @@
+#------------------------- PAR_DUMP -------------------------
+<job>
+basename = legacy_equivalence 
+<mesh>
+nghost = 4        
+nx1    = 8        
+nx2    = 8        
+nx3    = 1        
+x1min  = 0        
+x1max  = 1        
+x2min  = 0        
+x2max  = 1.3      
+x3min  = 0        
+x3max  = 1.7      
+ix1_bc = periodic 
+ox1_bc = periodic 
+ix2_bc = periodic 
+ox2_bc = periodic 
+ix3_bc = periodic 
+ox3_bc = periodic 
+<meshblock>
+nx1 = 8 
+nx2 = 8 
+nx3 = 1 
+<time>
+evolution  = dynamic 
+integrator = rk3     
+cfl_number = 0.2     
+nlim       = 1       
+tlim       = 0.0001  
+ndiag      = 1       
+start_time = 0       # Default value added at run time
+<pc_gh>
+spatial_order                 = 6                                       
+gauge                         = z4c_mp_hyperbolic                       
+reduction_system              = legacy                                  
+reduction_rate                = 0                                       
+lapse_projection_target       = collision_factorized                    
+kappa                         = 0                                       
+shift_eta                     = 2                                       
+dissipation                   = 0.3                                     
+project_gauge_constraints     = true                                    
+project_reduction_constraints = true                                    
+boundedness_output            = false                                   
+research_dt_ceiling           = 0.0001                                  
+formulation                   = legacy                                  # Default value added at run time
+restart_untagged_layout       = unspecified                             # Default value added at run time
+extrap_order                  = 2                                       # Default value added at run time
+gauge_a0_table                = inputs/pc_gh/gauge_a0_m1.dat            # Default value added at run time
+gauge_mass                    = 1                                       # Default value added at run time
+gauge_center_x                = 0                                       # Default value added at run time
+gauge_center_y                = 0                                       # Default value added at run time
+gauge_center_z                = 0                                       # Default value added at run time
+shift_switch_z0               = 0.1                                     # Default value added at run time
+shift_switch_z1               = 0.5                                     # Default value added at run time
+reduction_profile             = constant                                # Default value added at run time
+reduction_inner_rate          = 0                                       # Default value added at run time
+reduction_core_radius         = 0                                       # Default value added at run time
+reduction_taper_radius        = 0                                       # Default value added at run time
+reduction_follow_trackers     = 0                                       # Default value added at run time
+reduction_projection_profile  = global                                  # Default value added at run time
+hybrid_monitor                = 0                                       # Default value added at run time
+state_budget                  = 0                                       # Default value added at run time
+state_budget_dcycle           = 1                                       # Default value added at run time
+reduction_monitor             = 0                                       # Default value added at run time
+reduction_monitor_file        = legacy_equivalence.pcgh-reduction.csv   # Default value added at run time
+constraint_excise_chi         = 0.0625                                  # Default value added at run time
+constraint_exterior_horizon   = 0                                       # Default value added at run time
+constraint_horizon_radius     = 0.5                                     # Default value added at run time
+constraint_horizon_buffer     = 0                                       # Default value added at run time
+constraint_dcycle             = 1                                       # Default value added at run time
+physical_output_inner_radius  = 0.25                                    # Default value added at run time
+initial_data_division_floor   = 1e-14                                   # Default value added at run time
+reconstruct_adm_output        = 0                                       # Default value added at run time
+boundedness_dcycle            = 1                                       # Default value added at run time
+boundedness_file              = legacy_equivalence.pcgh-boundedness.dat # Default value added at run time
+coherent_transfer             = none                                    # Default value added at run time
+nrad_wave_extraction          = 0                                       # Default value added at run time
+extraction_nlev               = 10                                      # Default value added at run time
+waveform_dt                   = 1                                       # Default value added at run time
+dump_horizon_0                = 0                                       # Default value added at run time
+restart_layout                = legacy_pcgh55                           # Updated during run time
+restart_layout_version        = 1                                       # Updated during run time
+restart_layout_fields         = 55                                      # Updated during run time
+<problem>
+pgen_name = legacy_equivalence 
+user_srcs = 0                  # Default value added at run time
+user_hist = 0                  # Default value added at run time
+<output1>
+file_type            = rst    
+dt                   = 0.0001 
+last_time            = 0.0001 # Updated during run time
+file_number          = 2      # Updated during run time
+ghost_zones          = 0      # Default value added at run time
+gid                  = -1     # Default value added at run time
+data_format          = %12.5e # Default value added at run time
+single_file_per_rank = 0      # Default value added at run time
+<mesh_refinement>
+refinement = none # Default value added at run time
+<coord>
+special_rel = 0 # Default value added at run time
+general_rel = 0 # Default value added at run time
+<adm>
+dynamic = 0 # Default value added at run time
+#------------------------- PAR_DUMP -------------------------
+<par_end>

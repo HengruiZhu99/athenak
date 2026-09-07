@@ -297,3 +297,25 @@ to exp(t*A); require order>=2.8 on both halvings unless coarser error<=1e-10.
 Require C*RK=R(dt*(q-lambda))*C to normalized 2e-11. Record actual power and
 exponential norms, not only eigenvalues. These are uniform constant-coefficient
 checks; nonconforming interfaces and nonlinear evolution remain separate gates.
+
+
+### Restart layout identity before intrinsic mesh allocation
+
+Write the actual legacy module identity (legacy_pcgh55, version 1, fields 55)
+into new restarts. Reserve intrinsic_pcgh50 version 1 for intrinsic_clean, but
+do not enable that mode before its mesh tasks exist. Capture saved identity
+before -i/CLI overrides; reject missing members, unknown/inconsistent versions
+or counts, changed formulations and metadata override attempts before payload
+reading. An untagged historical file requires explicit
+restart_untagged_layout=legacy_pcgh55 after provenance validation; array size
+alone is not a layout proof. This deliberately tightens untagged restart input,
+while preserving a documented path for the exact collision-lineage files.
+
+Test real serial restart output/read paths with a nontrivial uniform 2D FD6
+legacy fixture, RK3/KO0.3, fixed dt ceiling 1e-4. Compare uninterrupted two steps
+with one step plus restart to t=2e-4 in all 55 stored fields, including ghosts:
+normalized error <=2e-12, with no restart fixture reinitialization. Test tagged
+and explicitly declared untagged resumes; untagged default, wrong declaration,
+wrong version/count/name, partial metadata, formulation changes and CLI/-i
+metadata relabeling must fail with an identifying message. Retain raw restarts
+externally with hashes. No intrinsic evolution or restart conversion is claimed.

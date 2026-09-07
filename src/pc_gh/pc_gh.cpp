@@ -35,6 +35,7 @@
 #include "mesh/meshblock_pack.hpp"
 #include "parameter_input.hpp"
 #include "pc_gh/pc_gh.hpp"
+#include "pc_gh/state_layout.hpp"
 #include "utils/horizon_dump.hpp"
 #include "utils/compact_object_tracker.hpp"
 
@@ -91,6 +92,12 @@ PcGh::PcGh(MeshBlockPack *ppack, ParameterInput *pin)
       nrad(0),
       dtnew(std::numeric_limits<float>::max()),
       pmy_pack(ppack) {
+  // Do not route a requested intrinsic layout through legacy tensor bindings.
+  if (RequestedFormulation(pin) != "legacy") {
+    std::cerr << "### FATAL ERROR: PC-GH formulation " << RequestedFormulation(pin)
+              << " is not enabled in mesh tasks yet" << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int const nmb = std::max(ppack->nmb_thispack, ppack->pmesh->nmb_maxperrank);
   int const ncells1 = indcs.nx1 + 2*indcs.ng;

@@ -35,6 +35,7 @@
 #include "athena.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
+#include "pc_gh/state_layout.hpp"
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "outputs/outputs.hpp"
@@ -232,6 +233,7 @@ int main(int argc, char *argv[]) {
 
   ParameterInput* pinput = new ParameterInput;
   IOWrapper infile, restartfile;
+  pc_gh::SavedStateLayout saved_pcgh_layout;
   // read parameters from restart file
   bool single_file_per_rank = false; // DBF: flag for single_file_per_rank for rst files
   if (res_flag) {
@@ -262,6 +264,12 @@ int main(int argc, char *argv[]) {
     // read parameters from restart file
     restartfile.Open(restart_file.c_str(),IOWrapper::FileMode::read,single_file_per_rank);
     pinput->LoadFromFile(restartfile, single_file_per_rank);
+    try {
+      saved_pcgh_layout = pc_gh::ReadSavedStateLayout(pinput);
+    } catch (const std::exception &error) {
+      std::cerr << "### FATAL ERROR: " << error.what() << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
     IOWrapperSizeT headeroffset = restartfile.GetPosition(single_file_per_rank);
   }
 
@@ -273,7 +281,19 @@ int main(int argc, char *argv[]) {
     infile.Close();
     pinput->CheckBlockNames();
   }
+  // Register new PC-GH choices before CLI parsing, which only accepts known keys.
+  // This happens after the immutable restart-layout snapshot above.
+  if (pinput->DoesBlockExist("pc_gh")) {
+    pinput->GetOrAddString("pc_gh", "formulation", "legacy");
+    pinput->GetOrAddString("pc_gh", "restart_untagged_layout", "unspecified");
+  }
   pinput->ModifyFromCmdline(argc, argv);
+  try {
+    if (res_flag) pc_gh::ValidateRestartLayout(saved_pcgh_layout, pinput);
+  } catch (const std::exception &error) {
+    std::cerr << "### FATAL ERROR: " << error.what() << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
 
   // Dump input parameters and quit if code was run with -n option.
   if (narg_flag) {
