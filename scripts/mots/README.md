@@ -38,8 +38,9 @@ This approach has measured spatial error; Newton convergence cannot remove it.
 Searches try preserved center/shape pairs, the origin, and refined local axis
 lapse minima with a logarithmic radius bank. The default lower radius is four
 local grid spacings. Tracking seeds persist in memory across failed searches;
-current-slice success is separate. Frozen searches ignore restored success and
-perform discovery afresh. No last-good seed is recovered from a failed legacy
+current-slice success is separate. Frozen searches ignore restored success as a detection, but try the saved
+center/shape together as a guess before fresh discovery; angular coefficients
+are padded or truncated when changing lmax. No last-good seed is recovered from a failed legacy
 restart carrier.
 
 The solver uses radius-squared flow scaling, a conservative all-angle 10%

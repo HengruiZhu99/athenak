@@ -460,6 +460,12 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
   M0Evaluation out;
   out.surface = seed;
   auto& s = out.surface;
+  auto failure = [&](const std::string& reason) {
+    s.failure = reason;
+    s.area = 0.0;  // Never expose a partially integrated surface as a full area.
+    s.direct_residual = s.epsilon_inf = std::numeric_limits<Real>::infinity();
+    return out;
+  };
   s.converged = s.verified = false;
   s.area = s.direct_residual = s.flow_residual = s.mean_radius = s.spin_z = 0;
   s.epsilon_inf = s.spacing = 0;
@@ -484,8 +490,7 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
       shape[2] += seed.coefficients[l] * ddy;
     }
     if (!(shape[0] > 0) || !std::isfinite(shape[0])) {
-      s.failure = "invalid_radius";
-      return out;
+      return failure("invalid_radius");
     }
     shapes.push_back(shape);
     positions.push_back(
@@ -506,8 +511,7 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     }
     s.minimum_radius = std::min(s.minimum_radius, r);
     if (!(r > 0) || !std::isfinite(r)) {
-      s.failure = "invalid_radius";
-      return out;
+      return failure("invalid_radius");
     }
   }
   // Include the analytic pole limits in epsilon_infinity, even though
@@ -524,20 +528,18 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
   }
   const auto geometry = sample(positions);
   if (geometry.size() != positions.size()) {
-    s.failure = "unavailable_stencil";
-    return out;
+    return failure("unavailable_stencil");
   }
   for (int n = 0; n < count; ++n) {
     if (!geometry[n].valid) {
-      s.failure = geometry[n].error == 2 ? "nonfinite_residual" : "unavailable_stencil";
-      return out;
+      return failure(geometry[n].error == 2 ? "nonfinite_residual"
+                                            : "unavailable_stencil");
     }
     const Real theta = std::acos(q[n].first);
     const auto& h = shapes[n];
     const auto point = EvaluateM0SurfacePoint(theta, h[0], h[1], h[2], geometry[n]);
     if (!point.valid) {
-      s.failure = "invalid_geometry";
-      return out;
+      return failure("invalid_geometry");
     }
     const Real da = 2 * kPi * q[n].second * point.area_factor / std::sin(theta);
     s.area += da;
@@ -559,8 +561,7 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     const auto point =
         EvaluateM0SurfacePoint(pole ? kPi : 0.0, h[0], 0.0, h[2], geometry[count + pole]);
     if (!point.valid) {
-      s.failure = "invalid_pole_geometry";
-      return out;
+      return failure("invalid_pole_geometry");
     }
     s.epsilon_inf = std::max(s.epsilon_inf, std::abs(point.expansion));
     s.ingoing_min = std::min(s.ingoing_min, point.ingoing_expansion);
@@ -707,6 +708,30 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
   return current.surface;
 }
 
+std::vector<M0CandidateSummary> RestoreM0Seeds(const Z4cM0FastFlowRestartState& state,
+                                               const int lmax) {
+  std::vector<M0CandidateSummary> seeds;
+  if (!state.converged || state.center_count < 1 || state.center_count > 2 || lmax < 1 ||
+      state.coefficients.empty() || state.coefficients.size() % state.center_count)
+    return seeds;
+  const int old_dim = state.coefficients.size() / state.center_count;
+  std::string reason;
+  if (!ValidateM0RestartState(state, old_dim - 1, &reason)) return seeds;
+  for (int n = 0; n < state.center_count; ++n) {
+    M0CandidateSummary seed;
+    seed.branch =
+        state.center_count == 1 ? state.selected_branch : (n == 0 ? "plus" : "minus");
+    seed.center_z = n == 0 ? state.center_z0 : state.center_z1;
+    seed.coefficients.assign(lmax + 1, 0.0);
+    for (int l = 0; l < std::min(old_dim, lmax + 1); ++l)
+      seed.coefficients[l] = state.coefficients[n * old_dim + l];
+    seed.fresh_initial_radius = std::abs(seed.coefficients[0]) / std::sqrt(4 * kPi);
+    // These are guesses, never current-slice detection or verification state.
+    seeds.push_back(std::move(seed));
+  }
+  return seeds;
+}
+
 #ifndef ATHENA_CARTOON_M0_MATH_ONLY
 CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
                                      const int horizon)
@@ -791,8 +816,12 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
       solve_options_.epsilon2 <= 0 || solve_options_.epsilon_inf <= 0 ||
       solve_options_.newton_switch <= 0 || solve_options_.backtracks < 1)
     throw std::runtime_error("invalid MOTS controls");
-  if (!pin->GetOrAddBoolean("fastflow", "horizon_only", false)) Restore();
-  for (int i : selected_) last_good_.push_back(candidates_[i]);
+  if (pin->GetOrAddBoolean("fastflow", "horizon_only", false)) {
+    last_good_ = RestoreM0Seeds(pack_->z4c_restart_state.fastflow, lmax_);
+  } else {
+    Restore();
+    for (int i : selected_) last_good_.push_back(candidates_[i]);
+  }
 }
 
 CartoonM0FastFlow::~CartoonM0FastFlow() {

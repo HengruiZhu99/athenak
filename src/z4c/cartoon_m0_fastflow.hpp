@@ -116,6 +116,9 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
                                   const std::string& branch, Real center, Real radius,
                                   const std::vector<Real>& seed = {});
 
+std::vector<M0CandidateSummary> RestoreM0Seeds(const Z4cM0FastFlowRestartState&,
+                                               int lmax);
+
 //! Cartoon-only implementation composed by FastFlow; it is not a second public finder.
 class CartoonM0FastFlow {
  public:

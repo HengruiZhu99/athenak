@@ -277,6 +277,11 @@ int main() {
   Close(restored[1].minimum_radius, 3.0, 0.0);
   Close(z4c::MinimumM0SelectedRadius(restored, {0, 1}), 2.0, 0.0);
   Close(z4c::M0SelectedCenterZ(restored, {0, 1}), 0.0, 0.0);
+  const auto seeds=z4c::RestoreM0Seeds(restart,4);
+  assert(seeds.size()==2 && seeds[0].coefficients.size()==5);
+  Close(seeds[0].center_z,2.0,0);Close(seeds[1].center_z,-2.0,0);
+  Close(seeds[0].coefficients[0],2.0,0);Close(seeds[1].coefficients[0],3.0,0);
+  assert(!seeds[0].converged && !seeds[0].verified);
   const auto valid_restart = restart;
   restart.time_first_found = std::numeric_limits<double>::quiet_NaN();
   assert(!z4c::ValidateM0RestartState(restart, 2, &reason));

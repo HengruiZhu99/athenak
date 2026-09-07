@@ -59,6 +59,9 @@ void RunFrozenMots(Mesh* mesh, Driver* driver, ParameterInput* pin) {
   driver->InitBoundaryValuesAndPrimitives(mesh, true);
   check();
   z->Z4cToADM(pack);
+  // Enable the analysis finder only after reading the original restart layout.
+  // This also supports checkpoints written with no evolution-time finder.
+  pin->SetInteger("fastflow", "num_horizons", 1);
   CartoonM0FastFlow finder(pack, pin, 0);
   finder.Find(cycle, time, true);
   check();
