@@ -583,3 +583,15 @@ this is an isolated experimental operator, not an interface or evolution
 qualification. Remaining work starts with the residual/prolongation error and
 repeated synchronized injection. Exact results and binaries are indexed in the
 `intrinsic-point-restrict-001` evidence directory.
+
+## Repeated-stage refined evolution fails signed convergence
+
+Eight matched serial SMR runs reach t0.02, including both finest timestep
+controls, but both ordinary and residual transfer fail the frozen signed-field
+alignment requirement. Higher-order comparison interpolation also fails and
+changes the inferred norm ratios. No Richardson claim is supported. Independent
+refined reduction/curl CSV checks pass to 8.54e-15; positive health and mildly
+decreasing total constraint norms are not qualification. Full evidence and
+limitations are in `analysis/pc_gh_clean_reduction/INTRINSIC_SMR_EVOLUTION.md`.
+Next is synchronized operation-level attribution during evolution; physical
+and puncture/binary gates remain incomplete.

@@ -634,6 +634,16 @@
       "status": "PASS",
       "evidence": "intrinsic-point-restrict-001",
       "scope": "Compiled tensor polynomial tests and matched initial CPU mesh control: corner defect improves; n8 serial/MPI bitwise and default/legacy regressions pass. Residual reconstruction remains14.75x ordinary curl RMS at n32. No interface stability or physical qualification."
+    },
+    "intrinsic_smr_evolution_convergence": {
+      "status": "FAIL",
+      "evidence": "intrinsic-smr-evolution-001",
+      "scope": "Eight matched t0.02 serial runs complete; both none/residual signed field alignments fail under six- and ten-point comparison. Timestep error small; interpolation sensitivity preserved. No physical or repeated-injection qualification."
+    },
+    "intrinsic_smr_diagnostic_check": {
+      "status": "PASS",
+      "evidence": "intrinsic-smr-evolution-001/diagnostic-check.json",
+      "scope": "78 reduction/intrinsic/raw-Q curl RMS and maximum components at final time in all8 runs match independent leaf stencils to8.54e-15."
     }
   }
 }
