@@ -468,3 +468,11 @@ norms and extrema. This is not yet an in-process physical history diagnostic.
 See `analysis/pc_gh_clean_reduction/INTRINSIC_STAGE_BUDGET.md`. Stage-dump MPI/CUDA
 validation and production diagnostic integration remain next; refinement/core
 and physical evolution/puncture/binary gates remain open.
+
+The two-rank extension of actual stage instrumentation now passes: all 54
+operation payloads agree bitwise with serial, including active RHS and RK
+registers. Twenty-four malformed rank/stage grouping controls are rejected.
+See `intrinsic-stage-mpi-001/`. CUDA controller PID 1860046 is confirmed live
+building the previous production commit, with serial/MPI tests queued inside
+the same controller; its result is not yet available. Reader/test changes in
+this checkpoint do not change production equations or operators.

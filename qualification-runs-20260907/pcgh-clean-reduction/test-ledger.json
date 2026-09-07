@@ -559,6 +559,16 @@
       "status": "PASS",
       "evidence": "intrinsic-stage-001/intrinsic-stage-legacy-001/results.json",
       "scope": "19 legacy restart and layout controls after diagnostic-only hooks"
+    },
+    "intrinsic_stage_MPI": {
+      "status": "PASS",
+      "evidence": "intrinsic-stage-mpi-001/results.json",
+      "scope": "Verified two-rank FD2/4/6 2D/3D 18 actual stages; bitwise serial state/RHS/register agreement; 24 group-negative controls"
+    },
+    "intrinsic_stage_CUDA": {
+      "status": "NOT_RUN",
+      "evidence": "intrinsic-stage-mpi-001/cuda-pending/controller-status-001.txt",
+      "scope": "Controller PID1860046 live, building fc469360 source; tests scheduled after build, no result yet"
     }
   }
 }

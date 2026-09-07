@@ -86,3 +86,40 @@ operator tests, not an unrestricted long-run output policy. MPI/CUDA stage-dump
 validation, production physical history/norm reduction, nonconforming transfer
 budgets and spatial/temporal physical qualification remain unfinished. Earlier
 CUDA evolution results apply to the preceding source, not this new dump code.
+
+## Verified two-rank extension
+
+The rank-local reader now lives in `intrinsic_stage.py`. `assemble_ranks`
+requires exactly the requested ranks, matching cycle/stage/operation/settings,
+matching local cell shapes, and unique block IDs. It sorts by global block ID
+before joining payloads. Global assembly checks uniform spacing and unique
+cell ownership; it is still explicitly limited to uniform periodic data.
+
+The six CPU MPI cases in `intrinsic-stage-mpi-001/` pass all 18 stage checks.
+Actual process logs and per-rank health files verify two ranks. Comparing the
+54 operation snapshots against the earlier serial run gives bitwise agreement
+for every state cell (including stored ghosts), active RHS and RK accumulator.
+Twenty-four negative controls reject missing/duplicate ranks, duplicate block
+IDs and mixed RK stages. These strengthen the reader's synchronization checks;
+they do not establish nonconforming-mesh correctness.
+
+```sh
+python3 -W error analysis/pc_gh_clean_reduction/check_intrinsic_stage_dump.py \
+  --binary MPI_BUILD/src/athena --fixtures SEEDED_DECOMPOSITION_RUN \
+  --launcher '/opt/homebrew/bin/mpiexec -n 2' --ranks 2 --output NEW_MPI_STAGE_RUN
+python3 -W error analysis/pc_gh_clean_reduction/compare_intrinsic_stage_runs.py \
+  --reference SERIAL_STAGE_RUN --target NEW_MPI_STAGE_RUN \
+  --target-ranks 2 --output comparison.json
+```
+
+The owned CUDA controller PID 1860046 is building source
+`fc46936088945a2beeb858763e713e3c701c2fb8` in the existing dedicated CUDA build
+root. Prior controllers were confirmed terminal; the prior binary and changed
+source files were preserved in `before-stage-001/`. Uploaded files and all 337
+source snapshot entries are verified before compilation. The controller will
+run serial and two-rank stage checks with the new reader after a successful
+build and a fresh free-memory check. Do not relaunch it because a poll times out.
+The committed controller snapshot is a live-build observation, not a CUDA pass.
+No equation or production-source change is introduced by this reader/MPI
+checkpoint. The next production priority remains physical diagnostics evaluated
+in-process with a justified derivative/halo construction.

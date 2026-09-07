@@ -455,6 +455,14 @@
       "same-cell reductions and physical diagnostics use reconstructed global periodic arrays only",
       "duplicate output rejected rather than overwritten"
     ],
-    "scope": "uniform periodic serial multi-block actual stage evidence, no intrinsic refinement or physical evolution qualification"
+    "scope": "uniform periodic actual stage evidence; rank count and group synchronization verified; no intrinsic refinement or physical evolution qualification",
+    "ranks": [
+      1,
+      2
+    ],
+    "backends": [
+      "CPU",
+      "CUDA"
+    ]
   }
 }
