@@ -566,9 +566,14 @@
       "scope": "Verified two-rank FD2/4/6 2D/3D 18 actual stages; bitwise serial state/RHS/register agreement; 24 group-negative controls"
     },
     "intrinsic_stage_CUDA": {
-      "status": "NOT_RUN",
-      "evidence": "intrinsic-stage-mpi-001/cuda-pending/controller-status-001.txt",
-      "scope": "Controller PID1860046 live, building fc469360 source; tests scheduled after build, no result yet"
+      "status": "PASS",
+      "evidence": "intrinsic-stage-cuda-001",
+      "scope": "Six serial and six two-rank actual stage suites; all 36 stages pass, dump neutral and duplicate guard; source fc469360 verified, one A10040GB; no new physical-stencil CUDA claim"
+    },
+    "intrinsic_primary_physical_stencil": {
+      "status": "PASS",
+      "evidence": "intrinsic-physical-stencil-001",
+      "scope": "612 final analytic points, oblique shear and nonzero conformal Ricci fixtures; FD2/4/6 H/M convergence and insufficient-halo controls; CPU compiled diagnostic, not task-integrated"
     }
   }
 }

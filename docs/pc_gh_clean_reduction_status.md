@@ -476,3 +476,20 @@ See `intrinsic-stage-mpi-001/`. CUDA controller PID 1860046 is confirmed live
 building the previous production commit, with serial/MPI tests queued inside
 the same controller; its result is not yet available. Reader/test changes in
 this checkpoint do not change production equations or operators.
+
+## Primary physical stencil and completed CUDA stages
+
+A primary-only physical H/M diagnostic kernel now passes 612 analytic compiled
+CPU points across two oblique fixtures, including nonzero conformal Ricci,
+FD2/4/6 and 2D/3D. The direct second/mixed derivative construction fits the
+existing valid ghost reach. It remains to be wired into synchronized mesh tasks
+and rank-reduced histories; its CUDA test is not run. See
+`analysis/pc_gh_clean_reduction/INTRINSIC_PHYSICAL_STENCIL.md`.
+
+The preceding CUDA stage controller is now terminal with exit zero. All six
+serial and six two-rank suites pass, including dump neutrality, RK reconstruction,
+valid ghost checks and duplicate-write controls. The verified binary is
+`e10099aa4138bed435f26095fa4966f2aebe1825efbb1fd12c876f3af0c94c0a`;
+all 337 source manifest entries match the preceding production source.
+Evidence: `intrinsic-stage-cuda-001/`. Earlier pending statements are historical.
+No new evolution equation is enabled by the physical diagnostic header.

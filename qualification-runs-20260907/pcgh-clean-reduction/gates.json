@@ -464,5 +464,33 @@
       "CPU",
       "CUDA"
     ]
+  },
+  "intrinsic_primary_physical_stencil": {
+    "orders": [
+      2,
+      4,
+      6
+    ],
+    "dimensions": [
+      2,
+      3
+    ],
+    "N": [
+      16,
+      32,
+      64
+    ],
+    "phases": 17,
+    "spacing_ratios": [
+      1,
+      1.3,
+      0.7
+    ],
+    "minimum_order": "FD order - 0.6",
+    "weighted_momentum_tolerance": 2e-12,
+    "fixture": "Rotated volume-preserving shear, nonconstant w/rho/K, trace-free conformal A; known physical H and vector M",
+    "halo_radius": "order/2 in each active direction; insufficient FD6 radius2 must give nonfinite diagnostic in guarded fixture",
+    "scope": "compiled prospective physical diagnostic kernel only; no production task hookup yet",
+    "additional_fixture": "Oblique curved unimodular warped metric with R[g]=-2(fprime)^2, A=0, variable w/rho/K; same thresholds"
   }
 }
