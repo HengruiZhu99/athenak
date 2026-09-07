@@ -1,0 +1,60 @@
+[  2%] Built target kokkossimd
+[ 11%] Built target kokkoscore
+[ 12%] Built target kokkoscontainers
+[ 12%] Built target AlwaysCheckGit
+[ 13%] Built target impl_git_version
+[ 14%] Building CXX object src/CMakeFiles/athena.dir/bvals/physics/z4c_bcs.cpp.o
+[ 15%] Building CXX object src/CMakeFiles/athena.dir/driver/driver.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/mesh/load_balance.cpp.o
+[ 16%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh.cpp.o
+[ 17%] Building CXX object src/CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o
+[ 18%] Building CXX object src/CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:368:23: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  368 |     int nb_per_plevel[max_level];      // NOLINT(runtime/arrays)
+      |                       ^~~~~~~~~
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:368:23: note: implicit use of 'this' pointer is only allowed within the evaluation of a call to a 'constexpr' member function
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:369:27: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  369 |     float cost_per_plevel[max_level];  // NOLINT(runtime/arrays)
+      |                           ^~~~~~~~~
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:369:27: note: implicit use of 'this' pointer is only allowed within the evaluation of a call to a 'constexpr' member function
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:390:21: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  390 |     int nb_per_rank[global_variable::nranks];    // NOLINT(runtime/arrays)
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:390:21: note: read of non-const variable 'nranks' is not allowed in a constant expression
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/globals.hpp:12:21: note: declared here
+   12 | extern int my_rank, nranks;
+      |                     ^
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:391:23: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  391 |     int cost_per_rank[global_variable::nranks];  // NOLINT(runtime/arrays)
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/mesh/mesh.cpp:391:23: note: read of non-const variable 'nranks' is not allowed in a constant expression
+/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src/globals.hpp:12:21: note: declared here
+   12 | extern int my_rank, nranks;
+      |                     ^
+4 warnings generated.
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/outputs/basetype_output.cpp.o
+[ 19%] Building CXX object src/CMakeFiles/athena.dir/outputs/history.cpp.o
+[ 20%] Building CXX object src/CMakeFiles/athena.dir/outputs/restart.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_intrinsic.cpp.o
+[ 21%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_adm.cpp.o
+[ 22%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_calcrhs.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_constraints.cpp.o
+[ 23%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_transfer.cpp.o
+[ 24%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_state_budget.cpp.o
+[ 25%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_newdt.cpp.o
+[ 25%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_projection.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_tasks.cpp.o
+[ 26%] Building CXX object src/CMakeFiles/athena.dir/pc_gh/pc_gh_update.cpp.o
+[ 27%] Building CXX object src/CMakeFiles/athena.dir/pgen/pgen.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_minkowski.cpp.o
+[ 28%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_gauge_wave.cpp.o
+[ 29%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_bowen_york.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/pgen/tests/pc_gh_trumpet_a0.cpp.o
+[ 30%] Building CXX object src/CMakeFiles/athena.dir/tasklist/numerical_relativity.cpp.o
+[ 31%] Building CXX object src/CMakeFiles/athena.dir/utils/compact_object_tracker.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/z4c/horizon_dump.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/z4c/z4c_amr.cpp.o
+[ 32%] Building CXX object src/CMakeFiles/athena.dir/__/analysis/pc_gh_clean_reduction/legacy_oracle.cpp.o
+[ 33%] Linking CXX executable athena
+[100%] Built target athena

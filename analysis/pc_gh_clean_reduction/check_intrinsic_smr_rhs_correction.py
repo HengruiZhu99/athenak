@@ -7,7 +7,7 @@ import numpy as np
 from intrinsic_stage import read_dump
 
 def jets(data):
- h=data['header'];u=data['state'];ks,ke,js,je,iss,ie=h['active_kji'];sl=[slice(ks,ke+1),slice(js,je+1),slice(iss,ie+1)];active=u[(slice(None),slice(None),*sl)];du=[];ko=np.zeros_like(active);order=h['order'];radius=order//2+1
+ h=data['header'];assert h.get('payload','evolution_state')=='evolution_state';u=data['state'];ks,ke,js,je,iss,ie=h['active_kji'];sl=[slice(ks,ke+1),slice(js,je+1),slice(iss,ie+1)];active=u[(slice(None),slice(None),*sl)];du=[];ko=np.zeros_like(active);order=h['order'];radius=order//2+1
  assert h['ghosts_valid'] and h['rank']==0
  for d in range(3):
   v=np.zeros_like(active)

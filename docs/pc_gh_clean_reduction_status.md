@@ -607,3 +607,14 @@ sum closes to 1.4e-17. This confirms an immediate reconstruction-to-GH source
 change, not the cause of the previous convergence failure. Next is the scalar
 p transfer commutator at that identified corner. Evidence and limits are in
 `analysis/pc_gh_clean_reduction/INTRINSIC_SMR_STAGE_BUDGET.md`.
+
+## Scalar p correction isolated to derivative/transfer mismatch
+
+Source and received residual snapshots plus a private repeated-transfer probe
+show that ordinary p transfer is exactly idempotent in the sampled stages.
+The entire p ghost correction is R-T(R), checked against an independent stored
+stencil derivative to 2.2e-15. Serial/MPI buffers match and the diagnostic replay
+is bitwise neutral. This identifies a specific numerical mismatch feeding the
+previous p-to-C RHS correction; it does not prove the later convergence failure's
+cause. Next is a coverage-checked interpolation/derivative compatibility control.
+See `analysis/pc_gh_clean_reduction/INTRINSIC_P_COMMUTATOR.md`.

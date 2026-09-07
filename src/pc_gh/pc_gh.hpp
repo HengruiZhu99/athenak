@@ -75,7 +75,8 @@ class PcGh {
   int intrinsic_diagnostic_dcycle = 1;
   template<int Stencil> void WriteIntrinsicDiagnostics(Driver *driver, int stage);
   void DumpIntrinsicStage(Driver *driver, int stage, const char *operation,
-                          bool ghosts_valid, bool include_rhs);
+                          bool ghosts_valid, bool include_rhs,
+                          const DvceArray5D<Real> *buffer = nullptr);
   void IntrinsicToADM();
   TaskStatus IntrinsicTimeStep();
   template<int Stencil> TaskStatus IntrinsicRHS();
@@ -257,8 +258,8 @@ class PcGh {
   void BeginReductionTransfer(int operation);
   void EndReductionTransfer(int operation);
   // NVCC extended lambdas require a publicly accessible enclosing method.
-  template <int ORDER> void TransferResidualGhosts();
-  void CompleteCoherentTransfer(int operation);
+  template <int ORDER> void TransferResidualGhosts(Driver *driver, int stage);
+  void CompleteCoherentTransfer(int operation, Driver *driver, int stage);
   void BeginStateBudget(int operation);
   void EndStateBudget(int operation);
   void WriteReductionSample(DvceArray5D<Real> norms, int operation, bool before);

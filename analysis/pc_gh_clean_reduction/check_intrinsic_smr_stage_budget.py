@@ -9,7 +9,7 @@ from intrinsic_restart import read_restart
 from analyze_intrinsic_interface_budget import block_budget
 
 def quantities(data):
- h=data['header'];ks,ke,js,je,iss,ie=h['active_kji'];assert ks==0 and iss==js and h['ghosts_valid']
+ h=data['header'];assert h.get('payload','evolution_state')=='evolution_state';ks,ke,js,je,iss,ie=h['active_kji'];assert ks==0 and iss==js and h['ghosts_valid']
  result=[];weights=[]
  for m,b in enumerate(h['blocks']):
   u=data['state'][m];q,_=block_budget(u,u,np.zeros((3,*u.shape)),b['spacing'],iss,(1,je-js+1,ie-iss+1),h['order']);result.append(np.concatenate([q[k] for k in ['reduction','curl','qcurl']]).reshape(78,-1));weights.extend([b['spacing'][0]*b['spacing'][1]]*((je-js+1)*(ie-iss+1)))
@@ -27,7 +27,7 @@ for mode in ['none','residual_shifted']:
   assert r.returncode==0 and f'Number of parallel ranks = {a.ranks}' in (d/'run.log').read_text()
   runs.append(dict(directory=str(d),command=command,returncode=r.returncode,seconds=time.monotonic()-start,binary_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),input_sha256=hashlib.sha256((d/'used.athinput').read_bytes()).hexdigest()))
  arrays=[read_restart(sorted(d.glob('rst/*.rst'))[-1],allow_refinement=True)['state'] for d in folders];assert np.array_equal(*arrays)
- parts={};files=sorted(folders[1].glob('intrinsic-stage-*.dat'));assert len(files)==30*a.ranks
+ parts={};files=sorted(folders[1].glob('intrinsic-stage-*.dat'));assert len(files)==(48 if mode=='residual_shifted' else 30)*a.ranks
  for f in files:
   d=read_dump(f);h=d['header'];parts.setdefault((h['cycle'],h['stage'],h['operation']),[]).append(d)
  snapshots={k:assemble_ranks(v,a.ranks) for k,v in parts.items()};stages=[]
@@ -37,10 +37,17 @@ for mode in ['none','residual_shifted']:
    assert not rk['header']['ghosts_valid'] and pre['header']['ghosts_valid'] and post['header']['ghosts_valid']
    assert np.array_equal(pre['state'][:,:20],post['state'][:,:20]);assert np.array_equal(pre['active'],post['active']);assert np.array_equal(rk['active'],pre['active']);assert np.array_equal(post['state'],exchange['state'])
    before,w=quantities(pre);after,w2=quantities(post);assert np.array_equal(w,w2);delta=after-before;assert np.max(abs(delta[:30]))==0
+   if mode=='residual_shifted':
+    source=snapshots[cycle,stage,'source-residual'];received=snapshots[cycle,stage,'received-residual']
+    assert source['header']['payload']==received['header']['payload']=='transfer_residual'
+    change=(received['state']-source['state'])[:,20:]
+    identity=float(np.max(abs((post['state']-pre['state'])[:,20:]-change)))
+    assert identity<2e-12
+   else:identity=0.
    if mode=='none':assert np.array_equal(pre['state'],post['state']) and np.max(abs(delta))==0
    state_delta=post['state']-pre['state'];ordinary_delta=pre['state']-rk['state']
    np.savez_compressed(folders[1]/f'budget-c{cycle}-s{stage}.npz',before=before,after=after,correction=delta,cell_area=w,coherent_state_delta=state_delta,ordinary_stored_state_delta=ordinary_delta)
-   stages.append(dict(cycle=cycle,stage=stage,primary_change=0,active_change=0,reduction_change=0,auxiliary_ghost_change=float(np.max(abs(state_delta))),ordinary_stored_change=float(np.max(abs(ordinary_delta))),correction=stats(delta,w),before=stats(before,w),after=stats(after,w),scope='ordinary ghost delta is raw only; no derivatives on stale post-RK state'))
+   stages.append(dict(residual_identity_error=identity,cycle=cycle,stage=stage,primary_change=0,active_change=0,reduction_change=0,auxiliary_ghost_change=float(np.max(abs(state_delta))),ordinary_stored_change=float(np.max(abs(ordinary_delta))),correction=stats(delta,w),before=stats(before,w),after=stats(after,w),scope='ordinary ghost delta is raw only; no derivatives on stale post-RK state'))
  # Reject a colliding dump in a separate directory, leaving main evidence untouched.
  collision=a.output/(mode+'-collision');collision.mkdir();(collision/'used.athinput').write_text((folders[1]/'used.athinput').read_text());first=next(f for f in files if '-r0-' in f.name and '-c0-s1-pre-rk.' in f.name);sentinel=collision/first.name;sentinel.write_bytes(first.read_bytes());original=hashlib.sha256(sentinel.read_bytes()).hexdigest()
  with (collision/'run.log').open('w') as log:r=subprocess.run(command,cwd=collision,stdout=log,stderr=subprocess.STDOUT,timeout=180)

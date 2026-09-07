@@ -26,7 +26,7 @@ void PcGh::RestrictIntrinsic2D(DvceArray5D<Real> &state, DvceArray5D<Real> &coar
 
 
 template <int ORDER>
-void PcGh::TransferResidualGhosts() {
+void PcGh::TransferResidualGhosts(Driver *driver, int stage) {
   auto state = u0;
   auto residual = transfer_residual;
   auto size = pmy_pack->pmb->mb_size;
@@ -39,6 +39,45 @@ void PcGh::TransferResidualGhosts() {
   const int first_aux = intrinsic_layout ? intrinsic::P : I_P1;
   const int nvars = EvolvedVariables();
   const bool collision = opt.lapse_projection_target == "collision_factorized";
+  auto exchange_residual = [&]() {
+    // A separate communicator avoids interacting with in-flight ordinary transfers.
+    // Restrict the residual itself: E_c = R_E E_f, then prolong/interchange E.
+    // The private coarse buffer stores E in auxiliary slots, not physical G.
+    if (pmy_pack->pmesh->multilevel) {
+      if (intrinsic_point_restriction)
+        RestrictIntrinsic2D(transfer_residual,coarse_transfer_residual);
+      else pmy_pack->pmesh->pmr->RestrictCC(transfer_residual,coarse_transfer_residual,true);
+    }
+    pbval_residual->InitRecv(nvars);
+    pbval_residual->PackAndSendCC(transfer_residual,coarse_transfer_residual);
+    while (pbval_residual->RecvAndUnpackCC(transfer_residual,coarse_transfer_residual)
+           != TaskStatus::complete) {}
+    if (!pmy_pack->pmesh->strictly_periodic) {
+      // Residuals carry exactly the same reflection tensor parity as auxiliaries.
+      // Outflow extrapolates E; it does not extrapolate an independently reset G.
+      pbval_residual->Z4cBCs(pmy_pack,pbval_residual->u_in,transfer_residual,
+                             coarse_transfer_residual);
+    }
+    if (pmy_pack->pmesh->multilevel) {
+      pbval_residual->ProlongateCC(transfer_residual,coarse_transfer_residual,true);
+    }
+    if (!pmy_pack->pmesh->strictly_periodic) {
+      // Prolongation changes tangential ghosts after the first physical fill.
+      // Refresh physical faces/edges/corners from these newly available values.
+      pbval_residual->Z4cBCs(pmy_pack,pbval_residual->u_in,transfer_residual,
+                             coarse_transfer_residual);
+    }
+    while (pbval_residual->ClearSend() != TaskStatus::complete) {}
+    while (pbval_residual->ClearRecv() != TaskStatus::complete) {}
+  };
+  if (intrinsic_layout && intrinsic_stage_dump && stage > 0) {
+    // Diagnostic-only replay of the same linear transfer on G. It uses only
+    // private buffers and is cleared before the physical residual transfer.
+    Kokkos::deep_copy(residual,state);
+    exchange_residual();
+    DumpIntrinsicStage(driver, stage, "transported-state-probe", true, false,
+                       &transfer_residual);
+  }
   Kokkos::deep_copy(residual,state);
   par_for("PC-GH source residual",DevExeSpace(),0,nmb-1,first_aux,nvars-1,
   0,nk-1,0,nj-1,0,ni-1,KOKKOS_LAMBDA(int m,int n,int k,int j,int i) {
@@ -49,35 +88,11 @@ void PcGh::TransferResidualGhosts() {
         : LegacyBoundaryTransferTarget<ORDER>(state,m,n,k,j,i,idx,collision,ind,bcs);
   });
   Kokkos::fence();
-  // A separate communicator avoids interacting with in-flight ordinary transfers.
-  // Restrict the residual itself: E_c = R_E E_f, then prolong/interchange E.
-  // The private coarse buffer stores E in auxiliary slots, not physical G.
-  if (pmy_pack->pmesh->multilevel) {
-    if (intrinsic_point_restriction)
-      RestrictIntrinsic2D(transfer_residual,coarse_transfer_residual);
-    else pmy_pack->pmesh->pmr->RestrictCC(transfer_residual,coarse_transfer_residual,true);
-  }
-  pbval_residual->InitRecv(nvars);
-  pbval_residual->PackAndSendCC(transfer_residual,coarse_transfer_residual);
-  while (pbval_residual->RecvAndUnpackCC(transfer_residual,coarse_transfer_residual)
-         != TaskStatus::complete) {}
-  if (!pmy_pack->pmesh->strictly_periodic) {
-    // Residuals carry exactly the same reflection tensor parity as auxiliaries.
-    // Outflow extrapolates E; it does not extrapolate an independently reset G.
-    pbval_residual->Z4cBCs(pmy_pack,pbval_residual->u_in,transfer_residual,
-                           coarse_transfer_residual);
-  }
-  if (pmy_pack->pmesh->multilevel) {
-    pbval_residual->ProlongateCC(transfer_residual,coarse_transfer_residual,true);
-  }
-  if (!pmy_pack->pmesh->strictly_periodic) {
-    // Prolongation changes tangential ghosts after the first physical fill.
-    // Refresh physical faces/edges/corners from these newly available values.
-    pbval_residual->Z4cBCs(pmy_pack,pbval_residual->u_in,transfer_residual,
-                           coarse_transfer_residual);
-  }
-  while (pbval_residual->ClearSend() != TaskStatus::complete) {}
-  while (pbval_residual->ClearRecv() != TaskStatus::complete) {}
+  if (intrinsic_layout) DumpIntrinsicStage(driver, stage, "source-residual",
+      true, false, &transfer_residual);
+  exchange_residual();
+  if (intrinsic_layout) DumpIntrinsicStage(driver, stage, "received-residual",
+      true, false, &transfer_residual);
   // Preserve all active G and every primary, including transferred primary ghosts.
   // Reconstruct fine OR coarse leaf ghosts from that leaf's actual primary state.
   par_for("PC-GH residual ghost reconstruction",DevExeSpace(),0,nmb-1,first_aux,nvars-1,
@@ -94,7 +109,7 @@ void PcGh::TransferResidualGhosts() {
   Kokkos::fence();
 }
 
-void PcGh::CompleteCoherentTransfer(int operation) {
+void PcGh::CompleteCoherentTransfer(int operation, Driver *driver, int stage) {
   if (opt.coherent_transfer == "none") return;
   if (!pmy_pack->pmesh->strictly_periodic) {
     // Complete primary physical corners after ordinary prolongation. Record
@@ -105,9 +120,9 @@ void PcGh::CompleteCoherentTransfer(int operation) {
   }
   BeginStateBudget(operation);
   switch (opt.spatial_order) {
-    case 2: TransferResidualGhosts<2>(); break;
-    case 4: TransferResidualGhosts<4>(); break;
-    case 6: TransferResidualGhosts<6>(); break;
+    case 2: TransferResidualGhosts<2>(driver, stage); break;
+    case 4: TransferResidualGhosts<4>(driver, stage); break;
+    case 6: TransferResidualGhosts<6>(driver, stage); break;
     default: throw std::runtime_error("unsupported coherent transfer order");
   }
   EndStateBudget(operation);

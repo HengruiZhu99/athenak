@@ -1,0 +1,62 @@
+[
+  {
+    "directory": "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-residual-trace-001/probe-mpi/none-reference",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-point-restrict-001/source/athena-mpi",
+      "-i",
+      "used.athinput"
+    ],
+    "returncode": 0,
+    "seconds": 0.26547733300000004,
+    "binary_sha256": "380cef0dc1cca6b3fd719cab138fd42c75864ed076099536a46801e9f20dab6e",
+    "input_sha256": "120235ee478222c43d2cf72d69a6e53114813cfa77d3bcd312cc53cd106e539d"
+  },
+  {
+    "directory": "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-residual-trace-001/probe-mpi/none-dump",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "used.athinput"
+    ],
+    "returncode": 0,
+    "seconds": 0.615492291,
+    "binary_sha256": "2273aa12697fa0a6d99ae65c97b8cdfe3237075489ce740780ebd979730231c7",
+    "input_sha256": "34e288337cdcb65e6995e7e743bfd47e49e2fd099ff5130cf7dcee68e7fea8a0"
+  },
+  {
+    "directory": "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-residual-trace-001/probe-mpi/residual_shifted-reference",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-point-restrict-001/source/athena-mpi",
+      "-i",
+      "used.athinput"
+    ],
+    "returncode": 0,
+    "seconds": 0.26960462500000015,
+    "binary_sha256": "380cef0dc1cca6b3fd719cab138fd42c75864ed076099536a46801e9f20dab6e",
+    "input_sha256": "c0b68f7bc94c8f72b7e5be6cf5e04b75ec961b6625780797f79fec666c58529f"
+  },
+  {
+    "directory": "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-residual-trace-001/probe-mpi/residual_shifted-dump",
+    "command": [
+      "/opt/homebrew/bin/mpiexec",
+      "-n",
+      "2",
+      "/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-transfer-mpi/src/athena",
+      "-i",
+      "used.athinput"
+    ],
+    "returncode": 0,
+    "seconds": 0.3223769999999999,
+    "binary_sha256": "2273aa12697fa0a6d99ae65c97b8cdfe3237075489ce740780ebd979730231c7",
+    "input_sha256": "46250411779748d8e056ff79dd5baba0f7c3089853f5e965aed397610e7a168d"
+  }
+]

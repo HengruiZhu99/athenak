@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/src",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907",
+    "-I/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current",
+    "-I/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/kokkos",
+    "-I/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/kokkos/core/src",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/kokkos/core/src",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/kokkos/core/src/../../tpls/desul/include",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/kokkos/core/src/../../tpls/mdspan/include",
+    "-I/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/kokkos/containers/src",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/kokkos/containers/src",
+    "-I/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/build-current/kokkos/simd/src",
+    "-I/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/kokkos/simd/src",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "-fsyntax-only",
+    "/Users/hz0693/research/athenak-pcgh-clean-reduction-20260907/analysis/pc_gh_clean_reduction/transfer_mesh_oracle.cpp"
+  ],
+  "returncode": 0
+}

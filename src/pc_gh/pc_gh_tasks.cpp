@@ -282,7 +282,7 @@ TaskStatus PcGh::Prolongate(Driver *pdriver, int stage) {
   if (monitor) EndReductionTransfer(1);
   if (IsIntrinsic() && pmy_pack->pmesh->multilevel)
     DumpIntrinsicStage(pdriver, stage, "pre-coherent", true, false);
-  CompleteCoherentTransfer(11);
+  CompleteCoherentTransfer(11, pdriver, stage);
   if (IsIntrinsic() && pmy_pack->pmesh->multilevel)
     DumpIntrinsicStage(pdriver, stage, "post-coherent", true, false);
   return TaskStatus::complete;
@@ -331,7 +331,7 @@ TaskStatus PcGh::ProlongateProjection(Driver *pdriver, int stage) {
     if (monitor) EndReductionTransfer(6);
   }
   if (opt.project_reduction_constraints && stage == pdriver->nexp_stages) {
-    CompleteCoherentTransfer(12);
+    CompleteCoherentTransfer(12, pdriver, stage);
   }
   return TaskStatus::complete;
 }

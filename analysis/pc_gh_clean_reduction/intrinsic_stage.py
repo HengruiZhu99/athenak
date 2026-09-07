@@ -39,6 +39,7 @@ def read_dump(path):
     return result
 
 def global_fields(data,values):
+    assert data['header'].get('payload','evolution_state')=='evolution_state', 'not an evolution-state payload'
     blocks=data['header']['blocks'];spacing=np.array(blocks[0]['spacing'])
     origins=np.array([b['origin'] for b in blocks]);minimum=origins.min(axis=0)
     assert all(np.array_equal(b['spacing'],spacing) for b in blocks)

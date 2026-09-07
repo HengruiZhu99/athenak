@@ -279,10 +279,12 @@ template<int Stencil> TaskStatus PcGh::IntrinsicRHS() {
 // RHS and RK accumulator payloads contain active cells only: their ghosts are
 // not synchronized. State ghosts are retained and explicitly labelled.
 void PcGh::DumpIntrinsicStage(Driver *driver, int stage, const char *operation,
-                             bool ghosts_valid, bool include_rhs) {
+                             bool ghosts_valid, bool include_rhs,
+                             const DvceArray5D<Real> *buffer) {
   if (!intrinsic_stage_dump || stage < 1) return;  // stage zero is initialization
   static_assert(sizeof(Real) == sizeof(double), "stage dumps require float64 Real");
-  auto h=Kokkos::create_mirror_view_and_copy(HostMemSpace(),u0);
+  if (buffer && include_rhs) IntrinsicError("residual dump cannot contain an evolution RHS");
+  auto h=Kokkos::create_mirror_view_and_copy(HostMemSpace(),buffer ? *buffer : u0);
   auto &size=pmy_pack->pmb->mb_size;
   auto &gid=pmy_pack->pmb->mb_gid;
   size.template sync<HostMemSpace>(); gid.template sync<HostMemSpace>();
@@ -295,7 +297,11 @@ void PcGh::DumpIntrinsicStage(Driver *driver, int stage, const char *operation,
   FILE *file=std::fopen(name.str().c_str(), "wbx");
   if (!file) IntrinsicError("cannot exclusively create stage dump " + name.str());
   std::ostringstream header; header << std::setprecision(17);
-  header << "{\"version\":1,\"dtype\":\"native_float64\",\"operation\":\"" << operation
+  if (buffer) header << "{\"payload\":\""
+    << (std::string(operation)=="transported-state-probe" ? "transported_state_probe"
+                                                        : "transfer_residual") << "\",";
+  else header << "{";
+  header << "\"version\":1,\"dtype\":\"native_float64\",\"operation\":\"" << operation
     << "\",\"rank\":" << global_variable::my_rank << ",\"cycle\":" << pmy_pack->pmesh->ncycle
     << ",\"stage\":" << stage << ",\"step_time\":" << pmy_pack->pmesh->time
     << ",\"dt\":" << pmy_pack->pmesh->dt << ",\"ghosts_valid\":" << (ghosts_valid?"true":"false")

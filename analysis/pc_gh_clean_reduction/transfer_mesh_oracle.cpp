@@ -131,7 +131,7 @@ void Final(ParameterInput *pin, Mesh *mesh) {
     auto before = Kokkos::create_mirror(state);
     Kokkos::deep_copy(before,state);
     pc->opt.state_budget = pin->GetOrAddBoolean("problem","raw_budget",false);
-    pc->CompleteCoherentTransfer(1101+repeat);
+    pc->CompleteCoherentTransfer(1101+repeat, nullptr, 0);
     auto after = Kokkos::create_mirror_view_and_copy(HostMemSpace(),state);
     for (int m=0; m<nmb; ++m) {
       Real error_before=0, error_after=0, fixed_change=0;
