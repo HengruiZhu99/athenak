@@ -1,6 +1,10 @@
 # Clean intrinsic reduction implementation status
 
-2026-09-07. Work in progress. Only one-step legacy controls have evolved; no new-formulation qualification claim.
+2026-09-07: **PAUSED at the user’s request. All owned jobs and builds are stopped. No further tests or evolutions are being run.**
+
+The [equation-level review](pcgh-scheme-review-20260907/README.md) is the current synthesis. It compares the actual b81b44d6 projected merger source with the free intrinsic implementation, includes nine existing figures, and distinguishes measured failures from conjecture. The uniform32 intrinsic puncture failed near 11.03M after large physical constraint growth and an alpha=2 domain crossing. Three CPU baseline screens and both early CPU timestep controls reached 2M; the higher-resolution/long SMR calculations were user-canceled before their targets. No intrinsic binary evolution was run. No puncture or binary convergence qualification is claimed.
+
+Source inspection for the review confirms that the intrinsic mesh RHS still uses the factorized lapse-gradient target rho*D(w)+w*D(rho), not D(rho*w). This discrete limitation is documented without modifying the solver. The unfinished health-performance edit was archived outside Git and production source restored to 9763080. The sections below are a historical checkpoint log; old “ongoing” statements do not authorize continuation.
 
 The remote source was fetched at `62945657b4f2828a481abb5e7708e0e3e06dbd8d`,
 exactly the independently verified SHA. The requested new branch

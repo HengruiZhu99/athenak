@@ -1,0 +1,30 @@
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 64
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 2
+  Rank = 0: 32 MeshBlocks, cost = 32
+  Rank = 1: 32 MeshBlocks, cost = 32
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+--------------------------------------------------------------------------
+The call to cuMemHostRegister(0x14c77fe00008, 134217728, 0) failed.
+  Host:  della-l03g10
+  cuMemHostRegister return value:  1
+  Registration cache:  smcuda
+--------------------------------------------------------------------------
+
+Setup complete, executing task list(s)...
+
+elapsed=6.015998e+00 cycle=0 time=0.000000e+00 dt=4.692315e-03
+[della-l03g10:403425] 1 more process has sent help message help-mpi-common-cuda.txt / cuMemHostRegister during init failed
+[della-l03g10:403425] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+elapsed=1.703932e+02 cycle=10 time=4.692284e-02 dt=4.692247e-03
+elapsed=3.367807e+02 cycle=20 time=9.384500e-02 dt=4.692180e-03
+elapsed=5.044258e+02 cycle=30 time=1.407665e-01 dt=4.692116e-03
+elapsed=6.708927e+02 cycle=40 time=1.876874e-01 dt=4.692060e-03
+elapsed=8.387909e+02 cycle=50 time=2.346078e-01 dt=4.692011e-03
+elapsed=1.005624e+03 cycle=60 time=2.815277e-01 dt=4.691970e-03
+elapsed=1.172540e+03 cycle=70 time=3.284473e-01 dt=4.691938e-03
+elapsed=1.340803e+03 cycle=80 time=3.753665e-01 dt=4.691912e-03

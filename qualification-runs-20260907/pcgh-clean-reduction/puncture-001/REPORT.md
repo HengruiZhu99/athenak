@@ -1,4 +1,6 @@
-# Initial puncture evolution results (campaign ongoing)
+# Initial puncture evolution results (paused)
+
+**Pause update:** All investigation jobs are stopped at the user’s request. The following text is the preserved earlier checkpoint, not current run status. The current failure, completed/partial times, equation audit and source identities are in [the comprehensive review](../../../docs/pcgh-scheme-review-20260907/README.md) and [stop inventory](../review-pause/remote-stop-inventory.json). No intrinsic binary evolution was run.
 
 Interface diagnosis remains stopped at the user's request. No further interface repair is included. The frozen issues remain failures, not satisfied prerequisites. User-directed puncture and subsequent binary screens are proceeding with ordinary transfer.
 

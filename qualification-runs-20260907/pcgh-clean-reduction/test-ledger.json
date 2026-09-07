@@ -665,6 +665,29 @@
       "status": "PASS",
       "evidence": "intrinsic-residual-trace-001",
       "scope": "Actual source/received/probe buffers: T(G)-G exactly0 for p, entire correction reproduced as R-T(R) to2.2e-15. Probe neutral, serial/MPI bitwise, payload guards and legacy restart/syntax controls pass. Not interface qualification."
+    },
+    "puncture-user-stop-review": {
+      "status": "USER_STOPPED",
+      "numerical_failure": "uniform32 alpha exceeded 2 after physical constraint growth; step-start time 11.024244795799081",
+      "completed_baseline_T2": [
+        "uniform32 CPU",
+        "uniform64 CPU",
+        "SMR32 CPU"
+      ],
+      "completed_T2_halfdt": [
+        "uniform32 CPU",
+        "uniform64 CPU"
+      ],
+      "binary_evolution": "NOT_RUN",
+      "evidence": "review-pause/stop-record.json"
     }
+  },
+  "pause": {
+    "date": "2026-09-07",
+    "status": "USER_PAUSED",
+    "all_owned_jobs_stopped": true,
+    "no_more_tests": true,
+    "review": "docs/pcgh-scheme-review-20260907/README.md",
+    "note": "Historical gates and fixtures below retain their recorded meanings; incomplete runs are not passes."
   }
 }

@@ -1,0 +1,110 @@
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 64
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 4
+  Rank = 0: 16 MeshBlocks, cost = 16
+  Rank = 1: 16 MeshBlocks, cost = 16
+  Rank = 2: 16 MeshBlocks, cost = 16
+  Rank = 3: 16 MeshBlocks, cost = 16
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+--------------------------------------------------------------------------
+The call to cuMemHostRegister(0x1507ffe00008, 134217728, 0) failed.
+  Host:  della-l02g4
+  cuMemHostRegister return value:  1
+  Registration cache:  smcuda
+--------------------------------------------------------------------------
+
+Setup complete, executing task list(s)...
+
+elapsed=3.631154e+00 cycle=0 time=0.000000e+00 dt=4.692315e-03
+--------------------------------------------------------------------------
+The call to cuIpcGetMemHandle failed. This means the GPU RDMA protocol
+cannot be used.
+  cuIpcGetMemHandle return value:   1
+  address: 0x67c0bc680
+Check the cuda.h file for what the return value means. Perhaps a reboot
+of the node will clear the problem.
+--------------------------------------------------------------------------
+[della-l02g4:227362] 3 more processes have sent help message help-mpi-common-cuda.txt / cuMemHostRegister during init failed
+[della-l02g4:227362] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+[della-l02g4:227362] 359 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] 718 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 717 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+elapsed=9.431109e+01 cycle=10 time=4.692284e-02 dt=4.692247e-03
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] 717 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+elapsed=1.856816e+02 cycle=20 time=9.384500e-02 dt=4.692180e-03
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] 717 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 716 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 718 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] 718 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] 720 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Data unpack would read past end of buffer in file util/show_help.c at line 501
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 717 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed
+[della-l02g4:227362] [[8081,0],0] ORTE_ERROR_LOG: Out of resource in file util/show_help.c at line 507
+[della-l02g4:227362] 719 more processes have sent help message help-mpi-common-cuda.txt / cuIpcGetMemHandle failed

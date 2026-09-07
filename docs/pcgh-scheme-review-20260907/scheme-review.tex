@@ -1,0 +1,632 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.85in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,mathtools,graphicx,booktabs,longtable,array,xcolor,microtype}
+\usepackage[unicode,colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\usepackage{enumitem,fancyhdr,xurl,float,needspace}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\setlist{nosep,leftmargin=*}
+\setlength{\parindent}{0pt}\setlength{\parskip}{6pt}
+\setlength{\emergencystretch}{3em}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small PC-GH: equations and production evidence}\fancyhead[R]{\small 7 September 2026}\fancyfoot[C]{\thepage}
+\newcommand{\D}{D_0}\newcommand{\TF}{\operatorname{TF}}\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\src}[1]{\texttt{\small\path{#1}}}
+\newcommand{\fig}[3]{\begin{figure}[H]\centering\includegraphics[width=\linewidth,height=.67\textheight,keepaspectratio]{figures/#1}\caption{#2}\label{#3}\end{figure}\clearpage}
+\title{Intrinsic clean-reduction PC-GH\\[3pt]\large Equation-level comparison with the merger-surviving projected scheme}
+\author{AthenaK project review}
+\date{7 September 2026\\\small Investigation paused; existing evidence only}
+\begin{document}
+\maketitle
+\begin{abstract}
+The new scheme replaces 55 independently stored conformal fields with 50 intrinsic fields and gives all ten gradient families a common transport--relaxation subsidiary equation. This removes identifiable continuum reduction-source mixing and enforces conformal algebraic constraints by parametrization. It does not yet establish stable puncture evolution. A coarse uniform single-hole run developed large physical Hamiltonian error and stopped when $\alpha$ exceeded 2 near $11.03M$. Finer and SMR screens were incomplete when the investigation was stopped.
+
+The earlier projected scheme evolved a head-on binary through a merger feature, developed sustained constraint growth around $40M$, and failed at total coordinate time $73.79991M$ with a non-positive conformal metric. Its global GH and auxiliary resets, different grid, damping, gauge switch, and off-reduction equations make this an informative historical comparison, not a matched performance experiment. Its early projection control was corrective; a causal explanation of its late failure remains incomplete.
+
+A plausible synthesis retains the intrinsic geometry and complete derivative equations while treating any localized gradient reconstruction as an explicit numerical closure. That is a proposal for review, not an implemented or tested improvement. No evolution, build, or scientific test was run to prepare this document.
+\end{abstract}
+\tableofcontents
+\clearpage
+
+\section{Scope, stop state, and how to read the evidence}
+All owned active Della calculations were terminated on request: Slurm jobs 13587092 (uniform128), 13587093 (SMR128), and 13586805 (SMR64) were canceled; the direct evolution and its controller in process group 2653311 were terminated. A subsequent queue query was empty and no owned Della evolution/build processes remained. No local investigation processes remained; an unrelated collapse calculation was left untouched. The final partial runs are classified as user-stopped, not numerical failures or completed qualifications. There is no resubmission in this review.
+
+An unfinished performance-only health-reduction edit was preserved outside the repository and the production source restored to commit \texttt{9763080}. It was not used by the production binaries discussed here. The earlier unfinished prolongation experiment likewise was not enabled in the puncture campaign. Stop records, log tails, checkpoint inventories, and compact copied results are under \src{qualification-runs-20260907/pcgh-clean-reduction/review-pause/}.
+
+This review uses three evidence labels: \textbf{identity/analysis} means a stated mathematical conclusion under explicit hypotheses; \textbf{measured} means saved source or numerical output supports the claim; \textbf{conjecture} means a possible explanation that the existing controls do not establish. The old report's statement that the late failure ``identifies'' an SMR projection-feedback loop is too strong. The observed grid-aligned growth and operation brackets support that hypothesis, but do not prove it.
+
+\subsection{The three distinct lineages}
+\begin{longtable}{P{.17\linewidth}P{.36\linewidth}P{.39\linewidth}}
+\toprule Label & Identity & Role in this review\\\midrule
+Legacy collision & \src{b81b44d658f3b81584e94ce79b92656c112ff908} & Actual 55-field binary source. Global GH and auxiliary projection; completed moving shift; $\kappa=0$.\\
+Intermediate advective / direct-lapse & September 4--5 extension; direct-lapse patch \texttt{5a9230e3}; actual manifests retained & True primary advection and finite reduction damping, but source mixing remains. The corrected lapse target failed the matched $M/256$ stress test. This was not the merger run.\\
+Intrinsic candidate & Mathematical reference \src{7ef9c61c0c2bd12a46b28f334a53a1aabcd1842e}; implementation \src{9763080fe9e253020aafe42831cd8d07d7ab0c94} & New 50-field system. Single-hole/outflow evolution binary frozen before the head-on initializer was added. No new binary evolution exists.\\\bottomrule
+\end{longtable}
+The legacy source was read in its separate control checkout. The newer source tree's legacy mode includes later engineering and formulation options; it must not silently stand in for \texttt{b81b44d6}. Likewise, the old \src{docs/pc_gh_clean_reduction_equations.tex} is a geometry checkpoint whose mesh-integration status is stale. This report supplies the complete equation comparison and current pause status.
+
+\section{Common conventions and the state dictionary}
+Use $G=c=1$, signature $(-,+,+,+)$, and
+\begin{equation}
+\D=\partial_t-\beta^i\partial_i,\quad \alpha=\rho w,\quad
+\gamma_{ij}=w^{-2}g_{ij},\quad
+K^{\rm phys}_{ij}=w^{-2}(A_{ij}+g_{ij}K/3).
+\end{equation}
+$K^{\rm phys}_{ij}=-\tfrac12\mathcal L_n\gamma_{ij}$. All conformal contractions below use $g$ and $g^{-1}$. Configuration fields are dimensionless; $K,A,C,Z$ and first derivatives have units $M^{-1}$. Denote the spacetime metric by $\psi_{\mu\nu}$ to avoid confusing it with $g_{ij}$.
+
+On the full reduction surface, the covariant reference is
+\begin{equation}
+R_{\mu\nu}-\nabla_{(\mu}C_{\nu)}+
+\kappa\left[n_{(\mu}C_{\nu)}-\tfrac12\psi_{\mu\nu}n^\sigma C_\sigma\right]=0,
+\qquad C_\mu=H_\mu+\Gamma_\mu.
+\end{equation}
+Here $C=n^\mu C_\mu=C_\perp$ and $Z^i=g^{ij}C_j$; the spatial coordinate projection of the raised spacetime constraint is $C^i+\beta^iC^0=w^2 Z^i$. This normalization is not an arbitrary Z4 convention. Both schemes use this physical identification on consistent jets. Their off-reduction extensions and numerical projections differ.
+
+\begin{longtable}{P{.22\linewidth}P{.32\linewidth}P{.38\linewidth}}
+\toprule Quantity & Legacy storage & Intrinsic storage / meaning\\\midrule
+Conformal factor/lapse & $w,\rho$ & Same; $\alpha=\rho w$ is composite.\\
+Conformal geometry & Six $g_{ij}$ and six $A_{ij}$ & Five chart coordinates $s^A$ and five trace-free frame components $\widehat A$.\\
+Gauge and curvature & $\beta^i,K,Z^i,C$ & Same physical roles, distinct off-reduction equations.\\
+Factor gradient & $p_i$ & $p_i\simeq\partial_iw$.\\
+Lapse gradient & $L_i$ & $l_i\simeq\partial_i\alpha$, with $L_i=2l_i$ in the map.\\
+Metric gradient & Eighteen $Q_{kij}$ & Fifteen $S_k^A\simeq\partial_ks^A$, and $Q_{kij}=J_{ij,A}S_k^A$.\\
+Shift gradient & Nine $B_i{}^j$ & Same index convention: matrix row $i$, column $j$.\\
+Counts & 22 non-auxiliary + 33 auxiliary = 55 & 20 non-auxiliary + 30 auxiliary = 50.\\\bottomrule
+\end{longtable}
+The five removed components are one determinant degree of freedom, one curvature trace, and three metric-gradient traces. Old and new restarts are not interchangeable. A finite-radius state map requires positive fields, SPD geometry, and the old algebraic constraint submanifold; arbitrary old 55-field dumps cannot be reinterpreted as 50-field data.
+
+\subsection{Intrinsic algebraic geometry}
+For $s=(a,c,b,d,e)$, let
+\begin{equation}
+T=\begin{pmatrix}e^a&0&0\\b&e^c&0\\d&e&e^{-a-c}\end{pmatrix},\qquad
+ g=TT^T,\qquad A=T\widehat A T^T,\quad
+ \widehat A_{33}=-\widehat A_{11}-\widehat A_{22}.
+\end{equation}
+The stored curvature entries are $(\widehat A_{11},\widehat A_{12},\widehat A_{13},\widehat A_{22},\widehat A_{23})$. Defining $J_{ij,A}=\partial g_{ij}/\partial s^A$ gives
+\begin{equation}
+\det g=1,\quad \tr(g^{-1}A)=0,\quad \tr(g^{-1}Q_k)=0,\quad Q_{kij}=J_{ij,A}S_k^A.
+\end{equation}
+These are exact algebraic identities in exact arithmetic, even when $S\ne\partial s$. They do not imply good conditioning, small physical constraints, or small curls. Floating-point exponent overflow or cancellation can still invalidate reconstructed geometry.
+
+True composite derivatives are
+\begin{align}
+\partial_k g_{ij}&=J_{ij,A}\partial_k s^A,\\
+\partial_k Q_{lij}&=J_{ij,A}\partial_k S_l^A+J_{ij,AB}(\partial_k s^B)S_l^A,\\
+\partial_k g^{-1}&=-g^{-1}(\partial_k g)g^{-1},\\
+\partial_k A&=(\partial_kT)\widehat AT^T+T(\partial_k\widehat A)T^T+T\widehat A(\partial_kT)^T.
+\end{align}
+The new kernel differentiates these functions using the actual primary jets. Replacing $\partial g$ by independent $Q$, or $\partial\alpha$ by independent $l$, would change its defining PDE.
+
+\section{Complete new continuum equations}
+\subsection{Geometric operators}
+Parentheses denote symmetrization with weight $1/2$. Set $\theta=B_i{}^i$ and
+\begin{align}
+\Gamma_{abc}&=\tfrac12(Q_{bac}+Q_{cab}-Q_{abc}),&
+\Gamma^a{}_{bc}&=g^{ad}\Gamma_{dbc},\\
+\Gamma^a(Q)&=g^{bc}\Gamma^a{}_{bc},&\Lambda^a&=\Gamma^a(Q)-Z^a.
+\end{align}
+These connections intentionally use independent gradients. With true derivatives of their algebraic composites, define
+\begin{align}
+R^*_{ij}={}&-\tfrac12g^{kl}\partial_k Q_{lij}+g_{k(i}\partial_{j)}\Lambda^k\nonumber\\
+&+g^{kl}\left[\Gamma^m{}_{kl}\Gamma_{(ij)m}
++\Gamma^m{}_{ki}\Gamma_{jml}+\Gamma^m{}_{kj}\Gamma_{iml}
++\Gamma^m{}_{ik}\Gamma_{mjl}\right],\\
+P_{ij}&=\partial_ip_j-\Gamma^k{}_{ij}p_k,\qquad
+N_{ij}=\partial_il_j-\Gamma^k{}_{ij}l_k,\\
+m_i&=\partial_j(g^{jk}A_{ki})+\Gamma^j{}_{jk}A^k{}_i
+-\Gamma^k{}_{ji}A^j{}_k-\tfrac23\partial_iK,\\
+M_i^\alpha&=\alpha m_i-3\rho A^j{}_i p_j,\\
+H^*&=\tfrac23K^2-A_{ij}A^{ij}+w^2g^{ij}R^*_{ij}+4wg^{ij}P_{ij}-6p_ip^i,\\
+\mathcal S_{ij}&=\alpha w^2R^*_{ij}+\alpha wP_{(ij)}-w^2N_{(ij)}
+-w(l_ip_j+l_jp_i),\\
+\mathcal T_{ij}&=-w(Z_ip_j+Z_jp_i)-\tfrac12w^2Z^kQ_{kij},\qquad Z_i=g_{ij}Z^j,\\
+\mathcal B_i&=\sum_d(\partial_dB_i{}^d-\partial_iB_d{}^d),\qquad
+\TF(X)_{ij}=X_{ij}-\tfrac13g_{ij}g^{kl}X_{kl}.
+\end{align}
+$H^*$ is an evolution operator, not an independent physical Hamiltonian diagnostic when $Z$ or reduction errors are nonzero. Similarly $M_i^\alpha$ uses the evolution's auxiliary connection.
+
+For physical diagnostics, use the actual primary metric and extrinsic curvature:
+\begin{align}
+H_{\rm phys}&=R[\gamma]+K^2-K^{\rm phys}_{ij}K_{\rm phys}^{ij},\\
+(M_{\rm phys})_i&=D_j K_{\rm phys}^j{}_i-D_iK.
+\end{align}
+With $\widetilde D$ and $R[g]$ built from true primary metric derivatives, their conformal expressions are
+\begin{align}
+H_{\rm phys}&=\tfrac23K^2-A_{ij}A^{ij}+w^2R[g]
++4w\widetilde D^i\partial_iw-6g^{ij}(\partial_iw)(\partial_jw),\\
+(M_{\rm phys})_i&=\widetilde D_jA^j{}_i-\tfrac23\partial_iK
+-\frac3w A^j{}_i\partial_jw.
+\end{align}
+The alpha-weighted momentum multiplies this last expression by $\alpha=\rho w$, yielding a regular last term $-3\rho A^j{}_i\partial_jw$. Weighted and unweighted momentum must remain separately labeled. The physical Hamiltonian uses neither $R^*$ nor independent $p$ in place of the primary derivatives. Coordinate-volume RMS means $[\sum_{\rm leaves,cells}h_1h_2h_3 f^2/\sum h_1h_2h_3]^{1/2}$ over the declared region; coarse cells covered by finer leaves are not counted twice.
+
+\subsection{Gauge and configuration}
+\begin{align}
+F_w&=\tfrac13w(\alpha K-\theta),&\D w&=F_w,\\
+\D\rho&=\rho[-2K-(\alpha K-\theta)/3],&\D\alpha&=-2\alpha K,\\
+F_\beta^i&=\Lambda^i-\eta\beta^i+\sigma(z)V^i,&\D\beta^i&=F_\beta^i,\\
+V^i&=g^{ij}(\alpha^2wp_j-\alpha w^2l_j),&z&=\alpha w^2.
+\end{align}
+The coefficient of $\Lambda$ is one. This is an integrated Gamma-like driver, not a separate two-field Gamma driver. The completion is
+\begin{equation}
+\sigma(z)=\begin{cases}0&z\le .1,\\
+\displaystyle\frac{e^{-1/u}}{e^{-1/u}+e^{-1/(1-u)}}&.1<z<.5,\quad u=(z-.1)/.4,\\
+1&z\ge .5.
+\end{cases}
+\end{equation}
+It is $C^\infty$ at its joins; the implementation uses an equivalent bounded logistic evaluation. The legacy cubic switch below is different even with identical endpoints.
+
+For the metric source, use the matrix $B$ convention from the dictionary:
+\begin{align}
+F_g&=-2\alpha A+Bg+gB^T-\tfrac23\theta g,\\
+W_T&=T^{-1}F_gT^{-T},\qquad
+L_T=\operatorname{strictLower}(W_T)+\tfrac12\operatorname{diag}(W_T),\\
+\D T&=TL_T,\\
+F_a&=(L_T)_{11},\quad F_c=(L_T)_{22},\quad
+F_b=b(L_T)_{11}+e^c(L_T)_{21},\\
+F_d&=d(L_T)_{11}+e(L_T)_{21}+e^{-a-c}(L_T)_{31},\\
+F_e&=e(L_T)_{22}+e^{-a-c}(L_T)_{32},\qquad \D s^A=F_s^A.
+\end{align}
+The coordinate named $e$ is distinct from the exponential $e^{(\cdot)}$. $L_T$ is a triangular matrix, not the old lapse gradient $L_i$.
+
+\subsection{Curvature and freely evolved GH constraints}
+\begin{align}
+\D K={}&\alpha A_{ij}A^{ij}+\tfrac13\alpha K^2-w^2g^{ij}N_{ij}+wp^il_i\nonumber\\
+&+\alpha(H^*-KC)+\alpha wp_iZ^i-\tfrac32\kappa\alpha C,\\
+\D C={}&\alpha(H^*-KC)+w^2(\rho p_i+l_i)Z^i-2\kappa\alpha C,\\
+F_A={}&\TF(\mathcal S)+BA+AB^T-\tfrac23\theta A
+-2\alpha Ag^{-1}A+\alpha(K-C)A+\alpha\TF(\mathcal T),\\
+\D\widehat A={}&T^{-1}F_AT^{-T}-L_T\widehat A-\widehat AL_T^T,\\
+\D Z^i={}&-2g^{ij}M_j^\alpha-\alpha g^{ij}\partial_jC+Cg^{ij}l_j
+-Z^jB_j{}^i+\tfrac23\theta Z^i\nonumber\\
+&-\left(\tfrac23\alpha K+\kappa\alpha\right)Z^i+g^{ij}\mathcal B_j.
+\end{align}
+The last term is the shift-gradient curl completion. Symmetrized Hessians and this completion vanish as changes on the full reduction surface but matter off it. Independent nonzero-$C,Z$ physical-jet checks support agreement with the stated GH reference on the full reduction surface. They do not assert equivalence to every other first-order GH extension away from that surface.
+
+\subsection{All thirty auxiliary equations and the exact subsidiary law}
+Define ten potentials, ten source functions, and their three gradients:
+\begin{equation}
+x^A=(w,\alpha,s^{1\ldots5},\beta^{1\ldots3}),\quad
+G_i^A=(p_i,l_i,S_i^{1\ldots5},B_i{}^{1\ldots3}),\quad
+F^A=(F_w,-2\alpha K,F_s^{1\ldots5},F_\beta^{1\ldots3}).
+\end{equation}
+The complete auxiliary rule is
+\begin{equation}\boxed{
+\partial_tG_i^A=\beta^j\partial_jG_i^A+(\partial_i\beta^j)G_j^A
++\partial_iF^A-\lambda(G_i^A-\partial_ix^A).}
+\end{equation}
+Every derivative of $F$ is a complete derivative of the composite source, holding no evolving field artificially constant. For example,
+\begin{equation}
+\partial_tl_i=\beta^j\partial_jl_i+(\partial_i\beta^j)l_j
+-2K\partial_i\alpha-2\alpha\partial_iK-\lambda(l_i-\partial_i\alpha).
+\end{equation}
+Set $E_i^A=G_i^A-\partial_ix^A$ and $\Omega_{ij}^A=\partial_iG_j^A-\partial_jG_i^A$. Commuting smooth derivatives and subtracting the differentiated primary equation gives
+\begin{align}
+(\partial_t-\mathcal L_\beta)E^A&=-\lambda E^A,\\
+(\partial_t-\mathcal L_\beta)\Omega^A&=-\lambda\Omega^A-d\lambda\wedge E^A.
+\end{align}
+Here $\mathcal L_\beta$ acts on the spatial covector index (and on both indices for the two-form); the family label is fixed. This removes the extra source map of the intermediate extension. It does not remove shift stretching or the variable-rate curl source. In the puncture screens, $\lambda=\alpha/M$; $\eta=2/M$ and $\kappa=1/M$. Thus relaxation becomes weak as the lapse collapses, and $d\lambda\wedge E$ can generate curl where the rate varies.
+
+For fixed coordinate-volume norms and suitable boundary data, the smooth subsidiary equation yields, family by family,
+\begin{equation}
+\frac{d}{dt}\int |E|^2d^3x=
+\int_{\partial\mathcal V}(\beta\cdot n)|E|^2dS+
+2\int E^T\left[\operatorname{Sym}(\partial\beta)
+-(\lambda+\tfrac12\partial_j\beta^j)I\right]E\,d^3x.
+\end{equation}
+Positive $\lambda$ alone therefore does not prove monotone coordinate-norm decay. Derivatives of the coefficients enter higher-order estimates. Nor does an exact continuum identity eliminate discrete forcing.
+
+The physical metric curl remains
+\begin{equation}
+\partial_iQ_{jab}-\partial_jQ_{iab}
+=J_{ab,A}\Omega_{ij}^A+
+J_{ab,AB}\big[(\partial_is^B)S_j^A-(\partial_js^B)S_i^A\big].
+\end{equation}
+It vanishes for exact gradients, but is not simply $J\Omega$ off reduction. Intrinsic curls and the old raw $Q$ curl must not be compared as the same scalar diagnostic.
+
+\section{What the merger-surviving code actually evolved}
+\subsection{Stored-gradient advection changes the off-reduction gauge}
+Let $r_i=p_i-\partial_iw$, $q_{iab}=Q_{iab}-\partial_ig_{ab}$, and $b_i{}^a=B_i{}^a-\partial_i\beta^a$. In the collision source,
+\begin{align}
+\partial_tw&=\beta^ip_i+F_w,&\D w&=F_w+\beta^ir_i,\\
+\partial_tg_{ab}&=\beta^iQ_{iab}+F_{g,ab},&\D g_{ab}&=F_{g,ab}+\beta^iq_{iab},\\
+\partial_t\beta^a&=\beta^iB_i{}^a+F_{\beta,\rm old}^a,&
+\D\beta^a&=F_{\beta,\rm old}^a+\beta^ib_i{}^a,\\
+\D\rho&=\rho[-2K-(\alpha K-\theta)/3].
+\end{align}
+Consequently the old composite lapse obeys
+\begin{equation}\boxed{\D\alpha=-2\alpha K+\rho\beta^ir_i.}\end{equation}
+Thus direct advective $1+\log$ is exact on reduction in the legacy collision code, but the free off-reduction lapse contains the displayed error term. In the new continuum system $\D\alpha=-2\alpha K$ also off reduction. This is a substantive difference, not a renaming of $L/2$.
+
+The old driver is
+\begin{equation}
+F_{\beta,\rm old}^a=\Gamma^a(Q)-Z^a-\eta\beta^a+sigma_{\rm old}(z)V^a,
+\quad V^a=g^{ac}(\alpha^2wp_c-\tfrac12\alpha w^2L_c),
+\end{equation}
+with the same endpoints $.1,.5$ but $\sigma_{\rm old}=u^2(3-2u)$ in between and constant outside. It is $C^1$, not the new $C^\infty$ plateau. The two continuum gauges differ in the transition even on exact gradients. On identical states their shift-source difference is $(\sigma-\sigma_{\rm old})V$. No matched-switch puncture comparison was completed.
+
+\subsection{Old source differentiation and all auxiliary rows}
+Define a formal derivative $\widehat\partial_i$ that substitutes
+\begin{equation}
+\widehat\partial_iw=p_i,\quad \widehat\partial_i\alpha=L_i/2,\quad
+\widehat\partial_ig_{ab}=Q_{iab},\quad
+\widehat\partial_i\beta^a=B_i{}^a,
+\end{equation}
+while retaining true derivatives of independently evolved $K,A,C,Z,p,L,Q,B$. For composites, apply the chain rule. In particular,
+\begin{equation}
+\widehat\partial_ig^{-1}=-g^{-1}Q_i g^{-1},\qquad
+\widehat\partial_i z=w^2(L_i/2+2\rho p_i).
+\end{equation}
+A formal $\widehat\partial_i\rho=(L_i/2-\rho p_i)/w$ explains the old positive-field algebra; the actual regular kernel evaluates the resulting shift derivative without dividing by $w$. For $v_c=\rho p_c-L_c/2$, it uses
+\begin{equation}
+z\widehat\partial_i v_c
+=\rho w^2(L_i/2-\rho p_i)p_c+\rho^2w^3\partial_ip_c
+-\tfrac12\rho w^3\partial_iL_c.
+\end{equation}
+These identities specify its complete polynomial shift differentiation together with the product rule for $\sigma_{\rm old}V$.
+
+The collision-source auxiliary equations, with no finite $\lambda$ relaxation, are
+\begin{align}
+\partial_tp_i={}&\beta^j\partial_jp_i+B_i{}^jp_j
++\tfrac13\{p_i(\alpha K-\theta)+w[(L_i/2)K+\alpha\partial_iK-\partial_i\theta]\},\\
+\partial_tL_i={}&\beta^j\partial_jL_i+B_i{}^jL_j-2KL_i-4\alpha\partial_iK,\\
+\partial_tQ_{iab}={}&\beta^j\partial_jQ_{iab}+B_i{}^jQ_{jab}
++\widehat\partial_iF_{g,ab},\\
+\partial_tB_i{}^a={}&\beta^j\partial_jB_i{}^a+B_i{}^jB_j{}^a
++\widehat\partial_iF_{\beta,\rm old}^a.
+\end{align}
+For example,
+\begin{align}
+\widehat\partial_iF_{g,ab}={}&-L_iA_{ab}-2\alpha\partial_iA_{ab}
++Q_{ika}B_b{}^k+g_{ka}\partial_iB_b{}^k\nonumber\\
+&+Q_{ikb}B_a{}^k+g_{kb}\partial_iB_a{}^k
+-\tfrac23(Q_{iab}\theta+g_{ab}\partial_i\theta).
+\end{align}
+Both replacing the derivative-index $B_i{}^j$ by true $\partial_i\beta^j$ and replacing $\widehat\partial F$ by true $\partial F$ are necessary for the new clean law.
+
+An illustrative exact subtraction in the legacy continuum equations is
+\begin{equation}
+\partial_t r_i=\beta^j(\partial_jp_i-\partial_ip_j)
++b_i{}^jp_j+(\widehat\partial_i-\partial_i)F_w.
+\end{equation}
+This is not the new transport--relaxation equation. Stored-gradient primary advection cancels a different derivative combination and exposes curl and source errors directly.
+
+\subsection{Curvature/GH: equal on reduction, different extensions}
+To recover the legacy curvature/GH rows from Section 3, store $g,A,Q$ directly and put $l=L/2$. Retain the displayed $K,C,F_A,Z$ structure with the following precise replacements:
+\begin{enumerate}
+\item Differentiate inverse metrics in $\partial\Lambda$ and $\partial(g^{-1}A)$ using $\widehat\partial g^{-1}=-g^{-1}Qg^{-1}$ rather than the true primary metric derivative. Differentiate the independent $Q$ directly, instead of differentiating $J(s)S$.
+\item Use $\alpha wP_{ij}-w^2N_{ij}$ in $\mathcal S$, not the symmetrized Hessians. The old code stores the upper-triangle curvature RHS and mirrors the tensor representation. When curls are nonzero, this upper-triangle prescription is not the new symmetric tensor extension.
+\item Omit $g^{ij}\mathcal B_j$ from $\D Z^i$.
+\item Use $\kappa=0$ for the recorded collision, instead of the new screen's $\kappa=1/M$.
+\end{enumerate}
+There are no additional $K$ or $C$ algebraic source changes beyond these operator/normalization choices. Both have the GH contribution $\alpha(H^*-KC)$ in $K$ and $C$, and the same regular $\mathcal T$ expression. The chart evolution of $\widehat A$ is the tangent map of the new $F_A$, not an extra physical force.
+
+The derivative difference already changes off-reduction curvature sources before projection:
+\begin{equation}
+\widehat\partial_i g^{-1}-\partial_i g^{-1}=-g^{-1}q_i g^{-1}.
+\end{equation}
+On smooth full-reduction jets, this vanishes, Hessian symmetrization changes nothing, and the $B$ curl vanishes. After matching the gauge function and damping, the physical equations can agree there. Such on-manifold agreement does not make the two algorithms equivalent after truncation and transfer errors are introduced.
+
+\subsection{Projection is part of the old algorithm}
+After each RK-stage update the legacy task chain restricts/exchanges, fills physical ghosts, prolongates, then enforces algebraic constraints and resets $C,Z$. On the final RK stage only, it reconstructs auxiliary gradients and performs an additional restriction/exchange/physical-BC/prolongation pass. The actual reset is
+\begin{equation}
+p_i^+=D_i^hw,\quad L_i^+=2(wD_i^h\rho+\rho D_i^hw),\quad
+Q_{iab}^+=D_i^hg_{ab},\quad B_i{}^{a+}=D_i^h\beta^a.
+\end{equation}
+The factorized lapse target is not $2D_i^h(\rho w)$ at finite spacing. After the exchange, transferred ghosts need not equal the derivative of transferred primaries. This is why setting an active-cell reduction residual to zero does not establish globally compatible derivatives.
+
+Writing $d_g=\det g$ and $s_g=d_g^{-1/3}$, the algebraic map is
+\begin{align}
+g^+&=s_g g,\\
+A^+&=A-\tfrac13g\tr(g^{-1}A),\\
+Q_i^+&=s_g[Q_i-\tfrac13g\tr(g^{-1}Q_i)],\\
+C^+&=0,\qquad Z^{i+}=0\quad\hbox{(separate GH reset).}
+\end{align}
+In particular the legacy code does \emph{not} multiply $A^+$ by $s_g$. Strict metric validation precedes the algebraic map, so it cannot repair a non-SPD RK update. The new chart structurally removes these algebraic projection steps; intrinsic production rejects enabling either GH or auxiliary projection.
+
+For the old projected algorithm, a zero post-reset $C$ or $Z$ is a construction, not evidence of satisfying the physical Einstein constraints. Projection does not directly set $H_{\rm phys}$ or $M_{\rm phys}$ to zero. It also means the free GH subsystem's spectrum alone cannot characterize the effective step map. Both projections and transfers belong in any analysis of that map.
+
+\section{The intermediate extension: what was already tried}
+The September 4 advective extension corrected stored-gradient primary advection and introduced damping of true reductions. It retained the old differentiated sources, adding a metric-gradient trace correction and the Hessian/$B$-curl completions. With
+\begin{equation}
+x=(w,g_{ab},\alpha,\beta^a),\quad G_i=(p_i,Q_{iab},L_i/2,B_i{}^a),\quad E_i=G_i-\partial_ix,
+\end{equation}
+its documented exact law is
+\begin{align}
+(\partial_t-\mathcal L_\beta)E_i^A
+&=-\lambda E_i^A+\mathcal J_i^A,\\
+\mathcal J_i^A&=b_i{}^kG_k^A+F^A{}_{,x^D}E_i^D+N_i^A,\\
+N_{i,g_{ab}}&=-\tfrac23\alpha g_{ab}A^{cd}q_{icd},\quad N=0\text{ otherwise},\\
+(\partial_t-\mathcal L_\beta)\Omega^A
+&=-\lambda\Omega^A-d\lambda\wedge E^A+d\mathcal J^A.
+\end{align}
+$\mathcal J$ here is a subsidiary source map, distinct from the chart Jacobian $J_{ij,A}$. The new intrinsic formulation removes this additional map by complete source differentiation and intrinsic tangent coordinates. Merely adding $-\lambda E$ to the old auxiliary equations does not do so.
+
+The later direct-lapse patch replaced the factorized target by $L-2D_h(\rho w)$ in the relaxation/projection helper. On a uniform grid with commuting scalar derivative operators,
+\begin{equation}
+D_i^hD_j^h\alpha-D_j^hD_i^h\alpha=0,
+\end{equation}
+whereas the factorized product-rule target generally has a discrete curl. Correcting that target was a sound isolated consistency improvement. It did not stabilize the matched stress run:
+\begin{center}\begin{tabular}{lrr}\toprule
+$M/256$ fine-core stress & Baseline & Direct-lapse corrected\\\midrule
+Failure time $t/M$ & 5.187818 & 5.167923\\
+Full-domain curl RMS at $5M$ & .03752940 & .04067021\\
+Terminal check & non-positive metric & negative $\rho$\\\bottomrule
+\end{tabular}\end{center}
+Both projection switches were off and $\lambda=(1+15P)/M$, with taper radii $(.125,.5)M$. The core had eight refinements, 456 leaves, $h_{\min}=M/256$, and outer faces at $\pm8M$. This is not a resolution companion of either the old binary or the current coarse intrinsic screen. The changed terminal variable did not indicate stabilization: corrected near-terminal maxima reached $\operatorname{curl}Q\simeq4.38\times10^6$ and $\operatorname{curl}B\simeq2.95\times10^6$, while the minimum metric eigenvalue was about $.0359$ at the last completed step. The failed indexed cell was the same as in baseline. Saved plots appear in Figures~\ref{fig:directcurl}--\ref{fig:directhealth}.
+
+\section{What the mathematical results do and do not cover}
+The pinned intrinsic characteristic analysis concerns the free 50-field continuum system on
+\begin{equation}
+g\text{ SPD},\quad w>0,\quad\rho>0,\quad0<\alpha<2,\quad\alpha^2w^2<4.
+\end{equation}
+For $\nu=(g^{ij}n_in_j)^{1/2}$ its characteristic speeds and multiplicities are
+\begin{center}\begin{tabular}{lc}\toprule
+Coordinate speed & Multiplicity\\\midrule
+$-\beta^in_i$ & 30\\
+$-\beta^in_i\pm\nu\alpha w$ & 6 per sign\\
+$-\beta^in_i\pm\nu$ & 2 per sign\\
+$-\beta^in_i\pm\nu w\sqrt{2\alpha}$ & 1 per sign\\
+$-\beta^in_i\pm\nu\sqrt{(4-\sigma\alpha^2w^2)/3}$ & 1 per sign\\\bottomrule
+\end{tabular}\end{center}
+The full lifted symbol, eigenvector completeness, and admitted coincidences were checked, not just the reality of these speeds. The $\alpha=2$ boundary is excluded and defective in the analyzed candidate; it is where the lapse and light speed branches coincide. The theorem is not a uniform estimate through a puncture limit, where speeds and conditioning can degenerate. The completed shift removes particular direct-driver defects; it does not remove every excluded surface. The known common-symmetrizer obstruction remains a limitation, not a newly imposed numerical gate.
+
+At Minkowski, the full source-inclusive Fourier polynomial is
+\begin{align}
+&(s+\lambda)^{30}(s^2+k^2)^2(s^2+2k^2)
+(s^2+\eta s+k^2)^3\nonumber\\
+&\hspace{20mm}\times(s^2+\kappa s+k^2)^3(s^2+2\kappa s+k^2).
+\end{align}
+The analysis includes neutral Jordan/nonnormal transients; a saved finite-time sample had amplification about 72.58. This number is a sampled linear calculation, not a universal bound or an explanation of a particular nonlinear crash. Neither acceptable Fourier roots nor local hyperbolicity prove nonlinear, puncture, boundary, or SMR stability.
+
+The production point kernel contains no division by $w,\rho,\alpha$ in its fundamental RHS. It does use the inverse conformal chart/metric, whose conditioning matters. Independent physical diagnostics may require inverse powers in derived quantities; they are not evidence that those powers reentered the fundamental evolution. Bounded coefficients also do not imply bounded spatial derivatives of puncture data.
+
+Previously completed checks include exact intrinsic map identities, independent nonlinear GH projections with nonzero $C,Z$, CPU/CUDA point comparisons on 432 cases near floating precision, and full principal-matrix samples (2652 configurations). Smooth uniform-grid temporal behavior was consistent with RK3. These are useful implementation/continuum checks, not a puncture convergence pass. The original KO$.3$ per-field smooth comparison failure was preserved; a KO-zero FD6 comparison and an explicit KO truncation model explained that particular smooth-grid discrepancy. No such explanation has qualified the puncture failure.
+
+\section{The implemented discretization is not the exact subsidiary PDE}
+\subsection{A material lapse-target limitation in the new mesh kernel}
+Source inspection at the pause is explicit: \src{intrinsic_finite_difference.hpp} computes $dU=D_hU$, calls \src{PointRHS}, and adds componentwise KO. Inside \src{intrinsic_rhs.hpp}, the lapse reduction target is
+\begin{equation}
+R^\alpha_{\rm code}=\rho D_hw+wD_h\rho,
+\end{equation}
+formed from the primary jets. It is \emph{not} the shared composite-stencil $D_h(\rho w)$ used in the separate direct-lapse helper/transfer-target work. The complete-source differentiation is analytic chain-rule differentiation evaluated on FD jets, not $D_h$ applied to a materialized complete source.
+
+This is consistent with the written continuum equations but leaves a discrete product-rule defect:
+\begin{equation}
+\delta_h=\rho D_hw+wD_h\rho-D_h(\rho w),\quad
+l-R^\alpha_{\rm code}=[l-D_h(\rho w)]-\delta_h.
+\end{equation}
+Relative to damping toward $D_h(\rho w)$, the implemented relaxation contains the extra forcing $+\lambda\delta_h$. Accordingly, the new production must not be described as having eliminated the direct composite lapse-target issue merely because another helper in the repository did so. This inspection is a documentation finding; no source change or new test was made. The already-failed direct-lapse stress comparison shows that fixing this alone is not known to cure puncture instability.
+
+\subsection{Finite differences, RK, KO, and boundaries}
+The screens use centered FD6, RK3, CFL .2, KO .3 on each stored field, and ordinary transfer. On a uniform mesh the first derivative is
+\begin{equation}
+D_hf_i=\frac{-f_{i-3}+9f_{i-2}-45f_{i-1}+45f_{i+1}-9f_{i+2}+f_{i+3}}{60h}.
+\end{equation}
+The FD6 KO stencil has order-eight differences and an $O(h^7)$ smooth modified-equation contribution. Applying KO to chart variables and $\widehat A$ differs from applying it directly to $g,A$ after a nonlinear map. Matching the numerical value .3 therefore does not match the physical dissipation operator across representations.
+
+For a reconstruction $\mathcal R_h(U)$, the relevant discrete defect is
+\begin{equation}
+I_h=\dot G-\mathcal R_h'(U)\dot U-\mathcal T_h(G-\mathcal R_h(U))
++\lambda(G-\mathcal R_h(U)).
+\end{equation}
+It can be forced by product-rule errors, source differentiation, transfer, KO, physical boundaries, and RK composition. In particular,
+\begin{equation}
+\mathcal R_h^\alpha=D_h(\rho w),\qquad
+(\mathcal R_h^\alpha)'\dot U=D_h(\rho\dot w+w\dot\rho).
+\end{equation}
+Nonlinear reconstruction is not exactly preserved by an ordinary RK update even if its continuous-time tangent relation is enforced. The scalar SSPRK3 stability polynomial $1+z+z^2/2+z^3/6$ is not by itself a coupled nonnormal/SMR stability proof.
+
+Outflow uses componentwise polynomial ghost extrapolation (the selected order 2 is linear extrapolation) and a second-order radial Sommerfeld boundary RHS, schematically
+\begin{equation}
+\partial_tU\big|_{\rm face}=-\frac{x^i}{r}\partial_i^{(2)}U-\frac{U-U_\infty}{r}.
+\end{equation}
+The new flat state uses $w=\rho=1$, zero chart and zero remaining fields. These are not constraint-preserving GH boundary conditions. Gauge/constraint speeds need not equal the unit radial speed. The small $\pm8M$ domain permits early comparisons but cannot be treated as isolated at late times simply because the first bad cell is near the core.
+
+\subsection{Frozen interface findings}
+No interface work was resumed for this review. The existing findings are:
+\begin{itemize}
+\item Residual-shifted repair holds primary data fixed and can preserve active stored values, yet increased a measured 2D fine-grid residual curl by 11.70 times at $n=32$. The coarse-corner maximum remained roughly $7\times10^{-4}$.
+\item A six-point 2D restriction control improved some truncation behavior, but its residual curl remained 14.75 times the ordinary-transfer comparison. Its one-sided boundary weights were not contractive.
+\item Actual smooth off-constraint SMR evolutions through $.02M$ remained finite, but both ordinary and repaired transfers failed signed field-difference alignment. Positive scalar norm orders did not establish Richardson convergence. Higher interpolation order did not resolve that failure.
+\item A same-cell stage budget measured a $C$-RHS increment of $-5.351229\times10^{-4}$, with $p$ and $S$ contributions $-3.709137\times10^{-4}$ and $-1.642091\times10^{-4}$; the sum closed to about $1.39\times10^{-17}$. This establishes an immediate ghost-to-source effect in that fixture, not the cause of either late puncture/binary failure.
+\item A private-buffer trace identified the derivative/transfer commutator in the $p$ correction. An unfinished prolongation control had only a polynomial unit check; it never ran as a mesh evolution and is absent from the puncture binary.
+\end{itemize}
+For a point transfer $\mathcal T$, the basic issue is
+\begin{equation}
+D_f\mathcal T x-\mathcal T D_cx\ne0.
+\end{equation}
+An apparently coherent reconstruction $G_f=D_fx_f+\mathcal T E_c$ can preserve a chosen reduction residual while changing its discrete curl or introducing incompatible corner stencils. A smaller residual norm is insufficient without primary convergence and a signed operation budget. Current puncture runs used \texttt{coherent\_transfer=none}; optional repair cannot explain the uniform failure, which has no refinement interface at all.
+
+\section{Saved production evidence}
+\subsection{The old binary: useful merger evidence, contaminated late evolution}
+The exact long input is \src{inputs/z4c/twopuncture/bbh_headon_pcgh_cuda_r128_t100.athinput}. It uses equal bare masses $.5M$ at $x=\pm2.5M$, zero momenta/spins, $\alpha=\psi^{-2}$, domain $[-128M,128M]^3$, finest spacing $M/16$, FD6/RK3/CFL .2/KO .3, $\eta=2/M$, $\kappa=0$, and both global projections. Initial refinement has 1464 leaves; the configuration enables adaptive refinement and has persistent internal refinement interfaces. Extraction radii are $8,12,24,32,48,56M$.
+
+The saved shared physical constraint histories use the $\chi\ge .0625$ mask and its included coordinate volume. They are \emph{not full-domain} norms, unlike the explicitly full-domain intrinsic values below. The historical table is reproduced with that qualification:
+\begin{center}\begin{tabular}{rrr}\toprule
+$t/M$ & Old masked $H$ RMS & Old masked $M$ RMS\\\midrule
+30 & $1.05846\times10^{-5}$ & $7.42850\times10^{-6}$\\
+40 & $1.56256\times10^{-5}$ & $1.95140\times10^{-5}$\\
+50 & $5.63424\times10^{-5}$ & $1.04681\times10^{-4}$\\
+60 & $2.85797\times10^{-4}$ & $6.21830\times10^{-4}$\\
+70 & $2.25634\times10^{-3}$ & $4.42374\times10^{-3}$\\
+73.7603 & $5.77223\times10^{-2}$ & $5.57140\times10^{-2}$\\\bottomrule
+\end{tabular}\end{center}
+The terminal post-RK check at $t=73.79991M$ found $\det g=-20.19875$. The location was $(-.34375,-.96875,-.03125)M$. This is total coordinate time, not time since merger. The matched Z4c control reached $100M$; this is a useful physical reference, not a matched first-order formulation benchmark.
+
+The saved $Q$-curl maximum rose from $.1425$ at $50M$ to $.6632$ at $60M$, $6.0715$ near $69.754M$, and $18.8909$ near $73.2009M$. A fit over $50$--$70M$ gave an e-folding time about $5.82M$. Grid-aligned inner rings and no simultaneous dynamic regrid support an internal-interface association. Differences of scalar operation maxima, sometimes involving stale ghosts or different maximizing cells, are not a signed feedback budget. In the saved one-step control, resetting $Q$ reduced final curl from $5.89637\times10^{-5}$ to $4.82647\times10^{-6}$: early-time projection was corrective.
+
+The coherent merger feature appears in $20\le u/M\le35$, with $u=t-r$, most cleanly at $r=8,12M$. At those radii its real $(2,2)$ peak differs from Z4c by about $-2.46\%$ and $-2.56\%$. At $r=24,32M$ the differences are about $-12.86\%$ and $-15.96\%$, already mixed with growth. The outer $48M$ window is incomplete; the $56M$ merger signal had not arrived before termination. These are finite-radius comparisons on one resolution, not error-controlled waveform convergence.
+
+The imaginary $(2,2)$ component should vanish by the head-on symmetries. Its growth is numerical leakage, not physical polarization. The old tracker had a restart serialization defect, so the included PC-GH trajectory was reconstructed from lapse minima in saved slices; it is not the raw ODE track. The saved common slice positions agreed with Z4c to about $.001225M$, well below one finest cell. This trajectory agreement does not validate the late constraints or waveform.
+
+Figures~\ref{fig:oldconstraints}--\ref{fig:oldtrack} are copied from the previous production, not regenerated simulations. Their captions explicitly narrow the old interpretation where necessary.
+
+\subsection{The intrinsic single-hole screens}
+Initial data are the time-symmetric $M=1$ wormhole,
+\begin{equation}
+\psi=1+\frac{M}{2r},\quad w=\psi^{-2}=\left(\frac r{r+M/2}\right)^2,
+\quad\rho=1,\quad p_i=l_i=\frac{Mx_i}{(r+M/2)^3},
+\end{equation}
+with zero chart, curvature, shift, $S,B,C,Z$. All grids are cell-centered and avoid $r=0$. The uniform spacing ladder is $.5,.25,.125M$. The one-level SMR ladder has root sizes $32,64,128$, fixed central box $[-4M,4M]^3$, and finest spacings $.25,.125,.0625M$. All have the same $\pm8M$ outer faces. These are preliminary coarse screens, not a resolved puncture-core ladder.
+
+Three baseline CPU runs completed $2M$. Independent primary-metric leaf stencils gave:
+\begin{center}\small\begin{tabular}{lrrrr}\toprule
+Case & $h_{\min}/M$ & Full $H$ RMS & $.5\le r/M<1$ & $1\le r/M<2$\\\midrule
+Uniform32 & .5 & .019401540 & .052945498 & .026473203\\
+Uniform64 & .25 & .006538425 & .054139724 & .006850018\\
+SMR32 & .25 & .006685643 & .054139880 & .006850148\\\bottomrule
+\end{tabular}\end{center}
+The $.5$--$1M$ annulus did not improve on the first uniform refinement. A smaller full-domain norm therefore cannot certify convergence. Uniform64 and SMR32 share fine spacing and have very similar early inner errors, but are not by themselves a three-resolution asymptotic comparison. Figure~\ref{fig:newearly} includes the saved full-domain history families through $2M$.
+
+The uniform32 timestep-halving control reached $2M$ and had combined primary RMS difference $1.50777\times10^{-9}$ and all-50 difference $2.52234\times10^{-9}$. The uniform64 half-step run also completed $2M$ (476 cycles); its saved log was recovered after stopping, but no new difference calculation was performed for this review. Small early timestep error is not a demonstration that the late nonlinear failure is timestep-independent. The long half-step coarse run stopped without a terminal success/failure record; its last logged time is $4.570676M$.
+
+The uniform32 continuation failed with step-start timestamp $11.0242447958M$ in the post-RK update. The header is not an exact substage time; ``near $11.03M$'' is the defensible description. At the first reported bad cell,
+\begin{align}
+(x,y,z)&=(-.25,-.25,-.25)M,\qquad r=.4330127M,\\
+w&=.2544575139,\quad\rho=7.9254211112,\quad\alpha=2.0166829528,\\
+\alpha^2w^2&=.2633333196,\quad K=-1.7481770818,\quad C=-2.8436806709.
+\end{align}
+The violated monitored domain was $\alpha<2$, not $\alpha^2w^2<4$. The last preserved checkpoint is at $11.0067479023M$. Its independent physical Hamiltonian RMS was $.752724$ over the full domain, $46.8092$ at $r<.5M$, $3.70496$ at $.5$--$1M$, and $1.64878$ at $1$--$2M$. At $r\ge4M$ it was $.00492203$. The large error extends beyond the innermost cell layer. This is substantial physical deterioration preceding the fatal domain check, not merely a harmless diagnostic threshold crossing.
+
+\subsection{Incomplete runs at the stop}
+The table lists the last \emph{printed} step time, a lower bound on reached evolution time, not an exact termination time. No first-bad file was present for the four canceled remote cases.
+\begin{center}\small\begin{tabular}{lrrl}\toprule
+Case & Target $t/M$ & Last printed $t/M$ & Disposition\\\midrule
+SMR32 direct CUDA continuation & 20 & 6.418017 & User-stopped; checkpoints saved\\
+SMR64, job 13586805 & 2 & 1.265007 & User-canceled; checkpoints saved\\
+Uniform128, job 13587092 & 2 & .3753665 & User-canceled; initial checkpoint only\\
+SMR128, job 13587093 & 2 & .1075641 & User-canceled; initial checkpoint only\\
+Uniform32 long half-step CPU & 20 & 4.570676 & Interrupted; incomplete log\\\bottomrule
+\end{tabular}\end{center}
+The finer three-resolution spatial convergence result does not exist. No intrinsic head-on evolution was run. Small and full-hierarchy head-on initialization were completed, and a separate GPU initializer binary was built, but the intrinsic implementation lacks the legacy AMR/tracker/waveform integration needed for a fully matched binary qualification.
+
+CUDA uniform smoke differed from CPU by $3.37508\times10^{-14}$ in the recorded maximum normalized state error. The two-rank SMR smoke matched serial exactly at $.02M$. Larger two-rank runs still emitted CUDA host-registration warnings; an earlier four-rank attempt emitted CUDA IPC/resource warnings and was canceled. These are unresolved execution limitations, not established numerical causes. Inter-GPU tuning remains paused. The environment was loaded from \src{/home/hz0693/athenak_env}; no replacement environment was invented.
+
+\Needspace{12\baselineskip}
+\section{Failure modes: evidence, inference, and competing explanations}
+\begin{longtable}{P{.21\linewidth}P{.35\linewidth}P{.36\linewidth}}
+\toprule Aspect & Projected legacy binary & Free intrinsic single hole\\\midrule
+Measured terminal condition & Non-SPD metric in post-RK update, $73.79991M$ & $\alpha>2$ in post-RK update near $11.03M$\\
+Measured precursor & Growing physical constraints and $Q$ curl; grid-aligned inner rings & Large core and fixed-annulus physical Hamiltonian growth; large free GH fields\\
+Refinement required for this observed failure? & Present; association measured & No: the failed run was uniform\\
+Constraint control & Algebraic and GH resets each stage; auxiliary reset each full step & Algebraic identities by chart; finite $\lambda=\alpha/M$, $\kappa=1/M$; no resets\\
+What a new chart prevents & Cannot permit an exact finite-chart negative determinant & Does not prevent lapse-domain exit, ill-conditioning, or physical runaway\\
+Most important missing evidence & Signed causal late-stage budget and matched controls & Late-time timestep/resolution controls and completed fixed-layout convergence\\\bottomrule
+\end{longtable}
+
+\subsection{Legacy: a plausible discrete feedback loop, not a demonstrated cause}
+\textbf{Measured:} first-order error growth near persistent interfaces precedes metric loss; active reconstruction was useful in an early control. \textbf{Conjecture:} transfer injects gradient inconsistency, curvature/gauge sources respond, and repeated projection/transfer reshapes the error into a growing mode. The observation that projection can remove a local reduction residual yet reintroduce derivative inconsistency through ghosts makes this plausible. It does not show projection is net destabilizing over the late trajectory.
+
+An equally relevant alternative is that the evolved primary geometry/gauge already develops an unstable discrete mode, and increasingly large projection corrections are its symptom. Near loss of SPD, the inverse metric and algebraic normalization can magnify existing errors; that amplification alone cannot identify the earlier seed. The evidence does not warrant blaming the outer boundary or ruling it out for all characteristic sectors without a characteristic-domain analysis. The large outer domain makes the new $\pm8M$ boundary concern a materially different issue.
+
+\subsection{Intrinsic: constraint/gauge growth with a different stopping surface}
+\textbf{Measured:} the failed uniform grid has no refinement transfer interface. Thus the particular SMR commutator mechanism cannot be necessary for this failure. $H_{\rm phys}$ was already large before the stop, and $C,Z$ were no longer suppressed by resets. The exact subsidiary identity cannot prevent discrete forcing, free GH growth, or underresolved puncture derivatives.
+
+\textbf{Conjecture:} on this coarse grid, underresolved puncture/gauge dynamics and the discrete gradient/source defects feed a coupled curvature/GH mode. Lapse-scaled reduction relaxation may become too weak during collapse to control accumulated errors. Negative $K$ subsequently raises the lapse through $\D\alpha=-2\alpha K$; the recorded negative $K$ is consistent with the final rising lapse. This sign observation does not prove the earlier causal sequence, nor does it prove that the $\alpha=2$ defect initiated the runaway. Physical deterioration precedes the threshold.
+
+Further alternatives remain open: a boundary-driven gauge disturbance in the small domain, late timestep effects, nonnormal amplification, and representation-dependent KO/truncation near the puncture. The early small timestep difference does not exclude late-time amplification. The frozen CPU/CUDA point checks reduce the likelihood of simple bulk algebra/transcription errors in tested regimes; they do not exclude every mesh/RK/boundary issue. The incomplete SMR continuation is neither a stability pass nor a contrasting failure mechanism.
+
+\subsection{Why the old method can survive longer without being a better continuum system}
+The old reset imposes $E\approx0$ once per full step and $C=Z=0$ once per stage. The new method removes those numerical controls at the same time as changing the state, derivative completion, switch, and damping. Suppressing off-constraint modes can improve practical lifetime even when the unconstrained PDE is less transparent. Conversely, the new chart can prevent the old determinant sign failure in exact arithmetic while allowing another instability to become the first stopping event. Changing the terminal variable is not itself a cure.
+
+The comparisons also change single hole to binary, $h$, core regularity, domain volume, topology, and diagnostic masks. Dividing $73.8$ by $11.03$ would be scientifically meaningless as a formulation speed or stability advantage. Neither current branch has the requested demonstrated physical field/constraint convergence through a healthy post-merger interval.
+
+\section{Can the schemes combine their strengths?}
+\subsection{A coherent candidate synthesis}
+My best-supported proposal is to keep the new intrinsic configuration and curvature chart, true primary advection, complete source differentiation, and the common auxiliary law. These features address identifiable equation-level weaknesses without relying on repeated determinant/trace repairs. Preserve the legacy collision infrastructure (initial data, topology handling, tracking, extraction) as engineering infrastructure, after respecting the new state layout.
+
+The useful legacy ingredient to reconsider is \emph{explicitly controlled auxiliary reconstruction}, rather than silently reinstating all global projections. A local closure could use synchronized same-stage primary ghosts and
+\begin{equation}
+G^+=G-P(G-\mathcal R_hx),\qquad
+\mathcal R_hx=(D_hw,D_h(\rho w),D_hs,D_h\beta),\quad 0\le P\le1,
+\end{equation}
+while holding $w,\rho,s,\beta,K,\widehat A,C,Z$ fixed. Then $Q=J(s)S$ remains intrinsic. This borrows the old method's ability to constrain derivative drift, retaining the new algebraic geometry and free GH meaning. It was not implemented or tested in the intrinsic puncture campaign.
+
+A full reconstruction $P=1$ before an RHS is a locally second-order-in-space numerical closure for those gradients, not the free first-order theorem. A taper has the continuum bookkeeping
+\begin{equation}
+E^+=(1-P)E,\qquad \Omega^+=(1-P)\Omega-dP\wedge E.
+\end{equation}
+Thus a taper can itself create curl. A moving or field-dependent mask adds stage/time dependence. A fixed fractional reset every stage corresponds formally to $\lambda_{\rm eff}\sim-\log(1-P)/\Delta t_{\rm event}$, not to a fixed physical damping rate as $\Delta t$ changes. These distinctions must remain explicit in any future design.
+
+\subsection{What to preserve, what to qualify, and what not to assume}
+\begin{longtable}{P{.24\linewidth}P{.31\linewidth}P{.37\linewidth}}
+\toprule Ingredient & Potential strength & Limitation / equation-level condition\\\midrule
+Intrinsic $T,\widehat A,S$ & Exact determinant/trace identities; no independent $Q$ trace projection & Chart conditioning and physical error remain; does not guarantee $\alpha<2$.\\
+True source derivatives & Removes $\mathcal J,d\mathcal J$ subsidiary mixing & FD chain rule and RK still force reductions; implemented lapse target remains factorized.\\
+Direct composite lapse stencil & Removes one uniform-grid target curl defect & Previous isolated repair failed the fine-core stress; all source/RK terms still need consistent accounting.\\
+Localized gradient closure & Could retain old practical reduction control near limited regularity & Changes the discrete system; mask and ghost commutators can add errors; no present evidence of success.\\
+Finite GH damping & Keeps free $C,Z$ dynamics observable & Lapse-weighted coefficients may be weak near the core; source coupling remains.\\
+Legacy global GH reset & Proven practical ingredient in one merger-surviving calculation & Discards freely evolved GH dynamics and can conceal their error; not the final free-GH claim.\\
+Transfer reconstruction & Could reduce repeated interface forcing & Existing residual repair worsened curls and failed field alignment; cannot be adopted as a demonstrated improvement.\\
+Gauge completion & Avoids known direct-shift degeneracies on stated domain & Old/new switches differ; neither is a proven remedy for the observed intrinsic lapse growth.\\\bottomrule
+\end{longtable}
+A globally GH-projected intrinsic calculation would be a distinct diagnostic algorithm, potentially useful for isolating policy effects if work is resumed. It should not be called validation of the free intrinsic system. Similarly changing the slicing to avoid $\alpha=2$, adding a lapse cap, or increasing floors would change the problem rather than explain the present failure. A different slicing law would require a new joint characteristic analysis; no such change is proposed as already safe.
+
+\subsection{Review priorities, without launching experiments}
+The first design decision is whether the intended method is the free intrinsic system or an intrinsic system with an explicitly delimited numerical core closure. The existing data favor retaining the intrinsic equation structure as a foundation, but do not demonstrate that free evolution alone is robust enough near an underresolved puncture. The old projection result provides a reason to consider closure, not evidence that a particular taper will work.
+
+Before choosing a synthesis, the most valuable equation-level issues to resolve on paper are: the mesh-level lapse target and source differentiation convention; the effective step map with any reconstruction; the coupling of physical/GH errors to gauge-domain margins; and whether a bounded regularity-based core can be specified independently of fitting a crash. The currently negative interface result should constrain any closure design, but it does not justify resuming an open-ended interface investigation. All experimental decisions remain paused for the user's review.
+
+\clearpage
+\section{Existing figures and their interpretation}
+The following nine figures are existing products copied without changing their data. The figure manifest records SHA256 hashes. Old plot titles may reflect the historical interpretation; the captions here control their use in this review. Historical masked curves are not new full-domain results.
+\fig{constraint_overlay_with_amr.png}{Legacy head-on production versus Z4c: saved shared physical constraint histories and AMR events. The plotted physical RMS curves use the historical chi mask, not the full domain. The growth after about $40M$ is evidence of deterioration; lack of a simultaneous regrid does not exclude errors on persistent refinement interfaces.}{fig:oldconstraints}
+\fig{pcgh_instability_slices_t50_t70.png}{Legacy saved slices at $50$--$70M$: Hamiltonian, raw metric-gradient curl, and minimum metric eigenvalue. Grid-aligned structures support an interface association. They do not alone prove that projection caused the late growth. These are slice outputs, not the complete first-invalid RK state.}{fig:oldslices}
+\fig{waveform_22_merger_window_overlay.png}{Previously produced merger-window comparison at finite extraction radius. The PC-GH feature is cleanest at $8M$ and $12M$; the $24M$ and $32M$ signals overlap instability. The old product's description of the whole window as uncontaminated must not be applied to every radius. No waveform convergence was established.}{fig:oldmerger}
+\fig{waveform_22_radii_overlay.png}{Complete available old waveform histories. Late PC-GH growth is numerical contamination and is not physical ringdown. The calculation stopped before the complete outer-radius merger windows were available.}{fig:oldwaves}
+\fig{waveform_22_radius_consistency.png}{Old retarded-time radius consistency and imaginary-mode leakage. The imaginary head-on $(2,2)$ component is symmetry error. The increasing outer-radius disagreement limits physical interpretation even though an inner merger feature exists.}{fig:oldradius}
+\fig{puncture_trajectory_overlay.png}{Old puncture trajectories reconstructed from lapse minima in saved slices, compared with Z4c and its ODE track. PC-GH's original restarted ODE track had a serialization defect; this figure deliberately uses the slice reconstruction. Trajectory agreement is not a late constraint or waveform qualification.}{fig:oldtrack}
+\fig{intrinsic-early-histories.png}{Existing intrinsic uniform32/uniform64/SMR32 early histories through $2M$: full-domain physical Hamiltonian, GH, reductions, and intrinsic curls. These are preliminary screens, not qualified convergence. The third-resolution runs were stopped before $2M$, and the fixed $.5$--$1M$ Hamiltonian annulus did not improve in the first refinement.}{fig:newearly}
+\fig{direct-lapse-individual-curls.png}{Intermediate 55-field $M/256$ stress comparison: existing individual curl histories, before and after the direct composite lapse-target correction. Both were free of the two global projection switches. This is a separate matched experiment, not the merger run and not the intrinsic candidate.}{fig:directcurl}
+\fig{direct-lapse-health-and-growth.png}{Intermediate stress-test health and growth. Correcting the isolated lapse-target defect did not remove runaway or qualify the method; the terminal condition changed from non-positive metric to negative rho at a slightly earlier time.}{fig:directhealth}
+\clearpage
+
+\appendix
+\section{Source audit and artifact map}
+Repository-relative paths below refer to the isolated new worktree. The editable report is \src{docs/pcgh-scheme-review-20260907/scheme-review.tex}. Its PDF is the reading copy. To reproduce the document, compile the TeX from that directory; this only formats saved text and figures and does not run an AthenaK executable.
+
+\begin{longtable}{P{.32\linewidth}P{.60\linewidth}}
+\toprule Claim / component & Primary source or saved evidence\\\midrule
+Legacy 55-field RHS & At \texttt{b81b44d6}: \src{src/pc_gh/pc_gh_calcrhs.cpp}. Switch near lines 98--110; true/stored advection near 377--456; auxiliary sources near 475--580.\\
+Legacy projection and timing & At \texttt{b81b44d6}: \src{src/pc_gh/pc_gh_projection.cpp}; \src{src/pc_gh/pc_gh_tasks.cpp}, task chain and final-stage guards.\\
+New complete RHS / source derivative & \src{src/pc_gh/intrinsic_rhs.hpp}; \src{src/pc_gh/intrinsic_sources.hpp}; \src{src/pc_gh/intrinsic_geometry.hpp}.\\
+New mesh discretization and health & \src{src/pc_gh/intrinsic_finite_difference.hpp}; \src{src/pc_gh/pc_gh_intrinsic.cpp}.\\
+Independent physical constraints & \src{src/pc_gh/intrinsic_physical_constraints.hpp}; regional puncture JSON files under \src{qualification-runs-20260907/pcgh-clean-reduction/puncture-001/}.\\
+Pinned mathematical reference & Read-only repository \src{/Users/hz0693/research/pcgh-candidate-reference-20260907/candidate_20260906/}; commit in Section 1.\\
+Original full candidate specification & \src{qualification-runs-20260907/pcgh-clean-reduction/REQUEST.md}.\\
+Completed checks and limitations & \src{qualification-runs-20260907/pcgh-clean-reduction/test-ledger.json}; \src{docs/pc_gh_clean_reduction_status.md}; detailed \src{analysis/pc_gh_clean_reduction/} records.\\
+Frozen interface records & \src{analysis/pc_gh_clean_reduction/INTRINSIC_INTERFACE_BUDGET.md}; \src{INTRINSIC_SMR_EVOLUTION.md}, \src{INTRINSIC_SMR_STAGE_BUDGET.md}, \src{INTRINSIC_P_COMMUTATOR.md} in the same directory.\\
+Legacy long comparison & \src{qualification-runs-20260902/della-r128-t100-comparison/README.md}, \src{plots/long_comparison_summary.json}, existing figures. The old causal wording is qualified in this review.\\
+Intermediate source law & \src{docs/pc_gh_regular_extension.md}; \src{docs/pc_gh_gamma2_audit.md}; \src{docs/pc_gh_hybrid_projection.md}.\\
+Direct-lapse negative result & \src{qualification-runs-20260905/direct-lapse-gradient/REPORT.md}, \src{PLAN.md}, \src{REPRODUCE.md}, \src{decisions.json}, \src{analysis/comparison.json}, source manifests and terminal audit.\\
+Current failure and pause & \src{qualification-runs-20260907/pcgh-clean-reduction/review-pause/}: first-bad state/summary, prefailure analysis, stop record, remote inventory and logs.\\\bottomrule
+\end{longtable}
+
+\subsection{Executable identities}
+Git identities do not replace executable/source manifests. The recorded SHA256 values are:
+\begin{description}[style=nextline,leftmargin=0pt,labelwidth=0pt]
+\item[Legacy collision executable] \src{3b6e83632711b10a49c412b89ec1aec502971e182f794500f0098c18dc902aac}.
+\item[Legacy long input] \src{a6a1401fbe29be9f48769e2746500f88af9385210ccb57a1026d48700635c321}.
+\item[Intrinsic CPU puncture executable] \src{7bff8fb5ce2cddc9612b76742dde5d2c736704e0f2ba536d3f849b4e4149f8de}.
+\item[Intrinsic CUDA puncture executable] \src{151d28e40f2014526e99aab6a0570265d3ca4b49c3f160215604e489c5bff5f4}.
+\item[SMR32 CPU $2M$ restart used by CUDA] \src{fdc10087319a12e8476bdb17822d169b16578d435081dd2d429357f3c5e4da19}.
+\item[Separate head-on CUDA initializer executable] \src{2267b1f7c2c1abf74bd4ae3928986a84044eec81f1b09d1840f74ab8ac2837c3}. Built before the pause; no head-on evolution run.
+\end{description}
+Legacy recorded Git status had an untracked \texttt{twopuncturesc} entry. The archived executable/input hashes and actual source context are therefore retained rather than reporting an unqualified clean-tree claim.
+
+\subsection{Availability and raw-data limits}
+The new worktree did not contain the old report's claimed \texttt{raw/} tree. The originating local checkout did contain it. For this review, 44 compact legacy files (about 20 MB before compression), including waveforms, histories/logs, inputs and provenance, were copied to \src{review-pause/legacy-raw/} with an origin/hash manifest. Larger text artifacts are losslessly gzip-compressed; the compression manifest maps original names and hashes to their stored files. Full slice binaries remain in the originating evidence tree; their existing plot products are included here. Restarts and the legacy CUDA core dump are not embedded in this report.
+
+The originating legacy data are under
+\begin{quote}\small\path{/Users/hz0693/research/athenak-pcgh-localization-20260902/qualification-runs-20260902/della-r128-t100-comparison/}\end{quote}
+and the original Della campaign is under
+\begin{quote}\small\path{/scratch/gpfs/FPRETORI/hz0693/pcgh-z4c-gpu-r128/}\end{quote}
+The new raw CPU campaign is under
+\begin{quote}\small\path{/Users/hz0693/research/pcgh-clean-reduction-tests-20260907/intrinsic-puncture-001/}\end{quote}
+and the stopped remote campaign is under
+\begin{quote}\small\path{/scratch/gpfs/FPRETORI/hz0693/pcgh-clean-reduction-20260907-intrinsic-mesh-001/puncture-001/}\end{quote}
+The remote stop inventory lists saved checkpoint filenames and sizes. It does not certify that a user-killed job generated a new final checkpoint or that every checkpoint was reread. Last printed times in the report are not inferred from checkpoint sequence numbers. No missing late-time sample was filled in, no canceled case was counted as a pass, and no numerical solver was restarted to produce a cleaner endpoint.
+
+\section{Pause-state conclusions for review}
+The intrinsic method has a clearer exact reduction subsystem and a stronger algebraic representation. The old method has the stronger demonstrated collision capability, assisted by projections. Neither fact resolves the numerical qualification problem. The old terminal metric failure and new lapse-domain failure both follow physical error growth; avoiding one terminal condition does not establish a healthy solution.
+
+The strongest present synthesis is a design hypothesis: intrinsic geometry and complete derivative equations, with a separately specified and justified numerical gradient closure if required by puncture regularity. The immediate source-level caveat is that the current mesh lapse target still uses factorized FD jets. The immediate evidence caveat is the absence of a completed intrinsic spatial/late-temporal convergence comparison. All investigation remains paused while the user reviews these equations and saved artifacts.
+\end{document}
