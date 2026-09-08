@@ -82,13 +82,34 @@ def classify(case):
         raise RuntimeError('Unexpected evolution termination')
     if not list(case.glob('*.mots_candidates.csv')):
         raise RuntimeError('Finder produced no evidence')
-    return dict(classification='no_candidate_through_t50', final=final)
+    # A cycle-cadenced runtime search need not land exactly on t=50. Always
+    # include the final saved slice, as in the recovered endpoint survey.
+    analysis = case/'final-mots'
+    frozen = json.loads((analysis/'search/frozen_mots.json').read_text())
+    manifest = json.loads((analysis/'manifest.json').read_text())
+    if (manifest.get('returncode') != 0 or not manifest.get('checkpoint_unchanged') or
+            not frozen.get('active_state_unchanged') or not frozen.get('mesh_unchanged') or
+            abs(frozen['time']-50) > 1e-8):
+        raise RuntimeError('Invalid final-slice analysis')
+    candidates = [r for r in csv.DictReader((analysis/'search/mots.mots_candidates.csv').open())
+                  if r['policy_accepted'] == '1']
+    if bool(candidates) != frozen['candidate_detected']:
+        raise RuntimeError('Final-slice candidate evidence disagrees')
+    if candidates:
+        if not all(math.isfinite(float(r['epsilon2'])) and float(r['epsilon2']) <= .01
+                   for r in candidates):
+            raise RuntimeError('Invalid final-slice candidate norm')
+        return dict(classification='candidate_detected', final=final,
+                    accepted=candidates, frozen_final=frozen)
+    return dict(classification='no_candidate_through_t50', final=final, frozen_final=frozen)
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     for key in ['survey', 'baseline', 'athena', 'output']:
         p.add_argument('--'+key, required=True, type=Path)
+    p.add_argument('--search-script', type=Path,
+                   default=Path(__file__).with_name('search_checkpoint.py'))
     args = p.parse_args()
     root = args.output.resolve()
     root.mkdir(parents=True, exist_ok=True)
@@ -123,6 +144,13 @@ def main():
     runner = oldrunner.replace('campaign=$(dirname -- "$case_dir")',
                               'campaign='+str(args.baseline.resolve()))
     runner = runner.replace('"$campaign/athena.history_extrema"', '"'+str(args.athena.resolve())+'"')
+    runner += '\nif [[ ! -f "$case_dir/mots_bisect.termination.json" ]]; then\n'
+    runner += '  checkpoint=$(ls "$case_dir"/rst/*.rst | sort | tail -n 1)\n'
+    runner += ('  "$python" "'+str(args.search_script.resolve())+'" --athena "'+
+               str(args.athena.resolve())+'" --checkpoint "$checkpoint" '+
+               '--output "$case_dir/final-mots" --lmax 128 --l-start 8 --radii 4 '+
+               '--iterations 500 --profile-points 1061 '+
+               '--launcher "${step[*]}" > final-search.log 2>&1\nfi\n')
     (root/'run_cycle.sh').write_text(runner)
     finder = dict(lmax=128, ntheta=260, mots_l_start=8, flow_iterations_0=500,
                   mots_radius_count=4, mots_detection='angular_candidate',
