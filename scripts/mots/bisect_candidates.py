@@ -46,20 +46,6 @@ def setparam(text, section, key, value):
 
 
 def classify(case):
-    accepted = []
-    for path in case.glob('*.mots_candidates.csv'):
-        accepted += [r for r in csv.DictReader(path.open()) if r['policy_accepted'] == '1']
-    if accepted:
-        if not all(0 <= float(r['time']) <= 50.0000001 and
-                   math.isfinite(float(r['epsilon2'])) and float(r['epsilon2']) <= .01
-                   for r in accepted):
-            raise RuntimeError('Invalid accepted-candidate evidence')
-        termination = json.loads(next(case.glob('*.termination.json')).read_text())
-        if termination['outcome'] not in ('mots_candidate', 'collapse'):
-            raise RuntimeError('Candidate/termination disagreement')
-        return dict(classification='candidate_detected', accepted=accepted, termination=termination)
-    if list(case.glob('*.termination.json')):
-        raise RuntimeError('Unexpected stopping condition without candidate')
     header = None
     final = None
     for line in next(case.glob('*.hst')).read_text().splitlines():
@@ -71,6 +57,25 @@ def classify(case):
             if not header or len(values) != len(header) or not all(map(math.isfinite, values)):
                 raise RuntimeError('Invalid evolution history')
             final = {key: values[i] for key, i in header.items()}
+    if not final:
+        raise RuntimeError('Missing evolution history')
+    accepted = []
+    for path in case.glob('*.mots_candidates.csv'):
+        accepted += [r for r in csv.DictReader(path.open()) if r['policy_accepted'] == '1']
+    if accepted:
+        if not all(0 <= float(r['time']) <= 50.0000001 and
+                   math.isfinite(float(r['epsilon2'])) and float(r['epsilon2']) <= .01
+                   for r in accepted):
+            raise RuntimeError('Invalid accepted-candidate evidence')
+        termination = json.loads(next(case.glob('*.termination.json')).read_text())
+        if termination['outcome'] not in ('mots_candidate', 'collapse'):
+            raise RuntimeError('Candidate/termination disagreement')
+        if not all(math.isfinite(v) for v in termination.values() if isinstance(v, (float, int))):
+            raise RuntimeError('Nonfinite termination diagnostics')
+        return dict(classification='candidate_detected', accepted=accepted,
+                    termination=termination, final=final)
+    if list(case.glob('*.termination.json')):
+        raise RuntimeError('Unexpected stopping condition without candidate')
     if not final or abs(final['time']-50) > 1e-8:
         raise RuntimeError('Nondetection run did not reach t=50')
     if 'Terminating on time limit' not in (case/'stdout.log').read_text():
@@ -110,6 +115,7 @@ def main():
                  criterion='angular_candidate by t=50', spatially_validated=False,
                  sub=str(sub), super=str(sup), relative_tolerance='0.000001',
                  survey_sha256=sha(args.survey), executable_sha256=sha(args.athena),
+                 controller_sha256=sha(Path(__file__)),
                  baseline_template_sha256=sha(args.baseline/'template.athinput'), completed=[])
     save(root/'state.json', state)
     # Preserve qualified initial-data generation and binding logic byte-for-byte.
