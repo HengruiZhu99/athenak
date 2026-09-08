@@ -573,8 +573,12 @@ void FastFlow::Write(int iter, Real time) {
 //----------------------------------------------------------------------------------------
 //! \fn bool FastFlow::ShouldSearch(int cycle, Real time)
 //! \brief Return whether this accepted cycle is scheduled for a horizon search.
-bool FastFlow::ShouldSearch(int cycle, Real time) {
-  if (cartoon_m0) return cartoon_m0->ShouldSearch(cycle, time);
+bool FastFlow::ShouldSearch(int cycle, Real time, bool final_slice) {
+  if (cartoon_m0) {
+    const bool in_window = time >= cartoon_m0->StartTime() &&
+        (cartoon_m0->StopTime() < 0 || time <= cartoon_m0->StopTime());
+    return cartoon_m0->ShouldSearch(cycle, time) || (final_slice && in_window);
+  }
   if (!IsInSearchWindow(time) || cycle < 0 || cycle % find_interval != 0) {
     return false;
   }
@@ -591,9 +595,9 @@ bool FastFlow::IsInSearchWindow(Real time) const {
 //----------------------------------------------------------------------------------------
 //! \fn void FastFlow::Find(int iter, Real time)
 //! \brief Search for the horizons
-void FastFlow::Find(int iter, Real time) {
+void FastFlow::Find(int iter, Real time, bool force) {
   if (cartoon_m0) {
-    cartoon_m0->Find(iter, time);
+    cartoon_m0->Find(iter, time, force);
     ah_found = cartoon_m0->Found();
     last_search_cycle = cartoon_m0->LastSearchCycle();
     time_first_found = cartoon_m0->TimeFirstFound();

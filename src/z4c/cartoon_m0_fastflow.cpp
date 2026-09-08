@@ -1405,7 +1405,10 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
   for (const auto& candidate : candidates_)
     tracking_ok = tracking_ok ||
                   (candidate.area > 0 && candidate.direct_residual < tracking_residual_);
-  const bool discover = !tracking_ok || search_count_ % discovery_interval_ == 0;
+  // Outermost selection requires the full seed bank at each scheduled search.
+  // Tracking is an additional guess, never a substitute for discovery.
+  const bool discover = outermost_selection_ || force || !tracking_ok ||
+                        search_count_ % discovery_interval_ == 0;
   ++search_count_;
   if (!seed_only && discover) {
     std::vector<Real> axis_z{0.0};

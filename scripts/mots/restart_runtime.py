@@ -30,6 +30,7 @@ def main():
     p.add_argument('--l-start',type=int,default=8)
     p.add_argument('--radii',type=int,default=4)
     p.add_argument('--iterations',type=int,default=500)
+    p.add_argument('--outer05', action='store_true')
     args=p.parse_args()
     for name in ['athena','checkpoint','amr_history']:
         setattr(args,name,getattr(args,name).resolve(strict=True))
@@ -88,6 +89,14 @@ mots_profile_points = 1061
 mots_discovery_interval = 8
 mots_tracking_residual = 0.01
 ''')
+    if args.outer05:
+        if args.lmax != 64:
+            p.error('--outer05 requires --lmax 64')
+        text=overlay.read_text().replace('mots_detection = angular_candidate',
+             'mots_detection = angular_l32\nmots_selection = outermost')
+        text=text.replace('mots_candidate_bound = 0.01','mots_candidate_bound = 0.05')
+        text=text.replace('initial_radius_0 = 1.0','initial_radius_0 = 8')
+        overlay.write_text(text)
     # Preserve the restart's live-AMR policy and all evolution/physical parameters.
     # The only AMR change is the destination of its append-only history.
     command=shlex.split(args.launcher)+[str(args.athena),'-r',str(args.checkpoint),

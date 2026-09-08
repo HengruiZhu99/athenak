@@ -752,10 +752,14 @@ TaskStatus Z4c::FindHorizon(Driver *pdrive, int stage) {
   if (stage == pdrive->nexp_stages) {
     const int accepted_cycle = pmy_pack->pmesh->ncycle + 1;
     const Real accepted_time = pmy_pack->pmesh->time + pmy_pack->pmesh->dt;
+    // Include the final accepted slice even when it lies between cadence ticks.
+    // Geometry/ghost tasks above have already prepared this live state.
+    const bool final_slice = accepted_time >= pdrive->tlim ||
+                             (pdrive->nlim >= 0 && accepted_cycle >= pdrive->nlim);
     for (auto & pahf : pfastflow) {
-      if (!pahf->ShouldSearch(accepted_cycle, accepted_time)) continue;
+      if (!pahf->ShouldSearch(accepted_cycle, accepted_time, final_slice)) continue;
       Kokkos::Timer horizon_timer;
-      pahf->Find(accepted_cycle, accepted_time);
+      pahf->Find(accepted_cycle, accepted_time, final_slice);
       pahf->Write(accepted_cycle, accepted_time);
       Real horizon_seconds = horizon_timer.seconds();
 #if MPI_PARALLEL_ENABLED
