@@ -210,10 +210,11 @@ void ParameterInput::LoadFromStream(std::istream &is) {
 //  \brief Read the parameters from an input or restart file.
 
 void ParameterInput::LoadFromFile(IOWrapper &input, bool single_file_per_rank) {
-  std::stringstream par;
   constexpr int kBufSize = 4096;
+  constexpr IOWrapperSizeT kMaxHeaderSize = 16 * 1024 * 1024;
   char buf[kBufSize];
   IOWrapperSizeT header = 0, ret, loc;
+  std::string header_text;
 
   // search for <par_end> (reading from restart files) or EOF (reading from input file).
   do {
@@ -230,25 +231,28 @@ void ParameterInput::LoadFromFile(IOWrapper &input, bool single_file_per_rank) {
     MPI_Bcast(buf, ret, MPI_BYTE, 0, MPI_COMM_WORLD);
   }
 #endif
-    par.write(buf, ret); // add the buffer into the stream
+    // Restart carriers can contain long spectral coefficient vectors. Search
+    // only new bytes plus the marker overlap, rather than copying/re-scanning
+    // the entire growing header after every read.
+    const std::size_t search_begin = header_text.size() > 8 ? header_text.size() - 8 : 0;
+    header_text.append(buf, ret);
     header += ret;
-    std::string sbuf = par.str(); // create string for search
-    loc = sbuf.find("<par_end>", 0); // search from the top of the stream
+    loc = header_text.find("<par_end>", search_begin);
     if (loc != std::string::npos) { // found <par_end>
       header = loc + 10; // store the header length
       break;
     }
-    if (header > kBufSize*10) {
+    if (header > kMaxHeaderSize) {
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-                << std::endl << "<par_end> is not found in the first 40KBytes."
-                << std::endl << "Probably the file is broken or the wrong file is "
-                << "specified" << std::endl;
+                << std::endl << "Parameter header exceeds the 16 MiB limit without "
+                << "<par_end>. Check the input or restart file." << std::endl;
       std::exit(EXIT_FAILURE);
     }
   } while (ret == kBufSize); // till EOF (or par_end is found)
 
-  // Now par contains the parameter inputs + some additional including <par_end>
+  // The buffer contains the parameter inputs and possibly bytes after <par_end>.
   // Read the stream and load the parameters
+  std::stringstream par(header_text);
   LoadFromStream(par);
   // Seek the file to the end of the header
   input.Seek(header, single_file_per_rank);

@@ -1769,6 +1769,12 @@ if (Athena_BUILD_UNIT_TESTS)
       COMMAND athena_z4c_cartoon_m0_fastflow_unit_test)
 
   add_test(
+      NAME athena.parameter_input_large_header
+      COMMAND ${PYTHON_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/tst/unit/parameter_input_large_header_test.py
+      --athena $<TARGET_FILE:athena>)
+
+  add_test(
       NAME athena.z4c_policy_migration
       COMMAND
       ${PYTHON_EXECUTABLE}
