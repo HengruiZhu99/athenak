@@ -166,7 +166,7 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
         "mots_newton_switch", "mots_backtracks", "mots_displacement",
         "mots_seed_file", "mots_seed_only", "mots_profile_points",
         "mots_l_start", "mots_discovery_interval", "mots_tracking_residual",
-        "mots_write_profiles", "mots_detection", "mots_level_iterations",
+        "mots_write_profiles", "mots_detection", "mots_selection", "mots_level_iterations",
         "mots_candidate_points", "mots_promotion_max", "mots_candidate_bound",
         "mots_angular_ratio", "mots_shape_change", "mots_area_change"};
     for (const auto &block : pin->block) {

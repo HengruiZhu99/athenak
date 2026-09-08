@@ -29,6 +29,10 @@ def main():
     p.add_argument('--detection', choices=['angular_candidate','angular_l32'], default='angular_candidate')
     p.add_argument('--lmax', type=int, default=128)
     p.add_argument('--stop-on-nondetection', action='store_true')
+    p.add_argument('--candidate-bound', type=float, default=0.05)
+    p.add_argument('--selection', choices=['outermost','residual'], default='outermost')
+    p.add_argument('--radii', type=int, default=4)
+    p.add_argument('--radius-max', type=float, default=1.0)
     args = p.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     inventory = json.loads(args.inventory.read_text())
@@ -48,8 +52,9 @@ def main():
                 command = [sys.executable, str(script), '--athena', str(args.athena),
                            '--checkpoint', str(checkpoint), '--output', str(out),
                            '--launcher', args.launcher, '--lmax', str(args.lmax), '--l-start', '8',
-                           '--detection', args.detection,
-                           '--radii', '4', '--iterations', '500', '--profile-points', '1061']
+                           '--detection', args.detection, '--candidate-bound', str(args.candidate_bound),
+                           '--selection', args.selection,
+                           '--radii', str(args.radii), '--radius-max', str(args.radius_max), '--iterations', '500', '--profile-points', '1061']
                 subprocess.run(command, check=True)
             manifest = json.loads((out/'manifest.json').read_text())
             result = json.loads((out/'search/frozen_mots.json').read_text())
@@ -60,6 +65,8 @@ def main():
             if result['time'] > 50.0000001:
                 raise RuntimeError('Slice exceeds prescribed time window '+str(out))
             rows = list(csv.DictReader((out/'search/mots.mots_candidates.csv').open()))
+            if not result['candidate_detected'] and any(r['angular_candidate']=='1' or r['strict_verified']=='1' for r in rows):
+                raise RuntimeError('Accepted surfaces have ambiguous enclosure; not nondetection: '+str(out))
             accepted = [r for r in rows if r['policy_accepted'] == '1']
             best = min(rows, key=lambda r: float(r['epsilon2'])) if rows else None
             item = dict(checkpoint=str(checkpoint), output=str(out), **result,

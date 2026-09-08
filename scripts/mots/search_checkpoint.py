@@ -38,6 +38,8 @@ def main():
     parser.add_argument('--detection', choices=['strict','angular_candidate','angular_l32'], default='angular_candidate')
     parser.add_argument('--l-start', type=int, default=8)
     parser.add_argument('--level-iterations', type=int, default=96)
+    parser.add_argument('--candidate-bound', type=float, default=0.05)
+    parser.add_argument('--selection', choices=['outermost','residual'], default='outermost')
     args = parser.parse_args()
     if args.seed_only and not args.seed:
         parser.error('--seed-only requires --seed')
@@ -70,7 +72,8 @@ horizon_only = true
 mots_detection = {args.detection}
 mots_l_start = {min(args.l_start,args.lmax)}
 mots_level_iterations = {args.level_iterations}
-mots_candidate_bound = 0.01
+mots_candidate_bound = {args.candidate_bound}
+mots_selection = {args.selection}
 mots_promotion_max = 0.5
 mots_angular_ratio = 0.8
 mots_candidate_points = 1061

@@ -222,3 +222,16 @@ coarse divergence gates remain. Use `survey_checkpoints.py --detection angular_l
 --lmax 64 --stop-on-nondetection` with an inventory ordered by descending |A| to
 stop at the first amplitude with no accepted candidate on any saved slice.
 This remains a candidate policy; spatial validation is separate.
+
+## Outermost discovered candidate / RMS0.05
+
+Use `--detection angular_l32 --lmax 64 --candidate-bound 0.05 --selection outermost`.
+The original0.01 bound and residual selector remain reproducible with explicit
+`--candidate-bound 0.01 --selection residual`. The outermost mode searches every
+configured radius and center, then selects an accepted surface enclosing all
+other accepted surfaces on a dense meridional grid (including translated centers
+and poles). Area alone is insufficient. Crossing/disjoint candidate sets return
+an explicit ambiguous_enclosure selection diagnostic; the survey halts rather
+than misclassifying this as nondetection. This is outermost among discovered
+candidates, not proof of the global outermost MOTS. For the amplitude scan use
+`--radii 8 --radius-max 8` to probe a broader seed range.

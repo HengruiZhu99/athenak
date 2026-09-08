@@ -285,6 +285,20 @@ int main() {
   } catch (const std::runtime_error&) { invalid_window = true; }
   assert(invalid_window);
 
+  auto outer = candidates[0];
+  outer.converged = true; outer.center_z = 0; outer.area = 16*kPi;
+  outer.coefficients = {2*std::sqrt(4*kPi)}; outer.direct_residual = 0.04;
+  auto inner = outer; inner.area = 4*kPi; inner.direct_residual = 1.e-6;
+  inner.coefficients = {std::sqrt(4*kPi)};
+  assert(z4c::SelectM0Outermost({inner,outer}) == 1);
+  inner.center_z = 0.5;
+  assert(z4c::SelectM0Outermost({inner,outer}) == 1);
+  inner.center_z = 1.5;  // intersecting, despite smaller area
+  assert(z4c::SelectM0Outermost({inner,outer}) == -1);
+  inner.center_z = 4;  // disjoint: neither encloses the other
+  assert(z4c::SelectM0Outermost({inner,outer}) == -1);
+  assert(z4c::SelectM0Outermost({outer,outer}) == 0);
+
   auto unequal=candidates;
   unequal[1].direct_residual=1.e-8;unequal[2].direct_residual=2.e-8;
   assert(z4c::SelectM0MirrorPair(unequal,1.e-3,&plus,&minus));

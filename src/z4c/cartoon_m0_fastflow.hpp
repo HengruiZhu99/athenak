@@ -99,6 +99,7 @@ Real M0DisjointPairInitialRadius(Real configured_radius, Real pair_fraction,
                                  Real plus_center_z, Real minus_center_z);
 
 //! Deterministic accepted-candidate selection. Returns -1 on failure.
+int SelectM0Outermost(const std::vector<M0CandidateSummary>& candidates);
 int SelectM0Single(const std::vector<M0CandidateSummary>& candidates);
 bool SelectM0MirrorPair(const std::vector<M0CandidateSummary>& candidates,
                         Real relative_tolerance, int* plus, int* minus);
@@ -185,6 +186,7 @@ class CartoonM0FastFlow {
   void Capture();
 
   M0SolveOptions solve_options_;
+  bool outermost_selection_ = true;
   int radius_count_ = 8;
   int l_start_ = 0, search_count_ = 0, discovery_interval_ = 8;
   Real tracking_residual_ = 0.01;

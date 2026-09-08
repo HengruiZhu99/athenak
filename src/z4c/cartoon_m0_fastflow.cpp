@@ -310,6 +310,45 @@ Real M0DisjointPairInitialRadius(const Real configured_radius, const Real pair_f
   return std::min(configured_radius, pair_fraction * half_separation);
 }
 
+// Select an enclosing member of the discovered set, not merely largest area.
+// Dense meridional containment includes both poles and translated centers.
+// This does not certify that the search discovered the global outermost MOTS.
+int SelectM0Outermost(const std::vector<M0CandidateSummary>& candidates) {
+  auto radius = [](const M0CandidateSummary& c, Real theta) {
+    Real value = 0;
+    for (std::size_t l = 0; l < c.coefficients.size(); ++l)
+      value += c.coefficients[l] * M0Harmonic(l, theta)[0];
+    return value;
+  };
+  int selected = -1;
+  for (int i = 0; i < static_cast<int>(candidates.size()); ++i) {
+    const auto& outer = candidates[i];
+    if (!outer.converged || !FiniteSummary(outer) || outer.coefficients.empty()) continue;
+    bool encloses = true;
+    for (int j = 0; j < static_cast<int>(candidates.size()) && encloses; ++j) {
+      const auto& inner = candidates[j];
+      if (i == j || !inner.converged || !FiniteSummary(inner)) continue;
+      const int points = std::max(1061, 16 * static_cast<int>(
+          std::max(outer.coefficients.size(), inner.coefficients.size())) + 1);
+      for (int k = 0; k < points; ++k) {
+        const Real theta = kPi * k / (points - 1);
+        const Real ri = radius(inner, theta);
+        const Real rho = ri * std::sin(theta);
+        const Real z = inner.center_z + ri * std::cos(theta) - outer.center_z;
+        const Real distance = std::hypot(rho, z);
+        const Real ro = radius(outer, std::atan2(rho, z));
+        if (!(ri > 0) || !(ro > 0) || !std::isfinite(distance) ||
+            distance > ro + 1.e-8 * std::max(Real(1), ro)) {
+          encloses = false;
+          break;
+        }
+      }
+    }
+    if (encloses && (selected < 0 || outer.area > candidates[selected].area)) selected = i;
+  }
+  return selected;  // -1 also signals non-nested/crossing accepted candidates.
+}
+
 int SelectM0Single(const std::vector<M0CandidateSummary>& candidates) {
   int selected = -1;
   for (int index = 0; index < static_cast<int>(candidates.size()); ++index) {
@@ -1026,14 +1065,14 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
       pin->GetOrAddInteger("fastflow", "mots_candidate_points", 1061);
   solve_options_.promotion_max = pin->GetOrAddReal("fastflow", "mots_promotion_max", 0.5);
   solve_options_.candidate_bound =
-      pin->GetOrAddReal("fastflow", "mots_candidate_bound", 0.01);
+      pin->GetOrAddReal("fastflow", "mots_candidate_bound", 0.05);
   solve_options_.angular_ratio = pin->GetOrAddReal("fastflow", "mots_angular_ratio", 0.8);
   solve_options_.shape_change = pin->GetOrAddReal("fastflow", "mots_shape_change", 0.02);
   solve_options_.area_change = pin->GetOrAddReal("fastflow", "mots_area_change", 0.01);
   if (solve_options_.coarse_iterations < 1 ||
       solve_options_.candidate_points < 2 * lmax_ + 4 ||
       !(solve_options_.promotion_max > 0) || !(solve_options_.candidate_bound > 0) ||
-      solve_options_.candidate_bound > 0.01 || !(solve_options_.angular_ratio > 0) ||
+      solve_options_.candidate_bound > 0.05 || !(solve_options_.angular_ratio > 0) ||
       !(solve_options_.angular_ratio < 1) || !(solve_options_.shape_change > 0) ||
       !(solve_options_.area_change > 0))
     throw std::runtime_error("invalid candidate controls");
@@ -1042,6 +1081,10 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
   if (l_start_ < 1 || l_start_ > lmax_ || discovery_interval_ < 1 ||
       !(tracking_residual_ > 0) || !std::isfinite(tracking_residual_))
     throw std::runtime_error("invalid MOTS runtime continuation controls");
+  const auto selection = pin->GetOrAddString("fastflow", "mots_selection", "outermost");
+  if (selection != "outermost" && selection != "residual")
+    throw std::runtime_error("unknown MOTS selection policy");
+  outermost_selection_ = selection == "outermost";
   radius_count_ = pin->GetOrAddInteger("fastflow", "mots_radius_count", 8);
   radius_min_ = pin->GetOrAddReal("fastflow", "mots_radius_min", 0.0);
   if (!std::isfinite(radius_min_) || !(solve_options_.displacement > 0) ||
@@ -1453,7 +1496,7 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
           candidate = PreferM0Recentered(candidate, recentered);
         }
         candidates_.push_back(std::move(candidate));
-        if (solve_options_.candidate_policy &&
+        if (solve_options_.candidate_policy && !outermost_selection_ &&
             (candidates_.back().verified || candidates_.back().angular_candidate))
           break;
       }
@@ -1466,12 +1509,22 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
     candidate.converged = candidate.verified || (solve_options_.candidate_policy &&
                                                  candidate.angular_candidate);
   int plus = -1, minus = -1;
-  if (mode_ == "mirror_pair" &&
+  if (!outermost_selection_ && mode_ == "mirror_pair" &&
       SelectM0MirrorPair(eligible, pair_tolerance_, &plus, &minus))
     selected_ = {plus, minus};
   else {
-    int best = SelectM0Single(eligible);
+    int best = outermost_selection_ ? SelectM0Outermost(eligible) : SelectM0Single(eligible);
     if (best >= 0) selected_.push_back(best);
+  }
+  if (outermost_selection_ && global_variable::my_rank == 0) {
+    int count = 0;
+    for (const auto& c : eligible) if (c.converged) ++count;
+    std::ofstream selection(pin_->GetString("job", "basename") + ".mots_selection.csv", std::ios::app);
+    if (selection.tellp() == 0) selection << "cycle,time,accepted_trials,selected,status\n";
+    selection << std::setprecision(17) << cycle << ',' << time << ',' << count << ','
+              << (selected_.empty() ? -1 : selected_[0]) << ','
+              << (count && selected_.empty() ? "ambiguous_enclosure" :
+                  count ? "outermost_discovered" : "no_candidate") << '\n';
   }
   found_ = !selected_.empty();
   if (found_) {
