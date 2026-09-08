@@ -1413,10 +1413,14 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
               : initial_radius_;
       const Real maximum = std::max(lower, std::abs(upper));
       for (int r = 0; r < radius_count_; ++r) {
+        // Discovery asks for existence, not an enumeration of all radial seeds.
+        // Start with the outer seed, which avoids costly outward drift from tiny
+        // spheres. Still visit every distinct center independently.
+        const int seed_index = solve_options_.candidate_policy ? radius_count_ - 1 - r : r;
         const Real radius =
             radius_count_ == 1
                 ? maximum
-                : lower * std::pow(maximum / lower, Real(r) / (radius_count_ - 1));
+                : lower * std::pow(maximum / lower, Real(seed_index) / (radius_count_ - 1));
         const std::string branch = center == 0 ? "origin" : center > 0 ? "plus" : "minus";
         auto candidate = SearchCandidate(branch, center, radius, {});
         candidate.axis_extremum_z = center;
@@ -1429,6 +1433,9 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
           candidate = PreferM0Recentered(candidate, recentered);
         }
         candidates_.push_back(std::move(candidate));
+        if (solve_options_.candidate_policy &&
+            (candidates_.back().verified || candidates_.back().angular_candidate))
+          break;
       }
     }
   }

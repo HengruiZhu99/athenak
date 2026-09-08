@@ -130,13 +130,17 @@ companion uses symmetric log scaling; the primary figure uses absolute expansion
 Set `mots_l_start=8`, `lmax=128`, `ntheta=260` in `<fastflow>` to refine fresh
 seeds through L=8,16,32,64,128 at each scheduled evolution-time search. The
 same continuation code also works in frozen mode. `flow_iterations_0` is a
-per-level budget. Candidates are accepted only after the final L and independent
-expansion checks; stage results are appended to `.mots_angular_stages.csv`.
+per-level budget (further capped by `mots_level_iterations` in candidate mode).
+Strict mode checks the final L; candidate mode can accept an earlier level once
+the angular-convergence checks below pass. Stage results are appended to
+`.mots_angular_stages.csv`.
 
 Geometry-independent quadrature, harmonic derivatives, and positivity-test basis
 values are cached. Geometry samples are always refreshed. Accepted surfaces, or
 otherwise the best valid failed trial, are kept with their centers for the next
-slice and tried at their original high L. Current-slice success is always reset.
+slice. Strict mode tries their original high L; candidate mode truncates them
+to the coarse basis and rebuilds the angular-convergence evidence on each slice.
+Current-slice success is always reset.
 When tracking yields epsilon2 < `mots_tracking_residual` (default0.01), expensive
 new radius/center discovery is skipped, except every `mots_discovery_interval`
 searches (default8). A failed or poor tracking result immediately triggers discovery.
@@ -150,7 +154,7 @@ finder does not change the mesh, AMR criteria, or evolution fields.
 
 
 `restart_runtime.py` creates a fresh output directory, copies the original AMR
-recording into it, and changes only diagnostic controls/output destinations and
+recording prefix authenticated by the checkpoint into it, and changes only diagnostic controls/output destinations and
 the explicit time/cycle limits. It requires an IrisK-enabled executable for
 z4c_irisk_xcts restarts so the original refinement and termination callbacks are
 enrolled. The initial-data artifact is not reread on restart.
@@ -167,6 +171,11 @@ production checkpoint and original AMR history remain unchanged. All evolution
 fields, gauge, physical AMR policy and initial-data parameters come from restart.
 
 ## Angular-convergence candidate policy
+
+Candidate discovery visits the largest radius first and stops the radius bank
+after acceptance at that center. Every distinct discovery center is still searched,
+including the origin and displaced axial lapse minima. This avoids repeatedly
+converging several radii to the same surface; strict mode retains the full bank.
 
 `mots_detection=angular_candidate` is the default Cartoon discovery policy;
 `strict` retains the original verification-based selection. Candidate acceptance

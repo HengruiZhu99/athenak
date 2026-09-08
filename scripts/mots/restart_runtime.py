@@ -4,9 +4,9 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import shlex
-import shutil
 import subprocess
 import time
 
@@ -36,7 +36,25 @@ def main():
     args.output=args.output.resolve()
     args.output.mkdir(parents=True,exist_ok=False)
     run=args.output/'run';run.mkdir()
-    shutil.copyfile(args.amr_history,run/'amr_history.jsonl')
+    # A saved slice authenticates the ledger prefix at its own checkpoint time.
+    # Copy exactly that prefix; later records belong to the production future.
+    with args.checkpoint.open('rb') as stream:
+        header = stream.read(4*1024*1024).split(b'<par_end>')[0].decode('utf-8')
+    carrier = re.search(r'<amr_history_restart>\s*(.*?)(?=\n<|\Z)', header, re.S)
+    if not carrier:
+        raise RuntimeError('Missing AMR restart carrier')
+    fields = dict(re.findall(r'^\s*(\w+)\s*=\s*(\S+)', carrier[1], re.M))
+    if fields.get('mode') != 'record':
+        raise RuntimeError('Expected live AMR record mode')
+    size = int(fields['history_bytes'])
+    with args.amr_history.open('rb') as stream:
+        prefix = stream.read(size)
+    digest = 14695981039346656037
+    for byte in prefix:
+        digest = ((digest ^ byte)*1099511628211) & ((1 << 64)-1)
+    if len(prefix) != size or f'{digest:016x}' != fields['history_digest']:
+        raise RuntimeError('AMR ledger prefix does not match checkpoint')
+    (run/'amr_history.jsonl').write_bytes(prefix)
     overlay=args.output/'restart.athinput'
     overlay.write_text(f'''<job>
 basename = runtime_mots
@@ -48,6 +66,14 @@ ndiag = 1
 amr_history_file = {run/'amr_history.jsonl'}
 <fastflow>
 horizon_only = false
+mots_detection = angular_candidate
+mots_level_iterations = 96
+mots_candidate_bound = 0.01
+mots_promotion_max = 0.5
+mots_angular_ratio = 0.8
+mots_candidate_points = 1061
+mots_shape_change = 0.02
+mots_area_change = 0.01
 lmax = {args.lmax}
 ntheta = {2*args.lmax+4}
 mots_l_start = {args.l_start}
@@ -71,6 +97,7 @@ mots_tracking_residual = 0.01
            checkpoint=str(args.checkpoint),checkpoint_sha256=sha(args.checkpoint),
            executable=str(args.athena),executable_sha256=sha(args.athena),
            original_amr_history=str(args.amr_history),original_amr_history_sha256=sha(args.amr_history),
+           copied_amr_history_bytes=size, copied_amr_history_digest=fields['history_digest'],
            overlay_sha256=sha(overlay),source_files={str(f.relative_to(source)):sha(f)
                for f in sorted((source/'src').rglob('*')) if f.is_file()})
     manifest=args.output/'manifest.json';manifest.write_text(json.dumps(m,indent=2)+'\n')
