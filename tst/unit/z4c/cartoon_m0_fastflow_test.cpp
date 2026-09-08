@@ -54,6 +54,35 @@ int main() {
   }
   Close(sphere.area_factor, radius * radius * std::sin(0.7), 2.0e-14);
   Close(sphere.spin_integrand_z, 0.0, 0.0);
+  // Ingoing Kerr-Schild Schwarzschild supplies a non-time-symmetric check.
+  // gamma_ij=delta_ij+2(M/r)n_i n_j; K follows from L_beta gamma/(2 alpha).
+  // Its r=2M sphere has theta_+=0 and theta_-=-sqrt(2)/M.
+  for (double ks_mass : {1.0, 0.1, 0.01}) {
+    for (double scale : {1.8, 2.0, 2.2}) {
+      const double r = scale * ks_mass, h = ks_mass/r;
+      const double f = 1+2*h, prefactor = 2*ks_mass/(r*r*std::sqrt(f));
+      for (double angle : {0.0, 0.3, 1.2, kPi}) {
+        z4c::M0AdmSample ks;
+        ks.valid = true;
+        const double n[3] = {std::sin(angle), 0.0, std::cos(angle)};
+        int v = 0;
+        for (int a = 0; a < 3; ++a) {
+          for (int b = a; b < 3; ++b, ++v) {
+            ks.metric[v] = (a == b) + 2*h*n[a]*n[b];
+            ks.curvature[v] = prefactor*((a == b)-(2+h)*n[a]*n[b]);
+            for (int d = 0; d < 3; ++d) {
+              ks.metric_derivative[6*d+v] = 2*ks_mass/(r*r)*
+                  ((a == d)*n[b]+(b == d)*n[a]-3*n[d]*n[a]*n[b]);
+            }
+          }
+        }
+        const auto point = z4c::EvaluateM0SurfacePoint(angle, r, 0.0, 0.0, ks);
+        assert(point.valid);
+        Close(ks_mass*point.expansion, ks_mass*2*(1-2*h)/(r*std::sqrt(f)), 1.e-12);
+        Close(ks_mass*point.ingoing_expansion, -ks_mass*2*std::sqrt(f)/r, 1.e-12);
+      }
+    }
+  }
   auto spinning = flat;
   spinning.curvature[1] = 1.0;  // K_XY=K_YX
   const auto spin_point = z4c::EvaluateM0SurfacePoint(
