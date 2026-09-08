@@ -71,7 +71,9 @@ void RunFrozenMots(Mesh* mesh, Driver* driver, ParameterInput* pin) {
     out << std::setprecision(17) << "{\"time\":" << time << ",\"cycle\":" << cycle
         << ",\"blocks\":" << blocks << ",\"active_state_unchanged\":true,"
         << "\"mesh_unchanged\":true,\"verified_candidate\":"
-        << (finder.Found() ? "true" : "false") << ",\"spatially_validated\":false}\n";
+        << (finder.StrictlyVerified() ? "true" : "false")
+        << ",\"candidate_detected\":" << (finder.Found()?"true":"false")
+        << ",\"spatially_validated\":false}\n";
     std::ofstream parameters("frozen_parameters.athinput");
     pin->ParameterDump(parameters);
   }

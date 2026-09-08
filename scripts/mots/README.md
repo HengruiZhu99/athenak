@@ -165,3 +165,40 @@ python3 scripts/mots/restart_runtime.py --athena /path/to/athena \
 The wrapper records input and executable hashes and verifies that both the
 production checkpoint and original AMR history remain unchanged. All evolution
 fields, gauge, physical AMR policy and initial-data parameters come from restart.
+
+## Angular-convergence candidate policy
+
+`mots_detection=angular_candidate` is the default Cartoon discovery policy;
+`strict` retains the original verification-based selection. Candidate acceptance
+requires two consecutive independent-grid epsilon2 reductions by a factor at most
+`mots_angular_ratio=0.8`, final area-weighted dimensionless epsilon2 at most
+`mots_candidate_bound=0.01`, relative area change at most0.01 and RMS radial-shape
+change at most0.02. All compared surfaces share the same center and use a common
+1,061-point independent quadrature, with explicit regular pole/geometry checks.
+Strictly verified solutions can also be accepted. The maximum expansion is still
+reported but is not an angular-candidate veto. Neither result is a spatial
+convergence certificate or an outermost-horizon claim.
+
+Candidate searches cap each level at96 iterations and stop flow drift when an
+8-iteration window improves RMS by less than0.1%. Invalid geometry, nonfinite
+expansion, epsilon2>0.5, or a>25% increase across angular levels veto further
+refinement. A line-search plateau at a reasonable residual can trigger refinement;
+it must not be confused with divergence. The accepted lower-order surface is
+zero-padded only for fixed-width history/restart storage, with actual solved_lmax
+recorded separately. On each new slice angular convergence is rechecked, including
+when starting from a tracked surface.
+
+Newton samples all finite-difference perturbations in a single geometry/MPI batch,
+while differentiating the complete residual at the changed positions. The global
+axis scan is also batched and checks every native active axis vertex, with finest
+leaf ownership. Discovery always includes the origin plus distinct global axial
+lapse minima (including a symmetric tie); the axis bound applies only to legacy
+CC scanning. A coincident origin minimum is not duplicated.
+
+`.mots_candidates.csv` distinguishes angular_candidate, strict_verified and
+policy_accepted. Frozen JSON similarly distinguishes candidate_detected and
+verified_candidate. The legacy restart accepted-state boolean stores policy
+acceptance; its status is explicitly `angular_candidate` for the heuristic policy.
+Such restored states are used as guesses and are not accepted on a new slice
+without reevaluation. A candidate-based bisection is an operational finite-time,
+finite-resolution detection threshold, not a certified black-hole threshold.

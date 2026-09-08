@@ -49,6 +49,8 @@ struct M0AngularStage {
 
 struct M0CandidateSummary {
   std::vector<M0AngularStage> angular_stages;
+  bool angular_candidate = false;
+  int solved_lmax = 0;
   bool converged = false;
   bool verified = false;
   Real epsilon_inf = 0.0;
@@ -115,6 +117,10 @@ using M0GeometrySampler =
     std::function<std::vector<M0AdmSample>(const std::vector<std::array<Real, 2>>&)>;
 struct M0SolveOptions {
   int lmax = 4, ntheta = 12, iterations = 300, backtracks = 24;
+  bool batch_newton = true, candidate_policy = false;
+  int coarse_iterations = 96, candidate_points = 1061;
+  Real promotion_max = 0.5, candidate_bound = 0.01, angular_ratio = 0.8;
+  Real shape_change = 0.02, area_change = 0.01;
   Real flow_scale = 1.0, newton_switch = 0.1;
   Real epsilon2 = 1.e-6, epsilon_inf = 1.e-5, displacement = 0.1;
 };
@@ -150,8 +156,13 @@ class CartoonM0FastFlow {
   std::vector<M0AdmSample> SampleAdmBatch(
       const std::vector<std::array<Real, 2>>& points) const;
   M0AxisSample SampleAxisLapse(Real z) const;
+  std::vector<M0AxisSample> SampleAxisLapseBatch(const std::vector<Real>& z) const;
 
   bool Found() const { return found_; }
+  bool StrictlyVerified() const {
+    for (int i : selected_) if (candidates_[i].verified) return true;
+    return false;
+  }
   int LastSearchCycle() const { return last_search_cycle_; }
   Real InitialRadius() const { return initial_radius_; }
   Real MinimumRadius() const;

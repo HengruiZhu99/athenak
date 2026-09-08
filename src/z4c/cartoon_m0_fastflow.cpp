@@ -524,7 +524,7 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     s.direct_residual = s.epsilon_inf = std::numeric_limits<Real>::infinity();
     return out;
   };
-  s.converged = s.verified = false;
+  s.converged = s.verified = s.angular_candidate = false;
   s.area = s.direct_residual = s.flow_residual = s.mean_radius = s.spin_z = 0;
   s.epsilon_inf = s.spacing = 0;
   s.minimum_radius = s.ingoing_min = std::numeric_limits<Real>::infinity();
@@ -684,6 +684,7 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
   auto current = EvaluateM0(sample, opt.ntheta, initial);
   if (!current.valid) return current.surface;
   const int dim = opt.lmax + 1;
+  Real window_residual = current.surface.direct_residual;
   for (int it = 0; it < opt.iterations; ++it) {
     current.surface.iterations = it;
     if (current.surface.direct_residual <= opt.epsilon2 &&
@@ -698,6 +699,13 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
       current.surface.failure = "angular_verification_failed";
       return current.surface;
     }
+    if (opt.candidate_policy && it > 0 && it % 8 == 0) {
+      if (current.surface.direct_residual > window_residual * (1 - 1.e-3)) {
+        current.surface.failure = "residual_plateau";
+        return current.surface;
+      }
+      window_residual = current.surface.direct_residual;
+    }
     bool advanced = false;
     for (int method = 0; method < 2 && !advanced; ++method) {
       std::vector<Real> step(dim);
@@ -707,19 +715,54 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
       if (use_newton) {
         std::vector<Real> jac(dim * dim);
         bool good = true;
+        std::vector<M0CandidateSummary> perturbed;
+        std::vector<Real> deltas;
+        std::vector<std::array<Real, 2>> all_points;
+        std::vector<std::size_t> offsets{0};
+        for (int j = 0; j < dim; ++j) {
+          const Real delta = std::cbrt(std::numeric_limits<Real>::epsilon()) *
+                             std::max(current.surface.mean_radius,
+                                      std::abs(current.surface.coefficients[j]));
+          deltas.push_back(delta);
+          for (Real sign : {1.0, -1.0}) {
+            auto trial = current.surface;
+            trial.coefficients[j] += sign * delta;
+            perturbed.push_back(trial);
+            if (opt.batch_newton) {
+              EvaluateM0(
+                  [&](const std::vector<std::array<Real, 2>>& points) {
+                    all_points.insert(all_points.end(), points.begin(), points.end());
+                    return std::vector<M0AdmSample>{};
+                  },
+                  opt.ntheta, trial);
+              good = good && all_points.size() > offsets.back();
+              offsets.push_back(all_points.size());
+            }
+          }
+        }
+        std::vector<M0AdmSample> geometry;
+        if (opt.batch_newton && good) {
+          geometry = sample(all_points);
+          good = geometry.size() == all_points.size();
+        }
         for (int j = 0; j < dim && good; ++j) {
-          auto plus = current.surface, minus = current.surface;
-          const Real delta =
-              std::cbrt(std::numeric_limits<Real>::epsilon()) *
-              std::max(current.surface.mean_radius, std::abs(plus.coefficients[j]));
-          plus.coefficients[j] += delta;
-          minus.coefficients[j] -= delta;
-          const auto p = EvaluateM0(sample, opt.ntheta, plus),
-                     m = EvaluateM0(sample, opt.ntheta, minus);
-          good = p.valid && m.valid;
+          auto evaluate = [&](int k) {
+            if (!opt.batch_newton) return EvaluateM0(sample, opt.ntheta, perturbed[k]);
+            return EvaluateM0(
+                [&](const std::vector<std::array<Real, 2>>& points) {
+                  if (points.size() != offsets[k + 1] - offsets[k])
+                    return std::vector<M0AdmSample>{};
+                  return std::vector<M0AdmSample>(geometry.begin() + offsets[k],
+                                                  geometry.begin() + offsets[k + 1]);
+                },
+                opt.ntheta, perturbed[k]);
+          };
+          const auto plus = evaluate(2 * j), minus = evaluate(2 * j + 1);
+          good = plus.valid && minus.valid;
           if (good)
             for (int i = 0; i < dim; ++i)
-              jac[i * dim + j] = (p.projection[i] - m.projection[i]) / (2 * delta);
+              jac[i * dim + j] =
+                  (plus.projection[i] - minus.projection[i]) / (2 * deltas[j]);
         }
         for (int i = 0; i < dim; ++i) step[i] = -current.projection[i];
         if (!good || !M0LinearSolve(jac, step)) continue;
@@ -766,30 +809,87 @@ M0CandidateSummary SolveM0Refined(const M0GeometrySampler& sample,
   if (start_l < 1 || start_l > options.lmax)
     throw std::runtime_error("invalid angular refinement range");
   std::vector<Real> coefficients = seed;
-  // A tracked high-order surface is tried at its original angular order first.
   int level = seed.empty() ? start_l : std::max(start_l, int(seed.size()) - 1);
   if (level > options.lmax) throw std::runtime_error("seed exceeds angular cap");
+  // Candidate evidence is rebuilt on each slice, including for tracked surfaces.
+  // Truncate a good tracked shape to the coarse basis, then recheck angular decrease.
+  if (options.candidate_policy && !seed.empty()) {
+    level = start_l;
+    coefficients.resize(level + 1);
+  }
   std::vector<M0AngularStage> stages;
-  M0CandidateSummary result;
+  std::vector<Real> residuals;
+  M0CandidateSummary result, previous;
+  int consecutive_decreases = 0;
   for (;;) {
     auto opt = options;
     opt.lmax = level;
     opt.ntheta =
         std::max(2 * level + 4,
                  int(std::ceil(Real(options.ntheta - 4) * level / options.lmax)) + 4);
+    if (options.candidate_policy)
+      opt.iterations = std::min(opt.iterations, opt.coarse_iterations);
     if (!coefficients.empty()) coefficients.resize(level + 1, 0);
     result = SolveM0Surface(sample, opt, branch, center, radius, coefficients);
+    result.solved_lmax = level;
+    if (options.candidate_policy && result.area > 0 &&
+        std::isfinite(result.direct_residual)) {
+      const bool strict = result.verified;
+      const int iterations = result.iterations;
+      const auto failure = result.failure;
+      result = AssessM0Surface(sample, options.candidate_points, result);
+      result.verified = strict && result.direct_residual <= options.epsilon2 &&
+                        result.epsilon_inf <= options.epsilon_inf;
+      result.converged = result.verified;
+      result.iterations = iterations;
+      result.solved_lmax = level;
+      if (result.area > 0) result.failure = failure;
+    }
     stages.push_back({level, opt.ntheta, result.iterations, result.direct_residual,
                       result.epsilon_inf, result.area, result.verified, result.failure});
-    if (level == options.lmax) break;
-    if (!(result.area > 0) || !std::isfinite(result.direct_residual)) {
-      result.coefficients.resize(options.lmax + 1, 0);
-      break;
+    if (options.candidate_policy) {
+      Real shape = std::numeric_limits<Real>::infinity(), area = shape;
+      if (previous.area > 0 && result.area > 0) {
+        Real sum = 0;
+        for (std::size_t l = 0; l < result.coefficients.size(); ++l) {
+          const Real diff =
+              result.coefficients[l] -
+              (l < previous.coefficients.size() ? previous.coefficients[l] : 0);
+          sum += diff * diff;
+        }
+        shape = std::sqrt(sum / (4 * kPi)) / result.mean_radius;
+        area = std::abs(result.area - previous.area) / result.area;
+        consecutive_decreases =
+            result.direct_residual <= options.angular_ratio * previous.direct_residual
+                ? consecutive_decreases + 1
+                : 0;
+      }
+      result.angular_candidate =
+          result.verified ||
+          (consecutive_decreases >= 2 && result.area > 0 &&
+           result.direct_residual <= options.candidate_bound &&
+           shape <= options.shape_change && area <= options.area_change);
+      if (result.angular_candidate) {
+        result.failure = result.verified ? "none" : "angular_candidate";
+        break;
+      }
+      if (!(result.area > 0) || !std::isfinite(result.direct_residual) ||
+          result.direct_residual > options.promotion_max ||
+          (previous.area > 0 &&
+           result.direct_residual > 1.25 * previous.direct_residual)) {
+        result.failure = "refinement_gated";
+        break;
+      }
     }
+    if (level == options.lmax) break;
+    if (!(result.area > 0) || !std::isfinite(result.direct_residual)) break;
+    previous = result;
     coefficients = result.coefficients;
     level = std::min(2 * level, options.lmax);
   }
   result.angular_stages = std::move(stages);
+  result.coefficients.resize(options.lmax + 1, 0);  // fixed-width restart/history carrier
+
   return result;
 }
 
@@ -894,7 +994,29 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
   solve_options_.newton_switch = pin->GetOrAddReal("fastflow", "mots_newton_switch", 0.1);
   solve_options_.displacement = pin->GetOrAddReal("fastflow", "mots_displacement", 0.1);
   solve_options_.backtracks = pin->GetOrAddInteger("fastflow", "mots_backtracks", 24);
-  l_start_ = pin->GetOrAddInteger("fastflow", "mots_l_start", lmax_);
+  l_start_ = pin->GetOrAddInteger("fastflow", "mots_l_start", std::min(8, lmax_));
+  const auto policy =
+      pin->GetOrAddString("fastflow", "mots_detection", "angular_candidate");
+  if (policy != "strict" && policy != "angular_candidate")
+    throw std::runtime_error("unknown MOTS detection policy");
+  solve_options_.candidate_policy = policy == "angular_candidate";
+  solve_options_.coarse_iterations =
+      pin->GetOrAddInteger("fastflow", "mots_level_iterations", 96);
+  solve_options_.candidate_points =
+      pin->GetOrAddInteger("fastflow", "mots_candidate_points", 1061);
+  solve_options_.promotion_max = pin->GetOrAddReal("fastflow", "mots_promotion_max", 0.5);
+  solve_options_.candidate_bound =
+      pin->GetOrAddReal("fastflow", "mots_candidate_bound", 0.01);
+  solve_options_.angular_ratio = pin->GetOrAddReal("fastflow", "mots_angular_ratio", 0.8);
+  solve_options_.shape_change = pin->GetOrAddReal("fastflow", "mots_shape_change", 0.02);
+  solve_options_.area_change = pin->GetOrAddReal("fastflow", "mots_area_change", 0.01);
+  if (solve_options_.coarse_iterations < 1 ||
+      solve_options_.candidate_points < 2 * lmax_ + 4 ||
+      !(solve_options_.promotion_max > 0) || !(solve_options_.candidate_bound > 0) ||
+      solve_options_.candidate_bound > 0.01 || !(solve_options_.angular_ratio > 0) ||
+      !(solve_options_.angular_ratio < 1) || !(solve_options_.shape_change > 0) ||
+      !(solve_options_.area_change > 0))
+    throw std::runtime_error("invalid candidate controls");
   discovery_interval_ = pin->GetOrAddInteger("fastflow", "mots_discovery_interval", 8);
   tracking_residual_ = pin->GetOrAddReal("fastflow", "mots_tracking_residual", 0.01);
   if (l_start_ < 1 || l_start_ > lmax_ || discovery_interval_ < 1 ||
@@ -918,7 +1040,7 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
       if (!(file >> seed.center_z >> count) || !std::isfinite(seed.center_z) ||
           count < 1 || count > lmax_ + 1)
         throw std::runtime_error("invalid MOTS analysis seed header");
-      seed.branch = "continuation";
+      seed.branch = seed.center_z == 0 ? "origin" : seed.center_z > 0 ? "plus" : "minus";
       seed.coefficients.assign(lmax_ + 1, 0.0);
       for (int l = 0; l < count; ++l)
         if (!(file >> seed.coefficients[l]) || !std::isfinite(seed.coefficients[l]))
@@ -929,7 +1051,10 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
       last_good_ = {seed};
     }
   } else {
-    Restore();
+    if (pack_->z4c_restart_state.fastflow.status == "angular_candidate")
+      last_good_ = RestoreM0Seeds(pack_->z4c_restart_state.fastflow, lmax_);
+    else
+      Restore();
     for (int i : selected_) last_good_.push_back(candidates_[i]);
   }
 }
@@ -1150,33 +1275,41 @@ M0AdmSample CartoonM0FastFlow::SampleAdm(const Real rho, const Real z) const {
 }
 
 M0AxisSample CartoonM0FastFlow::SampleAxisLapse(const Real z) const {
-  M0AxisSample result;
-  result.z = z;
-  // Lapse is an evolved Z4c field.  In VC mode sample the authoritative
-  // rho=0 nodal line; the ADM metric path above deliberately uses the explicit
-  // cell-centred adapter instead.
-  const auto stencil = LocateNativeCartoonMeridionalPoint(pack_->pmesh, 0.0, z);
-  if (!stencil.valid) return result;
-  Kokkos::View<Real*> values("Cartoon axis lapse sample", 2);
+  return SampleAxisLapseBatch({z})[0];
+}
+std::vector<M0AxisSample> CartoonM0FastFlow::SampleAxisLapseBatch(
+    const std::vector<Real>& z) const {
+  const int count = z.size();
+  std::vector<M0AxisSample> result(count);
+  Kokkos::View<CartoonMeridionalStencil*> stencils("MOTS axis stencils", count);
+  auto host_stencils = Kokkos::create_mirror_view(stencils);
+  for (int n = 0; n < count; ++n)
+    host_stencils(n) = LocateNativeCartoonMeridionalPoint(pack_->pmesh, 0, z[n]);
+  Kokkos::deep_copy(stencils, host_stencils);
+  Kokkos::View<Real*> values("MOTS axis lapse batch", 2 * count);
   Kokkos::deep_copy(values, 0.0);
-  if (stencil.owner_rank == global_variable::my_rank) {
-    auto u0 = pack_->pz4c->u0;
-    const int alpha = pack_->pz4c->I_Z4C_ALPHA;
-    Kokkos::parallel_for(
-        "Cartoon axis lapse interpolate", Kokkos::RangePolicy<DevExeSpace>(0, 1),
-        KOKKOS_LAMBDA(const int) {
-          values(0) = SampleCartoonMeridionalScalar(u0, alpha, stencil);
-          values(1) = 1.0;
-        });
-    Kokkos::fence();
-  }
+  auto u0 = pack_->pz4c->u0;
+  const int alpha = pack_->pz4c->I_Z4C_ALPHA, rank = global_variable::my_rank;
+  Kokkos::parallel_for(
+      "MOTS axis lapse batch", Kokkos::RangePolicy<DevExeSpace>(0, count),
+      KOKKOS_LAMBDA(const int n) {
+        const auto s = stencils(n);
+        if (s.valid && s.owner_rank == rank) {
+          values(2 * n) = SampleCartoonMeridionalScalar(u0, alpha, s);
+          values(2 * n + 1) = 1;
+        }
+      });
   auto host = Kokkos::create_mirror_view_and_copy(HostMemSpace(), values);
-  Real reduced[2] = {host(0), host(1)};
 #if MPI_PARALLEL_ENABLED
-  MPI_Allreduce(MPI_IN_PLACE, reduced, 2, MPI_ATHENA_REAL, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, host.data(), 2 * count, MPI_ATHENA_REAL, MPI_SUM,
+                MPI_COMM_WORLD);
 #endif
-  result.lapse = reduced[0];
-  result.valid = reduced[1] == 1.0 && std::isfinite(result.lapse) && result.lapse >= 0.0;
+  for (int n = 0; n < count; ++n) {
+    result[n].z = z[n];
+    result[n].lapse = host(2 * n);
+    result[n].valid =
+        host(2 * n + 1) == 1 && std::isfinite(host(2 * n)) && host(2 * n) >= 0;
+  }
   return result;
 }
 
@@ -1212,27 +1345,43 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
   const bool discover = !tracking_ok || search_count_ % discovery_interval_ == 0;
   ++search_count_;
   if (!seed_only && discover) {
-    std::vector<M0AxisSample> axis;
-    for (int i = -axis_search_samples_; i <= axis_search_samples_; ++i)
-      axis.push_back(SampleAxisLapse(axis_search_bound_ * i / axis_search_samples_));
-    std::vector<Real> centers{0.0};
-    const Real dz = axis_search_bound_ / axis_search_samples_;
-    for (std::size_t n = 1; n + 1 < axis.size(); ++n) {
-      if (!axis[n - 1].valid || !axis[n].valid || !axis[n + 1].valid ||
-          axis[n].lapse > axis[n - 1].lapse || axis[n].lapse >= axis[n + 1].lapse ||
-          std::abs(axis[n].z) < dz / 2)
-        continue;
-      Real center = axis[n].z, step = dz;
-      for (int refine = 0; refine < 8; ++refine) {
-        auto best = SampleAxisLapse(center);
-        for (Real z : {center - step / 2, center + step / 2}) {
-          auto value = SampleAxisLapse(z);
-          if (value.valid && (!best.valid || value.lapse < best.lapse)) best = value;
-        }
-        center = best.z;
-        step *= 0.5;
+    std::vector<Real> axis_z{0.0};
+    if (pack_->pz4c->layout.centering == Z4cGridCentering::vertex) {
+      // Sample every active native vertex on the whole symmetry axis, not a
+      // uniform coarse scan which can miss a narrow displaced lapse minimum.
+      const auto* mesh = pack_->pmesh;
+      for (int gid = 0; gid < mesh->nmb_total; ++gid) {
+        const auto& loc = mesh->lloc_eachmb[gid];
+        if (loc.lx1 != 0) continue;
+        Real r0, r1, z0, z1;
+        meridional_detail::LogicalEdges(*mesh, loc, &r0, &r1, &z0, &z1);
+        for (int j = 0; j <= mesh->mb_indcs.nx2; ++j)
+          axis_z.push_back(z0 + (z1 - z0) * j / mesh->mb_indcs.nx2);
       }
-      centers.push_back(center);
+    } else {
+      for (int i = -axis_search_samples_; i <= axis_search_samples_; ++i)
+        axis_z.push_back(axis_search_bound_ * i / axis_search_samples_);
+    }
+    std::sort(axis_z.begin(), axis_z.end());
+    axis_z.erase(std::unique(axis_z.begin(), axis_z.end()), axis_z.end());
+    const auto axis = SampleAxisLapseBatch(axis_z);
+    std::vector<Real> centers{0.0};
+    Real minimum = std::numeric_limits<Real>::infinity(), origin = minimum;
+    for (const auto& a : axis)
+      if (a.valid) {
+        minimum = std::min(minimum, a.lapse);
+        if (a.z == 0) origin = a.lapse;
+      }
+    const Real tie = std::max(Real(1.e-14), minimum * 1.e-8);
+    if (origin > minimum + tie) {
+      for (std::size_t n = 0; n < axis.size() && centers.size() < 3; ++n) {
+        const auto& a = axis[n];
+        if (!a.valid || a.lapse > minimum + tie || a.z == 0) continue;
+        if (n && axis[n - 1].valid && axis[n - 1].lapse <= a.lapse) continue;
+        if (n + 1 < axis.size() && axis[n + 1].valid && axis[n + 1].lapse < a.lapse)
+          continue;
+        centers.push_back(a.z);
+      }
     }
     for (Real center : centers) {
       const auto geometry = SampleAdm(0, center);
@@ -1272,7 +1421,9 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
   // An individual verified MOTS is sufficient for this finder milestone.
   // The optional pair label cannot veto a successful component.
   auto eligible = candidates_;
-  for (auto& candidate : eligible) candidate.converged = candidate.verified;
+  for (auto& candidate : eligible)
+    candidate.converged = candidate.verified || (solve_options_.candidate_policy &&
+                                                 candidate.angular_candidate);
   int plus = -1, minus = -1;
   if (mode_ == "mirror_pair" &&
       SelectM0MirrorPair(eligible, pair_tolerance_, &plus, &minus))
@@ -1324,7 +1475,8 @@ void CartoonM0FastFlow::Capture() {
   state.last_search_time = last_search_time_;
   state.time_first_found = time_first_found_;
   state.converged = found_;
-  state.status = found_ ? "accepted" : "failed";
+  state.status =
+      found_ ? (StrictlyVerified() ? "accepted" : "angular_candidate") : "failed";
   if (!found_) {
     state.failure_code =
         !candidates_.empty() && candidates_[0].failure == "axis_lapse_scan_coverage"
@@ -1419,6 +1571,22 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
                << stage.ntheta << ',' << stage.iterations << ',' << stage.epsilon2 << ','
                << stage.epsilon_inf << ',' << stage.area << ',' << stage.verified << ','
                << stage.failure << '\n';
+  }
+  {
+    std::ofstream events(pin_->GetString("job", "basename") + ".mots_candidates.csv",
+                         std::ios::app);
+    if (events.tellp() == 0)
+      events << "cycle,time,id,center_z,solved_lmax,angular_candidate,strict_verified,"
+                "policy_accepted,epsilon2,epsilon_inf,area,failure\n";
+    events << std::setprecision(17);
+    for (std::size_t i = 0; i < candidates_.size(); ++i) {
+      const auto& s = candidates_[i];
+      events << cycle << ',' << time << ',' << i << ',' << s.center_z << ','
+             << s.solved_lmax << ',' << s.angular_candidate << ',' << s.verified << ','
+             << (std::find(selected_.begin(), selected_.end(), int(i)) != selected_.end())
+             << ',' << s.direct_residual << ',' << s.epsilon_inf << ',' << s.area << ','
+             << s.failure << '\n';
+    }
   }
   if (output_ == nullptr) {
     const std::string path = pin_->GetString("job", "basename") + ".cartoon_m0_horizon_" +

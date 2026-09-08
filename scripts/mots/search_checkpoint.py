@@ -35,6 +35,9 @@ def main():
     parser.add_argument('--seed-only', action='store_true')
     parser.add_argument('--ntheta', type=int, default=0)
     parser.add_argument('--profile-points', type=int, default=0)
+    parser.add_argument('--detection', choices=['strict','angular_candidate'], default='angular_candidate')
+    parser.add_argument('--l-start', type=int, default=8)
+    parser.add_argument('--level-iterations', type=int, default=96)
     args = parser.parse_args()
     if args.seed_only and not args.seed:
         parser.error('--seed-only requires --seed')
@@ -64,6 +67,15 @@ def main():
 basename = mots
 <fastflow>
 horizon_only = true
+mots_detection = {args.detection}
+mots_l_start = {min(args.l_start,args.lmax)}
+mots_level_iterations = {args.level_iterations}
+mots_candidate_bound = 0.01
+mots_promotion_max = 0.5
+mots_angular_ratio = 0.8
+mots_candidate_points = 1061
+mots_shape_change = 0.02
+mots_area_change = 0.01
 lmax = {args.lmax}
 ntheta = {args.ntheta or 2*args.lmax+4}
 flow_iterations_0 = {args.iterations}

@@ -233,6 +233,18 @@ int main() {
     return std::vector<z4c::M0AdmSample>(p.size(),flat);
   };
   assert(!z4c::SolveM0Surface(flat_sampler,flat_opt,"flat",0,1).verified);
+  auto gated_options=flat_opt;
+  gated_options.lmax=64;gated_options.ntheta=132;gated_options.candidate_policy=true;
+  const auto gated=z4c::SolveM0Refined(flat_sampler,gated_options,8,"flat",0,1);
+  assert(!gated.verified && !gated.angular_candidate);
+  assert(gated.angular_stages.size()==1 && gated.solved_lmax==8);
+  assert(gated.failure=="refinement_gated");
+  auto invalid_sampler=[](const std::vector<std::array<Real,2>>& p) {
+    return std::vector<z4c::M0AdmSample>(p.size());
+  };
+  const auto invalid=z4c::SolveM0Refined(invalid_sampler,gated_options,8,"invalid",0,1);
+  assert(invalid.angular_stages.size()==1 && !invalid.angular_candidate);
+
   auto unequal=candidates;
   unequal[1].direct_residual=1.e-8;unequal[2].direct_residual=2.e-8;
   assert(z4c::SelectM0MirrorPair(unequal,1.e-3,&plus,&minus));
