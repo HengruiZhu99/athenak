@@ -88,3 +88,39 @@ resolution sensitivity is reported separately; the executable deliberately
 never sets `spatially_validated=true`. CC/full-3D qualification, independent
 shooting, general non-star-shaped surfaces and outermost identification are
 outside this milestone. No search failure certifies the absence of a MOTS.
+
+
+## Angular continuation
+
+`angular_continuation.py` runs bounded coarse-to-fine searches on the same
+checkpoint, carrying the best evaluated center and coefficients into the next
+stage with zero padding. Failed candidates remain guesses, never detections.
+This is spectral continuation, not a full multigrid correction cycle. Each stage
+stops at convergence, line-search failure, or its iteration budget (default 500).
+
+```
+python3 scripts/mots/angular_continuation.py --athena /absolute/path/to/athena \
+  --checkpoint /absolute/path/to/input.rst --output /absolute/new/sequence \
+  --levels 8 16 32 64 128
+python3 scripts/mots/plot_angular.py --sequence /absolute/new/sequence \
+  --output /absolute/plot/directory
+```
+
+Use `--initial-result /path/to/previous/result` to begin from an existing trial,
+and `--ntheta-factor 4` to double the default solve quadrature (`2*L+4`).
+The one-search wrapper also accepts `--seed`, `--seed-only`, `--ntheta`, and
+`--profile-points`. A seed text file contains center_z, coefficient count, then
+normalized real Y_l0 coefficients. Seed contents and SHA256 enter the manifest.
+The seed count cannot exceed L+1; missing higher modes are zero padded.
+
+The m=0 basis now uses a three-term Legendre recurrence differentiated twice
+with respect to theta. This avoids the severe cancellation/overflow in the
+factorial Wigner sum at high L and handles poles without division by sin(theta).
+The generic 3D harmonics are unchanged. Tests cover high-L equator values,
+axis derivatives, and the Legendre differential equation through L=128.
+
+Every surface gets a dense-profile CSV and a `mots.mots_dense_<id>.json` containing
+independent area-weighted residuals, including explicit pole checks. The
+continuation requests 1,061 points (or the existing 4*ntheta+3 minimum, if larger).
+Plots use the dense area and residuals, not search-grid residuals. The signed
+companion uses symmetric log scaling; the primary figure uses absolute expansion.

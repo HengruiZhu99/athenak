@@ -18,6 +18,9 @@ class MeshBlockPack;
 class ParameterInput;
 
 namespace z4c {
+// Normalized Y_l0 and first/second theta derivatives; stable through high l.
+std::array<Real, 3> M0Harmonic(int l, Real theta);
+
 
 struct M0AdmSample {
   bool valid = false;

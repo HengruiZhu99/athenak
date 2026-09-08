@@ -31,7 +31,15 @@ def main():
     parser.add_argument('--radius-max', type=float, default=1.0)
     parser.add_argument('--axis-bound', type=float, default=8.0)
     parser.add_argument('--axis-samples', type=int, default=257)
+    parser.add_argument('--seed', type=Path, help='center, coefficient count, then a_l0 values')
+    parser.add_argument('--seed-only', action='store_true')
+    parser.add_argument('--ntheta', type=int, default=0)
+    parser.add_argument('--profile-points', type=int, default=0)
     args = parser.parse_args()
+    if args.seed_only and not args.seed:
+        parser.error('--seed-only requires --seed')
+    if args.seed:
+        args.seed = args.seed.resolve(strict=True)
     args.athena = args.athena.resolve(strict=True)
     args.checkpoint = args.checkpoint.resolve(strict=True)
     args.output = args.output.resolve()
@@ -48,19 +56,25 @@ def main():
                 'source_sha': revision, 'source_status': git('status', '--porcelain'),
                 'slurm_job_id': os.environ.get('SLURM_JOB_ID'), 'started': time.time(),
                 'source_files': {str(p.relative_to(root)): sha(p) for p in sorted((root/'src').rglob('*')) if p.is_file()}}
+    if args.seed:
+        manifest['seed'] = {'path': str(args.seed), 'sha256': sha(args.seed),
+                            'contents': args.seed.read_text()}
     overlay = args.output/'search.athinput'
     overlay.write_text(f'''<job>
 basename = mots
 <fastflow>
 horizon_only = true
 lmax = {args.lmax}
-ntheta = {2*args.lmax+4}
+ntheta = {args.ntheta or 2*args.lmax+4}
 flow_iterations_0 = {args.iterations}
 mots_radius_count = {args.radii}
 mots_radius_min = {args.radius_min}
 initial_radius_0 = {args.radius_max}
 cartoon_axis_search_bound_0 = {args.axis_bound}
 cartoon_axis_search_samples_0 = {args.axis_samples}
+mots_seed_file = {args.seed or ''}
+mots_seed_only = {str(args.seed_only).lower()}
+mots_profile_points = {args.profile_points}
 mots_epsilon2 = 1e-6
 mots_epsilon_inf = 1e-5
 ''')

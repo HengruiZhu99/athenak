@@ -22,6 +22,26 @@
 #include "z4c/z4c.hpp"
 
 namespace z4c {
+std::array<Real, 3> M0Harmonic(int l, Real theta) {
+  const Real x = std::cos(theta), dx = -std::sin(theta), ddx = -x;
+  std::array<Real, 3> previous{1, 0, 0}, current{x, dx, ddx};
+  if (l == 0) current = previous;
+  for (int n = 2; n <= l; ++n) {
+    std::array<Real, 3> next{
+        ((2 * n - 1) * x * current[0] - (n - 1) * previous[0]) / n,
+        ((2 * n - 1) * (dx * current[0] + x * current[1]) - (n - 1) * previous[1]) / n,
+        ((2 * n - 1) * (ddx * current[0] + 2 * dx * current[1] + x * current[2]) -
+         (n - 1) * previous[2]) /
+            n};
+    previous = current;
+    current = next;
+  }
+  const Real normalization =
+      std::sqrt((2 * l + 1) / (4 * 3.141592653589793238462643383279502884));
+  for (auto& value : current) value *= normalization;
+  return current;
+}
+
 namespace {
 
 constexpr Real kPi = 3.141592653589793238462643383279502884;
@@ -481,9 +501,8 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     const Real theta = std::acos(q[n].first);
     std::array<Real, 3> shape{};
     for (int l = 0; l < dim; ++l) {
-      Real y, dy, ddy, a, b, c, d, e, f, g, h, i;
-      SphericalHarmSecondDerivs(&y, &a, &dy, &b, &c, &d, &ddy, &e, &f, &g, &h, &i, l, 0,
-                                theta, 0.0);
+      const auto harmonic = M0Harmonic(l, theta);
+      const Real y = harmonic[0], dy = harmonic[1], ddy = harmonic[2];
       basis[n * dim + l] = y;
       shape[0] += seed.coefficients[l] * y;
       shape[1] += seed.coefficients[l] * dy;
@@ -792,11 +811,10 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
     theta_[n] = std::acos(quadrature[n].first);
     weights_[n] = quadrature[n].second;
     for (int l = 0; l <= lmax_; ++l) {
-      Real yi, dyi, dphir, dphii, ddyi, ddphir, ddphii, mixedr, mixedi;
-      SphericalHarmSecondDerivs(&y0_[n * (lmax_ + 1) + l], &yi,
-                                &dy0_[n * (lmax_ + 1) + l], &dyi, &dphir, &dphii,
-                                &ddy0_[n * (lmax_ + 1) + l], &ddyi, &ddphir, &ddphii,
-                                &mixedr, &mixedi, l, 0, theta_[n], 0.0);
+      const auto harmonic = M0Harmonic(l, theta_[n]);
+      y0_[n * (lmax_ + 1) + l] = harmonic[0];
+      dy0_[n * (lmax_ + 1) + l] = harmonic[1];
+      ddy0_[n * (lmax_ + 1) + l] = harmonic[2];
     }
   }
   solve_options_.lmax = lmax_;
@@ -818,6 +836,25 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
     throw std::runtime_error("invalid MOTS controls");
   if (pin->GetOrAddBoolean("fastflow", "horizon_only", false)) {
     last_good_ = RestoreM0Seeds(pack_->z4c_restart_state.fastflow, lmax_);
+    // Analysis seeds are guesses only, including unconverged lower-order surfaces.
+    const auto seed_path = pin->GetOrAddString("fastflow", "mots_seed_file", "");
+    if (!seed_path.empty()) {
+      std::ifstream file(seed_path);
+      M0CandidateSummary seed;
+      int count = 0;
+      if (!(file >> seed.center_z >> count) || !std::isfinite(seed.center_z) ||
+          count < 1 || count > lmax_ + 1)
+        throw std::runtime_error("invalid MOTS analysis seed header");
+      seed.branch = "continuation";
+      seed.coefficients.assign(lmax_ + 1, 0.0);
+      for (int l = 0; l < count; ++l)
+        if (!(file >> seed.coefficients[l]) || !std::isfinite(seed.coefficients[l]))
+          throw std::runtime_error("invalid MOTS analysis seed coefficient");
+      std::string extra;
+      if (file >> extra) throw std::runtime_error("trailing MOTS analysis seed data");
+      seed.fresh_initial_radius = seed.coefficients[0] / std::sqrt(4 * kPi);
+      last_good_ = {seed};
+    }
   } else {
     Restore();
     for (int i : selected_) last_good_.push_back(candidates_[i]);
@@ -1090,59 +1127,66 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
   for (const auto& good : last_good_)
     candidates_.push_back(SearchCandidate(good.branch, good.center_z,
                                           good.fresh_initial_radius, good.coefficients));
-  std::vector<M0AxisSample> axis;
-  for (int i = -axis_search_samples_; i <= axis_search_samples_; ++i)
-    axis.push_back(SampleAxisLapse(axis_search_bound_ * i / axis_search_samples_));
-  std::vector<Real> centers{0.0};
-  const Real dz = axis_search_bound_ / axis_search_samples_;
-  for (std::size_t n = 1; n + 1 < axis.size(); ++n) {
-    if (!axis[n - 1].valid || !axis[n].valid || !axis[n + 1].valid ||
-        axis[n].lapse > axis[n - 1].lapse || axis[n].lapse >= axis[n + 1].lapse ||
-        std::abs(axis[n].z) < dz / 2)
-      continue;
-    Real center = axis[n].z, step = dz;
-    for (int refine = 0; refine < 8; ++refine) {
-      auto best = SampleAxisLapse(center);
-      for (Real z : {center - step / 2, center + step / 2}) {
-        auto value = SampleAxisLapse(z);
-        if (value.valid && (!best.valid || value.lapse < best.lapse)) best = value;
+  const bool seed_only = pin_->GetOrAddBoolean("fastflow", "horizon_only", false) &&
+                         pin_->GetOrAddBoolean("fastflow", "mots_seed_only", false);
+  if (seed_only && candidates_.empty())
+    throw std::runtime_error("mots_seed_only requires an analysis seed");
+  if (!seed_only) {
+    std::vector<M0AxisSample> axis;
+    for (int i = -axis_search_samples_; i <= axis_search_samples_; ++i)
+      axis.push_back(SampleAxisLapse(axis_search_bound_ * i / axis_search_samples_));
+    std::vector<Real> centers{0.0};
+    const Real dz = axis_search_bound_ / axis_search_samples_;
+    for (std::size_t n = 1; n + 1 < axis.size(); ++n) {
+      if (!axis[n - 1].valid || !axis[n].valid || !axis[n + 1].valid ||
+          axis[n].lapse > axis[n - 1].lapse || axis[n].lapse >= axis[n + 1].lapse ||
+          std::abs(axis[n].z) < dz / 2)
+        continue;
+      Real center = axis[n].z, step = dz;
+      for (int refine = 0; refine < 8; ++refine) {
+        auto best = SampleAxisLapse(center);
+        for (Real z : {center - step / 2, center + step / 2}) {
+          auto value = SampleAxisLapse(z);
+          if (value.valid && (!best.valid || value.lapse < best.lapse)) best = value;
+        }
+        center = best.z;
+        step *= 0.5;
       }
-      center = best.z;
-      step *= 0.5;
+      centers.push_back(center);
     }
-    centers.push_back(center);
-  }
-  for (Real center : centers) {
-    const auto geometry = SampleAdm(0, center);
-    const auto lapse = SampleAxisLapse(center);
-    Real lower = radius_min_ > 0 ? radius_min_ : 4 * geometry.spacing;
-    if (!(lower > 0)) lower = initial_radius_ / 128;
-    const Real upper =
-        center == 0
-            ? std::max(initial_radius_,
-                       origin_lapse_radius_factor_ *
-                           std::abs(*std::max_element(
-                               centers.begin(), centers.end(),
-                               [](Real a, Real b) { return std::abs(a) < std::abs(b); })))
-            : initial_radius_;
-    const Real maximum = std::max(lower, std::abs(upper));
-    for (int r = 0; r < radius_count_; ++r) {
-      const Real radius =
-          radius_count_ == 1
-              ? maximum
-              : lower * std::pow(maximum / lower, Real(r) / (radius_count_ - 1));
-      const std::string branch = center == 0 ? "origin" : center > 0 ? "plus" : "minus";
-      auto candidate = SearchCandidate(branch, center, radius, {});
-      candidate.axis_extremum_z = center;
-      candidate.center_lapse = lapse.lapse;
-      if (candidate.verified && lmax_ >= 1) {
-        const Real shift = candidate.coefficients[1] * std::sqrt(3 / (4 * kPi));
-        auto shape = candidate.coefficients;
-        shape[1] = 0;
-        auto recentered = SearchCandidate(branch, center + shift, radius, shape);
-        candidate = PreferM0Recentered(candidate, recentered);
+    for (Real center : centers) {
+      const auto geometry = SampleAdm(0, center);
+      const auto lapse = SampleAxisLapse(center);
+      Real lower = radius_min_ > 0 ? radius_min_ : 4 * geometry.spacing;
+      if (!(lower > 0)) lower = initial_radius_ / 128;
+      const Real upper =
+          center == 0
+              ? std::max(
+                    initial_radius_,
+                    origin_lapse_radius_factor_ *
+                        std::abs(*std::max_element(
+                            centers.begin(), centers.end(),
+                            [](Real a, Real b) { return std::abs(a) < std::abs(b); })))
+              : initial_radius_;
+      const Real maximum = std::max(lower, std::abs(upper));
+      for (int r = 0; r < radius_count_; ++r) {
+        const Real radius =
+            radius_count_ == 1
+                ? maximum
+                : lower * std::pow(maximum / lower, Real(r) / (radius_count_ - 1));
+        const std::string branch = center == 0 ? "origin" : center > 0 ? "plus" : "minus";
+        auto candidate = SearchCandidate(branch, center, radius, {});
+        candidate.axis_extremum_z = center;
+        candidate.center_lapse = lapse.lapse;
+        if (candidate.verified && lmax_ >= 1) {
+          const Real shift = candidate.coefficients[1] * std::sqrt(3 / (4 * kPi));
+          auto shape = candidate.coefficients;
+          shape[1] = 0;
+          auto recentered = SearchCandidate(branch, center + shift, radius, shape);
+          candidate = PreferM0Recentered(candidate, recentered);
+        }
+        candidates_.push_back(std::move(candidate));
       }
-      candidates_.push_back(std::move(candidate));
     }
   }
   // An individual verified MOTS is sufficient for this finder milestone.
@@ -1221,7 +1265,9 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
     for (std::size_t id = 0; id < candidates_.size(); ++id) {
       const auto& s = candidates_[id];
       if (s.coefficients.size() != static_cast<std::size_t>(lmax_ + 1)) continue;
-      const int count = 4 * solve_options_.ntheta + 3;
+      const int count =
+          std::max(4 * solve_options_.ntheta + 3,
+                   pin_->GetOrAddInteger("fastflow", "mots_profile_points", 0));
       const auto quad = GaussLegendre(count);
       std::vector<std::array<Real, 2>> points;
       std::vector<std::array<Real, 3>> shapes;
@@ -1229,9 +1275,8 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
         const Real theta = std::acos(quad[n].first);
         std::array<Real, 3> h{};
         for (int l = 0; l <= lmax_; ++l) {
-          Real y, dy, ddy, a, b, c, d, e, f, g, i, j;
-          SphericalHarmSecondDerivs(&y, &a, &dy, &b, &c, &d, &ddy, &e, &f, &g, &i, &j, l,
-                                    0, theta, 0);
+          const auto harmonic = M0Harmonic(l, theta);
+          const Real y = harmonic[0], dy = harmonic[1], ddy = harmonic[2];
           h[0] += s.coefficients[l] * y;
           h[1] += s.coefficients[l] * dy;
           h[2] += s.coefficients[l] * ddy;
@@ -1240,7 +1285,23 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
         points.push_back({h[0] * std::sin(theta), s.center_z + h[0] * std::cos(theta)});
       }
       const auto geometry = SampleAdmBatch(points);
+      const auto dense = EvaluateM0(
+          [this](const std::vector<std::array<Real, 2>>& p) { return SampleAdmBatch(p); },
+          count, s);
       if (global_variable::my_rank == 0) {
+        std::ofstream check(pin_->GetString("job", "basename") + ".mots_dense_" +
+                            std::to_string(id) + ".json");
+        check << std::setprecision(17) << "{\"points\":" << count
+              << ",\"valid\":" << (dense.valid ? "true" : "false")
+              << ",\"area\":";
+        if (dense.valid) {
+          check << dense.surface.area
+                << ",\"epsilon2\":" << dense.surface.direct_residual
+                << ",\"epsilon_inf\":" << dense.surface.epsilon_inf;
+        } else {
+          check << "null,\"epsilon2\":null,\"epsilon_inf\":null";
+        }
+        check << "}\n";
         const std::string name = pin_->GetString("job", "basename") + ".mots_surface_" +
                                  std::to_string(cycle) + "_" + std::to_string(id) +
                                  ".csv";

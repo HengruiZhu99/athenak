@@ -163,7 +163,8 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
         "cartoon_center_z_0", "cartoon_axis_search_bound_0",
         "cartoon_axis_search_samples_0", "horizon_only", "mots_radius_count",
         "mots_radius_min", "mots_epsilon2", "mots_epsilon_inf",
-        "mots_newton_switch", "mots_backtracks", "mots_displacement"};
+        "mots_newton_switch", "mots_backtracks", "mots_displacement",
+        "mots_seed_file", "mots_seed_only", "mots_profile_points"};
     for (const auto &block : pin->block) {
       if (block.block_name != "fastflow") continue;
       for (const auto &parameter : block.line) {

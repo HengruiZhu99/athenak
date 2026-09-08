@@ -21,6 +21,24 @@ void Close(const double actual, const double expected, const double tolerance) {
 }  // namespace
 
 int main() {
+  for (int l : {0, 2, 8, 16, 32, 64, 128}) {
+    const double norm = std::sqrt((2*l+1)/(4*kPi));
+    double equator = 1;
+    for (int n=2; n<=l; n+=2) equator *= -(n-1.0)/n;
+    auto h = z4c::M0Harmonic(l, kPi/2);
+    Close(h[0], norm*equator, 1.e-13);
+    Close(h[1], 0, 1.e-10);
+    Close(h[2], -l*(l+1)*h[0], 1.e-9);
+    h = z4c::M0Harmonic(l, 0);
+    Close(h[0], norm, 1.e-13);
+    Close(h[1], 0, 1.e-13);
+    Close(h[2], -0.5*l*(l+1)*norm, 1.e-8);
+    for (double theta : {0.01, 0.4, 1.2, 2.5, 3.13}) {
+      h = z4c::M0Harmonic(l, theta);
+      Close(h[2] + std::cos(theta)/std::sin(theta)*h[1] + l*(l+1)*h[0], 0, 2.e-8);
+    }
+  }
+
   z4c::M0AdmSample flat;
   flat.valid = true;
   flat.metric = {1.0, 0.0, 0.0, 1.0, 0.0, 1.0};
