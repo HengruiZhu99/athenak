@@ -1383,6 +1383,20 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
         centers.push_back(a.z);
       }
     }
+    if (global_variable::my_rank == 0) {
+      std::ofstream seeds(pin_->GetString("job", "basename") + ".mots_centers.csv",
+                          std::ios::app);
+      if (seeds.tellp() == 0)
+        seeds << "cycle,time,seed_center_z,seed_lapse,global_axis_min_lapse,kind\n";
+      seeds << std::setprecision(17);
+      for (Real center : centers) {
+        const auto at =
+            std::find_if(axis.begin(), axis.end(),
+                         [&](const M0AxisSample& a) { return a.z == center; });
+        seeds << cycle << ',' << time << ',' << center << ',' << at->lapse << ','
+              << minimum << ',' << (center == 0 ? "origin" : "axial_minimum") << '\n';
+      }
+    }
     for (Real center : centers) {
       const auto geometry = SampleAdm(0, center);
       const auto lapse = SampleAxisLapse(center);

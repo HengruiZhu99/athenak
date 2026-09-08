@@ -900,10 +900,13 @@ class CollapseTerminationMonitor {
       Fail("nonfinite curvature or constraint diagnostic in collapse termination monitor");
     }
     if (horizon_found) {
-      WriteTermination(pm, "collapse", maxima, constraints,
-                       max_meshblocks_per_rank);
+      const bool candidate_only =
+          pm->pmb_pack->z4c_restart_state.fastflow.status == "angular_candidate";
+      WriteTermination(pm, candidate_only ? "mots_candidate" : "collapse", maxima,
+                       constraints, max_meshblocks_per_rank);
       std::ostringstream reason;
-      reason << "confirmed apparent horizon at t=" << horizon_time;
+      reason << (candidate_only ? "angular-convergent MOTS candidate at t="
+                                : "confirmed apparent horizon at t=") << horizon_time;
       return reason.str();
     }
     if (meshblock_capacity_reached) {
