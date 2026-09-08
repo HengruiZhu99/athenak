@@ -45,7 +45,13 @@ def setparam(text, section, key, value):
     return text[:match.start()]+match[1]+body+text[match.end():]
 
 
-def classify(case):
+def classify(case, bound=.01, require_outermost=False):
+    if require_outermost:
+        if not list(case.glob("*.mots_selection.csv")):
+            raise RuntimeError("Missing runtime outermost-selection diagnostics")
+        for path in case.rglob("*.mots_selection.csv"):
+            if any(r["status"] == "ambiguous_enclosure" for r in csv.DictReader(path.open())):
+                raise RuntimeError("Ambiguous enclosure is not nondetection")
     header = None
     final = None
     for line in next(case.glob('*.hst')).read_text().splitlines():
@@ -64,7 +70,7 @@ def classify(case):
         accepted += [r for r in csv.DictReader(path.open()) if r['policy_accepted'] == '1']
     if accepted:
         if not all(0 <= float(r['time']) <= 50.0000001 and
-                   math.isfinite(float(r['epsilon2'])) and float(r['epsilon2']) <= .01
+                   math.isfinite(float(r['epsilon2'])) and float(r['epsilon2']) <= bound
                    for r in accepted):
             raise RuntimeError('Invalid accepted-candidate evidence')
         termination = json.loads(next(case.glob('*.termination.json')).read_text())
@@ -96,7 +102,7 @@ def classify(case):
     if bool(candidates) != frozen['candidate_detected']:
         raise RuntimeError('Final-slice candidate evidence disagrees')
     if candidates:
-        if not all(math.isfinite(float(r['epsilon2'])) and float(r['epsilon2']) <= .01
+        if not all(math.isfinite(float(r['epsilon2'])) and float(r['epsilon2']) <= bound
                    for r in candidates):
             raise RuntimeError('Invalid final-slice candidate norm')
         return dict(classification='candidate_detected', final=final,
@@ -110,7 +116,15 @@ def main():
         p.add_argument('--'+key, required=True, type=Path)
     p.add_argument('--search-script', type=Path,
                    default=Path(__file__).with_name('search_checkpoint.py'))
+    p.add_argument('--relative-tolerance', default='0.000001')
+    p.add_argument('--outer05', action='store_true',
+                   help='Monotonic L8/16/32, L64 RMS0.05, geometric outermost selection')
     args = p.parse_args()
+    tolerance = Decimal(args.relative_tolerance)
+    if not tolerance.is_finite() or not 0 < tolerance < 1:
+        p.error('relative tolerance must be finite and between zero and one')
+    bound = .05 if args.outer05 else .01
+
     root = args.output.resolve()
     root.mkdir(parents=True, exist_ok=True)
     lock = (root/'controller.lock').open('w')
@@ -133,8 +147,8 @@ def main():
     if not re.search(r'amr_history_mode\s*=\s*record', template):
         raise RuntimeError('Expected live AMR recording in original template')
     state = dict(status='STARTING', created=time.time(), pid=os.getpid(),
-                 criterion='angular_candidate by t=50', spatially_validated=False,
-                 sub=str(sub), super=str(sup), relative_tolerance='0.000001',
+                 criterion=('angular_l32 outermost RMS<=0.05 by t=50' if args.outer05 else 'angular_candidate by t=50'), spatially_validated=False,
+                 sub=str(sub), super=str(sup), relative_tolerance=str(tolerance),
                  survey_sha256=sha(args.survey), executable_sha256=sha(args.athena),
                  controller_sha256=sha(Path(__file__)),
                  baseline_template_sha256=sha(args.baseline/'template.athinput'), completed=[])
@@ -151,6 +165,15 @@ def main():
                '--output "$case_dir/final-mots" --lmax 128 --l-start 8 --radii 4 '+
                '--iterations 500 --profile-points 1061 '+
                '--launcher "${step[*]}" > final-search.log 2>&1\nfi\n')
+    if args.outer05:
+        runner = runner.replace('--lmax 128 --l-start 8 --radii 4',
+                                '--lmax 64 --l-start 8 --radii 8 --radius-max 8 '
+                                '--detection angular_l32 --candidate-bound 0.05 '
+                                '--selection outermost')
+    else:
+        runner = runner.replace('--iterations 500 --profile-points 1061',
+                                '--candidate-bound 0.01 --selection residual '
+                                '--iterations 500 --profile-points 1061')
     (root/'run_cycle.sh').write_text(runner)
     finder = dict(lmax=128, ntheta=260, mots_l_start=8, flow_iterations_0=500,
                   mots_radius_count=4, mots_detection='angular_candidate',
@@ -158,11 +181,19 @@ def main():
                   mots_promotion_max=.5, mots_angular_ratio=.8, mots_candidate_points=1061,
                   mots_shape_change=.02, mots_area_change=.01, mots_epsilon2=1e-6,
                   mots_epsilon_inf=1e-5, mots_write_profiles='true', mots_profile_points=1061)
+    if args.outer05:
+        finder.update(lmax=64, ntheta=132, mots_detection='angular_l32',
+                      mots_candidate_bound=.05, mots_selection='outermost',
+                      mots_radius_count=8, mots_radius_min=0, initial_radius_0=8)
+    else:
+        finder['mots_selection'] = 'residual'
+    state['finder'] = finder
+    save(root/'state.json', state)
     try:
         for iteration in range(1, 21):
             width = abs(sub-sup)/abs(sup)
             state['relative_width'] = str(width)
-            if width <= Decimal('0.000001'):
+            if width <= tolerance:
                 state.update(status='COMPLETE', finished=time.time())
                 save(root/'state.json', state)
                 return
@@ -204,7 +235,7 @@ def main():
                     raise RuntimeError('Allocation/evolution failed: '+str(process.returncode))
             if (case/'run-status').read_text().strip() != '0':
                 raise RuntimeError('Evolution failed')
-            result = classify(case)
+            result = classify(case, bound, args.outer05)
             result.update(amplitude=str(amplitude), directory=str(case),
                           job_id=(case/'job-id.txt').read_text().strip(),
                           input_sha256=sha(case/'input.athinput'),
