@@ -24,7 +24,10 @@ def main():
         fig,axes=plt.subplots(1,2,figsize=(12,4.8),gridspec_kw={'width_ratios':[1,1.75]},layout='constrained')
         for r,color in zip(rows,colors):
             folder=Path(r['output'])/'search'
-            dense=json.loads((folder/f"mots.mots_dense_{r['row']}.json").read_text())
+            dense_path=folder/f"mots.mots_dense_{r['state']['cycle']}_{r['row']}.json"
+            if not dense_path.exists():
+                dense_path=folder/f"mots.mots_dense_{r['row']}.json"
+            dense=json.loads(dense_path.read_text())
             d=np.genfromtxt(folder/f"mots.mots_surface_{r['state']['cycle']}_{r['row']}.csv",delimiter=',',names=True)
             assert dense['valid'] and np.all(d['valid']==1)
             ra=np.sqrt(dense['area']/(4*np.pi))

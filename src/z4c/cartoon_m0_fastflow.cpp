@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iomanip>
 #include <limits>
+#include <map>
 #include <stdexcept>
 #include <utility>
 
@@ -470,6 +471,43 @@ Real M0SelectedCenterZ(const std::vector<M0CandidateSummary>& candidates,
 }
 
 namespace {
+// Geometry-independent tables are reused for every Jacobian column and time slice.
+// Never cache sampled spacetime: positions and fields change during evolution.
+struct M0AngularTable {
+  std::vector<std::pair<Real, Real>> quadrature;
+  std::vector<std::array<Real, 3>> harmonic;
+  std::vector<Real> radius_basis;
+};
+const M0AngularTable& AngularTable(int count, int dim) {
+  static std::map<std::pair<int, int>, M0AngularTable> cache;
+  const auto key = std::make_pair(count, dim);
+  auto found = cache.find(key);
+  if (found != cache.end()) return found->second;
+  // Bound host memory for parameter scans. No caller retains tables across evaluations.
+  if (cache.size() >= 16) cache.clear();
+  M0AngularTable table;
+  table.quadrature = GaussLegendre(count);
+  for (int n = 0; n < count; ++n)
+    for (int l = 0; l < dim; ++l)
+      table.harmonic.push_back(M0Harmonic(l, std::acos(table.quadrature[n].first)));
+  table.radius_basis.resize((4 * count + 1) * dim);
+  for (int n = 0; n <= 4 * count; ++n) {
+    const Real mu = std::cos(kPi * n / (4 * count));
+    Real previous = 1, current = mu;
+    table.radius_basis[n * dim] = 1 / std::sqrt(4 * kPi);
+    for (int l = 1; l < dim; ++l) {
+      const Real value =
+          l == 1 ? current : ((2 * l - 1) * mu * current - (l - 1) * previous) / l;
+      if (l > 1) {
+        previous = current;
+        current = value;
+      }
+      table.radius_basis[n * dim + l] = value * std::sqrt((2 * l + 1) / (4 * kPi));
+    }
+  }
+  return cache.emplace(key, std::move(table)).first->second;
+}
+
 struct M0Evaluation {
   M0CandidateSummary surface;
   std::vector<Real> projection;
@@ -493,7 +531,8 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
   s.ingoing_max = -s.ingoing_min;
   const int dim = seed.coefficients.size();
   out.projection.assign(dim, 0.0);
-  const auto q = GaussLegendre(count);
+  const auto& table = AngularTable(count, dim);
+  const auto& q = table.quadrature;
   std::vector<std::array<Real, 2>> positions;
   std::vector<std::array<Real, 3>> shapes;
   std::vector<Real> basis(count * dim);
@@ -501,7 +540,7 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     const Real theta = std::acos(q[n].first);
     std::array<Real, 3> shape{};
     for (int l = 0; l < dim; ++l) {
-      const auto harmonic = M0Harmonic(l, theta);
+      const auto& harmonic = table.harmonic[n * dim + l];
       const Real y = harmonic[0], dy = harmonic[1], ddy = harmonic[2];
       basis[n * dim + l] = y;
       shape[0] += seed.coefficients[l] * y;
@@ -518,16 +557,9 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
   // Harmonic m=0 surfaces are pole-regular; also check radius on a separate
   // uniform angular grid including both poles (quadrature omits them).
   for (int n = 0; n <= 4 * count; ++n) {
-    const Real mu = std::cos(kPi * n / (4 * count));
-    Real p0 = 1, p1 = mu, r = seed.coefficients[0] / std::sqrt(4 * kPi);
-    for (int l = 1; l < dim; ++l) {
-      Real p = l == 1 ? p1 : ((2 * l - 1) * mu * p1 - (l - 1) * p0) / l;
-      if (l > 1) {
-        p0 = p1;
-        p1 = p;
-      }
-      r += seed.coefficients[l] * std::sqrt((2 * l + 1) / (4 * kPi)) * p;
-    }
+    Real r = 0;
+    for (int l = 0; l < dim; ++l)
+      r += seed.coefficients[l] * table.radius_basis[n * dim + l];
     s.minimum_radius = std::min(s.minimum_radius, r);
     if (!(r > 0) || !std::isfinite(r)) {
       return failure("invalid_radius");
@@ -727,6 +759,40 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
   return current.surface;
 }
 
+M0CandidateSummary SolveM0Refined(const M0GeometrySampler& sample,
+                                  const M0SolveOptions& options, int start_l,
+                                  const std::string& branch, Real center, Real radius,
+                                  const std::vector<Real>& seed) {
+  if (start_l < 1 || start_l > options.lmax)
+    throw std::runtime_error("invalid angular refinement range");
+  std::vector<Real> coefficients = seed;
+  // A tracked high-order surface is tried at its original angular order first.
+  int level = seed.empty() ? start_l : std::max(start_l, int(seed.size()) - 1);
+  if (level > options.lmax) throw std::runtime_error("seed exceeds angular cap");
+  std::vector<M0AngularStage> stages;
+  M0CandidateSummary result;
+  for (;;) {
+    auto opt = options;
+    opt.lmax = level;
+    opt.ntheta =
+        std::max(2 * level + 4,
+                 int(std::ceil(Real(options.ntheta - 4) * level / options.lmax)) + 4);
+    if (!coefficients.empty()) coefficients.resize(level + 1, 0);
+    result = SolveM0Surface(sample, opt, branch, center, radius, coefficients);
+    stages.push_back({level, opt.ntheta, result.iterations, result.direct_residual,
+                      result.epsilon_inf, result.area, result.verified, result.failure});
+    if (level == options.lmax) break;
+    if (!(result.area > 0) || !std::isfinite(result.direct_residual)) {
+      result.coefficients.resize(options.lmax + 1, 0);
+      break;
+    }
+    coefficients = result.coefficients;
+    level = std::min(2 * level, options.lmax);
+  }
+  result.angular_stages = std::move(stages);
+  return result;
+}
+
 std::vector<M0CandidateSummary> RestoreM0Seeds(const Z4cM0FastFlowRestartState& state,
                                                const int lmax) {
   std::vector<M0CandidateSummary> seeds;
@@ -801,6 +867,7 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
       (mode_ != "single" && mode_ != "mirror_pair")) {
     throw std::runtime_error("invalid Cartoon m=0 FastFlow configuration");
   }
+  ntheta_ = std::max(ntheta_, 2 * lmax_ + 4);
   const auto quadrature = GaussLegendre(ntheta_);
   theta_.resize(ntheta_);
   weights_.resize(ntheta_);
@@ -827,6 +894,12 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
   solve_options_.newton_switch = pin->GetOrAddReal("fastflow", "mots_newton_switch", 0.1);
   solve_options_.displacement = pin->GetOrAddReal("fastflow", "mots_displacement", 0.1);
   solve_options_.backtracks = pin->GetOrAddInteger("fastflow", "mots_backtracks", 24);
+  l_start_ = pin->GetOrAddInteger("fastflow", "mots_l_start", lmax_);
+  discovery_interval_ = pin->GetOrAddInteger("fastflow", "mots_discovery_interval", 8);
+  tracking_residual_ = pin->GetOrAddReal("fastflow", "mots_tracking_residual", 0.01);
+  if (l_start_ < 1 || l_start_ > lmax_ || discovery_interval_ < 1 ||
+      !(tracking_residual_ > 0) || !std::isfinite(tracking_residual_))
+    throw std::runtime_error("invalid MOTS runtime continuation controls");
   radius_count_ = pin->GetOrAddInteger("fastflow", "mots_radius_count", 8);
   radius_min_ = pin->GetOrAddReal("fastflow", "mots_radius_min", 0.0);
   if (!std::isfinite(radius_min_) || !(solve_options_.displacement > 0) ||
@@ -1111,11 +1184,11 @@ M0CandidateSummary CartoonM0FastFlow::SearchCandidate(const std::string& branch,
                                                       const Real center_z,
                                                       const Real radius,
                                                       const std::vector<Real>& seed) {
-  return SolveM0Surface(
+  return SolveM0Refined(
       [this](const std::vector<std::array<Real, 2>>& points) {
         return SampleAdmBatch(points);
       },
-      solve_options_, branch, center_z, radius, seed);
+      solve_options_, l_start_, branch, center_z, radius, seed);
 }
 
 void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force) {
@@ -1124,14 +1197,21 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
   last_search_time_ = time;
   candidates_.clear();
   selected_.clear();
-  for (const auto& good : last_good_)
+  const auto& tracking = last_good_.empty() ? last_trial_ : last_good_;
+  for (const auto& good : tracking)
     candidates_.push_back(SearchCandidate(good.branch, good.center_z,
                                           good.fresh_initial_radius, good.coefficients));
   const bool seed_only = pin_->GetOrAddBoolean("fastflow", "horizon_only", false) &&
                          pin_->GetOrAddBoolean("fastflow", "mots_seed_only", false);
   if (seed_only && candidates_.empty())
     throw std::runtime_error("mots_seed_only requires an analysis seed");
-  if (!seed_only) {
+  bool tracking_ok = false;
+  for (const auto& candidate : candidates_)
+    tracking_ok = tracking_ok ||
+                  (candidate.area > 0 && candidate.direct_residual < tracking_residual_);
+  const bool discover = !tracking_ok || search_count_ % discovery_interval_ == 0;
+  ++search_count_;
+  if (!seed_only && discover) {
     std::vector<M0AxisSample> axis;
     for (int i = -axis_search_samples_; i <= axis_search_samples_; ++i)
       axis.push_back(SampleAxisLapse(axis_search_bound_ * i / axis_search_samples_));
@@ -1207,6 +1287,12 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
     last_good_.clear();
     for (int n : selected_) last_good_.push_back(candidates_[n]);
   }
+  last_trial_.clear();
+  for (const auto& candidate : candidates_)
+    if (candidate.area > 0 && std::isfinite(candidate.direct_residual) &&
+        (last_trial_.empty() ||
+         candidate.direct_residual < last_trial_[0].direct_residual))
+      last_trial_ = {candidate};
   Capture();
 }
 
@@ -1260,7 +1346,8 @@ void CartoonM0FastFlow::Capture() {
 }
 
 void CartoonM0FastFlow::Write(const int cycle, const Real time) {
-  if (pin_->GetOrAddBoolean("fastflow", "horizon_only", false)) {
+  if (pin_->GetOrAddBoolean("fastflow", "horizon_only", false) ||
+      pin_->GetOrAddBoolean("fastflow", "mots_write_profiles", false)) {
     // Every rank participates in geometry sampling; only rank zero writes.
     for (std::size_t id = 0; id < candidates_.size(); ++id) {
       const auto& s = candidates_[id];
@@ -1290,13 +1377,11 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
           count, s);
       if (global_variable::my_rank == 0) {
         std::ofstream check(pin_->GetString("job", "basename") + ".mots_dense_" +
-                            std::to_string(id) + ".json");
+                            std::to_string(cycle) + "_" + std::to_string(id) + ".json");
         check << std::setprecision(17) << "{\"points\":" << count
-              << ",\"valid\":" << (dense.valid ? "true" : "false")
-              << ",\"area\":";
+              << ",\"valid\":" << (dense.valid ? "true" : "false") << ",\"area\":";
         if (dense.valid) {
-          check << dense.surface.area
-                << ",\"epsilon2\":" << dense.surface.direct_residual
+          check << dense.surface.area << ",\"epsilon2\":" << dense.surface.direct_residual
                 << ",\"epsilon_inf\":" << dense.surface.epsilon_inf;
         } else {
           check << "null,\"epsilon2\":null,\"epsilon_inf\":null";
@@ -1320,6 +1405,21 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
     }
   }
   if (global_variable::my_rank != 0) return;
+  {
+    const std::string name =
+        pin_->GetString("job", "basename") + ".mots_angular_stages.csv";
+    std::ofstream stages(name, std::ios::app);
+    if (stages.tellp() == 0)
+      stages << "cycle,time,candidate,lmax,ntheta,iterations,epsilon2,epsilon_inf,area,"
+                "verified,failure\n";
+    stages << std::setprecision(17);
+    for (std::size_t i = 0; i < candidates_.size(); ++i)
+      for (const auto& stage : candidates_[i].angular_stages)
+        stages << cycle << ',' << time << ',' << i << ',' << stage.lmax << ','
+               << stage.ntheta << ',' << stage.iterations << ',' << stage.epsilon2 << ','
+               << stage.epsilon_inf << ',' << stage.area << ',' << stage.verified << ','
+               << stage.failure << '\n';
+  }
   if (output_ == nullptr) {
     const std::string path = pin_->GetString("job", "basename") + ".cartoon_m0_horizon_" +
                              std::to_string(horizon_) + ".txt";

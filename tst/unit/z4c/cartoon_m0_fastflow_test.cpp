@@ -178,6 +178,17 @@ int main() {
       Close(solved.mean_radius,.5*m,1.e-5*m);
       Close(solved.area,16*kPi*m*m,1.e-7*m*m);
     }
+    auto hierarchy_options=opt;
+    hierarchy_options.lmax=16; hierarchy_options.ntheta=36;
+    const auto hierarchy=z4c::SolveM0Refined(exact,hierarchy_options,4,"staged",translation*m,.55*m);
+    assert(hierarchy.verified && hierarchy.coefficients.size()==17);
+    assert(hierarchy.angular_stages.size()==3);
+    assert(hierarchy.angular_stages[0].lmax==4 && hierarchy.angular_stages[1].lmax==8 &&
+           hierarchy.angular_stages[2].lmax==16);
+    Close(hierarchy.center_z,translation*m,0);
+    const auto tracked=z4c::SolveM0Refined(exact,hierarchy_options,4,"tracked",translation*m,.55*m,hierarchy.coefficients);
+    assert(tracked.verified && tracked.angular_stages.size()==1);
+    Close(tracked.area,hierarchy.area,1.e-12*m*m);
     auto flow_only=opt;
     flow_only.newton_switch=1.e-12;
     flow_only.iterations=1000;

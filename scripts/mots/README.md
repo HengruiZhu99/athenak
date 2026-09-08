@@ -124,3 +124,26 @@ independent area-weighted residuals, including explicit pole checks. The
 continuation requests 1,061 points (or the existing 4*ntheta+3 minimum, if larger).
 Plots use the dense area and residuals, not search-grid residuals. The signed
 companion uses symmetric log scaling; the primary figure uses absolute expansion.
+
+## Evolution-time refinement and efficiency
+
+Set `mots_l_start=8`, `lmax=128`, `ntheta=260` in `<fastflow>` to refine fresh
+seeds through L=8,16,32,64,128 at each scheduled evolution-time search. The
+same continuation code also works in frozen mode. `flow_iterations_0` is a
+per-level budget. Candidates are accepted only after the final L and independent
+expansion checks; stage results are appended to `.mots_angular_stages.csv`.
+
+Geometry-independent quadrature, harmonic derivatives, and positivity-test basis
+values are cached. Geometry samples are always refreshed. Accepted surfaces, or
+otherwise the best valid failed trial, are kept with their centers for the next
+slice and tried at their original high L. Current-slice success is always reset.
+When tracking yields epsilon2 < `mots_tracking_residual` (default0.01), expensive
+new radius/center discovery is skipped, except every `mots_discovery_interval`
+searches (default8). A failed or poor tracking result immediately triggers discovery.
+This threshold controls search effort only; it never changes acceptance tolerances.
+Failed-trial tracking is in-memory only and is rediscovered after restart.
+
+Set `mots_write_profiles=true` to write dense profiles during evolution as well.
+Dense JSON filenames include cycle and candidate index, avoiding overwritten
+slice diagnostics. The existing find_interval_0 controls cycle cadence. This
+finder does not change the mesh, AMR criteria, or evolution fields.

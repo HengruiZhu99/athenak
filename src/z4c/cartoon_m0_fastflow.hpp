@@ -40,7 +40,15 @@ struct M0SurfacePoint {
   Real spin_integrand_z = 0.0;
 };
 
+struct M0AngularStage {
+  int lmax, ntheta, iterations;
+  Real epsilon2, epsilon_inf, area;
+  bool verified;
+  std::string failure;
+};
+
 struct M0CandidateSummary {
+  std::vector<M0AngularStage> angular_stages;
   bool converged = false;
   bool verified = false;
   Real epsilon_inf = 0.0;
@@ -119,6 +127,10 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
                                   const std::string& branch, Real center, Real radius,
                                   const std::vector<Real>& seed = {});
 
+M0CandidateSummary SolveM0Refined(const M0GeometrySampler&, const M0SolveOptions&,
+    int start_l, const std::string& branch, Real center, Real radius,
+    const std::vector<Real>& seed = {});
+
 std::vector<M0CandidateSummary> RestoreM0Seeds(const Z4cM0FastFlowRestartState&,
                                                int lmax);
 
@@ -162,6 +174,9 @@ class CartoonM0FastFlow {
 
   M0SolveOptions solve_options_;
   int radius_count_ = 8;
+  int l_start_ = 0, search_count_ = 0, discovery_interval_ = 8;
+  Real tracking_residual_ = 0.01;
+  std::vector<M0CandidateSummary> last_trial_;
   Real radius_min_ = 0.0;
   std::vector<M0CandidateSummary> last_good_;
   MeshBlockPack* pack_;
