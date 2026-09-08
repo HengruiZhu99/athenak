@@ -211,3 +211,14 @@ acceptance; its status is explicitly `angular_candidate` for the heuristic polic
 Such restored states are used as guesses and are not accepted on a new slice
 without reevaluation. A candidate-based bisection is an operational finite-time,
 finite-resolution detection threshold, not a certified black-hole threshold.
+
+## Monotonic L8–L32 candidate policy
+
+`--detection angular_l32 --lmax 64 --l-start 8` requires strict decreases
+in dense RMS expansion at L8→16 and L16→32, then measures the surface at L64
+and requires epsilon2 <=0.01. It imposes no fractional decrease, area-change,
+shape-change or L32→64 convergence requirement. Invalid geometry and the existing
+coarse divergence gates remain. Use `survey_checkpoints.py --detection angular_l32
+--lmax 64 --stop-on-nondetection` with an inventory ordered by descending |A| to
+stop at the first amplitude with no accepted candidate on any saved slice.
+This remains a candidate policy; spatial validation is separate.

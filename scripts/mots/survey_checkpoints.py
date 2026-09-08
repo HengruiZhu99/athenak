@@ -26,10 +26,13 @@ def main():
     p.add_argument('--athena', required=True, type=Path)
     p.add_argument('--output', required=True, type=Path)
     p.add_argument('--launcher', default='')
+    p.add_argument('--detection', choices=['angular_candidate','angular_l32'], default='angular_candidate')
+    p.add_argument('--lmax', type=int, default=128)
+    p.add_argument('--stop-on-nondetection', action='store_true')
     args = p.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     inventory = json.loads(args.inventory.read_text())
-    state = dict(started=time.time(), criterion='angular_candidate',
+    state = dict(started=time.time(), criterion=args.detection,
                  scope='existence on enumerated saved slices through t=50', cases=[])
     save(args.output/'state.json', state)
     script = Path(__file__).with_name('search_checkpoint.py')
@@ -44,7 +47,8 @@ def main():
             if not out.exists():
                 command = [sys.executable, str(script), '--athena', str(args.athena),
                            '--checkpoint', str(checkpoint), '--output', str(out),
-                           '--launcher', args.launcher, '--lmax', '128', '--l-start', '8',
+                           '--launcher', args.launcher, '--lmax', str(args.lmax), '--l-start', '8',
+                           '--detection', args.detection,
                            '--radii', '4', '--iterations', '500', '--profile-points', '1061']
                 subprocess.run(command, check=True)
             manifest = json.loads((out/'manifest.json').read_text())
@@ -72,6 +76,9 @@ def main():
             record['classification'] = 'no_candidate_on_saved_slices'
         record['available_checkpoints'] = len(checkpoints)
         save(args.output/'state.json', state)
+        if args.stop_on_nondetection and record['classification'] == 'no_candidate_on_saved_slices':
+            state['failure_point'] = case['amplitude']
+            break
     state['finished'] = time.time()
     state['status'] = 'complete'
     save(args.output/'state.json', state)

@@ -35,7 +35,7 @@ def main():
     parser.add_argument('--seed-only', action='store_true')
     parser.add_argument('--ntheta', type=int, default=0)
     parser.add_argument('--profile-points', type=int, default=0)
-    parser.add_argument('--detection', choices=['strict','angular_candidate'], default='angular_candidate')
+    parser.add_argument('--detection', choices=['strict','angular_candidate','angular_l32'], default='angular_candidate')
     parser.add_argument('--l-start', type=int, default=8)
     parser.add_argument('--level-iterations', type=int, default=96)
     args = parser.parse_args()

@@ -274,6 +274,17 @@ int main() {
   const auto invalid=z4c::SolveM0Refined(invalid_sampler,gated_options,8,"invalid",0,1);
   assert(invalid.angular_stages.size()==1 && !invalid.angular_candidate);
 
+  auto window_options = gated_options;
+  window_options.candidate_l32_window = true;
+  const auto window_flat = z4c::SolveM0Refined(flat_sampler, window_options, 8,
+                                             "flat-window", 0, 1);
+  assert(!window_flat.angular_candidate && window_flat.angular_stages.size() == 1);
+  bool invalid_window = false;
+  try {
+    z4c::SolveM0Refined(flat_sampler, window_options, 16, "invalid-window", 0, 1);
+  } catch (const std::runtime_error&) { invalid_window = true; }
+  assert(invalid_window);
+
   auto unequal=candidates;
   unequal[1].direct_residual=1.e-8;unequal[2].direct_residual=2.e-8;
   assert(z4c::SelectM0MirrorPair(unequal,1.e-3,&plus,&minus));

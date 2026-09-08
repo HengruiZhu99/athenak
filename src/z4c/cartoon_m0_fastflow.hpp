@@ -118,6 +118,7 @@ using M0GeometrySampler =
 struct M0SolveOptions {
   int lmax = 4, ntheta = 12, iterations = 300, backtracks = 24;
   bool batch_newton = true, candidate_policy = false;
+  bool candidate_l32_window = false;
   int coarse_iterations = 96, candidate_points = 1061;
   Real promotion_max = 0.5, candidate_bound = 0.01, angular_ratio = 0.8;
   Real shape_change = 0.02, area_change = 0.01;

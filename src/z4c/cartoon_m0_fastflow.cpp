@@ -808,6 +808,10 @@ M0CandidateSummary SolveM0Refined(const M0GeometrySampler& sample,
                                   const std::vector<Real>& seed) {
   if (start_l < 1 || start_l > options.lmax)
     throw std::runtime_error("invalid angular refinement range");
+  if (options.candidate_l32_window &&
+      (!options.candidate_policy || start_l != 8 || options.lmax != 64))
+    throw std::runtime_error("L32 candidate window requires L8 start and L64 cap");
+  bool coarse_window_passed = false;
   std::vector<Real> coefficients = seed;
   int level = seed.empty() ? start_l : std::max(start_l, int(seed.size()) - 1);
   if (level > options.lmax) throw std::runtime_error("seed exceeds angular cap");
@@ -860,15 +864,28 @@ M0CandidateSummary SolveM0Refined(const M0GeometrySampler& sample,
         shape = std::sqrt(sum / (4 * kPi)) / result.mean_radius;
         area = std::abs(result.area - previous.area) / result.area;
         consecutive_decreases =
-            result.direct_residual <= options.angular_ratio * previous.direct_residual
+            (options.candidate_l32_window
+                 ? result.direct_residual < previous.direct_residual
+                 : result.direct_residual <= options.angular_ratio * previous.direct_residual)
                 ? consecutive_decreases + 1
                 : 0;
       }
-      result.angular_candidate =
-          result.verified ||
-          (consecutive_decreases >= 2 && result.area > 0 &&
-           result.direct_residual <= options.candidate_bound &&
-           shape <= options.shape_change && area <= options.area_change);
+      if (options.candidate_l32_window && level == 32)
+        coarse_window_passed = consecutive_decreases >= 2;
+      result.angular_candidate = options.candidate_l32_window
+          ? (level == 64 && coarse_window_passed && result.area > 0 &&
+             std::isfinite(result.direct_residual) &&
+             result.direct_residual <= options.candidate_bound)
+          : (result.verified ||
+             (consecutive_decreases >= 2 && result.area > 0 &&
+              result.direct_residual <= options.candidate_bound &&
+              shape <= options.shape_change && area <= options.area_change));
+      // The relaxed policy measures at L64, but only the L8/16/32 sequence
+      // supplies convergence evidence. A failed coarse window never promotes.
+      if (options.candidate_l32_window && level == 32 && !coarse_window_passed) {
+        result.failure = "coarse_window_failed";
+        break;
+      }
       if (result.angular_candidate) {
         result.failure = result.verified ? "none" : "angular_candidate";
         break;
@@ -997,9 +1014,12 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
   l_start_ = pin->GetOrAddInteger("fastflow", "mots_l_start", std::min(8, lmax_));
   const auto policy =
       pin->GetOrAddString("fastflow", "mots_detection", "angular_candidate");
-  if (policy != "strict" && policy != "angular_candidate")
+  if (policy != "strict" && policy != "angular_candidate" && policy != "angular_l32")
     throw std::runtime_error("unknown MOTS detection policy");
-  solve_options_.candidate_policy = policy == "angular_candidate";
+  solve_options_.candidate_policy = policy != "strict";
+  solve_options_.candidate_l32_window = policy == "angular_l32";
+  if (solve_options_.candidate_l32_window && (l_start_ != 8 || lmax_ != 64))
+    throw std::runtime_error("angular_l32 requires mots_l_start=8 and lmax=64");
   solve_options_.coarse_iterations =
       pin->GetOrAddInteger("fastflow", "mots_level_iterations", 96);
   solve_options_.candidate_points =
