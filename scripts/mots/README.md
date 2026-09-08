@@ -147,3 +147,21 @@ Set `mots_write_profiles=true` to write dense profiles during evolution as well.
 Dense JSON filenames include cycle and candidate index, avoiding overwritten
 slice diagnostics. The existing find_interval_0 controls cycle cadence. This
 finder does not change the mesh, AMR criteria, or evolution fields.
+
+
+`restart_runtime.py` creates a fresh output directory, copies the original AMR
+recording into it, and changes only diagnostic controls/output destinations and
+the explicit time/cycle limits. It requires an IrisK-enabled executable for
+z4c_irisk_xcts restarts so the original refinement and termination callbacks are
+enrolled. The initial-data artifact is not reread on restart.
+
+```
+python3 scripts/mots/restart_runtime.py --athena /path/to/athena \
+  --checkpoint /path/to/input.rst --amr-history /path/to/original.jsonl \
+  --output /absolute/new/runtime-test --tlim 50.025 --cycle-limit 36623 \
+  --launcher 'srun -n 1 -c 32 --gpus=1'
+```
+
+The wrapper records input and executable hashes and verifies that both the
+production checkpoint and original AMR history remain unchanged. All evolution
+fields, gauge, physical AMR policy and initial-data parameters come from restart.
