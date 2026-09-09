@@ -31,6 +31,11 @@ def main():
     p.add_argument('--radii',type=int,default=4)
     p.add_argument('--iterations',type=int,default=500)
     p.add_argument('--outer05', action='store_true')
+    p.add_argument('--ce-bracket', action='store_true')
+    p.add_argument('--ce-steps', type=int, default=4)
+    p.add_argument('--ce-iterations', type=int, default=96)
+    p.add_argument('--checkpoint-cadence', type=int, default=0)
+
     args=p.parse_args()
     for name in ['athena','checkpoint','amr_history']:
         setattr(args,name,getattr(args,name).resolve(strict=True))
@@ -97,6 +102,21 @@ mots_tracking_residual = 0.01
         text=text.replace('mots_candidate_bound = 0.01','mots_candidate_bound = 0.05')
         text=text.replace('initial_radius_0 = 1.0','initial_radius_0 = 8')
         overlay.write_text(text)
+    if args.ce_bracket:
+        if not args.outer05 or args.ce_steps < 1 or args.ce_iterations < 1:
+            p.error('--ce-bracket requires --outer05 and positive CE limits')
+        with overlay.open('a') as f:
+            f.write(f'ce_bracket = true\nce_steps = {args.ce_steps}\nce_iterations = {args.ce_iterations}\n')
+            f.write('<problem>\nstop_on_horizon = false\nstop_on_mots_bracket = true\nstop_on_dispersion = false\n')
+    if args.checkpoint_cadence:
+        if args.checkpoint_cadence < 1:
+            p.error('--checkpoint-cadence must be positive')
+        blocks=re.findall(r'<(output\d+)>\s*(.*?)(?=\n<|\Z)',header,re.S)
+        restart_blocks=[name for name,body in blocks if re.search(r'^\s*file_type\s*=\s*rst\s*(?:#.*)?$',body,re.M)]
+        if len(restart_blocks)!=1:
+            raise RuntimeError('Expected exactly one saved restart output block')
+        with overlay.open('a') as f:
+            f.write(f'<{restart_blocks[0]}>\ndcycle = {args.checkpoint_cadence}\n')
     # Preserve the restart's live-AMR policy and all evolution/physical parameters.
     # The only AMR change is the destination of its append-only history.
     command=shlex.split(args.launcher)+[str(args.athena),'-r',str(args.checkpoint),

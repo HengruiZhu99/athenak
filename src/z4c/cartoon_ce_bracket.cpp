@@ -40,9 +40,10 @@ bool Profile(const M0GeometrySampler& sample,const M0CandidateSummary& s,int cou
   std::vector<std::array<Real,2>> positions;
   std::vector<std::array<Real,3>> shapes;
   for(int n=0;n<count;++n) {
-    const Real t=pi*n/(count-1);const auto h=Shape(s,t);
+    const Real t=pi*n/(count-1);auto h=Shape(s,t);
+    if(n==0 || n==count-1)h[1]=0;
     if(!(h[0]>0) || !std::isfinite(h[0])) return false;
-    positions.push_back({h[0]*std::sin(t),s.center_z+h[0]*std::cos(t)});
+    positions.push_back({(n==0 || n==count-1)?0:h[0]*std::sin(t),s.center_z+h[0]*std::cos(t)});
     shapes.push_back(h);
   }
   const auto geometry=sample(positions);
@@ -72,7 +73,7 @@ bool Separation(const M0GeometrySampler& sample,const M0BracketResult& b,
       if(!(dr>0)) return false;
       for(int j=0;j<radial;++j) {
         const Real rr=r[k]+(j+0.5)*dr;
-        positions.push_back({rr*std::sin(t),b.central.center_z+rr*std::cos(t)});
+        positions.push_back({(n==0 || n==angular-1)?0:rr*std::sin(t),b.central.center_z+rr*std::cos(t)});
         increments.push_back(dr);
       }
     }
@@ -188,8 +189,10 @@ M0BracketResult VerifyM0Bracket(const M0GeometrySampler& sample,
                                                     std::abs(lengths[n][k]-coarse_lengths[n][k]));
   }
   b.narrow=(b.proper_width_max+2*b.separation_quadrature_change)/b.reference_radius<=opt.max_width_fraction;
-  b.supported=b.signs_resolved && b.narrow;
-  b.failure=!b.signs_resolved?"expansion_signs_unresolved":!b.narrow?"bracket_too_broad":"none";
+  // Sign/nesting evidence and localization width answer different questions.
+  // A broad sandwich is still reported, with an explicit localization warning.
+  b.supported=b.signs_resolved;
+  b.failure=!b.signs_resolved?"expansion_signs_unresolved":"none";
   return b;
 }
 
@@ -252,6 +255,7 @@ void WriteM0Bracket(const std::string& basename,int cycle,Real time,int candidat
      <<",\"nested\":"<<(b.nested?"true":"false")
      <<",\"signs_resolved\":"<<(b.signs_resolved?"true":"false")
      <<",\"narrow\":"<<(b.narrow?"true":"false")
+     <<",\"localization_warning\":"<<((b.supported&&!b.narrow)?"true":"false")
      <<",\"valid_geometry\":"<<(b.valid_geometry?"true":"false")
      <<",\"stability_operator_verified\":false,\"spatially_validated\":false"
      <<",\"uncertainty_kind\":\"angular_estimate_not_rigorous_or_spatial_bound\""

@@ -51,9 +51,25 @@ def main():
         print('Compiling',relative,flush=True)
         subprocess.run(cmd,check=True);commands.append(cmd);affected.append(relative)
         replacements[word]=str(target)
+    # New translation units have no baseline object/dependency file. Compile
+    # only files explicitly present in the new production CMake source list.
+    extra=[]
+    source_list=(source/'src/CMakeLists.txt').read_text()
+    for name in sorted(changed):
+        if not name.endswith('.cpp') or (old/name).exists(): continue
+        relative=name.removeprefix('src/')
+        if relative not in source_list:
+            raise RuntimeError('New source absent from production CMake list: '+name)
+        target=out/(relative.replace('/','_')+'.o')
+        includes=[v.replace(str(old),str(source)) for v in flags['CXX_INCLUDES']]
+        cmd=launch+flags['CXX_DEFINES']+includes+flags['CXX_FLAGS']+['-o',str(target),'-c',str(source/name)]
+        print('Compiling new source',relative,flush=True)
+        subprocess.run(cmd,check=True);commands.append(cmd);affected.append(relative)
+        extra.append(str(target))
     if changed and not affected: raise RuntimeError('Changed source but no affected objects')
     command=[replacements.get(w,w) for w in link]
     command[command.index('-o')+1]=str(out/'athena')
+    command[1:1]=extra
     subprocess.run(command,cwd=build/'src',check=True);commands.append(command)
     (out/'build.json').write_text(json.dumps(dict(changed=sorted(changed),affected=affected,commands=commands,
         executable_sha256=sha(out/'athena')),indent=2)+'\n')
