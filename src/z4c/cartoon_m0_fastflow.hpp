@@ -36,6 +36,7 @@ struct M0SurfacePoint {
   Real expansion = 0.0;
   Real ingoing_expansion = 0.0;
   Real flow_residual = 0.0;
+  Real flow_weight = 1.0;  // 1/|grad F|; applies to Theta-c as well as Theta
   Real area_factor = 0.0;  // dA/(dtheta dphi)
   Real spin_integrand_z = 0.0;
 };
@@ -49,6 +50,11 @@ struct M0AngularStage {
 
 struct M0CandidateSummary {
   std::vector<M0AngularStage> angular_stages;
+  // CE convergence is never a horizon-found or restart-success flag.
+  bool ce_converged = false;
+  Real expansion_target = 0.0, reference_radius = 0.0;
+  Real outgoing_min = 0.0, outgoing_max = 0.0;
+  Real physical_epsilon2 = 0.0, physical_epsilon_inf = 0.0;
   bool angular_candidate = false;
   int solved_lmax = 0;
   bool converged = false;
@@ -117,6 +123,8 @@ Real M0SelectedCenterZ(const std::vector<M0CandidateSummary>& candidates,
 using M0GeometrySampler =
     std::function<std::vector<M0AdmSample>(const std::vector<std::array<Real, 2>>&)>;
 struct M0SolveOptions {
+  // reference_radius=0 preserves the legacy area-radius normalization.
+  Real expansion_target = 0.0, reference_radius = 0.0;
   int lmax = 4, ntheta = 12, iterations = 300, backtracks = 24;
   bool batch_newton = true, candidate_policy = false;
   bool candidate_l32_window = false;

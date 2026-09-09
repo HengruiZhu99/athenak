@@ -16,6 +16,8 @@ constexpr double kPi = 3.141592653589793238462643383279502884;
 
 void Close(const double actual, const double expected, const double tolerance) {
   assert(std::isfinite(actual));
+  if (!(std::abs(actual - expected) <= tolerance))
+    std::fprintf(stderr,"actual=%.17g expected=%.17g tolerance=%.17g\n",actual,expected,tolerance);
   assert(std::abs(actual - expected) <= tolerance);
 }
 }  // namespace
@@ -207,6 +209,25 @@ int main() {
       Close(solved.mean_radius,.5*m,1.e-5*m);
       Close(solved.area,16*kPi*m*m,1.e-7*m*m);
     }
+    // Constant-expansion continuation on both sides of the exact MOTS.
+    for (double sign : {-1.0, 1.0}) {
+      auto ceopt = opt;
+      ceopt.reference_radius = 2*m;
+      ceopt.expansion_target = sign*0.05/ceopt.reference_radius;
+      const auto ce = z4c::SolveM0Surface(exact,ceopt,"ce",translation*m,.5*m);
+      assert(ce.ce_converged && !ce.verified && !ce.converged && !ce.angular_candidate);
+      assert(sign*(ce.mean_radius-.5*m)>0);
+      Close(ce.outgoing_min,ceopt.expansion_target,2.e-6/m);
+      Close(ce.outgoing_max,ceopt.expansion_target,2.e-6/m);
+      Close(ce.ingoing_min,-ceopt.expansion_target,2.e-6/m);
+      assert(ce.direct_residual<ceopt.epsilon2);
+      assert(ce.physical_epsilon2>0.01);
+      const auto dense=z4c::AssessM0Surface(exact,257,ce);
+      Close(dense.expansion_target,ceopt.expansion_target,0);
+      Close(dense.reference_radius,2*m,0);
+      assert(dense.direct_residual<ceopt.epsilon2);
+      assert(z4c::SelectM0Single({ce}) == -1);
+    }
     auto hierarchy_options=opt;
     hierarchy_options.lmax=16; hierarchy_options.ntheta=36;
     const auto hierarchy=z4c::SolveM0Refined(exact,hierarchy_options,4,"staged",translation*m,.55*m);
@@ -262,6 +283,29 @@ int main() {
     return std::vector<z4c::M0AdmSample>(p.size(),flat);
   };
   assert(!z4c::SolveM0Surface(flat_sampler,flat_opt,"flat",0,1).verified);
+  // A flat-space sphere with nonzero positive expansion is a CE solution,
+  // never a horizon, including when a caller accidentally enables MOTS policy.
+  auto ce_flat=flat_opt;
+  ce_flat.lmax=16;ce_flat.ntheta=36;
+  ce_flat.reference_radius=2.5;ce_flat.expansion_target=0.8;
+  ce_flat.candidate_policy=true;ce_flat.candidate_l32_window=true;
+  const auto ce_hierarchy=z4c::SolveM0Refined(flat_sampler,ce_flat,4,"flat-ce",0,2.3);
+  assert(ce_hierarchy.ce_converged && !ce_hierarchy.verified &&
+         !ce_hierarchy.converged && !ce_hierarchy.angular_candidate);
+  assert(ce_hierarchy.angular_stages.size()==3);
+  // Translation is a null mode for flat CE spheres; test invariant area radius.
+  Close(std::sqrt(ce_hierarchy.area/(4*kPi)),2.5,2.e-6);
+  Close(ce_hierarchy.physical_epsilon2,2,2.e-7);
+  Close(ce_hierarchy.outgoing_min,.8,2.e-7);
+  Close(ce_hierarchy.outgoing_max,.8,2.e-7);
+  Close(ce_hierarchy.ingoing_min,-.8,2.e-7);
+  Close(ce_hierarchy.ingoing_max,-.8,2.e-7);
+  assert(ce_hierarchy.direct_residual<ce_flat.epsilon2);
+  auto zero_ce=ce_hierarchy;zero_ce.expansion_target=0;zero_ce.reference_radius=0;
+  const auto zero_assessment=z4c::AssessM0Surface(flat_sampler,257,zero_ce);
+  Close(zero_assessment.direct_residual,zero_assessment.physical_epsilon2,0);
+  Close(zero_assessment.epsilon_inf,zero_assessment.physical_epsilon_inf,0);
+
   auto gated_options=flat_opt;
   gated_options.lmax=64;gated_options.ntheta=132;gated_options.candidate_policy=true;
   const auto gated=z4c::SolveM0Refined(flat_sampler,gated_options,8,"flat",0,1);

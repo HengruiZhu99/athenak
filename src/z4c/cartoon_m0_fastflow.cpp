@@ -233,6 +233,7 @@ M0SurfacePoint EvaluateM0SurfacePoint(const Real theta, const Real radius,
                      normal_k * invu * invu - trace_k;
   result.ingoing_expansion = -result.expansion + 2.0 * (normal_k * invu * invu - trace_k);
   result.flow_residual = result.expansion / invu;
+  result.flow_weight = 1.0 / invu;
   // At phi=0 the axial rotational Killing vector is (0,x,0).
   for (int b = 0; b < 3; ++b) {
     result.spin_integrand_z += x * upper[b] * invu * curvature[1][b];
@@ -563,11 +564,14 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     s.direct_residual = s.epsilon_inf = std::numeric_limits<Real>::infinity();
     return out;
   };
-  s.converged = s.verified = s.angular_candidate = false;
+  s.converged = s.verified = s.angular_candidate = s.ce_converged = false;
   s.area = s.direct_residual = s.flow_residual = s.mean_radius = s.spin_z = 0;
   s.epsilon_inf = s.spacing = 0;
   s.minimum_radius = s.ingoing_min = std::numeric_limits<Real>::infinity();
   s.ingoing_max = -s.ingoing_min;
+  s.outgoing_min = s.ingoing_min;
+  s.outgoing_max = -s.ingoing_min;
+  s.physical_epsilon2 = s.physical_epsilon_inf = 0.0;
   const int dim = seed.coefficients.size();
   out.projection.assign(dim, 0.0);
   const auto& table = AngularTable(count, dim);
@@ -633,9 +637,16 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     }
     const Real da = 2 * kPi * q[n].second * point.area_factor / std::sin(theta);
     s.area += da;
-    s.direct_residual += da * point.expansion * point.expansion;
-    s.flow_residual += 0.5 * q[n].second * point.flow_residual * point.flow_residual;
-    s.epsilon_inf = std::max(s.epsilon_inf, std::abs(point.expansion));
+    const Real error = point.expansion - s.expansion_target;
+    const Real flow = s.expansion_target == 0.0 ? point.flow_residual
+                                               : error * point.flow_weight;
+    s.direct_residual += da * error * error;
+    s.flow_residual += 0.5 * q[n].second * flow * flow;
+    s.epsilon_inf = std::max(s.epsilon_inf, std::abs(error));
+    s.physical_epsilon2 += da * point.expansion * point.expansion;
+    s.physical_epsilon_inf = std::max(s.physical_epsilon_inf, std::abs(point.expansion));
+    s.outgoing_min = std::min(s.outgoing_min, point.expansion);
+    s.outgoing_max = std::max(s.outgoing_max, point.expansion);
     s.ingoing_min = std::min(s.ingoing_min, point.ingoing_expansion);
     s.ingoing_max = std::max(s.ingoing_max, point.ingoing_expansion);
     s.spacing = std::max(s.spacing, geometry[n].spacing);
@@ -644,7 +655,7 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     s.spin_z += da * point.spin_integrand_z / (8 * kPi);
     for (int l = 0; l < dim; ++l)
       out.projection[l] +=
-          2 * kPi * q[n].second * point.flow_residual * basis[n * dim + l];
+          2 * kPi * q[n].second * flow * basis[n * dim + l];
   }
   for (int pole = 0; pole < 2; ++pole) {
     const auto& h = shapes[count + pole];
@@ -653,14 +664,20 @@ M0Evaluation EvaluateM0(const M0GeometrySampler& sample, int count,
     if (!point.valid) {
       return failure("invalid_pole_geometry");
     }
-    s.epsilon_inf = std::max(s.epsilon_inf, std::abs(point.expansion));
+    s.epsilon_inf = std::max(s.epsilon_inf, std::abs(point.expansion-s.expansion_target));
+    s.physical_epsilon_inf = std::max(s.physical_epsilon_inf, std::abs(point.expansion));
+    s.outgoing_min = std::min(s.outgoing_min, point.expansion);
+    s.outgoing_max = std::max(s.outgoing_max, point.expansion);
     s.ingoing_min = std::min(s.ingoing_min, point.ingoing_expansion);
     s.ingoing_max = std::max(s.ingoing_max, point.ingoing_expansion);
     s.spacing = std::max(s.spacing, geometry[count + pole].spacing);
   }
   const Real ra = std::sqrt(s.area / (4 * kPi));
-  s.direct_residual = ra * std::sqrt(s.direct_residual / s.area);
-  s.epsilon_inf *= ra;
+  const Real error_scale = s.reference_radius > 0 ? s.reference_radius : ra;
+  s.direct_residual = error_scale * std::sqrt(s.direct_residual / s.area);
+  s.epsilon_inf *= error_scale;
+  s.physical_epsilon2 = ra * std::sqrt(s.physical_epsilon2 / s.area);
+  s.physical_epsilon_inf *= ra;
   s.flow_residual = s.mean_radius * std::sqrt(s.flow_residual);
   s.irreducible_mass = ra / 2;
   s.mass = M0HorizonMass(s.area, s.spin_z);
@@ -714,6 +731,11 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
   if (opt.lmax < 1 || opt.ntheta < 2 * opt.lmax + 4 || opt.iterations < 1)
     throw std::runtime_error("invalid M0 solver dimensions");
   M0CandidateSummary initial;
+  if (!std::isfinite(opt.expansion_target) || !std::isfinite(opt.reference_radius) ||
+      opt.reference_radius < 0)
+    throw std::runtime_error("invalid constant expansion target/normalization");
+  initial.expansion_target = opt.expansion_target;
+  initial.reference_radius = opt.reference_radius;
   initial.branch = branch;
   initial.center_z = center;
   initial.fresh_initial_radius = radius;
@@ -729,10 +751,11 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
     if (current.surface.direct_residual <= opt.epsilon2 &&
         current.surface.epsilon_inf <= opt.epsilon_inf) {
       auto dense = EvaluateM0(sample, 4 * opt.ntheta + 3, current.surface);
-      current.surface.converged = true;
+      current.surface.converged = opt.expansion_target == 0.0;
       if (dense.valid && dense.surface.direct_residual <= opt.epsilon2 &&
           dense.surface.epsilon_inf <= opt.epsilon_inf) {
-        dense.surface.converged = dense.surface.verified = true;
+        dense.surface.ce_converged = opt.expansion_target != 0.0;
+        dense.surface.converged = dense.surface.verified = opt.expansion_target == 0.0;
         return dense.surface;
       }
       current.surface.failure = "angular_verification_failed";
@@ -842,9 +865,14 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
 }
 
 M0CandidateSummary SolveM0Refined(const M0GeometrySampler& sample,
-                                  const M0SolveOptions& options, int start_l,
+                                  const M0SolveOptions& requested, int start_l,
                                   const std::string& branch, Real center, Real radius,
                                   const std::vector<Real>& seed) {
+  auto options = requested;
+  if (options.expansion_target != 0.0) {
+    options.candidate_policy = false;
+    options.candidate_l32_window = false;
+  }
   if (start_l < 1 || start_l > options.lmax)
     throw std::runtime_error("invalid angular refinement range");
   if (options.candidate_l32_window &&
