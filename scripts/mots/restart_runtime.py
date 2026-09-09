@@ -98,7 +98,9 @@ mots_tracking_residual = 0.01
         if args.lmax != 64:
             p.error('--outer05 requires --lmax 64')
         text=overlay.read_text().replace('mots_detection = angular_candidate',
-             'mots_detection = angular_l32\nmots_selection = outermost')
+             'mots_detection = angular_l32\nmots_selection = outermost\n'
+             'mots_radius_min = 0\ncartoon_axis_search_bound_0 = 8\n'
+             'cartoon_axis_search_samples_0 = 257\nmots_seed_file = \nmots_seed_only = false')
         text=text.replace('mots_candidate_bound = 0.01','mots_candidate_bound = 0.05')
         text=text.replace('initial_radius_0 = 1.0','initial_radius_0 = 8')
         overlay.write_text(text)
@@ -106,7 +108,7 @@ mots_tracking_residual = 0.01
         if not args.outer05 or args.ce_steps < 1 or args.ce_iterations < 1:
             p.error('--ce-bracket requires --outer05 and positive CE limits')
         with overlay.open('a') as f:
-            f.write(f'ce_bracket = true\nce_steps = {args.ce_steps}\nce_iterations = {args.ce_iterations}\n')
+            f.write(f'ce_target = 0\nce_reference_radius = 0\nce_dense_points = 1061\nce_bracket = true\nce_steps = {args.ce_steps}\nce_iterations = {args.ce_iterations}\n')
             f.write('<problem>\nstop_on_horizon = false\nstop_on_mots_bracket = true\nstop_on_dispersion = false\n')
     if args.checkpoint_cadence:
         if args.checkpoint_cadence < 1:
@@ -122,7 +124,10 @@ mots_tracking_residual = 0.01
     command=shlex.split(args.launcher)+[str(args.athena),'-r',str(args.checkpoint),
                                       '-i',str(overlay),'-d',str(run)]
     source=Path(__file__).resolve().parents[2]
-    m=dict(command=command,started=time.time(),slurm_job_id=os.environ.get('SLURM_JOB_ID'),
+    revision_file=source/'source_revision.txt'
+    revision=(revision_file.read_text().strip() if revision_file.exists() else
+              subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip())
+    m=dict(source_sha=revision,command=command,started=time.time(),slurm_job_id=os.environ.get('SLURM_JOB_ID'),
            checkpoint=str(args.checkpoint),checkpoint_sha256=sha(args.checkpoint),
            executable=str(args.athena),executable_sha256=sha(args.athena),
            original_amr_history=str(args.amr_history),original_amr_history_sha256=sha(args.amr_history),
