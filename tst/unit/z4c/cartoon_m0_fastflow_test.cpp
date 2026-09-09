@@ -232,6 +232,28 @@ int main() {
     hierarchy_options.lmax=16; hierarchy_options.ntheta=36;
     const auto hierarchy=z4c::SolveM0Refined(exact,hierarchy_options,4,"staged",translation*m,.55*m);
     assert(hierarchy.verified && hierarchy.coefficients.size()==17);
+    z4c::M0BracketOptions bracket_opt;bracket_opt.dense_points=133;
+    const auto bracket=z4c::FindM0Bracket(exact,hierarchy_options,bracket_opt,hierarchy);
+    assert(bracket.supported && bracket.nested && bracket.signs_resolved && bracket.narrow);
+    assert(!bracket.stability_operator_verified && !bracket.spatially_validated);
+    Close(bracket.reference_radius,2*m,1.e-8*m);
+    Close(bracket.inner.expansion_target,-.05/bracket.reference_radius,0);
+    Close(bracket.outer.expansion_target,.05/bracket.reference_radius,0);
+    assert(bracket.inner.outgoing_max<0 && bracket.outer.outgoing_min>0);
+    assert(bracket.inner.ce_converged && bracket.outer.ce_converged);
+    assert(!bracket.inner.converged && !bracket.outer.converged);
+    assert(bracket.proper_width_max/bracket.reference_radius<.25);
+    assert(bracket.continuation.size()==8 && bracket.profiles[0].size()==267);
+    for(const auto& step:bracket.continuation) {
+      Close(step.reference_radius,bracket.reference_radius,0);
+      assert(!step.verified && !step.converged && !step.angular_candidate);
+    }
+    auto crossed=bracket;crossed.inner.coefficients=bracket.outer.coefficients;
+    assert(!z4c::VerifyM0Bracket(exact,bracket_opt,crossed).supported);
+    auto broad_opt=bracket_opt;broad_opt.max_width_fraction=.01;
+    const auto broad=z4c::VerifyM0Bracket(exact,broad_opt,bracket);
+    assert(!broad.supported && broad.signs_resolved && !broad.narrow);
+
     assert(hierarchy.angular_stages.size()==3);
     assert(hierarchy.angular_stages[0].lmax==4 && hierarchy.angular_stages[1].lmax==8 &&
            hierarchy.angular_stages[2].lmax==16);

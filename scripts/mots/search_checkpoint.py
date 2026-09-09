@@ -24,6 +24,12 @@ def main():
     parser.add_argument('--checkpoint', required=True, type=Path)
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--launcher', default='', help='e.g. srun -n 2 -c 16')
+    parser.add_argument('--ce-target', type=float, default=0.0)
+    parser.add_argument('--ce-reference-radius', type=float, default=0.0)
+    parser.add_argument('--ce-bracket', action='store_true')
+    parser.add_argument('--ce-steps', type=int, default=4)
+    parser.add_argument('--ce-iterations', type=int, default=96)
+    parser.add_argument('--ce-dense-points', type=int, default=1061)
     parser.add_argument('--lmax', type=int, default=8)
     parser.add_argument('--iterations', type=int, default=300)
     parser.add_argument('--radii', type=int, default=8)
@@ -69,6 +75,12 @@ def main():
 basename = mots
 <fastflow>
 horizon_only = true
+ce_target = {args.ce_target}
+ce_reference_radius = {args.ce_reference_radius}
+ce_bracket = {str(args.ce_bracket).lower()}
+ce_steps = {args.ce_steps}
+ce_iterations = {args.ce_iterations}
+ce_dense_points = {args.ce_dense_points}
 mots_detection = {args.detection}
 mots_l_start = {min(args.l_start,args.lmax)}
 mots_level_iterations = {args.level_iterations}

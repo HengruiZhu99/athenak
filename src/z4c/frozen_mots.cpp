@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <stdexcept>
 #include <vector>
+#include <tuple>
 
 #include "driver/driver.hpp"
 #include "globals.hpp"
@@ -23,6 +24,13 @@ void RunFrozenMots(Mesh* mesh, Driver* driver, ParameterInput* pin) {
       pack->z4c_symmetry.mode != Z4cSymmetryMode::cartoon_so2 || pack->phydro ||
       pack->pmhd)
     throw std::runtime_error("horizon_only requires vacuum native VC Cartoon");
+  const bool standalone_ce=pin->GetOrAddReal("fastflow","ce_target",0)!=0;
+  auto carrier=[](const Z4cM0FastFlowRestartState& s) {
+    return std::make_tuple(s.schema,s.coefficients,s.surface_mode,s.selected_branch,
+      s.center_count,s.center_z0,s.center_z1,s.status,s.failure_code,
+      s.last_search_cycle,s.last_search_time,s.time_first_found,s.converged);
+  };
+  const auto carrier_before=carrier(pack->z4c_restart_state.fastflow);
   const auto layout = z->layout;
   const Real time = mesh->time, dt = mesh->dt;
   const int cycle = mesh->ncycle, blocks = mesh->nmb_total;
@@ -66,6 +74,9 @@ void RunFrozenMots(Mesh* mesh, Driver* driver, ParameterInput* pin) {
   finder.Find(cycle, time, true);
   check();
   finder.Write(cycle, time);
+  if(standalone_ce && (finder.Found() || finder.StrictlyVerified() ||
+                      carrier(pack->z4c_restart_state.fastflow)!=carrier_before))
+    throw std::runtime_error("CE analysis changed horizon-found/restart bookkeeping");
   if (global_variable::my_rank == 0) {
     std::ofstream out("frozen_mots.json");
     out << std::setprecision(17) << "{\"time\":" << time << ",\"cycle\":" << cycle
@@ -73,6 +84,8 @@ void RunFrozenMots(Mesh* mesh, Driver* driver, ParameterInput* pin) {
         << "\"mesh_unchanged\":true,\"verified_candidate\":"
         << (finder.StrictlyVerified() ? "true" : "false")
         << ",\"candidate_detected\":" << (finder.Found()?"true":"false")
+        << ",\"ce_bookkeeping_unchanged\":" << (standalone_ce?"true":"null")
+        << ",\"bracket_supported\":" << (finder.BracketSupported()?"true":"false")
         << ",\"spatially_validated\":false}\n";
     std::ofstream parameters("frozen_parameters.athinput");
     pin->ParameterDump(parameters);

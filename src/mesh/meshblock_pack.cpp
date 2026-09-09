@@ -168,7 +168,9 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
         "mots_l_start", "mots_discovery_interval", "mots_tracking_residual",
         "mots_write_profiles", "mots_detection", "mots_selection", "mots_level_iterations",
         "mots_candidate_points", "mots_promotion_max", "mots_candidate_bound",
-        "mots_angular_ratio", "mots_shape_change", "mots_area_change"};
+        "mots_angular_ratio", "mots_shape_change", "mots_area_change",
+        "ce_target", "ce_reference_radius", "ce_bracket", "ce_iterations", "ce_steps",
+        "ce_dense_points", "ce_max_width_fraction", "ce_first_bracket_time"};
     for (const auto &block : pin->block) {
       if (block.block_name != "fastflow") continue;
       for (const auto &parameter : block.line) {

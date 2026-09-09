@@ -53,6 +53,7 @@ struct M0CandidateSummary {
   // CE convergence is never a horizon-found or restart-success flag.
   bool ce_converged = false;
   Real expansion_target = 0.0, reference_radius = 0.0;
+  Real solve_epsilon2_tolerance = 1.e-6, solve_epsilon_inf_tolerance = 1.e-5;
   Real outgoing_min = 0.0, outgoing_max = 0.0;
   Real physical_epsilon2 = 0.0, physical_epsilon_inf = 0.0;
   bool angular_candidate = false;
@@ -134,6 +135,40 @@ struct M0SolveOptions {
   Real flow_scale = 1.0, newton_switch = 0.1;
   Real epsilon2 = 1.e-6, epsilon_inf = 1.e-5, displacement = 0.1;
 };
+struct M0BracketOptions {
+  int continuation_steps = 4;
+  int dense_points = 1061, separation_points = 65, radial_points = 16;
+  Real max_width_fraction = 0.25;
+};
+struct M0BracketPoint {
+  Real theta, rho, z, radius, outgoing, ingoing, spacing;
+};
+struct M0BracketResult {
+  M0CandidateSummary central, inner, outer;
+  std::vector<M0CandidateSummary> continuation;
+  std::array<std::vector<M0BracketPoint>, 3> profiles;
+  bool supported = false, nested = false, signs_resolved = false;
+  bool narrow = false, valid_geometry = false;
+  // These are deliberately not inferred from a numerical sandwich.
+  bool stability_operator_verified = false, spatially_validated = false;
+  Real q = 0.05, reference_radius = 0.0;
+  Real inner_margin = 0.0, outer_margin = 0.0;
+  Real angular_uncertainty_inner = 0.0, angular_uncertainty_outer = 0.0;
+  Real radial_gap_inner = 0.0, radial_gap_outer = 0.0;
+  Real proper_inner_min = 0.0, proper_inner_max = 0.0;
+  Real proper_outer_min = 0.0, proper_outer_max = 0.0;
+  Real proper_width_max = 0.0, separation_quadrature_change = 0.0;
+  int geometry_points = 0;
+  std::string failure = "not_run";
+};
+M0BracketResult FindM0Bracket(const M0GeometrySampler&, const M0SolveOptions&,
+                              const M0BracketOptions&, const M0CandidateSummary&);
+void WriteM0Bracket(const std::string&, int cycle, Real time, int candidate,
+                    const M0BracketResult&);
+// Exposed separately for regression tests of invalid/non-nested sandwiches.
+M0BracketResult VerifyM0Bracket(const M0GeometrySampler&, const M0BracketOptions&,
+                                const M0BracketResult&);
+
 M0CandidateSummary AssessM0Surface(const M0GeometrySampler&, int ntheta,
                                    const M0CandidateSummary&);
 M0CandidateSummary PreferM0Recentered(const M0CandidateSummary&,
@@ -169,6 +204,8 @@ class CartoonM0FastFlow {
   std::vector<M0AxisSample> SampleAxisLapseBatch(const std::vector<Real>& z) const;
 
   bool Found() const { return found_; }
+  bool BracketSupported() const { return bracket_selected_ >= 0; }
+  Real TimeFirstBracket() const { return first_bracket_time_; }
   bool StrictlyVerified() const {
     for (int i : selected_) if (candidates_[i].verified) return true;
     return false;
@@ -194,6 +231,12 @@ class CartoonM0FastFlow {
   void Capture();
 
   M0SolveOptions solve_options_;
+  M0BracketOptions bracket_options_;
+  bool bracket_enabled_ = false;
+  int ce_iterations_ = 96, bracket_selected_ = -1;
+  Real first_bracket_time_ = -1.0;
+  std::vector<M0BracketResult> brackets_;
+  std::vector<int> bracket_candidate_ids_;
   bool outermost_selection_ = true;
   int radius_count_ = 8;
   int l_start_ = 0, search_count_ = 0, discovery_interval_ = 8;

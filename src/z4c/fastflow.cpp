@@ -571,6 +571,10 @@ void FastFlow::Write(int iter, Real time) {
 }
 
 //----------------------------------------------------------------------------------------
+bool FastFlow::BracketSupported() const {
+  return cartoon_m0 && cartoon_m0->BracketSupported();
+}
+
 //! \fn bool FastFlow::ShouldSearch(int cycle, Real time)
 //! \brief Return whether this accepted cycle is scheduled for a horizon search.
 bool FastFlow::ShouldSearch(int cycle, Real time, bool final_slice) {

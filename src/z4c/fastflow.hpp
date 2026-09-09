@@ -46,6 +46,7 @@ class FastFlow {
   // Default Destructor for FastFlow object (closes output file)
   ~FastFlow();
 
+  bool BracketSupported() const;
   bool ShouldSearch(int cycle, Real time, bool final_slice = false);
   void Find(int iter, Real time, bool force = false); // main functionality for finding AH
   void Write(int iter, Real time); // function for result writing

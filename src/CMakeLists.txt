@@ -180,6 +180,7 @@ add_executable(
         z4c/curvature_diagnostics.cpp
         z4c/fastflow.cpp
 	      z4c/cartoon_m0_fastflow.cpp
+              z4c/cartoon_ce_bracket.cpp
 	    z4c/horizon_dump.cpp
         z4c/tmunu.cpp
         z4c/amr_jump_diagnostic.cpp

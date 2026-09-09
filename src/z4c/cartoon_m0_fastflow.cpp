@@ -734,6 +734,8 @@ M0CandidateSummary SolveM0Surface(const M0GeometrySampler& sample,
   if (!std::isfinite(opt.expansion_target) || !std::isfinite(opt.reference_radius) ||
       opt.reference_radius < 0)
     throw std::runtime_error("invalid constant expansion target/normalization");
+  initial.solve_epsilon2_tolerance = opt.epsilon2;
+  initial.solve_epsilon_inf_tolerance = opt.epsilon_inf;
   initial.expansion_target = opt.expansion_target;
   initial.reference_radius = opt.reference_radius;
   initial.branch = branch;
@@ -1071,6 +1073,25 @@ CartoonM0FastFlow::CartoonM0FastFlow(MeshBlockPack* pack, ParameterInput* pin,
   solve_options_.lmax = lmax_;
   solve_options_.ntheta = std::max(ntheta_, 2 * lmax_ + 4);
   pin->SetInteger("fastflow", "ntheta", solve_options_.ntheta);
+  solve_options_.expansion_target = pin->GetOrAddReal("fastflow", "ce_target", 0);
+  solve_options_.reference_radius = pin->GetOrAddReal("fastflow", "ce_reference_radius", 0);
+  bracket_enabled_ = pin->GetOrAddBoolean("fastflow", "ce_bracket", false);
+  ce_iterations_ = pin->GetOrAddInteger("fastflow", "ce_iterations", 96);
+  bracket_options_.continuation_steps=pin->GetOrAddInteger("fastflow","ce_steps",4);
+  bracket_options_.dense_points=pin->GetOrAddInteger("fastflow","ce_dense_points",1061);
+  bracket_options_.max_width_fraction=pin->GetOrAddReal("fastflow","ce_max_width_fraction",0.25);
+  first_bracket_time_=pin->GetOrAddReal("fastflow","ce_first_bracket_time",-1);
+  if (!std::isfinite(solve_options_.expansion_target) ||
+      !std::isfinite(solve_options_.reference_radius) || solve_options_.reference_radius<0 ||
+      ce_iterations_<1 || bracket_options_.continuation_steps<1 ||
+      bracket_options_.dense_points<1061 || !(bracket_options_.max_width_fraction>0) ||
+      bracket_options_.max_width_fraction>0.25 || !std::isfinite(first_bracket_time_))
+    throw std::runtime_error("invalid constant expansion controls");
+  if (solve_options_.expansion_target!=0 &&
+      (!pin->GetOrAddBoolean("fastflow","horizon_only",false) || bracket_enabled_))
+    throw std::runtime_error("standalone CE targets require horizon_only and ce_bracket=false");
+  if (bracket_enabled_ && lmax_>64)
+    throw std::runtime_error("CE bracket qualification is capped at L64");
   solve_options_.iterations = iterations_;
   solve_options_.flow_scale = flow_scale_;
   solve_options_.epsilon2 = pin->GetOrAddReal("fastflow", "mots_epsilon2", 1.e-6);
@@ -1421,6 +1442,7 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
   last_search_time_ = time;
   candidates_.clear();
   selected_.clear();
+  brackets_.clear();bracket_candidate_ids_.clear();bracket_selected_=-1;
   const auto& tracking = last_good_.empty() ? last_trial_ : last_good_;
   for (const auto& good : tracking)
     candidates_.push_back(SearchCandidate(good.branch, good.center_z,
@@ -1533,6 +1555,11 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
       }
     }
   }
+  if (solve_options_.expansion_target!=0) {
+    // CE diagnostics never enter horizon selection, tracking, or restart capture.
+    found_=false;
+    return;
+  }
   // An individual verified MOTS is sufficient for this finder milestone.
   // The optional pair label cannot veto a successful component.
   auto eligible = candidates_;
@@ -1569,6 +1596,30 @@ void CartoonM0FastFlow::Find(const int cycle, const Real time, const bool force)
         (last_trial_.empty() ||
          candidate.direct_residual < last_trial_[0].direct_residual))
       last_trial_ = {candidate};
+  if (bracket_enabled_) {
+    auto ce_options=solve_options_;
+    ce_options.iterations=ce_iterations_;
+    std::vector<M0CandidateSummary> supported;
+    for (std::size_t i=0;i<candidates_.size();++i) {
+      const auto& c=candidates_[i];
+      // Include completed L64 trials even if the ordinary RMS bound failed;
+      // bracket failure on them remains inconclusive, not dispersion.
+      if (c.solved_lmax!=lmax_ || !(c.area>0) ||
+          !std::isfinite(c.direct_residual) || c.direct_residual>solve_options_.promotion_max)
+        continue;
+      auto b=FindM0Bracket([this](const std::vector<std::array<Real,2>>& p) {
+                            return SampleAdmBatch(p);
+                          },ce_options,bracket_options_,c);
+      bracket_candidate_ids_.push_back(i);
+      auto center=b.central;center.converged=b.supported;
+      supported.push_back(center);brackets_.push_back(std::move(b));
+    }
+    bracket_selected_=SelectM0Outermost(supported);
+    if (bracket_selected_>=0 && first_bracket_time_<0) {
+      first_bracket_time_=time;
+      pin_->SetReal("fastflow","ce_first_bracket_time",time);
+    }
+  }
   Capture();
 }
 
@@ -1682,6 +1733,27 @@ void CartoonM0FastFlow::Write(const int cycle, const Real time) {
     }
   }
   if (global_variable::my_rank != 0) return;
+  if (bracket_enabled_) {
+    for (std::size_t i=0;i<brackets_.size();++i)
+      WriteM0Bracket(pin_->GetString("job","basename"),cycle,time,bracket_candidate_ids_[i],brackets_[i]);
+    std::ofstream events(pin_->GetString("job","basename")+".ce_events.csv",std::ios::app);
+    if(events.tellp()==0) events<<"cycle,time,ordinary_candidate,first_ordinary_time,bracket_supported,first_bracket_time,central_candidate,brackets_tested\n";
+    events<<std::setprecision(17)<<cycle<<','<<time<<','<<found_<<','<<time_first_found_<<','
+          <<BracketSupported()<<','<<first_bracket_time_<<','
+          <<(bracket_selected_<0?-1:bracket_candidate_ids_[bracket_selected_])<<','<<brackets_.size()<<'\n';
+  }
+  if(solve_options_.expansion_target!=0) {
+    std::ofstream ce(pin_->GetString("job","basename")+".ce_targets.csv",std::ios::app);
+    if(ce.tellp()==0) ce<<"cycle,time,candidate,target,reference_radius,q,ce_converged,target_error_rms,target_error_max,outgoing_min,outgoing_max,ingoing_min,ingoing_max,area\n";
+    ce<<std::setprecision(17);
+    for(std::size_t i=0;i<candidates_.size();++i) {
+      const auto& c=candidates_[i];
+      ce<<cycle<<','<<time<<','<<i<<','<<c.expansion_target<<','<<c.reference_radius<<','
+        <<c.expansion_target*c.reference_radius<<','<<c.ce_converged<<','<<c.direct_residual<<','
+        <<c.epsilon_inf<<','<<c.outgoing_min<<','<<c.outgoing_max<<','<<c.ingoing_min<<','
+        <<c.ingoing_max<<','<<c.area<<'\n';
+    }
+  }
   {
     const std::string name =
         pin_->GetString("job", "basename") + ".mots_angular_stages.csv";

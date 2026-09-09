@@ -830,6 +830,7 @@ class CollapseTerminationMonitor {
       : pin_(pin),
         stop_on_horizon_(
             pin->GetOrAddBoolean("problem", "stop_on_horizon", false)),
+        stop_on_bracket_(pin->GetOrAddBoolean("problem", "stop_on_mots_bracket", false)),
         stop_on_dispersion_(
             pin->GetOrAddBoolean("problem", "stop_on_dispersion", false)),
         max_meshblocks_per_rank_stop_(pin->GetOrAddInteger(
@@ -867,7 +868,10 @@ class CollapseTerminationMonitor {
   }
 
   std::string Check(Mesh *pm) {
-    bool horizon_found = false;
+    bool horizon_found = false, bracket_found = false;
+    if (stop_on_bracket_)
+      for (const auto& finder : pm->pmb_pack->pz4c->pfastflow)
+        bracket_found = bracket_found || finder->BracketSupported();
     Real horizon_time = -1.0;
     if (stop_on_horizon_) {
       for (const auto &finder : pm->pmb_pack->pz4c->pfastflow) {
@@ -888,7 +892,7 @@ class CollapseTerminationMonitor {
         max_meshblocks_per_rank >= max_meshblocks_per_rank_stop_;
     // The resource guard is checked every cycle so the configured 180-block
     // clean stop cannot be skipped on the way to AthenaK's hard 200-block cap.
-    if (!horizon_found && !meshblock_capacity_reached &&
+    if (!horizon_found && !bracket_found && !meshblock_capacity_reached &&
         pm->ncycle % check_interval_ != 0) {
       return {};
     }
@@ -898,6 +902,13 @@ class CollapseTerminationMonitor {
     const ConstraintSummary constraints = ComputeConstraintSummary(pm);
     if (!maxima.finite || !FiniteConstraintSummary(constraints)) {
       Fail("nonfinite curvature or constraint diagnostic in collapse termination monitor");
+    }
+    if (bracket_found) {
+      WriteTermination(pm,"bracket_supported_mots_candidate",maxima,constraints,
+                       max_meshblocks_per_rank);
+      std::ostringstream reason;
+      reason << "bracket-supported MOTS candidate at t=" << pm->time;
+      return reason.str();
     }
     if (horizon_found) {
       const bool candidate_only =
@@ -965,7 +976,7 @@ class CollapseTerminationMonitor {
   }
 
   bool enabled() const {
-    return stop_on_horizon_ || stop_on_dispersion_ ||
+    return stop_on_horizon_ || stop_on_bracket_ || stop_on_dispersion_ ||
            max_meshblocks_per_rank_stop_ > 0;
   }
 
@@ -1030,6 +1041,7 @@ class CollapseTerminationMonitor {
 
   ParameterInput *pin_;
   bool stop_on_horizon_;
+  bool stop_on_bracket_;
   bool stop_on_dispersion_;
   int max_meshblocks_per_rank_stop_;
   int check_interval_;
@@ -1053,6 +1065,13 @@ void ConfigureCollapseTermination(ProblemGenerator *problem,
   if (pin->GetOrAddBoolean("problem", "stop_on_horizon", false) &&
       pm->pmb_pack->pz4c->pfastflow.empty()) {
     Fail("problem.stop_on_horizon=true requires at least one FastFlow horizon");
+  }
+  if (pin->GetOrAddBoolean("problem", "stop_on_mots_bracket", false)) {
+    if (pm->pmb_pack->pz4c->pfastflow.empty() ||
+        !pin->GetOrAddBoolean("fastflow","ce_bracket",false))
+      Fail("stop_on_mots_bracket requires an enabled CE bracket finder");
+    if (pin->GetOrAddBoolean("problem","stop_on_horizon",false))
+      Fail("disable stop_on_horizon to allow CE confirmation before stopping");
   }
   if (pin->GetOrAddBoolean("problem", "stop_on_dispersion", false) &&
       pm->pmb_pack->pz4c->opt.fd_stencil != 4) {
