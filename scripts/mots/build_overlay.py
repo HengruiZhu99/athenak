@@ -69,7 +69,9 @@ def main():
     if changed and not affected: raise RuntimeError('Changed source but no affected objects')
     command=[replacements.get(w,w) for w in link]
     command[command.index('-o')+1]=str(out/'athena')
-    command[1:1]=extra
+    # Preserve Kokkos launcher/compiler positional arguments; insert beside objects.
+    first_object=next(i for i,w in enumerate(command) if w.endswith('.o'))
+    command[first_object:first_object]=extra
     subprocess.run(command,cwd=build/'src',check=True);commands.append(command)
     (out/'build.json').write_text(json.dumps(dict(changed=sorted(changed),affected=affected,commands=commands,
         executable_sha256=sha(out/'athena')),indent=2)+'\n')
