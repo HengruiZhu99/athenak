@@ -157,6 +157,9 @@ z4c::Z4cValidationInput CollectZ4cValidationInput(ParameterInput *pin,
         "flow_alpha_beta_const_0", "dimensionless_hrms_tol_0",
         "mass_relative_tol_0", "cartoon_surface_mode_0",
         "cartoon_direct_residual_tol_0", "cartoon_pair_relative_tol_0",
+        "cartoon_adaptive_initial_radius_0",
+        "cartoon_origin_lapse_radius_factor_0",
+        "cartoon_pair_disjoint_fraction_0",
         "cartoon_center_z_0", "cartoon_axis_search_bound_0",
         "cartoon_axis_search_samples_0"};
     for (const auto &block : pin->block) {

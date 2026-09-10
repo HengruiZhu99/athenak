@@ -392,7 +392,8 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       pm->pmb_pack->z4c_symmetry.mode == z4c::Z4cSymmetryMode::cartoon_so2;
   // set number of and names of history variables for z4c
   const int kretschmann_index = opt.history_kretschmann ? 11 : -1;
-  const int max_refinement_level_index = opt.history_kretschmann ? 12 : 11;
+  const int min_lapse_index = opt.history_kretschmann ? 12 : 11;
+  const int max_refinement_level_index = min_lapse_index + 1;
   const int max_meshblocks_per_rank_index = max_refinement_level_index + 1;
   const int horizon_status_index = max_meshblocks_per_rank_index + 1;
   const int horizon_last_search_cycle_index = horizon_status_index + 1;
@@ -438,6 +439,8 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     pdata->label[kretschmann_index] = "maxAbsKret";
     pdata->reduction[kretschmann_index] = HistoryData::Reduction::max;
   }
+  pdata->label[min_lapse_index] = "minLapse";
+  pdata->reduction[min_lapse_index] = HistoryData::Reduction::min;
   pdata->label[max_refinement_level_index] = "maxRefLev";
   pdata->label[max_meshblocks_per_rank_index] = "maxNmbRank";
   pdata->label[horizon_status_index] = "ahStatus";
@@ -762,6 +765,28 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       Kokkos::Max<Real>(max_abs_K));
   pdata->hdata[9] = max_abs_K;
   pdata->hdata[10] = static_cast<Real>(pm->nmb_total);
+  Real min_lapse = std::numeric_limits<Real>::max();
+  Kokkos::parallel_reduce(
+      "Z4cHistoryMinLapse",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji),
+      KOKKOS_LAMBDA(const int idx, Real &rank_min_lapse) {
+        const int m = idx / nkji;
+        const int k0 = (idx - m * nkji) / nji;
+        const int j0 = (idx - m * nkji - k0 * nji) / nx1;
+        const int i0 = idx - m * nkji - k0 * nji - j0 * nx1;
+        const int k = k0 + ks;
+        const int j = j0 + js;
+        const int i = i0 + is;
+        if (vertex && !topology(m, k, j, i).canonical_diagnostic_owner) return;
+        const Real lapse = z4c.alpha(m, k, j, i);
+        rank_min_lapse = fmin(
+            rank_min_lapse,
+            Kokkos::isfinite(lapse)
+                ? lapse
+                : -std::numeric_limits<Real>::infinity());
+      },
+      Kokkos::Min<Real>(min_lapse));
+  pdata->hdata[min_lapse_index] = min_lapse;
   if (opt.telegraph_lapse) {
     Real telegraph_mu_min = std::numeric_limits<Real>::max();
     Real telegraph_mu_max = 0.0;
