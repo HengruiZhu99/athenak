@@ -22,6 +22,7 @@
 #include "parameter_input.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/amr_shadow_sensor.hpp"
+#include "z4c/chi_truncation_sensor.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_vertex_topology.hpp"
 
@@ -104,6 +105,36 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
     capture_replay_dchi =
         pin->DoesParameterExist("mesh_refinement", "amr_history_mode") &&
         pin->GetString("mesh_refinement", "amr_history_mode") == "replay";
+  } else if (ref_method == "chi_truncation") {
+    method = ChiTE;
+    const Real threshold = pin->GetReal("z4c_amr", "chi_error_max");
+    chi_error_length = pin->GetOrAddReal("z4c_amr", "chi_error_length", 1.0);
+    const int current = pin->GetInteger("mesh", "nx1");
+    const int reference = pin->GetOrAddInteger("z4c_amr", "chi_error_reference_nx1", current);
+    dchi_derefine_factor = pin->GetOrAddReal("z4c_amr", "chi_error_derefine_factor", 0.25);
+    const int order = pin->GetOrAddInteger("z4c", "spatial_order", 4);
+    if (!(threshold > 0) || !std::isfinite(threshold) ||
+        !(chi_error_length > 0) || !std::isfinite(chi_error_length) ||
+        reference <= 0 || current <= 0 || order != 4 ||
+        pin->GetInteger("mesh", "nghost") < 3 ||
+        !(dchi_derefine_factor > 0 && dchi_derefine_factor < 1)) {
+      std::cerr << "chi_truncation requires finite positive tolerance/length, "
+                   "positive reference resolution, spatial_order=4, at least 3 ghosts, "
+                   "and 0 < chi_error_derefine_factor < 1" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    dchi_thresh = ResolutionScaledChiErrorThreshold(threshold, reference, current);
+    if (!(dchi_thresh > 0) || !std::isfinite(dchi_thresh)) {
+      std::cerr << "Invalid scaled chi truncation threshold" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    if (global_variable::my_rank == 0) {
+      std::cout << std::setprecision(17) << "Z4C_CHI_TRUNCATION_SCALE reference_nx1="
+                << reference << " current_nx1=" << current
+                << " reference_threshold=" << threshold
+                << " effective_threshold=" << dchi_thresh
+                << " normalization_length=" << chi_error_length << std::endl;
+    }
   } else {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
               << __LINE__ << std::endl;
@@ -126,7 +157,7 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
   int num_levels = pin->GetOrAddInteger("mesh_refinement", "num_levels", 1);
   max_ref_lev =
       pin->GetOrAddInteger("z4c_amr", "max_ref_lev", num_levels - 1);
-  if ((method == Chi || method == dChi) &&
+  if ((method == Chi || method == dChi || method == ChiTE) &&
       (max_ref_lev < 0 || max_ref_lev >= num_levels)) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
               << __LINE__ << std::endl
@@ -143,7 +174,7 @@ void Z4c_AMR::Refine(MeshBlockPack *pmy_pack) {
     RefineTracker(pmy_pack);
   } else if (method == Chi) {
     RefineChiMin(pmy_pack);
-  } else if (method == dChi) {
+  } else if (method == dChi || method == ChiTE) {
     RefineDchiMax(pmy_pack);
   }
   RefineRadii(pmy_pack);
@@ -330,6 +361,10 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
     Kokkos::deep_copy(block_dchi_ordinal, std::numeric_limits<int>::max());
   }
   const auto capture_dchi = capture_replay_dchi;
+  const bool truncation = method == ChiTE;
+  const Real error_length = chi_error_length;
+  const auto sizes = pmbp->pmb->mb_size.d_view;
+
 
   if (dchi_shadow_nyquist) WriteDchiShadow(pmbp);
 
@@ -347,6 +382,28 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
           k += ks;
           if (!IsCanonicalDchiDiagnosticOwner<Centering>(
                   vertex_records, m, k, j, i)) return;
+          if (truncation) {
+            Real error = 0;
+            for (int dir = 0; dir < 3; ++dir) {
+              if ((dir == 0 && nx1 <= 1) || (dir == 1 && nx2 <= 1) ||
+                  (dir == 2 && nx3 <= 1)) continue;
+              Real samples[7];
+              for (int q = -3; q <= 3; ++q) {
+                const Real value = u0(m, I_Z4C_CHI, k + (dir == 2 ? q : 0),
+                                     j + (dir == 1 ? q : 0), i + (dir == 0 ? q : 0));
+                if (!Kokkos::isfinite(value)) {
+                  Kokkos::abort("Nonfinite chi in truncation-error refinement stencil");
+                }
+                samples[q+3] = value;
+              }
+              const Real h = dir == 0 ? sizes(m).dx1 :
+                             (dir == 1 ? sizes(m).dx2 : sizes(m).dx3);
+              error = fmax(error, ChiDerivativeTruncationError(samples, h, error_length));
+            }
+            if (!Kokkos::isfinite(error)) Kokkos::abort("Nonfinite chi truncation estimate");
+            dmax = fmax(error, dmax);
+            return;
+          }
           // This is 2*dx*|grad(chi)| on an isotropic mesh, not |grad(chi)|.
           // Since chi is dimensionless, the indicator is dimensionless and follows a
           // self-similar feature without introducing a preferred physical length.

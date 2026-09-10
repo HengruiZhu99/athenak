@@ -53,7 +53,7 @@ inline Real ResolutionScaledDchiThreshold(const Real reference_threshold,
 //! \class Z4c_AMR
 //  \brief managing AMR for Z4c simulations
 class Z4c_AMR {
-  enum RefinementMethod { Trivial, Tracker, Chi, dChi };
+  enum RefinementMethod { Trivial, Tracker, Chi, dChi, ChiTE };
 
  public:
   explicit Z4c_AMR(ParameterInput *pin);
@@ -76,6 +76,7 @@ class Z4c_AMR {
   std::vector<Real> radius;
   std::vector<int> reflevel;
 
+  Real chi_error_length = 1.0;  // fixed physical normalization length
   Real chi_thresh;     // chi threshold for chi refinement method
   Real dchi_thresh;    // dchi threshold for dchi refinement method
   Real dchi_reference_thresh = 0.0;  // unscaled value supplied by the input deck
