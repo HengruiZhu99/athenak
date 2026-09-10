@@ -1,13 +1,16 @@
-# N256 t200 bisection with boundary correction under qualification
+# N256 lapse bisection with corrected outer boundary
 
-PREPARED ONLY. No controller started. BOUNDARY_QUALIFIED.json is deliberately absent.
+PREPARED ONLY: controller not started and BOUNDARY_QUALIFIED.json absent.
 
-Candidate configuration: full_constraint_bjorhus + extrap_order2, vc_single_rank_device_sync=true. Bulk gauge, CFL0.15, diss0.50, AMR record/refinement policies, N256/block32, initial-data parameters remain the archived baseline. Diagnostics cover the full domain (history_constraint_radius1000) and save curvature every5 code units. The unchanged qualified production executable contains device synchronization already.
+Classification requested by the user:
+- At any completed timestep, global minimum lapse strictly below 1e-5 means collapse and clean early termination.
+- Otherwise continue to coordinate t=200 in existing code units. Final global minimum lapse strictly below 0.01 means collapse; otherwise disperse.
+- Relative amplitude bracket tolerance is 1e-5. Failed/nonfinite or incomplete evolutions cannot update the bracket.
 
-Before launch, inspect fresh endpoint qualification to t200, complete finite histories, global curvature/constraint locations, final restart evidence, and actual scheduler termination. Record the evidence and executable hash in BOUNDARY_QUALIFIED.json with approved_configuration. Do not manufacture this gate from t110 success alone.
+Native runtime parameter problem/collapse_lapse_threshold=1e-5 checks canonical active vertices with a device reduction and MPI global minimum. Zero disables it. A successful early stop writes a schema3 collapse_lapse termination record and final outputs through the driver's normal stopping hook. No horizon finding is enabled.
 
-Both endpoints are rerun fresh in the controller; failed/incomplete cases do not classify. Final global minLapse<0.01 at t200 defines collapse. Relative amplitude tolerance1e-5. Endpoint successes do not count as the two supervised midpoint cycles. The old campaign and monitor remain paused.
+Settings remain N256/block32, CFL0.15, diss0.50, original gauge and initial-data family, live AMR record policy, full_constraint_bjorhus with extrap_order2, device shared-node synchronization. Full-domain constraints and curvature output every5 code units are retained.
 
-Optional --adopt-super /absolute/completed/run reuses a fresh A=-0.05 endpoint only after run-status0, matching executable/amplitude/settings/input hashes, finite t0->200 history and final restart checks. A reused endpoint does not allocate another GPU job. It does not count as a midpoint cycle. Sixteen controller tests pass, including an entire fake-allocation bisection with endpoint reuse. The qualification gate remains absent.
+Before launch, require an executable-qualified gate and actual short restart validation of the new stop hook. Existing historical endpoint reuse requires explicit source/input/output provenance; a different historical executable requires explicitly authenticated file hashes in the qualification gate. Only clean completed segments are imported; cancelled continuations are excluded. Do not change a cancelled job's exit status to manufacture successful evidence.
 
---adopt-sub is also supported under the same checks. Both fresh qualification endpoints may be reused;17 tests pass including both-endpoint reuse followed by automatic midpoint submission. This option avoids redoing the endpoint runs; it does not waive qualification.
+28 workflow tests pass locally, including strict thresholds, required t200 completion without an early stop, rejected malformed stop markers, and mock automatic bisection successors. These are not actual midpoint cycles. Supervise two actual midpoint cycles and automatic successors before activating the existing two-hour monitor.

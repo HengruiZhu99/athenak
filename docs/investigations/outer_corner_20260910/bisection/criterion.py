@@ -1,4 +1,4 @@
-"""Final-time global-minimum-lapse criterion; incomplete runs remain unclassified."""
+"""Early global lapse <1e-5 collapse; otherwise final t200 lapse <0.01 collapse."""
 import math,re
 from decimal import Decimal
 
@@ -20,13 +20,20 @@ def read_history(path):
     if not rows:raise ValueError('No history data')
     return rows
 
+def first_early_crossing(rows):
+    if not rows:raise ValueError('No history data')
+    for row in rows:
+        if not math.isfinite(row['time']) or not math.isfinite(row['minLapse']) or row['minLapse']<=0:
+            raise ValueError('Invalid evolution history; no classification')
+    return next((row for row in rows if row['minLapse']<1e-5),None)
+
 def classify(rows,target_time):
     if not math.isfinite(target_time) or target_time<=0:raise ValueError('Invalid target time')
+    crossing=first_early_crossing(rows)
+    if crossing is not None:return 'collapse'
     final=rows[-1]
     if abs(final['time']-target_time)>1e-8*max(1,target_time):
         raise ValueError('Run did not reach the requested final time; do not update bracket')
-    if not math.isfinite(final['minLapse']) or final['minLapse']<=0:
-        raise ValueError('Invalid final lapse; do not update bracket')
     return 'collapse' if final['minLapse']<.01 else 'disperse'
 
 def relative_width(sub,supercritical):

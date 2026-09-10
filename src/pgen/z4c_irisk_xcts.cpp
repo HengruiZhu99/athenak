@@ -34,6 +34,7 @@
 #include "pgen/z4c_irisk_coordinate_map.hpp"
 #include "z4c/cartoon_axis_boundary.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/z4c_vertex_topology.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "z4c/curvature_diagnostics.hpp"
 #include "z4c/fastflow.hpp"
@@ -828,6 +829,8 @@ class CollapseTerminationMonitor {
  public:
   explicit CollapseTerminationMonitor(ParameterInput *pin)
       : pin_(pin),
+        collapse_lapse_threshold_(pin->GetOrAddReal(
+            "problem", "collapse_lapse_threshold", 0.0)),
         stop_on_horizon_(
             pin->GetOrAddBoolean("problem", "stop_on_horizon", false)),
         stop_on_dispersion_(
@@ -851,6 +854,10 @@ class CollapseTerminationMonitor {
     // and [9,10] instead.
     [[maybe_unused]] const int legacy_window_size =
         pin_->GetOrAddInteger("problem", "dispersion_window", 16);
+    if (!std::isfinite(collapse_lapse_threshold_) ||
+        collapse_lapse_threshold_ < 0.0 || collapse_lapse_threshold_ >= 1.0) {
+      Fail("problem.collapse_lapse_threshold must be in [0,1); zero disables it");
+    }
     if (check_interval_ < 1) {
       Fail("problem.termination_check_interval must be positive");
     }
@@ -867,6 +874,30 @@ class CollapseTerminationMonitor {
   }
 
   std::string Check(Mesh *pm) {
+    if (collapse_lapse_threshold_ > 0.0) {
+      const Real minimum = GlobalMinimumLapse(pm);
+      if (!std::isfinite(minimum) || minimum <= 0.0) {
+        Fail("invalid global lapse in collapse termination monitor");
+      }
+      if (minimum < collapse_lapse_threshold_) {
+        if (global_variable::my_rank == 0) {
+          const std::string filename =
+              pin_->GetString("job", "basename") + ".termination.json";
+          std::ofstream out(filename);
+          if (!out) Fail("could not write lapse termination record: " + filename);
+          out << std::setprecision(17)
+              << "{\n  \"schema_version\": 3,\n  \"outcome\": \"collapse_lapse\",\n"
+              << "  \"time\": " << pm->time << ",\n  \"cycle\": " << pm->ncycle
+              << ",\n  \"minLapse\": " << minimum
+              << ",\n  \"threshold\": " << collapse_lapse_threshold_ << "\n}\n";
+          if (!out) Fail("failed writing lapse termination record");
+        }
+        return "global minimum lapse below collapse threshold";
+      }
+      // A lapse-only monitor does not evaluate costly curvature/constraint summaries.
+      if (!stop_on_horizon_ && !stop_on_dispersion_ &&
+          max_meshblocks_per_rank_stop_ == 0) return {};
+    }
     bool horizon_found = false;
     Real horizon_time = -1.0;
     if (stop_on_horizon_) {
@@ -962,8 +993,45 @@ class CollapseTerminationMonitor {
   }
 
   bool enabled() const {
-    return stop_on_horizon_ || stop_on_dispersion_ ||
+    return collapse_lapse_threshold_ > 0.0 ||
+           stop_on_horizon_ || stop_on_dispersion_ ||
            max_meshblocks_per_rank_stop_ > 0;
+  }
+
+  // CUDA extended lambdas require an accessible enclosing member function.
+  Real GlobalMinimumLapse(Mesh *pm) const {
+    auto *pack = pm->pmb_pack;
+    const auto &layout = pack->pz4c->layout;
+    const auto &ind = pm->mb_indcs;
+    const bool vertex = layout.centering == z4c::Z4cGridCentering::vertex;
+    const int is = vertex ? layout.is : ind.is;
+    const int js = vertex ? layout.js : ind.js;
+    const int ks = vertex ? layout.ks : ind.ks;
+    const int nx = vertex ? layout.ie-layout.is+1 : ind.nx1;
+    const int ny = vertex ? layout.je-layout.js+1 : ind.nx2;
+    const int nz = vertex ? layout.ke-layout.ks+1 : ind.nx3;
+    DvceArray4D<vertex_topology::VertexTopologyRecord> topology;
+    if (vertex) topology = pack->pz4c->vertex_topology_plan->records.d_view;
+    const auto fields = pack->pz4c->z4c;
+    Real minimum = std::numeric_limits<Real>::max();
+    Kokkos::parallel_reduce("CollapseGlobalMinimumLapse",
+        Kokkos::RangePolicy<>(DevExeSpace(), 0, pack->nmb_thispack*nx*ny*nz),
+        KOKKOS_LAMBDA(const int index, Real &value) {
+          const int m=index/(nx*ny*nz);
+          const int q=index-m*nx*ny*nz;
+          const int k=q/(nx*ny)+ks;
+          const int j=(q%(nx*ny))/nx+js;
+          const int i=q%nx+is;
+          if (vertex && !topology(m,k,j,i).canonical_diagnostic_owner) return;
+          const Real lapse=fields.alpha(m,k,j,i);
+          value=fmin(value, Kokkos::isfinite(lapse) ? lapse :
+                     -std::numeric_limits<Real>::infinity());
+        }, Kokkos::Min<Real>(minimum));
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, &minimum, 1, MPI_ATHENA_REAL, MPI_MIN,
+                  MPI_COMM_WORLD);
+#endif
+    return minimum;
   }
 
  private:
@@ -1026,6 +1094,7 @@ class CollapseTerminationMonitor {
   }
 
   ParameterInput *pin_;
+  Real collapse_lapse_threshold_;
   bool stop_on_horizon_;
   bool stop_on_dispersion_;
   int max_meshblocks_per_rank_stop_;

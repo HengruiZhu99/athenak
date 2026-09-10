@@ -3,7 +3,7 @@
 from pathlib import Path
 from decimal import Decimal,getcontext
 import argparse,fcntl,hashlib,json,os,re,subprocess,sys,time,traceback
-from criterion import classify,read_history,relative_width
+from criterion import classify,read_history,relative_width,first_early_crossing
 getcontext().prec=40
 R=Path(__file__).resolve().parent
 
@@ -30,6 +30,7 @@ def campaign_input(template,case):
         ('job','basename','lapse200'),('time','tlim',200),
         ('fastflow','num_horizons',0),('problem','stop_on_horizon','false'),
         ('problem','stop_on_dispersion','false'),
+        ('problem','collapse_lapse_threshold',1e-5),
         ('mesh_refinement','amr_history_file',case/'amr_history.jsonl'),
         ('problem','brill_global_coefficients_file','initial.coefficients'),
         ('problem','constraint_summary_file','initial-constraints.dat'),
@@ -50,23 +51,64 @@ def input_parameters(text):
             result[key]=value.strip()
     return result
 
-def validate_adoption(case,amplitude,template,executable_hash):
+def validate_adoption(case,amplitude,template,executable_hash,legacy_evidence=None):
+    case=case.resolve(strict=True)
     if (case/'run-status').read_text().strip()!='0':raise RuntimeError('Adopted evolution is incomplete or failed')
     if Decimal((case/'amplitude.txt').read_text())!=amplitude:raise RuntimeError('Adopted amplitude mismatch')
     provenance=json.loads((case/'provenance.json').read_text())
-    if provenance.get('exe_sha256')!=executable_hash:raise RuntimeError('Adopted executable mismatch')
+    legacy=provenance.get('exe_sha256')!=executable_hash
+    if legacy:
+        if not legacy_evidence or provenance.get('exe_sha256')!=legacy_evidence.get('executable_sha256'):
+            raise RuntimeError('Adopted executable mismatch')
+        evidence_files=legacy_evidence.get('files',{})
+        required={'input.athinput','initial.coefficients','stdout.log','run-status','job-id.txt','provenance.json'}
+        if not required.issubset(evidence_files) or not any(x.endswith('.hst') for x in evidence_files) or not any(x.endswith('.rst') for x in evidence_files):
+            raise RuntimeError('Incomplete historical endpoint evidence')
+        for name,digest in evidence_files.items():
+            path=(case/name).resolve(strict=True)
+            if not path.is_relative_to(case) or sha(path)!=digest:raise RuntimeError('Historical evidence checksum mismatch: '+name)
     if provenance.get('input_sha256')!=sha(case/'input.athinput'):raise RuntimeError('Adopted input changed')
     expected=input_parameters(campaign_input(template,case))
     actual=input_parameters((case/'input.athinput').read_text())
-    # Basename only names output files; all physical, AMR and diagnostic settings match.
+    # Output destinations may differ; all physical, AMR and diagnostic settings match.
     expected.pop(('job','basename'));actual.pop(('job','basename'))
     history_key=('mesh_refinement','amr_history_file')
-    for params in [expected,actual]:params[history_key]=str((case/params[history_key]).resolve())
+    for params in [expected,actual]:params.pop(history_key)
+    if legacy:
+        if float(actual.get(('problem','collapse_lapse_threshold'),'0'))!=0:
+            raise RuntimeError('Historical endpoint unexpectedly enabled early stopping')
+        expected.pop(('problem','collapse_lapse_threshold'))
+        actual.pop(('problem','collapse_lapse_threshold'),None)
     if expected!=actual:raise RuntimeError('Adopted run settings differ from campaign')
     checks={line.split(maxsplit=1)[1].strip().lstrip('*'):line.split()[0]
             for line in (case/'inputs.sha256').read_text().splitlines()}
     for name in ['input.athinput','initial.coefficients']:
         if checks.get(name)!=sha(case/name):raise RuntimeError('Adopted input checksum mismatch: '+name)
+
+def validate_termination(case, rows, historical=False):
+    """Accept only a clean t200 finish or an authenticated native early stop."""
+    markers=list(case.glob('*.termination.json'))
+    log=(case/'stdout.log').read_text()
+    endings=re.findall(r'Terminating on [^\n]+',log)
+    if not endings:raise RuntimeError('Missing termination diagnostic')
+    if markers:
+        if len(markers)!=1:raise RuntimeError('Ambiguous termination markers')
+        marker=json.loads(markers[0].read_text())
+        final=rows[-1]
+        if marker.get('outcome')!='collapse_lapse' or marker.get('schema_version')!=3 or marker.get('threshold')!=1e-5:
+            raise RuntimeError('Unexpected physical/resource stop')
+        if endings[-1]!='Terminating on user stopping condition: global minimum lapse below collapse threshold':
+            raise RuntimeError('Early-stop log does not match marker')
+        for key in ['time','minLapse','cycle']:
+            if key not in final or marker.get(key)!=final[key]:
+                raise RuntimeError('Early-stop marker/history mismatch: '+key)
+        if not 0<final['minLapse']<1e-5:raise RuntimeError('Early-stop threshold not crossed')
+        return 'early_global_lapse'
+    if historical and first_early_crossing(rows) is not None and endings[-1] in ['Terminating on time limit','Terminating on wall clock limit']:
+        return 'historical_early_global_lapse'
+    if endings[-1]!='Terminating on time limit' or abs(rows[-1]['time']-200)>2e-6:
+        raise RuntimeError('Run must reach t200 without a valid early-stop marker')
+    return 'final_time_lapse'
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--baseline',required=True,type=Path);ap.add_argument('--adopt-super',type=Path);ap.add_argument('--adopt-sub',type=Path);a=ap.parse_args();base=a.baseline.resolve(strict=True)
@@ -82,7 +124,7 @@ def main():
         if not re.search(r'amr_history_mode\s*=\s*record',template):raise RuntimeError('Expected live AMR')
         runner=(base/'run_cycle.sh').read_text().replace('campaign=$(dirname -- "$case_dir")','campaign='+str(base))
         (R/'run_cycle.sh').write_text(runner)
-        state=dict(status='STARTING',pid=os.getpid(),host=os.uname().nodename,created=time.time(),target_time=200,criterion='global minLapse(t=200) < 0.01 => collapse; otherwise disperse',relative_tolerance='0.00001',baseline=str(base),executable_sha256=sha(base/'athena.history_extrema'),source_base=(base/'source-base.txt').read_text().strip(),source_patch_sha256=sha(base/'source.patch'),template_sha256=sha(base/'template.athinput'),boundary_qualification=q,boundary_qualification_sha256=sha(qualification),completed=[],active=None)
+        state=dict(status='STARTING',pid=os.getpid(),host=os.uname().nodename,created=time.time(),target_time=200,criterion='global minLapse < 1e-5 at any completed timestep => early collapse; otherwise run to t=200 and collapse iff final global minLapse < 0.01',relative_tolerance='0.00001',baseline=str(base),executable_sha256=sha(base/'athena.history_extrema'),source_base=(base/'source-base.txt').read_text().strip(),source_patch_sha256=sha(base/'source.patch'),template_sha256=sha(base/'template.athinput'),boundary_qualification=q,boundary_qualification_sha256=sha(qualification),completed=[],active=None)
         save(R/'state.json',state)
         def run_case(amplitude,name):
             if (R/'STOP').exists():raise RuntimeError('STOP requested before submission')
@@ -91,7 +133,7 @@ def main():
             adopted = adopt_path is not None
             if adopted:
                 case=adopt_path.resolve(strict=True)
-                validate_adoption(case,amplitude,template,state['executable_sha256'])
+                validate_adoption(case,amplitude,template,state['executable_sha256'],q.get('legacy_endpoint_evidence',{}).get(str(case)))
                 rc=0
             else:
                 case=R/name;case.mkdir();(case/'amplitude.txt').write_text(str(amplitude)+'\n')
@@ -106,11 +148,10 @@ def main():
             if rc or not (case/'run-status').exists() or (case/'run-status').read_text().strip()!='0':raise RuntimeError('Allocation/evolution failure; no bracket update: '+name)
             h=read_history(next(case.glob('*.hst')));result=classify(h,200)
             if adopted and abs(h[0]['time'])>1e-10:raise RuntimeError('Adopted endpoint must be a fresh evolution from t0')
-            if 'Terminating on time limit' not in (case/'stdout.log').read_text():raise RuntimeError('Unexpected termination')
-            if list(case.glob('*.termination.json')):raise RuntimeError('Premature physical/resource stop')
+            reason=validate_termination(case,h,historical=adopted and str(case) in q.get('legacy_endpoint_evidence',{}))
             checkpoints=sorted((case/'rst').glob('*.rst'))
             if not checkpoints or checkpoints[-1].stat().st_size<1024:raise RuntimeError('Missing final checkpoint')
-            record=dict(amplitude=str(amplitude),classification=result,final=h[-1],directory=str(case),job_id=(case/'job-id.txt').read_text().strip(),checkpoint=str(checkpoints[-1]),checkpoint_sha256=sha(checkpoints[-1]),coefficient_sha256=sha(case/'initial.coefficients'),input_sha256=sha(case/'input.athinput'),finished=time.time(),adopted=adopted)
+            record=dict(amplitude=str(amplitude),classification=result,classification_reason=reason,first_recorded_early_crossing=first_early_crossing(h),final=h[-1],directory=str(case),job_id=(case/'job-id.txt').read_text().strip(),checkpoint=str(checkpoints[-1]),checkpoint_sha256=sha(checkpoints[-1]),coefficient_sha256=sha(case/'initial.coefficients'),input_sha256=sha(case/'input.athinput'),finished=time.time(),adopted=adopted)
             save((R/('adopted-'+name+'-result.json')) if adopted else (case/'result.json'),record);state['completed'].append(record);state.update(status='CLASSIFIED',active=None);save(R/'state.json',state)
             subprocess.run([sys.executable,str(R/'plot.py')],check=True)
             return result

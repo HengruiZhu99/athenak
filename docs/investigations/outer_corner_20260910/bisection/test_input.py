@@ -18,7 +18,7 @@ class CampaignInput(unittest.TestCase):
         baseline=Path(__file__).with_name('baseline.athinput').read_text()
         old=parameters(baseline);new=parameters(campaign_input(baseline,Path('/isolated/cycle_01')))
         allowed={('job','basename'),('time','tlim'),('fastflow','num_horizons'),
-            ('problem','stop_on_horizon'),('problem','stop_on_dispersion'),
+            ('problem','stop_on_horizon'),('problem','stop_on_dispersion'),('problem','collapse_lapse_threshold'),
             ('mesh_refinement','amr_history_file'),('problem','brill_global_coefficients_file'),
             ('problem','constraint_summary_file'),('z4c','boundary_rhs'),('z4c','extrap_order'),
             ('z4c','vc_single_rank_device_sync'),('z4c','history_constraint_radius'),('output5','dt')}
@@ -29,6 +29,7 @@ class CampaignInput(unittest.TestCase):
         self.assertEqual(new['z4c','extrap_order'],'2')
         self.assertEqual(new['z4c','vc_single_rank_device_sync'],'true')
         self.assertEqual(new['time','tlim'],'200')
+        self.assertEqual(float(new['problem','collapse_lapse_threshold']),1e-5)
         self.assertEqual(new['fastflow','num_horizons'],'0')
         self.assertEqual(new['problem','stop_on_horizon'],'false')
         self.assertEqual(new['problem','stop_on_dispersion'],'false')

@@ -31,4 +31,15 @@ class Adoption(unittest.TestCase):
         with self.assertRaises(RuntimeError):self.validate()
     def test_wrong_executable_rejected(self):
         with self.assertRaises(RuntimeError):validate_adoption(self.case,Decimal('-.05'),self.template,'different-executable')
+    def test_historical_import_requires_all_authenticated_files(self):
+        p=self.case/'input.athinput'
+        p.write_text(setparam(p.read_text(),'problem','collapse_lapse_threshold',0))
+        self.authenticate()
+        for name in ['stdout.log','job-id.txt','history.hst','rst/final.rst']:
+            q=self.case/name;q.parent.mkdir(exist_ok=True);q.write_text('fixture')
+        files={str(q.relative_to(self.case)):sha(q) for q in self.case.rglob('*') if q.is_file()}
+        evidence=dict(executable_sha256='fixture-executable',files=files)
+        validate_adoption(self.case,Decimal('-.05'),self.template,'new-executable',evidence)
+        (self.case/'history.hst').write_text('changed')
+        with self.assertRaises(RuntimeError):validate_adoption(self.case,Decimal('-.05'),self.template,'new-executable',evidence)
 if __name__=='__main__':unittest.main()
