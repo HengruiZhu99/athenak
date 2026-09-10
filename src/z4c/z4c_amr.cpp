@@ -123,6 +123,17 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
                    "and 0 < chi_error_derefine_factor < 1" << std::endl;
       std::exit(EXIT_FAILURE);
     }
+    chi_error_start_time = pin->GetOrAddReal("z4c_amr", "chi_error_start_time", 0.0);
+    const Real bootstrap = pin->GetOrAddReal("z4c_amr", "dchi_max", 0.01);
+    const int bootstrap_reference = pin->GetOrAddInteger("z4c_amr", "dchi_reference_nx1", current);
+    chi_error_bootstrap_derefine = pin->GetOrAddReal("z4c_amr", "dchi_derefine_factor", 0.25);
+    if (!std::isfinite(chi_error_start_time) || chi_error_start_time < 0 ||
+        !std::isfinite(bootstrap) || !(bootstrap > 0) || bootstrap_reference <= 0 ||
+        !(chi_error_bootstrap_derefine > 0 && chi_error_bootstrap_derefine < 1)) {
+      std::cerr << "Invalid chi truncation bootstrap configuration" << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    chi_error_bootstrap_threshold = ResolutionScaledDchiThreshold(bootstrap, bootstrap_reference, current);
     dchi_thresh = ResolutionScaledChiErrorThreshold(threshold, reference, current);
     if (!(dchi_thresh > 0) || !std::isfinite(dchi_thresh)) {
       std::cerr << "Invalid scaled chi truncation threshold" << std::endl;
@@ -133,7 +144,9 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
                 << reference << " current_nx1=" << current
                 << " reference_threshold=" << threshold
                 << " effective_threshold=" << dchi_thresh
-                << " normalization_length=" << chi_error_length << std::endl;
+                << " normalization_length=" << chi_error_length
+                << " start_time=" << chi_error_start_time
+                << " bootstrap_dchi_threshold=" << chi_error_bootstrap_threshold << std::endl;
     }
   } else {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line "
@@ -341,8 +354,9 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
   auto &u0       = pmbp->pz4c->u0;
   int I_Z4C_CHI  = pmbp->pz4c->I_Z4C_CHI;
   // note: we need this to prevent capture by this in the lambda expr.
-  auto dchi_thresh = this->dchi_thresh;
-  auto dchi_derefine_factor = this->dchi_derefine_factor;
+  const bool bootstrapping = method == ChiTE && pmesh->time < chi_error_start_time;
+  auto dchi_thresh = bootstrapping ? chi_error_bootstrap_threshold : this->dchi_thresh;
+  auto dchi_derefine_factor = bootstrapping ? chi_error_bootstrap_derefine : this->dchi_derefine_factor;
   auto root_lev = pmesh->root_level;
   auto max_ref_lev = this->max_ref_lev;
   decltype(pmbp->pz4c->vertex_topology_plan->records.d_view) vertex_records;
@@ -361,7 +375,7 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
     Kokkos::deep_copy(block_dchi_ordinal, std::numeric_limits<int>::max());
   }
   const auto capture_dchi = capture_replay_dchi;
-  const bool truncation = method == ChiTE;
+  const bool truncation = method == ChiTE && !bootstrapping;
   const Real error_length = chi_error_length;
   const auto sizes = pmbp->pmb->mb_size.d_view;
 
@@ -387,18 +401,29 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
             for (int dir = 0; dir < 3; ++dir) {
               if ((dir == 0 && nx1 <= 1) || (dir == 1 && nx2 <= 1) ||
                   (dir == 2 && nx3 <= 1)) continue;
+              // Use only active samples: inter-level and physical ghosts do not
+              // have a guaranteed high enough order for D5/D6. Shift the seven-
+              // point stencil at block edges, evaluating D5 at the target point.
+              const int point = dir == 0 ? i : (dir == 1 ? j : k);
+              const int lower = dir == 0 ? is : (dir == 1 ? js : ks);
+              const int count = dir == 0 ? nx1 : (dir == 1 ? nx2 : nx3);
+              if (count < 7) Kokkos::abort("chi_truncation requires 7 active points per direction");
+              const int start = point-3 < lower ? lower :
+                                (point+3 >= lower+count ? lower+count-7 : point-3);
               Real samples[7];
-              for (int q = -3; q <= 3; ++q) {
-                const Real value = u0(m, I_Z4C_CHI, k + (dir == 2 ? q : 0),
-                                     j + (dir == 1 ? q : 0), i + (dir == 0 ? q : 0));
+              for (int q = 0; q < 7; ++q) {
+                const int shift = start+q-point;
+                const Real value = u0(m, I_Z4C_CHI, k + (dir == 2 ? shift : 0),
+                                     j + (dir == 1 ? shift : 0), i + (dir == 0 ? shift : 0));
                 if (!Kokkos::isfinite(value)) {
                   Kokkos::abort("Nonfinite chi in truncation-error refinement stencil");
                 }
-                samples[q+3] = value;
+                samples[q] = value;
               }
               const Real h = dir == 0 ? sizes(m).dx1 :
                              (dir == 1 ? sizes(m).dx2 : sizes(m).dx3);
-              error = fmax(error, ChiDerivativeTruncationError(samples, h, error_length));
+              error = fmax(error, ChiDerivativeTruncationError(
+                  samples, h, error_length, point-start-3));
             }
             if (!Kokkos::isfinite(error)) Kokkos::abort("Nonfinite chi truncation estimate");
             dmax = fmax(error, dmax);

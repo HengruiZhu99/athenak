@@ -76,6 +76,9 @@ class Z4c_AMR {
   std::vector<Real> radius;
   std::vector<int> reflevel;
 
+  Real chi_error_start_time = 0.0;
+  Real chi_error_bootstrap_threshold = 0.0;
+  Real chi_error_bootstrap_derefine = 0.25;
   Real chi_error_length = 1.0;  // fixed physical normalization length
   Real chi_thresh;     // chi threshold for chi refinement method
   Real dchi_thresh;    // dchi threshold for dchi refinement method

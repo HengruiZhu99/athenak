@@ -14,6 +14,11 @@ int main() {
   // Exact leading D2 error on x^6: 8 h^4. D1 proxy vanishes by parity.
   for (int q=0;q<7;++q) u[q]=std::pow(Real(q-3),6);
   pass &= std::abs(z4c::ChiDerivativeTruncationError(u,1,1)-8)<1e-10;
+  // Shifted edge stencils reproduce the leading errors on exact polynomials.
+  for (int offset=-3; offset<=3; ++offset) {
+    for (int q=0;q<7;++q) u[q]=std::pow(Real(q-3-offset),6);
+    pass &= std::abs(z4c::ChiDerivativeTruncationError(u,1,1,offset)-8)<1e-8;
+  }
   // Nyquist is invisible to centered odd derivatives but not D2 error.
   for (int q=0;q<7;++q) u[q]=(q%2 ? -1 : 1);
   pass &= z4c::ChiDerivativeTruncationError(u,1,1)>.7;

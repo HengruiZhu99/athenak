@@ -11,16 +11,19 @@ namespace z4c {
 // D5 and D6 are second-order estimates using seven native samples. Scaling
 // by a FIXED physical length makes both estimates dimensionless. This is
 // a derivative-error proxy, not an estimate of the complete evolution error.
+// offset locates the target relative to the stencil center (-3..3); this
+// permits one-sided evaluation without reading inter-level or physical ghosts.
 KOKKOS_INLINE_FUNCTION
 Real ChiDerivativeTruncationError(const Real *u, const Real h,
-                                  const Real length) {
-  const Real fifth = (-u[0] + 4*u[1] - 5*u[2] + 5*u[4] - 4*u[5] + u[6])/2;
+                                  const Real length, const int offset = 0) {
+  const Real centered_fifth = (-u[0] + 4*u[1] - 5*u[2] + 5*u[4] - 4*u[5] + u[6])/2;
   const Real sixth = u[0] - 6*u[1] + 15*u[2] - 20*u[3] +
                      15*u[4] - 6*u[5] + u[6];
+  const Real fifth = centered_fifth + offset*sixth;
   // Do not amplify cancellation at very small h into an AMR runaway.
   Real magnitude = 0;
   for (int q = 0; q < 7; ++q) magnitude = Kokkos::fmax(magnitude, Kokkos::abs(u[q]));
-  const Real roundoff = 256*std::numeric_limits<Real>::epsilon()*magnitude;
+  const Real roundoff = 1024*std::numeric_limits<Real>::epsilon()*magnitude;
   return Kokkos::fmax(Kokkos::fmax(Real{0}, Kokkos::abs(fifth)-roundoff)*length/(30*h),
                      Kokkos::fmax(Real{0}, Kokkos::abs(sixth)-roundoff)*length*length/(90*h*h));
 }
