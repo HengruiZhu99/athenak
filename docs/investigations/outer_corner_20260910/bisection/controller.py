@@ -69,7 +69,7 @@ def validate_adoption(case,amplitude,template,executable_hash):
         if checks.get(name)!=sha(case/name):raise RuntimeError('Adopted input checksum mismatch: '+name)
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--baseline',required=True,type=Path);ap.add_argument('--adopt-super',type=Path);a=ap.parse_args();base=a.baseline.resolve(strict=True)
+    ap=argparse.ArgumentParser();ap.add_argument('--baseline',required=True,type=Path);ap.add_argument('--adopt-super',type=Path);ap.add_argument('--adopt-sub',type=Path);a=ap.parse_args();base=a.baseline.resolve(strict=True)
     with (R/'controller.lock').open('w') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         if (R/'state.json').exists():raise RuntimeError('Existing state; explicit recovery required')
@@ -87,9 +87,10 @@ def main():
         def run_case(amplitude,name):
             if (R/'STOP').exists():raise RuntimeError('STOP requested before submission')
             if sha(base/'athena.history_extrema')!=state['executable_sha256']:raise RuntimeError('Executable changed')
-            adopted = name=='endpoint_super' and a.adopt_super is not None
+            adopt_path = a.adopt_super if name=='endpoint_super' else (a.adopt_sub if name=='endpoint_sub' else None)
+            adopted = adopt_path is not None
             if adopted:
-                case=a.adopt_super.resolve(strict=True)
+                case=adopt_path.resolve(strict=True)
                 validate_adoption(case,amplitude,template,state['executable_sha256'])
                 rc=0
             else:
@@ -110,7 +111,7 @@ def main():
             checkpoints=sorted((case/'rst').glob('*.rst'))
             if not checkpoints or checkpoints[-1].stat().st_size<1024:raise RuntimeError('Missing final checkpoint')
             record=dict(amplitude=str(amplitude),classification=result,final=h[-1],directory=str(case),job_id=(case/'job-id.txt').read_text().strip(),checkpoint=str(checkpoints[-1]),checkpoint_sha256=sha(checkpoints[-1]),coefficient_sha256=sha(case/'initial.coefficients'),input_sha256=sha(case/'input.athinput'),finished=time.time(),adopted=adopted)
-            save((R/'adopted-super-result.json') if adopted else (case/'result.json'),record);state['completed'].append(record);state.update(status='CLASSIFIED',active=None);save(R/'state.json',state)
+            save((R/('adopted-'+name+'-result.json')) if adopted else (case/'result.json'),record);state['completed'].append(record);state.update(status='CLASSIFIED',active=None);save(R/'state.json',state)
             subprocess.run([sys.executable,str(R/'plot.py')],check=True)
             return result
         try:

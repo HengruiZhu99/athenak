@@ -32,13 +32,15 @@ class Workflow(unittest.TestCase):
                 return 0
         argv=['controller','--baseline',str(base)]
         if adopt:
-            reused=root/'qualified_super';reused.mkdir()
-            (reused/'amplitude.txt').write_text('-.05')
-            (reused/'input.athinput').write_text(c.campaign_input((base/'template.athinput').read_text(),reused))
-            Allocator([str(reused)]).wait();calls.clear()
-            (reused/'provenance.json').write_text(json.dumps({'exe_sha256':c.sha(base/'athena.history_extrema'),'input_sha256':c.sha(reused/'input.athinput')}))
-            (reused/'inputs.sha256').write_text('\n'.join(c.sha(reused/name)+'  '+name for name in ['input.athinput','initial.coefficients']))
-            argv+=['--adopt-super',str(reused)]
+            endpoints=[('super','-.05')]+([('sub','-.047')] if adopt=='both' else [])
+            for role,amplitude in endpoints:
+                reused=root/('qualified_'+role);reused.mkdir()
+                (reused/'amplitude.txt').write_text(amplitude)
+                (reused/'input.athinput').write_text(c.campaign_input((base/'template.athinput').read_text(),reused))
+                Allocator([str(reused)]).wait();calls.clear()
+                (reused/'provenance.json').write_text(json.dumps({'exe_sha256':c.sha(base/'athena.history_extrema'),'input_sha256':c.sha(reused/'input.athinput')}))
+                (reused/'inputs.sha256').write_text('\n'.join(c.sha(reused/name)+'  '+name for name in ['input.athinput','initial.coefficients']))
+                argv+=['--adopt-'+role,str(reused)]
         with patch.object(c,'R',campaign),patch('sys.argv',argv),patch.object(c.subprocess,'Popen',Allocator),patch.object(c.subprocess,'run'):
             if failure:
                 with self.assertRaises((ValueError,RuntimeError)):c.main()
@@ -59,6 +61,13 @@ class Workflow(unittest.TestCase):
         self.assertTrue(state['completed'][1]['adopted'])
         self.assertEqual(len(state['completed']),len(calls)+1)
         self.assertFalse(any(Path(cmd[-1]).name=='endpoint_super' for cmd in calls))
+
+    def test_both_completed_endpoints_start_at_first_midpoint(self):
+        state,calls=self.exercise(adopt='both')
+        self.assertEqual(state['status'],'COMPLETE')
+        self.assertTrue(all(x['adopted'] for x in state['completed'][:2]))
+        self.assertEqual(len(state['completed']),len(calls)+2)
+        self.assertEqual(Path(calls[0][-1]).name,'cycle_01')
 
     def test_failed_midpoints_never_update_bracket_or_submit_successors(self):
         for failure in ['incomplete','nonfinite','crash']:
