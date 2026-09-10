@@ -831,6 +831,9 @@ class CollapseTerminationMonitor {
       : pin_(pin),
         collapse_lapse_threshold_(pin->GetOrAddReal(
             "problem", "collapse_lapse_threshold", 0.0)),
+        dispersion_lapse_dip_(pin->GetOrAddReal("problem", "dispersion_lapse_dip", 0.0)),
+        dispersion_lapse_recovery_(pin->GetOrAddReal("problem", "dispersion_lapse_recovery", 0.8)),
+        minimum_lapse_seen_(pin->GetOrAddReal("problem", "termination_min_lapse", 1.0)),
         stop_on_horizon_(
             pin->GetOrAddBoolean("problem", "stop_on_horizon", false)),
         stop_on_dispersion_(
@@ -858,6 +861,12 @@ class CollapseTerminationMonitor {
         collapse_lapse_threshold_ < 0.0 || collapse_lapse_threshold_ >= 1.0) {
       Fail("problem.collapse_lapse_threshold must be in [0,1); zero disables it");
     }
+    if (!std::isfinite(dispersion_lapse_dip_) || dispersion_lapse_dip_ < 0.0 ||
+        !std::isfinite(dispersion_lapse_recovery_) ||
+        !(dispersion_lapse_recovery_ > dispersion_lapse_dip_) ||
+        !std::isfinite(minimum_lapse_seen_) || minimum_lapse_seen_ <= 0.0) {
+      Fail("invalid lapse recovery thresholds or saved minimum lapse");
+    }
     if (check_interval_ < 1) {
       Fail("problem.termination_check_interval must be positive");
     }
@@ -874,10 +883,14 @@ class CollapseTerminationMonitor {
   }
 
   std::string Check(Mesh *pm) {
-    if (collapse_lapse_threshold_ > 0.0) {
+    if (collapse_lapse_threshold_ > 0.0 || dispersion_lapse_dip_ > 0.0) {
       const Real minimum = GlobalMinimumLapse(pm);
       if (!std::isfinite(minimum) || minimum <= 0.0) {
         Fail("invalid global lapse in collapse termination monitor");
+      }
+      if (minimum < minimum_lapse_seen_) {
+        minimum_lapse_seen_ = minimum;
+        pin_->SetReal("problem", "termination_min_lapse", minimum_lapse_seen_);
       }
       if (minimum < collapse_lapse_threshold_) {
         if (global_variable::my_rank == 0) {
@@ -893,6 +906,23 @@ class CollapseTerminationMonitor {
           if (!out) Fail("failed writing lapse termination record");
         }
         return "global minimum lapse below collapse threshold";
+      }
+      if (dispersion_lapse_dip_ > 0.0 && minimum_lapse_seen_ < dispersion_lapse_dip_ &&
+          minimum > dispersion_lapse_recovery_) {
+        if (global_variable::my_rank == 0) {
+          const std::string filename = pin_->GetString("job", "basename") + ".termination.json";
+          std::ofstream out(filename);
+          if (!out) Fail("could not write lapse recovery record: " + filename);
+          out << std::setprecision(17)
+              << "{\n  \"schema_version\": 3,\n  \"outcome\": \"dispersal_lapse\",\n"
+              << "  \"time\": " << pm->time << ",\n  \"cycle\": " << pm->ncycle
+              << ",\n  \"minLapse\": " << minimum
+              << ",\n  \"minimum_lapse_seen\": " << minimum_lapse_seen_
+              << ",\n  \"dip_threshold\": " << dispersion_lapse_dip_
+              << ",\n  \"recovery_threshold\": " << dispersion_lapse_recovery_ << "\n}\n";
+          if (!out) Fail("failed writing lapse recovery record");
+        }
+        return "global minimum lapse recovered after dip";
       }
       // A lapse-only monitor does not evaluate costly curvature/constraint summaries.
       if (!stop_on_horizon_ && !stop_on_dispersion_ &&
@@ -993,7 +1023,7 @@ class CollapseTerminationMonitor {
   }
 
   bool enabled() const {
-    return collapse_lapse_threshold_ > 0.0 ||
+    return collapse_lapse_threshold_ > 0.0 || dispersion_lapse_dip_ > 0.0 ||
            stop_on_horizon_ || stop_on_dispersion_ ||
            max_meshblocks_per_rank_stop_ > 0;
   }
@@ -1095,6 +1125,9 @@ class CollapseTerminationMonitor {
 
   ParameterInput *pin_;
   Real collapse_lapse_threshold_;
+  Real dispersion_lapse_dip_;
+  Real dispersion_lapse_recovery_;
+  Real minimum_lapse_seen_;
   bool stop_on_horizon_;
   bool stop_on_dispersion_;
   int max_meshblocks_per_rank_stop_;
