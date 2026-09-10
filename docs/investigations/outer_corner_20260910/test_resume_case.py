@@ -31,4 +31,14 @@ class Resume(unittest.TestCase):
     def test_active_allocation_is_not_duplicated(self):
         with patch('sys.argv',['resume_case','--case',str(self.case),'--previous-job','123']),patch.object(r.subprocess,'check_output',return_value='123\n'):
             with self.assertRaisesRegex(RuntimeError,'still active'):r.main()
+    def test_completed_job_purged_from_queue_uses_accounting(self):
+        with patch.object(r.subprocess,'check_output',side_effect=['','123|COMPLETED|0:0|\n']) as query:
+            r.verify_previous_allocation('123')
+            self.assertNotIn('-j',query.call_args_list[0].args[0])
+    def test_missing_accounting_is_not_success(self):
+        with patch.object(r.subprocess,'check_output',side_effect=['','']):
+            with self.assertRaises(RuntimeError):r.verify_previous_allocation('123')
+    def test_failed_accounting_is_not_resumed(self):
+        with patch.object(r.subprocess,'check_output',side_effect=['','123|FAILED|1:0|\n']):
+            with self.assertRaises(RuntimeError):r.verify_previous_allocation('123')
 if __name__=='__main__':unittest.main()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Resume an authenticated clean wall-clock stop; never classify an incomplete case."""
 from pathlib import Path
-import argparse,fcntl,json,math,os,re,shlex,shutil,struct,subprocess,sys,time,hashlib
+import argparse,fcntl,json,math,os,re,shlex,shutil,struct,subprocess,sys,time,hashlib,getpass
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'lapse-bisection-t200'))
 sys.path.insert(0,'/pscratch/sd/h/hzhu/lapse-bisection-t200-20260909')
 sys.path.insert(0,str(Path(__file__).resolve().parent/'bisection'))
@@ -46,17 +46,23 @@ def validate_checkpoint(case):
         if checks.get(name)!=sha(case/name):raise RuntimeError('Input changed: '+name)
     return rst,info
 
+def verify_previous_allocation(job_id):
+    # Completed jobs may be purged from squeue; querying a specific old ID then
+    # returns an error. Query this user's active allocations, and independently
+    # require terminal success in accounting. Other scheduler errors still fail.
+    live=subprocess.check_output(['squeue','-h','-u',getpass.getuser(),'-o','%i'],text=True).split()
+    if job_id in live:raise RuntimeError('Previous allocation is still active; do not duplicate')
+    accounting=subprocess.check_output(['sacct','-j',job_id,'-X','-n','-P','--format=JobID,State,ExitCode'],text=True)
+    rows=[x.split('|') for x in accounting.splitlines() if x.split('|')[0]==job_id]
+    if len(rows)!=1 or rows[0][1:3]!=['COMPLETED','0:0']:raise RuntimeError('Previous allocation is not verified COMPLETED0:0')
+
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--case',type=Path,required=True);ap.add_argument('--previous-job',required=True);a=ap.parse_args()
     case=a.case.resolve(strict=True)
     with (case/'continuation.lock').open('w') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         if (case/'job-id.txt').read_text().strip()!=a.previous_job:raise RuntimeError('Previous job ID mismatch')
-        live=subprocess.check_output(['squeue','-h','-j',a.previous_job,'-o','%i'],text=True).strip()
-        if live:raise RuntimeError('Previous allocation is still active; do not duplicate')
-        accounting=subprocess.check_output(['sacct','-j',a.previous_job,'-X','-n','-P','--format=JobID,State,ExitCode'],text=True)
-        rows=[x.split('|') for x in accounting.splitlines() if x.split('|')[0]==a.previous_job]
-        if len(rows)!=1 or rows[0][1:3]!=['COMPLETED','0:0']:raise RuntimeError('Previous allocation is not verified COMPLETED0:0')
+        verify_previous_allocation(a.previous_job)
         rst,info=validate_checkpoint(case)
         provenance=json.loads((case/'provenance.json').read_text());base=Path(provenance['baseline']);exe=base/'athena.history_extrema'
         if sha(exe)!=provenance['exe_sha256']:raise RuntimeError('Executable hash changed')
