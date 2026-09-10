@@ -30,16 +30,6 @@
 
 namespace z4c {
 
-template <typename Centering, typename Records>
-KOKKOS_INLINE_FUNCTION bool IsCanonicalDchiDiagnosticOwner(
-    const Records &records, const int m, const int k, const int j,
-    const int i) {
-  if constexpr (std::is_same_v<Centering, VertexCenteredZ4c>) {
-    return records(m, k, j, i).canonical_diagnostic_owner != 0;
-  }
-  return true;
-}
-
 // set some parameters
 Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
   std::string ref_method = pin->GetOrAddString("z4c_amr", "method", "trivial");
@@ -123,6 +113,16 @@ Z4c_AMR::Z4c_AMR(ParameterInput *pin) {
                    "and 0 < chi_error_derefine_factor < 1" << std::endl;
       std::exit(EXIT_FAILURE);
     }
+    const Real parent_factor = pin->GetOrAddReal(
+        "z4c_amr", "chi_error_parent_derefine_factor", 0.25);
+    if (!(parent_factor > 0 && parent_factor < 1)) {
+      std::cerr << "chi_error_parent_derefine_factor must be between 0 and 1"
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    dchi_derefine_factor = ChiErrorDerefineFactor(dchi_derefine_factor, parent_factor);
+    std::cout << "CHI_ERROR_HYSTERESIS effective_child_factor="
+              << dchi_derefine_factor << " parent_factor=" << parent_factor << std::endl;
     chi_error_start_time = pin->GetOrAddReal("z4c_amr", "chi_error_start_time", 0.0);
     const Real bootstrap = pin->GetOrAddReal("z4c_amr", "dchi_max", 0.01);
     const int bootstrap_reference = pin->GetOrAddInteger("z4c_amr", "dchi_reference_nx1", current);
@@ -394,8 +394,9 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
           int i = (idx - k * nji - j * nx1) + is;
           j += js;
           k += ks;
-          if (!IsCanonicalDchiDiagnosticOwner<Centering>(
-                  vertex_records, m, k, j, i)) return;
+          // Per-block maxima must include both copies of shared vertices.
+          // Global diagnostic ownership is unsuitable here: choosing one block
+          // removes opposite faces from reflected blocks' sample sets.
           if (truncation) {
             Real error = 0;
             for (int dir = 0; dir < 3; ++dir) {
@@ -454,8 +455,6 @@ void Z4c_AMR::RefineDchiMaxImpl(MeshBlockPack *pmbp) {
     par_for("Z4c_AMR::DchiArgmax", DevExeSpace(), 0, nmb - 1, ks, ks + nx3 - 1,
             js, js + nx2 - 1, is, is + nx1 - 1,
         KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-          if (!IsCanonicalDchiDiagnosticOwner<Centering>(
-                  vertex_records, m, k, j, i)) return;
           Real d2 = SQR(u0(m, I_Z4C_CHI, k, j, i + 1) -
                         u0(m, I_Z4C_CHI, k, j, i - 1));
           d2 += SQR(u0(m, I_Z4C_CHI, k, j + 1, i) -

@@ -16,9 +16,11 @@ namespace z4c {
 KOKKOS_INLINE_FUNCTION
 Real ChiDerivativeTruncationError(const Real *u, const Real h,
                                   const Real length, const int offset = 0) {
-  const Real centered_fifth = (-u[0] + 4*u[1] - 5*u[2] + 5*u[4] - 4*u[5] + u[6])/2;
-  const Real sixth = u[0] - 6*u[1] + 15*u[2] - 20*u[3] +
-                     15*u[4] - 6*u[5] + u[6];
+  // Pair reflected samples before summing: reversing the stencil flips D5
+  // and preserves D6 with identical floating-point grouping.
+  const Real centered_fifth = ((u[6]-u[0]) - 4*(u[5]-u[1]) + 5*(u[4]-u[2]))/2;
+  const Real sixth = ((u[0]+u[6]) - 6*(u[1]+u[5])) +
+                     (15*(u[2]+u[4]) - 20*u[3]);
   const Real fifth = centered_fifth + offset*sixth;
   // Do not amplify cancellation at very small h into an AMR runaway.
   Real magnitude = 0;
@@ -26,6 +28,12 @@ Real ChiDerivativeTruncationError(const Real *u, const Real h,
   const Real roundoff = 1024*std::numeric_limits<Real>::epsilon()*magnitude;
   return Kokkos::fmax(Kokkos::fmax(Real{0}, Kokkos::abs(fifth)-roundoff)*length/(30*h),
                      Kokkos::fmax(Real{0}, Kokkos::abs(sixth)-roundoff)*length*length/(90*h*h));
+}
+
+// A smooth fourth-order error grows by 16 when coarsening by two.
+// Apply hysteresis to the predicted parent error, not only the child error.
+inline Real ChiErrorDerefineFactor(const Real child_factor, const Real parent_factor) {
+  return child_factor < parent_factor/16 ? child_factor : parent_factor/16;
 }
 
 inline Real ResolutionScaledChiErrorThreshold(const Real threshold,

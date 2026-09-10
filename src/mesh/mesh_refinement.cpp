@@ -901,7 +901,7 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
               << " accepted_derefine_parents=" << ctnd
               << " created_leaves=" << nnew
               << " deleted_leaves=" << ndel
-              << " mirror_mismatches=0" << std::endl;
+              << " mirror_mismatches=unchecked" << std::endl;
   }
 
   return;

@@ -22,6 +22,22 @@ int main() {
   // Nyquist is invisible to centered odd derivatives but not D2 error.
   for (int q=0;q<7;++q) u[q]=(q%2 ? -1 : 1);
   pass &= z4c::ChiDerivativeTruncationError(u,1,1)>.7;
+  // Reflection must preserve the sensor, including shifted boundary stencils.
+  for (int seed=1; seed<200; ++seed) {
+    Real reverse[7];
+    for (int q=0; q<7; ++q) u[q]=1+.01*std::sin(seed*.73+q*.37);
+    for (int q=0; q<7; ++q) reverse[q]=u[6-q];
+    for (int offset=-3; offset<=3; ++offset) {
+      pass &= z4c::ChiDerivativeTruncationError(u,.003,1,offset) ==
+              z4c::ChiDerivativeTruncationError(reverse,.003,1,-offset);
+    }
+  }
+  // A just-refined smooth parent must not immediately qualify for coarsening.
+  const Real factor=z4c::ChiErrorDerefineFactor(.25,.25);
+  pass &= factor==1.0/64;
+  pass &= !(1.01/16 < factor);
+  pass &= .24/16 < factor;
+  pass &= z4c::ChiErrorDerefineFactor(.001,.25)==.001;
   Real previous=0;
   for (int n: {32,64,128}) {
     const Real h=1.0/n;
