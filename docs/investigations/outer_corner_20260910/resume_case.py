@@ -4,6 +4,7 @@ from pathlib import Path
 import argparse,fcntl,json,math,os,re,shlex,shutil,struct,subprocess,sys,time,hashlib
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'lapse-bisection-t200'))
 sys.path.insert(0,'/pscratch/sd/h/hzhu/lapse-bisection-t200-20260909')
+sys.path.insert(0,str(Path(__file__).resolve().parent/'bisection'))
 from criterion import read_history
 
 def sha(path):
