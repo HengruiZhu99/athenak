@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "dchi_history_exact": true,
+  "bootstrap_histories_exact": true,
+  "calibration_job": "58148291",
+  "cases": [
+    {
+      "case": "te_1e2",
+      "final_time": 6.0,
+      "blocks": 194,
+      "maxlevel": 3,
+      "minlapse": 0.5029455271333584,
+      "C2": 0.09195826515637502,
+      "C_Linf": 0.014400748203242624
+    },
+    {
+      "case": "te_1e3",
+      "final_time": 6.0,
+      "blocks": 200,
+      "maxlevel": 4,
+      "minlapse": 0.5029017485648908,
+      "C2": 0.06934855532633824,
+      "C_Linf": 0.011384990869527862
+    },
+    {
+      "case": "te_1e4",
+      "final_time": 6.0,
+      "blocks": 317,
+      "maxlevel": 7,
+      "minlapse": 0.501611062027743,
+      "C2": 0.07216689889946298,
+      "C_Linf": 0.01570644636846998
+    }
+  ],
+  "selected_reference_threshold": 0.0001,
+  "reason": "Tightest tested tolerance reaching t6 within short calibration cap;317blocks versus254dchi. Selected before late-time outcomes.",
+  "scope": "Short startup/switch qualification only; not long-time stability or spatial convergence."
+}
