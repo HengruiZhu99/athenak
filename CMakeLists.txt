@@ -1942,3 +1942,11 @@ if(Athena_BUILD_UNIT_TESTS)
   target_link_libraries(athena_rk4_predictor_states_test PRIVATE Kokkos::kokkos)
   add_test(NAME rk4_predictor_states COMMAND athena_rk4_predictor_states_test)
 endif()
+
+if(Athena_BUILD_UNIT_TESTS)
+  add_executable(athena_vertex_temporal_boundary_test tst/unit/vertex_temporal_boundary_test.cpp)
+  target_include_directories(athena_vertex_temporal_boundary_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR})
+  target_link_libraries(athena_vertex_temporal_boundary_test PRIVATE Kokkos::kokkos)
+  add_test(NAME vertex_temporal_boundary COMMAND athena_vertex_temporal_boundary_test)
+endif()

@@ -276,3 +276,30 @@ rk-predictor-results.json, raw /tmp/vc-cartoon-rk-predictor-runtime; build log
 commit's changes (uncommitted at build time). These remain synchronous tests.
 Asynchronous parent RHS/ghost evolution, global gauge coupling, dynamic AMR and
 faster full matched-end-time production reproduction remain outstanding.
+
+## Temporal/spatial coarse boundary sampling
+
+Previous goal turn made implementation progress (3103ef04). Revalidated guarded
+launcher1808047 and allocation58199493; allocation remains pending (resource/
+priority reasons). No duplicate allocation was submitted.
+
+Added VertexTemporalBoundary, connecting retained RK stages to native VC spatial
+midpoint stencils. A geometry plan resolves every stencil vertex to a same-level
+ACTIVE donor, across faces and corners, preferring lower logical donors at ties.
+It supports existing orders4/6/8, explicitly binds predictor source-block order,
+and rejects missing/physical-boundary support rather than substituting a lower
+order. Failed topology rebuilds invalidate the old plan. Stage scratch is reused
+when the shape is unchanged. Results are batched (target,component) values;
+consuming ghost scatter, axis/outer boundary policies and parent RHS advancement
+are still required before runtime subcycling works.
+
+CPU unit test vertex_temporal_boundary passes for spatial polynomials of degree
+3/5/7 respectively, permuted block/source order, coincident vertices and
+face/corner-spanning stencils. Manufactured u(x,z,t)=shape(x,z)*exp(t) checks all
+four child RK stages over both half steps. Successive local stage errors have
+ratios16.0819,16.0405,16.0201 for each order. This is a manufactured stage-boundary
+test, not global Z4c temporal convergence or production validation. Missing
+stencils and changed donor ordering reject. rk4_predictor_states also passes.
+Build/test logs /tmp/vc-temporal-build.log, /tmp/vc-temporal-config.log; tests use
+/tmp/vc-subcycling-cpu. GPU compilation of these new headers is still pending
+(the queued topology24 job uses older immutable source a127a1fe).

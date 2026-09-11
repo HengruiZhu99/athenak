@@ -32,6 +32,7 @@ class RK4PredictorStates {
     for (int b : blocks) if (b<0 || b>=state.extent_int(0) || !unique.insert(b).second) {
       throw std::invalid_argument("invalid or duplicate predictor block");
     }
+    source_blocks_=blocks;
     completed_=0; start_=start; dt_=dt; layout_=layout;
     for (int d=0; d<5; ++d) source_shape_[d]=state.extent_int(d);
     const int np=blocks.size(), nv=state.extent_int(1);
@@ -66,7 +67,9 @@ class RK4PredictorStates {
       throw std::invalid_argument("fine stage outside predictor interval");
     }
     const auto y=data_[0], a=data_[1], b=data_[2], c=data_[3], d=data_[4];
-    Kokkos::realloc(out,y.extent(0),y.extent(1),y.extent(2),y.extent(3),y.extent(4));
+    bool resize=false;
+    for (int d=0;d<5;++d) resize=resize || out.extent(d)!=y.extent(d);
+    if (resize) Kokkos::realloc(out,y.extent(0),y.extent(1),y.extent(2),y.extent(3),y.extent(4));
     const double dt=dt_;
     if (y.extent(0)>0) par_for("evaluate coarse RK stage predictor",DevExeSpace(),
         0,y.extent_int(0)-1,0,y.extent_int(1)-1,0,y.extent_int(2)-1,
@@ -77,6 +80,7 @@ class RK4PredictorStates {
       out(p,v,k,j,i)=predictor.StageBoundary(fraction,fine_dt,stage);
     });
   }
+  const std::vector<int> &SourceBlocks() const { return source_blocks_; }
   int CompletedStages() const { return completed_; }
   double StartTime() const { return start_; }
   std::size_t Bytes() const { return 5*data_[0].size()*sizeof(Real); }
@@ -93,6 +97,7 @@ class RK4PredictorStates {
   std::array<DvceArray5D<Real>,5> data_;
   DvceArray1D<int> blocks_;
   std::array<int,5> source_shape_{};
+  std::vector<int> source_blocks_;
   z4c::Z4cGridLayout layout_;
   double start_=0,dt_=0;
   int completed_=0;
