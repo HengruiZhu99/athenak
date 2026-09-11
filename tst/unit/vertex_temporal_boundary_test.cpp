@@ -9,6 +9,38 @@ template<class F> void Reject(F f) {
   bool rejected=false;try {f();} catch(const std::exception &) {rejected=true;} Check(rejected);
 }
 double Shape(double x,double y,int degree) {return 1+.02*std::pow(x,degree)+.003*std::pow(y,degree);}
+void TestOuterStencil() {
+  const std::vector<subcycling::BlockKey> keys{{0,0,0,0}};
+  const std::vector<int> ids{0};
+  z4c::Z4cGridLayout l;l.is=l.js=2;l.ie=l.je=10;l.ks=l.ke=0;
+  DvceArray5D<Real> state("outer state",1,1,1,13,13),rhs("outer rhs",1,1,1,13,13);
+  auto h=Kokkos::create_mirror_view(state);Kokkos::deep_copy(rhs,0.);
+  const std::vector<subcycling::FineVertex2D> targets{{1,1},{15,15},{1,15},{15,1},{0,1},{16,15}};
+  for(int order:{2,3,4}) {
+    for(int j=0;j<13;++j) for(int i=0;i<13;++i)
+      h(0,0,0,j,i)=std::pow(1+(i-2)/8.,order-1)*std::pow(1+(j-2)/8.,order-1);
+    Kokkos::deep_copy(state,h);
+    subcycling::RK4PredictorStates predictor;predictor.Begin(state,l,ids,0,.1);
+    for(int stage=1;stage<=4;++stage) predictor.Capture(rhs,stage);
+    subcycling::TemporalOuterExtension outer;outer.maximum_x=outer.maximum_y=8;
+    outer.order=order;outer.faces={{true,true,true,true}};
+    subcycling::VertexTemporalBoundary plan;DvceArray2D<Real> out;
+    plan.Build<8>(keys,ids,8,8,targets,{},outer);
+    for(double q:{0.,.5}) for(int stage=1;stage<=4;++stage) {
+      plan.Evaluate(predictor,q,.05,stage,out);
+      auto result=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),out);
+      for(int p=0;p<static_cast<int>(targets.size());++p) {
+        const double expected=std::pow(1+targets[p][0]/16.,order-1)*
+                              std::pow(1+targets[p][1]/16.,order-1);
+        Check(std::abs(result(p,0)-expected)<2e-12);
+      }
+    }
+    outer.faces[3]=false;
+    Reject([&]{plan.Build<8>(keys,ids,8,8,targets,{},outer);});
+    outer.faces[3]=true;
+    Reject([&]{plan.Build<8>(keys,ids,8,8,targets,{1},outer);});
+  }
+}
 void TestAxisStencil() {
   std::vector<subcycling::BlockKey> keys{{0,0,0,0},{0,0,1,0}};
   std::vector<int> ids{0,1};
@@ -44,12 +76,12 @@ void TestAxisStencil() {
   plan.Build<6>(keys,ids,8,8,targets,{1});
   Reject([&]{plan.Evaluate(predictor,0,.05,1,out);});
 }
-void TestHierarchyScatter(bool axis=false) {
-  const int patch_x=axis ? 0 : 1;
+void TestHierarchyScatter(bool axis=false,bool outer=false) {
+  const int patch_x=axis ? 0 : 1,patch_y=outer ? 0 : 1;
   std::vector<subcycling::BlockKey> leaves;
   for(int x=0;x<4;++x) for(int y=0;y<4;++y) {
-    if(x==patch_x && y==1) {
-      for(int a=0;a<2;++a) for(int b=0;b<2;++b) leaves.push_back({1,2*patch_x+a,2+b,0});
+    if(x==patch_x && y==patch_y) {
+      for(int a=0;a<2;++a) for(int b=0;b<2;++b) leaves.push_back({1,2*patch_x+a,2*patch_y+b,0});
     } else leaves.push_back({0,x,y,0});
   }
   subcycling::Hierarchy tree(leaves,0,2);
@@ -57,7 +89,8 @@ void TestHierarchyScatter(bool axis=false) {
   l.nx1=l.nx2=8;l.nx3=l.n3=1;l.ks=l.ke=0;
   l.is=l.js=2;l.ie=l.je=10;l.n1=l.n2=13;
   subcycling::HierarchyTemporalGhosts ghosts;
-  ghosts.Build<6>(tree,l,1,0,4,4,axis ? std::vector<int>{1,-1} : std::vector<int>{});
+  ghosts.Build<6>(tree,l,1,0,4,4,axis ? std::vector<int>{1,-1} : std::vector<int>{},
+                  outer ? 4 : 0,{{false,true,true,true}});
   auto shape=[&](double x,double y,int v) {
     return axis ? (v==0 ? 1+x*x+y*y : x*x*x+x*y*y) : (v+1)*Shape(x,y,5);
   };
@@ -90,7 +123,8 @@ void TestHierarchyScatter(bool axis=false) {
         const int x=key[1]*8+i-2,y=key[2]*8+j-2;
         // Independently identify points outside the refined patch, excluding
         // physical axis ghosts, which belong to the parity fill.
-        const bool target=key[0]==1 && x>=0 && (x<16*patch_x || x>16*(patch_x+1) || y<16 || y>32);
+        const bool target=key[0]==1 && x>=0 && y>=0 && (x<16*patch_x || x>16*(patch_x+1) ||
+            y<16*patch_y || y>16*(patch_y+1));
         if(!target) {Check(result(n,v,0,j,i)==initial(n,v,0,j,i));continue;}
         ++changed;
         // Analytic fine RK stages starting from exp(q*dt). The coarse dense
@@ -114,9 +148,11 @@ void TestHierarchyScatter(bool axis=false) {
 int main(int argc,char **argv) {
   Kokkos::initialize(argc,argv);
   {
+    TestOuterStencil();
     TestAxisStencil();
     TestHierarchyScatter();
     TestHierarchyScatter(true);
+    TestHierarchyScatter(true,true);
     std::vector<subcycling::BlockKey> keys;
     for(int j=0;j<3;++j) for(int i=0;i<3;++i) keys.push_back({2,i,j,0});
     // Deliberately reorder keys and source mapping. Stencils cross faces and corners.

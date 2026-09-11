@@ -14,6 +14,12 @@ namespace subcycling {
 // level finer than the supplied coarse block list. This plan is geometry-only;
 // callers scatter the returned (target,component) values into their ghost arrays.
 using FineVertex2D = std::array<std::int64_t,2>;
+struct TemporalOuterExtension {
+  // Coarse-level global upper vertex coordinates; ignored if order is zero.
+  std::int64_t maximum_x=0,maximum_y=0;
+  int order=0;
+  std::array<bool,4> faces{{false,false,false,false}};
+};
 class VertexTemporalBoundary {
  public:
   // Nonempty parities explicitly authorize reflection about logical rho=0.
@@ -23,7 +29,8 @@ class VertexTemporalBoundary {
   void Build(const std::vector<BlockKey> &coarse_blocks,
              const std::vector<int> &source_blocks, int nx, int ny,
              const std::vector<FineVertex2D> &targets,
-             const std::vector<int> &axis_parities={}) {
+             const std::vector<int> &axis_parities={},
+             const TemporalOuterExtension &outer={}) {
     blocks_=-1;  // A failed rebuild invalidates the previous topology plan.
     static_assert(ORDER==4 || ORDER==6 || ORDER==8,"qualified VC transfer order");
     if (nx<2 || ny<2 || coarse_blocks.empty() || source_blocks.size()!=coarse_blocks.size()) {
@@ -31,6 +38,11 @@ class VertexTemporalBoundary {
     }
     for(int sign:axis_parities) if(sign!=-1 && sign!=1)
       throw std::invalid_argument("invalid temporal boundary axis parity");
+    if(outer.order!=0 && (outer.order<2 || outer.order>4 ||
+       outer.maximum_x<outer.order-1 || outer.maximum_y<outer.order-1))
+      throw std::invalid_argument("invalid temporal outer extrapolation policy");
+    if(!axis_parities.empty() && outer.order!=0 && outer.faces[0])
+      throw std::invalid_argument("axis and extrapolation cannot own the same face");
     std::set<int> unique;
     for (int id : source_blocks) if (id<0 || !unique.insert(id).second)
       throw std::invalid_argument("invalid temporal boundary source indices");
@@ -61,22 +73,45 @@ class VertexTemporalBoundary {
         auto x=left[0]+i;const auto y=left[1]+j;
         const bool reflected=x<0 && !axis_parities.empty();
         if(reflected) x=-x;
-        int donor=-1,di=0,dj=0;
-        if (x>=0 && y>=0) {
-          const auto bx=x/nx,by=y/ny;
-          for (auto dx=bx-(x%nx==0);dx<=bx && donor<0;++dx) {
-            for (auto dy=by-(y%ny==0);dy<=by && donor<0;++dy) {
-              if (dx<0 || dy<0 || dx>std::numeric_limits<int>::max() ||
-                  dy>std::numeric_limits<int>::max()) continue;
-              auto found=donors.find({static_cast<int>(dx),static_cast<int>(dy)});
-              if (found!=donors.end()) {donor=found->second;di=x-dx*nx;dj=y-dy*ny;}
-            }
+        // Expand out-of-domain samples with the same degree-(order-1)
+        // polynomial extrapolation used by Z4c physical ghost filling. Tensor
+        // products commute here; all final reads are from active coarse data.
+        auto extension=[&](std::int64_t point,std::int64_t maximum,int face) {
+          std::vector<std::pair<std::int64_t,Real>> result;
+          const bool low=point<0,high=outer.order!=0 && point>maximum;
+          if(!low && !high) {result.emplace_back(point,1);return result;}
+          if(outer.order==0 || !outer.faces[face+(high ? 1 : 0)])
+            throw std::runtime_error("unavailable physical temporal-boundary stencil");
+          const auto delta=low ? -point : point-maximum;
+          for(int a=0;a<outer.order;++a) {
+            Real w=1;
+            for(int b=0;b<outer.order;++b) if(a!=b)
+              w*=(-static_cast<Real>(delta)-b)/static_cast<Real>(a-b);
+            result.emplace_back(low ? a : maximum-a,w);
           }
+          return result;
+        };
+        const auto xs=extension(x,outer.maximum_x,0);
+        const auto ys=extension(y,outer.maximum_y,2);
+        for(const auto &xx:xs) for(const auto &yy:ys) {
+          const auto sx=xx.first,sy=yy.first;
+          int donor=-1,di=0,dj=0;
+          if(sx>=0 && sy>=0) {
+            const auto bx=sx/nx,by=sy/ny;
+            for(auto dx=bx-(sx%nx==0);dx<=bx && donor<0;++dx)
+              for(auto dy=by-(sy%ny==0);dy<=by && donor<0;++dy) {
+                if(dx<0 || dy<0 || dx>std::numeric_limits<int>::max() ||
+                   dy>std::numeric_limits<int>::max()) continue;
+                auto found=donors.find({static_cast<int>(dx),static_cast<int>(dy)});
+                if(found!=donors.end()) {donor=found->second;di=sx-dx*nx;dj=sy-dy*ny;}
+              }
+          }
+          if(donor<0) throw std::runtime_error("unavailable active temporal-boundary stencil");
+          indices.push_back({donor,dj,di,reflected ? 1 : 0});
+          weights.push_back(xx.second*yy.second*
+              (count[0]==1 ? 1 : vertex_amr::MidpointRule<ORDER>::weight(i))*
+              (count[1]==1 ? 1 : vertex_amr::MidpointRule<ORDER>::weight(j)));
         }
-        if (donor<0) throw std::runtime_error("unavailable active temporal-boundary stencil");
-        indices.push_back({donor,dj,di,reflected ? 1 : 0});
-        weights.push_back((count[0]==1 ? 1 : vertex_amr::MidpointRule<ORDER>::weight(i))*
-                          (count[1]==1 ? 1 : vertex_amr::MidpointRule<ORDER>::weight(j)));
       }
       offsets.push_back(indices.size());
     }

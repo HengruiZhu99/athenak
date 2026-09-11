@@ -614,3 +614,28 @@ Outer-face stencil extension remains missing; no lower-order fallback added.
 Full coupled asynchronous evolution, production global gauge, live AMR and
 faster single-A100 matched-endpoint reproduction remain incomplete. No production
 source, jobs or outputs changed, and no GPU test was launched this turn.
+
+## Explicit outer-face temporal stencil extension
+
+Previous turn progressed withc2f5f344. Added TemporalOuterExtension: explicit
+coarse-domain upper vertex coordinates, extrapolation order2/3/4 and four face
+authorizations. Out-of-domain coarse stencil samples expand into active donors
+using degree(order-1) polynomial extrapolation, mathematically the existing Z4c
+linear/quadratic/cubic ghost rule. Tensor-product corner expansion composes with
+axis parity. This does not claim bit-identical floating arithmetic to the native
+Extrapolate evaluation. Disabled faces or missing interior donors reject; native
+spatial interpolation order remains unchanged. Axis and extrapolation ownership
+of the same inner-rho face reject. Hierarchy wrapper derives domain coordinates
+from root block counts and takes explicit extrapolation policy.
+
+Tests cover all four outer corners/faces with order8 spatial interpolation and
+extrapolation2/3/4 on matching-degree analytic polynomial data at every RK stage
+and both halfsteps. Errors below2e-12. Hierarchy scatter now also exercises a
+refined patch touching both axis and outer axial boundary, nonstationary even/odd
+fields, and confirms only intended fine ghosts change. Predictor, temporal
+boundary and hierarchy-state tests all pass; log/tmp/vc-temporal-outer-build.log.
+
+These tests qualify the local interpolation/scatter layer, not the assembled
+coupled Z4c integrator. Recursive stage integration, common-time telegraph gauge,
+live AMR/diagnostics and faster A100 endpoint reproduction remain incomplete.
+No production runs changed and no remote jobs launched.
