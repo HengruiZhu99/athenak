@@ -28,6 +28,7 @@
 #include "ion-neutral/ion-neutral.hpp"
 #include "radiation/radiation.hpp"
 #include "driver.hpp"
+#include "driver/execution_profile.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -72,6 +73,7 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
   nmb_updated_(0),
   npart_updated_(0),
   lb_efficiency_(0) {
+  execution_profile::enabled = pin->GetOrAddBoolean("time", "execution_profile", false);
   // set time-evolution option (no default)
   {
     std::string evolution_t = pin->GetString("time","evolution");
@@ -301,6 +303,7 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
 //! these tasks are to be performed, e.g. which stage of a multi-stage RK integrator.
 
 void Driver::ExecuteTaskList(Mesh *pm, std::string tl, int stage) {
+  execution_profile::Scope profile("tasks/"+tl);
   MeshBlockPack* pmbp = pm->pmb_pack;
   for (int p=0; p<(pm->nmb_packs_thisrank); ++p) {
     if (!(pmbp->tl_map[tl]->Empty())) {pmbp->tl_map[tl]->Reset();}
@@ -325,6 +328,7 @@ void Driver::ExecuteTaskList(Mesh *pm, std::string tl, int stage) {
 //  outputting ICs, and computing initial time step
 
 void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool res_flag) {
+  execution_profile::Scope profile("initialization");
   if (pmesh->pmr != nullptr && pmesh->pmr->amr_history != nullptr) {
     pmesh->pmr->amr_history->Initialize(res_flag);
   }
@@ -455,7 +459,8 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
         if (((out->out_params.dt > 0.0) &&
              ((time_32 >= next_32) && (time_32<tlim_32))) ||
             ((dcycle_ > 0) && ((pmesh->ncycle)%(dcycle_) == 0))) {
-          out->LoadOutputData(pmesh);
+          execution_profile::Scope profile("scheduled_output");
+        out->LoadOutputData(pmesh);
           out->WriteOutputFile(pmesh, pin);
           wrote_output = true;
         }
@@ -467,6 +472,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
     while ((pmesh->time < tlim) && (pmesh->ncycle < nlim || nlim < 0) &&
            (pmesh->nmb_total < nmb_total_limit || nmb_total_limit < 0) &&
            (elapsed_time < wall_time)) {
+      execution_profile::Scope cycle_profile("evolution_cycle");
       if (global_variable::my_rank == 0) {OutputCycleDiagnostics(pmesh);}
 
       // Execute TaskLists
@@ -512,6 +518,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
 
       std::string step_stop_reason;
       if (pmesh->pgen->user_stopping_condition) {
+        execution_profile::Scope profile("stopping_check");
         step_stop_reason =
             pmesh->pgen->user_stopping_condition(pmesh);
       }
@@ -533,6 +540,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       if (pmesh->adaptive) {
         const int created_before = pmesh->pmr->nmb_created;
         const int deleted_before = pmesh->pmr->nmb_deleted;
+        execution_profile::Scope profile("amr");
         pmesh->pmr->AdaptiveMeshRefinement(this, pin);
         topology_changed = (pmesh->pmr->nmb_created != created_before ||
                             pmesh->pmr->nmb_deleted != deleted_before);
@@ -565,6 +573,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
         elapsed_time = UpdateWallClock();
       }
     }  // end while
+    execution_profile::Write(global_variable::my_rank);
   }    // end of (time_evolution != tstatic) clause
   return;
 }

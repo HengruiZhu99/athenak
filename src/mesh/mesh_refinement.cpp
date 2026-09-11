@@ -1,3 +1,4 @@
+#include "driver/execution_profile.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -676,6 +677,7 @@ void MeshRefinement::AdaptiveMeshRefinement(Driver *pdriver, ParameterInput *pin
 //! counter for all MeshBlocks
 
 void MeshRefinement::CheckForRefinement(MeshBlockPack* pmbp) {
+  execution_profile::Scope profile("amr/tagging");
   // reallocate and zero refine_flag in host space and sync with device
   Kokkos::realloc(refine_flag, pmy_mesh->nmb_total);
   for (int m=0; m<(pmy_mesh->nmb_total); ++m) {
@@ -755,6 +757,7 @@ void MeshRefinement::CheckForRefinement(MeshBlockPack* pmbp) {
 //! Returns total number of MBs refined/derefined in arguments.
 
 void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
+  execution_profile::Scope profile("amr/tree");
   // compute nleaf= number of leaf MeshBlocks per refined block
   int nleaf = 2;
   if (pmy_mesh->two_d) {nleaf = 4;}
@@ -917,6 +920,7 @@ void MeshRefinement::UpdateMeshBlockTree(int &nnew, int &ndel) {
 //! Boundary values and primitives are set in calling function: AdaptiveMeshRefinement()
 
 void MeshRefinement::RedistAndRefineMeshBlocks(ParameterInput *pin, int nnew, int ndel) {
+  execution_profile::Scope profile("amr/redistribute_transfer");
   Mesh* pm = pmy_mesh;
   int old_nmb = pm->nmb_total;
   int new_nmb = old_nmb + nnew - ndel;

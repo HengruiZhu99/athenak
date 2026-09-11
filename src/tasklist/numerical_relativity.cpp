@@ -1,3 +1,4 @@
+#include "driver/execution_profile.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -119,7 +120,12 @@ bool NumericalRelativity::AssembleNumericalRelativityTasks(
       TaskID dep(0);
       if (DependenciesMet(task, queue, dep) && !task.added) {
         task.added = true;
-        task.id = list->AddTask(task.func_, dep);
+        const auto function = task.func_;
+        const auto label = "nr/"+task.name_string;
+        task.id = list->AddTask([function, label](Driver *d, int stage) {
+          execution_profile::Scope profile(label);
+          return function(d, stage);
+        }, dep);
         cycle_added++;
         added++;
         /*std::cout << "Successfully added " << task.name_string << " to task list!\n"
