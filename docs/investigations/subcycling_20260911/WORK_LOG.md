@@ -1442,3 +1442,29 @@ stage-limit build. Fixed-time ratios remain16.2127240283(sync),16.0440794985(rat
 Evidence timestep-batching-evidence; raw /tmp/vc-limit-batching-checkpoint.
 Still need live driver/AMR integration, CUDA execution and full matched-endpoint
 single-A100 provisional-collapse accuracy and wallclock comparison.
+
+## Reusable synchronized evolution owner; CUDA build complete
+
+Previous turn progressed with241e6db7 level-batched stability reductions. Extracted
+SynchronizedHierarchyEvolution from checkpoint analysis and made the probe consume
+it. Owns an independent hierarchy copy, predictor/geometry state, physical-leaf
+IDs, stage physics, common-time gauge cache and interval controls. Advance returns
+actual accepted interval and per-level limits; object tracks its synchronized
+time. Explicit CopyAcceptedLeavesTo provides the next driver integration boundary;
+caller must rebuild native ghosts/ADM before diagnostics. Object is noncopyable
+(callbacks bind this) and must be reconstructed after AMR. Probe still never exports
+to production fields or advances live mesh time.
+
+CPU full build and fixed-time real-checkpoint comparisons pass. All SIX field
+hashes exactly match preceding timestep-batched implementation. Evidence
+evolution-owner-evidence; raw /tmp/vc-owner-checkpoint. This is consumed reusable
+infrastructure, not yet live-AMR driver wiring or proof of performance.
+
+Perlmutter build c204ee04 completed status0. Launched prepared single-A10080GB
+shared_interactive qualification allocation58207663 on nid008304 (15minute cap).
+Last authoritative squeue state RUNNING; local observing session99491. Remote
+allocation log allocation-c204ee04.log; result directory gpu_validation_c204ee04.
+Do not replace remote source until this job terminates. It qualifies c204ee04,
+not subsequent retry/timestep/owner changes. Production jobs left untouched.
+Goal remains incomplete until live-AMR and actual matched-endpoint single-A100
+Brill scientific reproduction plus lower measured wall time succeed.

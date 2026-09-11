@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include "z4c/hierarchy_physics.hpp"
-#include "driver/hierarchy_physical_maximum.hpp"
+#include "z4c/synchronized_hierarchy_evolution.hpp"
 namespace z4c {
 template<int NG> struct CheckpointProbePhysics : HierarchyPhysics<NG> {
   using HierarchyPhysics<NG>::HierarchyPhysics;
@@ -41,55 +41,10 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
     throw std::invalid_argument("unsupported checkpoint probe configuration");
   if(!std::filesystem::create_directory(directory))
     throw std::runtime_error("checkpoint probe requires a new output directory");
-  z->RebuildSubcycleParents();
-  const auto &tree=*z->subcycle_hierarchy;const auto l=z->layout;
-  subcycling::VertexParentStates storage;storage.InitializeAll(tree,z->u0,l);
-  const int rx=mesh->mesh_indcs.nx1/mesh->mb_indcs.nx1;
-  const int ry=mesh->mesh_indcs.nx2/mesh->mb_indcs.nx2;
-  std::array<BoundaryFlag,6> faces;for(int n=0;n<6;++n) faces[n]=mesh->mesh_bcs[n];
-  std::array<bool,4> outer;
-  for(int n=0;n<4;++n) outer[n]=faces[n]==BoundaryFlag::outflow ||
-    faces[n]==BoundaryFlag::diode || faces[n]==BoundaryFlag::vacuum;
-  subcycling::HierarchyGeometry geometry;
-  geometry.Initialize(tree,mesh->mesh_size,mesh->root_level,rx,ry,l,faces);
-  std::vector<int> parity;for(int v=0;v<Z4c::nz4c;++v)
-    parity.push_back(Z4cStateAxisParitySignFromPackedIndex(v));
-  subcycling::HierarchyRK4 engine;
-  engine.Initialize<2*NG>(tree,l,mesh->root_level,rx,ry,parity,z->opt.extrap_order,outer);
-  engine.ReconcileInitialState(storage);
-  subcycling::HierarchyPhysicalMaximum maximum;
-  maximum.Build(tree,Z4c::I_Z4C_KHAT,Z4c::I_Z4C_THETA);
-  // Initial coefficient from the synchronized physical leaves, never parents.
-  const auto u=storage.Values();const int ni=l.ie-l.is+1,nj=l.je-l.js+1;
-  const int is=l.is,js=l.js,ks=l.ks;
-  DvceArray1D<int> leaf_ids("probe physical leaves",mesh->nmb_total);
-  const auto ids_host=Kokkos::create_mirror(leaf_ids);int leaf_count=0;
-  for(int n=0;n<static_cast<int>(tree.Nodes().size());++n)
-    if(!tree.Nodes()[n].Covered()) ids_host(leaf_count++)=n;
-  if(leaf_count!=mesh->nmb_total) throw std::runtime_error("probe leaf ownership mismatch");
-  Kokkos::deep_copy(leaf_ids,ids_host);
-  const auto current_maximum=[&]() {
-    Real value=0;
-    Kokkos::parallel_reduce("probe synchronized max K",
-      Kokkos::RangePolicy<DevExeSpace>(0,leaf_count*ni*nj),
-      KOKKOS_LAMBDA(int q,Real &v) {
-        const int i=q%ni+is;q/=ni;const int j=q%nj+js;const int m=leaf_ids(q/nj);
-        const Real k=u(m,Z4c::I_Z4C_KHAT,ks,j,i)+2*u(m,Z4c::I_Z4C_THETA,ks,j,i);
-        const Real a=Kokkos::isfinite(k)?fabs(k):INFINITY;if(a>v) v=a;
-      },Kokkos::Max<Real>(value));
-    if(!std::isfinite(value)) throw std::runtime_error("nonfinite synchronized probe K");
-    return value;
-  };
-  Real initial=current_maximum();
-  const subcycling::HierarchyRK4::Histories *history=nullptr;
-  std::map<double,Real> cache;
-  CheckpointProbePhysics<NG> physics(storage,geometry,l,z->opt,mesh->root_level,rx,ry,z->diss,outer,
-    [&](double t) {
-      if(!history) return initial;
-      const auto found=cache.find(t);if(found!=cache.end()) return found->second;
-      return cache.emplace(t,maximum.Evaluate(*history,t)).first->second;
-    },[](double){return 0.;},[](double){return 0.;});
-  physics.enforce_timestep_limits=true;physics.timestep_cfl=mesh->cfl_no;
+  SynchronizedHierarchyEvolution<NG,CheckpointProbePhysics<NG>> evolution(mesh,z);
+  const auto &tree=*evolution.tree;const auto l=evolution.layout;
+  auto &storage=evolution.storage;auto &physics=*evolution.physics;
+  const int ni=l.ie-l.is+1,nj=l.je-l.js+1;
   if(std::getenv("ATHENA_TEST_PROBE_FIRST_RHS"))
     physics.first_rhs_snapshot=directory+"/first_rhs_fields.bin";
   if(const char *stage=std::getenv("ATHENA_TEST_PROBE_RHS_STAGE")) {
@@ -97,7 +52,7 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
     if(physics.snapshot_stage<1 || physics.snapshot_stage>4)
       throw std::invalid_argument("invalid probe snapshot stage");
   }
-  subcycling::CorrectorControl control;
+  const auto &control=evolution.control;
   const Real requested_dt=dt;
   const Real target=mesh->time+(duration>0 ? duration : dt);
   if(!std::isfinite(target) || target<=mesh->time)
@@ -113,22 +68,19 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
   Kokkos::Timer timer;
   do {
     if(accepted_intervals>=1000000) throw std::runtime_error("probe interval budget exceeded");
-    history=nullptr;cache.clear();initial=current_maximum();
-    const auto limits=physics.TimestepLimits(time,mesh->cfl_no);
-    const subcycling::Schedule schedule(limits.front().level,limits.back().level,ratio);
     const Real cap=duration>0 ? std::min(requested_dt,target-time) : requested_dt;
-    const auto choice=schedule.ChooseInterval(limits,cap);
+    const auto advanced=evolution.Advance(cap,ratio);
+    const auto &limits=advanced.limits;
+    const subcycling::Schedule schedule(limits.front().level,limits.back().level,ratio);
     for(const auto &limit:limits)
       ceilings<<accepted_intervals<<','<<time<<','<<limit.level<<','
               <<schedule.Substeps(limit.level)<<','<<limit.spatial<<','<<limit.source<<'\n';
-    interval=engine.RunWithRetry(time,choice.dt,storage,physics,ratio,control,{},
-      [&](const auto &h){history=h.empty()?nullptr:&h;cache.clear();},
-      [&](const auto &a,const auto &b){return maximum.Difference(a,b,control);});
+    interval=advanced.interval;
     report=interval.corrector;
     const Real next=time+interval.dt;
     if(next<=time || (duration>0 && next>target))
       throw std::runtime_error("invalid accepted probe interval endpoint");
-    history=nullptr;cache.clear();initial=current_maximum();
+    const Real initial=evolution.initial;
     steps<<accepted_intervals<<','<<time<<','<<next<<','<<interval.dt<<','
          <<interval.attempts<<','<<interval.total_passes<<','<<initial<<'\n';
     time=next;++accepted_intervals;total_attempts+=interval.attempts;
