@@ -4,12 +4,15 @@
 namespace subcycling {
 // Cached coarse-predictor to fine-ghost plan in populated hierarchy node order.
 // Physical ghosts are filled separately. Missing spatial stencil support causes
-// Build to fail, including support crossing an axis/outer face; no downgrade.
+// Build to fail. Optional component parities extend stencils across rho=0;
+// caller must verify that logical rho=0 is the physical axis. Outer-face support
+// still requires a separate extension; there is no interpolation downgrade.
 class HierarchyTemporalGhosts {
  public:
   template<int ORDER>
   void Build(const Hierarchy &tree,const z4c::Z4cGridLayout &l,
-             int fine_level,int root,int root_x,int root_y) {
+             int fine_level,int root,int root_x,int root_y,
+             const std::vector<int> &axis_parities={}) {
     ready_=false;
     if(tree.Dimension()!=2 || root<0 || fine_level<=root || fine_level-root>30 ||
        root_x<=0 || root_y<=0 || l.centering!=z4c::Z4cGridCentering::vertex ||
@@ -49,7 +52,7 @@ class HierarchyTemporalGhosts {
       }
     }
     if(coarse.empty()) throw std::invalid_argument("missing coarse predictor level");
-    interpolation_.Build<ORDER>(coarse,sources,l.nx1,l.nx2,targets);
+    interpolation_.Build<ORDER>(coarse,sources,l.nx1,l.nx2,targets,axis_parities);
     destinations_=DvceArray2D<int>("temporal ghost destinations",destinations.size(),3);
     auto h=Kokkos::create_mirror_view(destinations_);
     for(int p=0;p<static_cast<int>(destinations.size());++p)

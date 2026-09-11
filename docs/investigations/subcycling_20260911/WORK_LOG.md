@@ -590,3 +590,27 @@ Boundary-adjacent interpolation whose stencil needs axis/outer support still
 rejects explicitly. This requires a boundary-aware extension, not reduced-order
 fallback. No complete asynchronous coupled evolution, production gauge or
 matched-endpoint faster A100 reproduction is claimed.
+
+## Axis parity for temporal coarse stencils
+
+Previous turn progressed with46f0e440. Native temporal boundary plans now accept
+explicit per-component axis parities. Negative-rho stencil points reflect to
+active positive-rho donors; their contributions receive the corresponding parity
+sign during the same batched interpolation. Target physical ghosts remain the
+separate parity-fill responsibility. Caller must establish that logical rho=0
+is the physical axis. Empty parity input preserves previous rejection behavior;
+invalid signs/component counts reject. HierarchyTemporalGhosts forwards this
+policy without changing active/same-level/physical target ownership.
+
+Expanded CPU temporal-boundary tests: analytic even and odd fields, spatial
+orders4/6/8, on-axis and near-axis targets with transverse block-boundary crossing,
+all four stages of both halfsteps. Stationary polynomial errors below2e-14.
+Hierarchy scatter test now repeats with a refined patch touching the axis and
+nonstationary even/odd fields, verifying actual scattered ghosts and untouched
+active/coarse/same-level/physical ghosts. Three related tests pass (predictor,
+temporal_boundary,hierarchy_state); build/tmp/vc-temporal-axis-build.log.
+
+Outer-face stencil extension remains missing; no lower-order fallback added.
+Full coupled asynchronous evolution, production global gauge, live AMR and
+faster single-A100 matched-endpoint reproduction remain incomplete. No production
+source, jobs or outputs changed, and no GPU test was launched this turn.
