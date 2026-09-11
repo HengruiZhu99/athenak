@@ -907,3 +907,30 @@ timeout. Compare CPU/GPU using scripts/subcycling/compare_hierarchy_backends.py
 once gpu_validation_103d8052 is complete; CPU dumps are /tmp/vc-cpu-gpu103 and the
 script requires equal source SHAs, lengths and finite values. It reports exact
 field differences without claiming production-checkpoint validation.
+
+## Single-A100 corrected hierarchy validation completed
+
+Previous turn made progress with successful compilation and a verified queued
+job. Job58202346 ran on nid008216 and completed0:0 in30s. All five corrected Z4c
+cases and both helper steps completed0:0; launcher status0. GPU field comparison
+uses exact matching source103d8052 and all20 case/timestep dump pairs. Maximum
+absolute CPU/GPU difference5.137003171608702e-14; maximum RMS9.141817484268351e-16.
+Corrector3 GPU ratios17.0095,16.334; three-level17.015,15.3972; coarse-group17.445,
+16.5538; time-dependent17.017,15.4925; CPBC13.6214,10.816 (last RMS5.83163e-14).
+All configured gates pass. CPBC ratios are less clean than16 and should not be
+represented as exact fourth-order asymptotics at the smallest differences.
+
+Evidence gpu-corrector-103-evidence/ includes logs, Slurm metadata, source/hash and
+comparison JSON. Durable raw CPU/GPU fields:
+/Users/hz0693/research/collapse/subcycling-results/gpu-validation-103d8052/{cpu,gpu}.
+Remote raw gpu_validation_103d8052. Archived validated test binary
+binaries/athena.hierarchy-corrector-103d8052 with CMake cache/hash; SHA256
+522d2d2954ba5f32f2159911da93454bf743e9a338ec45034f9a053e56410db2.
+No isolated build/allocation remains running after successful launcher completion.
+
+This validates small fixed-hierarchy prescribed-gauge vacuum tests on one A100,
+not a Brill restart or speedup. Next promote a bounded convergence-controlled
+corrector out of diagnostic-only code, integrate the actual common-time global
+telegraph history and synchronized driver/AMR/restart path, then perform the
+required matched-endpoint production comparison. Full goal remains incomplete;
+no production run was modified.
