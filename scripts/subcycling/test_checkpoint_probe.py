@@ -10,6 +10,7 @@ p.add_argument('--dt',type=float,default=2e-3)
 p.add_argument('--fixed-duration',type=float)
 p.add_argument('--boundary-rhs',choices=['sommerfeld','full_constraint_bjorhus'],default='full_constraint_bjorhus')
 p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
+p.add_argument('--production-gauge',action='store_true',help='Use Brill telegraph_tau=kappa=0.01')
 a=p.parse_args();assert a.intervals>0;exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
 repo=Path(__file__).resolve().parents[2]
 s=(repo/'tst/inputs/z4c_vc_minkowski_full_constraint_bjorhus.athinput').read_text()
@@ -28,6 +29,8 @@ telegraph_tau = 1
 telegraph_kappa = 1
 shift_mode = prescribed_zero
 target_kappa1 = 0''')
+if a.production_gauge:
+    s=s.replace('telegraph_tau = 1','telegraph_tau = 0.01').replace('telegraph_kappa = 1','telegraph_kappa = 0.01')
 s=s.replace('<problem>','<problem>\nlapse_gaussian_amplitude = 0.1')
 s+='''
 <refined_region1>

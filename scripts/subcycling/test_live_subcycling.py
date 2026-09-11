@@ -4,14 +4,16 @@ from pathlib import Path
 import numpy as np
 p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('output',type=Path)
 p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
+p.add_argument('--production-gauge',action='store_true',help='Use Brill telegraph_tau=kappa=0.01')
 a=p.parse_args();exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
 fixture=root/'fixture'
 subprocess.run([sys.executable,str(Path(__file__).with_name('test_checkpoint_probe.py')),
-                str(exe),str(fixture),'--seed-only',*(['--production-orders'] if a.production_orders else [])],check=True)
+                str(exe),str(fixture),'--seed-only',*(['--production-orders'] if a.production_orders else []),
+                *(['--production-gauge'] if a.production_gauge else [])],check=True)
 checkpoint=sorted((fixture/'seed/rst').glob('*.rst'))[-1]
 initial_hash=hashlib.sha256(checkpoint.read_bytes()).hexdigest()
 start=np.loadtxt(sorted((fixture/'seed').glob('*.hst'))[-1],ndmin=2)[-1,0]
-duration=.008;dt=.002;end=start+duration
+dt=.0004 if a.production_gauge else .002;duration=4*dt;end=start+duration
 results=[]
 def run(name,rst,ratio,finish,frozen=False):
     directory=root/name;directory.mkdir();env=os.environ.copy()

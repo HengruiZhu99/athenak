@@ -68,7 +68,17 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
   Kokkos::Timer timer;
   do {
     if(accepted_intervals>=1000000) throw std::runtime_error("probe interval budget exceeded");
-    const Real cap=duration>0 ? std::min(requested_dt,target-time) : requested_dt;
+    Real cap=requested_dt;
+    if(duration>0) {
+      const Real remaining=target-time;
+      // Accumulated additions can leave the final nominal interval a few ulps
+      // longer than requested_dt. Integrate that endpoint rather than create
+      // a spurious near-zero extra step. The actual spatial/source ceilings
+      // still apply independently inside Advance.
+      const Real roundoff=8*std::numeric_limits<Real>::epsilon()*
+                          std::max(std::abs(time),std::abs(target));
+      cap=remaining<=requested_dt+roundoff ? remaining : requested_dt;
+    }
     const auto advanced=evolution.Advance(cap,ratio);
     const auto &limits=advanced.limits;
     const subcycling::Schedule schedule(limits.front().level,limits.back().level,ratio);
