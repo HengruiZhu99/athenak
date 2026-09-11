@@ -115,6 +115,25 @@ int main(int argc,char **argv) {
       }
       Kokkos::deep_copy(storage.Values(),saved);
       std::cout<<"PASS: analytic per-level spatial/source ceilings and covered predictors\n";
+      if(flag("--stage-limits")) {
+        const auto original_gauge=physics.max_K;
+        physics.max_K=[](double time){return time>=.005 ? Real(1000) : Real(1);};
+        physics.enforce_timestep_limits=true;
+        const auto accepted=engine.RunWithRetry(0,.01,storage,physics,2);
+        if(accepted.attempts!=3 || accepted.dt!=.0025 || !accepted.corrector.converged)
+          throw std::runtime_error("stage source ceiling did not trigger bounded halving");
+        const auto retried=Kokkos::create_mirror(storage.Values());
+        Kokkos::deep_copy(retried,storage.Values());
+        Kokkos::deep_copy(storage.Values(),saved);
+        engine.RunCorrected(0,.0025,storage,physics,2);
+        const auto direct=Kokkos::create_mirror(storage.Values());
+        Kokkos::deep_copy(direct,storage.Values());
+        if(std::memcmp(retried.data(),direct.data(),direct.size()*sizeof(Real))!=0)
+          throw std::runtime_error("stage stability retry differs from direct interval");
+        Kokkos::deep_copy(storage.Values(),saved);
+        physics.max_K=original_gauge;physics.enforce_timestep_limits=false;
+        std::cout<<"PASS: tightening stage source limit, rollback and direct-step equivalence\n";
+      }
     }
     subcycling::HierarchyPhysicalMaximum global_K;
     global_K.Build(tree,Z::I_Z4C_KHAT,Z::I_Z4C_THETA);

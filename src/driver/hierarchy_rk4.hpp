@@ -81,6 +81,7 @@ class HierarchyRK4 {
       for(int pass=1;pass<=control.maximum_passes;++pass) {
         Kokkos::deep_copy(state,rollback_);current_history_.clear();
         if(begin_pass) begin_pass(previous_history_);
+        last_report_.passes=pass;
         Run(time,dt,storage,physics,maximum_ratio);
         last_report_.passes=pass;
         if(pass>1) {
@@ -113,7 +114,7 @@ class HierarchyRK4 {
     if(!last_report_.converged) throw std::logic_error("no accepted corrected histories");
     return current_history_;
   }
-  // Retry ONLY corrector nonconvergence, after RunCorrected restores the full
+  // Retry ONLY classified numerical interval failures, after RunCorrected restores the full
   // initial hierarchy. Physics/code failures propagate unchanged. A successful
   // retry advances by the returned dt, never the originally requested interval.
   // begin_pass must reset any external gauge cache even on its empty-history call.
@@ -133,7 +134,7 @@ class HierarchyRK4 {
         result.corrector=RunCorrected(time,dt,storage,physics,maximum_ratio,control,
                                        begin_pass,feedback_residual);
         result.total_passes+=result.corrector.passes;result.dt=dt;return result;
-      } catch(const CorrectorFailure &) {
+      } catch(const RetryableIntervalFailure &) {
         result.total_passes+=last_report_.passes;
         const double smaller=dt*.5;
         // Do not make an unrepresentable fine step or exceed the retry budget.

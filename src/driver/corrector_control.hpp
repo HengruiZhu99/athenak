@@ -23,9 +23,17 @@ struct CorrectorReport {
   Real feedback_change=std::numeric_limits<Real>::infinity();
   bool converged=false;
 };
-class CorrectorFailure : public std::runtime_error {
+class RetryableIntervalFailure : public std::runtime_error {
  public:
-  CorrectorFailure():std::runtime_error("hierarchy corrector failed to converge within its pass budget") {}
+  explicit RetryableIntervalFailure(const char *message):std::runtime_error(message) {}
+};
+class CorrectorFailure : public RetryableIntervalFailure {
+ public:
+  CorrectorFailure():RetryableIntervalFailure("hierarchy corrector failed to converge within its pass budget") {}
+};
+class IntervalStabilityFailure : public RetryableIntervalFailure {
+ public:
+  IntervalStabilityFailure():RetryableIntervalFailure("hierarchy stage exceeds its timestep stability ceiling") {}
 };
 struct IntervalRetryControl {
   int maximum_halvings=8;

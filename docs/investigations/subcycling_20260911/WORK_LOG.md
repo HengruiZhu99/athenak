@@ -1392,3 +1392,32 @@ three helpers on one GPU. No allocation launched yet. Do not mutate remote sourc
 until existing build is terminal. Latest local commits afterc204ee04 still need
 CUDA compilation after that qualification. Production untouched; end-to-end
 single-A100 reproduction/speedup still incomplete.
+
+## Intra-interval stage stability and rollback
+
+Previous turn made progress with fixed-time temporal qualification92857748.
+Inspected native Execute loop: accepted-step time/central updates, stopping,
+AMR, output and next timestep occur outside stage tasks. This is the intended
+integration location; no live driver change yet.
+
+Added optional hierarchy stage timestep enforcement (enabled in actual probe).
+At each RHS, reduce spatial limits only on the stage's currently advanced level
+group; asynchronous other levels do not participate. Source coefficient is the
+common-time stage gauge. Exceeding a valid spatial/source bound throws typed
+IntervalStabilityFailure. RunWithRetry catches this and CorrectorFailure through
+a dedicated RetryableIntervalFailure base, preserving full-state rollback and
+bounded halving. Invalid geometry/nonfinite states and other code failures still
+terminate. Started passes are counted even if RHS aborts before pass completion.
+The per-stage reductions currently prioritize correctness; batch/cache optimization
+is necessary before interpreting production performance.
+
+Real Z4c regression prescribes a source coefficient that tightens at t.005.
+Requested interval.01 rejects, .005 rejects, .0025 accepts; accepted result matches
+direct .0025 evolution bit-for-bit. Added hierarchy_z4c_stage_limits CTest entry.
+Existing retry and adaptive tests pass. Actual fixed-duration checkpoint test
+also passes with checks enabled (dt.004,.002,.001 to duration.016); no change to
+fourth-order convergence. Evidence stage-limit-evidence; raw
+/tmp/vc-stage-fixedtime-checkpoint, /tmp/vc-stage-limits-test.log.
+
+CUDA c204ee04 build still being monitored, source untouched. Live-AMR integration
+and actual single-A100 Brill reproduction/lower wallclock remain incomplete.

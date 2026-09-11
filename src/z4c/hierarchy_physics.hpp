@@ -23,6 +23,8 @@ struct HierarchyPhysics {
   Z4c::Options options;
   int root,root_x,root_y;
   Real diss;
+  bool enforce_timestep_limits=false;
+  Real timestep_cfl=.25;
   std::function<Real(double)> max_K,kappa1,shift_eta;
   std::vector<int> parities;
   std::array<bool,4> outer_faces;
@@ -43,7 +45,8 @@ struct HierarchyPhysics {
   // Synchronized-state limits for the campaign's zero-shift, undamped Z4c
   // system with max-domain telegraph damping. Include covered predictor nodes:
   // their stability matters even though they are excluded from physical extrema.
-  std::vector<subcycling::LevelStepLimit> TimestepLimits(double time,Real cfl) const {
+  std::vector<subcycling::LevelStepLimit> TimestepLimits(double time,Real cfl,
+      int minimum_level=-1,int maximum_level=-1) const {
     if(!std::isfinite(time) || !std::isfinite(cfl) || cfl<=0 || cfl>1 ||
        options.slow_start_lapse || options.damp_kappa1!=0 ||
        options.target_kappa1!=0 || options.shift_eta!=0 ||
@@ -69,11 +72,15 @@ struct HierarchyPhysics {
     const auto &host_levels=storage.AllLevels().h_view;
     int highest=root;
     for(int m=0;m<host_levels.extent_int(0);++m) highest=std::max(highest,host_levels(m));
+    const int first=minimum_level<0 ? root : minimum_level;
+    const int last=maximum_level<0 ? highest : maximum_level;
+    if(first<root || last>highest || last<first)
+      throw std::invalid_argument("invalid timestep level range");
     const int ni=layout.ie-layout.is+1,nj=layout.je-layout.js+1;
     const int is=layout.is,js=layout.js,ks=layout.ks;
     const std::size_t count=storage.Values().extent(0)*ni*nj;
     std::vector<subcycling::LevelStepLimit> limits;
-    for(int level=root;level<=highest;++level) {
+    for(int level=first;level<=last;++level) {
       Real spatial=std::numeric_limits<Real>::max();
       Kokkos::parallel_reduce("hierarchy spatial timestep",
         Kokkos::RangePolicy<DevExeSpace,Kokkos::IndexType<std::size_t>>(0,count),
@@ -91,6 +98,17 @@ struct HierarchyPhysics {
     }
     return limits;
   }
+  // Only this stage's level group is at the queried stage time. Other levels
+  // must not participate in the spatial reduction while asynchronously evolved.
+  void CheckStageTimestep(const subcycling::StepContext &s,int stage) const {
+    if(!enforce_timestep_limits) return;
+    const double time=s.StageTime(classical_rk4::StageTime(stage));
+    for(const auto &limit:TimestepLimits(time,timestep_cfl,s.minimum_level,s.maximum_level)) {
+      const double ceiling=std::min(limit.spatial,limit.source);
+      if(s.Dt()>ceiling*(1+32*std::numeric_limits<Real>::epsilon()))
+        throw subcycling::IntervalStabilityFailure();
+    }
+  }
   void Prepare(const subcycling::StepContext &s,int,const subcycling::BlockBatches &b,
                const DvceArray5D<Real> &u) {
     EnforceLocalVertexAxis(layout,geometry.boundaries,b,u,options.vertex_axis_correction_tolerance);
@@ -101,6 +119,7 @@ struct HierarchyPhysics {
   }
   void RHS(const subcycling::StepContext &s,int stage,const subcycling::BlockBatches &b,
            const DvceArray5D<Real> &u,const DvceArray5D<Real> &rhs) {
+    CheckStageTimestep(s,stage);
     const double time=s.StageTime(classical_rk4::StageTime(stage));
     const Real maximum=max_K(time),damping=kappa1(time),eta=shift_eta(time);
     if(!std::isfinite(maximum) || maximum<0 || !std::isfinite(damping) || !std::isfinite(eta))

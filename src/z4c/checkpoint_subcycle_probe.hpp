@@ -89,6 +89,7 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
       const auto found=cache.find(t);if(found!=cache.end()) return found->second;
       return cache.emplace(t,maximum.Evaluate(*history,t)).first->second;
     },[](double){return 0.;},[](double){return 0.;});
+  physics.enforce_timestep_limits=true;physics.timestep_cfl=mesh->cfl_no;
   if(std::getenv("ATHENA_TEST_PROBE_FIRST_RHS"))
     physics.first_rhs_snapshot=directory+"/first_rhs_fields.bin";
   if(const char *stage=std::getenv("ATHENA_TEST_PROBE_RHS_STAGE")) {
