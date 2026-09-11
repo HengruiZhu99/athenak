@@ -1,3 +1,4 @@
+#include "z4c/vertex_authority.hpp"
 #include "driver/execution_profile.hpp"
 //========================================================================================
 // AthenaK astrophysical fluid dynamics & numerical relativity code
@@ -370,36 +371,16 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
   Kokkos::realloc(device_authority_begin, group_count);
   Kokkos::realloc(device_authority_end, group_count);
   Kokkos::realloc(device_group_values, group_count, maximum_variables);
-  std::vector<int> authority_level(group_count,
-                                   std::numeric_limits<int>::min());
-  for (const int global_index : sorted_global_indices) {
-    const int owner_group = global_group_for_contributor[global_index];
-    authority_level[owner_group] = std::max(
-        authority_level[owner_group], global_contributors[global_index].level);
-  }
-  std::vector<int> authority_begin(group_count, 0);
-  std::vector<int> authority_end(group_count, 0);
-  std::vector<int> authority_contributors;
-  authority_contributors.reserve(global_count);
-  for (int owner_group = 0; owner_group < group_count; ++owner_group) {
-    authority_begin[owner_group] =
-        static_cast<int>(authority_contributors.size());
-    for (const int global_index : sorted_global_indices) {
-      if (global_group_for_contributor[global_index] == owner_group &&
-          global_contributors[global_index].level ==
-              authority_level[owner_group]) {
-        authority_contributors.push_back(global_index);
-      }
-    }
-    authority_end[owner_group] =
-        static_cast<int>(authority_contributors.size());
-    if (authority_begin[owner_group] == authority_end[owner_group]) {
-      std::cerr << "### FATAL ERROR: VC shared group has no finest-level authority"
-                << std::endl;
-      std::exit(EXIT_FAILURE);
-    }
-    device_authority_begin.h_view(owner_group) = authority_begin[owner_group];
-    device_authority_end.h_view(owner_group) = authority_end[owner_group];
+  const auto authorities=BuildVertexAuthorities(
+      sorted_global_indices,global_group_for_contributor,group_count,
+      [this](int index) { return global_contributors[index].level; });
+  const auto &authority_level=authorities.levels;
+  const auto &authority_begin=authorities.begin;
+  const auto &authority_end=authorities.end;
+  const auto &authority_contributors=authorities.contributors;
+  for (int owner_group=0; owner_group<group_count; ++owner_group) {
+    device_authority_begin.h_view(owner_group)=authority_begin[owner_group];
+    device_authority_end.h_view(owner_group)=authority_end[owner_group];
   }
   Kokkos::realloc(device_authority_contributors,
                   authority_contributors.size());

@@ -195,3 +195,25 @@ profiling-early/: RHS inclusive0.49672s, scheduled outputs7.93999s, initializati
 topology rebuild11.39476s. The short-window totals include initialization and
 final outputs; do not treat them as asymptotic evolution throughput or a subcycling
 speedup. Full-state comparison is still pending the four-case workflow.
+
+## Topology construction optimization and first GPU identity evidence
+
+Replaced the per-group full contributor scan with a linear grouped pass after
+the existing sort. Finest-authority membership and within-group contributor order
+are preserved exactly. Deterministic randomized tests compare all offsets,
+authority levels and contributor sequences against the original quadratic
+algorithm. Four static Cartoon runs retain byte-identical restart payloads.
+This optimization is additional to the required subcycling implementation; it
+is not a replacement for asynchronous evolution or its validation.
+
+The early GPU instrumented/base comparison now passes: all history columns
+identical, AMR histories identical and complete restart payload SHA256 identical
+(4a9102988f25b10c5a91cc1467de38ff63d7a7da8a247c3108334b42d1fef866), through
+t62.035027597047765. Evidence: profiling-early/comparison.json.
+
+Late baseline completed12 cycles in248.7253s total, with28.3963s reported after
+initialization. First recorded live-AMR event after the input checkpoint occurs
+at cycle133506 (17 steps later), outside this12-step sample. A subsequent
+performance comparison must extend past that event to measure topology rebuilding
+during evolution. Allocation58198945 is still running the late instrumented case;
+no source or executable used by that allocation was modified.
