@@ -3,11 +3,15 @@ import argparse, hashlib, json, os, subprocess
 from pathlib import Path
 import numpy as np
 p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('output',type=Path)
+p.add_argument('--uniform',action='store_true')
 p.add_argument('--dt',type=float,default=2e-3)
+p.add_argument('--boundary-rhs',choices=['sommerfeld','full_constraint_bjorhus'],default='full_constraint_bjorhus')
 a=p.parse_args();exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
 repo=Path(__file__).resolve().parents[2]
 s=(repo/'tst/inputs/z4c_vc_minkowski_full_constraint_bjorhus.athinput').read_text()
+s=s.replace('boundary_rhs = full_constraint_bjorhus','boundary_rhs = '+a.boundary_rhs)
 s=s.replace('nlim = 3','nlim = 1').replace('tlim = 0.01','tlim = 1.0')
+s=s.replace('<output1>','<output1>\ndata_format = %24.16e')
 s=s.replace('<time>','<time>\nsubcycle_probe_dt = 1e-4\nsubcycle_probe_ratio = 2')
 s=s.replace('refinement = none','refinement = static\nnum_levels = 1')
 s=s.replace('<z4c>','''<z4c>
@@ -29,6 +33,10 @@ x2max = 0
 file_type = rst
 dcycle = 1
 '''
+if a.uniform:
+    start=s.index('<refined_region1>');end=s.index('<output2>',start)
+    s=s[:start]+s[end:]
+    s=s.replace('refinement = static','refinement = none')
 seed=root/'seed';seed.mkdir();(seed/'input.athinput').write_text(s)
 def run(args,cwd,env=None):
     with (cwd/'run.log').open('w') as log:
@@ -50,6 +58,33 @@ for dt in [a.dt,a.dt/2,a.dt/4]:
         assert np.all(np.isfinite(values))
         arrays[ratio]=values
         results.append(dict(dt=dt,ratio=ratio,metadata=meta,fields_sha256=sha(output/'fields.bin')))
+    # Independent existing driver: classical RK4 to the identical endpoint.
+    baseline=root/f'dt{dt}_driver';baseline.mkdir()
+    end=float(meta['end_time'])
+    run(['-r',str(checkpoint),'time/integrator=rk4_classical',
+         'time/nlim=-1',f'time/tlim={end:.17g}'],baseline)
+    restart=sorted((baseline/'rst').glob('*.rst'))[-1]
+    nv=int(meta['variables']);ni=int(meta['ni']);nj=int(meta['nj']);nb=int(meta['leaves'])
+    # This fixture is vacuum Z4c only: restart.cpp writes native u0 as the
+    # sole final payload, in source-leaf order with all four ghosts per side.
+    # Validate the preceding per-block byte count before interpreting that tail.
+    raw=restart.read_bytes();block_bytes=nv*(ni+8)*(nj+8)*8
+    offset=len(raw)-nb*block_bytes
+    assert int.from_bytes(raw[offset-8:offset],byteorder='little')==block_bytes
+    native=np.frombuffer(raw,dtype=np.float64,offset=offset).reshape(nb,nv,nj+8,ni+8)
+    leafmap=np.loadtxt(root/f'dt{dt}_ratio2'/'probe/leaves.txt',dtype=int,ndmin=2)
+    reference=native[leafmap[:,0],:,4:4+nj,4:4+ni].ravel()
+    assert np.all(np.isfinite(reference))
+    assert 'Terminating on time limit' in (baseline/'run.log').read_text()
+    hst=np.loadtxt(sorted(baseline.glob('*.hst'))[-1],ndmin=2)
+    assert abs(hst[-1,0]-end)<1e-14
+    for ratio in [1,2]:
+        difference=arrays[ratio]-reference
+        location=np.unravel_index(np.argmax(np.abs(difference)),(nb,nv,nj,ni))
+        results.append(dict(dt=dt,comparison=f'ratio{ratio} minus existing classical driver',
+            maximum_location=dict(source_leaf=int(leafmap[location[0],0]),key=leafmap[location[0],1:].tolist(),component=int(location[1]),j=int(location[2]),i=int(location[3])),
+            active_values=reference.size,rms=float(np.sqrt(np.mean(difference**2))),
+            max_abs=float(np.max(np.abs(difference)))))
     delta=arrays[2]-arrays[1]
     results.append(dict(dt=dt,comparison='ratio2 minus ratio1',rms=float(np.sqrt(np.mean(delta**2))),max_abs=float(np.max(np.abs(delta)))))
 assert sha(checkpoint)==before

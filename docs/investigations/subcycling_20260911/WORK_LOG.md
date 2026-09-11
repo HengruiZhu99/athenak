@@ -1102,3 +1102,35 @@ comparison against production synchronous driver. Full raw output under
 Next remains CUDA/late-Brill checkpoint validation when access returns, plus
 production synchronous comparison, safe interval selection/retry, live-AMR
 driver integration and end-time single-A100 performance reproduction.
+
+## Independent production-driver comparison finds refinement mismatch
+
+Previous turn progressed with real-checkpoint probe tests. Extended the probe
+script to run the existing classical-RK4 driver to identical checkpoint_time+dt.
+Read the native vacuum-only Z4c restart tail at double precision, verifying its
+preceding per-block byte count; reorder by source leaf IDs; compare all50575
+active values, including coincident vertices. Verify final history time to1e-14.
+The general output tab path was unsuitable (requires1D slices); binary output
+is float32. No output format/source changes made.
+
+A substantive mismatch exists despite ratio1/ratio2 agreement. Refined CPBC
+ratio1-versus-driver max errors8.65017e-7,4.32251e-7,2.16071e-7 at dt.002,.001,
+.0005; RMS5.84544e-9,2.93353e-9,1.46927e-9. This is approximately first-order
+local scaling, suggesting different semi-discrete evolution/coupling, not
+ordinary RK4 integration error. Thus production reproduction NOT qualified.
+
+Maximum: source leaf1, logical(level2,x1,y0), GammaX component14,j1,i16 active
+offsets. Root level1 (verified checkpoint header), so this is a FINE block at
+rho2 coarse-fine interface, near physical z=-2 boundary. Earlier commentary
+misread level2 as root/coarse and was explicitly corrected. Sommerfeld retains
+a mismatch at same point in Khat (4.55740e-7 at dt.002). Uniform CPBC control
+agrees to roundoff (max3.89229e-16 at dt.002). This isolates refinement/corner
+coupling rather than a general physical-boundary or gauge defect.
+
+Driver-reference-evidence contains CPBC/Sommerfeld/uniform outputs. Raw data
+/tmp/vc-pulse-driver-comparison-v4, /tmp/vc-pulse-driver-sommerfeld,
+/tmp/vc-pulse-driver-uniform. Script reports differences without passing a
+scientific qualification gate just because processes exit0. Next inspect
+prepared stage1 ghosts and native coarse-fine ownership near that corner,
+fix the discrepancy and rerun independent comparisons before production use.
+Perlmutter access renewal pending; goal remains incomplete, no remote changes.
