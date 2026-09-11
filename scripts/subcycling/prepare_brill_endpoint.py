@@ -10,15 +10,16 @@ p.add_argument('--campaign',type=Path,required=True)
 p.add_argument('--output',type=Path,required=True)
 p.add_argument('--exe',type=Path,required=True)
 p.add_argument('--ratio',type=int,default=16)
+p.add_argument('--checkpoint-index',type=int,default=66,help='Saved checkpoint index in the recovered case')
 p.add_argument('--interval-cap',type=float,default=4e-5)
 a=p.parse_args()
-assert a.ratio in [2,4,8,16,32] and 0<a.interval_cap<1
+assert a.ratio in [2,4,8,16,32] and 0<a.interval_cap<1 and a.checkpoint_index>=0
 campaign=a.campaign.resolve();output=a.output.resolve();exe=a.exe.resolve()
 sys.path.insert(0,str(campaign))
 from resume_case import checkpoint_info,sha
 from workflow_common import setparam
 source=campaign/'cycle_03_recovery_24000'
-checkpoint=source/'rst/lapse200.00066.rst';info=checkpoint_info(checkpoint)
+checkpoint=source/('rst/lapse200.%05d.rst'%a.checkpoint_index);info=checkpoint_info(checkpoint)
 # Derive target from actual final history sample, never the eight-hour heuristic.
 histories=sorted(source.glob('*.hst'));assert len(histories)==1
 last=None;columns=None
@@ -33,7 +34,7 @@ with histories[0].open() as f:
 assert last is not None and columns is not None
 assert len(columns)==len(last.split())
 original_final=dict(zip(columns,map(float,last.split())))
-end=float(last.split()[0]);start=float(info['time']);assert start<end<start+.01
+end=float(last.split()[0]);start=float(info['time']);assert start<end
 output.mkdir(parents=True,exist_ok=False)
 with (source/'amr_history.jsonl').open('rb') as f:prefix=f.read(info['history_bytes'])
 assert len(prefix)==info['history_bytes'] and prefix.endswith(b'\n')

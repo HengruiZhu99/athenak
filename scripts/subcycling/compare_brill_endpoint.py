@@ -54,7 +54,7 @@ def main():
     reference = next(case for case in cases if case[0]['name'] == 'classical_sync')
     legacy = next((case for case in cases if case[0]['name'] == 'legacy_sync'), None)
     report = dict(start=m['start'], end=m['end'],
-                  scope='Short late-checkpoint segment only; scientific reproduction not certified.',
+                  scope='Checkpoint-to-recorded-end continuation; scientific reproduction not automatically certified.',
                   original_final_history_row=m['original_final_history_row'],
                   original_final=m.get('original_final'), cases=[])
     for row, run, history, final in cases:
@@ -83,7 +83,7 @@ def main():
         ax.grid(alpha=.25)
     axes[0, 0].legend()
     fig.suptitle('Brill endpoint experiment: native sample times; no temporal interpolation\n'
-                 'Short continuation; reproduction and spatial accuracy require separate assessment')
+                 'Checkpoint continuation; reproduction and spatial accuracy require separate assessment')
     a.output.mkdir(parents=True, exist_ok=False)
     fig.savefig(a.output/'diagnostics.png', dpi=160)
     plt.close(fig)
