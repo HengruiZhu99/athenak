@@ -891,3 +891,19 @@ and synchronize because their decltype declarations refer to enclosing lambdas
 of those same names. Renamed members to advance_fn/synchronize_fn; numerical
 operations unchanged. Local rebuild and corrected Z4c/transport tests pass.
 Preparing a fresh named retry after committing this fix. Prior logs retained.
+
+GPU retry103d8052: guarded build/validation PID164330, source branch
+codex/vc-corrector-gpu-103d8052. Build log corrector-103d8052-build.log, status
+corrector-103d8052.status, allocation log corrector-103d8052-allocation.log.
+Scripts archived in multilevel-evidence. CPU full active-field dumps for all five
+matching cases completed successfully in /tmp/vc-cpu-gpu103 with source/executable
+hashes; these will support actual field comparison after GPU completion, rather
+than only comparing convergence ratios. No production simulation changed.
+
+GPU retry build completed successfully for all three targets. Guarded launcher
+requested Slurm job58202346, shared_interactive, one A10080GB,15min. Verified queued
+with squeue; wrapper164330 remains the live handle. No restart on observation
+timeout. Compare CPU/GPU using scripts/subcycling/compare_hierarchy_backends.py
+once gpu_validation_103d8052 is complete; CPU dumps are /tmp/vc-cpu-gpu103 and the
+script requires equal source SHAs, lengths and finite values. It reports exact
+field differences without claiming production-checkpoint validation.
