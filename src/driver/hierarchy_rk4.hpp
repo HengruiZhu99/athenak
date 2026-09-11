@@ -1,6 +1,7 @@
 #ifndef DRIVER_HIERARCHY_RK4_HPP_
 #define DRIVER_HIERARCHY_RK4_HPP_
 #include "driver/subcycle_schedule.hpp"
+#include "driver/covered_stage_correction.hpp"
 #include "driver/classical_rk4_update.hpp"
 #include "driver/vertex_parent_states.hpp"
 #include "driver/hierarchy_vertex_exchange.hpp"
@@ -15,6 +16,7 @@ class HierarchyRK4 {
  public:
 #ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
   bool test_skip_restriction=false;
+  int test_corrector_passes=1;
 #endif
   template<int ORDER>
   void Initialize(const Hierarchy &tree,const z4c::Z4cGridLayout &layout,
@@ -37,6 +39,10 @@ class HierarchyRK4 {
       if(ghosts_[level].SourceBlocks()!=sources_.at(level-1))
         throw std::logic_error("hierarchy predictor source order mismatch");
     }
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+    corrections_.clear();
+    for(int level=root;level<maximum_;++level) corrections_[level].Build(tree,level,sources_.at(level+1));
+#endif
     nodes_=tree.Nodes().size();ready_=true;
   }
   template<class Physics>
@@ -49,6 +55,21 @@ class HierarchyRK4 {
       if(storage.AllLevels().h_view(n)!=entry.first)
         throw std::invalid_argument("hierarchy RK level order mismatch");
     const auto state=storage.Values();
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+    if(test_corrector_passes>1 && !inside_corrector_) {
+      DvceArray5D<Real> saved("corrector interval rollback",state.extent(0),state.extent(1),
+                            state.extent(2),state.extent(3),state.extent(4));
+      Kokkos::deep_copy(saved,state);previous_history_.clear();inside_corrector_=true;
+      try {
+        for(int pass=0;pass<test_corrector_passes;++pass) {
+          Kokkos::deep_copy(state,saved);current_history_.clear();
+          Run(time,dt,storage,physics,maximum_ratio);
+          previous_history_=std::move(current_history_);
+        }
+      } catch(...) {inside_corrector_=false;Kokkos::deep_copy(state,saved);throw;}
+      inside_corrector_=false;return;
+    }
+#endif
     for(auto *scratch:{&initial_,&rhs_,&sum_}) {
       bool resize=false;for(int d=0;d<5;++d) resize|=scratch->extent(d)!=state.extent(d);
       if(resize) Kokkos::realloc(*scratch,state.extent(0),state.extent(1),state.extent(2),
@@ -60,6 +81,11 @@ class HierarchyRK4 {
       const int level=step.maximum_level;
       blocks_.Update(true,storage.AllLevels(),nodes_,step.minimum_level,level);
       for(int stage=1;stage<=4;++stage) {
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+        const auto correction=previous_history_.find({level+1,step.begin_tick});
+        const bool correct=inside_corrector_ && correction!=previous_history_.end();
+        if(correct) corrections_.at(level).Apply(correction->second,step.Dt(),stage,false,layout_,state);
+#endif
         for(int parent=level-1;parent>=step.minimum_level;--parent)
           storage.RestrictLevel(layout_,parent);
         exchange_.Apply(state,step.minimum_level,level);
@@ -78,12 +104,20 @@ class HierarchyRK4 {
               l.ks,l.ke,l.js,l.je,l.is,l.ie,KOKKOS_LAMBDA(int m,int v,int k,int j,int i) {
             initial(m,v,k,j,i)=state(m,v,k,j,i);
           });
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+          if(inside_corrector_) current_history_[{level,step.begin_tick}].Begin(
+              state,layout_,sources_.at(level),step.StartTime(),step.Dt());
+#endif
           if(level<maximum_) {
             predictors_[level].Begin(state,layout_,sources_.at(level),step.StartTime(),step.Dt());
             contexts_[level]=step;
           }
         }
         physics.RHS(step,stage,blocks_,state,rhs_);
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+        if(correct) corrections_.at(level).Apply(correction->second,step.Dt(),stage,true,layout_,rhs_);
+        if(inside_corrector_) current_history_.at({level,step.begin_tick}).Capture(rhs_,stage);
+#endif
         if(level<maximum_) predictors_.at(level).Capture(rhs_,stage);
         classical_rk4::Update(blocks_,layout_,step.Dt(),stage,state,initial_,rhs_,sum_);
         physics.Project(step,stage,blocks_,state);
@@ -107,6 +141,11 @@ class HierarchyRK4 {
     Kokkos::fence("hierarchy RK synchronized interval complete");
   }
  private:
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+  bool inside_corrector_=false;
+  std::map<std::pair<int,std::uint64_t>,RK4PredictorStates> previous_history_,current_history_;
+  std::map<int,CoveredStageCorrection> corrections_;
+#endif
   bool ready_=false;
   int root_=0,maximum_=0,nodes_=0;
   z4c::Z4cGridLayout layout_;

@@ -1,5 +1,7 @@
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <iomanip>
 #include "z4c/hierarchy_physics.hpp"
 int main(int argc,char **argv) {
  Kokkos::initialize(argc,argv);
@@ -52,6 +54,8 @@ int main(int argc,char **argv) {
     storage.test_restriction_margin=flag("--interior-restriction") ? 1 :
       (flag("--deep-restriction") ? 3 : 0);
     subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,roots,roots,parity,4,{{false,true,true,true}});
+    engine.test_corrector_passes=flag("--corrector") ? 5 :
+      (flag("--corrector2") ? 2 : (flag("--corrector3") ? 3 : 1));
     engine.test_skip_restriction=flag("--no-restriction");
     struct TestPhysics: z4c::HierarchyPhysics<3> {
       using z4c::HierarchyPhysics<3>::HierarchyPhysics;
@@ -73,6 +77,12 @@ int main(int argc,char **argv) {
         if(!std::isfinite(value)) throw std::runtime_error("nonfinite hierarchy Z4c result");
         values.push_back(value);
       }
+    if(const char *prefix=std::getenv("ATHENA_HIERARCHY_TEST_DUMP_PREFIX")) {
+      std::ofstream output(std::string(prefix)+std::to_string(steps)+".txt");
+      if(!output) throw std::runtime_error("cannot write hierarchy test fields");
+      output << std::setprecision(17);
+      for(double value:values) output << value << '\n';
+    }
     results.push_back(values);std::cout << "completed steps=" << steps << '\n';
   }
   std::vector<double> errors;

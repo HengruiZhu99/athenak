@@ -93,6 +93,33 @@ class RK4PredictorStates {
       out(p,v,k,j,i)=predictor.StageBoundary(fraction,fine_dt,stage);
     });
   }
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+  // Experimental two-way coupling: the first fine half-step supplies a local
+  // Taylor reconstruction for its parent's RK stage vectors and dense history.
+  // This is not evaluation of a physical solution outside the stored interval.
+  void EvaluateParentStage(double parent_dt,int stage,bool rhs,DvceArray5D<Real> &out) const {
+    if(completed_!=4 || stage<1 || stage>4 || dt_<=0 ||
+       !std::isfinite(parent_dt) || std::abs(parent_dt/dt_-2)>1e-12)
+      throw std::invalid_argument("invalid fine-to-parent stage reconstruction");
+    const auto y=data_[0],a=data_[1],b=data_[2],c=data_[3],d=data_[4];
+    bool resize=false;for(int q=0;q<5;++q) resize|=out.extent(q)!=y.extent(q);
+    if(resize) Kokkos::realloc(out,y.extent(0),y.extent(1),y.extent(2),y.extent(3),y.extent(4));
+    const double h=dt_;
+    if(y.extent(0)>0) par_for("fine-to-parent RK reconstruction",DevExeSpace(),
+        0,y.extent_int(0)-1,0,y.extent_int(1)-1,0,y.extent_int(2)-1,
+        0,y.extent_int(3)-1,0,y.extent_int(4)-1,KOKKOS_LAMBDA(int p,int v,int k,int j,int i) {
+      RK4DenseBoundary dense{y(p,v,k,j,i),h,a(p,v,k,j,i),b(p,v,k,j,i),c(p,v,k,j,i),d(p,v,k,j,i)};
+      Real value=dense.StageBoundary(0,parent_dt,stage);
+      if(rhs) {
+        const double first=dense.First(0),second=dense.Second(0),third=dense.Third();
+        const double jac=4*(c(p,v,k,j,i)-b(p,v,k,j,i))/(h*h),H=parent_dt;
+        value=stage==1 ? first : stage==2 ? first+H*second/2+H*H*(third-jac)/8 :
+              stage==3 ? first+H*second/2+H*H*(third+jac)/8 : first+H*second+H*H*third/2;
+      }
+      out(p,v,k,j,i)=value;
+    });
+  }
+#endif
   const std::vector<int> &SourceBlocks() const { return source_blocks_; }
   int CompletedStages() const { return completed_; }
   double StartTime() const { return start_; }

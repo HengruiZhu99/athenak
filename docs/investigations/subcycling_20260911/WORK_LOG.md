@@ -803,3 +803,37 @@ Bounded groups are now numerically implemented but mixed multilevel/group and
 GPU qualification remain. Next work is consistent asynchronous two-way coupling
 against this reference, followed by production-gauge/live-AMR/endpoint comparison.
 No production files/jobs were changed.
+
+## Experimental two-way stage-history corrector passes two-level Z4c gate
+
+Previous turn progressed with2353aa56. Implemented an ATHENA_SUBCYCLE_DIAGNOSTICS
+only interval corrector. Each pass restores the same saved full hierarchy state;
+retains per-level/per-start-tick RK histories; reconstructs covered-parent stage
+vectors and dense predictor RHS from the previous pass's first fine half-step;
+then reruns the actual recursive RK engine with endpoint restriction still on.
+Exception handling restores the interval start state. Fine-to-parent transfers
+use native point injection into covered parents only. No physical coarse leaves
+or ghosts are direct correction destinations. Coarse uncovered RHS sees the
+updated covered-stage state through the existing shared/ghost exchange.
+
+The reconstruction uses local fine RK Taylor derivatives to form parent stage
+vectors and cubic dense history. It is explicitly not physical extrapolation
+of the fine solution beyond its stored interval. This experimental path still
+needs independent multilevel, stability and backend qualification before any
+production option is enabled. It stores whole active fine histories per step;
+memory and pass-cost optimization remain.
+
+Actual coupled Z4c test with feedback: two passes insufficient (ratios5.453,4.009),
+three passes give17.0094,16.3365; five passes17.0276,16.3827. Three- and five-pass
+CTest convergence gates pass, as does the synchronous reference. Corrected versus
+synchronous full active-leaf field RMS differences at4/8/16/32 steps are
+7.70416e-11,4.38868e-12,2.64858e-13,1.67384e-14, consistent with fourth-order
+approach to the same reference. Field ordering/configuration matched; raw arrays
+/tmp/vc-{corrected,synchronous}-values-{4,8,16,32}.txt. Evidence corrector-evidence/
+contains logs, CTest and comparison JSON. Build/tmp/vc-corrector-build.log.
+
+The uncorrected async regression remains failing and unchanged. The corrected
+path is not yet the production driver, and the tests are two-level prescribed-
+coefficient experiments. Next qualify deeper/mixed-group hierarchies and GPU,
+then promote a bounded/adaptive corrector and integrate common-time gauge/live
+AMR. No production runs changed. Full faster-A100 endpoint goal remains active.
