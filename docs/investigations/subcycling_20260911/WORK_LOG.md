@@ -1339,3 +1339,35 @@ Evidence timestep-evidence; raw /tmp/vc-limits-checkpoint-validation.
 CUDA build c204ee04 remains separate and in progress; do not replace its source
 until terminal. Full live-AMR repeated evolution, per-stage bound monitoring,
 CUDA execution and matched-endpoint single-A100 Brill speedup remain incomplete.
+
+## Repeated synchronized checkpoint evolution
+
+Previous turn progressed with3d36cc7a actual per-level limits. Added optional
+<time>/subcycle_probe_duration (default0 preserves single-interval probe).
+Positive duration repeatedly selects stable synchronization intervals capped by
+subcycle_probe_dt and remaining duration, runs corrected/retried evolution, and
+refreshes max-domain K from current synchronized physical leaf fields. The gauge
+maximum comes from actual projected/restricted endpoint fields, not stale dense
+history or covered nodes. Cached physical leaf IDs allocated once.
+
+Removed saved-finest-dt cap: actual per-level characteristic/source ceilings now
+control the interval, permitting coarse intervals larger than saved finest dt.
+Records each accepted start/end/dt, attempt/pass counts and endpoint gauge maximum
+in intervals.csv, plus per-interval timestep_limits.csv. Output describes actual
+elapsed time and aggregate attempts, preserving shortened-retry semantics.
+Fixed hierarchy only; no live mesh/time mutation or production output writes.
+One-million interval guard bounds this qualification path. Intra-interval source
+monitoring, dynamic AMR and production driver wiring remain future work.
+
+CPU full build passes. test_checkpoint_probe.py --intervals3 compares three
+synchronized intervals against independent existing native classical restart
+steps at each matching endpoint. Ratio1 max errors2.03396e-15,3.40873e-16,
+2.22045e-16 for interval caps.002,.001,.0005. Ratio2 RMS differences9.39843e-13,
+2.91551e-14,9.09281e-16. These cases shorten total duration with dt, so their~32x
+reduction is local-error evidence, NOT fixed-final-time temporal order proof.
+Original single-interval compatibility test also passes. Checkpoint hash unchanged.
+Evidence multi-interval-evidence; raw /tmp/vc-multi-checkpoint-validation.
+
+CUDA c204ee04 build remains live (PID316679), last observed~65percent. No remote
+source replacement while it compiles. Single-A100 Brill endpoint reproduction
+and lower end-to-end wall time have not yet been established.

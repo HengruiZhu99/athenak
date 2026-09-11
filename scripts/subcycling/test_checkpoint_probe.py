@@ -4,15 +4,16 @@ from pathlib import Path
 import numpy as np
 p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('output',type=Path)
 p.add_argument('--uniform',action='store_true')
+p.add_argument('--intervals',type=int,default=1)
 p.add_argument('--dt',type=float,default=2e-3)
 p.add_argument('--boundary-rhs',choices=['sommerfeld','full_constraint_bjorhus'],default='full_constraint_bjorhus')
-a=p.parse_args();exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
+a=p.parse_args();assert a.intervals>0;exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
 repo=Path(__file__).resolve().parents[2]
 s=(repo/'tst/inputs/z4c_vc_minkowski_full_constraint_bjorhus.athinput').read_text()
 s=s.replace('boundary_rhs = full_constraint_bjorhus','boundary_rhs = '+a.boundary_rhs)
 s=s.replace('nlim = 3','nlim = 1').replace('tlim = 0.01','tlim = 1.0')
 s=s.replace('<output1>','<output1>\ndata_format = %24.16e')
-s=s.replace('<time>','<time>\nsubcycle_probe_dt = 1e-4\nsubcycle_probe_ratio = 2')
+s=s.replace('<time>','<time>\nsubcycle_probe_dt = 1e-4\nsubcycle_probe_ratio = 2\nsubcycle_probe_duration = 0')
 s=s.replace('refinement = none','refinement = static\nnum_levels = 1')
 s=s.replace('<z4c>','''<z4c>
 telegraph_lapse = true
@@ -50,12 +51,13 @@ for dt in [a.dt,a.dt/2,a.dt/4]:
     for ratio in [1,2]:
         case=root/f'dt{dt}_ratio{ratio}';case.mkdir();output=case/'probe'
         env=os.environ.copy();env['ATHENA_TEST_SUBCYCLE_INTERVAL_DIR']=str(output)
-        run(['-r',str(checkpoint),f'time/subcycle_probe_dt={dt}',f'time/subcycle_probe_ratio={ratio}'],case,env)
+        run(['-r',str(checkpoint),f'time/subcycle_probe_dt={dt}',f'time/subcycle_probe_ratio={ratio}',f'time/subcycle_probe_duration={dt*a.intervals if a.intervals>1 else 0}'],case,env)
         meta=dict(line.split('=',1) for line in (output/'probe.txt').read_text().splitlines())
         # This comparison requires identical endpoints. Retry has a separate
         # regression; never compare a shortened probe against the requested dt.
-        assert float(meta['dt'])==dt and float(meta['requested_dt'])==dt
-        assert int(meta['interval_attempts'])==1
+        assert abs(float(meta['dt'])-dt*a.intervals)<1e-14 and float(meta['requested_dt'])==dt
+        assert int(meta['interval_attempts'])==int(meta['accepted_intervals'])
+        assert int(meta['accepted_intervals'])>=a.intervals
         dtype={8:np.float64,4:np.float32}[int(meta['real_bytes'])]
         values=np.fromfile(output/'fields.bin',dtype=dtype)
         assert values.size==int(meta['leaves'])*int(meta['variables'])*int(meta['ni'])*int(meta['nj'])
@@ -65,9 +67,16 @@ for dt in [a.dt,a.dt/2,a.dt/4]:
     # Independent existing driver: classical RK4 to the identical endpoint.
     baseline=root/f'dt{dt}_driver';baseline.mkdir()
     end=float(meta['end_time'])
-    run(['-r',str(checkpoint),'time/integrator=rk4_classical',
-         'time/nlim=-1',f'time/tlim={end:.17g}'],baseline)
-    restart=sorted((baseline/'rst').glob('*.rst'))[-1]
+    # Match each accepted synchronization endpoint with an independent native
+    # restart step. This also exercises consistency across restart initialization.
+    intervals=np.loadtxt(root/f'dt{dt}_ratio1'/'probe/intervals.csv',delimiter=',',skiprows=1,ndmin=2)
+    restart=checkpoint
+    for index,row in enumerate(intervals):
+        stepdir=baseline/f'step{index}';stepdir.mkdir()
+        run(['-r',str(restart),'time/integrator=rk4_classical',
+             'time/nlim=-1',f'time/tlim={row[2]:.17g}'],stepdir)
+        restart=sorted((stepdir/'rst').glob('*.rst'))[-1]
+    baseline=stepdir
     nv=int(meta['variables']);ni=int(meta['ni']);nj=int(meta['nj']);nb=int(meta['leaves'])
     # This fixture is vacuum Z4c only: restart.cpp writes native u0 as the
     # sole final payload, in source-leaf order with all four ghosts per side.
