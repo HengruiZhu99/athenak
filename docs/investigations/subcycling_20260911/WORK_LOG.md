@@ -311,3 +311,32 @@ and comparison (no source rebuild/change): new launcher PID1875948, allocation
 58199685 confirmed queued. SSH submission session77853 is still attached to the
 background shell; do not interpret that observational session as a duplicate
 job or retry while the confirmed allocation/launcher is live.
+
+## Level-local numerical RK update used by Z4c
+
+Previous turn progressed via temporal/spatial boundary sampler fcc60689. Verified
+allocation58199685 and launcher1875948 still live; allocation pending Resources
+at the final check. No new allocation submitted.
+
+BlockBatches now accepts an explicit level range and preserves other levels.
+Extracted the classical RK numerical update into a shared kernel taking explicit
+dt and block batches, with no mesh time/dt lookup. Z4c's synchronous classical
+path now calls this exact kernel (all levels, retaining existing post-update
+axis/projection/diagnostics). This does NOT enable asynchronous global tasks.
+The production wrapper still obtains dt from the mesh, and global CopyU/BCs need
+level-local consumers before recursive Z4c evolution is safe.
+
+New level_rk_update test calls Schedule with a grouped coarse level and ratios
+1/2/4, evolving a nonautonomous ODE using StepContext stage times. It checks
+coarse/fine update counts, forced-zero components, unchanged inactive levels and
+all ghosts, plus empty selected-level batches. Error ratios17.4669,17.1694,
+16.725 approach fourth order. This test has no spatial PDE coupling; it does
+not qualify asynchronous coarse/fine Z4c evolution.
+
+Full executable rebuilt; four static-AMR native Cartoon runs using level batches
+and RK-history capture reproduce full restart payloads byte-for-byte against
+3103ef04 capture baseline. Temporal ratios15.17646,15.23751. Evidence:
+level-update-results.json; raw /tmp/vc-cartoon-level-update-runtime. Four relevant
+CTest cases pass. Build logs /tmp/vc-level-rk-build.log and
+/tmp/vc-level-rk-rebuild.log. Build identifies base1bd235a6 plus uncommitted changes
+now included in this commit. GPU qualification of these changes remains pending.

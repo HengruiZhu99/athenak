@@ -1950,3 +1950,11 @@ if(Athena_BUILD_UNIT_TESTS)
   target_link_libraries(athena_vertex_temporal_boundary_test PRIVATE Kokkos::kokkos)
   add_test(NAME vertex_temporal_boundary COMMAND athena_vertex_temporal_boundary_test)
 endif()
+
+if(Athena_BUILD_UNIT_TESTS)
+  add_executable(athena_level_rk_update_test tst/unit/level_rk_update_test.cpp)
+  target_include_directories(athena_level_rk_update_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR})
+  target_link_libraries(athena_level_rk_update_test PRIVATE Kokkos::kokkos)
+  add_test(NAME level_rk_update COMMAND athena_level_rk_update_test)
+endif()

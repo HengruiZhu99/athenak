@@ -13,6 +13,7 @@
 #include "mesh/mesh_refinement.hpp"
 #include "driver/driver.hpp"
 #include "driver/classical_rk4.hpp"
+#include "driver/classical_rk4_update.hpp"
 #include "coordinates/coordinates.hpp"
 #include "globals.hpp"
 #include "z4c/z4c.hpp"
@@ -127,13 +128,7 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
   const bool telegraph_lapse = opt.telegraph_lapse;
 
   if (pdriver->integrator == "rk4_classical") {
-    // u1 is the beginning-of-step state, copied by CopyU only at stage 1.
-    // The accumulator is scratch, never checkpointed or transferred by AMR.
-    // Resize only at stage 1, after any between-step hierarchy changes.
-    if (stage == 1 && classical_sum.extent(0) != nmb1 + 1) {
-      Kokkos::realloc(classical_sum, nmb1 + 1, nz4c,
-                      bounds.n3, bounds.n2, bounds.n1);
-    }
+    // u1 is the beginning-of-step state, copied by CopyU at stage 1.
 #ifdef ATHENA_Z4C_KERNEL_TESTS
     // Test hook only: capture actual post-boundary RHS without consuming the
     // predictor or changing evolution. Runtime level-local stepping will select
@@ -148,21 +143,10 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
       coarse_rk_predictor.Capture(u_rhs,stage);
     }
 #endif
-    auto sum = classical_sum;
-    const Real dt = pmy_pack->pmesh->dt;
-    const Real weight = classical_rk4::Weight(stage);
-    const Real next = classical_rk4::NextFraction(stage);
-    par_for("z4c classical RK4 update", DevExeSpace(),
-        0, nmb1, 0, nvar-1, ks, ke, js, je, is, ie,
-        KOKKOS_LAMBDA(const int m, const int n, const int k, const int j,
-                      const int i) {
-      const bool prescribed_component = n >= I_Z4C_BETAX &&
-          n <= (telegraph_lapse ? I_Z4C_BETAZ : I_Z4C_BZ);
-      const Real rhs = u_rhs(m,n,k,j,i);
-      sum(m,n,k,j,i) = (stage == 1 ? 0.0 : sum(m,n,k,j,i)) + weight*rhs;
-      u0(m,n,k,j,i) = prescribed_zero_shift && prescribed_component ? 0.0 :
-          u1(m,n,k,j,i) + dt*(stage == 4 ? sum(m,n,k,j,i) : next*rhs);
-    });
+    rhs_batches.Update(pdriver->level_batch_rhs,pmy_pack->pmb->mb_lev,nmb1+1);
+    classical_rk4::Update(rhs_batches,bounds,pmy_pack->pmesh->dt,stage,
+        u0,u1,u_rhs,classical_sum,prescribed_zero_shift ? I_Z4C_BETAX : 1,
+        prescribed_zero_shift ? (telegraph_lapse ? I_Z4C_BETAZ : I_Z4C_BZ) : 0);
   } else {
   par_for("z4c RK update",DevExeSpace(),
       0,nmb1,0,nvar-1,ks,ke,js,je,is,ie,
