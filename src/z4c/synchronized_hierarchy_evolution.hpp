@@ -52,13 +52,25 @@ class SynchronizedHierarchyEvolution {
         const auto found=cache.find(t);if(found!=cache.end()) return found->second;
         return cache.emplace(t,maximum.Evaluate(*history,t)).first->second;
       },[](double){return 0.;},[](double){return 0.;});
+    // When all levels share an RK stage, use that actual stage vector's
+    // physical-leaf maximum, as the native synchronous integrator does.
+    // RK stages 2 and 3 have the same nominal time but different states;
+    // a physical dense-output history cannot substitute for both of them.
+    physics->stage_max_K=[this](const subcycling::StepContext &s,int stage,
+                               const DvceArray5D<Real> &u) {
+      if(s.minimum_level==physics->root &&
+         s.maximum_level==physics->timestep_ranges.rbegin()->first)
+        return PhysicalMaximum(u);
+      return physics->max_K(s.StageTime(classical_rk4::StageTime(stage)));
+    };
     physics->enforce_timestep_limits=true;physics->timestep_cfl=mesh->cfl_no;
     time=mesh->time;
   }
   SynchronizedHierarchyEvolution(const SynchronizedHierarchyEvolution &)=delete;
   SynchronizedHierarchyEvolution &operator=(const SynchronizedHierarchyEvolution &)=delete;
-  Real CurrentMaximum() const {
-    const auto u=storage.Values();const auto ids=leaf_ids;
+  Real CurrentMaximum() const {return PhysicalMaximum(storage.Values());}
+  Real PhysicalMaximum(const DvceArray5D<Real> &u) const {
+    const auto ids=leaf_ids;
     const int ni=layout.ie-layout.is+1,nj=layout.je-layout.js+1;
     const int is=layout.is,js=layout.js,ks=layout.ks;
     Real value=0;

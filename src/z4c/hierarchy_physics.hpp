@@ -27,6 +27,7 @@ struct HierarchyPhysics {
   bool enforce_timestep_limits=false;
   Real timestep_cfl=.25;
   std::function<Real(double)> max_K,kappa1,shift_eta;
+  std::function<Real(const subcycling::StepContext &,int,const DvceArray5D<Real> &)> stage_max_K;
   std::vector<int> parities;
   std::array<bool,4> outer_faces;
   DvceArray5D<Real> mu,unused;
@@ -67,7 +68,7 @@ struct HierarchyPhysics {
   // system with max-domain telegraph damping. Include covered predictor nodes:
   // their stability matters even though they are excluded from physical extrema.
   std::vector<subcycling::LevelStepLimit> TimestepLimits(double time,Real cfl,
-      int minimum_level=-1,int maximum_level=-1) const {
+      int minimum_level=-1,int maximum_level=-1,Real stage_maximum=-1) const {
     if(!std::isfinite(time) || !std::isfinite(cfl) || cfl<=0 || cfl>1 ||
        options.slow_start_lapse || options.damp_kappa1!=0 ||
        options.target_kappa1!=0 || options.shift_eta!=0 ||
@@ -75,7 +76,7 @@ struct HierarchyPhysics {
           TelegraphDampingPrescription::max_domain_abs_K) ||
        kappa1(time)!=0 || shift_eta(time)!=0)
       throw std::invalid_argument("unsupported hierarchy timestep source configuration");
-    const Real maximum=max_K(time);
+    const Real maximum=stage_maximum>=0 ? stage_maximum : max_K(time);
     if(!std::isfinite(maximum) || maximum<0)
       throw std::runtime_error("invalid synchronized timestep gauge maximum");
     const auto opt=options;
@@ -119,10 +120,10 @@ struct HierarchyPhysics {
   }
   // Only this stage's level group is at the queried stage time. Other levels
   // must not participate in the spatial reduction while asynchronously evolved.
-  void CheckStageTimestep(const subcycling::StepContext &s,int stage) const {
+  void CheckStageTimestep(const subcycling::StepContext &s,int stage,Real maximum=-1) const {
     if(!enforce_timestep_limits) return;
     const double time=s.StageTime(classical_rk4::StageTime(stage));
-    for(const auto &limit:TimestepLimits(time,timestep_cfl,s.minimum_level,s.maximum_level)) {
+    for(const auto &limit:TimestepLimits(time,timestep_cfl,s.minimum_level,s.maximum_level,maximum)) {
       const double ceiling=std::min(limit.spatial,limit.source);
       if(s.Dt()>ceiling*(1+32*std::numeric_limits<Real>::epsilon()))
         throw subcycling::IntervalStabilityFailure();
@@ -138,9 +139,10 @@ struct HierarchyPhysics {
   }
   void RHS(const subcycling::StepContext &s,int stage,const subcycling::BlockBatches &b,
            const DvceArray5D<Real> &u,const DvceArray5D<Real> &rhs) {
-    CheckStageTimestep(s,stage);
     const double time=s.StageTime(classical_rk4::StageTime(stage));
-    const Real maximum=max_K(time),damping=kappa1(time),eta=shift_eta(time);
+    const Real maximum=stage_max_K ? stage_max_K(s,stage,u) : max_K(time);
+    const Real damping=kappa1(time),eta=shift_eta(time);
+    CheckStageTimestep(s,stage,maximum);
     if(!std::isfinite(maximum) || maximum<0 || !std::isfinite(damping) || !std::isfinite(eta))
       throw std::runtime_error("invalid common-time gauge coefficients");
     auto state=BindStateViews(u),out=BindStateViews(rhs);Tmunu::Tmunu_vars vacuum;
