@@ -1,3 +1,4 @@
+#include "driver/execution_profile.hpp"
 //========================================================================================
 // AthenaK astrophysical fluid dynamics & numerical relativity code
 // Licensed under the 3-clause BSD License, see LICENSE file for details
@@ -114,6 +115,7 @@ void Z4cVertexTopologyPlan::ConfigureRuntime(
 
 void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
                                     const Z4cGridLayout &layout) {
+  execution_profile::Scope profile("vc/topology_rebuild");
   if (layout.centering != Z4cGridCentering::vertex) {
     std::cerr << "### FATAL ERROR: VC topology plan requested for non-VC layout"
               << std::endl;
@@ -645,6 +647,7 @@ void Z4cVertexTopologyPlan::Rebuild(MeshBlockPack *pack,
 
 void Z4cVertexTopologyPlan::SynchronizeSharedNodes(
     DvceArray5D<Real> &state, const char *diagnostic_environment) const {
+  execution_profile::Scope profile("vc/shared_node_sync");
   ++synchronization_calls;
   const int local_count = static_cast<int>(local_contributors.size());
   const int global_count = static_cast<int>(global_contributors.size());

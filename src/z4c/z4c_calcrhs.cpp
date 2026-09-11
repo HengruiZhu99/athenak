@@ -1,3 +1,4 @@
+#include "driver/execution_profile.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -134,6 +135,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
       opt.shift_eta_max_K || opt.damp_kappa1_max_K;
   Real max_abs_K = 1.0;
   if (use_max_K_scale) {
+    execution_profile::Scope profile("gauge/global_max_K");
     const int nmkji = nmb * active_nx3 * active_nx2 * active_nx1;
     const int nkji = active_nx3 * active_nx2 * active_nx1;
     const int nji = active_nx2 * active_nx1;

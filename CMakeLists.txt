@@ -1886,3 +1886,10 @@ if (Athena_BUILD_UNIT_TESTS)
 endif()
 
 install( TARGETS athena DESTINATION bin )
+
+if(Athena_BUILD_UNIT_TESTS)
+  add_executable(athena_execution_profile_test tst/unit/execution_profile_test.cpp)
+  target_include_directories(athena_execution_profile_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
+  target_link_libraries(athena_execution_profile_test PRIVATE Kokkos::kokkos)
+  add_test(NAME execution_profile COMMAND athena_execution_profile_test)
+endif()
