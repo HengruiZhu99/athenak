@@ -155,6 +155,7 @@ class RK4PredictorStates {
   const std::vector<int> &SourceBlocks() const { return source_blocks_; }
   int CompletedStages() const { return completed_; }
   double StartTime() const { return start_; }
+  double Dt() const { return dt_; }
   std::size_t Bytes() const { return 5*data_[0].size()*sizeof(Real); }
  private:
   std::array<DvceArray5D<Real>,5> data_;

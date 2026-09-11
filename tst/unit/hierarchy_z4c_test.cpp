@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <cstring>
 #include "z4c/hierarchy_physics.hpp"
+#include "driver/hierarchy_physical_maximum.hpp"
 struct TestPhysics: z4c::HierarchyPhysics<3> {
       using z4c::HierarchyPhysics<3>::HierarchyPhysics;
       bool skip_projection=false;
@@ -80,6 +81,17 @@ int main(int argc,char **argv) {
     TestPhysics physics(storage,geometry,l,opt,0,roots,roots,flag("--no-ko") ? 0 : .02/64,
       {{false,true,true,true}},[vary=flag("--time-dependent")](double t){return vary ? 1.+.5*t : 1.;},[](double){return 0.;},[](double){return 0.;});
     physics.skip_projection=flag("--no-projection");
+    subcycling::HierarchyPhysicalMaximum global_K;
+    global_K.Build(tree,Z::I_Z4C_KHAT,Z::I_Z4C_THETA);
+    const subcycling::HierarchyRK4::Histories *gauge_history=nullptr;
+    Real initial_K=0,largest_gauge=0;int gauge_samples=0;
+    if(flag("--global-gauge")) physics.max_K=[&](double t) {
+      const Real value=gauge_history ? global_K.Evaluate(*gauge_history,t) : initial_K;
+      largest_gauge=std::max(largest_gauge,value);++gauge_samples;return value;
+    };
+    const auto gauge_pass=[&](const subcycling::HierarchyRK4::Histories &histories) {
+      gauge_history=histories.empty()?nullptr:&histories;
+    };
     const double dt=.04/steps;
     const unsigned ratio=flag("--synchronous-hierarchy") ? 1 :
       (flag("--three-level") && !flag("--coarse-group") ? 4 : 2);
@@ -97,10 +109,11 @@ int main(int argc,char **argv) {
            std::memcmp(before.data(),after.data(),before.size()*sizeof(Real))!=0)
           throw std::runtime_error("corrector rollback did not preserve interval start");
       }
-      if(flag("--adaptive") || flag("--rollback-failure")) {
+      if(flag("--adaptive") || flag("--rollback-failure") || flag("--global-gauge")) {
         subcycling::CorrectorReport report;subcycling::CorrectorControl control;
         if(flag("--extra-passes")) control.maximum_passes=12;
-        try {report=engine.RunCorrected(n*dt,dt,storage,physics,ratio,control);}
+        try {report=engine.RunCorrected(n*dt,dt,storage,physics,ratio,control,
+          flag("--global-gauge") ? std::function<void(const subcycling::HierarchyRK4::Histories &)>(gauge_pass) : nullptr); }
         catch(const subcycling::CorrectorFailure &) {
           report=engine.LastCorrectorReport();
           std::cerr << "corrector failure steps=" << steps << " interval=" << n
@@ -108,11 +121,19 @@ int main(int argc,char **argv) {
                     << " history=" << report.history_change << std::endl;
           throw;
         }
+        if(flag("--global-gauge")) {
+          initial_K=global_K.Evaluate(engine.AcceptedHistories(),(n+1)*dt);
+          gauge_history=nullptr;
+        }
         if(!report.converged) throw std::runtime_error("accepted unconverged interval");
         minimum_passes=std::min(minimum_passes,report.passes);
         maximum_passes=std::max(maximum_passes,report.passes);
         worst_change=std::max(worst_change,std::max(report.endpoint_change,report.history_change));
       } else engine.Run(n*dt,dt,storage,physics,ratio);
+    }
+    if(flag("--global-gauge")) {
+      if(gauge_samples==0 || !(largest_gauge>0)) throw std::runtime_error("global gauge was not exercised");
+      std::cout << "global gauge samples=" << gauge_samples << " max=" << largest_gauge << std::endl;
     }
     if(maximum_passes>0) std::cout << "corrector passes=" << minimum_passes << ".." << maximum_passes
                                  << " worst normalized change=" << worst_change << std::endl;

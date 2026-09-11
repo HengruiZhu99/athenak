@@ -985,3 +985,32 @@ leaf level (including synchronous groups), then couple that coefficient history
 into interval iteration and convergence checks. MPI aggregation, production
 driver/AMR/restarts, and the requested single-A100 matched-endpoint speedup
 remain unverified/incomplete. Production campaign untouched.
+
+## Coupled hierarchy common-time maximum prototype
+
+Previous turn made progress in ee3dc31a. Added HierarchyPhysicalMaximum to combine
+physical-leaf maxima over each level's containing RK history at a requested
+common time. Select later interval at shared endpoints; reject absent coverage.
+Roundoff-sized endpoint differences are tolerated, no physical extrapolation.
+This remains single-rank and assumes canonical shared active values.
+
+Fixed histories missing from levels inside the synchronous coarse group: retain
+all populated levels, not just the group's highest level. RunCorrected now has
+a begin-pass history callback and exposes accepted histories, allowing a gauge
+callback to evaluate preceding-pass Khat+2Theta at stage times. Uncorrected Run
+invalidates prior accepted-report state. Current test seeds the first pass from
+the previous endpoint maximum (initial K=0) and corrects subsequent passes.
+
+Actual Z4c three-level global-gauge test passes with temporal ratios17.0454 and
+15.6091; grouped test17.4533 and16.5888. The callback is exercised and nonzero
+(max approximately0.000238112), not a prescribed constant. Adaptive/rollback/
+group existing tests pass. CPU logs archived. This small weak perturbation does
+not establish production-gauge accuracy or performance at strong K, switches,
+or long intervals. Endpoint/history convergence currently bounds iteration;
+explicit coefficient-history residuals and stronger synchronous-reference tests
+remain necessary. No CUDA qualification of these new changes yet.
+
+Production integration remains incomplete: common-time aggregation is local,
+main driver/AMR/checkpoint continuation is not using this prototype, source
+stability/retry and matched-endpoint single-A100 accuracy/wall-time remain
+unverified. No campaign files or jobs changed.

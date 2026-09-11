@@ -1,0 +1,70 @@
+UpdateCTestConfiguration  from :/tmp/vc-subcycling-cpu/DartConfiguration.tcl
+Test project /tmp/vc-subcycling-cpu
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 156
+    Start 156: hierarchy_z4c_global_gauge
+
+156: Test command: /tmp/vc-subcycling-cpu/athena_hierarchy_z4c_test "--global-gauge" "--three-level"
+156: Working Directory: /tmp/vc-subcycling-cpu
+156: Test timeout computed to be: 10000000
+156: global gauge samples=784 max=0.000238113
+156: corrector passes=7..7 worst normalized change=0.243551
+156: completed steps=4
+156: global gauge samples=1540 max=0.000238113
+156: corrector passes=6..7 worst normalized change=0.15102
+156: completed steps=8
+156: global gauge samples=2688 max=0.000238112
+156: corrector passes=6..6 worst normalized change=0.139457
+156: completed steps=16
+156: global gauge samples=5320 max=0.000238112
+156: corrector passes=5..6 worst normalized change=0.864633
+156: completed steps=32
+156: max difference=2.73012e-10 leaf=0 component=15 j=8 i=0
+156: successive rms=8.60518e-12
+156: max difference=1.61346e-11 leaf=0 component=7 j=8 i=0
+156: successive rms=5.0484e-13
+156: max difference=9.98043e-13 leaf=0 component=7 j=8 i=0
+156: successive rms=3.23426e-14
+156: ratio=17.0454
+156: ratio=15.6091
+1/2 Test #156: hierarchy_z4c_global_gauge .........   Passed    7.56 sec
+test 157
+    Start 157: hierarchy_z4c_global_gauge_group
+
+157: Test command: /tmp/vc-subcycling-cpu/athena_hierarchy_z4c_test "--global-gauge" "--three-level" "--coarse-group"
+157: Working Directory: /tmp/vc-subcycling-cpu
+157: Test timeout computed to be: 10000000
+157: global gauge samples=288 max=0.000238112
+157: corrector passes=6..6 worst normalized change=0.070902
+157: completed steps=4
+157: global gauge samples=564 max=0.000238112
+157: corrector passes=5..6 worst normalized change=0.264585
+157: completed steps=8
+157: global gauge samples=960 max=0.000238112
+157: corrector passes=5..5 worst normalized change=0.239464
+157: completed steps=16
+157: global gauge samples=1896 max=0.000238112
+157: corrector passes=4..5 worst normalized change=0.945916
+157: completed steps=32
+157: max difference=1.48726e-09 leaf=6 component=7 j=0 i=0
+157: successive rms=4.88448e-11
+157: max difference=8.13126e-11 leaf=6 component=7 j=0 i=0
+157: successive rms=2.79859e-12
+157: max difference=4.74642e-12 leaf=6 component=7 j=0 i=1
+157: successive rms=1.68704e-13
+157: ratio=17.4533
+157: ratio=16.5888
+2/2 Test #157: hierarchy_z4c_global_gauge_group ...   Passed    3.19 sec
+
+The following tests passed:
+	hierarchy_z4c_global_gauge
+	hierarchy_z4c_global_gauge_group
+
+100% tests passed out of 2
+
+Total Test time (real) =  10.76 sec

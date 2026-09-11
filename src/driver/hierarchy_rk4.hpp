@@ -1,5 +1,6 @@
 #ifndef DRIVER_HIERARCHY_RK4_HPP_
 #define DRIVER_HIERARCHY_RK4_HPP_
+#include <functional>
 #include "driver/subcycle_schedule.hpp"
 #include "driver/covered_stage_correction.hpp"
 #include "driver/classical_rk4_update.hpp"
@@ -14,6 +15,7 @@ namespace subcycling {
 // current-stage spatial data, with stage restriction before RHS evaluation.
 class HierarchyRK4 {
  public:
+  using Histories=std::map<std::pair<int,std::uint64_t>,RK4PredictorStates>;
 #ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
   bool test_skip_restriction=false;
   int test_corrector_passes=1;
@@ -50,7 +52,8 @@ class HierarchyRK4 {
   // convergence. Failure restores the hierarchy, then lets the driver reduce dt.
   template<class Physics>
   CorrectorReport RunCorrected(double time,double dt,VertexParentStates &storage,Physics &physics,
-      unsigned maximum_ratio,const CorrectorControl &control={}) {
+      unsigned maximum_ratio,const CorrectorControl &control={},
+      const std::function<void(const Histories &)> &begin_pass={}) {
     control.Validate();
     if(inside_corrector_) throw std::logic_error("nested hierarchy corrector call");
     const auto state=storage.Values();
@@ -64,6 +67,7 @@ class HierarchyRK4 {
     try {
       for(int pass=1;pass<=control.maximum_passes;++pass) {
         Kokkos::deep_copy(state,rollback_);current_history_.clear();
+        if(begin_pass) begin_pass(previous_history_);
         Run(time,dt,storage,physics,maximum_ratio);
         last_report_.passes=pass;
         if(pass>1) {
@@ -88,10 +92,15 @@ class HierarchyRK4 {
       inside_corrector_=false;previous_history_.clear();current_history_.clear();throw;
     }
   }
+  const Histories &AcceptedHistories() const {
+    if(!last_report_.converged) throw std::logic_error("no accepted corrected histories");
+    return current_history_;
+  }
   const CorrectorReport &LastCorrectorReport() const {return last_report_;}
   template<class Physics>
   void Run(double time,double dt,VertexParentStates &storage,Physics &physics,
            unsigned maximum_ratio=(1U<<20)) {
+    if(!inside_corrector_) last_report_={};
     if(!ready_ || storage.Values().extent_int(0)!=nodes_ ||
        storage.AllLevels().extent_int(0)!=nodes_)
       throw std::invalid_argument("hierarchy RK storage mismatch");
@@ -147,8 +156,9 @@ class HierarchyRK4 {
               l.ks,l.ke,l.js,l.je,l.is,l.ie,KOKKOS_LAMBDA(int m,int v,int k,int j,int i) {
             initial(m,v,k,j,i)=state(m,v,k,j,i);
           });
-          if(inside_corrector_) current_history_[{level,step.begin_tick}].Begin(
-              state,layout_,sources_.at(level),step.StartTime(),step.Dt());
+          if(inside_corrector_) for(int q=step.minimum_level;q<=level;++q)
+            current_history_[{q,step.begin_tick}].Begin(
+              state,layout_,sources_.at(q),step.StartTime(),step.Dt());
 
           if(level<maximum_) {
             predictors_[level].Begin(state,layout_,sources_.at(level),step.StartTime(),step.Dt());
@@ -157,7 +167,8 @@ class HierarchyRK4 {
         }
         physics.RHS(step,stage,blocks_,state,rhs_);
         if(correct) corrections_.at(level).Apply(correction->second,step.Dt(),stage,true,layout_,rhs_);
-        if(inside_corrector_) current_history_.at({level,step.begin_tick}).Capture(rhs_,stage);
+        if(inside_corrector_) for(int q=step.minimum_level;q<=level;++q)
+          current_history_.at({q,step.begin_tick}).Capture(rhs_,stage);
 
         if(level<maximum_) predictors_.at(level).Capture(rhs_,stage);
         classical_rk4::Update(blocks_,layout_,step.Dt(),stage,state,initial_,rhs_,sum_);
