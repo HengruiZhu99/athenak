@@ -1,0 +1,69 @@
+{
+  "level_batches": true,
+  "static_amr": true,
+  "time_dependent_damping": false,
+  "runs": [
+    {
+      "cfl": 0.4,
+      "time": 0.5,
+      "cycle": 31,
+      "file": "/private/tmp/vc-cartoon-bulk-rhs-runtime/0.4/tab/pulse.state.00001.tab",
+      "restart": "/private/tmp/vc-cartoon-bulk-rhs-runtime/0.4/rst/pulse.00001.rst",
+      "restart_payload_sha256": "ada902651eb8df38e9f44761646fb34e19900b8021a6140fb9819848ce87797a"
+    },
+    {
+      "cfl": 0.2,
+      "time": 0.5,
+      "cycle": 61,
+      "file": "/private/tmp/vc-cartoon-bulk-rhs-runtime/0.2/tab/pulse.state.00001.tab",
+      "restart": "/private/tmp/vc-cartoon-bulk-rhs-runtime/0.2/rst/pulse.00001.rst",
+      "restart_payload_sha256": "61ebb7b92d1e7bde470d3a26fb9a9f27f5b0ba4b2a3fbdc4fe026c39d0751617"
+    },
+    {
+      "cfl": 0.1,
+      "time": 0.5,
+      "cycle": 121,
+      "file": "/private/tmp/vc-cartoon-bulk-rhs-runtime/0.1/tab/pulse.state.00001.tab",
+      "restart": "/private/tmp/vc-cartoon-bulk-rhs-runtime/0.1/rst/pulse.00001.rst",
+      "restart_payload_sha256": "7b35c0ee377436cf35ccc1912f4b8a926a6b3cbc18f79b223b5a1fecc66a232b"
+    },
+    {
+      "cfl": 0.05,
+      "time": 0.5,
+      "cycle": 242,
+      "file": "/private/tmp/vc-cartoon-bulk-rhs-runtime/0.05/tab/pulse.state.00001.tab",
+      "restart": "/private/tmp/vc-cartoon-bulk-rhs-runtime/0.05/rst/pulse.00001.rst",
+      "restart_payload_sha256": "198807f76618d9302e67bdf82b7e01cbb870a98092b1aaedc4cb30815b675f89"
+    }
+  ],
+  "rms_successive_differences": [
+    3.746187914049624e-09,
+    2.4684198894479565e-10,
+    1.6199631463395933e-11
+  ],
+  "ratios": [
+    15.176461387561705,
+    15.237506452078886
+  ],
+  "passed": true,
+  "scope": "Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no dynamic-AMR or production-gauge qualification",
+  "payload_comparison": [
+    {
+      "cfl": 0.4,
+      "identical_payload": true
+    },
+    {
+      "cfl": 0.2,
+      "identical_payload": true
+    },
+    {
+      "cfl": 0.1,
+      "identical_payload": true
+    },
+    {
+      "cfl": 0.05,
+      "identical_payload": true
+    }
+  ],
+  "baseline": "/tmp/vc-cartoon-physical-parent-runtime/results.json"
+}

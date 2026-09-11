@@ -32,6 +32,7 @@
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/state_views.hpp"
 #include "z4c/z4c_vertex_topology.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "z4c/z4c_symmetry.hpp"
@@ -216,25 +217,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   con.Z.InitWithShallowSlice(u_con, I_CON_Z);
   con.M_d.InitWithShallowSlice(u_con, I_CON_MX, I_CON_MZ);
 
-  z4c.alpha.InitWithShallowSlice (u0, I_Z4C_ALPHA);
-  z4c.beta_u.InitWithShallowSlice(u0, I_Z4C_BETAX, I_Z4C_BETAZ);
-  z4c.vB_d.InitWithShallowSlice(u0, I_Z4C_BX, I_Z4C_BZ);
-  z4c.chi.InitWithShallowSlice   (u0, I_Z4C_CHI);
-  z4c.vKhat.InitWithShallowSlice  (u0, I_Z4C_KHAT);
-  z4c.vTheta.InitWithShallowSlice (u0, I_Z4C_THETA);
-  z4c.vGam_u.InitWithShallowSlice (u0, I_Z4C_GAMX, I_Z4C_GAMZ);
-  z4c.g_dd.InitWithShallowSlice  (u0, I_Z4C_GXX, I_Z4C_GZZ);
-  z4c.vA_dd.InitWithShallowSlice  (u0, I_Z4C_AXX, I_Z4C_AZZ);
-
-  rhs.alpha.InitWithShallowSlice (u_rhs, I_Z4C_ALPHA);
-  rhs.beta_u.InitWithShallowSlice(u_rhs, I_Z4C_BETAX, I_Z4C_BETAZ);
-  rhs.vB_d.InitWithShallowSlice  (u_rhs, I_Z4C_BX, I_Z4C_BZ);
-  rhs.chi.InitWithShallowSlice   (u_rhs, I_Z4C_CHI);
-  rhs.vKhat.InitWithShallowSlice  (u_rhs, I_Z4C_KHAT);
-  rhs.vTheta.InitWithShallowSlice (u_rhs, I_Z4C_THETA);
-  rhs.vGam_u.InitWithShallowSlice (u_rhs, I_Z4C_GAMX, I_Z4C_GAMZ);
-  rhs.g_dd.InitWithShallowSlice  (u_rhs, I_Z4C_GXX, I_Z4C_GZZ);
-  rhs.vA_dd.InitWithShallowSlice  (u_rhs, I_Z4C_AXX, I_Z4C_AZZ);
+  z4c=BindStateViews(u0);
+  rhs=BindStateViews(u_rhs);
 
   weyl.rpsi4.InitWithShallowSlice (u_weyl, 0);
   weyl.ipsi4.InitWithShallowSlice (u_weyl, 1);

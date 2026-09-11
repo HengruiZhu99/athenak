@@ -373,3 +373,34 @@ payload9ca1d4eac27694fbef13fab09cf013559e2f02ce42d781d43378c4583938bbde.
 Evidence parent-outer-results.json, raw /tmp/vc-parent-outer-runtime; four-CFL raw
 /tmp/vc-cartoon-physical-parent-runtime. This is initialization/leaf invariance,
 not an asynchronously evolved parent or production-gauge qualification.
+
+## Shared continuum bulk RHS evaluated on an auxiliary parent
+
+Previous turn made progress via physical parent fills b26ff2a0. Allocation
+58200152 now RUNNING on nid008445. Four GPU helper tests ran before the late
+baseline; baseline24steps completed335.87094s total with exit0, crossing the
+first AMR event at cycle133506. Development profile now running; full comparison
+pending. This remains synchronous optimization evidence, not subcycling.
+
+Extracted the three continuum RHS kernels verbatim into EvaluateZ4cBulkRHS with
+explicit geometry, bound field views, block batches, stage time and gauge scales.
+It has no mesh/driver pointer or global time lookup. The production leaf wrapper
+calls the same function; global gauge reduction, KO, boundary RHS replacement,
+axis audits and diagnostics remain in their existing surrounding paths. A shared
+BindStateViews function replaces the duplicate state/RHS tensor view setup.
+
+New analytic test evaluates the actual native VC Cartoon bulk operator on an
+injected covered parent with axis and physical ghosts. Flat metric and lapse
+1+.01*rho^2+.02*z^2 give trace RHS-.08 and the expected anisotropic traceless
+Hessian. Maximum error2.62151e-14 across active vertices, with ghosts unchanged.
+Initial test expectation swapped the packed axial/suppressed tensor directions;
+corrected to the authoritative (rho,z,suppressed) coordinate mapping. Bulk RHS
+is not yet a complete parent operator: KO, boundary RHS and axis checks still
+need explicit parent consumers before asynchronous evolution.
+
+Full CPU executable rebuilt. Four static Cartoon runs, with parent initialization
+and RK capture enabled, retain byte-identical complete restart payloads and
+ratios15.17646,15.23751. Evidence bulk-rhs-results.json; raw
+/tmp/vc-cartoon-bulk-rhs-runtime. Analytic unit parent_bulk_rhs passes. Build logs
+/tmp/vc-parent-rhs-build.log and /tmp/vc-parent-rhs-unit.log. GPU compilation of
+this extraction remains outstanding; queued/running topology24 uses a127a1fe.
