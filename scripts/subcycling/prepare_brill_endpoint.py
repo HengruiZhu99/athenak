@@ -63,7 +63,7 @@ for name,integrator,ratio in [('legacy_sync','rk4',0),
     # by a finest step. Both must reach the exact comparison endpoint.
     sections=re.findall(r'^<(output[^>]*)>',text,re.M)
     for section in sections:
-        for key,value in [('dcycle',0),('dt',(end-start)/8),('last_time',start),('file_number',0)]:
+        for key,value in [('cadence','time'),('dcycle',0),('dt',(end-start)/8),('last_time',start),('file_number',0)]:
             text=setparam(text,section,key,value)
     (case/'input.athinput').write_text(text)
     manifest['cases'].append(dict(name=name,directory=str(case),ratio=ratio,integrator=integrator,
