@@ -1,0 +1,30 @@
+diff --git a/src/outputs/outputs.cpp b/src/outputs/outputs.cpp
+index e7b56f06..5c86162c 100644
+--- a/src/outputs/outputs.cpp
++++ b/src/outputs/outputs.cpp
+@@ -20,6 +20,8 @@
+ //!                  is defined at start of outputs.hpp file]
+ //!   - file_type = tab,vtk,hst,bin,rst
+ //!   - dt        = problem time between outputs
++//!   - cadence   = auto (legacy precedence), time, or cycle; time overrides
++//!                 any dcycle value inherited from a restart
+ //!
+ //! EXAMPLE of an <output[n]> block for a TAB dump:
+ //!   <output3>
+@@ -72,7 +74,15 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
+       // set time of last output, time or cycles between outputs
+       // when last_time < 0, then outputs will always be made
+       opar.last_time = pin->GetOrAddReal(opar.block_name,"last_time", -1.0);
+-      if (pin->DoesParameterExist(opar.block_name,"dcycle")) {
++      // A restart may retain dcycle even after dt is overridden. Make the
++      // cadence choice explicit without changing legacy automatic precedence.
++      const std::string cadence=pin->GetOrAddString(opar.block_name,"cadence","auto");
++      if(cadence!="auto" && cadence!="time" && cadence!="cycle") {
++        std::cerr << "Invalid output cadence in " << opar.block_name << std::endl;
++        std::exit(EXIT_FAILURE);
++      }
++      if (cadence=="cycle" || (cadence=="auto" &&
++          pin->DoesParameterExist(opar.block_name,"dcycle"))) {
+         opar.dcycle = pin->GetInteger(opar.block_name,"dcycle");
+         opar.dt = 0.0;
+       } else {

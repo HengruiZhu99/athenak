@@ -5,6 +5,7 @@ import numpy as np
 p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('output',type=Path)
 p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
 p.add_argument('--production-gauge',action='store_true',help='Use Brill telegraph_tau=kappa=0.01')
+p.add_argument('--max-passes',type=int,default=8)
 a=p.parse_args();exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
 fixture=root/'fixture'
 subprocess.run([sys.executable,str(Path(__file__).with_name('test_checkpoint_probe.py')),
@@ -18,7 +19,8 @@ results=[]
 def run(name,rst,ratio,finish,frozen=False):
     directory=root/name;directory.mkdir();env=os.environ.copy()
     args=['-r',str(rst),'time/integrator=rk4_classical','time/nlim=-1',f'time/tlim={finish:.17g}',
-          f'time/subcycle_max_ratio={ratio}',f'time/subcycle_interval_cap={dt}']
+          f'time/subcycle_max_ratio={ratio}',f'time/subcycle_interval_cap={dt}',
+          f'time/subcycle_corrector_max_passes={a.max_passes}']
     if frozen:
         env['ATHENA_TEST_SUBCYCLE_INTERVAL_DIR']=str(directory/'probe')
         args += [f'time/subcycle_probe_dt={dt}',f'time/subcycle_probe_ratio={ratio}',

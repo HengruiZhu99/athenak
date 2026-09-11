@@ -11,7 +11,10 @@ class LiveHierarchyEvolution {
 };
 template<int NG> class LiveHierarchyImplementation final : public LiveHierarchyEvolution {
  public:
-  LiveHierarchyImplementation(Mesh *mesh,Z4c *z):evolution(mesh,z),native(z) {}
+  LiveHierarchyImplementation(Mesh *mesh,Z4c *z,int maximum_passes):evolution(mesh,z),native(z) {
+    evolution.control.maximum_passes=maximum_passes;
+    evolution.control.Validate();
+  }
   subcycling::AcceptedInterval Advance(Real cap,unsigned ratio) override {
     const auto result=evolution.Advance(cap,ratio);
     evolution.CopyAcceptedLeavesTo(native->u0);
@@ -33,11 +36,13 @@ template<int NG> class LiveHierarchyImplementation final : public LiveHierarchyE
   SynchronizedHierarchyEvolution<NG> evolution;
   Z4c *native;
 };
-inline std::unique_ptr<LiveHierarchyEvolution> MakeLiveHierarchy(Mesh *mesh,Z4c *z) {
+inline std::unique_ptr<LiveHierarchyEvolution> MakeLiveHierarchy(Mesh *mesh,Z4c *z,int maximum_passes=8) {
+  if(maximum_passes<3 || maximum_passes>64)
+    throw std::invalid_argument("live corrector pass limit must be between 3 and 64");
   switch(z->opt.fd_stencil) {
-    case 2:return std::make_unique<LiveHierarchyImplementation<2>>(mesh,z);
-    case 3:return std::make_unique<LiveHierarchyImplementation<3>>(mesh,z);
-    case 4:return std::make_unique<LiveHierarchyImplementation<4>>(mesh,z);
+    case 2:return std::make_unique<LiveHierarchyImplementation<2>>(mesh,z,maximum_passes);
+    case 3:return std::make_unique<LiveHierarchyImplementation<3>>(mesh,z,maximum_passes);
+    case 4:return std::make_unique<LiveHierarchyImplementation<4>>(mesh,z,maximum_passes);
     default:throw std::invalid_argument("unsupported live hierarchy stencil");
   }
 }

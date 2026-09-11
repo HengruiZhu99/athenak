@@ -1,0 +1,67 @@
+diff --git a/src/driver/hierarchy_rk4.hpp b/src/driver/hierarchy_rk4.hpp
+index 2645bf4e..b5d24612 100644
+--- a/src/driver/hierarchy_rk4.hpp
++++ b/src/driver/hierarchy_rk4.hpp
+@@ -1,6 +1,9 @@
+ #ifndef DRIVER_HIERARCHY_RK4_HPP_
+ #define DRIVER_HIERARCHY_RK4_HPP_
+ #include <functional>
++#include <cstdlib>
++#include <iomanip>
++#include <iostream>
+ #include "driver/subcycle_schedule.hpp"
+ #include "driver/covered_stage_correction.hpp"
+ #include "driver/classical_rk4_update.hpp"
+@@ -89,13 +92,24 @@ class HierarchyRK4 {
+           if(current_history_.size()!=previous_history_.size())
+             throw std::logic_error("corrector history topology changed");
+           last_report_.history_change=0;
+-          for(const auto &entry:current_history_)
+-            last_report_.history_change=std::max(last_report_.history_change,
+-                entry.second.Difference(previous_history_.at(entry.first),control));
++          std::pair<int,std::uint64_t> worst_history{-1,0};
++          for(const auto &entry:current_history_) {
++            const Real change=entry.second.Difference(previous_history_.at(entry.first),control);
++            if(change>last_report_.history_change) {
++              last_report_.history_change=change;worst_history=entry.first;
++            }
++          }
+           last_report_.feedback_change=feedback_residual ?
+               feedback_residual(current_history_,previous_history_) : 0;
+           if(!std::isfinite(last_report_.feedback_change) || last_report_.feedback_change<0)
+             throw std::runtime_error("invalid corrector feedback residual");
++          if(trace_corrector_) std::cerr<<std::setprecision(17)
++            <<"SUBCYCLE_CORRECTOR time="<<time<<" dt="<<dt<<" pass="<<pass
++            <<" endpoint="<<last_report_.endpoint_change
++            <<" history="<<last_report_.history_change
++            <<" feedback="<<last_report_.feedback_change
++            <<" worst_history_level="<<worst_history.first
++            <<" worst_history_tick="<<worst_history.second<<std::endl;
+           if(pass>=control.minimum_passes && last_report_.endpoint_change<=1 &&
+              last_report_.history_change<=1 && last_report_.feedback_change<=1) {
+             last_report_.converged=true;inside_corrector_=false;return last_report_;
+@@ -130,11 +144,15 @@ class HierarchyRK4 {
+     AcceptedInterval result;
+     for(int attempt=0;attempt<=retry.maximum_halvings;++attempt) {
+       ++result.attempts;
++      if(trace_corrector_) std::cerr<<std::setprecision(17)
++        <<"SUBCYCLE_ATTEMPT time="<<time<<" dt="<<dt
++        <<" attempt="<<result.attempts<<" ratio="<<maximum_ratio<<std::endl;
+       try {
+         result.corrector=RunCorrected(time,dt,storage,physics,maximum_ratio,control,
+                                        begin_pass,feedback_residual);
+         result.total_passes+=result.corrector.passes;result.dt=dt;return result;
+-      } catch(const RetryableIntervalFailure &) {
++      } catch(const RetryableIntervalFailure &failure) {
++        if(trace_corrector_) std::cerr<<"SUBCYCLE_RETRY reason="<<failure.what()<<std::endl;
+         result.total_passes+=last_report_.passes;
+         const double smaller=dt*.5;
+         // Do not make an unrepresentable fine step or exceed the retry budget.
+@@ -275,6 +293,7 @@ class HierarchyRK4 {
+   std::map<int,StepContext> contexts_;
+   DvceArray5D<Real> initial_,rhs_,sum_,rollback_,previous_end_;
+   CorrectorReport last_report_;
++  bool trace_corrector_=std::getenv("ATHENA_SUBCYCLE_TRACE")!=nullptr;
+ };
+ } // namespace subcycling
+ #endif

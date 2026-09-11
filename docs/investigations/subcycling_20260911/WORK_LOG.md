@@ -1650,3 +1650,14 @@ ATHENA_SUBCYCLE_TRACE enables per-attempt dt/ratio and per-pass normalized endpo
 
 ### Traced Brill failure isolates RK history convergence
 Diagnosticbuild1051167 completedstatus0; pinned-corrector-trace/athena. Prepared freshcorrector-probe-fb3d341c withoneacceptedcyclelimit andunchangedphysics/tolerances. Job58211844 nid008200 oneA100 reproducedCorrectorFailure134. Trace shows9attempts, dt from3.308885330634047e-5 down1.2925333322789246e-7. Finalpass8 endpoint0.0001131585, gaugefeedback0, history2.1999596 (normalized acceptance1). At larger dt historyresidualdominates andworstlevel shifts aspassesproceed. Immediateblocker is RK-historycorrector, not unresolvedglobalgaugefeedback. Traceandmetadataarchived; nexttest largerboundedmaxpasses withoutrelaxingtolerances, then investigate convergence/efficiency. Utilityprepare_corrector_probe.py preserves copiedprefix andlimits tooneinterval. No successfulsubcyclingreproduction yet.
+
+## Review pause (2026-09-11)
+User requested no further algorithm/tolerance/budget changes or simulations.
+Preserved already-written configurable corrector maximum-pass option (default8,
+bounds3..64) and test harness plumbing. CPU executable compile completed; this
+last change has NO runtime test and is NOT deployed to Perlmutter. No larger-budget
+experiment was run. It is unfinished qualification work, not a fix for the failure.
+Task-owned builds710534,880731,959300,1051167 are gone; trace build status0.
+Jobs58210242 COMPLETED0,58210606 CANCELLED,58211022 FAILED1,
+58211844 FAILED134. No task-owned job running; unrelated production
+58207074 corner-continue left untouched. No new jobs or simulations during handoff.

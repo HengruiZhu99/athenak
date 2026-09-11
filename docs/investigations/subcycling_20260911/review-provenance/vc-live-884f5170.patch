@@ -1,0 +1,281 @@
+diff --git a/scripts/subcycling/compare_brill_endpoint.py b/scripts/subcycling/compare_brill_endpoint.py
+new file mode 100644
+index 00000000..a89f717f
+--- /dev/null
++++ b/scripts/subcycling/compare_brill_endpoint.py
+@@ -0,0 +1,88 @@
++"""Describe completed endpoint experiments; never automatically certify reproduction."""
++import argparse
++import json
++import re
++from pathlib import Path
++import numpy as np
++
++
++def read_history(path):
++    labels = None
++    rows = []
++    for line in path.read_text().splitlines():
++        if line.startswith('#'):
++            pairs = re.findall(r'\[(\d+)\]=([^\s]+)', line)
++            if pairs:
++                current = [label for _, label in pairs]
++                if labels is not None and current != labels:
++                    raise ValueError('history schema changed within file')
++                labels = current
++        elif line.strip():
++            rows.append([float(x) for x in line.split()])
++    if labels is None or not rows:
++        raise ValueError('missing history header or samples')
++    values = np.asarray(rows)
++    if values.shape[1] != len(labels) or not np.all(np.isfinite(values)):
++        raise ValueError('invalid history data')
++    result = {name: values[:, i] for i, name in enumerate(labels)}
++    if np.any(np.diff(result['time']) < 0):
++        raise ValueError('history time goes backwards')
++    return result
++
++
++def main():
++    p = argparse.ArgumentParser(description=__doc__)
++    p.add_argument('manifest', type=Path)
++    p.add_argument('--output', type=Path, required=True)
++    a = p.parse_args()
++    m = json.loads(a.manifest.read_text())
++    metrics = ['minLapse', 'maxAbsKret', 'C-norm2', 'axisLapse', 'nmb_total', 'maxRefLev']
++    cases = []
++    for row in m['cases']:
++        directory = Path(row['directory'])
++        run = json.loads((directory/'result.json').read_text())
++        if run['returncode'] != 0:
++            raise ValueError('failed experiment: '+row['name'])
++        paths = list(directory.glob('*.user.hst'))
++        if len(paths) != 1:
++            raise ValueError('expected one user history')
++        history = read_history(paths[0])
++        if abs(history['time'][-1]-m['end']) > 1e-12*max(1, abs(m['end'])):
++            raise ValueError('experiment did not reach matched endpoint')
++        final = {key: float(history[key][-1]) for key in metrics}
++        cases.append((row, run, history, final))
++    reference = next(case for case in cases if case[0]['name'] == 'classical_sync')
++    report = dict(start=m['start'], end=m['end'],
++                  scope='Short late-checkpoint segment only; scientific reproduction not certified.',
++                  original_final_history_row=m['original_final_history_row'], cases=[])
++    for row, run, history, final in cases:
++        difference = {key: final[key]-reference[3][key] for key in metrics}
++        relative = {key: difference[key]/abs(reference[3][key])
++                    if reference[3][key] != 0 else None for key in metrics}
++        report['cases'].append(dict(name=row['name'], final=final,
++            difference_from_classical_sync=difference,
++            relative_difference_from_classical_sync=relative,
++            wall_seconds=run['wall_seconds'],
++            speedup_vs_classical_sync=reference[1]['wall_seconds']/run['wall_seconds']))
++    import matplotlib
++    matplotlib.use('Agg')
++    import matplotlib.pyplot as plt
++    fig, axes = plt.subplots(3, 2, figsize=(12, 10), constrained_layout=True)
++    for ax, metric in zip(axes.flat, metrics):
++        for row, _, history, _ in cases:
++            ax.plot(history['time']-m['start'], history[metric], '.-', label=row['name'])
++        ax.set_ylabel(metric)
++        ax.set_xlabel('Coordinate time since checkpoint')
++        ax.grid(alpha=.25)
++    axes[0, 0].legend()
++    fig.suptitle('Brill endpoint experiment: native sample times; no temporal interpolation\n'
++                 'Short continuation; reproduction and spatial accuracy require separate assessment')
++    a.output.mkdir(parents=True, exist_ok=False)
++    fig.savefig(a.output/'diagnostics.png', dpi=160)
++    plt.close(fig)
++    (a.output/'comparison.json').write_text(json.dumps(report, indent=2)+'\n')
++    print(json.dumps(report, indent=2))
++
++
++if __name__ == '__main__':
++    main()
+diff --git a/scripts/subcycling/run_live_gpu_38c1fab4.sh b/scripts/subcycling/run_live_gpu_38c1fab4.sh
+new file mode 100644
+index 00000000..698051ef
+--- /dev/null
++++ b/scripts/subcycling/run_live_gpu_38c1fab4.sh
+@@ -0,0 +1,26 @@
++#!/bin/bash
++set -euo pipefail
++module load PrgEnv-gnu cudatoolkit cmake cray-hdf5
++root=/pscratch/sd/h/hzhu/vc-subcycling-20260911
++[ "$(cat "$root/build-38c1fab4.status")" = 0 ]
++[ "$(git -C "$root/source" rev-parse --short=8 HEAD)" = 38c1fab4 ]
++[ -z "$(git -C "$root/source" status --porcelain)" ]
++out="$root/live_gpu_38c1fab4"
++mkdir "$out"
++trap 'echo $? > "$out/exit-status"' EXIT
++export MPICH_GPU_SUPPORT_ENABLED=1 MPICH_GPU_IPC_ENABLED=0 OMP_NUM_THREADS=1
++scontrol show job "$SLURM_JOB_ID" > "$out/slurm.txt"
++git -C "$root/source" rev-parse HEAD > "$out/source-sha.txt"
++sha256sum "$root/build/src/athena" > "$out/athena.sha256"
++# Each Python test launches several MPI programs. Give each a separate Slurm
++# step; the hash in test JSON identifies this wrapper, actual binary hash above.
++cat > "$out/athena-step" <<'WRAPPER'
++#!/bin/bash
++set -euo pipefail
++exec srun --nodes=1 --ntasks=1 --cpus-per-task=32 --gpus=1 --gpu-bind=single:1 --cpu-bind=cores --exact --kill-on-bad-exit=1 /pscratch/sd/h/hzhu/vc-subcycling-20260911/build/src/athena "$@"
++WRAPPER
++chmod +x "$out/athena-step"
++python3 "$root/source/scripts/subcycling/test_live_subcycling.py" "$out/athena-step" "$out/fixed" --production-orders > "$out/fixed.log" 2>&1
++python3 "$root/source/scripts/subcycling/test_live_amr.py" "$out/athena-step" "$out/amr" --production-orders > "$out/amr.log" 2>&1
++python3 "$root/source/scripts/subcycling/test_live_amr.py" "$out/athena-step" "$out/mixed" --production-orders --mixed > "$out/mixed.log" 2>&1
++sha256sum -c "$out/athena.sha256" > "$out/hash-verification.txt"
+diff --git a/scripts/subcycling/test_checkpoint_probe.py b/scripts/subcycling/test_checkpoint_probe.py
+index 0bfe9991..d125cf6c 100644
+--- a/scripts/subcycling/test_checkpoint_probe.py
++++ b/scripts/subcycling/test_checkpoint_probe.py
+@@ -10,6 +10,7 @@ p.add_argument('--dt',type=float,default=2e-3)
+ p.add_argument('--fixed-duration',type=float)
+ p.add_argument('--boundary-rhs',choices=['sommerfeld','full_constraint_bjorhus'],default='full_constraint_bjorhus')
+ p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
++p.add_argument('--production-gauge',action='store_true',help='Use Brill telegraph_tau=kappa=0.01')
+ a=p.parse_args();assert a.intervals>0;exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
+ repo=Path(__file__).resolve().parents[2]
+ s=(repo/'tst/inputs/z4c_vc_minkowski_full_constraint_bjorhus.athinput').read_text()
+@@ -28,6 +29,8 @@ telegraph_tau = 1
+ telegraph_kappa = 1
+ shift_mode = prescribed_zero
+ target_kappa1 = 0''')
++if a.production_gauge:
++    s=s.replace('telegraph_tau = 1','telegraph_tau = 0.01').replace('telegraph_kappa = 1','telegraph_kappa = 0.01')
+ s=s.replace('<problem>','<problem>\nlapse_gaussian_amplitude = 0.1')
+ s+='''
+ <refined_region1>
+diff --git a/scripts/subcycling/test_live_subcycling.py b/scripts/subcycling/test_live_subcycling.py
+index ef572419..6764c052 100644
+--- a/scripts/subcycling/test_live_subcycling.py
++++ b/scripts/subcycling/test_live_subcycling.py
+@@ -4,14 +4,16 @@ from pathlib import Path
+ import numpy as np
+ p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('output',type=Path)
+ p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
++p.add_argument('--production-gauge',action='store_true',help='Use Brill telegraph_tau=kappa=0.01')
+ a=p.parse_args();exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
+ fixture=root/'fixture'
+ subprocess.run([sys.executable,str(Path(__file__).with_name('test_checkpoint_probe.py')),
+-                str(exe),str(fixture),'--seed-only',*(['--production-orders'] if a.production_orders else [])],check=True)
++                str(exe),str(fixture),'--seed-only',*(['--production-orders'] if a.production_orders else []),
++                *(['--production-gauge'] if a.production_gauge else [])],check=True)
+ checkpoint=sorted((fixture/'seed/rst').glob('*.rst'))[-1]
+ initial_hash=hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+ start=np.loadtxt(sorted((fixture/'seed').glob('*.hst'))[-1],ndmin=2)[-1,0]
+-duration=.008;dt=.002;end=start+duration
++dt=.0004 if a.production_gauge else .002;duration=4*dt;end=start+duration
+ results=[]
+ def run(name,rst,ratio,finish,frozen=False):
+     directory=root/name;directory.mkdir();env=os.environ.copy()
+diff --git a/src/z4c/checkpoint_subcycle_probe.hpp b/src/z4c/checkpoint_subcycle_probe.hpp
+index fc266053..03fc3c3c 100644
+--- a/src/z4c/checkpoint_subcycle_probe.hpp
++++ b/src/z4c/checkpoint_subcycle_probe.hpp
+@@ -68,7 +68,17 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
+   Kokkos::Timer timer;
+   do {
+     if(accepted_intervals>=1000000) throw std::runtime_error("probe interval budget exceeded");
+-    const Real cap=duration>0 ? std::min(requested_dt,target-time) : requested_dt;
++    Real cap=requested_dt;
++    if(duration>0) {
++      const Real remaining=target-time;
++      // Accumulated additions can leave the final nominal interval a few ulps
++      // longer than requested_dt. Integrate that endpoint rather than create
++      // a spurious near-zero extra step. The actual spatial/source ceilings
++      // still apply independently inside Advance.
++      const Real roundoff=8*std::numeric_limits<Real>::epsilon()*
++                          std::max(std::abs(time),std::abs(target));
++      cap=remaining<=requested_dt+roundoff ? remaining : requested_dt;
++    }
+     const auto advanced=evolution.Advance(cap,ratio);
+     const auto &limits=advanced.limits;
+     const subcycling::Schedule schedule(limits.front().level,limits.back().level,ratio);
+diff --git a/src/z4c/hierarchy_physics.hpp b/src/z4c/hierarchy_physics.hpp
+index ed39e876..d1adaa94 100644
+--- a/src/z4c/hierarchy_physics.hpp
++++ b/src/z4c/hierarchy_physics.hpp
+@@ -27,6 +27,7 @@ struct HierarchyPhysics {
+   bool enforce_timestep_limits=false;
+   Real timestep_cfl=.25;
+   std::function<Real(double)> max_K,kappa1,shift_eta;
++  std::function<Real(const subcycling::StepContext &,int,const DvceArray5D<Real> &)> stage_max_K;
+   std::vector<int> parities;
+   std::array<bool,4> outer_faces;
+   DvceArray5D<Real> mu,unused;
+@@ -67,7 +68,7 @@ struct HierarchyPhysics {
+   // system with max-domain telegraph damping. Include covered predictor nodes:
+   // their stability matters even though they are excluded from physical extrema.
+   std::vector<subcycling::LevelStepLimit> TimestepLimits(double time,Real cfl,
+-      int minimum_level=-1,int maximum_level=-1) const {
++      int minimum_level=-1,int maximum_level=-1,Real stage_maximum=-1) const {
+     if(!std::isfinite(time) || !std::isfinite(cfl) || cfl<=0 || cfl>1 ||
+        options.slow_start_lapse || options.damp_kappa1!=0 ||
+        options.target_kappa1!=0 || options.shift_eta!=0 ||
+@@ -75,7 +76,7 @@ struct HierarchyPhysics {
+           TelegraphDampingPrescription::max_domain_abs_K) ||
+        kappa1(time)!=0 || shift_eta(time)!=0)
+       throw std::invalid_argument("unsupported hierarchy timestep source configuration");
+-    const Real maximum=max_K(time);
++    const Real maximum=stage_maximum>=0 ? stage_maximum : max_K(time);
+     if(!std::isfinite(maximum) || maximum<0)
+       throw std::runtime_error("invalid synchronized timestep gauge maximum");
+     const auto opt=options;
+@@ -119,10 +120,10 @@ struct HierarchyPhysics {
+   }
+   // Only this stage's level group is at the queried stage time. Other levels
+   // must not participate in the spatial reduction while asynchronously evolved.
+-  void CheckStageTimestep(const subcycling::StepContext &s,int stage) const {
++  void CheckStageTimestep(const subcycling::StepContext &s,int stage,Real maximum=-1) const {
+     if(!enforce_timestep_limits) return;
+     const double time=s.StageTime(classical_rk4::StageTime(stage));
+-    for(const auto &limit:TimestepLimits(time,timestep_cfl,s.minimum_level,s.maximum_level)) {
++    for(const auto &limit:TimestepLimits(time,timestep_cfl,s.minimum_level,s.maximum_level,maximum)) {
+       const double ceiling=std::min(limit.spatial,limit.source);
+       if(s.Dt()>ceiling*(1+32*std::numeric_limits<Real>::epsilon()))
+         throw subcycling::IntervalStabilityFailure();
+@@ -138,9 +139,10 @@ struct HierarchyPhysics {
+   }
+   void RHS(const subcycling::StepContext &s,int stage,const subcycling::BlockBatches &b,
+            const DvceArray5D<Real> &u,const DvceArray5D<Real> &rhs) {
+-    CheckStageTimestep(s,stage);
+     const double time=s.StageTime(classical_rk4::StageTime(stage));
+-    const Real maximum=max_K(time),damping=kappa1(time),eta=shift_eta(time);
++    const Real maximum=stage_max_K ? stage_max_K(s,stage,u) : max_K(time);
++    const Real damping=kappa1(time),eta=shift_eta(time);
++    CheckStageTimestep(s,stage,maximum);
+     if(!std::isfinite(maximum) || maximum<0 || !std::isfinite(damping) || !std::isfinite(eta))
+       throw std::runtime_error("invalid common-time gauge coefficients");
+     auto state=BindStateViews(u),out=BindStateViews(rhs);Tmunu::Tmunu_vars vacuum;
+diff --git a/src/z4c/synchronized_hierarchy_evolution.hpp b/src/z4c/synchronized_hierarchy_evolution.hpp
+index 2de93587..6f4874e1 100644
+--- a/src/z4c/synchronized_hierarchy_evolution.hpp
++++ b/src/z4c/synchronized_hierarchy_evolution.hpp
+@@ -52,13 +52,25 @@ class SynchronizedHierarchyEvolution {
+         const auto found=cache.find(t);if(found!=cache.end()) return found->second;
+         return cache.emplace(t,maximum.Evaluate(*history,t)).first->second;
+       },[](double){return 0.;},[](double){return 0.;});
++    // When all levels share an RK stage, use that actual stage vector's
++    // physical-leaf maximum, as the native synchronous integrator does.
++    // RK stages 2 and 3 have the same nominal time but different states;
++    // a physical dense-output history cannot substitute for both of them.
++    physics->stage_max_K=[this](const subcycling::StepContext &s,int stage,
++                               const DvceArray5D<Real> &u) {
++      if(s.minimum_level==physics->root &&
++         s.maximum_level==physics->timestep_ranges.rbegin()->first)
++        return PhysicalMaximum(u);
++      return physics->max_K(s.StageTime(classical_rk4::StageTime(stage)));
++    };
+     physics->enforce_timestep_limits=true;physics->timestep_cfl=mesh->cfl_no;
+     time=mesh->time;
+   }
+   SynchronizedHierarchyEvolution(const SynchronizedHierarchyEvolution &)=delete;
+   SynchronizedHierarchyEvolution &operator=(const SynchronizedHierarchyEvolution &)=delete;
+-  Real CurrentMaximum() const {
+-    const auto u=storage.Values();const auto ids=leaf_ids;
++  Real CurrentMaximum() const {return PhysicalMaximum(storage.Values());}
++  Real PhysicalMaximum(const DvceArray5D<Real> &u) const {
++    const auto ids=leaf_ids;
+     const int ni=layout.ie-layout.is+1,nj=layout.je-layout.js+1;
+     const int is=layout.is,js=layout.js,ks=layout.ks;
+     Real value=0;

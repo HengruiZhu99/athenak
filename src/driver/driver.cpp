@@ -600,7 +600,8 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
 
       if(subcycle_ratio!=0) {
         auto *z=pmesh->pmb_pack->pz4c;
-        if(!live_hierarchy) live_hierarchy=z4c::MakeLiveHierarchy(pmesh,z);
+        if(!live_hierarchy) live_hierarchy=z4c::MakeLiveHierarchy(pmesh,z,
+            pin->GetOrAddInteger("time","subcycle_corrector_max_passes",8));
         Real cap=std::min(subcycle_cap,tlim-pmesh->time);
         for(const auto &out:pout->pout_list) if(out->out_params.dt>0) {
           const Real remaining=out->out_params.last_time+out->out_params.dt-pmesh->time;

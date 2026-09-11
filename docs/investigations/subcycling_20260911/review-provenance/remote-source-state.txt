@@ -1,0 +1,262 @@
+diff --git a/scripts/subcycling/test_checkpoint_probe.py b/scripts/subcycling/test_checkpoint_probe.py
+index 0bfe9991..d125cf6c 100644
+--- a/scripts/subcycling/test_checkpoint_probe.py
++++ b/scripts/subcycling/test_checkpoint_probe.py
+@@ -10,6 +10,7 @@ p.add_argument('--dt',type=float,default=2e-3)
+ p.add_argument('--fixed-duration',type=float)
+ p.add_argument('--boundary-rhs',choices=['sommerfeld','full_constraint_bjorhus'],default='full_constraint_bjorhus')
+ p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
++p.add_argument('--production-gauge',action='store_true',help='Use Brill telegraph_tau=kappa=0.01')
+ a=p.parse_args();assert a.intervals>0;exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
+ repo=Path(__file__).resolve().parents[2]
+ s=(repo/'tst/inputs/z4c_vc_minkowski_full_constraint_bjorhus.athinput').read_text()
+@@ -28,6 +29,8 @@ telegraph_tau = 1
+ telegraph_kappa = 1
+ shift_mode = prescribed_zero
+ target_kappa1 = 0''')
++if a.production_gauge:
++    s=s.replace('telegraph_tau = 1','telegraph_tau = 0.01').replace('telegraph_kappa = 1','telegraph_kappa = 0.01')
+ s=s.replace('<problem>','<problem>\nlapse_gaussian_amplitude = 0.1')
+ s+='''
+ <refined_region1>
+diff --git a/scripts/subcycling/test_live_subcycling.py b/scripts/subcycling/test_live_subcycling.py
+index ef572419..6764c052 100644
+--- a/scripts/subcycling/test_live_subcycling.py
++++ b/scripts/subcycling/test_live_subcycling.py
+@@ -4,14 +4,16 @@ from pathlib import Path
+ import numpy as np
+ p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('output',type=Path)
+ p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
++p.add_argument('--production-gauge',action='store_true',help='Use Brill telegraph_tau=kappa=0.01')
+ a=p.parse_args();exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
+ fixture=root/'fixture'
+ subprocess.run([sys.executable,str(Path(__file__).with_name('test_checkpoint_probe.py')),
+-                str(exe),str(fixture),'--seed-only',*(['--production-orders'] if a.production_orders else [])],check=True)
++                str(exe),str(fixture),'--seed-only',*(['--production-orders'] if a.production_orders else []),
++                *(['--production-gauge'] if a.production_gauge else [])],check=True)
+ checkpoint=sorted((fixture/'seed/rst').glob('*.rst'))[-1]
+ initial_hash=hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+ start=np.loadtxt(sorted((fixture/'seed').glob('*.hst'))[-1],ndmin=2)[-1,0]
+-duration=.008;dt=.002;end=start+duration
++dt=.0004 if a.production_gauge else .002;duration=4*dt;end=start+duration
+ results=[]
+ def run(name,rst,ratio,finish,frozen=False):
+     directory=root/name;directory.mkdir();env=os.environ.copy()
+diff --git a/src/driver/hierarchy_rk4.hpp b/src/driver/hierarchy_rk4.hpp
+index 2645bf4e..b5d24612 100644
+--- a/src/driver/hierarchy_rk4.hpp
++++ b/src/driver/hierarchy_rk4.hpp
+@@ -1,6 +1,9 @@
+ #ifndef DRIVER_HIERARCHY_RK4_HPP_
+ #define DRIVER_HIERARCHY_RK4_HPP_
+ #include <functional>
++#include <cstdlib>
++#include <iomanip>
++#include <iostream>
+ #include "driver/subcycle_schedule.hpp"
+ #include "driver/covered_stage_correction.hpp"
+ #include "driver/classical_rk4_update.hpp"
+@@ -89,13 +92,24 @@ class HierarchyRK4 {
+           if(current_history_.size()!=previous_history_.size())
+             throw std::logic_error("corrector history topology changed");
+           last_report_.history_change=0;
+-          for(const auto &entry:current_history_)
+-            last_report_.history_change=std::max(last_report_.history_change,
+-                entry.second.Difference(previous_history_.at(entry.first),control));
++          std::pair<int,std::uint64_t> worst_history{-1,0};
++          for(const auto &entry:current_history_) {
++            const Real change=entry.second.Difference(previous_history_.at(entry.first),control);
++            if(change>last_report_.history_change) {
++              last_report_.history_change=change;worst_history=entry.first;
++            }
++          }
+           last_report_.feedback_change=feedback_residual ?
+               feedback_residual(current_history_,previous_history_) : 0;
+           if(!std::isfinite(last_report_.feedback_change) || last_report_.feedback_change<0)
+             throw std::runtime_error("invalid corrector feedback residual");
++          if(trace_corrector_) std::cerr<<std::setprecision(17)
++            <<"SUBCYCLE_CORRECTOR time="<<time<<" dt="<<dt<<" pass="<<pass
++            <<" endpoint="<<last_report_.endpoint_change
++            <<" history="<<last_report_.history_change
++            <<" feedback="<<last_report_.feedback_change
++            <<" worst_history_level="<<worst_history.first
++            <<" worst_history_tick="<<worst_history.second<<std::endl;
+           if(pass>=control.minimum_passes && last_report_.endpoint_change<=1 &&
+              last_report_.history_change<=1 && last_report_.feedback_change<=1) {
+             last_report_.converged=true;inside_corrector_=false;return last_report_;
+@@ -130,11 +144,15 @@ class HierarchyRK4 {
+     AcceptedInterval result;
+     for(int attempt=0;attempt<=retry.maximum_halvings;++attempt) {
+       ++result.attempts;
++      if(trace_corrector_) std::cerr<<std::setprecision(17)
++        <<"SUBCYCLE_ATTEMPT time="<<time<<" dt="<<dt
++        <<" attempt="<<result.attempts<<" ratio="<<maximum_ratio<<std::endl;
+       try {
+         result.corrector=RunCorrected(time,dt,storage,physics,maximum_ratio,control,
+                                        begin_pass,feedback_residual);
+         result.total_passes+=result.corrector.passes;result.dt=dt;return result;
+-      } catch(const RetryableIntervalFailure &) {
++      } catch(const RetryableIntervalFailure &failure) {
++        if(trace_corrector_) std::cerr<<"SUBCYCLE_RETRY reason="<<failure.what()<<std::endl;
+         result.total_passes+=last_report_.passes;
+         const double smaller=dt*.5;
+         // Do not make an unrepresentable fine step or exceed the retry budget.
+@@ -275,6 +293,7 @@ class HierarchyRK4 {
+   std::map<int,StepContext> contexts_;
+   DvceArray5D<Real> initial_,rhs_,sum_,rollback_,previous_end_;
+   CorrectorReport last_report_;
++  bool trace_corrector_=std::getenv("ATHENA_SUBCYCLE_TRACE")!=nullptr;
+ };
+ } // namespace subcycling
+ #endif
+diff --git a/src/outputs/outputs.cpp b/src/outputs/outputs.cpp
+index e7b56f06..5c86162c 100644
+--- a/src/outputs/outputs.cpp
++++ b/src/outputs/outputs.cpp
+@@ -20,6 +20,8 @@
+ //!                  is defined at start of outputs.hpp file]
+ //!   - file_type = tab,vtk,hst,bin,rst
+ //!   - dt        = problem time between outputs
++//!   - cadence   = auto (legacy precedence), time, or cycle; time overrides
++//!                 any dcycle value inherited from a restart
+ //!
+ //! EXAMPLE of an <output[n]> block for a TAB dump:
+ //!   <output3>
+@@ -72,7 +74,15 @@ Outputs::Outputs(ParameterInput *pin, Mesh *pm) {
+       // set time of last output, time or cycles between outputs
+       // when last_time < 0, then outputs will always be made
+       opar.last_time = pin->GetOrAddReal(opar.block_name,"last_time", -1.0);
+-      if (pin->DoesParameterExist(opar.block_name,"dcycle")) {
++      // A restart may retain dcycle even after dt is overridden. Make the
++      // cadence choice explicit without changing legacy automatic precedence.
++      const std::string cadence=pin->GetOrAddString(opar.block_name,"cadence","auto");
++      if(cadence!="auto" && cadence!="time" && cadence!="cycle") {
++        std::cerr << "Invalid output cadence in " << opar.block_name << std::endl;
++        std::exit(EXIT_FAILURE);
++      }
++      if (cadence=="cycle" || (cadence=="auto" &&
++          pin->DoesParameterExist(opar.block_name,"dcycle"))) {
+         opar.dcycle = pin->GetInteger(opar.block_name,"dcycle");
+         opar.dt = 0.0;
+       } else {
+diff --git a/src/z4c/checkpoint_subcycle_probe.hpp b/src/z4c/checkpoint_subcycle_probe.hpp
+index fc266053..03fc3c3c 100644
+--- a/src/z4c/checkpoint_subcycle_probe.hpp
++++ b/src/z4c/checkpoint_subcycle_probe.hpp
+@@ -68,7 +68,17 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
+   Kokkos::Timer timer;
+   do {
+     if(accepted_intervals>=1000000) throw std::runtime_error("probe interval budget exceeded");
+-    const Real cap=duration>0 ? std::min(requested_dt,target-time) : requested_dt;
++    Real cap=requested_dt;
++    if(duration>0) {
++      const Real remaining=target-time;
++      // Accumulated additions can leave the final nominal interval a few ulps
++      // longer than requested_dt. Integrate that endpoint rather than create
++      // a spurious near-zero extra step. The actual spatial/source ceilings
++      // still apply independently inside Advance.
++      const Real roundoff=8*std::numeric_limits<Real>::epsilon()*
++                          std::max(std::abs(time),std::abs(target));
++      cap=remaining<=requested_dt+roundoff ? remaining : requested_dt;
++    }
+     const auto advanced=evolution.Advance(cap,ratio);
+     const auto &limits=advanced.limits;
+     const subcycling::Schedule schedule(limits.front().level,limits.back().level,ratio);
+diff --git a/src/z4c/hierarchy_physics.hpp b/src/z4c/hierarchy_physics.hpp
+index ed39e876..d1adaa94 100644
+--- a/src/z4c/hierarchy_physics.hpp
++++ b/src/z4c/hierarchy_physics.hpp
+@@ -27,6 +27,7 @@ struct HierarchyPhysics {
+   bool enforce_timestep_limits=false;
+   Real timestep_cfl=.25;
+   std::function<Real(double)> max_K,kappa1,shift_eta;
++  std::function<Real(const subcycling::StepContext &,int,const DvceArray5D<Real> &)> stage_max_K;
+   std::vector<int> parities;
+   std::array<bool,4> outer_faces;
+   DvceArray5D<Real> mu,unused;
+@@ -67,7 +68,7 @@ struct HierarchyPhysics {
+   // system with max-domain telegraph damping. Include covered predictor nodes:
+   // their stability matters even though they are excluded from physical extrema.
+   std::vector<subcycling::LevelStepLimit> TimestepLimits(double time,Real cfl,
+-      int minimum_level=-1,int maximum_level=-1) const {
++      int minimum_level=-1,int maximum_level=-1,Real stage_maximum=-1) const {
+     if(!std::isfinite(time) || !std::isfinite(cfl) || cfl<=0 || cfl>1 ||
+        options.slow_start_lapse || options.damp_kappa1!=0 ||
+        options.target_kappa1!=0 || options.shift_eta!=0 ||
+@@ -75,7 +76,7 @@ struct HierarchyPhysics {
+           TelegraphDampingPrescription::max_domain_abs_K) ||
+        kappa1(time)!=0 || shift_eta(time)!=0)
+       throw std::invalid_argument("unsupported hierarchy timestep source configuration");
+-    const Real maximum=max_K(time);
++    const Real maximum=stage_maximum>=0 ? stage_maximum : max_K(time);
+     if(!std::isfinite(maximum) || maximum<0)
+       throw std::runtime_error("invalid synchronized timestep gauge maximum");
+     const auto opt=options;
+@@ -119,10 +120,10 @@ struct HierarchyPhysics {
+   }
+   // Only this stage's level group is at the queried stage time. Other levels
+   // must not participate in the spatial reduction while asynchronously evolved.
+-  void CheckStageTimestep(const subcycling::StepContext &s,int stage) const {
++  void CheckStageTimestep(const subcycling::StepContext &s,int stage,Real maximum=-1) const {
+     if(!enforce_timestep_limits) return;
+     const double time=s.StageTime(classical_rk4::StageTime(stage));
+-    for(const auto &limit:TimestepLimits(time,timestep_cfl,s.minimum_level,s.maximum_level)) {
++    for(const auto &limit:TimestepLimits(time,timestep_cfl,s.minimum_level,s.maximum_level,maximum)) {
+       const double ceiling=std::min(limit.spatial,limit.source);
+       if(s.Dt()>ceiling*(1+32*std::numeric_limits<Real>::epsilon()))
+         throw subcycling::IntervalStabilityFailure();
+@@ -138,9 +139,10 @@ struct HierarchyPhysics {
+   }
+   void RHS(const subcycling::StepContext &s,int stage,const subcycling::BlockBatches &b,
+            const DvceArray5D<Real> &u,const DvceArray5D<Real> &rhs) {
+-    CheckStageTimestep(s,stage);
+     const double time=s.StageTime(classical_rk4::StageTime(stage));
+-    const Real maximum=max_K(time),damping=kappa1(time),eta=shift_eta(time);
++    const Real maximum=stage_max_K ? stage_max_K(s,stage,u) : max_K(time);
++    const Real damping=kappa1(time),eta=shift_eta(time);
++    CheckStageTimestep(s,stage,maximum);
+     if(!std::isfinite(maximum) || maximum<0 || !std::isfinite(damping) || !std::isfinite(eta))
+       throw std::runtime_error("invalid common-time gauge coefficients");
+     auto state=BindStateViews(u),out=BindStateViews(rhs);Tmunu::Tmunu_vars vacuum;
+diff --git a/src/z4c/synchronized_hierarchy_evolution.hpp b/src/z4c/synchronized_hierarchy_evolution.hpp
+index 2de93587..6f4874e1 100644
+--- a/src/z4c/synchronized_hierarchy_evolution.hpp
++++ b/src/z4c/synchronized_hierarchy_evolution.hpp
+@@ -52,13 +52,25 @@ class SynchronizedHierarchyEvolution {
+         const auto found=cache.find(t);if(found!=cache.end()) return found->second;
+         return cache.emplace(t,maximum.Evaluate(*history,t)).first->second;
+       },[](double){return 0.;},[](double){return 0.;});
++    // When all levels share an RK stage, use that actual stage vector's
++    // physical-leaf maximum, as the native synchronous integrator does.
++    // RK stages 2 and 3 have the same nominal time but different states;
++    // a physical dense-output history cannot substitute for both of them.
++    physics->stage_max_K=[this](const subcycling::StepContext &s,int stage,
++                               const DvceArray5D<Real> &u) {
++      if(s.minimum_level==physics->root &&
++         s.maximum_level==physics->timestep_ranges.rbegin()->first)
++        return PhysicalMaximum(u);
++      return physics->max_K(s.StageTime(classical_rk4::StageTime(stage)));
++    };
+     physics->enforce_timestep_limits=true;physics->timestep_cfl=mesh->cfl_no;
+     time=mesh->time;
+   }
+   SynchronizedHierarchyEvolution(const SynchronizedHierarchyEvolution &)=delete;
+   SynchronizedHierarchyEvolution &operator=(const SynchronizedHierarchyEvolution &)=delete;
+-  Real CurrentMaximum() const {
+-    const auto u=storage.Values();const auto ids=leaf_ids;
++  Real CurrentMaximum() const {return PhysicalMaximum(storage.Values());}
++  Real PhysicalMaximum(const DvceArray5D<Real> &u) const {
++    const auto ids=leaf_ids;
+     const int ni=layout.ie-layout.is+1,nj=layout.je-layout.js+1;
+     const int is=layout.is,js=layout.js,ks=layout.ks;
+     Real value=0;
+ M scripts/subcycling/test_checkpoint_probe.py
+ M scripts/subcycling/test_live_subcycling.py
+ M src/driver/hierarchy_rk4.hpp
+ M src/outputs/outputs.cpp
+ M src/z4c/checkpoint_subcycle_probe.hpp
+ M src/z4c/hierarchy_physics.hpp
+ M src/z4c/synchronized_hierarchy_evolution.hpp
+?? scripts/subcycling/compare_brill_endpoint.py
+?? scripts/subcycling/run_live_gpu_38c1fab4.sh
+?? scripts/subcycling/test_restart_output_cadence.py

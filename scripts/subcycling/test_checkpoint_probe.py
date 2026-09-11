@@ -20,7 +20,7 @@ if a.production_orders:
 s=s.replace('boundary_rhs = full_constraint_bjorhus','boundary_rhs = '+a.boundary_rhs)
 s=s.replace('nlim = 3','nlim = 1').replace('tlim = 0.01','tlim = 1.0')
 s=s.replace('<output1>','<output1>\ndata_format = %24.16e')
-s=s.replace('<time>','<time>\nsubcycle_probe_dt = 1e-4\nsubcycle_probe_ratio = 2\nsubcycle_probe_duration = 0\nsubcycle_max_ratio = 0\nsubcycle_interval_cap = 0.002\nsubcycle_cycle_unit = synchronization')
+s=s.replace('<time>','<time>\nsubcycle_probe_dt = 1e-4\nsubcycle_probe_ratio = 2\nsubcycle_probe_duration = 0\nsubcycle_max_ratio = 0\nsubcycle_interval_cap = 0.002\nsubcycle_cycle_unit = synchronization\nsubcycle_corrector_max_passes = 8')
 s=s.replace('refinement = none','refinement = static\nnum_levels = 1')
 s=s.replace('<z4c>','''<z4c>
 telegraph_lapse = true
