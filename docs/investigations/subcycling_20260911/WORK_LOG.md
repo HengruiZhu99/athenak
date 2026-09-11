@@ -217,3 +217,29 @@ at cycle133506 (17 steps later), outside this12-step sample. A subsequent
 performance comparison must extend past that event to measure topology rebuilding
 during evolution. Allocation58198945 is still running the late instrumented case;
 no source or executable used by that allocation was modified.
+
+## Axis boundary initialization and completed profiling gate
+
+Auxiliary parents now reuse the existing native-VC axis reflection routine,
+with explicitly supplied component parities. The real test hook takes parities
+from Z4cStateAxisParitySignFromPackedIndex and runs only for an actual axis
+boundary. It mirrors positive-rho vertices without touching the evolved axis.
+Transverse unavailable ghost corners remain NaN. Unit tests exercise both parity
+signs, and four startup-hook runs retain byte-identical restart payloads.
+Physical outer boundaries and temporal coarse/fine boundaries remain outstanding.
+
+Allocation58198945 completed0:0. Both early and late profile/base comparisons
+have identical history columns, AMR histories and complete restart payloads.
+Late profile: initialization135.5483s including topology81.5769s;12 evolution
+cycles5.3309s including RHS1.0903s; total246.8573s. Baseline total248.7253s.
+Evidence is profiling-comparison.json. These are synchronous runs, not a
+subcycling speedup measurement.
+
+Archived the profiling executable as binaries/athena.profile-47a11d37 with its
+SHA256 and CMake cache on Perlmutter. Remote source now follows development
+branch at a127a1fe; build PID1778061 is live. New topology24 cases use24 steps
+at the late checkpoint, crossing the recorded first AMR event at step17.
+Guarded launcher1808047 (finish_topology24.sh) waits for the build, compiles/runs
+GPU helper tests, and requests a separate shared_interactive single-A100
+comparison. Inspect topology24-launch-status and allocation_topology24.log before
+retrying. Existing campaign jobs and production outputs remain unchanged.

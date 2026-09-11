@@ -7,6 +7,7 @@
 #include "athena.hpp"
 #include "driver/subcycle_hierarchy.hpp"
 #include "z4c/z4c_grid.hpp"
+#include "z4c/cartoon_axis_boundary.hpp"
 
 namespace subcycling {
 // Single-pack VC Cartoon parent storage. Initialize only from a common-time
@@ -138,6 +139,38 @@ class VertexParentStates {
     }
     Kokkos::fence("same-level parent ghost copies complete");
     return coverage;
+  }
+  // Caller must confirm that logical x=0 is the physical Cartoon axis.
+  // Unavailable transverse ghost donors remain NaN after reflection.
+  int FillAxisAtLogicalZero(const z4c::Z4cGridLayout &layout,
+                            const std::vector<int> &parities) {
+    if (LayoutKey(layout)!=layout_key_ || layout.is>layout.nx1 ||
+        static_cast<int>(parities.size())!=values_.extent_int(1)) {
+      throw std::invalid_argument("invalid parent axis layout or parity count");
+    }
+    for (int sign : parities) if (sign!=-1 && sign!=1) {
+      throw std::invalid_argument("invalid parent axis parity sign");
+    }
+    std::vector<int> axis;
+    for (int p=0; p<static_cast<int>(parent_nodes_.size()); ++p) {
+      if (keys_[parent_nodes_[p]][1]==0) axis.push_back(p);
+    }
+    DvceArray1D<int> parents("axis parent indices",axis.size());
+    DvceArray1D<int> signs("parent axis parity",parities.size());
+    auto hp=Kokkos::create_mirror_view(parents), hs=Kokkos::create_mirror_view(signs);
+    for (int p=0; p<static_cast<int>(axis.size()); ++p) hp(p)=axis[p];
+    for (int v=0; v<static_cast<int>(parities.size()); ++v) hs(v)=parities[v];
+    Kokkos::deep_copy(parents,hp); Kokkos::deep_copy(signs,hs);
+    const auto values=values_; const int start=layout.is, ks=layout.ks;
+    if (!axis.empty()) {
+      par_for("fill parent Cartoon axis",DevExeSpace(),0,axis.size()-1,
+          0,parities.size()-1,0,layout.n2-1,KOKKOS_LAMBDA(int p,int v,int j) {
+        z4c::FillCenteredAxisGhostLine<z4c::VertexCenteredZ4c>(
+            values,parents(p),v,ks,j,start,start,signs(v));
+      });
+    }
+    Kokkos::fence("parent axis ghosts complete");
+    return axis.size()*layout.is*layout.n2;
   }
   const DvceArray5D<Real> &Values() const { return values_; }
   const std::vector<int> &ParentNodes() const { return parent_nodes_; }

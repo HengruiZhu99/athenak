@@ -1,0 +1,662 @@
+{
+  "early": {
+    "final_time": 62.035027597047765,
+    "history_max_abs_differences": {
+      "time": 0.0,
+      "dt": 0.0,
+      "C-norm2": 0.0,
+      "H-norm2": 0.0,
+      "M-norm2": 0.0,
+      "Z-norm2": 0.0,
+      "Mx-norm2": 0.0,
+      "My-norm2": 0.0,
+      "Mz-norm2": 0.0,
+      "Theta-norm": 0.0,
+      "Volume": 0.0,
+      "max_abs_K": 0.0,
+      "nmb_total": 0.0,
+      "maxAbsKret": 0.0,
+      "minLapse": 0.0,
+      "maxRefLev": 0.0,
+      "maxNmbRank": 0.0,
+      "ahStatus": 0.0,
+      "ahLastCyc": 0.0,
+      "cycle": 0.0,
+      "axisLapse": 0.0,
+      "axisTau": 0.0,
+      "axisKret": 0.0,
+      "ax-C2": 0.0,
+      "ax-H2": 0.0,
+      "ax-M2": 0.0,
+      "ax-Z2": 0.0,
+      "ax-N": 0.0,
+      "off-C2": 0.0,
+      "off-H2": 0.0,
+      "off-M2": 0.0,
+      "off-Z2": 0.0,
+      "off-Vol": 0.0,
+      "L0-C2": 0.0,
+      "L0-H2": 0.0,
+      "L0-M2": 0.0,
+      "L0-Z2": 0.0,
+      "L0-N": 0.0,
+      "L1-C2": 0.0,
+      "L1-H2": 0.0,
+      "L1-M2": 0.0,
+      "L1-Z2": 0.0,
+      "L1-N": 0.0,
+      "L2-C2": 0.0,
+      "L2-H2": 0.0,
+      "L2-M2": 0.0,
+      "L2-Z2": 0.0,
+      "L2-N": 0.0,
+      "L3-C2": 0.0,
+      "L3-H2": 0.0,
+      "L3-M2": 0.0,
+      "L3-Z2": 0.0,
+      "L3-N": 0.0,
+      "L4-C2": 0.0,
+      "L4-H2": 0.0,
+      "L4-M2": 0.0,
+      "L4-Z2": 0.0,
+      "L4-N": 0.0,
+      "C-Linf": 0.0,
+      "C-rho": 0.0,
+      "C-z": 0.0,
+      "H-Linf": 0.0,
+      "H-rho": 0.0,
+      "H-z": 0.0,
+      "M-Linf": 0.0,
+      "M-rho": 0.0,
+      "M-z": 0.0,
+      "Z-Linf": 0.0,
+      "Z-rho": 0.0,
+      "Z-z": 0.0,
+      "muMin": 0.0,
+      "muMax": 0.0
+    },
+    "restart_payload_hashes": [
+      "4a9102988f25b10c5a91cc1467de38ff63d7a7da8a247c3108334b42d1fef866",
+      "4a9102988f25b10c5a91cc1467de38ff63d7a7da8a247c3108334b42d1fef866"
+    ],
+    "all_restart_payload_bytes_equal": true,
+    "amr_history_identical": true,
+    "profile": {
+      "evolution_cycle": {
+        "calls": 12.0,
+        "inclusive_seconds": 10.186430295,
+        "exclusive_seconds": 0.006398509999999524
+      },
+      "evolution_cycle/amr": {
+        "calls": 12.0,
+        "inclusive_seconds": 0.006892670000000001,
+        "exclusive_seconds": 0.0003309490000000003
+      },
+      "evolution_cycle/amr/amr/tagging": {
+        "calls": 12.0,
+        "inclusive_seconds": 0.005475663,
+        "exclusive_seconds": 0.005475663
+      },
+      "evolution_cycle/amr/amr/tree": {
+        "calls": 12.0,
+        "inclusive_seconds": 0.001086058,
+        "exclusive_seconds": 0.001086058
+      },
+      "evolution_cycle/scheduled_output": {
+        "calls": 6.0,
+        "inclusive_seconds": 7.939994422,
+        "exclusive_seconds": 7.939994422
+      },
+      "evolution_cycle/stopping_check": {
+        "calls": 12.0,
+        "inclusive_seconds": 0.0025567050000000007,
+        "exclusive_seconds": 0.0025567050000000007
+      },
+      "evolution_cycle/tasks/after_stagen": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.058886087000000004,
+        "exclusive_seconds": 0.0007656090000000085
+      },
+      "evolution_cycle/tasks/after_stagen/nr/CCEDump": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.5153999999999995e-05,
+        "exclusive_seconds": 4.5153999999999995e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ADMC": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.049287571999999995,
+        "exclusive_seconds": 0.049287571999999995
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearR": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.004288727999999999,
+        "exclusive_seconds": 0.004288727999999999
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearR2": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.464400000000001e-05,
+        "exclusive_seconds": 4.464400000000001e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearS": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.004097782000000001,
+        "exclusive_seconds": 0.004097782000000001
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearS2": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4595e-05,
+        "exclusive_seconds": 4.4595e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_DumpHorizon": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4535000000000006e-05,
+        "exclusive_seconds": 4.4535000000000006e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ProlW": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.3850000000000016e-05,
+        "exclusive_seconds": 4.3850000000000016e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_RecvW": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4191e-05,
+        "exclusive_seconds": 4.4191e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_RestW": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4843000000000004e-05,
+        "exclusive_seconds": 4.4843000000000004e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_SendW": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4513e-05,
+        "exclusive_seconds": 4.4513e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_Wave": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4348e-05,
+        "exclusive_seconds": 4.4348e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_Weyl": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.572299999999999e-05,
+        "exclusive_seconds": 4.572299999999999e-05
+      },
+      "evolution_cycle/tasks/after_timeintegrator": {
+        "calls": 12.0,
+        "inclusive_seconds": 1.3627999999999999e-05,
+        "exclusive_seconds": 1.3627999999999999e-05
+      },
+      "evolution_cycle/tasks/before_stagen": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.006256290000000001,
+        "exclusive_seconds": 0.000195845
+      },
+      "evolution_cycle/tasks/before_stagen/nr/Z4c_IRecvW": {
+        "calls": 48.0,
+        "inclusive_seconds": 5.3422999999999986e-05,
+        "exclusive_seconds": 5.3422999999999986e-05
+      },
+      "evolution_cycle/tasks/before_stagen/nr/Z4c_Recv": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.006007022000000001,
+        "exclusive_seconds": 0.006007022000000001
+      },
+      "evolution_cycle/tasks/before_timeintegrator": {
+        "calls": 12.0,
+        "inclusive_seconds": 1.967e-05,
+        "exclusive_seconds": 1.967e-05
+      },
+      "evolution_cycle/tasks/stagen": {
+        "calls": 48.0,
+        "inclusive_seconds": 2.165412313,
+        "exclusive_seconds": 0.001192907
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_AxisGhosts": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.0025774840000000005,
+        "exclusive_seconds": 0.0025774840000000005
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_AxisGhostsPost": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.0023322259999999993,
+        "exclusive_seconds": 0.0023322259999999993
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_BCS": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.016724408,
+        "exclusive_seconds": 0.016724408
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CalcRHS": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.496719974,
+        "exclusive_seconds": 0.46838590199999985
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CalcRHS/gauge/global_max_K": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.028334072000000002,
+        "exclusive_seconds": 0.028334072000000002
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CopyU": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.058272323,
+        "exclusive_seconds": 0.058272323
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_ExplRK": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.08015015399999995,
+        "exclusive_seconds": 0.08015015399999995
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_FastFlow": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4519e-05,
+        "exclusive_seconds": 4.4519e-05
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Newdt": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.005517924,
+        "exclusive_seconds": 0.005517924
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_PT": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.522899999999999e-05,
+        "exclusive_seconds": 4.522899999999999e-05
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Prolong": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.25248435799999996,
+        "exclusive_seconds": 0.25248435799999996
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RecvU": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.3696361469999999,
+        "exclusive_seconds": 0.33311651899999994
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RecvU/vc/shared_node_sync": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.03651962800000001,
+        "exclusive_seconds": 0.03651962800000001
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RestU": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.056541035,
+        "exclusive_seconds": 0.020436702
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RestU/vc/shared_node_sync": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.036104333,
+        "exclusive_seconds": 0.036104333
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_SendU": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.40000965,
+        "exclusive_seconds": 0.40000965
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_SomBC": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.022055434999999995,
+        "exclusive_seconds": 0.022055434999999995
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_VCFinalize": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.31335790099999994,
+        "exclusive_seconds": 0.295073781
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_VCFinalize/vc/shared_node_sync": {
+        "calls": 24.0,
+        "inclusive_seconds": 0.01828412,
+        "exclusive_seconds": 0.01828412
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Z4c2ADM": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.087750639,
+        "exclusive_seconds": 0.087750639
+      },
+      "initialization": {
+        "calls": 1.0,
+        "inclusive_seconds": 19.090950344,
+        "exclusive_seconds": 7.686705193
+      },
+      "initialization/vc/shared_node_sync": {
+        "calls": 2.0,
+        "inclusive_seconds": 0.009482407,
+        "exclusive_seconds": 0.009482407
+      },
+      "initialization/vc/topology_rebuild": {
+        "calls": 1.0,
+        "inclusive_seconds": 11.394762744,
+        "exclusive_seconds": 11.394762744
+      }
+    }
+  },
+  "late": {
+    "final_time": 62.205589398948426,
+    "history_max_abs_differences": {
+      "time": 0.0,
+      "dt": 0.0,
+      "C-norm2": 0.0,
+      "H-norm2": 0.0,
+      "M-norm2": 0.0,
+      "Z-norm2": 0.0,
+      "Mx-norm2": 0.0,
+      "My-norm2": 0.0,
+      "Mz-norm2": 0.0,
+      "Theta-norm": 0.0,
+      "Volume": 0.0,
+      "max_abs_K": 0.0,
+      "nmb_total": 0.0,
+      "maxAbsKret": 0.0,
+      "minLapse": 0.0,
+      "maxRefLev": 0.0,
+      "maxNmbRank": 0.0,
+      "ahStatus": 0.0,
+      "ahLastCyc": 0.0,
+      "cycle": 0.0,
+      "axisLapse": 0.0,
+      "axisTau": 0.0,
+      "axisKret": 0.0,
+      "ax-C2": 0.0,
+      "ax-H2": 0.0,
+      "ax-M2": 0.0,
+      "ax-Z2": 0.0,
+      "ax-N": 0.0,
+      "off-C2": 0.0,
+      "off-H2": 0.0,
+      "off-M2": 0.0,
+      "off-Z2": 0.0,
+      "off-Vol": 0.0,
+      "L0-C2": 0.0,
+      "L0-H2": 0.0,
+      "L0-M2": 0.0,
+      "L0-Z2": 0.0,
+      "L0-N": 0.0,
+      "L1-C2": 0.0,
+      "L1-H2": 0.0,
+      "L1-M2": 0.0,
+      "L1-Z2": 0.0,
+      "L1-N": 0.0,
+      "L2-C2": 0.0,
+      "L2-H2": 0.0,
+      "L2-M2": 0.0,
+      "L2-Z2": 0.0,
+      "L2-N": 0.0,
+      "L3-C2": 0.0,
+      "L3-H2": 0.0,
+      "L3-M2": 0.0,
+      "L3-Z2": 0.0,
+      "L3-N": 0.0,
+      "L4-C2": 0.0,
+      "L4-H2": 0.0,
+      "L4-M2": 0.0,
+      "L4-Z2": 0.0,
+      "L4-N": 0.0,
+      "C-Linf": 0.0,
+      "C-rho": 0.0,
+      "C-z": 0.0,
+      "H-Linf": 0.0,
+      "H-rho": 0.0,
+      "H-z": 0.0,
+      "M-Linf": 0.0,
+      "M-rho": 0.0,
+      "M-z": 0.0,
+      "Z-Linf": 0.0,
+      "Z-rho": 0.0,
+      "Z-z": 0.0,
+      "muMin": 0.0,
+      "muMax": 0.0
+    },
+    "restart_payload_hashes": [
+      "33f55bbfbff2fc6be0ab0a604fa4018fc4eac8efea266ae2f1f0c1e7db546371",
+      "33f55bbfbff2fc6be0ab0a604fa4018fc4eac8efea266ae2f1f0c1e7db546371"
+    ],
+    "all_restart_payload_bytes_equal": true,
+    "amr_history_identical": true,
+    "profile": {
+      "evolution_cycle": {
+        "calls": 12.0,
+        "inclusive_seconds": 5.330892555999999,
+        "exclusive_seconds": 0.006480100999999849
+      },
+      "evolution_cycle/amr": {
+        "calls": 12.0,
+        "inclusive_seconds": 0.005964037,
+        "exclusive_seconds": 0.00014229599999999993
+      },
+      "evolution_cycle/amr/amr/tagging": {
+        "calls": 12.0,
+        "inclusive_seconds": 0.004981700999999999,
+        "exclusive_seconds": 0.004981700999999999
+      },
+      "evolution_cycle/amr/amr/tree": {
+        "calls": 12.0,
+        "inclusive_seconds": 0.0008400400000000001,
+        "exclusive_seconds": 0.0008400400000000001
+      },
+      "evolution_cycle/scheduled_output": {
+        "calls": 3.0,
+        "inclusive_seconds": 0.054668282,
+        "exclusive_seconds": 0.054668282
+      },
+      "evolution_cycle/stopping_check": {
+        "calls": 12.0,
+        "inclusive_seconds": 0.001845012,
+        "exclusive_seconds": 0.001845012
+      },
+      "evolution_cycle/tasks/after_stagen": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.13148630699999997,
+        "exclusive_seconds": 0.000770404999999974
+      },
+      "evolution_cycle/tasks/after_stagen/nr/CCEDump": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4522999999999994e-05,
+        "exclusive_seconds": 4.4522999999999994e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ADMC": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.11106354699999997,
+        "exclusive_seconds": 0.11106354699999997
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearR": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.009843779000000004,
+        "exclusive_seconds": 0.009843779000000004
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearR2": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4556000000000005e-05,
+        "exclusive_seconds": 4.4556000000000005e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearS": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.009366811999999999,
+        "exclusive_seconds": 0.009366811999999999
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearS2": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4156e-05,
+        "exclusive_seconds": 4.4156e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_DumpHorizon": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.3477000000000004e-05,
+        "exclusive_seconds": 4.3477000000000004e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ProlW": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.3270999999999986e-05,
+        "exclusive_seconds": 4.3270999999999986e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_RecvW": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4108000000000005e-05,
+        "exclusive_seconds": 4.4108000000000005e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_RestW": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4178000000000016e-05,
+        "exclusive_seconds": 4.4178000000000016e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_SendW": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.449199999999999e-05,
+        "exclusive_seconds": 4.449199999999999e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_Wave": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.373200000000001e-05,
+        "exclusive_seconds": 4.373200000000001e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_Weyl": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.5270999999999994e-05,
+        "exclusive_seconds": 4.5270999999999994e-05
+      },
+      "evolution_cycle/tasks/after_timeintegrator": {
+        "calls": 12.0,
+        "inclusive_seconds": 1.5411999999999997e-05,
+        "exclusive_seconds": 1.5411999999999997e-05
+      },
+      "evolution_cycle/tasks/before_stagen": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.013676,
+        "exclusive_seconds": 0.0001899569999999997
+      },
+      "evolution_cycle/tasks/before_stagen/nr/Z4c_IRecvW": {
+        "calls": 48.0,
+        "inclusive_seconds": 5.110799999999999e-05,
+        "exclusive_seconds": 5.110799999999999e-05
+      },
+      "evolution_cycle/tasks/before_stagen/nr/Z4c_Recv": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.013434934999999999,
+        "exclusive_seconds": 0.013434934999999999
+      },
+      "evolution_cycle/tasks/before_timeintegrator": {
+        "calls": 12.0,
+        "inclusive_seconds": 1.5299e-05,
+        "exclusive_seconds": 1.5299e-05
+      },
+      "evolution_cycle/tasks/stagen": {
+        "calls": 48.0,
+        "inclusive_seconds": 5.1167421059999985,
+        "exclusive_seconds": 0.0011949190000000304
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_AxisGhosts": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.003448351000000001,
+        "exclusive_seconds": 0.003448351000000001
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_AxisGhostsPost": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.003252790000000001,
+        "exclusive_seconds": 0.003252790000000001
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_BCS": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.03399943000000001,
+        "exclusive_seconds": 0.03399943000000001
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CalcRHS": {
+        "calls": 48.0,
+        "inclusive_seconds": 1.090343947,
+        "exclusive_seconds": 1.083229148
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CalcRHS/gauge/global_max_K": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.007114798999999999,
+        "exclusive_seconds": 0.007114798999999999
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CopyU": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.085304355,
+        "exclusive_seconds": 0.085304355
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_ExplRK": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.154388629,
+        "exclusive_seconds": 0.154388629
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_FastFlow": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.3431e-05,
+        "exclusive_seconds": 4.3431e-05
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Newdt": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.010709278000000003,
+        "exclusive_seconds": 0.010709278000000003
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_PT": {
+        "calls": 48.0,
+        "inclusive_seconds": 4.4305e-05,
+        "exclusive_seconds": 4.4305e-05
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Prolong": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.608012466,
+        "exclusive_seconds": 0.608012466
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RecvU": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.9557261769999998,
+        "exclusive_seconds": 0.8628015099999999
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RecvU/vc/shared_node_sync": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.092924667,
+        "exclusive_seconds": 0.092924667
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RestU": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.14334818000000007,
+        "exclusive_seconds": 0.051085117
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RestU/vc/shared_node_sync": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.092263063,
+        "exclusive_seconds": 0.092263063
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_SendU": {
+        "calls": 48.0,
+        "inclusive_seconds": 1.0438876400000001,
+        "exclusive_seconds": 1.0438876400000001
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_SomBC": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.010905982999999998,
+        "exclusive_seconds": 0.010905982999999998
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_VCFinalize": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.7396518510000002,
+        "exclusive_seconds": 0.6932083680000001
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_VCFinalize/vc/shared_node_sync": {
+        "calls": 24.0,
+        "inclusive_seconds": 0.046443482999999994,
+        "exclusive_seconds": 0.046443482999999994
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Z4c2ADM": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.23248037399999993,
+        "exclusive_seconds": 0.23248037399999993
+      },
+      "initialization": {
+        "calls": 1.0,
+        "inclusive_seconds": 135.548255557,
+        "exclusive_seconds": 53.963092828
+      },
+      "initialization/vc/shared_node_sync": {
+        "calls": 2.0,
+        "inclusive_seconds": 0.008286549,
+        "exclusive_seconds": 0.008286549
+      },
+      "initialization/vc/topology_rebuild": {
+        "calls": 1.0,
+        "inclusive_seconds": 81.57687618,
+        "exclusive_seconds": 81.57687618
+      }
+    }
+  }
+}

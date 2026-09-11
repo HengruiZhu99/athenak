@@ -359,11 +359,20 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     z->RebuildSubcycleParents();
     const auto coverage=z->subcycle_parents.FillSameLevelGhosts(
         *z->subcycle_hierarchy,z->u0,z->layout);
+    int axis_targets=0;
+    if (pmesh->mesh_bcs[BoundaryFace::inner_x1]==BoundaryFlag::axis) {
+      std::vector<int> signs(z4c::Z4c::nz4c);
+      for (int n=0; n<z4c::Z4c::nz4c; ++n) {
+        signs[n]=z4c::Z4cStateAxisParitySignFromPackedIndex(n);
+      }
+      axis_targets=z->subcycle_parents.FillAxisAtLogicalZero(z->layout,signs);
+    }
     std::cout << "SUBCYCLE_PARENT_INITIALIZATION parents="
               << z->subcycle_parents.ParentNodes().size()
               << " bytes=" << z->subcycle_parents.Values().size()*sizeof(Real)
               << " same_level_ghosts=" << coverage.copied
-              << " unavailable_ghosts=" << coverage.unavailable
+              << " unavailable_before_axis=" << coverage.unavailable
+              << " axis_targets=" << axis_targets
               << " ghosts_valid=false evolved=false" << std::endl;
   }
   // This opt-in environment hook is compiled only into unit-test-enabled

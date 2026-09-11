@@ -10,10 +10,14 @@ source=CAMPAIGN/'cycle_03_recovery_24000'
 parser=argparse.ArgumentParser()
 parser.add_argument('--set-name',default='profiles')
 parser.add_argument('--source-compatibility',action='store_true')
+parser.add_argument('--steps',type=int,default=12)
+parser.add_argument('--tags',nargs='+',choices=['early','late'],default=['early','late'])
 args=parser.parse_args()
 if Path(args.set_name).name != args.set_name: raise SystemExit('set-name must be a directory name')
+if args.steps<=0: raise SystemExit('steps must be positive')
 manifest=[]
 for tag,number in [('early',63),('late',66)]:
+ if tag not in args.tags: continue
  checkpoint=source/'rst'/('lapse200.%05d.rst'%number)
  info=checkpoint_info(checkpoint)
  checkpoint_hash=sha(checkpoint)
@@ -25,13 +29,13 @@ for tag,number in [('early',63),('late',66)]:
   assert len(prefix)==info['history_bytes'] and prefix.endswith(b'\n')
   (case/'amr_history.jsonl').write_bytes(prefix)
   inp=(source/'input.athinput').read_text()
-  for section,key,value in [('time','nlim',info['cycle']+12),('time','ndiag',1),('time','execution_profile',str(mode=='profile').lower()),('mesh_refinement','amr_history_file',case/'amr_history.jsonl'),('problem','brill_global_coefficients_file',source/'initial.coefficients'),('mesh_refinement','max_nmb_per_rank',24000)]:
+  for section,key,value in [('time','nlim',info['cycle']+args.steps),('time','ndiag',1),('time','execution_profile',str(mode=='profile').lower()),('mesh_refinement','amr_history_file',case/'amr_history.jsonl'),('problem','brill_global_coefficients_file',source/'initial.coefficients'),('mesh_refinement','max_nmb_per_rank',24000)]:
    inp=setparam(inp,section,key,value)
   if args.source_compatibility and mode=='profile':
    recorded_source=json.loads(prefix.splitlines()[0])['source_id']
    inp=setparam(inp,'mesh_refinement','amr_history_compatible_source_id',recorded_source)
   (case/'input.athinput').write_text(inp)
   exe=CAMPAIGN/'bundle/athena.history_extrema' if mode=='baseline' else ROOT/'build/src/athena'
-  manifest.append(dict(case=str(case),tag=tag,mode=mode,checkpoint=str(checkpoint),checkpoint_sha256=checkpoint_hash,info=info,input_sha256=sha(case/'input.athinput'),exe=str(exe),steps=12))
+  manifest.append(dict(case=str(case),tag=tag,mode=mode,checkpoint=str(checkpoint),checkpoint_sha256=checkpoint_hash,info=info,input_sha256=sha(case/'input.athinput'),exe=str(exe),steps=args.steps))
 (ROOT/'profiles.json').write_text(json.dumps(manifest,indent=2))
 print(json.dumps(manifest,indent=2))

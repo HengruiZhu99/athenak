@@ -14,7 +14,7 @@ def payload_hash(path):
  return h.hexdigest()
 cases={(r['tag'],r['mode']):Path(r['case']) for r in json.loads((ROOT/'profiles.json').read_text())}
 results={}
-for tag in ['early','late']:
+for tag in sorted({tag for tag,mode in cases}):
  a=cases[(tag,'baseline')];b=cases[(tag,'profile')]
  ha=read_history(next(a.glob('*.hst')));hb=read_history(next(b.glob('*.hst')))
  assert len(ha)==len(hb) and ha[-1]['time']==hb[-1]['time']

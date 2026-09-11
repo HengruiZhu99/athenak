@@ -58,6 +58,17 @@ int main(int argc,char **argv) {
     try { parents.FillSameLevelGhosts(hierarchy,u,invalid); }
     catch (const std::invalid_argument &) { rejected=true; }
     Check(rejected);
+    Check(parents.FillAxisAtLogicalZero(l,{1,-1})==2*l.is*l.n2);
+    auto reflected=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),parents.Values());
+    for (int p=0; p<3; ++p) {
+      const bool axis=hierarchy.Nodes()[parents.ParentNodes()[p]].key[1]==0;
+      for (int v=0; v<2; ++v) for (int j=0; j<13; ++j) for (int i=0; i<13; ++i) {
+        const double expected=axis && i<l.is ?
+            (v==0 ? 1 : -1)*filled(p,v,0,j,2*l.is-i) : filled(p,v,0,j,i);
+        if (std::isnan(expected)) Check(std::isnan(reflected(p,v,0,j,i)));
+        else Check(reflected(p,v,0,j,i)==expected);
+      }
+    }
     auto after=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),u);
     for (std::size_t i=0; i<u.size(); ++i) Check(after.data()[i]==host.data()[i]);
     std::cout << "PASS: parent injection, same-level ghosts, missing-donor accounting, unchanged leaves\n";
