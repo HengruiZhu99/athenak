@@ -52,18 +52,25 @@ def main():
         final = {key: float(history[key][-1]) for key in metrics}
         cases.append((row, run, history, final))
     reference = next(case for case in cases if case[0]['name'] == 'classical_sync')
+    legacy = next((case for case in cases if case[0]['name'] == 'legacy_sync'), None)
     report = dict(start=m['start'], end=m['end'],
                   scope='Short late-checkpoint segment only; scientific reproduction not certified.',
-                  original_final_history_row=m['original_final_history_row'], cases=[])
+                  original_final_history_row=m['original_final_history_row'],
+                  original_final=m.get('original_final'), cases=[])
     for row, run, history, final in cases:
         difference = {key: final[key]-reference[3][key] for key in metrics}
         relative = {key: difference[key]/abs(reference[3][key])
                     if reference[3][key] != 0 else None for key in metrics}
+        original=m.get('original_final')
+        original_difference={key:final[key]-original[key] for key in metrics} if original else None
         report['cases'].append(dict(name=row['name'], final=final,
+            difference_from_archived_production=original_difference,
             difference_from_classical_sync=difference,
             relative_difference_from_classical_sync=relative,
             wall_seconds=run['wall_seconds'],
-            speedup_vs_classical_sync=reference[1]['wall_seconds']/run['wall_seconds']))
+            speedup_vs_classical_sync=reference[1]['wall_seconds']/run['wall_seconds'],
+            speedup_vs_legacy_sync=legacy[1]['wall_seconds']/run['wall_seconds']
+            if legacy is not None else None))
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
