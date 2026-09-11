@@ -367,12 +367,29 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
       }
       axis_targets=z->subcycle_parents.FillAxisAtLogicalZero(z->layout,signs);
     }
+    std::array<bool,4> outer_faces;
+    for(int f=0;f<4;++f) {
+      const auto flag=pmesh->mesh_bcs[f];
+      outer_faces[f]=flag==BoundaryFlag::outflow || flag==BoundaryFlag::diode ||
+                     flag==BoundaryFlag::vacuum;
+    }
+    const int root_x=pmesh->mesh_indcs.nx1/pmesh->mb_indcs.nx1;
+    const int root_y=pmesh->mesh_indcs.nx2/pmesh->mb_indcs.nx2;
+    int physical_targets=0;
+    if(z->opt.extrap_order==2) physical_targets=z->subcycle_parents.FillPhysicalGhosts<2>(
+        z->layout,pmesh->root_level,root_x,root_y,outer_faces);
+    else if(z->opt.extrap_order==3) physical_targets=z->subcycle_parents.FillPhysicalGhosts<3>(
+        z->layout,pmesh->root_level,root_x,root_y,outer_faces);
+    else if(z->opt.extrap_order==4) physical_targets=z->subcycle_parents.FillPhysicalGhosts<4>(
+        z->layout,pmesh->root_level,root_x,root_y,outer_faces);
+    else throw std::runtime_error("unsupported parent physical extrapolation order");
     std::cout << "SUBCYCLE_PARENT_INITIALIZATION parents="
               << z->subcycle_parents.ParentNodes().size()
               << " bytes=" << z->subcycle_parents.Values().size()*sizeof(Real)
               << " same_level_ghosts=" << coverage.copied
               << " unavailable_before_axis=" << coverage.unavailable
               << " axis_targets=" << axis_targets
+              << " physical_targets=" << physical_targets
               << " ghosts_valid=false evolved=false" << std::endl;
   }
   // This opt-in environment hook is compiled only into unit-test-enabled

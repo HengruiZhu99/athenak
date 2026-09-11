@@ -2,7 +2,8 @@
 #include <iostream>
 #include <stdexcept>
 #include "driver/vertex_parent_states.hpp"
-void Check(bool ok) { if (!ok) throw std::runtime_error("parent state regression"); }
+void CheckImpl(bool ok,int line) { if (!ok) throw std::runtime_error("parent state regression at line "+std::to_string(line)); }
+#define Check(condition) CheckImpl((condition),__LINE__)
 int main(int argc,char **argv) {
   Kokkos::initialize(argc,argv);
   {
@@ -69,9 +70,37 @@ int main(int argc,char **argv) {
         else Check(reflected(p,v,0,j,i)==expected);
       }
     }
+    // Use all-outflow boundaries for the manufactured cubic field; axis parity
+    // above was checked separately and is not this polynomial's symmetry.
+    parents.Initialize(hierarchy,u,l);
+    const auto before_physical=parents.FillSameLevelGhosts(hierarchy,u,l);
+    Check(parents.FillPhysicalGhosts<4>(l,0,2,1,{false,false,false,false})==0);
+    auto unfilled=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),parents.Values());
+    int remaining=0;
+    for(std::size_t n=0;n<unfilled.size();++n) remaining+=std::isnan(unfilled.data()[n]);
+    Check(remaining==2*before_physical.unavailable);
+    Check(parents.FillPhysicalGhosts<4>(l,0,2,1,{true,true,true,true})>0);
+    auto physical=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),parents.Values());
+    int physical_missing=0;
+    for(int p=0;p<3;++p) {
+      const auto key=hierarchy.Nodes()[parents.ParentNodes()[p]].key;
+      const double width=std::ldexp(1.,-key[0]);
+      for(int v=0;v<2;++v) for(int j=0;j<13;++j) for(int i=0;i<13;++i) {
+        if(std::isnan(physical(p,v,0,j,i))) {
+          Check(key[0]>0);++physical_missing;continue;
+        }
+        const double x=width*(key[1]+(i-2)/8.),z=width*(key[2]+(j-2)/8.);
+        Check(std::abs(physical(p,v,0,j,i)-(v+x*x+z*z*z))<1e-12);
+      }
+    }
+    Check(physical_missing==0);  // this fixture has a donor for every interior stencil
+    bool invalid_domain=false;
+    try {parents.FillPhysicalGhosts<4>(l,1,2,1,{true,true,true,true});}
+    catch(const std::invalid_argument &) {invalid_domain=true;}
+    Check(invalid_domain);
     auto after=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),u);
     for (std::size_t i=0; i<u.size(); ++i) Check(after.data()[i]==host.data()[i]);
-    std::cout << "PASS: parent injection, same-level ghosts, missing-donor accounting, unchanged leaves\n";
+    std::cout << "PASS: parent injection, same-level ghosts, physical ghosts, missing-donor accounting, unchanged leaves\n";
   }
   Kokkos::finalize();
 }

@@ -340,3 +340,36 @@ level-update-results.json; raw /tmp/vc-cartoon-level-update-runtime. Four releva
 CTest cases pass. Build logs /tmp/vc-level-rk-build.log and
 /tmp/vc-level-rk-rebuild.log. Build identifies base1bd235a6 plus uncommitted changes
 now included in this commit. GPU qualification of these changes remains pending.
+
+## Physical ghost support for covered parents
+
+Previous turn made implementation progress (3b1a1f42). Confirmed allocation
+58199685 revoked after queue timeout: sacct CANCELLED elapsed00:00:00 and
+launcher1875948 gone. Archived its logs with job-ID suffix, reduced requested
+allocation from90min to30min (same24 numerical steps and unchanged inputs), and
+retried. New launcher1911927 and job58200152 confirmed pending Resources.
+No production campaign modifications.
+
+Moved existing leaf Extrapolate<2/3/4> formulas verbatim into shared
+z4c/physical_extrapolation.hpp; leaf callers now use the namespaced function.
+Covered parent physical fills use those same formulas, explicit root-domain
+extent and enabled faces, x1 then x2 corner ordering. Only configured
+outflow/diode/vacuum faces are enabled by the startup test hook. Axis remains
+its separate preceding provider. No physical RHS conditions or parent evolution
+are enabled by this change; unknown/interlevel ghost support is not substituted.
+
+Cubic parent fixture tests exact values including outer corners, disabled-face
+missing counts and domain validation. Initial assertion expecting leftover
+interlevel NaNs was wrong: this fixture has same-level donors for every interior
+ghost. Corrected that expectation; missing disabled physical faces are still
+explicitly checked. Unit test passes.
+
+Full CPU executable built. Four static-AMR Cartoon runs retain byte-identical
+complete restart payloads vs level-update baseline; evidence
+parent-physical-results.json. Their parents touch only the axis, so additionally
+ran a fully refined domain to exercise actual outer-parent fills:8parents,
+800physical targets, with and without parent initialization gives identical
+payload9ca1d4eac27694fbef13fab09cf013559e2f02ce42d781d43378c4583938bbde.
+Evidence parent-outer-results.json, raw /tmp/vc-parent-outer-runtime; four-CFL raw
+/tmp/vc-cartoon-physical-parent-runtime. This is initialization/leaf invariance,
+not an asynchronously evolved parent or production-gauge qualification.

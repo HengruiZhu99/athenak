@@ -8,6 +8,7 @@
 #include "driver/subcycle_hierarchy.hpp"
 #include "z4c/z4c_grid.hpp"
 #include "z4c/cartoon_axis_boundary.hpp"
+#include "z4c/physical_extrapolation.hpp"
 
 namespace subcycling {
 // Single-pack VC Cartoon parent storage. Initialize only from a common-time
@@ -171,6 +172,67 @@ class VertexParentStates {
     }
     Kokkos::fence("parent axis ghosts complete");
     return axis.size()*layout.is*layout.n2;
+  }
+  // Same physical ghost extrapolation as the leaf path. Flags correspond to
+  // inner/outer x1 then inner/outer x2; enable only outflow/diode/vacuum faces.
+  // Run after same-level fill and axis reflection. x1 precedes x2 so physical
+  // corners use already-filled radial ghosts. Missing interlevel donors stay NaN.
+  template<int ORDER>
+  int FillPhysicalGhosts(const z4c::Z4cGridLayout &layout, int root_level,
+                         int root_x, int root_y, const std::array<bool,4> &faces) {
+    static_assert(ORDER>=2 && ORDER<=4,"supported physical extrapolation order");
+    if (LayoutKey(layout)!=layout_key_ || root_level<0 || root_x<=0 || root_y<=0 ||
+        layout.nx1+1<ORDER || layout.nx2+1<ORDER)
+      throw std::invalid_argument("invalid parent physical boundary layout");
+    std::vector<std::array<int,2>> work[2];
+    int targets=0;
+    for (int p=0;p<static_cast<int>(parent_nodes_.size());++p) {
+      const auto &key=keys_[parent_nodes_[p]];const int depth=key[0]-root_level;
+      if (depth<0 || depth>30 || std::int64_t(root_x)*(std::int64_t(1)<<depth)>
+          std::numeric_limits<int>::max() || std::int64_t(root_y)*(std::int64_t(1)<<depth)>
+          std::numeric_limits<int>::max())
+        throw std::invalid_argument("invalid parent physical domain extent");
+      const int extents[2]={root_x*(1<<depth),root_y*(1<<depth)};
+      for (int d=0;d<2;++d) {
+        if (key[d+1]>=extents[d]) throw std::invalid_argument("parent outside physical domain");
+        for(int side=0;side<2;++side) if (faces[2*d+side] &&
+            key[d+1]==(side==0 ? 0 : extents[d]-1)) {
+          work[d].push_back({p,side});
+          const int start=d==0 ? layout.is : layout.js;
+          const int end=d==0 ? layout.ie : layout.je;
+          const int length=d==0 ? layout.n1 : layout.n2;
+          targets+=(side==0 ? start : length-end-1)*(d==0 ? layout.n2 : layout.n1);
+        }
+      }
+    }
+    const auto values=values_;const int ks=layout.ks;
+    for(int d=0;d<2;++d) {
+      if(work[d].empty()) continue;
+      DvceArray2D<int> entries("physical parent ghost work",work[d].size(),2);
+      auto host=Kokkos::create_mirror_view(entries);
+      for(int r=0;r<static_cast<int>(work[d].size());++r)
+        for(int q=0;q<2;++q) host(r,q)=work[d][r][q];
+      Kokkos::deep_copy(entries,host);
+      const int start=d==0 ? layout.is : layout.js;
+      const int end=d==0 ? layout.ie : layout.je;
+      const int length=d==0 ? layout.n1 : layout.n2;
+      const int transverse=d==0 ? layout.n2 : layout.n1;
+      par_for("fill physical parent ghosts",DevExeSpace(),0,work[d].size()-1,
+          0,values.extent_int(1)-1,0,transverse-1,KOKKOS_LAMBDA(int r,int v,int t) {
+        const int p=entries(r,0),side=entries(r,1),edge=side==0 ? start : end;
+        const int inward=side==0 ? 1 : -1;
+        const int ng=side==0 ? start : length-end-1;
+        for(int n=1;n<=ng;++n) {
+          const int i=d==0 ? edge : t,j=d==0 ? t : edge;
+          const int target=edge-inward*n;
+          values(p,v,ks,d==0 ? t : target,d==0 ? target : t)=
+              z4c::Extrapolate<ORDER>(values,p,v,ks,j,i,0,d==1 ? inward : 0,
+                                      d==0 ? inward : 0,n);
+        }
+      });
+      Kokkos::fence("parent physical boundary direction complete");
+    }
+    return targets;
   }
   const DvceArray5D<Real> &Values() const { return values_; }
   const std::vector<int> &ParentNodes() const { return parent_nodes_; }

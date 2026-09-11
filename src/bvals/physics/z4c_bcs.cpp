@@ -12,6 +12,7 @@
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
 #include "z4c/cartoon_axis_boundary.hpp"
+#include "z4c/physical_extrapolation.hpp"
 #include "z4c/cartoon_vertex_axis.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_symmetry.hpp"
@@ -57,58 +58,6 @@ template<int order>
 void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0,
               int is, int ie, int js, int je, int ks, int ke, int n1, int n2,
               int n3, int ghost_width);
-
-// A simple function for doing one-sided extrapolation.
-// The off[xyz] variables control the direction of the extrapolation,
-// and delta specifies how far to extrapolate to.
-template<int order>
-KOKKOS_INLINE_FUNCTION
-Real Extrapolate(DvceArray5D<Real> u, const int m, const int n,
-                 const int k, const int j, const int i,
-                 const int offz, const int offy, const int offx,
-                 const int delta);
-
-// Linear extrapolation
-template<>
-KOKKOS_INLINE_FUNCTION
-Real Extrapolate<2>(DvceArray5D<Real> u, const int m, const int n,
-                    const int k, const int j, const int i,
-                    const int offz, const int offy, const int offx,
-                    const int delta) {
-  Real f0 = u(m,n,k,j,i);
-  Real f1 = u(m,n,k+offz,j+offy,i+offx);
-  return f0 + (delta)*(f0 - f1);
-}
-
-// Quadratic extrapolation
-template<>
-KOKKOS_INLINE_FUNCTION
-Real Extrapolate<3>(DvceArray5D<Real> u, const int m, const int n,
-                    const int k, const int j, const int i,
-                    const int offz, const int offy, const int offx,
-                    const int delta) {
-  Real f0 = u(m,n,k,j,i);
-  Real f1 = u(m,n,k+offz,j+offy,i+offx);
-  Real f2 = u(m,n,k+2*offz,j+2*offy,i+2*offx);
-  return 0.5*(f0 * (1 + delta) * (2 + delta) +
-              delta*(f2 + delta*f2 - 2*f1*(2 + delta)));
-}
-
-// Cubic extrapolation
-template<>
-KOKKOS_INLINE_FUNCTION
-Real Extrapolate<4>(DvceArray5D<Real> u, const int m, const int n,
-                    const int k, const int j, const int i,
-                    const int offz, const int offy, const int offx,
-                    const int delta) {
-  Real f0 = u(m,n,k,j,i);
-  Real f1 = u(m,n,k+offz,j+offy,i+offx);
-  Real f2 = u(m,n,k+2*offz,j+2*offy,i+2*offx);
-  Real f3 = u(m,n,k+3*offz,j+3*offy,i+3*offx);
-  return (-3.0*f1*delta*(2 + delta)*(3 + delta) +
-          f0*(1 + delta)*(2 + delta)*(3 + delta) +
-          delta*(1 + delta)*(-f3*(2 + delta) + 3*f2*(3 + delta)))/6.0;
-}
 
 //----------------------------------------------------------------------------------------
 // \!fn void MeshBoundaryValues::Z4cBCs()
@@ -224,7 +173,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
         case BoundaryFlag::vacuum:
           for (int i=0; i<ng; ++i) {
             //u0(m,n,k,j,is-i-1) = u0(m,n,k,j,is);
-            u0(m,n,k,j,is-i-1) = Extrapolate<order>(u0,m,n,k,j,is,0,0,1,i+1);
+            u0(m,n,k,j,is-i-1) = z4c::Extrapolate<order>(u0,m,n,k,j,is,0,0,1,i+1);
           }
           break;
         case BoundaryFlag::inflow:
@@ -254,7 +203,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
         case BoundaryFlag::vacuum:
           for (int i=0; i<ng; ++i) {
             //u0(m,n,k,j,ie+i+1) = u0(m,n,k,j,ie);
-            u0(m,n,k,j,ie+i+1) = Extrapolate<order>(u0,m,n,k,j,ie,0,0,-1,i+1);
+            u0(m,n,k,j,ie+i+1) = z4c::Extrapolate<order>(u0,m,n,k,j,ie,0,0,-1,i+1);
           }
           break;
         case BoundaryFlag::inflow:
@@ -296,7 +245,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
         case BoundaryFlag::vacuum:
           for (int j=0; j<ng; ++j) {
             //u0(m,n,k,js-j-1,i) = u0(m,n,k,js,i);
-            u0(m,n,k,js-j-1,i) = Extrapolate<order>(u0,m,n,k,js,i,0,1,0,j+1);
+            u0(m,n,k,js-j-1,i) = z4c::Extrapolate<order>(u0,m,n,k,js,i,0,1,0,j+1);
           }
           break;
         case BoundaryFlag::inflow:
@@ -326,7 +275,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
         case BoundaryFlag::vacuum:
           for (int j=0; j<ng; ++j) {
             //u0(m,n,k,je+j+1,i) = u0(m,n,k,je,i);
-            u0(m,n,k,je+j+1,i) = Extrapolate<order>(u0,m,n,k,je,i,0,-1,0,j+1);
+            u0(m,n,k,je+j+1,i) = z4c::Extrapolate<order>(u0,m,n,k,je,i,0,-1,0,j+1);
           }
           break;
         case BoundaryFlag::inflow:
@@ -367,7 +316,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
       case BoundaryFlag::vacuum:
         for (int k=0; k<ng; ++k) {
           //u0(m,n,ks-k-1,j,i) = u0(m,n,ks,j,i);
-          u0(m,n,ks-k-1,j,i) = Extrapolate<order>(u0,m,n,ks,j,i,1,0,0,k+1);
+          u0(m,n,ks-k-1,j,i) = z4c::Extrapolate<order>(u0,m,n,ks,j,i,1,0,0,k+1);
         }
         break;
       case BoundaryFlag::inflow:
@@ -397,7 +346,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
       case BoundaryFlag::vacuum:
         for (int k=0; k<ng; ++k) {
           //u0(m,n,ke+k+1,j,i) = u0(m,n,ke,j,i);
-          u0(m,n,ke+k+1,j,i) = Extrapolate<order>(u0,m,n,ke,j,i,-1,0,0,k+1);
+          u0(m,n,ke+k+1,j,i) = z4c::Extrapolate<order>(u0,m,n,ke,j,i,-1,0,0,k+1);
         }
         break;
       case BoundaryFlag::inflow:
