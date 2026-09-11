@@ -1134,3 +1134,33 @@ scientific qualification gate just because processes exit0. Next inspect
 prepared stage1 ghosts and native coarse-fine ownership near that corner,
 fix the discrepancy and rerun independent comparisons before production use.
 Perlmutter access renewal pending; goal remains incomplete, no remote changes.
+
+## Stage-transition diagnosis and uncommitted hanging-vertex experiment
+
+Previous turn progressed by isolating refinement mismatch. Added optional
+checkpoint-probe state/RHS binary snapshot (ATHENA_TEST_PROBE_FIRST_RHS, optional
+ATHENA_TEST_PROBE_RHS_STAGE1..4). CPU probe first prepared stage agrees with
+production pre-RHS diagnostic across all leaf active AND ghost values to1e-14.
+First complete RHS also agrees on all active leaf values to1e-14.
+Stage2 differs at424 active component-values; all are ODD hanging interface
+vertices, not even coincident points. Native stage transfer reconstructs these
+from coarse data; prior prototype excluded every active fine vertex.
+
+Uncommitted experiment in hierarchy_temporal_ghosts.hpp includes odd active
+vertices adjacent to a physical coarse leaf in interpolation targets.
+HierarchyRK4 synchronization restores spatial targets at parent/child common
+time. This reduces ratio1-versus-driver max error at dt.002 from8.65e-7 to
+6.87639e-9; now approximately dt^2 local scaling. HOWEVER both adaptive and
+coarse-group temporal-order CTests FAIL (coarse-group ratios4.423,2.046).
+Do not call this fix qualified or deploy it. The experimental ownership changes
+remain uncommitted intentionally for continued analysis. Production final-stage
+algebraic projection is only at last RK stage; simple every-stage projection
+is not an explanation. Next reconcile RK-history/corrector treatment of hanging
+vertices and synchronization/projection order, then rerun independent driver
+and temporal-order gates.
+
+Evidence stage-transition-evidence; raw CSV/snapshots /tmp/vc-first-rhs-compare,
+/tmp/vc-rhs-value-compare, /tmp/vc-stage2-probe. Current CPU executable includes
+uncommitted experiment and MUST NOT be used for claimed production reproduction.
+No live build/job remains: build63216 and test68885 finished; both selected
+order gates failed. Full goal incomplete; production untouched.

@@ -6,6 +6,29 @@
 #include "z4c/hierarchy_physics.hpp"
 #include "driver/hierarchy_physical_maximum.hpp"
 namespace z4c {
+template<int NG> struct CheckpointProbePhysics : HierarchyPhysics<NG> {
+  using HierarchyPhysics<NG>::HierarchyPhysics;
+  std::string first_rhs_snapshot;
+  int snapshot_stage=1;
+  void RHS(const subcycling::StepContext &step,int stage,const subcycling::BlockBatches &blocks,
+           const DvceArray5D<Real> &u,const DvceArray5D<Real> &rhs) {
+    const auto snapshot=stage==snapshot_stage ? first_rhs_snapshot : std::string();
+    if(!snapshot.empty()) {
+      const auto host=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),u);
+      std::ofstream out(first_rhs_snapshot,std::ios::binary);
+      out.write(reinterpret_cast<const char *>(host.data()),host.size()*sizeof(Real));
+      out.close();if(!out) throw std::runtime_error("probe RHS snapshot failed");
+      first_rhs_snapshot.clear();
+    }
+    HierarchyPhysics<NG>::RHS(step,stage,blocks,u,rhs);
+    if(!snapshot.empty()) {
+      const auto host=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
+      std::ofstream out(snapshot+".rhs",std::ios::binary);
+      out.write(reinterpret_cast<const char *>(host.data()),host.size()*sizeof(Real));
+      out.close();if(!out) throw std::runtime_error("probe RHS output failed");
+    }
+  }
+};
 // Qualification hook only: evolve a copied, fixed hierarchy for ONE interval.
 // Never copy the result back to the live MeshBlockPack or change checkpoint time.
 template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
@@ -49,12 +72,19 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
   if(!std::isfinite(initial)) throw std::runtime_error("nonfinite checkpoint K");
   const subcycling::HierarchyRK4::Histories *history=nullptr;
   std::map<double,Real> cache;
-  HierarchyPhysics<NG> physics(storage,geometry,l,z->opt,mesh->root_level,rx,ry,z->diss,outer,
+  CheckpointProbePhysics<NG> physics(storage,geometry,l,z->opt,mesh->root_level,rx,ry,z->diss,outer,
     [&](double t) {
       if(!history) return initial;
       const auto found=cache.find(t);if(found!=cache.end()) return found->second;
       return cache.emplace(t,maximum.Evaluate(*history,t)).first->second;
     },[](double){return 0.;},[](double){return 0.;});
+  if(std::getenv("ATHENA_TEST_PROBE_FIRST_RHS"))
+    physics.first_rhs_snapshot=directory+"/first_rhs_fields.bin";
+  if(const char *stage=std::getenv("ATHENA_TEST_PROBE_RHS_STAGE")) {
+    physics.snapshot_stage=std::stoi(stage);
+    if(physics.snapshot_stage<1 || physics.snapshot_stage>4)
+      throw std::invalid_argument("invalid probe snapshot stage");
+  }
   subcycling::CorrectorControl control;
   Kokkos::Timer timer;
   const auto report=engine.RunCorrected(mesh->time,dt,storage,physics,ratio,control,
