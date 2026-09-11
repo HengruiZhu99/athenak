@@ -21,6 +21,7 @@ class Scope {
     if (!active_) return;
     Kokkos::fence("profile begin");
     parent_ = current_;
+    if (parent_) name_ = parent_->name_+"/"+name_;
     current_ = this;
     start_ = Clock::now();
   }

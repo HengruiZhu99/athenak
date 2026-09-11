@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
             KOKKOS_LAMBDA(int i) { values(i) += 1.0; });
       }
     }
-    const auto p = ep::entries.at("parent"), c = ep::entries.at("child");
+    const auto p = ep::entries.at("parent"), c = ep::entries.at("parent/child");
     Check(p.calls == 1 && c.calls == 2);
     Check(c.inclusive > 0 && p.exclusive >= 0);
     Check(std::abs(p.inclusive-p.exclusive-c.inclusive) < 1.e-12);
