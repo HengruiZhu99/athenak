@@ -1893,3 +1893,11 @@ if(Athena_BUILD_UNIT_TESTS)
   target_link_libraries(athena_execution_profile_test PRIVATE Kokkos::kokkos)
   add_test(NAME execution_profile COMMAND athena_execution_profile_test)
 endif()
+
+if(Athena_BUILD_UNIT_TESTS)
+  add_executable(athena_classical_rk4_test tst/unit/classical_rk4_test.cpp)
+  target_include_directories(athena_classical_rk4_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR})
+  target_link_libraries(athena_classical_rk4_test PRIVATE Kokkos::kokkos)
+  add_test(NAME classical_rk4 COMMAND athena_classical_rk4_test)
+endif()

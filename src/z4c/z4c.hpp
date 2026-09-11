@@ -149,6 +149,7 @@ class Z4c {
   DvceArray5D<Real> u_mat;
   DvceArray5D<Real> u0;        // z4c solution
   DvceArray5D<Real> u1;        // z4c solution at intermediate timestep
+  DvceArray5D<Real> classical_sum; // active-block-only RK4 weighted RHS accumulator
   DvceArray5D<Real> u_rhs;     // z4c rhs storage
   DvceArray5D<Real> chi_provenance_terms; // default-off exact chi RHS terms
   DvceArray5D<Real> u_telegraph_mu; // physical inverse-length damping profile

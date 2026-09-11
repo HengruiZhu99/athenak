@@ -12,6 +12,7 @@
 #include "mesh/mesh.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "driver/driver.hpp"
+#include "driver/classical_rk4.hpp"
 #include "coordinates/coordinates.hpp"
 #include "globals.hpp"
 #include "z4c/z4c.hpp"
@@ -104,6 +105,30 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
       opt.shift_mode == Z4cShiftMode::prescribed_zero;
   const bool telegraph_lapse = opt.telegraph_lapse;
 
+  if (pdriver->integrator == "rk4_classical") {
+    // u1 is the beginning-of-step state, copied by CopyU only at stage 1.
+    // The accumulator is scratch, never checkpointed or transferred by AMR.
+    // Resize only at stage 1, after any between-step hierarchy changes.
+    if (stage == 1 && classical_sum.extent(0) != nmb1 + 1) {
+      Kokkos::realloc(classical_sum, nmb1 + 1, nz4c,
+                      bounds.n3, bounds.n2, bounds.n1);
+    }
+    auto sum = classical_sum;
+    const Real dt = pmy_pack->pmesh->dt;
+    const Real weight = classical_rk4::Weight(stage);
+    const Real next = classical_rk4::NextFraction(stage);
+    par_for("z4c classical RK4 update", DevExeSpace(),
+        0, nmb1, 0, nvar-1, ks, ke, js, je, is, ie,
+        KOKKOS_LAMBDA(const int m, const int n, const int k, const int j,
+                      const int i) {
+      const bool prescribed_component = n >= I_Z4C_BETAX &&
+          n <= (telegraph_lapse ? I_Z4C_BETAZ : I_Z4C_BZ);
+      const Real rhs = u_rhs(m,n,k,j,i);
+      sum(m,n,k,j,i) = (stage == 1 ? 0.0 : sum(m,n,k,j,i)) + weight*rhs;
+      u0(m,n,k,j,i) = prescribed_zero_shift && prescribed_component ? 0.0 :
+          u1(m,n,k,j,i) + dt*(stage == 4 ? sum(m,n,k,j,i) : next*rhs);
+    });
+  } else {
   par_for("z4c RK update",DevExeSpace(),
       0,nmb1,0,nvar-1,ks,ke,js,je,is,ie,
   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
@@ -116,6 +141,7 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
                       beta_dt*u_rhs(m,n,k,j,i);
     }
   });
+  }
   ApplyVertexAxisRegularity(u0, stage, "post_rk_state");
   CheckPrescribedZeroShiftInvariant(pdriver, stage);
   if (chi_parent_provenance != nullptr) {

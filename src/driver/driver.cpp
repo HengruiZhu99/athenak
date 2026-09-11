@@ -143,6 +143,22 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
       gam0[2] = 2.0/3.0;
       gam1[2] = 1.0/3.0;
       beta[2] = 2.0/3.0;
+    } else if (integrator == "rk4_classical") {
+      // The first classical-RK4 implementation is vacuum Z4c only. Other
+      // modules still use the 2S coefficients and must not silently run it.
+      if (!pin->DoesBlockExist("z4c") || pin->DoesBlockExist("hydro") ||
+          pin->DoesBlockExist("mhd") || pin->DoesBlockExist("radiation")) {
+        throw std::runtime_error("rk4_classical currently requires vacuum Z4c");
+      }
+      nimp_stages = 0;
+      nexp_stages = 4;
+      cfl_limit = 1.3925;
+      for (int s = 0; s < 4; ++s) {
+        gam0[s] = 0.0;
+        gam1[s] = 1.0;
+        beta[s] = (s < 2) ? 0.5 : 1.0;
+        delta[s] = 0.0;
+      }
     } else if (integrator == "rk4") {
       // RK4()4[2S] from Table 2 of Ketcheson (2010)
       // Non-SSP, explicit four-stage, fourth-order RK

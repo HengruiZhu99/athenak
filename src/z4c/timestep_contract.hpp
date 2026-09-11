@@ -19,6 +19,7 @@ namespace z4c {
 //! Coefficients of AthenaK's actual explicit 2S update, indexed by stage.
 struct ExplicitRKMethod {
   int stages = 0;
+  bool classical_rk4 = false;
   std::array<Real, 4> gam0{};
   std::array<Real, 4> gam1{};
   std::array<Real, 4> beta{};
@@ -28,6 +29,7 @@ struct ExplicitRKMethod {
 //! Evaluate the linear stability polynomial produced by the implemented 2S update.
 //! This intentionally models CopyU and ExpRKUpdate rather than assuming a textbook RK.
 inline Real ExplicitRKStabilityPolynomial(const ExplicitRKMethod &method, const Real z) {
+  if (method.classical_rk4) return 1.0 + z*(1.0 + z*(0.5 + z*(1.0/6.0 + z/24.0)));
   Real state = 1.0;
   Real accumulator = 0.0;
   for (int stage = 0; stage < method.stages; ++stage) {

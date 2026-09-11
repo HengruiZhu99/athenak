@@ -30,6 +30,7 @@ namespace {
 ExplicitRKMethod MethodFromDriver(const Driver *driver) {
   ExplicitRKMethod method;
   method.stages = driver->nexp_stages;
+  method.classical_rk4 = driver->integrator == "rk4_classical";
   for (int stage = 0; stage < method.stages; ++stage) {
     method.gam0[stage] = driver->gam0[stage];
     method.gam1[stage] = driver->gam1[stage];

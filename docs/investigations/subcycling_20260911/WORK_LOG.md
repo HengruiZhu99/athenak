@@ -11,3 +11,30 @@ User approved implementation and Perlmutter shared_interactive tests on a separa
 - Initial remote configure failed because git's empty submodule directory received a nested symlink. Replaced only that newly created empty directory with the intended dependency symlink; restarted configure/build.
 
 No asynchronous level evolution or production campaign changes have been made at this point. Gate results will be recorded here.
+
+## Classical RK4 reference implementation (in progress)
+
+Added opt-in `time/integrator=rk4_classical` for vacuum Z4c. CopyU retains
+beginning-of-step u1; ExpRKUpdate accumulates the four weighted RHS evaluations
+in active-block-sized scratch and retains the existing axis regularity,
+zero-shift, admissibility and AMR lifecycle hooks. The source timestep contract
+uses the classical stability polynomial and its2.7852935634 negative-real radius.
+The old `rk4` path is unchanged. This is synchronous stepping only, not subcycling.
+
+Local CPU full executable build passed. `athena_classical_rk4_test` measures
+nonautonomous nonlinear ODE error ratios15.5164,15.7631,15.8829 under successive
+halvings and checks the source stability radius. A four-step8^3 Z4c linear-wave
+smoke test with the actual executable terminated on its requested cycle limit.
+These checks do not qualify VC Cartoon, PDE temporal convergence, temporal
+boundary conditions, or production gauge behavior. Those remain required.
+
+Recovered the earlier remote build: it completed, but its post-build workflow
+failed because kokkos was a symlink that Git rejected. Preserved pre-sync.patch,
+replaced only that symlink with a shared clone at the identical gitlink SHA,
+fast-forwarded remote source to aa41ea73 and restarted the incremental profiling
+build. Production files and jobs were not modified. The new local classical-RK4
+changes are deliberately not mixed into the baseline profiling executable.
+
+Goal remains incomplete: level-local scheduling, parent states, stage-consistent
+boundaries, global gauge qualification, dynamic AMR and single-A100 matched-time
+reproduction through the provisional run's end time all remain outstanding.
