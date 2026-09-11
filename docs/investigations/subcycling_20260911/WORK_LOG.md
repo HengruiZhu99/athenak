@@ -639,3 +639,34 @@ These tests qualify the local interpolation/scatter layer, not the assembled
 coupled Z4c integrator. Recursive stage integration, common-time telegraph gauge,
 live AMR/diagnostics and faster A100 endpoint reproduction remain incomplete.
 No production runs changed and no remote jobs launched.
+
+## Assembled recursive hierarchy RK4 engine
+
+Previous turn progressed with90d980b3. Added HierarchyRK4, assembling real
+level-selected RK updates, initial-state copies, coarse predictor histories,
+same-level exchange, stage-consistent temporal ghost scatter, recursive two-child
+stepping, synchronized covered-parent restriction and shared-vertex reconciliation.
+Physics callbacks supply physical/stage preparation, actual RHS and post-update
+projection. Scratch arrays use populated node count. Each level's predictor is
+retained separately while finer levels advance. Integer parent/child ticks select
+fine-start predictor fractions. Completion fences at the common-time interval.
+
+This initial engine runs factor-two steps at every level, with the scheduler's
+20-level ratio limit. Bounded synchronous coarse grouping is not implemented;
+that needs current-stage spatial boundary filling within the group. It is not a
+production driver switch and has no gauge iteration, rollback or AMR wrapper yet.
+
+New hierarchy_rk4 regression evolves u_t=u+0.1(u_x+u_y) with nonuniform linear
+spatial data on a two-level, interior-patch hierarchy. Uses actual derivative
+ghost reads, polynomial physical extrapolation, temporal predictor boundaries
+and covered restriction. Analytic solution exp(t)*(1+0.1x+0.2y+0.03t). At t0.2,
+2/4/8/16 coarse steps give maximum errors5.20556e-7,3.42642e-8,2.19807e-9,
+1.39187e-10 (ratios15.1924,15.5883,15.7922). Checks exact coarse/fine RHS call
+counts4:8 per interval. Four related CPU tests pass; raw evidence
+hierarchy-rk4-transport.txt, build/tmp/vc-hierarchy-rk-build.log. Initial target
+build needed CMake regeneration and generated-header include path correction;
+subsequent build and test completed successfully.
+
+Coupled Z4c consumer, bounded grouping, common-time global gauge and live AMR
+remain to be implemented/qualified. Faster full-endpoint A100 reproduction is
+still unverified. Production files/jobs untouched; no GPU submission this turn.
