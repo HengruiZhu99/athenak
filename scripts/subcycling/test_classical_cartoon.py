@@ -5,6 +5,7 @@ import numpy as np
 repo=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(repo/'vis/python'))
 parser=argparse.ArgumentParser();parser.add_argument('exe',type=Path);parser.add_argument('output',type=Path)
+parser.add_argument('--time-dependent',action='store_true')
 a=parser.parse_args();a.exe=a.exe.resolve();a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=False)
 template='''<job>
 basename = pulse
@@ -70,6 +71,8 @@ file_type = hst
 dcycle = 1
 data_format = %24.16e
 '''
+if a.time_dependent:
+ template=template.replace('damp_kappa1 = 0\n','damp_kappa1 = 1\nroll_kappa = true\nkappa_roll_start_time = 0\nroll_window = 0.2\ntarget_kappa1 = 0.1\n')
 fields=[];results=[]
 for cfl in [.4,.2,.1,.05]:
  case=a.output/str(cfl);case.mkdir();(case/'input').write_text(template.format(cfl=cfl))
@@ -90,6 +93,6 @@ for cfl in [.4,.2,.1,.05]:
  fields.append(values);results.append(dict(cfl=cfl,time=time,cycle=cycle,file=str(final)))
 differences=[float(np.sqrt(np.mean((x-y)**2))) for x,y in zip(fields,fields[1:])]
 ratios=[x/y for x,y in zip(differences,differences[1:])]
-report=dict(runs=results,rms_successive_differences=differences,ratios=ratios,passed=all(12<q<20 for q in ratios),scope='Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no AMR or production-gauge qualification')
+report=dict(time_dependent_damping=a.time_dependent,runs=results,rms_successive_differences=differences,ratios=ratios,passed=all(12<q<20 for q in ratios),scope='Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no AMR or production-gauge qualification')
 (a.output/'results.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
 if not report['passed']:raise SystemExit('Temporal convergence gate failed')

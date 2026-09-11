@@ -1,4 +1,5 @@
 #include "driver/execution_profile.hpp"
+#include "driver/classical_rk4.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -111,6 +112,9 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   auto &telegraph_mu = pmy_pack->pz4c->u_telegraph_mu;
   auto &opt = pmy_pack->pz4c->opt;
   Real time = pmy_pack->pmesh->time;
+  if (pdriver->integrator == "rk4_classical") {
+    time += pmy_pack->pmesh->dt * classical_rk4::StageTime(stage);
+  }
   bool is_vacuum = (pmy_pack->ptmunu == nullptr) ? true : false;
   Tmunu::Tmunu_vars tmunu;
   if (!is_vacuum) tmunu = pmy_pack->ptmunu->tmunu;

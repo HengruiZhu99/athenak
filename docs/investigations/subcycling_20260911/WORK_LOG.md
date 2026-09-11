@@ -63,3 +63,19 @@ inside a block, and does not claim to fix or test that table-output issue.
 Reproduce with the bundled Python (NumPy required):
 `python scripts/subcycling/test_classical_cartoon.py /path/to/athena /new/output/path`.
 The output directory must not already exist; failures and raw outputs persist.
+
+## Scheduler ordering and stage-time groundwork
+
+Corrected classical-RK4 RHS evaluation of explicit time-dependent damping ramps
+to use stage time. Existing low-storage behavior is unchanged. Native pulse
+self-convergence with roll_kappa enabled gives ratios14.6862 and15.9700. This
+check retains the scope limitations of the preceding slice test.
+
+Added a recursive, callback-based interval scheduler with integer tick identifiers,
+coarse-level grouping and power-of-two ratio caps. Tests cover ratios1,2,4,16,32,
+parent prediction before children, synchronization only after child completion,
+shallow trees, invalid ratios and immediate failure propagation. Callbacks are
+responsible for numerical predictors, transfers and rollback. This scheduler is
+NOT yet connected to Z4c evolution; there is no functional subcycling runtime
+option yet. Next integration work must supply those numerical callbacks, with
+stage-consistent boundaries and qualified global gauge behavior.
