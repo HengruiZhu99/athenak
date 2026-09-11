@@ -1,0 +1,24 @@
+Test project /tmp/vc-subcycling-cpu
+    Start 152: hierarchy_z4c
+1/2 Test #152: hierarchy_z4c ....................Subprocess aborted***Exception:   0.59 sec
+completed steps=4
+completed steps=8
+completed steps=16
+completed steps=32
+successive rms=4.41021e-10
+successive rms=2.24963e-10
+successive rms=1.13796e-10
+ratio=1.96042
+ratio=1.9769
+libc++abi: terminating due to uncaught exception of type std::runtime_error: coupled Z4c temporal convergence gate failed
+
+    Start 153: hierarchy_z4c_uniform
+2/2 Test #153: hierarchy_z4c_uniform ............   Passed    0.10 sec
+
+50% tests passed, 1 tests failed out of 2
+
+Total Test time (real) =   0.70 sec
+
+The following tests FAILED:
+	152 - hierarchy_z4c (Subprocess aborted)
+Errors while running CTest

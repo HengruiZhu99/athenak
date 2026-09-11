@@ -1968,6 +1968,12 @@ if(Athena_BUILD_UNIT_TESTS)
 endif()
 
 if(Athena_BUILD_UNIT_TESTS)
+  add_executable(athena_hierarchy_z4c_test tst/unit/hierarchy_z4c_test.cpp)
+  target_include_directories(athena_hierarchy_z4c_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR})
+  target_link_libraries(athena_hierarchy_z4c_test PRIVATE Kokkos::kokkos)
+  add_test(NAME hierarchy_z4c COMMAND athena_hierarchy_z4c_test)
+  add_test(NAME hierarchy_z4c_uniform COMMAND athena_hierarchy_z4c_test --uniform)
   add_executable(athena_hierarchy_rk4_test tst/unit/hierarchy_rk4_test.cpp)
   target_include_directories(athena_hierarchy_rk4_test PRIVATE
     ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR})

@@ -670,3 +670,29 @@ subsequent build and test completed successfully.
 Coupled Z4c consumer, bounded grouping, common-time global gauge and live AMR
 remain to be implemented/qualified. Faster full-endpoint A100 reproduction is
 still unverified. Production files/jobs untouched; no GPU submission this turn.
+
+## Coupled Z4c engine consumer: convergence failure isolated to refinement
+
+Previous turn progressed with5ea62e6d. Added experimental HierarchyPhysics<NGHOST>
+consumer connecting actual native VC Cartoon bulk RHS, KO, physical RHS, axis
+checks, prescribed-zero shift, state admissibility and final-stage conformal
+projection to the recursive engine. Explicit stage-time callbacks supply maxK,
+kappa1 and shift eta; no asynchronous maximum reduction occurs. The consumer
+currently supports vacuum zero-shift experiments, not campaign deployment.
+
+New small-Gaussian-lapse test uses telegraph lapse with prescribed maxK=1,
+zero constraint damping, Sommerfeld, KO.02/64, and t0.04. A single-level control
+passes temporal convergence (successive RMS1.48969e-11,8.57537e-13,5.15110e-14;
+ratios17.3717,16.6476). The actual two-level subcycled test FAILS: successive
+RMS4.41021e-10,2.24963e-10,1.13796e-10; ratios1.96042,1.9769. It completes finite
+steps but exhibits first-order temporal sensitivity. This is not accepted as
+qualification. The CTest hierarchy_z4c deliberately has an active convergence
+gate and fails; hierarchy_z4c_uniform passes. Evidence
+hierarchy-z4c-convergence-failure.txt. Build/tmp/vc-hierarchy-z4c-build.log passed;
+core dumps disabled for the failing child test.
+
+The result isolates an assembled coarse/fine coupling issue absent from the
+single-level operator path and from the prior linear transport test. Next work
+must diagnose stage boundary consistency, synchronization/restriction and
+projection at the interface before proceeding to production gauge or GPU claims.
+No production source/jobs changed. Full endpoint reproduction is still unproven.
