@@ -20,6 +20,16 @@ int main(int argc,char **argv) {
       else leaves.push_back({0,x,y,0});
     }
   }
+  if(flag("--three-level")) {
+    bool refined=false;
+    for(auto it=leaves.begin();it!=leaves.end();++it) if((*it)[0]==1) {
+      const auto parent=*it;leaves.erase(it);
+      for(int a=0;a<2;++a) for(int b=0;b<2;++b)
+        leaves.push_back({2,2*parent[1]+a,2*parent[2]+b,0});
+      refined=true;break;
+    }
+    if(!refined) throw std::runtime_error("three-level test needs a refined parent");
+  }
   subcycling::Hierarchy tree(leaves,0,2);
   const int nx=flag("--nx32") ? 32 : (flag("--nx16") ? 16 : 8),nn=nx+9;
   z4c::Z4cGridLayout l;l.centering=z4c::Z4cGridCentering::vertex;
@@ -33,7 +43,8 @@ int main(int argc,char **argv) {
   opt.lapse_oplog=2;opt.lapse_harmonicf=1;opt.sss_damping_time=opt.ssl_damping_time=1;
   opt.shift_mode=z4c::Z4cShiftMode::prescribed_zero;opt.use_z4c=true;opt.extrap_order=4;
   opt.vertex_axis_correction_tolerance=1e-10;
-  opt.boundary_rhs_mode=z4c::Z4cBoundaryRHSMode::sommerfeld;
+  opt.boundary_rhs_mode=flag("--cpbc") ? z4c::Z4cBoundaryRHSMode::full_constraint_bjorhus :
+    z4c::Z4cBoundaryRHSMode::sommerfeld;
   opt.telegraph_lapse=true;opt.telegraph_tau=1;opt.telegraph_kappa=1;
   opt.telegraph_damping_prescription=z4c::TelegraphDampingPrescription::max_domain_abs_K;
   std::vector<int> parity;for(int v=0;v<Z::nz4c;++v) parity.push_back(z4c::Z4cStateAxisParitySignFromPackedIndex(v));
@@ -65,10 +76,11 @@ int main(int argc,char **argv) {
         z4c::HierarchyPhysics<3>::Project(s,skip_projection ? 3 : stage,b,u);
       }
     } physics(storage,geometry,l,opt,0,roots,roots,flag("--no-ko") ? 0 : .02/64,
-      {{false,true,true,true}},[](double){return 1.;},[](double){return 0.;},[](double){return 0.;});
+      {{false,true,true,true}},[vary=flag("--time-dependent")](double t){return vary ? 1.+.5*t : 1.;},[](double){return 0.;},[](double){return 0.;});
     physics.skip_projection=flag("--no-projection");
     const double dt=.04/steps;
-    for(int n=0;n<steps;++n) engine.Run(n*dt,dt,storage,physics,flag("--synchronous-hierarchy") ? 1 : 2);
+    for(int n=0;n<steps;++n) engine.Run(n*dt,dt,storage,physics,flag("--synchronous-hierarchy") ? 1 :
+      (flag("--three-level") && !flag("--coarse-group") ? 4 : 2));
     auto out=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
     std::vector<double> values;
     for(int n=0;n<out.extent_int(0);++n) if(!tree.Nodes()[n].Covered())

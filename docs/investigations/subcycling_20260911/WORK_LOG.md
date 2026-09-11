@@ -837,3 +837,20 @@ path is not yet the production driver, and the tests are two-level prescribed-
 coefficient experiments. Next qualify deeper/mixed-group hierarchies and GPU,
 then promote a bounded/adaptive corrector and integrate common-time gauge/live
 AMR. No production runs changed. Full faster-A100 endpoint goal remains active.
+
+## Three-level/coarse-group corrector qualification on CPU
+
+Previous turn progressed with7aa6bce1. Extended coupled Z4c test with a third
+refinement level, a ratio2 synchronized coarse group, explicitly time-varying
+prescribed maxK(t)=1+0.5t, and full_constraint_bjorhus boundary RHS. Three-pass
+fully subcycled ratios17.015,15.4057; five-pass17.0645,15.4974; three-pass coarse
+group17.4451,16.5551. Four new CTest gates (three_level,coarse_group,time_dependent,
+cpbc) pass. Evidence multilevel-evidence/, build/tmp/vc-multilevel-build.log.
+These remain short fixed-hierarchy vacuum tests; common-time gauge is prescribed,
+not a self-consistent global maximum.
+
+Perlmutter SSH confirmed working on login09. Isolated source clean at730f4d99;
+no matching build/validation process found. Preparing a GPU helper build of the
+new committed corrector test version in the existing isolated subcycling area.
+No production jobs or sources touched. GPU execution and full endpoint goal
+remain unverified.
