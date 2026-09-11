@@ -79,3 +79,11 @@ responsible for numerical predictors, transfers and rollback. This scheduler is
 NOT yet connected to Z4c evolution; there is no functional subcycling runtime
 option yet. Next integration work must supply those numerical callbacks, with
 stage-consistent boundaries and qualified global gauge behavior.
+
+Remote continuation: finish_profiles.sh is running as PID1635650, protected by
+profile-launch.lock. It waits for the verified build PID1579887 to exit, requires
+the successful build marker and clean aa41ea73 source, verifies the executable
+hash, builds the profile unit test, then requests one shared_interactive A100
+for the four prepared checkpoint comparisons. It writes profile-launch-status,
+allocation.log and comparison.log. Do not start a duplicate launch if observation
+times out; inspect PID1635650, its child allocation, and terminal status first.
