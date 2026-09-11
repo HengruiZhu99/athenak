@@ -1541,3 +1541,30 @@ static hierarchy; no dynamic AMR or production-gauge strong-field proof.
 Remote CUDA befad6a4 build verified live PID505749 (~36percent), does not include
 this driver entry. Do not replace its source while building. Full actual single-
 A100 provisional-collapse endpoint reproduction and lower wallclock outstanding.
+
+## Actual live AMR-event and restart tests
+
+Previous turn progressed with71694609 native-driver entry and fixed-hierarchy
+continuation checks. Added reproducible test_live_amr.py using existing test pgen's
+deterministic tagging (actual AMR transfers, NOT replay). Smooth lapse0.1 pulse,
+physical CPBC, real native outputs/restarts and global telegraph gauge.
+Both ratio1 and ratio2 pass refinement/coarsening sequence4->10->4->4 blocks.
+Splitting immediately after refinement and continuing through coarsening gives
+EXACT active-field equality with uninterrupted run at t.008.
+
+--mixed exercises simultaneous coarsening/refinement,4->7->7->7 blocks. Native
+log confirms6blocks created and3deleted, not just unchanged block count. Splitting
+immediately after the mixed event gives EXACT equality for both ratios. This
+checks topology invalidation when block count is unchanged. Checks finite fields,
+checkpoint input SHA preservation, expected event counts, and final history time.
+Fixture is bounded/deterministically tagged: not a physical error-based AMR
+convergence claim or proof of near-critical Brill stability/performance.
+
+Evidence live-amr-evidence; raw /tmp/vc-live-amr-final and
+/tmp/vc-live-amr-mixed-final. Commands:
+python scripts/subcycling/test_live_amr.py /path/to/athena /new/output
+python scripts/subcycling/test_live_amr.py /path/to/athena /new/mixed-output --mixed
+
+Remote CUDA befad6a4 build verified still live PID505749 (~60percent); no source
+change or duplicate submission. That snapshot predates native-driver integration.
+Actual A100 Brill endpoint reproduction and lower wallclock still outstanding.

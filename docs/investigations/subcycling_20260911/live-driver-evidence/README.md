@@ -35,3 +35,8 @@ python scripts/subcycling/test_live_subcycling.py /path/to/athena /new/output/di
 Checks ratios1 and2, native versus frozen final fields and matched-endpoint
 checkpoint/restart continuation, history time and accepted block-step counters.
 It is not a Brill reproduction, dynamic-AMR qualification or a speedup benchmark.
+
+Follow-up AMR checks now pass on CPU: `test_live_amr.py` exercises real refinement
+and coarsening; `--mixed` exercises a topology change with unchanged block count.
+Both test ratios1/2 and restart continuity across the event. See `../live-amr-evidence/`.
+These use deterministic test tagging, not the production χ-error controller.
