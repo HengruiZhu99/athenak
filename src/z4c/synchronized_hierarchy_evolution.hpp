@@ -95,6 +95,11 @@ class SynchronizedHierarchyEvolution {
   void CopyAcceptedLeavesTo(const DvceArray5D<Real> &leaves) const {
     storage.CopyLeavesTo(layout,leaves);
   }
+  void ImportSynchronizedLeaves(const DvceArray5D<Real> &leaves) {
+    storage.CopyLeavesFrom(layout,leaves);
+    engine.ReconcileInitialState(storage);
+    history=nullptr;cache.clear();initial=CurrentMaximum();
+  }
  private:
   DvceArray1D<int> leaf_ids;
   const subcycling::HierarchyRK4::Histories *history=nullptr;

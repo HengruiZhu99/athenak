@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('output',type=Path)
 p.add_argument('--uniform',action='store_true')
+p.add_argument('--seed-only',action='store_true')
 p.add_argument('--intervals',type=int,default=1)
 p.add_argument('--dt',type=float,default=2e-3)
 p.add_argument('--fixed-duration',type=float)
@@ -14,7 +15,7 @@ s=(repo/'tst/inputs/z4c_vc_minkowski_full_constraint_bjorhus.athinput').read_tex
 s=s.replace('boundary_rhs = full_constraint_bjorhus','boundary_rhs = '+a.boundary_rhs)
 s=s.replace('nlim = 3','nlim = 1').replace('tlim = 0.01','tlim = 1.0')
 s=s.replace('<output1>','<output1>\ndata_format = %24.16e')
-s=s.replace('<time>','<time>\nsubcycle_probe_dt = 1e-4\nsubcycle_probe_ratio = 2\nsubcycle_probe_duration = 0')
+s=s.replace('<time>','<time>\nsubcycle_probe_dt = 1e-4\nsubcycle_probe_ratio = 2\nsubcycle_probe_duration = 0\nsubcycle_max_ratio = 0\nsubcycle_interval_cap = 0.002\nsubcycle_cycle_unit = synchronization')
 s=s.replace('refinement = none','refinement = static\nnum_levels = 1')
 s=s.replace('<z4c>','''<z4c>
 telegraph_lapse = true
@@ -46,6 +47,7 @@ def run(args,cwd,env=None):
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 run(['-i','input.athinput'],seed)
 checkpoint=sorted((seed/'rst').glob('*.rst'))[-1];before=sha(checkpoint)
+if a.seed_only: raise SystemExit(0)
 results=[]
 fixed_fields={1:[],2:[]}
 if a.fixed_duration is not None: assert a.fixed_duration>0

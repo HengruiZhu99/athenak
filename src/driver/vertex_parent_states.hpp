@@ -177,6 +177,18 @@ class VertexParentStates {
       if(ids(n)>=0) leaves(ids(n),v,k,j,i)=values(n,v,k,j,i);
     });
   }
+  void CopyLeavesFrom(const z4c::Z4cGridLayout &layout,const DvceArray5D<Real> &leaves) {
+    if(!all_nodes_ || LayoutKey(layout)!=layout_key_ || leaves.extent_int(0)<=max_leaf_id_)
+      throw std::invalid_argument("invalid synchronized leaf source");
+    for(int d=1;d<5;++d) if(leaves.extent(d)!=values_.extent(d))
+      throw std::invalid_argument("changed synchronized leaf source layout");
+    const auto values=values_;const auto ids=all_leaf_ids_;
+    par_for("import synchronized hierarchy leaves",DevExeSpace(),0,values.extent_int(0)-1,
+        0,values.extent_int(1)-1,layout.ks,layout.ke,layout.js,layout.je,layout.is,layout.ie,
+        KOKKOS_LAMBDA(int n,int v,int k,int j,int i) {
+      if(ids(n)>=0) values(n,v,k,j,i)=leaves(ids(n),v,k,j,i);
+    });
+  }
   const DualArray1D<int> &AllLevels() const {
     if(!all_nodes_) throw std::logic_error("populated hierarchy not initialized");
     return all_levels_;

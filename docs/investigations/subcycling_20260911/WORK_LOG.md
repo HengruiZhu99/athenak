@@ -1511,3 +1511,33 @@ Restored only the archived test patch on isolated remote, fetched bundle and
 switched cleanly to codex/vc-evolution-befad6a4. Started build-befad6a4.sh, log
 build-befad6a4.log/status in isolated root; observer96618. Do not replace source
 until this newer CUDA build and subsequent tests terminate. Goal incomplete.
+
+## Native driver opt-in integration
+
+Previous turn progressed by resolving GPU test oracle and launching newer CUDA
+build. Added experimental live driver entry via subcycle_max_ratio>0, explicit
+subcycle_cycle_unit=synchronization, and subcycle_interval_cap. Defaults disabled;
+validates single-rank vacuum VC Cartoon classical RK4. Persistent hierarchy owner
+advances intervals and exports leaves; native accepted-state boundary rebuild,
+ADM, timestep, tracking/horizon and final-stage diagnostics then run before
+existing stopping/AMR/output loop. Import native finalized leaves back to owner
+without reallocating, reconcile covered/hanging values, preserving state continuity.
+Owner resets after actual topology change. Physical-time output/endpoints cap dt.
+
+Native ncycle and cycle-based output/AMR explicitly mean synchronization cycles.
+Track accepted leaf-block steps separately (including fine substeps, excluding
+covered predictors/corrector repetitions) in counter and subcycling_intervals.csv.
+No claim this counter measures all computational work. AMR is wired but actual
+refine/derefine events remain to be qualified.
+
+CPU full build passes. New test_live_subcycling.py generates isolated actual
+checkpoint, compares ratios1/2 live versus frozen evolution over4 intervals and
+compares split/restarted live evolution to uninterrupted run. Max errors1.62549e-15
+and1.06057e-15; restart comparison EXACT for both. Checks final history time,
+continuous intervals, leaf-block substep counts, checkpoint input hash unchanged.
+Evidence live-driver-evidence; raw /tmp/vc-live-guard-validation. Test fixture uses
+static hierarchy; no dynamic AMR or production-gauge strong-field proof.
+
+Remote CUDA befad6a4 build verified live PID505749 (~36percent), does not include
+this driver entry. Do not replace its source while building. Full actual single-
+A100 provisional-collapse endpoint reproduction and lower wallclock outstanding.

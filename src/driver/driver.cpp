@@ -1,4 +1,5 @@
 #include "driver/hierarchy_vertex_exchange.hpp"
+#include "z4c/live_hierarchy_evolution.hpp"
 #if defined(ATHENA_Z4C_KERNEL_TESTS)
 #include "z4c/checkpoint_subcycle_probe.hpp"
 #endif
@@ -532,6 +533,30 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
     std::cout << "\nSetup complete, executing task list(s)...\n" << std::endl;
   }
 
+  const int subcycle_ratio=pin->GetOrAddInteger("time","subcycle_max_ratio",0);
+  std::unique_ptr<z4c::LiveHierarchyEvolution> live_hierarchy;
+  Real subcycle_cap=0;
+  std::ofstream subcycle_log;
+  if(subcycle_ratio!=0) {
+    auto *pack=pmesh->pmb_pack;auto *z=pack->pz4c;
+    if(subcycle_ratio<1 || subcycle_ratio>32 || (subcycle_ratio&(subcycle_ratio-1)) ||
+       global_variable::nranks!=1 || !z || pack->phydro || pack->pmhd || pack->pdyngr ||
+       pack->prad || integrator!="rk4_classical" ||
+       z->layout.centering!=z4c::Z4cGridCentering::vertex ||
+       pack->z4c_symmetry.mode!=z4c::Z4cSymmetryMode::cartoon_so2 ||
+       time_evolution==TimeEvolution::tstatic ||
+       pin->GetOrAddString("time","subcycle_cycle_unit","")!="synchronization")
+      throw std::invalid_argument("live subcycling requires single-rank vacuum classical RK4 and explicit synchronization cycles");
+    subcycle_cap=pin->GetReal("time","subcycle_interval_cap");
+    if(!std::isfinite(subcycle_cap) || subcycle_cap<=0)
+      throw std::invalid_argument("invalid live subcycling interval cap");
+    subcycle_log.open("subcycling_intervals.csv",std::ios::app);
+    if(subcycle_log.tellp()==0)
+      subcycle_log<<"cycle,start,end,dt,attempts,passes,leaf_blocks,leaf_block_steps\n";
+    subcycle_log<<std::setprecision(17);
+    if(!subcycle_log) throw std::runtime_error("cannot open subcycling interval history");
+  }
+
   if (time_evolution == TimeEvolution::tstatic) {
     // TODO(@user): add work for time static problems here
   } else {
@@ -571,12 +596,39 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
       // Execute TaskLists
       // Work before time integrator indicated by "0" in stage
       ExecuteTaskList(pmesh, "before_timeintegrator", 0);
+      std::uint64_t accepted_block_steps=pmesh->nmb_total;
 
-      // time-integrator tasks for each stage of integrator
-      for (int stage=1; stage<=(nexp_stages); ++stage) {
-        ExecuteTaskList(pmesh, "before_stagen", stage);
-        ExecuteTaskList(pmesh, "stagen", stage);
-        ExecuteTaskList(pmesh, "after_stagen", stage);
+      if(subcycle_ratio!=0) {
+        auto *z=pmesh->pmb_pack->pz4c;
+        if(!live_hierarchy) live_hierarchy=z4c::MakeLiveHierarchy(pmesh,z);
+        Real cap=std::min(subcycle_cap,tlim-pmesh->time);
+        for(const auto &out:pout->pout_list) if(out->out_params.dt>0) {
+          const Real remaining=out->out_params.last_time+out->out_params.dt-pmesh->time;
+          if(remaining>0) cap=std::min(cap,remaining);
+        }
+        const auto interval=live_hierarchy->Advance(cap,subcycle_ratio);
+        accepted_block_steps=live_hierarchy->LeafBlockSteps(subcycle_ratio);
+        pmesh->dt=interval.dt;
+        (void)z->FinalizeVertexAcceptedState(this,nexp_stages);
+        live_hierarchy->ImportAcceptedNativeState();
+        (void)z->ConvertZ4cToADM(this,nexp_stages);
+        (void)z->NewTimeStep(this,nexp_stages);
+        (void)z->TrackCompactObjects(this,nexp_stages);
+        (void)z->FindHorizon(this,nexp_stages);
+        (void)z->InitRecvWeyl(this,nexp_stages);
+        ExecuteTaskList(pmesh,"after_stagen",nexp_stages);
+        subcycle_log<<pmesh->ncycle<<','<<pmesh->time<<','<<pmesh->time+pmesh->dt
+                    <<','<<pmesh->dt<<','<<interval.attempts<<','<<interval.total_passes
+                    <<','<<pmesh->nmb_total<<','<<accepted_block_steps<<'\n';
+        subcycle_log.flush();
+        if(!subcycle_log) throw std::runtime_error("failed subcycling interval history");
+      } else {
+        // time-integrator tasks for each stage of integrator
+        for (int stage=1; stage<=(nexp_stages); ++stage) {
+          ExecuteTaskList(pmesh, "before_stagen", stage);
+          ExecuteTaskList(pmesh, "stagen", stage);
+          ExecuteTaskList(pmesh, "after_stagen", stage);
+        }
       }
 
       // Work after time integrator indicated by "1" in stage
@@ -597,7 +649,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
           std::exit(EXIT_FAILURE);
         }
       }
-      nmb_updated_ += pmesh->nmb_total;
+      nmb_updated_ += accepted_block_steps;
       npart_updated_ += pmesh->nprtcl_total;
       // load balancing efficiency
       if (global_variable::nranks > 1) {
@@ -638,6 +690,7 @@ void Driver::Execute(Mesh *pmesh, ParameterInput *pin, Outputs *pout) {
         topology_changed = (pmesh->pmr->nmb_created != created_before ||
                             pmesh->pmr->nmb_deleted != deleted_before);
       }
+      if (topology_changed) live_hierarchy.reset();
       if (topology_changed && pmesh->pmb_pack->pz4c != nullptr) {
         const std::string central_error =
             z4c::UpdateCartoonCentralState(pmesh, true);
