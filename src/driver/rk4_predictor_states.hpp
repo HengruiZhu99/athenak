@@ -71,6 +71,26 @@ class RK4PredictorStates {
     detail::CopyRKActiveValues(rhs,data_[stage],blocks_,layout_);
     completed_=stage;
   }
+  // Physical common-time values for global coefficients/diagnostics. These
+  // deliberately differ from intermediate RK stage vectors. The caller must
+  // select each leaf's containing interval and exclude covered parent values.
+  void EvaluateValue(double fraction,DvceArray5D<Real> &out) const {
+    if(completed_!=4) throw std::logic_error("incomplete physical RK history");
+    if(!std::isfinite(fraction) || fraction<0 || fraction>1)
+      throw std::invalid_argument("physical time outside RK history");
+    const auto y=data_[0],a=data_[1],b=data_[2],c=data_[3],d=data_[4];
+    bool resize=false;for(int q=0;q<5;++q) resize|=out.extent(q)!=y.extent(q);
+    if(resize) Kokkos::realloc(out,y.extent(0),y.extent(1),y.extent(2),y.extent(3),y.extent(4));
+    const double dt=dt_;
+    if(y.extent(0)>0) par_for("common-time physical RK reconstruction",DevExeSpace(),
+        0,y.extent_int(0)-1,0,y.extent_int(1)-1,0,y.extent_int(2)-1,
+        0,y.extent_int(3)-1,0,y.extent_int(4)-1,
+        KOKKOS_LAMBDA(int p,int v,int k,int j,int i) {
+      RK4DenseBoundary predictor{y(p,v,k,j,i),dt,a(p,v,k,j,i),b(p,v,k,j,i),
+                                c(p,v,k,j,i),d(p,v,k,j,i)};
+      out(p,v,k,j,i)=predictor.Value(fraction);
+    });
+  }
   // Fine-start fraction is relative to THIS parent step. Reject requests outside
   // its interval, including nominally synchronous stages with an overlong dt.
   void EvaluateStage(double fraction, double fine_dt, int stage,

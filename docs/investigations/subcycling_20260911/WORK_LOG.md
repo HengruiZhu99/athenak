@@ -961,3 +961,27 @@ reduce the naive work savings and must be included in the eventual benchmark.
 Next: self-consistent common-time global telegraph coefficient, actual driver
 restart/AMR/diagnostic integration and single-A100 matched-endpoint validation.
 No production files or jobs changed in this turn.
+
+## Physical common-time history and leaf maximum primitive
+
+Previous goal turn made progress in commit83b9eb67. Added EvaluateValue to RK
+histories, explicitly distinct from fine RK stage vectors. Uses physical cubic
+dense output with interval validation. New RK4PhysicalMaximum selects explicit
+physical leaf source IDs and reduces |a*u_i+b*u_j|, supporting Khat+2Theta without
+including covered-parent blocks. Validates component/donor lists, rejects
+nonfinite selected physical values, and returns zero for an empty leaf batch.
+It currently reconstructs all packed components before reduction; fusion is an
+optimization opportunity after correctness integration.
+
+CPU predictor test passes with independent prescribed cubic-time solution at
+off-stage times, covered parent exclusion, Khat/Theta-style combination, a
+maximizing-leaf switch within an interval, empty batches and nonfinite rejection.
+Initial test caught Kokkos empty max-reduction identity; explicit zero handles
+this correctly. Test log physical-history-test.log. No GPU execution this turn.
+
+This is the per-history primitive, not completed production-gauge integration.
+Next assemble common-time maxima across containing histories for every physical
+leaf level (including synchronous groups), then couple that coefficient history
+into interval iteration and convergence checks. MPI aggregation, production
+driver/AMR/restarts, and the requested single-A100 matched-endpoint speedup
+remain unverified/incomplete. Production campaign untouched.
