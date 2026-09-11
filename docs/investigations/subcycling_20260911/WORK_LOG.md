@@ -430,3 +430,8 @@ host/device lambda inside private RK4PredictorStates::CopyActive. Moved that
 unchanged copy kernel to namespace-scope detail::CopyRKActiveValues. Predictor
 and temporal-boundary CPU tests pass after the portability fix. Archive the
 failed build log before retrying; no GPU evolution was launched with faaf6973.
+
+Retried GPU compilation only after failed worker disappeared. Remote source now
+730f4d99; build PID1962404, parent-rhs-build.pid/log. Failed log preserved as
+parent-rhs-build.faaf6973-failed.log. No allocation currently attached to this
+build and no new GPU test submitted yet.
