@@ -435,3 +435,34 @@ Retried GPU compilation only after failed worker disappeared. Remote source now
 730f4d99; build PID1962404, parent-rhs-build.pid/log. Failed log preserved as
 parent-rhs-build.faaf6973-failed.log. No allocation currently attached to this
 build and no new GPU test submitted yet.
+
+## Shared dissipation and queued-after-build GPU validation
+
+Previous turn progressed through shared parent bulk RHS and completed the exact
+GPU topology comparison. Revalidated retry build1962404, still live at82% after
+6m29s, with no new fatal error observed. Source remains730f4d99 during compilation.
+
+Extracted unchanged KO kernels into AddZ4cDissipation with explicit fields,
+geometry, boundary flags and block batches. Existing leaf pre-KO axis check and
+stage diagnostics remain in the wrapper; axis projection after adding KO remains
+inside the native Cartoon operator. Parent callers still need an explicit
+pre-KO axis check and physical boundary RHS before being complete.
+
+Parent bulk-RHS test now also checks KO on the smooth manufactured state and an
+even grid-frequency chi mode. Scalar mode matches expected damping with maximum
+error7.64363e-18. Full CPU executable rebuild and four static Cartoon runs retain
+byte-identical restart payloads vs bulk-RHS baseline. Evidence
+dissipation-results.json, raw /tmp/vc-cartoon-dissipation-runtime, build log
+/tmp/vc-dissipation-build.log, analytic unit log/tmp/vc-parent-ko-unit.log.
+
+Added optional shell-free launcher prefix to test_classical_cartoon.py so each
+GPU executable invocation can use its own srun step. Default CPU path passed.
+Copied that script outside remote source as test_classical_cartoon_launcher.py;
+no source/executable mutation during the live build. Guarded launcher2001088
+(finish_parent_gpu_730.sh; local evidence copy saved here) waits for build1962404,
+checks source/hash, builds seven helper targets and requests a15min single-A100
+shared_interactive allocation. Runs helper GPU tests then the four-CFL static
+Cartoon test with parent initialization/RK capture. Logs parent-gpu-validation.log,
+parent-gpu-unit-build.log, parent-gpu-allocation.log; status/pid named analogously.
+No allocation exists yet at this check. GPU validation covers source730f4d99,
+not the newer KO extraction in this commit. Production campaign untouched.

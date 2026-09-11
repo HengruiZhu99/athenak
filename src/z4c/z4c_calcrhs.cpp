@@ -27,6 +27,7 @@
 #include "z4c/cartoon_vertex_axis.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/bulk_rhs.hpp"
+#include "z4c/dissipation.hpp"
 #include "z4c/z4c_symmetry.hpp"
 #include "z4c/tmunu.hpp"
 #include "coordinates/cell_locations.hpp"
@@ -218,85 +219,12 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   }
   if constexpr (std::is_same_v<Centering, VertexCenteredZ4c> &&
                 std::is_same_v<Symmetry, CartoonSO2>) {
-    // The non-KO continuum RHS must already preserve the evolved-axis
-    // subspace. This strict pre-gate prevents the KO projection below from
-    // hiding a geometric, gauge, or boundary inconsistency.
+    // Do not let KO projection conceal a continuum-axis inconsistency.
     ApplyVertexAxisRegularity(u_rhs, stage, "pre_ko_rhs");
-    if (collect_rhs_stage_diagnostics) {
-      Kokkos::deep_copy(rhs_post_axis_pre_ko, u_rhs);
-    }
-    auto &mb_bcs = pmy_pack->pmb->mb_bcs;
-    rhs_batches.For4("SO2-invariant vertex K-O dissipation",
-            ks, ke, js, je, is, ie,
-        KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-          Real values[Z4c::nz4c];
-          Real idx[] = {1 / size.d_view(m).dx1, 1 / size.d_view(m).dx2,
-                        1 / size.d_view(m).dx3};
-          auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-              idx, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
-          for (int n = 0; n < Z4c::nz4c; ++n) {
-            values[n] = u_rhs(m, n, k, j, i);
-            for (int direction = 0; direction < 3; ++direction) {
-              const Real before = values[n];
-              values[n] += derivatives.DirectionalComponentDissipation(
-                               direction, n, u0) * diss;
-              if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
-                const int term = direction == 0 ? chi_ko_rho
-                                 : (direction == 1 ? chi_ko_z : chi_ko_y);
-                const int cumulative = direction == 0 ? chi_rhs_after_ko_rho
-                                       : (direction == 1 ? chi_rhs_after_ko_z
-                                                         : chi_rhs_after_ko_y);
-                chi_provenance_terms(m, term, k, j, i) = values[n] - before;
-                chi_provenance_terms(m, cumulative, k, j, i) = values[n];
-              }
-            }
-          }
-          if (i == is &&
-              mb_bcs.d_view(m, BoundaryFace::inner_x1) == BoundaryFlag::axis) {
-            ProjectVertexAxisZ4cValues(values);
-          }
-          for (int n = 0; n < Z4c::nz4c; ++n) {
-            u_rhs(m, n, k, j, i) = values[n];
-          }
-          if (collect_chi_provenance) {
-            chi_provenance_terms(m, chi_rhs_after_ko, k, j, i) =
-                values[Z4c::I_Z4C_CHI];
-          }
-        });
-  } else {
-    if (collect_rhs_stage_diagnostics) {
-      Kokkos::deep_copy(rhs_post_axis_pre_ko, u_rhs);
-    }
-    rhs_batches.For5("K-O Dissipation",
-    0,nz4c-1,ks,ke,js,je,is,ie,
-    KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
-      Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
-      auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(
-          idx, size.d_view, nx1, is, m, k, j, i, nx3 == 1);
-      // Keep the established multiply-then-accumulate order for Cartesian roundoff.
-      for (int direction = 0; direction < 3; ++direction) {
-        if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
-          const Real rhs_before = u_rhs(m,n,k,j,i);
-          u_rhs(m,n,k,j,i) +=
-              derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
-          const Real contribution = u_rhs(m,n,k,j,i) - rhs_before;
-          const int term = direction == 0 ? chi_ko_rho
-                           : (direction == 1 ? chi_ko_z : chi_ko_y);
-          const int cumulative = direction == 0 ? chi_rhs_after_ko_rho
-                                 : (direction == 1 ? chi_rhs_after_ko_z
-                                                   : chi_rhs_after_ko_y);
-          chi_provenance_terms(m, term, k, j, i) = contribution;
-          chi_provenance_terms(m, cumulative, k, j, i) = u_rhs(m,n,k,j,i);
-        } else {
-          u_rhs(m,n,k,j,i) +=
-              derivatives.DirectionalComponentDissipation(direction, n, u0) * diss;
-        }
-      }
-      if (collect_chi_provenance && n == Z4c::I_Z4C_CHI) {
-        chi_provenance_terms(m, chi_rhs_after_ko, k, j, i) = u_rhs(m,n,k,j,i);
-      }
-    });
   }
+  if (collect_rhs_stage_diagnostics) Kokkos::deep_copy(rhs_post_axis_pre_ko,u_rhs);
+  AddZ4cDissipation<Centering,Symmetry,NGHOST>(layout,size,pmy_pack->pmb->mb_bcs,
+      rhs_batches,u0,u_rhs,diss,collect_chi_provenance,chi_provenance_terms);
 
   // This intentionally expensive host-side census is default-off and exists only for
   // bounded causal audits.  It reports the pre-projection complete RHS so the

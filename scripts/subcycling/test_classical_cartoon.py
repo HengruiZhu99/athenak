@@ -1,6 +1,6 @@
 """Run native VC Cartoon gauge-pulse timestep refinement on an unchanged grid."""
 from pathlib import Path
-import argparse,json,subprocess,sys,re,hashlib
+import argparse,json,subprocess,sys,re,hashlib,shlex,os
 import numpy as np
 repo=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(repo/'vis/python'))
@@ -8,6 +8,7 @@ parser=argparse.ArgumentParser();parser.add_argument('exe',type=Path);parser.add
 parser.add_argument('--time-dependent',action='store_true')
 parser.add_argument('--level-batches',action='store_true')
 parser.add_argument('--static-amr',action='store_true')
+parser.add_argument('--launcher',default='',help='Command prefix, parsed without a shell (e.g. srun options)')
 a=parser.parse_args();a.exe=a.exe.resolve();a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=False)
 template='''<job>
 basename = pulse
@@ -87,7 +88,7 @@ fields=[];results=[]
 for cfl in [.4,.2,.1,.05]:
  case=a.output/str(cfl);case.mkdir();(case/'input').write_text(template.format(cfl=cfl))
  with (case/'stdout').open('w') as out,(case/'stderr').open('w') as err:
-  subprocess.run([str(a.exe),'-i','input'],cwd=case,stdout=out,stderr=err,check=True)
+  subprocess.run(shlex.split(a.launcher)+[str(a.exe),'-i','input'],cwd=case,stdout=out,stderr=err,check=True)
  assert 'Terminating on time limit' in (case/'stdout').read_text()
  final=sorted(case.rglob('*.tab'))[-1]
  text=final.read_text()
@@ -105,6 +106,6 @@ for cfl in [.4,.2,.1,.05]:
  fields.append(values);results.append(dict(cfl=cfl,time=time,cycle=cycle,file=str(final),restart=str(restart),restart_payload_sha256=hashlib.sha256(payload).hexdigest()))
 differences=[float(np.sqrt(np.mean((x-y)**2))) for x,y in zip(fields,fields[1:])]
 ratios=[x/y for x,y in zip(differences,differences[1:])]
-report=dict(level_batches=a.level_batches,static_amr=a.static_amr,time_dependent_damping=a.time_dependent,runs=results,rms_successive_differences=differences,ratios=ratios,passed=all(12<q<20 for q in ratios),scope='Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no dynamic-AMR or production-gauge qualification')
+report=dict(launcher=shlex.split(a.launcher),slurm_job_id=os.environ.get('SLURM_JOB_ID'),level_batches=a.level_batches,static_amr=a.static_amr,time_dependent_damping=a.time_dependent,runs=results,rms_successive_differences=differences,ratios=ratios,passed=all(12<q<20 for q in ratios),scope='Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no dynamic-AMR or production-gauge qualification')
 (a.output/'results.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
 if not report['passed']:raise SystemExit('Temporal convergence gate failed')

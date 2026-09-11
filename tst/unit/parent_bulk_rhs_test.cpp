@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "z4c/bulk_rhs.hpp"
+#include "z4c/dissipation.hpp"
 #include "z4c/state_views.hpp"
 #include "z4c/cartoon_vertex_axis.hpp"
 void Check(bool ok) {if(!ok) throw std::runtime_error("parent bulk RHS regression");}
@@ -58,7 +59,31 @@ int main(int argc,char **argv) {
       Check(std::isfinite(diff));worst=std::max(worst,diff);
     }
     std::cout << "maximum analytic parent bulk RHS error " << worst << '\n';Check(worst<1e-11);
-    std::cout << "PASS: actual VC Cartoon bulk RHS on injected parent state including axis and outer ghosts\n";
+    DualArray2D<BoundaryFlag> bcs("parent boundary flags",1,6);
+    for(int f=0;f<6;++f) bcs.h_view(0,f)=BoundaryFlag::outflow;
+    bcs.h_view(0,0)=BoundaryFlag::axis;bcs.modify_host();bcs.sync_device();
+    z4c::AddZ4cDissipation<z4c::VertexCenteredZ4c,z4c::CartoonSO2,3>(
+        l,sizes,bcs,batches,parents.Values(),rhs,.02/64,false,unused);
+    auto smooth=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
+    for(int j=4;j<=12;++j) for(int i=4;i<=12;++i)
+      Check(std::abs(smooth(0,Z::I_Z4C_KHAT,0,j,i)+.08)<1e-11);
+    // A grid-frequency even scalar mode must be damped by the sixth difference
+    // in both retained spatial directions. Suppressed-direction KO is zero.
+    auto ph=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),parents.Values());
+    for(int j=0;j<17;++j) for(int i=0;i<17;++i)
+      ph(0,Z::I_Z4C_CHI,0,j,i)=1+((i+j)%2 ? -.001 : .001);
+    Kokkos::deep_copy(parents.Values(),ph);Kokkos::deep_copy(rhs,0.0);
+    z4c::AddZ4cDissipation<z4c::VertexCenteredZ4c,z4c::CartoonSO2,3>(
+        l,sizes,bcs,batches,parents.Values(),rhs,.02/64,false,unused);
+    auto damped=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
+    double ko_error=0;
+    for(int j=4;j<=12;++j) for(int i=4;i<=12;++i) {
+      const double expected=(i+j)%2 ? .00016 : -.00016;
+      ko_error=std::max(ko_error,std::abs(damped(0,Z::I_Z4C_CHI,0,j,i)-expected));
+    }
+    Check(ko_error<1e-12);
+    std::cout << "parent grid-mode KO error " << ko_error << '\n';
+    std::cout << "PASS: actual VC Cartoon bulk RHS and dissipation on injected parent state including axis and outer ghosts\n";
   }
   Kokkos::finalize();
 }
