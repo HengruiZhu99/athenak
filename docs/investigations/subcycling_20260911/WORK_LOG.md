@@ -1164,3 +1164,30 @@ Evidence stage-transition-evidence; raw CSV/snapshots /tmp/vc-first-rhs-compare,
 uncommitted experiment and MUST NOT be used for claimed production reproduction.
 No live build/job remains: build63216 and test68885 finished; both selected
 order gates failed. Full goal incomplete; production untouched.
+
+## Hanging-vertex RHS consistency and remaining asynchronous defect
+
+Previous turn progressed with stage diagnosis. Added RK4DenseBoundary::StageRHS,
+whose classical RK updates reproduce all prescribed stage vectors and the
+physical cubic endpoint at shifted child starts. Independent RK algebra identity
+regression passes. This mathematical primitive is committed separately.
+
+UNCOMMITTED coupling experiment extends temporal interpolation with RHS mode,
+adds shape-checked RestrictField, applies coarse-reconstructed hanging RHS before
+RK history capture/update, and synchronizes same-level RHS. These changes must
+not be described as qualified: adaptive/coarse-group gates still fail. Fully
+synchronous three-level control now passes ratios18.8818,16.8263. Asynchronous
+ratios13.7463,2.74843; disabling final algebraic projection does not remove loss.
+Tightening corrector10x to atol1e-13,rtol1e-11,max16 leaves ratios13.7464,2.74843.
+Stronger lapse pulse0.1 gives14.0943,2.9035. Thus error is not a loose-corrector
+stopping artifact. A100/production reproduction remains unqualified.
+
+Even tighter100x control failed history convergence at12 passes in interval1;
+that log is preserved, not called evolution instability. Test option
+--tight-corrector currently means10x tighter/max16. All tested local processes
+are terminal; no GPU job launched. Worktree has uncommitted hanging/coupling
+experiments in hierarchy_rk4, hierarchy_temporal_ghosts, vertex_parent_states,
+vertex_temporal_boundary, rk4_predictor_states and hierarchy_z4c_test.
+Next investigate asynchronous prescribed-vertex stage/history consistency and
+common-time restriction, retaining the independent driver comparison as a gate.
+Production campaign untouched; Perlmutter authentication renewal still pending.

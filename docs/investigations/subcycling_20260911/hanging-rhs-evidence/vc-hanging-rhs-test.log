@@ -1,0 +1,46 @@
+Test project /tmp/vc-subcycling-cpu
+    Start 153: hierarchy_z4c_adaptive
+1/2 Test #153: hierarchy_z4c_adaptive ...........Subprocess aborted***Exception:   8.22 sec
+corrector passes=8..8 worst normalized change=0.258541
+completed steps=4
+corrector passes=7..7 worst normalized change=0.272508
+completed steps=8
+corrector passes=7..7 worst normalized change=0.0641844
+completed steps=16
+corrector passes=6..6 worst normalized change=0.204749
+completed steps=32
+max difference=4.44692e-10 leaf=0 component=7 j=0 i=0
+successive rms=1.36042e-11
+max difference=2.62673e-11 leaf=0 component=7 j=0 i=0
+successive rms=9.89652e-13
+max difference=1.14694e-11 leaf=0 component=11 j=0 i=4
+successive rms=3.60079e-13
+ratio=13.7464
+ratio=2.74843
+libc++abi: terminating due to uncaught exception of type std::runtime_error: coupled Z4c temporal convergence gate failed
+
+    Start 161: hierarchy_z4c_coarse_group
+2/2 Test #161: hierarchy_z4c_coarse_group .......Subprocess aborted***Exception:   1.86 sec
+completed steps=4
+completed steps=8
+completed steps=16
+completed steps=32
+max difference=1.48738e-09 leaf=6 component=7 j=0 i=0
+successive rms=5.33822e-11
+max difference=8.14091e-11 leaf=6 component=7 j=0 i=0
+successive rms=3.51036e-12
+max difference=2.34511e-11 leaf=0 component=11 j=0 i=4
+successive rms=7.49701e-13
+ratio=15.207
+ratio=4.68235
+libc++abi: terminating due to uncaught exception of type std::runtime_error: coupled Z4c temporal convergence gate failed
+
+
+0% tests passed, 2 tests failed out of 2
+
+Total Test time (real) =  10.09 sec
+
+The following tests FAILED:
+	153 - hierarchy_z4c_adaptive (Subprocess aborted)
+	161 - hierarchy_z4c_coarse_group (Subprocess aborted)
+Errors while running CTest

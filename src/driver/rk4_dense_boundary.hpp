@@ -25,6 +25,16 @@ struct RK4DenseBoundary {
   KOKKOS_INLINE_FUNCTION double Third() const {
     return 4*(k1-k2-k3+k4)/(H*H);
   }
+  // RHS values whose classical-RK4 updates reproduce StageBoundary and
+  // the physical cubic endpoint, including prescribed hanging vertices.
+  KOKKOS_INLINE_FUNCTION double StageRHS(double q,double h,int stage) const {
+    const double f=First(q),d=Second(q),e=Third();
+    const double j=4*(k3-k2)/(H*H);
+    if(stage==1) return f;
+    if(stage==2) return f+h*d/2+h*h*(e-j)/8;
+    if(stage==3) return f+h*d/2+h*h*(e+j)/8;
+    return f+h*d+h*h*e/2;
+  }
   KOKKOS_INLINE_FUNCTION double StageBoundary(double start_fraction,
                                              double fine_dt, int stage) const {
     const double y=Value(start_fraction);
