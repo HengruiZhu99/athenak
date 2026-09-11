@@ -466,3 +466,40 @@ Cartoon test with parent initialization/RK capture. Logs parent-gpu-validation.l
 parent-gpu-unit-build.log, parent-gpu-allocation.log; status/pid named analogously.
 No allocation exists yet at this check. GPU validation covers source730f4d99,
 not the newer KO extraction in this commit. Production campaign untouched.
+
+## Parent axis gate and physical boundary RHS
+
+Previous turn progressed with shared KO. GPU build1962404 succeeded, and guarded
+launcher2001088 completed validation job58200675 on nid008552 (COMPLETED0:0,
+26s allocation). Seven helper tests passed on A100. Native static Cartoon
+four-CFL test ratios15.17644,15.23920; CPU/GPU radial-slice max differences range
+2.64e-14 to1.47e-13 with identical coordinates. This is slice comparison, not
+full-restart byte equality across backends. Evidence gpu-classical-730-results,
+-cpu-comparison, -tables and -evidence files. Validated executable archived as
+binaries/athena.parent-rhs-730f4d99 with hash and CMake cache. No GPU validation
+allocation/build remains active at this point. It covers730f4d99, not later KO
+or boundary extraction commits.
+
+Added EnforceLocalVertexAxis using explicit selected blocks and the unchanged
+point correction/tolerance rule; leaf lean wrapper now calls it, leaving its
+full audit path unchanged. Expected-failure child processes reject excessive
+and nonfinite corrections (returncode-6); evidence parent-axis-rejection.json.
+
+Moved existing Sommerfeld and full-constraint Bjorhus point algorithms verbatim
+into boundary_rhs.hpp. Leaf sweeps still call the same functions. Added a
+selected-block VC Cartoon boundary sweep for auxiliary parent consumers. Tests
+preserve flat RHS at faces/corners and correct a nonzero Theta incoming RHS only
+at owned physical boundary points. The initial pulse expectation incorrectly
+included axis/outer-boundary intersections: the established CPBC ownership rule
+explicitly excludes the whole Cartoon axis, including those intersections. The
+parent implementation preserves that policy; adjusted test expectation to match.
+Existing full_constraint_bjorhus unit tests also pass.
+
+Full CPU executable rebuilt. Four Sommerfeld Cartoon runs retain byte-identical
+restart payloads (boundary-rhs-results.json). Added an explicit boundary selector
+to the timestep test; four CPBC runs pass with ratios15.17646,15.23751
+(cpbc-rhs-results.json). Raw /tmp/vc-cartoon-boundary-rhs-runtime and
+/tmp/vc-cartoon-cpbc-rhs-runtime. The parent operator pieces are available, but
+recursive coupled evolution, temporal ghost scatter/ownership, common-time
+telegraph gauge, synchronized live AMR and full endpoint reproduction still
+require integration and qualification.

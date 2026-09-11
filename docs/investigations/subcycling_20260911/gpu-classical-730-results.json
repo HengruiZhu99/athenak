@@ -1,0 +1,62 @@
+{
+  "launcher": [
+    "srun",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=32",
+    "--gpus=1",
+    "--gpu-bind=single:1",
+    "--cpu-bind=cores",
+    "--exact",
+    "--kill-on-bad-exit=1"
+  ],
+  "slurm_job_id": "58200675",
+  "level_batches": true,
+  "static_amr": true,
+  "time_dependent_damping": false,
+  "runs": [
+    {
+      "cfl": 0.4,
+      "time": 0.5,
+      "cycle": 31,
+      "file": "/pscratch/sd/h/hzhu/vc-subcycling-20260911/gpu_validation_730f4d99/cartoon/0.4/tab/pulse.state.00001.tab",
+      "restart": "/pscratch/sd/h/hzhu/vc-subcycling-20260911/gpu_validation_730f4d99/cartoon/0.4/rst/pulse.00001.rst",
+      "restart_payload_sha256": "3a1599671bb3e2bbe26c8b4419d00b5f41ccd1ffb4abf8e2a2212dac8485b819"
+    },
+    {
+      "cfl": 0.2,
+      "time": 0.5,
+      "cycle": 61,
+      "file": "/pscratch/sd/h/hzhu/vc-subcycling-20260911/gpu_validation_730f4d99/cartoon/0.2/tab/pulse.state.00001.tab",
+      "restart": "/pscratch/sd/h/hzhu/vc-subcycling-20260911/gpu_validation_730f4d99/cartoon/0.2/rst/pulse.00001.rst",
+      "restart_payload_sha256": "5690238e98ce024f08d6558d413d1471fb532450b3b341533282c1365cd206dc"
+    },
+    {
+      "cfl": 0.1,
+      "time": 0.5,
+      "cycle": 121,
+      "file": "/pscratch/sd/h/hzhu/vc-subcycling-20260911/gpu_validation_730f4d99/cartoon/0.1/tab/pulse.state.00001.tab",
+      "restart": "/pscratch/sd/h/hzhu/vc-subcycling-20260911/gpu_validation_730f4d99/cartoon/0.1/rst/pulse.00001.rst",
+      "restart_payload_sha256": "2df950e96785c23e5b799678f4b8208a5b805c25641bbeeb89a449fbddce34df"
+    },
+    {
+      "cfl": 0.05,
+      "time": 0.5,
+      "cycle": 242,
+      "file": "/pscratch/sd/h/hzhu/vc-subcycling-20260911/gpu_validation_730f4d99/cartoon/0.05/tab/pulse.state.00001.tab",
+      "restart": "/pscratch/sd/h/hzhu/vc-subcycling-20260911/gpu_validation_730f4d99/cartoon/0.05/rst/pulse.00001.rst",
+      "restart_payload_sha256": "62b550950d96edaa4d35bca6b73f8738398ddf6f3ebd195514c446eb29fd64a1"
+    }
+  ],
+  "rms_successive_differences": [
+    3.746187538504341e-09,
+    2.4684226407721727e-10,
+    1.6197849467621655e-11
+  ],
+  "ratios": [
+    15.176442950354959,
+    15.239199782084489
+  ],
+  "passed": true,
+  "scope": "Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no dynamic-AMR or production-gauge qualification"
+}

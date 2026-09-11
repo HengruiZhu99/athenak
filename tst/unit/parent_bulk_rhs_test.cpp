@@ -3,10 +3,13 @@
 #include <stdexcept>
 #include "z4c/bulk_rhs.hpp"
 #include "z4c/dissipation.hpp"
+#include "z4c/axis_regularity.hpp"
+#include "z4c/boundary_rhs.hpp"
 #include "z4c/state_views.hpp"
 #include "z4c/cartoon_vertex_axis.hpp"
 void Check(bool ok) {if(!ok) throw std::runtime_error("parent bulk RHS regression");}
 int main(int argc,char **argv) {
+  const std::string failure=argc>1 ? argv[1] : "";
   Kokkos::initialize(argc,argv);
   {
     using Z=z4c::Z4c;
@@ -62,6 +65,13 @@ int main(int argc,char **argv) {
     DualArray2D<BoundaryFlag> bcs("parent boundary flags",1,6);
     for(int f=0;f<6;++f) bcs.h_view(0,f)=BoundaryFlag::outflow;
     bcs.h_view(0,0)=BoundaryFlag::axis;bcs.modify_host();bcs.sync_device();
+    if(failure=="--reject-axis" || failure=="--reject-axis-nan") {
+      auto invalid=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
+      invalid(0,Z::I_Z4C_AXX,0,4,4)=failure=="--reject-axis" ? .2 :
+          std::numeric_limits<Real>::quiet_NaN();
+      Kokkos::deep_copy(rhs,invalid);
+    }
+    z4c::EnforceLocalVertexAxis(l,bcs,batches,rhs,1e-10);
     z4c::AddZ4cDissipation<z4c::VertexCenteredZ4c,z4c::CartoonSO2,3>(
         l,sizes,bcs,batches,parents.Values(),rhs,.02/64,false,unused);
     auto smooth=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
@@ -83,7 +93,36 @@ int main(int argc,char **argv) {
     }
     Check(ko_error<1e-12);
     std::cout << "parent grid-mode KO error " << ko_error << '\n';
-    std::cout << "PASS: actual VC Cartoon bulk RHS and dissipation on injected parent state including axis and outer ghosts\n";
+    // Exact flat state: both physical RHS choices must leave zero evolution,
+    // including composite corners and the physical-boundary/axis intersections.
+    for(int n=0;n<Z::nz4c;++n) for(int j=0;j<17;++j) for(int i=0;i<17;++i) {
+      ph(0,n,0,j,i)=(n==Z::I_Z4C_CHI || n==Z::I_Z4C_ALPHA ||
+          n==Z::I_Z4C_GXX || n==Z::I_Z4C_GYY || n==Z::I_Z4C_GZZ) ? 1 : 0;
+    }
+    Kokkos::deep_copy(parents.Values(),ph);
+    for(auto mode : {z4c::Z4cBoundaryRHSMode::sommerfeld,
+                    z4c::Z4cBoundaryRHSMode::full_constraint_bjorhus}) {
+      Kokkos::deep_copy(rhs,0.0);
+      z4c::ApplyLocalCartoonBoundaryRHS(l,sizes,bcs,batches,state_views,rhs_views,mode,false,3);
+      z4c::EnforceLocalVertexAxis(l,bcs,batches,rhs,1e-10);
+      auto flat=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
+      for(std::size_t n=0;n<flat.size();++n) Check(std::isfinite(flat.data()[n]) && std::abs(flat.data()[n])<1e-12);
+    }
+    // A pure Theta RHS violates the incoming compatibility equations. Its
+    // boundary correction must not modify the interior or the nonphysical axis.
+    auto pulse=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
+    for(int j=4;j<=12;++j) for(int i=4;i<=12;++i) pulse(0,Z::I_Z4C_THETA,0,j,i)=.1;
+    Kokkos::deep_copy(rhs,pulse);
+    z4c::ApplyLocalCartoonBoundaryRHS(l,sizes,bcs,batches,state_views,rhs_views,
+        z4c::Z4cBoundaryRHSMode::full_constraint_bjorhus,false,3);
+    auto corrected=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
+    for(int j=4;j<=12;++j) for(int i=4;i<=12;++i) {
+      // Preserve the established CPBC exclusion of the whole Cartoon axis,
+      // including its intersection with a physical z boundary.
+      const double expected=i!=4 && (i==12 || j==4 || j==12) ? 0 : .1;
+      Check(std::abs(corrected(0,Z::I_Z4C_THETA,0,j,i)-expected)<1e-12);
+    }
+    std::cout << "PASS: parent bulk/KO, axis gate, flat physical RHS and corners\n";
   }
   Kokkos::finalize();
 }

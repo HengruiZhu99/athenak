@@ -31,6 +31,7 @@
 #include "z4c/fastflow.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/axis_regularity.hpp"
 #include "z4c/z4c_vertex_topology.hpp"
 #include "tasklist/numerical_relativity.hpp"
 #include "z4c/cce/cce.hpp"
@@ -304,18 +305,9 @@ void Z4c::ApplyVertexAxisRegularity(DvceArray5D<Real> &state, const int stage,
   auto &mb_bcs = pmy_pack->pmb->mb_bcs;
   const int is = layout.is;
   if (!opt.vertex_axis_regularity_audit) {
-    const Real tolerance = opt.vertex_axis_correction_tolerance;
-    par_for("enforce evolved vertex axis regularity lean", DevExeSpace(),
-            0, nmb - 1, layout.ks, layout.ke, layout.js, layout.je,
-        KOKKOS_LAMBDA(const int m, const int k, const int j) {
-          if (mb_bcs.d_view(m, BoundaryFace::inner_x1) !=
-              BoundaryFlag::axis) return;
-          const VertexAxisCorrection correction =
-              EnforceVertexAxisZ4cPoint(state, m, k, j, is);
-          if (correction.nonfinite != 0 || correction.max_rel > tolerance) {
-            Kokkos::abort("VC axis regularity correction rejected in lean runtime");
-          }
-        });
+    subcycling::BlockBatches axis_blocks;
+    axis_blocks.Update(false,pmy_pack->pmb->mb_lev,nmb);
+    EnforceLocalVertexAxis(layout,mb_bcs,axis_blocks,state,opt.vertex_axis_correction_tolerance);
     return;
   }
   const int active_n2 = layout.je - layout.js + 1;
