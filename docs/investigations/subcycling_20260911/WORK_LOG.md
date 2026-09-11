@@ -1501,3 +1501,13 @@ boundary-fixed-build.log, boundary-fixed-gpu.log (created after compile),
 boundary-fixed.patch and boundary-fixed.sha256 in isolated remote root.
 No source replacement until test terminal. Newer local evolution changes still
 need their own CUDA build and Brill tests. Overall goal incomplete.
+
+Targeted GPU rerun58207979 on nid008285 completed successfully (observing7913 exit0).
+Temporal boundary and previously skipped schedule helper both PASS; interpolation
+ratios16.0819,16.0405,16.0201 at all three orders, matching CPU. GPU log archived.
+Together with58207663 evolution cases this resolves c204ee04 qualification failure
+without changing interpolation or tolerances. Does not qualify later evolution code.
+Restored only the archived test patch on isolated remote, fetched bundle and
+switched cleanly to codex/vc-evolution-befad6a4. Started build-befad6a4.sh, log
+build-befad6a4.log/status in isolated root; observer96618. Do not replace source
+until this newer CUDA build and subsequent tests terminate. Goal incomplete.
