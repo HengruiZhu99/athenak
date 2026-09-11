@@ -1,6 +1,7 @@
 #ifndef Z4C_HIERARCHY_PHYSICS_HPP_
 #define Z4C_HIERARCHY_PHYSICS_HPP_
 #include <functional>
+#include <map>
 #include "driver/hierarchy_rk4.hpp"
 #include "driver/hierarchy_geometry.hpp"
 #include "z4c/bulk_rhs.hpp"
@@ -29,6 +30,10 @@ struct HierarchyPhysics {
   std::vector<int> parities;
   std::array<bool,4> outer_faces;
   DvceArray5D<Real> mu,unused;
+  // Fixed-topology cache: recreate this physics object after any regrid.
+  DvceArray1D<int> timestep_nodes;
+  std::map<int,std::pair<int,int>> timestep_ranges;
+  Real classical_source_radius;
   HierarchyPhysics(subcycling::VertexParentStates &s,const subcycling::HierarchyGeometry &g,
       const Z4cGridLayout &l,const Z4c::Options &opt,int r,int rx,int ry,Real ko,
       const std::array<bool,4> &faces,std::function<Real(double)> maximum,
@@ -41,6 +46,22 @@ struct HierarchyPhysics {
       throw std::invalid_argument("unsupported hierarchy Z4c configuration");
     for(int v=0;v<Z4c::nz4c;++v) parities.push_back(Z4cStateAxisParitySignFromPackedIndex(v));
     mu=DvceArray5D<Real>("hierarchy telegraph coefficient",s.Values().extent(0),1,l.n3,l.n2,l.n1);
+    std::map<int,std::vector<int>> groups;
+    const auto &levels=s.AllLevels().h_view;
+    for(int m=0;m<levels.extent_int(0);++m) groups[levels(m)].push_back(m);
+    if(groups.empty() || groups.begin()->first!=root)
+      throw std::invalid_argument("missing hierarchy timestep root");
+    timestep_nodes=DvceArray1D<int>("hierarchy timestep block lists",levels.extent(0));
+    const auto ids=Kokkos::create_mirror(timestep_nodes);
+    int offset=0,expected=root;
+    for(const auto &group:groups) {
+      if(group.first!=expected++) throw std::invalid_argument("missing hierarchy timestep level");
+      timestep_ranges[group.first]={offset,static_cast<int>(group.second.size())};
+      for(int m:group.second) ids(offset++)=m;
+    }
+    Kokkos::deep_copy(timestep_nodes,ids);
+    ExplicitRKMethod method;method.stages=4;method.classical_rk4=true;
+    classical_source_radius=ExplicitRKNegativeRealStabilityRadius(method);
   }
   // Synchronized-state limits for the campaign's zero-shift, undamped Z4c
   // system with max-domain telegraph damping. Include covered predictor nodes:
@@ -61,32 +82,30 @@ struct HierarchyPhysics {
     const auto coefficients=ScaleInvariantTelegraphCoefficients(
         maximum,maximum,opt.telegraph_tau,opt.telegraph_kappa);
     const Real rate=opt.telegraph_lapse ? coefficients.damping : 0;
-    ExplicitRKMethod method;method.stages=4;method.classical_rk4=true;
     const Real source=SourceTimestepCeiling(opt.timestep_source_safety,
-        ExplicitRKNegativeRealStabilityRadius(method),rate);
+        classical_source_radius,rate);
     if(!std::isfinite(rate) || rate<0 || !std::isfinite(source) || source<=0)
       throw std::runtime_error("invalid hierarchy timestep source ceiling");
     const auto state=BindStateViews(storage.Values());
     const auto sizes=geometry.sizes.d_view;
-    const auto levels=storage.AllLevels().d_view;
-    const auto &host_levels=storage.AllLevels().h_view;
-    int highest=root;
-    for(int m=0;m<host_levels.extent_int(0);++m) highest=std::max(highest,host_levels(m));
+    const auto ids=timestep_nodes;
+    const int highest=timestep_ranges.rbegin()->first;
     const int first=minimum_level<0 ? root : minimum_level;
     const int last=maximum_level<0 ? highest : maximum_level;
     if(first<root || last>highest || last<first)
       throw std::invalid_argument("invalid timestep level range");
     const int ni=layout.ie-layout.is+1,nj=layout.je-layout.js+1;
     const int is=layout.is,js=layout.js,ks=layout.ks;
-    const std::size_t count=storage.Values().extent(0)*ni*nj;
     std::vector<subcycling::LevelStepLimit> limits;
     for(int level=first;level<=last;++level) {
+      const auto range=timestep_ranges.at(level);
+      const int offset=range.first;
+      const std::size_t count=static_cast<std::size_t>(range.second)*ni*nj;
       Real spatial=std::numeric_limits<Real>::max();
       Kokkos::parallel_reduce("hierarchy spatial timestep",
         Kokkos::RangePolicy<DevExeSpace,Kokkos::IndexType<std::size_t>>(0,count),
         KOKKOS_LAMBDA(std::size_t q,Real &value) {
-          const int i=q%ni+is;q/=ni;const int j=q%nj+js;const int m=q/nj;
-          if(levels(m)!=level) return;
+          const int i=q%ni+is;q/=ni;const int j=q%nj+js;const int m=ids(offset+q/nj);
           const Real point=SpatialTimestepPoint(state,sizes(m),opt,m,ks,j,i,
                                                 maximum,0,true,false,true);
           value=fmin(value,point);

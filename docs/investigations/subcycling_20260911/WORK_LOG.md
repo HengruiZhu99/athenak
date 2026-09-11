@@ -1421,3 +1421,24 @@ fourth-order convergence. Evidence stage-limit-evidence; raw
 
 CUDA c204ee04 build still being monitored, source untouched. Live-AMR integration
 and actual single-A100 Brill reproduction/lower wallclock remain incomplete.
+
+## Avoid whole-hierarchy scans in every level's timestep reduction
+
+Previous turn progressed with21a8e720 intra-stage stability rollback. CUDA build
+c204ee04 remains live PID316679, last visible completed percentage96; no duplicate
+build/allocation launched. Its prepared A100 script remains ready, not submitted.
+
+Replaced each level's all-node scan with cached device block IDs grouped by level.
+Now a stage reduction launches exactly its level's point count rather than all
+hierarchy points with a per-point level rejection. Synchronized all-level checks
+visit every node once in total rather than once per level. Cache constructed once
+per fixed-topology physics instance, explicitly recreated after regrid. Cached
+classical RK4 negative-real stability radius avoids repeated host root solving.
+No claim of measured wallclock gain yet.
+
+CPU full build, real Z4c source-tightening rollback test and fixed-duration actual
+checkpoint comparisons pass. All SIX field hashes exactly match preceding
+stage-limit build. Fixed-time ratios remain16.2127240283(sync),16.0440794985(ratio2).
+Evidence timestep-batching-evidence; raw /tmp/vc-limit-batching-checkpoint.
+Still need live driver/AMR integration, CUDA execution and full matched-endpoint
+single-A100 provisional-collapse accuracy and wallclock comparison.
