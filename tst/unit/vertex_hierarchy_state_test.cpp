@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "driver/vertex_parent_states.hpp"
 #include "driver/hierarchy_geometry.hpp"
+#include "driver/hierarchy_vertex_exchange.hpp"
 void Check(bool ok) {if(!ok) throw std::runtime_error("hierarchy state regression");}
 int main(int argc,char **argv) {
   Kokkos::initialize(argc,argv);
@@ -33,6 +34,49 @@ int main(int argc,char **argv) {
     try {geometry.Initialize(tree,domain,0,1,1,l,faces);}
     catch(const std::invalid_argument &) {bad_domain=true;}
     Check(bad_domain && geometry.sizes.extent_int(0)==static_cast<int>(tree.Nodes().size()));
+    // Give coincident active vertices deliberately different values. Resolve
+    // expected authority independently by scanning containing same-level nodes.
+    subcycling::HierarchyVertexExchange exchange;
+    const auto exchange_coverage=exchange.Build(tree,l);
+    Check(exchange_coverage.shared>0 && exchange_coverage.ghosts>0 &&
+          exchange_coverage.unavailable>0);
+    DvceArray5D<Real> stage("exchange stage",tree.Nodes().size(),2,1,l.n2,l.n1);
+    auto seed=Kokkos::create_mirror_view(stage);
+    for(int n=0;n<stage.extent_int(0);++n) for(int v=0;v<2;++v)
+      for(int j=0;j<l.n2;++j) for(int i=0;i<l.n1;++i)
+        seed(n,v,0,j,i)=(i>=l.is && i<=l.ie && j>=l.js && j<=l.je)
+          ? 100000*n+10000*v+100*j+i : -99;
+    Kokkos::deep_copy(stage,seed);
+    exchange.Apply(stage,1,1);
+    auto received=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),stage);
+    for(int n=0;n<stage.extent_int(0);++n) for(int v=0;v<2;++v)
+      for(int j=0;j<l.n2;++j) for(int i=0;i<l.n1;++i) {
+        const auto key=tree.Nodes()[n].key;
+        int donor=-1,di=0,dj=0;
+        const int gx=key[1]*l.nx1+i-l.is,gy=key[2]*l.nx2+j-l.js;
+        if(key[0]==1) for(int d=0;d<stage.extent_int(0);++d) {
+          const auto k=tree.Nodes()[d].key;
+          if(k[0]!=key[0]) continue;
+          const int x=gx-k[1]*l.nx1+l.is,y=gy-k[2]*l.nx2+l.js;
+          if(x<l.is || x>l.ie || y<l.js || y>l.je) continue;
+          if(donor<0 || k<tree.Nodes()[donor].key) {donor=d;di=x;dj=y;}
+        }
+        const Real expected=donor<0 ? seed(n,v,0,j,i) : seed(donor,v,0,dj,di);
+        Check(received(n,v,0,j,i)==expected);
+      }
+    // Repeated application must be idempotent and use the cached topology.
+    exchange.Apply(stage,1,1);
+    auto again=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),stage);
+    for(std::size_t k=0;k<stage.size();++k) Check(again.data()[k]==received.data()[k]);
+    bool bad_exchange=false;
+    try {exchange.Apply(stage,2,1);} catch(const std::invalid_argument &) {bad_exchange=true;}
+    Check(bad_exchange);
+    auto invalid_layout=l;invalid_layout.nx3=2;
+    try {exchange.Build(tree,invalid_layout);Check(false);}
+    catch(const std::invalid_argument &) {}
+    bad_exchange=false;
+    try {exchange.Apply(stage,1,1);} catch(const std::invalid_argument &) {bad_exchange=true;}
+    Check(bad_exchange);
     DvceArray5D<Real> u("leaves",leaves.size()+20,2,1,13,13);
     auto h=Kokkos::create_mirror(u);Kokkos::deep_copy(h,-3.0);
     for(int m=0;m<static_cast<int>(leaves.size());++m) {

@@ -537,3 +537,30 @@ restart payloads against the boundary-RHS baseline; temporal ratios15.1764614,
 Full coupled stepping, temporal ghost ownership/scatter, common-time telegraph
 coefficient, live AMR/diagnostics and faster single-A100 reproduction through the
 recorded endpoint remain incomplete. No production run or campaign was changed.
+
+## Cached same-level active/ghost vertex exchange
+
+Previous turn made verified progress (a9ecd6eb). Added HierarchyVertexExchange,
+which caches transfers by logical level for populated hierarchy fields. It
+reconciles duplicate active vertices and fills same-level ghosts from canonical
+active donors in a single device phase. Canonical donors are never destinations,
+so no staging array or read/write race is introduced. Apply selects levels and
+performs no topology reconstruction or field allocation. Coarse/fine and physical
+missing donors remain for their separate providers; same-stage/time consistency
+within each selected level remains a caller obligation. Failed Build invalidates
+the old plan; invalid Apply shapes/ranges reject.
+
+The expanded hierarchy-state unit initializes inconsistent duplicate values,
+independently scans containing blocks to establish expected authority, verifies
+all target values, untouched other levels, idempotence and invalidation. Passes.
+The test-only all-node startup path applies this exchange before ghost handling
+and leaf scatter. Full CPU executable built and four static Cartoon runs preserve
+all restart payloads exactly against all-node-storage baseline; temporal ratios
+15.1764614,15.2375065. Evidence shared-exchange-results.json, raw
+/tmp/vc-cartoon-shared-exchange-runtime. Final edit after full build only adds
+failed-Build invalidation; the updated unit was rebuilt and passed.
+
+This removes a required ownership gap for actual per-level evolution, but does
+not enable asynchronous Z4c stepping. Temporal ghost scatter and physical/axis
+stencil coverage, common-time gauge, live AMR/restarts and faster matched-endpoint
+single-A100 reproduction remain unfinished. No production files/jobs changed.

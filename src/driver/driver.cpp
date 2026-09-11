@@ -1,3 +1,4 @@
+#include "driver/hierarchy_vertex_exchange.hpp"
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -359,7 +360,15 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     if (z == nullptr) throw std::runtime_error("parent initialization test requires Z4c");
     z->RebuildSubcycleParents();
     const bool all_nodes=std::getenv("ATHENA_TEST_SUBCYCLE_ALL_NODES") != nullptr;
-    if(all_nodes) z->subcycle_parents.InitializeAll(*z->subcycle_hierarchy,z->u0,z->layout);
+    if(all_nodes) {
+      z->subcycle_parents.InitializeAll(*z->subcycle_hierarchy,z->u0,z->layout);
+      subcycling::HierarchyVertexExchange exchange;
+      const auto exchange_coverage=exchange.Build(*z->subcycle_hierarchy,z->layout);
+      exchange.Apply(z->subcycle_parents.Values(),0,std::numeric_limits<int>::max());
+      Kokkos::fence("test populated hierarchy shared vertices");
+      std::cout << "SUBCYCLE_SHARED_VERTICES shared=" << exchange_coverage.shared
+                << " ghosts=" << exchange_coverage.ghosts << std::endl;
+    }
     const auto coverage=z->subcycle_parents.FillSameLevelGhosts(
         *z->subcycle_hierarchy,z->u0,z->layout);
     int axis_targets=0;
