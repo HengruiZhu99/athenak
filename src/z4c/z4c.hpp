@@ -16,6 +16,7 @@
 #include "athena.hpp"
 #include "driver/block_batches.hpp"
 #include "driver/vertex_parent_states.hpp"
+#include "driver/rk4_predictor_states.hpp"
 #include "utils/finite_diff.hpp"
 #include "utils/cart_grid.hpp"
 #include "parameter_input.hpp"
@@ -148,6 +149,7 @@ class Z4c {
   subcycling::BlockBatches rhs_batches;
   std::unique_ptr<subcycling::Hierarchy> subcycle_hierarchy;
   subcycling::VertexParentStates subcycle_parents;
+  subcycling::RK4PredictorStates coarse_rk_predictor;
   void RebuildSubcycleParents();
   Z4cGridLayout layout;         // authoritative Z4c active/stored index geometry
   // flags to denote relativistic dynamics

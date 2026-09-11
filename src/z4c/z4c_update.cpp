@@ -17,6 +17,8 @@
 #include "globals.hpp"
 #include "z4c/z4c.hpp"
 
+#include <cstdlib>
+#include <numeric>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -132,6 +134,20 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
       Kokkos::realloc(classical_sum, nmb1 + 1, nz4c,
                       bounds.n3, bounds.n2, bounds.n1);
     }
+#ifdef ATHENA_Z4C_KERNEL_TESTS
+    // Test hook only: capture actual post-boundary RHS without consuming the
+    // predictor or changing evolution. Runtime level-local stepping will select
+    // only coarse donor blocks and attach this to each parent interval.
+    if (std::getenv("ATHENA_TEST_RK_PREDICTOR") != nullptr) {
+      if (stage == 1) {
+        std::vector<int> ids(nmb1+1);
+        std::iota(ids.begin(),ids.end(),0);
+        coarse_rk_predictor.Begin(u1,bounds,ids,pmy_pack->pmesh->time,
+                                  pmy_pack->pmesh->dt);
+      }
+      coarse_rk_predictor.Capture(u_rhs,stage);
+    }
+#endif
     auto sum = classical_sum;
     const Real dt = pmy_pack->pmesh->dt;
     const Real weight = classical_rk4::Weight(stage);

@@ -1934,3 +1934,11 @@ if(Athena_BUILD_UNIT_TESTS)
   target_include_directories(athena_vertex_authority_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
   add_test(NAME vertex_authority COMMAND athena_vertex_authority_test)
 endif()
+
+if(Athena_BUILD_UNIT_TESTS)
+  add_executable(athena_rk4_predictor_states_test tst/unit/rk4_predictor_states_test.cpp)
+  target_include_directories(athena_rk4_predictor_states_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR})
+  target_link_libraries(athena_rk4_predictor_states_test PRIVATE Kokkos::kokkos)
+  add_test(NAME rk4_predictor_states COMMAND athena_rk4_predictor_states_test)
+endif()

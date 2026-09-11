@@ -243,3 +243,36 @@ Guarded launcher1808047 (finish_topology24.sh) waits for the build, compiles/run
 GPU helper tests, and requests a separate shared_interactive single-A100
 comparison. Inspect topology24-launch-status and allocation_topology24.log before
 retrying. Existing campaign jobs and production outputs remain unchanged.
+
+## Sparse coarse RK histories connected to synchronous test path
+
+Previous goal turn was planning-only (no implementation progress). Revalidated
+remote build1778061 as live, then observed successful terminal build. Guarded
+launcher1808047 submitted topology24 allocation58199493; last inspected PENDING
+(Priority), so no duplicate submission or build. Production58197653 remains
+running and unchanged.
+
+Added RK4PredictorStates: owns beginning state and four RHS arrays for an explicit
+selected block list, with active vertices only (no invalid ghost RHS or reserved
+capacity storage). Requests require a complete ordered parent step and child
+interval bounds. Device stage evaluation uses the existing stage-consistent dense
+formula. This is distinct from a physical endpoint after algebraic projection.
+Spatial boundary sampling still must gather a valid active-donor stencil; these
+arrays are not a complete asynchronous boundary provider.
+
+ATHENA_TEST_RK_PREDICTOR in a kernel-test build captures actual RHS stages before
+classical updates, without changing the fields or consuming the predictor.
+Unit tests cover sparse order, independent ownership after source overwrite,
+invalid/incomplete stages, reuse after a new interval and empty batches.
+The first unit attempt exposed a test-fixture host mirror alias on the Serial
+backend; using an independent host mirror fixed the fixture. Five helper tests
+pass after explicitly building the previously unbuilt authority test target.
+
+Full CPU executable rebuilt with changes; four native static-AMR Cartoon tests
+with capture enabled retain byte-identical complete restart payloads against
+parent-axis baseline. Temporal ratios15.17646,15.23751. Evidence:
+rk-predictor-results.json, raw /tmp/vc-cartoon-rk-predictor-runtime; build log
+/tmp/vc-predictor-build.log. Build source SHA identifies base96d1e912 plus this
+commit's changes (uncommitted at build time). These remain synchronous tests.
+Asynchronous parent RHS/ghost evolution, global gauge coupling, dynamic AMR and
+faster full matched-end-time production reproduction remain outstanding.
