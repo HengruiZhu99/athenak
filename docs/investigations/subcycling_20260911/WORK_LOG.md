@@ -1568,3 +1568,34 @@ python scripts/subcycling/test_live_amr.py /path/to/athena /new/mixed-output --m
 Remote CUDA befad6a4 build verified still live PID505749 (~60percent); no source
 change or duplicate submission. That snapshot predates native-driver integration.
 Actual A100 Brill endpoint reproduction and lower wallclock still outstanding.
+
+## Recover actual endpoint and prepare isolated Brill comparison harness
+
+Previous turn progressed with actual AMR event/restart tests79052119. Re-read real
+Perlmutter checkpoint and final campaign history. Checkpoint t62.20556032298022,
+cycle133489,nmb8924,dt2.422989058508578e-6; SHA independently verified unchanged
+4b4dc1f576fe2b88d00c72de17bc413bf5bfa0ccbfce4ef36e2980a6cd979b4b.
+Final history t62.205994062314062,cycle133668,minLapse.017361930148278765,
+maxAbsKret259724.66624038288,C-norm2 131.3371573622191. These reproduce the
+recorded provisional run; large constraints are not evidence of trustworthy
+physical collapse. Actual input: spatial_order4, transfer6, extrapolation2,
+telegraph_tau=kappa=.01,zero shift/damping,chiTE.001,CFL.25,capacity24000.
+
+Added prepare_brill_endpoint.py and run_brill_endpoint.py. Preparation copies
+checkpoint-required90925809-byte AMR history prefix into each fresh case and
+redirects the embedded absolute production history path; never append to production.
+Pins checkpoint/executable/input hashes. Two cases: current classical synchronous
+and subcycled, same endpoint and requested physical output cadence (eight samples;
+native sync may overshoot sample times by a finest step). Records explicit source
+compatibility for copied history. Executor runs serially on one allocated GPU,
+exclusive output files, per-case executable verification, fail-fast on errors or
+unexpected termination, requires subcycling CSV for subcycled case. Does not mark
+scientific reproduction successful merely on exit0. No simulations launched by
+these scripts yet; syntax checks pass; actual remote checkpoint parser schema
+verified. Must prepare against a pinned executable containing live integration.
+This benchmark covers the late checkpoint-to-history-end segment, not a claim of
+replaying or accelerating the entire original eight-hour evolution.
+
+Remote befad6a4 CUDA build still live PID505749 (~87percent), predates live-driver
+code; no replacement/duplicate run. Strong-field science/performance comparison
+remains outstanding, as does newer CUDA native-driver qualification.
