@@ -1468,3 +1468,13 @@ Do not replace remote source until this job terminates. It qualifies c204ee04,
 not subsequent retry/timestep/owner changes. Production jobs left untouched.
 Goal remains incomplete until live-AMR and actual matched-endpoint single-A100
 Brill scientific reproduction plus lower measured wall time succeed.
+
+GPU qualification58207663 terminal FAILED134 after47seconds. All five actual
+Z4c evolution cases passed: adaptive, coarse-group, global-gauge, global-gauge
+CPBC, rollback; hierarchy RK helper also passed. vertex_temporal_boundary_test
+then threw generic "temporal boundary regression" (step.6 aborted); schedule test
+was not reached. Archived logs gpu-c204-evidence. Overall CUDA qualification is
+NOT passed. Added assertion line diagnostics to local temporal boundary helper;
+next rebuild/relaunch that small target to locate failure before any broad claim.
+Remote source remains clean c204ee04, no build/job live from this qualification.
+Observer99491 terminal134. Production unchanged.

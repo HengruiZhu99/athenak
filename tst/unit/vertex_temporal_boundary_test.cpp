@@ -4,7 +4,10 @@
 #include <numeric>
 #include "driver/vertex_temporal_boundary.hpp"
 #include "driver/hierarchy_temporal_ghosts.hpp"
-void Check(bool ok) { if (!ok) throw std::runtime_error("temporal boundary regression"); }
+void CheckAt(bool ok,int line) {
+  if (!ok) throw std::runtime_error("temporal boundary regression at line "+std::to_string(line));
+}
+#define Check(ok) CheckAt((ok),__LINE__)
 template<class F> void Reject(F f) {
   bool rejected=false;try {f();} catch(const std::exception &) {rejected=true;} Check(rejected);
 }
