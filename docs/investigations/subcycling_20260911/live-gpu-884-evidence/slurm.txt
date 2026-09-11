@@ -1,0 +1,30 @@
+JobId=58210242 JobName=vc-live-qual
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:07 TimeLimit=00:15:00 TimeMin=N/A
+   SubmitTime=2026-09-11T13:54:12 EligibleTime=2026-09-11T13:54:12
+   AccrueTime=Unknown
+   StartTime=2026-09-11T13:54:12 EndTime=2026-09-11T14:09:12 Deadline=N/A
+   PreemptEligibleTime=2026-09-11T13:54:12 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-11T13:54:12 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login39:907868
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid008553
+   BatchHost=nid008553
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm80g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc --account=m3328_g --qos=shared_interactive --constraint=gpu&hbm80g --nodes=1 --ntasks=1 --cpus-per-task=32 --gpus=1 --time=00:15:00 --job-name=vc-live-qual bash /pscratch/sd/h/hzhu/vc-subcycling-20260911/run-live-gpu-884f5170.sh
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63208-63210
+
