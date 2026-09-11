@@ -70,7 +70,9 @@ AMRHistory::AMRHistory(Mesh *mesh, ParameterInput *pin) : mesh_(mesh), pin_(pin)
   const bool has_compatible_source_environment =
       compatible_source_environment != nullptr;
   if (has_compatible_source_parameter || has_compatible_source_environment) {
-    if (!replay()) Fatal("amr_history_compatible_source_id is replay-only");
+    // Explicit source compatibility is also needed when continuing a recorded
+    // hierarchy with a qualified new executable. The header source must match
+    // exactly; all remaining geometry and restart checks remain mandatory.
     const std::string parameter_source_id = has_compatible_source_parameter
         ? pin->GetString("mesh_refinement", "amr_history_compatible_source_id") : "";
     const std::string environment_source_id = has_compatible_source_environment
@@ -256,6 +258,7 @@ void AMRHistory::LoadHistory() {
     std::cout << "AMR_HISTORY_SOURCE_COMPATIBILITY"
               << " recorded_source_id=" << header_.source_id
               << " current_source_id=" << candidate.source_id
+              << " mode=" << (record() ? "record" : "replay")
               << " explicit_match=true" << std::endl;
     candidate.source_id = header_.source_id;
   }

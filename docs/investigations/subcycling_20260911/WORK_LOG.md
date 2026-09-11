@@ -106,3 +106,47 @@ asynchronous coarse/fine evolution remain unverified.
 
 Profiling allocation58198556 is confirmed queued for resources; launcher1635650
 is live. No duplicate allocation has been requested.
+
+## Dense boundary and covered-parent groundwork
+
+Implemented the scalar component formulas for classical-RK4 coarse dense output
+and fine stage reconstruction from Ji et al.2503.09629v2 equations11-19. Tests
+compare reconstructed child stage vectors against direct nonlinear,
+nonautonomous RK stages in both half intervals. Local boundary-error ratios
+17.6055,16.8023,16.3995 approach16. A separate check rejects interpreting the
+stage2 vector as merely the physical dense state at its nominal time. These
+helpers are not yet connected to runtime coarse/fine ghost filling.
+
+Added a sparse hierarchy containing active leaves and their covered ancestors,
+with deterministic indices, source-leaf references and parent/child links.
+2D/3D tests require complete child sets and reject overlapping, incomplete and
+duplicate leaves. This is topology for future predictor state allocation, not
+an implemented parent-state evolution path.
+
+## Profiling source-identity gate
+
+Allocation58198556 was CANCELLED before starting after salloc timed out; verified
+by sacct (zero elapsed). Retry58198653 ran the early baseline successfully
+(12cycles,51.0634s including initialization/output). The profile binary failed
+before evolution with AMR history source-id mismatch. This is not an evolution
+instability. Original evidence is retained under profiles and profiles.58198653.json.
+
+Extended the existing explicit amr_history_compatible_source_id option to AMR
+record continuation, logging both source IDs and mode. All other header,
+checkpoint digest and topology checks remain. Local tests verify default
+mismatch rejection, explicit correct-source continuation through a further
+cycle, and wrong-source rejection. Evidence: source-compatibility-results.json;
+raw local evidence: /tmp/vc-source-compat-test4.
+
+Remote profiling-only source is47a11d37 (aa41ea73 plus this compatibility change;
+no classical-RK4 or subcycling changes mixed in). Build PID1674145 is live.
+Guarded continuation PID1695372 waits on that build and then runs new cases in
+profiles_source_compat, leaving the earlier cases intact. Its script is
+finish_compatible_profiles.sh; inspect compatible-launch.log, allocation.log,
+profile-launch-status and actual Slurm handles before any retry. It uses the
+manifest-aware comparison script copied separately in the remote root.
+
+The full subcycling goal remains incomplete: populated parent predictor fields,
+asynchronous Z4c steps, temporal ghost filling, global telegraph consistency,
+dynamic AMR synchronization and faster matched-end-time reproduction are still
+required. Helper tests are not substitutes for those gates.

@@ -12,9 +12,10 @@ def payload_hash(path):
   h.update(prefix[mark:])
   for chunk in iter(lambda:f.read(4*1024*1024),b''):h.update(chunk)
  return h.hexdigest()
+cases={(r['tag'],r['mode']):Path(r['case']) for r in json.loads((ROOT/'profiles.json').read_text())}
 results={}
 for tag in ['early','late']:
- a=ROOT/'profiles'/(tag+'_baseline');b=ROOT/'profiles'/(tag+'_profile')
+ a=cases[(tag,'baseline')];b=cases[(tag,'profile')]
  ha=read_history(next(a.glob('*.hst')));hb=read_history(next(b.glob('*.hst')))
  assert len(ha)==len(hb) and ha[-1]['time']==hb[-1]['time']
  differences={k:max(abs(x[k]-y[k]) for x,y in zip(ha,hb)) for k in ha[0]}
