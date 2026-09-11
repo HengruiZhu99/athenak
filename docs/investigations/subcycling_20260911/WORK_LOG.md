@@ -424,3 +424,9 @@ source to faaf6973. New GPU build PID1953857, parent-rhs-build.log and
 parent-rhs-build.pid. No new GPU allocation yet; build completion and new helper
 GPU tests must be checked before another evolution comparison. Production
 campaign remains unchanged.
+
+GPU build1953857 failed and is confirmed terminal: NVCC disallows an extended
+host/device lambda inside private RK4PredictorStates::CopyActive. Moved that
+unchanged copy kernel to namespace-scope detail::CopyRKActiveValues. Predictor
+and temporal-boundary CPU tests pass after the portability fix. Archive the
+failed build log before retrying; no GPU evolution was launched with faaf6973.

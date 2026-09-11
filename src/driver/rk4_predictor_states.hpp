@@ -11,6 +11,19 @@
 #include "z4c/z4c_grid.hpp"
 
 namespace subcycling {
+namespace detail {
+inline void CopyRKActiveValues(const DvceArray5D<Real> &src, const DvceArray5D<Real> &dst,
+    const DvceArray1D<int> &blocks, const z4c::Z4cGridLayout &layout) {
+    const auto ids=blocks; const int is=layout.is,js=layout.js,ks=layout.ks;
+    if (dst.extent(0)>0) par_for("retain coarse RK active values",DevExeSpace(),
+        0,dst.extent_int(0)-1,0,dst.extent_int(1)-1,0,dst.extent_int(2)-1,
+        0,dst.extent_int(3)-1,0,dst.extent_int(4)-1,
+        KOKKOS_LAMBDA(int p,int v,int k,int j,int i) {
+      dst(p,v,k,j,i)=src(ids(p),v,k+ks,j+js,i+is);
+    });
+  }
+}  // namespace detail
+
 // Sparse coarse RK history. Stores active vertices only; ghost RHS values are
 // not supplied by the evolution operator. Spatial interpolation must obtain
 // its complete stencil from active donors. No physical diagnostic ownership.
@@ -45,7 +58,7 @@ class RK4PredictorStates {
     auto host=Kokkos::create_mirror_view(blocks_);
     for (int p=0; p<np; ++p) host(p)=blocks[p];
     Kokkos::deep_copy(blocks_,host);
-    CopyActive(state,data_[0]);
+    detail::CopyRKActiveValues(state,data_[0],blocks_,layout_);
   }
   void Capture(const DvceArray5D<Real> &rhs, int stage) {
     if (stage<1 || stage>4 || stage!=completed_+1 || dt_<=0) {
@@ -54,7 +67,7 @@ class RK4PredictorStates {
     for (int d=0; d<5; ++d) if (rhs.extent_int(d)!=source_shape_[d]) {
       throw std::invalid_argument("predictor source storage changed within step");
     }
-    CopyActive(rhs,data_[stage]);
+    detail::CopyRKActiveValues(rhs,data_[stage],blocks_,layout_);
     completed_=stage;
   }
   // Fine-start fraction is relative to THIS parent step. Reject requests outside
@@ -85,15 +98,6 @@ class RK4PredictorStates {
   double StartTime() const { return start_; }
   std::size_t Bytes() const { return 5*data_[0].size()*sizeof(Real); }
  private:
-  void CopyActive(const DvceArray5D<Real> &src, const DvceArray5D<Real> &dst) {
-    const auto ids=blocks_; const int is=layout_.is,js=layout_.js,ks=layout_.ks;
-    if (dst.extent(0)>0) par_for("retain coarse RK active values",DevExeSpace(),
-        0,dst.extent_int(0)-1,0,dst.extent_int(1)-1,0,dst.extent_int(2)-1,
-        0,dst.extent_int(3)-1,0,dst.extent_int(4)-1,
-        KOKKOS_LAMBDA(int p,int v,int k,int j,int i) {
-      dst(p,v,k,j,i)=src(ids(p),v,k+ks,j+js,i+is);
-    });
-  }
   std::array<DvceArray5D<Real>,5> data_;
   DvceArray1D<int> blocks_;
   std::array<int,5> source_shape_{};
