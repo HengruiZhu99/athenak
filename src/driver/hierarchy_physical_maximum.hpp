@@ -38,6 +38,30 @@ class HierarchyPhysicalMaximum {
     }
     return maximum;
   }
+  // Verify the feedback at every nominal stage time used by these histories.
+  // Max-location switches are recomputed from fields, not interpolated maxima.
+  template<class Histories> Real Difference(const Histories &a,const Histories &b,
+                                             const CorrectorControl &control) {
+    control.Validate();
+    if(a.empty() || a.size()!=b.size())
+      throw std::invalid_argument("incompatible gauge histories");
+    std::set<double> times;
+    for(const auto &entry:a) {
+      const auto found=b.find(entry.first);
+      const auto &h=entry.second;
+      if(found==b.end() || found->second.StartTime()!=h.StartTime() ||
+         found->second.Dt()!=h.Dt())
+        throw std::invalid_argument("changed gauge history intervals");
+      for(double f:{0.,.5,1.}) times.insert(h.StartTime()+f*h.Dt());
+    }
+    Real error=0;
+    for(double time:times) {
+      const Real x=Evaluate(a,time),y=Evaluate(b,time);
+      error=std::max(error,std::abs(x-y)/(control.absolute_tolerance+
+                     control.relative_tolerance*std::max(std::abs(x),std::abs(y))));
+    }
+    return error;
+  }
  private:
   std::map<int,RK4PhysicalMaximum> levels_;
 };

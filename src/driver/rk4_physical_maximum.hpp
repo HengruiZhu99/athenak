@@ -32,10 +32,14 @@ class RK4PhysicalMaximum {
   Real Evaluate(const RK4PredictorStates &history,double fraction) {
     if(!ready_ || history.SourceBlocks()!=sources_)
       throw std::invalid_argument("physical maximum history mismatch");
-    history.EvaluateValue(fraction,values_);
-    if(first_>=values_.extent_int(1) || second_>=values_.extent_int(1))
+    if(history.completed_!=4 || !std::isfinite(fraction) || fraction<0 || fraction>1)
+      throw std::invalid_argument("invalid physical maximum time/history");
+    const auto values=history.data_[0],k1=history.data_[1],k2=history.data_[2],
+               k3=history.data_[3],k4=history.data_[4];
+    const double dt=history.dt_;
+    if(first_>=values.extent_int(1) || second_>=values.extent_int(1))
       throw std::invalid_argument("physical maximum component out of range");
-    const auto values=values_;const auto ids=ids_;
+    const auto ids=ids_;
     const int ni=values.extent_int(4),nj=values.extent_int(3),nk=values.extent_int(2);
     const int first=first_,second=second_;const Real a=a_,b=b_;
     const std::size_t count=ids.extent(0)*ni*nj*nk;
@@ -46,7 +50,13 @@ class RK4PhysicalMaximum {
       KOKKOS_LAMBDA(std::size_t q,Real &out) {
         const int i=q%ni;q/=ni;const int j=q%nj;q/=nj;const int k=q%nk;
         const int m=ids(q/nk);
-        const Real x=a*values(m,first,k,j,i)+b*values(m,second,k,j,i);
+        RK4DenseBoundary physical{
+          a*values(m,first,k,j,i)+b*values(m,second,k,j,i),dt,
+          a*k1(m,first,k,j,i)+b*k1(m,second,k,j,i),
+          a*k2(m,first,k,j,i)+b*k2(m,second,k,j,i),
+          a*k3(m,first,k,j,i)+b*k3(m,second,k,j,i),
+          a*k4(m,first,k,j,i)+b*k4(m,second,k,j,i)};
+        const Real x=physical.Value(fraction);
         const Real v=Kokkos::isfinite(x)?fabs(x):INFINITY;
         if(v>out) out=v;
       },Kokkos::Max<Real>(maximum));
@@ -59,7 +69,6 @@ class RK4PhysicalMaximum {
   Real a_=1,b_=2;
   std::vector<int> sources_;
   DvceArray1D<int> ids_;
-  DvceArray5D<Real> values_;
 };
 }
 #endif

@@ -53,7 +53,8 @@ class HierarchyRK4 {
   template<class Physics>
   CorrectorReport RunCorrected(double time,double dt,VertexParentStates &storage,Physics &physics,
       unsigned maximum_ratio,const CorrectorControl &control={},
-      const std::function<void(const Histories &)> &begin_pass={}) {
+      const std::function<void(const Histories &)> &begin_pass={},
+      const std::function<Real(const Histories &,const Histories &)> &feedback_residual={}) {
     control.Validate();
     if(inside_corrector_) throw std::logic_error("nested hierarchy corrector call");
     const auto state=storage.Values();
@@ -78,8 +79,12 @@ class HierarchyRK4 {
           for(const auto &entry:current_history_)
             last_report_.history_change=std::max(last_report_.history_change,
                 entry.second.Difference(previous_history_.at(entry.first),control));
+          last_report_.feedback_change=feedback_residual ?
+              feedback_residual(current_history_,previous_history_) : 0;
+          if(!std::isfinite(last_report_.feedback_change) || last_report_.feedback_change<0)
+            throw std::runtime_error("invalid corrector feedback residual");
           if(pass>=control.minimum_passes && last_report_.endpoint_change<=1 &&
-             last_report_.history_change<=1) {
+             last_report_.history_change<=1 && last_report_.feedback_change<=1) {
             last_report_.converged=true;inside_corrector_=false;return last_report_;
           }
         }

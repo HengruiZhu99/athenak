@@ -1014,3 +1014,30 @@ Production integration remains incomplete: common-time aggregation is local,
 main driver/AMR/checkpoint continuation is not using this prototype, source
 stability/retry and matched-endpoint single-A100 accuracy/wall-time remain
 unverified. No campaign files or jobs changed.
+
+## Explicit gauge-feedback residual and fused maximum
+
+Previous turn progressed with coupled histories. CorrectorReport now includes
+feedback_change. RunCorrected accepts an optional normalized feedback residual
+callback and requires it <=1 together with endpoint/history convergence.
+Invalid/nonfinite callback residuals throw through hierarchy rollback.
+HierarchyPhysicalMaximum::Difference checks common-time maxima at all nominal
+RK stage times, comparing the actual fields of both interval iterates.
+
+The strong-gauge test increases the initial lapse perturbation from0.001 to0.1;
+max|K| reaches approximately0.0237967. Before fusion it passed ratios17.0052 and
+16.475, using7..8 passes at the largest step and6..7 at the smallest. This is
+still smooth short-time test data, not a production-collapse qualification.
+
+Fused physical interpolation and absolute-maximum reduction reads only the two
+requested components from retained histories; avoids allocating/reconstructing
+all spacetime components at every query. Independent physical-history tests,
+coupled weak/strong gauge and coarse-group tests all pass after fusion. Logs
+vc-feedback-strong.log and vc-feedback-fused-test.log. CPU suite155.81s is not a
+controlled speedup measurement. Repeated-time query caching remains important;
+explicit gauge checks are expensive and must be included in the A100 benchmark.
+
+Still incomplete: source stability and retry control; caller cleanup of derived
+physics/gauge state on exceptions; strong-gauge comparison to existing
+synchronous production path; main-driver checkpoint/AMR integration and actual
+single-A100 matched-endpoint reproduction. No production files/jobs changed.

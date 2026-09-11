@@ -20,6 +20,7 @@ struct CorrectorReport {
   int passes=0;
   Real endpoint_change=std::numeric_limits<Real>::infinity();
   Real history_change=std::numeric_limits<Real>::infinity();
+  Real feedback_change=std::numeric_limits<Real>::infinity();
   bool converged=false;
 };
 class CorrectorFailure : public std::runtime_error {

@@ -158,6 +158,7 @@ class RK4PredictorStates {
   double Dt() const { return dt_; }
   std::size_t Bytes() const { return 5*data_[0].size()*sizeof(Real); }
  private:
+  friend class RK4PhysicalMaximum;
   std::array<DvceArray5D<Real>,5> data_;
   DvceArray1D<int> blocks_;
   std::array<int,5> source_shape_{};

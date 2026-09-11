@@ -67,7 +67,7 @@ int main(int argc,char **argv) {
         const auto key=leaves[m];const double w=std::ldexp(1.,-key[0]);
         const double x=w*(key[1]+(i-4)/static_cast<double>(nx)),z=domain.x2min+w*(key[2]+(j-4)/static_cast<double>(nx));
         double value=(v==Z::I_Z4C_CHI || v==Z::I_Z4C_GXX || v==Z::I_Z4C_GYY || v==Z::I_Z4C_GZZ || v==Z::I_Z4C_ALPHA) ? 1 : 0;
-        if(v==Z::I_Z4C_ALPHA) value+=.001*(flag("--polynomial-lapse") ? x*x+z*z : std::exp(-x*x-z*z));
+        if(v==Z::I_Z4C_ALPHA) value+=(flag("--strong-gauge") ? .1 : .001)*(flag("--polynomial-lapse") ? x*x+z*z : std::exp(-x*x-z*z));
         h(m,v,0,j,i)=value;
       }
     Kokkos::deep_copy(leaf,h);
@@ -113,12 +113,14 @@ int main(int argc,char **argv) {
         subcycling::CorrectorReport report;subcycling::CorrectorControl control;
         if(flag("--extra-passes")) control.maximum_passes=12;
         try {report=engine.RunCorrected(n*dt,dt,storage,physics,ratio,control,
-          flag("--global-gauge") ? std::function<void(const subcycling::HierarchyRK4::Histories &)>(gauge_pass) : nullptr); }
+          flag("--global-gauge") ? std::function<void(const subcycling::HierarchyRK4::Histories &)>(gauge_pass) : nullptr,
+          flag("--global-gauge") ? std::function<Real(const subcycling::HierarchyRK4::Histories &,const subcycling::HierarchyRK4::Histories &)>(
+            [&](const auto &a,const auto &b){return global_K.Difference(a,b,control);}) : nullptr); }
         catch(const subcycling::CorrectorFailure &) {
           report=engine.LastCorrectorReport();
           std::cerr << "corrector failure steps=" << steps << " interval=" << n
                     << " passes=" << report.passes << " endpoint=" << report.endpoint_change
-                    << " history=" << report.history_change << std::endl;
+                    << " history=" << report.history_change << " feedback=" << report.feedback_change << std::endl;
           throw;
         }
         if(flag("--global-gauge")) {
@@ -128,7 +130,7 @@ int main(int argc,char **argv) {
         if(!report.converged) throw std::runtime_error("accepted unconverged interval");
         minimum_passes=std::min(minimum_passes,report.passes);
         maximum_passes=std::max(maximum_passes,report.passes);
-        worst_change=std::max(worst_change,std::max(report.endpoint_change,report.history_change));
+        worst_change=std::max(worst_change,std::max(report.feedback_change,std::max(report.endpoint_change,report.history_change)));
       } else engine.Run(n*dt,dt,storage,physics,ratio);
     }
     if(flag("--global-gauge")) {
