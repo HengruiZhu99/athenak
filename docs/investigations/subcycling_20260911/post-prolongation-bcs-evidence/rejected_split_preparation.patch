@@ -1,0 +1,91 @@
+diff --git a/src/driver/hierarchy_rk4.hpp b/src/driver/hierarchy_rk4.hpp
+index c316c019..4798105b 100644
+--- a/src/driver/hierarchy_rk4.hpp
++++ b/src/driver/hierarchy_rk4.hpp
+@@ -60,6 +60,15 @@ class HierarchyRK4 {
+       ghosts_.at(fine).ApplySpatial(storage.Values(),layout_);
+     Kokkos::fence("initial hierarchy reconciliation complete");
+   }
++  template<class Physics>
++  void InitializeStageBoundaries(double time,double dt,VertexParentStates &storage,Physics &physics) {
++    ReconcileInitialState(storage);
++    blocks_.Update(true,storage.AllLevels(),nodes_,root_,maximum_);
++    const StepContext initial{root_,maximum_,0,1,1,time,dt};
++    BeforeTransfer(physics,initial,0,blocks_,storage.Values(),0);
++    physics.Prepare(initial,0,blocks_,storage.Values());
++    Kokkos::fence("initial stage boundaries complete");
++  }
+   // Accepted intervals require both endpoint and complete retained RK-history
+   // convergence. Failure restores the hierarchy, then lets the driver reduce dt.
+   template<class Physics>
+@@ -158,6 +167,7 @@ class HierarchyRK4 {
+         for(int parent=level-1;parent>=step.minimum_level;--parent)
+           storage.RestrictLevel(layout_,parent);
+         exchange_.Apply(state,step.minimum_level,level);
++        BeforeTransfer(physics,step,stage,blocks_,state,0);
+         for(int fine=step.minimum_level+1;fine<=level;++fine)
+           ghosts_.at(fine).ApplySpatial(state,layout_);
+         if(step.minimum_level>root_) {
+@@ -227,6 +237,14 @@ class HierarchyRK4 {
+     Kokkos::fence("hierarchy RK synchronized interval complete");
+   }
+  private:
++  template<class Physics>
++  static auto BeforeTransfer(Physics &p,const StepContext &s,int stage,const BlockBatches &b,
++                             const DvceArray5D<Real> &u,int)
++      -> decltype(p.BeforeTransfer(s,stage,b,u),void()) {p.BeforeTransfer(s,stage,b,u);}
++  template<class Physics>
++  static void BeforeTransfer(Physics &,const StepContext &,int,const BlockBatches &,
++                             const DvceArray5D<Real> &,long) {}
++
+   bool inside_corrector_=false;
+   std::map<std::pair<int,std::uint64_t>,RK4PredictorStates> previous_history_,current_history_;
+   std::map<int,CoveredStageCorrection> corrections_;
+diff --git a/src/z4c/checkpoint_subcycle_probe.hpp b/src/z4c/checkpoint_subcycle_probe.hpp
+index 29daf706..e7b508a3 100644
+--- a/src/z4c/checkpoint_subcycle_probe.hpp
++++ b/src/z4c/checkpoint_subcycle_probe.hpp
+@@ -86,6 +86,7 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
+     if(physics.snapshot_stage<1 || physics.snapshot_stage>4)
+       throw std::invalid_argument("invalid probe snapshot stage");
+   }
++  engine.InitializeStageBoundaries(mesh->time,dt,storage,physics);
+   subcycling::CorrectorControl control;
+   Kokkos::Timer timer;
+   const auto report=engine.RunCorrected(mesh->time,dt,storage,physics,ratio,control,
+diff --git a/src/z4c/hierarchy_physics.hpp b/src/z4c/hierarchy_physics.hpp
+index 523ef20c..325a09bd 100644
+--- a/src/z4c/hierarchy_physics.hpp
++++ b/src/z4c/hierarchy_physics.hpp
+@@ -39,13 +39,16 @@ struct HierarchyPhysics {
+     for(int v=0;v<Z4c::nz4c;++v) parities.push_back(Z4cStateAxisParitySignFromPackedIndex(v));
+     mu=DvceArray5D<Real>("hierarchy telegraph coefficient",s.Values().extent(0),1,l.n3,l.n2,l.n1);
+   }
++  void BeforeTransfer(const subcycling::StepContext &s,int,const subcycling::BlockBatches &,
++                      const DvceArray5D<Real> &) {
++    if(options.extrap_order==2) storage.FillPhysicalGhosts<2>(layout,root,root_x,root_y,outer_faces,s.minimum_level,s.maximum_level);
++    if(options.extrap_order==3) storage.FillPhysicalGhosts<3>(layout,root,root_x,root_y,outer_faces,s.minimum_level,s.maximum_level);
++    if(options.extrap_order==4) storage.FillPhysicalGhosts<4>(layout,root,root_x,root_y,outer_faces,s.minimum_level,s.maximum_level);
++  }
+   void Prepare(const subcycling::StepContext &s,int,const subcycling::BlockBatches &b,
+                const DvceArray5D<Real> &u) {
+     EnforceLocalVertexAxis(layout,geometry.boundaries,b,u,options.vertex_axis_correction_tolerance);
+     storage.FillAxisAtLogicalZero(layout,parities,s.minimum_level,s.maximum_level);
+-    if(options.extrap_order==2) storage.FillPhysicalGhosts<2>(layout,root,root_x,root_y,outer_faces,s.minimum_level,s.maximum_level);
+-    if(options.extrap_order==3) storage.FillPhysicalGhosts<3>(layout,root,root_x,root_y,outer_faces,s.minimum_level,s.maximum_level);
+-    if(options.extrap_order==4) storage.FillPhysicalGhosts<4>(layout,root,root_x,root_y,outer_faces,s.minimum_level,s.maximum_level);
+   }
+   void RHS(const subcycling::StepContext &s,int stage,const subcycling::BlockBatches &b,
+            const DvceArray5D<Real> &u,const DvceArray5D<Real> &rhs) {
+diff --git a/tst/unit/hierarchy_z4c_test.cpp b/tst/unit/hierarchy_z4c_test.cpp
+index 278fe40c..917133f9 100644
+--- a/tst/unit/hierarchy_z4c_test.cpp
++++ b/tst/unit/hierarchy_z4c_test.cpp
+@@ -94,6 +94,7 @@ int main(int argc,char **argv) {
+       gauge_history=histories.empty()?nullptr:&histories;
+     };
+     const double dt=.04/steps;
++    if(!flag("--unreconciled-initial")) engine.InitializeStageBoundaries(0,dt,storage,physics);
+     const unsigned ratio=flag("--synchronous-hierarchy") ? 1 :
+       (flag("--three-level") && !flag("--coarse-group") ? 4 : 2);
+     int minimum_passes=100,maximum_passes=0;double worst_change=0;

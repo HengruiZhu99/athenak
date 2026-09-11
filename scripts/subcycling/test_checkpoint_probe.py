@@ -80,6 +80,8 @@ for dt in [a.dt,a.dt/2,a.dt/4]:
     assert abs(hst[-1,0]-end)<1e-14
     for ratio in [1,2]:
         difference=arrays[ratio]-reference
+        if ratio==1:
+            assert np.max(np.abs(difference))<1e-12, "synchronous hierarchy differs from native driver"
         location=np.unravel_index(np.argmax(np.abs(difference)),(nb,nv,nj,ni))
         results.append(dict(dt=dt,comparison=f'ratio{ratio} minus existing classical driver',
             maximum_location=dict(source_leaf=int(leafmap[location[0],0]),key=leafmap[location[0],1:].tolist(),component=int(location[1]),j=int(location[2]),i=int(location[3])),

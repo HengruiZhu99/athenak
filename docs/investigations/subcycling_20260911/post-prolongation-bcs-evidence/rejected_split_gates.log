@@ -1,0 +1,67 @@
+Test project /tmp/vc-subcycling-cpu
+    Start 153: hierarchy_z4c_adaptive
+1/3 Test #153: hierarchy_z4c_adaptive ...........Subprocess aborted***Exception:   7.92 sec
+corrector passes=8..8 worst normalized change=0.544718
+completed steps=4
+corrector passes=7..7 worst normalized change=0.317719
+completed steps=8
+corrector passes=7..7 worst normalized change=0.0817985
+completed steps=16
+corrector passes=6..6 worst normalized change=0.20434
+completed steps=32
+max difference=4.45339e-10 leaf=0 component=7 j=0 i=0
+successive rms=1.38405e-11
+max difference=5.32744e-11 leaf=4 component=9 j=1 i=7
+successive rms=1.06548e-12
+max difference=2.66468e-11 leaf=4 component=9 j=1 i=7
+successive rms=3.37927e-13
+ratio=12.99
+ratio=3.15297
+libc++abi: terminating due to uncaught exception of type std::runtime_error: coupled Z4c temporal convergence gate failed
+
+    Start 154: hierarchy_z4c_rollback
+2/3 Test #154: hierarchy_z4c_rollback ...........Subprocess aborted***Exception:   7.94 sec
+corrector passes=8..8 worst normalized change=0.544718
+completed steps=4
+corrector passes=7..7 worst normalized change=0.317719
+completed steps=8
+corrector passes=7..7 worst normalized change=0.0817985
+completed steps=16
+corrector passes=6..6 worst normalized change=0.20434
+completed steps=32
+max difference=4.45339e-10 leaf=0 component=7 j=0 i=0
+successive rms=1.38405e-11
+max difference=5.32744e-11 leaf=4 component=9 j=1 i=7
+successive rms=1.06548e-12
+max difference=2.66468e-11 leaf=4 component=9 j=1 i=7
+successive rms=3.37927e-13
+ratio=12.99
+ratio=3.15297
+libc++abi: terminating due to uncaught exception of type std::runtime_error: coupled Z4c temporal convergence gate failed
+
+    Start 161: hierarchy_z4c_coarse_group
+3/3 Test #161: hierarchy_z4c_coarse_group .......Subprocess aborted***Exception:   1.81 sec
+completed steps=4
+completed steps=8
+completed steps=16
+completed steps=32
+max difference=1.48738e-09 leaf=6 component=7 j=0 i=0
+successive rms=5.32897e-11
+max difference=1.25254e-10 leaf=4 component=9 j=1 i=7
+successive rms=3.43497e-12
+max difference=5.47868e-11 leaf=4 component=9 j=1 i=7
+successive rms=6.9667e-13
+ratio=15.5139
+ratio=4.93056
+libc++abi: terminating due to uncaught exception of type std::runtime_error: coupled Z4c temporal convergence gate failed
+
+
+0% tests passed, 3 tests failed out of 3
+
+Total Test time (real) =  17.68 sec
+
+The following tests FAILED:
+	153 - hierarchy_z4c_adaptive (Subprocess aborted)
+	154 - hierarchy_z4c_rollback (Subprocess aborted)
+	161 - hierarchy_z4c_coarse_group (Subprocess aborted)
+Errors while running CTest

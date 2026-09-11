@@ -1,0 +1,74 @@
+diff --git a/src/driver/hierarchy_rk4.hpp b/src/driver/hierarchy_rk4.hpp
+index c316c019..1066189c 100644
+--- a/src/driver/hierarchy_rk4.hpp
++++ b/src/driver/hierarchy_rk4.hpp
+@@ -158,6 +158,7 @@ class HierarchyRK4 {
+         for(int parent=level-1;parent>=step.minimum_level;--parent)
+           storage.RestrictLevel(layout_,parent);
+         exchange_.Apply(state,step.minimum_level,level);
++        physics.Prepare(step,stage,blocks_,state);
+         for(int fine=step.minimum_level+1;fine<=level;++fine)
+           ghosts_.at(fine).ApplySpatial(state,layout_);
+         if(step.minimum_level>root_) {
+@@ -166,7 +167,6 @@ class HierarchyRK4 {
+                                 (parent.end_tick-parent.begin_tick);
+           ghosts_.at(level).Apply(predictors_.at(level-1),fraction,step.Dt(),stage,state);
+         }
+-        physics.Prepare(step,stage,blocks_,state);
+         if(stage==1) {
+           const auto initial=initial_;const auto l=layout_;
+           blocks_.For5("save hierarchy RK initial state",0,state.extent_int(1)-1,
+diff --git a/src/driver/hierarchy_temporal_ghosts.hpp b/src/driver/hierarchy_temporal_ghosts.hpp
+index d0d26670..e7b919e7 100644
+--- a/src/driver/hierarchy_temporal_ghosts.hpp
++++ b/src/driver/hierarchy_temporal_ghosts.hpp
+@@ -39,7 +39,15 @@ class HierarchyTemporalGhosts {
+         const bool active=i>=l.is && i<=l.ie && j>=l.js && j<=l.je;
+         const std::int64_t x=std::int64_t(key[1])*l.nx1+i-l.is;
+         const std::int64_t y=std::int64_t(key[2])*l.nx2+j-l.js;
+-        if(x<0 || y<0 || x>bx*l.nx1 || y>by*l.nx2) continue;
++        // A coarse/fine face can extend into physical ghost rows. The native
++        // path prolongates those corners from the already extrapolated coarse
++        // field; extrapolating the fine field afterward is a different operator.
++        const auto xmax=bx*l.nx1,ymax=by*l.nx2;
++        if((x<0 && axis_parities.empty() && !outer_faces[0]) ||
++           (x>xmax && !outer_faces[1]) || (y<0 && !outer_faces[2]) ||
++           (y>ymax && !outer_faces[3])) continue;
++        const auto own_x=std::max(std::int64_t{0},std::min(xmax,x));
++        const auto own_y=std::max(std::int64_t{0},std::min(ymax,y));
+         // Native VC ownership: odd hanging vertices are reconstructed from
+         // an adjacent physical coarse leaf. Coincident even vertices retain
+         // fine authority and feed restriction.
+@@ -56,9 +64,9 @@ class HierarchyTemporalGhosts {
+         }
+         if(active && !hanging) continue;
+         // Same-level exchange owns non-hanging points with an active donor.
+-        bool same=false;const auto ix=x/l.nx1,iy=y/l.nx2;
+-        for(auto a=ix-(x%l.nx1==0);a<=ix && !same;++a)
+-          for(auto b=iy-(y%l.nx2==0);b<=iy && !same;++b) {
++        bool same=false;const auto ix=own_x/l.nx1,iy=own_y/l.nx2;
++        for(auto a=ix-(own_x%l.nx1==0);a<=ix && !same;++a)
++          for(auto b=iy-(own_y%l.nx2==0);b<=iy && !same;++b) {
+             if(a<0 || b<0 || a>std::numeric_limits<int>::max() ||
+                b>std::numeric_limits<int>::max()) continue;
+             same=tree.Find({fine_level,static_cast<int>(a),static_cast<int>(b),0})>=0;
+diff --git a/src/driver/vertex_temporal_boundary.hpp b/src/driver/vertex_temporal_boundary.hpp
+index bc12ac56..1590596d 100644
+--- a/src/driver/vertex_temporal_boundary.hpp
++++ b/src/driver/vertex_temporal_boundary.hpp
+@@ -64,9 +64,13 @@ class VertexTemporalBoundary {
+     for (const auto &target : targets) {
+       std::int64_t left[2]; int count[2];
+       for (int d=0;d<2;++d) {
+-        if (target[d]<0) throw std::invalid_argument("axis/physical boundary provider required");
++        if(target[d]<0 && !(d==0 && !axis_parities.empty()) &&
++           !(outer.order>0 && outer.faces[2*d]))
++          throw std::invalid_argument("axis/physical boundary provider required");
+         const bool odd=target[d]%2;
+-        left[d]=target[d]/2+(odd ? vertex_amr::MidpointRule<ORDER>::left_offset : 0);
++        // Integer floor, including negative odd physical-ghost coordinates.
++        left[d]=target[d]/2-(target[d]<0 && odd)+
++                (odd ? vertex_amr::MidpointRule<ORDER>::left_offset : 0);
+         count[d]=odd ? ORDER : 1;
+       }
+       for (int j=0;j<count[1];++j) for (int i=0;i<count[0];++i) {

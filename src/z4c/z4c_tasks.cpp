@@ -657,6 +657,13 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
     if (layout.centering == Z4cGridCentering::vertex) {
       pbval_u_vc->ProlongateVC(u0, coarse_u0, opt.vertex_prolongation_order,
                                I_Z4C_CHI);
+      // Prolongation changes hanging vertices and adjacent fine ghosts. At
+      // intermediate Cartoon stages, refresh physical corners from that new
+      // state before the next RHS. The accepted final stage already performs
+      // this refresh in FinalizeVertexAcceptedState. Do not repeat user BCs.
+      if(stage>0 && stage<pdrive->nexp_stages &&
+         pmy_pack->z4c_symmetry.mode==Z4cSymmetryMode::cartoon_so2)
+        FillBuiltInPhysicalBoundaryGhosts();
       CheckStateAdmissibility(pdrive, stage,
                               Z4cStateCheckpoint::post_prolongation);
       CheckStateAdmissibility(pdrive, stage,

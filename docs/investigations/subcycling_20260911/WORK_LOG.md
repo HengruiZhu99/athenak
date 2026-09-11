@@ -1224,3 +1224,39 @@ Prepare fills physical ghosts after interpolation; native order differs.
 Evidence reconciled-ownership-evidence; raw /tmp/vc-reconciled-driver-comparison
 and /tmp/vc-stage2-reconciled. No remote jobs or production changes.
 Full single-A100 Brill reproduction/speedup and live-AMR integration incomplete.
+
+## Native intermediate-stage physical ghost refresh resolves reference mismatch
+
+Previous turn progressed by restoring hanging/RK order and isolating remaining
+ghost differences. Tested extending coarse interpolation into outer ghost rows
+and moving physical preparation before transfers. Both failed independent
+comparison/order tests; split physical/axis preparation also failed order.
+All experimental prototype changes from this turn were REVERTED to59c177e0.
+Rejected patches/logs archived; no unqualified ghost-plan changes remain.
+
+Actual cause found in native z4c_tasks.cpp: accepted final stage refreshes
+built-in physical ghosts AFTER prolongation, but intermediate stages did not.
+Prolongation changes hanging active values and adjacent fine ghosts, leaving
+physical corner values based on the earlier state. A test-only post-prolongation
+refresh eliminated the discrepancy. Promoted to native VC Cartoon intermediate
+stages only (stage>0 && stage<nexp_stages); final stage already refreshes.
+Uses FillBuiltInPhysicalBoundaryGhosts, preserving user callback count and
+CC/3D behavior. This is an intentional fix to the isolated branch's synchronous
+operator, not a claim of bitwise reproduction of old production evolution.
+
+Full executable rebuild succeeds. Checkpoint ratio1 versus independent native
+classical driver max errors3.92590e-16,2.22045e-16,8.70614e-17 at dt.002,.001,.0005
+for BOTH CPBC and Sommerfeld. Script now enforces max error<1e-12 for this
+synchronous reference. Ratio2 error relative reference shows~32x decrease per
+halving (local fifth order). Input checkpoint hash preservation remains checked.
+Adaptive/rollback/coarse-group gates all pass. Native synchronous smooth-pulse
+static-AMR temporal refinement script passes ratios15.17646,15.23751, on its
+radial slice; no broad production-gauge or dynamic-AMR claim.
+
+Evidence post-prolongation-bcs-evidence; raw /tmp/vc-post-prolong-final-cpbc,
+/tmp/vc-post-prolong-final-sommerfeld, /tmp/vc-native-boundary-temporal.
+No live local process remains. Production Perlmutter source/runs unchanged.
+Next CUDA compilation/checkpoint probe after SSH renewal, then actual driver
+subcycling/AMR/stability/retry integration and matched-endpoint A100 validation.
+The boundary correction must be separated from subcycling in future performance
+and scientific comparisons with the historical provisional-collapse run.

@@ -1,0 +1,289 @@
+{
+  "checkpoint_sha256": "264817746b5be4283cd9c3589c9b97355537b029f341eb127695c35bc7eabaac",
+  "executable_sha256": "ac7cf11dfdc6a00fad0f1e52f455c60120e2852fe8494f7f8c888e6dfa78bb06",
+  "scope": "local refined gauge-pulse checkpoint; not Brill reproduction or speedup",
+  "results": [
+    {
+      "dt": 0.002,
+      "ratio": 1,
+      "metadata": {
+        "checkpoint_time": "0.0040176521658326558",
+        "end_time": "0.0060176521658326558",
+        "dt": "0.002",
+        "ratio": "1",
+        "spatial_order": "6",
+        "corrector_atol": "9.9999999999999998e-13",
+        "corrector_rtol": "1e-10",
+        "corrector_max_passes": "8",
+        "passes": "3",
+        "seconds": "0.057895292000000001",
+        "endpoint_change": "1.0322500948887962e-07",
+        "history_change": "5.3500430291383398e-08",
+        "feedback_change": "0",
+        "real_bytes": "8",
+        "variables": "25",
+        "ni": "17",
+        "nj": "17",
+        "leaves": "7",
+        "mode": "isolated_fixed_hierarchy_probe"
+      },
+      "fields_sha256": "5fc8585b42a65068f62aab962e500150da85ec4e7d18f8d43566b77701bf90da"
+    },
+    {
+      "dt": 0.002,
+      "ratio": 2,
+      "metadata": {
+        "checkpoint_time": "0.0040176521658326558",
+        "end_time": "0.0060176521658326558",
+        "dt": "0.002",
+        "ratio": "2",
+        "spatial_order": "6",
+        "corrector_atol": "9.9999999999999998e-13",
+        "corrector_rtol": "1e-10",
+        "corrector_max_passes": "8",
+        "passes": "6",
+        "seconds": "0.19407287500000001",
+        "endpoint_change": "9.6871646099298982e-06",
+        "history_change": "0.0060906743986015874",
+        "feedback_change": "0.0013692337222159239",
+        "real_bytes": "8",
+        "variables": "25",
+        "ni": "17",
+        "nj": "17",
+        "leaves": "7",
+        "mode": "isolated_fixed_hierarchy_probe"
+      },
+      "fields_sha256": "64117dc2505e9d3740b75e26f21c93f4bbc5cd0d346d8ac52ec4b16d0f50d870"
+    },
+    {
+      "dt": 0.002,
+      "comparison": "ratio1 minus existing classical driver",
+      "maximum_location": {
+        "source_leaf": 2,
+        "key": [
+          2,
+          0,
+          1
+        ],
+        "component": 22,
+        "j": 16,
+        "i": 11
+      },
+      "active_values": 50575,
+      "rms": 3.494219432264906e-17,
+      "max_abs": 3.9258960665700116e-16
+    },
+    {
+      "dt": 0.002,
+      "comparison": "ratio2 minus existing classical driver",
+      "maximum_location": {
+        "source_leaf": 0,
+        "key": [
+          2,
+          0,
+          0
+        ],
+        "component": 15,
+        "j": 0,
+        "i": 2
+      },
+      "active_values": 50575,
+      "rms": 3.076699581509699e-13,
+      "max_abs": 1.181808571495838e-11
+    },
+    {
+      "dt": 0.002,
+      "comparison": "ratio2 minus ratio1",
+      "rms": 3.07670178398169e-13,
+      "max_abs": 1.181808571495838e-11
+    },
+    {
+      "dt": 0.001,
+      "ratio": 1,
+      "metadata": {
+        "checkpoint_time": "0.0040176521658326558",
+        "end_time": "0.0050176521658326558",
+        "dt": "0.001",
+        "ratio": "1",
+        "spatial_order": "6",
+        "corrector_atol": "9.9999999999999998e-13",
+        "corrector_rtol": "1e-10",
+        "corrector_max_passes": "8",
+        "passes": "3",
+        "seconds": "0.057124666999999997",
+        "endpoint_change": "2.6593318001940279e-08",
+        "history_change": "1.3468655040804888e-08",
+        "feedback_change": "0",
+        "real_bytes": "8",
+        "variables": "25",
+        "ni": "17",
+        "nj": "17",
+        "leaves": "7",
+        "mode": "isolated_fixed_hierarchy_probe"
+      },
+      "fields_sha256": "330a227dd90c1a8b423169dfef2485d9cbe7e1f560ac81f5b17bd40f2bebc709"
+    },
+    {
+      "dt": 0.001,
+      "ratio": 2,
+      "metadata": {
+        "checkpoint_time": "0.0040176521658326558",
+        "end_time": "0.0050176521658326558",
+        "dt": "0.001",
+        "ratio": "2",
+        "spatial_order": "6",
+        "corrector_atol": "9.9999999999999998e-13",
+        "corrector_rtol": "1e-10",
+        "corrector_max_passes": "8",
+        "passes": "5",
+        "seconds": "0.1613935",
+        "endpoint_change": "0.00026717344738900263",
+        "history_change": "0.43368223732880257",
+        "feedback_change": "0.09788580128940215",
+        "real_bytes": "8",
+        "variables": "25",
+        "ni": "17",
+        "nj": "17",
+        "leaves": "7",
+        "mode": "isolated_fixed_hierarchy_probe"
+      },
+      "fields_sha256": "46c555addcd9af7c12d13ce1c09f43189be94fe64f3f6a8047e0b268e1b70dab"
+    },
+    {
+      "dt": 0.001,
+      "comparison": "ratio1 minus existing classical driver",
+      "maximum_location": {
+        "source_leaf": 5,
+        "key": [
+          1,
+          0,
+          1
+        ],
+        "component": 18,
+        "j": 1,
+        "i": 0
+      },
+      "active_values": 50575,
+      "rms": 2.443681967170576e-18,
+      "max_abs": 2.220446049250313e-16
+    },
+    {
+      "dt": 0.001,
+      "comparison": "ratio2 minus existing classical driver",
+      "maximum_location": {
+        "source_leaf": 0,
+        "key": [
+          2,
+          0,
+          0
+        ],
+        "component": 15,
+        "j": 0,
+        "i": 2
+      },
+      "active_values": 50575,
+      "rms": 9.60591589081387e-15,
+      "max_abs": 3.668597340516534e-13
+    },
+    {
+      "dt": 0.001,
+      "comparison": "ratio2 minus ratio1",
+      "rms": 9.605916686974852e-15,
+      "max_abs": 3.668597340516534e-13
+    },
+    {
+      "dt": 0.0005,
+      "ratio": 1,
+      "metadata": {
+        "checkpoint_time": "0.0040176521658326558",
+        "end_time": "0.0045176521658326554",
+        "dt": "0.00050000000000000001",
+        "ratio": "1",
+        "spatial_order": "6",
+        "corrector_atol": "9.9999999999999998e-13",
+        "corrector_rtol": "1e-10",
+        "corrector_max_passes": "8",
+        "passes": "3",
+        "seconds": "0.057157332999999998",
+        "endpoint_change": "0",
+        "history_change": "3.3788180031633859e-09",
+        "feedback_change": "0",
+        "real_bytes": "8",
+        "variables": "25",
+        "ni": "17",
+        "nj": "17",
+        "leaves": "7",
+        "mode": "isolated_fixed_hierarchy_probe"
+      },
+      "fields_sha256": "0119b52ba0e2a0249419720268bd7034e6a30fdebcea952080795bbf1681fd71"
+    },
+    {
+      "dt": 0.0005,
+      "ratio": 2,
+      "metadata": {
+        "checkpoint_time": "0.0040176521658326558",
+        "end_time": "0.0045176521658326554",
+        "dt": "0.00050000000000000001",
+        "ratio": "2",
+        "spatial_order": "6",
+        "corrector_atol": "9.9999999999999998e-13",
+        "corrector_rtol": "1e-10",
+        "corrector_max_passes": "8",
+        "passes": "5",
+        "seconds": "0.16227254199999999",
+        "endpoint_change": "8.4018741925904696e-06",
+        "history_change": "0.028114923279863219",
+        "feedback_change": "0.0062736852039097478",
+        "real_bytes": "8",
+        "variables": "25",
+        "ni": "17",
+        "nj": "17",
+        "leaves": "7",
+        "mode": "isolated_fixed_hierarchy_probe"
+      },
+      "fields_sha256": "5bf5ae90aac633f321e358b0978735836eeb33286f81b676dad069a6e46d29ac"
+    },
+    {
+      "dt": 0.0005,
+      "comparison": "ratio1 minus existing classical driver",
+      "maximum_location": {
+        "source_leaf": 5,
+        "key": [
+          1,
+          0,
+          1
+        ],
+        "component": 7,
+        "j": 0,
+        "i": 8
+      },
+      "active_values": 50575,
+      "rms": 1.0803475211517108e-18,
+      "max_abs": 8.7061434450586e-17
+    },
+    {
+      "dt": 0.0005,
+      "comparison": "ratio2 minus existing classical driver",
+      "maximum_location": {
+        "source_leaf": 0,
+        "key": [
+          2,
+          0,
+          0
+        ],
+        "component": 15,
+        "j": 0,
+        "i": 2
+      },
+      "active_values": 50575,
+      "rms": 3.0254318965835366e-16,
+      "max_abs": 1.146798584913955e-14
+    },
+    {
+      "dt": 0.0005,
+      "comparison": "ratio2 minus ratio1",
+      "rms": 3.025455848453748e-16,
+      "max_abs": 1.146798584913955e-14
+    }
+  ]
+}

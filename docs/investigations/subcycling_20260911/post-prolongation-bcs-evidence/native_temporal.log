@@ -1,0 +1,53 @@
+{
+  "boundary_rhs": "full_constraint_bjorhus",
+  "launcher": [],
+  "slurm_job_id": null,
+  "level_batches": false,
+  "static_amr": true,
+  "time_dependent_damping": false,
+  "runs": [
+    {
+      "cfl": 0.4,
+      "time": 0.5,
+      "cycle": 31,
+      "file": "/private/tmp/vc-native-boundary-temporal/0.4/tab/pulse.state.00001.tab",
+      "restart": "/private/tmp/vc-native-boundary-temporal/0.4/rst/pulse.00001.rst",
+      "restart_payload_sha256": "f682b9654d5bf2c29b4b325554f0374e5b73a990211b0a229b238596876a11f0"
+    },
+    {
+      "cfl": 0.2,
+      "time": 0.5,
+      "cycle": 61,
+      "file": "/private/tmp/vc-native-boundary-temporal/0.2/tab/pulse.state.00001.tab",
+      "restart": "/private/tmp/vc-native-boundary-temporal/0.2/rst/pulse.00001.rst",
+      "restart_payload_sha256": "d5ca7c26fb2270349f02961ff4fd438ad20c1ea48b9abd8ff761046af29c21fd"
+    },
+    {
+      "cfl": 0.1,
+      "time": 0.5,
+      "cycle": 121,
+      "file": "/private/tmp/vc-native-boundary-temporal/0.1/tab/pulse.state.00001.tab",
+      "restart": "/private/tmp/vc-native-boundary-temporal/0.1/rst/pulse.00001.rst",
+      "restart_payload_sha256": "7ed1f89b091b26e6f765a4e928629a5193b377ab4d33975cc8ef43b85ea0fd55"
+    },
+    {
+      "cfl": 0.05,
+      "time": 0.5,
+      "cycle": 242,
+      "file": "/private/tmp/vc-native-boundary-temporal/0.05/tab/pulse.state.00001.tab",
+      "restart": "/private/tmp/vc-native-boundary-temporal/0.05/rst/pulse.00001.rst",
+      "restart_payload_sha256": "bf8cf0ff4c35197d138d3f1971965fde3db69b6475c775a3af4b524d622f352c"
+    }
+  ],
+  "rms_successive_differences": [
+    3.7461878342037235e-09,
+    2.468419872466962e-10,
+    1.6199630109436427e-11
+  ],
+  "ratios": [
+    15.176461168495408,
+    15.23750762080108
+  ],
+  "passed": true,
+  "scope": "Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no dynamic-AMR or production-gauge qualification"
+}
