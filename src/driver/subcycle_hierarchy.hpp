@@ -57,6 +57,7 @@ class Hierarchy {
       }
     }
   }
+  int Dimension() const { return dimension_; }
   const std::vector<HierarchyNode> &Nodes() const { return nodes_; }
   int Find(const BlockKey &key) const {
     auto found=index_.find(key); return found==index_.end() ? -1 : found->second;

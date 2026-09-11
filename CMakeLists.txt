@@ -1920,3 +1920,11 @@ if(Athena_BUILD_UNIT_TESTS)
   target_include_directories(athena_subcycle_hierarchy_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
   add_test(NAME subcycle_hierarchy COMMAND athena_subcycle_hierarchy_test)
 endif()
+
+if(Athena_BUILD_UNIT_TESTS)
+  add_executable(athena_vertex_parent_states_test tst/unit/vertex_parent_states_test.cpp)
+  target_include_directories(athena_vertex_parent_states_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR})
+  target_link_libraries(athena_vertex_parent_states_test PRIVATE Kokkos::kokkos)
+  add_test(NAME vertex_parent_states COMMAND athena_vertex_parent_states_test)
+endif()

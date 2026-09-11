@@ -150,3 +150,24 @@ The full subcycling goal remains incomplete: populated parent predictor fields,
 asynchronous Z4c steps, temporal ghost filling, global telegraph consistency,
 dynamic AMR synchronization and faster matched-end-time reproduction are still
 required. Helper tests are not substitutes for those gates.
+
+## Parent-state initialization on native storage
+
+Added VertexParentStates with storage only for covered ancestors. It populates
+active VC points by bottom-up injection from already reconciled child vertices;
+parent ghost storage remains NaN. A two-generation polynomial test verifies
+exact coordinate-consistent injection, untouched leaf arrays and invalid ghosts.
+The first implementation explicitly rejects non-Cartoon/non-even-block layouts.
+
+Z4c::RebuildSubcycleParents builds this hierarchy from the real mesh leaf list.
+A unit-test-build-only ATHENA_TEST_SUBCYCLE_PARENTS environment hook exercises it
+after startup boundary initialization. On the 14-block static Cartoon fixture,
+it allocates two parents (250000 bytes). Four CFL runs through t0.5 produce
+byte-identical complete restart payloads to runs without parent initialization.
+Evidence: parent-initialization-results.json; raw outputs are under
+/tmp/vc-cartoon-parent-runtime. The hook stores an initialization snapshot only;
+it does not advance parents, fill their ghosts, or enable subcycling.
+
+Remote compatible profiling build finished successfully. Guarded launcher1695372
+has requested allocation58198945, currently pending resources. Preserve this
+handle and recheck its actual state rather than launching a duplicate.

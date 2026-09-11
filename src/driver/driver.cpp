@@ -353,6 +353,15 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   InitBoundaryValuesAndPrimitives(pmesh, res_flag);
 
 #if defined(ATHENA_Z4C_KERNEL_TESTS)
+  if (std::getenv("ATHENA_TEST_SUBCYCLE_PARENTS") != nullptr) {
+    auto *z=pmesh->pmb_pack->pz4c;
+    if (z == nullptr) throw std::runtime_error("parent initialization test requires Z4c");
+    z->RebuildSubcycleParents();
+    std::cout << "SUBCYCLE_PARENT_INITIALIZATION parents="
+              << z->subcycle_parents.ParentNodes().size()
+              << " bytes=" << z->subcycle_parents.Values().size()*sizeof(Real)
+              << " ghosts_valid=false evolved=false" << std::endl;
+  }
   // This opt-in environment hook is compiled only into unit-test-enabled
   // Athena executables.  It deliberately corrupts one active chi value and
   // exercises the complete production state-failure selection, contiguous

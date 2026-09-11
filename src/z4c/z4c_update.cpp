@@ -27,6 +27,25 @@
 
 namespace z4c {
 
+void Z4c::RebuildSubcycleParents() {
+  auto *mesh=pmy_pack->pmesh;
+  if (global_variable::nranks != 1 || pmy_pack->gids != 0 ||
+      pmy_pack->nmb_thispack != mesh->nmb_total ||
+      layout.centering != Z4cGridCentering::vertex ||
+      pmy_pack->z4c_symmetry.mode != Z4cSymmetryMode::cartoon_so2) {
+    throw std::runtime_error("subcycling parents currently require single-pack VC Cartoon");
+  }
+  std::vector<subcycling::BlockKey> leaves;
+  leaves.reserve(mesh->nmb_total);
+  for (int m=0; m<mesh->nmb_total; ++m) {
+    const auto &loc=mesh->lloc_eachmb[m];
+    leaves.push_back({loc.level,loc.lx1,loc.lx2,loc.lx3});
+  }
+  auto hierarchy=std::make_unique<subcycling::Hierarchy>(leaves,mesh->root_level,2);
+  subcycle_parents.Initialize(*hierarchy,u0,layout);
+  subcycle_hierarchy=std::move(hierarchy);
+}
+
 void Z4c::InitializePrescribedZeroShift() {
   const auto bounds = layout;
   auto state = u0;
