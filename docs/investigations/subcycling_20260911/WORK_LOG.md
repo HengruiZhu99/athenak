@@ -1599,3 +1599,6 @@ replaying or accelerating the entire original eight-hour evolution.
 Remote befad6a4 CUDA build still live PID505749 (~87percent), predates live-driver
 code; no replacement/duplicate run. Strong-field science/performance comparison
 remains outstanding, as does newer CUDA native-driver qualification.
+
+### Production spatial-order fixture qualification
+Added --production-orders to checkpoint/live/AMR harnesses. Confirmed generated inputs use spatial_order=4 and extrap_order=2. CPU live/frozen differences <1.2e-15; split restarts exact at ratios 1/2, including real refine/coarsen and simultaneous mixed events. Results in production-order-evidence. Remote befad6a4 build PID505749 remains live, now compiling hierarchy test after main targets; no restart or source replacement. Actual Brill reproduction and speedup remain unverified.

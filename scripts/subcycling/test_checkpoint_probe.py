@@ -9,9 +9,13 @@ p.add_argument('--intervals',type=int,default=1)
 p.add_argument('--dt',type=float,default=2e-3)
 p.add_argument('--fixed-duration',type=float)
 p.add_argument('--boundary-rhs',choices=['sommerfeld','full_constraint_bjorhus'],default='full_constraint_bjorhus')
+p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
 a=p.parse_args();assert a.intervals>0;exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
 repo=Path(__file__).resolve().parents[2]
 s=(repo/'tst/inputs/z4c_vc_minkowski_full_constraint_bjorhus.athinput').read_text()
+if a.production_orders:
+    s=s.replace('spatial_order = 6','spatial_order = 4')
+    s=s.replace('<z4c>','<z4c>\nextrap_order = 2')
 s=s.replace('boundary_rhs = full_constraint_bjorhus','boundary_rhs = '+a.boundary_rhs)
 s=s.replace('nlim = 3','nlim = 1').replace('tlim = 0.01','tlim = 1.0')
 s=s.replace('<output1>','<output1>\ndata_format = %24.16e')

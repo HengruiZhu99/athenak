@@ -4,9 +4,13 @@ from pathlib import Path
 import numpy as np
 p=argparse.ArgumentParser();p.add_argument('exe',type=Path);p.add_argument('output',type=Path)
 p.add_argument('--mixed',action='store_true')
+p.add_argument('--production-orders',action='store_true',help='Use Brill spatial_order=4 and extrap_order=2')
 a=p.parse_args();exe=a.exe.resolve();root=a.output.resolve();root.mkdir(parents=True,exist_ok=False)
 repo=Path(__file__).resolve().parents[2]
 s=(repo/'tst/inputs/z4c_vc_minkowski_full_constraint_bjorhus.athinput').read_text()
+if a.production_orders:
+    s=s.replace('spatial_order = 6','spatial_order = 4')
+    s=s.replace('<z4c>','<z4c>\nextrap_order = 2')
 s=s.replace('refinement = none','refinement = adaptive\nnum_levels = 2\nmax_nmb_per_rank = 64\nrefinement_interval = 1')
 s=s.replace('integrator = rk4','integrator = rk4_classical\nsubcycle_max_ratio = 2\nsubcycle_interval_cap = 0.002\nsubcycle_cycle_unit = synchronization')
 s=s.replace('nlim = 3','nlim = 4').replace('tlim = 0.01','tlim = 0.008')
