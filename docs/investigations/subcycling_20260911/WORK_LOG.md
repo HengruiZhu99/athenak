@@ -696,3 +696,31 @@ single-level operator path and from the prior linear transport test. Next work
 must diagnose stage boundary consistency, synchronization/restriction and
 projection at the interface before proceeding to production gauge or GPU claims.
 No production source/jobs changed. Full endpoint reproduction is still unproven.
+
+## Order-loss isolation: restriction feedback
+
+Previous turn progressed by exposing the coupled convergence failure. Added
+compile-time test-only skip-restriction instrumentation to HierarchyRK4
+(ATHENA_SUBCYCLE_DIAGNOSTICS, enabled only for hierarchy_z4c_test). Added test
+consumer switches for KO and conformal projection plus a diagnostic-report mode;
+default convergence gate remains active and unchanged.
+
+Controlled results at the same timestep sequence:
+- No covered-parent restriction: RMS1.41913e-11,8.47100e-13,5.20208e-14;
+  ratios16.7528,16.2839.
+- No KO: RMS4.41695e-10,2.25378e-10,1.14023e-10; ratios1.9598,1.9766.
+- No conformal projection: same first-order values as full coupled baseline.
+
+Evidence restriction-controls/*.log. The prescribed-gauge native Z4c operator
+and one-way temporal boundaries can exhibit fourth-order behavior; first-order
+sensitivity enters through repeated fine-to-covered-parent feedback. This is an
+isolation result, not permission to remove restriction in production. Fine and
+coarse spatial operators differ; resetting coarse predictors from the fine state
+at synchronization without consistent two-way stage coupling is the next issue
+to address. Need retain common-time restriction and test an appropriate coupled
+predictor correction, not hide the failure by disabling feedback. Added named
+no_restriction_control CTest alongside the still-failing default refinement gate.
+
+Build/tmp/vc-hierarchy-z4c-build.log passed, controlled runs completed. No GPU jobs
+or production changes. Full gauge/live-AMR and faster endpoint reproduction remain
+unfinished and unverified.

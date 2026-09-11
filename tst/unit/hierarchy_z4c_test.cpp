@@ -5,9 +5,10 @@ int main(int argc,char **argv) {
  Kokkos::initialize(argc,argv);
  {
   using Z=z4c::Z4c;
+  auto flag=[&](const std::string &name) {for(int a=1;a<argc;++a) if(argv[a]==name) return true;return false;};
   std::vector<subcycling::BlockKey> leaves{{0,1,0,0},{0,0,1,0},{0,1,1,0},
     {1,0,0,0},{1,1,0,0},{1,0,1,0},{1,1,1,0}};
-  if(argc>1 && std::string(argv[1])=="--uniform") leaves={{0,0,0,0},{0,1,0,0},{0,0,1,0},{0,1,1,0}};
+  if(flag("--uniform")) leaves={{0,0,0,0},{0,1,0,0},{0,0,1,0},{0,1,1,0}};
   subcycling::Hierarchy tree(leaves,0,2);
   z4c::Z4cGridLayout l;l.centering=z4c::Z4cGridCentering::vertex;
   l.nx1=l.nx2=8;l.nx3=l.n3=1;l.ks=l.ke=0;l.is=l.js=4;l.ie=l.je=12;l.n1=l.n2=17;
@@ -39,8 +40,17 @@ int main(int argc,char **argv) {
     Kokkos::deep_copy(leaf,h);
     subcycling::VertexParentStates storage;storage.InitializeAll(tree,leaf,l);
     subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,2,2,parity,4,{{false,true,true,true}});
-    z4c::HierarchyPhysics<3> physics(storage,geometry,l,opt,0,2,2,.02/64,
+    engine.test_skip_restriction=flag("--no-restriction");
+    struct TestPhysics: z4c::HierarchyPhysics<3> {
+      using z4c::HierarchyPhysics<3>::HierarchyPhysics;
+      bool skip_projection=false;
+      void Project(const subcycling::StepContext &s,int stage,const subcycling::BlockBatches &b,
+                   const DvceArray5D<Real> &u) {
+        z4c::HierarchyPhysics<3>::Project(s,skip_projection ? 3 : stage,b,u);
+      }
+    } physics(storage,geometry,l,opt,0,2,2,flag("--no-ko") ? 0 : .02/64,
       {{false,true,true,true}},[](double){return 1.;},[](double){return 0.;},[](double){return 0.;});
+    physics.skip_projection=flag("--no-projection");
     const double dt=.04/steps;
     for(int n=0;n<steps;++n) engine.Run(n*dt,dt,storage,physics);
     auto out=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
@@ -65,7 +75,7 @@ int main(int argc,char **argv) {
     std::cout << "ratio=" << ratio << std::endl;
     converged &= ratio>10 && ratio<24;
   }
-  if(!converged) throw std::runtime_error("coupled Z4c temporal convergence gate failed");
+  if(!converged && !flag("--diagnostic")) throw std::runtime_error("coupled Z4c temporal convergence gate failed");
  }
  Kokkos::finalize();
 }

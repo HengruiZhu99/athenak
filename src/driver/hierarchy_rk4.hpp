@@ -13,6 +13,9 @@ namespace subcycling {
 // grouping requires its own current-stage spatial interface fill and is rejected.
 class HierarchyRK4 {
  public:
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+  bool test_skip_restriction=false;
+#endif
   template<int ORDER>
   void Initialize(const Hierarchy &tree,const z4c::Z4cGridLayout &layout,
                   int root,int root_x,int root_y,const std::vector<int> &parities,
@@ -82,6 +85,9 @@ class HierarchyRK4 {
       }
     };
     auto synchronize=[&](const StepContext &step) {
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+      if(!test_skip_restriction)
+#endif
       storage.RestrictLevel(layout_,step.maximum_level);
       exchange_.Apply(state,step.maximum_level,step.maximum_level);
     };
