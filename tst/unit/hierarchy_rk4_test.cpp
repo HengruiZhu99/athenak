@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <cstring>
 #include "driver/hierarchy_rk4.hpp"
 void Check(bool ok) {if(!ok) throw std::runtime_error("hierarchy RK regression");}
 struct Transport {
@@ -48,6 +49,49 @@ int main(int argc,char **argv) {
     subcycling::VertexParentStates storage;storage.InitializeAll(tree,leaf,l);
     subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,4,4,{},4,{{true,true,true,true}});
     Transport physics{storage,l};const double dt=.2/steps;
+    if(steps==2) {
+      const auto before=Kokkos::create_mirror(storage.Values());
+      Kokkos::deep_copy(before,storage.Values());
+      // Force a nonconvergent feedback contract at the first interval length.
+      // This exercises real evolution+rollback, then compares its half-step
+      // retry to a direct evolution from exactly the original hierarchy.
+      int empty_histories=0;
+      const auto begin=[&](const subcycling::HierarchyRK4::Histories &h) {
+        if(h.empty()) ++empty_histories;
+      };
+      const auto feedback=[&](const subcycling::HierarchyRK4::Histories &a,
+                             const subcycling::HierarchyRK4::Histories &) {
+        return a.begin()->second.Dt()>dt*.75 ? Real(2) : Real(0);
+      };
+      const auto accepted=engine.RunWithRetry(0,dt,storage,physics,2,{}, {},begin,feedback);
+      Check(accepted.dt==dt*.5 && accepted.attempts==2 && empty_histories==2 &&
+            accepted.corrector.converged && accepted.total_passes>accepted.corrector.passes);
+      const auto retried=Kokkos::create_mirror(storage.Values());
+      Kokkos::deep_copy(retried,storage.Values());
+      Kokkos::deep_copy(storage.Values(),before);
+      engine.RunCorrected(0,dt*.5,storage,physics,2);
+      const auto direct=Kokkos::create_mirror(storage.Values());
+      Kokkos::deep_copy(direct,storage.Values());
+      Check(std::memcmp(retried.data(),direct.data(),direct.size()*sizeof(Real))==0);
+      Kokkos::deep_copy(storage.Values(),before);
+      subcycling::IntervalRetryControl no_retry;no_retry.maximum_halvings=0;
+      bool failed=false;
+      try {engine.RunWithRetry(0,dt,storage,physics,2,{},no_retry,begin,feedback);}
+      catch(const subcycling::CorrectorFailure &) {failed=true;}
+      const auto after=Kokkos::create_mirror(storage.Values());
+      Kokkos::deep_copy(after,storage.Values());
+      Check(failed && !engine.LastCorrectorReport().converged &&
+            std::memcmp(before.data(),after.data(),after.size()*sizeof(Real))==0);
+      int failure_calls=0;
+      bool propagated=false;
+      try {
+        engine.RunWithRetry(0,dt,storage,physics,2,{}, {},
+          [&](const auto &){++failure_calls;throw std::runtime_error("code failure");});
+      } catch(const std::runtime_error &e) {propagated=std::string(e.what())=="code failure";}
+      Check(propagated && failure_calls==1);
+      physics.calls[0]=physics.calls[1]=0;
+      std::cout << "PASS: bounded retry, half-step equivalence, rollback, fatal propagation\n";
+    }
     int passes=0;
     for(int n=0;n<steps;++n) {
       if(argc>1 && std::string(argv[1])=="--corrected") {

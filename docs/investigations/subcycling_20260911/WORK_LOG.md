@@ -1275,3 +1275,36 @@ native per-level reductions or an integrated evolution/retry driver.
 SSH recheck succeeded (login39); isolated remote source is still103d8052. Existing
 production job58200306 is running and is not modified. Proceed with isolated CUDA
 qualification of accumulated changes before the actual Brill comparison.
+
+## Bounded corrector retries and checkpoint integration
+
+Previous turn made progress with per-level selector c204ee04 and launched the
+isolated CUDA build. Build PID316679 remains live on Perlmutter; do not replace
+remote source while it compiles. Production campaign unaffected.
+
+Added RunWithRetry: only CorrectorFailure triggers interval halving after the
+existing full-state rollback. Bounded by maximum halvings (default8), minimum dt,
+and representable fine steps. Other exceptions propagate. Reports accepted dt,
+attempt count and total corrector passes; no pretending a shortened interval
+reached the requested endpoint. External gauge caches reset through begin_pass.
+Checkpoint probe now uses this path and records requested versus accepted dt.
+This does NOT yet retry source-stability violations or Kokkos invalid-state aborts.
+
+Actual transport evolution test forces first-attempt feedback nonconvergence,
+then checks half-step retry bit-for-bit against direct half-step integration;
+checks exhausted retries preserve state and code failures propagate once.
+Corrected temporal ratios15.2456,15.6176,15.8076. Fixed CPU rollback test snapshots:
+create_mirror_view_and_copy may alias HostSpace state, so use create_mirror plus
+explicit deep_copy for independent before/after arrays. Z4c rollback regression
+with independent copies passes (temporal ratios16.4846,16.2056).
+
+CPU full executable builds. Actual checkpoint harness passes all six ratio/dt
+cases with exactly one attempt; ratio1 agreement with independent native driver
+remains at roundoff and ratio2 local error decreases~32x. Harness now explicitly
+rejects mismatched requested/accepted endpoints rather than comparing different
+times after a shortened retry. Evidence retry-evidence; raw
+/tmp/vc-retry-checkpoint-validation and /tmp/vc-retry-helper.log.
+
+Remaining: native per-level limits, repeated/live-AMR driver integration, source
+stability checks, CUDA qualification, and full single-A100 matched-endpoint
+Brill accuracy/performance proof. No completion claim.

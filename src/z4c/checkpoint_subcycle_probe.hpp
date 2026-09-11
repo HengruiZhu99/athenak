@@ -88,9 +88,12 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
   }
   subcycling::CorrectorControl control;
   Kokkos::Timer timer;
-  const auto report=engine.RunCorrected(mesh->time,dt,storage,physics,ratio,control,
+  const Real requested_dt=dt;
+  const auto interval=engine.RunWithRetry(mesh->time,dt,storage,physics,ratio,control,{},
     [&](const auto &h){history=h.empty()?nullptr:&h;cache.clear();},
     [&](const auto &a,const auto &b){return maximum.Difference(a,b,control);});
+  const auto report=interval.corrector;
+  dt=interval.dt;
   Kokkos::fence("checkpoint probe evolution complete");const double seconds=timer.seconds();
   history=nullptr;cache.clear();
   // Binary layout: hierarchy leaf order, then variable,j,i (Real scalars).
@@ -107,6 +110,8 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
   fields.close();topology.close();
   std::ofstream meta(directory+"/probe.txt");meta<<std::setprecision(17)
     <<"checkpoint_time="<<mesh->time<<"\nend_time="<<mesh->time+dt<<"\ndt="<<dt
+    <<"\nrequested_dt="<<requested_dt<<"\ninterval_attempts="<<interval.attempts
+    <<"\ntotal_corrector_passes="<<interval.total_passes
     <<"\nratio="<<ratio<<"\nspatial_order="<<z->opt.spatial_order
     <<"\ncorrector_atol="<<control.absolute_tolerance<<"\ncorrector_rtol="<<control.relative_tolerance
     <<"\ncorrector_max_passes="<<control.maximum_passes<<"\npasses="<<report.passes<<"\nseconds="<<seconds

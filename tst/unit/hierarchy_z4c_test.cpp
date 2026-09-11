@@ -99,13 +99,15 @@ int main(int argc,char **argv) {
     int minimum_passes=100,maximum_passes=0;double worst_change=0;
     for(int n=0;n<steps;++n) {
       if(flag("--rollback-failure") && n==0) {
-        const auto before=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
+        const auto before=Kokkos::create_mirror(storage.Values());
+        Kokkos::deep_copy(before,storage.Values());
         subcycling::CorrectorControl tight;tight.maximum_passes=3;
         tight.absolute_tolerance=1e-30;tight.relative_tolerance=0;
         bool failed=false;
         try {engine.RunCorrected(n*dt,dt,storage,physics,ratio,tight);}
         catch(const subcycling::CorrectorFailure &) {failed=true;}
-        const auto after=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
+        const auto after=Kokkos::create_mirror(storage.Values());
+        Kokkos::deep_copy(after,storage.Values());
         if(!failed || engine.LastCorrectorReport().converged ||
            std::memcmp(before.data(),after.data(),before.size()*sizeof(Real))!=0)
           throw std::runtime_error("corrector rollback did not preserve interval start");

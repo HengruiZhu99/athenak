@@ -113,6 +113,38 @@ class HierarchyRK4 {
     if(!last_report_.converged) throw std::logic_error("no accepted corrected histories");
     return current_history_;
   }
+  // Retry ONLY corrector nonconvergence, after RunCorrected restores the full
+  // initial hierarchy. Physics/code failures propagate unchanged. A successful
+  // retry advances by the returned dt, never the originally requested interval.
+  // begin_pass must reset any external gauge cache even on its empty-history call.
+  template<class Physics>
+  AcceptedInterval RunWithRetry(double time,double dt,VertexParentStates &storage,
+      Physics &physics,unsigned maximum_ratio,const CorrectorControl &control={},
+      const IntervalRetryControl &retry={},
+      const std::function<void(const Histories &)> &begin_pass={},
+      const std::function<Real(const Histories &,const Histories &)> &feedback_residual={}) {
+    retry.Validate();control.Validate();
+    if(!std::isfinite(dt) || dt<=0 || dt<retry.minimum_dt)
+      throw std::invalid_argument("invalid requested hierarchy retry interval");
+    AcceptedInterval result;
+    for(int attempt=0;attempt<=retry.maximum_halvings;++attempt) {
+      ++result.attempts;
+      try {
+        result.corrector=RunCorrected(time,dt,storage,physics,maximum_ratio,control,
+                                       begin_pass,feedback_residual);
+        result.total_passes+=result.corrector.passes;result.dt=dt;return result;
+      } catch(const CorrectorFailure &) {
+        result.total_passes+=last_report_.passes;
+        const double smaller=dt*.5;
+        // Do not make an unrepresentable fine step or exceed the retry budget.
+        const Schedule schedule(root_,maximum_,maximum_ratio);
+        if(attempt==retry.maximum_halvings || smaller<retry.minimum_dt ||
+           smaller<=0 || time+smaller/schedule.Ticks()==time) throw;
+        dt=smaller;
+      }
+    }
+    throw std::logic_error("unreachable hierarchy retry exit");
+  }
   const CorrectorReport &LastCorrectorReport() const {return last_report_;}
   template<class Physics>
   void Run(double time,double dt,VertexParentStates &storage,Physics &physics,

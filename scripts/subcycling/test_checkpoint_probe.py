@@ -52,6 +52,10 @@ for dt in [a.dt,a.dt/2,a.dt/4]:
         env=os.environ.copy();env['ATHENA_TEST_SUBCYCLE_INTERVAL_DIR']=str(output)
         run(['-r',str(checkpoint),f'time/subcycle_probe_dt={dt}',f'time/subcycle_probe_ratio={ratio}'],case,env)
         meta=dict(line.split('=',1) for line in (output/'probe.txt').read_text().splitlines())
+        # This comparison requires identical endpoints. Retry has a separate
+        # regression; never compare a shortened probe against the requested dt.
+        assert float(meta['dt'])==dt and float(meta['requested_dt'])==dt
+        assert int(meta['interval_attempts'])==1
         dtype={8:np.float64,4:np.float32}[int(meta['real_bytes'])]
         values=np.fromfile(output/'fields.bin',dtype=dtype)
         assert values.size==int(meta['leaves'])*int(meta['variables'])*int(meta['ni'])*int(meta['nj'])

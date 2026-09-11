@@ -27,6 +27,20 @@ class CorrectorFailure : public std::runtime_error {
  public:
   CorrectorFailure():std::runtime_error("hierarchy corrector failed to converge within its pass budget") {}
 };
+struct IntervalRetryControl {
+  int maximum_halvings=8;
+  double minimum_dt=0;
+  void Validate() const {
+    if(maximum_halvings<0 || maximum_halvings>20 ||
+       !std::isfinite(minimum_dt) || minimum_dt<0)
+      throw std::invalid_argument("invalid hierarchy interval retry control");
+  }
+};
+struct AcceptedInterval {
+  double dt=0;
+  int attempts=0, total_passes=0;
+  CorrectorReport corrector;
+};
 // Max scaled difference on explicitly selected active bounds. Also used on
 // packed active RK histories, with dt weighting for RHS (increment units).
 inline Real CorrectorDifference(const DvceArray5D<Real> &a,const DvceArray5D<Real> &b,
