@@ -38,3 +38,28 @@ changes are deliberately not mixed into the baseline profiling executable.
 Goal remains incomplete: level-local scheduling, parent states, stage-consistent
 boundaries, global gauge qualification, dynamic AMR and single-A100 matched-time
 reproduction through the provisional run's end time all remain outstanding.
+
+## Native VC Cartoon temporal reference gate
+
+Added an optional Gaussian lapse pulse to the exact-flat-geometry Minkowski
+carrier (amplitude zero retains the default). Nonzero amplitude is explicitly
+restricted to the native VC Cartoon coordinate map and validated for positive
+lapse/width. Initial spatial geometry and extrinsic curvature remain flat;
+subsequent gauge evolution is nontrivial.
+
+`test_classical_cartoon.py` uses the production Z4c task graph on a fixed16x32
+meridional grid, CFL0.4,0.2,0.1,0.05 to t0.5. All25 evolved fields on the radial
+slice z0.5 are compared using double-precision text output. Successive RMS
+errors7.7640e-7,5.2873e-8,3.3109e-9 give ratios14.6843 and15.9696. Local full build
+passed. This is temporal self-convergence on a slice, not spatial convergence,
+full-domain qualification, or asynchronous-boundary qualification.
+
+Two measurement problems encountered were retained in /tmp/vc-classical-cartoon-1
+through4: binary output stores float32 and obscures the finest differences;
+VC table output exactly at z0 (a shared block face) had no rows because selected
+block and canonical diagnostic owner differ. The final test samples z0.5,
+inside a block, and does not claim to fix or test that table-output issue.
+
+Reproduce with the bundled Python (NumPy required):
+`python scripts/subcycling/test_classical_cartoon.py /path/to/athena /new/output/path`.
+The output directory must not already exist; failures and raw outputs persist.
