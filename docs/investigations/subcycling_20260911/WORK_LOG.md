@@ -303,3 +303,11 @@ stencils and changed donor ordering reject. rk4_predictor_states also passes.
 Build/test logs /tmp/vc-temporal-build.log, /tmp/vc-temporal-config.log; tests use
 /tmp/vc-subcycling-cpu. GPU compilation of these new headers is still pending
 (the queued topology24 job uses older immutable source a127a1fe).
+
+Allocation58199493 was revoked after the salloc queue timeout; sacct confirms
+CANCELLED elapsed00:00:00 and launcher1808047 is gone. Archived its allocation,
+launcher and status logs with job-ID suffixes. Retried the same immutable source
+and comparison (no source rebuild/change): new launcher PID1875948, allocation
+58199685 confirmed queued. SSH submission session77853 is still attached to the
+background shell; do not interpret that observational session as a duplicate
+job or retry while the confirmed allocation/launcher is live.
