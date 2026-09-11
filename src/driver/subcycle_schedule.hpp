@@ -5,8 +5,21 @@
 #include <cmath>
 #include <cstdint>
 #include <stdexcept>
+#include <vector>
 
 namespace subcycling {
+// Limits already include their respective safety factors. In particular, the
+// caller applies CFL to the spatial ceiling, not to the explicit-source ceiling.
+struct LevelStepLimit {
+  int level;
+  double spatial, source;
+};
+enum class IntervalLimiter { synchronization, spatial, source };
+struct IntervalChoice {
+  double dt;
+  IntervalLimiter limiter;
+  int level;  // -1 for the requested synchronization/end-time cap
+};
 // Integer ticks identify common physical times without accumulating floating
 // point drift. The coarsest group contains [minimum_level, first_subcycled_level].
 struct StepContext {
@@ -46,6 +59,35 @@ class Schedule {
     ticks_ = std::uint64_t{1} << (maximum_-first_);
   }
   std::uint64_t Ticks() const { return ticks_; }
+  std::uint64_t Substeps(int level) const {
+    if (level < minimum_ || level > maximum_)
+      throw std::invalid_argument("timestep level outside hierarchy");
+    return std::uint64_t{1} << std::max(0, level-first_);
+  }
+  // Every evolved level, including covered predictors, must supply a contract.
+  // Ascending order makes ties deterministic and catches missing/duplicate levels.
+  IntervalChoice ChooseInterval(const std::vector<LevelStepLimit> &limits,
+                                double cap) const {
+    if (!std::isfinite(cap) || cap <= 0 ||
+        limits.size() != static_cast<std::size_t>(maximum_-minimum_+1))
+      throw std::invalid_argument("invalid subcycling timestep coverage or cap");
+    IntervalChoice result{cap, IntervalLimiter::synchronization, -1};
+    for (std::size_t n=0; n<limits.size(); ++n) {
+      const auto &limit=limits[n];
+      if (limit.level != minimum_+static_cast<int>(n) ||
+          !std::isfinite(limit.spatial) || limit.spatial <= 0 ||
+          !std::isfinite(limit.source) || limit.source <= 0)
+        throw std::invalid_argument("invalid per-level subcycling timestep limit");
+      const double q=static_cast<double>(Substeps(limit.level));
+      // Compare before multiplication so an effectively unlimited source ceiling
+      // (numeric_limits::max()) cannot overflow in a deep hierarchy.
+      if (limit.spatial < result.dt/q)
+        result={limit.spatial*q, IntervalLimiter::spatial, limit.level};
+      if (limit.source < result.dt/q)
+        result={limit.source*q, IntervalLimiter::source, limit.level};
+    }
+    return result;
+  }
   template <typename Callbacks>
   void Run(double start, double dt, Callbacks &callbacks) const {
     if (!std::isfinite(start) || !std::isfinite(dt) || dt <= 0 ||

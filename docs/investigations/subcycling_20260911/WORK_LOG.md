@@ -1260,3 +1260,18 @@ Next CUDA compilation/checkpoint probe after SSH renewal, then actual driver
 subcycling/AMR/stability/retry integration and matched-endpoint A100 validation.
 The boundary correction must be separated from subcycling in future performance
 and scientific comparisons with the historical provisional-collapse run.
+
+## Per-level synchronization interval contract
+
+Added Schedule::ChooseInterval using the schedule's own per-level substep counts.
+Every evolved level (including covered predictors) must provide finite positive
+spatial and source ceilings in ascending order. CFL belongs in the supplied
+spatial ceiling only, matching z4c_newdt/mesh contracts; source safety is already
+included by SourceTimestepCeiling. Requested end/synchronization cap is separate.
+Tests verify grouped levels, coarse and fine source restrictions, deterministic
+limiter reporting, missing/duplicate contracts and overflow-safe unlimited bounds.
+CPU schedule target builds and passes. This is selection infrastructure, not yet
+native per-level reductions or an integrated evolution/retry driver.
+SSH recheck succeeded (login39); isolated remote source is still103d8052. Existing
+production job58200306 is running and is not modified. Proceed with isolated CUDA
+qualification of accumulated changes before the actual Brill comparison.
