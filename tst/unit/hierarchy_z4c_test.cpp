@@ -9,13 +9,23 @@ int main(int argc,char **argv) {
   std::vector<subcycling::BlockKey> leaves{{0,1,0,0},{0,0,1,0},{0,1,1,0},
     {1,0,0,0},{1,1,0,0},{1,0,1,0},{1,1,1,0}};
   if(flag("--uniform")) leaves={{0,0,0,0},{0,1,0,0},{0,0,1,0},{0,1,1,0}};
+  const int roots=flag("--interior-patch") ? 4 : 2;
+  if(flag("--interior-patch")) {
+    leaves.clear();
+    for(int x=0;x<roots;++x) for(int y=0;y<roots;++y) {
+      if(x==1 && y==1) for(int a=0;a<2;++a) for(int b=0;b<2;++b)
+        leaves.push_back({1,2+a,2+b,0});
+      else leaves.push_back({0,x,y,0});
+    }
+  }
   subcycling::Hierarchy tree(leaves,0,2);
+  const int nx=flag("--nx32") ? 32 : (flag("--nx16") ? 16 : 8),nn=nx+9;
   z4c::Z4cGridLayout l;l.centering=z4c::Z4cGridCentering::vertex;
-  l.nx1=l.nx2=8;l.nx3=l.n3=1;l.ks=l.ke=0;l.is=l.js=4;l.ie=l.je=12;l.n1=l.n2=17;
-  RegionSize domain{};domain.x1min=0;domain.x1max=2;domain.x2min=-1;domain.x2max=1;
+  l.nx1=l.nx2=nx;l.nx3=l.n3=1;l.ks=l.ke=0;l.is=l.js=4;l.ie=l.je=nx+4;l.n1=l.n2=nn;
+  RegionSize domain{};domain.x1min=0;domain.x1max=roots;domain.x2min=-roots/2.;domain.x2max=roots/2.;
   domain.x3min=-.5;domain.x3max=.5;
   subcycling::HierarchyGeometry geometry;
-  geometry.Initialize(tree,domain,0,2,2,l,{{BoundaryFlag::axis,BoundaryFlag::outflow,
+  geometry.Initialize(tree,domain,0,roots,roots,l,{{BoundaryFlag::axis,BoundaryFlag::outflow,
     BoundaryFlag::outflow,BoundaryFlag::outflow,BoundaryFlag::periodic,BoundaryFlag::periodic}});
   Z::Options opt{};opt.chi_psi_power=-4;opt.chi_div_floor=opt.chi_min_floor=1e-12;
   opt.lapse_oplog=2;opt.lapse_harmonicf=1;opt.sss_damping_time=opt.ssl_damping_time=1;
@@ -27,19 +37,21 @@ int main(int argc,char **argv) {
   std::vector<int> parity;for(int v=0;v<Z::nz4c;++v) parity.push_back(z4c::Z4cStateAxisParitySignFromPackedIndex(v));
   std::vector<std::vector<double>> results;
   for(int steps:{4,8,16,32}) {
-    DvceArray5D<Real> leaf("Z4c leaves",leaves.size(),Z::nz4c,1,17,17);
+    DvceArray5D<Real> leaf("Z4c leaves",leaves.size(),Z::nz4c,1,nn,nn);
     auto h=Kokkos::create_mirror_view(leaf);
     for(int m=0;m<leaf.extent_int(0);++m) for(int v=0;v<Z::nz4c;++v)
-      for(int j=0;j<17;++j) for(int i=0;i<17;++i) {
+      for(int j=0;j<nn;++j) for(int i=0;i<nn;++i) {
         const auto key=leaves[m];const double w=std::ldexp(1.,-key[0]);
-        const double x=w*(key[1]+(i-4)/8.),z=-1+w*(key[2]+(j-4)/8.);
+        const double x=w*(key[1]+(i-4)/static_cast<double>(nx)),z=domain.x2min+w*(key[2]+(j-4)/static_cast<double>(nx));
         double value=(v==Z::I_Z4C_CHI || v==Z::I_Z4C_GXX || v==Z::I_Z4C_GYY || v==Z::I_Z4C_GZZ || v==Z::I_Z4C_ALPHA) ? 1 : 0;
-        if(v==Z::I_Z4C_ALPHA) value+=.001*std::exp(-x*x-z*z);
+        if(v==Z::I_Z4C_ALPHA) value+=.001*(flag("--polynomial-lapse") ? x*x+z*z : std::exp(-x*x-z*z));
         h(m,v,0,j,i)=value;
       }
     Kokkos::deep_copy(leaf,h);
     subcycling::VertexParentStates storage;storage.InitializeAll(tree,leaf,l);
-    subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,2,2,parity,4,{{false,true,true,true}});
+    storage.test_restriction_margin=flag("--interior-restriction") ? 1 :
+      (flag("--deep-restriction") ? 3 : 0);
+    subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,roots,roots,parity,4,{{false,true,true,true}});
     engine.test_skip_restriction=flag("--no-restriction");
     struct TestPhysics: z4c::HierarchyPhysics<3> {
       using z4c::HierarchyPhysics<3>::HierarchyPhysics;
@@ -48,7 +60,7 @@ int main(int argc,char **argv) {
                    const DvceArray5D<Real> &u) {
         z4c::HierarchyPhysics<3>::Project(s,skip_projection ? 3 : stage,b,u);
       }
-    } physics(storage,geometry,l,opt,0,2,2,flag("--no-ko") ? 0 : .02/64,
+    } physics(storage,geometry,l,opt,0,roots,roots,flag("--no-ko") ? 0 : .02/64,
       {{false,true,true,true}},[](double){return 1.;},[](double){return 0.;},[](double){return 0.;});
     physics.skip_projection=flag("--no-projection");
     const double dt=.04/steps;
@@ -66,6 +78,15 @@ int main(int argc,char **argv) {
   std::vector<double> errors;
   for(int r=0;r<3;++r) {
     double sum=0;for(std::size_t n=0;n<results[r].size();++n) sum+=std::pow(results[r][n]-results[r+1][n],2);
+    double maximum=0;std::size_t location=0;
+    for(std::size_t n=0;n<results[r].size();++n) {
+      const double d=std::abs(results[r][n]-results[r+1][n]);
+      if(d>maximum) {maximum=d;location=n;}
+    }
+    const int points=(nx+1)*(nx+1);
+    std::cout << "max difference=" << maximum << " leaf=" << location/(Z::nz4c*points)
+              << " component=" << (location/points)%Z::nz4c << " j=" << (location%(points))/(nx+1)
+              << " i=" << location%(nx+1) << std::endl;
     errors.push_back(std::sqrt(sum/results[r].size()));
     std::cout << "successive rms=" << errors.back() << '\n';
   }

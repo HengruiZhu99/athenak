@@ -724,3 +724,33 @@ no_restriction_control CTest alongside the still-failing default refinement gate
 Build/tmp/vc-hierarchy-z4c-build.log passed, controlled runs completed. No GPU jobs
 or production changes. Full gauge/live-AMR and faster endpoint reproduction remain
 unfinished and unverified.
+
+## Restriction footprint and spatial controls
+
+Previous turn progressed withd9ceaff9. Added test-only restriction-margin
+instrumentation (same ATHENA_SUBCYCLE_DIAGNOSTICS guard; production margin zero).
+Interior-only restriction (one-vertex margin) still gives ratios1.9186,1.9404;
+three-vertex margin reduces error but trends toward order loss (14.70,3.55).
+Thus this is not solely overwriting coincident boundary vertices.
+
+Added independent nx16/nx32 spatial resolution controls and polynomial lapse
+initial data. Neither restores fourth-order timestep behavior: nx16 ratios2.12,
+2.03; nx32 ratios3.56,1.97; polynomial lapse1.94,1.97. Do not dismiss the failure
+as an already-understood spatial floor. Test now reports maximum-difference
+component and leaf-local position: default leading difference is component9
+(Axy), coarse leaf1, j0/i1, on the physical boundary adjacent to refinement.
+
+An additional interior-patch control moves refinement away from physical/axis
+boundaries: error drops substantially but ratios2.264,2.020 remain. Therefore
+physical boundaries amplify the discrepancy but are not required for order loss.
+Evidence restriction-controls/vc-z4c-{interior-restriction,deep-restriction,nx16,
+nx32,polynomial-lapse,interior-patch}.log. All diagnostic processes completed.
+The default convergence test remains failing, not relaxed or marked expected-pass.
+
+Re-read Ji et al.2503.09629v2 sectionII, equations11-19 and algorithm steps1-7
+(https://arxiv.org/html/2503.09629v2). It specifies stage and accepted-endpoint
+boundary updates before restriction. Our dense stage formulas agree, but this
+alone does not prove correctness of the assembled vertex ownership/feedback.
+Continue investigating consistent parent/fine stage coupling and accepted
+interface states; these controls do not establish a fix. No production changes
+or remote jobs; full goal remains incomplete.

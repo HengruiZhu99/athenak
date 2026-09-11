@@ -19,6 +19,9 @@ namespace subcycling {
 // Covered parents are kept outside the physical leaf arrays and diagnostics.
 class VertexParentStates {
  public:
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+  int test_restriction_margin=0;
+#endif
   void Initialize(const Hierarchy &hierarchy, const DvceArray5D<Real> &leaves,
                   const z4c::Z4cGridLayout &layout) {
     if (hierarchy.Dimension() != 2 || layout.centering != z4c::Z4cGridCentering::vertex || layout.nx3 != 1 || layout.n3 != 1 || layout.ks != layout.ke ||
@@ -142,10 +145,15 @@ class VertexParentStates {
     const auto ids=found->second;
     const auto values=values_;const auto children=all_children_;
     const int nx=layout.nx1,ny=layout.nx2,is=layout.is,js=layout.js;
+    int margin=0;
+#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
+    margin=test_restriction_margin;
+#endif
     par_for("restrict synchronized covered parents",DevExeSpace(),0,ids.extent_int(0)-1,
         0,values.extent_int(1)-1,
         layout.ks,layout.ke,js,layout.je,is,layout.ie,
         KOKKOS_LAMBDA(int row,int v,int k,int j,int i) {
+      if(i<is+margin || i>is+nx-margin || j<js+margin || j>js+ny-margin) return;
       const int n=ids(row);
       const int cx=(i-is)>nx/2,cy=(j-js)>ny/2;
       const int child=children(n,cx+2*cy);
