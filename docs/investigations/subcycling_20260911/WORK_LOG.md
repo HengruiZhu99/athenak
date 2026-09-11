@@ -754,3 +754,22 @@ alone does not prove correctness of the assembled vertex ownership/feedback.
 Continue investigating consistent parent/fine stage coupling and accepted
 interface states; these controls do not establish a fix. No production changes
 or remote jobs; full goal remains incomplete.
+
+## Rejected interface-vertex prescription hypothesis
+
+Previous turn progressed withc6a32eeb. Implemented an isolated experiment adding
+fine active vertices on refinement edges to the temporal boundary plan, prescribing
+them at each stage and at accepted half/full endpoints with dense physical values.
+The full restriction test still gives RMS4.09135e-10,2.11646e-10,1.07578e-10 and
+ratios1.93311,1.96738. It does not resolve order loss. Preserved the exact experiment
+as restriction-controls/prescribed-interfaces-rejected.patch and its raw log, then
+removed the unvalidated implementation changes from all four affected sources.
+
+Rebuilt the restored source. Required hierarchy_z4c still fails at the established
+ratios1.96042,1.9769; uniform and no-restriction controls pass. No acceptance gate
+relaxed, no boundary ownership change retained, no production work touched.
+
+This rules out merely adding coarse-prescribed shared interface stage/end values
+as a sufficient fix. Need consistent two-way coupling or a demonstrated analysis
+of mixed spatial/temporal restriction error before claiming qualification. Full
+single-A100 faster endpoint reproduction remains unverified and the goal active.

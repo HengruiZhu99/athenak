@@ -1,0 +1,122 @@
+diff --git a/src/driver/hierarchy_rk4.hpp b/src/driver/hierarchy_rk4.hpp
+index 2a911f37..f8d387b6 100644
+--- a/src/driver/hierarchy_rk4.hpp
++++ b/src/driver/hierarchy_rk4.hpp
+@@ -19,7 +19,9 @@ class HierarchyRK4 {
+   template<int ORDER>
+   void Initialize(const Hierarchy &tree,const z4c::Z4cGridLayout &layout,
+                   int root,int root_x,int root_y,const std::vector<int> &parities,
+-                  int extrapolation_order,const std::array<bool,4> &faces) {
++                  int extrapolation_order,const std::array<bool,4> &faces,
++                  bool prescribe_interface_vertices=false) {
++    prescribe_interfaces_=prescribe_interface_vertices;
+     ready_=false;layout_=layout;root_=root;maximum_=root;
+     sources_.clear();ghosts_.clear();predictors_.clear();contexts_.clear();
+     for(int n=0;n<static_cast<int>(tree.Nodes().size());++n) {
+@@ -33,7 +35,7 @@ class HierarchyRK4 {
+     exchange_.Build(tree,layout);
+     for(int level=root+1;level<=maximum_;++level) {
+       ghosts_[level].Build<ORDER>(tree,layout,level,root,root_x,root_y,parities,
+-                                 extrapolation_order,faces);
++                                 extrapolation_order,faces,prescribe_interface_vertices);
+       if(ghosts_[level].SourceBlocks()!=sources_.at(level-1))
+         throw std::logic_error("hierarchy predictor source order mismatch");
+     }
+@@ -81,6 +83,12 @@ class HierarchyRK4 {
+         physics.RHS(step,stage,blocks_,state,rhs_);
+         if(level<maximum_) predictors_.at(level).Capture(rhs_,stage);
+         classical_rk4::Update(blocks_,layout_,step.Dt(),stage,state,initial_,rhs_,sum_);
++        if(stage==4 && level>root_ && prescribe_interfaces_) {
++          const auto parent=contexts_.at(level-1);
++          const double fraction=static_cast<double>(step.end_tick-parent.begin_tick)/
++                                (parent.end_tick-parent.begin_tick);
++          ghosts_.at(level).Apply(predictors_.at(level-1),fraction,0,1,state);
++        }
+         physics.Project(step,stage,blocks_,state);
+       }
+     };
+@@ -101,7 +109,7 @@ class HierarchyRK4 {
+     Kokkos::fence("hierarchy RK synchronized interval complete");
+   }
+  private:
+-  bool ready_=false;
++  bool ready_=false,prescribe_interfaces_=false;
+   int root_=0,maximum_=0,nodes_=0;
+   z4c::Z4cGridLayout layout_;
+   BlockBatches blocks_;
+diff --git a/src/driver/hierarchy_temporal_ghosts.hpp b/src/driver/hierarchy_temporal_ghosts.hpp
+index cb98dd36..d5c8d498 100644
+--- a/src/driver/hierarchy_temporal_ghosts.hpp
++++ b/src/driver/hierarchy_temporal_ghosts.hpp
+@@ -13,7 +13,8 @@ class HierarchyTemporalGhosts {
+   void Build(const Hierarchy &tree,const z4c::Z4cGridLayout &l,
+              int fine_level,int root,int root_x,int root_y,
+              const std::vector<int> &axis_parities={},int extrapolation_order=0,
+-             const std::array<bool,4> &outer_faces={{false,false,false,false}}) {
++             const std::array<bool,4> &outer_faces={{false,false,false,false}},
++             bool prescribe_interface_vertices=false) {
+     ready_=false;
+     if(tree.Dimension()!=2 || root<0 || fine_level<=root || fine_level-root>30 ||
+        root_x<=0 || root_y<=0 || l.centering!=z4c::Z4cGridCentering::vertex ||
+@@ -36,19 +37,21 @@ class HierarchyTemporalGhosts {
+       if(key[0]==fine_level-1) {coarse.push_back(key);sources.push_back(n);}
+       if(key[0]!=fine_level) continue;
+       for(int j=0;j<l.n2;++j) for(int i=0;i<l.n1;++i) {
+-        if(i>=l.is && i<=l.ie && j>=l.js && j<=l.je) continue;
++        if(i>=l.is && i<=l.ie && j>=l.js && j<=l.je && !prescribe_interface_vertices) continue;
+         const std::int64_t x=std::int64_t(key[1])*l.nx1+i-l.is;
+         const std::int64_t y=std::int64_t(key[2])*l.nx2+j-l.js;
+         if(x<0 || y<0 || x>bx*l.nx1 || y>by*l.nx2) continue;
+         // Same-level exchange owns any point with an active same-level donor.
+-        bool same=false;const auto ix=x/l.nx1,iy=y/l.nx2;
+-        for(auto a=ix-(x%l.nx1==0);a<=ix && !same;++a)
+-          for(auto b=iy-(y%l.nx2==0);b<=iy && !same;++b) {
++        bool same=false,missing=false;const auto ix=x/l.nx1,iy=y/l.nx2;
++        for(auto a=ix-(x%l.nx1==0);a<=ix;++a)
++          for(auto b=iy-(y%l.nx2==0);b<=iy;++b) {
+             if(a<0 || b<0 || a>std::numeric_limits<int>::max() ||
+                b>std::numeric_limits<int>::max()) continue;
+-            same=tree.Find({fine_level,static_cast<int>(a),static_cast<int>(b),0})>=0;
++            if(a>=bx || b>=by) continue;
++            const bool present=tree.Find({fine_level,static_cast<int>(a),static_cast<int>(b),0})>=0;
++            same|=present;missing|=!present;
+           }
+-        if(same) continue;
++        if(same && !(prescribe_interface_vertices && missing)) continue;
+         targets.push_back({x,y});destinations.push_back({n,j,i});
+       }
+     }
+diff --git a/src/driver/rk4_predictor_states.hpp b/src/driver/rk4_predictor_states.hpp
+index 4949d71c..7fe648d9 100644
+--- a/src/driver/rk4_predictor_states.hpp
++++ b/src/driver/rk4_predictor_states.hpp
+@@ -70,13 +70,15 @@ class RK4PredictorStates {
+     detail::CopyRKActiveValues(rhs,data_[stage],blocks_,layout_);
+     completed_=stage;
+   }
++  // A zero-duration stage1 request evaluates a physical dense-output state,
++  // including the accepted endpoint. Other zero-duration stages are invalid.
+   // Fine-start fraction is relative to THIS parent step. Reject requests outside
+   // its interval, including nominally synchronous stages with an overlong dt.
+   void EvaluateStage(double fraction, double fine_dt, int stage,
+                      DvceArray5D<Real> &out) const {
+     if (completed_!=4) throw std::logic_error("incomplete coarse RK predictor");
+     if (stage<1 || stage>4 || !std::isfinite(fraction) || !std::isfinite(fine_dt) ||
+-        fine_dt<=0 || fraction<0 || fraction>1 || fine_dt/dt_>1-fraction) {
++        fine_dt<0 || (fine_dt==0 && stage!=1) || fraction<0 || fraction>1 || fine_dt/dt_>1-fraction) {
+       throw std::invalid_argument("fine stage outside predictor interval");
+     }
+     const auto y=data_[0], a=data_[1], b=data_[2], c=data_[3], d=data_[4];
+diff --git a/tst/unit/hierarchy_z4c_test.cpp b/tst/unit/hierarchy_z4c_test.cpp
+index c3d4e03b..30123e66 100644
+--- a/tst/unit/hierarchy_z4c_test.cpp
++++ b/tst/unit/hierarchy_z4c_test.cpp
+@@ -51,7 +51,7 @@ int main(int argc,char **argv) {
+     subcycling::VertexParentStates storage;storage.InitializeAll(tree,leaf,l);
+     storage.test_restriction_margin=flag("--interior-restriction") ? 1 :
+       (flag("--deep-restriction") ? 3 : 0);
+-    subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,roots,roots,parity,4,{{false,true,true,true}});
++    subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,roots,roots,parity,4,{{false,true,true,true}},flag("--prescribe-interfaces"));
+     engine.test_skip_restriction=flag("--no-restriction");
+     struct TestPhysics: z4c::HierarchyPhysics<3> {
+       using z4c::HierarchyPhysics<3>::HierarchyPhysics;
