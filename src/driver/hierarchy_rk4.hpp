@@ -22,7 +22,9 @@ class HierarchyRK4 {
   void Initialize(const Hierarchy &tree,const z4c::Z4cGridLayout &layout,
                   int root,int root_x,int root_y,const std::vector<int> &parities,
                   int extrapolation_order,const std::array<bool,4> &faces) {
+    if(inside_corrector_) throw std::logic_error("cannot reinitialize an active corrector");
     ready_=false;layout_=layout;root_=root;maximum_=root;
+    previous_history_.clear();current_history_.clear();last_report_={};
     sources_.clear();ghosts_.clear();predictors_.clear();contexts_.clear();
     for(int n=0;n<static_cast<int>(tree.Nodes().size());++n) {
       const int level=tree.Nodes()[n].key[0];
@@ -39,12 +41,54 @@ class HierarchyRK4 {
       if(ghosts_[level].SourceBlocks()!=sources_.at(level-1))
         throw std::logic_error("hierarchy predictor source order mismatch");
     }
-#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
     corrections_.clear();
     for(int level=root;level<maximum_;++level) corrections_[level].Build(tree,level,sources_.at(level+1));
-#endif
+
     nodes_=tree.Nodes().size();ready_=true;
   }
+  // Accepted intervals require both endpoint and complete retained RK-history
+  // convergence. Failure restores the hierarchy, then lets the driver reduce dt.
+  template<class Physics>
+  CorrectorReport RunCorrected(double time,double dt,VertexParentStates &storage,Physics &physics,
+      unsigned maximum_ratio,const CorrectorControl &control={}) {
+    control.Validate();
+    if(inside_corrector_) throw std::logic_error("nested hierarchy corrector call");
+    const auto state=storage.Values();
+    for(auto *scratch:{&rollback_,&previous_end_}) {
+      bool resize=false;for(int d=0;d<5;++d) resize|=scratch->extent(d)!=state.extent(d);
+      if(resize) Kokkos::realloc(*scratch,state.extent(0),state.extent(1),state.extent(2),
+                                state.extent(3),state.extent(4));
+    }
+    Kokkos::deep_copy(rollback_,state);previous_history_.clear();inside_corrector_=true;
+    last_report_={};
+    try {
+      for(int pass=1;pass<=control.maximum_passes;++pass) {
+        Kokkos::deep_copy(state,rollback_);current_history_.clear();
+        Run(time,dt,storage,physics,maximum_ratio);
+        last_report_.passes=pass;
+        if(pass>1) {
+          last_report_.endpoint_change=CorrectorDifference(state,previous_end_,layout_,control);
+          if(current_history_.size()!=previous_history_.size())
+            throw std::logic_error("corrector history topology changed");
+          last_report_.history_change=0;
+          for(const auto &entry:current_history_)
+            last_report_.history_change=std::max(last_report_.history_change,
+                entry.second.Difference(previous_history_.at(entry.first),control));
+          if(pass>=control.minimum_passes && last_report_.endpoint_change<=1 &&
+             last_report_.history_change<=1) {
+            last_report_.converged=true;inside_corrector_=false;return last_report_;
+          }
+        }
+        Kokkos::deep_copy(previous_end_,state);
+        previous_history_=std::move(current_history_);
+      }
+      throw CorrectorFailure();
+    } catch(...) {
+      Kokkos::deep_copy(state,rollback_);Kokkos::fence("failed corrector rollback complete");
+      inside_corrector_=false;previous_history_.clear();current_history_.clear();throw;
+    }
+  }
+  const CorrectorReport &LastCorrectorReport() const {return last_report_;}
   template<class Physics>
   void Run(double time,double dt,VertexParentStates &storage,Physics &physics,
            unsigned maximum_ratio=(1U<<20)) {
@@ -81,11 +125,10 @@ class HierarchyRK4 {
       const int level=step.maximum_level;
       blocks_.Update(true,storage.AllLevels(),nodes_,step.minimum_level,level);
       for(int stage=1;stage<=4;++stage) {
-#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
         const auto correction=previous_history_.find({level+1,step.begin_tick});
         const bool correct=inside_corrector_ && correction!=previous_history_.end();
         if(correct) corrections_.at(level).Apply(correction->second,step.Dt(),stage,false,layout_,state);
-#endif
+
         for(int parent=level-1;parent>=step.minimum_level;--parent)
           storage.RestrictLevel(layout_,parent);
         exchange_.Apply(state,step.minimum_level,level);
@@ -104,20 +147,18 @@ class HierarchyRK4 {
               l.ks,l.ke,l.js,l.je,l.is,l.ie,KOKKOS_LAMBDA(int m,int v,int k,int j,int i) {
             initial(m,v,k,j,i)=state(m,v,k,j,i);
           });
-#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
           if(inside_corrector_) current_history_[{level,step.begin_tick}].Begin(
               state,layout_,sources_.at(level),step.StartTime(),step.Dt());
-#endif
+
           if(level<maximum_) {
             predictors_[level].Begin(state,layout_,sources_.at(level),step.StartTime(),step.Dt());
             contexts_[level]=step;
           }
         }
         physics.RHS(step,stage,blocks_,state,rhs_);
-#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
         if(correct) corrections_.at(level).Apply(correction->second,step.Dt(),stage,true,layout_,rhs_);
         if(inside_corrector_) current_history_.at({level,step.begin_tick}).Capture(rhs_,stage);
-#endif
+
         if(level<maximum_) predictors_.at(level).Capture(rhs_,stage);
         classical_rk4::Update(blocks_,layout_,step.Dt(),stage,state,initial_,rhs_,sum_);
         physics.Project(step,stage,blocks_,state);
@@ -141,11 +182,10 @@ class HierarchyRK4 {
     Kokkos::fence("hierarchy RK synchronized interval complete");
   }
  private:
-#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
   bool inside_corrector_=false;
   std::map<std::pair<int,std::uint64_t>,RK4PredictorStates> previous_history_,current_history_;
   std::map<int,CoveredStageCorrection> corrections_;
-#endif
+
   bool ready_=false;
   int root_=0,maximum_=0,nodes_=0;
   z4c::Z4cGridLayout layout_;
@@ -155,7 +195,8 @@ class HierarchyRK4 {
   std::map<int,HierarchyTemporalGhosts> ghosts_;
   std::map<int,RK4PredictorStates> predictors_;
   std::map<int,StepContext> contexts_;
-  DvceArray5D<Real> initial_,rhs_,sum_;
+  DvceArray5D<Real> initial_,rhs_,sum_,rollback_,previous_end_;
+  CorrectorReport last_report_;
 };
 } // namespace subcycling
 #endif

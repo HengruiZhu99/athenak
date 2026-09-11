@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <cstring>
 #include "z4c/hierarchy_physics.hpp"
 struct TestPhysics: z4c::HierarchyPhysics<3> {
       using z4c::HierarchyPhysics<3>::HierarchyPhysics;
@@ -80,8 +81,41 @@ int main(int argc,char **argv) {
       {{false,true,true,true}},[vary=flag("--time-dependent")](double t){return vary ? 1.+.5*t : 1.;},[](double){return 0.;},[](double){return 0.;});
     physics.skip_projection=flag("--no-projection");
     const double dt=.04/steps;
-    for(int n=0;n<steps;++n) engine.Run(n*dt,dt,storage,physics,flag("--synchronous-hierarchy") ? 1 :
-      (flag("--three-level") && !flag("--coarse-group") ? 4 : 2));
+    const unsigned ratio=flag("--synchronous-hierarchy") ? 1 :
+      (flag("--three-level") && !flag("--coarse-group") ? 4 : 2);
+    int minimum_passes=100,maximum_passes=0;double worst_change=0;
+    for(int n=0;n<steps;++n) {
+      if(flag("--rollback-failure") && n==0) {
+        const auto before=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
+        subcycling::CorrectorControl tight;tight.maximum_passes=3;
+        tight.absolute_tolerance=1e-30;tight.relative_tolerance=0;
+        bool failed=false;
+        try {engine.RunCorrected(n*dt,dt,storage,physics,ratio,tight);}
+        catch(const subcycling::CorrectorFailure &) {failed=true;}
+        const auto after=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
+        if(!failed || engine.LastCorrectorReport().converged ||
+           std::memcmp(before.data(),after.data(),before.size()*sizeof(Real))!=0)
+          throw std::runtime_error("corrector rollback did not preserve interval start");
+      }
+      if(flag("--adaptive") || flag("--rollback-failure")) {
+        subcycling::CorrectorReport report;subcycling::CorrectorControl control;
+        if(flag("--extra-passes")) control.maximum_passes=12;
+        try {report=engine.RunCorrected(n*dt,dt,storage,physics,ratio,control);}
+        catch(const subcycling::CorrectorFailure &) {
+          report=engine.LastCorrectorReport();
+          std::cerr << "corrector failure steps=" << steps << " interval=" << n
+                    << " passes=" << report.passes << " endpoint=" << report.endpoint_change
+                    << " history=" << report.history_change << std::endl;
+          throw;
+        }
+        if(!report.converged) throw std::runtime_error("accepted unconverged interval");
+        minimum_passes=std::min(minimum_passes,report.passes);
+        maximum_passes=std::max(maximum_passes,report.passes);
+        worst_change=std::max(worst_change,std::max(report.endpoint_change,report.history_change));
+      } else engine.Run(n*dt,dt,storage,physics,ratio);
+    }
+    if(maximum_passes>0) std::cout << "corrector passes=" << minimum_passes << ".." << maximum_passes
+                                 << " worst normalized change=" << worst_change << std::endl;
     auto out=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
     std::vector<double> values;
     for(int n=0;n<out.extent_int(0);++n) if(!tree.Nodes()[n].Covered())

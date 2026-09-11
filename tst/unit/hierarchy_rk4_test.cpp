@@ -48,8 +48,14 @@ int main(int argc,char **argv) {
     subcycling::VertexParentStates storage;storage.InitializeAll(tree,leaf,l);
     subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,4,4,{},4,{{true,true,true,true}});
     Transport physics{storage,l};const double dt=.2/steps;
-    for(int n=0;n<steps;++n) engine.Run(n*dt,dt,storage,physics);
-    Check(physics.calls[0]==4*steps && physics.calls[1]==8*steps);
+    int passes=0;
+    for(int n=0;n<steps;++n) {
+      if(argc>1 && std::string(argv[1])=="--corrected") {
+        const auto report=engine.RunCorrected(n*dt,dt,storage,physics,2);
+        Check(report.converged);passes+=report.passes;
+      } else {engine.Run(n*dt,dt,storage,physics);++passes;}
+    }
+    Check(physics.calls[0]==4*passes && physics.calls[1]==8*passes);
     auto h=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
     double error=0;
     for(int n=0;n<h.extent_int(0);++n) for(int j=l.js;j<=l.je;++j) for(int i=l.is;i<=l.ie;++i)

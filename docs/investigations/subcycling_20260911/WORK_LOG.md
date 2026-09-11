@@ -934,3 +934,30 @@ corrector out of diagnostic-only code, integrate the actual common-time global
 telegraph history and synchronized driver/AMR/restart path, then perform the
 required matched-endpoint production comparison. Full goal remains incomplete;
 no production run was modified.
+
+## Bounded convergence-controlled hierarchy corrector
+
+Promoted stage correction and RK-history reconstruction out of diagnostic-only
+compilation. RunCorrected requires convergence of both active endpoint fields
+and all retained RK histories, with RHS differences weighted by the local dt.
+Defaults: minimum3/maximum8 passes, absolute1e-12 and relative1e-10. Six passes
+were insufficient at the largest test step (history normalized change2.40558
+despite endpoint0.000944729); seven converged. No tolerances were relaxed.
+Failure restores all hierarchy values including ghosts; a forced failure test
+checks byte equality then successful recovery. External physics side effects
+are still the caller's responsibility. Initialization now clears histories and
+reports; covered-stage injection validates donors and target/packed layouts.
+
+CPU rebuild succeeded. Six selected CTests pass, including adaptive, rollback,
+coarse group, prescribed time-dependent gauge, CPBC, and corrected transport
+compiled without diagnostic controls. Additional adaptive three-level combined
+time-dependent/CPBC test passes, ratios16.1836 and15.2821; registered as CTest.
+Logs archived in adaptive-corrector-evidence. These changes have not yet been
+CUDA qualified. The uncorrected asynchronous Z4c diagnostic remains known to
+lose order; this is not a claim that the entire test suite passes.
+
+Full production goal remains incomplete. Multiple corrector passes materially
+reduce the naive work savings and must be included in the eventual benchmark.
+Next: self-consistent common-time global telegraph coefficient, actual driver
+restart/AMR/diagnostic integration and single-A100 matched-endpoint validation.
+No production files or jobs changed in this turn.

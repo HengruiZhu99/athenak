@@ -8,6 +8,7 @@
 #include <vector>
 #include "athena.hpp"
 #include "driver/rk4_dense_boundary.hpp"
+#include "driver/corrector_control.hpp"
 #include "z4c/z4c_grid.hpp"
 
 namespace subcycling {
@@ -93,8 +94,7 @@ class RK4PredictorStates {
       out(p,v,k,j,i)=predictor.StageBoundary(fraction,fine_dt,stage);
     });
   }
-#ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
-  // Experimental two-way coupling: the first fine half-step supplies a local
+  // Two-way coupling: the first fine half-step supplies a local
   // Taylor reconstruction for its parent's RK stage vectors and dense history.
   // This is not evaluation of a physical solution outside the stored interval.
   void EvaluateParentStage(double parent_dt,int stage,bool rhs,DvceArray5D<Real> &out) const {
@@ -119,7 +119,19 @@ class RK4PredictorStates {
       out(p,v,k,j,i)=value;
     });
   }
-#endif
+
+  Real Difference(const RK4PredictorStates &other,const CorrectorControl &control) const {
+    if(completed_!=4 || other.completed_!=4 || source_blocks_!=other.source_blocks_ ||
+       start_!=other.start_ || dt_!=other.dt_)
+      throw std::invalid_argument("incompatible corrector RK histories");
+    z4c::Z4cGridLayout l;
+    l.is=l.js=l.ks=0;l.ie=data_[0].extent_int(4)-1;
+    l.je=data_[0].extent_int(3)-1;l.ke=data_[0].extent_int(2)-1;
+    Real error=0;
+    for(int n=0;n<5;++n) error=std::max(error,CorrectorDifference(data_[n],other.data_[n],
+                                                               l,control,n==0 ? 1 : dt_));
+    return error;
+  }
   const std::vector<int> &SourceBlocks() const { return source_blocks_; }
   int CompletedStages() const { return completed_; }
   double StartTime() const { return start_; }
