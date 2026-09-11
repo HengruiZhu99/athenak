@@ -854,3 +854,21 @@ no matching build/validation process found. Preparing a GPU helper build of the
 new committed corrector test version in the existing isolated subcycling area.
 No production jobs or sources touched. GPU execution and full endpoint goal
 remain unverified.
+
+GPU build dispatch: committed source261b4d25 transferred by incremental Git bundle.
+Remote isolated source checked clean, then switched to codex/vc-corrector-gpu-261.
+Started build_corrector_261.sh as PID94079; verified live with ps17s after launch.
+Log corrector-261-build.log; terminal exit recorded in corrector-261-build.status;
+executable hash on success corrector-261-executable.sha256. Targets are coupled
+Z4c, recursive transport and temporal-boundary helper tests. No GPU allocation
+submitted yet. Re-poll this PID/status before any retry or submission. Remote
+source remains261b4d25 throughout this build. Production unaffected.
+
+## CUDA local-type compile correction
+
+Build94079 verified terminal: process absent, status2. NVCC rejects the function-
+local TestPhysics type as a template parameter of the enclosing RK device lambda.
+Moved the same test consumer to namespace scope, without numerical changes.
+Local rebuild succeeded and five corrected Z4c CPU gates passed. Archived full
+CUDA failure log in multilevel-evidence/corrector-261-cuda-failure.log. Preparing
+one retry from the new committed source; no GPU allocation exists yet.

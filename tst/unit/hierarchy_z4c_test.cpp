@@ -3,6 +3,14 @@
 #include <fstream>
 #include <iomanip>
 #include "z4c/hierarchy_physics.hpp"
+struct TestPhysics: z4c::HierarchyPhysics<3> {
+      using z4c::HierarchyPhysics<3>::HierarchyPhysics;
+      bool skip_projection=false;
+      void Project(const subcycling::StepContext &s,int stage,const subcycling::BlockBatches &b,
+                   const DvceArray5D<Real> &u) {
+        z4c::HierarchyPhysics<3>::Project(s,skip_projection ? 3 : stage,b,u);
+      }
+    };
 int main(int argc,char **argv) {
  Kokkos::initialize(argc,argv);
  {
@@ -68,14 +76,7 @@ int main(int argc,char **argv) {
     engine.test_corrector_passes=flag("--corrector") ? 5 :
       (flag("--corrector2") ? 2 : (flag("--corrector3") ? 3 : 1));
     engine.test_skip_restriction=flag("--no-restriction");
-    struct TestPhysics: z4c::HierarchyPhysics<3> {
-      using z4c::HierarchyPhysics<3>::HierarchyPhysics;
-      bool skip_projection=false;
-      void Project(const subcycling::StepContext &s,int stage,const subcycling::BlockBatches &b,
-                   const DvceArray5D<Real> &u) {
-        z4c::HierarchyPhysics<3>::Project(s,skip_projection ? 3 : stage,b,u);
-      }
-    } physics(storage,geometry,l,opt,0,roots,roots,flag("--no-ko") ? 0 : .02/64,
+    TestPhysics physics(storage,geometry,l,opt,0,roots,roots,flag("--no-ko") ? 0 : .02/64,
       {{false,true,true,true}},[vary=flag("--time-dependent")](double t){return vary ? 1.+.5*t : 1.;},[](double){return 0.;},[](double){return 0.;});
     physics.skip_projection=flag("--no-projection");
     const double dt=.04/steps;

@@ -1,0 +1,61 @@
+-- Cray Programming Environment 2.7.36 C
+-- Cray Programming Environment 2.7.36 CXX
+-- Setting default Kokkos CXX standard to 17
+-- Kokkos version: 4.7.2
+-- The project name is: Kokkos
+-- Using internal gtest for testing
+-- Compiler Version: 13.2.78
+-- kokkos_launch_compiler (/pscratch/sd/h/hzhu/vc-subcycling-20260911/source/kokkos/bin/kokkos_launch_compiler) is enabled...
+-- Using -std=c++17 for C++17 standard as feature
+-- Built-in Execution Spaces:
+--     Device Parallel: Kokkos::Cuda
+--     Host Parallel: NoTypeDefined
+--       Host Serial: SERIAL
+-- 
+-- Architectures:
+--  AMPERE80
+-- Using internal desul_atomics copy
+-- Experimental mdspan support is enabled
+-- Using internal mdspan directory /pscratch/sd/h/hzhu/vc-subcycling-20260911/source/kokkos/tpls/mdspan/include
+-- Kokkos Backends: SERIAL;CUDA
+CMake Warning (dev) at CMakeLists.txt:330 (find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (2.4s)
+-- Generating done (2.5s)
+-- Build files have been written to: /pscratch/sd/h/hzhu/vc-subcycling-20260911/build
+[ 11%] Built target kokkossimd
+[ 88%] Built target kokkoscore
+[ 88%] Built target kokkosalgorithms
+[100%] Built target kokkoscontainers
+[100%] Building CXX object CMakeFiles/athena_hierarchy_z4c_test.dir/tst/unit/hierarchy_z4c_test.cpp.o
+/pscratch/sd/h/hzhu/vc-subcycling-20260911/source/src/z4c/telegraph_damping.hpp(48): warning #20013-D: calling a constexpr __host__ function("epsilon") from a __host__ __device__ function("RoundoffSafeNonnegativeSqrt") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    const Real tolerance = kRoundoffMultiplier * std::numeric_limits<Real>::epsilon() *
+                                                 ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+/pscratch/sd/h/hzhu/vc-subcycling-20260911/source/src/z4c/boundary_rhs.hpp(357): warning #20013-D: calling a constexpr __host__ function("epsilon") from a __host__ __device__ function("ApplyFullConstraintBjorhusAtPoint") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+      if (fabs(normal_component) <= 32.0 * std::numeric_limits<Real>::epsilon()) {
+                                           ^
+          detected during instantiation of "void z4c::ApplyFullConstraintBjorhusConfigured<Centering,Symmetry>(const z4c::Z4c::Z4c_vars &, const z4c::Z4c::Z4c_vars &, const z4c::Z4cGridLayout &, const DualArray1D<RegionSize> &, const DvceArray2D<BoundaryFlag> &, __nv_bool, int, int, int, int, int, int) [with Centering=z4c::VertexCenteredZ4c, Symmetry=z4c::CartoonSO2]" at line 564
+
+/pscratch/sd/h/hzhu/vc-subcycling-20260911/source/src/z4c/boundary_rhs.hpp(446): warning #20013-D: calling a constexpr __host__ function("epsilon") from a __host__ __device__ function("ApplyFullConstraintBjorhusAtPoint") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    const Real tolerance = 2048.0 * std::numeric_limits<Real>::epsilon() * scale;
+                                    ^
+          detected during instantiation of "void z4c::ApplyFullConstraintBjorhusConfigured<Centering,Symmetry>(const z4c::Z4c::Z4c_vars &, const z4c::Z4c::Z4c_vars &, const z4c::Z4cGridLayout &, const DualArray1D<RegionSize> &, const DvceArray2D<BoundaryFlag> &, __nv_bool, int, int, int, int, int, int) [with Centering=z4c::VertexCenteredZ4c, Symmetry=z4c::CartoonSO2]" at line 564
+
+/pscratch/sd/h/hzhu/vc-subcycling-20260911/source/src/driver/hierarchy_rk4.hpp(104): error: A type local to a function ("TestPhysics") cannot be used in the template argument of the enclosing parent function (and any parent classes) of an extended __device__ or __host__ __device__ lambda
+                                                          (int m,int v,int k,int j,int i) {
+                                                          ^
+          detected during instantiation of "void subcycling::HierarchyRK4::Run(double, double, subcycling::VertexParentStates &, Physics &, unsigned int) [with Physics=TestPhysics]" at line 82 of /pscratch/sd/h/hzhu/vc-subcycling-20260911/source/tst/unit/hierarchy_z4c_test.cpp
+
+1 error detected in the compilation of "/pscratch/sd/h/hzhu/vc-subcycling-20260911/source/tst/unit/hierarchy_z4c_test.cpp".
+gmake[3]: *** [CMakeFiles/athena_hierarchy_z4c_test.dir/build.make:76: CMakeFiles/athena_hierarchy_z4c_test.dir/tst/unit/hierarchy_z4c_test.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:1855: CMakeFiles/athena_hierarchy_z4c_test.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:1862: CMakeFiles/athena_hierarchy_z4c_test.dir/rule] Error 2
+gmake: *** [Makefile:829: athena_hierarchy_z4c_test] Error 2
