@@ -1041,3 +1041,34 @@ Still incomplete: source stability and retry control; caller cleanup of derived
 physics/gauge state on exceptions; strong-gauge comparison to existing
 synchronous production path; main-driver checkpoint/AMR integration and actual
 single-A100 matched-endpoint reproduction. No production files/jobs changed.
+
+## Checkpoint entry-path qualification hook
+
+Added test-build-only ATHENA_TEST_SUBCYCLE_INTERVAL_DIR hook after restart ghost
+initialization. Requires vacuum single-rank VC Cartoon, production max-domain
+telegraph gauge, zero constraint damping/shift eta, rho-axis boundary, a new
+output directory, and explicit time/subcycle_probe_dt and subcycle_probe_ratio.
+Currently one fixed-hierarchy interval, dt capped at the saved finest dt.
+This is an accuracy probe, not full driver subcycling or a speedup mode. Dispatch
+uses opt.fd_stencil (not ghost allocation width). It copies populated hierarchy
+state, never copies evolved fields back to live u0 or changes mesh time, writes
+leaf-ordered fields.bin/topology/probe metadata, then exits before evolution
+and final production output. Caller must run in an isolated working directory
+because normal restart initialization still runs before this hook.
+
+The common-time coefficient callback caches repeated query times per pass.
+Corrector still checks gauge/endpoint/history residuals. Source stability/retry
+for intervals larger than saved dt is explicitly not implemented here.
+
+Complete CPU athena build succeeded. A four-block flat VC Cartoon telegraph
+checkpoint smoke test succeeded, dt1e-4,3passes, zero residuals. Repeated output
+fields have identical SHA d07f7c56a70d0342b81ff47dc896f979277275b9a06eda35874f7334af754b83.
+Input checkpoint SHA unchanged0f5ee2a323e1bbe0626b5f33db4ead8c7b84ba59bdddf9dd2e8f0d32cb0eba4c.
+Final rebuild/smoke also succeeded after metadata/option guards. Evidence in
+checkpoint-probe-evidence; raw restart/fields under /tmp/vc-checkpoint-probe-smoke.
+Initial smoke rejected a custom input block; parameters now use allowed time
+block. No Perlmutter production files or runs changed.
+
+Next: CUDA compile and isolated Brill checkpoint probe, then actual multi-interval
+driver integration with live AMR, safe step limits/retry and diagnostic cadence.
+Matched-endpoint single-A100 reproduction/speedup remains incomplete.

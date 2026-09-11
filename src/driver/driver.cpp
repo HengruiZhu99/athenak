@@ -1,4 +1,7 @@
 #include "driver/hierarchy_vertex_exchange.hpp"
+#if defined(ATHENA_Z4C_KERNEL_TESTS)
+#include "z4c/checkpoint_subcycle_probe.hpp"
+#endif
 //========================================================================================
 // AthenaXXX astrophysical plasma code
 // Copyright(C) 2020 James M. Stone <jmstone@ias.edu> and the Athena code team
@@ -354,6 +357,20 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   InitBoundaryValuesAndPrimitives(pmesh, res_flag);
 
 #if defined(ATHENA_Z4C_KERNEL_TESTS)
+  if(const char *directory=std::getenv("ATHENA_TEST_SUBCYCLE_INTERVAL_DIR")) {
+    if(!res_flag || pmesh->pmb_pack->pdyngr || pmesh->pmb_pack->phydro ||
+       pmesh->pmb_pack->pmhd) throw std::runtime_error("probe requires vacuum Z4c restart");
+    const Real dt=pin->GetReal("time","subcycle_probe_dt");
+    const int ratio=pin->GetInteger("time","subcycle_probe_ratio");
+    auto *z=pmesh->pmb_pack->pz4c;
+    if(!z) throw std::runtime_error("probe requires Z4c");
+    if(z->opt.fd_stencil==2) z4c::CheckpointSubcycleProbe<2>(pmesh,z,directory,dt,ratio);
+    else if(z->opt.fd_stencil==3) z4c::CheckpointSubcycleProbe<3>(pmesh,z,directory,dt,ratio);
+    else if(z->opt.fd_stencil==4) z4c::CheckpointSubcycleProbe<4>(pmesh,z,directory,dt,ratio);
+    else throw std::runtime_error("unsupported probe ghost count");
+    std::cout<<"Checkpoint subcycling probe complete; live evolution not advanced."<<std::endl;
+    std::exit(EXIT_SUCCESS);
+  }
   if (std::getenv("ATHENA_TEST_SUBCYCLE_PARENTS") != nullptr ||
       std::getenv("ATHENA_TEST_SUBCYCLE_ALL_NODES") != nullptr) {
     auto *z=pmesh->pmb_pack->pz4c;
