@@ -1,0 +1,23 @@
+{
+  "command": [
+    "srun",
+    "--nodes=1",
+    "--ntasks=1",
+    "--cpus-per-task=32",
+    "--gpus=1",
+    "--gpu-bind=single:1",
+    "--cpu-bind=cores",
+    "--exact",
+    "--kill-on-bad-exit=1",
+    "/pscratch/sd/h/hzhu/vc-subcycling-20260911/pinned-corrector-trace/athena",
+    "-r",
+    "/pscratch/sd/h/hzhu/n128-chite-bisection-20260910/cycle_03_recovery_24000/rst/lapse200.00066.rst",
+    "-i",
+    "/pscratch/sd/h/hzhu/vc-subcycling-20260911/corrector-probe-fb3d341c/input.athinput",
+    "-t",
+    "00:08:00"
+  ],
+  "returncode": 134,
+  "wall_seconds": 111.5839773810003,
+  "job_id": "58211844"
+}
