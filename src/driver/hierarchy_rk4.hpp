@@ -132,10 +132,10 @@ class HierarchyRK4 {
       exchange_.Apply(state,step.minimum_level,step.maximum_level);
     };
     struct Callbacks {
-      decltype(advance) &advance;
-      decltype(synchronize) &synchronize;
-      void Advance(const StepContext &s) {advance(s);}
-      void Synchronize(const StepContext &s) {synchronize(s);}
+      decltype(advance) &advance_fn;
+      decltype(synchronize) &synchronize_fn;
+      void Advance(const StepContext &s) {advance_fn(s);}
+      void Synchronize(const StepContext &s) {synchronize_fn(s);}
     } callbacks{advance,synchronize};
     Schedule(root_,maximum_,maximum_ratio).Run(time,dt,callbacks);
     Kokkos::fence("hierarchy RK synchronized interval complete");

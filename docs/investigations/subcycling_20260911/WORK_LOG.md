@@ -872,3 +872,22 @@ Moved the same test consumer to namespace scope, without numerical changes.
 Local rebuild succeeded and five corrected Z4c CPU gates passed. Archived full
 CUDA failure log in multilevel-evidence/corrector-261-cuda-failure.log. Preparing
 one retry from the new committed source; no GPU allocation exists yet.
+
+Retry dispatch: sourcec0464f5c fetched/checked out in the clean isolated remote
+source as codex/vc-corrector-gpu-c046. Guarded build_validate_corrector_c046.sh
+started as PID153387. Builds coupled Z4c, recursive transport and temporal sampler
+GPU tests, then only on success requests a15min singleA10080GB shared_interactive
+allocation (accountm3328_g). Run script captures source/hash/Slurm provenance,
+executes five corrected Z4c cases with full active-field dumps, then two helpers.
+Any build/test failure stops the sequence. Logs corrector-c046-build.log,
+corrector-c046-allocation.log; terminal status corrector-c046.status. Do not retry
+while this verified process remains live. No production simulation is included.
+
+## GCC callback-name portability correction
+
+Process153387 verified terminal (absent; corrector-c046.status2). No allocation
+log/job was created. GCC host compilation rejects callback members named advance
+and synchronize because their decltype declarations refer to enclosing lambdas
+of those same names. Renamed members to advance_fn/synchronize_fn; numerical
+operations unchanged. Local rebuild and corrected Z4c/transport tests pass.
+Preparing a fresh named retry after committing this fix. Prior logs retained.
