@@ -1072,3 +1072,33 @@ block. No Perlmutter production files or runs changed.
 Next: CUDA compile and isolated Brill checkpoint probe, then actual multi-interval
 driver integration with live AMR, safe step limits/retry and diagnostic cadence.
 Matched-endpoint single-A100 reproduction/speedup remains incomplete.
+
+## Refined real-checkpoint probe qualification; SSH unavailable
+
+Previous turn made progress with the checkpoint hook. Perlmutter SSH via the
+requested control socket reached login but failed authentication(publickey etc),
+exit255. No remote source/job state could be inspected or modified. Requested
+connection renewal; meaningful local work continued, goal not blocked.
+
+Attempted local Brill fixture from archived A=-0.049625 coefficients but current
+CPU build lacks the IrisK generator; failed before evolution. Evidence remains
+/tmp/vc-brill-probe-local/create.log. No claim of Brill validation.
+
+Added reproducible scripts/subcycling/test_checkpoint_probe.py. It creates an
+isolated seven-leaf/two-level Gaussian lapse-pulse checkpoint with telegraph
+max-domain gauge, runs ratio1 and ratio2 probes at three dt, verifies finite
+output shape and unchanged source checkpoint hash, and records executable hash.
+Input parameters must exist before Athena command-line overrides; corrected
+the initial script fixture accordingly.
+
+Initial dt1e-4 tests were roundoff-limited. At dt.002,.001,.0005, ratio2-minus-
+ratio1 RMS differences2.98133e-13,9.30743e-15,2.93151e-16; max differences
+1.18181e-11,3.66860e-13,1.14680e-14. Approximately32x reduction per halving,
+consistent with fifth-order local error over ONE interval. Ratio1 needs3 passes,
+ratio2 needs5,5,4. These are both hierarchy-probe paths, not an independent
+comparison against production synchronous driver. Full raw output under
+/tmp/vc-pulse-checkpoint-qualification-v3; committed pulse-checkpoint-evidence.
+
+Next remains CUDA/late-Brill checkpoint validation when access returns, plus
+production synchronous comparison, safe interval selection/retry, live-AMR
+driver integration and end-time single-A100 performance reproduction.
