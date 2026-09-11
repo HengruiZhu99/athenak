@@ -9,8 +9,8 @@ namespace subcycling {
 // Assembled fixed-hierarchy recursive RK4 engine. Physics supplies Prepare
 // (physical ghosts/stage geometry), RHS, and Project (post-update admissibility).
 // Gauge histories, rollback, and live regridding are owned by the outer driver.
-// This first engine uses factor-two stepping at every level. Synchronous coarse
-// grouping requires its own current-stage spatial interface fill and is rejected.
+// Coarser levels can form a synchronous group. Its internal interfaces use
+// current-stage spatial data, with stage restriction before RHS evaluation.
 class HierarchyRK4 {
  public:
 #ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
@@ -40,7 +40,8 @@ class HierarchyRK4 {
     nodes_=tree.Nodes().size();ready_=true;
   }
   template<class Physics>
-  void Run(double time,double dt,VertexParentStates &storage,Physics &physics) {
+  void Run(double time,double dt,VertexParentStates &storage,Physics &physics,
+           unsigned maximum_ratio=(1U<<20)) {
     if(!ready_ || storage.Values().extent_int(0)!=nodes_ ||
        storage.AllLevels().extent_int(0)!=nodes_)
       throw std::invalid_argument("hierarchy RK storage mismatch");
@@ -57,10 +58,14 @@ class HierarchyRK4 {
     // state machinery in one path used by manufactured and Z4c consumers.
     auto advance=[&](const StepContext &step) {
       const int level=step.maximum_level;
-      blocks_.Update(true,storage.AllLevels(),nodes_,level,level);
+      blocks_.Update(true,storage.AllLevels(),nodes_,step.minimum_level,level);
       for(int stage=1;stage<=4;++stage) {
-        exchange_.Apply(state,level,level);
-        if(level>root_) {
+        for(int parent=level-1;parent>=step.minimum_level;--parent)
+          storage.RestrictLevel(layout_,parent);
+        exchange_.Apply(state,step.minimum_level,level);
+        for(int fine=step.minimum_level+1;fine<=level;++fine)
+          ghosts_.at(fine).ApplySpatial(state,layout_);
+        if(step.minimum_level>root_) {
           const auto parent=contexts_.at(level-1);
           const double fraction=static_cast<double>(step.begin_tick-parent.begin_tick)/
                                 (parent.end_tick-parent.begin_tick);
@@ -88,8 +93,9 @@ class HierarchyRK4 {
 #ifdef ATHENA_SUBCYCLE_DIAGNOSTICS
       if(!test_skip_restriction)
 #endif
-      storage.RestrictLevel(layout_,step.maximum_level);
-      exchange_.Apply(state,step.maximum_level,step.maximum_level);
+      for(int parent=step.maximum_level;parent>=step.minimum_level;--parent)
+        storage.RestrictLevel(layout_,parent);
+      exchange_.Apply(state,step.minimum_level,step.maximum_level);
     };
     struct Callbacks {
       decltype(advance) &advance;
@@ -97,7 +103,7 @@ class HierarchyRK4 {
       void Advance(const StepContext &s) {advance(s);}
       void Synchronize(const StepContext &s) {synchronize(s);}
     } callbacks{advance,synchronize};
-    Schedule(root_,maximum_,1U<<(maximum_-root_)).Run(time,dt,callbacks);
+    Schedule(root_,maximum_,maximum_ratio).Run(time,dt,callbacks);
     Kokkos::fence("hierarchy RK synchronized interval complete");
   }
  private:

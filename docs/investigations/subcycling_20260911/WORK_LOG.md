@@ -773,3 +773,33 @@ This rules out merely adding coarse-prescribed shared interface stage/end values
 as a sufficient fix. Need consistent two-way coupling or a demonstrated analysis
 of mixed spatial/temporal restriction error before claiming qualification. Full
 single-A100 faster endpoint reproduction remains unverified and the goal active.
+
+## Stage-coupled synchronous hierarchy reference and coarse groups
+
+Previous turn progressed by rejecting/archiving the interface prescription
+hypothesis. Implemented direct current-stage spatial evaluation of the existing
+native interpolation plan (active hierarchy donor IDs, same parity and explicit
+physical extrapolation, no synthetic RK history). HierarchyTemporalGhosts now
+scatters this spatial evaluation for levels sharing an RK stage.
+
+HierarchyRK4 now accepts a bounded maximum_ratio. The resulting coarser group
+restricts its internal covered levels before each common RK stage, reconciles
+shared vertices, and fills internal interfaces from current-stage spatial data.
+Interfaces to genuinely asynchronous children still use the coarse RK predictor.
+At interval synchronization, restriction covers every level in the group. Ratio1
+is the fully coupled synchronous hierarchy reference; ratio2 on the two-level
+test preserves the existing asynchronous behavior.
+
+The real Z4c synchronous hierarchy reference WITH restriction now passes:
+successive RMS7.73436e-11,4.40538e-12,2.65808e-13; ratios17.5566,16.5736.
+Evidence hierarchy-z4c-synchronous-reference.txt. This establishes a stage-coupled
+reference without removing feedback. Direct spatial ghost evaluation is checked
+against the independently tested initial-time temporal evaluation for interior,
+axis and axis/outer patches. Five of six relevant CPU tests pass; default
+asynchronous hierarchy_z4c remains failing at1.96042,1.9769. Build/tmp/vc-group-build.log,
+test/tmp/vc-group-ctest.log. No claim that the async error is fixed.
+
+Bounded groups are now numerically implemented but mixed multilevel/group and
+GPU qualification remain. Next work is consistent asynchronous two-way coupling
+against this reference, followed by production-gauge/live-AMR/endpoint comparison.
+No production files/jobs were changed.

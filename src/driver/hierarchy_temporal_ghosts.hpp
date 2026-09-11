@@ -80,6 +80,17 @@ class HierarchyTemporalGhosts {
       state(ids(p,0),v,0,ids(p,1),ids(p,2))=values(p,v);
     });
   }
+  void ApplySpatial(const DvceArray5D<Real> &state,const z4c::Z4cGridLayout &layout) {
+    if(!ready_ || state.extent_int(0)!=nodes_ || state.extent_int(1)<=0 ||
+       state.extent_int(2)!=1 || state.extent_int(3)!=n2_ || state.extent_int(4)!=n1_)
+      throw std::invalid_argument("invalid synchronous ghost destination state");
+    interpolation_.EvaluateSpatial(state,layout,values_);
+    const auto ids=destinations_;const auto values=values_;
+    if(ids.extent_int(0)>0) par_for("scatter synchronous fine ghosts",DevExeSpace(),
+        0,ids.extent_int(0)-1,0,state.extent_int(1)-1,KOKKOS_LAMBDA(int p,int v) {
+      state(ids(p,0),v,0,ids(p,1),ids(p,2))=values(p,v);
+    });
+  }
  private:
   bool ready_=false;
   int nodes_=0,n1_=0,n2_=0;

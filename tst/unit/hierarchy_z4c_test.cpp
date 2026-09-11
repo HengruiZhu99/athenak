@@ -64,7 +64,7 @@ int main(int argc,char **argv) {
       {{false,true,true,true}},[](double){return 1.;},[](double){return 0.;},[](double){return 0.;});
     physics.skip_projection=flag("--no-projection");
     const double dt=.04/steps;
-    for(int n=0;n<steps;++n) engine.Run(n*dt,dt,storage,physics);
+    for(int n=0;n<steps;++n) engine.Run(n*dt,dt,storage,physics,flag("--synchronous-hierarchy") ? 1 : 2);
     auto out=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
     std::vector<double> values;
     for(int n=0;n<out.extent_int(0);++n) if(!tree.Nodes()[n].Covered())

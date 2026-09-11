@@ -131,6 +131,10 @@ class VertexTemporalBoundary {
     }
     for (int n=0;n<static_cast<int>(offsets.size());++n) ho(n)=offsets[n];
     Kokkos::deep_copy(indices_,hi);Kokkos::deep_copy(weights_,hw);Kokkos::deep_copy(offsets_,ho);
+    source_ids_=DvceArray1D<int>("spatial predictor source IDs",source_blocks.size());
+    auto hs=Kokkos::create_mirror_view(source_ids_);
+    for(int n=0;n<static_cast<int>(source_blocks.size());++n) hs(n)=source_blocks[n];
+    Kokkos::deep_copy(source_ids_,hs);
     source_blocks_=source_blocks;
     nx_=nx;ny_=ny;blocks_=coarse_blocks.size();targets_=targets.size();
   }
@@ -161,11 +165,36 @@ class VertexTemporalBoundary {
       out(p,v)=result;
     });
   }
+  // Direct spatial sampling for levels at the SAME RK stage. No fabricated
+  // temporal history: donor IDs index the populated hierarchy state directly.
+  void EvaluateSpatial(const DvceArray5D<Real> &state,const z4c::Z4cGridLayout &l,
+                       DvceArray2D<Real> &out) {
+    if(blocks_<0 || l.ie-l.is!=nx_ || l.je-l.js!=ny_ || l.ks!=0 ||
+       l.is<0 || l.js<0 || state.extent_int(2)!=1 || state.extent_int(1)<=0 ||
+       state.extent_int(3)<=l.je || state.extent_int(4)<=l.ie)
+      throw std::invalid_argument("invalid current-stage spatial donor state");
+    for(int n:source_blocks_) if(n>=state.extent_int(0))
+      throw std::invalid_argument("missing current-stage spatial donor");
+    const int nv=state.extent_int(1),is=l.is,js=l.js;
+    if(parities_.extent_int(0)!=0 && parities_.extent_int(0)!=nv)
+      throw std::invalid_argument("spatial axis component count mismatch");
+    if(out.extent_int(0)!=targets_ || out.extent_int(1)!=nv) Kokkos::realloc(out,targets_,nv);
+    const auto ids=indices_;const auto sources=source_ids_;
+    const auto w=weights_;const auto offsets=offsets_;const auto parity=parities_;
+    if(targets_>0) par_for("interpolate current-stage VC boundary",DevExeSpace(),
+        0,targets_-1,0,nv-1,KOKKOS_LAMBDA(int p,int v) {
+      Real result=0;
+      for(int n=offsets(p);n<offsets(p+1);++n)
+        result+=w(n)*(ids(n,3) ? parity(v) : 1)*
+          state(sources(ids(n,0)),v,0,ids(n,1)+js,ids(n,2)+is);
+      out(p,v)=result;
+    });
+  }
  private:
   std::vector<int> source_blocks_;
   int nx_=0,ny_=0,blocks_=-1,targets_=0;
   DvceArray2D<int> indices_;
-  DvceArray1D<int> offsets_,parities_;
+  DvceArray1D<int> offsets_,parities_,source_ids_;
   DvceArray1D<Real> weights_;
   DvceArray5D<Real> stage_values_;
 };

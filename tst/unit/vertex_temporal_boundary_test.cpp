@@ -112,6 +112,12 @@ void TestHierarchyScatter(bool axis=false,bool outer=false) {
     for(std::size_t k=0;k<rhs.size();++k) hr.data()[k]=initial.data()[k]*factors[stage-1];
     Kokkos::deep_copy(rhs,hr);predictor.Capture(rhs,stage);
   }
+  ghosts.ApplySpatial(u,l);
+  auto spatial=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),u);
+  Kokkos::deep_copy(u,initial);
+  ghosts.Apply(predictor,0,dt/2,1,u);
+  auto at_start=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),u);
+  for(std::size_t n=0;n<u.size();++n) Check(spatial.data()[n]==at_start.data()[n]);
   for(double q:{0.,.5}) for(int stage=1;stage<=4;++stage) {
     Kokkos::deep_copy(u,initial);
     ghosts.Apply(predictor,q,dt/2,stage,u);
