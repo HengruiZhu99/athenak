@@ -404,3 +404,23 @@ ratios15.17646,15.23751. Evidence bulk-rhs-results.json; raw
 /tmp/vc-cartoon-bulk-rhs-runtime. Analytic unit parent_bulk_rhs passes. Build logs
 /tmp/vc-parent-rhs-build.log and /tmp/vc-parent-rhs-unit.log. GPU compilation of
 this extraction remains outstanding; queued/running topology24 uses a127a1fe.
+
+## Completed topology optimization GPU comparison
+
+Job58200152 COMPLETED0:0 (7m20s), one A100 on nid008445. Baseline24steps took
+335.87094s total; optimized sourcea127a1fe took91.49285s (3.671x). All history
+columns exactly equal, AMR history identical, complete restart payload SHA256
+451f84d0dce7d7f2d9f08f5f3f612cf0de8a9c63a898b2659a5a253637205304 identical.
+Matched final time62.2056184751341; one actual AMR event crossed. Profile evolution
+24cycles11.71898s; topology rebuild during AMR0.37489s; initialization54.53511s
+including topology0.33516s. Evidence topology24-comparison.json and
+topology24-timing.json. This is a short synchronous restart speedup from topology
+optimization, not full provisional endpoint reproduction or subcycling success.
+
+Archived immutable GPU executable binaries/athena.topology-a127a1fe with hash
+72d03a012dd24b46a643c8b2b692ad261caaa47056593733d8851f1f2408715c and CMake cache.
+After confirming allocation/launcher terminal, fast-forwarded isolated remote
+source to faaf6973. New GPU build PID1953857, parent-rhs-build.log and
+parent-rhs-build.pid. No new GPU allocation yet; build completion and new helper
+GPU tests must be checked before another evolution comparison. Production
+campaign remains unchanged.

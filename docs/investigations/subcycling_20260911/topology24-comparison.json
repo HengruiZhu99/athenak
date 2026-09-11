@@ -1,0 +1,347 @@
+{
+  "late": {
+    "final_time": 62.2056184751341,
+    "history_max_abs_differences": {
+      "time": 0.0,
+      "dt": 0.0,
+      "C-norm2": 0.0,
+      "H-norm2": 0.0,
+      "M-norm2": 0.0,
+      "Z-norm2": 0.0,
+      "Mx-norm2": 0.0,
+      "My-norm2": 0.0,
+      "Mz-norm2": 0.0,
+      "Theta-norm": 0.0,
+      "Volume": 0.0,
+      "max_abs_K": 0.0,
+      "nmb_total": 0.0,
+      "maxAbsKret": 0.0,
+      "minLapse": 0.0,
+      "maxRefLev": 0.0,
+      "maxNmbRank": 0.0,
+      "ahStatus": 0.0,
+      "ahLastCyc": 0.0,
+      "cycle": 0.0,
+      "axisLapse": 0.0,
+      "axisTau": 0.0,
+      "axisKret": 0.0,
+      "ax-C2": 0.0,
+      "ax-H2": 0.0,
+      "ax-M2": 0.0,
+      "ax-Z2": 0.0,
+      "ax-N": 0.0,
+      "off-C2": 0.0,
+      "off-H2": 0.0,
+      "off-M2": 0.0,
+      "off-Z2": 0.0,
+      "off-Vol": 0.0,
+      "L0-C2": 0.0,
+      "L0-H2": 0.0,
+      "L0-M2": 0.0,
+      "L0-Z2": 0.0,
+      "L0-N": 0.0,
+      "L1-C2": 0.0,
+      "L1-H2": 0.0,
+      "L1-M2": 0.0,
+      "L1-Z2": 0.0,
+      "L1-N": 0.0,
+      "L2-C2": 0.0,
+      "L2-H2": 0.0,
+      "L2-M2": 0.0,
+      "L2-Z2": 0.0,
+      "L2-N": 0.0,
+      "L3-C2": 0.0,
+      "L3-H2": 0.0,
+      "L3-M2": 0.0,
+      "L3-Z2": 0.0,
+      "L3-N": 0.0,
+      "L4-C2": 0.0,
+      "L4-H2": 0.0,
+      "L4-M2": 0.0,
+      "L4-Z2": 0.0,
+      "L4-N": 0.0,
+      "C-Linf": 0.0,
+      "C-rho": 0.0,
+      "C-z": 0.0,
+      "H-Linf": 0.0,
+      "H-rho": 0.0,
+      "H-z": 0.0,
+      "M-Linf": 0.0,
+      "M-rho": 0.0,
+      "M-z": 0.0,
+      "Z-Linf": 0.0,
+      "Z-rho": 0.0,
+      "Z-z": 0.0,
+      "muMin": 0.0,
+      "muMax": 0.0
+    },
+    "restart_payload_hashes": [
+      "451f84d0dce7d7f2d9f08f5f3f612cf0de8a9c63a898b2659a5a253637205304",
+      "451f84d0dce7d7f2d9f08f5f3f612cf0de8a9c63a898b2659a5a253637205304"
+    ],
+    "all_restart_payload_bytes_equal": true,
+    "amr_history_identical": true,
+    "profile": {
+      "evolution_cycle": {
+        "calls": 24.0,
+        "inclusive_seconds": 11.718982223000001,
+        "exclusive_seconds": 0.010701481999999707
+      },
+      "evolution_cycle/amr": {
+        "calls": 24.0,
+        "inclusive_seconds": 0.6987367990000001,
+        "exclusive_seconds": 0.2489421410000001
+      },
+      "evolution_cycle/amr/amr/redistribute_transfer": {
+        "calls": 1.0,
+        "inclusive_seconds": 0.433331092,
+        "exclusive_seconds": 0.058441679999999996
+      },
+      "evolution_cycle/amr/amr/redistribute_transfer/vc/topology_rebuild": {
+        "calls": 1.0,
+        "inclusive_seconds": 0.374889412,
+        "exclusive_seconds": 0.374889412
+      },
+      "evolution_cycle/amr/amr/tagging": {
+        "calls": 24.0,
+        "inclusive_seconds": 0.010666227,
+        "exclusive_seconds": 0.010666227
+      },
+      "evolution_cycle/amr/amr/tree": {
+        "calls": 24.0,
+        "inclusive_seconds": 0.001919529,
+        "exclusive_seconds": 0.001919529
+      },
+      "evolution_cycle/amr/vc/shared_node_sync": {
+        "calls": 2.0,
+        "inclusive_seconds": 0.0038778099999999998,
+        "exclusive_seconds": 0.0038778099999999998
+      },
+      "evolution_cycle/scheduled_output": {
+        "calls": 6.0,
+        "inclusive_seconds": 0.150206075,
+        "exclusive_seconds": 0.150206075
+      },
+      "evolution_cycle/stopping_check": {
+        "calls": 24.0,
+        "inclusive_seconds": 0.004966612000000001,
+        "exclusive_seconds": 0.004966612000000001
+      },
+      "evolution_cycle/tasks/after_stagen": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.2626110230000001,
+        "exclusive_seconds": 0.0015123299999999604
+      },
+      "evolution_cycle/tasks/after_stagen/nr/CCEDump": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.779499999999995e-05,
+        "exclusive_seconds": 8.779499999999995e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ADMC": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.22229412599999993,
+        "exclusive_seconds": 0.22229412599999993
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearR": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.019383005000000002,
+        "exclusive_seconds": 0.019383005000000002
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearR2": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.838099999999999e-05,
+        "exclusive_seconds": 8.838099999999999e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearS": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.018539482999999995,
+        "exclusive_seconds": 0.018539482999999995
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ClearS2": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.753199999999996e-05,
+        "exclusive_seconds": 8.753199999999996e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_DumpHorizon": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.744199999999995e-05,
+        "exclusive_seconds": 8.744199999999995e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_ProlW": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.724700000000001e-05,
+        "exclusive_seconds": 8.724700000000001e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_RecvW": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.862199999999997e-05,
+        "exclusive_seconds": 8.862199999999997e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_RestW": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.943099999999999e-05,
+        "exclusive_seconds": 8.943099999999999e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_SendW": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.927699999999998e-05,
+        "exclusive_seconds": 8.927699999999998e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_Wave": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.5713e-05,
+        "exclusive_seconds": 8.5713e-05
+      },
+      "evolution_cycle/tasks/after_stagen/nr/Z4c_Weyl": {
+        "calls": 96.0,
+        "inclusive_seconds": 9.063899999999997e-05,
+        "exclusive_seconds": 9.063899999999997e-05
+      },
+      "evolution_cycle/tasks/after_timeintegrator": {
+        "calls": 24.0,
+        "inclusive_seconds": 2.789499999999999e-05,
+        "exclusive_seconds": 2.789499999999999e-05
+      },
+      "evolution_cycle/tasks/before_stagen": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.02710586799999999,
+        "exclusive_seconds": 0.00037575300000000037
+      },
+      "evolution_cycle/tasks/before_stagen/nr/Z4c_IRecvW": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.00010106799999999999,
+        "exclusive_seconds": 0.00010106799999999999
+      },
+      "evolution_cycle/tasks/before_stagen/nr/Z4c_Recv": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.026629047000000003,
+        "exclusive_seconds": 0.026629047000000003
+      },
+      "evolution_cycle/tasks/before_timeintegrator": {
+        "calls": 24.0,
+        "inclusive_seconds": 3.3066e-05,
+        "exclusive_seconds": 3.3066e-05
+      },
+      "evolution_cycle/tasks/stagen": {
+        "calls": 96.0,
+        "inclusive_seconds": 10.564593403,
+        "exclusive_seconds": 0.0024397990000003117
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_AxisGhosts": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.006894860999999996,
+        "exclusive_seconds": 0.006894860999999996
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_AxisGhostsPost": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.006487254999999998,
+        "exclusive_seconds": 0.006487254999999998
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_BCS": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.068035596,
+        "exclusive_seconds": 0.068035596
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CalcRHS": {
+        "calls": 96.0,
+        "inclusive_seconds": 2.3197664940000005,
+        "exclusive_seconds": 2.2882534690000007
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CalcRHS/gauge/global_max_K": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.03151302499999999,
+        "exclusive_seconds": 0.03151302499999999
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_CopyU": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.17043594900000003,
+        "exclusive_seconds": 0.17043594900000003
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_ExplRK": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.3845595610000001,
+        "exclusive_seconds": 0.3845595610000001
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_FastFlow": {
+        "calls": 96.0,
+        "inclusive_seconds": 8.894099999999996e-05,
+        "exclusive_seconds": 8.894099999999996e-05
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Newdt": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.021503388000000002,
+        "exclusive_seconds": 0.021503388000000002
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_PT": {
+        "calls": 96.0,
+        "inclusive_seconds": 9.0323e-05,
+        "exclusive_seconds": 9.0323e-05
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Prolong": {
+        "calls": 96.0,
+        "inclusive_seconds": 1.216885436,
+        "exclusive_seconds": 1.216885436
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RecvU": {
+        "calls": 96.0,
+        "inclusive_seconds": 1.9117956830000002,
+        "exclusive_seconds": 1.7257207080000003
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RecvU/vc/shared_node_sync": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.18607497500000006,
+        "exclusive_seconds": 0.18607497500000006
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RestU": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.28725837400000004,
+        "exclusive_seconds": 0.10225905400000002
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_RestU/vc/shared_node_sync": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.18499932000000002,
+        "exclusive_seconds": 0.18499932000000002
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_SendU": {
+        "calls": 96.0,
+        "inclusive_seconds": 2.0907178340000008,
+        "exclusive_seconds": 2.0907178340000008
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_SomBC": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.032756458999999995,
+        "exclusive_seconds": 0.032756458999999995
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_VCFinalize": {
+        "calls": 96.0,
+        "inclusive_seconds": 1.5796024760000005,
+        "exclusive_seconds": 1.4864596850000003
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_VCFinalize/vc/shared_node_sync": {
+        "calls": 48.0,
+        "inclusive_seconds": 0.09314279099999996,
+        "exclusive_seconds": 0.09314279099999996
+      },
+      "evolution_cycle/tasks/stagen/nr/Z4c_Z4c2ADM": {
+        "calls": 96.0,
+        "inclusive_seconds": 0.4652749739999996,
+        "exclusive_seconds": 0.4652749739999996
+      },
+      "initialization": {
+        "calls": 1.0,
+        "inclusive_seconds": 54.535108387,
+        "exclusive_seconds": 54.189538526
+      },
+      "initialization/vc/shared_node_sync": {
+        "calls": 2.0,
+        "inclusive_seconds": 0.010412595,
+        "exclusive_seconds": 0.010412595
+      },
+      "initialization/vc/topology_rebuild": {
+        "calls": 1.0,
+        "inclusive_seconds": 0.335157266,
+        "exclusive_seconds": 0.335157266
+      }
+    }
+  }
+}
