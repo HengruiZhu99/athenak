@@ -357,9 +357,13 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     auto *z=pmesh->pmb_pack->pz4c;
     if (z == nullptr) throw std::runtime_error("parent initialization test requires Z4c");
     z->RebuildSubcycleParents();
+    const auto coverage=z->subcycle_parents.FillSameLevelGhosts(
+        *z->subcycle_hierarchy,z->u0,z->layout);
     std::cout << "SUBCYCLE_PARENT_INITIALIZATION parents="
               << z->subcycle_parents.ParentNodes().size()
               << " bytes=" << z->subcycle_parents.Values().size()*sizeof(Real)
+              << " same_level_ghosts=" << coverage.copied
+              << " unavailable_ghosts=" << coverage.unavailable
               << " ghosts_valid=false evolved=false" << std::endl;
   }
   // This opt-in environment hook is compiled only into unit-test-enabled

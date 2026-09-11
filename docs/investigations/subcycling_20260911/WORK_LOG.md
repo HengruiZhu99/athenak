@@ -171,3 +171,27 @@ it does not advance parents, fill their ghosts, or enable subcycling.
 Remote compatible profiling build finished successfully. Guarded launcher1695372
 has requested allocation58198945, currently pending resources. Preserve this
 handle and recheck its actual state rather than launching a duplicate.
+
+## Same-level auxiliary ghost filling
+
+Parent storage now copies ghost values only from same-level active donors,
+including covered parents. Exact shared coordinates use deterministic lower-node
+ownership; missing physical/coarse-fine donors remain NaN. Layout, topology and
+source-index compatibility are checked; logical coordinate products use64-bit
+arithmetic. This is not a complete boundary provider: temporal coarse/fine,
+axis parity and physical outer boundaries remain to implement.
+
+The polynomial test now covers two adjacent covered root blocks and a second
+refinement generation, exercising leaf and parent donors, missing-donor counts,
+layout rejection and unchanged leaves. The real startup test reports472 copied
+and200 unavailable ghost points for two parents. All four CFL runs retain
+byte-identical complete restart payloads. Evidence is in
+parent-same-level-ghost-results.json.
+
+Allocation58198945 is RUNNING on nid008213. Early baseline and instrumented
+12-cycle restarts completed successfully (~51.27s and51.06s total respectively).
+The late baseline is currently running. Early profile evidence is copied to
+profiling-early/: RHS inclusive0.49672s, scheduled outputs7.93999s, initialization
+topology rebuild11.39476s. The short-window totals include initialization and
+final outputs; do not treat them as asymptotic evolution throughput or a subcycling
+speedup. Full-state comparison is still pending the four-case workflow.

@@ -1,6 +1,7 @@
 #ifndef DRIVER_VERTEX_PARENT_STATES_HPP_
 #define DRIVER_VERTEX_PARENT_STATES_HPP_
 #include <limits>
+#include <cstdint>
 #include <map>
 #include <stdexcept>
 #include "athena.hpp"
@@ -16,11 +17,18 @@ class VertexParentStates {
  public:
   void Initialize(const Hierarchy &hierarchy, const DvceArray5D<Real> &leaves,
                   const z4c::Z4cGridLayout &layout) {
-    if (hierarchy.Dimension() != 2 || layout.centering != z4c::Z4cGridCentering::vertex || layout.nx3 != 1 ||
+    if (hierarchy.Dimension() != 2 || layout.centering != z4c::Z4cGridCentering::vertex || layout.nx3 != 1 || layout.n3 != 1 || layout.ks != layout.ke ||
         layout.nx1%2 || layout.nx2%2 || layout.nx1<2 || layout.nx2<2) {
       throw std::invalid_argument("parent injection requires even-interval VC Cartoon blocks");
     }
+    if (leaves.extent_int(2)!=layout.n3 || leaves.extent_int(3)!=layout.n2 ||
+        leaves.extent_int(4)!=layout.n1 || leaves.extent_int(1)<=0) {
+      throw std::invalid_argument("source leaf storage does not match parent layout");
+    }
+    layout_key_=LayoutKey(layout);
     const auto &nodes=hierarchy.Nodes();
+    keys_.clear(); leaf_ids_.clear();
+    for (const auto &node : nodes) { keys_.push_back(node.key); leaf_ids_.push_back(node.source_leaf); }
     std::vector<int> source(nodes.size());
     std::map<int,std::vector<int>> levels;
     parent_nodes_.clear();
@@ -67,11 +75,82 @@ class VertexParentStates {
     }
     Kokkos::fence("covered VC parent initialization complete");
   }
+  struct GhostCoverage { int copied=0, unavailable=0; };
+  // Copies only coincident same-level ACTIVE donors. Unavailable physical or
+  // coarse/fine ghosts remain NaN; they need separate boundary providers.
+  GhostCoverage FillSameLevelGhosts(const Hierarchy &hierarchy,
+                                    const DvceArray5D<Real> &leaves,
+                                    const z4c::Z4cGridLayout &layout) {
+    const auto &nodes=hierarchy.Nodes();
+    if (LayoutKey(layout)!=layout_key_ || leaves.extent_int(1)!=values_.extent_int(1) ||
+        leaves.extent_int(2)!=layout.n3 || leaves.extent_int(3)!=layout.n2 ||
+        leaves.extent_int(4)!=layout.n1) throw std::invalid_argument("changed parent layout");
+    if (nodes.size()!=keys_.size()) throw std::invalid_argument("changed parent hierarchy");
+    std::vector<int> sources(nodes.size());
+    for (int n=0; n<static_cast<int>(nodes.size()); ++n) {
+      if (nodes[n].key!=keys_[n] || nodes[n].source_leaf!=leaf_ids_[n] ||
+          nodes[n].source_leaf>=leaves.extent_int(0)) {
+        throw std::invalid_argument("changed parent hierarchy");
+      }
+      sources[n]=nodes[n].source_leaf;
+    }
+    for (int p=0; p<static_cast<int>(parent_nodes_.size()); ++p) sources[parent_nodes_[p]]=-1-p;
+    std::vector<std::array<int,6>> copies;
+    GhostCoverage coverage;
+    const int nx=layout.nx1, ny=layout.nx2;
+    for (int p=0; p<static_cast<int>(parent_nodes_.size()); ++p) {
+      const auto key=nodes[parent_nodes_[p]].key;
+      for (int j=0; j<layout.n2; ++j) for (int i=0; i<layout.n1; ++i) {
+        if (i>=layout.is && i<=layout.ie && j>=layout.js && j<=layout.je) continue;
+        const std::int64_t gx=std::int64_t(key[1])*nx+i-layout.is;
+        const std::int64_t gy=std::int64_t(key[2])*ny+j-layout.js;
+        int donor=-1, di=0, dj=0;
+        if (gx>=0 && gy>=0) {
+          const auto bx=gx/nx, by=gy/ny;
+          // At a shared vertex prefer lower logical coordinates if present.
+          for (auto x=bx-(gx%nx==0); x<=bx && donor<0; ++x) {
+            for (auto y=by-(gy%ny==0); y<=by && donor<0; ++y) {
+              if (x<0 || y<0 || x>std::numeric_limits<int>::max() ||
+                  y>std::numeric_limits<int>::max()) continue;
+              donor=hierarchy.Find({key[0],static_cast<int>(x),static_cast<int>(y),0});
+              if (donor>=0) { di=gx-x*nx+layout.is; dj=gy-y*ny+layout.js; }
+            }
+          }
+        }
+        if (donor<0) { ++coverage.unavailable; continue; }
+        copies.push_back({p,j,i,sources[donor],dj,di}); ++coverage.copied;
+      }
+    }
+    DvceArray2D<int> transfers("same-level parent ghost copies",copies.size(),6);
+    auto host=Kokkos::create_mirror_view(transfers);
+    for (int c=0; c<static_cast<int>(copies.size()); ++c) {
+      for (int q=0; q<6; ++q) host(c,q)=copies[c][q];
+    }
+    Kokkos::deep_copy(transfers,host);
+    const auto values=values_; const int ks=layout.ks;
+    if (!copies.empty()) {
+      par_for("fill same-level parent ghosts",DevExeSpace(),0,copies.size()-1,
+          0,leaves.extent_int(1)-1,KOKKOS_LAMBDA(int c,int v) {
+        const int src=transfers(c,3), j=transfers(c,4), i=transfers(c,5);
+        values(transfers(c,0),v,ks,transfers(c,1),transfers(c,2))=
+            src>=0 ? leaves(src,v,ks,j,i) : values(-1-src,v,ks,j,i);
+      });
+    }
+    Kokkos::fence("same-level parent ghost copies complete");
+    return coverage;
+  }
   const DvceArray5D<Real> &Values() const { return values_; }
   const std::vector<int> &ParentNodes() const { return parent_nodes_; }
  private:
+  static std::array<int,13> LayoutKey(const z4c::Z4cGridLayout &l) {
+    return {l.nx1,l.nx2,l.nx3,l.is,l.ie,l.js,l.je,l.ks,l.ke,l.n1,l.n2,l.n3,
+            static_cast<int>(l.centering)};
+  }
+  std::array<int,13> layout_key_{};
   DvceArray5D<Real> values_;
   std::vector<int> parent_nodes_;
+  std::vector<BlockKey> keys_;
+  std::vector<int> leaf_ids_;
 };
 }  // namespace subcycling
 #endif  // DRIVER_VERTEX_PARENT_STATES_HPP_
