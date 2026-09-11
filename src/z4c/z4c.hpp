@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include "athena.hpp"
+#include "driver/block_batches.hpp"
 #include "utils/finite_diff.hpp"
 #include "utils/cart_grid.hpp"
 #include "parameter_input.hpp"
@@ -143,6 +144,7 @@ class Z4c {
   static char const * const Matter_names[nmat];*/
 
   // data
+  subcycling::BlockBatches rhs_batches;
   Z4cGridLayout layout;         // authoritative Z4c active/stored index geometry
   // flags to denote relativistic dynamics
   DvceArray5D<Real> u_con;     // constraints fields

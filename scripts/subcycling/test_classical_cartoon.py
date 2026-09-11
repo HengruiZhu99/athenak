@@ -1,11 +1,13 @@
 """Run native VC Cartoon gauge-pulse timestep refinement on an unchanged grid."""
 from pathlib import Path
-import argparse,json,subprocess,sys,re
+import argparse,json,subprocess,sys,re,hashlib
 import numpy as np
 repo=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(repo/'vis/python'))
 parser=argparse.ArgumentParser();parser.add_argument('exe',type=Path);parser.add_argument('output',type=Path)
 parser.add_argument('--time-dependent',action='store_true')
+parser.add_argument('--level-batches',action='store_true')
+parser.add_argument('--static-amr',action='store_true')
 a=parser.parse_args();a.exe=a.exe.resolve();a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=False)
 template='''<job>
 basename = pulse
@@ -70,7 +72,15 @@ dt = 0.5
 file_type = hst
 dcycle = 1
 data_format = %24.16e
+<output3>
+file_type = rst
+dt = 0.5
 '''
+if a.level_batches:
+ template=template.replace('integrator = rk4_classical','integrator = rk4_classical\nlevel_batch_rhs = true')
+if a.static_amr:
+ template=template.replace('nx1 = 16\nx1min', 'nx1 = 32\nx1min').replace('nx2 = 32\nx2min','nx2 = 64\nx2min')
+ template=template.replace('refinement = none','refinement = static\nnum_levels = 2\nmax_nmb_per_rank = 128\n<refined_region1>\nlevel = 1\nx1min = 0\nx1max = 2\nx2min = -2\nx2max = 2')
 if a.time_dependent:
  template=template.replace('damp_kappa1 = 0\n','damp_kappa1 = 1\nroll_kappa = true\nkappa_roll_start_time = 0\nroll_window = 0.2\ntarget_kappa1 = 0.1\n')
 fields=[];results=[]
@@ -90,9 +100,11 @@ for cfl in [.4,.2,.1,.05]:
  nfields=sum(name.startswith("z4c_") for name in header.split())
  values=table[:,-nfields:]
  assert np.isfinite(values).all()
- fields.append(values);results.append(dict(cfl=cfl,time=time,cycle=cycle,file=str(final)))
+ restart=sorted((case/'rst').glob('*.rst'))[-1]
+ payload=restart.read_bytes().split(b'<par_end>\n',1)[1]
+ fields.append(values);results.append(dict(cfl=cfl,time=time,cycle=cycle,file=str(final),restart=str(restart),restart_payload_sha256=hashlib.sha256(payload).hexdigest()))
 differences=[float(np.sqrt(np.mean((x-y)**2))) for x,y in zip(fields,fields[1:])]
 ratios=[x/y for x,y in zip(differences,differences[1:])]
-report=dict(time_dependent_damping=a.time_dependent,runs=results,rms_successive_differences=differences,ratios=ratios,passed=all(12<q<20 for q in ratios),scope='Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no AMR or production-gauge qualification')
+report=dict(level_batches=a.level_batches,static_amr=a.static_amr,time_dependent_damping=a.time_dependent,runs=results,rms_successive_differences=differences,ratios=ratios,passed=all(12<q<20 for q in ratios),scope='Synchronous native VC Cartoon smooth-pulse radial-slice temporal self-convergence; no dynamic-AMR or production-gauge qualification')
 (a.output/'results.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
 if not report['passed']:raise SystemExit('Temporal convergence gate failed')

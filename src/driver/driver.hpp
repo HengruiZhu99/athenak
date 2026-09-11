@@ -49,6 +49,7 @@ class Driver {
   Kokkos::Timer* pwall_clock_;     // timer for tracking the wall clock
   Real wall_time;
   bool user_stop;
+  bool level_batch_rhs; // synchronous qualification of level-local RHS launches
   std::string user_stop_reason;
 
   // functions

@@ -74,6 +74,7 @@ Driver::Driver(ParameterInput *pin, Mesh *pmesh, Real wtlim, Kokkos::Timer* ptim
   npart_updated_(0),
   lb_efficiency_(0) {
   execution_profile::enabled = pin->GetOrAddBoolean("time", "execution_profile", false);
+  level_batch_rhs = pin->GetOrAddBoolean("time", "level_batch_rhs", false);
   // set time-evolution option (no default)
   {
     std::string evolution_t = pin->GetString("time","evolution");

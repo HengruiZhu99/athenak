@@ -43,6 +43,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   const int js = layout.js; const int je = layout.je;
   const int ks = layout.ks; const int ke = layout.ke;
   int nmb = pmy_pack->nmb_thispack;
+  rhs_batches.Update(pdriver->level_batch_rhs, pmy_pack->pmb->mb_lev, nmb);
   const int nx1 = layout.nx1;
   const int nx2 = layout.nx2;
   const int nx3 = layout.nx3;
@@ -207,8 +208,8 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
   // ===================================================================================
   // Main RHS calculation
   //
-  par_for(
-      "z4c rhs loop", DevExeSpace(), 0, nmb - 1, ks, ke, js, je, is, ie,
+  rhs_batches.For4(
+      "z4c rhs loop", ks, ke, js, je, is, ie,
       KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
         // Define scratch arrays to be used in the following calculations
 
@@ -694,8 +695,8 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
           }
       });
 
-  par_for(
-      "z4c Gamma rhs loop", DevExeSpace(), 0, nmb - 1, ks, ke, js, je, is, ie,
+  rhs_batches.For4(
+      "z4c Gamma rhs loop", ks, ke, js, je, is, ie,
       KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
         AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> Gamma_u;
         AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> DA_u;
@@ -877,8 +878,8 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
         }
       });
 
-  par_for(
-      "z4c gauge rhs loop", DevExeSpace(), 0, nmb - 1, ks, ke, js, je, is, ie,
+  rhs_batches.For4(
+      "z4c gauge rhs loop", ks, ke, js, je, is, ie,
       KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
         AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
         AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> dalpha_d;
@@ -1050,7 +1051,7 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
       Kokkos::deep_copy(rhs_post_axis_pre_ko, u_rhs);
     }
     auto &mb_bcs = pmy_pack->pmb->mb_bcs;
-    par_for("SO2-invariant vertex K-O dissipation", DevExeSpace(), 0, nmb - 1,
+    rhs_batches.For4("SO2-invariant vertex K-O dissipation",
             ks, ke, js, je, is, ie,
         KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
           Real values[Z4c::nz4c];
@@ -1091,8 +1092,8 @@ TaskStatus Z4c::CalcRHSImpl(Driver *pdriver, int stage) {
     if (collect_rhs_stage_diagnostics) {
       Kokkos::deep_copy(rhs_post_axis_pre_ko, u_rhs);
     }
-    par_for("K-O Dissipation",
-    DevExeSpace(),0,nmb-1,0,nz4c-1,ks,ke,js,je,is,ie,
+    rhs_batches.For5("K-O Dissipation",
+    0,nz4c-1,ks,ke,js,je,is,ie,
     KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
       Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
       auto derivatives = MakeZ4cDerivativeProvider<Centering, Symmetry, NGHOST>(

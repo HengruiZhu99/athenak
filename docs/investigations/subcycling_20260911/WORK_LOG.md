@@ -87,3 +87,22 @@ hash, builds the profile unit test, then requests one shared_interactive A100
 for the four prepared checkpoint comparisons. It writes profile-launch-status,
 allocation.log and comparison.log. Do not start a duplicate launch if observation
 times out; inspect PID1635650, its child allocation, and terminal status first.
+
+## Synchronous per-level RHS execution
+
+Added default-off time/level_batch_rhs. Persistent device block lists are grouped
+by logical level and rebuilt when the local level sequence changes. The main,
+Gamma, gauge and KO RHS kernels use these batches. Global gauge reductions,
+axis regularity and boundary tasks still run on the common-time whole hierarchy.
+This is synchronous level-local kernel execution, NOT asynchronous evolution.
+
+Full CPU executable build and schedule/classical unit tests pass. On a two-level
+14-block native Cartoon gauge pulse, CFL0.4,0.2,0.1,0.05 runs through t0.5 have
+byte-identical complete restart payloads with and without level batching
+(parameter text excluded). Both paths show radial-slice temporal self-convergence
+ratios15.1765 and15.2375. JSON evidence is in classical-cartoon/static-*.json and
+batch-comparison.json. GPU qualification, dynamic hierarchy changes and actual
+asynchronous coarse/fine evolution remain unverified.
+
+Profiling allocation58198556 is confirmed queued for resources; launcher1635650
+is live. No duplicate allocation has been requested.
