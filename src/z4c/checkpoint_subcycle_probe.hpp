@@ -89,6 +89,10 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
   subcycling::CorrectorControl control;
   Kokkos::Timer timer;
   const Real requested_dt=dt;
+  const auto limits=physics.TimestepLimits(mesh->time,mesh->cfl_no);
+  const subcycling::Schedule schedule(limits.front().level,limits.back().level,ratio);
+  const auto choice=schedule.ChooseInterval(limits,dt);
+  dt=choice.dt;
   const auto interval=engine.RunWithRetry(mesh->time,dt,storage,physics,ratio,control,{},
     [&](const auto &h){history=h.empty()?nullptr:&h;cache.clear();},
     [&](const auto &a,const auto &b){return maximum.Difference(a,b,control);});
@@ -96,6 +100,13 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
   dt=interval.dt;
   Kokkos::fence("checkpoint probe evolution complete");const double seconds=timer.seconds();
   history=nullptr;cache.clear();
+  std::ofstream ceilings(directory+"/timestep_limits.csv");
+  ceilings<<std::setprecision(17)<<"level,substeps,spatial_with_cfl,source\n";
+  for(const auto &limit:limits)
+    ceilings<<limit.level<<','<<schedule.Substeps(limit.level)<<','
+            <<limit.spatial<<','<<limit.source<<'\n';
+  ceilings.close();
+  if(!ceilings) throw std::runtime_error("checkpoint timestep limits output failed");
   // Binary layout: hierarchy leaf order, then variable,j,i (Real scalars).
   const auto host=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),storage.Values());
   std::ofstream fields(directory+"/fields.bin",std::ios::binary);

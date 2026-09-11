@@ -9,6 +9,7 @@
 #include "z4c/boundary_rhs.hpp"
 #include "z4c/state_views.hpp"
 #include "z4c/state_admissibility.hpp"
+#include "z4c/spatial_timestep_point.hpp"
 namespace z4c {
 // Vacuum VC Cartoon consumer of the recursive engine. The caller supplies a
 // COMMON-TIME gauge history; this class never reduces asynchronous level data.
@@ -38,6 +39,57 @@ struct HierarchyPhysics {
       throw std::invalid_argument("unsupported hierarchy Z4c configuration");
     for(int v=0;v<Z4c::nz4c;++v) parities.push_back(Z4cStateAxisParitySignFromPackedIndex(v));
     mu=DvceArray5D<Real>("hierarchy telegraph coefficient",s.Values().extent(0),1,l.n3,l.n2,l.n1);
+  }
+  // Synchronized-state limits for the campaign's zero-shift, undamped Z4c
+  // system with max-domain telegraph damping. Include covered predictor nodes:
+  // their stability matters even though they are excluded from physical extrema.
+  std::vector<subcycling::LevelStepLimit> TimestepLimits(double time,Real cfl) const {
+    if(!std::isfinite(time) || !std::isfinite(cfl) || cfl<=0 || cfl>1 ||
+       options.slow_start_lapse || options.damp_kappa1!=0 ||
+       options.target_kappa1!=0 || options.shift_eta!=0 ||
+       (options.telegraph_lapse && options.telegraph_damping_prescription!=
+          TelegraphDampingPrescription::max_domain_abs_K) ||
+       kappa1(time)!=0 || shift_eta(time)!=0)
+      throw std::invalid_argument("unsupported hierarchy timestep source configuration");
+    const Real maximum=max_K(time);
+    if(!std::isfinite(maximum) || maximum<0)
+      throw std::runtime_error("invalid synchronized timestep gauge maximum");
+    const auto opt=options;
+    const auto coefficients=ScaleInvariantTelegraphCoefficients(
+        maximum,maximum,opt.telegraph_tau,opt.telegraph_kappa);
+    const Real rate=opt.telegraph_lapse ? coefficients.damping : 0;
+    ExplicitRKMethod method;method.stages=4;method.classical_rk4=true;
+    const Real source=SourceTimestepCeiling(opt.timestep_source_safety,
+        ExplicitRKNegativeRealStabilityRadius(method),rate);
+    if(!std::isfinite(rate) || rate<0 || !std::isfinite(source) || source<=0)
+      throw std::runtime_error("invalid hierarchy timestep source ceiling");
+    const auto state=BindStateViews(storage.Values());
+    const auto sizes=geometry.sizes.d_view;
+    const auto levels=storage.AllLevels().d_view;
+    const auto &host_levels=storage.AllLevels().h_view;
+    int highest=root;
+    for(int m=0;m<host_levels.extent_int(0);++m) highest=std::max(highest,host_levels(m));
+    const int ni=layout.ie-layout.is+1,nj=layout.je-layout.js+1;
+    const int is=layout.is,js=layout.js,ks=layout.ks;
+    const std::size_t count=storage.Values().extent(0)*ni*nj;
+    std::vector<subcycling::LevelStepLimit> limits;
+    for(int level=root;level<=highest;++level) {
+      Real spatial=std::numeric_limits<Real>::max();
+      Kokkos::parallel_reduce("hierarchy spatial timestep",
+        Kokkos::RangePolicy<DevExeSpace,Kokkos::IndexType<std::size_t>>(0,count),
+        KOKKOS_LAMBDA(std::size_t q,Real &value) {
+          const int i=q%ni+is;q/=ni;const int j=q%nj+js;const int m=q/nj;
+          if(levels(m)!=level) return;
+          const Real point=SpatialTimestepPoint(state,sizes(m),opt,m,ks,j,i,
+                                                maximum,0,true,false,true);
+          value=fmin(value,point);
+        },Kokkos::Min<Real>(spatial));
+      if(!std::isfinite(spatial) || spatial<=0 ||
+         spatial==std::numeric_limits<Real>::max())
+        throw std::runtime_error("invalid or missing hierarchy spatial timestep level");
+      limits.push_back({level,cfl*spatial,source});
+    }
+    return limits;
   }
   void Prepare(const subcycling::StepContext &s,int,const subcycling::BlockBatches &b,
                const DvceArray5D<Real> &u) {

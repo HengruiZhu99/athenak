@@ -56,6 +56,7 @@ int main(int argc,char **argv) {
   opt.boundary_rhs_mode=flag("--cpbc") ? z4c::Z4cBoundaryRHSMode::full_constraint_bjorhus :
     z4c::Z4cBoundaryRHSMode::sommerfeld;
   opt.telegraph_lapse=true;opt.telegraph_tau=1;opt.telegraph_kappa=1;
+  opt.timestep_source_safety=.8;
   opt.telegraph_damping_prescription=z4c::TelegraphDampingPrescription::max_domain_abs_K;
   std::vector<int> parity;for(int v=0;v<Z::nz4c;++v) parity.push_back(z4c::Z4cStateAxisParitySignFromPackedIndex(v));
   std::vector<std::vector<double>> results;
@@ -82,6 +83,39 @@ int main(int argc,char **argv) {
     TestPhysics physics(storage,geometry,l,opt,0,roots,roots,flag("--no-ko") ? 0 : .02/64,
       {{false,true,true,true}},[vary=flag("--time-dependent")](double t){return vary ? 1.+.5*t : 1.;},[](double){return 0.;},[](double){return 0.;});
     physics.skip_projection=flag("--no-projection");
+    if(steps==4) {
+      const auto saved=Kokkos::create_mirror(storage.Values());
+      Kokkos::deep_copy(saved,storage.Values());
+      const auto flat=Kokkos::create_mirror(storage.Values());
+      for(int m=0;m<flat.extent_int(0);++m) for(int v=0;v<Z::nz4c;++v)
+        for(int j=0;j<nn;++j) for(int i=0;i<nn;++i)
+          flat(m,v,0,j,i)=(v==Z::I_Z4C_ALPHA || v==Z::I_Z4C_CHI ||
+            v==Z::I_Z4C_GXX || v==Z::I_Z4C_GYY || v==Z::I_Z4C_GZZ) ? 1 : 0;
+      Kokkos::deep_copy(storage.Values(),flat);
+      const auto limits=physics.TimestepLimits(0,.25);
+      const auto half=physics.TimestepLimits(0,.125);
+      for(std::size_t n=0;n<limits.size();++n) {
+        const double expected=.25*std::ldexp(1./nx,-limits[n].level)/std::sqrt(2.);
+        if(std::abs(limits[n].spatial/expected-1)>1e-13 ||
+           half[n].spatial!=limits[n].spatial*.5 || half[n].source!=limits[n].source ||
+           std::abs(limits[n].source-.8*2.785293563405282)>1e-12)
+          throw std::runtime_error("analytic hierarchy timestep ceiling mismatch");
+      }
+      // A covered parent must constrain its own update despite not contributing
+      // to physical extrema. Large parent lapse raises its propagation speed.
+      for(int m=0;m<flat.extent_int(0);++m) if(tree.Nodes()[m].Covered()) {
+        for(int j=l.js;j<=l.je;++j) for(int i=l.is;i<=l.ie;++i)
+          flat(m,Z::I_Z4C_ALPHA,0,j,i)=10;
+        Kokkos::deep_copy(storage.Values(),flat);
+        const auto changed=physics.TimestepLimits(0,.25);
+        const int level=tree.Nodes()[m].key[0];
+        if(!(changed[level].spatial<limits[level].spatial*.11))
+          throw std::runtime_error("covered predictor omitted from timestep bound");
+        break;
+      }
+      Kokkos::deep_copy(storage.Values(),saved);
+      std::cout<<"PASS: analytic per-level spatial/source ceilings and covered predictors\n";
+    }
     subcycling::HierarchyPhysicalMaximum global_K;
     global_K.Build(tree,Z::I_Z4C_KHAT,Z::I_Z4C_THETA);
     const subcycling::HierarchyRK4::Histories *gauge_history=nullptr;

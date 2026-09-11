@@ -1308,3 +1308,34 @@ times after a shortened retry. Evidence retry-evidence; raw
 Remaining: native per-level limits, repeated/live-AMR driver integration, source
 stability checks, CUDA qualification, and full single-A100 matched-endpoint
 Brill accuracy/performance proof. No completion claim.
+
+## Native field-based hierarchy timestep ceilings
+
+Previous turn progressed with fffac431 bounded corrector retry and actual probe
+integration. This turn extracted native pointwise spatial characteristic limits
+into SpatialTimestepPoint, shared by native z4c_newdt and HierarchyPhysics.
+The calculation is unchanged; all six checkpoint output field SHA256 hashes
+match the preceding retry validation exactly after extraction/integration.
+
+HierarchyPhysics::TimestepLimits now reduces actual populated hierarchy fields
+at synchronization, including covered predictor nodes. Source ceiling uses the
+same telegraph coefficient and classical-RK4 negative-real stability radius as
+the native contract. Scope deliberately enforced: prescribed zero shift, no
+constraint/shift/slow-start damping, max-domain telegraph prescription. CFL is
+applied only to spatial limits. These are initial synchronized limits, not yet
+intra-interval stability monitoring or a live driver. Current reduction scans
+nodes per level; optimize device batching after correctness qualification.
+
+Checkpoint probe now selects its interval with these real per-level ceilings,
+and writes timestep_limits.csv. Small qualification case: spatial ceilings
+0.0080354032574317669 (coarse) and0.0040177016287158834 (fine), source924.403905495243.
+All requested small intervals remain unchanged. Full CPU build and real
+checkpoint comparisons pass; all six field hashes identical to prior build.
+Analytic flat hierarchy tests verify dx/CFL scaling and classical source ceiling,
+CFL independence of source ceiling, and inclusion of fast covered predictors.
+The complete adaptive Z4c test still passes ratios16.4846,16.2056.
+Evidence timestep-evidence; raw /tmp/vc-limits-checkpoint-validation.
+
+CUDA build c204ee04 remains separate and in progress; do not replace its source
+until terminal. Full live-AMR repeated evolution, per-stage bound monitoring,
+CUDA execution and matched-endpoint single-A100 Brill speedup remain incomplete.
