@@ -564,3 +564,29 @@ This removes a required ownership gap for actual per-level evolution, but does
 not enable asynchronous Z4c stepping. Temporal ghost scatter and physical/axis
 stencil coverage, common-time gauge, live AMR/restarts and faster matched-endpoint
 single-A100 reproduction remain unfinished. No production files/jobs changed.
+
+## Hierarchy temporal predictor ghost scatter
+
+Previous turn progressed with852887a6. Added HierarchyTemporalGhosts to build
+actual fine ghost destinations from populated hierarchy topology. It excludes
+active fine vertices, ghosts with an active same-level donor, and out-of-domain
+physical ghosts. Remaining targets are bound to the existing qualified native
+spatial/stage-temporal interpolation. Coarse source IDs match hierarchy storage.
+Apply evaluates coarse RK predictors and scatters all components in one device
+phase with cached destination lists and reusable scratch. Failed rebuilds and
+shape/component mismatch reject without destination writes.
+
+Expanded vertex_temporal_boundary unit uses an interior refined patch in a4x4
+root mesh, two fields and degree-five spatial data with exponential time behavior.
+All four stages of both halfsteps agree with analytic fine RK stages within the
+coarse predictor truncation error; stage1 at interval start is spatially exact to
+2e-14. Checks all destination values, target count, unchanged active/coarse and
+same-level-owned ghosts, component rejection and stale-plan rejection. Existing
+order4/6/8 predictor convergence tests remain passing. Three related CPU tests
+pass: rk4_predictor_states, vertex_temporal_boundary, vertex_hierarchy_state.
+Build log/tmp/vc-temporal-ghost-build.log. No GPU or evolution job launched.
+
+Boundary-adjacent interpolation whose stencil needs axis/outer support still
+rejects explicitly. This requires a boundary-aware extension, not reduced-order
+fallback. No complete asynchronous coupled evolution, production gauge or
+matched-endpoint faster A100 reproduction is claimed.
