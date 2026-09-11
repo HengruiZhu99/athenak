@@ -56,6 +56,7 @@ template<int NG> void CheckpointSubcycleProbe(Mesh *mesh,Z4c *z,
     parity.push_back(Z4cStateAxisParitySignFromPackedIndex(v));
   subcycling::HierarchyRK4 engine;
   engine.Initialize<2*NG>(tree,l,mesh->root_level,rx,ry,parity,z->opt.extrap_order,outer);
+  engine.ReconcileInitialState(storage);
   subcycling::HierarchyPhysicalMaximum maximum;
   maximum.Build(tree,Z4c::I_Z4C_KHAT,Z4c::I_Z4C_THETA);
   // Initial coefficient from the synchronized physical leaves, never parents.

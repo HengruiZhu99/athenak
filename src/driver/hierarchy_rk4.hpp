@@ -48,6 +48,18 @@ class HierarchyRK4 {
 
     nodes_=tree.Nodes().size();ready_=true;
   }
+  // Explicit initial reconciliation, before defining an interval's rollback
+  // state. Imported analytic values at hanging vertices need not satisfy the
+  // discrete interpolation constraint. The caller owns this initialization.
+  void ReconcileInitialState(VertexParentStates &storage) {
+    if(!ready_ || storage.Values().extent_int(0)!=nodes_)
+      throw std::invalid_argument("invalid initial hierarchy reconciliation");
+    for(int level=maximum_-1;level>=root_;--level) storage.RestrictLevel(layout_,level);
+    exchange_.Apply(storage.Values(),root_,maximum_);
+    for(int fine=root_+1;fine<=maximum_;++fine)
+      ghosts_.at(fine).ApplySpatial(storage.Values(),layout_);
+    Kokkos::fence("initial hierarchy reconciliation complete");
+  }
   // Accepted intervals require both endpoint and complete retained RK-history
   // convergence. Failure restores the hierarchy, then lets the driver reduce dt.
   template<class Physics>
@@ -172,6 +184,19 @@ class HierarchyRK4 {
         }
         physics.RHS(step,stage,blocks_,state,rhs_);
         if(correct) corrections_.at(level).Apply(correction->second,step.Dt(),stage,true,layout_,rhs_);
+        // Dependent hanging values need the RHS of their interpolation, not
+        // an independent PDE evaluation, in retained histories and RK sums.
+        for(int parent=level-1;parent>=step.minimum_level;--parent)
+          storage.RestrictField(layout_,parent,rhs_);
+        exchange_.Apply(rhs_,step.minimum_level,level);
+        for(int fine=step.minimum_level+1;fine<=level;++fine)
+          ghosts_.at(fine).ApplySpatial(rhs_,layout_);
+        if(step.minimum_level>root_) {
+          const auto parent=contexts_.at(level-1);
+          const double fraction=static_cast<double>(step.begin_tick-parent.begin_tick)/
+                                (parent.end_tick-parent.begin_tick);
+          ghosts_.at(level).Apply(predictors_.at(level-1),fraction,step.Dt(),stage,rhs_,true);
+        }
         if(inside_corrector_) for(int q=step.minimum_level;q<=level;++q)
           current_history_.at({q,step.begin_tick}).Capture(rhs_,stage);
 
@@ -187,6 +212,10 @@ class HierarchyRK4 {
       for(int parent=step.maximum_level;parent>=step.minimum_level;--parent)
         storage.RestrictLevel(layout_,parent);
       exchange_.Apply(state,step.minimum_level,step.maximum_level);
+      // At common time restore native hanging-vertex ownership as well as
+      // ghosts. These values must be settled before the next interval/output.
+      for(int fine=step.minimum_level+1;fine<=maximum_;++fine)
+        ghosts_.at(fine).ApplySpatial(state,layout_);
     };
     struct Callbacks {
       decltype(advance) &advance_fn;

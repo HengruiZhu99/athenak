@@ -36,11 +36,26 @@ class HierarchyTemporalGhosts {
       if(key[0]==fine_level-1) {coarse.push_back(key);sources.push_back(n);}
       if(key[0]!=fine_level) continue;
       for(int j=0;j<l.n2;++j) for(int i=0;i<l.n1;++i) {
-        if(i>=l.is && i<=l.ie && j>=l.js && j<=l.je) continue;
+        const bool active=i>=l.is && i<=l.ie && j>=l.js && j<=l.je;
         const std::int64_t x=std::int64_t(key[1])*l.nx1+i-l.is;
         const std::int64_t y=std::int64_t(key[2])*l.nx2+j-l.js;
         if(x<0 || y<0 || x>bx*l.nx1 || y>by*l.nx2) continue;
-        // Same-level exchange owns any point with an active same-level donor.
+        // Native VC ownership: odd hanging vertices are reconstructed from
+        // an adjacent physical coarse leaf. Coincident even vertices retain
+        // fine authority and feed restriction.
+        bool hanging=false;
+        if(active && (x%2 || y%2)) {
+          const auto ix=x/(2*l.nx1),iy=y/(2*l.nx2);
+          for(auto a=ix-(x%(2*l.nx1)==0);a<=ix;++a)
+            for(auto b=iy-(y%(2*l.nx2)==0);b<=iy;++b) {
+              if(a<0 || b<0 || a>std::numeric_limits<int>::max() ||
+                 b>std::numeric_limits<int>::max()) continue;
+              const int coarse_node=tree.Find({fine_level-1,static_cast<int>(a),static_cast<int>(b),0});
+              hanging|=coarse_node>=0 && !tree.Nodes()[coarse_node].Covered();
+            }
+        }
+        if(active && !hanging) continue;
+        // Same-level exchange owns non-hanging points with an active donor.
         bool same=false;const auto ix=x/l.nx1,iy=y/l.nx2;
         for(auto a=ix-(x%l.nx1==0);a<=ix && !same;++a)
           for(auto b=iy-(y%l.nx2==0);b<=iy && !same;++b) {
@@ -48,7 +63,7 @@ class HierarchyTemporalGhosts {
                b>std::numeric_limits<int>::max()) continue;
             same=tree.Find({fine_level,static_cast<int>(a),static_cast<int>(b),0})>=0;
           }
-        if(same) continue;
+        if(same && !hanging) continue;
         targets.push_back({x,y});destinations.push_back({n,j,i});
       }
     }
@@ -67,11 +82,11 @@ class HierarchyTemporalGhosts {
   const std::vector<int> &SourceBlocks() const {return sources_;}
   int TargetCount() const {return ready_ ? destinations_.extent_int(0) : 0;}
   void Apply(const RK4PredictorStates &predictor,double fraction,double dt,int stage,
-             const DvceArray5D<Real> &state) {
+             const DvceArray5D<Real> &state,bool rhs=false) {
     if(!ready_ || state.extent_int(0)!=nodes_ || state.extent_int(1)<=0 ||
        state.extent_int(2)!=1 || state.extent_int(3)!=n2_ || state.extent_int(4)!=n1_)
       throw std::invalid_argument("invalid temporal ghost destination state");
-    interpolation_.Evaluate(predictor,fraction,dt,stage,values_);
+    interpolation_.Evaluate(predictor,fraction,dt,stage,values_,rhs);
     if(values_.extent_int(1)!=state.extent_int(1))
       throw std::invalid_argument("temporal ghost component mismatch");
     const auto ids=destinations_;const auto values=values_;

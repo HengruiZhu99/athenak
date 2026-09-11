@@ -138,12 +138,17 @@ class VertexParentStates {
   // Call only after children and this parent reach the same physical time.
   // No allocation, reinitialization or ghost writes occur during restriction.
   void RestrictLevel(const z4c::Z4cGridLayout &layout,int level) {
+    RestrictField(layout,level,values_);
+  }
+  void RestrictField(const z4c::Z4cGridLayout &layout,int level,const DvceArray5D<Real> &field) {
+    for(int d=0;d<5;++d) if(field.extent(d)!=values_.extent(d))
+      throw std::invalid_argument("restriction field shape mismatch");
     if(!all_nodes_ || LayoutKey(layout)!=layout_key_ || level<0)
       throw std::invalid_argument("restriction requires a populated common-time hierarchy");
     const auto found=restriction_levels_.find(level);
     if(found==restriction_levels_.end()) return;
     const auto ids=found->second;
-    const auto values=values_;const auto children=all_children_;
+    const auto values=field;const auto children=all_children_;
     const int nx=layout.nx1,ny=layout.nx2,is=layout.is,js=layout.js;
     int margin=0;
 #ifdef ATHENA_SUBCYCLE_DIAGNOSTICS

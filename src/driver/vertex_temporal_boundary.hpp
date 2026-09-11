@@ -142,11 +142,11 @@ class VertexTemporalBoundary {
   // Temporal and spatial interpolation are linear here. Algebraic projection
   // and physical/axis boundary treatment belong to the consuming stage path.
   void Evaluate(const RK4PredictorStates &predictor, double fraction,
-                double fine_dt, int stage, DvceArray2D<Real> &out) {
+                double fine_dt, int stage, DvceArray2D<Real> &out,bool rhs=false) {
     if (blocks_<0) throw std::logic_error("uninitialized temporal boundary plan");
     if (predictor.SourceBlocks()!=source_blocks_)
       throw std::invalid_argument("temporal predictor donor order changed");
-    predictor.EvaluateStage(fraction,fine_dt,stage,stage_values_);
+    predictor.EvaluateStage(fraction,fine_dt,stage,stage_values_,rhs);
     if (stage_values_.extent_int(0)!=blocks_ || stage_values_.extent_int(2)!=1 ||
         stage_values_.extent_int(3)!=ny_+1 || stage_values_.extent_int(4)!=nx_+1) {
       throw std::invalid_argument("temporal predictor does not match boundary layout");

@@ -1191,3 +1191,36 @@ vertex_temporal_boundary, rk4_predictor_states and hierarchy_z4c_test.
 Next investigate asynchronous prescribed-vertex stage/history consistency and
 common-time restriction, retaining the independent driver comparison as a gate.
 Production campaign untouched; Perlmutter authentication renewal still pending.
+
+## Reconciled hanging ownership restores temporal order
+
+Previous turn progressed through RHS consistency controls. Two-level and no-KO
+controls still failed; polynomial lapse passed17.1849,16.5695. This isolated
+initial discrete compatibility: independently initialized Gaussian hanging
+values do not satisfy coarse interpolation. Added explicit ReconcileInitialState
+before defining the rollback state. Restrict covered levels, reconcile shared
+vertices, then impose hanging constraints downward. Z4c test defaults to this
+consistent initialization; --unreconciled-initial preserves the failing control.
+Checkpoint probe reconciles only its copied hierarchy. Main driver unchanged.
+
+Native odd hanging values and their interpolated RHS are now represented in
+stage/history transfers; even coincident values retain fine authority. Generic
+RestrictField validates dimensions. Synchronization refreshes all descendant
+levels at the common time. Gaussian three-level ratios16.4774,15.9122; grouped
+17.1144,16.4719; global-gauge16.4293,15.8907. Rebuilt adaptive/rollback/coarse-group
+and non-diagnostic corrected transport tests all PASS. Requested nonexistent
+athena_hierarchy_temporal_ghosts_test target caused the combined build command
+to end2 after athena and relevant existing targets succeeded; not a source error.
+
+Remaining independent classical driver discrepancy is NOT resolved. At dt.002
+ratio1 max6.87639e-9, RMS6.14343e-11; local errors scale roughly dt^2. Ratio1/2
+agreement again scales32x under timestep halving. Stage2 comparison now has320
+remaining mismatched ghost component-values (top differences near fine
+coarse-interface/physical-boundary corner); active hanging mismatch is corrected.
+Next inspect physical extrapolation/prolongation ordering and physical-corner
+coverage: current temporal plan excludes outside-domain targets and physics
+Prepare fills physical ghosts after interpolation; native order differs.
+
+Evidence reconciled-ownership-evidence; raw /tmp/vc-reconciled-driver-comparison
+and /tmp/vc-stage2-reconciled. No remote jobs or production changes.
+Full single-A100 Brill reproduction/speedup and live-AMR integration incomplete.

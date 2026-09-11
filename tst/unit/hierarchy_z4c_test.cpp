@@ -75,6 +75,7 @@ int main(int argc,char **argv) {
     storage.test_restriction_margin=flag("--interior-restriction") ? 1 :
       (flag("--deep-restriction") ? 3 : 0);
     subcycling::HierarchyRK4 engine;engine.Initialize<6>(tree,l,0,roots,roots,parity,4,{{false,true,true,true}});
+    if(!flag("--unreconciled-initial")) engine.ReconcileInitialState(storage);
     engine.test_corrector_passes=flag("--corrector") ? 5 :
       (flag("--corrector2") ? 2 : (flag("--corrector3") ? 3 : 1));
     engine.test_skip_restriction=flag("--no-restriction");
@@ -112,6 +113,9 @@ int main(int argc,char **argv) {
       if(flag("--adaptive") || flag("--rollback-failure") || flag("--global-gauge")) {
         subcycling::CorrectorReport report;subcycling::CorrectorControl control;
         if(flag("--extra-passes")) control.maximum_passes=12;
+        if(flag("--tight-corrector")) {
+          control.maximum_passes=16;control.absolute_tolerance=1e-13;control.relative_tolerance=1e-11;
+        }
         try {report=engine.RunCorrected(n*dt,dt,storage,physics,ratio,control,
           flag("--global-gauge") ? std::function<void(const subcycling::HierarchyRK4::Histories &)>(gauge_pass) : nullptr,
           flag("--global-gauge") ? std::function<Real(const subcycling::HierarchyRK4::Histories &,const subcycling::HierarchyRK4::Histories &)>(

@@ -94,7 +94,7 @@ class RK4PredictorStates {
   // Fine-start fraction is relative to THIS parent step. Reject requests outside
   // its interval, including nominally synchronous stages with an overlong dt.
   void EvaluateStage(double fraction, double fine_dt, int stage,
-                     DvceArray5D<Real> &out) const {
+                     DvceArray5D<Real> &out,bool rhs=false) const {
     if (completed_!=4) throw std::logic_error("incomplete coarse RK predictor");
     if (stage<1 || stage>4 || !std::isfinite(fraction) || !std::isfinite(fine_dt) ||
         fine_dt<=0 || fraction<0 || fraction>1 || fine_dt/dt_>1-fraction) {
@@ -111,7 +111,8 @@ class RK4PredictorStates {
         KOKKOS_LAMBDA(int p,int v,int k,int j,int i) {
       RK4DenseBoundary predictor{y(p,v,k,j,i),dt,a(p,v,k,j,i),b(p,v,k,j,i),
                                 c(p,v,k,j,i),d(p,v,k,j,i)};
-      out(p,v,k,j,i)=predictor.StageBoundary(fraction,fine_dt,stage);
+      out(p,v,k,j,i)=rhs ? predictor.StageRHS(fraction,fine_dt,stage) :
+                                 predictor.StageBoundary(fraction,fine_dt,stage);
     });
   }
   // Two-way coupling: the first fine half-step supplies a local
