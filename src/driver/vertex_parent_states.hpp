@@ -1,11 +1,13 @@
 #ifndef DRIVER_VERTEX_PARENT_STATES_HPP_
 #define DRIVER_VERTEX_PARENT_STATES_HPP_
 #include <limits>
+#include <algorithm>
 #include <cstdint>
 #include <map>
 #include <stdexcept>
 #include "athena.hpp"
 #include "driver/subcycle_hierarchy.hpp"
+#include "driver/block_batches.hpp"
 #include "z4c/z4c_grid.hpp"
 #include "z4c/cartoon_axis_boundary.hpp"
 #include "z4c/physical_extrapolation.hpp"
@@ -27,6 +29,8 @@ class VertexParentStates {
         leaves.extent_int(4)!=layout.n1 || leaves.extent_int(1)<=0) {
       throw std::invalid_argument("source leaf storage does not match parent layout");
     }
+    all_nodes_=false;
+    restriction_levels_.clear();
     layout_key_=LayoutKey(layout);
     const auto &nodes=hierarchy.Nodes();
     keys_.clear(); leaf_ids_.clear();
@@ -77,12 +81,102 @@ class VertexParentStates {
     }
     Kokkos::fence("covered VC parent initialization complete");
   }
+  // Unified populated hierarchy for the recursive stepper. Original leaf arrays
+  // remain untouched until CopyLeavesTo is explicitly called at synchronization.
+  // The default Initialize API above continues to allocate covered parents only.
+  void InitializeAll(const Hierarchy &hierarchy,const DvceArray5D<Real> &leaves,
+                     const z4c::Z4cGridLayout &layout) {
+    VertexParentStates covered;
+    covered.Initialize(hierarchy,leaves,layout);
+    const auto &nodes=hierarchy.Nodes();const int count=nodes.size();
+    std::vector<int> parent_source(count,-1);
+    for(int p=0;p<static_cast<int>(covered.ParentNodes().size());++p)
+      parent_source[covered.ParentNodes()[p]]=p;
+    keys_.clear();leaf_ids_.clear();parent_nodes_.clear();max_leaf_id_=-1;
+    std::map<int,std::vector<int>> restriction;
+    for(int n=0;n<count;++n) {
+      keys_.push_back(nodes[n].key);leaf_ids_.push_back(nodes[n].source_leaf);
+      parent_nodes_.push_back(n);max_leaf_id_=std::max(max_leaf_id_,nodes[n].source_leaf);
+      if(nodes[n].Covered()) restriction[nodes[n].key[0]].push_back(n);
+    }
+    restriction_levels_.clear();
+    for(const auto &group : restriction) {
+      DvceArray1D<int> ids("covered parent level indices",group.second.size());
+      auto host=Kokkos::create_mirror_view(ids);
+      for(int n=0;n<static_cast<int>(group.second.size());++n) host(n)=group.second[n];
+      Kokkos::deep_copy(ids,host);restriction_levels_.emplace(group.first,ids);
+    }
+    layout_key_=LayoutKey(layout);
+    Kokkos::realloc(values_,count,leaves.extent(1),layout.n3,layout.n2,layout.n1);
+    Kokkos::deep_copy(values_,std::numeric_limits<Real>::quiet_NaN());
+    all_levels_=DualArray1D<int>("stored hierarchy levels",count);
+    Kokkos::realloc(all_children_,count,4);Kokkos::realloc(all_leaf_ids_,count);
+    DvceArray1D<int> sources("stored hierarchy initialization sources",count);
+    auto hs=Kokkos::create_mirror_view(sources);
+    auto hc=Kokkos::create_mirror_view(all_children_);
+    auto hl=Kokkos::create_mirror_view(all_leaf_ids_);
+    for(int n=0;n<count;++n) {
+      hs(n)=nodes[n].Covered() ? -1-parent_source[n] : nodes[n].source_leaf;
+      hl(n)=nodes[n].source_leaf;all_levels_.h_view(n)=nodes[n].key[0];
+      for(int c=0;c<4;++c) hc(n,c)=nodes[n].children[c];
+    }
+    all_levels_.modify_host();all_levels_.sync_device();
+    Kokkos::deep_copy(sources,hs);Kokkos::deep_copy(all_children_,hc);Kokkos::deep_copy(all_leaf_ids_,hl);
+    const auto values=values_,parents=covered.Values();
+    par_for("initialize populated VC hierarchy",DevExeSpace(),0,count-1,
+        0,leaves.extent_int(1)-1,layout.ks,layout.ke,layout.js,layout.je,layout.is,layout.ie,
+        KOKKOS_LAMBDA(int n,int v,int k,int j,int i) {
+      const int src=sources(n);
+      values(n,v,k,j,i)=src>=0 ? leaves(src,v,k,j,i) : parents(-1-src,v,k,j,i);
+    });
+    Kokkos::fence("populated hierarchy initialization complete");
+    all_nodes_=true;
+  }
+  // Call only after children and this parent reach the same physical time.
+  // No allocation, reinitialization or ghost writes occur during restriction.
+  void RestrictLevel(const z4c::Z4cGridLayout &layout,int level) {
+    if(!all_nodes_ || LayoutKey(layout)!=layout_key_ || level<0)
+      throw std::invalid_argument("restriction requires a populated common-time hierarchy");
+    const auto found=restriction_levels_.find(level);
+    if(found==restriction_levels_.end()) return;
+    const auto ids=found->second;
+    const auto values=values_;const auto children=all_children_;
+    const int nx=layout.nx1,ny=layout.nx2,is=layout.is,js=layout.js;
+    par_for("restrict synchronized covered parents",DevExeSpace(),0,ids.extent_int(0)-1,
+        0,values.extent_int(1)-1,
+        layout.ks,layout.ke,js,layout.je,is,layout.ie,
+        KOKKOS_LAMBDA(int row,int v,int k,int j,int i) {
+      const int n=ids(row);
+      const int cx=(i-is)>nx/2,cy=(j-js)>ny/2;
+      const int child=children(n,cx+2*cy);
+      values(n,v,k,j,i)=values(child,v,k,2*(j-js)-cy*ny+js,2*(i-is)-cx*nx+is);
+    });
+  }
+  void CopyLeavesTo(const z4c::Z4cGridLayout &layout,const DvceArray5D<Real> &leaves) const {
+    if(!all_nodes_ || LayoutKey(layout)!=layout_key_ || leaves.extent_int(0)<=max_leaf_id_)
+      throw std::invalid_argument("invalid synchronized leaf destination");
+    for(int d=1;d<5;++d) if(leaves.extent(d)!=values_.extent(d))
+      throw std::invalid_argument("changed synchronized leaf layout");
+    const auto values=values_;const auto ids=all_leaf_ids_;
+    par_for("copy synchronized hierarchy leaves",DevExeSpace(),0,values.extent_int(0)-1,
+        0,values.extent_int(1)-1,layout.ks,layout.ke,layout.js,layout.je,layout.is,layout.ie,
+        KOKKOS_LAMBDA(int n,int v,int k,int j,int i) {
+      if(ids(n)>=0) leaves(ids(n),v,k,j,i)=values(n,v,k,j,i);
+    });
+  }
+  const DualArray1D<int> &AllLevels() const {
+    if(!all_nodes_) throw std::logic_error("populated hierarchy not initialized");
+    return all_levels_;
+  }
+  const std::vector<int> &StoredNodes() const { return parent_nodes_; }
   struct GhostCoverage { int copied=0, unavailable=0; };
   // Copies only coincident same-level ACTIVE donors. Unavailable physical or
   // coarse/fine ghosts remain NaN; they need separate boundary providers.
   GhostCoverage FillSameLevelGhosts(const Hierarchy &hierarchy,
                                     const DvceArray5D<Real> &leaves,
-                                    const z4c::Z4cGridLayout &layout) {
+                                    const z4c::Z4cGridLayout &layout,
+                                    int minimum_level=0, int maximum_level=std::numeric_limits<int>::max()) {
+    if(minimum_level<0 || maximum_level<minimum_level) throw std::invalid_argument("invalid ghost level range");
     const auto &nodes=hierarchy.Nodes();
     if (LayoutKey(layout)!=layout_key_ || leaves.extent_int(1)!=values_.extent_int(1) ||
         leaves.extent_int(2)!=layout.n3 || leaves.extent_int(3)!=layout.n2 ||
@@ -102,6 +196,7 @@ class VertexParentStates {
     const int nx=layout.nx1, ny=layout.nx2;
     for (int p=0; p<static_cast<int>(parent_nodes_.size()); ++p) {
       const auto key=nodes[parent_nodes_[p]].key;
+      if(key[0]<minimum_level || key[0]>maximum_level) continue;
       for (int j=0; j<layout.n2; ++j) for (int i=0; i<layout.n1; ++i) {
         if (i>=layout.is && i<=layout.ie && j>=layout.js && j<=layout.je) continue;
         const std::int64_t gx=std::int64_t(key[1])*nx+i-layout.is;
@@ -144,7 +239,9 @@ class VertexParentStates {
   // Caller must confirm that logical x=0 is the physical Cartoon axis.
   // Unavailable transverse ghost donors remain NaN after reflection.
   int FillAxisAtLogicalZero(const z4c::Z4cGridLayout &layout,
-                            const std::vector<int> &parities) {
+                            const std::vector<int> &parities,
+                            int minimum_level=0,int maximum_level=std::numeric_limits<int>::max()) {
+    if(minimum_level<0 || maximum_level<minimum_level) throw std::invalid_argument("invalid axis level range");
     if (LayoutKey(layout)!=layout_key_ || layout.is>layout.nx1 ||
         static_cast<int>(parities.size())!=values_.extent_int(1)) {
       throw std::invalid_argument("invalid parent axis layout or parity count");
@@ -154,7 +251,8 @@ class VertexParentStates {
     }
     std::vector<int> axis;
     for (int p=0; p<static_cast<int>(parent_nodes_.size()); ++p) {
-      if (keys_[parent_nodes_[p]][1]==0) axis.push_back(p);
+      const auto &key=keys_[parent_nodes_[p]];
+      if (key[1]==0 && key[0]>=minimum_level && key[0]<=maximum_level) axis.push_back(p);
     }
     DvceArray1D<int> parents("axis parent indices",axis.size());
     DvceArray1D<int> signs("parent axis parity",parities.size());
@@ -179,7 +277,9 @@ class VertexParentStates {
   // corners use already-filled radial ghosts. Missing interlevel donors stay NaN.
   template<int ORDER>
   int FillPhysicalGhosts(const z4c::Z4cGridLayout &layout, int root_level,
-                         int root_x, int root_y, const std::array<bool,4> &faces) {
+                         int root_x, int root_y, const std::array<bool,4> &faces,
+                         int minimum_level=0,int maximum_level=std::numeric_limits<int>::max()) {
+    if(minimum_level<0 || maximum_level<minimum_level) throw std::invalid_argument("invalid physical boundary level range");
     static_assert(ORDER>=2 && ORDER<=4,"supported physical extrapolation order");
     if (LayoutKey(layout)!=layout_key_ || root_level<0 || root_x<=0 || root_y<=0 ||
         layout.nx1+1<ORDER || layout.nx2+1<ORDER)
@@ -188,6 +288,7 @@ class VertexParentStates {
     int targets=0;
     for (int p=0;p<static_cast<int>(parent_nodes_.size());++p) {
       const auto &key=keys_[parent_nodes_[p]];const int depth=key[0]-root_level;
+      if(key[0]<minimum_level || key[0]>maximum_level) continue;
       if (depth<0 || depth>30 || std::int64_t(root_x)*(std::int64_t(1)<<depth)>
           std::numeric_limits<int>::max() || std::int64_t(root_y)*(std::int64_t(1)<<depth)>
           std::numeric_limits<int>::max())
@@ -235,12 +336,19 @@ class VertexParentStates {
     return targets;
   }
   const DvceArray5D<Real> &Values() const { return values_; }
+  // Legacy name: in InitializeAll mode this list also contains active leaves.
   const std::vector<int> &ParentNodes() const { return parent_nodes_; }
  private:
   static std::array<int,13> LayoutKey(const z4c::Z4cGridLayout &l) {
     return {l.nx1,l.nx2,l.nx3,l.is,l.ie,l.js,l.je,l.ks,l.ke,l.n1,l.n2,l.n3,
             static_cast<int>(l.centering)};
   }
+  std::map<int,DvceArray1D<int>> restriction_levels_;
+  bool all_nodes_=false;
+  int max_leaf_id_=-1;
+  DualArray1D<int> all_levels_;
+  DvceArray2D<int> all_children_;
+  DvceArray1D<int> all_leaf_ids_;
   std::array<int,13> layout_key_{};
   DvceArray5D<Real> values_;
   std::vector<int> parent_nodes_;

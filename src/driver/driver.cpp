@@ -353,10 +353,13 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
   InitBoundaryValuesAndPrimitives(pmesh, res_flag);
 
 #if defined(ATHENA_Z4C_KERNEL_TESTS)
-  if (std::getenv("ATHENA_TEST_SUBCYCLE_PARENTS") != nullptr) {
+  if (std::getenv("ATHENA_TEST_SUBCYCLE_PARENTS") != nullptr ||
+      std::getenv("ATHENA_TEST_SUBCYCLE_ALL_NODES") != nullptr) {
     auto *z=pmesh->pmb_pack->pz4c;
     if (z == nullptr) throw std::runtime_error("parent initialization test requires Z4c");
     z->RebuildSubcycleParents();
+    const bool all_nodes=std::getenv("ATHENA_TEST_SUBCYCLE_ALL_NODES") != nullptr;
+    if(all_nodes) z->subcycle_parents.InitializeAll(*z->subcycle_hierarchy,z->u0,z->layout);
     const auto coverage=z->subcycle_parents.FillSameLevelGhosts(
         *z->subcycle_hierarchy,z->u0,z->layout);
     int axis_targets=0;
@@ -383,8 +386,15 @@ void Driver::Initialize(Mesh *pmesh, ParameterInput *pin, Outputs *pout, bool re
     else if(z->opt.extrap_order==4) physical_targets=z->subcycle_parents.FillPhysicalGhosts<4>(
         z->layout,pmesh->root_level,root_x,root_y,outer_faces);
     else throw std::runtime_error("unsupported parent physical extrapolation order");
+    if(all_nodes) {
+      z->subcycle_parents.CopyLeavesTo(z->layout,z->u0);
+      Kokkos::fence("test populated hierarchy leaf round trip");
+    }
+    int parent_count=0;
+    for(const auto &node : z->subcycle_hierarchy->Nodes()) parent_count+=node.Covered();
     std::cout << "SUBCYCLE_PARENT_INITIALIZATION parents="
-              << z->subcycle_parents.ParentNodes().size()
+              << parent_count << " stored_nodes=" << z->subcycle_parents.StoredNodes().size()
+              << " all_nodes_mode=" << all_nodes
               << " bytes=" << z->subcycle_parents.Values().size()*sizeof(Real)
               << " same_level_ghosts=" << coverage.copied
               << " unavailable_before_axis=" << coverage.unavailable

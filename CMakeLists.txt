@@ -1966,3 +1966,11 @@ if(Athena_BUILD_UNIT_TESTS)
   target_link_libraries(athena_parent_bulk_rhs_test PRIVATE Kokkos::kokkos)
   add_test(NAME parent_bulk_rhs COMMAND athena_parent_bulk_rhs_test)
 endif()
+
+if(Athena_BUILD_UNIT_TESTS)
+  add_executable(athena_vertex_hierarchy_state_test tst/unit/vertex_hierarchy_state_test.cpp)
+  target_include_directories(athena_vertex_hierarchy_state_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR})
+  target_link_libraries(athena_vertex_hierarchy_state_test PRIVATE Kokkos::kokkos)
+  add_test(NAME vertex_hierarchy_state COMMAND athena_vertex_hierarchy_state_test)
+endif()

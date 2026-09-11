@@ -503,3 +503,37 @@ to the timestep test; four CPBC runs pass with ratios15.17646,15.23751
 recursive coupled evolution, temporal ghost scatter/ownership, common-time
 telegraph gauge, synchronized live AMR and full endpoint reproduction still
 require integration and qualification.
+
+## Unified populated hierarchy storage and geometry
+
+Resumed the implementation goal after the review-only response (that response
+made no implementation progress). Rechecked the completed cached-storage build
+and runtime results before continuing; no stopped build was relaunched.
+
+VertexParentStates now has an explicit all-node mode holding active leaves and
+covered ancestors in one node-indexed field allocation. Cached restriction lists
+support synchronization of one covered-parent level without per-call allocation.
+Explicit active-leaf scatter excludes ghosts and reserved capacity. Same-level,
+axis and physical ghost fills accept a target-level range. These are storage
+operations; caller time consistency is still required and not yet enforced by a
+coupled runtime scheduler.
+
+Added HierarchyGeometry for populated node geometry and physical boundary flags,
+with internal interfaces marked block, explicit root-block counts, nonzero root
+levels and domain validation. This provides metadata to the extracted actual
+Z4c kernels; it is not yet wired to asynchronous evolution.
+
+Expanded vertex_hierarchy_state regression covers polynomial injection, cached
+restriction without field reallocation, selective ghost fills, unchanged external
+leaf data until scatter, twenty unused reserved blocks, boundary flags and
+non-square root-grid geometry, and invalid-domain/mode rejection. Five related
+CPU tests pass: vertex_parent_states, vertex_temporal_boundary, level_rk_update,
+parent_bulk_rhs, vertex_hierarchy_state. Full athena cached-storage build passed.
+All-node startup round-trip static Cartoon four-CFL results retain byte-identical
+restart payloads against the boundary-RHS baseline; temporal ratios15.1764614,
+15.2375065. Evidence all-node-storage-results.json; raw
+/tmp/vc-cartoon-all-node-runtime. No GPU validation of these additions yet.
+
+Full coupled stepping, temporal ghost ownership/scatter, common-time telegraph
+coefficient, live AMR/diagnostics and faster single-A100 reproduction through the
+recorded endpoint remain incomplete. No production run or campaign was changed.
