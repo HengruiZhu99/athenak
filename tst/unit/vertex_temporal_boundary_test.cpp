@@ -17,7 +17,7 @@ void TestOuterStencil() {
   const std::vector<int> ids{0};
   z4c::Z4cGridLayout l;l.is=l.js=2;l.ie=l.je=10;l.ks=l.ke=0;
   DvceArray5D<Real> state("outer state",1,1,1,13,13),rhs("outer rhs",1,1,1,13,13);
-  auto h=Kokkos::create_mirror_view(state);Kokkos::deep_copy(rhs,0.);
+  auto h=Kokkos::create_mirror(state);Kokkos::deep_copy(rhs,0.);
   const std::vector<subcycling::FineVertex2D> targets{{1,1},{15,15},{1,15},{15,1},{0,1},{16,15}};
   for(int order:{2,3,4}) {
     for(int j=0;j<13;++j) for(int i=0;i<13;++i)
@@ -49,7 +49,7 @@ void TestAxisStencil() {
   std::vector<int> ids{0,1};
   z4c::Z4cGridLayout l;l.is=l.js=2;l.ie=l.je=10;l.ks=l.ke=0;
   DvceArray5D<Real> state("axis state",2,2,1,13,13),rhs("axis rhs",2,2,1,13,13);
-  auto h=Kokkos::create_mirror_view(state);
+  auto h=Kokkos::create_mirror(state);
   for(int m=0;m<2;++m) for(int j=0;j<13;++j) for(int i=0;i<13;++i) {
     const double x=(i-2)/8.,y=m+(j-2)/8.;
     h(m,0,0,j,i)=1+x*x+y*y;
@@ -100,7 +100,7 @@ void TestHierarchyScatter(bool axis=false,bool outer=false) {
   Check(ghosts.TargetCount()>0 && ghosts.SourceBlocks().size()==16);
   DvceArray5D<Real> u("scatter state",tree.Nodes().size(),2,1,13,13);
   DvceArray5D<Real> rhs("scatter rhs",tree.Nodes().size(),2,1,13,13);
-  auto initial=Kokkos::create_mirror_view(u);
+  auto initial=Kokkos::create_mirror(u);
   for(int n=0;n<u.extent_int(0);++n) for(int v=0;v<2;++v)
     for(int j=0;j<13;++j) for(int i=0;i<13;++i) {
       const auto key=tree.Nodes()[n].key;
@@ -110,16 +110,16 @@ void TestHierarchyScatter(bool axis=false,bool outer=false) {
   subcycling::RK4PredictorStates predictor;const double dt=.1;
   predictor.Begin(u,l,ghosts.SourceBlocks(),0,dt);
   const double factors[4]={1,1+.5*dt,1+.5*dt+.25*dt*dt,1+dt+.5*dt*dt+.25*dt*dt*dt};
-  auto hr=Kokkos::create_mirror_view(rhs);
+  auto hr=Kokkos::create_mirror(rhs);
   for(int stage=1;stage<=4;++stage) {
     for(std::size_t k=0;k<rhs.size();++k) hr.data()[k]=initial.data()[k]*factors[stage-1];
     Kokkos::deep_copy(rhs,hr);predictor.Capture(rhs,stage);
   }
   ghosts.ApplySpatial(u,l);
-  auto spatial=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),u);
+  auto spatial=Kokkos::create_mirror(u);Kokkos::deep_copy(spatial,u);
   Kokkos::deep_copy(u,initial);
   ghosts.Apply(predictor,0,dt/2,1,u);
-  auto at_start=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),u);
+  auto at_start=Kokkos::create_mirror(u);Kokkos::deep_copy(at_start,u);
   for(std::size_t n=0;n<u.size();++n) Check(spatial.data()[n]==at_start.data()[n]);
   for(double q:{0.,.5}) for(int stage=1;stage<=4;++stage) {
     Kokkos::deep_copy(u,initial);
@@ -130,10 +130,18 @@ void TestHierarchyScatter(bool axis=false,bool outer=false) {
       for(int j=0;j<13;++j) for(int i=0;i<13;++i) {
         const auto key=tree.Nodes()[n].key;
         const int x=key[1]*8+i-2,y=key[2]*8+j-2;
-        // Independently identify points outside the refined patch, excluding
-        // physical axis ghosts, which belong to the parity fill.
-        const bool target=key[0]==1 && x>=0 && y>=0 && (x<16*patch_x || x>16*(patch_x+1) ||
-            y<16*patch_y || y>16*(patch_y+1));
+        // Independently identify coarse-owned ghosts AND odd hanging active
+        // vertices. Physical faces have no coarse neighbor; even coincident
+        // vertices retain fine authority. Do not query the implementation's plan.
+        const bool outside=x<16*patch_x || x>16*(patch_x+1) ||
+                           y<16*patch_y || y>16*(patch_y+1);
+        const bool hanging_x=((patch_x>0 && x==16*patch_x) ||
+                              (patch_x<3 && x==16*(patch_x+1))) && y%2!=0;
+        const bool hanging_y=((patch_y>0 && y==16*patch_y) ||
+                              (patch_y<3 && y==16*(patch_y+1))) && x%2!=0;
+        const bool active=i>=l.is && i<=l.ie && j>=l.js && j<=l.je;
+        const bool target=key[0]==1 && x>=0 && y>=0 &&
+                          (outside || (active && (hanging_x || hanging_y)));
         if(!target) {Check(result(n,v,0,j,i)==initial(n,v,0,j,i));continue;}
         ++changed;
         // Analytic fine RK stages starting from exp(q*dt). The coarse dense
@@ -141,6 +149,10 @@ void TestHierarchyScatter(bool axis=false,bool outer=false) {
         const double f=dt/2;
         const double fine[4]={1,1+.5*f,1+.5*f+.25*f*f,1+f+.5*f*f+.25*f*f*f};
         const double exact=shape(x/16.,y/16.,v)*std::exp(q*dt)*fine[stage-1];
+        if(std::abs(result(n,v,0,j,i)-exact)>=2e-5)
+          std::cerr<<"scatter mismatch axis="<<axis<<" outer="<<outer<<" node="<<n
+                   <<" x="<<x<<" y="<<y<<" v="<<v<<" q="<<q<<" stage="<<stage
+                   <<" value="<<result(n,v,0,j,i)<<" exact="<<exact<<std::endl;
         Check(std::abs(result(n,v,0,j,i)-exact)<2e-5);
         if(q==0 && stage==1) Check(std::abs(result(n,v,0,j,i)-exact)<2e-14);
       }
@@ -186,7 +198,7 @@ int main(int argc,char **argv) {
       subcycling::RK4PredictorStates predictor;predictor.Begin(state,l,ids,0,dt);
       double factor[4]={1,1+.5*dt,1+.5*dt+.25*dt*dt,1+dt+.5*dt*dt+.25*dt*dt*dt};
       for(int stage=1;stage<=4;++stage) {
-        auto hr=Kokkos::create_mirror_view(rhs);
+        auto hr=Kokkos::create_mirror(rhs);
         for(int b=0;b<9;++b) for(int j=0;j<13;++j) for(int i=0;i<13;++i)
           hr(b,0,0,j,i)=h(b,0,0,j,i)*factor[stage-1];
         Kokkos::deep_copy(rhs,hr);predictor.Capture(rhs,stage);

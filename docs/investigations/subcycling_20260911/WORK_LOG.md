@@ -1478,3 +1478,26 @@ NOT passed. Added assertion line diagnostics to local temporal boundary helper;
 next rebuild/relaunch that small target to locate failure before any broad claim.
 Remote source remains clean c204ee04, no build/job live from this qualification.
 Observer99491 terminal134. Production unchanged.
+
+## Diagnose CUDA temporal-boundary test failure
+
+Previous turn progressed with reusable owner365daf05 and GPU evidence f18a1a1a.
+Targeted assertion-line GPU job58207830 failed at line137: the test expected
+odd active hanging vertices to remain at the sentinel even though native transfer
+now reconstructs them. With independent CPU snapshots, CPU fails at exactly the
+same assertion. create_mirror_view had aliased live CPU arrays and masked this.
+
+Fixed test initial/scratch mirrors to allocate independently, and made expected
+scatter targets independently include active odd vertices on coarse-fine patch
+edges, excluding physical faces and same-level ghost copies. Numerical tolerances
+UNCHANGED. CPU helper now passes axis/outer/interior scatter and all temporal
+orders. Earlier diagnostic attempt also caught ghost coordinates along the patch
+edge, corrected by requiring active destination for hanging ownership. No solver
+or interpolation code change required for this failure.
+
+Remote c204ee04 has only this test-file patch. Targeted rebuild plus one-A100 helper
+and scheduler rerun observing session7913; build last verified in progress. Files
+boundary-fixed-build.log, boundary-fixed-gpu.log (created after compile),
+boundary-fixed.patch and boundary-fixed.sha256 in isolated remote root.
+No source replacement until test terminal. Newer local evolution changes still
+need their own CUDA build and Brill tests. Overall goal incomplete.
