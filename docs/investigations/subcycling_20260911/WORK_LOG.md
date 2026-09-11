@@ -1371,3 +1371,24 @@ Evidence multi-interval-evidence; raw /tmp/vc-multi-checkpoint-validation.
 CUDA c204ee04 build remains live (PID316679), last observed~65percent. No remote
 source replacement while it compiles. Single-A100 Brill endpoint reproduction
 and lower end-to-end wall time have not yet been established.
+
+## Fixed-final-time checkpoint convergence qualification
+
+Previous turn progressed with4d3c6038 repeated intervals; its variable duration
+error reduction did not prove global temporal order. Added --fixed-duration to
+actual checkpoint regression, comparing dt,dt/2,dt/4 at identical endpoint and
+checking self-convergence of every active field (including duplicate copies).
+Test --fixed-duration.016 --dt.004 passes: synchronous ratio16.2127240283,
+factor-two subcycling ratio16.0440794985. Respective successive RMS differences
+3.7893542935e-11/2.3372718162e-12 and1.0670421932e-11/6.6506912615e-13.
+Independent native restart comparison at synchronization times remains enforced.
+This is smooth fixed-hierarchy gauge-pulse evidence, not full live-AMR Brill proof.
+Raw /tmp/vc-fixedtime-checkpoint; archived fixed-time-evidence/results.json.
+
+Remote CUDA c204ee04 build verified live PID316679 at~73percent. Prepared and
+copied run-gpu-c204ee04.sh, with source/build-status guards and new result directory,
+for adaptive, coarse-group, common-time global-gauge, CPBC and rollback cases plus
+three helpers on one GPU. No allocation launched yet. Do not mutate remote source
+until existing build is terminal. Latest local commits afterc204ee04 still need
+CUDA compilation after that qualification. Production untouched; end-to-end
+single-A100 reproduction/speedup still incomplete.
