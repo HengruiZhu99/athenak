@@ -260,3 +260,44 @@ long-time stability claim. Run with, for example:
 python3 tst/regression/z4c_background_restart.py --exe /absolute/path/to/athena \
   --output /absolute/path/to/new-results --launcher mpiexec
 ```
+
+## Checkpoint metadata initialization
+
+The 384-rank 200M checkpoint from job 8836445 has 1408 blocks and 5158010880
+payload bytes, all finite. A strict byte comparison of its headers found
+rank-dependent values in exactly nine unused root-mesh coarse-index integers.
+All other header bytes match across all ranks. These fields were never
+initialized; some contained recognizable text from earlier heap allocations.
+The Mesh constructor now value-initializes its region/index structures, and
+restart loading canonicalizes only the unused root coarse indices to zero.
+Meaningful MeshBlock coarse indices and evolution arrays are preserved. The
+checkpoint format is unchanged. This is a metadata initialization bug, not
+evidence of a numerical kernel race or an explanation for Theta growth.
+
+The eight-case CPU/MPI restart suite passes with `MallocPreScribble=1`, requiring
+zero unused root fields and byte-identical complete headers within each rank
+cohort. An additional no-step legacy-file test poisons those nine integers and
+checks that continuation emits canonical metadata while preserving exact
+vacuum state. All 33 launches have finite histories and valid metrics; the
+physical response/error maxima are unchanged from the preceding restart tests.
+
+## Further perturbation controls (not stability passes)
+
+The resolved dx=0.0625M, rate-5 run 8836445 continued to 225M with valid metrics,
+but max|Theta| reached 5.7100e-7 from a roughly 1e-8 seed. It was manually stopped
+after preserving the 200.00625M checkpoint. This was neither a walltime stop nor
+completion of its 1000M target. At 200M, the full 3D maximum is 3.09774e-7 at
+(0.46875,-0.09375,-0.15625)M, r=0.502921M, immediately outside the frozen core
+(rank 108, block 326, level 4). The exterior Theta maximum is 1.31467e-10 at
+r=9.12671M. These are Theta maxima, not Hamiltonian maxima or first-injection
+locations.
+
+Two additional dx=0.25M controls reached 60M, finite but still growing. Moving
+only the analytic background clamp from 0.5M to 0.125M, while leaving the
+residual freeze/ramp at 0.5/1M, changes the 30–60M log-growth slope from
+0.132329/M to 0.132198/M. Increasing only residual lapse damping from zero to
+two gives 0.129930/M. Neither isolates a sufficient cure. The experimental
+clamp option was therefore not retained in production source. Exact equilibrium
+with the inward clamp had separately passed uniform/refined one/four-rank
+stage audits. These controls constrain hypotheses; they do not identify a
+unique erroneous term in the nonzero-residual operator.

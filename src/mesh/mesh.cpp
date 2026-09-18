@@ -44,6 +44,9 @@
 //! only after the Mesh constructor has finished.
 
 Mesh::Mesh(ParameterInput *pin) :
+  mesh_size{},
+  mesh_indcs{},
+  mb_indcs{},
   one_d(false),
   two_d(false),
   three_d(false),

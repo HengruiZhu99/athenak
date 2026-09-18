@@ -7,9 +7,11 @@ Rank-file checkpoints require the same MPI partition on continuation.
 import argparse
 from array import array
 import json
+import hashlib
 import math
 from pathlib import Path
 import re
+import shutil
 import struct
 import subprocess
 import sys
@@ -38,7 +40,9 @@ def checkpoint(path):
                        for k, v in params['z4c'].items())
         stream.seek(end)
         total, level = struct.unpack('<ii', stream.read(8))
-        stream.read(72 + 76)  # RegionSize and mesh RegionIndcs.
+        stream.read(72)  # RegionSize.
+        root_indices = struct.unpack('<19i', stream.read(76))
+        assert root_indices[10:] == (0,)*9, 'Uninitialized root coarse indices'
         indices = struct.unpack('<19i', stream.read(76))
         time, dt, cycle = struct.unpack('<ddi', stream.read(20))
         ng, nx, ny, nz = indices[:4]
@@ -51,6 +55,9 @@ def checkpoint(path):
         faces = (n1+1)*n2*n3 + n1*(n2+1)*n3 + n1*n2*(n3+1)
         offset = 8*(nmhd*cells + faces)
         assert stride == offset + 8*25*cells, 'Unsupported checkpoint payload'
+        payload_start = stream.tell()
+        stream.seek(0)
+        header_hash = hashlib.sha256(stream.read(payload_start)).hexdigest()
         payload = stream.read()
         assert payload and len(payload) % stride == 0
         assert sys.byteorder == 'little', 'This reader expects a little-endian host'
@@ -64,7 +71,8 @@ def checkpoint(path):
                   for k in range(ng, ng+nz) for j in range(ng, ng+ny)
                   for i in range(ng, ng+nx)]
         return {'time': time, 'dt': dt, 'cycle': cycle, 'total': total,
-                'state': state, 'active': active, 'cells': cells, 'level': level}
+                'state': state, 'active': active, 'cells': cells, 'level': level,
+                'header_hash': header_hash}
 
 
 def cohort(run, ranks, cycle):
@@ -76,6 +84,7 @@ def cohort(run, ranks, cycle):
     assert set((run/'rst').glob('rank_*/'+name)) == set(files)
     records = [checkpoint(p) for p in files]
     assert len({(r['cycle'], r['time'], r['dt'], r['total']) for r in records}) == 1
+    assert len({r['header_hash'] for r in records}) == 1, 'Rank metadata differs'
     assert sum(len(r['state']) for r in records) == records[0]['total']
     return files[0], records
 
@@ -151,6 +160,24 @@ def main():
             first = launch(a.exe.resolve(), a.launcher, ranks, base/'first',
                            ['-i', str(deck), 'time/nlim=3'])
             saved, before = cohort(first, ranks, 3)
+            if case == 'vacuum' and ranks == 1:
+                # Legacy writers left exactly these nine unused root-mesh
+                # integers indeterminate. The reader must canonicalize them
+                # without changing the saved evolution state.
+                legacy = base/'legacy/rank_00000000'/saved.name
+                legacy.parent.mkdir(parents=True)
+                shutil.copyfile(saved, legacy)
+                with legacy.open('r+b') as stream:
+                    prefix = stream.read(262144)
+                    end = prefix.index(b'<par_end>\n') + len(b'<par_end>\n')
+                    stream.seek(end + 8 + 72 + 10*4)
+                    stream.write(struct.pack('<9i', *([0x5a5a5a5a]*9)))
+                legacy_run = launch(a.exe.resolve(), a.launcher, ranks,
+                                    base/'legacy_restored',
+                                    ['-r', str(legacy), 'time/nlim=3'])
+                _, cleaned = cohort(legacy_run, ranks, 3)
+                assert all(x.tobytes() == bytes(len(x)*8)
+                           for x in cleaned[0]['state'])
             restored = launch(a.exe.resolve(), a.launcher, ranks, base/'restored',
                               ['-r', str(saved), 'time/nlim=3'])
             _, after = cohort(restored, ranks, 3)

@@ -362,6 +362,13 @@ void Mesh::BuildTreeFromRestart(ParameterInput *pin, IOWrapper &resfile,
   hdos += sizeof(RegionSize);
   std::memcpy(&mesh_indcs, &(headerdata[hdos]), sizeof(RegionIndcs));
   hdos += sizeof(RegionIndcs);
+  // Root-mesh coarse indices are unused. Older checkpoints serialized these
+  // nine fields without initializing them; do not propagate that indeterminate
+  // metadata into subsequent checkpoints. MeshBlock coarse indices below are
+  // meaningful and must be retained.
+  mesh_indcs = RegionIndcs{mesh_indcs.ng, mesh_indcs.nx1, mesh_indcs.nx2,
+                          mesh_indcs.nx3, mesh_indcs.is, mesh_indcs.ie,
+                          mesh_indcs.js, mesh_indcs.je, mesh_indcs.ks, mesh_indcs.ke};
   std::memcpy(&mb_indcs, &(headerdata[hdos]), sizeof(RegionIndcs));
   hdos += sizeof(RegionIndcs);
   std::memcpy(&time, &(headerdata[hdos]), sizeof(Real));
