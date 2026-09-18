@@ -487,3 +487,44 @@ Hard freezing is not necessary for the slow mode in the regularized
 background, and removing it exposes a much faster central mode when the
 clamp is moved inward. This comparison rules out a single hard-freeze-only
 explanation; it does not identify a complete cause or a stable alternative.
+
+## Nonzero projection audit
+
+`debug_projection_snapshots=true`, together with `debug_balance=true`, now
+writes full state and background arrays immediately before/after algebraic
+projection. JSON metadata records shape, scalar representation, active-cell
+bounds, coordinates, rank, block, logical/root levels, cycle, and RK stage.
+Only live blocks are serialized; unused allocation capacity is excluded.
+The feature is read-only and adds no synchronization when disabled.
+
+`tst/regression/z4c_projection_snapshots.py` passed four zero-background cases
+(one/four MPI ranks, uniform/refined meshes). Snapshot state equals background
+bitwise, and projection leaves it bitwise unchanged. A separate nonzero
+control produces bitwise-identical saved Z4c state with snapshots on/off.
+
+At cycle 800, t=60M, RK stage 1 of the rate-5, dx=0.25M dipole control,
+projection changes the contracted connection derived from the metric by
+5.6223273e-9 at (-0.375,0.375,0.375)M, r=0.649519M, rank/block 6,
+logical level 1 (root level 1). Evolved Gamma is unchanged. The corresponding
+covariant Z change is 5.3384985e-9. Independent 80-digit evaluation at that
+point confirms that these changes exceed floating-point cancellation noise.
+Over the same audit, the largest changes in reconstructed physical metric
+and extrinsic-curvature tensor are 4.22266e-9 and 1.60572e-8 respectively.
+The pre-projection determinant error reaches 4.32091e-9; afterwards it is
+approximately 1e-15. These are changes to an already nonzero perturbation,
+not the first zero-background injection diagnosed earlier.
+
+The current projection rescales g and removes the A trace while keeping chi,
+Khat, and Gamma fixed. It therefore changes physical geometry and the
+connection constraint when the pre-projection algebraic errors are nonzero.
+This is a measured operation to investigate, not proof that projection is
+the sole cause of the unstable mode. A representation-preserving candidate
+has been checked algebraically in 32 high-precision point tests, but has not
+yet been implemented or validated through stencil updates and MPI transfers.
+
+The separate auxiliary-plus-gauge damping trial also failed: max|Theta| at
+60M is 8.42809e-8 with 30–60M log-growth 0.103307/M. At 50M the physical
+K residual, explicitly reconstructed as Khat+2Theta, reaches 6.58314e-7 at
+r=0.649519M. It was stopped manually at 68.8M; its 24 short MPI cases pass,
+but its long perturbation gate does not. This experimental sponge remains
+archived outside production source. Global kappa1/kappa2 remain 0.1/0.

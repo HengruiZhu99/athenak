@@ -246,6 +246,7 @@ class Z4c {
     // Input-gated debug reductions for instability localization.
     bool debug_balance;
     bool debug_balance_profiles;
+    bool debug_projection_snapshots;
     Real debug_balance_freeze, debug_balance_ramp, debug_balance_horizon;
     bool debug_reductions;
     int debug_reduction_stride;

@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstring>
+#include <cstdint>
 #include <string>
 #include <algorithm>
 #include <cstdlib>
@@ -345,6 +346,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.target_kappa1 = pin->GetOrAddReal("z4c", "target_kappa1", 0.0);
   opt.debug_balance = pin->GetOrAddBoolean("z4c", "debug_balance", false);
   opt.debug_balance_profiles = pin->GetOrAddBoolean("z4c", "debug_balance_profiles", false);
+  opt.debug_projection_snapshots =
+      pin->GetOrAddBoolean("z4c", "debug_projection_snapshots", false);
   opt.debug_balance_freeze = pin->GetOrAddReal("z4c", "debug_balance_freeze", 1.0);
   opt.debug_balance_ramp = pin->GetOrAddReal("z4c", "debug_balance_ramp", 1.4);
   opt.debug_balance_horizon = pin->GetOrAddReal("z4c", "debug_balance_horizon", 2.0);
@@ -514,6 +517,61 @@ void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
   auto &ix = pmy_pack->pmesh->mb_indcs;
   auto &dom = pmy_pack->pmesh->mesh_size;
   const int rank = global_variable::my_rank;
+  // Forensic snapshots retain neighboring metric values needed to measure
+  // connection changes caused by projection. This is read-only and uses the
+  // host mirrors already required by the balance audit. No production fence.
+  const std::string operation(label);
+  if (opt.debug_projection_snapshots && compare_background &&
+      (operation == "pre_projection" || operation == "post_projection" ||
+       operation == "init_reconstructed" || operation == "init_projected")) {
+    const int nmb = pmy_pack->nmb_thispack;
+    const std::string stem = "z4c_projection_" + operation + "_rank" +
+        std::to_string(rank) + "_cycle" + std::to_string(pmy_pack->pmesh->ncycle) +
+        "_stage" + std::to_string(stage);
+    const std::size_t count = static_cast<std::size_t>(nmb)*h.extent(1)*
+                             h.extent(2)*h.extent(3)*h.extent(4);
+    if (!h.span_is_contiguous() || !hb.span_is_contiguous()) {
+      std::cerr << "Projection snapshots require contiguous LayoutRight views.\n";
+      std::exit(EXIT_FAILURE);
+    }
+    std::ofstream data(stem + ".bin", std::ios::binary);
+    std::ofstream background(stem + ".background.bin", std::ios::binary);
+    data.write(reinterpret_cast<const char *>(h.data()), count*sizeof(Real));
+    background.write(reinterpret_cast<const char *>(hb.data()), count*sizeof(Real));
+    std::ofstream meta(stem + ".json");
+    const std::uint16_t endian = 1;
+    meta << std::setprecision(17)
+         << "{\"format_version\":1,\"scalar_bytes\":" << sizeof(Real)
+         << ",\"byte_order\":\""
+         << (*reinterpret_cast<const unsigned char *>(&endian) ? "little" : "big")
+         << "\",\"layout\":\"mnkji\",\"operation\":\"" << operation
+         << "\",\"rank\":" << rank << ",\"cycle\":" << pmy_pack->pmesh->ncycle
+         << ",\"stage\":" << stage << ",\"time\":" << pmy_pack->pmesh->time
+         << ",\"dt\":" << pmy_pack->pmesh->dt
+         << ",\"level_convention\":\"logical\",\"root_level\":"
+         << pmy_pack->pmesh->root_level
+         << ",\"chi_psi_power\":" << opt.chi_psi_power
+         << ",\"shape\":[" << nmb << ',' << h.extent(1) << ',' << h.extent(2)
+         << ',' << h.extent(3) << ',' << h.extent(4) << "],\"ng\":" << ix.ng
+         << ",\"active_start\":[" << ix.is << ',' << ix.js << ',' << ix.ks
+         << "],\"active_count\":[" << ix.nx1 << ',' << ix.nx2 << ',' << ix.nx3
+         << "],\"blocks\":[";
+    for (int m=0; m<nmb; ++m) {
+      const auto &s = mb.mb_size.h_view(m);
+      if (m) meta << ',';
+      meta << "{\"gid\":" << mb.mb_gid.h_view(m)
+           << ",\"level\":" << mb.mb_lev.h_view(m)
+           << ",\"xmin\":[" << s.x1min << ',' << s.x2min << ',' << s.x3min
+           << "],\"xmax\":[" << s.x1max << ',' << s.x2max << ',' << s.x3max
+           << "],\"dx\":[" << s.dx1 << ',' << s.dx2 << ',' << s.dx3 << "]}";
+    }
+    meta << "]}\n";
+    data.close(); background.close(); meta.close();
+    if (!data || !background || !meta) {
+      std::cerr << "Failed to write projection snapshot " << stem << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+  }
   const std::string filename = "z4c_balance_rank" + std::to_string(rank) + ".csv";
   const bool header = !std::ifstream(filename).good();
   std::ofstream out(filename, std::ios::app);
