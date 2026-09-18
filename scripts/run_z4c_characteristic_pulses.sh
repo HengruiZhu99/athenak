@@ -17,6 +17,7 @@ maximum_interior_ratio=${CPBC_MAX_INTERIOR_RATIO:-0.02}
 boundary_rhs=${Z4C_BOUNDARY_RHS:-characteristic_cpbc}
 characteristic_bc_source=${Z4C_CHARACTERISTIC_BC_SOURCE:-zero_rate}
 control_root=${Z4C_CONTROL_ROOT:-}
+residual_gauge=${Z4C_RESIDUAL_GAUGE:-background_adapted}
 check_boundary_diagnostic=${Z4C_CHECK_BOUNDARY_DIAGNOSTIC:-1}
 source_root=$(cd "$(dirname "$0")/.." && pwd)
 input_file="${source_root}/inputs/tests/z4c_characteristic_cpbc_plane_pulse.athinput"
@@ -100,6 +101,7 @@ for axis in "${axes[@]}"; do
         "problem/characteristic_test_center=${pulse_center}" \
         "z4c/extrap_order=${extrap_order}" \
         "z4c/boundary_rhs=${boundary_rhs}" \
+        "z4c/residual_gauge=${residual_gauge}" \
         "z4c/characteristic_bc_source=${characteristic_bc_source}" \
         >"${run_dir}/stdout.log" 2>&1
       if [[ ${boundary_rhs} == characteristic_cpbc &&

@@ -937,3 +937,97 @@ Local artifacts: `offline-operator-validation.json`,
 The next diagnostic must treat the coupled operator and its inner closure;
 negative work from an isolated added damping term has repeatedly failed to
 predict the resulting mode's stability.
+
+## Matched-gauge boundary comparison and core-stencil rejection
+
+A diagnostic core-stencil continuation was tested without changing stored
+residuals: constant or linear continuation into the frozen 0.5M core, followed
+by algebraic projection of scratch metric/A fields used only by the RHS.
+The stored core stayed exactly zero, exterior stencil inputs were byte
+identical, and one/four-thread snapshots matched. Both variants nevertheless
+regrew after an initial decrease. Restarting the 60M growing checkpoint,
+they reached the 120M target with max|Theta|=3.96211e-4 and 5.49878e-4;
+70–100M growth rates were +0.134858/M and +0.135767/M. Their complete final
+checkpoint payloads were finite. Completion is not stability. The experimental
+patch was archived as `experimental-core-stencil.patch` and removed from source.
+
+The characteristic boundary previously rejected `standard_subtract` even
+though the volume operator already supported it. CPBC now consistently
+selects its gauge coefficients: background lapse/shift and residual lapse
+multiplier for `background_adapted`, full lapse/shift and no adapted multiplier
+for `standard_subtract`. This selection applies to both the normal modes and
+the tangential-principal datum. The geometric coefficients always use the
+full state. The existing validity guards remain in place. This adds a matched
+boundary comparison; it does not change the production gauge or cure growth.
+
+Validation of the new path:
+
+- The characteristic numerical algebra checks pass all 103 coefficient cases,
+  including finite standard-gauge lapse changes; maximum error 7.51e-14.
+- `z4c_background_balance.py --gauge standard_subtract` passes 24 one/four-rank
+  CPU cases with exact vacuum stage/RHS/geometry cancellation, uniform and
+  refined meshes, coordinate-axis signed zeros, and nonzero linear response.
+  Repeating with `--boundary-source tangential_principal` passes another 24.
+- `z4c_standard_cpbc.py` seeds a finite 0.01-amplitude lapse/shift pulse at the
+  boundary. Independent full-state scalar characteristic rows have residual
+  at most 1.11e-17 over nine RK stages. Substituting a background-only lapse
+  coefficient instead produces 8.80e-6 error. Actual boundary updates are
+  byte identical on one/four ranks and when the adapted-only lapse multiplier
+  changes from 1 to 0.37. No small-residual reset is involved.
+- On the original growing 60M checkpoint, an independent nonlinear volume
+  operator agrees with the standard-gauge C++ RHS to 4.39e-14 over all three
+  stages. Thirty one/four-thread input/RHS snapshots match byte for byte.
+  Twenty-four unchanged adapted-gauge snapshots match the earlier executable
+  byte for byte, including background inputs, volume RHS, and KO.
+- This extension has been built and tested on CPU/MPI/OpenMP. Its enabled
+  standard-gauge path has not yet been validated on SYCL GPUs. The selection
+  reads immutable full/background views; it adds no stencil writes, view
+  ownership changes, cache invalidation, task dependencies, or fences.
+
+The matched long controls reject the adapted gauge as a sufficient explanation
+of the observed instability. Standard subtraction retains +0.132582/M growth
+from 30–60M, versus +0.132329/M for the adapted baseline. At 60M its Theta
+maximum is 7.24181e-8 at (-0.625,0.125,0.125)M, r=0.649519M, inside the
+0.5–1M sponge. The exterior maximum is 3.30384e-9 at
+(-1.875,0.625,0.375)M, r=2.011685M. These are completed-step state maxima,
+rank/block/relative-level zero, not first-injection locations. Normalized
+Theta profiles have correlation 0.999358; all 22 evolving fields together
+have correlation 0.991410. Thus changing gauge alters amplitude more than the
+mode shape or growth rate.
+
+The standard-gauge restart control has +0.131400/M growth over 70–100M.
+Its validated 100.05M checkpoint has max|Theta|=2.30182e-5 at
+(-0.625,0.125,-0.125)M, r=0.649519M. Both fresh and restarted checkpoint
+payloads are finite with valid sampled metrics. The runs were stopped after
+these checkpoints, with final histories at 65.025M and 115.2M, respectively;
+neither reached its requested 120M target or a walltime limit. Atmosphere and
+star gates remain closed.
+
+Local artifacts include `core-stencil-control-results.json`,
+`standard-cpbc-{balance-mpi,tangential-balance-mpi,finite-mpi-bitwise}/results.json`,
+`standard-cpbc-stage-results.json`, `standard-cpbc-{fresh,restart}-omp4/control-results.json`,
+and `standard-cpbc-control.png/pdf` with `standard-cpbc-mode-comparison.json`.
+
+The geometric Khat, Theta and conformal-connection RHS terms were also checked
+against equations (3)–(6) of [Hilditch et al., arXiv:1212.2901](https://arxiv.org/pdf/1212.2901).
+In particular, the connection uses the contracted metric Christoffel symbol
+in the shift-gradient terms and the combination 2*dKhat+dTheta in its
+constraint coupling. These terms match the reference formulation; this
+comparison has not identified a missing sign or factor that explains the
+mode. It does not establish stability on this curved background with the
+implemented excision boundary. Results for other formulations, such as
+[Garcia-Saenz et al., arXiv:2501.01055](https://arxiv.org/html/2501.01055v2),
+concern different puncture and constraint-damping systems and do not justify
+changing the requested kappa1=0.1, kappa2=0 here without a separate diagnosis.
+
+The new standard-gauge path also passes outgoing lapse, longitudinal-shift,
+and transverse-shift pulse tests at dx=0.0625M with fourth-order ghost
+extrapolation: the measured interior incoming/outgoing L2 ratios are
+0.005110, 0.001560, and 0.005114 (all below the unchanged 0.02 limit).
+These tests run to 12M and measure the saved interior state, separately from
+boundary enforcement diagnostics. At dx=0.125M the lapse ratio is 0.021018
+with fourth-order extrapolation, failing the same limit. With second-order
+extrapolation it is 0.028304 for both the new standard gauge and an unchanged
+adapted-gauge comparison. These coarse failures remain recorded; no tolerance
+was relaxed. This checks three gauge families at normal incidence, not a new
+all-orientation reflection validation or a long-time black-hole stability pass.

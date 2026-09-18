@@ -278,7 +278,6 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
         use_analytic_background &&
         evolve_lapse_residual &&
         evolve_shift_residual &&
-        opt.residual_gauge_mode == residual_gauge_background_adapted &&
         !opt.telegraph_lapse &&
         fabs(opt.chi_psi_power + 4.0) <= tol &&
         fabs(opt.lapse_advect - 1.0) <= tol &&
@@ -294,8 +293,9 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
                 << std::endl
                 << "characteristic_cpbc currently requires use_z4c=true, "
-                << "use_analytic_background=true, background_adapted evolved "
-                << "lapse and shift residuals, chi_psi_power=-4, unit lapse/shift "
+                << "use_analytic_background=true, standard_subtract or "
+                << "background_adapted evolved lapse and shift residuals, "
+                << "chi_psi_power=-4, unit lapse/shift "
                 << "advection, telegraph_lapse=false, shift_alpha2Gamma=0, and "
                 << "shift_H=0, sss_damping_amp=0, and a finite nonnegative "
                 << "characteristic_bc_max_energy_density, with a positive "

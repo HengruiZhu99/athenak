@@ -101,10 +101,17 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--ranks', type=int, nargs='+', default=[1, 4])
     parser.add_argument('--launcher', default='mpiexec')
+    parser.add_argument('--gauge', choices=['background_adapted', 'standard_subtract'],
+                        default='background_adapted')
+    parser.add_argument('--boundary-source', choices=['zero_rate', 'tangential_principal'],
+                        default='zero_rate')
     args = parser.parse_args()
     exe = args.exe.resolve()
     source = Path(__file__).resolve().parents[1] / 'inputs/z4c_ks_background.athinput'
-    baseline = source.read_text()
+    baseline = source.read_text().replace('residual_gauge = background_adapted',
+                                          'residual_gauge = ' + args.gauge)
+    baseline = baseline.replace('characteristic_bc_source = zero_rate',
+                                'characteristic_bc_source = ' + args.boundary_source)
     results = {}
     for ranks in args.ranks:
         for case in ['equilibrium', 'refined_equilibrium',

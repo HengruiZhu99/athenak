@@ -362,33 +362,40 @@ int ApplyResidualCharacteristicBC(
 
   const Real alpha = u_full(m,Z4c::I_Z4C_ALPHA,k,j,i);
   const Real chi = u_full(m,Z4c::I_Z4C_CHI,k,j,i);
-  const Real alpha_bg = u_bg(m,Z4c::I_Z4C_ALPHA,k,j,i);
-  const Real f_bg = opt.lapse_oplog*opt.lapse_harmonicf +
-                    opt.lapse_harmonic*alpha_bg;
-  const Real lapse_driver = opt.residual_lapse_f*f_bg*alpha_bg;
+  // Use the principal coefficients of the selected volume gauge.  Standard
+  // subtraction treats the background RHS as a prescribed source, so its
+  // gauge advection and lapse driver use the full state even at finite residual.
+  const bool adapted =
+      opt.residual_gauge_mode == Z4c::residual_gauge_background_adapted;
+  const auto &u_gauge = adapted ? u_bg : u_full;
+  const Real alpha_gauge = u_gauge(m,Z4c::I_Z4C_ALPHA,k,j,i);
+  const Real f_gauge = opt.lapse_oplog*opt.lapse_harmonicf +
+                    opt.lapse_harmonic*alpha_gauge;
+  const Real lapse_driver =
+      (adapted ? opt.residual_lapse_f : 1.0)*f_gauge*alpha_gauge;
   const Real shift_driver =
       (1.0 - opt.sss_damping_amp *
        exp(-0.5*SQR(time/opt.sss_damping_time)))*opt.shift_ggamma;
   Real beta_full_normal = 0.0;
-  Real beta_bg_normal = 0.0;
+  Real beta_gauge_normal = 0.0;
   for (int a = 0; a < 3; ++a) {
     beta_full_normal +=
         normal_d[a]*u_full(m,Z4c::I_Z4C_BETAX+a,k,j,i);
-    beta_bg_normal +=
-        normal_d[a]*u_bg(m,Z4c::I_Z4C_BETAX+a,k,j,i);
+    beta_gauge_normal +=
+        normal_d[a]*u_gauge(m,Z4c::I_Z4C_BETAX+a,k,j,i);
   }
 
-  if (!(isfinite(alpha) && isfinite(alpha_bg) && isfinite(chi) &&
+  if (!(isfinite(alpha) && isfinite(alpha_gauge) && isfinite(chi) &&
         isfinite(lapse_driver) && isfinite(shift_driver) &&
-        isfinite(beta_full_normal) && isfinite(beta_bg_normal)) ||
-      alpha <= 0.0 || alpha_bg <= 0.0 || chi <= 0.0 ||
+        isfinite(beta_full_normal) && isfinite(beta_gauge_normal)) ||
+      alpha <= 0.0 || alpha_gauge <= 0.0 || chi <= 0.0 ||
       lapse_driver <= 0.0 || shift_driver <= 0.0) {
     return CPBC_INVALID_COEFFICIENT;
   }
 
   const Real sqrt_chi = sqrt(chi);
   const Real c_light = alpha*sqrt_chi;
-  const Real beta_difference = beta_full_normal-beta_bg_normal;
+  const Real beta_difference = beta_full_normal-beta_gauge_normal;
   const Real lapse_discriminant =
       SQR(beta_difference)+4.0*chi*lapse_driver;
   const Real shift_long_discriminant =
@@ -404,14 +411,14 @@ int ApplyResidualCharacteristicBC(
     return CPBC_INVALID_SPEED;
   }
   const Real lambda_lapse[2] = {
-    0.5*(beta_full_normal+beta_bg_normal+sqrt(lapse_discriminant)),
-    0.5*(beta_full_normal+beta_bg_normal-sqrt(lapse_discriminant))};
+    0.5*(beta_full_normal+beta_gauge_normal+sqrt(lapse_discriminant)),
+    0.5*(beta_full_normal+beta_gauge_normal-sqrt(lapse_discriminant))};
   const Real lambda_shift_long[2] = {
-    0.5*(beta_full_normal+beta_bg_normal+sqrt(shift_long_discriminant)),
-    0.5*(beta_full_normal+beta_bg_normal-sqrt(shift_long_discriminant))};
+    0.5*(beta_full_normal+beta_gauge_normal+sqrt(shift_long_discriminant)),
+    0.5*(beta_full_normal+beta_gauge_normal-sqrt(shift_long_discriminant))};
   const Real lambda_shift_trans[2] = {
-    0.5*(beta_full_normal+beta_bg_normal+sqrt(shift_trans_discriminant)),
-    0.5*(beta_full_normal+beta_bg_normal-sqrt(shift_trans_discriminant))};
+    0.5*(beta_full_normal+beta_gauge_normal+sqrt(shift_trans_discriminant)),
+    0.5*(beta_full_normal+beta_gauge_normal-sqrt(shift_trans_discriminant))};
   const Real lambda_light[2] = {
     beta_full_normal+c_light,beta_full_normal-c_light};
   if (!(lambda_lapse[0] > 0.0 && lambda_lapse[1] < 0.0 &&
@@ -423,13 +430,13 @@ int ApplyResidualCharacteristicBC(
 
   // The closed scalar rows are singular when the longitudinal-shift root
   // coincides with either the lapse or the light root.  These are the exact
-  // finite-residual separations for the hybrid full/background advection
-  // symbol, not the zero-residual comoving approximations.
+  // finite-residual separations for the geometric and selected-gauge
+  // advections, not the zero-residual comoving approximations.
   const Real shift_mu = lambda_shift_long[0]-beta_full_normal;
-  const Real shift_delta_bg =
-      lambda_shift_long[0]-beta_bg_normal;
+  const Real shift_delta_gauge =
+      lambda_shift_long[0]-beta_gauge_normal;
   const Real lapse_shift_separation =
-      chi*lapse_driver-shift_mu*shift_delta_bg;
+      chi*lapse_driver-shift_mu*shift_delta_gauge;
   const Real light_shift_separation =
       chi*SQR(alpha)-SQR(shift_mu);
   const Real shift_mu_out =
@@ -438,7 +445,7 @@ int ApplyResidualCharacteristicBC(
       chi*SQR(alpha)-SQR(shift_mu_out);
   const Real separation_scale =
       fmax(1.0,fmax(fabs(chi*lapse_driver),
-                    fmax(fabs(shift_mu*shift_delta_bg),
+                    fmax(fabs(shift_mu*shift_delta_gauge),
                          fabs(chi*SQR(alpha)))));
   if (fabs(lapse_shift_separation) <=
           BoundaryRoundoffTolerance()*separation_scale ||
@@ -574,7 +581,7 @@ int ApplyResidualCharacteristicBC(
   // differences as the volume operator.  Subtracting its face-normal part
   // below leaves exactly the tangential principal boundary datum; nonlinear,
   // damping, source, and KO terms are not reclassified as incoming data.
-  Real beta_full_u[3], beta_bg_u[3];
+  Real beta_full_u[3], beta_gauge_u[3];
   Real gradient_k[3], gradient_theta[3];
   Real gradient_Gamma[3][3], gradient_A[3][3][3];
   Real hessian_alpha[3][3], hessian_chi[3][3];
@@ -582,7 +589,7 @@ int ApplyResidualCharacteristicBC(
   Real laplacian_metric[3][3], normal_advection_metric[3][3];
   for (int a = 0; a < 3; ++a) {
     beta_full_u[a] = u_full(m,Z4c::I_Z4C_BETAX+a,k,j,i);
-    beta_bg_u[a] = u_bg(m,Z4c::I_Z4C_BETAX+a,k,j,i);
+    beta_gauge_u[a] = u_gauge(m,Z4c::I_Z4C_BETAX+a,k,j,i);
     gradient_k[a] = CenteredCoordinateDerivative4(
         u,m,Z4c::I_Z4C_KHAT,k,j,i,a,idx);
     gradient_theta[a] = CenteredCoordinateDerivative4(
@@ -636,7 +643,7 @@ int ApplyResidualCharacteristicBC(
       laplacian_alpha += g_uu[a][b]*hessian_alpha[a][b];
       laplacian_chi += g_uu[a][b]*hessian_chi[a][b];
       normal_advection_alpha +=
-          normal_u[a]*beta_bg_u[b]*hessian_alpha[a][b];
+          normal_u[a]*beta_gauge_u[b]*hessian_alpha[a][b];
       normal_advection_chi +=
           normal_u[a]*beta_full_u[b]*hessian_chi[a][b];
       gradient_divergence_beta[a] += hessian_beta[a][b][b];
@@ -724,7 +731,7 @@ int ApplyResidualCharacteristicBC(
     Real beta_value = 0.0;
     for (int b = 0; b < 3; ++b) {
       for (int c = 0; c < 3; ++c) {
-        beta_value += normal_u[b]*beta_bg_u[c]*
+        beta_value += normal_u[b]*beta_gauge_u[c]*
                       hessian_beta[b][c][a];
       }
     }
@@ -773,27 +780,27 @@ int ApplyResidualCharacteristicBC(
   Real left_p[4][4] = {};
 
   // Lapse roots of
-  //   (lambda-beta_full)(lambda-beta_bg)=chi*lapse_driver.
+  //   (lambda-beta_full)(lambda-beta_gauge)=chi*lapse_driver.
   left_p[0][0] =
-      -(lambda_lapse[0]-beta_bg_normal)/chi;
+      -(lambda_lapse[0]-beta_gauge_normal)/chi;
 
   // Longitudinal-shift roots of
-  //   (lambda-beta_full)(lambda-beta_bg)=4 shift_driver/3.
+  //   (lambda-beta_full)(lambda-beta_gauge)=4 shift_driver/3.
   // Multiply the unit-d_s-beta row by both cone separations.  This is an
   // eigenvector rescaling, but avoids ill-conditioned large coefficients
   // close to either supported (nondegenerate) cone.
   const Real shift_q = (4.0/3.0)*shift_driver;
   left_p[1][0] =
-      alpha*SQR(shift_delta_bg)*light_shift_separation;
+      alpha*SQR(shift_delta_gauge)*light_shift_separation;
   left_p[1][1] =
       0.5*alpha*shift_q*lapse_shift_separation;
   left_p[1][3] =
-      0.25*shift_delta_bg*
+      0.25*shift_delta_gauge*
       (4.0*chi*SQR(alpha)-3.0*SQR(shift_mu))*lapse_shift_separation;
   const Real shift_left_d0 =
-      0.5*SQR(alpha)*shift_delta_bg*lapse_shift_separation;
+      0.5*SQR(alpha)*shift_delta_gauge*lapse_shift_separation;
   const Real shift_left_d2 =
-      -chi*alpha*shift_delta_bg*light_shift_separation;
+      -chi*alpha*shift_delta_gauge*light_shift_separation;
   const Real shift_left_d3 =
       lapse_shift_separation*light_shift_separation;
 
@@ -873,19 +880,19 @@ int ApplyResidualCharacteristicBC(
       Real outgoing_amplitude = 0.0;
       if (mode == 0) {
         outgoing_amplitude =
-            -(lambda_lapse[1]-beta_bg_normal)*scalar_p[0]/chi +
+            -(lambda_lapse[1]-beta_gauge_normal)*scalar_p[0]/chi +
             scalar_d[2];
       } else if (mode == 1) {
         const Real lambda = lambda_shift_long[1];
         const Real mu = lambda-beta_full_normal;
-        const Real delta_bg = lambda-beta_bg_normal;
+        const Real delta_gauge = lambda-beta_gauge_normal;
         outgoing_amplitude =
-            alpha*SQR(delta_bg)*light_shift_separation_out*scalar_p[0] +
+            alpha*SQR(delta_gauge)*light_shift_separation_out*scalar_p[0] +
             0.5*alpha*shift_q*lapse_shift_separation*scalar_p[1] +
-            0.25*delta_bg*(4.0*chi*SQR(alpha)-3.0*SQR(mu))*
+            0.25*delta_gauge*(4.0*chi*SQR(alpha)-3.0*SQR(mu))*
                 lapse_shift_separation*scalar_p[3] +
-            0.5*SQR(alpha)*delta_bg*lapse_shift_separation*scalar_d[0] -
-            chi*alpha*delta_bg*light_shift_separation_out*scalar_d[2] +
+            0.5*SQR(alpha)*delta_gauge*lapse_shift_separation*scalar_d[0] -
+            chi*alpha*delta_gauge*light_shift_separation_out*scalar_d[2] +
             lapse_shift_separation*light_shift_separation_out*scalar_d[3];
       } else if (mode == 2) {
         outgoing_amplitude =
@@ -1000,29 +1007,29 @@ int ApplyResidualCharacteristicBC(
           tangent_d[tangent][a]*principal_beta_normal_rhs[a];
     }
 
-    // Exact incoming transverse-gauge row for the hybrid full/background
+    // Exact incoming transverse-gauge row for the geometric and selected-gauge
     // advection root.  The coefficient of d_s beta_A is normalized to one.
-    const Real transverse_delta_bg =
-        lambda_shift_trans[0]-beta_bg_normal;
+    const Real transverse_delta_gauge =
+        lambda_shift_trans[0]-beta_gauge_normal;
     Real gauge_amplitude =
-        transverse_delta_bg*vector_p[1] + vector_d[1];
+        transverse_delta_gauge*vector_p[1] + vector_d[1];
     Real gauge_rate =
-        transverse_delta_bg*vector_p_rhs[1] + vector_d_rhs[1];
+        transverse_delta_gauge*vector_p_rhs[1] + vector_d_rhs[1];
     Real gauge_normal_principal_rate =
         lambda_shift_trans[0]*
-        (transverse_delta_bg*vector_p_normal[1] + vector_d_normal[1]);
+        (transverse_delta_gauge*vector_p_normal[1] + vector_d_normal[1]);
     Real gauge_full_principal_rate =
-        transverse_delta_bg*vector_p_principal[1] +
+        transverse_delta_gauge*vector_p_principal[1] +
         vector_d_principal[1];
     Real gauge_target = TangentialPrincipal ?
         gauge_full_principal_rate-gauge_normal_principal_rate : 0.0;
     Real gauge_residual = gauge_target-gauge_rate;
-    Real delta_gamma = gauge_residual/transverse_delta_bg;
+    Real delta_gamma = gauge_residual/transverse_delta_gauge;
 
     Real constraint_amplitude =
         -2.0*vector_p[0]/sqrt_chi - vector_p[1] + vector_d[0];
     Real outgoing_gauge_amplitude =
-        (lambda_shift_trans[1]-beta_bg_normal)*vector_p[1] +
+        (lambda_shift_trans[1]-beta_gauge_normal)*vector_p[1] +
         vector_d[1];
     Real outgoing_constraint_amplitude =
         2.0*vector_p[0]/sqrt_chi - vector_p[1] + vector_d[0];
@@ -1065,7 +1072,7 @@ int ApplyResidualCharacteristicBC(
                         fmax(fabs(delta_A),fabs(delta_gamma)),
                         collect_diagnostics);
     Real gauge_error =
-        transverse_delta_bg*vector_p_rhs[1] + vector_d_rhs[1] -
+        transverse_delta_gauge*vector_p_rhs[1] + vector_d_rhs[1] -
         gauge_target;
     Real constraint_error =
         -2.0*vector_p_rhs[0]/sqrt_chi -
@@ -1164,7 +1171,7 @@ int ApplyResidualCharacteristicBC(
 
   const Real maximum_shift_ratio =
       fmax(fabs(beta_full_normal)/c_light,
-           fabs(beta_full_normal-beta_bg_normal)/
+           fabs(beta_full_normal-beta_gauge_normal)/
                fmin(sqrt(lapse_discriminant),
                     fmin(sqrt(shift_long_discriminant),
                          sqrt(shift_trans_discriminant))));

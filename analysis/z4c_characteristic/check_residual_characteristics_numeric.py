@@ -525,6 +525,12 @@ def check_case(label, n, c, lapse, shift, beta):
             label, n, c, lapse, shift, beta, full_beta
         )
     )
+    # Standard subtraction: both advections and the lapse driver use the full
+    # state. Exercise a finite lapse change, not just the shared equilibrium.
+    full_alpha = n * 1.03
+    errors.append(check_finite_residual_algebra(
+        label + ":standard", full_alpha, c, 2.0 * full_alpha, shift,
+        beta, beta))
     return max(errors)
 
 

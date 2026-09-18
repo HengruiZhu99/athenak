@@ -44,7 +44,7 @@ the residual right-hand side as
 \]
 using identical finite-difference stencils for both terms.  Matter is included
 only in the full term and is required to be vacuum or atmosphere at a physical
-boundary.  The supported gauge path is the code's
+boundary.  One supported gauge path is the code's
 \texttt{background\_adapted} path,
 \begin{align}
  \dtzero\,\delta\alpha &=-L\,\delta\hat K
@@ -99,6 +99,24 @@ while \(L\) remains the analytic-background-adapted lapse driver and \(G\)
 remains the configured residual shift driver.  The symbol is not obtained by
 simply replacing every barred field in the zero-residual formulas by a full
 field.
+
+The \texttt{standard\_subtract} gauge is also supported. It applies
+Equation~\eqref{eq:residual} to the ordinary gauge equations as well as the
+geometric equations. Its background term is a prescribed source. In all the
+finite-residual formulas below, set
+\[
+ b_b=b_f,\qquad
+ L=\alpha_{\rm full}\left(f_{\rm oplog}f_{\rm harmonicf}
+                  +f_{\rm harmonic}\alpha_{\rm full}\right).
+\]
+Thus $b_b$ denotes the selected gauge advection coefficient; it equals the
+analytic-background shift only for \texttt{background\_adapted}. The same
+selection applies to the full vector advection in the tangential-principal
+boundary datum. The \texttt{residual\_lapse\_f} multiplier belongs only to the
+adapted gauge and is not applied to standard subtraction. The lower-order
+terms of the two gauges differ even when their zero-residual principal
+symbols agree. Matching the principal boundary symbol does not establish
+long-time stability of either gauge.
 
 This can be checked directly before computing any eigenvectors.  In a
 full-conformal-metric orthonormal frame, add \(b_f\) to the diagonal entries of the
@@ -680,7 +698,7 @@ edge/corner MeshBlock may occur in more than one compact list.
 No analytic-background ghost extrapolation enters a characteristic
 amplitude.  The local frame and geometric coefficients are read from the
 reconstructed full state at the active cell; the analytic background supplies
-only the gauge driver and background-shift advection identified explicitly
+the adapted gauge driver and background-shift advection identified explicitly
 above.  Residual ghost extrapolation remains enabled for the centered volume
 and KO stencils.
 The physical ghost fill is distinct from the active-cell characteristic
