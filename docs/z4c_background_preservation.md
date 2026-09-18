@@ -1138,3 +1138,25 @@ and was rejected. No new evolution change is justified from unvalidated
 spectral output. Artifacts include `mode-linearization-validation.json`,
 `mode-rk-validation.json`, `mode-stage-transfers.json`, and the locally retained
 `mode-linear-operator.py` with its coefficient builder and verifiers.
+
+A subsequent targeted solve of the complete linear RK3 map converged to a
+real amplification factor 1.0099483347103 per 0.075M step: growth
++0.1319890106/M, e-folding time 7.5763883M. Its independently recomputed
+relative eigenpair residual is 4.46e-10. A separate ARPACK solve in equivalent
+90,112-dimensional parity coordinates gives +0.1319890270/M, unit eigenvector
+norm, and 7.94e-9 residual. The symmetry reduction preserves all tensor/vector
+reflection signs; its transpose check has relative error 6.34e-15.
+
+The converged mode's Theta shape correlates with the saved 60M nonlinear run
+at 0.999999989 over evolving cells and 0.999999926 in the exterior. Its
+largest normalized Theta lies at r=0.649519M, with the exterior maximum at
+r=2.011685M. Thus the measured growth is reproduced by a converged mode of
+the discrete update, not merely an instantaneous positive source budget.
+This establishes an unstable mode in the seeded x-dipole symmetry sector on
+the single-block mesh; it does not establish the full spectrum, its causal
+source term, or refined-grid stability. An adjoint remains necessary before
+using biorthogonal source sensitivities to select another change. Two
+random-field checks also agree with the independent complex-step volume
+response to 2.95e-16 relative error. See `right-mode-analysis.json`,
+`mode-linearization/right-{targeted-results,octant-eigenvectors}.json`, and
+`mode-random-response.json`.
