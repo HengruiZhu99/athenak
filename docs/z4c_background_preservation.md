@@ -685,3 +685,29 @@ result dictionary equal to the pre-change signed-zero regression. This fix
 prevents invalid evolutions from masquerading as successful completions;
 it does not resolve the finite growing vacuum mode. GPU validation follows
 separately, and matter evolution remains gated on vacuum stability.
+
+Follow-up CPU checks repeat the invalid-state tests without MPI using one and
+four OpenMP threads; all six fail as intended. Rebuilding after moving the
+snapshot filter out of device Options and rerunning the snapshot regression
+also passes all four MPI cases and the noninterference test.
+
+A nested sixth-order stencil audit, restricted to r<2M so every input remains
+inside the captured ghost extent, further splits the Ricci contribution. In
+the 0.5–1M annulus, the derivative of the evolved-connection constraint
+contributes -3.99238/M and the remaining geometric Ricci part +7.55252/M,
+for the previously measured +3.56014/M net Ricci contribution there. The
+connection-constraint derivative is therefore not a positive driver in this
+particular inner product. Removing it on the basis of its large magnitude
+would be unjustified. This is an inferred diagnostic, not a changed equation.
+
+The next vacuum resolution control retains the earlier inward-characteristic
+gauge (lapse scale 0.1, shift coefficient 0.05), freeze/ramp 1/1.5M, rate 5,
+kappa1/kappa2=0.1/0, exterior dipole seed at 2.5M, and domain [-8,8]^3M.
+Increasing the requested SMR level to 2 produces 960 blocks of 8^3 cells:
+512 fine blocks with dx=0.125M and 448 outer blocks with dx=0.25M. Tree
+balancing also refines the outer grid, so this is a factor-two resolution
+comparison, not a change confined to the central region. Eight MPI ranks
+complete the three-step equilibrium audit with all 239400 state/RHS rows
+and 9072 geometry rows strictly zero. The perturbed evolution is running;
+no stability result is claimed yet. The pushed 4d102603 GPU build and its
+separate one-node validation are also pending.
