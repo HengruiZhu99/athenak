@@ -169,3 +169,32 @@ These cases preserve a finite, nonzero, linear response with the correct odd
 parity, and projected algebraic constraints remain at floating-point precision.
 The passive fluid in vacuum controls has stress-energy feedback disabled;
 metric exactness does not establish fluid stability or validate matter coupling.
+
+## Diagnostic working directory
+
+Start each process in its case directory when collecting initialization and
+stage traces. AthenaK applies `-d` after problem initialization; using `-d` alone
+puts the initial debug CSV rows in the launch directory and subsequent rows in
+the run directory. The regression runner already supplies `cwd=run`. GPU job
+8836413 exposed this launch-script issue: its first three-step perturbation
+control completed, but the strict verifier correctly rejected the incomplete
+case directory. The corrected launcher enters the case directory before
+starting MPI. The original files and the rejected verification are preserved.
+
+## Inner-layer controls at fixed resolution
+
+At dx=0.25M and 60M, the 0.5/1M freeze/ramp control has max|Theta|=1.20514e-7,
+with its maximum at (0.625,-0.125,0.125)M, r=0.64952M, within the sponge. The
+xy slice contains the global history maximum. Increasing only the sponge rate
+from 5 to 50 reduces the endpoint to 2.20003e-8, but the late log-growth slope
+remains positive (approximately 0.0632/M, versus 0.1319/M at rate 5). The source
+timestep safeguard is active; Z4c damping remains 0.1/0. This is not a stability
+pass and does not justify replacing the resolved vacuum test.
+
+With the original 1/1.4M layer on the same dx=0.25M grid, max|Theta| reaches
+7.30406e-7 at 60M. Its xy-slice maximum is 7.07443e-7 at
+(1.375,-0.625,0.125)M, r=1.51554M; that slice maximum is not the global argmax.
+Changing the freeze radius also changes the analytic interior background
+clamp, so this comparison does not isolate a single sponge term. Spatial
+profiles, raw exterior Hamiltonian maxima, and changes relative to initial
+Hamiltonian error must remain separate diagnostics.

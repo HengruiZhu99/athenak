@@ -75,6 +75,20 @@ def verify(run, ranks, equilibrium, refined):
             'theta_response': response, 'max_det_error': max_det, 'max_trace_A': max_trace}
 
 
+
+def verify_rank_consistency(results, ranks):
+    # Maxima are pointwise reductions, so changing the MPI partition must not
+    # change these short deterministic CPU controls. Do not compare sums whose
+    # reduction order can depend on rank count.
+    reference_rank = ranks[0]
+    suffix = f'_r{reference_rank}'
+    cases = [key[:-len(suffix)] for key in results if key.endswith(suffix)]
+    for case in cases:
+        reference = results[f'{case}_r{reference_rank}']['theta_response']
+        for rank in ranks[1:]:
+            actual = results[f'{case}_r{rank}']['theta_response']
+            assert actual == reference, f'{case}: Theta response changed with MPI ranks'
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--exe', type=Path, required=True)
@@ -143,6 +157,7 @@ def main():
         small = results[f'pulse_r{ranks}']['theta_response']
         large = results[f'pulse_double_r{ranks}']['theta_response']
         assert abs(large / small - 2) < 1e-4, 'Small-signal response is not linear'
+    verify_rank_consistency(results, args.ranks)
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / 'results.json').write_text(json.dumps(results, indent=2) + '\n')
     print(json.dumps(results, indent=2))
