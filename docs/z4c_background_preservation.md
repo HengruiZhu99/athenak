@@ -1160,3 +1160,58 @@ random-field checks also agree with the independent complex-step volume
 response to 2.95e-16 relative error. See `right-mode-analysis.json`,
 `mode-linearization/right-{targeted-results,octant-eigenvectors}.json`, and
 `mode-random-response.json`.
+
+The adjoint subsequently converged as well. A separately checked left RK
+mode has residual 4.23e-11 against the right-mode eigenvalue. In the specified
+coordinate-component Euclidean norm, the left/right eigenvector condition
+number is about 480.12. This quantifies significant nonnormality; it is not
+a physical energy norm. Differentiating the actual three-stage map, including
+projection and ghost ordering, gives the following growth-rate derivatives
+with respect to hypothetical multiplicative changes of individual operator
+terms:
+
+| Term multiplier | d(growth rate)/d(multiplier), in 1/M |
+| --- | ---: |
+| Advection | -1.357893 |
+| Algebraic response to A | +0.969140 |
+| First derivatives of the conformal metric | +0.389294 |
+| KO dissipation | +0.016099 |
+| Inner sponge | +0.030963 |
+| Characteristic boundary correction | -0.010409 |
+
+These are coupled eigenvalue sensitivities, not a sum of physical energies
+and not permission to rescale Einstein-equation terms. The largest local
+advection and algebraic-A sensitivities occur at r=1.709349M; the strongest
+metric-first-derivative sensitivity is at r=1.815730M. These lie beyond the
+0.5–1M sponge but inside the horizon, while the Theta state maximum remains
+at r=0.649519M. Thus a state maximum is not a reliable locator of the operator
+feedback most influential on this mode.
+
+An independent centered finite change of the entire RHS multiplier agrees
+with the differentiated RK sensitivity to 2.1e-13 in the growth-rate derivative.
+Increasing only the sponge rate from 5 to 5.05 in the linear operator gives
+growth +0.1322964028/M, with a unit-norm eigenvector and independently checked
+residual 6.81e-11. The measured increase, +0.0003073922/M, agrees with the
+local sensitivity prediction +0.00030963/M to within 0.8%; finite changes need
+not equal their first derivative exactly. This is a linear-operator control,
+not a new C++ long evolution. It confirms that stronger local negative
+relaxation need not decrease a coupled mode's growth rate. The first ARPACK
+output for the 4.95-rate control failed norm/residual validation and was
+rejected; its reported eigenvalue is not evidence about the evolution.
+
+The validated adjoint also predicts a negative initial growth-rate derivative
+for the previously rejected nondamping constraint-completion direction
+(-0.136875/M). The finite completion experiment nevertheless retained a
++0.05/M mode. This provides a concrete reason to validate the changed spectrum
+and nonlinear evolution rather than extrapolate a local derivative to a full
+formulation change. No arbitrary rescaling of physical A/metric terms, small
+residual reset, or global suppression of evolution has been introduced.
+Atmosphere and star runs remain gated on perturbation stability.
+
+Artifacts: `mode-sensitivity.json`, `mode-sensitivity.png/pdf`,
+`mode-linearization/left-targeted-large-results.json`,
+`mode-linearization/sponge-1.01-eigenvectors.json`, and
+`constraint-completion-eigen-sensitivity.json`. The independent volume,
+RK, transpose, eigenmode, and source-sensitivity tools are retained under the
+local review directory. These diagnostics have not established a stable
+replacement discretization or a new production fix.
