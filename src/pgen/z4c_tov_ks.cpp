@@ -2997,9 +2997,10 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
 
   if (restart) {
     pmbp->pz4c->UpdateBackgroundState(pmy_mesh_->time);
+    // The checkpoint already stores the evolved residual, including the stage
+    // projection. Rebuild derived fields without projecting/recasting it again:
+    // floating-point projection is not idempotent for a perturbed metric.
     pmbp->pz4c->ReconstructFullState();
-    pmbp->pz4c->EnforceAlgConstrOn(pmbp->pz4c->full);
-    pmbp->pz4c->RecastResidualState();
     pmbp->pz4c->PrescribeGaugeResidual();
     ApplyInnerExcision(pmy_mesh_, 0.0, false);
     pmbp->pz4c->Z4cToADM(pmbp);

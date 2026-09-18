@@ -221,3 +221,42 @@ rows have exactly zero differences and no bit mismatches. This job uses the
 pinned 7aefdac3 numerical build; the later actual-spacing diagnostic is a host
 reporting change, not an evolution change. The short refined audit does not
 establish long-time perturbation stability.
+
+## Per-rank checkpoint continuation
+
+A new restart regression exposed an MPI I/O dispatch error before evolution:
+`Mesh::BuildTreeFromRestart` omitted `single_file_per_rank` when calling
+`GetPosition`, passing a C `FILE*` to `MPI_File_get_position`. A debugger
+backtrace identified this call. Passing the existing flag fixes the abort;
+shared-file dispatch is unchanged.
+
+The TOV/KS restart initializer also projected and recast the already evolved
+saved residual again. A no-step restart changed active metric components by
+4.44e-16. Restart now reconstructs derived full/background fields without that
+extra projection/recast. The normal stage projection remains active; no
+physical perturbation is clipped or reset. This assumes continuation of a
+valid checkpoint with the same background/gauge parameters and MPI partition.
+Per-rank files do not support automatic redistribution to a new rank count.
+
+`tst/regression/z4c_background_restart.py` compares six uninterrupted RK3 steps
+with three steps plus a checkpoint and three resumed steps, using sixth-order
+spatial operators. It also performs a no-step restoration. Uniform and refined
+vacuum/dipole cases on one/four MPI ranks pass all eight cases (32 launches):
+
+- Saved active Z4c values are bitwise unchanged by restoration in every case.
+- Vacuum residuals, including stored ghosts, remain bitwise positive zero.
+- Nonzero perturbations remain finite and nonzero with valid metrics. Maximum
+  active differences between continuous and resumed evolution are 3.10e-13
+  (uniform) and 1.66e-14 (refined), against residual amplitudes near 5.8e-9.
+  Ghosts are reconstructed during restart, so nonzero evolution is not claimed
+  to be bitwise identical to uninterrupted evolution. The test bounds this
+  difference at 1e-12 for the specified 1e-8 seed.
+- All reported response/error maxima agree exactly between one and four ranks.
+
+These are CPU/MPI restart results, not yet a GPU restart validation or a
+long-time stability claim. Run with, for example:
+
+```sh
+python3 tst/regression/z4c_background_restart.py --exe /absolute/path/to/athena \
+  --output /absolute/path/to/new-results --launcher mpiexec
+```
