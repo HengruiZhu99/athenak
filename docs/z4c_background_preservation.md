@@ -301,3 +301,23 @@ clamp option was therefore not retained in production source. Exact equilibrium
 with the inward clamp had separately passed uniform/refined one/four-rank
 stage audits. These controls constrain hypotheses; they do not identify a
 unique erroneous term in the nonzero-residual operator.
+
+## Signed-zero background representation
+
+An axis-aligned control (same spacing, domain translated by half a cell while
+the black hole remains at the coordinate origin) exposed signed-zero input
+differences at the first reconstruction. `background + 0` can turn `-0` into
+`+0`. The run still preserved zero evolution: 870 state-audit rows and 54
+geometry-audit rows had bit mismatches but zero numerical difference. This
+was not the source of the observed growing perturbation.
+
+Reconstruction now returns the background value directly for an exactly zero
+residual, including signed zero, and performs the original addition for every
+nonzero residual. There is no epsilon threshold or perturbation reset. The
+expanded 24-case CPU/MPI stage suite passes, adding uniform/refined axis-aligned
+equilibria and single/double-amplitude axis-aligned pulses on one/four ranks.
+All sixteen pre-existing case results, including physical response and
+projection error maxima, are unchanged exactly. Axis-aligned zero state/RHS
+and geometry inputs now pass the strict bitwise audit; the nonzero response
+remains linear and rank independent. GPU validation of this extension remains
+pending.

@@ -36,6 +36,16 @@
 
 namespace z4c {
 
+namespace {
+KOKKOS_INLINE_FUNCTION
+Real AddResidualToBackground(const Real background, const Real residual) {
+  // Addition of +0 can change a background -0 to +0. Preserve the exact
+  // background representation at zero residual, without thresholding any
+  // nonzero perturbation or changing its ordinary floating-point addition.
+  return residual == 0.0 ? background : background + residual;
+}
+}  // namespace
+
 char const * const Z4c::Z4c_names[Z4c::nz4c] = {
   "z4c_chi",
   "z4c_gxx", "z4c_gxy", "z4c_gxz", "z4c_gyy", "z4c_gyz", "z4c_gzz",
@@ -788,22 +798,25 @@ void Z4c::ReconstructFullState() {
   const bool use_shift_residual_ = evolve_shift_residual;
   par_for("ReconstructFullState", DevExeSpace(), 0, nmb-1, ksg, keg, jsg, jeg, isg, ieg,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
-    full_.chi(m,k,j,i) = bg_.chi(m,k,j,i) + res.chi(m,k,j,i);
-    full_.vKhat(m,k,j,i) = bg_.vKhat(m,k,j,i) + res.vKhat(m,k,j,i);
-    full_.vTheta(m,k,j,i) = bg_.vTheta(m,k,j,i) + res.vTheta(m,k,j,i);
-    full_.alpha(m,k,j,i) = bg_.alpha(m,k,j,i) +
-        (use_lapse_residual_ ? res.alpha(m,k,j,i) : 0.0);
+    full_.chi(m,k,j,i) = AddResidualToBackground(bg_.chi(m,k,j,i), res.chi(m,k,j,i));
+    full_.vKhat(m,k,j,i) = AddResidualToBackground(bg_.vKhat(m,k,j,i), res.vKhat(m,k,j,i));
+    full_.vTheta(m,k,j,i) = AddResidualToBackground(bg_.vTheta(m,k,j,i), res.vTheta(m,k,j,i));
+    full_.alpha(m,k,j,i) = AddResidualToBackground(bg_.alpha(m,k,j,i),
+        use_lapse_residual_ ? res.alpha(m,k,j,i) : 0.0);
     for (int a = 0; a < 3; ++a) {
-      full_.vGam_u(m,a,k,j,i) = bg_.vGam_u(m,a,k,j,i) + res.vGam_u(m,a,k,j,i);
-      full_.beta_u(m,a,k,j,i) = bg_.beta_u(m,a,k,j,i) +
-          (use_shift_residual_ ? res.beta_u(m,a,k,j,i) : 0.0);
-      full_.vB_d(m,a,k,j,i) = bg_.vB_d(m,a,k,j,i) +
-          (use_shift_residual_ ? res.vB_d(m,a,k,j,i) : 0.0);
+      full_.vGam_u(m,a,k,j,i) = AddResidualToBackground(
+          bg_.vGam_u(m,a,k,j,i), res.vGam_u(m,a,k,j,i));
+      full_.beta_u(m,a,k,j,i) = AddResidualToBackground(bg_.beta_u(m,a,k,j,i),
+          use_shift_residual_ ? res.beta_u(m,a,k,j,i) : 0.0);
+      full_.vB_d(m,a,k,j,i) = AddResidualToBackground(bg_.vB_d(m,a,k,j,i),
+          use_shift_residual_ ? res.vB_d(m,a,k,j,i) : 0.0);
     }
     for (int a = 0; a < 3; ++a) {
       for (int b = a; b < 3; ++b) {
-        full_.g_dd(m,a,b,k,j,i) = bg_.g_dd(m,a,b,k,j,i) + res.g_dd(m,a,b,k,j,i);
-        full_.vA_dd(m,a,b,k,j,i) = bg_.vA_dd(m,a,b,k,j,i) + res.vA_dd(m,a,b,k,j,i);
+        full_.g_dd(m,a,b,k,j,i) = AddResidualToBackground(
+            bg_.g_dd(m,a,b,k,j,i), res.g_dd(m,a,b,k,j,i));
+        full_.vA_dd(m,a,b,k,j,i) = AddResidualToBackground(
+            bg_.vA_dd(m,a,b,k,j,i), res.vA_dd(m,a,b,k,j,i));
       }
     }
   });

@@ -107,7 +107,9 @@ def main():
     baseline = source.read_text()
     results = {}
     for ranks in args.ranks:
-        for case in ['equilibrium', 'refined_equilibrium', 'pulse', 'pulse_double',
+        for case in ['equilibrium', 'refined_equilibrium',
+                     'axis_equilibrium', 'refined_axis_equilibrium',
+                     'axis_pulse', 'axis_pulse_double', 'pulse', 'pulse_double',
                      'pulse_dipole', 'pulse_dipole_double',
                      'refined_dipole', 'refined_dipole_double']:
             run = args.output.resolve() / f'{case}_r{ranks}'
@@ -127,6 +129,18 @@ def main():
                 text = text.replace('max_nmb_per_rank = 8', 'max_nmb_per_rank = 128')
                 text += ('\n<refined_region0>\nlevel = 1\n'
                          'x1min = -1\nx1max = 1\nx2min = -1\nx2max = 1\nx3min = -1\nx3max = 1\n')
+            if 'axis' in case:
+                # Put active cell centers on coordinate axes (including the
+                # frozen origin). Off-diagonal background fields then contain
+                # signed zeros, which ordinary bg + 0 does not preserve bitwise.
+                half_width, shift = (8, 0.125) if refined else (4, 0.25)
+                head, rest = text.split('<meshblock>', 1)
+                for axis in range(1, 4):
+                    head = re.sub(rf'^x{axis}min\s*=.*',
+                                  f'x{axis}min = {-half_width-shift}', head, flags=re.M)
+                    head = re.sub(rf'^x{axis}max\s*=.*',
+                                  f'x{axis}max = {half_width-shift}', head, flags=re.M)
+                text = head + '<meshblock>' + rest
             if perturbed:
                 amp = 2e-8 if case.endswith('double') else 1e-8
                 text = text.replace('<problem>', '<problem>\n'
@@ -163,6 +177,9 @@ def main():
         small = results[f'pulse_r{ranks}']['theta_response']
         large = results[f'pulse_double_r{ranks}']['theta_response']
         assert abs(large / small - 2) < 1e-4, 'Small-signal response is not linear'
+        axis_ratio = (results[f'axis_pulse_double_r{ranks}']['theta_response'] /
+                      results[f'axis_pulse_r{ranks}']['theta_response'])
+        assert abs(axis_ratio - 2) < 1e-4, 'Axis-aligned physical response is not linear'
     verify_rank_consistency(results, args.ranks)
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / 'results.json').write_text(json.dumps(results, indent=2) + '\n')
