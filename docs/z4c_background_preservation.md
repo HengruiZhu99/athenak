@@ -1312,3 +1312,16 @@ used for an evolution or promoted to production.
 The tracked production equations remain unchanged by these candidate tests.
 The atmosphere and physical-star gates remain closed until a vacuum
 configuration passes finite-perturbation stability as well as exactness.
+
+The follow-up inner-sponge comparison replaces relaxation of all residual
+components by relaxation of Theta and the Gamma constraint only, retaining
+the deep frozen core and the original Z4c kappa terms. Its independent source
+and RK transpose checks pass at 2.73e-15 and 1.37e-15 relative; zero remains
+exact in the linear map. Nevertheless, its 45M compact-pulse control has
+31.5–45M growth +0.08695/M in Theta, +0.08040/M in the Gamma constraint,
+and +0.08181/M in the Hamiltonian residual. The latter two peak at coordinate
+r=0.207289M (areal R=1.207289M); Theta peaks at coordinate r=0.569402M
+(areal R=1.569402M). This comparison also fails the stability gate. It does
+not establish that relaxing the metric components is the sole cause.
+See `trumpet-constraint-sponge-results.json`; all these are local linear
+diagnostics, and no new nonlinear production candidate was submitted.
