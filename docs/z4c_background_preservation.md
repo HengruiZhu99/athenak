@@ -1653,3 +1653,66 @@ random control reaches 60M with an exactly zero frozen state but also grows.
 The candidate requires a wider effective stencil and has not been promoted
 to the C++ solver. Vacuum finite-perturbation stability remains unresolved;
 the atmosphere/star sequence has not advanced.
+
+The gauge-pulse regression now explicitly matches `debug_balance_freeze/ramp`
+to its physical 0.5M/M layer and checks every reported radial maximum's
+membership. These audit settings are independent of the evolution settings;
+leaving their defaults at 1M/1.4M mislabeled some v1 CSV regions. The initial
+injection coordinates and checkpoint profiles above were classified from
+coordinates and actual layer radii, so those findings are unaffected. The
+regression also asserts exact frozen-core residuals after each recast.
+
+The actual C++ 60M checkpoints put both gauge probes' Theta maxima at
+r=0.649519M in the sponge; exterior maxima lie at r=2.011685M. These are
+amplification locations, distinct from the initial injection coordinates.
+The frozen core remains exactly zero. The reviewed local figure
+`gauge-pulse-vacuum-controls.png/pdf` shows time histories, radial shell
+profiles, and signed Cartesian slices. Its source data are
+`gauge-pulse-spatial-profiles.json`.
+
+A further offline control uses the stationary 1+log Schwarzschild trumpet of
+[Bruegmann](https://arxiv.org/abs/0904.4418), distinct from the previously tested
+analytic R0=M trumpet. The isotropic horizon radius is 0.830404M. Independent
+continuum geometric, ADM Hamiltonian, and ADM momentum checks have maxima
+2.23e-15, 2.00e-15, and 8.11e-15; the stationary lapse RHS is below 7e-17.
+Tightening the radial-coordinate ODE tolerance changes the sampled state by
+1.16e-11. The shift driver still needs background forcing subtraction;
+stationary 1+log slicing does not make that driver stationary automatically.
+
+This single-block diagnostic uses dx=0.125M, a 0.125M frozen core, a rate-5
+sponge ending at 0.5M, unchanged kappa1=0.1/kappa2=0, full 1+log lapse and
+shift-advection response, and a prescribed shift coefficient
+`G_bg=0.9 alpha_bg^2 chi_bg` with matching boundary characteristics. The
+nonlinear directional-response and RK-transpose checks have relative errors
+2.53e-16 and 6.79e-14; the zero linear residual remains exact. An unrestricted
+compact perturbation reaches its 60M target normally, with the frozen state
+exactly zero throughout. Nevertheless, late Theta growth is +0.07758548/M,
+and Theta increases 12.05-fold over 30–60M. Its final maximum is at
+(0.3125,0.0625,-0.1875)M, r=0.369755M, inside this test's sponge. This background
+alone is rejected as a stability fix. The endpoint Rayleigh estimate has
+relative defect 2.28e-5 and is not a validated eigenvalue. No C++/MPI/SMR/GPU
+implementation of this background is claimed. Results are in
+`stationary-log-background-validation.json`,
+`stationary-log-operator-validation.json`, and
+`stationary-log-control-results.json` locally.
+
+All 32 gauge-probe cases and seven invalid-input controls passed again with
+the corrected audit radii. Their result dictionaries, including final active
+block hashes, match v1 exactly. See `gauge-pulse-mpi-regression-v2/results.json`.
+A separate MPI first-injection inventory records rank, block, relative level,
+coordinates, and RK stage for all four seeds on both meshes in
+`gauge-pulse-mpi-first-injection.json`. For example, the refined transverse
+shift-y case first develops Theta in stage-two volume RHS at
+(3.875,0.625,-0.375)M, rank 1, global block 54, level 1. This is an observation
+of the first nonzero Theta, not proof that mesh transfer caused the mode.
+
+For the stationary 1+log candidate, an independently recomputed full-grid
+approximate eigenpair has growth +0.07587000/M and relative residual 7.38e-8.
+Its state has unit norm and an exactly zero core before and after the step.
+Independent physical ADM Hamiltonian and momentum perturbations are nonzero,
+so this is not merely growth of a gauge norm. In this dipole mode, Theta and
+ADM H peak at (-0.4375,-0.0625,-0.0625)M, r=0.446339M; the momentum norm peaks
+at r=0.324760M. These normalized mode profiles are distinct from the random
+control's final maximum and from first-injection locations. See
+`stationary-log-mode-full-grid-validation.json`. This is a targeted unstable
+mode, not a full-spectrum analysis or a production fix.

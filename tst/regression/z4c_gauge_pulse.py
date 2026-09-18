@@ -13,7 +13,7 @@ import subprocess
 
 import numpy as np
 
-from z4c_background_balance import verify
+from z4c_background_balance import read_csv, verify
 
 
 def snapshot(run, operation, cycle, stage):
@@ -64,6 +64,27 @@ def check_seed(run, component, amplitude, center):
     return maximum, hashes, geometric_response
 
 
+def check_regions(run):
+    # Audit radii are explicit diagnostic settings, separate from the sponge.
+    # Check membership so stale defaults cannot mislabel first-injection sites.
+    frozen = 0
+    for path in sorted(run.glob('z4c_balance_rank*.csv')):
+        for row in read_csv(path):
+            radius = sum(float(row[a])**2 for a in ('x', 'y', 'z'))**.5
+            if row['region'] == 'freeze':
+                assert radius <= .5, row
+                if row['operation'] == 'post_recast':
+                    assert float(row['max_abs']) == 0, row
+                    frozen += 1
+            elif row['region'] == 'sponge':
+                assert .5 < radius < 1., row
+            elif row['region'] == 'interior':
+                assert 1. <= radius < 2., row
+            elif row['region'] == 'exterior':
+                assert radius >= 2., row
+    assert frozen > 0
+
+
 def verify_rejections(exe, launcher, output, baseline):
     enabled = baseline.replace('<problem>', '<problem>\nvacuum_gauge_pulse_amplitude = 1e-8')
     cases = {
@@ -105,7 +126,10 @@ def main():
     baseline = baseline.replace('excision_freeze_radius = 1.0', 'excision_freeze_radius = 0.5')
     baseline = baseline.replace('excision_ramp_radius = 1.4', 'excision_ramp_radius = 1.0')
     baseline = baseline.replace('<problem>', '<problem>\nzero_tmunu = true')
-    baseline = baseline.replace('<z4c>', '<z4c>\ndebug_snapshot_operations = pre_gauge_pulse,post_gauge_pulse,post_recast')
+    baseline = baseline.replace('<z4c>', '<z4c>\n'
+        'debug_balance_freeze = 0.5\ndebug_balance_ramp = 1.0\n'
+        'debug_balance_horizon = 2.0\n'
+        'debug_snapshot_operations = pre_gauge_pulse,post_gauge_pulse,post_recast')
     verify_rejections(args.exe, args.launcher, args.output, baseline)
     results = {}
     for ranks in args.ranks:
@@ -136,6 +160,7 @@ def main():
                         subprocess.run([args.launcher, '-n', str(ranks), str(args.exe.resolve()),
                                         '-i', 'input.athinput'], cwd=run, stdout=log,
                                        stderr=subprocess.STDOUT, check=True)
+                    check_regions(run)
                     result = verify(run, ranks, False, refined, expected_buffer=1.0,
                                     expect_theta_response=False)
                     (result['seed_max'], result['final_active_block_sha256'],
