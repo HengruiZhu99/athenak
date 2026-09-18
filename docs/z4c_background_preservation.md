@@ -1215,3 +1215,100 @@ Artifacts: `mode-sensitivity.json`, `mode-sensitivity.png/pdf`,
 RK, transpose, eigenmode, and source-sensitivity tools are retained under the
 local review directory. These diagnostics have not established a stable
 replacement discretization or a new production fix.
+
+The requested vacuum-to-MPI gate was repeated on the restored production
+numerics (source HEAD `5b089281`, MPI executable SHA256
+`2a6d1c7eadfc5db2a04258ae3a234aa78a39021d56402b5f8101508d4a9fa44c`). All
+24 cases passed on one/four MPI ranks with one OpenMP thread: eight exact
+equilibria and sixteen nonzero-response cases, including sixth-order SMR
+interfaces and coordinate axes. Across the exact cases, 525,750 sampled
+state/RHS rows and 22,680 auxiliary-geometry rows were bitwise zero. This is
+a repeat of the equilibrium/short-response gate, not a new long-time
+perturbation-stability pass. Results are in
+`sequence-vacuum-mpi-recheck/results.json` and its summary JSON.
+
+The rate-4.95 eigenpair subsequently passed independent validation: growth
++0.1316771145/M, residual 5.56e-10. Together with rate 5.05, the centered
+sponge-multiplier derivative is +0.0309644117/M, within 3.59e-5 relative of
+the adjoint derivative. Both rates remain unstable. See
+`sponge-eigen-sensitivity-validation.json`.
+
+Additional constraint-completion directions were checked with cached
+complex-step Jacobians. Their response agrees with the archived C++
+completion prototype to 5.24e-13 absolute error across three RK stages;
+the transpose error is 8.13e-16. On 300 finite, positive-definite,
+algebraically constrained states with Theta=0 and Gamma constraint=0, every
+added term vanishes exactly while the physical geometric RHS remains
+nonzero. Nonetheless, validated candidate modes still grow:
+
+| Diagnostic variant | Growth (1/M) | Eigenpair residual |
+| --- | ---: | ---: |
+| Completion, kappa3=0.5, original Z4c damping | +0.05532445 | 7.63e-9 |
+| Same, half the adapted lapse multiplier | +0.04875351 | 4.63e-9 |
+| Reference CCZ4 Gamma damping normalization, kappa3=0.5 | +0.05229492 | 9.10e-8 |
+| Background-scaled shift gauge, original Z4c equations | +0.12662872 | 2.76e-10 |
+
+The CCZ4 reference changes the Gamma damping operator even though the
+numeric kappa1 remains 0.1; it is not an unchanged-damping fix. The separate
+kappa3=1 targeted solve missed its declared residual tolerance and is not
+used as a validated eigenpair. The already recorded nonlinear C++ control
+independently rejects that candidate. No library convergence flag replaces
+the explicit eigenvector norm and residual checks.
+
+A further diagnostic removed all active-stencil reads of a small cubical
+frozen core. It retains sixth order in the bulk, uses centered fourth/second
+order where necessary, and second-order outward derivatives at 48 cells.
+Every outward-stencil point has inward characteristic speeds, with minimum
+margin 0.1393. Polynomial, independent volume-response, and RK transpose
+checks pass at 1.92e-13 absolute, 3.20e-16 relative, and 7.18e-16 relative,
+respectively. This construction is not claimed to be an SBP stability proof.
+
+Despite those checks, a converged complex mode has growth +0.12118839/M,
+angular frequency 0.11251736/M, unit norm, and eigenpair residual 1.64e-10.
+Its Theta maximum is at (-0.375,-0.375,-0.125)M, r=0.544862M; its exterior
+maximum is at (-1.875,-0.625,-0.375)M, r=2.011685M. These are single-block,
+level-zero diagnostic eigenmode locations, not first-injection coordinates
+from a nonlinear C++ run. Avoiding frozen-cell reads alone is therefore
+insufficient. This candidate was not promoted to production. See
+`core-avoiding-operator-validation.json` and `core-avoiding-mode-analysis.json`.
+
+A coordinate diagnostic also uses the R0=M analytic Schwarzschild trumpet
+of [Dennison and Baumgarte](https://arxiv.org/abs/1403.5484), equations 15–20.
+This is not the stationary 1+log trumpet. Its continuum geometric RHS and
+Hamiltonian checks are below 3.4e-15 on 200 points; the independent linear
+volume-response check is 2.55e-16 relative. With a prescribed, background
+scaled gauge, sixth-order dx=0.125M, and unchanged kappa1=0.1/kappa2=0, a
+compact perturbation initially decays but later grows: Theta's fitted
+31.5–45M slope is +0.09608/M. The horizon is at coordinate r=M, areal R=2M;
+these radii must not be conflated with Kerr–Schild coordinates. This is
+another rejected linear diagnostic, not a nonlinear or MPI evolution pass.
+An independently rechecked unit-norm eigenvector subsequently confirms
++0.09452981/M growth for the adapted-gauge trumpet map, with residual
+7.75e-10. Its Theta maximum is at coordinate r=0.324760M (areal
+R=1.324760M); the exterior maximum is near the small box's outer face,
+at coordinate r=1.939515M (areal R=2.939515M). The Gamma constraint and
+Hamiltonian residual are both nonzero in this mode. See
+`trumpet-mode-analysis.json`; this eigenmode is distinct from the finite-time
+full-gauge snapshot below.
+
+Restoring the full lapse/shift-advection response on that trumpet does not
+resolve the issue: a separate 45M compact-pulse test has late fitted growth
++0.09007/M in Theta, +0.08310/M in the Gamma constraint, and +0.08722/M in
+the Hamiltonian residual. At 45M, the Gamma-constraint maximum is at
+(-0.0625,0.0625,-0.3125)M, coordinate r=0.324760M, areal R=1.324760M.
+Theta and the Hamiltonian residual peak at (0.3125,0.0625,-0.1875)M,
+coordinate r=0.369755M, areal R=1.369755M. These lie in that diagnostic's
+inner damping annulus. They are later amplification locations, not evidence
+of first injection. The independent complex-step constraint-profile check
+agrees to 2.52e-16 relative. See `trumpet-standard-transient-results.json`
+and `trumpet-constraint-profile-validation.json`.
+
+The full-gauge diagnostic initially failed its independent response check
+because its changing-shift coefficient used a centered background gradient;
+the implemented advection uses a biased gradient. Correcting that diagnostic
+coefficient gives 2.55e-16 relative agreement. The failed version was never
+used for an evolution or promoted to production.
+
+The tracked production equations remain unchanged by these candidate tests.
+The atmosphere and physical-star gates remain closed until a vacuum
+configuration passes finite-perturbation stability as well as exactness.
