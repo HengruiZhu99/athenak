@@ -149,3 +149,23 @@ stability tests. With the deeper freeze/ramp radii 0.5/1M, dipole Theta at 60M
 is 1.24155e-5 for dx=0.5M and 1.20514e-7 for dx=0.25M. Both runs remain finite
 at that time but exhibit growth; neither is a stability pass. Finer controls
 are still required before progressing to matter evolution.
+
+## GPU/MPI evidence
+
+Aurora job 8836373 (one node, Intel PVC/SYCL, MHDTidal/debug-scaling) completed
+normally. Uniform stage audits on one/four ranks and a 120-block refinement
+audit on twelve ranks preserved exactly zero state/RHS and bitwise-identical
+full/background geometry. The four-rank long control reached 1000M in 338.73
+seconds of evolution, with 405000 sampled state/RHS rows and 21168 geometry
+rows exactly zero. All history values were finite and metric validity checks
+passed. This was target completion, not a walltime stop. The pinned executable
+contains the same numerical preservation fixes as df5c97f7; its source candidate
+predates host-only algebraic diagnostics and documentation/regression additions.
+It is not claimed to be a bit-identical build of that commit.
+
+The expanded sixteen-case CPU/MPI regression also injects a dipole centered at
+r=4M across genuine refinement interfaces, at two amplitudes and one/four ranks.
+These cases preserve a finite, nonzero, linear response with the correct odd
+parity, and projected algebraic constraints remain at floating-point precision.
+The passive fluid in vacuum controls has stress-energy feedback disabled;
+metric exactness does not establish fluid stability or validate matter coupling.

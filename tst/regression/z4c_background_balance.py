@@ -88,11 +88,13 @@ def main():
     results = {}
     for ranks in args.ranks:
         for case in ['equilibrium', 'refined_equilibrium', 'pulse', 'pulse_double',
-                     'pulse_dipole', 'pulse_dipole_double']:
+                     'pulse_dipole', 'pulse_dipole_double',
+                     'refined_dipole', 'refined_dipole_double']:
             run = args.output.resolve() / f'{case}_r{ranks}'
             run.mkdir(parents=True, exist_ok=False)
             text = baseline
-            refined = case == 'refined_equilibrium'
+            refined = case.startswith('refined_')
+            perturbed = 'pulse' in case or 'dipole' in case
             if refined:
                 # Same dx=0.5 coarse spacing, with genuine refinement interfaces.
                 for axis in range(1, 4):
@@ -105,11 +107,11 @@ def main():
                 text = text.replace('max_nmb_per_rank = 8', 'max_nmb_per_rank = 128')
                 text += ('\n<refined_region0>\nlevel = 1\n'
                          'x1min = -1\nx1max = 1\nx2min = -1\nx2max = 1\nx3min = -1\nx3max = 1\n')
-            if case.startswith('pulse'):
+            if perturbed:
                 amp = 2e-8 if case.endswith('double') else 1e-8
                 text = text.replace('<problem>', '<problem>\n'
                     f'outer_sponge_test_theta_pulse_amplitude = {amp}\n'
-                    'outer_sponge_test_theta_pulse_radius = 3\n'
+                    f'outer_sponge_test_theta_pulse_radius = {4 if refined else 3}\n'
                     'outer_sponge_test_theta_pulse_width = 0.3')
             if 'dipole' in case:
                 text = text.replace('<problem>', '<problem>\n'
@@ -120,7 +122,7 @@ def main():
             with (run / 'run.log').open('w') as log:
                 subprocess.run([args.launcher, '-n', str(ranks), str(exe), '-i', 'input.athinput'],
                                cwd=run, stdout=log, stderr=subprocess.STDOUT, check=True)
-            results[run.name] = verify(run, ranks, not case.startswith('pulse'), refined)
+            results[run.name] = verify(run, ranks, not perturbed, refined)
             if 'dipole' in case:
                 profile = {tuple(float(row[key]) for key in ('x', 'y', 'z')):
                            float(row['theta'])
@@ -132,6 +134,9 @@ def main():
                                    for (x, y, z), value in profile.items()) / magnitude
                 assert parity_error < 1e-5, 'The seeded Theta pulse is not odd in x'
                 results[run.name]['dipole_parity_error'] = parity_error
+        refined_ratio = (results[f'refined_dipole_double_r{ranks}']['theta_response'] /
+                         results[f'refined_dipole_r{ranks}']['theta_response'])
+        assert abs(refined_ratio - 2) < 1e-4
         dipole_ratio = (results[f'pulse_dipole_double_r{ranks}']['theta_response'] /
                         results[f'pulse_dipole_r{ranks}']['theta_response'])
         assert abs(dipole_ratio - 2) < 1e-4
