@@ -455,3 +455,35 @@ consistent contraction rounding, and signed-zero reconstruction. None of
 the experiments above establishes a complete explanation or cure for the
 remaining growing mode. No atmosphere or star evolution has been launched
 under a claim that this vacuum perturbation gate passed.
+
+### Isolating hard freezing from background regularization
+
+A separate vacuum-only diagnostic disables residual RHS/state hard freezing
+while leaving the background clamp and radial damping profile unchanged.
+It does not disable volume evolution. Both members of each pair start with
+2,764,800 bitwise-identical saved Z4c values, including ghosts. Zero-residual
+controls with the diagnostic enabled also pass on one/four MPI ranks through
+three RK3 steps. This switch is archived as an experiment, not retained in
+production or proposed as a replacement for interior zeroing.
+
+All four perturbed controls use eight CPU MPI ranks, dx=0.25M, rate 5,
+freeze/ramp profile radii 0.5/1M, the original background-adapted gauge, and
+unchanged kappa1=0.1, kappa2=0:
+
+| Background clamp | Hard freeze | Result |
+| --- | --- | --- |
+| 0.5M | on | At 60M, max(abs(Theta))=1.20565e-7; 30–60M log-growth 0.132478/M. |
+| 0.5M | off | At 60M, max(abs(Theta))=9.12920e-8; log-growth 0.132130/M. |
+| 0.125M | on | At 60M, max(abs(Theta))=1.06081e-7; continued positive growth. |
+| 0.125M | off | Rapid central growth; max(abs(Theta))=5.79983 at 20.025M, r=0.216506M. Manually stopped at 37.2M. |
+
+The smaller-clamp, unfrozen control reaches max|Theta|=7.94372e-5 at 6M
+with dt=0.075M. Repeating with dt=0.01875M gives 5.92339e-5 at 6M: temporal
+error changes the amplitude, but rapid amplification remains. The 20M
+checkpoint is finite and the metric-validity indicator remains clear despite
+order-unity residuals. These checks alone therefore cannot define stability.
+
+Hard freezing is not necessary for the slow mode in the regularized
+background, and removing it exposes a much faster central mode when the
+clamp is moved inward. This comparison rules out a single hard-freeze-only
+explanation; it does not identify a complete cause or a stable alternative.
