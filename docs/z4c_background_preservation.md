@@ -321,3 +321,36 @@ projection error maxima, are unchanged exactly. Axis-aligned zero state/RHS
 and geometry inputs now pass the strict bitwise audit; the nonzero response
 remains linear and rank independent. GPU validation of this extension remains
 pending.
+
+## Excision characteristic placement audit
+
+The old `AllIngoingExcisionRadius` checked only the 1+log lapse speed and
+ignored the Gamma-driver shift speeds. For the production Schwarzschild
+background (`residual_lapse_f=1`, `shift_Gamma=1`), the outgoing radial light,
+lapse, transverse-shift, and longitudinal-shift cones turn outward at
+2, 1.089866773, 0.931142464, and 0.708376139M respectively. The automatic
+freeze radius is now 95% of the smallest bound, computed from the configured
+lapse and shift coefficients. Explicit radii remain unchanged. Unsupported
+spin/gauge configurations require explicit radii and report an unavailable
+bound, rather than claiming a lapse-only estimate establishes causal excision.
+The bound concerns the zero-background radial principal symbol; it does not
+prove finite-difference causality or stability of finite perturbations.
+
+Seven executable initialization tests in
+`tst/regression/z4c_excision_characteristics.py` pass: default and varied lapse/
+shift coefficients, preserved explicit radii, and unsupported spin/advection
+with the appropriate explicit-radius requirement. The running 0.5M freeze
+already lies inside the corrected 0.708M bound. This bug therefore invalidates
+the old default-placement claim, but does not explain the current inner mode.
+
+A separate audit of `scalar_symbol()` in
+`analysis/z4c_characteristic/derive_residual_characteristics.py` found a
+lapse/longitudinal-shift cone coincidence at r=3.191280621M for the default
+gauge. At `G=3, L=4/C`, its characteristic polynomial is
+`(lambda-2)^2 (lambda+2)^2 (C*N^2-lambda^2)^2`, while the eigenspace at
+lambda=2 has dimension one for generic C,N: the frozen symbol is defective
+there. Changing only `residual_lapse_f` to 0.5 removes this particular
+coincidence, but the dx=0.25M dipole control still grows through 60M:
+max|Theta|=1.46187e-7, 30–60M log-growth slope 0.131123/M (baseline
+0.132329/M). This is a separate limitation of the chosen gauge; it has not
+been established as the cause of the observed near-excision growing mode.

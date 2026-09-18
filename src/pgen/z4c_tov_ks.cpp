@@ -155,30 +155,51 @@ Real RadialOuterSpongeRate(Real radius, Real start_radius, Real ramp_width,
   return SmootherStep((radius - start_radius)/ramp_width)/damping_time;
 }
 
-// Largest Kerr-Schild radius (equatorial estimate) at which *all* outgoing
-// characteristic cones point inward, including the superluminal 1+log gauge
-// cone (speed sqrt(2 alpha) relative to normal observers).  Junk created
-// inside this radius cannot propagate out of the excision region, so the
-// residual state may be safely projected there.  For Kerr-Schild on the
-// equator H = M/r and gamma^ll = 1/(1+2H) along the ingoing null direction:
-//   lambda_+ = -beta^l + sqrt(2 alpha gamma^ll),
-//   beta^l = 2H/(1+2H), alpha = 1/sqrt(1+2H).
-inline Real AllIngoingExcisionRadius(Real mass, Real spin) {
-  const Real r_hor = mass*(1.0 + std::sqrt(std::fmax(0.0, 1.0 - SQR(spin))));
-  Real r_allin = 0.0;
-  const int nscan = 2000;
-  for (int n = nscan; n >= 1; --n) {
-    const Real r = r_hor*static_cast<Real>(n)/static_cast<Real>(nscan);
-    const Real h = mass/r;  // equatorial Kerr-Schild scalar
-    const Real alpha = 1.0/std::sqrt(1.0 + 2.0*h);
-    const Real beta_l = 2.0*h/(1.0 + 2.0*h);
-    const Real c_gauge = std::sqrt(2.0*alpha/(1.0 + 2.0*h));
-    if (-beta_l + c_gauge < 0.0) {
-      r_allin = r;
-      break;
+// Zero-residual radial characteristic bound for Schwarzschild KS. In the
+// conformal orthonormal frame the squared speeds are alpha^2*chi, L*chi,
+// G, and 4G/3; convert with gtilde^rr=q^(-2/3), q=1+2M/r. In particular,
+// the longitudinal Gamma-driver cone can turn outward INSIDE the lapse cone.
+// See analysis/z4c_characteristic/derive_residual_characteristics.py.
+// This is not a finite-difference causality or perturbation-stability proof.
+// Unsupported gauges/spin require explicit radii, not a lapse-only guess.
+inline Real AllIngoingExcisionRadius(Real mass, Real spin,
+                                     const z4c::Z4c::Options &opt) {
+  if (spin != 0.0 || opt.chi_psi_power != -4.0 ||
+      opt.lapse_advect != 1.0 || opt.shift_advect != 1.0 ||
+      opt.telegraph_lapse || opt.shift_hh != 0.0 ||
+      opt.shift_alpha2ggamma != 0.0 || opt.sss_damping_amp != 0.0 ||
+      opt.slow_start_lapse || !opt.use_z4c) {
+    return std::numeric_limits<Real>::quiet_NaN();
+  }
+  const Real lapse_scale =
+      opt.residual_gauge_mode == z4c::Z4c::residual_gauge_background_adapted
+          ? opt.residual_lapse_f : 1.0;
+  const Real lapse_constant = opt.lapse_oplog*opt.lapse_harmonicf;
+  if (!std::isfinite(lapse_scale) || lapse_scale < 0.0 ||
+      !std::isfinite(lapse_constant) || lapse_constant < 0.0 ||
+      !std::isfinite(opt.lapse_harmonic) || opt.lapse_harmonic < 0.0 ||
+      !std::isfinite(opt.shift_ggamma) || opt.shift_ggamma < 0.0) {
+    return std::numeric_limits<Real>::quiet_NaN();
+  }
+  Real lo = 0.0;
+  Real hi = 2.0*mass;
+  for (int n = 0; n < 64; ++n) {
+    const Real r = 0.5*(lo + hi);
+    const Real q = 1.0 + 2.0*mass/r;
+    const Real alpha = 1.0/std::sqrt(q);
+    const Real beta_r = 1.0 - 1.0/q;
+    const Real light = 1.0/q;
+    const Real lapse = std::sqrt(lapse_scale*
+        (lapse_constant + opt.lapse_harmonic*alpha)*alpha/q);
+    // The longitudinal shift speed bounds the transverse speed sqrt(G).
+    const Real shift = std::sqrt((4.0/3.0)*opt.shift_ggamma)*std::pow(q, -1.0/3.0);
+    if (std::max(light, std::max(lapse, shift)) < beta_r) {
+      lo = r;
+    } else {
+      hi = r;
     }
   }
-  return r_allin;
+  return lo;
 }
 
 KOKKOS_INLINE_FUNCTION
@@ -526,9 +547,9 @@ void ApplyInnerExcision(Mesh *pm, Real bdt, bool project_mhd,
       }
     }
     if (excision_project_state_l) {
-      // Hard projection only in the deep freeze zone (ramp == 0), where all
-      // characteristic cones -- including the superluminal 1+log gauge cone
-      // -- point inward.  The annulus is handled by the sponge above.
+      // Hard projection only in the deep freeze zone (ramp == 0). Automatic
+      // placement lies inside all zero-background characteristic cones;
+      // explicit user radii need not. The annulus uses the sponge above.
       if (ramp <= 0.0) {
         z4c_u0(m,n,k,j,i) = 0.0;
         z4c_u1(m,n,k,j,i) = 0.0;
@@ -2664,15 +2685,26 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   }
   excision_project_state = pin->GetOrAddBoolean("problem", "excision_project_state", true);
   // Characteristic-based default placement: freeze (state projection) only
-  // where even the superluminal 1+log gauge cone points inward, and end the
+  // where light, lapse, and shift cones all point inward, and end the
   // RHS-damping ramp with a resolution-aware buffer below the horizon so
   // FD stencils and Kreiss-Oliger support never straddle ramp edge and
   // horizon in one reach.  Both radii remain overridable from the input.
   Real default_freeze = 0.0;
   Real default_ramp = 0.0;
   Real dx_bh_est = 0.0;
+  Real r_allin = 0.0;
   if (!use_minkowski_background) {
-    const Real r_allin = AllIngoingExcisionRadius(bh_mass, bh_spin);
+    r_allin = AllIngoingExcisionRadius(bh_mass, bh_spin, pmbp->pz4c->opt);
+    if (!std::isfinite(r_allin) &&
+        (!pin->DoesParameterExist("problem", "excision_freeze_radius") ||
+         !pin->DoesParameterExist("problem", "excision_ramp_radius"))) {
+      std::cerr << "Automatic excision placement supports Schwarzschild KS "
+                << "with the standard first-order lapse/Gamma-driver gauge and "
+                << "unit advection. Set both excision radii explicitly for "
+                << "other gauges or spin; the all-ingoing bound is unavailable."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
     const Real dx_base =
         (pin->GetReal("mesh", "x1max") - pin->GetReal("mesh", "x1min"))/
         pin->GetInteger("mesh", "nx1");
@@ -2680,7 +2712,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
         std::max(0, pin->GetOrAddInteger("problem", "amr_bh_refine_level", -1));
     dx_bh_est = dx_base/std::pow(2.0, bh_level);
     const Real ramp_width = std::fmax(8.0*dx_bh_est, 0.2*bh_mass);
-    default_freeze = 0.95*r_allin;
+    default_freeze = std::isfinite(r_allin) ? 0.95*r_allin : 0.0;
     default_ramp = std::fmin(default_freeze + ramp_width, 0.98*bh_horizon_radius);
   }
   excision_freeze_radius =
@@ -2909,11 +2941,16 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     std::cout << "EXCISION_SETUP freeze=" << excision_freeze_radius
               << " ramp=" << excision_ramp_radius
               << " horizon=" << bh_horizon_radius
-              << " allingoing=" << AllIngoingExcisionRadius(bh_mass, bh_spin)
+              << " allingoing=" << r_allin
+              << " allingoing_scope=Schwarzschild_zero_residual"
               << " dx_current=" << dx_bh_current
               << " buffer_cells=" << (dx_bh_current > 0.0 ? buffer/dx_bh_current : 0.0)
               << " planned_dx=" << dx_bh_est
               << std::endl;
+    if (std::isfinite(r_allin) && excision_freeze_radius >= r_allin) {
+      std::cout << "### WARNING: explicit freeze radius is not inside all "
+                << "zero-background radial characteristic cones." << std::endl;
+    }
     if (dx_bh_current > 0.0 && buffer < 8.0*dx_bh_current) {
       std::cout << "### WARNING: horizon-to-ramp buffer is thinner than 8 cells "
                 << "on the current mesh near the horizon; refine this region "
