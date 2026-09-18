@@ -1577,3 +1577,79 @@ transient fits; it is not a full-spectrum result. Applying the half-timestep
 map to this same vector yields Rayleigh growth +0.09768/M but defect 0.0032,
 so the half-timestep number is not a validated eigenvalue or a separate
 stability result. See `implicit-mode-full-grid-validation.json`.
+
+### Gauge-only probes separate injection from amplification
+
+The opt-in `problem/vacuum_gauge_pulse_amplitude` hook seeds a compact smooth
+pulse in the lapse (`vacuum_gauge_pulse_component=0`) or one shift component
+(1–3). Centers `vacuum_gauge_pulse_x1/x2/x3` are relative to the black hole;
+`vacuum_gauge_pulse_width` is its support radius. Defaults are amplitude zero,
+center (1.75,0,0)M, and width M. The hook requires vacuum with both matter
+feedback switches off, an analytic background, the selected gauge residual
+enabled, and no simultaneous Theta/characteristic pulse. It changes no
+geometric field, Theta, or Gamma and leaves the frozen core untouched. There
+are no production equation changes or new synchronization barriers.
+
+```sh
+python tst/regression/z4c_gauge_pulse.py \
+  --exe /path/to/mpi/athena --output /new/output/directory --ranks 1 4
+```
+
+The regression covers all four gauge components, amplitudes 1e-8 and 2e-8,
+uniform and refined meshes, and one/four MPI ranks (32 cases). The refined
+pulse crosses the actual refinement interface. All passed: initial geometric
+residuals remain exactly zero, the geometric response is nonzero and linear
+in pulse amplitude, and final active block arrays match bitwise between rank
+counts. Theta generation is measured, not required for a pass. Seven invalid
+configurations are rejected. The existing 24-case equilibrium/physical-pulse
+MPI suite was repeated with the hook disabled; its result dictionaries match
+the preceding suite exactly. Separate one/four-thread runs have 26 identical
+snapshot payloads per lapse/shift case, including background data. These are
+repeatability results, not proof of absence of every possible race. The new
+probe hook has not been tested on GPU.
+
+Actual sixth-order C++ controls use the 32^3 box [-4,4]^3 M, dx=0.25M,
+dt=0.075M, core radius 0.5M, sponge outer radius M, rate 5/M, and unchanged
+kappa1=0.1/kappa2=0. Initial full-minus-background physical ADM Hamiltonian,
+momentum, connection, and Theta constraints are exactly zero, including
+geometric ghost data. The raw background finite-difference constraints are
+not zero. Stage snapshots identify these first Theta injections:
+
+| Seed | First operation | Max absolute Theta RHS | Coordinates (M) | Radius (M) |
+| --- | --- | ---: | --- | ---: |
+| Lapse 1e-8 | Volume RHS, RK stage 1 | 1.29623378e-10 | (1.125,-0.125,-0.125) | 1.138804 |
+| Shift-x 1e-8 | Boundary RHS, RK stage 1 | 3.06094105e-11 | (3.875,0.125,0.125) | 3.879030 |
+
+Both are at cycle zero, rank/block/relative-level zero. The lapse injection
+is outside the sponge and inside the horizon. It agrees with
+`delta_alpha * H_Theta_RHS_background / 2` to relative error 7.99e-8 (about
+1e-17 absolute); this Hamiltonian-like RHS expression is not the independent
+physical ADM Hamiltonian. Full-minus-background cancellation at identical
+inputs does not cancel a changed lapse multiplying a nonzero discrete
+background constraint defect. The shift probe has exactly zero volume and
+post-excision Theta RHS at stage one; the first nonzero value is explicitly
+captured after the boundary update. Neither location alone establishes the
+origin of the later growing eigenmode.
+
+Both controls reach 60M normally, with finite histories and no reported
+invalid metrics. They are nevertheless unstable: late (45–60M) Theta growth
+is +0.13186503/M for the lapse and +0.13194475/M for the shift. Final Theta
+maxima are 2.10563e-8 and 1.70108e-8. Manually injecting Theta is therefore
+not necessary to excite the instability. Local artifacts are
+`gauge-pulse-injection-results.json`, `gauge-pulse-stage-thread-check.json`,
+`gauge-pulse-mpi-regression/results.json`, and
+`gauge-pulse-disabled-mpi-regression/results.json`.
+
+An independent flat-space lapse test also isolates a truncation forcing:
+using separate sixth-order diagonal D2 and composed mixed D1 derivatives
+produces momentum RHS `D1_i sum_{j!=i}(D2_j-D1_j^2) delta_alpha`. Its measured
+convergence orders are 5.74 and 5.94. Composing all second derivatives removes
+this flat-space discrepancy to roundoff. This does not establish a coding
+error or a cure for the black-hole mode. An offline black-hole operator with
+composed second derivatives, independently rebuilt background coefficients,
+and explicit polynomial derivative-field ghost closure still has a validated
+unstable RK eigenpair: +0.08172470/M, relative defect 5.43e-10. An unrestricted
+random control reaches 60M with an exactly zero frozen state but also grows.
+The candidate requires a wider effective stencil and has not been promoted
+to the C++ solver. Vacuum finite-perturbation stability remains unresolved;
+the atmosphere/star sequence has not advanced.

@@ -22,7 +22,8 @@ def read_csv(path):
         return list(csv.DictReader(stream))
 
 
-def verify(run, ranks, equilibrium, refined):
+def verify(run, ranks, equilibrium, refined, expected_buffer=0.6,
+           expect_theta_response=True):
     state_files = sorted(run.glob('z4c_balance_rank*.csv'))
     geometry_files = sorted(run.glob('z4c_geometry_rank*.csv'))
     algebraic_files = sorted(run.glob('z4c_algebraic_rank*.csv'))
@@ -67,7 +68,7 @@ def verify(run, ranks, equilibrium, refined):
             # exact residual preservation does not mean an exactly unit determinant.
             assert det < 2e-14 and trace < 2e-14
             max_det, max_trace = max(max_det, det), max(max_trace, trace)
-    if not equilibrium:
+    if not equilibrium and expect_theta_response:
         assert response > 0, 'A physical Theta perturbation was erased'
     log = (run / 'run.log').read_text(errors='replace')
     assert 'Terminating on cycle limit' in log and '### FATAL ERROR' not in log
@@ -76,7 +77,7 @@ def verify(run, ranks, equilibrium, refined):
     assert setup, 'Missing actual-mesh excision spacing diagnostic'
     expected_dx = 0.25 if refined else 0.5
     assert float(setup.group(1)) == expected_dx
-    assert abs(float(setup.group(2)) - 0.6 / expected_dx) < 1e-12
+    assert abs(float(setup.group(2)) - expected_buffer / expected_dx) < 1e-12
     return {'exact_equilibrium': equilibrium, 'ranks': ranks, 'refined': refined,
             'theta_response': response, 'max_det_error': max_det, 'max_trace_A': max_trace}
 

@@ -61,6 +61,12 @@ Real outer_sponge_test_theta_pulse_amplitude = 0.0;
 Real outer_sponge_test_theta_pulse_radius = 0.0;
 Real outer_sponge_test_theta_pulse_width = 0.0;
 int outer_sponge_test_theta_pulse_dipole_axis = 0;
+Real vacuum_gauge_pulse_amplitude = 0.0;
+int vacuum_gauge_pulse_component = 0;  // 0: lapse, 1..3: shift components
+Real vacuum_gauge_pulse_x1 = 1.75;
+Real vacuum_gauge_pulse_x2 = 0.0;
+Real vacuum_gauge_pulse_x3 = 0.0;
+Real vacuum_gauge_pulse_width = 1.0;
 int characteristic_test_family = 0;
 int characteristic_test_axis = 0;
 int characteristic_test_side = 1;
@@ -1997,6 +2003,51 @@ void SeedOuterSpongeThetaPulse(Mesh *pm) {
   }
 }
 
+void SeedVacuumGaugePulse(Mesh *pm) {
+  if (vacuum_gauge_pulse_amplitude == 0.0) return;
+  auto *pmbp = pm->pmb_pack;
+  auto *pz4c = pmbp->pz4c;
+  auto &indcs = pm->mb_indcs;
+  auto &size = pmbp->pmb->mb_size;
+  auto &u0 = pz4c->u0;
+  const int field = vacuum_gauge_pulse_component == 0 ?
+      pz4c->I_Z4C_ALPHA : pz4c->I_Z4C_BETAX + vacuum_gauge_pulse_component - 1;
+  const Real amplitude = vacuum_gauge_pulse_amplitude;
+  const Real width = vacuum_gauge_pulse_width;
+  const Real cx = vacuum_gauge_pulse_x1 + bh_center_x1;
+  const Real cy = vacuum_gauge_pulse_x2 + bh_center_x2;
+  const Real cz = vacuum_gauge_pulse_x3 + bh_center_x3;
+  const Real bx = bh_center_x1, by = bh_center_x2, bz = bh_center_x3;
+  const Real spin = bh_spin, freeze = excision_freeze_radius;
+
+  // A compact smooth gauge-only perturbation: physical metric, extrinsic
+  // curvature, Theta and evolved Gamma are untouched. In particular, the
+  // ADM/connection constraint residuals are initially exactly unchanged.
+  // Each active cell has one writer; no stencil input is updated in place.
+  pz4c->DebugBalance("pre_gauge_pulse", 0, u0);
+  par_for("z4c_tov_ks_vacuum_gauge_pulse", DevExeSpace(), 0,
+          pmbp->nmb_thispack - 1, indcs.ks, indcs.ke, indcs.js, indcs.je,
+          indcs.is, indcs.ie, KOKKOS_LAMBDA(int m, int k, int j, int i) {
+    const Real x = CellCenterX(i-indcs.is, indcs.nx1,
+                               size.d_view(m).x1min, size.d_view(m).x1max);
+    const Real y = CellCenterX(j-indcs.js, indcs.nx2,
+                               size.d_view(m).x2min, size.d_view(m).x2max);
+    const Real z = CellCenterX(k-indcs.ks, indcs.nx3,
+                               size.d_view(m).x3min, size.d_view(m).x3max);
+    const Real q2 = (SQR(x-cx) + SQR(y-cy) + SQR(z-cz))/SQR(width);
+    if (q2 < 1.0 && KerrSchildRadius(x-bx, y-by, z-bz, spin) > freeze) {
+      u0(m,field,k,j,i) += amplitude*exp(1.0 - 1.0/(1.0-q2));
+    }
+  });
+  pz4c->DebugBalance("post_gauge_pulse", 0, u0);
+  pz4c->ReconstructFullState();
+  pz4c->Z4cToADM(pmbp);
+  if (global_variable::my_rank == 0) {
+    std::cout << "VACUUM_GAUGE_PULSE component=" << vacuum_gauge_pulse_component
+              << " amplitude=" << amplitude << " width=" << width << std::endl;
+  }
+}
+
 void SeedCharacteristicPlanePulse(Mesh *pm) {
   if (characteristic_test_family == 0 ||
       characteristic_test_amplitude == 0.0) {
@@ -2792,6 +2843,15 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       pin->GetOrAddReal("problem", "outer_sponge_test_theta_pulse_width", 0.0);
   outer_sponge_test_theta_pulse_dipole_axis = pin->GetOrAddInteger(
       "problem", "outer_sponge_test_theta_pulse_dipole_axis", 0);
+  vacuum_gauge_pulse_amplitude =
+      pin->GetOrAddReal("problem", "vacuum_gauge_pulse_amplitude", 0.0);
+  vacuum_gauge_pulse_component =
+      pin->GetOrAddInteger("problem", "vacuum_gauge_pulse_component", 0);
+  vacuum_gauge_pulse_x1 = pin->GetOrAddReal("problem", "vacuum_gauge_pulse_x1", 1.75);
+  vacuum_gauge_pulse_x2 = pin->GetOrAddReal("problem", "vacuum_gauge_pulse_x2", 0.0);
+  vacuum_gauge_pulse_x3 = pin->GetOrAddReal("problem", "vacuum_gauge_pulse_x3", 0.0);
+  vacuum_gauge_pulse_width =
+      pin->GetOrAddReal("problem", "vacuum_gauge_pulse_width", 1.0);
   if (outer_sponge_test_theta_pulse_dipole_axis < 0 ||
       outer_sponge_test_theta_pulse_dipole_axis > 3) {
     std::cerr << "Theta pulse dipole axis must be 0 (spherical), 1, 2, or 3." << std::endl;
@@ -3031,6 +3091,26 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       pin->GetOrAddReal("problem", "amr_star_track_rho_floor", 1.0e-10);
   zero_tmunu = pin->GetOrAddBoolean("problem", "zero_tmunu", false);
   pure_background = pin->GetOrAddBoolean("problem", "pure_background", false);
+  if (vacuum_gauge_pulse_amplitude != 0.0 &&
+      (!pure_background || !zero_tmunu ||
+       !pin->GetOrAddBoolean("mhd", "zero_tmunu_feedback", false) ||
+       !pmbp->pz4c->use_analytic_background ||
+       !std::isfinite(vacuum_gauge_pulse_amplitude) ||
+       vacuum_gauge_pulse_component < 0 || vacuum_gauge_pulse_component > 3 ||
+       !std::isfinite(vacuum_gauge_pulse_x1) ||
+       !std::isfinite(vacuum_gauge_pulse_x2) ||
+       !std::isfinite(vacuum_gauge_pulse_x3) ||
+       !std::isfinite(vacuum_gauge_pulse_width) || vacuum_gauge_pulse_width <= 0.0 ||
+       outer_sponge_test_theta_pulse_amplitude != 0.0 || characteristic_test_requested ||
+       (vacuum_gauge_pulse_component == 0 && !pmbp->pz4c->evolve_lapse_residual) ||
+       (vacuum_gauge_pulse_component != 0 && !pmbp->pz4c->evolve_shift_residual))) {
+    std::cerr << "Vacuum gauge pulse requires pure_background=true, zero_tmunu=true, "
+              << "zero_tmunu_feedback=true, an analytic background, "
+              << "finite amplitude/center, positive finite width, component 0..3, "
+              << "the selected gauge residual enabled, and no other pulse test."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   if (outer_sponge_test_theta_pulse_amplitude != 0.0 && !pure_background) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "outer_sponge_test_theta_pulse_amplitude is a "
@@ -3092,6 +3172,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   if (pure_background) {
     SetupPureBackground(pin, pmy_mesh_);
     SeedOuterSpongeThetaPulse(pmy_mesh_);
+    SeedVacuumGaugePulse(pmy_mesh_);
     SeedCharacteristicPlanePulse(pmy_mesh_);
     return;
   }
