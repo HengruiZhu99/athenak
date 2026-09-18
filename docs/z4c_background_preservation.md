@@ -387,3 +387,71 @@ componentwise sponge is therefore not a demonstrated remedy. Investigation
 of metric/connection damping compatibility remains experimental; no such
 change has been retained in production source. Atmosphere and physical-star
 evolution remain gated on resolved perturbation stability.
+
+## Expanded GPU exactness and rejected interior-layer experiments
+
+Aurora job 8836612, using the pinned d165fe06 executable, passed all 24
+axis-expanded controls in 2m15s (exit 0). Eight zero-residual cases preserve
+state, RHS, and full/background geometry bitwise on one/four GPU MPI ranks,
+including refinement interfaces and coordinate axes. Sixteen nonzero-response
+cases pass the amplitude and rank checks. CPU/GPU nonzero response maxima
+differ by up to approximately 7.33e-16; this is not a claim of bitwise equality
+between backends. Algebraic determinant/trace errors remain below 9e-16.
+
+Three default-off local sponge experiments were investigated and rejected as
+stability fixes. Their patches, frozen executables, inputs, and raw results
+are retained under `review/vacuum-preservation-20260918`; none is enabled or
+retained in production source. All used sixth-order volume differences,
+dx=0.25M, freeze/ramp radii 0.5/1.5M, rate 50, and unchanged kappa1=0.1,
+kappa2=0. The following comparisons distinguish operator checks from long
+evolution tests:
+
+* Adding the continuum, linearized metric-sponge gradient term to the Gamma
+  source reduced growth relative to the componentwise wide-layer control,
+  but did not remove it. With lapse scale 0.5, max|Theta| at 60M is
+  2.12924e-7 and the 30–60M logarithmic growth rate is 0.118770/M.
+* A nonlinear discrete directional derivative of the contracted connection
+  accounts for the metric-sponge contribution without assuming a spatial
+  product rule. Thirty-two independent finite-difference derivative tests,
+  the 24-case one/four-rank MPI suite, and byte-identical one/four-thread
+  stage audits pass. Nevertheless, max|Theta| at 60M is 2.08279e-7 with
+  growth rate 0.140228/M. The run was stopped manually at 66.6M. Correcting
+  this one coupling is not sufficient to stabilize the system.
+* An auxiliary-only layer damps Theta while adding the opposite physical-K
+  compensation to Khat, and relaxes the residual Gamma-minus-contracted-
+  connection constraint. It leaves the physical metric and K unchanged by
+  the instantaneous sponge source. Deep-core zeroing remains active. Its
+  24 short MPI cases pass, but a separate perturbed evolution grows. At
+  100M, max|Theta|=1.590186e-7 at (-0.375,-0.125,-0.375)M,
+  r=0.544862M, rank/block 0, level 0. The gxx residual reaches 2.587428e-6
+  at the same radius; Gamma-x reaches 2.065957e-6 at r=0.649519M.
+  The 80–100M Theta log-growth rate is 0.087777/M. The run was stopped
+  manually at 108M after validating the finite 100M Z4c checkpoint. Small
+  early Theta values alone would have given a misleading assessment.
+
+The discrete connection experiment uses separate producer/consumer kernels
+and a pack-owned metric-rate scratch view. Inputs remain immutable during
+stencil reads; output cells have single ownership. Its local connection
+identity concerns the supplied metric-rate stencil. It does not establish
+Hamiltonian/momentum preservation, commutation with mesh interpolation, or
+stability of the separate frozen-core boundary and RK projections. No extra
+synchronization was introduced as a speculative race fix.
+
+A further committed-source vacuum control used lapse scale 0.1 and
+shift_Gamma=0.05, freeze/ramp 1/1.5M, rate 5, and an exterior dipole seed at
+2.5M. The known lapse/longitudinal-shift coincidence lies inside its frozen
+core, and the radial zero-background characteristic bound is 2M. A +/-4M
+box was rejected by the CPBC speed-sign guard before the first step; the
+accepted +/-8M box retained dx=0.25M around the hole through SMR, with
+dx=0.5M outside. At 50.025M on eight CPU MPI ranks, max|Theta|=1.632263e-6
+at (-1.375,0.625,0.625)M, r=1.634587M, block 92, level 1. The metric and
+Gamma peaks lie at r=1.386317M. Thus this gauge/excision configuration also
+fails the perturbation gate. Its queued one-node Aurora duplicate 8836662
+was canceled to avoid spending compute on an already rejected candidate.
+
+These are later amplification locations, not first-injection locations.
+The established first-injection fixes remain projection idempotence,
+consistent contraction rounding, and signed-zero reconstruction. None of
+the experiments above establishes a complete explanation or cure for the
+remaining growing mode. No atmosphere or star evolution has been launched
+under a claim that this vacuum perturbation gate passed.
