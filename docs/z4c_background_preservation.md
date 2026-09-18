@@ -253,8 +253,8 @@ vacuum/dipole cases on one/four MPI ranks pass all eight cases (32 launches):
   difference at 1e-12 for the specified 1e-8 seed.
 - All reported response/error maxima agree exactly between one and four ranks.
 
-These are CPU/MPI restart results, not yet a GPU restart validation or a
-long-time stability claim. Run with, for example:
+These tests establish restoration and equilibrium, not long-time perturbation
+stability. GPU confirmation is recorded below. Run with, for example:
 
 ```sh
 python3 tst/regression/z4c_background_restart.py --exe /absolute/path/to/athena \
@@ -354,3 +354,36 @@ coincidence, but the dx=0.25M dipole control still grows through 60M:
 max|Theta|=1.46187e-7, 30–60M log-growth slope 0.131123/M (baseline
 0.132329/M). This is a separate limitation of the chosen gauge; it has not
 been established as the cause of the observed near-excision growing mode.
+
+
+## GPU restart confirmation and stronger-sponge control
+
+Aurora job 8836582 (one node, pinned 2b965021 executable) passed the eight-case,
+33-launch restart suite in 1m32s, exit 0. Uniform/refined vacuum remains exactly
+zero on one/four GPU MPI ranks, including restart. All saved active state is
+restored bitwise. Metadata initialization and legacy unused-field handling
+pass. Within the GPU backend, one/four-rank results match exactly. For nonzero
+seeds, resumed versus uninterrupted evolution differs by at most 3.09569e-13
+(uniform) and 1.61723e-14 (refined), within the 1e-12 test bound. CPU/GPU nonzero
+response maxima are not bitwise identical: the largest difference is about
+1.99e-15. Exact equilibrium and bitwise saved-state restoration hold on both.
+
+The resolved rate-50 control 8836528 retained growth: at 200.00625M,
+max|Theta|=1.303649e-7 at (-0.84375,0.15625,0.15625)M, r=0.872205M,
+rank 302/block 1081/level 4, inside the transition layer. Exterior
+max|Theta|=1.316315e-10 at r=9.126712M. The 150–200M global log-growth slope is
+0.022390/M (e-fold about 44.7M). The final copied history at 218.00625M has
+max|Theta|=2.020576e-7 and valid metrics. The run was manually canceled after
+validating its 200M checkpoint (384 files, 1408 blocks, 5158010880 finite
+payload bytes). Its exit 271 and 28m25s walltime are not a clean application
+walltime stop or completion of the 1000M target. Like the matched rate-5
+executable, it predates the restart/metadata fixes; the checkpoint's only
+rank-header differences are the nine unused root-mesh coarse indices.
+
+Increasing only the rate-50 ramp endpoint from 1 to 1.5M on the dx=0.25M
+control made growth worse: max|Theta|=1.2757e-4 at 60M, log-growth slope
+0.256389/M over 30–60M. The run was manually stopped after 60M. A broader
+componentwise sponge is therefore not a demonstrated remedy. Investigation
+of metric/connection damping compatibility remains experimental; no such
+change has been retained in production source. Atmosphere and physical-star
+evolution remain gated on resolved perturbation stability.
