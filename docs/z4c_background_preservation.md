@@ -1287,16 +1287,16 @@ An independently rechecked unit-norm eigenvector subsequently confirms
 7.75e-10. Its Theta maximum is at coordinate r=0.324760M (areal
 R=1.324760M); the exterior maximum is near the small box's outer face,
 at coordinate r=1.939515M (areal R=2.939515M). The Gamma constraint and
-Hamiltonian residual are both nonzero in this mode. See
+Theta-RHS Hamiltonian-like quantity are both nonzero in this mode. See
 `trumpet-mode-analysis.json`; this eigenmode is distinct from the finite-time
 full-gauge snapshot below.
 
 Restoring the full lapse/shift-advection response on that trumpet does not
 resolve the issue: a separate 45M compact-pulse test has late fitted growth
 +0.09007/M in Theta, +0.08310/M in the Gamma constraint, and +0.08722/M in
-the Hamiltonian residual. At 45M, the Gamma-constraint maximum is at
+the Theta-RHS Hamiltonian-like diagnostic. At 45M, the Gamma-constraint maximum is at
 (-0.0625,0.0625,-0.3125)M, coordinate r=0.324760M, areal R=1.324760M.
-Theta and the Hamiltonian residual peak at (0.3125,0.0625,-0.1875)M,
+Theta and that Hamiltonian-like diagnostic peak at (0.3125,0.0625,-0.1875)M,
 coordinate r=0.369755M, areal R=1.369755M. These lie in that diagnostic's
 inner damping annulus. They are later amplification locations, not evidence
 of first injection. The independent complex-step constraint-profile check
@@ -1319,9 +1319,123 @@ the deep frozen core and the original Z4c kappa terms. Its independent source
 and RK transpose checks pass at 2.73e-15 and 1.37e-15 relative; zero remains
 exact in the linear map. Nevertheless, its 45M compact-pulse control has
 31.5–45M growth +0.08695/M in Theta, +0.08040/M in the Gamma constraint,
-and +0.08181/M in the Hamiltonian residual. The latter two peak at coordinate
+and +0.08181/M in the Theta-RHS Hamiltonian-like diagnostic. The latter two peak at coordinate
 r=0.207289M (areal R=1.207289M); Theta peaks at coordinate r=0.569402M
 (areal R=1.569402M). This comparison also fails the stability gate. It does
 not establish that relaxing the metric components is the sole cause.
 See `trumpet-constraint-sponge-results.json`; all these are local linear
 diagnostics, and no new nonlinear production candidate was submitted.
+
+
+## Independent ADM diagnostic and further vacuum controls
+
+The earlier offline trumpet JSON keys `delta_Hamiltonian` were misleading:
+they reconstruct the Hamiltonian-like quantity in the Theta RHS, whose Ricci
+expression contains derivatives of the independently evolved conformal
+connection. When its constraint is nonzero, that is not the physical ADM
+Hamiltonian. This changes diagnostic interpretation, not the existing C++
+`ADMConstraints` implementation or the observed Theta growth. Earlier raw
+JSON files remain available, with this correction applying to their labels.
+
+`analysis/z4c_characteristic/adm_hamiltonian.py` now independently evaluates
+`R(gamma) + K^2 - K_ij K^ij` directly from the physical spatial metric, its
+first/second derivatives, and extrinsic curvature. It neither projects data
+nor subtracts a background, and does not read evolved Gamma. The local grid
+wrapper differentiates `gamma_ij = gtilde_ij / chi`; it reports the directional
+residual of the raw finite-difference ADM diagnostic. Raw background H and
+residual H remain distinct.
+
+A Gamma-only perturbation provides a concrete counterexample: the physical
+ADM Hamiltonian residual is exactly zero, whereas the old Theta-derived
+quantity has maximum 0.16201857 in the same linear diagnostic normalization.
+For the validated adapted-gauge trumpet eigenmode, the independent ADM
+Hamiltonian residual is nonzero. Its maximum is at
+(-0.4375,-0.0625,-0.0625)M, coordinate r=0.446339M, areal R=1.446339M;
+the exterior maximum is at (-0.4375,1.9375,-0.0625)M, coordinate r=1.987264M,
+areal R=2.987264M. These are normalized eigenmode diagnostics on rank/block/
+relative-level zero, not first-injection locations or a nonlinear evolution
+checkpoint. See `hamiltonian-diagnostic-distinction.json`.
+
+The committed `check_adm_hamiltonian_numeric.py` checks 200 points per case:
+a conformally flat curved metric, a nonorthogonal affine coordinate change,
+a flat metric in nonlinear coordinates, analytic Kerr-Schild Schwarzschild
+vacuum data spanning r=0.4–10M, and complex directional derivatives. Maximum
+analytic errors are 8.9e-16 for the first coordinate tests and 2.14e-14 for
+Schwarzschild; the complex versus centered derivative difference is
+2.68e-11. Inputs remain unchanged. Run it with a NumPy-enabled Python:
+
+```sh
+python analysis/z4c_characteristic/check_adm_hamiltonian_numeric.py
+```
+
+A sixth-order product-rule correction to variable-shift advection was also
+tested offline: `[D(beta*u) - beta*D(u) - u*D(beta)] / 2`, retaining the
+original biased advection and KO. Its nonlinear-response and RK transpose
+checks give 1.01e-15 and 7.81e-15 relative error. A periodic scalar check
+converges at orders 5.92 and 5.98 and satisfies the corresponding discrete
+energy identity within 1.67e-15. Those properties do not ensure stability of
+the full tensor/boundary/RK problem: an independently validated unit-norm
+mode still grows at +0.13685359/M, residual 2.83e-10. Theta peaks at
+(-0.625,-0.125,-0.125)M, r=0.649519M; its exterior maximum is at
+(-1.875,-0.375,-0.625)M, r=2.011685M. This consistent discretization candidate
+was rejected, not promoted to C++. See `split-advection-mode-analysis.json`.
+
+The four saved KS, split-advection, core-avoiding KS, and adapted-trumpet
+modes were independently rechecked with frozen coordinates explicitly
+removed. They already had exactly zero core values; the subsequent RK step
+also leaves the core exactly zero. All eigenpair residuals remain below
+8e-10. An initial concern about random seeds in the frozen core was disproved:
+`raw_active` calls `ghost`, which masks that core before the first step.
+Explicit pre-zeroing reproduces the earlier numeric records exactly, apart
+from elapsed wall time. Additional assertions now check the core after every
+step. This was a verification improvement, not an identified initialization
+bug. See `frozen-core-eigenmode-revalidation.json` and
+`transient-core-initialization-correction.json`.
+
+
+The completed controls with explicit core-zero assertions remain unstable:
+
+| Local linear diagnostic | Target reached | Late fit interval | Theta growth (1/M) |
+| --- | ---: | ---: | ---: |
+| Trumpet: constraint layer to r=0.5M | 60M | 45–60M | +0.07166064 |
+| Trumpet: constraint layer to r=0.9M | 60M | 45–60M | +0.07199307 |
+| Kerr–Schild: connection adjustment | 90M | 60–90M | +0.07458832 |
+
+Both trumpet controls keep the coordinate horizon at r=M, the frozen core
+at r=0.125M, and the maximum sponge rate at 5/M. Only Theta and the Gamma
+constraint are relaxed; extending the outer edge from coordinate r=0.5M to
+0.9M does not remove late growth. The fitted Theta increases by factors
+2.93 and 2.95, respectively, over 45–60M. Both retain zero outer-boundary
+initial perturbations and exact zero residuals in the core at every step.
+
+The Kerr-Schild diagnostic adds
+`-C^j partial_j beta^i - (2/3) C^i partial_j beta^j` to evolved Gamma, with
+`C^i = Gamma^i - Gamma_metric^i`. This is motivated by equation (45) of
+[Yo, Baumgarte and Shapiro](https://arxiv.org/abs/gr-qc/0209066), relative to
+the current use of contracted metric Gamma in the shift-gradient terms.
+It is not the published BSSN system. Original kappa1=0.1/kappa2=0 terms
+remain unchanged, but this adds constraint couplings and therefore changes
+the total constraint operator. Independent nonlinear-response and RK
+transpose errors are 4.47e-16 and 5.25e-15; the addition vanishes exactly on
+328 finite C=0 states while the physical RHS remains nonzero. Its local
+adjoint growth derivative is -0.12940471/M, confirmed by a centered change
+of the full RK map. Nevertheless, the complete-strength 90M control still
+has +0.07458832/M late growth, increasing Theta by a factor 9.36 over
+60–90M. A favorable local sensitivity did not provide a stable update.
+
+At the final completed steps, the independent physical ADM Hamiltonian
+residual peaks at (-0.1875,-0.0625,0.0625)M in both trumpet controls
+(coordinate r=0.207289M, areal R=1.207289M). In the connection-adjustment
+Kerr-Schild control it peaks at (0.125,-0.125,0.625)M, r=0.649519M, whereas
+Theta peaks at (0.375,-0.125,0.375)M, r=0.544862M. These single-block,
+level-zero local snapshots identify amplification locations, not first
+injection. Complete maxima, exterior maxima, fit intervals and normalization
+bookkeeping are in `latest-vacuum-control-results.json`; the reviewed plot
+is `vacuum-latest-controls.png/pdf`.
+
+All three runs ended normally at their prescribed diagnostic targets, not
+at walltime. None is a nonlinear, refined-mesh or MPI stability pass. No
+experimental equation change was promoted to production, and no atmosphere,
+physical-star or new Aurora production run was started. The previously
+verified vacuum/MPI exactness remains distinct from the unresolved finite-
+perturbation stability gate.
