@@ -779,3 +779,25 @@ Thus zero residual preservation must not be conflated with small raw physical
 constraints. This control is rejected, with no production parameter change.
 `causal-outer-core-results.json` and `causal-outer-core-comparison.png/pdf`
 retain the comparison and spatial profiles in the local review directory.
+
+Job 8836811 subsequently passed its target-mesh 12-rank GPU zero gate:
+307800 state/RHS and 13608 geometry rows are exactly zero; determinant and
+trace errors are at most 8.89e-16 and 6.67e-16. Initial/final joined checkpoints
+made this gate take about ten minutes, with the first roughly 1GB shared file
+alone taking about 279 seconds before cycle zero. Before the long process
+started, its checkpoint format was changed to `single_file_per_rank=true`,
+using the previously validated rank-file restart path. The running zero input
+was unchanged. The original long input and submitted manifest were archived;
+the effective manifest was verified at installation and again by the zero
+verifier immediately before launching the long evolution. The executable and
+all physics parameters are unchanged.
+
+At the initial 9M sample, the fine perturbation has max|Theta|=8.08974e-9,
+finite history and no bad metric cells. Early timings span roughly 0.51–0.56
+seconds per step at dt=0.0375M: approximately 34–37 minutes for 150M or
+3.8–4.2 hours for 1000M on this one node, excluding extra setup/output costs.
+These are early throughput estimates, not completion or stability claims.
+The long process still receives `-t 00:55:00`; because the preceding gate
+consumed allocation time, the one-hour PBS deadline must also be monitored.
+The initial projected 150M completion fits within it. Neither matter stage
+has been launched.
