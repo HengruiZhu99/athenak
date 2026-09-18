@@ -2880,18 +2880,44 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
               << "excision_ramp_radius <= Kerr-Schild horizon radius." << std::endl;
     exit(EXIT_FAILURE);
   }
+  // The requested AMR level can be inactive (uniform/SMR controls), or not
+  // reached yet. Report the actual coarsest spacing near the horizon rather
+  // than presenting the planned AMR spacing as the currently resolved mesh.
+  Real dx_bh_current = 0.0;
+  if (!use_minkowski_background) {
+    const Real horizon_bound2 = SQR(bh_horizon_radius) + SQR(bh_spin);
+    for (int m = 0; m < pmbp->nmb_thispack; ++m) {
+      const auto &size = pmbp->pmb->mb_size.h_view(m);
+      const Real x = std::max(size.x1min, std::min(bh_center_x1, size.x1max));
+      const Real y = std::max(size.x2min, std::min(bh_center_x2, size.x2max));
+      const Real z = std::max(size.x3min, std::min(bh_center_x3, size.x3max));
+      if (SQR(x-bh_center_x1) + SQR(y-bh_center_x2) + SQR(z-bh_center_x3)
+          <= horizon_bound2) {
+        Real spacing = size.dx1;
+        if (pmy_mesh_->multi_d) spacing = std::max(spacing, size.dx2);
+        if (pmy_mesh_->three_d) spacing = std::max(spacing, size.dx3);
+        dx_bh_current = std::max(dx_bh_current, spacing);
+      }
+    }
+#if MPI_PARALLEL_ENABLED
+    MPI_Allreduce(MPI_IN_PLACE, &dx_bh_current, 1, MPI_ATHENA_REAL, MPI_MAX,
+                  MPI_COMM_WORLD);
+#endif
+  }
   if (!use_minkowski_background && global_variable::my_rank == 0) {
     const Real buffer = bh_horizon_radius - excision_ramp_radius;
     std::cout << "EXCISION_SETUP freeze=" << excision_freeze_radius
               << " ramp=" << excision_ramp_radius
               << " horizon=" << bh_horizon_radius
               << " allingoing=" << AllIngoingExcisionRadius(bh_mass, bh_spin)
-              << " buffer_cells=" << (dx_bh_est > 0.0 ? buffer/dx_bh_est : 0.0)
+              << " dx_current=" << dx_bh_current
+              << " buffer_cells=" << (dx_bh_current > 0.0 ? buffer/dx_bh_current : 0.0)
+              << " planned_dx=" << dx_bh_est
               << std::endl;
-    if (dx_bh_est > 0.0 && buffer < 8.0*dx_bh_est) {
+    if (dx_bh_current > 0.0 && buffer < 8.0*dx_bh_current) {
       std::cout << "### WARNING: horizon-to-ramp buffer is thinner than 8 cells "
-                << "at the BH refinement level; raise amr_bh_refine_level "
-                << "(required for high spin, where r_+ shrinks)." << std::endl;
+                << "on the current mesh near the horizon; refine this region "
+                << "or move the inner layer deeper." << std::endl;
     }
   }
   Real dfloor = pin->GetOrAddReal("mhd", "dfloor", 1.0e-16);

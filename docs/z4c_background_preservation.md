@@ -198,3 +198,26 @@ Changing the freeze radius also changes the analytic interior background
 clamp, so this comparison does not isolate a single sponge term. Spatial
 profiles, raw exterior Hamiltonian maxima, and changes relative to initial
 Hamiltonian error must remain separate diagnostics.
+
+## Actual mesh spacing diagnostic and refined GPU audit
+
+The old `EXCISION_SETUP buffer_cells` divided by a spacing inferred from
+`amr_bh_refine_level`, even when the input disabled AMR. The coarse dx=0.5M
+control therefore printed 614.4 cells although its actual horizon-to-ramp
+buffer was only 1.2 cells. The diagnostic now reports the coarsest actual
+spacing among blocks intersecting a conservative horizon bounding sphere,
+reduced across MPI ranks; `planned_dx` is labeled separately. Only active
+spatial dimensions enter this estimate. The placement defaults and evolution
+are unchanged. All sixteen CPU/MPI regressions pass, including actual-spacing
+checks (0.5M uniform, 0.25M refined) and exact rank agreement of the physical
+perturbation maxima.
+
+Corrected Aurora job 8836424 passed all four small-pulse GPU controls: single
+and double dipole amplitudes on one/four MPI ranks. Their physical Theta response
+maxima match the CPU reference exactly; odd-parity and algebraic projection
+checks pass. Its 1408-block refined vacuum audit at dx=0.0625M, freeze/ramp
+0.5/1M, and rate 5 passed on 96 ranks: 1500525 state/RHS rows and 108864 geometry
+rows have exactly zero differences and no bit mismatches. This job uses the
+pinned 7aefdac3 numerical build; the later actual-spacing diagnostic is a host
+reporting change, not an evolution change. The short refined audit does not
+establish long-time perturbation stability.

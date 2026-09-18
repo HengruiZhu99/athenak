@@ -71,6 +71,12 @@ def verify(run, ranks, equilibrium, refined):
         assert response > 0, 'A physical Theta perturbation was erased'
     log = (run / 'run.log').read_text(errors='replace')
     assert 'Terminating on cycle limit' in log and '### FATAL ERROR' not in log
+    setup = re.search(r'^EXCISION_SETUP .*dx_current=([^ ]+) buffer_cells=([^ ]+)',
+                      log, re.M)
+    assert setup, 'Missing actual-mesh excision spacing diagnostic'
+    expected_dx = 0.25 if refined else 0.5
+    assert float(setup.group(1)) == expected_dx
+    assert abs(float(setup.group(2)) - 0.6 / expected_dx) < 1e-12
     return {'exact_equilibrium': equilibrium, 'ranks': ranks, 'refined': refined,
             'theta_response': response, 'max_det_error': max_det, 'max_trace_A': max_trace}
 
