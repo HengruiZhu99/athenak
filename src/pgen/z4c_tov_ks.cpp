@@ -547,7 +547,9 @@ void ApplyInnerExcision(Mesh *pm, Real bdt, bool project_mhd,
           z4c_rhs(m,n,k,j,i) = rhs_full - sigma*u0_here;
         }
       } else {
-        z4c_rhs(m,n,k,j,i) = ramp <= 0.0 ? 0.0 : ramp*z4c_rhs(m,n,k,j,i);
+        // Zero rate disables relaxation, not the physical RHS or KO in the
+        // annulus. Keep the same frozen-core condition as at positive rate.
+        if (ramp <= 0.0) z4c_rhs(m,n,k,j,i) = 0.0;
       }
     }
     if (excision_project_state_l) {

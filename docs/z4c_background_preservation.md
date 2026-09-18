@@ -1716,3 +1716,38 @@ at r=0.324760M. These normalized mode profiles are distinct from the random
 control's final maximum and from first-injection locations. See
 `stationary-log-mode-full-grid-validation.json`. This is a targeted unstable
 mode, not a full-spectrum analysis or a production fix.
+
+### Zero-rate sponge semantics
+
+A separate code defect affected the zero-rate control: the legacy
+`excision_damp_rate=0` branch multiplied the entire Z4c RHS by the radial
+ramp, including physical terms and KO dissipation. Thus reducing the damping
+rate to zero selected a different evolution operator instead of removing
+relaxation. The zero-rate branch now retains the full annulus RHS and keeps
+the same zero RHS in the frozen core. Positive-rate updates remain
+`RHS -= rate * (1-ramp) * residual`; kappa1/kappa2 are unchanged. This corrects
+a control configuration and does not explain or fix the rate-5 instability.
+It also does not change the separate MHD state-projection path.
+
+```sh
+python tst/regression/z4c_excision_source.py \
+  --exe /path/to/mpi/athena --output /new/source-test/directory --ranks 1 4
+```
+
+The regression first reproduced the defect on the preceding executable:
+exact vacuum passed, but a compact lapse pulse failed the assertion that
+zero damping preserves the annulus RHS. After the fix, all eight cases pass
+(rates zero/five, exact vacuum/nonzero pulse, one/four MPI ranks). Every field
+is checked before/after the source at all three RK stages. Zero-rate annulus
+and exterior RHS arrays are preserved bitwise; the rate-5 additive source
+matches its analytic expression to relative error at most 1.07e-16. The core
+RHS and post-source residual remain exactly zero. Exact vacuum stays zero,
+and all active arrays match bitwise across MPI partitions.
+
+Both CPU OpenMP and MPI builds succeed. Repeating all four single-rank cases
+with one/four OpenMP threads gives identical complete snapshot payloads,
+including ghosts and background arrays (24 payloads per case); these also
+match the one-rank MPI executable. Artifacts are
+`zero-rate-source-before.log`, `zero-rate-source-after/results.json`, and
+`zero-rate-source-thread-check.json`. This focused source regression does
+not establish long-time stability or add GPU coverage for this change.
