@@ -1,0 +1,645 @@
+{
+  "analysis/tde_puncture/results/local-controls/atmosphere-v2": {
+    "run": "/Users/hz0693/research/TDE/athenak-review/analysis/tde_puncture/results/local-controls/atmosphere-v2",
+    "target_M": 100.0,
+    "histories_finite": true,
+    "termination": "fatal",
+    "failure_diagnostics": [
+      "### FATAL ERROR: characteristic_cpbc found 72 boundary cells with an invalid metric, gauge driver, cone separation, characteristic speed, or excessive matter energy density. metric_det=0 metric_normal=0 metric_tangent1=0 metric_tangent2=0 matter=72 coefficient=0 speed=0 cones=0 spacing=0 scalar_map=0 sample_bg={chi:5.756707e-01,gxx:1.000000e+00,gxy:0.000000e+00,gxz:0.000000e+00,gyy:1.000000e+00,gyz:0.000000e+00,gzz:1.000000e+00,alpha:7.587297e-01}"
+    ],
+    "last_history_time_M": 11.99999999999994,
+    "target_reached": false,
+    "max_Theta": 4.186127384713828e-12,
+    "final_Theta": 4.186127384713828e-12,
+    "bad_metric_max": 0.0,
+    "min_lapse": 0.02179582862634264,
+    "min_chi": 0.0004750581454994985,
+    "min_metric_determinant": 5.24176527683258,
+    "density_max_initial": 1e-14,
+    "density_max_final": 6.723227239090896e-13,
+    "exact_zero_history_residuals": false,
+    "constraints": {
+      "H-norm2": {
+        "initial": 0.0001560418959737225,
+        "final": 0.0001560418959384738,
+        "maximum": 0.0001560418959921471
+      },
+      "M-norm2": {
+        "initial": 0.0,
+        "final": 3.400702274374401e-22,
+        "maximum": 3.400702274374401e-22
+      },
+      "Theta-norm": {
+        "initial": 0.0,
+        "final": 2.290787384555793e-22,
+        "maximum": 2.290787384555793e-22
+      },
+      "Theta-int2": {
+        "initial": 0.0,
+        "final": 3.414301771271451e-22,
+        "maximum": 3.414301771271451e-22
+      }
+    },
+    "fluid_mass": {
+      "initial": 1.327133284065584e-11,
+      "final": 2.391753222981364e-11,
+      "final_over_initial": 1.8021951914689294
+    },
+    "constraint_note": "Raw history labels/normalizations retained. Physical H/M include background finite-difference error; their baseline is not zero. Theta maxima are unexcised.",
+    "measured_seconds_per_M": 26.60786151666667,
+    "estimated_hours_to_1000M_at_measured_rate": 7.391072643518519,
+    "recent_seconds_per_M": 26.890882222222224,
+    "recent_window_M": [
+      3.0,
+      12.0
+    ],
+    "estimated_hours_to_1000M_at_recent_rate": 7.469689506172839,
+    "status": "failed"
+  },
+  "analysis/tde_puncture/results/local-controls/lapse": {
+    "run": "/Users/hz0693/research/TDE/athenak-review/analysis/tde_puncture/results/local-controls/lapse",
+    "target_M": 100.0,
+    "histories_finite": true,
+    "termination": "operator_stop",
+    "operator_stop": {
+      "reason": "Wormhole perturbation already shows sustained growth; stop exploratory controls and test continuum-stationary trumpet instead.",
+      "termination": "operator SIGTERM; neither target completion nor clean application walltime stop"
+    },
+    "last_history_time_M": 40.02000000000076,
+    "target_reached": false,
+    "max_Theta": 4.564504565609438e-05,
+    "final_Theta": 4.564504565609438e-05,
+    "bad_metric_max": 0.0,
+    "min_lapse": 0.02179211782165744,
+    "min_chi": 0.000474059830872319,
+    "min_metric_determinant": 5.241747398629015,
+    "density_max_initial": 4e-24,
+    "density_max_final": 3.284079559998705e-19,
+    "exact_zero_history_residuals": false,
+    "constraints": {
+      "H-norm2": {
+        "initial": 0.0001560418959921388,
+        "final": 0.0001560648638970467,
+        "maximum": 0.0001560648638970467
+      },
+      "M-norm2": {
+        "initial": 0.0,
+        "final": 2.331910871294539e-08,
+        "maximum": 2.331910871294539e-08
+      },
+      "Theta-norm": {
+        "initial": 0.0,
+        "final": 1.0034931668214e-10,
+        "maximum": 1.0034931668214e-10
+      },
+      "Theta-int2": {
+        "initial": 0.0,
+        "final": 7.250246307681361e-07,
+        "maximum": 7.250246307681361e-07
+      }
+    },
+    "fluid_mass": {
+      "initial": 5.30853313626222e-21,
+      "final": 2.297878616025437e-18,
+      "final_over_initial": 432.8650791173909
+    },
+    "constraint_note": "Raw history labels/normalizations retained. Physical H/M include background finite-difference error; their baseline is not zero. Theta maxima are unexcised.",
+    "Theta_fit_10_20": {
+      "rate_per_M": 0.35900906461428295,
+      "observed_factor": 24.32177470648668,
+      "actual_window": [
+        10.01999999999998,
+        19.01999999999996
+      ]
+    },
+    "Theta_fit_20_30": {
+      "rate_per_M": 0.3931960487447281,
+      "observed_factor": 34.42933299467142,
+      "actual_window": [
+        20.01,
+        29.01000000000034
+      ]
+    },
+    "Theta_fit_30_40": {
+      "rate_per_M": 0.39294478326160065,
+      "observed_factor": 34.34717681323408,
+      "actual_window": [
+        30.00000000000038,
+        39.00000000000072
+      ]
+    },
+    "Theta_fit_tail": {
+      "rate_per_M": 0.3929809552212039,
+      "observed_factor": 1764.451871335019,
+      "actual_window": [
+        21.00000000000004,
+        40.02000000000076
+      ]
+    },
+    "measured_seconds_per_M": 25.237382728205127,
+    "estimated_hours_to_1000M_at_measured_rate": 7.010384091168091,
+    "recent_seconds_per_M": 25.059533333333334,
+    "recent_window_M": [
+      30.0,
+      39.0
+    ],
+    "estimated_hours_to_1000M_at_recent_rate": 6.960981481481482,
+    "status": "growing perturbation; not stable"
+  },
+  "analysis/tde_puncture/results/local-controls/trumpet-lapse-double-local": {
+    "run": "/Users/hz0693/research/TDE/athenak-review/analysis/tde_puncture/results/local-controls/trumpet-lapse-double-local",
+    "target_M": 100.0,
+    "histories_finite": true,
+    "termination": "target",
+    "last_history_time_M": 100.0,
+    "target_reached": true,
+    "max_Theta": 4.310009046878615e-09,
+    "final_Theta": 4.310009046878615e-09,
+    "bad_metric_max": 0.0,
+    "min_lapse": 0.07970028910083012,
+    "min_chi": 0.006352135830741488,
+    "min_metric_determinant": 4.740072063903781,
+    "density_max_initial": 4e-24,
+    "density_max_final": 2.536269497778608e-13,
+    "exact_zero_history_residuals": false,
+    "constraints": {
+      "H-norm2": {
+        "initial": 2.866046180282202e-09,
+        "final": 2.866046875877107e-09,
+        "maximum": 2.86633702306433e-09
+      },
+      "M-norm2": {
+        "initial": 3.28057981381272e-08,
+        "final": 3.280579816140909e-08,
+        "maximum": 3.280598508458361e-08
+      },
+      "Theta-norm": {
+        "initial": 0.0,
+        "final": 8.252672204145518e-18,
+        "maximum": 8.252672204145518e-18
+      },
+      "Theta-int2": {
+        "initial": 0.0,
+        "final": 3.188660403248168e-16,
+        "maximum": 3.188660403248168e-16
+      }
+    },
+    "fluid_mass": {
+      "initial": 1.27088601425603e-21,
+      "final": 2.028662776594936e-12,
+      "final_over_initial": 1596258636.760988
+    },
+    "constraint_note": "Raw history labels/normalizations retained. Physical H/M include background finite-difference error; their baseline is not zero. Theta maxima are unexcised.",
+    "Theta_fit_10_20": {
+      "rate_per_M": -0.12422091164389656,
+      "observed_factor": 0.5380739735137752,
+      "actual_window": [
+        10.01999999999998,
+        19.01999999999996
+      ]
+    },
+    "Theta_fit_20_30": {
+      "rate_per_M": -0.11308550295683929,
+      "observed_factor": 0.5894119408356959,
+      "actual_window": [
+        20.01,
+        29.01000000000034
+      ]
+    },
+    "Theta_fit_30_40": {
+      "rate_per_M": 0.05026941234339668,
+      "observed_factor": 1.2349310508152458,
+      "actual_window": [
+        30.00000000000038,
+        39.00000000000072
+      ]
+    },
+    "Theta_fit_40_60": {
+      "rate_per_M": 0.07004414398946517,
+      "observed_factor": 3.780451519137563,
+      "actual_window": [
+        40.02000000000076,
+        59.01000000000148
+      ]
+    },
+    "Theta_fit_60_100": {
+      "rate_per_M": 0.07071431200013015,
+      "observed_factor": 16.912159833852247,
+      "actual_window": [
+        60.00000000000151,
+        100.0
+      ]
+    },
+    "Theta_fit_tail": {
+      "rate_per_M": 0.07077905433942298,
+      "observed_factor": 4.115854940095238,
+      "actual_window": [
+        80.01000000000226,
+        100.0
+      ]
+    },
+    "measured_seconds_per_M": 25.222937147474745,
+    "estimated_hours_to_1000M_at_measured_rate": 7.006371429854097,
+    "recent_seconds_per_M": 23.78788888888893,
+    "recent_window_M": [
+      90.0,
+      99.0
+    ],
+    "estimated_hours_to_1000M_at_recent_rate": 6.607746913580257,
+    "status": "growing perturbation; not stable"
+  },
+  "analysis/tde_puncture/results/local-controls/trumpet-lapse-dx0125-local": {
+    "run": "/Users/hz0693/research/TDE/athenak-review/analysis/tde_puncture/results/local-controls/trumpet-lapse-dx0125-local",
+    "target_M": 100.0,
+    "histories_finite": true,
+    "termination": "target",
+    "last_history_time_M": 100.0,
+    "target_reached": true,
+    "max_Theta": 1.449437417928659e-09,
+    "final_Theta": 1.449437417928659e-09,
+    "bad_metric_max": 0.0,
+    "min_lapse": 0.09767910141521581,
+    "min_chi": 0.009541206749604375,
+    "min_metric_determinant": 4.782142681002489,
+    "density_max_initial": 4e-24,
+    "density_max_final": 1.449585925435687e-13,
+    "exact_zero_history_residuals": false,
+    "constraints": {
+      "H-norm2": {
+        "initial": 4.034579528574162e-08,
+        "final": 4.034579541098513e-08,
+        "maximum": 4.034634716867617e-08
+      },
+      "M-norm2": {
+        "initial": 4.467054780952845e-07,
+        "final": 4.467054780411473e-07,
+        "maximum": 4.467058520989021e-07
+      },
+      "Theta-norm": {
+        "initial": 0.0,
+        "final": 8.981047406695815e-19,
+        "maximum": 8.981047406695815e-19
+      },
+      "Theta-int2": {
+        "initial": 0.0,
+        "final": 3.771948808591981e-17,
+        "maximum": 3.771948808591981e-17
+      }
+    },
+    "fluid_mass": {
+      "initial": 1.258039306806522e-21,
+      "final": 2.121271500895416e-12,
+      "final_over_initial": 1686172673.1577024
+    },
+    "constraint_note": "Raw history labels/normalizations retained. Physical H/M include background finite-difference error; their baseline is not zero. Theta maxima are unexcised.",
+    "Theta_fit_10_20": {
+      "rate_per_M": -0.12636289668824885,
+      "observed_factor": 0.5470142976111463,
+      "actual_window": [
+        10.01249999999995,
+        19.01250000000001
+      ]
+    },
+    "Theta_fit_20_30": {
+      "rate_per_M": -0.12053630746969766,
+      "observed_factor": 0.5176021623096976,
+      "actual_window": [
+        20.02500000000004,
+        29.02500000000039
+      ]
+    },
+    "Theta_fit_30_40": {
+      "rate_per_M": 0.04810609045432016,
+      "observed_factor": 1.24438246101684,
+      "actual_window": [
+        30.00000000000042,
+        39.00000000000076
+      ]
+    },
+    "Theta_fit_40_60": {
+      "rate_per_M": 0.06928842231806043,
+      "observed_factor": 3.7312157037393643,
+      "actual_window": [
+        40.0125000000008,
+        59.02500000000152
+      ]
+    },
+    "Theta_fit_60_100": {
+      "rate_per_M": 0.07039748976597919,
+      "observed_factor": 16.691392175642868,
+      "actual_window": [
+        60.00000000000156,
+        100.0
+      ]
+    },
+    "Theta_fit_tail": {
+      "rate_per_M": 0.07050032664993675,
+      "observed_factor": 4.08860535691169,
+      "actual_window": [
+        80.02499999999928,
+        100.0
+      ]
+    },
+    "measured_seconds_per_M": 12.259239658153845,
+    "estimated_hours_to_1000M_at_measured_rate": 3.405344349487179,
+    "recent_seconds_per_M": 12.014133333333342,
+    "recent_window_M": [
+      86.25,
+      97.5
+    ],
+    "estimated_hours_to_1000M_at_recent_rate": 3.3372592592592625,
+    "status": "growing perturbation; not stable"
+  },
+  "analysis/tde_puncture/results/local-controls/trumpet-lapse-local": {
+    "run": "/Users/hz0693/research/TDE/athenak-review/analysis/tde_puncture/results/local-controls/trumpet-lapse-local",
+    "target_M": 100.0,
+    "histories_finite": true,
+    "termination": "target",
+    "last_history_time_M": 100.0,
+    "target_reached": true,
+    "max_Theta": 2.160176562829073e-09,
+    "final_Theta": 2.160176562829073e-09,
+    "bad_metric_max": 0.0,
+    "min_lapse": 0.07970029083260662,
+    "min_chi": 0.006352136232493485,
+    "min_metric_determinant": 4.740072069779678,
+    "density_max_initial": 4e-24,
+    "density_max_final": 1.924085294928216e-13,
+    "exact_zero_history_residuals": false,
+    "constraints": {
+      "H-norm2": {
+        "initial": 2.866046180282202e-09,
+        "final": 2.866046349514863e-09,
+        "maximum": 2.866191556342546e-09
+      },
+      "M-norm2": {
+        "initial": 3.28057981381272e-08,
+        "final": 3.280579814104308e-08,
+        "maximum": 3.280589158656941e-08
+      },
+      "Theta-norm": {
+        "initial": 0.0,
+        "final": 2.058684909003748e-18,
+        "maximum": 2.058684909003748e-18
+      },
+      "Theta-int2": {
+        "initial": 0.0,
+        "final": 7.953970106257001e-17,
+        "maximum": 7.953970106257001e-17
+      }
+    },
+    "fluid_mass": {
+      "initial": 1.27088601425603e-21,
+      "final": 1.823138324675664e-12,
+      "final_over_initial": 1434541181.6833313
+    },
+    "constraint_note": "Raw history labels/normalizations retained. Physical H/M include background finite-difference error; their baseline is not zero. Theta maxima are unexcised.",
+    "Theta_fit_10_20": {
+      "rate_per_M": -0.12422348513675197,
+      "observed_factor": 0.5380624171168847,
+      "actual_window": [
+        10.01999999999998,
+        19.01999999999996
+      ]
+    },
+    "Theta_fit_20_30": {
+      "rate_per_M": -0.1130646157462891,
+      "observed_factor": 0.5895636793459962,
+      "actual_window": [
+        20.01,
+        29.01000000000034
+      ]
+    },
+    "Theta_fit_30_40": {
+      "rate_per_M": 0.05035156496028012,
+      "observed_factor": 1.2358334097013173,
+      "actual_window": [
+        30.00000000000038,
+        39.00000000000072
+      ]
+    },
+    "Theta_fit_40_60": {
+      "rate_per_M": 0.07010451774473266,
+      "observed_factor": 3.7845731788650214,
+      "actual_window": [
+        40.02000000000076,
+        59.01000000000148
+      ]
+    },
+    "Theta_fit_60_100": {
+      "rate_per_M": 0.07072669319368152,
+      "observed_factor": 16.920839741012784,
+      "actual_window": [
+        60.00000000000151,
+        100.0
+      ]
+    },
+    "Theta_fit_tail": {
+      "rate_per_M": 0.07078769101171707,
+      "observed_factor": 4.1165711835745995,
+      "actual_window": [
+        80.01000000000226,
+        100.0
+      ]
+    },
+    "measured_seconds_per_M": 25.042971046464647,
+    "estimated_hours_to_1000M_at_measured_rate": 6.9563808462401795,
+    "recent_seconds_per_M": 25.788333333333362,
+    "recent_window_M": [
+      90.0,
+      99.0
+    ],
+    "estimated_hours_to_1000M_at_recent_rate": 7.163425925925933,
+    "status": "growing perturbation; not stable"
+  },
+  "analysis/tde_puncture/results/local-controls/trumpet-lapse-profile-local": {
+    "run": "/Users/hz0693/research/TDE/athenak-review/analysis/tde_puncture/results/local-controls/trumpet-lapse-profile-local",
+    "target_M": 50.0,
+    "histories_finite": true,
+    "termination": "target",
+    "last_history_time_M": 50.0,
+    "target_reached": true,
+    "max_Theta": 1.843991155294938e-10,
+    "final_Theta": 4.325086203284346e-11,
+    "bad_metric_max": 0.0,
+    "min_lapse": 0.09767910211806494,
+    "min_chi": 0.009541207045560565,
+    "min_metric_determinant": 4.782142684682724,
+    "density_max_initial": 4e-24,
+    "density_max_final": 1.219165881518076e-17,
+    "exact_zero_history_residuals": false,
+    "constraints": {
+      "H-norm2": {
+        "initial": 4.034579528574152e-08,
+        "final": 4.034579366668578e-08,
+        "maximum": 4.034634716867619e-08
+      },
+      "M-norm2": {
+        "initial": 4.467054780952811e-07,
+        "final": 4.467054818107719e-07,
+        "maximum": 4.467058520989012e-07
+      },
+      "Theta-norm": {
+        "initial": 0.0,
+        "final": 8.227795388019526e-22,
+        "maximum": 9.921993534136146e-20
+      },
+      "Theta-int2": {
+        "initial": 0.0,
+        "final": 3.219476008118641e-20,
+        "maximum": 1.522355771764927e-19
+      }
+    },
+    "fluid_mass": {
+      "initial": 1.258039306806511e-21,
+      "final": 1.261595052441023e-16,
+      "final_over_initial": 100282.64185508943
+    },
+    "constraint_note": "Raw history labels/normalizations retained. Physical H/M include background finite-difference error; their baseline is not zero. Theta maxima are unexcised.",
+    "Theta_fit_10_20": {
+      "rate_per_M": -0.12636289668824885,
+      "observed_factor": 0.5470142976111463,
+      "actual_window": [
+        10.01249999999995,
+        19.01250000000001
+      ]
+    },
+    "Theta_fit_20_30": {
+      "rate_per_M": -0.12053630746969766,
+      "observed_factor": 0.5176021623096976,
+      "actual_window": [
+        20.02500000000004,
+        29.02500000000039
+      ]
+    },
+    "Theta_fit_30_40": {
+      "rate_per_M": 0.04810609045432016,
+      "observed_factor": 1.24438246101684,
+      "actual_window": [
+        30.00000000000042,
+        39.00000000000076
+      ]
+    },
+    "Theta_fit_tail": {
+      "rate_per_M": 0.0631441950057775,
+      "observed_factor": 2.6470217538490104,
+      "actual_window": [
+        30.00000000000042,
+        50.0
+      ]
+    },
+    "measured_seconds_per_M": 6.163498875897436,
+    "estimated_hours_to_1000M_at_measured_rate": 1.712083021082621,
+    "recent_seconds_per_M": 6.163395555555558,
+    "recent_window_M": [
+      37.5,
+      48.75
+    ],
+    "estimated_hours_to_1000M_at_recent_rate": 1.7120543209876549,
+    "status": "late Theta growth observed; stability not established"
+  },
+  "analysis/tde_puncture/results/local-controls/trumpet-star-stage": {
+    "run": "/Users/hz0693/research/TDE/athenak-review/analysis/tde_puncture/results/local-controls/trumpet-star-stage",
+    "target_M": 100.0,
+    "histories_finite": true,
+    "termination": "cycle_limit",
+    "last_history_time_M": 0.1125,
+    "target_reached": false,
+    "max_Theta": 1.260391401928675e-06,
+    "final_Theta": 1.260391401928675e-06,
+    "bad_metric_max": 0.0,
+    "min_lapse": 0.09767907705946323,
+    "min_chi": 0.009541158324835484,
+    "min_metric_determinant": 1.014049753408385,
+    "density_max_initial": 4.298465429336313e-06,
+    "density_max_final": 4.32085931695507e-06,
+    "exact_zero_history_residuals": false,
+    "constraints": {
+      "H-norm2": {
+        "initial": 6.251362695810363e-08,
+        "final": 4.850271150866174e-08,
+        "maximum": 6.251362695810363e-08
+      },
+      "M-norm2": {
+        "initial": 4.917963379173105e-07,
+        "final": 4.929055607055275e-07,
+        "maximum": 4.929055607055275e-07
+      },
+      "Theta-norm": {
+        "initial": 0.0,
+        "final": 1.566410997707958e-11,
+        "maximum": 1.566410997707958e-11
+      },
+      "Theta-int2": {
+        "initial": 0.0,
+        "final": 4.339272234250077e-13,
+        "maximum": 4.339272234250077e-13
+      }
+    },
+    "fluid_mass": {
+      "initial": 5.073394746378934e-06,
+      "final": 5.073394746379636e-06,
+      "final_over_initial": 1.0000000000001383
+    },
+    "constraint_note": "Raw history labels/normalizations retained. Physical H/M include background finite-difference error; their baseline is not zero. Theta maxima are unexcised.",
+    "status": "finite over recorded interval; stability not established"
+  },
+  "analysis/tde_puncture/results/local-controls/vacuum": {
+    "run": "/Users/hz0693/research/TDE/athenak-review/analysis/tde_puncture/results/local-controls/vacuum",
+    "target_M": 100.0,
+    "histories_finite": true,
+    "termination": "operator_stop",
+    "operator_stop": {
+      "reason": "Wormhole perturbation already shows sustained growth; stop exploratory controls and test continuum-stationary trumpet instead.",
+      "termination": "operator SIGTERM; neither target completion nor clean application walltime stop"
+    },
+    "last_history_time_M": 40.02000000000076,
+    "target_reached": false,
+    "max_Theta": 0.0,
+    "final_Theta": 0.0,
+    "bad_metric_max": 0.0,
+    "min_lapse": 0.02179582862640745,
+    "min_chi": 0.0004750581455117225,
+    "min_metric_determinant": 5.24176527683258,
+    "density_max_initial": 4e-24,
+    "density_max_final": 4.068318262910178e-19,
+    "exact_zero_history_residuals": true,
+    "constraints": {
+      "H-norm2": {
+        "initial": 0.0001560418959921388,
+        "final": 0.0001560418959921388,
+        "maximum": 0.0001560418959921388
+      },
+      "M-norm2": {
+        "initial": 0.0,
+        "final": 0.0,
+        "maximum": 0.0
+      },
+      "Theta-norm": {
+        "initial": 0.0,
+        "final": 0.0,
+        "maximum": 0.0
+      },
+      "Theta-int2": {
+        "initial": 0.0,
+        "final": 0.0,
+        "maximum": 0.0
+      }
+    },
+    "fluid_mass": {
+      "initial": 5.30853313626222e-21,
+      "final": 1.957130870847623e-18,
+      "final_over_initial": 368.67639715359377
+    },
+    "constraint_note": "Raw history labels/normalizations retained. Physical H/M include background finite-difference error; their baseline is not zero. Theta maxima are unexcised.",
+    "measured_seconds_per_M": 25.17515688974359,
+    "estimated_hours_to_1000M_at_measured_rate": 6.993099136039886,
+    "recent_seconds_per_M": 25.02951111111112,
+    "recent_window_M": [
+      30.0,
+      39.0
+    ],
+    "estimated_hours_to_1000M_at_recent_rate": 6.952641975308644,
+    "status": "zero equilibrium preserved over recorded interval; perturbation stability separate"
+  }
+}

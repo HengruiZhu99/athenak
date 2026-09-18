@@ -1,0 +1,51 @@
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 876
+Number of logical  levels of refinement = 9 (10 levels total)
+Number of physical levels of refinement = 8 (9 levels total)
+  Physical level = 1 (logical level = 2): 52 MeshBlocks, cost = 52
+  Physical level = 2 (logical level = 3): 80 MeshBlocks, cost = 80
+  Physical level = 3 (logical level = 4): 108 MeshBlocks, cost = 108
+  Physical level = 4 (logical level = 5): 140 MeshBlocks, cost = 140
+  Physical level = 5 (logical level = 6): 140 MeshBlocks, cost = 140
+  Physical level = 6 (logical level = 7): 140 MeshBlocks, cost = 140
+  Physical level = 7 (logical level = 8): 152 MeshBlocks, cost = 152
+  Physical level = 8 (logical level = 9): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 1
+AssembleZ4cTasks
+PUNCTURE_BACKGROUND stationary R0=M=1 trumpet, R=r+1, horizon_r=1. Not the stationary standard 1+log trumpet.
+OUTER_SPONGE enabled=0 geometry=face width=2 rate=5
+PUNCTURE_RESOLUTION horizon_r=1 dx_current=0.125 diameter_cells=16 interior_layer=none
+
+TOV INITIAL DATA
+----------------
+Total points in buffer: 200000
+Radial step: 5e-05
+Radius (Schwarzschild): 2.356
+Radius (Isotropic): 2.35599
+Mass: 4.99989e-06
+
+Z4C_EXT_HMAX time=0 H=0.000133073 x=-0.0625 y=-0.0625 z=-1.0625 r_bh=1.06617
+
+Setup complete, executing task list(s)...
+
+elapsed=4.106952e+00 cycle=0 time=0.000000e+00 dt=3.750000e-02
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=68,32,32 gauge=2.582359e-09 constraint=4.078273e-09 radiation=1.083155e-10 outgoing_gauge=2.089868e-09 outgoing_constraint=4.078273e-09 outgoing_radiation=1.078918e-10 enforcement=6.214331e-25 correction=1.445236e-09 shift_ratio=4.023886e-03 diagnostic_kernel_seconds=1.277291e-03 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_EXT_HMAX time=3.750000e-02 H=1.330708e-04 x=-6.250000e-02 y=-6.250000e-02 z=-1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=7.500000e-02 H=1.330685e-04 x=-6.250000e-02 y=-6.250000e-02 z=1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.125000e-01 H=1.330662e-04 x=-6.250000e-02 y=-6.250000e-02 z=-1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.125000e-01 H=1.330662e-04 x=-6.250000e-02 y=-6.250000e-02 z=-1.062500e+00 r_bh=1.066170e+00
+
+Terminating on cycle limit
+time=1.125000e-01 cycle=3
+tlim=1.000000e+02 nlim=3
+
+MeshBlock-cycles = 2628
+cpu time used  = 2.832966e+01
+zone-cycles/cpu_second = 4.749566e+04
+particle-updates/cpu_second = 0.000000e+00

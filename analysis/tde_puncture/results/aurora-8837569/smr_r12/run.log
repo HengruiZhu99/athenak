@@ -1,0 +1,58 @@
+### WARNING in /lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/puncture-source-bd1d7e29/src/mesh/load_balance.cpp at line 115
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 64
+Number of logical  levels of refinement = 2 (3 levels total)
+Number of physical levels of refinement = 1 (2 levels total)
+Number of parallel ranks = 12
+  Rank = 0: 5 MeshBlocks, cost = 5
+  Rank = 1: 5 MeshBlocks, cost = 5
+  Rank = 2: 5 MeshBlocks, cost = 5
+  Rank = 3: 5 MeshBlocks, cost = 5
+  Rank = 4: 5 MeshBlocks, cost = 5
+  Rank = 5: 5 MeshBlocks, cost = 5
+  Rank = 6: 5 MeshBlocks, cost = 5
+  Rank = 7: 5 MeshBlocks, cost = 5
+  Rank = 8: 6 MeshBlocks, cost = 6
+  Rank = 9: 6 MeshBlocks, cost = 6
+  Rank = 10: 6 MeshBlocks, cost = 6
+  Rank = 11: 6 MeshBlocks, cost = 6
+Load Balancing:
+  Maximum normalized cost = 1.2, Average = 1.06667
+AssembleZ4cTasks
+PUNCTURE_BACKGROUND stationary R0=M=1 trumpet, R=r+1, horizon_r=1. Not the stationary standard 1+log trumpet.
+OUTER_SPONGE enabled=0 geometry=face width=2 rate=5
+PUNCTURE_RESOLUTION horizon_r=1 dx_current=0.25 diameter_cells=8 interior_layer=none
+z4c_tov_ks diagnostic: initialized pure analytic background.
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=0 H=0.00438009 x=-0.125 y=-0.125 z=-1.125 r_bh=1.1388
+
+Setup complete, executing task list(s)...
+
+elapsed=3.220516e-01 cycle=0 time=0.000000e+00 dt=7.500000e-02
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=3,4,4 gauge=0.000000e+00 constraint=0.000000e+00 radiation=0.000000e+00 outgoing_gauge=0.000000e+00 outgoing_constraint=0.000000e+00 outgoing_radiation=0.000000e+00 enforcement=0.000000e+00 correction=0.000000e+00 shift_ratio=2.575286e-01 diagnostic_kernel_seconds=7.118101e-03 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=3,4,4 gauge=0.000000e+00 constraint=0.000000e+00 radiation=0.000000e+00 outgoing_gauge=0.000000e+00 outgoing_constraint=0.000000e+00 outgoing_radiation=0.000000e+00 enforcement=0.000000e+00 correction=0.000000e+00 shift_ratio=2.575286e-01 diagnostic_kernel_seconds=1.540225e-03 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_EXT_HMAX time=0.075 H=0.00438009 x=-0.125 y=-0.125 z=-1.125 r_bh=1.1388
+Z4C_EXT_HMAX time=0.15 H=0.00438009 x=-0.125 y=-0.125 z=-1.125 r_bh=1.1388
+Z4C_EXT_HMAX time=0.225 H=0.00438009 x=-0.125 y=-0.125 z=-1.125 r_bh=1.1388
+Z4C_EXT_HMAX time=0.225 H=0.00438009 x=-0.125 y=-0.125 z=-1.125 r_bh=1.1388
+
+Terminating on cycle limit
+time=2.250000e-01 cycle=3
+tlim=2.000000e+02 nlim=3
+
+MeshBlock-cycles = 192
+cpu time used  = 3.284759e+00
+zone-cycles/cpu_second = 2.992731e+04
+particle-updates/cpu_second = 0.000000e+00
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks

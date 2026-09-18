@@ -1,0 +1,41 @@
+Kokkos::OpenMP::initialize WARNING: OMP_PROC_BIND environment variable not set
+  In general, for best performance with OpenMP 4.0 or better set OMP_PROC_BIND=spread and OMP_PLACES=threads
+  For best performance with OpenMP 3.1 set OMP_PROC_BIND=true
+  For unit testing set OMP_PROC_BIND=false
+
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+PUNCTURE_BACKGROUND isotropic wormhole, M=1, horizon_r=0.5, alpha=psi^-2. Fixed residual background; not trumpet relaxation.
+OUTER_SPONGE enabled=0 geometry=face width=2 rate=5
+PUNCTURE_RESOLUTION horizon_r=0.5 dx_current=0.1 diameter_cells=10 interior_layer=none
+z4c_tov_ks diagnostic: initialized pure analytic background.
+Z4C_EXT_HMAX time=0 H=0.0081428 x=0.05 y=0.05 z=-0.55 r_bh=0.554527
+
+Setup complete, executing task list(s)...
+
+elapsed=1.204618e-01 cycle=0 time=0.000000e+00 dt=3.000000e-02
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=0.000000e+00 constraint=0.000000e+00 radiation=0.000000e+00 outgoing_gauge=0.000000e+00 outgoing_constraint=0.000000e+00 outgoing_radiation=0.000000e+00 enforcement=2.668520e-29 correction=1.906896e-13 shift_ratio=0.000000e+00 diagnostic_kernel_seconds=6.670167e-03 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=4.764506e-16 constraint=2.676111e-16 radiation=5.238338e-32 outgoing_gauge=4.764506e-16 outgoing_constraint=2.866205e-16 outgoing_radiation=5.575258e-32 enforcement=5.522026e-29 correction=1.907055e-13 shift_ratio=1.712925e-32 diagnostic_kernel_seconds=1.970208e-03 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_EXT_HMAX time=1.020000e+00 H=8.142800e-03 x=5.500000e-01 y=5.000000e-02 z=5.000000e-02 r_bh=5.545268e-01
+Z4C_EXT_HMAX time=2.010000e+00 H=8.142800e-03 x=5.000000e-02 y=5.000000e-02 z=-5.500000e-01 r_bh=5.545268e-01
+Z4C_EXT_HMAX time=3.000000e+00 H=8.142800e-03 x=5.000000e-02 y=5.500000e-01 z=5.000000e-02 r_bh=5.545268e-01
+elapsed=7.739686e+01 cycle=100 time=3.000000e+00 dt=3.000000e-02
+Z4C_EXT_HMAX time=4.020000e+00 H=8.142800e-03 x=-5.500000e-01 y=5.000000e-02 z=5.000000e-02 r_bh=5.545268e-01
+Z4C_EXT_HMAX time=5.010000e+00 H=8.142800e-03 x=-5.500000e-01 y=5.000000e-02 z=5.000000e-02 r_bh=5.545268e-01
+Z4C_EXT_HMAX time=6.000000e+00 H=8.142800e-03 x=5.000000e-02 y=5.500000e-01 z=-5.000000e-02 r_bh=5.545268e-01
+elapsed=1.564774e+02 cycle=200 time=6.000000e+00 dt=3.000000e-02
+Z4C_CHARACTERISTIC_CPBC time=6.000000e+00 cycle=200 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=1.103744e-13 constraint=1.375052e-13 radiation=1.255022e-13 outgoing_gauge=4.783167e-13 outgoing_constraint=8.666970e-13 outgoing_radiation=1.274465e-13 enforcement=2.374471e-27 correction=8.912880e-12 shift_ratio=1.675994e-13 diagnostic_kernel_seconds=2.416042e-03 performance_valid=1 kernel_seconds=2.318959e-03 volume_rhs_seconds=1.455441e-01 kernel_fraction=1.593303e-02
+Z4C_EXT_HMAX time=7.020000e+00 H=8.142800e-03 x=5.500000e-01 y=5.000000e-02 z=-5.000000e-02 r_bh=5.545268e-01
+Z4C_EXT_HMAX time=8.010000e+00 H=8.142800e-03 x=5.500000e-01 y=5.000000e-02 z=-5.000000e-02 r_bh=5.545268e-01
+Z4C_EXT_HMAX time=9.000000e+00 H=8.142800e-03 x=5.500000e-01 y=5.000000e-02 z=-5.000000e-02 r_bh=5.545268e-01
+elapsed=2.410820e+02 cycle=300 time=9.000000e+00 dt=3.000000e-02
+Z4C_EXT_HMAX time=1.002000e+01 H=8.142800e-03 x=5.500000e-01 y=5.000000e-02 z=-5.000000e-02 r_bh=5.545268e-01
+Z4C_EXT_HMAX time=1.101000e+01 H=8.142800e-03 x=5.500000e-01 y=5.000000e-02 z=5.000000e-02 r_bh=5.545268e-01
+Z4C_EXT_HMAX time=1.200000e+01 H=8.142800e-03 x=-5.500000e-01 y=-5.000000e-02 z=5.000000e-02 r_bh=5.545268e-01
+elapsed=3.194148e+02 cycle=400 time=1.200000e+01 dt=3.000000e-02
+### FATAL ERROR: characteristic_cpbc found 72 boundary cells with an invalid metric, gauge driver, cone separation, characteristic speed, or excessive matter energy density. metric_det=0 metric_normal=0 metric_tangent1=0 metric_tangent2=0 matter=72 coefficient=0 speed=0 cones=0 spacing=0 scalar_map=0 sample_bg={chi:5.756707e-01,gxx:1.000000e+00,gxy:0.000000e+00,gxz:0.000000e+00,gyy:1.000000e+00,gyz:0.000000e+00,gzz:1.000000e+00,alpha:7.587297e-01}

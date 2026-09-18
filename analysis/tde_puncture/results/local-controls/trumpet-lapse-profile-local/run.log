@@ -1,0 +1,97 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 1
+AssembleZ4cTasks
+PUNCTURE_BACKGROUND stationary R0=M=1 trumpet, R=r+1, horizon_r=1. Not the stationary standard 1+log trumpet.
+OUTER_SPONGE enabled=0 geometry=face width=2 rate=5
+PUNCTURE_RESOLUTION horizon_r=1 dx_current=0.125 diameter_cells=16 interior_layer=none
+z4c_tov_ks diagnostic: initialized pure analytic background.
+VACUUM_GAUGE_PULSE component=0 amplitude=1e-08 width=0.5
+Z4C_EXT_HMAX time=0 H=0.000132972 x=-0.0625 y=1.0625 z=-0.0625 r_bh=1.06617
+
+Setup complete, executing task list(s)...
+
+elapsed=1.285298e-01 cycle=0 time=0.000000e+00 dt=3.750000e-02
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=0.000000e+00 constraint=0.000000e+00 radiation=0.000000e+00 outgoing_gauge=0.000000e+00 outgoing_constraint=0.000000e+00 outgoing_radiation=0.000000e+00 enforcement=1.211690e-27 correction=7.100732e-12 shift_ratio=5.150571e-01 diagnostic_kernel_seconds=4.644250e-03 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=7.941708e-16 constraint=2.625018e-16 radiation=2.100354e-17 outgoing_gauge=1.696632e-12 outgoing_constraint=4.102856e-13 outgoing_radiation=2.649351e-17 enforcement=1.938705e-26 correction=4.216621e-11 shift_ratio=5.150571e-01 diagnostic_kernel_seconds=1.037125e-03 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_EXT_HMAX time=1.012500e+00 H=1.329723e-04 x=-1.062500e+00 y=6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.025000e+00 H=1.329725e-04 x=1.062500e+00 y=6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=3.000000e+00 H=1.329724e-04 x=-6.250000e-02 y=1.062500e+00 z=-6.250000e-02 r_bh=1.066170e+00
+elapsed=2.299225e+01 cycle=100 time=3.750000e+00 dt=3.750000e-02
+Z4C_EXT_HMAX time=4.012500e+00 H=1.329727e-04 x=1.062500e+00 y=-6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=5.025000e+00 H=1.329724e-04 x=-1.062500e+00 y=-6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=6.000000e+00 H=1.329729e-04 x=-6.250000e-02 y=1.062500e+00 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=7.012500e+00 H=1.329721e-04 x=-1.062500e+00 y=-6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+elapsed=4.628056e+01 cycle=200 time=7.500000e+00 dt=3.750000e-02
+Z4C_CHARACTERISTIC_CPBC time=7.500000e+00 cycle=200 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=3.637766e-14 constraint=5.399599e-14 radiation=4.515949e-14 outgoing_gauge=2.732072e-09 outgoing_constraint=1.071471e-09 outgoing_radiation=2.840994e-10 enforcement=1.447566e-24 correction=8.068469e-10 shift_ratio=5.150571e-01 diagnostic_kernel_seconds=7.259580e-04 performance_valid=1 kernel_seconds=7.123750e-04 volume_rhs_seconds=4.043262e-02 kernel_fraction=1.761882e-02
+Z4C_EXT_HMAX time=8.025000e+00 H=1.329728e-04 x=1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=9.000000e+00 H=1.329741e-04 x=-1.062500e+00 y=-6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.001250e+01 H=1.329721e-04 x=1.062500e+00 y=6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.102500e+01 H=1.329774e-04 x=-1.062500e+00 y=-6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+elapsed=6.984917e+01 cycle=300 time=1.125000e+01 dt=3.750000e-02
+Z4C_EXT_HMAX time=1.200000e+01 H=1.329725e-04 x=6.250000e-02 y=-1.062500e+00 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.301250e+01 H=1.329724e-04 x=-6.250000e-02 y=1.062500e+00 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.402500e+01 H=1.329730e-04 x=6.250000e-02 y=-1.062500e+00 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.500000e+01 H=1.329738e-04 x=-1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+elapsed=9.296367e+01 cycle=400 time=1.500000e+01 dt=3.750000e-02
+Z4C_CHARACTERISTIC_CPBC time=1.500000e+01 cycle=400 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=5.827573e-14 constraint=8.061756e-14 radiation=6.315304e-14 outgoing_gauge=1.218564e-09 outgoing_constraint=3.913986e-10 outgoing_radiation=8.094052e-11 enforcement=3.360421e-25 correction=1.944003e-10 shift_ratio=5.150571e-01 diagnostic_kernel_seconds=7.255420e-04 performance_valid=1 kernel_seconds=6.907080e-04 volume_rhs_seconds=3.752588e-02 kernel_fraction=1.840618e-02
+Z4C_EXT_HMAX time=1.601250e+01 H=1.329726e-04 x=-1.062500e+00 y=-6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.702500e+01 H=1.329731e-04 x=1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=1.800000e+01 H=1.329727e-04 x=6.250000e-02 y=-6.250000e-02 z=-1.062500e+00 r_bh=1.066170e+00
+elapsed=1.161387e+02 cycle=500 time=1.875000e+01 dt=3.750000e-02
+Z4C_EXT_HMAX time=1.901250e+01 H=1.329723e-04 x=-1.062500e+00 y=6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.002500e+01 H=1.329728e-04 x=1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.100000e+01 H=1.329729e-04 x=1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.201250e+01 H=1.329725e-04 x=6.250000e-02 y=-1.062500e+00 z=-6.250000e-02 r_bh=1.066170e+00
+elapsed=1.395630e+02 cycle=600 time=2.250000e+01 dt=3.750000e-02
+Z4C_CHARACTERISTIC_CPBC time=2.250000e+01 cycle=600 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=6.994697e-14 constraint=9.543653e-14 radiation=9.314861e-14 outgoing_gauge=4.939094e-10 outgoing_constraint=1.968931e-10 outgoing_radiation=3.835056e-11 enforcement=7.754818e-26 correction=8.889458e-11 shift_ratio=5.150571e-01 diagnostic_kernel_seconds=7.197080e-04 performance_valid=1 kernel_seconds=8.006250e-04 volume_rhs_seconds=3.728117e-02 kernel_fraction=2.147532e-02
+Z4C_EXT_HMAX time=2.302500e+01 H=1.329724e-04 x=-6.250000e-02 y=6.250000e-02 z=-1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.400000e+01 H=1.329726e-04 x=-1.062500e+00 y=-6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.501250e+01 H=1.329724e-04 x=1.062500e+00 y=6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.602500e+01 H=1.329728e-04 x=-1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+elapsed=1.625417e+02 cycle=700 time=2.625000e+01 dt=3.750000e-02
+Z4C_EXT_HMAX time=2.700000e+01 H=1.329724e-04 x=6.250000e-02 y=6.250000e-02 z=-1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.801250e+01 H=1.329723e-04 x=-6.250000e-02 y=6.250000e-02 z=1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=2.902500e+01 H=1.329724e-04 x=-6.250000e-02 y=-1.062500e+00 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=3.000000e+01 H=1.329725e-04 x=-1.062500e+00 y=-6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+elapsed=1.853381e+02 cycle=800 time=3.000000e+01 dt=3.750000e-02
+Z4C_CHARACTERISTIC_CPBC time=3.000000e+01 cycle=800 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=8.374655e-14 constraint=1.073254e-13 radiation=1.155650e-13 outgoing_gauge=1.667822e-10 outgoing_constraint=1.023246e-10 outgoing_radiation=1.781336e-11 enforcement=3.877409e-26 correction=5.022481e-11 shift_ratio=5.150571e-01 diagnostic_kernel_seconds=6.967080e-04 performance_valid=1 kernel_seconds=6.502500e-04 volume_rhs_seconds=3.711763e-02 kernel_fraction=1.751863e-02
+Z4C_EXT_HMAX time=3.101250e+01 H=1.329723e-04 x=-6.250000e-02 y=1.062500e+00 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=3.202500e+01 H=1.329723e-04 x=1.062500e+00 y=-6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=3.300000e+01 H=1.329724e-04 x=1.062500e+00 y=-6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+elapsed=2.084297e+02 cycle=900 time=3.375000e+01 dt=3.750000e-02
+Z4C_EXT_HMAX time=3.401250e+01 H=1.329723e-04 x=6.250000e-02 y=-6.250000e-02 z=-1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=3.502500e+01 H=1.329723e-04 x=1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=3.600000e+01 H=1.329724e-04 x=1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=3.701250e+01 H=1.329723e-04 x=-1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+elapsed=2.312609e+02 cycle=1000 time=3.750000e+01 dt=3.750000e-02
+Z4C_CHARACTERISTIC_CPBC time=3.750000e+01 cycle=1000 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=9.297415e-14 constraint=1.290358e-13 radiation=1.217541e-13 outgoing_gauge=4.268515e-11 outgoing_constraint=5.370462e-11 outgoing_radiation=1.343236e-11 enforcement=2.584939e-26 correction=2.369115e-11 shift_ratio=5.150571e-01 diagnostic_kernel_seconds=7.012500e-04 performance_valid=1 kernel_seconds=7.979590e-04 volume_rhs_seconds=3.737054e-02 kernel_fraction=2.135262e-02
+Z4C_EXT_HMAX time=3.802500e+01 H=1.329723e-04 x=-6.250000e-02 y=-1.062500e+00 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=3.900000e+01 H=1.329723e-04 x=-1.062500e+00 y=6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=4.001250e+01 H=1.329723e-04 x=-6.250000e-02 y=-1.062500e+00 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=4.102500e+01 H=1.329723e-04 x=-1.062500e+00 y=-6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+elapsed=2.546334e+02 cycle=1100 time=4.125000e+01 dt=3.750000e-02
+Z4C_EXT_HMAX time=4.200000e+01 H=1.329723e-04 x=-1.062500e+00 y=-6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=4.301250e+01 H=1.329723e-04 x=1.062500e+00 y=-6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=4.402500e+01 H=1.329723e-04 x=-6.250000e-02 y=-6.250000e-02 z=1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=4.500000e+01 H=1.329723e-04 x=-1.062500e+00 y=-6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+elapsed=2.776253e+02 cycle=1200 time=4.500000e+01 dt=3.750000e-02
+Z4C_CHARACTERISTIC_CPBC time=4.500000e+01 cycle=1200 source=zero_rate incoming_modes=10 boundary_blocks_max=8,8,8 gauge=1.022279e-13 constraint=1.480081e-13 radiation=1.303484e-13 outgoing_gauge=1.859773e-11 outgoing_constraint=8.574018e-11 outgoing_radiation=1.734711e-11 enforcement=8.077936e-27 correction=1.836748e-11 shift_ratio=5.150571e-01 diagnostic_kernel_seconds=6.725830e-04 performance_valid=1 kernel_seconds=6.792920e-04 volume_rhs_seconds=3.736133e-02 kernel_fraction=1.818169e-02
+Z4C_EXT_HMAX time=4.601250e+01 H=1.329723e-04 x=1.062500e+00 y=6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=4.702500e+01 H=1.329723e-04 x=6.250000e-02 y=-6.250000e-02 z=-1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=4.800000e+01 H=1.329723e-04 x=1.062500e+00 y=6.250000e-02 z=-6.250000e-02 r_bh=1.066170e+00
+elapsed=3.005991e+02 cycle=1300 time=4.875000e+01 dt=3.750000e-02
+Z4C_EXT_HMAX time=4.901250e+01 H=1.329723e-04 x=6.250000e-02 y=6.250000e-02 z=1.062500e+00 r_bh=1.066170e+00
+Z4C_EXT_HMAX time=5.000000e+01 H=1.329723e-04 x=1.062500e+00 y=6.250000e-02 z=6.250000e-02 r_bh=1.066170e+00
+
+Terminating on time limit
+time=5.000000e+01 cycle=1334
+tlim=5.000000e+01 nlim=-1
+
+MeshBlock-cycles = 10672
+cpu time used  = 3.082582e+02
+zone-cycles/cpu_second = 1.418048e+05
+particle-updates/cpu_second = 0.000000e+00

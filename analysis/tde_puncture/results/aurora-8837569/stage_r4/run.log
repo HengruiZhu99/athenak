@@ -1,0 +1,40 @@
+
+Root grid = 2 x 2 x 2 MeshBlocks
+Total number of MeshBlocks = 8
+Number of logical  levels of refinement = 1 (2 levels total)
+Number of physical levels of refinement = 0 (1 levels total)
+Number of parallel ranks = 4
+  Rank = 0: 2 MeshBlocks, cost = 2
+  Rank = 1: 2 MeshBlocks, cost = 2
+  Rank = 2: 2 MeshBlocks, cost = 2
+  Rank = 3: 2 MeshBlocks, cost = 2
+Load Balancing:
+  Maximum normalized cost = 1, Average = 1
+AssembleZ4cTasks
+PUNCTURE_BACKGROUND stationary R0=M=1 trumpet, R=r+1, horizon_r=1. Not the stationary standard 1+log trumpet.
+OUTER_SPONGE enabled=0 geometry=face width=2 rate=5
+PUNCTURE_RESOLUTION horizon_r=1 dx_current=0.5 diameter_cells=4 interior_layer=none
+z4c_tov_ks diagnostic: initialized pure analytic background.
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=0 H=0.0941885 x=0.25 y=0.25 z=-1.25 r_bh=1.29904
+
+Setup complete, executing task list(s)...
+
+elapsed=1.522479e-01 cycle=0 time=0.000000e+00 dt=1.500000e-01
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=2,2,2 gauge=0.000000e+00 constraint=0.000000e+00 radiation=0.000000e+00 outgoing_gauge=0.000000e+00 outgoing_constraint=0.000000e+00 outgoing_radiation=0.000000e+00 enforcement=0.000000e+00 correction=0.000000e+00 shift_ratio=2.643172e-01 diagnostic_kernel_seconds=5.915603e-03 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=2,2,2 gauge=0.000000e+00 constraint=0.000000e+00 radiation=0.000000e+00 outgoing_gauge=0.000000e+00 outgoing_constraint=0.000000e+00 outgoing_radiation=0.000000e+00 enforcement=0.000000e+00 correction=0.000000e+00 shift_ratio=2.643172e-01 diagnostic_kernel_seconds=9.536720e-04 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_EXT_HMAX time=0.15 H=0.0941885 x=0.25 y=0.25 z=-1.25 r_bh=1.29904
+Z4C_EXT_HMAX time=0.3 H=0.0941885 x=0.25 y=0.25 z=-1.25 r_bh=1.29904
+Z4C_EXT_HMAX time=0.45 H=0.0941885 x=0.25 y=0.25 z=-1.25 r_bh=1.29904
+Z4C_EXT_HMAX time=0.45 H=0.0941885 x=0.25 y=0.25 z=-1.25 r_bh=1.29904
+
+Terminating on cycle limit
+time=4.500000e-01 cycle=3
+tlim=2.000000e+02 nlim=3
+
+MeshBlock-cycles = 24
+cpu time used  = 1.230090e+00
+zone-cycles/cpu_second = 9.989512e+03
+particle-updates/cpu_second = 0.000000e+00
+AssembleZ4cTasks
+AssembleZ4cTasks

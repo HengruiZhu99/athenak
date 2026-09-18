@@ -1,0 +1,6 @@
+# Preserve executed decks byte-for-byte, including empty assignment values,
+# so the submitted input SHA256 manifest remains verifiable.
+results/**/*.athinput whitespace=-blank-at-eol
+# Solver-generated headers/logs also retain their original formatting.
+results/**/*.hst whitespace=-blank-at-eol,-blank-at-eof
+results/**/*.log whitespace=-blank-at-eol,-blank-at-eof

@@ -35,6 +35,8 @@ def audit(run):
                                'walltime' if 'Terminating on wall clock limit' in log else
                                'cycle_limit' if 'Terminating on cycle limit' in log else
                                'fatal' if 'FATAL' in log or 'MPI_Abort' in log else 'unfinished'))
+    if (run/'exit_code.txt').exists():
+        output['application_exit_code'] = int((run/'exit_code.txt').read_text())
     if (run/'operator-stop.json').exists():
         output['termination'] = 'operator_stop'
         output['operator_stop'] = json.loads((run/'operator-stop.json').read_text())
@@ -56,6 +58,17 @@ def audit(run):
                   density_max_final=float(metrics['rho-max'][-1]))
     output['exact_zero_history_residuals'] = all(np.count_nonzero(metrics[k]) == 0
         for k in ['Theta-max', 'Khat-res', 'alpha-res', 'beta-res', 'B-res', 'Gam-res'])
+    output['constraints'] = {}
+    for data in records.values():
+        for key in ['H-norm2', 'M-norm2', 'Theta-norm', 'Theta-norm2', 'Theta-int2']:
+            if key in data:
+                output['constraints'][key] = dict(initial=float(data[key][0]),
+                    final=float(data[key][-1]), maximum=float(np.max(data[key])))
+        if 'mass' in data:
+            output['fluid_mass'] = dict(initial=float(data['mass'][0]),
+                final=float(data['mass'][-1]), final_over_initial=float(data['mass'][-1]/data['mass'][0]))
+    output['constraint_note'] = ('Raw history labels/normalizations retained. Physical H/M include '
+        'background finite-difference error; their baseline is not zero. Theta maxima are unexcised.')
     for start, stop in [(10,20), (20,30), (30,40), (40,60), (60,100)]:
         selected = (t >= start) & (t <= stop) & (theta > 0) & np.isfinite(theta)
         if np.count_nonzero(selected) >= 5 and t[-1] >= stop-.04:
@@ -63,17 +76,32 @@ def audit(run):
             rate, offset = np.polyfit(tx, ty, 1)
             output[f'Theta_fit_{start}_{stop}'] = dict(rate_per_M=float(rate),
                 observed_factor=float(np.exp(ty[-1]-ty[0])), actual_window=[float(tx[0]),float(tx[-1])])
+    # A walltime-limited run still needs a measured late-time slope.
+    selected=(t>=t[-1]-20)&(theta>0)&np.isfinite(theta)
+    if t[-1]>=30 and np.count_nonzero(selected)>=10:
+        tx,ty=t[selected],np.log(theta[selected])
+        rate,offset=np.polyfit(tx,ty,1)
+        output['Theta_fit_tail']=dict(rate_per_M=float(rate),
+            observed_factor=float(np.exp(ty[-1]-ty[0])),actual_window=[float(tx[0]),float(tx[-1])])
     cycles = re.findall(r'elapsed=([0-9.eE+-]+) cycle=(\d+) time=([0-9.eE+-]+)', log)
     if len(cycles) >= 2:
         e0, n0, t0 = map(float, cycles[0]); e1, n1, t1 = map(float, cycles[-1])
         if t1 > t0:
             output['measured_seconds_per_M'] = (e1-e0)/(t1-t0)
             output['estimated_hours_to_1000M_at_measured_rate'] = 1000*(e1-e0)/(t1-t0)/3600
+            er, nr, tr = map(float, cycles[max(0,len(cycles)-4)])
+            if t1>tr:
+                output['recent_seconds_per_M'] = (e1-er)/(t1-tr)
+                output['recent_window_M'] = [tr,t1]
+                output['estimated_hours_to_1000M_at_recent_rate'] = 1000*(e1-er)/(t1-tr)/3600
     fits = [v for k,v in output.items() if k.startswith('Theta_fit')]
-    if not all_finite or output['bad_metric_max'] > 0 or output['termination'] == 'fatal':
+    if (not all_finite or output['bad_metric_max'] > 0 or output['termination'] == 'fatal'
+            or output.get('application_exit_code', 0) != 0):
         output['status'] = 'failed'
     elif any(v['rate_per_M'] > 0 and v['observed_factor'] > 10 for v in fits):
         output['status'] = 'growing perturbation; not stable'
+    elif len(fits) >= 2 and all(v['rate_per_M'] > 0 for v in fits[-2:]):
+        output['status'] = 'late Theta growth observed; stability not established'
     elif output['exact_zero_history_residuals']:
         output['status'] = 'zero equilibrium preserved over recorded interval; perturbation stability separate'
     else:

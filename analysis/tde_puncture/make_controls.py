@@ -28,7 +28,7 @@ def setting(text, section, key, value):
 def make_case(case, target=100.):
     s = (ROOT/'tst/inputs/z4c_puncture_background.athinput').read_text()
     configs = {
-        'mesh_refinement': {'refinement': 'static', 'num_levels': 10, 'max_nmb_per_rank': 1024},
+        'mesh_refinement': {'refinement': 'static', 'num_levels': 10, 'max_nmb_per_rank': 2048},
         'time': {'nlim': -1, 'tlim': target, 'ndiag': 100},
         'z4c': {'debug_balance': 'false', 'debug_snapshot_operations': '',
                 'characteristic_bc_diagnostics': 'false', 'history_excise_ks_radius': 1.},
@@ -57,7 +57,9 @@ def make_case(case, target=100.):
             s = setting(s, section, key, value)
     s += '\n<refined_region0>\nlevel = 8\nx1min = -1\nx1max = 1\nx2min = -1\nx2max = 1\nx3min = -1\nx3max = 1\n'
     x = orbit()['isotropic_r0_M']
-    s += f'\n<refined_region1>\nlevel = 7\nx1min = {x-4}\nx1max = {x+4}\nx2min = -4\nx2max = 4\nx3min = -4\nx3max = 4\n'
+    # Resolve the swept stellar path throughout this <=100M pilot, not only
+    # its initial position. The inward displacement is about 9M at 100M.
+    s += f'\n<refined_region1>\nlevel = 7\nx1min = {x-14}\nx1max = {x+4}\nx2min = -4\nx2max = 8\nx3min = -4\nx3max = 4\n'
     # Thin slices record the hole and star on the same plane. Volume histories
     # and metric diagnostics remain enabled, including unexcised maxima.
     s += '\n<output2>\nfile_type = bin\nvariable = z4c_residual\nslice_x2 = 0\ndt = 20\n'
@@ -94,6 +96,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--target', type=float, default=100.)
     args = parser.parse_args()
+    if not 0 < args.target <= 100:
+        parser.error('The static stellar refinement corridor is only designed for 0 < target <= 100M')
     args.output.mkdir(parents=True, exist_ok=False)
     for case in ['vacuum', 'lapse', 'lapse_double', 'atmosphere', 'star']:
         (args.output/(case+'.athinput')).write_text(make_case(case, args.target))

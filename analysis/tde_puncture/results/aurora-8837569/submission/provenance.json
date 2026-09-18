@@ -1,0 +1,30 @@
+{
+  "numerical_source_commit": "8b694211",
+  "source_archive_base": "bd1d7e29",
+  "source_change_from_archive": "src/pgen/z4c_tov_ks.cpp only; all other compiled sources unchanged",
+  "pgen_sha256": "25b74c90142c64e5c3ab3d12070f3fb321e27cd05f814f4434a4dce225a611f5",
+  "kokkos_commit": "08ceff92bcf3a828844480bc1e6137eb74028517",
+  "background": "stationary Schwarzschild R0=M analytic trumpet",
+  "gauge": "background_adapted 1+log residual",
+  "kappa": [
+    0.1,
+    0
+  ],
+  "nodes": 4,
+  "ranks_per_case": 12,
+  "cases": [
+    "vacuum",
+    "lapse",
+    "atmosphere",
+    "star"
+  ],
+  "target_M": 100,
+  "one_node_per_case": true,
+  "mesh_blocks": 1268,
+  "BH_dx": 0.125,
+  "horizon_diameter_cells": 16,
+  "star_dx": 0.25,
+  "stellar_refinement": "covers swept path through 100M",
+  "walltime": "01:00:00",
+  "application_t": "00:55:00"
+}

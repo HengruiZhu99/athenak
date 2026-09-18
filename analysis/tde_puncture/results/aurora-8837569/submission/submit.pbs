@@ -1,0 +1,55 @@
+#!/bin/bash -l
+#PBS -A MHDTidal
+#PBS -N trumpet_stability
+#PBS -q debug-scaling
+#PBS -l select=4
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+source /home/hzhu/athenak_env
+export MPICH_GPU_SUPPORT_ENABLED=1 OMP_NUM_THREADS=1
+export SYCL_DEVICE_FILTER=level_zero:gpu ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+cd "$PBS_O_WORKDIR"
+source executable.env
+[[ "$(sha256sum "$ATHENA_EXE" | awk '{print $1}')" == "$EXPECTED_SHA256" ]]
+sha256sum -c inputs.sha256
+mapfile -t hosts < <(sort -u "$PBS_NODEFILE")
+[[ ${#hosts[@]} -eq 4 ]]
+root=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review
+runroot="$root/runs/trumpet_${PBS_JOBID%%.*}"
+[[ ! -e "$runroot" ]]
+mkdir "$runroot"
+cp submit.pbs executable.env inputs.sha256 provenance.json orbit.json "$runroot/"
+bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100
+for spec in stage_r1:1:stage stage_r4:4:stage smr_r12:12:stage_smr; do
+  IFS=: read -r name ranks deck <<< "$spec"
+  work="$runroot/$name"; mkdir "$work"; cp "$deck.athinput" "$work/input.athinput"
+  mpiexec --hosts "${hosts[0]}" -n "$ranks" -ppn "$ranks" --cpu-bind "$bind" \
+    gpu_tile_compact.sh "$ATHENA_EXE" -i "$work/input.athinput" -d "$work" -t 00:55:00 \
+    > "$work/run.log" 2>&1
+  python3 verify-vacuum.py "$work" "$ranks" 0 > "$work/verification.log" 2>&1
+  echo "Passed exact GPU control $name"
+done
+# Each case owns one distinct node. Independent diagnostic comparisons; matter
+# cases are not production promotion of the perturbed-vacuum configuration.
+pids=()
+cases=(vacuum lapse atmosphere star)
+for idx in 0 1 2 3; do
+  name=${cases[$idx]}; work="$runroot/$name"
+  mkdir "$work"; cp "$name.athinput" "$work/input.athinput"
+  (
+    set +e
+    mpiexec --hosts "${hosts[$idx]}" -n 12 -ppn 12 --cpu-bind "$bind" \
+      gpu_tile_compact.sh "$ATHENA_EXE" -i "$work/input.athinput" -d "$work" -t 00:55:00 \
+      > "$work/run.log" 2>&1
+    rc=$?
+    printf '%s\n' "$rc" > "$work/exit_code.txt"
+    echo "Completed diagnostic $name exit=$rc"
+  ) &
+  pids+=("$!")
+done
+for pid in "${pids[@]}"; do wait "$pid"; done
+echo 'Inspect each case: job completion is not a stability verdict.'
