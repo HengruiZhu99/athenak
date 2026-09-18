@@ -7,7 +7,7 @@ import json
 
 import numpy as np
 
-from adm_hamiltonian import hamiltonian
+from adm_hamiltonian import hamiltonian, ricci_tensor
 
 
 def main():
@@ -28,6 +28,10 @@ def main():
     actual = hamiltonian(g, dg, ddg, extrinsic)
     analytic_error = float(np.max(abs(actual - expected)))
     assert analytic_error < 1e-13, analytic_error
+    expected_ricci = (df[:, :, None] * df[:, None, :]
+                      - (8*a + np.sum(df**2, axis=1))[:, None, None] * np.eye(3))
+    ricci_error = float(np.max(abs(ricci_tensor(g, dg, ddg) - expected_ricci)))
+    assert ricci_error < 1e-13, ricci_error
     assert all(np.array_equal(q, old) for q, old in zip((g, dg, ddg, extrinsic), inputs))
 
     # An affine coordinate change makes the metric non-diagonal and non-isotropic.
@@ -41,6 +45,9 @@ def main():
     kt = np.einsum("ia,jb,nij->nab", transform, transform, extrinsic)
     coordinate_error = float(np.max(abs(hamiltonian(gt, dgt, ddgt, kt) - expected)))
     assert coordinate_error < 1e-13, coordinate_error
+    transformed_ricci = np.einsum("ia,jb,nij->nab", transform, transform, expected_ricci)
+    ricci_coordinate_error = float(np.max(abs(ricci_tensor(gt, dgt, ddgt) - transformed_ricci)))
+    assert ricci_coordinate_error < 1e-13, ricci_coordinate_error
 
     # Flat Cartesian space under X_i=exp(x_i): nonconstant metric but R=0.
     diagonal = np.exp(2 * xyz)
@@ -97,7 +104,9 @@ def main():
     report = {
         "samples_per_case": len(xyz),
         "analytic_conformal_metric_max_error": analytic_error,
+        "analytic_Ricci_tensor_max_error": ricci_error,
         "affine_coordinate_change_max_error": coordinate_error,
+        "affine_Ricci_tensor_change_max_error": ricci_coordinate_error,
         "flat_curvilinear_metric_max_error": flat_error,
         "complex_direction_max_error": response_error,
         "complex_metric_derivative_vs_centered_error": derivative_response_error,

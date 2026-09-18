@@ -11,15 +11,14 @@ explicit inverse metric and Christoffel symbols constructed below.
 import numpy as np
 
 
-def hamiltonian(metric, first, second, extrinsic):
-    """Return R + K**2 - K_ij K**ij in vacuum.
+def ricci_tensor(metric, first, second):
+    """Return the covariant Ricci tensor from physical metric derivatives.
 
-    Trailing shapes are (3,3), (3,3,3), (3,3,3,3), and (3,3), respectively.
+    Trailing shapes are (3,3), (3,3,3), and (3,3,3,3), respectively.
     Derivative indices precede metric indices: first[...,a,i,j] = d_a g_ij.
-    Inputs are read only. No constraint projection or background subtraction
-    is performed here; callers must distinguish raw H from a residual of H.
+    Inputs are read only. No independently evolved connection is used.
     """
-    dtype = np.result_type(metric, first, second, extrinsic)
+    dtype = np.result_type(metric, first, second)
     inverse = np.linalg.inv(metric)
     lower_connection = np.empty(metric.shape[:-2] + (3, 3, 3), dtype=dtype)
     for k in range(3):
@@ -52,6 +51,19 @@ def hamiltonian(metric, first, second, extrinsic):
                         connection[..., k, k, l] * connection[..., l, i, j]
                         - connection[..., k, j, l] * connection[..., l, i, k]
                     )
+    return ricci
+
+
+def hamiltonian(metric, first, second, extrinsic):
+    """Return R + K**2 - K_ij K**ij in vacuum.
+
+    Trailing shapes are (3,3), (3,3,3), (3,3,3,3), and (3,3), respectively.
+    Derivative indices precede metric indices: first[...,a,i,j] = d_a g_ij.
+    Inputs are read only. No constraint projection or background subtraction
+    is performed here; callers must distinguish raw H from a residual of H.
+    """
+    ricci = ricci_tensor(metric, first, second)
+    inverse = np.linalg.inv(metric)
     scalar_curvature = np.einsum("...ij,...ij->...", inverse, ricci)
     mixed_extrinsic = inverse @ extrinsic
     trace = np.trace(mixed_extrinsic, axis1=-2, axis2=-1)

@@ -1439,3 +1439,141 @@ experimental equation change was promoted to production, and no atmosphere,
 physical-star or new Aurora production run was started. The previously
 verified vacuum/MPI exactness remains distinct from the unresolved finite-
 perturbation stability gate.
+
+### Physical momentum diagnostic and further inner-layer controls
+
+`analysis/z4c_characteristic/adm_momentum.py` evaluates the vacuum momentum
+covector `D_j K^j_i - D_i K` from the physical metric, covariant extrinsic
+curvature, and their first derivatives. It does not use evolved conformal
+Gamma. Like the independent Hamiltonian helper, it performs neither
+projection nor background subtraction. A raw ADM constraint and the
+full-minus-background constraint must be labeled separately.
+
+Run its independent checks with:
+
+```sh
+python analysis/z4c_characteristic/check_adm_momentum_numeric.py
+```
+
+The regression uses 200 samples per case. It checks `K_ij=k(x) gamma_ij`
+against the analytic momentum `-2 partial_i k`, a nonorthogonal affine
+coordinate transformation of the covector, analytic Schwarzschild data
+including the horizon interior, complex derivative-only inputs, and an
+independent conservative-coordinate identity on arbitrary symmetric metric
+and extrinsic-curvature jets. Maximum errors are 3.34e-16, 3.34e-16,
+2.14e-14, 2.23e-16, and 1.56e-15 respectively. Inputs remain unchanged.
+
+Three additional local linear controls were rejected:
+
+| Diagnostic | Target/estimator | Theta growth (1/M) |
+| --- | --- | ---: |
+| Half constraint completion plus connection adjustment | 60–90M fit; 90M reached normally | +0.05191454 |
+| Single-component determinant/trace projection | 60–90M fit; 90M reached normally | +0.12761410 |
+| Inner physical-Hamiltonian relaxation | Validated RK eigenpair, dt=0.05M | +0.13187844 |
+
+The first two amplify Theta by factors 4.76 and 45.99 over 60–90M.
+Their final Theta maxima are at (-0.125,0.125,1.125)M and
+(-0.125,0.125,0.625)M, respectively, on rank/block/relative-level zero after
+a completed RK step. The projection alternative solves for one diagonal
+metric component and one diagonal A component to enforce the algebraic
+constraints; its independent nonlinear-response check passes, but that does
+not provide evolution stability. These maxima are amplification snapshots,
+not the first injection location.
+
+The Hamiltonian-relaxation diagnostic adds the residual of `nu chi H_ADM`,
+with `nu=0.2h` inside r=M, tapering smoothly to zero at r=1.5M. Its independent
+nonlinear directional-response error is 9.09e-16. On a finite Schwarzschild
+mass change from M=1 to 1.2, its added source converges away at orders
+7.04, 7.31, and 7.09. Nevertheless, a frozen-principal-symbol screen rejects
+dt=0.075M (RK amplification 1.196 for a sampled high-frequency mode).
+At dt=0.05M the targeted full RK mode remains unstable, with eigenpair
+residual 4.49e-10. Passing the smaller-timestep screen did not imply
+stability. Original kappa1=0.1/kappa2=0 terms stay unchanged throughout these
+diagnostics. No candidate was promoted to C++.
+
+Results are in the local review artifacts `inner-followup-control-results.json`,
+`hamiltonian-relaxation-validation.json`, and
+`hamiltonian-relaxation-physical-response.json`. The atmosphere/star gate
+remains closed until finite-perturbation vacuum stability is established.
+
+The Ricci helper now also exposes the covariant physical `ricci_tensor`.
+Its componentwise analytic conformal-metric check and affine tensor-transform
+check have maximum errors 3.34e-16 and 7.78e-16. A separate local pointwise
+cross-check transforms 200 arbitrary physical metric/K/lapse/shift jets into
+conformal variables with Theta=0 and metric-compatible Gamma. Reconstructing
+the physical metric and K time derivatives from the geometric Z4c RHS agrees
+with independent ADM equations to 1.43e-14 and 1.07e-14. Hamiltonian and
+momentum constraints are not imposed on these jets; retaining the Theta RHS
+is essential for reconstructing the correct ADM trace evolution. This
+supports the nonzero continuum physical response, not the stability of the
+spatially discretized evolution. See `physical-ADM-response.json` locally.
+
+An additional offline diagnostic tests a constraint-norm gradient source,
+inspired by the functional-derivative construction in
+[Tsuchiya, Yoneda and Shinkai](https://arxiv.org/abs/1109.5782). This is not
+that paper's BSSN formulation or a claimed reproduction of its results.
+For the linear diagnostic, define `C=(h H_ADM, h M_i, C_Gamma^i, Theta)`,
+`J=dC/du`, and a nonnegative diagonal mobility W that is zero in the frozen
+core and at r>=1.5M. P is the algebraic tangent projector. The added active
+source is `-P W P^T J^T delta_C`, with the active/ghost restriction included
+in J. Its contribution to `E=||delta_C||^2/2` is exactly a negative square
+in exact arithmetic. E here includes derivative-based constraints on all
+sampled grid points, including frozen points whose stencils sample active
+neighbors; it is a diagnostic norm, not physical gravitational energy.
+
+The independent nonlinear constraint-response, source transpose, and RK
+transpose checks have relative errors below 3e-14. The source has zero
+support outside the prescribed layer, lies in the linearized determinant/
+trace constraint tangent space, and preserves the zero linear residual
+exactly. The constraint-free shift response of the source is exactly zero
+while the ordinary physical/gauge RHS remains nonzero. These are separate
+checks from growth of the coupled evolution.
+
+The source is stiff: its largest decay estimate is about 2055 per unit
+strength on this grid, so a strong explicit update would be costly. An
+L-stable SDIRK2 source step with strength 5/M is therefore composed with the
+unchanged RK3 map using Strang splitting. The resulting diagnostic map is
+at most second order in time. Source-only comparison with a matrix
+exponential gives local orders 2.89 and 2.95. Independent iterative and
+direct implicit solves agree within 2.67e-13 for a complete split step;
+restricting the constraint calculation to the affected rows changes it by
+2.01e-16. Zero added strength recovers the baseline RK map bitwise. Original
+Z4c kappa terms, sixth-order bulk derivatives, KO, outer boundary, core
+zeroing, and rate-5 original sponge remain in place. No nonlinear, MPI, GPU,
+or mesh-refinement implementation of this experimental layer is claimed.
+
+Both implicit-layer perturbation controls reached their 60M diagnostic
+targets normally, with the frozen state exactly zero at every completed
+step. Neither is stable. The known-mode seed has late Theta growth
++0.10451240/M over 45–60M; an unrestricted compact random seed gives
++0.10341948/M. Theta grows by factors 22.69 and 22.04 over 30–60M.
+Thus a source whose own constraint-norm contribution is nonpositive still
+does not stabilize the coupled update. Results and the reviewed figure are
+`implicit-constraint-energy-control-results.json` and
+`implicit-vacuum-controls.png/pdf` in the local review directory.
+
+At 60M, Theta peaks at (-0.875,0.375,-0.125)M (r=0.960143M) for the mode seed,
+and (0.375,0.125,-1.375)M (r=1.430690M) for the random seed. The physical
+Hamiltonian residual peaks at r=0.216506M in the frozen core for both cases;
+this derivative diagnostic samples neighboring active residuals despite the
+core state being exactly zero. Its exterior peaks are at
+(-1.625,-1.125,0.375)M (r=2.011685M) and (1.375,0.625,-1.375)M
+(r=2.042517M), respectively. The physical momentum-residual norm peaks at
+r=0.649519M for both seeds. These are normalized linear snapshots on
+rank/block/relative-level zero after step 800, not first-injection locations.
+`constraint-energy-profiles.json` separates the core, original sponge,
+additional layer, horizon exterior, and outer boundary.
+
+No experimental equation or integrator change has been promoted to the
+production executable. The completed exact-zero CPU/MPI/GPU tests remain
+valid for the unchanged production numerics, but they are not finite-
+perturbation stability passes. No atmosphere, star, or new Aurora production
+run was started during these controls.
+
+An independently recomputed full-grid approximate eigenpair of this split
+map has growth +0.10463655/M and relative defect 6.94e-8, with unit norm
+and exactly zero core before/after the step. This agrees with the late
+transient fits; it is not a full-spectrum result. Applying the half-timestep
+map to this same vector yields Rayleigh growth +0.09768/M but defect 0.0032,
+so the half-timestep number is not a validated eigenvalue or a separate
+stability result. See `implicit-mode-full-grid-validation.json`.
