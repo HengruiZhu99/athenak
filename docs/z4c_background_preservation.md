@@ -712,3 +712,43 @@ and 9072 geometry rows strictly zero. The perturbed CPU pilot was stopped manual
 measurement (about eight seconds per step), before any stability conclusion.
 A one-node GPU pilot is prepared after validation. The pushed 4d102603 GPU build and its
 separate one-node validation are also pending.
+
+### GPU validation of invalid-state handling and snapshots
+
+Aurora job 8836796 completed with exit status 0 in 2m37s on one node in
+MHDTidal/debug-scaling. It used code 4d102603 and pinned executable SHA-256
+`f327d091fd20cc32889e214b17600fb372fc5ee3b763e587bce3f0db35c686f6`.
+All 24 equilibrium/small-response cases passed; the complete result dictionary
+is identical to the preceding d165fe06 GPU run (8836612). This covers one/four
+MPI ranks, uniform/SMR meshes, coordinate-axis signed zeros, and nonzero seeds.
+All six deliberately invalid checkpoints terminated nonzero and reported the
+bad state; the four-rank faults were detected on rank 3, block 7. The explicit
+diagnostic opt-out retained and reported the bad cell. Selected-stage and
+projection snapshots passed strict zero-bit checks on one/four GPU ranks,
+and enabling snapshots left the saved nonzero Z4c state bitwise unchanged.
+
+The 960-block refined vacuum pilot is submitted separately as job 8836811:
+one node, 12 GPU MPI ranks, one-hour walltime, application guard 00:55:00.
+It first runs three exact-zero steps on its own mesh and verifies all stage,
+geometry, algebraic, and refinement-transfer audits before starting the
+150M dipole evolution. Submission is not a perturbation-stability result.
+The small atmosphere and star remain gated on that unresolved requirement.
+
+An independent offline Fourier audit transcribes the 20-field tracefree
+principal tangent system and the actual sixth-order first/second/mixed and
+biased-advection operators, including eighth-derivative KO dissipation.
+Continuum flat-space and anisotropic frozen-KS eigenvalues agree with the
+analytic characteristic speeds. Direct plane-wave evaluation of the C++
+finite-difference header matches the transcribed symbols within 5.70e-14.
+For 495 wave/orientation samples at each of five radii and both gauge choices,
+the largest principal real eigenvalue is below 4.05e-14/M; adding the configured
+advection/KO gives negative real parts and RK3 amplification below one at
+dx=0.125M, dt=0.0375M. This is a sampled eigenvalue check, not an energy estimate
+or a proof of stability: it excludes spatial background gradients, curvature
+source terms, boundaries, SMR and the sponge, and does not rule out nonnormal
+growth or defective characteristic coincidences. No numerical operator was
+changed on the basis of this diagnostic.
+
+Artifacts: `gpu-results/8836796/{balance,invalid,snapshot}-results.json`,
+`audit-fd-principal.py/json`, and `check-fd-symbol.cpp/json`, under the local
+review directory cited above.
