@@ -11,6 +11,7 @@
 #include <map>
 #include <memory>    // make_unique, unique_ptr
 #include <list>
+#include <limits>
 #include <string>
 #include <vector>
 #include "athena.hpp"
@@ -139,6 +140,9 @@ class Z4c {
   SetADMBackgroundFnPtr SetADMBackground = nullptr;
   SetZ4cBackgroundFnPtr SetZ4cBackground = nullptr;
   UserRHSFnPtr user_rhs_func = nullptr;
+  // Absolute timestep bound enrolled by explicit user source terms.
+  // Unlike the spatial dtnew, this bound already includes its safety factor.
+  Real user_source_dt = std::numeric_limits<Real>::max();
   bool use_analytic_background = false;
   bool evolve_gauge_residual = false;
   bool evolve_lapse_residual = false;

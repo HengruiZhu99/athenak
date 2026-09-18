@@ -2645,6 +2645,11 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   use_direct_z4c_background =
       pin->GetOrAddBoolean("problem", "use_direct_z4c_background", true);
   excision_damp_rate = pin->GetOrAddReal("problem", "excision_damp_rate", 50.0);
+  if (!std::isfinite(excision_damp_rate) || excision_damp_rate < 0.0) {
+    std::cerr << "z4c_tov_ks requires finite nonnegative excision_damp_rate."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   excision_project_state = pin->GetOrAddBoolean("problem", "excision_project_state", true);
   // Characteristic-based default placement: freeze (state projection) only
   // where even the superluminal 1+log gauge cone points inward, and end the
@@ -2927,6 +2932,23 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   pmbp->pz4c->SetZ4cBackground =
       use_direct_z4c_background ? &SetZ4cBackgroundKerrSchild : nullptr;
   pmbp->pz4c->user_rhs_func = &ApplyZ4cUserRHS;
+  // The user RHS contains explicit linear relaxation. Spatial CFL alone does
+  // not constrain it on coarse grids: sigma*dt=7.5 caused the low-resolution
+  // BH residual to grow by ~49 per RK3 step. A forward-Euler decay bound
+  // sigma*dt<=1 is also safe for the SSP stages used by this problem. Sum the
+  // two maxima conservatively, including configurations where sponges overlap.
+  Real max_damping_rate = excision_ramp_radius > excision_freeze_radius ?
+                          excision_damp_rate : 0.0;
+  if (outer_sponge_enabled) {
+    max_damping_rate += outer_sponge_radial ? 1.0/outer_sponge_damping_time :
+                        (outer_sponge_width > 0.0 ? outer_sponge_rate : 0.0);
+  }
+  pmbp->pz4c->user_source_dt = max_damping_rate > 0.0 ?
+      1.0/max_damping_rate : std::numeric_limits<Real>::max();
+  if (global_variable::my_rank == 0 && max_damping_rate > 0.0) {
+    std::cout << "Z4C_SOURCE_TIMESTEP max_damping_rate=" << max_damping_rate
+              << " dt_limit=" << pmbp->pz4c->user_source_dt << std::endl;
+  }
 
   if (restart) {
     pmbp->pz4c->UpdateBackgroundState(pmy_mesh_->time);

@@ -616,6 +616,7 @@ void Mesh::NewTimeStep(const Real tlim) {
   // z4c timestep
   if (pmb_pack->pz4c != nullptr) {
     dt = std::min(dt, (cfl_no)*(pmb_pack->pz4c->dtnew) );
+    dt = std::min(dt, pmb_pack->pz4c->user_source_dt);
   }
   // Radiation timestep
   if (pmb_pack->prad != nullptr) {

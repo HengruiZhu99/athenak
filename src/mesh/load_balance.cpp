@@ -27,19 +27,30 @@
 #if MPI_PARALLEL_ENABLED
 namespace {
 
-void CheckAMRBufferBounds(const char *label, DualArray1D<AMRBuffer> &buffers,
-                          int nbuffers, int data_extent) {
+// Keep allocated storage between AMR events, but grow it before posting MPI or
+// packing when the actual transfers exceed the initial capacity estimate.
+void EnsureAMRBufferCapacity(const char *label, DualArray1D<AMRBuffer> &buffers,
+                             int nbuffers, DvceArray1D<Real> &data) {
+  std::size_t required = 0;
   for (int n = 0; n < nbuffers; ++n) {
     const int offset = buffers.h_view(n).offset;
     const int count = buffers.h_view(n).cnt;
-    if (offset < 0 || count < 0 || offset + count > data_extent) {
-      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-                << std::endl << "AMR " << label << " buffer exceeds fixed data buffer on rank "
+    const long long end = static_cast<long long>(offset) + count;
+    if (offset < 0 || count < 0 || end > std::numeric_limits<int>::max()) {
+      std::cerr << "Invalid AMR " << label << " transfer on rank "
                 << global_variable::my_rank << ": buffer=" << n
-                << " offset=" << offset << " count=" << count
-                << " extent=" << data_extent << std::endl;
+                << " offset=" << offset << " count=" << count << std::endl;
+      MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
       std::exit(EXIT_FAILURE);
     }
+    required = std::max(required, static_cast<std::size_t>(end));
+  }
+  if (required > data.extent(0)) {
+    std::cout << "Growing AMR " << label << " buffer on rank "
+              << global_variable::my_rank << " from " << data.extent(0)
+              << " to " << required << std::endl;
+    Kokkos::fence();
+    Kokkos::realloc(data, required);
   }
 }
 
@@ -282,16 +293,9 @@ void MeshRefinement::InitRecvAMR(int nleaf) {
     }
   }
   // Sync dual array, reallocate receive data array
-  CheckAMRBufferBounds("recv", recvbuf, rb_idx, recv_data.extent_int(0));
+  EnsureAMRBufferCapacity("recv", recvbuf, rb_idx, recv_data);
   recvbuf.template modify<HostMemSpace>();
   recvbuf.template sync<DevExeSpace>();
-/***
-  No need to reallocate recv_data buffer as it is fixed length
-  {
-    int ndata = recvbuf.h_view((nmb_recv-1)).offset + recvbuf.h_view((nmb_recv-1)).cnt;
-    Kokkos::realloc(recv_data, ndata);
-  }
-***/
 
   // Step 3. (InitRecvAMR)
   // loop over new MBs on this rank, post non-blocking recvs
@@ -543,16 +547,9 @@ void MeshRefinement::PackAndSendAMR(int nleaf) {
     }
   }
   // Sync dual array, reallocate send data array
-  CheckAMRBufferBounds("send", sendbuf, sb_idx, send_data.extent_int(0));
+  EnsureAMRBufferCapacity("send", sendbuf, sb_idx, send_data);
   sendbuf.template modify<HostMemSpace>();
   sendbuf.template sync<DevExeSpace>();
-/***
-  No need to reallocate send_date as it is fixed length
-  {
-    int ndata = sendbuf.h_view((nmb_send-1)).offset + sendbuf.h_view((nmb_send-1)).cnt;
-    Kokkos::realloc(send_data, ndata);
-  }
-***/
 
   // Step 3. (PackAndSendAMR)
   // Pack data into send buffers in parallel

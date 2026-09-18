@@ -570,7 +570,8 @@ void Driver::InitBoundaryValuesAndPrimitives(Mesh *pm) {
     (void) pz4c->ClearSend(this, -1);
     (void) pz4c->ClearRecv(this, -1);
     (void) pz4c->RecvU(this, 0);
-    (void) pz4c->Z4cBoundaryRHS(this, 0);
+    // Boundary RHS belongs to an evolution stage after CalcRHS has refreshed
+    // the full metric. Initialization/AMR only fills state ghost zones here.
     (void) pz4c->ApplyPhysicalBCs(this, 0);
     (void) pz4c->Prolongate(this, 0);
   }
