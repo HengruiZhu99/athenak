@@ -348,6 +348,8 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.debug_balance_profiles = pin->GetOrAddBoolean("z4c", "debug_balance_profiles", false);
   opt.debug_projection_snapshots =
       pin->GetOrAddBoolean("z4c", "debug_projection_snapshots", false);
+  debug_snapshot_operations =
+      pin->GetOrAddString("z4c", "debug_snapshot_operations", "");
   opt.debug_balance_freeze = pin->GetOrAddReal("z4c", "debug_balance_freeze", 1.0);
   opt.debug_balance_ramp = pin->GetOrAddReal("z4c", "debug_balance_ramp", 1.4);
   opt.debug_balance_horizon = pin->GetOrAddReal("z4c", "debug_balance_horizon", 2.0);
@@ -517,21 +519,26 @@ void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
   auto &ix = pmy_pack->pmesh->mb_indcs;
   auto &dom = pmy_pack->pmesh->mesh_size;
   const int rank = global_variable::my_rank;
-  // Forensic snapshots retain neighboring metric values needed to measure
-  // connection changes caused by projection. This is read-only and uses the
+  // Forensic snapshots retain full signed state/RHS arrays and ghost inputs.
+  // The operation filter is comma-delimited, without whitespace. Uses the
   // host mirrors already required by the balance audit. No production fence.
   const std::string operation(label);
-  if (opt.debug_projection_snapshots && compare_background &&
+  const bool projection_snapshot = opt.debug_projection_snapshots && compare_background &&
       (operation == "pre_projection" || operation == "post_projection" ||
-       operation == "init_reconstructed" || operation == "init_projected")) {
+       operation == "init_reconstructed" || operation == "init_projected");
+  const bool selected_snapshot = !debug_snapshot_operations.empty() &&
+      ("," + debug_snapshot_operations + ",").find("," + operation + ",") !=
+          std::string::npos;
+  if (projection_snapshot || selected_snapshot) {
     const int nmb = pmy_pack->nmb_thispack;
-    const std::string stem = "z4c_projection_" + operation + "_rank" +
+    const std::string stem = (projection_snapshot ? "z4c_projection_" : "z4c_snapshot_") +
+        operation + "_rank" +
         std::to_string(rank) + "_cycle" + std::to_string(pmy_pack->pmesh->ncycle) +
         "_stage" + std::to_string(stage);
     const std::size_t count = static_cast<std::size_t>(nmb)*h.extent(1)*
                              h.extent(2)*h.extent(3)*h.extent(4);
     if (!h.span_is_contiguous() || !hb.span_is_contiguous()) {
-      std::cerr << "Projection snapshots require contiguous LayoutRight views.\n";
+      std::cerr << "Balance snapshots require contiguous LayoutRight views.\n";
       std::exit(EXIT_FAILURE);
     }
     std::ofstream data(stem + ".bin", std::ios::binary);
@@ -547,6 +554,7 @@ void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
          << "\",\"layout\":\"mnkji\",\"operation\":\"" << operation
          << "\",\"rank\":" << rank << ",\"cycle\":" << pmy_pack->pmesh->ncycle
          << ",\"stage\":" << stage << ",\"time\":" << pmy_pack->pmesh->time
+         << ",\"compare_background\":" << (compare_background ? "true" : "false")
          << ",\"dt\":" << pmy_pack->pmesh->dt
          << ",\"level_convention\":\"logical\",\"root_level\":"
          << pmy_pack->pmesh->root_level
@@ -568,7 +576,7 @@ void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
     meta << "]}\n";
     data.close(); background.close(); meta.close();
     if (!data || !background || !meta) {
-      std::cerr << "Failed to write projection snapshot " << stem << std::endl;
+      std::cerr << "Failed to write balance snapshot " << stem << std::endl;
       std::exit(EXIT_FAILURE);
     }
   }

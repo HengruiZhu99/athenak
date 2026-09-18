@@ -9,9 +9,9 @@ import subprocess
 from z4c_background_restart import checkpoint
 
 
-def snapshots(run, ranks):
+def snapshots(run, ranks, prefix="z4c_projection_"):
     records = {}
-    for path in sorted(run.glob('z4c_projection_*.json')):
+    for path in sorted(run.glob(prefix+'*.json')):
         meta = json.loads(path.read_text())
         assert meta['format_version'] == 1 and meta['layout'] == 'mnkji'
         assert meta['scalar_bytes'] == 8 and meta['byte_order'] in ('little', 'big')
@@ -44,7 +44,14 @@ def verify_zero(run, ranks):
             partner = records[(key[0],key[1],key[2],'post_projection')]
             assert data == partner[1] and background == partner[2]
             assert meta['blocks'] == partner[0]['blocks']
-    return {'snapshots': len(records), 'exact_background': True,
+    selected = {}
+    if list(run.glob('z4c_snapshot_*.json')):
+        selected = snapshots(run, ranks, 'z4c_snapshot_')
+        for key, (meta, data, background) in selected.items():
+            assert not meta['compare_background']
+            # Selected operations in this test are residual state/RHS arrays.
+            assert not any(data), 'Zero residual snapshot contains nonzero bits'
+    return {'selected_snapshots': len(selected), 'snapshots': len(records), 'exact_background': True,
             'exact_projection': True, 'ranks': ranks}
 
 
@@ -72,10 +79,13 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--launcher',default='mpiexec')
     p.add_argument('--ranks',type=int,nargs='+',default=[1,4])
+    p.add_argument('--operations',default='',help='Comma-separated residual state/RHS operations')
     args=p.parse_args();args.exe=args.exe.resolve();args.output=args.output.resolve()
     source=Path(__file__).resolve().parents[1]/'inputs/z4c_ks_background.athinput'
     base=re.sub(r'^nlim\s*=.*','nlim = 1',source.read_text(),flags=re.M)
     base=base.replace('debug_balance = true','debug_balance = true\ndebug_projection_snapshots = true')
+    if args.operations:
+        base=base.replace('<z4c>','<z4c>\ndebug_snapshot_operations = '+args.operations)
     base+='\n<output2>\nfile_type = rst\ndt = 100\n'
     results={}
     for ranks in args.ranks:
@@ -96,9 +106,13 @@ def main():
     for enabled in (False,True):
         run=args.output/('pulse_snapshots_'+str(enabled).lower())
         text=pulse if enabled else pulse.replace('debug_projection_snapshots = true','debug_projection_snapshots = false')
+        if not enabled and args.operations:
+            text=text.replace('debug_snapshot_operations = '+args.operations,'debug_snapshot_operations =')
         launch(args,run,text);active.append(final_state(run))
         if enabled:snapshots(run,1)
-        else:assert not list(run.glob('z4c_projection_*'))
+        else:
+            assert not list(run.glob('z4c_projection_*'))
+            assert not list(run.glob('z4c_snapshot_*'))
     assert active[0]['total']==active[1]['total']
     for a,b in zip(active[0]['state'],active[1]['state']):
         assert struct.pack('<%dd'%len(a),*a)==struct.pack('<%dd'%len(b),*b)

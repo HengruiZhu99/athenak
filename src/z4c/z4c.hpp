@@ -143,6 +143,8 @@ class Z4c {
   // Absolute timestep bound enrolled by explicit user source terms.
   // Unlike the spatial dtnew, this bound already includes its safety factor.
   Real user_source_dt = std::numeric_limits<Real>::max();
+  // Host-only snapshot filter; keep strings out of device-captured Options.
+  std::string debug_snapshot_operations;
   bool use_analytic_background = false;
   bool evolve_gauge_residual = false;
   bool evolve_lapse_residual = false;
