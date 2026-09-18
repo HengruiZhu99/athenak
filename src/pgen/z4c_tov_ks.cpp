@@ -10,6 +10,8 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <limits>
 #include <string>
 #include <type_traits>
@@ -124,6 +126,7 @@ Real star_track_x3 = 0.0;
 bool pure_background = false;
 bool zero_tmunu = false;
 bool metric_diag_history = false;
+bool metric_diag_abort_on_invalid = true;
 
 void TOVKerrSchildHistory(HistoryData *pdata, Mesh *pm);
 void ResetToMinkowskiMetric(Mesh *pm);
@@ -422,7 +425,8 @@ void ApplyInnerExcision(Mesh *pm, Real bdt, bool project_mhd,
       Real z = CellCenterX(k - indcs.ks, indcs.nx3, x3min, x3max) - bh_center_x3_l;
       Real ramp = InnerExcisionRamp(x, y, z, bh_spin_l, excision_freeze_radius_l,
                                     excision_ramp_radius_l);
-      if (ramp >= 1.0 && isfinite(mhd_u0(m,n,k,j,i)) && isfinite(mhd_u1(m,n,k,j,i))) {
+      // Excision must not repair invalid fluid states outside its layer.
+      if (ramp >= 1.0) {
         return;
       }
 
@@ -508,18 +512,14 @@ void ApplyInnerExcision(Mesh *pm, Real bdt, bool project_mhd,
 
     Real ramp = InnerExcisionRamp(x, y, z, bh_spin_l, excision_freeze_radius_l,
                                   excision_ramp_radius_l);
-    if (ramp >= 1.0 && sigma_out <= 0.0 &&
-        (!update_z4c_rhs || isfinite(z4c_rhs(m,n,k,j,i))) &&
-        (!excision_project_state_l ||
-         (isfinite(z4c_u0(m,n,k,j,i)) && isfinite(z4c_u1(m,n,k,j,i))))) {
+    if (ramp >= 1.0 && sigma_out <= 0.0) {
       return;
     }
     if (update_z4c_rhs) {
       if (sigma_out > 0.0) {
         Real rhs_here = z4c_rhs(m,n,k,j,i);
         Real u0_here = z4c_u0(m,n,k,j,i);
-        z4c_rhs(m,n,k,j,i) = (isfinite(rhs_here) && isfinite(u0_here)) ?
-                              rhs_here - sigma_out*u0_here : 0.0;
+        z4c_rhs(m,n,k,j,i) = rhs_here - sigma_out*u0_here;
       }
       if (excision_damp_rate_l > 0.0) {
         // Sponge layer: keep the full RHS -- crucially including the KO
@@ -538,12 +538,10 @@ void ApplyInnerExcision(Mesh *pm, Real bdt, bool project_mhd,
           Real sigma = excision_damp_rate_l*(1.0 - ramp);
           Real rhs_full = z4c_rhs(m,n,k,j,i);
           Real u0_here = z4c_u0(m,n,k,j,i);
-          z4c_rhs(m,n,k,j,i) = (isfinite(rhs_full) && isfinite(u0_here)) ?
-                                rhs_full - sigma*u0_here : 0.0;
+          z4c_rhs(m,n,k,j,i) = rhs_full - sigma*u0_here;
         }
       } else {
-        z4c_rhs(m,n,k,j,i) = isfinite(z4c_rhs(m,n,k,j,i)) ?
-                              ramp*z4c_rhs(m,n,k,j,i) : 0.0;
+        z4c_rhs(m,n,k,j,i) = ramp <= 0.0 ? 0.0 : ramp*z4c_rhs(m,n,k,j,i);
       }
     }
     if (excision_project_state_l) {
@@ -553,10 +551,9 @@ void ApplyInnerExcision(Mesh *pm, Real bdt, bool project_mhd,
       if (ramp <= 0.0) {
         z4c_u0(m,n,k,j,i) = 0.0;
         z4c_u1(m,n,k,j,i) = 0.0;
-      } else {
-        if (!isfinite(z4c_u0(m,n,k,j,i))) { z4c_u0(m,n,k,j,i) = 0.0; }
-        if (!isfinite(z4c_u1(m,n,k,j,i))) { z4c_u1(m,n,k,j,i) = 0.0; }
       }
+      // Outside the frozen core, retain invalid values for detection. Turning
+      // a NaN into a zero residual silently invents valid background data.
     }
   });
 }
@@ -610,6 +607,7 @@ void TOVKerrSchildHistory(HistoryData *pdata, Mesh *pm) {
   auto &z4c_full = pm->pmb_pack->pz4c->full;
   auto &z4c_bg = pm->pmb_pack->pz4c->bg;
   auto &z4c_u0 = pm->pmb_pack->pz4c->u0;
+  auto &z4c_u_full = pm->pmb_pack->pz4c->u_full;
   auto &size = pm->pmb_pack->pmb->mb_size;
   auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
   int is = indcs.is;
@@ -646,6 +644,7 @@ void TOVKerrSchildHistory(HistoryData *pdata, Mesh *pm) {
   Real theta_abs_max = 0.0;
   Real khat_abs_max = 0.0;
   Real bad_metric_count = 0.0;
+  int first_bad_cell = std::numeric_limits<int>::max();
   Real alpha_res_abs_max = 0.0;
   Real beta_res_abs_max = 0.0;
   Real b_res_abs_max = 0.0;
@@ -675,7 +674,7 @@ void TOVKerrSchildHistory(HistoryData *pdata, Mesh *pm) {
                     Real &lapse_src_res_abs_max_local,
                     Real &lapse_src_adapt_abs_max_local,
                     Real &alpha_k_bg_abs_max_local,
-                    Real &khat_res_abs_max_local) {
+                    Real &khat_res_abs_max_local, int &first_bad_local) {
         int m = idx/nkji;
         int k = (idx - m*nkji)/nji;
         int j = (idx - m*nkji - k*nji)/nx1;
@@ -743,7 +742,21 @@ void TOVKerrSchildHistory(HistoryData *pdata, Mesh *pm) {
               add_abs = fmax(add_abs, fabs(z4c_full.vA_dd(m,a,b,k,j,i)));
             }
           }
-          const bool bad_metric = !(isfinite(alpha) && isfinite(chi) && isfinite(gbar_det) &&
+          bool finite_state = true;
+          for (int n=0; n<nz4c; ++n) {
+            finite_state = finite_state && isfinite(z4c_u_full(m,n,k,j,i));
+          }
+          for (int a=0; a<3; ++a) for (int b=a; b<3; ++b) {
+            finite_state = finite_state && isfinite(adm.vK_dd(m,a,b,k,j,i));
+          }
+          // Positive determinant alone also admits two negative eigenvalues.
+          // Sylvester's criterion checks positive definiteness of the metric.
+          const Real gxx = z4c_full.g_dd(m,0,0,k,j,i);
+          const Real minor2 = gxx*z4c_full.g_dd(m,1,1,k,j,i) -
+                              SQR(z4c_full.g_dd(m,0,1,k,j,i));
+          const bool bad_metric = !finite_state || !isfinite(minor2) ||
+                                  gxx <= 0.0 || minor2 <= 0.0 ||
+                                  !(isfinite(alpha) && isfinite(chi) && isfinite(gbar_det) &&
                                     isfinite(psi4) && isfinite(adm_det)) ||
                                   alpha <= 0.0 || chi <= 0.0 ||
                                   gbar_det <= 0.0 || psi4 <= 0.0 || adm_det <= 0.0;
@@ -761,6 +774,7 @@ void TOVKerrSchildHistory(HistoryData *pdata, Mesh *pm) {
           theta_abs_max_local = fmax(theta_abs_max_local, fabs(z4c_full.vTheta(m,k,j,i)));
           khat_abs_max_local = fmax(khat_abs_max_local, fabs(z4c_full.vKhat(m,k,j,i)));
           bad_metric_count_local += bad_metric ? 1.0 : 0.0;
+          if (bad_metric && idx < first_bad_local) first_bad_local = idx;
         }
       },
       Kokkos::Max<Real>(rho_max), Kokkos::Min<Real>(alpha_min),
@@ -778,7 +792,35 @@ void TOVKerrSchildHistory(HistoryData *pdata, Mesh *pm) {
       Kokkos::Max<Real>(lapse_src_res_abs_max),
       Kokkos::Max<Real>(lapse_src_adapt_abs_max),
       Kokkos::Max<Real>(alpha_k_bg_abs_max),
-      Kokkos::Max<Real>(khat_res_abs_max));
+      Kokkos::Max<Real>(khat_res_abs_max), Kokkos::Min<int>(first_bad_cell));
+
+  // Stop at the diagnostic sampling time instead of returning a successful
+  // time-limit exit for an invalid evolution. No state is clipped or repaired.
+  // A failing non-root rank must terminate the communicator, not leave peers
+  // blocked in the history reductions below.
+  if (metric_diag_history && metric_diag_abort_on_invalid && bad_metric_count > 0.0) {
+    const int m = first_bad_cell/nkji;
+    const int cell = first_bad_cell - m*nkji;
+    const int k = cell/nji, j = (cell-k*nji)/nx1, i = cell-k*nji-j*nx1;
+    const auto &mbs = size.h_view(m);
+    std::ostringstream message;
+    message << std::setprecision(17)
+              << "Z4C_INVALID_STATE time=" << pm->time << " cycle=" << pm->ncycle
+              << " rank=" << global_variable::my_rank
+              << " gid=" << pm->pmb_pack->pmb->mb_gid.h_view(m)
+              << " relative_level="
+              << pm->pmb_pack->pmb->mb_lev.h_view(m)-pm->root_level
+              << " x=" << mbs.x1min+(i+0.5)*mbs.dx1
+              << " y=" << mbs.x2min+(j+0.5)*mbs.dx2
+              << " z=" << mbs.x3min+(k+0.5)*mbs.dx3
+              << " local_bad_cells=" << bad_metric_count
+              << "; nonfinite Z4c/ADM state or invalid positive-definite spatial metric.";
+    std::cerr << message.str() << std::endl;
+#if MPI_PARALLEL_ENABLED
+    MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+#endif
+    std::exit(EXIT_FAILURE);
+  }
 
   if (metric_diag_history && outer_sponge_radial) {
     const Real start_radius = outer_sponge_start_radius;
@@ -3007,6 +3049,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   metric_diag_history =
       pin->GetOrAddBoolean("problem", "metric_diag_history", false) ||
       std::getenv("ATHENA_METRIC_DIAG_HISTORY") != nullptr;
+  metric_diag_abort_on_invalid =
+      pin->GetOrAddBoolean("problem", "metric_diag_abort_on_invalid", true);
   user_srcs = true;
   user_srcs_func = &ApplyInnerExcision;
   user_ref_func = &RefinementCondition;

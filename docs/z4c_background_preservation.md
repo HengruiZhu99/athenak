@@ -601,3 +601,87 @@ Artifacts are retained locally in `review/vacuum-preservation-20260918`:
 The prototype was based on commit 9b817be1. No Aurora job was submitted for
 this rejected candidate; atmosphere/star evolution remains behind the
 perturbed-vacuum stability gate.
+
+## Signed stage budget and invalid-state handling
+
+`z4c/debug_snapshot_operations` selects comma-separated `DebugBalance` operation
+names for raw binary snapshots (no whitespace in the list). It uses the same
+`debug_balance` and stride gates as the CSV audit. Metadata now explicitly
+records `compare_background`: false denotes a raw residual state or residual
+RHS, not a full state from which the supplied background should be subtracted.
+Snapshot payloads include ghosts for forensic use; RHS values are defined on
+active cells. The filter is a host-only class member, not part of the Options
+structure copied into device kernels.
+
+A four-case one/four-rank uniform/SMR regression with six selected operations
+passes strict zero-bit checks, alongside the existing projection snapshots.
+Saved nonzero Z4c state is bitwise identical with snapshots enabled/disabled.
+The added snapshots do not change the evolution operator.
+
+At the standard single-block checkpoint at 60M, the coordinate-volume Theta
+L2 logarithmic amplitude budget is:
+
+| Contribution | Rate (1/M) |
+|---|---:|
+| Curvature/Hamiltonian source | +4.25127108 |
+| Advection | -1.32085523 |
+| Z4c damping | -0.10797602 |
+| KO dissipation | -0.28768900 |
+| Excision source | -2.40266307 |
+| Outer boundary correction | -0.00012834 |
+| Total | +0.13195942 |
+
+The measured RK3 one-step L2 amplitude growth is +0.13195990/M. The excision
+source agrees with its configured analytic damping/freeze operator within
+1e-21 in absolute RHS units. Theta is bitwise unchanged by projection and
+recasting at all three stages. About 76.4% of its squared norm is in the
+0.5–1M annulus. This is a signed diagnostic of this late mode, not a physical
+positive-definite energy estimate or a proof of its first injection.
+Advection can have a positive value at the pointwise maximum while its
+whole-domain inner product is negative; these are different diagnostics.
+
+An independent algebraic split assigns +2.626548/M of the curvature source
+to Ricci, +1.455922/M to the K-squared term, and +0.168801/M to the A-squared
+term. The split uses the serialized full/background tensors; roundoff in
+these inferred subterms is distinct from the directly sampled stage RHS.
+
+The standard-gauge comparison could not use the characteristic boundary,
+which explicitly supports the adapted gauge only. Matched Sommerfeld controls
+with both gauges became invalid near 29M (standard: first sampled bad metric
+29.25M; adapted: 29.025M). The adapted run nevertheless returned a normal
+60M time-limit exit, while the standard run was manually stopped at 54.225M.
+Neither is a stability pass or a usable gauge comparison for the characteristic
+boundary. The Sommerfeld zero control stayed numerically zero but emitted
+negative-zero RHS bits at the boundary; the strict characteristic-boundary
+bitwise tests remain a separate claim.
+
+Fault injection then exposed an independent implementation defect:
+`ApplyInnerExcision` replaced nonfinite Z4c residuals and RHS values by zero
+outside the frozen core, including exterior cells. A NaN Gamma inserted into
+an exterior checkpoint cell was silently erased and the evolution returned
+exact vacuum. The fallback is removed. Finite updates retain the same
+arithmetic; explicit zeroing remains confined to the prescribed frozen core.
+Invalid fluid states outside the inner layer are likewise no longer repaired
+by this excision routine (the MHD solver's own policies are unchanged).
+
+With `problem/metric_diag_history=true`, history sampling now checks all full
+Z4c fields and ADM extrinsic-curvature components for finiteness. It tests the
+leading principal minors of the conformal spatial metric, since positive
+determinant alone also admits two negative eigenvalues. By default,
+`metric_diag_abort_on_invalid=true` terminates with a nonzero status and reports
+time, cycle, rank, block, relative level, coordinates, and local bad-cell count.
+MPI failure uses `MPI_Abort`, including when only a non-root rank detects it.
+This check occurs at history output times, not every RK stage, and does not
+replace stability checks on small but growing finite residuals. An explicit
+false setting allows diagnostic inspection; it never restores the erased-NaN
+fallback.
+
+`tst/regression/z4c_invalid_state.py` passes finite, valid vacuum plus six
+fault cases: NaN Gamma, negative chi, and a finite indefinite metric, each on
+one/four MPI ranks. The four-rank faults are reported on rank 3, block 7.
+An explicit opt-out reports one bad cell rather than erasing it. The existing
+24-case CPU/MPI equilibrium/perturbation suite also passes, with its entire
+result dictionary equal to the pre-change signed-zero regression. This fix
+prevents invalid evolutions from masquerading as successful completions;
+it does not resolve the finite growing vacuum mode. GPU validation follows
+separately, and matter evolution remains gated on vacuum stability.
