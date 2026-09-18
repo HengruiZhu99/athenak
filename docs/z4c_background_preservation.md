@@ -868,3 +868,72 @@ stages remain unstarted. Artifacts in the local review directory include
 `gpu-results/8836811/checkpoint50-profile.json`,
 `decoupled-clamp-stencil-support.json`, and
 `experimental-decoupled-clamp-current.patch`.
+
+### Full volume-operator audit and rejected interior diffusion
+
+An independent NumPy implementation of the vacuum volume operator was checked
+against the saved growing standard-gauge mode at 60M, cycle 800, all three RK
+stages. It includes the background gradients, nonlinear curvature, lapse
+Hessian, extrinsic-curvature contractions, connection evolution, biased
+advection, and adapted residual gauge. Its maximum difference from the C++
+volume RHS is 4.39e-14; the maximum geometric response is approximately
+3.1e-6. A complex-step linearization differs from the actual nonlinear response
+by at most 4.92e-13. These checks validate the diagnostic transcription and
+the small-perturbation approximation, not the continuum formulation's
+stability or the correctness of every boundary operator.
+
+Closed Schwarzschild background values agree with the serialized background
+to 1.07e-14 outside the frozen core. Using analytic derivatives and analytic
+background advection in the independent volume operator makes the background
+geometric RHS smaller than 6.71e-14. This checks the intended stationary
+background separately from the discrete residual cancellation guarantee.
+Replacing only the background derivative coefficients in the growing mode's
+linear response changes the instantaneous Theta logarithmic amplitude rate
+from +0.131959/M to +0.127008/M. Other components respond differently: the
+global Khat rate drops from +0.131989/M to +0.075364/M while the Gamma-x rate
+rises from +0.131985/M to +0.180229/M. No production derivative change is
+justified by these instantaneous results; they do not predict the eigenvector
+of a modified evolution operator.
+
+For the actual saved RHS, apply the first-order algebraic projection about
+the background and consider all 22 evolving fields (fixed B fields omitted).
+The coordinate-component L2 Rayleigh rate is +0.131978862/M, with relative
+defect ||L u - lambda u||/(|lambda| ||u||)=1.88729e-4. Thus the saved state is
+very nearly a separable growing mode of the sampled projected semidiscrete
+operator, rather than growth confined to one diagnostic field. This is not a
+complete spectrum of the RK/CPBC/SMR evolution. The largest absolute defect
+is 6.55e-12 in Azz at (-0.375,-0.125,0.875)M, r=0.960143M, rank/block/level 0,
+stage 1; its location is not an injection location.
+
+A separate experimental interior diffusion used the conservative face form
+div(nu*h*w*grad(residual)), nu=0.25, with harmonic face weights vanishing
+outside the existing 0.5–1M layer. It required a static uniform resolution
+within its support (outer SMR permitted), immutable stencil input, prescribed
+zero core, and a combined explicit-source timestep bound. The default and
+enabled variants each pass all 24 CPU/MPI cases; the default results equal
+the baseline exactly. Eight option/timestep rejection checks pass. At all
+three stages of the actual growing checkpoint, the C++ source agrees with an
+independent stencil calculation within 2.14e-21, is bitwise unchanged outside
+the layer, and has nonpositive componentwise diffusion work. One/four-thread
+snapshots are bitwise identical. The face-energy identity closes within
+5.05e-29. This established implementation properties only.
+
+Both long diffusion controls nevertheless grow. The fresh seed has a fitted
+30–60M rate +0.138229/M and max|Theta|=1.92104e-7 at 60M, compared with
+1.20514e-7 without diffusion. Its peak moves from r=0.649519M to r=0.892679M,
+still inside the layer. Restarting the original growing 60M checkpoint gives
+an initial decrease followed by +0.137872/M growth over 70–80M; its validated
+80.025M checkpoint has max|Theta|=1.63506e-6 at the same new radius. Both
+checkpoints are finite, but neither control passes stability. They were
+stopped manually (last histories 76.8M and 94.2M), not on walltime or target
+completion. The experimental patch was archived, the source reverted, and
+both local build directories rebuilt from the restored source. No GPU or
+matter evolution was launched for this experiment.
+
+Local artifacts: `offline-operator-validation.json`,
+`full-background-jet-response.json`, `background-derivative-response.json`,
+`inner-viscosity-{snapshot,options}-results.json`, `inner-viscosity-results.json`,
+`inner-viscosity-control.png/pdf`, and `experimental-inner-viscosity.patch`.
+The next diagnostic must treat the coupled operator and its inner closure;
+negative work from an isolated added damping term has repeatedly failed to
+predict the resulting mode's stability.
