@@ -200,3 +200,10 @@ endif()
 
 # enable include of header files with /src/ as root of path
 target_include_directories(athena PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# GCC does not implement the scoped Clang FP_CONTRACT pragma in CalcRHS.
+# Do not fuse one side of a well-balanced full/background subtraction.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set_property(SOURCE z4c/z4c_calcrhs.cpp APPEND PROPERTY
+               COMPILE_OPTIONS -ffp-contract=off)
+endif()

@@ -108,9 +108,12 @@ void Z4c::QueueZ4cTasks() {
 //! \fn TaskStatus Z4c::ApplyUserRHS
 //! \brief apply a problem-generator source after RHS construction
 TaskStatus Z4c::ApplyUserRHS(Driver *pdrive, int stage) {
+  DebugBalance("pre_excision_rhs", stage, u_rhs);
   if (user_rhs_func != nullptr) {
     user_rhs_func(pmy_pack->pmesh);
   }
+  DebugBalance("post_excision_rhs", stage, u_rhs);
+  DebugBalance("post_excision_state", stage, u0);
   return TaskStatus::complete;
 }
 
@@ -197,6 +200,7 @@ TaskStatus Z4c::SendU(Driver *pdrive, int stage) {
 
 TaskStatus Z4c::RecvU(Driver *pdrive, int stage) {
   TaskStatus tstat = pbval_u->RecvAndUnpackCC(u0, coarse_u0);
+  if (tstat == TaskStatus::complete) DebugBalance("post_exchange", stage, u0);
   return tstat;
 }
 
@@ -211,9 +215,12 @@ TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
     }
     ReconstructFullState();
     DebugDumpState("pre_alg_full", u_full, true, pmy_pack->pmesh->time, stage);
+    DebugBalance("pre_projection", stage, u_full, true);
     EnforceAlgConstrOn(full);
+    DebugBalance("post_projection", stage, u_full, true);
     DebugDumpState("post_alg_full", u_full, true, pmy_pack->pmesh->time, stage);
     RecastResidualState();
+    DebugBalance("post_recast", stage, u0);
     DebugDumpState("post_recast_residual", u0, false, pmy_pack->pmesh->time, stage);
   }
   return TaskStatus::complete;
@@ -272,6 +279,7 @@ TaskStatus Z4c::RestrictU(Driver *pdrive, int stage) {
   // Only execute Mesh function with SMR/SMR
   if (pmy_pack->pmesh->multilevel) {
     pmy_pack->pmesh->pmr->RestrictCC(u0, coarse_u0, true);
+    DebugBalance("post_restrict", stage, u0);
     DebugDumpState("post_restrict_residual", u0, false, pmy_pack->pmesh->time, stage);
   }
   return TaskStatus::complete;
@@ -286,6 +294,7 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
   if (pmy_pack->pmesh->multilevel) {  // only prolongate with SMR/AMR
     pbval_u->FillCoarseInBndryCC(u0, coarse_u0, true);
     pbval_u->ProlongateCC(u0, coarse_u0, true);
+    DebugBalance("post_prolong", stage, u0);
     DebugDumpState("post_prolong_residual", u0, false, pmy_pack->pmesh->time, stage);
   }
   return TaskStatus::complete;
@@ -296,6 +305,7 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
+  DebugBalance("pre_physical_bc", stage, u0);
   // only apply BCs if domain is not strictly periodic
   if (!(pmy_pack->pmesh->strictly_periodic)) {
     // physical BCs
@@ -306,6 +316,7 @@ TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
       (pmy_pack->pmesh->pgen->user_bcs_func)(pmy_pack->pmesh);
     }
   }
+  DebugBalance("post_physical_bc", stage, u0);
   return TaskStatus::complete;
 }
 

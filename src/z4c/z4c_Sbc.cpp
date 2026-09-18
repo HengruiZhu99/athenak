@@ -1273,6 +1273,7 @@ void Z4cSommerfeld(const Z4c::Z4c_vars& z4c, const Z4c::Z4c_vars& rhs,
 }  // namespace
 
 TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
+  DebugBalance("pre_boundary_rhs", stage, u_rhs);
   auto &pm = pmy_pack->pmesh;
   auto &mb_bcs = pmy_pack->pmb->mb_bcs;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -1337,6 +1338,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
         }
       });
     }
+    DebugBalance("post_boundary_rhs", stage, u_rhs);
     return TaskStatus::complete;
   }
 
@@ -1701,6 +1703,7 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
     }
   }
   characteristic_bc_announced = true;
+  DebugBalance("post_boundary_rhs", stage, u_rhs);
   return TaskStatus::complete;
 }
 

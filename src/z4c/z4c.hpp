@@ -244,6 +244,9 @@ class Z4c {
     Real target_kappa1;
 
     // Input-gated debug reductions for instability localization.
+    bool debug_balance;
+    bool debug_balance_profiles;
+    Real debug_balance_freeze, debug_balance_ramp, debug_balance_horizon;
     bool debug_reductions;
     int debug_reduction_stride;
     // Input-gated term-by-term residual RHS diagnostics (analytic background only).
@@ -345,6 +348,8 @@ class Z4c {
   void RecastResidualState();
   void PrescribeGaugeResidual();
   void EnforceAlgConstrOn(Z4c_vars &state);
+  void DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
+                    bool compare_background = false);
   void DebugDumpState(const char *label, DvceArray5D<Real> &u, bool full_state,
                       Real time, int stage);
 

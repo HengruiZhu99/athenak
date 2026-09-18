@@ -10,6 +10,9 @@
 #include <sys/stat.h>  // mkdir
 
 #include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <cstring>
 #include <string>
 #include <algorithm>
 #include <cstdlib>
@@ -330,6 +333,11 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.kappa_roll_start_time = pin->GetOrAddReal("z4c", "kappa_roll_start_time", 0.0);
   opt.roll_window = pin->GetOrAddReal("z4c", "roll_window", 20.0);
   opt.target_kappa1 = pin->GetOrAddReal("z4c", "target_kappa1", 0.0);
+  opt.debug_balance = pin->GetOrAddBoolean("z4c", "debug_balance", false);
+  opt.debug_balance_profiles = pin->GetOrAddBoolean("z4c", "debug_balance_profiles", false);
+  opt.debug_balance_freeze = pin->GetOrAddReal("z4c", "debug_balance_freeze", 1.0);
+  opt.debug_balance_ramp = pin->GetOrAddReal("z4c", "debug_balance_ramp", 1.4);
+  opt.debug_balance_horizon = pin->GetOrAddReal("z4c", "debug_balance_horizon", 2.0);
   opt.debug_reductions = pin->GetOrAddBoolean("z4c", "debug_reductions", false);
   opt.debug_reduction_stride = pin->GetOrAddInteger("z4c", "debug_reduction_stride", 1);
   opt.rhs_term_debug = pin->GetOrAddBoolean("z4c", "rhs_term_debug", false);
@@ -427,9 +435,29 @@ void Z4c::EnforceAlgConstrOn(Z4c_vars &state) {
   int ksg = ks-indcs.ng; int keg = ke+indcs.ng;
 
   int nmb = pmy_pack->nmb_thispack;
+  const bool residual_full = &state == &full && use_analytic_background &&
+                             SetADMBackground != nullptr;
+  const auto background = bg;
   par_for("Alg constr loop",DevExeSpace(),
   0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    // The refreshed background is already projected. Projection is not
+    // floating-point idempotent: P(P(bg)) can differ from P(bg) by an ulp.
+    // Keep that exact fixed point, including ghost cells. This exact equality
+    // test neither thresholds perturbations nor changes projection of a
+    // representably different geometry; non-geometric variables are untouched.
+    if (residual_full) {
+      bool identical = true;
+      for (int a = 0; a < 3; ++a)
+      for (int b = a; b < 3; ++b) {
+        const Real g = state.g_dd(m,a,b,k,j,i);
+        const Real A = state.vA_dd(m,a,b,k,j,i);
+        identical = identical && isfinite(g) && isfinite(A) &&
+            g == background.g_dd(m,a,b,k,j,i) &&
+            A == background.vA_dd(m,a,b,k,j,i);
+      }
+      if (identical) return;
+    }
     Real detg = adm::SpatialDet(state.g_dd(m,0,0,k,j,i), state.g_dd(m,0,1,k,j,i),
                               state.g_dd(m,0,2,k,j,i),state.g_dd(m,1,1,k,j,i),
                               state.g_dd(m,1,2,k,j,i), state.g_dd(m,2,2,k,j,i));
@@ -462,6 +490,110 @@ void Z4c::EnforceAlgConstrOn(Z4c_vars &state) {
 
 void Z4c::AlgConstr(MeshBlockPack *pmbp) {
   EnforceAlgConstrOn(z4c);
+}
+
+// Opt-in forensic output. Host mirrors provide the completion required to inspect
+// device kernels; production execution acquires no additional synchronization.
+void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
+                       bool compare_background) {
+  if (!opt.debug_balance || pmy_pack->pmesh->ncycle %
+      std::max(1, opt.debug_reduction_stride) != 0) return;
+  const auto h = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), state);
+  const auto hb = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), u_bg);
+  auto &mb = *pmy_pack->pmb;
+  auto &ix = pmy_pack->pmesh->mb_indcs;
+  auto &dom = pmy_pack->pmesh->mesh_size;
+  const int rank = global_variable::my_rank;
+  const std::string filename = "z4c_balance_rank" + std::to_string(rank) + ".csv";
+  const bool header = !std::ifstream(filename).good();
+  std::ofstream out(filename, std::ios::app);
+  if (header) out << "cycle,time,stage,operation,field,region,rank,gid,level,i,j,k,x,y,z,max_abs,nonzero,bit_mismatch,nonfinite\n";
+  out << std::setprecision(17);
+  if (compare_background) {
+    const std::string path = "z4c_algebraic_rank" + std::to_string(rank) + ".csv";
+    const bool first = !std::ifstream(path).good();
+    std::ofstream constraints(path,std::ios::app);
+    if (first) constraints << "cycle,time,stage,operation,det_error,trace_A,nonfinite\n";
+    Real determinant_error=0.0, trace_error=0.0; long bad=0;
+    for (int m=0;m<pmy_pack->nmb_thispack;++m)
+    for (int k=ix.ks;k<=ix.ke;++k) for(int j=ix.js;j<=ix.je;++j)
+    for (int i=ix.is;i<=ix.ie;++i) {
+      const Real det=adm::SpatialDet(h(m,I_Z4C_GXX,k,j,i),h(m,I_Z4C_GXY,k,j,i),
+        h(m,I_Z4C_GXZ,k,j,i),h(m,I_Z4C_GYY,k,j,i),h(m,I_Z4C_GYZ,k,j,i),h(m,I_Z4C_GZZ,k,j,i));
+      const Real tr=adm::Trace(1.0/det,h(m,I_Z4C_GXX,k,j,i),h(m,I_Z4C_GXY,k,j,i),
+        h(m,I_Z4C_GXZ,k,j,i),h(m,I_Z4C_GYY,k,j,i),h(m,I_Z4C_GYZ,k,j,i),h(m,I_Z4C_GZZ,k,j,i),
+        h(m,I_Z4C_AXX,k,j,i),h(m,I_Z4C_AXY,k,j,i),h(m,I_Z4C_AXZ,k,j,i),
+        h(m,I_Z4C_AYY,k,j,i),h(m,I_Z4C_AYZ,k,j,i),h(m,I_Z4C_AZZ,k,j,i));
+      bad += !std::isfinite(det) || !std::isfinite(tr) || det<=0;
+      determinant_error=std::max(determinant_error,std::fabs(det-1.0));
+      trace_error=std::max(trace_error,std::fabs(tr));
+    }
+    constraints << std::setprecision(17) << pmy_pack->pmesh->ncycle << ','
+      << pmy_pack->pmesh->time << ',' << stage << ',' << label << ','
+      << determinant_error << ',' << trace_error << ',' << bad << '\n';
+  }
+  // Regions overlap intentionally: radial regions, physical-boundary stencil
+  // bands, interface-adjacent blocks, and ghosts are distinct diagnostics.
+  const char *regions[] = {"freeze", "sponge", "interior", "exterior",
+                           "outer_boundary", "refinement_block", "ghost"};
+  struct Peak { Real value=-1, x=0, y=0, z=0; int m=0,i=0,j=0,k=0;
+                long count=0, bits=0, bad=0; };
+  Peak peak[nz4c][7];
+  std::ofstream profile;
+  if (opt.debug_balance_profiles && std::string(label) == "post_recast") {
+    profile.open("z4c_theta_rank" + std::to_string(rank) + "_cycle" +
+      std::to_string(pmy_pack->pmesh->ncycle) + "_stage" + std::to_string(stage) + ".csv");
+    profile << "gid,level,x,y,z,theta\n" << std::setprecision(17);
+  }
+  for (int m=0; m<pmy_pack->nmb_thispack; ++m) {
+    const auto &s = mb.mb_size.h_view(m);
+    bool refinement = false;
+    for (int b=0; b<mb.nnghbr; ++b) {
+      const auto &nb=mb.nghbr.h_view(m,b);
+      if (nb.gid >= 0 && nb.lev != mb.mb_lev.h_view(m)) refinement=true;
+    }
+    for (int k=0;k<static_cast<int>(state.extent(2));++k)
+    for (int j=0;j<static_cast<int>(state.extent(3));++j)
+    for (int i=0;i<static_cast<int>(state.extent(4));++i) {
+      const Real x=s.x1min+(i-ix.is+0.5)*s.dx1;
+      const Real y=s.x2min+(j-ix.js+0.5)*s.dx2;
+      const Real z=s.x3min+(k-ix.ks+0.5)*s.dx3;
+      const Real r=std::sqrt(x*x+y*y+z*z);
+      const bool ghost=i<ix.is || i>ix.ie || j<ix.js || j>ix.je || k<ix.ks || k>ix.ke;
+      const bool edge=x-dom.x1min < ix.ng*s.dx1 || dom.x1max-x < ix.ng*s.dx1 ||
+        y-dom.x2min < ix.ng*s.dx2 || dom.x2max-y < ix.ng*s.dx2 ||
+        z-dom.x3min < ix.ng*s.dx3 || dom.x3max-z < ix.ng*s.dx3;
+      const bool region[] = {!ghost && r<=opt.debug_balance_freeze,
+        !ghost && r>opt.debug_balance_freeze && r<opt.debug_balance_ramp,
+        !ghost && r>=opt.debug_balance_ramp && r<opt.debug_balance_horizon,
+        !ghost && r>=opt.debug_balance_horizon, !ghost && edge,
+        !ghost && refinement, ghost};
+      if (profile && !ghost) profile << mb.mb_gid.h_view(m) << ','
+        << mb.mb_lev.h_view(m)-pmy_pack->pmesh->root_level << ','
+        << x << ',' << y << ',' << z << ',' << h(m,I_Z4C_THETA,k,j,i) << '\n';
+      for (int n=0;n<nz4c;++n) {
+        const Real v=h(m,n,k,j,i), b=compare_background ? hb(m,n,k,j,i) : 0.0;
+        const Real d=v-b;
+        for (int q=0;q<7;++q) if (region[q]) {
+          auto &p=peak[n][q]; p.count += (d!=0.0);
+          p.bits += (std::memcmp(&v,&b,sizeof(Real))!=0);
+          p.bad += !std::isfinite(d);
+          if (std::fabs(d)>p.value || !std::isfinite(d)) {
+            p.value=std::fabs(d); p.m=m; p.i=i; p.j=j; p.k=k; p.x=x;p.y=y;p.z=z;
+          }
+        }
+      }
+    }
+  }
+  for (int n=0;n<nz4c;++n) for(int q=0;q<7;++q) {
+    const auto &p=peak[n][q]; if(p.value<0)continue;
+    out << pmy_pack->pmesh->ncycle << ',' << pmy_pack->pmesh->time << ',' << stage
+      << ',' << label << ',' << Z4c_names[n] << ',' << regions[q] << ',' << rank
+      << ',' << mb.mb_gid.h_view(p.m) << ','
+      << mb.mb_lev.h_view(p.m)-pmy_pack->pmesh->root_level << ','
+      << p.i << ',' << p.j << ',' << p.k << ',' << p.x << ',' << p.y << ','
+      << p.z << ',' << p.value << ',' << p.count << ',' << p.bits << ',' << p.bad << '\n';
+  }
 }
 
 void Z4c::DebugDumpState(const char *label, DvceArray5D<Real> &u, bool full_state,

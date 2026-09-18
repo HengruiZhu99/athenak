@@ -10,6 +10,9 @@
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <cstring>
 #include <sstream>
 
 #include "athena.hpp"
@@ -102,6 +105,56 @@ struct GeometryData {
     LA_dd.ZeroClear();
   }
 };
+
+// Explicit packing avoids comparing padding bytes in GeometryData.
+KOKKOS_INLINE_FUNCTION
+void PackBalanceGeometry(const GeometryData &g, DvceArray5D<Real> dump,
+                         int offset, int m, int k, int j, int i) {
+  int n = offset;
+  dump(m,n++,k,j,i) = g.Lalpha;
+  dump(m,n++,k,j,i) = g.Lchi;
+  dump(m,n++,k,j,i) = g.LKhat;
+  dump(m,n++,k,j,i) = g.LTheta;
+  dump(m,n++,k,j,i) = g.detg;
+  dump(m,n++,k,j,i) = g.chi_guarded;
+  dump(m,n++,k,j,i) = g.oopsi4;
+  dump(m,n++,k,j,i) = g.AA;
+  dump(m,n++,k,j,i) = g.R;
+  dump(m,n++,k,j,i) = g.Ht;
+  dump(m,n++,k,j,i) = g.K;
+  dump(m,n++,k,j,i) = g.S;
+  dump(m,n++,k,j,i) = g.Ddalpha;
+  dump(m,n++,k,j,i) = g.dbeta;
+  dump(m,n++,k,j,i) = g.dB;
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.Gamma_u(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.DA_u(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.dalpha_d(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.dchi_d(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.dKhat_d(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.dTheta_d(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.ddbeta_d(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.LGam_u(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.Lbeta_u(a);
+  for (int a=0;a<3;++a) dump(m,n++,k,j,i) = g.LB_d(a);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.g_uu(a,b);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.A_uu(a,b);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.AA_dd(a,b);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.R_dd(a,b);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.Rphi_dd(a,b);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.Ddalpha_dd(a,b);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.dbeta_du(a,b);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.Lg_dd(a,b);
+  for (int a=0;a<3;++a) for (int b=0;b<3;++b)
+    dump(m,n++,k,j,i) = g.LA_dd(a,b);
+}
 
 struct PointRHS {
   Real chi = 0.0;
@@ -1004,6 +1057,12 @@ template <int NGHOST>
 //! \fn void Z4c::CalcRHS(Driver *pdriver, int stage)
 //! \brief compute rhs of the z4c equations
 TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
+#if defined(__clang__)
+// Contracting a*b-c*d to fma(a,b,-rounded(c*d)) injects a residual
+// even when a==c and b==d. Both sides of the background subtraction must
+// use the same rounding. This scope also covers the Kokkos RHS lambda.
+#pragma clang fp contract(off)
+#endif
   Kokkos::Timer rhs_timer;
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
@@ -1040,9 +1099,11 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   const bool background_adapted_residual_gauge =
       opt.residual_gauge_mode == Z4c::residual_gauge_background_adapted;
   if (use_analytic_background) {
+    pz4c->DebugBalance("pre_rhs_state", stage, u0);
     pz4c->PrescribeGaugeResidual();
     pz4c->UpdateBackgroundState(time);
     pz4c->ReconstructFullState();
+    pz4c->DebugBalance("rhs_full_vs_bg", stage, pz4c->u_full, true);
   }
   
   bool is_vacuum = (pmy_pack->ptmunu == nullptr) ? true : false;
@@ -1062,6 +1123,13 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   }
   const Real kappa1_eff = kappa1_effective;
 
+  const bool balance_geometry = opt.debug_balance &&
+      pmy_pack->pmesh->ncycle % std::max(1,opt.debug_reduction_stride) == 0;
+  DvceArray5D<Real> geometry_audit;
+  if (balance_geometry && use_analytic_background) {
+    Kokkos::realloc(geometry_audit,nmb,252,ke+1,je+1,ie+1);
+  }
+
   // ===================================================================================
   // Main RHS calculation
   //
@@ -1079,6 +1147,10 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
           bg, opt, tmunu, false,
           size.d_view(m).dx1, size.d_view(m).dx2, size.d_view(m).dx3,
           m, k, j, i, geo_bg);
+      if (balance_geometry) {
+        PackBalanceGeometry(geo_full,geometry_audit,0,m,k,j,i);
+        PackBalanceGeometry(geo_bg,geometry_audit,126,m,k,j,i);
+      }
       const Real alpha_full = full.alpha(m,k,j,i);
       const Real alpha_bg = bg.alpha(m,k,j,i);
 
@@ -1224,6 +1296,56 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   // ===================================================================================
   // Add dissipation for stability
   //
+  if (balance_geometry && use_analytic_background) {
+    const auto h = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), geometry_audit);
+    const std::string path = "z4c_geometry_rank" +
+        std::to_string(global_variable::my_rank) + ".csv";
+    const bool header = !std::ifstream(path).good();
+    std::ofstream out(path,std::ios::app);
+    if (header) out << "cycle,time,stage,field,rank,gid,level,x,y,z,max_abs,bit_mismatch,nonfinite\n";
+    out << std::setprecision(17);
+    const char *names[] = {
+      "Lalpha","Lchi","LKhat","LTheta","detg","chi_guarded",
+      "oopsi4","AA","R","Ht","K","S",
+      "Ddalpha","dbeta","dB","Gamma_u0","Gamma_u1","Gamma_u2",
+      "DA_u0","DA_u1","DA_u2","dalpha_d0","dalpha_d1","dalpha_d2",
+      "dchi_d0","dchi_d1","dchi_d2","dKhat_d0","dKhat_d1","dKhat_d2",
+      "dTheta_d0","dTheta_d1","dTheta_d2","ddbeta_d0","ddbeta_d1","ddbeta_d2",
+      "LGam_u0","LGam_u1","LGam_u2","Lbeta_u0","Lbeta_u1","Lbeta_u2",
+      "LB_d0","LB_d1","LB_d2","g_uu00","g_uu01","g_uu02",
+      "g_uu10","g_uu11","g_uu12","g_uu20","g_uu21","g_uu22",
+      "A_uu00","A_uu01","A_uu02","A_uu10","A_uu11","A_uu12",
+      "A_uu20","A_uu21","A_uu22","AA_dd00","AA_dd01","AA_dd02",
+      "AA_dd10","AA_dd11","AA_dd12","AA_dd20","AA_dd21","AA_dd22",
+      "R_dd00","R_dd01","R_dd02","R_dd10","R_dd11","R_dd12",
+      "R_dd20","R_dd21","R_dd22","Rphi_dd00","Rphi_dd01","Rphi_dd02",
+      "Rphi_dd10","Rphi_dd11","Rphi_dd12","Rphi_dd20","Rphi_dd21","Rphi_dd22",
+      "Ddalpha_dd00","Ddalpha_dd01","Ddalpha_dd02","Ddalpha_dd10","Ddalpha_dd11","Ddalpha_dd12",
+      "Ddalpha_dd20","Ddalpha_dd21","Ddalpha_dd22","dbeta_du00","dbeta_du01","dbeta_du02",
+      "dbeta_du10","dbeta_du11","dbeta_du12","dbeta_du20","dbeta_du21","dbeta_du22",
+      "Lg_dd00","Lg_dd01","Lg_dd02","Lg_dd10","Lg_dd11","Lg_dd12",
+      "Lg_dd20","Lg_dd21","Lg_dd22","LA_dd00","LA_dd01","LA_dd02",
+      "LA_dd10","LA_dd11","LA_dd12","LA_dd20","LA_dd21","LA_dd22"
+    };
+    for (int n=0;n<126;++n) {
+      Real largest=-1; int mm=0,ii=is,jj=js,kk=ks; long bits=0,bad=0;
+      for (int m=0;m<nmb;++m) for (int k=ks;k<=ke;++k)
+      for (int j=js;j<=je;++j) for (int i=is;i<=ie;++i) {
+        Real a=h(m,n,k,j,i), b=h(m,n+126,k,j,i), diff=std::fabs(a-b);
+        bits += std::memcmp(&a,&b,sizeof(Real))!=0;
+        bad += !std::isfinite(diff);
+        if (diff>largest || !std::isfinite(diff)) { largest=diff; mm=m;ii=i;jj=j;kk=k; }
+      }
+      const auto &s = size.h_view(mm);
+      out << pmy_pack->pmesh->ncycle << ',' << time << ',' << stage << ',' << names[n]
+          << ',' << global_variable::my_rank << ',' << pmy_pack->pmb->mb_gid.h_view(mm)
+          << ',' << pmy_pack->pmb->mb_lev.h_view(mm)-pmy_pack->pmesh->root_level
+          << ',' << s.x1min+(ii-is+0.5)*s.dx1 << ',' << s.x2min+(jj-js+0.5)*s.dx2
+          << ',' << s.x3min+(kk-ks+0.5)*s.dx3 << ',' << largest << ',' << bits
+          << ',' << bad << '\n';
+    }
+  }
+  pz4c->DebugBalance("volume_rhs", stage, pz4c->u_rhs);
   Real &diss = pmy_pack->pz4c->diss;
   auto &u0 = pmy_pack->pz4c->u0;
   auto &u_rhs = pmy_pack->pz4c->u_rhs;
@@ -1235,6 +1357,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
       u_rhs(m,n,k,j,i) += Diss<NGHOST>(a, idx, u0, m, n, k, j, i)*diss;
     }
   });
+  pz4c->DebugBalance("post_ko_rhs", stage, pz4c->u_rhs);
   if (measure_characteristic_cost) {
     Kokkos::fence();
     characteristic_bc_volume_rhs_seconds = rhs_timer.seconds();

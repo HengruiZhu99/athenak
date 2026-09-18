@@ -1828,9 +1828,13 @@ void SetupPureBackground(ParameterInput *pin, Mesh *pmy_mesh) {
   Kokkos::deep_copy(DevExeSpace(), pz4c->u0, 0.0);
   Kokkos::deep_copy(DevExeSpace(), pz4c->u1, 0.0);
   Kokkos::deep_copy(DevExeSpace(), pz4c->u_rhs, 0.0);
+  pz4c->DebugBalance("init_state", 0, pz4c->u0);
   pz4c->ReconstructFullState();
+  pz4c->DebugBalance("init_reconstructed", 0, pz4c->u_full, true);
   pz4c->EnforceAlgConstrOn(pz4c->full);
+  pz4c->DebugBalance("init_projected", 0, pz4c->u_full, true);
   pz4c->RecastResidualState();
+  pz4c->DebugBalance("init_recast", 0, pz4c->u0);
   pz4c->PrescribeGaugeResidual();
   pz4c->ReconstructFullState();
   pz4c->Z4cToADM(pmbp);
