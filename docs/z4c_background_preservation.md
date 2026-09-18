@@ -801,3 +801,70 @@ The long process still receives `-t 00:55:00`; because the preceding gate
 consumed allocation time, the one-hour PBS deadline must also be monitored.
 The initial projected 150M completion fits within it. Neither matter stage
 has been launched.
+
+### Refined GPU perturbation fails the stability gate
+
+Job 8836811 was subsequently canceled after its complete 50.025M checkpoint
+was validated. PBS reports state F, exit 271, and walltime 29m57s. This was a
+deliberate stop for sustained growth, not a clean application walltime stop or
+completion of the requested 150M target. The final sampled history is 51.4125M,
+with max|Theta|=1.13572e-7 and zero bad metric cells. All 12 rank files at
+50.025M (cycle 1334, 960 blocks, 1,043,988,480 payload bytes) have matching
+headers and finite stored MHD/Z4c data.
+
+At that completed RK3 step the Theta maximum is 9.91724e-8 at
+(-1.0625,0.3125,-0.1875)M, r=1.12326M, rank 4, global block 324, relative
+level 2, inside the 1–1.5M sponge. The exterior maximum is 4.54277e-9 at
+(-1.9375,-0.3125,0.4375)M, r=2.01071M, rank 6, block 530, relative level 2.
+The frozen core remains exactly zero. These are state maxima at a specified
+time, not evidence that the initial perturbation was injected at these points.
+The imposed dipole was centered at 2.5M. The fitted 30–50M logarithmic growth
+rate is +0.0904144/M, versus +0.226226/M for the coarse control. Refinement
+slows the instability but does not eliminate it.
+
+Later timing also deteriorated: cycles 1050–1350 average 1.11091 seconds per
+step including intervening output, corresponding to 8.23 hours for 1000M at
+dt=0.0375M on one node, excluding setup. The earlier 3.8–4.2 hour extrapolation
+was not sustained. Neither estimate establishes production throughput.
+
+### Rejected stronger KO and isolated background-clamp controls
+
+Doubling KO dissipation from 0.5 to 1.0 does not stabilize the original
+single-block dx=0.25M, freeze/ramp=0.5/1M, lapse/shift=1/1 control. All 24
+MPI equilibrium/response tests pass with KO=1, but the fresh dipole has a
+30–60M fitted growth rate +0.133190/M, compared with +0.132328/M at KO=0.5.
+At 60M its maximum is 1.43921e-7 at (-0.625,0.125,0.125)M, r=0.649519M,
+rank/block 0, level 0. Switching the actual baseline growing 60M checkpoint
+to KO=1 gives only a brief initial decrease; the 70–100M growth rate is
++0.136163/M and max|Theta|=2.52388e-5 at the finite 100.05M checkpoint.
+Both controls were stopped manually. This also demonstrates why a negative
+instantaneous signed budget after changing one term is insufficient: the
+coupled mode changes under the modified operator.
+
+A separate experimental parameter decoupled analytic-background regularization
+from residual freezing, retaining the rejected outward freeze/ramp=1.5/1.9M
+control and changing only the background clamp from 1.5M to 0.25M. The default
+and override each pass 24 CPU/MPI equilibrium/response cases; the default
+result dictionary equals the baseline exactly. The actual target mesh also
+passes four-rank strict-zero audits (119700 state/RHS and 4536 geometry rows).
+Enumeration of all 133 sixth-order stencil offsets, including mixed
+derivatives and biased advection/KO, finds the closest background sample for
+an evolving cell at r=0.544862M. Thus no evolving-cell stencil touches the
+0.25M clamp. The initial exterior squared-H integral returns from 1.40208e-3
+to 1.43011e-6, confirming removal of that particular background artifact.
+
+Nevertheless, at the validated 50.025M checkpoint the peak Theta is
+9.22353e-7 at (1.625,-0.625,-0.625)M, r=1.84983M, rank 1, block 27, level 1.
+The exterior maximum is 6.16300e-7 at r=2.01168M. The 30–50M growth rate
+is +0.187820/M, essentially unchanged from +0.187285/M with the tied clamp.
+The experiment was stopped after checkpoint validation; its patch and pinned
+binary were archived and the source restored. Neither KO nor clamp changes
+were promoted. kappa1/kappa2 remain 0.1/0 throughout these controls.
+
+The exact-zero equilibrium guarantee remains verified, including MPI/SMR/GPU,
+but nonzero vacuum stability is unresolved. The atmosphere and physical-star
+stages remain unstarted. Artifacts in the local review directory include
+`latest-vacuum-controls.json`, `latest-vacuum-controls.png/pdf`,
+`gpu-results/8836811/checkpoint50-profile.json`,
+`decoupled-clamp-stencil-support.json`, and
+`experimental-decoupled-clamp-current.patch`.
