@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate reproducible residual-puncture controls; does not submit jobs.
 
-Wormhole background held fixed by subtraction, not a stationary trumpet.
+Stationary R0=M analytic trumpet with background-adapted residual gauge.
 Star data use the existing weak-field TOV superposition, not a solved binary
 constraint problem. Orbit conversion neglects the star's O(1e-6) self metric.
 """
@@ -31,11 +31,12 @@ def make_case(case, target=100.):
         'mesh_refinement': {'refinement': 'static', 'num_levels': 10, 'max_nmb_per_rank': 1024},
         'time': {'nlim': -1, 'tlim': target, 'ndiag': 100},
         'z4c': {'debug_balance': 'false', 'debug_snapshot_operations': '',
-                'characteristic_bc_diagnostics': 'false', 'history_excise_ks_radius': .5},
+                'characteristic_bc_diagnostics': 'false', 'history_excise_ks_radius': 1.},
         'mhd': {'zero_tmunu_feedback': 'true' if case in ['vacuum', 'lapse', 'lapse_double'] else 'false',
                 'dfloor': 1.6e-21, 'pfloor': 1.6e-33},
         'problem': {'zero_tmunu': 'true' if case in ['vacuum', 'lapse', 'lapse_double'] else 'false',
                     'pure_background': 'false' if case == 'star' else 'true',
+                    'bh_background': 'schwarzschild_trumpet',
                     'amr_star_refine': 'false', 'amr_bh_refine_level': -1},
         'output1': {'dt': 1., 'data_format': '%20.15e'},
     }
@@ -54,7 +55,7 @@ def make_case(case, target=100.):
     for section, changes in configs.items():
         for key, value in changes.items():
             s = setting(s, section, key, value)
-    s += '\n<refined_region0>\nlevel = 9\nx1min = -.5\nx1max = .5\nx2min = -.5\nx2max = .5\nx3min = -.5\nx3max = .5\n'
+    s += '\n<refined_region0>\nlevel = 8\nx1min = -1\nx1max = 1\nx2min = -1\nx2max = 1\nx3min = -1\nx3max = 1\n'
     x = orbit()['isotropic_r0_M']
     s += f'\n<refined_region1>\nlevel = 7\nx1min = {x-4}\nx1max = {x+4}\nx2min = -4\nx2max = 4\nx3min = -4\nx3max = 4\n'
     # Thin slices record the hole and star on the same plane. Volume histories
@@ -69,22 +70,23 @@ def orbit():
     rp = 20.
     L = math.sqrt(2*rp*rp/(rp-2))
     f = 1-2/R
-    r = .5*(R-1+math.sqrt(R*(R-2)))
-    psi = 1+.5/r
-    ur = -math.sqrt(2/R - f*L*L/(R*R))/math.sqrt(f)
-    ut = L/R
-    # Eulerian coordinate momentum on the isotropic spatial slice.
-    ux, uy = ur/(psi*psi), ut/(psi*psi)
+    r = R-1
+    psi = math.sqrt(R/r)
+    alpha = r/R
+    beta = r/R**2
+    uR = -math.sqrt(2/R - f*L*L/(R*R))
+    ut = (1+uR/r)/f
+    ux, uy = uR+beta*ut, L*r/R**2
     # Existing weak-field boosted TOV generator gives w^i approximately Wv^i.
     flatW = math.sqrt(1+ux*ux+uy*uy)
     W = math.sqrt(1+(psi**4)*(ux*ux+uy*uy))
-    assert abs(math.sqrt(f)*W-1) < 1e-14
+    assert abs(alpha*W-ux/r-1) < 1e-14
     assert abs(psi**4*r*uy-L) < 1e-14
     return dict(MBH_Msun=2e5, Mstar_Msun=1, areal_r0_M=R, isotropic_r0_M=r,
                 areal_rp_M=rp, separation_in_tidal_radii=1.5, E=1., L=L,
                 input_boost_x=ux/flatW, input_boost_y=uy/flatW,
-                background_E_check=math.sqrt(f)*W,
-                approximation='Initial TOV superposition; orbit neglects stellar self metric; fixed wormhole is not a stationary Einstein background with this lapse.')
+                background_E_check=alpha*W-ux/r,
+                approximation='Initial TOV superposition; orbit conversion neglects stellar self metric; R0=M stationary trumpet, not the stationary standard 1+log trumpet.')
 
 
 def main():

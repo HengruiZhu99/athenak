@@ -37,9 +37,41 @@ def check_background(run):
             expected[0] = psi**meta['chi_psi_power']
             expected[1] = expected[4] = expected[6] = 1.
             expected[18] = psi**-2
+            if 'bh_background = schwarzschild_trumpet' in (run/'input.athinput').read_text():
+                rad = np.sqrt(x*x+y*y+z*z)
+                R = rad+1
+                expected[0] = (R/rad)**(.5*meta['chi_psi_power'])
+                expected[7] = 1/R**2
+                expected[18] = rad/R
+                xyz = [x, y, z]
+                for a in range(3):
+                    expected[19+a] = xyz[a]/R**2
+                for q,(a,b) in enumerate([(0,0),(0,1),(0,2),(1,1),(1,2),(2,2)]):
+                    expected[8+q] = (2*(a==b)/3-2*xyz[a]*xyz[b]/rad**2)/R**2
             error = max(error, float(np.max(abs(expected-bg))))
     assert error < 2e-15, error
     return error
+
+
+def check_rejections(args, base):
+    cases = {
+        'unknown_background': (replace(base, 'bh_background', 'unknown'), 'bh_background must'),
+        'spin': (replace(base, 'bh_spin', '.1'), 'bh_background must'),
+        'core_projection': (replace(base, 'excision_project_state', 'true'), 'Puncture control requires'),
+        'indirect_background': (replace(base, 'use_direct_z4c_background', 'false'), 'Puncture control requires'),
+        'ks_orbit': (base.replace('<problem>', '<problem>\nstar_orbit = circular_geodesic'),
+                     'Puncture coordinates require'),
+    }
+    for name, (text, expected) in cases.items():
+        run = args.output.resolve()/('reject_'+name)
+        run.mkdir(parents=True, exist_ok=False)
+        (run/'input.athinput').write_text(text)
+        result = subprocess.run([args.launcher, '-n', '1', str(args.exe.resolve()),
+                                 '-i', 'input.athinput'], cwd=run, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT, text=True)
+        (run/'run.log').write_text(result.stdout)
+        assert result.returncode != 0 and expected in result.stdout, name
+    (args.output/'rejections.json').write_text(json.dumps(list(cases), indent=2)+'\n')
 
 
 def main():
@@ -48,8 +80,12 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--launcher', default='mpiexec')
     parser.add_argument('--ranks', type=int, nargs='+', default=[1, 4])
+    parser.add_argument('--background', choices=['schwarzschild_puncture', 'schwarzschild_trumpet'],
+                        default='schwarzschild_puncture')
     args = parser.parse_args()
     base = (Path(__file__).resolve().parents[1]/'inputs/z4c_puncture_background.athinput').read_text()
+    base = replace(base, 'bh_background', args.background)
+    check_rejections(args, base)
     results = {}
     for ranks in args.ranks:
         for refined in [False, True]:

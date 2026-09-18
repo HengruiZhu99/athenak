@@ -45,6 +45,7 @@ Real bh_spin = 0.0;
 Real bh_mass = 1.0;
 bool use_minkowski_background = false;
 bool use_puncture_background = false;
+bool use_trumpet_background = false;
 bool force_minkowski_metric = false;
 bool use_direct_z4c_background = true;
 Real bh_center_x1 = 0.0;
@@ -1330,6 +1331,7 @@ void FillKerrSchildADM(MeshBlockPack *pmbp, ADMState &adm_state) {
   const Real excision_freeze_radius_l = excision_freeze_radius;
   const bool excision_project_state_l = excision_project_state;
   const bool puncture = use_puncture_background;
+  const bool trumpet = use_trumpet_background;
 
   par_for("z4c_tov_ks_background", DevExeSpace(), 0, pmbp->nmb_thispack - 1,
           ksg, keg, jsg, jeg, isg, ieg,
@@ -1350,14 +1352,17 @@ void FillKerrSchildADM(MeshBlockPack *pmbp, ADMState &adm_state) {
       // not on this slice. Do not replace the puncture by a constant core.
       if (!(rad > 0.0)) Kokkos::abort("Puncture must not coincide with a cell center");
       const Real psi = 1.0 + 0.5/rad;
-      const Real psi4 = SQR(SQR(psi));
-      adm_state.alpha(m,k,j,i) = 1.0/SQR(psi);
+      const Real R = rad + 1.0;
+      const Real psi4 = trumpet ? SQR(R/rad) : SQR(SQR(psi));
+      adm_state.alpha(m,k,j,i) = trumpet ? rad/R : 1.0/SQR(psi);
       adm_state.psi4(m,k,j,i) = psi4;
+      const Real xyz[3] = {x, y, z};
       for (int a = 0; a < 3; ++a) {
-        adm_state.beta_u(m,a,k,j,i) = 0.0;
+        adm_state.beta_u(m,a,k,j,i) = trumpet ? xyz[a]/SQR(R) : 0.0;
         for (int b = a; b < 3; ++b) {
           adm_state.g_dd(m,a,b,k,j,i) = a == b ? psi4 : 0.0;
-          adm_state.vK_dd(m,a,b,k,j,i) = 0.0;
+          adm_state.vK_dd(m,a,b,k,j,i) = trumpet ?
+              ((a == b ? 1.0 : 0.0) - 2.0*xyz[a]*xyz[b]/SQR(rad))/SQR(rad) : 0.0;
         }
       }
       return;
@@ -1411,6 +1416,7 @@ void SetZ4cBackgroundKerrSchild(MeshBlockPack *pmbp, Real /*time*/) {
   const bool excision_project_state_l = excision_project_state;
   const Real chi_psi_power_l = pz4c->opt.chi_psi_power;
   const bool puncture = use_puncture_background;
+  const bool trumpet = use_trumpet_background;
   auto &bg = pz4c->bg;
 
   par_for("z4c_tov_ks_background_z4c", DevExeSpace(), 0, pmbp->nmb_thispack - 1,
@@ -1450,6 +1456,23 @@ void SetZ4cBackgroundKerrSchild(MeshBlockPack *pmbp, Real /*time*/) {
       // All other fields were initialized above: gtilde=I, K=A=Gamma=0.
       bg.chi(m,k,j,i) = pow(psi, chi_psi_power_l);
       bg.alpha(m,k,j,i) = 1.0/SQR(psi);
+      if (trumpet) {
+        // Dennison & Baumgarte (1403.5484), R0=M=1, R=r+1. This is
+        // stationary vacuum geometry, not the stationary standard 1+log slice.
+        // The background-adapted residual gauge preserves its lapse/shift.
+        const Real R = rad + 1.0;
+        const Real xyz[3] = {x, y, z};
+        bg.chi(m,k,j,i) = pow(R/rad, 0.5*chi_psi_power_l);
+        bg.alpha(m,k,j,i) = rad/R;
+        bg.vKhat(m,k,j,i) = 1.0/SQR(R);
+        for (int a = 0; a < 3; ++a) {
+          bg.beta_u(m,a,k,j,i) = xyz[a]/SQR(R);
+          for (int b = a; b < 3; ++b) {
+            bg.vA_dd(m,a,b,k,j,i) = ((a == b ? 2.0/3.0 : 0.0) -
+                                    2.0*xyz[a]*xyz[b]/SQR(rad))/SQR(R);
+          }
+        }
+      }
       return;
     }
     Real r_ks = KerrSchildRadius(x, y, z, bh_spin_l);
@@ -2732,11 +2755,14 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   bh_spin = pin->GetOrAddReal("problem", "bh_spin", 0.0);
   const std::string bh_background =
       pin->GetOrAddString("problem", "bh_background", "kerr_schild");
-  use_puncture_background = bh_background == "schwarzschild_puncture";
+  use_trumpet_background = bh_background == "schwarzschild_trumpet";
+  use_puncture_background = bh_background == "schwarzschild_puncture" ||
+                            use_trumpet_background;
   if ((bh_background != "kerr_schild" && !use_puncture_background) ||
       (use_puncture_background && (bh_mass != 1.0 || bh_spin != 0.0 ||
                                   coord_minkowski))) {
-    std::cerr << "bh_background must be kerr_schild or schwarzschild_puncture; "
+    std::cerr << "bh_background must be kerr_schild, schwarzschild_puncture, "
+              << "or schwarzschild_trumpet; "
               << "puncture requires bh_mass=1, bh_spin=0, coord/minkowski=false."
               << std::endl;
     std::exit(EXIT_FAILURE);
@@ -2808,6 +2834,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   bh_horizon_radius = use_minkowski_background ?
       0.0 : 1.0 + sqrt(fmax(0.0, 1.0 - SQR(bh_spin)));
   if (use_puncture_background) bh_horizon_radius = 0.5;
+  if (use_trumpet_background) bh_horizon_radius = 1.0;
   force_minkowski_metric =
       pin->GetOrAddBoolean("problem", "force_minkowski_metric", false);
   if (force_minkowski_metric && !use_minkowski_background) {
@@ -2875,9 +2902,15 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     pmbp->pz4c->opt.history_excise_ks_radius = bh_horizon_radius;
     pmbp->pz4c->opt.debug_balance_horizon = bh_horizon_radius;
     if (global_variable::my_rank == 0) {
-      std::cout << "PUNCTURE_BACKGROUND isotropic wormhole, M=1, horizon_r=0.5, "
-                << "alpha=psi^-2. Fixed residual background; not trumpet relaxation."
-                << std::endl;
+      if (use_trumpet_background) {
+        std::cout << "PUNCTURE_BACKGROUND stationary R0=M=1 trumpet, R=r+1, "
+                  << "horizon_r=1. Not the stationary standard 1+log trumpet."
+                  << std::endl;
+      } else {
+        std::cout << "PUNCTURE_BACKGROUND isotropic wormhole, M=1, horizon_r=0.5, "
+                  << "alpha=psi^-2. Fixed residual background; not trumpet relaxation."
+                  << std::endl;
+      }
     }
   }
   outer_sponge_enabled =
