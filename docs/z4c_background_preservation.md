@@ -1031,3 +1031,110 @@ extrapolation it is 0.028304 for both the new standard gauge and an unchanged
 adapted-gauge comparison. These coarse failures remain recorded; no tolerance
 was relaxed. This checks three gauge families at normal incidence, not a new
 all-orientation reflection validation or a long-time black-hole stability pass.
+
+## Analytic derivatives and covariant constraint-term controls
+
+Two further vacuum-only prototypes were tested against the same sixth-order,
+32-cubed single-block control (dx=0.25M, box +/-4M, freeze/ramp=0.5/1M,
+rate=5/M, kappa1=0.1, kappa2=0, adapted gauge, KO=0.5). Neither passes the
+finite-perturbation stability gate. Both patches and their executables remain
+archived locally; neither experimental change is retained in production code.
+
+The first replaced finite-difference background derivatives with analytic
+Schwarzschild derivatives, while retaining the finite-difference residual
+response. The full and background evaluations use the same modified jets.
+It passed one/four-thread exact-zero stage audits (22,650 state/RHS and 1,134
+geometry records per run), 24 one/four-rank uniform/refined/axis balance and
+nonzero-response cases, independent nonlinear RHS comparisons (4.39e-14
+maximum error), and 30 byte-identical thread-count snapshots. Default-disabled
+snapshots were also byte identical to the baseline. Nevertheless, fresh and
+restarted controls retained growth rates +0.132023/M (30–60M) and +0.131617/M
+(70–100M). Complete 60M and 100.05M checkpoint payloads were finite. These
+runs were manually stopped at 64.2M and 107.25M, respectively, rather than
+reaching their requested 120M target. Analytic background jets do not cure the
+observed mode.
+
+The second added nondamping covariant Z4 constraint terms, evaluated for full
+and background states and subtracted identically. The existing Z4c damping
+normalization was deliberately preserved: this is a formulation comparison,
+not a full CCZ4 implementation or an identified transcription fix. In
+particular, no change to kappa1 or kappa2 was made. An independent tensor
+identity check over 100 positive-definite geometries agreed to 1.43e-14;
+all added terms vanished exactly when Theta and the connection constraint
+were zero. One/four-thread zero audits and 24 MPI uniform/refined/axis and
+physical-response cases passed. Thirty enabled thread snapshots and thirty
+default-disabled baseline snapshots were byte identical. The independent
+nonlinear RHS comparison agreed to 4.39e-14; the added source was as large as
+1.10e-6, so the test did exercise the new terms. Neither enabled prototype was
+tested on GPU.
+
+Both constraint-term controls reached the 120M target, with all checkpoint
+payload values finite and no sampled invalid metric. Their completion is
+not stability:
+
+| Control | max abs(Theta) at 120M | Growth rate, 100–120M | Maximum position |
+| --- | ---: | ---: | --- |
+| Fresh 1e-8 dipole seed | 2.1402184e-7 | +0.0488109/M | (-0.625,0.125,0.125)M |
+| Restart original growing state at 60M | 1.6955390e-6 | +0.0531386/M | (0.625,-0.125,0.125)M |
+
+Both maxima lie at r=0.649519M in the sponge, at completed RK steps,
+rank/block/relative-level zero. Frozen cells remain exactly zero. Exterior
+maxima are 9.07911e-9 and 7.27303e-8, respectively, both at r=2.011685M.
+These state peaks do not identify the first injection or establish that the
+sponge itself supplies positive growth. The instantaneous original-mode Theta
+rate had become negative under the added terms, yet a growing mode remained
+in the evolution. This is further evidence that an isolated source budget is
+not a substitute for analysis of the coupled operator.
+
+The original growing mode was also compared with an infinitesimal translation
+of the analytic black hole. Its lapse correlation is high (-0.962), but the
+physical metric and extrinsic-curvature correlations are only -0.721 and
+-0.465 over evolving cells, with inconsistent best-fit displacements. This
+does not support classifying the mode as a pure black-hole translation.
+
+Artifacts: `experimental-analytic-background-jets.patch`,
+`experimental-constraint-completion.patch`, the corresponding
+`*-stage-results.json` and `*-balance-mpi/results.json`,
+`constraint-completion-{fresh,restart}-long-omp4/control-results.json`,
+`constraint-completion-instantaneous.json`, and
+`mode-translation-comparison.json`. Atmosphere and star gates remain closed.
+
+### Coupled linearization and stage-order checks
+
+An independent diagnostic now assembles the linear response of all 22 evolving
+fields about the saved projected background. Cell-local coefficients are
+complex-step derivatives of the independently checked nonlinear equations;
+finite-difference, advection, KO, ghost extrapolation, inner-layer, boundary,
+and projection maps are represented explicitly. This is a diagnostic for the
+single-block control, not new production evolution code or an MPI/SMR spectrum
+validation.
+
+At the growing 60M checkpoint, its volume, post-KO, post-excision, and
+post-boundary predictions agree with saved C++ data through all three RK
+stages: maximum absolute RHS difference 4.92e-13, versus a volume response
+of about 3.1e-6. The projected semidiscrete operator recovers the measured
++0.131979/M mode rate, with relative eigenvector defect about 1.84e-4.
+Its independently implemented transpose satisfies the random-vector dot-product
+identity to 4.45e-15 relative error.
+
+Stage ordering matters. Extrapolating already projected active data is not the
+same operation as extrapolating the raw RK update and then projecting every
+cell, including ghosts. The diagnostic therefore also implements the latter,
+actual RK3 sequence. Direct extrapolation of saved raw RK states agrees with
+C++ ghost values to 8.59e-19 absolute error. Applying the linearized projection
+to saved post-boundary states agrees with recast residuals to 1.31e-13;
+this comparison is against a finite, nonlinear perturbation. Predictions of
+the next two RK active states agree to 1.15e-13 absolute error, about 1.06e-7
+relative. The complete RK map and its transpose satisfy the dot-product
+identity to 2.49e-16 relative error.
+
+The complete ghost-array comparison is less accurate (up to 2.49e-9 at outer
+corners) when propagating linearization errors through the full stage. The
+isolated extrapolation check above still passes. This larger corner error is
+recorded separately; it is neither a zero-background preservation failure nor
+evidence that the growing physical-domain mode originates at the boundary.
+A preliminary eigensolver output failed unit-norm/eigenpair-residual checks
+and was rejected. No new evolution change is justified from unvalidated
+spectral output. Artifacts include `mode-linearization-validation.json`,
+`mode-rk-validation.json`, `mode-stage-transfers.json`, and the locally retained
+`mode-linear-operator.py` with its coefficient builder and verifiers.
