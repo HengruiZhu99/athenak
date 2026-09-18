@@ -708,6 +708,7 @@ Increasing the requested SMR level to 2 produces 960 blocks of 8^3 cells:
 balancing also refines the outer grid, so this is a factor-two resolution
 comparison, not a change confined to the central region. Eight MPI ranks
 complete the three-step equilibrium audit with all 239400 state/RHS rows
-and 9072 geometry rows strictly zero. The perturbed evolution is running;
-no stability result is claimed yet. The pushed 4d102603 GPU build and its
+and 9072 geometry rows strictly zero. The perturbed CPU pilot was stopped manually after a short throughput
+measurement (about eight seconds per step), before any stability conclusion.
+A one-node GPU pilot is prepared after validation. The pushed 4d102603 GPU build and its
 separate one-node validation are also pending.
