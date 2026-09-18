@@ -1751,3 +1751,42 @@ match the one-rank MPI executable. Artifacts are
 `zero-rate-source-before.log`, `zero-rate-source-after/results.json`, and
 `zero-rate-source-thread-check.json`. This focused source regression does
 not establish long-time stability or add GPU coverage for this change.
+
+Four offline controls isolate the roles of zeroing and damping in the
+stationary 1+log background test. They retain identical background data,
+volume coefficients, gauge, kappa terms, boundaries, KO, projection, and
+initial verified mode, changing only the indicated core mask or sponge.
+All reach 60M normally; none passes the perturbation-stability gate.
+
+| Change from the stationary-background control | Theta growth, 45–60M (1/M) | Amplification, 30–60M |
+| --- | ---: | ---: |
+| Release the eight core cells; retain the sponge | +0.07591066 | 9.75 |
+| Retain core zeroing; remove sponge damping | +0.10353106 | 22.27 |
+| Remove both core zeroing and sponge damping | +0.10191041 | 21.17 |
+| Retain zeroing; narrow sponge to 0.125–0.25M | +0.10467619 | 23.06 |
+
+The original targeted eigenvalue is +0.07587067/M. Thus releasing the core
+barely changes this mode; removing the sponge increases the observed late
+growth. These controls show that neither zeroing nor sponge damping is
+necessary for growth in this discretized background. They do not prove that
+every earlier Kerr-Schild failure has the same cause. No layer removal is
+promoted to a production configuration.
+
+The narrowed layer lies below the radial lapse characteristic horizon at
+r=0.303452M; independent scalar-characteristic eigenvalues confirm that all
+outward continuum characteristic speeds are negative over its support.
+The finite-difference stencil still spans beyond that region, so this does
+not establish discrete causality or stability. The default layer reaches
+r=0.5M, where the lapse characteristic has an outward branch despite being
+inside the physical horizon at r=0.830404M.
+
+Each changed map passes its independent transpose check (relative error
+below 4e-15) and exact-zero check. Runs with retained core zeroing keep all
+core state components exactly zero at every completed step. The released
+cells evolve nontrivially in the other controls. Final Theta maxima occur
+at r=0.446339M except when both layer operations are removed, where the
+maximum is at r=0.324760M. These are completed-step mode amplitudes, not
+first-injection locations. Results and the reviewed comparison plot are
+`stationary-log-layer-control-results.json`,
+`stationary-log-layer-characteristics.json`, and
+`stationary-log-layer-controls.png/pdf` in the local review directory.
