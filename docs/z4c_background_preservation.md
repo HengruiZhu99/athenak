@@ -519,8 +519,9 @@ Khat, and Gamma fixed. It therefore changes physical geometry and the
 connection constraint when the pre-projection algebraic errors are nonzero.
 This is a measured operation to investigate, not proof that projection is
 the sole cause of the unstable mode. A representation-preserving candidate
-has been checked algebraically in 32 high-precision point tests, but has not
-yet been implemented or validated through stencil updates and MPI transfers.
+was checked algebraically in 32 high-precision point tests and subsequently
+tested in the single-block control below. MPI transfers were not implemented
+for this rejected candidate.
 
 The separate auxiliary-plus-gauge damping trial also failed: max|Theta| at
 60M is 8.42809e-8 with 30–60M log-growth 0.103307/M. At 50M the physical
@@ -569,8 +570,9 @@ Neither is a stability pass:
 Both Theta maxima are at (-0.625,0.125,-0.125)M, r=0.649519M,
 rank/block 0, relative level 0, cycle 800. These are late-state maxima,
 not locations of the original exact-background injection. The spatial mode
-and growth rate are almost unchanged. The earlier eight-block MPI standard
-control gives the same amplitude to the precision of the recorded histories.
+and growth rate are almost unchanged. The earlier eight-block MPI freeze-on control gave 1.20565e-7 at 60M,
+within 0.05% of this single-block standard result; this is not a claim of
+bitwise equality across those separate runs.
 
 One-step checkpoint audits at 60M confirm the candidate actually preserved
 its intended quantities. Maximum physical-metric, physical-Kij, and covariant-Z
