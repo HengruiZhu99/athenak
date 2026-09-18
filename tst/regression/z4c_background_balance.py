@@ -87,7 +87,8 @@ def main():
     baseline = source.read_text()
     results = {}
     for ranks in args.ranks:
-        for case in ['equilibrium', 'refined_equilibrium', 'pulse', 'pulse_double']:
+        for case in ['equilibrium', 'refined_equilibrium', 'pulse', 'pulse_double',
+                     'pulse_dipole', 'pulse_dipole_double']:
             run = args.output.resolve() / f'{case}_r{ranks}'
             run.mkdir(parents=True, exist_ok=False)
             text = baseline
@@ -105,16 +106,35 @@ def main():
                 text += ('\n<refined_region0>\nlevel = 1\n'
                          'x1min = -1\nx1max = 1\nx2min = -1\nx2max = 1\nx3min = -1\nx3max = 1\n')
             if case.startswith('pulse'):
-                amp = 2e-8 if case == 'pulse_double' else 1e-8
+                amp = 2e-8 if case.endswith('double') else 1e-8
                 text = text.replace('<problem>', '<problem>\n'
                     f'outer_sponge_test_theta_pulse_amplitude = {amp}\n'
                     'outer_sponge_test_theta_pulse_radius = 3\n'
                     'outer_sponge_test_theta_pulse_width = 0.3')
+            if 'dipole' in case:
+                text = text.replace('<problem>', '<problem>\n'
+                                    'outer_sponge_test_theta_pulse_dipole_axis = 1')
+                text = text.replace('debug_balance_profiles = false',
+                                    'debug_balance_profiles = true')
             (run / 'input.athinput').write_text(text)
             with (run / 'run.log').open('w') as log:
                 subprocess.run([args.launcher, '-n', str(ranks), str(exe), '-i', 'input.athinput'],
                                cwd=run, stdout=log, stderr=subprocess.STDOUT, check=True)
             results[run.name] = verify(run, ranks, not case.startswith('pulse'), refined)
+            if 'dipole' in case:
+                profile = {tuple(float(row[key]) for key in ('x', 'y', 'z')):
+                           float(row['theta'])
+                           for file in run.glob('z4c_theta_rank*_cycle0_stage1.csv')
+                           for row in read_csv(file)}
+                assert profile, 'Missing dipole spatial profile'
+                magnitude = max(abs(value) for value in profile.values())
+                parity_error = max(abs(value + profile[(-x, y, z)])
+                                   for (x, y, z), value in profile.items()) / magnitude
+                assert parity_error < 1e-5, 'The seeded Theta pulse is not odd in x'
+                results[run.name]['dipole_parity_error'] = parity_error
+        dipole_ratio = (results[f'pulse_dipole_double_r{ranks}']['theta_response'] /
+                        results[f'pulse_dipole_r{ranks}']['theta_response'])
+        assert abs(dipole_ratio - 2) < 1e-4
         small = results[f'pulse_r{ranks}']['theta_response']
         large = results[f'pulse_double_r{ranks}']['theta_response']
         assert abs(large / small - 2) < 1e-4, 'Small-signal response is not linear'

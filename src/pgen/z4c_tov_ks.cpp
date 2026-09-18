@@ -58,6 +58,7 @@ Real outer_sponge_damping_time = 0.0;
 Real outer_sponge_test_theta_pulse_amplitude = 0.0;
 Real outer_sponge_test_theta_pulse_radius = 0.0;
 Real outer_sponge_test_theta_pulse_width = 0.0;
+int outer_sponge_test_theta_pulse_dipole_axis = 0;
 int characteristic_test_family = 0;
 int characteristic_test_axis = 0;
 int characteristic_test_side = 1;
@@ -1887,6 +1888,7 @@ void SeedOuterSpongeThetaPulse(Mesh *pm) {
   const Real amplitude = outer_sponge_test_theta_pulse_amplitude;
   const Real pulse_radius = outer_sponge_test_theta_pulse_radius;
   const Real pulse_width = outer_sponge_test_theta_pulse_width;
+  const int dipole_axis = outer_sponge_test_theta_pulse_dipole_axis;
   const Real bh_center_x1_l = bh_center_x1;
   const Real bh_center_x2_l = bh_center_x2;
   const Real bh_center_x3_l = bh_center_x3;
@@ -1903,7 +1905,13 @@ void SeedOuterSpongeThetaPulse(Mesh *pm) {
                               size.d_view(m).x3max) - bh_center_x3_l;
     const Real radius = KerrSchildRadius(x, y, z, bh_spin_l);
     const Real q = (radius - pulse_radius)/pulse_width;
-    u0(m,itheta,k,j,i) += amplitude*exp(-0.5*q*q);
+    // A dipole seeds the odd inner constraint mode directly; zero retains
+    // the original spherical pulse. This is an opt-in vacuum diagnostic.
+    const Real norm = sqrt(x*x + y*y + z*z);
+    const Real component = dipole_axis == 1 ? x : (dipole_axis == 2 ? y : z);
+    const Real angular = dipole_axis == 0 ? 1.0 :
+                         (norm > 0.0 ? component/norm : 0.0);
+    u0(m,itheta,k,j,i) += amplitude*exp(-0.5*q*q)*angular;
   });
 
   pmbp->pz4c->ReconstructFullState();
@@ -2708,6 +2716,13 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       pin->GetOrAddReal("problem", "outer_sponge_test_theta_pulse_radius", 0.0);
   outer_sponge_test_theta_pulse_width =
       pin->GetOrAddReal("problem", "outer_sponge_test_theta_pulse_width", 0.0);
+  outer_sponge_test_theta_pulse_dipole_axis = pin->GetOrAddInteger(
+      "problem", "outer_sponge_test_theta_pulse_dipole_axis", 0);
+  if (outer_sponge_test_theta_pulse_dipole_axis < 0 ||
+      outer_sponge_test_theta_pulse_dipole_axis > 3) {
+    std::cerr << "Theta pulse dipole axis must be 0 (spherical), 1, 2, or 3." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   const std::string characteristic_test_family_name =
       pin->GetOrAddString("problem", "characteristic_test_family", "none");
   const char *characteristic_names[] = {

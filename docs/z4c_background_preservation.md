@@ -53,7 +53,9 @@ python3 tst/regression/z4c_background_balance.py \
 
 The runner preserves logs and inputs and rejects an existing output directory.
 It tests uniform multi-block vacuum, genuine static refinement interfaces, and
-small Theta pulses at two amplitudes. Exact-zero checks cover every audited RK
+spherical and dipole Theta pulses at two amplitudes. The opt-in
+`outer_sponge_test_theta_pulse_dipole_axis` selects x/y/z with 1/2/3;
+zero retains the spherical seed. Dipole spatial parity is checked separately. Exact-zero checks cover every audited RK
 stage, full/background fields including ghosts, and 126 packed geometry and
 first-derivative/auxiliary components. Algebraic projection is checked separately
 against determinant/trace errors, and the physical-cell perturbation response
@@ -127,3 +129,23 @@ Do not infer perturbation stability from the exact-zero vacuum test. Resolved
 vacuum perturbation tests, GPU/MPI validation, and then atmosphere and stellar
 runs with the same interior zeroing/damping are still required. The production
 star job was canceled before starting while this validation is pursued.
+
+## Controlled dipole evidence
+
+The growing shell pattern in the coarse radial-pulse tests is predominantly
+odd (dipolar), rather than a spherical constraint offset. Directly seeding an
+x-directed dipole with amplitudes 1e-6 and 1e-8 gives a 100-fold early-response
+ratio. At 60M their maximum Theta values are 3.13461e-5 and 3.13451e-7.
+Halving the smaller-pulse timestep from 0.15M to 0.075M gives 3.13445e-7.
+These controls demonstrate an unstable small-signal mode of the coarse spatial
+system, rather than a source timestep instability or a zero-state injection.
+They do not identify a particular erroneous continuum term.
+
+The twelve-case MPI regression (one/four ranks) passes with the additional
+single/double-amplitude dipole seeds. Physical response maxima match across
+rank counts; relative odd-parity errors are below 5.8e-9, and determinant/trace
+errors remain below 9e-16. These short response checks are not long-time
+stability tests. With the deeper freeze/ramp radii 0.5/1M, dipole Theta at 60M
+is 1.24155e-5 for dx=0.5M and 1.20514e-7 for dx=0.25M. Both runs remain finite
+at that time but exhibit growth; neither is a stability pass. Finer controls
+are still required before progressing to matter evolution.
