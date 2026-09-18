@@ -44,6 +44,7 @@ namespace {
 Real bh_spin = 0.0;
 Real bh_mass = 1.0;
 bool use_minkowski_background = false;
+bool use_puncture_background = false;
 bool force_minkowski_metric = false;
 bool use_direct_z4c_background = true;
 Real bh_center_x1 = 0.0;
@@ -1328,6 +1329,7 @@ void FillKerrSchildADM(MeshBlockPack *pmbp, ADMState &adm_state) {
   const Real bh_spin_l = bh_spin;
   const Real excision_freeze_radius_l = excision_freeze_radius;
   const bool excision_project_state_l = excision_project_state;
+  const bool puncture = use_puncture_background;
 
   par_for("z4c_tov_ks_background", DevExeSpace(), 0, pmbp->nmb_thispack - 1,
           ksg, keg, jsg, jeg, isg, ieg,
@@ -1343,6 +1345,23 @@ void FillKerrSchildADM(MeshBlockPack *pmbp, ADMState &adm_state) {
     Real y = CellCenterX(j - indcs.js, indcs.nx2, x2min, x2max) - bh_center_x2_l;
     Real z = CellCenterX(k - indcs.ks, indcs.nx3, x3min, x3max) - bh_center_x3_l;
     Real rad = sqrt(SQR(x) + SQR(y) + SQR(z));
+    if (puncture) {
+      // Isotropic Schwarzschild wormhole data; the physical singularity is
+      // not on this slice. Do not replace the puncture by a constant core.
+      if (!(rad > 0.0)) Kokkos::abort("Puncture must not coincide with a cell center");
+      const Real psi = 1.0 + 0.5/rad;
+      const Real psi4 = SQR(SQR(psi));
+      adm_state.alpha(m,k,j,i) = 1.0/SQR(psi);
+      adm_state.psi4(m,k,j,i) = psi4;
+      for (int a = 0; a < 3; ++a) {
+        adm_state.beta_u(m,a,k,j,i) = 0.0;
+        for (int b = a; b < 3; ++b) {
+          adm_state.g_dd(m,a,b,k,j,i) = a == b ? psi4 : 0.0;
+          adm_state.vK_dd(m,a,b,k,j,i) = 0.0;
+        }
+      }
+      return;
+    }
     Real r_ks = KerrSchildRadius(x, y, z, bh_spin_l);
     if (excision_project_state_l && r_ks < excision_freeze_radius_l) {
       Real scale = excision_freeze_radius_l/fmax(rad, 1.0e-12);
@@ -1391,6 +1410,7 @@ void SetZ4cBackgroundKerrSchild(MeshBlockPack *pmbp, Real /*time*/) {
   const Real excision_freeze_radius_l = excision_freeze_radius;
   const bool excision_project_state_l = excision_project_state;
   const Real chi_psi_power_l = pz4c->opt.chi_psi_power;
+  const bool puncture = use_puncture_background;
   auto &bg = pz4c->bg;
 
   par_for("z4c_tov_ks_background_z4c", DevExeSpace(), 0, pmbp->nmb_thispack - 1,
@@ -1424,6 +1444,14 @@ void SetZ4cBackgroundKerrSchild(MeshBlockPack *pmbp, Real /*time*/) {
     Real y = CellCenterX(j - indcs.js, indcs.nx2, x2min, x2max) - bh_center_x2_l;
     Real z = CellCenterX(k - indcs.ks, indcs.nx3, x3min, x3max) - bh_center_x3_l;
     Real rad = sqrt(SQR(x) + SQR(y) + SQR(z));
+    if (puncture) {
+      if (!(rad > 0.0)) Kokkos::abort("Puncture must not coincide with a cell center");
+      const Real psi = 1.0 + 0.5/rad;
+      // All other fields were initialized above: gtilde=I, K=A=Gamma=0.
+      bg.chi(m,k,j,i) = pow(psi, chi_psi_power_l);
+      bg.alpha(m,k,j,i) = 1.0/SQR(psi);
+      return;
+    }
     Real r_ks = KerrSchildRadius(x, y, z, bh_spin_l);
     if (excision_project_state_l && r_ks < excision_freeze_radius_l) {
       Real scale = excision_freeze_radius_l/fmax(rad, 1.0e-12);
@@ -2702,6 +2730,17 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   }
 
   bh_spin = pin->GetOrAddReal("problem", "bh_spin", 0.0);
+  const std::string bh_background =
+      pin->GetOrAddString("problem", "bh_background", "kerr_schild");
+  use_puncture_background = bh_background == "schwarzschild_puncture";
+  if ((bh_background != "kerr_schild" && !use_puncture_background) ||
+      (use_puncture_background && (bh_mass != 1.0 || bh_spin != 0.0 ||
+                                  coord_minkowski))) {
+    std::cerr << "bh_background must be kerr_schild or schwarzschild_puncture; "
+              << "puncture requires bh_mass=1, bh_spin=0, coord/minkowski=false."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   Real coord_spin = pin->GetOrAddReal("coord", "a", 0.0);
   if (use_minkowski_background && fabs(bh_spin) > 1.0e-12) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
@@ -2735,6 +2774,12 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   star_boost_z = pin->GetOrAddReal("problem", "star_boost_z", 0.0);
   std::string star_orbit = pin->GetOrAddString("problem", "star_orbit", "none");
   star_orbit_circular_geodesic = (star_orbit == "circular_geodesic");
+  if (use_puncture_background && star_orbit_circular_geodesic) {
+    std::cerr << "Puncture coordinates require explicitly transformed stellar "
+              << "position and velocity; the Kerr-Schild orbit helper is unavailable."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   if (!(star_orbit == "none" || star_orbit_circular_geodesic)) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "Unsupported <problem>/star_orbit = " << star_orbit
@@ -2762,6 +2807,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   }
   bh_horizon_radius = use_minkowski_background ?
       0.0 : 1.0 + sqrt(fmax(0.0, 1.0 - SQR(bh_spin)));
+  if (use_puncture_background) bh_horizon_radius = 0.5;
   force_minkowski_metric =
       pin->GetOrAddBoolean("problem", "force_minkowski_metric", false);
   if (force_minkowski_metric && !use_minkowski_background) {
@@ -2788,7 +2834,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   Real default_ramp = 0.0;
   Real dx_bh_est = 0.0;
   Real r_allin = 0.0;
-  if (!use_minkowski_background) {
+  if (!use_minkowski_background && !use_puncture_background) {
     r_allin = AllIngoingExcisionRadius(bh_mass, bh_spin, pmbp->pz4c->opt);
     if (!std::isfinite(r_allin) &&
         (!pin->DoesParameterExist("problem", "excision_freeze_radius") ||
@@ -2814,6 +2860,26 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       pin->GetOrAddReal("problem", "excision_freeze_radius", default_freeze);
   excision_ramp_radius =
       pin->GetOrAddReal("problem", "excision_ramp_radius", default_ramp);
+  if (use_puncture_background) {
+    // This control isolates an unmodified puncture. The KS core extension,
+    // fluid projection, and KS causal-placement estimate do not apply here.
+    if (excision_project_state || excision_damp_rate != 0.0 ||
+        excision_freeze_radius != 0.0 || excision_ramp_radius != 0.0 ||
+        !use_direct_z4c_background || pmbp->pcoord->coord_data.bh_excise) {
+      std::cerr << "Puncture control requires direct background, coord/excise=false, "
+                << "excision_project_state=false and zero excision rate/radii."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
+    // At zero spin these spherical diagnostic masks also work in isotropic r.
+    pmbp->pz4c->opt.history_excise_ks_radius = bh_horizon_radius;
+    pmbp->pz4c->opt.debug_balance_horizon = bh_horizon_radius;
+    if (global_variable::my_rank == 0) {
+      std::cout << "PUNCTURE_BACKGROUND isotropic wormhole, M=1, horizon_r=0.5, "
+                << "alpha=psi^-2. Fixed residual background; not trumpet relaxation."
+                << std::endl;
+    }
+  }
   outer_sponge_enabled =
       pin->GetOrAddBoolean("problem", "outer_sponge_enabled", true);
   const std::string outer_sponge_geometry =
@@ -3013,7 +3079,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       excision_ramp_radius > bh_horizon_radius) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "z4c_tov_ks requires 0 <= excision_freeze_radius <= "
-              << "excision_ramp_radius <= Kerr-Schild horizon radius." << std::endl;
+              << "excision_ramp_radius <= background coordinate horizon radius."
+              << std::endl;
     exit(EXIT_FAILURE);
   }
   // The requested AMR level can be inactive (uniform/SMR controls), or not
@@ -3040,7 +3107,14 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
                   MPI_COMM_WORLD);
 #endif
   }
-  if (!use_minkowski_background && global_variable::my_rank == 0) {
+  if (use_puncture_background && global_variable::my_rank == 0) {
+    std::cout << "PUNCTURE_RESOLUTION horizon_r=" << bh_horizon_radius
+              << " dx_current=" << dx_bh_current
+              << " diameter_cells=" << 2.0*bh_horizon_radius/dx_bh_current
+              << " interior_layer=none" << std::endl;
+  }
+  if (!use_minkowski_background && !use_puncture_background &&
+      global_variable::my_rank == 0) {
     const Real buffer = bh_horizon_radius - excision_ramp_radius;
     std::cout << "EXCISION_SETUP freeze=" << excision_freeze_radius
               << " ramp=" << excision_ramp_radius
