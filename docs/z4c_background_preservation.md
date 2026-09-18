@@ -528,3 +528,74 @@ K residual, explicitly reconstructed as Khat+2Theta, reaches 6.58314e-7 at
 r=0.649519M. It was stopped manually at 68.8M; its 24 short MPI cases pass,
 but its long perturbation gate does not. This experimental sponge remains
 archived outside production source. Global kappa1/kappa2 remain 0.1/0.
+
+### Physical-geometry projection control (rejected as a stability fix)
+
+The candidate has now been tested in a guarded single-block vacuum prototype.
+For q=det(g)^(-1/3) and T=tr(g^-1 A), it used g'=qg,
+chi'=q chi (chi_psi_power=-4), A'=q(A-gT/3), and Khat'=Khat+T.
+Theta was unchanged. With contracted discrete metric connections C before and
+C' after projection, it updated Gamma by
+(C'-C)+((1-q)/q)(Gamma-C), preserving covariant Z_i. Metric stencils read
+immutable inputs in separate kernels before/after the pointwise map. Only
+Gamma physical ghosts were refreshed through independent residual scratch.
+The exact canonical-background branch was retained, without a tolerance.
+
+This was explicitly limited to one uniform vacuum block with outflow BCs;
+it is not an MPI/SMR implementation and has been removed from production
+source after the failed stability comparison. In particular, preserving Z
+can change Gamma inside the frozen core when neighboring metrics are
+projected. That ordering would require further excision analysis before any
+production use. No matter test used this prototype.
+
+Four short runs (zero/pulse, one/four OpenMP threads) passed. Equilibrium
+state/RHS/geometry audits stayed exactly zero and snapshots stayed bitwise
+equal to the background. Thread-count comparisons of all audit CSVs and
+snapshot bytes were identical. Nonzero response was retained; determinant
+and A-trace errors were below 2.7e-15.
+
+The matched long comparison used sixth-order derivatives, dx=0.25M,
+32^3 active cells in one block, domain [-4,4]^3 M, RK3 dt=0.075M,
+the 1e-8 dipole Theta pulse, freeze/ramp=0.5/1M, rate=5, f=1,
+kappa1/kappa2=0.1/0, and the same characteristic outer boundary.
+Both runs reached the 60M target with finite state and valid metrics.
+Neither is a stability pass:
+
+| Projection | max(abs(Theta)) at 60M | log-growth, 30–60M |
+|---|---:|---:|
+| Standard | 1.20514255e-7 | 0.13253461/M |
+| Physical-geometry candidate | 1.13865714e-7 | 0.13232546/M |
+
+Both Theta maxima are at (-0.625,0.125,-0.125)M, r=0.649519M,
+rank/block 0, relative level 0, cycle 800. These are late-state maxima,
+not locations of the original exact-background injection. The spatial mode
+and growth rate are almost unchanged. The earlier eight-block MPI standard
+control gives the same amplitude to the precision of the recorded histories.
+
+One-step checkpoint audits at 60M confirm the candidate actually preserved
+its intended quantities. Maximum physical-metric, physical-Kij, and covariant-Z
+changes were respectively 8.88e-16, 2.66e-15, and 1.21e-14, versus
+4.22e-9, 1.60e-8, and 5.33e-9 under standard projection. Thus removing these
+projection changes is insufficient to cure the growing mode. This is not a
+claim that standard algebraic projection is generally an implementation error.
+
+At the standard control's Theta maximum, cycle 800 stage 1, signed volume
+terms are: advection +1.63022e-7, curvature +3.97560e-7, and Z4c damping
+-1.19339e-8. The recorded RHS after KO is +5.20973e-7. Evaluating the
+configured sponge at that coordinate gives sigma=4.190951/M and a source
+approximately -5.05068e-7, leaving +1.59047e-8. These last two values are
+inferred from the analytic source and rounded console values, not separate
+raw RHS snapshots. The sponge damps Theta at this point; coupled volume
+terms overcome it. This local balance does not identify the full unstable
+operator or its first injection. A signed spatial growth budget is the next
+diagnostic, rather than another production parameter change.
+
+Artifacts are retained locally in `review/vacuum-preservation-20260918`:
+`experimental-physical-projection/tracked.patch`,
+`projection-trial-short-results.json`, `projection-long-results.json`,
+`projection-t60-comparison.json`, `projection-theta-budget-t60.json`, and
+`projection-control.png/pdf`. The pinned experimental executable SHA-256 is
+`1d5989bf08abc7de8a5563d267b7653f835e4020c29c301771ba5eb0a0db0284`.
+The prototype was based on commit 9b817be1. No Aurora job was submitted for
+this rejected candidate; atmosphere/star evolution remains behind the
+perturbed-vacuum stability gate.
