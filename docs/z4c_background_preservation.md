@@ -752,3 +752,30 @@ changed on the basis of this diagnostic.
 Artifacts: `gpu-results/8836796/{balance,invalid,snapshot}-results.json`,
 `audit-fd-principal.py/json`, and `check-fd-symbol.cpp/json`, under the local
 review directory cited above.
+
+### Rejected outward core/layer control
+
+A separate CPU vacuum control moves only the prescribed freeze/ramp radii
+from 1/1.5M to 1.5/1.9M at the preceding coarse dx=0.25M, retaining lapse
+scale 0.1, shift coefficient 0.05, rate 5 and kappa1/kappa2=0.1/0. Both edges
+remain inside the 2M horizon and the zero-background all-ingoing bound. The
+analytic-background regularization also follows the freeze radius in this
+implementation, so this is not an isolated damping change.
+
+Four-rank three-step equilibrium remains exact: 119700 state/RHS and 4536
+geometry audit rows are strictly zero. The eight-rank perturbed run nevertheless
+grows and is stopped manually at 50.25M after validating the complete finite
+120-block checkpoint at 50.025M, cycle 667. This is neither a walltime stop nor
+completion of its 100M target. At the checkpoint, max|Theta|=9.27361e-7 at
+(1.625,-0.625,-0.625)M, r=1.84983M, rank 1, block 27, relative level 1, after
+the completed RK3 step. Its exterior maximum is 6.16649e-7 at r=2.01168M.
+The 30–50M fitted growth rate is +0.187285/M, compared with +0.226226/M for
+the 1/1.5M control. The lower global maximum does not establish stability;
+the exterior perturbation is actually larger.
+
+The initial exterior Hamiltonian maximum is already 0.0178169 at r=2.04252M:
+sixth-order stencils on this coarse grid reach into the clamped background.
+Thus zero residual preservation must not be conflated with small raw physical
+constraints. This control is rejected, with no production parameter change.
+`causal-outer-core-results.json` and `causal-outer-core-comparison.png/pdf`
+retain the comparison and spatial profiles in the local review directory.
