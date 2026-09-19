@@ -32,6 +32,35 @@ def history(path):
     return dict(zip(keys, data.T))
 
 
+def recovery_events(log):
+    """Keep recovery failures separate from active-cell history validity.
+
+    Legacy messages have no event timestamp/rank. Neighboring progress records
+    only bracket their place in a merged log, not a synchronized global time.
+    """
+    errors = list(re.finditer(r"An error occurred during the primitive solve: ([^\n]+)", log))
+    if not errors:
+        return {"primitive_recovery_error_count": 0, "first_recovery_error": None}
+    first = errors[0]
+    end = errors[1].start() if len(errors) > 1 else min(len(log), first.end()+2500)
+    block = log[first.start():end]
+    det = re.search(r"detg\s*=\s*([^\s]+)", block)
+    loc = re.search(r"Location: \([^\n]+\)\s*\n\s*\(([^)]+)\)", block)
+    before = re.findall(r"(?:^|\s)time=([\deE+.\-]+)", log[:first.start()], re.M)
+    after = re.search(r"(?:^|\s)time=([\deE+.\-]+)", log[end:], re.M)
+    return {
+        "primitive_recovery_error_count": len(errors),
+        "first_recovery_error": {
+            "kind": first.group(1).strip(),
+            "coordinates_M": [float(x) for x in loc.group(1).split(",")] if loc else None,
+            "detg": float(det.group(1)) if det else None,
+            "preceding_log_time_M": float(before[-1]) if before else None,
+            "following_log_time_M": float(after.group(1)) if after else None,
+            "time_note": "Merged-log brackets only; not an exact event time or globally first event.",
+        },
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", action="append", required=True, help="label=directory")
@@ -64,6 +93,8 @@ def main():
             "final_masked_Theta_L2": float(theta[-1]),
             "growth_windows": [],
         }
+        row.update(recovery_events(log))
+        row["metric_input_diagnostic_events"] = re.findall(r"C2P_INVALID_ADM_INPUT[^\n]*", log)
         for lo, hi in [(50, 100), (100, 200), (200, 300), (300, 500), (500, 750), (750, 1000)]:
             mask = (h["time"] >= lo) & (h["time"] <= hi) & (theta > 0) & np.isfinite(theta)
             if mask.sum() < 15:
@@ -76,8 +107,12 @@ def main():
                 "R2": float(1-np.sum((y-np.polyval(fit, t))**2)/variance) if variance else None,
             })
         results[label] = row
-        axes[0].semilogy(u["time"], np.where(u["Theta-max"] > 0, u["Theta-max"], np.nan), label=label)
-        axes[1].semilogy(h["time"], np.where(theta > 0, theta, np.nan), label=label)
+        plot_u = u["time"] <= args.max_time if args.max_time is not None else np.ones_like(u["time"], dtype=bool)
+        plot_h = h["time"] <= args.max_time if args.max_time is not None else np.ones_like(h["time"], dtype=bool)
+        axes[0].semilogy(u["time"][plot_u], np.where(u["Theta-max"][plot_u] > 0,
+                        u["Theta-max"][plot_u], np.nan), label=label)
+        axes[1].semilogy(h["time"][plot_h], np.where(theta[plot_h] > 0,
+                        theta[plot_h], np.nan), label=label)
     axes[0].set_ylabel(r"Global $\max |\Theta|$")
     axes[1].set_ylabel(r"Masked proper-volume $\|\Theta\|_2$")
     for ax in axes:

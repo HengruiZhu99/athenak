@@ -1,0 +1,105 @@
+{
+  "executable": "/Users/hz0693/research/TDE/athenak-review/review/stability-isolation-20260919/athena-c2p-metric-diagnostic",
+  "sha256": "afa84b1c2dde149a3e17a510d879bce99bc2476952e8f711d2f0243ac0cce170",
+  "OMP_NUM_THREADS": 2,
+  "cases": {
+    "kappa-low/kappa0": {
+      "input": "input.athinput",
+      "command_line_overrides": {
+        "z4c/damp_kappa1": 0
+      },
+      "wall_clock_cap": "00:12:00",
+      "application_exit": 1,
+      "first_metric_input_event": "C2P_INVALID_ADM_INPUT first_event_per_rank=1 operation=stage_c2p cycle_start_time=479.99999999995009 dt=0.074999999999999997 cycle=6400 stage=1 rank=0 gid=0 relative_level=0 block=0 i=0 j=23 k=23 x=-2.875 y=2.875 z=2.875 ghost_depths=4,4,4 input_range=0:23,0:23,0:23 local_bad_cells=1 minor1=0.58525704255102662 minor2=0.24642602784159037 detg=-0.0026264320557451626 alpha=1.1924539716177014 psi4=0.71767180336770442 adm=0.58525704255102662,-0.46072840895642003,-0.45915188209821806,0.78375254172377151,-0.065787678946934297,0.78308146404337242,0.54424566607709657,-0.44009762875454045,-0.44179600939807429,-0.0081540997494878656,-0.26548108751532629,-0.0040159400784339138,0.71767180336770442,1.1924539716177014,-0.27452924754769215,0.007491660826934976,0.0091317381066044478",
+      "stop_tail": [
+        "Z4C_EXT_HMAX time=5.570250e+02 H=7.825189e-01 x=1.875000e+00 y=-1.250000e-01 z=1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_EXT_HMAX time=5.580000e+02 H=8.296808e-01 x=1.875000e+00 y=-1.250000e-01 z=1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_EXT_HMAX time=5.590500e+02 H=8.761347e-01 x=1.875000e+00 y=-1.250000e-01 z=1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_EXT_HMAX time=5.600250e+02 H=9.152080e-01 x=1.875000e+00 y=-1.250000e-01 z=1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_EXT_HMAX time=5.610000e+02 H=9.510104e-01 x=1.875000e+00 y=-1.250000e-01 z=1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_EXT_HMAX time=5.620500e+02 H=1.047721e+00 x=-1.875000e+00 y=-1.250000e-01 z=1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_EXT_HMAX time=5.630250e+02 H=1.592647e+00 x=-1.875000e+00 y=1.250000e-01 z=-1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_INVALID_STATE time=563.99999999997681 cycle=7520 rank=0 gid=0 relative_level=0 x=-1.625 y=-1.875 z=-1.875 local_bad_cells=2698; nonfinite Z4c/ADM state or invalid positive-definite spatial metric."
+      ]
+    },
+    "kappa-low/kappa002": {
+      "input": "input.athinput",
+      "command_line_overrides": {
+        "z4c/damp_kappa1": 0.02
+      },
+      "wall_clock_cap": "00:12:00",
+      "application_exit": 1,
+      "first_metric_input_event": "C2P_INVALID_ADM_INPUT first_event_per_rank=1 operation=stage_c2p cycle_start_time=543.3749999999643 dt=0.074999999999999997 cycle=7245 stage=1 rank=0 gid=0 relative_level=0 block=0 i=0 j=0 k=23 x=-2.875 y=-2.875 z=2.875 ghost_depths=4,4,4 input_range=0:23,0:23,0:23 local_bad_cells=1 minor1=1.936630027991181 minor2=1.6606506918498087 detg=-0.011566054787204764 alpha=0.84620100936360887 psi4=1.3052142590332019 adm=1.936630027991181,0.50946187608736282,-0.50976336290350466,0.99151725795971613,0.72464603070368927,0.98721792249187468,0.85679721685080179,0.23289891022575177,-0.23134761424725475,0.081322416330574687,0.62946003253118799,0.076330266427159066,1.3052142590332019,0.84620100936360887,-0.10653706446302656,-0.045491402241375593,0.044944591004372675",
+      "stop_tail": [
+        "Z4C_EXT_HMAX time=6.310500e+02 H=1.588481e+00 x=-1.875000e+00 y=-3.750000e-01 z=1.250000e-01 r_bh=1.916214e+00",
+        "Z4C_EXT_HMAX time=6.320250e+02 H=1.659923e+00 x=-1.875000e+00 y=-3.750000e-01 z=1.250000e-01 r_bh=1.916214e+00",
+        "Z4C_EXT_HMAX time=6.330000e+02 H=1.724496e+00 x=-1.875000e+00 y=-3.750000e-01 z=1.250000e-01 r_bh=1.916214e+00",
+        "Z4C_EXT_HMAX time=6.340500e+02 H=1.766580e+00 x=-1.875000e+00 y=-3.750000e-01 z=1.250000e-01 r_bh=1.916214e+00",
+        "Z4C_EXT_HMAX time=6.350250e+02 H=3.192656e+00 x=-1.875000e+00 y=-1.250000e-01 z=1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_EXT_HMAX time=6.360000e+02 H=1.921194e+00 x=-1.875000e+00 y=-3.750000e-01 z=1.250000e-01 r_bh=1.916214e+00",
+        "Z4C_EXT_HMAX time=6.370500e+02 H=3.686720e+00 x=-1.875000e+00 y=-1.250000e-01 z=1.250000e-01 r_bh=1.883315e+00",
+        "Z4C_INVALID_STATE time=638.02500000002169 cycle=8507 rank=0 gid=0 relative_level=0 x=-1.875 y=-1.875 z=-1.875 local_bad_cells=4096; nonfinite Z4c/ADM state or invalid positive-definite spatial metric."
+      ]
+    },
+    "timestep-half": {
+      "input": "input.athinput",
+      "command_line_overrides": {
+        "time/cfl_number": 0.15,
+        "time/tlim": 300
+      },
+      "wall_clock_cap": "00:12:00",
+      "application_exit": 0,
+      "first_metric_input_event": null,
+      "stop_tail": [
+        "Terminating on time limit",
+        "time=3.000000e+02 cycle=8001",
+        "tlim=3.000000e+02 nlim=-1",
+        "",
+        "MeshBlock-cycles = 8001",
+        "cpu time used  = 5.762678e+02",
+        "zone-cycles/cpu_second = 5.686956e+04",
+        "particle-updates/cpu_second = 0.000000e+00"
+      ]
+    },
+    "dissipation/ko08": {
+      "input": "input.athinput",
+      "command_line_overrides": {
+        "z4c/diss": 0.8,
+        "time/tlim": 300
+      },
+      "wall_clock_cap": "00:10:00",
+      "application_exit": 0,
+      "first_metric_input_event": null,
+      "stop_tail": [
+        "Terminating on time limit",
+        "time=3.000000e+02 cycle=4001",
+        "tlim=3.000000e+02 nlim=-1",
+        "",
+        "MeshBlock-cycles = 4001",
+        "cpu time used  = 3.264827e+02",
+        "zone-cycles/cpu_second = 5.019591e+04",
+        "particle-updates/cpu_second = 0.000000e+00"
+      ]
+    },
+    "dissipation/ko10": {
+      "input": "input.athinput",
+      "command_line_overrides": {
+        "z4c/diss": 1,
+        "time/tlim": 300
+      },
+      "wall_clock_cap": "00:10:00",
+      "application_exit": 0,
+      "first_metric_input_event": null,
+      "stop_tail": [
+        "Terminating on time limit",
+        "time=3.000000e+02 cycle=4001",
+        "tlim=3.000000e+02 nlim=-1",
+        "",
+        "MeshBlock-cycles = 4001",
+        "cpu time used  = 3.268794e+02",
+        "zone-cycles/cpu_second = 5.013499e+04",
+        "particle-updates/cpu_second = 0.000000e+00"
+      ]
+    }
+  }
+}

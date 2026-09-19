@@ -1,0 +1,363 @@
+{
+  "recorded_utc": "2026-09-19T21:43:07.857860+00:00",
+  "source_commit": "ed34472a",
+  "executable": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/executables/athena_residual_ed34472a",
+  "executable_sha256": "2b69044ae31eee138b82cdbabb7cf177d57456640c3437c3b271c0d2410365a8",
+  "job_id": "8840315",
+  "queue": "debug",
+  "project": "MHDTidal",
+  "nodes": 1,
+  "ranks": 8,
+  "PBS_walltime": "00:15:00",
+  "PBS_exit_status": 0,
+  "PBS_used_walltime": "00:04:32",
+  "target_M": 20,
+  "expected_case_count": 8,
+  "passed_case_count": 7,
+  "complete_suite_pass": false,
+  "incomplete_case": "hamiltonian_pulse",
+  "incomplete_reason": "Initialization took about 93 seconds; the 75-second application cap caused a clean walltime stop at cycle 0/time 0. No evolution or stage snapshots were produced; this case is excluded from the pass count.",
+  "cases": {
+    "legacy_zero": {
+      "available": true,
+      "exit_code": 0,
+      "final_history_time_M": 20.0,
+      "walltime_stop": false,
+      "initial_volume_Theta_rhs_max": 0.0,
+      "final_Theta_max": 0.0,
+      "max_bad_metric": 0.0,
+      "finite_histories": true,
+      "finite_all_active_snapshots": true,
+      "ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cycles": [
+        0,
+        266
+      ],
+      "all_saved_states_bitwise_zero": true,
+      "all_saved_volume_rhs_numerically_zero": true,
+      "CPU4rank_initial_stage_comparison": {
+        "volume_rhs": {
+          "max_absolute_difference": 0.0,
+          "CPU_max_amplitude": 0.0,
+          "difference_over_CPU_peak": 0.0,
+          "all_arrays_bitwise_equal": true,
+          "arrays_compared": 24
+        },
+        "post_recast": {
+          "max_absolute_difference": 0.0,
+          "CPU_max_amplitude": 0.0,
+          "difference_over_CPU_peak": 0.0,
+          "all_arrays_bitwise_equal": true,
+          "arrays_compared": 24
+        }
+      }
+    },
+    "legacy_pulse": {
+      "available": true,
+      "exit_code": 0,
+      "final_history_time_M": 20.0,
+      "walltime_stop": false,
+      "initial_volume_Theta_rhs_max": 3.5734652650137866e-11,
+      "final_Theta_max": 6.838960762306155e-12,
+      "max_bad_metric": 0.0,
+      "finite_histories": true,
+      "finite_all_active_snapshots": true,
+      "ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cycles": [
+        0,
+        266
+      ],
+      "CPU4rank_initial_stage_comparison": {
+        "volume_rhs": {
+          "max_absolute_difference": 4.6658233917099e-15,
+          "CPU_max_amplitude": 8.620863530678369e-08,
+          "difference_over_CPU_peak": 5.4122459717707074e-08,
+          "all_arrays_bitwise_equal": false,
+          "arrays_compared": 24
+        },
+        "post_recast": {
+          "max_absolute_difference": 2.220446049250313e-16,
+          "CPU_max_amplitude": 7.947266067453995e-09,
+          "difference_over_CPU_peak": 2.793974720871099e-08,
+          "all_arrays_bitwise_equal": false,
+          "arrays_compared": 24
+        }
+      }
+    },
+    "hamiltonian_zero": {
+      "available": true,
+      "exit_code": 0,
+      "final_history_time_M": 20.0,
+      "walltime_stop": false,
+      "initial_volume_Theta_rhs_max": 0.0,
+      "final_Theta_max": 0.0,
+      "max_bad_metric": 0.0,
+      "finite_histories": true,
+      "finite_all_active_snapshots": true,
+      "ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cycles": [
+        0,
+        266
+      ],
+      "all_saved_states_bitwise_zero": true,
+      "all_saved_volume_rhs_numerically_zero": true,
+      "CPU4rank_initial_stage_comparison": {
+        "volume_rhs": {
+          "max_absolute_difference": 0.0,
+          "CPU_max_amplitude": 0.0,
+          "difference_over_CPU_peak": 0.0,
+          "all_arrays_bitwise_equal": true,
+          "arrays_compared": 24
+        },
+        "post_recast": {
+          "max_absolute_difference": 0.0,
+          "CPU_max_amplitude": 0.0,
+          "difference_over_CPU_peak": 0.0,
+          "all_arrays_bitwise_equal": true,
+          "arrays_compared": 24
+        }
+      }
+    },
+    "hamiltonian_pulse": {
+      "available": false,
+      "exit_code": 0,
+      "final_history_time_M": 0.0,
+      "walltime_stop": true,
+      "reason": "No active stage arrays; application did not evolve before its walltime cap."
+    },
+    "source_zero": {
+      "available": true,
+      "exit_code": 0,
+      "final_history_time_M": 20.0,
+      "walltime_stop": false,
+      "initial_volume_Theta_rhs_max": 0.0,
+      "final_Theta_max": 0.0,
+      "max_bad_metric": 0.0,
+      "finite_histories": true,
+      "finite_all_active_snapshots": true,
+      "ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cycles": [
+        0,
+        266
+      ],
+      "all_saved_states_bitwise_zero": true,
+      "all_saved_volume_rhs_numerically_zero": true,
+      "CPU4rank_initial_stage_comparison": {
+        "volume_rhs": {
+          "max_absolute_difference": 0.0,
+          "CPU_max_amplitude": 0.0,
+          "difference_over_CPU_peak": 0.0,
+          "all_arrays_bitwise_equal": true,
+          "arrays_compared": 24
+        },
+        "post_recast": {
+          "max_absolute_difference": 0.0,
+          "CPU_max_amplitude": 0.0,
+          "difference_over_CPU_peak": 0.0,
+          "all_arrays_bitwise_equal": true,
+          "arrays_compared": 24
+        }
+      }
+    },
+    "source_pulse": {
+      "available": true,
+      "exit_code": 0,
+      "final_history_time_M": 20.0,
+      "walltime_stop": false,
+      "initial_volume_Theta_rhs_max": 3.5734652650137866e-11,
+      "final_Theta_max": 6.837956182487644e-12,
+      "max_bad_metric": 0.0,
+      "finite_histories": true,
+      "finite_all_active_snapshots": true,
+      "ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cycles": [
+        0,
+        266
+      ],
+      "CPU4rank_initial_stage_comparison": {
+        "volume_rhs": {
+          "max_absolute_difference": 4.665823391711516e-15,
+          "CPU_max_amplitude": 8.620863530678369e-08,
+          "difference_over_CPU_peak": 5.4122459717725815e-08,
+          "all_arrays_bitwise_equal": false,
+          "arrays_compared": 24
+        },
+        "post_recast": {
+          "max_absolute_difference": 2.220446049250313e-16,
+          "CPU_max_amplitude": 7.947266067453995e-09,
+          "difference_over_CPU_peak": 2.793974720871099e-08,
+          "all_arrays_bitwise_equal": false,
+          "arrays_compared": 24
+        }
+      },
+      "post_boundary_source": {
+        "additive_source_max_error": 1.6543612251060553e-24,
+        "RHS_max_amplitude": 8.620863531372258e-08,
+        "source_max_amplitude": 1.4770389576418177e-09,
+        "pre_user_rhs_bitwise_equal_to_post_boundary_rhs": true
+      }
+    },
+    "combined_zero": {
+      "available": true,
+      "exit_code": 0,
+      "final_history_time_M": 20.0,
+      "walltime_stop": false,
+      "initial_volume_Theta_rhs_max": 0.0,
+      "final_Theta_max": 0.0,
+      "max_bad_metric": 0.0,
+      "finite_histories": true,
+      "finite_all_active_snapshots": true,
+      "ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cycles": [
+        0,
+        266
+      ],
+      "all_saved_states_bitwise_zero": true,
+      "all_saved_volume_rhs_numerically_zero": true,
+      "CPU4rank_initial_stage_comparison": {
+        "volume_rhs": {
+          "max_absolute_difference": 0.0,
+          "CPU_max_amplitude": 0.0,
+          "difference_over_CPU_peak": 0.0,
+          "all_arrays_bitwise_equal": true,
+          "arrays_compared": 24
+        },
+        "post_recast": {
+          "max_absolute_difference": 0.0,
+          "CPU_max_amplitude": 0.0,
+          "difference_over_CPU_peak": 0.0,
+          "all_arrays_bitwise_equal": true,
+          "arrays_compared": 24
+        }
+      },
+      "CPU4rank_20M_Theta_difference": 0.0,
+      "CPU4rank_20M_Theta_value": 0.0
+    },
+    "combined_pulse": {
+      "available": true,
+      "exit_code": 0,
+      "final_history_time_M": 20.0,
+      "walltime_stop": false,
+      "initial_volume_Theta_rhs_max": 0.0,
+      "final_Theta_max": 6.832134446724048e-12,
+      "max_bad_metric": 0.0,
+      "finite_histories": true,
+      "finite_all_active_snapshots": true,
+      "ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cycles": [
+        0,
+        266
+      ],
+      "CPU4rank_initial_stage_comparison": {
+        "volume_rhs": {
+          "max_absolute_difference": 4.6658230444006716e-15,
+          "CPU_max_amplitude": 8.620863530678369e-08,
+          "difference_over_CPU_peak": 5.4122455689001285e-08,
+          "all_arrays_bitwise_equal": false,
+          "arrays_compared": 24
+        },
+        "post_recast": {
+          "max_absolute_difference": 2.220446049250313e-16,
+          "CPU_max_amplitude": 7.947266067453995e-09,
+          "difference_over_CPU_peak": 2.793974720871099e-08,
+          "all_arrays_bitwise_equal": false,
+          "arrays_compared": 24
+        }
+      },
+      "post_boundary_source": {
+        "additive_source_max_error": 3.308722450212111e-24,
+        "RHS_max_amplitude": 8.620863531372258e-08,
+        "source_max_amplitude": 1.4770389576418177e-09,
+        "pre_user_rhs_bitwise_equal_to_post_boundary_rhs": true
+      },
+      "CPU4rank_20M_Theta_difference": 1.3586700749334616e-15,
+      "CPU4rank_20M_Theta_value": 6.833493116798982e-12
+    }
+  },
+  "failed_checks": [
+    {
+      "passed": false,
+      "description": "hamiltonian_pulse: required stage/evolution data missing"
+    }
+  ],
+  "original_full_results": "review/stability-isolation-20260919/gpu-operators/results.json",
+  "original_results_sha256": "9c4deec3e895067d02f4adc2eb7b1268be94a22fad4785ebeb3e34f2992b561a",
+  "dedicated_retry": {
+    "job_id": "8840368",
+    "status": "submitted_pending_validation",
+    "only_case": "hamiltonian_pulse",
+    "records": "review/stability-isolation-20260919/gpu-operators/retry-hamiltonian-pulse",
+    "input_bitwise_identical": true,
+    "PBS_walltime": "00:05:00",
+    "application_cap": "00:04:30"
+  },
+  "limitations": [
+    "20M operator and MPI/GPU validation only; no long-time stability claim.",
+    "Toy sponge starts at0.5M and reaches full damping at1M; it overlaps the perturbation and is not a production recommendation.",
+    "CPU/GPU comparisons report absolute errors and peak-relative errors; only exactly zero states demand bitwise equality."
+  ],
+  "production_untouched": true
+}
