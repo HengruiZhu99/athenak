@@ -112,6 +112,10 @@ class DynGRMHD {
   bool fixed_evolution;     // Disable mhd evolution
   bool zero_tmunu_feedback;  // Diagnostic: disable matter feedback into Z4c
   bool refresh_tmunu_when_fixed; // Diagnostic: refresh fixed-fluid Tmunu each stage
+  bool debug_metric_before_c2p;  // Read-only, first invalid ADM input per rank
+  bool debug_metric_before_c2p_reported = false;
+  void CheckMetricBeforeC2P(const char *operation, int stage,
+                           int il, int iu, int jl, int ju, int kl, int ku);
   bool dyngr_x3_debug;      // Diagnostic: dump x3 GRMHD reconstruction/ADM inputs
   Real dyngr_x3_debug_x;
   Real dyngr_x3_debug_y_abs;

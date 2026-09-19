@@ -1,0 +1,42 @@
+{
+  "checks": {
+    "one_event_per_rank": true,
+    "before_first_recovery_error": true,
+    "stage_is_one": true,
+    "cycle_is_7562": true,
+    "fourth_corner_ghost": true,
+    "full_c2p_range": true,
+    "negative_metric_determinant": true,
+    "one_initial_bad_cell": true,
+    "reached_test_time_limit": true
+  },
+  "all_passed": true,
+  "event": {
+    "first_event_per_rank": "1",
+    "operation": "stage_c2p",
+    "cycle_start_time": "567.14999999997872",
+    "dt": "0.074999999999999997",
+    "cycle": "7562",
+    "stage": "1",
+    "rank": "0",
+    "gid": "0",
+    "relative_level": "0",
+    "block": "0",
+    "i": "0",
+    "j": "23",
+    "k": "23",
+    "x": "-2.875",
+    "y": "2.875",
+    "z": "2.875",
+    "ghost_depths": "4,4,4",
+    "input_range": "0:23,0:23,0:23",
+    "local_bad_cells": "1",
+    "minor1": "2.0562939061361454",
+    "minor2": "3.1256364517544228",
+    "detg": "-0.014414218415638605",
+    "alpha": "0.82959606691896526",
+    "psi4": "1.4563638625583677",
+    "adm": "2.0562939061361454,-0.54101863225366087,-0.34427530778295434,1.6623779324538444,-0.86278888515659724,0.65098412408578865,0.6750175017310055,-0.30086574462867344,-0.13355077898834042,0.4503477016679816,-0.51427556615482795,-0.077325189161877347,1.4563638625583677,0.82959606691896526,-0.088533492740297995,0.079317349723548758,0.071829533198945028"
+  },
+  "note": "cycle_start_time is the simulation step clock; no RK substage physical time is inferred. The reported point is the lowest flattened invalid index in this rank/input range, not a global origin assertion."
+}

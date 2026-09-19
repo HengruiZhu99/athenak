@@ -53,3 +53,19 @@ Current detailed records are under review/stability-isolation-20260919 and revie
 `summarize.py --run 'label=/path/to/run' --output /path/to/report` accepts repeated runs and produces a white-background comparison and JSON growth fits. It reports actual final times and stopping reasons. A low-quality straight exponential fit to an oscillating norm is not evidence of saturation; inspect successive peak amplitudes as well.
 
 The `evidence/` directory contains operator/MPI regression summaries and comparison figures. The operator figure's three-cell small-box sponge remains unstable with either ordering. A wider, resolved layer is a separate experiment, not a validated replacement.
+
+## First invalid metric before fluid recovery
+
+The optional `<mhd>/debug_metric_before_c2p=true` diagnostic scans the exact active/ghost range about to enter the main primitive-recovery call, and the slabs used by the legacy boundary-recovery path. It checks all ADM components, positive lapse/conformal factor, and positive definiteness of the spatial metric. It does not change fields or error handling. The disabled path launches no kernel. Other direct/FOFC EOS calls are not independently instrumented.
+
+The first event per rank records cycle-start time, cycle, RK stage, rank, global block, level, coordinates, ghost depths, scanned range, bad-cell count, and metric components. The reported cell is the first invalid flattened index in that call; the log does not claim a globally first event or invent an RK substage timestamp.
+
+A replay from the single-block baseline checkpoint at 500.025M records the first invalid input at cycle-start 567.15M, cycle 7562, stage 1, rank/block 0, at (-2.875,2.875,2.875)M. It is the fourth ghost in all three directions. Only one cell is invalid: all ADM components remain finite, but det(g)=-0.0144142. This precedes the recovery warning and the eventual active-cell failure around 675M. The fluid recovery's use of sqrt(det(g)) explains why its first visible symptom can be a fluid NaN even when the incoming metric is already invalid. It does not locate the much earlier growing-mode seed.
+
+The diagnostic OFF/ON controls have byte-identical histories and complete restart payloads, including ghosts, through 5M. Reproduce with:
+
+```
+python3 tst/regression/z4c_metric_input_diagnostic.py --exe /path/to/athena --output /tmp/metric-input-test
+```
+
+This logger was validated on OpenMP; MPI/GPU execution remains untested. `evidence/metric-input-event.json` and `metric-input-regression.json` preserve the observed event and equality checks.

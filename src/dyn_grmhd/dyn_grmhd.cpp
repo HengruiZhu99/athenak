@@ -13,6 +13,7 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -342,6 +343,8 @@ DynGRMHD::DynGRMHD(MeshBlockPack *pp, ParameterInput *pin) :
   zero_tmunu_feedback = pin->GetOrAddBoolean("mhd", "zero_tmunu_feedback", false);
   refresh_tmunu_when_fixed =
       pin->GetOrAddBoolean("mhd", "refresh_tmunu_when_fixed", false);
+  debug_metric_before_c2p =
+      pin->GetOrAddBoolean("mhd", "debug_metric_before_c2p", false);
   dyngr_x3_debug = pin->GetOrAddBoolean("mhd", "dyngr_x3_debug", false);
   dyngr_x3_debug_x = pin->GetOrAddReal("mhd", "dyngr_x3_debug_x", 20.03125);
   dyngr_x3_debug_y_abs = pin->GetOrAddReal("mhd", "dyngr_x3_debug_y_abs", 0.03125);
@@ -496,8 +499,93 @@ void DynGRMHDPS<EOSPolicy, ErrorPolicy>::ConvertInternalEnergyToPressure(int is,
 }
 
 //----------------------------------------------------------------------------------------
-//! \fn  TaskStatus DynGRMHD::ADMMatterSource_(Driver *pdrive, int stage) {
-//  \brief
+//! \brief Report the first invalid ADM input per rank before primitive recovery.
+void DynGRMHD::CheckMetricBeforeC2P(const char *operation, int stage,
+                                  int il, int iu, int jl, int ju, int kl, int ku) {
+  if (!debug_metric_before_c2p || debug_metric_before_c2p_reported) return;
+
+  // Scan exactly the next C2P input range, including its ghosts. This opt-in
+  // reduction completes preceding metric kernels; the disabled path launches
+  // nothing. No fields, error policies, or evolution decisions are changed.
+  auto &state = pmy_pack->padm->u_adm;
+  auto &metric = pmy_pack->padm->adm;
+  const int ni = iu-il+1, nj = ju-jl+1, nk = ku-kl+1;
+  const int nji = ni*nj, nkji = nji*nk;
+  const int count = pmy_pack->nmb_thispack*nkji;
+  int first, bad_count;
+  Kokkos::parallel_reduce("dyngr_metric_before_c2p",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, count),
+      KOKKOS_LAMBDA(const int idx, int &first_bad, int &nbad) {
+    const int m = idx/nkji;
+    const int k0 = (idx-m*nkji)/nji;
+    const int j0 = (idx-m*nkji-k0*nji)/ni;
+    const int i = idx-m*nkji-k0*nji-j0*ni+il;
+    const int j = j0+jl, k = k0+kl;
+    bool finite = true;
+    for (int n=0; n<adm::ADM::nadm; ++n) {
+      finite = finite && isfinite(state(m,n,k,j,i));
+    }
+    const Real gxx = metric.g_dd(m,0,0,k,j,i);
+    const Real gxy = metric.g_dd(m,0,1,k,j,i);
+    const Real gxz = metric.g_dd(m,0,2,k,j,i);
+    const Real gyy = metric.g_dd(m,1,1,k,j,i);
+    const Real gyz = metric.g_dd(m,1,2,k,j,i);
+    const Real gzz = metric.g_dd(m,2,2,k,j,i);
+    const Real minor2 = gxx*gyy-gxy*gxy;
+    const Real detg = adm::SpatialDet(gxx,gxy,gxz,gyy,gyz,gzz);
+    if (!(finite && isfinite(minor2) && isfinite(detg) &&
+          gxx>0.0 && minor2>0.0 && detg>0.0 &&
+          metric.alpha(m,k,j,i)>0.0 && metric.psi4(m,k,j,i)>0.0)) {
+      if (idx<first_bad) first_bad=idx;
+      ++nbad;
+    }
+  }, Kokkos::Min<int>(first), Kokkos::Sum<int>(bad_count));
+  if (bad_count==0) return;
+  debug_metric_before_c2p_reported = true;
+
+  const int m = first/nkji;
+  const int k0 = (first-m*nkji)/nji;
+  const int j0 = (first-m*nkji-k0*nji)/ni;
+  const int i = first-m*nkji-k0*nji-j0*ni+il;
+  const int j = j0+jl, k = k0+kl;
+  DvceArray1D<Real> point("dyngr-invalid-adm-point", adm::ADM::nadm);
+  Kokkos::parallel_for("dyngr_copy_invalid_adm_point",
+      Kokkos::RangePolicy<>(DevExeSpace(), 0, adm::ADM::nadm),
+      KOKKOS_LAMBDA(const int n) {point(n)=state(m,n,k,j,i);});
+  const auto h = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), point);
+  auto &pm = *pmy_pack->pmesh;
+  const auto &ix = pm.mb_indcs;
+  const auto &size = pmy_pack->pmb->mb_size.h_view(m);
+  const Real x = CellCenterX(i-ix.is,ix.nx1,size.x1min,size.x1max);
+  const Real y = CellCenterX(j-ix.js,ix.nx2,size.x2min,size.x2max);
+  const Real z = CellCenterX(k-ix.ks,ix.nx3,size.x3min,size.x3max);
+  const int gx = std::max(0,std::max(ix.is-i,i-ix.ie));
+  const int gy = std::max(0,std::max(ix.js-j,j-ix.je));
+  const int gz = std::max(0,std::max(ix.ks-k,k-ix.ke));
+  const Real minor2 = h(adm::ADM::I_ADM_GXX)*h(adm::ADM::I_ADM_GYY) -
+                     SQR(h(adm::ADM::I_ADM_GXY));
+  const Real detg = adm::SpatialDet(h(0),h(1),h(2),h(3),h(4),h(5));
+  std::ostringstream message;
+  message << std::setprecision(17)
+            << "C2P_INVALID_ADM_INPUT first_event_per_rank=1 operation=" << operation
+            << " cycle_start_time=" << pm.time << " dt=" << pm.dt
+            << " cycle=" << pm.ncycle << " stage=" << stage
+            << " rank=" << global_variable::my_rank
+            << " gid=" << pmy_pack->pmb->mb_gid.h_view(m)
+            << " relative_level="
+            << pmy_pack->pmb->mb_lev.h_view(m)-pm.root_level
+            << " block=" << m << " i=" << i << " j=" << j << " k=" << k
+            << " x=" << x << " y=" << y << " z=" << z
+            << " ghost_depths=" << gx << ',' << gy << ',' << gz
+            << " input_range=" << il << ':' << iu << ',' << jl << ':' << ju
+            << ',' << kl << ':' << ku << " local_bad_cells=" << bad_count
+            << " minor1=" << h(0) << " minor2=" << minor2 << " detg=" << detg
+            << " alpha=" << h(adm::ADM::I_ADM_ALPHA)
+            << " psi4=" << h(adm::ADM::I_ADM_PSI4) << " adm=";
+  for (int n=0; n<adm::ADM::nadm; ++n) message << (n ? "," : "") << h(n);
+  std::cout << message.str() << std::endl;
+}
+
 template<class EOSPolicy, class ErrorPolicy>
 TaskStatus DynGRMHDPS<EOSPolicy, ErrorPolicy>::ConToPrim(Driver *pdrive, int stage) {
   if (fixed_evolution) {
@@ -510,6 +598,7 @@ TaskStatus DynGRMHDPS<EOSPolicy, ErrorPolicy>::ConToPrim(Driver *pdrive, int sta
   int n1m1 = indcs.nx1 + 2*ng - 1;
   int n2m1 = (indcs.nx2 > 1)? (indcs.nx2 + 2*ng - 1) : 0;
   int n3m1 = (indcs.nx3 > 1)? (indcs.nx3 + 2*ng - 1) : 0;
+  CheckMetricBeforeC2P("stage_c2p",stage,0,n1m1,0,n2m1,0,n3m1);
   C2PDebugProbe(pmy_pack, "DynGRMHD_C2P_Before", pdrive, stage);
   eos.ConsToPrim(pmy_pack->pmhd->u0, pmy_pack->pmhd->b0, pmy_pack->pmhd->bcc0,
                  pmy_pack->pmhd->w0, temperature, 0, n1m1, 0, n2m1, 0, n3m1, false);
@@ -566,18 +655,24 @@ TaskStatus DynGRMHD::ApplyPhysicalBCs(Driver *pdrive, int stage) {
   int &is = indcs.is;  int &ie  = indcs.ie;
   int &js = indcs.js;  int &je  = indcs.je;
   int &ks = indcs.ks;  int &ke  = indcs.ke;
+  auto c2p_boundary = [&](int il, int iu, int jl, int ju, int kl, int ku) {
+    if (!fixed_evolution) {
+      CheckMetricBeforeC2P("boundary_c2p",stage,il,iu,jl,ju,kl,ku);
+    }
+    ConToPrimBC(il,iu,jl,ju,kl,ku);
+  };
   // X1-boundary
-  ConToPrimBC(is-ng, is+ng, 0, (n2-1), 0, (n3-1));
-  ConToPrimBC(ie-ng, ie+ng, 0, (n2-1), 0, (n3-1));
+  c2p_boundary(is-ng, is+ng, 0, (n2-1), 0, (n3-1));
+  c2p_boundary(ie-ng, ie+ng, 0, (n2-1), 0, (n3-1));
   // X2-boundary
   if (pm->multi_d) {
-    ConToPrimBC(0, (n1-1), js-ng, js+ng, 0, (n3-1));
-    ConToPrimBC(0, (n1-1), je-ng, je+ng, 0, (n3-1));
+    c2p_boundary(0, (n1-1), js-ng, js+ng, 0, (n3-1));
+    c2p_boundary(0, (n1-1), je-ng, je+ng, 0, (n3-1));
   }
   // X3-boundary
   if (pm->three_d) {
-    ConToPrimBC(0, (n1-1), 0, (n2-1), ks-ng, ks+ng);
-    ConToPrimBC(0, (n1-1), 0, (n2-1), ke-ng, ke+ng);
+    c2p_boundary(0, (n1-1), 0, (n2-1), ks-ng, ks+ng);
+    c2p_boundary(0, (n1-1), 0, (n2-1), ke-ng, ke+ng);
   }
 
   // Physical boundaries
