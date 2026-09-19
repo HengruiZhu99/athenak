@@ -251,12 +251,21 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   }
   opt.characteristic_bc_diagnostics =
       pin->GetOrAddBoolean("z4c", "characteristic_bc_diagnostics", false);
+  opt.user_rhs_after_boundary =
+      pin->GetOrAddBoolean("z4c", "user_rhs_after_boundary", false);
+  opt.residual_hamiltonian_balance =
+      pin->GetOrAddBoolean("z4c", "residual_hamiltonian_balance", false);
   opt.characteristic_bc_diagnostic_interval =
       pin->GetOrAddInteger("z4c", "characteristic_bc_diagnostic_interval", 100);
   opt.characteristic_bc_max_energy_density =
       pin->GetOrAddReal("z4c", "characteristic_bc_max_energy_density", 1.0e-12);
   use_analytic_background = pin->GetOrAddBoolean("z4c", "use_analytic_background",
                                                  false);
+  if (opt.residual_hamiltonian_balance && !use_analytic_background) {
+    std::cerr << "residual_hamiltonian_balance requires an analytic vacuum background."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   evolve_gauge_residual = pin->GetOrAddBoolean("z4c", "evolve_gauge_residual",
                                                use_analytic_background);
   evolve_lapse_residual = pin->GetOrAddBoolean("z4c", "evolve_lapse_residual",

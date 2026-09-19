@@ -660,7 +660,8 @@ void ComputeResidualTerms(const FullState &full, const BgState &bg,
       ? 4.0 * M_PI * af * (gf.S + tmunu.E(m,k,j,i)) : 0.0;
 
   terms[T_TH_ADV] = gf.LTheta - gb.LTheta;
-  terms[T_TH_HT] = 0.5 * (af * gf.Ht - ab * gb.Ht);
+  terms[T_TH_HT] = 0.5 * (opt.residual_hamiltonian_balance
+      ? af * (gf.Ht - gb.Ht) : af * gf.Ht - ab * gb.Ht);
   terms[T_TH_DAMP] = -(2.0 + opt.damp_kappa2) * kappa1_eff *
                      (af * full.vTheta(m,k,j,i) - ab * bg.vTheta(m,k,j,i));
   terms[T_TH_MAT] = include_matter
@@ -1173,9 +1174,17 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
               (geo_full.chi_guarded * alpha_full * geo_full.K -
                geo_bg.chi_guarded * alpha_bg * geo_bg.K);
 
+      // For a vacuum background, H_bg vanishes analytically, but its discrete
+      // value need not. A lapse perturbation must not source Theta solely from
+      // that fixed truncation defect. Keep the full lapse multiplying delta H;
+      // the physical matter source below is unchanged. This optional correction
+      // is not appropriate for a background with nonzero continuum H_bg.
+      const Real theta_hamiltonian = opt.residual_hamiltonian_balance
+          ? alpha_full * (geo_full.Ht - geo_bg.Ht)
+          : alpha_full * geo_full.Ht - alpha_bg * geo_bg.Ht;
       rhs.vTheta(m,k,j,i) =
           (geo_full.LTheta - geo_bg.LTheta) +
-          0.5 * (alpha_full * geo_full.Ht - alpha_bg * geo_bg.Ht) -
+          0.5 * theta_hamiltonian -
           (2.0 + opt.damp_kappa2) * kappa1_eff *
               (alpha_full * full.vTheta(m,k,j,i) -
                alpha_bg * bg.vTheta(m,k,j,i));

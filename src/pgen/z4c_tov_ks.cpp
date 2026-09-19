@@ -2913,6 +2913,12 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       }
     }
   }
+  if (pmbp->pz4c->opt.residual_hamiltonian_balance &&
+      (!use_trumpet_background || !use_direct_z4c_background)) {
+    std::cerr << "residual_hamiltonian_balance currently supports only the direct "
+              << "Schwarzschild trumpet vacuum background." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   outer_sponge_enabled =
       pin->GetOrAddBoolean("problem", "outer_sponge_enabled", true);
   const std::string outer_sponge_geometry =

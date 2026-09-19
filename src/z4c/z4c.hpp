@@ -222,6 +222,11 @@ class Z4c {
     // Physical-boundary RHS treatment.
     int boundary_rhs_mode;
     int characteristic_bc_source_mode;
+    // Experimental ordering: preserve additive user sources after boundary closure.
+    // This changes the incoming characteristic rate datum; default keeps legacy order.
+    bool user_rhs_after_boundary;
+    // Opt-in defect correction for analytic vacuum backgrounds (H_bg = 0).
+    bool residual_hamiltonian_balance;
     bool characteristic_bc_diagnostics;
     int characteristic_bc_diagnostic_interval;
     Real characteristic_bc_max_energy_density;

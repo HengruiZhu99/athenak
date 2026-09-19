@@ -1,0 +1,909 @@
+{
+  "collected_at_utc": "2026-09-19T20:40:00.249193+00:00",
+  "jobs": {
+    "cubic": "8839968",
+    "linear": "8840171"
+  },
+  "matched_difference": "extrap_order 4 (cubic) vs 2 (linear); target1000 vs1500M is irrelevant because cases fail beforetargets. Sameoldimmutableexecutable; newexperimentalHamiltonian/source-orderfixesnotincluded.",
+  "cases": {
+    "baseline": {
+      "cubic": {
+        "last_history_time_M": 649.0500000000284,
+        "Theta_max_final": 0.06115633520676377,
+        "exterior_Theta_L2_final": 0.29114574955099465,
+        "all_histories_finite": true,
+        "max_bad_metric_saved": 0.0,
+        "exit_code": "143",
+        "time_target_completed": false,
+        "walltime_stop": false,
+        "growth_windows": {
+          "100-200": {
+            "last_used_M": 199.0499999999927,
+            "gamma_per_M": 0.03151551967867411,
+            "efold_M": 31.730398552706685,
+            "R2": 0.9996524476399268
+          },
+          "200-300": {
+            "last_used_M": 299.9999999999774,
+            "gamma_per_M": 0.03599134136976575,
+            "efold_M": 27.784460426919303,
+            "R2": 0.9998505404360241
+          },
+          "300-400": {
+            "last_used_M": 398.9999999999624,
+            "gamma_per_M": 0.03787424814596103,
+            "efold_M": 26.403164391439983,
+            "R2": 0.9999916848522264
+          },
+          "400-600": {
+            "last_used_M": 599.9999999999986,
+            "gamma_per_M": 0.03964708755060665,
+            "efold_M": 25.222533653287197,
+            "R2": 0.9997799364147045
+          },
+          "600-700": {
+            "last_used_M": 649.0500000000284,
+            "gamma_per_M": 0.04276699701433197,
+            "efold_M": 23.382516188005496,
+            "R2": 0.9999869704722634
+          }
+        },
+        "invalid_state_detected": true,
+        "abort_detection_time_M": 650.025000000029,
+        "invalid_state_records": [
+          {
+            "time_M": 650.025000000029,
+            "cycle": 8667,
+            "rank": 3,
+            "gid": 3,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              -1.875
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 650.025000000029,
+            "cycle": 8667,
+            "rank": 1,
+            "gid": 1,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 650.025000000029,
+            "cycle": 8667,
+            "rank": 2,
+            "gid": 2,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 650.025000000029,
+            "cycle": 8667,
+            "rank": 4,
+            "gid": 4,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              0.125
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 650.025000000029,
+            "cycle": 8667,
+            "rank": 5,
+            "gid": 5,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 650.025000000029,
+            "cycle": 8667,
+            "rank": 6,
+            "gid": 6,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 650.025000000029,
+            "cycle": 8667,
+            "rank": 7,
+            "gid": 7,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              0.125
+            ],
+            "r_M": 0.21650635094610965
+          }
+        ],
+        "first_recorded_fluid_invalid": {
+          "log_line": 714,
+          "preceding_timestamp_M": 565.05,
+          "following_timestamp_M": 566.025,
+          "exact_event_time_available": false,
+          "xyz": [
+            -2.875,
+            2.875,
+            -2.875
+          ],
+          "detg": -0.0024636633685326537,
+          "note": "First recorded fluid error has no timestamp/rank. Preceding/following log timestamps bracket its position in merged MPI log, not an independently measured physical onset."
+        }
+      },
+      "linear": {
+        "last_history_time_M": 693.000000000055,
+        "Theta_max_final": 0.7478395588543543,
+        "exterior_Theta_L2_final": 0.6078633231105063,
+        "all_histories_finite": true,
+        "max_bad_metric_saved": 0.0,
+        "exit_code": "143",
+        "time_target_completed": false,
+        "walltime_stop": false,
+        "growth_windows": {
+          "100-200": {
+            "last_used_M": 199.0499999999927,
+            "gamma_per_M": 0.028986113210848357,
+            "efold_M": 34.499278765865704,
+            "R2": 0.9999637956314654
+          },
+          "200-300": {
+            "last_used_M": 299.9999999999774,
+            "gamma_per_M": 0.030962224715863813,
+            "efold_M": 32.297420782158454,
+            "R2": 0.999895999759892
+          },
+          "300-400": {
+            "last_used_M": 398.9999999999624,
+            "gamma_per_M": 0.033333876663632536,
+            "efold_M": 29.999511010701198,
+            "R2": 0.9999239158344374
+          },
+          "400-600": {
+            "last_used_M": 599.9999999999986,
+            "gamma_per_M": 0.04006697529604116,
+            "efold_M": 24.958210411725428,
+            "R2": 0.99805811946182
+          },
+          "600-700": {
+            "last_used_M": 693.000000000055,
+            "gamma_per_M": 0.04474538462650406,
+            "efold_M": 22.34867368661905,
+            "R2": 0.9991399005468498
+          }
+        },
+        "invalid_state_detected": true,
+        "abort_detection_time_M": 694.0500000000557,
+        "invalid_state_records": [
+          {
+            "time_M": 694.0500000000557,
+            "cycle": 9254,
+            "rank": 6,
+            "gid": 6,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 694.0500000000557,
+            "cycle": 9254,
+            "rank": 0,
+            "gid": 0,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              -1.875
+            ],
+            "r_M": 3.247595264191645
+          },
+          {
+            "time_M": 694.0500000000557,
+            "cycle": 9254,
+            "rank": 3,
+            "gid": 3,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              -1.875
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 694.0500000000557,
+            "cycle": 9254,
+            "rank": 5,
+            "gid": 5,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 694.0500000000557,
+            "cycle": 9254,
+            "rank": 1,
+            "gid": 1,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 694.0500000000557,
+            "cycle": 9254,
+            "rank": 2,
+            "gid": 2,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 694.0500000000557,
+            "cycle": 9254,
+            "rank": 4,
+            "gid": 4,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              0.125
+            ],
+            "r_M": 2.6545950726994127
+          }
+        ],
+        "first_recorded_fluid_invalid": {
+          "log_line": 859,
+          "preceding_timestamp_M": 686.025,
+          "following_timestamp_M": 687.0,
+          "exact_event_time_available": false,
+          "xyz": [
+            0.125,
+            0.125,
+            -2.875
+          ],
+          "detg": -0.014750669080733303,
+          "note": "First recorded fluid error has no timestamp/rank. Preceding/following log timestamps bracket its position in merged MPI log, not an independently measured physical onset."
+        }
+      }
+    },
+    "standard": {
+      "cubic": {
+        "last_history_time_M": 724.0500000000739,
+        "Theta_max_final": 0.1258059575995749,
+        "exterior_Theta_L2_final": 0.6453895700823999,
+        "all_histories_finite": true,
+        "max_bad_metric_saved": 0.0,
+        "exit_code": "143",
+        "time_target_completed": false,
+        "walltime_stop": false,
+        "growth_windows": {
+          "100-200": {
+            "last_used_M": 199.0499999999927,
+            "gamma_per_M": 0.03254352785039073,
+            "efold_M": 30.728076089267425,
+            "R2": 0.9870011122841503
+          },
+          "200-300": {
+            "last_used_M": 299.9999999999774,
+            "gamma_per_M": 0.036259818487397295,
+            "efold_M": 27.578737062557735,
+            "R2": 0.9999811944775123
+          },
+          "300-400": {
+            "last_used_M": 398.9999999999624,
+            "gamma_per_M": 0.03640541501054503,
+            "efold_M": 27.468441156634103,
+            "R2": 0.9999999981363022
+          },
+          "400-600": {
+            "last_used_M": 599.9999999999986,
+            "gamma_per_M": 0.03639723221848989,
+            "efold_M": 27.474616586147928,
+            "R2": 0.99999994669652
+          },
+          "600-700": {
+            "last_used_M": 699.0000000000587,
+            "gamma_per_M": 0.035273593089281255,
+            "efold_M": 28.349819579448358,
+            "R2": 0.9997724202691654
+          }
+        },
+        "invalid_state_detected": true,
+        "abort_detection_time_M": 725.0250000000744,
+        "invalid_state_records": [
+          {
+            "time_M": 725.0250000000744,
+            "cycle": 9667,
+            "rank": 0,
+            "gid": 0,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              -1.875
+            ],
+            "r_M": 3.247595264191645
+          },
+          {
+            "time_M": 725.0250000000744,
+            "cycle": 9667,
+            "rank": 1,
+            "gid": 1,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 725.0250000000744,
+            "cycle": 9667,
+            "rank": 5,
+            "gid": 5,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 725.0250000000744,
+            "cycle": 9667,
+            "rank": 2,
+            "gid": 2,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 725.0250000000744,
+            "cycle": 9667,
+            "rank": 3,
+            "gid": 3,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              -1.875
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 725.0250000000744,
+            "cycle": 9667,
+            "rank": 4,
+            "gid": 4,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              0.125
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 725.0250000000744,
+            "cycle": 9667,
+            "rank": 7,
+            "gid": 7,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              0.125
+            ],
+            "r_M": 0.21650635094610965
+          },
+          {
+            "time_M": 725.0250000000744,
+            "cycle": 9667,
+            "rank": 6,
+            "gid": 6,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          }
+        ],
+        "first_recorded_fluid_invalid": {
+          "log_line": 749,
+          "preceding_timestamp_M": 594.0,
+          "following_timestamp_M": 595.05,
+          "exact_event_time_available": false,
+          "xyz": [
+            2.875,
+            2.875,
+            -2.875
+          ],
+          "detg": -0.013868402539451541,
+          "note": "First recorded fluid error has no timestamp/rank. Preceding/following log timestamps bracket its position in merged MPI log, not an independently measured physical onset."
+        }
+      },
+      "linear": {
+        "last_history_time_M": 810.000000000126,
+        "Theta_max_final": 2.322989037066578,
+        "exterior_Theta_L2_final": 1.0784186046535278,
+        "all_histories_finite": true,
+        "max_bad_metric_saved": 0.0,
+        "exit_code": "143",
+        "time_target_completed": false,
+        "walltime_stop": false,
+        "growth_windows": {
+          "100-200": {
+            "last_used_M": 199.0499999999927,
+            "gamma_per_M": 0.02654676231497653,
+            "efold_M": 37.66937708391819,
+            "R2": 0.9477310749285068
+          },
+          "200-300": {
+            "last_used_M": 299.9999999999774,
+            "gamma_per_M": 0.031918624521892036,
+            "efold_M": 31.329670841991632,
+            "R2": 0.9996314596038243
+          },
+          "300-400": {
+            "last_used_M": 398.9999999999624,
+            "gamma_per_M": 0.032503104278285455,
+            "efold_M": 30.766292088232202,
+            "R2": 0.9999998478270076
+          },
+          "400-600": {
+            "last_used_M": 599.9999999999986,
+            "gamma_per_M": 0.03254688390405246,
+            "efold_M": 30.724907580952433,
+            "R2": 0.9999999065212436
+          },
+          "600-700": {
+            "last_used_M": 699.0000000000587,
+            "gamma_per_M": 0.032641954071349774,
+            "efold_M": 30.63542083951744,
+            "R2": 0.9999999619685469
+          }
+        },
+        "invalid_state_detected": true,
+        "abort_detection_time_M": 811.0500000001266,
+        "invalid_state_records": [
+          {
+            "time_M": 811.0500000001266,
+            "cycle": 10814,
+            "rank": 7,
+            "gid": 7,
+            "relative_level": 0,
+            "xyz": [
+              0.375,
+              0.125,
+              1.875
+            ],
+            "r_M": 1.9162137145944864
+          },
+          {
+            "time_M": 811.0500000001266,
+            "cycle": 10814,
+            "rank": 1,
+            "gid": 1,
+            "relative_level": 0,
+            "xyz": [
+              0.375,
+              -1.625,
+              -0.125
+            ],
+            "r_M": 1.6723860200324565
+          },
+          {
+            "time_M": 811.0500000001266,
+            "cycle": 10814,
+            "rank": 4,
+            "gid": 4,
+            "relative_level": 0,
+            "xyz": [
+              -0.625,
+              -1.625,
+              0.875
+            ],
+            "r_M": 1.948557158514987
+          },
+          {
+            "time_M": 811.0500000001266,
+            "cycle": 10814,
+            "rank": 5,
+            "gid": 5,
+            "relative_level": 0,
+            "xyz": [
+              0.375,
+              -1.625,
+              0.125
+            ],
+            "r_M": 1.6723860200324565
+          }
+        ],
+        "first_recorded_fluid_invalid": {
+          "log_line": 1001,
+          "preceding_timestamp_M": 804.0,
+          "following_timestamp_M": 805.05,
+          "exact_event_time_available": false,
+          "xyz": [
+            0.125,
+            2.875,
+            -1.375
+          ],
+          "detg": -0.03841654871793132,
+          "note": "First recorded fluid error has no timestamp/rank. Preceding/following log timestamps bracket its position in merged MPI log, not an independently measured physical onset."
+        }
+      }
+    },
+    "lapse_damping": {
+      "cubic": {
+        "last_history_time_M": 692.0250000000544,
+        "Theta_max_final": 0.08516519680145515,
+        "exterior_Theta_L2_final": 0.4253848625596877,
+        "all_histories_finite": true,
+        "max_bad_metric_saved": 0.0,
+        "exit_code": "143",
+        "time_target_completed": false,
+        "walltime_stop": false,
+        "growth_windows": {
+          "100-200": {
+            "last_used_M": 199.0499999999927,
+            "gamma_per_M": 0.03400781326372062,
+            "efold_M": 29.405007380077432,
+            "R2": 0.9936117211139908
+          },
+          "200-300": {
+            "last_used_M": 299.9999999999774,
+            "gamma_per_M": 0.037170394549068904,
+            "efold_M": 26.903131164773967,
+            "R2": 0.9999915388107784
+          },
+          "300-400": {
+            "last_used_M": 398.9999999999624,
+            "gamma_per_M": 0.037298755484411174,
+            "efold_M": 26.810546009181056,
+            "R2": 0.9999999990572286
+          },
+          "400-600": {
+            "last_used_M": 599.9999999999986,
+            "gamma_per_M": 0.0373094707040496,
+            "efold_M": 26.802846063733067,
+            "R2": 0.999999979912512
+          },
+          "600-700": {
+            "last_used_M": 692.0250000000544,
+            "gamma_per_M": 0.03587056102401068,
+            "efold_M": 27.878013932668352,
+            "R2": 0.9996205309722571
+          }
+        },
+        "invalid_state_detected": true,
+        "abort_detection_time_M": 693.000000000055,
+        "invalid_state_records": [
+          {
+            "time_M": 693.000000000055,
+            "cycle": 9240,
+            "rank": 4,
+            "gid": 4,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              0.125
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 693.000000000055,
+            "cycle": 9240,
+            "rank": 2,
+            "gid": 2,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 693.000000000055,
+            "cycle": 9240,
+            "rank": 3,
+            "gid": 3,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              -1.875
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 693.000000000055,
+            "cycle": 9240,
+            "rank": 7,
+            "gid": 7,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              0.125
+            ],
+            "r_M": 0.21650635094610965
+          },
+          {
+            "time_M": 693.000000000055,
+            "cycle": 9240,
+            "rank": 0,
+            "gid": 0,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              -1.875
+            ],
+            "r_M": 3.247595264191645
+          },
+          {
+            "time_M": 693.000000000055,
+            "cycle": 9240,
+            "rank": 5,
+            "gid": 5,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 693.000000000055,
+            "cycle": 9240,
+            "rank": 6,
+            "gid": 6,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          }
+        ],
+        "first_recorded_fluid_invalid": {
+          "log_line": 734,
+          "preceding_timestamp_M": 582.0,
+          "following_timestamp_M": 583.05,
+          "exact_event_time_available": false,
+          "xyz": [
+            -2.875,
+            -2.875,
+            2.875
+          ],
+          "detg": -0.0060399935415111905,
+          "note": "First recorded fluid error has no timestamp/rank. Preceding/following log timestamps bracket its position in merged MPI log, not an independently measured physical onset."
+        }
+      },
+      "linear": {
+        "last_history_time_M": 773.0250000001035,
+        "Theta_max_final": 0.1172573720771324,
+        "exterior_Theta_L2_final": 0.5527173218271781,
+        "all_histories_finite": true,
+        "max_bad_metric_saved": 0.0,
+        "exit_code": "143",
+        "time_target_completed": false,
+        "walltime_stop": false,
+        "growth_windows": {
+          "100-200": {
+            "last_used_M": 199.0499999999927,
+            "gamma_per_M": 0.028659608787867562,
+            "efold_M": 34.892311594404205,
+            "R2": 0.9741989853861027
+          },
+          "200-300": {
+            "last_used_M": 299.9999999999774,
+            "gamma_per_M": 0.03320402682957504,
+            "efold_M": 30.116829056085862,
+            "R2": 0.999855546974571
+          },
+          "300-400": {
+            "last_used_M": 398.9999999999624,
+            "gamma_per_M": 0.033683580159663565,
+            "efold_M": 29.688055582568694,
+            "R2": 0.9999999704382669
+          },
+          "400-600": {
+            "last_used_M": 599.9999999999986,
+            "gamma_per_M": 0.03377223417212168,
+            "efold_M": 29.61012276840957,
+            "R2": 0.9999988924516275
+          },
+          "600-700": {
+            "last_used_M": 699.0000000000587,
+            "gamma_per_M": 0.03432763111002691,
+            "efold_M": 29.13105179890801,
+            "R2": 0.9999939934523862
+          }
+        },
+        "invalid_state_detected": true,
+        "abort_detection_time_M": 774.0000000001041,
+        "invalid_state_records": [
+          {
+            "time_M": 774.0000000001041,
+            "cycle": 10320,
+            "rank": 0,
+            "gid": 0,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              -1.875
+            ],
+            "r_M": 3.247595264191645
+          },
+          {
+            "time_M": 774.0000000001041,
+            "cycle": 10320,
+            "rank": 1,
+            "gid": 1,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 774.0000000001041,
+            "cycle": 10320,
+            "rank": 2,
+            "gid": 2,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              -1.875
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 774.0000000001041,
+            "cycle": 10320,
+            "rank": 3,
+            "gid": 3,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              -1.875
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 774.0000000001041,
+            "cycle": 10320,
+            "rank": 4,
+            "gid": 4,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              -1.875,
+              0.125
+            ],
+            "r_M": 2.6545950726994127
+          },
+          {
+            "time_M": 774.0000000001041,
+            "cycle": 10320,
+            "rank": 5,
+            "gid": 5,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              -1.875,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 774.0000000001041,
+            "cycle": 10320,
+            "rank": 6,
+            "gid": 6,
+            "relative_level": 0,
+            "xyz": [
+              -1.875,
+              0.125,
+              0.125
+            ],
+            "r_M": 1.8833148966649205
+          },
+          {
+            "time_M": 774.0000000001041,
+            "cycle": 10320,
+            "rank": 7,
+            "gid": 7,
+            "relative_level": 0,
+            "xyz": [
+              0.125,
+              0.125,
+              0.125
+            ],
+            "r_M": 0.21650635094610965
+          }
+        ],
+        "first_recorded_fluid_invalid": {
+          "log_line": 960,
+          "preceding_timestamp_M": 770.025,
+          "following_timestamp_M": 771.0,
+          "exact_event_time_available": false,
+          "xyz": [
+            -0.125,
+            -1.625,
+            -2.875
+          ],
+          "detg": -0.012617747626187281,
+          "note": "First recorded fluid error has no timestamp/rank. Preceding/following log timestamps bracket its position in merged MPI log, not an independently measured physical onset."
+        }
+      }
+    }
+  },
+  "scheduler": {
+    "job_state": "F",
+    "PBS_exit_status": 0,
+    "walltime": "00:19:54",
+    "note": "Batch script completed all cases; each application failed with exit143. PBS0 is not evolution success."
+  }
+}

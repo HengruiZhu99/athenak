@@ -56,12 +56,26 @@ void Z4c::QueueZ4cTasks() {
                      Task_Run, {Z4c_CopyU}, {MHD_SetTmunu});
       break;
   }
-  pnr->QueueTask(&Z4c::ApplyUserRHS, this, Z4c_UserSrc, "Z4c_UserSrc", Task_Run,
-                 {Z4c_CalcRHS});
-  pnr->QueueTask(&Z4c::Z4cBoundaryRHS, this, Z4c_SomBC, "Z4c_SomBC", Task_Run,
-                 {Z4c_UserSrc});
-  pnr->QueueTask(&Z4c::ExpRKUpdate, this, Z4c_ExplRK, "Z4c_ExplRK", Task_Run,
-                 {Z4c_SomBC},{MHD_EField});
+  if (opt.user_rhs_after_boundary) {
+    // Homogeneous characteristic closure projects out the incoming component
+    // of any source that precedes it. Applying an additive user source after
+    // closure retains that source's discrete characteristic rate, including
+    // derivatives of a spatially varying sponge. This is an opt-in boundary
+    // datum experiment, not a proof of constraint preservation or stability.
+    pnr->QueueTask(&Z4c::Z4cBoundaryRHS, this, Z4c_SomBC, "Z4c_SomBC", Task_Run,
+                   {Z4c_CalcRHS});
+    pnr->QueueTask(&Z4c::ApplyUserRHS, this, Z4c_UserSrc, "Z4c_UserSrc", Task_Run,
+                   {Z4c_SomBC});
+    pnr->QueueTask(&Z4c::ExpRKUpdate, this, Z4c_ExplRK, "Z4c_ExplRK", Task_Run,
+                   {Z4c_UserSrc},{MHD_EField});
+  } else {
+    pnr->QueueTask(&Z4c::ApplyUserRHS, this, Z4c_UserSrc, "Z4c_UserSrc", Task_Run,
+                   {Z4c_CalcRHS});
+    pnr->QueueTask(&Z4c::Z4cBoundaryRHS, this, Z4c_SomBC, "Z4c_SomBC", Task_Run,
+                   {Z4c_UserSrc});
+    pnr->QueueTask(&Z4c::ExpRKUpdate, this, Z4c_ExplRK, "Z4c_ExplRK", Task_Run,
+                   {Z4c_SomBC},{MHD_EField});
+  }
   pnr->QueueTask(&Z4c::RestrictU, this, Z4c_RestU, "Z4c_RestU", Task_Run, {Z4c_ExplRK});
   pnr->QueueTask(&Z4c::SendU, this, Z4c_SendU, "Z4c_SendU", Task_Run, {Z4c_RestU});
   pnr->QueueTask(&Z4c::RecvU, this, Z4c_RecvU, "Z4c_RecvU", Task_Run, {Z4c_SendU});
