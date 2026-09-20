@@ -95,8 +95,9 @@ it is an affordable control, not the production time step or geometry.
 The sponge uses the **existing** smooth residual relaxation before CPBC.
 The wide layer covers most of the small patch. A longer discrete strip with
 an undamped center still has growing modes: at tangential k*dx=pi/8,
-gamma=0.001585/M and0.001245/M for rates0.02/M and0.1/M. The peak moves just
-inside the layer onset. It is mitigation, not a cure; increasing damping is
+gamma=0.001585/M and0.001245/M for rates0.02/M and0.1/M. The weighted full-state
+peak moves just inside the layer onset, whereas Theta itself peaks within the
+layer. It is mitigation, not a cure; increasing damping is
 not monotonically helpful. The [discrete audit](discrete/README.md) includes
 negative tests of ghost orders, source retention, SAT/SBP, localized kappa
 taper, and configuration-field boundary controls. Finite completion and small
@@ -128,11 +129,36 @@ Theta alone can hide gauge growth.
   accuracy across moving refinement interfaces and full stellar evolution is
   not established by the short restart tests.
 
-Aurora job8841948 is an independent one-node/four-rank debug control charged
-to the registered MHDTidal account. It uses the exact original production
-binary for a larger-domain baseline/sponge comparison, target5000M,24-minute
-application caps per case and one-hour allocation. It is **not** a GPU test of
-the repaired stencil. Its results must be reported separately after execution.
+Aurora job8841948 completed an independent one-node/four-rank debug control
+charged to MHDTidal, using the **original production binary**, not the repaired
+stencil. Its larger weak-field box has four32³ blocks and no BH interior or AMR.
+The original boundary failed at2375.4M; the first printed invalid metric lies
+in the fourth+x ghost at(2160,2000,-1040)M between neighboring log records at
+2361M and2362.2M. Its only saved checkpoint is initial data.
+
+The matched256M/rate0.02 sponge reached the5000M target in497 application-wall
+seconds, with all four final checkpoints finite and ghost-inclusive metrics
+positive. It did **not** stop at the walltime limit. Theta RMS still grows
+exponentially: gamma=0.001386/M over4000–5000M, an e-fold time of722M.
+The final active Theta and lapse peaks lie at(1616,1904,-1008)M,144M from+y,
+**inside** the sponge;99.13% of the proper-volume Theta² integral is in that
+layer. The strip model also places its Theta maximum144M from the face, with
+99.12% of its Theta² integral in the layer. This close agreement concerns the
+Theta profile, not the weighted full-state peak near the layer onset. Different
+geometry, variable coefficients and volume measures prevent equating the full
+modes, and a final profile does not establish initial injection. See
+[GPU comparison and spatial profile](results/gpu-8841948/README.md).
+
+Separate repaired-stencil GPU verification job8841975 stopped before evolution:
+the zero-control input disabled pulse amplitude but left pulse family enabled,
+which the problem generator rejects. The original record is preserved. The
+two zero inputs were corrected and passed local execution preflight. Replacement
+job8842005 is queued in debug-scaling, one node/MHDTidal/one hour; the nonzero
+pulse and executable are unchanged. The suite tests the oblique fixture and
+exact zero on1/2/4 MPI ranks against CPU stage arrays. **GPU evolution
+verification is pending**, and must not be inferred from either this input
+rejection or original-binary job8841948. The repaired executable SHA256 is
+`a6c3af79571819fba5dc2252ceb9abacb31279feec440f2c542e342dfee43639`.
 
 ## Reproduction and remaining work
 

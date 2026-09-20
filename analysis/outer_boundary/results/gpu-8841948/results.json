@@ -1,0 +1,887 @@
+{
+  "job": "8841948",
+  "binary_sha256": "fb74375038ffdd5f132e5305b9299c9672803b37e7eaedaff8ebb19bb7ad143c",
+  "scope": "Old exact production executable; four32^3blocks,4GPU MPI ranks, displaced weak-field box; no BH interior, matter feedback or AMR; dt0.6M versus production0.0375M. Face sponge mitigation only.",
+  "norm_definition": "RMS=sqrt(stored proper-volume integral(field squared)/stored proper volume); label Theta-norm truncates Theta-norm2, no square-root applied by output.",
+  "cases": {
+    "baseline": {
+      "histories_finite": true,
+      "last_history_time_M": 2374.199999999823,
+      "bad_metric_max": 0.0,
+      "final_values": {
+        "Theta_max": 0.166976559082182,
+        "alpha_res_max": 0.6124404510566289,
+        "beta_res_max": 0.2586201473542087,
+        "Gamma_res_max": 0.6779387376045339,
+        "Khat_res_max": 0.2371338480769108,
+        "Theta_RMS": 0.0004271915505665287,
+        "H_RMS": 0.0006389286173922666,
+        "M_RMS": 0.00045279885308174497,
+        "C_RMS": 0.0019268553825308903
+      },
+      "window_fits": {
+        "1000-1500": {
+          "Theta_max": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.011642624148479629,
+            "efold_M": 85.89128939033789,
+            "R_squared": 0.9999504063665832,
+            "first": 1.911887187470667e-10,
+            "last": 6.421272358081623e-08,
+            "endpoint_ratio": 335.8604210626387
+          },
+          "alpha_res_max": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.011586114837790422,
+            "efold_M": 86.3102095914241,
+            "R_squared": 0.9999210783741604,
+            "first": 5.778511336096415e-09,
+            "last": 1.88315333926603e-06,
+            "endpoint_ratio": 325.88901011625694
+          },
+          "beta_res_max": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.01185731674764377,
+            "efold_M": 84.33611256937328,
+            "R_squared": 0.9998996415580323,
+            "first": 1.509272646259534e-09,
+            "last": 5.38456146210851e-07,
+            "endpoint_ratio": 356.7653250360825
+          },
+          "Gamma_res_max": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.011858535097145342,
+            "efold_M": 84.32744785152477,
+            "R_squared": 0.9999011282852287,
+            "first": 3.036072445467896e-09,
+            "last": 1.084031349798617e-06,
+            "endpoint_ratio": 357.05055438212855
+          },
+          "Khat_res_max": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.011600456339419748,
+            "efold_M": 86.20350533986147,
+            "R_squared": 0.9999232344262724,
+            "first": 3.232281698281493e-10,
+            "last": 1.060975675062002e-07,
+            "endpoint_ratio": 328.2435672689329
+          },
+          "Theta_RMS": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.011166162712085394,
+            "efold_M": 89.55628050428435,
+            "R_squared": 0.9999375226552428,
+            "first": 4.935322578977268e-12,
+            "last": 1.312718337046517e-09,
+            "endpoint_ratio": 265.9843031615064
+          },
+          "H_RMS": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.01113438013303568,
+            "efold_M": 89.8119148126623,
+            "R_squared": 0.9999387049838654,
+            "first": 2.5839332982967145e-12,
+            "last": 6.764686570198178e-10,
+            "endpoint_ratio": 261.798033821436
+          },
+          "M_RMS": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.01116244510650525,
+            "efold_M": 89.5861068483302,
+            "R_squared": 0.9999337784483903,
+            "first": 5.49394775164663e-13,
+            "last": 1.4588237150852225e-10,
+            "endpoint_ratio": 265.5328701748188
+          },
+          "C_RMS": {
+            "actual_window_M": [
+              1000.200000000026,
+              1499.999999999955
+            ],
+            "samples": 501,
+            "gamma_per_M": 0.011144953757882662,
+            "efold_M": 89.72670696751116,
+            "R_squared": 0.9999359861725895,
+            "first": 7.815633347975184e-11,
+            "last": 2.0564776161005433e-08,
+            "endpoint_ratio": 263.1236042608524
+          }
+        },
+        "1500-2000": {
+          "Theta_max": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.012143350312784918,
+            "efold_M": 82.34959663044285,
+            "R_squared": 0.9999830376000263,
+            "first": 6.513877015118347e-08,
+            "last": 2.753534939457389e-05,
+            "endpoint_ratio": 422.7182879054344
+          },
+          "alpha_res_max": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.01216020985118952,
+            "efold_M": 82.23542292752286,
+            "R_squared": 0.9999826380647406,
+            "first": 1.910318775610875e-06,
+            "last": 0.0008135268167158705,
+            "endpoint_ratio": 425.8591953878084
+          },
+          "beta_res_max": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.012226035860213253,
+            "efold_M": 81.79266046930746,
+            "R_squared": 0.9999908858082383,
+            "first": 5.463159394673687e-07,
+            "last": 0.0002408558255453561,
+            "endpoint_ratio": 440.8727773532999
+          },
+          "Gamma_res_max": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.012225981480276779,
+            "efold_M": 81.79302427483813,
+            "R_squared": 0.9999910847949554,
+            "first": 1.099855440642428e-06,
+            "last": 0.0004848448988996554,
+            "endpoint_ratio": 440.82602220566037
+          },
+          "Khat_res_max": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.012167005123268342,
+            "efold_M": 82.18949444572739,
+            "R_squared": 0.9999829949383194,
+            "first": 1.076293327410636e-07,
+            "last": 4.599623373117261e-05,
+            "endpoint_ratio": 427.35778955195326
+          },
+          "Theta_RMS": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.011924089575380586,
+            "efold_M": 83.86384500705854,
+            "R_squared": 0.9999388347945806,
+            "first": 1.3310194595826962e-09,
+            "last": 5.033958475810653e-07,
+            "endpoint_ratio": 378.2032215658898
+          },
+          "H_RMS": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.011892833035042533,
+            "efold_M": 84.08425452988995,
+            "R_squared": 0.999936215655107,
+            "first": 6.858706317790702e-10,
+            "last": 2.5544315275132756e-07,
+            "endpoint_ratio": 372.4363471996711
+          },
+          "M_RMS": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.011939663408641556,
+            "efold_M": 83.75445485977697,
+            "R_squared": 0.9999373241419771,
+            "first": 1.4791752284492394e-10,
+            "last": 5.6363660275936095e-08,
+            "endpoint_ratio": 381.04789204067123
+          },
+          "C_RMS": {
+            "actual_window_M": [
+              1501.199999999955,
+              1999.19999999988
+            ],
+            "samples": 499,
+            "gamma_per_M": 0.011904552176547328,
+            "efold_M": 84.00147986835314,
+            "R_squared": 0.9999381552075726,
+            "first": 2.0850981815333186e-08,
+            "last": 7.810406218266022e-06,
+            "endpoint_ratio": 374.58217974764545
+          }
+        },
+        "2000-2361": {
+          "Theta_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.01344933850649766,
+            "efold_M": 74.35309918899571,
+            "R_squared": 0.9964155245530084,
+            "first": 2.794627858011308e-05,
+            "last": 0.004663476177413646,
+            "endpoint_ratio": 166.87288663658546
+          },
+          "alpha_res_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.013043269236748202,
+            "efold_M": 76.66789528369104,
+            "R_squared": 0.998759755382057,
+            "first": 0.0008256717317077777,
+            "last": 0.1043699103121838,
+            "endpoint_ratio": 126.40605982272197
+          },
+          "beta_res_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.012856495650538917,
+            "efold_M": 77.7816931753158,
+            "R_squared": 0.998823306687279,
+            "first": 0.0002444589711653878,
+            "last": 0.02906608400965276,
+            "endpoint_ratio": 118.89964140439831
+          },
+          "Gamma_res_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.012863072532197019,
+            "efold_M": 77.74192343990457,
+            "R_squared": 0.9987986023172828,
+            "first": 0.0004920981748092859,
+            "last": 0.05867776956712195,
+            "endpoint_ratio": 119.23996586628814
+          },
+          "Khat_res_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.013144238891076724,
+            "efold_M": 76.07895811136494,
+            "R_squared": 0.9982809226179856,
+            "first": 4.668331729964749e-05,
+            "last": 0.006357385601130818,
+            "endpoint_ratio": 136.1811021338628
+          },
+          "Theta_RMS": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.012501677845715346,
+            "efold_M": 79.98926322859346,
+            "R_squared": 0.9998582503914104,
+            "first": 5.108473165636091e-07,
+            "last": 4.918637059517176e-05,
+            "endpoint_ratio": 96.28389736103708
+          },
+          "H_RMS": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.012610516731339505,
+            "efold_M": 79.29889165562994,
+            "R_squared": 0.9995354555547356,
+            "first": 2.5921733237475387e-07,
+            "last": 2.6887167591929492e-05,
+            "endpoint_ratio": 103.7244205300993
+          },
+          "M_RMS": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.012732925844533966,
+            "efold_M": 78.53654471955348,
+            "R_squared": 0.9989637531427029,
+            "first": 5.719917827315272e-08,
+            "last": 6.896435741843509e-06,
+            "endpoint_ratio": 120.56879049747562
+          },
+          "C_RMS": {
+            "actual_window_M": [
+              2000.399999999879,
+              2360.999999999825
+            ],
+            "samples": 362,
+            "gamma_per_M": 0.012567379049403435,
+            "efold_M": 79.57108606885454,
+            "R_squared": 0.9996985115005834,
+            "first": 7.925860662428734e-06,
+            "last": 0.0007895748230945202,
+            "endpoint_ratio": 99.62007367065794
+          }
+        }
+      },
+      "checkpoint": {
+        "time_M": 0.0,
+        "cycle": 0,
+        "blocks": 4,
+        "ranks": 4,
+        "matching_headers": true,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "invalid_metric_samples": [],
+        "minimum": {
+          "alpha": 0.9975102049777426,
+          "chi": 0.9950266090347379,
+          "gxx": 1.0,
+          "second_minor": 1.0,
+          "determinant": 1.0
+        },
+        "files": [
+          {
+            "rank": 0,
+            "name": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/outer_sponge_8841948/baseline/rst/rank_00000000/ks_background.00000.rst",
+            "bytes": 16950951,
+            "sha256": "e85650b531790955afe72b85b0b8ff5a82ef59c3960fe9c09a0f5163a23a0f39",
+            "payload_finite": true
+          },
+          {
+            "rank": 1,
+            "name": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/outer_sponge_8841948/baseline/rst/rank_00000001/ks_background.00000.rst",
+            "bytes": 16950951,
+            "sha256": "35881925a924ab9ff1d7680e80905e0a758f5f2c4be010091e66e9c19659d324",
+            "payload_finite": true
+          },
+          {
+            "rank": 2,
+            "name": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/outer_sponge_8841948/baseline/rst/rank_00000002/ks_background.00000.rst",
+            "bytes": 16950951,
+            "sha256": "bb8da1094132656d015a003007d796d76feaca94db12eaf0e4985ed6d98837cc",
+            "payload_finite": true
+          },
+          {
+            "rank": 3,
+            "name": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/outer_sponge_8841948/baseline/rst/rank_00000003/ks_background.00000.rst",
+            "bytes": 16950951,
+            "sha256": "462a5503f51d1e3263dbc175c744ffb798e3b0797c5c0489180a2e477fdddabd",
+            "payload_finite": true
+          }
+        ],
+        "passed": true,
+        "note": "Saved checkpoint validity only; not a perturbation-stability result."
+      },
+      "application_exit": 143,
+      "target5000_reached": false,
+      "first_recorded_primitive_error": {
+        "error": "NANS_IN_CONS",
+        "preceding_history_time_M": 2361.0,
+        "next_history_time_M": 2362.2,
+        "local_m_k_j_i": "0, 19, 34, 39",
+        "xyz": "2160, 2000, -1040",
+        "detg": -0.027542773592261982,
+        "physical_ghost_codimension": 1,
+        "description": "fourth +x ghost (x2160) on global x face; no exact error timestamp printed; ordering uses neighboring buffered log records, not precise onset"
+      },
+      "fatal_invalid_state": [
+        "Z4C_INVALID_STATE time=2375.3999999998227 cycle=3959 rank=3 gid=3 relative_level=0 x=2000 y=2000 z=-1040 local_bad_cells=2; nonfinite Z4c/ADM state or invalid positive-definite spatial metric."
+      ]
+    },
+    "sponge": {
+      "histories_finite": true,
+      "last_history_time_M": 5000.0,
+      "bad_metric_max": 0.0,
+      "final_values": {
+        "Theta_max": 4.801742768551172e-12,
+        "alpha_res_max": 4.260772845654515e-10,
+        "beta_res_max": 1.007067942492695e-10,
+        "Gamma_res_max": 2.015553966539581e-10,
+        "Khat_res_max": 2.325541366876088e-11,
+        "Theta_RMS": 1.4394418284301115e-13,
+        "H_RMS": 6.119913750877269e-14,
+        "M_RMS": 7.706628397575587e-15,
+        "C_RMS": 1.822356199797267e-13
+      },
+      "window_fits": {
+        "2000-3000": {
+          "Theta_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0012435717788241158,
+            "efold_M": 804.1353277939212,
+            "R_squared": 0.9999837710022548,
+            "first": 9.483305707184364e-14,
+            "last": 3.302048709431733e-13,
+            "endpoint_ratio": 3.481959573369196
+          },
+          "alpha_res_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0012631475604644316,
+            "efold_M": 791.673143581358,
+            "R_squared": 0.9999870942200577,
+            "first": 8.11817280066407e-12,
+            "last": 2.87507795349029e-11,
+            "endpoint_ratio": 3.541533327863023
+          },
+          "beta_res_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0012935595212147308,
+            "efold_M": 773.0606776106749,
+            "R_squared": 0.9999550125437839,
+            "first": 1.984523764937685e-12,
+            "last": 7.154593432458223e-12,
+            "endpoint_ratio": 3.605194132146299
+          },
+          "Gamma_res_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0012935618546111155,
+            "efold_M": 773.0592831222831,
+            "R_squared": 0.9999550343878065,
+            "first": 3.971461425112952e-12,
+            "last": 1.43185454713438e-11,
+            "endpoint_ratio": 3.605359322087981
+          },
+          "Khat_res_max": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0012634957385994205,
+            "efold_M": 791.4549843345698,
+            "R_squared": 0.9999866432524439,
+            "first": 4.426468460691684e-13,
+            "last": 1.568032049817808e-12,
+            "endpoint_ratio": 3.542399688922184
+          },
+          "Theta_RMS": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0012754704922901454,
+            "efold_M": 784.0244098508857,
+            "R_squared": 0.9998816304985145,
+            "first": 2.5992396888688564e-15,
+            "last": 9.292297482167677e-15,
+            "endpoint_ratio": 3.575005999624268
+          },
+          "H_RMS": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0009102249692432825,
+            "efold_M": 1098.629496871913,
+            "R_squared": 0.9899377175775916,
+            "first": 1.6837015853943394e-15,
+            "last": 4.1472207699556726e-15,
+            "endpoint_ratio": 2.463156657885045
+          },
+          "M_RMS": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 4.467191929051414e-06,
+            "efold_M": 223854.27263528053,
+            "R_squared": 0.9035796633619603,
+            "first": 4.125107175518842e-15,
+            "last": 4.145640350216343e-15,
+            "endpoint_ratio": 1.0049776099926224
+          },
+          "C_RMS": {
+            "actual_window_M": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0008375942191747737,
+            "efold_M": 1193.8955368928334,
+            "R_squared": 0.9875485600495708,
+            "first": 5.502753302928231e-15,
+            "last": 1.2642950701419307e-14,
+            "endpoint_ratio": 2.2975681455120833
+          }
+        },
+        "3000-4000": {
+          "Theta_max": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 0.0013188219243107273,
+            "efold_M": 758.2524839527844,
+            "R_squared": 0.9998582223092868,
+            "first": 3.307096378107234e-13,
+            "last": 1.231302269350361e-12,
+            "endpoint_ratio": 3.7232125362342114
+          },
+          "alpha_res_max": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 0.0013359975098400675,
+            "efold_M": 748.5043891434425,
+            "R_squared": 0.9999149571497079,
+            "first": 2.879518845588791e-11,
+            "last": 1.087637757635207e-10,
+            "endpoint_ratio": 3.777151030983483
+          },
+          "beta_res_max": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 0.0012881072863896927,
+            "efold_M": 776.332849418778,
+            "R_squared": 0.9999757463545836,
+            "first": 7.165467763407818e-12,
+            "last": 2.590140265896351e-11,
+            "endpoint_ratio": 3.6147539161693314
+          },
+          "Gamma_res_max": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 0.0012881312411314517,
+            "efold_M": 776.3184123394393,
+            "R_squared": 0.9999757541791876,
+            "first": 1.434030803395691e-11,
+            "last": 5.183782511712369e-11,
+            "endpoint_ratio": 3.6148334466996883
+          },
+          "Khat_res_max": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 0.00133673891212828,
+            "efold_M": 748.089242354632,
+            "R_squared": 0.9999184627992841,
+            "first": 1.570453294106339e-12,
+            "last": 5.935582417322678e-12,
+            "endpoint_ratio": 3.7795345073922113
+          },
+          "Theta_RMS": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 0.001355342150461074,
+            "efold_M": 737.8210731952887,
+            "R_squared": 0.9999840120323151,
+            "first": 9.307113798444526e-15,
+            "last": 3.595693555096683e-14,
+            "endpoint_ratio": 3.863381960256704
+          },
+          "H_RMS": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 0.0013140469518838913,
+            "efold_M": 761.0078152583087,
+            "R_squared": 0.9997948638287874,
+            "first": 4.153216216178946e-15,
+            "last": 1.5334945333445947e-14,
+            "endpoint_ratio": 3.6923060431355164
+          },
+          "M_RMS": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 6.142862499315193e-05,
+            "efold_M": 16279.055572405863,
+            "R_squared": 0.9040611661526644,
+            "first": 4.1457099631887194e-15,
+            "last": 4.435070608961257e-15,
+            "endpoint_ratio": 1.0697976096595943
+          },
+          "C_RMS": {
+            "actual_window_M": [
+              3001.199999999728,
+              3998.999999999577
+            ],
+            "samples": 999,
+            "gamma_per_M": 0.0012943329705896386,
+            "efold_M": 772.5987228343924,
+            "R_squared": 0.99965627801627,
+            "first": 1.2660500955017963e-14,
+            "last": 4.577960026750077e-14,
+            "endpoint_ratio": 3.6159390872567423
+          }
+        },
+        "4000-5000": {
+          "Theta_max": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0013595926458690951,
+            "efold_M": 735.5144226753065,
+            "R_squared": 0.9999980966617747,
+            "first": 1.233301414822732e-12,
+            "last": 4.801742768551172e-12,
+            "endpoint_ratio": 3.8934057083209854
+          },
+          "alpha_res_max": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.001364123486579818,
+            "efold_M": 733.071462985538,
+            "R_squared": 0.9999981888728251,
+            "first": 1.089409673582509e-10,
+            "last": 4.260772845654515e-10,
+            "endpoint_ratio": 3.91108409350086
+          },
+          "beta_res_max": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0013586088985961104,
+            "efold_M": 736.0469970668739,
+            "R_squared": 0.9999961506117864,
+            "first": 2.594213358670869e-11,
+            "last": 1.007067942492695e-10,
+            "endpoint_ratio": 3.8819780922285463
+          },
+          "Gamma_res_max": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0013586232639202101,
+            "efold_M": 736.0392145167393,
+            "R_squared": 0.9999961810548538,
+            "first": 5.191934300232551e-11,
+            "last": 2.015553966539581e-10,
+            "endpoint_ratio": 3.8820868100147234
+          },
+          "Khat_res_max": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.001364254316746991,
+            "efold_M": 733.0011624111694,
+            "R_squared": 0.9999981942023688,
+            "first": 5.945256198527655e-12,
+            "last": 2.325541366876088e-11,
+            "endpoint_ratio": 3.9115915096342007
+          },
+          "Theta_RMS": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0013858709542184933,
+            "efold_M": 721.5679042526078,
+            "R_squared": 0.9999948466282198,
+            "first": 3.601621910783432e-14,
+            "last": 1.4394418284301115e-13,
+            "endpoint_ratio": 3.996648910093401
+          },
+          "H_RMS": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.001383115045256074,
+            "efold_M": 723.0056555525771,
+            "R_squared": 0.9999911574190632,
+            "first": 1.5360061696944292e-14,
+            "last": 6.119913750877269e-14,
+            "endpoint_ratio": 3.9843028443660193
+          },
+          "M_RMS": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0005441544454598873,
+            "efold_M": 1837.7135542003316,
+            "R_squared": 0.9591840193358295,
+            "first": 4.4360572506054376e-15,
+            "last": 7.706628397575587e-15,
+            "endpoint_ratio": 1.737269823675918
+          },
+          "C_RMS": {
+            "actual_window_M": [
+              4000.199999999576,
+              5000.0
+            ],
+            "samples": 1001,
+            "gamma_per_M": 0.0013807511878884083,
+            "efold_M": 724.2434471697297,
+            "R_squared": 0.9999881612451345,
+            "first": 4.5854236044034704e-14,
+            "last": 1.822356199797267e-13,
+            "endpoint_ratio": 3.9742374031642864
+          }
+        }
+      },
+      "checkpoint": {
+        "time_M": 5000.0,
+        "cycle": 8334,
+        "blocks": 4,
+        "ranks": 4,
+        "matching_headers": true,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "invalid_metric_samples": [],
+        "minimum": {
+          "alpha": 0.9975102049772526,
+          "chi": 0.9950266090361287,
+          "gxx": 0.9999999937875892,
+          "second_minor": 0.9999999959127406,
+          "determinant": 0.9999999999999997
+        },
+        "files": [
+          {
+            "rank": 0,
+            "name": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/outer_sponge_8841948/sponge/rst/rank_00000000/ks_background.00001.rst",
+            "bytes": 16950852,
+            "sha256": "31e42461e8ef90f67eed06823655e046fb08514911047782c3f51fecdd9789a4",
+            "payload_finite": true
+          },
+          {
+            "rank": 1,
+            "name": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/outer_sponge_8841948/sponge/rst/rank_00000001/ks_background.00001.rst",
+            "bytes": 16950852,
+            "sha256": "4e9446796d2cf54a17d47627e7cad5dfa472f0f9a1eabb0e89e5cddc3780332d",
+            "payload_finite": true
+          },
+          {
+            "rank": 2,
+            "name": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/outer_sponge_8841948/sponge/rst/rank_00000002/ks_background.00001.rst",
+            "bytes": 16950852,
+            "sha256": "312a3846e7d8dfc9825812fc4a50f266a26c0f452fa83d36d487e66bd6a987b0",
+            "payload_finite": true
+          },
+          {
+            "rank": 3,
+            "name": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/outer_sponge_8841948/sponge/rst/rank_00000003/ks_background.00001.rst",
+            "bytes": 16950852,
+            "sha256": "c2a39c9cb534ac6510f0b301dbf22c8d92de743eef26abc5eb97c6ea0d1f111b",
+            "payload_finite": true
+          }
+        ],
+        "passed": true,
+        "note": "Saved checkpoint validity only; not a perturbation-stability result."
+      },
+      "application_exit": 0,
+      "target5000_reached": true,
+      "evolution_error_marker": false,
+      "startup_resolution_infinity": true,
+      "startup_resolution_note": "The pre-mesh PUNCTURE_RESOLUTION line divides by dx_current=0; this diagnostic infinity is not an evolved field. Histories and checkpoint fields are checked separately."
+    }
+  },
+  "zero": {
+    "passed": true,
+    "ranks": 4,
+    "blocks": 4,
+    "cycles": 3,
+    "time_M": 1.7999999999999998,
+    "residual_max": 0,
+    "checkpoint_ghost_metric_validation": "passed separately by verify_checkpoint.py",
+    "stage_validity_csv_available": false,
+    "note": "Short exact-zero check only, not perturbation stability."
+  }
+}

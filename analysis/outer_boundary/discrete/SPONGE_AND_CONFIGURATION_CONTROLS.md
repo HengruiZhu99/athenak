@@ -126,3 +126,34 @@ the bounded robustness checks. An outer sponge may extend the usable time of a
 specific run, but would alter the residual spacetime in its layer and must not
 be advertised as a consistent boundary cure or promoted from one coarse-box
 pass. Full-domain matter/AMR/MPI validation remains necessary.
+
+## Source-order recheck and GPU diagnostic comparison
+
+The requested post-CPBC source-order discriminator had already been measured;
+no additional scan was run. For 12x12 cells, dx=32M, width=128M and rate=.02/M,
+adding `-sigma*u_residual` to **all q and p fields after** the unchanged
+zero_rate closure still gives gamma=.001274113662/M, with four positive
+eigenvalues. RK3 at dt=.0375M gives the same growth rate. The matched original
+pre-CPBC order gives .001385008843/M. Both maps preserve exact zero. Thus the
+closure overwriting momentum damping is not sufficient to explain or remove
+this growing mode. Evidence:
+[`results/sponge-after-n12-r02-w4.json`](results/sponge-after-n12-r02-w4.json)
+and [`results/sponge-before-n12-r02-w4.json`](results/sponge-before-n12-r02-w4.json).
+This is a negative corner-model result, not a new long-strip or resolution
+validation of the post-CPBC order.
+
+The GPU8841948 comparison requires matching diagnostics. In the saved
+rate=.02/M, width=256M strip eigenvector, the **weighted full-state norm** peaks
+272M from the face and has 40.94% inside the layer, whereas **Theta** peaks
+144M from the face and 99.1231% of Theta squared lies inside the layer. The latter
+agrees closely with the reported GPU active Theta peak at 144M and 99.1344% of
+Theta squared inside the sponge. The strip uses flat coordinate-volume weights;
+the GPU diagnostic uses proper-volume weights on the evolving geometry. The
+earlier onset-location claim applies only
+to the strip's weighted full state; the GPU Theta diagnostic does not establish
+that full-state location. This agreement also does not by itself identify the
+same eigenmode in the evolving three-dimensional background. Both strip
+diagnostics follow from the existing arrays in
+[`results/sponge-surviving-modes.json`](results/sponge-surviving-modes.json):
+use the `rate=.02` entry, cell-center distance to the nearest face, and square
+`theta_normalized` before summing over distances below 256M.
