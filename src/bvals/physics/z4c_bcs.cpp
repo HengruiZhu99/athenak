@@ -137,10 +137,17 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
 
   int nvar = u0.extent_int(1);  // TODO(@user): 2nd index from L of in array must be NVAR
   int nmb = ppack->nmb_thispack;
+  // Coarse buffers have different extents and no independently sampled analytic
+  // background. Audit fine state only; restriction/prolongation retain their
+  // existing hooks. Host mirrors/synchronization occur only when opted in.
+  const bool audit = ppack->pz4c->opt.debug_balance &&
+                     u0.data() == ppack->pz4c->u0.data();
+  const int audit_stage = ppack->pz4c->debug_physical_bc_stage;
 
   // only apply BCs unless periodic or shear_periodic
   if (pm->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::periodic
       && pm->mesh_bcs[BoundaryFace::inner_x1] != BoundaryFlag::shear_periodic) {
+    if (audit) ppack->pz4c->DebugBalance("pre_physical_bc_x1", audit_stage, u0);
     par_for("z4cbc_x1", DevExeSpace(), 0,(nmb-1),0,(nvar-1),0,(n3-1),0,(n2-1),
     KOKKOS_LAMBDA(int m, int n, int k, int j) {
       // apply physical boundaries to inner_x1
@@ -203,12 +210,14 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
           break;
       }
     });
+    if (audit) ppack->pz4c->DebugBalance("post_physical_bc_x1", audit_stage, u0);
   }
 
   if (pm->one_d) return;
 
   // only apply BCs if not periodic
   if (pm->mesh_bcs[BoundaryFace::inner_x2] != BoundaryFlag::periodic) {
+    if (audit) ppack->pz4c->DebugBalance("pre_physical_bc_x2", audit_stage, u0);
     par_for("z4cbc_x2", DevExeSpace(), 0,(nmb-1),0,(nvar-1),0,(n3-1),0,(n1-1),
     KOKKOS_LAMBDA(int m, int n, int k, int i) {
       // apply physical boundaries to inner_x2
@@ -271,11 +280,13 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
           break;
       }
     });
+    if (audit) ppack->pz4c->DebugBalance("post_physical_bc_x2", audit_stage, u0);
   }
   if (pm->two_d) return;
 
   // only apply BCs if not periodic
   if (pm->mesh_bcs[BoundaryFace::inner_x3] == BoundaryFlag::periodic) return;
+  if (audit) ppack->pz4c->DebugBalance("pre_physical_bc_x3", audit_stage, u0);
   par_for("z4cbc_x3", DevExeSpace(), 0,(nmb-1),0,(nvar-1),0,(n2-1),0,(n1-1),
   KOKKOS_LAMBDA(int m, int n, int j, int i) {
     // apply physical boundaries to inner_x3
@@ -338,6 +349,7 @@ void BCHelper(MeshBlockPack *ppack, DualArray2D<Real> u_in, DvceArray5D<Real> u0
         break;
     }
   });
+  if (audit) ppack->pz4c->DebugBalance("post_physical_bc_x3", audit_stage, u0);
 
   return;
 }

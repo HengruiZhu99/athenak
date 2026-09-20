@@ -241,11 +241,15 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   } else if (characteristic_bc_source == "tangential_principal") {
     opt.characteristic_bc_source_mode =
         characteristic_bc_source_tangential_principal;
+  } else if (characteristic_bc_source == "damped_constraint_radiation") {
+    opt.characteristic_bc_source_mode =
+        characteristic_bc_source_physical_constraint_radiation;
   } else {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "Unknown <z4c>/characteristic_bc_source = "
               << characteristic_bc_source
-              << ". Supported values are zero_rate and tangential_principal."
+              << ". Supported values are zero_rate, tangential_principal, "
+              << "and damped_constraint_radiation."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -255,6 +259,20 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddInteger("z4c", "characteristic_bc_diagnostic_interval", 100);
   opt.characteristic_bc_max_energy_density =
       pin->GetOrAddReal("z4c", "characteristic_bc_max_energy_density", 1.0e-12);
+  opt.characteristic_radiation_areal_shift = pin->GetOrAddReal(
+      "z4c", "characteristic_radiation_areal_shift", 1.0);
+  opt.characteristic_radiation_areal_falloff = pin->GetOrAddBoolean(
+      "z4c", "characteristic_radiation_areal_falloff", false);
+  if (opt.characteristic_bc_source_mode ==
+          characteristic_bc_source_physical_constraint_radiation &&
+      (!isfinite(opt.characteristic_radiation_areal_shift) ||
+       opt.characteristic_radiation_areal_shift < 0.0 ||
+       opt.damp_kappa1 < 0.0 || !isfinite(opt.damp_kappa1) ||
+       opt.damp_kappa2 != 0.0)) {
+    std::cerr << "damped_constraint_radiation requires finite nonnegative "
+              << "areal shift and kappa1, and kappa2=0." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   use_analytic_background = pin->GetOrAddBoolean("z4c", "use_analytic_background",
                                                  false);
   evolve_gauge_residual = pin->GetOrAddBoolean("z4c", "evolve_gauge_residual",
@@ -281,6 +299,9 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     const bool tangential_principal =
         opt.characteristic_bc_source_mode ==
         characteristic_bc_source_tangential_principal;
+    const bool physical_constraint_radiation =
+        opt.characteristic_bc_source_mode ==
+        characteristic_bc_source_physical_constraint_radiation;
     const bool supported =
         opt.use_z4c &&
         use_analytic_background &&
@@ -294,6 +315,9 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
         fabs(opt.shift_hh) <= tol &&
         fabs(opt.sss_damping_amp) <= tol &&
         (!tangential_principal || ppack->pmesh->mb_indcs.ng == 4) &&
+        (!physical_constraint_radiation ||
+         (ppack->pmesh->three_d && ppack->pmesh->mb_indcs.nx1 >= 5 &&
+          ppack->pmesh->mb_indcs.nx2 >= 5 && ppack->pmesh->mb_indcs.nx3 >= 5)) &&
         opt.characteristic_bc_diagnostic_interval > 0 &&
         isfinite(opt.characteristic_bc_max_energy_density) &&
         opt.characteristic_bc_max_energy_density >= 0.0;
@@ -308,8 +332,16 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
                 << "shift_H=0, sss_damping_amp=0, and a finite nonnegative "
                 << "characteristic_bc_max_energy_density, with a positive "
                 << "diagnostic interval. The tangential-principal mode also "
-                << "requires nghost=4." << std::endl;
+                << "requires nghost=4. Damped-constraint radiation requires "
+                << "three dimensions and at least five active cells per block direction."
+                << std::endl;
       std::exit(EXIT_FAILURE);
+    }
+    if (physical_constraint_radiation && global_variable::my_rank == 0) {
+      std::cout << "### WARNING: damped_constraint_radiation is an experimental "
+                << "boundary control with known growing modes; it is not a "
+                << "validated stability fix. See analysis/outer_boundary."
+                << std::endl;
     }
   }
 
@@ -349,6 +381,12 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddInteger("z4c", "extrap_order", 2))));
 
   opt.roll_kappa = pin->GetOrAddBoolean("z4c", "roll_kappa", false);
+  if (opt.roll_kappa && opt.characteristic_bc_source_mode ==
+      characteristic_bc_source_physical_constraint_radiation) {
+    std::cerr << "damped_constraint_radiation currently requires roll_kappa=false."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.kappa_roll_start_time = pin->GetOrAddReal("z4c", "kappa_roll_start_time", 0.0);
   opt.roll_window = pin->GetOrAddReal("z4c", "roll_window", 20.0);
   opt.target_kappa1 = pin->GetOrAddReal("z4c", "target_kappa1", 0.0);
@@ -619,10 +657,49 @@ void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
   // Regions overlap intentionally: radial regions, physical-boundary stencil
   // bands, interface-adjacent blocks, and ghosts are distinct diagnostics.
   const char *regions[] = {"freeze", "sponge", "interior", "exterior",
-                           "outer_boundary", "refinement_block", "ghost"};
+      "outer_boundary", "refinement_block", "ghost", "active_face_band",
+      "active_edge_band", "active_corner_band", "physical_ghost_face",
+      "physical_ghost_edge", "physical_ghost_corner", "internal_ghost"};
+  constexpr int nregions = 14;
   struct Peak { Real value=-1, x=0, y=0, z=0; int m=0,i=0,j=0,k=0;
                 long count=0, bits=0, bad=0; };
-  Peak peak[nz4c][7];
+  Peak peak[nz4c][nregions];
+  // State validity is intentionally separate from RHS extrema: a negative RHS
+  // metric component is not an invalid metric. View identity, not an operation
+  // label guess, determines whether reconstruction has a physical meaning.
+  const bool residual_state = state.data() == u0.data();
+  const bool full_state = state.data() == u_full.data() || state.data() == u_bg.data();
+  const bool check_validity = residual_state || full_state;
+  const char *state_role = residual_state ? "residual_reconstructed" : "full_state";
+  const bool reconstruct = residual_state && use_analytic_background &&
+                           SetADMBackground != nullptr;
+  // Before the complete fill/prolongation, ghost values can be stale or not
+  // initialized. Report them as observations, never as first valid-state errors.
+  const bool ghosts_ready = operation == "post_prolong" ||
+      operation == "pre_projection" || operation == "post_projection" ||
+      operation == "post_recast" || operation == "init_reconstructed" ||
+      operation == "init_projected";
+  const char *valid_regions[] = {"active_interior", "active_face_band",
+      "active_edge_band", "active_corner_band", "internal_ghost",
+      "physical_ghost_face", "physical_ghost_edge", "physical_ghost_corner"};
+  const char *valid_fields[] = {"alpha", "chi", "gxx", "minor2", "detg"};
+  const auto &mesh_bcs = pmy_pack->pmesh->mesh_bcs;
+  auto physical = [](BoundaryFlag b) {
+    return b!=BoundaryFlag::periodic && b!=BoundaryFlag::shear_periodic;
+  };
+  const bool lo[] = {physical(mesh_bcs[BoundaryFace::inner_x1]),
+      ix.nx2>1 && physical(mesh_bcs[BoundaryFace::inner_x2]),
+      ix.nx3>1 && physical(mesh_bcs[BoundaryFace::inner_x3])};
+  const bool hi[] = {physical(mesh_bcs[BoundaryFace::outer_x1]),
+      ix.nx2>1 && physical(mesh_bcs[BoundaryFace::outer_x2]),
+      ix.nx3>1 && physical(mesh_bcs[BoundaryFace::outer_x3])};
+  struct Minimum {
+    Real value=std::numeric_limits<Real>::infinity(), x=0,y=0,z=0;
+    int m=0,i=0,j=0,k=0,physical_codim=0,local_codim=0;
+    long count=0, nonpositive=0, nonfinite=0;
+  };
+  Minimum minima[8][5];
+  long invalid_metric_count[8] = {};
   std::ofstream profile;
   if (opt.debug_balance_profiles && std::string(label) == "post_recast") {
     profile.open("z4c_theta_rank" + std::to_string(rank) + "_cycle" +
@@ -644,21 +721,61 @@ void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
       const Real z=s.x3min+(k-ix.ks+0.5)*s.dx3;
       const Real r=std::sqrt(x*x+y*y+z*z);
       const bool ghost=i<ix.is || i>ix.ie || j<ix.js || j>ix.je || k<ix.ks || k>ix.ke;
-      const bool edge=x-dom.x1min < ix.ng*s.dx1 || dom.x1max-x < ix.ng*s.dx1 ||
-        y-dom.x2min < ix.ng*s.dx2 || dom.x2max-y < ix.ng*s.dx2 ||
-        z-dom.x3min < ix.ng*s.dx3 || dom.x3max-z < ix.ng*s.dx3;
+      const int band_codim =
+          static_cast<int>((lo[0] && x-dom.x1min < ix.ng*s.dx1) ||
+                           (hi[0] && dom.x1max-x < ix.ng*s.dx1)) +
+          static_cast<int>((lo[1] && y-dom.x2min < ix.ng*s.dx2) ||
+                           (hi[1] && dom.x2max-y < ix.ng*s.dx2)) +
+          static_cast<int>((lo[2] && z-dom.x3min < ix.ng*s.dx3) ||
+                           (hi[2] && dom.x3max-z < ix.ng*s.dx3));
+      const int physical_codim = static_cast<int>((lo[0] && x<dom.x1min) ||
+                                                (hi[0] && x>dom.x1max)) +
+          static_cast<int>((lo[1] && y<dom.x2min) || (hi[1] && y>dom.x2max)) +
+          static_cast<int>((lo[2] && z<dom.x3min) || (hi[2] && z>dom.x3max));
+      const int local_codim = static_cast<int>(i<ix.is || i>ix.ie) +
+          static_cast<int>(j<ix.js || j>ix.je) + static_cast<int>(k<ix.ks || k>ix.ke);
+      const bool edge=band_codim>0;
       const bool region[] = {!ghost && r<=opt.debug_balance_freeze,
         !ghost && r>opt.debug_balance_freeze && r<opt.debug_balance_ramp,
         !ghost && r>=opt.debug_balance_ramp && r<opt.debug_balance_horizon,
         !ghost && r>=opt.debug_balance_horizon, !ghost && edge,
-        !ghost && refinement, ghost};
+        !ghost && refinement, ghost, !ghost && band_codim==1,
+        !ghost && band_codim==2, !ghost && band_codim==3,
+        ghost && physical_codim==1, ghost && physical_codim==2,
+        ghost && physical_codim==3, ghost && physical_codim==0};
+      if (check_validity) {
+        const int q=ghost ? 4+physical_codim : band_codim;
+        auto value = [&](int n) {
+          if (!reconstruct) return h(m,n,k,j,i);
+          const bool lapse_fixed = n==I_Z4C_ALPHA &&
+              !(evolve_lapse_residual || preserve_lapse_residual);
+          return AddResidualToBackground(hb(m,n,k,j,i),
+                                          lapse_fixed ? 0.0 : h(m,n,k,j,i));
+        };
+        const Real gxx=value(I_Z4C_GXX), gxy=value(I_Z4C_GXY), gxz=value(I_Z4C_GXZ);
+        const Real gyy=value(I_Z4C_GYY), gyz=value(I_Z4C_GYZ), gzz=value(I_Z4C_GZZ);
+        const Real values[] = {value(I_Z4C_ALPHA),value(I_Z4C_CHI),gxx,
+            gxx*gyy-gxy*gxy,adm::SpatialDet(gxx,gxy,gxz,gyy,gyz,gzz)};
+        bool invalid=false;
+        for (int f=0;f<5;++f) {
+          const Real v=values[f]; auto &p=minima[q][f]; ++p.count;
+          p.nonpositive += std::isfinite(v) && v<=0.0;
+          p.nonfinite += !std::isfinite(v);
+          invalid = invalid || !std::isfinite(v) || v<=0.0;
+          if (v<p.value || !std::isfinite(v)) {
+            p.value=v; p.m=m;p.i=i;p.j=j;p.k=k;p.x=x;p.y=y;p.z=z;
+            p.physical_codim=physical_codim;p.local_codim=local_codim;
+          }
+        }
+        invalid_metric_count[q] += invalid;
+      }
       if (profile && !ghost) profile << mb.mb_gid.h_view(m) << ','
         << mb.mb_lev.h_view(m)-pmy_pack->pmesh->root_level << ','
         << x << ',' << y << ',' << z << ',' << h(m,I_Z4C_THETA,k,j,i) << '\n';
       for (int n=0;n<nz4c;++n) {
         const Real v=h(m,n,k,j,i), b=compare_background ? hb(m,n,k,j,i) : 0.0;
         const Real d=v-b;
-        for (int q=0;q<7;++q) if (region[q]) {
+        for (int q=0;q<nregions;++q) if (region[q]) {
           auto &p=peak[n][q]; p.count += (d!=0.0);
           p.bits += (std::memcmp(&v,&b,sizeof(Real))!=0);
           p.bad += !std::isfinite(d);
@@ -669,7 +786,7 @@ void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
       }
     }
   }
-  for (int n=0;n<nz4c;++n) for(int q=0;q<7;++q) {
+  for (int n=0;n<nz4c;++n) for(int q=0;q<nregions;++q) {
     const auto &p=peak[n][q]; if(p.value<0)continue;
     out << pmy_pack->pmesh->ncycle << ',' << pmy_pack->pmesh->time << ',' << stage
       << ',' << label << ',' << Z4c_names[n] << ',' << regions[q] << ',' << rank
@@ -677,6 +794,26 @@ void Z4c::DebugBalance(const char *label, int stage, DvceArray5D<Real> &state,
       << mb.mb_lev.h_view(p.m)-pmy_pack->pmesh->root_level << ','
       << p.i << ',' << p.j << ',' << p.k << ',' << p.x << ',' << p.y << ','
       << p.z << ',' << p.value << ',' << p.count << ',' << p.bits << ',' << p.bad << '\n';
+  }
+  if (check_validity) {
+    const std::string path="z4c_validity_rank"+std::to_string(rank)+".csv";
+    const bool first=!std::ifstream(path).good();
+    std::ofstream valid(path,std::ios::app);
+    if (first) valid << "cycle,time,stage,operation,state_role,readiness,region,field,rank,gid,relative_level,i,j,k,x,y,z,physical_codim,local_ghost_codim,min_value,cells,nonpositive,nonfinite,invalid_metric_cells\n";
+    valid << std::setprecision(17);
+    for (int q=0;q<8;++q) for (int f=0;f<5;++f) {
+      const auto &p=minima[q][f]; if (!p.count) continue;
+      const char *readiness=q<4 ? "active" : (ghosts_ready ? "post_fill" : "pending_ghosts");
+      valid << pmy_pack->pmesh->ncycle << ',' << pmy_pack->pmesh->time << ',' << stage
+          << ',' << label << ',' << state_role << ',' << readiness << ','
+          << valid_regions[q] << ',' << valid_fields[f] << ',' << rank << ','
+          << mb.mb_gid.h_view(p.m) << ','
+          << mb.mb_lev.h_view(p.m)-pmy_pack->pmesh->root_level << ','
+          << p.i << ',' << p.j << ',' << p.k << ',' << p.x << ',' << p.y << ','
+          << p.z << ',' << p.physical_codim << ',' << p.local_codim << ','
+          << p.value << ',' << p.count << ',' << p.nonpositive << ',' << p.nonfinite
+          << ',' << invalid_metric_count[q] << '\n';
+    }
   }
 }
 

@@ -16,8 +16,9 @@ The independent task checkout is `athenak-outer-boundary-fix`, branch
 `project/fix-residual-z4c-outer-boundary`. Changes and new tests belong here or
 in sibling `outer-boundary-fix-20260920`; campaign artifacts are read-only.
 No production restart, monitor update or existing-job modification is authorized.
-Dedicated Aurora diagnostics may use MHDTidal/debug, at most two nodes and
-one-hour allocations. No diagnostic submission belongs in debug-scaling.
+The latest user override allows dedicated Aurora diagnostics in either debug or
+debug-scaling to avoid queues, at most two nodes and one-hour allocations.
+The requested tidal allocation is registered by Aurora as MHDTidal (not TidalMHD).
 
 Production uses sixth-order volume differences, RK3, G=1 background-adapted
 gauge, lapse residual damping 0.1, kappa1=0.1/kappa2=0, linear residual ghosts,

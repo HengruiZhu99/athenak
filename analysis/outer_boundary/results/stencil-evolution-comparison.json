@@ -1,0 +1,206 @@
+[
+  {
+    "case": "outer-ghost-baseline",
+    "last_history_M": 2335.199999999829,
+    "last_theta_max": 0.1912114202427897,
+    "last_lapse_residual_max": 0.7287516558860387,
+    "last_shift_residual_max": 0.2824304145615392,
+    "last_history_bad_metric": 0.0,
+    "history_finite": true,
+    "fatal_invalid_state": {
+      "time": 2336.3999999998287,
+      "cycle": 3894.0,
+      "rank": 0.0,
+      "gid": 1.0,
+      "relative_level": 0.0,
+      "x": 2000.0,
+      "y": 1776.0,
+      "z": -1232.0,
+      "local_bad_cells": 6.0
+    },
+    "first_primitive_error": {
+      "kind": "NANS_IN_CONS",
+      "after_last_logged_time_M": 2310.0,
+      "local_mkji": [
+        3,
+        0,
+        10,
+        15
+      ],
+      "xyz_M": [
+        2160.0,
+        2000.0,
+        -1392.0
+      ],
+      "detg": -0.013382838274527797,
+      "note": "The preceding logged time is a lower bound, not the precise error time."
+    },
+    "outcome": "invalid_state_failure",
+    "theta_growth_windows": [
+      {
+        "time_window_M": [
+          500.4000000000075,
+          999.0000000000264
+        ],
+        "gamma_per_M": 0.010932252248788786,
+        "log_fit_R2": 0.9997329330848304
+      },
+      {
+        "time_window_M": [
+          1000.200000000026,
+          1499.999999999955
+        ],
+        "gamma_per_M": 0.01231787231308126,
+        "log_fit_R2": 0.9993950335770903
+      },
+      {
+        "time_window_M": [
+          1501.199999999955,
+          1999.19999999988
+        ],
+        "gamma_per_M": 0.012854329377726549,
+        "log_fit_R2": 0.9999996228743371
+      },
+      {
+        "time_window_M": [
+          2000.399999999879,
+          2335.199999999829
+        ],
+        "gamma_per_M": 0.015429765254844635,
+        "log_fit_R2": 0.9603890743125888
+      }
+    ]
+  },
+  {
+    "case": "outer-stencil-baseline",
+    "last_history_M": 2336.399999999829,
+    "last_theta_max": 0.1870827976238219,
+    "last_lapse_residual_max": 0.6953108989624461,
+    "last_shift_residual_max": 0.2709442369801277,
+    "last_history_bad_metric": 0.0,
+    "history_finite": true,
+    "fatal_invalid_state": {
+      "time": 2336.9999999998286,
+      "cycle": 3895.0,
+      "rank": 0.0,
+      "gid": 3.0,
+      "relative_level": 0.0,
+      "x": 2000.0,
+      "y": 2000.0,
+      "z": -1040.0,
+      "local_bad_cells": 2.0
+    },
+    "first_primitive_error": {
+      "kind": "NANS_IN_CONS",
+      "after_last_logged_time_M": 2310.0,
+      "local_mkji": [
+        3,
+        0,
+        10,
+        15
+      ],
+      "xyz_M": [
+        2160.0,
+        2000.0,
+        -1392.0
+      ],
+      "detg": -0.012314745968464491,
+      "note": "The preceding logged time is a lower bound, not the precise error time."
+    },
+    "outcome": "invalid_state_failure",
+    "theta_growth_windows": [
+      {
+        "time_window_M": [
+          500.4000000000075,
+          999.0000000000264
+        ],
+        "gamma_per_M": 0.010932291482063677,
+        "log_fit_R2": 0.9997329438604111
+      },
+      {
+        "time_window_M": [
+          1000.200000000026,
+          1499.999999999955
+        ],
+        "gamma_per_M": 0.012317840663567482,
+        "log_fit_R2": 0.9993950536118554
+      },
+      {
+        "time_window_M": [
+          1501.199999999955,
+          1999.19999999988
+        ],
+        "gamma_per_M": 0.01285429755017177,
+        "log_fit_R2": 0.9999996216785307
+      },
+      {
+        "time_window_M": [
+          2000.399999999879,
+          2336.399999999829
+        ],
+        "gamma_per_M": 0.015446535607695855,
+        "log_fit_R2": 0.9621312786867453
+      }
+    ]
+  },
+  {
+    "case": "outer-stencil-sponge",
+    "last_history_M": 5000.0,
+    "last_theta_max": 9.48426880588863e-15,
+    "last_lapse_residual_max": 2.287059430727822e-13,
+    "last_shift_residual_max": 1.675493511293924e-14,
+    "last_history_bad_metric": 0.0,
+    "history_finite": true,
+    "outcome": "time_target",
+    "theta_growth_windows": [
+      {
+        "time_window_M": [
+          500.4000000000075,
+          999.0000000000264
+        ],
+        "gamma_per_M": -0.003919868120700538,
+        "log_fit_R2": 0.37808512806932504
+      },
+      {
+        "time_window_M": [
+          1000.200000000026,
+          1499.999999999955
+        ],
+        "gamma_per_M": -0.0022782890708788256,
+        "log_fit_R2": 0.20790737010926186
+      },
+      {
+        "time_window_M": [
+          1501.199999999955,
+          1999.19999999988
+        ],
+        "gamma_per_M": -0.0027950507290443924,
+        "log_fit_R2": 0.2869279129010368
+      },
+      {
+        "time_window_M": [
+          2000.399999999879,
+          2999.999999999728
+        ],
+        "gamma_per_M": -6.265779585448226e-05,
+        "log_fit_R2": 0.007435591811727815
+      },
+      {
+        "time_window_M": [
+          3001.199999999728,
+          3998.999999999577
+        ],
+        "gamma_per_M": 0.000390722864094439,
+        "log_fit_R2": 0.9975444790528716
+      },
+      {
+        "time_window_M": [
+          4000.199999999576,
+          5000.0
+        ],
+        "gamma_per_M": 0.0003851965680329828,
+        "log_fit_R2": 0.9977419685608733
+      }
+    ]
+  }
+]

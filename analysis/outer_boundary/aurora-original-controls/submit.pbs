@@ -1,0 +1,41 @@
+#!/bin/bash -l
+#PBS -A MHDTidal
+#PBS -N outer_sponge_audit
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+source /home/hzhu/athenak_env
+export MPICH_GPU_SUPPORT_ENABLED=1 OMP_NUM_THREADS=1
+export SYCL_DEVICE_FILTER=level_zero:gpu ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+cd "$PBS_O_WORKDIR"
+source executable.env
+[[ "$(sha256sum "$ATHENA_EXE" | awk '{print $1}')" == "$EXPECTED_SHA256" ]]
+root=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review
+runroot="$root/runs/outer_sponge_${PBS_JOBID%%.*}"
+mkdir "$runroot"
+cp submit.pbs executable.env *.athinput verify_checkpoint.py zero_gate.py "$runroot/"
+bind=list:1-8:9-16:17-24:25-32
+zero="$runroot/zero"; mkdir "$zero"
+mpiexec -n 4 -ppn 4 --cpu-bind "$bind" gpu_tile_compact.sh "$ATHENA_EXE" \
+  -i "$PBS_O_WORKDIR/zero.athinput" -d "$zero" -t 00:03:00 > "$zero/run.log" 2>&1
+python3 "$PBS_O_WORKDIR/verify_checkpoint.py" "$zero" --ranks 4 --cycle 3 > "$zero/checkpoint-check.log" 2>&1
+python3 "$PBS_O_WORKDIR/zero_gate.py" "$zero" > "$zero/zero-check.log" 2>&1
+for name in baseline sponge; do
+  work="$runroot/$name"; mkdir "$work"
+  cp "$PBS_O_WORKDIR/$name.athinput" "$work/input.athinput"
+  date -u > "$work/start.txt"
+  set +e
+  mpiexec -n 4 -ppn 4 --cpu-bind "$bind" gpu_tile_compact.sh "$ATHENA_EXE" \
+    -i "$PBS_O_WORKDIR/$name.athinput" -d "$work" -t 00:24:00 > "$work/run.log" 2>&1
+  rc=$?; printf '%s\n' "$rc" > "$work/exit_code.txt"
+  python3 "$PBS_O_WORKDIR/verify_checkpoint.py" "$work" --ranks 4 > "$work/checkpoint-check.log" 2>&1
+  printf '%s\n' "$?" > "$work/checkpoint-check-exit.txt"
+  set -e
+  date -u > "$work/end.txt"
+  echo "$name application_exit=$rc"
+done

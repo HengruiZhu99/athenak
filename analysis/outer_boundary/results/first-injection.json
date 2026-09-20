@@ -1,0 +1,42 @@
+{
+  "Volume RHS": {
+    "Theta_rhs_max": 1.6553479961131055e-26,
+    "xyz": [
+      1776.0,
+      1776.0,
+      -1008.0
+    ],
+    "nonzero_in_slice": 12
+  },
+  "After characteristic boundary RHS": {
+    "Theta_rhs_max": 1.6817034034607754e-16,
+    "xyz": [
+      1776.0,
+      1552.0,
+      -1008.0
+    ],
+    "nonzero_in_slice": 20
+  },
+  "polynomial_consistency": {
+    "first_active_Dxx_x_squared_linear_ghosts": "-7/30",
+    "exact": "2",
+    "error": "-67/30",
+    "note": "Independent of h: linear ghost fill does not give a consistent Dxx for curved residuals at the first active cell; this alone is not a growing-mode proof."
+  },
+  "linear_extrapolation_fourth_ghost": {
+    "face_coefficients": [
+      5,
+      -4
+    ],
+    "face_linf_bound": 9,
+    "edge_coefficients": [
+      25,
+      -20,
+      -20,
+      16
+    ],
+    "edge_linf_bound": 81,
+    "corner_linf_bound": 729,
+    "note": "Worst-case linear operator bounds, not measured production amplification."
+  }
+}

@@ -21,6 +21,7 @@
 #include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_boundary_stencil.hpp"
+#include "z4c/z4c_constraint_radiation.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -60,9 +61,9 @@ enum CharacteristicInvalid {
   CPBC_NINVALID = 11
 };
 
-template <bool Value>
+template <int Value>
 struct CharacteristicSourceTag {
-  static constexpr bool value = Value;
+  static constexpr int value = Value;
 };
 
 KOKKOS_INLINE_FUNCTION
@@ -300,7 +301,7 @@ void AtomicDiagnosticMax(const DvceArray1D<Real> &diag, int index, Real value,
   }
 }
 
-template <bool TangentialPrincipal>
+template <bool TangentialPrincipal, bool ConstraintRadiation>
 KOKKOS_INLINE_FUNCTION
 int ApplyResidualCharacteristicBC(
     const DvceArray5D<Real> &u, const DvceArray5D<Real> &u_full,
@@ -308,7 +309,8 @@ int ApplyResidualCharacteristicBC(
     const DvceArray5D<Real> &u_rhs, const DvceArray5D<Real> &matter,
     bool has_matter, const Z4c::Options &opt,
     const DvceArray1D<Real> &diag, Real time,
-    int m, int k, int j, int i, const int side[3], const Real idx[3],
+    int m, int k, int j, int i, const RegionIndcs &indcs, const RegionSize &size,
+    const int side[3], const Real idx[3],
     bool collect_diagnostics) {
   Real g_dd[3][3], g_uu[3][3];
   Real normal_d[3], normal_u[3];
@@ -430,6 +432,24 @@ int ApplyResidualCharacteristicBC(
   Real inv_h = 0.0;
   for (int a = 0; a < 3; ++a) inv_h += fabs(normal_u[a])*idx[a];
   if (!(isfinite(inv_h)) || inv_h <= 0.0) return CPBC_INVALID_SPACING;
+
+  Real physical_theta_residual = 0.0;
+  Real physical_q_residual[3] = {};
+  if constexpr (ConstraintRadiation) {
+    const Real xyz[3] = {
+      CellCenterX(i-indcs.is,indcs.nx1,size.x1min,size.x1max),
+      CellCenterX(j-indcs.js,indcs.nx2,size.x2min,size.x2max),
+      CellCenterX(k-indcs.ks,indcs.nx3,size.x3min,size.x3max)};
+    // Only local Gamma/Theta RHS and derivatives of metric RHS are read.
+    // Every boundary kernel leaves metric RHS immutable, and disjoint face
+    // ownership gives this cell's momentum RHS exactly one writer. No
+    // in-place stencil read/write or ghost-RHS exchange is introduced.
+    if (ComputeConstraintRadiationResidual(
+            u_full,u_bg,u_rhs,m,k,j,i,indcs,side,idx,normal_d,normal_u,
+            xyz,opt,physical_theta_residual,physical_q_residual) != 0) {
+      return CPBC_INVALID_COEFFICIENT;
+    }
+  }
 
   Real derivative_metric[3][3], derivative_rhs_metric[3][3];
   Real centered_derivative_A[3][3] = {};
@@ -841,6 +861,19 @@ int ApplyResidualCharacteristicBC(
       // executable: homogeneous incoming characteristic data have zero rate.
       target_rate[mode] = 0.0;
     }
+    if constexpr (ConstraintRadiation) {
+      // Differential Bjorhus data, not a primitive Theta/Gamma overwrite:
+      // F_Theta=alpha*d_n C1+lower; F_Qn=-c_light*d_n C2+lower.
+      // Retain the full volume characteristic rate (including tangential,
+      // gauge and lower-order terms) and replace its incoming derivative.
+      if (mode == 2) {
+        target_rate[mode] = rate-lambda_light[0]*physical_theta_residual/alpha;
+      } else if (mode == 3) {
+        Real normal_q = 0.0;
+        for (int a = 0; a < 3; ++a) normal_q += normal_d[a]*physical_q_residual[a];
+        target_rate[mode] = rate+lambda_light[0]*normal_q/c_light;
+      }
+    }
     scalar_residual[mode] = target_rate[mode] - rate;
     AtomicDiagnosticMax(diag, mode < 2 ? CPBC_GAUGE_AMPLITUDE :
                         CPBC_CONSTRAINT_AMPLITUDE,
@@ -1016,6 +1049,13 @@ int ApplyResidualCharacteristicBC(
         vector_p_principal[1] + vector_d_principal[0];
     Real constraint_target = TangentialPrincipal ?
         constraint_full_principal_rate-constraint_normal_principal_rate : 0.0;
+    if constexpr (ConstraintRadiation) {
+      Real tangent_q = 0.0;
+      for (int a = 0; a < 3; ++a) {
+        tangent_q += tangent_d[tangent][a]*physical_q_residual[a];
+      }
+      constraint_target = constraint_rate+lambda_light[0]*tangent_q/c_light;
+    }
     Real constraint_residual = constraint_target-constraint_rate;
     Real delta_A =
         -0.5*sqrt_chi*(constraint_residual + delta_gamma);
@@ -1416,13 +1456,17 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
   // experimental tangential-principal source. This keeps the latter's larger
   // stencil and register footprint out of the default kernel.
   auto launch_characteristic_kernels = [&](auto source_tag) {
-  constexpr bool tangential_principal = decltype(source_tag)::value;
+  constexpr bool tangential_principal = decltype(source_tag)::value == 1;
+  constexpr bool constraint_radiation = decltype(source_tag)::value == 2;
   const char *x1_kernel = tangential_principal ?
-      "z4c_cpbc_tangential_principal_x1" : "z4c_cpbc_zero_rate_x1";
+      "z4c_cpbc_tangential_principal_x1" : (constraint_radiation ?
+      "z4c_cpbc_physical_constraint_radiation_x1" : "z4c_cpbc_zero_rate_x1");
   const char *x2_kernel = tangential_principal ?
-      "z4c_cpbc_tangential_principal_x2" : "z4c_cpbc_zero_rate_x2";
+      "z4c_cpbc_tangential_principal_x2" : (constraint_radiation ?
+      "z4c_cpbc_physical_constraint_radiation_x2" : "z4c_cpbc_zero_rate_x2");
   const char *x3_kernel = tangential_principal ?
-      "z4c_cpbc_tangential_principal_x3" : "z4c_cpbc_zero_rate_x3";
+      "z4c_cpbc_tangential_principal_x3" : (constraint_radiation ?
+      "z4c_cpbc_physical_constraint_radiation_x3" : "z4c_cpbc_zero_rate_x3");
 
   // The kernels have disjoint ownership. X1 owns every cell incident on an X1
   // physical face; X2 skips those cells; X3 skips both X1 and X2 incidents.
@@ -1456,9 +1500,9 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                      1.0/size.d_view(m).dx3};
       int status =
-          ApplyResidualCharacteristicBC<tangential_principal>(
+          ApplyResidualCharacteristicBC<tangential_principal,constraint_radiation>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
-          m,k,j,point_i,side,idx,collect_diagnostics);
+          m,k,j,point_i,indcs,size.d_view(m),side,idx,collect_diagnostics);
       if (collect_diagnostics && status != CPBC_VALID) {
         Kokkos::atomic_add(&invalid_(status),1);
       }
@@ -1493,9 +1537,9 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                      1.0/size.d_view(m).dx3};
       int status =
-          ApplyResidualCharacteristicBC<tangential_principal>(
+          ApplyResidualCharacteristicBC<tangential_principal,constraint_radiation>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
-          m,k,point_j,i,side,idx,collect_diagnostics);
+          m,k,point_j,i,indcs,size.d_view(m),side,idx,collect_diagnostics);
       if (collect_diagnostics && status != CPBC_VALID) {
         Kokkos::atomic_add(&invalid_(status),1);
       }
@@ -1528,9 +1572,9 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
       Real idx[3] = {1.0/size.d_view(m).dx1,1.0/size.d_view(m).dx2,
                      1.0/size.d_view(m).dx3};
       int status =
-          ApplyResidualCharacteristicBC<tangential_principal>(
+          ApplyResidualCharacteristicBC<tangential_principal,constraint_radiation>(
           u_,full_,bg_,rhs_,matter_,has_matter,opt_,diag_,time,
-          m,point_k,j,i,side,idx,collect_diagnostics);
+          m,point_k,j,i,indcs,size.d_view(m),side,idx,collect_diagnostics);
       if (collect_diagnostics && status != CPBC_VALID) {
         Kokkos::atomic_add(&invalid_(status),1);
       }
@@ -1541,9 +1585,12 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
 
   if (opt.characteristic_bc_source_mode ==
       characteristic_bc_source_tangential_principal) {
-    launch_characteristic_kernels(CharacteristicSourceTag<true>{});
+    launch_characteristic_kernels(CharacteristicSourceTag<1>{});
+  } else if (opt.characteristic_bc_source_mode ==
+      characteristic_bc_source_physical_constraint_radiation) {
+    launch_characteristic_kernels(CharacteristicSourceTag<2>{});
   } else {
-    launch_characteristic_kernels(CharacteristicSourceTag<false>{});
+    launch_characteristic_kernels(CharacteristicSourceTag<0>{});
   }
 
   if (measure_performance) {
@@ -1650,7 +1697,10 @@ TaskStatus Z4c::Z4cBoundaryRHS(Driver *pdriver, int stage) {
                 << " source="
                 << (opt.characteristic_bc_source_mode ==
                             characteristic_bc_source_tangential_principal ?
-                        "tangential_principal" : "zero_rate")
+                        "tangential_principal" :
+                    (opt.characteristic_bc_source_mode ==
+                       characteristic_bc_source_physical_constraint_radiation ?
+                       "physical_constraint_radiation" : "zero_rate"))
                 << " incoming_modes=10"
                 << " boundary_blocks_max="
                 << max_boundary_block_count[0] << ","

@@ -145,6 +145,9 @@ class Z4c {
   Real user_source_dt = std::numeric_limits<Real>::max();
   // Host-only snapshot filter; keep strings out of device-captured Options.
   std::string debug_snapshot_operations;
+  // Host-only context for opt-in physical ghost-fill diagnostics. -1 denotes
+  // initialization or a caller outside an RK stage; never changes evolution.
+  int debug_physical_bc_stage = -1;
   bool use_analytic_background = false;
   bool evolve_gauge_residual = false;
   bool evolve_lapse_residual = false;
@@ -157,6 +160,7 @@ class Z4c {
   static constexpr int boundary_rhs_characteristic_cpbc = 1;
   static constexpr int characteristic_bc_source_zero_rate = 0;
   static constexpr int characteristic_bc_source_tangential_principal = 1;
+  static constexpr int characteristic_bc_source_physical_constraint_radiation = 2;
 
   // aliases for the constraints
   struct Constraint_vars {
@@ -222,6 +226,9 @@ class Z4c {
     // Physical-boundary RHS treatment.
     int boundary_rhs_mode;
     int characteristic_bc_source_mode;
+    // Experimental local absorbing condition for the damped physical constraints.
+    Real characteristic_radiation_areal_shift;
+    bool characteristic_radiation_areal_falloff;
     bool characteristic_bc_diagnostics;
     int characteristic_bc_diagnostic_interval;
     Real characteristic_bc_max_energy_density;

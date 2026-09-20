@@ -1,0 +1,483 @@
+{
+  "8840414": {
+    "log_lines": 20944,
+    "primitive_errors": 0,
+    "assembly_messages": 456,
+    "first_error": null,
+    "first_two_error_contexts": [],
+    "physical_outside_dimension_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "local_ghost_dimension_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    }
+  },
+  "8840633": {
+    "log_lines": 19583,
+    "primitive_errors": 0,
+    "assembly_messages": 456,
+    "first_error": null,
+    "first_two_error_contexts": [],
+    "physical_outside_dimension_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "local_ghost_dimension_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    }
+  },
+  "8840819": {
+    "log_lines": 18339,
+    "primitive_errors": 0,
+    "assembly_messages": 456,
+    "first_error": null,
+    "first_two_error_contexts": [],
+    "physical_outside_dimension_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "local_ghost_dimension_counts": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    }
+  },
+  "8841001": {
+    "log_lines": 290821,
+    "primitive_errors": 14354,
+    "assembly_messages": 27,
+    "first_error": {
+      "job": "8841001",
+      "line": 2821,
+      "preceding_logged_time": 2088.45,
+      "error": "NANS_IN_CONS",
+      "local_block": 1,
+      "i": 39,
+      "j": 39,
+      "k": 38,
+      "x": 2160.0,
+      "y": 2160.0,
+      "z": -944.0,
+      "physical_outside_dimensions": 2,
+      "local_ghost_dimensions": 3,
+      "detg": -0.0005217479074370868,
+      "metric_min_eigenvalue": -0.00012227213439851644,
+      "metric_first_minor": 0.9368005769674655,
+      "metric_second_minor": 0.7289501580287923
+    },
+    "first_two_error_contexts": [
+      {
+        "line": 2821,
+        "text": "An error occurred during the primitive solve: NANS_IN_CONS\n  Location: (1, 38, 39, 39)\n            (2160, 2160, -944)\n  Conserved vars: \n    D   = -nan\n    Sx  = -nan\n    Sy  = -nan\n    Sz  = -nan\n    tau = -nan\n    Dye = 9.7109665888409028e-07\n    Bx  = -nan\n    By  = -nan\n    Bz  = -nan\n  Metric vars: \n    detg = -0.00052174790743708677\n    g_dd = {0.93680057696746555, -0.39981324467287332, 0.84399111193622989, 0.94876199961553875, 0.84784381206509107, 2.6351610946257824}\n    alp  = 1.0896480725323396\n    beta = {-0.13484868177937326, -0.13490140638866321, 0.22159017371982312}\n    psi4 = 1.1418811536581646\n    K_dd = {-0.009797327829094489, -0.0028039442960357732, -0.019846021408325896, -0.0098982119010183091, -0.0198287804821097, -0.049404140720192745}\nAssembleZ4cTasks\nAn error occurred during the primitive solve: NANS_IN_CONS"
+      },
+      {
+        "line": 2842,
+        "text": "An error occurred during the primitive solve: NANS_IN_CONS\n  Location: (2, 6, 39, 39)\n            (2160, 2160, -944)\n  Conserved vars: \n    D   = -nan\n    Sx  = -nan\n    Sy  = -nan\n    Sz  = -nan\n    tau = -nan\n    Dye = -1.2803144749082031e-07\n    Bx  = -nan\n    By  = -nan\n    Bz  = -nan\n  Metric vars: \n    detg = -0.00052174790743708677\n    g_dd = {0.93680057696746555, -0.39981324467287332, 0.84399111193622989, 0.94876199961553875, 0.84784381206509107, 2.6351610946257824}\n    alp  = 1.0896480725323396\n    beta = {-0.13484868177937326, -0.13490140638866321, 0.22159017371982312}\n    psi4 = 1.1418811536581646\n    K_dd = {-0.009797327829094489, -0.0028039442960357732, -0.019846021408325896, -0.0098982119010183091, -0.0198287804821097, -0.049404140720192745}\nAn error occurred during the primitive solve: NANS_IN_CONS\n  Location: (2, 6, 39, 39)"
+      }
+    ],
+    "physical_outside_dimension_counts": {
+      "0": 0,
+      "1": 7092,
+      "2": 7262,
+      "3": 0
+    },
+    "local_ghost_dimension_counts": {
+      "0": 0,
+      "1": 1204,
+      "2": 8346,
+      "3": 4804
+    },
+    "last_assembly_before_first_error": {
+      "line": 2820,
+      "preceding_logged_time": 2088.45
+    }
+  },
+  "fits": [
+    {
+      "diagnostic": "max Theta",
+      "nominal_window": [
+        100,
+        500
+      ],
+      "actual_window": [
+        100.0124999999963,
+        499.01250000012
+      ],
+      "points": 400,
+      "gamma_per_M": 0.003864094756427289,
+      "R2": 0.9619890545814525,
+      "initial": 4.347514224537052e-08,
+      "final": 2.59651839504888e-07
+    },
+    {
+      "diagnostic": "max Theta",
+      "nominal_window": [
+        500,
+        1000
+      ],
+      "actual_window": [
+        500.0250000001206,
+        999.0000000004231
+      ],
+      "points": 500,
+      "gamma_per_M": 0.002151468408302594,
+      "R2": 0.9702746485520981,
+      "initial": 2.610608546270472e-07,
+      "final": 9.747184181432158e-07
+    },
+    {
+      "diagnostic": "max Theta",
+      "nominal_window": [
+        1000,
+        1382.6
+      ],
+      "actual_window": [
+        1000.012500000424,
+        1382.512499999569
+      ],
+      "points": 384,
+      "gamma_per_M": 0.0037377003554324236,
+      "R2": 0.9987542582114163,
+      "initial": 9.785256630885527e-07,
+      "final": 4.378417747068066e-06
+    },
+    {
+      "diagnostic": "max Theta",
+      "nominal_window": [
+        1400,
+        1800
+      ],
+      "actual_window": [
+        1400.024999999526,
+        1799.999999998556
+      ],
+      "points": 401,
+      "gamma_per_M": 0.004236555133559716,
+      "R2": 0.6065920830492665,
+      "initial": 6.05461550323645e-06,
+      "final": 7.846071609234177e-05
+    },
+    {
+      "diagnostic": "max Theta",
+      "nominal_window": [
+        1800,
+        2005.1
+      ],
+      "actual_window": [
+        1801.012499998554,
+        2005.049999998059
+      ],
+      "points": 206,
+      "gamma_per_M": 0.011215596705815511,
+      "R2": 0.9989439547508685,
+      "initial": 7.898240513111542e-05,
+      "final": 0.0007516979209205266
+    },
+    {
+      "diagnostic": "max Theta",
+      "nominal_window": [
+        2007,
+        2088.45
+      ],
+      "actual_window": [
+        2008.012499998052,
+        2087.999999997858
+      ],
+      "points": 81,
+      "gamma_per_M": 0.014665219486906817,
+      "R2": 0.9977096339599643,
+      "initial": 0.0007807056269995075,
+      "final": 0.002561343799981587
+    },
+    {
+      "diagnostic": "max Theta",
+      "nominal_window": [
+        2088.45,
+        2119.1
+      ],
+      "actual_window": [
+        2089.012499997855,
+        2119.012499997782
+      ],
+      "points": 31,
+      "gamma_per_M": 0.1026751517279293,
+      "R2": 0.6746782074261066,
+      "initial": 0.002611564760775612,
+      "final": 0.1640217833720845
+    },
+    {
+      "diagnostic": "exterior Theta L2",
+      "nominal_window": [
+        100,
+        500
+      ],
+      "actual_window": [
+        100.0124999999963,
+        499.01250000012
+      ],
+      "points": 400,
+      "gamma_per_M": -0.0006258935697532017,
+      "R2": 0.5394316268120518,
+      "initial": 2.6870169406101042e-08,
+      "final": 1.9255239661704705e-08
+    },
+    {
+      "diagnostic": "exterior Theta L2",
+      "nominal_window": [
+        500,
+        1000
+      ],
+      "actual_window": [
+        500.0250000001206,
+        999.0000000004231
+      ],
+      "points": 500,
+      "gamma_per_M": 0.012401745426773145,
+      "R2": 0.9890525408069636,
+      "initial": 1.9374251413204512e-08,
+      "final": 6.3537686681281835e-06
+    },
+    {
+      "diagnostic": "exterior Theta L2",
+      "nominal_window": [
+        1000,
+        1382.6
+      ],
+      "actual_window": [
+        1000.012500000424,
+        1382.512499999569
+      ],
+      "points": 384,
+      "gamma_per_M": 0.015235161947961394,
+      "R2": 0.9994645922367092,
+      "initial": 6.446262794199649e-06,
+      "final": 0.0022435949039031696
+    },
+    {
+      "diagnostic": "exterior Theta L2",
+      "nominal_window": [
+        1400,
+        1800
+      ],
+      "actual_window": [
+        1400.024999999526,
+        1799.999999998556
+      ],
+      "points": 401,
+      "gamma_per_M": 0.008294761573982968,
+      "R2": 0.9243892910161042,
+      "initial": 0.0030235236255978302,
+      "final": 0.14209630007945098
+    },
+    {
+      "diagnostic": "exterior Theta L2",
+      "nominal_window": [
+        1800,
+        2005.1
+      ],
+      "actual_window": [
+        1801.012499998554,
+        2005.049999998059
+      ],
+      "points": 206,
+      "gamma_per_M": 0.011019802458374004,
+      "R2": 0.9985430185022188,
+      "initial": 0.14336839101899412,
+      "final": 1.3284981410343273
+    },
+    {
+      "diagnostic": "exterior Theta L2",
+      "nominal_window": [
+        2007,
+        2088.45
+      ],
+      "actual_window": [
+        2008.012499998052,
+        2087.999999997858
+      ],
+      "points": 81,
+      "gamma_per_M": 0.012750383766859717,
+      "R2": 0.9997433556144874,
+      "initial": 1.3772911282123086,
+      "final": 3.835367310787727
+    },
+    {
+      "diagnostic": "exterior Theta L2",
+      "nominal_window": [
+        2088.45,
+        2119.1
+      ],
+      "actual_window": [
+        2089.012499997855,
+        2119.012499997782
+      ],
+      "points": 31,
+      "gamma_per_M": 0.04075558602139892,
+      "R2": 0.6710614965937278,
+      "initial": 3.8906500448778236,
+      "final": 26.367935191667243
+    },
+    {
+      "diagnostic": "exterior Hamiltonian maximum",
+      "nominal_window": [
+        100,
+        500
+      ],
+      "actual_window": [
+        100.012,
+        499.013
+      ],
+      "points": 400,
+      "gamma_per_M": 1.537255073700706e-06,
+      "R2": 0.8415179612332229,
+      "initial": 0.000132988,
+      "final": 0.00013309
+    },
+    {
+      "diagnostic": "exterior Hamiltonian maximum",
+      "nominal_window": [
+        500,
+        1000
+      ],
+      "actual_window": [
+        500.025,
+        999.0
+      ],
+      "points": 500,
+      "gamma_per_M": 3.1939602513824347e-06,
+      "R2": 0.9339887083332873,
+      "initial": 0.000133091,
+      "final": 0.000133371
+    },
+    {
+      "diagnostic": "exterior Hamiltonian maximum",
+      "nominal_window": [
+        1000,
+        1382.6
+      ],
+      "actual_window": [
+        1000.01,
+        1382.51
+      ],
+      "points": 384,
+      "gamma_per_M": 1.9761926895908855e-05,
+      "R2": 0.9764670670610038,
+      "initial": 0.000133373,
+      "final": 0.000134456
+    },
+    {
+      "diagnostic": "exterior Hamiltonian maximum",
+      "nominal_window": [
+        1400,
+        1800
+      ],
+      "actual_window": [
+        1400.02,
+        1800.0
+      ],
+      "points": 401,
+      "gamma_per_M": 0.0008168301916041837,
+      "R2": 0.9101420902196319,
+      "initial": 0.00013457,
+      "final": 0.000180005
+    },
+    {
+      "diagnostic": "exterior Hamiltonian maximum",
+      "nominal_window": [
+        1800,
+        2005.1
+      ],
+      "actual_window": [
+        1800.0,
+        2005.05
+      ],
+      "points": 207,
+      "gamma_per_M": 0.003637587307624447,
+      "R2": 0.8275328131070381,
+      "initial": 0.000180005,
+      "final": 0.000458346
+    },
+    {
+      "diagnostic": "exterior Hamiltonian maximum",
+      "nominal_window": [
+        2007,
+        2088.45
+      ],
+      "actual_window": [
+        2007.0,
+        2088.0
+      ],
+      "points": 82,
+      "gamma_per_M": 0.01718594952219451,
+      "R2": 0.9969563441871381,
+      "initial": 0.000471392,
+      "final": 0.00192521
+    },
+    {
+      "diagnostic": "exterior Hamiltonian maximum",
+      "nominal_window": [
+        2088.45,
+        2119.1
+      ],
+      "actual_window": [
+        2089.01,
+        2119.01
+      ],
+      "points": 31,
+      "gamma_per_M": 0.12822301556475685,
+      "R2": 0.7192075631969306,
+      "initial": 0.00196963,
+      "final": 0.365251
+    }
+  ],
+  "hmax_first_outer_128": {
+    "job": "8840819",
+    "line": 5224,
+    "time": 1552.01,
+    "H": 0.000138818,
+    "x": 2040.0,
+    "y": 2040.0,
+    "z": -936.0,
+    "r": 3033.03,
+    "nearest_physical_face_distance": 8.0
+  },
+  "hmax_first_outer_256": {
+    "job": "8840819",
+    "line": 5224,
+    "time": 1552.01,
+    "H": 0.000138818,
+    "x": 2040.0,
+    "y": 2040.0,
+    "z": -936.0,
+    "r": 3033.03,
+    "nearest_physical_face_distance": 8.0
+  },
+  "hmax_last_before_first_ghost_error": {
+    "job": "8841001",
+    "line": 2806,
+    "time": 2088.0,
+    "H": 0.00192521,
+    "x": 1968.0,
+    "y": 1968.0,
+    "z": -1008.0,
+    "r": 2960.09,
+    "nearest_physical_face_distance": 80.0
+  },
+  "histories_metric_bad_nonzero_rows": 0,
+  "histories_metric_nonfinite_rows": 0,
+  "scope": "Recorded log order, not synchronized rank/stage event order. Preceding STAR_TRACK/elapsed times bracket log context, not exact primitive error timestamps. H maxima are global reductions; 1382M Theta localization remains one x-z slice."
+}

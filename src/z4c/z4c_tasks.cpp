@@ -306,6 +306,7 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
 
 TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
   DebugBalance("pre_physical_bc", stage, u0);
+  if (opt.debug_balance) debug_physical_bc_stage = stage;
   // only apply BCs if domain is not strictly periodic
   if (!(pmy_pack->pmesh->strictly_periodic)) {
     // physical BCs
@@ -317,6 +318,7 @@ TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
     }
   }
   DebugBalance("post_physical_bc", stage, u0);
+  if (opt.debug_balance) debug_physical_bc_stage = -1;
   return TaskStatus::complete;
 }
 
