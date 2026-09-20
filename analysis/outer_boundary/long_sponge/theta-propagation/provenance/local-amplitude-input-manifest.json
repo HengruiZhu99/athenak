@@ -1,0 +1,17 @@
+{
+  "parent_input": "theta_loweta_coremask.athinput",
+  "parent_sha256": "8da1b3ee0a101841c196e00346a527a458e0461ef8d2845fb4d70f6894953bb8",
+  "long_run_changes": [
+    "job/basename",
+    "problem/outer_sponge_test_theta_pulse_amplitude:1e-6 to1e-7"
+  ],
+  "gate_additional_change": "time/nlim=3; same dt=3.2 and no other numerical overrides",
+  "cases": {
+    "theta_loweta_amp1e7_coremask.athinput": {
+      "sha256": "9a72f639936cabba73c5181d03f7cbc836673882ee091fb4cca7d3682518b99e"
+    },
+    "theta_loweta_amp1e7_coremask_gate.athinput": {
+      "sha256": "25fbe6ff226e5ed27b29c5a1eb4a10cb5afe7d0575167442619678877cb4d014"
+    }
+  }
+}

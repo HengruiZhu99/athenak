@@ -1,0 +1,167 @@
+{
+  "scope": "Closed full-source PDE pilot, exact algebraic exterior elimination reference.\n\nA periodic large exterior is evolved with the identical bulk FD stencil, which\nis exactly equivalent to eliminating it into causal BDF2 boundary memory. This\nis not a finite-face AthenaK implementation. Original zero_rate comparison uses\nits actual finite-strip eigenmode. No scalar boundary surrogate is substituted.\n",
+  "parameters": {
+    "n_interior": 32,
+    "n_total": 2048,
+    "h": 32.0,
+    "length": 65536.0,
+    "tangential_angle": 0.39269908169872414,
+    "kappa": 0.1,
+    "eta": 2,
+    "lapse_damping": 0.1,
+    "G": 1
+  },
+  "original_eigenvalue": [
+    0.005634884344758716,
+    -1.610891082209529e-16
+  ],
+  "original_eigen_defect": 1.4858118729011502e-13,
+  "periodic_max_real": -3.278731319937475e-08,
+  "periodic_positive_count_above1e-10": 0,
+  "interior_stencil_match_max": 1.878236996617255e-15,
+  "runs": [
+    {
+      "dt": 8.0,
+      "records": [
+        {
+          "time": 0.0,
+          "original_zero_rate_weighted_norm": 1.0,
+          "exterior_memory_full_weighted_norm": 1.0,
+          "retained_interior_weighted_norm": 1.0,
+          "theta_max_full": 0.0001062957112002686,
+          "theta_max_interior": 0.0001062957112002686,
+          "sampled_induced_norm": 1.0,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 496.0,
+          "original_zero_rate_weighted_norm": 16.41540937553156,
+          "exterior_memory_full_weighted_norm": 4.03916391933129,
+          "retained_interior_weighted_norm": 3.879072083711865,
+          "theta_max_full": 9.914401670938356e-05,
+          "theta_max_interior": 9.914401670938356e-05,
+          "sampled_induced_norm": 104.2645793969563,
+          "induced_normal_angle": 0.4908738521234052,
+          "finite": true
+        },
+        {
+          "time": 2000.0,
+          "original_zero_rate_weighted_norm": 79114.22265037007,
+          "exterior_memory_full_weighted_norm": 16.974856844968915,
+          "retained_interior_weighted_norm": 16.030852601237108,
+          "theta_max_full": 4.270252673330737e-05,
+          "theta_max_interior": 4.270252673330737e-05,
+          "sampled_induced_norm": 1071.7159605772845,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 5000.0,
+          "original_zero_rate_weighted_norm": 1756587626568.4836,
+          "exterior_memory_full_weighted_norm": 21.733564022824194,
+          "retained_interior_weighted_norm": 20.116378684304895,
+          "theta_max_full": 6.072846376022384e-06,
+          "theta_max_interior": 6.072846376022384e-06,
+          "sampled_induced_norm": 1761.1277801924705,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 10000.0,
+          "original_zero_rate_weighted_norm": 3.0810251445489135e+24,
+          "exterior_memory_full_weighted_norm": 3.523303243208612,
+          "retained_interior_weighted_norm": 3.2309870517695933,
+          "theta_max_full": 7.240641110654374e-06,
+          "theta_max_interior": 7.240641110654374e-06,
+          "sampled_induced_norm": 279.92458833007817,
+          "induced_normal_angle": 0.14726215563702155,
+          "finite": true
+        },
+        {
+          "time": 20000.0,
+          "original_zero_rate_weighted_norm": 9.478641319039117e+48,
+          "exterior_memory_full_weighted_norm": 0.36506581052426956,
+          "retained_interior_weighted_norm": 0.33645897724654567,
+          "theta_max_full": 6.334189056472012e-07,
+          "theta_max_interior": 6.334189056472012e-07,
+          "sampled_induced_norm": 28.22127346239302,
+          "induced_normal_angle": 0.09817477042468103,
+          "finite": true
+        }
+      ]
+    },
+    {
+      "dt": 4.0,
+      "records": [
+        {
+          "time": 0.0,
+          "original_zero_rate_weighted_norm": 1.0,
+          "exterior_memory_full_weighted_norm": 1.0,
+          "retained_interior_weighted_norm": 1.0,
+          "theta_max_full": 0.0001062957112002686,
+          "theta_max_interior": 0.0001062957112002686,
+          "sampled_induced_norm": 1.0,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 500.0,
+          "original_zero_rate_weighted_norm": 16.748139712714938,
+          "exterior_memory_full_weighted_norm": 4.068166874846031,
+          "retained_interior_weighted_norm": 3.9067185972318907,
+          "theta_max_full": 9.955628634788242e-05,
+          "theta_max_interior": 9.955628634788242e-05,
+          "sampled_induced_norm": 105.57984583375344,
+          "induced_normal_angle": 0.4908738521234052,
+          "finite": true
+        },
+        {
+          "time": 2000.0,
+          "original_zero_rate_weighted_norm": 78591.7342101334,
+          "exterior_memory_full_weighted_norm": 16.974210965651924,
+          "retained_interior_weighted_norm": 16.03021411757739,
+          "theta_max_full": 4.2689177645698543e-05,
+          "theta_max_interior": 4.2689177645698543e-05,
+          "sampled_induced_norm": 1071.700883296889,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 5000.0,
+          "original_zero_rate_weighted_norm": 1730603054560.991,
+          "exterior_memory_full_weighted_norm": 21.730785875628506,
+          "retained_interior_weighted_norm": 20.11403614239173,
+          "theta_max_full": 6.072900630739914e-06,
+          "theta_max_interior": 6.072900630739914e-06,
+          "sampled_induced_norm": 1761.1428609171219,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 10000.0,
+          "original_zero_rate_weighted_norm": 2.9938620763682307e+24,
+          "exterior_memory_full_weighted_norm": 3.5236363862316957,
+          "retained_interior_weighted_norm": 3.230926208492908,
+          "theta_max_full": 7.2405952331728664e-06,
+          "theta_max_interior": 7.2405952331728664e-06,
+          "sampled_induced_norm": 279.8850427119143,
+          "induced_normal_angle": 0.14726215563702155,
+          "finite": true
+        },
+        {
+          "time": 20000.0,
+          "original_zero_rate_weighted_norm": 8.959843733159851e+48,
+          "exterior_memory_full_weighted_norm": 0.3692979864295056,
+          "retained_interior_weighted_norm": 0.33595756656132175,
+          "theta_max_full": 6.334108031251035e-07,
+          "theta_max_interior": 6.334108031251035e-07,
+          "sampled_induced_norm": 28.421495100363767,
+          "induced_normal_angle": 0.09817477042468103,
+          "finite": true
+        }
+      ]
+    }
+  ],
+  "seconds": 0.9904973340001106
+}

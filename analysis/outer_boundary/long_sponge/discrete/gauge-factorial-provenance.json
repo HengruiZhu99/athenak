@@ -1,0 +1,29 @@
+{
+  "description": "Independent one-factor gauge damping comparison, supplement to the original70-case screen.",
+  "additional_spectra": 8,
+  "kappa1": 0,
+  "shift_Gamma": 1,
+  "residual_shift_damping": 0,
+  "varied": [
+    "shift_eta",
+    "residual_lapse_damping"
+  ],
+  "main_result": "Reduced shift_eta, not lapse damping alone, removes the sampled mild mode; bounded flat semidiscrete model only.",
+  "semidiscrete_growth_field": "real",
+  "rk3_growth_diagnostic_dt_M": 0.0375,
+  "rk3_scope": "Raw rk3_growth values in all strip-screen files use fixed dt=.0375M. They are not checks of the GPUdt3.2M. Actual nonlinear timesteps were checked separately.",
+  "sha256": {
+    "gauge_factorial.py": "6d520c46d53358f18da8ffd20e1092c0d0379168b3b4ffa2bcb3db7b74a53d1d",
+    "screen.py": "68c76ce0d3ccfab3959c1b5ec4fdee410810bef2fdf821ce6c4a3885cb5f875f",
+    "strip_model.py": "6f19862cd90cb684464219141bab76ee70acebcbdae546ad77d742a488073aaf",
+    "stencils.py": "65e54b8940550d995b911bb2cbcc693a485d0fe98176e680b606bbf2cce6b9ca",
+    "gauge-factorial/eta0.02-lapse0.1-q0.0.json": "3e8190b63e6fef895c1d0dae25e4ff3d266b74a9e12fa4cd58585dfc90641b18",
+    "gauge-factorial/eta0.02-lapse0.1-q0.015625.json": "3d4ac855aa81dc7d3e24e4cb03eb66593924f9058e9324ddd5780f5baf0ec031",
+    "gauge-factorial/eta0.02-lapse0.1-q0.03125.json": "d0e5fe61ff460399305767ca1094c008269753b00a91f89646c0f54dea2b606a",
+    "gauge-factorial/eta0.02-lapse0.1-q0.125.json": "441a03ecc9582b3de0ed1a86d693e06b109dc96a3e744e6012103daa3cf15eef",
+    "gauge-factorial/eta2.0-lapse0.01-q0.0.json": "5266d6c3d41b505736264e111af551ce1f45130a656818bb8467dc50d0226799",
+    "gauge-factorial/eta2.0-lapse0.01-q0.015625.json": "08c809b37121b27fbf0a0a4928dd69dafb0ba0240cee9ebd3b0b5d8019b51952",
+    "gauge-factorial/eta2.0-lapse0.01-q0.03125.json": "96cdd998f349cd60d9d0bbef88e64a1fb4fdc6039f169e08f48d39959f3595ff",
+    "gauge-factorial/eta2.0-lapse0.01-q0.125.json": "aa823b8a94e369b8e885e8b2fd3d1757b7abbf8d6f86c7d898774ed867909695"
+  }
+}

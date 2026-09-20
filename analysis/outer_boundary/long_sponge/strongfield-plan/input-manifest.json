@@ -1,0 +1,103 @@
+{
+  "base_path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/fast-weakfield/input.athinput",
+  "base_sha256": "198e5b467e5be20a855d98487f7d193a0b55375c32446443a0b3f1a1a5481a35",
+  "inputs": {
+    "pulse_sponge": {
+      "path": "inputs/pulse_sponge.athinput",
+      "sha256": "4373363d8ca75913fbe5b46a8a43b53376d9ddc320c2ef595e8f828b4f476246",
+      "overrides_from_pulse_sponge": {}
+    },
+    "zero_sponge": {
+      "path": "inputs/zero_sponge.athinput",
+      "sha256": "e60b1db4ac1c629cc9802963be0109300e6e57d9b678c2d88022545c59f5f6d3",
+      "overrides_from_pulse_sponge": {
+        "problem/vacuum_gauge_pulse_amplitude": 0,
+        "time/nlim": 3
+      }
+    },
+    "pulse_nosponge": {
+      "path": "inputs/pulse_nosponge.athinput",
+      "sha256": "9a87fec9aaa593258e9bee9505d71408a325cf4050f994bbe2fab6b77517dc44",
+      "overrides_from_pulse_sponge": {
+        "problem/outer_sponge_enabled": "false"
+      }
+    },
+    "zero_nosponge": {
+      "path": "inputs/zero_nosponge.athinput",
+      "sha256": "f189481671e6282f9934481994de1cdb46c52c2e5fbe580599dbd90dc8a4c1e3",
+      "overrides_from_pulse_sponge": {
+        "problem/outer_sponge_enabled": "false",
+        "problem/vacuum_gauge_pulse_amplitude": 0,
+        "time/nlim": 3
+      }
+    },
+    "pulse_kappa01_sponge": {
+      "path": "inputs/pulse_kappa01_sponge.athinput",
+      "sha256": "b612db451511ef4a321e7a61b0016485c17714bdfa6685d9a3fb9b018eb2336f",
+      "overrides_from_pulse_sponge": {
+        "z4c/damp_kappa1": 0.1
+      }
+    },
+    "pulse_kappa01_nosponge": {
+      "path": "inputs/pulse_kappa01_nosponge.athinput",
+      "sha256": "90b9519e7d49553c8189626a3fd47b02308434db26a6de3270447d009adf10dc",
+      "overrides_from_pulse_sponge": {
+        "z4c/damp_kappa1": 0.1,
+        "problem/outer_sponge_enabled": "false"
+      }
+    },
+    "pulse_original_sources_nosponge": {
+      "path": "inputs/pulse_original_sources_nosponge.athinput",
+      "sha256": "c12590c9e3a51acadb9935a3610e004dfbc61ca0214d0eb049bd25f5ada283a7",
+      "overrides_from_pulse_sponge": {
+        "z4c/damp_kappa1": 0.1,
+        "z4c/shift_eta": 2,
+        "z4c/residual_lapse_damping": 0.1,
+        "problem/outer_sponge_enabled": "false"
+      }
+    },
+    "pulse_sponge_halfdt": {
+      "path": "inputs/pulse_sponge_halfdt.athinput",
+      "sha256": "ab5c284ac2230a8dbc7dfe7b6e955654b71bfd8aff2e4c2bfdec10053d06a7c2",
+      "overrides_from_pulse_sponge": {
+        "time/cfl_number": 0.1
+      }
+    },
+    "mesh32_pulse_sponge": {
+      "path": "inputs/mesh32_pulse_sponge.athinput",
+      "sha256": "b616a6abfa9d1a8fd17b21c2b6b594fdc09f7f0297785e3dc23addb76cb8f656",
+      "overrides_from_pulse_sponge": {
+        "meshblock/nx1": 32,
+        "meshblock/nx2": 32,
+        "meshblock/nx3": 32
+      }
+    },
+    "mesh32_inset_pulse_sponge": {
+      "path": "inputs/mesh32_inset_pulse_sponge.athinput",
+      "sha256": "2876b1acc32a20518559adc0194382f07efd31678c53781bd2e560f7645cb34e",
+      "overrides_from_pulse_sponge": {
+        "meshblock/nx1": 32,
+        "meshblock/nx2": 32,
+        "meshblock/nx3": 32,
+        "refined_region1/x1min": -15.99,
+        "refined_region1/x1max": 15.99,
+        "refined_region1/x2min": -15.99,
+        "refined_region1/x2max": 15.99,
+        "refined_region1/x3min": -15.99,
+        "refined_region1/x3max": 15.99,
+        "refined_region2/x1min": -7.99,
+        "refined_region2/x1max": 7.99,
+        "refined_region2/x2min": -7.99,
+        "refined_region2/x2max": 7.99,
+        "refined_region2/x3min": -7.99,
+        "refined_region2/x3max": 7.99,
+        "refined_region3/x1min": -3.99,
+        "refined_region3/x1max": 3.99,
+        "refined_region3/x2min": -3.99,
+        "refined_region3/x2max": 3.99,
+        "refined_region3/x3min": -3.99,
+        "refined_region3/x3max": 3.99
+      }
+    }
+  }
+}

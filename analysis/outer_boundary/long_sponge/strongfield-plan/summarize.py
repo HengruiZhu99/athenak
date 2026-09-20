@@ -1,0 +1,29 @@
+"""Summarize audited mesh geometry and explicitly rough resource scaling."""
+from pathlib import Path
+import hashlib,json
+import numpy as np
+p=Path(__file__).resolve().parent;j=json.loads((p/'mesh-audit.json').read_text());m=j['cases']['mesh16_r1'];b32=j['cases']['mesh32_r1'];bs=16
+seed=[];nseed=0;maximum=0.;minr=np.inf;maxr=0
+for b in m['blocks_geometry']:
+ axes=[b['min'][a]+(np.arange(bs)+.5)*b['dx_M']for a in range(3)];z,y,x=np.meshgrid(axes[2],axes[1],axes[0],indexing='ij');q2=((x-2.5)**2+y*y+z*z)/.75**2;mask=q2<1
+ if mask.any():
+  assert b['dx_M']==.125
+  rr=np.sqrt(x*x+y*y+z*z)[mask];nseed+=int(mask.sum());minr=min(minr,float(rr.min()));maxr=max(maxr,float(rr.max()));maximum=max(maximum,float(np.max(np.exp(1-1/(1-q2[mask]))))*1e-8);seed.append(b['gid'])
+seed_record={'kind':'compact C-infinity lapse bump; not direct constraint perturbation','amplitude':1e-8,'center_M':[2.5,0,0],'support_radius_M':.75,'analytic_radial_support_M':[1.75,3.25],'active_seed_cell_count':nseed,'all_seed_cells_dx_M':.125,'active_cell_center_radial_range_M':[minr,maxr],'largest_sampled_lapse_residual':maximum,'seed_gids':seed,'distance_support_to_first_refinement_plane_M':.75,'fine_cells_buffer':6,'puncture_seed_exactly_zero':True,'direct_theta_shell_staged':False,'direct_theta_reason':'The unregularized radial Gaussian shell has a nonzero radial derivative at r=0 for nonzero shell radius; the actual radius helper adds a tiny1e-6 core regularization but does not remove nonzero tails inside the horizon. A dipole further introduces angular dependence. No compact Theta seed is implemented in this binary. A smooth compact seed avoiding the puncture is required before that later control.'}
+# Actual source SmootherStep profile and geometric radial propagation estimate only.
+r=np.linspace(8,32,20001);q=np.clip((r-8)/20,0,1);sigma=.05*q**3*(10+q*(-15+6*q));v=r*(r-1)/(r+1)**2
+layer={'start_M':8,'ramp_width_M':20,'end_M':28,'damping_time_M':20,'max_rate_M_inverse':.05,'smoothness':'quintic SmootherStep, C2 at endpoints','minimum_width_over_max_dx':20,'axis_cells_across_ramp':28,'protected_radius_M':4,'undamped_margin_outside_protected_sphere_M':4,'source_dt_guard_M':20,'nominal_spatial_dt_M':.025,'sigma_dt':.00125,'nominal_dt_half_M':.0125,'sigma_integral_8_to_32':float(np.trapezoid(sigma,r)),'outgoing_physical_radial_geometric_optical_depth':float(np.trapezoid(sigma/v,r)),'attenuation_scope':'Scalar ray estimate only; not a reflection/stability prediction for coupled Z4c, gauge speeds, corners or SMR.'}
+# Prior measured result: original GPU binary, 4 rank / 4 blocks32^3, 8334 steps in497.24s.
+ref={'job':8841948,'source':'../../../athenak-outer-boundary-fix/analysis/outer_boundary/results/gpu-8841948/README.md (external reference)','binary_scope':'Original pre-stencil-fix GPU binary; uniform displaced weak-field domain; four32^3 blocks/four ranks/one node. Not a calibration of this SMR strong-field run.','cycles':8334,'application_wall_seconds':497.24,'ranks':4,'active_cells':4*32**3,'fine_ghost_cells':4*40**3}
+ref['active_zone_cycles_per_second']=ref['cycles']*ref['active_cells']/ref['application_wall_seconds'];ref['fine_ghost_zone_cycles_per_second']=ref['cycles']*ref['fine_ghost_cells']/ref['application_wall_seconds']
+resources={}
+for key,nranks in [('one_node_12ranks',12),('two_nodes_24ranks',24)]:
+ ideal_cycle=m['fine_ghost_cells']/(ref['fine_ghost_zone_cycles_per_second']*nranks/ref['ranks'])
+ resources[key]={'ranks':nranks,'block_occupancy':[m['blocks']//nranks,(m['blocks']+nranks-1)//nranks],'mean_blocks_per_rank':m['blocks']/nranks,'ideal_ghost_work_scaled_seconds_per_cycle':ideal_cycle,'minutes_100M_ideal_to_2x_slowdown':[ideal_cycle*4000/60,2*ideal_cycle*4000/60],'minutes_300M_ideal_to_2x_slowdown':[ideal_cycle*12000/60,2*ideal_cycle*12000/60],'minutes_1000M_ideal_to_2x_slowdown':[ideal_cycle*40000/60,2*ideal_cycle*40000/60],'assumptions':'Ideal scaling from4 ranks before an assumed1–2x SMR/communication penalty. Even this interval can be optimistic or pessimistic; measure actual seconds/cycle before promising completion.'}
+# Allocated primary arrays only: 151fine Z4c +27fine ADM/matter;27coarse Z4c.
+core_bytes=m['fine_ghost_cells']*178*8+m['blocks']*(bs//2+8)**3*27*8
+summary={'scope':j['scope'],'binary':j['binary'],'binary_sha256':j['binary_sha256'],'preferred':'16^3 blocks,232 blocks,±32M,dx_BH=.125M','mesh16':{k:v for k,v in m.items()if k not in ['blocks_geometry','command']},'mesh32':{k:v for k,v in b32.items()if k not in ['blocks_geometry','command']},'inset32_geometry_unchanged':j['inset_geometry_equal'],'seed':seed_record,'sponge':layer,'throughput_reference':ref,'rough_resource_estimates':resources,'memory':{'primary_Z4c_ADM_Tmunu_and_coarse_Z4c_bytes_lower_bound':core_bytes,'not_included':'MHD arrays, background RHS cache, communication buffers, refinement/reconstruction scratch, mirrors, runtime and MPI overhead','planning_budget_per_rank_GiB':2,'budget_scope':'Conservative planning allowance, not measured device allocation; inspect actual startup memory before the longer run.'},'checkpoint':{'all_rank_payload_bytes_estimate':m['snapshot_payload_bytes_all_ranks_estimate'],'output_interval_M':1000,'notes':'Initial/final outputs alone about1.70GB aggregate; per-rank outputs enabled. Do not use uniform-only checkpoint checker on this SMR mesh.'}}
+if (p/'preflight/results.json').exists():
+ summary['subsequent_preflight']={'record':'preflight/results.json','cases':['zero','pulse'],'ranks':8,'cycles':3,'time_M':.075,'actual_dt_M':.025,'both_raw_full_ghost_metric_checks_passed':True,'zero_residual_exactly_zero_including_ghosts':True,'long_evolution_or_stability_clearance':False}
+(p/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+print(json.dumps({'seed':seed_record,'resources':resources,'core_memory_GB':core_bytes/1e9,'checkpoint_GB':m['snapshot_payload_bytes_all_ranks_estimate']/1e9},indent=2))

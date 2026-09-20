@@ -1,0 +1,218 @@
+{
+  "time": 320.0,
+  "ranks": 8,
+  "blocks": 8,
+  "initial_active_bitwise_equal": true,
+  "coarse_cycle": 101,
+  "fine_cycle": 200,
+  "coarse_checkpoint_dt": 1.2505552149377763e-12,
+  "fine_checkpoint_dt": 1.6,
+  "relative_active_state_L2": 8.405012198275532e-08,
+  "relative_derivative_scaled_state_L2": 8.493573827888025e-08,
+  "theta_relative_L2": 1.0062408195631984e-07,
+  "theta_max_abs_difference": 1.0846742882685737e-13,
+  "all_fields_max_abs_difference": 4.222378002793903e-11,
+  "coarse_theta_max": 2.523485366553304e-07,
+  "fine_theta_max": 2.5234854105821934e-07,
+  "scope": "Two timesteps at one resolution and one early time; relative difference, not estimated error or convergence order. Derivative scaling multiplies Khat/A/Gamma/Theta by dx=64.",
+  "gates": {
+    "zero_standard": {
+      "time_code": 1.7999999999999998,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": true,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "wall_seconds": 3.1980968329589814
+    },
+    "pulse_gate_standard": {
+      "time_code": 1.7999999999999998,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": false,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 0.9999999999960123,
+        "chi": 0.9999999999891122,
+        "gxx": 0.9999999999978781,
+        "minor2": 0.9999999999989391,
+        "detg": 0.9999999999999997
+      },
+      "wall_seconds": 3.1952327920589596
+    },
+    "zero_loweta": {
+      "time_code": 9.600000000000001,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": true,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "wall_seconds": 3.2074897079728544
+    },
+    "pulse_gate_loweta": {
+      "time_code": 9.600000000000001,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": false,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 0.9999999998835201,
+        "chi": 0.9999999999441812,
+        "gxx": 0.9999999993820031,
+        "minor2": 0.9999999996910015,
+        "detg": 0.9999999999999997
+      },
+      "wall_seconds": 3.2598476249258965
+    },
+    "theta_loweta_early_dt3p2": {
+      "time_code": 320.0,
+      "cycle": 101,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": false,
+      "stopping_reason": "time limit",
+      "target_reached": true,
+      "minimum": {
+        "alpha": 0.9999999776272033,
+        "chi": 0.9999999917039173,
+        "gxx": 0.9999943019300462,
+        "minor2": 0.9999971467016252,
+        "detg": 0.9999999999999993
+      },
+      "wall_seconds": 100.80413900013082
+    },
+    "theta_loweta_early_dt1p6": {
+      "time_code": 320.0,
+      "cycle": 200,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": false,
+      "stopping_reason": "time limit",
+      "target_reached": true,
+      "minimum": {
+        "alpha": 0.9999999776271987,
+        "chi": 0.9999999917039133,
+        "gxx": 0.9999943019291573,
+        "minor2": 0.9999971467011135,
+        "detg": 0.9999999999999993
+      },
+      "wall_seconds": 262.2806889580097
+    },
+    "zero_loweta_lapse01": {
+      "time_code": 9.600000000000001,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": true,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "wall_seconds": 3.0962860838044435
+    },
+    "pulse_gate_loweta_lapse01": {
+      "time_code": 9.600000000000001,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": false,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 0.9999999999106969,
+        "chi": 0.9999999999441812,
+        "gxx": 0.9999999993820045,
+        "minor2": 0.9999999996910022,
+        "detg": 0.9999999999999997
+      },
+      "wall_seconds": 2.706486083101481
+    },
+    "pulse_gate_loweta_coremask": {
+      "time_code": 9.600000000000001,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": false,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 0.9999999998835201,
+        "chi": 0.9999999999441812,
+        "gxx": 0.9999999993820031,
+        "minor2": 0.9999999996910015,
+        "detg": 0.9999999999999997
+      },
+      "wall_seconds": 3.003125209128484
+    },
+    "zero_loweta_coremask": {
+      "time_code": 9.600000000000001,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": true,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "wall_seconds": 3.1062862079124898
+    },
+    "zero_loweta_lapse01_coremask": {
+      "time_code": 9.600000000000001,
+      "cycle": 3,
+      "passed": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "all_residuals_zero": true,
+      "stopping_reason": "cycle limit",
+      "target_reached": false,
+      "minimum": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "wall_seconds": 2.7644520001485944
+    }
+  }
+}

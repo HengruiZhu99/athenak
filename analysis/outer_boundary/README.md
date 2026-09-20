@@ -171,6 +171,23 @@ stencil portability, not long-time perturbation stability. See
 [GPU verification](results/gpu-8842005/README.md). The repaired executable SHA256
 is`a6c3af79571819fba5dc2252ceb9abacb31279feec440f2c542e342dfee43639`.
 
+## Longer source and boundary study
+
+The [long-sponge study](long_sponge/README.md) extends the investigation beyond
+5000M. A wider, smoother layer still fails with the original positive kappa;
+in the matched large flat cube it delays failure from5650.2M to6420M. Reducing
+kappa to zero and reducing shift damping to0.02 is the leading tested candidate:
+one displaced weak-curvature control reaches50000M with valid full/ghost
+metrics and Theta RMS7.56e-17. A separate GPU compact-lapse control with kappa0
+and the original eta2 reaches20000M with decaying metric perturbations.
+These are specific vacuum controls, not strong-field or stellar validation.
+
+The incoming-state audit also identifies retained nonzero initial Gaussian
+boundary data under `zero_rate`; this is separate from the growing positive
+source-coupled boundary mode. Direct constraint-pulse GPU finals remain
+unverified after SSH authentication expired. The study records measured
+results, incomplete runs and prototype limitations separately.
+
 ## Reproduction and remaining work
 
 Build problem `z4c_tov_ks` in double precision, with OpenMP or MPI as desired.
@@ -189,5 +206,5 @@ The next required development is a complete damped constraint/gauge/radiation
 boundary condition **together with** a compatible discrete closure. Removing
 one continuum branch or damping a small box is insufficient. Atmosphere,
 star/AMR, reflection and conservation validation remain gated on a perturbed
-vacuum stability pass. No such pass has been obtained, so production is not
-cleared to resume. No campaign restart or monitor resumption was performed.
+vacuum stability pass. The reduced-source vacuum passes do not establish stability for the
+strong-field production configuration, so production is not cleared to resume. No campaign restart or monitor resumption was performed.

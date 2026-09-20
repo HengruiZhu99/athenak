@@ -1,0 +1,87 @@
+Job Id: 8842248.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Job_Name = long_theta_loweta
+    Job_Owner = hzhu@aurora-uan-0009.hostmgmt1000.cm.aurora.alcf.anl.gov
+    job_state = Q
+    queue = debug
+    server = aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Account_Name = MHDTidal
+    Checkpoint = u
+    ctime = Sun Sep 20 18:45:59 2026
+    Error_Path = aurora-uan-0009.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flare
+	/projects/MHDTidal/hzhu/tde_1e4_solar_review/outer-boundary-fix-2026092
+	0/long-sponge-study/gpu/job-c-theta-loweta/long_theta_loweta.e8842248
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = doe
+    Mail_Points = a
+    Mail_Users = hz0693@princeton.edu
+    mtime = Sun Sep 20 18:46:00 2026
+    Output_Path = aurora-uan-0009.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flar
+	e/projects/MHDTidal/hzhu/tde_1e4_solar_review/outer-boundary-fix-202609
+	20/long-sponge-study/gpu/job-c-theta-loweta/long_theta_loweta.o8842248
+    Priority = 0
+    qtime = Sun Sep 20 18:46:00 2026
+    Rerunable = False
+    Resource_List.allow_account_check_failure = True
+    Resource_List.allow_negative_allocation = True
+    Resource_List.award_category = INCITE
+    Resource_List.award_type = INCITE-2026
+    Resource_List.backfill_factor = 84600
+    Resource_List.backfill_max = 50
+    Resource_List.base_score = 51
+    Resource_List.bkc_definition = compute_aurora_prod_20260828T195037_92b7e98_
+	d9c2e47
+    Resource_List.burn_ratio = 0.3482
+    Resource_List.current_allocation = 13375051776
+    Resource_List.enable_2nd_fp64 = True
+    Resource_List.enable_backfill = 0
+    Resource_List.enable_fifo = 1
+    Resource_List.enable_wfp = 0
+    Resource_List.fifo_factor = 1800
+    Resource_List.filesystems = home:flare
+    Resource_List.flare_fs = True
+    Resource_List.hbm_mode = flat
+    Resource_List.home_fs = True
+    Resource_List.ncpus = 208
+    Resource_List.ni_resource = aurora
+    Resource_List.nodect = 1
+    Resource_List.overburn = False
+    Resource_List.place = scatter
+    Resource_List.project_priority = 25
+    Resource_List.route_backfill = False
+    Resource_List.score_boost = 0
+    Resource_List.select = 1
+    Resource_List.snc_mode = quad
+    Resource_List.total_allocation = 20519999488
+    Resource_List.total_cpus = 10624
+    Resource_List.walltime = 01:00:00
+    Resource_List.wfp_factor = 100000
+    substate = 10
+    Variable_List = PBS_O_HOME=/home/hzhu,PBS_O_LANG=en_US.UTF-8,
+	PBS_O_LOGNAME=hzhu,
+	PBS_O_PATH=/home/hzhu/.local/bin:/home/hzhu/bin:/opt/cray/pals/1.8/bin
+	:/opt/cray/libfabric/1.22.0/bin:/opt/aurora/26.26.0/spack/unified/1.1.1
+	/install/linux-x86_64/mpich-5.0.0.aurora_test.3c70a61-hlkigtk/bin:/opt/
+	aurora/26.26.0/support/tools/gpu_validation:/opt/aurora/26.26.0/support
+	/tools/mpi_wrapper_utils:/opt/aurora/26.26.0/oneapi/ishmem/latest/bin:/
+	opt/aurora/26.26.0/oneapi/dpcpp-ct/latest/bin:/opt/aurora/26.26.0/oneap
+	i/advisor/latest/bin64:/opt/aurora/26.26.0/oneapi/vtune/latest/bin64:/o
+	pt/aurora/26.26.0/oneapi/debugger/latest/opt/debugger/bin:/opt/aurora/2
+	6.26.0/oneapi/mkl/latest/bin:/opt/aurora/26.26.0/oneapi/compiler/latest
+	/bin:/opt/aurora/26.26.0/spack/unified/1.1.1/install/linux-x86_64/gcc-1
+	3.4.0-hgnyg4p/bin:/opt/clmgr/sbin:/opt/clmgr/bin:/opt/sgi/sbin:/opt/sgi
+	/bin:/home/hzhu/.local/bin:/home/hzhu/bin:/usr/local/bin:/usr/bin:/bin:
+	/opt/c3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin:/opt/pbs/bin:/sbin,
+	PBS_O_MAIL=/var/spool/mail/hzhu,PBS_O_SHELL=/bin/bash,
+	PBS_O_INTERACTIVE_AUTH_METHOD=resvport,
+	PBS_O_HOST=aurora-uan-0009.hostmgmt1000.cm.aurora.alcf.anl.gov,
+	PBS_O_WORKDIR=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/o
+	uter-boundary-fix-20260920/long-sponge-study/gpu/job-c-theta-loweta,
+	PBS_O_SYSTEM=Linux,PBS_O_QUEUE=debug
+    etime = Sun Sep 20 18:46:00 2026
+    umask = 22
+    eligible_time = 00:00:02
+    Submit_arguments = submit.pbs
+    project = MHDTidal
+    Submit_Host = aurora-uan-0009.hostmgmt1000.cm.aurora.alcf.anl.gov
+

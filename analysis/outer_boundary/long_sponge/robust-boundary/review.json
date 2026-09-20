@@ -1,0 +1,24 @@
+{
+  "reviewers": [
+    "incoming_trace",
+    "gpu_results"
+  ],
+  "review_type": "Independent code/math/claim audit. Incoming-trace reviewer read only; GPU-results reviewer additionally ran cheap independent complex-RHS, normalization, eigenmode-defect and exterior-zero checks.",
+  "checked": [
+    "normal Fourier sign and convolution kernel orientation",
+    "20-field ordering and h weighting6:16",
+    "RK3 polynomial, binary powers and explicit memory indices",
+    "same bulk stencil/source configuration",
+    "scope: fixed tangential Fourier angle, linear model, periodic finite exterior",
+    "large transient amplification and discretization wrap caveats"
+  ],
+  "findings": "No indexing or norm-comparability error found. Full-PDE,16-step memory,internal kernel andCQ operator-response tests are explicitly separated.",
+  "root_requested_followup": "R_EE internal spectrum and kernel growth were computed and added separately.",
+  "independent_numerical_checks": {
+    "complex_random_bulk_strip_RHS_max_difference": 1.8611e-15,
+    "initial_weighted_norm": 1.0,
+    "original_mode_relative_defect": 1.4858e-13,
+    "exterior_initial_max": 0.0
+  },
+  "constraint_review": "GPU-results reviewer confirmed H/M/Q/Z formulas; requested unweighted discrete l2 labeling and initial zero-extension scope, both incorporated."
+}

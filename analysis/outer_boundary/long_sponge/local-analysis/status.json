@@ -1,0 +1,3445 @@
+{
+  "collected_at_utc": "2026-09-20T18:36:55.017997+00:00",
+  "scope": "Existing local fixed-binary vacuum weak-field controls; no production jobs or source changed.",
+  "fit_thresholds": {
+    "theta_rms": 1e-14,
+    "H_rms": 1e-14,
+    "theta_max": 1e-13,
+    "lapse_max": 1e-11,
+    "shift_max": 1e-11
+  },
+  "norm_definition": "Theta_rms=sqrt(Theta-norm2/Volume), H_rms=sqrt(H-norm2/Volume). History label Theta-norm is truncated; its stored value is the integral of Theta squared, not a norm. Volume is proper active-cell volume.",
+  "cases": {
+    "kappa01": {
+      "path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/kappa01",
+      "config": {
+        "time/tlim": "20000",
+        "time/cfl_number": "0.01875",
+        "z4c/damp_kappa1": "0.01",
+        "z4c/shift_eta": "2",
+        "z4c/residual_lapse_damping": "0.1",
+        "z4c/shift_Gamma": "1.0",
+        "problem/outer_sponge_enabled": "false",
+        "problem/vacuum_gauge_pulse_amplitude": "1e-08"
+      },
+      "input_sha256": "4f3c9c7930b3a8d91c096e8f1046f6aa742d92f7963faadad0b6bd02fd839271",
+      "execution": {
+        "case": "kappa01",
+        "exit_code": 1,
+        "elapsed_seconds": 781.5251153330319,
+        "binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8"
+      },
+      "status": "failed",
+      "final_log": null,
+      "last_history_M": 5530.200000000432,
+      "target_M": 20000.0,
+      "history_rows": 554,
+      "all_history_fields_finite": true,
+      "discarded_malformed_rows": {
+        "user": 0,
+        "z4c": 0
+      },
+      "history_sha256": {
+        "user": "57725f5916ee68fac9241332692aa44682726180b35f6a68df73dab1c67f9f62",
+        "z4c": "e42f9fabe511ed35b34c5f70365112742cbda2c2d488b8991788b69860381625"
+      },
+      "last": {
+        "theta_rms": 0.005696239518128531,
+        "H_rms": 0.0034938806840812894,
+        "theta_max": 0.1273861348939943,
+        "lapse_max": 0.673586863106277,
+        "shift_max": 0.1102298766605466
+      },
+      "badmetrics_max": 0.0,
+      "last_metric_history": {
+        "alpha-min": 0.3260030697576228,
+        "chi-min": 0.359080564462281,
+        "detg-min": 0.220179712001762,
+        "detg-max": 21.59853539017039
+      },
+      "fits": {
+        "theta_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 9.117330456927847e-13,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 1.4331888897628288e-14,
+            "max": 9.29690196813594e-14,
+            "endpoint_ratio": 6.355686006650913,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.004206017369621198,
+            "e_fold_M": 237.75460539528441,
+            "R_squared": 0.9843281729123092
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 9.725644949485945e-14,
+            "max": 8.523435316749274e-12,
+            "endpoint_ratio": 87.63876700228282,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.004498264944618499,
+            "e_fold_M": 222.30793701832758,
+            "R_squared": 0.9997127140290957
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 8.956598433404857e-12,
+            "max": 3.162238498688886e-07,
+            "endpoint_ratio": 35306.24401887759,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.005288151731996352,
+            "e_fold_M": 189.10198698524974,
+            "R_squared": 0.9998661306801568
+          }
+        ],
+        "H_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 2.730941995655417e-18,
+            "max": 1.2026089806809964e-13,
+            "endpoint_ratio": 1410.2545374739498,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 3.819544487249954e-15,
+            "max": 1.5833981666028286e-14,
+            "endpoint_ratio": 4.134612149507367,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 1.6486954764975412e-14,
+            "max": 1.2675961063716292e-12,
+            "endpoint_ratio": 76.88479312531913,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.004358874012399491,
+            "e_fold_M": 229.41704604339228,
+            "R_squared": 0.9985748755095504
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 1.3348901393882153e-12,
+            "max": 6.269419085493797e-08,
+            "endpoint_ratio": 46965.80565324344,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.005430735770968385,
+            "e_fold_M": 184.13711183405343,
+            "R_squared": 0.9999805595781297
+          }
+        ],
+        "theta_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 1.296467096197763e-11,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 7.752709671184193e-14,
+            "max": 3.394165684777348e-13,
+            "endpoint_ratio": 2.3429399163496196,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 3.532821816929266e-13,
+            "max": 2.478914545859728e-11,
+            "endpoint_ratio": 70.168116998734,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.004172332113024246,
+            "e_fold_M": 239.67411340013547,
+            "R_squared": 0.9958307252290449
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 2.618399283695402e-11,
+            "max": 1.225917397762569e-06,
+            "endpoint_ratio": 46819.34513946269,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0054072855956880635,
+            "e_fold_M": 184.9356728628188,
+            "R_squared": 0.999998487127224
+          }
+        ],
+        "lapse_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 1.939115534810298e-12,
+            "max": 7.939226578179513e-09,
+            "endpoint_ratio": 0.0002442448915792176,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 1.564526286301771e-12,
+            "max": 5.013434112299819e-12,
+            "endpoint_ratio": 2.658170473275253,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 5.254574553248403e-12,
+            "max": 3.611347887400029e-10,
+            "endpoint_ratio": 68.72769338037989,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 3.772079315567112e-10,
+            "max": 1.047809847465331e-05,
+            "endpoint_ratio": 27778.0438799654,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.00523822291797545,
+            "e_fold_M": 190.90443756572614,
+            "R_squared": 0.9990400424714385
+          }
+        ],
+        "shift_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 4.014961000925639e-11,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 6.436063677449019e-12,
+            "max": 1.278433318951423e-11,
+            "endpoint_ratio": 0.5034336622834509,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 5.559896754147101e-12,
+            "max": 1.325357918031955e-10,
+            "endpoint_ratio": 20.803360580926494,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 1.379441296161642e-10,
+            "max": 5.322360361379179e-06,
+            "endpoint_ratio": 38583.44951821356,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.005421024251863294,
+            "e_fold_M": 184.46698511933124,
+            "R_squared": 0.999751834848657
+          }
+        ]
+      },
+      "first_printed_primitive_failure": {
+        "message": "An error occurred during the primitive solve: NANS_IN_CONS",
+        "xyz_M": [
+          1424.0,
+          1968.0,
+          -1392.0
+        ],
+        "determinant": -0.0015029116413622923,
+        "preceding_printed_H_time_M": 5380.2,
+        "following_printed_H_time_M": 5390.4,
+        "time_scope": "Only stdout order; no exact first-event time/stage/rank in this primitive message.",
+        "physical_ghost_depth_xyz": [
+          4,
+          0,
+          4
+        ]
+      },
+      "active_invalid_events": [
+        {
+          "time": 5540.400000000438,
+          "cycle": 9234.0,
+          "rank": 0.0,
+          "gid": 0.0,
+          "relative_level": 0.0,
+          "x": 1616.0,
+          "y": 1616.0,
+          "z": -1200.0,
+          "local_bad_cells": 2.0
+        },
+        {
+          "time": 5540.400000000438,
+          "cycle": 9234.0,
+          "rank": 2.0,
+          "gid": 4.0,
+          "relative_level": 0.0,
+          "x": 1616.0,
+          "y": 1616.0,
+          "z": -848.0,
+          "local_bad_cells": 2.0
+        },
+        {
+          "time": 5540.400000000438,
+          "cycle": 9234.0,
+          "rank": 1.0,
+          "gid": 2.0,
+          "relative_level": 0.0,
+          "x": 1616.0,
+          "y": 1968.0,
+          "z": -1200.0,
+          "local_bad_cells": 2.0
+        },
+        {
+          "time": 5540.400000000438,
+          "cycle": 9234.0,
+          "rank": 3.0,
+          "gid": 6.0,
+          "relative_level": 0.0,
+          "x": 1616.0,
+          "y": 1968.0,
+          "z": -848.0,
+          "local_bad_cells": 2.0
+        }
+      ],
+      "last_progress": {
+        "wall_elapsed_s": 760.8947,
+        "cycle": 9000,
+        "time_M": 5400.0,
+        "dt_M": 0.6
+      },
+      "latest_H_max_location": {
+        "time": 5530.2,
+        "H": 0.093087,
+        "x": 1968.0,
+        "y": 1616.0,
+        "z": -1200.0,
+        "r_bh": 2815.045
+      },
+      "unreadable_checkpoint_candidates": [],
+      "latest_checkpoint": {
+        "rank0_path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/kappa01/rst/rank_00000000/ks_background.00001.rst",
+        "time_M": 5000.400000000111,
+        "cycle": 8334,
+        "older_than_latest_history": true,
+        "represents_failure_state": false
+      }
+    },
+    "all_weak": {
+      "path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/all_weak",
+      "config": {
+        "time/tlim": "20000",
+        "time/cfl_number": "0.01875",
+        "z4c/damp_kappa1": "0.01",
+        "z4c/shift_eta": "0.2",
+        "z4c/residual_lapse_damping": "0.01",
+        "z4c/shift_Gamma": "1.0",
+        "problem/outer_sponge_enabled": "false",
+        "problem/vacuum_gauge_pulse_amplitude": "1e-08"
+      },
+      "input_sha256": "3cbbdf9e16e29cc303f03aac3ef00510e691ab31ff77d178aefee2f84635631c",
+      "execution": {
+        "case": "all_weak",
+        "exit_code": 1,
+        "elapsed_seconds": 1213.0534057919867,
+        "binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8"
+      },
+      "status": "failed",
+      "final_log": null,
+      "last_history_M": 8280.0000000021,
+      "target_M": 20000.0,
+      "history_rows": 829,
+      "all_history_fields_finite": true,
+      "discarded_malformed_rows": {
+        "user": 0,
+        "z4c": 0
+      },
+      "history_sha256": {
+        "user": "7ba4b4eab4951e0ab97caa47497cd0d34bb6f135e6e5d568b407e1a5cb01a438",
+        "z4c": "caf8f02a402b6f735a0991f5c6ea349462caba67878e65b7802d368cab896bb8"
+      },
+      "last": {
+        "theta_rms": 0.0035568944793899016,
+        "H_rms": 0.0003502105736875795,
+        "theta_max": 0.01920237675703029,
+        "lapse_max": 0.9991529172435473,
+        "shift_max": 0.1135040385837258
+      },
+      "badmetrics_max": 0.0,
+      "last_metric_history": {
+        "alpha-min": 0.0004805772665189556,
+        "chi-min": 0.784437504483613,
+        "detg-min": 0.00302973322114865,
+        "detg-max": 2.071690868520908
+      },
+      "fits": {
+        "theta_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 1.4081915219311831e-12,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 7.025815771400745e-14,
+            "max": 2.9311986088443214e-13,
+            "endpoint_ratio": 4.172040235919714,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0029102408401416933,
+            "e_fold_M": 343.6141731662704,
+            "R_squared": 0.9986506070793865
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 3.023361023707336e-13,
+            "max": 6.16465760925637e-12,
+            "endpoint_ratio": 20.390080975830937,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003046468067713864,
+            "e_fold_M": 328.2489682389554,
+            "R_squared": 0.9999994687382905
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 6.359492569871596e-12,
+            "max": 2.753118106239062e-09,
+            "endpoint_ratio": 432.91474531821797,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0030511701223961477,
+            "e_fold_M": 327.74311489871275,
+            "R_squared": 0.9999999997099629
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 2.840150029771059e-09,
+            "max": 1.2696966233606127e-06,
+            "endpoint_ratio": 447.05265920862684,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003051512530735415,
+            "e_fold_M": 327.70633904590255,
+            "R_squared": 0.9999999961334952
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 1.2696966233606127e-06,
+            "max": 0.0008368571457746513,
+            "endpoint_ratio": 659.100079796756,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003181956286580996,
+            "e_fold_M": 314.27207350937476,
+            "R_squared": 0.9990176851221008
+          }
+        ],
+        "H_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 2.730941995655417e-18,
+            "max": 1.733403851032609e-13,
+            "endpoint_ratio": 2637.3515507626885,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 7.352818594169036e-15,
+            "max": 2.590500046604838e-14,
+            "endpoint_ratio": 3.5231387983094913,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 2.668360385356425e-14,
+            "max": 5.095593264184545e-13,
+            "endpoint_ratio": 19.096345801520748,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0029818463094695657,
+            "e_fold_M": 335.3626901642318,
+            "R_squared": 0.9999806776872409
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 5.254986808701287e-13,
+            "max": 2.2311033289783774e-10,
+            "endpoint_ratio": 424.56877822872605,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003042563555155498,
+            "e_fold_M": 328.67020914174213,
+            "R_squared": 0.9999988387272325
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 2.3015965454044321e-10,
+            "max": 1.0278143940381814e-07,
+            "endpoint_ratio": 446.5658397386827,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0030510425095898173,
+            "e_fold_M": 327.7568230717441,
+            "R_squared": 0.9999999895585638
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 1.0278143940381814e-07,
+            "max": 6.585677175092297e-05,
+            "endpoint_ratio": 640.7457623956618,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0031698252374406585,
+            "e_fold_M": 315.47480542094735,
+            "R_squared": 0.9991483687478987
+          }
+        ],
+        "theta_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 2.004121941779594e-11,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 2.155265978536348e-13,
+            "max": 7.958535914645956e-13,
+            "endpoint_ratio": 3.6260456744406406,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0027255338905782,
+            "e_fold_M": 366.9005927450999,
+            "R_squared": 0.9859854168442437
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 8.202150905516978e-13,
+            "max": 1.611442286525805e-11,
+            "endpoint_ratio": 19.646581794074372,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003010900960049624,
+            "e_fold_M": 332.12650076126005,
+            "R_squared": 0.9999870883991001
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 1.662153030268135e-11,
+            "max": 7.142259292217835e-09,
+            "endpoint_ratio": 429.6992612687209,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0030479450790582546,
+            "e_fold_M": 328.0899012488037,
+            "R_squared": 0.9999997998866295
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 7.368008131267645e-09,
+            "max": 3.295542292500032e-06,
+            "endpoint_ratio": 447.2772333834332,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003051686564299361,
+            "e_fold_M": 327.68765039590187,
+            "R_squared": 0.9999999843838386
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 3.295542292500032e-06,
+            "max": 0.003134090557507589,
+            "endpoint_ratio": 951.0090538483231,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0032912937198782957,
+            "e_fold_M": 303.8318925960147,
+            "R_squared": 0.9967659010276949
+          }
+        ],
+        "lapse_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 8.136602502872847e-12,
+            "max": 7.939226578179513e-09,
+            "endpoint_ratio": 0.0011752450004637932,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 1.115618708524835e-11,
+            "max": 6.478961811495765e-11,
+            "endpoint_ratio": 5.807505523157454,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003121082626840768,
+            "e_fold_M": 320.40164249423384,
+            "R_squared": 0.9920343988139972
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 6.68680666393584e-11,
+            "max": 1.405959682010405e-09,
+            "endpoint_ratio": 21.025876067169857,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0030747320568687503,
+            "e_fold_M": 325.23159140519755,
+            "R_squared": 0.9999972585991479
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 1.450550790593752e-09,
+            "max": 6.320015671912316e-07,
+            "endpoint_ratio": 435.69764760359425,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0030539776773726864,
+            "e_fold_M": 327.4418170797805,
+            "R_squared": 0.9999998930535003
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 6.519843138708126e-07,
+            "max": 0.0002916878945262713,
+            "endpoint_ratio": 447.3848347585672,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0030518216052168173,
+            "e_fold_M": 327.6731504523689,
+            "R_squared": 0.9999999950613067
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 0.0002916878945262713,
+            "max": 0.225884353049452,
+            "endpoint_ratio": 774.4042769286314,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0032309346824567595,
+            "e_fold_M": 309.5079592384744,
+            "R_squared": 0.9981566759989322
+          }
+        ],
+        "shift_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 5.124891278224849e-10,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 9.37514963664926e-12,
+            "max": 2.844180815343711e-11,
+            "endpoint_ratio": 3.023965836217412,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 2.921374283432719e-11,
+            "max": 5.05397621322623e-10,
+            "endpoint_ratio": 17.299995559924035,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0028912977145460557,
+            "e_fold_M": 345.8654551445954,
+            "R_squared": 0.9997678426613412
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 5.211040319955465e-10,
+            "max": 2.194590331090827e-07,
+            "endpoint_ratio": 421.1424583852735,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003039394646064513,
+            "e_fold_M": 329.0128846199114,
+            "R_squared": 0.9999973488689857
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 2.263926905666223e-07,
+            "max": 0.0001010922839475219,
+            "endpoint_ratio": 446.53510541574974,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003051106446960097,
+            "e_fold_M": 327.7499547733997,
+            "R_squared": 0.9999999930641903
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 0.0001010922839475219,
+            "max": 0.04810991085627172,
+            "endpoint_ratio": 475.9009192160116,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.003083628168988412,
+            "e_fold_M": 324.2933146275062,
+            "R_squared": 0.9999488743501367
+          }
+        ]
+      },
+      "first_printed_primitive_failure": {
+        "message": "An error occurred during the primitive solve: NANS_IN_CONS",
+        "xyz_M": [
+          1424.0,
+          1424.0,
+          -656.0
+        ],
+        "determinant": -0.0003206014503472354,
+        "preceding_printed_H_time_M": 8120.4,
+        "following_printed_H_time_M": 8130.0,
+        "time_scope": "Only stdout order; no exact first-event time/stage/rank in this primitive message.",
+        "physical_ghost_depth_xyz": [
+          4,
+          4,
+          4
+        ]
+      },
+      "active_invalid_events": [
+        {
+          "time": 8290.200000002105,
+          "cycle": 13817.0,
+          "rank": 1.0,
+          "gid": 2.0,
+          "relative_level": 0.0,
+          "x": 1744.0,
+          "y": 1808.0,
+          "z": -1136.0,
+          "local_bad_cells": 76.0
+        },
+        {
+          "time": 8290.200000002105,
+          "cycle": 13817.0,
+          "rank": 3.0,
+          "gid": 6.0,
+          "relative_level": 0.0,
+          "x": 1680.0,
+          "y": 1808.0,
+          "z": -1008.0,
+          "local_bad_cells": 84.0
+        },
+        {
+          "time": 8290.200000002105,
+          "cycle": 13817.0,
+          "rank": 0.0,
+          "gid": 0.0,
+          "relative_level": 0.0,
+          "x": 1776.0,
+          "y": 1712.0,
+          "z": -1136.0,
+          "local_bad_cells": 82.0
+        },
+        {
+          "time": 8290.200000002105,
+          "cycle": 13817.0,
+          "rank": 2.0,
+          "gid": 4.0,
+          "relative_level": 0.0,
+          "x": 1744.0,
+          "y": 1680.0,
+          "z": -1008.0,
+          "local_bad_cells": 84.0
+        }
+      ],
+      "last_progress": {
+        "wall_elapsed_s": 1181.802,
+        "cycle": 13500,
+        "time_M": 8100.0,
+        "dt_M": 0.6
+      },
+      "latest_H_max_location": {
+        "time": 8280.0,
+        "H": 0.00275021,
+        "x": 1776.0,
+        "y": 1776.0,
+        "z": -1008.0,
+        "r_bh": 2706.37
+      },
+      "unreadable_checkpoint_candidates": [],
+      "latest_checkpoint": {
+        "rank0_path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/all_weak/rst/rank_00000000/ks_background.00001.rst",
+        "time_M": 5000.400000000111,
+        "cycle": 8334,
+        "older_than_latest_history": true,
+        "represents_failure_state": false
+      }
+    },
+    "no_damping": {
+      "path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/no_damping",
+      "config": {
+        "time/tlim": "20000",
+        "time/cfl_number": "0.01875",
+        "z4c/damp_kappa1": "0",
+        "z4c/shift_eta": "0",
+        "z4c/residual_lapse_damping": "0",
+        "z4c/shift_Gamma": "1.0",
+        "problem/outer_sponge_enabled": "false",
+        "problem/vacuum_gauge_pulse_amplitude": "1e-08"
+      },
+      "input_sha256": "74d545dec7f67a4936a3229226846c5eb8b8ca33ab0153499b2f564dac271117",
+      "execution": {
+        "case": "no_damping",
+        "exit_code": 0,
+        "elapsed_seconds": 1800.1895632080268,
+        "binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8"
+      },
+      "status": "clean_stop_below_target",
+      "final_log": {
+        "reason": "wall clock limit",
+        "time_M": 12212.4,
+        "cycle": 20354
+      },
+      "last_history_M": 12212.40000000448,
+      "target_M": 20000.0,
+      "history_rows": 1223,
+      "all_history_fields_finite": true,
+      "discarded_malformed_rows": {
+        "user": 0,
+        "z4c": 0
+      },
+      "history_sha256": {
+        "user": "b0d87e210d26a69c9424a47cbb7eea861147cdfaf63697e3467a7ead13d6ea92",
+        "z4c": "95c380d9664880bfcd960fb997452e7d1a030738958d591f819fd52ade3e14a8"
+      },
+      "last": {
+        "theta_rms": 5.066965634065186e-16,
+        "H_rms": 9.636571674803634e-16,
+        "theta_max": 7.15001215624687e-15,
+        "lapse_max": 3.8086200859766e-12,
+        "shift_max": 1.345191319446215e-13
+      },
+      "badmetrics_max": 0.0,
+      "last_metric_history": {
+        "alpha-min": 0.9995711244787787,
+        "chi-min": 0.9991424328718774,
+        "detg-min": 1.001912724437641,
+        "detg-max": 1.002577120227498
+      },
+      "fits": {
+        "theta_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 3.3966209372019426e-12,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 4.1120886644735513e-13,
+            "max": 1.958168061434456e-12,
+            "endpoint_ratio": 0.23899567404157712,
+            "fit_status": "fitted",
+            "gamma_M_inverse": -0.003080578025727067,
+            "e_fold_M": null,
+            "R_squared": 0.9345338571822075
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 2.8108268071758062e-14,
+            "max": 5.159469530616079e-13,
+            "endpoint_ratio": 0.10443945486230036,
+            "fit_status": "fitted",
+            "gamma_M_inverse": -0.0028306850770044014,
+            "e_fold_M": null,
+            "R_squared": 0.976431269195669
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 1.6353572593690145e-16,
+            "max": 3.9335994432862e-14,
+            "endpoint_ratio": 0.0066424547225198555,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 1.6295546856255902e-16,
+            "max": 3.100485092172153e-16,
+            "endpoint_ratio": 1.010987613227261,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 2.1464806952721554e-16,
+            "max": 2.8582243556291007e-16,
+            "endpoint_ratio": 1.3267783233293282,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              8000.40000000193,
+              9990.000000003136
+            ],
+            "samples": 200,
+            "min": 2.8594453853303474e-16,
+            "max": 3.7717874290132305e-16,
+            "endpoint_ratio": 1.3190625875784936,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ],
+        "H_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 2.730941995655417e-18,
+            "max": 3.9114404230926483e-13,
+            "endpoint_ratio": 33415.20258020563,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 1.809193002648317e-14,
+            "max": 1.0413580858826628e-13,
+            "endpoint_ratio": 0.2064293281864754,
+            "fit_status": "fitted",
+            "gamma_M_inverse": -0.0031599480802001244,
+            "e_fold_M": null,
+            "R_squared": 0.9647323758506499
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 1.7459567437450592e-15,
+            "max": 2.920267451442616e-14,
+            "endpoint_ratio": 0.06709385732687133,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 9.13881461316649e-17,
+            "max": 1.841122762877567e-15,
+            "endpoint_ratio": 0.06548672686447542,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 1.2106367989966418e-16,
+            "max": 2.844347759411839e-16,
+            "endpoint_ratio": 2.349464151237756,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 2.844347759411839e-16,
+            "max": 5.026031729865029e-16,
+            "endpoint_ratio": 1.7670243426578487,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              8000.40000000193,
+              9990.000000003136
+            ],
+            "samples": 200,
+            "min": 5.036682594008774e-16,
+            "max": 7.157023342090127e-16,
+            "endpoint_ratio": 1.4209796246846162,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ],
+        "theta_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 2.322135820244556e-11,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 1.537401790178092e-12,
+            "max": 7.74752139566047e-12,
+            "endpoint_ratio": 0.23823402058405324,
+            "fit_status": "fitted",
+            "gamma_M_inverse": -0.0028843622238995934,
+            "e_fold_M": null,
+            "R_squared": 0.7668675003160514
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 7.223120383742057e-14,
+            "max": 2.673744057607204e-12,
+            "endpoint_ratio": 0.17026274903757715,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 9.344155398012967e-16,
+            "max": 1.8068998920892e-13,
+            "endpoint_ratio": 0.0091992421999938,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 1.068970025299059e-15,
+            "max": 2.187554337004893e-15,
+            "endpoint_ratio": 1.8480196858161992,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 2.187554337004893e-15,
+            "max": 3.461845011019593e-15,
+            "endpoint_ratio": 1.5825184099241187,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              8000.40000000193,
+              9990.000000003136
+            ],
+            "samples": 200,
+            "min": 3.456434801746558e-15,
+            "max": 5.066214088763255e-15,
+            "endpoint_ratio": 1.4644803852397315,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ],
+        "lapse_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 4.887745763682005e-11,
+            "max": 7.939226578179513e-09,
+            "endpoint_ratio": 0.006635962819484162,
+            "fit_status": "fitted",
+            "gamma_M_inverse": -0.009578699668859884,
+            "e_fold_M": null,
+            "R_squared": 0.9511343916824715
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 1.636246693692556e-12,
+            "max": 6.650491268800351e-11,
+            "endpoint_ratio": 0.03126392112107187,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 3.463895836830488e-14,
+            "max": 2.060573933704291e-12,
+            "endpoint_ratio": 0.05221377459749553,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 5.25135490647699e-14,
+            "max": 7.657208200839705e-13,
+            "endpoint_ratio": 14.58139534883721,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 7.69495578367696e-13,
+            "max": 1.509570246582825e-12,
+            "endpoint_ratio": 1.961765978935218,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 1.509570246582825e-12,
+            "max": 2.246092201119154e-12,
+            "endpoint_ratio": 1.4879017430315515,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              8000.40000000193,
+              9990.000000003136
+            ],
+            "samples": 200,
+            "min": 2.24986695940288e-12,
+            "max": 2.986166869334284e-12,
+            "endpoint_ratio": 1.3272637552430298,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ],
+        "shift_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 2.037092720961857e-09,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 3.745619851606985e-11,
+            "max": 1.926991911578666e-10,
+            "endpoint_ratio": 0.2704318692847477,
+            "fit_status": "fitted",
+            "gamma_M_inverse": -0.0033499013522742547,
+            "e_fold_M": null,
+            "R_squared": 0.8455705795093797
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 4.256265370532197e-12,
+            "max": 5.016979447982836e-11,
+            "endpoint_ratio": 0.20136661797456082,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3989.999999999578
+            ],
+            "samples": 200,
+            "min": 3.925836435450525e-14,
+            "max": 7.273818916977981e-12,
+            "endpoint_ratio": 0.008427476809774787,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              4000.199999999576,
+              6000.000000000717
+            ],
+            "samples": 201,
+            "min": 3.511042368301021e-14,
+            "max": 6.197332143992318e-14,
+            "endpoint_ratio": 1.1620318322086638,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              6000.000000000717,
+              7990.200000001923
+            ],
+            "samples": 200,
+            "min": 5.930125097572403e-14,
+            "max": 7.256700665717042e-14,
+            "endpoint_ratio": 1.1800394925907316,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              8000.40000000193,
+              9990.000000003136
+            ],
+            "samples": 200,
+            "min": 7.272936593250012e-14,
+            "max": 1.052551058464135e-13,
+            "endpoint_ratio": 1.447216052235357,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ]
+      },
+      "first_printed_primitive_failure": null,
+      "active_invalid_events": [],
+      "last_progress": {
+        "wall_elapsed_s": 1772.089,
+        "cycle": 20000,
+        "time_M": 12000.0,
+        "dt_M": 0.6
+      },
+      "latest_H_max_location": {
+        "time": 12212.4,
+        "H": 1.07192e-14,
+        "x": 1904.0,
+        "y": 2032.0,
+        "z": -1264.0,
+        "r_bh": 3058.09
+      },
+      "unreadable_checkpoint_candidates": [],
+      "latest_checkpoint": {
+        "rank0_path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/no_damping/rst/rank_00000000/ks_background.00003.rst",
+        "time_M": 12212.400000004483,
+        "cycle": 20354,
+        "older_than_latest_history": false,
+        "represents_failure_state": false
+      },
+      "checkpoint_validation": {
+        "time_M": 12212.400000004483,
+        "cycle": 20354,
+        "blocks": 8,
+        "ranks": 4,
+        "matching_headers": true,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "invalid_metric_samples": [],
+        "minimum": {
+          "alpha": 0.9995280774067078,
+          "chi": 0.9990563774977194,
+          "gxx": 0.9999999999439301,
+          "second_minor": 0.9999999999384693,
+          "determinant": 0.9999999999999997
+        },
+        "files": [
+          {
+            "rank": 0,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/no_damping/rst/rank_00000000/ks_background.00003.rst",
+            "bytes": 2191862,
+            "sha256": "3a7fda204f60cd323af4ce398c624e1737412146e62c26594836b9c1e73ea7f5",
+            "payload_finite": true
+          },
+          {
+            "rank": 1,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/no_damping/rst/rank_00000001/ks_background.00003.rst",
+            "bytes": 2191862,
+            "sha256": "f61f0c7531e7f775eee255affbf52c8a2f7d34a7ebcf5176103a7dc322849b9b",
+            "payload_finite": true
+          },
+          {
+            "rank": 2,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/no_damping/rst/rank_00000002/ks_background.00003.rst",
+            "bytes": 2191862,
+            "sha256": "93e262fdcafa6bfabcc60e813936a3dd512e298ce2c4908996feab3055b0e2d9",
+            "payload_finite": true
+          },
+          {
+            "rank": 3,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/no_damping/rst/rank_00000003/ks_background.00003.rst",
+            "bytes": 2191862,
+            "sha256": "083cf10c4b3eaabc3ca8f2cec86342c2036de7a24e862a78829bc68733dac0ed",
+            "payload_finite": true
+          }
+        ],
+        "passed": true,
+        "note": "Saved checkpoint validity only; not a perturbation-stability result.",
+        "matches_final_log_time_cycle": true,
+        "log_time_print_tolerance_M": 0.006106199999999999
+      }
+    },
+    "gauge_weak": {
+      "path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/gauge_weak",
+      "config": {
+        "time/tlim": "20000",
+        "time/cfl_number": "0.01875",
+        "z4c/damp_kappa1": "0.1",
+        "z4c/shift_eta": "0.2",
+        "z4c/residual_lapse_damping": "0.01",
+        "z4c/shift_Gamma": "1.0",
+        "problem/outer_sponge_enabled": "false",
+        "problem/vacuum_gauge_pulse_amplitude": "1e-08"
+      },
+      "input_sha256": "2b8de48321f6373567331a1f00419a2c478bcb33144be85ad457cf8a20655c07",
+      "execution": {
+        "case": "gauge_weak",
+        "exit_code": 1,
+        "elapsed_seconds": 592.8319293749519,
+        "binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8"
+      },
+      "status": "failed",
+      "final_log": null,
+      "last_history_M": 3980.399999999579,
+      "target_M": 20000.0,
+      "history_rows": 399,
+      "all_history_fields_finite": true,
+      "discarded_malformed_rows": {
+        "user": 0,
+        "z4c": 0
+      },
+      "history_sha256": {
+        "user": "230bcb3b6d0088c66433a22b5d787af4cc9aa4c329486efd516c6250985d99f5",
+        "z4c": "6e57fda7fe94b5826fcf2d76e1f4263743627f912c2c6bc994c131e4471d1037"
+      },
+      "last": {
+        "theta_rms": 0.0013421628188775262,
+        "H_rms": 0.0007111843159554875,
+        "theta_max": 0.005145172473275917,
+        "lapse_max": 0.406094347274214,
+        "shift_max": 0.2610495715493528
+      },
+      "badmetrics_max": 0.0,
+      "last_metric_history": {
+        "alpha-min": 0.5935412471639258,
+        "chi-min": 0.7668558844931418,
+        "detg-min": 0.84652935385516,
+        "detg-max": 2.217475021711163
+      },
+      "fits": {
+        "theta_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 6.487460540206175e-13,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 5.2807703242455126e-14,
+            "max": 8.985316008485415e-13,
+            "endpoint_ratio": 17.015161532837897,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0057910988521723186,
+            "e_fold_M": 172.67879991806507,
+            "R_squared": 0.9990448255912144
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 9.600281444857455e-13,
+            "max": 9.855567512332294e-10,
+            "endpoint_ratio": 1026.591519107139,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.00703706994945713,
+            "e_fold_M": 142.10459853069165,
+            "R_squared": 0.9999077049279401
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3980.399999999579
+            ],
+            "samples": 199,
+            "min": 1.0601108080403802e-09,
+            "max": 0.0013421628188775262,
+            "endpoint_ratio": 1266058.9899640023,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.007116581346962415,
+            "e_fold_M": 140.51690709990015,
+            "R_squared": 0.999979905149512
+          }
+        ],
+        "H_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 2.730941995655417e-18,
+            "max": 2.0864427705970277e-13,
+            "endpoint_ratio": 7245.297467860851,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 2.094685368367466e-14,
+            "max": 3.8495147439104607e-13,
+            "endpoint_ratio": 18.377532024824593,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.005914004918482721,
+            "e_fold_M": 169.09015359029445,
+            "R_squared": 0.9991638215640817
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 4.116984921850901e-13,
+            "max": 4.3779549780868145e-10,
+            "endpoint_ratio": 1063.3886354188023,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.007069214950285223,
+            "e_fold_M": 141.4584231817216,
+            "R_squared": 0.9999341853490684
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3980.399999999579
+            ],
+            "samples": 199,
+            "min": 4.709595234231282e-10,
+            "max": 0.0007111843159554875,
+            "endpoint_ratio": 1510075.241257054,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.007137592572544711,
+            "e_fold_M": 140.10326168610064,
+            "R_squared": 0.9999927423745474
+          }
+        ],
+        "theta_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 9.52890482335081e-12,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 1.734588864765229e-13,
+            "max": 3.385003712658334e-12,
+            "endpoint_ratio": 19.51473217324316,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.006011020812835778,
+            "e_fold_M": 166.36109425284738,
+            "R_squared": 0.9952208841367028
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 3.634078295428424e-12,
+            "max": 3.817964541089199e-09,
+            "endpoint_ratio": 1050.6005184016258,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0070282886084896395,
+            "e_fold_M": 142.28214800286884,
+            "R_squared": 0.9999937158753086
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3980.399999999579
+            ],
+            "samples": 199,
+            "min": 4.104170142269577e-09,
+            "max": 0.005145172473275917,
+            "endpoint_ratio": 1253645.023213066,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.007053094309551864,
+            "e_fold_M": 141.78174232630352,
+            "R_squared": 0.9999063076606258
+          }
+        ],
+        "lapse_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 1.464606214085507e-11,
+            "max": 7.939226578179513e-09,
+            "endpoint_ratio": 0.0027445317136791723,
+            "fit_status": "fitted",
+            "gamma_M_inverse": -0.011914967372930524,
+            "e_fold_M": null,
+            "R_squared": 0.9233050413370724
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 2.550026856340537e-11,
+            "max": 3.530693515330086e-10,
+            "endpoint_ratio": 13.845711101242568,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0050844481487691846,
+            "e_fold_M": 196.6781783863947,
+            "R_squared": 0.9980039731723057
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 3.789315528024417e-10,
+            "max": 3.751850458089123e-07,
+            "endpoint_ratio": 990.1129716809763,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.006964155651659727,
+            "e_fold_M": 143.59242527292966,
+            "R_squared": 0.9999909472176736
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3980.399999999579
+            ],
+            "samples": 199,
+            "min": 4.031491480649407e-07,
+            "max": 0.406094347274214,
+            "endpoint_ratio": 1007305.4829048006,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.0070486474497598595,
+            "e_fold_M": 141.87118977472323,
+            "R_squared": 0.9998687806307943
+          }
+        ],
+        "shift_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              490.2000000000072
+            ],
+            "samples": 50,
+            "min": 0.0,
+            "max": 4.952906578251613e-10,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              500.4000000000075,
+              990.000000000026
+            ],
+            "samples": 50,
+            "min": 1.605820744389128e-11,
+            "max": 1.530439667140823e-10,
+            "endpoint_ratio": 9.53057601533862,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.004577171990771631,
+            "e_fold_M": 218.4755132680556,
+            "R_squared": 0.999728254489702
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "samples": 100,
+            "min": 1.607330333283988e-10,
+            "max": 1.645009287578182e-07,
+            "endpoint_ratio": 1023.4419481260028,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.007129720822165786,
+            "e_fold_M": 140.25794627064113,
+            "R_squared": 0.9998768278841328
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.399999999879,
+              3980.399999999579
+            ],
+            "samples": 199,
+            "min": 1.769017301930711e-07,
+            "max": 0.2610495715493528,
+            "endpoint_ratio": 1475675.626600387,
+            "fit_status": "fitted",
+            "gamma_M_inverse": 0.007125981767347294,
+            "e_fold_M": 140.33154064218976,
+            "R_squared": 0.99998829017346
+          }
+        ]
+      },
+      "first_printed_primitive_failure": {
+        "message": "An error occurred during the primitive solve: NANS_IN_CONS",
+        "xyz_M": [
+          1424.0,
+          1424.0,
+          -848.0
+        ],
+        "determinant": -0.010705260509008108,
+        "preceding_printed_H_time_M": 3900.0,
+        "following_printed_H_time_M": 3910.2,
+        "time_scope": "Only stdout order; no exact first-event time/stage/rank in this primitive message.",
+        "physical_ghost_depth_xyz": [
+          4,
+          4,
+          0
+        ]
+      },
+      "active_invalid_events": [
+        {
+          "time": 3989.999999999578,
+          "cycle": 6650.0,
+          "rank": 2.0,
+          "gid": 4.0,
+          "relative_level": 0.0,
+          "x": 1616.0,
+          "y": 1584.0,
+          "z": -1008.0,
+          "local_bad_cells": 2.0
+        }
+      ],
+      "last_progress": {
+        "wall_elapsed_s": 579.2024,
+        "cycle": 6500,
+        "time_M": 3900.0,
+        "dt_M": 0.6
+      },
+      "latest_H_max_location": {
+        "time": 3980.4,
+        "H": 0.00551265,
+        "x": 2000.0,
+        "y": 1584.0,
+        "z": -1008.0,
+        "r_bh": 2743.2
+      },
+      "unreadable_checkpoint_candidates": [],
+      "latest_checkpoint": {
+        "rank0_path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/local/gauge_weak/rst/rank_00000000/ks_background.00000.rst",
+        "time_M": 0.0,
+        "cycle": 0,
+        "older_than_latest_history": true,
+        "represents_failure_state": false
+      }
+    },
+    "fast_weakfield": {
+      "path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/fast-weakfield",
+      "config": {
+        "time/tlim": "50000",
+        "time/cfl_number": "0.1",
+        "z4c/damp_kappa1": "0",
+        "z4c/shift_eta": "0.02",
+        "z4c/residual_lapse_damping": "0.01",
+        "z4c/shift_Gamma": "1.0",
+        "problem/outer_sponge_enabled": "false",
+        "problem/vacuum_gauge_pulse_amplitude": "1e-08"
+      },
+      "input_sha256": "198e5b467e5be20a855d98487f7d193a0b55375c32446443a0b3f1a1a5481a35",
+      "execution": {
+        "exit_code": 0
+      },
+      "status": "completed_target",
+      "final_log": {
+        "reason": "time limit",
+        "time_M": 50000.0,
+        "cycle": 15626
+      },
+      "last_history_M": 50000.0,
+      "target_M": 50000.0,
+      "history_rows": 2001,
+      "all_history_fields_finite": true,
+      "discarded_malformed_rows": {
+        "user": 0,
+        "z4c": 0
+      },
+      "history_sha256": {
+        "user": "99f6274b3092c27f9c845bc9026ada2a82a7d25b9caf2aef0f5fb645f7bd94c4",
+        "z4c": "b7638563b8a9257c6f6d569d5ae2b4c1ea393cbb8e3bbe292da4475fa8f8e87d"
+      },
+      "last": {
+        "theta_rms": 7.558543740607367e-17,
+        "H_rms": 1.1806141536812355e-16,
+        "theta_max": 4.712839781656506e-16,
+        "lapse_max": 1.353361867018066e-13,
+        "shift_max": 2.949924375952873e-15
+      },
+      "badmetrics_max": 0.0,
+      "last_metric_history": {
+        "alpha-min": 0.9995711244749336,
+        "chi-min": 0.9991424328895746,
+        "detg-min": 1.001912724374498,
+        "detg-max": 1.002577120174223
+      },
+      "fits": {
+        "theta_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              476.7999999999988
+            ],
+            "samples": 20,
+            "min": 0.0,
+            "max": 1.5543327490699013e-12,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              502.3999999999987,
+              976.0000000000052
+            ],
+            "samples": 20,
+            "min": 2.8173535218570498e-14,
+            "max": 3.3211152959593626e-13,
+            "endpoint_ratio": 0.09039555351314522,
+            "fit_status": "fitted",
+            "gamma_M_inverse": -0.0060543265767491325,
+            "e_fold_M": null,
+            "R_squared": 0.9567378856925122
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1001.600000000006,
+              2000.00000000002
+            ],
+            "samples": 41,
+            "min": 2.744150684969584e-16,
+            "max": 2.7129924224373402e-14,
+            "endpoint_ratio": 0.010593646508342549,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.00000000002,
+              3999.99999999991
+            ],
+            "samples": 81,
+            "min": 2.0954466290904897e-17,
+            "max": 2.744150684969584e-16,
+            "endpoint_ratio": 0.08674783958376714,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              3999.99999999991,
+              5999.999999999796
+            ],
+            "samples": 81,
+            "min": 2.3349843567900045e-17,
+            "max": 2.8246834345526344e-17,
+            "endpoint_ratio": 1.186596764873433,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              5999.999999999796,
+              7999.999999999683
+            ],
+            "samples": 81,
+            "min": 2.7488413724490743e-17,
+            "max": 3.189670972815607e-17,
+            "endpoint_ratio": 1.1154390610694747,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              7999.999999999683,
+              10000.00000000008
+            ],
+            "samples": 81,
+            "min": 3.1507622380558893e-17,
+            "max": 3.5507325389012535e-17,
+            "endpoint_ratio": 1.120567509048267,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              10000,
+              15000
+            ],
+            "actual_window_M": [
+              10000.00000000008,
+              14976.00000000121
+            ],
+            "samples": 200,
+            "min": 3.495553319488852e-17,
+            "max": 4.1770510166084784e-17,
+            "endpoint_ratio": 1.1830854733672143,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              15000,
+              20000
+            ],
+            "actual_window_M": [
+              15001.60000000122,
+              20000.00000000235
+            ],
+            "samples": 201,
+            "min": 4.1012132734665015e-17,
+            "max": 4.806500334390588e-17,
+            "endpoint_ratio": 1.1571961294716915,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              20000,
+              30000
+            ],
+            "actual_window_M": [
+              20000.00000000235,
+              30000.00000000463
+            ],
+            "samples": 401,
+            "min": 4.7903847345680876e-17,
+            "max": 5.799200976273405e-17,
+            "endpoint_ratio": 1.206921398433202,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              30000,
+              40000
+            ],
+            "actual_window_M": [
+              30000.00000000463,
+              39999.99999999868
+            ],
+            "samples": 401,
+            "min": 5.76521687607062e-17,
+            "max": 6.832644148520932e-17,
+            "endpoint_ratio": 1.1698909190209028,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              40000,
+              50000
+            ],
+            "actual_window_M": [
+              39999.99999999868,
+              50000.0
+            ],
+            "samples": 401,
+            "min": 6.778630356954607e-17,
+            "max": 7.596963616543057e-17,
+            "endpoint_ratio": 1.1141010945386967,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ],
+        "H_rms": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              476.7999999999988
+            ],
+            "samples": 20,
+            "min": 2.730941995655417e-18,
+            "max": 2.340774803414074e-13,
+            "endpoint_ratio": 5547.523306608615,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              502.3999999999987,
+              976.0000000000052
+            ],
+            "samples": 20,
+            "min": 2.3582680529670596e-15,
+            "max": 1.484648952754082e-14,
+            "endpoint_ratio": 0.17719934146269414,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1001.600000000006,
+              2000.00000000002
+            ],
+            "samples": 41,
+            "min": 3.874088032116869e-17,
+            "max": 2.230544695801734e-15,
+            "endpoint_ratio": 0.0173683497103132,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.00000000002,
+              3999.99999999991
+            ],
+            "samples": 81,
+            "min": 1.7512955113879413e-17,
+            "max": 3.874088032116869e-17,
+            "endpoint_ratio": 0.6766129440135853,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              3999.99999999991,
+              5999.999999999796
+            ],
+            "samples": 81,
+            "min": 2.6212581087783918e-17,
+            "max": 3.445158878892206e-17,
+            "endpoint_ratio": 1.3143150105495653,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              5999.999999999796,
+              7999.999999999683
+            ],
+            "samples": 81,
+            "min": 3.445158878892206e-17,
+            "max": 4.401746209470618e-17,
+            "endpoint_ratio": 1.2776613109018657,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              7999.999999999683,
+              10000.00000000008
+            ],
+            "samples": 81,
+            "min": 4.401746209470618e-17,
+            "max": 5.09585074556148e-17,
+            "endpoint_ratio": 1.157688449778739,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              10000,
+              15000
+            ],
+            "actual_window_M": [
+              10000.00000000008,
+              14976.00000000121
+            ],
+            "samples": 200,
+            "min": 5.09585074556148e-17,
+            "max": 6.191776712142736e-17,
+            "endpoint_ratio": 1.215062414756911,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              15000,
+              20000
+            ],
+            "actual_window_M": [
+              15001.60000000122,
+              20000.00000000235
+            ],
+            "samples": 201,
+            "min": 6.191629072948835e-17,
+            "max": 7.095075772432147e-17,
+            "endpoint_ratio": 1.1455154334521618,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              20000,
+              30000
+            ],
+            "actual_window_M": [
+              20000.00000000235,
+              30000.00000000463
+            ],
+            "samples": 401,
+            "min": 7.095075772432147e-17,
+            "max": 9.155611765563742e-17,
+            "endpoint_ratio": 1.2897161129632069,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              30000,
+              40000
+            ],
+            "actual_window_M": [
+              30000.00000000463,
+              39999.99999999868
+            ],
+            "samples": 401,
+            "min": 9.150633546400611e-17,
+            "max": 1.1022548980345183e-16,
+            "endpoint_ratio": 1.2038598018610764,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              40000,
+              50000
+            ],
+            "actual_window_M": [
+              39999.99999999868,
+              50000.0
+            ],
+            "samples": 401,
+            "min": 1.1009123997522517e-16,
+            "max": 1.1844752796671233e-16,
+            "endpoint_ratio": 1.0717189469181843,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ],
+        "theta_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              476.7999999999988
+            ],
+            "samples": 20,
+            "min": 0.0,
+            "max": 1.903793085190433e-11,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              502.3999999999987,
+              976.0000000000052
+            ],
+            "samples": 20,
+            "min": 8.016578821061974e-14,
+            "max": 1.260448074237359e-12,
+            "endpoint_ratio": 0.13057412655968978,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1001.600000000006,
+              2000.00000000002
+            ],
+            "samples": 41,
+            "min": 1.297350636266543e-15,
+            "max": 1.290938907933118e-13,
+            "endpoint_ratio": 0.011778483317909153,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.00000000002,
+              3999.99999999991
+            ],
+            "samples": 81,
+            "min": 7.36301385617127e-17,
+            "max": 1.330912416261634e-15,
+            "endpoint_ratio": 0.0759692820979423,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              3999.99999999991,
+              5999.999999999796
+            ],
+            "samples": 81,
+            "min": 1.011084607986341e-16,
+            "max": 1.557972095320971e-16,
+            "endpoint_ratio": 1.3514014212289056,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              5999.999999999796,
+              7999.999999999683
+            ],
+            "samples": 81,
+            "min": 1.205161126797578e-16,
+            "max": 1.849362612701373e-16,
+            "endpoint_ratio": 1.1825588627611014,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              7999.999999999683,
+              10000.00000000008
+            ],
+            "samples": 81,
+            "min": 1.547994786088443e-16,
+            "max": 2.124369107788577e-16,
+            "endpoint_ratio": 1.1566032686106016,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              10000,
+              15000
+            ],
+            "actual_window_M": [
+              10000.00000000008,
+              14976.00000000121
+            ],
+            "samples": 200,
+            "min": 1.731582538534982e-16,
+            "max": 2.586813925150309e-16,
+            "endpoint_ratio": 1.316166618928242,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              15000,
+              20000
+            ],
+            "actual_window_M": [
+              15001.60000000122,
+              20000.00000000235
+            ],
+            "samples": 201,
+            "min": 2.305964184240106e-16,
+            "max": 3.381359316678749e-16,
+            "endpoint_ratio": 1.0779001579607355,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              20000,
+              30000
+            ],
+            "actual_window_M": [
+              20000.00000000235,
+              30000.00000000463
+            ],
+            "samples": 401,
+            "min": 2.65403242409345e-16,
+            "max": 3.931760915129198e-16,
+            "endpoint_ratio": 1.3160425678688041,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              30000,
+              40000
+            ],
+            "actual_window_M": [
+              30000.00000000463,
+              39999.99999999868
+            ],
+            "samples": 401,
+            "min": 3.0101899061673e-16,
+            "max": 4.249530720393659e-16,
+            "endpoint_ratio": 0.9773935591637027,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              40000,
+              50000
+            ],
+            "actual_window_M": [
+              39999.99999999868,
+              50000.0
+            ],
+            "samples": 401,
+            "min": 3.422298588750488e-16,
+            "max": 4.920077015911321e-16,
+            "endpoint_ratio": 1.3330464464114427,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ],
+        "lapse_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              476.7999999999988
+            ],
+            "samples": 20,
+            "min": 5.695888205536903e-12,
+            "max": 7.939226578179513e-09,
+            "endpoint_ratio": 0.0007174361569666886,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              502.3999999999987,
+              976.0000000000052
+            ],
+            "samples": 20,
+            "min": 2.242650509742816e-14,
+            "max": 5.514588785615615e-12,
+            "endpoint_ratio": 0.0040667592760363185,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1001.600000000006,
+              2000.00000000002
+            ],
+            "samples": 41,
+            "min": 6.661338147750939e-15,
+            "max": 2.031708135064036e-14,
+            "endpoint_ratio": 0.8840579710144928,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.00000000002,
+              3999.99999999991
+            ],
+            "samples": 81,
+            "min": 1.354472090042691e-14,
+            "max": 2.864375403532904e-14,
+            "endpoint_ratio": 2.0737704918032787,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              3999.99999999991,
+              5999.999999999796
+            ],
+            "samples": 81,
+            "min": 2.742250870824137e-14,
+            "max": 4.352074256530614e-14,
+            "endpoint_ratio": 1.241106719367589,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              5999.999999999796,
+              7999.999999999683
+            ],
+            "samples": 81,
+            "min": 3.308464613382966e-14,
+            "max": 4.451994328746878e-14,
+            "endpoint_ratio": 1.1847133757961779,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              7999.999999999683,
+              10000.00000000008
+            ],
+            "samples": 81,
+            "min": 4.052314039881821e-14,
+            "max": 5.46229728115577e-14,
+            "endpoint_ratio": 1.3225806451612905,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              10000,
+              15000
+            ],
+            "actual_window_M": [
+              10000.00000000008,
+              14976.00000000121
+            ],
+            "samples": 200,
+            "min": 5.46229728115577e-14,
+            "max": 9.037215420448774e-14,
+            "endpoint_ratio": 1.3089430894308942,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              15000,
+              20000
+            ],
+            "actual_window_M": [
+              15001.60000000122,
+              20000.00000000235
+            ],
+            "samples": 201,
+            "min": 6.772360450213455e-14,
+            "max": 8.770761894538737e-14,
+            "endpoint_ratio": 1.1506211180124224,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              20000,
+              30000
+            ],
+            "actual_window_M": [
+              20000.00000000235,
+              30000.00000000463
+            ],
+            "samples": 401,
+            "min": 7.172040739078511e-14,
+            "max": 8.815170815523743e-14,
+            "endpoint_ratio": 1.0647773279352226,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              30000,
+              40000
+            ],
+            "actual_window_M": [
+              30000.00000000463,
+              39999.99999999868
+            ],
+            "samples": 401,
+            "min": 8.515410598874951e-14,
+            "max": 1.186828413324292e-13,
+            "endpoint_ratio": 1.3548795944233203,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              40000,
+              50000
+            ],
+            "actual_window_M": [
+              39999.99999999868,
+              50000.0
+            ],
+            "samples": 401,
+            "min": 1.130207039068409e-13,
+            "max": 1.377786773559819e-13,
+            "endpoint_ratio": 1.1403180542563147,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ],
+        "shift_max": [
+          {
+            "window_M": [
+              0,
+              500
+            ],
+            "actual_window_M": [
+              0.0,
+              476.7999999999988
+            ],
+            "samples": 20,
+            "min": 0.0,
+            "max": 1.177468524429532e-09,
+            "endpoint_ratio": null,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              500,
+              1000
+            ],
+            "actual_window_M": [
+              502.3999999999987,
+              976.0000000000052
+            ],
+            "samples": 20,
+            "min": 1.309242807483874e-12,
+            "max": 1.279155980356966e-11,
+            "endpoint_ratio": 0.15077887448681343,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              1000,
+              2000
+            ],
+            "actual_window_M": [
+              1001.600000000006,
+              2000.00000000002
+            ],
+            "samples": 41,
+            "min": 1.518251670218351e-14,
+            "max": 1.386238807120702e-12,
+            "endpoint_ratio": 0.013001731340494017,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              2000,
+              4000
+            ],
+            "actual_window_M": [
+              2000.00000000002,
+              3999.99999999991
+            ],
+            "samples": 81,
+            "min": 8.287641406479196e-16,
+            "max": 1.546324374969432e-14,
+            "endpoint_ratio": 0.08335297142122629,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              4000,
+              6000
+            ],
+            "actual_window_M": [
+              3999.99999999991,
+              5999.999999999796
+            ],
+            "samples": 81,
+            "min": 8.4855083029578e-16,
+            "max": 1.404665229617907e-15,
+            "endpoint_ratio": 1.0489837006575429,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              6000,
+              8000
+            ],
+            "actual_window_M": [
+              5999.999999999796,
+              7999.999999999683
+            ],
+            "samples": 81,
+            "min": 1.015707700238733e-15,
+            "max": 1.538022096833624e-15,
+            "endpoint_ratio": 0.983787977785037,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              8000,
+              10000
+            ],
+            "actual_window_M": [
+              7999.999999999683,
+              10000.00000000008
+            ],
+            "samples": 81,
+            "min": 1.227316859253591e-15,
+            "max": 1.967013791431826e-15,
+            "endpoint_ratio": 1.4676020090490232,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              10000,
+              15000
+            ],
+            "actual_window_M": [
+              10000.00000000008,
+              14976.00000000121
+            ],
+            "samples": 200,
+            "min": 1.585103576173807e-15,
+            "max": 2.213967941269712e-15,
+            "endpoint_ratio": 0.958253196062903,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              15000,
+              20000
+            ],
+            "actual_window_M": [
+              15001.60000000122,
+              20000.00000000235
+            ],
+            "samples": 201,
+            "min": 1.653570943366267e-15,
+            "max": 2.240232738898174e-15,
+            "endpoint_ratio": 1.06748062991245,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              20000,
+              30000
+            ],
+            "actual_window_M": [
+              20000.00000000235,
+              30000.00000000463
+            ],
+            "samples": 401,
+            "min": 1.79004489182788e-15,
+            "max": 2.395436279889473e-15,
+            "endpoint_ratio": 1.0363436267637929,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              30000,
+              40000
+            ],
+            "actual_window_M": [
+              30000.00000000463,
+              39999.99999999868
+            ],
+            "samples": 401,
+            "min": 2.096440425772284e-15,
+            "max": 2.941223653518676e-15,
+            "endpoint_ratio": 1.359236924944059,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          },
+          {
+            "window_M": [
+              40000,
+              50000
+            ],
+            "actual_window_M": [
+              39999.99999999868,
+              50000.0
+            ],
+            "samples": 401,
+            "min": 2.718745367724651e-15,
+            "max": 3.443209259379465e-15,
+            "endpoint_ratio": 1.0122399248490936,
+            "fit_status": "omitted: values at/below conservative analysis threshold or nonfinite"
+          }
+        ]
+      },
+      "first_printed_primitive_failure": null,
+      "active_invalid_events": [],
+      "last_progress": {
+        "wall_elapsed_s": 1229.677,
+        "cycle": 15500,
+        "time_M": 49600.0,
+        "dt_M": 3.2
+      },
+      "latest_H_max_location": {
+        "time": 50000.0,
+        "H": 7.994209e-16,
+        "x": 1968.0,
+        "y": 1552.0,
+        "z": -1264.0,
+        "r_bh": 2807.031
+      },
+      "unreadable_checkpoint_candidates": [],
+      "latest_checkpoint": {
+        "rank0_path": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/fast-weakfield/rst/rank_00000000/ks_background.00005.rst",
+        "time_M": 50000.0,
+        "cycle": 15626,
+        "older_than_latest_history": false,
+        "represents_failure_state": false
+      },
+      "checkpoint_validation": {
+        "time_M": 50000.0,
+        "cycle": 15626,
+        "blocks": 8,
+        "ranks": 4,
+        "matching_headers": true,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "invalid_metric_samples": [],
+        "minimum": {
+          "alpha": 0.9995280773908702,
+          "chi": 0.9990563774944414,
+          "gxx": 0.9999999999942087,
+          "second_minor": 0.9999999999925622,
+          "determinant": 0.9999999999999997
+        },
+        "files": [
+          {
+            "rank": 0,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/fast-weakfield/rst/rank_00000000/ks_background.00005.rst",
+            "bytes": 2191862,
+            "sha256": "6545f114b41259247538a81d30eef44f9924df8f718fb5a16f9ffc2c7b05258f",
+            "payload_finite": true
+          },
+          {
+            "rank": 1,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/fast-weakfield/rst/rank_00000001/ks_background.00005.rst",
+            "bytes": 2191862,
+            "sha256": "6c4b3427076a2c6cb4c507e1f164be73a37b2680bab26a4405c29c5321a08589",
+            "payload_finite": true
+          },
+          {
+            "rank": 2,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/fast-weakfield/rst/rank_00000002/ks_background.00005.rst",
+            "bytes": 2191862,
+            "sha256": "f12d4a8662fbe79d263eaa9010a0128378e512a6f183ad5b08e4ad3f63198dd7",
+            "payload_finite": true
+          },
+          {
+            "rank": 3,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/fast-weakfield/rst/rank_00000003/ks_background.00005.rst",
+            "bytes": 2191862,
+            "sha256": "aba8060790f709097860a109fc2054706061e8f0fcb4af9056d0f9f2ba9fbf6f",
+            "payload_finite": true
+          }
+        ],
+        "passed": true,
+        "note": "Saved checkpoint validity only; not a perturbation-stability result.",
+        "matches_final_log_time_cycle": true,
+        "log_time_print_tolerance_M": 0.024999999999999998
+      }
+    }
+  },
+  "timestep_comparison": {
+    "scope": "Existing t640M amplitude1e-6 weak-field pulse, serial single16cubed block; actual discrete time comparison only. Raw mixed-variable L2 is not a physical energy or constraint norm. Reference dt.6 is not exact. checkpoint_dt is not necessarily the last shortened timestep. Long controls use amplitude1e-8 and eight8cubed blocks on four ranks.",
+    "cases": {
+      "0.6": {
+        "time_M": 640.0,
+        "cycle": 1067,
+        "checkpoint_dt": 0.6,
+        "input_sha256": "e13100456320334d0fc3fce9d7d59b78976bd8fa09cfb112aeb36b0de63b7c9c"
+      },
+      "1.6": {
+        "time_M": 640.0,
+        "cycle": 400,
+        "checkpoint_dt": 1.6,
+        "input_sha256": "7bb772d9aa73f9610400506bc5b3a124784fb926eeba08c22120377e39822a6d",
+        "active_residual_L2_relative_difference_vs_dt0p6": 0.0007395288892604308,
+        "max_abs_active_difference": 2.291056233616473e-12
+      },
+      "3.2": {
+        "time_M": 640.0,
+        "cycle": 200,
+        "checkpoint_dt": 3.2,
+        "input_sha256": "413225c867d4b6273d9704aa3114795131701e702346a8b70b26b56e2c4f29e0",
+        "active_residual_L2_relative_difference_vs_dt0p6": 0.006251014929238379,
+        "max_abs_active_difference": 1.87960758069039e-11
+      }
+    },
+    "relative_error_ratio_dt3p2_over_dt1p6": 8.452698765412308,
+    "checkpoint_validation": {
+      "0.6": {
+        "time_M": 640.0,
+        "cycle": 1067,
+        "blocks": 1,
+        "ranks": 1,
+        "matching_headers": true,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "invalid_metric_samples": [],
+        "minimum": {
+          "alpha": 0.9995280777783374,
+          "chi": 0.9990563949219904,
+          "gxx": 0.9999999845939568,
+          "second_minor": 0.9999999922872904,
+          "determinant": 0.9999999999999996
+        },
+        "files": [
+          {
+            "rank": 0,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/timestep/0p6/rst/rank_00000000/ks_background.00001.rst",
+            "bytes": 3680109,
+            "sha256": "c28b6b49790522a63e193219619586a41cfdd3e00d3f10aa456ae494950a88c9",
+            "payload_finite": true
+          }
+        ],
+        "passed": true,
+        "note": "Saved checkpoint validity only; not a perturbation-stability result."
+      },
+      "1.6": {
+        "time_M": 640.0,
+        "cycle": 400,
+        "blocks": 1,
+        "ranks": 1,
+        "matching_headers": true,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "invalid_metric_samples": [],
+        "minimum": {
+          "alpha": 0.999528077773984,
+          "chi": 0.9990563949030118,
+          "gxx": 0.9999999846108388,
+          "second_minor": 0.9999999922957944,
+          "determinant": 0.9999999999999996
+        },
+        "files": [
+          {
+            "rank": 0,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/timestep/1p6/rst/rank_00000000/ks_background.00001.rst",
+            "bytes": 3680109,
+            "sha256": "2b7e433032db987cdacbc3b7a806e7820590aa9e3a3564bffafaa4b357409e6e",
+            "payload_finite": true
+          }
+        ],
+        "passed": true,
+        "note": "Saved checkpoint validity only; not a perturbation-stability result."
+      },
+      "3.2": {
+        "time_M": 640.0,
+        "cycle": 200,
+        "blocks": 1,
+        "ranks": 1,
+        "matching_headers": true,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "invalid_metric_samples": [],
+        "minimum": {
+          "alpha": 0.9995280777418379,
+          "chi": 0.9990563947570533,
+          "gxx": 0.9999999847339957,
+          "second_minor": 0.9999999923575096,
+          "determinant": 0.9999999999999996
+        },
+        "files": [
+          {
+            "rank": 0,
+            "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/timestep/3p2/rst/rank_00000000/ks_background.00001.rst",
+            "bytes": 3680109,
+            "sha256": "a0b91aa886bed165da1f6ba4e9bc50e7e029b02603446c3d354e354a256a6de9",
+            "payload_finite": true
+          }
+        ],
+        "passed": true,
+        "note": "Saved checkpoint validity only; not a perturbation-stability result."
+      }
+    }
+  }
+}

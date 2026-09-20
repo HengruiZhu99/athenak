@@ -1,0 +1,21 @@
+{
+  "case": "zero",
+  "command": [
+    "mpiexec",
+    "-n",
+    "8",
+    "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/bin/athena-active-stencil-mpi",
+    "-i",
+    "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/strongfield-plan/preflight/zero/input.athinput",
+    "-t",
+    "00:05:00",
+    "time/nlim=3",
+    "time/ndiag=1"
+  ],
+  "binary": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/bin/athena-active-stencil-mpi",
+  "binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8",
+  "input_sha256": "e60b1db4ac1c629cc9802963be0109300e6e57d9b678c2d88022545c59f5f6d3",
+  "exit_code": 0,
+  "application_elapsed_seconds": 29.455042,
+  "scope": "Only three RK3 cycles on eight local MPI ranks; no Aurora submission."
+}

@@ -1,0 +1,196 @@
+{
+  "scope": "Fixed first-active +x face trace; state function, not a physical constraint norm or instability proof. No exact injection operation or formal convergence order identified.",
+  "geometry": {
+    "global_nx": 32,
+    "block_nx": 16,
+    "ranks": 8,
+    "dx": 128,
+    "xyz": [
+      1984,
+      64,
+      64
+    ],
+    "rank": 7,
+    "block": 7,
+    "relative_level": 0
+  },
+  "profile_comparison_caveat": "Compact radius512 and Gaussian sigma512 differ throughout the interior; this does not isolate only boundary tail changes.",
+  "cases": {
+    "compact": {
+      "times": [
+        0.0,
+        5004.799999999989,
+        10003.199999999706,
+        15001.599999999422,
+        20000.000000000164,
+        22540.80000000074
+      ],
+      "cycles": [
+        0,
+        782,
+        1563,
+        2344,
+        3125,
+        3522
+      ],
+      "seed": {
+        "amplitude": 1e-06,
+        "profile": "compact",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 0.0
+      },
+      "initial_C1": 0.0,
+      "latest_C1": 1.9550790528313781e-13,
+      "latest_delta_C1": 1.9550790528313781e-13,
+      "latest_Theta": 7.12827940143749e-14,
+      "latest_C1_terms": {
+        "sqrtchi_Theta": 7.128279401779077e-14,
+        "halfchi_Gamma_n": 6.2960072801706385e-15,
+        "D_n_chi": 1.179291039851764e-13
+      },
+      "latest_C1_actual_minus_flat": 6.915041099197038e-24,
+      "stop_reason": "walltime",
+      "target": 50000,
+      "target_reached": false,
+      "trace_file_sha256": "cef07486c9caa2062dbf27dda3043ddd65360bbfe0b5accef433d6595a169da1"
+    },
+    "gaussian": {
+      "times": [
+        0.0,
+        5004.799999999989,
+        10003.199999999706,
+        15001.599999999422,
+        15647.999999999385
+      ],
+      "cycles": [
+        0,
+        782,
+        1563,
+        2344,
+        2445
+      ],
+      "seed": {
+        "amplitude": 1e-06,
+        "profile": "gaussian",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 5.402721845128488e-10
+      },
+      "initial_C1": 5.402721845128488e-10,
+      "latest_C1": 5.41636650736748e-10,
+      "latest_delta_C1": 1.3644662238992468e-12,
+      "latest_Theta": 1.6533149652907684e-10,
+      "latest_C1_terms": {
+        "sqrtchi_Theta": 1.6533151518336246e-10,
+        "halfchi_Gamma_n": -5.775584180010733e-11,
+        "D_n_chi": 4.340609773534929e-10
+      },
+      "latest_C1_actual_minus_flat": 7.652881156884545e-18,
+      "stop_reason": "walltime",
+      "target": 50000,
+      "target_reached": false,
+      "trace_file_sha256": "db7aeaedc6dc653190c4ef65c92acb9d2c0385d8baf2a958d02ce3d253b531dc"
+    },
+    "compact_amp1e7": {
+      "times": [
+        0.0,
+        5004.799999999989,
+        6000.0
+      ],
+      "cycles": [
+        0,
+        782,
+        938
+      ],
+      "seed": {
+        "amplitude": 1e-07,
+        "profile": "compact",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 0.0
+      },
+      "initial_C1": 0.0,
+      "latest_C1": 1.9850170248298394e-15,
+      "latest_delta_C1": 1.9850170248298394e-15,
+      "latest_Theta": -4.553566490244325e-11,
+      "latest_C1_terms": {
+        "sqrtchi_Theta": -4.553566469026786e-11,
+        "halfchi_Gamma_n": -8.277523219456966e-12,
+        "D_n_chi": 5.3815172926749654e-11
+      },
+      "latest_C1_actual_minus_flat": 4.3056317033552686e-19,
+      "stop_reason": "target_time",
+      "target": 6000,
+      "target_reached": true,
+      "trace_file_sha256": "33409cba7a9c3f1b1c75bbef9f9d7fc49ddc939cacf49a7ac500fa204123aa39"
+    },
+    "compact_halfdt": {
+      "times": [
+        0.0,
+        5001.599999999853,
+        6000.0
+      ],
+      "cycles": [
+        0,
+        1563,
+        1876
+      ],
+      "seed": {
+        "amplitude": 1e-06,
+        "profile": "compact",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 0.0
+      },
+      "initial_C1": 0.0,
+      "latest_C1": 1.9544038251547107e-13,
+      "latest_delta_C1": 1.9544038251547107e-13,
+      "latest_Theta": -4.5522657724578495e-10,
+      "latest_C1_terms": {
+        "sqrtchi_Theta": -4.552265560606686e-10,
+        "halfchi_Gamma_n": -8.271742552111216e-11,
+        "D_n_chi": 5.381394219642963e-10
+      },
+      "latest_C1_actual_minus_flat": 4.292848326214373e-17,
+      "stop_reason": "target_time",
+      "target": 6000,
+      "target_reached": true,
+      "trace_file_sha256": "472549eb170b7386f760c9e94dc2566b4f42c2ff04810bf82d106dba4610827c"
+    }
+  },
+  "near_5000_comparisons": {
+    "compact_amp1e7": {
+      "reference_time": 5004.799999999989,
+      "comparison_time": 5004.799999999989,
+      "time_offset": 0.0,
+      "reference_C1": 1.9545787975255575e-13,
+      "comparison_C1": 1.9368350950899856e-15,
+      "C1_ratio": 0.00990921981524595,
+      "amplitude_ratio": 0.1,
+      "ratio_over_linear_scaling": 0.09909219815245948,
+      "ratio_over_quadratic_scaling": 0.9909219815245948,
+      "relative_difference": -0.990090780184754,
+      "interpolation_used": false
+    },
+    "compact_halfdt": {
+      "reference_time": 5004.799999999989,
+      "comparison_time": 5001.599999999853,
+      "time_offset": -3.2000000001362423,
+      "reference_C1": 1.9545787975255575e-13,
+      "comparison_C1": 1.9534099191128072e-13,
+      "C1_ratio": 0.999401979385927,
+      "amplitude_ratio": 1.0,
+      "ratio_over_linear_scaling": 0.999401979385927,
+      "ratio_over_quadratic_scaling": 0.999401979385927,
+      "relative_difference": -0.0005980206140729916,
+      "interpolation_used": false
+    }
+  },
+  "nonlinear_identity": "d_t C1 = R + dot(chi)*Theta/(2sqrt(chi)) + dot(chi)*Gamma_n/2 + chi*dot(n_d).Gamma/2 + dot(n_u).D(chi_res), with fixed derivative stencil/component set; algebraic projection contributes separate jumps.",
+  "interpretation": "Initial Gaussian tails are retained, but compact initial data also acquire a nearly constant trace. Its amplitude ratio is approximately quadratic and halving dt barely changes it; this is consistent with moving-basis/projection effects, not a unique identification of either. C1 need not be an exact nonlinear Riemann invariant."
+}

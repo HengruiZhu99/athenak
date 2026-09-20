@@ -1,0 +1,111 @@
+{
+  "scope": "Flat linearized physical Hamiltonian H=partial_i partial_j h_ij+2 Laplacian chi, momentum M_i=partial_j A_ij\u22122/3 partial_i(Khat+2Theta), Q_i=Gamma_i\u2212partial_j h_ij, Z_i=Q_i/2. Same sixth-order D1/D2; D2 is not replaced by D1 squared. No nonlinear K/A products or curvature-background terms. Complex Fourier tangent uses modal amplitude norms, not a real-tangent spatial max. D2 is independent of D1 squared, so H+div Q need not exactly reproduce the discrete Theta RHS identity. The L2 keys denote unweighted discrete l2 of complex modal amplitudes, without sqrt(dx) or proper-volume factors. Ratios compare the same extended periodic initial/final state, including derivative contributions from the initial zero-extension outside the retained interval.",
+  "time_initial": 0,
+  "time_final": 50000.4,
+  "initial": {
+    "Theta": {
+      "full_L2": 0.0002697862834958747,
+      "full_max": 0.0001062957112002686,
+      "interior_L2": 0.0002697862834958747,
+      "interior_max": 0.0001062957112002686,
+      "max_normal_x": -496.0
+    },
+    "H": {
+      "full_L2": 0.0005733204553998588,
+      "full_max": 0.0003382579039648325,
+      "interior_L2": 0.0004956802959894628,
+      "interior_max": 0.0003382579039648325,
+      "max_normal_x": -496.0
+    },
+    "M": {
+      "full_L2": 3.875110323048896e-05,
+      "full_max": 1.5338982893208546e-05,
+      "interior_L2": 3.174647924512969e-05,
+      "interior_max": 1.3463830985481177e-05,
+      "max_normal_x": -528.0
+    },
+    "Q": {
+      "full_L2": 0.007100688240102571,
+      "full_max": 0.004564137584664815,
+      "interior_L2": 0.0025965236510701113,
+      "interior_max": 0.0014484569655141592,
+      "max_normal_x": -528.0
+    },
+    "Z": {
+      "full_L2": 0.0035503441200512853,
+      "full_max": 0.0022820687923324075,
+      "interior_L2": 0.0012982618255350557,
+      "interior_max": 0.0007242284827570796,
+      "max_normal_x": -528.0
+    }
+  },
+  "final": {
+    "Theta": {
+      "full_L2": 2.4408633523559547e-09,
+      "full_max": 3.7411278749613445e-10,
+      "interior_L2": 2.004576850026474e-09,
+      "interior_max": 3.7411278749613445e-10,
+      "max_normal_x": -16.0
+    },
+    "H": {
+      "full_L2": 1.1180044804600955e-08,
+      "full_max": 1.717855875015791e-09,
+      "interior_L2": 8.146872081354573e-10,
+      "interior_max": 1.5884488581103887e-10,
+      "max_normal_x": 45360.0
+    },
+    "M": {
+      "full_L2": 4.6018725846917865e-10,
+      "full_max": 9.626695810062171e-11,
+      "interior_L2": 4.416341297510035e-10,
+      "interior_max": 9.626695810062171e-11,
+      "max_normal_x": -304.0
+    },
+    "Q": {
+      "full_L2": 4.606294926558485e-09,
+      "full_max": 9.651803788203327e-10,
+      "interior_L2": 4.397388778500061e-09,
+      "interior_max": 9.651803788203327e-10,
+      "max_normal_x": -304.0
+    },
+    "Z": {
+      "full_L2": 2.3031474632792427e-09,
+      "full_max": 4.825901894101664e-10,
+      "interior_L2": 2.1986943892500304e-09,
+      "interior_max": 4.825901894101664e-10,
+      "max_normal_x": -304.0
+    }
+  },
+  "ratios": {
+    "Theta": {
+      "full_L2": 9.0473960378096e-06,
+      "full_max": 3.519547338944651e-06,
+      "interior_L2": 7.430240055392311e-06,
+      "interior_max": 3.519547338944651e-06
+    },
+    "H": {
+      "full_L2": 1.9500516158635056e-05,
+      "full_max": 5.078538756612145e-06,
+      "interior_L2": 1.6435739219958342e-06,
+      "interior_max": 4.6959696713414686e-07
+    },
+    "M": {
+      "full_L2": 1.187546211863997e-05,
+      "full_max": 6.275967498682371e-06,
+      "interior_L2": 1.3911278990685424e-05,
+      "interior_max": 7.150042079734356e-06
+    },
+    "Q": {
+      "full_L2": 6.48711050366006e-07,
+      "full_max": 2.1147048284943725e-07,
+      "interior_L2": 1.6935677734680963e-06,
+      "interior_max": 6.663507455174703e-07
+    },
+    "Z": {
+      "full_L2": 6.48711050366006e-07,
+      "full_max": 2.1147048284943725e-07,
+      "interior_L2": 1.6935677734680963e-06,
+      "interior_max": 6.663507455174703e-07
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "scope": "No source changes, jobs or production changes. Finite frozen-symbol diagnostics only.",
+  "real_verified_root_count": 27,
+  "max_verified_root_relative_defect": 1.4433397343284294e-11,
+  "kappa_zero_complex_cases": 6,
+  "kappa_zero_complex_verified_root_count": 0,
+  "complex_refinement_unresolved_classification_evaluations": 21,
+  "dtn_rejected_known_root_count": 8,
+  "dtn_known_root_min_scaled_sigma": 0.003296891327404364,
+  "top_uniform_controls": [
+    {
+      "kappa1": 0,
+      "eta": 2,
+      "lapse_damping": 0.1
+    },
+    {
+      "kappa1": 0,
+      "eta": 0.02,
+      "lapse_damping": 0.01
+    }
+  ],
+  "radial_kappa_taper": {
+    "status": "negative independent discrete screen; no longer ranked as next trial",
+    "reference": "../discrete/README.md",
+    "kappa_core": 0.1,
+    "kappa_exterior": 0,
+    "transition_M": [
+      512,
+      1792
+    ],
+    "dx_M": 64,
+    "sponge_rate": 0.005,
+    "kh": [
+      "pi/64",
+      "pi/32",
+      "pi/8"
+    ],
+    "gamma_M_inverse": [
+      0.00025834,
+      0.00047619,
+      0.00079592
+    ],
+    "limitation": "Flat frozen-coefficient discrete screen; transition peak alone does not identify the sole cause."
+  }
+}

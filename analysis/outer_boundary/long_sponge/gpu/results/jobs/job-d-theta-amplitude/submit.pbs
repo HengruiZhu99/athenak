@@ -1,0 +1,53 @@
+#!/bin/bash -l
+#PBS -A MHDTidal
+#PBS -N long_theta_amp
+#PBS -q debug-scaling
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+source /home/hzhu/athenak_env
+export MPICH_GPU_SUPPORT_ENABLED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export SYCL_DEVICE_FILTER=level_zero:gpu ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+cd "$PBS_O_WORKDIR"
+source executable.env
+[[ "$(sha256sum "$ATHENA_EXE" | awk '{print $1}')" == "$EXPECTED_SHA256" ]]
+python3 - <<'CHECK'
+from pathlib import Path
+import hashlib,json
+p=Path.cwd()
+for n,h in json.loads((p/'input-manifest.json').read_text()).items():assert hashlib.sha256((p/n).read_bytes()).hexdigest()==h
+CHECK
+trial=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/outer-boundary-fix-20260920
+runroot=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/long_theta_amp_${PBS_JOBID%%.*}
+mkdir "$runroot"
+cp submit.pbs executable.env input-manifest.json *.athinput "$runroot/"
+bind=list:1-8:9-16:17-24:25-32:33-40:41-48:49-56:57-64
+run_case() {
+ local name="$1" cap="$2" zero="$3"
+ local work="$runroot/$name"; mkdir "$work"
+ cp "$PBS_O_WORKDIR/$name.athinput" "$work/input.athinput"
+ date -u > "$work/start.txt"
+ set +e
+ mpiexec -n 8 -ppn 8 --cpu-bind "$bind" gpu_tile_compact.sh "$ATHENA_EXE" -i "$PBS_O_WORKDIR/$name.athinput" -d "$work" -t "$cap" > "$work/run.log" 2>&1
+ local app_exit=$?
+ set -e
+ echo "$app_exit" > "$work/exit_code.txt"
+ date -u > "$work/end.txt"
+ local args=(); if [[ "$zero" == yes ]]; then args+=(--exact-zero); fi
+ set +e
+ python3 "$trial/long-sponge-study/gpu/check_minkowski_checkpoint.py" "$work" --ranks 8 "${args[@]}" > "$work/checkpoint-check.log" 2>&1
+ local check_exit=$?
+ set -e
+ echo "$check_exit" > "$work/checkpoint-check-exit.txt"
+ printf '%s application_exit=%s checkpoint_validation_exit=%s\n' "$name" "$app_exit" "$check_exit"
+ CASE_PASS=0
+ if [[ "$app_exit" == 0 && "$check_exit" == 0 ]]; then CASE_PASS=1; fi
+}
+run_case zero_primary 00:01:00 yes
+[[ "$CASE_PASS" == 1 ]]
+run_case theta_amplitude 00:55:00 no
+[[ "$CASE_PASS" == 1 ]]

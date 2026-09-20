@@ -1,0 +1,56 @@
+#!/bin/bash -l
+# PREPARED ONLY. No READY.json is distributed; do not submit this archive blindly.
+#PBS -A MHDTidal
+#PBS -N strongfield_smr232
+#PBS -q debug
+#PBS -l select=2
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+: "${PBS_JOBID:?Must run under an intentionally submitted PBS allocation}"
+: "${PBS_O_WORKDIR:?Missing PBS submission directory}"
+source /home/hzhu/athenak_env
+export MPICH_GPU_SUPPORT_ENABLED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export SYCL_DEVICE_FILTER=level_zero:gpu ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+cd "$PBS_O_WORKDIR"
+python3 check_package.py --require-ready
+source executable.env
+[[ "$(sha256sum "$ATHENA_EXE" | awk '{print $1}')" == "$EXPECTED_SHA256" ]]
+command -v gpu_tile_compact.sh
+python3 -c 'import numpy'
+runroot=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/strongfield_smr232_${PBS_JOBID%%.*}
+# mkdir, without -p, refuses an existing run directory or accidental rerun.
+mkdir "$runroot"
+cp submit.pbs executable.env package-manifest.json READY.json *.athinput *.py mesh-audit.json README.md validator24-regression.json "$runroot/"
+bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100
+run_case() {
+ local name="$1" cap="$2" zero="$3" work="$runroot/$1"
+ [[ "$(sha256sum "$ATHENA_EXE" | awk '{print $1}')" == "$EXPECTED_SHA256" ]]
+ mkdir "$work"
+ cp "$PBS_O_WORKDIR/$name.athinput" "$work/input.athinput"
+ date -u > "$work/start.txt"
+ set +e
+ mpiexec -n 24 -ppn 12 --cpu-bind "$bind" gpu_tile_compact.sh "$ATHENA_EXE" \
+   -i "$PBS_O_WORKDIR/$name.athinput" -d "$work" -t "$cap" > "$work/run.log" 2>&1
+ local rc=$?
+ set -e
+ printf '%s\n' "$rc" > "$work/exit_code.txt"
+ date -u > "$work/end.txt"
+ local opts=(); if [[ "$zero" == yes ]]; then opts+=(--zero); fi
+ set +e
+ python3 "$PBS_O_WORKDIR/check_run.py" "$work" --ranks 24 "${opts[@]}" > "$work/validation.log" 2>&1
+ local vc=$?
+ set -e
+ printf '%s\n' "$vc" > "$work/validation_exit.txt"
+ [[ "$rc" == 0 && "$vc" == 0 ]]
+}
+# All24 final rank files must pass exact-zero/ghost-SPD/cycle3 checks before
+# pulse can start. The pulse is a new -i run; it never restarts the gate.
+run_case zero 00:02:00 yes
+# Leave2min after the required55min pulse cap; never start late in this hour.
+[[ "$SECONDS" -lt 180 ]]
+run_case pulse 00:55:00 no
+# A clean walltime stop is allowed, reported as such, and never resubmitted here.

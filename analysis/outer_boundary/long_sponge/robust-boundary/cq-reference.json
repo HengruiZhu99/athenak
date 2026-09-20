@@ -1,0 +1,61 @@
+{
+  "scope": "Time-domain operator-response and causality reference only. BDF2 convolution quadrature requires matched interior/interface time discretization. No AthenaK RK3, nonlinear, grid corner, or AMR stability claim.",
+  "config": {
+    "alpha": 0.999665896620774,
+    "chi": 0.9993319048666159,
+    "beta_n": 0.0003157233701617295,
+    "G": 1.0,
+    "kappa": 0.1,
+    "eta": 2.0,
+    "lapse_damping": 0.1
+  },
+  "k": 0.01227184630308513,
+  "rows": [
+    {
+      "dt": 16,
+      "n": 8192,
+      "rho": 0.9985362286099287,
+      "zero_max": 0.0,
+      "series_errors": [
+        2.1290925640081676e-12,
+        6.129877326006886e-12,
+        1.112489511382532e-11,
+        8.644912433715902e-12
+      ],
+      "finite": true,
+      "relative_error_vs_dt4_until16000": 1.970822023515966e-05,
+      "peak_nonzero_response": 1.4275452959321295e-09
+    },
+    {
+      "dt": 8,
+      "n": 16384,
+      "rho": 0.9992678462804299,
+      "zero_max": 0.0,
+      "series_errors": [
+        2.0513159848503077e-12,
+        4.025985963937937e-12,
+        6.17752001126731e-12,
+        5.217694177816293e-12
+      ],
+      "finite": true,
+      "relative_error_vs_dt4_until16000": 3.942692504046143e-06,
+      "peak_nonzero_response": 1.4275508751801378e-09
+    },
+    {
+      "dt": 4,
+      "n": 32768,
+      "rho": 0.9996338561095407,
+      "zero_max": 0.0,
+      "series_errors": [
+        1.4896076413904354e-12,
+        4.384236150512137e-12,
+        6.607507402713672e-12,
+        6.45791127161874e-12
+      ],
+      "finite": true,
+      "relative_error_vs_dt4_until16000": 0.0,
+      "peak_nonzero_response": 1.427552253613521e-09
+    }
+  ],
+  "difference_ratio": 4.998670379425817
+}

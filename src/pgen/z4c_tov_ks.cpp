@@ -62,6 +62,7 @@ Real outer_sponge_damping_time = 0.0;
 Real outer_sponge_test_theta_pulse_amplitude = 0.0;
 Real outer_sponge_test_theta_pulse_radius = 0.0;
 Real outer_sponge_test_theta_pulse_width = 0.0;
+bool outer_sponge_test_theta_pulse_compact = false;
 int outer_sponge_test_theta_pulse_dipole_axis = 0;
 Real vacuum_gauge_pulse_amplitude = 0.0;
 int vacuum_gauge_pulse_component = 0;  // 0: lapse, 1..3: shift components
@@ -2029,6 +2030,7 @@ void SeedOuterSpongeThetaPulse(Mesh *pm) {
   const Real amplitude = outer_sponge_test_theta_pulse_amplitude;
   const Real pulse_radius = outer_sponge_test_theta_pulse_radius;
   const Real pulse_width = outer_sponge_test_theta_pulse_width;
+  const bool compact = outer_sponge_test_theta_pulse_compact;
   const int dipole_axis = outer_sponge_test_theta_pulse_dipole_axis;
   const Real bh_center_x1_l = bh_center_x1;
   const Real bh_center_x2_l = bh_center_x2;
@@ -2052,7 +2054,15 @@ void SeedOuterSpongeThetaPulse(Mesh *pm) {
     const Real component = dipole_axis == 1 ? x : (dipole_axis == 2 ? y : z);
     const Real angular = dipole_axis == 0 ? 1.0 :
                          (norm > 0.0 ? component/norm : 0.0);
-    u0(m,itheta,k,j,i) += amplitude*exp(-0.5*q*q)*angular;
+    // A compact C-infinity seed has exactly zero incoming initial data at
+    // distant boundaries. Keep the Gaussian evaluation unchanged by default.
+    Real profile = 0.0;
+    if (compact) {
+      if (q*q < 1.0) profile = exp(1.0 - 1.0/(1.0 - q*q));
+    } else {
+      profile = exp(-0.5*q*q);
+    }
+    u0(m,itheta,k,j,i) += amplitude*profile*angular;
   });
 
   pmbp->pz4c->ReconstructFullState();
@@ -2071,6 +2081,7 @@ void SeedOuterSpongeThetaPulse(Mesh *pm) {
   if (global_variable::my_rank == 0) {
     std::cout << "OUTER_SPONGE_TEST_THETA_PULSE amplitude=" << amplitude
               << " radius=" << pulse_radius << " width=" << pulse_width
+              << " profile=" << (compact ? "compact" : "gaussian")
               << std::endl;
   }
 }
@@ -2961,6 +2972,17 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       pin->GetOrAddReal("problem", "outer_sponge_test_theta_pulse_radius", 0.0);
   outer_sponge_test_theta_pulse_width =
       pin->GetOrAddReal("problem", "outer_sponge_test_theta_pulse_width", 0.0);
+  const std::string theta_pulse_profile = pin->GetOrAddString(
+      "problem", "outer_sponge_test_theta_pulse_profile", "gaussian");
+  if (theta_pulse_profile == "compact") {
+    outer_sponge_test_theta_pulse_compact = true;
+  } else if (theta_pulse_profile == "gaussian") {
+    outer_sponge_test_theta_pulse_compact = false;
+  } else {
+    std::cerr << "outer_sponge_test_theta_pulse_profile must be gaussian or "
+              << "compact." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   outer_sponge_test_theta_pulse_dipole_axis = pin->GetOrAddInteger(
       "problem", "outer_sponge_test_theta_pulse_dipole_axis", 0);
   vacuum_gauge_pulse_amplitude =

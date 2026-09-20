@@ -1,0 +1,74 @@
+{
+  "passed": false,
+  "time_M": 0.07500000000000001,
+  "cycle": 3,
+  "checkpoint_dt": 0.025,
+  "root_logical_level": 2,
+  "relative_levels": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "blocks": 232,
+  "ranks": 8,
+  "blocks_per_rank": [
+    29,
+    29,
+    29,
+    29,
+    29,
+    29,
+    29,
+    29
+  ],
+  "matching_cohort_headers": true,
+  "header_sha256": "fb4bcb71e40862576be58cdb6626d0a64323edca5ac725f37ff93341a76d622b",
+  "contiguous_gid_partition_counts_match": true,
+  "ownership_scope": "Rank-file payload order is implicit in the format; verified file paths, equal costs, deterministic contiguous counts and common location table. Format has no embedded per-block gid or rank signature.",
+  "mesh_audit_geometry_matches": true,
+  "all_payload_finite": true,
+  "invalid_metric_cells_including_ghosts": 1,
+  "invalid_metric_samples": [
+    {
+      "rank": 0,
+      "gid": 21,
+      "local_block": 21,
+      "logical_level": 5,
+      "relative_level": 3,
+      "array_ijk": [
+        3,
+        12,
+        12
+      ],
+      "xyz_M": [
+        -4.0625,
+        -2.9375,
+        -2.9375
+      ],
+      "ghost_depth": [
+        1,
+        0,
+        0
+      ],
+      "raw_full_values": {
+        "alpha": 0.8531675472249687,
+        "chi": 0.7278948636378691,
+        "gxx": -1.0,
+        "second_minor": -1.0,
+        "determinant": -1.0
+      }
+    }
+  ],
+  "minimum_raw_full": {
+    "alpha": 0.09767910245494875,
+    "chi": 0.009541207056404375,
+    "gxx": -1.0,
+    "second_minor": -1.0,
+    "determinant": -1.0
+  },
+  "residual_exactly_zero": false,
+  "residual_nonzero_count_including_ghosts": 1,
+  "residual_nonzero_count_active": 0,
+  "scope": "Saved static-SMR residual payload and raw alpha/chi/conformal metric Sylvester minors only; no floors, clipping, constraint or stability clearance."
+}

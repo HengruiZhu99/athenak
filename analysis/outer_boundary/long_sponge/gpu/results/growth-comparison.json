@@ -1,0 +1,2141 @@
+{
+  "scope": "Current unmasked A/B lapse-bump controls only. RMS uses whole-domain proper-volume integral/volume; do not reuse normalization for later core-mask cases.",
+  "floors_note": "Conservative reporting floors, not data clipping or evolution modification. Below-floor values remain plotted but not fit.",
+  "cases": {
+    "baseline": {
+      "last_history_time": 5640.000000000498,
+      "all_metric_histories_finite": true,
+      "bad_metric_max": 0.0,
+      "final_values": {
+        "Theta_max": 0.06011278594629314,
+        "lapse_res_max": 0.3292314365407301,
+        "shift_res_max": 0.09756114854096934,
+        "Gamma_res_max": 0.2307000270080029,
+        "Theta_RMS": 0.00021676069764213393,
+        "H_RMS": 0.00010988742937484792,
+        "M_RMS": 0.00024413505132288846
+      },
+      "stopping_reason": null,
+      "invalid_state_records": [
+        "Z4C_INVALID_STATE time=5650.2000000005046 cycle=9417 rank=3 gid=3 relative_level=0 x=32 y=32 z=-1952 local_bad_cells=6; nonfinite Z4c/ADM state or invalid positive-definite spatial metric."
+      ],
+      "fit_windows": {
+        "1000-2000": {
+          "Theta_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0022382009198898397,
+            "R_squared": 0.843190698299384,
+            "endpoint_ratio": 5.970367042026328
+          },
+          "lapse_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0008677537365774738,
+            "R_squared": 0.9721698687342687,
+            "endpoint_ratio": 2.219883933357402
+          },
+          "shift_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0004855497589587004,
+            "R_squared": 0.8365981261529466,
+            "endpoint_ratio": 1.5334058117204163
+          },
+          "Gamma_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0004864126095161633,
+            "R_squared": 0.8372541905931803,
+            "endpoint_ratio": 1.5342434974367505
+          },
+          "Theta_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0012024249663111412,
+            "R_squared": 0.9395840616236164,
+            "endpoint_ratio": 2.8780588607267736
+          },
+          "H_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 48,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "2000-3000": {
+          "Theta_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0026640534571802997,
+            "R_squared": 0.9327692197864597,
+            "endpoint_ratio": 19.01592205968532
+          },
+          "lapse_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0027004212904285407,
+            "R_squared": 0.9246461000199565,
+            "endpoint_ratio": 16.746616074474563
+          },
+          "shift_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.002698441680184353,
+            "R_squared": 0.8649354206708154,
+            "endpoint_ratio": 20.287831769270657
+          },
+          "Gamma_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0027020556079257892,
+            "R_squared": 0.8649910071929915,
+            "endpoint_ratio": 20.35213940396737
+          },
+          "Theta_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0030318103614768595,
+            "R_squared": 0.9513868818026994,
+            "endpoint_ratio": 25.36354259895079
+          },
+          "H_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0030242676160483245,
+            "R_squared": 0.8885931924281854,
+            "endpoint_ratio": 25.963346193548297
+          },
+          "M_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 34,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "3000-4000": {
+          "Theta_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.006459284437731538,
+            "R_squared": 0.9996126929064444,
+            "endpoint_ratio": 510.2110530963584
+          },
+          "lapse_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.006533917996894935,
+            "R_squared": 0.99998493516336,
+            "endpoint_ratio": 594.2795732181106
+          },
+          "shift_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.0065781391476793976,
+            "R_squared": 0.999997853096552,
+            "endpoint_ratio": 629.6428374067692
+          },
+          "Gamma_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.00657817105068332,
+            "R_squared": 0.9999978539125343,
+            "endpoint_ratio": 629.6541342703337
+          },
+          "Theta_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.006626151528816367,
+            "R_squared": 0.9999928801149852,
+            "endpoint_ratio": 652.8884553357344
+          },
+          "H_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.006627458963114732,
+            "R_squared": 0.9999975042097177,
+            "endpoint_ratio": 659.3289210370941
+          },
+          "M_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.006629727050402413,
+            "R_squared": 0.9999978244062488,
+            "endpoint_ratio": 661.3681005001873
+          }
+        },
+        "4000-5000": {
+          "Theta_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.006623388282063736,
+            "R_squared": 0.9999995575315741,
+            "endpoint_ratio": 704.0558706552924
+          },
+          "lapse_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.0066273763039459525,
+            "R_squared": 0.9999996880985418,
+            "endpoint_ratio": 708.0343646918025
+          },
+          "shift_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.006624482252876869,
+            "R_squared": 0.9999994491597215,
+            "endpoint_ratio": 704.7946691882064
+          },
+          "Gamma_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.006624490791869532,
+            "R_squared": 0.9999994492852728,
+            "endpoint_ratio": 704.8023164323733
+          },
+          "Theta_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.0067040427147475904,
+            "R_squared": 0.9999976098679316,
+            "endpoint_ratio": 763.3963204344116
+          },
+          "H_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.006693572414695095,
+            "R_squared": 0.9999982335781691,
+            "endpoint_ratio": 755.3413850327597
+          },
+          "M_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.006695579282085408,
+            "R_squared": 0.9999981683288487,
+            "endpoint_ratio": 756.8649125878268
+          }
+        },
+        "5000-10000": {
+          "Theta_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 65,
+            "samples_above_floor": 65,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 65,
+            "samples_above_floor": 65,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "shift_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 65,
+            "samples_above_floor": 65,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Gamma_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 65,
+            "samples_above_floor": 65,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Theta_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 65,
+            "samples_above_floor": 65,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 65,
+            "samples_above_floor": 65,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 65,
+            "samples_above_floor": 65,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "10000-15000": {
+          "Theta_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "shift_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Gamma_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Theta_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "15000-20000": {
+          "Theta_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "shift_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Gamma_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Theta_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        }
+      },
+      "application_exit": 143
+    },
+    "radial_k01": {
+      "last_history_time": 6410.400000000966,
+      "all_metric_histories_finite": true,
+      "bad_metric_max": 0.0,
+      "final_values": {
+        "Theta_max": 0.007456956496694831,
+        "lapse_res_max": 0.1757146782999608,
+        "shift_res_max": 0.05401596738423698,
+        "Gamma_res_max": 0.1144664511211599,
+        "Theta_RMS": 5.665197211730897e-05,
+        "H_RMS": 2.200772152402298e-05,
+        "M_RMS": 1.6486371636219887e-05
+      },
+      "stopping_reason": null,
+      "invalid_state_records": [
+        "Z4C_INVALID_STATE time=6420.0000000009713 cycle=10700 rank=3 gid=3 relative_level=0 x=1952 y=32 z=-1952 local_bad_cells=2; nonfinite Z4c/ADM state or invalid positive-definite spatial metric.",
+        "Z4C_INVALID_STATE time=6420.0000000009713 cycle=10700 rank=7 gid=7 relative_level=0 x=1952 y=32 z=1952 local_bad_cells=1; nonfinite Z4c/ADM state or invalid positive-definite spatial metric."
+      ],
+      "fit_windows": {
+        "1000-2000": {
+          "Theta_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0015368072796056388,
+            "R_squared": 0.8019330615924537,
+            "endpoint_ratio": 2.5796546059054855
+          },
+          "lapse_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0007144625317307144,
+            "R_squared": 0.9818826275256699,
+            "endpoint_ratio": 1.9828523596069332
+          },
+          "shift_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0003855475519646594,
+            "R_squared": 0.8310827514038754,
+            "endpoint_ratio": 1.391794330618211
+          },
+          "Gamma_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.00038634704241222796,
+            "R_squared": 0.8319804348661951,
+            "endpoint_ratio": 1.392198711920094
+          },
+          "Theta_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": 0.0007030638588755428,
+            "R_squared": 0.9510589955881265,
+            "endpoint_ratio": 1.8852863371874042
+          },
+          "H_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "2000-3000": {
+          "Theta_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0015118664078944593,
+            "R_squared": 0.923671981003036,
+            "endpoint_ratio": 4.581776048513194
+          },
+          "lapse_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0005346607569537203,
+            "R_squared": 0.7880208807607231,
+            "endpoint_ratio": 2.0931984864572355
+          },
+          "shift_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0004560073382192378,
+            "R_squared": 0.6072411068918278,
+            "endpoint_ratio": 2.3624211879993764
+          },
+          "Gamma_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.000458172112156216,
+            "R_squared": 0.6070554142308566,
+            "endpoint_ratio": 2.370530512988976
+          },
+          "Theta_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0014388135999033225,
+            "R_squared": 0.949273908557842,
+            "endpoint_ratio": 5.229450073395493
+          },
+          "H_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 91,
+            "fitted": true,
+            "actual_window": [
+              2099.999999999864,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": 0.0011792297470086075,
+            "R_squared": 0.7360131178494533,
+            "endpoint_ratio": 3.9857524837710163
+          },
+          "M_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "3000-4000": {
+          "Theta_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.0054822482841777875,
+            "R_squared": 0.9994143819801034,
+            "endpoint_ratio": 183.0844729790341
+          },
+          "lapse_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.005482929199955307,
+            "R_squared": 0.9997952143549897,
+            "endpoint_ratio": 227.46952555128703
+          },
+          "shift_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.00549728997511019,
+            "R_squared": 0.9999309693146146,
+            "endpoint_ratio": 229.53072357475355
+          },
+          "Gamma_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.005497089993086419,
+            "R_squared": 0.9999309998771998,
+            "endpoint_ratio": 229.53569452911591
+          },
+          "Theta_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.005571248615444629,
+            "R_squared": 0.9997986227587202,
+            "endpoint_ratio": 219.6318304085988
+          },
+          "H_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.005609385726860425,
+            "R_squared": 0.9999778902027401,
+            "endpoint_ratio": 239.74787357874376
+          },
+          "M_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 97,
+            "fitted": true,
+            "actual_window": [
+              3029.999999999724,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": 0.005620670194861186,
+            "R_squared": 0.9999905392022141,
+            "endpoint_ratio": 219.13438284434827
+          }
+        },
+        "4000-5000": {
+          "Theta_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.005585426015760359,
+            "R_squared": 0.999997507338216,
+            "endpoint_ratio": 251.81897060434702
+          },
+          "lapse_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.005580033067809003,
+            "R_squared": 0.9999970775771068,
+            "endpoint_ratio": 250.53662212007964
+          },
+          "shift_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.005626586810435856,
+            "R_squared": 0.999999040664146,
+            "endpoint_ratio": 262.42565289043057
+          },
+          "Gamma_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.00562660258090519,
+            "R_squared": 0.9999990411757154,
+            "endpoint_ratio": 262.4297602516353
+          },
+          "Theta_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.005746598384452902,
+            "R_squared": 0.9999887895984704,
+            "endpoint_ratio": 296.1509066908453
+          },
+          "H_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.00572315262307569,
+            "R_squared": 0.9999924515691008,
+            "endpoint_ratio": 289.2398973315995
+          },
+          "M_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": 0.005727247092493908,
+            "R_squared": 0.9999919834515851,
+            "endpoint_ratio": 290.43477657336365
+          }
+        },
+        "5000-10000": {
+          "Theta_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 142,
+            "samples_above_floor": 142,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 142,
+            "samples_above_floor": 142,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "shift_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 142,
+            "samples_above_floor": 142,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Gamma_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 142,
+            "samples_above_floor": 142,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Theta_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 142,
+            "samples_above_floor": 142,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 142,
+            "samples_above_floor": 142,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 142,
+            "samples_above_floor": 142,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "10000-15000": {
+          "Theta_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "shift_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Gamma_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Theta_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "15000-20000": {
+          "Theta_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "shift_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Gamma_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "Theta_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 0,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        }
+      },
+      "application_exit": 143
+    },
+    "radial_k0": {
+      "last_history_time": 20000.0,
+      "all_metric_histories_finite": true,
+      "bad_metric_max": 0.0,
+      "final_values": {
+        "Theta_max": 2.128566581548179e-14,
+        "lapse_res_max": 2.720046410331634e-14,
+        "shift_res_max": 2.081671308706447e-12,
+        "Gamma_res_max": 4.163204257403409e-12,
+        "Theta_RMS": 5.835142861991421e-16,
+        "H_RMS": 3.525979840508239e-16,
+        "M_RMS": 2.072677983758207e-17
+      },
+      "stopping_reason": "time limit",
+      "invalid_state_records": [],
+      "fit_windows": {
+        "1000-2000": {
+          "Theta_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": -0.0014793558726440706,
+            "R_squared": 0.9941730701082293,
+            "endpoint_ratio": 0.22750036206751958
+          },
+          "shift_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": -0.00014818756729576292,
+            "R_squared": 0.9996519920096958,
+            "endpoint_ratio": 0.86488340629532
+          },
+          "Gamma_res_max": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              1000.200000000026,
+              1990.199999999881
+            ],
+            "gamma_per_code_time": -0.00014821494522734117,
+            "R_squared": 0.9996547127245932,
+            "endpoint_ratio": 0.8648564442023411
+          },
+          "Theta_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              1000,
+              2000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "2000-3000": {
+          "Theta_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": -0.0009223887963258935,
+            "R_squared": 0.9976122911327966,
+            "endpoint_ratio": 0.39602114824103607
+          },
+          "shift_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": -0.00014979396528718805,
+            "R_squared": 0.9999809873974614,
+            "endpoint_ratio": 0.8609642800621771
+          },
+          "Gamma_res_max": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 101,
+            "samples_above_floor": 101,
+            "fitted": true,
+            "actual_window": [
+              2000.399999999879,
+              2999.999999999728
+            ],
+            "gamma_per_code_time": -0.00014979468123270997,
+            "R_squared": 0.9999809469798796,
+            "endpoint_ratio": 0.8609634901611992
+          },
+          "Theta_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              2000,
+              3000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 101,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "3000-4000": {
+          "Theta_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": -0.0006646148001985113,
+            "R_squared": 0.9985853790051424,
+            "endpoint_ratio": 0.5203967227253121
+          },
+          "shift_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": -0.00014427194173830622,
+            "R_squared": 0.9999742496660189,
+            "endpoint_ratio": 0.8681693577617148
+          },
+          "Gamma_res_max": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 99,
+            "samples_above_floor": 99,
+            "fitted": true,
+            "actual_window": [
+              3010.199999999727,
+              3989.999999999578
+            ],
+            "gamma_per_code_time": -0.00014427009587819977,
+            "R_squared": 0.9999742437950778,
+            "endpoint_ratio": 0.8681708902999773
+          },
+          "Theta_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              3000,
+              4000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 99,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "4000-5000": {
+          "Theta_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": -0.0005107836894274422,
+            "R_squared": 0.9990470255401974,
+            "endpoint_ratio": 0.6006336501584132
+          },
+          "shift_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": -0.00013856200003112246,
+            "R_squared": 0.999971896215338,
+            "endpoint_ratio": 0.8718068003101938
+          },
+          "Gamma_res_max": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 100,
+            "samples_above_floor": 100,
+            "fitted": true,
+            "actual_window": [
+              4000.199999999576,
+              4990.200000000104
+            ],
+            "gamma_per_code_time": -0.00013855963665796226,
+            "R_squared": 0.9999718970618134,
+            "endpoint_ratio": 0.8718088512226246
+          },
+          "Theta_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              4000,
+              5000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 100,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "5000-10000": {
+          "Theta_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 500,
+            "samples_above_floor": 455,
+            "fitted": true,
+            "actual_window": [
+              5000.400000000111,
+              9540.000000002863
+            ],
+            "gamma_per_code_time": -0.0002991481336002327,
+            "R_squared": 0.9895043476185149,
+            "endpoint_ratio": 0.2513950892857135
+          },
+          "shift_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 500,
+            "samples_above_floor": 500,
+            "fitted": true,
+            "actual_window": [
+              5000.400000000111,
+              9990.000000003136
+            ],
+            "gamma_per_code_time": -0.00012225158721479088,
+            "R_squared": 0.9992735844781038,
+            "endpoint_ratio": 0.5430409778703011
+          },
+          "Gamma_res_max": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 500,
+            "samples_above_floor": 500,
+            "fitted": true,
+            "actual_window": [
+              5000.400000000111,
+              9990.000000003136
+            ],
+            "gamma_per_code_time": -0.00012224931899022185,
+            "R_squared": 0.999273585596308,
+            "endpoint_ratio": 0.5430470826422663
+          },
+          "Theta_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              5000,
+              10000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "10000-15000": {
+          "Theta_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "shift_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 500,
+            "samples_above_floor": 500,
+            "fitted": true,
+            "actual_window": [
+              10000.20000000314,
+              14990.40000000617
+            ],
+            "gamma_per_code_time": -0.0001003964367816836,
+            "R_squared": 0.9994365349361836,
+            "endpoint_ratio": 0.60560816246047
+          },
+          "Gamma_res_max": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 500,
+            "samples_above_floor": 500,
+            "fitted": true,
+            "actual_window": [
+              10000.20000000314,
+              14990.40000000617
+            ],
+            "gamma_per_code_time": -0.00010039473109894746,
+            "R_squared": 0.999436547194054,
+            "endpoint_ratio": 0.6056132810171857
+          },
+          "Theta_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              10000,
+              15000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 500,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        },
+        "15000-20000": {
+          "Theta_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 501,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "lapse_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 501,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "shift_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 501,
+            "samples_above_floor": 501,
+            "fitted": true,
+            "actual_window": [
+              15000.00000000617,
+              20000.0
+            ],
+            "gamma_per_code_time": -8.366541943161992e-05,
+            "R_squared": 0.998884559413885,
+            "endpoint_ratio": 0.6614595869831025
+          },
+          "Gamma_res_max": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-13,
+            "samples_in_window": 501,
+            "samples_above_floor": 501,
+            "fitted": true,
+            "actual_window": [
+              15000.00000000617,
+              20000.0
+            ],
+            "gamma_per_code_time": -8.366322931000038e-05,
+            "R_squared": 0.9988838872599154,
+            "endpoint_ratio": 0.6614672691107826
+          },
+          "Theta_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 501,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "H_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 501,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          },
+          "M_RMS": {
+            "window": [
+              15000,
+              20000
+            ],
+            "absolute_floor": 1e-14,
+            "samples_in_window": 501,
+            "samples_above_floor": 0,
+            "fitted": false,
+            "reason": "Insufficient above-floor coverage; no growth or saturation inference"
+          }
+        }
+      },
+      "application_exit": 0
+    }
+  }
+}

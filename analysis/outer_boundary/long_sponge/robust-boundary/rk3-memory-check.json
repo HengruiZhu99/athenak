@@ -1,0 +1,74 @@
+{
+  "scope": "Actual matrix-memory convolution, not merely exterior state carry. Identical original explicit RK3 and bulk stencil. Zero initial exterior is assumed in this check; nonzero exterior adds R_IE R_EE^n uE0.",
+  "N": 32,
+  "interior_cells": 8,
+  "dt": 0.6,
+  "checks": [
+    {
+      "step": 1,
+      "relative_error": 0.0
+    },
+    {
+      "step": 2,
+      "relative_error": 1.558192648459309e-16
+    },
+    {
+      "step": 3,
+      "relative_error": 2.34195737355249e-16
+    },
+    {
+      "step": 4,
+      "relative_error": 2.568899276912304e-16
+    },
+    {
+      "step": 5,
+      "relative_error": 2.690016285347745e-16
+    },
+    {
+      "step": 6,
+      "relative_error": 2.7722894341704776e-16
+    },
+    {
+      "step": 7,
+      "relative_error": 4.002216502122102e-16
+    },
+    {
+      "step": 8,
+      "relative_error": 4.340995088350395e-16
+    },
+    {
+      "step": 9,
+      "relative_error": 4.1988242361208625e-16
+    },
+    {
+      "step": 10,
+      "relative_error": 4.700518430231182e-16
+    },
+    {
+      "step": 11,
+      "relative_error": 5.141614550517511e-16
+    },
+    {
+      "step": 12,
+      "relative_error": 4.542870354208377e-16
+    },
+    {
+      "step": 13,
+      "relative_error": 4.3655482519525e-16
+    },
+    {
+      "step": 14,
+      "relative_error": 4.629627767451956e-16
+    },
+    {
+      "step": 15,
+      "relative_error": 4.608715595729459e-16
+    },
+    {
+      "step": 16,
+      "relative_error": 5.21391007751179e-16
+    }
+  ],
+  "max_relative_error": 5.21391007751179e-16,
+  "zero_max": 0.0
+}

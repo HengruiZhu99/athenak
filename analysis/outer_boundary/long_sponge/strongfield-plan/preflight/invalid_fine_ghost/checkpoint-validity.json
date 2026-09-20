@@ -1,0 +1,210 @@
+{
+  "passed": false,
+  "time_M": 0.07500000000000001,
+  "cycle": 3,
+  "checkpoint_dt": 0.025,
+  "root_logical_level": 2,
+  "relative_levels": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "blocks": 232,
+  "ranks": 8,
+  "blocks_per_rank": [
+    29,
+    29,
+    29,
+    29,
+    29,
+    29,
+    29,
+    29
+  ],
+  "matching_cohort_headers": true,
+  "header_sha256": "fb4bcb71e40862576be58cdb6626d0a64323edca5ac725f37ff93341a76d622b",
+  "contiguous_gid_partition_counts_match": true,
+  "ownership_scope": "Rank-file payload order is implicit in the format; verified file paths, equal costs, deterministic contiguous counts and common location table. Format has no embedded per-block gid or rank signature.",
+  "mesh_audit_geometry_matches": true,
+  "all_payload_finite": true,
+  "invalid_metric_cells_including_ghosts": 1,
+  "invalid_metric_samples": [
+    {
+      "rank": 0,
+      "gid": 21,
+      "local_block": 21,
+      "logical_level": 5,
+      "relative_level": 3,
+      "array_ijk": [
+        3,
+        12,
+        12
+      ],
+      "xyz_M": [
+        -4.0625,
+        -2.9375,
+        -2.9375
+      ],
+      "ghost_depth": [
+        1,
+        0,
+        0
+      ],
+      "raw_full_values": {
+        "alpha": 0.8531675472249687,
+        "chi": 0.7278948636378691,
+        "gxx": -1.0,
+        "second_minor": -1.0,
+        "determinant": -1.0
+      }
+    }
+  ],
+  "minimum_raw_full": {
+    "alpha": 0.09767910245494875,
+    "chi": 0.009541207056404375,
+    "gxx": -1.0,
+    "second_minor": -1.0,
+    "determinant": -1.0
+  },
+  "residual_exactly_zero": false,
+  "residual_nonzero_count_including_ghosts": 1,
+  "residual_nonzero_count_active": 0,
+  "residual_field_max_including_ghosts": [
+    0.0,
+    2.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "residual_field_max_active": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "files": [
+    {
+      "rank": 0,
+      "path": "preflight/invalid_fine_ghost/rst/rank_00000000/ks_background.00001.rst",
+      "bytes": 106258831,
+      "sha256": "7e80bbe868207b47714b4b29e5233cce45303a23cf42243f4a08e23304a86dc4",
+      "gid_first": 0,
+      "gid_last": 28,
+      "blocks": 29,
+      "all_payload_finite": true
+    },
+    {
+      "rank": 1,
+      "path": "preflight/invalid_fine_ghost/rst/rank_00000001/ks_background.00001.rst",
+      "bytes": 106258831,
+      "sha256": "b682112b2c9b1b81a4d478d4518a9972ecc06f02f36ba46742c33e0da7858a09",
+      "gid_first": 29,
+      "gid_last": 57,
+      "blocks": 29,
+      "all_payload_finite": true
+    },
+    {
+      "rank": 2,
+      "path": "preflight/invalid_fine_ghost/rst/rank_00000002/ks_background.00001.rst",
+      "bytes": 106258831,
+      "sha256": "b7b8f53ba9d95077d4263533cd4d4d9fa8ec8eb5233b70d853d982a27aa99bec",
+      "gid_first": 58,
+      "gid_last": 86,
+      "blocks": 29,
+      "all_payload_finite": true
+    },
+    {
+      "rank": 3,
+      "path": "preflight/invalid_fine_ghost/rst/rank_00000003/ks_background.00001.rst",
+      "bytes": 106258831,
+      "sha256": "f9702571da33c329f8dd5de774f1834bf48ce553a7d53e35ab4fbb9512fee088",
+      "gid_first": 87,
+      "gid_last": 115,
+      "blocks": 29,
+      "all_payload_finite": true
+    },
+    {
+      "rank": 4,
+      "path": "preflight/invalid_fine_ghost/rst/rank_00000004/ks_background.00001.rst",
+      "bytes": 106258831,
+      "sha256": "1a88a7323807cf6d481c14b02eae6676f2b2be8a4dda05d56fd725e8142542e8",
+      "gid_first": 116,
+      "gid_last": 144,
+      "blocks": 29,
+      "all_payload_finite": true
+    },
+    {
+      "rank": 5,
+      "path": "preflight/invalid_fine_ghost/rst/rank_00000005/ks_background.00001.rst",
+      "bytes": 106258831,
+      "sha256": "ed8eb290efabcebe117b46e169e44c95ff03dd475bbd2f06134466e34d56ca92",
+      "gid_first": 145,
+      "gid_last": 173,
+      "blocks": 29,
+      "all_payload_finite": true
+    },
+    {
+      "rank": 6,
+      "path": "preflight/invalid_fine_ghost/rst/rank_00000006/ks_background.00001.rst",
+      "bytes": 106258831,
+      "sha256": "842af8b1e2ebe717be73fd7d9031bfd2183dd990b2c25b8567eb8cfc09e7a114",
+      "gid_first": 174,
+      "gid_last": 202,
+      "blocks": 29,
+      "all_payload_finite": true
+    },
+    {
+      "rank": 7,
+      "path": "preflight/invalid_fine_ghost/rst/rank_00000007/ks_background.00001.rst",
+      "bytes": 106258831,
+      "sha256": "5b6b01daf3198d8c222b3957e3f7b6817a05839c2d8a9843ec33b4cd8158133a",
+      "gid_first": 203,
+      "gid_last": 231,
+      "blocks": 29,
+      "all_payload_finite": true
+    }
+  ],
+  "scope": "Saved static-SMR residual payload and raw alpha/chi/conformal metric Sylvester minors only; no floors, clipping, constraint or stability clearance."
+}

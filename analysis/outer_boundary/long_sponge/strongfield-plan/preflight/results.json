@@ -1,0 +1,388 @@
+{
+  "scope": "Authorized local three-cycle static-SMR execution and saved-state validator checks only; no long evolution or Aurora job.",
+  "validator_sha256": "b1b61571ef70e1757619ecee809984bc36fb234bc06b3d5cd1d77345c141f232",
+  "cases": {
+    "zero": {
+      "execution": {
+        "case": "zero",
+        "command": [
+          "mpiexec",
+          "-n",
+          "8",
+          "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/bin/athena-active-stencil-mpi",
+          "-i",
+          "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/strongfield-plan/preflight/zero/input.athinput",
+          "-t",
+          "00:05:00",
+          "time/nlim=3",
+          "time/ndiag=1"
+        ],
+        "binary": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/bin/athena-active-stencil-mpi",
+        "binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8",
+        "input_sha256": "e60b1db4ac1c629cc9802963be0109300e6e57d9b678c2d88022545c59f5f6d3",
+        "exit_code": 0,
+        "application_elapsed_seconds": 29.455042,
+        "scope": "Only three RK3 cycles on eight local MPI ranks; no Aurora submission."
+      },
+      "time_M": 0.07500000000000001,
+      "cycle": 3,
+      "actual_step_dt_from_log_M": 0.025,
+      "checkpoint_dt": 0.025,
+      "evolution_seconds_per_cycle_from_progress": 9.029763,
+      "all_rank_headers_match": true,
+      "all_payload_finite": true,
+      "invalid_full_ghost_metric_cells": 0,
+      "mesh_audit_geometry_matches": true,
+      "raw_metric_minima": {
+        "alpha": 0.09767910245494875,
+        "chi": 0.009541207056404375,
+        "gxx": 1.0,
+        "second_minor": 1.0,
+        "determinant": 1.0
+      },
+      "residual_exactly_zero": true,
+      "residual_maxima_active": {
+        "chi": 0.0,
+        "Khat": 0.0,
+        "Theta": 0.0,
+        "lapse": 0.0,
+        "shift_max_component": 0.0
+      },
+      "histories": [
+        {
+          "name": "ks_background.z4c.user.hst",
+          "rows": 2,
+          "all_finite": true
+        },
+        {
+          "name": "ks_background.mhd.hst",
+          "rows": 2,
+          "all_finite": true
+        },
+        {
+          "name": "ks_background.user.hst",
+          "rows": 2,
+          "all_finite": true
+        }
+      ],
+      "latest_checkpoint_files": [
+        {
+          "rank": 0,
+          "path": "preflight/zero/rst/rank_00000000/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "0d72ff216fa11d7c9e0149132433c3d8e19a7a6d0b2e41a340357d75f4656c7d",
+          "gid_first": 0,
+          "gid_last": 28,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 1,
+          "path": "preflight/zero/rst/rank_00000001/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "b682112b2c9b1b81a4d478d4518a9972ecc06f02f36ba46742c33e0da7858a09",
+          "gid_first": 29,
+          "gid_last": 57,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 2,
+          "path": "preflight/zero/rst/rank_00000002/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "b7b8f53ba9d95077d4263533cd4d4d9fa8ec8eb5233b70d853d982a27aa99bec",
+          "gid_first": 58,
+          "gid_last": 86,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 3,
+          "path": "preflight/zero/rst/rank_00000003/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "f9702571da33c329f8dd5de774f1834bf48ce553a7d53e35ab4fbb9512fee088",
+          "gid_first": 87,
+          "gid_last": 115,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 4,
+          "path": "preflight/zero/rst/rank_00000004/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "1a88a7323807cf6d481c14b02eae6676f2b2be8a4dda05d56fd725e8142542e8",
+          "gid_first": 116,
+          "gid_last": 144,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 5,
+          "path": "preflight/zero/rst/rank_00000005/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "ed8eb290efabcebe117b46e169e44c95ff03dd475bbd2f06134466e34d56ca92",
+          "gid_first": 145,
+          "gid_last": 173,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 6,
+          "path": "preflight/zero/rst/rank_00000006/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "842af8b1e2ebe717be73fd7d9031bfd2183dd990b2c25b8567eb8cfc09e7a114",
+          "gid_first": 174,
+          "gid_last": 202,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 7,
+          "path": "preflight/zero/rst/rank_00000007/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "5b6b01daf3198d8c222b3957e3f7b6817a05839c2d8a9843ec33b4cd8158133a",
+          "gid_first": 203,
+          "gid_last": 231,
+          "blocks": 29,
+          "all_payload_finite": true
+        }
+      ]
+    },
+    "pulse": {
+      "execution": {
+        "case": "pulse",
+        "command": [
+          "mpiexec",
+          "-n",
+          "8",
+          "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/bin/athena-active-stencil-mpi",
+          "-i",
+          "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/strongfield-plan/preflight/pulse/input.athinput",
+          "-t",
+          "00:05:00",
+          "time/nlim=3",
+          "time/ndiag=1"
+        ],
+        "binary": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/bin/athena-active-stencil-mpi",
+        "binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8",
+        "input_sha256": "4373363d8ca75913fbe5b46a8a43b53376d9ddc320c2ef595e8f828b4f476246",
+        "exit_code": 0,
+        "application_elapsed_seconds": 28.668174417,
+        "scope": "Only three RK3 cycles on eight local MPI ranks; no Aurora submission."
+      },
+      "time_M": 0.07500000000000001,
+      "cycle": 3,
+      "actual_step_dt_from_log_M": 0.025,
+      "checkpoint_dt": 0.025,
+      "evolution_seconds_per_cycle_from_progress": 8.921172333333333,
+      "all_rank_headers_match": true,
+      "all_payload_finite": true,
+      "invalid_full_ghost_metric_cells": 0,
+      "mesh_audit_geometry_matches": true,
+      "raw_metric_minima": {
+        "alpha": 0.09767910245494875,
+        "chi": 0.009541207056404375,
+        "gxx": 0.9999999998592345,
+        "second_minor": 0.9999999997770141,
+        "determinant": 0.9999999999999997
+      },
+      "residual_exactly_zero": false,
+      "residual_maxima_active": {
+        "chi": 8.439182686004187e-11,
+        "Khat": 7.366747961645714e-09,
+        "Theta": 1.7060165439238137e-10,
+        "lapse": 9.584462334899513e-09,
+        "shift_max_component": 7.44114353468106e-11
+      },
+      "histories": [
+        {
+          "name": "ks_background.z4c.user.hst",
+          "rows": 2,
+          "all_finite": true
+        },
+        {
+          "name": "ks_background.mhd.hst",
+          "rows": 2,
+          "all_finite": true
+        },
+        {
+          "name": "ks_background.user.hst",
+          "rows": 2,
+          "all_finite": true
+        }
+      ],
+      "latest_checkpoint_files": [
+        {
+          "rank": 0,
+          "path": "preflight/pulse/rst/rank_00000000/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "97e8e5f2943ae47305db0b383e8ce720ccf6fa67861b452c48d4ba882854f5c8",
+          "gid_first": 0,
+          "gid_last": 28,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 1,
+          "path": "preflight/pulse/rst/rank_00000001/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "e94906519b62e704cbddfe620d9a878ddf6076b483ea0e1a61871c6de3fee59c",
+          "gid_first": 29,
+          "gid_last": 57,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 2,
+          "path": "preflight/pulse/rst/rank_00000002/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "f2c4f2436fa0caeb2bcf2b7a1d3b94589ba309781f5683967d0795af1164c940",
+          "gid_first": 58,
+          "gid_last": 86,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 3,
+          "path": "preflight/pulse/rst/rank_00000003/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "87b958e7f515413abf096b94ec428ccac6e62b87fbb34cc14875eaedbfe2d18d",
+          "gid_first": 87,
+          "gid_last": 115,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 4,
+          "path": "preflight/pulse/rst/rank_00000004/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "cee0720746af4edbf402367954a6d5cc603add836a655a0278e3286a5c1869fc",
+          "gid_first": 116,
+          "gid_last": 144,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 5,
+          "path": "preflight/pulse/rst/rank_00000005/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "73bdc47a4699db544d849b7e278f26958647724ea11a900c31b6c365ebf08639",
+          "gid_first": 145,
+          "gid_last": 173,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 6,
+          "path": "preflight/pulse/rst/rank_00000006/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "945969ed92b8d31edae43fa8b7201824ae862c5bb1053433215b175ec13b00c1",
+          "gid_first": 174,
+          "gid_last": 202,
+          "blocks": 29,
+          "all_payload_finite": true
+        },
+        {
+          "rank": 7,
+          "path": "preflight/pulse/rst/rank_00000007/ks_background.00001.rst",
+          "bytes": 106258831,
+          "sha256": "be4b9e2207178b57fd7c1f2702e0e43d64924cab02b9c6ee1b3ee34efd89a22a",
+          "gid_first": 203,
+          "gid_last": 231,
+          "blocks": 29,
+          "all_payload_finite": true
+        }
+      ]
+    }
+  },
+  "initial_pulse": {
+    "only_lapse_nonzero_including_ghosts": true,
+    "max_lapse_residual": 9.789481542249698e-09,
+    "Theta_exactly_zero": true
+  },
+  "validator_regression": {
+    "positive_zero_passed": true,
+    "level_dependent_geometry_matches_mesh_audit": true,
+    "indefinite_fine_ghost_rejected": true,
+    "mutation": {
+      "rank": 0,
+      "gid": 21,
+      "local_block": 21,
+      "relative_level": 3,
+      "array_ijk": [
+        3,
+        12,
+        12
+      ],
+      "expected_xyz_M": [
+        -4.0625,
+        -2.9375,
+        -2.9375
+      ],
+      "byte_offset": 78018727,
+      "field": "residual gxx",
+      "before": 0,
+      "after": -2,
+      "full_gxx": -1,
+      "checkpoint": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/strongfield-plan/preflight/invalid_fine_ghost/rst/rank_00000000/ks_background.00001.rst"
+    },
+    "reported_invalid_sample": {
+      "rank": 0,
+      "gid": 21,
+      "local_block": 21,
+      "logical_level": 5,
+      "relative_level": 3,
+      "array_ijk": [
+        3,
+        12,
+        12
+      ],
+      "xyz_M": [
+        -4.0625,
+        -2.9375,
+        -2.9375
+      ],
+      "ghost_depth": [
+        1,
+        0,
+        0
+      ],
+      "raw_full_values": {
+        "alpha": 0.8531675472249687,
+        "chi": 0.7278948636378691,
+        "gxx": -1.0,
+        "second_minor": -1.0,
+        "determinant": -1.0
+      }
+    },
+    "scope_guards": {
+      "AMR": {
+        "rejected": true,
+        "reason": "Only fixed static-SMR grids supported; no AMR/uniform fallback"
+      },
+      "wrong_background": {
+        "rejected": true,
+        "reason": "Unsupported background"
+      },
+      "wrong_mass": {
+        "rejected": true,
+        "reason": "Requires M=R0=1 spin0 trumpet"
+      },
+      "wrong_chi_exponent": {
+        "rejected": true,
+        "reason": "Requires chi=psi^-4"
+      }
+    },
+    "source_cohort_unchanged": {
+      "0": true,
+      "1": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true
+    },
+    "note": "Private malformed checkpoint is never supplied to AthenaK or used to continue evolution."
+  }
+}

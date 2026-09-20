@@ -1,0 +1,86 @@
+{
+  "seed": {
+    "kind": "compact C-infinity lapse bump; not direct constraint perturbation",
+    "amplitude": 1e-08,
+    "center_M": [
+      2.5,
+      0,
+      0
+    ],
+    "support_radius_M": 0.75,
+    "analytic_radial_support_M": [
+      1.75,
+      3.25
+    ],
+    "active_seed_cell_count": 912,
+    "all_seed_cells_dx_M": 0.125,
+    "active_cell_center_radial_range_M": [
+      1.8146538926197469,
+      3.1985103954809966
+    ],
+    "largest_sampled_lapse_residual": 9.789481542249698e-09,
+    "seed_gids": [
+      53,
+      54,
+      103,
+      104,
+      153,
+      154,
+      203,
+      204
+    ],
+    "distance_support_to_first_refinement_plane_M": 0.75,
+    "fine_cells_buffer": 6,
+    "puncture_seed_exactly_zero": true,
+    "direct_theta_shell_staged": false,
+    "direct_theta_reason": "The unregularized radial Gaussian shell has a nonzero radial derivative at r=0 for nonzero shell radius; the actual radius helper adds a tiny1e-6 core regularization but does not remove nonzero tails inside the horizon. A dipole further introduces angular dependence. No compact Theta seed is implemented in this binary. A smooth compact seed avoiding the puncture is required before that later control."
+  },
+  "resources": {
+    "one_node_12ranks": {
+      "ranks": 12,
+      "block_occupancy": [
+        19,
+        20
+      ],
+      "mean_blocks_per_rank": 19.333333333333332,
+      "ideal_ghost_work_scaled_seconds_per_cycle": 0.24915697624190064,
+      "minutes_100M_ideal_to_2x_slowdown": [
+        16.610465082793375,
+        33.22093016558675
+      ],
+      "minutes_300M_ideal_to_2x_slowdown": [
+        49.831395248380126,
+        99.66279049676025
+      ],
+      "minutes_1000M_ideal_to_2x_slowdown": [
+        166.10465082793377,
+        332.20930165586753
+      ],
+      "assumptions": "Ideal scaling from4 ranks before an assumed1\u20132x SMR/communication penalty. Even this interval can be optimistic or pessimistic; measure actual seconds/cycle before promising completion."
+    },
+    "two_nodes_24ranks": {
+      "ranks": 24,
+      "block_occupancy": [
+        9,
+        10
+      ],
+      "mean_blocks_per_rank": 9.666666666666666,
+      "ideal_ghost_work_scaled_seconds_per_cycle": 0.12457848812095032,
+      "minutes_100M_ideal_to_2x_slowdown": [
+        8.305232541396688,
+        16.610465082793375
+      ],
+      "minutes_300M_ideal_to_2x_slowdown": [
+        24.915697624190063,
+        49.831395248380126
+      ],
+      "minutes_1000M_ideal_to_2x_slowdown": [
+        83.05232541396688,
+        166.10465082793377
+      ],
+      "assumptions": "Ideal scaling from4 ranks before an assumed1\u20132x SMR/communication penalty. Even this interval can be optimistic or pessimistic; measure actual seconds/cycle before promising completion."
+    }
+  },
+  "core_memory_GB": 4.772265984,
+  "checkpoint_GB": 0.84989952
+}

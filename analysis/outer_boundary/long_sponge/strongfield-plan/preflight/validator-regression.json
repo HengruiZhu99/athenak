@@ -1,0 +1,85 @@
+{
+  "positive_zero_passed": true,
+  "level_dependent_geometry_matches_mesh_audit": true,
+  "indefinite_fine_ghost_rejected": true,
+  "mutation": {
+    "rank": 0,
+    "gid": 21,
+    "local_block": 21,
+    "relative_level": 3,
+    "array_ijk": [
+      3,
+      12,
+      12
+    ],
+    "expected_xyz_M": [
+      -4.0625,
+      -2.9375,
+      -2.9375
+    ],
+    "byte_offset": 78018727,
+    "field": "residual gxx",
+    "before": 0,
+    "after": -2,
+    "full_gxx": -1,
+    "checkpoint": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/strongfield-plan/preflight/invalid_fine_ghost/rst/rank_00000000/ks_background.00001.rst"
+  },
+  "reported_invalid_sample": {
+    "rank": 0,
+    "gid": 21,
+    "local_block": 21,
+    "logical_level": 5,
+    "relative_level": 3,
+    "array_ijk": [
+      3,
+      12,
+      12
+    ],
+    "xyz_M": [
+      -4.0625,
+      -2.9375,
+      -2.9375
+    ],
+    "ghost_depth": [
+      1,
+      0,
+      0
+    ],
+    "raw_full_values": {
+      "alpha": 0.8531675472249687,
+      "chi": 0.7278948636378691,
+      "gxx": -1.0,
+      "second_minor": -1.0,
+      "determinant": -1.0
+    }
+  },
+  "scope_guards": {
+    "AMR": {
+      "rejected": true,
+      "reason": "Only fixed static-SMR grids supported; no AMR/uniform fallback"
+    },
+    "wrong_background": {
+      "rejected": true,
+      "reason": "Unsupported background"
+    },
+    "wrong_mass": {
+      "rejected": true,
+      "reason": "Requires M=R0=1 spin0 trumpet"
+    },
+    "wrong_chi_exponent": {
+      "rejected": true,
+      "reason": "Requires chi=psi^-4"
+    }
+  },
+  "source_cohort_unchanged": {
+    "0": true,
+    "1": true,
+    "2": true,
+    "3": true,
+    "4": true,
+    "5": true,
+    "6": true,
+    "7": true
+  },
+  "note": "Private malformed checkpoint is never supplied to AthenaK or used to continue evolution."
+}

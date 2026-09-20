@@ -1,0 +1,154 @@
+{
+  "scope": "Same sixth-order full-source exterior elimination, now original explicit RK3.\n\nExact discrete-time memory: with R=I+dtL+dt\u00b2L\u00b2/2+dt\u00b3L\u00b3/6, partition I/E.\nInterior update is R_II uI[n]+R_IE R_EE^n uE[0]\n+sum(j=0..n-1)R_IE R_EE^(n-1-j) R_EI uI[j].\nNo fitted kernel, PDE source omissions, or frozen incoming characteristics.\n",
+  "parameters": {
+    "n_interior": 32,
+    "n_total": 4096,
+    "h": 32.0,
+    "length": 131072.0,
+    "angle_y": 0.39269908169872414,
+    "kappa": 0.1,
+    "eta": 2,
+    "lapse_damping": 0.1,
+    "G": 1
+  },
+  "original_eigenvalue": [
+    0.005634884344758716,
+    -1.610891082209529e-16
+  ],
+  "periodic_max_real": -3.2787313164725586e-08,
+  "runs": [
+    {
+      "dt": 0.6,
+      "max_periodic_amplification": 0.999999980205145,
+      "records": [
+        {
+          "time": 0.0,
+          "original_zero_rate_weighted_norm": 1.0,
+          "exterior_memory_full_weighted_norm": 1.0000000000000002,
+          "retained_interior_weighted_norm": 1.0000000000000002,
+          "theta_max_full": 0.00010629571120026861,
+          "sampled_induced_norm": 1.0,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 4999.8,
+          "original_zero_rate_weighted_norm": 1719912789484.4373,
+          "exterior_memory_full_weighted_norm": 21.73042843888353,
+          "retained_interior_weighted_norm": 20.1138050446657,
+          "theta_max_full": 6.071878137633494e-06,
+          "sampled_induced_norm": 1761.1766060408684,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 10000.199999999999,
+          "original_zero_rate_weighted_norm": 2.968118059889867e+24,
+          "exterior_memory_full_weighted_norm": 3.5229685021093604,
+          "retained_interior_weighted_norm": 3.230231424311555,
+          "theta_max_full": 7.240191618353182e-06,
+          "sampled_induced_norm": 279.9565671160271,
+          "induced_normal_angle": 0.1349903093339364,
+          "finite": true
+        },
+        {
+          "time": 19999.8,
+          "original_zero_rate_weighted_norm": 8.779990043147207e+48,
+          "exterior_memory_full_weighted_norm": 0.3697775101351042,
+          "retained_interior_weighted_norm": 0.33503930335687054,
+          "theta_max_full": 6.334411554857902e-07,
+          "sampled_induced_norm": 28.433623583759648,
+          "induced_normal_angle": 0.09817477042468103,
+          "finite": true
+        },
+        {
+          "time": 30000.0,
+          "original_zero_rate_weighted_norm": 2.6060047012718438e+73,
+          "exterior_memory_full_weighted_norm": 0.12665064006646845,
+          "retained_interior_weighted_norm": 0.06853134068616958,
+          "theta_max_full": 4.739653811552836e-08,
+          "sampled_induced_norm": 7.889912359330708,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 50000.4,
+          "original_zero_rate_weighted_norm": 2.295818429117131e+122,
+          "exterior_memory_full_weighted_norm": 0.09622988554272317,
+          "retained_interior_weighted_norm": 0.009993633819351378,
+          "theta_max_full": 3.741127874754359e-10,
+          "sampled_induced_norm": 5.470107122889654,
+          "induced_normal_angle": 0.01227184630308513,
+          "finite": true
+        }
+      ]
+    },
+    {
+      "dt": 0.3,
+      "max_periodic_amplification": 0.9999999901561518,
+      "records": [
+        {
+          "time": 0.0,
+          "original_zero_rate_weighted_norm": 1.0,
+          "exterior_memory_full_weighted_norm": 1.0000000000000002,
+          "retained_interior_weighted_norm": 1.0000000000000002,
+          "theta_max_full": 0.00010629571120026861,
+          "sampled_induced_norm": 1.0,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 4999.8,
+          "original_zero_rate_weighted_norm": 1719912857561.6653,
+          "exterior_memory_full_weighted_norm": 21.73042844433156,
+          "retained_interior_weighted_norm": 20.11380504321889,
+          "theta_max_full": 6.071878137656891e-06,
+          "sampled_induced_norm": 1761.17660673949,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 10000.199999999999,
+          "original_zero_rate_weighted_norm": 2.968118294870826e+24,
+          "exterior_memory_full_weighted_norm": 3.5229685761469067,
+          "retained_interior_weighted_norm": 3.230231441014092,
+          "theta_max_full": 7.2401916183017585e-06,
+          "sampled_induced_norm": 279.9565679588771,
+          "induced_normal_angle": 0.1349903093339364,
+          "finite": true
+        },
+        {
+          "time": 19999.8,
+          "original_zero_rate_weighted_norm": 8.779991433299907e+48,
+          "exterior_memory_full_weighted_norm": 0.369778293064459,
+          "retained_interior_weighted_norm": 0.3350393311616168,
+          "theta_max_full": 6.334411554745973e-07,
+          "sampled_induced_norm": 28.433626409489484,
+          "induced_normal_angle": 0.09817477042468103,
+          "finite": true
+        },
+        {
+          "time": 30000.0,
+          "original_zero_rate_weighted_norm": 2.6060053201986578e+73,
+          "exterior_memory_full_weighted_norm": 0.12665344678466092,
+          "retained_interior_weighted_norm": 0.06853135570392754,
+          "theta_max_full": 4.7396538113889604e-08,
+          "sampled_induced_norm": 7.889912359346888,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 50000.4,
+          "original_zero_rate_weighted_norm": 2.295819337886959e+122,
+          "exterior_memory_full_weighted_norm": 0.09623484711680971,
+          "retained_interior_weighted_norm": 0.009993652661314715,
+          "theta_max_full": 3.7411278747358556e-10,
+          "sampled_induced_norm": 5.470155945250291,
+          "induced_normal_angle": 0.01227184630308513,
+          "finite": true
+        }
+      ]
+    }
+  ],
+  "seconds": 1.839998666999918
+}

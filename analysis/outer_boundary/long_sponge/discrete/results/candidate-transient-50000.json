@@ -1,0 +1,164 @@
+{
+  "parameters": {
+    "n": 128,
+    "h": 32,
+    "angle_y": 0.0,
+    "angle_z": 0.0,
+    "mode": "zero_rate",
+    "degree": 1,
+    "damping": true,
+    "shift": 1.0,
+    "lapse_damping": 0.1,
+    "sponge_rate": 0.001,
+    "sponge_cells": 16.0,
+    "kappa": 0,
+    "sponge_order": "before"
+  },
+  "eigenvalue": [
+    1.6990180326767437e-06,
+    2.732763358780061e-27
+  ],
+  "sparse_nnz": 38782,
+  "records": [
+    {
+      "time": 0.0,
+      "cases": [
+        {
+          "label": "compact_lapse",
+          "state_norm": 1.0,
+          "weighted_state_norm": 1.0,
+          "theta_max": 0.0,
+          "lapse_max": 0.6256359939886774,
+          "metric_max": 0.0,
+          "eigenmode_relative_error": null
+        },
+        {
+          "label": "leading_mode",
+          "state_norm": 1.0000000000000002,
+          "weighted_state_norm": 1.004247690299407,
+          "theta_max": 5.607364028954281e-05,
+          "lapse_max": 1.1963015199991368e-12,
+          "metric_max": 0.1567422943664003,
+          "eigenmode_relative_error": 0.0
+        }
+      ]
+    },
+    {
+      "time": 10000.0,
+      "cases": [
+        {
+          "label": "compact_lapse",
+          "state_norm": 0.38013353249198445,
+          "weighted_state_norm": 0.38656496217226827,
+          "theta_max": 7.700900838328735e-08,
+          "lapse_max": 2.036722980223861e-05,
+          "metric_max": 0.11822377944944185,
+          "eigenmode_relative_error": null
+        },
+        {
+          "label": "leading_mode",
+          "state_norm": 1.017135334463822,
+          "weighted_state_norm": 1.0214558103568785,
+          "theta_max": 5.70344808787759e-05,
+          "lapse_max": 1.197075953783501e-12,
+          "metric_max": 0.1594281259976595,
+          "eigenmode_relative_error": 3.582001062334787e-10
+        }
+      ]
+    },
+    {
+      "time": 20000.0,
+      "cases": [
+        {
+          "label": "compact_lapse",
+          "state_norm": 0.3269215308420267,
+          "weighted_state_norm": 0.3297759121735378,
+          "theta_max": 5.374033775815949e-08,
+          "lapse_max": 7.258000005825071e-06,
+          "metric_max": 0.08886347136879348,
+          "eigenmode_relative_error": null
+        },
+        {
+          "label": "leading_mode",
+          "state_norm": 1.0345642886653337,
+          "weighted_state_norm": 1.0389587973578958,
+          "theta_max": 5.8011785795332724e-05,
+          "lapse_max": 1.197754286915657e-12,
+          "metric_max": 0.1621599802606382,
+          "eigenmode_relative_error": 7.680089137564747e-10
+        }
+      ]
+    },
+    {
+      "time": 30000.0,
+      "cases": [
+        {
+          "label": "compact_lapse",
+          "state_norm": 0.29979467063413323,
+          "weighted_state_norm": 0.3015300467225856,
+          "theta_max": 1.598890884880243e-08,
+          "lapse_max": 4.174908533424647e-06,
+          "metric_max": 0.0749289297337629,
+          "eigenmode_relative_error": null
+        },
+        {
+          "label": "leading_mode",
+          "state_norm": 1.0522918938556742,
+          "weighted_state_norm": 1.0567617039247046,
+          "theta_max": 5.900583716002481e-05,
+          "lapse_max": 1.198439683365369e-12,
+          "metric_max": 0.16493864576453232,
+          "eigenmode_relative_error": 1.2067412698415585e-09
+        }
+      ]
+    },
+    {
+      "time": 40000.0,
+      "cases": [
+        {
+          "label": "compact_lapse",
+          "state_norm": 0.28271134329392383,
+          "weighted_state_norm": 0.2839163711950682,
+          "theta_max": 6.278454772150551e-09,
+          "lapse_max": 3.045301542834361e-06,
+          "metric_max": 0.06627358132657314,
+          "eigenmode_relative_error": null
+        },
+        {
+          "label": "leading_mode",
+          "state_norm": 1.0703232675155872,
+          "weighted_state_norm": 1.0748696692754949,
+          "theta_max": 6.001692192861463e-05,
+          "lapse_max": 1.1991342309036874e-12,
+          "metric_max": 0.16776492463480389,
+          "eigenmode_relative_error": 1.6656250042554778e-09
+        }
+      ]
+    },
+    {
+      "time": 50000.0,
+      "cases": [
+        {
+          "label": "compact_lapse",
+          "state_norm": 0.2713601291012324,
+          "weighted_state_norm": 0.2722598372252482,
+          "theta_max": 6.973438187592804e-09,
+          "lapse_max": 2.4816792338803496e-06,
+          "metric_max": 0.06031181536887143,
+          "eigenmode_relative_error": null
+        },
+        {
+          "label": "leading_mode",
+          "state_norm": 1.0886636148182234,
+          "weighted_state_norm": 1.093287920693371,
+          "theta_max": 6.104533197398141e-05,
+          "lapse_max": 1.1998390835147025e-12,
+          "metric_max": 0.17063963274225746,
+          "eigenmode_relative_error": 2.141478757213871e-09
+        }
+      ]
+    }
+  ],
+  "wall_seconds": 37.577185624977574,
+  "scope": "Two initial directions, not an induced-norm bound or all-perturbation stability proof; unit-normalized initial states, linear homogeneity."
+}

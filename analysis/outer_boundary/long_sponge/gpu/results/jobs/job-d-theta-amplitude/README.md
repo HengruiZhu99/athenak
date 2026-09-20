@@ -1,0 +1,7 @@
+# Direct Theta amplitude discriminator
+
+Job8842283 is an independent fresh diagnostic, authorized after the loweta direct-Theta primary developed a small late boundary/layer plateau. Only the pulse amplitude changes1e−6→1e−7 and basename changes, compared with the original primary input. All other physics, timestep3.2, target50000, output cadence1000/64/128 and diagnostic core mask are identical. Immutable repaired GPU binary unchanged. One node/eight ranks/MHDTidal/debug-scaling/PBS1h; application cap55minutes. The byte-identical primary exact-zero input runs its own3-cycle gate before this case. No C job changes or restarts.
+
+The submitted input SHA256 is9a72f639936cabba73c5181d03f7cbc836673882ee091fb4cca7d3682518b99e. CPU8-rank3-cycle execution passed all-payload and ghost-SPD checks. Initial Theta equals0.1 times the primary to1.34e−16 relative error; all other24Z4c fields including ghosts were bitwise equal. Initial Theta² and momentum² integrals scale0.01; Hamiltonian² integrals scale0.0001, as expected for this nonlinear initial constraint data.
+
+This test measures amplitude dependence. It does not assume the observed small plateau is machine noise: a nonzero Gaussian initial incoming boundary characteristic may be retained by zero_rate. That explanation requires a separate actual characteristic-state audit and matching linear amplitude scaling. Results are pending until validated from output.

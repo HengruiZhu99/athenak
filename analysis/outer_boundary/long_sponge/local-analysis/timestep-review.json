@@ -1,0 +1,114 @@
+{
+  "scope": "Existing t640M amplitude1e-6 weak-field pulse, serial single16cubed block; actual discrete time comparison only. Raw mixed-variable L2 is not a physical energy or constraint norm. Reference dt.6 is not exact. checkpoint_dt is not necessarily the last shortened timestep. Long controls use amplitude1e-8 and eight8cubed blocks on four ranks.",
+  "cases": {
+    "0.6": {
+      "time_M": 640.0,
+      "cycle": 1067,
+      "checkpoint_dt": 0.6,
+      "input_sha256": "e13100456320334d0fc3fce9d7d59b78976bd8fa09cfb112aeb36b0de63b7c9c"
+    },
+    "1.6": {
+      "time_M": 640.0,
+      "cycle": 400,
+      "checkpoint_dt": 1.6,
+      "input_sha256": "7bb772d9aa73f9610400506bc5b3a124784fb926eeba08c22120377e39822a6d",
+      "active_residual_L2_relative_difference_vs_dt0p6": 0.0007395288892604308,
+      "max_abs_active_difference": 2.291056233616473e-12
+    },
+    "3.2": {
+      "time_M": 640.0,
+      "cycle": 200,
+      "checkpoint_dt": 3.2,
+      "input_sha256": "413225c867d4b6273d9704aa3114795131701e702346a8b70b26b56e2c4f29e0",
+      "active_residual_L2_relative_difference_vs_dt0p6": 0.006251014929238379,
+      "max_abs_active_difference": 1.87960758069039e-11
+    }
+  },
+  "relative_error_ratio_dt3p2_over_dt1p6": 8.452698765412308,
+  "checkpoint_validation": {
+    "0.6": {
+      "time_M": 640.0,
+      "cycle": 1067,
+      "blocks": 1,
+      "ranks": 1,
+      "matching_headers": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "invalid_metric_samples": [],
+      "minimum": {
+        "alpha": 0.9995280777783374,
+        "chi": 0.9990563949219904,
+        "gxx": 0.9999999845939568,
+        "second_minor": 0.9999999922872904,
+        "determinant": 0.9999999999999996
+      },
+      "files": [
+        {
+          "rank": 0,
+          "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/timestep/0p6/rst/rank_00000000/ks_background.00001.rst",
+          "bytes": 3680109,
+          "sha256": "c28b6b49790522a63e193219619586a41cfdd3e00d3f10aa456ae494950a88c9",
+          "payload_finite": true
+        }
+      ],
+      "passed": true,
+      "note": "Saved checkpoint validity only; not a perturbation-stability result."
+    },
+    "1.6": {
+      "time_M": 640.0,
+      "cycle": 400,
+      "blocks": 1,
+      "ranks": 1,
+      "matching_headers": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "invalid_metric_samples": [],
+      "minimum": {
+        "alpha": 0.999528077773984,
+        "chi": 0.9990563949030118,
+        "gxx": 0.9999999846108388,
+        "second_minor": 0.9999999922957944,
+        "determinant": 0.9999999999999996
+      },
+      "files": [
+        {
+          "rank": 0,
+          "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/timestep/1p6/rst/rank_00000000/ks_background.00001.rst",
+          "bytes": 3680109,
+          "sha256": "2b7e433032db987cdacbc3b7a806e7820590aa9e3a3564bffafaa4b357409e6e",
+          "payload_finite": true
+        }
+      ],
+      "passed": true,
+      "note": "Saved checkpoint validity only; not a perturbation-stability result."
+    },
+    "3.2": {
+      "time_M": 640.0,
+      "cycle": 200,
+      "blocks": 1,
+      "ranks": 1,
+      "matching_headers": true,
+      "all_payload_finite": true,
+      "invalid_metric_cells_including_ghosts": 0,
+      "invalid_metric_samples": [],
+      "minimum": {
+        "alpha": 0.9995280777418379,
+        "chi": 0.9990563947570533,
+        "gxx": 0.9999999847339957,
+        "second_minor": 0.9999999923575096,
+        "determinant": 0.9999999999999996
+      },
+      "files": [
+        {
+          "rank": 0,
+          "name": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/timestep/3p2/rst/rank_00000000/ks_background.00001.rst",
+          "bytes": 3680109,
+          "sha256": "a0b91aa886bed165da1f6ba4e9bc50e7e029b02603446c3d354e354a256a6de9",
+          "payload_finite": true
+        }
+      ],
+      "passed": true,
+      "note": "Saved checkpoint validity only; not a perturbation-stability result."
+    }
+  }
+}

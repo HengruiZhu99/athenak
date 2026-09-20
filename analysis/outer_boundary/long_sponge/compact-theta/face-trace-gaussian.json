@@ -1,0 +1,397 @@
+{
+  "scope": "Evaluate scalar incoming state functions at a fixed first-active +x face near its center.\n\nRank-local read complements, but never replaces, all-rank checkpoint validation.\nSupported fixture: evolved residual Minkowski, [-2048,2048]^3, uniform 32^3 or 64^3,\n8 blocks of 16^3 or 32^3, one block/rank, rank7 location(1,1,1). Uses the source's\nactive-only second-order derivative, full conformal normal and projected state.\nWeighted RHS rate omits frame/coefficient time derivatives; nonlinear state\nfunctions are therefore not claimed to be exact invariants. This is state\nmeasurement, not a reconstruction of individual RK-stage rates.\n",
+  "missing_files": [],
+  "script_sha256": "2b01a3451bfc6470b12e45deab09921ae70b6f2d8ec21ed45194eaed2a2ec3d7",
+  "rows": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "rank": 7,
+      "block": 7,
+      "relative_level": 0,
+      "xyz": [
+        1984.0,
+        64.0,
+        64.0
+      ],
+      "dx": 128.0,
+      "global_nx": 32,
+      "block_nx": 16,
+      "nghost": 4,
+      "seed": {
+        "amplitude": 1e-06,
+        "profile": "gaussian",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 5.402721845128488e-10
+      },
+      "checkpoint_file": "pulse_gate_loweta_coremask.00000.rst",
+      "checkpoint_sha256": "39521aedf25529ca5cbe994c09d5cf0df8382f3a64ac04e4c1d4824833041d0b",
+      "Theta": 5.402721845128488e-10,
+      "chi_res": 0.0,
+      "alpha_res": 0.0,
+      "metric_res_frobenius": 0.0,
+      "beta_res_norm": 0.0,
+      "normal_d": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "normal_u": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "C1_terms": {
+        "sqrtchi_Theta": 5.402721845128488e-10,
+        "halfchi_Gamma_n": 0.0,
+        "D_n_chi": 0.0
+      },
+      "C2_terms": {
+        "four_Khat_over_3sqrtchi": 0.0,
+        "two_Theta_over_3sqrtchi": 3.601814563418992e-10,
+        "minus_two_A_nn_TF_over_sqrtchi": -0.0,
+        "minus_Gamma_n": -0.0,
+        "D_n_h_nn_TF": 0.0
+      },
+      "longitudinal_gauge_terms": {
+        "Khat": -0.0,
+        "Theta": 2.401209708945995e-10,
+        "Gamma_n": 0.0,
+        "D_chi": 0.0,
+        "D_alpha": 0.0,
+        "D_beta_n": -0.0
+      },
+      "C1_in_actual_basis": 5.402721845128488e-10,
+      "C1_out_actual_basis": -5.402721845128488e-10,
+      "C2_in_actual_basis": 3.601814563418992e-10,
+      "C2_out_actual_basis": -3.601814563418992e-10,
+      "longitudinal_gauge_in_actual_basis": 2.401209708945995e-10,
+      "C1_in_flat_reference": 5.402721845128488e-10,
+      "C2_in_flat_reference": 3.601814563418992e-10,
+      "C1_actual_minus_flat": 0.0,
+      "C2_actual_minus_flat": 0.0,
+      "C1_in_actual_basis_over_initial": 1.0,
+      "C1_in_actual_basis_minus_initial": 0.0,
+      "C2_in_actual_basis_over_initial": 1.0,
+      "C2_in_actual_basis_minus_initial": 0.0,
+      "longitudinal_gauge_in_actual_basis_over_initial": 1.0,
+      "longitudinal_gauge_in_actual_basis_minus_initial": 0.0,
+      "Theta_over_initial": 1.0,
+      "Theta_minus_initial": 0.0
+    },
+    {
+      "time": 5004.799999999989,
+      "cycle": 782,
+      "rank": 7,
+      "block": 7,
+      "relative_level": 0,
+      "xyz": [
+        1984.0,
+        64.0,
+        64.0
+      ],
+      "dx": 128.0,
+      "global_nx": 32,
+      "block_nx": 16,
+      "nghost": 4,
+      "seed": {
+        "amplitude": 1e-06,
+        "profile": "gaussian",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 5.402721845128488e-10
+      },
+      "checkpoint_file": "pulse_gate_loweta_coremask.00001.rst",
+      "checkpoint_sha256": "d3b7b9334df920aadba502e10da4fb2c4db64f9538d858a4055abc8c2ff7e274",
+      "Theta": 3.6480896892035686e-09,
+      "chi_res": 4.715996814397272e-06,
+      "alpha_res": -6.482303582799886e-11,
+      "metric_res_frobenius": 1.1658763320745756e-06,
+      "beta_res_norm": 5.406900117921127e-08,
+      "normal_d": [
+        0.9999995246781367,
+        0.0,
+        0.0
+      ],
+      "normal_u": [
+        1.0000004753220892,
+        3.0300923844651534e-08,
+        3.0300924604544445e-08
+      ],
+      "C1_terms": {
+        "sqrtchi_Theta": 3.6480982913831033e-09,
+        "halfchi_Gamma_n": 4.230853400890419e-10,
+        "D_n_chi": -3.5295545937395285e-09
+      },
+      "C2_terms": {
+        "four_Khat_over_3sqrtchi": 4.405373186624394e-13,
+        "two_Theta_over_3sqrtchi": 2.432054058029545e-09,
+        "minus_two_A_nn_TF_over_sqrtchi": -2.850294953808694e-09,
+        "minus_Gamma_n": -8.46166689658671e-10,
+        "D_n_h_nn_TF": 1.6234319262925064e-09
+      },
+      "longitudinal_gauge_terms": {
+        "Khat": -1.4684402099483172e-13,
+        "Theta": 1.621396134268954e-09,
+        "Gamma_n": 3.1023579201781597e-15,
+        "D_chi": -1.3585454485838356e-09,
+        "D_alpha": 1.798304251743181e-13,
+        "D_beta_n": -2.2241956407191415e-11
+      },
+      "C1_in_actual_basis": 5.416290377326168e-10,
+      "C1_out_actual_basis": -6.75456754503359e-09,
+      "C2_in_actual_basis": 3.5946487817334873e-10,
+      "C2_out_actual_basis": 1.195065595094322e-09,
+      "longitudinal_gauge_in_actual_basis": 2.4064481804002663e-10,
+      "C1_in_flat_reference": 5.416203360509636e-10,
+      "C2_in_flat_reference": 3.5946329289282983e-10,
+      "C1_actual_minus_flat": 8.701681653203812e-15,
+      "C2_actual_minus_flat": 1.5852805188956266e-15,
+      "C1_in_actual_basis_over_initial": 1.0025114252753757,
+      "C1_in_actual_basis_minus_initial": 1.3568532197679769e-12,
+      "C2_in_actual_basis_over_initial": 0.9980105078816988,
+      "C2_in_actual_basis_minus_initial": -7.165781685504581e-13,
+      "longitudinal_gauge_in_actual_basis_over_initial": 1.002181596815453,
+      "longitudinal_gauge_in_actual_basis_minus_initial": 5.238471454271594e-13,
+      "Theta_over_initial": 6.752318171798847,
+      "Theta_minus_initial": 3.1078175046907197e-09
+    },
+    {
+      "time": 10003.199999999706,
+      "cycle": 1563,
+      "rank": 7,
+      "block": 7,
+      "relative_level": 0,
+      "xyz": [
+        1984.0,
+        64.0,
+        64.0
+      ],
+      "dx": 128.0,
+      "global_nx": 32,
+      "block_nx": 16,
+      "nghost": 4,
+      "seed": {
+        "amplitude": 1e-06,
+        "profile": "gaussian",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 5.402721845128488e-10
+      },
+      "checkpoint_file": "pulse_gate_loweta_coremask.00002.rst",
+      "checkpoint_sha256": "765362728117ab78cbfa8dcea87bd2e8f4abc4708ff01b7e241459f052b8272f",
+      "Theta": 6.729477111190804e-11,
+      "chi_res": 6.12424160273406e-08,
+      "alpha_res": -1.411759598113349e-12,
+      "metric_res_frobenius": 7.192706750299955e-09,
+      "beta_res_norm": 7.155032967690078e-09,
+      "normal_d": [
+        1.0000000018645123,
+        0.0,
+        0.0
+      ],
+      "normal_u": [
+        0.9999999981354879,
+        -2.7775090649186097e-09,
+        -2.777509209055529e-09
+      ],
+      "C1_terms": {
+        "sqrtchi_Theta": 6.729477317255519e-11,
+        "halfchi_Gamma_n": -6.991229184032081e-11,
+        "D_n_chi": 5.442541621837064e-10
+      },
+      "C2_terms": {
+        "four_Khat_over_3sqrtchi": 9.625713047341824e-15,
+        "two_Theta_over_3sqrtchi": 4.48631793675073e-11,
+        "minus_two_A_nn_TF_over_sqrtchi": 9.176564731856899e-11,
+        "minus_Gamma_n": 1.3982457511744683e-10,
+        "D_n_h_nn_TF": 8.299480362447335e-11
+      },
+      "longitudinal_gauge_terms": {
+        "Khat": -3.2085705841952024e-15,
+        "Theta": 2.990879265586498e-11,
+        "Gamma_n": -5.924699078031061e-18,
+        "D_chi": 2.0948356253445604e-10,
+        "D_alpha": 3.9141968230503636e-15,
+        "D_beta_n": 1.2517718580317508e-12
+      },
+      "C1_in_actual_basis": 5.416366435159408e-10,
+      "C1_out_actual_basis": 4.0704709717083046e-10,
+      "C2_in_actual_basis": 3.594578311410438e-10,
+      "C2_out_actual_basis": 8.61809263427965e-11,
+      "longitudinal_gauge_in_actual_basis": 2.406448267498925e-10,
+      "C1_in_flat_reference": 5.416366466883073e-10,
+      "C2_in_flat_reference": 3.5945783553915466e-10,
+      "C1_actual_minus_flat": -3.1723664825212663e-18,
+      "C2_actual_minus_flat": -4.3981108383431695e-18,
+      "C1_in_actual_basis_over_initial": 1.0025255029635152,
+      "C1_in_actual_basis_minus_initial": 1.3644590030920571e-12,
+      "C2_in_actual_basis_over_initial": 0.997990942653726,
+      "C2_in_actual_basis_minus_initial": -7.236252008553668e-13,
+      "longitudinal_gauge_in_actual_basis_over_initial": 1.0021816330882778,
+      "longitudinal_gauge_in_actual_basis_minus_initial": 5.238558552930413e-13,
+      "Theta_over_initial": 0.12455716403868952,
+      "Theta_minus_initial": -4.729774134009408e-10
+    },
+    {
+      "time": 15001.599999999422,
+      "cycle": 2344,
+      "rank": 7,
+      "block": 7,
+      "relative_level": 0,
+      "xyz": [
+        1984.0,
+        64.0,
+        64.0
+      ],
+      "dx": 128.0,
+      "global_nx": 32,
+      "block_nx": 16,
+      "nghost": 4,
+      "seed": {
+        "amplitude": 1e-06,
+        "profile": "gaussian",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 5.402721845128488e-10
+      },
+      "checkpoint_file": "pulse_gate_loweta_coremask.00003.rst",
+      "checkpoint_sha256": "61227dd081ee492311204573ddec007bed32bc4efd8362cee2cc7068be80e469",
+      "Theta": 1.7253160191839548e-10,
+      "chi_res": 2.2962094892164941e-07,
+      "alpha_res": -2.2315482794965646e-14,
+      "metric_res_frobenius": 1.0439423860678937e-08,
+      "beta_res_norm": 5.3548876370547925e-09,
+      "normal_d": [
+        0.9999999964989834,
+        0.0,
+        0.0
+      ],
+      "normal_u": [
+        1.0000000035010168,
+        -2.9750902261740096e-09,
+        -2.9750895809255337e-09
+      ],
+      "C1_terms": {
+        "sqrtchi_Theta": 1.725316217268294e-10,
+        "halfchi_Gamma_n": -5.63731648113648e-11,
+        "D_n_chi": 4.2547819088608276e-10
+      },
+      "C2_terms": {
+        "four_Khat_over_3sqrtchi": 1.589905310236333e-16,
+        "two_Theta_over_3sqrtchi": 1.1502105473997589e-10,
+        "minus_two_A_nn_TF_over_sqrtchi": -4.529685793628598e-12,
+        "minus_Gamma_n": 1.1274630373381635e-10,
+        "D_n_h_nn_TF": 1.3621987806156516e-10
+      },
+      "longitudinal_gauge_terms": {
+        "Khat": -5.299681398880569e-17,
+        "Theta": 7.668076478622315e-11,
+        "Gamma_n": -1.952685759536561e-17,
+        "D_chi": 1.6376674446131912e-10,
+        "D_alpha": 7.578339178587097e-17,
+        "D_beta_n": 1.9744693162000687e-13
+      },
+      "C1_in_actual_basis": 5.416366478015474e-10,
+      "C1_out_actual_basis": 1.9657340434788854e-10,
+      "C2_in_actual_basis": 3.5945770973225984e-10,
+      "C2_out_actual_basis": 1.384746538585032e-10,
+      "longitudinal_gauge_in_actual_basis": 2.4064495943888247e-10,
+      "C1_in_flat_reference": 5.416366389935295e-10,
+      "C2_in_flat_reference": 3.5945772188741657e-10,
+      "C1_actual_minus_flat": 8.808017892606805e-18,
+      "C2_actual_minus_flat": -1.2155156730116198e-17,
+      "C1_in_actual_basis_over_initial": 1.0025255108958253,
+      "C1_in_actual_basis_minus_initial": 1.3644632886985773e-12,
+      "C2_in_actual_basis_over_initial": 0.9979906055770058,
+      "C2_in_actual_basis_minus_initial": -7.237466096393518e-13,
+      "longitudinal_gauge_in_actual_basis_over_initial": 1.0021821856805377,
+      "longitudinal_gauge_in_actual_basis_minus_initial": 5.239885442829982e-13,
+      "Theta_over_initial": 0.3193420036494445,
+      "Theta_minus_initial": -3.677405825944533e-10
+    },
+    {
+      "time": 15647.999999999385,
+      "cycle": 2445,
+      "rank": 7,
+      "block": 7,
+      "relative_level": 0,
+      "xyz": [
+        1984.0,
+        64.0,
+        64.0
+      ],
+      "dx": 128.0,
+      "global_nx": 32,
+      "block_nx": 16,
+      "nghost": 4,
+      "seed": {
+        "amplitude": 1e-06,
+        "profile": "gaussian",
+        "width": 512.0,
+        "radius": 0.0,
+        "dipole_axis": 0,
+        "initial_analytic_Theta_at_point": 5.402721845128488e-10
+      },
+      "checkpoint_file": "pulse_gate_loweta_coremask.00004.rst",
+      "checkpoint_sha256": "0af9bc33a112de2a3173e4e0c48b99b6684d9c3a8e6fd45febdeb574d0c4c11d",
+      "Theta": 1.6533149652907684e-10,
+      "chi_res": 2.2565920065886758e-07,
+      "alpha_res": -1.4432899320127035e-15,
+      "metric_res_frobenius": 1.0645840309078246e-08,
+      "beta_res_norm": 5.500964218756378e-09,
+      "normal_d": [
+        0.9999999963819679,
+        0.0,
+        0.0
+      ],
+      "normal_u": [
+        1.000000003618032,
+        -2.947811635289275e-09,
+        -2.9478115570060552e-09
+      ],
+      "C1_terms": {
+        "sqrtchi_Theta": 1.6533151518336246e-10,
+        "halfchi_Gamma_n": -5.775584180010733e-11,
+        "D_n_chi": 4.340609773534929e-10
+      },
+      "C2_terms": {
+        "four_Khat_over_3sqrtchi": 4.8782977859282366e-18,
+        "two_Theta_over_3sqrtchi": 1.1022098524986221e-10,
+        "minus_two_A_nn_TF_over_sqrtchi": -2.053614971982398e-12,
+        "minus_Gamma_n": 1.1551165753394636e-10,
+        "D_n_h_nn_TF": 1.357786717028681e-10
+      },
+      "longitudinal_gauge_terms": {
+        "Khat": -1.6260983678529054e-18,
+        "Theta": 7.348071486879851e-11,
+        "Gamma_n": -1.9642264204685663e-17,
+        "D_chi": 1.6707026078466533e-10,
+        "D_alpha": 5.608638732732116e-17,
+        "D_beta_n": 9.399084574318853e-14
+      },
+      "C1_in_actual_basis": 5.41636650736748e-10,
+      "C1_out_actual_basis": 2.109736203700231e-10,
+      "C2_in_actual_basis": 3.5945770439299205e-10,
+      "C2_out_actual_basis": 1.4312295408063688e-10,
+      "longitudinal_gauge_in_actual_basis": 2.4064500131723177e-10,
+      "C1_in_flat_reference": 5.416366430838669e-10,
+      "C2_in_flat_reference": 3.59457716052409e-10,
+      "C1_actual_minus_flat": 7.652881156884545e-18,
+      "C2_actual_minus_flat": -1.1659416945857935e-17,
+      "C1_in_actual_basis_over_initial": 1.0025255163286437,
+      "C1_in_actual_basis_minus_initial": 1.3644662238992468e-12,
+      "C2_in_actual_basis_over_initial": 0.9979905907531782,
+      "C2_in_actual_basis_minus_initial": -7.237519489071405e-13,
+      "longitudinal_gauge_in_actual_basis_over_initial": 1.0021823600857516,
+      "longitudinal_gauge_in_actual_basis_minus_initial": 5.240304226322969e-13,
+      "Theta_over_initial": 0.3060151924685009,
+      "Theta_minus_initial": -3.7494068798377194e-10
+    }
+  ]
+}

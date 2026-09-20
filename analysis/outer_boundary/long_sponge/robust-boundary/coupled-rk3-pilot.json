@@ -1,0 +1,154 @@
+{
+  "scope": "Same sixth-order full-source exterior elimination, now original explicit RK3.\n\nExact discrete-time memory: with R=I+dtL+dt\u00b2L\u00b2/2+dt\u00b3L\u00b3/6, partition I/E.\nInterior update is R_II uI[n]+R_IE R_EE^n uE[0]\n+sum(j=0..n-1)R_IE R_EE^(n-1-j) R_EI uI[j].\nNo fitted kernel, PDE source omissions, or frozen incoming characteristics.\n",
+  "parameters": {
+    "n_interior": 32,
+    "n_total": 8192,
+    "h": 32.0,
+    "length": 262144.0,
+    "angle_y": 0.39269908169872414,
+    "kappa": 0.1,
+    "eta": 2,
+    "lapse_damping": 0.1,
+    "G": 1
+  },
+  "original_eigenvalue": [
+    0.005634884344758716,
+    -1.610891082209529e-16
+  ],
+  "periodic_max_real": -3.278731295405096e-08,
+  "runs": [
+    {
+      "dt": 0.6,
+      "max_periodic_amplification": 0.999999980205145,
+      "records": [
+        {
+          "time": 0.0,
+          "original_zero_rate_weighted_norm": 1.0,
+          "exterior_memory_full_weighted_norm": 1.0000000000000002,
+          "retained_interior_weighted_norm": 1.0000000000000002,
+          "theta_max_full": 0.00010629571120026861,
+          "sampled_induced_norm": 1.0,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 4999.8,
+          "original_zero_rate_weighted_norm": 1719912789484.4373,
+          "exterior_memory_full_weighted_norm": 21.73042843888422,
+          "retained_interior_weighted_norm": 20.11380504466536,
+          "theta_max_full": 6.071878137636345e-06,
+          "sampled_induced_norm": 1761.1766060408684,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 10000.199999999999,
+          "original_zero_rate_weighted_norm": 2.968118059889867e+24,
+          "exterior_memory_full_weighted_norm": 3.522968502103059,
+          "retained_interior_weighted_norm": 3.230231424305848,
+          "theta_max_full": 7.24019161835752e-06,
+          "sampled_induced_norm": 279.9565671160271,
+          "induced_normal_angle": 0.1349903093339364,
+          "finite": true
+        },
+        {
+          "time": 19999.8,
+          "original_zero_rate_weighted_norm": 8.779990043147207e+48,
+          "exterior_memory_full_weighted_norm": 0.3697775101350548,
+          "retained_interior_weighted_norm": 0.3350393033564122,
+          "theta_max_full": 6.334411554873311e-07,
+          "sampled_induced_norm": 28.433623583759648,
+          "induced_normal_angle": 0.09817477042468103,
+          "finite": true
+        },
+        {
+          "time": 30000.0,
+          "original_zero_rate_weighted_norm": 2.6060047012718438e+73,
+          "exterior_memory_full_weighted_norm": 0.12665064006648513,
+          "retained_interior_weighted_norm": 0.068531340686208,
+          "theta_max_full": 4.739653811578426e-08,
+          "sampled_induced_norm": 7.889912359330708,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 50000.4,
+          "original_zero_rate_weighted_norm": 2.295818429117131e+122,
+          "exterior_memory_full_weighted_norm": 0.09622988554271564,
+          "retained_interior_weighted_norm": 0.009993633819349179,
+          "theta_max_full": 3.741127874954281e-10,
+          "sampled_induced_norm": 5.470107122889654,
+          "induced_normal_angle": 0.01227184630308513,
+          "finite": true
+        }
+      ]
+    },
+    {
+      "dt": 0.3,
+      "max_periodic_amplification": 0.9999999901561518,
+      "records": [
+        {
+          "time": 0.0,
+          "original_zero_rate_weighted_norm": 1.0,
+          "exterior_memory_full_weighted_norm": 1.0000000000000002,
+          "retained_interior_weighted_norm": 1.0000000000000002,
+          "theta_max_full": 0.00010629571120026861,
+          "sampled_induced_norm": 1.0,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 4999.8,
+          "original_zero_rate_weighted_norm": 1719912857561.6653,
+          "exterior_memory_full_weighted_norm": 21.730428444346522,
+          "retained_interior_weighted_norm": 20.113805043231988,
+          "theta_max_full": 6.071878137677413e-06,
+          "sampled_induced_norm": 1761.17660673949,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 10000.199999999999,
+          "original_zero_rate_weighted_norm": 2.968118294870826e+24,
+          "exterior_memory_full_weighted_norm": 3.5229685761463894,
+          "retained_interior_weighted_norm": 3.2302314410145705,
+          "theta_max_full": 7.240191618322159e-06,
+          "sampled_induced_norm": 279.9565679588771,
+          "induced_normal_angle": 0.1349903093339364,
+          "finite": true
+        },
+        {
+          "time": 19999.8,
+          "original_zero_rate_weighted_norm": 8.779991433299907e+48,
+          "exterior_memory_full_weighted_norm": 0.3697782930668184,
+          "retained_interior_weighted_norm": 0.3350393311642637,
+          "theta_max_full": 6.334411554763415e-07,
+          "sampled_induced_norm": 28.433626409489484,
+          "induced_normal_angle": 0.09817477042468103,
+          "finite": true
+        },
+        {
+          "time": 30000.0,
+          "original_zero_rate_weighted_norm": 2.6060053201986578e+73,
+          "exterior_memory_full_weighted_norm": 0.1266534467847903,
+          "retained_interior_weighted_norm": 0.06853135570408064,
+          "theta_max_full": 4.7396538114422176e-08,
+          "sampled_induced_norm": 7.889912359346888,
+          "induced_normal_angle": 0.0,
+          "finite": true
+        },
+        {
+          "time": 50000.4,
+          "original_zero_rate_weighted_norm": 2.295819337886959e+122,
+          "exterior_memory_full_weighted_norm": 0.09623484711672156,
+          "retained_interior_weighted_norm": 0.009993652661320426,
+          "theta_max_full": 3.7411278749613445e-10,
+          "sampled_induced_norm": 5.470155945250291,
+          "induced_normal_angle": 0.01227184630308513,
+          "finite": true
+        }
+      ]
+    }
+  ],
+  "seconds": 2.6162937080000574
+}
