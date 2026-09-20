@@ -184,9 +184,15 @@ These are specific vacuum controls, not strong-field or stellar validation.
 
 The incoming-state audit also identifies retained nonzero initial Gaussian
 boundary data under `zero_rate`; this is separate from the growing positive
-source-coupled boundary mode. Direct constraint-pulse GPU finals remain
-unverified after SSH authentication expired. The study records measured
-results, incomplete runs and prototype limitations separately.
+source-coupled boundary mode. With access renewed, three direct constraint-pulse
+GPU controls are now verified through50000M, with finite eight-rank payloads
+and valid full/ghost metrics. Their final exterior Theta RMS values are
+1.26e-13,1.27e-13 and5.26e-15. Small late gauge/Hamiltonian drifts remain;
+these are not an all-field asymptotic stability pass. Strong-field SMR
+job8843091 is submitted in debug on two nodes/24ranks, with an exact-zero gate
+before a fresh lapse pulse. It uses the existing boundary/reduced damping,
+not the coupled exterior prototype. The study records actual stopping reasons
+and prototype limitations separately.
 
 ## Reproduction and remaining work
 

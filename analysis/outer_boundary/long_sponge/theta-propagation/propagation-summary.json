@@ -2,17 +2,17 @@
   "weighting": "coordinate volume dx^3; not proper volume",
   "cases": {
     "theta_primary": {
-      "snapshots": 373,
-      "latest_time": 23808.0,
+      "snapshots": 783,
+      "latest_time": 50000.0,
       "regions": {
         "core r\u2264512M": {
           "initial_RMS": 6.178666776888344e-07,
-          "latest_RMS": 3.006033363278161e-14,
-          "latest_to_initial": 4.865181230556729e-08,
+          "latest_RMS": 1.5012911167851893e-14,
+          "latest_to_initial": 2.4297978366479555e-08,
           "minimum_RMS": 2.387311245906231e-15,
           "time_of_minimum": 23488.0,
-          "latest_over_minimum": 12.59171114965808,
-          "latest_max_abs": 3.410595441591564e-14,
+          "latest_over_minimum": 6.288627506612755,
+          "latest_max_abs": 1.5157283590684807e-14,
           "fit_2000_5000": {
             "gamma": -0.0003246621343966974,
             "actual_first_time": 2048.0,
@@ -32,20 +32,26 @@
             "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
           },
           "fit_20000_35000": {
-            "gamma": -0.000699859119874722,
+            "gamma": -0.00013270683188736695,
             "actual_first_time": 20032.0,
-            "actual_last_time": 23808.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": -7.854134155445561e-08,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
             "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
           }
         },
         "ramp 512\u20131792M": {
           "initial_RMS": 6.43239860454758e-08,
-          "latest_RMS": 1.2539861781001527e-13,
-          "latest_to_initial": 1.949484562747105e-06,
+          "latest_RMS": 1.1361606238949134e-13,
+          "latest_to_initial": 1.7663094185296137e-06,
           "minimum_RMS": 7.916624533402969e-14,
           "time_of_minimum": 22080.0,
-          "latest_over_minimum": 1.5839909709108377,
-          "latest_max_abs": 2.9772579258728615e-13,
+          "latest_over_minimum": 1.4351578998107841,
+          "latest_max_abs": 2.874226464472107e-13,
           "fit_2000_5000": {
             "gamma": -0.0006291112498008234,
             "actual_first_time": 2048.0,
@@ -65,20 +71,26 @@
             "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
           },
           "fit_20000_35000": {
-            "gamma": -0.00021473827230592915,
+            "gamma": -1.5697837610116746e-05,
             "actual_first_time": 20032.0,
-            "actual_last_time": 23808.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": 1.9028837030709447e-09,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
             "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
           }
         },
         "plateau r\u22651792M": {
           "initial_RMS": 3.6010163773127084e-12,
-          "latest_RMS": 1.344859359725069e-13,
-          "latest_to_initial": 0.037346660465029116,
+          "latest_RMS": 1.3182972417831786e-13,
+          "latest_to_initial": 0.03660903210795642,
           "minimum_RMS": 4.435925166593675e-14,
           "time_of_minimum": 19520.0,
-          "latest_over_minimum": 3.031744921787713,
-          "latest_max_abs": 4.636257740567307e-13,
+          "latest_over_minimum": 2.9718653770606607,
+          "latest_max_abs": 4.58480367386549e-13,
           "fit_2000_5000": {
             "gamma": -0.0008203363625068417,
             "actual_first_time": 2048.0,
@@ -98,26 +110,310 @@
             "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
           },
           "fit_20000_35000": {
-            "gamma": -6.490482481272855e-05,
+            "gamma": -4.843516745337881e-06,
             "actual_first_time": 20032.0,
-            "actual_last_time": 23808.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": 1.2330696565867526e-09,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
             "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
           }
         }
       },
       "latest_active_peak": {
-        "signed_value": 4.636257740567307e-13,
-        "rank": 0,
+        "signed_value": 4.58480367386549e-13,
+        "rank": 5,
         "logical_location": [
+          1,
           0,
-          0,
+          1,
+          0
+        ],
+        "xyz": [
+          32.0,
+          -32.0,
+          2016.0
+        ],
+        "radius": 2016.5078725360831
+      }
+    },
+    "theta_lapse01": {
+      "snapshots": 783,
+      "latest_time": 50000.0,
+      "regions": {
+        "core r\u2264512M": {
+          "initial_RMS": 6.178666776888344e-07,
+          "latest_RMS": 2.417363387038741e-14,
+          "latest_to_initial": 3.912435278240003e-08,
+          "minimum_RMS": 2.417363387038741e-14,
+          "time_of_minimum": 50000.0,
+          "latest_over_minimum": 1.0,
+          "latest_max_abs": 2.429203925958124e-14,
+          "fit_2000_5000": {
+            "gamma": -0.0003242180681309393,
+            "actual_first_time": 2048.0,
+            "actual_last_time": 4992.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_5000_10000": {
+            "gamma": -0.0005541271000308644,
+            "actual_first_time": 5056.0,
+            "actual_last_time": 9984.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_10000_20000": {
+            "gamma": -0.0005777957648081905,
+            "actual_first_time": 10048.0,
+            "actual_last_time": 19968.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_20000_35000": {
+            "gamma": -0.00015851695065805728,
+            "actual_first_time": 20032.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": -0.0001063705244041241,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          }
+        },
+        "ramp 512\u20131792M": {
+          "initial_RMS": 6.43239860454758e-08,
+          "latest_RMS": 1.1441867768623897e-13,
+          "latest_to_initial": 1.7787871169138555e-06,
+          "minimum_RMS": 1.140583695602886e-13,
+          "time_of_minimum": 41408.0,
+          "latest_over_minimum": 1.0031589801549803,
+          "latest_max_abs": 2.8868422409511485e-13,
+          "fit_2000_5000": {
+            "gamma": -0.0006288773073138609,
+            "actual_first_time": 2048.0,
+            "actual_last_time": 4992.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_5000_10000": {
+            "gamma": -0.0006641534895608793,
+            "actual_first_time": 5056.0,
+            "actual_last_time": 9984.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_10000_20000": {
+            "gamma": -0.0006471752961601343,
+            "actual_first_time": 10048.0,
+            "actual_last_time": 19968.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_20000_35000": {
+            "gamma": -8.293854288197563e-05,
+            "actual_first_time": 20032.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": -4.4422899147908913e-07,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          }
+        },
+        "plateau r\u22651792M": {
+          "initial_RMS": 3.6010163773127084e-12,
+          "latest_RMS": 1.3314476638046192e-13,
+          "latest_to_initial": 0.03697421850656021,
+          "minimum_RMS": 4.394758776182205e-14,
+          "time_of_minimum": 19520.0,
+          "latest_over_minimum": 3.0296262698660983,
+          "latest_max_abs": 4.593900672193729e-13,
+          "fit_2000_5000": {
+            "gamma": -0.0008203038835579816,
+            "actual_first_time": 2048.0,
+            "actual_last_time": 4992.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_5000_10000": {
+            "gamma": -0.000635830023487761,
+            "actual_first_time": 5056.0,
+            "actual_last_time": 9984.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_10000_20000": {
+            "gamma": -0.000673350296612066,
+            "actual_first_time": 10048.0,
+            "actual_last_time": 19968.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_20000_35000": {
+            "gamma": -5.196598876246069e-06,
+            "actual_first_time": 20032.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": 3.4240547702251764e-07,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          }
+        }
+      },
+      "latest_active_peak": {
+        "signed_value": 4.593900672193729e-13,
+        "rank": 3,
+        "logical_location": [
+          1,
+          1,
           0,
           0
         ],
         "xyz": [
-          -2016.0,
+          32.0,
+          32.0,
+          -2016.0
+        ],
+        "radius": 2016.5078725360831
+      }
+    },
+    "theta_amplitude": {
+      "snapshots": 783,
+      "latest_time": 50000.0,
+      "regions": {
+        "core r\u2264512M": {
+          "initial_RMS": 6.178666786948122e-08,
+          "latest_RMS": 6.965246794380395e-16,
+          "latest_to_initial": 1.1273057820651298e-08,
+          "minimum_RMS": 3.8015314264176024e-17,
+          "time_of_minimum": 26304.0,
+          "latest_over_minimum": 18.322212848162984,
+          "latest_max_abs": 7.442484107807472e-16,
+          "fit_2000_5000": {
+            "gamma": -0.0003247451875932583,
+            "actual_first_time": 2048.0,
+            "actual_last_time": 4992.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_5000_10000": {
+            "gamma": -0.0005520666715960572,
+            "actual_first_time": 5056.0,
+            "actual_last_time": 9984.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_10000_20000": {
+            "gamma": -0.000640371269099119,
+            "actual_first_time": 10048.0,
+            "actual_last_time": 19968.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_20000_35000": {
+            "gamma": -0.00019652153183537916,
+            "actual_first_time": 20032.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": -3.720303099523534e-06,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          }
+        },
+        "ramp 512\u20131792M": {
+          "initial_RMS": 6.43239857970172e-09,
+          "latest_RMS": 4.9709706319240155e-15,
+          "latest_to_initial": 7.728020225006839e-07,
+          "minimum_RMS": 2.383342827701325e-15,
+          "time_of_minimum": 22144.0,
+          "latest_over_minimum": 2.085713634709612,
+          "latest_max_abs": 1.5505880000127314e-14,
+          "fit_2000_5000": {
+            "gamma": -0.0006292380176995268,
+            "actual_first_time": 2048.0,
+            "actual_last_time": 4992.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_5000_10000": {
+            "gamma": -0.0006629501278271521,
+            "actual_first_time": 5056.0,
+            "actual_last_time": 9984.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_10000_20000": {
+            "gamma": -0.0006702658174592266,
+            "actual_first_time": 10048.0,
+            "actual_last_time": 19968.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_20000_35000": {
+            "gamma": -3.55835596103496e-05,
+            "actual_first_time": 20032.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": -7.336325878127913e-08,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          }
+        },
+        "plateau r\u22651792M": {
+          "initial_RMS": 3.6010163679454705e-13,
+          "latest_RMS": 5.41106720385631e-15,
+          "latest_to_initial": 0.015026499884929843,
+          "minimum_RMS": 4.1665096909051784e-15,
+          "time_of_minimum": 22592.0,
+          "latest_over_minimum": 1.2987050565771634,
+          "latest_max_abs": 2.80345205058187e-14,
+          "fit_2000_5000": {
+            "gamma": -0.0008203178224178558,
+            "actual_first_time": 2048.0,
+            "actual_last_time": 4992.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_5000_10000": {
+            "gamma": -0.0006356499242620098,
+            "actual_first_time": 5056.0,
+            "actual_last_time": 9984.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_10000_20000": {
+            "gamma": -0.0006782271741784214,
+            "actual_first_time": 10048.0,
+            "actual_last_time": 19968.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_20000_35000": {
+            "gamma": -1.2789290172549355e-05,
+            "actual_first_time": 20032.0,
+            "actual_last_time": 34944.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          },
+          "fit_35000_50000": {
+            "gamma": -3.724918138185514e-09,
+            "actual_first_time": 35008.0,
+            "actual_last_time": 50000.0,
+            "scope": "log-linear descriptive fit, not proof of a pure eigenmode"
+          }
+        }
+      },
+      "latest_active_peak": {
+        "signed_value": 2.80345205058187e-14,
+        "rank": 5,
+        "logical_location": [
+          1,
+          0,
+          1,
+          0
+        ],
+        "xyz": [
+          32.0,
           -32.0,
-          -32.0
+          2016.0
         ],
         "radius": 2016.5078725360831
       }

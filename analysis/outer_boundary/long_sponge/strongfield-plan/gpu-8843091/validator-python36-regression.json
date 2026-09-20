@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "scope": "Parser/ownership/guard test using synthetic repartition of existing eight-rank raw checkpoint. Not a24-rank evolution. Fixture is never passed to AthenaK.",
+  "blocks": 232,
+  "ranks": 24,
+  "counts": [
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+  ],
+  "full_finite_exact_zero_and_raw_ghost_SPD": true,
+  "classification": "exact_zero_gate_pass",
+  "single_fine_ghost_rejected": {
+    "rank": 2,
+    "gid": 21,
+    "local_block": 3,
+    "logical_level": 5,
+    "relative_level": 3,
+    "array_ijk": [
+      3,
+      12,
+      12
+    ],
+    "xyz_M": [
+      -4.0625,
+      -2.9375,
+      -2.9375
+    ],
+    "ghost_depth": [
+      1,
+      0,
+      0
+    ],
+    "raw_full_values": {
+      "alpha": 0.8531675472249687,
+      "chi": 0.7278948636378691,
+      "gxx": -1.0,
+      "second_minor": -1.0,
+      "determinant": -1.0
+    }
+  },
+  "missing_rank_rejected": "Missing/extra rank-file cohort",
+  "mixed_cycle_header_rejected": "Rank1 cohort header differs",
+  "original_eight_rank_files_unchanged": true,
+  "fixture": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/validator-python36-recheck/synthetic24"
+}

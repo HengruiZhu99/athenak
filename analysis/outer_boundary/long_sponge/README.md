@@ -80,10 +80,28 @@ not a claim that every mode is stable.
 
 GPU job 8842248 uses Theta=A exp[-r^2/(2*384^2)] with A=1e-6, kappa1=0,
 eta=.02, and lapse damping .01 or .1 in two independent fresh starts.
-Job 8842283 repeats the primary with A=1e-7. The primary's cached histories
-reach 30800 M; a later status-only observation reached 45571.2 M. **Final
-stopping reasons and final checkpoint validity remain unverified** because
-Aurora authentication expired. Elapsed calendar time is not completion.
+Job 8842283 repeats the primary with A=1e-7. After access renewal, all three
+cases are verified to have **reached 50000 M**, with application/PBS exit0,
+finite complete payloads and positive-definite raw full/ghost metrics in
+all eight final rank files. Their three initial zero controls also pass.
+These are actual target completions, not walltime stops.
+
+| Direct-Theta case | Final max absolute Theta | Final exterior Theta RMS |
+|---|---:|---:|
+| A=1e-6, lapse damping .01 | 4.58480e-13 | 1.25828e-13 |
+| A=1e-6, lapse damping .1 | 4.59390e-13 | 1.26980e-13 |
+| A=1e-7, lapse damping .01 | 2.80345e-14 | 5.26301e-15 |
+
+The former large Theta runaway is absent over this interval, but this is not
+proof of asymptotic stability of every field. Over40000–50000 M, primary Theta
+RMS changes by-.0072%, while its lapse maximum grows35.8% to2.63e-12. The
+small-amplitude case has a20.7% increase in exterior Hamiltonian RMS to6.01e-17,
+with a descriptive fitted rate1.87e-5/M. These tiny trends must not be dismissed
+as roundoff without further scaling/localization. Stronger lapse damping .1
+reduces its lapse maximum to1.06e-12 with late decay, but barely changes the
+Theta plateau. It is a useful matched follow-up, not a validated strong-field
+choice. [Final comparison](gpu/results/README.md) includes successive-window
+fits and all-rank validation records.
 
 The primary's late exterior RMS is about 1.26e-13. This cannot automatically
 be called roundoff: the Gaussian already has nonzero incoming boundary data.
@@ -98,7 +116,15 @@ This is evidence for retained initial data, distinct from the positive
 boundary mode. Replacing dC/dt=0 by dC/dt=-nu*C merely changes a modal row's
 factor from lambda to lambda+nu and leaves its old positive roots unchanged.
 [Trace audit and spatial profiles](theta-propagation/README.md) preserve all
-terms and distinguish short local checkpoints from incomplete GPU samples.
+terms and distinguish short local checkpoints from the full GPU series. At
+50000 M the primary incoming C1 is1.54579e-12 at the same face point: its
+acquired part beyond the initial value is5.18101e-13. Reducing the seed tenfold
+reduces that acquired part to4.84425e-15, approximately quadratically. C1 is a
+nonlinear function of the state-dependent basis, not a proven nonlinear
+Riemann invariant; its retained value is not itself a physical constraint norm.
+All783 Theta snapshots per case pass full cohort/header/finite checks. The
+late Theta maxima are32 M from physical faces; these are amplification
+locations, not a new localization of first injection.
 
 The new optional `outer_sponge_test_theta_pulse_profile = compact` gives an
 exactly supported bump, exp[1-1/(1-q^2)] for |q|<1 and zero otherwise. For the
@@ -127,6 +153,17 @@ planar pilot with finite-exterior memory, not an installed AthenaK CPBC.
 Large transient amplification, sampled tangential frequencies, exterior size,
 convolution cost, corners and refinement coupling remain explicit limits.
 
+The subsequent [memory-compression study](memory-compression/README.md) tests
+causal reduced realizations of that complete coupled RK3 response. Stable
+exterior poles alone again fail: aggressive exterior-only reduction restores
+positive closed-system modes. Projection in a complete Lyapunov metric gives
+an exact-arithmetic contraction construction that retains the physical
+interior update, but accurate tested models still keep60–70% of the small
+exterior states, require dense operations and an ill-conditioned nonlocal
+metric. These short periodic compression fixtures have wraparound; they are
+not open-domain50000 M evolutions. This is a reference for further boundary
+development, not a production implementation or clearance to resume.
+
 ## Remaining gates and reproduction
 
 A 232-block static-SMR centered trumpet fixture passes an eight-rank,
@@ -134,10 +171,21 @@ three-cycle zero/pulse preflight. All residual and ghost entries stay exactly
 zero in its zero case; the pulse has finite physical response. Its endpoint
 is only .075 M. [Strong-field plan](strongfield-plan/README.md) records the
 mesh, full ghost validation and deliberate invalid-interface rejection test.
-Long strong-field stability remains untested with this candidate. A
-[guarded two-node Aurora draft](strongfield-plan/aurora-next/README.md) is
-prepared but not submitted; renewed SSH access and environment checks are
-required before its zero gate and long pulse can run.
+Long strong-field stability remains untested with this candidate. After access
+renewal and the direct-Theta validation, a derived launch copy was submitted
+as **job8843091**, MHDTidal/debug, two nodes/24 ranks, one hour. It requires a
+fresh three-cycle exact-zero gate before a fresh lapse pulse with target1000 M
+and application cap55minutes. All24 rank checkpoints must validate. Added
+per-rank Theta/constraint outputs and50 M checkpoints support localization.
+The [launch record](strongfield-plan/gpu-8843091/README.md) separates this
+submission from the [original prepared draft](strongfield-plan/aurora-next/README.md).
+This uses the existing zero_rate boundary and reduced damping, not the
+exterior-memory prototype. There is no automatic restart or production change.
+The actual24rank zero gate passed, and the completed50 M checkpoint independently
+passes finite/full-ghost metric checks. Histories through61 M show max|Theta|
+falling from1.43e-9 at15 M to2.06e-10; the run is still in progress. Its latest
+measured throughput is0.103 M/s, too slow to reach1000 M in this allocation.
+These early results do not replace the required long strong-field test.
 
 Removing kappa damping does not remove the physical constraint equations,
 but it also removes their bulk friction. For the frozen damped wave,

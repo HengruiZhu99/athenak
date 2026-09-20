@@ -1,0 +1,44 @@
+{
+  "scope": "Single known-order actual rerun through the portable default sibling model path; archived full sweeps unchanged.",
+  "command": "python3 balanced_memory.py --total 32 --inside 8 --orders 256",
+  "model_override_used": false,
+  "model_sha256": {
+    "bulk_symbol.py": "5ee7c817bb051bbc39a5e6164d5011624e5313ac0c69f960c4951b278dff9c30",
+    "strip_reference.py": "d0f5ce588304f520a4627d7558c6c5f626fd05271ba40fac2cbc0e9868b94880",
+    "stencils.py": "65e54b8940550d995b911bb2cbcc693a485d0fe98176e680b606bbf2cce6b9ca",
+    "characteristic_reference.py": "d3d4318b5c5575c43f3320ab029cf3534cc3b3e1e8f3859e0df872aa454a5a79"
+  },
+  "exit_code": 0,
+  "comparisons": {
+    "closed_rho": {
+      "expected": 0.9999999818725192,
+      "actual": 0.9999999818725192,
+      "absolute_difference": 0.0
+    },
+    "closed_growth": {
+      "expected": -3.0212468356717665e-08,
+      "actual": -3.0212468356717665e-08,
+      "absolute_difference": 0.0
+    },
+    "exterior_rho": {
+      "expected": 0.9999425684284754,
+      "actual": 0.9999425684284754,
+      "absolute_difference": 0.0
+    },
+    "biorthogonality": {
+      "expected": 5.210050375796652e-12,
+      "actual": 5.210050375796652e-12,
+      "absolute_difference": 0.0
+    },
+    "zero_step_max": {
+      "expected": 0.0,
+      "actual": 0.0,
+      "absolute_difference": 0.0
+    }
+  },
+  "maximum_absolute_sample_difference": 0.0,
+  "exact_zero_preserved": true,
+  "all_python_scripts_parse": true,
+  "passed": true,
+  "transitive_characteristic_model_checked_against": "../robust-boundary/model-source-hashes.json"
+}

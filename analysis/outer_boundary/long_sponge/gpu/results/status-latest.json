@@ -1,6 +1,91 @@
 {
-  "checked_utc": "2026-09-20T19:02:20.618591+00:00",
+  "checked_utc": "2026-09-20T21:09:09.897010+00:00",
   "jobs": {
+    "8842283": {
+      "scheduler": {
+        "job_state": "F",
+        "queue": "debug-scaling",
+        "resources_used.walltime": "00:18:12",
+        "Exit_status": "0",
+        "stime": "Sun Sep 20 19:14:15 2026",
+        "etime": "Sun Sep 20 19:09:04 2026"
+      },
+      "cases": {
+        "zero_primary": {
+          "target_time_code": 50000.0,
+          "Theta_RMS_region": "exterior",
+          "log_mtime_utc": "2026-09-20T19:14:19+00:00",
+          "elapsed_wall_seconds": 0.1722204,
+          "cycle": 3,
+          "time_code": 9.600000000000001,
+          "dt": 3.2,
+          "stopping_reason": "cycle limit",
+          "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 9.600000000000001,
+            "cycle": 3,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 0.0,
+            "all_residuals_zero": true
+          },
+          "last_metric_history": {
+            "time": 9.600000000000001,
+            "Theta-max": 0.0,
+            "alpha-res": 0.0,
+            "beta-res": 0.0,
+            "Gam-res": 0.0,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 0.0,
+          "last_core_Theta_L2": 0.0,
+          "last_exterior_Theta_L2": 0.0,
+          "last_total_Theta_L2": 0.0,
+          "last_progress_log_time_code": 0.0
+        },
+        "theta_amplitude": {
+          "target_time_code": 50000.0,
+          "Theta_RMS_region": "exterior",
+          "log_mtime_utc": "2026-09-20T19:31:57+00:00",
+          "elapsed_wall_seconds": 1052.782,
+          "cycle": 15626,
+          "time_code": 50000.0,
+          "dt": 3.2,
+          "measured_time_per_wall_second": 48.889120301294206,
+          "stopping_reason": "time limit",
+          "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 50000.0,
+            "cycle": 15626,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 5.845879336163762e-11,
+            "all_residuals_zero": false
+          },
+          "last_metric_history": {
+            "time": 50000.0,
+            "Theta-max": 2.803452060909924e-14,
+            "alpha-res": 1.416866624026625e-12,
+            "beta-res": 1.059684835846627e-12,
+            "Gam-res": 2.225647231013545e-14,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 5.263007541013302e-15,
+          "last_core_Theta_L2": 1.6635502182488074e-11,
+          "last_exterior_Theta_L2": 1.3739277641601537e-09,
+          "last_total_Theta_L2": 1.3740284717075488e-09,
+          "last_progress_log_time_code": 49984.0
+        }
+      }
+    },
     "8842171": {
       "scheduler": {
         "job_state": "F",
@@ -180,9 +265,10 @@
     },
     "8842248": {
       "scheduler": {
-        "job_state": "R",
+        "job_state": "F",
         "queue": "debug",
-        "resources_used.walltime": "00:10:00",
+        "resources_used.walltime": "00:36:15",
+        "Exit_status": "0",
         "stime": "Sun Sep 20 18:52:07 2026",
         "etime": "Sun Sep 20 18:46:00 2026"
       },
@@ -226,28 +312,112 @@
         "theta_primary": {
           "target_time_code": 50000.0,
           "Theta_RMS_region": "exterior",
-          "log_mtime_utc": "2026-09-20T19:02:27+00:00",
-          "elapsed_wall_seconds": 610.3784,
-          "cycle": 9100,
-          "time_code": 29120.0,
+          "log_mtime_utc": "2026-09-20T19:09:42+00:00",
+          "elapsed_wall_seconds": 1046.405,
+          "cycle": 15626,
+          "time_code": 50000.0,
           "dt": 3.2,
-          "measured_time_per_wall_second": 47.83576907692755,
-          "forecast_seconds_to_target": 436.4934525547531,
-          "forecast_is_extrapolation": true,
+          "measured_time_per_wall_second": 47.939238897793665,
+          "stopping_reason": "time limit",
           "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 50000.0,
+            "cycle": 15626,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 8.761849024097046e-10,
+            "all_residuals_zero": false
+          },
           "last_metric_history": {
-            "time": 29171.20000000444,
-            "Theta-max": 4.5825979260264e-13,
-            "alpha-res": 1.422861828359601e-12,
-            "beta-res": 1.045843519057965e-11,
-            "Gam-res": 2.158205278877058e-13,
+            "time": 50000.0,
+            "Theta-max": 4.584803784729862e-13,
+            "alpha-res": 2.633671059015796e-12,
+            "beta-res": 1.044921213071306e-11,
+            "Gam-res": 2.155361775819175e-13,
             "bad-metric": 0.0
           },
           "metric_history_all_finite": true,
-          "last_Theta_RMS": 1.2566986788830876e-13,
-          "last_core_Theta_L2": 3.352861987480739e-10,
-          "last_exterior_Theta_L2": 3.280658810472202e-08,
-          "last_total_Theta_L2": 3.280830138711785e-08
+          "last_Theta_RMS": 1.2582842364807394e-13,
+          "last_core_Theta_L2": 3.585620487119373e-10,
+          "last_exterior_Theta_L2": 3.284797967765336e-08,
+          "last_total_Theta_L2": 3.284993661555992e-08,
+          "last_progress_log_time_code": 49984.0
+        },
+        "zero_lapse01": {
+          "target_time_code": 50000.0,
+          "Theta_RMS_region": "exterior",
+          "log_mtime_utc": "2026-09-20T19:10:13+00:00",
+          "elapsed_wall_seconds": 0.1580013,
+          "cycle": 3,
+          "time_code": 9.600000000000001,
+          "dt": 3.2,
+          "stopping_reason": "cycle limit",
+          "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 9.600000000000001,
+            "cycle": 3,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 0.0,
+            "all_residuals_zero": true
+          },
+          "last_metric_history": {
+            "time": 9.600000000000001,
+            "Theta-max": 0.0,
+            "alpha-res": 0.0,
+            "beta-res": 0.0,
+            "Gam-res": 0.0,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 0.0,
+          "last_core_Theta_L2": 0.0,
+          "last_exterior_Theta_L2": 0.0,
+          "last_total_Theta_L2": 0.0,
+          "last_progress_log_time_code": 0.0
+        },
+        "theta_lapse01": {
+          "target_time_code": 50000.0,
+          "Theta_RMS_region": "exterior",
+          "log_mtime_utc": "2026-09-20T19:27:54+00:00",
+          "elapsed_wall_seconds": 1055.529,
+          "cycle": 15626,
+          "time_code": 50000.0,
+          "dt": 3.2,
+          "measured_time_per_wall_second": 47.88931291554515,
+          "stopping_reason": "time limit",
+          "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 50000.0,
+            "cycle": 15626,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 8.781397831114646e-10,
+            "all_residuals_zero": false
+          },
+          "last_metric_history": {
+            "time": 50000.0,
+            "Theta-max": 4.59390071838316e-13,
+            "alpha-res": 1.063482635288437e-12,
+            "beta-res": 1.021142749355311e-11,
+            "Gam-res": 2.143361802409835e-13,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 1.2698041186391446e-13,
+          "last_core_Theta_L2": 5.77352893172708e-10,
+          "last_exterior_Theta_L2": 3.3148710501367955e-08,
+          "last_total_Theta_L2": 3.3153738013484344e-08,
+          "last_progress_log_time_code": 49984.0
         }
       }
     }

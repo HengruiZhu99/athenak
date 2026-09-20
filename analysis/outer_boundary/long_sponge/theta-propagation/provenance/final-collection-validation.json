@@ -1,0 +1,31 @@
+{
+  "reader_test": "PASS: constant full coverage and truncated/mismatched-cycle/duplicate/nonfinite rejection",
+  "trace_initial_test": "PASS: global32/64 A=1e-6/1e-7 analytic Theta, C1/C2/gauge coefficients, archive initial, curved-background rejection",
+  "visual_review": [
+    "theta-radial-spacetime.png: three-case panels and axes/colorbars legible",
+    "theta-regional-rms.png: three cases, all regions to 50000M, coordinate-volume labels",
+    "incoming-c1-gpu.png: total/linearly normalized and acquired/quadratically normalized C1 labeled, eleven samples per case"
+  ],
+  "evolutions_run_for_this_refresh": 0,
+  "binary_cases": [
+    {
+      "case": "theta_primary",
+      "snapshots": 783,
+      "latest_time": 50000.0,
+      "excluded": []
+    },
+    {
+      "case": "theta_lapse01",
+      "snapshots": 783,
+      "latest_time": 50000.0,
+      "excluded": []
+    },
+    {
+      "case": "theta_amplitude",
+      "snapshots": 783,
+      "latest_time": 50000.0,
+      "excluded": []
+    }
+  ],
+  "scope": "Portable synthetic parser/analytic checks and visual review. All-rank physical checkpoint validation owned by separate GPU package."
+}

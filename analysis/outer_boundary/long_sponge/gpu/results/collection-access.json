@@ -1,20 +1,14 @@
 {
-  "checked_utc": "2026-09-20T20:28:47.546446+00:00",
-  "fresh_aurora_collection_succeeded": false,
-  "reason": "Original Aurora SSH control socket missing. Direct BatchMode SSH to hzhu@aurora.alcf.anl.gov returns exit255 Permission denied (keyboard-interactive,hostbased).",
-  "other_live_socket_is_not_aurora": "The available d471... control socket is Perlmutter; hostname was verified. It was not used for any job changes or final-data assertions.",
-  "last_successful_status_utc": "2026-09-20T19:07:52.143106+00:00",
-  "last_status_primary_time": 45571.19999999361,
-  "last_local_complete_primary_history_time": 30800.00000000481,
-  "C_final_checkpoint_or_stop_known": false,
-  "D_final_checkpoint_or_stop_known": false,
-  "actual_C_primary_input_matches_submission": true,
-  "actual_C_primary_input_sha256": "8da1b3ee0a101841c196e00346a527a458e0461ef8d2845fb4d70f6894953bb8",
-  "diagnostic_helpers_updated": [
-    "check_minkowski_checkpoint.py",
-    "collect_profiles.py",
-    "../radial_profiles.py"
-  ],
-  "helper_regression": "fast-cohort-selection-regression.json",
-  "checkpoint_selection_policy": "Read metadata only to select every5000code-time and latest saved cohort. Retain full finite-state, cross-rank header, all-payload and ghost-SPD checks for selected cohorts. No production code or submitted input changed."
+  "checked_utc": "2026-09-20T21:19:05.615887+00:00",
+  "fresh_aurora_collection_succeeded": true,
+  "verified_hostname": "aurora-uan-0010.hostmgmt.cm.aurora.alcf.anl.gov",
+  "C_final_checkpoint_or_stop_known": true,
+  "D_final_checkpoint_or_stop_known": true,
+  "independent_all_rank_final_validation": "validation/final-recheck-renewed-access.json",
+  "earlier_access_failure_record": "historical/collection-access-expired.json",
+  "preserved_external_partial_records": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/gpu/cached-before-final/results-8842248",
+  "previous_status_record": "historical/status-before-final-collection.json",
+  "read_only_scheduler_and_jobs": true,
+  "no_submissions_or_restarts": true,
+  "note": "Renewed SSH access recovered completed output. This evidence supersedes the earlier unavailable-final status. All3perturbed C/D controls reached actual50000M with exit0 and valid8rank final cohorts."
 }

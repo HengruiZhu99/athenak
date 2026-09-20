@@ -107,7 +107,7 @@ def check_supported(h):
     require(np.array_equal(lo,h['region'][:3]) and np.array_equal(hi,h['region'][3:6]), 'Region input/header mismatch')
     require(np.array_equal((hi-lo)/ns,h['region'][6:]), 'Root spacing mismatch')
     require(h['root_level'] == math.ceil(math.log2(int(max(ns//n)))), 'Unexpected root logical level')
-    shape = (nz+2*ng,ny+2*ng,nx+2*ng); cells = math.prod(shape)
+    shape = (nz+2*ng,ny+2*ng,nx+2*ng); cells = shape[0]*shape[1]*shape[2]
     faces = (shape[2]+1)*shape[1]*shape[0]+shape[2]*(shape[1]+1)*shape[0]+shape[2]*shape[1]*(shape[0]+1)
     offset = 8*(5*cells+faces)
     require(h['stride'] == offset+8*25*cells, 'Unsupported checkpoint payload stride/precision')

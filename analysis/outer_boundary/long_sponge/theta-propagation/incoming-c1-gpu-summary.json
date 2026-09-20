@@ -1,0 +1,57 @@
+{
+  "scope": "Plot checkpoint samples of incoming C1, not physical constraint norms.",
+  "cases": {
+    "theta_primary": {
+      "job": "8842248",
+      "time_final": 50000.0,
+      "initial_C1": 1.0276926189524702e-12,
+      "final_C1": 1.5457940318700352e-12,
+      "final_increment_C1": 5.18101412917565e-13,
+      "retained_initial_fraction_of_final": 0.6648315349679619,
+      "final_terms": {
+        "sqrtchi_Theta": 4.582466729519464e-13,
+        "halfchi_Gamma_n": -9.433188844934752e-14,
+        "D_n_chi": 1.1818792473674363e-12
+      },
+      "source_sha256": "d3404d5b07e1b1c4b7be7c6cb5670f886d21ff424cc30f93b110c7b3b358364d"
+    },
+    "theta_lapse01": {
+      "job": "8842248",
+      "time_final": 50000.0,
+      "initial_C1": 1.0276926189524702e-12,
+      "final_C1": 1.5459259801587349e-12,
+      "final_increment_C1": 5.182333612062647e-13,
+      "retained_initial_fraction_of_final": 0.6647747900885573,
+      "final_terms": {
+        "sqrtchi_Theta": 4.592334105611743e-13,
+        "halfchi_Gamma_n": -9.389951294714747e-14,
+        "D_n_chi": 1.180592082544708e-12
+      },
+      "source_sha256": "169675bbe47b0ebc9f9f671dde7240e60847d686126852fcbe8069a045601d8c"
+    },
+    "theta_amplitude": {
+      "job": "8842283",
+      "time_final": 50000.0,
+      "initial_C1": 1.0276926189524702e-13,
+      "final_C1": 1.0761350920736071e-13,
+      "final_increment_C1": 4.844247312113695e-15,
+      "retained_initial_fraction_of_final": 0.9549847658737779,
+      "final_terms": {
+        "sqrtchi_Theta": 2.7581458394522052e-14,
+        "halfchi_Gamma_n": -1.1106851168131958e-14,
+        "D_n_chi": 9.113890198097062e-14
+      },
+      "source_sha256": "53a0967046ae97b5b2146d2f959b5133e41438734810774650763596526c811e"
+    }
+  },
+  "amplitude_comparison": {
+    "amplitude_ratio": 0.1,
+    "final_time_both": 50000,
+    "measured_final_C1_ratio": 0.06961697806348399,
+    "measured_acquired_increment_ratio": 0.009349998265464027,
+    "initial_plus_quadratic_prediction_for_small_C1": 1.0795027602442266e-13,
+    "measured_small_C1": 1.0761350920736071e-13,
+    "relative_prediction_error": -0.003119647577239762,
+    "scope": "Two amplitudes at one resolution; arithmetic, projection and higher-order contributions not separated; not proof of a pure quadratic law."
+  }
+}

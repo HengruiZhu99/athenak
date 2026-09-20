@@ -1,0 +1,144 @@
+### WARNING in /lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/outer-boundary-fix-20260920/source/src/mesh/load_balance.cpp at line 115
+Number of MeshBlocks cannot be divided evenly by number of MPI ranks. This will result in poor load balancing.
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 232
+Number of logical  levels of refinement = 5 (6 levels total)
+Number of physical levels of refinement = 3 (4 levels total)
+  Physical level = 0 (logical level = 2): 56 MeshBlocks, cost = 56
+  Physical level = 1 (logical level = 3): 56 MeshBlocks, cost = 56
+  Physical level = 2 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 5): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 24
+  Rank = 0: 9 MeshBlocks, cost = 9
+  Rank = 1: 9 MeshBlocks, cost = 9
+  Rank = 2: 9 MeshBlocks, cost = 9
+  Rank = 3: 9 MeshBlocks, cost = 9
+  Rank = 4: 9 MeshBlocks, cost = 9
+  Rank = 5: 9 MeshBlocks, cost = 9
+  Rank = 6: 9 MeshBlocks, cost = 9
+  Rank = 7: 9 MeshBlocks, cost = 9
+  Rank = 8: 10 MeshBlocks, cost = 10
+  Rank = 9: 10 MeshBlocks, cost = 10
+  Rank = 10: 10 MeshBlocks, cost = 10
+  Rank = 11: 10 MeshBlocks, cost = 10
+  Rank = 12: 10 MeshBlocks, cost = 10
+  Rank = 13: 10 MeshBlocks, cost = 10
+  Rank = 14: 10 MeshBlocks, cost = 10
+  Rank = 15: 10 MeshBlocks, cost = 10
+  Rank = 16: 10 MeshBlocks, cost = 10
+  Rank = 17: 10 MeshBlocks, cost = 10
+  Rank = 18: 10 MeshBlocks, cost = 10
+  Rank = 19: 10 MeshBlocks, cost = 10
+  Rank = 20: 10 MeshBlocks, cost = 10
+  Rank = 21: 10 MeshBlocks, cost = 10
+  Rank = 22: 10 MeshBlocks, cost = 10
+  Rank = 23: 10 MeshBlocks, cost = 10
+Load Balancing:
+  Maximum normalized cost = 1.11111, Average = 1.07407
+AssembleZ4cTasks
+PUNCTURE_BACKGROUND stationary R0=M=1 trumpet, R=r+1, horizon_r=1. Not the stationary standard 1+log trumpet.
+OUTER_SPONGE enabled=1 geometry=radial start=8 ramp_width=20 damping_time=20 max_rate=0.05 nearest_boundary_radius=32 sigma_start=0 sigma_mid=0.025 sigma_end=0.05 sigma_boundary=0.05
+PUNCTURE_RESOLUTION horizon_r=1 dx_current=0.125 diameter_cells=16 interior_layer=none
+Z4C_SOURCE_TIMESTEP max_damping_rate=0.05 dt_limit=20
+z4c_tov_ks diagnostic: initialized pure analytic background.
+VACUUM_GAUGE_PULSE component=0 amplitude=1e-08 width=0.75
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=0 H=0.000132972 x=1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+
+Setup complete, executing task list(s)...
+
+elapsed=1.044441e+00 cycle=0 time=0.000000e+00 dt=2.500000e-02
+Z4C_CHARACTERISTIC_CPBC time=0.000000e+00 cycle=0 source=zero_rate incoming_modes=10 boundary_blocks_max=4,4,4 gauge=0.000000e+00 constraint=0.000000e+00 radiation=0.000000e+00 outgoing_gauge=0.000000e+00 outgoing_constraint=0.000000e+00 outgoing_radiation=0.000000e+00 enforcement=0.000000e+00 correction=0.000000e+00 shift_ratio=3.173004e-02 diagnostic_kernel_seconds=1.862189e-02 performance_valid=0 kernel_seconds=0.000000e+00 volume_rhs_seconds=0.000000e+00 kernel_fraction=0.000000e+00
+Z4C_EXT_HMAX time=1 H=0.000132972 x=1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=2 H=0.000132972 x=0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+elapsed=1.884563e+01 cycle=100 time=2.500000e+00 dt=2.500000e-02
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=3 H=0.000132972 x=-0.0625 y=0.0625 z=1.0625 r_bh=1.06617
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=4 H=0.000132972 x=0.0625 y=0.0625 z=1.0625 r_bh=1.06617
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=5 H=0.000132972 x=-0.0625 y=0.0625 z=-1.0625 r_bh=1.06617
+elapsed=3.644477e+01 cycle=200 time=5.000000e+00 dt=2.500000e-02
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=6 H=0.000132972 x=-1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=7 H=0.000132972 x=1.0625 y=0.0625 z=-0.0625 r_bh=1.06617
+elapsed=5.405928e+01 cycle=300 time=7.500000e+00 dt=2.500000e-02
+Z4C_EXT_HMAX time=8 H=0.000132972 x=1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=9 H=0.000132972 x=0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=10 H=0.000132972 x=-0.0625 y=1.0625 z=0.0625 r_bh=1.06617
+elapsed=7.397619e+01 cycle=400 time=1.000000e+01 dt=2.500000e-02
+AssembleZ4cTasks
+Z4C_EXT_HMAX time=11 H=0.000132972 x=-1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=12 H=0.000132973 x=1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+elapsed=9.187553e+01 cycle=500 time=1.250000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=13 H=0.000132973 x=1.0625 y=0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=14 H=0.000132973 x=1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=15 H=0.000132972 x=-0.0625 y=-0.0625 z=-1.0625 r_bh=1.06617
+elapsed=1.102682e+02 cycle=600 time=1.500000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=16 H=0.000132973 x=1.0625 y=0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=17 H=0.000132973 x=0.0625 y=1.0625 z=-0.0625 r_bh=1.06617
+elapsed=1.290312e+02 cycle=700 time=1.750000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=18 H=0.000132973 x=1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=19 H=0.000132973 x=1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=20 H=0.000132974 x=-0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+elapsed=1.480764e+02 cycle=800 time=2.000000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=21 H=0.000132975 x=1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=22 H=0.000132977 x=-1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+elapsed=1.676258e+02 cycle=900 time=2.250000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=23 H=0.000132983 x=-1.0625 y=0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=24 H=0.000132974 x=-0.0625 y=1.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=25 H=0.000132973 x=0.0625 y=-0.0625 z=-1.0625 r_bh=1.06617
+elapsed=1.878190e+02 cycle=1000 time=2.500000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=26 H=0.000132972 x=1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=27 H=0.000132974 x=-0.0625 y=1.0625 z=-0.0625 r_bh=1.06617
+elapsed=2.085044e+02 cycle=1100 time=2.750000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=28 H=0.000132974 x=0.0625 y=0.0625 z=1.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=29 H=0.000132974 x=-1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=30 H=0.000132973 x=0.0625 y=0.0625 z=1.0625 r_bh=1.06617
+elapsed=2.295517e+02 cycle=1200 time=3.000000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=31 H=0.000132975 x=1.0625 y=0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=32 H=0.000132973 x=-1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+elapsed=2.510160e+02 cycle=1300 time=3.250000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=33 H=0.000132974 x=1.0625 y=0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=34 H=0.000132972 x=-1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=35 H=0.000132975 x=-0.0625 y=1.0625 z=-0.0625 r_bh=1.06617
+elapsed=2.726438e+02 cycle=1400 time=3.500000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=36 H=0.000132972 x=-1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=37 H=0.000132973 x=1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+elapsed=2.945920e+02 cycle=1500 time=3.750000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=38 H=0.000132972 x=0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=39 H=0.000132974 x=-0.0625 y=1.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=40 H=0.000132973 x=1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+elapsed=3.167122e+02 cycle=1600 time=4.000000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=41 H=0.000132977 x=-0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=42 H=0.000132973 x=0.0625 y=0.0625 z=1.0625 r_bh=1.06617
+elapsed=3.393784e+02 cycle=1700 time=4.250000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=43 H=0.000132975 x=-0.0625 y=1.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=44 H=0.000132973 x=0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=45 H=0.000132976 x=1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+elapsed=3.622465e+02 cycle=1800 time=4.500000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=46 H=0.000132973 x=0.0625 y=0.0625 z=1.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=47 H=0.000132972 x=0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+elapsed=3.855053e+02 cycle=1900 time=4.750000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=48 H=0.000132977 x=1.0625 y=-0.0625 z=-0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=49 H=0.000132973 x=0.0625 y=1.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=50 H=0.000132975 x=1.0625 y=0.0625 z=0.0625 r_bh=1.06617
+elapsed=4.092400e+02 cycle=2000 time=5.000000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=51 H=0.000132973 x=-0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=52 H=0.000132973 x=0.0625 y=-0.0625 z=1.0625 r_bh=1.06617
+elapsed=4.331047e+02 cycle=2100 time=5.250000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=53 H=0.000132974 x=-1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=54 H=0.000132973 x=0.0625 y=0.0625 z=1.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=55 H=0.000132975 x=-1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+elapsed=4.573362e+02 cycle=2200 time=5.500000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=56 H=0.000132974 x=1.0625 y=0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=57 H=0.000132973 x=-1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+elapsed=4.818757e+02 cycle=2300 time=5.750000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=58 H=0.000132973 x=1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=59 H=0.000132972 x=1.0625 y=-0.0625 z=0.0625 r_bh=1.06617
+Z4C_EXT_HMAX time=60 H=0.000132974 x=-1.0625 y=0.0625 z=0.0625 r_bh=1.06617
+elapsed=5.066806e+02 cycle=2400 time=6.000000e+01 dt=2.500000e-02
+Z4C_EXT_HMAX time=61 H=0.000132973 x=0.0625 y=1.0625 z=0.0625 r_bh=1.06617

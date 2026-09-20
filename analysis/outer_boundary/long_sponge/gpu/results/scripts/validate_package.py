@@ -33,9 +33,8 @@ for directory in sorted((root / 'jobs').iterdir()):
         assert hashlib.sha256((directory / name).read_bytes()).hexdigest() == expected, (directory, name)
 
 assert last_times['8842171-radial_k0'] == 20000.0
-assert abs(last_times['8842248-theta_primary'] - 30800.0) < 1e-7
-assert '8842248-theta_lapse01' not in last_times
-assert '8842283-theta_amplitude' not in last_times
+for key in ['8842248-theta_primary','8842248-theta_lapse01','8842283-theta_amplitude']:
+    assert last_times[key] == 50000.0
 for name in ('8842171-radial_k0-checkpoint-validation.json',
              '8842171-zero-checkpoint-validation.json',
              '8842172-zero-checkpoint-validation.json',
@@ -45,9 +44,20 @@ for name in ('8842171-radial_k0-checkpoint-validation.json',
     assert record['invalid_metric_cells_including_ghosts'] == 0
     assert record['ranks'] == 8
 access = json.loads((root / 'collection-access.json').read_text())
-assert not access['fresh_aurora_collection_succeeded']
-assert not access['C_final_checkpoint_or_stop_known']
-assert not access['D_final_checkpoint_or_stop_known']
+assert access['fresh_aurora_collection_succeeded']
+assert access['C_final_checkpoint_or_stop_known']
+assert access['D_final_checkpoint_or_stop_known']
+recheck=json.loads((root/'validation/final-recheck-renewed-access.json').read_text())
+assert len(recheck['cases']) == 6
+for key, record in recheck['cases'].items():
+    assert record['passed'] and record['all_payload_finite']
+    assert record['invalid_metric_cells_including_ghosts'] == 0 and record['ranks'] == 8
+    assert record['checkpoint_matches_final_application_record']
+    if '/theta_' in key:
+        assert record['target_reached'] and record['time_code'] == 50000
+        assert record['stopping_reason'] == 'time limit'
+    else:
+        assert record['all_residuals_zero'] and record['cycle'] == 3
 print(json.dumps({'passed': True, 'manifest_files': len(manifest),
                   'cached_history_last_times': last_times,
-                  'C_and_D_final_results_available': False}, indent=2))
+                  'C_and_D_final_results_available': True}, indent=2))

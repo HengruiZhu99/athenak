@@ -1,0 +1,152 @@
+{
+  "collected_utc": "2026-09-20T21:31:21.023556Z",
+  "scheduler": {
+    "job_state": [
+      "R"
+    ],
+    "resources_used.walltime": [
+      "00:08:38"
+    ],
+    "Exit_status": [],
+    "queue": [
+      "debug"
+    ],
+    "stime": [
+      "Sun Sep 20 21:21:10 2026"
+    ],
+    "mtime": [
+      "Sun Sep 20 21:30:17 2026"
+    ]
+  },
+  "current_status": "running; no final pulse validation or completion claim",
+  "history_end_M": 60.99999999999761,
+  "zero_gate": {
+    "time_M": 0.07500000000000001,
+    "ranks": 24,
+    "blocks": 232,
+    "exact_zero": true,
+    "all_payload_finite": true,
+    "invalid_metric_cells_including_ghosts": 0,
+    "source": "zero/run-validation.json"
+  },
+  "all_collected_histories_finite": true,
+  "bad_metric_max": 0.0,
+  "throughput": {
+    "window_M": [
+      47.5,
+      60.0
+    ],
+    "seconds_per_M": 9.694024000000004,
+    "seconds_per_cycle": 0.2423506000000001,
+    "dt_M": 0.025,
+    "time_to_1000M_from_last_record_hours": 2.5312173777777787,
+    "remaining_time_estimate_scope": "Extrapolation of the recent measured window, not a target-completion prediction within this PBS allocation"
+  },
+  "amplitudes": {
+    "Theta-max": {
+      "initial": 0.0,
+      "final": 2.058155328332319e-10,
+      "max": 1.426457000730077e-09,
+      "time_of_max_M": 15.00000000000015
+    },
+    "alpha-res": {
+      "initial": 9.789481542249698e-09,
+      "final": 8.116174399219744e-12,
+      "max": 9.789481542249698e-09,
+      "time_of_max_M": 0.0
+    },
+    "beta-res": {
+      "initial": 0.0,
+      "final": 3.167052037289508e-11,
+      "max": 2.344981112067934e-09,
+      "time_of_max_M": 14.00000000000013
+    },
+    "Gam-res": {
+      "initial": 0.0,
+      "final": 6.41585311889381e-11,
+      "max": 1.381134267299945e-08,
+      "time_of_max_M": 1.0
+    }
+  },
+  "raw_constraint_integral_comparison": {
+    "H-norm2": {
+      "initial_zero_gate_baseline": 4.034740546114146e-08,
+      "final": 4.034739141498686e-08,
+      "final_relative_change": -3.481303059160723e-07,
+      "max_abs_relative_change": 2.28745381833928e-05
+    },
+    "M-norm2": {
+      "initial_zero_gate_baseline": 4.467178817257777e-07,
+      "final": 4.467180936062646e-07,
+      "final_relative_change": 4.743049148991929e-07,
+      "max_abs_relative_change": 2.8198233154030916e-06
+    },
+    "H-int2": {
+      "initial_zero_gate_baseline": 97.73624840566934,
+      "final": 97.73624840624088,
+      "final_relative_change": 5.8477667153056245e-12,
+      "max_abs_relative_change": 1.3455458969247047e-10
+    },
+    "M-int2": {
+      "initial_zero_gate_baseline": 80.99263853960588,
+      "final": 80.992638540015,
+      "final_relative_change": 5.051292717439537e-12,
+      "max_abs_relative_change": 1.2161116558218055e-10
+    }
+  },
+  "theta_profiles": {
+    "cohorts": 11,
+    "first_M": 0.0,
+    "last_M": 50.0,
+    "excluded": [],
+    "scope": "Read-only, fail-closed profiles of completed 24-rank static SMR Theta dumps.\n\nFloat32 active cells only; coordinate volume, not proper metric volume.\nInterface bands mean <= two local cell widths from a nested cubic interface.\nThey overlap radial regions. This does not inspect ghosts or establish validity\nof the other metric fields, nor locate the first RK-stage injection.\n"
+  },
+  "limitations": [
+    "Raw full-background H and M have nonzero discretization baselines. Differences of scalar norms are not norms of a residual constraint field.",
+    "This short pulse response and its moving maxima do not establish an instability origin or long-term stability.",
+    "Theta binary dumps are float32 active cells; ghost-metric validity is checked separately at the completed 50M checkpoint only."
+  ],
+  "pulse_checkpoint_50M": {
+    "passed": true,
+    "time_M": 49.99999999999823,
+    "cycle": 2000,
+    "ranks": 24,
+    "blocks": 232,
+    "all_payload_finite": true,
+    "invalid_metric_cells_including_ghosts": 0,
+    "minimum_raw_full": {
+      "alpha": 0.0976791024510144,
+      "chi": 0.009541207055215144,
+      "gxx": 0.9999999998379305,
+      "second_minor": 0.999999999918965,
+      "determinant": 0.9999999999999997
+    },
+    "collected_utc": "2026-09-20T21:35:13.999276Z",
+    "source": "pulse-checkpoint-50M.json"
+  },
+  "final_proper_exterior_rms": {
+    "Theta": 3.403301678897663e-12,
+    "H": 3.7118144993429093e-07,
+    "M": 1.2350806133269843e-06,
+    "Z": 2.9367885052527972e-12
+  },
+  "logged_raw_exterior_Hmax": {
+    "first": {
+      "time_M": 0.0,
+      "H": 0.000132972,
+      "x": 1.0625,
+      "y": -0.0625,
+      "z": -0.0625,
+      "radius_M": 1.06617
+    },
+    "last": {
+      "time_M": 61.0,
+      "H": 0.000132973,
+      "x": 0.0625,
+      "y": 1.0625,
+      "z": 0.0625,
+      "radius_M": 1.06617
+    },
+    "scope": "Raw full constraint maxima are dominated by initial background truncation near r=1.06617M; not the peak of H(t)-H(0)."
+  }
+}

@@ -1,0 +1,391 @@
+{
+  "scope": "Balanced truncation of exact full-source RK3 exterior, with closed-loop audit.\n\nExternal prototype only. Same discrete Fourier symbol, all20 fields. No assumed\nenergy argument: reduced exterior stability is NOT closed-domain stability.\n",
+  "parameters": {
+    "total": 64,
+    "inside": 32,
+    "tangent_divisor": 8,
+    "orders": [
+      16,
+      64,
+      128,
+      256,
+      320,
+      384,
+      448
+    ],
+    "h": 32.0,
+    "dt": 0.6
+  },
+  "full_rho": 0.999999980205149,
+  "metric_min_eigen": 1.054739714723413,
+  "metric_max_eigen": 25282544478.69929,
+  "full_Lyapunov_relative_residual": 6.507881211173202e-07,
+  "runs": [
+    {
+      "order": 16,
+      "closed_rho": 0.9999909689523194,
+      "closed_growth": -1.5051814101218364e-05,
+      "exterior_metric_orthogonality": 6.603764495755965e-15,
+      "initial_full_relative_error": 1.924557359737467e-12,
+      "interior_top_row_error": 1.6558616361371177e-14,
+      "zero_max": 0.0,
+      "records": [
+        {
+          "time": 0.0,
+          "full_norm": 0.9999999999999998,
+          "full_relative_error": 1.9245573597374673e-12,
+          "interior_relative_error": 0.0
+        },
+        {
+          "time": 100.2,
+          "full_norm": 3.4121161505622184,
+          "full_relative_error": 2.02114343177084,
+          "interior_relative_error": 0.46540796646926375
+        },
+        {
+          "time": 1000.1999999999999,
+          "full_norm": 7.8341589337942645,
+          "full_relative_error": 0.7303713842754007,
+          "interior_relative_error": 0.4829724720651248
+        },
+        {
+          "time": 4999.8,
+          "full_norm": 11.778045259064376,
+          "full_relative_error": 0.8834177615544961,
+          "interior_relative_error": 0.7448193627673144
+        },
+        {
+          "time": 10000.199999999999,
+          "full_norm": 9.64215293424613,
+          "full_relative_error": 2.636185954920765,
+          "interior_relative_error": 1.4190582906798497
+        },
+        {
+          "time": 49999.799999999996,
+          "full_norm": 2.630943692150644,
+          "full_relative_error": 25.64746635917289,
+          "interior_relative_error": 19.636022254535533
+        }
+      ]
+    },
+    {
+      "order": 64,
+      "closed_rho": 0.9999983093481493,
+      "closed_growth": -2.8177554664869003e-06,
+      "exterior_metric_orthogonality": 1.2450620102201154e-14,
+      "initial_full_relative_error": 1.9397093742750643e-12,
+      "interior_top_row_error": 1.655861644764737e-14,
+      "zero_max": 0.0,
+      "records": [
+        {
+          "time": 0.0,
+          "full_norm": 0.9999999999999998,
+          "full_relative_error": 1.9397093742750647e-12,
+          "interior_relative_error": 0.0
+        },
+        {
+          "time": 100.2,
+          "full_norm": 2.610649908876407,
+          "full_relative_error": 1.4151551731404641,
+          "interior_relative_error": 0.45842744810324587
+        },
+        {
+          "time": 1000.1999999999999,
+          "full_norm": 9.273179593437046,
+          "full_relative_error": 0.8764084231657863,
+          "interior_relative_error": 0.39860578272710184
+        },
+        {
+          "time": 4999.8,
+          "full_norm": 11.50604698118274,
+          "full_relative_error": 0.731741584144772,
+          "interior_relative_error": 0.6014275953583497
+        },
+        {
+          "time": 10000.199999999999,
+          "full_norm": 9.395191566538879,
+          "full_relative_error": 2.2515390744501427,
+          "interior_relative_error": 1.3987335701969443
+        },
+        {
+          "time": 49999.799999999996,
+          "full_norm": 2.446026811658716,
+          "full_relative_error": 23.95569107273991,
+          "interior_relative_error": 22.598381914492748
+        }
+      ]
+    },
+    {
+      "order": 128,
+      "closed_rho": 0.9999987858918825,
+      "closed_growth": -2.0235147575273744e-06,
+      "exterior_metric_orthogonality": 1.7290959619299708e-14,
+      "initial_full_relative_error": 1.9968651798780014e-12,
+      "interior_top_row_error": 1.6558616782928344e-14,
+      "zero_max": 0.0,
+      "records": [
+        {
+          "time": 0.0,
+          "full_norm": 0.9999999999999998,
+          "full_relative_error": 1.996865179878002e-12,
+          "interior_relative_error": 0.0
+        },
+        {
+          "time": 100.2,
+          "full_norm": 2.5948451771304812,
+          "full_relative_error": 1.4179008610054329,
+          "interior_relative_error": 0.3464110458788193
+        },
+        {
+          "time": 1000.1999999999999,
+          "full_norm": 10.334265556128736,
+          "full_relative_error": 1.0198345151266117,
+          "interior_relative_error": 0.4703558702940285
+        },
+        {
+          "time": 4999.8,
+          "full_norm": 16.202149707337814,
+          "full_relative_error": 0.7650996830532751,
+          "interior_relative_error": 0.5653180003444085
+        },
+        {
+          "time": 10000.199999999999,
+          "full_norm": 9.869891339118967,
+          "full_relative_error": 2.3396532008025996,
+          "interior_relative_error": 1.0606989906919786
+        },
+        {
+          "time": 49999.799999999996,
+          "full_norm": 0.4189234809418334,
+          "full_relative_error": 4.1288959502224,
+          "interior_relative_error": 2.634012176887338
+        }
+      ]
+    },
+    {
+      "order": 256,
+      "closed_rho": 0.9999998605499131,
+      "closed_growth": -2.3241682774242066e-07,
+      "exterior_metric_orthogonality": 2.711890919115864e-14,
+      "initial_full_relative_error": 1.9755745209863133e-12,
+      "interior_top_row_error": 1.655861685710126e-14,
+      "zero_max": 0.0,
+      "records": [
+        {
+          "time": 0.0,
+          "full_norm": 0.9999999999999998,
+          "full_relative_error": 1.9755745209863137e-12,
+          "interior_relative_error": 0.0
+        },
+        {
+          "time": 100.2,
+          "full_norm": 1.6002631621336694,
+          "full_relative_error": 0.2806366024299496,
+          "interior_relative_error": 0.027879275005546298
+        },
+        {
+          "time": 1000.1999999999999,
+          "full_norm": 8.526324640700313,
+          "full_relative_error": 0.2897234554312871,
+          "interior_relative_error": 0.04661012817827386
+        },
+        {
+          "time": 4999.8,
+          "full_norm": 21.4284039241368,
+          "full_relative_error": 0.25060978412034474,
+          "interior_relative_error": 0.07224071982790717
+        },
+        {
+          "time": 10000.199999999999,
+          "full_norm": 4.4108075751452205,
+          "full_relative_error": 0.7970053396880209,
+          "interior_relative_error": 0.19189758875265098
+        },
+        {
+          "time": 49999.799999999996,
+          "full_norm": 0.511508450385329,
+          "full_relative_error": 4.891203292958155,
+          "interior_relative_error": 1.69335596274229
+        }
+      ]
+    },
+    {
+      "order": 320,
+      "closed_rho": 0.9999999703824276,
+      "closed_growth": -4.936262138868966e-08,
+      "exterior_metric_orthogonality": 3.315406377869185e-14,
+      "initial_full_relative_error": 1.951964839309072e-12,
+      "interior_top_row_error": 1.6558616840681924e-14,
+      "zero_max": 0.0,
+      "records": [
+        {
+          "time": 0.0,
+          "full_norm": 0.9999999999999998,
+          "full_relative_error": 1.9519648393090723e-12,
+          "interior_relative_error": 0.0
+        },
+        {
+          "time": 100.2,
+          "full_norm": 1.5645203003067323,
+          "full_relative_error": 0.15765736769948904,
+          "interior_relative_error": 0.012970489000260403
+        },
+        {
+          "time": 1000.1999999999999,
+          "full_norm": 8.349069773730973,
+          "full_relative_error": 0.15600337406608988,
+          "interior_relative_error": 0.045900457421436815
+        },
+        {
+          "time": 4999.8,
+          "full_norm": 21.706400548690347,
+          "full_relative_error": 0.15928303259188614,
+          "interior_relative_error": 0.06500423598679682
+        },
+        {
+          "time": 10000.199999999999,
+          "full_norm": 3.6885634781822794,
+          "full_relative_error": 0.3574807375008366,
+          "interior_relative_error": 0.10612384745145874
+        },
+        {
+          "time": 49999.799999999996,
+          "full_norm": 0.2397474809336547,
+          "full_relative_error": 2.1042921303429725,
+          "interior_relative_error": 0.47397988153040976
+        }
+      ]
+    },
+    {
+      "order": 384,
+      "closed_rho": 0.9999999794278442,
+      "closed_growth": -3.428692661381435e-08,
+      "exterior_metric_orthogonality": 3.8534606161473e-14,
+      "initial_full_relative_error": 1.9488737778706933e-12,
+      "interior_top_row_error": 1.6558616839402303e-14,
+      "zero_max": 0.0,
+      "records": [
+        {
+          "time": 0.0,
+          "full_norm": 0.9999999999999998,
+          "full_relative_error": 1.9488737778706937e-12,
+          "interior_relative_error": 0.0
+        },
+        {
+          "time": 100.2,
+          "full_norm": 1.5442506776451055,
+          "full_relative_error": 0.051984141404397256,
+          "interior_relative_error": 0.001326578752618448
+        },
+        {
+          "time": 1000.1999999999999,
+          "full_norm": 8.291514513218173,
+          "full_relative_error": 0.06394086402512057,
+          "interior_relative_error": 0.008502271154846091
+        },
+        {
+          "time": 4999.8,
+          "full_norm": 21.735743422261773,
+          "full_relative_error": 0.0697689854935755,
+          "interior_relative_error": 0.01566202631400538
+        },
+        {
+          "time": 10000.199999999999,
+          "full_norm": 3.5453492583896953,
+          "full_relative_error": 0.14697400251201737,
+          "interior_relative_error": 0.03929954687313806
+        },
+        {
+          "time": 49999.799999999996,
+          "full_norm": 0.11335185427904379,
+          "full_relative_error": 0.4781581271167738,
+          "interior_relative_error": 0.09848269004012038
+        }
+      ]
+    },
+    {
+      "order": 448,
+      "closed_rho": 0.9999999802004421,
+      "closed_growth": -3.299926346354609e-08,
+      "exterior_metric_orthogonality": 4.4107836234967275e-14,
+      "initial_full_relative_error": 1.9622398274600604e-12,
+      "interior_top_row_error": 1.655861683614315e-14,
+      "zero_max": 0.0,
+      "records": [
+        {
+          "time": 0.0,
+          "full_norm": 0.9999999999999998,
+          "full_relative_error": 1.962239827460061e-12,
+          "interior_relative_error": 0.0
+        },
+        {
+          "time": 100.2,
+          "full_norm": 1.5443490157555049,
+          "full_relative_error": 0.002598003919512366,
+          "interior_relative_error": 2.3605512297075958e-05
+        },
+        {
+          "time": 1000.1999999999999,
+          "full_norm": 8.288177778100751,
+          "full_relative_error": 0.004302515382852737,
+          "interior_relative_error": 8.49576732036844e-05
+        },
+        {
+          "time": 4999.8,
+          "full_norm": 21.733765130169463,
+          "full_relative_error": 0.0050116844184263125,
+          "interior_relative_error": 0.00023042394813122574
+        },
+        {
+          "time": 10000.199999999999,
+          "full_norm": 3.523148384504033,
+          "full_relative_error": 0.0070576879995549605,
+          "interior_relative_error": 0.000881439259461199
+        },
+        {
+          "time": 49999.799999999996,
+          "full_norm": 0.10241958720109227,
+          "full_relative_error": 0.026075076342624393,
+          "interior_relative_error": 0.005978513766447798
+        }
+      ]
+    }
+  ],
+  "old_eigenvalue": [
+    0.005634884344758716,
+    -1.610891082209529e-16
+  ],
+  "lifted_exterior_rho": 0.9999986142683551,
+  "reference": [
+    {
+      "time": 0.0,
+      "full_norm": 0.9999999999999998,
+      "interior_norm": 0.9999999999999998
+    },
+    {
+      "time": 100.2,
+      "full_norm": 1.5443645067243996,
+      "interior_norm": 1.500989839104618
+    },
+    {
+      "time": 1000.1999999999999,
+      "full_norm": 8.288335774598638,
+      "interior_norm": 7.925440295931323
+    },
+    {
+      "time": 4999.8,
+      "full_norm": 21.73321294944969,
+      "interior_norm": 20.1131031458608
+    },
+    {
+      "time": 10000.199999999999,
+      "full_norm": 3.523829881637759,
+      "interior_norm": 3.2293544728534247
+    },
+    {
+      "time": 49999.799999999996,
+      "full_norm": 0.10239587385985666,
+      "interior_norm": 0.07760295733222568
+    }
+  ]
+}

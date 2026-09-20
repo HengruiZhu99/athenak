@@ -1,5 +1,5 @@
 {
-  "scope": "Compact historical evidence. A/B completed results are verified. C contains incomplete cached histories and a later status-only sample; D has submitted inputs only. Do not infer final C/D status from their targets or elapsed calendar time. Raw checkpoint and log paths are provenance locations, not packaged dependencies.",
+  "scope": "Compact completed A/B/C/D evidence with exact submitted inputs and lossless histories. Final C/D states were recovered after renewed SSH access and independently validated across all8ranks. Earlier incomplete-cache and access-failure records are explicitly historical. Raw dumps/checkpoints/logs remain external.",
   "executable_remote": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/outer-boundary-fix-20260920/athena-boundary-fixed",
   "executable_sha256": "a6c3af79571819fba5dc2252ceb9abacb31279feec440f2c542e342dfee43639",
   "source_manifest_sha256": "7ba164e6f2361b2a575ca8fd59f1afc4f3b0638cc9fbb3168d249942749f44a7",
@@ -135,27 +135,74 @@
       "remote_directory": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/long_theta_loweta_8842248",
       "local_directory": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/gpu/results-8842248",
       "cases": {
-        "theta_primary": {
-          "local_run_log_sha256": "34672a7c50781192855fbee048bcb2c84275f1eb60a4041d7d43cffcb13f64b5",
-          "local_run_log_bytes": 294585,
+        "theta_lapse01": {
+          "local_run_log_sha256": "8cf4980fcb2b14df3f7d96e2603a481d3a54ccf8ee543cd44d36cddd6ecd895d",
+          "local_run_log_bytes": 415072,
           "histories": {
-            "theta_loweta_coremask.mhd.hst": {
-              "sha256": "37691b4805a15f761c98be7d4815380264d54223c1e4104f86487ad3db101489",
-              "bytes": 890620,
-              "rows": 3080
+            "theta_loweta_lapse01_coremask.mhd.hst": {
+              "sha256": "03ddb4ba44d2383b4ca616ad0865e396bab042287c259fa07e0c957fecd40f00",
+              "bytes": 1438425,
+              "rows": 5001
             },
-            "theta_loweta_coremask.user.hst": {
-              "sha256": "8c23ff7556790d7fd2a41c696e207c5882497f27d9dd5080cd1dc656cdff97d2",
-              "bytes": 1494671,
-              "rows": 3081
+            "theta_loweta_lapse01_coremask.user.hst": {
+              "sha256": "e9335a49e81c091a68a3f0b6bb0091f7631bd057b3ef6167b0be90639d8f68f3",
+              "bytes": 2425871,
+              "rows": 5001
             },
-            "theta_loweta_coremask.z4c.user.hst": {
-              "sha256": "9b378eaa88c21e474bb1800c548673172087cfcc1f531ac630d77acfcd29f3e9",
-              "bytes": 1020072,
-              "rows": 3081
+            "theta_loweta_lapse01_coremask.z4c.user.hst": {
+              "sha256": "dfe7d7ef95e2efa6ea3b38192adf1020e67cc827f04e29e0f4ff88d26f346468",
+              "bytes": 1655592,
+              "rows": 5001
             }
           },
-          "log_is_complete": false
+          "log_is_complete": true,
+          "application_exit": 0
+        },
+        "theta_primary": {
+          "local_run_log_sha256": "5fdec705b9764421dc84d91b03ef55ba85f4bdbe4d84e6a04bb4d2794e41a3ed",
+          "local_run_log_bytes": 484611,
+          "histories": {
+            "theta_loweta_coremask.mhd.hst": {
+              "sha256": "82b9712646a3d38e392effcc6df9aeda84f7bacd69da412dad4d8f40072f8000",
+              "bytes": 1443868,
+              "rows": 5001
+            },
+            "theta_loweta_coremask.user.hst": {
+              "sha256": "845de6438a0abfdf3363962321cc4e7f73f67954f71efb54c7c3ecdfef25e5fd",
+              "bytes": 2425871,
+              "rows": 5001
+            },
+            "theta_loweta_coremask.z4c.user.hst": {
+              "sha256": "595c54102a634d72836c4af9a635550c19365fad28d423b8cc4fcca75ba2337f",
+              "bytes": 1655592,
+              "rows": 5001
+            }
+          },
+          "log_is_complete": true,
+          "application_exit": 0
+        },
+        "zero_lapse01": {
+          "local_run_log_sha256": "81b1216a672dbe251f01b01b7c8ceb4ace0ec5a663c5ecc646030bcd8f1b13a9",
+          "local_run_log_bytes": 1989,
+          "histories": {
+            "zero_loweta_lapse01_coremask.mhd.hst": {
+              "sha256": "cb4f908713742794e578b284c454ebdd70e2cded3ce5506e6d5479a2ca8a7602",
+              "bytes": 769,
+              "rows": 2
+            },
+            "zero_loweta_lapse01_coremask.user.hst": {
+              "sha256": "9226e11d5e8650d7d8cf49d8d5b960ace1eded3e59543c70b2141f14a972c7ad",
+              "bytes": 1356,
+              "rows": 2
+            },
+            "zero_loweta_lapse01_coremask.z4c.user.hst": {
+              "sha256": "99703a00bb2d2ea473fb2ff83c04f54b6fcc4a350ac614af336aea79c404f07e",
+              "bytes": 923,
+              "rows": 2
+            }
+          },
+          "log_is_complete": true,
+          "application_exit": 0
         },
         "zero_primary": {
           "local_run_log_sha256": "cb2503b647711b783e359aee96c160f544f0b3fef7a00c9527508a41e054e117",
@@ -184,8 +231,55 @@
     },
     "8842283": {
       "remote_directory": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/long_theta_amp_8842283",
-      "cases": {},
-      "available_evidence": "Submission and exact inputs only; output inaccessible after Aurora authentication expired."
+      "local_directory": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/gpu/results-8842283",
+      "cases": {
+        "theta_amplitude": {
+          "local_run_log_sha256": "cd98828e57309e7ea3eefc76e736c46eb4a51100a531040c9a23cc7e89f3b560",
+          "local_run_log_bytes": 420633,
+          "histories": {
+            "theta_loweta_amp1e7_coremask.mhd.hst": {
+              "sha256": "fff3ef2e848fcd36610dbedc9101ffdfbf8f48a4b39c611f67a650d93b455160",
+              "bytes": 1440103,
+              "rows": 5001
+            },
+            "theta_loweta_amp1e7_coremask.user.hst": {
+              "sha256": "166895e71f2e5c5664d9547297e16b4becf58088b403cdde99543e457f83c834",
+              "bytes": 2425871,
+              "rows": 5001
+            },
+            "theta_loweta_amp1e7_coremask.z4c.user.hst": {
+              "sha256": "d58483e5b3fefca6a2b296ef60c4815245d20c53e26b38661df1db0f847d5c94",
+              "bytes": 1655592,
+              "rows": 5001
+            }
+          },
+          "log_is_complete": true,
+          "application_exit": 0
+        },
+        "zero_primary": {
+          "local_run_log_sha256": "fe1f4d9c8311b5d65862b58435bcbf840fbc39163dda3a4ac4ff409029b27ee4",
+          "local_run_log_bytes": 1989,
+          "histories": {
+            "zero_loweta_coremask.mhd.hst": {
+              "sha256": "cb4f908713742794e578b284c454ebdd70e2cded3ce5506e6d5479a2ca8a7602",
+              "bytes": 769,
+              "rows": 2
+            },
+            "zero_loweta_coremask.user.hst": {
+              "sha256": "9226e11d5e8650d7d8cf49d8d5b960ace1eded3e59543c70b2141f14a972c7ad",
+              "bytes": 1356,
+              "rows": 2
+            },
+            "zero_loweta_coremask.z4c.user.hst": {
+              "sha256": "99703a00bb2d2ea473fb2ff83c04f54b6fcc4a350ac614af336aea79c404f07e",
+              "bytes": 923,
+              "rows": 2
+            }
+          },
+          "log_is_complete": true,
+          "application_exit": 0
+        }
+      }
     }
   },
   "collection_access": "collection-access.json"

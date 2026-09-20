@@ -1,6 +1,6 @@
 # Prepared strong-field vacuum discrimination
 
-**Prepared and mesh-audited; the subsequently authorized local three-cycle zero/pulse preflight has now passed.** No long evolution, restart continuation or Aurora submission has been performed. See [preflight results](preflight/README.md). Assess the independent direct-Theta flat-space control before proceeding to longer strong-field trials. This is a centered Schwarzschild trumpet diagnostic with the production G1 bulk gauge retained; it is not a TDE run or a claim of strong-field stability.
+**The local three-cycle preflight passed; the next GPU control is submitted.** After renewed access and verification of three flat direct-Theta controls through50000M, a derived package was submitted as job8843091 (debug,2nodes24ranks). See [launch and status](gpu-8843091/README.md) and [local preflight results](preflight/README.md). The preparation details below record the original mesh/input study; the launch adds more frequent checkpoints and spatial outputs. This is a centered Schwarzschild trumpet diagnostic with the production G1 bulk gauge retained; it is not a TDE run or a claim of strong-field stability.
 
 The preferred mesh has **232 blocks of 16³ active cells**, a domain `[-32,32]³ M`, and `dx=.125M` throughout the entire sphere `r≤4M`. The coordinate horizon is `r=1M` (areal radius `R=2M`), giving **16 points across its coordinate diameter**. The horizon and this surrounding exterior region have no sponge or inner excision treatment.
 
@@ -34,7 +34,7 @@ The candidate outer source is `rhs(delta u) -= sigma(r)*delta u` for every evolv
 
 The explicit source safeguard is retained: `dt_source≤20M`. With CFL`.2`, the Z4c spatial estimate is `.025M` atdx.125M (`sigma*dt=.00125`), far below that source bound. The actual dynamical timestep must be measured after initialization because the fluid/other timestep logic may reduce it. A matched half-timestep input is included.
 
-## Controlled input matrix
+## Original preparation: controlled input matrix
 
 All inputs are fresh starts; none refers to a production or failed checkpoint. Except for listed differences, they preserve the same geometry and seed.
 
@@ -51,15 +51,15 @@ All inputs are fresh starts; none refers to a production or failed checkpoint. E
 | `mesh32_pulse_sponge` | 32³ blocks; only a layout/cost comparison, physically larger fine region |
 | `mesh32_inset_pulse_sponge` | 32³ plus inset boxes; geometry proved unchanged |
 
-The nonzero-seed decks carry `tlim=1000M`. A sensible future order is: verify exact zero over all residual entries including ghosts/refinement transfers for the two three-cycle controls; run matched pulse_sponge/pulse_nosponge to100M, then300M if finite; inspect protected-core, horizon exterior, refinement-interface and sponge-region norms and signed profiles; use the kappa and half-step controls to separate effects; only then consider reaching1000M from independently validated clean checkpoints. Extending a finite near-noise history alone is insufficient. The flat direct-Theta gate and later compact strong-field direct-Theta control remain separate requirements.
+The nonzero-seed decks carry `tlim=1000M`. The original staged proposal was: verify exact zero over all residual entries including ghosts/refinement transfers for the two three-cycle controls; run matched pulse_sponge/pulse_nosponge to100M, then300M if finite; inspect protected-core, horizon exterior, refinement-interface and sponge-region norms and signed profiles; use the kappa and half-step controls to separate effects; then consider reaching1000M. The subsequently submitted8843091 instead uses a zero gate followed by one uninterrupted fresh pulse toward1000M with a55minute cap and frequent diagnostics. Neither sequence supplies a stability pass merely by finite completion. The later compact strong-field direct-Theta control remains a separate requirement.
 
 The present `check_trumpet_checkpoint.py` explicitly supports uniform grids only. **Do not use it on these SMR checkpoints.** The separate `check_smr_trumpet_checkpoint.py` now reconstructs each block's coordinates with `2^(logical_level-root_level)` and has passed the authorized three-cycle preflight: common rank headers, exact leaf-coordinate agreement with this mesh audit, full/ghost metric minors, exact-zero residual payloads and deliberate rejection of an indefinite fine ghost. Its static-grid/format restrictions remain explicit. Output histories exclude the coordinate horizon for their exterior norm; diagnostics inside the horizon and at interfaces must be reported separately. Mesh-only checks cannot establish zero-preserving transfers.
 
-## Resource estimate: debug only, at most two nodes
+## Original resource estimate: debug only, at most two nodes
 
-A candidate future allocation is **two nodes,24 MPI ranks (12/node), queue debug, project TidalMHD**, one-hour PBS walltime and application cap`-t 00:55:00`. No PBS job or submission command is created here. The requested allocation and GPU-rank mapping must be checked when the actual job is prepared. This work does not touch debug-scaling or the ongoing TDE job.
+The original candidate allocation was **two nodes,24 MPI ranks (12/node), queue debug, account MHDTidal**, one-hour PBS walltime and application cap`-t 00:55:00`. No job was submitted during this original mesh preparation. The later8843091 launch uses these resources after checking the environment and GPU-rank mapping; its actual records supersede this estimate. Production remains untouched.
 
-With232 blocks,24 ranks would receive9–10 blocks each (mean9.67). One node/12 ranks would receive19–20. Counts follow the equal-cost static partition; the mesh was actually constructed on1/4 ranks, not on Aurora. The former production target of roughly two blocks/rank would require far more than two debug nodes and is not the resource constraint for this diagnostic.
+With232 blocks,24 ranks receive9–10 blocks each (mean9.67). One node/12 ranks would receive19–20. Counts follow the equal-cost static partition; the original mesh preparation constructed it on1/4 local ranks, and8843091 subsequently confirms the24rank ownership on Aurora. The former production target of roughly two blocks/rank would require far more than two debug nodes and is not the resource constraint for this diagnostic.
 
 The only available nearby measured reference used four32³ blocks/four GPU ranks on one node:8334 cycles in497.24s (job8841948, **old original binary**, uniform displaced weak-field case). It delivered2.197 million active or4.291 million ghost-inclusive zone-cycles/s. Scaling its ghost-inclusive work to this mesh and optimistically scaling rank throughput gives the following **rough** intervals; the upper value applies an additional2× SMR/communication penalty, not a measured confidence bound:
 
@@ -70,7 +70,7 @@ The only available nearby measured reference used four32³ blocks/four GPU ranks
 
 These estimates assume `.025M` steps,4000/12000/40000 cycles, and omit startup/I/O. Strong-field fluid work, small-block launch efficiency, network transfers and refined boundaries can invalidate the scaling. Thus300M is the plausible first one-hour two-node target;1000M should not be promised within that allocation. A two-node pilot must first measure actual seconds/cycle. Lowering node count is possible for the first100M test but is unlikely to finish300M within the one-hour cap under the slower estimate.
 
-Primary Z4c/ADM/Tmunu arrays plus coarse Z4c alone require about4.77GB aggregate for16³. This excludes MHD, background-RHS cache, boundary/refinement buffers, mirrors and runtime overhead. Reserve a provisional2GiB/rank rather than treat that lower bound as a complete memory estimate, and check actual allocation before a long run. A full all-rank restart payload is approximately0.850GB; initial and final checkpoints alone total1.70GB. Inputs use per-rank restart files with an interval1000M, and the walltime stop must flush its endpoint. No binary slice output is enabled in this first vacuum diagnostic.
+Primary Z4c/ADM/Tmunu arrays plus coarse Z4c alone require about4.77GB aggregate for16³. This excludes MHD, background-RHS cache, boundary/refinement buffers, mirrors and runtime overhead. Reserve a provisional2GiB/rank rather than treat that lower bound as a complete memory estimate, and check actual allocation before a long run. A full all-rank restart payload is approximately0.850GB; initial and final checkpoints alone total1.70GB. The original preparation used per-rank restart interval1000M and no binary output. Launch8843091 instead uses checkpoint interval50M, Theta binary interval5M and constraint binary interval10M, all per rank; the walltime stop must flush its endpoint.
 
 ## Reproduce preparation without evolution
 

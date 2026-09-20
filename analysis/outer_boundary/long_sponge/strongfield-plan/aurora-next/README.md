@@ -49,3 +49,5 @@ python3 check_package.py --require-ready  # must reject the unarmed prepared dec
 ```
 
 `validator24-regression.json` records the completed private-fixture checks. The input parser and mesh construction passed in the parent strong-field plan; no new evolution is performed by this preparation.
+
+After Aurora access renewal, a derived launch copy was submitted as job8843091. See [actual launch](../gpu-8843091/README.md). This directory remains the unsubmitted draft; only its checkpoint reader was made compatible with Python3.6. Its current manifest therefore differs from the original draft manifest preserved with the launch.

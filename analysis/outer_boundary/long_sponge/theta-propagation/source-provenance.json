@@ -1,10 +1,10 @@
 {
-  "scope": "Compact copied diagnostic evidence; no raw checkpoints or dumps. C sample stops at23808M; no final C/D completion inferred.",
+  "scope": "Compact diagnostic evidence for completed C/D GPU cases through 50000M: three sets of 783 validated eight-rank Theta snapshots and eleven rank7 checkpoint traces per case. No raw checkpoints or dumps.",
   "external_source_directory": "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/theta-propagation",
   "local_cpu_executable_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8",
   "gpu_executable_sha256": "a6c3af79571819fba5dc2252ceb9abacb31279feec440f2c542e342dfee43639",
   "local_checkpoint_hashes": "face-trace-local-*.json lists rank7 checkpoint content hashes; whole cohorts validated separately in provenance.",
-  "gpu_binary_hashes": "theta_primary/manifest.json lists all8 hashes for each accepted binary cohort.",
+  "gpu_binary_hashes": "Each theta_*/manifest.json lists all eight source-rank hashes for every accepted binary cohort.",
   "source_files": {
     "gpu-8842248-input-manifest.json": "cb8b13e55c12e61aef8ec4ee62cfcf7a9414fe60925d080b73f814efb46dae1e",
     "theta_primary.athinput": "8da1b3ee0a101841c196e00346a527a458e0461ef8d2845fb4d70f6894953bb8",
@@ -37,5 +37,38 @@
     "theta_lapse01/manifest.json": "88548f6e1a5f5bc0ae0249e55cdeb74c239966f2d2a7bbfd423d29502910a857",
     "theta_primary/manifest.json": "80f09ad1cdb564e6c363a482aaa43ffc739f95311cf37eae235cae4befb69443",
     "theta_primary/profiles.npz": "384dee39d8cf2b257be3a5ef14a34678a0f7531717cd5a4e71c5b0fbc7452b7b"
+  },
+  "external_source_directories": [
+    "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/theta-propagation-current",
+    "/Users/hz0693/research/TDE/outer-boundary-fix-20260920/long-sponge-study/theta-propagation-D"
+  ],
+  "historical_collection": "archive-23808/source-provenance.json preserves prior collection provenance; archive-23808 contains the original 373 primary snapshots through 23808M.",
+  "gpu_trace_hashes": "incoming-gpu-final/face-trace-*.json record each source rank7 checkpoint hash and checker hash; full-cohort metric/finite validation is separate in ../gpu/results/validation/.",
+  "renewed_collection": {
+    "date": "2026-09-20",
+    "ssh_host": "hzhu@aurora.alcf.anl.gov",
+    "verified_hostname": "aurora-uan-0010.hostmgmt.cm.aurora.alcf.anl.gov",
+    "read_only_simulation_outputs": true,
+    "remote_analysis_writes_only": true,
+    "jobs_submitted_or_modified": false,
+    "cases": {
+      "theta_primary": {
+        "job": 8842248,
+        "run": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/long_theta_loweta_8842248/theta_primary"
+      },
+      "theta_lapse01": {
+        "job": 8842248,
+        "run": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/long_theta_loweta_8842248/theta_lapse01"
+      },
+      "theta_amplitude": {
+        "job": 8842283,
+        "run": "/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/runs/long_theta_amp_8842283/theta_amplitude"
+      }
+    }
+  },
+  "physical_constraints_cross_reference": {
+    "path": "../gpu/results/final-cd-comparison.json",
+    "sha256": "3c65e376aef9b7fe5998fc188c761e8bdedec7ff02c07ba52dca63287ec68aab",
+    "scope": "Independent proper-volume exterior history diagnostics, collected by gpu_results; not derived from Theta-only binary profiles."
   }
 }

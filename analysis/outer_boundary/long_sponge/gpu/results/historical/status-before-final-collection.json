@@ -1,0 +1,255 @@
+{
+  "checked_utc": "2026-09-20T19:02:20.618591+00:00",
+  "jobs": {
+    "8842171": {
+      "scheduler": {
+        "job_state": "F",
+        "queue": "debug-scaling",
+        "resources_used.walltime": "00:36:02",
+        "Exit_status": "0",
+        "stime": "Sun Sep 20 18:16:08 2026",
+        "etime": "Sun Sep 20 18:09:44 2026"
+      },
+      "cases": {
+        "zero": {
+          "target_time_code": 20000.0,
+          "Theta_RMS_region": "whole_domain",
+          "log_mtime_utc": "2026-09-20T18:16:11+00:00",
+          "elapsed_wall_seconds": 0.1652812,
+          "cycle": 3,
+          "time_code": 1.7999999999999998,
+          "dt": 0.6,
+          "stopping_reason": "cycle limit",
+          "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 1.7999999999999998,
+            "cycle": 3,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 0.0,
+            "all_residuals_zero": true
+          },
+          "last_metric_history": {
+            "time": 1.8,
+            "Theta-max": 0.0,
+            "alpha-res": 0.0,
+            "beta-res": 0.0,
+            "Gam-res": 0.0,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 0.0,
+          "last_progress_log_time_code": 0.0
+        },
+        "radial_k0": {
+          "target_time_code": 20000.0,
+          "Theta_RMS_region": "whole_domain",
+          "log_mtime_utc": "2026-09-20T18:52:04+00:00",
+          "elapsed_wall_seconds": 2126.079,
+          "cycle": 33334,
+          "time_code": 20000.0,
+          "dt": 0.6,
+          "measured_time_per_wall_second": 9.308483323025179,
+          "stopping_reason": "time limit",
+          "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 20000.0,
+            "cycle": 33334,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 6.500742166792861e-10,
+            "all_residuals_zero": false
+          },
+          "last_metric_history": {
+            "time": 20000.0,
+            "Theta-max": 2.128566581548179e-14,
+            "alpha-res": 2.720046410331634e-14,
+            "beta-res": 2.081671308706447e-12,
+            "Gam-res": 4.163204257403409e-12,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 5.835142861991421e-16,
+          "last_progress_log_time_code": 19800.0
+        }
+      }
+    },
+    "8842172": {
+      "scheduler": {
+        "job_state": "F",
+        "queue": "debug",
+        "resources_used.walltime": "00:22:37",
+        "Exit_status": "1",
+        "stime": "Sun Sep 20 18:16:08 2026",
+        "etime": "Sun Sep 20 18:09:46 2026"
+      },
+      "cases": {
+        "zero": {
+          "target_time_code": 20000.0,
+          "Theta_RMS_region": "whole_domain",
+          "log_mtime_utc": "2026-09-20T18:16:11+00:00",
+          "elapsed_wall_seconds": 0.1764065,
+          "cycle": 3,
+          "time_code": 1.7999999999999998,
+          "dt": 0.6,
+          "stopping_reason": "cycle limit",
+          "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 1.7999999999999998,
+            "cycle": 3,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 0.0,
+            "all_residuals_zero": true
+          },
+          "last_metric_history": {
+            "time": 1.8,
+            "Theta-max": 0.0,
+            "alpha-res": 0.0,
+            "beta-res": 0.0,
+            "Gam-res": 0.0,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 0.0,
+          "last_progress_log_time_code": 0.0
+        },
+        "baseline": {
+          "target_time_code": 20000.0,
+          "Theta_RMS_region": "whole_domain",
+          "log_mtime_utc": "2026-09-20T18:26:45+00:00",
+          "elapsed_wall_seconds": 599.8803,
+          "cycle": 9000,
+          "time_code": 5400.0,
+          "dt": 0.6,
+          "measured_time_per_wall_second": 9.024723684685556,
+          "invalid_state_records": [
+            "Z4C_INVALID_STATE time=5650.2000000005046 cycle=9417 rank=3 gid=3 relative_level=0 x=32 y=32 z=-1952 local_bad_cells=6; nonfinite Z4c/ADM state or invalid positive-definite spatial metric."
+          ],
+          "first_primitive_error_excerpt": "An error occurred during the primitive solve: NANS_IN_CONS\n  Location: (0, 39, 36, 36)\n            (32, 32, 2272)\n  Conserved vars: \n    D   = -nan\n    Sx  = -nan\n    Sy  = -nan\n    Sz  = -nan\n    tau = -nan\n    Dye = -5.8290068128747478e+303\n    Bx  = -nan\n    By  = -nan\n    Bz  = -nan\n  Metric vars: \n    detg = -0.014375931386003904\n    g_dd = {1.4839398613690529, -0.59059077671564653, -0.48573269944964931, 1.4511240322868892, 0.70596970389955471, 0.36714314917921481}\n    alp  = 1.077700539466135\n    beta = {0.069365409592758318, -0.0369020623945258, 0.0032628065589928785}\n    psi4 = 1.4104037402981331\n    K_dd = {-0.0083694463960524799, 0.029956564607430937, -0.0014092213066836977, -0.007",
+          "application_exit": 143,
+          "checkpoint_validation_exit": 1,
+          "last_metric_history": {
+            "time": 5640.000000000498,
+            "Theta-max": 0.06011278594629314,
+            "alpha-res": 0.3292314365407301,
+            "beta-res": 0.09756114854096934,
+            "Gam-res": 0.2307000270080029,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 0.00021676069764213393
+        },
+        "radial_k01": {
+          "target_time_code": 20000.0,
+          "Theta_RMS_region": "whole_domain",
+          "log_mtime_utc": "2026-09-20T18:38:41+00:00",
+          "elapsed_wall_seconds": 697.5918,
+          "cycle": 10500,
+          "time_code": 6300.0,
+          "dt": 0.6,
+          "measured_time_per_wall_second": 9.012718762850373,
+          "invalid_state_records": [
+            "Z4C_INVALID_STATE time=6420.0000000009713 cycle=10700 rank=3 gid=3 relative_level=0 x=1952 y=32 z=-1952 local_bad_cells=2; nonfinite Z4c/ADM state or invalid positive-definite spatial metric.",
+            "Z4C_INVALID_STATE time=6420.0000000009713 cycle=10700 rank=7 gid=7 relative_level=0 x=1952 y=32 z=1952 local_bad_cells=1; nonfinite Z4c/ADM state or invalid positive-definite spatial metric."
+          ],
+          "first_primitive_error_excerpt": "An error occurred during the primitive solve: NANS_IN_CONS\n  Location: (0, 5, 5, 39)\n            (2272, 96, -1952)\n  Conserved vars: \n    D   = -nan\n    Sx  = -nan\n    Sy  = -nan\n    Sz  = -nan\n    tau = -nan\n    Dye = -3.0836084709076178e-06\n    Bx  = -nan\n    By  = -nan\n    Bz  = -nan\n  Metric vars: \n    detg = -0.013641485258004134\n    g_dd = {1.3704419144398674, 0.72648439317257263, -0.14977545847945994, 1.5519036848854448, -0.1279059375237126, 0.0098544756970861524}\n    alp  = 1.1733334326053813\n    beta = {-0.025279972891629757, -0.036128251930678229, 0.02626789564860095}\n    psi4 = 1.3707181876803161\n    K_dd = {0.0049866823312980611, -0.0088790328132421596, -0.0071594582555418807, -0",
+          "application_exit": 143,
+          "checkpoint_validation_exit": 1,
+          "last_metric_history": {
+            "time": 6410.400000000966,
+            "Theta-max": 0.007456956496694831,
+            "alpha-res": 0.1757146782999608,
+            "beta-res": 0.05401596738423698,
+            "Gam-res": 0.1144664511211599,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 5.665197211730897e-05
+        }
+      }
+    },
+    "8842248": {
+      "scheduler": {
+        "job_state": "R",
+        "queue": "debug",
+        "resources_used.walltime": "00:10:00",
+        "stime": "Sun Sep 20 18:52:07 2026",
+        "etime": "Sun Sep 20 18:46:00 2026"
+      },
+      "cases": {
+        "zero_primary": {
+          "target_time_code": 50000.0,
+          "Theta_RMS_region": "exterior",
+          "log_mtime_utc": "2026-09-20T18:52:10+00:00",
+          "elapsed_wall_seconds": 0.1611707,
+          "cycle": 3,
+          "time_code": 9.600000000000001,
+          "dt": 3.2,
+          "stopping_reason": "cycle limit",
+          "invalid_state_records": [],
+          "application_exit": 0,
+          "checkpoint_validation_exit": 0,
+          "checkpoint": {
+            "time_code": 9.600000000000001,
+            "cycle": 3,
+            "passed": true,
+            "all_payload_finite": true,
+            "invalid_metric_cells_including_ghosts": 0,
+            "residual_max": 0.0,
+            "all_residuals_zero": true
+          },
+          "last_metric_history": {
+            "time": 9.600000000000001,
+            "Theta-max": 0.0,
+            "alpha-res": 0.0,
+            "beta-res": 0.0,
+            "Gam-res": 0.0,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 0.0,
+          "last_core_Theta_L2": 0.0,
+          "last_exterior_Theta_L2": 0.0,
+          "last_total_Theta_L2": 0.0,
+          "last_progress_log_time_code": 0.0
+        },
+        "theta_primary": {
+          "target_time_code": 50000.0,
+          "Theta_RMS_region": "exterior",
+          "log_mtime_utc": "2026-09-20T19:02:27+00:00",
+          "elapsed_wall_seconds": 610.3784,
+          "cycle": 9100,
+          "time_code": 29120.0,
+          "dt": 3.2,
+          "measured_time_per_wall_second": 47.83576907692755,
+          "forecast_seconds_to_target": 436.4934525547531,
+          "forecast_is_extrapolation": true,
+          "invalid_state_records": [],
+          "last_metric_history": {
+            "time": 29171.20000000444,
+            "Theta-max": 4.5825979260264e-13,
+            "alpha-res": 1.422861828359601e-12,
+            "beta-res": 1.045843519057965e-11,
+            "Gam-res": 2.158205278877058e-13,
+            "bad-metric": 0.0
+          },
+          "metric_history_all_finite": true,
+          "last_Theta_RMS": 1.2566986788830876e-13,
+          "last_core_Theta_L2": 3.352861987480739e-10,
+          "last_exterior_Theta_L2": 3.280658810472202e-08,
+          "last_total_Theta_L2": 3.280830138711785e-08
+        }
+      }
+    }
+  }
+}
