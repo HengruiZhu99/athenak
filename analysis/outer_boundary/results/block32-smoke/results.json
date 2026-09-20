@@ -1,0 +1,525 @@
+{
+  "scope": "Short eight32^3-block zero/oblique CPU MPI check; no stability clearance.",
+  "binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8",
+  "mesh": "64^3 active cells on[-1,1]^3; eight32^3 blocks; no AMR",
+  "scheme": "Exact oblique Minkowski fixture; G1; RK3; ng4; original zero_rate; linearghosts",
+  "diagnostics": "Signed stage dumps disabled; invalid state/CPBC checks retained; per-rank restarts",
+  "cases": {
+    "zero_r1": {
+      "cycle": 3,
+      "time_M": 0.018750000000000003,
+      "dt_M": 0.00625,
+      "ranks": 1,
+      "blocks": 8,
+      "block_cells": [
+        32,
+        32,
+        32
+      ],
+      "residual_values_including_ghosts": 12800000,
+      "nonzero_residual_values": 0,
+      "max_abs_residual": 0,
+      "minimum_full_metric_including_ghosts": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "max_abs_raised_tangential_normal_at_internal_edge": 0,
+      "headers_match_across_ranks": true,
+      "all_checkpoint_payload_finite": true,
+      "blocks_by_gid": [
+        {
+          "gid": 0,
+          "logical_location": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 1,
+          "logical_location": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 2,
+          "logical_location": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 3,
+          "logical_location": [
+            1,
+            1,
+            0,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 4,
+          "logical_location": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 5,
+          "logical_location": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 6,
+          "logical_location": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 7,
+          "logical_location": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        }
+      ],
+      "files": [
+        {
+          "rank": 0,
+          "name": "zero_r1/rst/rank_00000000/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 135491712,
+          "sha256": "44d759bbc12181ed8febf418c253bcf51349f6518d5f71035adb83486d1ee025"
+        }
+      ],
+      "passed": true,
+      "input_sha256": "c00074ef364315a7bebe128574219c63c9250dac6cd2ad9c3a383c1dd3b97219",
+      "launch_through_exit_seconds": 12.649045458994806,
+      "same_layout_MPI_residual_bitwise_equal": true
+    },
+    "zero_r4": {
+      "cycle": 3,
+      "time_M": 0.018750000000000003,
+      "dt_M": 0.00625,
+      "ranks": 4,
+      "blocks": 8,
+      "block_cells": [
+        32,
+        32,
+        32
+      ],
+      "residual_values_including_ghosts": 12800000,
+      "nonzero_residual_values": 0,
+      "max_abs_residual": 0,
+      "minimum_full_metric_including_ghosts": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "max_abs_raised_tangential_normal_at_internal_edge": 0,
+      "headers_match_across_ranks": true,
+      "all_checkpoint_payload_finite": true,
+      "blocks_by_gid": [
+        {
+          "gid": 0,
+          "logical_location": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 1,
+          "logical_location": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 2,
+          "logical_location": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 3,
+          "logical_location": [
+            1,
+            1,
+            0,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 4,
+          "logical_location": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 5,
+          "logical_location": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 6,
+          "logical_location": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        },
+        {
+          "gid": 7,
+          "logical_location": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "residual_sha256": "d874d23e022cd2db859e6d6825af392f8f28d0996f8be2eb6e31e01561087d67"
+        }
+      ],
+      "files": [
+        {
+          "rank": 0,
+          "name": "zero_r4/rst/rank_00000000/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 33885312,
+          "sha256": "e1b2ca95475524c3f68161165e25aff5971832c602fc44375c8f6897de63ec35"
+        },
+        {
+          "rank": 1,
+          "name": "zero_r4/rst/rank_00000001/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 33885312,
+          "sha256": "e1b2ca95475524c3f68161165e25aff5971832c602fc44375c8f6897de63ec35"
+        },
+        {
+          "rank": 2,
+          "name": "zero_r4/rst/rank_00000002/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 33885312,
+          "sha256": "e1b2ca95475524c3f68161165e25aff5971832c602fc44375c8f6897de63ec35"
+        },
+        {
+          "rank": 3,
+          "name": "zero_r4/rst/rank_00000003/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 33885312,
+          "sha256": "e1b2ca95475524c3f68161165e25aff5971832c602fc44375c8f6897de63ec35"
+        }
+      ],
+      "passed": true,
+      "input_sha256": "c00074ef364315a7bebe128574219c63c9250dac6cd2ad9c3a383c1dd3b97219",
+      "launch_through_exit_seconds": 4.069173083873466,
+      "same_layout_MPI_residual_bitwise_equal": true
+    },
+    "pulse_r1": {
+      "cycle": 3,
+      "time_M": 0.018750000000000003,
+      "dt_M": 0.00625,
+      "ranks": 1,
+      "blocks": 8,
+      "block_cells": [
+        32,
+        32,
+        32
+      ],
+      "residual_values_including_ghosts": 12800000,
+      "nonzero_residual_values": 11263991,
+      "max_abs_residual": 0.007104882712781545,
+      "minimum_full_metric_including_ghosts": {
+        "alpha": 0.9999999794753824,
+        "chi": 0.9950041598629259,
+        "gxx": 0.9999320782439293,
+        "minor2": 0.9999417438750824,
+        "detg": 0.9999999999999991
+      },
+      "max_abs_raised_tangential_normal_at_internal_edge": 0.0038631264542715337,
+      "headers_match_across_ranks": true,
+      "all_checkpoint_payload_finite": true,
+      "blocks_by_gid": [
+        {
+          "gid": 0,
+          "logical_location": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "residual_sha256": "8e11664b663032a87e932debc1b987d2eacc8ecd99ecda7a43105e52e7a5cafc"
+        },
+        {
+          "gid": 1,
+          "logical_location": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "residual_sha256": "01aff75beb23c802fe942a2f7d6ef1e38b0d73d8dc40d5462b9fb900b3462d3c"
+        },
+        {
+          "gid": 2,
+          "logical_location": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "residual_sha256": "03aeb2860cf69ffe37e558a997589f7e18c4d8690d503ccb9a5e57c8e53716fa"
+        },
+        {
+          "gid": 3,
+          "logical_location": [
+            1,
+            1,
+            0,
+            1
+          ],
+          "residual_sha256": "e41428aee5aba8e8de6c753d811387e3036de77f88003b16b2538874e2fa27cb"
+        },
+        {
+          "gid": 4,
+          "logical_location": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "residual_sha256": "bbb6577719a3e043317ce9eec30ed69aaa7ac98f50cfde893b4440cbf0bf96d0"
+        },
+        {
+          "gid": 5,
+          "logical_location": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "residual_sha256": "46d532934097a7fd4f9039cbfa8739db665b881842c1b42095224987ebcc8d06"
+        },
+        {
+          "gid": 6,
+          "logical_location": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "residual_sha256": "09bf0901a20b9dfde23ba47dd25857d1af4ce746b3750a9d3bb387cebcd20393"
+        },
+        {
+          "gid": 7,
+          "logical_location": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "residual_sha256": "4c274b051cc685f941d810b6c603255261afddf58e5a858ce6efde18bb0cf5d5"
+        }
+      ],
+      "files": [
+        {
+          "rank": 0,
+          "name": "pulse_r1/rst/rank_00000000/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 135491712,
+          "sha256": "95722daa7cb77512b98496791b942f7b256e26842b657049c2a04c27f4ad132c"
+        }
+      ],
+      "passed": true,
+      "input_sha256": "ae2fbd81905ed0a822ac6d84fa37dc64cd64c5bcb35cb242da8f615e4809dfe5",
+      "launch_through_exit_seconds": 13.03465733397752,
+      "same_layout_MPI_residual_bitwise_equal": true
+    },
+    "pulse_r4": {
+      "cycle": 3,
+      "time_M": 0.018750000000000003,
+      "dt_M": 0.00625,
+      "ranks": 4,
+      "blocks": 8,
+      "block_cells": [
+        32,
+        32,
+        32
+      ],
+      "residual_values_including_ghosts": 12800000,
+      "nonzero_residual_values": 11263991,
+      "max_abs_residual": 0.007104882712781545,
+      "minimum_full_metric_including_ghosts": {
+        "alpha": 0.9999999794753824,
+        "chi": 0.9950041598629259,
+        "gxx": 0.9999320782439293,
+        "minor2": 0.9999417438750824,
+        "detg": 0.9999999999999991
+      },
+      "max_abs_raised_tangential_normal_at_internal_edge": 0.0038631264542715337,
+      "headers_match_across_ranks": true,
+      "all_checkpoint_payload_finite": true,
+      "blocks_by_gid": [
+        {
+          "gid": 0,
+          "logical_location": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "residual_sha256": "8e11664b663032a87e932debc1b987d2eacc8ecd99ecda7a43105e52e7a5cafc"
+        },
+        {
+          "gid": 1,
+          "logical_location": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "residual_sha256": "01aff75beb23c802fe942a2f7d6ef1e38b0d73d8dc40d5462b9fb900b3462d3c"
+        },
+        {
+          "gid": 2,
+          "logical_location": [
+            0,
+            1,
+            0,
+            1
+          ],
+          "residual_sha256": "03aeb2860cf69ffe37e558a997589f7e18c4d8690d503ccb9a5e57c8e53716fa"
+        },
+        {
+          "gid": 3,
+          "logical_location": [
+            1,
+            1,
+            0,
+            1
+          ],
+          "residual_sha256": "e41428aee5aba8e8de6c753d811387e3036de77f88003b16b2538874e2fa27cb"
+        },
+        {
+          "gid": 4,
+          "logical_location": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "residual_sha256": "bbb6577719a3e043317ce9eec30ed69aaa7ac98f50cfde893b4440cbf0bf96d0"
+        },
+        {
+          "gid": 5,
+          "logical_location": [
+            1,
+            0,
+            1,
+            1
+          ],
+          "residual_sha256": "46d532934097a7fd4f9039cbfa8739db665b881842c1b42095224987ebcc8d06"
+        },
+        {
+          "gid": 6,
+          "logical_location": [
+            0,
+            1,
+            1,
+            1
+          ],
+          "residual_sha256": "09bf0901a20b9dfde23ba47dd25857d1af4ce746b3750a9d3bb387cebcd20393"
+        },
+        {
+          "gid": 7,
+          "logical_location": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "residual_sha256": "4c274b051cc685f941d810b6c603255261afddf58e5a858ce6efde18bb0cf5d5"
+        }
+      ],
+      "files": [
+        {
+          "rank": 0,
+          "name": "pulse_r4/rst/rank_00000000/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 33885312,
+          "sha256": "20613574fd04d68044cad9ec73f3fbfa6948c4749d779e1b38d413968600b059"
+        },
+        {
+          "rank": 1,
+          "name": "pulse_r4/rst/rank_00000001/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 33885312,
+          "sha256": "b913430d65edc6bb8bda4ad333b3d48c619ef344526f88bf98a369eedb81e3f0"
+        },
+        {
+          "rank": 2,
+          "name": "pulse_r4/rst/rank_00000002/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 33885312,
+          "sha256": "581a8f6850d56b4aa8934453310393c94eeaff40613a5081186944c75c5f7692"
+        },
+        {
+          "rank": 3,
+          "name": "pulse_r4/rst/rank_00000003/z4c_characteristic_cpbc_plane_pulse.00001.rst",
+          "bytes": 33885312,
+          "sha256": "0b1d05c6d8a9f12b689c631caac179a6b8acf2e41828d935cbe0ca55640dc8eb"
+        }
+      ],
+      "passed": true,
+      "input_sha256": "ae2fbd81905ed0a822ac6d84fa37dc64cd64c5bcb35cb242da8f615e4809dfe5",
+      "launch_through_exit_seconds": 4.082697374979034,
+      "same_layout_MPI_residual_bitwise_equal": true
+    }
+  },
+  "output_bytes_so_far": 1084184024,
+  "pass": true,
+  "total_test_seconds": 37.039388000033796,
+  "script_sha256": "c36b11b9d95b6d8af108ec10581c05182b8c6f4bf7b9cdf44b9a7e8296140107"
+}

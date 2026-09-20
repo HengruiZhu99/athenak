@@ -111,11 +111,19 @@ Theta alone can hide gauge growth.
 - Long zero vacuum reaches5000M /8334cycles. Every one of345600 saved residual
   entries, including all ghosts, is exactly zero; this is not a perturbation
   stability pass.
-- Oblique-metric integration on1/2/4 MPI ranks passes all nineRK stages.
+- Oblique-metric integration on1/2/4 MPI ranks passes all nineRK stages
+  (Minkowski principal-part fixture, with kappa/eta/lapse damping zero).
   The test actually activates tangential raised-normal components; all ten
   independently checked boundary-rate equations agree within1.39e-17. All288
   active stage/block arrays and72 complete post-RK residual block payloads
   agree bitwise across rank counts for the same block layout.
+- The same fixture with eight32³ blocks also passes on1/4 MPI ranks: all
+  12.8 million saved residual entries, including ghosts, are exactly zero in
+  the zero control and bitwise equal across ranks in both zero/pulse controls.
+  All checkpoint payloads are finite and full metrics positive. The pulse
+  activates an off-diagonal raised normal; it is not another zero-only test.
+  This three-step test reaches0.01875M and is not a production-damping or
+  stability pass. [Results and reproduction](results/block32-smoke/README.md).
 - Diagnostics off/on, one/four CPU MPI ranks: eight zero/pulse controls pass;
   residual checkpoint payloads, including ghosts, are bitwise identical for a
   fixed block layout. This does not require equivalence after changing block sizes.
