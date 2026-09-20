@@ -1,0 +1,38 @@
+#!/bin/bash -l
+#PBS -A MHDTidal
+#PBS -N residual_G2domains
+#PBS -q debug
+#PBS -l select=1
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+source /home/hzhu/athenak_env
+export MPICH_GPU_SUPPORT_ENABLED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export SYCL_DEVICE_FILTER=level_zero:gpu ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+cd "$PBS_O_WORKDIR"
+ATHENA_EXE=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review/executables/athena_trumpet_8b694211
+EXPECTED_SHA256=94fd7c3670c4e69e20bedf3c8d24b9b19aaec7e3cd4dad1a5a6de87a9f608130
+[[ "$(sha256sum "$ATHENA_EXE" | awk '{print $1}')" == "$EXPECTED_SHA256" ]]
+root=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review
+runroot="$root/runs/residual_G2domains_${PBS_JOBID%%.*}"
+mkdir "$runroot"
+cp submit.pbs cases.json *.athinput "$runroot/"
+bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100
+status=0
+for name in small_dx025 wide_dx025 small_dx0125; do
+ work="$runroot/$name"; mkdir "$work"
+ cp "$PBS_O_WORKDIR/$name.athinput" "$work/input.athinput"
+ date -u > "$work/start.txt"
+ set +e
+ mpiexec -n 8 -ppn 8 --cpu-bind "$bind" gpu_tile_compact.sh "$ATHENA_EXE" -i "$work/input.athinput" -d "$work" -t 00:17:00 > "$work/run.log" 2>&1
+ rc=$?; printf '%s\n' "$rc" > "$work/exit_code.txt"
+ set -e
+ date -u > "$work/end.txt"
+ if [[ "$rc" -ne 0 ]]; then status=1; fi
+ printf '%s exit=%s\n' "$name" "$rc"
+done
+printf '%s\n' "$status" > "$runroot/suite_exit_code.txt"
+exit "$status"

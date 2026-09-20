@@ -1,0 +1,282 @@
+{
+  "baseline": [
+    {
+      "index": 0,
+      "eigenvalue_40steps": 1.1496435994428778,
+      "gamma": 0.04648399360470152,
+      "efold_M": 21.512781550225004,
+      "amplitude_convergence": {
+        "0.003": {
+          "max_abs": 3.5061872478703293e-06,
+          "relative_l2": 1.6187227680671755e-06,
+          "relative_max": 3.0497957996440768e-06,
+          "bitwise_equal": false,
+          "active_max": 2.214096961328238e-11
+        },
+        "0.0003": {
+          "max_abs": 5.210058635407577e-06,
+          "relative_l2": 2.3003929806527257e-06,
+          "relative_max": 4.531892615925435e-06,
+          "bitwise_equal": false,
+          "active_max": 4.039710840147981e-11
+        }
+      },
+      "eigen_residual_40steps": {
+        "max_abs": 1.5281453847361404e-06,
+        "relative_l2": 9.671244806781952e-07,
+        "relative_max": 1.3292340212885856e-06,
+        "bitwise_equal": false,
+        "active_max": 4.369204871165766e-09
+      },
+      "eigenvalue_one_step_expected": 1.0034923837309309,
+      "eigen_residual_one_step": {
+        "max_abs": 1.2815668465337993e-06,
+        "relative_l2": 5.208406828363055e-07,
+        "relative_max": 1.2771066998725018e-06,
+        "bitwise_equal": false,
+        "active_max": 1.762996747287776e-10
+      },
+      "one_step_rayleigh_full": 1.0034923751125289,
+      "one_step_gamma_full": 0.046483879092593654,
+      "one_step_rayleigh_active": 1.003492384275281,
+      "one_step_gamma_active": 0.04648400083744258,
+      "nonlinear100steps": {
+        "max_abs": 7.40011335569335e-05,
+        "relative_l2": 3.119099372447547e-05,
+        "relative_max": 5.221921128121432e-05,
+        "bitwise_equal": false,
+        "active_max": 3.984698263378604e-08
+      },
+      "stage1_active_growth_budget": {
+        "volume": 0.048864125990433986,
+        "KO": -0.001853642896637052,
+        "boundary": -0.0011519856149110237,
+        "final_rhs": 0.04585849747888592
+      },
+      "stage1_projection_change": {
+        "max_abs": 0.0006343330770573197,
+        "relative_l2": 0.0023737079747232917,
+        "relative_max": 0.036407259603437235,
+        "bitwise_equal": false,
+        "active_max": 0.0006343330770573197
+      },
+      "stage1_projection_growth_rate": 0.0006255034134746935
+    },
+    {
+      "index": 1,
+      "eigenvalue_40steps": 1.1131603634096114,
+      "gamma": 0.03573438134786856,
+      "efold_M": 27.984253883260433,
+      "amplitude_convergence": {
+        "0.003": {
+          "max_abs": 5.939275159905222e-06,
+          "relative_l2": 4.232772340582233e-06,
+          "relative_max": 5.335477146863023e-06,
+          "bitwise_equal": false,
+          "active_max": 2.4387897951116955e-11
+        },
+        "0.0003": {
+          "max_abs": 4.28606554564448e-06,
+          "relative_l2": 2.7220705483685047e-06,
+          "relative_max": 3.850357357469661e-06,
+          "bitwise_equal": false,
+          "active_max": 3.7251349756050444e-11
+        }
+      },
+      "eigen_residual_40steps": {
+        "max_abs": 2.056212823717947e-06,
+        "relative_l2": 2.1960122793671727e-06,
+        "relative_max": 1.8471847285504894e-06,
+        "bitwise_equal": false,
+        "active_max": 3.828085731521699e-08
+      },
+      "eigenvalue_one_step_expected": 1.0026836732223159,
+      "eigen_residual_one_step": {
+        "max_abs": 7.85203956193143e-07,
+        "relative_l2": 5.549867852472327e-07,
+        "relative_max": 7.831023653449345e-07,
+        "bitwise_equal": false,
+        "active_max": 1.5706484099431428e-09
+      },
+      "one_step_rayleigh_full": 1.002683662142398,
+      "one_step_gamma_full": 0.03573423401103241,
+      "one_step_rayleigh_active": 1.0026836762343638,
+      "one_step_gamma_active": 0.035734421401017236,
+      "nonlinear100steps": {
+        "max_abs": 0.00013339667674810984,
+        "relative_l2": 6.980882983290714e-05,
+        "relative_max": 0.00010203535400573497,
+        "bitwise_equal": false,
+        "active_max": 8.523746027923329e-08
+      },
+      "stage1_active_growth_budget": {
+        "volume": 0.03687451963746289,
+        "KO": -0.0006251982804548117,
+        "boundary": -0.0005120264413266987,
+        "final_rhs": 0.035737294915681374
+      },
+      "stage1_projection_change": {
+        "max_abs": 3.48128182468062e-05,
+        "relative_l2": 0.00033031661323077707,
+        "relative_max": 0.0019765165044287204,
+        "bitwise_equal": false,
+        "active_max": 3.48128182468062e-05
+      },
+      "stage1_projection_growth_rate": -2.87319176553452e-06
+    }
+  ],
+  "linear_ghosts": [
+    {
+      "index": 0,
+      "gamma": 0.04559075064230512,
+      "mu": 1.1465669903596762,
+      "eigen_residual": {
+        "max_abs": 2.6092343733408185e-06,
+        "relative_l2": 9.261783402473313e-07,
+        "relative_max": 2.2756929122146676e-06,
+        "bitwise_equal": false,
+        "active_max": 2.6092343733408185e-06
+      },
+      "amplitude_convergence": {
+        "max_abs": 4.591919922081189e-07,
+        "relative_l2": 2.5891806281937875e-07,
+        "relative_max": 4.0049320769332976e-07,
+        "bitwise_equal": false,
+        "active_max": 2.780522826428822e-07
+      },
+      "one_step_residual": {
+        "max_abs": 6.788282966851966e-07,
+        "relative_l2": 8.061969942721532e-08,
+        "relative_max": 6.765111386091819e-07,
+        "bitwise_equal": false,
+        "active_max": 1.1487303031021412e-07
+      },
+      "one_step_gamma_active": 0.045590803729644684,
+      "cosine_with_cubic_active": 0.9998902726729881
+    },
+    {
+      "index": 1,
+      "gamma": 0.031854805728349644,
+      "mu": 1.1002796966719646,
+      "eigen_residual": {
+        "max_abs": 6.310012618637728e-05,
+        "relative_l2": 2.0981853207387938e-05,
+        "relative_max": 5.7349168922445214e-05,
+        "bitwise_equal": false,
+        "active_max": 6.310012618637728e-05
+      },
+      "amplitude_convergence": {
+        "max_abs": 3.160258166268193e-07,
+        "relative_l2": 2.068609905967735e-07,
+        "relative_max": 2.872188979989376e-07,
+        "bitwise_equal": false,
+        "active_max": 2.319703318320876e-07
+      },
+      "one_step_residual": {
+        "max_abs": 1.8327154191422057e-05,
+        "relative_l2": 1.5564676022793826e-06,
+        "relative_max": 1.8283420858880346e-05,
+        "bitwise_equal": false,
+        "active_max": 1.9079211151518116e-06
+      },
+      "one_step_gamma_active": 0.03185479011453981,
+      "cosine_with_cubic_active": 0.9998388660329556
+    }
+  ],
+  "scaled_kappa03": [
+    {
+      "mode": 0,
+      "gamma": 0.03514495466230606,
+      "mu": 1.1111937234366638,
+      "eigen_residual": {
+        "max_abs": 2.510709800722377e-06,
+        "relative_l2": 1.4005452848112184e-06,
+        "relative_max": 2.2594708265245916e-06,
+        "bitwise_equal": false,
+        "active_max": 1.8425809103863634e-09
+      },
+      "amplitude_convergence": {
+        "max_abs": 6.958056282702074e-06,
+        "relative_l2": 3.2613197791070517e-06,
+        "relative_max": 6.261796845640705e-06,
+        "bitwise_equal": false,
+        "active_max": 4.7921072546339843e-11
+      },
+      "one_step_eigen_residual": {
+        "max_abs": 1.1392511130234317e-06,
+        "relative_l2": 5.622365452417234e-07,
+        "relative_max": 1.1377506421758854e-06,
+        "bitwise_equal": false,
+        "active_max": 4.6005228326959774e-11
+      },
+      "one_step_gamma_active": 0.03514494480046906,
+      "physical_constraints": {
+        "H": {
+          "initial_rms": 0.004449913632650182,
+          "multiplier": 1.1111936789542864,
+          "relative_eigen_residual": 1.7048018803196215e-07
+        },
+        "M_cov": {
+          "initial_rms": 0.0017879531348772477,
+          "multiplier": 1.111193771511711,
+          "relative_eigen_residual": 2.7025473395628394e-07
+        },
+        "Q_contrav": {
+          "initial_rms": 0.0017414285314166823,
+          "multiplier": 1.1111936586666387,
+          "relative_eigen_residual": 1.6947747457711833e-07
+        }
+      }
+    },
+    {
+      "mode": 1,
+      "gamma": 0.024353272133819864,
+      "mu": 1.0757948851688832,
+      "eigen_residual": {
+        "max_abs": 2.664096206382143e-06,
+        "relative_l2": 1.5850636016968426e-06,
+        "relative_max": 2.4763979110794164e-06,
+        "bitwise_equal": false,
+        "active_max": 3.5574997002060793e-09
+      },
+      "amplitude_convergence": {
+        "max_abs": 5.483546718386496e-06,
+        "relative_l2": 3.5441226358503196e-06,
+        "relative_max": 5.097205951427711e-06,
+        "bitwise_equal": false,
+        "active_max": 4.680300761193686e-11
+      },
+      "one_step_eigen_residual": {
+        "max_abs": 8.406019204043602e-07,
+        "relative_l2": 4.822002602237132e-07,
+        "relative_max": 8.398345930630144e-07,
+        "bitwise_equal": false,
+        "active_max": 9.045984022070484e-11
+      },
+      "one_step_gamma_active": 0.02435325606796378,
+      "physical_constraints": {
+        "H": {
+          "initial_rms": 0.0032690906092213306,
+          "multiplier": 1.0757948487784197,
+          "relative_eigen_residual": 4.604938240613338e-07
+        },
+        "M_cov": {
+          "initial_rms": 0.0017244502870644143,
+          "multiplier": 1.0757948036127207,
+          "relative_eigen_residual": 5.591548759719513e-07
+        },
+        "Q_contrav": {
+          "initial_rms": 0.0016656697093044718,
+          "multiplier": 1.0757948422509425,
+          "relative_eigen_residual": 3.529787355270088e-07
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Finite-difference approximation to complete discrete map, not automatic differentiation",
+    "Single CPU process, single16^3block,dx.25M,box+-2M only",
+    "Finite seed-dependent Krylov subspace, not a complete spectrum",
+    "No production or queue changes; no spinning-background test"
+  ]
+}

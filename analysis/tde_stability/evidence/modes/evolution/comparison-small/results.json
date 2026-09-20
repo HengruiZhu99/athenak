@@ -1,0 +1,173 @@
+{
+  "G2 CPU CFL0.15": {
+    "directory": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/evolution/cpu-small-dx025",
+    "last_history_time_M": 244.2749999999744,
+    "stop": "walltime",
+    "first_recorded_invalid_time_M": null,
+    "finite_histories": true,
+    "max_recorded_bad_metric": 0.0,
+    "final_Theta_max": 3.632411113976787e-09,
+    "final_masked_Theta_L2": 1.913257118671543e-08,
+    "growth_windows": [
+      {
+        "range_M": [
+          50.02500000000118,
+          98.9999999999964
+        ],
+        "gamma_per_M": 0.012387296294760592,
+        "R2": 0.9662940864527713
+      },
+      {
+        "range_M": [
+          100.0124999999963,
+          199.0124999999813
+        ],
+        "gamma_per_M": 0.035317408981510506,
+        "R2": 0.9998826742498661
+      },
+      {
+        "range_M": [
+          200.0249999999811,
+          244.2749999999744
+        ],
+        "gamma_per_M": 0.03573627642244877,
+        "R2": 0.9999999976789163
+      }
+    ],
+    "primitive_recovery_error_count": 0,
+    "first_recovery_error": null,
+    "metric_input_diagnostic_events": []
+  },
+  "G2 CPU CFL0.30": {
+    "directory": "/Users/hz0693/research/TDE/athenak-review/review/stability-isolation-20260919/gauge-slow/shift_Gamma2",
+    "last_history_time_M": 700.0500000000593,
+    "stop": "invalid state",
+    "first_recorded_invalid_time_M": 701.0250000000599,
+    "finite_histories": true,
+    "max_recorded_bad_metric": 0.0,
+    "final_Theta_max": 0.1449103429186548,
+    "final_masked_Theta_L2": 0.5881764641212403,
+    "growth_windows": [
+      {
+        "range_M": [
+          50.02500000000047,
+          99.00000000000232
+        ],
+        "gamma_per_M": 0.01238789905259956,
+        "R2": 0.965574740262266
+      },
+      {
+        "range_M": [
+          100.0500000000024,
+          199.0499999999927
+        ],
+        "gamma_per_M": 0.035372241049235656,
+        "R2": 0.9998925483854642
+      },
+      {
+        "range_M": [
+          200.0249999999925,
+          299.9999999999774
+        ],
+        "gamma_per_M": 0.03574024764024967,
+        "R2": 0.9999999975698073
+      },
+      {
+        "range_M": [
+          301.0499999999772,
+          499.0499999999472
+        ],
+        "gamma_per_M": 0.03593258865977444,
+        "R2": 0.9999921520339923
+      },
+      {
+        "range_M": [
+          500.0249999999471,
+          700.0500000000593
+        ],
+        "gamma_per_M": 0.040515381496368616,
+        "R2": 0.9993712766905567
+      }
+    ],
+    "primitive_recovery_error_count": 1002,
+    "first_recovery_error": {
+      "kind": "NANS_IN_CONS",
+      "coordinates_M": [
+        2.875,
+        -2.875,
+        -2.875
+      ],
+      "detg": -0.011159313451509223,
+      "preceding_log_time_M": 597.0,
+      "following_log_time_M": 598.05,
+      "time_note": "Merged-log brackets only; not an exact event time or globally first event."
+    },
+    "metric_input_diagnostic_events": []
+  },
+  "G2 GPU CFL0.15": {
+    "directory": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/evolution/gpu-8840650/small_dx025",
+    "last_history_time_M": 671.0250000002243,
+    "stop": "invalid state",
+    "first_recorded_invalid_time_M": 672.0000000002249,
+    "finite_histories": true,
+    "max_recorded_bad_metric": 0.0,
+    "final_Theta_max": 0.05259734796216103,
+    "final_masked_Theta_L2": 0.2715140592293025,
+    "growth_windows": [
+      {
+        "range_M": [
+          50.02500000000118,
+          98.9999999999964
+        ],
+        "gamma_per_M": 0.012479585155397176,
+        "R2": 0.9661534064739388
+      },
+      {
+        "range_M": [
+          100.0124999999963,
+          199.0124999999813
+        ],
+        "gamma_per_M": 0.03533301142100805,
+        "R2": 0.999888826422664
+      },
+      {
+        "range_M": [
+          200.0249999999811,
+          299.9999999999993
+        ],
+        "gamma_per_M": 0.03574831094565083,
+        "R2": 0.9999999779382898
+      },
+      {
+        "range_M": [
+          301.0124999999999,
+          499.01250000012
+        ],
+        "gamma_per_M": 0.036239884402972045,
+        "R2": 0.9999535463517971
+      },
+      {
+        "range_M": [
+          500.0250000001206,
+          671.0250000002243
+        ],
+        "gamma_per_M": 0.042328997542199154,
+        "R2": 0.9994551816903197
+      }
+    ],
+    "primitive_recovery_error_count": 8002,
+    "first_recovery_error": {
+      "kind": "NANS_IN_CONS",
+      "coordinates_M": [
+        -2.875,
+        -2.875,
+        -2.875
+      ],
+      "detg": -0.02712349163320482,
+      "preceding_log_time_M": 590.025,
+      "following_log_time_M": 591.0,
+      "time_note": "Merged-log brackets only; not an exact event time or globally first event."
+    },
+    "metric_input_diagnostic_events": []
+  }
+}

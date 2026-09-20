@@ -1,0 +1,78 @@
+diff --git a/src/main.cpp b/src/main.cpp
+index 5016372e..4a7b4198 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -30,6 +30,9 @@
+ #include <memory>
+ #include <cstdio> // sscanf
+ #include <fstream>  // Include this for std::ifstream
++#include <cmath>
++#include <iomanip>
++#include "z4c/z4c.hpp"
+ 
+ // Athena headers
+ #include "athena.hpp"
+@@ -351,8 +354,63 @@ int main(int argc, char *argv[]) {
+   //    3. Any final analysis or diagnostics run in Driver::Finalize()
+ 
+   pdriver->Initialize(pmesh, pinput, pout, res_flag);
++
++  // Isolated mode-analysis worktree only: import the COMPLETE residual state
++  // after initialization, so initialization does not re-extrapolate projected
++  // ghosts. No equation, stencil, task dependency, or RK update is modified.
++  const bool mode_analysis = pinput->GetOrAddBoolean("problem", "mode_analysis", false);
++  std::string mode_output;
++  if (mode_analysis) {
++    if (global_variable::nranks != 1 || pmesh->nmb_total != 1 ||
++        pmesh->multilevel || pmesh->pmb_pack->pz4c == nullptr || sizeof(Real) != 8 ||
++        !pinput->GetBoolean("problem", "pure_background") ||
++        !pinput->GetBoolean("problem", "zero_tmunu") ||
++        !pinput->GetBoolean("mhd", "zero_tmunu_feedback") ||
++        pinput->GetString("problem", "bh_background") != "schwarzschild_trumpet") {
++      std::cerr << "Mode hook requires one-rank/single-block double-precision "
++                << "fixed-mesh vacuum Schwarzschild trumpet.\n";
++      std::exit(EXIT_FAILURE);
++    }
++    const auto input = pinput->GetOrAddString("problem", "mode_input_state", "");
++    mode_output = pinput->GetOrAddString("problem", "mode_output_state", "mode_state.bin");
++    auto *z = pmesh->pmb_pack->pz4c;
++    if (!input.empty()) {
++      auto h = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), z->u0);
++      const std::size_t count = h.extent(1)*h.extent(2)*h.extent(3)*h.extent(4);
++      if (!h.span_is_contiguous()) std::exit(EXIT_FAILURE);
++      std::ifstream stream(input, std::ios::binary | std::ios::ate);
++      if (!stream || stream.tellg() != static_cast<std::streamoff>(count*sizeof(Real))) {
++        std::cerr << "Mode input byte count mismatch.\n";
++        std::exit(EXIT_FAILURE);
++      }
++      stream.seekg(0);
++      stream.read(reinterpret_cast<char*>(h.data()), count*sizeof(Real));
++      if (!stream) std::exit(EXIT_FAILURE);
++      for (std::size_t i=0; i<count; ++i) {
++        if (!std::isfinite(h.data()[i])) std::exit(EXIT_FAILURE);
++      }
++      Kokkos::deep_copy(z->u0, h);
++      // Refresh reconstructed full metric and ADM cache; preserve supplied
++      // ghost state. Initialization has already completed/cleared exchanges.
++      z->Z4cToADM(pmesh->pmb_pack);
++    }
++  }
++
+   pdriver->Execute(pmesh, pinput, pout);
+   pdriver->Finalize(pmesh, pinput, pout);
++  if (mode_analysis) {
++    auto h = Kokkos::create_mirror_view_and_copy(
++        Kokkos::HostSpace(), pmesh->pmb_pack->pz4c->u0);
++    const std::size_t count = h.extent(1)*h.extent(2)*h.extent(3)*h.extent(4);
++    std::ofstream output(mode_output, std::ios::binary);
++    output.write(reinterpret_cast<const char*>(h.data()), count*sizeof(Real));
++    if (!output) std::exit(EXIT_FAILURE);
++    std::ofstream metadata(mode_output + ".json");
++    metadata << std::setprecision(17) << "{\"shape\":[1," << h.extent(1)
++      << ',' << h.extent(2) << ',' << h.extent(3) << ',' << h.extent(4)
++      << "],\"time\":" << pmesh->time << ",\"cycle\":" << pmesh->ncycle
++      << ",\"dt\":" << pmesh->dt << ",\"scalar_bytes\":8,\"includes_ghosts\":true}\n";
++  }
+ 
+   //--- Step 8. -------------------------------------------------------------------------
+   // clean up, and terminate

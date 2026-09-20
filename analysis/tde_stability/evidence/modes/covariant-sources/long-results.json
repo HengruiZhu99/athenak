@@ -1,0 +1,175 @@
+{
+  "configuration": "G2, coupled covariant source prototype, constant sigma=1, dx=0.25M, dt=0.0375M",
+  "time_M": 1000.0,
+  "target_M": 1000,
+  "termination": "simulation time target",
+  "exit_code": 0,
+  "restart_at_M": 300,
+  "history_finite": true,
+  "invalid_or_recovery_log": false,
+  "final_checkpoint": {
+    "time_M": 1000.0,
+    "cycle": 26701,
+    "blocks": 1,
+    "ranks": 1,
+    "matching_headers": true,
+    "all_payload_finite": true,
+    "invalid_metric_cells_including_ghosts": 0,
+    "invalid_metric_samples": [],
+    "minimum": {
+      "alpha": 0.17797387640071613,
+      "chi": 0.03167470067193581,
+      "gxx": 0.9999999083942537,
+      "second_minor": 0.9999999307077962,
+      "determinant": 0.9999999999999996
+    },
+    "passed": true,
+    "note": "Saved checkpoint validity only; not a perturbation-stability result."
+  },
+  "final": {
+    "Theta_max": 2.147076084907554e-10,
+    "Theta_exterior_L2": 6.904232842131083e-10,
+    "Theta_interior_L2": 6.165518636873757e-10,
+    "alpha_res_max": 8.303053800062798e-10,
+    "Gamma_res_max": 4.199177001273842e-10,
+    "passive_fluid_rho_max": 1.186435132690878e+75,
+    "badmetrics": 0.0
+  },
+  "windows": {
+    "Theta_max": [
+      {
+        "window_M": [
+          100,
+          200
+        ],
+        "actual_window_M": [
+          100.0124999999963,
+          199.0124999999813
+        ],
+        "gamma_per_M": 0.003264812746670971,
+        "log_fit_R2": 0.9954466905185578,
+        "last_to_first_ratio": 1.4134332535078409
+      },
+      {
+        "window_M": [
+          200,
+          300
+        ],
+        "actual_window_M": [
+          200.0249999999811,
+          300.0
+        ],
+        "gamma_per_M": 0.0034268872540791483,
+        "log_fit_R2": 0.9942274384394759,
+        "last_to_first_ratio": 1.4420597902098276
+      },
+      {
+        "window_M": [
+          300,
+          500
+        ],
+        "actual_window_M": [
+          300.0,
+          499.0218750001179
+        ],
+        "gamma_per_M": 0.005214224892420827,
+        "log_fit_R2": 0.9982844181347899,
+        "last_to_first_ratio": 2.710647375247869
+      },
+      {
+        "window_M": [
+          500,
+          750
+        ],
+        "actual_window_M": [
+          500.0343750001185,
+          749.0343750002695
+        ],
+        "gamma_per_M": 0.003974798247115418,
+        "log_fit_R2": 0.9975908997535775,
+        "last_to_first_ratio": 2.699633927792405
+      },
+      {
+        "window_M": [
+          750,
+          1000
+        ],
+        "actual_window_M": [
+          750.0093750002701,
+          1000.0
+        ],
+        "gamma_per_M": 0.0037213294235697632,
+        "log_fit_R2": 0.998555324012602,
+        "last_to_first_ratio": 2.5636357686563462
+      }
+    ],
+    "Theta_exterior_L2": [
+      {
+        "window_M": [
+          100,
+          200
+        ],
+        "actual_window_M": [
+          100.0124999999963,
+          199.0124999999813
+        ],
+        "gamma_per_M": 0.007638282047159866,
+        "log_fit_R2": 0.988109131151951,
+        "last_to_first_ratio": 2.148485548243971
+      },
+      {
+        "window_M": [
+          200,
+          300
+        ],
+        "actual_window_M": [
+          200.0249999999811,
+          300.0
+        ],
+        "gamma_per_M": 0.007886467855932713,
+        "log_fit_R2": 0.9710491184723389,
+        "last_to_first_ratio": 2.1518121039141995
+      },
+      {
+        "window_M": [
+          300,
+          500
+        ],
+        "actual_window_M": [
+          300.0,
+          499.0218750001179
+        ],
+        "gamma_per_M": 0.005472901198239751,
+        "log_fit_R2": 0.9220735835530625,
+        "last_to_first_ratio": 2.254276189322108
+      },
+      {
+        "window_M": [
+          500,
+          750
+        ],
+        "actual_window_M": [
+          500.0343750001185,
+          749.0343750002695
+        ],
+        "gamma_per_M": 0.004470231089654905,
+        "log_fit_R2": 0.9877170294463355,
+        "last_to_first_ratio": 3.0548881660298877
+      },
+      {
+        "window_M": [
+          750,
+          1000
+        ],
+        "actual_window_M": [
+          750.0093750002701,
+          1000.0
+        ],
+        "gamma_per_M": 0.0043653060613482635,
+        "log_fit_R2": 0.9989321864361459,
+        "last_to_first_ratio": 2.9236582316203195
+      }
+    ]
+  },
+  "interpretation": "Valid finite target completion, not stability. Fits vary with the window and are not one identified eigenmode. A separately verified oscillatory growing mode has gamma about 0.0018/M. Matter feedback is disabled; passive fluid behavior is not atmosphere validation."
+}

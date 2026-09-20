@@ -1,0 +1,145 @@
+{
+  "zero_full_inputs": [
+    {
+      "cycle": 0,
+      "stage": 1,
+      "full_background_bytes_equal": true,
+      "finite": true
+    },
+    {
+      "cycle": 0,
+      "stage": 2,
+      "full_background_bytes_equal": true,
+      "finite": true
+    },
+    {
+      "cycle": 0,
+      "stage": 3,
+      "full_background_bytes_equal": true,
+      "finite": true
+    },
+    {
+      "cycle": 1,
+      "stage": 1,
+      "full_background_bytes_equal": true,
+      "finite": true
+    },
+    {
+      "cycle": 1,
+      "stage": 2,
+      "full_background_bytes_equal": true,
+      "finite": true
+    },
+    {
+      "cycle": 1,
+      "stage": 3,
+      "full_background_bytes_equal": true,
+      "finite": true
+    },
+    {
+      "cycle": 2,
+      "stage": 1,
+      "full_background_bytes_equal": true,
+      "finite": true
+    },
+    {
+      "cycle": 2,
+      "stage": 2,
+      "full_background_bytes_equal": true,
+      "finite": true
+    },
+    {
+      "cycle": 2,
+      "stage": 3,
+      "full_background_bytes_equal": true,
+      "finite": true
+    }
+  ],
+  "default_off_serialized_arrays": {
+    "count": 54,
+    "all_equal": true
+  },
+  "matter_initial_rhs_bytes_equal": true,
+  "zero_forensic_signed_sum": {
+    "Khat": {
+      "records": 12,
+      "max_absolute_difference": 3.80402e-19,
+      "max_relative_to_term_magnitudes": 1.0
+    },
+    "Theta": {
+      "records": 12,
+      "max_absolute_difference": 2.49717e-24,
+      "max_relative_to_term_magnitudes": 1.0
+    }
+  },
+  "late_on_forensic_signed_sum": {
+    "Khat": {
+      "records": 4,
+      "max_absolute_difference": 3.3832700000000007e-06,
+      "max_relative_to_term_magnitudes": 0.043319890258207185
+    },
+    "Theta": {
+      "records": 4,
+      "max_absolute_difference": 1.1683094000000002e-05,
+      "max_relative_to_term_magnitudes": 0.17257691945335848
+    }
+  },
+  "late_off_forensic_signed_sum": {
+    "Khat": {
+      "records": 4,
+      "max_absolute_difference": 3.3832700000000016e-06,
+      "max_relative_to_term_magnitudes": 0.046561059619272975
+    },
+    "Theta": {
+      "records": 4,
+      "max_absolute_difference": 1.1683e-05,
+      "max_relative_to_term_magnitudes": 0.17345588923053168
+    }
+  },
+  "forensic_sum_scope": "Local diagnostic scalar sums omit the separate KO contribution while rhs values include it. Nonzero late full-sum differences are not source defects; compare matched on/off increments below. Zero residual tiny differences reflect existing independently recomputed algebraic diagnostics.",
+  "forensic_covariant_on_off_increments": [
+    {
+      "field": "Khat_res",
+      "component": "Khat",
+      "actual_increment": -5.4366100000000005e-06,
+      "printed_source_increment": -5.43661e-06,
+      "absolute_error": 8.470329472543003e-22
+    },
+    {
+      "field": "Khat_res",
+      "component": "Theta",
+      "actual_increment": 3.4349999999999764e-07,
+      "printed_source_increment": 3.43594e-07,
+      "absolute_error": 9.400000000238299e-11
+    },
+    {
+      "field": "Gam_res",
+      "component": "Khat",
+      "actual_increment": -1.8758600000000007e-06,
+      "printed_source_increment": -1.87586e-06,
+      "absolute_error": 6.352747104407253e-22
+    },
+    {
+      "field": "Gam_res",
+      "component": "Theta",
+      "actual_increment": 4.7455000000000006e-06,
+      "printed_source_increment": 4.74546e-06,
+      "absolute_error": 4.0000000000257115e-11
+    },
+    {
+      "field": "Theta_res",
+      "component": "Khat",
+      "actual_increment": 1.491500000000001e-07,
+      "printed_source_increment": 1.4915e-07,
+      "absolute_error": 7.940933880509066e-23
+    },
+    {
+      "field": "Theta_res",
+      "component": "Theta",
+      "actual_increment": 2.506189999999999e-06,
+      "printed_source_increment": 2.50622e-06,
+      "absolute_error": 3.000000000082811e-11
+    }
+  ],
+  "binary_sha256": "7456bbb2cbcef90cdfddbe6d1515220f5e4e02981b799c71e40adb81bf52cd8f"
+}

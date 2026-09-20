@@ -4,6 +4,8 @@ Two opt-in operator changes are being evaluated on `project/tde`. Both default o
 
 The completed [control comparison](CONTROL_RESULTS.md) includes different gauges, ghost extrapolation, inner/outer sponges, constraint damping, dissipation, timestep and resolution. The [full-phase upstream audit](UPSTREAM.md) localizes late positiveTheta work to coupled conformal-factor/shear terms in the nearest puncture cells. This is distinct from both the initial seed and later invalid outer ghosts. No tested variant qualifies for production promotion.
 
+The [complete-timestep mode experiment](MODES.md) independently verifies growing physical constraint modes even with the G=2 gauge, linear ghosts, lapse-adjusted damping or coupled covariant sources. The strongest tested damping reaches1000M with valid metrics but still grows. Exact equilibrium preservation and principal-symbol checks alone do not establish perturbation stability. The requested Liu spinning-hole evolution remains conditional on passing the vacuum tests.
+
 `z4c/residual_hamiltonian_balance=true` uses alpha_full*(Ht_full-Ht_background)/2 in the Theta equation. For a known vacuum background Ht_background=0 analytically; this removes the artificial delta_alpha*Ht_background_discrete/2 gauge source. The explicit -8*pi*alpha_full*E matter term is retained. The problem generator currently restricts this option to its direct Schwarzschild trumpet background. It does not reset residuals or enforce a zero physical Hamiltonian perturbation.
 
 `z4c/user_rhs_after_boundary=true` changes the task dependencies to volume RHS, characteristic boundary RHS, additive user RHS, then RK. The old order projects out incoming components of an earlier sponge source. The new order retains the full discrete source including derivatives of its spatial profile. This changes the boundary datum and does not automatically preserve source terms internal to the volume calculation. It also does not prove the boundary operator is stable.
@@ -46,7 +48,7 @@ Current detailed records are under review/stability-isolation-20260919 and revie
 - The source-order regression checks five configurations over all three RK stages. Defaults agree bitwise with explicit legacy ordering; without a user source, the orderings agree bitwise. The retained discrete characteristic source agrees within 1.1e-22 for a source of magnitude 1.9e-7.
 - The Hamiltonian regression checks seven configurations. The initial pure-lapse volume Theta source becomes exactly zero; a genuine constraint perturbation and explicit matter source remain. The signed diagnostic term decomposition is checked against the actual volume RHS. Identical Hamiltonians cancel exactly for finite identical floating-point evaluations; this does not make the entire perturbed RHS or the boundary update zero.
 - Sixteen MPI controls cover zero and pulsed vacuum, one and four ranks, with each option separately and together. Active volume RHS and post-recast arrays agree bitwise across the rank decompositions through three stages. Combined four-rank controls reach 20M with zero residual preserved exactly and the pulse remaining finite.
-- Aurora operator validation8840315 completed seven of eight20M cases. All four zero controls are bitwise zero on all eight ranks through saved first/final RK stages. The combined pulse's initial volumeTheta source is exactly zero; the retained source agrees within3.31e-24. CPU/GPU first-stage differences are at most4.67e-15 in RHS and2.22e-16 in state. The isolated Hamiltonian-pulse case stopped at time0 because initialization exceeded its75-second application cap; it is incomplete, not a passed20M test. Dedicated follow-up8840368 uses the identical input/executable with a larger application time cap and is tracked separately in the local gpu-operators records. [Compact original results](evidence/gpu-operator-regression.json) preserve the incomplete case.
+- Aurora operator validation8840315 completed seven of eight20M cases. All four zero controls are bitwise zero on all eight ranks through saved first/final RK stages. The combined pulse's initial volumeTheta source is exactly zero; the retained source agrees within3.31e-24. CPU/GPU first-stage differences are at most4.67e-15 in RHS and2.22e-16 in state. The isolated Hamiltonian-pulse case stopped at time0 because initialization exceeded its75-second application cap; it remains incomplete in the [original results](evidence/gpu-operator-regression.json). Dedicated follow-up8840368 subsequently reached20M with the identical input/executable, all eight ranks finite, zero bad metrics and exactly zero initial volumeTheta source. The [combined coverage record](evidence/gpu-operator-coverage.json) now validates all eight short operator cases without rewriting the original outcome. This is not a long-time stability pass.
 - These checks do not establish stability on GPUs, across refinement interfaces, or with an evolved star. They do not justify changing production physics. Long-time controls, resolved boundary layers, physical matter, and refinement remain distinct validation steps.
 
 ## Reproducing the wider pulse control
@@ -72,3 +74,15 @@ python3 tst/regression/z4c_metric_input_diagnostic.py --exe /path/to/athena --ou
 ```
 
 This logger was validated on OpenMP; MPI/GPU execution remains untested. `evidence/metric-input-event.json` and `metric-input-regression.json` preserve the observed event and equality checks.
+
+## Saved checkpoint admissibility
+
+`python3 analysis/tde_stability/check_checkpoint.py RUN --ranks N` checks a complete saved uniform direct M=R0=1 Schwarzschild trumpet cohort, including all-field finiteness, matching rank headers and positive-definite active/ghost metrics. Scope is serial output or exactly one block per rank; it rejects AMR and unsupported geometry/lapse reconstruction. It is not the production checkpoint continuation helper.
+
+Eight on-disk parser regressions cover valid serial/MPI states, indefinite fourth ghosts with positive determinant, nonfinite fluid payload, invalid lapse, incompatible configurations and corrupt cohorts:
+
+```
+python3 -m unittest discover -s analysis/tde_stability -p test_check_checkpoint.py -v
+```
+
+A real experimental control reached its time target with exit0 and finite checkpoint numbers but had eight indefinite ghost metrics. This validator rejects that state. A valid checkpoint still does not establish stability of its evolution.

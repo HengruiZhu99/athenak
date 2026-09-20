@@ -1,0 +1,33 @@
+{
+  "cases": {
+    "small_dx025": {
+      "L": 2,
+      "n": 16,
+      "nb": 8,
+      "dx": 0.25,
+      "input_sha256": "828f3d8d34cabad4a18bd7028d44ccd0e03856378e387b9321efc57e88ec2024",
+      "dt_expected": 0.0375
+    },
+    "wide_dx025": {
+      "L": 4,
+      "n": 32,
+      "nb": 16,
+      "dx": 0.25,
+      "input_sha256": "024b1fb811bc646a52ec34b3ae5cea598f9ad66fd0bb77dd0e0d0e0a790150da",
+      "dt_expected": 0.0375
+    },
+    "small_dx0125": {
+      "L": 2,
+      "n": 32,
+      "nb": 16,
+      "dx": 0.125,
+      "input_sha256": "2b2b5631af786cdfc48abdf6d1df95681206e62d7bb9468a5e7d854567f5b77c",
+      "dt_expected": 0.01875
+    }
+  },
+  "gauge": {
+    "shift_Gamma": 2,
+    "residual_lapse_f": 1
+  },
+  "description": "Matched vacuum pulse domains/resolution with conservative CFL.15, sixth-order, original boundaries, no sponge, no matter feedback. Target1000M; walltime stopping is incomplete. Both exact zero and perturbation stability required before spin extension."
+}

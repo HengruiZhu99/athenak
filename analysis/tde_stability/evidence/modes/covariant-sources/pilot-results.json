@@ -1,0 +1,800 @@
+{
+  "scope": "Finite single-block CPU controls; incomplete windows marked explicitly. Theta norm uses proper-volume square integral, r>1M; curves do not prove continuum or matter stability.",
+  "cases": [
+    {
+      "name": "Z4c \u03b10.1",
+      "path": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/lapse-damping/baseline",
+      "time": 300.0,
+      "process_ended": true,
+      "reached_time_target": true,
+      "exit_code": 0,
+      "bad_metric_max": 0.0,
+      "finite": true,
+      "invalid_log": false,
+      "first_invalid_adm": null,
+      "final": {
+        "rho_max_passive_fluid": 3879726.994834028,
+        "Theta_max": 2.669847530646932e-08,
+        "Theta_exterior_L2": 1.4084917274378062e-07,
+        "Theta_interior_L2": 6.305011605173218e-08,
+        "alpha_res": 1.965846707641106e-08,
+        "Gamma_res": 1.957000506689796e-08
+      },
+      "windows": {
+        "Theta_max": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": -0.015078752740338949,
+            "r_squared": 0.8436814931557105
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.03125387755945513,
+            "r_squared": 0.9951550141996437
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.03564174852207221,
+            "r_squared": 0.9999982956263672
+          }
+        ],
+        "Theta_exterior_L2": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.01246720525584465,
+            "r_squared": 0.9663115277527918
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.03532620187393986,
+            "r_squared": 0.9998863746079559
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.035733489369966766,
+            "r_squared": 0.9999999991582209
+          }
+        ]
+      },
+      "horizon_radius_M": 1.0
+    },
+    {
+      "name": "Z4c constant0.1",
+      "path": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/lapse-damping/scaled_01",
+      "time": 300.0,
+      "process_ended": true,
+      "reached_time_target": true,
+      "exit_code": 0,
+      "bad_metric_max": 0.0,
+      "finite": true,
+      "invalid_log": false,
+      "first_invalid_adm": null,
+      "final": {
+        "rho_max_passive_fluid": 78626918.45852923,
+        "Theta_max": 3.478937524301971e-08,
+        "Theta_exterior_L2": 6.778380749699381e-08,
+        "Theta_interior_L2": 1.730255086269117e-07,
+        "alpha_res": 4.205054671135855e-08,
+        "Gamma_res": 5.442895448219125e-08
+      },
+      "windows": {
+        "Theta_max": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.02573654562584774,
+            "r_squared": 0.9999806971702075
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.026384128637814745,
+            "r_squared": 0.9999911644859171
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.026662275964886507,
+            "r_squared": 0.999997767409228
+          }
+        ],
+        "Theta_exterior_L2": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.02785133624966089,
+            "r_squared": 0.9997317786233858
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.03049096368810163,
+            "r_squared": 0.9998685677027707
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.032470736583713106,
+            "r_squared": 0.9999726223014113
+          }
+        ]
+      },
+      "horizon_radius_M": 1.0
+    },
+    {
+      "name": "Z4c constant0.3",
+      "path": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/lapse-damping/scaled_03",
+      "time": 300.0,
+      "process_ended": true,
+      "reached_time_target": true,
+      "exit_code": 0,
+      "bad_metric_max": 0.0,
+      "finite": true,
+      "invalid_log": false,
+      "first_invalid_adm": null,
+      "final": {
+        "rho_max_passive_fluid": 42567461939.21725,
+        "Theta_max": 5.901808874781702e-10,
+        "Theta_exterior_L2": 2.6519697229043783e-09,
+        "Theta_interior_L2": 1.6975772965107642e-09,
+        "alpha_res": 4.52998860644982e-10,
+        "Gamma_res": 5.902797791013131e-10
+      },
+      "windows": {
+        "Theta_max": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.014653383157903474,
+            "r_squared": 0.9991725917253006
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.011897803203081023,
+            "r_squared": 0.9997748875542138
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.02067199412365937,
+            "r_squared": 0.9900839840399626
+          }
+        ],
+        "Theta_exterior_L2": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.016754837069147033,
+            "r_squared": 0.9968224172578007
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.021526837590295552,
+            "r_squared": 0.9991832141199851
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.024699193901671756,
+            "r_squared": 0.999875850811392
+          }
+        ]
+      },
+      "horizon_radius_M": 1.0
+    },
+    {
+      "name": "Coupled \u03b10.1",
+      "path": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/covariant-sources/covariant_alpha01",
+      "time": 227.024999999977,
+      "process_ended": true,
+      "reached_time_target": false,
+      "exit_code": 1,
+      "bad_metric_max": 0.0,
+      "finite": true,
+      "invalid_log": true,
+      "first_invalid_adm": {
+        "first_event_per_rank": "1",
+        "operation": "stage_c2p",
+        "cycle_start_time": "199.76249999998115",
+        "dt": "0.037499999999999999",
+        "cycle": "5327",
+        "stage": "1",
+        "rank": "0",
+        "gid": "0",
+        "relative_level": "0",
+        "block": "0",
+        "i": "0",
+        "j": "0",
+        "k": "0",
+        "x": "-2.875",
+        "y": "-2.875",
+        "z": "-2.875",
+        "ghost_depths": "4,4,4",
+        "input_range": "0:23,0:23,0:23",
+        "local_bad_cells": "8",
+        "minor1": "0.65314530187877196",
+        "minor2": "0.0004154644203364095",
+        "detg": "-2.1454305691231695e-08",
+        "alpha": "2.6807900015464341",
+        "psi4": "0.66416987811926864",
+        "adm": "0.65314530187877196,0.6530178177932987,0.6530177997956238,0.6535264565909471,0.65355177047120383,0.65352645383098484,-0.85539884234429286,-1.3643422229916038,-1.3643422003552119,-0.85600842240538955,-1.3649668375249706,-0.85600841131796568,0.66416987811926864,2.6807900015464341,0.13657118025071058,0.13664973208151676,0.13664972871305586"
+      },
+      "final": {
+        "rho_max_passive_fluid": 0.216876891038245,
+        "Theta_max": 0.6459126118011298,
+        "Theta_exterior_L2": 4.265236523871994,
+        "Theta_interior_L2": 3.9547695489437786,
+        "alpha_res": 0.4723880812756268,
+        "Gamma_res": 0.8557295670717109
+      },
+      "windows": {
+        "Theta_max": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.10662006332281182,
+            "r_squared": 0.9960610491678301
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": false,
+            "gamma": 0.11261284316604378,
+            "r_squared": 0.9999879787627561
+          },
+          null
+        ],
+        "Theta_exterior_L2": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.11225037629622654,
+            "r_squared": 0.9999844992570168
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": false,
+            "gamma": 0.113108796004827,
+            "r_squared": 0.9999959703033295
+          },
+          null
+        ]
+      },
+      "horizon_radius_M": 1.0,
+      "saved_checkpoint": {
+        "time_M": 200.0249999999811,
+        "cycle": 5334,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 8,
+        "passed": false,
+        "note": "Saved-state validity only, not a stability result."
+      }
+    },
+    {
+      "name": "Coupled constant0.1",
+      "path": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/covariant-sources/covariant_const01",
+      "time": 300.0,
+      "process_ended": true,
+      "reached_time_target": true,
+      "exit_code": 0,
+      "bad_metric_max": 0.0,
+      "finite": true,
+      "invalid_log": true,
+      "first_invalid_adm": {
+        "first_event_per_rank": "1",
+        "operation": "stage_c2p",
+        "cycle_start_time": "298.04999999999814",
+        "dt": "0.037499999999999999",
+        "cycle": "7948",
+        "stage": "1",
+        "rank": "0",
+        "gid": "0",
+        "relative_level": "0",
+        "block": "0",
+        "i": "0",
+        "j": "0",
+        "k": "0",
+        "x": "-2.875",
+        "y": "-2.875",
+        "z": "-2.875",
+        "ghost_depths": "4,4,4",
+        "input_range": "0:23,0:23,0:23",
+        "local_bad_cells": "8",
+        "minor1": "13.786068763826618",
+        "minor2": "-0.79311779992480769",
+        "detg": "0.034485140681873243",
+        "alpha": "4.5706181139015269",
+        "psi4": "0.32549475942984119",
+        "adm": "13.786068763826618,13.814957100456654,13.814955927399074,13.786375589989277,13.815476516742372,13.786375486116977,82.271934173351426,82.088524838903425,82.088517838245153,82.273761762242316,82.091625388929785,82.273761154383621,0.32549475942984119,4.5706181139015269,0.21439451462510944,0.21439817876223072,0.2143981695202245"
+      },
+      "final": {
+        "rho_max_passive_fluid": 1454579.394821432,
+        "Theta_max": 0.03675004304152631,
+        "Theta_exterior_L2": 0.17677234743726555,
+        "Theta_interior_L2": 0.2623371850106945,
+        "alpha_res": 0.05064844401498614,
+        "Gamma_res": 0.01187279954893812
+      },
+      "windows": {
+        "Theta_max": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.07104448532410755,
+            "r_squared": 0.9888014949916966
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.07835122447636937,
+            "r_squared": 0.999967143495242
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              298.0124999999981
+            ],
+            "complete": false,
+            "gamma": 0.07882396730066557,
+            "r_squared": 0.9999981179160629
+          }
+        ],
+        "Theta_exterior_L2": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.07732388719332368,
+            "r_squared": 0.999891278967391
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.07886202167830555,
+            "r_squared": 0.9999999930574806
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              298.0124999999981
+            ],
+            "complete": false,
+            "gamma": 0.07903853200108484,
+            "r_squared": 0.9999980846354035
+          }
+        ]
+      },
+      "horizon_radius_M": 1.0,
+      "saved_checkpoint": {
+        "time_M": 300.0,
+        "cycle": 8001,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 8,
+        "passed": false,
+        "note": "Saved-state validity only, not a stability result."
+      }
+    },
+    {
+      "name": "Coupled constant0.3",
+      "path": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/covariant-sources/covariant_const03",
+      "time": 300.0,
+      "process_ended": true,
+      "reached_time_target": true,
+      "exit_code": 0,
+      "bad_metric_max": 0.0,
+      "finite": true,
+      "invalid_log": false,
+      "first_invalid_adm": null,
+      "final": {
+        "rho_max_passive_fluid": 130386.191432798,
+        "Theta_max": 5.529189292331264e-10,
+        "Theta_exterior_L2": 4.886444529711932e-10,
+        "Theta_interior_L2": 2.7783200745300307e-09,
+        "alpha_res": 6.946855868328328e-10,
+        "Gamma_res": 8.614094850664744e-10
+      },
+      "windows": {
+        "Theta_max": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.016126205780914067,
+            "r_squared": 0.9990676705821138
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.015357651508382728,
+            "r_squared": 0.999585323334026
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.01754988007059278,
+            "r_squared": 0.9998669337749119
+          }
+        ],
+        "Theta_exterior_L2": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.014428419060746541,
+            "r_squared": 0.9998393247747083
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.014774209328987526,
+            "r_squared": 0.9993014041475303
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.017526409734601324,
+            "r_squared": 0.9997662340082033
+          }
+        ]
+      },
+      "horizon_radius_M": 1.0,
+      "saved_checkpoint": {
+        "time_M": 300.0,
+        "cycle": 8001,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "passed": true,
+        "note": "Saved-state validity only, not a stability result."
+      }
+    },
+    {
+      "name": "Coupled constant1.0",
+      "path": "/Users/hz0693/research/TDE/athenak-review/review/stability-modes-20260919/covariant-sources/covariant_const10",
+      "time": 300.0,
+      "process_ended": true,
+      "reached_time_target": true,
+      "exit_code": 0,
+      "bad_metric_max": 0.0,
+      "finite": true,
+      "invalid_log": false,
+      "first_invalid_adm": null,
+      "final": {
+        "rho_max_passive_fluid": 2763964.946766321,
+        "Theta_max": 1.135414264452042e-11,
+        "Theta_exterior_L2": 3.4148497004104746e-11,
+        "Theta_interior_L2": 3.8974329666806306e-11,
+        "alpha_res": 3.359756917120649e-11,
+        "Gamma_res": 2.386332215997047e-11
+      },
+      "windows": {
+        "Theta_max": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.004055032215721287,
+            "r_squared": 0.9997867413177921
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.003264812746670971,
+            "r_squared": 0.9954466905185578
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.0034268872540791483,
+            "r_squared": 0.9942274384394759
+          }
+        ],
+        "Theta_exterior_L2": [
+          {
+            "requested": [
+              50,
+              100
+            ],
+            "actual": [
+              50.02500000000118,
+              98.9999999999964
+            ],
+            "complete": true,
+            "gamma": 0.00503304850929117,
+            "r_squared": 0.9998111995051427
+          },
+          {
+            "requested": [
+              100,
+              200
+            ],
+            "actual": [
+              100.0124999999963,
+              199.0124999999813
+            ],
+            "complete": true,
+            "gamma": 0.007638282047159866,
+            "r_squared": 0.988109131151951
+          },
+          {
+            "requested": [
+              200,
+              300
+            ],
+            "actual": [
+              200.0249999999811,
+              300.0
+            ],
+            "complete": true,
+            "gamma": 0.007886467855932713,
+            "r_squared": 0.9710491184723389
+          }
+        ]
+      },
+      "horizon_radius_M": 1.0,
+      "saved_checkpoint": {
+        "time_M": 300.0,
+        "cycle": 8001,
+        "all_payload_finite": true,
+        "invalid_metric_cells_including_ghosts": 0,
+        "passed": true,
+        "note": "Saved-state validity only, not a stability result."
+      }
+    }
+  ]
+}

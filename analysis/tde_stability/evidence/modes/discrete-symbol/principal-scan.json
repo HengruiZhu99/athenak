@@ -1,0 +1,3032 @@
+{
+  "grid": "17^3 first-octant phases including Nyquist; origin excluded",
+  "h": 0.25,
+  "state_dimensions": 20,
+  "note": "Frozen principal coefficients, with optional upwind/KO and lower-order kappa/eta only. Not full background lower-order Jacobian or global evolution.",
+  "results": [
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.3041343948096097e-14,
+      "high_frequency_max_real_eigenvalue": 3.3041343948096097e-14,
+      "max_growth_xi_over_pi": [
+        0.8125000000000001,
+        0.6874999999999999,
+        0.5625
+      ],
+      "max_RK3_abs_dt_0075": 1.0383289960316056,
+      "RK3_max_xi_over_pi": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999686564863
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.7039081658763997e-08,
+      "high_frequency_max_real_eigenvalue": -0.12499999999999578,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999994976608779,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999680175208
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.7271466804936673e-09,
+      "high_frequency_max_real_eigenvalue": -0.12105621882867389,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999994976608779,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999680175208
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.307573705446851e-13,
+      "high_frequency_max_real_eigenvalue": 2.307573705446851e-13,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.75,
+        0.75
+      ],
+      "max_RK3_abs_dt_0075": 1.10858224810929,
+      "RK3_max_xi_over_pi": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999686564863
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.7039082589320742e-08,
+      "high_frequency_max_real_eigenvalue": -0.1249999999999929,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999994976608779,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999680175207
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.2899514228542623e-09,
+      "high_frequency_max_real_eigenvalue": -0.12101171290466459,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999994976608779,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999680175208
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 1.7763568394002505e-14,
+      "high_frequency_max_real_eigenvalue": 1.7763568394002505e-14,
+      "max_growth_xi_over_pi": [
+        0.8125000000000001,
+        1.0,
+        0.375
+      ],
+      "max_RK3_abs_dt_0075": 1.0383289960316047,
+      "RK3_max_xi_over_pi": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999686564863
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.7039081949541686e-08,
+      "high_frequency_max_real_eigenvalue": -0.12499999999999735,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.999999497660878,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999680175208
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": 7.816560319796537e-09,
+      "high_frequency_max_real_eigenvalue": -0.11990830714472356,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999994976608779,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999680175208
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.2570531757464133e-14,
+      "high_frequency_max_real_eigenvalue": 3.2570531757464133e-14,
+      "max_growth_xi_over_pi": [
+        0.875,
+        0.5,
+        0.6874999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.0386803207670672,
+      "RK3_max_xi_over_pi": [
+        0.9374999999999999,
+        0.9374999999999999,
+        0.9374999999999999
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999686564863
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.703908250778874e-08,
+      "high_frequency_max_real_eigenvalue": -0.12499999999999485,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999994976608779,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999680175208
+    },
+    {
+      "point": "Minkowski",
+      "alpha": 1.0,
+      "chi": 1.0,
+      "beta": [
+        0,
+        0,
+        0
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": 6.567255817768523e-09,
+      "high_frequency_max_real_eigenvalue": -0.12357930198275716,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999994976608779,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999680175208
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.2779583706273143e-14,
+      "high_frequency_max_real_eigenvalue": 2.2779583706273143e-14,
+      "max_growth_xi_over_pi": [
+        1.0,
+        0.0,
+        0.4375
+      ],
+      "max_RK3_abs_dt_0075": 1.0,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.3125,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.0738531038289043e-08,
+      "high_frequency_max_real_eigenvalue": -0.152139433404881,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999984446084,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.999999999222305
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.0696120688751263e-08,
+      "high_frequency_max_real_eigenvalue": -0.1521209653305259,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999984477893,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999992238955
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.206202664474134e-14,
+      "high_frequency_max_real_eigenvalue": 3.206202664474134e-14,
+      "max_growth_xi_over_pi": [
+        1.0,
+        0.8125000000000001,
+        0.5625
+      ],
+      "max_RK3_abs_dt_0075": 1.1188577503339059,
+      "RK3_max_xi_over_pi": [
+        0.9374999999999999,
+        0.9374999999999999,
+        0.9374999999999999
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.0738531180620767e-08,
+      "high_frequency_max_real_eigenvalue": -0.15213943340487646,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999984446084,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.999999999222305
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.0697264081227665e-08,
+      "high_frequency_max_real_eigenvalue": -0.1521209714722523,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999984477034,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999992238526
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 1.482754891091176e-14,
+      "high_frequency_max_real_eigenvalue": 1.482754891091176e-14,
+      "max_growth_xi_over_pi": [
+        0.1875,
+        0.8125000000000001,
+        0.5
+      ],
+      "max_RK3_abs_dt_0075": 1.0,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.3125,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.0738531197883603e-08,
+      "high_frequency_max_real_eigenvalue": -0.15213943340488,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999984446084,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.999999999222305
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.0661008051043563e-08,
+      "high_frequency_max_real_eigenvalue": -0.15212501391059813,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999984504226,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999992252122
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.6645352591003757e-14,
+      "high_frequency_max_real_eigenvalue": 2.6645352591003757e-14,
+      "max_growth_xi_over_pi": [
+        0.8125000000000001,
+        0.6874999999999999,
+        1.0
+      ],
+      "max_RK3_abs_dt_0075": 1.0515994187198572,
+      "RK3_max_xi_over_pi": [
+        0.875,
+        0.875,
+        0.875
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.07385310868613e-08,
+      "high_frequency_max_real_eigenvalue": -0.15213943340488,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999984446084,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.999999999222305
+    },
+    {
+      "point": "r0.108253",
+      "alpha": 0.09767910245494875,
+      "chi": 0.009541207056404375,
+      "beta": [
+        0.05088643763415667,
+        0.05088643763415667,
+        0.05088643763415667
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.066142713863517e-08,
+      "high_frequency_max_real_eigenvalue": -0.1521250144228861,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999984503912,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999992251964
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.1319366301432065e-14,
+      "high_frequency_max_real_eigenvalue": 2.1319366301432065e-14,
+      "max_growth_xi_over_pi": [
+        0.6874999999999999,
+        0.75,
+        0.625
+      ],
+      "max_RK3_abs_dt_0075": 1.0000000000000004,
+      "RK3_max_xi_over_pi": [
+        1.0,
+        0.0,
+        0.75
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.317975887187515e-08,
+      "high_frequency_max_real_eigenvalue": -0.17004846319178107,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999982614065,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999991307521
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.2941789634574082e-08,
+      "high_frequency_max_real_eigenvalue": -0.16998390301152,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999982792542,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.999999999139676
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.552713678800501e-14,
+      "high_frequency_max_real_eigenvalue": 3.552713678800501e-14,
+      "max_growth_xi_over_pi": [
+        0.6874999999999999,
+        0.8125000000000001,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_0075": 1.1359639566014874,
+      "RK3_max_xi_over_pi": [
+        0.875,
+        0.875,
+        0.875
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000004
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.3179758779079407e-08,
+      "high_frequency_max_real_eigenvalue": -0.17004846319178135,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999982614065,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999991307521
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.29535876927593e-08,
+      "high_frequency_max_real_eigenvalue": -0.16998394236164105,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999982783696,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999991392335
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 1.8207657603852567e-14,
+      "high_frequency_max_real_eigenvalue": 1.8207657603852567e-14,
+      "max_growth_xi_over_pi": [
+        0.125,
+        0.75,
+        0.5625
+      ],
+      "max_RK3_abs_dt_0075": 1.0,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.1875
+      ],
+      "max_RK3_abs_dt_00375": 1.0
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.317975877558794e-08,
+      "high_frequency_max_real_eigenvalue": -0.17004846319178193,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999982614065,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999991307521
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.2884651598297246e-08,
+      "high_frequency_max_real_eigenvalue": -0.16999844340373407,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999982835396,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999991418188
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.842170943040401e-14,
+      "high_frequency_max_real_eigenvalue": 2.842170943040401e-14,
+      "max_growth_xi_over_pi": [
+        0.75,
+        0.75,
+        0.6874999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.0683818004872045,
+      "RK3_max_xi_over_pi": [
+        0.875,
+        0.875,
+        0.875
+      ],
+      "max_RK3_abs_dt_00375": 1.0
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.3179758668057104e-08,
+      "high_frequency_max_real_eigenvalue": -0.17004846319178046,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999982614065,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999991307521
+    },
+    {
+      "point": "r0.216506",
+      "alpha": 0.17797387640247572,
+      "chi": 0.031674700681723705,
+      "beta": [
+        0.08446586848459654,
+        0.08446586848459654,
+        0.08446586848459654
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.289195508044139e-08,
+      "high_frequency_max_real_eigenvalue": -0.16999840597912774,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.999999998282992,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999991415448
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.4868995751603507e-14,
+      "high_frequency_max_real_eigenvalue": 2.4868995751603507e-14,
+      "max_growth_xi_over_pi": [
+        0.5,
+        0.875,
+        0.6874999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.0000000000000002,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.75,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.5735228323386927e-08,
+      "high_frequency_max_real_eigenvalue": -0.18879558092580506,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999980692089,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999990348885
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.4844312535343303e-08,
+      "high_frequency_max_real_eigenvalue": -0.1886074916903638,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999980762506,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999990645617
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.2355105065614526e-14,
+      "high_frequency_max_real_eigenvalue": 3.2355105065614526e-14,
+      "max_growth_xi_over_pi": [
+        1.0,
+        0.75,
+        0.6874999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.1608873566064237,
+      "RK3_max_xi_over_pi": [
+        0.875,
+        0.875,
+        0.875
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000004
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.5735228478982307e-08,
+      "high_frequency_max_real_eigenvalue": -0.1887955809258052,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999980692089,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999990348885
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.491295945842537e-08,
+      "high_frequency_max_real_eigenvalue": -0.188607693023473,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999980711023,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999990619872
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.1316282072803006e-14,
+      "high_frequency_max_real_eigenvalue": 2.1316282072803006e-14,
+      "max_growth_xi_over_pi": [
+        0.375,
+        0.875,
+        0.3125
+      ],
+      "max_RK3_abs_dt_0075": 1.0000000000000002,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.25,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.5735228281753564e-08,
+      "high_frequency_max_real_eigenvalue": -0.18879558092580592,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999980692089,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999990348885
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.479684412017936e-08,
+      "high_frequency_max_real_eigenvalue": -0.1886515858565607,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999980798108,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999990663417
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.9081084283783384e-14,
+      "high_frequency_max_real_eigenvalue": 2.9081084283783384e-14,
+      "max_growth_xi_over_pi": [
+        0.75,
+        0.875,
+        0.9374999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.0944499059843775,
+      "RK3_max_xi_over_pi": [
+        0.8125000000000001,
+        0.8125000000000001,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.573522817073126e-08,
+      "high_frequency_max_real_eigenvalue": -0.18879558092580506,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999980692089,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999990348885
+    },
+    {
+      "point": "r0.414578",
+      "alpha": 0.2930754400536453,
+      "chi": 0.08589321356263782,
+      "beta": [
+        0.11961671423588917,
+        0.11961671423588917,
+        0.11961671423588917
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.4859115573660093e-08,
+      "high_frequency_max_real_eigenvalue": -0.18865090813031532,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999980751404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999990640064
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.738781423872183e-14,
+      "high_frequency_max_real_eigenvalue": 2.738781423872183e-14,
+      "max_growth_xi_over_pi": [
+        0.75,
+        0.5,
+        1.0
+      ],
+      "max_RK3_abs_dt_0075": 1.0000000000000002,
+      "RK3_max_xi_over_pi": [
+        0.1875,
+        0.5,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.7058709328731112e-08,
+      "high_frequency_max_real_eigenvalue": -0.1985047361794583,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999979705526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989852957
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.51481718450039e-08,
+      "high_frequency_max_real_eigenvalue": -0.198142215028126,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999979705526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989940734
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.552713678800501e-14,
+      "high_frequency_max_real_eigenvalue": 3.552713678800501e-14,
+      "max_growth_xi_over_pi": [
+        0.75,
+        0.75,
+        0.9374999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.1745662319864094,
+      "RK3_max_xi_over_pi": [
+        0.875,
+        0.875,
+        0.875
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.7058709096982898e-08,
+      "high_frequency_max_real_eigenvalue": -0.19850473617945674,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999979705526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989852957
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.5318334515386626e-08,
+      "high_frequency_max_real_eigenvalue": -0.1981428165688205,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999979705526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989876923
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.1316282072803006e-14,
+      "high_frequency_max_real_eigenvalue": 2.1316282072803006e-14,
+      "max_growth_xi_over_pi": [
+        0.5,
+        0.625,
+        0.75
+      ],
+      "max_RK3_abs_dt_0075": 1.0000000000000002,
+      "RK3_max_xi_over_pi": [
+        0.1875,
+        0.8125000000000001,
+        0.5
+      ],
+      "max_RK3_abs_dt_00375": 1.0
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.705870927321996e-08,
+      "high_frequency_max_real_eigenvalue": -0.19850473617945852,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999979705527,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989852957
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.511024158448117e-08,
+      "high_frequency_max_real_eigenvalue": -0.19823248539277602,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999979705526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989954959
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.375077994860476e-14,
+      "high_frequency_max_real_eigenvalue": 3.375077994860476e-14,
+      "max_growth_xi_over_pi": [
+        0.9374999999999999,
+        0.875,
+        0.6874999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.1099912676331838,
+      "RK3_max_xi_over_pi": [
+        0.8125000000000001,
+        0.8125000000000001,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0000000000000002
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.7058709271084743e-08,
+      "high_frequency_max_real_eigenvalue": -0.1985047361794582,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999979705526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989852957
+    },
+    {
+      "point": "r0.649519",
+      "alpha": 0.39376268599062314,
+      "chi": 0.1550490528785501,
+      "beta": [
+        0.13782138033648897,
+        0.13782138033648897,
+        0.13782138033648897
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.531630863189752e-08,
+      "high_frequency_max_real_eigenvalue": -0.1982288753775874,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999979705526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989877681
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.4868996062086382e-14,
+      "high_frequency_max_real_eigenvalue": 2.4868996062086382e-14,
+      "max_growth_xi_over_pi": [
+        0.875,
+        0.9374999999999999,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_0075": 1.0000000000000002,
+      "RK3_max_xi_over_pi": [
+        0.25,
+        0.25,
+        0.25
+      ],
+      "max_RK3_abs_dt_00375": 1.0
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.7532436450628994e-08,
+      "high_frequency_max_real_eigenvalue": -0.20198003589194824,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.99999999787254,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989636256
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.4024042058077235e-08,
+      "high_frequency_max_real_eigenvalue": -0.20135068671361017,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.99999999787254,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989636256
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 4.180018793784208e-14,
+      "high_frequency_max_real_eigenvalue": 4.180018793784208e-14,
+      "max_growth_xi_over_pi": [
+        0.8125000000000001,
+        0.625,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_0075": 1.1801809934143184,
+      "RK3_max_xi_over_pi": [
+        0.8125000000000001,
+        0.8125000000000001,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.7532436552846207e-08,
+      "high_frequency_max_real_eigenvalue": -0.20198003589194746,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.99999999787254,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989636256
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.4323455173871765e-08,
+      "high_frequency_max_real_eigenvalue": -0.20135244734089966,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.99999999787254,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989636256
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.220446049250313e-14,
+      "high_frequency_max_real_eigenvalue": 2.220446049250313e-14,
+      "max_growth_xi_over_pi": [
+        0.625,
+        0.75,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_0075": 1.0,
+      "RK3_max_xi_over_pi": [
+        0.0625,
+        0.0625,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 1.0
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.7532436497335055e-08,
+      "high_frequency_max_real_eigenvalue": -0.20198003589194613,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.99999999787254,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989636257
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.390463308446798e-08,
+      "high_frequency_max_real_eigenvalue": -0.20152516728245468,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.99999999787254,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989636256
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.907985046680551e-14,
+      "high_frequency_max_real_eigenvalue": 3.907985046680551e-14,
+      "max_growth_xi_over_pi": [
+        0.6874999999999999,
+        0.5625,
+        0.9374999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.1160149887004926,
+      "RK3_max_xi_over_pi": [
+        0.8125000000000001,
+        0.8125000000000001,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 1.0
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.753243650765502e-08,
+      "high_frequency_max_real_eigenvalue": -0.20198003589194613,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.99999999787254,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989636257
+    },
+    {
+      "point": "r1.000000",
+      "alpha": 0.5,
+      "chi": 0.25,
+      "beta": [
+        0.14433756729740646,
+        0.14433756729740646,
+        0.14433756729740646
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.439873680912726e-08,
+      "high_frequency_max_real_eigenvalue": -0.2015102285010795,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.99999999787254,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999989636256
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.7489946083369965e-14,
+      "high_frequency_max_real_eigenvalue": 2.7489946083369965e-14,
+      "max_growth_xi_over_pi": [
+        0.625,
+        0.8125000000000001,
+        0.5625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999949894526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999996868136
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.636650847653854e-08,
+      "high_frequency_max_real_eigenvalue": -0.19342669857061956,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999930119717,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999986980701
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.9176425392622213e-08,
+      "high_frequency_max_real_eigenvalue": -0.19215012871076748,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999930119717,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999986980701
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 4.264429970530474e-14,
+      "high_frequency_max_real_eigenvalue": 4.264429970530474e-14,
+      "max_growth_xi_over_pi": [
+        0.5,
+        0.625,
+        0.75
+      ],
+      "max_RK3_abs_dt_0075": 1.167931797555319,
+      "RK3_max_xi_over_pi": [
+        0.875,
+        0.875,
+        0.875
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999996868136
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.6366508087960483e-08,
+      "high_frequency_max_real_eigenvalue": -0.19342669857061967,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999930119717,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999986980701
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.9542844699287887e-08,
+      "high_frequency_max_real_eigenvalue": -0.19216163646052262,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999930119717,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999986980701
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.1316282072803006e-14,
+      "high_frequency_max_real_eigenvalue": 2.1316282072803006e-14,
+      "max_growth_xi_over_pi": [
+        0.5625,
+        0.625,
+        1.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999949894526,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999996868136
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.636650842102739e-08,
+      "high_frequency_max_real_eigenvalue": -0.19342669857062034,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999930119717,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999986980701
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.8479160682255424e-08,
+      "high_frequency_max_real_eigenvalue": -0.19263390232120203,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999930119717,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999986980701
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.064215547965432e-14,
+      "high_frequency_max_real_eigenvalue": 3.064215547965432e-14,
+      "max_growth_xi_over_pi": [
+        0.375,
+        0.75,
+        1.0
+      ],
+      "max_RK3_abs_dt_0075": 1.1030687818361016,
+      "RK3_max_xi_over_pi": [
+        0.8125000000000001,
+        0.8125000000000001,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999996868136
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.6366508198982785e-08,
+      "high_frequency_max_real_eigenvalue": -0.19342669857061878,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999930119717,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999986980701
+    },
+    {
+      "point": "r2.000000",
+      "alpha": 0.6666666666666666,
+      "chi": 0.4444444444444444,
+      "beta": [
+        0.12830005981991685,
+        0.12830005981991685,
+        0.12830005981991685
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.9605005289556076e-08,
+      "high_frequency_max_real_eigenvalue": -0.19253319434224142,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999930119717,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999986980701
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 1.6687731051195769e-12,
+      "high_frequency_max_real_eigenvalue": 1.6687731051195769e-12,
+      "max_growth_xi_over_pi": [
+        0.6874999999999999,
+        0.75,
+        0.5
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999549004243,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999971805431
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.375482921479488e-08,
+      "high_frequency_max_real_eigenvalue": -0.17426722297084507,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999531188404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999962897388
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.2470810724541928e-08,
+      "high_frequency_max_real_eigenvalue": -0.17214074416578487,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999531188404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999962897388
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.1749720997552894e-14,
+      "high_frequency_max_real_eigenvalue": 3.1749720997552894e-14,
+      "max_growth_xi_over_pi": [
+        0.75,
+        0.25,
+        0.625
+      ],
+      "max_RK3_abs_dt_0075": 1.1428001632517806,
+      "RK3_max_xi_over_pi": [
+        0.875,
+        0.875,
+        0.875
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999971805431
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.375482846539434e-08,
+      "high_frequency_max_real_eigenvalue": -0.17426722297084396,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999531188404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999962897388
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.2621536386011006e-08,
+      "high_frequency_max_real_eigenvalue": -0.17222503782261092,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999531188404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999962897388
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 1.7763568394002505e-14,
+      "high_frequency_max_real_eigenvalue": 1.7763568394002505e-14,
+      "max_growth_xi_over_pi": [
+        0.625,
+        0.9374999999999999,
+        0.625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999549004243,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999971805431
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.375482910377258e-08,
+      "high_frequency_max_real_eigenvalue": -0.17426722297084524,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999531188404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999962897388
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.0690121305626336e-08,
+      "high_frequency_max_real_eigenvalue": -0.17312585643327202,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999531188404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999962897388
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.842170943040401e-14,
+      "high_frequency_max_real_eigenvalue": 2.842170943040401e-14,
+      "max_growth_xi_over_pi": [
+        0.4375,
+        0.5625,
+        0.9374999999999999
+      ],
+      "max_RK3_abs_dt_0075": 1.0760533139058885,
+      "RK3_max_xi_over_pi": [
+        0.8125000000000001,
+        0.8125000000000001,
+        0.8125000000000001
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999971805431
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.375482921479488e-08,
+      "high_frequency_max_real_eigenvalue": -0.17426722297084388,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999531188404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999962897388
+    },
+    {
+      "point": "r4.000000",
+      "alpha": 0.8,
+      "chi": 0.6400000000000001,
+      "beta": [
+        0.09237604307034014,
+        0.09237604307034014,
+        0.09237604307034014
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.2184640888873585e-08,
+      "high_frequency_max_real_eigenvalue": -0.17297428881026605,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999999531188404,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999962897388
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.331003513505178e-14,
+      "high_frequency_max_real_eigenvalue": 3.331003513505178e-14,
+      "max_growth_xi_over_pi": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997335893952,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999833388004
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.936287019610461e-08,
+      "high_frequency_max_real_eigenvalue": -0.14204748199682976,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997321372165,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999826126948
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 1,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.4189458544084836e-09,
+      "high_frequency_max_real_eigenvalue": -0.13868824751896058,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997321372165,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999826126948
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 3.4458547126803296e-14,
+      "high_frequency_max_real_eigenvalue": 3.4458547126803296e-14,
+      "max_growth_xi_over_pi": [
+        0.625,
+        0.1875,
+        1.0
+      ],
+      "max_RK3_abs_dt_0075": 1.1136108244845795,
+      "RK3_max_xi_over_pi": [
+        0.9374999999999999,
+        0.9374999999999999,
+        0.9374999999999999
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999833388004
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.9362869974060004e-08,
+      "high_frequency_max_real_eigenvalue": -0.14204748199682804,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997321372165,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999826126948
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 2,
+      "scheme": "standard",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -2.091104566804472e-09,
+      "high_frequency_max_real_eigenvalue": -0.13878067553648865,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997321372165,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999826126948
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.853273173286652e-14,
+      "high_frequency_max_real_eigenvalue": 2.853273173286652e-14,
+      "max_growth_xi_over_pi": [
+        0.8125000000000001,
+        1.0,
+        0.875
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997335893952,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999833388004
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.936287027590189e-08,
+      "high_frequency_max_real_eigenvalue": -0.14204748199682893,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997321372165,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999826126948
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 1,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": 1.415141295394292e-09,
+      "high_frequency_max_real_eigenvalue": -0.13761649670966516,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997321372165,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999826126948
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "principal_centered",
+      "samples": 4912,
+      "max_real_eigenvalue": 2.8199664825478976e-14,
+      "high_frequency_max_real_eigenvalue": 2.8199664825478976e-14,
+      "max_growth_xi_over_pi": [
+        0.75,
+        0.8125000000000001,
+        0.4375
+      ],
+      "max_RK3_abs_dt_0075": 1.0472759744968625,
+      "RK3_max_xi_over_pi": [
+        0.875,
+        0.875,
+        0.875
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999833388004
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.936287011131305e-08,
+      "high_frequency_max_real_eigenvalue": -0.14204748199682804,
+      "max_growth_xi_over_pi": [
+        0.0,
+        0.0625,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997321372164,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999826126948
+    },
+    {
+      "point": "r16.000000",
+      "alpha": 0.9411764705882353,
+      "chi": 0.8858131487889274,
+      "beta": [
+        0.03196402874406233,
+        0.03196402874406233,
+        0.03196402874406233
+      ],
+      "shift_driver": 2,
+      "scheme": "compatible",
+      "style": "upwind_KO05_damping",
+      "samples": 4912,
+      "max_real_eigenvalue": -1.7932753459231146e-11,
+      "high_frequency_max_real_eigenvalue": -0.14055332360315287,
+      "max_growth_xi_over_pi": [
+        0.0625,
+        0.0,
+        0.0
+      ],
+      "max_RK3_abs_dt_0075": 0.9999997321372165,
+      "RK3_max_xi_over_pi": [
+        0.0,
+        0.0,
+        0.0625
+      ],
+      "max_RK3_abs_dt_00375": 0.9999999826126948
+    }
+  ]
+}

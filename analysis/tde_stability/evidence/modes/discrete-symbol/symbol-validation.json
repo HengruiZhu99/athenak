@@ -1,0 +1,994 @@
+{
+  "independent_Minkowski_and_paper_checks": [
+    {
+      "xi": [
+        0.23,
+        0.91,
+        2.5
+      ],
+      "max_abs_matrix_error": 2.1316282072803006e-14
+    },
+    {
+      "xi": [
+        0.0,
+        0.0,
+        3.141592653589793
+      ],
+      "max_abs_matrix_error": 2.842170943040401e-14
+    },
+    {
+      "xi": [
+        3.141592653589793,
+        3.141592653589793,
+        3.141592653589793
+      ],
+      "max_abs_matrix_error": 5.684341886080802e-14
+    },
+    {
+      "xi": [
+        0.02,
+        0.03,
+        0.04
+      ],
+      "max_abs_matrix_error": 4.3769368558587767e-16
+    },
+    {
+      "paper_eq63_shift": 1,
+      "xi": [
+        0.23,
+        0.91,
+        2.5
+      ],
+      "max_abs_eigenvalue_error": 1.7819562850017183e-14
+    },
+    {
+      "paper_eq63_shift": 1,
+      "xi": [
+        3.141592653589793,
+        3.141592653589793,
+        3.141592653589793
+      ],
+      "max_abs_eigenvalue_error": 2.2469334198890888e-14
+    },
+    {
+      "paper_eq63_shift": 1,
+      "xi": [
+        0.02,
+        0.03,
+        0.04
+      ],
+      "max_abs_eigenvalue_error": 4.652682298944613e-16
+    },
+    {
+      "paper_eq63_shift": 2,
+      "xi": [
+        0.23,
+        0.91,
+        2.5
+      ],
+      "max_abs_eigenvalue_error": 2.0254449821619916e-14
+    },
+    {
+      "paper_eq63_shift": 2,
+      "xi": [
+        3.141592653589793,
+        3.141592653589793,
+        3.141592653589793
+      ],
+      "max_abs_eigenvalue_error": 3.5704330589399866e-14
+    },
+    {
+      "paper_eq63_shift": 2,
+      "xi": [
+        0.02,
+        0.03,
+        0.04
+      ],
+      "max_abs_eigenvalue_error": 3.7064107158592507e-16
+    }
+  ],
+  "high_frequency_conditioning": [
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 8.879695309744757e-16,
+      "eigenvector_condition": 9.769054294797842,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 3.6038263327594344
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 2.9004576518332215e-15,
+      "eigenvector_condition": 18.894934482170065,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 7.063808991609546
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 1.0569654853469309e-15,
+      "eigenvector_condition": 9.483901412937618,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 6.077117762084942
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 8.881784197001252e-16,
+      "eigenvector_condition": 10.097971745088932,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 8.241933801790724
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 1.4432899320127035e-15,
+      "eigenvector_condition": 9.950635048676931,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 8.188541903982083
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 1.887379141862766e-15,
+      "eigenvector_condition": 6.73329346558363,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 3.414498017066294
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 2.8553548414578245e-15,
+      "eigenvector_condition": 4.388856415211286,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 1.9655393639670584
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 3.3624835980580373e-15,
+      "eigenvector_condition": 3.9409781347977098,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 2.366542569682519
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 2.0538669848115555e-15,
+      "eigenvector_condition": 6.4397576283950935,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 2.1408455583760673
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 2.5901135435448663e-15,
+      "eigenvector_condition": 9.742151241268415,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 2.230567157296057
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 2.4270303764463956e-15,
+      "eigenvector_condition": 42.27990630968642,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 13.421269157416207
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 1.2385867173201042e-14,
+      "eigenvector_condition": 43.6832461141443,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 4.399174166298524
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 2.6736515958662853e-15,
+      "eigenvector_condition": 42.296040028691046,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 7.459455151613008
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 3.663653270939023e-15,
+      "eigenvector_condition": 41.58793988619587,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 24.922071021381033
+    },
+    {
+      "point": "flat",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 4.407105009502419e-15,
+      "eigenvector_condition": 40.36304133555153,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 25.167762737000267
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 8.881784197001252e-16,
+      "eigenvector_condition": 102.41496352840065,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 29.6860946120312
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 8.881784197001252e-16,
+      "eigenvector_condition": 1003.5611240866033,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 276.3443118218584
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 6.366548513104456e-16,
+      "eigenvector_condition": 10006.396727735568,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 2361.3610972199926
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 1.7763568394002505e-15,
+      "eigenvector_condition": 105927.23151274117,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 2863.943447923525
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 8.881784197001252e-16,
+      "eigenvector_condition": 3.127034717398991,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 2.9211696009517545
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 1.8318679906315083e-15,
+      "eigenvector_condition": 113.07629386234574,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 50.158587123282345
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 1.6653345369377348e-15,
+      "eigenvector_condition": 1047.1342803293044,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 375.0868788122758
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 1.966742740888705e-15,
+      "eigenvector_condition": 10594.92501577418,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 4856.693089141739
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 97316.26333158661,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4583.751358219807
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 3.1086244690204406e-15,
+      "eigenvector_condition": 3.92147351581688,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 2.230567157296055
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 2.220446049250313e-15,
+      "eigenvector_condition": 34.62108910088709,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 22.277732107105475
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 1.7763568394002505e-15,
+      "eigenvector_condition": 31.882202224303384,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 17.71181958560738
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 2.481883173206719e-15,
+      "eigenvector_condition": 34.63277729690762,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 22.43329250587429
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 1.7686180569264536e-15,
+      "eigenvector_condition": 33.75815518500333,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 16.113219695348494
+    },
+    {
+      "point": "flat",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 8.881784197001252e-16,
+      "eigenvector_condition": 35.90098502376927,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 15.719431229613187
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 1.3322676295501878e-15,
+      "eigenvector_condition": 190.3215994367991,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 77.69466790042327
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 4.857223590807334e-16,
+      "eigenvector_condition": 190.15329272665826,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 21.9462195503746
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 4.440892098500626e-16,
+      "eigenvector_condition": 191.08271758802917,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 116.75826766628497
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 1.0874989969014208e-15,
+      "eigenvector_condition": 178.02173704708258,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 90.50265312068215
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 6.106226635438361e-16,
+      "eigenvector_condition": 197.483180080922,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 90.71385643345936
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 5.615449393052115e-16,
+      "eigenvector_condition": 29.83343109298133,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 8.829721223586633
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 8.881784197001252e-16,
+      "eigenvector_condition": 75.29469719108987,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 9.73958206513885
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 1.7763568394002505e-15,
+      "eigenvector_condition": 48.982201186792764,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 2.968572792220664
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 1.7546406783064073e-15,
+      "eigenvector_condition": 154.80932309630293,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4.189782910713757
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 4.884981308350689e-15,
+      "eigenvector_condition": 61.865686041874476,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4.213989524802149
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 8.88150084829068e-16,
+      "eigenvector_condition": 204.01467914396326,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 35.45381305683133
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 8.894694823432458e-16,
+      "eigenvector_condition": 98.77322968458994,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 7.668411670488853
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 2.652368372622139e-15,
+      "eigenvector_condition": 123.82826505539349,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 53.856823342443285
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 8.604146958814639e-16,
+      "eigenvector_condition": 109.53125024585401,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 44.77195047409069
+    },
+    {
+      "point": "core",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 1.0235741138220534e-15,
+      "eigenvector_condition": 120.91751536821869,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 44.79912808520801
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 19.29635616567576,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 11.204317130102375
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 1.5543122344752192e-15,
+      "eigenvector_condition": 26.78012045101576,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 4.485497571636893
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 1.9984014443252818e-15,
+      "eigenvector_condition": 27.517601916568076,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 4.280113893138422
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 8.881784197001252e-16,
+      "eigenvector_condition": 19.66524114321359,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 10.31257861888612
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 3.2623045705425424e-16,
+      "eigenvector_condition": 14.718678257750604,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 10.30630021420104
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 62.176953197102875,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 8.834251286180423
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 8.153200337090993e-17,
+      "eigenvector_condition": 29.95952711909756,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 9.73956573409247
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 32.49340194263307,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 2.968573380138858
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 3.1283617749328146e-15,
+      "eigenvector_condition": 41.883260463906616,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4.189782905931262
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 1.5543122344752192e-15,
+      "eigenvector_condition": 47.32054922428763,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4.213989524802151
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 5.329070518200751e-15,
+      "eigenvector_condition": 148.32929432203196,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 11.171880318204433
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 1.8518050317318268e-16,
+      "eigenvector_condition": 66.09784819699235,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 5.292757335917031
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 1.3322676295501878e-15,
+      "eigenvector_condition": 69.09095982738187,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 8.11069983720867
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 369.14526634240497,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 11.46923117869784
+    },
+    {
+      "point": "core",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 1.0463689981909357e-15,
+      "eigenvector_condition": 42.085651351019976,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 11.4691406467783
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 1.0547118733938987e-15,
+      "eigenvector_condition": 9.9476648545645,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 7.387443270178487
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 1.339206523454095e-15,
+      "eigenvector_condition": 9.491484573459115,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 6.366807983421099
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 6.661338147750939e-16,
+      "eigenvector_condition": 9.340050106553273,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 7.789014353097976
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 6.661338147750939e-16,
+      "eigenvector_condition": 9.423271114704402,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 7.846181749961463
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 1.3322676295501878e-15,
+      "eigenvector_condition": 9.192212225582395,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 7.853438022358541
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 2.220446049250313e-15,
+      "eigenvector_condition": 7.342252807713022,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 2.1980315197796183
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 4.40619762898109e-15,
+      "eigenvector_condition": 3.7808252412406804,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 2.3911085896865174
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 4.527828383211385,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 1.8120974399306882
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 1.774621677397196e-15,
+      "eigenvector_condition": 7.3842859826489535,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 1.6553304093652945
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 1.2994335645857424e-15,
+      "eigenvector_condition": 4.019861625141691,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 1.7104274512952116
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 2.6823805492331293e-15,
+      "eigenvector_condition": 7.458309058100033,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 3.0954195674658624
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 4.978263045936564e-15,
+      "eigenvector_condition": 9.678145793371243,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 5.197395449823838
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 4.609936448023287e-15,
+      "eigenvector_condition": 6.637009244687111,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 3.7473801427587965
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 3.386776956913217e-15,
+      "eigenvector_condition": 7.269286683375185,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4.320205101977728
+    },
+    {
+      "point": "far_r16",
+      "scheme": "standard",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 1.4122951546426239e-15,
+      "eigenvector_condition": 8.829824326999052,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4.2915726878979426
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 1.7694179454963432e-15,
+      "eigenvector_condition": 4.981517880481564,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 2.401810884247535
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 9.799018589931118e-16,
+      "eigenvector_condition": 3.2386824551258058,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 2.315098310788014
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 7.28583859910259e-16,
+      "eigenvector_condition": 3.766036950406475,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 2.3305661508152618
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 7.91033905045424e-16,
+      "eigenvector_condition": 4.62690415726578,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 2.5532547189291313
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "axis",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 1.0044048925905713e-15,
+      "eigenvector_condition": 2.693394322316737,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 2.5778750673838857
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 3.442696444536992e-15,
+      "eigenvector_condition": 8.101379784656283,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 2.489557789409295
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 11.21547324325714,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 2.4504005768115693
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 1.8873638824831914e-15,
+      "eigenvector_condition": 6.363126859666215,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 1.8120969768039703
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 2.0919149953169426e-15,
+      "eigenvector_condition": 4.575791898030669,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 1.6483272863161067
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "diagonal",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 9.992007221626409e-16,
+      "eigenvector_condition": 4.847980063031504,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 1.710427451295212
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.1,
+      "max_real_hlambda": 1.3527277264316309e-15,
+      "eigenvector_condition": 9.446302497791748,
+      "tau_time_over_h": 99.99999999999999,
+      "expm_norm_at_tau": 3.971781239742835
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.01,
+      "max_real_hlambda": 9.992007221626409e-16,
+      "eigenvector_condition": 6.459472561191894,
+      "tau_time_over_h": 10000.0,
+      "expm_norm_at_tau": 3.0388409481127985
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.001,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 5.280937063213907,
+      "tau_time_over_h": 1000000.0,
+      "expm_norm_at_tau": 2.1933817522450223
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0.0001,
+      "max_real_hlambda": 2.6645352591003757e-15,
+      "eigenvector_condition": 5.58447725339783,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4.190820797220746
+    },
+    {
+      "point": "far_r16",
+      "scheme": "compatible",
+      "direction": "asymmetric",
+      "epsilon_to_Nyquist": 0,
+      "max_real_hlambda": 4.440893625476037e-15,
+      "eigenvector_condition": 5.3072664310982285,
+      "tau_time_over_h": 10000000.0,
+      "expm_norm_at_tau": 4.1821686023115365
+    }
+  ],
+  "norm": "q=(chi,hTF,alpha,beta) multiplied by sqrt(-L); curvature/Gamma/Theta unscaled. Rates multiplied by h for condition tests.",
+  "warning": "A large condition number with repeated eigenvalues is not by itself proof of defect. expm checks are finite-dimensional diagnostics; flat G2 exact branch coincidences require care."
+}

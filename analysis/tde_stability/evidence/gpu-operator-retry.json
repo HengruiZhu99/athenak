@@ -1,0 +1,91 @@
+{
+  "analyzed_utc": "2026-09-20T00:36:58.561383+00:00",
+  "job_id": "8840368",
+  "source_commit": "ed34472a",
+  "cases": {
+    "hamiltonian_pulse": {
+      "available": true,
+      "exit_code": 0,
+      "final_history_time_M": 20.0,
+      "final_Theta_max": 6.832483151726061e-12,
+      "max_bad_metric": 0.0,
+      "finite_histories": true,
+      "finite_all_active_snapshots": true,
+      "ranks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "cycles": [
+        0,
+        266
+      ],
+      "target_completed": true,
+      "walltime_stop": false,
+      "initial_volume_Theta_rhs_max": 0.0,
+      "final_state_snapshot_end_times_M": [
+        20.0,
+        20.0,
+        20.0,
+        20.0,
+        20.0,
+        20.0,
+        20.0,
+        20.0
+      ],
+      "CPU4rank_initial_stage_comparison": {
+        "volume_rhs": {
+          "max_absolute_difference": 4.6658230444006716e-15,
+          "CPU_max_amplitude": 8.620863530678369e-08,
+          "difference_over_CPU_peak": 5.4122455689001285e-08,
+          "all_arrays_bitwise_equal": false,
+          "arrays_compared": 24
+        },
+        "post_recast": {
+          "max_absolute_difference": 2.220446049250313e-16,
+          "CPU_max_amplitude": 7.947266067453995e-09,
+          "difference_over_CPU_peak": 2.793974720871099e-08,
+          "all_arrays_bitwise_equal": false,
+          "arrays_compared": 24
+        }
+      }
+    }
+  },
+  "checks": [
+    {
+      "passed": true,
+      "description": "hamiltonian_pulse: finite20M target with no invalid metric"
+    },
+    {
+      "passed": true,
+      "description": "hamiltonian_pulse: all8MPI ranks represented"
+    },
+    {
+      "passed": true,
+      "description": "hamiltonian_pulse: final double-precision snapshot is actual20M state"
+    },
+    {
+      "passed": true,
+      "description": "hamiltonian_pulse: volume_rhsGPU/CPU absolute stage difference<=1e-13"
+    },
+    {
+      "passed": true,
+      "description": "hamiltonian_pulse: post_recastGPU/CPU absolute stage difference<=1e-13"
+    },
+    {
+      "passed": true,
+      "description": "hamiltonian_pulse: balancedpurelapseTheta sourceexactzero"
+    }
+  ],
+  "passed": true,
+  "limitations": [
+    "20M operator and MPI/GPU validation only; no long-time stability claim.",
+    "Toy sponge starts at0.5M and reaches full damping at1M; it overlaps the perturbation and is not a production recommendation.",
+    "CPU/GPU comparisons report absolute errors and peak-relative errors; only exactly zero states demand bitwise equality."
+  ]
+}

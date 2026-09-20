@@ -1,0 +1,43 @@
+{
+  "worktree": "/Users/hz0693/research/TDE/athenak-mode-analysis",
+  "source_commit": "1b93538a",
+  "isolated_source_change": "src/main.cpp opt-in full-state input/output hook after initialization and full ADM reconstruction; physics/task kernels unchanged",
+  "binary": "/Users/hz0693/research/TDE/build-mode-analysis/src/athena",
+  "scheme": "sixth-order/RK3/cubic residual ghost extrapolation/zero_rate characteristic boundary",
+  "grid": [
+    16,
+    16,
+    16
+  ],
+  "box_M": [
+    -2,
+    2
+  ],
+  "dx_M": 0.25,
+  "dt_M": 0.075,
+  "shift_Gamma": 2,
+  "field_count": 25,
+  "full_shape_including_ghosts": [
+    1,
+    25,
+    24,
+    24,
+    24
+  ],
+  "matter_feedback": false,
+  "threads": 2,
+  "notes": [
+    "This is a finite-difference response experiment, not an automatic differentiable tangent solver.",
+    "Composition and amplitude-linearity validations are required before eigenmode interpretation.",
+    "No MPI/AMR/GPU/full-domain stability claim.",
+    "No production or Aurora queue actions."
+  ],
+  "baseline_binary_sha256": "1aa1c3cae182341469eff2239fa79123b9fbf3227ad37327bf7f9f45d544e0a2",
+  "immutable_binary": "athena-mode-analysis",
+  "hook_patch": "isolated-hook.patch",
+  "hook_flags": "problem/mode_analysis, problem/mode_input_state, problem/mode_output_state",
+  "constraint_probe_binary": "athena-constraint-probe",
+  "constraint_probe_sha256": "5ea4a8d1dba9b294b96881992c91aa62d0a59bd343fb43e0fd7cea5dd8903b56",
+  "lapse_scaled_binary": "athena-lapse-scaled",
+  "lapse_scaled_binary_sha256": "5be3094897d5edd5106aa6cadc1faa5a5d25959d1a78ab2cc3774013686374c8"
+}
