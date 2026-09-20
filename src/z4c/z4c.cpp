@@ -269,6 +269,14 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.user_Sbc = pin->GetOrAddBoolean("z4c", "user_Sbc", false);
 
   if (opt.boundary_rhs_mode == boundary_rhs_characteristic_cpbc) {
+    const auto &bc_indcs = ppack->pmesh->mb_indcs;
+    if (bc_indcs.nx1 < 3 || (bc_indcs.nx2 > 1 && bc_indcs.nx2 < 3) ||
+        (bc_indcs.nx3 > 1 && bc_indcs.nx3 < 3)) {
+      std::cerr << "characteristic_cpbc requires at least three active cells "
+                << "per block in each active direction for its boundary stencils."
+                << std::endl;
+      std::exit(EXIT_FAILURE);
+    }
     const Real tol = 64.0*std::numeric_limits<Real>::epsilon();
     const bool tangential_principal =
         opt.characteristic_bc_source_mode ==
