@@ -157,6 +157,7 @@ class Z4c {
   static constexpr int boundary_rhs_characteristic_cpbc = 1;
   static constexpr int characteristic_bc_source_zero_rate = 0;
   static constexpr int characteristic_bc_source_tangential_principal = 1;
+  static constexpr int characteristic_bc_source_physical_constraint_radiation = 2;
 
   // aliases for the constraints
   struct Constraint_vars {
@@ -222,6 +223,9 @@ class Z4c {
     // Physical-boundary RHS treatment.
     int boundary_rhs_mode;
     int characteristic_bc_source_mode;
+    // Leading outgoing amplitude radius R=r+shift for the experimental
+    // physical-constraint radiation condition (Schwarzschild trumpet: shift=M).
+    Real characteristic_radiation_areal_shift;
     // Experimental ordering: preserve additive user sources after boundary closure.
     // This changes the incoming characteristic rate datum; default keeps legacy order.
     bool user_rhs_after_boundary;

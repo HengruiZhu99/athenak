@@ -241,11 +241,17 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   } else if (characteristic_bc_source == "tangential_principal") {
     opt.characteristic_bc_source_mode =
         characteristic_bc_source_tangential_principal;
+  } else if (characteristic_bc_source == "physical_constraint_radiation") {
+    // Diagnostic prototype: shifted-trumpet perturbation stability has NOT
+    // passed. See analysis/tde_stability/BOUNDARY_RADIATION.md before use.
+    opt.characteristic_bc_source_mode =
+        characteristic_bc_source_physical_constraint_radiation;
   } else {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "Unknown <z4c>/characteristic_bc_source = "
               << characteristic_bc_source
-              << ". Supported values are zero_rate and tangential_principal."
+              << ". Supported values are zero_rate, tangential_principal, "
+              << "and physical_constraint_radiation."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
@@ -259,6 +265,16 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
       pin->GetOrAddInteger("z4c", "characteristic_bc_diagnostic_interval", 100);
   opt.characteristic_bc_max_energy_density =
       pin->GetOrAddReal("z4c", "characteristic_bc_max_energy_density", 1.0e-12);
+  opt.characteristic_radiation_areal_shift = pin->GetOrAddReal(
+      "z4c", "characteristic_radiation_areal_shift", 1.0);
+  if (opt.characteristic_bc_source_mode ==
+          characteristic_bc_source_physical_constraint_radiation &&
+      (!isfinite(opt.characteristic_radiation_areal_shift) ||
+       opt.characteristic_radiation_areal_shift < 0.0)) {
+    std::cerr << "physical_constraint_radiation requires a finite nonnegative "
+              << "characteristic_radiation_areal_shift." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   use_analytic_background = pin->GetOrAddBoolean("z4c", "use_analytic_background",
                                                  false);
   if (opt.residual_hamiltonian_balance && !use_analytic_background) {
@@ -282,6 +298,9 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     const bool tangential_principal =
         opt.characteristic_bc_source_mode ==
         characteristic_bc_source_tangential_principal;
+    const bool physical_constraint_radiation =
+        opt.characteristic_bc_source_mode ==
+        characteristic_bc_source_physical_constraint_radiation;
     const bool supported =
         opt.use_z4c &&
         use_analytic_background &&
@@ -295,6 +314,9 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
         fabs(opt.shift_hh) <= tol &&
         fabs(opt.sss_damping_amp) <= tol &&
         (!tangential_principal || ppack->pmesh->mb_indcs.ng == 4) &&
+        (!physical_constraint_radiation ||
+         (ppack->pmesh->three_d && ppack->pmesh->mb_indcs.nx1 >= 5 &&
+          ppack->pmesh->mb_indcs.nx2 >= 5 && ppack->pmesh->mb_indcs.nx3 >= 5)) &&
         opt.characteristic_bc_diagnostic_interval > 0 &&
         isfinite(opt.characteristic_bc_max_energy_density) &&
         opt.characteristic_bc_max_energy_density >= 0.0;
@@ -309,7 +331,9 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
                 << "shift_H=0, sss_damping_amp=0, and a finite nonnegative "
                 << "characteristic_bc_max_energy_density, with a positive "
                 << "diagnostic interval. The tangential-principal mode also "
-                << "requires nghost=4." << std::endl;
+                << "requires nghost=4. Physical-constraint radiation requires "
+                << "three dimensions and at least five active cells per block direction."
+                << std::endl;
       std::exit(EXIT_FAILURE);
     }
   }
