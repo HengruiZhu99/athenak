@@ -1,0 +1,1089 @@
+{
+  "scope": "Continuum point test, not a grid evolution; fixed source in conformal Z4c geometric variables, positive precollapsed lapse and zero shift.",
+  "formula": "Without projection: delta C_t(modified)-delta C_t(physical) = -C_double_prime[delta_U,F(U_background)]. With algebraic projection P(U), differentiate -C_prime[U] P(U) F(U_background), including P_prime.",
+  "variation": "d/dM of exact Liu family at M=1 with a/M=.9 and fixed Cartesian coordinates",
+  "caveat": "Background is an exact algebraic fixed point after subtraction, but neighboring physical constraint-satisfying mass data acquire M/Q sources. H is symmetry-zero in this direction. This is a property to measure in the authorized reference-forced numerical model, not a reason to conflate it with physical vacuum evolution.",
+  "checks_passed": true,
+  "points": [
+    {
+      "r_over_throat": 0.5,
+      "algebraic_tangent_projection": false,
+      "xyz": [
+        0.05384587103827752,
+        0.07179449471770337,
+        0.155439640693497
+      ],
+      "checks": [
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 9.825251981913008e-14,
+          "mass_family_max_abs_H": 3.122502256758253e-16,
+          "H_source_per_delta_mass": -1.8098225691025285e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.2355467335051995,
+            -0.3140623113402284,
+            0.01862322438994549
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.03785944627757099,
+          "Q_source_vector_per_delta_mass": [
+            0.03676377065109371,
+            -0.02757282798826477,
+            2.7257067679947648e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595471331383382
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 9.825251981913008e-14,
+          "mass_family_max_abs_H": 5.342948306008566e-16,
+          "H_source_per_delta_mass": 2.7144470163077603e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.23554662378627456,
+            -0.3140621650485333,
+            0.01862308451547154
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.03785942610530042,
+          "Q_source_vector_per_delta_mass": [
+            0.036763799780570316,
+            -0.027572849835103923,
+            7.954027785211628e-15
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595474972551861
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 9.825251981913008e-14,
+          "mass_family_max_abs_H": 9.020562075079397e-16,
+          "H_source_per_delta_mass": 1.794302740956041e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.23554661414038736,
+            -0.31406215218781003,
+            0.01862307221860946
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.03785942433190136,
+          "Q_source_vector_per_delta_mass": [
+            0.03676380233907928,
+            -0.027572851753754346,
+            1.1841031334152006e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595475292351603
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 5.05029988932481e-13,
+          "mass_family_max_abs_H": 3.122502256758253e-16,
+          "H_source_per_delta_mass": -1.8098225691025285e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.23554673350525593,
+            -0.314062311340266,
+            0.018623224389983102
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.03785944627757783,
+          "Q_source_vector_per_delta_mass": [
+            0.03676377065109371,
+            -0.02757282798826477,
+            2.7257067679947648e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595471331383382
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 5.05029988932481e-13,
+          "mass_family_max_abs_H": 5.342948306008566e-16,
+          "H_source_per_delta_mass": 2.7144470163077603e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.23554662378633728,
+            -0.3140621650486587,
+            0.01862308451547154
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0378594261053136,
+          "Q_source_vector_per_delta_mass": [
+            0.036763799780570316,
+            -0.027572849835103923,
+            7.954027785211628e-15
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595474972551861
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 5.05029988932481e-13,
+          "mass_family_max_abs_H": 9.020562075079397e-16,
+          "H_source_per_delta_mass": 1.794302740956041e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.23554661414057543,
+            -0.31406215218781003,
+            0.01862307221860946
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.03785942433191214,
+          "Q_source_vector_per_delta_mass": [
+            0.03676380233907928,
+            -0.027572851753754346,
+            1.1841031334152006e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595475292351603
+        }
+      ],
+      "max_absolute_calibration_errors": {
+        "H_source_per_delta_mass": 1.522858039325265e-13,
+        "M_source_physical_norm_per_delta_mass": 1.7734014604031678e-09,
+        "Q_source_Euclidean_norm_per_delta_mass": 3.1979974224327634e-09
+      },
+      "max_relative_calibration_errors": {
+        "H_source_per_delta_mass": null,
+        "M_source_physical_norm_per_delta_mass": 4.684174394348483e-08,
+        "Q_source_Euclidean_norm_per_delta_mass": 6.959013418601757e-08
+      }
+    },
+    {
+      "r_over_throat": 0.5,
+      "algebraic_tangent_projection": true,
+      "xyz": [
+        0.05384587103827752,
+        0.07179449471770337,
+        0.155439640693497
+      ],
+      "checks": [
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 8.587691529367304e-14,
+          "mass_family_max_abs_H": 3.122502256758253e-16,
+          "H_source_per_delta_mass": -1.876181944927171e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.0950025717502331,
+            -0.12667009566693987,
+            -0.019451452653976225
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.014920315987322252,
+          "Q_source_vector_per_delta_mass": [
+            0.03676377065109371,
+            -0.02757282798826477,
+            2.7257067679947648e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595471331383382
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 8.587691529367304e-14,
+          "mass_family_max_abs_H": 5.342948306008566e-16,
+          "H_source_per_delta_mass": 2.783170211469716e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.09500254292957547,
+            -0.12667005723930858,
+            -0.01945153351317947
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.014920310902779711,
+          "Q_source_vector_per_delta_mass": [
+            0.036763799780570316,
+            -0.027572849835103923,
+            7.954027785211628e-15
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595474972551861
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 8.587691529367304e-14,
+          "mass_family_max_abs_H": 9.020562075079397e-16,
+          "H_source_per_delta_mass": 1.8471591258411366e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.09500254039671427,
+            -0.12667005386241106,
+            -0.019451540622067755
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.014920310455934633,
+          "Q_source_vector_per_delta_mass": [
+            0.03676380233907928,
+            -0.027572851753754346,
+            1.1841031334152006e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595475292351603
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 4.912625990956504e-13,
+          "mass_family_max_abs_H": 3.122502256758253e-16,
+          "H_source_per_delta_mass": -1.876181944927171e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.09500257175021429,
+            -0.12667009566690224,
+            -0.01945145265393861
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.01492031598731856,
+          "Q_source_vector_per_delta_mass": [
+            0.03676377065109371,
+            -0.02757282798826477,
+            2.7257067679947648e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595471331383382
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 4.912625990956504e-13,
+          "mass_family_max_abs_H": 5.342948306008566e-16,
+          "H_source_per_delta_mass": 2.783170211469716e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.09500254292963814,
+            -0.12667005723943395,
+            -0.019451533513054085
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.01492031090279362,
+          "Q_source_vector_per_delta_mass": [
+            0.036763799780570316,
+            -0.027572849835103923,
+            7.954027785211628e-15
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595474972551861
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 4.912625990956504e-13,
+          "mass_family_max_abs_H": 9.020562075079397e-16,
+          "H_source_per_delta_mass": 1.8471591258411366e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.0950025403965262,
+            -0.12667005386128258,
+            -0.019451540622067758
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.014920310455838123,
+          "Q_source_vector_per_delta_mass": [
+            0.03676380233907928,
+            -0.027572851753754346,
+            1.1841031334152006e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.04595475292351603
+        }
+      ],
+      "max_absolute_calibration_errors": {
+        "H_source_per_delta_mass": 1.5688421046941649e-13,
+        "M_source_physical_norm_per_delta_mass": 4.4695549691886605e-10,
+        "Q_source_Euclidean_norm_per_delta_mass": 3.1979974224327634e-09
+      },
+      "max_relative_calibration_errors": {
+        "H_source_per_delta_mass": null,
+        "M_source_physical_norm_per_delta_mass": 2.995617941341014e-08,
+        "Q_source_Euclidean_norm_per_delta_mass": 6.959013418601757e-08
+      }
+    },
+    {
+      "r_over_throat": 1.0,
+      "algebraic_tangent_projection": false,
+      "xyz": [
+        0.10769174207655503,
+        0.14358898943540674,
+        0.310879281386994
+      ],
+      "checks": [
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 2.0327588709899655e-13,
+          "mass_family_max_abs_H": 6.800116025829084e-16,
+          "H_source_per_delta_mass": -1.7077386807892219e-15,
+          "M_source_covector_per_delta_mass": [
+            -0.18785304274723102,
+            -0.25047072366300605,
+            0.14415846968048565
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.07560675045782594,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397523794959184,
+            0.016798142846163877,
+            1.453286508809544e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996904743665674
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 2.0327588709899655e-13,
+          "mass_family_max_abs_H": 9.159339953157541e-16,
+          "H_source_per_delta_mass": -1.1973297469266032e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.18785301496399887,
+            -0.2504706866190413,
+            0.14415839363300711
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.07560673386146802,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397483941209256,
+            0.016798112955721905,
+            4.27925828170796e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996854926400548
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 2.0327588709899655e-13,
+          "mass_family_max_abs_H": 1.0824674490095276e-15,
+          "H_source_per_delta_mass": -6.858602802810097e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.1878530125219799,
+            -0.2504706833616995,
+            0.14415838694829985
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.07560673240246535,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397480437530426,
+            0.016798110327176374,
+            -7.172401054314822e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996850546330165
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 4.1650115838335293e-13,
+          "mass_family_max_abs_H": 6.800116025829084e-16,
+          "H_source_per_delta_mass": -1.7077386807892219e-15,
+          "M_source_covector_per_delta_mass": [
+            -0.1878530427472216,
+            -0.2504707236629872,
+            0.14415846968056087
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.07560675045782932,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397523794959184,
+            0.016798142846163877,
+            1.453286508809544e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996904743665674
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 4.1650115838335293e-13,
+          "mass_family_max_abs_H": 9.159339953157541e-16,
+          "H_source_per_delta_mass": -1.1973297469266032e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.1878530149639675,
+            -0.25047068661891597,
+            0.14415839363303848
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.07560673386144778,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397483941209256,
+            0.016798112955721905,
+            4.27925828170796e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996854926400548
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 4.1650115838335293e-13,
+          "mass_family_max_abs_H": 1.0824674490095276e-15,
+          "H_source_per_delta_mass": -6.858602802810097e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.1878530125216037,
+            -0.25047068336207556,
+            0.1441583869477356
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.07560673240242426,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397480437530426,
+            0.016798110327176374,
+            -7.172401054314822e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996850546330165
+        }
+      ],
+      "max_absolute_calibration_errors": {
+        "H_source_per_delta_mass": 6.738869828117437e-13,
+        "M_source_physical_norm_per_delta_mass": 1.459023526995118e-09,
+        "Q_source_Euclidean_norm_per_delta_mass": 4.380070382781209e-09
+      },
+      "max_relative_calibration_errors": {
+        "H_source_per_delta_mass": null,
+        "M_source_physical_norm_per_delta_mass": 1.929753450035801e-08,
+        "Q_source_Euclidean_norm_per_delta_mass": 1.564486825235187e-07
+      }
+    },
+    {
+      "r_over_throat": 1.0,
+      "algebraic_tangent_projection": true,
+      "xyz": [
+        0.10769174207655503,
+        0.14358898943540674,
+        0.310879281386994
+      ],
+      "checks": [
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 1.761172656175984e-13,
+          "mass_family_max_abs_H": 6.800116025829084e-16,
+          "H_source_per_delta_mass": -3.325092350503431e-15,
+          "M_source_covector_per_delta_mass": [
+            -0.07115901442170097,
+            -0.09487868589556994,
+            0.03873276881050458
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.027182128863609933,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397523794959184,
+            0.016798142846163877,
+            1.453286508809544e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996904743665674
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 1.761172656175984e-13,
+          "mass_family_max_abs_H": 9.159339953157541e-16,
+          "H_source_per_delta_mass": -1.4135058196782462e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.07115900038037706,
+            -0.09487866717423316,
+            0.03873275101187442
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.027182122643350577,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397483941209256,
+            0.016798112955721905,
+            4.27925828170796e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996854926400548
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 1.761172656175984e-13,
+          "mass_family_max_abs_H": 1.0824674490095276e-15,
+          "H_source_per_delta_mass": -7.024143550256604e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.07115899914588857,
+            -0.09487866552854105,
+            0.03873274944752653
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.02718212209655762,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397480437530426,
+            0.016798110327176374,
+            -7.172401054314822e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996850546330165
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 4.194163843733922e-13,
+          "mass_family_max_abs_H": 6.800116025829084e-16,
+          "H_source_per_delta_mass": -3.325092350503431e-15,
+          "M_source_covector_per_delta_mass": [
+            -0.07115901442169156,
+            -0.09487868589551351,
+            0.0387327688105422
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.027182128863602866,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397523794959184,
+            0.016798142846163877,
+            1.453286508809544e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996904743665674
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 4.194163843733922e-13,
+          "mass_family_max_abs_H": 9.159339953157541e-16,
+          "H_source_per_delta_mass": -1.4135058196782462e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.07115900038034573,
+            -0.09487866717417046,
+            0.038732751011749035
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.027182122643326093,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397483941209256,
+            0.016798112955721905,
+            4.27925828170796e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996854926400548
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 4.194163843733922e-13,
+          "mass_family_max_abs_H": 1.0824674490095276e-15,
+          "H_source_per_delta_mass": -7.024143550256604e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.07115899914579453,
+            -0.09487866552835297,
+            0.03873274944724441
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.02718212209649211,
+          "Q_source_vector_per_delta_mass": [
+            -0.022397480437530426,
+            0.016798110327176374,
+            -7.172401054314822e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.027996850546330165
+        }
+      ],
+      "max_absolute_calibration_errors": {
+        "H_source_per_delta_mass": 6.88279296828878e-13,
+        "M_source_physical_norm_per_delta_mass": 5.46833984343964e-10,
+        "Q_source_Euclidean_norm_per_delta_mass": 4.380070382781209e-09
+      },
+      "max_relative_calibration_errors": {
+        "H_source_per_delta_mass": null,
+        "M_source_physical_norm_per_delta_mass": 2.011741329108862e-08,
+        "Q_source_Euclidean_norm_per_delta_mass": 1.564486825235187e-07
+      }
+    },
+    {
+      "r_over_throat": 2.0,
+      "algebraic_tangent_projection": false,
+      "xyz": [
+        0.21538348415311007,
+        0.2871779788708135,
+        0.621758562773988
+      ],
+      "checks": [
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 6.599695483256652e-14,
+          "mass_family_max_abs_H": 7.216449660063518e-16,
+          "H_source_per_delta_mass": -1.4805146303661418e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.031233928511418294,
+            -0.0416452380152385,
+            0.037706701903204846
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.02568180347405878,
+          "Q_source_vector_per_delta_mass": [
+            -0.04192638125299908,
+            0.03144478593966604,
+            -1.075767741651746e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.05240797656619888
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 6.599695483256652e-14,
+          "mass_family_max_abs_H": 9.992007221626409e-16,
+          "H_source_per_delta_mass": -1.720077641673722e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.03123398665961067,
+            -0.041645315546252046,
+            0.03770675885778851
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.02568184833581915,
+          "Q_source_vector_per_delta_mass": [
+            -0.041926374627632164,
+            0.03144478097072412,
+            1.2292277401340346e-15
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.0524079682845402
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 6.599695483256652e-14,
+          "mass_family_max_abs_H": 6.730727086790012e-16,
+          "H_source_per_delta_mass": -1.4784969212797094e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.031233991771866948,
+            -0.041645322362661656,
+            0.03770676386486155
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.025681852279924294,
+          "Q_source_vector_per_delta_mass": [
+            -0.04192637404532018,
+            0.0314447805335738,
+            1.8690572325230408e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.052407967556400425
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 1.7925348454559228e-13,
+          "mass_family_max_abs_H": 7.216449660063518e-16,
+          "H_source_per_delta_mass": -1.4805146303661418e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.03123392851140654,
+            -0.04164523801522439,
+            0.037706701903195444
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.025681803474050597,
+          "Q_source_vector_per_delta_mass": [
+            -0.04192638125299908,
+            0.03144478593966604,
+            -1.075767741651746e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.05240797656619888
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 1.7925348454559228e-13,
+          "mass_family_max_abs_H": 9.992007221626409e-16,
+          "H_source_per_delta_mass": -1.720077641673722e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.031233986659712543,
+            -0.04164531554623637,
+            0.03770675885771014
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.025681848335817825,
+          "Q_source_vector_per_delta_mass": [
+            -0.041926374627632164,
+            0.03144478097072412,
+            1.2292277401340346e-15
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.0524079682845402
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 1.7925348454559228e-13,
+          "mass_family_max_abs_H": 6.730727086790012e-16,
+          "H_source_per_delta_mass": -1.4784969212797094e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.031233991771819923,
+            -0.04164532236223849,
+            0.037706763864955584
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.02568185227982348,
+          "Q_source_vector_per_delta_mass": [
+            -0.04192637404532018,
+            0.0314447805335738,
+            1.8690572325230408e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.052407967556400425
+        }
+      ],
+      "max_absolute_calibration_errors": {
+        "H_source_per_delta_mass": 2.4158072039401256e-14,
+        "M_source_physical_norm_per_delta_mass": 3.944005653316873e-09,
+        "Q_source_Euclidean_norm_per_delta_mass": 7.281397776393028e-10
+      },
+      "max_relative_calibration_errors": {
+        "H_source_per_delta_mass": null,
+        "M_source_physical_norm_per_delta_mass": 1.535716976464122e-07,
+        "Q_source_Euclidean_norm_per_delta_mass": 1.3893684712266186e-08
+      }
+    },
+    {
+      "r_over_throat": 2.0,
+      "algebraic_tangent_projection": true,
+      "xyz": [
+        0.21538348415311007,
+        0.2871779788708135,
+        0.621758562773988
+      ],
+      "checks": [
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 4.457474578318114e-14,
+          "mass_family_max_abs_H": 7.216449660063518e-16,
+          "H_source_per_delta_mass": -1.55104486757794e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.017599309370818585,
+            -0.023465745827754975,
+            -0.021733612127941653
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.012279723706731497,
+          "Q_source_vector_per_delta_mass": [
+            -0.04192638125299908,
+            0.03144478593966604,
+            -1.075767741651746e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.05240797656619888
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 4.457474578318114e-14,
+          "mass_family_max_abs_H": 9.992007221626409e-16,
+          "H_source_per_delta_mass": -1.7037869702064448e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.017599322604514394,
+            -0.0234657634725866,
+            -0.021733575088231427
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.01227972485636276,
+          "Q_source_vector_per_delta_mass": [
+            -0.041926374627632164,
+            0.03144478097072412,
+            1.2292277401340346e-15
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.0524079682845402
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 4.457474578318114e-14,
+          "mass_family_max_abs_H": 6.730727086790012e-16,
+          "H_source_per_delta_mass": -1.4113366895452914e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.01759932376783846,
+            -0.023465765024113752,
+            -0.02173357183230799
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.012279724957545356,
+          "Q_source_vector_per_delta_mass": [
+            -0.04192637404532018,
+            0.0314447805335738,
+            1.8690572325230408e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.052407967556400425
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 1.8641459613080166e-13,
+          "mass_family_max_abs_H": 7.216449660063518e-16,
+          "H_source_per_delta_mass": -1.55104486757794e-14,
+          "M_source_covector_per_delta_mass": [
+            -0.017599309370809182,
+            -0.023465745827773787,
+            -0.021733612127955763
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.012279723706736518,
+          "Q_source_vector_per_delta_mass": [
+            -0.04192638125299908,
+            0.03144478593966604,
+            -1.075767741651746e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.05240797656619888
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 1.8641459613080166e-13,
+          "mass_family_max_abs_H": 9.992007221626409e-16,
+          "H_source_per_delta_mass": -1.7037869702064448e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.01759932260449089,
+            -0.023465763472649292,
+            -0.021733575088106045
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.01227972485635482,
+          "Q_source_vector_per_delta_mass": [
+            -0.041926374627632164,
+            0.03144478097072412,
+            1.2292277401340346e-15
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.0524079682845402
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 1.8641459613080166e-13,
+          "mass_family_max_abs_H": 6.730727086790012e-16,
+          "H_source_per_delta_mass": -1.4113366895452914e-13,
+          "M_source_covector_per_delta_mass": [
+            -0.01759932376790899,
+            -0.02346576502387865,
+            -0.021733571832072886
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.012279724957465085,
+          "Q_source_vector_per_delta_mass": [
+            -0.04192637404532018,
+            0.0314447805335738,
+            1.8690572325230408e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 0.052407967556400425
+        }
+      ],
+      "max_absolute_calibration_errors": {
+        "H_source_per_delta_mass": 2.924502806611534e-14,
+        "M_source_physical_norm_per_delta_mass": 1.0111026599313178e-10,
+        "Q_source_Euclidean_norm_per_delta_mass": 7.281397776393028e-10
+      },
+      "max_relative_calibration_errors": {
+        "H_source_per_delta_mass": null,
+        "M_source_physical_norm_per_delta_mass": 8.233919435765935e-09,
+        "Q_source_Euclidean_norm_per_delta_mass": 1.3893684712266186e-08
+      }
+    },
+    {
+      "r_over_throat": 10.0,
+      "algebraic_tangent_projection": false,
+      "xyz": [
+        1.0769174207655505,
+        1.4358898943540674,
+        3.10879281386994
+      ],
+      "checks": [
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 1.0225202914520752e-14,
+          "mass_family_max_abs_H": 2.365187039277128e-16,
+          "H_source_per_delta_mass": -1.6036120766883815e-15,
+          "M_source_covector_per_delta_mass": [
+            0.00029778295731946054,
+            0.000397043943093416,
+            -0.0015766252749662031
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0013040535723675129,
+          "Q_source_vector_per_delta_mass": [
+            -4.1036293553335657e-05,
+            3.077722016391754e-05,
+            -8.13510546512347e-16
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.129536694101905e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 1.0225202914520752e-14,
+          "mass_family_max_abs_H": 2.347297703431117e-16,
+          "H_source_per_delta_mass": -1.606708725416931e-15,
+          "M_source_covector_per_delta_mass": [
+            0.00029778302382062747,
+            0.0003970440317609794,
+            -0.0015766253935397877
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0013040536916601182,
+          "Q_source_vector_per_delta_mass": [
+            -4.103628676738654e-05,
+            3.07772150733715e-05,
+            4.595901422567653e-16
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.129535845793213e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 1.0225202914520752e-14,
+          "mass_family_max_abs_H": 2.2236986557677696e-16,
+          "H_source_per_delta_mass": -1.1062340455251414e-14,
+          "M_source_covector_per_delta_mass": [
+            0.0002977830296666608,
+            0.00039704403955270084,
+            -0.0015766254039645859
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0013040537021471459,
+          "Q_source_vector_per_delta_mass": [
+            -4.1036286166015734e-05,
+            3.0777214622343396e-05,
+            -2.0266036974335315e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.1295357706218625e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 1.2677780042015298e-14,
+          "mass_family_max_abs_H": 2.365187039277128e-16,
+          "H_source_per_delta_mass": -1.6036120766883815e-15,
+          "M_source_covector_per_delta_mass": [
+            0.0002977829573196809,
+            0.0003970439430931222,
+            -0.0015766252749656153
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0013040535723670504,
+          "Q_source_vector_per_delta_mass": [
+            -4.1036293553335657e-05,
+            3.077722016391754e-05,
+            -8.13510546512347e-16
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.129536694101905e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 1.2677780042015298e-14,
+          "mass_family_max_abs_H": 2.347297703431117e-16,
+          "H_source_per_delta_mass": -1.606708725416931e-15,
+          "M_source_covector_per_delta_mass": [
+            0.00029778302381989276,
+            0.00039704403176024476,
+            -0.001576625393539788
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0013040536916598215,
+          "Q_source_vector_per_delta_mass": [
+            -4.103628676738654e-05,
+            3.07772150733715e-05,
+            4.595901422567653e-16
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.129535845793213e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 1.2677780042015298e-14,
+          "mass_family_max_abs_H": 2.2236986557677696e-16,
+          "H_source_per_delta_mass": -1.1062340455251414e-14,
+          "M_source_covector_per_delta_mass": [
+            0.0002977830296659261,
+            0.0003970440395541702,
+            -0.001576625403961647
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.001304053702145194,
+          "Q_source_vector_per_delta_mass": [
+            -4.1036286166015734e-05,
+            3.0777214622343396e-05,
+            -2.0266036974335315e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.1295357706218625e-05
+        }
+      ],
+      "max_absolute_calibration_errors": {
+        "H_source_per_delta_mass": 9.455631729834483e-15,
+        "M_source_physical_norm_per_delta_mass": 1.04853725528542e-11,
+        "Q_source_Euclidean_norm_per_delta_mass": 7.517135039978619e-13
+      },
+      "max_relative_calibration_errors": {
+        "H_source_per_delta_mass": null,
+        "M_source_physical_norm_per_delta_mass": 8.040598738844539e-09,
+        "Q_source_Euclidean_norm_per_delta_mass": 1.4654610818840831e-08
+      }
+    },
+    {
+      "r_over_throat": 10.0,
+      "algebraic_tangent_projection": true,
+      "xyz": [
+        1.0769174207655505,
+        1.4358898943540674,
+        3.10879281386994
+      ],
+      "checks": [
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 9.807608546391134e-15,
+          "mass_family_max_abs_H": 2.365187039277128e-16,
+          "H_source_per_delta_mass": -1.6002389979071746e-15,
+          "M_source_covector_per_delta_mass": [
+            0.00018591281559950158,
+            0.00024788375413251274,
+            -0.0005334675567994588
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0004937010828773545,
+          "Q_source_vector_per_delta_mass": [
+            -4.1036293553335657e-05,
+            3.077722016391754e-05,
+            -8.13510546512347e-16
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.129536694101905e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 9.807608546391134e-15,
+          "mass_family_max_abs_H": 2.347297703431117e-16,
+          "H_source_per_delta_mass": -1.5917780824084736e-15,
+          "M_source_covector_per_delta_mass": [
+            0.00018591285449929128,
+            0.0002478838059982285,
+            -0.0005334675481761057
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.000493701105768224,
+          "Q_source_vector_per_delta_mass": [
+            -4.103628676738654e-05,
+            3.07772150733715e-05,
+            4.595901422567653e-16
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.129535845793213e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.004,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 9.807608546391134e-15,
+          "mass_family_max_abs_H": 2.2236986557677696e-16,
+          "H_source_per_delta_mass": -1.1097429669335746e-14,
+          "M_source_covector_per_delta_mass": [
+            0.00018591285792071452,
+            0.0002478838105606772,
+            -0.0005334675474208505
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0004937011077839484,
+          "Q_source_vector_per_delta_mass": [
+            -4.1036286166015734e-05,
+            3.0777214622343396e-05,
+            -2.0266036974335315e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.1295357706218625e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.001,
+          "background_constraint_tangent_max": 1.2904944325311705e-14,
+          "mass_family_max_abs_H": 2.365187039277128e-16,
+          "H_source_per_delta_mass": -1.6002389979071746e-15,
+          "M_source_covector_per_delta_mass": [
+            0.00018591281559906083,
+            0.00024788375413229227,
+            -0.0005334675567991649
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0004937010828769631,
+          "Q_source_vector_per_delta_mass": [
+            -4.1036293553335657e-05,
+            3.077722016391754e-05,
+            -8.13510546512347e-16
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.129536694101905e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0003,
+          "background_constraint_tangent_max": 1.2904944325311705e-14,
+          "mass_family_max_abs_H": 2.347297703431117e-16,
+          "H_source_per_delta_mass": -1.5917780824084736e-15,
+          "M_source_covector_per_delta_mass": [
+            0.00018591285450002599,
+            0.0002478838059984735,
+            -0.0005334675481746363
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0004937011057675228,
+          "Q_source_vector_per_delta_mass": [
+            -4.103628676738654e-05,
+            3.07772150733715e-05,
+            4.595901422567653e-16
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.129535845793213e-05
+        },
+        {
+          "source_derivative_step_fraction": 0.002,
+          "mass_step": 0.0001,
+          "background_constraint_tangent_max": 1.2904944325311705e-14,
+          "mass_family_max_abs_H": 2.2236986557677696e-16,
+          "H_source_per_delta_mass": -1.1097429669335746e-14,
+          "M_source_covector_per_delta_mass": [
+            0.00018591285791924516,
+            0.0002478838105584731,
+            -0.0005334675474149731
+          ],
+          "M_source_physical_norm_per_delta_mass": 0.0004937011077788489,
+          "Q_source_vector_per_delta_mass": [
+            -4.1036286166015734e-05,
+            3.0777214622343396e-05,
+            -2.0266036974335315e-14
+          ],
+          "Q_source_Euclidean_norm_per_delta_mass": 5.1295357706218625e-05
+        }
+      ],
+      "max_absolute_calibration_errors": {
+        "H_source_per_delta_mass": 9.505651586927272e-15,
+        "M_source_physical_norm_per_delta_mass": 2.0113261100032642e-12,
+        "Q_source_Euclidean_norm_per_delta_mass": 7.517135039978619e-13
+      },
+      "max_relative_calibration_errors": {
+        "H_source_per_delta_mass": null,
+        "M_source_physical_norm_per_delta_mass": 4.073975282437949e-09,
+        "Q_source_Euclidean_norm_per_delta_mass": 1.4654610818840831e-08
+      }
+    }
+  ]
+}

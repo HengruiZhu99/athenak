@@ -1,0 +1,41 @@
+{
+  "scope": "CPU continuum frozen half-space boundary analysis; proposedv2 failure, not a fix or originalslowmode attribution",
+  "reproduction": "OPENBLAS_NUM_THREADS=1 python3 run_all.py",
+  "dependencies": [
+    "numpy",
+    "scipy"
+  ],
+  "constants": {
+    "alpha": 0.6531769730886202,
+    "chi": 0.4266401581732121,
+    "beta_normal": 0.2255366474924469,
+    "beta_tangent_y": -0.01503577649949646,
+    "shift_Gamma": 2,
+    "lapse_driver": "2alpha",
+    "kappa1": 0.1,
+    "kappa2": 0,
+    "shift_eta": 2
+  },
+  "files": {
+    "RESULTS.md": "cd425cd22a2b9e319831ff691e19e083d9be1599b422fa425d83375d1dc61b8f",
+    "boundary_variants.py": "18c608abfa16da7b96d190b5b4a8965484cdcacd4b619aa24bd5d81d9609e381",
+    "characteristic_rows.py": "d6f3fc3e090cb76365ac873b0a67d8787229897b7b67c7d7951e0d781d3f97fe",
+    "determinant.py": "6e4a719dfc84c8ea046967e6ce3eefd07b33433487513ebd927c16bfb39dbe83",
+    "dirichlet-halfspace-mode.npz": "19c5ecbc977b3ab9abf626a95b8e80fa872cdab644cf39828b943d6c2302ff47",
+    "dirichlet-physical-validation.json": "35c224d22d5c27fa54647e7dadea09b08bc4b1634804f1a16d0e63bee8863590",
+    "dirichlet_profile.py": "4953790cef88312c917e3baf822c4ee298a4640f251112ed3ee1c5e2950dfa91",
+    "physical-gauge-validation.json": "8d0c9b0346d01ef2d482a24c2f30e675d864c4d821a35f1ae2a39f71eae76dae",
+    "physical_and_gauge.py": "6199fee9f34058a1a01b48b57e5eb6876c227bf19c34a040d53cabe2360b95f3",
+    "run_all.py": "714fa6f876b2761de9229e0a5d57c73aa23f2d6e14d5ee54bf6853537bd3da2b",
+    "schur-real-candidates.json": "c669bf3ce133f702cf993c5fa46c652b368658eb6efe3fe667add9e3d5562d05",
+    "schur-real-scan.json": "bb51c0cda207640a75d500b3ceae386b01c46cbbabbfe04c98277316955fda39",
+    "schur_check.py": "7712dfe942999734560cb19bfb4a999242e98a6368c0354260f42b09e181666a",
+    "validate_root.py": "ae45b38981f8074e661aa98694212d92b4222a82e0787d7c30bf727a2d7a0c39",
+    "validated-halfspace-mode.npz": "64e195a902ffed75c4ea0ab6477dbbdb9c497242f5bc08437435fb11e8f1e5a8",
+    "validated-root.json": "892d5cd03578333a11be7a0e54abd8dd914024100743860d5470de21e10d596d",
+    "weyl-halfspace-mode.npz": "cdfd8ee0453fced272d8f3e24dd371a3e4a1f782c488fdeae1b8090634f6b564",
+    "weyl-physical-validation.json": "884456c48a026c1554e93423d6ef7c9381b21bac7c698900b5abbb78ba752a51",
+    "weyl-row-check.json": "e58e03d3b50a19444e89b205723d0a9d03e86a38ab3f7602819a2a78e44ec649",
+    "weyl_profile.py": "234471fad2001d88fc031b5b690e9e13da6e99c6c62459e0d57baf9ed08967b8"
+  }
+}

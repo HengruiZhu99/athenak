@@ -1,0 +1,131 @@
+{
+  "scope": "Linear spherical full-state radial annulus only; promising differential Bjorhus pilot, no 3D/nonlinear validation or exact finite-grid physical constraint preservation.",
+  "reference_constraint_branch_per_M": -0.072790693446,
+  "spectrum_neutral_mode_caveat": "Small positive eigenvalues near zero remain at double-precision resolution; no exact full-spectrum negativity proof. Fast N^2 modes of old algebraic closure are absent.",
+  "rows": [
+    {
+      "degree": 32,
+      "max_real_spectrum_per_M": 0.0001374955532306093,
+      "constraint_branch_per_M": -0.0717484654848961,
+      "constraint_branch_endpoint_PDE_relative": 0.012758146465221856,
+      "constraint_branch_actual_radiation_relative": [
+        0.01233253355548925,
+        0.7633762985604846
+      ],
+      "offgrid": {
+        "sample_count": 512,
+        "relative_L2_full_PDE": 0.0019441750231123614,
+        "max_abs_full_PDE_Theta_normalized": 0.015971763552405985,
+        "max_last_8_chebyshev_coefficients_over_max_coefficient": 5.0120237160420115e-05
+      },
+      "final_constraint_norm_over_initial_state": {
+        "pure_lapse": 4.321842925772252e-06,
+        "Theta_pulse": 0.001765116543157852,
+        "constraint_free_radial_coordinate": 1.9413901686269733e-07
+      },
+      "all_finite_300M": true,
+      "Theta_pulse_boundary_absolute_at5M": [
+        0.0004484989873337168,
+        0.003243651871731682
+      ]
+    },
+    {
+      "degree": 48,
+      "max_real_spectrum_per_M": 5.215068217823718e-07,
+      "constraint_branch_per_M": -0.07278800163196655,
+      "constraint_branch_endpoint_PDE_relative": 3.355986871681804e-05,
+      "constraint_branch_actual_radiation_relative": [
+        3.449203866489412e-05,
+        0.006935997318232805
+      ],
+      "offgrid": {
+        "sample_count": 512,
+        "relative_L2_full_PDE": 3.325747270400635e-06,
+        "max_abs_full_PDE_Theta_normalized": 1.7506439806500712e-05,
+        "max_last_8_chebyshev_coefficients_over_max_coefficient": 7.9340093550407e-08
+      },
+      "final_constraint_norm_over_initial_state": {
+        "pure_lapse": 9.635895111046943e-09,
+        "Theta_pulse": 5.774158731600437e-06,
+        "constraint_free_radial_coordinate": 6.040588205291169e-10
+      },
+      "all_finite_300M": true,
+      "Theta_pulse_boundary_absolute_at5M": [
+        4.210445762344722e-06,
+        1.1733267318292384e-06
+      ]
+    },
+    {
+      "degree": 64,
+      "max_real_spectrum_per_M": 8.969336833975813e-10,
+      "constraint_branch_per_M": -0.07279068081296057,
+      "constraint_branch_endpoint_PDE_relative": 6.544809397793016e-08,
+      "constraint_branch_actual_radiation_relative": [
+        7.459121187570595e-08,
+        1.9348266785680233e-05
+      ],
+      "offgrid": {
+        "sample_count": 512,
+        "relative_L2_full_PDE": 7.1427243745898715e-09,
+        "max_abs_full_PDE_Theta_normalized": 4.238061510758451e-08,
+        "max_last_8_chebyshev_coefficients_over_max_coefficient": 1.236157650669249e-10
+      },
+      "final_constraint_norm_over_initial_state": {
+        "pure_lapse": 1.7470556337385512e-10,
+        "Theta_pulse": 2.548266837119952e-08,
+        "constraint_free_radial_coordinate": 6.418274913297551e-12
+      },
+      "all_finite_300M": true,
+      "Theta_pulse_boundary_absolute_at5M": [
+        2.0007549897740895e-07,
+        3.3176020304975795e-06
+      ],
+      "half_exponential_subdivision_final_relative_state_difference": [
+        1.2260299864747383e-05,
+        8.206881392597146e-07,
+        1.280553460434655e-05
+      ],
+      "half_exponential_subdivision_final_constraint_norm": {
+        "pure_lapse": 1.239489551295163e-10,
+        "Theta_pulse": 1.8725864121388382e-08,
+        "constraint_free_radial_coordinate": 4.533747021282072e-12
+      }
+    },
+    {
+      "degree": 80,
+      "max_real_spectrum_per_M": 4.551888648200007e-08,
+      "constraint_branch_per_M": -0.07279068050907019,
+      "constraint_branch_endpoint_PDE_relative": 3.91427817553979e-09,
+      "constraint_branch_actual_radiation_relative": [
+        2.3973543195934063e-08,
+        3.794842525389651e-07
+      ],
+      "offgrid": {
+        "sample_count": 512,
+        "relative_L2_full_PDE": 2.5964756685871106e-10,
+        "max_abs_full_PDE_Theta_normalized": 1.5165152258966863e-09,
+        "max_last_8_chebyshev_coefficients_over_max_coefficient": 8.207962338670138e-13
+      },
+      "final_constraint_norm_over_initial_state": {
+        "pure_lapse": 3.7729270254443626e-11,
+        "Theta_pulse": 9.403499653793107e-09,
+        "constraint_free_radial_coordinate": 1.3390559468178184e-12
+      },
+      "all_finite_300M": true,
+      "Theta_pulse_boundary_absolute_at5M": [
+        1.089712679466781e-08,
+        6.068337302499865e-07
+      ],
+      "half_exponential_subdivision_final_relative_state_difference": [
+        0.0001135343880803354,
+        1.2054404641589324e-05,
+        0.00011738752287362904
+      ],
+      "half_exponential_subdivision_final_constraint_norm": {
+        "pure_lapse": 1.924774343557705e-11,
+        "Theta_pulse": 6.622746788894257e-09,
+        "constraint_free_radial_coordinate": 8.498517346673324e-13
+      }
+    }
+  ]
+}

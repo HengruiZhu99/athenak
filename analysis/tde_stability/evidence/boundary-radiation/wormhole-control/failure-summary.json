@@ -1,0 +1,23 @@
+{
+  "purpose": "Nonspinning zero-background-shift vacuum discriminator, not high-spin evolution or a physical stationary Einstein solution",
+  "source_base": "74b7691e",
+  "binary_sha256": "e4506e84597d3b682ad0dfc29a544fb577e43374d41dd05127f222a3d695b9be",
+  "command": [
+    "/Users/hz0693/research/TDE/athenak-review/review/boundary-radiation-20260920/bin/athena-radiation-v2",
+    "-i",
+    "/Users/hz0693/research/TDE/athenak-review/review/boundary-radiation-20260920/wormhole-control/input.athinput",
+    "-d",
+    "/Users/hz0693/research/TDE/athenak-review/review/boundary-radiation-20260920/wormhole-control",
+    "-t",
+    "00:05:00"
+  ],
+  "start_utc": "2026-09-20T03:52:11.294816+00:00",
+  "status": "completed",
+  "radiation_weight_scope": "Uses unchanged r+1 leading model; not exact wormhole areal radius",
+  "exit_code": 1,
+  "end_utc": "2026-09-20T03:54:08.817499+00:00",
+  "first_invalid_event": "C2P_INVALID_ADM_INPUT first_event_per_rank=1 operation=stage_c2p cycle_start_time=67.387500000001197 dt=0.037499999999999999 cycle=1797 stage=1 rank=0 gid=0 relative_level=0 block=0 i=0 j=0 k=0 x=-2.875 y=-2.875 z=-2.875 ghost_depths=4,4,4 input_range=0:23,0:23,0:23 local_bad_cells=4 minor1=0.59918459246001088 minor2=0.71684332260960226 detg=-0.034858862857400794 alpha=0.70942455066051369 psi4=1.5946169292061236 adm=0.59918459246001088,0.73234248091590526,0.7322199977908026,2.0914570363344263,-0.32572424446265763,2.0916271968430649,-1.0013795634326994,-2.3590964830778893,-2.3588077459042069,-2.1104596010610939,0.14579324328039883,-2.1105926248690827,1.5946169292061236,0.70942455066051369,0.17276733764525112,-0.018845179772797375,-0.018867081916051975",
+  "active_abort_event": "Z4C_INVALID_STATE time=77.024999999999736 cycle=2054 rank=0 gid=0 relative_level=0 x=1.625 y=-0.125 z=-0.125 local_bad_cells=3; nonfinite Z4c/ADM state or invalid positive-definite spatial metric.",
+  "first_invalid_M": 67.3875,
+  "active_abort_M": 77.025
+}

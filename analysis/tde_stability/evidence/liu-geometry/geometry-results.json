@@ -1,0 +1,4077 @@
+{
+  "scope": "Standalone compiled double-precision geometry/derivative checks; no evolution, GPU/MPI/AMR or stability claim.",
+  "source": "https://arxiv.org/pdf/1001.4077",
+  "spin_candidate": 0.9,
+  "checks_passed": true,
+  "convergence_checks_passed": true,
+  "compile_command": [
+    "c++",
+    "-std=c++17",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-shared",
+    "-fPIC",
+    "-I/Users/hz0693/research/TDE/athenak-liu-background/src",
+    "/Users/hz0693/research/TDE/athenak-liu-background/tst/unit/kerr_liu/driver.cpp",
+    "-o",
+    "/Users/hz0693/research/TDE/athenak-review/review/liu-background-20260920/liu_provider.so"
+  ],
+  "wall_seconds": 0.6583415828645229,
+  "summary": {
+    "max_analytic_H": 2.9976021664879227e-15,
+    "max_analytic_M_norm": 3.2201693591091535e-16,
+    "max_signed_metric_rhs_norm": 1.7566659981140996e-16,
+    "max_signed_curvature_rhs_norm": 4.053034358781265e-16,
+    "max_conformal_det_error": 1.9984014443252818e-15,
+    "max_Gamma_connection_error": 4.085620730620576e-14,
+    "minimum_metric_eigenvalue": 1.4640999999999993,
+    "max_spherical_metric_relative_error": 5.217296623467639e-16,
+    "max_spherical_K_relative_error": 6.918040728252917e-16,
+    "max_Schwarzschild_relative_error": 6.661338147750939e-16,
+    "max_A_trace": 5.251836227139994e-17
+  },
+  "points": [
+    {
+      "spin": 0.0,
+      "radius": 0.05,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.015,
+        0.020000000000000004,
+        0.04330127018922193
+      ],
+      "minimum_metric_eigenvalue": 14640.999999999993,
+      "conformal_det_error": 1.7763568394002505e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.8373642107357487e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 7.979727989493313e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0012377839536698828,
+          "alpha": 0.008264462809917357
+        },
+        "signed_stationary": {
+          "H": 7.979727989493313e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 4.265970948648531e-17,
+          "alpha": -0.8181818181818181
+        }
+      },
+      "spherical_metric_relative_error": 1.511670275897145e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 2.220446049250313e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.05,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.05,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 14640.999999999998,
+      "conformal_det_error": 1.3322676295501878e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.0823815626887698e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.949029909160572e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0012377839536698838,
+          "alpha": 0.008264462809917357
+        },
+        "signed_stationary": {
+          "H": 2.949029909160572e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 6.866411163783102e-17,
+          "alpha": -0.8181818181818181
+        }
+      },
+      "spherical_metric_relative_error": 2.1518899428801523e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 1.1102230246251565e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.05,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.0,
+        0.0,
+        0.05
+      ],
+      "minimum_metric_eigenvalue": 14640.999999999998,
+      "conformal_det_error": 1.3322676295501878e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.0823815626887698e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.949029909160572e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.001237783953669884,
+          "alpha": 0.008264462809917357
+        },
+        "signed_stationary": {
+          "H": 2.949029909160572e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 6.866411163783102e-17,
+          "alpha": -0.8181818181818181
+        }
+      },
+      "schwarzschild_metric_relative_error": 1.1102230246251565e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.05,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.05
+      ],
+      "minimum_metric_eigenvalue": 14640.999999999998,
+      "conformal_det_error": 1.3322676295501878e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.0823815626887698e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.949029909160572e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.001237783953669884,
+          "alpha": 0.008264462809917357
+        },
+        "signed_stationary": {
+          "H": 2.949029909160572e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 6.866411163783102e-17,
+          "alpha": -0.8181818181818181
+        }
+      },
+      "schwarzschild_metric_relative_error": 1.1102230246251565e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.05,
+      "r_over_throat": 0.1,
+      "xyz": [
+        5e-10,
+        0.0,
+        0.049999999999999996
+      ],
+      "minimum_metric_eigenvalue": 14640.999999999998,
+      "conformal_det_error": 1.7763568394002505e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.726034363858683e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -7.112366251504909e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0012377839536698832,
+          "alpha": 0.008264462809917357
+        },
+        "signed_stationary": {
+          "H": -7.112366251504909e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.927955504314937e-17,
+          "alpha": -0.8181818181818181
+        }
+      },
+      "schwarzschild_metric_relative_error": 2.220446049250313e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.24999999999999997,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.075,
+        0.1,
+        0.21650635094610965
+      ],
+      "minimum_metric_eigenvalue": 81.00000000000004,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.100169881646081e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 9.71445146547012e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0647047665242328,
+          "alpha": 0.11111111111111109
+        },
+        "signed_stationary": {
+          "H": 9.71445146547012e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.1104828591190103e-16,
+          "alpha": -0.33333333333333337
+        }
+      },
+      "spherical_metric_relative_error": 3.8654353423718227e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.25,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.25,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 81.0,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 6.455284409435734e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -4.440892098500626e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.06470476652423283,
+          "alpha": 0.11111111111111112
+        },
+        "signed_stationary": {
+          "H": -4.440892098500626e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.636354252468605e-17,
+          "alpha": -0.33333333333333337
+        }
+      },
+      "spherical_metric_relative_error": 0.0,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.25,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.0,
+        0.0,
+        0.25
+      ],
+      "minimum_metric_eigenvalue": 81.0,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 6.455284409435734e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -4.440892098500626e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.06470476652423283,
+          "alpha": 0.11111111111111112
+        },
+        "signed_stationary": {
+          "H": -4.440892098500626e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.636354252468605e-17,
+          "alpha": -0.33333333333333337
+        }
+      },
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.25,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.25
+      ],
+      "minimum_metric_eigenvalue": 81.0,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 6.455284409435734e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -4.440892098500626e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.06470476652423283,
+          "alpha": 0.11111111111111112
+        },
+        "signed_stationary": {
+          "H": -4.440892098500626e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.636354252468605e-17,
+          "alpha": -0.33333333333333337
+        }
+      },
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.24999999999999997,
+      "r_over_throat": 0.5,
+      "xyz": [
+        2.5e-09,
+        0.0,
+        0.24999999999999997
+      ],
+      "minimum_metric_eigenvalue": 81.00000000000004,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.697373911381547e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.0539125955565396e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.06470476652423278,
+          "alpha": 0.11111111111111109
+        },
+        "signed_stationary": {
+          "H": 2.0539125955565396e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 4.053034358781265e-16,
+          "alpha": -0.33333333333333337
+        }
+      },
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.49499999999999994,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.1485,
+        0.198,
+        0.4286825748732971
+      ],
+      "minimum_metric_eigenvalue": 16.325689308245202,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.0289095176501692e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 6.38378239159465e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10363405621559466,
+          "alpha": 0.2474937501578243
+        },
+        "signed_stationary": {
+          "H": 6.38378239159465e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 5.442894761810588e-17,
+          "alpha": -0.005025125628140764
+        }
+      },
+      "spherical_metric_relative_error": 4.0357963344283567e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 4.440892098500626e-16,
+      "schwarzschild_chi_relative_error": 6.661338147750939e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.495,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.495,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 16.325689308245206,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.788920104658176e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.1934897514720433e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.1036340562155947,
+          "alpha": 0.2474937501578243
+        },
+        "signed_stationary": {
+          "H": 1.1934897514720433e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.03265931829692e-17,
+          "alpha": -0.005025125628140708
+        }
+      },
+      "spherical_metric_relative_error": 1.7768184344233167e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 2.220446049250313e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.495,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.0,
+        0.0,
+        0.495
+      ],
+      "minimum_metric_eigenvalue": 16.325689308245206,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.788920104658176e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.1934897514720433e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.1036340562155947,
+          "alpha": 0.2474937501578243
+        },
+        "signed_stationary": {
+          "H": 1.1934897514720433e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.03265931829692e-17,
+          "alpha": -0.005025125628140708
+        }
+      },
+      "schwarzschild_metric_relative_error": 2.220446049250313e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.495,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.495
+      ],
+      "minimum_metric_eigenvalue": 16.325689308245206,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.788920104658176e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.1934897514720433e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.1036340562155947,
+          "alpha": 0.2474937501578243
+        },
+        "signed_stationary": {
+          "H": 1.1934897514720433e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.03265931829692e-17,
+          "alpha": -0.005025125628140708
+        }
+      },
+      "schwarzschild_metric_relative_error": 2.220446049250313e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.49499999999999994,
+      "r_over_throat": 0.99,
+      "xyz": [
+        4.95e-09,
+        0.0,
+        0.49499999999999994
+      ],
+      "minimum_metric_eigenvalue": 16.325689308245202,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.2307553952432204e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 8.881784197001252e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10363405621559463,
+          "alpha": 0.2474937501578243
+        },
+        "signed_stationary": {
+          "H": 8.881784197001252e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 3.8866934951745274e-17,
+          "alpha": -0.005025125628140764
+        }
+      },
+      "schwarzschild_metric_relative_error": 4.440892098500626e-16,
+      "schwarzschild_chi_relative_error": 6.661338147750939e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.49999999999999994,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.15,
+        0.2,
+        0.4330127018922193
+      ],
+      "minimum_metric_eigenvalue": 16.00000000000001,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 9.317330069051075e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 3.3306690738754696e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.1036445246986062,
+          "alpha": 0.24999999999999992
+        },
+        "signed_stationary": {
+          "H": 3.3306690738754696e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 4.031546439985991e-17,
+          "alpha": -5.551115123125783e-17
+        }
+      },
+      "spherical_metric_relative_error": 3.2713798320530865e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 6.661338147750939e-16,
+      "schwarzschild_chi_relative_error": 5.551115123125783e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.5,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.5,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 16.0,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.3322676295501877e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 0.0,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10364452469860622,
+          "alpha": 0.25
+        },
+        "signed_stationary": {
+          "H": 0.0,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0,
+          "alpha": 0.0
+        }
+      },
+      "spherical_metric_relative_error": 0.0,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.5,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "minimum_metric_eigenvalue": 16.0,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.3322676295501877e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 0.0,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10364452469860622,
+          "alpha": 0.25
+        },
+        "signed_stationary": {
+          "H": 0.0,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0,
+          "alpha": 0.0
+        }
+      },
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.5,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.5
+      ],
+      "minimum_metric_eigenvalue": 16.0,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.3322676295501877e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 0.0,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10364452469860622,
+          "alpha": 0.25
+        },
+        "signed_stationary": {
+          "H": 0.0,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0,
+          "alpha": 0.0
+        }
+      },
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.49999999999999994,
+      "r_over_throat": 1.0,
+      "xyz": [
+        5e-09,
+        0.0,
+        0.49999999999999994
+      ],
+      "minimum_metric_eigenvalue": 16.00000000000001,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.220446049250321e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.1094237467877974e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10364452469860601,
+          "alpha": 0.24999999999999992
+        },
+        "signed_stationary": {
+          "H": 2.1094237467877974e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.596296363159513e-17,
+          "alpha": -5.551115123125783e-17
+        }
+      },
+      "schwarzschild_metric_relative_error": 6.661338147750939e-16,
+      "schwarzschild_chi_relative_error": 5.551115123125783e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.505,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.1515,
+        0.202,
+        0.4373428289111415
+      ],
+      "minimum_metric_eigenvalue": 15.685513272238861,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.397075215988679e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 0.0,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10363426349946077,
+          "alpha": 0.2524937501546992
+        },
+        "signed_stationary": {
+          "H": 0.0,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 6.23882992858637e-17,
+          "alpha": 0.004975124378109457
+        }
+      },
+      "spherical_metric_relative_error": 3.0512718474229246e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 5.551115123125783e-16,
+      "schwarzschild_chi_relative_error": 6.661338147750939e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.505,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.505,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 15.68551327223887,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.0715845758945512e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.6653345369377348e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10363426349946071,
+          "alpha": 0.2524937501546992
+        },
+        "signed_stationary": {
+          "H": -1.6653345369377348e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.247644269198321e-17,
+          "alpha": 0.004975124378109457
+        }
+      },
+      "spherical_metric_relative_error": 1.3076780869130989e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 5.551115123125783e-16,
+      "schwarzschild_chi_relative_error": 6.661338147750939e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.505,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.0,
+        0.0,
+        0.505
+      ],
+      "minimum_metric_eigenvalue": 15.68551327223887,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.0715845758945512e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.1102230246251565e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10363426349946071,
+          "alpha": 0.2524937501546992
+        },
+        "signed_stationary": {
+          "H": -1.1102230246251565e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.243559273874702e-17,
+          "alpha": 0.004975124378109457
+        }
+      },
+      "schwarzschild_metric_relative_error": 5.551115123125783e-16,
+      "schwarzschild_chi_relative_error": 6.661338147750939e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.505,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.505
+      ],
+      "minimum_metric_eigenvalue": 15.68551327223887,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.0715845758945512e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.1102230246251565e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.10363426349946071,
+          "alpha": 0.2524937501546992
+        },
+        "signed_stationary": {
+          "H": -1.1102230246251565e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.243559273874702e-17,
+          "alpha": 0.004975124378109457
+        }
+      },
+      "schwarzschild_metric_relative_error": 5.551115123125783e-16,
+      "schwarzschild_chi_relative_error": 6.661338147750939e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.5049999999999999,
+      "r_over_throat": 1.01,
+      "xyz": [
+        5.0500000000000006e-09,
+        0.0,
+        0.5049999999999999
+      ],
+      "minimum_metric_eigenvalue": 15.685513272238884,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.969376654337283e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -6.106226635438361e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.1036342634994607,
+          "alpha": 0.2524937501546991
+        },
+        "signed_stationary": {
+          "H": -6.106226635438361e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 4.052632170025673e-17,
+          "alpha": 0.004975124378109347
+        }
+      },
+      "schwarzschild_metric_relative_error": 1.1102230246251565e-16,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.9999999999999999,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.3,
+        0.4,
+        0.8660254037844386
+      ],
+      "minimum_metric_eigenvalue": 5.062500000000003,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.865283502489928e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 9.298117831235686e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.06470476652423275,
+          "alpha": 0.44444444444444436
+        },
+        "signed_stationary": {
+          "H": 9.298117831235686e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.0982074451695563e-16,
+          "alpha": 0.3333333333333333
+        }
+      },
+      "spherical_metric_relative_error": 3.8654353423718227e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 4.440892098500626e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 1.0,
+      "r_over_throat": 2.0,
+      "xyz": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 5.0625,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.5265566588595902e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -5.551115123125783e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0647047665242328,
+          "alpha": 0.4444444444444445
+        },
+        "signed_stationary": {
+          "H": -5.551115123125783e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.714677883882473e-17,
+          "alpha": 0.33333333333333337
+        }
+      },
+      "spherical_metric_relative_error": 0.0,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 0.0
+    },
+    {
+      "spin": 0.0,
+      "radius": 1.0,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "minimum_metric_eigenvalue": 5.0625,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.5265566588595902e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -8.326672684688674e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0647047665242328,
+          "alpha": 0.4444444444444445
+        },
+        "signed_stationary": {
+          "H": -8.326672684688674e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.830694587734243e-17,
+          "alpha": 0.33333333333333337
+        }
+      },
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 0.0
+    },
+    {
+      "spin": 0.0,
+      "radius": 1.0,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "minimum_metric_eigenvalue": 5.0625,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.5265566588595902e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -8.326672684688674e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0647047665242328,
+          "alpha": 0.4444444444444445
+        },
+        "signed_stationary": {
+          "H": -8.326672684688674e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.830694587734243e-17,
+          "alpha": 0.33333333333333337
+        }
+      },
+      "schwarzschild_metric_relative_error": 0.0,
+      "schwarzschild_chi_relative_error": 0.0
+    },
+    {
+      "spin": 0.0,
+      "radius": 0.9999999999999999,
+      "r_over_throat": 2.0,
+      "xyz": [
+        1e-08,
+        0.0,
+        0.9999999999999999
+      ],
+      "minimum_metric_eigenvalue": 5.062500000000003,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 5.920118647707027e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 6.106226635438361e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0647047665242328,
+          "alpha": 0.44444444444444436
+        },
+        "signed_stationary": {
+          "H": 6.106226635438361e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.21238242422042e-16,
+          "alpha": 0.3333333333333333
+        }
+      },
+      "schwarzschild_metric_relative_error": 4.440892098500626e-16,
+      "schwarzschild_chi_relative_error": 4.440892098500626e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 5.0,
+      "r_over_throat": 10.0,
+      "xyz": [
+        1.5,
+        2.0,
+        4.330127018922193
+      ],
+      "minimum_metric_eigenvalue": 1.4640999999999997,
+      "conformal_det_error": 3.3306690738754696e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.7137622763137194e-18,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.3877787807814457e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0012377839536698372,
+          "alpha": 0.8264462809917353
+        },
+        "signed_stationary": {
+          "H": 1.3877787807814457e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 4.747219456064406e-17,
+          "alpha": 0.8181818181818182
+        }
+      },
+      "spherical_metric_relative_error": 3.7457402475898027e-16,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 2.220446049250313e-16,
+      "schwarzschild_chi_relative_error": 1.1102230246251565e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 5.0,
+      "r_over_throat": 10.0,
+      "xyz": [
+        5.0,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 1.4641,
+      "conformal_det_error": 1.1102230246251565e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.2162960850062863e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0012377839536698505,
+          "alpha": 0.8264462809917354
+        },
+        "signed_stationary": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 8.210091207197737e-17,
+          "alpha": 0.8181818181818182
+        }
+      },
+      "spherical_metric_relative_error": 0.0,
+      "spherical_K_relative_error": 0.0,
+      "schwarzschild_metric_relative_error": 3.3306690738754696e-16,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 5.0,
+      "r_over_throat": 10.0,
+      "xyz": [
+        0.0,
+        0.0,
+        5.0
+      ],
+      "minimum_metric_eigenvalue": 1.4641,
+      "conformal_det_error": 1.1102230246251565e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.2162960850062875e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0012377839536698507,
+          "alpha": 0.8264462809917354
+        },
+        "signed_stationary": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 8.210091207197737e-17,
+          "alpha": 0.8181818181818182
+        }
+      },
+      "schwarzschild_metric_relative_error": 3.3306690738754696e-16,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 5.0,
+      "r_over_throat": 10.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -5.0
+      ],
+      "minimum_metric_eigenvalue": 1.4641,
+      "conformal_det_error": 1.1102230246251565e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.2162960850062875e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0012377839536698507,
+          "alpha": 0.8264462809917354
+        },
+        "signed_stationary": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 8.210091207197737e-17,
+          "alpha": 0.8181818181818182
+        }
+      },
+      "schwarzschild_metric_relative_error": 3.3306690738754696e-16,
+      "schwarzschild_chi_relative_error": 2.220446049250313e-16
+    },
+    {
+      "spin": 0.0,
+      "radius": 5.0,
+      "r_over_throat": 10.0,
+      "xyz": [
+        5e-08,
+        0.0,
+        4.999999999999999
+      ],
+      "minimum_metric_eigenvalue": 1.4640999999999995,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.9462710205586118e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.7520707107365752e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.001237783953669824,
+          "alpha": 0.8264462809917354
+        },
+        "signed_stationary": {
+          "H": 1.7520707107365752e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 6.150047370955637e-17,
+          "alpha": 0.8181818181818182
+        }
+      },
+      "schwarzschild_metric_relative_error": 3.3306690738754696e-16,
+      "schwarzschild_chi_relative_error": 0.0
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.04665063509461096,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.01399519052838329,
+        0.01866025403784439,
+        0.04040063509461096
+      ],
+      "minimum_metric_eigenvalue": 14727.156123669385,
+      "conformal_det_error": 1.3322676295501878e-15,
+      "A_trace": 2.032629808253383e-19,
+      "Gamma_connection_error": 2.55351295663786e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.2389720326078102e-16,
+          "M_norm": 9.92123271647316e-19,
+          "K_trace": 8.651447410047661e-19,
+          "metric_rhs_norm": 9.497378699381909e-05,
+          "curvature_rhs_norm": 0.001356308839759702,
+          "alpha": 0.00820372821235493
+        },
+        "signed_stationary": {
+          "H": 1.2389720326078102e-16,
+          "M_norm": 9.92123271647316e-19,
+          "K_trace": 8.651447410047661e-19,
+          "metric_rhs_norm": 4.5402155294033366e-18,
+          "curvature_rhs_norm": 9.434222130041835e-17,
+          "alpha": -0.8049851652495205
+        }
+      },
+      "spherical_metric_relative_error": 3.333245538174167e-16,
+      "spherical_K_relative_error": 5.555490390381212e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.04665063509461097,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.04665063509461097,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 14640.999999999995,
+      "conformal_det_error": 1.9984014443252818e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.2212453270876722e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.1140177322288558e-16,
+          "M_norm": 3.650813094655987e-18,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.00019229242961446097,
+          "curvature_rhs_norm": 0.0013768887408307923,
+          "alpha": 0.00821695430617328
+        },
+        "signed_stationary": {
+          "H": 1.1140177322288558e-16,
+          "M_norm": 3.650813094655987e-18,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.6982561710002533e-18,
+          "curvature_rhs_norm": 5.3537827481715794e-17,
+          "alpha": -0.8041527490359011
+        }
+      },
+      "spherical_metric_relative_error": 2.1270149281267775e-16,
+      "spherical_K_relative_error": 6.918040728252917e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.04665063509461097,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.0,
+        0.0,
+        0.04665063509461097
+      ],
+      "minimum_metric_eigenvalue": 14755.87483155918,
+      "conformal_det_error": 1.7763568394002505e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.085620730620576e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.43982048506075e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0013495430565281423,
+          "alpha": 0.008199339038863806
+        },
+        "signed_stationary": {
+          "H": -1.43982048506075e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.0531192173010477e-16,
+          "alpha": -0.8052610465827623
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.04665063509461097,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.04665063509461097
+      ],
+      "minimum_metric_eigenvalue": 14755.87483155918,
+      "conformal_det_error": 1.7763568394002505e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.085620730620576e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.43982048506075e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0013495430565281423,
+          "alpha": 0.008199339038863806
+        },
+        "signed_stationary": {
+          "H": -1.43982048506075e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.0531192173010477e-16,
+          "alpha": -0.8052610465827623
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.04665063509461097,
+      "r_over_throat": 0.1,
+      "xyz": [
+        4.665063509461097e-10,
+        0.0,
+        0.04665063509461096
+      ],
+      "minimum_metric_eigenvalue": 14755.87483155918,
+      "conformal_det_error": 1.7763568394002505e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.1760371282653068e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.509342502987631e-16,
+          "M_norm": 1.3619082830317624e-26,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.8917486017795748e-12,
+          "curvature_rhs_norm": 0.0013495430565281406,
+          "alpha": 0.008199339038863806
+        },
+        "signed_stationary": {
+          "H": -1.509342502987631e-16,
+          "M_norm": 1.3619082830317624e-26,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 8.357973940220307e-19,
+          "curvature_rhs_norm": 1.0428344650265715e-16,
+          "alpha": -0.8052610465827623
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.23325317547305482,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.06997595264191644,
+        0.09330127018922194,
+        0.20200317547305482
+      ],
+      "minimum_metric_eigenvalue": 84.4462449467756,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 1.0266492775633604e-17,
+      "Gamma_connection_error": 3.6637359812630166e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.734723475976807e-18,
+          "M_norm": 3.42730982226715e-17,
+          "K_trace": 8.039982847205181e-20,
+          "metric_rhs_norm": 0.02136892808322424,
+          "curvature_rhs_norm": 0.06074939857174691,
+          "alpha": 0.10717071265154862
+        },
+        "signed_stationary": {
+          "H": -1.734723475976807e-18,
+          "M_norm": 3.42730982226715e-17,
+          "K_trace": 8.039982847205181e-20,
+          "metric_rhs_norm": 3.519505867195596e-17,
+          "curvature_rhs_norm": 1.0585647125694112e-16,
+          "alpha": -0.31183865837288205
+        }
+      },
+      "spherical_metric_relative_error": 1.4051216156894602e-16,
+      "spherical_K_relative_error": 3.422005298115615e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.23325317547305482,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.23325317547305482,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 81.0,
+      "conformal_det_error": 8.881784197001252e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 8.548717289613705e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -2.220446049250313e-16,
+          "M_norm": 4.681821910547603e-17,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.045427182018313715,
+          "curvature_rhs_norm": 0.07148372070870301,
+          "alpha": 0.10798907634889501
+        },
+        "signed_stationary": {
+          "H": -2.220446049250313e-16,
+          "M_norm": 4.681821910547603e-17,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.0133171901811652e-17,
+          "curvature_rhs_norm": 7.054338012044624e-17,
+          "alpha": -0.30601714097739974
+        }
+      },
+      "spherical_metric_relative_error": 9.550163512887806e-17,
+      "spherical_K_relative_error": 4.061088738980328e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.23325317547305482,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.0,
+        0.0,
+        0.23325317547305482
+      ],
+      "minimum_metric_eigenvalue": 85.59499326236741,
+      "conformal_det_error": 8.881784197001252e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 5.551115123125783e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 8.326672684688674e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.057578119098458995,
+          "alpha": 0.10690608583445277
+        },
+        "signed_stationary": {
+          "H": 8.326672684688674e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 3.0052366775224036e-17,
+          "alpha": -0.313745065219024
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.23325317547305482,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.23325317547305482
+      ],
+      "minimum_metric_eigenvalue": 85.59499326236741,
+      "conformal_det_error": 8.881784197001252e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 5.551115123125783e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 8.326672684688674e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.057578119098458995,
+          "alpha": 0.10690608583445277
+        },
+        "signed_stationary": {
+          "H": 8.326672684688674e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 3.0052366775224036e-17,
+          "alpha": -0.313745065219024
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.23325317547305482,
+      "r_over_throat": 0.5,
+      "xyz": [
+        2.3325317547305485e-09,
+        0.0,
+        0.2332531754730548
+      ],
+      "minimum_metric_eigenvalue": 85.59499326236741,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.3306690738754696e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.703740047961051e-16,
+          "M_norm": 1.072895470690507e-24,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 4.190146415734248e-10,
+          "curvature_rhs_norm": 0.057578119098459085,
+          "alpha": 0.10690608583445275
+        },
+        "signed_stationary": {
+          "H": -1.703740047961051e-16,
+          "M_norm": 1.072895470690507e-24,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.6495197850234944e-17,
+          "curvature_rhs_norm": 1.1640630855495414e-16,
+          "alpha": -0.313745065219024
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46184128743664854,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.13855238623099456,
+        0.18473651497465943,
+        0.3999662874366485
+      ],
+      "minimum_metric_eigenvalue": 17.204743727890033,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": -6.222564815948701e-18,
+      "Gamma_connection_error": 1.0061396160665481e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -5.898059818321144e-17,
+          "M_norm": 1.3158970577559186e-16,
+          "K_trace": 1.3680106242314161e-17,
+          "metric_rhs_norm": 0.06472206114110661,
+          "curvature_rhs_norm": 0.09408698283253802,
+          "alpha": 0.23677643564051404
+        },
+        "signed_stationary": {
+          "H": -5.898059818321144e-17,
+          "M_norm": 1.3158970577559186e-16,
+          "K_trace": 1.3680106242314161e-17,
+          "metric_rhs_norm": 4.801546288568156e-17,
+          "curvature_rhs_norm": 5.5432091586532365e-17,
+          "alpha": -0.004637098603254864
+        }
+      },
+      "spherical_metric_relative_error": 2.09754797247575e-16,
+      "spherical_K_relative_error": 4.0946831562313803e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46184128743664854,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.46184128743664854,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 16.325689308245206,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 9.43689570931383e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -2.0816681711721685e-16,
+          "M_norm": 1.5382079801245948e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.13900639065004328,
+          "curvature_rhs_norm": 0.1275468239459967,
+          "alpha": 0.23885518404211029
+        },
+        "signed_stationary": {
+          "H": -2.0816681711721685e-16,
+          "M_norm": 1.5382079801245948e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.1072187898665527e-17,
+          "curvature_rhs_norm": 6.050780117265851e-17,
+          "alpha": -0.004517084647129928
+        }
+      },
+      "spherical_metric_relative_error": 2.332983038339836e-16,
+      "spherical_K_relative_error": 4.753515220021301e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46184128743664854,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.0,
+        0.0,
+        0.46184128743664854
+      ],
+      "minimum_metric_eigenvalue": 17.497761867771636,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.3306690738754696e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.7755575615628914e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.08475491222099857,
+          "alpha": 0.23611091799299672
+        },
+        "signed_stationary": {
+          "H": 2.7755575615628914e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 8.004272656934258e-17,
+          "alpha": -0.00467641880454646
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46184128743664854,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.46184128743664854
+      ],
+      "minimum_metric_eigenvalue": 17.497761867771636,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.3306690738754696e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.7755575615628914e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.08475491222099857,
+          "alpha": 0.23611091799299672
+        },
+        "signed_stationary": {
+          "H": 2.7755575615628914e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 8.004272656934258e-17,
+          "alpha": -0.00467641880454646
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46184128743664854,
+      "r_over_throat": 0.99,
+      "xyz": [
+        4.618412874366486e-09,
+        0.0,
+        0.4618412874366485
+      ],
+      "minimum_metric_eigenvalue": 17.497761867771633,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.4988010832439613e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.7037702770935876e-16,
+          "M_norm": 1.5819730582247764e-24,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.2652310112706836e-09,
+          "curvature_rhs_norm": 0.08475491222099883,
+          "alpha": 0.23611091799299672
+        },
+        "signed_stationary": {
+          "H": 2.7037702770935876e-16,
+          "M_norm": 1.5819730582247764e-24,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.6015840572284997e-19,
+          "curvature_rhs_norm": 6.153913696178296e-17,
+          "alpha": -0.00467641880454646
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46650635094610965,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.1399519052838329,
+        0.18660254037844387,
+        0.40400635094610965
+      ],
+      "minimum_metric_eigenvalue": 16.86156123669388,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 2.414503051581694e-17,
+      "Gamma_connection_error": 1.0547118733938987e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 3.2959746043559335e-16,
+          "M_norm": 2.299261973862584e-17,
+          "K_trace": -1.4284006989746894e-17,
+          "metric_rhs_norm": 0.06538170108406385,
+          "curvature_rhs_norm": 0.09411300325115451,
+          "alpha": 0.23917369136869573
+        },
+        "signed_stationary": {
+          "H": 3.2959746043559335e-16,
+          "M_norm": 2.299261973862584e-17,
+          "K_trace": -1.4284006989746894e-17,
+          "metric_rhs_norm": 1.275272653879673e-17,
+          "curvature_rhs_norm": 4.5597501686344485e-17,
+          "alpha": 0.0
+        }
+      },
+      "spherical_metric_relative_error": 3.3541131772238366e-16,
+      "spherical_K_relative_error": 1.9660961862105671e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46650635094610965,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.46650635094610965,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 16.0,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 9.992007221626409e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 5.273559366969494e-16,
+          "M_norm": 1.0358521839084692e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.1404234505933428,
+          "curvature_rhs_norm": 0.12783945872666924,
+          "alpha": 0.24127354575926382
+        },
+        "signed_stationary": {
+          "H": 5.273559366969494e-16,
+          "M_norm": 1.0358521839084692e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 3.376732175738358e-17,
+          "alpha": 0.0
+        }
+      },
+      "spherical_metric_relative_error": 5.951158213520253e-17,
+      "spherical_K_relative_error": 1.2124794649150713e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46650635094610965,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.0,
+        0.0,
+        0.46650635094610965
+      ],
+      "minimum_metric_eigenvalue": 17.148748315591853,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 9.992007221626409e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.4988010832439613e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.08471128165947328,
+          "alpha": 0.238501418307553
+        },
+        "signed_stationary": {
+          "H": 1.4988010832439613e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.4037033579794545e-17,
+          "alpha": 0.0
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46650635094610965,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.46650635094610965
+      ],
+      "minimum_metric_eigenvalue": 17.148748315591853,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 9.992007221626409e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.4988010832439613e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.08471128165947328,
+          "alpha": 0.238501418307553
+        },
+        "signed_stationary": {
+          "H": 1.4988010832439613e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.4037033579794545e-17,
+          "alpha": 0.0
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.46650635094610965,
+      "r_over_throat": 1.0,
+      "xyz": [
+        4.665063509461097e-09,
+        0.0,
+        0.4665063509461096
+      ],
+      "minimum_metric_eigenvalue": 17.148748315591856,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.220446049250313e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -5.067800380537695e-16,
+          "M_norm": 7.989951166705808e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.2781252485837243e-09,
+          "curvature_rhs_norm": 0.08471128165947335,
+          "alpha": 0.23850141830755298
+        },
+        "signed_stationary": {
+          "H": -5.067800380537695e-16,
+          "M_norm": 7.989951166705808e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 3.3066696228221034e-25,
+          "curvature_rhs_norm": 6.043470126425391e-17,
+          "alpha": 0.0
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.4711714144555707,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.14135142433667122,
+        0.18846856578222831,
+        0.4080464144555707
+      ],
+      "minimum_metric_eigenvalue": 16.530098348892043,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 2.6460403295075253e-17,
+      "Gamma_connection_error": 2.9976021664879227e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.1102230246251565e-15,
+          "M_norm": 0.0,
+          "K_trace": -1.3916881216915054e-17,
+          "metric_rhs_norm": 0.0660296951564966,
+          "curvature_rhs_norm": 0.09412205253680939,
+          "alpha": 0.24155990946544376
+        },
+        "signed_stationary": {
+          "H": -1.1102230246251565e-15,
+          "M_norm": 0.0,
+          "K_trace": -1.3916881216915054e-17,
+          "metric_rhs_norm": 3.0504989229462624e-17,
+          "curvature_rhs_norm": 3.043151318116468e-17,
+          "alpha": 0.004590958022966574
+        }
+      },
+      "spherical_metric_relative_error": 4.1486966237533827e-16,
+      "spherical_K_relative_error": 3.081322125713541e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.47117141445557076,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.47117141445557076,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 15.685513272238877,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.9968028886505635e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -8.465450562766819e-16,
+          "M_norm": 5.230945152101806e-17,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.14181485964768478,
+          "curvature_rhs_norm": 0.1281057048619675,
+          "alpha": 0.24368065495478541
+        },
+        "signed_stationary": {
+          "H": -8.465450562766819e-16,
+          "M_norm": 5.230945152101806e-17,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 7.310736389267863e-17,
+          "curvature_rhs_norm": 7.728765227715158e-17,
+          "alpha": 0.004472138080310524
+        }
+      },
+      "spherical_metric_relative_error": 2.7148094238816783e-16,
+      "spherical_K_relative_error": 0.0
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.47117141445557076,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.0,
+        0.0,
+        0.47117141445557076
+      ],
+      "minimum_metric_eigenvalue": 16.811626707776426,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 5.551115123125783e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -8.604228440844963e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.08465318595835822,
+          "alpha": 0.24088094635672117
+        },
+        "signed_stationary": {
+          "H": -8.604228440844963e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.481576588242785e-18,
+          "alpha": 0.004629887029541694
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.47117141445557076,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.47117141445557076
+      ],
+      "minimum_metric_eigenvalue": 16.811626707776426,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 5.551115123125783e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -8.604228440844963e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.08465318595835822,
+          "alpha": 0.24088094635672117
+        },
+        "signed_stationary": {
+          "H": -8.604228440844963e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 7.481576588242785e-18,
+          "alpha": 0.004629887029541694
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.4711714144555707,
+      "r_over_throat": 1.01,
+      "xyz": [
+        4.7117141445557075e-09,
+        0.0,
+        0.4711714144555707
+      ],
+      "minimum_metric_eigenvalue": 16.81162670777643,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.0547118733938987e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 4.0915488700620395e-16,
+          "M_norm": 4.034832157187087e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.2907935161211253e-09,
+          "curvature_rhs_norm": 0.08465318595835834,
+          "alpha": 0.24088094635672114
+        },
+        "signed_stationary": {
+          "H": 4.0915488700620395e-16,
+          "M_norm": 4.034832157187087e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.5746073330422427e-19,
+          "curvature_rhs_norm": 2.5494489167537068e-17,
+          "alpha": 0.004629887029541639
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.9330127018922193,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.2799038105676658,
+        0.37320508075688774,
+        0.8080127018922193
+      ],
+      "minimum_metric_eigenvalue": 5.277890309173475,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 3.761633507168945e-18,
+      "Gamma_connection_error": 3.608224830031759e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.463307335887066e-16,
+          "M_norm": 3.525414512206058e-17,
+          "K_trace": -6.685929212366445e-18,
+          "metric_rhs_norm": 0.08547571233289696,
+          "curvature_rhs_norm": 0.06239913157835596,
+          "alpha": 0.42868285060619443
+        },
+        "signed_stationary": {
+          "H": 2.463307335887066e-16,
+          "M_norm": 3.525414512206058e-17,
+          "K_trace": -6.685929212366445e-18,
+          "metric_rhs_norm": 2.2388800013894514e-17,
+          "curvature_rhs_norm": 8.727449695984625e-17,
+          "alpha": 0.31183865837288205
+        }
+      },
+      "spherical_metric_relative_error": 1.4051216156894602e-16,
+      "spherical_K_relative_error": 1.9329521701561158e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.9330127018922193,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.9330127018922193,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 5.0625,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.220446049250313e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.0816681711721685e-16,
+          "M_norm": 4.681821910547603e-17,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.18170872807325486,
+          "curvature_rhs_norm": 0.09317453485203749,
+          "alpha": 0.43195630539558005
+        },
+        "signed_stationary": {
+          "H": 2.0816681711721685e-16,
+          "M_norm": 4.681821910547603e-17,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 5.694520951426191e-17,
+          "curvature_rhs_norm": 7.91195254673304e-17,
+          "alpha": 0.30601714097739974
+        }
+      },
+      "spherical_metric_relative_error": 9.550163512887806e-17,
+      "spherical_K_relative_error": 4.061088738980328e-16
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.9330127018922193,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.0,
+        0.0,
+        0.9330127018922193
+      ],
+      "minimum_metric_eigenvalue": 5.349687078897963,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.85722573273506e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 3.3306690738754696e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.05370767896764418,
+          "alpha": 0.427624343337811
+        },
+        "signed_stationary": {
+          "H": 3.3306690738754696e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.305160890859797e-16,
+          "alpha": 0.313745065219024
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.9330127018922193,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.9330127018922193
+      ],
+      "minimum_metric_eigenvalue": 5.349687078897963,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.85722573273506e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 3.3306690738754696e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.05370767896764418,
+          "alpha": 0.427624343337811
+        },
+        "signed_stationary": {
+          "H": 3.3306690738754696e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.305160890859797e-16,
+          "alpha": 0.313745065219024
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 0.9330127018922193,
+      "r_over_throat": 2.0,
+      "xyz": [
+        9.330127018922194e-09,
+        0.0,
+        0.9330127018922192
+      ],
+      "minimum_metric_eigenvalue": 5.349687078897963,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.3592239273284576e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -4.479297609523942e-16,
+          "M_norm": 3.576318235635023e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.6760585662936991e-09,
+          "curvature_rhs_norm": 0.05370767896764425,
+          "alpha": 0.427624343337811
+        },
+        "signed_stationary": {
+          "H": -4.479297609523942e-16,
+          "M_norm": 3.576318235635023e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.6784551126423536e-17,
+          "curvature_rhs_norm": 1.295399381789787e-16,
+          "alpha": 0.313745065219024
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 4.665063509461096,
+      "r_over_throat": 10.0,
+      "xyz": [
+        1.3995190528383288,
+        1.8660254037844386,
+        4.040063509461096
+      ],
+      "minimum_metric_eigenvalue": 1.4727156123669383,
+      "conformal_det_error": 0.0,
+      "A_trace": 1.4795035203682937e-18,
+      "Gamma_connection_error": 3.209238430557093e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 4.660036462614259e-17,
+          "M_norm": 6.804374819976419e-19,
+          "K_trace": 9.467813036133734e-21,
+          "metric_rhs_norm": 0.009497378699381923,
+          "curvature_rhs_norm": 0.0016848824226349058,
+          "alpha": 0.820372821235493
+        },
+        "signed_stationary": {
+          "H": 4.660036462614259e-17,
+          "M_norm": 6.804374819976419e-19,
+          "K_trace": 9.467813036133734e-21,
+          "metric_rhs_norm": 4.694470174838018e-18,
+          "curvature_rhs_norm": 1.1704664185238766e-16,
+          "alpha": 0.8049851652495207
+        }
+      },
+      "spherical_metric_relative_error": 5.217296623467639e-16,
+      "spherical_K_relative_error": 7.66800022353487e-18
+    },
+    {
+      "spin": 0.5,
+      "radius": 4.665063509461096,
+      "r_over_throat": 10.0,
+      "xyz": [
+        4.665063509461096,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 1.4640999999999993,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.3877787807814457e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -3.8055496254241206e-17,
+          "M_norm": 7.130494325499974e-19,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.019229242961446107,
+          "curvature_rhs_norm": 0.0022574064845546165,
+          "alpha": 0.8216954306173277
+        },
+        "signed_stationary": {
+          "H": -3.8055496254241206e-17,
+          "M_norm": 7.130494325499974e-19,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 6.587539479981087e-18,
+          "curvature_rhs_norm": 1.9551177104632016e-17,
+          "alpha": 0.8041527490359012
+        }
+      },
+      "spherical_metric_relative_error": 1.2239800450549003e-16,
+      "spherical_K_relative_error": 1.2266347333466993e-17
+    },
+    {
+      "spin": 0.5,
+      "radius": 4.665063509461096,
+      "r_over_throat": 10.0,
+      "xyz": [
+        0.0,
+        0.0,
+        4.665063509461096
+      ],
+      "minimum_metric_eigenvalue": 1.4755874831559177,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.597017211338539e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.0408340855860843e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0014771796975434153,
+          "alpha": 0.8199339038863804
+        },
+        "signed_stationary": {
+          "H": -1.0408340855860843e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 6.060733836784969e-18,
+          "alpha": 0.8052610465827625
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 4.665063509461096,
+      "r_over_throat": 10.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -4.665063509461096
+      ],
+      "minimum_metric_eigenvalue": 1.4755874831559177,
+      "conformal_det_error": 0.0,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.597017211338539e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.0408340855860843e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0014771796975434153,
+          "alpha": 0.8199339038863804
+        },
+        "signed_stationary": {
+          "H": -1.0408340855860843e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 6.060733836784969e-18,
+          "alpha": 0.8052610465827625
+        }
+      }
+    },
+    {
+      "spin": 0.5,
+      "radius": 4.665063509461096,
+      "r_over_throat": 10.0,
+      "xyz": [
+        4.6650635094610964e-08,
+        0.0,
+        4.6650635094610955
+      ],
+      "minimum_metric_eigenvalue": 1.475587483155918,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.2551405187698492e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.17947888477642e-16,
+          "M_norm": 2.39397940376677e-26,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.8917486017795774e-10,
+          "curvature_rhs_norm": 0.0014771796975433687,
+          "alpha": 0.8199339038863804
+        },
+        "signed_stationary": {
+          "H": 1.17947888477642e-16,
+          "M_norm": 2.39397940376677e-26,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.4526143470657588e-18,
+          "curvature_rhs_norm": 4.178029145523233e-17,
+          "alpha": 0.8052610465827625
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.035897247358851685,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.010769174207655505,
+        0.014358898943540675,
+        0.031087928138699403
+      ],
+      "minimum_metric_eigenvalue": 15112.437350062013,
+      "conformal_det_error": 1.7763568394002505e-15,
+      "A_trace": -5.077999649203834e-19,
+      "Gamma_connection_error": 3.730349362740526e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 6.10405823109339e-17,
+          "M_norm": 2.606663962676073e-18,
+          "K_trace": 1.6547512142946638e-18,
+          "metric_rhs_norm": 0.00033375891097617256,
+          "curvature_rhs_norm": 0.0018330570319748667,
+          "alpha": 0.007928351675765315
+        },
+        "signed_stationary": {
+          "H": 6.10405823109339e-17,
+          "M_norm": 2.606663962676073e-18,
+          "K_trace": 1.6547512142946638e-18,
+          "metric_rhs_norm": 9.56495694014901e-18,
+          "curvature_rhs_norm": 1.5303985380361983e-16,
+          "alpha": -0.7456215051820273
+        }
+      },
+      "spherical_metric_relative_error": 3.745300341650929e-16,
+      "spherical_K_relative_error": 2.583157651701172e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.035897247358851685,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.035897247358851685,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 14640.999999999989,
+      "conformal_det_error": 1.7763568394002505e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.730349362740526e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 7.112366251504909e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0007110042697992354,
+          "curvature_rhs_norm": 0.0019988213234789056,
+          "alpha": 0.007993614780806785
+        },
+        "signed_stationary": {
+          "H": 7.112366251504909e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 7.026275961295269e-18,
+          "curvature_rhs_norm": 7.630248891000822e-17,
+          "alpha": -0.7403474441470246
+        }
+      },
+      "spherical_metric_relative_error": 2.4116462759115565e-16,
+      "spherical_K_relative_error": 3.3514478202756845e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.035897247358851685,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.0,
+        0.0,
+        0.035897247358851685
+      ],
+      "minimum_metric_eigenvalue": 15269.58313341602,
+      "conformal_det_error": 1.5543122344752192e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 7.105427357601002e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0017818819726561816,
+          "alpha": 0.007907093750165878
+        },
+        "signed_stationary": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.2032496019686002e-17,
+          "alpha": -0.7473310720572824
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.035897247358851685,
+      "r_over_throat": 0.1,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.035897247358851685
+      ],
+      "minimum_metric_eigenvalue": 15269.58313341602,
+      "conformal_det_error": 1.5543122344752192e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 7.105427357601002e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.0017818819726561816,
+          "alpha": 0.007907093750165878
+        },
+        "signed_stationary": {
+          "H": 4.5102810375396984e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.2032496019686002e-17,
+          "alpha": -0.7473310720572824
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.03589724735885168,
+      "r_over_throat": 0.1,
+      "xyz": [
+        3.5897247358851685e-10,
+        0.0,
+        0.03589724735885168
+      ],
+      "minimum_metric_eigenvalue": 15269.583133416032,
+      "conformal_det_error": 1.9984014443252818e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.7763568394002505e-14,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -5.915155090260258e-17,
+          "M_norm": 1.0710425856970272e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 6.538601812219894e-12,
+          "curvature_rhs_norm": 0.0017818819726561836,
+          "alpha": 0.007907093750165874
+        },
+        "signed_stationary": {
+          "H": -5.915155090260258e-17,
+          "M_norm": 1.0710425856970272e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.4917436812125377e-18,
+          "curvature_rhs_norm": 9.993354439038994e-17,
+          "alpha": -0.7473310720572824
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.1794862367942584,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.05384587103827752,
+        0.07179449471770337,
+        0.155439640693497
+      ],
+      "minimum_metric_eigenvalue": 99.85749400248086,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 5.251836227139994e-17,
+      "Gamma_connection_error": 1.4432899320127035e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -5.065392549852277e-16,
+          "M_norm": 1.2101395785435318e-16,
+          "K_trace": 1.917560911039307e-17,
+          "metric_rhs_norm": 0.04086560643005516,
+          "curvature_rhs_norm": 0.03724995657169821,
+          "alpha": 0.09133048026491267
+        },
+        "signed_stationary": {
+          "H": -5.065392549852277e-16,
+          "M_norm": 1.2101395785435318e-16,
+          "K_trace": 1.917560911039307e-17,
+          "metric_rhs_norm": 4.577339443184657e-17,
+          "curvature_rhs_norm": 1.0674567913321507e-16,
+          "alpha": -0.22821760418558998
+        }
+      },
+      "spherical_metric_relative_error": 1.8799573779500883e-16,
+      "spherical_K_relative_error": 5.862686821346547e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.1794862367942584,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.1794862367942584,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 80.99999999999996,
+      "conformal_det_error": 8.881784197001252e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.1086244689504383e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.1102230246251565e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.11174493232837429,
+          "curvature_rhs_norm": 0.10468329415271245,
+          "alpha": 0.09472845744770284
+        },
+        "signed_stationary": {
+          "H": 1.1102230246251565e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.153135563094894e-16,
+          "curvature_rhs_norm": 4.222219480594157e-17,
+          "alpha": -0.20656068712814474
+        }
+      },
+      "spherical_metric_relative_error": 1.571312548644283e-16,
+      "spherical_K_relative_error": 0.0
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.1794862367942584,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.0,
+        0.0,
+        0.1794862367942584
+      ],
+      "minimum_metric_eigenvalue": 106.14332533664117,
+      "conformal_det_error": 1.1102230246251565e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.7763568394002505e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -3.642919299551295e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.025054727083744465,
+          "alpha": 0.0903566560299135
+        },
+        "signed_stationary": {
+          "H": -3.642919299551295e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 3.790267562819877e-17,
+          "alpha": -0.23490615371627666
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.1794862367942584,
+      "r_over_throat": 0.5,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.1794862367942584
+      ],
+      "minimum_metric_eigenvalue": 106.14332533664117,
+      "conformal_det_error": 1.1102230246251565e-15,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.7763568394002505e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -3.642919299551295e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.025054727083744465,
+          "alpha": 0.0903566560299135
+        },
+        "signed_stationary": {
+          "H": -3.642919299551295e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 3.790267562819877e-17,
+          "alpha": -0.23490615371627666
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.17948623679425837,
+      "r_over_throat": 0.5,
+      "xyz": [
+        1.794862367942584e-09,
+        0.0,
+        0.17948623679425837
+      ],
+      "minimum_metric_eigenvalue": 106.14332533664125,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 5.329070518200751e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.016269656045988e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 7.466092111901963e-10,
+          "curvature_rhs_norm": 0.025054727083744534,
+          "alpha": 0.09035665602991345
+        },
+        "signed_stationary": {
+          "H": -1.016269656045988e-15,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.235493283266374e-17,
+          "curvature_rhs_norm": 1.606007543972501e-16,
+          "alpha": -0.23490615371627674
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.3553827488526316,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.10661482465578949,
+        0.14215309954105268,
+        0.30777048857312406
+      ],
+      "minimum_metric_eigenvalue": 21.135783687002707,
+      "conformal_det_error": 8.881784197001252e-16,
+      "A_trace": 3.744839603711879e-17,
+      "Gamma_connection_error": 4.440892098500626e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -6.245004513516506e-16,
+          "M_norm": 8.979280245409505e-17,
+          "K_trace": -1.0986676602098477e-17,
+          "metric_rhs_norm": 0.10495488878327137,
+          "curvature_rhs_norm": 0.04785285637470238,
+          "alpha": 0.19533844372087567
+        },
+        "signed_stationary": {
+          "H": -6.245004513516506e-16,
+          "M_norm": 8.979280245409505e-17,
+          "K_trace": -1.0986676602098477e-17,
+          "metric_rhs_norm": 6.547158193800443e-17,
+          "curvature_rhs_norm": 3.45884556911455e-17,
+          "alpha": -0.0031986315213518132
+        }
+      },
+      "spherical_metric_relative_error": 3.5822077033902864e-16,
+      "spherical_K_relative_error": 1.1504549139563343e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.35538274885263166,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.35538274885263166,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 16.3256893082452,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 8.881784197001252e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 4.440892098500626e-16,
+          "M_norm": 1.578201519120052e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.3066409796065702,
+          "curvature_rhs_norm": 0.24970219118566056,
+          "alpha": 0.20392901892911036
+        },
+        "signed_stationary": {
+          "H": 4.440892098500626e-16,
+          "M_norm": 1.578201519120052e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 9.348090200427047e-17,
+          "curvature_rhs_norm": 5.554665608192564e-17,
+          "alpha": -0.0028111971522912574
+        }
+      },
+      "spherical_metric_relative_error": 7.958695215738552e-17,
+      "spherical_K_relative_error": 5.724886750909459e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.35538274885263166,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.0,
+        0.0,
+        0.35538274885263166
+      ],
+      "minimum_metric_eigenvalue": 22.739148479921866,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.1086244689504383e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.0122792321330962e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.024945707118512028,
+          "alpha": 0.19297232385034793
+        },
+        "signed_stationary": {
+          "H": 2.0122792321330962e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.532309544891355e-17,
+          "alpha": -0.0033177370691358753
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.35538274885263166,
+      "r_over_throat": 0.99,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.35538274885263166
+      ],
+      "minimum_metric_eigenvalue": 22.739148479921866,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.1086244689504383e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.0122792321330962e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.024945707118512028,
+          "alpha": 0.19297232385034793
+        },
+        "signed_stationary": {
+          "H": 2.0122792321330962e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 2.532309544891355e-17,
+          "alpha": -0.0033177370691358753
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.3553827488526316,
+      "r_over_throat": 0.99,
+      "xyz": [
+        3.5538274885263166e-09,
+        0.0,
+        0.3553827488526316
+      ],
+      "minimum_metric_eigenvalue": 22.73914847992187,
+      "conformal_det_error": 8.881784197001252e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.3322676295501878e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 8.919709031320793e-16,
+          "M_norm": 6.938622170663694e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.8892805419421355e-09,
+          "curvature_rhs_norm": 0.02494570711851193,
+          "alpha": 0.19297232385034788
+        },
+        "signed_stationary": {
+          "H": 8.919709031320793e-16,
+          "M_norm": 6.938622170663694e-25,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 4.17141697326511e-19,
+          "curvature_rhs_norm": 2.936662673834656e-17,
+          "alpha": -0.003317737069135927
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.3589724735885168,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.10769174207655503,
+        0.14358898943540674,
+        0.310879281386994
+      ],
+      "minimum_metric_eigenvalue": 20.714373500620223,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": -3.3152119762487115e-17,
+      "Gamma_connection_error": 1.3322676295501878e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.0685896612017132e-15,
+          "M_norm": 5.963737636810929e-17,
+          "K_trace": -5.370519204141622e-18,
+          "metric_rhs_norm": 0.1060204846366641,
+          "curvature_rhs_norm": 0.047939009642966136,
+          "alpha": 0.1973146641571189
+        },
+        "signed_stationary": {
+          "H": -1.0685896612017132e-15,
+          "M_norm": 5.963737636810929e-17,
+          "K_trace": -5.370519204141622e-18,
+          "metric_rhs_norm": 2.9056961440220825e-17,
+          "curvature_rhs_norm": 5.2838747386259326e-17,
+          "alpha": 0.0
+        }
+      },
+      "spherical_metric_relative_error": 2.1628419798347613e-16,
+      "spherical_K_relative_error": 2.2430157003598446e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.3589724735885168,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.3589724735885168,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 16.0,
+      "conformal_det_error": 8.881784197001252e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.886579864025407e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -2.220446049250313e-15,
+          "M_norm": 1.594158021538469e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.3097592011450158,
+          "curvature_rhs_norm": 0.2515526000590591,
+          "alpha": 0.20599246407110963
+        },
+        "signed_stationary": {
+          "H": -2.220446049250313e-15,
+          "M_norm": 1.594158021538469e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.7566659981140996e-16,
+          "curvature_rhs_norm": 8.546294028986163e-17,
+          "alpha": 0.0
+        }
+      },
+      "spherical_metric_relative_error": 1.1484152043187448e-16,
+      "spherical_K_relative_error": 1.1681976069277485e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.3589724735885168,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.0,
+        0.0,
+        0.3589724735885168
+      ],
+      "minimum_metric_eigenvalue": 22.285831334160303,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 0.0,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.3877787807814457e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.025056608210563897,
+          "alpha": 0.1949245423283215
+        },
+        "signed_stationary": {
+          "H": -1.3877787807814457e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.2098374922832811e-17,
+          "alpha": 0.0
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.3589724735885168,
+      "r_over_throat": 1.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.3589724735885168
+      ],
+      "minimum_metric_eigenvalue": 22.285831334160303,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 0.0,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.3877787807814457e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.025056608210563897,
+          "alpha": 0.1949245423283215
+        },
+        "signed_stationary": {
+          "H": -1.3877787807814457e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.2098374922832811e-17,
+          "alpha": 0.0
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.35897247358851675,
+      "r_over_throat": 1.0,
+      "xyz": [
+        3.589724735885168e-09,
+        0.0,
+        0.35897247358851675
+      ],
+      "minimum_metric_eigenvalue": 22.285831334160306,
+      "conformal_det_error": 8.881784197001252e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.3322676295501878e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 9.399654487724185e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.9084556749098887e-09,
+          "curvature_rhs_norm": 0.02505660821056388,
+          "alpha": 0.19492454232832143
+        },
+        "signed_stationary": {
+          "H": 9.399654487724185e-17,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.071556805901676e-25,
+          "curvature_rhs_norm": 4.6839188242039797e-17,
+          "alpha": -5.104785418153638e-17
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.3625621983244019,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.10876865949732058,
+        0.1450248793297608,
+        0.3139880742008639
+      ],
+      "minimum_metric_eigenvalue": 20.306994990325578,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 3.987160187207712e-17,
+      "Gamma_connection_error": 1.9845236565174673e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -5.967448757360216e-16,
+          "M_norm": 4.655593010594537e-17,
+          "K_trace": -1.3199917665732287e-17,
+          "metric_rhs_norm": 0.10707529847398436,
+          "curvature_rhs_norm": 0.048022764753929276,
+          "alpha": 0.19928473700347613
+        },
+        "signed_stationary": {
+          "H": -5.967448757360216e-16,
+          "M_norm": 4.655593010594537e-17,
+          "K_trace": -1.3199917665732287e-17,
+          "metric_rhs_norm": 9.868709943878458e-17,
+          "curvature_rhs_norm": 4.9860181520631087e-17,
+          "alpha": 0.0031668032725205696
+        }
+      },
+      "spherical_metric_relative_error": 4.409197862292684e-16,
+      "spherical_K_relative_error": 2.0101404258958314e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.36256219832440195,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.36256219832440195,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 15.685513272238879,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.5543122344752192e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -2.9976021664879227e-15,
+          "M_norm": 3.2201693591091535e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.3128361636141505,
+          "curvature_rhs_norm": 0.2533542289661853,
+          "alpha": 0.20804886820966192
+        },
+        "signed_stationary": {
+          "H": -2.9976021664879227e-15,
+          "M_norm": 3.2201693591091535e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.2599496369294474e-17,
+          "curvature_rhs_norm": 8.948536616239241e-17,
+          "alpha": 0.0027832237204640556
+        }
+      },
+      "spherical_metric_relative_error": 2.652017655569363e-16,
+      "spherical_K_relative_error": 2.3834115948038396e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.36256219832440195,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.0,
+        0.0,
+        0.36256219832440195
+      ],
+      "minimum_metric_eigenvalue": 21.84748889635446,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.440892098500626e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -8.049116928532385e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.02517082261152908,
+          "alpha": 0.19687081469642734
+        },
+        "signed_stationary": {
+          "H": -8.049116928532385e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.4252744808335278e-17,
+          "alpha": 0.003284723765348869
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.36256219832440195,
+      "r_over_throat": 1.01,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.36256219832440195
+      ],
+      "minimum_metric_eigenvalue": 21.84748889635446,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.440892098500626e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -8.049116928532385e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.02517082261152908,
+          "alpha": 0.19687081469642734
+        },
+        "signed_stationary": {
+          "H": -8.049116928532385e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 1.4252744808335278e-17,
+          "alpha": 0.003284723765348869
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.3625621983244019,
+      "r_over_throat": 1.01,
+      "xyz": [
+        3.6256219832440194e-09,
+        0.0,
+        0.3625621983244019
+      ],
+      "minimum_metric_eigenvalue": 21.847488896354474,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 4.440892098500626e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.397148452880236e-16,
+          "M_norm": 1.4157597794499116e-24,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.92744965541407e-09,
+          "curvature_rhs_norm": 0.025170822611529066,
+          "alpha": 0.19687081469642728
+        },
+        "signed_stationary": {
+          "H": 2.397148452880236e-16,
+          "M_norm": 1.4157597794499116e-24,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 4.124490668619242e-19,
+          "curvature_rhs_norm": 2.3293906524489213e-17,
+          "alpha": 0.0032847237653488184
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.7179449471770336,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.21538348415311007,
+        0.2871779788708135,
+        0.621758562773988
+      ],
+      "minimum_metric_eigenvalue": 6.241093375155054,
+      "conformal_det_error": 0.0,
+      "A_trace": 3.8529615871117295e-17,
+      "Gamma_connection_error": 4.85722573273506e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -7.979727989493313e-16,
+          "M_norm": 1.1286413322595205e-16,
+          "K_trace": -3.7963407270892016e-17,
+          "metric_rhs_norm": 0.16346242572022063,
+          "curvature_rhs_norm": 0.047648145061938804,
+          "alpha": 0.36532192105965067
+        },
+        "signed_stationary": {
+          "H": -7.979727989493313e-16,
+          "M_norm": 1.1286413322595205e-16,
+          "K_trace": -3.7963407270892016e-17,
+          "metric_rhs_norm": 4.062959549191179e-17,
+          "curvature_rhs_norm": 1.1613839157081846e-16,
+          "alpha": 0.22821760418558998
+        }
+      },
+      "spherical_metric_relative_error": 1.8799573779500883e-16,
+      "spherical_K_relative_error": 5.245923688941953e-16
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.7179449471770336,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.7179449471770336,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 5.062499999999997,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.1102230246251565e-15,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 1.5543122344752192e-15,
+          "M_norm": 1.5161324512153696e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.4469797293134971,
+          "curvature_rhs_norm": 0.26484012747746943,
+          "alpha": 0.3789138297908113
+        },
+        "signed_stationary": {
+          "H": 1.5543122344752192e-15,
+          "M_norm": 1.5161324512153696e-16,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.717966587639225e-17,
+          "curvature_rhs_norm": 2.6992062627612983e-16,
+          "alpha": 0.20656068712814474
+        }
+      },
+      "spherical_metric_relative_error": 1.571312548644283e-16,
+      "spherical_K_relative_error": 0.0
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.7179449471770336,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.0,
+        0.0,
+        0.7179449471770336
+      ],
+      "minimum_metric_eigenvalue": 6.633957833540073,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 6.661338147750939e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.231653667943533e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.03098222798897503,
+          "alpha": 0.3614266241196539
+        },
+        "signed_stationary": {
+          "H": -1.231653667943533e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 5.305065602721528e-17,
+          "alpha": 0.23490615371627666
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.7179449471770336,
+      "r_over_throat": 2.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -0.7179449471770336
+      ],
+      "minimum_metric_eigenvalue": 6.633957833540073,
+      "conformal_det_error": 4.440892098500626e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 6.661338147750939e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -1.231653667943533e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.03098222798897503,
+          "alpha": 0.3614266241196539
+        },
+        "signed_stationary": {
+          "H": -1.231653667943533e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 5.305065602721528e-17,
+          "alpha": 0.23490615371627666
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 0.7179449471770335,
+      "r_over_throat": 2.0,
+      "xyz": [
+        7.179449471770336e-09,
+        0.0,
+        0.7179449471770335
+      ],
+      "minimum_metric_eigenvalue": 6.633957833540078,
+      "conformal_det_error": 6.661338147750939e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 3.3306690738754696e-16,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": -4.559539733054794e-16,
+          "M_norm": 1.2846179461729158e-24,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.9864368447607853e-09,
+          "curvature_rhs_norm": 0.030982227988974907,
+          "alpha": 0.3614266241196538
+        },
+        "signed_stationary": {
+          "H": -4.559539733054794e-16,
+          "M_norm": 1.2846179461729158e-24,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 2.419371372518407e-17,
+          "curvature_rhs_norm": 7.713047129585155e-17,
+          "alpha": 0.23490615371627663
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 3.5897247358851683,
+      "r_over_throat": 10.0,
+      "xyz": [
+        1.0769174207655505,
+        1.4358898943540674,
+        3.10879281386994
+      ],
+      "minimum_metric_eigenvalue": 1.511243735006202,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 2.638356640030952e-18,
+      "Gamma_connection_error": 6.938893903907228e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.2090619264392153e-16,
+          "M_norm": 4.599104473196706e-18,
+          "K_trace": -1.0416040978212192e-19,
+          "metric_rhs_norm": 0.03337589109761722,
+          "curvature_rhs_norm": 0.0049461979348663565,
+          "alpha": 0.7928351675765312
+        },
+        "signed_stationary": {
+          "H": 2.2090619264392153e-16,
+          "M_norm": 4.599104473196706e-18,
+          "K_trace": -1.0416040978212192e-19,
+          "metric_rhs_norm": 7.744415155663123e-18,
+          "curvature_rhs_norm": 7.24085523474856e-17,
+          "alpha": 0.7456215051820273
+        }
+      },
+      "spherical_metric_relative_error": 1.553972576295401e-16,
+      "spherical_K_relative_error": 2.909219710836648e-18
+    },
+    {
+      "spin": 0.9,
+      "radius": 3.5897247358851683,
+      "r_over_throat": 10.0,
+      "xyz": [
+        3.5897247358851683,
+        0.0,
+        0.0
+      ],
+      "minimum_metric_eigenvalue": 1.4640999999999995,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 7.632783294297951e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.194425197110661e-16,
+          "M_norm": 5.562873686655184e-18,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.07110042697992344,
+          "curvature_rhs_norm": 0.01039210734632914,
+          "alpha": 0.7993614780806781
+        },
+        "signed_stationary": {
+          "H": 2.194425197110661e-16,
+          "M_norm": 5.562873686655184e-18,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 1.2129705514452903e-17,
+          "curvature_rhs_norm": 1.8738761527353208e-16,
+          "alpha": 0.7403474441470246
+        }
+      },
+      "spherical_metric_relative_error": 2.5819747387941435e-16,
+      "spherical_K_relative_error": 2.943923360032078e-17
+    },
+    {
+      "spin": 0.9,
+      "radius": 3.5897247358851683,
+      "r_over_throat": 10.0,
+      "xyz": [
+        0.0,
+        0.0,
+        3.5897247358851683
+      ],
+      "minimum_metric_eigenvalue": 1.5269583133416025,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.3877787807814457e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.5673907444456745e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.002886579916922504,
+          "alpha": 0.7907093750165873
+        },
+        "signed_stationary": {
+          "H": 2.5673907444456745e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 9.195203886091705e-17,
+          "alpha": 0.7473310720572826
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 3.5897247358851683,
+      "r_over_throat": 10.0,
+      "xyz": [
+        0.0,
+        0.0,
+        -3.5897247358851683
+      ],
+      "minimum_metric_eigenvalue": 1.5269583133416025,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 1.3877787807814457e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 2.5673907444456745e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.002886579916922504,
+          "alpha": 0.7907093750165873
+        },
+        "signed_stationary": {
+          "H": 2.5673907444456745e-16,
+          "M_norm": 0.0,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 9.195203886091705e-17,
+          "alpha": 0.7473310720572826
+        }
+      }
+    },
+    {
+      "spin": 0.9,
+      "radius": 3.5897247358851683,
+      "r_over_throat": 10.0,
+      "xyz": [
+        3.5897247358851685e-08,
+        0.0,
+        3.589724735885168
+      ],
+      "minimum_metric_eigenvalue": 1.5269583133416027,
+      "conformal_det_error": 2.220446049250313e-16,
+      "A_trace": 0.0,
+      "Gamma_connection_error": 2.0816681711721685e-17,
+      "gauges": {
+        "precollapsed_zero_shift": {
+          "H": 3.105406984819138e-17,
+          "M_norm": 9.413460225852779e-26,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 6.538601812219894e-10,
+          "curvature_rhs_norm": 0.0028865799169225347,
+          "alpha": 0.7907093750165873
+        },
+        "signed_stationary": {
+          "H": 3.105406984819138e-17,
+          "M_norm": 9.413460225852779e-26,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 3.2804617929868028e-18,
+          "curvature_rhs_norm": 5.5196979268767723e-17,
+          "alpha": 0.7473310720572826
+        }
+      }
+    }
+  ],
+  "convergence": [
+    {
+      "spin": 0.5,
+      "xyz": [
+        0.06997595264191644,
+        0.09330127018922194,
+        0.20200317547305482
+      ],
+      "r_over_throat": 0.5,
+      "rows": [
+        {
+          "step_over_radius": 0.08,
+          "H": 2.1684056000904547e-05,
+          "M_norm": 3.820163637939062e-06,
+          "K_trace": 8.039982847205181e-20,
+          "metric_rhs_norm": 0.02136892808322424,
+          "curvature_rhs_norm": 0.06075310321710779,
+          "Gamma_error": 1.2542961579375955e-06,
+          "Gamma_gradient_error": 1.2052541658147398e-05,
+          "metric_first_error": 1.393804086682611e-05,
+          "metric_second_error": 3.47271209456743e-05
+        },
+        {
+          "step_over_radius": 0.04,
+          "H": 4.386684764583898e-07,
+          "M_norm": 6.230111344883541e-08,
+          "K_trace": 8.039982847205181e-20,
+          "metric_rhs_norm": 0.02136892808322424,
+          "curvature_rhs_norm": 0.06074946348112116,
+          "Gamma_error": 2.174800273202493e-08,
+          "Gamma_gradient_error": 1.815018981776717e-07,
+          "metric_first_error": 1.8741294294518523e-07,
+          "metric_second_error": 6.515797564190286e-07,
+          "H_order": 5.627359792393984,
+          "M_norm_order": 5.938232680263107,
+          "Gamma_error_order": 5.849851305363409,
+          "Gamma_gradient_error_order": 6.053208969768169,
+          "metric_first_error_order": 6.216663389240711,
+          "metric_second_error_order": 5.735977216478408
+        },
+        {
+          "step_over_radius": 0.02,
+          "H": 7.23385179361713e-09,
+          "M_norm": 9.843987620873196e-10,
+          "K_trace": 8.039982847205181e-20,
+          "metric_rhs_norm": 0.02136892808322424,
+          "curvature_rhs_norm": 0.06074939961174821,
+          "Gamma_error": 3.4860092590349723e-10,
+          "Gamma_gradient_error": 2.808009935684197e-09,
+          "metric_first_error": 2.8140266059790184e-09,
+          "metric_second_error": 1.0583034032314223e-08,
+          "H_order": 5.922223184563702,
+          "M_norm_order": 5.983871293615009,
+          "Gamma_error_order": 5.963162702910287,
+          "Gamma_gradient_error_order": 6.014292785632264,
+          "metric_first_error_order": 6.05744081133694,
+          "metric_second_error_order": 5.944116586553205
+        },
+        {
+          "step_over_radius": 0.01,
+          "H": 1.2319521618120444e-10,
+          "M_norm": 1.5423852499974846e-11,
+          "K_trace": 8.039982847205181e-20,
+          "metric_rhs_norm": 0.02136892808322424,
+          "curvature_rhs_norm": 0.06074939858791968,
+          "Gamma_error": 5.497824417943775e-12,
+          "Gamma_gradient_error": 4.566941269601443e-11,
+          "metric_first_error": 4.3528606442241833e-11,
+          "metric_second_error": 1.6676956512584773e-10,
+          "H_order": 5.875745899869525,
+          "M_norm_order": 5.996007778357206,
+          "Gamma_error_order": 5.98657175837191,
+          "Gamma_gradient_error_order": 5.9421759932422304,
+          "metric_first_error_order": 6.01452832543188,
+          "metric_second_error_order": 5.987753454449395
+        }
+      ]
+    },
+    {
+      "spin": 0.5,
+      "xyz": [
+        0.1399519052838329,
+        0.18660254037844387,
+        0.40400635094610965
+      ],
+      "r_over_throat": 1.0,
+      "rows": [
+        {
+          "step_over_radius": 0.08,
+          "H": 9.996107288325756e-06,
+          "M_norm": 7.2549360499618106e-06,
+          "K_trace": -1.4284006989746894e-17,
+          "metric_rhs_norm": 0.06538170108406385,
+          "curvature_rhs_norm": 0.09411720484625881,
+          "Gamma_error": 6.738115538307277e-07,
+          "Gamma_gradient_error": 6.101622325199729e-06,
+          "metric_first_error": 1.2258784011848663e-05,
+          "metric_second_error": 1.9666312427689982e-05
+        },
+        {
+          "step_over_radius": 0.04,
+          "H": 2.1310791592163425e-07,
+          "M_norm": 1.1831738604772277e-07,
+          "K_trace": -1.4284006989746894e-17,
+          "metric_rhs_norm": 0.06538170108406385,
+          "curvature_rhs_norm": 0.09411308011278123,
+          "Gamma_error": 1.2376246527612267e-08,
+          "Gamma_gradient_error": 1.0004718749290209e-07,
+          "metric_first_error": 1.6862804395669038e-07,
+          "metric_second_error": 4.0029498121277294e-07,
+          "H_order": 5.551710297642848,
+          "M_norm_order": 5.938228907469248,
+          "Gamma_error_order": 5.766699421587206,
+          "Gamma_gradient_error_order": 5.930440367387137,
+          "metric_first_error_order": 6.183827584406092,
+          "metric_second_error_order": 5.61851912952321
+        },
+        {
+          "step_over_radius": 0.02,
+          "H": 3.5479858183362634e-09,
+          "M_norm": 1.8691611329945713e-09,
+          "K_trace": -1.4284006989746894e-17,
+          "metric_rhs_norm": 0.06538170108406385,
+          "curvature_rhs_norm": 0.09411300449331486,
+          "Gamma_error": 2.00902516844792e-10,
+          "Gamma_gradient_error": 1.5820874887939596e-09,
+          "metric_first_error": 2.548110918742333e-09,
+          "metric_second_error": 6.603233185003886e-09,
+          "H_order": 5.908440129937919,
+          "M_norm_order": 5.984127331144023,
+          "Gamma_error_order": 5.9449343917811825,
+          "Gamma_gradient_error_order": 5.982707418360678,
+          "metric_first_error_order": 6.048272596536834,
+          "metric_second_error_order": 5.921747123664835
+        },
+        {
+          "step_over_radius": 0.01,
+          "H": 5.880356965248801e-11,
+          "M_norm": 2.928669031916035e-11,
+          "K_trace": -1.4284006989746894e-17,
+          "metric_rhs_norm": 0.06538170108406385,
+          "curvature_rhs_norm": 0.09411300327004056,
+          "Gamma_error": 3.060995901194019e-12,
+          "Gamma_gradient_error": 2.507953567043586e-11,
+          "metric_first_error": 3.9474810581327055e-11,
+          "metric_second_error": 1.0430922195253235e-10,
+          "H_order": 5.914952696749264,
+          "M_norm_order": 5.996001969398683,
+          "Gamma_error_order": 6.0363507145627215,
+          "Gamma_gradient_error_order": 5.979174934313563,
+          "metric_first_error_order": 6.012351925579129,
+          "metric_second_error_order": 5.984233976918351
+        }
+      ]
+    },
+    {
+      "spin": 0.9,
+      "xyz": [
+        0.05384587103827752,
+        0.07179449471770337,
+        0.155439640693497
+      ],
+      "r_over_throat": 0.5,
+      "rows": [
+        {
+          "step_over_radius": 0.08,
+          "H": -5.352471331708519e-05,
+          "M_norm": 8.110824237917256e-06,
+          "K_trace": 1.917560911039307e-17,
+          "metric_rhs_norm": 0.04086560643005516,
+          "curvature_rhs_norm": 0.037256160964398245,
+          "Gamma_error": 3.9467221135680575e-06,
+          "Gamma_gradient_error": 0.00013582747207241397,
+          "metric_first_error": 1.3404421283325156e-05,
+          "metric_second_error": 3.1698777728810024e-05
+        },
+        {
+          "step_over_radius": 0.04,
+          "H": -6.71335295701625e-07,
+          "M_norm": 1.3127029212422253e-07,
+          "K_trace": 1.917560911039307e-17,
+          "metric_rhs_norm": 0.04086560643005516,
+          "curvature_rhs_norm": 0.03725005778058765,
+          "Gamma_error": 7.400708934568456e-08,
+          "Gamma_gradient_error": 2.0184656088773067e-06,
+          "metric_first_error": 1.7741281992328993e-07,
+          "metric_second_error": 6.058377121294788e-07,
+          "H_order": 6.317027858575573,
+          "M_norm_order": 5.949236170487622,
+          "Gamma_error_order": 5.736847656107719,
+          "Gamma_gradient_error_order": 6.072372488176283,
+          "metric_first_error_order": 6.239454861006937,
+          "metric_second_error_order": 5.709352016748911
+        },
+        {
+          "step_over_radius": 0.02,
+          "H": -9.852851298730592e-09,
+          "M_norm": 2.0707173037765403e-09,
+          "K_trace": 1.917560911039307e-17,
+          "metric_rhs_norm": 0.04086560643005516,
+          "curvature_rhs_norm": 0.03724995816717958,
+          "Gamma_error": 1.206818645016483e-09,
+          "Gamma_gradient_error": 3.111983204462376e-08,
+          "metric_first_error": 2.6837510932688876e-09,
+          "metric_second_error": 1.0054553332628906e-08,
+          "H_order": 6.090348400521871,
+          "M_norm_order": 5.9862660366225775,
+          "Gamma_error_order": 5.9383826810225715,
+          "Gamma_gradient_error_order": 6.019280921759209,
+          "metric_first_error_order": 6.046715579128051,
+          "metric_second_error_order": 5.91301048833877
+        },
+        {
+          "step_over_radius": 0.01,
+          "H": -1.66155755820796e-10,
+          "M_norm": 3.2434352040297845e-11,
+          "K_trace": 1.917560911039307e-17,
+          "metric_rhs_norm": 0.04086560643005516,
+          "curvature_rhs_norm": 0.03724995659671898,
+          "Gamma_error": 1.8987478256349277e-11,
+          "Gamma_gradient_error": 4.854019408639942e-10,
+          "metric_first_error": 4.1727173632093856e-11,
+          "metric_second_error": 1.5929478733823015e-10,
+          "H_order": 5.889933108311843,
+          "M_norm_order": 5.996464181171926,
+          "Gamma_error_order": 5.99001676817071,
+          "Gamma_gradient_error_order": 6.002510586748413,
+          "metric_first_error_order": 6.007119859834145,
+          "metric_second_error_order": 5.9800061242018305
+        }
+      ]
+    },
+    {
+      "spin": 0.9,
+      "xyz": [
+        0.10769174207655503,
+        0.14358898943540674,
+        0.310879281386994
+      ],
+      "r_over_throat": 1.0,
+      "rows": [
+        {
+          "step_over_radius": 0.08,
+          "H": -0.00011931628078223899,
+          "M_norm": 1.2326856176905818e-05,
+          "K_trace": -5.370519204141622e-18,
+          "metric_rhs_norm": 0.1060204846366641,
+          "curvature_rhs_norm": 0.04795547218900054,
+          "Gamma_error": 2.371226633879342e-06,
+          "Gamma_gradient_error": 9.351133170287795e-05,
+          "metric_first_error": 1.2732131472478987e-05,
+          "metric_second_error": 3.940164357290312e-05
+        },
+        {
+          "step_over_radius": 0.04,
+          "H": -1.7559890920781918e-06,
+          "M_norm": 1.936453084541731e-07,
+          "K_trace": -5.370519204141622e-18,
+          "metric_rhs_norm": 0.1060204846366641,
+          "curvature_rhs_norm": 0.047939264687743705,
+          "Gamma_error": 3.6546672604886865e-08,
+          "Gamma_gradient_error": 1.4912217771723135e-06,
+          "metric_first_error": 2.0566551189533483e-07,
+          "metric_second_error": 6.502648444006027e-07,
+          "H_order": 6.086363219782104,
+          "M_norm_order": 5.992244544761549,
+          "Gamma_error_order": 6.019749685275839,
+          "Gamma_gradient_error_order": 5.970574462494602,
+          "metric_first_error_order": 5.952030261034715,
+          "metric_second_error_order": 5.921084571564599
+        },
+        {
+          "step_over_radius": 0.02,
+          "H": -2.6986324772049208e-08,
+          "M_norm": 3.0317911391682124e-09,
+          "K_trace": -5.370519204141622e-18,
+          "metric_rhs_norm": 0.1060204846366641,
+          "curvature_rhs_norm": 0.047939013612740305,
+          "Gamma_error": 5.697681493277429e-10,
+          "Gamma_gradient_error": 2.338149496239339e-08,
+          "metric_first_error": 3.3441584538400728e-09,
+          "metric_second_error": 1.030359086392114e-08,
+          "H_order": 6.023911561223197,
+          "M_norm_order": 5.997102369320952,
+          "Gamma_error_order": 6.003221275969987,
+          "Gamma_gradient_error_order": 5.994983847911721,
+          "metric_first_error_order": 5.942512870789099,
+          "metric_second_error_order": 5.979808310602432
+        },
+        {
+          "step_over_radius": 0.01,
+          "H": -4.148401067105567e-10,
+          "M_norm": 4.7400645478369524e-11,
+          "K_trace": -5.370519204141622e-18,
+          "metric_rhs_norm": 0.1060204846366641,
+          "curvature_rhs_norm": 0.047939009704497756,
+          "Gamma_error": 8.92225182624884e-12,
+          "Gamma_gradient_error": 3.658104930082118e-10,
+          "metric_first_error": 5.274218837828563e-11,
+          "metric_second_error": 1.6140375423139324e-10,
+          "H_order": 6.023529320894909,
+          "M_norm_order": 5.999119853933945,
+          "Gamma_error_order": 5.996823297378787,
+          "Gamma_gradient_error_order": 5.998126907065561,
+          "metric_first_error_order": 5.986541964257452,
+          "metric_second_error_order": 5.996329266875064
+        }
+      ]
+    },
+    {
+      "spin": 0.9,
+      "xyz": [
+        0.21538348415311007,
+        0.2871779788708135,
+        0.621758562773988
+      ],
+      "r_over_throat": 2.0,
+      "rows": [
+        {
+          "step_over_radius": 0.08,
+          "H": -0.00010665621793085056,
+          "M_norm": 9.95688684311479e-06,
+          "K_trace": -3.7963407270892016e-17,
+          "metric_rhs_norm": 0.16346242572022063,
+          "curvature_rhs_norm": 0.04767233990896584,
+          "Gamma_error": 9.5765511010093e-07,
+          "Gamma_gradient_error": 4.561038346029278e-05,
+          "metric_first_error": 1.3131034015032563e-05,
+          "metric_second_error": 4.794460005287144e-05
+        },
+        {
+          "step_over_radius": 0.04,
+          "H": -1.604410299498038e-06,
+          "M_norm": 1.5253155209188375e-07,
+          "K_trace": -3.7963407270892016e-17,
+          "metric_rhs_norm": 0.16346242572022063,
+          "curvature_rhs_norm": 0.047648511704078494,
+          "Gamma_error": 2.7135694136148913e-08,
+          "Gamma_gradient_error": 6.885169208104003e-07,
+          "metric_first_error": 2.2527176086745736e-07,
+          "metric_second_error": 7.884292218106285e-07,
+          "H_order": 6.05478113264954,
+          "M_norm_order": 6.028515125433759,
+          "Gamma_error_order": 5.141242458649951,
+          "Gamma_gradient_error_order": 6.0497263791060165,
+          "metric_first_error_order": 5.8651702421438126,
+          "metric_second_error_order": 5.9262432765741435
+        },
+        {
+          "step_over_radius": 0.02,
+          "H": -2.479132072547019e-08,
+          "M_norm": 2.3737601346736935e-09,
+          "K_trace": -3.7963407270892016e-17,
+          "metric_rhs_norm": 0.16346242572022063,
+          "curvature_rhs_norm": 0.04764815073595786,
+          "Gamma_error": 4.718536672498885e-10,
+          "Gamma_gradient_error": 1.0656559190636017e-08,
+          "metric_first_error": 3.6591890199477406e-09,
+          "metric_second_error": 1.2479808411705226e-08,
+          "H_order": 6.016064191258013,
+          "M_norm_order": 6.005789733767249,
+          "Gamma_error_order": 5.845708487531886,
+          "Gamma_gradient_error_order": 6.013678511712225,
+          "metric_first_error_order": 5.943998722618873,
+          "metric_second_error_order": 5.9813135570235945
+        },
+        {
+          "step_over_radius": 0.01,
+          "H": -4.0277460533477694e-10,
+          "M_norm": 3.7063725061033364e-11,
+          "K_trace": -3.7963407270892016e-17,
+          "metric_rhs_norm": 0.16346242572022063,
+          "curvature_rhs_norm": 0.047648145152119736,
+          "Gamma_error": 7.559952663882541e-12,
+          "Gamma_gradient_error": 1.6647794254254222e-10,
+          "metric_first_error": 5.7745391096306244e-11,
+          "metric_second_error": 1.9536521107494608e-10,
+          "H_order": 5.943718595684635,
+          "M_norm_order": 6.001022464089453,
+          "Gamma_error_order": 5.963818504439771,
+          "Gamma_gradient_error_order": 6.000266842634458,
+          "metric_first_error_order": 5.985674328042832,
+          "metric_second_error_order": 5.9972783884052605
+        }
+      ]
+    },
+    {
+      "spin": 0.9,
+      "xyz": [
+        0.0,
+        0.0,
+        0.3589724735885168
+      ],
+      "r_over_throat": 1.0,
+      "rows": [
+        {
+          "step_over_radius": 0.08,
+          "H": -3.552781592010973e-05,
+          "M_norm": 7.461943785976401e-19,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.02505715877852371,
+          "Gamma_error": 9.74052717284124e-06,
+          "Gamma_gradient_error": 3.579395700903376e-05,
+          "metric_first_error": 7.129394297891736e-05,
+          "metric_second_error": 5.4825529347226444e-05
+        },
+        {
+          "step_over_radius": 0.04,
+          "H": 4.932920957129161e-08,
+          "M_norm": 3.7309718929882005e-19,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.025056555481223042,
+          "Gamma_error": 1.6047919482176098e-07,
+          "Gamma_gradient_error": 5.913533964729822e-07,
+          "metric_first_error": 1.0033362006470796e-06,
+          "metric_second_error": 7.737816507780239e-07,
+          "H_order": 9.49229111564717,
+          "M_norm_order": 1.0,
+          "Gamma_error_order": 5.923541677667576,
+          "Gamma_gradient_error_order": 5.919551680096786,
+          "metric_first_error_order": 6.150902498490746,
+          "metric_second_error_order": 6.146777508582083
+        },
+        {
+          "step_over_radius": 0.02,
+          "H": 3.2343527509026693e-09,
+          "M_norm": 1.8654859464941002e-19,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.02505660713261189,
+          "Gamma_error": 2.5414896853703794e-09,
+          "Gamma_gradient_error": 9.371491138665533e-09,
+          "metric_first_error": 1.5283403218094025e-08,
+          "metric_second_error": 1.1794671931400658e-08,
+          "H_order": 3.930893232077947,
+          "M_norm_order": 1.0,
+          "Gamma_error_order": 5.9805680867441,
+          "Gamma_gradient_error_order": 5.979598121815484,
+          "metric_first_error_order": 6.036695468979487,
+          "metric_second_error_order": 6.035719321846706
+        },
+        {
+          "step_over_radius": 0.01,
+          "H": 5.94616161864181e-11,
+          "M_norm": 9.327429732470501e-20,
+          "K_trace": 0.0,
+          "metric_rhs_norm": 0.0,
+          "curvature_rhs_norm": 0.025056608192588568,
+          "Gamma_error": 3.9820147179625565e-11,
+          "Gamma_gradient_error": 1.4692380645442427e-10,
+          "metric_first_error": 2.3728602997389605e-10,
+          "metric_second_error": 1.8244072811622916e-10,
+          "H_order": 5.765374546308374,
+          "M_norm_order": 1.0,
+          "Gamma_error_order": 5.996032011971535,
+          "Gamma_gradient_error_order": 5.995138535968951,
+          "metric_first_error_order": 6.009194854234041,
+          "metric_second_error_order": 6.014563647293727
+        }
+      ]
+    }
+  ],
+  "spin_parity": [
+    {
+      "spin": 0.5,
+      "metric": 0.0,
+      "K": 0.0,
+      "shift": 0.0
+    },
+    {
+      "spin": 0.9,
+      "metric": 0.0,
+      "K": 0.0,
+      "shift": 0.0
+    }
+  ],
+  "invalid_statuses": [
+    1,
+    1,
+    1,
+    2,
+    1,
+    1
+  ],
+  "mass_rescaling_max_error": 0.0,
+  "outer_charge_integrals": [
+    {
+      "radius": 10.0,
+      "ADM_mass_surface_integral": 1.1636262611814017,
+      "angular_momentum": 0.9000000000000009
+    },
+    {
+      "radius": 20.0,
+      "ADM_mass_surface_integral": 1.0794681216023887,
+      "angular_momentum": 0.9000000000000008
+    },
+    {
+      "radius": 40.0,
+      "ADM_mass_surface_integral": 1.039122938237444,
+      "angular_momentum": 0.900000000000001
+    },
+    {
+      "radius": 80.0,
+      "ADM_mass_surface_integral": 1.0194054479510068,
+      "angular_momentum": 0.9000000000000007
+    },
+    {
+      "radius": 160.0,
+      "ADM_mass_surface_integral": 1.0096633058122153,
+      "angular_momentum": 0.9000000000000008
+    },
+    {
+      "radius": 320.0,
+      "ADM_mass_surface_integral": 1.0048217462855649,
+      "angular_momentum": 0.9000000000000012
+    }
+  ],
+  "ADM_mass_extrapolated_cubic_in_inverse_radius": 0.9999999985651785,
+  "hashes": {
+    "/Users/hz0693/research/TDE/athenak-liu-background/src/coordinates/kerr_liu.hpp": "02fae4db39cfa68ceeb010270c76eb2dc9d931eae5e8be9e1255dc2417683f0d",
+    "/Users/hz0693/research/TDE/athenak-liu-background/tst/unit/kerr_liu/driver.cpp": "96eb4051b012808b110bfce20e11f80079ca16506faaac5d4952294961f607f3",
+    "/Users/hz0693/research/TDE/athenak-liu-background/tst/unit/kerr_liu/validate.py": "a5e0088110d626cd788e92ecb1f4321173898ead2471ac9acf01832655bfe43c",
+    "/Users/hz0693/research/TDE/athenak-review/review/liu-background-20260920/liu_provider.so": "f679017d0bfb27a26551cc3f7369e3e977ffc52d98587e522f922653ee4dcc60"
+  }
+}

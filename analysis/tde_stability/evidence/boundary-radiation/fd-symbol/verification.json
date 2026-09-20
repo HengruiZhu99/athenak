@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "test": "boundary_quadratic_moment",
+      "degree": 1,
+      "value": -0.2333333333333334,
+      "expected": -0.23333333333333334
+    },
+    {
+      "test": "boundary_quadratic_moment",
+      "degree": 2,
+      "value": 2.0000000000000018,
+      "expected": 2.0
+    },
+    {
+      "test": "boundary_quadratic_moment",
+      "degree": 3,
+      "value": 2.0,
+      "expected": 2.0
+    },
+    {
+      "test": "independent_sector_reduction",
+      "sector": "scalar",
+      "mode": "zero_rate",
+      "error": 4.618527782440651e-14
+    },
+    {
+      "test": "independent_sector_reduction",
+      "sector": "vector",
+      "mode": "zero_rate",
+      "error": 7.105427357601002e-15
+    },
+    {
+      "test": "tangential_target_normal_limit",
+      "mode": "zero_rate",
+      "error": 2.842170943040401e-14
+    },
+    {
+      "test": "independent_sector_reduction",
+      "sector": "scalar",
+      "mode": "radiation",
+      "error": 2.842170943040401e-14
+    },
+    {
+      "test": "independent_sector_reduction",
+      "sector": "vector",
+      "mode": "radiation",
+      "error": 7.105427357601002e-15
+    },
+    {
+      "test": "tangential_target_normal_limit",
+      "mode": "radiation",
+      "error": 3.552713678800501e-14
+    },
+    {
+      "test": "shifted_oblique_regression",
+      "mode": "zero_rate",
+      "gamma": 1.4890367842623092e-14,
+      "eigen_residual": 3.5622790208082606e-14
+    },
+    {
+      "test": "shifted_oblique_regression",
+      "mode": "radiation",
+      "gamma": 1.2127989530042136,
+      "eigen_residual": 6.026110699185248e-14
+    }
+  ]
+}

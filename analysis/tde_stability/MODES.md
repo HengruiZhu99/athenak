@@ -1,5 +1,8 @@
 # Complete-timestep vacuum mode tests
 
+Latest follow-up: the differential physical-constraint boundary is implemented but fails the perturbed vacuum gate. Exact-zero/MPI tests pass; a new rapid shifted outer-face mode is isolated. See [boundary investigation](BOUNDARY_RADIATION.md). Liu spin0.9 geometry is prepared; no spin evolution has started.
+
+
 The Schwarzschild trumpet vacuum control is still perturbatively unstable. Growing modes survive the G=2 gauge, linear ghost extrapolation, lapse-adjusted damping and coupled covariant-source experiments. The strongest tested damping reaches1000M with valid metrics but retains a verified weak growing constraint mode. No candidate is being promoted to the TDE calculation. Dedicated Aurora work uses `debug`; the production job and `debug-scaling` are unchanged.
 
 ## What is now established
