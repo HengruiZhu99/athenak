@@ -21,6 +21,7 @@
 #include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_constraint_radiation.hpp"
+#include "z4c/z4c_boundary_stencil.hpp"
 
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
@@ -89,44 +90,14 @@ bool UsesBoundaryRHS(BoundaryFlag flag, bool user_sbc) {
 }
 
 KOKKOS_INLINE_FUNCTION
-Real CoordinateDerivative(const DvceArray5D<Real> &u, int m, int n,
-                          int k, int j, int i, int dir, int side,
-                          const Real idx[3]) {
-  if (side != 0) {
-    const int inward = -side;
-    Real f0 = u(m,n,k,j,i);
-    Real f1;
-    Real f2;
-    if (dir == 0) {
-      f1 = u(m,n,k,j,i + inward);
-      f2 = u(m,n,k,j,i + 2*inward);
-    } else if (dir == 1) {
-      f1 = u(m,n,k,j + inward,i);
-      f2 = u(m,n,k,j + 2*inward,i);
-    } else {
-      f1 = u(m,n,k + inward,j,i);
-      f2 = u(m,n,k + 2*inward,j,i);
-    }
-    return 0.5*side*idx[dir]*(3.0*f0 - 4.0*f1 + f2);
-  }
-
-  if (dir == 0) {
-    return 0.5*idx[0]*(u(m,n,k,j,i+1) - u(m,n,k,j,i-1));
-  } else if (dir == 1) {
-    return 0.5*idx[1]*(u(m,n,k,j+1,i) - u(m,n,k,j-1,i));
-  }
-  return 0.5*idx[2]*(u(m,n,k+1,j,i) - u(m,n,k-1,j,i));
-}
-
-KOKKOS_INLINE_FUNCTION
 Real NormalDerivative(const DvceArray5D<Real> &u, int m, int n,
                       int k, int j, int i, const Real normal_u[3],
-                      const int side[3], const Real idx[3]) {
+                      const RegionIndcs &indcs, const Real idx[3]) {
   Real derivative = 0.0;
   for (int a = 0; a < 3; ++a) {
     if (fabs(normal_u[a]) > BoundaryRoundoffTolerance()) {
       derivative += normal_u[a] *
-          CoordinateDerivative(u, m, n, k, j, i, a, side[a], idx);
+          BoundaryCoordinateDerivative2(u, m, n, k, j, i, a, indcs, idx);
     }
   }
   return derivative;
@@ -488,8 +459,8 @@ int ApplyResidualCharacteristicBC(
     for (int b = a; b < 3; ++b) {
       int goffset = Z4c::I_Z4C_GXX + SymmetricOffset(a,b);
       int aoffset = Z4c::I_Z4C_AXX + SymmetricOffset(a,b);
-      Real dg = NormalDerivative(u,m,goffset,k,j,i,normal_u,side,idx);
-      Real drg = NormalDerivative(u_rhs,m,goffset,k,j,i,normal_u,side,idx);
+      Real dg = NormalDerivative(u,m,goffset,k,j,i,normal_u,indcs,idx);
+      Real drg = NormalDerivative(u_rhs,m,goffset,k,j,i,normal_u,indcs,idx);
       Real avalue = u(m,aoffset,k,j,i);
       Real arhs = u_rhs(m,aoffset,k,j,i);
       derivative_metric[a][b] = derivative_metric[b][a] = dg;
@@ -511,9 +482,9 @@ int ApplyResidualCharacteristicBC(
   Real centered_second_beta[3] = {};
   for (int a = 0; a < 3; ++a) {
     derivative_beta[a] = NormalDerivative(
-        u,m,Z4c::I_Z4C_BETAX+a,k,j,i,normal_u,side,idx);
+        u,m,Z4c::I_Z4C_BETAX+a,k,j,i,normal_u,indcs,idx);
     derivative_rhs_beta[a] = NormalDerivative(
-        u_rhs,m,Z4c::I_Z4C_BETAX+a,k,j,i,normal_u,side,idx);
+        u_rhs,m,Z4c::I_Z4C_BETAX+a,k,j,i,normal_u,indcs,idx);
     if constexpr (TangentialPrincipal) {
       centered_derivative_Gamma[a] = CenteredNormalDerivative4(
           u,m,Z4c::I_Z4C_GAMX+a,k,j,i,normal_u,idx);
@@ -548,19 +519,19 @@ int ApplyResidualCharacteristicBC(
     scalar_p_rhs[3] += normal_d[a]*u_rhs(m,Z4c::I_Z4C_GAMX+a,k,j,i);
   }
   scalar_d[0] =
-      NormalDerivative(u,m,Z4c::I_Z4C_CHI,k,j,i,normal_u,side,idx);
+      NormalDerivative(u,m,Z4c::I_Z4C_CHI,k,j,i,normal_u,indcs,idx);
   scalar_d[1] = ProjectTensor(derivative_metric,normal_u,normal_u) -
                 derivative_metric_trace/3.0;
   scalar_d[2] =
-      NormalDerivative(u,m,Z4c::I_Z4C_ALPHA,k,j,i,normal_u,side,idx);
+      NormalDerivative(u,m,Z4c::I_Z4C_ALPHA,k,j,i,normal_u,indcs,idx);
   scalar_d[3] = 0.0;
   scalar_d_rhs[0] =
-      NormalDerivative(u_rhs,m,Z4c::I_Z4C_CHI,k,j,i,normal_u,side,idx);
+      NormalDerivative(u_rhs,m,Z4c::I_Z4C_CHI,k,j,i,normal_u,indcs,idx);
   scalar_d_rhs[1] =
       ProjectTensor(derivative_rhs_metric,normal_u,normal_u) -
       derivative_rhs_metric_trace/3.0;
   scalar_d_rhs[2] =
-      NormalDerivative(u_rhs,m,Z4c::I_Z4C_ALPHA,k,j,i,normal_u,side,idx);
+      NormalDerivative(u_rhs,m,Z4c::I_Z4C_ALPHA,k,j,i,normal_u,indcs,idx);
   scalar_d_rhs[3] = 0.0;
   for (int a = 0; a < 3; ++a) {
     scalar_d[3] += normal_d[a]*derivative_beta[a];
