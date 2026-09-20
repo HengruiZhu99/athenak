@@ -117,6 +117,8 @@ Real amr_bh_exclusion_radius = 0.0;
 Real amr_bh_refine_radius = 0.0;
 Real amr_bh_derefine_radius = 0.0;
 int amr_bh_refine_level = -1;
+Real amr_static_halfwidth = 0.0;
+int amr_static_level = -1;
 bool amr_star_refine = false;
 Real amr_star_refine_radius = 0.0;
 Real amr_star_refine_radius_factor = 0.0;
@@ -1266,6 +1268,23 @@ void RefinementCondition(MeshBlockPack *pmbp) {
     }
     refine_flag.template modify<HostMemSpace>();
     refine_flag.template sync<DevExeSpace>();
+  }
+
+  // Retain the original inner-domain base spacing while outer layers stay coarse.
+  if (amr_static_halfwidth > 0.0 && amr_static_level >= 0) {
+    for (int m = 0; m < nmb; ++m) {
+      const auto &box = size.h_view(m);
+      const Real h = amr_static_halfwidth;
+      if (box.x1min < h && box.x1max > -h &&
+          box.x2min < h && box.x2max > -h &&
+          box.x3min < h && box.x3max > -h) {
+        const int level = pmbp->pmesh->lloc_eachmb[m + mbs].level -
+                          pmbp->pmesh->root_level;
+        if (level < amr_static_level) refine_flag.h_view(m + mbs) = 1;
+        else if (level == amr_static_level && refine_flag.h_view(m + mbs) < 0)
+          refine_flag.h_view(m + mbs) = 0;
+      }
+    }
   }
 
   const auto &mesh_size = pmbp->pmesh->mesh_size;
@@ -3185,6 +3204,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   amr_bh_derefine_radius =
       pin->GetOrAddReal("problem", "amr_bh_derefine_radius", amr_bh_refine_radius);
   amr_bh_refine_level = pin->GetOrAddInteger("problem", "amr_bh_refine_level", -1);
+  amr_static_halfwidth = pin->GetOrAddReal("problem", "amr_static_halfwidth", 0.0);
+  amr_static_level = pin->GetOrAddInteger("problem", "amr_static_level", -1);
   amr_star_refine = pin->GetOrAddBoolean("problem", "amr_star_refine", false);
   amr_star_refine_radius = pin->GetOrAddReal("problem", "amr_star_refine_radius", 0.0);
   amr_star_refine_radius_factor =
