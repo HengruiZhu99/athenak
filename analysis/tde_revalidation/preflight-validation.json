@@ -1,0 +1,56 @@
+{
+  "floor-zero-1-1": {
+    "passed": true,
+    "time_M": 0.30000000000000004,
+    "cycle": 3,
+    "blocks": 64,
+    "ranks": 1,
+    "all_payload_finite": true,
+    "invalid_metric_cells_including_ghosts": 0,
+    "residual_exactly_zero": true,
+    "relative_levels": [
+      1
+    ]
+  },
+  "floor-zero-2-1": {
+    "passed": true,
+    "time_M": 0.30000000000000004,
+    "cycle": 3,
+    "blocks": 64,
+    "ranks": 2,
+    "all_payload_finite": true,
+    "invalid_metric_cells_including_ghosts": 0,
+    "residual_exactly_zero": true,
+    "relative_levels": [
+      1
+    ]
+  },
+  "floor-zero-2-0": {
+    "passed": true,
+    "time_M": 0.5,
+    "cycle": 3,
+    "blocks": 8,
+    "ranks": 2,
+    "all_payload_finite": true,
+    "invalid_metric_cells_including_ghosts": 0,
+    "residual_exactly_zero": true,
+    "relative_levels": [
+      0
+    ]
+  },
+  "floor-pulse-2-1": {
+    "passed": true,
+    "time_M": 0.30000000000000004,
+    "cycle": 3,
+    "blocks": 64,
+    "ranks": 2,
+    "all_payload_finite": true,
+    "invalid_metric_cells_including_ghosts": 0,
+    "residual_exactly_zero": false,
+    "relative_levels": [
+      1
+    ]
+  },
+  "zero_MPI_agreement": "All stored residual entries are identically zero on both 1 and 2 MPI ranks; fixed 64-block floor-on layouts match.",
+  "floor_effect": "Floor-on retains 64 refined leaves; matched floor-off coarsens to 8, preserving zero through transfer."
+}

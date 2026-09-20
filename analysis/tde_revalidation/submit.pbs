@@ -1,0 +1,41 @@
+#!/bin/bash -l
+#PBS -A MHDTidal
+#PBS -N tde_revalidate
+#PBS -q debug-scaling
+#PBS -l select=38
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+source /home/hzhu/athenak_env
+export MPICH_GPU_SUPPORT_ENABLED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export SYCL_DEVICE_FILTER=level_zero:gpu ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+cd "$PBS_O_WORKDIR"
+python3 advance.py --verify-package
+source executable.env
+root=/lus/flare/projects/MHDTidal/hzhu/tde_1e4_solar_review
+work="$root/runs/star_reval_${PBS_JOBID%%.*}"
+mkdir "$work"
+cp star.athinput submit.pbs executable.env launch-manifest.json orbit.json orbit.csv "$work/"
+bind=list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100
+args=(-i "$PBS_O_WORKDIR/star.athinput")
+if [[ -n "${RESTART_FILE:-}" ]]; then
+  case "$RESTART_FILE" in "$root"/runs/star_reval_*/rst/rank_00000000/*.rst) ;; *) echo 'Refusing unrelated restart'; exit 1 ;; esac
+  [[ -f "$RESTART_FILE" ]]
+  args=(-r "$RESTART_FILE")
+  printf '%s\n' "$RESTART_FILE" > "$work/restart-source.txt"
+fi
+date -u > "$work/start.txt"
+set +e
+mpiexec -n 456 -ppn 12 --cpu-bind "$bind" gpu_tile_compact.sh "$ATHENA_EXE" \
+  "${args[@]}" -d "$work" -t 00:55:00 time/tlim=2500 \
+  output2/single_file_per_rank=true output3/single_file_per_rank=true output4/single_file_per_rank=true \
+  > "$work/run.log" 2>&1
+rc=$?
+set -e
+printf '%s\n' "$rc" > "$work/exit_code.txt"
+date -u > "$work/end.txt"
+tail -25 "$work/run.log"
+exit "$rc"

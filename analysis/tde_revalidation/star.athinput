@@ -1,0 +1,225 @@
+<job>
+basename = trumpet_disruption
+
+<mesh>
+nghost = 4
+nx1 = 64
+x1min = -2048
+x1max = 2048
+ix1_bc = outflow
+ox1_bc = outflow
+nx2 = 64
+x2min = -2048
+x2max = 2048
+ix2_bc = outflow
+ox2_bc = outflow
+nx3 = 64
+x3min = -2048
+x3max = 2048
+ix3_bc = outflow
+ox3_bc = outflow
+
+<meshblock>
+nx1 = 32
+nx2 = 32
+nx3 = 32
+
+<mesh_refinement>
+refinement = adaptive
+num_levels = 10
+refinement_interval = 20
+max_nmb_per_rank = 16
+
+<amr_criterion0>
+method = user
+
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = 0.3
+nlim = -1
+tlim = 2500
+ndiag = 100
+
+<mhd>
+zero_tmunu_feedback = false
+evolution = dynamic
+eos = ideal
+dyn_eos = ideal
+dyn_error = reset_floor
+reconstruct = wenoz
+rsolver = hlle
+gamma = 1.3333333333333333
+dfloor = 1.6e-21
+pfloor = 1.6e-33
+tfloor = 1e-12
+dthreshold = 1.0
+gamma_max = 10.0
+fofc = true
+fofc_method = llf
+
+<adm>
+
+
+<coord>
+general_rel = true
+is_dynamical = true
+a = 0
+excise = false
+
+<z4c>
+debug_balance_freeze = 0
+debug_balance_ramp = 0
+debug_balance_horizon = 0.5
+debug_snapshot_operations = 
+debug_balance = false
+debug_balance_profiles = false
+boundary_rhs = characteristic_cpbc
+characteristic_bc_source = zero_rate
+extrap_order = 2
+characteristic_bc_diagnostics = false
+characteristic_bc_diagnostic_interval = 200
+characteristic_bc_max_energy_density = 1.0e-12
+use_analytic_background = true
+evolve_gauge_residual = true
+evolve_lapse_residual = true
+evolve_shift_residual = true
+residual_gauge = background_adapted
+residual_hamiltonian_balance = false
+user_rhs_after_boundary = false
+residual_lapse_f = 1.0
+residual_lapse_damping = 0.1
+residual_shift_damping = 0.0
+diss = 0.5
+damp_kappa1 = 0.0
+damp_kappa2 = 0.0
+lapse_harmonic = 0.0
+lapse_oplog = 2.0
+lapse_advect = 1.0
+shift_Gamma = 1.0
+shift_advect = 1.0
+shift_eta = 0.02
+history_excise_ks_horizon = true
+rhs_term_debug = false
+rhs_term_debug_stride = 1
+debug_reductions = false
+debug_reduction_stride = 1
+
+history_excise_ks_radius = 1.0
+
+<problem>
+amr_static_halfwidth = 256
+amr_static_level = 3
+zero_tmunu = false
+bh_background = schwarzschild_trumpet
+excision_project_state = false
+pure_background = false
+pgen_name = z4c_tov_ks
+user_hist = true
+metric_diag_history = true
+bh_mass = 1.0
+bh_spin = 0
+bh_center_x1 = 0.0
+bh_center_x2 = 0.0
+bh_center_x3 = 0.0
+use_direct_z4c_background = true
+outer_sponge_enabled = true
+outer_sponge_geometry = radial
+outer_sponge_start_radius = 512
+outer_sponge_ramp_width = 1280
+outer_sponge_damping_time = 1000
+star_center_x1 = 205.6705864860798
+star_center_x2 = 0.0
+star_center_x3 = 0.0
+star_boost_x = -0.08774281426992651
+star_boost_y = 0.031961097722447485
+star_boost_z = 0.0
+boost_atmosphere = false
+isotropic = true
+rhoc = 4.9451950378e-06
+kappa = 0.00010641642727074857
+npoints = 200000
+dr = 5e-05
+rho_cut = 1.6e-21
+excision_damp_rate = 0
+excision_freeze_radius = 0
+excision_ramp_radius = 0
+excision_atmo_density = 4e-24
+excision_atmo_energy = 4e-36
+amr_rho_slope_refine = true
+amr_rho_slope_threshold = 0.25
+amr_rho_min = 4.298465228203e-10
+amr_bh_exclusion_radius = 3.0
+amr_bh_refine_radius = 2
+amr_bh_derefine_radius = 3
+amr_bh_refine_level = 9
+amr_star_refine = true
+amr_star_refine_radius = 8
+amr_star_derefine_radius = 12
+amr_star_refine_level = 8
+amr_star_track_rhomax = true
+amr_star_track_rho_floor = 4e-16
+b_norm = 0.0
+pcut = 0.04
+use_pcut_rel = true
+magindex = 1.0
+
+<output1>
+file_type = hst
+dt = 1.0
+data_format = %20.15e
+
+<output2>
+file_type = bin
+variable = z4c_residual
+slice_x2 = 0
+dt = 50
+
+single_file_per_rank = true
+
+<output3>
+file_type = bin
+variable = mhd_w_bcc
+slice_x3 = 0
+dt = 25
+
+single_file_per_rank = true
+
+<output4>
+file_type = rst
+dt = 500
+single_file_per_rank = true
+
+<refined_region0>
+level = 9
+x1min = -3
+x1max = 3
+x2min = -3
+x2max = 3
+x3min = -3
+x3max = 3
+
+<refined_region1>
+level = 8
+x1min = 193.670586486080
+x1max = 217.670586486080
+x2min = -12
+x2max = 12
+x3min = -12
+x3max = 12
+
+<refined_region2>
+level = 3
+x1min = -256
+x1max = 256
+x2min = -256
+x2max = 256
+x3min = -256
+x3max = 256
+
+<output5>
+file_type = bin
+variable = con
+slice_x2 = 0
+dt = 50
+single_file_per_rank = true
