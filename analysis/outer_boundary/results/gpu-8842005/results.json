@@ -1,0 +1,243 @@
+{
+  "job_id": "8842005",
+  "pbs_exit": 0,
+  "pbs_walltime": "00:01:03",
+  "executable_sha256": "a6c3af79571819fba5dc2252ceb9abacb31279feec440f2c542e342dfee43639",
+  "scope": "Eight8^3blocks, three-cycle Minkowski zero and finite oblique pulse; exact-zero target20code-time. Actual stencil ownership/portability check, not long-time perturbed boundary or stellar stability.",
+  "zero_short": {
+    "r1": {
+      "ranks": 1,
+      "blocks": 8,
+      "time_M": 0.07500000000000001,
+      "cycle": 3,
+      "zero_requested": true,
+      "residual_max": 0.0,
+      "all_payload_finite": true,
+      "ghost_inclusive_minimum": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "validity_rows": 6120,
+      "residual_sha256": "8b60a4ab8149bc68261ab1a2c9eed6dd2123dcb0f2b9bcfb52f2f08249f572e1",
+      "target20_reached": false,
+      "passed": true
+    },
+    "r2": {
+      "ranks": 2,
+      "blocks": 8,
+      "time_M": 0.07500000000000001,
+      "cycle": 3,
+      "zero_requested": true,
+      "residual_max": 0.0,
+      "all_payload_finite": true,
+      "ghost_inclusive_minimum": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "validity_rows": 12240,
+      "residual_sha256": "8b60a4ab8149bc68261ab1a2c9eed6dd2123dcb0f2b9bcfb52f2f08249f572e1",
+      "target20_reached": false,
+      "passed": true
+    },
+    "r4": {
+      "ranks": 4,
+      "blocks": 8,
+      "time_M": 0.07500000000000001,
+      "cycle": 3,
+      "zero_requested": true,
+      "residual_max": 0.0,
+      "all_payload_finite": true,
+      "ghost_inclusive_minimum": {
+        "alpha": 1.0,
+        "chi": 1.0,
+        "gxx": 1.0,
+        "minor2": 1.0,
+        "detg": 1.0
+      },
+      "validity_rows": 24480,
+      "residual_sha256": "8b60a4ab8149bc68261ab1a2c9eed6dd2123dcb0f2b9bcfb52f2f08249f572e1",
+      "target20_reached": false,
+      "passed": true
+    }
+  },
+  "zero20": {
+    "ranks": 4,
+    "blocks": 8,
+    "time_M": 20.0,
+    "cycle": 801,
+    "zero_requested": true,
+    "residual_max": 0.0,
+    "all_payload_finite": true,
+    "ghost_inclusive_minimum": {
+      "alpha": 1.0,
+      "chi": 1.0,
+      "gxx": 1.0,
+      "minor2": 1.0,
+      "detg": 1.0
+    },
+    "validity_rows": 0,
+    "residual_sha256": "8b60a4ab8149bc68261ab1a2c9eed6dd2123dcb0f2b9bcfb52f2f08249f572e1",
+    "target20_reached": true,
+    "passed": true
+  },
+  "pulse_checkpoints": {
+    "r1": {
+      "ranks": 1,
+      "blocks": 8,
+      "time_M": 0.07500000000000001,
+      "cycle": 3,
+      "zero_requested": false,
+      "residual_max": 0.013203998581329876,
+      "all_payload_finite": true,
+      "ghost_inclusive_minimum": {
+        "alpha": 0.9991233289478094,
+        "chi": 0.9950873786647801,
+        "gxx": 0.9996411953426484,
+        "minor2": 0.9997022736166977,
+        "detg": 0.9999999999999992
+      },
+      "validity_rows": 6120,
+      "residual_sha256": "f50269cf23ffc52a1dd796be3d3ea27009b5dec253bbbff9bb28e53a97975535",
+      "target20_reached": false,
+      "passed": true
+    },
+    "r2": {
+      "ranks": 2,
+      "blocks": 8,
+      "time_M": 0.07500000000000001,
+      "cycle": 3,
+      "zero_requested": false,
+      "residual_max": 0.013203998581329876,
+      "all_payload_finite": true,
+      "ghost_inclusive_minimum": {
+        "alpha": 0.9991233289478094,
+        "chi": 0.9950873786647801,
+        "gxx": 0.9996411953426484,
+        "minor2": 0.9997022736166977,
+        "detg": 0.9999999999999992
+      },
+      "validity_rows": 12240,
+      "residual_sha256": "f50269cf23ffc52a1dd796be3d3ea27009b5dec253bbbff9bb28e53a97975535",
+      "target20_reached": false,
+      "passed": true
+    },
+    "r4": {
+      "ranks": 4,
+      "blocks": 8,
+      "time_M": 0.07500000000000001,
+      "cycle": 3,
+      "zero_requested": false,
+      "residual_max": 0.013203998581329876,
+      "all_payload_finite": true,
+      "ghost_inclusive_minimum": {
+        "alpha": 0.9991233289478094,
+        "chi": 0.9950873786647801,
+        "gxx": 0.9996411953426484,
+        "minor2": 0.9997022736166977,
+        "detg": 0.9999999999999992
+      },
+      "validity_rows": 24480,
+      "residual_sha256": "f50269cf23ffc52a1dd796be3d3ea27009b5dec253bbbff9bb28e53a97975535",
+      "target20_reached": false,
+      "passed": true
+    }
+  },
+  "cpu_gpu": {
+    "passed": true,
+    "cpu_binary_sha256": "67ff395e3c7af43425ef13fe4f0ebecef00256db9450f6ac912f5ab39620f1f8",
+    "arrays_compared": 360,
+    "bitwise_equal_arrays": 0,
+    "max_abs_per_field": [
+      8.048249566794397e-15,
+      1.9761969838327786e-14,
+      1.294103713078698e-15,
+      1.2949710748166865e-15,
+      1.9761969838327786e-14,
+      1.919471526168337e-15,
+      3.7636560534792807e-14,
+      1.4365592049259135e-13,
+      1.208460415069723e-13,
+      2.3743593896563553e-14,
+      2.3846809943384173e-14,
+      1.208460415069723e-13,
+      2.2698423002287527e-14,
+      1.1173115384288668e-13,
+      7.635038434816721e-14,
+      7.838348026201203e-14,
+      7.877899721453474e-14,
+      2.386279108340661e-13,
+      1.1394531151953657e-14,
+      1.2299189444675562e-15,
+      1.3270634591222574e-15,
+      1.3634926521177704e-15,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_error_relative_to_field_peak": [
+      1.283432130836502e-12,
+      2.2896952515950512e-10,
+      1.464795939605936e-13,
+      1.4657777063214885e-13,
+      2.28969525159505e-10,
+      2.417391429124822e-13,
+      2.289695251595048e-10,
+      6.20852681992668e-12,
+      1.9588617111901333e-10,
+      4.462102670398572e-12,
+      4.520591601357081e-12,
+      1.9588746906361897e-10,
+      4.5204397427386026e-12,
+      1.9646120694204263e-10,
+      2.605681812700963e-12,
+      2.2588034176854167e-12,
+      2.270201164265692e-12,
+      1.0888218800318529e-10,
+      1.289633686461114e-12,
+      1.7953690574279686e-13,
+      1.904994110295364e-13,
+      1.957288066264241e-13,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_error_over_allowed_tolerance": 0.2150782475062459,
+    "tolerance": "abs<=1e-12+1e-10*abs(CPU); zero controls checked exactly"
+  },
+  "characteristic": {
+    "r1": {
+      "bitwise_matches_reference": true,
+      "sampled_physical_internal_intersections": 144,
+      "max_independent_ten_mode_rate_error": 1.734723475976807e-17,
+      "max_logged_enforcement_error": 1.12757e-17,
+      "max_boundary_rhs_change": 0.016270997779830643,
+      "min_abs_triggered_tangent_normal": 9.463808510065756e-06,
+      "max_abs_triggered_tangent_normal": 0.0040913760141236275
+    },
+    "r2": {
+      "bitwise_matches_reference": true,
+      "sampled_physical_internal_intersections": 144,
+      "max_independent_ten_mode_rate_error": 1.734723475976807e-17,
+      "max_logged_enforcement_error": 1.12757e-17,
+      "max_boundary_rhs_change": 0.016270997779830643,
+      "min_abs_triggered_tangent_normal": 9.463808510065756e-06,
+      "max_abs_triggered_tangent_normal": 0.0040913760141236275
+    },
+    "r4": {
+      "bitwise_matches_reference": true,
+      "sampled_physical_internal_intersections": 144,
+      "max_independent_ten_mode_rate_error": 1.734723475976807e-17,
+      "max_logged_enforcement_error": 1.12757e-17,
+      "max_boundary_rhs_change": 0.016270997779830643,
+      "min_abs_triggered_tangent_normal": 9.463808510065756e-06,
+      "max_abs_triggered_tangent_normal": 0.0040913760141236275
+    }
+  },
+  "passed": true
+}

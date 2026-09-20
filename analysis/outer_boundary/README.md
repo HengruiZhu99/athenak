@@ -161,12 +161,15 @@ Separate repaired-stencil GPU verification job8841975 stopped before evolution:
 the zero-control input disabled pulse amplitude but left pulse family enabled,
 which the problem generator rejects. The original record is preserved. The
 two zero inputs were corrected and passed local execution preflight. Replacement
-job8842005 is queued in debug-scaling, one node/MHDTidal/one hour; the nonzero
-pulse and executable are unchanged. The suite tests the oblique fixture and
-exact zero on1/2/4 MPI ranks against CPU stage arrays. **GPU evolution
-verification is pending**, and must not be inferred from either this input
-rejection or original-binary job8841948. The repaired executable SHA256 is
-`a6c3af79571819fba5dc2252ceb9abacb31279feec440f2c542e342dfee43639`.
+job8842005 **passed**, with PBS exit0 in63seconds. Exact-zero controls remain
+zero on1/2/4 GPU MPI ranks and the longer four-rank zero run reaches20code-time
+units. Oblique boundary responses and signed stage arrays agree bitwise across
+GPU rank counts. All360 CPU/GPU array comparisons pass the stated tolerance;
+maximum absolute error is2.3863e-13, and no full array is CPU/GPU bitwise equal.
+All-ten-mode boundary-rate errors are below1.74e-17. This verifies the tested
+stencil portability, not long-time perturbation stability. See
+[GPU verification](results/gpu-8842005/README.md). The repaired executable SHA256
+is`a6c3af79571819fba5dc2252ceb9abacb31279feec440f2c542e342dfee43639`.
 
 ## Reproduction and remaining work
 
