@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only checkpoint audit for centered M=R0=1, a=.9 Kerr trumpet controls.
+"""Read-only checkpoint audit for centered M=R0=1 trumpet comparison controls.
 
 Supports little-endian doubles, five MHD cell fields, magnetic face fields and
 25 residual Z4c fields on uniform/static dyadic meshes with equal unit costs.
@@ -72,9 +72,11 @@ def supported(h):
     mesh, block, mr, mhd, z, c, b = [p[s] for s in ('mesh','meshblock','mesh_refinement','mhd','z4c','coord','problem')]
     require(mr.get('refinement') in ('none','static'), 'Only uniform/static controls supported')
     require(not boolean(mr,'prolong_primitives',False), 'Primitive prolongation unsupported')
-    require(b.get('pgen_name') == 'z4c_tov_ks' and b.get('bh_background') == 'kerr_trumpet', 'Requires new Kerr trumpet background')
+    require(b.get('pgen_name') == 'z4c_tov_ks', 'Requires z4c_tov_ks')
     spin = float(b['bh_spin'])
-    require(float(b['bh_mass']) == 1 and spin == .9, 'Scope requires M=R0=1 and a=.9')
+    geometry_supported = ((b.get('bh_background') == 'kerr_trumpet' and spin in (0.0, .9)) or
+                          (b.get('bh_background') == 'schwarzschild_trumpet' and spin == 0.0))
+    require(float(b['bh_mass']) == 1 and geometry_supported, 'Scope requires M=R0=1 Kerr a=.9 or the zero-spin comparison')
     require(all(float(b.get('bh_center_x'+str(i),'0')) == 0 for i in (1,2,3)), 'Requires centered background')
     require(boolean(b,'use_direct_z4c_background') and boolean(z,'use_analytic_background'), 'Requires direct residual background')
     require(not boolean(c,'minkowski',False) and not boolean(c,'excise',False) and float(c['a']) == spin, 'Coordinate flags/spin unsupported')
