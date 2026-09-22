@@ -29,6 +29,7 @@
 #include "coordinates/adm.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "coordinates/cartesian_ks.hpp"
+#include "coordinates/kerr_trumpet.hpp"
 #include "dyn_grmhd/dyn_grmhd.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/tmunu.hpp"
@@ -46,6 +47,9 @@ Real bh_mass = 1.0;
 bool use_minkowski_background = false;
 bool use_puncture_background = false;
 bool use_trumpet_background = false;
+bool use_kerr_trumpet_background = false;
+// Spherical puncture coordinates must not use the oblate KS radial masks.
+Real bh_radius_spin = 0.0;
 bool force_minkowski_metric = false;
 bool use_direct_z4c_background = true;
 Real bh_center_x1 = 0.0;
@@ -407,7 +411,7 @@ void ApplyInnerExcision(Mesh *pm, Real bdt, bool project_mhd,
   const Real bh_center_x1_l = bh_center_x1;
   const Real bh_center_x2_l = bh_center_x2;
   const Real bh_center_x3_l = bh_center_x3;
-  const Real bh_spin_l = bh_spin;
+  const Real bh_spin_l = bh_radius_spin;
   const Real excision_freeze_radius_l = excision_freeze_radius;
   const Real excision_ramp_radius_l = excision_ramp_radius;
   const Real excision_damp_rate_l = excision_damp_rate;
@@ -840,7 +844,7 @@ void TOVKerrSchildHistory(HistoryData *pdata, Mesh *pm) {
     const Real bh_center_x1_l = bh_center_x1;
     const Real bh_center_x2_l = bh_center_x2;
     const Real bh_center_x3_l = bh_center_x3;
-    const Real bh_spin_l = bh_spin;
+    const Real bh_spin_l = bh_radius_spin;
     Kokkos::parallel_reduce(
         "TOVKerrSchildSpongeHistory",
         Kokkos::RangePolicy<>(DevExeSpace(), 0, nmkji*nz4c),
@@ -1151,7 +1155,7 @@ void RefinementCondition(MeshBlockPack *pmbp) {
   const Real bh_center_x1_l = bh_center_x1;
   const Real bh_center_x2_l = bh_center_x2;
   const Real bh_center_x3_l = bh_center_x3;
-  const Real bh_spin_l = bh_spin;
+  const Real bh_spin_l = bh_radius_spin;
 
   par_for_outer("z4c_tov_ks_rho_gradient_refinement", DevExeSpace(), 0, 0, 0, nmb - 1,
   KOKKOS_LAMBDA(TeamMember_t tmember, const int m) {
@@ -1351,6 +1355,7 @@ void FillKerrSchildADM(MeshBlockPack *pmbp, ADMState &adm_state) {
   const bool excision_project_state_l = excision_project_state;
   const bool puncture = use_puncture_background;
   const bool trumpet = use_trumpet_background;
+  const bool spinning_trumpet = use_kerr_trumpet_background && bh_spin != 0.0;
 
   par_for("z4c_tov_ks_background", DevExeSpace(), 0, pmbp->nmb_thispack - 1,
           ksg, keg, jsg, jeg, isg, ieg,
@@ -1366,6 +1371,24 @@ void FillKerrSchildADM(MeshBlockPack *pmbp, ADMState &adm_state) {
     Real y = CellCenterX(j - indcs.js, indcs.nx2, x2min, x2max) - bh_center_x2_l;
     Real z = CellCenterX(k - indcs.ks, indcs.nx3, x3min, x3max) - bh_center_x3_l;
     Real rad = sqrt(SQR(x) + SQR(y) + SQR(z));
+    if (spinning_trumpet) {
+      const Real xyz[3] = {x, y, z};
+      kerr_trumpet::Geometry<Real> geometry;
+      const auto status = kerr_trumpet::Evaluate(Real(1.0), bh_spin_l, xyz, geometry);
+      if (status != kerr_trumpet::Status::success) {
+        Kokkos::abort("Invalid Kerr trumpet ADM background; puncture must avoid cell centers");
+      }
+      adm_state.alpha(m,k,j,i) = geometry.alpha.value;
+      adm_state.psi4(m,k,j,i) = 1.0/geometry.chi.value;
+      for (int a = 0; a < 3; ++a) {
+        adm_state.beta_u(m,a,k,j,i) = geometry.beta[a].value;
+        for (int b = a; b < 3; ++b) {
+          adm_state.g_dd(m,a,b,k,j,i) = geometry.gamma[a][b].value;
+          adm_state.vK_dd(m,a,b,k,j,i) = geometry.K[a][b].value;
+        }
+      }
+      return;
+    }
     if (puncture) {
       // Isotropic Schwarzschild wormhole data; the physical singularity is
       // not on this slice. Do not replace the puncture by a constant core.
@@ -1436,6 +1459,7 @@ void SetZ4cBackgroundKerrSchild(MeshBlockPack *pmbp, Real /*time*/) {
   const Real chi_psi_power_l = pz4c->opt.chi_psi_power;
   const bool puncture = use_puncture_background;
   const bool trumpet = use_trumpet_background;
+  const bool spinning_trumpet = use_kerr_trumpet_background && bh_spin != 0.0;
   auto &bg = pz4c->bg;
 
   par_for("z4c_tov_ks_background_z4c", DevExeSpace(), 0, pmbp->nmb_thispack - 1,
@@ -1469,6 +1493,27 @@ void SetZ4cBackgroundKerrSchild(MeshBlockPack *pmbp, Real /*time*/) {
     Real y = CellCenterX(j - indcs.js, indcs.nx2, x2min, x2max) - bh_center_x2_l;
     Real z = CellCenterX(k - indcs.ks, indcs.nx3, x3min, x3max) - bh_center_x3_l;
     Real rad = sqrt(SQR(x) + SQR(y) + SQR(z));
+    if (spinning_trumpet) {
+      const Real xyz[3] = {x, y, z};
+      kerr_trumpet::Geometry<Real> geometry;
+      const auto status = kerr_trumpet::Evaluate(Real(1.0), bh_spin_l, xyz, geometry);
+      if (status != kerr_trumpet::Status::success) {
+        Kokkos::abort("Invalid direct Kerr trumpet background; puncture must avoid cell centers");
+      }
+      // The provider uses chi=det(gamma)^(-1/3); this option is checked at setup.
+      bg.chi(m,k,j,i) = geometry.chi.value;
+      bg.alpha(m,k,j,i) = geometry.alpha.value;
+      bg.vKhat(m,k,j,i) = geometry.trace_K.value;
+      for (int a = 0; a < 3; ++a) {
+        bg.beta_u(m,a,k,j,i) = geometry.beta[a].value;
+        bg.vGam_u(m,a,k,j,i) = geometry.conformal_Gamma[a].value;
+        for (int b = a; b < 3; ++b) {
+          bg.g_dd(m,a,b,k,j,i) = geometry.conformal_metric[a][b].value;
+          bg.vA_dd(m,a,b,k,j,i) = geometry.conformal_A[a][b].value;
+        }
+      }
+      return;
+    }
     if (puncture) {
       if (!(rad > 0.0)) Kokkos::abort("Puncture must not coincide with a cell center");
       const Real psi = 1.0 + 0.5/rad;
@@ -2033,7 +2078,7 @@ void SeedOuterSpongeThetaPulse(Mesh *pm) {
   const Real bh_center_x1_l = bh_center_x1;
   const Real bh_center_x2_l = bh_center_x2;
   const Real bh_center_x3_l = bh_center_x3;
-  const Real bh_spin_l = bh_spin;
+  const Real bh_spin_l = bh_radius_spin;
 
   par_for("z4c_tov_ks_outer_sponge_theta_pulse", DevExeSpace(), 0, nmb - 1,
           ks, ke, js, je, is, ie,
@@ -2090,7 +2135,7 @@ void SeedVacuumGaugePulse(Mesh *pm) {
   const Real cy = vacuum_gauge_pulse_x2 + bh_center_x2;
   const Real cz = vacuum_gauge_pulse_x3 + bh_center_x3;
   const Real bx = bh_center_x1, by = bh_center_x2, bz = bh_center_x3;
-  const Real spin = bh_spin, freeze = excision_freeze_radius;
+  const Real spin = bh_radius_spin, freeze = excision_freeze_radius;
 
   // A compact smooth gauge-only perturbation: physical metric, extrinsic
   // curvature, Theta and evolved Gamma are untouched. In particular, the
@@ -2774,18 +2819,35 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   bh_spin = pin->GetOrAddReal("problem", "bh_spin", 0.0);
   const std::string bh_background =
       pin->GetOrAddString("problem", "bh_background", "kerr_schild");
-  use_trumpet_background = bh_background == "schwarzschild_trumpet";
+  use_kerr_trumpet_background = bh_background == "kerr_trumpet";
+  use_trumpet_background = bh_background == "schwarzschild_trumpet" ||
+                           use_kerr_trumpet_background;
   use_puncture_background = bh_background == "schwarzschild_puncture" ||
                             use_trumpet_background;
   if ((bh_background != "kerr_schild" && !use_puncture_background) ||
-      (use_puncture_background && (bh_mass != 1.0 || bh_spin != 0.0 ||
-                                  coord_minkowski))) {
+      (use_puncture_background && (bh_mass != 1.0 || coord_minkowski ||
+          !std::isfinite(bh_spin) || std::abs(bh_spin) >= 1.0 ||
+          (!use_kerr_trumpet_background && bh_spin != 0.0)))) {
     std::cerr << "bh_background must be kerr_schild, schwarzschild_puncture, "
-              << "or schwarzschild_trumpet; "
-              << "puncture requires bh_mass=1, bh_spin=0, coord/minkowski=false."
+              << "schwarzschild_trumpet, or kerr_trumpet; puncture requires "
+              << "bh_mass=1, coord/minkowski=false, and zero spin except "
+              << "kerr_trumpet, which requires finite |bh_spin|<1."
               << std::endl;
     std::exit(EXIT_FAILURE);
   }
+  if (use_kerr_trumpet_background && pmbp->pz4c->opt.chi_psi_power != -4.0) {
+    std::cerr << "kerr_trumpet currently requires z4c/chi_psi_power=-4."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (use_kerr_trumpet_background && pin->GetOrAddBoolean(
+          "mesh_refinement", "prolong_primitives", false)) {
+    std::cerr << "kerr_trumpet does not support mesh_refinement/prolong_primitives=true; "
+              << "dynamic GRMHD requires conserved-variable prolongation."
+              << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  bh_radius_spin = use_puncture_background ? 0.0 : bh_spin;
   Real coord_spin = pin->GetOrAddReal("coord", "a", 0.0);
   if (use_minkowski_background && fabs(bh_spin) > 1.0e-12) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
@@ -2793,7 +2855,9 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
               << std::endl;
     exit(EXIT_FAILURE);
   }
-  if (!use_minkowski_background && fabs(coord_spin - bh_spin) > 1.0e-12) {
+  if (!use_minkowski_background &&
+      (fabs(coord_spin - bh_spin) > 1.0e-12 ||
+       (use_kerr_trumpet_background && !std::isfinite(coord_spin)))) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
               << std::endl << "z4c_tov_ks requires <coord>/a to match "
               << "<problem>/bh_spin so the coordinate source terms and analytic "
@@ -2854,6 +2918,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
       0.0 : 1.0 + sqrt(fmax(0.0, 1.0 - SQR(bh_spin)));
   if (use_puncture_background) bh_horizon_radius = 0.5;
   if (use_trumpet_background) bh_horizon_radius = 1.0;
+  if (use_kerr_trumpet_background) bh_horizon_radius = sqrt(1.0-SQR(bh_spin));
   force_minkowski_metric =
       pin->GetOrAddBoolean("problem", "force_minkowski_metric", false);
   if (force_minkowski_metric && !use_minkowski_background) {
@@ -2917,11 +2982,19 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
                 << std::endl;
       std::exit(EXIT_FAILURE);
     }
-    // At zero spin these spherical diagnostic masks also work in isotropic r.
+    // The Cartesian puncture radius is spherical, including spinning R=1+r.
+    pmbp->pz4c->opt.history_excise_ks_spin = 0.0;
     pmbp->pz4c->opt.history_excise_ks_radius = bh_horizon_radius;
     pmbp->pz4c->opt.debug_balance_horizon = bh_horizon_radius;
     if (global_variable::my_rank == 0) {
-      if (use_trumpet_background) {
+      if (use_kerr_trumpet_background) {
+        std::cout << "PUNCTURE_BACKGROUND stationary Kerr trumpet R0=M=1, "
+                  << "R=r+1, spin=" << bh_spin
+                  << " horizon_r=" << bh_horizon_radius
+                  << ". Stationary analytic lapse and shift; background-adapted "
+                  << "residual gauge, not a stationary standard 1+log slice."
+                  << std::endl;
+      } else if (use_trumpet_background) {
         std::cout << "PUNCTURE_BACKGROUND stationary R0=M=1 trumpet, R=r+1, "
                   << "horizon_r=1. Not the stationary standard 1+log trumpet."
                   << std::endl;
@@ -2933,7 +3006,8 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
     }
   }
   if (pmbp->pz4c->opt.residual_hamiltonian_balance &&
-      (!use_trumpet_background || !use_direct_z4c_background)) {
+      (!use_trumpet_background || use_kerr_trumpet_background ||
+       !use_direct_z4c_background)) {
     std::cerr << "residual_hamiltonian_balance currently supports only the direct "
               << "Schwarzschild trumpet vacuum background." << std::endl;
     std::exit(EXIT_FAILURE);
@@ -3146,7 +3220,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   // than presenting the planned AMR spacing as the currently resolved mesh.
   Real dx_bh_current = 0.0;
   if (!use_minkowski_background) {
-    const Real horizon_bound2 = SQR(bh_horizon_radius) + SQR(bh_spin);
+    const Real horizon_bound2 = SQR(bh_horizon_radius) + SQR(bh_radius_spin);
     for (int m = 0; m < pmbp->nmb_thispack; ++m) {
       const auto &size = pmbp->pmb->mb_size.h_view(m);
       const Real x = std::max(size.x1min, std::min(bh_center_x1, size.x1max));
