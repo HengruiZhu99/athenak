@@ -39,7 +39,10 @@ MeshBlockPack::MeshBlockPack(Mesh *pm, int igids, int igide) :
   pmesh(pm),
   gids(igids),
   gide(igide),
-  nmb_thispack(igide - igids + 1) {
+  nmb_thispack(igide - igids + 1),
+  pmb(nullptr),
+  pcoord(nullptr) {
+  // Mesh-only (-m) exits before coordinates and physics are constructed.
   // create map for task lists
   tl_map.insert(std::make_pair("before_timeintegrator",std::make_shared<TaskList>()));
   tl_map.insert(std::make_pair("after_timeintegrator",std::make_shared<TaskList>()));
