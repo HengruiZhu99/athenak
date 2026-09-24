@@ -84,6 +84,9 @@ MeshBlockPack::~MeshBlockPack() {
 //! Allows for passing of pointer to 'this' pack.
 
 void MeshBlockPack::AddMeshBlocks(ParameterInput *pin) {
+  // Covers AMR refinement, derefinement and migration, including unchanged
+  // counts and allocator reuse: analytic ghosts belong to the new layout.
+  if (pz4c != nullptr) pz4c->InvalidateBackgroundCache();
   pmb = new MeshBlock(this, gids, nmb_thispack);
 }
 
@@ -94,6 +97,7 @@ void MeshBlockPack::AddMeshBlocks(ParameterInput *pin) {
 //! function, since latter uses data inside Coordinates class.
 
 void MeshBlockPack::AddCoordinates(ParameterInput *pin) {
+  if (pz4c != nullptr) pz4c->InvalidateBackgroundCache();
   pcoord = new Coordinates(pin, this);
 }
 

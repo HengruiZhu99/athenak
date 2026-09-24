@@ -140,6 +140,28 @@ class Z4c {
   SetADMBackgroundFnPtr SetADMBackground = nullptr;
   SetZ4cBackgroundFnPtr SetZ4cBackground = nullptr;
   UserRHSFnPtr user_rhs_func = nullptr;
+  // Opt-in only by an audited, time-independent pgen. Reuse the existing ADM
+  // and once-projected Z4c arrays; never cache evolving full/residual fields.
+  bool stationary_background_cache_enabled = false;
+  bool stationary_background_cache_valid = false;
+  unsigned long long background_cache_hits = 0, background_cache_fills = 0;
+  unsigned long long background_cache_invalidations = 0;
+  SetADMBackgroundFnPtr cached_adm_provider = nullptr;
+  SetZ4cBackgroundFnPtr cached_z4c_provider = nullptr;
+  const void *cached_bg_data = nullptr, *cached_adm_data = nullptr;
+  int cached_background_nmb = -1;
+  Real cached_chi_psi_power = 0;
+  void InvalidateBackgroundCache() {
+    stationary_background_cache_valid = false;
+    if (stationary_background_cache_enabled) ++background_cache_invalidations;
+  }
+  void ConfigureStationaryBackgroundCache(bool enabled) {
+    stationary_background_cache_enabled = enabled;
+    InvalidateBackgroundCache();
+  }
+  bool BackgroundCacheHit() const;
+  void CommitBackgroundCache();
+
   // Absolute timestep bound enrolled by explicit user source terms.
   // Unlike the spatial dtnew, this bound already includes its safety factor.
   Real user_source_dt = std::numeric_limits<Real>::max();

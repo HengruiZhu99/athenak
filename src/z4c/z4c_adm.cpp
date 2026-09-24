@@ -187,7 +187,31 @@ template void Z4c::ADMToZ4c<2>(MeshBlockPack *pmbp, ParameterInput *pin);
 template void Z4c::ADMToZ4c<3>(MeshBlockPack *pmbp, ParameterInput *pin);
 template void Z4c::ADMToZ4c<4>(MeshBlockPack *pmbp, ParameterInput *pin);
 
+bool Z4c::BackgroundCacheHit() const {
+  return stationary_background_cache_enabled && stationary_background_cache_valid &&
+    use_analytic_background && SetADMBackground != nullptr &&
+    cached_adm_provider == SetADMBackground && cached_z4c_provider == SetZ4cBackground &&
+    cached_bg_data == u_bg.data() && cached_adm_data == u_adm_bg.data() &&
+    cached_background_nmb == pmy_pack->nmb_thispack &&
+    cached_chi_psi_power == opt.chi_psi_power;
+}
+
+void Z4c::CommitBackgroundCache() {
+  if (!stationary_background_cache_enabled) return;
+  cached_adm_provider = SetADMBackground;
+  cached_z4c_provider = SetZ4cBackground;
+  cached_bg_data = u_bg.data(); cached_adm_data = u_adm_bg.data();
+  cached_background_nmb = pmy_pack->nmb_thispack;
+  cached_chi_psi_power = opt.chi_psi_power;
+  // Existing kernels use the same ordered DevExeSpace path. No new per-stage
+  // fence is introduced; validity means that the ordered fill was enqueued.
+  stationary_background_cache_valid = true;
+}
+
 void Z4c::UpdateBackgroundState(Real time) {
+  if (BackgroundCacheHit()) { ++background_cache_hits; return; }
+  if (stationary_background_cache_enabled) ++background_cache_fills;
+
   RefreshBackground(time);
   if (!(use_analytic_background) || SetADMBackground == nullptr) {
     Kokkos::deep_copy(DevExeSpace(), u_bg, 0.0);
@@ -196,6 +220,7 @@ void Z4c::UpdateBackgroundState(Real time) {
   if (SetZ4cBackground != nullptr) {
     SetZ4cBackground(pmy_pack, time);
     EnforceAlgConstrOn(bg);
+    CommitBackgroundCache();
     return;
   }
   switch (pmy_pack->pmesh->mb_indcs.ng) {
@@ -210,6 +235,7 @@ void Z4c::UpdateBackgroundState(Real time) {
       break;
   }
   EnforceAlgConstrOn(bg);
+  CommitBackgroundCache();
 }
 //----------------------------------------------------------------------------------------
 //! \fn void Z4c::Z4cToADM(MeshBlockPack *pmbp)

@@ -3,6 +3,7 @@
 
 Supports little-endian doubles, five MHD cell fields, magnetic face fields and
 25 residual Z4c fields on uniform/static dyadic meshes with equal unit costs.
+Dynamic vacuum meshes are supported only without matter/star tracking.
 Only the binary-format reader and deterministic partition routine are imported
 from the older campaign. No Schwarzschild background validator is called.
 No checkpoint is repaired; this audit is not a resubmission controller.
@@ -70,7 +71,9 @@ def supported(h):
     require({'mesh','meshblock','mesh_refinement','mhd','z4c','coord','problem'} <= set(p), 'Missing sections')
     require(not ({'hydro','radiation','turbulence'} & set(p)), 'Unsupported extra checkpoint module')
     mesh, block, mr, mhd, z, c, b = [p[s] for s in ('mesh','meshblock','mesh_refinement','mhd','z4c','coord','problem')]
-    require(mr.get('refinement') in ('none','static'), 'Only uniform/static controls supported')
+    require(mr.get('refinement') in ('none','static','adaptive'), 'Unsupported refinement mode')
+    if mr.get('refinement') == 'adaptive':
+        require(boolean(b,'pure_background') and boolean(b,'zero_tmunu') and boolean(mhd,'zero_tmunu_feedback') and not boolean(b,'amr_star_refine') and not boolean(b,'amr_star_track_rhomax'), 'Dynamic scope requires decoupled vacuum without star tracking')
     require(not boolean(mr,'prolong_primitives',False), 'Primitive prolongation unsupported')
     require(b.get('pgen_name') == 'z4c_tov_ks', 'Requires z4c_tov_ks')
     spin = float(b['bh_spin'])

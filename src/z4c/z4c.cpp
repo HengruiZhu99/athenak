@@ -879,6 +879,7 @@ void Z4c::DebugDumpState(const char *label, DvceArray5D<Real> &u, bool full_stat
 }
 
 void Z4c::RefreshBackground(Real time) {
+  InvalidateBackgroundCache();
   if (!(use_analytic_background) || SetADMBackground == nullptr) {
     Kokkos::deep_copy(DevExeSpace(), u_bg, 0.0);
     return;
@@ -1005,6 +1006,11 @@ void Z4c::PrescribeGaugeResidual() {
 //----------------------------------------------------------------------------------------
 // destructor
 Z4c::~Z4c() {
+  if (stationary_background_cache_enabled) {
+    std::cout << "Z4C_BACKGROUND_CACHE rank=" << global_variable::my_rank
+              << " fills=" << background_cache_fills << " hits=" << background_cache_hits
+              << " invalidations=" << background_cache_invalidations << std::endl;
+  }
   delete[] psi_out;
   delete pbval_u;
   delete pbval_weyl;
