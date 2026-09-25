@@ -1,0 +1,38 @@
+{
+  "scope": "Integration checks for stationary unmapped Kerr construction and opt-in background cache; not long perturbation or stellar stability.",
+  "base_project_tde": "8f96cdab",
+  "selected_source_commits": [
+    "193d260e",
+    "68b5b13e",
+    "81c7d803",
+    "73382cbc"
+  ],
+  "binary_sha256": "2d14bd6000c6af2c7f4e93594cb62cf5882e69937a9450ba735862a420adde91",
+  "geometry_passed": true,
+  "MPI_response_cases": 12,
+  "zero_spin_identity_cases": 3,
+  "configuration_rejections": 11,
+  "cache_snapshot_pairs": 6,
+  "identical_files_per_snapshot_pair": 83,
+  "cache_rejection_cases": 2,
+  "vacuum_AMR_restart_full_checkpoint_pairs": 4,
+  "four_rank_mesh_only_probe_exit": 0,
+  "evidence_sha256": {
+    "geometry/geometry-results.json": "a1ba9da7a4bfd191a1a606b99804fa28f0e98f10398c784ead1f72cbe98549e4",
+    "stages/results.json": "eae3f87b4958fb3e83098e3c6d7a97f91ee6d57c044ccc39a537bf5e6577162f",
+    "guards/results.json": "0851e4f8b02f6553ad5687d3272e039f98dc0f9ecbf50f96389cc9743dd1beea",
+    "cache/results.json": "96ead089ae21b374844575505d8f6e45787207f32ab337a3f83c9d1ef110f42a",
+    "cache-guards/results.json": "195e8c69c2986c07c6240ab0c8337d19a03628440a529d6f3d45627b1037a6a5",
+    "amr-v2/results.json": "16574875634f1f04dd92e6c9f5a858663d249b017b9d07bc37a4c5ab72148b9b"
+  },
+  "limitations": [
+    "Cache static comparison covers spacetime/background snapshots and histories; AMR/restart comparisons include complete MHD/B/Z4c checkpoint payloads.",
+    "Restart equality is cached versus uncached, not uninterrupted matter versus restarted matter.",
+    "No new GPU test on this integrated source; previous GPU benchmark and vacuum lifecycle results belong to the original cache branch.",
+    "No experimental fisheye/gauge/damping/source-balance changes included."
+  ],
+  "test_harness_repairs": [
+    "Initial cache guard expected later cache diagnostic; indirect provider is rejected earlier by existing puncture guard. Corrected assertion and reran both guards.",
+    "Initial AMR harness expected different log syntax and derefinement; actual fixture exercises refinement and load migration. Corrected assertions and reran all eight evolutions/four comparisons. Original logs preserved."
+  ]
+}

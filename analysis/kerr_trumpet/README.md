@@ -156,3 +156,22 @@ metric positivity using independent Kerr geometry. It deliberately does not
 use the Schwarzschild campaign's geometry checks and does not authorize a
 restart or certify constraints. The old production checkpoint controller is
 not suitable for this new background.
+
+## Integration into project/tde (September 2026)
+
+This branch includes the validated stationary R0=M Kerr geometry construction,
+its independent geometry and MPI regressions, the mesh-only owner-pointer
+initialization fix, and the opt-in stationary-background cache. See
+[STATIONARY_CACHE.md](../../tst/unit/kerr_trumpet/STATIONARY_CACHE.md) for cache
+invalidation, reproducible on/off comparisons and measured performance scope.
+Fisheye mapping, experimental source corrections, derivative variants and gauge
+or constraint-damping experiments are not part of this integration. Existing
+input files do not switch to Kerr or enable caching automatically.
+
+Construction validation establishes positive lapse off the puncture, positive
+spatial metrics, continuum ADM identities/stationarity and consistent residual
+initialization. It does **not** establish long-time perturbation stability:
+residual subtraction removes F_h(background), not its linearized action on a
+perturbation. Several tested configurations, including finer meshes, exhibit
+late coherent inner gauge/constraint growth. Neither this source integration
+nor successful finite checkpoint audits clears a full stellar campaign.
