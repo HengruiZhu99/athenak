@@ -167,6 +167,7 @@ void ProblemGenerator::Z4cLinearWave(ParameterInput *pin, const bool restart) {
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
   if (pmbp->pz4c != nullptr && pmbp->pz4c->use_analytic_background) {
     pmbp->pz4c->SetADMBackground = &SetADMBackgroundFlat;
+    pmbp->pz4c->ConfigureStationaryBackgroundCache(pin, true);
   }
 
   if (restart)

@@ -3347,18 +3347,10 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   pmbp->pz4c->SetADMBackground = &SetADMBackgroundKerrSchild;
   pmbp->pz4c->SetZ4cBackground =
       use_direct_z4c_background ? &SetZ4cBackgroundKerrSchild : nullptr;
-  const bool cache_stationary = pin->GetOrAddBoolean(
-      "problem", "cache_stationary_background", false);
-  if (cache_stationary && (!use_kerr_trumpet_background ||
-      !use_direct_z4c_background || force_minkowski_metric ||
-      !pmbp->pz4c->use_analytic_background)) {
-    std::cerr << "Stationary cache requires the fixed direct Kerr trumpet provider."
-              << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
-  // All background parameters are fixed after pgen enrollment. Re-enrollment
-  // (including restart) invalidates; changing a parameter in future must do so.
-  pmbp->pz4c->ConfigureStationaryBackgroundCache(cache_stationary);
+  // Both providers ignore time; their parameters remain fixed after enrollment.
+  // Re-enrollment (including restart) invalidates. Future parameter mutations
+  // must also invalidate the cache.
+  pmbp->pz4c->ConfigureStationaryBackgroundCache(pin, true);
   pmbp->pz4c->user_rhs_func = &ApplyZ4cUserRHS;
   // The user RHS contains explicit linear relaxation. Spatial CFL alone does
   // not constrain it on coarse grids: sigma*dt=7.5 caused the low-resolution

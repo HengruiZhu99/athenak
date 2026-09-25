@@ -155,10 +155,9 @@ class Z4c {
     stationary_background_cache_valid = false;
     if (stationary_background_cache_enabled) ++background_cache_invalidations;
   }
-  void ConfigureStationaryBackgroundCache(bool enabled) {
-    stationary_background_cache_enabled = enabled;
-    InvalidateBackgroundCache();
-  }
+  // Providers must explicitly declare time independence at enrollment.
+  // Unknown providers remain uncached; a user may opt out of stationary caching.
+  void ConfigureStationaryBackgroundCache(ParameterInput *pin, bool time_independent);
   bool BackgroundCacheHit() const;
   void CommitBackgroundCache();
 

@@ -161,12 +161,13 @@ not suitable for this new background.
 
 This branch includes the validated stationary R0=M Kerr geometry construction,
 its independent geometry and MPI regressions, the mesh-only owner-pointer
-initialization fix, and the opt-in stationary-background cache. See
+initialization fix, and the stationary-background cache (default on for explicitly stationary providers). See
 [STATIONARY_CACHE.md](../../tst/unit/kerr_trumpet/STATIONARY_CACHE.md) for cache
 invalidation, reproducible on/off comparisons and measured performance scope.
 Fisheye mapping, experimental source corrections, derivative variants and gauge
 or constraint-damping experiments are not part of this integration. Existing
-input files do not switch to Kerr or enable caching automatically.
+input files do not switch to Kerr. Eligible analytic backgrounds now cache by
+default; `problem/cache_stationary_background=false` preserves the uncached path.
 
 Construction validation establishes positive lapse off the puncture, positive
 spatial metrics, continuum ADM identities/stationarity and consistent residual

@@ -10,6 +10,7 @@ def main():
     p.add_argument('--exe',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--launcher',default='mpiexec')
+    p.add_argument('--default',action='store_true',help='Omit flag in the cached fresh input')
     a=p.parse_args();out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
     repo=Path(__file__).resolve().parents[2];exe=a.exe.resolve()
     base=(repo/'tst/inputs/z4c_kerr_cache_amr.athinput').read_text()
@@ -21,6 +22,8 @@ def main():
                 d=out/(mode+'-'+phase+'-'+flag);d.mkdir();runs.append(d)
                 if phase=='fresh':
                     s=replace(base,'cache_stationary_background',flag)
+                    if a.default and flag=='true':
+                        s=re.sub(r'^cache_stationary_background\s*=.*\n', '', s, flags=re.M)
                     s=replace(s,'vacuum_gauge_pulse_amplitude','0' if mode=='zero' else '1e-8')
                     (d/'input.athinput').write_text(s);args=['-i','input.athinput']
                 else:

@@ -49,9 +49,10 @@ def main():
                     text = replace(text, key, value)
             name = case + ('_refined' if refined else '_uniform')
             runs = []
-            for enabled in ['false', 'true']:
+            for enabled in ['false', 'true', 'default']:
                 run = out / (name + '_' + enabled); run.mkdir()
-                config = text.replace('<problem>', '<problem>\ncache_stationary_background = ' + enabled)
+                config = (text if enabled == 'default' else text.replace(
+                    '<problem>', '<problem>\ncache_stationary_background = ' + enabled))
                 (run / 'input.athinput').write_text(config)
                 with (run / 'run.log').open('w') as log:
                     subprocess.run([a.launcher, '-n', str(a.ranks), str(exe), '-i', 'input.athinput'],
@@ -60,7 +61,7 @@ def main():
                 inspect(run, case == 'vacuum', refined, .9)
                 log = (run / 'run.log').read_text()
                 assert 'Terminating on cycle limit' in log
-                if enabled == 'true':
+                if enabled != 'false':
                     stats = re.findall(r'Z4C_BACKGROUND_CACHE rank=(\d+) fills=(\d+) hits=(\d+) invalidations=(\d+)', log)
                     assert sorted(int(s[0]) for s in stats) == list(range(a.ranks)), stats
                     assert all(int(s[1]) > 0 and int(s[2]) > 0 for s in stats), stats
@@ -70,25 +71,21 @@ def main():
             assert any(x.endswith('.background.bin') for x in files)
             hashes = {}
             for name2 in files:
-                left, right = [(run / name2).read_bytes() for run in runs]
-                assert left == right, name2
+                left, right, default = [(run / name2).read_bytes() for run in runs]
+                assert left == right == default, name2
                 hashes[name2] = hashlib.sha256(left).hexdigest()
             results['pairs'][name] = {'passed': True, 'files': hashes, 'cached_rank_statistics': stats}
             (out / 'results.json').write_text(json.dumps(results, indent=2) + '\n')
             print(name, 'PASS', len(files), 'byte-identical files', flush=True)
-    for name, key, value in [('wrong_provider', 'bh_background', 'schwarzschild_trumpet'),
-                             ('indirect_provider', 'use_direct_z4c_background', 'false')]:
+    for name, key, value in [('indirect_provider', 'use_direct_z4c_background', 'false')]:
         run = out / name; run.mkdir()
         text = replace(base, key, value).replace('<problem>', '<problem>\ncache_stationary_background = true')
-        if name == 'wrong_provider':
-            text = replace(replace(text, 'bh_spin', '0'), 'a', '0')
         (run / 'input.athinput').write_text(text)
         with (run / 'run.log').open('w') as log:
             r = subprocess.run([a.launcher, '-n', '1', str(exe), '-i', 'input.athinput'], cwd=run,
                                env=env, stdout=log, stderr=subprocess.STDOUT, timeout=60)
         assert r.returncode != 0
-        expected = ('Puncture control requires direct background' if name == 'indirect_provider'
-                    else 'Stationary cache requires the fixed direct Kerr trumpet provider.')
+        expected = 'Puncture control requires direct background'
         assert expected in (run / 'run.log').read_text()
         results['rejections'][name] = True
     (out / 'results.json').write_text(json.dumps(results, indent=2) + '\n')

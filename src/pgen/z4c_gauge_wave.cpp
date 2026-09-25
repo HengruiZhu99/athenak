@@ -103,6 +103,7 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
   if (pmbp->pz4c != nullptr) {
     pmbp->pz4c->SetADMBackground = &SetADMBackgroundGaugeWave;
+    pmbp->pz4c->ConfigureStationaryBackgroundCache(pin, false);
     if (pmbp->pz4c->use_analytic_background) {
       pgen_final_func = Z4cGaugeWaveErrors;
     }

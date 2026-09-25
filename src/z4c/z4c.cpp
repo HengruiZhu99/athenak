@@ -37,6 +37,20 @@
 
 namespace z4c {
 
+void Z4c::ConfigureStationaryBackgroundCache(ParameterInput *pin,
+                                           bool time_independent) {
+  const bool eligible = time_independent && use_analytic_background;
+  const bool enabled = pin->GetOrAddBoolean("problem", "cache_stationary_background",
+                                           eligible);
+  if (enabled && !eligible) {
+    std::cerr << "Stationary cache requires an explicitly time-independent analytic "
+                 "background provider." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  stationary_background_cache_enabled = enabled;
+  InvalidateBackgroundCache();
+}
+
 namespace {
 KOKKOS_INLINE_FUNCTION
 Real AddResidualToBackground(const Real background, const Real residual) {
