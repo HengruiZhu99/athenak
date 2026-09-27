@@ -30,6 +30,7 @@
 #include "radiation/radiation_tetrad.hpp"
 #include "particles/particles.hpp"
 #include "outputs.hpp"
+#include "z4c/z4c.hpp"
 #include "utils/current.hpp"
 #include "utils/finite_diff.hpp"
 #include "athena_tensor.hpp"
@@ -96,16 +97,22 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
   int &i_dv = out_params.i_derived;
   int &n_dv = out_params.n_derived;
 
-  // temperature = pressure / density
+  // specific internal energy proxy = eint / density
   if (name.compare("temperature") == 0) {
     if (derived_var.extent(4) <= 1)
       Kokkos::realloc(derived_var, nmb_alloc, n_dv, n3, n2, n1);
     auto dv = derived_var;
-    auto &w0_ = (pm->pmb_pack->phydro != nullptr)?
+    if (pm->pmb_pack->phydro == nullptr && pm->pmb_pack->pmhd == nullptr) {
+      std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
+                << std::endl << "Temperature output requested but no hydro or MHD "
+                << "module constructed." << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    auto &w0_ = (pm->pmb_pack->phydro != nullptr) ?
       pm->pmb_pack->phydro->w0 : pm->pmb_pack->pmhd->w0;
     par_for("temperature", DevExeSpace(), 0, (nmb-1), ks, ke, js, je, is, ie,
     KOKKOS_LAMBDA(int m, int k, int j, int i) {
-      dv(m,i_dv,k,j,i) = (w0_(m,IPR,k,j,i) / w0_(m,IDN,k,j,i));
+      dv(m,i_dv,k,j,i) = w0_(m,IEN,k,j,i) / w0_(m,IDN,k,j,i);
     });
     i_dv += 1; // increment derived variable index
   }
@@ -1279,6 +1286,9 @@ void BaseTypeOutput::ComputeDerivedVariable(std::string name, Mesh *pm) {
   // Z4c Diagnostics: Kretschmann Scalar, Electric/Magnetic Weyl tensors, Super-Poynting
   // Flux
   if (name.compare("z4c_diag") == 0) {
+    // Vacuum initial data may populate only Z4c fields before the first output.
+    // Refresh the ADM metric and curvature, including their ghost zones.
+    pm->pmb_pack->pz4c->Z4cToADM(pm->pmb_pack);
     constexpr int n_z4c_vars = 16;
 
     Kokkos::realloc(derived_var, nmb_alloc, n_z4c_vars, n3, n2, n1);
