@@ -196,6 +196,8 @@ class FastFlowFinder : public HorizonFinder {
  private:
   MeshBlockPack *pmbp;
   std::vector<std::unique_ptr<FastFlow>> pff;
+  Real dt_find = 0.0;
+  Real last_find_time = -1.0e30;
 };
 
 #endif  // Z4C_FASTFLOW_HPP_

@@ -1,0 +1,180 @@
+# Single boosted puncture: telegrapher lapse and integrated horizon finder
+
+<comment>
+problem   = z4c one puncture
+reference = e.g. Cook. Living Rev. Relativ. 3, 5 (2000)
+
+<job>
+basename  = g1.5_bhahaha_L5       # problem ID: basename of output filenames
+
+<mesh>
+nghost    = 4         # Number of ghost cells
+nx1       = 128       # Number of zones in X1-direction
+x1min     = -64       # minimum value of X1
+x1max     = 64        # maximum value of X1
+ix1_bc    = outflow   # inner-X1 boundary flag
+ox1_bc    = outflow   # outer-X1 boundary flag
+
+nx2       = 128       # Number of zones in X2-direction
+x2min     = -64       # minimum value of X2
+x2max     = 64        # maximum value of X2
+ix2_bc    = outflow   # inner-X2 boundary flag
+ox2_bc    = outflow   # outer-X2 boundary flag
+
+nx3       = 128       # Number of zones in X3-direction
+x3min     = -64       # minimum value of X3
+x3max     = 64        # maximum value of X3
+ix3_bc    = outflow   # inner-X3 boundary flag
+ox3_bc    = outflow   # outer-X3 boundary flag
+
+<meshblock>
+nx1       = 32         # Number of cells in each MeshBlock, X1-dir
+nx2       = 32         # Number of cells in each MeshBlock, X2-dir
+nx3       = 32         # Number of cells in each MeshBlock, X3-dir
+
+<time>
+evolution  = dynamic    # dynamic/kinematic/static
+integrator = rk4        # time integration algorithm
+cfl_number = 0.25       # The Courant, Friedrichs, & Lewy (CFL) Number
+nlim       = -1         # cycle limit (-1 no limit)
+tlim       = 20         # time limit
+ndiag      = 100          # cycles between diagostic output
+
+<z4c>
+# Puncture Gauge
+lapse_harmonic = 0.0       # Harmonic lapse parameter mu_L
+lapse_oplog    = 2.0       # 1+log lapse parameter
+shift_eta      = 2.0       # Shift damping term
+shift_Gamma    = 1.0
+diss           = 0.1       # Kreiss-Oliger dissipation parameter
+chi_div_floor  = 0.00001
+#chi_min_floor  = 0.00001
+damp_kappa1    = 0.01      # Constraint damping factor 1
+damp_kappa2    = 0.00
+
+# SSL Gauge Params
+slow_start_lapse = false
+ssl_damping_time = 20
+ssl_damping_amp  = 0.6
+
+# Telegraph Gauge
+telegraph_lapse = true 
+telegraph_tau   = 0.1    # damping time
+telegraph_kappa = 0.2    # diffusion coefficient
+
+# Puncture Tracker
+nco       = 1
+co_0_x    = 0.0
+co_0_y    = 0.0
+co_0_z    = 0.0
+co_0_mass = 1.0
+co_0_radius = 0.8
+co_0_reflevel = 5
+tracker_mode = ode
+spatial_order = 6
+horizon_finder = bhahaha
+co_0_type = BH
+
+<mesh_refinement>
+refinement            = adaptive    # type of refinement
+max_nmb_per_rank      = 600
+num_levels            = 6
+refinement_interval   = 1
+
+<amr_criterion0>
+method = user
+
+<z4c_amr>
+method    = tracker 
+chi_min   = 0.01
+#method   = dchi # use gradient of chi to specify regions of refinement
+#dchi_max = 0.05
+# set to 0.25 * desired resolution at horizon
+# ranging from 0.05 (low) to 0.005 (high)
+
+<problem>
+pgen_name        = z4c_boosted_puncture
+punc_ADM_mass    = 1.
+punc_velocity_x1 = 0.7453559924999299  # gamma = 1.5
+
+<refined_region1>
+level = 5
+x1min = -1
+x1max = 1
+x2min = -1
+x2max = 1
+x3min = -1
+x3max = 1
+
+<output1>
+file_type  = hst     # History data dump
+dt         = 0.1     # time increment between outputs
+
+<output2>
+file_type   = tab    # Binary data dump
+variable    = adm    # variables to be output
+dt          = 1      # time increment between outputs
+slice_x2    = 0
+slice_x3    = 0
+
+<output3>
+file_type   = tab    # Binary data dump
+variable    = z4c    # variables to be output
+dt          = 1      # time increment between outputs
+slice_x2    = 0
+slice_x3    = 0
+
+<output4>
+file_type   = tab    # Binary data dump
+variable    = con    # variables to be output
+dt          = 1      # time increment between outputs
+slice_x2    = 0
+slice_x3    = 0
+
+<output5>
+file_type   = rst
+dt          = 10
+#variable   = con
+#dt         = 1
+#slice_x3   = 0
+
+#<output6>
+#file_type  = bin
+#variable   = z4c
+#dt         = 10
+
+<fastflow>
+npunct = 1
+num_horizons = 1
+use_puncture_0 = 0
+start_time_0 = 0.0
+stop_time_0 = 20.0
+dt = 0.5
+ntheta = 16
+lmax = 8
+flow_iterations_0 = 300
+flow_alpha_beta_const_0 = 1.0
+hmean_tol_0 = 1e-4
+hmean_max_0 = 100.0
+mass_tol_0 = 1e-10
+verbose = true
+output_grid = false
+output_ylm = false
+
+<bhahaha>
+bah_num_horizons = 1
+bah_mass_0 = 1.0
+bah_dt = 0.5
+bah_max_itr = 10000
+bah_Theta_Linf_tol = 1e-2
+bah_Theta_L2_tol = 2e-5
+bah_Nr_interp = 64
+bah_max_search_radius = 2.0
+bah_interp_half_width = 4
+bah_num_resolutions_multigrid = 2
+bah_Ntheta_array_multigrid_0 = 16
+bah_Nphi_array_multigrid_0 = 32
+bah_Ntheta_array_multigrid_1 = 32
+bah_Nphi_array_multigrid_1 = 64
+bah_output_shape_every = 1
+bah_verbosity = 1

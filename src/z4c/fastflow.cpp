@@ -1563,6 +1563,7 @@ bool FastFlow::PuncAreClose() {
 }
 
 FastFlowFinder::FastFlowFinder(MeshBlockPack *pmbp, ParameterInput *pin): pmbp(pmbp) {
+  dt_find = pin->GetOrAddReal("fastflow", "dt", 0.0);
   int nh = pin->GetOrAddInteger("fastflow", "num_horizons", 0);
   for (int n = 0; n < nh; ++n) {
     pff.push_back(std::make_unique<FastFlow>(pmbp, pin, n));
@@ -1572,6 +1573,10 @@ FastFlowFinder::FastFlowFinder(MeshBlockPack *pmbp, ParameterInput *pin): pmbp(p
 void FastFlowFinder::Find(Driver *pdrive, int stage) {
   if (stage != pdrive->nexp_stages) return;
   Real time = pmbp->pmesh->time;
+  if (dt_find > 0.0) {
+    if (static_cast<float>(time) < static_cast<float>(last_find_time + dt_find)) return;
+    last_find_time = time;
+  }
   for (auto &pahf : pff) {
     pahf->Find(stage, time);
     pahf->Write(stage, time);
