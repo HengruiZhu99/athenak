@@ -21,7 +21,9 @@ p = Path('kokkos/cmake/kokkos_arch.cmake')
 s = p.read_text().replace(
     'set(SYCL_TARGET_BACKEND_FLAG -Xsycl-target-backend "-device 12.60.7")',
     'set(SYCL_TARGET_BACKEND_FLAG -Xsycl-target-backend -device '
-    '-Xsycl-target-backend 12.60.7)')
+    '-Xsycl-target-backend=spir64_gen 12.60.7)')
+s = s.replace('-Xsycl-target-backend -device -Xsycl-target-backend 12.60.7',
+              '-Xsycl-target-backend -device -Xsycl-target-backend=spir64_gen 12.60.7')
 p.write_text(s)
 PATCH
 mkdir -p "$build"
