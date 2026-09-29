@@ -69,7 +69,8 @@ The compile/run milestone is achieved. Both original PR heads are merged on the 
 | 8879643 | debug / 2 | Rejected cadence transition: gamma=5 has 27 successes within threshold, nine failures, saved history through 1.20054 M; canceled. Later cases did not start. |
 | 8879644 | debug-scaling / 32 | Canceled before execution to separate finder budgets. |
 | 8879662 | debug / 2 | Uniform 0.01 M BHaHAHA cadence probe submitted, gamma=5, target 0.3 M. |
-| 8879663 | debug-scaling / 32 | v2 gamma=5 level-7 fastflow submitted, target 20 M. |
+| 8879663 | debug-scaling / 32 | v2 gamma=5 level-7 fastflow running, target 20 M. |
+| 8879674 | debug-scaling / 8 | v2 gamma=3, 4, 5 level-6 fastflow queued, each target 20 M. |
 
 Jobs 8879325, 8879509, 8879539, and 8879561 were canceled before execution. Cancellation/rejected attempts are retained separately from successful qualifications. Only actual t=20 termination and successful exit count as a completed evolution. A completed evolution with failed horizon searches does not establish reliable horizon tracking.
 

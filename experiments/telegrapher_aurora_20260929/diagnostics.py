@@ -58,15 +58,19 @@ def main(root):
                              constrained_layout=True)
     peaks = {}
     for run in runs:
-        label = run.name
+        outcome = analyze(run)
+        job = run.parent.name.removeprefix('evolution_')
+        label = f'{run.name} ({job})'
+        style = '-' if outcome['qualified_tracking_20M'] else '--'
         histories = list(run.glob('*.hst'))
         if histories:
             rows = numeric_rows(histories[0])
-            axes[0].semilogy([r[0] for r in rows], [r[3] for r in rows], label=label)
+            axes[0].semilogy([r[0] for r in rows], [r[3] for r in rows],
+                             linestyle=style, label=label)
         ff = list(run.glob('*.horizon_summary_0.txt'))
         if ff:
             rows = numeric_rows(ff[0])
-            successful = analyze(run)['successful_horizon_times']
+            successful = outcome['successful_horizon_times']
             rows = [r for r in rows if any(abs(r[1] - t) < 5e-4 for t in successful)]
             times = [r[1] for r in rows]
             masses = [r[2] for r in rows]
@@ -77,17 +81,20 @@ def main(root):
             times = [r[1] for r in rows]
             masses = [r[24] for r in rows]
             residuals = [r[14] for r in rows]
-        axes[1].plot(times, masses, label=label)
-        axes[2].semilogy(times, residuals, label=label)
+        axes[1].plot(times, [mass - 1 for mass in masses],
+                     linestyle=style, label=label)
+        axes[2].semilogy(times, residuals, linestyle=style, label=label)
         peaks[str(run.relative_to(root))] = slice_peaks(run)
     axes[0].set_ylabel(r'$\int_{\chi\geq0.0625} H^2\,dV$')
-    axes[1].set_ylabel('Horizon mass / rest mass')
-    axes[1].axhline(1, color='black', lw=0.7, ls='--')
+    axes[1].set_ylabel('Horizon mass / rest mass − 1')
+    axes[1].axhline(0, color='black', lw=0.7, ls='--')
     axes[2].set_ylabel('RMS expansion × mass')
     axes[2].set_xlabel('Time / rest mass')
     for ax in axes:
         ax.grid(alpha=0.2)
     axes[0].legend(fontsize=8, ncol=2)
+    fig.suptitle('Solid: qualified 20 M tracking; dashed: incomplete or failed tracking',
+                 fontsize=10)
     fig.savefig(root / 'evolution_diagnostics.png', dpi=180)
     fig.savefig(root / 'evolution_diagnostics.pdf')
     plt.close(fig)
