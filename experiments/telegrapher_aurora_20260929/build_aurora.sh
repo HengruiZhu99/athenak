@@ -21,7 +21,7 @@ module list > "$build/modules.txt" 2>&1
 icpx --version > "$build/compiler.txt"
 git rev-parse HEAD > "$build/source_commit.txt"
 git -C kokkos diff > "$build/kokkos-compat.patch"
-cmake -S "$root" -B "$build" \
+cmake -U 'KOKKOS_*_OPTIONS_CHECK' -S "$root" -B "$build" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_CXX_COMPILER=mpicxx -DCMAKE_C_COMPILER=icx \
   -DAthena_ENABLE_MPI=ON -DAthena_ENABLE_OPENMP=ON \
