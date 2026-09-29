@@ -38,7 +38,8 @@ def analyze(run):
         result['finder'] = 'fastflow'
         result['successes'] = text.count('Found horizon')
         result['mass_stall_successes'] = text.count('(mass stall)')
-        result['failures'] = text.count('Failed,')
+        result['searches'] = text.count('Searching for horizon')
+        result['failures'] = result['searches'] - result['successes']
         # Fastflow column 9 is the area-weighted mean SQUARE expansion.
         usable = [r for r in rows if len(r) >= 12 and
                   all(math.isfinite(r[i]) for i in [1, 2, 7, 8, 9, 10, 11])]
@@ -53,7 +54,7 @@ def analyze(run):
         rows = numeric_rows(paths[0]) if paths else []
         result['finder'] = 'bhahaha'
         result['successes'] = log.splitlines().count('Success')
-        result['failures'] = len(re.findall(r'Failed.*(?:code|error)', log))
+        result['failures'] = len(re.findall(r'Failed.*(?:code|error)', log, re.IGNORECASE))
         usable = [r for r in rows if len(r) >= 26 and
                   all(math.isfinite(r[i]) for i in [1, 5, 11, 12, 13, 14, 24])]
         if usable:

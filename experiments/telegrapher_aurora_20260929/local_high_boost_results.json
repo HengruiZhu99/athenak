@@ -1,0 +1,52 @@
+{
+  "purpose": "CPU initial-data horizon qualification; not an Aurora run or 20 M evolution",
+  "gamma": 5,
+  "dx": 0.015625,
+  "domain": [
+    -4,
+    4
+  ],
+  "rk": "rk1",
+  "cfl": 1e-08,
+  "steps": 1,
+  "time": 1.236932e-10,
+  "fastflow": {
+    "lmax": 64,
+    "ntheta": 80,
+    "alpha": 0.1,
+    "axis_ratio_x": 0.2,
+    "rms_tolerance": 0.01,
+    "mass": 0.9999899689077941,
+    "area": 50.26447402711593,
+    "expansion_rms_times_mass": 0.0005452478781396958,
+    "min_radius": 0.09987730139645772,
+    "criterion": "hmean and optional RMS",
+    "iterations": 72
+  },
+  "bhahaha": {
+    "Nr": 256,
+    "Ntheta": 32,
+    "Nphi": 64,
+    "L2_tolerance": 0.001,
+    "Linf_tolerance": 0.01,
+    "mass": 0.9997357428768701,
+    "area": 50.2389199439933,
+    "expansion_rms_times_mass": 0.0009953696986,
+    "expansion_linf_times_mass": 0.003732803919,
+    "min_radius": 0.09983775981,
+    "iterations": 9060,
+    "success": true
+  },
+  "harmonics": {
+    "addition_theorem_max_relative_error": 7.32747e-14,
+    "derivative_max_relative_error": 8.16675e-07,
+    "max_l_tested": 96,
+    "old_l64_addition_theorem_error": 2838.86
+  },
+  "rejected_settings": [
+    "fastflow spherical seed diverged even at alpha=0.02 and lmax=32",
+    "factorial harmonics at lmax=64 produce unphysical radii",
+    "BHaHAHA Nr=64 crosses inner radial boundary at gamma=5",
+    "BHaHAHA strict coarse/fine multigrid stalled; experimental coarse tolerance patch reverted"
+  ]
+}

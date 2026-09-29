@@ -11,7 +11,7 @@ Branch: `HengruiZhu99/athenak:project/telegrapher_lapse`.
 - Merge commit: `efacb13cbb3cbbef198b624c58a3dadb18758da8`.
 - Both PR heads are ancestors of this branch; their branches were not pushed to.
 
-The conflict in `Z4c::FindHorizon` was resolved using the new shared `HorizonFinder` interface. Two small run-support changes add an optional fastflow physical-time cadence (default remains every step) and keep the boosted generator from replacing checkpoint fields on restart.
+The conflict in `Z4c::FindHorizon` was resolved using the new shared `HorizonFinder` interface. Run-support changes add an optional fastflow physical-time cadence (default remains every step), retain checkpoint fields on restart, and support an ellipsoidal initial guess plus the full previous surface. The latter are opt-in. An optional RMS expansion threshold guards against cancellation in the mean-expansion or mass-stall tests. Normalized Legendre recurrences replace the scalar harmonic factorial sum, which becomes inaccurate at high multipoles; addition-theorem and derivative checks cover modes through l=96.
 
 ## Input and units
 
@@ -27,7 +27,7 @@ Campaign: `/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_202609
 
 A fresh clone lives in `source`; builds and simulation output remain in this campaign. The current login environment is oneAPI 2026.1, MPICH 5.0.0, and compute image `compute_aurora_prod_20260928T161726_a233edf0_69791cc`.
 
-Run `build_aurora.sh` on the login node. It retains the pinned Kokkos 4.7.2 submodule and applies two recorded compatibility edits: replace the missing USM pointer aliases with `sycl::global_ptr`, and pass PVC backend tokens separately to avoid oneAPI 2026.1's escaped-quote failure. Distinct target-qualified flags prevent CMake from deduplicating them. Host OpenMP discovery is supplied explicitly because device compilation lacks `_OPENMP`. MPI is provided through CMake's imported target, using `icpx` directly. SYCL RDC is enabled. The script records the commit, compiler/modules, complete Kokkos diff, and executable SHA256.
+Run `build_aurora.sh` on the login node. It retains the pinned Kokkos 4.7.2 submodule and applies two recorded compatibility edits: replace the missing USM pointer aliases with `sycl::global_ptr`, and pass PVC backend tokens separately to avoid oneAPI 2026.1's escaped-quote failure. Distinct target-qualified flags prevent CMake from deduplicating them. Host OpenMP discovery is supplied explicitly because device compilation lacks `_OPENMP`. MPI is provided through CMake's imported target, using `icpx` directly. SYCL RDC is enabled. The physics-registration translation unit additionally uses a host compiler pass with the same SYCL types and headers: oneAPI 2026.1 recursively checks its mesh/CCE pointer containers during device compilation. It launches no kernels; all kernel files remain at O3 with SYCL/RDC. The compiler launcher records this workaround in the recipe. Compute execution must validate the linked result. The script records the commit, compiler/modules, complete Kokkos diff, and executable SHA256.
 
 ## Debug runs
 
@@ -51,6 +51,8 @@ This reports actual final time, termination, successes, mass-stall convergence, 
 ## Local validation
 
 The serial CPU build passed. Two reduced-mesh, two-step unboosted integration tests found horizons with fastflow mass 0.9999976338 and BHaHAHA mass 1.0000000962. BHaHAHA's dimensionless L2 expansion was 1.948740159e-5. A checkpoint reload at the saved final cycle took zero evolution steps and did not reinitialize the puncture. These are integration checks, not Aurora or high-boost qualifications. Details are in `local_smoke_results.json`.
+
+The gamma=5 CPU initial-data probes (one Euler step at CFL=1e-8, physical time about 1.24e-10 M) recovered mass 0.999989969 with fastflow and 0.999735743 with BHaHAHA. Fastflow used a 1/gamma x-axis seed, lmax=64, ntheta=80, alpha=0.1; its dimensionless RMS expansion was 5.45e-4. BHaHAHA used Nr=256 and a single 32x64 angular grid; L2 expansion was 9.95e-4 and Linf 3.73e-3. Its tighter 2e-5 target did not converge in the earlier probes. The high-boost qualification decks explicitly use L2 tolerance 1e-3, while the low-boost decks keep 2e-5. These tolerances and angular resolution remain subjects of the higher-resolution comparison. An experimental change to BHaHAHA coarse-grid stopping was reverted. Details are in `local_high_boost_results.json`.
 
 ## Aurora results
 
