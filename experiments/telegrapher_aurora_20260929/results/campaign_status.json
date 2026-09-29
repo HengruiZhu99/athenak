@@ -71,7 +71,8 @@
         "g3_bhahaha_L6"
       ],
       "state_at_submission": "Q",
-      "last_seen_state": "R"
+      "last_seen_state": "R",
+      "state": "canceled after fastflow failed at 0.500744 M; partial outputs retained"
     }
   ],
   "resolution_job": {
@@ -83,6 +84,22 @@
       "g5_bhahaha_L7"
     ],
     "state_at_submission": "Q",
-    "finest_dx": 0.0078125
+    "finest_dx": 0.0078125,
+    "state": "canceled before execution; will resubmit with increased iteration cap"
+  },
+  "replacement_high_boost_job": {
+    "id": "8879523",
+    "nodes": 8,
+    "queue": "debug-scaling",
+    "cases": [
+      "g5_bhahaha_L6",
+      "g5_fastflow_L6",
+      "g4_bhahaha_L6",
+      "g4_fastflow_L6",
+      "g3_bhahaha_L6",
+      "g3_fastflow_L6"
+    ],
+    "fastflow_max_iterations": 4000,
+    "state_at_submission": "Q"
   }
 }

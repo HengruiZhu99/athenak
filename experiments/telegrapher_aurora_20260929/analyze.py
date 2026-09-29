@@ -30,6 +30,7 @@ def analyze(run):
     result['termination'] = [x for x in log.splitlines() if 'Terminating on' in x]
     result['exit_status'] = ((run / 'exit_status.txt').read_text().strip()
                              if (run / 'exit_status.txt').exists() else None)
+    result['completed_20M'] &= result['exit_status'] == '0'
     summaries = list(run.glob('*horizon_summary_0.txt'))
     if summaries:
         rows = numeric_rows(summaries[0])
@@ -39,10 +40,27 @@ def analyze(run):
         result['successes'] = text.count('Found horizon')
         result['mass_stall_successes'] = text.count('(mass stall)')
         result['searches'] = text.count('Searching for horizon')
-        result['failures'] = result['searches'] - result['successes']
+        result['failures'] = text.count('Failed,')
+        result['pending_searches'] = (result['searches'] - result['successes'] -
+                                     result['failures'])
+        success_times, failed_times = [], []
+        search_time = None
+        for line in text.splitlines():
+            match = re.match(r'time=([\d.eE+-]+),', line)
+            if match:
+                search_time = float(match[1])
+            elif 'Found horizon' in line and search_time is not None:
+                success_times.append(search_time)
+            elif 'Failed,' in line and search_time is not None:
+                failed_times.append(search_time)
+        result['failed_search_times'] = failed_times
+        result['successful_horizon_times'] = success_times
         # Fastflow column 9 is the area-weighted mean SQUARE expansion.
+        # On failure it writes the last successful properties with a NEW time.
+        # Verbose output is therefore needed to reject these stale rows.
         usable = [r for r in rows if len(r) >= 12 and
-                  all(math.isfinite(r[i]) for i in [1, 2, 7, 8, 9, 10, 11])]
+                  all(math.isfinite(r[i]) for i in [1, 2, 7, 8, 9, 10, 11]) and
+                  (not verbose or any(abs(r[1] - t) < 5e-4 for t in success_times))]
         if usable:
             r = usable[-1]
             result.update(last_horizon_time=r[1], mass=r[2], area=r[7],

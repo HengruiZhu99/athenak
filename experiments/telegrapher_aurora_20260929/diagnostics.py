@@ -6,7 +6,7 @@ import math
 import re
 from pathlib import Path
 
-from analyze import numeric_rows
+from analyze import analyze, numeric_rows
 
 
 def slice_data(path):
@@ -63,6 +63,8 @@ def main(root):
         ff = list(run.glob('*.horizon_summary_0.txt'))
         if ff:
             rows = numeric_rows(ff[0])
+            successful = analyze(run)['successful_horizon_times']
+            rows = [r for r in rows if any(abs(r[1] - t) < 5e-4 for t in successful)]
             times = [r[1] for r in rows]
             masses = [r[2] for r in rows]
             residuals = [math.sqrt(max(0, r[8])) * r[2] for r in rows]
