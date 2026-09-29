@@ -15,6 +15,14 @@ using sycl_device_ptr = sycl::global_ptr<T>;
 template <typename T>
 using sycl_host_ptr = sycl::global_ptr<T>;''')
 p.write_text(s)
+# oneAPI 2026.1 forwards Kokkos 4.7's escaped, space-containing backend
+# argument as a single ocloc token. Repeated flags preserve separate tokens.
+p = Path('kokkos/cmake/kokkos_arch.cmake')
+s = p.read_text().replace(
+    'set(SYCL_TARGET_BACKEND_FLAG -Xsycl-target-backend "-device 12.60.7")',
+    'set(SYCL_TARGET_BACKEND_FLAG -Xsycl-target-backend -device '
+    '-Xsycl-target-backend 12.60.7)')
+p.write_text(s)
 PATCH
 mkdir -p "$build"
 module list > "$build/modules.txt" 2>&1
