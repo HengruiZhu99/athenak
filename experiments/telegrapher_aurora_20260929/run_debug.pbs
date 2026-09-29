@@ -12,6 +12,7 @@ set -euo pipefail
 campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929
 source_root="$campaign/source"
 workflow="$source_root/experiments/telegrapher_aurora_20260929"
+input_directory="${INPUT_DIRECTORY:-$workflow/inputs}"
 executable_build="${EXECUTABLE_BUILD:-$source_root/build/aurora-sycl}"
 exe="$executable_build/src/athena"
 tile_wrapper="$(command -v gpu_tile_compact.sh)"
@@ -50,7 +51,7 @@ for case_name in $cases; do
     $((remaining % 3600 / 60)) $((remaining % 60))
   run="$group/$case_name"
   mkdir -p "$run"
-  cp "$workflow/inputs/$case_name.athinput" "$run/input.athinput"
+  cp "$input_directory/$case_name.athinput" "$run/input.athinput"
   git -C "$source_root" rev-parse HEAD > "$run/input_commit.txt"
   sha256sum "$exe" > "$run/executable.sha256"
   cd "$run"

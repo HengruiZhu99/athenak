@@ -26,6 +26,11 @@ def numeric_rows(path):
 def analyze(run):
     log = (run / 'run.log').read_text()
     result = {'run': str(run)}
+    deck = (run / 'input.athinput').read_text() if (run / 'input.athinput').exists() else ''
+    def input_real(name):
+        match = re.search(r'^\s*' + re.escape(name) + r'\s*=\s*([\d.eE+-]+)',
+                          deck, re.MULTILINE)
+        return float(match[1]) if match else None
     progress = re.findall(r'time=([\d.eE+-]+)', log)
     result['evolution_time'] = float(progress[-1]) if progress else None
     result['completed_20M'] = ('Terminating on time limit' in log and
@@ -73,6 +78,12 @@ def analyze(run):
             result['max_recorded_expansion_rms_times_mass'] = max(
                 math.sqrt(max(0, r[8])) * r[2] for r in usable)
             result['max_recorded_mass_error'] = max(abs(r[2] - 1) for r in usable)
+            tolerance = input_real('hrms_tol_0')
+            result['input_rms_tolerance'] = tolerance
+            if tolerance is not None:
+                result['reported_successes_above_rms_tolerance'] = sum(
+                    math.sqrt(max(0, r[8])) * r[2] > tolerance * (1 + 1e-8)
+                    for r in usable)
     else:
         paths = list((run / 'horizon').glob('BHaHAHA_diagnostics.ah*.gp'))
         rows = numeric_rows(paths[0]) if paths else []
@@ -88,6 +99,11 @@ def analyze(run):
                           expansion_rms_times_mass=r[14], min_radius=r[5])
             result['max_recorded_expansion_rms_times_mass'] = max(r[14] for r in usable)
             result['max_recorded_mass_error'] = max(abs(r[24] - 1) for r in usable)
+            tolerance = input_real('bah_Theta_L2_tol')
+            result['input_rms_tolerance'] = tolerance
+            if tolerance is not None:
+                result['reported_successes_above_rms_tolerance'] = sum(
+                    r[14] > tolerance * (1 + 1e-8) for r in usable)
     if 'mass' in result:
         result['mass_relative_error_to_1M'] = abs(result['mass'] - 1)
         result['small_expansion'] = result['expansion_rms_times_mass'] < 1e-2
