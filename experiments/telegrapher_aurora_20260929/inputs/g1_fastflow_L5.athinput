@@ -63,7 +63,6 @@ telegraph_tau   = 0.1    # damping time
 telegraph_kappa = 0.2    # diffusion coefficient
 
 # Puncture Tracker
-nco       = 1
 co_0_x    = 0.0
 co_0_y    = 0.0
 co_0_z    = 0.0
@@ -86,7 +85,6 @@ method = user
 
 <z4c_amr>
 method    = tracker 
-chi_min   = 0.01
 #method   = dchi # use gradient of chi to specify regions of refinement
 #dchi_max = 0.05
 # set to 0.25 * desired resolution at horizon
