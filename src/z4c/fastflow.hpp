@@ -68,6 +68,7 @@ class FastFlow {
   // Fast-Flow parameters
   Real hmean_tol; // for convergence
   Real hmean_max; // divergence guard
+  Real hrms_tol; // optional RMS expansion threshold, multiplied by mass
   Real mass_tol; // fallback for convergence
   int flow_iterations; // number of flow iterations
   Real flow_alpha_beta_const; // alpha & beta constants in the iteration formula
@@ -155,6 +156,10 @@ class FastFlow {
   // Functions used in the fast-flow algorithm
   void FastFlowLoop();
   void InitialGuess();
+  void SeedEllipsoid(Real radius);
+  Real initial_axis_ratio[3] = {1.0, 1.0, 1.0};
+  bool use_full_previous_guess = false;
+  bool full_guess_ready = false;
 
   // Pointers to MeshBlockPack and ParameterInput
   MeshBlockPack *pmbp;

@@ -86,6 +86,8 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   // Convergence parameters
   hmean_tol = pin->GetOrAddReal("fastflow", "hmean_tol_" + n_str, 1e-4);
   hmean_max = pin->GetOrAddReal("fastflow", "hmean_max_" + n_str, 100.);
+  hrms_tol = pin->GetOrAddReal("fastflow", "hrms_tol_" + n_str,
+                                std::numeric_limits<Real>::max());
   mass_tol = pin->GetOrAddReal("fastflow", "mass_tol_" + n_str, 1e-8);
   if (hmean_tol >= hmean_max) {
     std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
@@ -106,6 +108,16 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
 
   // Initial guess
   initial_radius = pin->GetOrAddReal("fastflow", "initial_radius_" + n_str, 1.0);
+  const char *axis_names[] = {"x", "y", "z"};
+  for (int a = 0; a < 3; ++a) {
+    initial_axis_ratio[a] = pin->GetOrAddReal("fastflow",
+        "initial_axis_ratio_" + std::string(axis_names[a]) + "_" + n_str, 1.0);
+    if (!std::isfinite(initial_axis_ratio[a]) || initial_axis_ratio[a] <= 0) {
+      throw std::runtime_error("Fastflow initial axis ratios must be finite and positive");
+    }
+  }
+  use_full_previous_guess = pin->GetOrAddBoolean("fastflow", "use_full_previous_guess",
+                                                false);
   rr_min = -1.0;
 
   expand_guess = pin->GetOrAddReal("fastflow", "expand_guess", 1.0);
@@ -454,6 +466,14 @@ void FastFlow::Find(int iter, Real time) {
 //! \fn void FastFlow::InitialGuess()
 //! \brief Initial guess for spectral coefs of horizon n
 void FastFlow::InitialGuess() {
+  if (use_full_previous_guess && full_guess_ready && ah_found && expand_guess == 1.0) {
+    if (use_puncture >= 0) {
+      for (int a = 0; a < 3; ++a) {
+        center[a] = pmbp->pz4c->ptracker[use_puncture]->GetPos(a);
+      }
+    }
+    return;
+  }
   // Reset Coefficients to Zero
   Kokkos::deep_copy(a0.h_view, 0.0);
   Kokkos::deep_copy(ac.h_view, 0.0);
@@ -471,6 +491,12 @@ void FastFlow::InitialGuess() {
     // make radius a bit larger than half the distance between any of the punctures
     Real largedist = PuncMaxDistance(use_puncture);
     Real mass = pmbp->pz4c->ptracker[use_puncture]->GetMass();
+    if ((!ah_found || !full_guess_ready) &&
+        (initial_axis_ratio[0] != 1.0 || initial_axis_ratio[1] != 1.0 ||
+         initial_axis_ratio[2] != 1.0)) {
+      SeedEllipsoid(0.5 * mass);
+      return;
+    }
     if (ah_found && last_a0 > 0) {
       a0.h_view(0) = last_a0 * expand_guess;
     } else {
@@ -498,12 +524,46 @@ void FastFlow::InitialGuess() {
   }
 
   // Take a0 either from previous or from input value
+  if ((!ah_found || !full_guess_ready) &&
+      (initial_axis_ratio[0] != 1.0 || initial_axis_ratio[1] != 1.0 ||
+       initial_axis_ratio[2] != 1.0)) {
+    SeedEllipsoid(initial_radius);
+    return;
+  }
   if (ah_found && last_a0 > 0) {
     a0.h_view(0) = last_a0 * expand_guess;
   } else {
     a0.h_view(0) = Kokkos::sqrt(4.0 * M_PI) * initial_radius;
   }
   // Sync to device
+  a0.template modify<HostMemSpace>();
+  a0.template sync<DevExeSpace>();
+  ac.template modify<HostMemSpace>();
+  ac.template sync<DevExeSpace>();
+  as.template modify<HostMemSpace>();
+  as.template sync<DevExeSpace>();
+}
+
+// Project a user-specified ellipsoidal guess onto the existing spherical-harmonic grid.
+// Every MPI rank has the same angular grid and constructs the same global seed.
+void FastFlow::SeedEllipsoid(Real radius) {
+  for (int p = 0; p < nangles; ++p) {
+    Real theta = gl_grid->polar_pos.h_view(p, 0);
+    Real phi = gl_grid->polar_pos.h_view(p, 1);
+    Real nx = std::sin(theta) * std::cos(phi) / initial_axis_ratio[0];
+    Real ny = std::sin(theta) * std::sin(phi) / initial_axis_ratio[1];
+    Real nz = std::cos(theta) / initial_axis_ratio[2];
+    Real wr = gl_grid->int_weights.h_view(p) * radius /
+              std::sqrt(nx*nx + ny*ny + nz*nz);
+    for (int l = 0; l <= lmax; ++l) {
+      a0.h_view(l) += wr * Y0.h_view(p, l);
+      for (int m = 1; m <= l; ++m) {
+        int lm = lmindex(l, m, lmax);
+        ac.h_view(lm) += wr * Yc.h_view(p, lm);
+        as.h_view(lm) += wr * Ys.h_view(p, lm);
+      }
+    }
+  }
   a0.template modify<HostMemSpace>();
   a0.template sync<DevExeSpace>();
   ac.template modify<HostMemSpace>();
@@ -740,13 +800,14 @@ void FastFlow::FastFlowLoop() {
       break;
     }
 
-    if (Kokkos::fabs(hmean)*mass/area < hmean_tol) {
+    const bool rms_converged = Kokkos::sqrt(hrms)*mass <= hrms_tol;
+    if (Kokkos::fabs(hmean)*mass/area < hmean_tol && rms_converged) {
       ah_found = true;
       criterion = "hmean";
       break;
     }
 
-    if (Kokkos::fabs(mass_prev-mass) < mass_tol) {
+    if (Kokkos::fabs(mass_prev-mass) < mass_tol && rms_converged) {
       ah_found = true;
       criterion = "mass stall";
       break;
@@ -757,6 +818,7 @@ void FastFlow::FastFlowLoop() {
   }
 
   if (ah_found) {
+    full_guess_ready = true;
     last_a0 = a0.h_view(0);
 
     ah_prop[harea] = area;
