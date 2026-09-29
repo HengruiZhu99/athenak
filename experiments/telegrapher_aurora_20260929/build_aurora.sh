@@ -44,6 +44,7 @@ cmake -U 'KOKKOS_*_OPTIONS_CHECK' -S "$root" -B "$build" \
   -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON \
   -DKokkos_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE=ON \
   -DCMAKE_CXX_FLAGS="-O3 -fsycl -fiopenmp" \
-  -DCMAKE_C_FLAGS="-O3 -ffp-model=precise"
+  -DCMAKE_C_FLAGS="-O3 -ffp-model=precise" \
+  -DCMAKE_EXE_LINKER_FLAGS="-fsycl-max-parallel-link-jobs=8"
 cmake --build "$build" -j "${BUILD_JOBS:-8}"
 sha256sum "$build/src/athena" > "$build/executable.sha256"
