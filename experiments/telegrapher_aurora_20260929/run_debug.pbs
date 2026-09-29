@@ -31,7 +31,8 @@ else
 fi
 group="$campaign/runs/${phase}_${PBS_JOBID%%.*}"
 mkdir -p "$group"
-git -C "$source_root" rev-parse HEAD > "$group/source_commit.txt"
+cp "$source_root/build/aurora-sycl/source_commit.txt" "$group/source_commit.txt"
+git -C "$source_root" rev-parse HEAD > "$group/input_commit.txt"
 sha256sum "$exe" > "$group/executable.sha256"
 module list > "$group/modules.txt" 2>&1
 cat "$PBS_NODEFILE" > "$group/nodes.txt"
