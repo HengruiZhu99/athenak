@@ -36,6 +36,7 @@ git -C kokkos diff > "$build/kokkos-compat.patch"
 cmake -U 'KOKKOS_*_OPTIONS_CHECK' -S "$root" -B "$build" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_CXX_COMPILER=icpx -DCMAKE_C_COMPILER=icx \
+  -DCMAKE_CXX_COMPILER_LAUNCHER="$root/experiments/telegrapher_aurora_20260929/sycl_compile.py" \
   -DMPI_CXX_COMPILER=mpicxx \
   -DAthena_ENABLE_MPI=ON -DAthena_ENABLE_OPENMP=ON \
   -DOpenMP_CXX_FLAGS=-fiopenmp -DOpenMP_CXX_LIB_NAMES='iomp5;pthread' \
