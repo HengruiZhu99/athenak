@@ -56,4 +56,4 @@ The gamma=5 CPU initial-data probes (one Euler step at CFL=1e-8, physical time a
 
 ## Aurora results
 
-Pending the fresh SYCL build and compute-node runs. No high-boost or 20 M completion is claimed at this stage.
+The fresh SYCL/RDC/PVC build succeeded on 2026-09-29 with source commit `30cd2301`. The link compiled all 144 GPU images. One-node debug smoke job `8879276` was submitted under `CompactBinaryMerger` to qualify both unboosted finders. Compute results are pending; no Aurora high-boost or 20 M completion is claimed at this stage.
