@@ -35,6 +35,7 @@ void BoostedPunctureRefinementCondition(MeshBlockPack* pmbp);
 
 void ProblemGenerator::Z4cBoostedPuncture(ParameterInput *pin, const bool restart) {
   user_ref_func  = BoostedPunctureRefinementCondition;
+  if (restart) return;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
   auto &indcs = pmy_mesh_->mb_indcs;
 
