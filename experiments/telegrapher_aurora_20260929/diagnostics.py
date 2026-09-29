@@ -46,6 +46,28 @@ def slice_peaks(run):
     return peaks
 
 
+def peak_horizon_comparison(run, peaks, outcome):
+    """Compare the slice peak with the nearest qualified fastflow sample.
+
+    Times are not identical; retain the offset rather than claiming synchronous
+    horizon excision or using this comparison to change the history norm.
+    """
+    summaries = list(run.glob('*horizon_summary_0.txt'))
+    if not peaks or not summaries or not outcome['qualified_tracking_20M']:
+        return None
+    peak = max(peaks, key=lambda row: row['max_abs_H'])
+    rows = numeric_rows(summaries[0])
+    ah = min(rows, key=lambda row: abs(row[1] - peak['time']))
+    tracker = numeric_rows(next(run.glob('*.co_0.txt')))
+    center = min(tracker, key=lambda row: abs(row[1] - ah[1]))
+    distance = math.sqrt((peak['x'] - center[2])**2 + center[3]**2 + center[4]**2)
+    return dict(slice_peak=peak, nearest_horizon_time=ah[1],
+                horizon_time_offset=ah[1] - peak['time'],
+                nearest_horizon_min_radius=ah[11],
+                distance_from_nearest_horizon_center=distance,
+                inside_nearest_horizon_min_radius=distance < ah[11])
+
+
 def main(root):
     import matplotlib
     matplotlib.use('Agg')
@@ -57,6 +79,7 @@ def main(root):
     fig, axes = plt.subplots(3, 1, figsize=(10, 10), sharex=True,
                              constrained_layout=True)
     peaks = {}
+    peak_comparisons = {}
     for run in runs:
         outcome = analyze(run)
         job = run.parent.name.removeprefix('evolution_')
@@ -85,6 +108,10 @@ def main(root):
                      linestyle=style, label=label)
         axes[2].semilogy(times, residuals, linestyle=style, label=label)
         peaks[str(run.relative_to(root))] = slice_peaks(run)
+        comparison = peak_horizon_comparison(run, peaks[str(run.relative_to(root))],
+                                             outcome)
+        if comparison is not None:
+            peak_comparisons[str(run.relative_to(root))] = comparison
     axes[0].set_ylabel(r'$\int_{\chi\geq0.0625} H^2\,dV$')
     axes[1].set_ylabel('Horizon mass / rest mass − 1')
     axes[1].axhline(0, color='black', lw=0.7, ls='--')
@@ -100,6 +127,8 @@ def main(root):
     plt.close(fig)
     (root / 'constraint_slice_peaks.json').write_text(
         json.dumps(peaks, indent=2, allow_nan=False) + '\n')
+    (root / 'constraint_peak_horizon_comparison.json').write_text(
+        json.dumps(peak_comparisons, indent=2, allow_nan=False) + '\n')
     selected = [run for run in runs if run.name in
                 ('g1_fastflow_L5', 'g5_fastflow_L6', 'g5_fastflow_L7')]
     fig, axes = plt.subplots(len(selected), 2, figsize=(12, 3.5 * len(selected)),
