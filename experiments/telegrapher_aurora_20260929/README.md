@@ -68,9 +68,10 @@ The compile/run milestone is achieved. Both original PR heads are merged on the 
 | 8879523 | debug-scaling / 8 | v1 gamma=5 BHaHAHA reaches 20 M with 20 successful and 20 failed searches. Some reported successes exceed its configured L2 threshold, so tracking is unqualified. Fastflow with 4000 iterations passes six searches but stops at 2.512066 M on the batch wall limit; later gamma=3/4 cases did not start. |
 | 8879643 | debug / 2 | Rejected cadence transition: gamma=5 has 27 successes within threshold, nine failures, saved history through 1.20054 M; canceled. Later cases did not start. |
 | 8879644 | debug-scaling / 32 | Canceled before execution to separate finder budgets. |
-| 8879662 | debug / 2 | Uniform 0.01 M BHaHAHA cadence probe submitted, gamma=5, target 0.3 M. |
+| 8879662 | debug / 2 | Uniform 0.01 M BHaHAHA probe reaches 0.3 M: 18 successes, six failures, no above-threshold successes; rejected. |
 | 8879663 | debug-scaling / 32 | v2 gamma=5 level-7 fastflow running, target 20 M. |
 | 8879674 | debug-scaling / 8 | v2 gamma=3, 4, 5 level-6 fastflow queued, each target 20 M. |
+| 8879681 | debug / 2 | Uniform-cadence radial probe queued, Nr=2048, gamma=5, target 0.3 M. |
 
 Jobs 8879325, 8879509, 8879539, and 8879561 were canceled before execution. Cancellation/rejected attempts are retained separately from successful qualifications. Only actual t=20 termination and successful exit count as a completed evolution. A completed evolution with failed horizon searches does not establish reliable horizon tracking.
 
@@ -100,4 +101,4 @@ In the unboosted 20 M baseline, both finder runs have identical finite histories
 
 For completed gamma=1.5 and 2 fastflow runs, integrated H-squared peaks are 0.00041357 and 0.00594881, respectively. Their largest sampled non-excised x-axis |H| occurs close to the puncture and chi mask: gamma=1.5 has 0.145745 at t=17.00113, x minus tracker=0.341485, chi=0.0631898, at a block edge; gamma=2 has 0.526746 at t=13.00349, x minus tracker=0.298976, chi=0.0665413, 14 cells from an edge. Thus the sampled peaks are not uniformly at block interfaces. A one-dimensional slice cannot determine the cause of the three-dimensional integrated norm. Gamma=5 level-7 repeats will test spatial resolution while retaining the angular finder settings; this does not establish angular convergence.
 
-The v2 cadence-transition test (8879643) establishes that the fresh-residual guard prevents above-threshold reported successes, but not reliable tracking: the first three 0.01 M bootstrap finds succeed, then the jump to 0.1 M fails. Quadratic extrapolation across this interval increase amplifies the short-history differences. A uniform 0.01 M cadence is being tested in `inputs_cadence_probe` before another full evolution.
+The v2 cadence-transition test (8879643) establishes that the fresh-residual guard prevents above-threshold reported successes, but not reliable tracking: the first three 0.01 M bootstrap finds succeed, then the jump to 0.1 M fails. The interval change was a possible contribution. The uniform 0.01 M probe in `inputs_cadence_probe` still fails after each third successful search, ruling out cadence as the sole cause. At that point the interpolation shell changes from 20% to 5% radius margins. The radial spacing is set by the full maximum search radius rather than by the shell width; `inputs_radial_probe` tests Nr=2048 to isolate radial stencil support while retaining all solver tolerances.
