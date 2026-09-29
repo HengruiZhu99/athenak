@@ -29,7 +29,7 @@ cmake -S "$root" -B "$build" \
   -DPROBLEM=built_in_pgens \
   -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON \
   -DKokkos_ENABLE_SYCL_RELOCATABLE_DEVICE_CODE=ON \
-  -DCMAKE_CXX_FLAGS="-O3 -fsycl -fsycl-targets=spir64_gen -Xsycl-target-backend=spir64_gen -device\ pvc" \
+  -DCMAKE_CXX_FLAGS="-O3 -fsycl -fiopenmp" \
   -DCMAKE_C_FLAGS="-O3 -ffp-model=precise"
 cmake --build "$build" -j "${BUILD_JOBS:-8}"
 sha256sum "$build/src/athena" > "$build/executable.sha256"
