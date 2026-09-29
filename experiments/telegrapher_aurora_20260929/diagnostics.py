@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Plot saved campaign data and locate Hamiltonian peaks on the x-axis slice."""
 import argparse
+import gzip
 import json
 import math
 import re
@@ -10,7 +11,9 @@ from analyze import analyze, numeric_rows
 
 
 def slice_data(path):
-    lines = path.read_text().splitlines()
+    text = (gzip.decompress(path.read_bytes()).decode() if path.suffix == '.gz'
+            else path.read_text())
+    lines = text.splitlines()
     time = float(re.search(r'time=([\d.eE+-]+)', lines[0])[1])
     names = lines[1].split()[1:]
     return time, [dict(zip(names, row)) for row in numeric_rows(path)]
@@ -20,7 +23,7 @@ def slice_peaks(run):
     trackers = list(run.glob('*.co_0.txt'))
     tracker = numeric_rows(trackers[0]) if trackers else []
     peaks = []
-    for path in sorted((run / 'tab').glob('*.con.*.tab')):
+    for path in sorted((run / 'tab').glob('*.con.*.tab*')):
         time, rows = slice_data(path)
         zpath = path.with_name(path.name.replace('.con.', '.z4c.'))
         if not zpath.exists():
@@ -95,7 +98,7 @@ def main(root):
     fig, axes = plt.subplots(len(selected), 2, figsize=(12, 3.5 * len(selected)),
                              squeeze=False, constrained_layout=True)
     for run, pair in zip(selected, axes):
-        paths = sorted((run / 'tab').glob('*.con.*.tab'))
+        paths = sorted((run / 'tab').glob('*.con.*.tab*'))
         available = [(slice_data(path)[0], path) for path in paths]
         chosen = dict.fromkeys(min(available, key=lambda item: abs(item[0] - target))[1]
                                for target in (0, 1, 5, 10, 20))

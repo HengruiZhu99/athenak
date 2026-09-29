@@ -71,3 +71,5 @@ The unboosted x-axis outermost cells have |H| approximately 3.27e-5 from t=1 thr
 Gamma=5 level-7 resolution job `8879509` is queued on 16-node debug-scaling, with both finders and a 20 M target. This repeats the evolution at dx=1/128 while retaining the angular settings, allowing a spatial-resolution comparison rather than claiming angular convergence.
 
 The first gamma=5 evolution attempt in job `8879483` reached the fastflow iteration cap at 0.500744 M. Its failed-search output repeats the previous successful surface; that repeated mass and residual are stale and must not count as convergence. The verbose log records the rejection. The run was stopped and preserved in `results/evolution_8879483`. The pending resolution job `8879509` was canceled before execution. High-boost fastflow decks now allow 4,000 iterations with the same alpha and expansion thresholds. A replacement batch starts with BHaHAHA.
+
+Saved slice tables are gzip-compressed without losing numerical values; `diagnostics.py` reads the compressed files directly. The gamma=5 resolution replacement uses BHaHAHA first and the increased fastflow iteration cap.

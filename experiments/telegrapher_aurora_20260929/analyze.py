@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Summarize actual horizon convergence and evolution progress, without dependencies."""
 import argparse
+import gzip
 import json
 import math
 import re
@@ -11,7 +12,9 @@ def numeric_rows(path):
     if not path.exists():
         return []
     rows = []
-    for line in path.read_text().splitlines():
+    text = (gzip.decompress(path.read_bytes()).decode() if path.suffix == '.gz'
+            else path.read_text())
+    for line in text.splitlines():
         if line.strip() and not line.lstrip().startswith('#'):
             try:
                 rows.append([float(x) for x in line.split()])
