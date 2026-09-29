@@ -49,6 +49,9 @@ def analyze(run):
                           expansion_rms_times_mass=math.sqrt(max(0, r[8])) * r[2],
                           mean_expansion_times_mass=abs(r[9]) * r[2] / r[7],
                           min_radius=r[11])
+            result['max_recorded_expansion_rms_times_mass'] = max(
+                math.sqrt(max(0, r[8])) * r[2] for r in usable)
+            result['max_recorded_mass_error'] = max(abs(r[2] - 1) for r in usable)
     else:
         paths = list((run / 'horizon').glob('BHaHAHA_diagnostics.ah*.gp'))
         rows = numeric_rows(paths[0]) if paths else []
@@ -62,6 +65,8 @@ def analyze(run):
             result.update(last_horizon_time=r[1], mass=r[24], mass_irr=r[12],
                           area=r[11], expansion_linf_times_mass=r[13],
                           expansion_rms_times_mass=r[14], min_radius=r[5])
+            result['max_recorded_expansion_rms_times_mass'] = max(r[14] for r in usable)
+            result['max_recorded_mass_error'] = max(abs(r[24] - 1) for r in usable)
     if 'mass' in result:
         result['mass_relative_error_to_1M'] = abs(result['mass'] - 1)
         result['small_expansion'] = result['expansion_rms_times_mass'] < 1e-2

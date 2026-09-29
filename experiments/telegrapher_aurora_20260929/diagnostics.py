@@ -88,6 +88,39 @@ def main(root):
     plt.close(fig)
     (root / 'constraint_slice_peaks.json').write_text(
         json.dumps(peaks, indent=2, allow_nan=False) + '\n')
+    selected = [run for run in runs if run.name in
+                ('g1_fastflow_L5', 'g5_fastflow_L6', 'g5_fastflow_L7')]
+    fig, axes = plt.subplots(len(selected), 2, figsize=(12, 3.5 * len(selected)),
+                             squeeze=False, constrained_layout=True)
+    for run, pair in zip(selected, axes):
+        paths = sorted((run / 'tab').glob('*.con.*.tab'))
+        available = [(slice_data(path)[0], path) for path in paths]
+        chosen = dict.fromkeys(min(available, key=lambda item: abs(item[0] - target))[1]
+                               for target in (0, 1, 5, 10, 20))
+        tracker = numeric_rows(next(run.glob('*.co_0.txt')))
+        for path in chosen:
+            time, rows = slice_data(path)
+            _, zrows = slice_data(path.with_name(path.name.replace('.con.', '.z4c.')))
+            chi = {(r['gid'], r['i']): r['z4c_chi'] for r in zrows}
+            rows = sorted(rows, key=lambda r: r['x1v'])
+            values = [abs(r['con_H']) if chi[(r['gid'], r['i'])] >= 0.0625
+                      else math.nan for r in rows]
+            center = min(tracker, key=lambda r: abs(r[1] - time))[2]
+            pair[0].semilogy([r['x1v'] for r in rows],
+                             values, label=f't={time:.2f}')
+            pair[1].semilogy([r['x1v'] - center for r in rows],
+                             values, label=f't={time:.2f}')
+        pair[0].set_xlabel('x / rest mass')
+        pair[1].set_xlabel('(x − tracker x) / rest mass')
+        pair[1].set_xlim(-4, 4)
+        for ax in pair:
+            ax.set_ylabel('|H|, chi ≥ 0.0625')
+            ax.set_title(run.name)
+            ax.grid(alpha=0.2)
+            ax.legend(fontsize=8)
+    fig.savefig(root / 'constraint_profiles.png', dpi=180)
+    fig.savefig(root / 'constraint_profiles.pdf')
+    plt.close(fig)
 
 
 if __name__ == '__main__':
