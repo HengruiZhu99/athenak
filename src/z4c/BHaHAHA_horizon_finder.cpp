@@ -111,6 +111,8 @@ void BHAHAHorizonFinder::LoadParameters() {
   find_every_ = pin_->GetOrAddInteger("bhahaha", "bah_find_every", 1);
   dt_find_ = pin_->GetOrAddReal("bhahaha", "bah_dt", 0.0);
   initial_dt_find_ = pin_->GetOrAddReal("bhahaha", "bah_initial_dt", 0.0);
+  cold_start_each_find_ =
+      pin_->GetOrAddBoolean("bhahaha", "bah_cold_start_each_find", false);
   if (!std::isfinite(initial_dt_find_) || initial_dt_find_ < 0.0) {
     std::cerr << "bhahaha/bah_initial_dt must be finite and nonnegative" << std::endl;
     abort();
@@ -148,6 +150,12 @@ void BHAHAHorizonFinder::LoadParameters() {
   bah_BBH_mode_common_horizon_idx_ =
       pin_->GetOrAddInteger("bhahaha", "bah_BBH_mode_common_horizon_idx", 2);
 
+  if (cold_start_each_find_ && (max_num_horizons_ != 1 || bah_BBH_mode_enable_)) {
+    std::cerr << "bhahaha/bah_cold_start_each_find requires one independent horizon"
+              << std::endl;
+    abort();
+  }
+
   m_guess.assign(max_num_horizons_,0.0);
   for (int h = 0; h < max_num_horizons_; ++h) {
     m_guess[h] = pin_->GetOrAddReal("bhahaha", "bah_mass_"+std::to_string(h), 1.0);
@@ -170,7 +178,7 @@ void BHAHAHorizonFinder::checkMultigridResolutionInputs() {
 void BHAHAHorizonFinder::FindHorizons() {
   Real time = pmbp_->pmesh->time;
   double interval = dt_find_;
-  if (initial_dt_find_ > 0.0 && interval > 0.0) {
+  if (!cold_start_each_find_ && initial_dt_find_ > 0.0 && interval > 0.0) {
     for (int h = 0; h < max_num_horizons_; ++h) {
       if (bah_horizon_active_[h] && params_data_[h].t_m3 < 0.0) {
         interval = std::min(interval, initial_dt_find_);
@@ -185,6 +193,10 @@ void BHAHAHorizonFinder::FindHorizons() {
   }
 
   for (int h = 0; h < max_num_horizons_; ++h) {
+    // A fresh full-sphere search is useful for validating independent moving
+    // punctures when the extrapolated shell/shape history is unreliable.
+    // Keep the regular cadence: cold searches cannot build bootstrap history.
+    if (cold_start_each_find_) resetHorizonHistory(h);
     readPersistentData(h);
   }
 
