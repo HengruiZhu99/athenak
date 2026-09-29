@@ -38,7 +38,15 @@ module list > "$group/modules.txt" 2>&1
 cat "$PBS_NODEFILE" > "$group/nodes.txt"
 nodes=$(sort -u "$PBS_NODEFILE" | wc -l)
 ranks=$((12 * nodes))
+deadline=$((SECONDS + ${JOB_BUDGET_SECONDS:-3000}))
 for case_name in $cases; do
+  remaining=$((deadline - SECONDS))
+  if (( remaining < 180 )); then
+    echo "Batch time budget exhausted before starting $case_name"
+    break
+  fi
+  printf -v time_budget '%02d:%02d:%02d' $((remaining / 3600)) \
+    $((remaining % 3600 / 60)) $((remaining % 60))
   run="$group/$case_name"
   mkdir -p "$run"
   cp "$workflow/inputs/$case_name.athinput" "$run/input.athinput"
@@ -60,7 +68,7 @@ for case_name in $cases; do
   set +e
   mpiexec -n "$ranks" -ppn 12 --cpu-bind="$bind" \
     "$tile_wrapper" "$exe" "${input_args[@]}" \
-    -t 00:50:00 "${overrides[@]}" > run.log 2>&1
+    -t "$time_budget" "${overrides[@]}" > run.log 2>&1
   rc=$?
   set -e
   echo "$rc" > exit_status.txt
