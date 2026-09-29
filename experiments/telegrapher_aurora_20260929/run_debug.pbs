@@ -1,0 +1,60 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -N telegraph-ah
+#PBS -l select=1
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=flare:home
+#PBS -l place=scatter
+#PBS -j oe
+
+set -euo pipefail
+campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929
+source_root="$campaign/source"
+workflow="$source_root/experiments/telegrapher_aurora_20260929"
+exe="$source_root/build/aurora-sycl/src/athena"
+tile_wrapper="$(command -v gpu_tile_compact.sh)"
+test -x "$exe"
+export MPICH_GPU_SUPPORT_ENABLED=1
+export OMP_NUM_THREADS=8
+export OMP_PLACES=threads
+export OMP_PROC_BIND=spread
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+bind='list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
+phase=${PHASE:-smoke}
+if [[ $phase == smoke ]]; then
+  cases='g1_fastflow_L5 g1_bhahaha_L5'
+else
+  cases=${CASE:?Set CASE to the input stem for an evolution}
+fi
+group="$campaign/runs/${phase}_${PBS_JOBID%%.*}"
+mkdir -p "$group"
+git -C "$source_root" rev-parse HEAD > "$group/source_commit.txt"
+sha256sum "$exe" > "$group/executable.sha256"
+module list > "$group/modules.txt" 2>&1
+cat "$PBS_NODEFILE" > "$group/nodes.txt"
+for case_name in $cases; do
+  run="$group/$case_name"
+  mkdir -p "$run"
+  cp "$workflow/inputs/$case_name.athinput" "$run/input.athinput"
+  cd "$run"
+  overrides=()
+  if [[ $phase == smoke ]]; then
+    overrides=(time/nlim=4)
+  fi
+  restart=()
+  if [[ -n ${RESTART_FILE:-} ]]; then
+    restart=(-r "$RESTART_FILE")
+  fi
+  set +e
+  mpiexec -n 12 -ppn 12 --cpu-bind="$bind" \
+    "$tile_wrapper" "$exe" -i "$run/input.athinput" \
+    "${restart[@]}" -t 00:50:00 "${overrides[@]}" > run.log 2>&1
+  rc=$?
+  set -e
+  echo "$rc" > exit_status.txt
+  if (( rc != 0 )); then
+    tail -50 run.log
+    exit "$rc"
+  fi
+done
