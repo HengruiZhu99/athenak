@@ -24,6 +24,8 @@ bind='list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100
 phase=${PHASE:-smoke}
 if [[ $phase == smoke ]]; then
   cases='g1_fastflow_L5 g1_bhahaha_L5'
+elif [[ $phase == ladder ]]; then
+  cases='g1.5_fastflow_L5 g1.5_bhahaha_L5 g2_fastflow_L5 g2_bhahaha_L5 g3_fastflow_L6 g3_bhahaha_L6 g4_fastflow_L6 g4_bhahaha_L6 g5_fastflow_L6 g5_bhahaha_L6'
 else
   cases=${CASE:?Set CASE to the input stem for an evolution}
 fi
@@ -39,7 +41,7 @@ for case_name in $cases; do
   cp "$workflow/inputs/$case_name.athinput" "$run/input.athinput"
   cd "$run"
   overrides=()
-  if [[ $phase == smoke ]]; then
+  if [[ $phase == smoke || $phase == ladder ]]; then
     overrides=(time/nlim=4)
   fi
   restart=()
