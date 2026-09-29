@@ -52,14 +52,15 @@ for case_name in $cases; do
   if [[ $phase == smoke || $phase == ladder ]]; then
     overrides+=(time/nlim=4)
   fi
-  restart=()
+  input_args=(-i "$run/input.athinput")
   if [[ -n ${RESTART_FILE:-} ]]; then
-    restart=(-r "$RESTART_FILE")
+    # Preserve the checkpoint's evolving tracker and output parameters.
+    input_args=(-r "$RESTART_FILE")
   fi
   set +e
   mpiexec -n "$ranks" -ppn 12 --cpu-bind="$bind" \
-    "$tile_wrapper" "$exe" -i "$run/input.athinput" \
-    "${restart[@]}" -t 00:50:00 "${overrides[@]}" > run.log 2>&1
+    "$tile_wrapper" "$exe" "${input_args[@]}" \
+    -t 00:50:00 "${overrides[@]}" > run.log 2>&1
   rc=$?
   set -e
   echo "$rc" > exit_status.txt
