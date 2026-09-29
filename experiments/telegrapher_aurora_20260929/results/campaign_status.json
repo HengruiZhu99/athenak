@@ -39,9 +39,9 @@
   "canceled_job": "8879325",
   "account": "CompactBinaryMerger",
   "next_steps": [
-    "Retrieve boosted 20 M evolution outcomes and resume checkpoints if needed",
-    "Run gamma=5 level-7 resolution repeat",
-    "Analyze horizon residuals and constraint slices; record actual completion evidence"
+    "Verify v2 moving horizon residuals and tracking",
+    "Complete boosted and higher-resolution 20 M evolutions, restarting checkpoints if necessary",
+    "Compare horizon masses and constraint profiles across resolutions"
   ],
   "access_restored": "2026-09-29",
   "boosted_evolution_jobs": [
@@ -56,7 +56,13 @@
         "g2_bhahaha_L5"
       ],
       "state_at_submission": "Q",
-      "last_seen_state": "R"
+      "last_seen_state": "R",
+      "state": "F",
+      "completed_fastflow_20M": [
+        "g1.5_fastflow_L5",
+        "g2_fastflow_L5"
+      ],
+      "bhahaha_tracking_qualified": false
     },
     {
       "id": "8879483",
@@ -112,6 +118,33 @@
       "g5_fastflow_L7"
     ],
     "state_at_submission": "Q",
-    "fastflow_max_iterations": 4000
-  }
+    "fastflow_max_iterations": 4000,
+    "state": "canceled before execution; replaced by v2 job 8879644"
+  },
+  "aurora_source_commit_v2": "1a91212fe7a68bdb1f423329babcab90da9df301",
+  "aurora_build_v2_success": true,
+  "aurora_executable_sha256_v2": "8b186cec17f03b2c1029e3c11165c085bc7a45180ec6e13cb010692cab8f3600",
+  "v2_jobs": [
+    {
+      "id": "8879643",
+      "queue": "debug",
+      "nodes": 2,
+      "cases": [
+        "g5_bhahaha_L6",
+        "g1.5_bhahaha_L5",
+        "g2_bhahaha_L5"
+      ],
+      "last_seen_state": "Q"
+    },
+    {
+      "id": "8879644",
+      "queue": "debug-scaling",
+      "nodes": 32,
+      "cases": [
+        "g5_bhahaha_L7",
+        "g5_fastflow_L7"
+      ],
+      "last_seen_state": "Q"
+    }
+  ]
 }
