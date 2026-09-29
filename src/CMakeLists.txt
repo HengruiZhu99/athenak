@@ -5,6 +5,16 @@
 #=========================================================================================
 
 # list of files to be compiled into executable name
+set(Athena_MESH_PACK_OPT_LEVEL "" CACHE STRING
+    "Optional optimization override for the physics-registration translation unit")
+if(NOT Athena_MESH_PACK_OPT_LEVEL STREQUAL "")
+  if(NOT Athena_MESH_PACK_OPT_LEVEL MATCHES "^[0-3]$")
+    message(FATAL_ERROR "Athena_MESH_PACK_OPT_LEVEL must be empty or 0, 1, 2, 3")
+  endif()
+  set_source_files_properties(mesh/meshblock_pack.cpp PROPERTIES
+    COMPILE_OPTIONS "-O${Athena_MESH_PACK_OPT_LEVEL}")
+endif()
+
 add_executable(
     athena
         main.cpp
