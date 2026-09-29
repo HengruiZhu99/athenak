@@ -227,9 +227,10 @@
         "g4_fastflow_L6",
         "g5_fastflow_L6"
       ],
-      "last_seen_state": "Q",
+      "last_seen_state": "canceled",
       "fastflow_interval": 0.1,
-      "executable": "aurora-sycl-v2"
+      "executable": "aurora-sycl-v2",
+      "state": "canceled before execution at user wrap-up request"
     },
     {
       "id": "8879707",
@@ -240,10 +241,28 @@
         "g1.5_bhahaha_L5",
         "g2_bhahaha_L5"
       ],
-      "last_seen_state": "Q",
+      "last_seen_state": "R",
       "cold_start": true,
       "interval": 0.5,
-      "executable": "aurora-sycl-v3"
+      "executable": "aurora-sycl-v3",
+      "state": "R at wrap-up snapshot"
     }
-  ]
+  ],
+  "wrap_up": {
+    "requested_by_user": true,
+    "snapshot_utc": "2026-09-29 23:18 UTC",
+    "goal_complete": false,
+    "new_submissions_stopped": true,
+    "queued_job_canceled": "8879705",
+    "running_jobs_left_to_finish_normally": [
+      "8879663",
+      "8879707"
+    ],
+    "automatic_continuations": false,
+    "latest_observed_times_M": {
+      "8879663": 2.944022,
+      "8879707": 1.568291
+    },
+    "note": "These are partial observations; final job outputs remain on Aurora and require collection after completion."
+  }
 }

@@ -56,7 +56,7 @@ The gamma=5 CPU initial-data probes (one Euler step at CFL=1e-8, physical time a
 
 ## Aurora results and current status
 
-The compile/run milestone is achieved. Both original PR heads are merged on the separate branch, and the original branches and `telegrapher_gauge` checkout remain unchanged. The complete boosted tracking and resolution campaign is still in progress; `results/campaign_status.json` records submissions and outcomes.
+The compile/run milestone is achieved. Both original PR heads are merged on the separate branch, and the original branches and `telegrapher_gauge` checkout remain unchanged. The complete boosted tracking and resolution campaign is unfinished; new submissions stopped at the user’s wrap-up request; `results/campaign_status.json` records submissions and outcomes.
 
 | Job | Queue / nodes | Actual outcome |
 | --- | --- | --- |
@@ -70,8 +70,8 @@ The compile/run milestone is achieved. Both original PR heads are merged on the 
 | 8879644 | debug-scaling / 32 | Canceled before execution to separate finder budgets. |
 | 8879662 | debug / 2 | Uniform 0.01 M BHaHAHA probe reaches 0.3 M: 18 successes, six failures, no above-threshold successes; rejected. |
 | 8879663 | debug-scaling / 32 | v2 gamma=5 level-7 fastflow running, target 20 M. |
-| 8879674 | debug-scaling / 8 | v2 gamma=3, 4, 5 level-6 fastflow queued, each target 20 M. |
-| 8879681 | debug / 2 | Uniform-cadence radial probe queued, Nr=2048, gamma=5, target 0.3 M. |
+| 8879674 | debug-scaling / 8 | Canceled before execution; replacement 8879705 also canceled at wrap-up. |
+| 8879681 | debug / 2 | Nr=2048 probe reaches 0.3 M, 18 successes and six failures; rejected. |
 
 Jobs 8879325, 8879509, 8879539, and 8879561 were canceled before execution. Cancellation/rejected attempts are retained separately from successful qualifications. Only actual t=20 termination and successful exit count as a completed evolution. A completed evolution with failed horizon searches does not establish reliable horizon tracking.
 
@@ -112,3 +112,11 @@ The Nr=2048 radial probe (8879681) also reaches 0.3 M with 18 successes and six 
 High-boost fastflow at 0.5 M intervals spends thousands of iterations relaxing the change between consecutive surfaces, even with prediction. v3 tests a 0.1 M interval while retaining all flow coefficients and residual criteria. `FASTFLOW_FIND_DT` can override the existing cadence parameter on a checkpoint continuation; `actual_arguments.txt` and `restart_source.txt` record the effective invocation. Such continuations preserve the saved fields and spectral history.
 
 The independent v3 GPU build succeeded from the cold-start support revision; see `results/compilation_v3` for its source and binary hash. Job 8879707 (two-node debug) requests cold gamma=5, 1.5, and 2 BHaHAHA evolutions to 20 M. Job 8879705 replaces queued job 8879674 before execution, using v2 fastflow with v3 0.1 M decks for gamma=3, 4, and 5. `RESTART_CASE` restricts a supplied checkpoint to the named case in a mixed batch; other cases start from their own decks.
+
+## Wrap-up snapshot — 2026-09-29 23:18 UTC
+
+New submissions stopped at the user’s request. Queued job 8879705 was canceled before execution. Jobs 8879663 (32-node level-7 gamma=5 fastflow) and 8879707 (two-node cold-search BHaHAHA batch) were already running and are left to terminate normally within their existing one-hour allocations so checkpoint writes can complete. No continuation is submitted or scheduled. Latest progress-log times are 2.944022 M and 1.568291 M, respectively; these are partial observations, not final results. The latter has successful early cold searches, but does not yet qualify 20 M tracking.
+
+Completed qualifications: both finders at gamma=1, and fastflow at gamma=1.5 and 2, each through 20 M with 40 successful searches and zero failures. Both finders also passed initial searches at gamma=1.5, 2, 3, 4, and 5. Reliable boosted BHaHAHA tracking, the remaining higher-boost 20 M fastflow cases, and both gamma=5 level-7 20 M resolution comparisons remain unfinished. The v3 cold-search mode avoids unreliable warm-start history; warm tracking is not repaired.
+
+All completed-run evidence and all three Aurora build provenance records are retained in results. A partial snapshot of the two running jobs is retained separately in results/wrap_snapshot_20260929; it must not be interpreted as their final output. Large restart files and eventual final outputs remain under /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/runs on Aurora. Collect final outputs before judging these two jobs, then use the saved spectral-history checkpoints for any authorized future continuation.
