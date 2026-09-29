@@ -14,7 +14,11 @@
   "ladder_job": {
     "id": "8879324",
     "last_seen_state": "R",
-    "last_seen_node": "x4304c2s0b0n0"
+    "last_seen_node": "x4304c2s0b0n0",
+    "state": "F",
+    "pbs_exit_status": 0,
+    "wall_seconds": 896,
+    "all_ten_cases_success": true
   },
   "baseline_job": {
     "id": "8879327",
@@ -24,16 +28,48 @@
     "cases": [
       "g1_fastflow_L5",
       "g1_bhahaha_L5"
-    ]
+    ],
+    "state": "F",
+    "pbs_exit_status": 0,
+    "wall_seconds": 1208,
+    "both_finders_completed_20M": true,
+    "horizon_searches_each": 40,
+    "failures": 0
   },
   "canceled_job": "8879325",
-  "blocking_issue": "Authenticated Aurora SSH ControlMaster disappeared; interactive authentication required",
   "account": "CompactBinaryMerger",
   "next_steps": [
-    "Restore authenticated SSH proxy",
-    "Retrieve ladder and baseline outcomes",
-    "Qualify any failed finder settings",
-    "Run high-boost 20 M evolutions and resolution repeat, using debug-scaling as needed",
-    "Analyze horizon residuals and constraints; record actual completion evidence"
+    "Retrieve boosted 20 M evolution outcomes and resume checkpoints if needed",
+    "Run gamma=5 level-7 resolution repeat",
+    "Analyze horizon residuals and constraint slices; record actual completion evidence"
+  ],
+  "access_restored": "2026-09-29",
+  "boosted_evolution_jobs": [
+    {
+      "id": "8879482",
+      "queue": "debug",
+      "nodes": 2,
+      "cases": [
+        "g1.5_fastflow_L5",
+        "g1.5_bhahaha_L5",
+        "g2_fastflow_L5",
+        "g2_bhahaha_L5"
+      ],
+      "state_at_submission": "Q"
+    },
+    {
+      "id": "8879483",
+      "queue": "debug-scaling",
+      "nodes": 8,
+      "cases": [
+        "g5_fastflow_L6",
+        "g5_bhahaha_L6",
+        "g4_fastflow_L6",
+        "g4_bhahaha_L6",
+        "g3_fastflow_L6",
+        "g3_bhahaha_L6"
+      ],
+      "state_at_submission": "Q"
+    }
   ]
 }

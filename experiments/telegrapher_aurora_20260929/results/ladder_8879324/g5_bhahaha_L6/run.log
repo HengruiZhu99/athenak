@@ -1,0 +1,83 @@
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 400
+Number of logical  levels of refinement = 8 (9 levels total)
+Number of physical levels of refinement = 6 (7 levels total)
+  Physical level = 0 (logical level = 2): 56 MeshBlocks, cost = 56
+  Physical level = 1 (logical level = 3): 56 MeshBlocks, cost = 56
+  Physical level = 2 (logical level = 4): 56 MeshBlocks, cost = 56
+  Physical level = 3 (logical level = 5): 56 MeshBlocks, cost = 56
+  Physical level = 4 (logical level = 6): 56 MeshBlocks, cost = 56
+  Physical level = 5 (logical level = 7): 56 MeshBlocks, cost = 56
+  Physical level = 6 (logical level = 8): 64 MeshBlocks, cost = 64
+Number of parallel ranks = 12
+  Rank = 0: 33 MeshBlocks, cost = 33
+  Rank = 1: 33 MeshBlocks, cost = 33
+  Rank = 2: 33 MeshBlocks, cost = 33
+  Rank = 3: 33 MeshBlocks, cost = 33
+  Rank = 4: 33 MeshBlocks, cost = 33
+  Rank = 5: 33 MeshBlocks, cost = 33
+  Rank = 6: 33 MeshBlocks, cost = 33
+  Rank = 7: 33 MeshBlocks, cost = 33
+  Rank = 8: 34 MeshBlocks, cost = 34
+  Rank = 9: 34 MeshBlocks, cost = 34
+  Rank = 10: 34 MeshBlocks, cost = 34
+  Rank = 11: 34 MeshBlocks, cost = 34
+Load Balancing:
+  Maximum normalized cost = 1.0303, Average = 1.0101
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+AssembleZ4cTasks
+OnePuncture initialized.
+
+Setup complete, executing task list(s)...
+
+elapsed=4.694645e+01 cycle=0 time=0.000000e+00 dt=3.092331e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=0.000 }=-
+#Final iteration: 9064, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(4.03503e-03, 9.92164e-04) = (L_inf Theta, L2 Theta)
+#(5.02390e+01, 9.99736e-01) = (Area, M_irr)
+#(+8.7413e-06, -2.3992e-16, -2.2942e-16) = (x, y, z) centroid, wrt input grid origin
+#(+3.0199e-03, -2.3992e-16, -2.2942e-16) = (x, y, z) centroid, wrt global origin
+#(9.98679e-02, 4.94624e-01, 3.98002e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25695e+01, 1.25713e+01, 1.25669e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0.02807, 0.04348) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0, 0.03321) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.867 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 3.069249e-02, MPI 8.647902e-02, solve 2.876700e+00
+
+Terminating on cycle limit
+time=1.245488e-02 cycle=4
+tlim=2.000000e+01 nlim=4
+
+Current number of MeshBlocks = 400
+0 MeshBlocks created, 0 deleted by AMR
+0 communicated for load balancing, load balancing efficiency = 9.900000e-01
+
+MeshBlock-cycles = 1600
+cpu time used  = 4.925726e+01
+zone-cycles/cpu_second = 1.064387e+06
+particle-updates/cpu_second = 0.000000e+00
