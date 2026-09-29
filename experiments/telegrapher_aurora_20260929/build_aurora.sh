@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 root=$PWD
-build="$root/build/aurora-sycl"
+build="${BUILD_DIRECTORY:-$root/build/aurora-sycl}"
 module load cmake
 # Kokkos 4.7 compatibility with oneAPI 2026.1; retain the pinned submodule.
 python3 - <<'PATCH'

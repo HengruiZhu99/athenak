@@ -5,7 +5,7 @@ problem   = z4c one puncture
 reference = e.g. Cook. Living Rev. Relativ. 3, 5 (2000)
 
 <job>
-basename  = g2_bhahaha_L5       # problem ID: basename of output filenames
+basename  = g2_fastflow_L5       # problem ID: basename of output filenames
 
 <mesh>
 nghost    = 4         # Number of ghost cells
@@ -71,7 +71,7 @@ co_0_radius = 0.8
 co_0_reflevel = 5
 tracker_mode = ode
 spatial_order = 6
-horizon_finder = bhahaha
+horizon_finder = fastflow
 co_0_type = BH
 
 <mesh_refinement>
@@ -141,18 +141,29 @@ dt          = 10
 #variable   = z4c
 #dt         = 10
 
-<bhahaha>
-bah_num_horizons = 1
-bah_mass_0 = 1.0
-bah_dt = 0.01
-bah_max_itr = 20000
-bah_Theta_Linf_tol = 1e-2
-bah_Theta_L2_tol = 2e-5
-bah_Nr_interp = 64
-bah_max_search_radius = 2.0
-bah_interp_half_width = 4
-bah_num_resolutions_multigrid = 1
-bah_Ntheta_array_multigrid_0 = 32
-bah_Nphi_array_multigrid_0 = 64
-bah_output_shape_every = 50
-bah_verbosity = 1
+<fastflow>
+npunct = 1
+num_horizons = 1
+use_puncture_0 = 0
+start_time_0 = 0.0
+stop_time_0 = 20.0
+dt = 0.5
+ntheta = 40
+lmax = 24
+flow_iterations_0 = 1000
+flow_alpha_beta_const_0 = 0.1
+hmean_tol_0 = 1e-4
+hmean_max_0 = 100.0
+mass_tol_0 = 1e-10
+verbose = true
+output_grid = false
+output_ylm = false
+
+
+# Boost-shaped seed; retain the full surface between successful searches.
+initial_axis_ratio_x_0 = 0.5
+initial_axis_ratio_y_0 = 1.0
+initial_axis_ratio_z_0 = 1.0
+use_full_previous_guess = true
+predict_previous_guess = true
+hrms_tol_0 = 0.002

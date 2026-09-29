@@ -244,9 +244,11 @@ void ParameterInput::LoadFromFile(IOWrapper &input, bool single_file_per_rank) {
       header = loc + 10; // store the header length
       break;
     }
-    if (header > kBufSize*10) {
+    // Spectral horizon guesses can exceed the old 40 KiB parameter header.
+    // Keep a finite bound so a corrupt restart cannot consume unlimited memory.
+    if (header > 4*1024*1024) {
       std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
-                << std::endl << "<par_end> is not found in the first 40KBytes."
+                << std::endl << "<par_end> is not found in the first 4 MiB."
                 << std::endl << "Probably the file is broken or the wrong file is "
                 << "specified" << std::endl;
       std::exit(EXIT_FAILURE);
@@ -800,7 +802,9 @@ void ParameterInput::ParameterDump(std::ostream& os) {
 
       len = itb->max_len_parname - param_name.length() + 1;
       param_name.append(len,' ');                         // pad name  to align vertically
-      len = itb->max_len_parvalue - param_value.length() + 1;
+      // Avoid padding every line to the length of a serialized spectral guess.
+      const std::size_t value_width = std::min(itb->max_len_parvalue, std::size_t(80));
+      len = value_width > param_value.length() ? value_width - param_value.length() + 1 : 1;
       param_value.append(len,' ');                        // pad value to align vertically
 
       os<< param_name << "= " << param_value << itl->param_comment <<  std::endl;

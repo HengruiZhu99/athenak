@@ -10,6 +10,7 @@
 #define Z4C_FASTFLOW_HPP_
 
 #include <cstdio>
+#include <array>
 
 #include <memory>
 #include <string>
@@ -157,9 +158,17 @@ class FastFlow {
   void FastFlowLoop();
   void InitialGuess();
   void SeedEllipsoid(Real radius);
+  void RestoreFullGuess();
+  void SaveFullGuess();
+  std::vector<Real> PackGuess();
+  void ApplyGuess(const std::vector<Real> &values);
+  void PredictGuess();
   Real initial_axis_ratio[3] = {1.0, 1.0, 1.0};
   bool use_full_previous_guess = false;
   bool full_guess_ready = false;
+  bool predict_previous_guess = false;
+  std::array<std::vector<Real>, 3> guess_history;
+  std::array<Real, 3> guess_times = {-1.0, -1.0, -1.0};
 
   // Pointers to MeshBlockPack and ParameterInput
   MeshBlockPack *pmbp;

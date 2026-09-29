@@ -110,6 +110,11 @@ void BHAHAHorizonFinder::Find(Driver *pdrive, int stage) {
 void BHAHAHorizonFinder::LoadParameters() {
   find_every_ = pin_->GetOrAddInteger("bhahaha", "bah_find_every", 1);
   dt_find_ = pin_->GetOrAddReal("bhahaha", "bah_dt", 0.0);
+  initial_dt_find_ = pin_->GetOrAddReal("bhahaha", "bah_initial_dt", 0.0);
+  if (!std::isfinite(initial_dt_find_) || initial_dt_find_ < 0.0) {
+    std::cerr << "bhahaha/bah_initial_dt must be finite and nonnegative" << std::endl;
+    abort();
+  }
   last_find_time_ = -1.0e30;
   output_shape_every_ = pin_->GetOrAddInteger("bhahaha", "bah_output_shape_every", 1);
   interp_half_width_ = pin_->GetOrAddInteger("bhahaha", "bah_interp_half_width", 0);
@@ -164,8 +169,16 @@ void BHAHAHorizonFinder::checkMultigridResolutionInputs() {
 
 void BHAHAHorizonFinder::FindHorizons() {
   Real time = pmbp_->pmesh->time;
-  if (dt_find_ > 0.0) {
-    if (static_cast<float>(time) < static_cast<float>(last_find_time_ + dt_find_)) return;
+  double interval = dt_find_;
+  if (initial_dt_find_ > 0.0 && interval > 0.0) {
+    for (int h = 0; h < max_num_horizons_; ++h) {
+      if (bah_horizon_active_[h] && params_data_[h].t_m3 < 0.0) {
+        interval = std::min(interval, initial_dt_find_);
+      }
+    }
+  }
+  if (interval > 0.0) {
+    if (static_cast<float>(time) < static_cast<float>(last_find_time_ + interval)) return;
     last_find_time_ = time;
   } else if (find_every_ == 0 || pmbp_->pmesh->ncycle % find_every_ != 0) {
     return;

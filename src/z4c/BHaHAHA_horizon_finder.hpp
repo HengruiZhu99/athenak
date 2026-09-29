@@ -77,6 +77,7 @@ class BHAHAHorizonFinder : public HorizonFinder {
   // User-configurable parameters
   int find_every_;
   double dt_find_;
+  double initial_dt_find_;
   double last_find_time_;
   int output_shape_every_;
   int interp_half_width_;

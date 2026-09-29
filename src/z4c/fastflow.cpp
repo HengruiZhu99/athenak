@@ -17,6 +17,7 @@
 #include <limits>
 #include <memory>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -118,6 +119,8 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   }
   use_full_previous_guess = pin->GetOrAddBoolean("fastflow", "use_full_previous_guess",
                                                 false);
+  predict_previous_guess = pin->GetOrAddBoolean("fastflow", "predict_previous_guess",
+                                               false);
   rr_min = -1.0;
 
   expand_guess = pin->GetOrAddReal("fastflow", "expand_guess", 1.0);
@@ -167,6 +170,7 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   Kokkos::realloc(a0, lmax1);
   Kokkos::realloc(ac, lmpoints);
   Kokkos::realloc(as, lmpoints);
+  RestoreFullGuess();
 
   // Reallocate for the spherical harmonics.
   // The spherical grid is the same for all surfaces.
@@ -459,6 +463,127 @@ void FastFlow::Find(int iter, Real time) {
 
     parname = "ah_found_a0_" + std::to_string(nh);
     pin->SetBoolean("fastflow", parname, ah_found);
+    if (use_full_previous_guess) SaveFullGuess();
+  }
+}
+
+void FastFlow::SaveFullGuess() {
+  const std::string prefix = "full_guess_" + std::to_string(nh) + "_";
+  pin->SetInteger("fastflow", prefix + "lmax", lmax);
+  const char *axis[] = {"x", "y", "z"};
+  for (int d = 0; d < 3; ++d) {
+    pin->SetRealExact("fastflow", "center_" + std::string(axis[d]) + "_" +
+                      std::to_string(nh), center[d]);
+  }
+  if (pmbp->pmesh->time > guess_times[0]) {
+    for (int i = 2; i > 0; --i) {
+      guess_history[i] = guess_history[i-1];
+      guess_times[i] = guess_times[i-1];
+    }
+  }
+  guess_history[0] = PackGuess();
+  guess_times[0] = pmbp->pmesh->time;
+  for (int i = 0; i < 3; ++i) {
+    if (guess_history[i].empty()) continue;
+    std::ostringstream encoded;
+    encoded << std::setprecision(std::numeric_limits<Real>::max_digits10);
+    for (const auto value : guess_history[i]) encoded << value << ' ';
+    pin->SetString("fastflow", prefix + "coeff_" + std::to_string(i), encoded.str());
+    pin->SetRealExact("fastflow", prefix + "time_" + std::to_string(i), guess_times[i]);
+  }
+}
+
+void FastFlow::RestoreFullGuess() {
+  const std::string prefix = "full_guess_" + std::to_string(nh) + "_";
+  if (!pin->DoesParameterExist("fastflow", prefix + "lmax")) return;
+  const int stored_lmax = pin->GetInteger("fastflow", prefix + "lmax");
+  const bool restore = use_full_previous_guess && ah_found && stored_lmax == lmax;
+  for (int i = 0; i < 3; ++i) {
+    const std::string key = prefix + "coeff_" + std::to_string(i);
+    if (!pin->DoesParameterExist("fastflow", key)) continue;
+    const std::string encoded = pin->GetString("fastflow", key);
+    const Real time = pin->GetReal("fastflow", prefix + "time_" + std::to_string(i));
+    if (!restore) continue;
+    std::istringstream values(encoded);
+    Real value;
+    while (values >> value) {
+      if (!std::isfinite(value)) throw std::runtime_error("Nonfinite fastflow checkpoint guess");
+      guess_history[i].push_back(value);
+    }
+    if (!values.eof() || guess_history[i].size() != static_cast<size_t>(lmax1 * lmax1) ||
+        !std::isfinite(time)) throw std::runtime_error("Invalid fastflow checkpoint guess");
+    guess_times[i] = time;
+  }
+  if (!restore || guess_history[0].empty()) return;
+  ApplyGuess(guess_history[0]);
+  full_guess_ready = true;
+  if (verbose && global_variable::my_rank == root) {
+    std::cout << "Fastflow restored full spectral guess at t=" << guess_times[0]
+              << " with lmax=" << lmax << std::endl;
+  }
+}
+
+std::vector<Real> FastFlow::PackGuess() {
+  std::vector<Real> values;
+  values.reserve(lmax1 * lmax1);
+  for (int l = 0; l <= lmax; ++l) {
+    values.push_back(a0.h_view(l));
+    for (int m = 1; m <= l; ++m) {
+      const int idx = lmindex(l, m, lmax);
+      values.push_back(ac.h_view(idx));
+      values.push_back(as.h_view(idx));
+    }
+  }
+  return values;
+}
+
+void FastFlow::ApplyGuess(const std::vector<Real> &values) {
+  Kokkos::deep_copy(a0.h_view, 0.0);
+  Kokkos::deep_copy(ac.h_view, 0.0);
+  Kokkos::deep_copy(as.h_view, 0.0);
+  size_t n = 0;
+  for (int l = 0; l <= lmax; ++l) {
+    a0.h_view(l) = values[n++];
+    for (int m = 1; m <= l; ++m) {
+      const int idx = lmindex(l, m, lmax);
+      ac.h_view(idx) = values[n++];
+      as.h_view(idx) = values[n++];
+    }
+  }
+  a0.template modify<HostMemSpace>();
+  a0.template sync<DevExeSpace>();
+  ac.template modify<HostMemSpace>();
+  ac.template sync<DevExeSpace>();
+  as.template modify<HostMemSpace>();
+  as.template sync<DevExeSpace>();
+}
+
+void FastFlow::PredictGuess() {
+  if (!predict_previous_guess || guess_history[1].empty()) return;
+  const Real time = pmbp->pmesh->time;
+  const Real span = guess_times[0] - guess_times[1];
+  if (span <= 0.0 || time < guess_times[0] || time - guess_times[0] > 2.0*span) return;
+  const int count = guess_history[2].empty() ? 2 : 3;
+  Real weights[3] = {1.0, 1.0, 1.0};
+  for (int i = 0; i < count; ++i) {
+    for (int j = 0; j < count; ++j) {
+      if (i == j) continue;
+      const Real denominator = guess_times[i] - guess_times[j];
+      if (denominator == 0.0) return;
+      weights[i] *= (time - guess_times[j]) / denominator;
+    }
+    if (!std::isfinite(weights[i]) || std::abs(weights[i]) > 8.0) return;
+  }
+  std::vector<Real> predicted(guess_history[0].size(), 0.0);
+  for (size_t n = 0; n < predicted.size(); ++n) {
+    for (int i = 0; i < count; ++i) predicted[n] += weights[i]*guess_history[i][n];
+  }
+  ApplyGuess(predicted);
+  RadiiFromSphericalHarmonics();
+  if (!std::isfinite(rr_min) || rr_min <= 0.0) {
+    ApplyGuess(guess_history[0]);
+  } else if (verbose && ioproc) {
+    fprintf(pofile_verbose, "Used %d-surface spectral predictor\n", count);
   }
 }
 
@@ -472,6 +597,7 @@ void FastFlow::InitialGuess() {
         center[a] = pmbp->pz4c->ptracker[use_puncture]->GetPos(a);
       }
     }
+    PredictGuess();
     return;
   }
   // Reset Coefficients to Zero

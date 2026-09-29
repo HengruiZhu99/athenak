@@ -234,11 +234,14 @@ int bah_find_horizon(bhahaha_params_and_data_struct *restrict bhahaha_params_and
       } // END IF: Check for diagnostic errors
 
       // Step 5.f: Determine if stop conditions are met to exit the simulation loop.
+      // Between diagnostic evaluations, over-relaxation can leave cached norms
+      // from another trial surface. Only stop on a freshly evaluated surface.
       if (commondata.nn > bhahaha_params_and_data->max_iterations) {
         commondata.error_flag = FIND_HORIZON_MAX_ITERATIONS_EXCEEDED;
         stop_condition = 1;
         break;
       } else if (commondata.nn > 2 && // Ensure a minimum number of iterations.
+                 commondata.nn % commondata.output_diagnostics_every_nn == 0 &&
                  bhahaha_diags->Theta_Linf_times_M <= bhahaha_params_and_data->Theta_Linf_times_M_tolerance &&
                  bhahaha_diags->Theta_L2_times_M <= bhahaha_params_and_data->Theta_L2_times_M_tolerance) {
         stop_condition = 1;
