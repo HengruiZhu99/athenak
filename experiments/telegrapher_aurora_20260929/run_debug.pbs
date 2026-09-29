@@ -36,21 +36,28 @@ git -C "$source_root" rev-parse HEAD > "$group/input_commit.txt"
 sha256sum "$exe" > "$group/executable.sha256"
 module list > "$group/modules.txt" 2>&1
 cat "$PBS_NODEFILE" > "$group/nodes.txt"
+nodes=$(sort -u "$PBS_NODEFILE" | wc -l)
+ranks=$((12 * nodes))
 for case_name in $cases; do
   run="$group/$case_name"
   mkdir -p "$run"
   cp "$workflow/inputs/$case_name.athinput" "$run/input.athinput"
   cd "$run"
   overrides=()
+  if (( nodes > 1 )); then
+    capacity=128
+    if [[ $case_name == *_L7 ]]; then capacity=384; fi
+    overrides+=(mesh_refinement/max_nmb_per_rank=$((capacity / nodes + 32)))
+  fi
   if [[ $phase == smoke || $phase == ladder ]]; then
-    overrides=(time/nlim=4)
+    overrides+=(time/nlim=4)
   fi
   restart=()
   if [[ -n ${RESTART_FILE:-} ]]; then
     restart=(-r "$RESTART_FILE")
   fi
   set +e
-  mpiexec -n 12 -ppn 12 --cpu-bind="$bind" \
+  mpiexec -n "$ranks" -ppn 12 --cpu-bind="$bind" \
     "$tile_wrapper" "$exe" -i "$run/input.athinput" \
     "${restart[@]}" -t 00:50:00 "${overrides[@]}" > run.log 2>&1
   rc=$?
