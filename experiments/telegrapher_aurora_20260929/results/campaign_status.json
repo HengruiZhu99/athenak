@@ -107,7 +107,13 @@
     ],
     "fastflow_max_iterations": 4000,
     "state_at_submission": "Q",
-    "last_seen_state": "R"
+    "last_seen_state": "R",
+    "state": "F",
+    "pbs_exit_status": 0,
+    "fastflow_final_time": 2.512066,
+    "fastflow_successes": 6,
+    "fastflow_failures": 0,
+    "remaining_cases_started": false
   },
   "replacement_resolution_job": {
     "id": "8879539",
@@ -134,7 +140,8 @@
         "g1.5_bhahaha_L5",
         "g2_bhahaha_L5"
       ],
-      "last_seen_state": "Q"
+      "last_seen_state": "R",
+      "state": "canceled after repeated failures at cadence transition"
     },
     {
       "id": "8879644",
@@ -142,6 +149,28 @@
       "nodes": 32,
       "cases": [
         "g5_bhahaha_L7",
+        "g5_fastflow_L7"
+      ],
+      "last_seen_state": "Q",
+      "state": "canceled before execution; split into separate finder jobs"
+    },
+    {
+      "id": "8879662",
+      "queue": "debug",
+      "nodes": 2,
+      "phase": "cadence",
+      "cases": [
+        "g5_bhahaha_L6"
+      ],
+      "tlim": 0.3,
+      "cadence": 0.01,
+      "last_seen_state": "Q"
+    },
+    {
+      "id": "8879663",
+      "queue": "debug-scaling",
+      "nodes": 32,
+      "cases": [
         "g5_fastflow_L7"
       ],
       "last_seen_state": "Q"

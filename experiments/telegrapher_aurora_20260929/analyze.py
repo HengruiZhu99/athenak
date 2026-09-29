@@ -110,6 +110,11 @@ def analyze(run):
     hst = list(run.glob('*.hst'))
     history = numeric_rows(hst[0]) if hst else []
     if history:
+        result['last_history_time'] = max(r[0] for r in history)
+        # Canceled jobs may stop between infrequent progress-log lines.
+        result['last_progress_log_time'] = result['evolution_time']
+        result['evolution_time'] = max(result['evolution_time'] or 0,
+                                       result['last_history_time'])
         result['constraints_finite'] = all(all(math.isfinite(x) for x in r)
                                             for r in history)
         for i, label in [(2, 'C'), (3, 'H'), (4, 'M')]:
@@ -117,6 +122,11 @@ def analyze(run):
             if finite:
                 peak = max(finite, key=lambda r: r[i])
                 result[label + '_norm2_peak'] = {'time': peak[0], 'value': peak[i]}
+    result['qualified_tracking_20M'] = bool(
+        result['completed_20M'] and result.get('successes', 0) > 0 and
+        result.get('failures') == 0 and result.get('pending_searches', 0) == 0 and
+        result.get('reported_successes_above_rms_tolerance') == 0 and
+        result.get('constraints_finite') is True)
     return result
 
 

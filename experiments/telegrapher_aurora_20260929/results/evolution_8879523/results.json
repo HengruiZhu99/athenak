@@ -1,6 +1,6 @@
 [
   {
-    "run": "experiments/telegrapher_aurora_20260929/results/evolution_8879523/g5_bhahaha_L6",
+    "run": "evolution_8879523/g5_bhahaha_L6",
     "evolution_time": 20.0,
     "completed_20M": true,
     "termination": [
@@ -23,6 +23,8 @@
     "reported_successes_above_rms_tolerance": 1,
     "mass_relative_error_to_1M": 0.0001466073472100593,
     "small_expansion": true,
+    "last_history_time": 20.0,
+    "last_progress_log_time": 20.0,
     "constraints_finite": true,
     "C_norm2_peak": {
       "time": 20.0,
@@ -35,6 +37,59 @@
     "M_norm2_peak": {
       "time": 20.0,
       "value": 0.0147819
-    }
+    },
+    "qualified_tracking_20M": false
+  },
+  {
+    "run": "evolution_8879523/g5_fastflow_L6",
+    "evolution_time": 2.51207,
+    "completed_20M": false,
+    "termination": [
+      "Terminating on wall clock limit"
+    ],
+    "exit_status": "0",
+    "finder": "fastflow",
+    "successes": 6,
+    "mass_stall_successes": 0,
+    "searches": 6,
+    "failures": 0,
+    "pending_searches": 0,
+    "failed_search_times": [],
+    "successful_horizon_times": [
+      0.0,
+      0.5007,
+      1.0035,
+      1.5061,
+      2.0089,
+      2.509
+    ],
+    "last_horizon_time": 2.50899,
+    "mass": 0.9999995529832114,
+    "area": 50.26543751841764,
+    "expansion_rms_times_mass": 0.0019998892901910204,
+    "mean_expansion_times_mass": 7.053722580062136e-05,
+    "min_radius": 0.1247681857014542,
+    "max_recorded_expansion_rms_times_mass": 0.0019998892901910204,
+    "max_recorded_mass_error": 2.2130318138025018e-05,
+    "input_rms_tolerance": 0.002,
+    "reported_successes_above_rms_tolerance": 0,
+    "mass_relative_error_to_1M": 4.470167885850529e-07,
+    "small_expansion": true,
+    "last_history_time": 2.51207,
+    "last_progress_log_time": 2.512066,
+    "constraints_finite": true,
+    "C_norm2_peak": {
+      "time": 2.51207,
+      "value": 0.0151499
+    },
+    "H_norm2_peak": {
+      "time": 2.51207,
+      "value": 0.00183998
+    },
+    "M_norm2_peak": {
+      "time": 2.51207,
+      "value": 0.000718955
+    },
+    "qualified_tracking_20M": false
   }
 ]

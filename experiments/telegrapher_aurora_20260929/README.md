@@ -65,9 +65,11 @@ The compile/run milestone is achieved. Both original PR heads are merged on the 
 | 8879327 | debug-scaling / 2 | Both unboosted evolutions reach exactly 20 M, each 40 successful searches and zero failures; PBS exit 0, wall 1208 s. |
 | 8879482 | debug / 2 | Fastflow gamma=1.5 and 2 reach 20 M, each 40/40 successes. BHaHAHA gamma=1.5 reaches 20 M with 19 failed searches; gamma=2 stops at 1.70818 M with 66 failures. Boosted BHaHAHA tracking remains unqualified. |
 | 8879483 | debug-scaling / 8 | First gamma=5 fastflow evolution hits the 1000-iteration cap at 0.500744 M; canceled with partial outputs retained. |
-| 8879523 | debug-scaling / 8 | v1 gamma=5 BHaHAHA reaches 20 M with 20 successful and 20 failed searches. Some reported successes exceed its configured L2 threshold, so tracking is unqualified. Fastflow with 4000 iterations is slow; remaining cases depend on the batch budget. |
-| 8879643 | debug / 2 | v2 submitted: gamma=5, 1.5, 2 BHaHAHA, 20 M targets. |
-| 8879644 | debug-scaling / 32 | v2 submitted: gamma=5 level-7 BHaHAHA and fastflow, 20 M targets. |
+| 8879523 | debug-scaling / 8 | v1 gamma=5 BHaHAHA reaches 20 M with 20 successful and 20 failed searches. Some reported successes exceed its configured L2 threshold, so tracking is unqualified. Fastflow with 4000 iterations passes six searches but stops at 2.512066 M on the batch wall limit; later gamma=3/4 cases did not start. |
+| 8879643 | debug / 2 | Rejected cadence transition: gamma=5 has 27 successes within threshold, nine failures, saved history through 1.20054 M; canceled. Later cases did not start. |
+| 8879644 | debug-scaling / 32 | Canceled before execution to separate finder budgets. |
+| 8879662 | debug / 2 | Uniform 0.01 M BHaHAHA cadence probe submitted, gamma=5, target 0.3 M. |
+| 8879663 | debug-scaling / 32 | v2 gamma=5 level-7 fastflow submitted, target 20 M. |
 
 Jobs 8879325, 8879509, 8879539, and 8879561 were canceled before execution. Cancellation/rejected attempts are retained separately from successful qualifications. Only actual t=20 termination and successful exit count as a completed evolution. A completed evolution with failed horizon searches does not establish reliable horizon tracking.
 
@@ -96,3 +98,5 @@ v2 serializes all full-surface coefficients and up to three successful samples i
 In the unboosted 20 M baseline, both finder runs have identical finite histories and slices. Peak integrated squared Hamiltonian norm is 1.61735e-5 at 0.101478 M. The largest sampled non-excised x-axis |H| is 2.51144e-4 at t=9.005504, x=-0.359375, chi=0.0644641, 11 cells from a block edge. Outermost x-axis cells separately show persistent |H| around 3.27e-5 from t=1 through 20, versus about 2.44e-14 initially.
 
 For completed gamma=1.5 and 2 fastflow runs, integrated H-squared peaks are 0.00041357 and 0.00594881, respectively. Their largest sampled non-excised x-axis |H| occurs close to the puncture and chi mask: gamma=1.5 has 0.145745 at t=17.00113, x minus tracker=0.341485, chi=0.0631898, at a block edge; gamma=2 has 0.526746 at t=13.00349, x minus tracker=0.298976, chi=0.0665413, 14 cells from an edge. Thus the sampled peaks are not uniformly at block interfaces. A one-dimensional slice cannot determine the cause of the three-dimensional integrated norm. Gamma=5 level-7 repeats will test spatial resolution while retaining the angular finder settings; this does not establish angular convergence.
+
+The v2 cadence-transition test (8879643) establishes that the fresh-residual guard prevents above-threshold reported successes, but not reliable tracking: the first three 0.01 M bootstrap finds succeed, then the jump to 0.1 M fails. Quadratic extrapolation across this interval increase amplifies the short-history differences. A uniform 0.01 M cadence is being tested in `inputs_cadence_probe` before another full evolution.

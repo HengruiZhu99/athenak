@@ -1,0 +1,94 @@
+Job Id: 8879643.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Job_Name = telegraph-ah
+    Job_Owner = hzhu@aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov
+    resources_used.cpupercent = 1910
+    resources_used.cput = 01:06:28
+    resources_used.mem = 18901084kb
+    resources_used.ncpus = 416
+    resources_used.ngpus = 0
+    resources_used.vmem = 63691460080kb
+    resources_used.walltime = 00:03:12
+    job_state = F
+    queue = debug
+    server = aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov
+    Account_Name = CompactBinaryMerger
+    Checkpoint = u
+    ctime = Tue Sep 29 22:19:04 2026
+    Error_Path = aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flare
+	/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/ex
+	periments/telegrapher_aurora_20260929/telegraph-ah.e8879643
+    exec_host = x4219c2s1b0n0/0*208+x4219c2s2b0n0/0*208
+    exec_vnode = (x4219c2s1b0n0:ncpus=208)+(x4219c2s2b0n0:ncpus=208)
+    Hold_Types = n
+    Join_Path = oe
+    Keep_Files = doe
+    Mail_Points = a
+    Mail_Users = hz0693@princeton.edu
+    mtime = Tue Sep 29 22:31:43 2026
+    Output_Path = aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov:/lus/flar
+	e/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/e
+	xperiments/telegrapher_aurora_20260929/telegraph-ah.o8879643
+    Priority = 0
+    qtime = Tue Sep 29 22:19:04 2026
+    Rerunable = False
+    Resource_List.allow_account_check_failure = True
+    Resource_List.allow_negative_allocation = True
+    Resource_List.award_category = INCITE
+    Resource_List.award_type = INCITE-2026
+    Resource_List.backfill_factor = 84600
+    Resource_List.backfill_max = 50
+    Resource_List.base_score = 51
+    Resource_List.bkc_definition = compute_aurora_prod_20260928T161726_a233edf0
+	_69791cc
+    Resource_List.burn_ratio = 0.6846
+    Resource_List.current_allocation = 6813349376
+    Resource_List.enable_2nd_fp64 = True
+    Resource_List.enable_backfill = 0
+    Resource_List.enable_fifo = 1
+    Resource_List.enable_wfp = 0
+    Resource_List.fifo_factor = 1800
+    Resource_List.filesystems = flare:home
+    Resource_List.flare_fs = True
+    Resource_List.hbm_mode = flat
+    Resource_List.home_fs = True
+    Resource_List.ncpus = 416
+    Resource_List.ni_resource = aurora
+    Resource_List.nodect = 2
+    Resource_List.overburn = False
+    Resource_List.place = scatter
+    Resource_List.project_priority = 25
+    Resource_List.route_backfill = False
+    Resource_List.score_boost = 0
+    Resource_List.select = 2
+    Resource_List.snc_mode = quad
+    Resource_List.total_allocation = 21600000000
+    Resource_List.total_cpus = 10624
+    Resource_List.walltime = 01:00:00
+    Resource_List.wfp_factor = 100000
+    stime = Tue Sep 29 22:27:33 2026
+    obittime = Tue Sep 29 22:31:43 2026
+    session_id = 383479
+    jobdir = /home/hzhu
+    substate = 91
+    euser = hzhu
+    egroup = users
+    comment = Job run at Tue Sep 29 at 22:27 on (x4219c2s1b0n0:ncpus=208)+(x421
+	9c2s2b0n0:ncpus=208) and terminated by hzhu@aurora-uan-0012.hostmgmt100
+	0.cm.aurora.alcf.anl.gov
+    etime = Tue Sep 29 22:19:04 2026
+    umask = 22
+    run_count = 1
+    eligible_time = 00:08:59
+    Stageout_status = 1
+    Exit_status = 143
+    Submit_arguments = -l select=2 -v PHASE=evolution,
+	CASE=g5_bhahaha_L6 g1.5_bhahaha_L5 g2_bhahaha_L5,
+	EXECUTABLE_BUILD=/lus/flare/projects/CompactBinaryMerger/hzhu/telegrap
+	her_lapse_20260929/source/build/aurora-sycl-v2,
+	INPUT_DIRECTORY=/lus/flare/projects/CompactBinaryMerger/hzhu/telegraph
+	er_lapse_20260929/source/experiments/telegrapher_aurora_20260929/inputs
+	_v2 run_debug.pbs
+    history_timestamp = 1790721103
+    project = CompactBinaryMerger
+    Submit_Host = aurora-uan-0012.hostmgmt1000.cm.aurora.alcf.anl.gov
+
