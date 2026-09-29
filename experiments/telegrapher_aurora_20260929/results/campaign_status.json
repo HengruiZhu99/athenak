@@ -189,7 +189,8 @@
         "g4_fastflow_L6",
         "g5_fastflow_L6"
       ],
-      "last_seen_state": "Q"
+      "last_seen_state": "Q",
+      "state": "canceled before execution; replaced by shorter-cadence job 8879705"
     },
     {
       "id": "8879681",
@@ -210,9 +211,39 @@
     }
   ],
   "build_v3": {
-    "source_commit": "a2ab7337",
-    "state": "compiling",
+    "source_commit": "a2ab73376d074ba12a4ece4f912a7545749b7966",
+    "state": "success",
     "mode": "fresh build directory",
-    "cold_start_supported": true
-  }
+    "cold_start_supported": true,
+    "executable_sha256": "ceaf16758f1d2ec15a9416f2c722b648936964590aab5def61d79b0748687268"
+  },
+  "v3_jobs": [
+    {
+      "id": "8879705",
+      "queue": "debug-scaling",
+      "nodes": 8,
+      "cases": [
+        "g3_fastflow_L6",
+        "g4_fastflow_L6",
+        "g5_fastflow_L6"
+      ],
+      "last_seen_state": "Q",
+      "fastflow_interval": 0.1,
+      "executable": "aurora-sycl-v2"
+    },
+    {
+      "id": "8879707",
+      "queue": "debug",
+      "nodes": 2,
+      "cases": [
+        "g5_bhahaha_L6",
+        "g1.5_bhahaha_L5",
+        "g2_bhahaha_L5"
+      ],
+      "last_seen_state": "Q",
+      "cold_start": true,
+      "interval": 0.5,
+      "executable": "aurora-sycl-v3"
+    }
+  ]
 }

@@ -65,12 +65,12 @@ for case_name in $cases; do
     overrides+=(time/nlim=4)
   fi
   input_args=(-i "$run/input.athinput")
-  if [[ -n ${RESTART_FILE:-} ]]; then
+  if [[ -n ${RESTART_FILE:-} && ${RESTART_CASE:-$case_name} == "$case_name" ]]; then
     # Preserve the checkpoint's evolving tracker and output parameters.
     input_args=(-r "$RESTART_FILE")
     printf '%s\n' "$RESTART_FILE" > restart_source.txt
   fi
-  if [[ -n ${FASTFLOW_FIND_DT:-} ]]; then
+  if [[ -n ${FASTFLOW_FIND_DT:-} && $case_name == *fastflow* ]]; then
     overrides+=("fastflow/dt=$FASTFLOW_FIND_DT")
   fi
   printf '%q ' "$exe" "${input_args[@]}" -t "$time_budget" "${overrides[@]}" \
