@@ -59,3 +59,9 @@ The gamma=5 CPU initial-data probes (one Euler step at CFL=1e-8, physical time a
 The fresh SYCL/RDC/PVC build succeeded on 2026-09-29 with source commit `30cd2301`. The link compiled all 144 GPU images. One-node debug smoke job `8879276` finished with PBS exit status 0 on node `x4712c3s0b0n0`, under `CompactBinaryMerger`, using the new default compute image. Wall time was 2 min 49 s. Both cases completed four RK4 cycles (time 0.02899383 M) with finite constraint histories. Fastflow recovered mass 0.9999999127 and dimensionless RMS expansion 9.99e-5; BHaHAHA recovered mass 1.0000000812 and L2 expansion 1.93e-5. Raw small outputs and `results.json` are saved in `results/smoke_8879276` (large checkpoints stay on Aurora). The first compile/run milestone is achieved.
 
 Boost-ladder job `8879324` is queued on one-node debug; two-node debug-scaling baseline job `8879327` requests 20 M for both unboosted finders. The earlier queued baseline `8879325` was canceled and replaced to share the batch time budget safely across cases. No Aurora high-boost or 20 M completion is claimed yet.
+
+### Connection interruption
+
+After the smoke success and subsequent submissions, the authenticated local Aurora SSH ControlMaster closed. The last available snapshot showed boost-ladder job `8879324` running (node `x4304c2s0b0n0`) and baseline job `8879327` queued. PBS jobs continue independently of the SSH session; their current outcomes have not been retrieved. Restoring the authenticated proxy is required before monitoring, checkpoint continuation, and the high-boost 20 M submissions can continue.
+
+The gamma=4 fastflow CPU initial-data check also passed with mass near 1, minimum radius 0.125035 M, and RMS expansion below the deck tolerance 0.002. See `results/local_g4_fastflow.json`. These tiny-time CPU probes remain separate from Aurora evolution results.

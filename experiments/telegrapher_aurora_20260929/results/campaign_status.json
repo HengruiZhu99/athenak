@@ -1,0 +1,39 @@
+{
+  "goal_complete": false,
+  "aurora_build_success": true,
+  "aurora_source_commit": "30cd23013b66d4019e26a529648f5f0a8d3fcd9b",
+  "smoke_job": {
+    "id": "8879276",
+    "queue": "debug",
+    "nodes": 1,
+    "pbs_exit_status": 0,
+    "wall_seconds": 169,
+    "both_finders_success": true,
+    "time": 0.02899383
+  },
+  "ladder_job": {
+    "id": "8879324",
+    "last_seen_state": "R",
+    "last_seen_node": "x4304c2s0b0n0"
+  },
+  "baseline_job": {
+    "id": "8879327",
+    "last_seen_state": "Q",
+    "nodes": 2,
+    "queue": "debug-scaling",
+    "cases": [
+      "g1_fastflow_L5",
+      "g1_bhahaha_L5"
+    ]
+  },
+  "canceled_job": "8879325",
+  "blocking_issue": "Authenticated Aurora SSH ControlMaster disappeared; interactive authentication required",
+  "account": "CompactBinaryMerger",
+  "next_steps": [
+    "Restore authenticated SSH proxy",
+    "Retrieve ladder and baseline outcomes",
+    "Qualify any failed finder settings",
+    "Run high-boost 20 M evolutions and resolution repeat, using debug-scaling as needed",
+    "Analyze horizon residuals and constraints; record actual completion evidence"
+  ]
+}
