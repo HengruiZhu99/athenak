@@ -68,7 +68,14 @@ for case_name in $cases; do
   if [[ -n ${RESTART_FILE:-} ]]; then
     # Preserve the checkpoint's evolving tracker and output parameters.
     input_args=(-r "$RESTART_FILE")
+    printf '%s\n' "$RESTART_FILE" > restart_source.txt
   fi
+  if [[ -n ${FASTFLOW_FIND_DT:-} ]]; then
+    overrides+=("fastflow/dt=$FASTFLOW_FIND_DT")
+  fi
+  printf '%q ' "$exe" "${input_args[@]}" -t "$time_budget" "${overrides[@]}" \
+    > actual_arguments.txt
+  printf '\n' >> actual_arguments.txt
   set +e
   mpiexec -n "$ranks" -ppn 12 --cpu-bind="$bind" \
     "$tile_wrapper" "$exe" "${input_args[@]}" \
