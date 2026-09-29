@@ -38,7 +38,6 @@ cmake -U 'KOKKOS_*_OPTIONS_CHECK' -S "$root" -B "$build" \
   -DCMAKE_CXX_COMPILER=icpx -DCMAKE_C_COMPILER=icx \
   -DMPI_CXX_COMPILER=mpicxx \
   -DAthena_ENABLE_MPI=ON -DAthena_ENABLE_OPENMP=ON \
-  -DAthena_MESH_PACK_OPT_LEVEL=1 \
   -DOpenMP_CXX_FLAGS=-fiopenmp -DOpenMP_CXX_LIB_NAMES='iomp5;pthread' \
   -DPROBLEM=built_in_pgens \
   -DKokkos_ENABLE_SYCL=ON -DKokkos_ARCH_INTEL_PVC=ON \

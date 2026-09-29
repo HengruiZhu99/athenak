@@ -64,8 +64,9 @@ MeshBlockPack::~MeshBlockPack() {
   if (pz4c   != nullptr) {
     delete pz4c;
     // cce dump
-    for (auto cce : pz4c_cce) {
-      delete cce;
+    // Avoid the range iterator's recursive SYCL type check in oneAPI 2026.1.
+    for (std::size_t n = 0; n < pz4c_cce.size(); ++n) {
+      delete pz4c_cce[n];
     }
     pz4c_cce.resize(0);
   }
