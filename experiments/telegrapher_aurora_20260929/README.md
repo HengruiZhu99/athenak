@@ -2,6 +2,18 @@
 
 Scope: item 1 of the requested run plan. Establish the new-image GPU build, test both integrated apparent-horizon finders from a stationary hole through gamma=5, then evolve the successful high-boost setup to 20 M. Other initial-data problems and merger runs are excluded.
 
+## Current status — 2026-10-01
+
+New jobs use capacity following the user’s queue change. The accepted allocations are one hour or shorter; checkpoint continuations use a 25-minute application budget inside a 30-minute allocation. No new debug/debug-scaling jobs have been accepted since the campaign resumed.
+
+| Finder | Qualified 0–20 M cases | Remaining checks |
+| --- | --- | --- |
+| Fastflow | gamma=1, 1.5, 2 | gamma=3/4/5 and level-7 gamma=5, currently queued |
+| BHaHAHA fresh searches | gamma=1, 1.5, 2, 3, 5 | gamma=4 continuation and level-7 gamma=5 |
+| BHaHAHA warm search plus one cold retry | Short gamma=5 CPU check passes | gamma=5 GPU 20 M job 8883700 is running |
+
+Both finders pass initial horizon searches through gamma=5. Full tracking is qualified only from actual successful 20 M evolutions with no terminal horizon failures and no above-threshold reported successes. Fresh-search mode avoids the failing warm history; recovery handles warm failures without relaxing the residual criterion. The underlying warm predictor is still under investigation. High-resolution comparisons and constraint-spike attribution remain incomplete.
+
 ## Source
 
 Branch: `HengruiZhu99/athenak:project/telegrapher_lapse`.
@@ -40,7 +52,7 @@ qsub -v PHASE=evolution,CASE=g5_fastflow_L6 run_debug.pbs
 qsub -v PHASE=evolution,CASE=g5_bhahaha_L6 run_debug.pbs
 ```
 
-Smoke and ladder jobs explicitly stop after four steps to qualify initial horizon finding. They do not count as 20 M evolutions. Evolution jobs retain tlim=20 and checkpoint before the batch limit. A continuation can set `RESTART_FILE` to the rank-0 checkpoint; the code selects matching rank files. Continuations read parameters from the checkpoint without loading the initial deck again. Do not count wall-clock or cycle-limit exits as completion. If more nodes are needed, override the PBS queue and selection (for example `-q debug-scaling -l select=8`); the launcher uses 12 ranks per allocated node and reduces per-rank AMR capacity.
+Smoke and ladder jobs explicitly stop after four steps to qualify initial horizon finding. They do not count as 20 M evolutions. Evolution jobs retain tlim=20 and checkpoint before the batch limit. A continuation can set `RESTART_FILE` to the rank-0 checkpoint; the code selects matching rank files. Continuations read parameters from the checkpoint without loading the initial deck again. Do not count wall-clock or cycle-limit exits as completion. For the resumed campaign, explicitly override the historical PBS queue with capacity (for example `-q capacity -l select=2`); the launcher uses 12 ranks per allocated node and reduces per-rank AMR capacity.
 
 ```bash
 python3 analyze.py /path/to/job/group > results.json
@@ -56,7 +68,7 @@ The gamma=5 CPU initial-data probes (one Euler step at CFL=1e-8, physical time a
 
 ## Aurora results and current status
 
-The compile/run milestone is achieved. Both original PR heads are merged on the separate branch, and the original branches and `telegrapher_gauge` checkout remain unchanged. The complete boosted tracking and resolution campaign is unfinished; new submissions stopped at the user’s wrap-up request; `results/campaign_status.json` records submissions and outcomes.
+The compile/run milestone is achieved. Both original PR heads are merged on the separate branch, and the original branches and `telegrapher_gauge` checkout remain unchanged. The campaign resumed on 2026-10-01 and now uses capacity allocations under CompactBinaryMerger. Earlier wrap-up sections and results/campaign_status.json are dated historical snapshots. The complete boosted tracking and resolution campaign remains unfinished.
 
 | Job | Queue / nodes | Actual outcome |
 | --- | --- | --- |
