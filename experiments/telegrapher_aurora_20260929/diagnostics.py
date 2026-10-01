@@ -47,25 +47,40 @@ def slice_peaks(run):
 
 
 def peak_horizon_comparison(run, peaks, outcome):
-    """Compare the slice peak with the nearest qualified fastflow sample.
+    """Compare the slice peak with the nearest qualified horizon sample.
 
     Times are not identical; retain the offset rather than claiming synchronous
     horizon excision or using this comparison to change the history norm.
     """
-    summaries = list(run.glob('*horizon_summary_0.txt'))
-    if not peaks or not summaries or not outcome['qualified_tracking_20M']:
+    if not peaks or not outcome['qualified_tracking_20M']:
         return None
     peak = max(peaks, key=lambda row: row['max_abs_H'])
-    rows = numeric_rows(summaries[0])
+    summaries = list(run.glob('*horizon_summary_0.txt'))
+    if summaries:
+        rows = [r for r in numeric_rows(summaries[0]) if any(
+            abs(r[1] - t) < 5e-4 for t in outcome['successful_horizon_times'])]
+    else:
+        summaries = list((run / 'horizon').glob('BHaHAHA_diagnostics.ah1.gp'))
+        rows = numeric_rows(summaries[0]) if summaries else []
+    if not rows:
+        return None
     ah = min(rows, key=lambda row: abs(row[1] - peak['time']))
-    tracker = numeric_rows(next(run.glob('*.co_0.txt')))
-    center = min(tracker, key=lambda row: abs(row[1] - ah[1]))
-    distance = math.sqrt((peak['x'] - center[2])**2 + center[3]**2 + center[4]**2)
+    if outcome['finder'] == 'fastflow':
+        tracker = numeric_rows(next(run.glob('*.co_0.txt')))
+        center = min(tracker, key=lambda row: abs(row[1] - ah[1]))[2:5]
+        radius = ah[11]
+        center_source = 'nearest tracker sample (fastflow grid center)'
+    else:
+        center = ah[2:5]
+        radius = ah[5]
+        center_source = 'BHaHAHA area centroid'
+    distance = math.sqrt((peak['x'] - center[0])**2 + center[1]**2 + center[2]**2)
     return dict(slice_peak=peak, nearest_horizon_time=ah[1],
                 horizon_time_offset=ah[1] - peak['time'],
-                nearest_horizon_min_radius=ah[11],
+                center_source=center_source,
+                nearest_horizon_min_radius=radius,
                 distance_from_nearest_horizon_center=distance,
-                inside_nearest_horizon_min_radius=distance < ah[11])
+                inside_nearest_horizon_min_radius=distance < radius)
 
 
 def main(root):
