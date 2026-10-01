@@ -1,0 +1,54 @@
+diff --git a/src/z4c/BHaHAHA_horizon_finder.cpp b/src/z4c/BHaHAHA_horizon_finder.cpp
+index 97a596d3..d009ebff 100644
+--- a/src/z4c/BHaHAHA_horizon_finder.cpp
++++ b/src/z4c/BHaHAHA_horizon_finder.cpp
+@@ -115,6 +115,14 @@ void BHAHAHorizonFinder::LoadParameters() {
+       pin_->GetOrAddBoolean("bhahaha", "bah_cold_start_each_find", false);
+   retry_cold_on_failure_ =
+       pin_->GetOrAddBoolean("bhahaha", "bah_retry_cold_on_failure", false);
++  warm_shell_padding_ =
++      pin_->GetOrAddReal("bhahaha", "bah_warm_shell_padding", 0.0);
++  if (!std::isfinite(warm_shell_padding_) || warm_shell_padding_ < 0.0 ||
++      warm_shell_padding_ > 0.5) {
++    std::cerr << "bhahaha/bah_warm_shell_padding must be between 0 and 0.5"
++              << std::endl;
++    abort();
++  }
+   if (!std::isfinite(initial_dt_find_) || initial_dt_find_ < 0.0) {
+     std::cerr << "bhahaha/bah_initial_dt must be finite and nonnegative" << std::endl;
+     abort();
+@@ -152,9 +160,9 @@ void BHAHAHorizonFinder::LoadParameters() {
+   bah_BBH_mode_common_horizon_idx_ =
+       pin_->GetOrAddInteger("bhahaha", "bah_BBH_mode_common_horizon_idx", 2);
+ 
+-  if ((cold_start_each_find_ || retry_cold_on_failure_) &&
++  if ((cold_start_each_find_ || retry_cold_on_failure_ || warm_shell_padding_ > 0.0) &&
+       (max_num_horizons_ != 1 || bah_BBH_mode_enable_)) {
+-    std::cerr << "BHaHAHA cold-search options require one independent horizon"
++    std::cerr << "BHaHAHA cold-search options require one independent horizon"
+               << std::endl;
+     abort();
+   }
+@@ -406,6 +414,10 @@ void BHAHAHorizonFinder::InterpolateMetricData(int h) {
+     r_max = r_search;
+   } else {
+     bah_xyz_center_r_minmax(&pd, &xc, &yc, &zc, &r_min, &r_max);
++    // Optional additional room for relaxation in the narrowed history shell.
++    // This changes interpolation coverage, not spacing or convergence criteria.
++    r_min *= 1.0 - warm_shell_padding_;
++    r_max *= 1.0 + warm_shell_padding_;
+   }
+   grid_center_[h] = {xc, yc, zc};
+ 
+diff --git a/src/z4c/BHaHAHA_horizon_finder.hpp b/src/z4c/BHaHAHA_horizon_finder.hpp
+index ed19d528..1b236ff9 100644
+--- a/src/z4c/BHaHAHA_horizon_finder.hpp
++++ b/src/z4c/BHaHAHA_horizon_finder.hpp
+@@ -80,6 +80,7 @@ class BHAHAHorizonFinder : public HorizonFinder {
+   double initial_dt_find_;
+   bool cold_start_each_find_;
+   bool retry_cold_on_failure_;
++  double warm_shell_padding_;
+   double last_find_time_;
+   int output_shape_every_;
+   int interp_half_width_;

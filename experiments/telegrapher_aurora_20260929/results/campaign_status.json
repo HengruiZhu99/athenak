@@ -39,11 +39,12 @@
   "canceled_job": "8879325",
   "account": "CompactBinaryMerger",
   "next_steps": [
-    "Verify v2 moving horizon residuals and tracking",
-    "Complete boosted and higher-resolution 20 M evolutions, restarting checkpoints if necessary",
-    "Compare horizon masses and constraint profiles across resolutions"
+    "gamma4 fresh-search checkpoint chain to 20M",
+    "fastflow gamma3/4/5 to 20M",
+    "gamma5 level7 resolution comparison for both finders",
+    "constraint resolution assessment"
   ],
-  "access_restored": "2026-09-29",
+  "access_restored": "2026-10-01",
   "boosted_evolution_jobs": [
     {
       "id": "8879482",
@@ -266,93 +267,76 @@
     "note": "These are partial observations; final job outputs remain on Aurora and require collection after completion."
   },
   "resumed_20261001": {
-    "access_verified": true,
-    "submission_queue_restriction": "capacity only; user redirected after debug rejection",
-    "cold_search_20M_qualified": [
-      "g1.5_bhahaha_L5",
-      "g5_bhahaha_L6"
+    "snapshot_utc": "2026-10-01 14:46 UTC",
+    "qualified_20M_fastflow_gamma": [
+      1,
+      1.5,
+      2
     ],
-    "g2_cold_search_final_time": 13.0604,
-    "g5_high_resolution_fastflow_final_time": 4.5087,
-    "g5_high_resolution_fastflow_successes": 10,
-    "g5_high_resolution_fastflow_failures": 0,
-    "capacity_jobs": [
-      {
-        "id": "8883677",
+    "qualified_20M_bhahaha_fresh_gamma": [
+      1,
+      1.5,
+      2,
+      3,
+      5
+    ],
+    "gamma4_fresh_checkpoint_time": 13.09771,
+    "gamma4_continuation_job": "8883776",
+    "warm_retry_gamma5_gpu_job": "8883700",
+    "warm_retry_gamma5_cpu_integration_pass": true,
+    "capacity_jobs": {
+      "8883677": {
+        "state": "F",
+        "pbs_exit_status": 0,
         "nodes": 2,
-        "walltime": "01:00:00",
-        "cases": [
-          "g2_bhahaha_L5",
-          "g3_bhahaha_L6",
-          "g4_bhahaha_L6"
-        ],
-        "restart_case": "g2_bhahaha_L5",
-        "state_at_submission": "Q",
-        "executable": "aurora-sycl-v3"
+        "wall_seconds": 3106
       },
-      {
-        "id": "8883678",
+      "8883678": {
+        "state": "Q",
         "nodes": 16,
-        "walltime": "01:00:00",
-        "cases": [
-          "g5_bhahaha_L7"
-        ],
-        "state_at_submission": "Q",
-        "executable": "aurora-sycl-v3"
+        "case": "g5_bhahaha_L7"
       },
-      {
-        "id": "8883681",
+      "8883681": {
+        "state": "Q",
         "nodes": 8,
-        "walltime": "01:00:00",
         "cases": [
           "g5_fastflow_L6",
           "g3_fastflow_L6",
           "g4_fastflow_L6"
-        ],
-        "state_at_submission": "Q",
-        "executable": "aurora-sycl-v2",
-        "fastflow_interval": 0.1
+        ]
       },
-      {
-        "id": "8883700",
+      "8883700": {
+        "state": "F",
         "nodes": 2,
-        "walltime": "01:00:00",
-        "cases": [
-          "g5_bhahaha_L6"
-        ],
-        "state_at_submission": "Q",
-        "executable": "aurora-sycl-v4",
-        "cold_search_each_find": false,
-        "retry_cold_on_failure": true,
-        "resource_edit": "qalter -A CompactBinaryMerger -l select=2 succeeded; without -A account_check raised an exception"
+        "case": "g5_bhahaha_L6",
+        "exit_status": 0
       },
-      {
-        "id": "8883708",
+      "8883708": {
+        "state": "Q",
         "nodes": 16,
-        "walltime": "01:00:00",
-        "cases": [
-          "g5_fastflow_L7"
-        ],
-        "restart_case": "g5_fastflow_L7",
-        "state_at_submission": "Q",
-        "executable": "aurora-sycl-v2",
-        "fastflow_interval": 0.1
+        "case": "g5_fastflow_L7"
+      },
+      "8883776": {
+        "state": "Q",
+        "nodes": 2,
+        "wall_minutes": 30,
+        "case": "g4_bhahaha_L6"
       }
-    ],
-    "g2_cold_search_chain_20M_qualified": true,
-    "v4_verified_build": {
-      "source_commit": "0cf934c448ef3d24a51de6e064e7b826901c6f9d",
-      "exit_status": 0,
-      "sha256": "ce8af50c2aa4aca77c11878c2a767f0e7cd5a75b6e80286702273ca4d852e13a",
-      "note": "Controlled recompilation/relink of finder, diagnostics and Z4c after stopping a redundant overlapping build."
     },
-    "cpu_gamma5_retry_test": {
-      "successes": 4,
-      "cold_retries": 1,
-      "terminal_failures": 0,
-      "time": 0.04462332,
-      "dx": 0.015625,
-      "exit_status": 0
+    "remaining": [
+      "gamma4 fresh-search checkpoint chain to 20M",
+      "fastflow gamma3/4/5 to 20M",
+      "gamma5 level7 resolution comparison for both finders",
+      "constraint resolution assessment"
+    ],
+    "warm_retry_gamma5_gpu_qualified_20M": true,
+    "warm_retry_gamma5_counts": {
+      "scheduled_searches": 40,
+      "successful_searches": 40,
+      "rejected_warm_attempts": 39,
+      "successful_cold_retries": 39,
+      "terminal_failures": 0
     }
-  }
+  },
+  "current_queue": "capacity"
 }
