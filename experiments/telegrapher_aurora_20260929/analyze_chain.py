@@ -26,12 +26,17 @@ def chain(runs, max_gap):
             linked = f'/{previous.parent.name}/{previous.name}/rst/' in source
             histories = list(run.glob('*.hst'))
             history = numeric_rows(histories[0]) if histories else []
-            start = history[0][0] if history else None
+            first_history = history[0][0] if history else None
+            # Restart preserves output counters, so the first .hst row can be
+            # delayed until its next scheduled output. The initial finder runs
+            # immediately and records the checkpoint's simulation time.
+            start = record.get('first_horizon_time')
             previous_end = records[i - 1]['evolution_time']
             continuous = (start is not None and previous_end is not None and
                           abs(start - previous_end) <= 1e-3)
             links.append({'restart_source': source, 'matches_previous_run': linked,
-                          'first_history_time': start,
+                          'first_horizon_time': start,
+                          'first_history_time': first_history,
                           'previous_final_time': previous_end,
                           'time_continuous': continuous})
     times = sorted(set(times))

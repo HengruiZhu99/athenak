@@ -312,7 +312,38 @@
         "state_at_submission": "Q",
         "executable": "aurora-sycl-v2",
         "fastflow_interval": 0.1
+      },
+      {
+        "id": "8883700",
+        "nodes": 4,
+        "walltime": "01:00:00",
+        "cases": [
+          "g5_bhahaha_L6"
+        ],
+        "state_at_submission": "Q",
+        "executable": "aurora-sycl-v4",
+        "cold_search_each_find": false,
+        "retry_cold_on_failure": true
+      },
+      {
+        "id": "8883708",
+        "nodes": 16,
+        "walltime": "01:00:00",
+        "cases": [
+          "g5_fastflow_L7"
+        ],
+        "restart_case": "g5_fastflow_L7",
+        "state_at_submission": "Q",
+        "executable": "aurora-sycl-v2",
+        "fastflow_interval": 0.1
       }
-    ]
+    ],
+    "g2_cold_search_chain_20M_qualified": true,
+    "v4_verified_build": {
+      "source_commit": "0cf934c448ef3d24a51de6e064e7b826901c6f9d",
+      "exit_status": 0,
+      "sha256": "ce8af50c2aa4aca77c11878c2a767f0e7cd5a75b6e80286702273ca4d852e13a",
+      "note": "Controlled recompilation/relink of finder, diagnostics and Z4c after stopping a redundant overlapping build."
+    }
   }
 }
