@@ -88,10 +88,13 @@ def analyze(run):
         paths = list((run / 'horizon').glob('BHaHAHA_diagnostics.ah*.gp'))
         rows = numeric_rows(paths[0]) if paths else []
         result['finder'] = 'bhahaha'
+        result['attempts'] = log.splitlines().count('Finding Horizon')
         result['successes'] = log.splitlines().count('Success')
         result['warm_attempt_rejections'] = log.count('BHaHAHA warm attempt rejected')
         result['cold_retries'] = log.count('BHaHAHA cold retry at time=')
         result['failures'] = len(re.findall(r'Failed.*(?:code|error)', log, re.IGNORECASE))
+        result['searches'] = result['attempts'] - result['cold_retries']
+        result['pending_searches'] = result['searches'] - result['successes'] - result['failures']
         usable = [r for r in rows if len(r) >= 26 and
                   all(math.isfinite(r[i]) for i in [1, 5, 11, 12, 13, 14, 24])]
         if usable:
@@ -106,6 +109,8 @@ def analyze(run):
             if tolerance is not None:
                 result['reported_successes_above_rms_tolerance'] = sum(
                     r[14] > tolerance * (1 + 1e-8) for r in usable)
+    if usable:
+        result['first_horizon_time'] = usable[0][1]
     if 'mass' in result:
         result['mass_relative_error_to_1M'] = abs(result['mass'] - 1)
         result['small_expansion'] = result['expansion_rms_times_mass'] < 1e-2
@@ -128,7 +133,9 @@ def analyze(run):
         result['completed_20M'] and result.get('successes', 0) > 0 and
         result.get('failures') == 0 and result.get('pending_searches', 0) == 0 and
         result.get('reported_successes_above_rms_tolerance') == 0 and
-        result.get('constraints_finite') is True)
+        result.get('constraints_finite') is True and
+        result.get('first_horizon_time', float('inf')) <= 1e-3 and
+        result.get('last_horizon_time', -1) >= 19.0)
     return result
 
 
