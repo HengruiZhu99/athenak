@@ -4,11 +4,11 @@ Scope: item 1 of the requested run plan. Establish the new-image GPU build, test
 
 ## Current status — 2026-10-01
 
-New jobs use capacity following the user’s queue change. The accepted allocations are one hour or shorter; checkpoint continuations use a 25-minute application budget inside a 30-minute allocation. No new debug/debug-scaling jobs have been accepted since the campaign resumed.
+New jobs use capacity following the user’s queue change. The accepted allocations are one hour or shorter; application budgets leave five to ten minutes for checkpointing. No new debug/debug-scaling jobs have been accepted since the campaign resumed.
 
 | Finder | Qualified 0–20 M cases | Remaining checks |
 | --- | --- | --- |
-| Fastflow | gamma=1, 1.5, 2 | gamma=3/4/5 and level-7 gamma=5, currently queued |
+| Fastflow | gamma=1, 1.5, 2 | gamma=3/4 not yet evolved; gamma=5 level 6 reaches 2.039848 M and level 7 reaches 6.625960 M, with checkpoint continuations queued |
 | BHaHAHA fresh searches | gamma=1, 1.5, 2, 3, 4, 5 | level-7 gamma=5 |
 | BHaHAHA warm search plus one cold retry | gamma=5 through 20 M on Aurora; short CPU check also passes | Warm predictor itself still needs repair |
 
@@ -178,3 +178,8 @@ The early gamma=5 resolution comparison is reproducible with compare_resolution.
 Job 8883776 is reduced to one capacity node while retaining its thirty-minute walltime and 1500-second application budget. The saved global checkpoint permits MPI repartitioning; its 96-block per-rank capacity exceeds the expected roughly 45 blocks per rank. The measured two-node gamma=4 evolution suggests the remaining 6.9 M should fit, with wall-clock checkpointing retained if it does not. The capacity resource edit explicitly repeats -A CompactBinaryMerger.
 
 As of 2026-10-01 16:14 UTC, capacity job 8883776 has finished gamma=4 at exactly 20 M with PBS/application exit 0, one node, walltime 14m34s. Its fourteen continuation searches all succeed. The combined checkpoint chain has forty-one distinct successful horizon samples, no terminal failures or above-threshold residuals, finite histories and max sample gap 0.504 M; it qualifies 0–20 M tracking. See results/g4_cold_chain_20M_20261001.json and results/evolution_8883776. BHaHAHA fresh-search tracking is now qualified at every tested boost from gamma=1 through 5. Jobs 8883678 (high-resolution BHaHAHA), 8883681 (fastflow gamma=5/3/4) and 8883708 (high-resolution fastflow continuation) remain queued with Insufficient amount of resource: at_queue; no campaign job is running.
+
+
+As of 2026-10-01 22:40 UTC (18:40 EDT), both fastflow capacity allocations have completed normally at their application wall-clock budgets. Job 8883681 advances gamma=5 level 6 to 2.039848 M with 21 successful searches, zero failures, zero above-tolerance successes and finite constraint histories. Its shared budget prevents the gamma=3/4 cases from starting. Job 8883708 resumes level 7 at 4.508697 M and reaches 6.625960 M with 22 successful searches, zero failures, zero above-tolerance successes and finite histories. The level-7 chain retains a valid checkpoint link, 32 unique successful horizon samples and a maximum sample gap of 0.5016 M; it remains incomplete through 20 M. Small outputs and PBS records are preserved in results/evolution_8883681 and results/evolution_8883708, with reproducible analysis in results/g5_fastflow_L6_capacity_20261001.json, results/g5_fastflow_L7_capacity_20261001.json and results/g5_fastflow_L7_chain_20261001.json. Large restart files remain on Aurora.
+
+Capacity continuations 8888791 (eight nodes, level 6) and 8888792 (sixteen nodes, level 7) are accepted, each for one hour with a 3000-second application budget, the same v2 executable, preserved spectral history and 0.1 M search cadence. They resume checkpoints evolution_8883681/g5_fastflow_L6/rst/g5_fastflow_L6.00001.rst and evolution_8883708/g5_fastflow_L7/rst/g5_fastflow_L7.00002.rst respectively. High-resolution BHaHAHA job 8883678 remains queued, with the scheduler reporting insufficient free nodes. Its PBS record contains run_count=2 and Exit_status=-30 while still Q, with no application output available; these are launch attempts, not an observed horizon-finder failure. No completed high-resolution BHaHAHA result is claimed.
