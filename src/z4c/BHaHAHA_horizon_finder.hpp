@@ -68,7 +68,7 @@ class BHAHAHorizonFinder : public HorizonFinder {
   void gatherMetricData(int h, size_t pts);
 
   // Core solver & cleanup
-  void SolveHorizon(int h);
+  void SolveHorizon(int h, bool retry_candidate = false);
 
   // AthenaK handles
   MeshBlockPack *pmbp_;
@@ -79,6 +79,7 @@ class BHAHAHorizonFinder : public HorizonFinder {
   double dt_find_;
   double initial_dt_find_;
   bool cold_start_each_find_;
+  bool retry_cold_on_failure_;
   double last_find_time_;
   int output_shape_every_;
   int interp_half_width_;

@@ -113,6 +113,8 @@ void BHAHAHorizonFinder::LoadParameters() {
   initial_dt_find_ = pin_->GetOrAddReal("bhahaha", "bah_initial_dt", 0.0);
   cold_start_each_find_ =
       pin_->GetOrAddBoolean("bhahaha", "bah_cold_start_each_find", false);
+  retry_cold_on_failure_ =
+      pin_->GetOrAddBoolean("bhahaha", "bah_retry_cold_on_failure", false);
   if (!std::isfinite(initial_dt_find_) || initial_dt_find_ < 0.0) {
     std::cerr << "bhahaha/bah_initial_dt must be finite and nonnegative" << std::endl;
     abort();
@@ -150,8 +152,9 @@ void BHAHAHorizonFinder::LoadParameters() {
   bah_BBH_mode_common_horizon_idx_ =
       pin_->GetOrAddInteger("bhahaha", "bah_BBH_mode_common_horizon_idx", 2);
 
-  if (cold_start_each_find_ && (max_num_horizons_ != 1 || bah_BBH_mode_enable_)) {
-    std::cerr << "bhahaha/bah_cold_start_each_find requires one independent horizon"
+  if ((cold_start_each_find_ || retry_cold_on_failure_) &&
+      (max_num_horizons_ != 1 || bah_BBH_mode_enable_)) {
+    std::cerr << "BHaHAHA cold-search options require one independent horizon"
               << std::endl;
     abort();
   }
@@ -212,7 +215,20 @@ void BHAHAHorizonFinder::FindHorizons() {
   }
   for (int h = 0; h < max_num_horizons_; ++h) {
     if (!bah_horizon_active_[h]) continue;
-    if (global_variable::my_rank == rootRank(h)) SolveHorizon(h);
+    const bool can_retry = retry_cold_on_failure_ &&
+                           !params_data_[h].use_fixed_radius_guess_on_full_sphere;
+    if (global_variable::my_rank == rootRank(h)) SolveHorizon(h, can_retry);
+    // Every rank must agree before retrying the collective interpolation.
+    broadcastHorizonState(h);
+    if (can_retry && !found_[h]) {
+      resetHorizonHistory(h);
+      readPersistentData(h);
+      if (global_variable::my_rank == rootRank(h)) {
+        std::cout << "BHaHAHA cold retry at time=" << pmbp_->pmesh->time << std::endl;
+      }
+      InterpolateMetricData(h);
+      if (global_variable::my_rank == rootRank(h)) SolveHorizon(h);
+    }
   }
   for (int h = 0; h < max_num_horizons_; ++h) {
     if (!bah_horizon_active_[h]) continue;
@@ -468,7 +484,7 @@ void BHAHAHorizonFinder::gatherMetricData(int h, size_t pts) {
   time_mpi_[h] = timer.seconds();
 }
 
-void BHAHAHorizonFinder::SolveHorizon(int h) {
+void BHAHAHorizonFinder::SolveHorizon(int h, bool retry_candidate) {
   Kokkos::Timer timer;
   auto &pd = params_data_[h];
   bhahaha_diagnostics_struct diags;
@@ -492,7 +508,11 @@ void BHAHAHorizonFinder::SolveHorizon(int h) {
                   grid_center_[h][1] + diags.y_centroid_wrt_coord_origin,
                   grid_center_[h][2] + diags.z_centroid_wrt_coord_origin};
   } else {
-    std::cout << "Failed with Error Flag " << rc << std::endl;
+    if (retry_candidate) {
+      std::cout << "BHaHAHA warm attempt rejected with Error Flag " << rc << std::endl;
+    } else {
+      std::cout << "Failed with Error Flag " << rc << std::endl;
+    }
     found_[h] = 0;
     min_radius_[h] = 0.0;
     resetHorizonHistory(h);

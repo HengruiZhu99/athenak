@@ -89,6 +89,8 @@ def analyze(run):
         rows = numeric_rows(paths[0]) if paths else []
         result['finder'] = 'bhahaha'
         result['successes'] = log.splitlines().count('Success')
+        result['warm_attempt_rejections'] = log.count('BHaHAHA warm attempt rejected')
+        result['cold_retries'] = log.count('BHaHAHA cold retry at time=')
         result['failures'] = len(re.findall(r'Failed.*(?:code|error)', log, re.IGNORECASE))
         usable = [r for r in rows if len(r) >= 26 and
                   all(math.isfinite(r[i]) for i in [1, 5, 11, 12, 13, 14, 24])]

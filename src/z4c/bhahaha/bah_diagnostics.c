@@ -105,6 +105,33 @@ void bah_diagnostics(commondata_struct *restrict commondata, griddata_struct *re
       if (commondata->error_flag != BHAHAHA_SUCCESS)
         return;
 
+      // Evolving finder history must be independent of diagnostic verbosity.
+      {
+        REAL x_center, y_center, z_center, r_min, r_max;
+        bah_xyz_center_r_minmax(commondata->bhahaha_params_and_data, &x_center, &y_center, &z_center, &r_min, &r_max);
+
+        // Cycle data from previous horizon finds. _m1 data depend on centroids being computed in bah_diagnostics()
+        commondata->bhahaha_params_and_data->t_m3 = commondata->bhahaha_params_and_data->t_m2;
+        commondata->bhahaha_params_and_data->t_m2 = commondata->bhahaha_params_and_data->t_m1;
+        commondata->bhahaha_params_and_data->t_m1 = commondata->bhahaha_params_and_data->time_external_input;
+        commondata->bhahaha_params_and_data->x_center_m3 = commondata->bhahaha_params_and_data->x_center_m2;
+        commondata->bhahaha_params_and_data->y_center_m3 = commondata->bhahaha_params_and_data->y_center_m2;
+        commondata->bhahaha_params_and_data->z_center_m3 = commondata->bhahaha_params_and_data->z_center_m2;
+        commondata->bhahaha_params_and_data->x_center_m2 = commondata->bhahaha_params_and_data->x_center_m1;
+        commondata->bhahaha_params_and_data->y_center_m2 = commondata->bhahaha_params_and_data->y_center_m1;
+        commondata->bhahaha_params_and_data->z_center_m2 = commondata->bhahaha_params_and_data->z_center_m1;
+        commondata->bhahaha_params_and_data->x_center_m1 = x_center + commondata->bhahaha_diagnostics->x_centroid_wrt_coord_origin;
+        commondata->bhahaha_params_and_data->y_center_m1 = y_center + commondata->bhahaha_diagnostics->y_centroid_wrt_coord_origin;
+        commondata->bhahaha_params_and_data->z_center_m1 = z_center + commondata->bhahaha_diagnostics->z_centroid_wrt_coord_origin;
+        commondata->bhahaha_params_and_data->r_min_m3 = commondata->bhahaha_params_and_data->r_min_m2;
+        commondata->bhahaha_params_and_data->r_max_m3 = commondata->bhahaha_params_and_data->r_max_m2;
+        commondata->bhahaha_params_and_data->r_min_m2 = commondata->bhahaha_params_and_data->r_min_m1;
+        commondata->bhahaha_params_and_data->r_max_m2 = commondata->bhahaha_params_and_data->r_max_m1;
+        commondata->bhahaha_params_and_data->r_min_m1 = commondata->bhahaha_diagnostics->min_coord_radius_wrt_centroid;
+        commondata->bhahaha_params_and_data->r_max_m1 = commondata->bhahaha_diagnostics->max_coord_radius_wrt_centroid;
+
+      }
+
       // Display detailed final iteration diagnostics if verbosity is enabled.
       if (commondata->bhahaha_params_and_data->verbosity_level > 0) {
         bhahaha_diagnostics_struct *restrict bhahaha_diags = commondata->bhahaha_diagnostics;
@@ -122,33 +149,8 @@ void bah_diagnostics(commondata_struct *restrict commondata, griddata_struct *re
         printf("#(%+4.4e, %+4.4e, %+4.4e) = (x, y, z) centroid, wrt input grid origin\n", bhahaha_diags->x_centroid_wrt_coord_origin,
                bhahaha_diags->y_centroid_wrt_coord_origin, bhahaha_diags->z_centroid_wrt_coord_origin);
 
-        {
-          REAL x_center, y_center, z_center, r_min, r_max;
-          bah_xyz_center_r_minmax(commondata->bhahaha_params_and_data, &x_center, &y_center, &z_center, &r_min, &r_max);
-
-          // Cycle data from previous horizon finds. _m1 data depend on centroids being computed in bah_diagnostics()
-          commondata->bhahaha_params_and_data->t_m3 = commondata->bhahaha_params_and_data->t_m2;
-          commondata->bhahaha_params_and_data->t_m2 = commondata->bhahaha_params_and_data->t_m1;
-          commondata->bhahaha_params_and_data->t_m1 = commondata->bhahaha_params_and_data->time_external_input;
-          commondata->bhahaha_params_and_data->x_center_m3 = commondata->bhahaha_params_and_data->x_center_m2;
-          commondata->bhahaha_params_and_data->y_center_m3 = commondata->bhahaha_params_and_data->y_center_m2;
-          commondata->bhahaha_params_and_data->z_center_m3 = commondata->bhahaha_params_and_data->z_center_m2;
-          commondata->bhahaha_params_and_data->x_center_m2 = commondata->bhahaha_params_and_data->x_center_m1;
-          commondata->bhahaha_params_and_data->y_center_m2 = commondata->bhahaha_params_and_data->y_center_m1;
-          commondata->bhahaha_params_and_data->z_center_m2 = commondata->bhahaha_params_and_data->z_center_m1;
-          commondata->bhahaha_params_and_data->x_center_m1 = x_center + bhahaha_diags->x_centroid_wrt_coord_origin;
-          commondata->bhahaha_params_and_data->y_center_m1 = y_center + bhahaha_diags->y_centroid_wrt_coord_origin;
-          commondata->bhahaha_params_and_data->z_center_m1 = z_center + bhahaha_diags->z_centroid_wrt_coord_origin;
-          commondata->bhahaha_params_and_data->r_min_m3 = commondata->bhahaha_params_and_data->r_min_m2;
-          commondata->bhahaha_params_and_data->r_max_m3 = commondata->bhahaha_params_and_data->r_max_m2;
-          commondata->bhahaha_params_and_data->r_min_m2 = commondata->bhahaha_params_and_data->r_min_m1;
-          commondata->bhahaha_params_and_data->r_max_m2 = commondata->bhahaha_params_and_data->r_max_m1;
-          commondata->bhahaha_params_and_data->r_min_m1 = commondata->bhahaha_diagnostics->min_coord_radius_wrt_centroid;
-          commondata->bhahaha_params_and_data->r_max_m1 = commondata->bhahaha_diagnostics->max_coord_radius_wrt_centroid;
-
-          printf("#(%+4.4e, %+4.4e, %+4.4e) = (x, y, z) centroid, wrt global origin\n", commondata->bhahaha_params_and_data->x_center_m1,
-                 commondata->bhahaha_params_and_data->y_center_m1, commondata->bhahaha_params_and_data->z_center_m1);
-        }
+        printf("#(%+4.4e, %+4.4e, %+4.4e) = (x, y, z) centroid, wrt global origin\n", commondata->bhahaha_params_and_data->x_center_m1,
+               commondata->bhahaha_params_and_data->y_center_m1, commondata->bhahaha_params_and_data->z_center_m1);
 
         printf("#(%5.5e, %5.5e, %5.5e) = (min, max, mean) coord radii, relative to centroid\n", bhahaha_diags->min_coord_radius_wrt_centroid,
                bhahaha_diags->max_coord_radius_wrt_centroid, bhahaha_diags->mean_coord_radius_wrt_centroid);
