@@ -1,0 +1,330 @@
+{
+  "coarse": {
+    "run": "experiments/telegrapher_aurora_20260929/results/evolution_8879707/g5_bhahaha_L6",
+    "evolution_time": 20.0,
+    "completed_20M": true,
+    "termination": [
+      "Terminating on time limit"
+    ],
+    "exit_status": "0",
+    "finder": "bhahaha",
+    "attempts": 40,
+    "successes": 40,
+    "warm_attempt_rejections": 0,
+    "cold_retries": 0,
+    "failures": 0,
+    "searches": 40,
+    "pending_searches": 0,
+    "last_horizon_time": 19.561,
+    "mass": 1.000158433264741,
+    "mass_irr": 1.000158433264741,
+    "area": 50.28141116813455,
+    "expansion_linf_times_mass": 0.002005543848,
+    "expansion_rms_times_mass": 0.0009927809791,
+    "min_radius": 0.2066103127,
+    "max_recorded_expansion_rms_times_mass": 0.0009994110776,
+    "max_recorded_mass_error": 0.0015565496441739546,
+    "input_rms_tolerance": 0.001,
+    "reported_successes_above_rms_tolerance": 0,
+    "first_horizon_time": 0.0,
+    "mass_relative_error_to_1M": 0.00015843326474107577,
+    "small_expansion": true,
+    "last_history_time": 20.0,
+    "last_progress_log_time": 20.0,
+    "constraints_finite": true,
+    "C_norm2_peak": {
+      "time": 20.0,
+      "value": 5.50328
+    },
+    "H_norm2_peak": {
+      "time": 20.0,
+      "value": 0.0886299
+    },
+    "M_norm2_peak": {
+      "time": 20.0,
+      "value": 0.0147819
+    },
+    "qualified_tracking_20M": true
+  },
+  "fine": {
+    "run": "experiments/telegrapher_aurora_20260929/results/evolution_8879663/g5_fastflow_L7",
+    "evolution_time": 4.5087,
+    "completed_20M": false,
+    "termination": [
+      "Terminating on wall clock limit"
+    ],
+    "exit_status": "0",
+    "finder": "fastflow",
+    "successes": 10,
+    "mass_stall_successes": 0,
+    "searches": 10,
+    "failures": 0,
+    "pending_searches": 0,
+    "failed_search_times": [],
+    "successful_horizon_times": [
+      0.0,
+      0.501,
+      1.0016,
+      1.5026,
+      2.0042,
+      2.5048,
+      3.005,
+      3.506,
+      4.0064,
+      4.5072
+    ],
+    "last_horizon_time": 4.50715,
+    "mass": 1.000007094561284,
+    "area": 50.26619568305824,
+    "expansion_rms_times_mass": 0.000998869689524146,
+    "mean_expansion_times_mass": 2.7915911482800044e-05,
+    "min_radius": 0.1235474272745702,
+    "max_recorded_expansion_rms_times_mass": 0.0009998207276860059,
+    "max_recorded_mass_error": 4.9509077794995804e-05,
+    "input_rms_tolerance": 0.001,
+    "reported_successes_above_rms_tolerance": 0,
+    "first_horizon_time": 0.0,
+    "mass_relative_error_to_1M": 7.094561284004541e-06,
+    "small_expansion": true,
+    "last_history_time": 4.5087,
+    "last_progress_log_time": 4.508697,
+    "constraints_finite": true,
+    "C_norm2_peak": {
+      "time": 4.5087,
+      "value": 0.0399365
+    },
+    "H_norm2_peak": {
+      "time": 4.5087,
+      "value": 0.00446898
+    },
+    "M_norm2_peak": {
+      "time": 4.5087,
+      "value": 0.00136898
+    },
+    "qualified_tracking_20M": false
+  },
+  "finest_dx": [
+    0.015625,
+    0.0078125
+  ],
+  "matching_physical_parameters": {
+    "problem/punc_ADM_mass": "1.",
+    "problem/punc_velocity_x1": "0.9797958971132712",
+    "problem/pgen_name": "z4c_boosted_puncture",
+    "z4c/telegraph_lapse": "true",
+    "z4c/telegraph_tau": "0.1",
+    "z4c/telegraph_kappa": "0.2",
+    "z4c/damp_kappa1": "0.01",
+    "z4c/damp_kappa2": "0.00",
+    "time/integrator": "rk4",
+    "time/cfl_number": "0.25",
+    "mesh/nx1": "128",
+    "mesh/nx2": "128",
+    "mesh/nx3": "128",
+    "mesh/x1min": "-64",
+    "mesh/x1max": "64",
+    "mesh/x2min": "-64",
+    "mesh/x2max": "64",
+    "mesh/x3min": "-64",
+    "mesh/x3max": "64"
+  },
+  "overlap_end": 4.5087,
+  "integrated_norm_comparison": [
+    {
+      "target_time": 0,
+      "coarse_time": 0.0,
+      "fine_time": 0.0,
+      "fine_minus_coarse_time": 0.0,
+      "coarse_H_norm2": 4.59527e-08,
+      "fine_H_norm2": 1.57327e-11,
+      "fine_over_coarse_H_norm2": 0.0003423672602480377
+    },
+    {
+      "target_time": 0.1,
+      "coarse_time": 0.100485,
+      "fine_time": 0.100652,
+      "fine_minus_coarse_time": 0.00016700000000000048,
+      "coarse_H_norm2": 0.000578775,
+      "fine_H_norm2": 8.07669e-05,
+      "fine_over_coarse_H_norm2": 0.13954801088505897
+    },
+    {
+      "target_time": 1,
+      "coarse_time": 1.00035,
+      "fine_time": 1.00155,
+      "fine_minus_coarse_time": 0.0011999999999998678,
+      "coarse_H_norm2": 0.000850861,
+      "fine_H_norm2": 0.00102051,
+      "fine_over_coarse_H_norm2": 1.1993850934523973
+    },
+    {
+      "target_time": 2,
+      "coarse_time": 2.0027,
+      "fine_time": 2.00093,
+      "fine_minus_coarse_time": -0.0017700000000000493,
+      "coarse_H_norm2": 0.00150626,
+      "fine_H_norm2": 0.00154487,
+      "fine_over_coarse_H_norm2": 1.0256330248429886
+    },
+    {
+      "target_time": 3,
+      "coarse_time": 3.00286,
+      "fine_time": 3.00022,
+      "fine_minus_coarse_time": -0.0026399999999999757,
+      "coarse_H_norm2": 0.00229048,
+      "fine_H_norm2": 0.00236745,
+      "fine_over_coarse_H_norm2": 1.0336043100136216
+    },
+    {
+      "target_time": 4,
+      "coarse_time": 4.00296,
+      "fine_time": 4.00014,
+      "fine_minus_coarse_time": -0.0028199999999998226,
+      "coarse_H_norm2": 0.00355307,
+      "fine_H_norm2": 0.00362785,
+      "fine_over_coarse_H_norm2": 1.02104658788034
+    },
+    {
+      "target_time": 4.5,
+      "coarse_time": 4.50175,
+      "fine_time": 4.50098,
+      "fine_minus_coarse_time": -0.0007700000000001594,
+      "coarse_H_norm2": 0.00441472,
+      "fine_H_norm2": 0.00445513,
+      "fine_over_coarse_H_norm2": 1.0091534683966368
+    }
+  ],
+  "x_axis_peak_comparison": [
+    {
+      "target_time": 0,
+      "coarse_peak": {
+        "time": 0.0,
+        "max_abs_H": 1.27396e-05,
+        "x": -0.195312,
+        "tracker_x": 0.0030111714532705816,
+        "x_minus_tracker": -0.1983231714532706,
+        "chi": 0.065864,
+        "gid": 307,
+        "cell_i": 23,
+        "cells_from_block_edge": 12
+      },
+      "fine_peak": {
+        "time": 0.0,
+        "max_abs_H": 2.03558e-07,
+        "x": -0.191406,
+        "tracker_x": 0.0015097470731888932,
+        "x_minus_tracker": -0.1929157470731889,
+        "chi": 0.0640364,
+        "gid": 2457,
+        "cell_i": 11,
+        "cells_from_block_edge": 7
+      },
+      "coarse_over_fine_abs_H": 62.58461961701334
+    },
+    {
+      "target_time": 1,
+      "coarse_peak": {
+        "time": 1.00035,
+        "max_abs_H": 0.00209488,
+        "x": 0.664062,
+        "tracker_x": 0.43317134351865494,
+        "x_minus_tracker": 0.2308906564813451,
+        "chi": 0.0779423,
+        "gid": 477,
+        "cell_i": 14,
+        "cells_from_block_edge": 10
+      },
+      "fine_peak": {
+        "time": 1.001552,
+        "max_abs_H": 5.66297e-05,
+        "x": 0.644531,
+        "tracker_x": 0.4338222132030792,
+        "x_minus_tracker": 0.2107087867969208,
+        "chi": 0.0691832,
+        "gid": 2059,
+        "cell_i": 22,
+        "cells_from_block_edge": 13
+      },
+      "coarse_over_fine_abs_H": 36.992602821487665
+    },
+    {
+      "target_time": 2,
+      "coarse_peak": {
+        "time": 2.002705,
+        "max_abs_H": 0.0129204,
+        "x": 0.742188,
+        "tracker_x": 0.5376343875856573,
+        "x_minus_tracker": 0.20455361241434267,
+        "chi": 0.0637982,
+        "gid": 477,
+        "cell_i": 19,
+        "cells_from_block_edge": 15
+      },
+      "fine_peak": {
+        "time": 2.000927,
+        "max_abs_H": 4.88245e-05,
+        "x": 0.746094,
+        "tracker_x": 0.5381410335598803,
+        "x_minus_tracker": 0.20795296644011974,
+        "chi": 0.0655998,
+        "gid": 2059,
+        "cell_i": 35,
+        "cells_from_block_edge": 0
+      },
+      "coarse_over_fine_abs_H": 264.62943808948376
+    },
+    {
+      "target_time": 3,
+      "coarse_peak": {
+        "time": 3.002861,
+        "max_abs_H": 0.00552902,
+        "x": 0.835938,
+        "tracker_x": 0.6243352532051258,
+        "x_minus_tracker": 0.21160274679487412,
+        "chi": 0.0673762,
+        "gid": 477,
+        "cell_i": 25,
+        "cells_from_block_edge": 10
+      },
+      "fine_peak": {
+        "time": 3.000221,
+        "max_abs_H": 5.74698e-05,
+        "x": 0.839844,
+        "tracker_x": 0.6246405056133882,
+        "x_minus_tracker": 0.2152034943866118,
+        "chi": 0.0692084,
+        "gid": 2060,
+        "cell_i": 15,
+        "cells_from_block_edge": 11
+      },
+      "coarse_over_fine_abs_H": 96.2073993645358
+    },
+    {
+      "target_time": 4,
+      "coarse_peak": {
+        "time": 4.00296,
+        "max_abs_H": 0.00476426,
+        "x": 0.960938,
+        "tracker_x": 0.7284081867699451,
+        "x_minus_tracker": 0.23252981323005484,
+        "chi": 0.0786813,
+        "gid": 477,
+        "cell_i": 33,
+        "cells_from_block_edge": 2
+      },
+      "fine_peak": {
+        "time": 4.000142,
+        "max_abs_H": 0.000340181,
+        "x": 0.277344,
+        "tracker_x": 0.7283507211143758,
+        "x_minus_tracker": -0.45100672111437584,
+        "chi": 0.141486,
+        "gid": 2059,
+        "cell_i": 7,
+        "cells_from_block_edge": 3
+      },
+      "coarse_over_fine_abs_H": 14.005073769552093
+    }
+  ],
+  "note": "Partial comparison when either run is unfinished. Chi>=0.0625 is a coordinate mask, not horizon excision. Adding an AMR level does not uniformly refine the entire domain. The slice maxima can occur at different locations; no convergence order is fitted."
+}
