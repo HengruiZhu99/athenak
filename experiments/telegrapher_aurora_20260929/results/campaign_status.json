@@ -315,7 +315,7 @@
       },
       {
         "id": "8883700",
-        "nodes": 4,
+        "nodes": 2,
         "walltime": "01:00:00",
         "cases": [
           "g5_bhahaha_L6"
@@ -323,7 +323,8 @@
         "state_at_submission": "Q",
         "executable": "aurora-sycl-v4",
         "cold_search_each_find": false,
-        "retry_cold_on_failure": true
+        "retry_cold_on_failure": true,
+        "resource_edit": "qalter -A CompactBinaryMerger -l select=2 succeeded; without -A account_check raised an exception"
       },
       {
         "id": "8883708",
@@ -344,6 +345,14 @@
       "exit_status": 0,
       "sha256": "ce8af50c2aa4aca77c11878c2a767f0e7cd5a75b6e80286702273ca4d852e13a",
       "note": "Controlled recompilation/relink of finder, diagnostics and Z4c after stopping a redundant overlapping build."
+    },
+    "cpu_gamma5_retry_test": {
+      "successes": 4,
+      "cold_retries": 1,
+      "terminal_failures": 0,
+      "time": 0.04462332,
+      "dx": 0.015625,
+      "exit_status": 0
     }
   }
 }
