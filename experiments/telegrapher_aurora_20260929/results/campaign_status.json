@@ -39,7 +39,6 @@
   "canceled_job": "8879325",
   "account": "CompactBinaryMerger",
   "next_steps": [
-    "gamma4 fresh-search checkpoint chain to 20M",
     "fastflow gamma3/4/5 to 20M",
     "gamma5 level7 resolution comparison for both finders",
     "constraint resolution assessment"
@@ -267,7 +266,7 @@
     "note": "These are partial observations; final job outputs remain on Aurora and require collection after completion."
   },
   "resumed_20261001": {
-    "snapshot_utc": "2026-10-01 15:07 UTC",
+    "snapshot_utc": "2026-10-01 16:14 UTC",
     "qualified_20M_fastflow_gamma": [
       1,
       1.5,
@@ -278,6 +277,7 @@
       1.5,
       2,
       3,
+      4,
       5
     ],
     "gamma4_fresh_checkpoint_time": 13.09771,
@@ -317,14 +317,16 @@
         "case": "g5_fastflow_L7"
       },
       "8883776": {
-        "state": "Q",
+        "state": "F",
         "nodes": 1,
         "wall_minutes": 30,
-        "case": "g4_bhahaha_L6"
+        "case": "g4_bhahaha_L6",
+        "pbs_exit_status": 0,
+        "wall_seconds": 874,
+        "completed_20M": true
       }
     },
     "remaining": [
-      "gamma4 fresh-search checkpoint chain to 20M",
       "fastflow gamma3/4/5 to 20M",
       "gamma5 level7 resolution comparison for both finders",
       "constraint resolution assessment"
@@ -336,7 +338,8 @@
       "rejected_warm_attempts": 39,
       "successful_cold_retries": 39,
       "terminal_failures": 0
-    }
+    },
+    "gamma4_fresh_qualified_20M": true
   },
   "current_queue": "capacity"
 }

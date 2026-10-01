@@ -1,0 +1,302 @@
+
+Root grid = 4 x 4 x 4 MeshBlocks
+Total number of MeshBlocks = 568
+Number of logical  levels of refinement = 8 (9 levels total)
+Number of physical levels of refinement = 6 (7 levels total)
+  Physical level = 0 (logical level = 2): 52 MeshBlocks, cost = 52
+  Physical level = 1 (logical level = 3): 84 MeshBlocks, cost = 84
+  Physical level = 2 (logical level = 4): 84 MeshBlocks, cost = 84
+  Physical level = 3 (logical level = 5): 84 MeshBlocks, cost = 84
+  Physical level = 4 (logical level = 6): 84 MeshBlocks, cost = 84
+  Physical level = 5 (logical level = 7): 84 MeshBlocks, cost = 84
+  Physical level = 6 (logical level = 8): 96 MeshBlocks, cost = 96
+Number of parallel ranks = 12
+  Rank = 0: 47 MeshBlocks, cost = 47
+  Rank = 1: 47 MeshBlocks, cost = 47
+  Rank = 2: 47 MeshBlocks, cost = 47
+  Rank = 3: 47 MeshBlocks, cost = 47
+  Rank = 4: 47 MeshBlocks, cost = 47
+  Rank = 5: 47 MeshBlocks, cost = 47
+  Rank = 6: 47 MeshBlocks, cost = 47
+  Rank = 7: 47 MeshBlocks, cost = 47
+  Rank = 8: 48 MeshBlocks, cost = 48
+  Rank = 9: 48 MeshBlocks, cost = 48
+  Rank = 10: 48 MeshBlocks, cost = 48
+  Rank = 11: 48 MeshBlocks, cost = 48
+Load Balancing:
+  Maximum normalized cost = 1.02128, Average = 1.00709
+AssembleZ4cTasks
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <time>/start_time = 0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <problem>/punc_ADM_mass = 1. was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <problem>/punc_velocity_x1 = 0.96824583655185426 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <problem>/punc_center_x1 = 0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <problem>/punc_center_x2 = 0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <problem>/punc_center_x3 = 0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <problem>/punc_velocity_x2 = 0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <problem>/punc_velocity_x3 = 0 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <refined_region1>/level = 6 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <refined_region1>/x1min = -1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <refined_region1>/x1max = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <refined_region1>/x2min = -1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <refined_region1>/x2max = 1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <refined_region1>/x3min = -1 was not used by the code (check for a typo)
+### WARNING in /lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/src/parameter_input.cpp: input parameter <refined_region1>/x3max = 1 was not used by the code (check for a typo)
+
+Setup complete, executing task list(s)...
+
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=13.098 }=-
+#Final iteration: 6900, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(2.14978e-03, 9.99221e-04) = (L_inf Theta, L2 Theta)
+#(5.01682e+01, 9.99032e-01) = (Area, M_irr)
+#(-3.3845e-02, -3.0360e-15, -2.9032e-16) = (x, y, z) centroid, wrt input grid origin
+#(+2.2735e+00, -2.6099e-15, +3.9326e-16) = (x, y, z) centroid, wrt global origin
+#(2.48806e-01, 7.58406e-01, 6.22777e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25519e+01, 1.25515e+01, 1.24751e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1794) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.01216, 0.1798) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.219 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 0.0268214, MPI 0.108314, solve 2.23351
+elapsed=2.136773e+01 cycle=4200 time=1.321633e+01 dt=3.114957e-03
+elapsed=5.768090e+01 cycle=4300 time=1.352625e+01 dt=3.083514e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=13.600 }=-
+#Final iteration: 6888, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(2.18443e-03, 9.98138e-04) = (L_inf Theta, L2 Theta)
+#(5.01713e+01, 9.99063e-01) = (Area, M_irr)
+#(-3.3880e-02, +8.5176e-16, -1.5684e-15) = (x, y, z) centroid, wrt input grid origin
+#(+2.3647e+00, +1.3006e-15, -8.6702e-16) = (x, y, z) centroid, wrt global origin
+#(2.51252e-01, 7.57010e-01, 6.22122e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25523e+01, 1.25520e+01, 1.24764e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1785) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.0118, 0.1789) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.195 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.399413e-02, MPI 8.551963e-02, solve 2.196864e+00
+elapsed=9.624673e+01 cycle=4400 time=1.383313e+01 dt=3.054215e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=14.101 }=-
+#Final iteration: 6948, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(1.89911e-03, 9.96038e-04) = (L_inf Theta, L2 Theta)
+#(5.01751e+01, 9.99100e-01) = (Area, M_irr)
+#(-3.3955e-02, -6.5515e-16, +1.6489e-15) = (x, y, z) centroid, wrt input grid origin
+#(+2.4558e+00, -1.9998e-16, +2.3385e-15) = (x, y, z) centroid, wrt global origin
+#(2.53441e-01, 7.55224e-01, 6.21150e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25529e+01, 1.25526e+01, 1.24775e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1779) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.01153, 0.1783) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.194 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.396609e-02, MPI 8.484717e-02, solve 2.196024e+00
+elapsed=1.348124e+02 cycle=4500 time=1.413718e+01 dt=3.026843e-03
+elapsed=1.710882e+02 cycle=4600 time=1.443858e+01 dt=3.001210e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=14.603 }=-
+#Final iteration: 7420, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(2.05498e-03, 9.92983e-04) = (L_inf Theta, L2 Theta)
+#(5.01883e+01, 9.99232e-01) = (Area, M_irr)
+#(-3.4029e-02, -8.7331e-16, -1.1989e-15) = (x, y, z) centroid, wrt input grid origin
+#(+2.5478e+00, -4.0657e-16, -5.1703e-16) = (x, y, z) centroid, wrt global origin
+#(2.55500e-01, 7.53348e-01, 6.20101e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25546e+01, 1.25543e+01, 1.24801e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1767) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.01142, 0.1771) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.338 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.386944e-02, MPI 8.578643e-02, solve 2.339633e+00
+elapsed=2.097717e+02 cycle=4700 time=1.473750e+01 dt=2.977150e-03
+elapsed=2.461816e+02 cycle=4800 time=1.503409e+01 dt=2.954520e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=15.105 }=-
+#Final iteration: 7284, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(1.75170e-03, 9.97940e-04) = (L_inf Theta, L2 Theta)
+#(5.01843e+01, 9.99192e-01) = (Area, M_irr)
+#(-3.4135e-02, -3.3407e-15, +4.5970e-16) = (x, y, z) centroid, wrt input grid origin
+#(+2.6399e+00, -2.8764e-15, +1.1216e-15) = (x, y, z) centroid, wrt global origin
+#(2.57243e-01, 7.50787e-01, 6.18492e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25542e+01, 1.25539e+01, 1.24799e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1766) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.01119, 0.177) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.297 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.400845e-02, MPI 8.613045e-02, solve 2.298389e+00
+elapsed=2.848549e+02 cycle=4900 time=1.532847e+01 dt=2.933192e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=15.606 }=-
+#Final iteration: 7328, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(1.66918e-03, 9.99252e-04) = (L_inf Theta, L2 Theta)
+#(5.01846e+01, 9.99195e-01) = (Area, M_irr)
+#(-3.4251e-02, +2.0088e-15, -4.7899e-16) = (x, y, z) centroid, wrt input grid origin
+#(+2.7325e+00, +2.4658e-15, +1.7205e-16) = (x, y, z) centroid, wrt global origin
+#(2.58849e-01, 7.48122e-01, 6.16784e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25543e+01, 1.25541e+01, 1.24802e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1764) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.01069, 0.1767) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.296 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.394860e-02, MPI 1.141864e-01, solve 2.304721e+00
+elapsed=3.235714e+02 cycle=5000 time=1.562078e+01 dt=2.913055e-03
+elapsed=3.598453e+02 cycle=5100 time=1.594662e+01 dt=3.724859e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=16.110 }=-
+#Final iteration: 7384, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(3.01398e-03, 4.21270e-04) = (L_inf Theta, L2 Theta)
+#(5.02527e+01, 9.99873e-01) = (Area, M_irr)
+#(-3.4510e-02, -2.5948e-15, +1.7899e-15) = (x, y, z) centroid, wrt input grid origin
+#(+2.8259e+00, -2.1301e-15, +2.4496e-15) = (x, y, z) centroid, wrt global origin
+#(2.60749e-01, 7.46717e-01, 6.16077e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25628e+01, 1.25626e+01, 1.24890e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.176) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.01008, 0.1763) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.331 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.402510e-02, MPI 9.742736e-02, solve 2.333423e+00
+elapsed=3.966906e+02 cycle=5200 time=1.631496e+01 dt=3.642547e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=16.611 }=-
+#Final iteration: 7576, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(1.49438e-03, 9.97586e-04) = (L_inf Theta, L2 Theta)
+#(5.01818e+01, 9.99167e-01) = (Area, M_irr)
+#(-3.4536e-02, +2.3801e-15, -2.0379e-15) = (x, y, z) centroid, wrt input grid origin
+#(+2.9195e+00, +2.8416e-15, -1.3749e-15) = (x, y, z) centroid, wrt global origin
+#(2.61647e-01, 7.42243e-01, 6.12875e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25543e+01, 1.25540e+01, 1.24800e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1766) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.009784, 0.1768) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.393 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.398833e-02, MPI 8.165655e-02, solve 2.395281e+00
+elapsed=4.334750e+02 cycle=5300 time=1.667548e+01 dt=3.568441e-03
+elapsed=4.679188e+02 cycle=5400 time=1.702895e+01 dt=3.501465e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=17.113 }=-
+#Final iteration: 7884, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(1.66557e-03, 9.96981e-04) = (L_inf Theta, L2 Theta)
+#(5.01879e+01, 9.99228e-01) = (Area, M_irr)
+#(-3.4663e-02, +1.9650e-15, -1.7391e-15) = (x, y, z) centroid, wrt input grid origin
+#(+3.0136e+00, +2.4157e-15, -1.0700e-15) = (x, y, z) centroid, wrt global origin
+#(2.62951e-01, 7.39343e-01, 6.10942e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25550e+01, 1.25548e+01, 1.24813e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1759) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.009605, 0.1762) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.470 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.402145e-02, MPI 8.390114e-02, solve 2.471603e+00
+elapsed=5.047638e+02 cycle=5500 time=1.737604e+01 dt=3.440689e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=17.616 }=-
+#Final iteration: 7224, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(1.81593e-03, 9.93481e-04) = (L_inf Theta, L2 Theta)
+#(5.01848e+01, 9.99197e-01) = (Area, M_irr)
+#(-3.4811e-02, +2.5328e-15, +1.3928e-16) = (x, y, z) centroid, wrt input grid origin
+#(+3.1084e+00, +2.9735e-15, +8.0089e-16) = (x, y, z) centroid, wrt global origin
+#(2.64104e-01, 7.36126e-01, 6.08749e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25547e+01, 1.25545e+01, 1.24808e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1761) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.008805, 0.1763) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.282 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.403025e-02, MPI 9.270481e-02, solve 2.286202e+00
+elapsed=5.414127e+02 cycle=5600 time=1.771733e+01 dt=3.385318e-03
+elapsed=5.774759e+02 cycle=5700 time=1.805332e+01 dt=3.334676e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=18.117 }=-
+#Final iteration: 7276, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(1.87824e-03, 9.98129e-04) = (L_inf Theta, L2 Theta)
+#(5.01848e+01, 9.99197e-01) = (Area, M_irr)
+#(-3.4943e-02, -1.7031e-15, +3.5917e-15) = (x, y, z) centroid, wrt input grid origin
+#(+3.2035e+00, -1.2679e-15, +4.2618e-15) = (x, y, z) centroid, wrt global origin
+#(2.65211e-01, 7.32937e-01, 6.06584e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25547e+01, 1.25546e+01, 1.24810e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1761) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.008521, 0.1763) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.304 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.397352e-02, MPI 8.109876e-02, solve 2.312850e+00
+elapsed=6.162059e+02 cycle=5800 time=1.838445e+01 dt=3.288188e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=18.617 }=-
+#Final iteration: 5960, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(3.92995e-03, 9.92227e-04) = (L_inf Theta, L2 Theta)
+#(5.01904e+01, 9.99253e-01) = (Area, M_irr)
+#(-3.5113e-02, -1.8339e-15, +1.6234e-15) = (x, y, z) centroid, wrt input grid origin
+#(+3.2990e+00, -1.4043e-15, +2.2942e-15) = (x, y, z) centroid, wrt global origin
+#(2.66251e-01, 7.29835e-01, 6.04466e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25556e+01, 1.25554e+01, 1.24816e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1763) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.009261, 0.1766) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 1.917 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.404873e-02, MPI 8.037859e-02, solve 1.921436e+00
+elapsed=6.545608e+02 cycle=5900 time=1.871112e+01 dt=3.245364e-03
+elapsed=6.910088e+02 cycle=6000 time=1.903367e+01 dt=3.205787e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=19.117 }=-
+#Final iteration: 7492, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(2.61365e-03, 9.98338e-04) = (L_inf Theta, L2 Theta)
+#(5.03231e+01, 1.00057e+00) = (Area, M_irr)
+#(-3.5489e-02, +3.2879e-15, -9.3759e-16) = (x, y, z) centroid, wrt input grid origin
+#(+3.3949e+00, +3.7020e-15, -2.5981e-16) = (x, y, z) centroid, wrt global origin
+#(2.68133e-01, 7.29340e-01, 6.04512e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25721e+01, 1.25719e+01, 1.24981e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1762) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.008281, 0.1764) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 2.363 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.404735e-02, MPI 8.975900e-02, solve 2.365567e+00
+elapsed=7.298103e+02 cycle=6100 time=1.935241e+01 dt=3.169100e-03
+Finding Horizon
+#-={ BHaHAHA Horizon 1 / 1 Diagnostics, t=19.617 }=-
+#Final iteration: 5716, at (Nr x Ntheta x Nphi) = (250 x 32 x 64)
+#(3.01276e-03, 9.58390e-04) = (L_inf Theta, L2 Theta)
+#(5.02834e+01, 1.00018e+00) = (Area, M_irr)
+#(-3.5393e-02, +1.2203e-15, -1.3351e-15) = (x, y, z) centroid, wrt input grid origin
+#(+3.4920e+00, +1.6352e-15, -6.5554e-16) = (x, y, z) centroid, wrt global origin
+#(2.68910e-01, 7.25468e-01, 6.01762e-01) = (min, max, mean) coord radii, relative to centroid
+#(1.25667e+01, 1.25665e+01, 1.24953e+01) = (xy, xz, yz) proper circumferences
+#spin_x = (    N/A    ,     N/A    ) based on (xy/yz, xz/yz) proper circumference spin_from_ratios.
+#spin_y = (0, 0.1732) based on (xy/xz, yz/xz) proper circumference spin_from_ratios.
+#spin_z = (0.007886, 0.1734) based on (xz/xy, yz/xy) proper circumference spin_from_ratios.
+#-={ BHaHAHA finished horizon 1 / 1 in 1.839 seconds }=-
+Success
+BHaHAHA horizon 0 timing [s]: interpolation 1.403981e-02, MPI 9.027556e-02, solve 1.844249e+00
+elapsed=7.680593e+02 cycle=6200 time=1.966762e+01 dt=3.134994e-03
+elapsed=8.044191e+02 cycle=6300 time=1.997952e+01 dt=3.103203e-03
+
+Terminating on time limit
+time=2.000000e+01 cycle=6307
+tlim=2.000000e+01 nlim=-1
+
+Current number of MeshBlocks = 568
+28 MeshBlocks created, 28 deleted by AMR
+53 communicated for load balancing, load balancing efficiency = 3.383725e-01
+
+MeshBlock-cycles = 1201504
+cpu time used  = 8.654561e+02
+zone-cycles/cpu_second = 4.549148e+07
+particle-updates/cpu_second = 0.000000e+00
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
+AssembleZ4cTasks
