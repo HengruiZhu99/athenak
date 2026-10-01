@@ -116,6 +116,7 @@
     "z4c/telegraph_kappa": "0.2",
     "z4c/damp_kappa1": "0.01",
     "z4c/damp_kappa2": "0.00",
+    "z4c/co_0_radius": "0.8",
     "time/integrator": "rk4",
     "time/cfl_number": "0.25",
     "mesh/nx1": "128",
@@ -126,7 +127,8 @@
     "mesh/x2min": "-64",
     "mesh/x2max": "64",
     "mesh/x3min": "-64",
-    "mesh/x3max": "64"
+    "mesh/x3max": "64",
+    "z4c/excise_chi": ".0625 (explicit or code default)"
   },
   "overlap_end": 4.5087,
   "integrated_norm_comparison": [
