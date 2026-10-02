@@ -255,3 +255,13 @@ Compact evidence is archived in `results/g5_oplog_b32/8895067/`. Two of 30
 cases are now validated. The SSL block32 comparison is debug job8895192,
 submitted 2026-10-02 09:05 UTC and verified Q/no holds. See its receipt
 in `setup_evidence/progress_8895192.json`.
+
+Job8895192 (gamma5 SSL block32) completed t=4M/PBS0 in 6m40s. All 8
+BHaHAHA searches passed, max RMS=.000999290, max mass error=.00107114,
+and horizon enclosure radius<=1.25441M. All 41 history samples pass the
+exterior speed/boundary/chi checks with constant spherical volume. Compact
+evidence is in `results/g5_ssl_b32/8895192/`. All three block32 gauge cases
+are validated (3/30 total); this alone does not establish convergence.
+The block48 telegrapher run is debug job8895331, submitted 2026-10-02
+09:20 UTC and verified Q/no holds; `setup_evidence/progress_8895331.json`
+retains the receipt and PBS completion evidence.
