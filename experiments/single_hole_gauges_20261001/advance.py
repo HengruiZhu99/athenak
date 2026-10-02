@@ -101,6 +101,10 @@ def main():
             run=STATE_ROOT/'runs'/case['name']/attempt['job_id'].split('.')[0]
             try: result=audit(run,case)
             except (OSError,ValueError,KeyError,TypeError) as e: result=dict(passed=False,error=str(e))
+            recorded_binary=run/'executable.sha256'
+            result['binary_matches']=bool(recorded_binary.exists() and
+                recorded_binary.read_text().split()[0]==attempt['executable_sha256'])
+            result['passed'] &= result['binary_matches']
             result['pbs_exit_status']=job.get('Exit_status')
             result['passed'] &= job.get('Exit_status')==0
             attempt.update(status='passed' if result['passed'] else 'needs_review',audit=result)
