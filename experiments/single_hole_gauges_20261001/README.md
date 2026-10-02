@@ -351,3 +351,14 @@ This is the second/final g5_tel_b64 attempt. The first partial run and failed
 audit are in `results/g5_tel_b64/8897270/`; submission/recovery/PBS evidence
 is in `setup_evidence/progress_8898067.json`. Six completed cases remain
 validated. The source executable and all numerical inputs are unchanged.
+
+At 2026-10-02 17:20–17:21 UTC (13:20–13:21 EDT), repeated qselect and
+fully qualified qstat requests fail with Connection refused / errno15010 to
+aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov. SSH and filesystem access
+still work. Job8898067 was last verified Q/no hold at 17:05 UTC; it has no
+run directory at 17:21, but its current scheduler state cannot be confirmed.
+No cancellation or replacement was attempted. The heartbeat is paused per
+the external-block instruction. Restore PBS access (ALCF intervention if
+needed), then resume and inspect this SAME job before advancing. Six cases
+remain validated. Receipts and unchanged state are preserved in
+`setup_evidence/pbs_unavailable_20261002_1720.json`.
