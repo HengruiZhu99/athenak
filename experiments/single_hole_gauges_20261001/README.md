@@ -155,3 +155,13 @@ this thread. It advances the guarded controller and executes the publication
 handoff above, notifying only meaningful changes or actionable failures.
 See `storage_cleanup.json` for 79.73GiB of reproducible initial checkpoints
 removed; all later checkpoints, held-job restart sources and diagnostics remain.
+
+## Initial submission
+
+GPU v5 build completed successfully from source 933b69ee. At 2026-10-02
+00:55 UTC the one-node debug request was explicitly rejected by PBS (code38):
+`would exceed queue generic's per-user limit of jobs in 'Q' state`. No debug
+job was created. The authorized capacity fallback accepted job **8890549**,
+case `g5_tel_b32`, one node, one hour, account CompactBinaryMerger. It was
+queued at the last setup check. Receipts and binary identity are in
+`setup_evidence/`; live remote state takes precedence over this snapshot.

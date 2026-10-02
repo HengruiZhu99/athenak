@@ -1,0 +1,70 @@
+{
+  "created": "2026-10-02T00:55:01.200339Z",
+  "attempts": [
+    {
+      "time": "2026-10-02T00:55:21.700537Z",
+      "case": "g5_tel_b32",
+      "nodes": 1,
+      "queue": "capacity",
+      "command": [
+        "qsub",
+        "-A",
+        "CompactBinaryMerger",
+        "-q",
+        "capacity",
+        "-N",
+        "tlp-00-0",
+        "-l",
+        "select=1",
+        "-l",
+        "walltime=01:00:00",
+        "-o",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/single_hole_20261001/tlp-00-0.pbs.log",
+        "-v",
+        "CASE=g5_tel_b32",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/experiments/single_hole_gauges_20261001/run.pbs"
+      ],
+      "executable_sha256": "e6f7372bd5beec1c7cbe4804c6cbfeb79677e5b08c46a0f73c2796cafb0c30e8",
+      "stdout": "8890549.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\n",
+      "stderr": "",
+      "returncode": 0,
+      "job_id": "8890549.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "status": "submitted"
+    }
+  ],
+  "completed": [],
+  "status": "running",
+  "held_legacy_jobs": [
+    "8883678",
+    "8888791",
+    "8888792"
+  ],
+  "last_rejection": {
+    "time": "2026-10-02T00:55:04.684177Z",
+    "case": "g5_tel_b32",
+    "nodes": 1,
+    "queue": "debug",
+    "command": [
+      "qsub",
+      "-A",
+      "CompactBinaryMerger",
+      "-q",
+      "debug",
+      "-N",
+      "tlp-00-0",
+      "-l",
+      "select=1",
+      "-l",
+      "walltime=01:00:00",
+      "-o",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/single_hole_20261001/tlp-00-0.pbs.log",
+      "-v",
+      "CASE=g5_tel_b32",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/experiments/single_hole_gauges_20261001/run.pbs"
+    ],
+    "executable_sha256": "e6f7372bd5beec1c7cbe4804c6cbfeb79677e5b08c46a0f73c2796cafb0c30e8",
+    "stdout": "",
+    "stderr": "qsub: would exceed queue generic's per-user limit of jobs in 'Q' state\n",
+    "returncode": 38
+  }
+}
