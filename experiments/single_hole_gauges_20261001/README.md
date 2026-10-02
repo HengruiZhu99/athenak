@@ -275,3 +275,12 @@ two-resolution endpoint comparison are in `results/g5_tel_b48/8895331/`;
 no convergence order is yet claimed. Four of 30 cases are validated.
 Block48 1+log is debug job8895760, submitted 2026-10-02 10:10 UTC and
 verified Q/no holds (`setup_evidence/progress_8895760.json`).
+
+Job8895760 (gamma5 1+log block48) completed t=4M/PBS0 in 27m11s.
+All 9 BHaHAHA searches, including t=4M, passed; max RMS=.000999702,
+max mass error=.00118023, horizon enclosure radius<=1.31768M. All 41
+history samples pass exterior checks with constant spherical volume and
+.00574773% surface quadrature error. Compact evidence and two-resolution
+endpoint norms are in `results/g5_oplog_b48/8895760/`. Five of 30 cases
+are validated. Block48 SSL is debug job8896075, submitted 2026-10-02
+10:50 UTC and verified Q/no holds; see `setup_evidence/progress_8896075.json`.
