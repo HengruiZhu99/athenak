@@ -227,10 +227,12 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
     }
     finder.Find(0,0.0);finder.Write(0,0.0);
     if (global_variable::my_rank==0)
-      std::cout << "HiSpID horizon " << h << " geometry=" << (direct?"native":"mesh")
+      std::cout << std::setprecision(17) << "HiSpID horizon " << h << " geometry=" << (direct?"native":"mesh")
                 << " found=" << finder.ah_found << " area=" << finder.Area()
                 << " expansion_rms=" << finder.ExpansionRMS() << " min_radius=" << finder.rr_min
-                << " attempt_area=" << finder.last_area << " attempt_expansion_rms=" << finder.last_expansion_rms << std::endl;
+                << " attempt_area=" << finder.last_area << " attempt_expansion_rms=" << finder.last_expansion_rms
+                << " center_x=" << finder.center[0] << " center_y=" << finder.center[1]
+                << " center_z=" << finder.center[2] << std::endl;
     if (!finder.ah_found || !std::isfinite(finder.Area()) || finder.Area()<=0 ||
         !std::isfinite(finder.ExpansionRMS()) || finder.ExpansionRMS()>finder.expansion_rms_tol ||
         !std::isfinite(finder.rr_min) || finder.rr_min<=0)

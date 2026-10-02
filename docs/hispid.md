@@ -16,8 +16,10 @@ cmake -S . -B build-hispid -DPROBLEM=z4c/hispid \
 cmake --build build-hispid -j1
 ```
 
-Double precision is required. CMake resolves the header/library only under
-HISPID_ROOT, prints those paths, and records the library SHA256. Reconfigure
+Double precision is required. CMake resolves the header under HISPID_ROOT
+and the library under its build-hispid directory. For a separately preserved
+verified producer, set -DHISPID_LIBRARY_DIR=/absolute/path/to/producer-build.
+It prints both paths and records the library SHA256. Reconfigure
 and rebuild after changing the external library. The checkpoint source SHA
 must match that consumer SHA by default. Explicit library migration is for
 separately validated builds; a matching mathematical parameterization alone
@@ -103,5 +105,27 @@ v=.885 boosted Schwarzschild and their combined Kerr seed pass again, with
 zero evolution steps. Fresh16³/32³/64³ mesh constraint controls also pass for allfour exact
 seeds, recorded in the same current evidence file. The combined64³
 outer H/M RMS are6.13e-7/2.23e-7. Historical quadrature refinements retain
-their earlier fingerprints in `hispid-validation.json`. No regular-basis
-solved binary or binary attenuation enclosure is accepted.
+their earlier fingerprints in `hispid-validation.json`. The current moderate binary has subsequently passed the preliminary
+constraint/charge/covariance sequence and its direct-geometry initial-time
+horizon/enclosure checks; stronger exterior accuracy remains failed.
+
+The separately built consumer uses native producer SHA126300dc… via
+HISPID_LIBRARY_DIR=.../TwoPuncturesC/build-hispid-budget.
+`tst/test_suite/z4c/check_hispid_binary.py` checks both components of the
+128×256×28 moderate checkpoint at lmax8/12/16, followed by fixed-lmax16
+quadrature ntheta32→48. Its direct native geometry and imported mesh
+round trip are separate from a mesh-resolved finder check. Both finest
+surfaces pass expansion RMS1e-7:9.38e-8 and6.09e-8 at ntheta48. Relative
+area changes are<7e-12 under fixed-order quadrature refinement.
+
+The real orthonormal harmonic coefficients give continuous radius bounds
+by the addition theorem. Subtracting the actual17-digit finder-center
+offset, inner_max and an observed refinement allowance gives enclosure
+margins.176225M/.115817M. Continuous upper bounds also certify distinct
+components, with separation margin5.555M. This encloses the g/operator
+modified balls on the retained surfaces; the refinement allowance is
+empirical, and noncompact f/F tails still require exterior constraints.
+The coordinate rotation integral does not provide a generic AKV spin.
+Full source, checkpoint/executable hashes, coefficients, failed coarse
+flags and commands are in `hispid-moderate-binary.json`. These checks take
+zero evolution steps and do not promote the failed stronger binary gate.
