@@ -93,3 +93,13 @@ the fixed cube[-2,2]³ outside radius1.8. At64³, combined-seed H/M RMS are
 with resolution and pass the declared mesh gate. This validates field
 import and AthenaK's outer mesh constraints, separately from the direct
 native-geometry horizon checks. No evolution steps are taken.
+
+The current regular-basis consumer compares the checkpoint basis token with
+`HiSpID_unknown_parameterization()` from the explicitly linked backend, so
+legacy nodal-V arrays cannot be interpreted as modal-P data. Its freshly
+rebuilt exact-seed controls are recorded in `hispid-current-controls.json`
+(native SHA9cbf1108…, executable SHAeca603e9…). Schwarzschild, chi=.95 Kerr,
+v=.885 boosted Schwarzschild and their combined Kerr seed pass again, with
+zero evolution steps. Historical mesh and quadrature refinements retain
+their earlier fingerprints in `hispid-validation.json`. No regular-basis
+solved binary or binary attenuation enclosure is accepted.

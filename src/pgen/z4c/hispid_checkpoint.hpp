@@ -31,7 +31,7 @@ inline Checkpoint Read(const std::string &filename, const std::string &expected_
   label("HISPID_CHECKPOINT");int version;integer(version);
   if (version!=1) throw std::runtime_error("Unsupported HiSpID checkpoint version");
   label("parameterization");std::string parameterization;in>>parameterization;
-  if (parameterization!="W_plus_Aminus1_V") throw std::runtime_error("Unsupported HiSpID unknown parameterization");
+  if (parameterization!=HiSpID_unknown_parameterization()) throw std::runtime_error("Unsupported HiSpID unknown parameterization");
   label("library_sha256");in>>result.library_sha;
   if (result.library_sha.size()!=64 || result.library_sha.find_first_not_of("0123456789abcdef")!=std::string::npos ||
       result.library_sha!=expected_sha) throw std::runtime_error("Checkpoint source-library SHA does not match input");
