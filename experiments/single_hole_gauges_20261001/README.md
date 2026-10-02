@@ -341,3 +341,13 @@ will use four nodes and the same 50-minute cap within one hour. The 84
 reserved-node-hour and two-attempt caps remain enforced, including this
 partial attempt. Eleven controller tests pass, including override/budget
 guards. All other allocations retain their original size; no new case is added.
+
+The four-node debug request was explicitly rejected (PBS188, resource
+limits). qstat -Qf confirms debug resources_max.nodect=2. The rejected
+intent was reconciled under advance.lock against PBS and preserved; no
+debug job was created. The authorized capacity fallback accepted job8898067,
+four nodes/one hour, at 2026-10-02 15:02 UTC (11:02 EDT), verified Q/no hold.
+This is the second/final g5_tel_b64 attempt. The first partial run and failed
+audit are in `results/g5_tel_b64/8897270/`; submission/recovery/PBS evidence
+is in `setup_evidence/progress_8898067.json`. Six completed cases remain
+validated. The source executable and all numerical inputs are unchanged.
