@@ -265,3 +265,13 @@ are validated (3/30 total); this alone does not establish convergence.
 The block48 telegrapher run is debug job8895331, submitted 2026-10-02
 09:20 UTC and verified Q/no holds; `setup_evidence/progress_8895331.json`
 retains the receipt and PBS completion evidence.
+
+Job8895331 (gamma5 telegrapher block48) completed t=4M/PBS0 in 35m38s.
+All 8 BHaHAHA searches passed, max RMS=.000999842, max mass error=.00115265,
+and horizon enclosure radius<=1.26952M. All 41 history samples pass the
+exterior checks; constant shell coordinate volume=17124.75858561198,
+relative surface quadrature error=.00574773%. Compact evidence and a
+two-resolution endpoint comparison are in `results/g5_tel_b48/8895331/`;
+no convergence order is yet claimed. Four of 30 cases are validated.
+Block48 1+log is debug job8895760, submitted 2026-10-02 10:10 UTC and
+verified Q/no holds (`setup_evidence/progress_8895760.json`).
