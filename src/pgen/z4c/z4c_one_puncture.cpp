@@ -26,14 +26,15 @@
 #include "coordinates/cell_locations.hpp"
 
 
-void ADMOnePuncture(MeshBlockPack *pmbp, ParameterInput *pin);
-void RefinementCondition(MeshBlockPack* pmbp);
+static void ADMOnePuncture(MeshBlockPack *pmbp, ParameterInput *pin);
+static void RefinementCondition(MeshBlockPack* pmbp);
 
 //----------------------------------------------------------------------------------------
 //! \fn ProblemGenerator::UserProblem_()
 //! \brief Problem Generator for single puncture
-void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
+void ProblemGenerator::Z4cOnePuncture(ParameterInput *pin, const bool restart) {
   user_ref_func  = RefinementCondition;
+  if (restart) return;
   MeshBlockPack *pmbp = pmy_mesh_->pmb_pack;
   auto &indcs = pmy_mesh_->mb_indcs;
 
@@ -55,6 +56,35 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
             break;
   }
   pmbp->pz4c->Z4cToADM(pmbp);
+  // Apply the perturbation after the pre-collapsed lapse has been initialized.
+  // A compact C-infinity bump vanishes exactly outside radius width, so an
+  // off-center pulse does not change the puncture's collapsed lapse.
+  const Real amplitude = pin->GetOrAddReal("problem", "lapse_pulse_amplitude", 0.0);
+  const Real width = pin->GetOrAddReal("problem", "lapse_pulse_width", 1.0);
+  const Real xc = pin->GetOrAddReal("problem", "lapse_pulse_x", 4.0);
+  const Real yc = pin->GetOrAddReal("problem", "lapse_pulse_y", 0.0);
+  const Real zc = pin->GetOrAddReal("problem", "lapse_pulse_z", 0.0);
+  if (!std::isfinite(amplitude) || amplitude<0 || !std::isfinite(width) || width<=0 ||
+      !std::isfinite(xc) || !std::isfinite(yc) || !std::isfinite(zc)) {
+    std::cerr << "Lapse pulse requires finite amplitude>=0, width>0 and center." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
+  if (amplitude>0) {
+    auto &size = pmbp->pmb->mb_size;
+    auto &z4c = pmbp->pz4c->z4c;
+    const int ng=indcs.ng, is=indcs.is, js=indcs.js, ks=indcs.ks;
+    const int nx=indcs.nx1, ny=indcs.nx2, nz=indcs.nx3;
+    par_for("stationary puncture lapse pulse", DevExeSpace(),0,pmbp->nmb_thispack-1,
+      ks-ng,indcs.ke+ng,js-ng,indcs.je+ng,is-ng,indcs.ie+ng,
+      KOKKOS_LAMBDA(const int m,const int k,const int j,const int i) {
+        const Real x=CellCenterX(i-is,nx,size.d_view(m).x1min,size.d_view(m).x1max)-xc;
+        const Real y=CellCenterX(j-js,ny,size.d_view(m).x2min,size.d_view(m).x2max)-yc;
+        const Real z=CellCenterX(k-ks,nz,size.d_view(m).x3min,size.d_view(m).x3max)-zc;
+        const Real q=(x*x+y*y+z*z)/(width*width);
+        if (q<1) z4c.alpha(m,k,j,i) += amplitude*exp(-q/(1-q));
+      });
+    pmbp->pz4c->Z4cToADM(pmbp);
+  }
   switch (indcs.ng) {
     case 2: pmbp->pz4c->ADMConstraints<2>(pmbp);
             break;
@@ -67,6 +97,12 @@ void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
 
   return;
 }
+
+#ifdef ATHENA_CUSTOM_ONE_PUNCTURE
+void ProblemGenerator::UserProblem(ParameterInput *pin, const bool restart) {
+  Z4cOnePuncture(pin,restart);
+}
+#endif
 
 //----------------------------------------------------------------------------------------
 //! \fn void ADMOnePuncture(MeshBlockPack *pmbp, ParameterInput *pin)

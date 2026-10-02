@@ -258,6 +258,13 @@ add_executable(
 )
 
 # custom problem generator to be included in compile
+if ("${PROBLEM}" STREQUAL "z4c/z4c_one_puncture")
+  target_compile_definitions(athena PRIVATE ATHENA_CUSTOM_ONE_PUNCTURE)
+else()
+  target_sources(athena PRIVATE pgen/z4c/z4c_one_puncture.cpp)
+endif()
+
+# custom problem generator to be included in compile
 # specify on command line using '-D PROBLEM=file' where 'file' is name of file in
 # pgen/ directory (not including .cpp extension)
 

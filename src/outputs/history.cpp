@@ -22,6 +22,7 @@
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/cell_locations.hpp"
 #include "outputs.hpp"
 
 //----------------------------------------------------------------------------------------
@@ -197,6 +198,26 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   int &nhist_ = pdata->nhist;
   auto &opt = pm->pmb_pack->pz4c->opt;
 
+  // Keep all legacy column positions. The new norms use a fixed box, a chi
+  // mask, and a conservative boundary-travel exclusion. Invalid-volume and
+  // sampled speed-violation columns prevent treating a changing domain as
+  // a fixed-domain convergence test.
+  const bool interior = opt.history_interior_radius>0;
+  if (interior) {
+    pdata->nhist = 17;
+    pdata->label[9] = "interior-H2";
+    pdata->label[10] = "interior-M2";
+    pdata->label[11] = "interior-C2";
+    pdata->label[12] = "interior-volume";
+    pdata->label[13] = "boundary-excluded-volume";
+    pdata->label[14] = "speed-bound-violation-volume";
+    pdata->label[15] = "interior-coordinate-volume";
+    pdata->label[16] = "interior-chi-excluded-volume";
+  }
+  const auto domain = pm->mesh_size;
+  const Real boundary_distance = opt.history_boundary_buffer+
+                                 opt.history_boundary_speed*pm->time;
+
   // loop over all MeshBlocks in this pack
   auto &indcs = pm->pmb_pack->pmesh->mb_indcs;
   int is = indcs.is; int nx1 = indcs.nx1;
@@ -225,6 +246,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 
     // Excise the punctures based on chi
     array_sum::GlobalSum hvars;
+    for (int n=9; n<17; ++n) hvars.the_array[n] = 0.0;
     if (z4c.chi(m,k,j,i)>=opt.excise_chi) {
       hvars.the_array[0] = vol*u_con_(m,0,k,j,i); // ||C||^2 (comes already squared)
       hvars.the_array[1] = vol*SQR(u_con_(m,1,k,j,i)); //||H||^2
@@ -245,6 +267,48 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       hvars.the_array[6] = 0;
       hvars.the_array[7] = 0;
       hvars.the_array[8] = 0;
+    }
+
+    if (interior) {
+      const Real x = CellCenterX(i-is,nx1,size.d_view(m).x1min,size.d_view(m).x1max);
+      const Real y = CellCenterX(j-js,nx2,size.d_view(m).x2min,size.d_view(m).x2max);
+      const Real z = CellCenterX(k-ks,nx3,size.d_view(m).x3min,size.d_view(m).x3max);
+      const bool box = fabs(x)<opt.history_interior_radius &&
+                       fabs(y)<opt.history_interior_radius &&
+                       fabs(z)<opt.history_interior_radius &&
+                       fmax(fabs(x),fmax(fabs(y),fabs(z)))>=opt.history_inner_radius;
+      const Real dist = fmin(fmin(x-domain.x1min,domain.x1max-x),
+                        fmin(fmin(y-domain.x2min,domain.x2max-y),
+                             fmin(z-domain.x3min,domain.x3max-z)));
+      const bool safe = dist>boundary_distance;
+      if (box && safe && z4c.chi(m,k,j,i)<opt.excise_chi) hvars.the_array[16] = vol;
+      if (box && !safe) hvars.the_array[13] = vol;
+      if (box && safe && z4c.chi(m,k,j,i)>=opt.excise_chi) {
+        hvars.the_array[9] = hvars.the_array[1];
+        hvars.the_array[10] = hvars.the_array[2];
+        hvars.the_array[11] = hvars.the_array[0];
+        hvars.the_array[12] = vol;
+        hvars.the_array[15] = size.d_view(m).dx1*size.d_view(m).dx2*size.d_view(m).dx3;
+      }
+      // Audit the proposed conservative boundary-speed envelope on each output.
+      // Includes light, lapse/relaxation, and conformal Gamma-driver estimates.
+      // This sampled audit is not a full nonlinear hyperbolicity proof.
+      const Real gxx=adm.g_dd(m,0,0,k,j,i), gxy=adm.g_dd(m,0,1,k,j,i);
+      const Real gxz=adm.g_dd(m,0,2,k,j,i), gyy=adm.g_dd(m,1,1,k,j,i);
+      const Real gyz=adm.g_dd(m,1,2,k,j,i), gzz=adm.g_dd(m,2,2,k,j,i);
+      const Real inv[3] = {(gyy*gzz-gyz*gyz)/detg,
+                          (gxx*gzz-gxz*gxz)/detg,(gxx*gyy-gxy*gxy)/detg};
+      const Real alpha = fabs(z4c.alpha(m,k,j,i));
+      const Real tel = opt.telegraph_lapse ? opt.telegraph_kappa/opt.telegraph_tau : 0;
+      bool violation = false;
+      for (int a=0; a<3; ++a) {
+        const Real light = alpha*sqrt(inv[a]);
+        const Real lapse = sqrt((2*alpha+tel)*inv[a]);
+        const Real shift = sqrt((4.0/3.0)*inv[a]/fmax(z4c.chi(m,k,j,i),1e-30));
+        const Real speed = fabs(z4c.beta_u(m,a,k,j,i))+fmax(light,fmax(lapse,shift));
+        if (!(speed<=opt.history_boundary_speed)) violation = true;
+      }
+      if (violation) hvars.the_array[14] = vol;
     }
 
     // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES

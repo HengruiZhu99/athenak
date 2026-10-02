@@ -185,6 +185,9 @@ class Z4c {
     int spatial_order, fd_stencil;
     // Value of chi to specify the excision region for constraint evaluation
     Real excise_chi;
+    // Optional fixed-coordinate interior histories; zero radius disables them.
+    Real history_interior_radius, history_inner_radius;
+    Real history_boundary_speed, history_boundary_buffer;
 
     // Flag if drift control for COT should be used.
     bool enable_driftcontrol;
