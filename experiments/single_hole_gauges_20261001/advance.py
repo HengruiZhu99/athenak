@@ -70,6 +70,7 @@ def main():
         state=json.loads((STATE_ROOT/'state.json').read_text()) if (STATE_ROOT/'state.json').exists() else dict(
             created=now(),attempts=[],completed=[],status='prepared',
             held_legacy_jobs=['8883678','8888791','8888792'])
+        save(state)  # Persist the initial prepared state even in inspection mode.
         jobs=scheduler()
         active={k:v for k,v in jobs.items() if v['job_state'] not in ('F','X')}
         own={k:v for k,v in active.items() if v.get('Job_Name','').startswith('tlp-')}

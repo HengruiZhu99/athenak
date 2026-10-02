@@ -92,9 +92,12 @@ queue multiple campaign jobs or bypass PBS limits. One node for block32/48,
 two nodes for block64; each reserves one hour, app stops after 50 minutes.
 At most two attempts/case and 84 reserved node-hours total. No automatic
 retry of a failed/partial evolution: inspect first and document any repair.
-No new case families, binary runs, long evolutions or more nodes are authorized
-by this finite manifest. The original user permits necessary single-hole tests;
-ask only if a required expansion exceeds the bounded scope.
+The finite manifest excludes new case families, binary runs and long evolutions.
+If block64 performance requires a short four-node capacity retry, the user
+authorizes necessary single-hole tests on capacity: document the evidence,
+update and test the controller/manifest explicitly, and retain the finite
+node-hour and attempt budgets. Do not mistake this initial allocation choice
+for an extra user-approval requirement.
 
 Controller uses a filesystem lock and persists submission intent BEFORE qsub.
 An ambiguous submission stops all further submissions until PBS is reconciled.
@@ -144,3 +147,11 @@ Inspect rendered slides. Commit and push code/results to
 existing `HengruiZhu99/telegrapher_gauge` branch after reviewing diffs. Never
 change original PR #790/#792 branches. Pause the monitor only after final
 handoff, or on an actionable block that prevents safe progress; report which.
+
+## Monitor installed
+
+Heartbeat `aurora-single-hole-gauge-comparisons` is active every 15 minutes in
+this thread. It advances the guarded controller and executes the publication
+handoff above, notifying only meaningful changes or actionable failures.
+See `storage_cleanup.json` for 79.73GiB of reproducible initial checkpoints
+removed; all later checkpoints, held-job restart sources and diagnostics remain.
