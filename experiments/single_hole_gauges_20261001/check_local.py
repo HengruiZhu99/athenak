@@ -65,6 +65,8 @@ def main():
         assert sum(b[alpha_col]>a[alpha_col] for a,b in zip(z0,zp))>0
         assert fields(zero,'con')==fields(pulse,'con'), 'pulse changed initial constraints'
         hz=table(next(zero.rglob('*.hst')))[0]
+        # The sphere excludes cube corners: its sampled volume is below the old cubical shell.
+        assert 0<hz[17]<(2*3)**3-(2*2)**3
         assert len(hz)==19 and hz[14]>0 and hz[15]==0 and hz[16]==0 and hz[18]==0, hz
         bad=run('boundary',overrides=('z4c/history_boundary_buffer=8',))
         assert table(next(bad.rglob('*.hst')))[0][15]>0

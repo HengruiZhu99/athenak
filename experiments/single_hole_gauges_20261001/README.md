@@ -47,13 +47,25 @@ Do not claim shock formation or a resolved ordering without resolution evidence.
 History columns retain the original nine integral positions and append H²,M²,C²,
 physical volume, boundary-excluded volume, sampled-speed-violation volume,
 coordinate volume and chi-excluded volume. These are integrals; normalized
-L2 is sqrt(integral/physical_volume). Norm regions are FIXED cubical shells:
-8<=max(|x|,|y|,|z|)<16 (boost) and 2<=max(...)<8 (pulse). Near-hole spike
+L2 is sqrt(integral/physical_volume). Norm regions are FIXED spherical shells centered at the coordinate origin:
+2<=r<16 (boost) and 1<=r<8 (pulse), where r=sqrt(x*x+y*y+z*z).
+The boosted inner radius is larger because the puncture moves; a fixed mask
+avoids resolution-dependent tracker motion changing the convergence domain.
+At every horizon search require |centroid|+maximum_centroid_radius < inner_radius;
+this conservative enclosure check guarantees the measured horizon is excised.
+If it fails, stop and revise the common radius consistently across resolutions. Near-hole spike
 profiles are separate diagnostics, not a replacement for these volume norms.
 
 Reject convergence if any of the three exclusion/violation columns is nonzero.
-Require the coordinate volume to equal 28672 / 4032 respectively at every time
-and resolution. A moving chi cutoff otherwise invalidates fixed-domain claims.
+Require the sampled coordinate volume to remain constant in time for each
+resolution and agree within 1% with (4*pi/3)*(R_outer^3-R_inner^3). Save the
+relative volume quadrature error at each resolution. Cell-center sphere masks
+have a resolution-dependent surface quadrature error; account for this when
+interpreting observed orders rather than claiming exact equal discrete volumes.
+A moving chi cutoff otherwise invalidates fixed-domain claims.
+The user requested exclusion at least t from each face (the c=1 light-cone
+estimate). The chosen outer spheres are safely inside that region AND the
+more conservative gauge/coordinate-speed screen below for the full run.
 Cells closer than 4+8t to ANY domain face are excluded. The speed envelope 8
 is deliberately much larger than expected gauge/light/shift speeds, with a 4M
 buffer. A sampled audit checks physical inverse-metric light/lapse speeds and
@@ -165,3 +177,14 @@ job was created. The authorized capacity fallback accepted job **8890549**,
 case `g5_tel_b32`, one node, one hour, account CompactBinaryMerger. It was
 queued at the last setup check. Receipts and binary identity are in
 `setup_evidence/`; live remote state takes precedence over this snapshot.
+
+## User refinement: spherical convergence region
+
+On 2026-10-01 evening the user requested inner horizon excision and a spherical
+outer cutoff. Job8890549 was still Q with no start time and was held before
+updating its diagnostics. No simulation data were discarded or repeated.
+The history kernel and all inputs now use the fixed spherical shells above;
+physical meshes, initial data, gauge parameters and evolution durations are
+unchanged. CPU tests exercise the spherical mask as well as the original pulse,
+restart and boundary checks. The queued job must be released only after the
+updated GPU build and provenance reconcile; remote state records this revision.

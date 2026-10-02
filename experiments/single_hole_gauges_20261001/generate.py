@@ -41,7 +41,7 @@ def make(kind, gauge, block, width=None):
     b['z4c'].update(telegraph_lapse=str(gauge=='tel').lower(),
                     slow_start_lapse=str(gauge=='ssl').lower(),
                     history_interior_radius=16 if kind=='g5' else 8,
-                    history_inner_radius=8 if kind=='g5' else 2,
+                    history_inner_radius=2 if kind=='g5' else 1,
                     history_boundary_speed=8, history_boundary_buffer=4)
     # Freeze the physical mesh: no tracker-driven AMR topology changes.
     b['mesh_refinement'].update(refinement='static', num_levels=7, max_nmb_per_rank=128)

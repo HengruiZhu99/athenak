@@ -198,7 +198,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   int &nhist_ = pdata->nhist;
   auto &opt = pm->pmb_pack->pz4c->opt;
 
-  // Keep all legacy column positions. The new norms use a fixed box, a chi
+  // Keep all legacy column positions. The new norms use a fixed spherical shell, a chi
   // mask, and a conservative boundary-travel exclusion. Invalid-volume and
   // sampled speed-violation columns prevent treating a changing domain as
   // a fixed-domain convergence test.
@@ -273,17 +273,16 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       const Real x = CellCenterX(i-is,nx1,size.d_view(m).x1min,size.d_view(m).x1max);
       const Real y = CellCenterX(j-js,nx2,size.d_view(m).x2min,size.d_view(m).x2max);
       const Real z = CellCenterX(k-ks,nx3,size.d_view(m).x3min,size.d_view(m).x3max);
-      const bool box = fabs(x)<opt.history_interior_radius &&
-                       fabs(y)<opt.history_interior_radius &&
-                       fabs(z)<opt.history_interior_radius &&
-                       fmax(fabs(x),fmax(fabs(y),fabs(z)))>=opt.history_inner_radius;
+      const Real radius2 = x*x+y*y+z*z;
+      const bool shell = radius2<SQR(opt.history_interior_radius) &&
+                         radius2>=SQR(opt.history_inner_radius);
       const Real dist = fmin(fmin(x-domain.x1min,domain.x1max-x),
                         fmin(fmin(y-domain.x2min,domain.x2max-y),
                              fmin(z-domain.x3min,domain.x3max-z)));
       const bool safe = dist>boundary_distance;
-      if (box && safe && z4c.chi(m,k,j,i)<opt.excise_chi) hvars.the_array[16] = vol;
-      if (box && !safe) hvars.the_array[13] = vol;
-      if (box && safe && z4c.chi(m,k,j,i)>=opt.excise_chi) {
+      if (shell && safe && z4c.chi(m,k,j,i)<opt.excise_chi) hvars.the_array[16] = vol;
+      if (shell && !safe) hvars.the_array[13] = vol;
+      if (shell && safe && z4c.chi(m,k,j,i)>=opt.excise_chi) {
         hvars.the_array[9] = hvars.the_array[1];
         hvars.the_array[10] = hvars.the_array[2];
         hvars.the_array[11] = hvars.the_array[0];

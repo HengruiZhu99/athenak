@@ -46,14 +46,25 @@ def audit(run,case):
         result.get('evolution_time',-1)>=case['target_time']-1e-5 and
         'Terminating on time limit' in (run/'run.log').read_text())
     result['finite']=bool(rows and all(len(r)==19 and all(math.isfinite(x) for x in r) for r in rows))
-    expected=28672 if case['kind']=='g5' else 4032
+    outer,inner=(16,2) if case['kind']=='g5' else (8,1)
+    expected=4*math.pi/3*(outer**3-inner**3)
+    sampled_volume=rows[0][17] if result['finite'] else 0
+    result['shell_analytic_volume']=expected
+    result['shell_sampled_volume']=sampled_volume
+    result['shell_volume_relative_quadrature_error']=abs(sampled_volume-expected)/expected
     result['fixed_safe_shell']=bool(result['finite'] and all(
         r[15]==0 and r[16]==0 and r[18]==0 and r[14]>0 and
-        abs(r[17]-expected)<expected*1e-10 for r in rows))
+        abs(r[17]-sampled_volume)<expected*1e-10 for r in rows) and
+        result['shell_volume_relative_quadrature_error']<0.01)
     result['horizons_ok']=bool(result.get('successes',0)>0 and result.get('failures',1)==0 and
         result.get('pending_searches',1)==0 and result.get('reported_successes_above_rms_tolerance',1)==0)
+    horizons=list((run/'horizon').glob('BHaHAHA_diagnostics.ah*.gp'))
+    hr=numeric_rows(horizons[0]) if horizons else []
+    enclosing=[math.sqrt(sum(x*x for x in r[2:5]))+r[6] for r in hr if len(r)>=7]
+    result['horizon_origin_radius_upper_bound']=max(enclosing) if enclosing else None
+    result['horizon_excised']=bool(enclosing and all(math.isfinite(r) and r<inner for r in enclosing))
     result['input_matches']=hashlib.sha256((run/'input.athinput').read_bytes()).hexdigest()==case['input_sha256']
-    result['passed']=all(result[k] for k in ('complete','finite','fixed_safe_shell','horizons_ok','input_matches'))
+    result['passed']=all(result[k] for k in ('complete','finite','fixed_safe_shell','horizons_ok','horizon_excised','input_matches'))
     return result
 
 
