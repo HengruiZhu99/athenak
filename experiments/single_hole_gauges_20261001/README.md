@@ -226,3 +226,11 @@ Only after the new GPU build passes may a documented recovery under advance.lock
 change needs_review to prepared. Do not claim 3D validity until the repeat
 reports zero unexcised-speed violation at every output. If it still fails,
 stop and investigate; no third attempt is authorized by the finite manifest.
+
+The corrected GPU build completed from b29589dd (SHA256
+`50fe25b90fb303999bd449528b4d5094d30f2f948089a354886850c15166fde3`).
+The guarded recovery retained the failed first audit and prepared the final
+baseline attempt. Debug accepted **8894777** at 2026-10-02 08:17:43 UTC,
+one node/one hour under CompactBinaryMerger; PBS verified Q and Hold_Types=n.
+See `setup_evidence/exterior_retry_8894777.json`. Await its full 3D exterior
+audit before qualifying this baseline or advancing the remaining matrix.
