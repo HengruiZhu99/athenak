@@ -4,6 +4,7 @@ import argparse
 import fcntl
 import hashlib
 import json
+import shlex
 from pathlib import Path
 import advance
 
@@ -24,7 +25,9 @@ def main():
         assert job['job_state']=='H' and not job.get('stime'), 'Job must be held and never started.'
         assert job['Account_Name']=='CompactBinaryMerger'
         assert job['queue'] in ('debug','capacity')
-        assert job['Variable_List']['CASE']=='g5_tel_b32'
+        submitted=shlex.split(job['Submit_arguments'])
+        assert submitted[submitted.index('-v')+1]=='CASE=g5_tel_b32'
+        assert submitted[-1]==str(advance.WORKFLOW/'run.pbs')
         build=advance.EXE.parent.parent
         marker=build/'executable.sha256'
         if not marker.exists():
