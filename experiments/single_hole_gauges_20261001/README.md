@@ -310,3 +310,12 @@ automation resumed, reconcile terminal PBS evidence and prepare the second
 SSL attempt as described above. Five cases remain scientifically validated;
 the manuscript revision and all compact data are preserved. Snapshot:
 `setup_evidence/pbs_block_8896075_1219.json`.
+
+The PBS block resolved after the user-requested cancellation retry: job8896075
+is F/Exit_status265 with termination recorded at 12:32:40 UTC, no stime and
+no run directory. Under advance.lock the attempt was marked prelaunch_failed
+with its full receipt and node-hour charge retained. The controller submitted
+the second/final SSL block48 attempt as debug job8896880 at 12:35 UTC
+(08:35 EDT); PBS verified Q/no hold. Both terminal and replacement receipts
+are in `setup_evidence/prelaunch_recovered_8896880.json`. Resume the 15-minute
+monitor; this supersedes the external-block/pause note above.
