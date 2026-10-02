@@ -824,6 +824,10 @@ void FastFlow::FastFlowLoop() {
       fprintf(pofile_verbose, "%3d %15.7e %15.7e %15.7e %15.7e %15.7e"
                               " %15.7e %15.7e %15.7e %15.7e\n",
               k, area, mass, meanradius, rr_min, hmean, Sx, Sy, Sz, S);
+      // A stable area or signed mean can hide unresolved angular expansion.
+      // Comment lines preserve the existing numeric verbose-table columns.
+      if (k%25==0) fprintf(pofile_verbose, "# expansion_rms = %.17e\n",
+                          last_expansion_rms);
       fflush(pofile_verbose);
     }
 

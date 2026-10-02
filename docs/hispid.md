@@ -129,3 +129,52 @@ The coordinate rotation integral does not provide a generic AKV spin.
 Full source, checkpoint/executable hashes, coefficients, failed coarse
 flags and commands are in `hispid-moderate-binary.json`. These checks take
 zero evolution steps and do not promote the failed stronger binary gate.
+
+The revised local spin95 binary checkpoint has also been loaded and measured.
+Its native grid is128×256×24, with equal seed masses.5 at x=±6, spins
+(0,0,.2375), zero boost, omega1/power4 and actual correction operators.
+It carries the explicit diagnostic label because independent physical
+constraints still fail. `--allow-diagnostic` enables this measurement without
+promoting its physical acceptance.
+
+Both lmax12,ntheta24 surfaces are found with expansion RMS4.77e-6 under the
+coarse1e-5 measurement tolerance. Each has area8.3135384, Christodoulou
+mass.5006533, irreducible mass.4066849, coordinate spin magnitude.2375000
+and coordinate chi.9475223. Their center coordinates are exactly(±6,0,0).
+The mesh import/ADM-to-Z4c round trip error is4.1089e-16. This is an
+initial-time direct-native-geometry check, with zero evolution steps.
+
+The stricter lmax16,ntheta32 attempt stops at RMS2.3512e-7, above1e-7.
+Its angular standard deviation levels near2.32e-7 while the signed mean
+continues decreasing. Fixed-lmax quadrature and higher-lmax checks remain
+pending. The strict horizon/enclosure flags remain false. The coarse retained
+surfaces have continuous inner-ball margins.013955M, but this alone does not
+certify the stricter refined surface or exterior vacuum accuracy. The spin
+integral uses coordinate rotations; a generic AKV spin is unmeasured.
+
+`check_hispid_binary.py` accepts explicit positive `--flow-alpha`,
+`--guess-scale` and `--flow-iterations` controls. All output directories must
+be new. Alpha.2 stabilizes this mass.5/high-spin flow; the failed alpha1
+cycle is retained. Using the measured mean-radius guess instead of1.05 times
+the seed radius reduces the matched coarse search213.69s→44.39s, with relative
+area difference9.4e-13. Geometry and acceptance thresholds are unchanged.
+Verbose FastFlow output now reports RMS every25 iterations as comment lines,
+keeping the existing numeric columns. Failed attempts retain last area/RMS.
+
+`hispid-spin95-binary.json` contains the checkpoint/source/executable hashes,
+commands, coefficients, measured properties, resources and all earlier
+interrupted attempts. The logging consumer102abcb0… links the same
+126300dc… producer. To replay the bounded diagnostic, use the separately
+built serial executable and its explicit checkpoint:
+
+```sh
+python tst/test_suite/z4c/check_hispid_binary.py \
+  --executable /absolute/path/build-hispid-horizon-progress/src/athena \
+  --checkpoint /absolute/path/build-hispid-binary/data/spin95-local128.hispid \
+  --allow-diagnostic --flow-alpha .2 --guess-scale .97901669168957195 \
+  --flow-iterations 100 --levels 8,12,16 --timeout 1800 \
+  --output /absolute/path/fresh-spin95-diagnostic
+```
+
+The diagnostic returns1 for the retained strict failure. The reported
+coarse property measurements and successful import remain available.
