@@ -188,3 +188,9 @@ physical meshes, initial data, gauge parameters and evolution durations are
 unchanged. CPU tests exercise the spherical mask as well as the original pulse,
 restart and boundary checks. The queued job must be released only after the
 updated GPU build and provenance reconcile; remote state records this revision.
+
+The revised GPU build passed and job8890549 was released back to capacity at
+2026-10-02 02:47 UTC (October 1, 22:47 EDT). Its binary/input hashes and
+original submission provenance are retained in
+`setup_evidence/spherical_release_8890549.json`. The same job remains queued;
+no extra attempt was submitted. The diagnostic revision is now `released`.

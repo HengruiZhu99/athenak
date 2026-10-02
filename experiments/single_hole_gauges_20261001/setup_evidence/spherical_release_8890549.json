@@ -1,0 +1,113 @@
+{
+  "created": "2026-10-02T00:55:01.200339Z",
+  "attempts": [
+    {
+      "time": "2026-10-02T00:55:21.700537Z",
+      "case": "g5_tel_b32",
+      "nodes": 1,
+      "queue": "capacity",
+      "command": [
+        "qsub",
+        "-A",
+        "CompactBinaryMerger",
+        "-q",
+        "capacity",
+        "-N",
+        "tlp-00-0",
+        "-l",
+        "select=1",
+        "-l",
+        "walltime=01:00:00",
+        "-o",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/single_hole_20261001/tlp-00-0.pbs.log",
+        "-v",
+        "CASE=g5_tel_b32",
+        "/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/experiments/single_hole_gauges_20261001/run.pbs"
+      ],
+      "executable_sha256": "6ae1bea19d4197d08497a6e8e9b83327fb3bdf1dfa350d75ea64b2b07895fc16",
+      "stdout": "8890549.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov\n",
+      "stderr": "",
+      "returncode": 0,
+      "job_id": "8890549.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "status": "submitted",
+      "original_executable_sha256": "e6f7372bd5beec1c7cbe4804c6cbfeb79677e5b08c46a0f73c2796cafb0c30e8",
+      "input_sha256": "d56c7a040f9e710ad2902a47439c761707860df3ba0803c594800f653ce36375",
+      "diagnostic_revision": {
+        "job_id": "8890549.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+        "source_commit": "d8404887412c60fb6a89a8db41347bd7174d0a51",
+        "executable_sha256": "6ae1bea19d4197d08497a6e8e9b83327fb3bdf1dfa350d75ea64b2b07895fc16",
+        "input_sha256": "d56c7a040f9e710ad2902a47439c761707860df3ba0803c594800f653ce36375",
+        "time": "2026-10-02T02:47:14.499400Z"
+      }
+    }
+  ],
+  "completed": [],
+  "status": "running",
+  "held_legacy_jobs": [
+    "8883678",
+    "8888791",
+    "8888792"
+  ],
+  "last_rejection": {
+    "time": "2026-10-02T00:55:04.684177Z",
+    "case": "g5_tel_b32",
+    "nodes": 1,
+    "queue": "debug",
+    "command": [
+      "qsub",
+      "-A",
+      "CompactBinaryMerger",
+      "-q",
+      "debug",
+      "-N",
+      "tlp-00-0",
+      "-l",
+      "select=1",
+      "-l",
+      "walltime=01:00:00",
+      "-o",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/single_hole_20261001/tlp-00-0.pbs.log",
+      "-v",
+      "CASE=g5_tel_b32",
+      "/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929/source/experiments/single_hole_gauges_20261001/run.pbs"
+    ],
+    "executable_sha256": "e6f7372bd5beec1c7cbe4804c6cbfeb79677e5b08c46a0f73c2796cafb0c30e8",
+    "stdout": "",
+    "stderr": "qsub: would exceed queue generic's per-user limit of jobs in 'Q' state\n",
+    "returncode": 38
+  },
+  "diagnostic_revision": {
+    "status": "released",
+    "job_id": "8890549",
+    "source_commit": "d8404887",
+    "time": "2026-10-02T02:42:51.097028Z",
+    "reason": "User requested fixed spherical convergence domain with horizon-interior excision",
+    "boost_shell": [
+      2,
+      16
+    ],
+    "pulse_shell": [
+      1,
+      8
+    ],
+    "center": [
+      0,
+      0,
+      0
+    ],
+    "boundary_screen": "At least distance t from each face; retain conservative 4+8t screen",
+    "old_executable_sha256": "e6f7372bd5beec1c7cbe4804c6cbfeb79677e5b08c46a0f73c2796cafb0c30e8",
+    "validation": {
+      "job_id": "8890549.aurora-pbs-0001.hostmgmt.cm.aurora.alcf.anl.gov",
+      "source_commit": "d8404887412c60fb6a89a8db41347bd7174d0a51",
+      "executable_sha256": "6ae1bea19d4197d08497a6e8e9b83327fb3bdf1dfa350d75ea64b2b07895fc16",
+      "input_sha256": "d56c7a040f9e710ad2902a47439c761707860df3ba0803c594800f653ce36375",
+      "time": "2026-10-02T02:47:14.499400Z"
+    },
+    "release_receipt": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  }
+}
