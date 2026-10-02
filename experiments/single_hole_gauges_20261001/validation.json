@@ -26,5 +26,25 @@
     }
   },
   "cpu_checks": "6 passed",
-  "controller_checks": "8 passed"
+  "controller_checks": "8 passed",
+  "spherical_region_revision": {
+    "source_commit": "d8404887",
+    "boost_radii": [
+      2,
+      16
+    ],
+    "pulse_radii": [
+      1,
+      8
+    ],
+    "center": [
+      0,
+      0,
+      0
+    ],
+    "cpu_checks": "6 passed including spherical volume and restart",
+    "spherical_audit_checks": "4 passed",
+    "controller_checks": "8 passed",
+    "physical_mesh_changed": false
+  }
 }
