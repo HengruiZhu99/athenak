@@ -319,3 +319,13 @@ the second/final SSL block48 attempt as debug job8896880 at 12:35 UTC
 (08:35 EDT); PBS verified Q/no hold. Both terminal and replacement receipts
 are in `setup_evidence/prelaunch_recovered_8896880.json`. Resume the 15-minute
 monitor; this supersedes the external-block/pause note above.
+
+Replacement job8896880 (gamma5 SSL block48) completed t=4M/PBS0 in
+28m17s. All 9 BHaHAHA searches including t=4M passed; max RMS=.000999702,
+max mass error=.00115980, horizon enclosure radius<=1.31920M. All 41
+history samples pass exterior checks with constant spherical volume and
+.00574773% surface quadrature error. Compact data and endpoint norms are in
+`results/g5_ssl_b48/8896880/`. All six block32/48 cases are now validated;
+block64 is needed for three-resolution convergence. Telegrapher block64 is
+debug job8897270, two nodes/one hour, submitted 2026-10-02 13:21 UTC and
+verified Q/no holds; see `setup_evidence/progress_8897270.json`.
