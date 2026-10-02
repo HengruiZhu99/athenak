@@ -163,6 +163,28 @@ if (${PROBLEM} MATCHES "z4c/spectre/*")
   target_link_libraries(athena PRIVATE spectre::Exporter)
 endif()
 
+if (${PROBLEM} STREQUAL "z4c/hispid")
+  if (Athena_SINGLE_PRECISION)
+    message(FATAL_ERROR "HiSpID import validation requires double precision")
+  endif()
+  set(HISPID_ROOT "" CACHE PATH "Explicit isolated HiSpID source/build directory")
+  # Re-resolve after a root change; stale find_library cache entries must not
+  # silently link a different checkout's build.
+  unset(HISPID_INCLUDE_DIR CACHE)
+  unset(HISPID_LIBRARY CACHE)
+  find_path(HISPID_INCLUDE_DIR HiSpID.h PATHS "${HISPID_ROOT}/include" NO_DEFAULT_PATH)
+  find_library(HISPID_LIBRARY NAMES HiSpID PATHS "${HISPID_ROOT}/build-hispid" NO_DEFAULT_PATH)
+  if (NOT HISPID_INCLUDE_DIR OR NOT HISPID_LIBRARY)
+    message(FATAL_ERROR "Build HiSpID first and set -DHISPID_ROOT=/absolute/path/to/TwoPuncturesC")
+  endif()
+  target_include_directories(athena PRIVATE ${HISPID_INCLUDE_DIR})
+  target_link_libraries(athena PRIVATE ${HISPID_LIBRARY})
+  file(SHA256 "${HISPID_LIBRARY}" HISPID_BINARY_SHA256)
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${HISPID_LIBRARY}")
+  target_compile_definitions(athena PRIVATE HISPID_LIBRARY_SHA256="${HISPID_BINARY_SHA256}")
+  message(STATUS "HiSpID include: ${HISPID_INCLUDE_DIR}; library: ${HISPID_LIBRARY}")
+endif()
+
 if (${PROBLEM} MATCHES "dyn_grmhd/elliptica/*")
   target_include_directories(athena PRIVATE
       ${CMAKE_SOURCE_DIR}/Elliptica_ID_Reader/include)
@@ -260,4 +282,3 @@ target_include_directories(athena PUBLIC
 configure_file(config.hpp.in config.hpp)
 
 install( TARGETS athena DESTINATION bin )
-

@@ -10,6 +10,9 @@
 #define Z4C_FASTFLOW_HPP_
 
 #include <cstdio>
+#include <cmath>
+#include <functional>
+#include <limits>
 
 #include <string>
 #include <vector>
@@ -54,6 +57,19 @@ class FastFlow {
   void RadiiFromSphericalHarmonics();
   void UpdateFlowSpectralComponents();
   void SurfaceIntegrals();
+
+  // Optional host geometry source for initial-data validation. Tensors use
+  // [xx,xy,xz,yy,yz,zz], derivatives [dx(6),dy(6),dz(6)]. Only rank zero
+  // evaluates it; the ordinary surface-integral collectives remain in use.
+  // The owner must clear the callback before releasing its data/evolving.
+  std::function<void(const Real *, Real *, Real *, Real *)> geometry_source;
+  std::function<Real(Real, Real)> initial_shape;
+  Real expansion_rms_tol; // <=0 retains historical mass-stabilization criterion
+  bool require_complete_surface;
+  Real Area() const { return ah_prop[harea]; }
+  Real ExpansionRMS() const { return std::sqrt(ah_prop[hhrms]); }
+  Real last_expansion_rms = std::numeric_limits<Real>::quiet_NaN();
+  Real last_area = std::numeric_limits<Real>::quiet_NaN();
 
   // Some of the main parameters in the fast-flow algorithm
   bool ah_found; // Horizon found
@@ -156,6 +172,9 @@ class FastFlow {
   // Functions used in the fast-flow algorithm
   void FastFlowLoop();
   void InitialGuess();
+  void InitialShape();
+  void SourceGeometry();
+  void CheckCoverage();
 
   // Pointers to MeshBlockPack and ParameterInput
   MeshBlockPack *pmbp;

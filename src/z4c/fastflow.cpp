@@ -23,6 +23,7 @@
 #endif
 
 #include "fastflow.hpp"
+#include "fastflow_harmonics.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
@@ -82,6 +83,9 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
   // Convergence parameters
   hmean_tol = pin->GetOrAddReal("fastflow", "hmean_tol_" + n_str, 100.);
   mass_tol = pin->GetOrAddReal("fastflow", "mass_tol_" + n_str, 1e-2);
+  expansion_rms_tol = pin->GetOrAddReal("fastflow", "expansion_rms_tol_" + n_str, -1.0);
+  require_complete_surface = pin->GetOrAddBoolean("fastflow", "require_complete_surface", false);
+  if (!std::isfinite(expansion_rms_tol)) throw std::runtime_error("Invalid expansion RMS tolerance");
 
   // Output booleans
   verbose = pin->GetOrAddBoolean("fastflow", "verbose", false);
@@ -396,12 +400,12 @@ void FastFlow::Write(int iter, Real time) {
       }
       fprintf(pofile_shape, "# iter = %d, Time = %g\n",iter,time);
       for (int l = 0; l <= lmax; l++) {
-        fprintf(pofile_shape,"%e ", a0.h_view(l));
+        fprintf(pofile_shape,"%.17e ", a0.h_view(l));
 
         for (int m = 1; m <= l; m++) {
           int l1 = lmindex(l,m,lmax);
-          fprintf(pofile_shape,"%e ",ac.h_view(l1));
-          fprintf(pofile_shape,"%e ",as.h_view(l1));
+          fprintf(pofile_shape,"%.17e ",ac.h_view(l1));
+          fprintf(pofile_shape,"%.17e ",as.h_view(l1));
         }
       }
       fprintf(pofile_shape,"\n");
@@ -428,6 +432,9 @@ void FastFlow::Find(int iter, Real time) {
   }
 
   InitialGuess();
+  if (initial_shape) InitialShape();
+  std::fill(ah_prop, ah_prop+kHnvar, std::numeric_limits<Real>::quiet_NaN());
+  last_expansion_rms=last_area=std::numeric_limits<Real>::quiet_NaN();
   FastFlowLoop();
 
   // Retain `last_a0` in restart: this serves as primary ini. guess.
@@ -567,6 +574,7 @@ template void FastFlow::MetricDerivatives<4>(Real time);
 //!        Flag here the surface points contained (on this rank).
 template <int NGHOST>
 void FastFlow::MetricInterp() {
+  if (geometry_source) { SourceGeometry(); return; }
   // In MetricInterp() we'll flag the surface points on this mesh
   // default to 0 (no points).
   Kokkos::deep_copy(havepoint.d_view, 0.0);
@@ -660,6 +668,75 @@ template void FastFlow::MetricInterp<2>();
 template void FastFlow::MetricInterp<3>();
 template void FastFlow::MetricInterp<4>();
 
+void FastFlow::SourceGeometry() {
+  auto radii = Kokkos::create_mirror_view_and_copy(HostMemSpace(), rr);
+  auto gi = Kokkos::create_mirror_view(g_interp);
+  auto ki = Kokkos::create_mirror_view(K_interp);
+  auto dgi = Kokkos::create_mirror_view(dg_interp);
+  Kokkos::deep_copy(gi, 0.0); Kokkos::deep_copy(ki, 0.0); Kokkos::deep_copy(dgi, 0.0);
+  Kokkos::deep_copy(havepoint.h_view, 0);
+  int error = 0;
+  if (global_variable::my_rank == 0) {
+    try {
+      for (int p=0; p<nangles; ++p) {
+        Real th=gl_grid->polar_pos.h_view(p,0), ph=gl_grid->polar_pos.h_view(p,1);
+        if (!std::isfinite(radii(p)) || radii(p)<=0) throw std::runtime_error("Invalid surface radius");
+        Real x[3]={center[0]+radii(p)*std::sin(th)*std::cos(ph),
+                   center[1]+radii(p)*std::sin(th)*std::sin(ph),
+                   center[2]+radii(p)*std::cos(th)};
+        Real g[6], K[6], dg[18]; geometry_source(x,g,K,dg);
+        for (int c=0;c<6;++c) {
+          if (!std::isfinite(g[c]) || !std::isfinite(K[c])) throw std::runtime_error("Nonfinite surface geometry");
+          gi(c,p)=g[c]; ki(c,p)=K[c];
+        }
+        for (int c=0;c<18;++c) {
+          if (!std::isfinite(dg[c])) throw std::runtime_error("Nonfinite surface gradient");
+          dgi(c,p)=dg[c];
+        }
+        havepoint.h_view(p)=1;
+      }
+    } catch (const std::exception &e) {
+      std::cerr << "FastFlow initial geometry: " << e.what() << std::endl; error=1;
+    }
+  }
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE,&error,1,MPI_INT,MPI_MAX,MPI_COMM_WORLD);
+#endif
+  if (error) throw std::runtime_error("FastFlow initial geometry callback failed");
+  Kokkos::deep_copy(g_interp,gi); Kokkos::deep_copy(K_interp,ki); Kokkos::deep_copy(dg_interp,dgi);
+  havepoint.template modify<HostMemSpace>(); havepoint.template sync<DevExeSpace>();
+}
+
+void FastFlow::CheckCoverage() {
+  std::vector<int> ownership(nangles);
+  for (int p=0;p<nangles;++p) ownership[p]=havepoint.h_view(p);
+#if MPI_PARALLEL_ENABLED
+  MPI_Allreduce(MPI_IN_PLACE,ownership.data(),nangles,MPI_INT,MPI_SUM,MPI_COMM_WORLD);
+#endif
+  for (int count:ownership) if (count!=1)
+    throw std::runtime_error("FastFlow requires exactly one owner for every angular point");
+}
+
+void FastFlow::InitialShape() {
+  // Host projection uses the same normalized harmonics and quadrature as
+  // the flow. It is performed on every rank and needs no MPI sum.
+  Kokkos::deep_copy(a0.h_view,0.0); Kokkos::deep_copy(ac.h_view,0.0); Kokkos::deep_copy(as.h_view,0.0);
+  for (int p=0;p<nangles;++p) {
+    Real r=initial_shape(gl_grid->polar_pos.h_view(p,0),gl_grid->polar_pos.h_view(p,1));
+    if (!std::isfinite(r) || r<=0) throw std::runtime_error("Invalid initial surface shape");
+    Real rw=r*gl_grid->int_weights.h_view(p);
+    for (int l=0;l<=lmax;++l) {
+      a0.h_view(l)+=rw*Y0.h_view(p,l);
+      for (int m=1;m<=l;++m) {
+        int q=lmindex(l,m,lmax);ac.h_view(q)+=rw*Yc.h_view(p,q);as.h_view(q)+=rw*Ys.h_view(p,q);
+      }
+    }
+  }
+  a0.template modify<HostMemSpace>(); a0.template sync<DevExeSpace>();
+  ac.template modify<HostMemSpace>(); ac.template sync<DevExeSpace>();
+  as.template modify<HostMemSpace>(); as.template sync<DevExeSpace>();
+}
+
 //----------------------------------------------------------------------------------------
 //! \fn void FastFlow::FastFlowLoop()
 //! \brief Fast Flow loop for horizon n.
@@ -704,11 +781,14 @@ void FastFlow::FastFlowLoop() {
               break;
     }
 
+    if (geometry_source || require_complete_surface) CheckCoverage();
+
     // Step 3: Compute the surface integrals.
     SurfaceIntegrals();
 
     area  = integrals[iarea];
     hrms  = integrals[ihrms]/area;
+    last_expansion_rms=std::sqrt(hrms);last_area=area;
     hmean = integrals[ihmean];
     Sx = integrals[iSx] / (8 * M_PI);
     Sy = integrals[iSy] / (8 * M_PI);
@@ -776,7 +856,8 @@ void FastFlow::FastFlowLoop() {
     }
 
     // End flow when mass difference is small
-    if (Kokkos::fabs(mass_prev-mass) < mass_tol) {
+    if (Kokkos::fabs(mass_prev-mass) < mass_tol &&
+        (expansion_rms_tol<=0 || std::sqrt(hrms)<=expansion_rms_tol)) {
       ah_found = true;
       break;
     }
@@ -942,7 +1023,7 @@ void FastFlow::RadiiFromSphericalHarmonics() {
   // Step 2: Compute the global minimum.
   rr_min = std::numeric_limits<Real>::infinity();
   Kokkos::parallel_reduce("FastFlow_sphradii",
-  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles-1),
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles),
   KOKKOS_LAMBDA(const int &p, Real &lmin) {
     lmin = Kokkos::min(lmin, rr_(p));
   }, Kokkos::Min<Real>(rr_min));
@@ -1041,7 +1122,7 @@ void FastFlow::SurfaceIntegrals() {
 
   // Loop over surface points
   Kokkos::parallel_reduce("FastFlow_surfintegrals",
-  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles-1),
+  Kokkos::RangePolicy<>(DevExeSpace(), 0, nangles),
   KOKKOS_LAMBDA(const int &p,
                 Real& area,
                 Real& coarea,
@@ -1432,10 +1513,12 @@ void FastFlow::ComputeSphericalHarmonics() {
         Real YlmRdth, YlmIdth, YlmRdphi, YlmIdphi;
         Real YlmRdth2, YlmIdth2, YlmRdphi2, YlmIdphi2, YlmRdthdphi, YlmIdthdphi;
 
-        SphericalHarmSecondDerivs(&YlmR, &YlmI,
-                                  &YlmRdth, &YlmIdth, &YlmRdphi, &YlmIdphi,
-                                  &YlmRdth2, &YlmIdth2, &YlmRdphi2, &YlmIdphi2,
-                                  &YlmRdthdphi, &YlmIdthdphi, l, m, theta, phi);
+        auto h=StableFastFlowHarmonic(l,m,theta,phi);
+        YlmR=h.real;YlmI=h.imag;YlmRdth=h.th_real;YlmIdth=h.th_imag;
+        YlmRdphi=h.ph_real;YlmIdphi=h.ph_imag;
+        YlmRdth2=h.th2_real;YlmIdth2=h.th2_imag;
+        YlmRdphi2=h.ph2_real;YlmIdphi2=h.ph2_imag;
+        YlmRdthdphi=h.thph_real;YlmIdthdphi=h.thph_imag;
 
         if (m == 0) { // m = 0 spherical harmonics
           Y0_.d_view(p,l) = YlmR;

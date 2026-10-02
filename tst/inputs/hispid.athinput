@@ -1,0 +1,68 @@
+# Initial-time import/finder control; override filename and source SHA on CLI.
+<job>
+basename = hispid
+<mesh>
+nghost = 4
+nx1 = 16
+nx2 = 16
+nx3 = 16
+x1min = -2
+x1max = 2
+x2min = -2
+x2max = 2
+x3min = -2
+x3max = 2
+ix1_bc = outflow
+ox1_bc = outflow
+ix2_bc = outflow
+ox2_bc = outflow
+ix3_bc = outflow
+ox3_bc = outflow
+<meshblock>
+nx1 = 16
+nx2 = 16
+nx3 = 16
+<time>
+evolution = dynamic
+integrator = rk4
+cfl_number = 0.4
+nlim = 0
+tlim = 0
+<z4c>
+nco = 0
+chi_div_floor = 1e-12
+diss = 0.1
+damp_kappa1 = 0.02
+damp_kappa2 = 0
+<mesh_refinement>
+refinement = none
+<fastflow>
+npunct = 0
+num_horizons = 1
+use_puncture_0 = -1
+initial_radius_0 = 0.5
+ntheta = 16
+lmax = 8
+flow_iterations_0 = 600
+flow_alpha_beta_const_0 = 1
+hmean_tol_0 = 100
+mass_tol_0 = 1e-12
+expansion_rms_tol_0 = 1e-7
+start_time_0 = 0
+stop_time_0 = 0
+verbose = true
+output_grid = false
+output_ylm = false
+<problem>
+hispid_filename = REPLACE_WITH_ABSOLUTE_CHECKPOINT
+hispid_source_sha256 = REPLACE_WITH_SOURCE_SHA256
+hispid_initial_horizons = true
+hispid_direct_horizon_geometry = true
+hispid_seed_horizon_guess = true
+hispid_horizon_guess_scale = 1.05
+hispid_flat_control = false
+hispid_allow_diagnostic = false
+hispid_allow_library_migration = false
+hispid_preserve_horizon_centers = false
+hispid_mesh_constraints = false
+hispid_mesh_constraint_min_radius = 0.75
