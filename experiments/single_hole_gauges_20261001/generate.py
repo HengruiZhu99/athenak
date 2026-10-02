@@ -89,9 +89,9 @@ def main():
                 cases.append(meta)
                 (ROOT/'inputs'/(meta['name']+'.athinput')).write_text(text)
     (ROOT/'cases.json').write_text(json.dumps(dict(cases=cases,
-        max_attempts_per_case=2, max_campaign_node_hours=60,
+        max_attempts_per_case=2, max_campaign_node_hours=84,
         max_new_output_bytes=5*1024**3,
-        note='30 short single-hole cases, maximum two 1-node 1-hour attempts per case; no automatic enlargement.'),indent=2)+'\n')
+        note='30 short single-hole cases, maximum two 1-hour attempts per case; B64 uses two nodes, others one; no automatic enlargement.'),indent=2)+'\n')
 
 if __name__ == '__main__':
     main()

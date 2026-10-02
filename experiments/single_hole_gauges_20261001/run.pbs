@@ -1,0 +1,39 @@
+#!/bin/bash -l
+#PBS -A CompactBinaryMerger
+#PBS -q debug
+#PBS -N tlp-single
+#PBS -l select=1
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=flare:home
+#PBS -l place=scatter
+#PBS -j oe
+set -euo pipefail
+campaign=/lus/flare/projects/CompactBinaryMerger/hzhu/telegrapher_lapse_20260929
+source_root="$campaign/source"
+workflow="$source_root/experiments/single_hole_gauges_20261001"
+exe="$source_root/build/aurora-sycl-v5/src/athena"
+run="$campaign/single_hole_20261001/runs/${CASE:?}/${PBS_JOBID%%.*}"
+mkdir -p "$run"
+cd "$run"
+cp "$workflow/inputs/$CASE.athinput" input.athinput
+cp "$source_root/build/aurora-sycl-v5/source_commit.txt" source_commit.txt
+sha256sum "$exe" > executable.sha256
+sha256sum input.athinput > input.sha256
+module list > modules.txt 2>&1
+cat "$PBS_NODEFILE" > nodes.txt
+export MPICH_GPU_SUPPORT_ENABLED=1 OMP_NUM_THREADS=8 OMP_PLACES=threads OMP_PROC_BIND=spread
+export ZE_FLAT_DEVICE_HIERARCHY=COMPOSITE
+bind='list:1-8:9-16:17-24:25-32:33-40:41-48:53-60:61-68:69-76:77-84:85-92:93-100'
+nodes=$(sort -u "$PBS_NODEFILE" | wc -l)
+printf '%s\n' "$nodes" > node_count.txt
+printf '%s\n' "$exe -i input.athinput -t 00:50:00" > actual_arguments.txt
+set +e
+mpiexec -n "$((12 * nodes))" -ppn 12 --cpu-bind="$bind" \
+    "$(command -v gpu_tile_compact.sh)" "$exe" -i input.athinput -t 00:50:00 > run.log 2>&1
+rc=$?
+set -e
+printf '%s\n' "$rc" > exit_status.txt
+# Compress text profiles, never delete the only copy of scientific outputs.
+find . -name '*.tab' -type f -exec gzip '{}' +
+du -sb . > output_bytes.txt
+exit "$rc"
