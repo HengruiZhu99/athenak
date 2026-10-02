@@ -100,6 +100,8 @@ legacy nodal-V arrays cannot be interpreted as modal-P data. Its freshly
 rebuilt exact-seed controls are recorded in `hispid-current-controls.json`
 (native SHA9cbf1108…, executable SHAeca603e9…). Schwarzschild, chi=.95 Kerr,
 v=.885 boosted Schwarzschild and their combined Kerr seed pass again, with
-zero evolution steps. Historical mesh and quadrature refinements retain
+zero evolution steps. Fresh16³/32³/64³ mesh constraint controls also pass for allfour exact
+seeds, recorded in the same current evidence file. The combined64³
+outer H/M RMS are6.13e-7/2.23e-7. Historical quadrature refinements retain
 their earlier fingerprints in `hispid-validation.json`. No regular-basis
 solved binary or binary attenuation enclosure is accepted.

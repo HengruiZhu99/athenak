@@ -718,5 +718,754 @@
       }
     ],
     "passed": true
+  },
+  "mesh_constraints": {
+    "executable_sha256": "eca603e9f396011f572a38e5a52492a478577f41d79ef6295c5cba950a2d4958",
+    "initial_time": 0,
+    "criteria": {
+      "outer_constraint_rms": 1e-06,
+      "outer_constraint_max": 0.0001,
+      "absolute_roundoff_floor": 1e-12
+    },
+    "common_region": "cube [-2,2]^3 outside radius1.8 from active puncture",
+    "records": [
+      {
+        "case": "schwarzschild",
+        "resolution": 16,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/schwarzschild.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=16",
+          "meshblock/nx1=16",
+          "mesh/nx2=16",
+          "meshblock/nx2=16",
+          "mesh/nx3=16",
+          "meshblock/nx3=16"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/schwarzschild.hispid",
+          "file_sha256": "2428da23b9f1f9a2fc132f390268e325325b17cd75895307c661b549bd3df852",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 0.16973420802969486,
+        "passed_local": false,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 2.1180157451489403e-16,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.2566618102211707,
+              "M_rms": 0,
+              "H_max": 2.966812135435213,
+              "M_max": 0
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.5,
+              "H_rms": 3.210739949383052e-05,
+              "M_rms": 0,
+              "H_max": 0.000213643081309731,
+              "M_max": 0
+            }
+          ]
+        },
+        "passed_case": false
+      },
+      {
+        "case": "schwarzschild",
+        "resolution": 32,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/schwarzschild.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=32",
+          "meshblock/nx1=32",
+          "mesh/nx2=32",
+          "meshblock/nx2=32",
+          "mesh/nx3=32",
+          "meshblock/nx3=32"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/schwarzschild.hispid",
+          "file_sha256": "2428da23b9f1f9a2fc132f390268e325325b17cd75895307c661b549bd3df852",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 0.7588648749515414,
+        "passed_local": true,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 4.562419523048394e-16,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.24815230223067772,
+              "M_rms": 0,
+              "H_max": 6.70960089833392,
+              "M_max": 0
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.453125,
+              "H_rms": 4.873871576797893e-07,
+              "M_rms": 0,
+              "H_max": 4.307250204984694e-06,
+              "M_max": 0
+            }
+          ]
+        },
+        "passed_case": false
+      },
+      {
+        "case": "schwarzschild",
+        "resolution": 64,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/schwarzschild.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=64",
+          "meshblock/nx1=64",
+          "mesh/nx2=64",
+          "meshblock/nx2=64",
+          "mesh/nx3=64",
+          "meshblock/nx3=64"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/schwarzschild.hispid",
+          "file_sha256": "2428da23b9f1f9a2fc132f390268e325325b17cd75895307c661b549bd3df852",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 4.408461500017438,
+        "passed_local": true,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 4.967730933995734e-16,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.14161798694636324,
+              "M_rms": 0,
+              "H_max": 12.350851611554441,
+              "M_max": 0
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.580078125,
+              "H_rms": 7.210116785544806e-09,
+              "M_rms": 0,
+              "H_max": 5.886305930998801e-08,
+              "M_max": 0
+            }
+          ]
+        },
+        "passed_case": true,
+        "converges_or_exact_zero": true
+      },
+      {
+        "case": "kerr95",
+        "resolution": 16,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=16",
+          "meshblock/nx1=16",
+          "mesh/nx2=16",
+          "meshblock/nx2=16",
+          "mesh/nx3=16",
+          "meshblock/nx3=16"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95.hispid",
+          "file_sha256": "b8697e056b98a75f86b24e064d2dbcccfc0cad2ee23e1079a9be0d21a20a695e",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 0.1631049580173567,
+        "passed_local": false,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 5.728049753870259e-16,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.1869244695155113,
+              "M_rms": 0.061988996952913905,
+              "H_max": 2.164703164791286,
+              "M_max": 0.710213838970188
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.5,
+              "H_rms": 7.31477467838464e-05,
+              "M_rms": 4.476964724663261e-05,
+              "H_max": 0.0003856070395599244,
+              "M_max": 0.00020743541531424733
+            }
+          ]
+        },
+        "passed_case": false
+      },
+      {
+        "case": "kerr95",
+        "resolution": 32,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=32",
+          "meshblock/nx1=32",
+          "mesh/nx2=32",
+          "meshblock/nx2=32",
+          "mesh/nx3=32",
+          "meshblock/nx3=32"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95.hispid",
+          "file_sha256": "b8697e056b98a75f86b24e064d2dbcccfc0cad2ee23e1079a9be0d21a20a695e",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 0.7473709160112776,
+        "passed_local": true,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 1.2530450682776638e-15,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.1269469736009894,
+              "M_rms": 0.028739165074203873,
+              "H_max": 4.377173471819937,
+              "M_max": 0.8973287982868732
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.453125,
+              "H_rms": 9.712540401409652e-07,
+              "M_rms": 7.68882391611133e-07,
+              "H_max": 5.914039565253076e-06,
+              "M_max": 4.798749698246654e-06
+            }
+          ]
+        },
+        "passed_case": false
+      },
+      {
+        "case": "kerr95",
+        "resolution": 64,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=64",
+          "meshblock/nx1=64",
+          "mesh/nx2=64",
+          "meshblock/nx2=64",
+          "mesh/nx3=64",
+          "meshblock/nx3=64"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95.hispid",
+          "file_sha256": "b8697e056b98a75f86b24e064d2dbcccfc0cad2ee23e1079a9be0d21a20a695e",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 4.430598374980036,
+        "passed_local": true,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 7.457784360865128e-15,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.06620717454060891,
+              "M_rms": 0.010453848816510278,
+              "H_max": 6.696106928007233,
+              "M_max": 0.9181245634986046
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.580078125,
+              "H_rms": 1.5563372353491494e-08,
+              "M_rms": 1.2214348585341186e-08,
+              "H_max": 1.0357516258205357e-07,
+              "M_max": 7.22308007719093e-08
+            }
+          ]
+        },
+        "passed_case": true,
+        "converges_or_exact_zero": true
+      },
+      {
+        "case": "boost885",
+        "resolution": 16,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/boost885.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=16",
+          "meshblock/nx1=16",
+          "mesh/nx2=16",
+          "meshblock/nx2=16",
+          "mesh/nx3=16",
+          "meshblock/nx3=16"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/boost885.hispid",
+          "file_sha256": "1fc6c2aba3e64d051289d790cc5d510b3c4f6b20abf608adef3c6fbd772f117d",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 0.16312808397924528,
+        "passed_local": false,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 4.3920733985495557e-16,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.22310428192084783,
+              "M_rms": 0.008974553940925492,
+              "H_max": 4.021252968297371,
+              "M_max": 0.14460081182990206
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.5,
+              "H_rms": 0.00024911931826800956,
+              "M_rms": 0.00010327402988385185,
+              "H_max": 0.001245196849894617,
+              "M_max": 0.00039794721408189273
+            }
+          ]
+        },
+        "passed_case": false
+      },
+      {
+        "case": "boost885",
+        "resolution": 32,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/boost885.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=32",
+          "meshblock/nx1=32",
+          "mesh/nx2=32",
+          "meshblock/nx2=32",
+          "mesh/nx3=32",
+          "meshblock/nx3=32"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/boost885.hispid",
+          "file_sha256": "1fc6c2aba3e64d051289d790cc5d510b3c4f6b20abf608adef3c6fbd772f117d",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 0.7495853340369649,
+        "passed_local": false,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 4.884981308350689e-15,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.5706862606136877,
+              "M_rms": 0.008567367898143852,
+              "H_max": 27.33986127204923,
+              "M_max": 0.44631247986485617
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.453125,
+              "H_rms": 6.597079500030335e-06,
+              "M_rms": 2.630275031489238e-06,
+              "H_max": 4.822197334994685e-05,
+              "M_max": 1.4577990458052983e-05
+            }
+          ]
+        },
+        "passed_case": false
+      },
+      {
+        "case": "boost885",
+        "resolution": 64,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/boost885.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=64",
+          "meshblock/nx1=64",
+          "mesh/nx2=64",
+          "meshblock/nx2=64",
+          "mesh/nx3=64",
+          "meshblock/nx3=64"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/boost885.hispid",
+          "file_sha256": "1fc6c2aba3e64d051289d790cc5d510b3c4f6b20abf608adef3c6fbd772f117d",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 4.454870707995724,
+        "passed_local": true,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 4.218847493575595e-15,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.8449764504061417,
+              "M_rms": 0.004028139544459677,
+              "H_max": 136.62111542029965,
+              "M_max": 0.5902239589681507
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.580078125,
+              "H_rms": 1.1921393294653575e-07,
+              "M_rms": 4.7474030545900315e-08,
+              "H_max": 1.0713912059479025e-06,
+              "M_max": 3.0155061977412545e-07
+            }
+          ]
+        },
+        "passed_case": true,
+        "converges_or_exact_zero": true
+      },
+      {
+        "case": "kerr95_boost885",
+        "resolution": 16,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95_boost885.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=16",
+          "meshblock/nx1=16",
+          "mesh/nx2=16",
+          "meshblock/nx2=16",
+          "mesh/nx3=16",
+          "meshblock/nx3=16"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95_boost885.hispid",
+          "file_sha256": "855d53fa5af7727c9dcbad7ccafd33a494f1f015de215929c52ca77189a6327c",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 0.16401637496892363,
+        "passed_local": false,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 4.996003610813204e-16,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.19705310398117865,
+              "M_rms": 0.07102593205306026,
+              "H_max": 3.83997936340558,
+              "M_max": 1.1075285185420096
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.5,
+              "H_rms": 0.0009037041481265193,
+              "M_rms": 0.0004004581420492596,
+              "H_max": 0.006245837379285052,
+              "M_max": 0.002280010084967229
+            }
+          ]
+        },
+        "passed_case": false
+      },
+      {
+        "case": "kerr95_boost885",
+        "resolution": 32,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95_boost885.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=32",
+          "meshblock/nx1=32",
+          "mesh/nx2=32",
+          "meshblock/nx2=32",
+          "mesh/nx3=32",
+          "meshblock/nx3=32"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95_boost885.hispid",
+          "file_sha256": "855d53fa5af7727c9dcbad7ccafd33a494f1f015de215929c52ca77189a6327c",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 0.7526604160084389,
+        "passed_local": false,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 1.3912482277333993e-15,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.18870180659664199,
+              "M_rms": 0.04201795641320684,
+              "H_max": 11.656251361729876,
+              "M_max": 1.851599233848703
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.453125,
+              "H_rms": 3.14700365699002e-05,
+              "M_rms": 1.1876377032240968e-05,
+              "H_max": 0.00033616492565977096,
+              "M_max": 0.00010768793455240103
+            }
+          ]
+        },
+        "passed_case": false
+      },
+      {
+        "case": "kerr95_boost885",
+        "resolution": 64,
+        "command": [
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/src/athena",
+          "-i",
+          "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/tst/inputs/hispid.athinput",
+          "problem/hispid_filename=/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95_boost885.hispid",
+          "problem/hispid_source_sha256=9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "problem/hispid_initial_horizons=false",
+          "problem/hispid_mesh_constraints=true",
+          "problem/hispid_mesh_constraint_min_radius=1.8",
+          "mesh/nx1=64",
+          "meshblock/nx1=64",
+          "mesh/nx2=64",
+          "meshblock/nx2=64",
+          "mesh/nx3=64",
+          "meshblock/nx3=64"
+        ],
+        "source": {
+          "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK/build-hispid/data-current/kerr95_boost885.hispid",
+          "file_sha256": "855d53fa5af7727c9dcbad7ccafd33a494f1f015de215929c52ca77189a6327c",
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "acceptance": "analytic_seed"
+        },
+        "returncode": 0,
+        "seconds": 4.4694480409962125,
+        "passed_local": true,
+        "zero_evolution_verified": true,
+        "mesh": {
+          "source_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "consumer_library_sha256": "9cbf1108d9060095cade976c27394d8953594f45df97503a90700474f4f822fb",
+          "rms_measure": "coordinate_cell_volume",
+          "fd_stencil": 4,
+          "roundtrip_relative_error": 4.581256714205611e-15,
+          "minimum_radius": 1.8,
+          "regions": [
+            {
+              "region": "g_equals_one",
+              "volume": 64,
+              "H_rms": 0.1395549630414205,
+              "M_rms": 0.019294915345399243,
+              "H_max": 23.94825207918446,
+              "M_max": 2.2743598815490524
+            },
+            {
+              "region": "g_less_than_one",
+              "volume": 0
+            },
+            {
+              "region": "stencil_safe_outer",
+              "volume": 39.580078125,
+              "H_rms": 6.134573595345951e-07,
+              "M_rms": 2.227908281337532e-07,
+              "H_max": 8.857770809648125e-06,
+              "M_max": 2.2780420362014258e-06
+            }
+          ]
+        },
+        "passed_case": true,
+        "converges_or_exact_zero": true
+      }
+    ],
+    "passed": true
   }
 }
