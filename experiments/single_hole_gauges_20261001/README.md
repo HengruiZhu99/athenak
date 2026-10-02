@@ -234,3 +234,14 @@ baseline attempt. Debug accepted **8894777** at 2026-10-02 08:17:43 UTC,
 one node/one hour under CompactBinaryMerger; PBS verified Q and Hold_Types=n.
 See `setup_evidence/exterior_retry_8894777.json`. Await its full 3D exterior
 audit before qualifying this baseline or advancing the remaining matrix.
+
+Job8894777 completed t=4M/PBS0 in 8m24s and passed the corrected 3D
+exterior audit: all 41 history outputs have zero unexcised-speed, boundary and
+chi-exclusion volumes. All 8 BHaHAHA searches succeeded; max RMS=.000998737,
+max mass error=.00113900, and |centroid|+r_max<=1.27050M. Shell volume remains
+constant with .08795% quadrature error. All 123 decompressed field profiles
+are byte-identical to job8890549, confirming the diagnostic-only revision.
+Compact evidence and audit are in `results/g5_tel_b32/8894777/`. The first of
+30 cases is now validated. The matching gamma5 1+log block32 run was submitted
+as debug job8895067 on 2026-10-02 08:50 UTC, verified Q without holds; receipt
+is in `setup_evidence/progress_8895067.json`.
