@@ -16,7 +16,7 @@ with tempfile.TemporaryDirectory() as tmp:
     (run/'horizon').mkdir()
     (run/'horizon/BHaHAHA_diagnostics.ah1.gp').touch()
     volume=4*math.pi/3*(16**3-2**3)
-    row=[0.0]*19;row[14]=volume;row[17]=volume*1.0001
+    row=[0.0]*20;row[14]=volume;row[17]=volume*1.0001
     rows=[row[:],row[:]];rows[1][0]=4
     horizons=[[0,0,0.7,0,0,0.1,0.6]]
     summary=dict(exit_status='0',evolution_time=4,successes=1,failures=0,
@@ -27,6 +27,11 @@ with tempfile.TemporaryDirectory() as tmp:
              patch.object(advance,'numeric_rows',side_effect=read):
             return advance.audit(run,case)
     assert audit()['passed']
+    rows[1][16]=1000  # Violations confined inside excision do not invalidate the exterior.
+    assert audit()['passed']
+    rows[1][19]=.01
+    assert not audit()['fixed_safe_shell']
+    rows[1][19]=0
     rows[1][17]+=1
     assert not audit()['fixed_safe_shell']
     rows[1][17]=rows[0][17]
@@ -35,4 +40,4 @@ with tempfile.TemporaryDirectory() as tmp:
     horizons[0][6]=.6
     rows[1][18]=.01
     assert not audit()['fixed_safe_shell']
-print('4 spherical audit checks passed.')
+print('6 spherical audit checks passed.')

@@ -45,15 +45,17 @@ def audit(run,case):
     result['complete']=bool(result.get('exit_status')=='0' and rows and
         result.get('evolution_time',-1)>=case['target_time']-1e-5 and
         'Terminating on time limit' in (run/'run.log').read_text())
-    result['finite']=bool(rows and all(len(r)==19 and all(math.isfinite(x) for x in r) for r in rows))
+    result['finite']=bool(rows and all(len(r)==20 and all(math.isfinite(x) for x in r) for r in rows))
     outer,inner=(16,2) if case['kind']=='g5' else (8,1)
     expected=4*math.pi/3*(outer**3-inner**3)
     sampled_volume=rows[0][17] if result['finite'] else 0
     result['shell_analytic_volume']=expected
     result['shell_sampled_volume']=sampled_volume
     result['shell_volume_relative_quadrature_error']=abs(sampled_volume-expected)/expected
+    result['full_grid_speed_violation_volume_max']=max((r[16] for r in rows),default=None)
+    result['unexcised_speed_violation_volume_max']=max((r[19] for r in rows if len(r)==20),default=None)
     result['fixed_safe_shell']=bool(result['finite'] and all(
-        r[15]==0 and r[16]==0 and r[18]==0 and r[14]>0 and
+        r[15]==0 and r[19]==0 and r[18]==0 and r[14]>0 and
         abs(r[17]-sampled_volume)<expected*1e-10 for r in rows) and
         result['shell_volume_relative_quadrature_error']<0.01)
     result['horizons_ok']=bool(result.get('successes',0)>0 and result.get('failures',1)==0 and

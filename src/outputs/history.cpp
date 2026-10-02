@@ -204,7 +204,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   // a fixed-domain convergence test.
   const bool interior = opt.history_interior_radius>0;
   if (interior) {
-    pdata->nhist = 17;
+    pdata->nhist = 18;
     pdata->label[9] = "interior-H2";
     pdata->label[10] = "interior-M2";
     pdata->label[11] = "interior-C2";
@@ -213,6 +213,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     pdata->label[14] = "speed-bound-violation-volume";
     pdata->label[15] = "interior-coordinate-volume";
     pdata->label[16] = "interior-chi-excluded-volume";
+    pdata->label[17] = "unexcised-speed-violation-volume";
   }
   const auto domain = pm->mesh_size;
   const Real boundary_distance = opt.history_boundary_buffer+
@@ -246,7 +247,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
 
     // Excise the punctures based on chi
     array_sum::GlobalSum hvars;
-    for (int n=9; n<17; ++n) hvars.the_array[n] = 0.0;
+    for (int n=9; n<18; ++n) hvars.the_array[n] = 0.0;
     if (z4c.chi(m,k,j,i)>=opt.excise_chi) {
       hvars.the_array[0] = vol*u_con_(m,0,k,j,i); // ||C||^2 (comes already squared)
       hvars.the_array[1] = vol*SQR(u_con_(m,1,k,j,i)); //||H||^2
@@ -307,7 +308,13 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
         const Real speed = fabs(z4c.beta_u(m,a,k,j,i))+fmax(light,fmax(lapse,shift));
         if (!(speed<=opt.history_boundary_speed)) violation = true;
       }
-      if (violation) hvars.the_array[14] = vol;
+      if (violation) {
+        hvars.the_array[14] = vol;  // Retain the full-grid diagnostic, including puncture.
+        // Boundary signals must cross this unexcised exterior before reaching
+        // the measured shell. Singular/underresolved puncture cells inside the
+        // excision sphere are not part of this boundary transit-speed audit.
+        if (radius2>=SQR(opt.history_inner_radius)) hvars.the_array[17] = vol;
+      }
     }
 
     // fill rest of the_array with zeros, if nhist < NHISTORY_VARIABLES
@@ -493,7 +500,7 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
         std::fprintf(pfile,"#  [%d]=time      ", iout++);
         std::fprintf(pfile,"[%d]=dt       ", iout++);
         for (int n=0; n<data.nhist; ++n) {
-          std::fprintf(pfile,"[%d]=%.10s    ", iout++, data.label[n].c_str());
+          std::fprintf(pfile,"[%d]=%s    ", iout++, data.label[n].c_str());
         }
         std::fprintf(pfile,"\n");                              // terminate line
         data.header_written = true;

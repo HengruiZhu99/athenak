@@ -46,7 +46,9 @@ Do not claim shock formation or a resolved ordering without resolution evidence.
 
 History columns retain the original nine integral positions and append H²,M²,C²,
 physical volume, boundary-excluded volume, sampled-speed-violation volume,
-coordinate volume and chi-excluded volume. These are integrals; normalized
+coordinate volume, chi-excluded volume, and unexcised-speed-violation volume.
+The original full-grid speed diagnostic is retained separately, including
+puncture cells; the boundary audit now uses the unexcised exterior (r>=R_inner). These are integrals; normalized
 L2 is sqrt(integral/physical_volume). Norm regions are FIXED spherical shells centered at the coordinate origin:
 2<=r<16 (boost) and 1<=r<8 (pulse), where r=sqrt(x*x+y*y+z*z).
 The boosted inner radius is larger because the puncture moves; a fixed mask
@@ -56,7 +58,10 @@ this conservative enclosure check guarantees the measured horizon is excised.
 If it fails, stop and revise the common radius consistently across resolutions. Near-hole spike
 profiles are separate diagnostics, not a replacement for these volume norms.
 
-Reject convergence if any of the three exclusion/violation columns is nonzero.
+Reject convergence if boundary-excluded volume, chi-excluded volume or the
+UNEXCISED speed-violation volume is nonzero. Do not replace a 3D audit with
+line-profile evidence. Full-grid puncture-interior speed flags remain visible
+but do not invalidate a boundary transit bound on the unexcised exterior.
 Require the sampled coordinate volume to remain constant in time for each
 resolution and agree within 1% with (4*pi/3)*(R_outer^3-R_inner^3). Save the
 relative volume quadrature error at each resolution. Cell-center sphere masks
@@ -194,3 +199,30 @@ The revised GPU build passed and job8890549 was released back to capacity at
 original submission provenance are retained in
 `setup_evidence/spherical_release_8890549.json`. The same job remains queued;
 no extra attempt was submitted. The diagnostic revision is now `released`.
+
+## First completed case and diagnosed audit correction
+
+Job8890549 reached t=4M, PBS exit0, in 8m28s. BHaHAHA succeeded on 8/8
+searches with max RMS .000998737 and max mass error .00113901. Its largest
+|centroid|+r_max was 1.27050M, inside the 2M inner sphere. Coordinate volume
+was constant, 17138.835205078125, with .08795% sphere quadrature error; boundary
+and chi-excluded volumes were zero. The original full-grid speed check failed.
+Line profiles locate 70 violations at x=.08594..72656M, inside excision; some
+correspond to negative chi and an invalid physical inverse metric in the
+underresolved puncture interior. Outside |x|>=2 the maximum line estimate is
+1.97726. This is NOT a 3D certificate and the first case is not marked passed.
+
+The diagnostic correction appends a separate 3D unexcised-speed violation
+column (zero-based history column19), preserving all original columns. It
+audits all cells r>=R_inner, including the entire path from the boundary to
+the measurement shell. The full-grid flag at column16 remains as evidence.
+This avoids imposing a physical-metric speed bound on cells deliberately
+excised inside the horizon. No evolution equation, grid, gauge or input is
+changed. One second and final attempt for g5_tel_b32 is justified to obtain
+the missing 3D audit; retain the first attempt and its node-hour charge.
+Run the local CPU, controller and spherical-audit checks after this correction;
+rebuild the existing v5 executable while preserving its old binary/provenance.
+Only after the new GPU build passes may a documented recovery under advance.lock
+change needs_review to prepared. Do not claim 3D validity until the repeat
+reports zero unexcised-speed violation at every output. If it still fails,
+stop and investigate; no third attempt is authorized by the finite manifest.

@@ -67,11 +67,11 @@ def main():
         hz=table(next(zero.rglob('*.hst')))[0]
         # The sphere excludes cube corners: its sampled volume is below the old cubical shell.
         assert 0<hz[17]<(2*3)**3-(2*2)**3
-        assert len(hz)==19 and hz[14]>0 and hz[15]==0 and hz[16]==0 and hz[18]==0, hz
+        assert len(hz)==20 and hz[14]>0 and hz[15]==0 and hz[16]==0 and hz[18]==0 and hz[19]==0, hz
         bad=run('boundary',overrides=('z4c/history_boundary_buffer=8',))
         assert table(next(bad.rglob('*.hst')))[0][15]>0
         badspeed=run('speed',overrides=('z4c/history_boundary_speed=0.01',))
-        assert table(next(badspeed.rglob('*.hst')))[0][16]>0
+        assert table(next(badspeed.rglob('*.hst')))[0][19]>0
         base['output5']=dict(file_type='rst',dt=.00001)
         full=run('full',overrides=('time/nlim=2',))
         half=run('half',overrides=('time/nlim=1',))
