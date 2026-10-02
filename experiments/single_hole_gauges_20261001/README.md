@@ -284,3 +284,19 @@ history samples pass exterior checks with constant spherical volume and
 endpoint norms are in `results/g5_oplog_b48/8895760/`. Five of 30 cases
 are validated. Block48 SSL is debug job8896075, submitted 2026-10-02
 10:50 UTC and verified Q/no holds; see `setup_evidence/progress_8896075.json`.
+
+Job8896075 SSL block48 stalled in PBS R/substate41 from 10:54 UTC with
+no stime, resources_used, or run directory through 12:04. After preserving
+PBS/state evidence, cancellation was requested. PBS comment records termination
+by hzhu, but the ordinary qdel client did not return. A force deletion request
+timed out after 45s; the original hung client was stopped to release advance.lock
+(receipt -15). This does not undo the server termination request. At 12:08
+PBS still reported R/41, so NO replacement was submitted. Both receipts and
+PBS evidence are in `setup_evidence/prelaunch_stall_8896075.json` and remote
+`prelaunch_recovery_8896075.json` / `prelaunch_force_cancel_8896075.json`.
+Do not repeat qdel blindly. Recheck scheduler; if terminal cancellation is
+confirmed, document a prelaunch_failed attempt under advance.lock (retaining
+the attempt/node-hour charge and all evidence), then submit the second/final
+SSL block48 attempt through advance.py. No third attempt and no simultaneous
+replacement of an active Q/R/E job. If any output appeared, inspect it before
+classifying the attempt. The user explicitly reaffirmed cancel/resubmit.
