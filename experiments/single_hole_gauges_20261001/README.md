@@ -329,3 +329,15 @@ history samples pass exterior checks with constant spherical volume and
 block64 is needed for three-resolution convergence. Telegrapher block64 is
 debug job8897270, two nodes/one hour, submitted 2026-10-02 13:21 UTC and
 verified Q/no holds; see `setup_evidence/progress_8897270.json`.
+
+Job8897270 (gamma5 telegrapher block64, two nodes) stopped cleanly at the
+50-minute application cap, t=3.655130360026725M, cycle2370, PBS0. It is
+INCOMPLETE and is not used as a completed 4M convergence datum. All 8
+horizon searches and exterior/finite/provenance/volume checks passed. This
+is an allocation-performance failure, not a numerical failure. The manifest
+now records allocation_nodes=4 only for g5_tel_b64, with the observed reason;
+all input hashes and numerical settings are unchanged. Its second/final run
+will use four nodes and the same 50-minute cap within one hour. The 84
+reserved-node-hour and two-attempt caps remain enforced, including this
+partial attempt. Eleven controller tests pass, including override/budget
+guards. All other allocations retain their original size; no new case is added.

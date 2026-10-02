@@ -68,7 +68,9 @@
       "width": null,
       "target_time": 4,
       "input_sha256": "defb766cac31a0d6bfcbb7a768069c1f60f896a0cfc89333ac4e71615d1a0fbc",
-      "geometry_sha256": "3d3b789a328da36ddb2865cd9d559f30118e508f04996b8d5a7a131e52124caf"
+      "geometry_sha256": "3d3b789a328da36ddb2865cd9d559f30118e508f04996b8d5a7a131e52124caf",
+      "allocation_nodes": 4,
+      "allocation_reason": "Job8897270 reached only 3.655130360026725M on two nodes at the 50-minute cap; bounded four-node final retry."
     },
     {
       "name": "g5_oplog_b64",
@@ -304,5 +306,5 @@
   "max_attempts_per_case": 2,
   "max_campaign_node_hours": 84,
   "max_new_output_bytes": 5368709120,
-  "note": "30 short single-hole cases, maximum two 1-hour attempts per case; B64 uses two nodes, others one; no automatic enlargement."
+  "note": "30 short single-hole cases, maximum two 1-hour attempts per case; B64 uses two nodes except documented g5_tel_b64 four-node retry; others one; no automatic enlargement."
 }

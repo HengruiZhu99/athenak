@@ -45,3 +45,17 @@ test(base,{},0,submit=False)
 assert test(base,{},1,returncode=38)['status']=='prepared'
 assert test(base,{},1,returncode=1)['status']=='submission_uncertain'
 print('8 controller checks passed: duplicates, queue occupancy, ambiguous submission, failures, dry run, PBS rejection.')
+
+# A documented performance repair changes only allocation, retaining all budgets.
+spec=json.loads((advance.WORKFLOW/'cases.json').read_text())
+prior=dict(case='g5_tel_b64',nodes=2,status='wallclock_limited')
+retry=dict(attempts=[prior],completed=[c['name'] for c in spec['cases'][:6]],status='prepared')
+out=test(retry,{},1)
+assert out['attempts'][-1]['nodes']==4
+assert 'select=4' in out['attempts'][-1]['command']
+for state, message in [(dict(retry,attempts=[prior,prior]),'Case attempt budget'),
+                       (dict(retry,attempts=[dict(case='old',nodes=82,status='passed')]),'node-hour')]:
+    try: test(state,{},0)
+    except RuntimeError as exc: assert message in str(exc),str(exc)
+    else: raise AssertionError('Budget guard did not stop allocation override')
+print('3 allocation-repair checks passed: four nodes, attempt cap, node-hour cap.')

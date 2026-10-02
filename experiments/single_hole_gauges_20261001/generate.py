@@ -80,6 +80,9 @@ def main():
     for block in (32,48,64):
         for gauge in ('tel','oplog','ssl'):
             meta, text = make('g5',gauge,block)
+            if meta['name'] == 'g5_tel_b64':
+                meta['allocation_nodes'] = 4
+                meta['allocation_reason'] = 'Job8897270 reached only 3.655130360026725M on two nodes at the 50-minute cap; bounded four-node final retry.'
             cases.append(meta)
             (ROOT/'inputs'/(meta['name']+'.athinput')).write_text(text)
     for block, widths in ((32,(None,1,.5)),(48,(None,.5)),(64,(None,.5))):
@@ -91,7 +94,7 @@ def main():
     (ROOT/'cases.json').write_text(json.dumps(dict(cases=cases,
         max_attempts_per_case=2, max_campaign_node_hours=84,
         max_new_output_bytes=5*1024**3,
-        note='30 short single-hole cases, maximum two 1-hour attempts per case; B64 uses two nodes, others one; no automatic enlargement.'),indent=2)+'\n')
+        note='30 short single-hole cases, maximum two 1-hour attempts per case; B64 uses two nodes except documented g5_tel_b64 four-node retry; others one; no automatic enlargement.'),indent=2)+'\n')
 
 if __name__ == '__main__':
     main()

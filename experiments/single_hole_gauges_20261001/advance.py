@@ -122,7 +122,9 @@ def main():
             print(json.dumps(dict(next_case=case['name'],completed=len(state['completed']),status=state['status'])));return
         if args.queue=='debug' and any(j.get('queue')=='debug' for j in active.values()):
             print('Debug already occupied by user; defer or choose authorized capacity queue.');return
-        nodes=2 if case['block']==64 else 1
+        nodes=case.get('allocation_nodes',2 if case['block']==64 else 1)
+        if nodes not in (1,2,4) or (nodes==4 and not case.get('allocation_reason')):
+            raise RuntimeError('Allocation override requires documented bounded node count.')
         if sum(a.get('nodes',0) for a in state['attempts'])+nodes>spec['max_campaign_node_hours']:
             raise RuntimeError('Finite campaign node-hour reservation budget reached.')
         if sum(a['case']==case['name'] for a in state['attempts'])>=spec['max_attempts_per_case']:
