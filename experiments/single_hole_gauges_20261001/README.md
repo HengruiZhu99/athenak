@@ -300,3 +300,13 @@ the attempt/node-hour charge and all evidence), then submit the second/final
 SSL block48 attempt through advance.py. No third attempt and no simultaneous
 replacement of an active Q/R/E job. If any output appeared, inspect it before
 classifying the attempt. The user explicitly reaffirmed cancel/resubmit.
+
+At 2026-10-02 12:19 UTC job8896075 still reports R/substate41 with the
+termination comment, no stime/resources and no run directory. Neither ordinary
+nor force cancellation has confirmed removal. Report this as an ALCF scheduler
+block and pause the heartbeat, rather than creating a duplicate allocation.
+ALCF needs to clear the stalled launch on x4216c3s5b0n0. Once cleared and
+automation resumed, reconcile terminal PBS evidence and prepare the second
+SSL attempt as described above. Five cases remain scientifically validated;
+the manuscript revision and all compact data are preserved. Snapshot:
+`setup_evidence/pbs_block_8896075_1219.json`.
