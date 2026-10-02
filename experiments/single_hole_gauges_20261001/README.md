@@ -245,3 +245,13 @@ Compact evidence and audit are in `results/g5_tel_b32/8894777/`. The first of
 30 cases is now validated. The matching gamma5 1+log block32 run was submitted
 as debug job8895067 on 2026-10-02 08:50 UTC, verified Q without holds; receipt
 is in `setup_evidence/progress_8895067.json`.
+
+Job8895067 (gamma5 1+log block32) completed t=4M/PBS0 in 6m44s.
+All 8 BHaHAHA searches passed, with max RMS=.000999446, max mass error
+=.00109013, and maximum horizon enclosure radius=1.25345M. All 41 history
+samples pass the exterior speed, boundary and chi-exclusion checks; spherical
+volume is constant with the same .08795% quadrature error as telegrapher.
+Compact evidence is archived in `results/g5_oplog_b32/8895067/`. Two of 30
+cases are now validated. The SSL block32 comparison is debug job8895192,
+submitted 2026-10-02 09:05 UTC and verified Q/no holds. See its receipt
+in `setup_evidence/progress_8895192.json`.
