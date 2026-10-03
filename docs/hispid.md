@@ -259,3 +259,28 @@ The displaced comparison does not interpret a boosted surface's coordinate
 rotation integral as intrinsic spin or impose unit Christodoulou mass on it;
 those quantities depend on the rotation origin. Centered exact-seed checks
 retain their original mass and spin criteria.
+
+The binary driver has an optional `--enclosure-axis x` (or y/z) range
+certificate for its retained finite real harmonic surface. It projects each
+degree onto the chosen zonal mode and bounds the orthogonal remainder by the
+addition theorem. The zonal Legendre expansion is converted to a finite
+cosine series using the [Legendre generating function](https://dlmf.nist.gov/14.7.E19).
+Uniform angular samples are supplemented by global first- and second-
+derivative bounds, so the returned lower/upper bounds cover the full sphere.
+This can tighten an inconclusive monopole-minus-tail bound for elongated
+surfaces without assuming exact axial symmetry.
+
+The helper uses 100-digit outward Decimal intervals, exact rational Machin
+bounds for pi, integer quadrant reduction and a bounded cosine Taylor tail.
+Square roots are explicitly widened because [Decimal sqrt uses half-even
+rounding](https://docs.python.org/3/library/decimal.html#decimal.Decimal.sqrt).
+Float lower/upper outputs round outward. Coefficient payloads, method source,
+axis, subdivision count and all error terms are retained. Worker logs supplying
+the actual finder centers and execution witnesses are hash-bound alongside
+the shape and summary files. Existing offsets,
+modified-ball radii, rounding allowances and the empirical refinement buffer
+are still subtracted. The old Cauchy result is also recorded; previous failed
+enclosure evidence is preserved. This certifies the ideal finite expansion,
+with no continuum PDE/truncation or physical-acceptance transfer. Synthetic
+known-extremum and phase/rounding controls are prepared; execution is pending
+the end of the benchmark campaign.

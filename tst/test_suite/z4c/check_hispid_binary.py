@@ -67,11 +67,16 @@ def main():
     p.add_argument('--migration-proof',help='checkpoint-bound, separate-process CPU sampler proof; no physical acceptance transfer')
     p.add_argument('--harmonic-storage',choices=('dense','factorized'),default='dense')
     p.add_argument('--consumer-memory-mib',type=int,default=32768)
+    p.add_argument('--enclosure-axis',choices=('x','y','z'),help='optional outward interval range of the retained SH surface about this Cartesian axis')
+    p.add_argument('--enclosure-intervals',type=int,default=1024)
     p.add_argument('--common',action='store_true',help='separate common-surface search; a failed search does not establish absence')
     p.add_argument('--common-center',default='0,0,0',help='explicit Cartesian common-search center')
     p.add_argument('--common-radius',type=float,help='positive initial common-search sphere radius')
     p.add_argument('--timeout',type=int,default=1800);a=p.parse_args()
     if not math.isfinite(a.flow_alpha) or a.flow_alpha<=0:raise ValueError('positive finite flow alpha required')
+    if (a.enclosure_axis and (a.enclosure_intervals<16 or a.enclosure_intervals>16384 or a.enclosure_intervals%2)):
+        raise ValueError('even enclosure interval count in[16,16384] required')
+    if not a.enclosure_axis and a.enclosure_intervals!=1024:raise ValueError('enclosure intervals require an enclosure axis')
     if not math.isfinite(a.guess_scale) or a.guess_scale<=0:raise ValueError('positive finite horizon guess scale required')
     if a.flow_iterations<1:raise ValueError('positive flow iteration count required')
     if not math.isfinite(a.domain_half_width) or a.domain_half_width<=0:raise ValueError('positive finite domain half width required')
@@ -94,6 +99,8 @@ def main():
     levels=list(map(int,a.levels.split(',')))
     if len(levels)<3 or any(l<2 for l in levels) or any(x>=y for x,y in zip(levels,levels[1:])):
         raise ValueError('three increasing harmonic orders required')
+    if a.enclosure_axis and levels[-1]>256:
+        raise ValueError('axial enclosure certificates support harmonic orders through256')
     root=Path(a.output).resolve();root.mkdir(parents=True,exist_ok=False)
     result=dict(executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),source=source,
                 initial_time=0,evolution_steps=0,geometry='direct_native',cpu_threads=1,flow_alpha=a.flow_alpha,seed_horizon_guess_scale=a.guess_scale,flow_iterations=a.flow_iterations,domain_half_width=a.domain_half_width,
@@ -102,6 +109,12 @@ def main():
                 records=[],passed=False,horizon_enclosure_verified=False,
                 stronger_binary_validation_complete=False)
     result['sampler_migration']=migration
+    result['enclosure_method']='axial_interval' if a.enclosure_axis else 'monopole_and_Cauchy_tail'
+    if a.enclosure_axis:
+        import harmonic_enclosure
+        helper=Path(harmonic_enclosure.__file__).resolve(strict=True)
+        result['enclosure_implementation']=dict(path=str(helper),sha256=hashlib.sha256(helper.read_bytes()).hexdigest())
+        result['enclosure_axis']=a.enclosure_axis;result['enclosure_intervals']=a.enclosure_intervals
     result['surface_kind']='common' if a.common else 'component'
     result['common_search_initial_center']=common_center if a.common else None
     result['common_search_initial_radius']=a.common_radius if a.common else None
@@ -156,12 +169,21 @@ def main():
         start=time.monotonic();row=dict(lmax=lmax,ntheta=ntheta,kind=kind,command=cmd,passed=False,holes=[])
         row['input_sha256']=hashlib.sha256(input_path.read_bytes()).hexdigest()
         row['input_path']=str(input_path.resolve());row['bound_inputs_unchanged']=False
+        row['retained_artifacts_sha256']={}
         result['records'].append(row);(root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         with (run/'run.log').open('w') as log:
             try:completed=subprocess.run(cmd,cwd=run,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=a.timeout)
             except subprocess.TimeoutExpired:row['returncode']='timeout'
             else:row['returncode']=completed.returncode
-        row['seconds']=time.monotonic()-start;stdout=(run/'run.log').read_text()
+        row['seconds']=time.monotonic()-start
+        log_path=(run/'run.log').resolve();log_bytes=log_path.read_bytes()
+        row['retained_artifacts_sha256'][str(log_path)]=hashlib.sha256(log_bytes).hexdigest()
+        (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
+        stdout=log_bytes.decode()
+        if hashlib.sha256(log_path.read_bytes()).hexdigest()!=row['retained_artifacts_sha256'][str(log_path)]:
+            row['worker_log_changed']=True
+            (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
+            raise ValueError('worker log changed during decoding; retained attempt is unqualified')
         row['harmonic_storage']=a.harmonic_storage
         row['harmonic_allocation']=storage_evidence(stdout,a.harmonic_storage,lmax,ntheta,surface_count)
         (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
@@ -188,14 +210,25 @@ def main():
         shapes=[];centers=[]
         if row['returncode']==0:
             for h in range(surface_count):
-                summary=np.atleast_2d(np.loadtxt(run/f'hispid.horizon_summary_{h}.txt'))[-1]
-                shape=np.atleast_2d(np.loadtxt(run/f'hispid.horizon_shape_{h}.txt'))[-1];shapes.append(shape)
+                summary_path=run/f'hispid.horizon_summary_{h}.txt';shape_path=run/f'hispid.horizon_shape_{h}.txt'
+                bound_surfaces={str(path.resolve()):hashlib.sha256(path.read_bytes()).hexdigest() for path in (summary_path,shape_path)}
+                row['retained_artifacts_sha256'].update(bound_surfaces)
+                (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
+                summary=np.atleast_2d(np.loadtxt(summary_path))[-1]
+                shape=np.atleast_2d(np.loadtxt(shape_path))[-1];shapes.append(shape)
+                if any(hashlib.sha256(Path(path).read_bytes()).hexdigest()!=sha for path,sha in bound_surfaces.items()):
+                    raise ValueError('horizon surface changed during decoding')
                 match=re.search(r'HiSpID horizon '+str(h)+r' .*center_x=([\deE+.-]+) center_y=([\deE+.-]+) center_z=([\deE+.-]+)',stdout)
                 if match is None:raise ValueError('actual finder center is required')
                 center=np.array(list(map(float,match.groups())))
                 centers.append(center)
-                lower=radius_lower_bound(shape);offset=float(np.linalg.norm(center-np.array(source['holes'][h][1:4])))
+                cauchy_lower=radius_lower_bound(shape);lower=cauchy_lower
                 upper=float(2*shape[0]/math.sqrt(4*math.pi)-lower)
+                certificate=None
+                if a.enclosure_axis:
+                    certificate=harmonic_enclosure.axial_range(shape,a.enclosure_axis,a.enclosure_intervals)
+                    lower=certificate['radius_lower_bound'];upper=certificate['radius_upper_bound']
+                offset=float(np.linalg.norm(center-np.array(source['holes'][h][1:4])))
                 rounding_margin=float(64*np.finfo(float).eps*(1+uniform_bound(shape)+offset+source['inner_max'][h]))
                 margin=lower-offset-source['inner_max'][h]-rounding_margin
                 hole=dict(index=h,summary=summary.tolist(),coefficients=shape.tolist(),center=center.tolist(),
@@ -204,6 +237,7 @@ def main():
                           expansion_rms=float(np.sqrt(summary[8])),sampled_min_radius=float(summary[11]),
                           continuous_radius_lower_bound=lower,continuous_radius_upper_bound=upper,
                           center_offset=offset,rounding_allowance=rounding_margin,inner_ball_margin=margin)
+                if certificate:hole.update(cauchy_radius_lower_bound=cauchy_lower,continuous_range_certificate=certificate)
                 hole['expansion_pass']=bool(np.isfinite(summary).all() and summary[7]>0 and summary[8]>=0 and hole['expansion_rms']<1e-7)
                 hole['retained_surface_encloses_inner_ball']=margin>0 and lower>0
                 if a.common:
@@ -244,6 +278,10 @@ def main():
     if (hashlib.sha256((ROOT/'inputs/hispid.athinput').read_bytes()).hexdigest()!=result['input_template_sha256']
         or any(hashlib.sha256(Path(r['input_path']).read_bytes()).hexdigest()!=r['input_sha256'] for r in rows)):
         raise ValueError('bound horizon inputs changed before final qualification')
+    if any(hashlib.sha256(Path(path).read_bytes()).hexdigest()!=sha for r in rows for path,sha in r['retained_artifacts_sha256'].items()):
+        raise ValueError('bound horizon logs or surfaces changed before final qualification')
+    if a.enclosure_axis and hashlib.sha256(helper.read_bytes()).hexdigest()!=result['enclosure_implementation']['sha256']:
+        raise ValueError('enclosure implementation changed before final qualification')
     result['schedule_prerequisites_verified']=schedule_prerequisites(rows,len(schedule))
     if result['schedule_prerequisites_verified']:
         fine,coarse,quad=rows[-2],rows[-3],rows[-1];checks=[]
@@ -251,8 +289,9 @@ def main():
             f,c,q=fine['holes'][h],coarse['holes'][h],quad['holes'][h]
             spectral_area=abs(f['area']/c['area']-1);quadrature_area=abs(q['area']/f['area']-1)
             buffer=2*(f['shape_change_uniform_bound']+q['shape_change_uniform_bound'])
+            buffer_rounding=(64*(lmax+1)*np.finfo(float).eps*(1+buffer+uniform_bound(f['coefficients'])+uniform_bound(q['coefficients'])) if a.enclosure_axis else 0.)
             check=dict(index=h,spectral_area_relative_change=spectral_area,quadrature_area_relative_change=quadrature_area,
-                       observed_refinement_buffer=buffer,enclosure_margin_after_buffer=q['inner_ball_margin']-buffer)
+                       observed_refinement_buffer=buffer,buffer_rounding_allowance=buffer_rounding,enclosure_margin_after_buffer=q['inner_ball_margin']-buffer-buffer_rounding)
             check['passed']=bool(fine['passed'] and quad['passed'] and spectral_area<1e-5 and quadrature_area<1e-7
                                  and f['shape_change_uniform_bound']<1e-4 and check['enclosure_margin_after_buffer']>0)
             checks.append(check)
