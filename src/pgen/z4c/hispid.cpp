@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
+#include <filesystem>
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
@@ -21,6 +22,9 @@
 #include "z4c/z4c_amr.hpp"
 #include "z4c/fastflow.hpp"
 #include "hispid_checkpoint.hpp"
+#if HISPID_DYNAMIC_IMAGE
+#include <dlfcn.h>
+#endif
 #if MPI_PARALLEL_ENABLED
 #include <mpi.h>
 #endif
@@ -41,7 +45,44 @@ struct ResetSource {
   FastFlow &finder;
   ~ResetSource() { finder.geometry_source={};finder.initial_shape={}; }
 };
+void VerifyConsumerImage() {
+#if HISPID_DYNAMIC_IMAGE
+  // A compiled SHA describes the linked file. Also check the actual images
+  // supplying these entry points, so loader interposition cannot silently
+  // replace the sampler used by the separately proved migration.
+  const auto expected=std::filesystem::canonical(HISPID_LIBRARY_PATH);
+  auto address=[](const char *name,bool required) {
+    dlerror();void *value=dlsym(RTLD_DEFAULT,name);const char *error=dlerror();
+    if (required && (!value || error))
+      throw std::runtime_error(std::string("HiSpID consumer symbol unavailable: ")+name);
+    return error?nullptr:value;
+  };
+  for (const auto name:{"HiSpID_create_sampler","HiSpID_sample","HiSpID_sample_with_derivatives"}) {
+    Dl_info info{};
+    if (!dladdr(address(name,true),&info) || !info.dli_fname ||
+        std::filesystem::canonical(info.dli_fname)!=expected)
+      throw std::runtime_error("HiSpID loaded consumer image differs from the configured library");
+  }
+  for (const auto name:{"AB_To_XR","C_To_c","PK_solve","Puncture_execution_initialize"}) {
+    const auto symbol=address(name,std::string(name)=="AB_To_XR" || std::string(name)=="C_To_c");
+    if (!symbol) continue;
+    Dl_info info{};
+    if (!dladdr(symbol,&info) || !info.dli_fname)
+      throw std::runtime_error("HiSpID puncture dependency image unavailable");
+    const auto image=std::filesystem::canonical(info.dli_fname);
+    if (image!=expected && (image.parent_path()!=expected.parent_path() ||
+        (image.filename()!="libTwoPunctures.so" && image.filename()!="libTwoPunctures.dylib")))
+      throw std::runtime_error("HiSpID loaded puncture dependency differs from the configured directory");
+    if (global_variable::my_rank==0)
+      std::cout << "HiSpID consumer_dependency symbol=" << std::quoted(name)
+                << " image=" << std::quoted(image.string()) << std::endl;
+  }
+  if (global_variable::my_rank==0)
+    std::cout << "HiSpID consumer_image=" << std::quoted(expected.string()) << std::endl;
+#endif
+}
 void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
+  VerifyConsumerImage();
   const auto checkpoint=hispid_import::Read(pin->GetString("problem","hispid_filename"),
                                            pin->GetString("problem","hispid_source_sha256"));
   if (checkpoint.library_sha!=HISPID_LIBRARY_SHA256 &&
@@ -176,7 +217,12 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
   if (pack->pz4c->pfastflow.empty()) throw std::runtime_error("Initial horizon check requires a configured FastFlow surface");
   std::vector<int> active;
   for (int a=0;a<2;++a) if (checkpoint.config.hole[a].mass>0) active.push_back(a);
-  if (pack->pz4c->pfastflow.size()!=active.size())
+  const bool common=pin->GetOrAddBoolean("problem","hispid_common_horizon",false);
+  if (common && active.size()!=2)
+    throw std::runtime_error("Initial common horizon search requires two active holes");
+  if (common && pack->pz4c->pfastflow.size()!=1)
+    throw std::runtime_error("Initial common horizon search requires exactly one configured finder");
+  if (!common && pack->pz4c->pfastflow.size()!=active.size())
     throw std::runtime_error("Initial component horizon verification needs one finder for each active hole");
   const bool direct=pin->GetOrAddBoolean("problem","hispid_direct_horizon_geometry",true);
   if (!direct) {
@@ -192,12 +238,12 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
   int h=0;
   for (auto &owned:pack->pz4c->pfastflow) {
     auto &finder=*owned;ResetSource reset{finder};
-    if (h>=static_cast<int>(active.size())) throw std::runtime_error("Need one configured active hole per horizon");
+    if (!common && h>=static_cast<int>(active.size())) throw std::runtime_error("Need one configured active hole per horizon");
     const auto hole=checkpoint.config.hole[active[h]];
     if (!(finder.start_time<=0 && finder.stop_time>=0)) throw std::runtime_error("Initial finder time window must include time zero");
     if (finder.lmax<1 || finder.ntheta<=finder.lmax)
       throw std::runtime_error("Initial finder needs lmax>=1 and ntheta>lmax");
-    if (!pin->GetOrAddBoolean("problem","hispid_preserve_horizon_centers",false))
+    if (!common && !pin->GetOrAddBoolean("problem","hispid_preserve_horizon_centers",false))
       for (int d=0;d<3;++d) finder.center[d]=hole.center[d];
     finder.require_complete_surface=true;
     if (finder.expansion_rms_tol<=0)
@@ -216,7 +262,9 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
       for (int c=0;c<6;++c) { g[c]=p.gamma[full[c]];K[c]=p.Kij[full[c]]; }
       for (int d=0;d<3;++d) for (int c=0;c<6;++c) dg[6*d+c]=gradient[9*d+full[c]];
     };
-    if (seed_guess && !flat) {
+    // A common search uses the configured center/radius. A single-hole seed
+    // ellipsoid is not a common-horizon initial guess.
+    if (seed_guess && !common && !flat) {
       const double s2=hole.spin[0]*hole.spin[0]+hole.spin[1]*hole.spin[1]+hole.spin[2]*hole.spin[2];
       const double rh=.5*hole.mass*std::sqrt(1-s2/std::pow(hole.mass,4));
       const double v2=hole.velocity[0]*hole.velocity[0]+hole.velocity[1]*hole.velocity[1]+hole.velocity[2]*hole.velocity[2];
@@ -232,7 +280,7 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
                 << " expansion_rms=" << finder.ExpansionRMS() << " min_radius=" << finder.rr_min
                 << " attempt_area=" << finder.last_area << " attempt_expansion_rms=" << finder.last_expansion_rms
                 << " center_x=" << finder.center[0] << " center_y=" << finder.center[1]
-                << " center_z=" << finder.center[2] << std::endl;
+                << " center_z=" << finder.center[2] << " kind=" << (common?"common":"component") << std::endl;
     if (!finder.ah_found || !std::isfinite(finder.Area()) || finder.Area()<=0 ||
         !std::isfinite(finder.ExpansionRMS()) || finder.ExpansionRMS()>finder.expansion_rms_tol ||
         !std::isfinite(finder.rr_min) || finder.rr_min<=0)

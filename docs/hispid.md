@@ -178,3 +178,26 @@ python tst/test_suite/z4c/check_hispid_binary.py \
 
 The diagnostic returns1 for the retained strict failure. The reported
 coarse property measurements and successful import remain available.
+
+The October3 consumer preparation preserves checkpoint memory budgets through
+the native65536MiB maximum, while the sampler independently checks its actual
+allocation estimate. Dynamic builds verify the actual HiSpID and puncture
+symbol images and log their canonical paths. An explicit `--migration-proof`
+must bind a separate-process producer/pure-CPU-consumer field and derivative
+witness, exact basis/maps, checkpoint SHA and both dependency inventories.
+That witness transfers sampling data only; physical acceptance stays separate.
+Executable, input, checkpoint, proof and image hashes are rechecked around
+every retained horizon worker.
+
+`check_hispid_binary.py --domain-half-width` records a domain containing both
+holes and all trial surfaces. `--common --common-radius` performs a separate
+one-finder search about its configured center. Component searches retain their
+own masses/spins. Common-surface enclosure checks subtract each hole's center
+offset and modified-ball radius from a continuous harmonic lower bound, then
+subtract the observed refinement allowance. Inconclusive contracted bounds
+remain failed, and a failed common search does not prove absence.
+
+A fresh Serial consumer builds successfully with one compiler process; typed
+checkpoint and synthetic sampler-proof metadata tests pass. Actual migrated
+sampler, new import and common-horizon controls are still pending. No new
+chi=.99/Gamma10 binary has been qualified by this preparation.

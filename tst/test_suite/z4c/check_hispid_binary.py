@@ -6,6 +6,7 @@ is not a mesh-resolved horizon or production evolution test.
 import argparse,hashlib,json,math,os,re,subprocess,time
 from pathlib import Path
 import numpy as np
+from hispid_sampler_proof import validate_migration,import_evidence
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -28,6 +29,7 @@ def shape_change(a,b):
 
 
 def checkpoint_metadata(path):
+    initial_sha=hashlib.sha256(path.read_bytes()).hexdigest()
     meta={}
     with path.open() as f:
         for line in f:
@@ -38,7 +40,8 @@ def checkpoint_metadata(path):
     if meta.get('HISPID_CHECKPOINT')!=['1']:raise ValueError('checkpoint version')
     holes=[list(map(float,meta['hole'+str(h)])) for h in range(2)]
     if any(x[0]<=0 for x in holes):raise ValueError('two active holes required')
-    return dict(path=str(path),file_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+    if hashlib.sha256(path.read_bytes()).hexdigest()!=initial_sha:raise ValueError('checkpoint changed while reading metadata')
+    return dict(path=str(path),file_sha256=initial_sha,
                 source_library_sha256=meta['library_sha256'][0],acceptance=meta['acceptance'][0],
                 holes=holes,inner_max=list(map(float,meta['inner_max'])),
                 inner_flatten=int(meta['inner_flatten'][0]),parameterization=meta['parameterization'][0])
@@ -51,60 +54,105 @@ def main():
     p.add_argument('--flow-alpha',type=float,default=1.,help='positive FastFlow step-size factor; does not change acceptance tolerances')
     p.add_argument('--guess-scale',type=float,default=1.05,help='positive multiplier of the seed horizon radius for the initial guess')
     p.add_argument('--flow-iterations',type=int,default=600,help='positive maximum per-surface iteration count; acceptance tolerances stay unchanged')
+    p.add_argument('--domain-half-width',type=float,default=8.,help='positive mesh-domain half width; every active hole and modified ball must fit')
+    p.add_argument('--migration-proof',help='checkpoint-bound, separate-process CPU sampler proof; no physical acceptance transfer')
+    p.add_argument('--common',action='store_true',help='separate common-surface search; a failed search does not establish absence')
+    p.add_argument('--common-center',default='0,0,0',help='explicit Cartesian common-search center')
+    p.add_argument('--common-radius',type=float,help='positive initial common-search sphere radius')
     p.add_argument('--timeout',type=int,default=1800);a=p.parse_args()
     if not math.isfinite(a.flow_alpha) or a.flow_alpha<=0:raise ValueError('positive finite flow alpha required')
     if not math.isfinite(a.guess_scale) or a.guess_scale<=0:raise ValueError('positive finite horizon guess scale required')
     if a.flow_iterations<1:raise ValueError('positive flow iteration count required')
+    if not math.isfinite(a.domain_half_width) or a.domain_half_width<=0:raise ValueError('positive finite domain half width required')
+    common_center=list(map(float,a.common_center.split(',')))
+    if len(common_center)!=3 or not np.isfinite(common_center).all():raise ValueError('finite three-component common center required')
+    if a.common:
+        if a.common_radius is None or not math.isfinite(a.common_radius) or a.common_radius<=0:
+            raise ValueError('positive finite common radius required')
+        if max(abs(x) for x in common_center)+a.common_radius>=a.domain_half_width:
+            raise ValueError('initial common sphere must fit inside the mesh domain')
+    elif a.common_radius is not None or a.common_center!='0,0,0':
+        raise ValueError('common center/radius options require --common')
+    surface_count=1 if a.common else 2
     exe=Path(a.executable).resolve(strict=True);source=checkpoint_metadata(Path(a.checkpoint).resolve(strict=True))
+    if any(max(abs(x) for x in hole[1:4])+radius>=a.domain_half_width for hole,radius in zip(source['holes'],source['inner_max'])):
+        raise ValueError('mesh domain does not enclose the active holes and modified balls')
     if source['acceptance'] not in ('preliminary','strong') and not (a.allow_diagnostic and source['acceptance']=='diagnostic'):
         raise ValueError('checked binary or explicit --allow-diagnostic required')
+    migration=validate_migration(a.migration_proof,source) if a.migration_proof else None
     levels=list(map(int,a.levels.split(',')))
     if len(levels)<3 or any(l<2 for l in levels) or any(x>=y for x,y in zip(levels,levels[1:])):
         raise ValueError('three increasing harmonic orders required')
     root=Path(a.output).resolve();root.mkdir(parents=True,exist_ok=False)
     result=dict(executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),source=source,
-                initial_time=0,evolution_steps=0,geometry='direct_native',cpu_threads=1,flow_alpha=a.flow_alpha,seed_horizon_guess_scale=a.guess_scale,flow_iterations=a.flow_iterations,
+                initial_time=0,evolution_steps=0,geometry='direct_native',cpu_threads=1,flow_alpha=a.flow_alpha,seed_horizon_guess_scale=a.guess_scale,flow_iterations=a.flow_iterations,domain_half_width=a.domain_half_width,
                 criteria=dict(expansion_rms=1e-7,area_relative_spectral=1e-5,
                               shape_uniform_spectral=1e-4,area_relative_quadrature=1e-7),
                 records=[],passed=False,horizon_enclosure_verified=False,
                 stronger_binary_validation_complete=False)
+    result['sampler_migration']=migration
+    result['surface_kind']='common' if a.common else 'component'
+    result['common_search_initial_center']=common_center if a.common else None
+    result['common_search_initial_radius']=a.common_radius if a.common else None
+    input_template=(ROOT/'inputs/hispid.athinput').read_text()
+    result['input_template_sha256']=hashlib.sha256(input_template.encode()).hexdigest()
     schedule=[(l,2*l,'spectral') for l in levels]+[(levels[-1],3*levels[-1],'quadrature')]
     env=os.environ.copy();env.update(OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',VECLIB_MAXIMUM_THREADS='1')
     previous_shapes=None;previous_centers=None
     for lmax,ntheta,kind in schedule:
+        if hashlib.sha256(exe.read_bytes()).hexdigest()!=result['executable_sha256']:
+            raise ValueError('AthenaK executable changed before horizon worker')
+        if hashlib.sha256(Path(source['path']).read_bytes()).hexdigest()!=source['file_sha256']:
+            raise ValueError('checkpoint changed before horizon worker')
+        if migration and validate_migration(a.migration_proof,source)!=migration:
+            raise ValueError('sampler proof changed before horizon worker')
         run=root/f'{kind}_l{lmax}_n{ntheta}';run.mkdir()
         # AthenaK only permits command-line overrides of keys already present.
         extra=['use_puncture_massweighted_center_0 = false']
+        extra += [f'center_{axis}_0 = {common_center[d]}' for d,axis in enumerate(('x','y','z'))]
         extra += [key+'_1 = '+value for key,value in (
             ('use_puncture','-1'),('start_time','0'),('stop_time','0'),
             ('flow_iterations',str(a.flow_iterations)),('flow_alpha_beta_const',str(a.flow_alpha)),
             ('expansion_rms_tol','1e-7'),('mass_tol','1e-12'),
             ('hmean_tol','100'),('use_puncture_massweighted_center','false'))]
         input_path=run/'binary.athinput'
-        input_path.write_text((ROOT/'inputs/hispid.athinput').read_text().replace(
+        input_path.write_text(input_template.replace(
             '<problem>','\n'.join(extra)+'\n<problem>'))
         cmd=[str(exe),'-i',str(input_path),
              'problem/hispid_filename='+source['path'],'problem/hispid_source_sha256='+source['source_library_sha256'],
              f'problem/hispid_horizon_guess_scale={a.guess_scale}',
-             'fastflow/num_horizons=2',f'fastflow/lmax={lmax}',f'fastflow/ntheta={ntheta}']
+             f'fastflow/num_horizons={surface_count}',f'fastflow/lmax={lmax}',f'fastflow/ntheta={ntheta}']
+        if a.common:
+            cmd += ['problem/hispid_common_horizon=true','problem/hispid_seed_horizon_guess=false',
+                    f'fastflow/initial_radius_0={a.common_radius}']
         if a.allow_diagnostic:cmd += ['problem/hispid_allow_diagnostic=true']
-        for d in (1,2,3):cmd += [f'mesh/nx{d}=8',f'meshblock/nx{d}=8',f'mesh/x{d}min=-8',f'mesh/x{d}max=8']
-        for h in range(2):
+        if migration:cmd += ['problem/hispid_allow_library_migration=true']
+        for d in (1,2,3):cmd += [f'mesh/nx{d}=8',f'meshblock/nx{d}=8',f'mesh/x{d}min={-a.domain_half_width}',f'mesh/x{d}max={a.domain_half_width}']
+        for h in range(surface_count):
             cmd += [f'fastflow/use_puncture_{h}=-1',f'fastflow/start_time_{h}=0',f'fastflow/stop_time_{h}=0',
                     f'fastflow/flow_iterations_{h}={a.flow_iterations}',f'fastflow/flow_alpha_beta_const_{h}={a.flow_alpha}',
                     f'fastflow/expansion_rms_tol_{h}='+('1e-5' if lmax<levels[-1] else '1e-7'),
                     f'fastflow/mass_tol_{h}=1e-12',f'fastflow/hmean_tol_{h}=100',
                     f'fastflow/use_puncture_massweighted_center_{h}=false']
         start=time.monotonic();row=dict(lmax=lmax,ntheta=ntheta,kind=kind,command=cmd,passed=False,holes=[])
+        row['input_sha256']=hashlib.sha256(input_path.read_bytes()).hexdigest()
         with (run/'run.log').open('w') as log:
             try:completed=subprocess.run(cmd,cwd=run,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=a.timeout)
             except subprocess.TimeoutExpired:row['returncode']='timeout'
             else:row['returncode']=completed.returncode
         row['seconds']=time.monotonic()-start;stdout=(run/'run.log').read_text()
-        imported=re.search(r'HiSpID import source=([0-9a-f]{64}) acceptance=(\w+) consumer=([0-9a-f]{64}) ADM/Z4c relative error=([\deE+.-]+)',stdout)
-        if imported is not None:
-            row['import']=dict(source_library_sha256=imported[1],acceptance=imported[2],consumer_library_sha256=imported[3],adm_z4c_relative_error=float(imported[4]))
-            row['import']['passed']=bool(imported[1]==imported[3]==source['source_library_sha256'] and imported[2]==source['acceptance'] and math.isfinite(float(imported[4])) and 0<=float(imported[4])<1e-11)
+        if (hashlib.sha256(exe.read_bytes()).hexdigest()!=result['executable_sha256']
+            or hashlib.sha256(input_path.read_bytes()).hexdigest()!=row['input_sha256']):
+            row['executable_or_input_changed']=True;result['records'].append(row)
+            (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
+            raise ValueError('AthenaK executable/input changed during worker; retained attempt is unqualified')
+        if hashlib.sha256(Path(source['path']).read_bytes()).hexdigest()!=source['file_sha256']:
+            row['checkpoint_changed']=True;result['records'].append(row)
+            (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
+            raise ValueError('checkpoint changed during horizon worker; retained attempt is unqualified')
+        if migration and validate_migration(a.migration_proof,source)!=migration:
+            raise ValueError('sampler proof changed during horizon worker')
+        row['import']=import_evidence(stdout,source,migration)
         row['zero_evolution_verified']=bool(re.search(r'time=0\.000000e\+00 cycle=0',stdout) and 'MeshBlock-cycles = 0' in stdout)
         row['attempts']=[]
         for match in re.finditer(r'HiSpID horizon (\d+) geometry=(\w+) found=([01]).*? attempt_area=(\S+) attempt_expansion_rms=(\S+)',stdout):
@@ -114,7 +162,7 @@ def main():
         if row['returncode']!=0:row['failure_log_tail']=stdout.splitlines()[-8:]
         shapes=[];centers=[]
         if row['returncode']==0:
-            for h in range(2):
+            for h in range(surface_count):
                 summary=np.atleast_2d(np.loadtxt(run/f'hispid.horizon_summary_{h}.txt'))[-1]
                 shape=np.atleast_2d(np.loadtxt(run/f'hispid.horizon_shape_{h}.txt'))[-1];shapes.append(shape)
                 match=re.search(r'HiSpID horizon '+str(h)+r' .*center_x=([\deE+.-]+) center_y=([\deE+.-]+) center_z=([\deE+.-]+)',stdout)
@@ -133,15 +181,28 @@ def main():
                           center_offset=offset,rounding_allowance=rounding_margin,inner_ball_margin=margin)
                 hole['expansion_pass']=bool(np.isfinite(summary).all() and summary[7]>0 and summary[8]>=0 and hole['expansion_rms']<1e-7)
                 hole['retained_surface_encloses_inner_ball']=margin>0 and lower>0
+                if a.common:
+                    enclosed=[]
+                    for index,(seed,radius) in enumerate(zip(source['holes'],source['inner_max'])):
+                        distance=float(np.linalg.norm(center-np.array(seed[1:4])))
+                        allowance=float(64*np.finfo(float).eps*(1+uniform_bound(shape)+distance+radius))
+                        enclosed.append(dict(index=index,center_offset=distance,inner_radius=radius,
+                            rounding_allowance=allowance,continuous_enclosure_margin=lower-distance-radius-allowance))
+                    hole['component_ball_enclosures']=enclosed
+                    hole['inner_ball_margin']=min(e['continuous_enclosure_margin'] for e in enclosed)
+                    hole['retained_surface_encloses_inner_ball']=bool(lower>0 and hole['inner_ball_margin']>0)
+                    hole['surface_kind']='common'
                 if previous_shapes is not None:
                     hole['coefficient_change_uniform_bound']=shape_change(previous_shapes[h],shape)
                     hole['center_change']=float(np.linalg.norm(center-previous_centers[h]))
                     hole['shape_change_uniform_bound']=hole['coefficient_change_uniform_bound']+hole['center_change']
                 row['holes'].append(hole)
-            row['component_separation_margin']=float(np.linalg.norm(centers[0]-centers[1])-
-                sum(h['continuous_radius_upper_bound']+h['rounding_allowance'] for h in row['holes']))
-            row['distinct_components_verified']=row['component_separation_margin']>0
-            row['passed']=row.get('import',{}).get('passed',False) and row['zero_evolution_verified'] and row['distinct_components_verified'] and all(
+            if not a.common:
+                row['component_separation_margin']=float(np.linalg.norm(centers[0]-centers[1])-
+                    sum(h['continuous_radius_upper_bound']+h['rounding_allowance'] for h in row['holes']))
+                row['distinct_components_verified']=row['component_separation_margin']>0
+            row['surface_kind_verified']=bool(not a.common or ' kind=common' in stdout)
+            row['passed']=row.get('import',{}).get('passed',False) and row['zero_evolution_verified'] and row['surface_kind_verified'] and (a.common or row['distinct_components_verified']) and all(
                 h['expansion_pass'] and h['retained_surface_encloses_inner_ball'] for h in row['holes'])
         result['records'].append(row);(root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         print(lmax,ntheta,kind,'returncode',row['returncode'],'passed',row['passed'],'seconds',row['seconds'],flush=True)
@@ -149,9 +210,15 @@ def main():
         if row['returncode']!=0:break
         previous_shapes=shapes;previous_centers=centers
     rows=result['records']
+    if hashlib.sha256(exe.read_bytes()).hexdigest()!=result['executable_sha256']:
+        raise ValueError('AthenaK executable changed before final horizon qualification')
+    if migration and validate_migration(a.migration_proof,source)!=migration:
+        raise ValueError('sampler proof changed before final horizon qualification')
+    if hashlib.sha256(Path(source['path']).read_bytes()).hexdigest()!=source['file_sha256']:
+        raise ValueError('checkpoint changed before final horizon qualification')
     if len(rows)==len(schedule) and all(r['returncode']==0 for r in rows):
         fine,coarse,quad=rows[-2],rows[-3],rows[-1];checks=[]
-        for h in range(2):
+        for h in range(surface_count):
             f,c,q=fine['holes'][h],coarse['holes'][h],quad['holes'][h]
             spectral_area=abs(f['area']/c['area']-1);quadrature_area=abs(q['area']/f['area']-1)
             buffer=2*(f['shape_change_uniform_bound']+q['shape_change_uniform_bound'])
@@ -162,6 +229,7 @@ def main():
             checks.append(check)
         result['refinement_checks']=checks;result['passed']=all(c['passed'] for c in checks)
         result['horizon_enclosure_verified']=result['passed']
+        result['common_horizon_verified']=bool(a.common and result['passed'])
     result['note']='Continuous bounds apply to the retained harmonic surfaces. The observed refinement buffer is an empirical truncation check, not a rigorous bound on the exact PDE surface. g/operator modified balls alone are tested; noncompact f/F attenuation tails require exterior constraints. Reported spin is the coordinate rotation integral, not an approximate-Killing-vector spin. Input constraint acceptance remains separate; diagnostic or preliminary input is not promoted to strong binary validation.'
     (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
     return 0 if result['passed'] else 1
