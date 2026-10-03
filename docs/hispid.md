@@ -225,3 +225,37 @@ For the unit nonspinning Gamma10 control, the horizon's irreducible and
 Christodoulou masses are1 while isolated ADM energy is10. For Kerr99 the
 expected area is8*pi*(1+sqrt(1-.99^2)) and coordinate Sz=.99. Seed inputs,
 measured horizon properties and global ADM charges remain distinct outputs.
+
+FastFlow has an opt-in `fastflow/factorized_harmonics=true` cache for double
+precision. The default dense tables, harmonic recurrence, Gauss--Legendre
+angles, normalization, derivative multiplication order and flow rules remain
+the same. The compact cache stores three polar factors per theta node and
+two phase factors per azimuthal node. Each finder logs actual host, device and
+unique allocation bytes. This storage count excludes mesh and flow arrays
+and is separate from a measured process peak.
+
+The Serial validation drivers accept `--harmonic-storage factorized`; their
+allocation screen and recorded commands use that mode, and qualification
+requires its actual per-horizon allocation witness. Fixed-order quadrature
+inherits the baseline mode. At lmax160, ntheta162 the compact harmonic data
+are101,615,592 bytes per horizon including the15 tiny unused dense views,
+versus130,814,792,640 bytes for dense tables. These are allocation estimates;
+bitwise harmonic, flow-history, horizon and measured-RAM checks are pending
+the end of the single-worker benchmark campaign. No physical gate is changed.
+
+`Athena_ENABLE_FASTFLOW_CACHE_TEST=ON` builds `test_fastflow_cache`, comparing
+all15 valid components on small production GL grids and selected endpoint,
+degree and azimuthal nodes through lmax160 on the actual Kokkos execution
+space. `check_fastflow_cache.py` runs separate Serial dense/compact processes
+on exact seeds with displaced search centers. Its opt-in
+`fastflow/full_precision_trace=true` records every iteration's coefficients,
+radii and angular gradients, flow source and integrals at round-trip precision.
+The trace requires verbose output and leaves the flow decisions unchanged.
+An optional historical dense executable compares ordinary histories and final
+outputs against the previous implementation. Equivalence evidence and the
+original physical tolerances are required separately; these controls have
+been built but have not yet run.
+The displaced comparison does not interpret a boosted surface's coordinate
+rotation integral as intrinsic spin or impose unit Christodoulou mass on it;
+those quantities depend on the rotation origin. Centered exact-seed checks
+retain their original mass and spin criteria.

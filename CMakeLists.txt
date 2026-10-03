@@ -34,6 +34,7 @@ endif()
 option(Athena_SINGLE_PRECISION "Compile for single precision" OFF)
 option(Athena_ENABLE_MPI "Compile with MPI parallelism enabled" OFF)
 option(Athena_ENABLE_OPENMP "Compile with OpenMP parallelism enabled" OFF)
+option(Athena_ENABLE_FASTFLOW_CACHE_TEST "Build the optional dense/factorized harmonic control" OFF)
 set(PROBLEM built_in_pgens CACHE STRING "Name of problem generator function")
 
 #------ set macros exported to config.hpp ------------------------------------------------
@@ -296,3 +297,12 @@ target_include_directories(athena PUBLIC
 configure_file(config.hpp.in config.hpp)
 
 install( TARGETS athena DESTINATION bin )
+
+if(Athena_ENABLE_FASTFLOW_CACHE_TEST)
+  if(Athena_SINGLE_PRECISION)
+    message(FATAL_ERROR "The factorized harmonic control requires double precision")
+  endif()
+  add_executable(test_fastflow_cache tst/test_suite/z4c/test_fastflow_cache.cpp)
+  target_include_directories(test_fastflow_cache PRIVATE src ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(test_fastflow_cache PRIVATE Kokkos::kokkos)
+endif()

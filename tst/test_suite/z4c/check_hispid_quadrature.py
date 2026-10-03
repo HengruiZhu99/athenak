@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 from check_hispid_controls import ROOT,shape_error,seed_targets,exact_seed_source,harmonic_table_bytes,refinement_qualified
 from hispid_sampler_proof import validate_migration,import_evidence
+from fastflow_storage import storage_evidence
 
 p=argparse.ArgumentParser();p.add_argument('--executable',required=True);p.add_argument('--baseline',required=True)
 p.add_argument('--case',required=True,choices=('boost885','kerr95_boost885','kerr99','gamma10'))
@@ -21,6 +22,8 @@ if not (baseline.get('case_qualification',{}).get(a.case) is True
         and refinement_qualified(source_rows,'boost885' in a.case or a.case=='gamma10')):
     raise ValueError('qualified case-specific refinement group with every import/provenance/execution check required')
 last=source_rows[-1];source=exact_seed_source(last['source'],a.case);lmax=last['lmax'];root=Path(a.output).resolve();root.mkdir(parents=True,exist_ok=True)
+storage=last.get('harmonic_storage','dense')
+if any(r.get('harmonic_storage','dense')!=storage for r in source_rows):raise ValueError('baseline storage modes differ')
 if (root/'quadrature.json').exists():raise FileExistsError('preserve prior quadrature evidence at a separate output path')
 migration=last.get('sampler_migration')
 if migration and validate_migration(migration['path'],source)!=migration:raise ValueError('baseline sampler proof changed')
@@ -34,13 +37,14 @@ if 'flow_alpha' in last and a.baseline_flow_alpha is not None and alpha!=a.basel
 result=dict(case=a.case,executable_sha256=sha,baseline=str(Path(a.baseline).resolve()),lmax=lmax,
             baseline_sha256=baseline_sha,source=source,sampler_migration=migration,
             flow_alpha=alpha,flow_alpha_source='record' if 'flow_alpha' in last else 'explicit_input_recovery',records=[],passed=False)
+result['harmonic_storage']=storage
 template=(ROOT/'inputs/hispid.athinput').read_text()
 result['input_template_sha256']=hashlib.sha256(template.encode()).hexdigest()
 result['consumer_memory_screen']=dict(budget_mib=a.consumer_memory_mib,other_allowance_bytes=1024**3,
     note='Single-copy Serial harmonic data plus allowance; measured peak remains separate.')
 for nt in map(int,a.ntheta.split(',')):
     if nt<=last['ntheta'] or nt%2:raise ValueError('use a finer even theta quadrature')
-    table_bytes=harmonic_table_bytes(lmax,nt)
+    table_bytes=harmonic_table_bytes(lmax,nt,storage)
     if table_bytes+1024**3>a.consumer_memory_mib*1024**2:
         raise ValueError('declared Serial harmonic-table storage plus allowance exceeds the consumer budget')
     if (hashlib.sha256(exe.read_bytes()).hexdigest()!=sha
@@ -53,6 +57,7 @@ for nt in map(int,a.ntheta.split(',')):
     input_path=run/'quadrature.athinput';input_path.write_text(template);input_sha=hashlib.sha256(input_path.read_bytes()).hexdigest()
     cmd=[str(exe),'-i',str(input_path),'problem/hispid_filename='+source['path'],
          'problem/hispid_source_sha256='+source['source_library_sha256'],f'fastflow/lmax={lmax}',f'fastflow/ntheta={nt}',
+         'fastflow/factorized_harmonics='+str(storage=='factorized').lower(),
          f'problem/hispid_horizon_guess_scale={last["initial_scale"]}',f'fastflow/flow_alpha_beta_const_0={alpha}',
          'fastflow/flow_iterations_0=3000']
     if migration:cmd+=['problem/hispid_allow_library_migration=true']
@@ -65,6 +70,7 @@ for nt in map(int,a.ntheta.split(',')):
     stdout=(run/'run.log').read_text()
     row=dict(ntheta=nt,returncode=returncode,seconds=time.monotonic()-start,command=cmd,passed=False,
         input_sha256=input_sha,harmonic_table_bytes=table_bytes,import_evidence=dict(passed=False))
+    row['harmonic_storage']=storage;row['harmonic_allocation']=storage_evidence(stdout,storage,lmax,nt)
     result['records'].append(row);result['passed']=False
     (root/'quadrature.json').write_text(json.dumps(result,indent=2)+'\n')
     row['import_evidence']=import_evidence(stdout,source,migration)
@@ -85,7 +91,7 @@ for nt in map(int,a.ntheta.split(',')):
         row['shape_sampled_relative_linf']=shape_error(run/'hispid.horizon_shape_0.txt',lmax,chi,speed)
         row['passed']=bool(np.isfinite(values).all() and row['expansion_rms']<1e-7 and row['relative_area_change']<1e-7
                            and row['expansion_rms_change']<1e-8 and row['shape_sampled_relative_linf']<1e-6 and row['zero_evolution_verified']
-                           and row['import_evidence']['passed'] and unchanged)
+                           and row['import_evidence']['passed'] and unchanged and row['harmonic_allocation']['passed'])
     result['passed']=all(x['passed'] for x in result['records'])
     (root/'quadrature.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(row),flush=True)
     if not unchanged:raise ValueError('bound inputs changed; retained quadrature stays unqualified')

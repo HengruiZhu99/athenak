@@ -60,6 +60,9 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
 
   lmax = pin->GetOrAddInteger("fastflow", "lmax", 4);
   lmax1 = lmax + 1;
+  factorized_harmonics = pin->GetOrAddBoolean("fastflow", "factorized_harmonics", false);
+  if (factorized_harmonics && sizeof(Real)!=sizeof(double))
+    throw std::runtime_error("Factorized FastFlow harmonics require double precision");
 
   // Flow parameters
   flow_iterations = pin->GetOrAddInteger("fastflow", "flow_iterations_" + n_str, 100);
@@ -89,6 +92,9 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
 
   // Output booleans
   verbose = pin->GetOrAddBoolean("fastflow", "verbose", false);
+  full_precision_trace = pin->GetOrAddBoolean("fastflow", "full_precision_trace", false);
+  if (full_precision_trace && !verbose)
+    throw std::runtime_error("FastFlow full precision trace requires verbose output");
   output_ylm = pin->GetOrAddBoolean("fastflow", "output_ylm", false);
   output_grid = pin->GetOrAddBoolean("fastflow", "output_grid", false);
 
@@ -151,25 +157,31 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
 
   // Reallocate for the spherical harmonics.
   // The spherical grid is the same for all surfaces.
-  Kokkos::realloc(Y0, nangles, lmax1);
-  Kokkos::realloc(Yc, nangles, lmpoints);
-  Kokkos::realloc(Ys, nangles, lmpoints);
+  if (factorized_harmonics) {
+    Kokkos::realloc(harmonic_polar, 3, ntheta, lmpoints);
+    Kokkos::realloc(harmonic_phase, 2, 2*ntheta, lmax1);
+  } else {
+    Kokkos::realloc(Y0, nangles, lmax1);
+    Kokkos::realloc(Yc, nangles, lmpoints);
+    Kokkos::realloc(Ys, nangles, lmpoints);
 
-  Kokkos::realloc(dY0dth, nangles, lmax1);
-  Kokkos::realloc(dYcdth, nangles, lmpoints);
-  Kokkos::realloc(dYsdth, nangles, lmpoints);
-  Kokkos::realloc(dYcdph, nangles, lmpoints);
-  Kokkos::realloc(dYsdph, nangles, lmpoints);
+    Kokkos::realloc(dY0dth, nangles, lmax1);
+    Kokkos::realloc(dYcdth, nangles, lmpoints);
+    Kokkos::realloc(dYsdth, nangles, lmpoints);
+    Kokkos::realloc(dYcdph, nangles, lmpoints);
+    Kokkos::realloc(dYsdph, nangles, lmpoints);
 
-  Kokkos::realloc(dY0dth2, nangles, lmax1);
-  Kokkos::realloc(dYcdth2, nangles, lmpoints);
-  Kokkos::realloc(dYcdthdph, nangles, lmpoints);
-  Kokkos::realloc(dYsdth2, nangles, lmpoints);
-  Kokkos::realloc(dYsdthdph, nangles, lmpoints);
-  Kokkos::realloc(dYcdph2, nangles, lmpoints);
-  Kokkos::realloc(dYsdph2, nangles, lmpoints);
+    Kokkos::realloc(dY0dth2, nangles, lmax1);
+    Kokkos::realloc(dYcdth2, nangles, lmpoints);
+    Kokkos::realloc(dYcdthdph, nangles, lmpoints);
+    Kokkos::realloc(dYsdth2, nangles, lmpoints);
+    Kokkos::realloc(dYsdthdph, nangles, lmpoints);
+    Kokkos::realloc(dYcdph2, nangles, lmpoints);
+    Kokkos::realloc(dYsdph2, nangles, lmpoints);
+  }
 
   ComputeSphericalHarmonics();
+  WriteHarmonicStorage();
 
   // Fields on the sphere.
   Kokkos::realloc(rr, nangles);
@@ -283,6 +295,7 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
     }
 
     if (output_ylm) {
+      const auto harmonics=HostHarmonics();
       pofile_ylm = fopen(ofname_ylm.c_str(), "w");
       if (NULL == pofile_ylm) {
         std::cout << "### FATAL ERROR in " << __FILE__ << " at line " << __LINE__
@@ -306,29 +319,29 @@ FastFlow::FastFlow(MeshBlockPack *pmbp, ParameterInput *pin, int n):
             if (m == 0) {
               fprintf(pofile_ylm, "%.15e %.15e %d %d %.15e %.15e %.15e %.15e %.15e %.15e"
                                 "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e\n",
-                      theta, phi, l, m, Y0.h_view(p,l), 0.0, 0.0,
-                      dY0dth.h_view(p,l), 0.0, 0.0, 0.0, 0.0,
-                      dY0dth2.h_view(p,l), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+                      theta, phi, l, m, harmonics(FF_Y0,p,l), 0.0, 0.0,
+                      harmonics(FF_dY0dth,p,l), 0.0, 0.0, 0.0, 0.0,
+                      harmonics(FF_dY0dth2,p,l), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
             } else {
               const int l1 = lmindex(l,m,lmax);
               fprintf(pofile_ylm, "%.15e %.15e %d %d %.15e %.15e %.15e %.15e %.15e %.15e"
                                 "%.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e %.15e\n",
                       theta, phi, l, m,
                       0.0,
-                      Yc.h_view(p,l1),
-                      Ys.h_view(p,l1),
+                      harmonics(FF_Yc,p,l1),
+                      harmonics(FF_Ys,p,l1),
                       0.0,
-                      dYcdth.h_view(p,l1),
-                      dYsdth.h_view(p,l1),
-                      dYcdph.h_view(p,l1),
-                      dYsdph.h_view(p,l1),
+                      harmonics(FF_dYcdth,p,l1),
+                      harmonics(FF_dYsdth,p,l1),
+                      harmonics(FF_dYcdph,p,l1),
+                      harmonics(FF_dYsdph,p,l1),
                       0.0,
-                      dYcdth2.h_view(p,l1),
-                      dYsdth2.h_view(p,l1),
-                      dYcdph2.h_view(p,l1),
-                      dYsdph2.h_view(p,l1),
-                      dYcdthdph.h_view(p,l1),
-                      dYsdthdph.h_view(p,l1)
+                      harmonics(FF_dYcdth2,p,l1),
+                      harmonics(FF_dYsdth2,p,l1),
+                      harmonics(FF_dYcdph2,p,l1),
+                      harmonics(FF_dYsdph2,p,l1),
+                      harmonics(FF_dYcdthdph,p,l1),
+                      harmonics(FF_dYsdthdph,p,l1)
                       );
             }
           }
@@ -718,6 +731,7 @@ void FastFlow::CheckCoverage() {
 }
 
 void FastFlow::InitialShape() {
+  const auto harmonics=HostHarmonics();
   // Host projection uses the same normalized harmonics and quadrature as
   // the flow. It is performed on every rank and needs no MPI sum.
   Kokkos::deep_copy(a0.h_view,0.0); Kokkos::deep_copy(ac.h_view,0.0); Kokkos::deep_copy(as.h_view,0.0);
@@ -726,9 +740,9 @@ void FastFlow::InitialShape() {
     if (!std::isfinite(r) || r<=0) throw std::runtime_error("Invalid initial surface shape");
     Real rw=r*gl_grid->int_weights.h_view(p);
     for (int l=0;l<=lmax;++l) {
-      a0.h_view(l)+=rw*Y0.h_view(p,l);
+      a0.h_view(l)+=rw*harmonics(FF_Y0,p,l);
       for (int m=1;m<=l;++m) {
-        int q=lmindex(l,m,lmax);ac.h_view(q)+=rw*Yc.h_view(p,q);as.h_view(q)+=rw*Ys.h_view(p,q);
+        int q=lmindex(l,m,lmax);ac.h_view(q)+=rw*harmonics(FF_Yc,p,q);as.h_view(q)+=rw*harmonics(FF_Ys,p,q);
       }
     }
   }
@@ -785,6 +799,7 @@ void FastFlow::FastFlowLoop() {
 
     // Step 3: Compute the surface integrals.
     SurfaceIntegrals();
+    if (full_precision_trace && ioproc) WriteFlowTrace(k);
 
     area  = integrals[iarea];
     hrms  = integrals[ihrms]/area;
@@ -909,6 +924,7 @@ void FastFlow::FastFlowLoop() {
 //! \fn void FastFlow::UpdateFlowSpectralComponents()
 //! \brief Find new spectral components with fast-flow.
 void FastFlow::UpdateFlowSpectralComponents() {
+  const auto harmonics=HostHarmonics();
   const Real alpha = flow_alpha_beta_const;
   const Real beta = 0.5 * flow_alpha_beta_const;
   const Real A = alpha / (lmax * lmax1) + beta;
@@ -938,12 +954,12 @@ void FastFlow::UpdateFlowSpectralComponents() {
     const Real drho = gl_grid->int_weights.h_view(p) * rho.h_view(p);
 
     for (int l = 0; l <= lmax; l++) {
-      spec0[l] += drho * Y0.h_view(p,l);
+      spec0[l] += drho * harmonics(FF_Y0,p,l);
 
       for (int m = 1; m <= l; m++) {
         int l1 = lmindex(l,m,lmax);
-        specc[l1] += drho * Yc.h_view(p,l1);
-        specs[l1] += drho * Ys.h_view(p,l1);
+        specc[l1] += drho * harmonics(FF_Yc,p,l1);
+        specs[l1] += drho * harmonics(FF_Ys,p,l1);
       }
     }
   }
@@ -984,6 +1000,7 @@ void FastFlow::UpdateFlowSpectralComponents() {
 //! \fn void FastFlow::RadiiFromSphericalHarmonics()
 //! \brief Compute the radius of the surface.
 void FastFlow::RadiiFromSphericalHarmonics() {
+  const auto harmonics=DeviceHarmonics();
   // Reset the radii on the surface to zero.
   Kokkos::deep_copy(rr, 0.0);
   Kokkos::deep_copy(rr_dth, 0.0);
@@ -997,29 +1014,21 @@ void FastFlow::RadiiFromSphericalHarmonics() {
   auto &a0_ = a0;
   auto &ac_ = ac;
   auto &as_ = as;
-  auto &Y0_ = Y0;
-  auto &Yc_ = Yc;
-  auto &Ys_ = Ys;
-  auto &dY0dth_ = dY0dth;
-  auto &dYcdth_ = dYcdth;
-  auto &dYsdth_ = dYsdth;
-  auto &dYcdph_ = dYcdph;
-  auto &dYsdph_ = dYsdph;
 
   // Step 1: Compute the radii from the spherical harmonics.
   par_for("FastFlow_sphradii_compute", DevExeSpace(), 0, nangles-1,
   KOKKOS_LAMBDA(int p) {
     for (int l = 0; l <= lmax_; l++){
-      rr_(p) += a0_.d_view(l) * Y0_.d_view(p,l);
-      rr_dth_(p) += a0_.d_view(l) * dY0dth_.d_view(p,l);
+      rr_(p) += a0_.d_view(l) * harmonics(FF_Y0,p,l);
+      rr_dth_(p) += a0_.d_view(l) * harmonics(FF_dY0dth,p,l);
 
       for (int m = 1; m <= l; m++){
         int l1 = lmindex(l,m,lmax_);
-        rr_(p) += ac_.d_view(l1) * Yc_.d_view(p,l1) + as_.d_view(l1) * Ys_.d_view(p,l1);
-        rr_dth_(p) += ac_.d_view(l1) * dYcdth_.d_view(p,l1) +
-                      as_.d_view(l1) * dYsdth_.d_view(p,l1);
-        rr_dph_(p) += ac_.d_view(l1) * dYcdph_.d_view(p,l1) +
-                      as_.d_view(l1) * dYsdph_.d_view(p,l1);
+        rr_(p) += ac_.d_view(l1) * harmonics(FF_Yc,p,l1) + as_.d_view(l1) * harmonics(FF_Ys,p,l1);
+        rr_dth_(p) += ac_.d_view(l1) * harmonics(FF_dYcdth,p,l1) +
+                      as_.d_view(l1) * harmonics(FF_dYsdth,p,l1);
+        rr_dph_(p) += ac_.d_view(l1) * harmonics(FF_dYcdph,p,l1) +
+                      as_.d_view(l1) * harmonics(FF_dYsdph,p,l1);
       }
     }
   });
@@ -1039,6 +1048,7 @@ void FastFlow::RadiiFromSphericalHarmonics() {
 //!        Needs metric and extr. curv. interpolated on the surface.
 //!        Performs local sums and MPI reduce.
 void FastFlow::SurfaceIntegrals() {
+  const auto harmonics=DeviceHarmonics();
   const Real min_rp = 1e-10;
 
   // Initialize integrals
@@ -1073,20 +1083,8 @@ void FastFlow::SurfaceIntegrals() {
   auto &ac_ = ac;
 
   // **FIRST DERIVATIVES SPHERICAL HARMONICS**
-  auto &dY0dth_ = dY0dth;
-  auto &dYcdth_ = dYcdth;
-  auto &dYsdth_ = dYsdth;
-  auto &dYcdph_ = dYcdph;
-  auto &dYsdph_ = dYsdph;
 
   // **SECOND DERIVATIVES SPHERICAL HARMONICS**
-  auto &dY0dth2_ = dY0dth2;
-  auto &dYcdth2_ = dYcdth2;
-  auto &dYsdth2_ = dYsdth2;
-  auto &dYcdph2_ = dYcdph2;
-  auto &dYsdph2_ = dYsdph2;
-  auto &dYcdthdph_ = dYcdthdph;
-  auto &dYsdthdph_ = dYsdthdph;
 
   // Indices mapping
   int gmap[3][3] = {
@@ -1263,15 +1261,15 @@ void FastFlow::SurfaceIntegrals() {
         dFdi(a) = drdi(a);
 
         for (int l = 0; l <= lmax_; l++) {
-          dFdi(a) -= a0_.d_view(l) * dthetadi(a) * dY0dth_.d_view(p,l);
+          dFdi(a) -= a0_.d_view(l) * dthetadi(a) * harmonics(FF_dY0dth,p,l);
 
           for (int m = 1; m <= l; m++) {
             const int l1 = lmindex(l,m,lmax_);
             dFdi(a) -=
-              ac_.d_view(l1) * (dthetadi(a) * dYcdth_.d_view(p,l1) +
-              dphidi(a) * dYcdph_.d_view(p,l1)) +
-              as_.d_view(l1) * (dthetadi(a) * dYsdth_.d_view(p,l1) +
-              dphidi(a) * dYsdph_.d_view(p,l1));
+              ac_.d_view(l1) * (dthetadi(a) * harmonics(FF_dYcdth,p,l1) +
+              dphidi(a) * harmonics(FF_dYcdph,p,l1)) +
+              as_.d_view(l1) * (dthetadi(a) * harmonics(FF_dYsdth,p,l1) +
+              dphidi(a) * harmonics(FF_dYsdph,p,l1));
           }
         }
 
@@ -1280,23 +1278,23 @@ void FastFlow::SurfaceIntegrals() {
           dFdidj(a,b) = drdidj(a,b);
 
           for (int l = 0; l <= lmax_; l++) {
-            dFdidj(a,b) -= a0_.d_view(l)*(dthetadidj(a,b) * dY0dth_.d_view(p,l)
-                            + dthetadi(a) * dthetadi(b) * dY0dth2_.d_view(p,l));
+            dFdidj(a,b) -= a0_.d_view(l)*(dthetadidj(a,b) * harmonics(FF_dY0dth,p,l)
+                            + dthetadi(a) * dthetadi(b) * harmonics(FF_dY0dth2,p,l));
 
             for (int m = 1; m <= l; m++) {
               int l1 = lmindex(l,m,lmax_);
-              dFdidj(a,b) -= ac_.d_view(l1) * (dthetadidj(a,b) * dYcdth_.d_view(p,l1)
-                + dthetadi(a) * (dthetadi(b) * dYcdth2_.d_view(p,l1)
-                + dphidi(b) * dYcdthdph_.d_view(p,l1))
-                + dphididj(a,b) * dYcdph_.d_view(p,l1)
-                + dphidi(a) * (dthetadi(b) * dYcdthdph_.d_view(p,l1)
-                + dphidi(b) * dYcdph2_.d_view(p,l1)))
-                + as_.d_view(l1) * (dthetadidj(a,b) * dYsdth_.d_view(p,l1)
-                + dthetadi(a) * (dthetadi(b) * dYsdth2_.d_view(p,l1)
-                + dphidi(b) * dYsdthdph_.d_view(p,l1))
-                + dphididj(a,b) * dYsdph_.d_view(p,l1)
-                + dphidi(a) * (dthetadi(b) * dYsdthdph_.d_view(p,l1)
-                + dphidi(b) * dYsdph2_.d_view(p,l1)));
+              dFdidj(a,b) -= ac_.d_view(l1) * (dthetadidj(a,b) * harmonics(FF_dYcdth,p,l1)
+                + dthetadi(a) * (dthetadi(b) * harmonics(FF_dYcdth2,p,l1)
+                + dphidi(b) * harmonics(FF_dYcdthdph,p,l1))
+                + dphididj(a,b) * harmonics(FF_dYcdph,p,l1)
+                + dphidi(a) * (dthetadi(b) * harmonics(FF_dYcdthdph,p,l1)
+                + dphidi(b) * harmonics(FF_dYcdph2,p,l1)))
+                + as_.d_view(l1) * (dthetadidj(a,b) * harmonics(FF_dYsdth,p,l1)
+                + dthetadi(a) * (dthetadi(b) * harmonics(FF_dYsdth2,p,l1)
+                + dphidi(b) * harmonics(FF_dYsdthdph,p,l1))
+                + dphididj(a,b) * harmonics(FF_dYsdph,p,l1)
+                + dphidi(a) * (dthetadi(b) * harmonics(FF_dYsdthdph,p,l1)
+                + dphidi(b) * harmonics(FF_dYsdph2,p,l1)));
             }
           }
         }
@@ -1473,11 +1471,141 @@ void FastFlow::SurfaceIntegrals() {
   rho.template sync<HostMemSpace>();
 }
 
+FastFlow::DeviceHarmonicCache FastFlow::DeviceHarmonics() const {
+  DeviceHarmonicCache cache;
+  cache.ntheta=ntheta;cache.lmax1=lmax1;
+  cache.factorized=factorized_harmonics;cache.sqrt2=Kokkos::sqrt(2.0);
+  cache.polar=harmonic_polar.d_view;cache.phase=harmonic_phase.d_view;
+  cache.dense[FF_Y0]=Y0.d_view;
+  cache.dense[FF_Yc]=Yc.d_view;
+  cache.dense[FF_Ys]=Ys.d_view;
+  cache.dense[FF_dY0dth]=dY0dth.d_view;
+  cache.dense[FF_dYcdth]=dYcdth.d_view;
+  cache.dense[FF_dYsdth]=dYsdth.d_view;
+  cache.dense[FF_dYcdph]=dYcdph.d_view;
+  cache.dense[FF_dYsdph]=dYsdph.d_view;
+  cache.dense[FF_dY0dth2]=dY0dth2.d_view;
+  cache.dense[FF_dYcdth2]=dYcdth2.d_view;
+  cache.dense[FF_dYsdth2]=dYsdth2.d_view;
+  cache.dense[FF_dYcdph2]=dYcdph2.d_view;
+  cache.dense[FF_dYsdph2]=dYsdph2.d_view;
+  cache.dense[FF_dYcdthdph]=dYcdthdph.d_view;
+  cache.dense[FF_dYsdthdph]=dYsdthdph.d_view;
+  return cache;
+}
+
+FastFlow::HostHarmonicCache FastFlow::HostHarmonics() const {
+  HostHarmonicCache cache;
+  cache.ntheta=ntheta;cache.lmax1=lmax1;
+  cache.factorized=factorized_harmonics;cache.sqrt2=Kokkos::sqrt(2.0);
+  cache.polar=harmonic_polar.h_view;cache.phase=harmonic_phase.h_view;
+  cache.dense[FF_Y0]=Y0.h_view;
+  cache.dense[FF_Yc]=Yc.h_view;
+  cache.dense[FF_Ys]=Ys.h_view;
+  cache.dense[FF_dY0dth]=dY0dth.h_view;
+  cache.dense[FF_dYcdth]=dYcdth.h_view;
+  cache.dense[FF_dYsdth]=dYsdth.h_view;
+  cache.dense[FF_dYcdph]=dYcdph.h_view;
+  cache.dense[FF_dYsdph]=dYsdph.h_view;
+  cache.dense[FF_dY0dth2]=dY0dth2.h_view;
+  cache.dense[FF_dYcdth2]=dYcdth2.h_view;
+  cache.dense[FF_dYsdth2]=dYsdth2.h_view;
+  cache.dense[FF_dYcdph2]=dYcdph2.h_view;
+  cache.dense[FF_dYsdph2]=dYsdph2.h_view;
+  cache.dense[FF_dYcdthdph]=dYcdthdph.h_view;
+  cache.dense[FF_dYsdthdph]=dYsdthdph.h_view;
+  return cache;
+}
+
+void FastFlow::WriteHarmonicStorage() const {
+  std::size_t host_bytes=0, device_bytes=0, unique_bytes=0;
+  const auto count=[&](const auto &view) {
+    const std::size_t h=view.h_view.span()*sizeof(Real), d=view.d_view.span()*sizeof(Real);
+    host_bytes+=h;device_bytes+=d;
+    unique_bytes+=h+(static_cast<const void *>(view.h_view.data())==
+                       static_cast<const void *>(view.d_view.data()) ? 0 : d);
+  };
+  count(Y0);
+  count(Yc);
+  count(Ys);
+  count(dY0dth);
+  count(dYcdth);
+  count(dYsdth);
+  count(dYcdph);
+  count(dYsdph);
+  count(dY0dth2);
+  count(dYcdth2);
+  count(dYsdth2);
+  count(dYcdph2);
+  count(dYsdph2);
+  count(dYcdthdph);
+  count(dYsdthdph);
+  count(harmonic_polar);count(harmonic_phase);
+  if (global_variable::my_rank==0)
+    std::cout << "FastFlow harmonic_storage horizon=" << nh
+              << " mode=" << (factorized_harmonics?"factorized":"dense")
+              << " lmax=" << lmax << " ntheta=" << ntheta
+              << " host_bytes=" << host_bytes << " device_bytes=" << device_bytes
+              << " unique_bytes=" << unique_bytes << std::endl;
+}
+
+void FastFlow::WriteFlowTrace(int iteration) const {
+  // Opt-in validation only: retain every stage without altering flow decisions.
+  const auto r=Kokkos::create_mirror_view_and_copy(HostMemSpace(),rr);
+  const auto rth=Kokkos::create_mirror_view_and_copy(HostMemSpace(),rr_dth);
+  const auto rph=Kokkos::create_mirror_view_and_copy(HostMemSpace(),rr_dph);
+  fprintf(pofile_verbose,"# full_precision_iteration %d\n",iteration);
+  fprintf(pofile_verbose,"# full_precision_integrals");
+  for (int v=0;v<invar;++v) fprintf(pofile_verbose," %.17e",integrals[v]);
+  fprintf(pofile_verbose," %.17e\n",rr_min);
+  fprintf(pofile_verbose,"# full_precision_coefficients");
+  for (int l=0;l<=lmax;++l) {
+    fprintf(pofile_verbose," %.17e",a0.h_view(l));
+    for (int m=1;m<=l;++m) {
+      const int q=lmindex(l,m,lmax);
+      fprintf(pofile_verbose," %.17e %.17e",ac.h_view(q),as.h_view(q));
+    }
+  }
+  fprintf(pofile_verbose,"\n");
+  for (int p=0;p<nangles;++p)
+    fprintf(pofile_verbose,"# full_precision_point %d %.17e %.17e %.17e %.17e\n",
+            p,r(p),rth(p),rph(p),rho.h_view(p));
+  fflush(pofile_verbose);
+}
+
 //----------------------------------------------------------------------------------------
 //! \fn void FastFlow::ComputeSphericalHarmonics()
 //! \brief Compute spherical harmonics for grid of size ntheta*nphi.
 //!        Results are used for all horizons.
 void FastFlow::ComputeSphericalHarmonics() {
+  if (factorized_harmonics) {
+    const auto positions=gl_grid->polar_pos.d_view;
+    const auto polar=harmonic_polar.d_view, phase=harmonic_phase.d_view;
+    const int nt=ntheta, lm=lmax, lm1=lmax1;
+    par_for("FastFlow_polar_factors", DevExeSpace(), 0, nt-1,
+    KOKKOS_LAMBDA(int itheta) {
+      for (int l=0;l<=lm;++l) for (int m=0;m<=l;++m) {
+        const auto h=StableFastFlowHarmonic(l,m,positions(itheta,0),0.0);
+        const int q=l*lm1+m;
+        polar(0,itheta,q)=h.real;
+        polar(1,itheta,q)=h.th_real;
+        polar(2,itheta,q)=h.th2_real;
+      }
+    });
+    par_for("FastFlow_phase_factors", DevExeSpace(), 0, 2*nt-1,
+    KOKKOS_LAMBDA(int iphi) {
+      const Real phi=positions(iphi*nt,1);
+      for (int m=0;m<=lm;++m) {
+        phase(0,iphi,m)=std::cos(m*phi);
+        phase(1,iphi,m)=std::sin(m*phi);
+      }
+    });
+    harmonic_polar.template modify<DevExeSpace>();
+    harmonic_polar.template sync<HostMemSpace>();
+    harmonic_phase.template modify<DevExeSpace>();
+    harmonic_phase.template sync<HostMemSpace>();
+    return;
+  }
   const Real sqrt2 = Kokkos::sqrt(2.0);
 
   // Explicitely capture the variables for the Kokkos kernel.

@@ -7,8 +7,17 @@ import argparse,hashlib,json,math,os,re,subprocess,time
 from pathlib import Path
 import numpy as np
 from hispid_sampler_proof import validate_migration,import_evidence
+from fastflow_storage import harmonic_table_bytes,storage_evidence
 
 ROOT=Path(__file__).resolve().parents[2]
+
+
+def schedule_prerequisites(rows,expected):
+    """Coarse expansion is diagnostic, but every execution witness is required."""
+    return bool(len(rows)==expected and all(r.get('returncode')==0
+        and r.get('bound_inputs_unchanged') is True and r.get('zero_evolution_verified') is True
+        and r.get('surface_kind_verified') is True and r.get('import',{}).get('passed') is True
+        and r.get('harmonic_allocation',{}).get('passed') is True for r in rows))
 
 
 def uniform_bound(coefficients):
@@ -56,6 +65,8 @@ def main():
     p.add_argument('--flow-iterations',type=int,default=600,help='positive maximum per-surface iteration count; acceptance tolerances stay unchanged')
     p.add_argument('--domain-half-width',type=float,default=8.,help='positive mesh-domain half width; every active hole and modified ball must fit')
     p.add_argument('--migration-proof',help='checkpoint-bound, separate-process CPU sampler proof; no physical acceptance transfer')
+    p.add_argument('--harmonic-storage',choices=('dense','factorized'),default='dense')
+    p.add_argument('--consumer-memory-mib',type=int,default=32768)
     p.add_argument('--common',action='store_true',help='separate common-surface search; a failed search does not establish absence')
     p.add_argument('--common-center',default='0,0,0',help='explicit Cartesian common-search center')
     p.add_argument('--common-radius',type=float,help='positive initial common-search sphere radius')
@@ -97,6 +108,13 @@ def main():
     input_template=(ROOT/'inputs/hispid.athinput').read_text()
     result['input_template_sha256']=hashlib.sha256(input_template.encode()).hexdigest()
     schedule=[(l,2*l,'spectral') for l in levels]+[(levels[-1],3*levels[-1],'quadrature')]
+    if a.consumer_memory_mib<2048:raise ValueError('consumer screen needs at least2048MiB')
+    estimates=[dict(lmax=l,ntheta=nt,harmonic_table_bytes=surface_count*harmonic_table_bytes(l,nt,a.harmonic_storage)) for l,nt,_ in schedule]
+    if any(row['harmonic_table_bytes']+1024**3>a.consumer_memory_mib*1024**2 for row in estimates):
+        raise ValueError('declared Serial harmonic storage plus allowance exceeds the consumer budget')
+    result['harmonic_storage']=a.harmonic_storage
+    result['consumer_memory_screen']=dict(budget_mib=a.consumer_memory_mib,other_allowance_bytes=1024**3,
+        estimates=estimates,number_of_surfaces=surface_count,measured_peak=False)
     env=os.environ.copy();env.update(OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',VECLIB_MAXIMUM_THREADS='1')
     previous_shapes=None;previous_centers=None
     for lmax,ntheta,kind in schedule:
@@ -121,6 +139,7 @@ def main():
         cmd=[str(exe),'-i',str(input_path),
              'problem/hispid_filename='+source['path'],'problem/hispid_source_sha256='+source['source_library_sha256'],
              f'problem/hispid_horizon_guess_scale={a.guess_scale}',
+             'fastflow/factorized_harmonics='+str(a.harmonic_storage=='factorized').lower(),
              f'fastflow/num_horizons={surface_count}',f'fastflow/lmax={lmax}',f'fastflow/ntheta={ntheta}']
         if a.common:
             cmd += ['problem/hispid_common_horizon=true','problem/hispid_seed_horizon_guess=false',
@@ -136,22 +155,28 @@ def main():
                     f'fastflow/use_puncture_massweighted_center_{h}=false']
         start=time.monotonic();row=dict(lmax=lmax,ntheta=ntheta,kind=kind,command=cmd,passed=False,holes=[])
         row['input_sha256']=hashlib.sha256(input_path.read_bytes()).hexdigest()
+        row['input_path']=str(input_path.resolve());row['bound_inputs_unchanged']=False
+        result['records'].append(row);(root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         with (run/'run.log').open('w') as log:
             try:completed=subprocess.run(cmd,cwd=run,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=a.timeout)
             except subprocess.TimeoutExpired:row['returncode']='timeout'
             else:row['returncode']=completed.returncode
         row['seconds']=time.monotonic()-start;stdout=(run/'run.log').read_text()
+        row['harmonic_storage']=a.harmonic_storage
+        row['harmonic_allocation']=storage_evidence(stdout,a.harmonic_storage,lmax,ntheta,surface_count)
+        (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         if (hashlib.sha256(exe.read_bytes()).hexdigest()!=result['executable_sha256']
             or hashlib.sha256(input_path.read_bytes()).hexdigest()!=row['input_sha256']):
-            row['executable_or_input_changed']=True;result['records'].append(row)
+            row['executable_or_input_changed']=True
             (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
             raise ValueError('AthenaK executable/input changed during worker; retained attempt is unqualified')
         if hashlib.sha256(Path(source['path']).read_bytes()).hexdigest()!=source['file_sha256']:
-            row['checkpoint_changed']=True;result['records'].append(row)
+            row['checkpoint_changed']=True
             (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
             raise ValueError('checkpoint changed during horizon worker; retained attempt is unqualified')
         if migration and validate_migration(a.migration_proof,source)!=migration:
             raise ValueError('sampler proof changed during horizon worker')
+        row['bound_inputs_unchanged']=True
         row['import']=import_evidence(stdout,source,migration)
         row['zero_evolution_verified']=bool(re.search(r'time=0\.000000e\+00 cycle=0',stdout) and 'MeshBlock-cycles = 0' in stdout)
         row['attempts']=[]
@@ -202,9 +227,9 @@ def main():
                     sum(h['continuous_radius_upper_bound']+h['rounding_allowance'] for h in row['holes']))
                 row['distinct_components_verified']=row['component_separation_margin']>0
             row['surface_kind_verified']=bool(not a.common or ' kind=common' in stdout)
-            row['passed']=row.get('import',{}).get('passed',False) and row['zero_evolution_verified'] and row['surface_kind_verified'] and (a.common or row['distinct_components_verified']) and all(
+            row['passed']=row.get('import',{}).get('passed',False) and row['harmonic_allocation']['passed'] and row['zero_evolution_verified'] and row['surface_kind_verified'] and (a.common or row['distinct_components_verified']) and all(
                 h['expansion_pass'] and h['retained_surface_encloses_inner_ball'] for h in row['holes'])
-        result['records'].append(row);(root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
+        (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         print(lmax,ntheta,kind,'returncode',row['returncode'],'passed',row['passed'],'seconds',row['seconds'],flush=True)
         for h in row['holes']:print({k:v for k,v in h.items() if k not in ('coefficients','summary')},flush=True)
         if row['returncode']!=0:break
@@ -216,7 +241,11 @@ def main():
         raise ValueError('sampler proof changed before final horizon qualification')
     if hashlib.sha256(Path(source['path']).read_bytes()).hexdigest()!=source['file_sha256']:
         raise ValueError('checkpoint changed before final horizon qualification')
-    if len(rows)==len(schedule) and all(r['returncode']==0 for r in rows):
+    if (hashlib.sha256((ROOT/'inputs/hispid.athinput').read_bytes()).hexdigest()!=result['input_template_sha256']
+        or any(hashlib.sha256(Path(r['input_path']).read_bytes()).hexdigest()!=r['input_sha256'] for r in rows)):
+        raise ValueError('bound horizon inputs changed before final qualification')
+    result['schedule_prerequisites_verified']=schedule_prerequisites(rows,len(schedule))
+    if result['schedule_prerequisites_verified']:
         fine,coarse,quad=rows[-2],rows[-3],rows[-1];checks=[]
         for h in range(surface_count):
             f,c,q=fine['holes'][h],coarse['holes'][h],quad['holes'][h]

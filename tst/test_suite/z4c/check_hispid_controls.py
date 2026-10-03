@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 from check_hispid_binary import checkpoint_metadata
 from hispid_sampler_proof import validate_migration,import_evidence
+from fastflow_storage import harmonic_table_bytes,storage_evidence
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -43,15 +44,10 @@ def shape_error(path,lmax,chi,speed=.885):
     return float(np.max(abs(radius/expected-1)))
 
 
-def harmonic_table_bytes(lmax,ntheta):
-    """Exact data bytes for the fifteen harmonic tables, one Serial copy."""
-    if lmax<2 or ntheta<lmax+1:raise ValueError('harmonic order/quadrature outside supported control')
-    return 8*2*ntheta**2*(12*(lmax+1)**2+3*(lmax+1))
-
-
 def refinement_qualified(rows,boosted):
     if not rows or not all(row.get('returncode')==0 and row.get('bound_inputs_unchanged') is True
-        and row.get('zero_evolution_verified') is True and row.get('import',{}).get('passed') is True for row in rows):
+        and row.get('zero_evolution_verified') is True and row.get('import',{}).get('passed') is True
+        and ('harmonic_storage' not in row or row.get('harmonic_allocation',{}).get('passed') is True) for row in rows):
         return False
     if boosted:
         return bool(len(rows)>=3 and rows[-1]['passed'] and all(
@@ -99,6 +95,7 @@ def main():
     p.add_argument('--combined-flow-alpha',type=float,default=.2)
     p.add_argument('--boost-flow-alpha',type=float,default=1.,help='step factor for the separate Gamma10 control')
     p.add_argument('--consumer-memory-mib',type=int,default=32768,help='explicit Serial consumer screen: harmonic tables plus1GiB allowance; actual memory is separate')
+    p.add_argument('--harmonic-storage',choices=('dense','factorized'),default='dense')
     a=p.parse_args();exe=Path(a.executable).resolve(strict=True)
     manifest_path=Path(a.manifest).resolve(strict=True);manifest_bytes=manifest_path.read_bytes()
     manifest_sha=hashlib.sha256(manifest_bytes).hexdigest();manifest=json.loads(manifest_bytes)
@@ -111,6 +108,7 @@ def main():
     evidence={'executable_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),
         'manifest_sha256':manifest_sha,'input_template_sha256':hashlib.sha256(template.encode()).hexdigest(),
         'initial_time':0,'evolution_steps':0,'records':[],'passed':False}
+    evidence['harmonic_storage']=a.harmonic_storage
     cases=[]
     boost_levels=list(map(int,a.boost_levels.split(',')))
     if len(boost_levels)<3 or any(l<2 for l in boost_levels) or any(x>=y for x,y in zip(boost_levels,boost_levels[1:])):
@@ -121,7 +119,7 @@ def main():
         elif case in ('kerr95','kerr99'):cases.extend((case,l,n,s) for l,n,s in ((8,16,.8),(12,24,1.2),(16,32,1.05)))
         elif case in ('boost885','kerr95_boost885','gamma10'):cases.extend((case,l,l+2,1.02) for l in boost_levels)
         else:raise ValueError('unsupported exact control: '+case)
-    estimates=[dict(case=case,lmax=l,ntheta=nt,harmonic_table_bytes=harmonic_table_bytes(l,nt)) for case,l,nt,_ in cases]
+    estimates=[dict(case=case,lmax=l,ntheta=nt,harmonic_table_bytes=harmonic_table_bytes(l,nt,a.harmonic_storage)) for case,l,nt,_ in cases]
     if any(row['harmonic_table_bytes']+1024**3>a.consumer_memory_mib*1024**2 for row in estimates):
         raise ValueError('declared harmonic-table storage plus allowance exceeds the Serial consumer budget')
     evidence['consumer_memory_screen']=dict(budget_mib=a.consumer_memory_mib,other_allowance_bytes=1024**3,
@@ -143,6 +141,7 @@ def main():
         input_sha=hashlib.sha256(input_path.read_bytes()).hexdigest()
         cmd=[str(exe),'-i',str(input_path),
              'problem/hispid_filename='+source['path'],'problem/hispid_source_sha256='+source['source_library_sha256'],
+             'fastflow/factorized_harmonics='+str(a.harmonic_storage=='factorized').lower(),
              f'fastflow/lmax={lmax}',f'fastflow/ntheta={ntheta}',f'problem/hispid_horizon_guess_scale={scale}']
         if case=='flat':
             cmd+=['problem/hispid_flat_control=true','problem/hispid_seed_horizon_guess=false',
@@ -166,6 +165,8 @@ def main():
         stdout=(run/'run.log').read_text()
         row={'case':case,'lmax':lmax,'ntheta':ntheta,'initial_scale':scale,'returncode':returncode,'seconds':time.monotonic()-start,'command':cmd,'source':source,'passed':False,
             'input_sha256':input_sha,'sampler_migration':migration}
+        row['harmonic_storage']=a.harmonic_storage
+        row['harmonic_allocation']=storage_evidence(stdout,a.harmonic_storage,lmax,ntheta)
         evidence['records'].append(row);evidence['passed']=False
         (root/'controls.json').write_text(json.dumps(evidence,indent=2)+'\n')
         row['flow_alpha']=a.combined_flow_alpha if case=='kerr95_boost885' else a.boost_flow_alpha if case=='gamma10' else 1.0
@@ -207,7 +208,7 @@ def main():
                 row['expected_seed_lorentz_factor']=float(1/np.sqrt(1-speed**2))
                 row['passed'] &= row['horizon_mass_error']<2e-5
                 if chi==0:row['passed'] &= np.max(abs(values[3:7]))<2e-5
-            row['passed'] &= row['zero_evolution_verified'] and unchanged and row['import']['passed']
+            row['passed'] &= row['zero_evolution_verified'] and unchanged and row['import']['passed'] and row['harmonic_allocation']['passed']
         complete=len(evidence['records'])==len(cases)
         groups={name:[x for x in evidence['records'] if x['case']==name] for name in a.cases.split(',')}
         evidence['case_qualification']={name:bool(len(rows)==sum(c[0]==name for c in cases)

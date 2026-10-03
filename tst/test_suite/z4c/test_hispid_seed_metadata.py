@@ -5,6 +5,8 @@ import tempfile
 import unittest
 
 from check_hispid_controls import exact_seed_source,harmonic_table_bytes,refinement_qualified
+from fastflow_storage import storage_evidence
+from check_hispid_binary import schedule_prerequisites
 
 
 class ExactSeedMetadataTests(unittest.TestCase):
@@ -49,6 +51,27 @@ class ExactSeedMetadataTests(unittest.TestCase):
     def test_serial_harmonic_screen_includes_all_fifteen_tables(self):
         self.assertEqual(harmonic_table_bytes(8,16),8*2*16**2*(12*9**2+3*9))
         with self.assertRaises(ValueError):harmonic_table_bytes(8,8)
+
+    def test_compact_screen_and_actual_storage_witness(self):
+        count=harmonic_table_bytes(160,162,'factorized')
+        self.assertEqual(count,101615472+120)
+        self.assertGreater(harmonic_table_bytes(160,162),32*1024**3)
+        self.assertLess(count,128*1024**2)
+        line=f'FastFlow harmonic_storage horizon=0 mode=factorized lmax=160 ntheta=162 host_bytes={count} device_bytes={count} unique_bytes={count}'
+        self.assertTrue(storage_evidence(line,'factorized',160,162)['passed'])
+        for altered in ('',line.replace('factorized','dense'),line+line,
+                        line.replace(f'unique_bytes={count}',f'unique_bytes={2*count}')):
+            self.assertFalse(storage_evidence(altered,'factorized',160,162)['passed'])
+
+    def test_coarse_allocation_and_execution_failures_block_binary_schedule(self):
+        rows=[dict(returncode=0,bound_inputs_unchanged=True,zero_evolution_verified=True,
+            surface_kind_verified=True,**{'import':dict(passed=True)},
+            harmonic_allocation=dict(passed=True),passed=i>0) for i in range(4)]
+        self.assertTrue(schedule_prerequisites(rows,4))
+        for key,value in (('harmonic_allocation',dict(passed=False)),('import',dict(passed=False)),
+            ('bound_inputs_unchanged',False),('zero_evolution_verified',False),('surface_kind_verified',False)):
+            changed=[dict(row) for row in rows];changed[0][key]=value
+            with self.subTest(key=key):self.assertFalse(schedule_prerequisites(changed,4))
 
     def test_fine_success_cannot_waive_coarse_provenance_failure(self):
         rows=[dict(returncode=0,bound_inputs_unchanged=True,zero_evolution_verified=True,

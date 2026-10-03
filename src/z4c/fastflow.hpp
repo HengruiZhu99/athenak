@@ -21,6 +21,7 @@
 #include "athena_tensor.hpp"
 #include "coordinates/adm.hpp"
 #include "geodesic-grid/gauss_legendre.hpp"
+#include "fastflow_harmonic_cache.hpp"
 #include "z4c_macros.hpp"
 
 // Forward declaration
@@ -122,6 +123,17 @@ class FastFlow {
   DualArray2D<Real> Y0, Yc, Ys;
   DualArray2D<Real> dY0dth, dYcdth, dYsdth, dYcdph, dYsdph;
   DualArray2D<Real> dY0dth2, dYcdth2, dYcdthdph, dYsdth2, dYsdthdph, dYcdph2, dYsdph2;
+  bool factorized_harmonics;
+  bool full_precision_trace;
+  DualArray3D<Real> harmonic_polar, harmonic_phase;
+  using DeviceHarmonicCache=FastFlowHarmonicCache<DualArray2D<Real>::t_dev,
+                                                DualArray3D<Real>::t_dev>;
+  using HostHarmonicCache=FastFlowHarmonicCache<DualArray2D<Real>::t_host,
+                                              DualArray3D<Real>::t_host>;
+  DeviceHarmonicCache DeviceHarmonics() const;
+  HostHarmonicCache HostHarmonics() const;
+  void WriteHarmonicStorage() const;
+  void WriteFlowTrace(int iteration) const;
 
   // Arrays for spectral coefficients
   DualArray1D<Real> a0, ac, as;
