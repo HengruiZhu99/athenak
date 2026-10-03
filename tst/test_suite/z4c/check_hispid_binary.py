@@ -28,7 +28,7 @@ def shape_change(a,b):
     return uniform_bound(aa-bb)
 
 
-def checkpoint_metadata(path):
+def checkpoint_metadata(path,require_two_active=True):
     initial_sha=hashlib.sha256(path.read_bytes()).hexdigest()
     meta={}
     with path.open() as f:
@@ -39,7 +39,7 @@ def checkpoint_metadata(path):
             meta[words[0]]=words[1:]
     if meta.get('HISPID_CHECKPOINT')!=['1']:raise ValueError('checkpoint version')
     holes=[list(map(float,meta['hole'+str(h)])) for h in range(2)]
-    if any(x[0]<=0 for x in holes):raise ValueError('two active holes required')
+    if require_two_active and any(x[0]<=0 for x in holes):raise ValueError('two active holes required')
     if hashlib.sha256(path.read_bytes()).hexdigest()!=initial_sha:raise ValueError('checkpoint changed while reading metadata')
     return dict(path=str(path),file_sha256=initial_sha,
                 source_library_sha256=meta['library_sha256'][0],acceptance=meta['acceptance'][0],

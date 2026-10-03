@@ -201,3 +201,27 @@ A fresh Serial consumer builds successfully with one compiler process; typed
 checkpoint and synthetic sampler-proof metadata tests pass. Actual migrated
 sampler, new import and common-horizon controls are still pending. No new
 chi=.99/Gamma10 binary has been qualified by this preparation.
+
+The existing exact-control and fixed-order quadrature drivers now recognize
+separate `kerr99` and `gamma10` checkpoints. Each requires a fresh
+separate-process producer/pure-reference-consumer sampler proof in its manifest
+entry's `migration_proof`. The case name is checked against the actual mass,
+spin, boost, zero corrections and unmodified single-seed configuration.
+Every refinement row must preserve import/provenance and time/cycle zero,
+including coarse diagnostic surfaces. A fine success cannot waive a failed
+coarse import. Quadrature requires the qualified case-specific group.
+Timeout logs and unqualified rows are preserved before subsequent validation.
+
+`--consumer-memory-mib` screens the fifteen Serial harmonic tables and an
+explicit1GiB allowance; it is not a measured process peak or a complete
+allocation guarantee. High-order shape checks use the independently provided
+[SciPy spherical harmonic oracle](https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.sph_harm_y.html),
+with polar/azimuthal conventions matching global z, order-dependent displaced
+samples and cardinal points. Lower orders keep the independent Legendre
+polynomial oracle. These are sampled shape checks, without continuous shape
+certification. Their numerical execution remains pending.
+
+For the unit nonspinning Gamma10 control, the horizon's irreducible and
+Christodoulou masses are1 while isolated ADM energy is10. For Kerr99 the
+expected area is8*pi*(1+sqrt(1-.99^2)) and coordinate Sz=.99. Seed inputs,
+measured horizon properties and global ADM charges remain distinct outputs.

@@ -89,10 +89,10 @@ def import_evidence(stdout,source,migration=None):
         result['passed'] &= result['loaded_consumer_sha256']==expected
         if migration:result['passed'] &= loaded==Path(migration['consumer_library_path']).resolve(strict=True)
     elif migration:result['passed']=False
+    dependencies={}
+    for symbol,image in re.findall(r'HiSpID consumer_dependency symbol=("(?:[^"\\]|\\.)*") image=("(?:[^"\\]|\\.)*")',stdout):
+        path=str(Path(json.loads(image)).resolve(strict=True));dependencies[path]=digest(path)
+    result['consumer_dependency_images']=dependencies
     if migration:
-        dependencies={}
-        for symbol,image in re.findall(r'HiSpID consumer_dependency symbol=("(?:[^"\\]|\\.)*") image=("(?:[^"\\]|\\.)*")',stdout):
-            path=str(Path(json.loads(image)).resolve(strict=True));dependencies[path]=digest(path)
-        result['consumer_dependency_images']=dependencies
         result['passed'] &= dependencies==migration['consumer_dependency_images']
     return result
