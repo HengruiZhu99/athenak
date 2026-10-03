@@ -1,5 +1,17 @@
 # HiSpID initial-data integration
 
+October 3 physical follow-up: the user stopped further performance work while
+preserving the existing report and failures. The new Perlmutter Serial
+consumer builds with a separately verified pure CPU sampler. Fresh exact
+Kerr chi=.99 and Gamma10 checkpoint sampler comparisons agree at 1512 points
+per case, including physical metric gradients. The harmonic cache component
+test passes exhaustive L8/16 checks and sampled L160 checks; its bound receipt
+and log are in `hispid-fastflow-cache-components-20261003.json` and the sibling
+`.log`. Two displaced speed=.885 finder comparison attempts timed out at900s;
+their successful import does not qualify full finder equivalence. Centered
+target horizon measurements are separate. No new solved binary or measured
+Gamma10 horizon is claimed by these component checks.
+
 This isolated branch starts at PR790 head
 `22baa243970fa1880b2bbc48e88a590069d55e47` on
 `HengruiZhu99/athenak:project/z4c_overhaul`. It adds the problem generator

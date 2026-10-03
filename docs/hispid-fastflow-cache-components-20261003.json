@@ -1,0 +1,45 @@
+{
+  "purpose": "harmonic_cache_correctness_only_no_performance_measurement",
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/test_fastflow_cache"
+  ],
+  "allocated_job_id": "59284155",
+  "bound_artifacts_sha256": {
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/test_fastflow_cache": "9526f05a7d6b00dcef6c9e02cca64236871751070f17111d9fe6b8333f03ddf5",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/CMakeCache.txt": "16dfdcfaa689b0d44c4cf90706a0d3c5f07dd399c05e7994a2e1d6180b236846",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/athenak-kokkos-source-link.json": "ed3dc255814031f0f733edcb6ea9495e1c80e7954fe47284d86d48a5fa2219bd",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-030cbcc.staging.json": "47ee863f048cb3cca7b8b9161330e557708a32661691d505de378d728e42e132"
+  },
+  "passed": true,
+  "completed": true,
+  "returncode": 0,
+  "log_sha256": "4a33b4d812d93afd1a45db2de0088828fd3eab68299ef743ae5314a25672d60b",
+  "checks": [
+    {
+      "lmax": 8,
+      "ntheta": 16,
+      "exhaustive": true,
+      "execution": "Serial",
+      "mismatches": 0
+    },
+    {
+      "lmax": 16,
+      "ntheta": 18,
+      "exhaustive": true,
+      "execution": "Serial",
+      "mismatches": 0
+    },
+    {
+      "lmax": 160,
+      "ntheta": 162,
+      "exhaustive": false,
+      "execution": "Serial",
+      "mismatches": 0
+    }
+  ],
+  "bound_artifacts_unchanged": true,
+  "utc": "2026-10-03T22:02:15.450169+00:00"
+}
