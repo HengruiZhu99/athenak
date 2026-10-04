@@ -1,5 +1,20 @@
 # HiSpID initial-data integration
 
+October 3 completed Gamma10 damping diagnosis: further runs are held under
+the latest preservation instruction; the performance campaign remains stopped.
+The exact isolated seed's L96/ntheta98 trial uses alpha=.02, initial scale1.02,
+a200-iteration cap and the unchanged1e-7 expansion RMS criterion. It times
+out at900s. All45 complete surface-integral snapshots retain positive minimum
+radii; expansion RMS falls from.443830 to.0790216. This supports improved
+flow stability over the recorded interval, without establishing convergence.
+Its area remains an attempt diagnostic, not a qualified horizon mass.
+The import roundtrip error is4.65942e-16; terminal time/cycle verification
+remains false after timeout. A single angular order cannot satisfy the
+unchanged three-order refinement rule even if a worker were to converge.
+Full trace, frozen sources, original failed receipt and local hash verification
+are retained in `hispid-gamma10-damped-20261003/`. Allocation59296178 completed
+and is no longer queued. No new run was started during preservation.
+
 October 3 retained Gamma10 solver retry: the separate restart200/budget4800
 trial from the failed128×256×8 checkpoint reaches the original1e-14 internal
 tolerance in2 additional Newton/574 Krylov steps, while independent near-hole

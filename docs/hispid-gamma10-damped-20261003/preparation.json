@@ -1,0 +1,35 @@
+{
+  "purpose": "one_exact_Gamma10_horizon_damping_diagnosis",
+  "git_commit": "2aada0e6b0cf5e5fee6ca443f9a2309f4519fd2a",
+  "archive": "workflow-2aada0e6.tar",
+  "archive_sha256": "e03039ff6cc15ae27cbbf5001f56b4a441223b7f64554b85d4aa70c108633303",
+  "files": {
+    "tst/test_suite/z4c/check_hispid_controls.py": "f75535c71abba8f101fe1a48f65cb8de88e4d3a3144a428a80adde4bf68f56e0",
+    "tst/test_suite/z4c/check_hispid_binary.py": "5069fcc1d70de59046a462b9070d576a7d0e5c4d6ed2fb04abbdccf72c77bd6f",
+    "tst/test_suite/z4c/hispid_sampler_proof.py": "824f3348f2361d8472e743242446b6e06cdfdde8fbbc96bcc1f263a5bf29a547",
+    "tst/test_suite/z4c/fastflow_storage.py": "6c3a6f30967d638f233b34a7e3c88dc9f3cf2bcf90d54fdb98970d5c3f53110c",
+    "tst/test_suite/z4c/test_hispid_control_policy.py": "ae94d8893f5b05be280800487e5f6eb2b404d8ec0429288fd42e722aed7c2a19",
+    "tst/inputs/hispid.athinput": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e"
+  },
+  "case": "gamma10",
+  "boost_levels": [
+    96
+  ],
+  "ntheta": 98,
+  "initial_scale": 1.02,
+  "flow_alpha": 0.02,
+  "previous_flow_alpha": 0.2,
+  "flow_iteration_limit": 200,
+  "worker_timeout_seconds": 900,
+  "expansion_rms_tolerance": 1e-07,
+  "harmonic_storage": "factorized",
+  "full_precision_trace": true,
+  "native_executable_sha256": "6f279f0747876c8279f780f4d1ed3edc7b0cc3f53f27ca870cfcb6c3b26441e2",
+  "native_rebuilt": false,
+  "seed_checkpoint_sha256": "2c442ab70ebc00ebf0cbb00f1bd832d0ef69bc90c82c98397f52236b521dfb54",
+  "performance_campaign_started": false,
+  "physical_acceptance_waived": false,
+  "aggregate_qualification_requires_three_levels": true,
+  "policy_tests_passed": 4,
+  "review": "formulation_review: no launch blocker; wrapper exit1 expected for single-order diagnosis even if native succeeds"
+}

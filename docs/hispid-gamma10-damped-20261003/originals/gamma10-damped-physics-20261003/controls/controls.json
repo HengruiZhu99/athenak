@@ -1,0 +1,150 @@
+{
+  "executable_sha256": "6f279f0747876c8279f780f4d1ed3edc7b0cc3f53f27ca870cfcb6c3b26441e2",
+  "manifest_sha256": "1d803af23ba850469942ebf08204b755673cf81159f6a7f471645ef0ee6be141",
+  "input_template_sha256": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+  "initial_time": 0,
+  "evolution_steps": 0,
+  "records": [
+    {
+      "case": "gamma10",
+      "lmax": 96,
+      "ntheta": 98,
+      "initial_scale": 1.02,
+      "returncode": "timeout",
+      "seconds": 900.0056821040343,
+      "command": [
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/src/athena",
+        "-i",
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/gamma10-damped-physics-20261003/controls/gamma10_l96_n98_s1.02/control.athinput",
+        "problem/hispid_filename=/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/gamma10.checkpoint",
+        "problem/hispid_source_sha256=7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "fastflow/factorized_harmonics=true",
+        "fastflow/lmax=96",
+        "fastflow/ntheta=98",
+        "problem/hispid_horizon_guess_scale=1.02",
+        "fastflow/flow_alpha_beta_const_0=0.02",
+        "fastflow/flow_iterations_0=200",
+        "fastflow/full_precision_trace=true",
+        "problem/hispid_allow_library_migration=true"
+      ],
+      "source": {
+        "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/gamma10.checkpoint",
+        "file_sha256": "2c442ab70ebc00ebf0cbb00f1bd832d0ef69bc90c82c98397f52236b521dfb54",
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "analytic_seed",
+        "holes": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.99498743710662,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -6.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "inner_max": [
+          0.0,
+          0.0
+        ],
+        "inner_flatten": 0,
+        "parameterization": "modal_P_C2prolate_mapped_v2"
+      },
+      "passed": false,
+      "input_sha256": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+      "sampler_migration": {
+        "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/gamma10-migration.json",
+        "file_sha256": "8df6304da195abb77fd1f5ebe5505aabea1cfbedf709773b761d5bcf967e73e8",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_library_path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "maps": {
+          "radial_stretch": 0.2,
+          "angular_stretch": 2.0
+        },
+        "passed": true,
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        },
+        "purpose": "sampling_only_no_acceptance_transfer"
+      },
+      "harmonic_storage": "factorized",
+      "harmonic_allocation": {
+        "requested_mode": "factorized",
+        "expected_bytes_per_horizon": 22434280,
+        "records": [
+          {
+            "horizon": 0,
+            "mode": "factorized",
+            "lmax": 96,
+            "ntheta": 98,
+            "host_bytes": 22434280,
+            "device_bytes": 22434280,
+            "unique_bytes": 22434280
+          }
+        ],
+        "serial_allocation_verified": true,
+        "passed": true,
+        "measured_process_peak": false
+      },
+      "flow_alpha": 0.02,
+      "flow_iteration_limit": 200,
+      "bound_inputs_unchanged": true,
+      "import": {
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "analytic_seed",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "adm_z4c_relative_error": 4.65942182910582e-16,
+        "explicit_migration": true,
+        "passed": true,
+        "loaded_consumer_image": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "loaded_consumer_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        }
+      },
+      "zero_evolution_verified": false
+    }
+  ],
+  "passed": false,
+  "harmonic_storage": "factorized",
+  "diagnostic_single_boost_level": true,
+  "worker_timeout_seconds": 900.0,
+  "full_precision_trace": true,
+  "workflow_source_sha256": {
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-gamma10-damped-2aada0e6/tst/test_suite/z4c/check_hispid_controls.py": "f75535c71abba8f101fe1a48f65cb8de88e4d3a3144a428a80adde4bf68f56e0",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-gamma10-damped-2aada0e6/tst/test_suite/z4c/check_hispid_binary.py": "5069fcc1d70de59046a462b9070d576a7d0e5c4d6ed2fb04abbdccf72c77bd6f",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-gamma10-damped-2aada0e6/tst/test_suite/z4c/hispid_sampler_proof.py": "824f3348f2361d8472e743242446b6e06cdfdde8fbbc96bcc1f263a5bf29a547",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-gamma10-damped-2aada0e6/tst/test_suite/z4c/fastflow_storage.py": "6c3a6f30967d638f233b34a7e3c88dc9f3cf2bcf90d54fdb98970d5c3f53110c"
+  },
+  "consumer_memory_screen": {
+    "budget_mib": 32768,
+    "other_allowance_bytes": 1073741824,
+    "estimates": [
+      {
+        "case": "gamma10",
+        "lmax": 96,
+        "ntheta": 98,
+        "harmonic_table_bytes": 22434280
+      }
+    ],
+    "note": "Single-copy Serial harmonic data only, plus an explicit allowance; not a measured peak or a complete allocation guarantee."
+  },
+  "case_qualification": {
+    "gamma10": false
+  }
+}

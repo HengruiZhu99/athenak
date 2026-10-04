@@ -1,0 +1,30 @@
+JobId=59296178 JobName=codex-gamma10-finder
+   UserId=hzhu(102811) GroupId=hzhu(102811) MCS_label=N/A
+   Priority=73320 Nice=0 Account=m3328_g QOS=gpu_shared_interactive
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:04:22 TimeLimit=00:30:00 TimeMin=N/A
+   SubmitTime=2026-10-03T18:43:05 EligibleTime=2026-10-03T18:43:05
+   AccrueTime=Unknown
+   StartTime=2026-10-03T18:43:05 EndTime=2026-10-03T19:13:05 Deadline=N/A
+   PreemptEligibleTime=2026-10-03T18:43:05 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-10-03T18:43:05 Scheduler=Main
+   Partition=shared_urgent_gpu_ss11 AllocNode:Sid=login33:2103590
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid200269
+   BatchHost=nid200269
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=32 NumTasks=1 CPUs/Task=32 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1
+   AllocTRES=cpu=32,mem=57472M,node=1,billing=32,gres/gpu=1,gres/gpu:a100=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=32 MinMemoryCPU=1796M MinTmpDiskNode=0
+   Features=gpu&a100&hbm80g DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=u1:1 LicensesAlloc=u1:1 Network=(null)
+   Command=bash
+   SubmitLine=salloc -A m3328_g -C gpu&hbm80g -q shared_interactive -N1 --gpus=1 -n1 -c32 -t00:30:00 -J codex-gamma10-finder bash --noprofile --norc
+   WorkDir=/global/u1/h/hzhu
+   TresPerJob=gres/gpu:1
+   TresPerTask=cpu=32
+   ResvPorts=63717-63719
+
