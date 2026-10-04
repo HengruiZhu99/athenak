@@ -60,6 +60,18 @@ def seed_targets(case):
             float(np.sqrt(.99)) if case=='gamma10' else .885 if 'boost885' in case else 0.)
 
 
+def boost_orders(specification,cases,diagnostic_single=False):
+    levels=list(map(int,specification.split(',')))
+    if any(l<2 for l in levels) or any(x>=y for x,y in zip(levels,levels[1:])):
+        raise ValueError('strictly increasing distinct boost harmonic orders >=2 required')
+    if diagnostic_single:
+        if cases!=['gamma10'] or len(levels)!=1:
+            raise ValueError('single-level diagnostic requires only gamma10 and exactly one boost order')
+    elif len(levels)<3:
+        raise ValueError('three or more strictly increasing distinct boost harmonic orders required')
+    return levels
+
+
 def exact_seed_source(entry,case):
     """The case name cannot substitute for the actual analytic configuration."""
     path=Path(entry['path']).resolve(strict=True);source=checkpoint_metadata(path,False)
@@ -92,8 +104,12 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--executable',required=True);p.add_argument('--manifest',required=True)
     p.add_argument('--output',required=True);p.add_argument('--cases',default='flat,schwarzschild,kerr95,boost885,kerr95_boost885')
     p.add_argument('--boost-levels',default='16,24,32,48')
+    p.add_argument('--diagnostic-single-boost-level',action='store_true',help='one Gamma10 finder diagnosis only; cannot qualify refinement or aggregate acceptance')
     p.add_argument('--combined-flow-alpha',type=float,default=.2)
     p.add_argument('--boost-flow-alpha',type=float,default=1.,help='step factor for the separate Gamma10 control')
+    p.add_argument('--flow-iterations',type=int,default=3000,help='iteration cap for Gamma10/combined-boost controls; does not change acceptance')
+    p.add_argument('--worker-timeout',type=float,default=900.,help='bounded worker time in seconds; partial evidence remains unqualified')
+    p.add_argument('--full-precision-trace',action='store_true',help='retain all finder iterates at round-trip precision')
     p.add_argument('--consumer-memory-mib',type=int,default=32768,help='explicit Serial consumer screen: harmonic tables plus1GiB allowance; actual memory is separate')
     p.add_argument('--harmonic-storage',choices=('dense','factorized'),default='dense')
     a=p.parse_args();exe=Path(a.executable).resolve(strict=True)
@@ -101,6 +117,10 @@ def main():
     manifest_sha=hashlib.sha256(manifest_bytes).hexdigest();manifest=json.loads(manifest_bytes)
     if any(not np.isfinite(x) or x<=0 for x in (a.combined_flow_alpha,a.boost_flow_alpha)):
         raise ValueError('positive finite flow step factors required')
+    if a.flow_iterations<=0 or not np.isfinite(a.worker_timeout) or a.worker_timeout<=0:
+        raise ValueError('positive finder iteration cap and finite worker timeout required')
+    case_names=a.cases.split(',')
+    boost_levels=boost_orders(a.boost_levels,case_names,a.diagnostic_single_boost_level)
     if a.consumer_memory_mib<2048:raise ValueError('consumer screen needs at least2048MiB')
     root=Path(a.output).resolve();root.mkdir(parents=True,exist_ok=True)
     if (root/'controls.json').exists():raise FileExistsError('preserve prior exact controls in a separate output directory')
@@ -109,11 +129,14 @@ def main():
         'manifest_sha256':manifest_sha,'input_template_sha256':hashlib.sha256(template.encode()).hexdigest(),
         'initial_time':0,'evolution_steps':0,'records':[],'passed':False}
     evidence['harmonic_storage']=a.harmonic_storage
+    evidence['diagnostic_single_boost_level']=a.diagnostic_single_boost_level
+    evidence['worker_timeout_seconds']=a.worker_timeout
+    evidence['full_precision_trace']=a.full_precision_trace
+    script_paths=[Path(__file__).resolve(),*(Path(__file__).resolve().parent/name for name in
+        ('check_hispid_binary.py','hispid_sampler_proof.py','fastflow_storage.py'))]
+    evidence['workflow_source_sha256']={str(path):hashlib.sha256(path.read_bytes()).hexdigest() for path in script_paths}
     cases=[]
-    boost_levels=list(map(int,a.boost_levels.split(',')))
-    if len(boost_levels)<3 or any(l<2 for l in boost_levels) or any(x>=y for x,y in zip(boost_levels,boost_levels[1:])):
-        raise ValueError('three or more strictly increasing distinct boost harmonic orders required')
-    for case in a.cases.split(','):
+    for case in case_names:
         if case=='flat':cases.append((case,8,16,1.0))
         elif case=='schwarzschild':cases.extend((case,8,16,s) for s in (.8,1.2))
         elif case in ('kerr95','kerr99'):cases.extend((case,l,n,s) for l,n,s in ((8,16,.8),(12,24,1.2),(16,32,1.05)))
@@ -134,8 +157,9 @@ def main():
         if any(hashlib.sha256(Path(path).read_bytes()).hexdigest()!=sha for path,sha in dependencies.items()):
             raise ValueError('exact-control dependency changed before worker')
         if (hashlib.sha256(exe.read_bytes()).hexdigest()!=evidence['executable_sha256']
-            or hashlib.sha256(manifest_path.read_bytes()).hexdigest()!=manifest_sha):
-            raise ValueError('bound executable/manifest changed before exact horizon worker')
+            or hashlib.sha256(manifest_path.read_bytes()).hexdigest()!=manifest_sha
+            or any(hashlib.sha256(Path(path).read_bytes()).hexdigest()!=sha for path,sha in evidence['workflow_source_sha256'].items())):
+            raise ValueError('bound executable/manifest/workflow changed before exact horizon worker')
         run=root/f'{case}_l{lmax}_n{ntheta}_s{scale}';run.mkdir(exist_ok=False)
         input_path=run/'control.athinput';input_path.write_text(template)
         input_sha=hashlib.sha256(input_path.read_bytes()).hexdigest()
@@ -153,13 +177,14 @@ def main():
             # is required to satisfy the strict expansion gate below.
             cmd+=['fastflow/expansion_rms_tol_0=.1']
         if case=='kerr95_boost885':
-            cmd+=[f'fastflow/flow_alpha_beta_const_0={a.combined_flow_alpha}','fastflow/flow_iterations_0=3000']
-        if case=='gamma10':cmd+=[f'fastflow/flow_alpha_beta_const_0={a.boost_flow_alpha}','fastflow/flow_iterations_0=3000']
+            cmd+=[f'fastflow/flow_alpha_beta_const_0={a.combined_flow_alpha}',f'fastflow/flow_iterations_0={a.flow_iterations}']
+        if case=='gamma10':cmd+=[f'fastflow/flow_alpha_beta_const_0={a.boost_flow_alpha}',f'fastflow/flow_iterations_0={a.flow_iterations}']
+        if a.full_precision_trace:cmd+=['fastflow/full_precision_trace=true']
         if migration:cmd+=['problem/hispid_allow_library_migration=true']
         env=os.environ.copy();env.update(OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',VECLIB_MAXIMUM_THREADS='1')
         start=time.monotonic()
         with (run/'run.log').open('w') as log:
-            try:r=subprocess.run(cmd,cwd=run,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=900)
+            try:r=subprocess.run(cmd,cwd=run,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=a.worker_timeout)
             except subprocess.TimeoutExpired:returncode='timeout'
             else:returncode=r.returncode
         stdout=(run/'run.log').read_text()
@@ -170,10 +195,12 @@ def main():
         evidence['records'].append(row);evidence['passed']=False
         (root/'controls.json').write_text(json.dumps(evidence,indent=2)+'\n')
         row['flow_alpha']=a.combined_flow_alpha if case=='kerr95_boost885' else a.boost_flow_alpha if case=='gamma10' else 1.0
+        if case in ('gamma10','kerr95_boost885'):row['flow_iteration_limit']=a.flow_iterations
         unchanged=bool(hashlib.sha256(exe.read_bytes()).hexdigest()==evidence['executable_sha256']
             and hashlib.sha256(input_path.read_bytes()).hexdigest()==input_sha
             and hashlib.sha256(manifest_path.read_bytes()).hexdigest()==manifest_sha
-            and hashlib.sha256(Path(source['path']).read_bytes()).hexdigest()==source['file_sha256'])
+            and hashlib.sha256(Path(source['path']).read_bytes()).hexdigest()==source['file_sha256']
+            and all(hashlib.sha256(Path(path).read_bytes()).hexdigest()==sha for path,sha in evidence['workflow_source_sha256'].items()))
         if migration:unchanged &= validate_migration(entry['migration_proof'],source)==migration
         row['bound_inputs_unchanged']=unchanged;row['import']=import_evidence(stdout,source,migration)
         if not migration and dependencies:
