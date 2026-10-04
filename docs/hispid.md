@@ -1,5 +1,28 @@
 # HiSpID initial-data integration
 
+October 3 completed extreme imports: both coarse chi=.99 and Gamma10 binary
+checkpoints retain their diagnostic acceptance labels. Fresh producer/CPU
+sampler proofs compare2454 points per checkpoint and every physical/conformal
+field and metric derivative with zero difference. The spin binary imports
+with ADM/Z4c roundtrip error4.633e-16, but its first component finder attempt
+fails at expansion RMS1.941e-5. The Gamma binary passes the separate
+`check_hispid_import.py` check with error4.809e-16, time/cycle zero, and no
+finder constructed. This driver shares the checkpoint/migration/import
+helpers and binds inputs, executable, source, libraries and retained log;
+it establishes interchange only. Both binary constraint acceptance flags
+remain failed and no enclosure is established.
+
+Exact isolated Kerr chi=.99 passes the L8/12/16 controls, with area
+28.6781506783, Christodoulou mass1, coordinate-axial chi error below1.4e-12
+and expansion RMS below1e-7.
+Exact Gamma10 factorized L64/96 searches fail invalid-surface checks and
+L160 times out at900s. No measured Gamma10 horizon mass or calibrated
+binary d/Mirr=50 is claimed. Further performance checks remain stopped;
+original successful and failed measurements are preserved.
+The unchanged import/finder receipts and logs are in
+`hispid-extreme-20261003/`; the native branch retains the complete raw-data
+manifest and sampler arrays in `validation/extreme_physics_20261003`.
+
 October 3 physical follow-up: the user stopped further performance work while
 preserving the existing report and failures. The new Perlmutter Serial
 consumer builds with a separately verified pure CPU sampler. Fresh exact

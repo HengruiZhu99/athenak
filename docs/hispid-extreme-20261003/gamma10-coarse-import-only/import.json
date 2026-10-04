@@ -1,0 +1,123 @@
+{
+  "schema": "hispid_initial_time_import_v1",
+  "purpose": "interchange_only",
+  "source": {
+    "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/results/headon_gamma10_kokkos_80_160_8.checkpoint",
+    "file_sha256": "acf167adbb4d1fbb553dd88152135abcd4d1776acc781e01a31c355cb5cd04a1",
+    "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+    "acceptance": "diagnostic",
+    "holes": [
+      [
+        0.5,
+        12.5,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.99498743710662,
+        0.0,
+        0.0
+      ],
+      [
+        0.5,
+        -12.5,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.99498743710662,
+        0.0,
+        0.0
+      ]
+    ],
+    "inner_max": [
+      0.007500000000000003,
+      0.007500000000000003
+    ],
+    "inner_flatten": 0,
+    "parameterization": "modal_P_C2prolate_mapped_v2"
+  },
+  "sampler_migration": {
+    "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/binary-consumer-proofs/gamma10-grid0-migration.json",
+    "file_sha256": "3d9b6ac888cf2f2c4ad2af43fd37c7dc7cc39756829ee5957a5dcc067c194cdf",
+    "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+    "consumer_library_path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+    "maps": {
+      "radial_stretch": 0.2,
+      "angular_stretch": 2.0
+    },
+    "passed": true,
+    "consumer_dependency_images": {
+      "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+    },
+    "purpose": "sampling_only_no_acceptance_transfer"
+  },
+  "command": [
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/src/athena",
+    "-i",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/gamma10-coarse-import-only/import.athinput",
+    "problem/hispid_filename=/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/results/headon_gamma10_kokkos_80_160_8.checkpoint",
+    "problem/hispid_source_sha256=7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+    "problem/hispid_initial_horizons=false",
+    "fastflow/num_horizons=0",
+    "problem/hispid_flat_control=false",
+    "problem/hispid_mesh_constraints=false",
+    "time/nlim=0",
+    "time/tlim=0",
+    "problem/hispid_allow_diagnostic=true",
+    "problem/hispid_allow_library_migration=true",
+    "mesh/nx1=8",
+    "meshblock/nx1=8",
+    "mesh/x1min=-32.0",
+    "mesh/x1max=32.0",
+    "mesh/nx2=8",
+    "meshblock/nx2=8",
+    "mesh/x2min=-32.0",
+    "mesh/x2max=32.0",
+    "mesh/nx3=8",
+    "meshblock/nx3=8",
+    "mesh/x3min=-32.0",
+    "mesh/x3max=32.0"
+  ],
+  "bound_artifacts_sha256": {
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/src/athena": "6f279f0747876c8279f780f4d1ed3edc7b0cc3f53f27ca870cfcb6c3b26441e2",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-030cbcc/tst/inputs/hispid.athinput": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/results/headon_gamma10_kokkos_80_160_8.checkpoint": "acf167adbb4d1fbb553dd88152135abcd4d1776acc781e01a31c355cb5cd04a1",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-import-f231d722/check_hispid_import.py": "905c22b07cbdf0b040dd9e5c719eccf64be9ac15c8598b09a41830d075c55249",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-030cbcc/tst/test_suite/z4c/check_hispid_binary.py": "5069fcc1d70de59046a462b9070d576a7d0e5c4d6ed2fb04abbdccf72c77bd6f",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-030cbcc/tst/test_suite/z4c/hispid_sampler_proof.py": "824f3348f2361d8472e743242446b6e06cdfdde8fbbc96bcc1f263a5bf29a547",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-030cbcc/tst/test_suite/z4c/fastflow_storage.py": "6c3a6f30967d638f233b34a7e3c88dc9f3cf2bcf90d54fdb98970d5c3f53110c",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/gamma10-coarse-import-only/import.athinput": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+    "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/gamma10-coarse-import-only/run.log": "be51611c5d9e417aeadac04d750a50739390fba16f073dca5cae061932598edb"
+  },
+  "completed": true,
+  "passed": true,
+  "physical_acceptance": false,
+  "horizon_search_performed": false,
+  "criteria": {
+    "adm_z4c_relative_error": 1e-11,
+    "time": 0,
+    "cycle": 0
+  },
+  "domain_half_width": 32.0,
+  "returncode": 0,
+  "import": {
+    "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+    "acceptance": "diagnostic",
+    "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+    "adm_z4c_relative_error": 4.809305856308779e-16,
+    "explicit_migration": true,
+    "passed": true,
+    "loaded_consumer_image": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+    "loaded_consumer_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+    "consumer_dependency_images": {
+      "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+    }
+  },
+  "zero_evolution_verified": true,
+  "no_finder_verified": true,
+  "bound_inputs_unchanged": true,
+  "note": "Import and round-trip evidence only; checkpoint physical acceptance is unchanged."
+}

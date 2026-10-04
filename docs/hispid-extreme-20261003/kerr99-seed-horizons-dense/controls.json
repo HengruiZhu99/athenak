@@ -1,0 +1,447 @@
+{
+  "executable_sha256": "6f279f0747876c8279f780f4d1ed3edc7b0cc3f53f27ca870cfcb6c3b26441e2",
+  "manifest_sha256": "1d803af23ba850469942ebf08204b755673cf81159f6a7f471645ef0ee6be141",
+  "input_template_sha256": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+  "initial_time": 0,
+  "evolution_steps": 0,
+  "records": [
+    {
+      "case": "kerr99",
+      "lmax": 8,
+      "ntheta": 16,
+      "initial_scale": 0.8,
+      "returncode": 0,
+      "seconds": 128.48659460095223,
+      "command": [
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/src/athena",
+        "-i",
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/kerr99-seed-horizons-dense/kerr99_l8_n16_s0.8/control.athinput",
+        "problem/hispid_filename=/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99.checkpoint",
+        "problem/hispid_source_sha256=7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "fastflow/factorized_harmonics=false",
+        "fastflow/lmax=8",
+        "fastflow/ntheta=16",
+        "problem/hispid_horizon_guess_scale=0.8",
+        "problem/hispid_allow_library_migration=true"
+      ],
+      "source": {
+        "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99.checkpoint",
+        "file_sha256": "68e8ca5a5fb54d1bed5585805de3db9c044396484602c5b5a1561afacdafaa76",
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "analytic_seed",
+        "holes": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.99,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -6.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "inner_max": [
+          0.0,
+          0.0
+        ],
+        "inner_flatten": 0,
+        "parameterization": "modal_P_C2prolate_mapped_v2"
+      },
+      "passed": true,
+      "input_sha256": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+      "sampler_migration": {
+        "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99-migration.json",
+        "file_sha256": "1c5ff1de02b1e09dfd156cc4ca40f2647c3c223b82370310a472a596f9cdf401",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_library_path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "maps": {
+          "radial_stretch": 0.2,
+          "angular_stretch": 2.0
+        },
+        "passed": true,
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        },
+        "purpose": "sampling_only_no_acceptance_transfer"
+      },
+      "harmonic_storage": "dense",
+      "harmonic_allocation": {
+        "requested_mode": "dense",
+        "expected_bytes_per_horizon": 4091904,
+        "records": [
+          {
+            "horizon": 0,
+            "mode": "dense",
+            "lmax": 8,
+            "ntheta": 16,
+            "host_bytes": 4091904,
+            "device_bytes": 4091904,
+            "unique_bytes": 4091904
+          }
+        ],
+        "serial_allocation_verified": true,
+        "passed": true,
+        "measured_process_peak": false
+      },
+      "flow_alpha": 1.0,
+      "bound_inputs_unchanged": true,
+      "import": {
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "analytic_seed",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "adm_z4c_relative_error": 7.354207303984936e-16,
+        "explicit_migration": true,
+        "passed": true,
+        "loaded_consumer_image": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "loaded_consumer_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        }
+      },
+      "zero_evolution_verified": true,
+      "attempt_area": 28.678150678307997,
+      "attempt_expansion_rms": 9.64258220199056e-08,
+      "summary": [
+        0.0,
+        0.0,
+        0.9999999999994129,
+        -1.751444770879704e-18,
+        -3.224642773971868e-18,
+        0.9899999999986371,
+        0.9899999999986371,
+        28.678150678308,
+        9.297939152214512e-15,
+        -2.749882284170663e-06,
+        0.07053361727165008,
+        0.07053361668711601
+      ],
+      "area": 28.678150678308,
+      "expansion_rms": 9.64258220199056e-08,
+      "min_radius": 0.07053361668711601,
+      "expected_area": 28.67815067830628,
+      "relative_area_error": 5.995204332975845e-14,
+      "spin_error": 1.3629097850298422e-12,
+      "expected_irreducible_mass": 0.7553367989832943,
+      "expected_horizon_mass": 1.0,
+      "horizon_mass_error": 5.870859354217828e-13,
+      "expected_seed_lorentz_factor": 1.0
+    },
+    {
+      "case": "kerr99",
+      "lmax": 12,
+      "ntheta": 24,
+      "initial_scale": 1.2,
+      "returncode": 0,
+      "seconds": 283.71337714302354,
+      "command": [
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/src/athena",
+        "-i",
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/kerr99-seed-horizons-dense/kerr99_l12_n24_s1.2/control.athinput",
+        "problem/hispid_filename=/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99.checkpoint",
+        "problem/hispid_source_sha256=7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "fastflow/factorized_harmonics=false",
+        "fastflow/lmax=12",
+        "fastflow/ntheta=24",
+        "problem/hispid_horizon_guess_scale=1.2",
+        "problem/hispid_allow_library_migration=true"
+      ],
+      "source": {
+        "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99.checkpoint",
+        "file_sha256": "68e8ca5a5fb54d1bed5585805de3db9c044396484602c5b5a1561afacdafaa76",
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "analytic_seed",
+        "holes": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.99,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -6.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "inner_max": [
+          0.0,
+          0.0
+        ],
+        "inner_flatten": 0,
+        "parameterization": "modal_P_C2prolate_mapped_v2"
+      },
+      "passed": true,
+      "input_sha256": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+      "sampler_migration": {
+        "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99-migration.json",
+        "file_sha256": "1c5ff1de02b1e09dfd156cc4ca40f2647c3c223b82370310a472a596f9cdf401",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_library_path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "maps": {
+          "radial_stretch": 0.2,
+          "angular_stretch": 2.0
+        },
+        "passed": true,
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        },
+        "purpose": "sampling_only_no_acceptance_transfer"
+      },
+      "harmonic_storage": "dense",
+      "harmonic_allocation": {
+        "requested_mode": "dense",
+        "expected_bytes_per_horizon": 19049472,
+        "records": [
+          {
+            "horizon": 0,
+            "mode": "dense",
+            "lmax": 12,
+            "ntheta": 24,
+            "host_bytes": 19049472,
+            "device_bytes": 19049472,
+            "unique_bytes": 19049472
+          }
+        ],
+        "serial_allocation_verified": true,
+        "passed": true,
+        "measured_process_peak": false
+      },
+      "flow_alpha": 1.0,
+      "bound_inputs_unchanged": true,
+      "import": {
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "analytic_seed",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "adm_z4c_relative_error": 7.354207303984936e-16,
+        "explicit_migration": true,
+        "passed": true,
+        "loaded_consumer_image": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "loaded_consumer_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        }
+      },
+      "zero_evolution_verified": true,
+      "attempt_area": 28.678150678307627,
+      "attempt_expansion_rms": 9.828559164675616e-08,
+      "summary": [
+        0.0,
+        0.0,
+        1.000000000000007,
+        2.045868676329309e-18,
+        -2.107072180484126e-19,
+        0.9900000000000094,
+        0.9900000000000094,
+        28.67815067830763,
+        9.660057525352903e-15,
+        2.802919390933721e-06,
+        0.07053374373295004,
+        0.0705337434321576
+      ],
+      "area": 28.67815067830763,
+      "expansion_rms": 9.828559164675616e-08,
+      "min_radius": 0.0705337434321576,
+      "expected_area": 28.67815067830628,
+      "relative_area_error": 4.707345624410664e-14,
+      "spin_error": 9.43689570931383e-15,
+      "expected_irreducible_mass": 0.7553367989832943,
+      "expected_horizon_mass": 1.0,
+      "horizon_mass_error": 7.105427357601002e-15,
+      "expected_seed_lorentz_factor": 1.0
+    },
+    {
+      "case": "kerr99",
+      "lmax": 16,
+      "ntheta": 32,
+      "initial_scale": 1.05,
+      "returncode": 0,
+      "seconds": 569.4576311670244,
+      "command": [
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/src/athena",
+        "-i",
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/kerr99-seed-horizons-dense/kerr99_l16_n32_s1.05/control.athinput",
+        "problem/hispid_filename=/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99.checkpoint",
+        "problem/hispid_source_sha256=7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "fastflow/factorized_harmonics=false",
+        "fastflow/lmax=16",
+        "fastflow/ntheta=32",
+        "problem/hispid_horizon_guess_scale=1.05",
+        "problem/hispid_allow_library_migration=true"
+      ],
+      "source": {
+        "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99.checkpoint",
+        "file_sha256": "68e8ca5a5fb54d1bed5585805de3db9c044396484602c5b5a1561afacdafaa76",
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "analytic_seed",
+        "holes": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.99,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -6.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "inner_max": [
+          0.0,
+          0.0
+        ],
+        "inner_flatten": 0,
+        "parameterization": "modal_P_C2prolate_mapped_v2"
+      },
+      "passed": true,
+      "input_sha256": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+      "sampler_migration": {
+        "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/consumer-analytic-seeds-v2/kerr99-migration.json",
+        "file_sha256": "1c5ff1de02b1e09dfd156cc4ca40f2647c3c223b82370310a472a596f9cdf401",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_library_path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "maps": {
+          "radial_stretch": 0.2,
+          "angular_stretch": 2.0
+        },
+        "passed": true,
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        },
+        "purpose": "sampling_only_no_acceptance_transfer"
+      },
+      "harmonic_storage": "dense",
+      "harmonic_allocation": {
+        "requested_mode": "dense",
+        "expected_bytes_per_horizon": 57655296,
+        "records": [
+          {
+            "horizon": 0,
+            "mode": "dense",
+            "lmax": 16,
+            "ntheta": 32,
+            "host_bytes": 57655296,
+            "device_bytes": 57655296,
+            "unique_bytes": 57655296
+          }
+        ],
+        "serial_allocation_verified": true,
+        "passed": true,
+        "measured_process_peak": false
+      },
+      "flow_alpha": 1.0,
+      "bound_inputs_unchanged": true,
+      "import": {
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "analytic_seed",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "adm_z4c_relative_error": 7.354207303984936e-16,
+        "explicit_migration": true,
+        "passed": true,
+        "loaded_consumer_image": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "loaded_consumer_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        }
+      },
+      "zero_evolution_verified": true,
+      "attempt_area": 28.678150678307794,
+      "attempt_expansion_rms": 9.587921966815954e-08,
+      "summary": [
+        0.0,
+        0.0,
+        1.000000000000007,
+        -5.544983552634234e-18,
+        3.035134346734788e-18,
+        0.990000000000008,
+        0.990000000000008,
+        28.67815067830779,
+        9.192824764175192e-15,
+        2.734294208957515e-06,
+        0.07053374217005637,
+        0.07053374187506786
+      ],
+      "area": 28.67815067830779,
+      "expansion_rms": 9.587921966815954e-08,
+      "min_radius": 0.07053374187506786,
+      "expected_area": 28.67815067830628,
+      "relative_area_error": 5.262457136723242e-14,
+      "spin_error": 7.993605777301127e-15,
+      "expected_irreducible_mass": 0.7553367989832943,
+      "expected_horizon_mass": 1.0,
+      "horizon_mass_error": 7.105427357601002e-15,
+      "expected_seed_lorentz_factor": 1.0
+    }
+  ],
+  "passed": true,
+  "harmonic_storage": "dense",
+  "consumer_memory_screen": {
+    "budget_mib": 32768,
+    "other_allowance_bytes": 1073741824,
+    "estimates": [
+      {
+        "case": "kerr99",
+        "lmax": 8,
+        "ntheta": 16,
+        "harmonic_table_bytes": 4091904
+      },
+      {
+        "case": "kerr99",
+        "lmax": 12,
+        "ntheta": 24,
+        "harmonic_table_bytes": 19049472
+      },
+      {
+        "case": "kerr99",
+        "lmax": 16,
+        "ntheta": 32,
+        "harmonic_table_bytes": 57655296
+      }
+    ],
+    "note": "Single-copy Serial harmonic data only, plus an explicit allowance; not a measured peak or a complete allocation guarantee."
+  },
+  "case_qualification": {
+    "kerr99": true
+  }
+}

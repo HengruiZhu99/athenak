@@ -1,0 +1,231 @@
+{
+  "executable_sha256": "6f279f0747876c8279f780f4d1ed3edc7b0cc3f53f27ca870cfcb6c3b26441e2",
+  "source": {
+    "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/results/aligned_spin99_kokkos_80_160_16.checkpoint",
+    "file_sha256": "883e6c2ca73bd2000fbd1271629f8af8e269f432b8630689159b849c2dd4cd3a",
+    "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+    "acceptance": "diagnostic",
+    "holes": [
+      [
+        0.5,
+        6.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2475,
+        -0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.5,
+        -6.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.2475,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "inner_max": [
+      0.01058005198474942,
+      0.01058005198474942
+    ],
+    "inner_flatten": 0,
+    "parameterization": "modal_P_C2prolate_mapped_v2"
+  },
+  "initial_time": 0,
+  "evolution_steps": 0,
+  "geometry": "direct_native",
+  "cpu_threads": 1,
+  "flow_alpha": 0.2,
+  "seed_horizon_guess_scale": 0.98,
+  "flow_iterations": 100,
+  "domain_half_width": 8.0,
+  "criteria": {
+    "expansion_rms": 1e-07,
+    "area_relative_spectral": 1e-05,
+    "shape_uniform_spectral": 0.0001,
+    "area_relative_quadrature": 1e-07
+  },
+  "records": [
+    {
+      "lmax": 8,
+      "ntheta": 16,
+      "kind": "spectral",
+      "command": [
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/athenak-build-extreme-serial-20261003/src/athena",
+        "-i",
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/spin99-coarse-component-horizons/spectral_l8_n16/binary.athinput",
+        "problem/hispid_filename=/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/results/aligned_spin99_kokkos_80_160_16.checkpoint",
+        "problem/hispid_source_sha256=7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "problem/hispid_horizon_guess_scale=0.98",
+        "fastflow/factorized_harmonics=false",
+        "fastflow/num_horizons=2",
+        "fastflow/lmax=8",
+        "fastflow/ntheta=16",
+        "problem/hispid_allow_diagnostic=true",
+        "problem/hispid_allow_library_migration=true",
+        "mesh/nx1=8",
+        "meshblock/nx1=8",
+        "mesh/x1min=-8.0",
+        "mesh/x1max=8.0",
+        "mesh/nx2=8",
+        "meshblock/nx2=8",
+        "mesh/x2min=-8.0",
+        "mesh/x2max=8.0",
+        "mesh/nx3=8",
+        "meshblock/nx3=8",
+        "mesh/x3min=-8.0",
+        "mesh/x3max=8.0",
+        "fastflow/use_puncture_0=-1",
+        "fastflow/start_time_0=0",
+        "fastflow/stop_time_0=0",
+        "fastflow/flow_iterations_0=100",
+        "fastflow/flow_alpha_beta_const_0=0.2",
+        "fastflow/expansion_rms_tol_0=1e-5",
+        "fastflow/mass_tol_0=1e-12",
+        "fastflow/hmean_tol_0=100",
+        "fastflow/use_puncture_massweighted_center_0=false",
+        "fastflow/use_puncture_1=-1",
+        "fastflow/start_time_1=0",
+        "fastflow/stop_time_1=0",
+        "fastflow/flow_iterations_1=100",
+        "fastflow/flow_alpha_beta_const_1=0.2",
+        "fastflow/expansion_rms_tol_1=1e-5",
+        "fastflow/mass_tol_1=1e-12",
+        "fastflow/hmean_tol_1=100",
+        "fastflow/use_puncture_massweighted_center_1=false"
+      ],
+      "passed": false,
+      "holes": [],
+      "input_sha256": "3d4ab4f6712acb24c011f88cd930f76bb827e5398545b9f5446509f0257ee4de",
+      "input_path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/spin99-coarse-component-horizons/spectral_l8_n16/binary.athinput",
+      "bound_inputs_unchanged": true,
+      "retained_artifacts_sha256": {
+        "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/spin99-coarse-component-horizons/spectral_l8_n16/run.log": "d2f8a696a346971cb5b84ed74056e9b8519e0a86afad80b55e2856f0674d253e"
+      },
+      "returncode": 1,
+      "seconds": 157.7510232089553,
+      "harmonic_storage": "dense",
+      "harmonic_allocation": {
+        "requested_mode": "dense",
+        "expected_bytes_per_horizon": 4091904,
+        "records": [
+          {
+            "horizon": 0,
+            "mode": "dense",
+            "lmax": 8,
+            "ntheta": 16,
+            "host_bytes": 4091904,
+            "device_bytes": 4091904,
+            "unique_bytes": 4091904
+          },
+          {
+            "horizon": 1,
+            "mode": "dense",
+            "lmax": 8,
+            "ntheta": 16,
+            "host_bytes": 4091904,
+            "device_bytes": 4091904,
+            "unique_bytes": 4091904
+          }
+        ],
+        "serial_allocation_verified": true,
+        "passed": true,
+        "measured_process_peak": false
+      },
+      "import": {
+        "source_library_sha256": "7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236",
+        "acceptance": "diagnostic",
+        "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "adm_z4c_relative_error": 4.633186567844278e-16,
+        "explicit_migration": true,
+        "passed": true,
+        "loaded_consumer_image": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+        "loaded_consumer_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+        "consumer_dependency_images": {
+          "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+        }
+      },
+      "zero_evolution_verified": false,
+      "attempts": [
+        {
+          "index": 0,
+          "geometry": "native",
+          "found": false,
+          "area": 7.193939048537215,
+          "expansion_rms": 1.9413361334405622e-05
+        }
+      ],
+      "failure_log_tail": [
+        "AssembleZ4cTasks",
+        "HiSpID consumer_dependency symbol=\"AB_To_XR\" image=\"/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so\"",
+        "HiSpID consumer_dependency symbol=\"C_To_c\" image=\"/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so\"",
+        "HiSpID consumer_dependency symbol=\"PK_solve\" image=\"/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so\"",
+        "HiSpID consumer_image=\"/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so\"",
+        "HiSpID import source=7645fee2138e0c44d8bdb81be6a278e7246141de6433aaf27ed21baecb115236 acceptance=diagnostic consumer=48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff ADM/Z4c relative error=4.6331865678442777e-16",
+        "HiSpID horizon 0 geometry=native found=0 area=nan expansion_rms=nan min_radius=0.034472716627019971 attempt_area=7.1939390485372154 attempt_expansion_rms=1.9413361334405622e-05 center_x=6 center_y=0 center_z=0 kind=component",
+        "HiSpID pgen: Initial HiSpID horizon search failed its geometry/expansion checks"
+      ]
+    }
+  ],
+  "passed": false,
+  "horizon_enclosure_verified": false,
+  "stronger_binary_validation_complete": false,
+  "sampler_migration": {
+    "path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/extreme-human-override-20261003/binary-consumer-proofs/spin99-grid0-migration.json",
+    "file_sha256": "bcd81cb85248d524fbed8d2c394112b403160df4fa4d2e27f776edb429e97f00",
+    "consumer_library_sha256": "48ef22c57d62b03b0d9676bd39c0cb3c37ff0cce0a3e84804b264cb542507aff",
+    "consumer_library_path": "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libHiSpID.so",
+    "maps": {
+      "radial_stretch": 0.2,
+      "angular_stretch": 2.0
+    },
+    "passed": true,
+    "consumer_dependency_images": {
+      "/pscratch/sd/h/hzhu/codex-hispid-kokkos-20261002/build-reference/libTwoPunctures.so": "686ed7d4dfb0fe434c4f8e10858a283d004b5436890d80fd8b78cfc6eb6109fc"
+    },
+    "purpose": "sampling_only_no_acceptance_transfer"
+  },
+  "enclosure_method": "monopole_and_Cauchy_tail",
+  "surface_kind": "component",
+  "common_search_initial_center": null,
+  "common_search_initial_radius": null,
+  "input_template_sha256": "f4e4352aab7161e2c159e15fb176db0d0ea15157d89bfcd384100c8e525f0f5e",
+  "harmonic_storage": "dense",
+  "consumer_memory_screen": {
+    "budget_mib": 32768,
+    "other_allowance_bytes": 1073741824,
+    "estimates": [
+      {
+        "lmax": 8,
+        "ntheta": 16,
+        "harmonic_table_bytes": 8183808
+      },
+      {
+        "lmax": 12,
+        "ntheta": 24,
+        "harmonic_table_bytes": 38098944
+      },
+      {
+        "lmax": 16,
+        "ntheta": 32,
+        "harmonic_table_bytes": 115310592
+      },
+      {
+        "lmax": 16,
+        "ntheta": 48,
+        "harmonic_table_bytes": 259448832
+      }
+    ],
+    "number_of_surfaces": 2,
+    "measured_peak": false
+  },
+  "schedule_prerequisites_verified": false,
+  "note": "Continuous bounds apply to the retained harmonic surfaces. The observed refinement buffer is an empirical truncation check, not a rigorous bound on the exact PDE surface. g/operator modified balls alone are tested; noncompact f/F attenuation tails require exterior constraints. Reported spin is the coordinate rotation integral, not an approximate-Killing-vector spin. Input constraint acceptance remains separate; diagnostic or preliminary input is not promoted to strong binary validation."
+}
