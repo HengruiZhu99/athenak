@@ -1,5 +1,20 @@
 # HiSpID initial-data integration
 
+October 3 retained Gamma10 solver retry: the separate restart200/budget4800
+trial from the failed128×256×8 checkpoint reaches the original1e-14 internal
+tolerance in2 additional Newton/574 Krylov steps, while independent near-hole
+momentum RMS remains0.217375. The binary remains physically unvalidated.
+Its fresh diagnostic checkpoint passes2454-point separate-process producer/CPU
+sampling, including metric derivatives, with zero measured differences.
+AthenaK import-only passes at ADM/Z4c error4.59847e-16 with time/cycle zero and
+no finder constructed. The exact receipt, migration proof, input and run log
+are in `hispid-extreme-gmres200-20261003/`. They establish interchange only.
+The native branch retains all raw arrays, frozen sources and the separate
+incomplete HS99UU attempt in `validation/extreme_trial_retention_20261003`.
+Allocation59293910 has been released. No further numerical work was launched
+during preservation; existing performance results and failed flags remain
+unchanged under the HUMAN OVERRIDE.
+
 October 3 completed extreme imports: both coarse chi=.99 and Gamma10 binary
 checkpoints retain their diagnostic acceptance labels. Fresh producer/CPU
 sampler proofs compare2454 points per checkpoint and every physical/conformal
