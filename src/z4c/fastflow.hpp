@@ -71,6 +71,8 @@ class FastFlow {
   // Optional retained real-SH coefficients in Write() ordering. This is an
   // initial guess only; Find recomputes geometry, expansion and convergence.
   std::vector<Real> initial_coefficients;
+  bool transformed_rotation_generators = false;
+  Kokkos::Array<Real,27> rotation_generators{};
   Real expansion_rms_tol; // <=0 retains historical mass-stabilization criterion
   bool require_complete_surface;
   Real Area() const { return ah_prop[harea]; }

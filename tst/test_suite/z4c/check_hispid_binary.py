@@ -72,6 +72,7 @@ def main():
     p.add_argument('--flow-alpha',type=float,default=1.,help='positive FastFlow step-size factor; does not change acceptance tolerances')
     p.add_argument('--guess-scale',type=float,default=1.05,help='positive multiplier of the seed horizon radius for the initial guess')
     p.add_argument('--initial-shapes',nargs='+',help='one retained coefficient file per surface, used only as the first initial guess')
+    p.add_argument('--affine-chart',action='store_true',help='boost-aligned spatial finder chart; preserve physical tensors and rotation generators')
     p.add_argument('--reuse-shapes',action='store_true',help='initialize each later order from the preceding passed surface; recompute all checks')
     p.add_argument('--flow-iterations',type=int,default=600,help='positive maximum per-surface iteration count; acceptance tolerances stay unchanged')
     p.add_argument('--domain-half-width',type=float,default=8.,help='positive mesh-domain half width; every active hole and modified ball must fit')
@@ -101,6 +102,8 @@ def main():
             raise ValueError('initial common sphere must fit inside the mesh domain')
     elif a.common_radius is not None or a.common_center!='0,0,0':
         raise ValueError('common center/radius options require --common')
+    if a.affine_chart and (a.common or a.initial_shapes):
+        raise ValueError("affine chart requires component searches and no untagged external shape guesses")
     surface_count=1 if a.common else 2
     guess_files=[Path(x).resolve(strict=True) for x in a.initial_shapes] if a.initial_shapes else None
     if guess_files is not None and len(guess_files)!=surface_count:
@@ -124,6 +127,7 @@ def main():
                 records=[],passed=False,horizon_enclosure_verified=False,
                 stronger_binary_validation_complete=False)
     result['sampler_migration']=migration
+    result['horizon_chart']='boost_affine' if a.affine_chart else 'laboratory'
     result['reuse_converged_shapes']=a.reuse_shapes
     result['initial_shape_guesses']=[str(x) for x in guess_files] if guess_files else []
     result['enclosure_method']='axial_interval' if a.enclosure_axis else 'monopole_and_Cauchy_tail'
@@ -181,6 +185,7 @@ def main():
              f'problem/hispid_horizon_guess_scale={a.guess_scale}',
              'fastflow/factorized_harmonics='+str(a.harmonic_storage=='factorized').lower(),
              f'fastflow/num_horizons={surface_count}',f'fastflow/lmax={lmax}',f'fastflow/ntheta={ntheta}']
+        if a.affine_chart:cmd += ['problem/hispid_horizon_affine_chart=true']
         if a.common:
             cmd += ['problem/hispid_common_horizon=true','problem/hispid_seed_horizon_guess=false',
                     f'fastflow/initial_radius_0={a.common_radius}']
@@ -256,6 +261,17 @@ def main():
                 match=re.search(r'HiSpID horizon '+str(h)+r' .*center_x=([\deE+.-]+) center_y=([\deE+.-]+) center_z=([\deE+.-]+)',stdout)
                 if match is None:raise ValueError('actual finder center is required')
                 center=np.array(list(map(float,match.groups())))
+                chart_center=center.copy();minimum_scale=1.
+                if a.affine_chart:
+                    velocity=np.asarray(source['holes'][h][7:10]);v2=float(velocity@velocity)
+                    if not 0<=v2<1:raise ValueError('invalid chart velocity')
+                    minimum_scale=math.sqrt(1-v2)
+                    chart_match=re.search(r'HiSpID horizon_chart horizon='+str(h)+r' kind=boost_affine minimum_scale=(\S+)',stdout)
+                    if not chart_match or abs(float(chart_match[1])/minimum_scale-1)>1e-12:
+                        raise ValueError('missing or mismatched native affine chart')
+                    J=np.eye(3)-np.outer(velocity,velocity)/(1+minimum_scale)
+                    seed_center=np.asarray(source['holes'][h][1:4])
+                    center=seed_center+J@(center-seed_center)
                 centers.append(center)
                 cauchy_lower=radius_lower_bound(shape);lower=cauchy_lower
                 upper=float(2*shape[0]/math.sqrt(4*math.pi)-lower)
@@ -263,6 +279,8 @@ def main():
                 if a.enclosure_axis:
                     certificate=harmonic_enclosure.axial_range(shape,a.enclosure_axis,a.enclosure_intervals)
                     lower=certificate['radius_lower_bound'];upper=certificate['radius_upper_bound']
+                chart_lower=lower;chart_upper=upper
+                lower*=minimum_scale  # Singular-value bound on physical radius.
                 offset=float(np.linalg.norm(center-np.array(source['holes'][h][1:4])))
                 rounding_margin=float(64*np.finfo(float).eps*(1+uniform_bound(shape)+offset+source['inner_max'][h]))
                 margin=lower-offset-source['inner_max'][h]-rounding_margin
@@ -272,6 +290,8 @@ def main():
                           expansion_rms=float(np.sqrt(summary[8])),sampled_min_radius=float(summary[11]),
                           continuous_radius_lower_bound=lower,continuous_radius_upper_bound=upper,
                           center_offset=offset,rounding_allowance=rounding_margin,inner_ball_margin=margin)
+                hole.update(chart_center=chart_center.tolist(),chart_minimum_scale=minimum_scale,chart_radius_lower_bound=chart_lower,chart_radius_upper_bound=chart_upper)
+                if a.affine_chart:hole['sampled_min_radius_chart']=hole.pop('sampled_min_radius')
                 if certificate:hole.update(cauchy_radius_lower_bound=cauchy_lower,continuous_range_certificate=certificate)
                 hole['expansion_pass']=bool(np.isfinite(summary).all() and summary[7]>0 and summary[8]>=0 and hole['expansion_rms']<1e-7)
                 hole['retained_surface_encloses_inner_ball']=margin>0 and lower>0

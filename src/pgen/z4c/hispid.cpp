@@ -18,6 +18,7 @@
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
+#include "coordinates/affine_horizon.hpp"
 #include "coordinates/cell_locations.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/z4c_amr.hpp"
@@ -44,7 +45,7 @@ void Flat(HiSpID_Point &p, double *dg=nullptr) {
 }
 struct ResetSource {
   FastFlow &finder;
-  ~ResetSource() { finder.geometry_source={};finder.initial_shape={};finder.initial_coefficients.clear();finder.geometry_source_parallel_safe=false; }
+  ~ResetSource() { finder.geometry_source={};finder.initial_shape={};finder.initial_coefficients.clear();finder.transformed_rotation_generators=false;finder.geometry_source_parallel_safe=false; }
 };
 void VerifyConsumerImage() {
 #if HISPID_DYNAMIC_IMAGE
@@ -238,6 +239,9 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
       case 4: finder->MetricDerivatives<4>(0.0);break;
     }
   }
+  const bool affine_chart=pin->GetOrAddBoolean("problem","hispid_horizon_affine_chart",false);
+  if (affine_chart && (!direct || common || flat))
+    throw std::runtime_error("Affine chart requires direct nonflat component geometry");
   const bool seed_guess=pin->GetOrAddBoolean("problem","hispid_seed_horizon_guess",true);
   const Real scale=pin->GetOrAddReal("problem","hispid_horizon_guess_scale",1.05);
   if (!std::isfinite(scale) || scale<=0) throw std::runtime_error("Invalid horizon guess scale");
@@ -251,6 +255,13 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
       throw std::runtime_error("Initial finder needs lmax>=1 and ntheta>lmax");
     if (!common && !pin->GetOrAddBoolean("problem","hispid_preserve_horizon_centers",false))
       for (int d=0;d<3;++d) finder.center[d]=hole.center[d];
+    const double zero_velocity[3]={0,0,0};
+    const AffineHorizonChart chart(affine_chart?hole.velocity:zero_velocity);
+    finder.transformed_rotation_generators=affine_chart;
+    for (int i=0;i<27;++i) finder.rotation_generators[i]=chart.rotations[i];
+    if (affine_chart && global_variable::my_rank==0)
+      std::cout << std::setprecision(17) << "HiSpID horizon_chart horizon=" << h
+                << " kind=boost_affine minimum_scale=" << chart.minimum_scale << std::endl;
     finder.require_complete_surface=true;
     if (finder.expansion_rms_tol<=0)
       finder.expansion_rms_tol=pin->GetOrAddReal("problem","hispid_expansion_rms_tol",1e-6);
@@ -263,14 +274,20 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
                 << " host_concurrency=" << Kokkos::DefaultHostExecutionSpace().concurrency()
                 << std::endl;
     if (direct) finder.geometry_source=[&](const Real *x,Real *g,Real *K,Real *dg) {
-      const auto domain=pack->pmesh->mesh_size;
-      if (x[0]<domain.x1min || x[0]>domain.x1max || x[1]<domain.x2min || x[1]>domain.x2max ||
-          x[2]<domain.x3min || x[2]>domain.x3max) throw std::runtime_error("Horizon point outside mesh domain");
       double pos[3]={x[0],x[1],x[2]},gradient[27];HiSpID_Point p;
+      if (affine_chart) {const double y[3]={x[0],x[1],x[2]};chart.Position(y,hole.center,pos);}
+      const auto domain=pack->pmesh->mesh_size;
+      if (pos[0]<domain.x1min || pos[0]>domain.x1max || pos[1]<domain.x2min || pos[1]>domain.x2max ||
+          pos[2]<domain.x3min || pos[2]>domain.x3max) throw std::runtime_error("Horizon point outside mesh domain");
       if (flat) Flat(p,gradient);
       else if (HiSpID_sample_with_derivatives(data.get(),1,pos,&p,gradient))
         throw std::runtime_error(HiSpID_last_error());
       PositiveMetric(p.gamma);
+      if (affine_chart) {
+        double gy[9],Ky[9],dgy[27];chart.Pullback(p.gamma,p.Kij,gradient,gy,Ky,dgy);
+        std::copy(gy,gy+9,p.gamma);std::copy(Ky,Ky+9,p.Kij);std::copy(dgy,dgy+27,gradient);
+        PositiveMetric(p.gamma);
+      }
       for (int c=0;c<6;++c) { g[c]=p.gamma[full[c]];K[c]=p.Kij[full[c]]; }
       for (int d=0;d<3;++d) for (int c=0;c<6;++c) dg[6*d+c]=gradient[9*d+full[c]];
     };
@@ -283,7 +300,7 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
       const double v2=hole.velocity[0]*hole.velocity[0]+hole.velocity[1]*hole.velocity[1]+hole.velocity[2]*hole.velocity[2];
       finder.initial_shape=[=](Real th,Real ph) {
         double vn=hole.velocity[0]*std::sin(th)*std::cos(ph)+hole.velocity[1]*std::sin(th)*std::sin(ph)+hole.velocity[2]*std::cos(th);
-        return scale*rh/std::sqrt(1+vn*vn/(1-v2));
+        return affine_chart?scale*rh:scale*rh/std::sqrt(1+vn*vn/(1-v2));
       };
     }
     const std::string shape_path=pin->GetOrAddString("problem","hispid_horizon_shape_guess_"+std::to_string(h),"");

@@ -105,6 +105,7 @@ def exact_seed_source(entry,case):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--executable',required=True);p.add_argument('--manifest',required=True)
     p.add_argument('--output',required=True);p.add_argument('--cases',default='flat,schwarzschild,kerr95,boost885,kerr95_boost885')
+    p.add_argument('--affine-chart',action='store_true',help='use the spatial boost-affine chart and its spherical exact-shape oracle')
     p.add_argument('--boost-levels',default='16,24,32,48')
     p.add_argument('--diagnostic-single-boost-level',action='store_true',help='one Gamma10 finder diagnosis only; cannot qualify refinement or aggregate acceptance')
     p.add_argument('--combined-flow-alpha',type=float,default=.2)
@@ -133,6 +134,9 @@ def main():
     evidence['harmonic_storage']=a.harmonic_storage
     evidence['diagnostic_single_boost_level']=a.diagnostic_single_boost_level
     evidence['worker_timeout_seconds']=a.worker_timeout
+    evidence['horizon_chart']='boost_affine' if a.affine_chart else 'laboratory'
+    if a.affine_chart and any(c not in ('gamma10','boost885','kerr95_boost885') for c in case_names):
+        raise ValueError('affine controls require boosted analytic seeds')
     evidence['full_precision_trace']=a.full_precision_trace
     script_paths=[Path(__file__).resolve(),*(Path(__file__).resolve().parent/name for name in
         ('check_hispid_binary.py','hispid_sampler_proof.py','fastflow_storage.py'))]
@@ -169,12 +173,13 @@ def main():
              'problem/hispid_filename='+source['path'],'problem/hispid_source_sha256='+source['source_library_sha256'],
              'fastflow/factorized_harmonics='+str(a.harmonic_storage=='factorized').lower(),
              f'fastflow/lmax={lmax}',f'fastflow/ntheta={ntheta}',f'problem/hispid_horizon_guess_scale={scale}']
+        if a.affine_chart:cmd+=['problem/hispid_horizon_affine_chart=true']
         if case=='flat':
             cmd+=['problem/hispid_flat_control=true','problem/hispid_seed_horizon_guess=false',
                   'fastflow/initial_radius_0=4','fastflow/mass_tol_0=100','fastflow/expansion_rms_tol_0=.6']
             cmd+=['fastflow/hmean_tol_0=1000']
             for d in (1,2,3):cmd.extend([f'mesh/x{d}min=-5',f'mesh/x{d}max=5'])
-        elif ('boost885' in case or case=='gamma10') and lmax<max(map(int,a.boost_levels.split(','))):
+        elif not a.affine_chart and ('boost885' in case or case=='gamma10') and lmax<max(map(int,a.boost_levels.split(','))):
             # Underresolved coarse searches are diagnostics; only the finest
             # is required to satisfy the strict expansion gate below.
             cmd+=['fastflow/expansion_rms_tol_0=.1']
@@ -227,7 +232,7 @@ def main():
                 if case in ('kerr95','kerr99'):
                     row['spin_error']=float(abs(values[5]-chi));row['passed'] &= row['spin_error']<2e-5
                 elif 'boost885' in case or case=='gamma10':
-                    row['shape_sampled_relative_linf']=shape_error(run/'hispid.horizon_shape_0.txt',lmax,chi,speed,source['seed_family'])
+                    row['shape_sampled_relative_linf']=shape_error(run/'hispid.horizon_shape_0.txt',lmax,chi,0. if a.affine_chart else speed,source['seed_family'])
                     row['passed'] &= row['shape_sampled_relative_linf']<1e-6
                     row['shape_oracle']=dict(method='scipy.special.sph_harm_y' if lmax>64 else 'NumPy Legendre-polynomial derivatives',
                         ntheta=max(40,2*lmax+3),nphi=max(80,4*lmax+6),additional_cardinal_directions=True,
@@ -237,6 +242,8 @@ def main():
                 row['expected_seed_lorentz_factor']=float(1/np.sqrt(1-speed**2))
                 row['passed'] &= row['horizon_mass_error']<2e-5
                 if chi==0:row['passed'] &= np.max(abs(values[3:7]))<2e-5
+            row['affine_chart_verified']=not a.affine_chart or bool(re.search(r'HiSpID horizon_chart horizon=0 kind=boost_affine minimum_scale=',stdout))
+            row['passed'] &= row['affine_chart_verified']
             row['passed'] &= row['zero_evolution_verified'] and unchanged and row['import']['passed'] and row['harmonic_allocation']['passed']
         complete=len(evidence['records'])==len(cases)
         groups={name:[x for x in evidence['records'] if x['case']==name] for name in a.cases.split(',')}

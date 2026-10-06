@@ -138,3 +138,37 @@ surfaces enclose their modified balls with a.03226304058 margin after the
 empirical refinement buffer. Full evidence is in the native branch under
 `validation/trumpet/spin-focused-map/horizon160-warm/surfaces`. Independent
 physical constraints of the input remain outside acceptance.
+
+### Affine finder chart (under validation)
+
+`problem/hispid_horizon_affine_chart=true` optionally searches each direct
+component horizon in y coordinates, with x=c+J(y-c),
+J=I-vv^T/(1+sqrt(1-v^2)). This is a spatial coordinate change on the same
+laboratory slice, not an additional spacetime boost. Its minimum singular
+value is1/Gamma, so the boosted seed horizon becomes spherical in y.
+The pgen pulls back gamma and K with two J factors and dgamma with three.
+FastFlow receives J^{-1} E_i J as its rotation generators, preserving the
+original laboratory coordinate-spin integral rather than changing its axes.
+Defaults, physical data and checkpoint representation remain unchanged.
+
+The binary driver `--affine-chart` bounds physical radii using the minimum
+singular value and maps centers back to laboratory coordinates. Its retained
+SH coefficients describe the chart surface. Warm starts are reused within
+the same run; untagged external initial shapes are rejected. Common and mesh
+geometry searches currently reject this option.
+
+The standalone C++ algebra control checks derivative chain rules on a varying
+positive metric, tangent-area invariance, and spin-integrand invariance at zero,
+generic, and Gamma10 velocities. Local maxima are1.43e-10,1.78e-15,1.78e-15,
+respectively. Full consumer build and analytic-seed horizon checks remain
+pending; this feature is not yet physically validated.
+
+Perlmutter full build59411280 passed. The fresh isolated Gamma10 checkpoint
+migrates exactly between the producer and CPU sampler. The first attempt59411376
+was rejected before numerical work because the template omitted the new input
+option; the template now declares it. In attempt59411393, orders4 and8 reached
+expansion RMS4.36e-10 and1.39e-9 and areas close to16pi but exhausted600 iterations
+before the unchanged1e-12 mass-stabilization criterion. These are failed runs.
+Attempt59411500 is queued after that run with1000 iterations and unchanged
+acceptance thresholds. No isolated or binary affine-horizon acceptance is yet
+claimed. The input elliptic constraint failures are unaffected by this feature.

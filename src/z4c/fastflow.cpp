@@ -1092,6 +1092,8 @@ void FastFlow::RadiiFromSphericalHarmonics() {
 void FastFlow::SurfaceIntegrals() {
   const auto harmonics=DeviceHarmonics();
   const Real min_rp = 1e-10;
+  const bool transformed_rotations=transformed_rotation_generators;
+  const auto rotation_map=rotation_generators;
 
   // Initialize integrals
   for (int v = 0; v < invar; v++) {
@@ -1470,6 +1472,17 @@ void FastFlow::SurfaceIntegrals() {
       phiz(1) =  xp; // (x-xc);
       phiz(2) =  0;
 
+      if (transformed_rotations) {
+        const Real position[3]={xp,yp,zp};
+        for (int a=0;a<3;++a) {
+          phix(a)=phiy(a)=phiz(a)=0;
+          for (int b=0;b<3;++b) {
+            phix(a)+=rotation_map[3*a+b]*position[b];
+            phiy(a)+=rotation_map[9+3*a+b]*position[b];
+            phiz(a)+=rotation_map[18+3*a+b]*position[b];
+          }
+        }
+      }
       // Integrand of spin
       Real intSx = 0;
       Real intSy = 0;
