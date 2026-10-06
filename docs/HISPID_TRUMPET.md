@@ -25,9 +25,10 @@ rejects three malformed metadata cases. The initial loader failure and
 intermediate result are retained separately. Executables are local ignored
 artifacts; source/image hashes and checkpoint bytes are retained.
 
-Full AthenaK compilation, mesh import and horizon searches for this new seed
-family remain pending. No evolution, binary solve, GPU qualification or
-performance campaign is claimed by the standalone reader check.
+At the standalone-reader milestone, full AthenaK compilation, mesh import
+and horizon searches were still pending. The later consumer results below
+supersede that status. No evolution or binary acceptance is claimed by the
+standalone reader check.
 
 ## Full production consumer build, 2026-10-05
 
@@ -41,8 +42,10 @@ with Serial execution and MPI disabled. The allocation has released.
 and library hashes, archive hashes and completion receipt. The isolated remote
 executable is
 `/pscratch/sd/h/hzhu/codex-hispid-trumpet-20261005/build-athenak/src/athena`.
-This establishes compilation/linkage of the full pgen; initial-time import,
-horizon convergence and physical binary acceptance remain pending.
+This build established compilation/linkage of the full pgen. Subsequent
+isolated spin-0.99 import and horizon searches passed at angular orders
+8/12/16, with finest mass 1.00000000000409, spin 0.989999999999997, and
+expansion RMS 4.538e-11. Physical binary acceptance remains pending.
 
 ## Parallel direct horizon sampling
 
