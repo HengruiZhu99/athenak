@@ -28,3 +28,18 @@ artifacts; source/image hashes and checkpoint bytes are retained.
 Full AthenaK compilation, mesh import and horizon searches for this new seed
 family remain pending. No evolution, binary solve, GPU qualification or
 performance campaign is claimed by the standalone reader check.
+
+## Full production consumer build, 2026-10-05
+
+The complete `z4c/hispid` executable from consumer commit ea925d1e compiled
+successfully on Perlmutter (allocation59402262, one shared A100 allocation).
+It uses the CPU sampler library built from native commit ff5e8ae, row power3,
+and the repository's pinned Kokkos6739bc623081648af9e752b616d9671527922cbf,
+with Serial execution and MPI disabled. The allocation has released.
+
+`trumpet-production-build-20261005/` preserves configure/build logs, executable
+and library hashes, archive hashes and completion receipt. The isolated remote
+executable is
+`/pscratch/sd/h/hzhu/codex-hispid-trumpet-20261005/build-athenak/src/athena`.
+This establishes compilation/linkage of the full pgen; initial-time import,
+horizon convergence and physical binary acceptance remain pending.
