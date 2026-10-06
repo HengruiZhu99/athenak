@@ -46,11 +46,18 @@ def shape_error(path,lmax,chi,speed=.885,seed_family='qi'):
     return float(np.max(abs(radius/expected-1)))
 
 
-def refinement_qualified(rows,boosted):
+def refinement_qualified(rows,boosted,affine=False):
     if not rows or not all(row.get('returncode')==0 and row.get('bound_inputs_unchanged') is True
         and row.get('zero_evolution_verified') is True and row.get('import',{}).get('passed') is True
         and ('harmonic_storage' not in row or row.get('harmonic_allocation',{}).get('passed') is True) for row in rows):
         return False
+    if affine:
+        # The exact surface is degree zero in this chart. Require exact physical
+        # checks at every order and stable properties, not decreasing residuals
+        # from repeated nonlinear solves stopped at the same tolerance.
+        if len(rows)<3 or not all(r.get('passed') is True and r.get('affine_chart_verified') is True for r in rows):return False
+        masses=np.array([r['summary'][2] for r in rows]);spins=np.array([r['summary'][3:6] for r in rows])/masses[:,None]**2
+        return bool(np.ptp(masses)/np.min(masses)<1e-4 and np.max(np.linalg.norm(spins-spins[-1],axis=1))<1e-4)
     if boosted:
         return bool(len(rows)>=3 and rows[-1]['passed'] and all(
             rows[i+1].get('expansion_rms',np.inf)<rows[i].get('expansion_rms',0) for i in range(len(rows)-1)))
@@ -245,10 +252,11 @@ def main():
             row['affine_chart_verified']=not a.affine_chart or bool(re.search(r'HiSpID horizon_chart horizon=0 kind=boost_affine minimum_scale=',stdout))
             row['passed'] &= row['affine_chart_verified']
             row['passed'] &= row['zero_evolution_verified'] and unchanged and row['import']['passed'] and row['harmonic_allocation']['passed']
+        row['passed']=bool(row['passed'])
         complete=len(evidence['records'])==len(cases)
         groups={name:[x for x in evidence['records'] if x['case']==name] for name in a.cases.split(',')}
         evidence['case_qualification']={name:bool(len(rows)==sum(c[0]==name for c in cases)
-            and refinement_qualified(rows,'boost885' in name or name=='gamma10')) for name,rows in groups.items()}
+            and refinement_qualified(rows,'boost885' in name or name=='gamma10',a.affine_chart)) for name,rows in groups.items()}
         evidence['passed']=bool(complete and all(evidence['case_qualification'].values()))
         (root/'controls.json').write_text(json.dumps(evidence,indent=2)+'\n')
         print(case,lmax,ntheta,'passed',row['passed'],'seconds',row['seconds'],flush=True)

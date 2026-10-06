@@ -172,3 +172,20 @@ before the unchanged1e-12 mass-stabilization criterion. These are failed runs.
 Attempt59411500 is queued after that run with1000 iterations and unchanged
 acceptance thresholds. No isolated or binary affine-horizon acceptance is yet
 claimed. The input elliptic constraint failures are unaffected by this feature.
+
+The affine exact Gamma10 control now passes at orders4/8/12 (job59411566).
+Maximum relative area error is7.22e-11, shape error1.13e-10, expansion RMS
+4.78e-11, and horizon-mass error3.61e-11. Times are23.25/59.52/115.11s.
+The laboratory-slice horizon is unchanged; retained shape coefficients are
+spherical in the affine chart. These results validate the geometry pullback
+and finder against the independent exact horizon, not the solved binary.
+
+The corrected control converts NumPy boolean outcomes before JSON serialization.
+The prior59411500 attempt found its first horizon but failed report serialization;
+its partial output is preserved and not promoted. Affine angular qualification
+requires every order to pass the unchanged exact area/shape/expansion/mass tests,
+and mass/spin stability within1e-4. The old laboratory-chart rule of decreasing
+expansion with angular order remains unchanged for that chart. It is inapplicable
+to the exact degree-zero affine sphere: its remaining expansion is the nonlinear
+stopping residual, not unresolved angular structure. No physical tolerance was
+relaxed, and the stricter coarse-order exact checks remain enforced.
