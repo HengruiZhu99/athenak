@@ -446,7 +446,8 @@ void FastFlow::Find(int iter, Real time) {
   }
 
   InitialGuess();
-  if (initial_shape) InitialShape();
+  if (!initial_coefficients.empty()) InitialCoefficients();
+  else if (initial_shape) InitialShape();
   std::fill(ah_prop, ah_prop+kHnvar, std::numeric_limits<Real>::quiet_NaN());
   last_expansion_rms=last_area=std::numeric_limits<Real>::quiet_NaN();
   FastFlowLoop();
@@ -770,6 +771,26 @@ void FastFlow::InitialShape() {
   a0.template modify<HostMemSpace>(); a0.template sync<DevExeSpace>();
   ac.template modify<HostMemSpace>(); ac.template sync<DevExeSpace>();
   as.template modify<HostMemSpace>(); as.template sync<DevExeSpace>();
+}
+
+void FastFlow::InitialCoefficients() {
+  const int side=static_cast<int>(std::sqrt(initial_coefficients.size()));
+  if (side<1 || static_cast<size_t>(side)*side!=initial_coefficients.size() || side>lmax1)
+    throw std::runtime_error("Initial surface coefficients require a complete supported SH order");
+  for (Real c:initial_coefficients) if (!std::isfinite(c))
+    throw std::runtime_error("Nonfinite initial surface coefficient");
+  Kokkos::deep_copy(a0.h_view,0.0);Kokkos::deep_copy(ac.h_view,0.0);Kokkos::deep_copy(as.h_view,0.0);
+  int index=0;
+  for (int l=0;l<side;l++) {
+    a0.h_view(l)=initial_coefficients[index++];
+    for (int m=1;m<=l;m++) {
+      const int q=lmindex(l,m,lmax);
+      ac.h_view(q)=initial_coefficients[index++];as.h_view(q)=initial_coefficients[index++];
+    }
+  }
+  a0.template modify<HostMemSpace>();a0.template sync<DevExeSpace>();
+  ac.template modify<HostMemSpace>();ac.template sync<DevExeSpace>();
+  as.template modify<HostMemSpace>();as.template sync<DevExeSpace>();
 }
 
 //----------------------------------------------------------------------------------------

@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -43,7 +44,7 @@ void Flat(HiSpID_Point &p, double *dg=nullptr) {
 }
 struct ResetSource {
   FastFlow &finder;
-  ~ResetSource() { finder.geometry_source={};finder.initial_shape={};finder.geometry_source_parallel_safe=false; }
+  ~ResetSource() { finder.geometry_source={};finder.initial_shape={};finder.initial_coefficients.clear();finder.geometry_source_parallel_safe=false; }
 };
 void VerifyConsumerImage() {
 #if HISPID_DYNAMIC_IMAGE
@@ -284,6 +285,26 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
         double vn=hole.velocity[0]*std::sin(th)*std::cos(ph)+hole.velocity[1]*std::sin(th)*std::sin(ph)+hole.velocity[2]*std::cos(th);
         return scale*rh/std::sqrt(1+vn*vn/(1-v2));
       };
+    }
+    const std::string shape_path=pin->GetOrAddString("problem","hispid_horizon_shape_guess_"+std::to_string(h),"");
+    if (!shape_path.empty()) {
+      std::ifstream input(shape_path);if (!input) throw std::runtime_error("Cannot read horizon shape guess");
+      std::string line;int records=0;
+      while (std::getline(input,line)) {
+        const auto first=line.find_first_not_of(" \t\r");
+        if (first==std::string::npos || line[first]=='#') continue;
+        if (++records>1) throw std::runtime_error("Horizon shape guess requires exactly one coefficient record");
+        std::istringstream row(line);Real value;
+        while (row>>value) {
+          if (!std::isfinite(value) || finder.initial_coefficients.size()>=static_cast<size_t>((finder.lmax+1)*(finder.lmax+1)))
+            throw std::runtime_error("Invalid or excessive horizon shape coefficients");
+          finder.initial_coefficients.push_back(value);
+        }
+        if (!row.eof()) throw std::runtime_error("Malformed horizon shape coefficients");
+      }
+      if (records!=1 || finder.initial_coefficients.empty()) throw std::runtime_error("Missing horizon shape coefficients");
+      if (global_variable::my_rank==0)
+        std::cout << "HiSpID horizon_shape_guess horizon=" << h << " coefficients=" << finder.initial_coefficients.size() << std::endl;
     }
     finder.Find(0,0.0);finder.Write(0,0.0);
     if (global_variable::my_rank==0)

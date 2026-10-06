@@ -109,3 +109,23 @@ Run `check_hispid_binary.py` with `--allow-diagnostic`, the checkpoint-bound
 `--migration-proof`, `--geometry-threads 16`, `--strict-expansion`, and
 `--harmonic-storage factorized` to reproduce this consumer path. Acceptance of
 these horizon checks does not promote the input's constraint-validation status.
+
+### Reusing converged horizon shapes
+
+The optional `problem/hispid_horizon_shape_guess_0` and `_1` inputs read one
+complete finite spherical-harmonic coefficient record from the existing
+`hispid.horizon_shape_N.txt` format. A lower order is padded with zero higher
+modes; malformed, excessive, or incomplete coefficient records are rejected.
+The coefficients only initialize FastFlow. Geometry, expansion, properties,
+and acceptance are recomputed. Omission preserves the existing initial guess.
+
+`check_hispid_binary.py --initial-shapes FILE0 FILE1 --reuse-shapes` binds
+input files by SHA256, verifies native consumption, and reuses only a passed
+row as the next guess. All existing import, enclosure, expansion, angular,
+and quadrature criteria remain in effect.
+
+Perlmutter validation59410814 on the focused spin99 diagnostic checkpoint:
+l12 and l16 pass in35.49 and50.42 seconds, versus670.69 and1226.91 seconds
+from seed-radius initialization. Mass and coordinate spin agree within1e-12.
+These checks validate initial-guess reuse; the input binary still fails
+independent physical constraint requirements and is not accepted physical data.

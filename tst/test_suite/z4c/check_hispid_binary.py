@@ -18,6 +18,7 @@ def schedule_prerequisites(rows,expected):
         and r.get('bound_inputs_unchanged') is True and r.get('zero_evolution_verified') is True
         and r.get('surface_kind_verified') is True and r.get('import',{}).get('passed') is True
         and r.get('harmonic_allocation',{}).get('passed') is True
+        and r.get('shape_guess_verified',True) is True
         and r.get('parallel_geometry_verified',True) is True for r in rows))
 
 
@@ -70,6 +71,8 @@ def main():
     p.add_argument('--geometry-threads',type=int,default=1);p.add_argument('--strict-expansion',action='store_true',help='require expansion RMS below1e-7 at every angular order');p.add_argument('--output',required=True);p.add_argument('--levels',default='8,12,16')
     p.add_argument('--flow-alpha',type=float,default=1.,help='positive FastFlow step-size factor; does not change acceptance tolerances')
     p.add_argument('--guess-scale',type=float,default=1.05,help='positive multiplier of the seed horizon radius for the initial guess')
+    p.add_argument('--initial-shapes',nargs='+',help='one retained coefficient file per surface, used only as the first initial guess')
+    p.add_argument('--reuse-shapes',action='store_true',help='initialize each later order from the preceding passed surface; recompute all checks')
     p.add_argument('--flow-iterations',type=int,default=600,help='positive maximum per-surface iteration count; acceptance tolerances stay unchanged')
     p.add_argument('--domain-half-width',type=float,default=8.,help='positive mesh-domain half width; every active hole and modified ball must fit')
     p.add_argument('--migration-proof',help='checkpoint-bound, separate-process CPU sampler proof; no physical acceptance transfer')
@@ -99,6 +102,9 @@ def main():
     elif a.common_radius is not None or a.common_center!='0,0,0':
         raise ValueError('common center/radius options require --common')
     surface_count=1 if a.common else 2
+    guess_files=[Path(x).resolve(strict=True) for x in a.initial_shapes] if a.initial_shapes else None
+    if guess_files is not None and len(guess_files)!=surface_count:
+        raise ValueError('one initial coefficient file per surface required')
     exe=Path(a.executable).resolve(strict=True);source=checkpoint_metadata(Path(a.checkpoint).resolve(strict=True))
     if any(max(abs(x) for x in hole[1:4])+radius>=a.domain_half_width for hole,radius in zip(source['holes'],source['inner_max'])):
         raise ValueError('mesh domain does not enclose the active holes and modified balls')
@@ -118,6 +124,8 @@ def main():
                 records=[],passed=False,horizon_enclosure_verified=False,
                 stronger_binary_validation_complete=False)
     result['sampler_migration']=migration
+    result['reuse_converged_shapes']=a.reuse_shapes
+    result['initial_shape_guesses']=[str(x) for x in guess_files] if guess_files else []
     result['enclosure_method']='axial_interval' if a.enclosure_axis else 'monopole_and_Cauchy_tail'
     if a.enclosure_axis:
         import harmonic_enclosure
@@ -156,8 +164,18 @@ def main():
             ('expansion_rms_tol','1e-7'),('mass_tol','1e-12'),
             ('hmean_tol','100'),('use_puncture_massweighted_center','false'))]
         input_path=run/'binary.athinput'
+        guess_inputs={};guess_counts=[]
+        if guess_files:
+            for h,path in enumerate(guess_files):
+                coefficients=np.atleast_2d(np.loadtxt(path))
+                count=coefficients.size
+                if (coefficients.shape[0]!=1 or not np.isfinite(coefficients).all()
+                    or math.isqrt(count)**2!=count or count>(lmax+1)**2):
+                    raise ValueError('initial guess requires one complete supported finite SH record')
+                guess_inputs[str(path)]=hashlib.sha256(path.read_bytes()).hexdigest();guess_counts.append(count)
+        shape_options=''.join(f'\nhispid_horizon_shape_guess_{h} = {path}' for h,path in enumerate(guess_files or []))
         input_path.write_text(input_template.replace(
-            '<problem>','\n'.join(extra)+'\n<problem>\nhispid_parallel_geometry = '+str(a.geometry_threads>1).lower()))
+            '<problem>','\n'.join(extra)+'\n<problem>'+shape_options+'\nhispid_parallel_geometry = '+str(a.geometry_threads>1).lower()))
         cmd=[str(exe),'-i',str(input_path),
              'problem/hispid_filename='+source['path'],'problem/hispid_source_sha256='+source['source_library_sha256'],
              f'problem/hispid_horizon_guess_scale={a.guess_scale}',
@@ -178,7 +196,8 @@ def main():
         start=time.monotonic();row=dict(lmax=lmax,ntheta=ntheta,kind=kind,command=cmd,passed=False,holes=[])
         row['input_sha256']=hashlib.sha256(input_path.read_bytes()).hexdigest()
         row['input_path']=str(input_path.resolve());row['bound_inputs_unchanged']=False
-        row['retained_artifacts_sha256']={}
+        row['retained_artifacts_sha256']=guess_inputs.copy()
+        row['initial_shape_inputs']=guess_inputs
         result['records'].append(row);(root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         with (run/'run.log').open('w') as log:
             try:completed=subprocess.run(cmd,cwd=run,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=a.timeout)
@@ -189,6 +208,11 @@ def main():
         row['retained_artifacts_sha256'][str(log_path)]=hashlib.sha256(log_bytes).hexdigest()
         (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         stdout=log_bytes.decode()
+        row['shape_guess_verified']=all(
+            f'HiSpID horizon_shape_guess horizon={h} coefficients={count}' in stdout
+            for h,count in enumerate(guess_counts))
+        if any(hashlib.sha256(Path(path).read_bytes()).hexdigest()!=sha for path,sha in guess_inputs.items()):
+            raise ValueError('initial horizon guess changed during worker')
         if hashlib.sha256(log_path.read_bytes()).hexdigest()!=row['retained_artifacts_sha256'][str(log_path)]:
             row['worker_log_changed']=True
             (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
@@ -272,13 +296,14 @@ def main():
                     sum(h['continuous_radius_upper_bound']+h['rounding_allowance'] for h in row['holes']))
                 row['distinct_components_verified']=row['component_separation_margin']>0
             row['surface_kind_verified']=bool(not a.common or ' kind=common' in stdout)
-            row['passed']=row.get('import',{}).get('passed',False) and row['harmonic_allocation']['passed'] and row['zero_evolution_verified'] and row['surface_kind_verified'] and (a.common or row['distinct_components_verified']) and all(
+            row['passed']=row['shape_guess_verified'] and row.get('import',{}).get('passed',False) and row['harmonic_allocation']['passed'] and row['zero_evolution_verified'] and row['surface_kind_verified'] and (a.common or row['distinct_components_verified']) and all(
                 h['expansion_pass'] and h['retained_surface_encloses_inner_ball'] for h in row['holes'])
         (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         print(lmax,ntheta,kind,'returncode',row['returncode'],'passed',row['passed'],'seconds',row['seconds'],flush=True)
         for h in row['holes']:print({k:v for k,v in h.items() if k not in ('coefficients','summary')},flush=True)
         if row['returncode']!=0:break
         previous_shapes=shapes;previous_centers=centers
+        guess_files=[(run/f'hispid.horizon_shape_{h}.txt').resolve() for h in range(surface_count)] if a.reuse_shapes and row['passed'] else None
     rows=result['records']
     if hashlib.sha256(exe.read_bytes()).hexdigest()!=result['executable_sha256']:
         raise ValueError('AthenaK executable changed before final horizon qualification')

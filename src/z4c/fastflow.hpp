@@ -68,6 +68,9 @@ class FastFlow {
   // concurrent read-only calls. The owner must not mutate data during Find.
   bool geometry_source_parallel_safe = false;
   std::function<Real(Real, Real)> initial_shape;
+  // Optional retained real-SH coefficients in Write() ordering. This is an
+  // initial guess only; Find recomputes geometry, expansion and convergence.
+  std::vector<Real> initial_coefficients;
   Real expansion_rms_tol; // <=0 retains historical mass-stabilization criterion
   bool require_complete_surface;
   Real Area() const { return ah_prop[harea]; }
@@ -188,6 +191,7 @@ class FastFlow {
   void FastFlowLoop();
   void InitialGuess();
   void InitialShape();
+  void InitialCoefficients();
   void SourceGeometry();
   void CheckCoverage();
 
