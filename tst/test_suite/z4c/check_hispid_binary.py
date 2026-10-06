@@ -17,7 +17,8 @@ def schedule_prerequisites(rows,expected):
     return bool(len(rows)==expected and all(r.get('returncode')==0
         and r.get('bound_inputs_unchanged') is True and r.get('zero_evolution_verified') is True
         and r.get('surface_kind_verified') is True and r.get('import',{}).get('passed') is True
-        and r.get('harmonic_allocation',{}).get('passed') is True for r in rows))
+        and r.get('harmonic_allocation',{}).get('passed') is True
+        and r.get('parallel_geometry_verified',True) is True for r in rows))
 
 
 def uniform_bound(coefficients):
@@ -66,7 +67,7 @@ def checkpoint_metadata(path,require_two_active=True):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--executable',required=True);p.add_argument('--checkpoint',required=True)
     p.add_argument('--allow-diagnostic',action='store_true',help='measure horizons of explicitly labeled unvalidated data without promoting its constraint acceptance')
-    p.add_argument('--output',required=True);p.add_argument('--levels',default='8,12,16')
+    p.add_argument('--geometry-threads',type=int,default=1);p.add_argument('--strict-expansion',action='store_true',help='require expansion RMS below1e-7 at every angular order');p.add_argument('--output',required=True);p.add_argument('--levels',default='8,12,16')
     p.add_argument('--flow-alpha',type=float,default=1.,help='positive FastFlow step-size factor; does not change acceptance tolerances')
     p.add_argument('--guess-scale',type=float,default=1.05,help='positive multiplier of the seed horizon radius for the initial guess')
     p.add_argument('--flow-iterations',type=int,default=600,help='positive maximum per-surface iteration count; acceptance tolerances stay unchanged')
@@ -80,6 +81,7 @@ def main():
     p.add_argument('--common-center',default='0,0,0',help='explicit Cartesian common-search center')
     p.add_argument('--common-radius',type=float,help='positive initial common-search sphere radius')
     p.add_argument('--timeout',type=int,default=1800);a=p.parse_args()
+    if a.geometry_threads<1:raise ValueError('positive geometry thread count required')
     if not math.isfinite(a.flow_alpha) or a.flow_alpha<=0:raise ValueError('positive finite flow alpha required')
     if (a.enclosure_axis and (a.enclosure_intervals<16 or a.enclosure_intervals>16384 or a.enclosure_intervals%2)):
         raise ValueError('even enclosure interval count in[16,16384] required')
@@ -110,7 +112,7 @@ def main():
         raise ValueError('axial enclosure certificates support harmonic orders through256')
     root=Path(a.output).resolve();root.mkdir(parents=True,exist_ok=False)
     result=dict(executable_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),source=source,
-                initial_time=0,evolution_steps=0,geometry='direct_native',cpu_threads=1,flow_alpha=a.flow_alpha,seed_horizon_guess_scale=a.guess_scale,flow_iterations=a.flow_iterations,domain_half_width=a.domain_half_width,
+                initial_time=0,evolution_steps=0,geometry='direct_native',cpu_threads=a.geometry_threads,strict_expansion=a.strict_expansion,flow_alpha=a.flow_alpha,seed_horizon_guess_scale=a.guess_scale,flow_iterations=a.flow_iterations,domain_half_width=a.domain_half_width,
                 criteria=dict(expansion_rms=1e-7,area_relative_spectral=1e-5,
                               shape_uniform_spectral=1e-4,area_relative_quadrature=1e-7),
                 records=[],passed=False,horizon_enclosure_verified=False,
@@ -135,7 +137,7 @@ def main():
     result['harmonic_storage']=a.harmonic_storage
     result['consumer_memory_screen']=dict(budget_mib=a.consumer_memory_mib,other_allowance_bytes=1024**3,
         estimates=estimates,number_of_surfaces=surface_count,measured_peak=False)
-    env=os.environ.copy();env.update(OMP_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',VECLIB_MAXIMUM_THREADS='1')
+    env=os.environ.copy();env.update(OMP_NUM_THREADS=str(a.geometry_threads),OPENBLAS_NUM_THREADS='1',VECLIB_MAXIMUM_THREADS='1',OMP_PROC_BIND='spread',OMP_PLACES='cores')
     previous_shapes=None;previous_centers=None
     for lmax,ntheta,kind in schedule:
         if hashlib.sha256(exe.read_bytes()).hexdigest()!=result['executable_sha256']:
@@ -155,7 +157,7 @@ def main():
             ('hmean_tol','100'),('use_puncture_massweighted_center','false'))]
         input_path=run/'binary.athinput'
         input_path.write_text(input_template.replace(
-            '<problem>','\n'.join(extra)+'\n<problem>'))
+            '<problem>','\n'.join(extra)+'\n<problem>\nhispid_parallel_geometry = '+str(a.geometry_threads>1).lower()))
         cmd=[str(exe),'-i',str(input_path),
              'problem/hispid_filename='+source['path'],'problem/hispid_source_sha256='+source['source_library_sha256'],
              f'problem/hispid_horizon_guess_scale={a.guess_scale}',
@@ -170,7 +172,7 @@ def main():
         for h in range(surface_count):
             cmd += [f'fastflow/use_puncture_{h}=-1',f'fastflow/start_time_{h}=0',f'fastflow/stop_time_{h}=0',
                     f'fastflow/flow_iterations_{h}={a.flow_iterations}',f'fastflow/flow_alpha_beta_const_{h}={a.flow_alpha}',
-                    f'fastflow/expansion_rms_tol_{h}='+('1e-5' if lmax<levels[-1] else '1e-7'),
+                    f'fastflow/expansion_rms_tol_{h}='+('1e-5' if not a.strict_expansion and lmax<levels[-1] else '1e-7'),
                     f'fastflow/mass_tol_{h}=1e-12',f'fastflow/hmean_tol_{h}=100',
                     f'fastflow/use_puncture_massweighted_center_{h}=false']
         start=time.monotonic();row=dict(lmax=lmax,ntheta=ntheta,kind=kind,command=cmd,passed=False,holes=[])
@@ -206,6 +208,8 @@ def main():
         if migration and validate_migration(a.migration_proof,source)!=migration:
             raise ValueError('sampler proof changed during horizon worker')
         row['bound_inputs_unchanged']=True
+        witness=re.search(r'HiSpID horizon_geometry parallel=1 host_concurrency=(\d+)',stdout)
+        row['parallel_geometry_verified']=bool(a.geometry_threads==1 or (witness and int(witness[1])==a.geometry_threads))
         row['import']=import_evidence(stdout,source,migration)
         row['zero_evolution_verified']=bool(re.search(r'time=0\.000000e\+00 cycle=0',stdout) and 'MeshBlock-cycles = 0' in stdout)
         row['attempts']=[]
@@ -295,14 +299,17 @@ def main():
         for h in range(surface_count):
             f,c,q=fine['holes'][h],coarse['holes'][h],quad['holes'][h]
             spectral_area=abs(f['area']/c['area']-1);quadrature_area=abs(q['area']/f['area']-1)
+            mass_change=max(abs(f['mass']/c['mass']-1),abs(q['mass']/f['mass']-1))
+            spins=[np.array(v['coordinate_spin'][:3])/v['mass']**2 for v in (c,f,q)]
+            spin_change=max(float(np.linalg.norm(spins[1]-spins[0])),float(np.linalg.norm(spins[2]-spins[1])))
             buffer=2*(f['shape_change_uniform_bound']+q['shape_change_uniform_bound'])
             buffer_rounding=(64*(lmax+1)*np.finfo(float).eps*(1+buffer+uniform_bound(f['coefficients'])+uniform_bound(q['coefficients'])) if a.enclosure_axis else 0.)
-            check=dict(index=h,spectral_area_relative_change=spectral_area,quadrature_area_relative_change=quadrature_area,
+            check=dict(index=h,mass_relative_change=mass_change,dimensionless_spin_vector_change=spin_change,spectral_area_relative_change=spectral_area,quadrature_area_relative_change=quadrature_area,
                        observed_refinement_buffer=buffer,buffer_rounding_allowance=buffer_rounding,enclosure_margin_after_buffer=q['inner_ball_margin']-buffer-buffer_rounding)
             check['passed']=bool(fine['passed'] and quad['passed'] and spectral_area<1e-5 and quadrature_area<1e-7
-                                 and f['shape_change_uniform_bound']<1e-4 and check['enclosure_margin_after_buffer']>0)
+                                 and mass_change<1e-4 and spin_change<1e-4 and f['shape_change_uniform_bound']<1e-4 and check['enclosure_margin_after_buffer']>0)
             checks.append(check)
-        result['refinement_checks']=checks;result['passed']=all(c['passed'] for c in checks)
+        result['refinement_checks']=checks;result['passed']=all(c['passed'] for c in checks) and (not a.strict_expansion or all(row['passed'] for row in rows))
         result['horizon_enclosure_verified']=result['passed']
         result['common_horizon_verified']=bool(a.common and result['passed'])
     result['note']='Continuous bounds apply to the retained harmonic surfaces. The observed refinement buffer is an empirical truncation check, not a rigorous bound on the exact PDE surface. g/operator modified balls alone are tested; noncompact f/F attenuation tails require exterior constraints. Reported spin is the coordinate rotation integral, not an approximate-Killing-vector spin. Input constraint acceptance remains separate; diagnostic or preliminary input is not promoted to strong binary validation.'
