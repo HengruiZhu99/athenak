@@ -84,3 +84,28 @@ The polar384 control passed on Perlmutter: the actual C++ reader and native
 CPU sampler match Python physical fields and metric gradients exactly, and
 polar513 is rejected with `Invalid checkpoint grid extent`. Records are in
 the native branch's `validation/trumpet/polar-refinement/reader384/` directory.
+
+## Solved moderate binary: consumer and horizons
+
+The full OpenMP consumer built with the larger polar limit has now loaded the
+256x512x16 moderate trumpet checkpoint and passed the l=8/12/16 horizon schedule
+plus an independent l=16 quadrature increase from32 to48 polar points, using
+16 geometry threads. The checkpoint remains diagnostic because its separate
+constraint-resolution sequence fails decreasing bulk error.
+
+The checkpoint-bound producer/CPU-sampler comparison is exact over2454 points.
+The pgen's ADM/Z4c roundtrip error is4.13e-16. Final component irreducible masses
+are0.5887780113536 and0.3935773862669; coordinate-spin magnitudes divided by
+horizon mass squared are0.3895967639598 and0.3726775137246. Final expansion RMS
+values are2.57e-10 and3.15e-9. Both retained surfaces enclose their modified balls,
+including the empirical angular-refinement buffer. Mass and spin-vector changes
+are below1.7e-11. The coordinate spin integral is not an AKV estimator.
+
+Native commit76ac385 preserves the complete inputs, logs, surfaces and assessment:
+[moderate binary horizon evidence](https://github.com/HengruiZhu99/TwoPuncturesC/tree/76ac385/validation/trumpet/convergence/horizon256/surfaces).
+The production executable SHA256 is
+`4d5c4f53bf297ebe4b390ec72a74dd379d6f0182be723d9a0ae83c155dec24e1`.
+Run `check_hispid_binary.py` with `--allow-diagnostic`, the checkpoint-bound
+`--migration-proof`, `--geometry-threads 16`, `--strict-expansion`, and
+`--harmonic-storage factorized` to reproduce this consumer path. Acceptance of
+these horizon checks does not promote the input's constraint-validation status.
