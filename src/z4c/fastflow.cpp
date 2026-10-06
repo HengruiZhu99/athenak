@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cstdio>
 #include <limits>
 #include <iostream>
@@ -691,7 +692,7 @@ void FastFlow::SourceGeometry() {
   int error = 0;
   if (global_variable::my_rank == 0) {
     try {
-      for (int p=0; p<nangles; ++p) {
+      auto sample_point = [&](int p) {
         Real th=gl_grid->polar_pos.h_view(p,0), ph=gl_grid->polar_pos.h_view(p,1);
         if (!std::isfinite(radii(p)) || radii(p)<=0) throw std::runtime_error("Invalid surface radius");
         Real x[3]={center[0]+radii(p)*std::sin(th)*std::cos(ph),
@@ -707,6 +708,26 @@ void FastFlow::SourceGeometry() {
           dgi(c,p)=dg[c];
         }
         havepoint.h_view(p)=1;
+      };
+      if (geometry_source_parallel_safe && nangles>1) {
+        // Materialize lazy, read-only provider caches before launching workers.
+        sample_point(0);
+        std::atomic<bool> failed{false};
+        std::string failure;
+        Kokkos::parallel_for("initial surface geometry",
+            Kokkos::RangePolicy<Kokkos::DefaultHostExecutionSpace>(1,nangles),
+            [&](int p) {
+              if (failed.load(std::memory_order_relaxed)) return;
+              try { sample_point(p); }
+              catch (const std::exception &e) {
+                // Exactly one thread writes the message; read after the fence.
+                if (!failed.exchange(true)) failure=e.what();
+              }
+            });
+        Kokkos::DefaultHostExecutionSpace().fence();
+        if (failed.load()) throw std::runtime_error(failure);
+      } else {
+        for (int p=0; p<nangles; ++p) sample_point(p);
       }
     } catch (const std::exception &e) {
       std::cerr << "FastFlow initial geometry: " << e.what() << std::endl; error=1;

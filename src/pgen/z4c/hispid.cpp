@@ -43,7 +43,7 @@ void Flat(HiSpID_Point &p, double *dg=nullptr) {
 }
 struct ResetSource {
   FastFlow &finder;
-  ~ResetSource() { finder.geometry_source={};finder.initial_shape={}; }
+  ~ResetSource() { finder.geometry_source={};finder.initial_shape={};finder.geometry_source_parallel_safe=false; }
 };
 void VerifyConsumerImage() {
 #if HISPID_DYNAMIC_IMAGE
@@ -255,6 +255,12 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
       finder.expansion_rms_tol=pin->GetOrAddReal("problem","hispid_expansion_rms_tol",1e-6);
     if (!std::isfinite(finder.expansion_rms_tol) || finder.expansion_rms_tol<=0)
       throw std::runtime_error("Initial horizon checks require a positive expansion RMS tolerance");
+    finder.geometry_source_parallel_safe=direct &&
+      pin->GetOrAddBoolean("problem","hispid_parallel_geometry",false);
+    if (global_variable::my_rank==0)
+      std::cout << "HiSpID horizon_geometry parallel=" << finder.geometry_source_parallel_safe
+                << " host_concurrency=" << Kokkos::DefaultHostExecutionSpace().concurrency()
+                << std::endl;
     if (direct) finder.geometry_source=[&](const Real *x,Real *g,Real *K,Real *dg) {
       const auto domain=pack->pmesh->mesh_size;
       if (x[0]<domain.x1min || x[0]>domain.x1max || x[1]<domain.x2min || x[1]>domain.x2max ||

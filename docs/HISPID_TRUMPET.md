@@ -43,3 +43,29 @@ executable is
 `/pscratch/sd/h/hzhu/codex-hispid-trumpet-20261005/build-athenak/src/athena`.
 This establishes compilation/linkage of the full pgen; initial-time import,
 horizon convergence and physical binary acceptance remain pending.
+
+## Parallel direct horizon sampling
+
+`<problem>/hispid_parallel_geometry = true` opts the native HiSpID callback
+into host-parallel surface sampling. Define it in the input file before using
+a command-line override. Build AthenaK with OpenMP and choose the thread count
+with `OMP_NUM_THREADS`. The default remains serial. The callback must support
+concurrent read-only calls after one serial warmup; its owner clears the flag
+when releasing the provider. Worker exceptions are collected and propagated
+before any incomplete surface can advance.
+
+A matched isolated spin-0.99 trumpet at lmax=8, ntheta=16 on Perlmutter,
+using 16 threads, agrees with the previously validated serial mass/spin/area
+to 2.64e-15 scaled error. Expansion RMS is 4.42e-11; runtime was 12.29 s versus
+102.03 s for the earlier serial run (different allocations, not a scaling
+study). A deliberately too-narrow mesh exercises callback failure and exits
+with no horizon data rows. FastFlow creates a header-only summary at startup;
+its existence is not evidence of an accepted horizon. The original test's
+incorrect file-absence assertion and its corrected assessment are retained in
+the native solver's `validation/trumpet/parallel-consumer/` records. The
+three-order angular study is not repeated for this backend control.
+
+`check_hispid_parallel_geometry.py` reproduces these two checks using a bound,
+passing serial baseline. `perlmutter_trumpet_parallel.sh` records the isolated
+build recipe; its output directory must be fresh when rerunning the control.
+Binary physical convergence and Gamma=10 horizon acceptance remain pending.

@@ -64,6 +64,9 @@ class FastFlow {
   // evaluates it; the ordinary surface-integral collectives remain in use.
   // The owner must clear the callback before releasing its data/evolving.
   std::function<void(const Real *, Real *, Real *, Real *)> geometry_source;
+  // Opt-in only: after one serial warmup call, callback/data must support
+  // concurrent read-only calls. The owner must not mutate data during Find.
+  bool geometry_source_parallel_safe = false;
   std::function<Real(Real, Real)> initial_shape;
   Real expansion_rms_tol; // <=0 retains historical mass-stabilization criterion
   bool require_complete_surface;
