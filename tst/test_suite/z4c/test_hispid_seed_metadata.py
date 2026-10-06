@@ -25,6 +25,32 @@ class ExactSeedMetadataTests(unittest.TestCase):
         return dict(path=str(path),file_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
             source_library_sha256='a'*64,acceptance='analytic_seed')
 
+    def test_trumpet_metadata_and_import_family_binding(self):
+        from check_hispid_binary import checkpoint_metadata
+        from hispid_sampler_proof import import_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'seed.txt';original=self.fixture(path,.99,0.)
+            text=original.replace('HISPID_CHECKPOINT 1','HISPID_CHECKPOINT 2').replace(
+                'library_sha256','seed_family trumpet_r0_m\nlibrary_sha256')
+            path.write_text(text);source=exact_seed_source(self.entry(path),'kerr99')
+            self.assertEqual(source['seed_family'],'trumpet_r0_m')
+            line='HiSpID import source='+('a'*64)+' acceptance=analytic_seed consumer='+('a'*64)+' ADM/Z4c relative error=1e-16'
+            self.assertFalse(import_evidence(line,source)['passed'])
+            self.assertFalse(import_evidence(line+' seed_family=qi',source)['passed'])
+            self.assertTrue(import_evidence(line+' seed_family=trumpet_r0_m',source)['passed'])
+            for bad in (text.replace('trumpet_r0_m','unknown'),text.replace('HISPID_CHECKPOINT 2','HISPID_CHECKPOINT 1')):
+                path.write_text(bad)
+                with self.assertRaises(ValueError):checkpoint_metadata(path,False)
+
+    def test_surface_oracle_uses_trumpet_coordinate_radius(self):
+        import math
+        from check_hispid_controls import shape_error
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'shape.txt'
+            path.write_text(str(math.sqrt(4*math.pi))+'\n')
+            self.assertLess(shape_error(path,0,0,0,'trumpet_r0_m'),1e-14)
+            self.assertGreater(shape_error(path,0,0,0,'qi'),.9)
+
     def test_targets_are_checked_against_actual_zero_correction_file(self):
         import math
         with tempfile.TemporaryDirectory() as directory:

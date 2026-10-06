@@ -57,7 +57,7 @@ void VerifyConsumerImage() {
       throw std::runtime_error(std::string("HiSpID consumer symbol unavailable: ")+name);
     return error?nullptr:value;
   };
-  for (const auto name:{"HiSpID_create_sampler","HiSpID_sample","HiSpID_sample_with_derivatives"}) {
+  for (const auto name:{"HiSpID_create_sampler","HiSpID_create_with_seed_family","HiSpID_seed_family","HiSpID_sample","HiSpID_sample_with_derivatives"}) {
     Dl_info info{};
     if (!dladdr(address(name,true),&info) || !info.dli_fname ||
         std::filesystem::canonical(info.dli_fname)!=expected)
@@ -90,7 +90,11 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
     throw std::runtime_error("Checkpoint/consumer-library SHA differs; validate the new build before explicit migration");
   if (checkpoint.acceptance=="diagnostic" && !pin->GetOrAddBoolean("problem","hispid_allow_diagnostic",false))
     throw std::runtime_error("Diagnostic checkpoint requires hispid_allow_diagnostic=true");
-  hispid_import::Context data(HiSpID_create_sampler(&checkpoint.config));
+  hispid_import::Context data(checkpoint.seed_family==HISPID_SEED_QI
+      ? HiSpID_create_sampler(&checkpoint.config)
+      : HiSpID_create_with_seed_family(&checkpoint.config,checkpoint.seed_family,0,0,1));
+  if (data && HiSpID_seed_family(data.get())!=checkpoint.seed_family)
+    throw std::runtime_error("HiSpID consumer seed-family mismatch");
   if (!data || HiSpID_set_unknowns(data.get(),checkpoint.unknowns.data(),checkpoint.unknowns.size()))
     throw std::runtime_error(std::string("HiSpID checkpoint: ")+HiSpID_last_error());
   const bool flat=pin->GetOrAddBoolean("problem","hispid_flat_control",false);
@@ -153,7 +157,8 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
   if (global_variable::my_rank==0) {
     std::cout << "HiSpID import source=" << checkpoint.library_sha << " acceptance=" << checkpoint.acceptance
               << " consumer=" << HISPID_LIBRARY_SHA256
-              << " ADM/Z4c relative error=" << std::setprecision(17) << error << std::endl;
+              << " ADM/Z4c relative error=" << std::setprecision(17) << error
+              << " seed_family=" << (checkpoint.seed_family==HISPID_SEED_QI?"qi":"trumpet_r0_m") << std::endl;
   }
   if (pin->GetOrAddBoolean("problem","hispid_mesh_constraints",false)) {
     switch (ind.ng) {
@@ -266,7 +271,8 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
     // ellipsoid is not a common-horizon initial guess.
     if (seed_guess && !common && !flat) {
       const double s2=hole.spin[0]*hole.spin[0]+hole.spin[1]*hole.spin[1]+hole.spin[2]*hole.spin[2];
-      const double rh=.5*hole.mass*std::sqrt(1-s2/std::pow(hole.mass,4));
+      const double radius_factor=checkpoint.seed_family==HISPID_SEED_QI?.5:1.;
+      const double rh=radius_factor*hole.mass*std::sqrt(1-s2/std::pow(hole.mass,4));
       const double v2=hole.velocity[0]*hole.velocity[0]+hole.velocity[1]*hole.velocity[1]+hole.velocity[2]*hole.velocity[2];
       finder.initial_shape=[=](Real th,Real ph) {
         double vn=hole.velocity[0]*std::sin(th)*std::cos(ph)+hole.velocity[1]*std::sin(th)*std::sin(ph)+hole.velocity[2]*std::cos(th);

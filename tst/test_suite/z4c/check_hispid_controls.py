@@ -12,7 +12,7 @@ from fastflow_storage import harmonic_table_bytes,storage_evidence
 
 ROOT=Path(__file__).resolve().parents[2]
 
-def shape_error(path,lmax,chi,speed=.885):
+def shape_error(path,lmax,chi,speed=.885,seed_family='qi'):
     # Independent Legendre polynomials; high orders use SciPy's normalized
     # harmonic oracle to avoid overflowing unnormalized factorial derivatives.
     coefficients=np.atleast_2d(np.loadtxt(path))[-1]
@@ -39,7 +39,9 @@ def shape_error(path,lmax,chi,speed=.885):
     radius=cosine[:,0,None]+np.zeros((len(mu),len(phi)))
     for m in range(1,lmax+1):radius+=cosine[:,m,None]*np.cos(m*phi)+sine[:,m,None]*np.sin(m*phi)
     nx=np.sqrt(1-mu*mu)[:,None]*np.cos(phi);G=1/np.sqrt(1-speed**2)
-    expected=.5*np.sqrt(1-chi*chi)/np.sqrt(1+(G*G-1)*nx*nx)
+    if seed_family not in ('qi','trumpet_r0_m'):raise ValueError('unsupported surface seed family')
+    factor=.5 if seed_family=='qi' else 1.
+    expected=factor*np.sqrt(1-chi*chi)/np.sqrt(1+(G*G-1)*nx*nx)
     if not np.isfinite(radius).all():raise ValueError('nonfinite independent surface oracle')
     return float(np.max(abs(radius/expected-1)))
 
@@ -225,7 +227,7 @@ def main():
                 if case in ('kerr95','kerr99'):
                     row['spin_error']=float(abs(values[5]-chi));row['passed'] &= row['spin_error']<2e-5
                 elif 'boost885' in case or case=='gamma10':
-                    row['shape_sampled_relative_linf']=shape_error(run/'hispid.horizon_shape_0.txt',lmax,chi,speed)
+                    row['shape_sampled_relative_linf']=shape_error(run/'hispid.horizon_shape_0.txt',lmax,chi,speed,source['seed_family'])
                     row['passed'] &= row['shape_sampled_relative_linf']<1e-6
                     row['shape_oracle']=dict(method='scipy.special.sph_harm_y' if lmax>64 else 'NumPy Legendre-polynomial derivatives',
                         ntheta=max(40,2*lmax+3),nphi=max(80,4*lmax+6),additional_cardinal_directions=True,

@@ -25,6 +25,8 @@ def validate_migration(path,source):
     checkpoint=proof['checkpoint']
     for key in ('file_sha256','source_library_sha256','acceptance','parameterization'):
         if checkpoint.get(key)!=source.get(key):raise ValueError('migration/checkpoint binding differs: '+key)
+    if checkpoint.get('seed_family','qi')!=source.get('seed_family','qi'):
+        raise ValueError('migration/checkpoint seed family differs')
     if proof['producer_library_sha256']!=source['source_library_sha256']:
         raise ValueError('migration producer mismatch')
     consumer=proof['consumer_library_sha256']
@@ -82,6 +84,9 @@ def import_evidence(stdout,source,migration=None):
                 adm_z4c_relative_error=error,explicit_migration=migration is not None)
     result['passed']=bool(match[1]==source['source_library_sha256'] and match[2]==source['acceptance']
         and match[3]==expected and math.isfinite(error) and 0<=error<1e-11)
+    family=re.search(r'HiSpID import[^\n]* seed_family=(\w+)',stdout)
+    result['seed_family']=family[1] if family else 'qi'
+    result['passed'] &= result['seed_family']==source.get('seed_family','qi')
     image=re.search(r'HiSpID consumer_image=("(?:[^"\\]|\\.)*")',stdout)
     if image:
         loaded=Path(json.loads(image[1])).resolve(strict=True)

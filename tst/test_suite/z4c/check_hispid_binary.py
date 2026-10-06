@@ -45,15 +45,22 @@ def checkpoint_metadata(path,require_two_active=True):
             words=line.split()
             if not words:continue
             if words[0]=='unknowns':break
+            if words[0] in meta:raise ValueError('duplicate checkpoint field')
             meta[words[0]]=words[1:]
-    if meta.get('HISPID_CHECKPOINT')!=['1']:raise ValueError('checkpoint version')
+    version=meta.get('HISPID_CHECKPOINT')
+    if version not in (['1'],['2']):raise ValueError('checkpoint version')
+    family='qi'
+    if version==['2']:
+        if meta.get('seed_family') not in (['qi'],['trumpet_r0_m']):raise ValueError('checkpoint seed family')
+        family=meta['seed_family'][0]
+    elif 'seed_family' in meta:raise ValueError('v1 checkpoint cannot carry a seed family')
     holes=[list(map(float,meta['hole'+str(h)])) for h in range(2)]
     if require_two_active and any(x[0]<=0 for x in holes):raise ValueError('two active holes required')
     if hashlib.sha256(path.read_bytes()).hexdigest()!=initial_sha:raise ValueError('checkpoint changed while reading metadata')
     return dict(path=str(path),file_sha256=initial_sha,
                 source_library_sha256=meta['library_sha256'][0],acceptance=meta['acceptance'][0],
                 holes=holes,inner_max=list(map(float,meta['inner_max'])),
-                inner_flatten=int(meta['inner_flatten'][0]),parameterization=meta['parameterization'][0])
+                inner_flatten=int(meta['inner_flatten'][0]),parameterization=meta['parameterization'][0],seed_family=family)
 
 
 def main():

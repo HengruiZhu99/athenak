@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "scope": "standalone_actual_reader_and_sampler_only",
+  "athenak_evolution_or_horizon_run": false,
+  "records": [
+    {
+      "family": "qi",
+      "scaled_linf": 0.0,
+      "metadata": {
+        "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/docs/trumpet-checkpoint-20261005-final/qi.checkpoint",
+        "file_sha256": "bafee8530adff902bfb99e2d356d4043d2ba5026c05b53e79b381f32142bef65",
+        "source_library_sha256": "439c82359e044269ecab3aa01d2f43f7e3ccae69b85077d062b644d8b356c71e",
+        "acceptance": "analytic_seed",
+        "seed_family": "qi",
+        "format_version": 1
+      }
+    },
+    {
+      "family": "trumpet_r0_m",
+      "scaled_linf": 0.0,
+      "metadata": {
+        "path": "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/docs/trumpet-checkpoint-20261005-final/trumpet_r0_m.checkpoint",
+        "file_sha256": "1486e62086c15128951069d53618cfc78d366100a8e10923f90577bb239e49c1",
+        "source_library_sha256": "439c82359e044269ecab3aa01d2f43f7e3ccae69b85077d062b644d8b356c71e",
+        "acceptance": "analytic_seed",
+        "seed_family": "trumpet_r0_m",
+        "format_version": 2
+      }
+    }
+  ],
+  "rejected": [
+    {
+      "case": "unknown_family",
+      "error": "Unsupported HiSpID seed family"
+    },
+    {
+      "case": "mislabelled_v1",
+      "error": "Expected checkpoint field: library_sha256"
+    },
+    {
+      "case": "missing_family",
+      "error": "Expected checkpoint field: seed_family"
+    }
+  ],
+  "compile_command": [
+    "c++",
+    "-std=c++17",
+    "-O2",
+    "-I/Users/hz0693/research/lazarus/.hispid-worktrees/TwoPuncturesC-trumpet/include",
+    "-I/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/src/pgen/z4c",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/tst/test_suite/z4c/hispid_checkpoint_probe.cpp",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/TwoPuncturesC-trumpet/build-hispid-trumpet/libHiSpID.so",
+    "-Wl,-rpath,/Users/hz0693/research/lazarus/.hispid-worktrees/TwoPuncturesC-trumpet/build-hispid-trumpet",
+    "-o",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/docs/trumpet-checkpoint-20261005-final/reader"
+  ],
+  "execution_cwd": "/Users/hz0693/research/lazarus/.hispid-worktrees/TwoPuncturesC-trumpet",
+  "sha256": {
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/TwoPuncturesC-trumpet/build-hispid-trumpet/libHiSpID.so": "439c82359e044269ecab3aa01d2f43f7e3ccae69b85077d062b644d8b356c71e",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/src/pgen/z4c/hispid_checkpoint.hpp": "e0694a9459f7a093bf86232885414b656942da3699382a82f5b8f8e1cd41f6db",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/tst/test_suite/z4c/check_trumpet_checkpoint.py": "17b1cbccbb2eb5fd4d5e30b05a1ee68ebc0ca638641052689d6635ff930f762d",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/tst/test_suite/z4c/hispid_checkpoint_probe.cpp": "52454535cc1e718092dd71368cb58dba6a558dd3a20c7a8a8ad43ab7b66a7358",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/TwoPuncturesC-trumpet/python/checkpoint_export.py": "77cd4915788b5fd45a30b7aee2c2b9e6b9cc28fb8526dcc56be24fe4300604e0",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/TwoPuncturesC-trumpet/python/hispid.py": "e1ea73652634909962f5ce31f470fe3692724e652bb93c0a3eaab966493b8137",
+    "/Users/hz0693/research/lazarus/.hispid-worktrees/AthenaK-trumpet/docs/trumpet-checkpoint-20261005-final/reader": "021c291f7fedb1fb3d97656516313a1eab4cb095a22c67adfc60cae1611d8bf5"
+  }
+}

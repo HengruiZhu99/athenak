@@ -13,6 +13,7 @@
 namespace hispid_import {
 struct Checkpoint {
   HiSpID_Config config{};
+  int seed_family=HISPID_SEED_QI;
   std::string library_sha, acceptance;
   std::vector<double> unknowns;
 };
@@ -29,9 +30,15 @@ inline Checkpoint Read(const std::string &filename, const std::string &expected_
   auto integer=[&](int &value) { if (!(in>>value)) throw std::runtime_error("Invalid checkpoint integer"); };
   Checkpoint result;auto &c=result.config;
   label("HISPID_CHECKPOINT");int version;integer(version);
-  if (version!=1) throw std::runtime_error("Unsupported HiSpID checkpoint version");
+  if (version!=1 && version!=2) throw std::runtime_error("Unsupported HiSpID checkpoint version");
   label("parameterization");std::string parameterization;in>>parameterization;
   if (parameterization!=HiSpID_unknown_parameterization()) throw std::runtime_error("Unsupported HiSpID unknown parameterization");
+  if (version==2) {
+    label("seed_family");std::string family;in>>family;
+    if (family=="qi") result.seed_family=HISPID_SEED_QI;
+    else if (family=="trumpet_r0_m") result.seed_family=HISPID_SEED_TRUMPET_R0_M;
+    else throw std::runtime_error("Unsupported HiSpID seed family");
+  }
   label("library_sha256");in>>result.library_sha;
   if (result.library_sha.size()!=64 || result.library_sha.find_first_not_of("0123456789abcdef")!=std::string::npos ||
       result.library_sha!=expected_sha) throw std::runtime_error("Checkpoint source-library SHA does not match input");
