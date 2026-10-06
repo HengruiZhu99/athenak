@@ -129,3 +129,12 @@ l12 and l16 pass in35.49 and50.42 seconds, versus670.69 and1226.91 seconds
 from seed-radius initialization. Mass and coordinate spin agree within1e-12.
 These checks validate initial-guess reuse; the input binary still fails
 independent physical constraint requirements and is not accepted physical data.
+
+The full focused spin99 horizon schedule59410814 subsequently passed orders
+12/16/20 and the20x60 quadrature control. Final component mass is.50001785189996,
+Mirr=.37776358547565, coordinate chi=.98992952098846, and expansion RMS5.976e-9.
+Maximum mass-relative/spin-vector changes are1.106e-11/3.788e-11. Both retained
+surfaces enclose their modified balls with a.03226304058 margin after the
+empirical refinement buffer. Full evidence is in the native branch under
+`validation/trumpet/spin-focused-map/horizon160-warm/surfaces`. Independent
+physical constraints of the input remain outside acceptance.
