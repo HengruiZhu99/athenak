@@ -65,8 +65,10 @@ inline Checkpoint Read(const std::string &filename, const std::string &expected_
   label("krylov_restart");integer(c.krylov_restart);
   label("memory_limit_mib");integer(c.memory_limit_mib);
   std::size_t count=4;
-  for (int n:c.n) {
-    if (n<4 || n>256) throw std::runtime_error("Invalid checkpoint grid extent");
+  const int limits[3]={HISPID_MAX_RADIAL_POINTS,HISPID_MAX_POLAR_POINTS,HISPID_MAX_AZIMUTHAL_POINTS};
+  for (int axis=0;axis<3;++axis) {
+    const int n=c.n[axis];
+    if (n<4 || n>limits[axis]) throw std::runtime_error("Invalid checkpoint grid extent");
     count*=static_cast<std::size_t>(n);
   }
   label("unknowns");std::size_t saved_count;if (!(in>>saved_count) || saved_count!=count)

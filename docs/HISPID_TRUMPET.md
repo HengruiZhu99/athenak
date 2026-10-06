@@ -72,3 +72,15 @@ three-order angular study is not repeated for this backend control.
 passing serial baseline. `perlmutter_trumpet_parallel.sh` records the isolated
 build recipe; its output directory must be fresh when rerunning the control.
 Binary physical convergence and Gamma=10 horizon acceptance remain pending.
+
+The checkpoint reader now uses the native header's per-axis extent limits,
+including polar extents through512, with radial/azimuthal limits still256.
+Sampler memory budgets and image binding are unchanged. The focused reader
+control accepts `--polar-extent 384` to check the actual reader/sampler path
+and reject polar513 without repeating the earlier family-metadata matrix.
+Full horizon validation of any newly refined solved binary remains pending.
+
+The polar384 control passed on Perlmutter: the actual C++ reader and native
+CPU sampler match Python physical fields and metric gradients exactly, and
+polar513 is rejected with `Invalid checkpoint grid extent`. Records are in
+the native branch's `validation/trumpet/polar-refinement/reader384/` directory.
