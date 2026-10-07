@@ -4,7 +4,9 @@
 
 **This branch does not implement a complete hyperboloidal Z4c evolution.** It adds
 regular CMC reference geometry, a factored reference gauge kernel, and a stable
-boundary-fitted radial characteristic prototype. The production Z4c RHS, mesh task
+boundary-fitted radial characteristic prototype. It also includes off-shell physical
+Hamiltonian/momentum and Z4 constraint kernels in regular conformal variables.
+The production Z4c RHS, mesh task
 graph, and ADM conversion are unchanged. There is no hyperboloidal runtime mode.
 The CMake option only builds tests.
 
@@ -251,3 +253,77 @@ The equation/gauge reference is
 [Height-function-based 4D reference metrics for hyperboloidal evolution](https://doi.org/10.1007/s10714-024-03323-8).
 The implementation is an original algebraic specialization and test harness;
 no published evolution code has been imported.
+
+## Milestone 2: off-shell constraint diagnostics
+
+`conformal_constraints.hpp` now evaluates Cartesian spatial geometry and vacuum
+physical ADM constraints from the Penrose-rescaled spatial metric and extrinsic
+curvature, including their spatial derivatives. These kernels accept arbitrary
+data; they do not subtract the Minkowski reference and do not assume the constraints
+are satisfied. They are not yet connected to production field output.
+
+Let `w = n_bar(Omega)`, `b = gamma_bar`, and `k = K_bar`. Write `D`, `R`, tensor
+contractions, and `div(k)` using b. Then the implemented identities are
+
+```
+gamma_phys = Omega^-2 b
+K_physij   = Omega^-1 k_ij + Omega^-2 b_ij w
+K_phys     = Omega tr(k) + 3 w
+
+H_phys = Omega^2 [R + tr(k)^2 - k_ij k^ij]
+         +4 Omega [D^2 Omega + w tr(k)]
+         -6 [|D Omega|^2 - w^2]
+
+M_phys_i = Omega [D_j k^j_i - D_i tr(k)]
+           -2 k^j_i D_j Omega -2 D_i w.
+```
+
+For fixed Omega, `w=-beta.grad(Omega)/alpha`; the helper also evaluates its spatial
+gradient from lapse/shift derivatives. Neither physical constraint formula divides
+by Omega. The reported null residual is `|D Omega|^2-w^2`. Its vanishing is required
+at scri, not throughout the domain.
+
+Both momentum norms are retained: `b^ij M_i M_j` and the physical norm
+`Omega^2 b^ij M_i M_j`. Reporting only the latter would hide some boundary violations.
+Likewise, the spatial Z diagnostic retains its unweighted covector and conformal
+norm alongside its physical norm. The Z4 helper takes the twice-conformal spatial
+metric and computes
+
+```
+Z_i = (1/2) g_tilde_ij [Lambda^j - contracted_Gamma(g_tilde)^j]
+determinant_residual = det(g_tilde)-1
+tracefree_residual   = g_tilde^ij A_ij.
+```
+
+This expression assumes the Cartesian CMC reference's zero spatial connection.
+Theta must be supplied in its physical normalization explicitly. The helper does
+not silently reinterpret the existing AthenaK evolution variable. Invalid spatial
+metrics and nonfinite results produce a false validity flag; the physical
+constraint helper also returns a NaN Hamiltonian for an invalid geometry.
+
+The `hyperboloidal_constraints` CTest adds:
+
+* CMC Hamiltonian/momentum identities along a non-axis-aligned radius including
+  the origin and scri, evaluated in a Kokkos Serial kernel.
+* A non-flat, non-diagonal manufactured metric with nonzero curvature shear and
+  nonzero constraints. Its Ricci scalar is checked against the analytic conformal
+  transformation of a constant metric. A separate finite-difference path constructs
+  the physical ADM fields and checks convergence to the conformal constraints.
+* Incompatible data at scri that must remain visible in H and unweighted M.
+* Nonzero Theta, spatial Z, determinant and trace-free diagnostics.
+* Exact vacuum Hamiltonian/momentum checks on time-symmetric isotropic Schwarzschild
+  data away from the puncture. This tests diagnostics, not hyperboloidal puncture
+  evolution.
+
+For the two manufactured points, halving spacing from 0.02 through 0.0025 reduces
+Hamiltonian and momentum errors by approximately four on each step. Final H errors
+are 6.51e-5 and 1.90e-5; final maximum component M errors are 5.06e-6 and 9.40e-6.
+Both hyperboloidal CTests pass in Release and in the strict-warning ASan/UBSan Debug
+build on one Serial execution thread. This milestone changes no production RHS.
+
+The next evolution implementation is based on the general tensor equations in
+Appendix B of [arXiv:1412.3827](https://arxiv.org/abs/1412.3827), with the physical
+trace/Theta transformation in section 7. The source explicitly identifies an
+instability in evolving the untransformed conformal trace. The target remains a
+single-puncture hyperboloidal evolution with constraint, convergence and stability
+tests; these diagnostics do not fulfill that target on their own.
