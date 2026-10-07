@@ -29,6 +29,7 @@ template <typename T>
 struct SpatialGeometry {
   bool valid;
   T determinant, inverse[3][3], connection[3][3][3], ricci[3][3], scalar;
+  T contracted[3], dcontracted[3][3];  // dcontracted[derivative][component]
 };
 
 template <typename T>
@@ -69,6 +70,15 @@ SpatialGeometry<T> Geometry(const MetricJet<T> &m) {
       dconnection[d][k][i][j] += T(0.5)*(dinverse[d][k][a]*first
           + out.inverse[k][a]*(m.ddg[d][i][a][j]+m.ddg[d][j][a][i]
                                -m.ddg[d][a][i][j]));
+    }
+  }
+  for (int i = 0; i < 3; ++i)
+  for (int j = 0; j < 3; ++j)
+  for (int k = 0; k < 3; ++k) {
+    out.contracted[i] += out.inverse[j][k]*out.connection[i][j][k];
+    for (int d = 0; d < 3; ++d) {
+      out.dcontracted[d][i] += dinverse[d][j][k]*out.connection[i][j][k]
+          +out.inverse[j][k]*dconnection[d][i][j][k];
     }
   }
   for (int i = 0; i < 3; ++i)

@@ -6,7 +6,8 @@
 regular CMC reference geometry, a factored reference gauge kernel, and a stable
 boundary-fitted radial characteristic prototype. It also includes off-shell physical
 Hamiltonian/momentum and Z4 constraint kernels in regular conformal variables.
-The production Z4c RHS, mesh task
+The nonlinear conformal interior tensor RHS is implemented as an experimental
+kernel, with its scri pole numerators exposed. The production Z4c RHS, mesh task
 graph, and ADM conversion are unchanged. There is no hyperboloidal runtime mode.
 The CMake option only builds tests.
 
@@ -233,10 +234,10 @@ The accuracy target was retained and the convergence sequence refined to
 
 ## Work still required for the requested solver
 
-1. Derive and implement the full off-constraint conformal Z4c equations, including
-   definitions of Theta and Khat, connection constraints and damping. Reference
-   Einstein sources cannot replace the metric-dependent Omega^-1/Omega^-2 terms.
-   Prove the limiting combinations at scri and verify them on nontrivial data.
+1. Integrate the experimental off-constraint conformal Z4c interior tensor kernel
+   into a time evolution. Reference Einstein sources cannot replace its nonlinear
+   geometric terms. Prove the limiting combinations at scri and verify them on
+   nontrivial data; the existing interior assembler explicitly refuses Omega=0.
 2. Close the gauge and metric limiting equations together. Check the complete
    coupled principal symbol and compatible initial data, not only isolated lapse
    or radial physical speeds. Arbitrary perturbations of factored fields need not
@@ -327,3 +328,93 @@ trace/Theta transformation in section 7. The source explicitly identifies an
 instability in evolving the untransformed conformal trace. The target remains a
 single-puncture hyperboloidal evolution with constraint, convergence and stability
 tests; these diagnostics do not fulfill that target on their own.
+
+## Milestone 3: nonlinear conformal interior RHS (2026-10-07)
+
+`conformal_rhs.hpp` implements the vacuum tensor system with C_Z4c=0 and the
+physical curvature/constraint variables
+
+```
+P = K_phys - 2 Theta_phys = Omega Khat_bar + 3 w
+T = Theta_phys = Omega Theta_bar,
+w = n_bar(Omega).
+```
+
+`Z4cJet.trace` stores the full P, not P minus its reference value. The other inputs
+are chi, the unit-determinant metric, its trace-free curvature A, Lambda, lapse,
+shift and their Cartesian spatial derivatives. `PenroseMetric` converts spatial
+metric jets without changing the variable interpretation. `Geometry` additionally
+provides contracted connection derivatives for computing spatial Z derivatives.
+
+The kernel implements chi, metric, A, P, T and Lambda evolution. Lapse/shift
+evolution is supplied separately by the gauge kernel; neither time integration nor
+a numerical spherical boundary is included in this milestone. The equations assume
+the algebraic determinant/trace-free constraints, which must be enforced by the
+eventual time integrator.
+
+The returned form is `dt(u) = regular + pole/Omega`. Both returned parts are finite
+functions of regular fields, including at Omega=0. The assembler requires positive
+Omega and rejects nonfinite results; it never floors Omega. The pole numerators
+must satisfy compatibility conditions before a boundary limit may replace this
+interior formula. In particular, a finite numerator is not a finite RHS.
+
+Using the Penrose spatial metric b and its derivative D, B=P+2T, and
+`A2 = A_ij A^ij` with the twice-conformal metric, the transformed trace equation is
+
+```
+P_t = beta.grad(P) + Omega [alpha A2 - D^2 alpha]
+      +3 D(alpha).D(Omega) + alpha D^2 Omega
+      +(alpha/Omega) [B^2/3 - 3 |D Omega|^2 + kappa1 (1-kappa2) T].
+```
+
+The chain rule cancels every gauge time derivative and every double pole. The
+Theta equation from the tensor system retains `-3 alpha w T/Omega`. This differs
+from the later stabilized spherical equations in the same paper, which omit that
+off-constraint term. The kernel explicitly chooses the tensor system and tests the
+coefficient; a subsequent stability experiment may motivate the published
+alternative, but the two versions are not silently conflated here.
+
+`EvolvedConstraints` evaluates H, M, Theta, Z and algebraic residuals from these
+evolved variables directly. In particular, H and M no longer depend on w:
+
+```
+H_phys = Omega^2 [R(b)-A2] + (2/3) B^2 +4 Omega D^2 Omega-6 |D Omega|^2
+M_phys_i = Omega [Dtilde_j A^j_i - (3/2) A^j_i d_j(log chi)]
+           -(2/3) d_i B -2 A^j_i d_j Omega.
+```
+
+Thus diagnostics at scri do not reconstruct `K_bar=(B-3w)/Omega`. Tests compare
+them with the previous ADM-jet diagnostics off the constraint surface and verify
+that incompatible data at scri remain visible.
+
+The new `hyperboloidal_rhs` CTest verifies:
+
+* The complete interior geometric RHS vanishes on CMC Minkowski, using a Serial
+  Kokkos kernel along a non-axis-aligned radius.
+* Reconstructing ordinary ADM metric and curvature evolution from the Omega=1,
+  Z=Theta=0 limit agrees with independent ADM equations on data with nonzero H.
+  Theta must respond to the Hamiltonian violation in this test.
+* All RHS components approach zero at second order on a different exact solution:
+  the stationary Schwarzschild CMC exterior with M=0.05, K_phys=-3 and C=0,
+  compactified using the Minkowski Omega. Finite differences sample the exact
+  non-flat solution; there is no Schwarzschild reference subtraction.
+* Nonzero Theta/spatial-Z damping has the physical normalization and the retained
+  off-constraint w term is exercised. Zero/negative Omega assembly, overflowing
+  results and negative chi are rejected.
+
+At compactified radii 0.3, 0.65 and 0.85, halving stencil spacing from 0.004 through
+0.0005 reduces the maximum stationary RHS residual by approximately four per step.
+The finest residuals are 4.97e-6, 1.56e-7 and 3.50e-8. These are pointwise spatial
+consistency tests, not time-evolution stability or global convergence results.
+
+`python3 tst/hyperboloidal/check_rhs_transform.py` independently checks the trace,
+Theta, A and Lambda variable transformations with SymPy. It keeps lapse and
+compactifier time derivatives independent and verifies their cancellation, rather
+than assuming stationarity. All three CTests pass in Release and strict-warning
+ASan/UBSan Debug builds on one Serial thread. Changed files pass repository lint.
+
+Next: connect this RHS and gauge to a boundary-fitted time-evolution driver, test
+the scri limiting/staggered treatments on constraint and gauge perturbations, and
+then construct and evolve Schwarzschild trumpet/puncture initial data. The C=0
+Schwarzschild exterior test above is not such a puncture and does not complete the
+active single-puncture goal.
