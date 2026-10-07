@@ -261,3 +261,12 @@ configure_file(config.hpp.in config.hpp)
 
 install( TARGETS athena DESTINATION bin )
 
+# Opt-in building-block tests; does not enable hyperboloidal Z4c evolution.
+option(Athena_ENABLE_HYPERBOLOIDAL_TESTS "Build experimental hyperboloidal tests" OFF)
+if (Athena_ENABLE_HYPERBOLOIDAL_TESTS)
+  enable_testing()
+  add_executable(hyperboloidal_tests tst/hyperboloidal/test_hyperboloidal.cpp)
+  target_include_directories(hyperboloidal_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
+  target_link_libraries(hyperboloidal_tests PRIVATE Kokkos::kokkos)
+  add_test(NAME hyperboloidal_building_blocks COMMAND hyperboloidal_tests)
+endif()
