@@ -650,7 +650,7 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     }
 
     // ADM gauge variables
-    if (nullptr == pm->pmb_pack->pz4c) {
+    if (nullptr == pm->pmb_pack->pz4c || pm->pmb_pack->padm->separate_z4c_gauge) {
       for (int v = adm::ADM::nadm - 4; v < adm::ADM::nadm; ++v) {
         if (variable.compare("adm") == 0 ||
             variable.compare(adm::ADM::ADM_names[v]) == 0) {

@@ -218,7 +218,8 @@ TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ConvertZ4cToADM(Driver *pdrive, int stage) {
-  if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages) {
+  if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages
+      || pmy_pack->padm->separate_z4c_gauge) {
     Z4cToADM(pmy_pack);
   }
   return TaskStatus::complete;

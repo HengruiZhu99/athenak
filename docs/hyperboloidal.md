@@ -11,11 +11,12 @@ constraint and field errors. Global constraint convergence is slow near the
 puncture; this is finite-duration evidence, not a long-time stability result.
 See the final section for the successful parameters and measured limitations.
 
-**The requested production 3D solver is not complete.** The AthenaK Z4c task
-graph and ADM conversion are unchanged. The CMake option builds the tests and
+**The requested production 3D solver is not complete.** AthenaK now has opt-in
+independent ADM gauge storage, but its production evolution remains Cauchy.
+The CMake option builds the tests and
 standalone spherical executable; it does not enable a hyperboloidal AthenaK
 runtime mode. Cartesian spherical-boundary stencils, full mesh integration and
-longer puncture stability tests remain outstanding. GPU/MPI testing is out of
+long-time puncture stability beyond the tests below remain outstanding. GPU/MPI testing is out of
 scope. The sections below retain the equation derivations and earlier failed
 experiments so their limitations and subsequent fixes remain auditable.
 
@@ -712,12 +713,11 @@ lapse and shift for Omega>0, and rejects scri/exterior evaluation without a floo
 The physical curvature uses P+2Theta and Omega*A. Non-diagonal, tracefree test data
 with nonzero Theta verify those factors and recovery of the physical trace.
 
-A concrete integration obstacle is that `coordinates/adm.cpp` currently aliases
-ADM lapse to Z4c lapse. The physical lapse and evolved Penrose lapse differ by
-Omega, so a conformal runtime must allocate independent ADM lapse storage before
-using this conversion. The adapter intentionally returns point values rather than
-writing physical lapse through the current shared alias. The production task graph
-remains unchanged and no incomplete hyperboloidal runtime switch has been exposed.
+The physical lapse and evolved Penrose lapse differ by Omega. The default ADM
+storage aliases Z4c lapse; the opt-in independent storage described below removes
+that obstacle. The adapter intentionally returns point values. A future conformal
+runtime must dispatch this conversion instead of the current Cauchy conversion;
+no hyperboloidal production runtime switch has been exposed.
 
 The live puncture gauge is now a shared, three-dimensional
 `UnfactoredReferenceGauge` kernel. It returns separate regular and pole parts,
@@ -739,8 +739,8 @@ result. An unused overload-tag parameter in the shared task-list header was made
 anonymous so this real-header test can compile under strict warnings; no task-list
 behavior changed.
 
-The next integration steps remain independent physical ADM gauge storage, a
-validated sphere-crossing stencil/closure and active-cell policy, and dispatch of
+The next integration steps remain a validated sphere-crossing stencil/closure
+and active-cell policy, and dispatch of
 the conformal kernel with compatible initialization, RK, constraints and outputs.
 Passing the interior adapter tests does not complete those steps.
 
@@ -759,5 +759,42 @@ non-evolution ASan/UBSan CTests pass, and the final adapter assertions were rebu
 and rerun under sanitizers after adding nonzero component/value checks and
 conversion-underflow rejection. A short live-puncture sanitizer run also passes
 through t=0.02. The full longer spherical runs are Release-only. Changed C++ files
-and Python regression scripts pass lint. A finer 512-cell t=20 run is being tracked
-separately; its incomplete history is not counted as a passed long-time test here.
+and Python regression scripts pass lint.
+
+The finer 512-cell run has now also completed t=20 (400M), using the shared gauge
+kernel with the same parameters. Final H/M L2 are 1.88086/1.29648, raw finite-
+difference H/M L2 are 2.58348/1.76894, mass is 0.0499967438, and horizon R is
+0.100002456. The largest sampled relative mass error is 6.51236e-5. The final
+extrapolated scri pole maximum is 5.86566e-8 and null residual is -1.71006e-11.
+Lapse and chi remain positive. Both runs exited successfully. These two long
+resolutions show improvement, but do not establish an asymptotic convergence order
+or indefinite stability. The 256-cell run used the preceding scalar gauge
+implementation; the shared implementation's separate 128-cell equivalence test
+is documented above. The longer runs still use analytic trumpet reconstruction.
+
+## Independent ADM gauge storage
+
+`<adm> separate_z4c_gauge=true` allocates independent ADM lapse/shift on the first
+conversion or initial halo completion. Delaying detachment preserves existing
+initial-data importers which fill Z4c gauge directly. All ADM views are rebound
+together. Cauchy conversion copies the lapse/shift without rescaling, including
+after pre-collapsed lapse initialization, initial/regridded halo fills, and every
+RK stage. ADM-to-Z4c conversion copies gauge back when storage is independent.
+Restart files continue to store Z4c as the authoritative evolved state. The default
+shared-storage behavior and algebraic-constraint projection schedule are unchanged.
+This switch is a storage prerequisite, not a conformal evolution option.
+
+The six new serial tests compare initial/final full-volume output for linear waves
+and boosted punctures with one/two blocks, restart equivalence, and adaptive
+refinement with outflow boundaries. The AMR test requires more than the eight
+initial blocks and runs up to 15 cycles. Stored ADM gauge matches evolved gauge
+throughout the output volume, including ghost cells. These comparisons use the
+binary writer's single-precision representation. The existing 46 overhaul,
+conversion and restart tests also pass. The first test run caught missing initial
+halo synchronization; synchronization now occurs after the Z4c boundary fill.
+No GPU/MPI or external initial-data importer execution is claimed.
+The full Release executable builds and all five hyperboloidal CTests pass after
+the storage changes. The new Python test passes flake8; `git diff --check` passes.
+Whole-file C++ lint reports 27 pre-existing include-path/formatting findings in
+the touched production files, all outside changed lines. This storage milestone
+has not had a full production executable sanitizer run.

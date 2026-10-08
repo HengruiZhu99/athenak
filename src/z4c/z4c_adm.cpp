@@ -74,10 +74,15 @@ void Z4c::ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin) {
   auto &z4c = pmbp->pz4c->z4c;
   auto &adm = pmbp->padm->adm;
   auto &opt = pmbp->pz4c->opt;
+  const bool copy_gauge = !pmbp->padm->gauge_is_shared;
   // 2 1D scratch array and 1 2D scratch array
   par_for("initialize z4c fields",DevExeSpace(),
   0,nmb-1,ksg,keg,jsg,jeg,isg,ieg,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    if (copy_gauge) {
+      z4c.alpha(m,k,j,i) = adm.alpha(m,k,j,i);
+      for (int a = 0; a < 3; ++a) z4c.beta_u(m,a,k,j,i) = adm.beta_u(m,a,k,j,i);
+    }
     for (int a=0; a<3; ++a) z4c.vB_d(m,a,k,j,i) = 0.0;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> Kt_dd;
     Real detg = adm::SpatialDet(adm.g_dd(m,0,0,k,j,i), adm.g_dd(m,0,1,k,j,i),
@@ -209,6 +214,7 @@ template void Z4c::ADMToZ4c<4>(MeshBlockPack *pmbp, ParameterInput *pin);
 //
 // This sets the ADM variables everywhere in the MeshBlock
 void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
+  pmbp->padm->EnsureSeparateGaugeStorage();
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   int &is = indcs.is; int &ie = indcs.ie;
@@ -242,6 +248,7 @@ void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
         (1./3.) * (z4c.vKhat(m,k,j,i) + 2.*z4c.vTheta(m,k,j,i)) * adm.g_dd(m,a,b,k,j,i);
     }
   });
+  pmbp->padm->SyncCauchyGaugeFromZ4c();
   return;
 }
 //----------------------------------------------------------------------------------------

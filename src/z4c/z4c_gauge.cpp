@@ -45,6 +45,7 @@ void Z4c::GaugePreCollapsedLapse(MeshBlockPack *pmbp, ParameterInput *pin) {
                                                            // which is 0th component
                                                            // of z4c
   });
+  pmbp->padm->SyncCauchyGaugeFromZ4c();
 }
 
 } // end namespace z4c

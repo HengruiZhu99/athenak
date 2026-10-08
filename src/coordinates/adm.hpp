@@ -56,6 +56,10 @@ class ADM {
 
   DvceArray5D<Real> u_adm;                                // adm variables
   bool is_dynamic;                                        // is the metric time dependent?
+  bool gauge_is_shared;  // whether lapse/shift currently alias Z4c storage
+  bool separate_z4c_gauge;  // opt-in storage separation, not a conformal runtime mode
+  void EnsureSeparateGaugeStorage();
+  void SyncCauchyGaugeFromZ4c();
 
   void (*SetADMVariables)(MeshBlockPack *pm);
 

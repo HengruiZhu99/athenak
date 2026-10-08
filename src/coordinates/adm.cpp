@@ -31,6 +31,8 @@ ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
     SetADMVariables(&ADM::SetADMVariablesToKerrSchild),
     pmy_pack(ppack) {
   is_dynamic = pin->GetOrAddBoolean("adm" , "dynamic", false);
+  separate_z4c_gauge = pin->GetOrAddBoolean("adm", "separate_z4c_gauge", false);
+  gauge_is_shared = pmy_pack->pz4c != nullptr;
 
   int nmb = std::max((ppack->nmb_thispack), (ppack->pmesh->nmb_maxperrank));
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -52,6 +54,50 @@ ADM::ADM(MeshBlockPack *ppack, ParameterInput *pin):
   adm.psi4.InitWithShallowSlice(u_adm, I_ADM_PSI4);
   adm.g_dd.InitWithShallowSlice(u_adm, I_ADM_GXX, I_ADM_GZZ);
   adm.vK_dd.InitWithShallowSlice(u_adm, I_ADM_KXX, I_ADM_KZZ);
+}
+
+// Detach after initial data import, preserving the current aliased gauge. Many
+// importers populate Z4c gauge directly, so constructor-time separation would
+// lose their initial lapse/shift. Subsequent physical conversions own their gauge.
+void ADM::EnsureSeparateGaugeStorage() {
+  if (!separate_z4c_gauge || !gauge_is_shared) return;
+  const int nmb = u_adm.extent_int(0), nk = u_adm.extent_int(2);
+  const int nj = u_adm.extent_int(3), ni = u_adm.extent_int(4);
+  const auto previous = u_adm;
+  const auto evolved = pmy_pack->pz4c->u0;
+  DvceArray5D<Real> expanded("independent ADM gauge", nmb, nadm, nk, nj, ni);
+  par_for("detach ADM gauge", DevExeSpace(), 0,nmb-1,0,nk-1,0,nj-1,0,ni-1,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    for (int v = 0; v < I_ADM_ALPHA; ++v) expanded(m,v,k,j,i) = previous(m,v,k,j,i);
+    expanded(m,I_ADM_ALPHA,k,j,i) = evolved(m,z4c::Z4c::I_Z4C_ALPHA,k,j,i);
+    for (int a = 0; a < 3; ++a) {
+      expanded(m,I_ADM_BETAX+a,k,j,i) = evolved(m,z4c::Z4c::I_Z4C_BETAX+a,k,j,i);
+    }
+  });
+  Kokkos::fence();
+  u_adm = expanded;
+  adm.alpha.InitWithShallowSlice(u_adm, I_ADM_ALPHA);
+  adm.beta_u.InitWithShallowSlice(u_adm, I_ADM_BETAX, I_ADM_BETAZ);
+  adm.psi4.InitWithShallowSlice(u_adm, I_ADM_PSI4);
+  adm.g_dd.InitWithShallowSlice(u_adm, I_ADM_GXX, I_ADM_GZZ);
+  adm.vK_dd.InitWithShallowSlice(u_adm, I_ADM_KXX, I_ADM_KZZ);
+  gauge_is_shared = false;
+}
+
+// Identity gauge map for the current Cauchy runtime. A future conformal runtime
+// must instead write alpha_phys=alpha_bar/Omega using its own conversion.
+void ADM::SyncCauchyGaugeFromZ4c() {
+  if (gauge_is_shared || pmy_pack->pz4c == nullptr) return;
+  const int nmb = pmy_pack->nmb_thispack;
+  const int nk = u_adm.extent_int(2), nj = u_adm.extent_int(3), ni = u_adm.extent_int(4);
+  const auto dst = u_adm, src = pmy_pack->pz4c->u0;
+  par_for("copy Cauchy ADM gauge", DevExeSpace(), 0,nmb-1,0,nk-1,0,nj-1,0,ni-1,
+  KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
+    dst(m,I_ADM_ALPHA,k,j,i) = src(m,z4c::Z4c::I_Z4C_ALPHA,k,j,i);
+    for (int a = 0; a < 3; ++a) {
+      dst(m,I_ADM_BETAX+a,k,j,i) = src(m,z4c::Z4c::I_Z4C_BETAX+a,k,j,i);
+    }
+  });
 }
 
 //----------------------------------------------------------------------------------------
