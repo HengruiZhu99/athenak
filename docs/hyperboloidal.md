@@ -856,7 +856,8 @@ reproduced with `hyperboloidal_ghost_tests 48 4 1.5 0.1 centered`; it must fail.
 The corresponding upwind case omits the last argument.
 
 **This is still a boundary candidate, not a completed hyperboloidal Z4c boundary.**
-It has not been tested on a conformal wave system or nonlinear Cartesian Z4c.
+The conformal-wave tests below now expose additional limitations; nonlinear
+Cartesian Z4c has still not been evolved with this closure.
 The conformal mesh adapter now provides `AddMeshUpwindAdvection`, replacing only
 the componentwise beta-gradient advection by AthenaK's `Lx`, while retaining
 centered geometric derivatives. Independent coefficient-table tests check every
@@ -872,3 +873,78 @@ rerun after adding the upwind correction. The adapter also passes a strict
 ASan/UBSan build and execution. Changed C++ files pass lint and the diff passes
 whitespace checks. The full ghost/transport sanitizer process was still running
 when this milestone was recorded; it is not counted as a completed sanitizer pass.
+
+## Conformal-wave boundary audit and interior dissipation
+
+The Cartesian boundary candidate is now tested on a nonspherical conformally
+invariant scalar wave, not only one-way transport. With S=a=1 and Pi=n_bar(phi),
+the test evolves
+
+```
+phi_t = beta.grad(phi) + alpha Pi
+Pi_t = beta.grad(Pi) + alpha Lap(phi) + grad(alpha).grad(phi)
+       - 3 Pi - alpha R phi/6
+alpha=(1+r^2)/2, beta=-x, R=6/alpha^3-6/alpha.
+```
+
+The exact dipole is a physical Cartesian derivative of
+`[F(T-Rphysical)-F(T+Rphysical)]/Rphysical`, divided by Omega, with
+`F(s)=0.01 exp(-((s-0.6)/0.2)^2)`. Its axis is (0.3,0.4,sqrt(0.75)).
+`check_wave_exact.py` independently differentiates this expression using
+45-digit arithmetic and checks both normal-momentum and coordinate-time-momentum
+PDE forms at twelve spacetime points; maximum residual is 2.80260e-44.
+
+The initial quartic closure looked convergent at t=1.2: N=24/48/96 RMS errors were
+0.0600233/0.00231783/0.000478150. However, its N=48 error grew to 0.364675 by t=4.
+Increasing ordinary ghost-filled KO from 0.1 to 0.5 made the maximum error exceed
+1000 by t=1.70313. Quintic extrapolation failed that cutoff by t=1.94375. Switching
+to the equivalent coordinate-time-momentum equation also failed by t=3.35312.
+Short-time convergence therefore did not establish a usable long-time closure.
+
+Cubic extrapolation improved the normal-momentum wave. With ordinary KO, N=48/96
+runs at t=4 give RMS errors 2.71609e-4/6.11523e-6 and maximum errors over time
+0.112053/0.00700844. These are about 44x and 16x improvements under refinement.
+
+`interior_dissipation.hpp` adds a further alternative. It uses
+`Q=-sum_d D3_d^T D3_d/(64 h_d)`, retaining only four-point lines whose entire
+stencil is active. Consequently `sum q Qq=-sum_lines (D3 q)^2/(64 h_d)<=0`
+in the uniform-grid squared norm. No extrapolated donor enters this operator.
+An independent row-wise test verifies the identity, zero total Q, annihilation
+of quadratics, and untouched inactive nodes, including an interior hole filled
+with NaN sentinels. It equals KO6 in the interior but has only second-order
+boundary consistency. The scalar identity is not a Z4c energy estimate.
+
+With cubic extrapolation and this operator at coefficient 0.1, the final-source
+wave regression measures:
+
+| N | End time | RMS field error | Maximum field error over all steps |
+|---|---|---|---|
+| 24 | 1.2 | 5.00945e-3 | 1.23487 |
+| 48 | 1.2 | 1.86630e-4 | 0.0978664 |
+| 48 | 4 | 2.49246e-4 | 0.0978664 |
+| 48 | 8 | 3.63415e-4 | 0.0978664 |
+
+The coarse transient is substantial. Optional CSV histories retain unweighted
+field errors and fixed-background time-translation energy,
+`E=integral[alpha(Pi^2+|grad phi|^2+R phi^2/6)/2+Pi beta.grad(phi)] d^3x`,
+alongside energy computed from the exact solution on the same active nodes.
+For the N=48 run, numerical energy starts at 0.196317, peaks at 0.196584, and is
+3.97304e-9 at t=4. Energy degenerates at scri, so its smallness cannot replace
+the unweighted error checks. Late residual field error still rises slightly;
+at t=8 its energy is 8.14910e-9 and instantaneous maximum field error is
+0.00329551. Indefinite stability is not established. Raising the interior-only
+coefficient to 1 reduces the early maximum slightly but increases t=8 RMS error
+to 4.91112e-4, so it is not selected as an improvement. Quartic extrapolation with
+that stronger interior operator still has t=4 RMS error 0.0179.
+
+Reproduction: `hyperboloidal_wave_tests N degree end [dissipation [form [history.csv]]]`.
+Forms are `normal`, `coordinate`, `normal_ko`, and `coordinate_ko`; the `_ko`
+forms use interior-only dissipation. The default CTest checks cubic `_ko`
+convergence and the t=4 field/energy bounds. Failed alternatives remain selectable.
+
+All eight Release CTests pass. The new dissipation unit test and short normal/
+coordinate wave runs also pass strict ASan/UBSan builds and execution. These
+smokes are not full-duration wave sanitizer tests. The previous extended transport
+sanitizer process is still being tracked separately. Changed C++ and Python files
+pass lint. No production Z4c runtime dispatch or Cartesian puncture evolution is
+claimed by this wave milestone.
