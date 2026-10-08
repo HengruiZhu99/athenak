@@ -10,6 +10,7 @@
 #include "z4c/hyperboloidal/cmc_reference.hpp"
 #include "z4c/hyperboloidal/conformal_rhs.hpp"
 #include "z4c/hyperboloidal/spherical_tensor.hpp"
+#include "z4c/hyperboloidal/cmc_trumpet.hpp"
 
 namespace hyp = z4c::hyperboloidal;
 using Jet = hyp::Z4cJet<double>;
@@ -327,10 +328,65 @@ void EvolvedDiagnostics() {
   Check(scri.momentum_conformal_norm2 > 0.001, "evolved scri M hidden");
 }
 
+void Trumpet() {
+  const hyp::CMCTrumpet trumpet(0.05);
+  const double r0 = trumpet.radius(), c = trumpet.integration_constant();
+  const double j = -r0+c/(r0*r0), dj = -1-2*c/(r0*r0*r0);
+  Check(std::abs(1-0.1/r0+j*j) < 1e-13, "trumpet double-root value");
+  Check(std::abs(0.1/(r0*r0)+2*j*dj) < 1e-11, "trumpet double-root derivative");
+  Check(std::abs(1/trumpet.InverseAreal(1e-6)-r0) < 1e-5,
+        "trumpet cylindrical puncture end");
+  for (double r : {0.02, 0.1, 0.5, 0.9}) {
+    const auto exact = trumpet.Jet(r);
+    const double point[3] = {r, 0, 0};
+    const auto exact_o = Compactifier(point, exact);
+    RHS exact_rhs{};
+    Check(hyp::AssembleInterior(hyp::ConformalRHS(exact, exact_o, 1.5, 0.),
+                               exact_o.omega, exact_rhs), "analytic trumpet RHS");
+    Check(Norm(exact_rhs) < 1e-8, "analytic trumpet stationarity");
+    const auto exact_constraints = hyp::EvolvedConstraints(exact, exact_o);
+    Check(std::abs(exact_constraints.hamiltonian) < 1e-8
+          && std::sqrt(exact_constraints.momentum_conformal_norm2) < 1e-8,
+          "analytic trumpet constraints");
+    Check(std::abs(trumpet.InverseAreal(r)-trumpet.InverseAreal(r, 0.0005)) < 1e-9,
+          "trumpet quadrature refinement");
+    const auto sphere = hyp::SphereDiagnostics(r, exact, exact_o);
+    Check(std::abs(sphere.mass-0.05) < 1e-10, "trumpet Misner-Sharp mass");
+    Check((sphere.areal_radius > 0.1) == (sphere.expansion_out > 0),
+          "trumpet horizon expansion sign");
+    double last = 0;
+    for (double h : {0.01*r, 0.005*r, 0.0025*r}) {
+      double v[hyp::NFIELDS], p[hyp::NFIELDS], m[hyp::NFIELDS];
+      double d[hyp::NFIELDS], dd[hyp::NFIELDS];
+      trumpet.Values(r, v);
+      trumpet.Values(r+h, p);
+      trumpet.Values(r-h, m);
+      for (int f = 0; f < hyp::NFIELDS; ++f) {
+        d[f] = (p[f]-m[f])/(2*h);
+        dd[f] = (p[f]+m[f]-2*v[f])/(h*h);
+      }
+      const auto u = hyp::SphericalJet(r, v, d, dd, hyp::CMCReference<double>{1, 1});
+      const double x[3] = {r, 0, 0};
+      const auto o = Compactifier(x, u);
+      RHS rhs{};
+      Check(hyp::AssembleInterior(hyp::ConformalRHS(u, o, 1.5, 0.), o.omega, rhs),
+            "trumpet stationary RHS invalid");
+      const auto con = hyp::EvolvedConstraints(u, o);
+      const double error = std::max({Norm(rhs), std::abs(con.hamiltonian),
+                                    std::sqrt(con.momentum_conformal_norm2)});
+      std::cout << "trumpet r=" << r << " h=" << h << " error=" << error << '\n';
+      if (last > 0) Check(last/error > 3.5, "trumpet stationary convergence");
+      last = error;
+    }
+    Check(last < 0.002, "trumpet stationary residual");
+  }
+}
+
 int main(int argc, char **argv) {
   Kokkos::ScopeGuard guard(argc, argv);
   try {
     Minkowski();
+    Trumpet();
     Schwarzschild();
     ADMRecovery();
     OffConstraintDamping();

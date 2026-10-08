@@ -3,6 +3,7 @@
 #ifndef Z4C_HYPERBOLOIDAL_SPHERICAL_TENSOR_HPP_
 #define Z4C_HYPERBOLOIDAL_SPHERICAL_TENSOR_HPP_
 
+#include <cmath>
 #include "z4c/hyperboloidal/cmc_reference.hpp"
 #include "z4c/hyperboloidal/conformal_rhs.hpp"
 
@@ -104,6 +105,25 @@ Z4cJet<T> SphericalJet(T radius, const T q[NFIELDS], const T d[NFIELDS],
                         dd[DBETA], radius);
   u.lambda = RadialVector(q[LAMBDA], d[LAMBDA], dd[LAMBDA], radius);
   return u;
+}
+
+// Spherical vacuum diagnostics from geometry and curvature, independent of gauge.
+// The outgoing expansion uses future n+s; K_ij=-1/2 Lie_n gamma_ij.
+struct SphericalDiagnostics {
+  double areal_radius, mass, expansion_out;
+};
+
+inline SphericalDiagnostics SphereDiagnostics(double r, const Z4cJet<double> &u,
+                                               const OmegaJet<double> &o) {
+  const double grr = u.metric.g[0][0], gtt = u.metric.g[1][1];
+  const double radius = r*std::sqrt(gtt/u.chi.value)/o.omega;
+  const double log_derivative = 1/r+0.5*(u.metric.dg[0][1][1]/gtt
+      -u.chi.d[0]/u.chi.value)-o.gradient[0]/o.omega;
+  const double spatial = o.omega*std::sqrt(u.chi.value/grr)*log_derivative;
+  const double angular_k = o.omega*u.a.k[1][1]/gtt
+      +(u.trace.value+2*u.theta.value)/3;
+  return {radius, radius/2*(1+radius*radius*(angular_k*angular_k-spatial*spatial)),
+          2*(spatial-angular_k)};
 }
 
 }  // namespace hyperboloidal

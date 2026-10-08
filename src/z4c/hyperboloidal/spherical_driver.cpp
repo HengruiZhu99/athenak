@@ -11,6 +11,7 @@
 #include <Kokkos_Core.hpp>
 
 #include "z4c/hyperboloidal/spherical_tensor.hpp"
+#include "z4c/hyperboloidal/cmc_trumpet.hpp"
 
 namespace hyp = z4c::hyperboloidal;
 using Exec = Kokkos::DefaultHostExecutionSpace;
@@ -22,7 +23,8 @@ struct Options {
   double end = 1, amplitude = 0.001, cfl = 0.05, dissipation = 0.1;
   double kappa1 = 1.5, slicing = 1, shift_driver = 1;
   double lapse_damping = 1.5, shift_damping = 1, diagnostic_dt = 0.1;
-  bool fixed_shift = false;
+  double mass = 0;
+  bool fixed_shift = false, fixed_lapse = false, puncture_gauge = false;
   std::string output = "hyperboloidal";
 };
 
@@ -30,6 +32,14 @@ Options Parse(int argc, char **argv) {
   Options o;
   for (int i = 1; i < argc; ++i) {
     const std::string key = argv[i];
+    if (key == "--puncture-gauge") {
+      o.puncture_gauge = true;
+      continue;
+    }
+    if (key == "--fixed-lapse") {
+      o.fixed_lapse = true;
+      continue;
+    }
     if (key == "--fixed-shift") {
       o.fixed_shift = true;
       continue;
@@ -37,6 +47,7 @@ Options Parse(int argc, char **argv) {
     if (i+1 == argc) throw std::invalid_argument("missing option value");
     const std::string v = argv[++i];
     if (key == "--n") o.n = std::stoi(v);
+    else if (key == "--mass") o.mass = std::stod(v);
     else if (key == "--t") o.end = std::stod(v);
     else if (key == "--amplitude") o.amplitude = std::stod(v);
     else if (key == "--cfl") o.cfl = std::stod(v);
@@ -53,13 +64,13 @@ Options Parse(int argc, char **argv) {
   }
   for (double value : {o.end, o.amplitude, o.cfl, o.dissipation, o.kappa1,
                        o.slicing, o.shift_driver, o.lapse_damping,
-                       o.shift_damping, o.diagnostic_dt}) {
+                       o.shift_damping, o.diagnostic_dt, o.mass}) {
     if (!std::isfinite(value)) throw std::invalid_argument("nonfinite driver option");
   }
   if (o.n < 8 || o.extrapolation < 2 || o.extrapolation > 5 || !(o.end >= 0)
       || !(o.cfl > 0 && o.cfl <= 0.2) || !(o.dissipation >= 0)
       || !(o.kappa1 >= 0) || !(o.diagnostic_dt > 0) || o.slicing < 0
-      || o.shift_driver < 0 || o.lapse_damping < 0 || o.shift_damping < 0) {
+      || o.mass < 0 || o.shift_driver < 0 || o.lapse_damping < 0 || o.shift_damping < 0) {
     throw std::invalid_argument("invalid radial driver options");
   }
   return o;
@@ -114,7 +125,8 @@ void RHS(State q, State result, const Options &o) {
   const double h = 1./n, kappa1 = o.kappa1, diss = o.dissipation;
   const double slicing = o.slicing, driver = o.shift_driver;
   const double xi = o.lapse_damping, eta = o.shift_damping;
-  const bool fixed_shift = o.fixed_shift;
+  const bool fixed_shift = o.fixed_shift, fixed_lapse = o.fixed_lapse;
+  const bool puncture_gauge = o.puncture_gauge;
   int failed = 0;
   Kokkos::parallel_reduce("radial conformal Z4c RHS", Kokkos::RangePolicy<Exec>(0, n),
       KOKKOS_LAMBDA(const int cell, int &bad) {
@@ -148,14 +160,14 @@ void RHS(State q, State result, const Options &o) {
     // expanded before evaluation; no subtraction of two large gauge sources.
     const double pole = -(alpha*alpha+slicing*radial*radial)*v[hyp::DK]
         +radius*(background.beta[0]*da+background.alpha*db+da*db)
-        -xi*(2*background.alpha*da+da*da);
-    result(i, hyp::DALPHA) = beta*d[hyp::DALPHA]+db*background.dalpha[0]
+        -xi*(puncture_gauge ? alpha*da : 2*background.alpha*da+da*da);
+    result(i, hyp::DALPHA) = fixed_lapse ? 0 : beta*d[hyp::DALPHA]+db*background.dalpha[0]
         +pole/omega.omega;
     result(i, hyp::DBETA) = fixed_shift ? 0 :
         beta*d[hyp::DBETA]-db+(driver*radial*radial+0.75*alpha*alpha*u.chi.value)
         *u.lambda.value[0]-eta*db;
     for (int f = 0; f < hyp::NFIELDS; ++f) {
-      if (f == hyp::DBETA && fixed_shift) continue;
+      if ((f == hyp::DBETA && fixed_shift) || (f == hyp::DALPHA && fixed_lapse)) continue;
       result(i, f) += diss/(64*h)*(q(i-3, f)-6*q(i-2, f)+15*q(i-1, f)
           -20*q(i, f)+15*q(i+1, f)-6*q(i+2, f)+q(i+3, f));
       if (!Kokkos::isfinite(result(i, f))) ++bad;
@@ -177,6 +189,7 @@ void Report(State q, double time, const Options &o, std::ostream &log) {
   const double h = 1./o.n;
   double h2 = 0, m2 = 0, z2 = 0, t2 = 0, maxh = 0, maxm = 0, maxq = 0;
   double minchi = 1e100, minalpha = 1e100, null_last = 0;
+  double mass_half = 0, horizon = 0, previous_expansion = 0, previous_radius = 0;
   for (int cell = 0; cell < o.n; ++cell) {
     double v[hyp::NFIELDS], d[hyp::NFIELDS], dd[hyp::NFIELDS];
     Differences(q, cell+ng, h, v, d, dd);
@@ -184,6 +197,14 @@ void Report(State q, double time, const Options &o, std::ostream &log) {
     const auto u = hyp::SphericalJet(radius, v, d, dd, hyp::CMCReference<double>{1, 1});
     const auto con = hyp::EvolvedConstraints(u, Omega(radius, u));
     if (!con.valid) throw std::runtime_error("invalid constraint diagnostic");
+    const auto sphere = hyp::SphereDiagnostics(radius, u, Omega(radius, u));
+    if (cell == o.n/2) mass_half = sphere.mass;
+    if (cell > 0 && previous_expansion <= 0 && sphere.expansion_out > 0) {
+      horizon = previous_radius+(sphere.areal_radius-previous_radius)
+          *(-previous_expansion)/(sphere.expansion_out-previous_expansion);
+    }
+    previous_expansion = sphere.expansion_out;
+    previous_radius = sphere.areal_radius;
     // Coordinate radial L2 norms, explicitly unweighted by Omega or r^2 so
     // neither the puncture vicinity nor the scri vicinity can disappear.
     h2 += h*con.hamiltonian*con.hamiltonian;
@@ -199,7 +220,8 @@ void Report(State q, double time, const Options &o, std::ostream &log) {
   }
   log << std::setprecision(17) << time << ',' << std::sqrt(h2) << ',' << std::sqrt(m2)
       << ',' << std::sqrt(z2) << ',' << std::sqrt(t2) << ',' << maxh << ',' << maxm
-      << ',' << maxq << ',' << minchi << ',' << minalpha << ',' << null_last << '\n';
+      << ',' << maxq << ',' << minchi << ',' << minalpha << ',' << null_last
+      << ',' << mass_half << ',' << horizon << '\n';
   log.flush();
   std::cout << "t=" << time << " H_L2=" << std::sqrt(h2) << " M_L2=" << std::sqrt(m2)
             << " max_deviation=" << maxq << std::endl;
@@ -216,13 +238,18 @@ int main(int argc, char **argv) {
     State k3("k3", o.n+2*ng, hyp::NFIELDS), k4("k4", o.n+2*ng, hyp::NFIELDS);
     for (int cell = 0; cell < o.n; ++cell) {
       const double radius = (cell+0.5)/o.n, x = (radius-0.4)/0.12;
-      q(cell+ng, hyp::DALPHA) = std::abs(x) < 1 ?
+      if (o.mass > 0) {
+        double values[hyp::NFIELDS];
+        hyp::CMCTrumpet(o.mass).Values(radius, values);
+        for (int f = 0; f < hyp::NFIELDS; ++f) q(cell+ng, f) = values[f];
+      }
+      q(cell+ng, hyp::DALPHA) += std::abs(x) < 1 ?
           o.amplitude*std::exp(1-1/(1-x*x)) : 0;
     }
     std::ofstream log(o.output+"-diagnostics.csv");
     if (!log) throw std::runtime_error("cannot open diagnostic output");
     log << "t,H_L2,M_L2,Z_L2,Theta_L2,H_max,M_max,max_deviation,min_chi,min_alpha,"
-           "null_residual_last_cell\n";
+           "null_residual_last_cell,mass_near_half,horizon_areal_radius\n";
     double time = 0, next_report = o.diagnostic_dt;
     Report(q, time, o, log);
     while (time < o.end) {
@@ -250,7 +277,7 @@ int main(int argc, char **argv) {
     std::ofstream fields(o.output+"-fields.csv");
     if (!fields) throw std::runtime_error("cannot open field output");
     fields << "r,delta_chi,delta_grr,A_rr,delta_K,Theta,Lambda,delta_alpha,delta_beta,"
-              "H,M_r,Z_r,c_light_minus,c_light_plus\n";
+              "H,M_r,Z_r,c_light_minus,c_light_plus,areal_radius,mass,expansion_out\n";
     fields << std::setprecision(17);
     for (int cell = 0; cell < o.n; ++cell) {
       const double radius = (cell+0.5)/o.n;
@@ -264,7 +291,9 @@ int main(int argc, char **argv) {
       fields << ',' << con.hamiltonian << ',' << con.momentum[0] << ','
              << con.z4.z_covector[0] << ',' << -u.beta.value[0]-speed << ','
              << -u.beta.value[0]+speed;
-      fields << '\n';
+      const auto sphere = hyp::SphereDiagnostics(radius, u, Omega(radius, u));
+      fields << ',' << sphere.areal_radius << ',' << sphere.mass << ','
+             << sphere.expansion_out << '\n';
     }
   } catch (const std::exception &e) {
     std::cerr << "FAIL: " << e.what() << '\n';

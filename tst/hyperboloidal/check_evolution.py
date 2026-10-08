@@ -60,6 +60,15 @@ def check(executable, directory, extended):
         invalid = subprocess.run([str(executable), option, 'nan'],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         assert invalid.returncode != 0
+    # Initial-data audit only. Live trumpet gauges are not yet stable.
+    trumpet = [run(executable, directory, f'trumpet-id-{n}', n, 0,
+                   '--mass', '0.05', '--amplitude', '0')[0][0]
+               for n in (128, 256, 512)]
+    for key in ('H_L2', 'M_L2'):
+        assert all(b[key] < a[key]/3 for a, b in zip(trumpet, trumpet[1:]))
+    for row in trumpet:
+        assert abs(row['mass_near_half'] - .05) < 1e-6
+        assert abs(row['horizon_areal_radius'] - .1) < .001
     if not extended:
         return
     resolutions = [64, 128, 256, 512]

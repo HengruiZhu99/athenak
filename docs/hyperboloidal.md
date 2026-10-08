@@ -492,3 +492,81 @@ script passes, and the three kernel CTests plus a 16-cell t=0.05 pulse pass unde
 ASan/UBSan with strict compiler warnings. The long and resolution-study runs were
 Release-only. C++ and Python lint pass. The production AthenaK evolution path is
 unchanged; its earlier Cauchy regression results are not hyperboloidal evidence.
+
+## CMC trumpet initial data and failed gauge experiments
+
+`cmc_trumpet.hpp` constructs a Schwarzschild CMC trumpet with mass M>0, S=a=1,
+K=-3. With physical areal radius R, define J=-R+C/R^2 and
+D=1-2M/R+J^2. The critical C is obtained from the double zero of D at R0 between
+1.5M and 2M. The isotropic compact coordinate satisfies
+
+```
+log(1/r) = integral_R^infinity dR / (R sqrt(D)).
+```
+
+The code integrates u=1/R against t=-log(r), starting at u=0 at scri. It factors
+the double zero analytically before evaluating the square root. This avoids a
+finite areal-radius cutoff and cancellation at the cylindrical end. The fields
+are chi=(r u/Omega)^2, A_rr=-2 C u^3/Omega, alpha=Omega sqrt(D),
+beta^r=r(-1+C u^3), unit conformal metric, P=-3, Theta=Lambda=0. Analytic first
+and second spatial derivatives accompany the initializer. Omega and the live
+gauge reference remain the Minkowski compactifier and reference used above.
+
+Independent checks verify the double root, the limiting areal radius at r=1e-6,
+quadrature refinement, analytic constraints and stationary geometric RHS below
+1e-8 at r=0.02, 0.1, 0.5 and 0.9. A separate finite-difference reconstruction
+converges at second order on these points. These checks do not subtract a
+Schwarzschild evolution residual. Misner-Sharp mass reconstructed from geometry
+and curvature agrees with M=0.05 within 1e-10, and the outgoing null expansion
+changes sign at areal radius 2M. These are initial-data/equation tests.
+
+The driver accepts `--mass 0.05 --amplitude 0` to initialize this trumpet. Its
+output now includes areal radius, Misner-Sharp mass and outgoing expansion in
+field snapshots, mass near coordinate r=0.5 and an interpolated outermost apparent
+horizon areal radius in time histories (zero if no crossing is resolved). The
+horizon value is a linear interpolation of expansion, not a high-order finder.
+
+For the finite-difference initial data, including every cell in the norms:
+
+| Cells | H L2 | M L2 | Mass near r=0.5 | Horizon areal radius |
+|---:|---:|---:|---:|---:|
+| 128 | 11.2402 | 8.01055 | 0.0499999757 | 0.1001911 |
+| 256 | 2.98715 | 2.00407 | 0.0499999985 | 0.1001775 |
+| 512 | 0.739734 | 0.487410 | 0.0499999999 | 0.1000378 |
+
+The large constraint errors are concentrated at the puncture end and decrease
+roughly quadratically in these unweighted norms. They must not be confused with
+the tiny residuals obtained using analytic derivatives. The initial-data
+resolution checks and mass/horizon tolerances are part of the evolution CTest.
+
+**Stable puncture evolution is not established.** The following single-core
+experiments expose failures, rather than supplying a passing puncture gate:
+
+* The original live reference gauge at 128 cells fails after t=0.12, before 0.2.
+* Setting the extra slicing and shift-driver coefficients to zero delays failure
+  to shortly after t=0.30. It does not cure it.
+* `--puncture-gauge` changes the lapse restoring term from
+  `-xi (alpha^2-alpha_ref^2)/Omega` to
+  `-xi alpha (alpha-alpha_ref)/Omega`. It preserves the Minkowski fixed point
+  and lets this restoring term vanish for a collapsed lapse. With zero extra
+  slicing/shift-driver coefficients, it fails after t=0.36 at 128 cells and
+  after t=0.20 at 512 cells. Resolution alone therefore does not fix the gauge.
+* With the lapse-weighted alternative and fixed shift, 256 cells fail after t=0.4.
+  Fixed lapse with a live shift and zero extra shift coefficient also fails
+  after t=0.3. Holding only one gauge component fixed is insufficient.
+* Holding both lapse and shift fixed reaches t=1 at 256 cells, but has H L2=3.34,
+  M L2=1.97 and growing field drift. This is not a demonstrated stable equilibrium.
+
+`--fixed-lapse` and `--fixed-shift` support these isolation experiments. They do
+not manufacture an evolved stationary source. No puncture lapse/chi floor or
+interior excision is used. The next work is to control the puncture-end spatial
+errors and audit the live gauge/constraint modes before accepting a long-time
+black-hole evolution. The new data and diagnostics are verified; these gauge
+options remain experimental and the failed runs are not regression successes.
+
+Validation: all four Release CTests pass after these additions. The three kernel
+CTest cases and a 32-cell fixed-gauge t=0.01 trumpet smoke run pass under strict
+warnings and ASan/UBSan; the updated analytic trumpet test was rebuilt and rerun
+under sanitizers after its final assertions were added. C++/Python lint pass.
+Sanitizer success checks memory/undefined behavior, not physical stability; the
+coarse sanitizer smoke run itself has large constraint errors.
