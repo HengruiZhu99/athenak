@@ -1161,3 +1161,47 @@ N=36. The largest errors remain near r=0.977. The N=36 run reaches t=0.5 with
 H=0.0177828, M=0.109239 and Z=0.0282965, substantially below N=24 at that time
 but still too large to establish accurate long-time evolution. Stability and
 asymptotic convergence across longer native puncture runs remain outstanding.
+
+### Controlled boundary-order comparisons
+
+The native input `z4c/hyperboloidal_ghost_degree` and the standalone driver's
+last optional argument select polynomial degree 2 through 5. The default remains
+3. This changes the true-normal interpolation/extrapolation degree only: the
+required stencil halo stays at three cells, and every donor remains strictly
+inside the sphere. There is no fallback to exterior donors or a shorter halo.
+The N=24 example cannot accommodate degree 5 and rejects it with
+`no interior normal-ray rectangles`; N=36 accommodates it. These are geometric
+requirements, separate from numerical stability.
+
+The following standalone comparisons use exactly the same N=24 grid, mass 0.5,
+projected SSPRK3, pole coefficient 0.1, dissipation 0.1 and live reference gauge.
+All reach t=0.5 in 702 steps. H, M and Z are unweighted active-node RMS, with
+conformal norms for the latter two:
+
+| Ghost degree | H | M | Z | Maximum shell null deviation |
+| --- | ---: | ---: | ---: | ---: |
+| 2 | 0.0430851130 | 0.198479468 | 0.0601857403 | 0.0834984 |
+| 3 | 0.101036777 | 0.679817958 | 0.172531074 | 0.124565 |
+| 4 | 0.579389655 | 2.26506907 | 0.542547835 | 0.429136 |
+
+Higher interpolation order is clearly not sufficient to improve this coarse
+nonlinear evolution. Degree 2 reduces these errors, but does not solve the
+long-time problem: its N=24 continuation reaches t=1 in 1403 steps with
+H=0.210158449, M=0.821378051 and Z=0.171307931. Lapse and chi stay positive,
+but the growing constraint errors are unacceptable as an accuracy result.
+The refined degree-2 run and the native N=48 cubic run are still pending;
+neither is counted as a completed validation here.
+
+The boundary policy is an experimental extrapolation closure, not a proven
+constraint-preserving characteristic boundary condition at scri. Short native
+comparisons, restart equality and memory-safety tests do not establish a
+nonlinear energy estimate or accurate long-time puncture evolution.
+
+Validation for the selectable-degree change: the Release build passes 75 tests
+(23 native plus 52 existing Cauchy/ADM/restart checks). The native cases compare
+CMC, a nonspherical pulse and a trumpet with the standalone driver for degrees
+2, 3 and 4; degree 5 is checked on N=36, alongside the explicit N=24 geometric
+rejection. Restart equality is checked for degrees 2 and 3. All 23 native tests
+also pass with ASan/UBSan. Seven focused CTests pass: reference building blocks,
+constraints, tensor RHS, mesh adapter, interior dissipation, Cartesian evolution
+and Cartesian radial jets. C++ and Python lint and diff whitespace checks pass.

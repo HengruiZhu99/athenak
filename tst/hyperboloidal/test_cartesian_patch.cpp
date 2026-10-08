@@ -132,7 +132,7 @@ void AuditInterfaces(hyp::CartesianConformalPatch &patch) {
 
 hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
                               bool smooth = false, double mass = 0, bool project = true,
-                              double pole_cfl = 0.04) {
+                              double pole_cfl = 0.04, int ghost_degree = 3) {
   hyp::SphericalGhostGrid grid;
   grid.radius = 1;
   for (int d = 0; d < 3; ++d) {
@@ -140,7 +140,7 @@ hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
     grid.h[d] = 2.1/n;
     grid.first[d] = -1.05-2.5*grid.h[d];
   }
-  hyp::CartesianConformalPatch patch(grid);
+  hyp::CartesianConformalPatch patch(grid,1,ghost_degree);
   if (amplitude == 0 && mass == 0) AuditInterfaces(patch);
   auto q = patch.Allocate("state"), initial = patch.Allocate("RK initial");
   auto stage = patch.Allocate("RK stage"), rhs = patch.Allocate("RHS");
@@ -219,6 +219,7 @@ hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
             << " steps=" << steps << " min_omega=" << patch.min_omega
             << " amplitude=" << amplitude << " smooth=" << smooth << " mass=" << mass
             << " project=" << project << " pole_cfl=" << pole_cfl
+            << " ghost_degree=" << ghost_degree
             << " H=" << last.h_l2 << " M=" << last.m_l2
             << " max_H=" << last.max_h << " max_H_r=" << last.max_h_radius
             << " max_M=" << last.max_m << " max_M_r=" << last.max_m_radius
@@ -246,9 +247,10 @@ int main(int argc, char **argv) {
   try {
     AuditGaugeConstraintTangent();
     if (argc > 1) {
-      if (argc < 4 || argc > 6) {
+      if (argc < 4 || argc > 7) {
         throw std::invalid_argument(
-            "usage: N end amplitude [compact|smooth|trumpet|trumpet_raw] [pole_cfl]");
+            "usage: N end amplitude [compact|smooth|trumpet|trumpet_raw] [pole_cfl] "
+            "[ghost_degree]");
       }
       const int n = std::atoi(argv[1]);
       const double end = std::atof(argv[2]), amplitude = std::atof(argv[3]);
@@ -261,12 +263,12 @@ int main(int argc, char **argv) {
       }
       const bool trumpet = profile == "trumpet" || profile == "trumpet_raw";
       if (trumpet && amplitude <= 0) throw std::invalid_argument("mass must be positive");
-      const double pole_cfl = argc == 6 ? std::stod(argv[5]) : 0.04;
+      const double pole_cfl = argc >= 6 ? std::stod(argv[5]) : 0.04;
       if (!std::isfinite(pole_cfl) || pole_cfl <= 0 || pole_cfl > 0.2) {
         throw std::invalid_argument("invalid pole CFL");
       }
       Run(n,end,trumpet ? 0 : amplitude,profile == "smooth",trumpet ? amplitude : 0,
-          profile != "trumpet_raw",pole_cfl);
+          profile != "trumpet_raw",pole_cfl,argc == 7 ? std::stoi(argv[6]) : 3);
     } else {
       Run(24,0.01,0);
       Run(24,0.01,1e-4);

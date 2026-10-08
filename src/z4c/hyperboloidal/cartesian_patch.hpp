@@ -94,6 +94,7 @@ class CartesianConformalPatch {
  public:
   const SphericalGhostGrid grid;
   const CMCReference<Real> reference;
+  const int ghost_degree;
   Kokkos::View<int *> active;
   Kokkos::View<unsigned char *> mask;
   Kokkos::View<SphericalGhostStencil *> ghosts;
@@ -104,10 +105,11 @@ class CartesianConformalPatch {
   Real kappa1 = 5, dissipation = 0.1;
   GaugeParameters<Real> gauge_parameters{2,0.1,1.5,1};
 
-  explicit CartesianConformalPatch(SphericalGhostGrid g, Real curvature_radius = 1)
-      : grid(g), reference{g.radius,curvature_radius} {
+  explicit CartesianConformalPatch(SphericalGhostGrid g, Real curvature_radius = 1,
+                                     int degree = 3)
+      : grid(g), reference{g.radius,curvature_radius}, ghost_degree(degree) {
     reference.Validate();
-    const auto plans = PlanSphericalGhosts(grid,3,3);
+    const auto plans = PlanSphericalGhosts(grid,3,ghost_degree);
     const int cells = grid.n[0]*grid.n[1]*grid.n[2];
     std::vector<int> nodes;
     mask = Kokkos::View<unsigned char *>("conformal active mask",cells);

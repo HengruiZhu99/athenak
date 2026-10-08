@@ -47,7 +47,8 @@ void Z4c::SetupHyperboloidal(ParameterInput *pin) {
     grid.h[d] = h[d];
     grid.first[d] = lower[d]+(0.5-ind.ng)*h[d];
   }
-  hyperboloidal_patch = std::make_unique<hyp::CartesianConformalPatch>(grid);
+  hyperboloidal_patch = std::make_unique<hyp::CartesianConformalPatch>(grid,1,
+      pin->GetOrAddInteger("z4c","hyperboloidal_ghost_degree",3));
   auto &patch = *hyperboloidal_patch;
   patch.kappa1 = pin->GetOrAddReal("z4c","hyperboloidal_kappa1",5);
   patch.dissipation = pin->GetOrAddReal("z4c","hyperboloidal_dissipation",0.1);

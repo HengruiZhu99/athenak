@@ -78,17 +78,19 @@ def check_adm(directory, first=False):
             assert (value[~mask] == 0).all(), name
 
 
+@pytest.mark.parametrize('degree', [2, 3, 4])
 @pytest.mark.parametrize('mass,pulse', [(0, 0), (0, 1e-4), (0.5, 0)])
-def test_native_tasks_and_adm(tmp_path, mass, pulse):
-    run(tmp_path, 'time/nlim=3', f'problem/mass={mass}', f'problem/lapse_pulse={pulse}')
+def test_native_tasks_and_adm(tmp_path, mass, pulse, degree):
+    run(tmp_path, 'time/nlim=3', f'problem/mass={mass}', f'problem/lapse_pulse={pulse}',
+        f'z4c/hyperboloidal_ghost_degree={degree}')
     check_adm(tmp_path, first=True)
     check_adm(tmp_path)
     history = np.loadtxt(next(tmp_path.glob('*.hst')))
     final = history[-1]
     amplitude, profile = (mass, 'trumpet') if mass else (pulse, 'smooth')
     result = subprocess.run([str(PATCH_EXE), '24', f'{final[0]:.17g}',
-                             str(amplitude), profile], capture_output=True, text=True,
-                            timeout=120)
+                             str(amplitude), profile, '.04', str(degree)],
+                            capture_output=True, text=True, timeout=120)
     assert result.returncode == 0, result.stdout + result.stderr
     values = dict(re.findall(r'(\w+)=([-+\deE.]+)', result.stdout.splitlines()[-1]))
     for column, name in [(2, 'H'), (3, 'M'), (4, 'Z'), (5, 'Theta')]:
@@ -97,10 +99,13 @@ def test_native_tasks_and_adm(tmp_path, mass, pulse):
         assert np.max(np.abs(history[:, 2:8])) < 1e-11
 
 
-def test_native_trumpet_restart(tmp_path):
+@pytest.mark.parametrize('degree', [2, 3])
+def test_native_trumpet_restart(tmp_path, degree):
     full, split = tmp_path / 'full', tmp_path / 'split'
-    run(full, 'problem/mass=0.5', 'time/nlim=3')
-    run(split, 'problem/mass=0.5', 'time/nlim=1')
+    run(full, 'problem/mass=0.5', 'time/nlim=3',
+        f'z4c/hyperboloidal_ghost_degree={degree}')
+    run(split, 'problem/mass=0.5', 'time/nlim=1',
+        f'z4c/hyperboloidal_ghost_degree={degree}')
     checkpoint = sorted((split / 'rst').glob('*.rst'))[-1]
     run(split, 'time/nlim=3', checkpoint=checkpoint)
     for kind in ('z4c', 'adm', 'con'):
@@ -150,3 +155,25 @@ def test_nodes_exactly_on_scri_are_inactive(tmp_path):
     history = np.loadtxt(next(tmp_path.glob('*.hst')))
     assert np.isfinite(history).all()
     assert np.max(np.abs(history[:, 2:8])) < 1e-10
+
+
+@pytest.mark.parametrize('degree', [1, 6])
+def test_invalid_spherical_ghost_degree(tmp_path, degree):
+    result = run(tmp_path, f'z4c/hyperboloidal_ghost_degree={degree}', success=False)
+    assert 'invalid spherical ghost policy' in result.stdout + result.stderr
+
+
+def test_fifth_degree_requires_interior_donors(tmp_path):
+    result = run(tmp_path / 'coarse', 'z4c/hyperboloidal_ghost_degree=5', success=False)
+    assert 'no interior normal-ray rectangles' in result.stdout + result.stderr
+    fine = tmp_path / 'fine'
+    options = [f'{block}/nx{d}=36' for block in ('mesh', 'meshblock') for d in (1, 2, 3)]
+    run(fine, *options, 'z4c/hyperboloidal_ghost_degree=5', 'problem/lapse_pulse=0.0001',
+        'time/nlim=3')
+    final = np.loadtxt(next(fine.glob('*.hst')))[-1]
+    result = subprocess.run([str(PATCH_EXE), '36', f'{final[0]:.17g}', '0.0001',
+                             'smooth', '.04', '5'], capture_output=True, text=True, timeout=120)
+    assert result.returncode == 0, result.stdout + result.stderr
+    values = dict(re.findall(r'(\w+)=([-+\deE.]+)', result.stdout.splitlines()[-1]))
+    for column, name in [(2, 'H'), (3, 'M'), (4, 'Z'), (5, 'Theta')]:
+        np.testing.assert_allclose(final[column], float(values[name]), rtol=2e-5, atol=1e-11)
