@@ -1258,3 +1258,70 @@ The strict standalone ASan/UBSan build with warnings-as-errors passes a short
 CMC evolution, poisoned-inactive-cell checks and both layout oracles. C++ lint
 and diff whitespace checks pass. Longer N=36/N=48 native degree-2 runs to t=1
 are pending and are not included among the passed checks.
+
+### Radial constraint budgets
+
+`tst/hyperboloidal/analyze_native_constraints.py` reads masked native constraint
+binary dumps and emits JSON containing unweighted global RMS/maxima, the
+coordinates of each maximum, and radial-bin RMS and fractions of each squared
+constraint norm. M and Z use the conformal norms already stored by the native
+solver. Every active cell must be covered; incomplete radial bins, inconsistent
+masks and nonfinite/negative squared constraint values are rejected. The current
+prototype supports one uniform block and the unit spherical domain.
+
+For example, `python tst/hyperboloidal/analyze_native_constraints.py
+path/to/hyp.con.00001.bin` uses bins with edges
+0, 0.25, 0.5, 0.75, 0.85, 0.9, 0.95 and 1. Custom edges are supplied with
+`--edges`. These are compactified coordinate radii, not physical areal radii.
+The fractions partition the *squared* global norm; they are not percentages of
+pointwise error or physical volume integrals.
+
+At N=24, M=0.5, t=0.5, KO coefficient 0.1 and pole coefficient 0.1:
+
+| Ghost degree | H squared norm at r>0.9 | M squared norm at r>0.9 | Z squared norm at r>0.9 |
+| --- | ---: | ---: | ---: |
+| 2 | 37.2% | 85.4% | 95.8% |
+| 3 | 66.9% | 96.5% | 97.8% |
+
+The H maximum lies at r=0.929108; the momentum maximum lies at r=0.992846.
+The stronger-KO trials have a distinct additional problem: the fraction of the
+H squared norm at r<0.25 increases from 4.96% (KO=0.1) to 23.3% (KO=0.5) and
+46.5% (KO=1). Increasing dissipation does not merely suppress an outer error;
+it introduces substantial additional error in the puncture region.
+The budget reader agrees with native global history norms to binary-output
+precision for CMC, nonspherical pulses and trumpets at degrees 2, 3 and 4,
+and on the dyadic grid containing exact scri nodes. Tests verify complete cell
+and squared-norm accounting and rejection of bins omitting the interior.
+All 23 native integration tests pass with these additional budget checks.
+
+A further unmerged experiment separates the normal and transverse polynomial
+degrees in the sphere-normal ghost construction. Interior-donor checks and
+mixed polynomial reproduction pass (errors below 5e-15 for the tested pairs).
+At the same N=24, t=0.5, normal degree 2/transverse degree 3 gives
+H=0.0439600743, M=0.202703694 and Z=0.0604731641; normal degree 3/transverse
+degree 2 gives H=0.105457353, M=0.682144538 and Z=0.173264921. Neither improves
+the corresponding equal-degree baseline. This option is not adopted.
+
+The native N=36 quadratic snapshot at t=0.500127604 (the first output step
+past 0.5) gives H=0.0137806632, M=0.0931146941 and Z=0.0175563926.
+The fractions outside r=0.9 are 70.9%, 95.7% and 99.0%, respectively.
+This supports localization of the remaining errors near the outer boundary;
+it is not a same-time field self-convergence comparison with the t=0.5 dump.
+
+Another unmerged trial reconstructs the physical Theta ghost values as Omega
+times an extrapolation of Theta/Omega. It preserves a manufactured
+Omega*(1+0.3*x*y+0.4*z*z) field to below 4e-15 on the tested stencils.
+At N=24, t=0.5, quadratic ghosts give H=0.0431642946, M=0.197438132 and
+Z=0.0611846130; cubic ghosts give H=0.100823596, M=0.536190840 and
+Z=0.164510993. The cubic momentum norm improves, but this is not a uniform
+improvement across constraints and policies. A matched N=36 cubic comparison
+at t=0.1 (both pole coefficient 0.1, 522 steps) gives:
+
+| Theta ghosts | H | M | Z |
+| --- | ---: | ---: | ---: |
+| Direct baseline | 0.00184573849 | 0.0127910624 | 0.00355657823 |
+| Factored | 0.00185588174 | 0.0114052407 | 0.00356956622 |
+
+The finer result again trades lower momentum error for slightly higher H and Z.
+Factoring only this ghost variable is not adopted as a stability fix or exposed
+in the native input. The production boundary treatment remains unchanged.

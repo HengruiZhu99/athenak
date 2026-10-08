@@ -13,6 +13,10 @@ from .overhaul_utils import ROOT
 spec = importlib.util.spec_from_file_location('hyp_reader', ROOT / 'vis/python/bin_convert.py')
 reader = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(reader)
+profile_spec = importlib.util.spec_from_file_location(
+    'hyp_radial', ROOT / 'tst/hyperboloidal/analyze_native_constraints.py')
+radial = importlib.util.module_from_spec(profile_spec)
+profile_spec.loader.exec_module(radial)
 EXE = Path(os.environ.get('ATHENA_OVERHAUL_EXE', './athena')).resolve()
 PATCH_EXE = Path(os.environ.get(
     'ATHENA_HYP_PATCH_EXE', './hyperboloidal_cartesian_tests')).resolve()
@@ -78,6 +82,21 @@ def check_adm(directory, first=False):
             assert (value[~mask] == 0).all(), name
 
 
+def check_radial_budget(directory, history_row):
+    path = sorted((directory / 'bin').glob('*.con.*.bin'))[-1]
+    profile = radial.analyze(path, [0, .25, .5, .75, .9, 1])
+    assert profile['active_cells'] == history_row[-1]
+    assert sum(row['cells'] for row in profile['radial_bins']) == profile['active_cells']
+    for column, name in [(2, 'H'), (3, 'M'), (4, 'Z')]:
+        np.testing.assert_allclose(profile['global'][name]['rms'], history_row[column],
+                                   rtol=3e-7, atol=1e-12)
+        fraction = sum(row[name]['squared_norm_fraction'] for row in profile['radial_bins'])
+        np.testing.assert_allclose(fraction, 1 if profile['global'][name]['rms'] else 0,
+                                   rtol=1e-12, atol=1e-12)
+    with pytest.raises(ValueError, match='cover all active nodes'):
+        radial.analyze(path, [.5, 1])
+
+
 @pytest.mark.parametrize('degree', [2, 3, 4])
 @pytest.mark.parametrize('mass,pulse', [(0, 0), (0, 1e-4), (0.5, 0)])
 def test_native_tasks_and_adm(tmp_path, mass, pulse, degree):
@@ -87,6 +106,7 @@ def test_native_tasks_and_adm(tmp_path, mass, pulse, degree):
     check_adm(tmp_path)
     history = np.loadtxt(next(tmp_path.glob('*.hst')))
     final = history[-1]
+    check_radial_budget(tmp_path, final)
     amplitude, profile = (mass, 'trumpet') if mass else (pulse, 'smooth')
     result = subprocess.run([str(PATCH_EXE), '24', f'{final[0]:.17g}',
                              str(amplitude), profile, '.04', str(degree)],
@@ -155,6 +175,7 @@ def test_nodes_exactly_on_scri_are_inactive(tmp_path):
     history = np.loadtxt(next(tmp_path.glob('*.hst')))
     assert np.isfinite(history).all()
     assert np.max(np.abs(history[:, 2:8])) < 1e-10
+    check_radial_budget(tmp_path, history[-1])
 
 
 @pytest.mark.parametrize('degree', [1, 6])
