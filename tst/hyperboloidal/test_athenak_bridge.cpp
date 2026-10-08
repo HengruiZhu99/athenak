@@ -208,7 +208,8 @@ void PhysicalConversion() {
   Check(!hyp::ToPhysicalADM(u, Real(-0.1)).valid, "physical ADM allowed outside scri");
   Check(!hyp::ToPhysicalADM(u, std::numeric_limits<Real>::quiet_NaN()).valid,
         "nonfinite compactifier allowed");
-  Check(!hyp::ToPhysicalADM(u, Real(1e200)).valid, "underflowed physical metric accepted");
+  Check(!hyp::ToPhysicalADM(u, Real(1e200)).valid,
+        "underflowed physical metric accepted");
   u.chi.value = std::numeric_limits<Real>::infinity();
   Check(!hyp::ToPhysicalADM(u, Real(1)).valid, "infinite chi accepted");
   u.chi.value = 0;
