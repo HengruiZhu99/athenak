@@ -1012,8 +1012,10 @@ The smooth pulse improves on all three grids, but these results do not establish
 uniform fourth-order convergence. The N=24 compact t=0.5 run completes 1754 steps
 with minimum lapse 0.502778, minimum chi 1.00000, and maximum field deviation
 2.91790e-4. Long-time stability and fine-grid evolution through a full crossing
-time remain unverified. An N=24 smooth t=2 extension is being tracked separately;
-it is not counted as a completed validation here.
+time remain unverified. The N=24 smooth t=2 extension subsequently completed: H=1.87915e-5,
+M=1.06217e-4, Z=1.72132e-5, minimum lapse=0.502881, minimum chi=0.999980,
+and maximum field deviation=2.65935e-4 after 7014 steps. This is still a
+single coarse resolution and does not establish long-time convergence.
 
 Reproduce with `hyperboloidal_cartesian_tests N end amplitude [compact|smooth]`.
 The default test checks CMC stationarity, the compact pulse and a 24/36 smooth
@@ -1027,3 +1029,66 @@ completed with exit 0, including cubic/quartic/quintic convergence pairs and the
 N=48 quartic t=8 case. That binary preceded only the centered-advection CLI
 negative control; a rebuilt final-source short upwind smoke also passes. These
 results close that earlier pending validation, not the nonlinear stability gap.
+
+
+## Cartesian trumpet initialization and first puncture runs
+
+`cartesian_radial.hpp` converts spherical scalar, vector and tensor jets from
+(r,0,0) to arbitrary directions, transforming all derivative indices, including
+mixed Cartesian second derivatives. Finite differences of independently sampled
+component values converge by about four on each halving of their step, for both
+a manufactured nonflat radial metric and CMC trumpet data. Off-axis initial
+Hamiltonian and momentum constraints over masses 0.05/0.5, radii 0.02/0.15/0.6/0.95
+and three directions are below 2.7e-13.
+
+`cartesian_trumpet.hpp` initializes the actual AthenaK field arrays from these
+jets. It requires S=a=1 and a grid excluding r=0 and scri; it does not floor either
+singular location. An optional fixed initial-profile reconstruction differentiates
+only changes from that profile and adds its exact jets back. Ghost deviations
+still use strictly interior donors and the true-normal spherical plan. The
+profile is not the gauge target: Minkowski remains the reference. No black-hole
+RHS is subtracted. The test explicitly checks that the initial geometric RHS is
+stationary to 1e-6 while the live gauge RHS is nonzero; at N=24, M=0.5 their maxima
+are 9.94e-12 and 0.510341 respectively.
+
+The patch now also has a masked final-step algebraic projection, matching the
+existing AthenaK normalization of det(g_tilde) and removal of tr(A_tilde), with
+rejection of invalid metrics instead of a determinant floor. Tests verify that
+it preserves inactive poisoned cells and rejects indefinite metrics. It does
+not project Hamiltonian, momentum or Z4 differential constraints.
+
+Run `hyperboloidal_cartesian_tests N end mass trumpet` for projected evolution,
+or use `trumpet_raw` for the unprojected control. These are experimental Cartesian
+puncture runs, still outside AthenaK's production task graph. N=24, M=0.5 runs
+to t=0.1 with positive lapse and chi, but the errors are not yet satisfactory:
+
+| Treatment | RMS H | RMS M | RMS Z | max det error | max trace error |
+|---|---|---|---|---|---|
+| No projection | 0.0208668 | 0.0939474 | 0.0289368 | 2.08e-4 | 2.89e-3 |
+| Projection | 0.0208484 | 0.0939028 | 0.0289517 | 8.88e-16 | 1.22e-15 |
+
+The maximum projected H error is 0.276497 at r=0.929108; maximum M is 0.923621
+at r=0.992846. This localizes the serious differential-constraint error to the
+outer region and shows that algebraic projection is not a solution to it. The N=36 projected comparison at t=0.1 gives H=0.00184574, M=0.0127911,
+Z=0.00355659: improvements of about 11.3, 7.34 and 8.14 over N=24. This is
+encouraging refinement evidence, not an established asymptotic order. The N=24
+run completes t=1 with positive lapse/chi, but H=0.345206, M=1.45786 and
+Z=0.424791 are too large to claim an accurate long evolution. No converged or
+long-time-stable Cartesian black-hole evolution is claimed. The next boundary
+audit must address the singular pole assembly/regularity near arbitrary Cartesian
+cuts, rather than interpreting the scalar boundary successes as sufficient.
+
+All ten Release CTests pass, including the new independent radial derivative
+and constraint tests and the one-step puncture smoke. The final localization
+run reproduces the t=0.1 constraints. Strict ASan/UBSan radial tests and a
+one-step Cartesian trumpet smoke pass. Full-duration Cartesian puncture
+sanitizer tests and native task integration remain outstanding.
+
+
+The optional final CLI argument selects the pole timestep coefficient (default
+0.04, allowed experimental range (0,0.2]). At N=24, M=0.5, t=0.1, increasing it
+to 0.1 reduces the number of steps from 351 to 141. H changes from 0.02084844 to
+0.02084788, M from 0.09390278 to 0.09390201, and Z from 0.02895168 to 0.02895091.
+Those changes are much smaller than the spatial-refinement changes. This is an
+early-time timestep sensitivity check, not proof that the larger step is stable
+at later times. Finer and longer runs with that coefficient are tracked separately.

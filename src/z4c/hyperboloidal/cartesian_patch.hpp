@@ -79,6 +79,7 @@ OmegaJet<Real> CartesianOmega(const Z4cJet<Real> &u, const CMCPoint<Real> &p) {
 struct CartesianDiagnostics {
   double h_l2 = 0, m_l2 = 0, z_l2 = 0, theta_l2 = 0;
   double max_h = 0, max_m = 0, max_det = 0, max_trace = 0, max_deviation = 0;
+  double max_h_radius = 0, max_m_radius = 0;
   double shell_max_pole = 0, shell_max_pole_deviation = 0;
   double shell_max_null_deviation = 0;
   double min_alpha = std::numeric_limits<double>::infinity();
@@ -97,6 +98,8 @@ class CartesianConformalPatch {
   Kokkos::View<unsigned char *> mask;
   Kokkos::View<SphericalGhostStencil *> ghosts;
   DvceArray5D<Real> deviations;
+  DvceArray5D<Real> reconstruction_values;
+  Kokkos::View<Z4cJet<Real> *> reconstruction_jets;
   Real min_omega = std::numeric_limits<Real>::infinity();
   Real kappa1 = 5, dissipation = 0.1;
   GaugeParameters<Real> gauge_parameters{2,0.1,1.5,1};
@@ -157,6 +160,21 @@ class CartesianConformalPatch {
     });
   }
 
+  // Cache a fixed initial profile and its exact derivatives. The CMC reference
+  // remains the gauge target and the only RHS whose roundoff is subtracted.
+  void SetReconstruction(const DvceArray5D<Real> &data,
+                         const Kokkos::View<Z4cJet<Real> *> &jets) {
+    if (jets.extent(0) != active.extent(0) || reconstruction_jets.extent(0)) {
+      throw std::invalid_argument("invalid/repeated Cartesian reconstruction setup");
+    }
+    Prepare(data);  // extend the initial profile using the validated sphere plan
+    reconstruction_values = Allocate("analytic reconstruction values");
+    Kokkos::deep_copy(reconstruction_values,data);
+    reconstruction_jets = Kokkos::View<Z4cJet<Real> *>(
+        "analytic initial jets",jets.extent(0));
+    Kokkos::deep_copy(reconstruction_jets,jets);
+  }
+
   void Prepare(const DvceArray5D<Real> &data) const {
     CheckShape(data);
     if (data.data() == deviations.data()) {
@@ -165,13 +183,16 @@ class CartesianConformalPatch {
     const auto g = grid;
     const auto ref = reference;
     const auto dev = deviations;
+    const auto baseline = reconstruction_values;
+    const bool reconstructed = baseline.size() != 0;
     const auto inside = mask;
     Kokkos::parallel_for("Cartesian reference deviations",data.size(),
         KOKKOS_LAMBDA(const int index) {
       const int cells = g.n[0]*g.n[1]*g.n[2], f = index/cells, s = index%cells;
       const int i = s%g.n[0], j = s/g.n[0]%g.n[1], k = s/(g.n[0]*g.n[1]);
       const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);
-      dev(0,f,k,j,i) = inside(s) ? data(0,f,k,j,i)-ReferenceComponent(f,p) : 0;
+      dev(0,f,k,j,i) = inside(s) ? data(0,f,k,j,i)
+          -(reconstructed ? baseline(0,f,k,j,i) : ReferenceComponent(f,p)) : 0;
     });
     for (int f = 0; f < Z4c::nz4c; ++f) {
       FillSphericalGhosts(CartesianComponent{dev,f,g.n[0],g.n[1]},ghosts);
@@ -183,7 +204,8 @@ class CartesianConformalPatch {
       const int i = s%g.n[0], j = s/g.n[0]%g.n[1], k = s/(g.n[0]*g.n[1]);
       const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);
       for (int f = 0; f < Z4c::nz4c; ++f) {
-        data(0,f,k,j,i) = dev(0,f,k,j,i)+ReferenceComponent(f,p);
+        data(0,f,k,j,i) = dev(0,f,k,j,i)
+            +(reconstructed ? baseline(0,f,k,j,i) : ReferenceComponent(f,p));
       }
     });
   }
@@ -207,6 +229,7 @@ class CartesianConformalPatch {
     const auto dev = deviations;
     const auto udev = BindCartesianFields(dev), full = BindCartesianFields(data);
     const auto output = BindCartesianFields(result);
+    const auto initial_jets = reconstruction_jets;
     const auto gauge = gauge_parameters;
     const Real damping = kappa1, epsilon = dissipation;
     int failures = 0;
@@ -218,7 +241,8 @@ class CartesianConformalPatch {
       const Real idx[3] = {1/spacing[0],1/spacing[1],1/spacing[2]};
       const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);
       auto u = LoadMeshJet<3>(udev,idx,0,k,j,i);
-      AddReferenceJet(u,p,ref);
+      if (initial_jets.extent(0)) AddBackgroundJet(u,initial_jets(point));
+      else AddReferenceJet(u,p,ref);
       if (!(u.alpha.value > 0) || !Kokkos::isfinite(u.alpha.value)) {
         ++bad;
         return;
@@ -259,12 +283,51 @@ class CartesianConformalPatch {
     if (failures) throw std::runtime_error("invalid Cartesian conformal RHS");
   }
 
+  // Match AthenaK's final-stage algebraic projection, restricted to active
+  // cells. Invalid metrics are rejected rather than replaced by a determinant
+  // floor. This does not project the differential Einstein/Z4 constraints.
+  void ProjectAlgebraic(const DvceArray5D<Real> &data) const {
+    CheckShape(data);
+    const auto g = grid;
+    const auto nodes = active;
+    const auto q = BindCartesianFields(data);
+    int failures = 0;
+    Kokkos::parallel_reduce("masked conformal algebraic projection",nodes.extent(0),
+        KOKKOS_LAMBDA(const int point, int &bad) {
+      const int s = nodes(point), i = s%g.n[0], j = s/g.n[0]%g.n[1];
+      const int k = s/(g.n[0]*g.n[1]);
+      MetricJet<Real> metric{};
+      for (int a = 0; a < 3; ++a)
+      for (int b = 0; b < 3; ++b) metric.g[a][b] = q.g_dd(0,a,b,k,j,i);
+      const auto geo = Geometry(metric);
+      if (!geo.valid) {
+        ++bad;
+        return;
+      }
+      const Real scale = 1/Kokkos::cbrt(geo.determinant);
+      Real trace = 0;
+      for (int a = 0; a < 3; ++a)
+      for (int b = 0; b < 3; ++b) trace += geo.inverse[a][b]*q.vA_dd(0,a,b,k,j,i);
+      if (!Kokkos::isfinite(trace) || !Kokkos::isfinite(scale)) {
+        ++bad;
+        return;
+      }
+      for (int a = 0; a < 3; ++a)
+      for (int b = a; b < 3; ++b) {
+        q.g_dd(0,a,b,k,j,i) = scale*metric.g[a][b];
+        q.vA_dd(0,a,b,k,j,i) -= metric.g[a][b]*trace/3;
+      }
+    },failures);
+    if (failures) throw std::runtime_error("invalid metric in conformal projection");
+  }
+
   CartesianDiagnostics Diagnose(const DvceArray5D<Real> &data) const {
     Prepare(data);
     const auto g = grid;
     const auto ref = reference;
     const auto nodes = active;
     const auto q = BindCartesianFields(deviations);
+    const auto initial_jets = reconstruction_jets;
     const Real damping = kappa1;
     Kokkos::View<Real **> diagnostics("Cartesian constraints",active.extent(0),12);
     int failures = 0;
@@ -275,7 +338,8 @@ class CartesianConformalPatch {
       const Real idx[3] = {1/g.h[0],1/g.h[1],1/g.h[2]};
       const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);
       auto u = LoadMeshJet<3>(q,idx,0,k,j,i);
-      AddReferenceJet(u,p,ref);
+      if (initial_jets.extent(0)) AddBackgroundJet(u,initial_jets(point));
+      else AddReferenceJet(u,p,ref);
       if (!(u.alpha.value > 0) || !Kokkos::isfinite(u.alpha.value)) {
         ++bad;
         return;
@@ -341,6 +405,8 @@ class CartesianConformalPatch {
     },failures);
     if (failures) throw std::runtime_error("invalid Cartesian constraints");
     const auto h = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),diagnostics);
+    const auto host_nodes = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(),nodes);
     CartesianDiagnostics out;
     for (size_t p = 0; p < active.extent(0); ++p) {
       for (int f = 0; f < 12; ++f) if (!std::isfinite(h(p,f))) {
@@ -348,8 +414,19 @@ class CartesianConformalPatch {
       }
       out.h_l2 += h(p,0)*h(p,0); out.m_l2 += h(p,1)*h(p,1);
       out.z_l2 += h(p,2)*h(p,2); out.theta_l2 += h(p,3)*h(p,3);
-      out.max_h = std::max(out.max_h,std::abs(h(p,0)));
-      out.max_m = std::max(out.max_m,std::abs(h(p,1)));
+      const int s = host_nodes(p);
+      const double x = g.first[0]+(s%g.n[0])*g.h[0];
+      const double y = g.first[1]+(s/g.n[0]%g.n[1])*g.h[1];
+      const double z = g.first[2]+(s/(g.n[0]*g.n[1]))*g.h[2];
+      const double radius = std::sqrt(x*x+y*y+z*z);
+      if (std::abs(h(p,0)) > out.max_h) {
+        out.max_h = std::abs(h(p,0));
+        out.max_h_radius = radius;
+      }
+      if (std::abs(h(p,1)) > out.max_m) {
+        out.max_m = std::abs(h(p,1));
+        out.max_m_radius = radius;
+      }
       out.max_det = std::max(out.max_det,h(p,4));
       out.max_trace = std::max(out.max_trace,h(p,5));
       out.min_alpha = std::min(out.min_alpha,h(p,6));

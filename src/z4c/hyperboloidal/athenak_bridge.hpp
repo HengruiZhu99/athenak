@@ -73,6 +73,45 @@ Z4cJet<Real> LoadMeshJet(const Z4c::Z4c_vars &q, const Real idx[3],
   return u;
 }
 
+// Add an analytic, time-independent initial-data jet after differentiating
+// deviations. This changes reconstruction, not the evolution equations.
+KOKKOS_INLINE_FUNCTION
+void AddScalarJet(ScalarJet<Real> &a, const ScalarJet<Real> &b) {
+  a.value += b.value;
+  for (int d = 0; d < 3; ++d) {
+    a.d[d] += b.d[d];
+    for (int e = 0; e < 3; ++e) a.dd[d][e] += b.dd[d][e];
+  }
+}
+
+KOKKOS_INLINE_FUNCTION
+void AddVectorJet(VectorJet<Real> &a, const VectorJet<Real> &b) {
+  for (int i = 0; i < 3; ++i) {
+    a.value[i] += b.value[i];
+    for (int d = 0; d < 3; ++d) {
+      a.d[d][i] += b.d[d][i];
+      for (int e = 0; e < 3; ++e) a.dd[d][e][i] += b.dd[d][e][i];
+    }
+  }
+}
+
+KOKKOS_INLINE_FUNCTION
+void AddBackgroundJet(Z4cJet<Real> &a, const Z4cJet<Real> &b) {
+  AddScalarJet(a.chi,b.chi); AddScalarJet(a.alpha,b.alpha);
+  AddScalarJet(a.trace,b.trace); AddScalarJet(a.theta,b.theta);
+  AddVectorJet(a.beta,b.beta); AddVectorJet(a.lambda,b.lambda);
+  for (int i = 0; i < 3; ++i)
+  for (int j = 0; j < 3; ++j) {
+    a.metric.g[i][j] += b.metric.g[i][j];
+    a.a.k[i][j] += b.a.k[i][j];
+    for (int d = 0; d < 3; ++d) {
+      a.metric.dg[d][i][j] += b.metric.dg[d][i][j];
+      a.a.dk[d][i][j] += b.a.dk[d][i][j];
+      for (int e = 0; e < 3; ++e) a.metric.ddg[d][e][i][j] += b.metric.ddg[d][e][i][j];
+    }
+  }
+}
+
 // Conservative admission test, including mixed-derivative corners. False means
 // the caller needs a boundary treatment, not permission to skip a physical cell.
 // Array halo extents remain a separate caller obligation; wider dissipation

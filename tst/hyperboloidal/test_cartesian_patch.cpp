@@ -8,7 +8,7 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
-#include "z4c/hyperboloidal/cartesian_patch.hpp"
+#include "z4c/hyperboloidal/cartesian_trumpet.hpp"
 
 namespace hyp = z4c::hyperboloidal;
 using z4c::Z4c;
@@ -91,6 +91,22 @@ void AuditInterfaces(hyp::CartesianConformalPatch &patch) {
   if (diagnostics.h_l2 > 1e-12 || diagnostics.m_l2 > 1e-12) {
     throw std::runtime_error("poisoned reference constraints");
   }
+  host = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),q);
+  const int ci = g.n[0]/2, cj = g.n[1]/2, ck = g.n[2]/2;
+  host(0,Z4c::I_Z4C_GXX,ck,cj,ci) = 1.2;
+  host(0,Z4c::I_Z4C_GYY,ck,cj,ci) = 0.8;
+  host(0,Z4c::I_Z4C_AXX,ck,cj,ci) = 0.03;
+  host(0,Z4c::I_Z4C_AYY,ck,cj,ci) = 0.07;
+  Kokkos::deep_copy(q,host);
+  patch.ProjectAlgebraic(q);
+  const auto projected = patch.Diagnose(q);
+  if (projected.max_det > 1e-13 || projected.max_trace > 1e-13) {
+    throw std::runtime_error("masked algebraic projection failed");
+  }
+  const auto ph = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),q);
+  if (!std::isnan(ph(0,Z4c::I_Z4C_CHI,0,0,0))) {
+    throw std::runtime_error("projection overwrote inactive corner");
+  }
   // A finite, positive determinant alone would admit two negative eigenvalues.
   patch.InitializeReference(q);
   host = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),q);
@@ -105,10 +121,18 @@ void AuditInterfaces(hyp::CartesianConformalPatch &patch) {
     rejected = true;
   }
   if (!rejected) throw std::runtime_error("accepted indefinite spatial metric");
+  rejected = false;
+  try {
+    patch.ProjectAlgebraic(q);
+  } catch (const std::runtime_error &) {
+    rejected = true;
+  }
+  if (!rejected) throw std::runtime_error("projection accepted indefinite metric");
 }
 
 hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
-                              bool smooth = false) {
+                              bool smooth = false, double mass = 0, bool project = true,
+                              double pole_cfl = 0.04) {
   hyp::SphericalGhostGrid grid;
   grid.radius = 1;
   for (int d = 0; d < 3; ++d) {
@@ -117,7 +141,7 @@ hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
     grid.first[d] = -1.05-2.5*grid.h[d];
   }
   hyp::CartesianConformalPatch patch(grid);
-  if (amplitude == 0) AuditInterfaces(patch);
+  if (amplitude == 0 && mass == 0) AuditInterfaces(patch);
   auto q = patch.Allocate("state"), initial = patch.Allocate("RK initial");
   auto stage = patch.Allocate("RK stage"), rhs = patch.Allocate("RHS");
   patch.InitializeReference(q);
@@ -137,11 +161,33 @@ hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
     host(0,Z4c::I_Z4C_ALPHA,k,j,i) += amplitude*bump*(1+0.2*x+0.3*y*z);
   }
   Kokkos::deep_copy(q,host);
+  if (mass > 0) hyp::InitializeCartesianTrumpet(patch,q,mass);
   const auto first = patch.Diagnose(q);
-  if (first.h_l2 > 1e-10 || first.m_l2 > 1e-10 || first.z_l2 > 1e-10) {
-    throw std::runtime_error("nonzero initial Minkowski constraints");
+  if (first.h_l2 > 1e-8 || first.m_l2 > 1e-8 || first.z_l2 > 1e-8) {
+    throw std::runtime_error("nonzero analytic initial constraints");
   }
-  const double dt_limit = std::min(0.025*grid.h[0],0.04*patch.min_omega);
+  if (mass > 0) {
+    patch.RHS(q,rhs);
+    const auto rh = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),rhs);
+    double gauge_motion = 0, geometric_motion = 0;
+    for (int k = 0; k < grid.n[2]; ++k)
+    for (int j = 0; j < grid.n[1]; ++j)
+    for (int i = 0; i < grid.n[0]; ++i) {
+      if (!grid.Interior(i,j,k)) continue;
+      for (int f = 0; f < Z4c::I_Z4C_BX; ++f) {
+        const double value = std::abs(rh(0,f,k,j,i));
+        if (f >= Z4c::I_Z4C_ALPHA) gauge_motion = std::max(gauge_motion,value);
+        else geometric_motion = std::max(geometric_motion,value);
+      }
+    }
+    std::cout << "trumpet initial H=" << first.h_l2 << " M=" << first.m_l2
+              << " geometry_RHS=" << geometric_motion << " gauge_RHS=" << gauge_motion
+              << std::endl;
+    if (gauge_motion < 1e-4 || geometric_motion > 1e-6) {
+      throw std::runtime_error("trumpet initial geometry/gauge evolution mismatch");
+    }
+  }
+  const double dt_limit = std::min(0.025*grid.h[0],pole_cfl*patch.min_omega);
   double t = 0;
   int steps = 0;
   double next_report = end/10;
@@ -157,6 +203,7 @@ hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
       });
       Kokkos::deep_copy(q,stage);
     }
+    if (project) patch.ProjectAlgebraic(q);
     t += dt;
     ++steps;
     if (end > 0.1 && t >= next_report) {
@@ -170,8 +217,11 @@ hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
   const auto last = patch.Diagnose(q);
   std::cout << std::setprecision(12) << "n=" << n << " t=" << t
             << " steps=" << steps << " min_omega=" << patch.min_omega
-            << " amplitude=" << amplitude << " smooth=" << smooth
+            << " amplitude=" << amplitude << " smooth=" << smooth << " mass=" << mass
+            << " project=" << project << " pole_cfl=" << pole_cfl
             << " H=" << last.h_l2 << " M=" << last.m_l2
+            << " max_H=" << last.max_h << " max_H_r=" << last.max_h_radius
+            << " max_M=" << last.max_m << " max_M_r=" << last.max_m_radius
             << " Z=" << last.z_l2 << " Theta=" << last.theta_l2
             << " det=" << last.max_det << " trace=" << last.max_trace
             << " min_alpha=" << last.min_alpha << " min_chi=" << last.min_chi
@@ -180,9 +230,13 @@ hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
             << " shell_pole_delta=" << last.shell_max_pole_deviation
             << " shell_null_deviation=" << last.shell_max_null_deviation << std::endl;
   if (!(last.min_alpha > 0 && last.min_chi > 0)
-      || last.max_deviation > std::max(1e-10,20*std::abs(amplitude))
-      || (amplitude == 0 && last.max_deviation > 1e-10)) {
+      || (mass == 0 && last.max_deviation > std::max(1e-10,20*std::abs(amplitude)))
+      || (amplitude == 0 && mass == 0 && last.max_deviation > 1e-10)) {
     throw std::runtime_error("Cartesian evolution audit failed");
+  }
+  if (mass > 0 && end <= 1e-6
+      && (last.h_l2 > 1e-8 || last.m_l2 > 1e-8 || last.z_l2 > 1e-8)) {
+    throw std::runtime_error("one-step trumpet constraint bound");
   }
   return last;
 }
@@ -192,21 +246,31 @@ int main(int argc, char **argv) {
   try {
     AuditGaugeConstraintTangent();
     if (argc > 1) {
-      if (argc != 4 && argc != 5) {
-        throw std::invalid_argument("usage: N end amplitude [compact|smooth]");
+      if (argc < 4 || argc > 6) {
+        throw std::invalid_argument(
+            "usage: N end amplitude [compact|smooth|trumpet|trumpet_raw] [pole_cfl]");
       }
       const int n = std::atoi(argv[1]);
       const double end = std::atof(argv[2]), amplitude = std::atof(argv[3]);
       if (n < 24 || n%2 || !std::isfinite(end) || end <= 0
           || !std::isfinite(amplitude)) throw std::invalid_argument("invalid parameters");
-      const std::string profile = argc == 5 ? argv[4] : "compact";
-      if (profile != "compact" && profile != "smooth") {
+      const std::string profile = argc >= 5 ? argv[4] : "compact";
+      if (profile != "compact" && profile != "smooth" && profile != "trumpet"
+          && profile != "trumpet_raw") {
         throw std::invalid_argument("unknown pulse profile");
       }
-      Run(n,end,amplitude,profile == "smooth");
+      const bool trumpet = profile == "trumpet" || profile == "trumpet_raw";
+      if (trumpet && amplitude <= 0) throw std::invalid_argument("mass must be positive");
+      const double pole_cfl = argc == 6 ? std::stod(argv[5]) : 0.04;
+      if (!std::isfinite(pole_cfl) || pole_cfl <= 0 || pole_cfl > 0.2) {
+        throw std::invalid_argument("invalid pole CFL");
+      }
+      Run(n,end,trumpet ? 0 : amplitude,profile == "smooth",trumpet ? amplitude : 0,
+          profile != "trumpet_raw",pole_cfl);
     } else {
       Run(24,0.01,0);
       Run(24,0.01,1e-4);
+      Run(24,0.000001,0,false,0.5);
       const auto coarse = Run(24,0.01,1e-4,true);
       const auto fine = Run(36,0.01,1e-4,true);
       if (coarse.h_l2 < 4*fine.h_l2 || coarse.m_l2 < 3*fine.m_l2
