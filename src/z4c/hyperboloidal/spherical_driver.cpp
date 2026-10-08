@@ -12,6 +12,7 @@
 
 #include "z4c/hyperboloidal/spherical_tensor.hpp"
 #include "z4c/hyperboloidal/cmc_trumpet.hpp"
+#include "z4c/hyperboloidal/reference_gauge.hpp"
 
 namespace hyp = z4c::hyperboloidal;
 using Exec = Kokkos::DefaultHostExecutionSpace;
@@ -209,21 +210,16 @@ void RHS(State q, State result, const Options &o, const Reconstruction &rec) {
     result(i, hyp::DK) = rhs.trace-rhs0.trace;
     result(i, hyp::THETA) = rhs.theta-rhs0.theta;
     result(i, hyp::LAMBDA) = rhs.lambda[0]-rhs0.lambda[0];
-    const double alpha = u.alpha.value, beta = u.beta.value[0];
-    const double da = v[hyp::DALPHA], db = v[hyp::DBETA];
-    const double radial = 1-radius*radius;
-    // Reference gauge in unfactored deviations, with the singular numerator
-    // expanded before evaluation; no subtraction of two large gauge sources.
-    const double lapse_coefficient = alpha*alpha
-        +slicing*radial*radial*(one_plus_log ? alpha : 1);
-    const double pole = -lapse_coefficient*v[hyp::DK]
-        +radius*(background.beta[0]*da+background.alpha*db+da*db)
-        -xi*(puncture_gauge ? alpha*da : 2*background.alpha*da+da*da);
-    result(i, hyp::DALPHA) = fixed_lapse ? 0 : beta*d[hyp::DALPHA]+db*background.dalpha[0]
-        +pole/omega.omega;
-    result(i, hyp::DBETA) = fixed_shift ? 0 :
-        beta*d[hyp::DBETA]-db+(driver*radial*radial+0.75*alpha*alpha*u.chi.value)
-        *u.lambda.value[0]-eta*db;
+    const auto gauge_parts = hyp::UnfactoredReferenceGauge(ref, background, u,
+        hyp::GaugeParameters<double>{slicing, driver, xi, eta},
+        puncture_gauge, one_plus_log);
+    hyp::GaugeRHS<double> gauge{};
+    if (!hyp::AssembleGaugeInterior(gauge_parts, omega.omega, gauge)) {
+      ++bad;
+      return;
+    }
+    result(i, hyp::DALPHA) = fixed_lapse ? 0 : gauge.alpha;
+    result(i, hyp::DBETA) = fixed_shift ? 0 : gauge.beta[0];
     for (int f = 0; f < hyp::NFIELDS; ++f) {
       if ((f == hyp::DBETA && fixed_shift) || (f == hyp::DALPHA && fixed_lapse)) continue;
       double ko = 0;
@@ -299,9 +295,11 @@ void ScriDiagnostics(State q, const Options &o, double &null_residual,
       pole_max = std::max({pole_max, std::abs(p.metric[i][j]), std::abs(p.a[i][j])});
     }
   }
-  const double alpha = u.alpha.value, da = v[hyp::DALPHA], db = v[hyp::DBETA];
-  lapse_pole = -alpha*alpha*v[hyp::DK]-da+db+da*db
-      -o.lapse_damping*(o.puncture_gauge ? alpha*da : 2*da+da*da);
+  const hyp::CMCReference<double> ref{1, 1};
+  lapse_pole = hyp::UnfactoredReferenceGauge(ref, ref.At(1., 0., 0.), u,
+      hyp::GaugeParameters<double>{o.slicing, o.shift_driver, o.lapse_damping,
+                                  o.shift_damping},
+      o.puncture_gauge, o.one_plus_log).pole.alpha;
 }
 
 void Report(State q, double time, const Options &o, std::ostream &log,

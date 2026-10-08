@@ -689,3 +689,75 @@ CTest pass and a 32-cell live-gauge sanitizer smoke run through t=0.02 with quin
 scri extrapolation. The 128/256/512-cell convergence audit passes, as do C++ and
 Python lint. The t=5 resolution/boundary studies are Release-only; sanitizer
 success is not used as evidence of physical accuracy.
+
+## AthenaK Cartesian mesh interface
+
+`athenak_bridge.hpp` now loads the conformal tensor jets directly from AthenaK's
+`Z4c_vars` field views using its existing `Dx`, `Dxx` and `Dxy` operators. It
+packs the geometric and gauge RHS into the real AthenaK variable layout,
+including explicitly zeroing the unused auxiliary gauge slots. The input must
+already use the documented Penrose/physical-trace variable convention. This
+adapter does not reinterpret ordinary Cauchy initial data as conformal data.
+
+The protected loader requires the complete Cartesian stencil box to lie strictly
+inside scri. A test constructs an interior point where every axial sample is
+inside but a mixed-derivative corner is outside; rejection occurs before any
+field access. Rejection requires a boundary treatment from the caller, not a
+permission to freeze or drop that cell. This is an interior adapter, not a
+cut-sphere closure. It also does not check allocation extents or a wider
+artificial-dissipation stencil on the caller's behalf.
+
+`ToPhysicalADM` returns independent point values of physical metric, curvature,
+lapse and shift for Omega>0, and rejects scri/exterior evaluation without a floor.
+The physical curvature uses P+2Theta and Omega*A. Non-diagonal, tracefree test data
+with nonzero Theta verify those factors and recovery of the physical trace.
+
+A concrete integration obstacle is that `coordinates/adm.cpp` currently aliases
+ADM lapse to Z4c lapse. The physical lapse and evolved Penrose lapse differ by
+Omega, so a conformal runtime must allocate independent ADM lapse storage before
+using this conversion. The adapter intentionally returns point values rather than
+writing physical lapse through the current shared alias. The production task graph
+remains unchanged and no incomplete hyperboloidal runtime switch has been exposed.
+
+The live puncture gauge is now a shared, three-dimensional
+`UnfactoredReferenceGauge` kernel. It returns separate regular and pole parts,
+with interior-only assembly. Tests compare it with the independently factored
+reference gauge on non-axis-aligned points for S=2, a=3, including near scri, and
+check both puncture modifications. The spherical driver uses this shared kernel.
+Repeating its 128-cell t=5 live-puncture run changes the final fields and diagnostics
+by at most 4.15e-11 relative to the previous implementation.
+
+The new Cartesian mesh CTest verifies all three AthenaK FD orders on data with
+nonzero mixed derivatives and distinct field amplitudes. Halving grid spacing
+reduces the summed jet errors by about 4, 16 and 64 for the second-, fourth- and
+sixth-order operators. It also evaluates the complete geometric/gauge RHS and
+constraints on a 6x6x6 CMC Minkowski interior with actual AthenaK views, verifies
+reference stationarity, checks all RHS slots with distinct nonzero values, and
+confirms that output halo sentinels are untouched. These are Cartesian volume and
+interface tests, not a Cartesian puncture time evolution or a boundary stability
+result. An unused overload-tag parameter in the shared task-list header was made
+anonymous so this real-header test can compile under strict warnings; no task-list
+behavior changed.
+
+The next integration steps remain independent physical ADM gauge storage, a
+validated sphere-crossing stencil/closure and active-cell policy, and dispatch of
+the conformal kernel with compatible initialization, RK, constraints and outputs.
+Passing the interior adapter tests does not complete those steps.
+
+## Longer spherical evolution
+
+The previous successful parameters at 256 cells reach t=20 (400M), with positive
+metric/lapse and no failed RHS evaluation. The largest sampled relative mass error
+is 1.68645e-3. At the endpoint H/M L2 are 2.98692/2.19098, mass is 0.0500843225,
+horizon R is 0.100396241, and the scri geometric pole maximum is 2.78e-6.
+The maximum sampled H L2 over this run is 3.55040. Late oscillations and increased
+mass error relative to t=5 motivate the finer long run; finite completion at one
+resolution is not a long-time convergence result.
+
+Validation of the mesh-interface milestone: five Release CTests pass. Four
+non-evolution ASan/UBSan CTests pass, and the final adapter assertions were rebuilt
+and rerun under sanitizers after adding nonzero component/value checks and
+conversion-underflow rejection. A short live-puncture sanitizer run also passes
+through t=0.02. The full longer spherical runs are Release-only. Changed C++ files
+and Python regression scripts pass lint. A finer 512-cell t=20 run is being tracked
+separately; its incomplete history is not counted as a passed long-time test here.

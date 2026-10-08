@@ -5,6 +5,7 @@
 
 #include <initializer_list>
 #include "z4c/hyperboloidal/cmc_reference.hpp"
+#include "z4c/hyperboloidal/conformal_rhs.hpp"
 
 namespace z4c {
 namespace hyperboloidal {
@@ -68,6 +69,57 @@ GaugeRHS<T> ReferenceGauge(const CMCReference<T> &ref, const CMCPoint<T> &p,
     }
   }
   return rhs;
+}
+
+// Unfactored three-dimensional gauge used by the live puncture prototype.
+// P=u.trace=K_phys-2 Theta_phys, not its deviation and not a conformal trace.
+template <typename T>
+struct GaugeRHSParts {
+  GaugeRHS<T> regular, pole;
+  bool valid;
+};
+
+template <typename T>
+KOKKOS_INLINE_FUNCTION
+GaugeRHSParts<T> UnfactoredReferenceGauge(const CMCReference<T> &ref,
+    const CMCPoint<T> &p, const Z4cJet<T> &u, const GaugeParameters<T> &g,
+    bool lapse_weighted_restoring = false, bool one_plus_log = false) {
+  GaugeRHSParts<T> out{};
+  const T alpha = u.alpha.value, da = alpha-p.alpha;
+  const T radial = 2*ref.curvature_radius*ref.scri_radius*p.omega;
+  const T coefficient = alpha*alpha+g.slicing*radial*radial
+      *(one_plus_log ? alpha : T(1));
+  out.pole.alpha = -coefficient*(u.trace.value-p.k_physical)
+      -g.lapse_damping*(lapse_weighted_restoring ? alpha*da : (alpha+p.alpha)*da);
+  for (int j = 0; j < 3; ++j) {
+    const T db = u.beta.value[j]-p.beta[j];
+    out.regular.alpha += u.beta.value[j]*(u.alpha.d[j]-p.dalpha[j])+db*p.dalpha[j];
+    out.pole.alpha -= (p.alpha*db+p.beta[j]*da+da*db)*p.domega[j];
+  }
+  for (int i = 0; i < 3; ++i) {
+    const T db = u.beta.value[i]-p.beta[i];
+    out.regular.beta[i] = -db/ref.curvature_radius-g.shift_damping*db
+        +(g.shift_driver*radial*radial+T(0.75)*alpha*alpha*u.chi.value)*u.lambda.value[i];
+    for (int j = 0; j < 3; ++j) {
+      const T reference_derivative = i == j ? -1/ref.curvature_radius : 0;
+      out.regular.beta[i] += u.beta.value[j]*(u.beta.d[j][i]-reference_derivative);
+    }
+  }
+  out.valid = alpha > 0 && u.chi.value > 0 && Kokkos::isfinite(out.regular.alpha)
+      && Kokkos::isfinite(out.pole.alpha);
+  for (int i = 0; i < 3; ++i) {
+    out.valid = out.valid && Kokkos::isfinite(out.regular.beta[i]);
+  }
+  return out;
+}
+
+template <typename T>
+KOKKOS_INLINE_FUNCTION
+bool AssembleGaugeInterior(const GaugeRHSParts<T> &parts, T omega, GaugeRHS<T> &rhs) {
+  if (!parts.valid || !(omega > 0) || !Kokkos::isfinite(omega)) return false;
+  rhs = parts.regular;
+  rhs.alpha += parts.pole.alpha/omega;
+  return Kokkos::isfinite(rhs.alpha);
 }
 
 }  // namespace hyperboloidal
