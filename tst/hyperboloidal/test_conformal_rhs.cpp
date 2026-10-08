@@ -9,6 +9,7 @@
 
 #include "z4c/hyperboloidal/cmc_reference.hpp"
 #include "z4c/hyperboloidal/conformal_rhs.hpp"
+#include "z4c/hyperboloidal/spherical_tensor.hpp"
 
 namespace hyp = z4c::hyperboloidal;
 using Jet = hyp::Z4cJet<double>;
@@ -334,6 +335,37 @@ int main(int argc, char **argv) {
     ADMRecovery();
     OffConstraintDamping();
     EvolvedDiagnostics();
+    // Tensor t_ij=(1+2 r^2) delta_ij + r^2 n_i n_j is a Cartesian quadratic.
+    // Compare every angular and radial derivative of its spherical reduction.
+    for (double r : {0.001, 0.2, 0.8}) {
+      const auto tensor = hyp::RadialTensor(1+3*r*r, 6*r, 6., 1+2*r*r, 4*r, 4., r);
+      const double x[3] = {r, 0, 0};
+      // v_i=(1+r^2) x_i exercises every angular vector Hessian component.
+      const auto vector = hyp::RadialVector(r+r*r*r, 1+3*r*r, 6*r, r);
+      for (int i = 0; i < 3; ++i)
+      for (int a = 0; a < 3; ++a) {
+        Check(std::abs(vector.d[a][i]-((1+r*r)*(a == i)+2*x[a]*x[i])) < 1e-12,
+              "radial vector gradient");
+        for (int b = 0; b < 3; ++b) {
+          const double expected = 2*((a == b)*x[i]+(i == a)*x[b]+(i == b)*x[a]);
+          Check(std::abs(vector.dd[a][b][i]-expected) < 1e-12,
+                "radial vector Hessian");
+        }
+      }
+      for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+      for (int a = 0; a < 3; ++a) {
+        const double expected = 4*x[a]*(i == j)+(i == a ? x[j] : 0)
+            +(j == a ? x[i] : 0);
+        Check(std::abs(tensor.dg[a][i][j]-expected) < 1e-10, "radial tensor gradient");
+        for (int b = 0; b < 3; ++b) {
+          const double second = 4*(a == b)*(i == j)+(i == a)*(j == b)
+              +(j == a)*(i == b);
+          Check(std::abs(tensor.ddg[a][b][i][j]-second) < 1e-9,
+                "radial tensor Hessian");
+        }
+      }
+    }
     std::cout << "PASS nonlinear conformal Z4c interior RHS\n";
   } catch (const std::exception &e) {
     std::cerr << "FAIL: " << e.what() << '\n';

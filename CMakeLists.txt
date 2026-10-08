@@ -261,7 +261,7 @@ configure_file(config.hpp.in config.hpp)
 
 install( TARGETS athena DESTINATION bin )
 
-# Opt-in building-block tests; does not enable hyperboloidal Z4c evolution.
+# Opt-in tests and standalone spherical experiment; not an AthenaK runtime mode.
 option(Athena_ENABLE_HYPERBOLOIDAL_TESTS "Build experimental hyperboloidal tests" OFF)
 if (Athena_ENABLE_HYPERBOLOIDAL_TESTS)
   enable_testing()
@@ -277,4 +277,13 @@ if (Athena_ENABLE_HYPERBOLOIDAL_TESTS)
   target_include_directories(hyperboloidal_rhs_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
   target_link_libraries(hyperboloidal_rhs_tests PRIVATE Kokkos::kokkos)
   add_test(NAME hyperboloidal_rhs COMMAND hyperboloidal_rhs_tests)
+  add_executable(hyperboloidal_spherical src/z4c/hyperboloidal/spherical_driver.cpp)
+  target_include_directories(hyperboloidal_spherical PRIVATE ${CMAKE_SOURCE_DIR}/src)
+  target_link_libraries(hyperboloidal_spherical PRIVATE Kokkos::kokkos)
+  find_package(Python3 COMPONENTS Interpreter)
+  if (Python3_Interpreter_FOUND)
+    add_test(NAME hyperboloidal_evolution COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_SOURCE_DIR}/tst/hyperboloidal/check_evolution.py
+      $<TARGET_FILE:hyperboloidal_spherical>)
+  endif()
 endif()

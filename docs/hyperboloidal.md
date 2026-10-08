@@ -418,3 +418,77 @@ the scri limiting/staggered treatments on constraint and gauge perturbations, an
 then construct and evolve Schwarzschild trumpet/puncture initial data. The C=0
 Schwarzschild exterior test above is not such a puncture and does not complete the
 active single-puncture goal.
+
+## Standalone spherical evolution experiment
+
+`hyperboloidal_spherical` now time-integrates the nonlinear tensor kernel on one
+Kokkos host thread, with live reference lapse and shift. This is a standalone
+spherical experiment, not the AthenaK 3D task graph or a puncture run. Units are
+S=a=1. It stores deviations from CMC Minkowski for chi, the radial conformal
+metric, physical trace, lapse and shift, plus A_rr, physical Theta and Lambda^r.
+The angular metric and curvature enforce unit determinant and zero A trace.
+Analytic Cartesian angular derivatives of spherical scalars, vectors and tensors
+are included; independent Cartesian polynomial tests exercise these derivatives.
+
+The grid is cell-centered on 0<r<1. The origin uses parity ghosts and scri uses
+polynomial continuation of the deviations. All evolution points have Omega>0;
+there is no Omega floor and no RHS evaluated outside scri. This avoids intersecting
+Cartesian stencils with a sphere, but does not supply the exact Omega=0 limiting
+equations. Fourth-order centered differences, RK4 and sixth-difference dissipation
+are used. The analytic Minkowski RHS is subtracted to remove its floating-point
+residual; perturbed fields use the full nonlinear equations. Default outer
+polynomial degree is four; degrees three and five are comparison treatments.
+
+Outputs include radial L2 norms of H, M, Z, Theta, maximum H/M, minimum chi/lapse,
+maximum state deviation, and the null residual at the last interior point. Norms
+use dr, without r^2 or Omega weights that could hide center or scri errors. Final
+snapshots include every evolved field, H, M_r, Z_r and both physical radial light
+speeds. These speeds do not constitute an audit of every gauge/constraint mode.
+The last interior null residual is not an exact scri boundary diagnostic.
+
+The default perturbation is a compact smooth lapse pulse of amplitude 0.001,
+center 0.4 and half-width 0.12; the initial geometric constraints vanish. With
+CFL 0.05, dissipation 0.1, kappa1=1.5 and live shift, the t=1 results are:
+
+| Radial cells | H L2 | M L2 |
+|---:|---:|---:|
+| 64 | 3.5063941e-3 | 2.3827287e-3 |
+| 128 | 8.8908305e-4 | 1.0548326e-3 |
+| 256 | 3.3541561e-4 | 3.7829432e-4 |
+| 512 | 1.09362e-4 | 1.65388e-4 |
+
+All eight evolved fields also show decreasing self-differences at t=1 after
+fourth-order interpolation onto matching radii. The finest-pair orders range
+roughly from 1.5 to 2.3, not four. This test therefore establishes error reduction
+for this pulse, not the nominal fourth-order global convergence of the scheme.
+The 512-cell run has an intermediate H L2 peak near t=0.3; final norms alone
+must not be interpreted as uniform-in-time fourth-order convergence. At t=1 the
+largest H/M errors are in the interior, while Z has its maximum near scri.
+
+At 128 cells the run reaches t=10 with H L2=7.42e-12, M L2=6.94e-12 and maximum
+state deviation 2.13e-7. Cubic and quintic outer continuation both reach t=3;
+H/M L2 are respectively (8.45e-5, 6.80e-5) and (6.98e-5, 3.79e-5). These are
+finite-duration stability observations, not an energy estimate or proof of
+stability under arbitrary boundary or constraint perturbations.
+
+Reproduce the small reference/pulse checks with CTest, or the full experiment:
+
+```sh
+python3 tst/hyperboloidal/check_evolution.py build/hyperboloidal_spherical \
+  --extended --output evolution-results
+```
+
+The script checks exact reference preservation, finite positive geometry, pulse
+decay, decreasing constraint norms and all eight field differences, the longer
+run, two alternative boundary closures, and rejection of nonfinite CLI inputs.
+The thresholds require error reduction but intentionally do not claim fourth
+order. Raw diagnostic histories and field snapshots are retained under --output.
+The unresolved order reduction, exact scri compatibility and trumpet initial data
+remain work toward the single-puncture objective. No black-hole evolution is
+claimed by this experiment.
+
+Validation for this milestone: all four Release CTests pass, the extended driver
+script passes, and the three kernel CTests plus a 16-cell t=0.05 pulse pass under
+ASan/UBSan with strict compiler warnings. The long and resolution-study runs were
+Release-only. C++ and Python lint pass. The production AthenaK evolution path is
+unchanged; its earlier Cauchy regression results are not hyperboloidal evidence.
