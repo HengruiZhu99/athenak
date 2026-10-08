@@ -30,12 +30,24 @@ inline Z4c::Z4c_vars BindCartesianFields(const DvceArray5D<Real> &data) {
   return q;
 }
 
+// Non-owning flattened field access. The calling patch retains the parent view
+// until its kernels finish. Keep a strided fallback for padded/subview storage.
 struct CartesianComponent {
-  DvceArray5D<Real> data;
-  int field, nx, ny;
+  Real *data;
+  int nx, ny;
+  size_t sx, sy, sz;
+  bool contiguous;
+  template <typename View>
+  KOKKOS_INLINE_FUNCTION
+  CartesianComponent(const View &v, int field, int x, int y)
+      : data(v.data()+field*v.stride_1()), nx(x), ny(y), sx(v.stride_4()),
+        sy(v.stride_3()), sz(v.stride_2()),
+        contiguous(sx == 1 && sy == static_cast<size_t>(nx)
+                   && sz == static_cast<size_t>(nx)*ny) {}
   KOKKOS_INLINE_FUNCTION
   Real &operator()(int s) const {
-    return data(0,field,s/(nx*ny),s/nx%ny,s%nx);
+    if (contiguous) return data[s];
+    return data[(s/(nx*ny))*sz+(s/nx%ny)*sy+(s%nx)*sx];
   }
 };
 

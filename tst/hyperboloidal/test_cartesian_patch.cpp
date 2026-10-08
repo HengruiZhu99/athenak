@@ -58,6 +58,42 @@ void AuditGaugeConstraintTangent() {
   }
 }
 
+template <typename View>
+void AuditComponentAccess(const View &v) {
+  const int nx = v.extent_int(4), ny = v.extent_int(3), nz = v.extent_int(2);
+  const int cells = nx*ny*nz, fields = v.extent_int(1);
+  Kokkos::parallel_for("component oracle",cells*fields,KOKKOS_LAMBDA(const int q) {
+    const int f = q/cells, s = q%cells;
+    v(0,f,s/(nx*ny),s/nx%ny,s%nx) = 100000*f+s+1;
+  });
+  int errors = 0;
+  Kokkos::parallel_reduce("component addressing",cells*fields,
+      KOKKOS_LAMBDA(const int q, int &bad) {
+    const int f = q/cells, s = q%cells;
+    const hyp::CartesianComponent component(v,f,nx,ny);
+    if (component(s) != 100000*f+s+1) ++bad;
+    component(s) = -(100000*f+s+1);
+  },errors);
+  if (errors) throw std::runtime_error("flattened component read mismatch");
+  const auto h = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),v);
+  for (int f = 0; f < fields; ++f)
+  for (int k = 0; k < nz; ++k)
+  for (int j = 0; j < ny; ++j)
+  for (int i = 0; i < nx; ++i) {
+    if (h(0,f,k,j,i) != -(100000*f+i+nx*(j+ny*k)+1)) {
+      throw std::runtime_error("flattened component write mismatch");
+    }
+  }
+}
+
+void AuditComponentLayouts() {
+  AuditComponentAccess(DvceArray5D<Real>("contiguous component audit",1,25,7,9,13));
+  // Deliberately pad all spatial directions and the field stride.
+  const Kokkos::LayoutStride layout(1,100000,25,3000,7,400,9,40,13,2);
+  AuditComponentAccess(Kokkos::View<Real *****,Kokkos::LayoutStride>(
+      "strided component audit",layout));
+}
+
 void AuditInterfaces(hyp::CartesianConformalPatch &patch) {
   auto q = patch.Allocate("interface audit"), rhs = patch.Allocate("audit RHS");
   patch.InitializeReference(q);
@@ -245,6 +281,7 @@ hyp::CartesianDiagnostics Run(int n, double end, double amplitude,
 int main(int argc, char **argv) {
   Kokkos::ScopeGuard guard(argc,argv);
   try {
+    AuditComponentLayouts();
     AuditGaugeConstraintTangent();
     if (argc > 1) {
       if (argc < 4 || argc > 7) {

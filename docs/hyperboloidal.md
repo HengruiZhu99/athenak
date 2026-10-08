@@ -1205,3 +1205,56 @@ rejection. Restart equality is checked for degrees 2 and 3. All 23 native tests
 also pass with ASan/UBSan. Seven focused CTests pass: reference building blocks,
 constraints, tensor RHS, mesh adapter, interior dissipation, Cartesian evolution
 and Cartesian radial jets. C++ and Python lint and diff whitespace checks pass.
+
+### Further boundary trials and single-core cost
+
+The degree-2 N=36, M=0.5 run reaches t=0.5 in 2607 steps with
+H=0.0137708900, M=0.0930641297, Z=0.0175467266 and shell null deviation
+0.0631063. Relative to N=24, these constraint norms decrease by factors
+3.13, 2.13 and 3.43. This is encouraging refinement evidence, but the
+improvement over cubic interpolation is smaller on N=36 than on N=24;
+no asymptotic convergence order or long-time stability is inferred.
+
+Two native degree-2 N=24 trials increase interior-only KO dissipation while
+holding mass, timestep coefficient, gauge and end time fixed (M=0.5,
+pole coefficient 0.1, t=0.5):
+
+| Dissipation | H | M | Z |
+| --- | ---: | ---: | ---: |
+| 0.1 (baseline) | 0.0430851130 | 0.198479468 | 0.0601857403 |
+| 0.5 | 0.0486755141 | 0.200334942 | 0.0595339257 |
+| 1.0 | 0.0596232163 | 0.204863964 | 0.0587677701 |
+
+Increasing dissipation is not a remedy for this error growth.
+A separate, unmerged driver experiment extrapolated the entire RHS from
+interior donors across an outer layer of fixed width in grid cells, with
+all constraint diagnostics still evaluated on the entire original active
+sphere. Quadratic true-normal stencils with verified donor/target coverage
+were used. At the same N=24 and t=0.5, a one-cell layer gives
+H=1.34331414, M=1.42395855, Z=0.720511753 and null deviation 2.36473;
+a half-cell layer gives H=0.0446443112, M=0.0829081576, Z=0.0976181607
+and null deviation 0.0901278. The latter reduces momentum error but increases
+Z error. These mixed/poor results do not justify a native runtime option.
+The experiment is excluded from the solver. No singular denominator is floored.
+
+A three-second sample of the native N=48 run found substantial cost in the
+interior dissipation kernel (345 of 2312 samples). `CartesianComponent` now
+uses direct field-relative access when all three spatial strides are contiguous,
+with a fallback using the actual strides for padded storage. The parent view
+remains owned by the calling patch while kernels execute. No floating-point
+stencil operation or boundary condition changes.
+An independent read/write oracle checks both contiguous and deliberately padded
+five-dimensional views, including non-unit innermost stride and field padding.
+A single before/after N=24, t=0.05, degree-2 puncture benchmark takes 7.64 versus
+5.46 CPU seconds; all 26 common printed fields match exactly. This timing is
+machine/load dependent, not a portable speedup guarantee.
+The native N=24 cubic t=0.1 repetition matches the pre-change final history row
+and every saved Z4c, ADM and constraint field exactly, including inactive values.
+
+Validation of the addressing optimization: all 75 Release native/Cauchy
+regressions and all 23 native ASan/UBSan tests pass. The Cartesian evolution
+CTest passes, including the layout oracle and smooth-pulse refinement check.
+The strict standalone ASan/UBSan build with warnings-as-errors passes a short
+CMC evolution, poisoned-inactive-cell checks and both layout oracles. C++ lint
+and diff whitespace checks pass. Longer N=36/N=48 native degree-2 runs to t=1
+are pending and are not included among the passed checks.
