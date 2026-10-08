@@ -137,26 +137,37 @@ Real TensorUpwindCorrection(const Field &field, const Velocity &beta,
   return correction;
 }
 
+template <int NGHOST, typename Velocity>
+KOKKOS_INLINE_FUNCTION
+void AddMeshUpwindAdvectionWithVelocity(const Z4c::Z4c_vars &q, const Velocity &beta,
+                                       const Real idx[3],
+                           int m, int k, int j, int i,
+                           Z4cRHS<Real> &rhs, GaugeRHS<Real> &gauge) {
+  static_assert(NGHOST >= 2 && NGHOST <= 4, "unsupported AthenaK advection order");
+  rhs.chi += ScalarUpwindCorrection<NGHOST>(q.chi, beta, idx, m,k,j,i);
+  rhs.trace += ScalarUpwindCorrection<NGHOST>(q.vKhat, beta, idx, m,k,j,i);
+  rhs.theta += ScalarUpwindCorrection<NGHOST>(q.vTheta, beta, idx, m,k,j,i);
+  gauge.alpha += ScalarUpwindCorrection<NGHOST>(q.alpha, beta, idx, m,k,j,i);
+  for (int a = 0; a < 3; ++a) {
+    rhs.lambda[a] += VectorUpwindCorrection<NGHOST>(q.vGam_u, beta, idx, a,m,k,j,i);
+    gauge.beta[a] += VectorUpwindCorrection<NGHOST>(q.beta_u, beta, idx, a,m,k,j,i);
+    for (int b = 0; b < 3; ++b) {
+      rhs.metric[a][b] += TensorUpwindCorrection<NGHOST>(q.g_dd, beta, idx,
+                                                       a,b,m,k,j,i);
+      rhs.a[a][b] += TensorUpwindCorrection<NGHOST>(q.vA_dd, beta, idx,
+                                                  a,b,m,k,j,i);
+    }
+  }
+}
+
+// Existing full-field interface; the explicit-velocity variant also permits
+// differencing reference deviations while advecting with the full evolved beta.
 template <int NGHOST>
 KOKKOS_INLINE_FUNCTION
 void AddMeshUpwindAdvection(const Z4c::Z4c_vars &q, const Real idx[3],
                            int m, int k, int j, int i,
                            Z4cRHS<Real> &rhs, GaugeRHS<Real> &gauge) {
-  static_assert(NGHOST >= 2 && NGHOST <= 4, "unsupported AthenaK advection order");
-  rhs.chi += ScalarUpwindCorrection<NGHOST>(q.chi, q.beta_u, idx, m,k,j,i);
-  rhs.trace += ScalarUpwindCorrection<NGHOST>(q.vKhat, q.beta_u, idx, m,k,j,i);
-  rhs.theta += ScalarUpwindCorrection<NGHOST>(q.vTheta, q.beta_u, idx, m,k,j,i);
-  gauge.alpha += ScalarUpwindCorrection<NGHOST>(q.alpha, q.beta_u, idx, m,k,j,i);
-  for (int a = 0; a < 3; ++a) {
-    rhs.lambda[a] += VectorUpwindCorrection<NGHOST>(q.vGam_u, q.beta_u, idx, a,m,k,j,i);
-    gauge.beta[a] += VectorUpwindCorrection<NGHOST>(q.beta_u, q.beta_u, idx, a,m,k,j,i);
-    for (int b = 0; b < 3; ++b) {
-      rhs.metric[a][b] += TensorUpwindCorrection<NGHOST>(q.g_dd, q.beta_u, idx,
-                                                       a,b,m,k,j,i);
-      rhs.a[a][b] += TensorUpwindCorrection<NGHOST>(q.vA_dd, q.beta_u, idx,
-                                                  a,b,m,k,j,i);
-    }
-  }
+  AddMeshUpwindAdvectionWithVelocity<NGHOST>(q,q.beta_u,idx,m,k,j,i,rhs,gauge);
 }
 
 KOKKOS_INLINE_FUNCTION

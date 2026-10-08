@@ -13,10 +13,12 @@ See the final section for the successful parameters and measured limitations.
 
 **The requested production 3D solver is not complete.** AthenaK now has opt-in
 independent ADM gauge storage, but its production evolution remains Cauchy.
-The CMake option builds the tests and
-standalone spherical executable; it does not enable a hyperboloidal AthenaK
-runtime mode. Cartesian spherical-boundary stencils, full mesh integration and
-long-time puncture stability beyond the tests below remain outstanding. GPU/MPI testing is out of
+A separate Cartesian patch adapter now evolves nonspherical pulses with the
+full tensor RHS on actual AthenaK field arrays. The CMake option builds its
+tests and the standalone spherical executable; it does not enable a hyperboloidal AthenaK
+runtime mode. The spherical-boundary reconstruction has scalar and short
+nonlinear Cartesian tests, but native task integration and Cartesian puncture
+stability remain outstanding. GPU/MPI testing is out of
 scope. The sections below retain the equation derivations and earlier failed
 experiments so their limitations and subsequent fixes remain auditable.
 
@@ -948,3 +950,80 @@ smokes are not full-duration wave sanitizer tests. The previous extended transpo
 sanitizer process is still being tracked separately. Changed C++ and Python files
 pass lint. No production Z4c runtime dispatch or Cartesian puncture evolution is
 claimed by this wave milestone.
+
+
+## Nonlinear Cartesian conformal patch
+
+`cartesian_patch.hpp` connects the tensor conformal RHS, shared live gauge,
+actual AthenaK field layout and fourth-order Cartesian derivatives to the
+cubic true-normal spherical ghost reconstruction. The active domain is r<S,
+inside one uniform Cartesian allocation. The constructor checks stencil
+coverage, so an invalid/coarse geometry is rejected. Every RHS reconstructs
+reference deviations from strictly interior donors, restores analytic reference
+jets and replaces only advection by AthenaK's upwind operator. The advecting
+velocity is the full evolved shift, not its deviation. Interior-only KO has
+coefficient 0.1. Auxiliary B fields remain frozen for the integrated shift gauge.
+
+The only RHS subtracted is the analytic CMC Minkowski floating-point residual;
+no evolved or black-hole RHS is subtracted. Omega is never floored. Invalid
+spatial metrics/lapses, aliased input/output or scratch storage, invalid damping
+coefficients and nonfinite RHS values are rejected. The adapter writes zero RHS
+to inactive nodes. It does not dispatch native AthenaK tasks, convert physical
+ADM fields, perform algebraic projection, or evolve punctures yet.
+
+Diagnostics include unweighted active-node RMS H, conformal norms of the momentum
+covector and Z4 covector, physical Theta, determinant and trace-free residuals,
+minimum chi/lapse and maximum field deviation. In an outer shell of width twice
+the largest grid spacing, they also record the maximum absolute conformal pole
+numerator, its deviation from the exact CMC numerator, and the null residual's
+deviation from CMC. The raw numerator need not vanish at finite Omega even for
+exact CMC. Shell measurements are not evaluations at scri and do not prove that
+the pole/Omega limit exists.
+
+The new executable uses SSPRK3 and dt=min(0.025h,0.04 min(Omega)), with the last
+step shortened to the requested end time. This conservative empirical step
+bound is for the tested S=a=1 and kappa1=5; it is not a general characteristic
+CFL theorem. Each simulation uses Kokkos Serial on one CPU core.
+
+Tests include poisoned inactive cells (no contamination of active RHS or
+constraints), rejection of a positive-determinant but indefinite metric, alias
+rejection, and a continuum constraint check independent of finite differences:
+the instantaneous H derivative for an analytic lapse perturbation of flat CMC
+initial data is zero to 2.3e-14. Unperturbed Cartesian CMC remains stationary to
+1.4e-15 at t=0.01 on N=24.
+
+Two nonspherical lapse-only pulses of amplitude 1e-4 multiply
+(1+0.2x+0.3yz). The compact pulse is exp(1-1/(1-r^2/0.36)) inside r<0.6,
+zero outside. Its short-run Hamiltonian convergence is irregular, so a smoother
+pulse, (1-r^2)^4 exp(-r^2/0.25), tests refinement without that narrow transition.
+Both start with exactly constraint-satisfying spatial Minkowski data.
+
+| Profile | N | t | RMS H | RMS M | RMS Z |
+|---|---|---|---|---|---|
+| Compact | 24 | 0.01 | 4.12474e-6 | 3.97262e-5 | 7.13782e-6 |
+| Compact | 36 | 0.01 | 2.00999e-6 | 1.62353e-5 | 2.00531e-6 |
+| Compact | 48 | 0.01 | 2.01377e-6 | 1.02932e-5 | 6.13443e-7 |
+| Smooth | 24 | 0.01 | 8.34771e-7 | 5.63086e-6 | 7.99096e-7 |
+| Smooth | 36 | 0.01 | 7.29736e-8 | 1.28517e-6 | 2.21033e-7 |
+| Smooth | 48 | 0.01 | 3.62252e-8 | 6.99048e-7 | 1.25695e-7 |
+| Compact | 24 | 0.5 | 8.01329e-6 | 5.29683e-5 | 1.30449e-5 |
+
+The smooth pulse improves on all three grids, but these results do not establish
+uniform fourth-order convergence. The N=24 compact t=0.5 run completes 1754 steps
+with minimum lapse 0.502778, minimum chi 1.00000, and maximum field deviation
+2.91790e-4. Long-time stability and fine-grid evolution through a full crossing
+time remain unverified. An N=24 smooth t=2 extension is being tracked separately;
+it is not counted as a completed validation here.
+
+Reproduce with `hyperboloidal_cartesian_tests N end amplitude [compact|smooth]`.
+The default test checks CMC stationarity, the compact pulse and a 24/36 smooth
+constraint-convergence pair. All nine Release CTests pass; after final diagnostic
+changes the Cartesian CTest passes again. The normal AthenaK executable builds.
+Strict ASan/UBSan builds and one-step reference/pulse smokes pass (not the full
+Cartesian evolution durations). Changed C++ files pass cpplint.
+
+The previously pending full spherical ghost/transport ASan/UBSan run also
+completed with exit 0, including cubic/quartic/quintic convergence pairs and the
+N=48 quartic t=8 case. That binary preceded only the centered-advection CLI
+negative control; a rebuilt final-source short upwind smoke also passes. These
+results close that earlier pending validation, not the nonlinear stability gap.
