@@ -1,5 +1,6 @@
 <job>
 basename=hyp
+
 <mesh>
 nx1=24
 nx2=24
@@ -17,10 +18,12 @@ ix2_bc=outflow
 ox2_bc=outflow
 ix3_bc=outflow
 ox3_bc=outflow
+
 <meshblock>
 nx1=24
 nx2=24
 nx3=24
+
 <time>
 evolution=dynamic
 integrator=rk3
@@ -28,6 +31,7 @@ cfl_number=0.4
 nlim=2
 tlim=0.001
 ndiag=1
+
 <z4c>
 hyperboloidal=true
 hyperboloidal_kappa1=5
@@ -36,36 +40,40 @@ hyperboloidal_pole_cfl=0.04
 floor_chi=false
 nrad_wave_extraction=0
 spatial_order=4
+
 <problem>
 pgen_name=z4c_hyperboloidal
 mass=0
 lapse_pulse=0
+
 <output1>
 file_type=bin
 variable=z4c
 id=z4c
 dt=0.0001
 ghost_zones=true
+
 <output2>
 file_type=bin
 variable=adm
 id=adm
 dt=0.0001
 ghost_zones=true
+
 <output3>
 file_type=hst
 dt=0.0001
+data_format=%24.16e
 # Experimental uniform Cartesian prototype. See docs/hyperboloidal.md.
-# Set problem/mass=0
-lapse_pulse=0.5 for a CMC trumpet; longer stability is still under study.
+# Set problem/mass=0.5 for a CMC trumpet; longer stability is still under study.
+
 <output4>
 file_type=bin
 variable=con
 id=con
 dt=0.0001
 ghost_zones=true
+
 <output5>
 file_type=rst
 dt=0.0001
-<output3>
-data_format=%24.16e
