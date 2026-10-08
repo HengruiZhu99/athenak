@@ -51,6 +51,8 @@ def check(executable, directory, extended):
     reference, fields = run(executable, directory, 'reference', 16, .2,
                             '--amplitude', '0')
     assert all(row['max_deviation'] == 0 for row in reference)
+    assert all(row['scri_pole_max'] == 0 and row['scri_lapse_pole'] == 0
+               for row in reference)
     assert max(abs(row['H']) for row in fields) < 1e-12
     pulse, _ = run(executable, directory, 'pulse', 64, 3)
     assert max(row['max_deviation'] for row in pulse) < .1
@@ -60,7 +62,7 @@ def check(executable, directory, extended):
         invalid = subprocess.run([str(executable), option, 'nan'],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         assert invalid.returncode != 0
-    # Initial-data audit only. Live trumpet gauges are not yet stable.
+    # Initial-data audit; the separate check_puncture.py runs the live-gauge study.
     trumpet = [run(executable, directory, f'trumpet-id-{n}', n, 0,
                    '--mass', '0.05', '--amplitude', '0')[0][0]
                for n in (128, 256, 512)]
@@ -69,6 +71,15 @@ def check(executable, directory, extended):
     for row in trumpet:
         assert abs(row['mass_near_half'] - .05) < 1e-6
         assert abs(row['horizon_areal_radius'] - .1) < .001
+    equilibrium, _ = run(executable, directory, 'trumpet-equilibrium', 64, 1,
+                         '--mass', '.05', '--amplitude', '0',
+                         '--analytic-trumpet', '--fixed-lapse', '--fixed-shift')
+    assert max(row['H_L2'] for row in equilibrium) < 1e-8
+    assert max(row['M_L2'] for row in equilibrium) < 1e-8
+    assert max(abs(row['mass_near_half'] - .05) for row in equilibrium) < 1e-9
+    # Plain differences still see the puncture profile's truncation error.
+    assert equilibrium[0]['H_raw_L2'] > 1
+    assert abs(equilibrium[-1]['H_raw_L2'] / equilibrium[0]['H_raw_L2'] - 1) < 1e-8
     if not extended:
         return
     resolutions = [64, 128, 256, 512]

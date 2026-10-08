@@ -1,21 +1,27 @@
-# Experimental hyperboloidal building blocks
+# Experimental hyperboloidal Z4c prototype
 
 ## Status
 
-**This branch does not implement a complete hyperboloidal Z4c evolution.** It adds
-regular CMC reference geometry, a factored reference gauge kernel, and a stable
-boundary-fitted radial characteristic prototype. It also includes off-shell physical
-Hamiltonian/momentum and Z4 constraint kernels in regular conformal variables.
-The nonlinear conformal interior tensor RHS is implemented as an experimental
-kernel, with its scri pole numerators exposed. The production Z4c RHS, mesh task
-graph, and ADM conversion are unchanged. There is no hyperboloidal runtime mode.
-The CMake option only builds tests.
+The branch now contains a **single-core spherical conformal Z4c evolver**, using
+the full Cartesian tensor RHS with analytic spherical angular derivatives. It
+includes CMC Minkowski reference geometry, live reference gauges, Schwarzschild
+trumpet initial data, constraint/mass/horizon diagnostics, and a staggered scri
+boundary. A 128/256/512-cell live-puncture study reaches t=5 (100M) with decreasing
+constraint and field errors. Global constraint convergence is slow near the
+puncture; this is finite-duration evidence, not a long-time stability result.
+See the final section for the successful parameters and measured limitations.
 
-This is a partial implementation of the requested 3D hyperboloidal solver. A stable
-model transport problem, an exact reference solution, and a stationary gauge do not
-establish off-background regularity or stability of conformal Z4c. In particular,
-the reference Einstein sources below must not be used as the sources for a perturbed
-metric. The unresolved equations and integration work are listed below.
+**The requested production 3D solver is not complete.** The AthenaK Z4c task
+graph and ADM conversion are unchanged. The CMake option builds the tests and
+standalone spherical executable; it does not enable a hyperboloidal AthenaK
+runtime mode. Cartesian spherical-boundary stencils, full mesh integration and
+longer puncture stability tests remain outstanding. GPU/MPI testing is out of
+scope. The sections below retain the equation derivations and earlier failed
+experiments so their limitations and subsequent fixes remain auditable.
+
+Reference Einstein source values must not be used as sources for a perturbed
+metric. The nonlinear kernel recomputes geometry and exposes scri pole numerators;
+its interior assembly never floors Omega or evaluates at Omega=0.
 
 Base: `HengruiZhu99/athenak`, `project/z4c_overhaul`,
 `e9a2039e93ba9737b86b67e10d8f746342770431`.
@@ -570,3 +576,116 @@ warnings and ASan/UBSan; the updated analytic trumpet test was rebuilt and rerun
 under sanitizers after its final assertions were added. C++/Python lint pass.
 Sanitizer success checks memory/undefined behavior, not physical stability; the
 coarse sanitizer smoke run itself has large constraint errors.
+
+## Analytic-profile reconstruction and live puncture gauge
+
+The optional `--analytic-trumpet` treatment differentiates the difference between
+the evolved fields and the initial analytic trumpet profile, then adds the exact
+profile derivatives. Dissipation acts on that difference as well. The initial
+profile and its derivatives are computed once. This changes the spatial
+approximation, not the continuum nonlinear equations: no Schwarzschild RHS is
+subtracted or frozen. The reference compactifier and gauge source geometry remain
+CMC Minkowski. This option is specialized to the analytic spherical trumpet; it
+is not a generic black-hole or binary reconstruction method.
+
+With both gauge variables fixed, the 128-cell trumpet remains near roundoff
+through t=1 (H L2 about 5e-12, M L2 about 1.2e-11), unlike the original derivative
+scheme. The automated test exercises the same equilibrium at 64 cells. It also
+checks that the independently computed **plain finite-difference** constraint
+norms remain large and unchanged: `H_raw_L2` and `M_raw_L2` are now always output
+beside the reconstruction-based norms. Equilibrium preservation alone is not a
+stability or convergence test for a perturbed black hole.
+
+This reconstruction does not by itself fix the live-gauge failures. Parameter
+experiments with constant slicing coefficients, a fivefold smaller timestep and
+stronger dissipation still failed on the finer grid. Two additional optional
+changes are used in the subsequent live-gauge study:
+
+* `--one-plus-log` makes the extra slicing coefficient proportional to lapse:
+  `alpha^2 + slicing * alpha * (1-r^2)^2`, replacing
+  `alpha^2 + slicing * (1-r^2)^2`. Thus the additional term vanishes with the
+  puncture lapse; the outer gauge still tends to harmonic slicing.
+* `--lapse-scaled-damping` passes `kappa1/alpha` to the tensor kernel so the
+  coordinate-time damping coefficient remains active where lapse collapses.
+  Every evolved grid point must still have positive lapse. There is no lapse
+  floor, and the existing continuum kernel is unchanged.
+
+The tested choice additionally uses `--puncture-gauge` (the lapse-weighted
+restoring source), slicing=2 and shift_driver=0.1. The nonzero interior shift
+coefficient avoids relying only on alpha^2 chi near the puncture. Without
+lapse-scaled damping, a 256-cell run reaches t=5 but its mass near r=0.5 has
+increased to 0.0592186 from 0.05: remaining finite did not constitute success.
+With lapse-scaled damping and kappa1=5 the corresponding mass is 0.0499965268.
+
+Scri diagnostics now extrapolate the fields and their derivatives to r=1 and
+report `scri_null_residual`, `scri_pole_max` (all geometric pole numerators), and
+`scri_lapse_pole`. No pole is divided by Omega=0. These diagnostics test
+compatibility independently of the last interior point. They do not impose
+boundary values or implement a limiting evolution equation at scri. The actual
+integrator retains its staggered grid and polynomial outer continuation.
+
+The live study uses M=0.05, zero added pulse, CFL=0.05, dissipation=0.1, the options
+above and default quartic outer continuation. Every run evolves both lapse and
+shift. At t=5 (100M in the chosen coordinate time):
+
+| Cells | H L2 | M L2 | Plain-FD H L2 | Plain-FD M L2 | Mass near r=0.5 | Horizon R |
+|---:|---:|---:|---:|---:|---:|---:|
+| 128 | 2.78169 | 2.48871 | 13.4181 | 9.97200 | 0.049365697 | 0.098449603 |
+| 256 | 1.98582 | 1.49156 | 4.83999 | 3.43279 | 0.049996527 | 0.100228449 |
+| 512 | 1.34743 | 0.976283 | 2.05981 | 1.45607 | 0.049999529 | 0.100036220 |
+
+The reconstructed H/M norms converge slowly, at approximately 0.49--0.74 order
+across these resolutions. Their largest errors remain near the puncture; those
+cells have **not** been removed from the norms. Plain-FD H/M norms improve at
+1.23--1.54 order, Z at about 1.64 and Theta at about two. The maxima over the
+sampled time histories also decrease for H, M, Z and Theta. All eight field
+self-differences decrease using fourth-order interpolation to common radii,
+excluding only the two endpoint samples that need interpolation ghosts. Their
+apparent orders range from 0.58 to 5.42; the high values are not evidence of
+superconvergence or a clean asymptotic regime. Fourth-order global convergence
+has not been demonstrated.
+
+The final scri geometric pole maximum drops from 5.14e-7 at 128 cells to 1.78e-9
+at 512 cells; extrapolated null residuals are -2.44e-9 and -1.22e-12. The 256-cell
+run predates the added endpoint diagnostic columns but uses identical evolution
+and reconstruction equations. Its data is used for the evolution study, not for
+an unmeasured intermediate scri residual.
+
+Reproduce the live study (sequential runs, one host thread each) with:
+
+```sh
+python3 tst/hyperboloidal/check_puncture.py build/hyperboloidal_spherical \
+  --output puncture-results
+```
+
+The script checks finite positive geometry, mass and horizon error bounds,
+decreasing final and sampled-maximum constraint norms, all eight self-differences,
+and decreasing scri geometric pole residuals. `--prefixes` audits three existing
+output prefixes without rerunning them; it does not establish their provenance.
+The reported study was audited using the completed run outputs described above.
+These results establish a finite-duration spherical live-gauge puncture prototype,
+not long-time stability, a Cartesian mesh implementation, or a general scri
+boundary energy estimate. Those limitations remain part of the active task.
+
+For the same live-gauge parameters at 256 cells, cubic and quintic outer
+continuation also reach t=5. Their final H/M norms differ from the quartic result
+by less than 1.5e-6 in absolute value; the mass differences are below 1.5e-11.
+Their extrapolated scri pole maxima are 3.13e-7 and 5.68e-8, respectively. This
+comparison supports the numerical closure for this finite-duration spherical
+experiment; it is not a proof of a general Cartesian cut-cell boundary treatment.
+
+A control run with the same live gauge and damping **without** analytic-profile
+reconstruction also reaches t=5 at 256 cells. Its H/M L2 norms are 5.66692/4.25789,
+with mass 0.0500432453 and horizon R=0.100182748. Thus the gauge/damping improvement
+is not limited to a numerically preserved equilibrium, although the plain scheme
+has larger constraint errors and has not yet received its own resolution study.
+New runs also write a `-config.txt` sidecar containing all numerical and gauge
+options; the earlier study outputs predate that provenance sidecar.
+
+Validation for this milestone: all four Release CTests and all four ASan/UBSan
+Debug CTests pass with strict compiler warnings. The final diagnostic/configuration
+output changes were rebuilt in both configurations, followed by another Release
+CTest pass and a 32-cell live-gauge sanitizer smoke run through t=0.02 with quintic
+scri extrapolation. The 128/256/512-cell convergence audit passes, as do C++ and
+Python lint. The t=5 resolution/boundary studies are Release-only; sanitizer
+success is not used as evidence of physical accuracy.
