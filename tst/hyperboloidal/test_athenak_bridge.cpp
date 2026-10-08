@@ -1,5 +1,6 @@
 // Copyright(C) 2026 AthenaK contributors
 // Licensed under the 3-clause BSD License (the "LICENSE").
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -148,6 +149,8 @@ void MinkowskiMesh() {
     if (!hyp::AssembleInterior(hyp::ConformalRHS(u, o, Real(5)/u.alpha.value, Real(0)),
                               o.omega, evolution)
         || !hyp::AssembleGaugeInterior(gauge_parts, o.omega, gauge)) ++bad;
+    const Real inverse_spacing[3] = {1/spacing[0], 1/spacing[1], 1/spacing[2]};
+    hyp::AddMeshUpwindAdvection<3>(q, inverse_spacing, 0,k,j,i, evolution, gauge);
     hyp::StoreMeshRHS(rhs, 0,k,j,i, evolution, gauge);
     const auto adm = hyp::ToPhysicalADM(u, o.omega);
     if (!adm.valid || Kokkos::fabs(adm.alpha-u.alpha.value/o.omega) > 1e-12) ++bad;
@@ -308,12 +311,72 @@ void NonzeroPacking() {
   }
 }
 
+template <int NGHOST>
+void UpwindCorrection() {
+  DvceArray5D<Real> data("upwind input", 1, Z::nz4c, 9, 9, 9);
+  DvceArray5D<Real> output("upwind correction", 1, Z::nz4c, 1, 1, 1);
+  const auto q = Bind(data), packed = Bind(output);
+  auto host = Kokkos::create_mirror_view(data);
+  for (int f = 0; f < Z::nz4c; ++f)
+  for (int k = 0; k < 9; ++k)
+  for (int j = 0; j < 9; ++j)
+  for (int i = 0; i < 9; ++i) {
+    const double sign = f == Z::I_Z4C_BETAX || f == Z::I_Z4C_BETAZ ? -1 : 1;
+    host(0,f,k,j,i) = sign*(0.1*f+0.03*(f+1)*std::sin(
+        0.2+0.4*(0.7*(i-4)-0.4*(j-4)+0.3*(k-4))));
+  }
+  Kokkos::deep_copy(data, host);
+  Kokkos::parallel_for("correct mesh advection", 1, KOKKOS_LAMBDA(const int) {
+    hyp::Z4cRHS<Real> rhs{};
+    hyp::GaugeRHS<Real> gauge{};
+    const Real idx[3] = {2.5,2.5,2.5};
+    hyp::AddMeshUpwindAdvection<NGHOST>(q,idx,0,4,4,4,rhs,gauge);
+    hyp::StoreMeshRHS(packed,0,0,0,0,rhs,gauge);
+  });
+  const auto result = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), output);
+  // Independent explicit coefficient tables audit every packed component and
+  // both signs of beta, rather than comparing the helper with another Lx call.
+  const double up2[3] = {0.5,-2,1.5}, center2[3] = {-0.5,0,0.5};
+  const double up4[5] = {-1./12,0.5,-1.5,5./6,0.25};
+  const double center4[5] = {1./12,-2./3,0,2./3,-1./12};
+  const double up6[7] = {1./60,-2./15,0.5,-4./3,7./12,0.4,-1./30};
+  const double center6[7] = {-1./60,0.15,-0.75,0,0.75,-0.15,1./60};
+  const double *up = NGHOST == 2 ? up2 : (NGHOST == 3 ? up4 : up6);
+  const double *central = NGHOST == 2 ? center2 : (NGHOST == 3 ? center4 : center6);
+  double maximum = 0;
+  for (int f = 0; f < Z::nz4c; ++f) {
+    double expected = 0;
+    if (f < Z::I_Z4C_BX) {
+      for (int d = 0; d < 3; ++d) {
+        const double beta = host(0,Z::I_Z4C_BETAX+d,4,4,4);
+        const int direction = beta < 0 ? 1 : -1;
+        double biased = 0, centered = 0;
+        for (int s = 0; s < 2*NGHOST-1; ++s) {
+          const int bias_offset = direction*(s-NGHOST);
+          const int center_offset = s-(NGHOST-1);
+          biased += direction*up[s]*host(0,f,4+(d == 2)*bias_offset,
+              4+(d == 1)*bias_offset,4+(d == 0)*bias_offset);
+          centered += central[s]*host(0,f,4+(d == 2)*center_offset,
+              4+(d == 1)*center_offset,4+(d == 0)*center_offset);
+        }
+        expected += beta*(biased-centered)/0.4;
+      }
+    }
+    maximum = std::max(maximum, std::abs(expected));
+    Check(std::abs(result(0,f,0,0,0)-expected) < 2e-13, "upwind component correction");
+  }
+  Check(maximum > 1e-8, "upwind test did not exercise a nonzero correction");
+}
+
 int main(int argc, char **argv) {
   Kokkos::ScopeGuard guard(argc, argv);
   try {
     Derivatives<2>();
     Derivatives<3>();
     Derivatives<4>();
+    UpwindCorrection<2>();
+    UpwindCorrection<3>();
+    UpwindCorrection<4>();
     MinkowskiMesh();
     PhysicalConversion();
     GaugeEquivalence();

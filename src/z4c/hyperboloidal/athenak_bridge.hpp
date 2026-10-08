@@ -95,6 +95,70 @@ bool LoadInteriorMeshJet(const Z4c::Z4c_vars &q, const CMCReference<Real> &ref,
   return true;
 }
 
+// The tensor kernel uses centered jets for geometry, constraints and advection.
+// Replace ONLY beta^i partial_i of each evolved component by AthenaK's Lx.
+// This requires a complete axis halo of radius NGHOST (not NGHOST-1). At scri
+// that halo needs an independently validated closure. These corrections do not
+// modify geometric derivatives or add a characteristic boundary condition.
+template <int NGHOST, typename Field, typename Velocity>
+KOKKOS_INLINE_FUNCTION
+Real ScalarUpwindCorrection(const Field &field, const Velocity &beta,
+                            const Real idx[3], int m, int k, int j, int i) {
+  Real correction = 0;
+  for (int d = 0; d < 3; ++d) {
+    correction += Lx<NGHOST>(d, idx, beta, field, m,d,k,j,i)
+        -beta(m,d,k,j,i)*Dx<NGHOST>(d, idx, field, m,k,j,i);
+  }
+  return correction;
+}
+
+template <int NGHOST, typename Field, typename Velocity>
+KOKKOS_INLINE_FUNCTION
+Real VectorUpwindCorrection(const Field &field, const Velocity &beta,
+                            const Real idx[3], int a, int m, int k, int j, int i) {
+  Real correction = 0;
+  for (int d = 0; d < 3; ++d) {
+    correction += Lx<NGHOST>(d, idx, beta, field, m,d,a,k,j,i)
+        -beta(m,d,k,j,i)*Dx<NGHOST>(d, idx, field, m,a,k,j,i);
+  }
+  return correction;
+}
+
+template <int NGHOST, typename Field, typename Velocity>
+KOKKOS_INLINE_FUNCTION
+Real TensorUpwindCorrection(const Field &field, const Velocity &beta,
+                            const Real idx[3], int a, int b, int m,
+                            int k, int j, int i) {
+  Real correction = 0;
+  for (int d = 0; d < 3; ++d) {
+    correction += Lx<NGHOST>(d, idx, beta, field, m,d,a,b,k,j,i)
+        -beta(m,d,k,j,i)*Dx<NGHOST>(d, idx, field, m,a,b,k,j,i);
+  }
+  return correction;
+}
+
+template <int NGHOST>
+KOKKOS_INLINE_FUNCTION
+void AddMeshUpwindAdvection(const Z4c::Z4c_vars &q, const Real idx[3],
+                           int m, int k, int j, int i,
+                           Z4cRHS<Real> &rhs, GaugeRHS<Real> &gauge) {
+  static_assert(NGHOST >= 2 && NGHOST <= 4, "unsupported AthenaK advection order");
+  rhs.chi += ScalarUpwindCorrection<NGHOST>(q.chi, q.beta_u, idx, m,k,j,i);
+  rhs.trace += ScalarUpwindCorrection<NGHOST>(q.vKhat, q.beta_u, idx, m,k,j,i);
+  rhs.theta += ScalarUpwindCorrection<NGHOST>(q.vTheta, q.beta_u, idx, m,k,j,i);
+  gauge.alpha += ScalarUpwindCorrection<NGHOST>(q.alpha, q.beta_u, idx, m,k,j,i);
+  for (int a = 0; a < 3; ++a) {
+    rhs.lambda[a] += VectorUpwindCorrection<NGHOST>(q.vGam_u, q.beta_u, idx, a,m,k,j,i);
+    gauge.beta[a] += VectorUpwindCorrection<NGHOST>(q.beta_u, q.beta_u, idx, a,m,k,j,i);
+    for (int b = 0; b < 3; ++b) {
+      rhs.metric[a][b] += TensorUpwindCorrection<NGHOST>(q.g_dd, q.beta_u, idx,
+                                                       a,b,m,k,j,i);
+      rhs.a[a][b] += TensorUpwindCorrection<NGHOST>(q.vA_dd, q.beta_u, idx,
+                                                  a,b,m,k,j,i);
+    }
+  }
+}
+
 KOKKOS_INLINE_FUNCTION
 void StoreMeshRHS(const Z4c::Z4c_vars &q, int m, int k, int j, int i,
                   const Z4cRHS<Real> &rhs, const GaugeRHS<Real> &gauge) {

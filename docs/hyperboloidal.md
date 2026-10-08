@@ -798,3 +798,77 @@ the storage changes. The new Python test passes flake8; `git diff --check` passe
 Whole-file C++ lint reports 27 pre-existing include-path/formatting findings in
 the touched production files, all outside changed lines. This storage milestone
 has not had a full production executable sanitizer run.
+
+## Cartesian spherical ghost reconstruction candidate
+
+`spherical_ghosts.hpp` now plans a spherical-domain closure on a uniform Cartesian
+patch containing the entire sphere. It explicitly enumerates the nodes needed by
+AthenaK's Cartesian mixed second derivatives and the wider axis-only upwind/KO
+stencils. Physical nodes satisfy r<S strictly. All interpolation donors are also
+strictly interior, and no ghost depends on another ghost. Required exterior nodes
+are reconstructed, rather than skipping adjacent physical nodes or pretending
+that every Cartesian line intersects the sphere.
+
+For each exterior node, its true sphere-normal ray intersects interior coordinate
+planes. On each plane, the planner chooses a tensor-product interpolation rectangle
+containing the ray point, with all four corners inside the sphere. Convexity then
+guarantees that every donor is inside. Normal-plane spacing is increased until
+all required rectangles exist; a grid too coarse to support them is rejected.
+The interpolated values are then extrapolated along the normal. Cartesian tensor
+components use the same scalar reconstruction without rotating their components.
+Applying it to reference deviations will preserve the analytic background.
+
+This extends the smooth-data normal-line construction described in
+[Baeza, Mulet and Zorío](https://doi.org/10.1007/s10915-015-0043-2)
+to two transverse interpolation directions. It is not their full filtered/WENO
+algorithm, nor does their analysis establish stability for Z4c.
+
+The new CTest independently verifies donor admissibility, unique targets, mixed
+corner coverage, degree-2 through degree-5 mixed polynomial reproduction, and
+rejection of unsupported allocations/stencils. On an exponential field with all
+nonzero Cartesian mixed derivatives, AthenaK's fourth-order Hessian operators
+have boundary-region maximum error 0.0343028 at 24 cells across the diameter and
+0.00720392 at 48 cells. This is a factor 4.76 improvement, not a demonstrated
+fourth-order boundary Hessian result.
+
+The evolution test is the genuinely three-dimensional, nonspherical problem
+q_t + x^i partial_i q = 0 in the unit ball. Its exact solution is an off-axis
+Gaussian evaluated at exp(-t)*x. The entire sphere is outflow. RK4 uses
+dt<=0.15h, AthenaK's actual fourth-order `Lx` upwind operator, and KO6 with
+coefficient 0.1. At t=1.5:
+
+| Normal degree | N coarse/fine | RMS error coarse/fine | Maximum error over time coarse/fine |
+|---|---|---|---|
+| 3 | 24 / 48 | 6.92734e-4 / 5.56929e-5 | 0.0786323 / 0.00912019 |
+| 4 | 24 / 48 | 6.82070e-4 / 5.49525e-5 | 0.275137 / 0.00985624 |
+| 5 | 32 / 64 | 2.30492e-4 / 1.99636e-5 | 0.202205 / 0.00500660 |
+
+The quartic 48-cell run reaches t=8 with final RMS error 8.00790e-7 and maximum
+error over all steps 0.00985624. Both final and time-maximum errors must decrease
+in the convergence test. Large coarse-grid transients remain visible in the table.
+
+Several alternatives were rejected. Direct lattice-line extrapolation, selecting
+the best-aligned lattice line, and blending lattice lines exceeded the initial
+error cutoff. With the final normal-plane reconstruction but **centered**
+advection, the maximum error exceeds 1000 by t=0.5125 at N=24 and t=0.2875 at N=48.
+Thus geometric consistency alone is insufficient. The negative control can be
+reproduced with `hyperboloidal_ghost_tests 48 4 1.5 0.1 centered`; it must fail.
+The corresponding upwind case omits the last argument.
+
+**This is still a boundary candidate, not a completed hyperboloidal Z4c boundary.**
+It has not been tested on a conformal wave system or nonlinear Cartesian Z4c.
+The conformal mesh adapter now provides `AddMeshUpwindAdvection`, replacing only
+the componentwise beta-gradient advection by AthenaK's `Lx`, while retaining
+centered geometric derivatives. Independent coefficient-table tests check every
+packed field, both shift signs, and second/fourth/sixth-order operators; the CMC
+Minkowski fixed point remains stationary. This adapter is not yet dispatched in
+a Cartesian conformal evolution. Scri regularity, gauge
+characteristics, stiffness near arbitrarily small positive Omega, runtime
+dispatch, and multiblock/AMR donor mapping remain unresolved. No stable production
+scri switch is enabled by these scalar transport results.
+
+Validation for this milestone: all six Release CTests pass, with the mesh adapter
+rerun after adding the upwind correction. The adapter also passes a strict
+ASan/UBSan build and execution. Changed C++ files pass lint and the diff passes
+whitespace checks. The full ghost/transport sanitizer process was still running
+when this milestone was recorded; it is not counted as a completed sanitizer pass.
