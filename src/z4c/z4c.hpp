@@ -46,6 +46,8 @@ class Z4c {
   std::unique_ptr<hyperboloidal::CartesianConformalPatch> hyperboloidal_patch;
   DvceArray5D<Real> hyperboloidal_active;
   Real hyperboloidal_pole_cfl = 0.04;
+  bool hyperboloidal_mass_diagnostics = false;
+  int hyperboloidal_mass_nmu = 32;
   void SetupHyperboloidal(ParameterInput *pin);
   void InitializeHyperboloidal(ParameterInput *pin, bool restart);
   void HyperboloidalADM();

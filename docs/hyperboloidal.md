@@ -1325,3 +1325,109 @@ at t=0.1 (both pole coefficient 0.1, 522 steps) gives:
 The finer result again trades lower momentum error for slightly higher H and Z.
 Factoring only this ghost variable is not adopted as a stability fix or exposed
 in the native input. The production boundary treatment remains unchanged.
+
+### Interior Hawking-mass diagnostic
+
+`z4c/hyperboloidal_mass_diagnostics=true` appends Hawking masses and physical
+areal radii on coordinate spheres r=0.3, 0.5 and 0.7 to native history. The
+columns are `mH-r03`, `Rarea-r03`, `mH-r05`, `Rarea-r05`, `mH-r07` and
+`Rarea-r07`. The flag defaults to false. `hyperboloidal_mass_nmu` defaults to 32
+and selects Gauss-Legendre nodes in cos(theta), with twice as many equally
+spaced azimuthal points; allowed values are 4 through 128. Increasing this
+parameter controls angular quadrature error, not Cartesian interpolation error.
+
+The definition is the full 3D surface integral
+
+```
+m_H = sqrt(A/(16*pi)) * [1 + integral(theta_+ theta_- dA)/(16*pi)],
+```
+
+with null normals n+s and n-s, whose inner product is -2; see equation (4.8) of
+[Csukás and Rácz, Hyperboloidal initial data without logarithmic singularities](https://doi.org/10.1007/s10714-025-03424-y).
+No spherical symmetry is assumed when evaluating the evolved fields. In a
+spherically symmetric Schwarzschild continuum solution this mass is constant,
+but that statement does not hold for arbitrary surfaces in a general spacetime.
+This finite-radius diagnostic is neither an apparent-horizon finder nor a
+Bondi-mass measurement at scri.
+
+For b_ij=gtilde_ij/chi, B=b^ij x_i x_j and sbar^i=b^ij x_j/sqrt(B), the surface
+mean curvature in the physical spatial metric is
+`H_s = Omega div_b(sbar) - 2 sbar^i partial_i Omega`. The null expansion product
+is `(K_ss-K)^2-H_s^2`. The code constructs K_ss-K from the full physical ADM
+curvature, including any numerical trace of Atilde, rather than assuming that
+this algebraic constraint vanishes. The area density per Euclidean solid angle
+is `J=r*sqrt(det(b)*B)/Omega^2`. For improved summation of nearly cancelling
+terms, the code integrates `J*theta_+*theta_- + 4`: the added constant has exact
+sphere integral 16*pi. It does not subtract the initial black-hole mass or force
+an evolved value to remain constant.
+
+The densities are computed from reconstructed mesh jets and interpolated onto
+each surface with tricubic stencils. All 64 donors must be strictly inside the
+active sphere; otherwise extraction is rejected. Inactive cells remain poisoned.
+The interpolation bias must be measured independently of evolution error. On
+exact M=0.5 trumpet initial data, the maximum mass error over the three extraction
+spheres decreases from 4.83e-3 at N=24 to 8.55e-4 at N=36 and 2.30e-4 at N=48
+(the largest error is at r=0.7). These numbers include the default 32-node
+quadrature. Doubling its angular resolution changes each tested mass by less
+than 15% of its Cartesian interpolation error. The original 24-node choice
+failed that check at N=48 and is not the default.
+
+Independent validation includes analytic Minkowski and Schwarzschild CMC
+spheres (M=0.05 and 0.5, radii 0.2 through 0.9), nonzero physical Theta, and a
+nonzero A trace. A finite-difference oracle in sheared flat coordinates verifies
+the surface mean curvature with second-order error reduction. Nonlinear flat
+coordinate transformations test nonzero off-diagonal metric derivatives and
+known physical area. Native enabled/disabled comparisons show identical saved
+Z4c, ADM and constraint fields, and mass-enabled restart histories agree with
+uninterrupted ones. The full Release regression run passes 79 tests. All 27
+native ASan/UBSan tests passed; after retaining the small A-trace residual in the
+physical curvature contraction, all six affected native tests passed again in
+both Release and ASan/UBSan. The final standalone Hawking CTest also passes in Release and in the strict
+ASan/UBSan build with warnings treated as errors.
+
+To add these diagnostics to an older checkpoint, use a minimal input overlay
+with `-r checkpoint.rst -i mass_only.athinput`; a command-line override alone
+cannot add parameter names absent from the checkpoint. The overlay need contain
+only the new z4c diagnostic parameters. Setting `time/nlim=0` in that overlay
+permits a diagnostic-only restart without advancing the solution. The checkpoint
+audits below used this path and report zero MeshBlock-cycles.
+
+Completed native evolution evidence now includes the cubic N=48, M=0.5 run to
+t=0.5 (3076 steps), with H=0.00855585661, M=0.0642931265 and Z=0.0128601265.
+These are lower than the cubic N=36 results at the same time, but do not by
+themselves establish long-time stability. The quadratic N=36 run reaches t=1
+(5213 steps), with H=0.0372859885, M=0.165782053 and Z=0.0417192134. A quadratic
+N=24 continuation, restarted at t=0.5, reaches t=1 with H=0.210158322,
+M=0.821378419 and Z=0.171308161. Its extra shortened step at the restart explains
+small differences from the uninterrupted standalone result.
+
+Measured masses on the saved evolved data are:
+
+| Policy / N / time | m_H at r=0.3 | m_H at r=0.5 | m_H at r=0.7 |
+| --- | ---: | ---: | ---: |
+| Quadratic / 24 / 0.5 | 0.49966937 | 0.50019175 | 0.49490599 |
+| Cubic / 24 / 0.5 | 0.49966941 | 0.50015816 | 0.48846297 |
+| Quadratic / 36 / 0.500127604 | 0.49992726 | 0.50032228 | 0.49732945 |
+| Cubic / 48 / 0.5 | 0.49997666 | 0.50015303 | 0.49924718 |
+| Quadratic / 24 / 1 | 0.50090156 | 0.49528493 | 0.53876358 |
+| Quadratic / 36 / 1 | 0.50011581 | 0.49868029 | 0.51186014 |
+
+The expected continuum mass is 0.5. Differences include both evolution and
+extraction interpolation errors. At N=36, t=1, doubling the angular quadrature
+changes the outer mass by 5.61e-5; at cubic N=48, t=0.5 the change is 4.21e-6.
+Thus angular quadrature is not the principal source of these outer deviations.
+The N=48 quadratic t=1 run remains pending. The coarse quadratic N=24
+continuation requested to t=5 instead fails an active physical-ADM validity
+check after the last saved history at t=1.300126953. At that output H=0.452209,
+M=5.22193 and Z=1.31884, with rapidly growing outer pole residuals. This is a
+failed evolution, not a stability pass. A replay with mass diagnostics disabled
+fails after its last logged cycle at t=1.367852; its shared history columns are
+bitwise identical to the enabled run at t=1.100517578, 1.200322266 and 1.300126953.
+A second replay reducing the pole timestep coefficient from 0.1 to 0.04 fails
+after its last logged cycle at t=1.375266. The smaller timestep is therefore not
+a cure, and mass extraction is not necessary for this failure. At the final
+saved snapshots near t=1.350, the smallest conformal-metric eigenvalue is
+0.103888 (coefficient 0.1) or 0.106223 (0.04), at
+(x,y,z)=(0.04375,0.65625,0.74375), r=0.992846. The metrics are still positive
+definite at these saved times but strongly distorted near scri. The exact
+invalid field at the subsequent failing stage has not yet been isolated.

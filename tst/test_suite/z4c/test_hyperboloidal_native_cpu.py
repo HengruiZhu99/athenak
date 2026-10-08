@@ -122,10 +122,11 @@ def test_native_tasks_and_adm(tmp_path, mass, pulse, degree):
 @pytest.mark.parametrize('degree', [2, 3])
 def test_native_trumpet_restart(tmp_path, degree):
     full, split = tmp_path / 'full', tmp_path / 'split'
+    mass_option = f'z4c/hyperboloidal_mass_diagnostics={str(degree == 2).lower()}'
     run(full, 'problem/mass=0.5', 'time/nlim=3',
-        f'z4c/hyperboloidal_ghost_degree={degree}')
+        f'z4c/hyperboloidal_ghost_degree={degree}', mass_option)
     run(split, 'problem/mass=0.5', 'time/nlim=1',
-        f'z4c/hyperboloidal_ghost_degree={degree}')
+        f'z4c/hyperboloidal_ghost_degree={degree}', mass_option)
     checkpoint = sorted((split / 'rst').glob('*.rst'))[-1]
     run(split, 'time/nlim=3', checkpoint=checkpoint)
     for kind in ('z4c', 'adm', 'con'):
@@ -135,6 +136,9 @@ def test_native_trumpet_restart(tmp_path, degree):
             np.testing.assert_allclose(a[name], b[name], rtol=1e-11, atol=1e-12,
                                        equal_nan=True, err_msg=name)
     check_adm(split)
+    np.testing.assert_allclose(np.loadtxt(next(full.glob('*.hst')))[-1],
+                               np.loadtxt(next(split.glob('*.hst')))[-1],
+                               rtol=1e-11, atol=1e-12)
 
 
 @pytest.mark.parametrize('option', ['mesh/nx1=48', 'mesh/nghost=4',
@@ -198,3 +202,27 @@ def test_fifth_degree_requires_interior_donors(tmp_path):
     values = dict(re.findall(r'(\w+)=([-+\deE.]+)', result.stdout.splitlines()[-1]))
     for column, name in [(2, 'H'), (3, 'M'), (4, 'Z'), (5, 'Theta')]:
         np.testing.assert_allclose(final[column], float(values[name]), rtol=2e-5, atol=1e-11)
+
+
+@pytest.mark.parametrize('mass', [0, 0.5])
+def test_native_hawking_history(tmp_path, mass):
+    enabled, disabled = tmp_path / 'enabled', tmp_path / 'disabled'
+    run(enabled, f'problem/mass={mass}', 'z4c/hyperboloidal_mass_diagnostics=true')
+    run(disabled, f'problem/mass={mass}')
+    history = np.loadtxt(next(enabled.glob('*.hst')))
+    assert history.shape[1] == 21
+    assert np.isfinite(history).all()
+    # The independent exact-data tests quantify the coarsest interpolation bias.
+    np.testing.assert_allclose(history[:, [15, 17, 19]], mass, rtol=0,
+                               atol=0.005 if mass else 1e-10)
+    assert (np.diff(history[:, [16, 18, 20]], axis=1) > 0).all()
+    for kind in ('z4c', 'adm', 'con'):
+        a, b = fields(enabled, kind), fields(disabled, kind)
+        for key in a:
+            np.testing.assert_array_equal(a[key], b[key], err_msg=key)
+
+
+@pytest.mark.parametrize('nmu', [3, 129])
+def test_invalid_hawking_quadrature(tmp_path, nmu):
+    result = run(tmp_path, f'z4c/hyperboloidal_mass_nmu={nmu}', success=False)
+    assert 'invalid Hawking quadrature' in result.stdout + result.stderr

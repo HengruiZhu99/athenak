@@ -21,7 +21,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
-#include "z4c/hyperboloidal/cartesian_patch.hpp"
+#include "z4c/hyperboloidal/cartesian_hawking.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
 
@@ -188,6 +188,20 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     for (int v = 0; v < pdata->nhist; ++v) {
       pdata->label[v] = labels[v];
       pdata->hdata[v] = values[v];
+    }
+    if (z->hyperboloidal_mass_diagnostics) {
+      const auto masses = z4c::hyperboloidal::CartesianHawkingMasses(
+          *z->hyperboloidal_patch,z->u0,{0.3,0.5,0.7},z->hyperboloidal_mass_nmu);
+      const char *mass_labels[] = {"mH-r03","Rarea-r03","mH-r05","Rarea-r05",
+                                   "mH-r07","Rarea-r07"};
+      for (size_t r = 0; r < masses.size(); ++r) {
+        const int v = 13+2*r;
+        pdata->label[v] = mass_labels[2*r];
+        pdata->label[v+1] = mass_labels[2*r+1];
+        pdata->hdata[v] = masses[r].mass;
+        pdata->hdata[v+1] = masses[r].areal_radius;
+      }
+      pdata->nhist = 19;
     }
     return;
   }

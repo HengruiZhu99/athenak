@@ -49,6 +49,12 @@ void Z4c::SetupHyperboloidal(ParameterInput *pin) {
   }
   hyperboloidal_patch = std::make_unique<hyp::CartesianConformalPatch>(grid,1,
       pin->GetOrAddInteger("z4c","hyperboloidal_ghost_degree",3));
+  hyperboloidal_mass_diagnostics =
+      pin->GetOrAddBoolean("z4c","hyperboloidal_mass_diagnostics",false);
+  hyperboloidal_mass_nmu = pin->GetOrAddInteger("z4c","hyperboloidal_mass_nmu",32);
+  if (hyperboloidal_mass_nmu < 4 || hyperboloidal_mass_nmu > 128) {
+    throw std::invalid_argument("invalid Hawking quadrature");
+  }
   auto &patch = *hyperboloidal_patch;
   patch.kappa1 = pin->GetOrAddReal("z4c","hyperboloidal_kappa1",5);
   patch.dissipation = pin->GetOrAddReal("z4c","hyperboloidal_dissipation",0.1);
