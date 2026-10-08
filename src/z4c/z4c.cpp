@@ -10,6 +10,7 @@
 #include <sys/stat.h>  // mkdir
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <algorithm>
 #include <memory>    // make_unique, unique_ptr
@@ -25,6 +26,7 @@
 #include "z4c/driftcontrol/driftcontrol.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/hyperboloidal/cartesian_patch.hpp"
 #include "z4c/z4c_amr.hpp"
 #include "coordinates/adm.hpp"
 #include "utils/cart_grid.hpp"
@@ -71,6 +73,14 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   coarse_u_weyl("coarse_u_weyl",1,1,1,1,1),
   pamr(new Z4c_AMR(pin)),
   pmy_pack(ppack) {
+  if (pin->GetOrAddBoolean("z4c","hyperboloidal",false)
+      && (pin->GetOrAddInteger("z4c","nrad_wave_extraction",0) != 0
+          || pin->GetOrAddInteger("fastflow","num_horizons",0) != 0
+          || pin->GetOrAddInteger("cce","num_radii",0) != 0
+          || pin->DoesParameterExist("z4c","co_0_type"))) {
+    throw std::invalid_argument("hyperboloidal prototype requires disabled extraction "
+        "and trackers until their interpolation is mask aware");
+  }
   // (1) read time-evolution option [already error checked in driver constructor]
   // Then initialize memory and algorithms for reconstruction and Riemann solvers
   std::string evolution_t = pin->GetString("time","evolution");
@@ -314,6 +324,7 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
     }
   }
   */
+  SetupHyperboloidal(pin);
 }
 
 //----------------------------------------------------------------------------------------
@@ -322,6 +333,10 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 //
 // This function operates on all grid points of the MeshBlock
 void Z4c::AlgConstr(MeshBlockPack *pmbp) {
+  if (hyperboloidal_patch) {
+    hyperboloidal_patch->ProjectAlgebraic(u0);
+    return;
+  }
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   int &is = indcs.is; int &ie = indcs.ie;

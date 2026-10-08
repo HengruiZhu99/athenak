@@ -33,6 +33,7 @@ class DriftControl;
 
 namespace z4c {
 class Z4c_AMR;
+namespace hyperboloidal { class CartesianConformalPatch; }
 
 // Shift needed for derivatives
 //----------------------------------------------------------------------------------------
@@ -42,6 +43,13 @@ class Z4c {
  public:
   Z4c(MeshBlockPack *ppack, ParameterInput *pin);
   ~Z4c();
+  std::unique_ptr<hyperboloidal::CartesianConformalPatch> hyperboloidal_patch;
+  DvceArray5D<Real> hyperboloidal_active;
+  Real hyperboloidal_pole_cfl = 0.04;
+  void SetupHyperboloidal(ParameterInput *pin);
+  void InitializeHyperboloidal(ParameterInput *pin, bool restart);
+  void HyperboloidalADM();
+  void HyperboloidalConstraints();
 
   // Indices of evolved variables
   enum {

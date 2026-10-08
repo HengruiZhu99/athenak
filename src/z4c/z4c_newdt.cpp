@@ -17,6 +17,7 @@
 #include "driver/driver.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c.hpp"
+#include "z4c/hyperboloidal/cartesian_patch.hpp"
 
 namespace z4c {
 
@@ -29,6 +30,13 @@ TaskStatus Z4c::NewTimeStep(Driver *pdriver, int stage) {
     return TaskStatus::complete; // only execute last stage
   }
 
+  if (hyperboloidal_patch) {
+    const auto g = hyperboloidal_patch->grid;
+    const Real h = std::min(g.h[0],std::min(g.h[1],g.h[2]));
+    dtnew = std::min(Real(0.025)*h,hyperboloidal_pole_cfl*hyperboloidal_patch->min_omega)
+        /pmy_pack->pmesh->cfl_no;
+    return TaskStatus::complete;
+  }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   int nx1 = indcs.nx1;
   int nx2 = indcs.nx2;

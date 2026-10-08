@@ -11,15 +11,14 @@ constraint and field errors. Global constraint convergence is slow near the
 puncture; this is finite-duration evidence, not a long-time stability result.
 See the final section for the successful parameters and measured limitations.
 
-**The requested production 3D solver is not complete.** AthenaK now has opt-in
-independent ADM gauge storage, but its production evolution remains Cauchy.
-A separate Cartesian patch adapter now evolves nonspherical pulses with the
-full tensor RHS on actual AthenaK field arrays. The CMake option builds its
-tests and the standalone spherical executable; it does not enable a hyperboloidal AthenaK
-runtime mode. The spherical-boundary reconstruction has scalar and short
-nonlinear Cartesian tests, but native task integration and Cartesian puncture
-stability remain outstanding. GPU/MPI testing is out of
-scope. The sections below retain the equation derivations and earlier failed
+**Converged long-time Cartesian puncture evolution is not yet established.**
+The default AthenaK path remains Cauchy. An opt-in, single-block vacuum
+hyperboloidal runtime now dispatches native RK tasks, masked algebraic projection,
+physical ADM conversion and constraint diagnostics. It supports CMC Minkowski
+and trumpet initial data, a lapse pulse, output masks and restart. See the native
+runtime section below for exact configuration and restrictions. The earlier
+standalone patch and spherical executables remain useful independent tests.
+GPU/MPI testing is out of scope. The sections below retain the equation derivations and earlier failed
 experiments so their limitations and subsequent fixes remain auditable.
 
 Reference Einstein source values must not be used as sources for a perturbed
@@ -1092,3 +1091,73 @@ to 0.1 reduces the number of steps from 351 to 141. H changes from 0.02084844 to
 Those changes are much smaller than the spatial-refinement changes. This is an
 early-time timestep sensitivity check, not proof that the larger step is stable
 at later times. Finer and longer runs with that coefficient are tracked separately.
+
+
+## Native AthenaK hyperboloidal runtime
+
+The standard executable now supports `z4c/hyperboloidal=true` with
+`problem/pgen_name=z4c_hyperboloidal`. The example
+`inputs/z4c/hyperboloidal.athinput` runs a bounded two-step CMC smoke. Set
+`problem/mass=0.5` for the trumpet, or `problem/lapse_pulse=1e-4` for a nonspherical
+smooth lapse pulse. S=a=1, physical K_ref=-3, and the shared live gauge coefficients
+remain (2,0.1,1.5,1). Hyperboloidal damping/dissipation have separate parameters,
+`hyperboloidal_kappa1=5` and `hyperboloidal_dissipation=0.1`. No Cauchy chi floor
+is permitted. Initialization rejects unsupported geometry/options, rather than
+silently reusing Cauchy evolution.
+
+Supported scope is one uniform three-dimensional MeshBlock on one rank, three
+halo cells, fourth-order spatial derivatives, chi power -4 and SSPRK3 (`rk3`).
+The sphere r<1 must fit inside the physical mesh. Matter, multilevel meshes,
+trackers, horizons and wave/CCE extraction are rejected for this prototype.
+This is a runtime integration milestone, not a claim that the long-time numerical
+stability problem has been solved.
+
+The native task chain now calls the Cartesian conformal RHS, reconstructs the
+spherical ghost fringe, performs masked final-stage algebraic projection and
+converts physical ADM at every RK stage. Cartesian-box Sommerfeld/outflow
+operations do not overwrite the spherical closure. The physical timestep is
+min(0.025 min(dx), hyperboloidal_pole_cfl min(Omega)), with default pole coefficient
+0.04; the module cancels the framework's additional CFL multiplier so this agrees
+with the test driver. The mesh still shortens the final step to the requested
+end time. The empirical coefficient is not a general nonlinear CFL theorem.
+
+ADM lapse storage is detached automatically before writing alpha_phys=alpha_bar/
+Omega. Physical metric, curvature and psi4 are written only to active cells;
+inactive ADM entries are NaN and are accompanied by `z4c_active` in field outputs.
+The evolved conformal variables remain authoritative. Every field output,
+including a single selected scalar, carries the mask. Unsupported derived
+curvature, Weyl and PDF outputs are rejected because their derivative/reduction
+paths are not yet mask aware.
+
+Native constraint output contains physical H and the momentum covector; `con_M`
+and `con_Z` are their **conformal** squared norms, avoiding artificial suppression
+near scri. `con_C` is H^2+M_conformal^2+Z_conformal^2+Theta^2. Inactive entries are
+zero and identified by the mask. History reports unweighted active-node RMS
+constraints, algebraic residuals, positive-field minima and outer-shell pole/null
+diagnostics. It neither integrates the divergent physical volume at scri nor
+excises difficult cells based on chi.
+
+A restart reconstructs the immutable analytic initial profile before loading the
+checkpoint's evolved fields. It then refreshes ADM and constraints without
+reinitializing the evolution. This avoids incorrectly pairing restart values
+with initial-data derivatives.
+
+Validation: the initial native/Cauchy regression run passed 61 tests (nine new
+native checks plus 52 existing overhaul, conversion, restart and separate-gauge
+checks). Four additional output-safety/boundary checks bring the native test file to 13
+passing tests; the final combined Release run passes all 65 tests. A grid with
+dyadic spacing places nodes exactly at r=1 and verifies they remain inactive,
+with NaN physical ADM values and finite, stationary active CMC data. All 13 native
+tests also pass under ASan/UBSan (the initial 12 plus the final exact-scri test). These check CMC, a nonspherical pulse and a trumpet against the
+independent driver, physical ADM mapping at the initial and final saved states, poisoned inactive
+ADM cells, restart equality, unsupported configurations and output masks.
+A native N=24, M=0.5 evolution reaches t=0.1 in 141 steps with pole coefficient
+0.1, giving H=0.0208478807307, M=0.0939020062887 and Z=0.0289509126457, matching
+the standalone run. Its large errors are reported, not treated as an accuracy pass.
+
+Additional standalone refinement evidence: at N=48, t=0.1 and pole coefficient
+0.1, H=4.07348e-4, M=2.75813e-3 and Z=6.27472e-4. Errors decrease further from
+N=36. The largest errors remain near r=0.977. The N=36 run reaches t=0.5 with
+H=0.0177828, M=0.109239 and Z=0.0282965, substantially below N=24 at that time
+but still too large to establish accurate long-time evolution. Stability and
+asymptotic convergence across longer native puncture runs remain outstanding.

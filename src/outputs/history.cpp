@@ -21,6 +21,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/hyperboloidal/cartesian_patch.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
 
@@ -174,6 +175,22 @@ void HistoryOutput::LoadHydroHistoryData(HistoryData *pdata, Mesh *pm) {
 //  Data is stored in a Real array defined in derived class.
 
 void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
+  auto *z = pm->pmb_pack->pz4c;
+  if (z->hyperboloidal_patch) {
+    const auto d = z->hyperboloidal_patch->Diagnose(z->u0);
+    const char *labels[] = {"H-L2","M-conformal-L2","Z-conformal-L2","Theta-L2",
+        "det-max","trace-max","alpha-min","chi-min","H-max","M-max",
+        "pole-deviation-max","null-deviation-max","active-cells"};
+    const Real values[] = {d.h_l2,d.m_l2,d.z_l2,d.theta_l2,d.max_det,d.max_trace,
+        d.min_alpha,d.min_chi,d.max_h,d.max_m,d.shell_max_pole_deviation,
+        d.shell_max_null_deviation,Real(z->hyperboloidal_patch->active.extent(0))};
+    pdata->nhist = 13;
+    for (int v = 0; v < pdata->nhist; ++v) {
+      pdata->label[v] = labels[v];
+      pdata->hdata[v] = values[v];
+    }
+    return;
+  }
   // set number of and names of history variables for z4c
   pdata->nhist = 9;
   pdata->label[0] = "C-norm2";

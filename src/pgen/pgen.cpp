@@ -915,6 +915,11 @@ void ProblemGenerator::OutputErrors(ParameterInput *pin, Mesh *pm) {
 //! user-defined problem generator function compiled with the code.
 
 void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart) {
+  auto *z4c = pmy_mesh_->pmb_pack->pz4c;
+  if (z4c != nullptr && z4c->hyperboloidal_patch) {
+    z4c->InitializeHyperboloidal(pin,is_restart);
+    return;
+  }
 #if USER_PROBLEM_ENABLED
   // call user-defined problem generator (if USER_PROBLEM_ENABLED macro defined at build)
   UserProblem(pin, is_restart);

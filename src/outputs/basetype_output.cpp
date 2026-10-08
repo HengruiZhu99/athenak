@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <stdexcept>
 #include <sstream>
 #include <string>    // std::string, to_string()
 #include <cstdio>    // snprintf
@@ -49,6 +50,10 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
       out_params.file_type.compare("rst") == 0 ||
       out_params.file_type.compare("log") == 0 ||
       out_params.file_type.compare("trk") == 0) {return;}
+
+  if (pm->pmb_pack->pz4c != nullptr && pm->pmb_pack->pz4c->hyperboloidal_patch) {
+    outvars.emplace_back("z4c_active",0,&pm->pmb_pack->pz4c->hyperboloidal_active);
+  }
 
   // initialize vector containing number of output MBs per rank
   noutmbs.assign(global_variable::nranks, 0);
@@ -185,6 +190,12 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
   if (ivar>=157 && pm->pmb_pack->ptmunu != nullptr) {
     std::cerr << "Z4c curvature diagnostics currently require vacuum." << std::endl;
     std::exit(EXIT_FAILURE);
+  }
+
+  if (pm->pmb_pack->pz4c != nullptr && pm->pmb_pack->pz4c->hyperboloidal_patch
+      && (ivar >= 157 || (ivar >= 129 && ivar < 132) || out_params.file_type == "pdf")) {
+    throw std::invalid_argument(
+        "derived curvature, Weyl and PDF outputs are not conformal-mask aware");
   }
 
   // Now load STL vector of output variables
@@ -734,6 +745,10 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
     out_params.contains_derived = true;
     out_params.n_derived += 1;
     outvars.emplace_back("pdens",0,&(derived_var));
+  }
+
+  if (pm->pmb_pack->pz4c != nullptr && pm->pmb_pack->pz4c->hyperboloidal_patch) {
+    outvars.emplace_back("z4c_active",0,&pm->pmb_pack->pz4c->hyperboloidal_active);
   }
 
   // initialize vector containing number of output MBs per rank

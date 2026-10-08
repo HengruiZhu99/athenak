@@ -214,6 +214,10 @@ template void Z4c::ADMToZ4c<4>(MeshBlockPack *pmbp, ParameterInput *pin);
 //
 // This sets the ADM variables everywhere in the MeshBlock
 void Z4c::Z4cToADM(MeshBlockPack *pmbp) {
+  if (hyperboloidal_patch) {
+    HyperboloidalADM();
+    return;
+  }
   pmbp->padm->EnsureSeparateGaugeStorage();
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;

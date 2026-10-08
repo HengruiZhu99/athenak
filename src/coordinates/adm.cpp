@@ -87,6 +87,10 @@ void ADM::EnsureSeparateGaugeStorage() {
 // Identity gauge map for the current Cauchy runtime. A future conformal runtime
 // must instead write alpha_phys=alpha_bar/Omega using its own conversion.
 void ADM::SyncCauchyGaugeFromZ4c() {
+  if (pmy_pack->pz4c != nullptr && pmy_pack->pz4c->hyperboloidal_patch) {
+    pmy_pack->pz4c->HyperboloidalADM();
+    return;
+  }
   if (gauge_is_shared || pmy_pack->pz4c == nullptr) return;
   const int nmb = pmy_pack->nmb_thispack;
   const int nk = u_adm.extent_int(2), nj = u_adm.extent_int(3), ni = u_adm.extent_int(4);

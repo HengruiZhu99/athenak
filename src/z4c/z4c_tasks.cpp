@@ -23,6 +23,7 @@
 #include "z4c/fastflow.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/hyperboloidal/cartesian_patch.hpp"
 #include "tasklist/numerical_relativity.hpp"
 #include "z4c/cce/cce.hpp"
 
@@ -241,6 +242,10 @@ TaskStatus Z4c::UpdateExcisionMasks(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ADMConstraints_(Driver *pdrive, int stage) {
+  if (hyperboloidal_patch) {
+    if (stage == pdrive->nexp_stages) HyperboloidalConstraints();
+    return TaskStatus::complete;
+  }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   if (stage == pdrive->nexp_stages) {
     switch (opt.fd_stencil) {
@@ -296,6 +301,10 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
+  if (hyperboloidal_patch) {
+    hyperboloidal_patch->Prepare(u0);
+    return TaskStatus::complete;
+  }
   // only apply BCs if domain is not strictly periodic
   if (!(pmy_pack->pmesh->strictly_periodic)) {
     // Step 3: apply physical BCs to the fine array. This is called *after* prolongation,

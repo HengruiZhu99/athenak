@@ -19,6 +19,7 @@
 #include "mesh/mesh.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
+#include "z4c/hyperboloidal/cartesian_patch.hpp"
 #include "z4c/driftcontrol/driftcontrol.hpp"
 #include "z4c/tmunu.hpp"
 #include "coordinates/cell_locations.hpp"
@@ -29,6 +30,10 @@ template <int NGHOST>
 //! \fn void Z4c::CalcRHS(Driver *pdriver, int stage)
 //! \brief compute rhs of the z4c equations
 TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
+  if (hyperboloidal_patch) {
+    hyperboloidal_patch->RHS(u0,u_rhs);
+    return TaskStatus::complete;
+  }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
   int &is = indcs.is; int &ie = indcs.ie;
