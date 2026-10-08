@@ -10,7 +10,8 @@ import pytest
 
 from .overhaul_utils import ROOT
 
-spec = importlib.util.spec_from_file_location('hyp_reader', ROOT / 'vis/python/bin_convert.py')
+spec = importlib.util.spec_from_file_location(
+    'hyp_reader', ROOT / 'vis/python/bin_convert.py')
 reader = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(reader)
 profile_spec = importlib.util.spec_from_file_location(
@@ -66,7 +67,8 @@ def check_adm(directory, first=False):
     np.testing.assert_allclose(a['adm_psi4'][mask], psi, rtol=3e-7)
     for component in ('xx', 'xy', 'xz', 'yy', 'yz', 'zz'):
         metric = psi * q['z4c_g' + component][mask]
-        np.testing.assert_allclose(a['adm_g' + component][mask], metric, rtol=3e-7, atol=1e-10)
+        np.testing.assert_allclose(a['adm_g' + component][mask], metric,
+                                   rtol=3e-7, atol=1e-10)
         first_term = psi * omega[mask] * q['z4c_A' + component][mask]
         second_term = metric * (q['z4c_Khat'][mask] + 2*q['z4c_Theta'][mask]) / 3
         curvature = first_term + second_term
@@ -90,7 +92,8 @@ def check_radial_budget(directory, history_row):
     for column, name in [(2, 'H'), (3, 'M'), (4, 'Z')]:
         np.testing.assert_allclose(profile['global'][name]['rms'], history_row[column],
                                    rtol=3e-7, atol=1e-12)
-        fraction = sum(row[name]['squared_norm_fraction'] for row in profile['radial_bins'])
+        fraction = sum(row[name]['squared_norm_fraction']
+                       for row in profile['radial_bins'])
         np.testing.assert_allclose(fraction, 1 if profile['global'][name]['rms'] else 0,
                                    rtol=1e-12, atol=1e-12)
     with pytest.raises(ValueError, match='cover all active nodes'):
@@ -114,7 +117,8 @@ def test_native_tasks_and_adm(tmp_path, mass, pulse, degree):
     assert result.returncode == 0, result.stdout + result.stderr
     values = dict(re.findall(r'(\w+)=([-+\deE.]+)', result.stdout.splitlines()[-1]))
     for column, name in [(2, 'H'), (3, 'M'), (4, 'Z'), (5, 'Theta')]:
-        np.testing.assert_allclose(final[column], float(values[name]), rtol=2e-5, atol=1e-11)
+        np.testing.assert_allclose(final[column], float(values[name]),
+                                   rtol=2e-5, atol=1e-11)
     if mass == pulse == 0:
         assert np.max(np.abs(history[:, 2:8])) < 1e-11
 
@@ -123,10 +127,11 @@ def test_native_tasks_and_adm(tmp_path, mass, pulse, degree):
 def test_native_trumpet_restart(tmp_path, degree):
     full, split = tmp_path / 'full', tmp_path / 'split'
     mass_option = f'z4c/hyperboloidal_mass_diagnostics={str(degree == 2).lower()}'
+    gauge_option = f'z4c/hyperboloidal_shift_driver={1 if degree == 2 else 0.1}'
     run(full, 'problem/mass=0.5', 'time/nlim=3',
-        f'z4c/hyperboloidal_ghost_degree={degree}', mass_option)
+        f'z4c/hyperboloidal_ghost_degree={degree}', mass_option, gauge_option)
     run(split, 'problem/mass=0.5', 'time/nlim=1',
-        f'z4c/hyperboloidal_ghost_degree={degree}', mass_option)
+        f'z4c/hyperboloidal_ghost_degree={degree}', mass_option, gauge_option)
     checkpoint = sorted((split / 'rst').glob('*.rst'))[-1]
     run(split, 'time/nlim=3', checkpoint=checkpoint)
     for kind in ('z4c', 'adm', 'con'):
@@ -197,11 +202,13 @@ def test_fifth_degree_requires_interior_donors(tmp_path):
         'time/nlim=3')
     final = np.loadtxt(next(fine.glob('*.hst')))[-1]
     result = subprocess.run([str(PATCH_EXE), '36', f'{final[0]:.17g}', '0.0001',
-                             'smooth', '.04', '5'], capture_output=True, text=True, timeout=120)
+                             'smooth', '.04', '5'], capture_output=True, text=True,
+                            timeout=120)
     assert result.returncode == 0, result.stdout + result.stderr
     values = dict(re.findall(r'(\w+)=([-+\deE.]+)', result.stdout.splitlines()[-1]))
     for column, name in [(2, 'H'), (3, 'M'), (4, 'Z'), (5, 'Theta')]:
-        np.testing.assert_allclose(final[column], float(values[name]), rtol=2e-5, atol=1e-11)
+        np.testing.assert_allclose(final[column], float(values[name]),
+                                   rtol=2e-5, atol=1e-11)
 
 
 @pytest.mark.parametrize('mass', [0, 0.5])
@@ -226,3 +233,33 @@ def test_native_hawking_history(tmp_path, mass):
 def test_invalid_hawking_quadrature(tmp_path, nmu):
     result = run(tmp_path, f'z4c/hyperboloidal_mass_nmu={nmu}', success=False)
     assert 'invalid Hawking quadrature' in result.stdout + result.stderr
+
+
+@pytest.mark.parametrize('parameter', ['slicing', 'shift_driver', 'lapse_damping',
+                                       'shift_damping'])
+@pytest.mark.parametrize('value', [-1, 'nan'])
+def test_invalid_reference_gauge(tmp_path, parameter, value):
+    result = run(tmp_path, f'z4c/hyperboloidal_{parameter}={value}', success=False)
+    assert ('Reference gauge coefficients must be finite >=0'
+            in result.stdout + result.stderr)
+
+
+def test_changed_gauge_preserves_minkowski(tmp_path):
+    run(tmp_path, 'time/nlim=3', 'z4c/hyperboloidal_slicing=0.5',
+        'z4c/hyperboloidal_shift_driver=1', 'z4c/hyperboloidal_lapse_damping=3',
+        'z4c/hyperboloidal_shift_damping=0')
+    a, b = fields(tmp_path, 'z4c', first=True), fields(tmp_path, 'z4c')
+    for key in a:
+        np.testing.assert_allclose(a[key], b[key], rtol=0, atol=1e-12)
+    history = np.loadtxt(next(tmp_path.glob('*.hst')))
+    assert np.max(np.abs(history[:, 2:8])) < 1e-11
+
+
+def test_shift_driver_changes_live_puncture(tmp_path):
+    baseline, changed = tmp_path / 'baseline', tmp_path / 'changed'
+    run(baseline, 'problem/mass=0.5', 'time/nlim=3')
+    run(changed, 'problem/mass=0.5', 'time/nlim=3', 'z4c/hyperboloidal_shift_driver=1')
+    a, b = fields(baseline, 'z4c'), fields(changed, 'z4c')
+    mask = a['z4c_active'].astype(bool)
+    assert np.max(np.abs(a['z4c_betax'][mask] - b['z4c_betax'][mask])) > 1e-10
+    check_adm(changed)

@@ -56,6 +56,15 @@ void Z4c::SetupHyperboloidal(ParameterInput *pin) {
     throw std::invalid_argument("invalid Hawking quadrature");
   }
   auto &patch = *hyperboloidal_patch;
+  patch.gauge_parameters.slicing =
+      pin->GetOrAddReal("z4c","hyperboloidal_slicing",2);
+  patch.gauge_parameters.shift_driver =
+      pin->GetOrAddReal("z4c","hyperboloidal_shift_driver",0.1);
+  patch.gauge_parameters.lapse_damping =
+      pin->GetOrAddReal("z4c","hyperboloidal_lapse_damping",1.5);
+  patch.gauge_parameters.shift_damping =
+      pin->GetOrAddReal("z4c","hyperboloidal_shift_damping",1);
+  patch.gauge_parameters.Validate();
   patch.kappa1 = pin->GetOrAddReal("z4c","hyperboloidal_kappa1",5);
   patch.dissipation = pin->GetOrAddReal("z4c","hyperboloidal_dissipation",0.1);
   hyperboloidal_pole_cfl = pin->GetOrAddReal("z4c","hyperboloidal_pole_cfl",0.04);

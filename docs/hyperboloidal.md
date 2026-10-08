@@ -1431,3 +1431,109 @@ saved snapshots near t=1.350, the smallest conformal-metric eigenvalue is
 (x,y,z)=(0.04375,0.65625,0.74375), r=0.992846. The metrics are still positive
 definite at these saved times but strongly distorted near scri. The exact
 invalid field at the subsequent failing stage has not yet been isolated.
+
+
+### Further boundary and gauge controls (experimental, not a stability claim)
+
+The original quadratic N=48 native run completed t=1 in 6151 steps. Its
+H/M/Z norms are 0.0133792111 / 0.0495631693 / 0.0102797806, compared with
+0.0372859885 / 0.165782053 / 0.0417192134 at N=36 and
+0.210158322 / 0.821378419 / 0.171308161 at N=24. These are same-time
+constraint-norm refinement results, not full solution self-convergence or a
+long-time stability demonstration.
+
+An uncommitted boundary experiment replaces degree-two normal-ray extrapolation
+with minimum-norm quadratic weights on nearby strictly interior Cartesian
+cells. All constant, linear and quadratic moments are constrained. The initial
+64-neighbor choice is rank deficient for some exterior targets and was rejected
+before evolution. A 216-neighbor variant passes polynomial/coverage tests and
+reaches t=1.5 at N=24, beyond the normal-ray failure near t=1.38. Selecting whole
+distance shells with at most 216 donors removes arbitrary cutoff tie-breaking;
+reflection and x/y-permutation weight differences are below 2e-14. Scalar
+transport errors at N=24/48 decrease from 6.63203e-4 to 5.39544e-5 in L2 and
+from 0.0418585 to 0.00682476 in the maximum-in-time infinity norm.
+
+This is a consistency and numerical sensitivity experiment, not a
+constraint-preserving characteristic boundary condition or an energy estimate
+for Z4c. The symmetric variant reaches t=1.5 with H=0.895536118,
+M=0.715063533 and Z=0.133704734, but its continuation fails after the last
+logged cycle at t=2.208838 with an invalid conformal metric. Its last saved
+history at t=2.200283203 has H=1063.98 and M=4701.00: this is an inaccurate,
+failed run. The earlier nonsymmetric variant at t=1.5 has 95.2% of squared
+Hamiltonian error in 0.5<r<0.75, with its peak at r=0.585335. Boundary
+reconstruction alone therefore has not solved the problem.
+
+The spherical driver provides an important independent discretization control
+for the same M=0.5 case. Previous long spherical results used M=0.05 and cannot
+be transferred to this larger mass without testing. With the native prototype's
+slicing=2, shift_driver=0.1, lapse_damping=1.5, shift_damping=1,
+kappa1=5, dissipation=0.1 and the same puncture/lapse-scaled-damping options,
+128 radial cells fail after the t=2 diagnostic. Doubling radial resolution and
+halving CFL from 0.05 to 0.025 still fails after the t=2.100098 diagnostic.
+Failures occur near r=0.69--0.70, away from scri. Immediately before failure,
+a separate 128-cell run stopped at t=1.9 has mass 0.5000000211 near r=0.5 and
+horizon areal radius 0.999996458, but the conformal radial metric reaches 33.08
+near r=0.707. Strong metric stretching precedes the numerical failure; this
+observation alone does not prove a continuum gauge shock.
+
+Further 128-cell radial controls keep all other parameters fixed:
+
+| Changed control | Outcome / last diagnostic time |
+| --- | --- |
+| Slicing 0 (harmonic coefficient) | Fails after t=2.9 |
+| Slicing 0.5 | Fails after t=2.5 |
+| Fixed lapse | Fails after t=2.5 |
+| Fixed shift | Reaches t=3; H=0.1344, M=0.2109 |
+| Shift damping 4 | Fails after t=1.6 |
+| Shift driver 0.01 | Fails after t=1.6 |
+| Shift damping 0 | Reaches t=5; H=0.04377, M=0.04808 |
+| Shift driver 1 | Reaches t=5; H=0.01128, M=0.01353 |
+| Shift driver 1, shift damping 0 | Reaches t=5; H=0.01053, M=0.01274 |
+
+With shift_driver=1 and the original shift damping, the 128/256-cell runs at
+t=5 have mass errors 1.94e-7 / 8.75e-9 near r=0.5 and horizon-radius errors
+4.77e-6 / 6.40e-7. H decreases from 0.0112808 to 0.00174050 and M from
+0.0135300 to 0.00361956. The 512-cell run also reaches t=5, with
+H=0.00256056, M=0.00425134 and
+Z=0.000151747. Thus the all-point radial norms are not monotonically
+convergent at these resolutions. A spatial audit reproduces all three reported
+norms from the field dumps and locates almost all of their squared error at
+r<0.1, near the puncture. Reporting a fixed r>=0.1 region alongside (not instead
+of) the full norms gives H/M/Z RMS values
+1.26e-5/1.83e-5/3.33e-6 at N=128,
+6.57e-7/1.42e-6/1.83e-7 at N=256 and
+3.78e-8/9.80e-8/1.18e-8 at N=512. The N=512 mass error near r=0.5 is
+4.42e-10 and horizon-radius error 3.66e-7. These results
+motivate a stronger shift-driver trial in the Cartesian code, while retaining
+Minkowski as the reference. They do not justify claiming that the full 3D
+prototype is stable.
+
+
+The native adapter now accepts `hyperboloidal_slicing`,
+`hyperboloidal_shift_driver`, `hyperboloidal_lapse_damping` and
+`hyperboloidal_shift_damping` under `<z4c>`, with defaults 2, 0.1, 1.5 and 1.
+Every coefficient must be finite and nonnegative. These are the existing gauge
+kernel's coefficients; runtime controls allow reproducible gauge comparisons.
+Regression checks cover rejection of negative/nonfinite values, preservation of
+the Minkowski fixed point under changed coefficients, a measurable shift change
+for live puncture data, physical ADM consistency and restart with a nondefault
+driver. All 37 native tests pass in both Release and ASan/UBSan after restoring
+the production normal-ray boundary implementation; all 52 Cauchy conversion,
+restart, overhaul and separate-gauge regressions also pass. Python and C++
+lint pass.
+The experimental shell reconstruction also passes its standalone ASan/UBSan
+spherical-ghost CTest (2886.45 seconds), but is retained as an unmerged patch.
+
+The stronger-driver N=24 Cartesian shell-reconstruction trial completes t=5
+with H=0.0903796, M=0.0914417 and Z=0.00635526. Its masses on r=0.3/0.5/0.7
+are 0.507369 / 0.502843 / 0.482243; these deviations must be improved and
+checked under refinement. For the original weaker driver, completed symmetric
+shell trials at t=1.5 have H/M/Z=0.515564/0.624231/0.148483 at N=36 and
+0.290258/0.250851/0.0612876 at N=48, compared with
+0.895536/0.715064/0.133705 at N=24. The Z norm is not monotonic, so these
+three results do not establish uniform constraint convergence.
+
+A 256-cell spherical run with shift_driver=1 reaches t=20 (40 mass units),
+with H=0.00124539, M=0.00126026, Z=2.07e-8, mass near r=0.5 equal to
+0.5000002493 and horizon areal radius 1.0000014915. This provides longer radial
+evidence for the stronger gauge. Longer 3D refinement tests remain necessary.
