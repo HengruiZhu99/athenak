@@ -1,0 +1,78 @@
+{
+  "passed": true,
+  "full20_cases": 1080,
+  "complete_nonzero_modified_covector_cases": 378,
+  "flat_gauge_constraint_cases": 60,
+  "zero_modified_covector_cases": 162,
+  "maximum_errors": {
+    "D_symbol": 2.394642943326073e-15,
+    "S_symbol": 6.0574775954251e-14,
+    "KO_symbol": 3.609459045669709e-15,
+    "upwind_symbol": 2.077933901374143e-15,
+    "upwind_positive_real": 0.0,
+    "canonical_matrix": 6.349749892919174e-13,
+    "complete_basis_residual": 8.518553387695834e-13,
+    "complete_basis_condition": 11.529152606733899,
+    "flat_gauge_formula": 9.387019366232792e-13,
+    "compatible_gauge_leakage": 1.3665757493119077e-12,
+    "common_scalar_basis_residual": 8.526080944317918e-13,
+    "nyquist_nilpotence": 5.1493392432493886e-14
+  },
+  "native_flat_gauge_defect_peaks": {
+    "H": 8736.171064352748,
+    "M": 4368.085532176374,
+    "Z": 568.8888888888889
+  },
+  "nyquist_ko_damped_Jordan": {
+    "h_max": 0.125,
+    "ko_epsilon": 0.1,
+    "max_propagator_Dplus_norm_sampled": 132.69603183264314,
+    "max_uniform_h_analytic_bound": 133.69501194319076,
+    "maximum_roundoff_removed": 1.144297609610975e-14
+  },
+  "exact_stencil_and_manufactured": {
+    "coefficients_over_144": [
+      1,
+      -16,
+      64,
+      16,
+      -130,
+      16,
+      64,
+      -16,
+      1
+    ],
+    "radius": 4,
+    "manufactured_exp_h": [
+      0.2,
+      0.1,
+      0.05,
+      0.025
+    ],
+    "manufactured_exp_errors": [
+      0.00010717291844453136,
+      6.674596673805766e-06,
+      4.167906637597696e-07,
+      2.6043631806693668e-08
+    ],
+    "manufactured_exp_ratios": [
+      16.056838140516856,
+      16.014266283212333,
+      16.00355383816504
+    ],
+    "delta_h2": "-16*t**3*(t + 2)/9",
+    "composed_leading_error": "-h^4 f^(6)/15"
+  },
+  "actual_Dx_composition_manufactured_errors": [
+    1.7322147842890878e-05,
+    1.0807478633134693e-06,
+    6.751725245557338e-08,
+    4.219645965974905e-09
+  ],
+  "actual_Dx_composition_manufactured_ratios": [
+    16.02792698546989,
+    16.006988199417705,
+    16.000691290216864
+  ],
+  "scope": "Constant-coefficient interior principal and gauge-constraint columns; no nonflat product rule, ghost, nonlinear or global energy claim."
+}

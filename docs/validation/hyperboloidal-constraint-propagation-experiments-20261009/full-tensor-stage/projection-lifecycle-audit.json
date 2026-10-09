@@ -1,0 +1,44 @@
+{
+  "implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "launch_HEAD": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "files": {
+    "src/driver/driver.cpp": {
+      "current_sha256": "1f643c2caa535d8c2e14fcb569b207dd7c02c04a48db75ef67dd01684e8c1dd5",
+      "27c_sha256": "1f643c2caa535d8c2e14fcb569b207dd7c02c04a48db75ef67dd01684e8c1dd5",
+      "matches27c": true
+    },
+    "src/z4c/z4c_tasks.cpp": {
+      "current_sha256": "3a8c9158692222d0699f1d1ff38f261621e7712ad472a4fd9007c8815b1d8626",
+      "27c_sha256": "3a8c9158692222d0699f1d1ff38f261621e7712ad472a4fd9007c8815b1d8626",
+      "matches27c": true
+    },
+    "src/z4c/z4c_update.cpp": {
+      "current_sha256": "97f4ff66c876e751554ba5afee8b2d73f44080805f1546766866352441f67115",
+      "27c_sha256": "97f4ff66c876e751554ba5afee8b2d73f44080805f1546766866352441f67115",
+      "matches27c": true
+    },
+    "src/z4c/z4c.cpp": {
+      "current_sha256": "79356bc144aab6eb37248d8d099d8bae2bcddbf1780ad6144462f8df575fcb5f",
+      "27c_sha256": "79356bc144aab6eb37248d8d099d8bae2bcddbf1780ad6144462f8df575fcb5f",
+      "matches27c": true
+    },
+    "src/z4c/z4c_calcrhs.cpp": {
+      "current_sha256": "d24756f1e445a25a13715a87d46990e72ea31e75c8ceb89f7fdec648c17872ad",
+      "27c_sha256": "d24756f1e445a25a13715a87d46990e72ea31e75c8ceb89f7fdec648c17872ad",
+      "matches27c": true
+    },
+    "src/z4c/z4c_hyperboloidal.cpp": {
+      "current_sha256": "1c3e8b5836e2c231622b7df823476135b7e1517aadac93c6e814c2da20d774d1",
+      "27c_sha256": "1c3e8b5836e2c231622b7df823476135b7e1517aadac93c6e814c2da20d774d1",
+      "matches27c": true
+    },
+    "src/z4c/hyperboloidal/cartesian_patch.hpp": {
+      "current_sha256": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+      "27c_sha256": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+      "matches27c": true
+    }
+  },
+  "lifecycle": "Driver SSPRK3 coefficients combine current u0 and saved u1. Z4c EnforceAlgConstr calls AlgConstr only at final stage when no dyngr; hyperboloidal AlgConstr delegates active-only CartesianPatch ProjectAlgebraic. Calcrhs delegates CartesianPatch RHS, which Prepare fills deviations at each RHS; no intermediate projection.",
+  "linearized_native_map": "P_ref [I+dtJ22+dt^2J22^2/2+dt^3J22^3/6] Lift",
+  "projected_semidiscrete_generator": "L20=P_ref J22 Lift. R3(dt L20) is a different map."
+}

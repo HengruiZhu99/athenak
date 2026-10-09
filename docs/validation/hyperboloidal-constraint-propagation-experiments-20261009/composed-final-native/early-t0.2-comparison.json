@@ -1,0 +1,111 @@
+{
+  "status": "PASS",
+  "scope": "Original HST RMS comparison at coordinate t=.2. N24 histories are linearly interpolated between their actual cadence times; N36 has an exact final row. No exact N24 field snapshot at t.2, no field interpolation/comparison across resolutions, no measured convergence order and no stability acceptance.",
+  "sources_sha256": {
+    "build-layer-research/time-projection-controls/composed-final-native-audit/compare_early.py": "121bd1fbad3fa18a9da0c1ae7d8e25296f042dbe222e771a85202645261b7d4b"
+  },
+  "rows": {
+    "composed_N24": {
+      "run": "build-layer-research/time-projection-controls/composed-N24-t2",
+      "case": "finite-angular-long-N24",
+      "requested_comparison_time": 0.2,
+      "exact_history_row": false,
+      "history_bracket_times": [
+        0.17537109374999502,
+        0.20017968749999435
+      ],
+      "right_interpolation_weight": 0.9927570461346952,
+      "constraints": {
+        "H": 0.027295947105189115,
+        "M": 0.03206624256967449,
+        "Z": 0.013322792353050545,
+        "Theta": 0.0005674122382724448
+      },
+      "history_sha256": "e1a192cfcd7ed83b7db49a3d041e8084f0a1bf2a840c7728d90e48969ff9bf9d",
+      "result_sha256": "e1a78bd629affd725f0dddd0c7d94eaa30d4145b4afa48384a4422c3b699e6d3"
+    },
+    "composed_N36": {
+      "run": "build-layer-research/time-projection-controls/composed-N36-t0.2",
+      "case": "finite-angular-long-N36",
+      "requested_comparison_time": 0.2,
+      "exact_history_row": true,
+      "history_bracket_times": [
+        0.2,
+        0.2
+      ],
+      "right_interpolation_weight": 0.0,
+      "constraints": {
+        "H": 0.013556367384844933,
+        "M": 0.007134943119924887,
+        "Z": 0.00209046098243833,
+        "Theta": 9.767460026751781e-05
+      },
+      "history_sha256": "5c5f8760b5aa692b2f58a4deafaf9780cc696b08b05539d4b344151184591d73",
+      "result_sha256": "f7779d12144ebadfcbbba99e91452e85f0be646c2b4a0a59d772f004a2af47cf"
+    },
+    "baseline_N24": {
+      "run": "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-long",
+      "case": "finite-angular-long-N24",
+      "requested_comparison_time": 0.2,
+      "exact_history_row": false,
+      "history_bracket_times": [
+        0.17537109374999502,
+        0.20017968749999435
+      ],
+      "right_interpolation_weight": 0.9927570461346952,
+      "constraints": {
+        "H": 0.02277651922739749,
+        "M": 0.027371604158616135,
+        "Z": 0.013031455384759852,
+        "Theta": 0.0003588667628970249
+      },
+      "history_sha256": "ccad5f3f168553ea58e93412feff0a55776c4f732cbcdf322ba324b77c61dc3f",
+      "result_sha256": "7f1a766cb6e693310911b53f7a179cd2661c8cae57a757c1643a16e80dbdf29f"
+    },
+    "baseline_N36": {
+      "run": "build-layer-research/spatial-norm-native-controls/N36-t0.2",
+      "case": "finite-angular-long-N36",
+      "requested_comparison_time": 0.2,
+      "exact_history_row": true,
+      "history_bracket_times": [
+        0.2,
+        0.2
+      ],
+      "right_interpolation_weight": 0.0,
+      "constraints": {
+        "H": 0.010763938154042862,
+        "M": 0.006958314541584385,
+        "Z": 0.002256118670098246,
+        "Theta": 9.863287636996766e-05
+      },
+      "history_sha256": "db0f9357fe4f43e95ea1e4cfa550b67a78e24394ebb4c8c07c34a16ec94b5675",
+      "result_sha256": "cabbcd5dfe9959e3b112b34ad1481deb0e72eba50131c5b0ef58aa1537ffbb7b"
+    }
+  },
+  "ratios": {
+    "composed_N36_over_N24": {
+      "H": 0.4966439644905302,
+      "M": 0.22250636645131933,
+      "Z": 0.15690862148426965,
+      "Theta": 0.1721404539403308
+    },
+    "baseline_N36_over_N24": {
+      "H": 0.4725892506478823,
+      "M": 0.25421654139309996,
+      "Z": 0.17312868006567808,
+      "Theta": 0.274845392684833
+    },
+    "N24_composed_over_baseline": {
+      "H": 1.1984248704848317,
+      "M": 1.1715149168405812,
+      "Z": 1.0223564413711925,
+      "Theta": 1.5811222908800309
+    },
+    "N36_composed_over_baseline": {
+      "H": 1.259424496019912,
+      "M": 1.0253838163372655,
+      "Z": 0.9265740362617086,
+      "Theta": 0.9902844149160226
+    }
+  }
+}

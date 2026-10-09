@@ -1,0 +1,1259 @@
+{
+  "scope": "Completed private native control; final full-precision fields at exact equal physical time. Interior HST comparisons are linearly interpolated between cadence outputs. Two timesteps alone do not establish temporal order. No pulse/stability acceptance.",
+  "kind": "stage-reference",
+  "launch": {
+    "scope": "Private every-stage active algebraic projection reference preflight; BIN drift is output-float32 limited, HST double; full RST audit follows. No pulse acceptance.",
+    "result_sha256": "1d0024bed15bdb432afee9c18589e02fe365585c58995fa9eeeb7ebc6fefc1fe",
+    "executable_sha256": "283dd6ffa52b66d5b9d322a8c6238abb6d4390727129e89a5eb154d442568e19",
+    "case": {
+      "name": "reference-long-N24",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/athena-validation",
+        "-i",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/layer.athinput"
+      ],
+      "exit_status": 0,
+      "wall_seconds": 18.055080917,
+      "requested_time": 0.05,
+      "input_text": "<job>\nbasename=hyp\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\nnghost=3\nx1min=-1.05\nx1max=1.05\nx2min=-1.05\nx2max=1.05\nx3min=-1.05\nx3max=1.05\nix1_bc=outflow\nox1_bc=outflow\nix2_bc=outflow\nox2_bc=outflow\nix3_bc=outflow\nox3_bc=outflow\n\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n\n<time>\nevolution=dynamic\nintegrator=rk3\ncfl_number=0.4\nnlim=2\ntlim=0.001\nndiag=1\n\n<z4c>\nhyperboloidal=true\nhyperboloidal_slicing=2\nhyperboloidal_shift_driver=0.1\nhyperboloidal_lapse_damping=1.5\nhyperboloidal_shift_damping=1\nhyperboloidal_kappa1=5\nhyperboloidal_dissipation=0.1\nhyperboloidal_pole_cfl=0.04\nhyperboloidal_ghost_degree=3\nhyperboloidal_mass_diagnostics=false\nhyperboloidal_mass_nmu=32\nfloor_chi=false\nnrad_wave_extraction=0\nspatial_order=4\n\n<problem>\npgen_name=z4c_hyperboloidal\nmass=0\nlapse_pulse=0\n\n<output1>\nfile_type=bin\nvariable=z4c\nid=z4c\ndt=0.0001\nghost_zones=true\n\n<output2>\nfile_type=bin\nvariable=adm\nid=adm\ndt=0.0001\nghost_zones=true\n\n<output3>\nfile_type=hst\ndt=0.0001\ndata_format=%24.16e\n# Experimental uniform Cartesian prototype. See docs/hyperboloidal.md.\n# Layer mass>0 selects wormhole initial data; 0<M<2*layer_r0 is required.\n# The Minkowski reference remains the gauge target. Long stability is unverified.\n\n<output4>\nfile_type=bin\nvariable=con\nid=con\ndt=0.0001\nghost_zones=true\n\n<output5>\nfile_type=rst\ndt=0.0001\n\n<z4c>\n# Interior-only research prototype: exact scri is never assembled.\nhyperboloidal_layer=true\nhyperboloidal_layer_r0=0.35\nhyperboloidal_layer_r1=0.75\nhyperboloidal_gauge_r0=0.45\nhyperboloidal_gauge_r1=0.85\nhyperboloidal_gauge_q0=0.5\nhyperboloidal_layer_lapse_inner=0\nhyperboloidal_layer_lapse_outer=1.5\nhyperboloidal_layer_shift_inner=0\nhyperboloidal_layer_shift_outer=1\nhyperboloidal_preferred_source=true\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n<time>\nnlim=-1\ntlim=0.05\nndiag=100\n<problem>\nlapse_pulse=0.0\nshift_pulse=0.0\npulse_angular=true\n\n<output1>\ndt=0.025\n\n<output2>\ndt=0.025\n\n<output3>\ndt=0.025\n\n<output4>\ndt=0.025\n\n<output5>\ndt=0.025\n\n\n<z4c>\nhyperboloidal_physical_trace_lapse=true\nhyperboloidal_preferred_source=false\nhyperboloidal_curvature_radius=.5\nhyperboloidal_layer_r0=.05\nhyperboloidal_layer_r1=.95\nhyperboloidal_gauge_r0=.45\nhyperboloidal_gauge_r1=.85\nhyperboloidal_symmetric_ghosts=true\nhyperboloidal_ghost_degree=2\nhyperboloidal_kappa1=10\nhyperboloidal_scri_lapse_damping=2\nhyperboloidal_pole_cfl=.03\nfloor_chi=false\n<problem>\npulse_width=.5\n",
+      "input_sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "input_parameters": {
+        "job/basename": "hyp",
+        "mesh/nx1": "24",
+        "mesh/nx2": "24",
+        "mesh/nx3": "24",
+        "mesh/nghost": "3",
+        "mesh/x1min": "-1.05",
+        "mesh/x1max": "1.05",
+        "mesh/x2min": "-1.05",
+        "mesh/x2max": "1.05",
+        "mesh/x3min": "-1.05",
+        "mesh/x3max": "1.05",
+        "mesh/ix1_bc": "outflow",
+        "mesh/ox1_bc": "outflow",
+        "mesh/ix2_bc": "outflow",
+        "mesh/ox2_bc": "outflow",
+        "mesh/ix3_bc": "outflow",
+        "mesh/ox3_bc": "outflow",
+        "meshblock/nx1": "24",
+        "meshblock/nx2": "24",
+        "meshblock/nx3": "24",
+        "time/evolution": "dynamic",
+        "time/integrator": "rk3",
+        "time/cfl_number": "0.4",
+        "time/nlim": "-1",
+        "time/tlim": "0.05",
+        "time/ndiag": "100",
+        "z4c/hyperboloidal": "true",
+        "z4c/hyperboloidal_slicing": "2",
+        "z4c/hyperboloidal_shift_driver": "0.1",
+        "z4c/hyperboloidal_lapse_damping": "1.5",
+        "z4c/hyperboloidal_shift_damping": "1",
+        "z4c/hyperboloidal_kappa1": "10",
+        "z4c/hyperboloidal_dissipation": "0.1",
+        "z4c/hyperboloidal_pole_cfl": ".03",
+        "z4c/hyperboloidal_ghost_degree": "2",
+        "z4c/hyperboloidal_mass_diagnostics": "false",
+        "z4c/hyperboloidal_mass_nmu": "32",
+        "z4c/floor_chi": "false",
+        "z4c/nrad_wave_extraction": "0",
+        "z4c/spatial_order": "4",
+        "problem/pgen_name": "z4c_hyperboloidal",
+        "problem/mass": "0",
+        "problem/lapse_pulse": "0.0",
+        "output1/file_type": "bin",
+        "output1/variable": "z4c",
+        "output1/id": "z4c",
+        "output1/dt": "0.025",
+        "output1/ghost_zones": "true",
+        "output2/file_type": "bin",
+        "output2/variable": "adm",
+        "output2/id": "adm",
+        "output2/dt": "0.025",
+        "output2/ghost_zones": "true",
+        "output3/file_type": "hst",
+        "output3/dt": "0.025",
+        "output3/data_format": "%24.16e",
+        "output4/file_type": "bin",
+        "output4/variable": "con",
+        "output4/id": "con",
+        "output4/dt": "0.025",
+        "output4/ghost_zones": "true",
+        "output5/file_type": "rst",
+        "output5/dt": "0.025",
+        "z4c/hyperboloidal_layer": "true",
+        "z4c/hyperboloidal_layer_r0": ".05",
+        "z4c/hyperboloidal_layer_r1": ".95",
+        "z4c/hyperboloidal_gauge_r0": ".45",
+        "z4c/hyperboloidal_gauge_r1": ".85",
+        "z4c/hyperboloidal_gauge_q0": "0.5",
+        "z4c/hyperboloidal_layer_lapse_inner": "0",
+        "z4c/hyperboloidal_layer_lapse_outer": "1.5",
+        "z4c/hyperboloidal_layer_shift_inner": "0",
+        "z4c/hyperboloidal_layer_shift_outer": "1",
+        "z4c/hyperboloidal_preferred_source": "false",
+        "problem/shift_pulse": "0.0",
+        "problem/pulse_angular": "true",
+        "z4c/hyperboloidal_physical_trace_lapse": "true",
+        "z4c/hyperboloidal_curvature_radius": ".5",
+        "z4c/hyperboloidal_symmetric_ghosts": "true",
+        "z4c/hyperboloidal_scri_lapse_damping": "2",
+        "problem/pulse_width": ".5"
+      },
+      "diagnostics": {
+        "time": 0.05,
+        "H": 8.035653903604116e-14,
+        "M": 2.7071682853903104e-14,
+        "Z": 1.3152383739428082e-15,
+        "Theta": 1.0003745009758295e-15,
+        "alpha_min": 0.9812130534015334,
+        "chi_min": 0.7612705478353703,
+        "pole_deviation_max": 4.7100164161639245e-14,
+        "null_deviation_max": 4.022433868992255e-15,
+        "metric_eigen_min": 0.9999998807907102,
+        "metric_eigen_max": 2.2666419670367866,
+        "metric_stretch_ratio_max": 2.266641976786722,
+        "constraint_budget": {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.con.00002.bin",
+          "time": 0.05,
+          "cycle": 117,
+          "active_cells": 6152,
+          "global": {
+            "H": {
+              "rms": 8.035653904351045e-14,
+              "max": 5.808123079709127e-13,
+              "max_radius": 0.1907018287799045,
+              "max_xyz": [
+                0.04375000000000018,
+                0.1312500000000001,
+                -0.13124999999999987
+              ]
+            },
+            "M": {
+              "rms": 2.70716828449507e-14,
+              "max": 1.4109390640972178e-13,
+              "max_radius": 0.2588284905106082,
+              "max_xyz": [
+                0.04375000000000018,
+                0.21875,
+                -0.13124999999999987
+              ]
+            },
+            "Z": {
+              "rms": 1.3152383747390067e-15,
+              "max": 6.8342504296959084e-15,
+              "max_radius": 0.985103896804799,
+              "max_xyz": [
+                0.4812500000000002,
+                -0.83125,
+                0.21875
+              ]
+            }
+          },
+          "radial_bins": [
+            {
+              "r_min": 0.0,
+              "r_max": 0.05,
+              "cells": 0,
+              "H": {
+                "rms": null,
+                "squared_norm_fraction": 0.0
+              },
+              "M": {
+                "rms": null,
+                "squared_norm_fraction": 0.0
+              },
+              "Z": {
+                "rms": null,
+                "squared_norm_fraction": 0.0
+              }
+            },
+            {
+              "r_min": 0.05,
+              "r_max": 0.9,
+              "cells": 4632,
+              "H": {
+                "rms": 9.256523045294832e-14,
+                "squared_norm_fraction": 0.9990921588086744
+              },
+              "M": {
+                "rms": 2.920753670319193e-14,
+                "squared_norm_fraction": 0.8764185865303624
+              },
+              "Z": {
+                "rms": 8.14889696849658e-16,
+                "squared_norm_fraction": 0.2890286762983196
+              }
+            },
+            {
+              "r_min": 0.9,
+              "r_max": 0.95,
+              "cells": 768,
+              "H": {
+                "rms": 5.970309692922173e-15,
+                "squared_norm_fraction": 0.0006891220802647035
+              },
+              "M": {
+                "rms": 1.454135879517559e-14,
+                "squared_norm_fraction": 0.036018395880526244
+              },
+              "Z": {
+                "rms": 1.6178714627889319e-15,
+                "squared_norm_fraction": 0.18889652952238126
+              }
+            },
+            {
+              "r_min": 0.95,
+              "r_max": 1.0,
+              "cells": 752,
+              "H": {
+                "rms": 3.399099147338375e-15,
+                "squared_norm_fraction": 0.0002187191110609027
+              },
+              "M": {
+                "rms": 2.2912625484185233e-14,
+                "squared_norm_fraction": 0.08756301758911138
+              },
+              "Z": {
+                "rms": 2.718129086073045e-15,
+                "squared_norm_fraction": 0.5220747941792991
+              }
+            }
+          ]
+        }
+      }
+    },
+    "snapshots": [
+      {
+        "time": 0.0,
+        "cycle": 0,
+        "float32_bin_drift": 0.0,
+        "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62"
+      },
+      {
+        "time": 0.02523632812499913,
+        "cycle": 59,
+        "float32_bin_drift": 1.1368683772161603e-13,
+        "sha256": "3da3514e2f6f2c7ec5e71221d56a5e13e1be22eaebb01961589c7b575542044e"
+      },
+      {
+        "time": 0.05,
+        "cycle": 117,
+        "float32_bin_drift": 1.1368683772161603e-13,
+        "sha256": "23ab49ee6fcc7dd2e374aa33c7526b42d9b174f1d8ae9c97b385c00f47af8e1c"
+      }
+    ]
+  },
+  "case": {
+    "name": "reference-long-N24",
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/athena-validation",
+      "-i",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/layer.athinput"
+    ],
+    "exit_status": 0,
+    "wall_seconds": 18.055080917,
+    "requested_time": 0.05,
+    "input_text": "<job>\nbasename=hyp\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\nnghost=3\nx1min=-1.05\nx1max=1.05\nx2min=-1.05\nx2max=1.05\nx3min=-1.05\nx3max=1.05\nix1_bc=outflow\nox1_bc=outflow\nix2_bc=outflow\nox2_bc=outflow\nix3_bc=outflow\nox3_bc=outflow\n\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n\n<time>\nevolution=dynamic\nintegrator=rk3\ncfl_number=0.4\nnlim=2\ntlim=0.001\nndiag=1\n\n<z4c>\nhyperboloidal=true\nhyperboloidal_slicing=2\nhyperboloidal_shift_driver=0.1\nhyperboloidal_lapse_damping=1.5\nhyperboloidal_shift_damping=1\nhyperboloidal_kappa1=5\nhyperboloidal_dissipation=0.1\nhyperboloidal_pole_cfl=0.04\nhyperboloidal_ghost_degree=3\nhyperboloidal_mass_diagnostics=false\nhyperboloidal_mass_nmu=32\nfloor_chi=false\nnrad_wave_extraction=0\nspatial_order=4\n\n<problem>\npgen_name=z4c_hyperboloidal\nmass=0\nlapse_pulse=0\n\n<output1>\nfile_type=bin\nvariable=z4c\nid=z4c\ndt=0.0001\nghost_zones=true\n\n<output2>\nfile_type=bin\nvariable=adm\nid=adm\ndt=0.0001\nghost_zones=true\n\n<output3>\nfile_type=hst\ndt=0.0001\ndata_format=%24.16e\n# Experimental uniform Cartesian prototype. See docs/hyperboloidal.md.\n# Layer mass>0 selects wormhole initial data; 0<M<2*layer_r0 is required.\n# The Minkowski reference remains the gauge target. Long stability is unverified.\n\n<output4>\nfile_type=bin\nvariable=con\nid=con\ndt=0.0001\nghost_zones=true\n\n<output5>\nfile_type=rst\ndt=0.0001\n\n<z4c>\n# Interior-only research prototype: exact scri is never assembled.\nhyperboloidal_layer=true\nhyperboloidal_layer_r0=0.35\nhyperboloidal_layer_r1=0.75\nhyperboloidal_gauge_r0=0.45\nhyperboloidal_gauge_r1=0.85\nhyperboloidal_gauge_q0=0.5\nhyperboloidal_layer_lapse_inner=0\nhyperboloidal_layer_lapse_outer=1.5\nhyperboloidal_layer_shift_inner=0\nhyperboloidal_layer_shift_outer=1\nhyperboloidal_preferred_source=true\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n<time>\nnlim=-1\ntlim=0.05\nndiag=100\n<problem>\nlapse_pulse=0.0\nshift_pulse=0.0\npulse_angular=true\n\n<output1>\ndt=0.025\n\n<output2>\ndt=0.025\n\n<output3>\ndt=0.025\n\n<output4>\ndt=0.025\n\n<output5>\ndt=0.025\n\n\n<z4c>\nhyperboloidal_physical_trace_lapse=true\nhyperboloidal_preferred_source=false\nhyperboloidal_curvature_radius=.5\nhyperboloidal_layer_r0=.05\nhyperboloidal_layer_r1=.95\nhyperboloidal_gauge_r0=.45\nhyperboloidal_gauge_r1=.85\nhyperboloidal_symmetric_ghosts=true\nhyperboloidal_ghost_degree=2\nhyperboloidal_kappa1=10\nhyperboloidal_scri_lapse_damping=2\nhyperboloidal_pole_cfl=.03\nfloor_chi=false\n<problem>\npulse_width=.5\n",
+    "input_sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+    "input_parameters": {
+      "job/basename": "hyp",
+      "mesh/nx1": "24",
+      "mesh/nx2": "24",
+      "mesh/nx3": "24",
+      "mesh/nghost": "3",
+      "mesh/x1min": "-1.05",
+      "mesh/x1max": "1.05",
+      "mesh/x2min": "-1.05",
+      "mesh/x2max": "1.05",
+      "mesh/x3min": "-1.05",
+      "mesh/x3max": "1.05",
+      "mesh/ix1_bc": "outflow",
+      "mesh/ox1_bc": "outflow",
+      "mesh/ix2_bc": "outflow",
+      "mesh/ox2_bc": "outflow",
+      "mesh/ix3_bc": "outflow",
+      "mesh/ox3_bc": "outflow",
+      "meshblock/nx1": "24",
+      "meshblock/nx2": "24",
+      "meshblock/nx3": "24",
+      "time/evolution": "dynamic",
+      "time/integrator": "rk3",
+      "time/cfl_number": "0.4",
+      "time/nlim": "-1",
+      "time/tlim": "0.05",
+      "time/ndiag": "100",
+      "z4c/hyperboloidal": "true",
+      "z4c/hyperboloidal_slicing": "2",
+      "z4c/hyperboloidal_shift_driver": "0.1",
+      "z4c/hyperboloidal_lapse_damping": "1.5",
+      "z4c/hyperboloidal_shift_damping": "1",
+      "z4c/hyperboloidal_kappa1": "10",
+      "z4c/hyperboloidal_dissipation": "0.1",
+      "z4c/hyperboloidal_pole_cfl": ".03",
+      "z4c/hyperboloidal_ghost_degree": "2",
+      "z4c/hyperboloidal_mass_diagnostics": "false",
+      "z4c/hyperboloidal_mass_nmu": "32",
+      "z4c/floor_chi": "false",
+      "z4c/nrad_wave_extraction": "0",
+      "z4c/spatial_order": "4",
+      "problem/pgen_name": "z4c_hyperboloidal",
+      "problem/mass": "0",
+      "problem/lapse_pulse": "0.0",
+      "output1/file_type": "bin",
+      "output1/variable": "z4c",
+      "output1/id": "z4c",
+      "output1/dt": "0.025",
+      "output1/ghost_zones": "true",
+      "output2/file_type": "bin",
+      "output2/variable": "adm",
+      "output2/id": "adm",
+      "output2/dt": "0.025",
+      "output2/ghost_zones": "true",
+      "output3/file_type": "hst",
+      "output3/dt": "0.025",
+      "output3/data_format": "%24.16e",
+      "output4/file_type": "bin",
+      "output4/variable": "con",
+      "output4/id": "con",
+      "output4/dt": "0.025",
+      "output4/ghost_zones": "true",
+      "output5/file_type": "rst",
+      "output5/dt": "0.025",
+      "z4c/hyperboloidal_layer": "true",
+      "z4c/hyperboloidal_layer_r0": ".05",
+      "z4c/hyperboloidal_layer_r1": ".95",
+      "z4c/hyperboloidal_gauge_r0": ".45",
+      "z4c/hyperboloidal_gauge_r1": ".85",
+      "z4c/hyperboloidal_gauge_q0": "0.5",
+      "z4c/hyperboloidal_layer_lapse_inner": "0",
+      "z4c/hyperboloidal_layer_lapse_outer": "1.5",
+      "z4c/hyperboloidal_layer_shift_inner": "0",
+      "z4c/hyperboloidal_layer_shift_outer": "1",
+      "z4c/hyperboloidal_preferred_source": "false",
+      "problem/shift_pulse": "0.0",
+      "problem/pulse_angular": "true",
+      "z4c/hyperboloidal_physical_trace_lapse": "true",
+      "z4c/hyperboloidal_curvature_radius": ".5",
+      "z4c/hyperboloidal_symmetric_ghosts": "true",
+      "z4c/hyperboloidal_scri_lapse_damping": "2",
+      "problem/pulse_width": ".5"
+    },
+    "diagnostics": {
+      "time": 0.05,
+      "H": 8.035653903604116e-14,
+      "M": 2.7071682853903104e-14,
+      "Z": 1.3152383739428082e-15,
+      "Theta": 1.0003745009758295e-15,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "pole_deviation_max": 4.7100164161639245e-14,
+      "null_deviation_max": 4.022433868992255e-15,
+      "metric_eigen_min": 0.9999998807907102,
+      "metric_eigen_max": 2.2666419670367866,
+      "metric_stretch_ratio_max": 2.266641976786722,
+      "constraint_budget": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.con.00002.bin",
+        "time": 0.05,
+        "cycle": 117,
+        "active_cells": 6152,
+        "global": {
+          "H": {
+            "rms": 8.035653904351045e-14,
+            "max": 5.808123079709127e-13,
+            "max_radius": 0.1907018287799045,
+            "max_xyz": [
+              0.04375000000000018,
+              0.1312500000000001,
+              -0.13124999999999987
+            ]
+          },
+          "M": {
+            "rms": 2.70716828449507e-14,
+            "max": 1.4109390640972178e-13,
+            "max_radius": 0.2588284905106082,
+            "max_xyz": [
+              0.04375000000000018,
+              0.21875,
+              -0.13124999999999987
+            ]
+          },
+          "Z": {
+            "rms": 1.3152383747390067e-15,
+            "max": 6.8342504296959084e-15,
+            "max_radius": 0.985103896804799,
+            "max_xyz": [
+              0.4812500000000002,
+              -0.83125,
+              0.21875
+            ]
+          }
+        },
+        "radial_bins": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.05,
+            "cells": 0,
+            "H": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "M": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "Z": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            }
+          },
+          {
+            "r_min": 0.05,
+            "r_max": 0.9,
+            "cells": 4632,
+            "H": {
+              "rms": 9.256523045294832e-14,
+              "squared_norm_fraction": 0.9990921588086744
+            },
+            "M": {
+              "rms": 2.920753670319193e-14,
+              "squared_norm_fraction": 0.8764185865303624
+            },
+            "Z": {
+              "rms": 8.14889696849658e-16,
+              "squared_norm_fraction": 0.2890286762983196
+            }
+          },
+          {
+            "r_min": 0.9,
+            "r_max": 0.95,
+            "cells": 768,
+            "H": {
+              "rms": 5.970309692922173e-15,
+              "squared_norm_fraction": 0.0006891220802647035
+            },
+            "M": {
+              "rms": 1.454135879517559e-14,
+              "squared_norm_fraction": 0.036018395880526244
+            },
+            "Z": {
+              "rms": 1.6178714627889319e-15,
+              "squared_norm_fraction": 0.18889652952238126
+            }
+          },
+          {
+            "r_min": 0.95,
+            "r_max": 1.0,
+            "cells": 752,
+            "H": {
+              "rms": 3.399099147338375e-15,
+              "squared_norm_fraction": 0.0002187191110609027
+            },
+            "M": {
+              "rms": 2.2912625484185233e-14,
+              "squared_norm_fraction": 0.08756301758911138
+            },
+            "Z": {
+              "rms": 2.718129086073045e-15,
+              "squared_norm_fraction": 0.5220747941792991
+            }
+          }
+        ]
+      }
+    }
+  },
+  "result_sha256": "1d0024bed15bdb432afee9c18589e02fe365585c58995fa9eeeb7ebc6fefc1fe",
+  "history_sha256": "33590c7fe984c08d1b293bbc20d9c67245152ff0f481b47a723cc1062a7c2135",
+  "base_history_sha256": "32fce4a8c928311c21bae52cd6cefa86dbc347988e53e7f55701bbe956773395",
+  "source_overlay_hashes_verified": true,
+  "reused_link_inputs_verified": true,
+  "comparison_input_sha256": {
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/results.json": "16cae97747a0b072fac20f16c7e64fbd50e007aca2e34aebb415cc5028939e46",
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/layer.athinput": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/athena-validation": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "build-layer-research/time-projection-controls/stage-projection-reference/athena-validation": "283dd6ffa52b66d5b9d322a8c6238abb6d4390727129e89a5eb154d442568e19",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec"
+  },
+  "input_parameter_differences": {},
+  "initial_full_precision_active_arrays_identical": true,
+  "first_dt_ratio": 1.0,
+  "first_dt": 0.00042773437499998563,
+  "history_dt_range": [
+    0.00042773437499998563,
+    0.00042773437499998563
+  ],
+  "rounded_log_dt_range": [
+    0.0004277344,
+    0.0004277344
+  ],
+  "history_rows": [
+    [
+      0.0,
+      0.00042773437499998563,
+      6.091900502453727e-15,
+      9.729042585004061e-16,
+      1.2391380160796285e-16,
+      0.0,
+      8.881784197001252e-16,
+      9.439920159136376e-16,
+      0.9812130534015334,
+      0.7612705478353704,
+      7.071633878758217e-14,
+      6.055563204749014e-15,
+      0.0,
+      3.708906823981056e-15,
+      6152.0
+    ],
+    [
+      0.02523632812499913,
+      0.00042773437499998563,
+      8.17497244282807e-14,
+      2.0307245497247725e-14,
+      1.2434475500369603e-15,
+      7.417306077018033e-16,
+      8.881784197001252e-16,
+      4.639152252071605e-16,
+      0.9812130534015334,
+      0.7612705478353703,
+      5.728187021936115e-13,
+      8.458855916361829e-14,
+      5.16169641782882e-14,
+      3.708906823981056e-15,
+      6152.0
+    ],
+    [
+      0.05,
+      0.00042773437499998563,
+      8.035653903604116e-14,
+      2.7071682853903104e-14,
+      1.3152383739428082e-15,
+      1.0003745009758295e-15,
+      8.881784197001252e-16,
+      4.639152252071605e-16,
+      0.9812130534015334,
+      0.7612705478353703,
+      5.808123079709127e-13,
+      1.4109390554071246e-13,
+      4.7100164161639245e-14,
+      4.022433868992255e-15,
+      6152.0
+    ]
+  ],
+  "snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "bin_sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+      "restart_sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+      "active_cells": 6152,
+      "all_active_fields_finite": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "bin_sha256": "3da3514e2f6f2c7ec5e71221d56a5e13e1be22eaebb01961589c7b575542044e",
+      "restart_sha256": "62fe63189b8f42e345a7bd06011030dc84124bdf1c32fff3c0a2a9d73dd8b050",
+      "active_cells": 6152,
+      "all_active_fields_finite": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 5.551115123125783e-16,
+      "full_precision_drift_from_initial_max": 1.1355596466254679e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "bin_sha256": "23ab49ee6fcc7dd2e374aa33c7526b42d9b174f1d8ae9c97b385c00f47af8e1c",
+      "restart_sha256": "03872c9f08c18a4179c1c8a9b47b9898612850f8a960c508d18ef98e34d99a20",
+      "active_cells": 6152,
+      "all_active_fields_finite": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 5.551115123125783e-16,
+      "full_precision_drift_from_initial_max": 1.426616844425858e-14
+    }
+  ],
+  "matched_history_times": {
+    "0.05": {
+      "H": {
+        "control": 8.035653903604116e-14,
+        "baseline": 8.477891400533267e-14,
+        "ratio": 0.9478363810013732
+      },
+      "M": {
+        "control": 2.7071682853903104e-14,
+        "baseline": 2.687926841005914e-14,
+        "ratio": 1.007158470271905
+      },
+      "Z": {
+        "control": 1.3152383739428082e-15,
+        "baseline": 1.2542892301336465e-15,
+        "ratio": 1.0485925752568788
+      },
+      "Theta": {
+        "control": 1.0003745009758295e-15,
+        "baseline": 9.974238931711035e-16,
+        "ratio": 1.0029582285174112
+      }
+    }
+  },
+  "final_equal_time_fields": {
+    "z4c_chi": {
+      "rms_difference": 0.0,
+      "max_difference": 0.0,
+      "baseline_rms_change": 5.604993271537774e-17
+    },
+    "z4c_gxx": {
+      "rms_difference": 7.676258276878504e-17,
+      "max_difference": 6.661338147750939e-16,
+      "baseline_rms_change": 1.1054303473674451e-16
+    },
+    "z4c_gxy": {
+      "rms_difference": 2.220521243280806e-17,
+      "max_difference": 3.3306690738754696e-16,
+      "baseline_rms_change": 4.248548623941197e-17
+    },
+    "z4c_gxz": {
+      "rms_difference": 2.3746581909634944e-17,
+      "max_difference": 5.551115123125783e-16,
+      "baseline_rms_change": 4.195618795081902e-17
+    },
+    "z4c_gyy": {
+      "rms_difference": 7.687994684732953e-17,
+      "max_difference": 6.661338147750939e-16,
+      "baseline_rms_change": 1.1112151409343377e-16
+    },
+    "z4c_gyz": {
+      "rms_difference": 2.280449319403406e-17,
+      "max_difference": 5.551115123125783e-16,
+      "baseline_rms_change": 4.177914429573795e-17
+    },
+    "z4c_gzz": {
+      "rms_difference": 7.535325019256659e-17,
+      "max_difference": 6.661338147750939e-16,
+      "baseline_rms_change": 1.1277699682893275e-16
+    },
+    "z4c_Khat": {
+      "rms_difference": 2.41082515590629e-17,
+      "max_difference": 6.643990912991171e-16,
+      "baseline_rms_change": 3.664467292747326e-16
+    },
+    "z4c_Axx": {
+      "rms_difference": 6.425585180500742e-16,
+      "max_difference": 5.162537064506978e-15,
+      "baseline_rms_change": 7.953916451493829e-16
+    },
+    "z4c_Axy": {
+      "rms_difference": 1.8476679947480422e-16,
+      "max_difference": 3.635980405647388e-15,
+      "baseline_rms_change": 3.937449492693331e-16
+    },
+    "z4c_Axz": {
+      "rms_difference": 2.2134619467992157e-16,
+      "max_difference": 8.326672684688674e-15,
+      "baseline_rms_change": 4.010100181591865e-16
+    },
+    "z4c_Ayy": {
+      "rms_difference": 6.333016017243737e-16,
+      "max_difference": 3.836730290447541e-15,
+      "baseline_rms_change": 7.9445662657872545e-16
+    },
+    "z4c_Ayz": {
+      "rms_difference": 2.0480195111311564e-16,
+      "max_difference": 8.43769498715119e-15,
+      "baseline_rms_change": 3.9952714871002593e-16
+    },
+    "z4c_Azz": {
+      "rms_difference": 6.3643393885162e-16,
+      "max_difference": 5.377642775528102e-15,
+      "baseline_rms_change": 7.785847935284165e-16
+    },
+    "z4c_Gamx": {
+      "rms_difference": 5.433963141398574e-16,
+      "max_difference": 6.077147155488732e-15,
+      "baseline_rms_change": 1.5551104809023603e-15
+    },
+    "z4c_Gamy": {
+      "rms_difference": 5.416290724529531e-16,
+      "max_difference": 5.4993345337215445e-15,
+      "baseline_rms_change": 1.5772424198044078e-15
+    },
+    "z4c_Gamz": {
+      "rms_difference": 5.630772316979074e-16,
+      "max_difference": 5.249325052988202e-15,
+      "baseline_rms_change": 1.5368481141967568e-15
+    },
+    "z4c_Theta": {
+      "rms_difference": 4.08956407211436e-16,
+      "max_difference": 2.9750397893801655e-15,
+      "baseline_rms_change": 9.974238931711021e-16
+    },
+    "z4c_alpha": {
+      "rms_difference": 0.0,
+      "max_difference": 0.0,
+      "baseline_rms_change": 9.665732551378313e-17
+    },
+    "z4c_betax": {
+      "rms_difference": 3.445413483868021e-19,
+      "max_difference": 1.3877787807814457e-17,
+      "baseline_rms_change": 4.171701782107212e-17
+    },
+    "z4c_betay": {
+      "rms_difference": 4.2265300607068473e-19,
+      "max_difference": 2.7755575615628914e-17,
+      "baseline_rms_change": 4.202822052791973e-17
+    },
+    "z4c_betaz": {
+      "rms_difference": 3.393858474438126e-19,
+      "max_difference": 1.3877787807814457e-17,
+      "baseline_rms_change": 4.047789007431394e-17
+    },
+    "z4c_Bx": {
+      "rms_difference": 0.0,
+      "max_difference": 0.0,
+      "baseline_rms_change": 0.0
+    },
+    "z4c_By": {
+      "rms_difference": 0.0,
+      "max_difference": 0.0,
+      "baseline_rms_change": 0.0
+    },
+    "z4c_Bz": {
+      "rms_difference": 0.0,
+      "max_difference": 0.0,
+      "baseline_rms_change": 0.0
+    }
+  },
+  "radial_constraint_budgets": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.con.00000.bin",
+      "time": 0.0,
+      "cycle": 0,
+      "active_cells": 6152,
+      "global": {
+        "H": {
+          "rms": 6.091900538120694e-15,
+          "max": 7.071634131137344e-14,
+          "max_radius": 0.0757772228311383,
+          "max_xyz": [
+            -0.043749999999999956,
+            -0.043749999999999956,
+            -0.043749999999999956
+          ]
+        },
+        "M": {
+          "rms": 9.729042587104413e-16,
+          "max": 6.055563109021961e-15,
+          "max_radius": 0.31243749374874985,
+          "max_xyz": [
+            0.04375000000000018,
+            0.04375000000000018,
+            0.30625000000000013
+          ]
+        },
+        "Z": {
+          "rms": 1.2391380161216055e-16,
+          "max": 6.476480747144365e-16,
+          "max_radius": 0.5721054863397135,
+          "max_xyz": [
+            0.30625000000000013,
+            0.04375000000000018,
+            -0.48124999999999996
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 552,
+          "H": {
+            "rms": 1.1008821761300497e-14,
+            "squared_norm_fraction": 0.29302105219241037
+          },
+          "M": {
+            "rms": 1.8695472419336613e-15,
+            "squared_norm_fraction": 0.33132593318885045
+          },
+          "Z": {
+            "rms": 1.7330683844721655e-16,
+            "squared_norm_fraction": 0.17551522216371818
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 3288,
+          "H": {
+            "rms": 5.871511269747767e-15,
+            "squared_norm_fraction": 0.4964890465381966
+          },
+          "M": {
+            "rms": 1.0186774724471354e-15,
+            "squared_norm_fraction": 0.5859339699829587
+          },
+          "Z": {
+            "rms": 1.5345044422671627e-16,
+            "squared_norm_fraction": 0.8196197594914062
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 792,
+          "H": {
+            "rms": 6.4204335090228785e-15,
+            "squared_norm_fraction": 0.14299865483568508
+          },
+          "M": {
+            "rms": 5.26696553704373e-16,
+            "squared_norm_fraction": 0.03773024273991629
+          },
+          "Z": {
+            "rms": 2.4088371231675594e-17,
+            "squared_norm_fraction": 0.004865017017182485
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H": {
+            "rms": 4.017309964720986e-15,
+            "squared_norm_fraction": 0.05428876588165766
+          },
+          "M": {
+            "rms": 5.841864243141627e-16,
+            "squared_norm_fraction": 0.04500985408827455
+          },
+          "Z": {
+            "rms": 1.2778977186079487e-20,
+            "squared_norm_fraction": 1.3276931684232031e-09
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H": {
+            "rms": 2.0020725693486105e-15,
+            "squared_norm_fraction": 0.013202480552050274
+          },
+          "M": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.con.00001.bin",
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "active_cells": 6152,
+      "global": {
+        "H": {
+          "rms": 8.174972443609358e-14,
+          "max": 5.728187021936115e-13,
+          "max_radius": 0.1907018287799045,
+          "max_xyz": [
+            0.04375000000000018,
+            0.1312500000000001,
+            -0.13124999999999987
+          ]
+        },
+        "M": {
+          "rms": 2.0307245497465492e-14,
+          "max": 8.45885581733794e-14,
+          "max_radius": 0.2588284905106082,
+          "max_xyz": [
+            0.04375000000000018,
+            0.21875,
+            -0.13124999999999987
+          ]
+        },
+        "Z": {
+          "rms": 1.2434475496806117e-15,
+          "max": 6.490505150634928e-15,
+          "max_radius": 0.985103896804799,
+          "max_xyz": [
+            0.4812500000000002,
+            -0.83125,
+            0.21875
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 552,
+          "H": {
+            "rms": 1.9329664594970102e-13,
+            "squared_norm_fraction": 0.5016476622439774
+          },
+          "M": {
+            "rms": 3.487698388850607e-14,
+            "squared_norm_fraction": 0.2646662440149323
+          },
+          "Z": {
+            "rms": 7.714027233628154e-16,
+            "squared_norm_fraction": 0.034532668909932736
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 3288,
+          "H": {
+            "rms": 7.858658982570121e-14,
+            "squared_norm_fraction": 0.49390085072201045
+          },
+          "M": {
+            "rms": 2.015136723672798e-14,
+            "squared_norm_fraction": 0.5262868020484395
+          },
+          "Z": {
+            "rms": 7.721078534824567e-16,
+            "squared_norm_fraction": 0.20607081093861554
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 792,
+          "H": {
+            "rms": 1.3639819536823221e-14,
+            "squared_norm_fraction": 0.003583880405201666
+          },
+          "M": {
+            "rms": 1.0178021604936725e-14,
+            "squared_norm_fraction": 0.03233951879608112
+          },
+          "Z": {
+            "rms": 8.357727190777462e-16,
+            "squared_norm_fraction": 0.05816078975054053
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H": {
+            "rms": 6.014448153194009e-15,
+            "squared_norm_fraction": 0.0006757154815964187
+          },
+          "M": {
+            "rms": 1.334527381864115e-14,
+            "squared_norm_fraction": 0.05391353805761818
+          },
+          "Z": {
+            "rms": 1.4489468321375012e-15,
+            "squared_norm_fraction": 0.16950981540140414
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H": {
+            "rms": 3.239015379577988e-15,
+            "squared_norm_fraction": 0.00019189114721429376
+          },
+          "M": {
+            "rms": 2.035347900551621e-14,
+            "squared_norm_fraction": 0.12279389708292893
+          },
+          "Z": {
+            "rms": 2.5934066945666218e-15,
+            "squared_norm_fraction": 0.531725914999507
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.con.00002.bin",
+      "time": 0.05,
+      "cycle": 117,
+      "active_cells": 6152,
+      "global": {
+        "H": {
+          "rms": 8.035653904351045e-14,
+          "max": 5.808123079709127e-13,
+          "max_radius": 0.1907018287799045,
+          "max_xyz": [
+            0.04375000000000018,
+            0.1312500000000001,
+            -0.13124999999999987
+          ]
+        },
+        "M": {
+          "rms": 2.70716828449507e-14,
+          "max": 1.4109390640972178e-13,
+          "max_radius": 0.2588284905106082,
+          "max_xyz": [
+            0.04375000000000018,
+            0.21875,
+            -0.13124999999999987
+          ]
+        },
+        "Z": {
+          "rms": 1.3152383747390067e-15,
+          "max": 6.8342504296959084e-15,
+          "max_radius": 0.985103896804799,
+          "max_xyz": [
+            0.4812500000000002,
+            -0.83125,
+            0.21875
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 552,
+          "H": {
+            "rms": 1.9154991827310756e-13,
+            "squared_norm_fraction": 0.5098521395875812
+          },
+          "M": {
+            "rms": 5.438510410044748e-14,
+            "squared_norm_fraction": 0.3621197170422021
+          },
+          "Z": {
+            "rms": 7.713954082053998e-16,
+            "squared_norm_fraction": 0.030865115470747623
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 3288,
+          "H": {
+            "rms": 7.657700916764711e-14,
+            "squared_norm_fraction": 0.4853665422892704
+          },
+          "M": {
+            "rms": 2.6020127953169176e-14,
+            "squared_norm_fraction": 0.4937462735164074
+          },
+          "Z": {
+            "rms": 7.847832052063891e-16,
+            "squared_norm_fraction": 0.19028560663831653
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 792,
+          "H": {
+            "rms": 1.393853991132439e-14,
+            "squared_norm_fraction": 0.0038734769318227195
+          },
+          "M": {
+            "rms": 1.0816684650868912e-14,
+            "squared_norm_fraction": 0.020552595971752904
+          },
+          "Z": {
+            "rms": 9.550242879645895e-16,
+            "squared_norm_fraction": 0.06787795418925545
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H": {
+            "rms": 5.970309692922173e-15,
+            "squared_norm_fraction": 0.0006891220802647035
+          },
+          "M": {
+            "rms": 1.454135879517559e-14,
+            "squared_norm_fraction": 0.036018395880526244
+          },
+          "Z": {
+            "rms": 1.6178714627889319e-15,
+            "squared_norm_fraction": 0.18889652952238126
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H": {
+            "rms": 3.399099147338375e-15,
+            "squared_norm_fraction": 0.0002187191110609027
+          },
+          "M": {
+            "rms": 2.2912625484185233e-14,
+            "squared_norm_fraction": 0.08756301758911138
+          },
+          "Z": {
+            "rms": 2.718129086073045e-15,
+            "squared_norm_fraction": 0.5220747941792991
+          }
+        }
+      ]
+    }
+  ],
+  "audit_source_sha256": {
+    "build-layer-research/time-projection-controls/audit_native_control.py": "e0ce39bdec3061806dc910cd63be610e1aeaf638d1840b6b3e0a00380b4d2687",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "vis/python/bin_convert.py": "35e3ec2ebbe2d5a24af9bf1e4796cf1f20def58ce1d76c50f0166288b6d8f37c",
+    "tst/hyperboloidal/analyze_native_constraints.py": "f3e70e2e0e5892760f6c18b986f55e1cb82e149179c8d38ac9e9939d9fc5e1c8",
+    "tst/hyperboloidal/run_layer_validation.py": "ca81d60cc9a00b83f9325b79abce9fa3eaaade293e2c5f73c3a3d4bdbfac5d96"
+  },
+  "all_retained_files": {
+    "build-layer-research/time-projection-controls/stage-projection-reference/athena-validation": {
+      "sha256": "283dd6ffa52b66d5b9d322a8c6238abb6d4390727129e89a5eb154d442568e19",
+      "bytes": 10432232
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "5bfd4aae1cd93f3c27abcd3e5358d2edb98b276e5b02fa52d317790619147c88",
+      "bytes": 1955271
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "4e024574cff9a18e53f9a292f1edf2f0d9a992402f9889c18a72d5d11c8164b4",
+      "bytes": 1955460
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "620315ddb8e38d902e85c3d3f76cfc6bcc9dc88e5bceaa8529f897c772ebb142",
+      "bytes": 1955853
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "b016de811a4bbfffd2e90a2b104a6e1180ec751f416e5d88493fbac6fcd8b097",
+      "bytes": 875184
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "37f0905574d97f850e3c1ebb2562e2633949c443c8c10944d8d4cd173243f153",
+      "bytes": 875105
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "e76cc61598338d78646bbb9e98acd48c97d7228859db24af9c670e314d2e0db9",
+      "bytes": 875742
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+      "bytes": 2819329
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "3da3514e2f6f2c7ec5e71221d56a5e13e1be22eaebb01961589c7b575542044e",
+      "bytes": 2819674
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "23ab49ee6fcc7dd2e374aa33c7526b42d9b174f1d8ae9c97b385c00f47af8e1c",
+      "bytes": 2819927
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "33590c7fe984c08d1b293bbc20d9c67245152ff0f481b47a723cc1062a7c2135",
+      "bytes": 1397
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/layer.athinput": {
+      "sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "bytes": 2385
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+      "bytes": 5411042
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "62fe63189b8f42e345a7bd06011030dc84124bdf1c32fff3c0a2a9d73dd8b050",
+      "bytes": 5411678
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "03872c9f08c18a4179c1c8a9b47b9898612850f8a960c508d18ef98e34d99a20",
+      "bytes": 5411678
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/reference-long-N24/run.log": {
+      "sha256": "5e7f982e8ec41f3054d8096d1f603750adf21bbc56fabd4a47a25c2574fcbf89",
+      "bytes": 621
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/results.json": {
+      "sha256": "1d0024bed15bdb432afee9c18589e02fe365585c58995fa9eeeb7ebc6fefc1fe",
+      "bytes": 10760
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/time-projection-controls/stage-projection-reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    }
+  }
+}

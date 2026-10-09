@@ -1,0 +1,14 @@
+{
+  "status": "reproduced initial incorrect Z formula assertion; not an accepted gate",
+  "returncode": 1,
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/kernel-matrices.json"
+  ],
+  "source_copy": "check_discrete.py",
+  "source_sha256": "ee67a1a025b1b507874dd8cfa7b866318a49ad7d043bd9599f9707968d2ea11f",
+  "matrix_sha256": "98d2772cdf32765b0da6be2c1079c4988d45812e883e337d44fb2fcfb36e61da",
+  "cause": "Z_i,t includes additional delta_i beta_i/6 from native Lambda diagonal gradient-divergence. Initial expected formula omitted it.",
+  "correction": "Full20 independent audit found and verified corrected term. Accepted gate also uses einsum to avoid Apple BLAS floating status warnings on finite matrices."
+}

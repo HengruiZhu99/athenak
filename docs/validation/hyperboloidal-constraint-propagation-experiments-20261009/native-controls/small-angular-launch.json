@@ -1,0 +1,25 @@
+{
+  "scope": "Small-amplitude control of failed finite pulse; same frozen spatial-norm candidate, factor100 smaller lapse/shift pulse. Separates linear and nonlinear behavior; cannot satisfy finite-pulse acceptance.",
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "tst/hyperboloidal/run_layer_validation.py",
+    "build-layer-spatial-norm-native/src/athena",
+    "build-layer-research/time-projection-controls/small-angular-t2",
+    "--suite",
+    "long",
+    "--overrides",
+    "build-layer-research/time-projection-controls/small-angular-N24.athinput",
+    "--duration",
+    "2",
+    "--output-cadence",
+    ".025"
+  ],
+  "launch_head": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "compiled_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "build_receipt_sha256": "a39430b8c3bcf2e7cc05d03a441831edc493f050afbb687e642418f1e5f56ce6",
+  "all_production_overlay_hashes_verified": true,
+  "native_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+  "override_sha256": "d319d43b0bbe5d33fc0526c829f4c45234b7b83ad8b6d6909623825024ac54b0",
+  "expected_initial_dt": 0.000427734375,
+  "amplitude_ratio": 0.01
+}

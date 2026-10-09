@@ -1,0 +1,746 @@
+{
+  "production": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-production",
+      "bytes": 842608,
+      "sha256": "565f428febb35aebde603a1c511b5a4aa859de2321444ea925824e5345ba523a",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/projected-v1/server-production",
+      "bytes": 842608,
+      "sha256": "565f428febb35aebde603a1c511b5a4aa859de2321444ea925824e5345ba523a",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/projected-v1/production-validation-vectors.npz",
+      "bytes": 599552,
+      "sha256": "55b4fc65becd950509eb2601a2282f17dacd91eac8b1a933cd7c030735ab3454",
+      "copied": false,
+      "arrays": {
+        "gauge_pulse.npy": {
+          "shape": [
+            32800
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "smooth_geometry.npy": {
+          "shape": [
+            32800
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "white_random.npy": {
+          "shape": [
+            32800
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "shell_random.npy": {
+          "shape": [
+            32800
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/server-production",
+      "bytes": 860848,
+      "sha256": "cabc1e77bec266bbde2516c7aa6052f8b99a3d1276e5223480381cc6132f4de4",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-projected-J20.npz",
+      "bytes": 101864928,
+      "sha256": "bfb62f29aaa426f173aa75ddcfa0c86d9784c0542ea4a2a6b69debb5a85eb22a",
+      "copied": false,
+      "arrays": {
+        "indices.npy": {
+          "shape": [
+            15086677
+          ],
+          "dtype": "int32",
+          "fortran_order": false
+        },
+        "indptr.npy": {
+          "shape": [
+            32801
+          ],
+          "dtype": "int32",
+          "fortran_order": false
+        },
+        "format.npy": {
+          "shape": [],
+          "dtype": "|S3",
+          "fortran_order": false
+        },
+        "shape.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "int64",
+          "fortran_order": false
+        },
+        "data.npy": {
+          "shape": [
+            15086677
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-projected-expm-t2.0.npz",
+      "bytes": 41204768,
+      "sha256": "933431d0e81140ae1d2edcb2cd08f55559a404c92d08ce1a00fed983eaf3f547",
+      "copied": false,
+      "arrays": {
+        "times.npy": {
+          "shape": [
+            81
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "values.npy": {
+          "shape": [
+            81,
+            32800,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "names.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "<U12",
+          "fortran_order": false
+        },
+        "initial_original_norms.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "pilot_t01.npy": {
+          "shape": [
+            32800,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-projected-krylov-m50-80-h0.1-t2.0.npz",
+      "bytes": 40696355,
+      "sha256": "b72ddc8f59ff5253e3e94345cc6cea3b23237e653adcd48bdfbeb124da885e6e",
+      "copied": false,
+      "arrays": {
+        "times.npy": {
+          "shape": [
+            81
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "values.npy": {
+          "shape": [
+            81,
+            32800,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "names.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "<U12",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-projected-expm-native-diagnostics.npz",
+      "bytes": 14231675,
+      "sha256": "e7e5824f871981f6aeaf3a19615a8c179881371365db51f2ac25f9e4b2d44a09",
+      "copied": false,
+      "arrays": {
+        "times.npy": {
+          "shape": [
+            81
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "constraints.npy": {
+          "shape": [
+            81,
+            1640,
+            7,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "norm_squared_integral_roots.npy": {
+          "shape": [
+            81,
+            2,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-projected-krylov-native-diagnostics.npz",
+      "bytes": 14231545,
+      "sha256": "83007823ebd9674b285d8c1cc6c2d9f57c6595e369e706e6c57288cf5bfba07b",
+      "copied": false,
+      "arrays": {
+        "times.npy": {
+          "shape": [
+            81
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "constraints.npy": {
+          "shape": [
+            81,
+            1640,
+            7,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "norm_squared_integral_roots.npy": {
+          "shape": [
+            81,
+            2,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-projected-expm-ritz-vectors.npz",
+      "bytes": 3026086,
+      "sha256": "3104abb2e7b073d93e46ca47c64c2a7dfed32299318ecae34b26f9b1f64e79ce",
+      "copied": false,
+      "arrays": {
+        "eigenvalues.npy": {
+          "shape": [
+            6
+          ],
+          "dtype": "complex128",
+          "fortran_order": false
+        },
+        "vectors.npy": {
+          "shape": [
+            32800,
+            6
+          ],
+          "dtype": "complex128",
+          "fortran_order": true
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-projected-krylov-ritz-vectors.npz",
+      "bytes": 3025975,
+      "sha256": "ec6d7a617c1850b66f2fceca329aa196497b158f6cfcfb4bd0fa4f5f4edfcf3b",
+      "copied": false,
+      "arrays": {
+        "eigenvalues.npy": {
+          "shape": [
+            6
+          ],
+          "dtype": "complex128",
+          "fortran_order": false
+        },
+        "vectors.npy": {
+          "shape": [
+            32800,
+            6
+          ],
+          "dtype": "complex128",
+          "fortran_order": true
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-cache0.0001-metadata.json",
+      "bytes": 483620,
+      "sha256": "44c15b4a037b0d20cf8770b93e5ba664e2d0c0330a9b0bb40909bee9ace9cee1",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-cache0.0001-J22.npz",
+      "bytes": 89682308,
+      "sha256": "7496268382ef28e62d363750a2ca6cea3437b21d52dfa5abadd487c79d917e86",
+      "copied": false,
+      "arrays": {
+        "indices.npy": {
+          "shape": [
+            14871476
+          ],
+          "dtype": "int32",
+          "fortran_order": false
+        },
+        "indptr.npy": {
+          "shape": [
+            36081
+          ],
+          "dtype": "int32",
+          "fortran_order": false
+        },
+        "format.npy": {
+          "shape": [],
+          "dtype": "|S3",
+          "fortran_order": false
+        },
+        "shape.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "int64",
+          "fortran_order": false
+        },
+        "data.npy": {
+          "shape": [
+            14871476
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-cache0.0001-indptr.bin",
+      "bytes": 288648,
+      "sha256": "bcbf5164f0f0b874fd4471c6318df6be3fdfc00be45131be0ee381a0d99567ff",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-cache0.0001-indices.bin",
+      "bytes": 59485904,
+      "sha256": "485c4e4c9ce09b9aced15c92979ec6cf1e27128ee2adfa3f4f5fbd4f679d0ac1",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-cache0.0001-data.bin",
+      "bytes": 118971808,
+      "sha256": "79f3a03e04c854b81960de1366c4db25e544f6638f3d9d0172c9efeed96df239",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-cache0.0001-lift.bin",
+      "bytes": 5772800,
+      "sha256": "4d30173931ddecdcdba83c0689a316f3a1d3c3f4cd16ace2c964cc883d03b4e9",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/production-cache0.0001-restrict.bin",
+      "bytes": 5772800,
+      "sha256": "7f8833a0cb6e398f752d03748b94c3de4235b7a537ee8bc1ea25a78c52e62cdb",
+      "copied": false
+    }
+  ],
+  "spatialnorm": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-spatialnorm",
+      "bytes": 843792,
+      "sha256": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/projected-v1/server-spatialnorm",
+      "bytes": 843792,
+      "sha256": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/projected-v1/spatialnorm-validation-vectors.npz",
+      "bytes": 599552,
+      "sha256": "55b4fc65becd950509eb2601a2282f17dacd91eac8b1a933cd7c030735ab3454",
+      "copied": false,
+      "arrays": {
+        "gauge_pulse.npy": {
+          "shape": [
+            32800
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "smooth_geometry.npy": {
+          "shape": [
+            32800
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "white_random.npy": {
+          "shape": [
+            32800
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "shell_random.npy": {
+          "shape": [
+            32800
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/server-spatialnorm",
+      "bytes": 862032,
+      "sha256": "bc4f4c62e4fa3e286da4c19f11fa79ba73a8ed3658f4fa42646d7dca7bf5a943",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-J20.npz",
+      "bytes": 102016263,
+      "sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+      "copied": false,
+      "arrays": {
+        "indices.npy": {
+          "shape": [
+            15109351
+          ],
+          "dtype": "int32",
+          "fortran_order": false
+        },
+        "indptr.npy": {
+          "shape": [
+            32801
+          ],
+          "dtype": "int32",
+          "fortran_order": false
+        },
+        "format.npy": {
+          "shape": [],
+          "dtype": "|S3",
+          "fortran_order": false
+        },
+        "shape.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "int64",
+          "fortran_order": false
+        },
+        "data.npy": {
+          "shape": [
+            15109351
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-expm-t2.0.npz",
+      "bytes": 41289784,
+      "sha256": "874b43db6de02e8762d81a7ae725c34a48e8eb5aa91babd47c8a408c5515968c",
+      "copied": false,
+      "arrays": {
+        "times.npy": {
+          "shape": [
+            81
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "values.npy": {
+          "shape": [
+            81,
+            32800,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "names.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "<U12",
+          "fortran_order": false
+        },
+        "initial_original_norms.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "pilot_t01.npy": {
+          "shape": [
+            32800,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-krylov-m50-80-h0.1-t2.0.npz",
+      "bytes": 40781239,
+      "sha256": "95b2633a60c855ca2bdc1081755fd6fa855c64e505c95320512e0f163053fa2d",
+      "copied": false,
+      "arrays": {
+        "times.npy": {
+          "shape": [
+            81
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "values.npy": {
+          "shape": [
+            81,
+            32800,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "names.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "<U12",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-expm-native-diagnostics.npz",
+      "bytes": 14256036,
+      "sha256": "88271dcdfafffc16d5118d3667b3fe811fc85113a179484fdccdd9316fb95855",
+      "copied": false,
+      "arrays": {
+        "times.npy": {
+          "shape": [
+            81
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "constraints.npy": {
+          "shape": [
+            81,
+            1640,
+            7,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "norm_squared_integral_roots.npy": {
+          "shape": [
+            81,
+            2,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-krylov-native-diagnostics.npz",
+      "bytes": 14255758,
+      "sha256": "5da4f389fa89e6b26e8443586375ae57733c4f250376b2241bb2f10ce3de66f8",
+      "copied": false,
+      "arrays": {
+        "times.npy": {
+          "shape": [
+            81
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "constraints.npy": {
+          "shape": [
+            81,
+            1640,
+            7,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        },
+        "norm_squared_integral_roots.npy": {
+          "shape": [
+            81,
+            2,
+            2
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-expm-ritz-vectors.npz",
+      "bytes": 3026104,
+      "sha256": "269b8d1a5daf9c88264b13b17411d7fa7631a63cfdb963da918ffd723313d64f",
+      "copied": false,
+      "arrays": {
+        "eigenvalues.npy": {
+          "shape": [
+            6
+          ],
+          "dtype": "complex128",
+          "fortran_order": false
+        },
+        "vectors.npy": {
+          "shape": [
+            32800,
+            6
+          ],
+          "dtype": "complex128",
+          "fortran_order": true
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-krylov-ritz-vectors.npz",
+      "bytes": 3026059,
+      "sha256": "952f1dfdbd59963741432b5a3a2ce6106327f9df1faec0e1c9079222ae4e586d",
+      "copied": false,
+      "arrays": {
+        "eigenvalues.npy": {
+          "shape": [
+            6
+          ],
+          "dtype": "complex128",
+          "fortran_order": false
+        },
+        "vectors.npy": {
+          "shape": [
+            32800,
+            6
+          ],
+          "dtype": "complex128",
+          "fortran_order": true
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-metadata.json",
+      "bytes": 483620,
+      "sha256": "98b7b7f459cce564398769cff48545cb6e89eb3708d01b2018a81b3a393d4e26",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-J22.npz",
+      "bytes": 89852067,
+      "sha256": "1f7a5297ea5a6308a707222d558f75316ae9615a6046abd581ebd8e7a90b6e65",
+      "copied": false,
+      "arrays": {
+        "indices.npy": {
+          "shape": [
+            14898732
+          ],
+          "dtype": "int32",
+          "fortran_order": false
+        },
+        "indptr.npy": {
+          "shape": [
+            36081
+          ],
+          "dtype": "int32",
+          "fortran_order": false
+        },
+        "format.npy": {
+          "shape": [],
+          "dtype": "|S3",
+          "fortran_order": false
+        },
+        "shape.npy": {
+          "shape": [
+            2
+          ],
+          "dtype": "int64",
+          "fortran_order": false
+        },
+        "data.npy": {
+          "shape": [
+            14898732
+          ],
+          "dtype": "float64",
+          "fortran_order": false
+        }
+      }
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-indptr.bin",
+      "bytes": 288648,
+      "sha256": "319ea39521e1356cbd4ad45813bec9753b2d723453bcae74766bc7405194cb57",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-indices.bin",
+      "bytes": 59594928,
+      "sha256": "e9daf83001ad46775dd9fc4ec09436eecd4788021e039db4c0ca8dca01a7310b",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-data.bin",
+      "bytes": 119189856,
+      "sha256": "079e4c2f3e64421f7c1d58ac5e6361d345a63af9924ba1f194b92f7e1723d5b5",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-lift.bin",
+      "bytes": 5772800,
+      "sha256": "4d30173931ddecdcdba83c0689a316f3a1d3c3f4cd16ace2c964cc883d03b4e9",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-restrict.bin",
+      "bytes": 5772800,
+      "sha256": "7f8833a0cb6e398f752d03748b94c3de4235b7a537ee8bc1ea25a78c52e62cdb",
+      "copied": false
+    }
+  ],
+  "diagnostic_executables": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/diagnostic-fields",
+      "bytes": 786128,
+      "sha256": "013082680e21470b66c4d8b0a4eebfb616b746e7539dcc30c2438b9f27daca1f",
+      "copied": false
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/diagnostic-constraint-norms",
+      "bytes": 808184,
+      "sha256": "dd2ef78efb254608589af538fe013f8696d76236e85b139cc2df5cc728fa8aba",
+      "copied": false
+    }
+  ]
+}

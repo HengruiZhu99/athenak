@@ -1,0 +1,61 @@
+Composed native bounded preflight audit
+
+Both completed native preflights PASS the implementation/data-validity audit.
+This is not pulse stability acceptance and does not establish temporal or
+spatial order. No BH evolution or production edit occurred.
+
+Auditor: ../audit_composed_native.py
+SHA256 088b456a99a9ff66ad905e7cc12c38da922656393e47c2835996ce7d8ddf6e69
+
+The auditor verifies both executable hashes, baseline source/gauge overlay
+hashes, the private build's exact six compiled objects/dependency files, all
+repository dependencies, private header/init hashes, and every reused base
+link input. Baseline executable is dd1d1892..., private is e337453c...; full
+hashes and receipt hashes are in each JSON audit.
+
+Full-precision state fields come from the frozen binary64 RST reader. All 25
+evolved active fields rounded to float32 match same-index BIN data bitwise,
+including signed zero. Alpha/chi are positive, the physical spatial metric is
+SPD, and conformal determinant/trace errors remain below 1e-12 at every saved
+snapshot. The original HST constraint diagnostics are retained; no composed
+diagnostic derivative is substituted.
+
+Stored arrays are cropped to their identical physical N24 box before pairing
+uniform grid indices across ng4 and ng3. Header region/spacing and physical box
+dimensions agree exactly, and spherical masks agree. Reproducing the native
+grid.first+stored_index*h coordinate construction gives a maximum coordinate
+difference 2.220446049250313e-16. Initial active fields differ by at most
+1.176836406102666e-14. Therefore initial arrays are not claimed bitwise equal.
+
+Reference: composed-reference/reference-long-N24 versus
+native-reference/reference-long-N24, exact final t=.05, three snapshots each.
+Only input change is mesh/nghost 3->4. Composed maximum binary64 active field
+drift from its own initial state is 1.097346605770629e-14. Final original HST
+H/M/Z are 8.57096636e-14 / 1.34272569e-14 / 1.20725425e-15, all roundoff-sized.
+
+Pulse: composed-short/finite-angular-long-N24 versus
+native-short/finite-angular-N24, exact final t=.02, three/two snapshots.
+Inputs differ only in ng3->4 and output cadences .02->.01. Pulse amplitudes,
+width, angular dependence, gauges, geometry, kappa and pole CFL are identical.
+Final original HST H/M/Z:
+  composed .00353627663969 / .00603310172040 / .00157544670670
+  baseline .00311063175885 / .00489404887943 / .00119800239565
+Ratios are 1.13683551 / 1.23274243 / 1.31506140. The composed operator is worse
+on these short-time norms; a correctness pass is not an improvement claim.
+
+Each receipt captures all input/executable/result/history files, every mask
+digest, each exact RST time/cycle/header-dt, RST/BIN hashes, complete HST rows,
+per-field initial/final full-precision differences and all retained run-file
+hashes. HST endpoint comparisons use exact equal times, without interpolation.
+Header dt is pm->dt at output and need not equal the last completed step.
+Float32 quantized differences may exceed the actual binary64 field drift.
+
+Reproduction from repository root (PY is the scientific venv Python):
+  PY=/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python
+  "$PY" build-layer-research/time-projection-controls/audit_composed_native.py build-layer-research/time-projection-controls/composed-reference build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference
+  "$PY" build-layer-research/time-projection-controls/audit_composed_native.py build-layer-research/time-projection-controls/composed-short build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short
+
+The same auditor accepts later run/baseline directories, optional --case and
+--baseline-case selectors, and --output. It requires completed cases with the
+same physical grid and exact final time, and fails on unapproved physical
+input differences. No frozen old archive or root common auditor is modified.

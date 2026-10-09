@@ -1,0 +1,40 @@
+{
+  "gauge": "spatialnorm",
+  "semantics": "exact constant block similarity K=T J20 T^-1; configuration {chi,g,alpha,beta} multiplied by1/h; momenta {P,A,Lambda,Theta} unchanged. Outputs multiplied byT^-1. J20 is projected continuous native global tangent, not native finite-RK3 map.",
+  "spacing": 0.1375,
+  "configuration_scale": 7.2727272727272725,
+  "norm1_unbalanced": 191677.0188342635,
+  "norm1_balanced": 47430.93149877744,
+  "matrix_shape": [
+    32800,
+    32800
+  ],
+  "matrix_nnz": 15109351,
+  "balanced_matrix_nnz": 15109351,
+  "trace_relative_difference": 0.0,
+  "source_sha256": "dd5d74369a2446cc2529c9bd74a1d5bef91197f4b532cbcb904d4a39a01ca456",
+  "pilot": {
+    "balanced_seconds": 16.61114575,
+    "unbalanced_seconds": 16.600285375,
+    "balanced_vs_unbalanced_relative_state_l2": [
+      1.941027796966639e-15,
+      7.156399946946014e-16
+    ],
+    "euclidean_amplification": [
+      1.093018256135554,
+      5.377124681640451
+    ],
+    "balanced_vs_native_final_only_relative_initial_l2": [
+      2.29077358111301e-06,
+      9.787806212165512e-05
+    ],
+    "balanced_vs_native_half_relative_initial_l2": [
+      1.153991953511384e-06,
+      4.878157657525724e-05
+    ],
+    "balanced_vs_projected_RK3_relative_initial_l2": [
+      2.0531075161464168e-08,
+      5.49412968753126e-07
+    ]
+  }
+}

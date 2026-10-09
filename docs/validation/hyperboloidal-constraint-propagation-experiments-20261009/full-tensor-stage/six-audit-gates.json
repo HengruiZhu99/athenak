@@ -1,0 +1,264 @@
+[
+  {
+    "gauge": "production",
+    "gates": [
+      {
+        "id": "G1",
+        "description": "Prepared/reference stationarity and nonrecursive interior donors",
+        "thresholds": {
+          "Prepare_change": 0,
+          "reference_RHS_max": 1e-10,
+          "reference_H_M_Z_max": 1e-11,
+          "weight_sum_error": 1e-13
+        },
+        "observed": {
+          "prepared_reference_change": 0,
+          "projected_reference_rhs_max": 6.083573831355486e-12,
+          "projected_reference_H": 3.239473509281292e-14,
+          "projected_reference_M": 1.3305685154844717e-15,
+          "projected_reference_Z": 6.643108248740043e-16,
+          "ghost_weight_sum_error": 1.3322676295501878e-15,
+          "strict_interior_donor_references": 63576
+        },
+        "pass": true
+      },
+      {
+        "id": "G2",
+        "description": "Native algebraic projector derivative and actual Prepare derivative",
+        "thresholds": {
+          "max_error_at_epsilon1e-6": 1e-08,
+          "P_L_identity_max": 1e-13
+        },
+        "observed": {
+          "audit": {
+            "epsilon": 1e-06,
+            "lift_native_projector_identity_max_error": 4.4386849751276714e-10,
+            "restrict_native_projector_derivative_max_error": 4.4386849751276714e-10,
+            "native_Prepare_vs_linear_ghost_fill_max_error": 3.1426430346925827e-09
+          },
+          "P_L_identity_max": 2.995033467229317e-16
+        },
+        "pass": true
+      },
+      {
+        "id": "G3",
+        "description": "Exported full22 CSR equals actual ghost fill/centered/mixed/upwind/KO cached matvec",
+        "thresholds": {
+          "relative_l2": 2e-14
+        },
+        "observed": {
+          "max_relative_l2": 1.1060644689084793e-15,
+          "rows": [
+            36080,
+            36080
+          ],
+          "nnz": 14871476
+        },
+        "pass": true
+      },
+      {
+        "id": "G4",
+        "description": "Native centered full22 RHS Jv amplitude sweep agrees with cached linear response",
+        "thresholds": {
+          "best_relative_l2_per_vector": 2e-08
+        },
+        "observed": {
+          "worst_best_relative_l2": 7.183940019240289e-10,
+          "note": "All amplitude results retained. Projected-v1 additionally retains all six epsilon levels1e-3,3e-4,1e-4,3e-5,1e-5,3e-6."
+        },
+        "pass": true
+      },
+      {
+        "id": "G5",
+        "description": "Actual nonlinear final-only SSPRK3 step derivative matches P R3(dt J22)Lift",
+        "thresholds": {
+          "relative_input_l2_at_epsilon1e-5": 1e-08
+        },
+        "observed": {
+          "max_relative_input_l2": 3.821415175975432e-10,
+          "dt_factors": [
+            2,
+            1,
+            0.5
+          ],
+          "nominal_dt": 8.085937499998367e-05
+        },
+        "pass": true
+      },
+      {
+        "id": "G6",
+        "description": "Exact block similarity and short projected RK3 versus canonical continuous exponential",
+        "thresholds": {
+          "similarity_relative_state_l2": 1e-12,
+          "projected_RK3_vs_continuous_relative_initial_l2": 1e-05
+        },
+        "observed": {
+          "similarity": {
+            "balanced_seconds": 16.324392416,
+            "unbalanced_seconds": 16.373833667,
+            "balanced_vs_unbalanced_relative_state_l2": [
+              1.8847700382969933e-15,
+              8.092714446792053e-16
+            ],
+            "euclidean_amplification": [
+              1.0932923379501347,
+              5.390265034155347
+            ],
+            "balanced_vs_native_final_only_relative_initial_l2": [
+              2.28817776135458e-06,
+              9.806241744381996e-05
+            ],
+            "balanced_vs_native_half_relative_initial_l2": [
+              1.1529251716387087e-06,
+              4.887365432095968e-05
+            ],
+            "balanced_vs_projected_RK3_relative_initial_l2": [
+              2.1140936363588668e-08,
+              5.605489232070901e-07
+            ]
+          },
+          "short_native_final_vs_every_RHS_relative_initial_l2": [
+            2.2811765047235925e-06,
+            9.816747779498695e-05
+          ],
+          "short_native_dt_vs_half_relative_initial_l2": [
+            1.1354907223283148e-06,
+            4.919316136061556e-05
+          ]
+        },
+        "pass": true
+      }
+    ]
+  },
+  {
+    "gauge": "spatialnorm",
+    "gates": [
+      {
+        "id": "G1",
+        "description": "Prepared/reference stationarity and nonrecursive interior donors",
+        "thresholds": {
+          "Prepare_change": 0,
+          "reference_RHS_max": 1e-10,
+          "reference_H_M_Z_max": 1e-11,
+          "weight_sum_error": 1e-13
+        },
+        "observed": {
+          "prepared_reference_change": 0,
+          "projected_reference_rhs_max": 6.083573831355486e-12,
+          "projected_reference_H": 3.239473509281292e-14,
+          "projected_reference_M": 1.3305685154844717e-15,
+          "projected_reference_Z": 6.643108248740043e-16,
+          "ghost_weight_sum_error": 1.3322676295501878e-15,
+          "strict_interior_donor_references": 63576
+        },
+        "pass": true
+      },
+      {
+        "id": "G2",
+        "description": "Native algebraic projector derivative and actual Prepare derivative",
+        "thresholds": {
+          "max_error_at_epsilon1e-6": 1e-08,
+          "P_L_identity_max": 1e-13
+        },
+        "observed": {
+          "audit": {
+            "epsilon": 1e-06,
+            "lift_native_projector_identity_max_error": 4.4386849751276714e-10,
+            "restrict_native_projector_derivative_max_error": 4.4386849751276714e-10,
+            "native_Prepare_vs_linear_ghost_fill_max_error": 3.1426430346925827e-09
+          },
+          "P_L_identity_max": 2.995033467229317e-16
+        },
+        "pass": true
+      },
+      {
+        "id": "G3",
+        "description": "Exported full22 CSR equals actual ghost fill/centered/mixed/upwind/KO cached matvec",
+        "thresholds": {
+          "relative_l2": 2e-14
+        },
+        "observed": {
+          "max_relative_l2": 1.1060667037013772e-15,
+          "rows": [
+            36080,
+            36080
+          ],
+          "nnz": 14898732
+        },
+        "pass": true
+      },
+      {
+        "id": "G4",
+        "description": "Native centered full22 RHS Jv amplitude sweep agrees with cached linear response",
+        "thresholds": {
+          "best_relative_l2_per_vector": 2e-08
+        },
+        "observed": {
+          "worst_best_relative_l2": 7.249624240321396e-10,
+          "note": "All amplitude results retained. Projected-v1 additionally retains all six epsilon levels1e-3,3e-4,1e-4,3e-5,1e-5,3e-6."
+        },
+        "pass": true
+      },
+      {
+        "id": "G5",
+        "description": "Actual nonlinear final-only SSPRK3 step derivative matches P R3(dt J22)Lift",
+        "thresholds": {
+          "relative_input_l2_at_epsilon1e-5": 1e-08
+        },
+        "observed": {
+          "max_relative_input_l2": 3.8260131208898327e-10,
+          "dt_factors": [
+            2,
+            1,
+            0.5
+          ],
+          "nominal_dt": 8.085937499998367e-05
+        },
+        "pass": true
+      },
+      {
+        "id": "G6",
+        "description": "Exact block similarity and short projected RK3 versus canonical continuous exponential",
+        "thresholds": {
+          "similarity_relative_state_l2": 1e-12,
+          "projected_RK3_vs_continuous_relative_initial_l2": 1e-05
+        },
+        "observed": {
+          "similarity": {
+            "balanced_seconds": 16.61114575,
+            "unbalanced_seconds": 16.600285375,
+            "balanced_vs_unbalanced_relative_state_l2": [
+              1.941027796966639e-15,
+              7.156399946946014e-16
+            ],
+            "euclidean_amplification": [
+              1.093018256135554,
+              5.377124681640451
+            ],
+            "balanced_vs_native_final_only_relative_initial_l2": [
+              2.29077358111301e-06,
+              9.787806212165512e-05
+            ],
+            "balanced_vs_native_half_relative_initial_l2": [
+              1.153991953511384e-06,
+              4.878157657525724e-05
+            ],
+            "balanced_vs_projected_RK3_relative_initial_l2": [
+              2.0531075161464168e-08,
+              5.49412968753126e-07
+            ]
+          },
+          "short_native_final_vs_every_RHS_relative_initial_l2": [
+            2.2837842190757142e-06,
+            9.798259996182725e-05
+          ],
+          "short_native_dt_vs_half_relative_initial_l2": [
+            1.137014086057588e-06,
+            4.910083598509925e-05
+          ]
+        },
+        "pass": true
+      }
+    ]
+  }
+]

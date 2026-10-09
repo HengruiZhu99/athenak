@@ -1,0 +1,688 @@
+{
+  "scope": "Completed bounded private composed-operator preflight. All 25 state fields use full-precision restart data; standard production HST differential-constraint diagnostics stay unchanged. Physical box cells are paired by uniform grid index across ng4/ng3, with floating-coordinate differences measured. No stability acceptance, temporal order, exact initial bitwise identity or BH claim.",
+  "head": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "seconds": 0.161838916,
+  "build_verification": {
+    "base_build_receipt_sha256": "a39430b8c3bcf2e7cc05d03a441831edc493f050afbb687e642418f1e5f56ce6",
+    "private_build_receipt_sha256": "f2c884662b04b68b4efef0cb1dedb2e11b26f242683427642d233afbf433c886",
+    "all_six_private_objects_and_dependency_files_verified": true,
+    "all_private_sources_and_repository_dependencies_verified": true,
+    "all_reused_base_link_inputs_verified": true,
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16"
+  },
+  "private_case": "finite-angular-long-N24",
+  "baseline_case": "finite-angular-N24",
+  "input_parameter_differences": {
+    "mesh/nghost": [
+      "3",
+      "4"
+    ],
+    "output1/dt": [
+      "0.02",
+      "0.01"
+    ],
+    "output2/dt": [
+      "0.02",
+      "0.01"
+    ],
+    "output3/dt": [
+      "0.02",
+      "0.01"
+    ],
+    "output4/dt": [
+      "0.02",
+      "0.01"
+    ],
+    "output5/dt": [
+      "0.02",
+      "0.01"
+    ]
+  },
+  "physical_grid_and_index_alignment_verified": true,
+  "native_coordinate_construction_max_difference": 2.220446049250313e-16,
+  "active_physical_box_masks_identical": true,
+  "initial_arrays_bitwise_equal": false,
+  "initial_full_precision_active_max_difference": 1.176836406102666e-14,
+  "exact_final_comparison_time": 0.02,
+  "final_original_HST_diagnostics": {
+    "H": {
+      "private": 0.0035362766396929116,
+      "baseline": 0.003110631758851493,
+      "ratio": 1.1368355092595643
+    },
+    "M": {
+      "private": 0.006033101720397809,
+      "baseline": 0.00489404887942953,
+      "ratio": 1.2327424324991727
+    },
+    "Z": {
+      "private": 0.001575446706696139,
+      "baseline": 0.001198002395651048,
+      "ratio": 1.3150613992219697
+    },
+    "Theta": {
+      "private": 9.231136527888631e-05,
+      "baseline": 6.156048106303179e-05,
+      "ratio": 1.4995231305026464
+    }
+  },
+  "final_equal_time_full_precision_fields": {
+    "z4c_chi": {
+      "initial_max_difference": 6.661338147750939e-16,
+      "initial_rms_difference": 1.3010821583774566e-16,
+      "final_max_difference": 0.00028053776881886705,
+      "final_rms_difference": 3.5098335027105107e-05,
+      "baseline_rms_change": 0.000340440507947896
+    },
+    "z4c_gxx": {
+      "initial_max_difference": 1.3322676295501878e-15,
+      "initial_rms_difference": 1.9411622130792377e-16,
+      "final_max_difference": 0.0002770951839909941,
+      "final_rms_difference": 4.153009090184571e-05,
+      "baseline_rms_change": 0.0003086328418962094
+    },
+    "z4c_gxy": {
+      "initial_max_difference": 9.43689570931383e-16,
+      "initial_rms_difference": 1.3891327246437573e-16,
+      "final_max_difference": 9.412174720843943e-05,
+      "final_rms_difference": 8.348202205614725e-06,
+      "baseline_rms_change": 0.0002379786533379216
+    },
+    "z4c_gxz": {
+      "initial_max_difference": 9.43689570931383e-16,
+      "initial_rms_difference": 1.3434898805199158e-16,
+      "final_max_difference": 9.398745791136203e-05,
+      "final_rms_difference": 8.347055755489038e-06,
+      "baseline_rms_change": 0.00023779526388774725
+    },
+    "z4c_gyy": {
+      "initial_max_difference": 1.3322676295501878e-15,
+      "initial_rms_difference": 1.942967633860862e-16,
+      "final_max_difference": 0.00028084666028016514,
+      "final_rms_difference": 4.135311224717816e-05,
+      "baseline_rms_change": 0.00024068700818276228
+    },
+    "z4c_gyz": {
+      "initial_max_difference": 9.43689570931383e-16,
+      "initial_rms_difference": 1.3617607930634624e-16,
+      "final_max_difference": 8.503166864658033e-05,
+      "final_rms_difference": 7.778849163770205e-06,
+      "baseline_rms_change": 0.00019134966624847807
+    },
+    "z4c_gzz": {
+      "initial_max_difference": 1.3322676295501878e-15,
+      "initial_rms_difference": 1.9285288883235835e-16,
+      "final_max_difference": 0.0002803245262555931,
+      "final_rms_difference": 4.135303199479775e-05,
+      "baseline_rms_change": 0.00024058907648396267
+    },
+    "z4c_Khat": {
+      "initial_max_difference": 4.884981308350689e-15,
+      "initial_rms_difference": 9.345856225127991e-16,
+      "final_max_difference": 0.0024316236043517847,
+      "final_rms_difference": 0.00029168936828696053,
+      "baseline_rms_change": 0.008117461278673571
+    },
+    "z4c_Axx": {
+      "initial_max_difference": 2.886579864025407e-15,
+      "initial_rms_difference": 3.9470889221565924e-16,
+      "final_max_difference": 0.00665409103932925,
+      "final_rms_difference": 0.0009132833387862408,
+      "baseline_rms_change": 0.002569801796531099
+    },
+    "z4c_Axy": {
+      "initial_max_difference": 2.1094237467877974e-15,
+      "initial_rms_difference": 2.8913879373918365e-16,
+      "final_max_difference": 0.0021820967307689143,
+      "final_rms_difference": 0.0002337269243399512,
+      "baseline_rms_change": 0.002193682424551107
+    },
+    "z4c_Axz": {
+      "initial_max_difference": 2.1094237467877974e-15,
+      "initial_rms_difference": 2.7973661275739496e-16,
+      "final_max_difference": 0.002177345975409039,
+      "final_rms_difference": 0.00023367644490564118,
+      "baseline_rms_change": 0.0021936718000249746
+    },
+    "z4c_Ayy": {
+      "initial_max_difference": 2.886579864025407e-15,
+      "initial_rms_difference": 3.9899524621023327e-16,
+      "final_max_difference": 0.007050989857784299,
+      "final_rms_difference": 0.0009064757820152298,
+      "baseline_rms_change": 0.0025695776263629185
+    },
+    "z4c_Ayz": {
+      "initial_max_difference": 2.1094237467877974e-15,
+      "initial_rms_difference": 2.8398540690733314e-16,
+      "final_max_difference": 0.0019693329094298364,
+      "final_rms_difference": 0.00020854758825506384,
+      "baseline_rms_change": 0.0021927766205186183
+    },
+    "z4c_Azz": {
+      "initial_max_difference": 2.886579864025407e-15,
+      "initial_rms_difference": 3.9967952352367473e-16,
+      "final_max_difference": 0.007061498421350784,
+      "final_rms_difference": 0.0009064708094148177,
+      "baseline_rms_change": 0.0025695771217616532
+    },
+    "z4c_Gamx": {
+      "initial_max_difference": 9.992007221626409e-15,
+      "initial_rms_difference": 1.8019857534405706e-15,
+      "final_max_difference": 0.01894220914075708,
+      "final_rms_difference": 0.0015126831635444704,
+      "baseline_rms_change": 0.002847047450908062
+    },
+    "z4c_Gamy": {
+      "initial_max_difference": 1.176836406102666e-14,
+      "initial_rms_difference": 1.803463242736713e-15,
+      "final_max_difference": 0.020104839636542447,
+      "final_rms_difference": 0.0013333023629629273,
+      "baseline_rms_change": 0.0022839881364898566
+    },
+    "z4c_Gamz": {
+      "initial_max_difference": 1.0103029524088925e-14,
+      "initial_rms_difference": 1.7997276333862412e-15,
+      "final_max_difference": 0.02009834333154343,
+      "final_rms_difference": 0.0013331937961901497,
+      "baseline_rms_change": 0.0022823179055753576
+    },
+    "z4c_Theta": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0006840905265182558,
+      "final_rms_difference": 0.00010403621706125159,
+      "baseline_rms_change": 6.156048106303187e-05
+    },
+    "z4c_alpha": {
+      "initial_max_difference": 1.1102230246251565e-15,
+      "initial_rms_difference": 2.656872508556956e-16,
+      "final_max_difference": 0.0004336957394035501,
+      "final_rms_difference": 5.176567844693472e-05,
+      "baseline_rms_change": 0.0003786922562301609
+    },
+    "z4c_betax": {
+      "initial_max_difference": 1.5543122344752192e-15,
+      "initial_rms_difference": 3.152752830067902e-16,
+      "final_max_difference": 0.0002100851461310782,
+      "final_rms_difference": 2.362778503757134e-05,
+      "baseline_rms_change": 8.763508792768462e-05
+    },
+    "z4c_betay": {
+      "initial_max_difference": 1.5543122344752192e-15,
+      "initial_rms_difference": 3.151071278155036e-16,
+      "final_max_difference": 0.00014616429806091347,
+      "final_rms_difference": 1.389745574484129e-05,
+      "baseline_rms_change": 7.801499974648643e-05
+    },
+    "z4c_betaz": {
+      "initial_max_difference": 1.5543122344752192e-15,
+      "initial_rms_difference": 3.190452062977217e-16,
+      "final_max_difference": 0.00014592280850811434,
+      "final_rms_difference": 1.3889900656591772e-05,
+      "baseline_rms_change": 7.799539279493491e-05
+    },
+    "z4c_Bx": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    },
+    "z4c_By": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    },
+    "z4c_Bz": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    }
+  },
+  "private_history_rows": [
+    [
+      0.0,
+      0.00042773437499998563,
+      6.0048545660552085e-15,
+      9.986961755370912e-16,
+      1.2395298299904818e-16,
+      0.0,
+      8.881784197001252e-16,
+      9.083252187259944e-16,
+      1.0013454866411735,
+      0.7612705478353704,
+      7.071633878716858e-14,
+      7.1039781084251215e-15,
+      0.00028356750353797366,
+      0.00023806553064921828,
+      6152.0
+    ],
+    [
+      0.010265624999999655,
+      0.00042773437499998563,
+      0.002084771177481438,
+      0.006115901363141521,
+      0.0010765529964221479,
+      5.645200650986395e-05,
+      8.881784197001252e-16,
+      5.629367589190838e-16,
+      1.0017063963927222,
+      0.7611152220813758,
+      0.015617112763707608,
+      0.030587983823298297,
+      0.07887854823986473,
+      0.0019569202980586906,
+      6152.0
+    ],
+    [
+      0.02,
+      0.00042773437499998563,
+      0.0035362766396929116,
+      0.006033101720397809,
+      0.001575446706696139,
+      9.231136527888631e-05,
+      8.881784197001252e-16,
+      5.478169041755828e-16,
+      1.0020144832544813,
+      0.7609502188377416,
+      0.03130000724072285,
+      0.03723737545761177,
+      0.09222867975809265,
+      0.0029144390635779715,
+      6152.0
+    ]
+  ],
+  "baseline_history_rows": [
+    [
+      0.0,
+      0.00042773437499998563,
+      6.091900502453727e-15,
+      9.729042585004061e-16,
+      1.2391380160796285e-16,
+      0.0,
+      8.881784197001252e-16,
+      9.439920159136376e-16,
+      1.0013454866411735,
+      0.7612705478353704,
+      7.071633878758217e-14,
+      6.055563204749014e-15,
+      0.00028356750353886184,
+      0.00023806553064771374,
+      6152.0
+    ],
+    [
+      0.02,
+      0.00042773437499998563,
+      0.003110631758851493,
+      0.00489404887942953,
+      0.001198002395651048,
+      6.156048106303179e-05,
+      8.881784197001252e-16,
+      7.586932980698304e-16,
+      1.0020160366022013,
+      0.7609497968209644,
+      0.029664722255637235,
+      0.02441604463075991,
+      0.07996889556516185,
+      0.002023309821601426,
+      6152.0
+    ]
+  ],
+  "private_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0013454866411735,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999986,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.881784197001252e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "153c7d632737111145ac6be45613a16fcbc4a9c186acb63bd1050320da43bf12",
+          "bytes": 3419201
+        },
+        "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/rst/hyp.00000.rst": {
+          "sha256": "7cb354aa51bd5653879f0d045999cee9bb988f2ad1d6147b0cf9b659c2a176f4",
+          "bytes": 6564642
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.010265624999999655,
+      "cycle": 24,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0017063963927222,
+      "chi_min": 0.7611152220813758,
+      "physical_metric_eigen_min": 0.999274809915528,
+      "physical_metric_eigen_max": 2.267559295224059,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "b346ba399130aeaa482d4d9d8fccae8bed3bd48a4bb1100caffa55c3fe4df889",
+          "bytes": 3419162
+        },
+        "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/rst/hyp.00001.rst": {
+          "sha256": "66b0aeaea850b780181757c46ad16b8fc4c7b55440c8651e17ca61152db6ca3c",
+          "bytes": 6564642
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.04585459332565843
+    },
+    {
+      "time": 0.02,
+      "cycle": 47,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0020144832544813,
+      "chi_min": 0.7609502188377416,
+      "physical_metric_eigen_min": 0.998232039156012,
+      "physical_metric_eigen_max": 2.268601144470279,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 5.551115123125783e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "089e0d6611277fb53db30d01ce6ac8e3a0281c24879fc5bcc23df857f4255752",
+          "bytes": 3419162
+        },
+        "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/rst/hyp.00002.rst": {
+          "sha256": "bbfb980a70f70e0f1855d87883e9a8963c6300d577a02d3bdf4ad79db8dea040",
+          "bytes": 6564642
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0881568533532399
+    }
+  ],
+  "baseline_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0013454866411735,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "6cdebb54d2bccfe258f597144f850dee527ce741a64ab405e02baa5857728b8a",
+          "bytes": 2819329
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/rst/hyp.00000.rst": {
+          "sha256": "025233e64affb5692326b8148b3dda1bc0da5635fc7ec27e01c9a626bd105088",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02,
+      "cycle": 47,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0020160366022013,
+      "chi_min": 0.7609497968209644,
+      "physical_metric_eigen_min": 0.9982302999303395,
+      "physical_metric_eigen_max": 2.268600926619159,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "0ac7ecc209207f1d12275f519600c982fd921f835453959a4c3558c13ec334ae",
+          "bytes": 2819290
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/rst/hyp.00001.rst": {
+          "sha256": "fa31962382197ed93d5c6a4c4d0ce7d7487b4ec5a58bc5c420494c0348c3b14c",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.08900470490146635
+    }
+  ],
+  "private_inputs": {
+    "build-layer-research/time-projection-controls/composed-short/athena-validation": {
+      "sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "bytes": 10433528
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/hyp.z4c.user.hst": {
+      "sha256": "f75a5aae34b724a1d20d73639421948f95f55cb3dc8727410de0ee74d6390e24",
+      "bytes": 1397
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/layer.athinput": {
+      "sha256": "176c33dfb50c672f7dfb1477bdfeec6f4a9ecbf1457dbef163c0dcdb30095cf3",
+      "bytes": 2398
+    },
+    "build-layer-research/time-projection-controls/composed-short/results.json": {
+      "sha256": "25ca8adb147aa77c3362b9f156deb0414751834a1e7c86da22abcd80d5276df4",
+      "bytes": 10741
+    }
+  },
+  "baseline_inputs": {
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/hyp.z4c.user.hst": {
+      "sha256": "ade280c806dad6a64617f0119c6a21d0433c3260912481b8519d0caa98e1cad4",
+      "bytes": 1021
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/layer.athinput": {
+      "sha256": "45a1d147dc0d9ee1eea7e3bfc651ce1284845d072aa34087d3062409e5f85a09",
+      "bytes": 2381
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/results.json": {
+      "sha256": "22c406f3bda9fe7c1e43d5ddf61cc763215f20175a5458f5308ff58911e58106",
+      "bytes": 10822
+    }
+  },
+  "audit_source_sha256": {
+    "build-layer-research/time-projection-controls/audit_composed_native.py": "088b456a99a9ff66ad905e7cc12c38da922656393e47c2835996ce7d8ddf6e69",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec",
+    "vis/python/bin_convert.py": "35e3ec2ebbe2d5a24af9bf1e4796cf1f20def58ce1d76c50f0166288b6d8f37c",
+    "tst/hyperboloidal/run_layer_validation.py": "ca81d60cc9a00b83f9325b79abce9fa3eaaade293e2c5f73c3a3d4bdbfac5d96"
+  },
+  "all_run_files": {
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "4f288a106ae78c8e282b1e7cce2d29eb1f4b6507a34dd33bccd971f3a7ef5564",
+      "bytes": 1955271
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "b6b24188301bed441a1ea7ee71d395c6240ea0f7257caa7013142e7ec9eca8a1",
+      "bytes": 1955216
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/bin/hyp.con.00000.bin": {
+      "sha256": "05fbb8e23b16258b2c671a8776e06864182fd66f1cd5ba20815e9fe3280a020c",
+      "bytes": 875184
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/bin/hyp.con.00001.bin": {
+      "sha256": "85e4bb27526062667bba46c7aac378bad0dad35c483b7d070ba1e7f0a28e968d",
+      "bytes": 875105
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "6cdebb54d2bccfe258f597144f850dee527ce741a64ab405e02baa5857728b8a",
+      "bytes": 2819329
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "0ac7ecc209207f1d12275f519600c982fd921f835453959a4c3558c13ec334ae",
+      "bytes": 2819290
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/hyp.z4c.user.hst": {
+      "sha256": "ade280c806dad6a64617f0119c6a21d0433c3260912481b8519d0caa98e1cad4",
+      "bytes": 1021
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/layer.athinput": {
+      "sha256": "45a1d147dc0d9ee1eea7e3bfc651ce1284845d072aa34087d3062409e5f85a09",
+      "bytes": 2381
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/rst/hyp.00000.rst": {
+      "sha256": "025233e64affb5692326b8148b3dda1bc0da5635fc7ec27e01c9a626bd105088",
+      "bytes": 5411042
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/rst/hyp.00001.rst": {
+      "sha256": "fa31962382197ed93d5c6a4c4d0ce7d7487b4ec5a58bc5c420494c0348c3b14c",
+      "bytes": 5411042
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/finite-angular-N24/run.log": {
+      "sha256": "ba0081ea3d20c05270fc54a0fe91e898cab025688bc221ebf03be4e1a51524e7",
+      "bytes": 554
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/results.json": {
+      "sha256": "22c406f3bda9fe7c1e43d5ddf61cc763215f20175a5458f5308ff58911e58106",
+      "bytes": 10822
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-short/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    },
+    "build-layer-research/time-projection-controls/composed-short/athena-validation": {
+      "sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "bytes": 10433528
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "e01f7d46e443bfcb269b82a0fb0e69ade376a353a8e8cc076792b72d274a424c",
+      "bytes": 2370567
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "47986e9000426bb8c845aa46eb617cf68ecc090ee36b3de1aa4de91b979c1f32",
+      "bytes": 2370512
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "b8ebd5c5151a5748e78300f417d426e331ce79508b9de469a30e07c84a1c49ae",
+      "bytes": 2370512
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "51620856a1f62edd87a967c567aabb1aaee743a8fa9054ad922e78b58b3b700e",
+      "bytes": 1059760
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "d91416e1b69aa1a7ccc5186e096e7aa770f22e82371efce6063add9fc0d6f733",
+      "bytes": 1059681
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "b806e4a6058311b561e074dbd9c97c4ba1488cdc6db412132c7fe69c2b244b39",
+      "bytes": 1059681
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "153c7d632737111145ac6be45613a16fcbc4a9c186acb63bd1050320da43bf12",
+      "bytes": 3419201
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "b346ba399130aeaa482d4d9d8fccae8bed3bd48a4bb1100caffa55c3fe4df889",
+      "bytes": 3419162
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "089e0d6611277fb53db30d01ce6ac8e3a0281c24879fc5bcc23df857f4255752",
+      "bytes": 3419162
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/hyp.z4c.user.hst": {
+      "sha256": "f75a5aae34b724a1d20d73639421948f95f55cb3dc8727410de0ee74d6390e24",
+      "bytes": 1397
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/layer.athinput": {
+      "sha256": "176c33dfb50c672f7dfb1477bdfeec6f4a9ecbf1457dbef163c0dcdb30095cf3",
+      "bytes": 2398
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/rst/hyp.00000.rst": {
+      "sha256": "7cb354aa51bd5653879f0d045999cee9bb988f2ad1d6147b0cf9b659c2a176f4",
+      "bytes": 6564642
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/rst/hyp.00001.rst": {
+      "sha256": "66b0aeaea850b780181757c46ad16b8fc4c7b55440c8651e17ca61152db6ca3c",
+      "bytes": 6564642
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/rst/hyp.00002.rst": {
+      "sha256": "bbfb980a70f70e0f1855d87883e9a8963c6300d577a02d3bdf4ad79db8dea040",
+      "bytes": 6564642
+    },
+    "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/run.log": {
+      "sha256": "055a0b8366b7fbb0cce4859dfef38c0fa7f4587e5747322e9e13dd6b5e7044ce",
+      "bytes": 554
+    },
+    "build-layer-research/time-projection-controls/composed-short/results.json": {
+      "sha256": "25ca8adb147aa77c3362b9f156deb0414751834a1e7c86da22abcd80d5276df4",
+      "bytes": 10741
+    },
+    "build-layer-research/time-projection-controls/composed-short/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/time-projection-controls/composed-short/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    }
+  },
+  "precision": "RST state binary64; all 25 active BIN fields match exact float32 rounding bitwise. HST text uses production binary64 diagnostics. A quantized BIN difference need not equal the true field drift. Header dt is pm->dt at write time, not always the completed step.",
+  "status": "PASS"
+}

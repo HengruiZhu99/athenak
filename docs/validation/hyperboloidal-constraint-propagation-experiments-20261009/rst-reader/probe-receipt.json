@@ -1,0 +1,30 @@
+{
+  "command": [
+    "/usr/bin/c++",
+    "-std=c++17",
+    "-O2",
+    "-DKOKKOS_DEPENDENCE",
+    "-Isrc",
+    "-Ibuild-layer-spatial-norm-native",
+    "-Ibuild-layer-spatial-norm-native/kokkos",
+    "-Ibuild-layer-spatial-norm-native/kokkos/core/src",
+    "-Ikokkos/core/src",
+    "-Ibuild-layer-spatial-norm-native/kokkos/containers/src",
+    "-Ikokkos/containers/src",
+    "-Ibuild-layer-spatial-norm-native/kokkos/algorithms/src",
+    "-Ikokkos/algorithms/src",
+    "-Ibuild-layer-spatial-norm-native/kokkos/simd/src",
+    "-Ikokkos/simd/src",
+    "-isystem",
+    "kokkos/tpls/desul/include",
+    "-isystem",
+    "kokkos/tpls/mdspan/include",
+    "build-layer-research/time-projection-controls/rst-reader-gate/layout_probe.cpp",
+    "-o",
+    "build-layer-research/time-projection-controls/rst-reader-gate/layout_probe"
+  ],
+  "returncode": 0,
+  "seconds": 1.543311959,
+  "source_sha256": "37623f358b2dbb32508a3865ed4fa7ae18619e159a3492cee05f5b702c64f6d2",
+  "binary_sha256": "fa764d0b94e9a4b86604f64ec612b75b6e9672900a55977c845c5cdc4b4e1b45"
+}

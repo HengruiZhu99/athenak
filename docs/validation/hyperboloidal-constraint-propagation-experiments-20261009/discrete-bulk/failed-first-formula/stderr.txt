@@ -1,0 +1,36 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:156: RuntimeWarning: divide by zero encountered in matmul
+  CL = Q@L
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:156: RuntimeWarning: overflow encountered in matmul
+  CL = Q@L
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:156: RuntimeWarning: invalid value encountered in matmul
+  CL = Q@L
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:180: RuntimeWarning: divide by zero encountered in matmul
+  float(np.max(abs(L@L))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:180: RuntimeWarning: overflow encountered in matmul
+  float(np.max(abs(L@L))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:180: RuntimeWarning: invalid value encountered in matmul
+  float(np.max(abs(L@L))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:186: RuntimeWarning: divide by zero encountered in matmul
+  reduced = T@L@np.linalg.inv(T)
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:186: RuntimeWarning: overflow encountered in matmul
+  reduced = T@L@np.linalg.inv(T)
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:186: RuntimeWarning: invalid value encountered in matmul
+  reduced = T@L@np.linalg.inv(T)
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:194: RuntimeWarning: divide by zero encountered in matmul
+  float(np.max(abs(B@reduced-(1j*alpha*s*speeds+1j*np.dot(velocity,p))[:, None]*B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:194: RuntimeWarning: overflow encountered in matmul
+  float(np.max(abs(B@reduced-(1j*alpha*s*speeds+1j*np.dot(velocity,p))[:, None]*B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:194: RuntimeWarning: invalid value encountered in matmul
+  float(np.max(abs(B@reduced-(1j*alpha*s*speeds+1j*np.dot(velocity,p))[:, None]*B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:201: RuntimeWarning: divide by zero encountered in matmul
+  float(np.max(abs(B@shifted-eigenvalues[:, None]*B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:201: RuntimeWarning: overflow encountered in matmul
+  float(np.max(abs(B@shifted-eigenvalues[:, None]*B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py:201: RuntimeWarning: invalid value encountered in matmul
+  float(np.max(abs(B@shifted-eigenvalues[:, None]*B))))
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py", line 227, in <module>
+    main(sys.argv[1])
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-bianchi/_first_failure_reproduction.py", line 211, in main
+    assert maximum['flat_gauge_formula'] < 2e-10, maximum
+AssertionError: {'D_symbol': 2.394642943326073e-15, 'S_symbol': 6.0574775954251e-14, 'KO_symbol': 3.609459045669709e-15, 'upwind_positive_real': 0.0, 'canonical_matrix': 6.349749892919174e-13, 'complete_basis_residual': 8.518553387695834e-13, 'complete_basis_condition': 11.529152606733899, 'flat_gauge_formula': 56.888888888888914, 'compatible_gauge_leakage': 1.9073980572082003e-12, 'common_scalar_basis_residual': 8.526080944317918e-13, 'nyquist_nilpotence': 5.1493392432493886e-14}

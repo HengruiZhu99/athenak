@@ -1,0 +1,25 @@
+{
+  "scope": "Independent actual-timestep-halving control for failed spatial-norm N24pulse; same immutable source/exe/grid/boundary/initial data. Does not itself establish stability.",
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/run_layer_validation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src/athena",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/N24-half-step-t2",
+    "--suite",
+    "long",
+    "--overrides",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/N24-half-step.athinput",
+    "--duration",
+    "2",
+    "--output-cadence",
+    "0.025"
+  ],
+  "launch_head": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "compiled_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "build_receipt_sha256": "a39430b8c3bcf2e7cc05d03a441831edc493f050afbb687e642418f1e5f56ce6",
+  "native_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+  "all_recorded_production_overlay_hashes_verified": true,
+  "override_sha256": "d255f9d9e6c10563d3cb84d367d46cb12ff64a4b38f4875bb93a7106f618ce1b",
+  "expected_initial_dt": 0.0002138671875,
+  "baseline_initial_dt": 0.000427734375
+}

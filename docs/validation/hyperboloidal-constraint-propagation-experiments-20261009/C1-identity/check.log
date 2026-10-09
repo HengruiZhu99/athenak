@@ -1,0 +1,41 @@
+{
+  "passed_tensor_and_transform": true,
+  "candidate_native_accepted": false,
+  "fulltensor_rows": 384,
+  "relative_or_normalized_errors": {
+    "metric_error": 4.013940970132916e-16,
+    "C0_ADM_error": 1.2515521469761456e-14,
+    "C1_ADM_error": 1.294543708211512e-14,
+    "C1_Theta_error": 4.298339473243223e-12,
+    "C1_Z_extra_shift_error": 8.700565722716007e-13,
+    "covariant_connection_Z_error": 8.05286407390298e-13
+  },
+  "absolute_physical_residual_maxima": {
+    "metric_absolute_residual": 0.01953125,
+    "C0_ADM_absolute_residual": 0.0234375,
+    "C1_ADM_absolute_residual": 0.0234375
+  },
+  "smallest_positive_Omega": 2.4999374999997247e-05,
+  "Einstein_sector_additions_exact_zero": true,
+  "C0_switch_exact_zero": true,
+  "AppendixB_affine_shift_counterexample": {
+    "AppendixB_C1_addition_norm": 0,
+    "noncovariant_Z_rate": 1.0000000000000004,
+    "extra_shift_rate": 1,
+    "repaired_Z_error": 1.1102230246251568e-16
+  },
+  "actual_full20_principal_gate": {
+    "passed_kernel_cases": 360,
+    "max_kernel_symbol_error": 3.552713678800501e-15,
+    "max_left_eigenfield_error": 8.881784197001252e-16,
+    "max_normalized_basis_condition": 11.529152606733899,
+    "old_endpoint_geometric_multiplicity": 3,
+    "harmonic_endpoint_complete": true
+  },
+  "exact_delta_P": "2*chi*(Omega*Ztilde_dalpha - Ztilde_dOmega*alpha)",
+  "exact_delta_Theta": "(-2*Omega**2*Ztilde_dalpha*chi - Omega**2*Ztilde_dchi*alpha - 2*P*Theta*alpha - 4*Theta**2*alpha + 6*Theta*alpha*w)/(2*Omega)",
+  "exact_delta_Kphysical": "alpha*(-Omega**2*Ztilde_dchi - 2*Omega*Ztilde_dOmega*chi - 2*P*Theta - 4*Theta**2 + 6*Theta*w)/Omega",
+  "exact_delta_Lambda": "-2*Theta*gtilde_inverse_dalpha/Omega + 2*Theta*alpha*gtilde_inverse_dOmega/Omega**2",
+  "regularity": "Physical Theta is unrestricted. Lambda contains an actual 2 alpha Theta gtilde_inverse dOmega / Omega^2 addition. No Omega floor, Theta falloff or scri assembly is provided.",
+  "scope": "Mechanical AppendixB C1 matches physical Kij/Theta Z4 identities but retains the printed-system extra Z shift-gradient term. The separately derived connection subtraction restores the physical covector identity at finite Omega. Principal-only equality does not establish offconstraint pole or native stability."
+}

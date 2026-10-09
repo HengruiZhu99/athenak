@@ -1,0 +1,721 @@
+{
+  "passed": true,
+  "seconds": 0.073007,
+  "negative_controls": [
+    {
+      "case": "truncated_payload",
+      "rejected": true,
+      "message": "RST payload size/EOF mismatch (incomplete or other physics)"
+    },
+    {
+      "case": "missing_terminator",
+      "rejected": true,
+      "message": "ParameterInput terminator absent from first40KiB"
+    },
+    {
+      "case": "multi_block",
+      "rejected": true,
+      "message": "requires one uniform root MeshBlock"
+    },
+    {
+      "case": "refined_root",
+      "rejected": true,
+      "message": "requires one uniform root MeshBlock"
+    },
+    {
+      "case": "nan_time",
+      "rejected": true,
+      "message": "invalid exact RST header scalars"
+    },
+    {
+      "case": "zero_dt",
+      "rejected": true,
+      "message": "invalid exact RST header scalars"
+    },
+    {
+      "case": "negative_cycle",
+      "rejected": true,
+      "message": "invalid exact RST header scalars"
+    },
+    {
+      "case": "wrong_payload_size",
+      "rejected": true,
+      "message": "RST payload size/EOF mismatch (incomplete or other physics)"
+    },
+    {
+      "case": "wrong_active_dimension",
+      "rejected": true,
+      "message": "uniform single block dimensions/location mismatch"
+    },
+    {
+      "case": "wrong_coarse_dimension",
+      "rejected": true,
+      "message": "invalid uniform coarse storage indices"
+    },
+    {
+      "case": "changed_active_payload",
+      "rejected": true,
+      "message": "RST rounded to BIN differs: z4c_chi, count=1"
+    }
+  ],
+  "read_only_write_rejected": true,
+  "original_rst_unchanged": true,
+  "reference_drifts": [
+    {
+      "name": "baseline_reference",
+      "snapshots": 3,
+      "max_binary64_active_drift": 1.3093295951669232e-14,
+      "fields": [
+        {
+          "time": 0.0,
+          "cycle": 0,
+          "fields": {
+            "z4c_chi": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gxx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gxy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gxz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gyy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gyz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gzz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Khat": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Axx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Axy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Axz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Ayy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Ayz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Azz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Gamx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Gamy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Gamz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Theta": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_alpha": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_betax": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_betay": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_betaz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Bx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_By": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Bz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            }
+          }
+        },
+        {
+          "time": 0.02523632812499913,
+          "cycle": 59,
+          "fields": {
+            "z4c_chi": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 5.59783948014577e-17
+            },
+            "z4c_gxx": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.1054303473674451e-16
+            },
+            "z4c_gxy": {
+              "max_abs_drift": 3.3306690738754696e-16,
+              "rms_drift": 3.0958010191921756e-17
+            },
+            "z4c_gxz": {
+              "max_abs_drift": 5.828670879282072e-16,
+              "rms_drift": 3.12108903662376e-17
+            },
+            "z4c_gyy": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.1112151409343377e-16
+            },
+            "z4c_gyz": {
+              "max_abs_drift": 5.828670879282072e-16,
+              "rms_drift": 3.041708946764717e-17
+            },
+            "z4c_gzz": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.1277699682893275e-16
+            },
+            "z4c_Khat": {
+              "max_abs_drift": 1.8041124150158794e-15,
+              "rms_drift": 3.296169886155665e-16
+            },
+            "z4c_Axx": {
+              "max_abs_drift": 4.3983700296684825e-15,
+              "rms_drift": 6.823613516862493e-16
+            },
+            "z4c_Axy": {
+              "max_abs_drift": 3.0009835957567703e-15,
+              "rms_drift": 3.844149432557898e-16
+            },
+            "z4c_Axz": {
+              "max_abs_drift": 4.052314039881821e-15,
+              "rms_drift": 3.733922736604053e-16
+            },
+            "z4c_Ayy": {
+              "max_abs_drift": 4.691758412369681e-15,
+              "rms_drift": 6.815344350205482e-16
+            },
+            "z4c_Ayz": {
+              "max_abs_drift": 4.163336342344337e-15,
+              "rms_drift": 3.7807160995538805e-16
+            },
+            "z4c_Azz": {
+              "max_abs_drift": 4.488236501086059e-15,
+              "rms_drift": 6.73106207926501e-16
+            },
+            "z4c_Gamx": {
+              "max_abs_drift": 1.0872299590955965e-14,
+              "rms_drift": 1.29767786430458e-15
+            },
+            "z4c_Gamy": {
+              "max_abs_drift": 1.0446384727647055e-14,
+              "rms_drift": 1.325176330200756e-15
+            },
+            "z4c_Gamz": {
+              "max_abs_drift": 1.0315647599727068e-14,
+              "rms_drift": 1.289476098423346e-15
+            },
+            "z4c_Theta": {
+              "max_abs_drift": 3.735446009212004e-15,
+              "rms_drift": 7.348833345355789e-16
+            },
+            "z4c_alpha": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 9.665732551378313e-17
+            },
+            "z4c_betax": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.171516463158734e-17
+            },
+            "z4c_betay": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.2024763462768357e-17
+            },
+            "z4c_betaz": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.047516868254524e-17
+            },
+            "z4c_Bx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_By": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Bz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            }
+          }
+        },
+        {
+          "time": 0.05,
+          "cycle": 117,
+          "fields": {
+            "z4c_chi": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 5.604993271537774e-17
+            },
+            "z4c_gxx": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.1054303473674451e-16
+            },
+            "z4c_gxy": {
+              "max_abs_drift": 3.3306690738754696e-16,
+              "rms_drift": 4.248548623941197e-17
+            },
+            "z4c_gxz": {
+              "max_abs_drift": 5.828670879282072e-16,
+              "rms_drift": 4.195618795081902e-17
+            },
+            "z4c_gyy": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.1112151409343377e-16
+            },
+            "z4c_gyz": {
+              "max_abs_drift": 5.828670879282072e-16,
+              "rms_drift": 4.177914429573795e-17
+            },
+            "z4c_gzz": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.1277699682893275e-16
+            },
+            "z4c_Khat": {
+              "max_abs_drift": 4.801714581503802e-15,
+              "rms_drift": 3.664467292747326e-16
+            },
+            "z4c_Axx": {
+              "max_abs_drift": 5.6463568651081405e-15,
+              "rms_drift": 7.953916451493829e-16
+            },
+            "z4c_Axy": {
+              "max_abs_drift": 3.635980405647388e-15,
+              "rms_drift": 3.937449492693331e-16
+            },
+            "z4c_Axz": {
+              "max_abs_drift": 8.326672684688674e-15,
+              "rms_drift": 4.010100181591865e-16
+            },
+            "z4c_Ayy": {
+              "max_abs_drift": 6.0151607256329895e-15,
+              "rms_drift": 7.9445662657872545e-16
+            },
+            "z4c_Ayz": {
+              "max_abs_drift": 8.43769498715119e-15,
+              "rms_drift": 3.9952714871002593e-16
+            },
+            "z4c_Azz": {
+              "max_abs_drift": 5.2757113082210134e-15,
+              "rms_drift": 7.785847935284165e-16
+            },
+            "z4c_Gamx": {
+              "max_abs_drift": 1.3093295951669232e-14,
+              "rms_drift": 1.5551104809023603e-15
+            },
+            "z4c_Gamy": {
+              "max_abs_drift": 1.2765877778704023e-14,
+              "rms_drift": 1.5772424198044078e-15
+            },
+            "z4c_Gamz": {
+              "max_abs_drift": 1.3015335171562983e-14,
+              "rms_drift": 1.5368481141967568e-15
+            },
+            "z4c_Theta": {
+              "max_abs_drift": 5.9179710546018485e-15,
+              "rms_drift": 9.974238931711021e-16
+            },
+            "z4c_alpha": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 9.665732551378313e-17
+            },
+            "z4c_betax": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.171701782107212e-17
+            },
+            "z4c_betay": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.202822052791973e-17
+            },
+            "z4c_betaz": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.047789007431394e-17
+            },
+            "z4c_Bx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_By": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Bz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "stage_projection_reference",
+      "snapshots": 3,
+      "max_binary64_active_drift": 1.426616844425858e-14,
+      "fields": [
+        {
+          "time": 0.0,
+          "cycle": 0,
+          "fields": {
+            "z4c_chi": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gxx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gxy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gxz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gyy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gyz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_gzz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Khat": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Axx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Axy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Axz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Ayy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Ayz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Azz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Gamx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Gamy": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Gamz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Theta": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_alpha": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_betax": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_betay": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_betaz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Bx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_By": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Bz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            }
+          }
+        },
+        {
+          "time": 0.02523632812499913,
+          "cycle": 59,
+          "fields": {
+            "z4c_chi": {
+              "max_abs_drift": 1.1102230246251565e-16,
+              "rms_drift": 5.590676534818806e-17
+            },
+            "z4c_gxx": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.0732433859283654e-16
+            },
+            "z4c_gxy": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 2.971771973032825e-17
+            },
+            "z4c_gxz": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 2.933988898796358e-17
+            },
+            "z4c_gyy": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.0776215179915104e-16
+            },
+            "z4c_gyz": {
+              "max_abs_drift": 2.3510723898577257e-16,
+              "rms_drift": 2.982966309877823e-17
+            },
+            "z4c_gzz": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.049553144582044e-16
+            },
+            "z4c_Khat": {
+              "max_abs_drift": 1.8596235662471372e-15,
+              "rms_drift": 3.2934710339385074e-16
+            },
+            "z4c_Axx": {
+              "max_abs_drift": 5.051514762044462e-15,
+              "rms_drift": 7.321633036694717e-16
+            },
+            "z4c_Axy": {
+              "max_abs_drift": 3.07789082835352e-15,
+              "rms_drift": 3.7930823927084444e-16
+            },
+            "z4c_Axz": {
+              "max_abs_drift": 3.2365028801051196e-15,
+              "rms_drift": 3.824305186505292e-16
+            },
+            "z4c_Ayy": {
+              "max_abs_drift": 4.8384971068823244e-15,
+              "rms_drift": 7.491078157004594e-16
+            },
+            "z4c_Ayz": {
+              "max_abs_drift": 3.638426608624757e-15,
+              "rms_drift": 3.781815313660532e-16
+            },
+            "z4c_Azz": {
+              "max_abs_drift": 5.072913463999785e-15,
+              "rms_drift": 7.26603187635024e-16
+            },
+            "z4c_Gamx": {
+              "max_abs_drift": 1.1355596466254679e-14,
+              "rms_drift": 1.3530423715343374e-15
+            },
+            "z4c_Gamy": {
+              "max_abs_drift": 1.1257723306350992e-14,
+              "rms_drift": 1.3898019474868539e-15
+            },
+            "z4c_Gamz": {
+              "max_abs_drift": 1.0237134232248969e-14,
+              "rms_drift": 1.345277884538638e-15
+            },
+            "z4c_Theta": {
+              "max_abs_drift": 4.0286974505972125e-15,
+              "rms_drift": 7.417306077018033e-16
+            },
+            "z4c_alpha": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 9.665732551378313e-17
+            },
+            "z4c_betax": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.1715537690447964e-17
+            },
+            "z4c_betay": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.20262002273362e-17
+            },
+            "z4c_betaz": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.0475548828246504e-17
+            },
+            "z4c_Bx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_By": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Bz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            }
+          }
+        },
+        {
+          "time": 0.05,
+          "cycle": 117,
+          "fields": {
+            "z4c_chi": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 5.604993271537774e-17
+            },
+            "z4c_gxx": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.0733367236148426e-16
+            },
+            "z4c_gxy": {
+              "max_abs_drift": 3.3175196822718136e-16,
+              "rms_drift": 4.1687538918373164e-17
+            },
+            "z4c_gxz": {
+              "max_abs_drift": 3.3476580978229695e-16,
+              "rms_drift": 4.147930999310181e-17
+            },
+            "z4c_gyy": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.0775285514625886e-16
+            },
+            "z4c_gyz": {
+              "max_abs_drift": 3.854707631292359e-16,
+              "rms_drift": 4.161325649435453e-17
+            },
+            "z4c_gzz": {
+              "max_abs_drift": 6.661338147750939e-16,
+              "rms_drift": 1.049553144582044e-16
+            },
+            "z4c_Khat": {
+              "max_abs_drift": 4.85722573273506e-15,
+              "rms_drift": 3.6233540242086505e-16
+            },
+            "z4c_Axx": {
+              "max_abs_drift": 5.933065483183955e-15,
+              "rms_drift": 8.700555079762497e-16
+            },
+            "z4c_Axy": {
+              "max_abs_drift": 3.2387953099850295e-15,
+              "rms_drift": 3.8840200741592443e-16
+            },
+            "z4c_Axz": {
+              "max_abs_drift": 3.625244987766252e-15,
+              "rms_drift": 3.924600337712859e-16
+            },
+            "z4c_Ayy": {
+              "max_abs_drift": 5.503621810341079e-15,
+              "rms_drift": 8.801404386953534e-16
+            },
+            "z4c_Ayz": {
+              "max_abs_drift": 3.8875822381307266e-15,
+              "rms_drift": 3.8940851524339936e-16
+            },
+            "z4c_Azz": {
+              "max_abs_drift": 5.7609408478040825e-15,
+              "rms_drift": 8.597379831483491e-16
+            },
+            "z4c_Gamx": {
+              "max_abs_drift": 1.426616844425858e-14,
+              "rms_drift": 1.6096488002793318e-15
+            },
+            "z4c_Gamy": {
+              "max_abs_drift": 1.351336456716489e-14,
+              "rms_drift": 1.6447135007919866e-15
+            },
+            "z4c_Gamz": {
+              "max_abs_drift": 1.268763577703531e-14,
+              "rms_drift": 1.591597507263539e-15
+            },
+            "z4c_Theta": {
+              "max_abs_drift": 6.067160495864627e-15,
+              "rms_drift": 1.0003745009758295e-15
+            },
+            "z4c_alpha": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 9.665732551378313e-17
+            },
+            "z4c_betax": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.171746468876134e-17
+            },
+            "z4c_betay": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.202841329810571e-17
+            },
+            "z4c_betaz": {
+              "max_abs_drift": 2.220446049250313e-16,
+              "rms_drift": 4.04778529466358e-17
+            },
+            "z4c_Bx": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_By": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            },
+            "z4c_Bz": {
+              "max_abs_drift": 0.0,
+              "rms_drift": 0.0
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "build-layer-research/time-projection-controls/rst-reader-gate/validate_rst.py": "e149c4a5779cf33c66ea69f0be02d951d1c14dcb558380d346592c04a918dc90",
+    "build-layer-research/time-projection-controls/rst-reader-gate/test_reader.py": "36ac48f349116e22d25d351b40865de88bb047def5f45ab83348d3ea50e5abeb",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec"
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "command": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-spatialnorm",
+    "16",
+    "2.2",
+    "0.0001"
+  ],
+  "metadata": {
+    "points": 1640,
+    "dimension": 32800,
+    "n": 16,
+    "span": 2.2,
+    "spacing": 0.1375,
+    "kappa": 10,
+    "ko": 0.1,
+    "degree": 2,
+    "symmetric": true,
+    "a": 0.5,
+    "r0": 0.05,
+    "r1": 0.95,
+    "local_jacobian_step": 0.0001,
+    "cache_seconds": 1.304613209,
+    "min_omega": 0.0026953124999994555,
+    "spatialnorm": true,
+    "xyz_omega_volume_ginv_chi_metadata_only": {
+      "shape": [
+        1640,
+        12
+      ],
+      "json_sha256": "5703b6aac618968b0699b264f561eb998228a50c07c95a9c243c29f4a1d56e10"
+    }
+  },
+  "source_sha256": "2fe2b120e9b5d7881c689e02b1b7934283a806e0475f0240e476f7f81aec4013",
+  "old_jv_source_sha256": "73331d8f7aff09083ce37e7e354fe8de23c20f8b084175443a71bcf42e8bdf4f",
+  "executable_sha256": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+  "driver_sha256": "fe2c512870df013db6cb684369eacfb63bfc112aed5036caeebc1ceda1cc65e6",
+  "build_command": [
+    "/usr/bin/c++",
+    "-DSPATIAL_NORM",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/tangent_server.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-spatialnorm",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "vectors": [
+    {
+      "name": "gauge_pulse",
+      "fast_norm": 28.482168621603478,
+      "native_epsilon_sweep": [
+        {
+          "eps_normalized_linf": 0.001,
+          "relative_l2_vs_cache": 1.0335649345177538e-07,
+          "linf_vs_cache": 1.1160670918767667e-06
+        },
+        {
+          "eps_normalized_linf": 0.0003,
+          "relative_l2_vs_cache": 3.039846814356533e-08,
+          "linf_vs_cache": 3.284379826212682e-07
+        },
+        {
+          "eps_normalized_linf": 0.0001,
+          "relative_l2_vs_cache": 9.823180515881404e-09,
+          "linf_vs_cache": 1.0612849909866565e-07
+        },
+        {
+          "eps_normalized_linf": 3e-05,
+          "relative_l2_vs_cache": 2.6288386240878855e-09,
+          "linf_vs_cache": 2.8320042545965964e-08
+        },
+        {
+          "eps_normalized_linf": 1e-05,
+          "relative_l2_vs_cache": 7.394677630409119e-10,
+          "linf_vs_cache": 6.089283704656043e-09
+        },
+        {
+          "eps_normalized_linf": 3e-06,
+          "relative_l2_vs_cache": 1.6041589303658121e-09,
+          "linf_vs_cache": 2.3493332565807656e-09
+        }
+      ],
+      "native_sweep_seconds": 0.13082662500000009,
+      "fast_seconds_per_call": 0.009859833299999999,
+      "initial_constraints_component_rms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "constraint_tangent_component_rms": [
+        0.8247470480559264,
+        1.0829584652206283,
+        1.081764005854943,
+        1.0817636603953142,
+        0.06988708623721904,
+        0.030804717842994964,
+        0.030666082779388967
+      ]
+    },
+    {
+      "name": "smooth_geometry",
+      "fast_norm": 34954.08736154895,
+      "native_epsilon_sweep": [
+        {
+          "eps_normalized_linf": 0.001,
+          "relative_l2_vs_cache": 2.2477657223537076e-09,
+          "linf_vs_cache": 8.726815072801486e-06
+        },
+        {
+          "eps_normalized_linf": 0.0003,
+          "relative_l2_vs_cache": 2.0233717579787898e-10,
+          "linf_vs_cache": 7.856448740461985e-07
+        },
+        {
+          "eps_normalized_linf": 0.0001,
+          "relative_l2_vs_cache": 2.4184800674421714e-11,
+          "linf_vs_cache": 8.748901936250775e-08
+        },
+        {
+          "eps_normalized_linf": 3e-05,
+          "relative_l2_vs_cache": 2.938987120198608e-11,
+          "linf_vs_cache": 1.715029611659702e-07
+        },
+        {
+          "eps_normalized_linf": 1e-05,
+          "relative_l2_vs_cache": 9.55906088559001e-11,
+          "linf_vs_cache": 4.590388016367797e-07
+        },
+        {
+          "eps_normalized_linf": 3e-06,
+          "relative_l2_vs_cache": 3.07132237016082e-10,
+          "linf_vs_cache": 1.6274144627459464e-06
+        }
+      ],
+      "native_sweep_seconds": 0.12566608300000004,
+      "fast_seconds_per_call": 0.010217212500000006,
+      "initial_constraints_component_rms": [
+        12.409812365045813,
+        0.5181809059799645,
+        0.5170364545806958,
+        0.5170364545811098,
+        0.025918681635431106,
+        0.02587059455237688,
+        0.025870594552377214
+      ],
+      "constraint_tangent_component_rms": [
+        128.548740687447,
+        2203.3844941749985,
+        2201.4683529716785,
+        2201.468352971608,
+        42.38648287701317,
+        42.34593624888533,
+        42.34593624888594
+      ]
+    },
+    {
+      "name": "white_random",
+      "fast_norm": 1197204.2670539995,
+      "native_epsilon_sweep": [
+        {
+          "eps_normalized_linf": 0.001,
+          "relative_l2_vs_cache": 5.329751829662815e-07,
+          "linf_vs_cache": 0.1866637251805514
+        },
+        {
+          "eps_normalized_linf": 0.0003,
+          "relative_l2_vs_cache": 4.9984377768907694e-08,
+          "linf_vs_cache": 0.016799740740680136
+        },
+        {
+          "eps_normalized_linf": 0.0001,
+          "relative_l2_vs_cache": 7.157445924606782e-09,
+          "linf_vs_cache": 0.0018666143587324768
+        },
+        {
+          "eps_normalized_linf": 3e-05,
+          "relative_l2_vs_cache": 1.408236124650951e-09,
+          "linf_vs_cache": 0.00044110192147517324
+        },
+        {
+          "eps_normalized_linf": 1e-05,
+          "relative_l2_vs_cache": 3.454418641736234e-10,
+          "linf_vs_cache": 0.00012014092137002663
+        },
+        {
+          "eps_normalized_linf": 3e-06,
+          "relative_l2_vs_cache": 9.836876150273969e-11,
+          "linf_vs_cache": 1.756456185830757e-05
+        }
+      ],
+      "native_sweep_seconds": 0.12589266599999993,
+      "fast_seconds_per_call": 0.009965058299999986,
+      "initial_constraints_component_rms": [
+        378.440407129785,
+        18.438046792314537,
+        18.19825267974296,
+        19.270471346611735,
+        9.291306745435655,
+        9.227505577939205,
+        10.824826935288709
+      ],
+      "constraint_tangent_component_rms": [
+        73002.68377621437,
+        56205.844948062164,
+        52421.70332197491,
+        64010.14215902077,
+        3208.2245718638087,
+        3197.395931516371,
+        4103.89061655981
+      ]
+    },
+    {
+      "name": "shell_random",
+      "fast_norm": 3078.6290302201105,
+      "native_epsilon_sweep": [
+        {
+          "eps_normalized_linf": 0.001,
+          "relative_l2_vs_cache": 1.882363850163287e-07,
+          "linf_vs_cache": 0.00014899690086167539
+        },
+        {
+          "eps_normalized_linf": 0.0003,
+          "relative_l2_vs_cache": 1.694088233602318e-08,
+          "linf_vs_cache": 1.3408802317371737e-05
+        },
+        {
+          "eps_normalized_linf": 0.0001,
+          "relative_l2_vs_cache": 1.88205627125243e-09,
+          "linf_vs_cache": 1.4895975368744985e-06
+        },
+        {
+          "eps_normalized_linf": 3e-05,
+          "relative_l2_vs_cache": 1.6919752969829658e-10,
+          "linf_vs_cache": 1.31364458866301e-07
+        },
+        {
+          "eps_normalized_linf": 1e-05,
+          "relative_l2_vs_cache": 4.915857527658554e-11,
+          "linf_vs_cache": 2.2529576426677522e-08
+        },
+        {
+          "eps_normalized_linf": 3e-06,
+          "relative_l2_vs_cache": 1.347118904318775e-10,
+          "linf_vs_cache": 6.528908969016811e-08
+        }
+      ],
+      "native_sweep_seconds": 0.12275225000000001,
+      "fast_seconds_per_call": 0.009240033400000014,
+      "initial_constraints_component_rms": [
+        0.2578667580837113,
+        0.03657255348935694,
+        0.03850498670575306,
+        0.03881132566284137,
+        0.021738309338707972,
+        0.02130621946210636,
+        0.02597295068107731
+      ],
+      "constraint_tangent_component_rms": [
+        16.98290073610135,
+        117.29052716238097,
+        126.28771294814551,
+        165.1453104786491,
+        8.396220456218698,
+        7.142582973744642,
+        10.158560261604542
+      ]
+    }
+  ],
+  "cache_additivity_relative_l2": 4.544092345340095e-16,
+  "total_seconds": 2.7988743329999997,
+  "server_exit_status": 0,
+  "stderr_sha256": "a4c4ed70e61adca49ab9d39dbdab9c9f58ccbac5aee085b7f3c3064977cefbda",
+  "original_receipt_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/projected-v1/spatialnorm-cache0.0001-validation.json",
+  "original_receipt_sha256": "b097db5050b630adcce1b8bb2431d3e6ce5b05034cec68d4a4931045be550c56"
+}

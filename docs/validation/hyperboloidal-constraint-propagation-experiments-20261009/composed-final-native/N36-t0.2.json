@@ -1,0 +1,1526 @@
+{
+  "scope": "Completed bounded private composed-operator preflight. All 25 state fields use full-precision restart data; standard production HST differential-constraint diagnostics stay unchanged. Physical box cells are paired by uniform grid index across ng4/ng3, with floating-coordinate differences measured. No stability acceptance, temporal order, exact initial bitwise identity or BH claim.",
+  "head": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "seconds": 0.7584519590000001,
+  "build_verification": {
+    "base_build_receipt_sha256": "a39430b8c3bcf2e7cc05d03a441831edc493f050afbb687e642418f1e5f56ce6",
+    "private_build_receipt_sha256": "f2c884662b04b68b4efef0cb1dedb2e11b26f242683427642d233afbf433c886",
+    "all_six_private_objects_and_dependency_files_verified": true,
+    "all_private_sources_and_repository_dependencies_verified": true,
+    "all_reused_base_link_inputs_verified": true,
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16"
+  },
+  "private_case": "finite-angular-long-N36",
+  "baseline_case": "finite-angular-long-N36",
+  "input_parameter_differences": {
+    "mesh/nghost": [
+      "3",
+      "4"
+    ]
+  },
+  "physical_grid_and_index_alignment_verified": true,
+  "native_coordinate_construction_max_difference": 2.220446049250313e-16,
+  "active_physical_box_masks_identical": true,
+  "initial_arrays_bitwise_equal": false,
+  "initial_full_precision_active_max_difference": 7.993605777301127e-15,
+  "exact_final_comparison_time": 0.2,
+  "final_original_HST_diagnostics": {
+    "H": {
+      "private": 0.013556367384844933,
+      "baseline": 0.010763938154042862,
+      "ratio": 1.259424496019912
+    },
+    "M": {
+      "private": 0.007134943119924887,
+      "baseline": 0.006958314541584385,
+      "ratio": 1.0253838163372655
+    },
+    "Z": {
+      "private": 0.00209046098243833,
+      "baseline": 0.002256118670098246,
+      "ratio": 0.9265740362617086
+    },
+    "Theta": {
+      "private": 9.767460026751781e-05,
+      "baseline": 9.863287636996766e-05,
+      "ratio": 0.9902844149160226
+    }
+  },
+  "final_equal_time_full_precision_fields": {
+    "z4c_chi": {
+      "initial_max_difference": 4.440892098500626e-16,
+      "initial_rms_difference": 5.619919119369996e-17,
+      "final_max_difference": 0.0004143245603456247,
+      "final_rms_difference": 4.278595407840064e-05,
+      "baseline_rms_change": 0.0027549766042851203
+    },
+    "z4c_gxx": {
+      "initial_max_difference": 1.1102230246251565e-15,
+      "initial_rms_difference": 9.482706001344357e-17,
+      "final_max_difference": 0.00046881842324431044,
+      "final_rms_difference": 4.2078536462593985e-05,
+      "baseline_rms_change": 0.005020845422916745
+    },
+    "z4c_gxy": {
+      "initial_max_difference": 8.326672684688674e-16,
+      "initial_rms_difference": 6.395861689032642e-17,
+      "final_max_difference": 0.0003094663451866873,
+      "final_rms_difference": 2.6858294885244576e-05,
+      "baseline_rms_change": 0.003901103092243275
+    },
+    "z4c_gxz": {
+      "initial_max_difference": 7.771561172376096e-16,
+      "initial_rms_difference": 6.21413999893827e-17,
+      "final_max_difference": 0.00030788686203972503,
+      "final_rms_difference": 2.685134463851283e-05,
+      "baseline_rms_change": 0.0039000599073733305
+    },
+    "z4c_gyy": {
+      "initial_max_difference": 1.1102230246251565e-15,
+      "initial_rms_difference": 9.279439123448106e-17,
+      "final_max_difference": 0.00042082839750723355,
+      "final_rms_difference": 4.129853176913925e-05,
+      "baseline_rms_change": 0.004691962309768951
+    },
+    "z4c_gyz": {
+      "initial_max_difference": 8.326672684688674e-16,
+      "initial_rms_difference": 6.124469364971134e-17,
+      "final_max_difference": 0.00027448685344200023,
+      "final_rms_difference": 2.6270777104337745e-05,
+      "baseline_rms_change": 0.0036951777944790407
+    },
+    "z4c_gzz": {
+      "initial_max_difference": 1.1102230246251565e-15,
+      "initial_rms_difference": 9.210580535622263e-17,
+      "final_max_difference": 0.00042067395612754854,
+      "final_rms_difference": 4.1298250138670095e-05,
+      "baseline_rms_change": 0.004691549102169679
+    },
+    "z4c_Khat": {
+      "initial_max_difference": 2.6645352591003757e-15,
+      "initial_rms_difference": 3.4071271231658863e-16,
+      "final_max_difference": 0.0010526556735284964,
+      "final_rms_difference": 0.00015681382857432653,
+      "baseline_rms_change": 0.03948925383330889
+    },
+    "z4c_Axx": {
+      "initial_max_difference": 1.9984014443252818e-15,
+      "initial_rms_difference": 1.6306755314635659e-16,
+      "final_max_difference": 0.005136533413085417,
+      "final_rms_difference": 0.00042547334766265376,
+      "baseline_rms_change": 0.01231037993971648
+    },
+    "z4c_Axy": {
+      "initial_max_difference": 1.6653345369377348e-15,
+      "initial_rms_difference": 1.2549953479873518e-16,
+      "final_max_difference": 0.005397664839113258,
+      "final_rms_difference": 0.0004355452558099463,
+      "baseline_rms_change": 0.008443696874466462
+    },
+    "z4c_Axz": {
+      "initial_max_difference": 1.6653345369377348e-15,
+      "initial_rms_difference": 1.197029345946935e-16,
+      "final_max_difference": 0.005275581279898816,
+      "final_rms_difference": 0.0004354242090726139,
+      "baseline_rms_change": 0.008443539623628307
+    },
+    "z4c_Ayy": {
+      "initial_max_difference": 1.9984014443252818e-15,
+      "initial_rms_difference": 1.619393857854516e-16,
+      "final_max_difference": 0.004645516017738294,
+      "final_rms_difference": 0.00041618628873414117,
+      "baseline_rms_change": 0.012318554059930254
+    },
+    "z4c_Ayz": {
+      "initial_max_difference": 1.6653345369377348e-15,
+      "initial_rms_difference": 1.196942293627467e-16,
+      "final_max_difference": 0.0045857994491464524,
+      "final_rms_difference": 0.00042360722567385905,
+      "baseline_rms_change": 0.00843931839232341
+    },
+    "z4c_Azz": {
+      "initial_max_difference": 1.9984014443252818e-15,
+      "initial_rms_difference": 1.5475892113579574e-16,
+      "final_max_difference": 0.004616444378673694,
+      "final_rms_difference": 0.0004161809725393114,
+      "baseline_rms_change": 0.012318540364788381
+    },
+    "z4c_Gamx": {
+      "initial_max_difference": 7.327471962526033e-15,
+      "initial_rms_difference": 6.845679620465889e-16,
+      "final_max_difference": 0.019932501061333534,
+      "final_rms_difference": 0.0012388154964775072,
+      "baseline_rms_change": 0.024881149600539915
+    },
+    "z4c_Gamy": {
+      "initial_max_difference": 7.993605777301127e-15,
+      "initial_rms_difference": 6.959247030496496e-16,
+      "final_max_difference": 0.020608636159432342,
+      "final_rms_difference": 0.00119789333700889,
+      "baseline_rms_change": 0.021466569309900232
+    },
+    "z4c_Gamz": {
+      "initial_max_difference": 7.327471962526033e-15,
+      "initial_rms_difference": 6.618073662445368e-16,
+      "final_max_difference": 0.020461493599381,
+      "final_rms_difference": 0.0011977827347630103,
+      "baseline_rms_change": 0.021456027729613584
+    },
+    "z4c_Theta": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0005735915602556897,
+      "final_rms_difference": 8.502027605869551e-05,
+      "baseline_rms_change": 9.8632876369968e-05
+    },
+    "z4c_alpha": {
+      "initial_max_difference": 6.661338147750939e-16,
+      "initial_rms_difference": 1.1013088358300397e-16,
+      "final_max_difference": 0.0003683139737165053,
+      "final_rms_difference": 3.233924079244109e-05,
+      "baseline_rms_change": 0.01531334510062707
+    },
+    "z4c_betax": {
+      "initial_max_difference": 1.1102230246251565e-15,
+      "initial_rms_difference": 1.0741027023608853e-16,
+      "final_max_difference": 0.0003174956046967381,
+      "final_rms_difference": 2.3175353972280978e-05,
+      "baseline_rms_change": 0.0015092462742128626
+    },
+    "z4c_betay": {
+      "initial_max_difference": 1.1102230246251565e-15,
+      "initial_rms_difference": 1.0655099821906723e-16,
+      "final_max_difference": 0.0002801198627599977,
+      "final_rms_difference": 2.1578731764897218e-05,
+      "baseline_rms_change": 0.001341873146866265
+    },
+    "z4c_betaz": {
+      "initial_max_difference": 9.992007221626409e-16,
+      "initial_rms_difference": 1.0366029447331741e-16,
+      "final_max_difference": 0.0002776593267201921,
+      "final_rms_difference": 2.157580177364934e-05,
+      "baseline_rms_change": 0.0013415381361900256
+    },
+    "z4c_Bx": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    },
+    "z4c_By": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    },
+    "z4c_Bz": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    }
+  },
+  "private_history_rows": [
+    [
+      0.0,
+      0.00011510416666666207,
+      5.881141483419905e-15,
+      1.0075360934212766e-15,
+      1.1038670280509313e-16,
+      0.0,
+      8.881784197001252e-16,
+      1.0800087121312207e-15,
+      1.0013085680841045,
+      0.7612904298636871,
+      4.272695001614032e-14,
+      5.899368691122903e-15,
+      4.97231864450276e-05,
+      4.3893474817481944e-05,
+      21008.0
+    ],
+    [
+      0.02509270833333227,
+      0.00011510416666666207,
+      0.001428920862360889,
+      0.0015481524821596988,
+      0.0005918299961836886,
+      1.7528736086219357e-05,
+      8.881784197001252e-16,
+      8.200970636243391e-16,
+      1.0021210747440161,
+      0.7608844006030698,
+      0.023665558276775925,
+      0.014496063865877176,
+      0.04091119667096944,
+      0.0005122436142066467,
+      21008.0
+    ],
+    [
+      0.05007031249999826,
+      0.00011510416666666207,
+      0.002631376910979054,
+      0.0020354985880306144,
+      0.0007596163394982285,
+      2.899039926257615e-05,
+      8.881784197001252e-16,
+      9.063742910291994e-16,
+      1.0025651710624461,
+      0.7603571020269648,
+      0.03590556601290965,
+      0.017456244913034522,
+      0.04947001819404528,
+      0.0007742117842601378,
+      21008.0
+    ],
+    [
+      0.07504791666666367,
+      0.00011510416666666207,
+      0.003564907160910063,
+      0.002554947952867765,
+      0.00088928135285361,
+      4.0602786458106594e-05,
+      8.881784197001252e-16,
+      7.624370255385066e-16,
+      1.0023623936001163,
+      0.7597563084713927,
+      0.02670374361231173,
+      0.019467874682845936,
+      0.059122890060465026,
+      0.0010635662189040441,
+      21008.0
+    ],
+    [
+      0.10002552083332834,
+      0.00011510416666666207,
+      0.005142350847204641,
+      0.003024760915505003,
+      0.0009853277544445635,
+      5.052230592139473e-05,
+      8.881784197001252e-16,
+      7.165767142438098e-16,
+      1.0011667995085645,
+      0.7591329988664227,
+      0.04178693585549818,
+      0.01942905613574954,
+      0.06671680852494569,
+      0.0012795442340173206,
+      21008.0
+    ],
+    [
+      0.12500312499999303,
+      0.00011510416666666207,
+      0.007471126401149042,
+      0.003428495247008132,
+      0.001065902408267189,
+      5.962316711810114e-05,
+      9.992007221626409e-16,
+      7.456107727022427e-16,
+      0.9986280095048715,
+      0.7585468204525896,
+      0.07423180719120423,
+      0.022189570061898145,
+      0.0708108833980692,
+      0.0018754437952775464,
+      21008.0
+    ],
+    [
+      0.15009583333332435,
+      0.00011510416666666207,
+      0.009871932893528343,
+      0.003940044147747346,
+      0.0011924728432845869,
+      6.94685975166474e-05,
+      8.881784197001252e-16,
+      6.920171708297123e-16,
+      0.9940909093453462,
+      0.7580571404871549,
+      0.09275378935918047,
+      0.030474792714446322,
+      0.07021595057228859,
+      0.0028300080652146984,
+      21008.0
+    ],
+    [
+      0.17507343749998902,
+      0.00011510416666666207,
+      0.011929658119011326,
+      0.005010064702453474,
+      0.001489713264521773,
+      8.154944090477287e-05,
+      8.881784197001252e-16,
+      7.031466163826065e-16,
+      0.9841756584297278,
+      0.757740015344403,
+      0.10517004059379063,
+      0.048133568439083126,
+      0.1013795379519678,
+      0.003929434956576221,
+      21008.0
+    ],
+    [
+      0.2,
+      0.00011510416666666207,
+      0.013556367384844933,
+      0.007134943119924887,
+      0.00209046098243833,
+      9.767460026751781e-05,
+      8.881784197001252e-16,
+      7.223923164400106e-16,
+      0.976372370334758,
+      0.7576740225980818,
+      0.10708011745867618,
+      0.07016776876317424,
+      0.16938163950790713,
+      0.005533475000715976,
+      21008.0
+    ]
+  ],
+  "baseline_history_rows": [
+    [
+      0.0,
+      0.00011510416666666207,
+      5.9205263358143055e-15,
+      1.0339304631414346e-15,
+      1.1027636185879319e-16,
+      0.0,
+      8.881784197001252e-16,
+      1.0800087121312207e-15,
+      1.0013085680841045,
+      0.7612904298636871,
+      4.2726895806031904e-14,
+      6.176479774936182e-15,
+      4.97231864450276e-05,
+      4.3893474817481944e-05,
+      21008.0
+    ],
+    [
+      0.02509270833333227,
+      0.00011510416666666207,
+      0.0012725955661822084,
+      0.0012850591606712676,
+      0.0003585386705262219,
+      1.7044605257434383e-05,
+      8.881784197001252e-16,
+      7.166974344557991e-16,
+      1.002121477291804,
+      0.7608841501953941,
+      0.01997103084321405,
+      0.009394471875282858,
+      0.02906727257130644,
+      0.0004303754643696174,
+      21008.0
+    ],
+    [
+      0.05007031249999826,
+      0.00011510416666666207,
+      0.002198684051211863,
+      0.001959061931576465,
+      0.00046917186619229324,
+      3.929861129220233e-05,
+      8.881784197001252e-16,
+      6.376833389985698e-16,
+      1.002570345594995,
+      0.7603565352471288,
+      0.02101750973244243,
+      0.014959971852155605,
+      0.03050164395941983,
+      0.0004424443321871535,
+      21008.0
+    ],
+    [
+      0.07504791666666367,
+      0.00011510416666666207,
+      0.0033511378509564808,
+      0.0025751190411767086,
+      0.000578529107035325,
+      5.692733445596715e-05,
+      8.881784197001252e-16,
+      6.629497259267659e-16,
+      1.0023770947438977,
+      0.7597564595407338,
+      0.0232233604785973,
+      0.01606372107309271,
+      0.04184168194173137,
+      0.0005955767625092095,
+      21008.0
+    ],
+    [
+      0.10002552083332834,
+      0.00011510416666666207,
+      0.004895708594910899,
+      0.0031438591617779462,
+      0.0007135524911153747,
+      6.393014428707249e-05,
+      8.881784197001252e-16,
+      6.858639643856587e-16,
+      1.001180856535285,
+      0.7591341109842838,
+      0.03373614243086276,
+      0.02459117421122797,
+      0.06016006259032076,
+      0.0009868481310448473,
+      21008.0
+    ],
+    [
+      0.12500312499999303,
+      0.00011510416666666207,
+      0.006513614000960427,
+      0.003670103097333222,
+      0.0009052267393946315,
+      6.636603552902338e-05,
+      8.881784197001252e-16,
+      6.826779395323036e-16,
+      0.9986359255034786,
+      0.758547310312811,
+      0.044075388046267205,
+      0.03313474011401912,
+      0.07800861552561643,
+      0.0017522802575735106,
+      21008.0
+    ],
+    [
+      0.15009583333332435,
+      0.00011510416666666207,
+      0.008017502860154279,
+      0.004257695180134399,
+      0.0011919761517665552,
+      7.194492279189647e-05,
+      8.881784197001252e-16,
+      7.069289625532368e-16,
+      0.9940931007084234,
+      0.7580556107122516,
+      0.053710420338236475,
+      0.041093457038751294,
+      0.09358516532113444,
+      0.0027027030775759967,
+      21008.0
+    ],
+    [
+      0.17507343749998902,
+      0.00011510416666666207,
+      0.009396101669691443,
+      0.005284895706335228,
+      0.0016261755072381338,
+      8.342735503674223e-05,
+      8.881784197001252e-16,
+      7.588822326340255e-16,
+      0.9844548840005152,
+      0.7577333006725948,
+      0.06136268803962708,
+      0.049902544966515354,
+      0.1049874657688786,
+      0.0037986144743776995,
+      21008.0
+    ],
+    [
+      0.2,
+      0.00011510416666666207,
+      0.010763938154042862,
+      0.006958314541584385,
+      0.002256118670098246,
+      9.863287636996766e-05,
+      8.881784197001252e-16,
+      7.038861191871145e-16,
+      0.9767406843084745,
+      0.7576607106895581,
+      0.06883417590710936,
+      0.05867001809606921,
+      0.11015560450343866,
+      0.005347258417252841,
+      21008.0
+    ]
+  ],
+  "private_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0013085680841045,
+      "chi_min": 0.7612904298636871,
+      "physical_metric_eigen_min": 0.9999999999999987,
+      "physical_metric_eigen_max": 2.2664643328100476,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 9.992007221626409e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00000.bin": {
+          "sha256": "9b3cdc2facead6a4f5a77375fa014f05dc677937341d0902f0d4f5913b386553",
+          "bytes": 8870465
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00000.rst": {
+          "sha256": "b464dc75e4f8e6fdded8bab327eb44d20b2379434d62a8254c3fa0e75273b2a7",
+          "bytes": 17047842
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02509270833333227,
+      "cycle": 218,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0021210747440161,
+      "chi_min": 0.7608844006030698,
+      "physical_metric_eigen_min": 0.9976504334111048,
+      "physical_metric_eigen_max": 2.26898782473422,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 7.771561172376096e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00001.bin": {
+          "sha256": "ea0b3df6877ed2b87535a6105c9ece77c752d479ccc5f1f215d0ee1055704a0c",
+          "bytes": 8870811
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00001.rst": {
+          "sha256": "7c7c008991434676c5309bee015753e9ac3adcae216dcb31a82c6865d4d0c6d7",
+          "bytes": 17048478
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.11441149126477725
+    },
+    {
+      "time": 0.05007031249999826,
+      "cycle": 435,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0025651710624461,
+      "chi_min": 0.7603571020269648,
+      "physical_metric_eigen_min": 0.9938305878752208,
+      "physical_metric_eigen_max": 2.2727643853427804,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00002.bin": {
+          "sha256": "a33814962b74976f332b48a1f24ab5a998608ce46e8a7b74c433fef611e1f59b",
+          "bytes": 8871063
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00002.rst": {
+          "sha256": "136a64a8ea43d63dfeb6b791355155061488bb75516680fffc55e41b304d8e56",
+          "bytes": 17048478
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2099916310935349
+    },
+    {
+      "time": 0.07504791666666367,
+      "cycle": 652,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0023623936001163,
+      "chi_min": 0.7597563084713927,
+      "physical_metric_eigen_min": 0.9891039151041426,
+      "physical_metric_eigen_max": 2.277727715014687,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 7.771561172376096e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00003.bin": {
+          "sha256": "c4f9879f77ec8cceb4f45675de55c00175dc7ed883250c3d2b25afc915a8f5a7",
+          "bytes": 8871063
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00003.rst": {
+          "sha256": "2a0a1c3ebf95a911ef8186a601c9d9141ed6673322e956341aa34d5dd9b3c3e7",
+          "bytes": 17048478
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2716325905893889
+    },
+    {
+      "time": 0.10002552083332834,
+      "cycle": 869,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0011667995085645,
+      "chi_min": 0.7591329988664227,
+      "physical_metric_eigen_min": 0.984322198240383,
+      "physical_metric_eigen_max": 2.2836813540170007,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00004.bin": {
+          "sha256": "022bac7875545375599bf833306e18f46515ca0920d4a1d673c30da29485f045",
+          "bytes": 8871063
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00004.rst": {
+          "sha256": "0851d747965e73bc65143ba625d940e14775ee3207999abcb2e2cf0f5bd11550",
+          "bytes": 17048478
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2893045205115036
+    },
+    {
+      "time": 0.12500312499999303,
+      "cycle": 1086,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9986280095048715,
+      "chi_min": 0.7585468204525896,
+      "physical_metric_eigen_min": 0.9802065117470502,
+      "physical_metric_eigen_max": 2.290377951046228,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00005.bin": {
+          "sha256": "436438005120dce8f611710fd63d5a841381a440301bc9d2d542c12c53e0502c",
+          "bytes": 8871064
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00005.rst": {
+          "sha256": "837ca6b2445fa7c0498e42d4a0bb08935052026efe94b0486c10df5ba9f76c29",
+          "bytes": 17048478
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2651732826319516
+    },
+    {
+      "time": 0.15009583333332435,
+      "cycle": 1304,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9940909093453462,
+      "chi_min": 0.7580571404871549,
+      "physical_metric_eigen_min": 0.9771931782976105,
+      "physical_metric_eigen_max": 2.297505531414211,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00006.bin": {
+          "sha256": "4a97d896b4763c3bc41702e2bc6d2db42db762420c8404a57f77761936e4f36d",
+          "bytes": 8871064
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00006.rst": {
+          "sha256": "e3704369b73b3d478fb7a7d661eb67e2233114aa0ce633f099910ec805d5327a",
+          "bytes": 17048478
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.23715942618310332
+    },
+    {
+      "time": 0.17507343749998902,
+      "cycle": 1521,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9841756584297278,
+      "chi_min": 0.757740015344403,
+      "physical_metric_eigen_min": 0.975472299141606,
+      "physical_metric_eigen_max": 2.304536238966888,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 7.216449660063518e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00007.bin": {
+          "sha256": "7dd8b286ffca7d9dff3bd39c86ed9fc4829de013d1c5fb2b8d5c7c0c434d9d6c",
+          "bytes": 8871064
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00007.rst": {
+          "sha256": "69ba88f645565faa24d70d72cbc4b99963d3a1a0cb285385b49512af584941ea",
+          "bytes": 17048478
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2425564121325734
+    },
+    {
+      "time": 0.2,
+      "cycle": 1738,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.976372370334758,
+      "chi_min": 0.7576740225980818,
+      "physical_metric_eigen_min": 0.9749993285228254,
+      "physical_metric_eigen_max": 2.310911237663292,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00008.bin": {
+          "sha256": "72d4b8580794aed58fe87644791b551488438efb0ec17fe06055de6eecc686f6",
+          "bytes": 8871064
+        },
+        "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00008.rst": {
+          "sha256": "9a2cad76d278722b12727ed05555b41f447625b5609e64ed05df01cc14431f7b",
+          "bytes": 17048478
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.22992617717804376
+    }
+  ],
+  "baseline_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0013085680841045,
+      "chi_min": 0.7612904298636871,
+      "physical_metric_eigen_min": 0.9999999999999983,
+      "physical_metric_eigen_max": 2.2664643328100484,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 9.992007221626409e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00000.bin": {
+          "sha256": "d528caa4f68e43fccc73f9b9ddaeaa38037d97ec278bf6e0f85054a1614a6c83",
+          "bytes": 7716481
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00000.rst": {
+          "sha256": "f50eff764a4d85308fbe769f1fca6d70ea8a4ed3baae4c60ce221ec1da4326ff",
+          "bytes": 14828642
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02509270833333227,
+      "cycle": 218,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.002121477291804,
+      "chi_min": 0.7608841501953941,
+      "physical_metric_eigen_min": 0.9976412164252949,
+      "physical_metric_eigen_max": 2.2689885411155357,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00001.bin": {
+          "sha256": "d4369472339055642551e7803dc414e339975925135cf927a0488e555367e038",
+          "bytes": 7716827
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00001.rst": {
+          "sha256": "059b0e272c71f65cceed032aaecf21f3259d007958c074c236961008d9e8d821",
+          "bytes": 14829278
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.11456331544431211
+    },
+    {
+      "time": 0.05007031249999826,
+      "cycle": 435,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.002570345594995,
+      "chi_min": 0.7603565352471288,
+      "physical_metric_eigen_min": 0.9937683272585371,
+      "physical_metric_eigen_max": 2.272765139557209,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00002.bin": {
+          "sha256": "e3d7ed7201f5de18b4be8b72b5a0d773cd720a1b7abfe1decc4b0e505a28b2aa",
+          "bytes": 7717079
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00002.rst": {
+          "sha256": "35df69b94b3f309b848831bbd491b42cb4c58bc343f03e52d7a2bef6901fe1d0",
+          "bytes": 14829278
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2102782285234062
+    },
+    {
+      "time": 0.07504791666666367,
+      "cycle": 652,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.0023770947438977,
+      "chi_min": 0.7597564595407338,
+      "physical_metric_eigen_min": 0.9889659890903143,
+      "physical_metric_eigen_max": 2.277720547095731,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00003.bin": {
+          "sha256": "b21d95784020e6e2c65aece78154a830acc6f94a9eb6e6eddf3b53a3154d4105",
+          "bytes": 7717079
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00003.rst": {
+          "sha256": "0aa50d1b2aa847c5ad24c76bd8d7b573df615b178c07ca96d4abe7c01a32d477",
+          "bytes": 14829278
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2724782051884122
+    },
+    {
+      "time": 0.10002552083332834,
+      "cycle": 869,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 1.001180856535285,
+      "chi_min": 0.7591341109842838,
+      "physical_metric_eigen_min": 0.9841658852692518,
+      "physical_metric_eigen_max": 2.283659372806719,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 5.551115123125783e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00004.bin": {
+          "sha256": "6c7c2b5a99ba274d0deadd4a250f1d884ba87db3fc8f922f8a2ef5af8d5fe2d8",
+          "bytes": 7717079
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00004.rst": {
+          "sha256": "dca300902fcde2b3f928e8a8666a587e8561cee177e35807512fb2d37c83b3b3",
+          "bytes": 14829278
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2903363227504863
+    },
+    {
+      "time": 0.12500312499999303,
+      "cycle": 1086,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9986359255034786,
+      "chi_min": 0.758547310312811,
+      "physical_metric_eigen_min": 0.9801094906760677,
+      "physical_metric_eigen_max": 2.2903458901434863,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 7.771561172376096e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00005.bin": {
+          "sha256": "454ee7465277058056af8168b70d191c5074aba72e242fdb5d277c9a06aa5670",
+          "bytes": 7717080
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00005.rst": {
+          "sha256": "a98712a731edd05b8a0449f0e0ced2f1b3c4c058acc2686da0f6476c9c378d45",
+          "bytes": 14829278
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2645232260381784
+    },
+    {
+      "time": 0.15009583333332435,
+      "cycle": 1304,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9940931007084234,
+      "chi_min": 0.7580556107122516,
+      "physical_metric_eigen_min": 0.9771770071284344,
+      "physical_metric_eigen_max": 2.2974794928293614,
+      "det_error_max": 9.992007221626409e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00006.bin": {
+          "sha256": "726c9e01498b3d7100e39133c65411775713d59ee2fb57d1e2097620ae7476d0",
+          "bytes": 7717080
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00006.rst": {
+          "sha256": "aa53476b14d54163daf211cbb45cf14780a61875dfe7572f8e00886264ff05af",
+          "bytes": 14829278
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.2383776167931151
+    },
+    {
+      "time": 0.17507343749998902,
+      "cycle": 1521,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9844548840005152,
+      "chi_min": 0.7577333006725948,
+      "physical_metric_eigen_min": 0.9755322395033531,
+      "physical_metric_eigen_max": 2.304535782505001,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00007.bin": {
+          "sha256": "d5491f0b64775a4d4b1ab963204e182da9cefae3d65c09ea2103692301d90a8b",
+          "bytes": 7717080
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00007.rst": {
+          "sha256": "1e650081b97d3788c318ef1b363e0c84ad75d976b44248937d1dd18c73d937d7",
+          "bytes": 14829278
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.24159810557334233
+    },
+    {
+      "time": 0.2,
+      "cycle": 1738,
+      "restart_header_dt": 0.00011510416666666207,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        36,
+        36,
+        36
+      ],
+      "active_cells": 21008,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9767406843084745,
+      "chi_min": 0.7576607106895581,
+      "physical_metric_eigen_min": 0.9751540906207582,
+      "physical_metric_eigen_max": 2.31095002944343,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 6.661338147750939e-16,
+      "mask_box_sha256": "89972e22ef1c9321644ad94b5b2471f0319f652f4e0a3c72c10b2bf9e42026ea",
+      "files": {
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00008.bin": {
+          "sha256": "7e3583ce0f84bb70e2cf0d1b0b7f63ec861a1b64e62bc8930d65536033cc5f24",
+          "bytes": 7717080
+        },
+        "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00008.rst": {
+          "sha256": "52c9893a7f7c9736d8a6f1a2fc0d87c32fa12472e70065b8e55fd393fba18033",
+          "bytes": 14829278
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.22666226406040738
+    }
+  ],
+  "private_inputs": {
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/athena-validation": {
+      "sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "bytes": 10433528
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/hyp.z4c.user.hst": {
+      "sha256": "5c5f8760b5aa692b2f58a4deafaf9780cc696b08b05539d4b344151184591d73",
+      "bytes": 3653
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/layer.athinput": {
+      "sha256": "2bfe956ff26b6f213fa31a7f8a73ae1487c7a926e6eafec9d92dfdd18a091e25",
+      "bytes": 2464
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/results.json": {
+      "sha256": "f7779d12144ebadfcbbba99e91452e85f0be646c2b4a0a59d772f004a2af47cf",
+      "bytes": 10839
+    }
+  },
+  "baseline_inputs": {
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/hyp.z4c.user.hst": {
+      "sha256": "db0f9357fe4f43e95ea1e4cfa550b67a78e24394ebb4c8c07c34a16ec94b5675",
+      "bytes": 3653
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/layer.athinput": {
+      "sha256": "ed06e9dde2b4cf2de8196cdf41f10db4772edb2c502d27398b4e1c0046f403a3",
+      "bytes": 2447
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/results.json": {
+      "sha256": "cabbcd5dfe9959e3b112b34ad1481deb0e72eba50131c5b0ef58aa1537ffbb7b",
+      "bytes": 10802
+    }
+  },
+  "audit_source_sha256": {
+    "build-layer-research/time-projection-controls/audit_composed_native.py": "088b456a99a9ff66ad905e7cc12c38da922656393e47c2835996ce7d8ddf6e69",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec",
+    "vis/python/bin_convert.py": "35e3ec2ebbe2d5a24af9bf1e4796cf1f20def58ce1d76c50f0166288b6d8f37c",
+    "tst/hyperboloidal/run_layer_validation.py": "ca81d60cc9a00b83f9325b79abce9fa3eaaade293e2c5f73c3a3d4bdbfac5d96"
+  },
+  "all_run_files": {
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00000.bin": {
+      "sha256": "c8260a4b7c82bf6c69fbd10a4f355a13ee56358730d2074354f9ebe283389db0",
+      "bytes": 5345607
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00001.bin": {
+      "sha256": "7b7f38ba80e038e52f1f7ae4b059e75807e3a46521f6fbb93f801d4b187a1d02",
+      "bytes": 5345797
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00002.bin": {
+      "sha256": "12d88d8d2897cbf42ecd12576afcc2c69123a1a9afb178a02c560ae4ff56741b",
+      "bytes": 5346189
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00003.bin": {
+      "sha256": "0c91be0f1426bebe4f621f1ee39432a1d87740b3733b14afba20263d5db655ce",
+      "bytes": 5346189
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00004.bin": {
+      "sha256": "de903b54107fda7ca158da60ecbc8eb385689d0f06fe00ca4bad33f0490c4c7e",
+      "bytes": 5346189
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00005.bin": {
+      "sha256": "4b35bc4321e9151981ce49829b2bdb608fee755d06224f0be7cdbc2e7f89c093",
+      "bytes": 5346190
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00006.bin": {
+      "sha256": "d8674341b8ace31909090dd9f3f5e957eb362af72805af34db53e2eb3c6c45af",
+      "bytes": 5346190
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00007.bin": {
+      "sha256": "e00bfcb9a055a2720d0d4c36311ad59519e2804bf474491f63ddea173f65d30a",
+      "bytes": 5346190
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00008.bin": {
+      "sha256": "540c5507f772a9d42ecdda335070f2549b3c832db32654749f01d5f7acfa0a17",
+      "bytes": 5346190
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00000.bin": {
+      "sha256": "ad1ad7880621fc9631506df0139e6353f5c0e94aea6cc7b06cd2be713dc42895",
+      "bytes": 2382000
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00001.bin": {
+      "sha256": "b115f5890236085267f3d83cc8b0ccc0a49acf013aa14f50ce529ed8a68de578",
+      "bytes": 2381922
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00002.bin": {
+      "sha256": "bf22551c4daea75b4306d6cec8a368bb68b3c404cc172ee9b5e05bb1cb74b66b",
+      "bytes": 2382558
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00003.bin": {
+      "sha256": "73154e603b11959c77d476faf617b8a93395161e077466422bc9acc150f41895",
+      "bytes": 2382558
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00004.bin": {
+      "sha256": "85988d6ee23703808e8524f0d45739bf6e362b8ddf319eaec1591b43f3d8e6df",
+      "bytes": 2382558
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00005.bin": {
+      "sha256": "56aa3fbc3b0288e967ae03cf26877840193c8ee6185755babe05d2d52c799a57",
+      "bytes": 2382559
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00006.bin": {
+      "sha256": "93553b44701b804d3dc548f04be588035c130d6989ea6855a71fe948e33be8d5",
+      "bytes": 2382559
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00007.bin": {
+      "sha256": "162115b35b3574876b10336c501baff07c7cbd0fc45c29aecb7e0124ca2de38f",
+      "bytes": 2382559
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00008.bin": {
+      "sha256": "f4c483df20dc485bf0cefe77fb6c68e0937ec8be007455778c7fd40342476599",
+      "bytes": 2382559
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00000.bin": {
+      "sha256": "d528caa4f68e43fccc73f9b9ddaeaa38037d97ec278bf6e0f85054a1614a6c83",
+      "bytes": 7716481
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00001.bin": {
+      "sha256": "d4369472339055642551e7803dc414e339975925135cf927a0488e555367e038",
+      "bytes": 7716827
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00002.bin": {
+      "sha256": "e3d7ed7201f5de18b4be8b72b5a0d773cd720a1b7abfe1decc4b0e505a28b2aa",
+      "bytes": 7717079
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00003.bin": {
+      "sha256": "b21d95784020e6e2c65aece78154a830acc6f94a9eb6e6eddf3b53a3154d4105",
+      "bytes": 7717079
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00004.bin": {
+      "sha256": "6c7c2b5a99ba274d0deadd4a250f1d884ba87db3fc8f922f8a2ef5af8d5fe2d8",
+      "bytes": 7717079
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00005.bin": {
+      "sha256": "454ee7465277058056af8168b70d191c5074aba72e242fdb5d277c9a06aa5670",
+      "bytes": 7717080
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00006.bin": {
+      "sha256": "726c9e01498b3d7100e39133c65411775713d59ee2fb57d1e2097620ae7476d0",
+      "bytes": 7717080
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00007.bin": {
+      "sha256": "d5491f0b64775a4d4b1ab963204e182da9cefae3d65c09ea2103692301d90a8b",
+      "bytes": 7717080
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00008.bin": {
+      "sha256": "7e3583ce0f84bb70e2cf0d1b0b7f63ec861a1b64e62bc8930d65536033cc5f24",
+      "bytes": 7717080
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/hyp.z4c.user.hst": {
+      "sha256": "db0f9357fe4f43e95ea1e4cfa550b67a78e24394ebb4c8c07c34a16ec94b5675",
+      "bytes": 3653
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/layer.athinput": {
+      "sha256": "ed06e9dde2b4cf2de8196cdf41f10db4772edb2c502d27398b4e1c0046f403a3",
+      "bytes": 2447
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00000.rst": {
+      "sha256": "f50eff764a4d85308fbe769f1fca6d70ea8a4ed3baae4c60ce221ec1da4326ff",
+      "bytes": 14828642
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00001.rst": {
+      "sha256": "059b0e272c71f65cceed032aaecf21f3259d007958c074c236961008d9e8d821",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00002.rst": {
+      "sha256": "35df69b94b3f309b848831bbd491b42cb4c58bc343f03e52d7a2bef6901fe1d0",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00003.rst": {
+      "sha256": "0aa50d1b2aa847c5ad24c76bd8d7b573df615b178c07ca96d4abe7c01a32d477",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00004.rst": {
+      "sha256": "dca300902fcde2b3f928e8a8666a587e8561cee177e35807512fb2d37c83b3b3",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00005.rst": {
+      "sha256": "a98712a731edd05b8a0449f0e0ced2f1b3c4c058acc2686da0f6476c9c378d45",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00006.rst": {
+      "sha256": "aa53476b14d54163daf211cbb45cf14780a61875dfe7572f8e00886264ff05af",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00007.rst": {
+      "sha256": "1e650081b97d3788c318ef1b363e0c84ad75d976b44248937d1dd18c73d937d7",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00008.rst": {
+      "sha256": "52c9893a7f7c9736d8a6f1a2fc0d87c32fa12472e70065b8e55fd393fba18033",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/run.log": {
+      "sha256": "c63275927c70a2c1faceef78eabc0ac223208686653a08c7381f1611e05a2aa6",
+      "bytes": 1671
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/results.json": {
+      "sha256": "cabbcd5dfe9959e3b112b34ad1481deb0e72eba50131c5b0ef58aa1537ffbb7b",
+      "bytes": 10802
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/athena-validation": {
+      "sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "bytes": 10433528
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00000.bin": {
+      "sha256": "d066201148af53e7ecf6b6842b5fc29084697626b796e6639bc5e49c82823994",
+      "bytes": 6144519
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00001.bin": {
+      "sha256": "569c284e898930888add38d547af2035cad71824166a5ce9d659cb949b5ac5b4",
+      "bytes": 6144709
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00002.bin": {
+      "sha256": "1165580b22383c9355c3cf9fdff3aa37210c269f8c68fb305bd05326ba7945d3",
+      "bytes": 6145101
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00003.bin": {
+      "sha256": "bb0dfd2e219c4921c5211af1961302b4267be7acbe079b0815f98a2c62ec9162",
+      "bytes": 6145101
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00004.bin": {
+      "sha256": "da57d6256b931761dab2d396b766e4bb42f51750ad7b0e7a556f1c97c5860ff9",
+      "bytes": 6145101
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00005.bin": {
+      "sha256": "3870a2c30474a9e74a6dc1f76e9b87b1e2e9967a27c01aa621280f7fa31980dc",
+      "bytes": 6145102
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00006.bin": {
+      "sha256": "77fdab65f33b33a73ff4c9d4e44ac6e70a7150761c812593ffb8afc6b744291e",
+      "bytes": 6145102
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00007.bin": {
+      "sha256": "efe540ab314388d9883a6a16e8e951932d97e0dc07910d72aafce5f2fb33c61a",
+      "bytes": 6145102
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00008.bin": {
+      "sha256": "63bfa58d3be11599d1bda9e731b26c19ce8f445697e8df1c2eb2e8d822ba55e7",
+      "bytes": 6145102
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00000.bin": {
+      "sha256": "f764cc515673a7538d9726aaafe323e4082e9bac458ab7ad0e99bbfb06f06bac",
+      "bytes": 2737072
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00001.bin": {
+      "sha256": "8b707f2e548e39ba1e3d5a987e277cae87c657da51a2560170ba2b41943259ea",
+      "bytes": 2736994
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00002.bin": {
+      "sha256": "8e2e33b74721cfdab8051e16a0d0aae89be6dc8a1d9803b4d047c1b4f21c71d0",
+      "bytes": 2737630
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00003.bin": {
+      "sha256": "8646c00132d237708aab094628fb0ac22785896dc683aabec3dbc7700ccfce15",
+      "bytes": 2737630
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00004.bin": {
+      "sha256": "117aa8edad3cd4c1def69bad972f6bb727e9ed7073d01cccbc149f9f86fdf189",
+      "bytes": 2737630
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00005.bin": {
+      "sha256": "4ce0c072263f663e06a2dade5d8cc17e0aa4390a23186fda2f9b84d38b7664d2",
+      "bytes": 2737631
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00006.bin": {
+      "sha256": "46fa7562d2fb42745cb8b2155dd768199354995a4c2f9b16ae30f905e52baaea",
+      "bytes": 2737631
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00007.bin": {
+      "sha256": "770809346b7c11fa41b34f1d204b1b787dfa2fe651b379d00ebfadcfb97c7bb9",
+      "bytes": 2737631
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.con.00008.bin": {
+      "sha256": "d524d842ce80d5e621f5aa144dcbc1ed1e9a63178cb48b5c582ad8651c609570",
+      "bytes": 2737631
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00000.bin": {
+      "sha256": "9b3cdc2facead6a4f5a77375fa014f05dc677937341d0902f0d4f5913b386553",
+      "bytes": 8870465
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00001.bin": {
+      "sha256": "ea0b3df6877ed2b87535a6105c9ece77c752d479ccc5f1f215d0ee1055704a0c",
+      "bytes": 8870811
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00002.bin": {
+      "sha256": "a33814962b74976f332b48a1f24ab5a998608ce46e8a7b74c433fef611e1f59b",
+      "bytes": 8871063
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00003.bin": {
+      "sha256": "c4f9879f77ec8cceb4f45675de55c00175dc7ed883250c3d2b25afc915a8f5a7",
+      "bytes": 8871063
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00004.bin": {
+      "sha256": "022bac7875545375599bf833306e18f46515ca0920d4a1d673c30da29485f045",
+      "bytes": 8871063
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00005.bin": {
+      "sha256": "436438005120dce8f611710fd63d5a841381a440301bc9d2d542c12c53e0502c",
+      "bytes": 8871064
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00006.bin": {
+      "sha256": "4a97d896b4763c3bc41702e2bc6d2db42db762420c8404a57f77761936e4f36d",
+      "bytes": 8871064
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00007.bin": {
+      "sha256": "7dd8b286ffca7d9dff3bd39c86ed9fc4829de013d1c5fb2b8d5c7c0c434d9d6c",
+      "bytes": 8871064
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00008.bin": {
+      "sha256": "72d4b8580794aed58fe87644791b551488438efb0ec17fe06055de6eecc686f6",
+      "bytes": 8871064
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/hyp.z4c.user.hst": {
+      "sha256": "5c5f8760b5aa692b2f58a4deafaf9780cc696b08b05539d4b344151184591d73",
+      "bytes": 3653
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/layer.athinput": {
+      "sha256": "2bfe956ff26b6f213fa31a7f8a73ae1487c7a926e6eafec9d92dfdd18a091e25",
+      "bytes": 2464
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00000.rst": {
+      "sha256": "b464dc75e4f8e6fdded8bab327eb44d20b2379434d62a8254c3fa0e75273b2a7",
+      "bytes": 17047842
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00001.rst": {
+      "sha256": "7c7c008991434676c5309bee015753e9ac3adcae216dcb31a82c6865d4d0c6d7",
+      "bytes": 17048478
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00002.rst": {
+      "sha256": "136a64a8ea43d63dfeb6b791355155061488bb75516680fffc55e41b304d8e56",
+      "bytes": 17048478
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00003.rst": {
+      "sha256": "2a0a1c3ebf95a911ef8186a601c9d9141ed6673322e956341aa34d5dd9b3c3e7",
+      "bytes": 17048478
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00004.rst": {
+      "sha256": "0851d747965e73bc65143ba625d940e14775ee3207999abcb2e2cf0f5bd11550",
+      "bytes": 17048478
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00005.rst": {
+      "sha256": "837ca6b2445fa7c0498e42d4a0bb08935052026efe94b0486c10df5ba9f76c29",
+      "bytes": 17048478
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00006.rst": {
+      "sha256": "e3704369b73b3d478fb7a7d661eb67e2233114aa0ce633f099910ec805d5327a",
+      "bytes": 17048478
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00007.rst": {
+      "sha256": "69ba88f645565faa24d70d72cbc4b99963d3a1a0cb285385b49512af584941ea",
+      "bytes": 17048478
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00008.rst": {
+      "sha256": "9a2cad76d278722b12727ed05555b41f447625b5609e64ed05df01cc14431f7b",
+      "bytes": 17048478
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/run.log": {
+      "sha256": "47e88b22f48a393fbcddaf9cd6e5de5ae11f8b065937132d677e7e282c80b1ac",
+      "bytes": 1671
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/results.json": {
+      "sha256": "f7779d12144ebadfcbbba99e91452e85f0be646c2b4a0a59d772f004a2af47cf",
+      "bytes": 10839
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/time-projection-controls/composed-N36-t0.2/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    }
+  },
+  "precision": "RST state binary64; all 25 active BIN fields match exact float32 rounding bitwise. HST text uses production binary64 diagnostics. A quantized BIN difference need not equal the true field drift. Header dt is pm->dt at write time, not always the completed step.",
+  "status": "PASS"
+}

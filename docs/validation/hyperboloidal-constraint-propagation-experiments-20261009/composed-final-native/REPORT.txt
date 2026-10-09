@@ -1,0 +1,79 @@
+Completed composed-operator native controls: independent data audit
+
+All completed cases PASS data/source checks, with the accepted preflight auditor
+unchanged. This is not finite-pulse stability acceptance or adoption of the
+composed operator. Production remains implementation27c19d20; no BH run occurs.
+
+N24 composed t2: 81 private + 81 same-resolution baseline RST/BIN snapshots.
+N36 composed t.2: 9 private + 9 same-resolution baseline RST/BIN snapshots.
+All active binary64 evolved fields are finite, lapse/chi positive, spatial
+metric SPD, and conformal determinant/trace errors below 1e-12 at every saved
+snapshot. All 25 active BIN casts match RST float32 rounding bitwise. The
+original HST constraint diagnostic derivatives are unchanged. Exact final
+times match each corresponding baseline; no final-time field interpolation.
+
+Private executable:
+e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16
+Baseline executable:
+dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d
+All six private objects/dependency files, private sources, compiled repository
+dependencies, gauge overlay and reused base object/library inputs are checked.
+Captured input/executable/history/mask/RST/BIN/result and full run-file hashes
+are in N24-t2.json and N36-t0.2.json. The launch record's input/build/preflight
+hashes are independently rechecked in final-verification.json.
+
+Uniform physical box indices are paired across ng4/ng3 after cropping ghosts.
+Header geometry/spacing agree exactly; maximum native coordinate construction
+difference is 2.220446049250313e-16 at both resolutions. Initial active-field
+max differences are 1.176836406102666e-14 (N24) and 7.993605777301127e-15 (N36).
+No exact bitwise initial-array identity is claimed across ghost widths.
+Within each resolution, allowed input changes are only ng3->4; any cadence,
+duration or diagnostic cadence differences are explicitly listed by the
+accepted auditor, with no physical coefficient/gauge/pulse difference allowed.
+
+Exact final original HST RMS:
+  N24 t2       H                M                Z                Theta
+  composed  1.154724071709   1.401967977136    .365045756454    .0288669963984
+  baseline  1.222186892047   1.348372696866    .375766081907    .0218961887735
+  ratio      .944801551402   1.039748120378    .971470747444   1.318357121277
+
+  N36 t.2
+  composed   .0135563673848   .00713494311992  .00209046098244 .0000976746002675
+  baseline   .0107639381540   .00695831454158  .00225611867010 .0000986328763700
+  ratio     1.259424496020   1.025383816337    .926574036262    .990284414916
+
+Long N24 evolution retains growing constraints with mixed modest changes;
+Theta is about32 percent higher. N36 early-time H/M are worse and Z is lower
+than the same-resolution original-operator control. These do not demonstrate
+a constraint-source improvement sufficient for finite-pulse acceptance.
+
+Own N24/N36 comparison at coordinate t=.2, original HST histories only:
+N24 has no exact saved history/field state there. Both its baseline and
+composed histories are linearly interpolated between .17537109374999502 and
+.20017968749999435, right weight .9927570461346952. N36 has an exact final
+history row at .2. No field interpolation or exact N24 field comparison at .2
+is performed. early-t0.2-comparison.json records all brackets/hashes.
+
+  composed N24 H/M/Z = .0272959471052 / .0320662425697 / .0133227923531
+  composed N36 H/M/Z = .0135563673848 / .00713494311992 / .00209046098244
+  N36/N24 ratios     = .496643964491 / .222506366451 / .156908621484
+  baseline N36/N24   = .472589250648 / .254216541393 / .173128680066
+Both families have smaller early-time norms at N36. Two resolutions and these
+cadence comparisons alone do not establish a convergence order, a global
+boundary stability estimate, or later N36 stability.
+
+Precision interpretation: inherited physical_metric_eigen_* receipt keys
+numerically diagonalize the Penrose metric gtilde/chi. Physical metric SPD is
+equivalent for active Omega>0; these numerical values are not physical metric
+eigenvalue magnitudes. No accepted key, source or receipt is renamed. States
+are binary64 RST, BIN is binary32, and header dt is pm->dt at write time.
+
+Reproduction from repository root, using the same scientific Python as the
+saved launch record and passing distinct final receipt paths:
+  python build-layer-research/time-projection-controls/audit_composed_native.py build-layer-research/time-projection-controls/composed-N24-t2 build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-long --output build-layer-research/time-projection-controls/composed-final-native-audit/N24-t2.json
+  python build-layer-research/time-projection-controls/audit_composed_native.py build-layer-research/time-projection-controls/composed-N36-t0.2 build-layer-research/spatial-norm-native-controls/N36-t0.2 --output build-layer-research/time-projection-controls/composed-final-native-audit/N36-t0.2.json
+  python build-layer-research/time-projection-controls/composed-final-native-audit/compare_early.py
+Use the virtualenv Python path recorded in composed-evolution-launch.json.
+The captured/ directory retains accepted auditor and launch bytes; the frozen
+21-file implementation/halo gate supplies the exact private header/source
+snapshots. Old preflight receipts and every previous frozen index are retained.

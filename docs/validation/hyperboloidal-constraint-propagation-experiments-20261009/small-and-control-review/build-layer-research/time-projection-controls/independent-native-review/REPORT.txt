@@ -1,0 +1,43 @@
+Independent completed-control and draft review
+
+PASS, read-only, no accepted source/receipt or frozen evidence changed.
+The new review_controls.py rehashes every source, comparison input and retained
+run file captured by the parent's accepted half-step, every-stage, and
+stage-reference audit receipts. It independently reconstructs their 81/81/3
+binary64 snapshots, all bitwise BIN quantizations, initial active arrays,
+coordinate/mask equality, final full-field statistics and exact-endpoint
+H/M/Z/Theta ratios. Every captured statistic is reproduced exactly.
+
+The stage build is independently checked: the private task source is exactly
+the recorded single EnforceAlgConstr replacement; the private object/executable,
+unchanged production source/overlay and all reused base link inputs match.
+The stage input matches the baseline exactly. The half-step input differs only
+in pole CFL .03->.015, and actual initial dt ratios are 1 and .5 respectively.
+
+At exact t2 the half-step H/M/Z ratios to baseline are
+.999951561454857 / 1.00013898865895 / .999940916022435.
+The every-stage ratios are
+.999894017351912 / 1.00027086608141 / .999887502396006.
+Maximum relative H/M/Z change is .02708660814 percent. Maximum final absolute
+all-field differences are .001287665280724326 / .0025070295721576485.
+Stage-reference maximum binary64 drift is 1.426616844425858e-14. These confirm
+the draft's sensitivity-control interpretation, not temporal convergence order
+or a stability remedy. Original HST diagnostics remain unchanged.
+
+Inherited receipt physical_metric_eigen_* keys numerically describe the
+Penrose spatial metric gtilde/chi. Positivity is equivalent to physical spatial
+metric positivity for active Omega>0; these are not physical eigenvalue ranges.
+No accepted bytes are changed to rename those fields.
+
+Read-only draft review found one native-resolution correction and no other
+error in the reviewed inner endpoint, parser, preflight and control claims.
+For actual span2.1S Cartesian cubes, r_min=1.05*sqrt(3)*S/N. N24 and N36 have
+no cell inside the exact .05S Minkowski-reference core; N48 contains only the
+innermost eight-cell shell. The previously frozen inner report's sqrt(3)S/N
+formula explicitly refers to a [-S,S] cube, and is not the actual span2.1
+native-grid formula. This correction was sent to the parent for the new draft;
+the frozen inner report remains unchanged.
+
+Final review runtime 4.21751 s. receipt.json preserves hashes and reconstructed
+comparison details. Reproduction from repository root:
+  /Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python build-layer-research/time-projection-controls/independent-native-review/review_controls.py

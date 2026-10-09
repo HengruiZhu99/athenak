@@ -1,0 +1,231 @@
+{
+  "executable": "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/small-angular-t2/athena-validation",
+  "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+  "source_commit": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "source_dirty": false,
+  "workspace_at_launch": {
+    "scope": "Workspace at launch; executable build-source equality is not inferred",
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "changed_files_sha256": {}
+  },
+  "cases": [
+    {
+      "name": "finite-angular-long-N24",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/small-angular-t2/athena-validation",
+        "-i",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/small-angular-t2/finite-angular-long-N24/layer.athinput"
+      ],
+      "exit_status": 0,
+      "wall_seconds": 714.677899375,
+      "requested_time": 2.0,
+      "input_text": "<job>\nbasename=hyp\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\nnghost=3\nx1min=-1.05\nx1max=1.05\nx2min=-1.05\nx2max=1.05\nx3min=-1.05\nx3max=1.05\nix1_bc=outflow\nox1_bc=outflow\nix2_bc=outflow\nox2_bc=outflow\nix3_bc=outflow\nox3_bc=outflow\n\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n\n<time>\nevolution=dynamic\nintegrator=rk3\ncfl_number=0.4\nnlim=2\ntlim=0.001\nndiag=1\n\n<z4c>\nhyperboloidal=true\nhyperboloidal_slicing=2\nhyperboloidal_shift_driver=0.1\nhyperboloidal_lapse_damping=1.5\nhyperboloidal_shift_damping=1\nhyperboloidal_kappa1=5\nhyperboloidal_dissipation=0.1\nhyperboloidal_pole_cfl=0.04\nhyperboloidal_ghost_degree=3\nhyperboloidal_mass_diagnostics=false\nhyperboloidal_mass_nmu=32\nfloor_chi=false\nnrad_wave_extraction=0\nspatial_order=4\n\n<problem>\npgen_name=z4c_hyperboloidal\nmass=0\nlapse_pulse=0\n\n<output1>\nfile_type=bin\nvariable=z4c\nid=z4c\ndt=0.0001\nghost_zones=true\n\n<output2>\nfile_type=bin\nvariable=adm\nid=adm\ndt=0.0001\nghost_zones=true\n\n<output3>\nfile_type=hst\ndt=0.0001\ndata_format=%24.16e\n# Experimental uniform Cartesian prototype. See docs/hyperboloidal.md.\n# Layer mass>0 selects wormhole initial data; 0<M<2*layer_r0 is required.\n# The Minkowski reference remains the gauge target. Long stability is unverified.\n\n<output4>\nfile_type=bin\nvariable=con\nid=con\ndt=0.0001\nghost_zones=true\n\n<output5>\nfile_type=rst\ndt=0.0001\n\n<z4c>\n# Interior-only research prototype: exact scri is never assembled.\nhyperboloidal_layer=true\nhyperboloidal_layer_r0=0.35\nhyperboloidal_layer_r1=0.75\nhyperboloidal_gauge_r0=0.45\nhyperboloidal_gauge_r1=0.85\nhyperboloidal_gauge_q0=0.5\nhyperboloidal_layer_lapse_inner=0\nhyperboloidal_layer_lapse_outer=1.5\nhyperboloidal_layer_shift_inner=0\nhyperboloidal_layer_shift_outer=1\nhyperboloidal_preferred_source=true\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n<time>\nnlim=-1\ntlim=2.0\nndiag=100\n<problem>\nlapse_pulse=0.1\nshift_pulse=0.02\npulse_angular=true\n\n<output1>\ndt=0.025\n\n<output2>\ndt=0.025\n\n<output3>\ndt=0.025\n\n<output4>\ndt=0.025\n\n<output5>\ndt=0.025\n\n\n<z4c>\nhyperboloidal_physical_trace_lapse=true\nhyperboloidal_preferred_source=false\nhyperboloidal_curvature_radius=.5\nhyperboloidal_layer_r0=.05\nhyperboloidal_layer_r1=.95\nhyperboloidal_gauge_r0=.45\nhyperboloidal_gauge_r1=.85\nhyperboloidal_symmetric_ghosts=true\nhyperboloidal_ghost_degree=2\nhyperboloidal_kappa1=10\nhyperboloidal_scri_lapse_damping=2\nhyperboloidal_pole_cfl=.03\nfloor_chi=false\n<problem>\npulse_width=.5\n\n<problem>\nlapse_pulse=.001\nshift_pulse=.0002\n",
+      "input_sha256": "9eac3c66f2ef0667469da4d6f38ad676dda56e3d8c830d45f2c606bbeba7c420",
+      "input_parameters": {
+        "job/basename": "hyp",
+        "mesh/nx1": "24",
+        "mesh/nx2": "24",
+        "mesh/nx3": "24",
+        "mesh/nghost": "3",
+        "mesh/x1min": "-1.05",
+        "mesh/x1max": "1.05",
+        "mesh/x2min": "-1.05",
+        "mesh/x2max": "1.05",
+        "mesh/x3min": "-1.05",
+        "mesh/x3max": "1.05",
+        "mesh/ix1_bc": "outflow",
+        "mesh/ox1_bc": "outflow",
+        "mesh/ix2_bc": "outflow",
+        "mesh/ox2_bc": "outflow",
+        "mesh/ix3_bc": "outflow",
+        "mesh/ox3_bc": "outflow",
+        "meshblock/nx1": "24",
+        "meshblock/nx2": "24",
+        "meshblock/nx3": "24",
+        "time/evolution": "dynamic",
+        "time/integrator": "rk3",
+        "time/cfl_number": "0.4",
+        "time/nlim": "-1",
+        "time/tlim": "2.0",
+        "time/ndiag": "100",
+        "z4c/hyperboloidal": "true",
+        "z4c/hyperboloidal_slicing": "2",
+        "z4c/hyperboloidal_shift_driver": "0.1",
+        "z4c/hyperboloidal_lapse_damping": "1.5",
+        "z4c/hyperboloidal_shift_damping": "1",
+        "z4c/hyperboloidal_kappa1": "10",
+        "z4c/hyperboloidal_dissipation": "0.1",
+        "z4c/hyperboloidal_pole_cfl": ".03",
+        "z4c/hyperboloidal_ghost_degree": "2",
+        "z4c/hyperboloidal_mass_diagnostics": "false",
+        "z4c/hyperboloidal_mass_nmu": "32",
+        "z4c/floor_chi": "false",
+        "z4c/nrad_wave_extraction": "0",
+        "z4c/spatial_order": "4",
+        "problem/pgen_name": "z4c_hyperboloidal",
+        "problem/mass": "0",
+        "problem/lapse_pulse": ".001",
+        "output1/file_type": "bin",
+        "output1/variable": "z4c",
+        "output1/id": "z4c",
+        "output1/dt": "0.025",
+        "output1/ghost_zones": "true",
+        "output2/file_type": "bin",
+        "output2/variable": "adm",
+        "output2/id": "adm",
+        "output2/dt": "0.025",
+        "output2/ghost_zones": "true",
+        "output3/file_type": "hst",
+        "output3/dt": "0.025",
+        "output3/data_format": "%24.16e",
+        "output4/file_type": "bin",
+        "output4/variable": "con",
+        "output4/id": "con",
+        "output4/dt": "0.025",
+        "output4/ghost_zones": "true",
+        "output5/file_type": "rst",
+        "output5/dt": "0.025",
+        "z4c/hyperboloidal_layer": "true",
+        "z4c/hyperboloidal_layer_r0": ".05",
+        "z4c/hyperboloidal_layer_r1": ".95",
+        "z4c/hyperboloidal_gauge_r0": ".45",
+        "z4c/hyperboloidal_gauge_r1": ".85",
+        "z4c/hyperboloidal_gauge_q0": "0.5",
+        "z4c/hyperboloidal_layer_lapse_inner": "0",
+        "z4c/hyperboloidal_layer_lapse_outer": "1.5",
+        "z4c/hyperboloidal_layer_shift_inner": "0",
+        "z4c/hyperboloidal_layer_shift_outer": "1",
+        "z4c/hyperboloidal_preferred_source": "false",
+        "problem/shift_pulse": ".0002",
+        "problem/pulse_angular": "true",
+        "z4c/hyperboloidal_physical_trace_lapse": "true",
+        "z4c/hyperboloidal_curvature_radius": ".5",
+        "z4c/hyperboloidal_symmetric_ghosts": "true",
+        "z4c/hyperboloidal_scri_lapse_damping": "2",
+        "problem/pulse_width": ".5"
+      },
+      "diagnostics": {
+        "time": 2.0,
+        "H": 0.008629695557302804,
+        "M": 0.005465789162949415,
+        "Z": 0.0016106121571459091,
+        "Theta": 0.000126221769471713,
+        "alpha_min": 0.9835814923985926,
+        "chi_min": 0.7596055461784122,
+        "pole_deviation_max": 0.05631111179609393,
+        "null_deviation_max": 0.0029617837149319252,
+        "metric_eigen_min": 0.9978435520076814,
+        "metric_eigen_max": 2.274408300397552,
+        "metric_stretch_ratio_max": 2.270850779107062,
+        "constraint_budget": {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/small-angular-t2/finite-angular-long-N24/bin/hyp.con.00080.bin",
+          "time": 2.0,
+          "cycle": 4676,
+          "active_cells": 6152,
+          "global": {
+            "H": {
+              "rms": 0.008629695548763645,
+              "max": 0.03983759880065918,
+              "max_radius": 0.4353070037341463,
+              "max_xyz": [
+                0.30625000000000013,
+                -0.21875,
+                0.21875
+              ]
+            },
+            "M": {
+              "rms": 0.0054657891647457175,
+              "max": 0.03302969764282263,
+              "max_radius": 0.8869496533062066,
+              "max_xyz": [
+                -0.56875,
+                0.4812500000000002,
+                -0.48124999999999996
+              ]
+            },
+            "Z": {
+              "rms": 0.0016106121565796865,
+              "max": 0.01081979586225566,
+              "max_radius": 0.9373124812462491,
+              "max_xyz": [
+                -0.56875,
+                0.5687500000000001,
+                -0.48124999999999996
+              ]
+            }
+          },
+          "radial_bins": [
+            {
+              "r_min": 0.0,
+              "r_max": 0.05,
+              "cells": 0,
+              "H": {
+                "rms": null,
+                "squared_norm_fraction": 0.0
+              },
+              "M": {
+                "rms": null,
+                "squared_norm_fraction": 0.0
+              },
+              "Z": {
+                "rms": null,
+                "squared_norm_fraction": 0.0
+              }
+            },
+            {
+              "r_min": 0.05,
+              "r_max": 0.9,
+              "cells": 4632,
+              "H": {
+                "rms": 0.00980936206457362,
+                "squared_norm_fraction": 0.9728431038862722
+              },
+              "M": {
+                "rms": 0.0044433010471615275,
+                "squared_norm_fraction": 0.49757431203291247
+              },
+              "Z": {
+                "rms": 0.0005312820059034763,
+                "squared_norm_fraction": 0.08192576254048041
+              }
+            },
+            {
+              "r_min": 0.9,
+              "r_max": 0.95,
+              "cells": 768,
+              "H": {
+                "rms": 0.003853144438200367,
+                "squared_norm_fraction": 0.024887686243472956
+              },
+              "M": {
+                "rms": 0.009171294894648126,
+                "squared_norm_fraction": 0.3514798711540359
+              },
+              "Z": {
+                "rms": 0.003451888693669369,
+                "squared_norm_fraction": 0.573424856543348
+              }
+            },
+            {
+              "r_min": 0.95,
+              "r_max": 1.0,
+              "cells": 752,
+              "H": {
+                "rms": 0.0011757961920987525,
+                "squared_norm_fraction": 0.0022692098702550238
+              },
+              "M": {
+                "rms": 0.006073830378754368,
+                "squared_norm_fraction": 0.15094581681305166
+              },
+              "Z": {
+                "rms": 0.0027044500660250506,
+                "squared_norm_fraction": 0.3446493809161717
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

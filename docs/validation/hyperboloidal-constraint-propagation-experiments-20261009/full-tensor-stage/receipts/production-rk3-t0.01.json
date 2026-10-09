@@ -1,0 +1,52 @@
+{
+  "gauge": "production",
+  "stop": 0.01,
+  "base_steps": 124,
+  "base_dt": 8.064516129032258e-05,
+  "nominal_pole_dt": 8.085937499998367e-05,
+  "names": [
+    "gauge_pulse",
+    "shell_random"
+  ],
+  "runs": [
+    {
+      "label": "native_final_only",
+      "steps": 124,
+      "dt": 8.064516129032258e-05,
+      "seconds": 14.790670708,
+      "euclidean_amplification": [
+        1.0932924870002425,
+        5.3902554663684175
+      ]
+    },
+    {
+      "label": "native_final_only_half",
+      "steps": 248,
+      "dt": 4.032258064516129e-05,
+      "seconds": 30.49120025,
+      "euclidean_amplification": [
+        1.0932924143819471,
+        5.390260318528397
+      ]
+    },
+    {
+      "label": "projected_every_RHS",
+      "steps": 124,
+      "dt": 8.064516129032258e-05,
+      "seconds": 14.825232833000001,
+      "euclidean_amplification": [
+        1.0932923373016095,
+        5.3902649198533235
+      ]
+    }
+  ],
+  "relative_dt_vs_half": [
+    1.1354907223283148e-06,
+    4.919316136061556e-05
+  ],
+  "relative_native_vs_projected": [
+    2.2811765047235925e-06,
+    9.816747779498695e-05
+  ],
+  "total_seconds": 60.108331084
+}

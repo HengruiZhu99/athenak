@@ -1,0 +1,235 @@
+INNER WORMHOLE-TO-TRUMPET GAUGE: CONDITIONAL LOCAL AUDIT
+
+Scratch only at HEAD b37a20f2d7a8ccc42148f1a814a80b2957e17b53. No tracked
+source/default/reference changes, athena build, native evolution, BH launch or
+BH RHS subtraction. Prior 69/34/27-file frozen gates verify unchanged.
+
+Outcome and scope
+
+The current default eta_inner=0 does not admit a coordinate-stationary future
+Schwarzschild trumpet in the regular radial power-law/polyhomogeneous class
+specified below. Its alpha^2*chi shift driver becomes subleading, whereas
+shift advection has a nonzero leading term. Positive eta_inner=v removes
+this leading obstruction. This is a necessary local balance, not existence,
+sufficiency, stability, formation, full gauge stationarity, global matching
+or dynamic boundary-manifold preservation. No standard moving-puncture
+radius or lapse exponent is imposed.
+
+Actual equations and the exact-core qualification
+
+In layer_gauge.hpp, W is the gauge cutoff .45S--.85S; q0=.5,
+mu=(1-W)*3q0/4+W. W=0 alone does NOT give a trivial geometric reference.
+The Minkowski geometry cutoff is .05S--.95S. Only r<.05S has exactly
+Omega=alpha_ref=chi_ref=1, gtilde_ref=I, beta_ref=Lambda_ref=P_ref=0.
+For this local core, Theta_phys=0 implies stored P=K, and with nu_inner=0:
+
+  alphaDot = beta.grad(alpha) - alpha*(alpha+2)*K,
+  betaDot^i = beta.grad(beta^i) + (3/8)*alpha^2*chi*Lambda^i
+              - eta_inner*beta^i.
+
+These equations follow from the full production gauge; either lapse mode
+agrees here. Positive nu_inner would add -alpha*nu_inner*log(alpha), which
+is incompatible with finite K and the simple stationary alpha~r^p balance
+unless other assumed asymptotics change. This audit keeps nu_inner=0.
+
+Sign, dimensions and stationary Schwarzschild geometry
+
+Use geometrized units and standard production K_ij=-L_n(gamma_ij)/2.
+Lengths r,R,M,S,a have dimension L; alpha,chi,gtilde,beta,c are dimensionless;
+K,Lambda,v,eta_inner have dimension 1/L. Let Schwarzschild time be
+T=c*t+h(R), c>0, F=1-2M/R, s=sqrt((alpha/c)^2-F). The future BH branch has
+outward beta^R=alpha*s and R'(r)>0. The stationary ADM data satisfy
+
+  gamma_RR=c^2/alpha^2,  h'=-c*s/(alpha*F),
+  K_R=s_R, K_T=s/R, K=s_R+2s/R.
+
+proof.py verifies g_tt=-c^2 F=-alpha^2+gamma_RR*(beta^R)^2,
+g_tR=-cFh'=gamma_RR*beta^R and gamma_RR=F^-1-Fh'^2. Thus the outward
+shift and positive K below use the current minus-L_n convention. With
+alphaDot=0, beta^R*alpha_R=alpha*(alpha+2)*K, whose first integral is
+
+  [(alpha/c)^2-F]*R^4 = C4*(1+alpha/2)^2.
+
+At a simple lapse-zero cylinder R0, take 0<R0<3M/2, so
+
+  s0=sqrt(2M/R0-1),
+  K0=(3M-2R0)/(R0^2*s0)>0,
+  alpha_R0=2*(3M-2R0)/[R0*(2M-R0)]=2*K0/s0>0.
+
+The local branch excludes degenerate roots. c is the constant normalization
+of the stationary Killing time; c=1 is used in the examples, not proved to
+be the eventual normalization of a globally matched layered solution.
+
+Regular radial asymptotics, without assuming bounded derivatives
+
+Assume R-R0=k*r^p plus conormal power/log corrections, k>0,p>0, with the
+corresponding differentiated expansions. In particular gtilde radial and
+angular Cartesian eigenvalues tend to positive constants, r*d_r gtilde is
+bounded, and the second derivatives have the corresponding conormal bounds.
+The numerical prototypes use ordinary powers and analytic derivatives.
+Bounded metric components alone would not imply this derivative control;
+wild oscillatory metrics are outside this conditional argument. Direction-
+dependent bounded Cartesian metric limits are allowed: smooth extension
+through the puncture point itself is not assumed.
+
+The stationary Schwarzschild formulas imply
+
+  alpha ~ alpha_R0*k*r^p,
+  beta^r ~ v*r,  v=alpha_R0*s0/p=2*K0/p>0,
+  gamma_rr ~ c^2*p^2/(alpha_R0^2*r^2),
+  gamma_tangent ~ R0^2/r^2.
+
+Define zeta=c*p/(alpha_R0*R0). Then
+
+  gtilde_R0=zeta^(4/3), gtilde_T0=zeta^(-2/3),
+  chi ~ r^2/[R0^2*zeta^(2/3)],
+  Lambda^r = 2*(1/gtilde_T0-1/gtilde_R0)/r + o(1/r).
+
+Thus alpha^2*chi*Lambda=O(r^(2p+1))=o(r). Dividing the actual shift
+RHS by r gives betaDot^r/r -> v*(v-eta_inner). At default eta_inner=0
+this is v^2>0. A driver cancellation would require Lambda~r^(-1-2p),
+which violates the assumed radial derivative expansion. This excludes a
+regular stationary endpoint in this class, not transient geometric trumpet
+formation, a different singular coordinate chart or a time-dependent limit.
+
+A necessary local repair is eta_inner=v>0, with p=2*K0/eta_inner.
+An isotropic chart additionally requires zeta=1, p=alpha_R0*R0/c; neither
+isotropy nor its exponent follows from the actual shift. For beta=v*r+
+B*r^(1+2p), the first remaining driver term would require
+B=-(3/8)*A^2*Cchi*lambda0/[v*(1+2p)] (alpha~A*r^p,chi~Cchi*r^2).
+Earlier subleading beta terms must vanish. This illustrates the unsolved
+coordinate matching problem; the tested pure R=R0+k*r^p maps only satisfy
+the leading damped balance, and their finite-radius damped shift RHS is
+nonzero. Eta equality is deliberately not called sufficient.
+
+Principal/speed implications
+
+Changing eta_inner adds the algebraic source
+-delta_eta_inner*(1-W)*(beta-beta_ref). It has no spatial derivatives,
+vanishes at the Minkowski reference and vanishes in the W=1 outer collar.
+All 144 actual full20 extracted principal matrix pairs at eta_inner=0/.5
+are bitwise equal. The existing complete eigenbasis passes in both lapse
+modes, axis/oblique frames, alpha=.01/.1/1,chi=1e-4/.1/1,r=.01/.2/.6/.9.
+The production q0,mu,f,principal couplings and geometric RHS are unchanged.
+This is fixed-positive-lapse/chi hyperbolicity, not uniform alpha=chi=0
+puncture hyperbolicity. Added explicit damping also requires its ordinary
+source timestep/stability check. Current validation requires
+0<=eta_inner<=eta_outer (default eta_outer=1); do not silently alter outer
+rates to accommodate a desired inner value.
+
+With positive v, radial coordinate characteristic speeds are
+-beta^r +/- alpha*sqrt(chi*gtildeInverse_rr) for light fields, with factors
+sqrt(q0) or sqrt(3q0/4) for shift fields, and
+-beta^r +/- sqrt(alpha^2+2alpha)*sqrt(chi*gtildeInverse_rr) for lapse.
+The offsets scale as r^(p+1) and r^(1+p/2), respectively, smaller than v*r;
+all these local coordinate branches point toward r=0 sufficiently close to
+a stationary trumpet. Conventional constant-speed Gamma gauge intuition
+does not apply. For the pre-collapsed exact wormhole core alpha~r^2,
+chi~r^4 initially, the driver coefficient alpha^2*chi is even weaker, O(r^8).
+This does not alone prove or disprove a dynamical transition.
+
+A constant coefficient k*Lambda replacement requires normalized
+mu_eff=k/(alpha^2*chi), q_eff=4mu_eff/3, changing the principal system.
+Actual W=0 scalar blocks at f=3 have defective positive roots:
+q_eff=1 gives algebraic/geometric multiplicities3/2; q_eff=f=3 gives2/1.
+For k=.75, alpha=chi=1 already gives the first Mink-core defect. The
+vector mu_eff=1 crossing is instead semisimple2/2. A simple removal of
+the suppression is therefore not justified by the current complete basis.
+A redesigned shift or auxiliary Gamma-driver system needs a fresh complete
+principal derivation, resonance audit and coordinate CFL/puncture treatment.
+Changing the lapse alone to standard1+log changes f and global stationary
+selection, and leaves the eta0 shift obstruction in the regular class.
+
+Reproducible kernel and oracle checks
+
+local_trumpet.hpp supplies complete consumed Cartesian analytic jets for
+five local slice/chart cases: M=.5; R0/M=1.4,p=.75,1,1.5,(2/3), and
+R0/M=1.35,p=1.25. At nine r/M=.04 down to .0001, both axis and oblique
+(.36,-.48,.8) points lie in the exact reference core, giving90 rows.
+The lapse root is factored in delta=R-R0 to avoid cancellation. Analytic
+Geometry supplies Lambda and its derivative. The full production tensor
+kernel is used without RHS subtraction. Independent value finite differences
+check the consumed first/second jets. Release and ASAN+UB checks both give:
+
+  max |H|*M^2                       2.5639212975e-15
+  max physical momentum norm*M^2    1.2829724341e-15
+  max normalized stationary geomRHS 1.2060370016e-15
+  max |alphaDot/alpha|*M             7.2681367712e-16
+  shift decomposition error*M^2/r    5.3874178784e-17
+  damping identity error*M^2/r       2.7880710841e-17
+  relative Misner-Sharp mass error   4.4408920985e-16
+  areal-radius error/M               6.6613381478e-16
+  normalized first/second jet errors 3.1313e-10 / 2.1637e-6
+
+For the R0/M1.4,p1 case at r/M1e-4, betaDot*M^2/r=.0971751933
+approaches v^2*M^2=.0971817298; damping eta=v gives -4.35768e-6.
+This is asymptotic cancellation, not finite-radius stationarity. A 100-digit
+independent value/differentiation oracle checks six cases (including mass
+rescaling) through r/M1e-40, with limiting errors below1e-25. Exact SymPy
+checks verify stationary ADM signs, hybrid integral, K0/p/v, and the
+principal collision multiplicities. Full basis maximum matrix/eigenfield
+errors are3.5527e-15/8.8818e-16; max normalized condition37.2086.
+
+Reproduce from repository root:
+  /Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python build-layer-research/inner-trumpet-gate/run_audit.py
+
+receipt.json records all exact compile/run commands, source hashes and
+binary hashes. It contains8 passing checks plus4 builds. Final tests take
+4.594876084 seconds; total including builds 7.008972959 seconds.
+LeakSanitizer is disabled because macOS does not support it; address and
+undefined-behavior sanitizers are enabled. The source snapshot of the
+principal extractor differs only by an eta argument/assignment and explicit
+return0 for its renamed unused main. Production code remains unchanged.
+
+failed-collision-hypothesis/ retains the complete failed receipt, proof source,
+runner and stderr from an exploratory overbroad assertion that the vector
+mu=1 crossing would also be defective. Actual rank2 at multiplicity2
+corrected that expectation; scalar defects and numerical tests were not
+invalidated. The final proof explicitly checks that vector crossing is
+semisimple. No failed result was silently promoted to a pass.
+
+Later measurable acceptance, after Minkowski pulse acceptance
+
+Use the actual full Cartesian native evolution with an even grid excluding
+r=0, angular/off-axis diagnostics and resolution/time convergence. On a
+uniform box[-S,S]^3, the nearest even-grid cell center has rmin=sqrt(3)*S/N.
+At .05S exactcore, N24 has no exactcore cell; N36/48 resolve only the
+innermost shell. Core asymptotics cannot be inferred from such a grid.
+The detached BH height cutoff .30--.95 does not enlarge the reference core.
+
+Measure R_areal=r*sqrt(gtilde_T/chi)/Omega and distinguish the initial
+wormhole R~M^2/(4r) from an emerging positive plateauR0. Resolve the
+logarithmically diverging proper radial length and chi/r^2, metric eigenvalue
+limits, lapse slopep_eff=dlog(alpha)/dlog(r), v_eff=beta^r/r, finite K,
+Theta/Z and vacuum constraints. Check vp-2K and separately shift advection,
+Gamma driver and eta term divided by r; v_eff->eta is a necessary stationary
+check here. Require full RHS decay, convergent mass/horizon invariants and
+outer Q/N_raw/pole compatibility with the retained Minkowski reference.
+Fit over a resolved range outside the first few cells; interchange of
+late-time and r->0 limits is not established by isolated cell collapse.
+No fixed published R0 or standard1+log exponent is an acceptance target.
+
+Primary literature, with explicit translation limits
+
+Ohme et al., Stationary hyperboloidal slicings with evolved gauge conditions
+(2009), https://arxiv.org/pdf/0905.0450 . Their K=+L_n gamma/2 is opposite
+production. Eq24 has f=1+2/alpha. Their pure constant-offset configuration
+is not the spatially layered reference gauge. The paper text/Fig8 print
+R0~1.3955M, but its Eqs28--31 give Cpaper^2=.3908532208M^4,C4=4Cpaper^2,
+and zero-lapse roots1.3195497562M/1.6552952247M; the positive-alpha_R root
+is the smaller one. This equation/text inconsistency is independently
+recomputed in oracle.py; neither number is adopted as a layered target.
+
+Baumgarte/de Oliveira, Bona-Masso slicing conditions and the lapse close to
+black-hole punctures (2022), https://arxiv.org/pdf/2201.08857 . Their
+minus-K convention agrees with production. Eqs8--18 give stationary
+Schwarzschild/Bona-Masso relations; Eqs21--26 obtain an isotropic-radius
+exponent. Isotropic coordinates and their standard1+log exponent do not
+follow from this implementation's shift.
+
+Brown, Probing the puncture for black hole simulations (2009),
+https://arxiv.org/pdf/0908.3814 . AppendixB explicitly distinguishes a
+stationary slicing from stationary Gamma-driver spatial coordinates.
+Its eta0 auxiliary-driver reduction gives beta.grad(beta)+(3/4)Lambda=0,
+without our alpha^2*chi factor. Its characteristic/puncture conclusions
+cannot be transferred to the current single first-order shift by analogy.

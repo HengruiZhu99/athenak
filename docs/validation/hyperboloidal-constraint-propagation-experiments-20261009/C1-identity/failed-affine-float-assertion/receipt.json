@@ -1,0 +1,14 @@
+{
+  "status": "reproduced failed exact float equality; no accepted gate",
+  "returncode": 1,
+  "source_hashes": {
+    "stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "affine.json": "27cd851ccfd8c7868fb06fc8322cc8b698f73dbeb46553944bf564d4bc1152c5",
+    "c1_additions.hpp": "908d655ad8a43261d8e0cd66b3c0da485fc131b57a5203019aea01acc21771b7",
+    "check_transform.py": "dccc6faa72e41241ca648eb273817f0704178ce2af6e0b96f1c37b5dd477105f",
+    "covariant_gate.cpp": "c127799bb78cad3bde0064d15f043fc7bb04a5e1c438632d55146571e134237b",
+    "stderr.txt": "51eaa0e58de0113d1a5424a227f66458468abf526cea99acd9af3d139b032a60",
+    "run_audit.py": "4c30463f76895a9abc7383a66eadf8fe25d17cd59fb26c7b1d037a7fc643d10f"
+  },
+  "cause": "actual affine residual is1.0000000000000004 due binary64 arithmetic; exact algebraic identity is1. Replace strict native float equality with1e-14 tolerance while retaining symbolic exact identities."
+}

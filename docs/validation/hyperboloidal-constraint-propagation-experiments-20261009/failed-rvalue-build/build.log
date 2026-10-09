@@ -1,0 +1,109 @@
+In file included from /Users/hz0693/research/hyperboloidal/src/outputs/history.cpp:24:
+In file included from /Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_hawking.hpp:10:
+In file included from /Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/cartesian_patch.hpp:12:
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/athenak_bridge.hpp:104:10: error: no matching function for call to 'Dx'
+  104 |   return Dx<NGHOST>(axis,idx,FirstDerivativeField<NGHOST,Field>(axis,idx,q),indices...);
+      |          ^~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/athenak_bridge.hpp:117:46: note: in instantiation of function template specialization 'z4c::hyperboloidal::ComposedDxx<3, AthenaTensor<double, TensorSymm::NONE, 3, 0>, int, int, int, int>' requested here
+  117 |       out.dd[a][b] = out.dd[b][a] = a == b ? ComposedDxx<NGHOST>(a, idx, q, m,k,j,i)
+      |                                              ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/athenak_bridge.hpp:129:11: note: in instantiation of function template specialization 'z4c::hyperboloidal::LoadComposedMeshScalar<3, AthenaTensor<double, TensorSymm::NONE, 3, 0>>' requested here
+  129 |   u.chi = LoadComposedMeshScalar<NGHOST>(q.chi, idx, m,k,j,i);
+      |           ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/cartesian_patch.hpp:325:16: note: in instantiation of function template specialization 'z4c::hyperboloidal::LoadComposedMeshJet<3>' requested here
+  325 |       auto u = LoadComposedMeshJet<3>(udev,idx,0,k,j,i);
+      |                ^
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:16:6: note: candidate function [with NGHOST = 3, TYPE = z4c::hyperboloidal::FirstDerivativeField<3, AthenaTensor<double, TensorSymm::NONE, 3, 0>>] not viable: expects an lvalue for 3rd argument
+   16 | Real Dx(int const dir,
+      |      ^
+   17 |         const Real idx[], TYPE &quant,
+      |                           ~~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:72:6: note: candidate function template not viable: requires 8 arguments, but 7 were provided
+   72 | Real Dx(int const dir,
+      |      ^  ~~~~~~~~~~~~~~
+   73 |         const Real idx[], TYPE &quant,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   74 |         int const m, int const a,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+   75 |         int const k, int const j, int const i) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:128:6: note: candidate function template not viable: requires 9 arguments, but 7 were provided
+  128 | Real Dx(int const dir,
+      |      ^  ~~~~~~~~~~~~~~
+  129 |         const Real idx[], TYPE &quant,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  130 |         int const m, int const a, int const b,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  131 |         int const k, int const j, int const i) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/hz0693/research/hyperboloidal/src/outputs/history.cpp:24:
+In file included from /Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_hawking.hpp:10:
+In file included from /Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/cartesian_patch.hpp:12:
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/athenak_bridge.hpp:104:10: error: no matching function for call to 'Dx'
+  104 |   return Dx<NGHOST>(axis,idx,FirstDerivativeField<NGHOST,Field>(axis,idx,q),indices...);
+      |          ^~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/athenak_bridge.hpp:141:13: note: in instantiation of function template specialization 'z4c::hyperboloidal::ComposedDxx<3, AthenaTensor<double, TensorSymm::NONE, 3, 1>, int, int, int, int, int>' requested here
+  141 |             ComposedDxx<NGHOST>(d, idx, q.beta_u, m,a,k,j,i) :
+      |             ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/cartesian_patch.hpp:325:16: note: in instantiation of function template specialization 'z4c::hyperboloidal::LoadComposedMeshJet<3>' requested here
+  325 |       auto u = LoadComposedMeshJet<3>(udev,idx,0,k,j,i);
+      |                ^
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:72:6: note: candidate function [with NGHOST = 3, TYPE = z4c::hyperboloidal::FirstDerivativeField<3, AthenaTensor<double, TensorSymm::NONE, 3, 1>>] not viable: expects an lvalue for 3rd argument
+   72 | Real Dx(int const dir,
+      |      ^
+   73 |         const Real idx[], TYPE &quant,
+      |                           ~~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:16:6: note: candidate function template not viable: requires 7 arguments, but 8 were provided
+   16 | Real Dx(int const dir,
+      |      ^  ~~~~~~~~~~~~~~
+   17 |         const Real idx[], TYPE &quant,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   18 |         int const m,
+      |         ~~~~~~~~~~~~
+   19 |         int const k, int const j, int const i) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:128:6: note: candidate function template not viable: requires 9 arguments, but 8 were provided
+  128 | Real Dx(int const dir,
+      |      ^  ~~~~~~~~~~~~~~
+  129 |         const Real idx[], TYPE &quant,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  130 |         int const m, int const a, int const b,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  131 |         int const k, int const j, int const i) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/hz0693/research/hyperboloidal/src/outputs/history.cpp:24:
+In file included from /Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_hawking.hpp:10:
+In file included from /Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/cartesian_patch.hpp:12:
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/athenak_bridge.hpp:104:10: error: no matching function for call to 'Dx'
+  104 |   return Dx<NGHOST>(axis,idx,FirstDerivativeField<NGHOST,Field>(axis,idx,q),indices...);
+      |          ^~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/athenak_bridge.hpp:156:15: note: in instantiation of function template specialization 'z4c::hyperboloidal::ComposedDxx<3, AthenaTensor<double, TensorSymm::SYM2, 3, 2>, int, int, int, int, int, int>' requested here
+  156 |               ComposedDxx<NGHOST>(d, idx, q.g_dd, m,a,b,k,j,i) :
+      |               ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/cartesian_patch.hpp:325:16: note: in instantiation of function template specialization 'z4c::hyperboloidal::LoadComposedMeshJet<3>' requested here
+  325 |       auto u = LoadComposedMeshJet<3>(udev,idx,0,k,j,i);
+      |                ^
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:128:6: note: candidate function [with NGHOST = 3, TYPE = z4c::hyperboloidal::FirstDerivativeField<3, AthenaTensor<double, TensorSymm::SYM2, 3, 2>>] not viable: expects an lvalue for 3rd argument
+  128 | Real Dx(int const dir,
+      |      ^
+  129 |         const Real idx[], TYPE &quant,
+      |                           ~~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:72:6: note: candidate function template not viable: requires 8 arguments, but 9 were provided
+   72 | Real Dx(int const dir,
+      |      ^  ~~~~~~~~~~~~~~
+   73 |         const Real idx[], TYPE &quant,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   74 |         int const m, int const a,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+   75 |         int const k, int const j, int const i) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp:16:6: note: candidate function template not viable: requires 7 arguments, but 9 were provided
+   16 | Real Dx(int const dir,
+      |      ^  ~~~~~~~~~~~~~~
+   17 |         const Real idx[], TYPE &quant,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   18 |         int const m,
+      |         ~~~~~~~~~~~~
+   19 |         int const k, int const j, int const i) {
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3 errors generated.

@@ -77,7 +77,7 @@ lapse amplitude .1, shift amplitude .02 and width .5. Its t2 result is:
 
 The candidate completes in 665.1 seconds and all 81 saved field snapshots
 are finite with positive lapse/chi and positive definite physical spatial
-metric. Final alpha/chi minima are .772240/.611262 and metric eigenvalues
+metric. Final alpha/chi minima are .772240/.611262 and Penrose spatial-metric eigenvalues
 range .650948–3.88644. Nevertheless its Hamiltonian error is 1.9% worse,
 and all three constraint norms grow. It fails pulse stabilization acceptance.
 Final H squared norm is 88.61% inside r=.9, while M/Z squared norms are

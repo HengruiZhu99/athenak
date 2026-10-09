@@ -1,0 +1,17 @@
+{
+  "scope": "Superseded scratch failures, preserved without inventing an original full receipt.",
+  "initial_compile_observation": {
+    "status": "partial observation from actual tool output, not a complete original source/receipt snapshot",
+    "file": "subsidiary.hpp",
+    "line": 19,
+    "expression": "dz-=2*(dgamma*c.q+connection*c.d)",
+    "error": "invalid operands to binary expression ('int' and 'complex<double>'); conflicting deduced template types int and double",
+    "repair": "Use 2. as the floating-point literal. Final compile and all receipt commands pass.",
+    "superseded_output": "An earlier shell call continued to an old executable after this compile failure. Its output was not accepted; final run_audit.py checks compilation before executing and hashes the actual binary/output."
+  },
+  "principal_structural_assertion": {
+    "complete_preserved_receipt": "failed-principal-structural-assertion/receipt.json",
+    "reason": "SymPy structural equality rejected algebraically equal expanded/factored matrices.",
+    "repair": "Require simplify(R-expected)==zeros(8), then verify the Hermitian energy identity exactly."
+  }
+}

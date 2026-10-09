@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "assumptions": [
+    "stationary radial Schwarzschild geometry",
+    "future/outward shift branch, positive lapse, c>0",
+    "Omega=1 exact reference core",
+    "Theta_phys=0; P=K; lapse_inner=0",
+    "regular radial conormal/polyhomogeneous expansion",
+    "nondegenerate conformal metric, chi~Cchi*r^2, alpha~A*r^p, p>0"
+  ],
+  "K0": "(3*M - 2*R0)/(R0**2*sqrt(2*M/R0 - 1))",
+  "alpha_R0": "(6*M - 4*R0)/(R0*(2*M - R0))",
+  "v": "2*K0/p",
+  "eta_required": "eta_inner=v>0",
+  "radius_restriction": "0<R0<3*M/2",
+  "default_eta0_obstruction": "betaDot/r -> v^2>0; alpha^2*chi*Lambda/r ->0",
+  "hypothetical_unsuppressed_driver_principal_collisions": [
+    {
+      "case": "q=1,f=3",
+      "positive_root_algebraic_multiplicity": 3,
+      "positive_root_geometric_multiplicity": 2,
+      "defective": true
+    },
+    {
+      "case": "q=f=3",
+      "positive_root_algebraic_multiplicity": 2,
+      "positive_root_geometric_multiplicity": 1,
+      "defective": true
+    },
+    {
+      "case": "mu=1 vector",
+      "positive_root_algebraic_multiplicity": 2,
+      "positive_root_geometric_multiplicity": 2,
+      "defective": false
+    }
+  ],
+  "not_proved": [
+    "existence",
+    "stability",
+    "global matching",
+    "dynamic formation",
+    "uniform puncture hyperbolicity",
+    "all-order stationary coordinate ODE"
+  ]
+}

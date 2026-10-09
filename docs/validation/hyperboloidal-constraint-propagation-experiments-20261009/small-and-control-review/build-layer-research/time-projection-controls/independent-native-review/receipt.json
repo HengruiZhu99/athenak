@@ -1,0 +1,118 @@
+{
+  "status": "PASS",
+  "seconds": 4.217513125,
+  "scope": "Independent read-only completed-control receipt/state reconstruction; no accepted file changed.",
+  "stage_private_source_exact_single_replacement_verified": true,
+  "stage_private_object_executable_and_all_reused_inputs_verified": true,
+  "stage_build_receipt_sha256": "a6931643df6c6d7f259dfb1630aa286973eccd753e8135490fd81525c313e834",
+  "source_sha256": {
+    "build-layer-research/time-projection-controls/independent-native-review/review_controls.py": "eadd03147487959cb2d8f752e0c33713824ae8c0bb21e473273a936d3f0c70d6",
+    "build-layer-research/time-projection-controls/audit_composed_native.py": "088b456a99a9ff66ad905e7cc12c38da922656393e47c2835996ce7d8ddf6e69",
+    "build-layer-research/time-projection-controls/audit_native_control.py": "e0ce39bdec3061806dc910cd63be610e1aeaf638d1840b6b3e0a00380b4d2687",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13"
+  },
+  "cases": [
+    {
+      "name": "N24-half-step-t2",
+      "receipt_sha256": "15dea59d5188d512161d0298054e589ac1c55d36644e433839aafb11ff91170e",
+      "all_captured_source_and_run_hashes_verified": true,
+      "all_saved_double_snapshots_independently_reconstructed": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "initial_active_coordinates_masks_arrays_bitwise_identical": true,
+      "snapshots": 81,
+      "all_final_field_comparisons_exactly_reproduced": true,
+      "final_relative_constraints": {
+        "H": {
+          "control": 1.2221276910916485,
+          "baseline": 1.2221868920465926,
+          "ratio": 0.9999515614548566
+        },
+        "M": {
+          "control": 1.348560105379222,
+          "baseline": 1.3483726968663203,
+          "ratio": 1.0001389886589496
+        },
+        "Z": {
+          "control": 0.3757438801521933,
+          "baseline": 0.3757660819069462,
+          "ratio": 0.9999409160224354
+        },
+        "Theta": {
+          "control": 0.02189682726621176,
+          "baseline": 0.021896188773540663,
+          "ratio": 1.000029159991161
+        }
+      },
+      "max_final_full_field_difference": 0.001287665280724326,
+      "first_dt_ratio": 0.5
+    },
+    {
+      "name": "stage-projection-t2",
+      "receipt_sha256": "e96f846cfcf58181d10fbb4d8ade2f3cfc9356adcedaf8059680ebe88756a855",
+      "all_captured_source_and_run_hashes_verified": true,
+      "all_saved_double_snapshots_independently_reconstructed": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "initial_active_coordinates_masks_arrays_bitwise_identical": true,
+      "snapshots": 81,
+      "all_final_field_comparisons_exactly_reproduced": true,
+      "final_relative_constraints": {
+        "H": {
+          "control": 1.2220573614433146,
+          "baseline": 1.2221868920465926,
+          "ratio": 0.9998940173519116
+        },
+        "M": {
+          "control": 1.3487379252950005,
+          "baseline": 1.3483726968663203,
+          "ratio": 1.0002708660814097
+        },
+        "Z": {
+          "control": 0.3757238091230694,
+          "baseline": 0.3757660819069462,
+          "ratio": 0.9998875023960059
+        },
+        "Theta": {
+          "control": 0.021897142666340224,
+          "baseline": 0.021896188773540663,
+          "ratio": 1.000043564330278
+        }
+      },
+      "max_final_full_field_difference": 0.0025070295721576485,
+      "first_dt_ratio": 1.0
+    },
+    {
+      "name": "stage-projection-reference",
+      "receipt_sha256": "b24a6d4739f0b5707de7403e28ef0fda5caac3cfcbbe51e8c283cc4c68760952",
+      "all_captured_source_and_run_hashes_verified": true,
+      "all_saved_double_snapshots_independently_reconstructed": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "initial_active_coordinates_masks_arrays_bitwise_identical": true,
+      "snapshots": 3,
+      "all_final_field_comparisons_exactly_reproduced": true,
+      "final_relative_constraints": {
+        "H": {
+          "control": 8.035653903604116e-14,
+          "baseline": 8.477891400533267e-14,
+          "ratio": 0.9478363810013732
+        },
+        "M": {
+          "control": 2.7071682853903104e-14,
+          "baseline": 2.687926841005914e-14,
+          "ratio": 1.007158470271905
+        },
+        "Z": {
+          "control": 1.3152383739428082e-15,
+          "baseline": 1.2542892301336465e-15,
+          "ratio": 1.0485925752568788
+        },
+        "Theta": {
+          "control": 1.0003745009758295e-15,
+          "baseline": 9.974238931711035e-16,
+          "ratio": 1.0029582285174112
+        }
+      },
+      "max_final_full_field_difference": 8.43769498715119e-15,
+      "first_dt_ratio": 1.0
+    }
+  ]
+}

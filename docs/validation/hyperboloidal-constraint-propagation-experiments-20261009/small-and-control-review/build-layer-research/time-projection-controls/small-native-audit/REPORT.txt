@@ -1,0 +1,45 @@
+Independent small-angular-pulse audit
+
+PASS, read-only, 81 small-pulse + 81 finite-baseline + 3 reference snapshots.
+This is an amplitude sensitivity control, not acceptance of the required
+substantial finite angular pulse or evidence of a wormhole-to-trumpet transition.
+No production source, accepted auditor, old receipt, or frozen archive changed.
+
+All three executable hashes are the unchanged spatial-norm executable
+dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d.
+Baseline build source and gauge overlay hashes are checked. Input differences
+are exactly lapse amplitude .1->.001 and shift amplitude .02->.0002. Physical
+coordinates and masks are identical. Every non-gauge initial field is bitwise
+identical to baseline and zero-pulse reference. For all four initial lapse/shift
+components, small-reference=.01*(baseline-reference) has maximum absolute
+binary64 subtraction residual 1.1102230246251565e-16. Tiny shift components
+have larger relative subtraction residuals; no exact pointwise ratio is assumed
+where a reference subtraction rounds to zero.
+
+All saved active binary64 evolved fields are finite; alpha and chi are positive,
+the spatial metric is SPD, and determinant/trace errors stay below 1e-12.
+All 25 active BIN fields are bitwise identical to the RST fields rounded to
+binary32, including signed zero. Header time/cycle and size/ABI checks use the
+frozen strict restart reader. Exact final time is t=2 for both pulses; history
+times happen to coincide exactly. The general history comparison is explicitly
+defined as baseline linear interpolation, which is direct pairing here.
+
+Original HST constraints at t2:
+              small          small/.01       finite baseline    normalized ratio
+  H       .0086296955573      .862969555730     1.222186892047       .706086410635
+  M       .00546578916295     .546578916295     1.348372696866       .405361898506
+  Z       .00161061215715     .161061215715      .375766081907       .428620951889
+  Theta   .000126221769472    .0126221769472     .0218961887735      .576455431478
+These do not follow simple linear amplitude scaling. Decreasing the amplitude
+does not establish the requested finite-pulse stability.
+
+Precision/field-label clarification: inherited receipt keys named
+physical_metric_eigen_* diagonalize gtilde/chi, the Penrose spatial metric.
+Their numerical values are conformal. Its SPD is equivalent to physical
+Omega^-2*gtilde/chi SPD at every active Omega>0 cell. No physical metric
+eigenvalue magnitude or range is inferred from those keys.
+
+Audit source ../audit_small_native.py and receipt.json retain exact source,
+input, executable, result, history, mask, RST and BIN hashes plus all run-file
+hashes. Runtime 2.30736 s. Reproduction from repository root:
+  /Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python build-layer-research/time-projection-controls/audit_small_native.py

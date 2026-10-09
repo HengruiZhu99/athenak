@@ -1,0 +1,734 @@
+{
+  "scope": "Completed bounded private composed-operator preflight. All 25 state fields use full-precision restart data; standard production HST differential-constraint diagnostics stay unchanged. Physical box cells are paired by uniform grid index across ng4/ng3, with floating-coordinate differences measured. No stability acceptance, temporal order, exact initial bitwise identity or BH claim.",
+  "head": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "seconds": 0.174205292,
+  "build_verification": {
+    "base_build_receipt_sha256": "a39430b8c3bcf2e7cc05d03a441831edc493f050afbb687e642418f1e5f56ce6",
+    "private_build_receipt_sha256": "f2c884662b04b68b4efef0cb1dedb2e11b26f242683427642d233afbf433c886",
+    "all_six_private_objects_and_dependency_files_verified": true,
+    "all_private_sources_and_repository_dependencies_verified": true,
+    "all_reused_base_link_inputs_verified": true,
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16"
+  },
+  "private_case": "reference-long-N24",
+  "baseline_case": "reference-long-N24",
+  "input_parameter_differences": {
+    "mesh/nghost": [
+      "3",
+      "4"
+    ]
+  },
+  "physical_grid_and_index_alignment_verified": true,
+  "native_coordinate_construction_max_difference": 2.220446049250313e-16,
+  "active_physical_box_masks_identical": true,
+  "initial_arrays_bitwise_equal": false,
+  "initial_full_precision_active_max_difference": 1.176836406102666e-14,
+  "exact_final_comparison_time": 0.05,
+  "final_original_HST_diagnostics": {
+    "H": {
+      "private": 8.570966360071176e-14,
+      "baseline": 8.477891400533267e-14,
+      "ratio": 1.0109785505782787
+    },
+    "M": {
+      "private": 1.342725689271298e-14,
+      "baseline": 2.687926841005914e-14,
+      "ratio": 0.49953952197925305
+    },
+    "Z": {
+      "private": 1.2072542544375931e-15,
+      "baseline": 1.2542892301336465e-15,
+      "ratio": 0.9625006939659031
+    },
+    "Theta": {
+      "private": 4.60522195461597e-16,
+      "baseline": 9.974238931711035e-16,
+      "ratio": 0.4617116139031537
+    }
+  },
+  "final_equal_time_full_precision_fields": {
+    "z4c_chi": {
+      "initial_max_difference": 6.661338147750939e-16,
+      "initial_rms_difference": 1.3010821583774566e-16,
+      "final_max_difference": 6.661338147750939e-16,
+      "final_rms_difference": 1.4594496794488141e-16,
+      "baseline_rms_change": 5.604993271537774e-17
+    },
+    "z4c_gxx": {
+      "initial_max_difference": 1.3322676295501878e-15,
+      "initial_rms_difference": 1.9411622130792377e-16,
+      "final_max_difference": 1.3322676295501878e-15,
+      "final_rms_difference": 1.9743206319301032e-16,
+      "baseline_rms_change": 1.1054303473674451e-16
+    },
+    "z4c_gxy": {
+      "initial_max_difference": 9.43689570931383e-16,
+      "initial_rms_difference": 1.3891327246437573e-16,
+      "final_max_difference": 1.0269562977782698e-15,
+      "final_rms_difference": 1.4702743826250774e-16,
+      "baseline_rms_change": 4.248548623941197e-17
+    },
+    "z4c_gxz": {
+      "initial_max_difference": 9.43689570931383e-16,
+      "initial_rms_difference": 1.3434898805199158e-16,
+      "final_max_difference": 9.43689570931383e-16,
+      "final_rms_difference": 1.4247801731064396e-16,
+      "baseline_rms_change": 4.195618795081902e-17
+    },
+    "z4c_gyy": {
+      "initial_max_difference": 1.3322676295501878e-15,
+      "initial_rms_difference": 1.942967633860862e-16,
+      "final_max_difference": 1.3322676295501878e-15,
+      "final_rms_difference": 1.9360463352362415e-16,
+      "baseline_rms_change": 1.1112151409343377e-16
+    },
+    "z4c_gyz": {
+      "initial_max_difference": 9.43689570931383e-16,
+      "initial_rms_difference": 1.3617607930634624e-16,
+      "final_max_difference": 8.881784197001252e-16,
+      "final_rms_difference": 1.4434249403353277e-16,
+      "baseline_rms_change": 4.177914429573795e-17
+    },
+    "z4c_gzz": {
+      "initial_max_difference": 1.3322676295501878e-15,
+      "initial_rms_difference": 1.9285288883235835e-16,
+      "final_max_difference": 1.3322676295501878e-15,
+      "final_rms_difference": 1.9967725817245092e-16,
+      "baseline_rms_change": 1.1277699682893275e-16
+    },
+    "z4c_Khat": {
+      "initial_max_difference": 4.884981308350689e-15,
+      "initial_rms_difference": 9.345856225127991e-16,
+      "final_max_difference": 5.329070518200751e-15,
+      "final_rms_difference": 9.752286762284727e-16,
+      "baseline_rms_change": 3.664467292747326e-16
+    },
+    "z4c_Axx": {
+      "initial_max_difference": 2.886579864025407e-15,
+      "initial_rms_difference": 3.9470889221565924e-16,
+      "final_max_difference": 4.3638442042246944e-15,
+      "final_rms_difference": 8.018174335617525e-16,
+      "baseline_rms_change": 7.953916451493829e-16
+    },
+    "z4c_Axy": {
+      "initial_max_difference": 2.1094237467877974e-15,
+      "initial_rms_difference": 2.8913879373918365e-16,
+      "final_max_difference": 3.3306690738754696e-15,
+      "final_rms_difference": 4.920720725483948e-16,
+      "baseline_rms_change": 3.937449492693331e-16
+    },
+    "z4c_Axz": {
+      "initial_max_difference": 2.1094237467877974e-15,
+      "initial_rms_difference": 2.7973661275739496e-16,
+      "final_max_difference": 7.827072323607354e-15,
+      "final_rms_difference": 4.885047884524633e-16,
+      "baseline_rms_change": 4.010100181591865e-16
+    },
+    "z4c_Ayy": {
+      "initial_max_difference": 2.886579864025407e-15,
+      "initial_rms_difference": 3.9899524621023327e-16,
+      "final_max_difference": 5.140628727564025e-15,
+      "final_rms_difference": 7.975430345041473e-16,
+      "baseline_rms_change": 7.9445662657872545e-16
+    },
+    "z4c_Ayz": {
+      "initial_max_difference": 2.1094237467877974e-15,
+      "initial_rms_difference": 2.8398540690733314e-16,
+      "final_max_difference": 8.43769498715119e-15,
+      "final_rms_difference": 4.968501681256604e-16,
+      "baseline_rms_change": 3.9952714871002593e-16
+    },
+    "z4c_Azz": {
+      "initial_max_difference": 2.886579864025407e-15,
+      "initial_rms_difference": 3.9967952352367473e-16,
+      "final_max_difference": 3.97666433568202e-15,
+      "final_rms_difference": 7.789559796984741e-16,
+      "baseline_rms_change": 7.785847935284165e-16
+    },
+    "z4c_Gamx": {
+      "initial_max_difference": 9.992007221626409e-15,
+      "initial_rms_difference": 1.8019857534405706e-15,
+      "final_max_difference": 1.1894147229027098e-14,
+      "final_rms_difference": 2.1786999963371315e-15,
+      "baseline_rms_change": 1.5551104809023603e-15
+    },
+    "z4c_Gamy": {
+      "initial_max_difference": 1.176836406102666e-14,
+      "initial_rms_difference": 1.803463242736713e-15,
+      "final_max_difference": 1.176836406102666e-14,
+      "final_rms_difference": 2.1781323117239543e-15,
+      "baseline_rms_change": 1.5772424198044078e-15
+    },
+    "z4c_Gamz": {
+      "initial_max_difference": 1.0103029524088925e-14,
+      "initial_rms_difference": 1.7997276333862412e-15,
+      "final_max_difference": 1.065290910664044e-14,
+      "final_rms_difference": 2.150550872262298e-15,
+      "baseline_rms_change": 1.5368481141967568e-15
+    },
+    "z4c_Theta": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 5.383209249344262e-15,
+      "final_rms_difference": 9.857264703682588e-16,
+      "baseline_rms_change": 9.974238931711021e-16
+    },
+    "z4c_alpha": {
+      "initial_max_difference": 1.1102230246251565e-15,
+      "initial_rms_difference": 2.6504170445969098e-16,
+      "final_max_difference": 1.1102230246251565e-15,
+      "final_rms_difference": 2.813769739871216e-16,
+      "baseline_rms_change": 9.665732551378313e-17
+    },
+    "z4c_betax": {
+      "initial_max_difference": 1.5543122344752192e-15,
+      "initial_rms_difference": 3.15237121757389e-16,
+      "final_max_difference": 1.5543122344752192e-15,
+      "final_rms_difference": 3.147910413177157e-16,
+      "baseline_rms_change": 4.171701782107212e-17
+    },
+    "z4c_betay": {
+      "initial_max_difference": 1.5543122344752192e-15,
+      "initial_rms_difference": 3.151055426822007e-16,
+      "final_max_difference": 1.5543122344752192e-15,
+      "final_rms_difference": 3.1428782453494423e-16,
+      "baseline_rms_change": 4.202822052791973e-17
+    },
+    "z4c_betaz": {
+      "initial_max_difference": 1.5543122344752192e-15,
+      "initial_rms_difference": 3.190452062669495e-16,
+      "final_max_difference": 1.5543122344752192e-15,
+      "final_rms_difference": 3.186748116615127e-16,
+      "baseline_rms_change": 4.047789007431394e-17
+    },
+    "z4c_Bx": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    },
+    "z4c_By": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    },
+    "z4c_Bz": {
+      "initial_max_difference": 0.0,
+      "initial_rms_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0,
+      "baseline_rms_change": 0.0
+    }
+  },
+  "private_history_rows": [
+    [
+      0.0,
+      0.00042773437499998563,
+      6.0048545660552085e-15,
+      9.986961755370912e-16,
+      1.2395298299904818e-16,
+      0.0,
+      8.881784197001252e-16,
+      9.083252187259944e-16,
+      0.9812130534015334,
+      0.7612705478353704,
+      7.071633878716858e-14,
+      7.1039781084251215e-15,
+      0.0,
+      3.708906823981056e-15,
+      6152.0
+    ],
+    [
+      0.02523632812499913,
+      0.00042773437499998563,
+      8.608822410851268e-14,
+      9.82342282663972e-15,
+      1.1878436445296065e-15,
+      3.3403307425404585e-16,
+      8.881784197001252e-16,
+      4.917621123343462e-16,
+      0.9812130534015334,
+      0.7612705478353703,
+      6.623035453401371e-13,
+      4.853448198124601e-14,
+      3.693801117279043e-14,
+      3.708906823981056e-15,
+      6152.0
+    ],
+    [
+      0.05,
+      0.00042773437499998563,
+      8.570966360071176e-14,
+      1.342725689271298e-14,
+      1.2072542544375931e-15,
+      4.60522195461597e-16,
+      8.881784197001252e-16,
+      4.917621123343462e-16,
+      0.9812130534015334,
+      0.7612705478353703,
+      6.587508316613366e-13,
+      8.194923099222265e-14,
+      3.708144902248023e-14,
+      3.708906823981056e-15,
+      6152.0
+    ]
+  ],
+  "baseline_history_rows": [
+    [
+      0.0,
+      0.00042773437499998563,
+      6.091900502453727e-15,
+      9.729042585004061e-16,
+      1.2391380160796285e-16,
+      0.0,
+      8.881784197001252e-16,
+      9.439920159136376e-16,
+      0.9812130534015334,
+      0.7612705478353704,
+      7.071633878758217e-14,
+      6.055563204749014e-15,
+      0.0,
+      3.708906823981056e-15,
+      6152.0
+    ],
+    [
+      0.02523632812499913,
+      0.00042773437499998563,
+      8.654468309787834e-14,
+      1.9960074028938785e-14,
+      1.2011903507224548e-15,
+      7.34883334535579e-16,
+      6.661338147750939e-16,
+      4.347767982970695e-16,
+      0.9812130534015334,
+      0.7612705478353703,
+      6.407643513006711e-13,
+      8.776321830263023e-14,
+      4.872138421427363e-14,
+      3.708906823981056e-15,
+      6152.0
+    ],
+    [
+      0.05,
+      0.00042773437499998563,
+      8.477891400533267e-14,
+      2.687926841005914e-14,
+      1.2542892301336465e-15,
+      9.974238931711035e-16,
+      6.661338147750939e-16,
+      4.347767982970695e-16,
+      0.9812130534015334,
+      0.7612705478353703,
+      6.496461354976724e-13,
+      1.4963490380465705e-13,
+      5.0254933447750157e-14,
+      4.0160641812289026e-15,
+      6152.0
+    ]
+  ],
+  "private_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999986,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.881784197001252e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "b16d548567db58f3747b8dad74aae74c0dd9a65fa33a32630dd6827521258bcb",
+          "bytes": 3419201
+        },
+        "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "b03660c9a6c0dc952005bb52905c1ca0e81bb7ad46a65f710980c92a4bb8397a",
+          "bytes": 6564642
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999983,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "f3e4a81510f6776cfac73d9bfddc4bd5f0023bc0bed2d578ce0e8c2c35122c31",
+          "bytes": 3419546
+        },
+        "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "4a76c98c4dd3ceb0c20fe2ac787defa0938af64c57cdc27e049de836046107c6",
+          "bytes": 6565278
+        }
+      },
+      "full_precision_drift_from_initial_max": 9.07537584665845e-15
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 4,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999983,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "932ec82c6cb886fb039fa869fbf16c444364667ad10fef29f6490d41ef80df37",
+          "bytes": 3419799
+        },
+        "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "bbd83cc67f679c30b3500d4fa5488f4478fd6cf6e1ce0b91cfc42522441f0d9f",
+          "bytes": 6565278
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.097346605770629e-14
+    }
+  ],
+  "baseline_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+          "bytes": 2819674
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0872299590955965e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+          "bytes": 2819927
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.3093295951669232e-14
+    }
+  ],
+  "private_inputs": {
+    "build-layer-research/time-projection-controls/composed-reference/athena-validation": {
+      "sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "bytes": 10433528
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "68b319e918cb799bcec2f62eff21a824bb2b4c6473ed0782c00c3ed720a89e6f",
+      "bytes": 1397
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/layer.athinput": {
+      "sha256": "8f92f510088446f15ae305bb10cc1ebd88f719f6aff4cd8fde219a991b699cf8",
+      "bytes": 2402
+    },
+    "build-layer-research/time-projection-controls/composed-reference/results.json": {
+      "sha256": "7d39ffc2728266f78ea6d2f5a46e8dbb6380bc1ee8cfc282e23778a92430f253",
+      "bytes": 10770
+    }
+  },
+  "baseline_inputs": {
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "32fce4a8c928311c21bae52cd6cefa86dbc347988e53e7f55701bbe956773395",
+      "bytes": 1397
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/layer.athinput": {
+      "sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "bytes": 2385
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/results.json": {
+      "sha256": "16cae97747a0b072fac20f16c7e64fbd50e007aca2e34aebb415cc5028939e46",
+      "bytes": 10838
+    }
+  },
+  "audit_source_sha256": {
+    "build-layer-research/time-projection-controls/audit_composed_native.py": "088b456a99a9ff66ad905e7cc12c38da922656393e47c2835996ce7d8ddf6e69",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec",
+    "vis/python/bin_convert.py": "35e3ec2ebbe2d5a24af9bf1e4796cf1f20def58ce1d76c50f0166288b6d8f37c",
+    "tst/hyperboloidal/run_layer_validation.py": "ca81d60cc9a00b83f9325b79abce9fa3eaaade293e2c5f73c3a3d4bdbfac5d96"
+  },
+  "all_run_files": {
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "5bfd4aae1cd93f3c27abcd3e5358d2edb98b276e5b02fa52d317790619147c88",
+      "bytes": 1955271
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "c2abf3d9de384d103efdda70abd39c3be755265ee4d2222a84478e31c6cd0952",
+      "bytes": 1955460
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "e18486ebd9cdfa13e6c9c933e70450cf4d5c047290fc7d7bedeb3ed4ce1c73c2",
+      "bytes": 1955853
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "b016de811a4bbfffd2e90a2b104a6e1180ec751f416e5d88493fbac6fcd8b097",
+      "bytes": 875184
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "62e30c8ec2381820627f2937cb095567ee3f748bf712024dec200d5f04385091",
+      "bytes": 875105
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "eaa476c0aa9715df1dc42c42369558323248fffec19c00b941e5e0952049a1d5",
+      "bytes": 875742
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+      "bytes": 2819329
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+      "bytes": 2819674
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+      "bytes": 2819927
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "32fce4a8c928311c21bae52cd6cefa86dbc347988e53e7f55701bbe956773395",
+      "bytes": 1397
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/layer.athinput": {
+      "sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "bytes": 2385
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+      "bytes": 5411042
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+      "bytes": 5411678
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+      "bytes": 5411678
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/run.log": {
+      "sha256": "bd63f8dce3560f35c6b0539b4cf0da656937bab9930e08ee9e89bb6f2c1f91d2",
+      "bytes": 621
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/results.json": {
+      "sha256": "16cae97747a0b072fac20f16c7e64fbd50e007aca2e34aebb415cc5028939e46",
+      "bytes": 10838
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    },
+    "build-layer-research/time-projection-controls/composed-reference/athena-validation": {
+      "sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "bytes": 10433528
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "2c97cca1febafcbd0e606d9ac054f3c5aec290fc0926e627752f79a5cb9aa28a",
+      "bytes": 2370567
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "e8771e121a7f661500e13b6ec821d01918d13e56c1ce51c32c6af4a348f6a182",
+      "bytes": 2370756
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "94338b4f0447b8b1bbf687701e16c6b6be43c68a309f584b8d7bad969952a927",
+      "bytes": 2371149
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "0f6f926d3b510f58387824a76429776a1a356aa484e40dcd78bc0da5e2b32de9",
+      "bytes": 1059760
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "70fe4b535465b5671ab564f06ccd38bcd55da2bc1c9da0f385d2c34beb7e9a69",
+      "bytes": 1059681
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "9a0e5e8c56aeb63c79d7e1b5bad66abf2442436fce0136c871c2725a5b8e9ce9",
+      "bytes": 1060318
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "b16d548567db58f3747b8dad74aae74c0dd9a65fa33a32630dd6827521258bcb",
+      "bytes": 3419201
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "f3e4a81510f6776cfac73d9bfddc4bd5f0023bc0bed2d578ce0e8c2c35122c31",
+      "bytes": 3419546
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "932ec82c6cb886fb039fa869fbf16c444364667ad10fef29f6490d41ef80df37",
+      "bytes": 3419799
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "68b319e918cb799bcec2f62eff21a824bb2b4c6473ed0782c00c3ed720a89e6f",
+      "bytes": 1397
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/layer.athinput": {
+      "sha256": "8f92f510088446f15ae305bb10cc1ebd88f719f6aff4cd8fde219a991b699cf8",
+      "bytes": 2402
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "b03660c9a6c0dc952005bb52905c1ca0e81bb7ad46a65f710980c92a4bb8397a",
+      "bytes": 6564642
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "4a76c98c4dd3ceb0c20fe2ac787defa0938af64c57cdc27e049de836046107c6",
+      "bytes": 6565278
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "bbd83cc67f679c30b3500d4fa5488f4478fd6cf6e1ce0b91cfc42522441f0d9f",
+      "bytes": 6565278
+    },
+    "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/run.log": {
+      "sha256": "bc4ab278256d5a420dfb2bd841cdf81d07b9ae4453c0963aba29ca3053de0ec2",
+      "bytes": 621
+    },
+    "build-layer-research/time-projection-controls/composed-reference/results.json": {
+      "sha256": "7d39ffc2728266f78ea6d2f5a46e8dbb6380bc1ee8cfc282e23778a92430f253",
+      "bytes": 10770
+    },
+    "build-layer-research/time-projection-controls/composed-reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/time-projection-controls/composed-reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    }
+  },
+  "precision": "RST state binary64; all 25 active BIN fields match exact float32 rounding bitwise. HST text uses production binary64 diagnostics. A quantized BIN difference need not equal the true field drift. Header dt is pm->dt at write time, not always the completed step.",
+  "status": "PASS"
+}

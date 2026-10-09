@@ -1,0 +1,85 @@
+Private composed-derivative implementation and halo gate
+
+PASS, scratch only, source-at-launch b37a20f2d7a8ccc42148f1a814a80b2957e17b53.
+No tracked source change, native evolution, BH run, or stability acceptance.
+
+The actual private CartesianConformalPatch uses N24, allocated ng4, S=1,
+span=2.1, curvature radius a=.5, geometry transition (.05,.95), kappa10,
+cube-symmetric degree-two and degree-three ghost plans. Its gauge is the
+unchanged private spatial-norm injection. The private patch differs from the
+production patch only in the evolution loader and ghost-planning radius.
+The production LoadMeshJet diagnostic loader is byte-preserved. The private
+native initializer additionally requires allocated ng4, while its FD template
+parameter remains 3, meaning the existing fourth-order first derivative.
+
+For each degree, there are 6,152 active cells and 8,648 exterior ghost targets.
+Every radius-four axis target (166,104 checks), original radius-two mixed
+target (461,400 checks), and radius-three upwind/KO axis target (129,192 checks)
+is allocated and either active or supplied by the actual ghost plan. All
+donors are allocated and strictly interior, so no fill depends on another
+ghost. The existing radius-four planner also supplies mixed radius-three
+targets, a conservative superset of the actual mixed derivative requirement.
+Five generating reflections/permutations of the full cube group give exactly
+zero transformed donor-weight-map difference. Maximum donor count is 32/71
+and maximum weight l1 amplification 10.3226/25.2123 for degree two/three.
+These amplification measurements are not an energy estimate.
+
+Quadratic ghost fill maximum errors are 4.4409e-16 and 9.4369e-16. All actual
+consumed scalar/vector/tensor jet entries at every active cell are read and
+compared with the quadratic polynomial's analytic jets. The maximum errors
+are 3.0448e-13 and 5.4481e-13. Inactive input fields start as NaN. The actual
+patch prepare/fill, tensor RHS, upwind correction, KO, and original diagnostics
+are exercised. Reference RHS max is 1.3323e-15, and reference H/M/Z RMS are
+6.0049e-15 / 9.9870e-16 / 1.2395e-16 for either degree. A nontrivial small
+all-field quadratic perturbation gives a finite actual RHS (max .0761092).
+
+Independently, composed Dxx is checked against the nine-point convolution
+  [1,-16,64,16,-130,16,64,-16,1] / (144 h^2), offsets -4 through +4.
+Maximum discrepancy is 2.5846e-13. Original Dxy agrees with repeated existing
+first derivatives to 1.0658e-13. Analytically supplied sine data, without ghost
+extrapolation error, give maximum Dxx errors at N16/32/64 of
+1.6813247877384098e-3 / 1.0580768069350932e-4 / 6.6242413014738766e-6,
+with observed orders 3.9900821791 and 3.9975453209.
+
+Two builds and two executions pass: optimized Release and address/undefined
+sanitizers with Kokkos debug bounds checks. Both executions produce identical
+six measurement rows. Build/test durations, exact compiler/link arguments,
+source/dependency hashes and output hashes are in receipt.json. Total time
+41.0801 s; Release execution 1.2015 s, sanitizer execution 35.2049 s. Leak
+checking is disabled on macOS. No failed attempt occurred in this gate. The
+parent's earlier temporary-wrapper lvalue compile failure is preserved in the
+separate composed-derivative-build-failed-rvalue directory and is not erased.
+
+Private native executable SHA256:
+e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16
+Gate Release executable SHA256:
+4a6e86bf69d6f43b764e3fbd2438d41f40e9752fa8a1e7575dfe4c49cf0b4f6a
+Gate ASAN/UB executable SHA256:
+7350fbf1c76fefc7d920539f8e88d1c4d2fd798a55655e8c853a8e12808ada05
+
+Reproduction from the repository root, using the saved private header build:
+  /Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python build-layer-research/time-projection-controls/composed-derivative-gate/run_gate.py
+The runner has strict source-byte assertions and does not edit production.
+The captured directory retains byte snapshots of the private headers, root
+build recipe/receipt, and gauge injection. frozen-index.json indexes all
+retained text/source/log evidence; executables are identified by hashes and
+excluded from this archival index.
+
+Mathematical scope:
+This gate establishes valid accesses, ghost consistency, and the intended
+fourth-order differential stencil. Centered Dx squared has vanishing Nyquist
+stiffness. No uniform diagonalizer, positive energy, discrete constraint
+closure, boundary stability, or nonlinear pulse acceptance follows here.
+The independent continuum/Fourier/Jordan and native evolution gates remain
+necessary. No mixing of the old diagnostic Dxx with the new evolution Dxx is
+concealed; their difference is intentional in this experiment.
+
+Primary comparison: Cao and Hilditch, arXiv:1111.2177, Section III A, Eqs. 25-29
+and 40-46, https://arxiv.org/pdf/1111.2177. Their novel scalar Hessian is a
+trace-free repeated-D1 Hessian plus the independent raw-second-derivative
+Laplacian trace; vector grad-div terms use repeated D1. It is not a blanket
+Dx-squared substitution. They explicitly state that their semidiscrete
+constraint subsystem does not close, and do not analyze a D0-squared closure
+scheme because its norm is too weak for their estimates. Their periodic,
+linear Minkowski stability result does not supply the missing proof for this
+curved hyperboloidal experiment.

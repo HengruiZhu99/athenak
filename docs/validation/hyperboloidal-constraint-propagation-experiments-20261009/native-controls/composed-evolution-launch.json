@@ -1,0 +1,45 @@
+{
+  "scope": "Private composed-Dxx native finite-angular controls after full20bulk/haloASAN/reference/short correctness gates. Short errors are worse than baseline; longer/resolution controls test whether transient/global behavior improves. Old diagnosticstencils unchanged. No productionadoption/acceptance.",
+  "launch_head": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "compiled_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+  "build_receipt_sha256": "f2c884662b04b68b4efef0cb1dedb2e11b26f242683427642d233afbf433c886",
+  "preflight_audits_sha256": {
+    "build-layer-research/time-projection-controls/composed-native-audit/composed-reference-audit.json": "9040f2b3f238f67376ede5ed51b627fe069f5bc3bd9b1b690068ea4c5713f89c",
+    "build-layer-research/time-projection-controls/composed-native-audit/composed-short-audit.json": "18b0ccc77ae39238e1157d4c554da2217cab64e64b7b8e688dc41c4eb9052f77"
+  },
+  "override_sha256": {
+    "build-layer-research/time-projection-controls/composed-N24.athinput": "f0338c0c3a1a62339d340a4fdef79a4453177130958f5f6a8df77097d4bd8120",
+    "build-layer-research/time-projection-controls/composed-N36.athinput": "33f651037380fa0c464650ae7e813f9a57defc52248af48d5a06fcf75b9378f4"
+  },
+  "commands": {
+    "N24-t2": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "tst/hyperboloidal/run_layer_validation.py",
+      "build-layer-research/time-projection-controls/composed-derivative-build/athena-composed-derivative",
+      "build-layer-research/time-projection-controls/composed-N24-t2",
+      "--suite",
+      "long",
+      "--overrides",
+      "build-layer-research/time-projection-controls/composed-N24.athinput",
+      "--duration",
+      "2",
+      "--output-cadence",
+      ".025"
+    ],
+    "N36-t0.2": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "tst/hyperboloidal/run_layer_validation.py",
+      "build-layer-research/time-projection-controls/composed-derivative-build/athena-composed-derivative",
+      "build-layer-research/time-projection-controls/composed-N36-t0.2",
+      "--suite",
+      "long",
+      "--overrides",
+      "build-layer-research/time-projection-controls/composed-N36.athinput",
+      "--duration",
+      ".2",
+      "--output-cadence",
+      ".025"
+    ]
+  }
+}

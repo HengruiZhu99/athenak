@@ -1,0 +1,59 @@
+Read-only binary64 native restart reader gate
+
+Scope: one uniform root block, 3D even dimensions, vacuum hyperboloidal Z4c,
+no trackers/other physics/refinement, native little-endian binary64 ABI.
+No tracked changes, native run, executable rebuild or frozen-archive edits.
+
+API: import restart_reader; d=restart_reader.read_rst(path)
+d['u'] is a read-only numpy ndarray/memmap view with shape(25,nz,ny,nx),
+including ghosts. d['time'],d['dt'],d['cycle'] retain exact binary values.
+d['parameters'] maps section/key to final assignment strings. Full metadata,
+named fields, offsets, active_data (box interior only), and exact shape remain.
+The spherical PDE mask still must be applied. align_with_bin aligns the RST
+storage view to a BIN output index range without flattening/permutation.
+
+Production writer/readers, structs/config, variable order and actual ABI
+are hash-checked. C++ sizeof/offsetof probe: Real8,int4,float4,uint64 size8,
+RegionSize72 (9Reals),RegionIndcs76 (19ints),LogicalLocation16 (4int32),
+nz4c25,LayoutRight(m,n,k,j,i). Parameter input ends at <par_end> newline.
+Header after that has two ints, RegionSize, two RegionIndcs, time/dt double,
+cycle int, logical location/cost, Z4c last_output_time double, uint64 data_size.
+For nmb1, data starts parameter_header_end+288 bytes. Ghosted shape is
+(25,N+2ng,N+2ng,N+2ng); N24/ng3 gives25x30x30x30 doubles. Data_size and exact
+EOF are enforced; no offset is guessed from a filename or array match.
+
+Checked87 complete RST/BIN pairs: all81 baseline finite-pulse snapshots
+through exactt2/cycle4676, plus3 baseline-reference and3 stage-reference.
+Exact time/cycle, box dimensions/indices/geometry and spherical masks agree.
+All25 active double fields cast to float32 match corresponding BIN bits,
+including signed zero, with zero mismatches. Both files are hash/size checked
+before and after reading. Metadata exposes exact scalar little-endian bytes.
+BIN contains no independent dt field. Header dt is exact pm->dt at write:
+cadence outputs precede NewTimeStep; final outputs follow NewTimeStep. Thus
+final header dt need not be the actual clipped final step, and cadence dt
+must not universally be labeled 'next_dt'.
+
+Eleven malformed-data controls reject truncated payload, missing terminator,
+multiblock/refined metadata, NaNtime,zerodt,negativecycle,wrong data_size,
+active/coarse dimensions and an altered active value that fails quantization.
+An attempted write to u raises ValueError; the original RST hash is unchanged.
+
+Full-precision25-field active drift for3 reference snapshots through t.05:
+baseline1.3093295951669232e-14; stageprojection1.426616844425858e-14.
+Float32 threshold crossings can amplify apparent BIN drift; all quantization
+checks above compare exact casts. This result does not establish evolution
+stability or pulse acceptance.
+
+Commands (from repository root, using bundled scientific Python environment):
+  python layout probe build: full command in probe-receipt.json
+  python build-layer-research/time-projection-controls/rst-reader-gate/validate_rst.py <run case directories> [--output external_receipt.json]
+  python build-layer-research/time-projection-controls/rst-reader-gate/test_reader.py
+The actual interpreter is /Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python.
+
+Final check durations: pair validation 0.9256769580000002 seconds; supplemental
+negative/reference tests 0.073007 seconds. Source/probe/run-file hashes,
+individual snapshot/time/cycle/dt/offsets and per-variable extrema are in
+checked-receipt.json; negative tests and reference per-field drift are in
+supplemental-receipt.json. Prior69/34/27/40-file gates remain hash-verified.
+The parser and this receipt are frozen for parent audit; future half/stage
+validation receipts must be written outside this frozen gate.
