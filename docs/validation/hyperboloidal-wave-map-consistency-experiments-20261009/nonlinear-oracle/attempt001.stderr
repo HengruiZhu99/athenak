@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/nonlinear-minkowski-wave-map-oracle-20261009/nonlinear_oracle.py", line 527, in <module>
+    main()
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/nonlinear-minkowski-wave-map-oracle-20261009/nonlinear_oracle.py", line 486, in main
+    row = case(point, mp.mpf(eps), height, digits)
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/nonlinear-minkowski-wave-map-oracle-20261009/nonlinear_oracle.py", line 275, in case
+    u = storage(g, omega)
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/nonlinear-minkowski-wave-map-oracle-20261009/nonlinear_oracle.py", line 256, in storage
+    ti = inverse3(gt)
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/nonlinear-minkowski-wave-map-oracle-20261009/jet_algebra.py", line 125, in inverse3
+    result[i][j] = (-1)**(i+j)*minor/determinant
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/nonlinear-minkowski-wave-map-oracle-20261009/jet_algebra.py", line 95, in __truediv__
+    return self*self.coerce(other)**(-1)
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/nonlinear-minkowski-wave-map-oracle-20261009/jet_algebra.py", line 83, in __pow__
+    assert self.v != 0
+AssertionError

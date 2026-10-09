@@ -502,6 +502,11 @@ Its local source/dual checks pass; production equations and the unresolved
 regularity/boundary claims above are unchanged. Its global harmonic core is a
 diagnostic choice, with no moving-puncture blend selected.
 
+The subsequent [wave-map consistency audit](hyperboloidal-wave-map-consistency-audit.md)
+records passing actual constrained20 principal, linear-core and finite-amplitude
+nonradial exact-flat RHS gates. These local results do not establish native
+evolution stability or resolve the regularity and boundary limitations above.
+
 The later acceptance target is a substantial angular gauge disturbance on
 Minkowski followed by a single black hole surviving the inner
 wormhole-to-trumpet transition. The Minkowski hyperboloidal reference must be

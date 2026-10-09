@@ -1,0 +1,17 @@
+{
+  "status": "root execution RELEASED after independent probe/parser/schema review PASS",
+  "recipe_sha256": "22440fcfb91245adb7adb5105d811ea315bb496c60f8b6b394bb4b6fb737d838",
+  "independent_review_sha256": "49bc6dc5eba317724d07cbdb919698a8baab01cbc086a46cd6e7387dcf559167",
+  "inputs_checked": 381,
+  "scope": "48 prescribed nonlinear exact-flat finiteOmega actual raw22 point actions; Release and ASan/UBSan, no evolution",
+  "fixed_thresholds": {
+    "rhs22_scaled": 5e-09,
+    "connection_scaled": 5e-09,
+    "source_scaled": 5e-09,
+    "physical_constraints_absolute": 5e-09,
+    "input_normals_absolute": 5e-11,
+    "rate_normals_scaled": 5e-11,
+    "omega_difference_absolute": 2e-10
+  },
+  "no_operator_eigen_propagation_native_evolution": true
+}

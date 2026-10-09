@@ -1,0 +1,39 @@
+{
+  "kind": "independent read-only source binding and proof scope review",
+  "passed": true,
+  "capsule_index_sha256": "569ebb305b36a41fdb091330fce7da8e5be7a50f658588ca3892a51d68274ced",
+  "input_source_pins": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-principal-core-20261009/immutable-principal-core-wave-map-20261009/principal.cpp",
+      "sha256": "ba9b92dc13ee36468c3a8932dcc191ec8eb8e5621a1f229b71abb4a8728579b9"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-principal-core-20261009/immutable-principal-core-wave-map-20261009/core.cpp",
+      "sha256": "226b602e09b973970ff070b45d079c27ec15895ddd572865b66b7feadc544338"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-principal-core-20261009/immutable-principal-core-wave-map-20261009/reference_wave_map.hpp",
+      "sha256": "56d61c56bf37bf33591bec74c029c686c7d39f7abbe62dd090becda8e7176e28"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-principal-core-20261009/immutable-principal-core-wave-map-20261009/tensor-parts-arithmetic-repair.patch",
+      "sha256": "6c77c044c0a8fd273027ed5ac791399c030f1daa7f63e9b1c149d507546add7f"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-principal-core-20261009/immutable-principal-core-wave-map-20261009/REPORT.md",
+      "sha256": "84bce56c1a02c90448786a423f8f2d7f0bf377fdc10bc3447d6cb6f76a4e0336"
+    }
+  ],
+  "source_findings": [
+    "Actual principal extraction separates value/first/second derivative grades and imposes the det/trace tangent before the free20 chart. The SPD frame and alpha/chi/Omega normalizations match the named independent harmonic scalar/vector/TT equations.",
+    "The geometry repair subtracts unchanged frozen-base RHSParts before Omega division; it changes arithmetic ordering, not the mathematical grade extraction or helper/gauge. First failed attempt is retained.",
+    "Both candidate alpha and beta poles are assembled once. Core connection is exactly zero at flat Cauchy reference; candidate core rows alpha_t=-P and beta_t=Lambda+grad(chi)/2-grad(alpha) follow the complete full-Z/P gauge.",
+    "Core LiftField uses each symmetric ij only once and directly supplies complete input spatial jets without projection. Actual kappa10 remains in the geometry call; its Einstein-sector damping vanishes because physical Theta and Lambda-contractedGamma are zero.",
+    "Origin w acceleration uses input jet identity div(Lambda+grad(chi)/2)/3, not a spatial derivative of the actual source. Nonzero radii recover scalar w through x dot Xtt/rho.",
+    "No saved per-case core actual rows exist. Independent exact Cartesian polynomial target proof and saved actual aggregate audit are distinct from per-case actual residual recomputation.",
+    "Exact Fraction symmetrizer proof applies to expected linear principal M; floating agreement with actual792 saved matrices is separate. It does not certify nonlinear/full frequency/scri/boundary/evolution behavior."
+  ],
+  "actual_saved_review_receipt_sha256": "e64a61c529855060e399bd288e137689d6953d9fd69d1403161a744514b12825",
+  "first_independent_attempt": "Python syntax/pre-arithmetic failure retained in review_saved.py/recipe.json/run001 logs; fixed missing outer comprehension in separately pinned v2; thresholds unchanged",
+  "no_new_query_compile_or_scientific_operator": true
+}

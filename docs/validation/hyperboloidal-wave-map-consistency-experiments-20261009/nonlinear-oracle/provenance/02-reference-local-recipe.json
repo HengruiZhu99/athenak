@@ -1,0 +1,256 @@
+{
+  "kind": "Final fixed local complete-reference Taylor backend recipe, before scientific compile/query",
+  "launch_HEAD": "ab95fd1a23ae779019707365b3da2b31e6ca12f8",
+  "reference": {
+    "S": 1.0,
+    "curvature_radius": 0.5,
+    "r0": 0.05,
+    "r1": 0.95
+  },
+  "radii": [
+    0.0,
+    0.01,
+    0.025,
+    0.049,
+    0.05,
+    0.0500001,
+    0.051,
+    0.051153846153846154,
+    0.05118421052631579,
+    0.0512,
+    0.05121621621621622,
+    0.0517578125,
+    0.057031250000000006,
+    0.06,
+    0.075,
+    0.078125,
+    0.1,
+    0.2,
+    0.3,
+    0.45,
+    0.5,
+    0.6,
+    0.75,
+    0.85,
+    0.9,
+    0.921875,
+    0.94,
+    0.9429687499999999,
+    0.9482421875,
+    0.9487837837837837,
+    0.9488,
+    0.9488157894736842,
+    0.9488461538461538,
+    0.949,
+    0.9499999,
+    0.95,
+    0.98,
+    0.995
+  ],
+  "radii_hex": [
+    "0x0.0p+0",
+    "0x1.47ae147ae147bp-7",
+    "0x1.999999999999ap-6",
+    "0x1.916872b020c4ap-5",
+    "0x1.999999999999ap-5",
+    "0x1.9999cf497ecf1p-5",
+    "0x1.a1cac083126e9p-5",
+    "0x1.a30d640973ca7p-5",
+    "0x1.a34d11c90701ap-5",
+    "0x1.a36e2eb1c432dp-5",
+    "0x1.a39030b58d6c4p-5",
+    "0x1.a800000000000p-5",
+    "0x1.d333333333334p-5",
+    "0x1.eb851eb851eb8p-5",
+    "0x1.3333333333333p-4",
+    "0x1.4000000000000p-4",
+    "0x1.999999999999ap-4",
+    "0x1.999999999999ap-3",
+    "0x1.3333333333333p-2",
+    "0x1.ccccccccccccdp-2",
+    "0x1.0000000000000p-1",
+    "0x1.3333333333333p-1",
+    "0x1.8000000000000p-1",
+    "0x1.b333333333333p-1",
+    "0x1.ccccccccccccdp-1",
+    "0x1.d800000000000p-1",
+    "0x1.e147ae147ae14p-1",
+    "0x1.e2cccccccccccp-1",
+    "0x1.e580000000000p-1",
+    "0x1.e5c6fcf4a7293p-1",
+    "0x1.e5c91d14e3bcdp-1",
+    "0x1.e5cb2ee36f8fep-1",
+    "0x1.e5cf29bf68c35p-1",
+    "0x1.e5e353f7ced91p-1",
+    "0x1.e666630b68131p-1",
+    "0x1.e666666666666p-1",
+    "0x1.f5c28f5c28f5cp-1",
+    "0x1.fd70a3d70a3d7p-1"
+  ],
+  "radii_input_sha256": "3990385ff898d037f27a77dc44991b75cd9321bfa5e50fc511521f009a243d66",
+  "radial_fields_in_output_order": [
+    {
+      "name": "A_radial",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "A_tangent",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "L",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "P",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "alpha",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "b",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "beta",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "chi",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "complement",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "g_radial",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "lambda",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "name": "omega",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "weight",
+      "ordinary_derivatives": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "output_prefix": [
+    "radius",
+    "old_consumed_scaled_max",
+    "old_consumed_absolute_max"
+  ],
+  "output_columns": 57,
+  "valid_derivative_budget": "omega/weight/complement4; L and all physical metric/lapse/shift/storedA/P profiles3; Lambda2. No invented truncation padding consumed.",
+  "gates": {
+    "old_consumed_scaled_max": 5e-11,
+    "independent_high_precision_scaled_max": 2e-10,
+    "normal_representable_tail_relative_max": 2e-08,
+    "tail_relative_applies_abs_at_least": 1e-300,
+    "tail_nonzero_applies_abs_at_least": 1e-320,
+    "finite_all_exported_values": true,
+    "exact_core_outer_branch_zero_derivatives": true
+  },
+  "independent_precision": "ordinary100/130digits; derivative tails may require400/460digits or complementary/factored analytical evaluation, separately identified. High-precision oracle owner records this explicitly.",
+  "tail_scope": "weight/complement tails explicitly checked, every other profile retains absolute/scaled error; any cancellation-limited tail relative diagnostics must be retained and not silently relabeled.",
+  "synthetic_Taylor_cases": [
+    "reciprocal(product)=1",
+    "exp(log(positive polynomial))",
+    "exp derivative survives zero exp(value) when representable",
+    "truncate/derivative coefficients agree ordinary factorial convention"
+  ],
+  "synthetic_threshold_scaled": 5e-13,
+  "sources": [
+    {
+      "path": "taylor.hpp",
+      "sha256": "966c1349274e53a0a0a6f7635fe4bd2a84fb78034e2b91521f9e339310e2f675"
+    },
+    {
+      "path": "complete_reference.hpp",
+      "sha256": "3e7e662a7115662d52faef07f8e1bb4ed1badaeaab87104f4527333f840ec3c7"
+    },
+    {
+      "path": "reference_probe.cpp",
+      "sha256": "5a610e614d54ab14efc92c8349fef30547557fc1fed349c6d3b500e549672f71"
+    }
+  ],
+  "held_derivation": {
+    "path": "build-layer-research/boundary/einstein-coordinate-gauge-held-20261009/DERIVATION.md",
+    "sha256": "126667e9e0bf61eb8f245cf9018ace90b2c35d6631d58f48f5fe40c23b07b83d"
+  },
+  "scope": "complete-reference backend local gate only; coordinate lift/gauge queries require subsequent declared local gates; no operator/eigs/propagation"
+}

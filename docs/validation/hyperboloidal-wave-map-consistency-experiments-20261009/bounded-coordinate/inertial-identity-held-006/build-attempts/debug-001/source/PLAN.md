@@ -1,0 +1,13 @@
+Source-only narrow numerical identity-check refinement. The inertial adapter, conformal lift, original physical comparator, complete reference, generic/actual C0 gauge/source bindings and all point/field cases are byte-identical to inertial-family-held-003. The first inertial overall FAIL is retained; all original source/geometry/FD gates already pass and are repeated without threshold changes only if root releases this source. No operator, spectrum or propagation.
+
+The failed added direct check evaluates E'=d(x/Omega) and h_i=bL n_i/(alpha Omega^2), then multiplies by xi^i=Omega^2 Xi^i/L. Its temporal/spatial Taylor-jet residual maxima were combined, so the observed1.1209e-8 cannot yet be assigned to a derivative order from saved output. The new diagnostic retains the old direct scalar metric and additionally exposes temporal orders0..3 and spatial orders0..2. The new header has not been executed; which term caused the old maximum will be measured after review/release rather than asserted now.
+
+Cancel the analytically known Omega powers before numerical Taylor multiplication. Set f^i=Xi^i/L, Hscaled_i=bL n_i/alpha, S_ij=Omega delta_ij-x_i Omega_j. The new check consists of ALL three controls:
+
+  1. ACTUAL RETURNED xi^i versus Omega^2 f^i through degree3, both displacement/velocity;
+  2. S_ij f^j versus prescribed Xi^i through degree2;
+  3. ACTUAL RETURNED xi^t+Hscaled_i f^i versus prescribed Xi^T through degree3.
+
+The first control binds the actual returned adapter Taylor coefficients; (2)/(3) alone would be an insufficient prescribed-input tautology. Algebraically (1) makes (2)/(3) identical to the original forward embedding identities at strict Omega>0. The stable contractions contain no inverse powers of Omega, and the L used here is independently generated from the complete radial backend while S uses differentiated Cartesian Omega. Preserve an explicit manufactured corruption of an actual returned third-order xi coefficient (add1e-6) to demonstrate that the returned-coefficient comparison detects a wrong adapter output. No corrupt data is sent into actual source queries.
+
+Keep the numerical5e-10 identity threshold, with the exact same Taylor-coefficient scaling as the original PolyError (coefficient absolute error divided by max(1,abs(expected coefficient))). Report every group/order and its worst case; gate the maximum of all three stable controls. This is an algebraically factored/backward identity validation and does NOT claim that the old uncanceled direct floating forward-identity residual passed its absolute criterion. That residual and the first FAIL remain in reports. All scientific source/geometry/FD criteria and13radii including.995 remain unchanged. Root review/release required before compilation/query.

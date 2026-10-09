@@ -1,0 +1,41 @@
+{
+  "kind": "Fresh execution admission after root fixed-plan review",
+  "authorization": "Root approved PLAN d27a84f2 and plan a06e5fea for independent execution at exactly declared points/eps/precisions/thresholds; no actual source or kernel queries.",
+  "plan_sha256": "a06e5feae350c5196b11b823ddb2aa527a77723618b21761d5fe74d031f533bc",
+  "PLAN_sha256": "d27a84f2026dce332064d99f9a4e3767f994f9ad5f78499902bc37eaf53f55f2",
+  "sources": [
+    {
+      "path": "jet_algebra.py",
+      "sha256": "657c0ef06b06180a0b02942d7b898edb0ae80b8df620d0d1df063619bb626057"
+    },
+    {
+      "path": "nonlinear_oracle.py",
+      "sha256": "06a41b074afa315a3bd661ad5382cbe58a422a7605e93cda115200593dd41b8b"
+    },
+    {
+      "path": "reference_helpers/radial_oracle.py",
+      "sha256": "b52d538658a73c373f8ac9a7757e5f9ab75a14e53218c723ca30f33190b22eaf"
+    },
+    {
+      "path": "reference_helpers/cartesian_composition.py",
+      "sha256": "605495d41cc4aa1eca2c5cbbc493d8cbaea7194eeb49cf405812b2dbb6eb6315"
+    },
+    {
+      "path": "GAUSSIAN-BOUND.md",
+      "sha256": "aa0688ffb5198806914a59dca5af19c90dda75e15e2da968aeee97e554917f4b"
+    }
+  ],
+  "external_inputs": [
+    {
+      "path": "build-layer-research/continuum/immutable-independent-higher-reference-jets-20261009/owner-inputs/reference-local-recipe.json",
+      "sha256": "3e7107cdb0b3904a8881a3ee8bb25b1e8b25e0dba2b266f50ac2238f664cad36"
+    },
+    {
+      "path": "build-layer-research/continuum/immutable-independent-higher-reference-jets-20261009/owner-inputs/reference-gate-attempt001/reference-release.stdout",
+      "sha256": "887c6494c242925b171a1079d89aa20d6c34a7cc1b93cbc1637ac5f1e8865e00"
+    }
+  ],
+  "source_query": false,
+  "pde_or_eigen_or_propagation": false,
+  "notes": "Reference helpers are exact copies from immutable7c556fcf, imported locally with bytecode writing disabled. Complete time/spatial Taylor order is enforced by Jet.order; differentiation lowers order."
+}

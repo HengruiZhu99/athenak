@@ -1,0 +1,3 @@
+The original actual-RHS capsule includes `freeze.stdout` with zero bytes. That is the exact snapshot taken while the owner freezer was still executing. Its SHA256 is the empty-file digest; the collector preserves those archived bytes unchanged under `actual-rhs/freeze.stdout`.
+
+After the freezer completed, the working `build-layer-research/nonlinear-wave-map-RHS-root-20261009/freeze.stdout` contained the final freeze summary. The collector adds that completed stdout and the corresponding stderr under `addenda/completed-owner-freeze.stdout` and `.stderr`, each with its own catalog hash and origin. These later logs are collection context, not replacements for the earlier snapshot. No original source, recipe, receipt, index or frozen output is rewritten.

@@ -1,0 +1,330 @@
+{
+  "kind": "Fixed source-only finite-amplitude nonlinear Minkowski wave-map oracle plan, execution HELD for root review",
+  "HEAD_at_preparation": "35d348712d11ae4db9ce8568476b27b0f64e113a",
+  "plan_document_sha256": "d27a84f2026dce332064d99f9a4e3767f994f9ad5f78499902bc37eaf53f55f2",
+  "inputs": [
+    {
+      "path": "build-layer-research/reference-wave-map-proposal-20261009/DERIVATION.md",
+      "sha256": "8616d5d48e7d1cf84e4d7223b3331a20cdb7940ab6c9c7a649424471166dc656"
+    },
+    {
+      "path": "build-layer-research/continuum/immutable-independent-higher-reference-jets-20261009/index.json",
+      "sha256": "7c556fcf4bc82671ebf0a8de7751a316363d541b7dd77e0e9a7ac86f7e94f8eb"
+    }
+  ],
+  "reference": {
+    "S": "1",
+    "a": "0.5",
+    "r0_hex": "0x1.999999999999ap-5",
+    "r1_hex": "0x1.e666666666666p-1",
+    "width_hex": "0x1.ccccccccccccdp-1"
+  },
+  "gaussian": {
+    "u0": "-0.5",
+    "sigma": "0.35",
+    "epsilon": [
+      "0",
+      "0.025",
+      "0.05",
+      "0.1"
+    ],
+    "a_contravariant": [
+      "0",
+      "0",
+      "0",
+      "1"
+    ],
+    "dimensional_semantics": "All lengths in S; phi dimensionless; epsilon has units S. Gaussian decimal strings are exact; reference coefficients and collocation coordinates are exact binary64 rationals."
+  },
+  "points": [
+    {
+      "name": "origin",
+      "t": 0.0,
+      "prescribed_radius": 0.0,
+      "direction": [
+        0,
+        0,
+        0
+      ],
+      "cartesian_binary64": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cartesian_hex": [
+        "0x0.0p+0",
+        "0x0.0p+0",
+        "0x0.0p+0"
+      ],
+      "time_hex": "0x0.0p+0"
+    },
+    {
+      "name": "core",
+      "t": 0.0,
+      "prescribed_radius": 0.025,
+      "direction": [
+        1,
+        2,
+        3
+      ],
+      "cartesian_binary64": [
+        0.00668153104781061,
+        0.01336306209562122,
+        0.020044593143431832
+      ],
+      "cartesian_hex": [
+        "0x1.b5e17d566a043p-8",
+        "0x1.b5e17d566a043p-7",
+        "0x1.48691e00cf833p-6"
+      ],
+      "time_hex": "0x0.0p+0"
+    },
+    {
+      "name": "near_core",
+      "t": 0.125,
+      "prescribed_radius": 0.049,
+      "direction": [
+        -2,
+        1,
+        2
+      ],
+      "cartesian_binary64": [
+        -0.03266666666666667,
+        0.016333333333333335,
+        0.03266666666666667
+      ],
+      "cartesian_hex": [
+        "-0x1.0b9af72015d87p-5",
+        "0x1.0b9af72015d87p-6",
+        "0x1.0b9af72015d87p-5"
+      ],
+      "time_hex": "0x1.0000000000000p-3"
+    },
+    {
+      "name": "left_tail",
+      "t": 0.0,
+      "prescribed_radius": 0.0500001,
+      "direction": [
+        1,
+        -3,
+        2
+      ],
+      "cartesian_binary64": [
+        0.01336308882174541,
+        -0.04008926646523623,
+        0.02672617764349082
+      ],
+      "cartesian_hex": [
+        "0x1.b5e1b6bb419bcp-7",
+        "-0x1.4869490c7134dp-5",
+        "0x1.b5e1b6bb419bcp-6"
+      ],
+      "time_hex": "0x0.0p+0"
+    },
+    {
+      "name": "inner_transition",
+      "t": 0.0,
+      "prescribed_radius": 0.1,
+      "direction": [
+        2,
+        1,
+        -1
+      ],
+      "cartesian_binary64": [
+        0.08164965809277261,
+        0.040824829046386304,
+        -0.040824829046386304
+      ],
+      "cartesian_hex": [
+        "0x1.4e6fdf33cf032p-4",
+        "0x1.4e6fdf33cf032p-5",
+        "-0x1.4e6fdf33cf032p-5"
+      ],
+      "time_hex": "0x0.0p+0"
+    },
+    {
+      "name": "transition_low",
+      "t": 0.125,
+      "prescribed_radius": 0.3,
+      "direction": [
+        1,
+        1,
+        1
+      ],
+      "cartesian_binary64": [
+        0.17320508075688773,
+        0.17320508075688773,
+        0.17320508075688773
+      ],
+      "cartesian_hex": [
+        "0x1.62b9586ad0a22p-3",
+        "0x1.62b9586ad0a22p-3",
+        "0x1.62b9586ad0a22p-3"
+      ],
+      "time_hex": "0x1.0000000000000p-3"
+    },
+    {
+      "name": "transition_mid",
+      "t": 0.0,
+      "prescribed_radius": 0.5,
+      "direction": [
+        -1,
+        2,
+        2
+      ],
+      "cartesian_binary64": [
+        -0.16666666666666666,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "cartesian_hex": [
+        "-0x1.5555555555555p-3",
+        "0x1.5555555555555p-2",
+        "0x1.5555555555555p-2"
+      ],
+      "time_hex": "0x0.0p+0"
+    },
+    {
+      "name": "transition_high",
+      "t": 0.25,
+      "prescribed_radius": 0.75,
+      "direction": [
+        1,
+        -2,
+        2
+      ],
+      "cartesian_binary64": [
+        0.25,
+        -0.5,
+        0.5
+      ],
+      "cartesian_hex": [
+        "0x1.0000000000000p-2",
+        "-0x1.0000000000000p-1",
+        "0x1.0000000000000p-1"
+      ],
+      "time_hex": "0x1.0000000000000p-2"
+    },
+    {
+      "name": "near_collar",
+      "t": 0.0,
+      "prescribed_radius": 0.9,
+      "direction": [
+        -2,
+        -1,
+        2
+      ],
+      "cartesian_binary64": [
+        -0.6,
+        -0.3,
+        0.6
+      ],
+      "cartesian_hex": [
+        "-0x1.3333333333333p-1",
+        "-0x1.3333333333333p-2",
+        "0x1.3333333333333p-1"
+      ],
+      "time_hex": "0x0.0p+0"
+    },
+    {
+      "name": "right_tail",
+      "t": 0.125,
+      "prescribed_radius": 0.9499999,
+      "direction": [
+        2,
+        3,
+        -1
+      ],
+      "cartesian_binary64": [
+        0.507796306181358,
+        0.7616944592720369,
+        -0.253898153090679
+      ],
+      "cartesian_hex": [
+        "0x1.03fde0a02835cp-1",
+        "0x1.85fcd0f03c50ap-1",
+        "-0x1.03fde0a02835cp-2"
+      ],
+      "time_hex": "0x1.0000000000000p-3"
+    },
+    {
+      "name": "outer_endpoint",
+      "t": 0.0,
+      "prescribed_radius": 0.95,
+      "direction": [
+        1,
+        2,
+        -3
+      ],
+      "cartesian_binary64": [
+        0.2538981798168032,
+        0.5077963596336064,
+        -0.7616945394504094
+      ],
+      "cartesian_hex": [
+        "0x1.03fde26b4ef28p-2",
+        "0x1.03fde26b4ef28p-1",
+        "-0x1.85fcd3a0f66bbp-1"
+      ],
+      "time_hex": "0x0.0p+0"
+    },
+    {
+      "name": "outer",
+      "t": 0.0,
+      "prescribed_radius": 0.98,
+      "direction": [
+        -1,
+        2,
+        2
+      ],
+      "cartesian_binary64": [
+        -0.32666666666666666,
+        0.6533333333333333,
+        0.6533333333333333
+      ],
+      "cartesian_hex": [
+        "-0x1.4e81b4e81b4e8p-2",
+        "0x1.4e81b4e81b4e8p-1",
+        "0x1.4e81b4e81b4e8p-1"
+      ],
+      "time_hex": "0x0.0p+0"
+    }
+  ],
+  "precision_digits": [
+    80,
+    110
+  ],
+  "height_panels": [
+    0.05,
+    0.075,
+    0.1,
+    0.2,
+    0.35,
+    0.5,
+    0.65,
+    0.8,
+    0.9,
+    0.925,
+    0.95
+  ],
+  "height_quadrature": "tanh-sinh on fixed panels with final partial panel; exact core h0; analytic outer sqrt(R\u00b2+a\u00b2)+C",
+  "thresholds": {
+    "precision_scaled": "1e-55",
+    "algebraic_curvature_wave_implicit_scaled": "1e-55",
+    "inverse_scalar_scaled": "1e-65",
+    "native_reference_scaled": "2e-10",
+    "jacobian_orientation": "D>0; report condition, no uniform/global injectivity claim"
+  },
+  "derivative_budget": {
+    "phi_full_spacetime": 3,
+    "embedding_full_spacetime": 3,
+    "inverse_map_full_spacetime": 3,
+    "physical_fourmetric_full_spacetime": 2,
+    "metric_chi_lapse_shift_spatial": 2,
+    "A_P_Lambda_spatial": 1,
+    "evolved_time_derivatives": "one, obtained from full g through2",
+    "Theta_physical": "identically zero"
+  },
+  "execution_admission": "No execution until root plan review; no actual kernel queries until independent geometry/identity gates pass and separate interface/release is recorded.",
+  "scope": "Finite sampled localized exact-flat source oracle only, no evolution/eigensolve/propagation/native/scri/BH acceptance."
+}

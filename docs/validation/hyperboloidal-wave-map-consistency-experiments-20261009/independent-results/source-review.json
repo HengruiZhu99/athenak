@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "review_time_utc": "2026-10-09T16:57:34.959665+00:00",
+  "phase": "source-only, saved before opening any actual run stdout/receipt/comparison",
+  "scope": "independent read-only analyzer/runner source and recipe pin review; no compile/query",
+  "source_pins": {
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/PLAN.md": "7014a9e142cd9765adda2a5a7bffbaa76e5ed33d0937d3c22eeeec953d6d3716",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/analyze.py": "9ef3d3ce75766f0366b10826de3f3c51a9f6c8b2547c91a08144cd97269fb7d1",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/run_gate.py": "299b0a9923890c3ae359e1ebb4067d5dcc55052303bc28bbcb9e9af5356b1d26",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/prepare_input.py": "2284ddab3d242e2aa3d6bbb7ed010b0940b76ffcdb1e2edaa5ec92cee99a4766",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/execution-recipe.json": "22440fcfb91245adb7adb5105d811ea315bb496c60f8b6b394bb4b6fb737d838",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/execution-release.json": "7747e879bbc2d74c32d4876075b00b1b42e8ec29fca7a065b4fa805665d75a76"
+  },
+  "recipe_inputs_checked": 381,
+  "recipe_input_hashes_match": true,
+  "unchanged_from_preexecution_independent_review": true,
+  "cases": 48,
+  "rhs_components_per_case": 22,
+  "thresholds": {
+    "rhs22_scaled": 5e-09,
+    "connection_scaled": 5e-09,
+    "source_scaled": 5e-09,
+    "physical_constraints_absolute": 5e-09,
+    "input_normals_absolute": 5e-11,
+    "rate_normals_scaled": 5e-11,
+    "omega_difference_absolute": 2e-10
+  },
+  "review_findings": [
+    "Analyzer requires exactly 48 actual and expected rows and exact point order/equality.",
+    "All 22 RHS entries compare individually to saved independent time rates using abs(actual-expected)/max(1,abs(expected)); both absolute and scaled error arrays remain saved.",
+    "All 36 connection entries and four scaled source entries use the same entrywise expected-value scale; no source-computed expectation.",
+    "Physical8 and input normals compare absolute zero residuals; output two normals use the declared max(1,maxabs(actual_rhs22)) scale. Native Omega differences use fixed absolute threshold.",
+    "Independent payload/input conversion was already read back, including Decimal source scaling. Analyzer imports no geometry, kernel, helper or oracle formulas.",
+    "Runner checks all fixed recipe inputs before launch and after, snapshots exact sources, uses fresh attempt paths and retained Release/ASan-UBSan build/run stdout/stderr/receipts, and requires exact output byte equality.",
+    "Runner records compiler executable and compiler-dependency hashes. A failed command or comparison remains a failed receipt; no threshold adjustment or adaptive case deletion.",
+    "Probe fixes output dimensions at 22/36/4/8/2/2/13. The analyzer separately enforces RHS22 and connection/source lengths; independent result review will enforce every output dimension explicitly."
+  ],
+  "remaining_blockers": [],
+  "limitation": "Only source admissibility reviewed here. Actual numerical status has not yet been inspected; no continuum/scri/native/BH acceptance."
+}

@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "scope": "Root saved-artifact verification only: byte hashes, JSON, stored case/shape/threshold checks. No source query, compile, matrix generation, propagation or evolution.",
+  "UTC": "2026-10-09T17:10:25.930649+00:00",
+  "HEAD": "a0f8fc8464665db3104fdbdaf142661259a6a399",
+  "catalog_sha256": "734f3d83f7f971c3bdd3c345e8a269254c29f0ee9eeb6aa59303937ec1927294",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-wave-map-consistency-experiments-20261009/verify_compact.py",
+        "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-wave-map-consistency-experiments-20261009",
+        "--rehash-externals"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "ca6bf69446036894ff16603bfed8edc74a0af2d682b3ecebf75d131af7490407",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-wave-map-consistency-experiments-20261009/actual-rhs/verify_capsule.py",
+        "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-wave-map-consistency-experiments-20261009/actual-rhs",
+        "--metadata-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "0258488e7c1eac595082ee0928656044983958d862a87a5b6dbc603375433da5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-wave-map-consistency-experiments-20261009/principal-core/verify_capsule.py",
+        "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-wave-map-consistency-experiments-20261009/principal-core",
+        "--metadata-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "d6171851645569f0934e2248e65cd680bd0b2b52e2b013404018dc458b3852f4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "original_freezes_unchanged": true,
+  "payload_omission_limits": "All NPZ/NPY/JSONL, executable/object/archive content and files over1MiB omitted; arithmetic on omitted payloads not replayed."
+}

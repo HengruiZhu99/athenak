@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "scope": "independent read-only source/interface and saved-input arithmetic review only; no compile/query/eigen/propagation",
+  "review_sha256": "f9a89fdfdfff8eea1c406f81be2456b528abcfb6546b706c0aacdca2155d6613",
+  "saved_input_readback_sha256": "3f167c3b1c86c40bd71711d39c922a61b60bf6c3e747d2d4b7a5e1dbc2781421",
+  "inputs": {
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/probe.cpp": "e606f2c1f7e5d578c75e01458b93554e231d7df982bdf6bdbddc603cbf9ffee3",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/PLAN.md": "7014a9e142cd9765adda2a5a7bffbaa76e5ed33d0937d3c22eeeec953d6d3716",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/reference_wave_map.hpp": "56d61c56bf37bf33591bec74c029c686c7d39f7abbe62dd090becda8e7176e28",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/prepare_input.py": "2284ddab3d242e2aa3d6bbb7ed010b0940b76ffcdb1e2edaa5ec92cee99a4766",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/analyze.py": "9ef3d3ce75766f0366b10826de3f3c51a9f6c8b2547c91a08144cd97269fb7d1",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/run_gate.py": "299b0a9923890c3ae359e1ebb4067d5dcc55052303bc28bbcb9e9af5356b1d26",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/prepared-input001/receipt.json": "639bc8aa70addbe38a5754da64c42605f81e0b97ca42f6ad893f89919506a8e5",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/prepared-input001/input.txt": "b8e6967a7127841b18907e86f6586c14e7804a4db95684b2edbc1f4987bb2449",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/prepared-input001/expected.json": "515ea275a1b7771326e00aa9063cadcba11e79c68ec3a3d70bc6000b60212442",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/history/precompile-API-and-decimal-review002/probe.cpp": "258d8b486e3955f00fa375acc534ce496f9dfbfb7cbedb2d70ec4f76de127789",
+    "build-layer-research/nonlinear-wave-map-RHS-root-20261009/history/precompile-API-and-decimal-review002/prepare_input.py": "67a623bcc168ad32c1ddf1c7fa2e1e20f884d1b62d329aa7f0a50e9c3763d39a",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "build-layer-research/continuum/immutable-nonlinear-Minkowski-wave-map-oracle-20261009/index.json": "eb51be9c1cc698e542099169aba1bb64e8a72dd524a4cab0bd1cfb68e27b5d84",
+    "build-layer-research/continuum/immutable-nonlinear-Minkowski-wave-map-oracle-20261009/SCHEMA.md": "dfcd71885d7c3f0ab9daca7153c921b5b04009fc200b8baf0dba8d3daf4b4c19",
+    "build-layer-research/continuum/reference-wave-map-gauge-20261009/immutable-local-reference-wave-map-20261009/index.json": "25f09ff04e1f7067147b9bb75ff916750f989beb4366477b1db8748fde74dd31"
+  },
+  "remaining_source_blockers": [],
+  "preserved_precompile_correction": "void SetStationaryOmegaNormal call followed by explicit finite normal/dnormal validation; owner retained original source before any compile",
+  "clarification": "rate_normals2[0] is d_t log(det gtilde), appropriate determinant-one tangent; no absolute determinant-rate magnitude claim",
+  "numerical_execution_pending": true
+}

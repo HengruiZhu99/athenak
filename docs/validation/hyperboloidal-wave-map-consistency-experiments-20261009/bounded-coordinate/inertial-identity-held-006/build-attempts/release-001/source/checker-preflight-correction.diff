@@ -1,0 +1,12 @@
+--- unexecuted-held004
++++ exact-original-arithmetic-held005
+@@ -19,7 +19,8 @@
+    // contractions alone would only check the prescribed input displacement.
+    ByOrder(returned.X[i],o*o*factor[i],e.actual_factor_relation);ByOrder(returned.Xdot[i],o*o*factor_velocity[i],e.actual_factor_relation);
+    const C3 scaled_height=b*L*x[i]/(alpha*r);
+-   original_time+=scaled_height*returned.X[i]/(o*o);original_velocity+=scaled_height*returned.Xdot[i]/(o*o);
++   const C3 original_height_gradient=b*L*x[i]/(alpha*o*o*r);
++   original_time+=original_height_gradient*returned.X[i];original_velocity+=original_height_gradient*returned.Xdot[i];
+    stable_time+=scaled_height*factor[i];stable_velocity+=scaled_height*factor_velocity[i];
+   }
+   ByOrder(original_time,raw.T,e.original_time);ByOrder(original_velocity,raw.Tdot,e.original_time);ByOrder(stable_time,raw.T,e.stable_time);ByOrder(stable_velocity,raw.Tdot,e.stable_time);

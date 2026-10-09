@@ -1,0 +1,37 @@
+{
+  "status": "root source and fixed recipe review PASS; local Release and ASan/UBSan execution released",
+  "launch_HEAD": "35d348712d11ae4db9ce8568476b27b0f64e113a",
+  "recipe_sha256": "c33127d775eb2a4cb40a7276a90e9f32ce091386e0f65584c40d128eae144aa5",
+  "driver_sha256": "2b19cf8386dacc912c2dcfc71bf64731ade0f9c3b84220e90f25e3fbc546b98f",
+  "source_and_reference_pins_checked": 18,
+  "independent_reference_index": {
+    "path": "build-layer-research/continuum/immutable-independent-higher-reference-jets-20261009/index.json",
+    "sha256": "7c556fcf4bc82671ebf0a8de7751a316363d541b7dd77e0e9a7ac86f7e94f8eb"
+  },
+  "algebra": [
+    "The stationary spatial embedding Jacobian has radial eigenvalue L/Omega^2; hence Xi^I=x^I*zeta pulls back to xi^i=Omega^2*x^i*zeta/L.",
+    "h_i xi^i=(b/alpha)*r*zeta, so xi^t=tau-b*r*zeta/alpha and the identical stationary adapter acts on velocities.",
+    "At and within r0 the embedding is the identity, including all consumed derivatives; no origin division is needed.",
+    "In the polynomial outer collar alpha=L=1+r^2 and b=2r. The adapter coefficients extend smoothly to scri and xi^i=O(Omega^2). psi=X(Omega)/Omega=Omega*Omega_prime*r*zeta/L=O(Omega); conformal lift fields have bounded finite-order jets there. This boundedness observation concerns the adapter and conformal tangent formulas, not general Z4c evolution or the numerical physical comparator.",
+    "Identity checks compare temporal embedding through Cartesian degree3 and spatial displacement through degree2, matching the available direct derivative jets."
+  ],
+  "scope": {
+    "same_629_cases_including_r_0_995": true,
+    "geometry_threshold": 5e-10,
+    "FD_threshold": 2e-07,
+    "fixed_five_eps": [
+      1e-05,
+      3e-06,
+      1e-06,
+      3e-07,
+      1e-07
+    ],
+    "old_broad_controls_remain_FAILED": true,
+    "actual_Cdot_or_operator_or_spectrum_or_evolution": false
+  },
+  "requirements": [
+    "Save additive local-gate-admission with corrected independent-reference path before execution; preserve recipe bytes.",
+    "Keep source hash guards, all original gates, failed run artifacts, Release/Debug outputs and full build dependencies.",
+    "This release requires no human approval; execution is within existing user authorization."
+  ]
+}

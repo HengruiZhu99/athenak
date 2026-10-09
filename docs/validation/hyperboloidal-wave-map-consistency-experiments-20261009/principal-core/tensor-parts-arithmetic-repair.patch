@@ -1,0 +1,33 @@
+--- build-layer-research/continuum/reference-wave-map-principal-core-20261009/attempts/1791564543283538000/principal.cpp
++++ build-layer-research/continuum/reference-wave-map-principal-core-20261009/principal.cpp
+@@ -88,9 +88,10 @@
+     for(int i=0;i<3;++i){o.gradient[i]=p.domega[i];for(int j=0;j<3;++j)o.hessian[i][j]=p.omega_hessian[i][j];}
+     hyp::SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);return o;};
+   const auto omega=make_omega(base);
+-  RHS rbase{};if(!hyp::AssembleInterior(hyp::ConformalRHS(base,omega,0.,0.),omega.omega,rbase))throw std::runtime_error("principal frozen base invalid");
+-  auto subtract=[&](RHS &r){r.chi-=rbase.chi;r.trace-=rbase.trace;r.theta-=rbase.theta;
+-    for(int i=0;i<3;++i){r.lambda[i]-=rbase.lambda[i];for(int j=0;j<3;++j){r.metric[i][j]-=rbase.metric[i][j];r.a[i][j]-=rbase.a[i][j];}}};
++  const auto baseparts=hyp::ConformalRHS(base,omega,0.,0.);
++  auto difference=[&](const Jet &u,RHS &r){auto f=hyp::ConformalRHS(u,make_omega(u),0.,0.);
++    auto subtract=[](RHS &v,const RHS &b){v.chi-=b.chi;v.trace-=b.trace;v.theta-=b.theta;for(int i=0;i<3;++i){v.lambda[i]-=b.lambda[i];for(int j=0;j<3;++j){v.metric[i][j]-=b.metric[i][j];v.a[i][j]-=b.a[i][j];}}};
++    subtract(f.regular,baseparts.regular);subtract(f.pole,baseparts.pole);return hyp::AssembleInterior(f,omega.omega,r);};
+   const auto gbasegeo=hyp::Geometry(base.metric);
+   // Separate derivative orders to exclude lower-order physical-trace/Z4 terms.
+   // The reduction enforces det(gtilde)=1 and trace(A)=0 before extraction.
+@@ -145,15 +146,7 @@
+       }
+     }
+     RHS r1{}, r2{}, r3{};
+-    if (!hyp::AssembleInterior(hyp::ConformalRHS(first, make_omega(first), 0., 0.),
+-                               omega.omega, r1) ||
+-        !hyp::AssembleInterior(hyp::ConformalRHS(second, make_omega(second), 0., 0.),
+-                               omega.omega, r2) ||
+-        !hyp::AssembleInterior(hyp::ConformalRHS(connection, make_omega(connection), 0., 0.),
+-                               omega.omega, r3)) {
+-      throw std::runtime_error("kernel symbol extraction failed");
+-    }
+-    subtract(r1);subtract(r2);subtract(r3);
++    if(!difference(first,r1)||!difference(second,r2)||!difference(connection,r3))throw std::runtime_error("kernel principal difference invalid");
+     for(const auto&pair:{std::pair<const double(*)[3],const double(*)[3]>{hcoord,acoord},std::pair<const double(*)[3],const double(*)[3]>{r1.metric,r2.a}}){
+       double trh=0,tra=0,nh=0,na=0;for(int i=0;i<3;++i)for(int j=0;j<3;++j){trh+=gbasegeo.inverse[i][j]*pair.first[i][j];tra+=gbasegeo.inverse[i][j]*pair.second[i][j];nh+=std::abs(pair.first[i][j]);na+=std::abs(pair.second[i][j]);}
+       normal=std::max({normal,std::abs(trh)/std::max(1.,nh),std::abs(tra)/std::max(1.,na)});

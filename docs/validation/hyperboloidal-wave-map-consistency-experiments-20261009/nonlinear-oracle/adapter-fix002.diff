@@ -1,0 +1,19 @@
+--- attempt001/nonlinear_oracle.py
++++ attempt002/nonlinear_oracle.py
+@@ -95,12 +95,15 @@
+     fjet = [1/oj[0], -oj[1]/oj[0]**2,
+             2*oj[1]**2/oj[0]**3-oj[2]/oj[0]**2,
+             -6*oj[1]**3/oj[0]**4+6*oj[1]*oj[2]/oj[0]**3-oj[3]/oj[0]**2]
++    # vector_cart consumes a radial VECTOR MAGNITUDE, not x_i's coefficient.
++    # Yhat^I=x^I/Omega=(r/Omega)n^I, so provide derivatives of r*f(r).
++    radial_magnitude = [r*fjet[n]+(n*fjet[n-1] if n else 0) for n in range(4)]
+     for axes_count in (1, 2, 3):
+         for axes in itertools.product(range(3), repeat=axes_count):
+             m = tuple(axes.count(i) for i in range(3))
+             target = first if axes_count == 1 else second if axes_count == 2 else third
+             for a in range(4):
+-                number = scalar_cart(hjet, xyz, m) if a == 0 else vector_cart(fjet, xyz, m, a-1)
++                number = scalar_cart(hjet, xyz, m) if a == 0 else vector_cart(radial_magnitude, xyz, m, a-1)
+                 if axes_count == 1:
+                     target[a][axes[0]+1] = number
+                 elif axes_count == 2:

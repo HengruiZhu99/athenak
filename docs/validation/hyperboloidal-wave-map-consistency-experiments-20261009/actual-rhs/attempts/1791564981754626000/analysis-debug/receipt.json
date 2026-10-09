@@ -1,0 +1,117 @@
+{
+  "passed": true,
+  "scope": "finiteOmega nonlinear exact-flat actual48point source consistency; no evolution",
+  "source_sha256": "9ef3d3ce75766f0366b10826de3f3c51a9f6c8b2547c91a08144cd97269fb7d1",
+  "actual_stdout_sha256": "2207857bd4d00d9089cee16e7ba77a1bf0bb61491b87f8f2d706c351ea1ccbbe",
+  "expected_sha256": "515ea275a1b7771326e00aa9063cadcba11e79c68ec3a3d70bc6000b60212442",
+  "cases": 48,
+  "maxima": {
+    "rhs22_scaled": 2.4158453015843406e-13,
+    "rhs22_absolute": 2.4158453015843406e-13,
+    "connection_scaled": 4.2243981868139937e-16,
+    "source_scaled": 2.4980018054066022e-15,
+    "physical_constraints_absolute": 1.3780643293159756e-14,
+    "input_normals_absolute": 3.3306690738754696e-16,
+    "rate_normals_scaled": 4.123636951224207e-14,
+    "rate_normals_absolute": 4.786542284911702e-14,
+    "omega_difference_absolute": 8.881784197001252e-16
+  },
+  "worst": {
+    "rhs22_scaled": {
+      "index": 45,
+      "point_name": "outer",
+      "epsilon": 0.025,
+      "value": 2.4158453015843406e-13
+    },
+    "rhs22_absolute": {
+      "index": 45,
+      "point_name": "outer",
+      "epsilon": 0.025,
+      "value": 2.4158453015843406e-13
+    },
+    "physical_constraints_absolute": {
+      "index": 20,
+      "point_name": "transition_low",
+      "epsilon": 0.0,
+      "value": 1.3780643293159756e-14
+    },
+    "input_normals_absolute": {
+      "index": 26,
+      "point_name": "transition_mid",
+      "epsilon": 0.05,
+      "value": 3.3306690738754696e-16
+    },
+    "rate_normals_absolute": {
+      "index": 47,
+      "point_name": "outer",
+      "epsilon": 0.1,
+      "value": 4.786542284911702e-14
+    },
+    "rate_normals_scaled": {
+      "index": 42,
+      "point_name": "outer_endpoint",
+      "epsilon": 0.05,
+      "value": 4.123636951224207e-14
+    },
+    "connection_scaled": {
+      "index": 36,
+      "point_name": "right_tail",
+      "epsilon": 0.0,
+      "value": 4.2243981868139937e-16
+    },
+    "source_scaled": {
+      "index": 38,
+      "point_name": "right_tail",
+      "epsilon": 0.05,
+      "value": 2.4980018054066022e-15
+    },
+    "omega_difference_absolute": {
+      "index": 20,
+      "point_name": "transition_low",
+      "epsilon": 0.0,
+      "value": 8.881784197001252e-16
+    }
+  },
+  "thresholds": {
+    "rhs22_scaled": 5e-09,
+    "connection_scaled": 5e-09,
+    "source_scaled": 5e-09,
+    "physical_constraints_absolute": 5e-09,
+    "input_normals_absolute": 5e-11,
+    "rate_normals_scaled": 5e-11,
+    "omega_difference_absolute": 2e-10
+  },
+  "checks": {
+    "rhs22_scaled": true,
+    "connection_scaled": true,
+    "source_scaled": true,
+    "physical_constraints_absolute": true,
+    "input_normals_absolute": true,
+    "rate_normals_scaled": true,
+    "omega_difference_absolute": true
+  },
+  "raw22_component_scaled_max": [
+    3.399364123524151e-14,
+    8.222589276130066e-16,
+    2.0816681711721685e-16,
+    1.8388068845354155e-16,
+    1.9220736113823023e-15,
+    4.440892098500626e-16,
+    2.0573820425084932e-15,
+    2.3919755065549e-13,
+    2.648575803121389e-14,
+    3.913536161803677e-15,
+    2.8796409701214998e-15,
+    2.245426067304379e-14,
+    5.329070518200751e-15,
+    2.842170943040401e-14,
+    1.021405182655144e-14,
+    1.9876461587742256e-14,
+    1.3999348523586376e-14,
+    2.4158453015843406e-13,
+    8.711087406965135e-14,
+    7.208122987378829e-14,
+    5.5566662382489085e-14,
+    5.523359547510154e-14
+  ]
+}

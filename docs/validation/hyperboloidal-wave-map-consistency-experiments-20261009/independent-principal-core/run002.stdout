@@ -1,0 +1,57 @@
+{
+  "kind": "independent saved-only principal/core review",
+  "passed": true,
+  "recipe_sha256": "f7fc4ed48d1bf251e0ee158c9c5123c3dde6482f5d5e3b9b280a193ce30f0aa4",
+  "source_sha256": "54d8d770d3d42bb29f4c717093bbb2288e729f9c1d20d6dcaf9e8337195bdc21",
+  "no_sourcequeries_or_compile_or_matrix_generation_or_evolution": true,
+  "capsule_files_verified": 95,
+  "source_input_pins_verified": 375,
+  "compiler_dependency_entries_verified": 4202,
+  "exact_fraction_principal": {
+    "M2_I": true,
+    "trace_M_zero": true,
+    "complementary_idempotent_projectors": true,
+    "projector_ranks": [
+      10,
+      10
+    ],
+    "H_projector_and_IplusMtM_identity": true,
+    "HM_MtH": true,
+    "positive_quadratic_lower_bound": "x^T H x=(||x||^2+||Mx||^2)/2 >= ||x||^2/2, by exact coefficient identity"
+  },
+  "actual_saved_principal": {
+    "release": {
+      "cases": 792,
+      "expected_error": 4.04121180963557e-13,
+      "M2_error": 4.086730953645201e-13,
+      "HM_error": 3.2218672174622043e-13,
+      "normal_scaled": 2.627661123322586e-16
+    },
+    "debug": {
+      "cases": 792,
+      "expected_error": 4.04121180963557e-13,
+      "M2_error": 4.086730953645201e-13,
+      "HM_error": 3.2218672174622043e-13,
+      "normal_scaled": 2.627661123322586e-16
+    }
+  },
+  "Release_Debug_actual_matrices_equal": true,
+  "exact_polynomial_core_targets_verified": 204,
+  "saved_actual_core_aggregate": {
+    "core_cases": 204,
+    "witnesses": 17,
+    "all22_max_absolute": 1.1102230246251565e-15,
+    "all22_max_scaled": 1.1102230246251565e-15,
+    "physical8_initial_constraint_max": 6.661338147750939e-16,
+    "input_algebraic_normal_max": 3.469446951953614e-18,
+    "output_algebraic_normal_max": 1.7763568394002505e-15,
+    "coordinate_acceleration_max_absolute": 3.552713678800501e-15,
+    "coordinate_acceleration_max_scaled": 3.552713678800501e-16,
+    "analytic_origin_scalar_w_limit_error": 0
+  },
+  "core_limitation": "Actual per-case rows were not saved. Independently verified all204 exact polynomial targets, physical8 constraints, input/output normals, accelerations and origin limits; actual source binding reviewed and saved aggregate maxima rechecked, but individual actual residuals are not recomputed.",
+  "first_failure_preserved": true,
+  "linear_principal_core_scope_only": true,
+  "no_finite_k_nonlinear_Cwave_or_scri_acceptance": true,
+  "seconds": 2.559578042
+}
