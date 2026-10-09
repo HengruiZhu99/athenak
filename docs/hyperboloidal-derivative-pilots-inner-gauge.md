@@ -65,6 +65,30 @@ four-dimensional inverse must solve
 future time orientation, coverage and injectivity. Reference time is not
 automatically native target time.
 
+The diagnosed CMC control defect has now been corrected in a fresh private
+source: the height-gradient factor `b=Omega*q/a` had frozen radius as a scalar;
+it now uses the radius jet `Q=sqrt(sum(Y_i*Y_i))`. A reverse source/AST proof
+preserves every other derivative-core method, including `NativeGraph`, and
+the original control grids, boosts, precisions and tolerances. Independent
+source review preceded the new attempt.
+
+The corrected control slice passed 880 checks over 100 rows and 189,440 roots
+at 80/110 digits. Enclosing runtime was `1540.031219 s`. Maximum saved local
+identity, exact-derivative and scalar-wave-trace errors were `1.95031e-79`,
+`4.89248e-27` and `5.71173e-29`. A separate saved-only qualification retained
+1,480 original noncontrol checks with zero failures and deferred all 880 old
+controls. The two source identities and receipts are separate; the original
+2,360-check attempt remains FAIL. Independent saved-result review confirmed
+both registries and unchanged pins without recomputing numerical targets or
+decoding the control derivative jets.
+
+The [CMC correction capsule](validation/hyperboloidal-CMC-control-correction-20261009/README.md)
+preserves the source change, independent reviews, exact commands and results.
+It establishes neither a coordinate inverse nor global timelike admissibility,
+native RHS agreement or stable evolution. Its unchanged physical-reference
+RWM oracle is not a manufactured solution of the compound interior
+Bona--Masso proposal.
+
 The completed evidence is in
 [the compact capsule](validation/hyperboloidal-derivative-pilots-inner-pencil-20261009/README.md).
 Its catalog SHA256 is

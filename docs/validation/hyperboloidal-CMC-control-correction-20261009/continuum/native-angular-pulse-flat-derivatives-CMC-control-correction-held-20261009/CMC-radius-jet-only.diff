@@ -1,0 +1,11 @@
+--- preserved-original/derivative_core.py
++++ fresh-corrected/derivative_core.py
+@@ -275,7 +275,7 @@
+             vq=self.a*self.a/H.v**3
+             vqq=-3*self.a*self.a*q/H.v**5
+             H1,H2,H3=height_tensors(q,nuv,v,vq,vqq)
+-            b=omega*q/self.a
++            b=omega*(sumjet(t*t for t in Y)**mp.mpf(".5"))/self.a
+             nu=[v/(sumjet(t*t for t in Y)**mp.mpf(".5")) for v in Y]
+             D=k[0]*omega*omega/(h+b)+b*sumjet((k[i+1]-k[0]*nu[i])**2 for i in range(3))/(2*k[0])
+         else:

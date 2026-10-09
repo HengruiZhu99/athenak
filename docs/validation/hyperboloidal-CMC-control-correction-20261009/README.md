@@ -1,0 +1,11 @@
+The original full493,568-root derivative attempt remains FAIL:2360checks,156failures, all in the CMC control slice. Its immutable failure capsule is separate. This capsule records a fresh correction and two separately qualified stages; it does not relabel that original attempt or create a combined full-PASS field.
+
+The CMC height-gradient factor had frozen the radius as a scalar in b=Omega*q/a. Replacing only that occurrence by the radius jet Q=sqrt(sum(Y_i*Y_i)) restores the intended first/second derivative dependence. The reverse AST/source proof preserves every other derivative-core method, NativeGraph, original control/grid/precision/boost registry and tolerance. Independent full source review preceded root release.
+
+The fresh corrected-control attempt passed880checks on100rows/189440roots at80/110digits. Enclosing runtime1540.031219s; child1539.9660895s. Saved maximum local identity error1.95031e-79, exact derivative error4.89248e-27 and wave trace5.71173e-29 satisfy their unchanged gates. A separate saved-only qualification retained1480original noncontrol checks with0failures and deferred all880old controls. No native/initial/coarea ray was reintegrated for that qualification.
+
+Independent saved provenance confirmed exact registries, both source identities, both root/child receipts, unchanged pre/post pins and preserved original2360/156FAIL. It did not decode scientific control jets or recompute derivatives, roots, inverse maps, targets or native operators.
+
+The original Kirchhoff/native-IVP coordinate inverse, timelike/global admissibility, full native RHS comparison and stable gauge evolution remain unaccepted. This source/control work concerns the unchanged physical-reference RWM equations; it is not a manufactured solution of the compound interior Bona-Masso proposal. The eventual black hole criterion still requires surviving the wormhole-to-trumpet transition with the Minkowski hyperboloidal reference throughout.
+
+catalog.json records byte-exact small UTF-8 evidence and metadata-only scientific jets/arrays/JSONL/binaries/files above1MiB. Compiler/native log whitespace is preserved. The collector runs no science. Production src and root CMakeLists.txt remain identical to27c19d20696ea6dd4704032c51dfd026218f64f2.
