@@ -1,0 +1,7 @@
+Command: PYTHONPATH=build-layer-research/boundary/python-deps OPENBLAS_NUM_THREADS=1 /usr/bin/python3 build-layer-research/continuum/discrete-mode-identification/check_and_freeze.py
+Exit: 1; wall time 0.214856792 seconds. Before any freeze/output mutation.
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/check_and_freeze.py", line 63, in <module>
+    for path, digest in data.get('input_sha256', {}).items():
+AttributeError: 'list' object has no attribute 'get'
+Cause: commands-in-progress.json is a command list, not a mapping.

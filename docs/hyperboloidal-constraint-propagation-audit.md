@@ -398,3 +398,9 @@ Further [bounded inner-lapse and matching composed-stencil controls](hyperboloid
 pass implementation gates but worsen the t2 global constraints. A separate
 inertial damping-vector feasibility derivation identifies additional source
 stiffness and live timelikeness requirements before any native candidate.
+
+The [mode and gauge-corner follow-up](hyperboloidal-mode-and-gauge-corner-audit.md)
+identifies a reproducible constraint-carrying approximate discrete direction,
+checks its actual finite-step action, derives Einstein Taylor compatibility,
+and exhibits a separate initial gauge/null time-corner obstruction. The full-C1
+t6 extension and wide flat-reference screen also remain negative.

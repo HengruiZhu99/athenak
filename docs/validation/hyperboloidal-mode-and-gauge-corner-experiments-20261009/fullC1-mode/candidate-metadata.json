@@ -1,0 +1,99 @@
+{
+  "status": "CONVERGED_APPROXIMATE_C1_GENERATOR_PAIR_NOT_CERTIFIED_EIGENVALUE",
+  "scope": "Finite-grid fullC1 norm N16/span2.2 projected continuous pseudomodes; no globally rightmost/continuum/stability claim",
+  "coordinates": "Complex free20 point-major original active-cell k/j/i order; Euclidean unit norm; maxabs entry phased real positive; conjugates implicit",
+  "candidate_vectors_sha256": "5c1fd006aeb183947b256f20c7becee4238b342ce64053947be2f4a15b9ba866",
+  "config_sha256": "2846b6189bae598ea051100192e18263fd4520e0e9de142e493e3bea52bda6c2",
+  "choices_sha256": "ffbae1a89a7296b360a33f62fbfda51279022a11e5c369cca7a37d00c10f0f32",
+  "C0_vector_metadata_sha256": "e411042b90498bb4f08eadcdf9214095028c049df8a0c15b46b5dfd4d3f2d6e1",
+  "C0_vector_sha256": "fc88b20d4953f5088aed97d04dce41ad0af039fc794a401a21cceb53280e1eee",
+  "initial_seed_arrays_bitwise_equal_C0_C1": true,
+  "times_and_reference_coordinates_bitwise_equal_C0_C1": true,
+  "no_eigenvalue_perturbation_bound": true,
+  "conditioning_caveat": "Small generator residual is pseudospectral evidence; no norm(J) normalization or branch classification",
+  "candidates": [
+    {
+      "key": "candidate0",
+      "case": "late4-combined-s1",
+      "rank": 32,
+      "method": "rayleigh-ritz",
+      "lambda": [
+        1.91565911806787,
+        6.776525925530402
+      ],
+      "actual_J_residual_generator_units": 5.776044425698581e-07,
+      "actual_J_residual_relative_to_max1_lambda": 8.202171727217431e-08,
+      "singular_value_fraction_at_rank": 3.0513772192449953e-09,
+      "case_report_sha256": "78cbbd32135a01f2a8589c5e9986ca3a17bdd03a32e896a8191fd66387c1d21b",
+      "lambda_minus_C0_candidate0": [
+        -0.000679878500666975,
+        -0.014469495215641892
+      ],
+      "phase_aligned_component_distance_to_C0_candidate0": 0.16053082231012036,
+      "phase_aligned_component_distance_to_C1_candidate0": 0.0
+    },
+    {
+      "key": "candidate1",
+      "case": "late4-combined-s1",
+      "rank": 32,
+      "method": "projected-DMD",
+      "lambda": [
+        1.9156591103692893,
+        6.77652588339009
+      ],
+      "actual_J_residual_generator_units": 5.754839164295273e-07,
+      "actual_J_residual_relative_to_max1_lambda": 8.172059612959728e-08,
+      "singular_value_fraction_at_rank": 3.0513772192449953e-09,
+      "case_report_sha256": "78cbbd32135a01f2a8589c5e9986ca3a17bdd03a32e896a8191fd66387c1d21b",
+      "lambda_minus_C0_candidate0": [
+        -0.0006798861992476368,
+        -0.014469537355953577
+      ],
+      "phase_aligned_component_distance_to_C0_candidate0": 0.16053082213358252,
+      "phase_aligned_component_distance_to_C1_candidate0": 9.451823863224347e-09
+    },
+    {
+      "key": "candidate2",
+      "case": "late2-combined-s2",
+      "rank": 80,
+      "method": "projected-DMD",
+      "lambda": [
+        1.9156587760295634,
+        6.776525599921331
+      ],
+      "actual_J_residual_generator_units": 3.686356811431914e-07,
+      "actual_J_residual_relative_to_max1_lambda": 5.234747368884262e-08,
+      "singular_value_fraction_at_rank": 6.010419198522424e-10,
+      "case_report_sha256": "040eb1cf48fd42225d4d9febb5f9a05b38221faf2482cc1ef2bfb3c9ac1cc740",
+      "lambda_minus_C0_candidate0": [
+        -0.0006802205389735416,
+        -0.014469820824713153
+      ],
+      "phase_aligned_component_distance_to_C0_candidate0": 0.16053081340990716,
+      "phase_aligned_component_distance_to_C1_candidate0": 1.4915957577620825e-07
+    },
+    {
+      "key": "candidate3",
+      "case": "late4-combined-raw-s2",
+      "rank": 24,
+      "method": "rayleigh-ritz",
+      "lambda": [
+        1.915659088970198,
+        6.776525738400149
+      ],
+      "actual_J_residual_generator_units": 4.6423248485371453e-07,
+      "actual_J_residual_relative_to_max1_lambda": 6.592253076913504e-08,
+      "singular_value_fraction_at_rank": 2.226912371828607e-09,
+      "case_report_sha256": "4f42bed377530007bb8a3eb84270d65cd4d18564c0458486869a1823b8aed9e9",
+      "lambda_minus_C0_candidate0": [
+        -0.0006799075983388025,
+        -0.014469682345894519
+      ],
+      "phase_aligned_component_distance_to_C0_candidate0": 0.16053081943003542,
+      "phase_aligned_component_distance_to_C1_candidate0": 4.4553359960810066e-08
+    }
+  ],
+  "source_sha256": "d9ecbd37c7421295ffc3167dab0759a322e0785c4822f2063b86540f20989ff5",
+  "head": "269f1dbcfed80aa8959b3980ef146abaf1de6e28",
+  "seconds": 1.2952179579999998
+}

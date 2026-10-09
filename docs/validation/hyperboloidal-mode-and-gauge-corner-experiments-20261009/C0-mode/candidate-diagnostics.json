@@ -1,0 +1,248 @@
+{
+  "status": "APPROXIMATE_CANDIDATE_DIAGNOSTICS_COMPLETED",
+  "scope": "Only a finite-grid approximate/pseudospectral vector is characterized; no eigenvalue error bound, continuum mode, or pure gauge/subsidiary/stencil branch label.",
+  "native_command": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-spatialnorm",
+    "16",
+    "2.2",
+    "0.0001"
+  ],
+  "native_exit": 0,
+  "native_generator_amplitude_controls": [
+    {
+      "amplitude_scale": 0.001,
+      "native_Jv_minus_cached_Jv_generator_units": 2.6513200689351984e-06,
+      "native_centered_RHS_minus_lambda_v_generator_units": 2.7113743133397647e-06,
+      "native_centered_RHS_minus_lambda_v_relative_to_max1_lambda": 3.842541156589757e-07
+    },
+    {
+      "amplitude_scale": 0.0001,
+      "native_Jv_minus_cached_Jv_generator_units": 6.747364896953356e-08,
+      "native_centered_RHS_minus_lambda_v_generator_units": 5.923829033915795e-07,
+      "native_centered_RHS_minus_lambda_v_relative_to_max1_lambda": 8.395210043641947e-08
+    },
+    {
+      "amplitude_scale": 3e-05,
+      "native_Jv_minus_cached_Jv_generator_units": 2.154149806002348e-07,
+      "native_centered_RHS_minus_lambda_v_generator_units": 6.271756957446025e-07,
+      "native_centered_RHS_minus_lambda_v_relative_to_max1_lambda": 8.888291120317394e-08
+    },
+    {
+      "amplitude_scale": 1e-05,
+      "native_Jv_minus_cached_Jv_generator_units": 6.89542436483625e-07,
+      "native_centered_RHS_minus_lambda_v_generator_units": 9.074219263273072e-07,
+      "native_centered_RHS_minus_lambda_v_relative_to_max1_lambda": 1.2859921557675764e-07
+    },
+    {
+      "amplitude_scale": 3e-06,
+      "native_Jv_minus_cached_Jv_generator_units": 2.3129891021074662e-06,
+      "native_centered_RHS_minus_lambda_v_generator_units": 2.398333615142399e-06,
+      "native_centered_RHS_minus_lambda_v_relative_to_max1_lambda": 3.398902017355853e-07
+    }
+  ],
+  "actual_constraint_amplitude_controls": [
+    {
+      "amplitude_scale": 0.0001,
+      "difference_from_eps1e-5_absolute_l2": 1.386611761776697e-09,
+      "difference_from_eps1e-5_relative_l2": 1.1212602804428995e-09
+    },
+    {
+      "amplitude_scale": 3e-05,
+      "difference_from_eps1e-5_absolute_l2": 1.3594465346699542e-09,
+      "difference_from_eps1e-5_relative_l2": 1.0992935764211672e-09
+    },
+    {
+      "amplitude_scale": 1e-05,
+      "difference_from_eps1e-5_absolute_l2": 0.0,
+      "difference_from_eps1e-5_relative_l2": 0.0
+    }
+  ],
+  "native_H_M_Z_rms_for_unit_free20_candidate": [
+    0.019095804493364055,
+    0.021740068863122568,
+    0.008119441894331572
+  ],
+  "Theta_rms_for_unit_free20_candidate": 0.0005104140869950274,
+  "raw22_component_squared_fractions": {
+    "chi": 0.0067379597342183215,
+    "metric": 0.01032163665249572,
+    "P": 0.19675566330792266,
+    "A": 0.13490632923174936,
+    "Lambda": 0.6156541793038135,
+    "Theta": 0.0003883231569773133,
+    "alpha": 0.03436216143960802,
+    "beta": 0.0008737471732153337
+  },
+  "radial_localization": [
+    {
+      "r_lower": 0.0,
+      "r_upper": 0.2,
+      "cells": 8,
+      "weighted_component_squared_fraction": 0.011934797599519072,
+      "H_M_Z_squared_fraction": [
+        0.02586503616901955,
+        0.000727952426520485,
+        5.321282167452003e-05
+      ]
+    },
+    {
+      "r_lower": 0.2,
+      "r_upper": 0.4,
+      "cells": 80,
+      "weighted_component_squared_fraction": 0.0924537250421785,
+      "H_M_Z_squared_fraction": [
+        0.3144556258840563,
+        0.021660009452394734,
+        0.0006253796664835628
+      ]
+    },
+    {
+      "r_lower": 0.4,
+      "r_upper": 0.6,
+      "cells": 272,
+      "weighted_component_squared_fraction": 0.21931354446318013,
+      "H_M_Z_squared_fraction": [
+        0.2400106301828515,
+        0.03766060184092397,
+        0.0020344035914080494
+      ]
+    },
+    {
+      "r_lower": 0.6,
+      "r_upper": 0.8,
+      "cells": 480,
+      "weighted_component_squared_fraction": 0.14369658734894966,
+      "H_M_Z_squared_fraction": [
+        0.2569378401227488,
+        0.04797868603112291,
+        0.005481417502343053
+      ]
+    },
+    {
+      "r_lower": 0.8,
+      "r_upper": 0.9,
+      "cells": 368,
+      "weighted_component_squared_fraction": 0.02460430408780681,
+      "H_M_Z_squared_fraction": [
+        0.1313198539842089,
+        0.08369210226783144,
+        0.052869610507621456
+      ]
+    },
+    {
+      "r_lower": 0.9,
+      "r_upper": 0.95,
+      "cells": 168,
+      "weighted_component_squared_fraction": 0.04142724051087119,
+      "H_M_Z_squared_fraction": [
+        0.02500837541583701,
+        0.14110899223080475,
+        0.08279474271266843
+      ]
+    },
+    {
+      "r_lower": 0.95,
+      "r_upper": 1.0,
+      "cells": 264,
+      "weighted_component_squared_fraction": 0.4665698009474948,
+      "H_M_Z_squared_fraction": [
+        0.006402638241277986,
+        0.6671716557504017,
+        0.856141233197801
+      ]
+    }
+  ],
+  "peak_component_radius": 0.9986514344354592,
+  "peak_H_M_Z_radius": [
+    0.22801795433693378,
+    0.9600415030091148,
+    0.9986514344354592
+  ],
+  "active_neighbor_roughness": [
+    {
+      "axis": 0,
+      "active_neighbor_pairs": 1476,
+      "difference_over_h_full_component_ratio": 5.6402031348268284,
+      "difference_over_full_component_ratio": 0.775527931038689
+    },
+    {
+      "axis": 1,
+      "active_neighbor_pairs": 1476,
+      "difference_over_h_full_component_ratio": 5.640203134192849,
+      "difference_over_full_component_ratio": 0.7755279309515168
+    },
+    {
+      "axis": 2,
+      "active_neighbor_pairs": 1476,
+      "difference_over_h_full_component_ratio": 5.640203132698666,
+      "difference_over_full_component_ratio": 0.7755279307460666
+    }
+  ],
+  "pi_over_h_reference": 22.84794657156213,
+  "late_state_orthogonal_pair_projection": [
+    {
+      "seed": "gauge_pulse",
+      "samples": [
+        {
+          "time": 0.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.06645521206465116
+        },
+        {
+          "time": 2.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.9999301052490772
+        },
+        {
+          "time": 4.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.9999999804294207
+        },
+        {
+          "time": 5.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.9999999970558688
+        },
+        {
+          "time": 6.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.9999999987016978
+        }
+      ]
+    },
+    {
+      "seed": "shell_random",
+      "samples": [
+        {
+          "time": 0.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 1.5377758560463997e-05
+        },
+        {
+          "time": 2.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.5694046383708041
+        },
+        {
+          "time": 4.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.9921165668670531
+        },
+        {
+          "time": 5.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.9976079906818475
+        },
+        {
+          "time": 6.0,
+          "orthogonal_pair_squared_fraction_raw_free20": 0.999043634071165
+        }
+      ]
+    }
+  ],
+  "norm_caveat": "Component fractions and pair overlaps use raw component units; no invariant energy or biorthogonal dynamical decomposition.",
+  "source_sha256": "154cacc2c0d360597e2ad38faea30d1bc92a87426d7f6618b81f41485fbda98d",
+  "seconds_after_server_start": 2.4610654999999997,
+  "input_sha256": {
+    "build-layer-research/continuum/discrete-mode-identification/candidate-vectors.npz": "fc88b20d4953f5088aed97d04dce41ad0af039fc794a401a21cceb53280e1eee",
+    "build-layer-research/continuum/discrete-mode-identification/candidate-metadata.json": "e411042b90498bb4f08eadcdf9214095028c049df8a0c15b46b5dfd4d3f2d6e1",
+    "build-layer-research/boundary/full-tensor-propagator/server-spatialnorm": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+    "build-layer-research/boundary/full-tensor-propagator/tangent_server.cpp": "2fe2b120e9b5d7881c689e02b1b7934283a806e0475f0240e476f7f81aec4013",
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-lift.bin": "4d30173931ddecdcdba83c0689a316f3a1d3c3f4cd16ace2c964cc883d03b4e9",
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-metadata.json": "98b7b7f459cce564398769cff48545cb6e89eb3708d01b2018a81b3a393d4e26",
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-J20.npz": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+    "build-layer-research/boundary/full-tensor-C0-long-window-20261009/spatialnorm-projected-krylov-m50-80-h0.1-t6.0.npz": "b02bf12087248a96d1b217d164e6d960cfc506791892b1058d7c2df018ed82cf"
+  },
+  "head": "269f1dbcfed80aa8959b3980ef146abaf1de6e28"
+}

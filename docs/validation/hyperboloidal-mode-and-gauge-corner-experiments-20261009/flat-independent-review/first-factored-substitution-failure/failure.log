@@ -1,0 +1,9 @@
+Command: /Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python build-layer-research/continuum/independent-flat-penrose-review/review.py
+Exit 1; wall time 0.091122667 seconds.
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/independent-flat-penrose-review/review.py", line 31, in <module>
+    assert s.simplify(metric.subs(b**2, b2) - 1) == 0
+AssertionError
+Cause: s.factor(metric) hides b**2 inside linear factors before a structural
+substitution. The corrected check expands the numerator before substitution.
+No frozen input or production source changed; no output receipt written.

@@ -1,0 +1,43 @@
+{
+  "scope": "Same descriptive native diagnostic as frozen C0, new C1 pins and explicit pair projection",
+  "original_source_sha256": "154cacc2c0d360597e2ad38faea30d1bc92a87426d7f6618b81f41485fbda98d",
+  "new_source_sha256": "660ed609466584f612e90cbc25c765d1363ca6fd1f0c0c4724a0901545d97af3",
+  "literal_edits": [
+    {
+      "before": "B = ROOT/'build-layer-research/boundary/full-tensor-propagator'",
+      "after": "B = ROOT/'build-layer-research/boundary/full-tensor-covariant-c1'"
+    },
+    {
+      "before": "OLD = B/'full22-v2'",
+      "after": "OLD = B/'full22-candidate'"
+    },
+    {
+      "before": "fc88b20d4953f5088aed97d04dce41ad0af039fc794a401a21cceb53280e1eee",
+      "after": "5c1fd006aeb183947b256f20c7becee4238b342ce64053947be2f4a15b9ba866"
+    },
+    {
+      "before": "e411042b90498bb4f08eadcdf9214095028c049df8a0c15b46b5dfd4d3f2d6e1",
+      "after": "f1b137cf9e57b81f7e26b3ce5f6b63ce70c5e22dc36912b27c3e469316d3fc39"
+    },
+    {
+      "before": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+      "after": "b088aaa25f865a9a21754f3ee05cf1ed1f86c7717d5ff6d3cf4253a073eb3450"
+    },
+    {
+      "before": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+      "after": "1093d7c07a71019cd69e578d52ca0c47635dc190b32ccb371683fd162132241e"
+    },
+    {
+      "before": "full-tensor-C0-long-window-20261009",
+      "after": "full-tensor-C1-long-window-20261009"
+    },
+    {
+      "before": "coefficient = orth.T@y",
+      "after": "coefficient = np.einsum('ij,i->j', orth, y, optimize=False)"
+    },
+    {
+      "before": "(P/'candidate-vectors.npz', P/'candidate-metadata.json', B/'server-spatialnorm',",
+      "after": "(P/'candidate-vectors.npz', P/'candidate-metadata.json', P/'input-pins.json', B/'server-spatialnorm',"
+    }
+  ]
+}

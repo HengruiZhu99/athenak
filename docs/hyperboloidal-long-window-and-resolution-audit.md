@@ -29,3 +29,9 @@ On even centered grids r²/h² is a sum of three squared half-integers. Choosing
 Default N20 reaches t6 with pointwise H/M/Z2458.1905/2638.7390/772.5266, versus N16 3320.9525/4264.5736/1433.5982. Its component amplification84786.566 remains large. The initial discrete constraint-tangent defect C_h J_h has Hdot/Mdot/Zdot=.824747/1.872265/.082188 at N16, .323254/1.730908/.043013 at default N20 and .290273/1.840843/.040620 at controlled N20. Momentum source reduction is weak. These are discrete source measurements, not a continuum gauge-constraint violation or asymptotic-order proof.
 
 The [archive](validation/hyperboloidal-live-damping-and-scri-hierarchy-experiments-20261009/README.md) retains exact matrices' hashes, source/compile provenance, epsilon checks, propagation commands, samples, errors and failures. The N20 v1 table transcription and corrected v2 are explicit; array data never changed. Production src/CMake remains byte-identical to implementation27c19d20. The later [matching composed-Hessian control](hyperboloidal-bounded-lapse-and-stencil-audit.md) passes its implementation oracles but worsens M/Z at t2. Bounded inner-lapse variants likewise fail that global screen and are not promoted.
+
+The subsequent [mode and gauge-corner audit](hyperboloidal-mode-and-gauge-corner-audit.md)
+reports a reproducible approximate late-state pair and distinguishes its generator
+residual from the exact cached finite-step action. A full-C1 t6 extension still
+has large growth. Neither calculation certifies a continuum eigenvalue or a
+stable native evolution.

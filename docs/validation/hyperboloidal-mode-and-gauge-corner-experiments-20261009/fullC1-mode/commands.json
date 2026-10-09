@@ -1,0 +1,10 @@
+{
+  "scope": "Additional completed read-only preparation/export/oracle commands; nine search commands and measured durations are in receipt.json",
+  "commands": [
+    {"command": ["python3", "build-layer-research/continuum/discrete-mode-C1-identification/prepare_search.py"], "returncode": 0, "stderr": ""},
+    {"command": ["python3", "build-layer-research/continuum/discrete-mode-C1-identification/configure.py", "--long-index", "build-layer-research/boundary/full-tensor-C1-long-window-20261009/immutable-fullC1-long-window-20261009/index.json", "--long-sha", "836b8f1189d2be96aa994970f0c436aca594adfc449e503a954e54b73cd2335c"], "returncode": 0, "stderr": ""},
+    {"command": ["/usr/bin/python3", "build-layer-research/continuum/discrete-mode-C1-identification/export_candidates.py"], "returncode": 0, "stdout_stderr_file": "export.log", "environment": {"PYTHONPATH": "build-layer-research/boundary/python-deps", "OPENBLAS_NUM_THREADS": "1"}, "tool_wall_time_seconds": 2.132936709},
+    {"command": ["python3", "build-layer-research/continuum/discrete-mode-C1-identification/prepare_classifier.py"], "returncode": 0, "stderr": ""},
+    {"command": ["/usr/bin/python3", "build-layer-research/continuum/discrete-mode-C1-identification/classify_candidate.py"], "returncode": 0, "stdout_stderr_file": "classify.log", "native_stderr_file": "native-diagnostic.stderr", "environment": {"PYTHONPATH": "build-layer-research/boundary/python-deps", "OPENBLAS_NUM_THREADS": "1"}, "duration_note": "2.501712791 seconds recorded after server startup; complete wall duration not archived"}
+  ]
+}

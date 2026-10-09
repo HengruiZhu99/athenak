@@ -1,0 +1,1 @@
+The frozen firstjet main was renamed as an unused helper during inclusion, losing the special implicit return0 rule for main. Initial compile succeeded with -Wreturn-type warning; no helper call occurred. Fresh copy now explicitly returns0. Frozen source and initial output remain unchanged.

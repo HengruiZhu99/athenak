@@ -1,0 +1,36 @@
+{
+  "scope": "Same SVD/Ritz/DMD/rank/window method as frozen C0; new C1 pinned inputs and explicit dense contractions",
+  "old_index_sha256": "396899199b3e94afdf28133c3db094690c18c094aa86e38ad42edfc8829c1d69",
+  "old_source_sha256": "998348a22869a875aa63d7090c0e4364bb14935493d901e1b1874779965315ff",
+  "new_source_sha256": "0c4c109cec7fcbecd8d2847b7ce8db332420fb21684c81fbed3f0530b3629800",
+  "literal_edits": [
+    {
+      "before": "C0 N16",
+      "after": "C1 N16"
+    },
+    {
+      "before": "OLD = B/'full-tensor-propagator/full22-v2'\nLONG = B/'full-tensor-C0-long-window-20261009'\nFROZEN = LONG/'immutable-C0-long-window-20261009'\nMATRIX = OLD/'spatialnorm-projected-J20.npz'\nSTATES = LONG/'spatialnorm-projected-krylov-m50-80-h0.1-t6.0.npz'",
+      "after": "config = json.loads((P/'input-pins.json').read_text())\nMATRIX = ROOT/config['matrix']\nSTATES = ROOT/config['states']"
+    },
+    {
+      "before": "assert sha(FROZEN/'index.json') == 'd1efcbea11e730eec2e784ef7981e64f5e67d64e51bc963c6cdd7ed22834d896'\ncatalog = json.loads((FROZEN/'index.json').read_text())\nfor name, entry in catalog['files'].items():\n    assert sha(FROZEN/name) == entry['sha256']\nmetadata = json.loads((FROZEN/'large-output-metadata.json').read_text())\nfor p, wanted in ((MATRIX, '767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6'),\n                  (STATES, 'b02bf12087248a96d1b217d164e6d960cfc506791892b1058d7c2df018ed82cf')):\n    assert sha(p) == metadata[str(p)]['sha256'] == wanted\n    assert p.stat().st_size == metadata[str(p)]['bytes']\noriginal = B/'full-tensor-global-final/manifest.json'\nassert sha(original) == '4f62819e2337c0cb20571071fe10d0e80d8b43895a928ccd4418faec0bc590d2'\npins = {str(p.relative_to(ROOT)): sha(p) for p in\n        (MATRIX, STATES, FROZEN/'index.json', FROZEN/'source-identity-verification.json',\n         FROZEN/'large-output-metadata.json', original, OLD/'spatialnorm-cache0.0001-metadata.json',\n         Path(__file__))}\n",
+      "after": "pins = {str((P/'input-pins.json').relative_to(ROOT)): sha(P/'input-pins.json'),\n        str(Path(__file__).relative_to(ROOT)): sha(Path(__file__))}\nfor path, wanted in config['catalogs'].items():\n    index = ROOT/path\n    assert sha(index) == wanted\n    catalog = json.loads(index.read_text())\n    for name, entry in catalog['files'].items():\n        file = index.parent/name\n        assert sha(file) == entry['sha256'] and file.stat().st_size == entry['bytes']\n    pins[path] = wanted\nfor path, entry in config['artifacts'].items():\n    file = ROOT/path\n    assert sha(file) == entry['sha256'] and file.stat().st_size == entry['bytes']\n    pins[path] = entry['sha256']\n"
+    },
+    {
+      "before": "RR = U.T@JU",
+      "after": "RR = np.einsum('ki,kj->ij', U, JU, optimize=False)\nassert np.isfinite(RR).all()"
+    },
+    {
+      "before": "dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]",
+      "after": "uy = np.einsum('ki,kj->ij', Ur, Y, optimize=False)\n    dmd_matrix = np.einsum('ki,ji->kj', uy, vh[:rank], optimize=False)/singular[:rank][None, :]\n    assert np.isfinite(dmd_matrix).all()"
+    },
+    {
+      "before": "residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]",
+      "after": "lifted = np.einsum('ij,jk->ik', Ur, vectors, optimize=False)\n        action = np.einsum('ij,jk->ik', JUr, vectors, optimize=False)\n        residual_vectors = action-lifted*eig[None, :]\n        assert np.isfinite(residual_vectors).all()"
+    },
+    {
+      "before": "v = Ur@vectors[:, k]",
+      "after": "v = np.einsum('ij,j->i', Ur, vectors[:, k], optimize=False)"
+    }
+  ]
+}

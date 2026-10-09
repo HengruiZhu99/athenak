@@ -1,0 +1,137 @@
+[
+  {
+    "case": "all-combined-s2",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "all-combined-s2",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 2.597245917,
+    "stdout_sha256": "a9d8b0cb115540897c25499b8a7d03b9a0ea34f5564fe49dc36fbb0b38b166e1"
+  },
+  {
+    "case": "late2-combined-s2",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "late2-combined-s2",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 2.3678801249999997,
+    "stdout_sha256": "6252a28e2ff409a23f631244dbc5b5470f084113f5ef4ece61544f56a16f56e3"
+  },
+  {
+    "case": "late4-combined-s1",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "late4-combined-s1",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 2.1625348749999995,
+    "stdout_sha256": "a1859cd9151eda072faf9b031423b751e5c04c9cdf6f34a03c5e433ad81f77a9"
+  },
+  {
+    "case": "late4-combined-s2",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "late4-combined-s2",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 1.8764298750000004,
+    "stdout_sha256": "9707c832e74412503673261ce3c4026b88b2bba6216ffecc44bb0d53e66f5d5e"
+  },
+  {
+    "case": "late4-combined-s4",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "late4-combined-s4",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 1.630703875,
+    "stdout_sha256": "ee21daf17edad51a40ef956b7e201e132d4f55c8bc90cba3b255794a58ff1683"
+  },
+  {
+    "case": "late4-combined-raw-s2",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "late4-combined-raw-s2",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 1.8643138750000006,
+    "stdout_sha256": "e454363a9c97beee77a1554fe3478c67a13adf02bb4ab83c561c7de89207350b"
+  },
+  {
+    "case": "late4-gauge-s2",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "late4-gauge-s2",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 1.4868500420000004,
+    "stdout_sha256": "c6efd4e06ee34c4c65df693dde9855039bee917dc5261daa317c1d63ec7a8f09"
+  },
+  {
+    "case": "late4-shell-s2",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "late4-shell-s2",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 1.6197099159999997,
+    "stdout_sha256": "6813d1ec49e0b74b17441ece8786b965731983605a5c355898c89eed195fbed4"
+  },
+  {
+    "case": "late5-combined-s1",
+    "command": [
+      "/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py",
+      "--case",
+      "late5-combined-s1",
+      "--max-rank",
+      "96"
+    ],
+    "returncode": 0,
+    "stderr": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: divide by zero encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: overflow encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:79: RuntimeWarning: invalid value encountered in matmul\n  RR = U.T@JU\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul\n  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: divide by zero encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: overflow encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:92: RuntimeWarning: invalid value encountered in matmul\n  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: divide by zero encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: overflow encountered in matmul\n  v = Ur@vectors[:, k]\n/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/reduced_modes.py:110: RuntimeWarning: invalid value encountered in matmul\n  v = Ur@vectors[:, k]\n",
+    "seconds": 1.670168499999999,
+    "stdout_sha256": "162d9b1002e5f45c19c12aa1fdd996a5bcdcc59d9293a843d06e85d228accd71"
+  }
+]

@@ -1,0 +1,1070 @@
+{
+  "scope": "Approximate-mode action of exact cached final-only native RK3 map; not eigenvalue certification or nonlinear/continuum stability.",
+  "map": "P_ref (I + dt J22 + dt^2 J22^2/2 + dt^3 J22^3/6) Lift_ref",
+  "continuous_generator": "J20=P_ref J22 Lift_ref; algebraic projection at every infinitesimal RHS",
+  "modal_scalar": "mu=1+v* (B_dt v-v)/(v*v); phase uses principal log1p(mu-1)",
+  "residual_units": "Euclidean state norm per unit Euclidean input; divided by dt is separately reported; no normalization by ||J||.",
+  "direct_oracle_scope": "Centered finite-amplitude derivative of actual nonlinear final-only SSPRK3, real/imag separately; includes finite-difference and cached-J approximation errors.",
+  "nominal_pole_dt": 8.085937499998367e-05,
+  "omega_min": 0.0026953124999994555,
+  "spacing": 0.1375,
+  "points": 1640,
+  "inputs": {
+    "build-layer-research/continuum/discrete-mode-identification/candidate-vectors.npz": {
+      "sha256": "fc88b20d4953f5088aed97d04dce41ad0af039fc794a401a21cceb53280e1eee",
+      "bytes": 1784037
+    },
+    "build-layer-research/continuum/discrete-mode-identification/candidate-metadata.json": {
+      "sha256": "e411042b90498bb4f08eadcdf9214095028c049df8a0c15b46b5dfd4d3f2d6e1",
+      "bytes": 4066
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-J20.npz": {
+      "sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+      "bytes": 102016263
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-J22.npz": {
+      "sha256": "1f7a5297ea5a6308a707222d558f75316ae9615a6046abd581ebd8e7a90b6e65",
+      "bytes": 89852067
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-metadata.json": {
+      "sha256": "98b7b7f459cce564398769cff48545cb6e89eb3708d01b2018a81b3a393d4e26",
+      "bytes": 483620
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/server-spatialnorm": {
+      "sha256": "bc4f4c62e4fa3e286da4c19f11fa79ba73a8ed3658f4fa42646d7dca7bf5a943",
+      "bytes": 862032
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-lift.bin": {
+      "sha256": "4d30173931ddecdcdba83c0689a316f3a1d3c3f4cd16ace2c964cc883d03b4e9",
+      "bytes": 5772800
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-restrict.bin": {
+      "sha256": "7f8833a0cb6e398f752d03748b94c3de4235b7a537ee8bc1ea25a78c52e62cdb",
+      "bytes": 5772800
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/full22_server.cpp": {
+      "sha256": "e918c0d4c6536fd5182e056d01049427116e8992667ffa4a417d21bf04b60f92",
+      "bytes": 9634
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/projected_base.hpp": {
+      "sha256": "9a9673cab47a75be9b3b6490734bb3bcc58697a22867bb148c9ce069980ed928",
+      "bytes": 11243
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/build-provenance.json": {
+      "sha256": "395ad0a94bacdd4c33663efa5770b2cd3c0b43731b17707aba9092f577bccced",
+      "bytes": 417905
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/validate22.py": {
+      "sha256": "3a76085738f94520da8cb8d178ba248e2c16b37eb7f93dc0495a1f1e47d12a08",
+      "bytes": 5000
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-validation.json": {
+      "sha256": "beefc39c60b30beb46aba3ab14d9481db42dba66fcc39d0fedbbe825d2f86032",
+      "bytes": 548651
+    }
+  },
+  "candidate_metadata_status": "CONVERGED_APPROXIMATE_CACHED_GENERATOR_PAIR_NOT_CERTIFIED_EIGENVALUE",
+  "candidates": [
+    {
+      "key": "candidate0",
+      "lambda": [
+        1.916338996568537,
+        6.790995420746044
+      ],
+      "input_norm": 1.0000000000000002,
+      "recomputed_generator_residual_state_per_time": 5.886773215552094e-07,
+      "reported_generator_residual": 5.886773215552094e-07,
+      "generator_rayleigh_lambda": [
+        1.9163389965684632,
+        6.790995420746035
+      ],
+      "P_J22_L_vs_J20_action_l2": 9.514700077264402e-13,
+      "P_L_identity_action_l2": 3.828864273316061e-17,
+      "normal_J22_L_norm": 0.6466042208085234,
+      "normal_feedback_second_coefficient_l2": 1381.1679269935528,
+      "normal_feedback_third_coefficient_l2": 8587761.97946994,
+      "steps": [
+        {
+          "mu": [
+            1.0001558457204125,
+            0.0005503834235515667
+          ],
+          "abs_mu": 1.0001559971577567,
+          "mu_minus_one": [
+            0.00015584572041245763,
+            0.0005503834235515667
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9290897495236343,
+          "phase_radians": 0.0005502976064675738,
+          "effective_frequency_phase_over_dt": 6.805612910904703,
+          "residual_state_per_unit_input_l2": 3.5735263337279633e-06,
+          "residual_state_per_unit_input_linf": 3.0597241886980073e-07,
+          "residual_state_per_unit_input_per_dt": 0.0441943353350021,
+          "dt": 8.085937499998367e-05,
+          "factor_nominal_dt": 1.0,
+          "increment_l2": 0.0005720337154239076,
+          "polynomial_reassociation_l2": 1.0525527016869846e-16,
+          "state_norm_amplification": 1.00015599716414,
+          "residual_against_exp_dt_lambda_state": 3.902676712382379e-06,
+          "residual_against_R3_dt_lambda_state": 3.902676711718573e-06,
+          "scalar_R3_mu": [
+            1.0001548151921802,
+            0.0005492007119971738
+          ],
+          "scalar_exp_mu": [
+            1.0001548151921822,
+            0.0005492007119932383
+          ],
+          "native22_vs_projected20_state_l2": 3.902675514358074e-06,
+          "native22_vs_projected20_per_dt": 0.04826497254472795,
+          "native22_minus_projected20_scalar_mu": [
+            1.0305282254008612e-06,
+            1.182711557835127e-06
+          ],
+          "projected20": {
+            "mu": [
+              1.000154815192187,
+              0.0005492007119937322
+            ],
+            "abs_mu": 1.0001549659795426,
+            "mu_minus_one": [
+              0.00015481519218705673,
+              0.0005492007119937322
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.91633899662864,
+            "phase_radians": 0.0005491156453497674,
+            "effective_frequency_phase_over_dt": 6.790995420752118,
+            "residual_state_per_unit_input_l2": 4.760258814317791e-11,
+            "residual_state_per_unit_input_linf": 2.2973006762427774e-12,
+            "residual_state_per_unit_input_per_dt": 5.887083364568119e-07
+          }
+        },
+        {
+          "mu": [
+            1.0000777172265114,
+            0.0002748885054901682
+          ],
+          "abs_mu": 1.0000777550054198,
+          "mu_minus_one": [
+            7.771722651136903e-05,
+            0.0002748885054901682
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9231408270497936,
+          "phase_radians": 0.00027486713665586125,
+          "effective_frequency_phase_over_dt": 6.798646085402386,
+          "residual_state_per_unit_input_l2": 9.658107912533251e-07,
+          "residual_state_per_unit_input_linf": 8.149383106482375e-08,
+          "residual_state_per_unit_input_per_dt": 0.023888653387526684,
+          "dt": 4.0429687499991834e-05,
+          "factor_nominal_dt": 0.5,
+          "increment_l2": 0.00028566517207689564,
+          "polynomial_reassociation_l2": 1.0558493386217966e-16,
+          "state_norm_amplification": 1.000077755005886,
+          "residual_against_exp_dt_lambda_state": 1.0507687425725139e-06,
+          "residual_against_R3_dt_lambda_state": 1.0507687425328378e-06,
+          "scalar_R3_mu": [
+            1.0000774422942755,
+            0.00027457909196202356
+          ],
+          "scalar_exp_mu": [
+            1.0000774422942755,
+            0.0002745790919617776
+          ],
+          "native22_vs_projected20_state_l2": 1.0507681564055027e-06,
+          "native22_vs_projected20_per_dt": 0.02599001430336841,
+          "native22_minus_projected20_scalar_mu": [
+            2.74932234277329e-07,
+            3.094135290059442e-07
+          ],
+          "projected20": {
+            "mu": [
+              1.000077442294277,
+              0.0002745790919611621
+            ],
+            "abs_mu": 1.0000774799881962,
+            "mu_minus_one": [
+              7.744229427709185e-05,
+              0.0002745790919611621
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.916338996608506,
+            "phase_radians": 0.0002745578226740223,
+            "effective_frequency_phase_over_dt": 6.7909954207308125,
+            "residual_state_per_unit_input_l2": 2.3800666561484834e-11,
+            "residual_state_per_unit_input_linf": 1.148363370285685e-12,
+            "residual_state_per_unit_input_per_dt": 5.886928154339467e-07
+          }
+        },
+        {
+          "mu": [
+            1.0000388007161993,
+            0.00013736329932432113
+          ],
+          "abs_mu": 1.0000388101501712,
+          "mu_minus_one": [
+            3.8800716199245066e-05,
+            0.00013736329932432113
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9198465027348175,
+          "phase_radians": 0.0001373579688728657,
+          "effective_frequency_phase_over_dt": 6.794906286272603,
+          "residual_state_per_unit_input_l2": 2.508068700269775e-07,
+          "residual_state_per_unit_input_linf": 2.0999236814290406e-08,
+          "residual_state_per_unit_input_per_dt": 0.012407064488293568,
+          "dt": 2.0214843749995917e-05,
+          "factor_nominal_dt": 0.25,
+          "increment_l2": 0.00014273834272165103,
+          "polynomial_reassociation_l2": 1.0268486094618445e-16,
+          "state_norm_amplification": 1.0000388101502018,
+          "residual_against_exp_dt_lambda_state": 2.7236443909393595e-07,
+          "residual_against_R3_dt_lambda_state": 2.723644390915119e-07,
+          "scalar_R3_mu": [
+            1.0000387298206181,
+            0.0001372842289873418
+          ],
+          "scalar_exp_mu": [
+            1.0000387298206181,
+            0.00013728422898732644
+          ],
+          "native22_vs_projected20_state_l2": 2.7236414904999474e-07,
+          "native22_vs_projected20_per_dt": 0.013473472880543524,
+          "native22_minus_projected20_scalar_mu": [
+            7.089558081034403e-08,
+            7.907033719505032e-08
+          ],
+          "projected20": {
+            "mu": [
+              1.0000387298206184,
+              0.00013728422898712619
+            ],
+            "abs_mu": 1.000038739243733,
+            "mu_minus_one": [
+              3.872982061843472e-05,
+              0.00013728422898712619
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163389965842752,
+            "phase_radians": 0.0001372789113371188,
+            "effective_frequency_phase_over_dt": 6.790995420736137,
+            "residual_state_per_unit_input_l2": 1.1900176609208266e-11,
+            "residual_state_per_unit_input_linf": 5.741099468427971e-13,
+            "residual_state_per_unit_input_per_dt": 5.886850651126437e-07
+          }
+        }
+      ]
+    },
+    {
+      "key": "candidate1",
+      "lambda": [
+        1.916339001669619,
+        6.790995381930034
+      ],
+      "input_norm": 1.0000000000000009,
+      "recomputed_generator_residual_state_per_time": 5.867328011416467e-07,
+      "reported_generator_residual": 5.867328011416467e-07,
+      "generator_rayleigh_lambda": [
+        1.9163389773077588,
+        6.7909953944459645
+      ],
+      "P_J22_L_vs_J20_action_l2": 9.780192971662195e-13,
+      "P_L_identity_action_l2": 3.887561050736332e-17,
+      "normal_J22_L_norm": 0.6466042200780385,
+      "normal_feedback_second_coefficient_l2": 1381.1679288429902,
+      "normal_feedback_third_coefficient_l2": 8587762.015362851,
+      "steps": [
+        {
+          "mu": [
+            1.000155845718859,
+            0.0005503834214251657
+          ],
+          "abs_mu": 1.0001559971562022,
+          "mu_minus_one": [
+            0.00015584571885911717,
+            0.0005503834214251657
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.929089730301475,
+          "phase_radians": 0.0005502976043423594,
+          "effective_frequency_phase_over_dt": 6.805612884621858,
+          "residual_state_per_unit_input_l2": 3.573526547360054e-06,
+          "residual_state_per_unit_input_linf": 3.0597252971783665e-07,
+          "residual_state_per_unit_input_per_dt": 0.04419433797702215,
+          "dt": 8.085937499998367e-05,
+          "factor_nominal_dt": 1.0,
+          "increment_l2": 0.0005720337129561261,
+          "polynomial_reassociation_l2": 1.0715680006779933e-16,
+          "state_norm_amplification": 1.0001559971625862,
+          "residual_against_exp_dt_lambda_state": 3.902676695278043e-06,
+          "residual_against_R3_dt_lambda_state": 3.902676694614263e-06,
+          "scalar_R3_mu": [
+            1.0001548151925945,
+            0.0005492007088582761
+          ],
+          "scalar_exp_mu": [
+            1.0001548151925965,
+            0.0005492007088543407
+          ],
+          "native22_vs_projected20_state_l2": 3.902675517813865e-06,
+          "native22_vs_projected20_per_dt": 0.04826497258746624,
+          "native22_minus_projected20_scalar_mu": [
+            1.0305282291854805e-06,
+            1.1827115585678912e-06
+          ],
+          "projected20": {
+            "mu": [
+              1.0001548151906299,
+              0.0005492007098665984
+            ],
+            "abs_mu": 1.0001549659779843,
+            "mu_minus_one": [
+              0.00015481519062993167,
+              0.0005492007098665984
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163389773597848,
+            "phase_radians": 0.0005491156432238184,
+            "effective_frequency_phase_over_dt": 6.790995394460189,
+            "residual_state_per_unit_input_l2": 4.739141600194379e-11,
+            "residual_state_per_unit_input_linf": 1.9858888139714936e-12,
+            "residual_state_per_unit_input_per_dt": 5.860967389613556e-07
+          }
+        },
+        {
+          "mu": [
+            1.0000777172257338,
+            0.00027488850442695993
+          ],
+          "abs_mu": 1.000077755004642,
+          "mu_minus_one": [
+            7.771722573373318e-05,
+            0.00027488850442695993
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9231408078124008,
+          "phase_radians": 0.0002748671355929494,
+          "effective_frequency_phase_over_dt": 6.798646059112006,
+          "residual_state_per_unit_input_l2": 9.658109008633282e-07,
+          "residual_state_per_unit_input_linf": 8.149389754294436e-08,
+          "residual_state_per_unit_input_per_dt": 0.02388865609865333,
+          "dt": 4.0429687499991834e-05,
+          "factor_nominal_dt": 0.5,
+          "increment_l2": 0.00028566517084260617,
+          "polynomial_reassociation_l2": 1.0689614691440893e-16,
+          "state_norm_amplification": 1.000077755005108,
+          "residual_against_exp_dt_lambda_state": 1.0507687348258891e-06,
+          "residual_against_R3_dt_lambda_state": 1.0507687347862135e-06,
+          "scalar_R3_mu": [
+            1.0000774422944823,
+            0.0002745790903926395
+          ],
+          "scalar_exp_mu": [
+            1.0000774422944823,
+            0.00027457909039239355
+          ],
+          "native22_vs_projected20_state_l2": 1.0507681575815868e-06,
+          "native22_vs_projected20_per_dt": 0.025990014332458025,
+          "native22_minus_projected20_scalar_mu": [
+            2.74932235274774e-07,
+            3.09413529232995e-07
+          ],
+          "projected20": {
+            "mu": [
+              1.0000774422934984,
+              0.0002745790908977273
+            ],
+            "abs_mu": 1.000077479987417,
+            "mu_minus_one": [
+              7.744229349845846e-05,
+              0.0002745790908977273
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163389773381578,
+            "phase_radians": 0.0002745578216108837,
+            "effective_frequency_phase_over_dt": 6.790995394434823,
+            "residual_state_per_unit_input_l2": 2.369563578471054e-11,
+            "residual_state_per_unit_input_linf": 9.926678207875831e-13,
+            "residual_state_per_unit_input_per_dt": 5.860949527427172e-07
+          }
+        },
+        {
+          "mu": [
+            1.00003880071581,
+            0.00013736329879269894
+          ],
+          "abs_mu": 1.000038810149782,
+          "mu_minus_one": [
+            3.880071581016607e-05,
+            0.00013736329879269894
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9198464834801998,
+          "phase_radians": 0.0001373579683413176,
+          "effective_frequency_phase_over_dt": 6.794906259977663,
+          "residual_state_per_unit_input_l2": 2.5080692526664684e-07,
+          "residual_state_per_unit_input_linf": 2.0999270721787623e-08,
+          "residual_state_per_unit_input_per_dt": 0.01240706722092262,
+          "dt": 2.0214843749995917e-05,
+          "factor_nominal_dt": 0.25,
+          "increment_l2": 0.00014273834210438117,
+          "polynomial_reassociation_l2": 1.0737794160728312e-16,
+          "state_norm_amplification": 1.0000388101498123,
+          "residual_against_exp_dt_lambda_state": 2.723644352798232e-07,
+          "residual_against_R3_dt_lambda_state": 2.723644352773985e-07,
+          "scalar_R3_mu": [
+            1.0000387298207214,
+            0.000137284228202666
+          ],
+          "scalar_exp_mu": [
+            1.0000387298207214,
+            0.00013728422820265062
+          ],
+          "native22_vs_projected20_state_l2": 2.7236414938475953e-07,
+          "native22_vs_projected20_per_dt": 0.013473472897103869,
+          "native22_minus_projected20_scalar_mu": [
+            7.08955810657146e-08,
+            7.907033725714896e-08
+          ],
+          "projected20": {
+            "mu": [
+              1.0000387298202291,
+              0.00013728422845544163
+            ],
+            "abs_mu": 1.0000387392433439,
+            "mu_minus_one": [
+              3.872982022910023e-05,
+              0.00013728422845544163
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163389773296562,
+            "phase_radians": 0.00013727891080550825,
+            "effective_frequency_phase_over_dt": 6.7909953944381085,
+            "residual_state_per_unit_input_l2": 1.1847800038301328e-11,
+            "residual_state_per_unit_input_linf": 4.962647640212287e-13,
+            "residual_state_per_unit_input_per_dt": 5.860940695276817e-07
+          }
+        }
+      ]
+    },
+    {
+      "key": "candidate2",
+      "lambda": [
+        1.9163387202139734,
+        6.790995032604308
+      ],
+      "input_norm": 1.0000000000000009,
+      "recomputed_generator_residual_state_per_time": 3.769066638712808e-07,
+      "reported_generator_residual": 3.769066638712808e-07,
+      "generator_rayleigh_lambda": [
+        1.9163387085130048,
+        6.790995041481619
+      ],
+      "P_J22_L_vs_J20_action_l2": 9.264614636424781e-13,
+      "P_L_identity_action_l2": 3.814577008534897e-17,
+      "normal_J22_L_norm": 0.6466042083182577,
+      "normal_feedback_second_coefficient_l2": 1381.1679253331283,
+      "normal_feedback_third_coefficient_l2": 8587762.200336188,
+      "steps": [
+        {
+          "mu": [
+            1.0001558456970345,
+            0.0005503833929728482
+          ],
+          "abs_mu": 1.0001559971343619,
+          "mu_minus_one": [
+            0.00015584569703460126,
+            0.0005503833929728482
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9290894602412518,
+          "phase_radians": 0.0005502975759064921,
+          "effective_frequency_phase_over_dt": 6.805612532951229,
+          "residual_state_per_unit_input_l2": 3.5735232239495784e-06,
+          "residual_state_per_unit_input_linf": 3.0597134713256346e-07,
+          "residual_state_per_unit_input_per_dt": 0.04419429687590709,
+          "dt": 8.085937499998367e-05,
+          "factor_nominal_dt": 1.0,
+          "increment_l2": 0.0005720336796140053,
+          "polynomial_reassociation_l2": 1.0364523451078256e-16,
+          "state_norm_amplification": 1.0001559971407443,
+          "residual_against_exp_dt_lambda_state": 3.902673838242964e-06,
+          "residual_against_R3_dt_lambda_state": 3.902673837579212e-06,
+          "scalar_R3_mu": [
+            1.000154815169848,
+            0.0005492006805951444
+          ],
+          "scalar_exp_mu": [
+            1.0001548151698503,
+            0.0005492006805912091
+          ],
+          "native22_vs_projected20_state_l2": 3.902675491381765e-06,
+          "native22_vs_projected20_per_dt": 0.0482649722605765,
+          "native22_minus_projected20_scalar_mu": [
+            1.0305281303042933e-06,
+            1.1827116608564772e-06
+          ],
+          "projected20": {
+            "mu": [
+              1.0001548151689044,
+              0.000549200681311992
+            ],
+            "abs_mu": 1.000154965956243,
+            "mu_minus_one": [
+              0.00015481516890429695,
+              0.000549200681311992
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.916338708523836,
+            "phase_radians": 0.0005491156146855686,
+            "effective_frequency_phase_over_dt": 6.790995041523379,
+            "residual_state_per_unit_input_l2": 3.0446406606051985e-11,
+            "residual_state_per_unit_input_linf": 3.1033633709340048e-12,
+            "residual_state_per_unit_input_per_dt": 3.765352701039074e-07
+          }
+        },
+        {
+          "mu": [
+            1.0000777172148423,
+            0.00027488849018106256
+          ],
+          "abs_mu": 1.0000777549937465,
+          "mu_minus_one": [
+            7.771721484218978e-05,
+            0.00027488849018106256
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.923140538340627,
+          "phase_radians": 0.00027486712135115366,
+          "effective_frequency_phase_over_dt": 6.798645706851164,
+          "residual_state_per_unit_input_l2": 9.658092650519735e-07,
+          "residual_state_per_unit_input_linf": 8.14933080414457e-08,
+          "residual_state_per_unit_input_per_dt": 0.023888615638005328,
+          "dt": 4.0429687499991834e-05,
+          "factor_nominal_dt": 0.5,
+          "increment_l2": 0.0002856651541654808,
+          "polynomial_reassociation_l2": 1.0377905637680197e-16,
+          "state_norm_amplification": 1.000077754994212,
+          "residual_against_exp_dt_lambda_state": 1.0507673231675155e-06,
+          "residual_against_R3_dt_lambda_state": 1.0507673231278394e-06,
+          "scalar_R3_mu": [
+            1.000077442283106,
+            0.00027457907626529134
+          ],
+          "scalar_exp_mu": [
+            1.000077442283106,
+            0.0002745790762650454
+          ],
+          "native22_vs_projected20_state_l2": 1.0507681527908817e-06,
+          "native22_vs_projected20_per_dt": 0.02599001421396329,
+          "native22_minus_projected20_scalar_mu": [
+            2.74932208784901e-07,
+            3.0941355710615943e-07
+          ],
+          "projected20": {
+            "mu": [
+              1.0000774422826335,
+              0.0002745790766239563
+            ],
+            "abs_mu": 1.0000774799765484,
+            "mu_minus_one": [
+              7.744228263340512e-05,
+              0.0002745790766239563
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163387085308046,
+            "phase_radians": 0.0002745578073412019,
+            "effective_frequency_phase_over_dt": 6.79099504148424,
+            "residual_state_per_unit_input_l2": 1.522492474252352e-11,
+            "residual_state_per_unit_input_linf": 1.5516560357395278e-12,
+            "residual_state_per_unit_input_per_dt": 3.7657784870403947e-07
+          }
+        },
+        {
+          "mu": [
+            1.0000388007103702,
+            0.00013736329166395283
+          ],
+          "abs_mu": 1.0000388101443412,
+          "mu_minus_one": [
+            3.880071037023737e-05,
+            0.00013736329166395283
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9198462143439219,
+          "phase_radians": 0.0001373579612135954,
+          "effective_frequency_phase_over_dt": 6.794905907379232,
+          "residual_state_per_unit_input_l2": 2.5080611360314113e-07,
+          "residual_state_per_unit_input_linf": 2.09989763576224e-08,
+          "residual_state_per_unit_input_per_dt": 0.012407027069066106,
+          "dt": 2.0214843749995917e-05,
+          "factor_nominal_dt": 0.25,
+          "increment_l2": 0.00014273833376391172,
+          "polynomial_reassociation_l2": 1.0459615143494903e-16,
+          "state_norm_amplification": 1.0000388101443707,
+          "residual_against_exp_dt_lambda_state": 2.7236373345077344e-07,
+          "residual_against_R3_dt_lambda_state": 2.723637334483476e-07,
+          "scalar_R3_mu": [
+            1.0000387298150324,
+            0.00013728422114004643
+          ],
+          "scalar_exp_mu": [
+            1.0000387298150324,
+            0.00013728422114003106
+          ],
+          "native22_vs_projected20_state_l2": 2.7236414842530636e-07,
+          "native22_vs_projected20_per_dt": 0.013473472849641064,
+          "native22_minus_projected20_scalar_mu": [
+            7.089557422260167e-08,
+            7.907034451332377e-08
+          ],
+          "projected20": {
+            "mu": [
+              1.000038729814796,
+              0.00013728422131943947
+            ],
+            "abs_mu": 1.0000387392379095,
+            "mu_minus_one": [
+              3.872981479601483e-05,
+              0.00013728422131943947
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163387085118895,
+            "phase_radians": 0.00013727890367052844,
+            "effective_frequency_phase_over_dt": 6.790995041480653,
+            "residual_state_per_unit_input_l2": 7.612892403814932e-12,
+            "residual_state_per_unit_input_linf": 7.758214126977527e-13,
+            "residual_state_per_unit_input_per_dt": 3.765991218119838e-07
+          }
+        }
+      ]
+    },
+    {
+      "key": "candidate3",
+      "lambda": [
+        1.9163390108790987,
+        6.790995228382365
+      ],
+      "input_norm": 0.9999999999999993,
+      "recomputed_generator_residual_state_per_time": 5.043701024831267e-07,
+      "reported_generator_residual": 5.043701024831267e-07,
+      "generator_rayleigh_lambda": [
+        1.9163390108790848,
+        6.790995228382322
+      ],
+      "P_J22_L_vs_J20_action_l2": 9.196555791220181e-13,
+      "P_L_identity_action_l2": 3.745429798976853e-17,
+      "normal_J22_L_norm": 0.6466042134126494,
+      "normal_feedback_second_coefficient_l2": 1381.167922884564,
+      "normal_feedback_third_coefficient_l2": 8587762.09275404,
+      "steps": [
+        {
+          "mu": [
+            1.000155845721571,
+            0.0005503834079874324
+          ],
+          "abs_mu": 1.0001559971589065,
+          "mu_minus_one": [
+            0.00015584572157082853,
+            0.0005503834079874324
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9290897637405096,
+          "phase_radians": 0.000550297590905232,
+          "effective_frequency_phase_over_dt": 6.805612718442891,
+          "residual_state_per_unit_input_l2": 3.5735264402925956e-06,
+          "residual_state_per_unit_input_linf": 3.059725093869938e-07,
+          "residual_state_per_unit_input_per_dt": 0.044194336652902864,
+          "dt": 8.085937499998367e-05,
+          "factor_nominal_dt": 1.0,
+          "increment_l2": 0.0005720337007650948,
+          "polynomial_reassociation_l2": 1.0003497221707489e-16,
+          "state_norm_amplification": 1.0001559971652911,
+          "residual_against_exp_dt_lambda_state": 3.902676805569009e-06,
+          "residual_against_R3_dt_lambda_state": 3.902676804905231e-06,
+          "scalar_R3_mu": [
+            1.000154815193346,
+            0.0005492006964409944
+          ],
+          "scalar_exp_mu": [
+            1.0001548151933481,
+            0.000549200696437059
+          ],
+          "native22_vs_projected20_state_l2": 3.902675493130882e-06,
+          "native22_vs_projected20_per_dt": 0.04826497228220809,
+          "native22_minus_projected20_scalar_mu": [
+            1.0305282209561808e-06,
+            1.1827115505728563e-06
+          ],
+          "projected20": {
+            "mu": [
+              1.00015481519335,
+              0.0005492006964368605
+            ],
+            "abs_mu": 1.0001549659806968,
+            "mu_minus_one": [
+              0.00015481519334987196,
+              0.0005492006964368605
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163390109004421,
+            "phase_radians": 0.00054911562979467,
+            "effective_frequency_phase_over_dt": 6.790995228379899,
+            "residual_state_per_unit_input_l2": 4.078727461944292e-11,
+            "residual_state_per_unit_input_linf": 2.0884537539812677e-12,
+            "residual_state_per_unit_input_per_dt": 5.044223334579467e-07
+          }
+        },
+        {
+          "mu": [
+            1.00007771722709,
+            0.00027488849771052274
+          ],
+          "abs_mu": 1.0000777550059963,
+          "mu_minus_one": [
+            7.771722709005275e-05,
+            0.00027488849771052274
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9231408413062228,
+          "phase_radians": 0.00027486712887666193,
+          "effective_frequency_phase_over_dt": 6.79864589298934,
+          "residual_state_per_unit_input_l2": 9.658108571233003e-07,
+          "residual_state_per_unit_input_linf": 8.149388255823444e-08,
+          "residual_state_per_unit_input_per_dt": 0.02388865501677438,
+          "dt": 4.0429687499991834e-05,
+          "factor_nominal_dt": 0.5,
+          "increment_l2": 0.0002856651647483929,
+          "polynomial_reassociation_l2": 1.0296474462583857e-16,
+          "state_norm_amplification": 1.0000777550064632,
+          "residual_against_exp_dt_lambda_state": 1.0507688019868114e-06,
+          "residual_against_R3_dt_lambda_state": 1.0507688019471353e-06,
+          "scalar_R3_mu": [
+            1.0000774422948562,
+            0.0002745790841843767
+          ],
+          "scalar_exp_mu": [
+            1.0000774422948564,
+            0.00027457908418413075
+          ],
+          "native22_vs_projected20_state_l2": 1.050768152025486e-06,
+          "native22_vs_projected20_per_dt": 0.025990014195031764,
+          "native22_minus_projected20_scalar_mu": [
+            2.7493223297096947e-07,
+            3.094135271810654e-07
+          ],
+          "projected20": {
+            "mu": [
+              1.000077442294857,
+              0.00027457908418334123
+            ],
+            "abs_mu": 1.000077479988774,
+            "mu_minus_one": [
+              7.744229485708194e-05,
+              0.00027457908418334123
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163390108978893,
+            "phase_radians": 0.00027455781489664504,
+            "effective_frequency_phase_over_dt": 6.790995228362833,
+            "residual_state_per_unit_input_l2": 2.0392580938240612e-11,
+            "residual_state_per_unit_input_linf": 1.0439916350721714e-12,
+            "residual_state_per_unit_input_per_dt": 5.043962048493382e-07
+          }
+        },
+        {
+          "mu": [
+            1.0000388007164884,
+            0.0001373632954351071
+          ],
+          "abs_mu": 1.0000388101504598,
+          "mu_minus_one": [
+            3.88007164885349e-05,
+            0.0001373632954351071
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9198465170137695,
+          "phase_radians": 0.0001373579649837629,
+          "effective_frequency_phase_over_dt": 6.794906093884136,
+          "residual_state_per_unit_input_l2": 2.5080690545700175e-07,
+          "residual_state_per_unit_input_linf": 2.0999261737767234e-08,
+          "residual_state_per_unit_input_per_dt": 0.01240706624096723,
+          "dt": 2.0214843749995917e-05,
+          "factor_nominal_dt": 0.25,
+          "increment_l2": 0.0001427383390575918,
+          "polynomial_reassociation_l2": 1.0272415340322863e-16,
+          "state_norm_amplification": 1.0000388101504922,
+          "residual_against_exp_dt_lambda_state": 2.7236447143323856e-07,
+          "residual_against_R3_dt_lambda_state": 2.723644714308129e-07,
+          "scalar_R3_mu": [
+            1.000038729820908,
+            0.00013728422509862918
+          ],
+          "scalar_exp_mu": [
+            1.0000387298209077,
+            0.00013728422509861382
+          ],
+          "native22_vs_projected20_state_l2": 2.7236414808021047e-07,
+          "native22_vs_projected20_per_dt": 0.013473472832569654,
+          "native22_minus_projected20_scalar_mu": [
+            7.089558045923927e-08,
+            7.907033673740757e-08
+          ],
+          "projected20": {
+            "mu": [
+              1.0000387298209081,
+              0.00013728422509836965
+            ],
+            "abs_mu": 1.0000387392440224,
+            "mu_minus_one": [
+              3.872982090807566e-05,
+              0.00013728422509836965
+            ],
+            "effective_growth_log_abs_mu_over_dt": 1.9163390108961798,
+            "phase_radians": 0.00013727890744847317,
+            "effective_frequency_phase_over_dt": 6.790995228370286,
+            "residual_state_per_unit_input_l2": 1.0196026575034298e-11,
+            "residual_state_per_unit_input_linf": 5.219370129076145e-13,
+            "residual_state_per_unit_input_per_dt": 5.043831503786101e-07
+          }
+        }
+      ]
+    }
+  ],
+  "actual_native_one_step_candidate0": [
+    {
+      "dt": 8.085937499998367e-05,
+      "factor_nominal_dt": 1.0,
+      "eps_sweep": [
+        {
+          "mu": [
+            1.0001558457485025,
+            0.0005503833760670724
+          ],
+          "abs_mu": 1.0001559971858205,
+          "mu_minus_one": [
+            0.00015584574850244028,
+            0.0005503833760670724
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.929090096538391,
+          "phase_radians": 0.0005502975589750375,
+          "effective_frequency_phase_over_dt": 6.805612323557394,
+          "residual_state_per_unit_input_l2": 3.573447184228752e-06,
+          "residual_state_per_unit_input_linf": 3.0596645011294085e-07,
+          "residual_state_per_unit_input_per_dt": 0.044193356481292044,
+          "eps_maxfree_component": 0.001,
+          "state_l2_vs_cached_exact_map": 4.07944942453288e-10,
+          "state_linf_vs_cached_exact_map": 3.384578451004207e-11,
+          "state_error_vs_cache_per_dt": 5.045116196524774e-06
+        },
+        {
+          "mu": [
+            1.0001558457200326,
+            0.0005503834233323867
+          ],
+          "abs_mu": 1.0001559971573766,
+          "mu_minus_one": [
+            0.00015584572003262925,
+            0.0005503834233323867
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.929089744823115,
+          "phase_radians": 0.0005502976062486371,
+          "effective_frequency_phase_over_dt": 6.805612908197079,
+          "residual_state_per_unit_input_l2": 3.5735258832345995e-06,
+          "residual_state_per_unit_input_linf": 3.059729948332559e-07,
+          "residual_state_per_unit_input_per_dt": 0.0441943297636832,
+          "eps_maxfree_component": 0.0001,
+          "state_l2_vs_cached_exact_map": 1.798139450575741e-11,
+          "state_linf_vs_cached_exact_map": 1.2663136250554711e-12,
+          "state_error_vs_cache_per_dt": 2.2237859871859065e-07
+        },
+        {
+          "mu": [
+            1.0001558457002688,
+            0.0005503834206040862
+          ],
+          "abs_mu": 1.0001559971376115,
+          "mu_minus_one": [
+            0.00015584570026879014,
+            0.0005503834206040862
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.929089500423555,
+          "phase_radians": 0.0005502976035316367,
+          "effective_frequency_phase_over_dt": 6.805612874595529,
+          "residual_state_per_unit_input_l2": 3.573526402597161e-06,
+          "residual_state_per_unit_input_linf": 3.05976552709195e-07,
+          "residual_state_per_unit_input_per_dt": 0.044194336186717774,
+          "eps_maxfree_component": 1e-05,
+          "state_l2_vs_cached_exact_map": 1.9289483583993724e-10,
+          "state_linf_vs_cached_exact_map": 1.6165037760831087e-11,
+          "state_error_vs_cache_per_dt": 2.385559322465406e-06
+        }
+      ]
+    },
+    {
+      "dt": 4.0429687499991834e-05,
+      "factor_nominal_dt": 0.5,
+      "eps_sweep": [
+        {
+          "mu": [
+            1.0000777172488544,
+            0.0002748884797090625
+          ],
+          "abs_mu": 1.0000777550277558,
+          "mu_minus_one": [
+            7.77172488543349e-05,
+            0.0002748884797090625
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9231413794699503,
+          "phase_radians": 0.0002748671108706201,
+          "effective_frequency_phase_over_dt": 6.798645447622508,
+          "residual_state_per_unit_input_l2": 9.657697366152613e-07,
+          "residual_state_per_unit_input_linf": 8.149034851312282e-08,
+          "residual_state_per_unit_input_per_dt": 0.023887637929812255,
+          "eps_maxfree_component": 0.001,
+          "state_l2_vs_cached_exact_map": 3.1199125769313234e-10,
+          "state_linf_vs_cached_exact_map": 2.703717204944598e-11,
+          "state_error_vs_cache_per_dt": 7.716885214440388e-06
+        },
+        {
+          "mu": [
+            1.0000777172266557,
+            0.0002748885052173577
+          ],
+          "abs_mu": 1.0000777550055642,
+          "mu_minus_one": [
+            7.77172266557324e-05,
+            0.0002748885052173577
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9231408306193924,
+          "phase_radians": 0.0002748671363830323,
+          "effective_frequency_phase_over_dt": 6.798646078654152,
+          "residual_state_per_unit_input_l2": 9.658094398380874e-07,
+          "residual_state_per_unit_input_linf": 8.149405381436528e-08,
+          "residual_state_per_unit_input_per_dt": 0.02388861996121742,
+          "eps_maxfree_component": 0.0001,
+          "state_l2_vs_cached_exact_map": 1.6630170549539763e-11,
+          "state_linf_vs_cached_exact_map": 9.60028038217474e-13,
+          "state_error_vs_cache_per_dt": 4.113356193896656e-07
+        },
+        {
+          "mu": [
+            1.0000777172385524,
+            0.00027488850778444756
+          ],
+          "abs_mu": 1.0000777550174615,
+          "mu_minus_one": [
+            7.771723855243905e-05,
+            0.00027488850778444756
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9231411248696753,
+          "phase_radians": 0.0002748671389466527,
+          "effective_frequency_phase_over_dt": 6.798646142063508,
+          "residual_state_per_unit_input_l2": 9.658099722385402e-07,
+          "residual_state_per_unit_input_linf": 8.149723728617202e-08,
+          "residual_state_per_unit_input_per_dt": 0.023888633129769684,
+          "eps_maxfree_component": 1e-05,
+          "state_l2_vs_cached_exact_map": 1.789048340388526e-10,
+          "state_linf_vs_cached_exact_map": 1.1635855155778472e-11,
+          "state_error_vs_cache_per_dt": 4.42508575014063e-06
+        }
+      ]
+    },
+    {
+      "dt": 2.0214843749995917e-05,
+      "factor_nominal_dt": 0.25,
+      "eps_sweep": [
+        {
+          "mu": [
+            1.00003880073644,
+            0.00013736328383596276
+          ],
+          "abs_mu": 1.0000388101704099,
+          "mu_minus_one": [
+            3.880073643998559e-05,
+            0.00013736328383596276
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9198475038760787,
+          "phase_radians": 0.00013735795338232844,
+          "effective_frequency_phase_over_dt": 6.794905519977426,
+          "residual_state_per_unit_input_l2": 2.507828371485947e-07,
+          "residual_state_per_unit_input_linf": 2.099716814814281e-08,
+          "residual_state_per_unit_input_per_dt": 0.012405875615469221,
+          "eps_maxfree_component": 0.001,
+          "state_l2_vs_cached_exact_map": 2.7878755461374397e-10,
+          "state_linf_vs_cached_exact_map": 2.6141948708573737e-11,
+          "state_error_vs_cache_per_dt": 1.3791229754808285e-05
+        },
+        {
+          "mu": [
+            1.0000388007161778,
+            0.00013736329942913269
+          ],
+          "abs_mu": 1.0000388101501496,
+          "mu_minus_one": [
+            3.880071617769675e-05,
+            0.00013736329942913269
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9198465016693882,
+          "phase_radians": 0.00013735796897767615,
+          "effective_frequency_phase_over_dt": 6.79490629145743,
+          "residual_state_per_unit_input_l2": 2.5080684610948875e-07,
+          "residual_state_per_unit_input_linf": 2.099933696328094e-08,
+          "residual_state_per_unit_input_per_dt": 0.012407063305128906,
+          "eps_maxfree_component": 0.0001,
+          "state_l2_vs_cached_exact_map": 1.6619424921176267e-11,
+          "state_linf_vs_cached_exact_map": 1.0367388934551495e-12,
+          "state_error_vs_cache_per_dt": 8.221396675984509e-07
+        },
+        {
+          "mu": [
+            1.0000388007168324,
+            0.0001373632994085883
+          ],
+          "abs_mu": 1.0000388101508044,
+          "mu_minus_one": [
+            3.880071683227192e-05,
+            0.0001373632994085883
+          ],
+          "effective_growth_log_abs_mu_over_dt": 1.9198465340606414,
+          "phase_radians": 0.00013735796895704265,
+          "effective_frequency_phase_over_dt": 6.794906290436719,
+          "residual_state_per_unit_input_l2": 2.508081044949908e-07,
+          "residual_state_per_unit_input_linf": 2.1000709092642224e-08,
+          "residual_state_per_unit_input_per_dt": 0.012407125555696738,
+          "eps_maxfree_component": 1e-05,
+          "state_l2_vs_cached_exact_map": 1.838055013724544e-10,
+          "state_linf_vs_cached_exact_map": 1.5035874541610326e-11,
+          "state_error_vs_cache_per_dt": 9.092600647605377e-06
+        }
+      ]
+    }
+  ],
+  "fresh_cache_byte_identity": {
+    "data": {
+      "old_sha256": "079e4c2f3e64421f7c1d58ac5e6361d345a63af9924ba1f194b92f7e1723d5b5",
+      "fresh_sha256": "079e4c2f3e64421f7c1d58ac5e6361d345a63af9924ba1f194b92f7e1723d5b5",
+      "byte_identical": true
+    },
+    "indices": {
+      "old_sha256": "e9daf83001ad46775dd9fc4ec09436eecd4788021e039db4c0ca8dca01a7310b",
+      "fresh_sha256": "e9daf83001ad46775dd9fc4ec09436eecd4788021e039db4c0ca8dca01a7310b",
+      "byte_identical": true
+    },
+    "indptr": {
+      "old_sha256": "319ea39521e1356cbd4ad45813bec9753b2d723453bcae74766bc7405194cb57",
+      "fresh_sha256": "319ea39521e1356cbd4ad45813bec9753b2d723453bcae74766bc7405194cb57",
+      "byte_identical": true
+    },
+    "lift": {
+      "old_sha256": "4d30173931ddecdcdba83c0689a316f3a1d3c3f4cd16ace2c964cc883d03b4e9",
+      "fresh_sha256": "4d30173931ddecdcdba83c0689a316f3a1d3c3f4cd16ace2c964cc883d03b4e9",
+      "byte_identical": true
+    },
+    "restrict": {
+      "old_sha256": "7f8833a0cb6e398f752d03748b94c3de4235b7a537ee8bc1ea25a78c52e62cdb",
+      "fresh_sha256": "7f8833a0cb6e398f752d03748b94c3de4235b7a537ee8bc1ea25a78c52e62cdb",
+      "byte_identical": true
+    }
+  },
+  "native_command": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/full22-v2/server-spatialnorm",
+    "16",
+    "2.2",
+    "0.0001",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-mode-finite-step-20261009/native-step-cache"
+  ],
+  "native_server_exit": 0,
+  "native_stderr_sha256": "558ef1edbc7c0f7ce13e6fc74a27b6d77be4841402e2da50896b697bd5bb23f2",
+  "source_sha256": "571d835d996623b9a59992d58741db6fae6c90c14e915f11f117160964c36b0c",
+  "seconds": 4.45729725,
+  "head_at_launch": "269f1dbcfed80aa8959b3980ef146abaf1de6e28",
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "2.0.2",
+    "scipy": "1.13.1"
+  },
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONPATH": "build-layer-research/boundary/python-deps"
+  }
+}

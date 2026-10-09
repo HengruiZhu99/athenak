@@ -48,3 +48,10 @@ Thus d_t R0=B(F0,F1,tangential F0)=0 adds second-jet conditions. No finite close
 The actual value-only matrix also explains the limit of this counterexample. Its five-dimensional semisimple kernel projector Π and group inverse D satisfy exact reconstructed identities; Θ and δ(P−3w) rows annihilate Π. For constant frozen finite forcing and zero initial perturbation, u_t=P u/Ω+f has u=tΠf+ΩD(exp(tP/Ω)−I)(I−Π)f. Those two amplitudes can remain O(Ω) despite O(1) initial derivatives through a time layer t~Ω. This is a finite matrix statement; the full spatial pole operator, variable coefficients and forcing are not controlled by it.
 
 See the byte-preserved [complete derivation](validation/hyperboloidal-live-damping-and-scri-hierarchy-experiments-20261009/scri-linear-hierarchy/DERIVATION.md), compiled maps, exact projector check and all failed/successful receipts in the [archive](validation/hyperboloidal-live-damping-and-scri-hierarchy-experiments-20261009/README.md). Original index SHA256 is `bdaaa422b7906a7237130f146a687c1be4ed55ced61605c48f57eaa7efe4cae9`. These results reject a value-only ghost projection as a justified closure; they do not impose new production falloffs.
+
+The [Einstein Taylor and gauge-corner follow-up](hyperboloidal-mode-and-gauge-corner-audit.md)
+derives Θ1=0 from M0=Z0=0 on compatible pole jets and relates Θ_t0 to H1.
+It also identifies the nonzero higher Einstein coefficients of the Ω²P witness.
+A distinct initially constraint-free lapse/shift witness still violates null
+time compatibility, so those constraint conditions alone do not close the gauge
+hierarchy.

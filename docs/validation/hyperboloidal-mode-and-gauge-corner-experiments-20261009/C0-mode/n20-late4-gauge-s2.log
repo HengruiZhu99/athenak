@@ -1,0 +1,37 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:73: RuntimeWarning: divide by zero encountered in matmul
+  RR = U.T@JU
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:73: RuntimeWarning: overflow encountered in matmul
+  RR = U.T@JU
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:73: RuntimeWarning: invalid value encountered in matmul
+  RR = U.T@JU
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:80: RuntimeWarning: divide by zero encountered in matmul
+  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:80: RuntimeWarning: overflow encountered in matmul
+  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:80: RuntimeWarning: invalid value encountered in matmul
+  dmd_matrix = Ur.T@Y@vh[:rank, :].T/singular[:rank][None, :]
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:86: RuntimeWarning: divide by zero encountered in matmul
+  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:86: RuntimeWarning: overflow encountered in matmul
+  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:86: RuntimeWarning: invalid value encountered in matmul
+  residual_vectors = JUr@vectors-(Ur@vectors)*eig[None, :]
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:104: RuntimeWarning: divide by zero encountered in matmul
+  v = Ur@vectors[:, k]
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:104: RuntimeWarning: overflow encountered in matmul
+  v = Ur@vectors[:, k]
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py:104: RuntimeWarning: invalid value encountered in matmul
+  v = Ur@vectors[:, k]
+n20-late4-gauge-s2 rayleigh-ritz 4 sigma 8.545765822821625e-05 rightmost (1.9183226803069102+6.805503214022891j) 0.00013890511274139626 best-positive (1.9183226803069102+6.805503214022891j) 0.00013890511274139626 1.9645163953927938e-05
+n20-late4-gauge-s2 projected-DMD 4 sigma 8.545765822821625e-05 rightmost (1.9183184206402633+6.805497118722461j) 0.00013284218241900662 best-positive (1.9183184206402633+6.805497118722461j) 0.00013284218241900662 1.8787710502369028e-05
+n20-late4-gauge-s2 rayleigh-ritz 8 sigma 6.309671839005414e-06 rightmost (1.9182778093106547+6.805505908352041j) 1.0083963119625509e-05 best-positive (1.9182778093106547+6.805505908352041j) 1.0083963119625509e-05 1.426163323260611e-06
+n20-late4-gauge-s2 projected-DMD 8 sigma 6.309671839005414e-06 rightmost (1.9182778879322078+6.805506895480519j) 1.0110791778716059e-05 best-positive (1.9182778879322078+6.805506895480519j) 1.0110791778716059e-05 1.4299574732443267e-06
+n20-late4-gauge-s2 rayleigh-ritz 12 sigma 1.6312338242102258e-07 rightmost (1.9182806150931717+6.805508319193895j) 1.5649969878905436e-06 best-positive (1.9182806150931717+6.805508319193895j) 1.5649969878905436e-06 2.2133563023934957e-07
+n20-late4-gauge-s2 projected-DMD 12 sigma 1.6312338242102258e-07 rightmost (1.9182805110485244+6.805508342331629j) 1.5744641888256706e-06 best-positive (1.9182805110485244+6.805508342331629j) 1.5744641888256706e-06 2.2267456519922915e-07
+n20-late4-gauge-s2 rayleigh-ritz 16 sigma 1.2383463181769638e-10 rightmost (1.9182801754537029+6.805508807387614j) 4.1404806614375357e-07 best-positive (1.9182801754537029+6.805508807387614j) 4.1404806614375357e-07 5.855831406332027e-08
+n20-late4-gauge-s2 projected-DMD 16 sigma 1.2383463181769638e-10 rightmost (1.9182801983528295+6.805508813342162j) 4.240635866674116e-07 best-positive (1.9182801983528295+6.805508813342162j) 4.240635866674116e-07 5.99747968399398e-08
+n20-late4-gauge-s2 rayleigh-ritz 24 sigma 1.9226755725130796e-13 rightmost (1.9182802945062782+6.805508826998773j) 6.041615405351405e-07 best-positive (1.9182802945062782+6.805508826998773j) 6.041615405351405e-07 8.544583074395425e-08
+n20-late4-gauge-s2 projected-DMD 24 sigma 1.9226755725130796e-13 rightmost (1.9182802567944948+6.805508801253969j) 1.9907025296668089e-07 best-positive (1.9182802567944948+6.805508801253969j) 1.9907025296668089e-07 2.8154263527440157e-08
+n20-late4-gauge-s2 rayleigh-ritz 29 sigma 1.3580320090447992e-14 rightmost (1.9182802508341017-6.805508796916212j) 1.9776581229149094e-07 best-positive (1.9182802508341017+6.805508796916212j) 1.9776581229149094e-07 2.7969778093696115e-08
+n20-late4-gauge-s2 projected-DMD 29 sigma 1.3580320090447992e-14 rightmost (1.9182802553957503+6.805508805163597j) 2.0451694414565135e-07 best-positive (1.9182802553957503+6.805508805163597j) 2.0451694414565135e-07 2.8924582416197568e-08
+DONE n20-late4-gauge-s2 1.7495684169999999

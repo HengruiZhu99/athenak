@@ -1,0 +1,102 @@
+{
+  "status": "CONVERGED_APPROXIMATE_CACHED_GENERATOR_PAIR_NOT_CERTIFIED_EIGENVALUE",
+  "scope": "Finite-grid N16 span2.2 C0norm projected-continuous generator pseudomodes from saved histories, no globally-rightmost or continuum claim",
+  "coordinates": "Complex free20 point-major in original active-cell k/j/i order; Euclidean unit norm; largest-magnitude component phased real positive; conjugates implicit",
+  "native_field_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
+  "generator_action": "dq/dt=J@q; no ||J|| residual normalization",
+  "no_eigenvalue_perturbation_bound": true,
+  "conditioning_caveat": "Non-normality means small eigenvector residual is pseudospectral evidence, not a certified eigenvalue error bound.",
+  "candidate_vectors_sha256": "fc88b20d4953f5088aed97d04dce41ad0af039fc794a401a21cceb53280e1eee",
+  "matrix": "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-J20.npz",
+  "matrix_sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+  "states": "build-layer-research/boundary/full-tensor-C0-long-window-20261009/spatialnorm-projected-krylov-m50-80-h0.1-t6.0.npz",
+  "states_sha256": "b02bf12087248a96d1b217d164e6d960cfc506791892b1058d7c2df018ed82cf",
+  "original_metadata": "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-metadata.json",
+  "original_metadata_sha256": "98b7b7f459cce564398769cff48545cb6e89eb3708d01b2018a81b3a393d4e26",
+  "source_sha256": "8ce910b2feb7d755099c3df52bdf4cd67f8731cad897cc60285bcd21c30189cb",
+  "seconds": 1.3808425000000002,
+  "head": "38d9db1185550c3ec3659ef2392e14c46d96fb09",
+  "candidates": [
+    {
+      "key": "candidate0",
+      "case": "late4-combined-s1",
+      "rank": 32,
+      "method": "rayleigh-ritz",
+      "lambda": [
+        1.916338996568537,
+        6.790995420746044
+      ],
+      "actual_J_residual_generator_units": 5.886773215552094e-07,
+      "actual_J_residual_relative_to_max1_lambda": 8.342694790969864e-08,
+      "singular_value_fraction_at_rank": 3.2185344620726533e-09,
+      "case_report_sha256": "ad324ac1fd61230551e0081184fd92a27938a95fab335b720b741d8dc11b510b",
+      "phase_aligned_distance_to_candidate0": 0.0
+    },
+    {
+      "key": "candidate1",
+      "case": "late4-combined-s1",
+      "rank": 32,
+      "method": "projected-DMD",
+      "lambda": [
+        1.916339001669619,
+        6.790995381930034
+      ],
+      "actual_J_residual_generator_units": 5.867328011416467e-07,
+      "actual_J_residual_relative_to_max1_lambda": 8.31513722288067e-08,
+      "singular_value_fraction_at_rank": 3.2185344620726533e-09,
+      "case_report_sha256": "ad324ac1fd61230551e0081184fd92a27938a95fab335b720b741d8dc11b510b",
+      "phase_aligned_distance_to_candidate0": 9.190794646396471e-09
+    },
+    {
+      "key": "candidate2",
+      "case": "late2-combined-s2",
+      "rank": 80,
+      "method": "projected-DMD",
+      "lambda": [
+        1.9163387202139734,
+        6.790995032604308
+      ],
+      "actual_J_residual_generator_units": 3.769066638712808e-07,
+      "actual_J_residual_relative_to_max1_lambda": 5.341495835042124e-08,
+      "singular_value_fraction_at_rank": 5.914522264211057e-10,
+      "case_report_sha256": "56d6c39e21d07d4cea3eb337acc84fbbc975fe1913681a4ff634351687ee892d",
+      "phase_aligned_distance_to_candidate0": 1.6669921875464227e-07
+    },
+    {
+      "key": "candidate3",
+      "case": "late4-combined-raw-s2",
+      "rank": 24,
+      "method": "rayleigh-ritz",
+      "lambda": [
+        1.9163390108790987,
+        6.790995228382365
+      ],
+      "actual_J_residual_generator_units": 5.043701024831267e-07,
+      "actual_J_residual_relative_to_max1_lambda": 7.147898824559999e-08,
+      "singular_value_fraction_at_rank": 2.2329633568594944e-09,
+      "case_report_sha256": "ff953439e96f330e4a5815a18742e36c7075f257bb3e0175fd882e691a65ad76",
+      "phase_aligned_distance_to_candidate0": 4.453707095919583e-08
+    }
+  ]
+}

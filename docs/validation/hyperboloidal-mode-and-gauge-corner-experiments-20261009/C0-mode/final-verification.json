@@ -1,0 +1,124 @@
+{
+  "status": "PASS_READ_ONLY_APPROXIMATE_MODE_DIAGNOSTIC_NOT_EIGENVALUE_CERTIFICATION",
+  "head_at_verification": "269f1dbcfed80aa8959b3980ef146abaf1de6e28",
+  "original_search_head": "38d9db1185550c3ec3659ef2392e14c46d96fb09",
+  "source_sha256": "6e839bf9c0d91338d47b03110c1e5dc1f65c97a9954baf00d43971207d4829b2",
+  "versions": {
+    "numpy": "2.0.2",
+    "scipy": "1.13.1"
+  },
+  "verified_input_catalogs": [
+    {
+      "path": "build-layer-research/boundary/full-tensor-global-final/manifest.json",
+      "sha256": "4f62819e2337c0cb20571071fe10d0e80d8b43895a928ccd4418faec0bc590d2",
+      "verified_small_files": 71
+    },
+    {
+      "path": "build-layer-research/boundary/full-tensor-C0-long-window-20261009/immutable-C0-long-window-20261009/index.json",
+      "sha256": "d1efcbea11e730eec2e784ef7981e64f5e67d64e51bc963c6cdd7ed22834d896",
+      "verified_small_files": 29
+    },
+    {
+      "path": "build-layer-research/boundary/full-tensor-C0-N20-20261009/immutable-C0-N20-default-span-v2-20261009/index.json",
+      "sha256": "8ec4c4dd84898d19b055831696de6e3608542b1fd10a88e04f087b1f689f99aa",
+      "verified_small_files": 63
+    },
+    {
+      "path": "build-layer-research/boundary/full-tensor-mode-finite-step-20261009/immutable-mode-final-step-20261009/index.json",
+      "sha256": "3e212ec5e437c0190f687fcd3b95d52671fe814b36c9e62469924a4a01e241b0",
+      "verified_small_files": 20
+    }
+  ],
+  "all_reported_input_pins_reverified": {
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-projected-J20.npz": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+    "build-layer-research/boundary/full-tensor-C0-long-window-20261009/spatialnorm-projected-krylov-m50-80-h0.1-t6.0.npz": "b02bf12087248a96d1b217d164e6d960cfc506791892b1058d7c2df018ed82cf",
+    "build-layer-research/boundary/full-tensor-C0-long-window-20261009/immutable-C0-long-window-20261009/index.json": "d1efcbea11e730eec2e784ef7981e64f5e67d64e51bc963c6cdd7ed22834d896",
+    "build-layer-research/boundary/full-tensor-C0-long-window-20261009/immutable-C0-long-window-20261009/source-identity-verification.json": "8944caa4c74d12b892f952fb7b5fe2f0dafddc1c8ae5a54876bf884bf3620b50",
+    "build-layer-research/boundary/full-tensor-C0-long-window-20261009/immutable-C0-long-window-20261009/large-output-metadata.json": "076b41beb690162886e48636ea52e62d19ec9932a53cd57bb340c9d1a6851eae",
+    "build-layer-research/boundary/full-tensor-global-final/manifest.json": "4f62819e2337c0cb20571071fe10d0e80d8b43895a928ccd4418faec0bc590d2",
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-metadata.json": "98b7b7f459cce564398769cff48545cb6e89eb3708d01b2018a81b3a393d4e26",
+    "build-layer-research/continuum/discrete-mode-identification/reduced_modes.py": "998348a22869a875aa63d7090c0e4364bb14935493d901e1b1874779965315ff",
+    "build-layer-research/continuum/discrete-mode-identification/candidate-vectors.npz": "fc88b20d4953f5088aed97d04dce41ad0af039fc794a401a21cceb53280e1eee",
+    "build-layer-research/continuum/discrete-mode-identification/candidate-metadata.json": "e411042b90498bb4f08eadcdf9214095028c049df8a0c15b46b5dfd4d3f2d6e1",
+    "build-layer-research/boundary/full-tensor-propagator/server-spatialnorm": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+    "build-layer-research/boundary/full-tensor-propagator/tangent_server.cpp": "2fe2b120e9b5d7881c689e02b1b7934283a806e0475f0240e476f7f81aec4013",
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/spatialnorm-cache0.0001-lift.bin": "4d30173931ddecdcdba83c0689a316f3a1d3c3f4cd16ace2c964cc883d03b4e9",
+    "build-layer-research/boundary/full-tensor-C0-N20-20261009/full22/spatialnorm-projected-J20.npz": "bfc114a9495b49d01b9275f4efd8a1fe49d167273f8d849631d25cddf9c2a103",
+    "build-layer-research/boundary/full-tensor-C0-N20-20261009/full22/spatialnorm-projected-krylov-m50-80-h0.1-t6.0.npz": "2e777543e187896882e7a97f4f23a63fee057145a8c4f034932a782ebe0154c7",
+    "build-layer-research/boundary/full-tensor-C0-N20-20261009/immutable-C0-N20-default-span-v2-20261009/index.json": "8ec4c4dd84898d19b055831696de6e3608542b1fd10a88e04f087b1f689f99aa",
+    "build-layer-research/boundary/full-tensor-C0-N20-20261009/immutable-C0-N20-default-span-v2-20261009/source-identity-verification.json": "6db9c0a34369e0ccd2eb3dab8201336c81dbd041f4df3991ff9ef292994c665e",
+    "build-layer-research/boundary/full-tensor-C0-N20-20261009/immutable-C0-N20-default-span-v2-20261009/large-artifacts-metadata-only.json": "92add4841ac1e9c5d09c6ba622108ad7eb5d6d094100572e6ca8c589fa33dfab",
+    "build-layer-research/boundary/full-tensor-C0-N20-20261009/full22/spatialnorm-cache0.0001-metadata.json": "cd72ca5486a65e90744ed04f00a4da58f7246e2f63e5743147fba19209babb86",
+    "build-layer-research/continuum/discrete-mode-identification/n20_reduced_modes.py": "7d4b9c08d24ef25fa91bf006f0317380e37db1911145ba05b87e00603d37bd64"
+  },
+  "search_suite_commands": 9,
+  "search_suite_all_returncode_zero": true,
+  "search_suite_warning_commands": 9,
+  "warnings_preserved_in_original_receipt": true,
+  "selected_N16_actual_J_rechecks": [
+    {
+      "key": "candidate0",
+      "residual_generator_units": 5.886773215552094e-07
+    },
+    {
+      "key": "candidate1",
+      "residual_generator_units": 5.867328011416467e-07
+    },
+    {
+      "key": "candidate2",
+      "residual_generator_units": 3.769066638712808e-07
+    },
+    {
+      "key": "candidate3",
+      "residual_generator_units": 5.043701024831267e-07
+    }
+  ],
+  "independent_explicit_contraction_N20_rechecks": [
+    {
+      "case": "n20-late2-gauge-s2",
+      "rank": 32,
+      "lambda": [
+        1.9182802861785322,
+        6.805508834100131
+      ],
+      "residual_generator_units": 3.823879270415271e-07,
+      "residual_relative_to_max1_lambda": 5.408065869674017e-08,
+      "singular_fraction": 1.4100894213604591e-09,
+      "original_stdout_completion_verified": true,
+      "original_full_stderr_not_archived": true
+    },
+    {
+      "case": "n20-late4-gauge-s1",
+      "rank": 16,
+      "lambda": [
+        1.9182801782503716,
+        6.8055088123862655
+      ],
+      "residual_generator_units": 3.697182132168264e-07,
+      "residual_relative_to_max1_lambda": 5.228879687584163e-08,
+      "singular_fraction": 1.4245325183079827e-10,
+      "original_stdout_completion_verified": true,
+      "original_full_stderr_not_archived": true
+    },
+    {
+      "case": "n20-late4-gauge-s2",
+      "rank": 16,
+      "lambda": [
+        1.9182801754537029,
+        6.805508807387614
+      ],
+      "residual_generator_units": 4.1404806578432313e-07,
+      "residual_relative_to_max1_lambda": 5.855831401248646e-08,
+      "singular_fraction": 1.2383463181769638e-10,
+      "original_stdout_completion_verified": true,
+      "original_full_stderr_not_archived": true
+    }
+  ],
+  "native_exit": 0,
+  "actual_RHS_real_imag_probes": 10,
+  "actual_constraint_real_imag_probes": 6,
+  "no_new_propagation_or_LU_or_evolution": true,
+  "residual_never_divided_by_J_norm": true,
+  "scope": "Approximate finite-grid generator pseudomodes; no spectral error bound, globally-rightmost, continuum, or stability claim",
+  "seconds": 3.44557125
+}
