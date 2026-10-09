@@ -1,0 +1,61 @@
+{
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "build-layer-research/continuum/finite-matrix-exact-certificate-20261009/run_saved_certificate.py",
+    "--execute",
+    "--N",
+    "12",
+    "--authorization",
+    "build-layer-research/continuum/finite-matrix-exact-certificate-20261009/N12-admission001.json",
+    "--output",
+    "build-layer-research/continuum/finite-matrix-exact-certificate-20261009/N12-certificate001"
+  ],
+  "launch_HEAD": "ab95fd1a23ae779019707365b3da2b31e6ca12f8",
+  "source_before": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/J0-N12-sector-readback001/operator.npz": "1df586b980dd7ce21555b762236dcd3ecac8cbeb2b5c848a9e8321e1d7da0aac",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-pade13-20261009/J0-N12-rb98-growth001/growth-payload.npz": "211948ce77b28c7809f048d2c8e00218cb1943d085284b565cd04b2e5eb7dbd7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-pade13-20261009/J0-N12-rb98-growth001/receipt.json": "d807cb2e76583ff9c2c367dd71ccc6a5f39f3cb7e3048a9bc36d0bb178419d2a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/synthetic001/receipt.json": "a7e755ad7d89d91aaa432ac739374ef4b074256510919958eacb09337ca297f6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/run_saved_certificate.py": "005108d7b7d559f6bc232a3f91a896d56f4f2797bc2357687b182ba4889dab2c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/dyadic_certificate.py": "29ae13b44a4605d29fd6fbe1840e602e804a4a761465ce8907d632d493c67297",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/PLAN.md": "79bd2f55bed1f28248e4a667734d960ad8aec407372e9cc0c25e8fd2c32540e3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/N12-admission001.json": "c488108a6cbd48156c4c533e9d25b329b113a41984983cfdaef9b403c5d16799"
+  },
+  "error": null,
+  "N": 12,
+  "J": 0,
+  "rb": 0.98,
+  "certificate_computation_completed": true,
+  "original_SciPy_expm_attempt_remains_failed": true,
+  "both_ordinary_FD_attempts_remain_failed": true,
+  "general_nongauge_continuum_comparator_unresolved": true,
+  "scope": "Exact eigenvalue enclosure of the supplied rounded finite matrix only; no continuum/subsidiary/native stability theorem.",
+  "rounded_sum_binding_checked": true,
+  "certified_positive_eigenvalues_at_least": 2,
+  "invertibility_proved": true,
+  "certificate_status": "certified positive finite-matrix eigenvalue",
+  "outputs": [
+    {
+      "path": "exact-binary64-input.json",
+      "sha256": "7d4c72e1440a06eeda08940ee831125c1a4ceb79cfced316f7c80587ead5017a",
+      "role": "large_payload"
+    },
+    {
+      "path": "certificate.json",
+      "sha256": "4f0818b9916d5c9bc177f8eb4bcf639cebb37c917cba5720bf88e0db7effa2ee",
+      "role": "source_or_receipt"
+    }
+  ],
+  "source_after": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/J0-N12-sector-readback001/operator.npz": "1df586b980dd7ce21555b762236dcd3ecac8cbeb2b5c848a9e8321e1d7da0aac",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-pade13-20261009/J0-N12-rb98-growth001/growth-payload.npz": "211948ce77b28c7809f048d2c8e00218cb1943d085284b565cd04b2e5eb7dbd7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-pade13-20261009/J0-N12-rb98-growth001/receipt.json": "d807cb2e76583ff9c2c367dd71ccc6a5f39f3cb7e3048a9bc36d0bb178419d2a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/synthetic001/receipt.json": "a7e755ad7d89d91aaa432ac739374ef4b074256510919958eacb09337ca297f6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/run_saved_certificate.py": "005108d7b7d559f6bc232a3f91a896d56f4f2797bc2357687b182ba4889dab2c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/dyadic_certificate.py": "29ae13b44a4605d29fd6fbe1840e602e804a4a761465ce8907d632d493c67297",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/PLAN.md": "79bd2f55bed1f28248e4a667734d960ad8aec407372e9cc0c25e8fd2c32540e3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-matrix-exact-certificate-20261009/N12-admission001.json": "c488108a6cbd48156c4c533e9d25b329b113a41984983cfdaef9b403c5d16799"
+  },
+  "sources_unchanged": true,
+  "seconds": 0.888937
+}

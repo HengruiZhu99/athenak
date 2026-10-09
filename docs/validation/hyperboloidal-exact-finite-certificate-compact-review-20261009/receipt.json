@@ -1,0 +1,18 @@
+{
+  "status": "PASS_catalog_and_compact_metadata_checks",
+  "exit_codes": [
+    0,
+    0
+  ],
+  "utc": "2026-10-09T16:14:17.192002+00:00",
+  "catalog_sha256": "baeadc6b87ed7d15e6741ee7c08d935a574d33960a97f6ca4730b1f2e1a6ee1f",
+  "logs": {
+    "catalog.stdout": "db86662d8675188b1e61930c3045d531729d7fba703a85750be484039601ceb4",
+    "compact.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compact.stdout": "9cb2623e937e24652889c207cabcc12b0d790a6cb4ff671165958f04ed32ee73",
+    "catalog.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "scope": "Compact metadata verification explicitly skips omitted exact-input proof replay. Full-local exact replay and independent root rational readback are retained in archive.",
+  "bytecode_note": "The compact verifier import generated uncataloged __pycache__; these generated cache files were removed. Use python3 -B or PYTHONDONTWRITEBYTECODE=1 for repeated immutable-archive verification. No cataloged scientific byte changed.",
+  "removed_uncataloged_cache_files": []
+}
