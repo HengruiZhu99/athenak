@@ -49,7 +49,8 @@
         "PROBLEM": "built_in_pgens"
       },
       "executable_sha256": "b227bfce8a9d282d27aa354227170823ca6c7443fae9a6c668e0b9aba22209d6",
-      "build_exit_status": 0
+      "build_exit_status": 0,
+      "corresponding_implementation_commit": "d21fb74ce6ad1308d77aad3be6f39da78eca93a7"
     },
     "build-layer-debug": {
       "cache": {
@@ -69,7 +70,8 @@
         "PROBLEM": "built_in_pgens"
       },
       "executable_sha256": "3e238602ac5dd9b6c0889e9acd86c166bc19c94ff65f5be20dec1158f08ab9e5",
-      "build_exit_status": 0
+      "build_exit_status": 0,
+      "corresponding_implementation_commit": "d21fb74ce6ad1308d77aad3be6f39da78eca93a7"
     }
   },
   "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin",
@@ -109,12 +111,70 @@
       "seconds": 28.91
     },
     "native_cauchy_pytest_debug_asan_ubsan": {
-      "status": "running; final receipt update follows"
+      "passed": 96,
+      "failed": 4,
+      "seconds": 2004.62,
+      "status": "development run with explicit failures",
+      "failures": [
+        {
+          "test": "test_fifth_degree_requires_interior_donors",
+          "cause": "TimeoutExpired 120 seconds",
+          "rerun": "pass with unchanged assertions and 600-second budget; 274.97 seconds"
+        },
+        {
+          "test": "test_refinement_cap[0]",
+          "cause": "AddressSanitizer heap-buffer-overflow in Mesh::PrintMeshDiagnostics, pre-existing in ca77b353",
+          "rerun": "pass after inclusive-level array-size fix"
+        },
+        {
+          "test": "test_refinement_cap[1]",
+          "cause": "same pre-existing AddressSanitizer heap-buffer-overflow",
+          "rerun": "pass after inclusive-level array-size fix"
+        },
+        {
+          "test": "test_separate_gauge_amr_outflow",
+          "cause": "TimeoutExpired 90 seconds after first refinement cycle",
+          "rerun": "not completed with extended budget; complete Release test passes"
+        }
+      ],
+      "interpretation": "Not a clean 100-test sanitizer suite. All 11 new native layer tests passed; remaining AMR timeout is a sanitizer coverage limitation for an unsupported layer configuration."
     },
     "lint": {
       "cpp_selected_new_modified": "pass cpplint",
       "python_new": "pass pycodestyle --max-line-length=90",
       "newdt_preexisting_warnings": 4
+    },
+    "native_cauchy_pytest_release_committed": {
+      "passed": 100,
+      "seconds": 31.13,
+      "source_commit": "d21fb74ce6ad1308d77aad3be6f39da78eca93a7",
+      "source_dirty": false
+    },
+    "layer_gates_release_committed": {
+      "passed": 6,
+      "seconds": 1.52
+    },
+    "layer_gates_debug_asan_ubsan_committed": {
+      "passed": 6,
+      "seconds": 4.82
+    },
+    "native_cauchy_pytest_release_post_mesh_fix": {
+      "passed": 100,
+      "seconds": 31.11,
+      "matching_runtime_source_commit": "49e3ee3d17c51767abbd1b53492113869ee269be"
+    },
+    "cauchy_refinement_caps_debug_post_mesh_fix": {
+      "passed": 2,
+      "deselected": 29,
+      "seconds": 53.22,
+      "matching_runtime_source_commit": "49e3ee3d17c51767abbd1b53492113869ee269be"
+    },
+    "fifth_degree_donor_debug_extended_budget": {
+      "passed": 1,
+      "seconds": 274.97,
+      "subprocess_timeout": 600,
+      "assertions": "unchanged",
+      "reproducer": "rerun-layer-debug-timeout.py"
     }
   },
   "analysis": {
@@ -2542,6 +2602,295 @@
           "failure_log": "hyperboloidal-layer-logs/long-valid-grid-finite-angular-long-N16.log"
         }
       ]
+    },
+    "committed-control": {
+      "executable": "/Users/hz0693/research/hyperboloidal/build-layer-validation/committed-control/athena-validation",
+      "sha256": "b227bfce8a9d282d27aa354227170823ca6c7443fae9a6c668e0b9aba22209d6",
+      "source_commit": "d21fb74ce6ad1308d77aad3be6f39da78eca93a7",
+      "source_dirty": false,
+      "cases": [
+        {
+          "name": "finite-angular-N24",
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-validation/committed-control/athena-validation",
+            "-i",
+            "/Users/hz0693/research/hyperboloidal/build-layer-validation/committed-control/finite-angular-N24/layer.athinput"
+          ],
+          "exit_status": 0,
+          "wall_seconds": 6.163579875,
+          "requested_time": 0.01,
+          "diagnostics": {
+            "time": 0.01,
+            "H": 0.02431852992047448,
+            "M": 0.0319656652394448,
+            "Z": 0.003742235039300173,
+            "Theta": 8.339705810996954e-05,
+            "alpha_min": 0.6680277727593441,
+            "chi_min": 0.3986031558639185,
+            "pole_deviation_max": 0.11326020390524856,
+            "null_deviation_max": 0.009295868825073886,
+            "metric_eigen_min": 0.9961700945096998,
+            "metric_eigen_max": 15.783551250560638,
+            "metric_stretch_ratio_max": 15.78370944941701,
+            "constraint_budget": {
+              "path": "/Users/hz0693/research/hyperboloidal/build-layer-validation/committed-control/finite-angular-N24/bin/hyp.con.00001.bin",
+              "time": 0.01,
+              "cycle": 36,
+              "active_cells": 6152,
+              "global": {
+                "H": {
+                  "rms": 0.02431852991015713,
+                  "max": 0.2974250316619873,
+                  "max_radius": 0.3788861141556919,
+                  "max_xyz": [
+                    0.21875,
+                    0.21875,
+                    0.21875
+                  ]
+                },
+                "M": {
+                  "rms": 0.03196566525578889,
+                  "max": 0.1799102936171489,
+                  "max_radius": 0.9928455003171442,
+                  "max_xyz": [
+                    0.7437500000000001,
+                    0.6562500000000002,
+                    -0.043749999999999956
+                  ]
+                },
+                "Z": {
+                  "rms": 0.0037422350378623313,
+                  "max": 0.04016226908922822,
+                  "max_radius": 0.9928455003171442,
+                  "max_xyz": [
+                    0.7437500000000001,
+                    0.6562500000000002,
+                    -0.043749999999999956
+                  ]
+                }
+              },
+              "radial_bins": [
+                {
+                  "r_min": 0.0,
+                  "r_max": 0.35,
+                  "cells": 280,
+                  "H": {
+                    "rms": 0.031751880402876964,
+                    "squared_norm_fraction": 0.07759003885780469
+                  },
+                  "M": {
+                    "rms": 0.019356226065480136,
+                    "squared_norm_fraction": 0.01668843384547784
+                  },
+                  "Z": {
+                    "rms": 0.0006100003027543723,
+                    "squared_norm_fraction": 0.0012093156809573576
+                  }
+                },
+                {
+                  "r_min": 0.35,
+                  "r_max": 0.75,
+                  "cells": 2328,
+                  "H": {
+                    "rms": 0.037918806511501695,
+                    "squared_norm_fraction": 0.9200286103166626
+                  },
+                  "M": {
+                    "rms": 0.041249934779222806,
+                    "squared_norm_fraction": 0.6301525342708743
+                  },
+                  "Z": {
+                    "rms": 0.0010784987215685428,
+                    "squared_norm_fraction": 0.03142995774223469
+                  }
+                },
+                {
+                  "r_min": 0.75,
+                  "r_max": 0.9,
+                  "cells": 2024,
+                  "H": {
+                    "rms": 0.0004893305921840828,
+                    "squared_norm_fraction": 0.00013320615178346248
+                  },
+                  "M": {
+                    "rms": 0.004414375561877167,
+                    "squared_norm_fraction": 0.0062742994861687915
+                  },
+                  "Z": {
+                    "rms": 0.0001780962152033402,
+                    "squared_norm_fraction": 0.0007451461131297192
+                  }
+                },
+                {
+                  "r_min": 0.9,
+                  "r_max": 1.0,
+                  "cells": 1520,
+                  "H": {
+                    "rms": 0.0023197213251292125,
+                    "squared_norm_fraction": 0.0022481446737492652
+                  },
+                  "M": {
+                    "rms": 0.037875878032034314,
+                    "squared_norm_fraction": 0.3468847323974791
+                  },
+                  "Z": {
+                    "rms": 0.0074019189553045945,
+                    "squared_norm_fraction": 0.9666155804636782
+                  }
+                }
+              ]
+            }
+          },
+          "input_text": "<job>\nbasename=hyp\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\nnghost=3\nx1min=-1.05\nx1max=1.05\nx2min=-1.05\nx2max=1.05\nx3min=-1.05\nx3max=1.05\nix1_bc=outflow\nox1_bc=outflow\nix2_bc=outflow\nox2_bc=outflow\nix3_bc=outflow\nox3_bc=outflow\n\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n\n<time>\nevolution=dynamic\nintegrator=rk3\ncfl_number=0.4\nnlim=2\ntlim=0.001\nndiag=1\n\n<z4c>\nhyperboloidal=true\nhyperboloidal_slicing=2\nhyperboloidal_shift_driver=0.1\nhyperboloidal_lapse_damping=1.5\nhyperboloidal_shift_damping=1\nhyperboloidal_kappa1=5\nhyperboloidal_dissipation=0.1\nhyperboloidal_pole_cfl=0.04\nhyperboloidal_ghost_degree=3\nhyperboloidal_mass_diagnostics=false\nhyperboloidal_mass_nmu=32\nfloor_chi=false\nnrad_wave_extraction=0\nspatial_order=4\n\n<problem>\npgen_name=z4c_hyperboloidal\nmass=0\nlapse_pulse=0\n\n<output1>\nfile_type=bin\nvariable=z4c\nid=z4c\ndt=0.0001\nghost_zones=true\n\n<output2>\nfile_type=bin\nvariable=adm\nid=adm\ndt=0.0001\nghost_zones=true\n\n<output3>\nfile_type=hst\ndt=0.0001\ndata_format=%24.16e\n# Experimental uniform Cartesian prototype. See docs/hyperboloidal.md.\n# Set problem/mass=0.5 for a CMC trumpet; longer stability is still under study.\n\n<output4>\nfile_type=bin\nvariable=con\nid=con\ndt=0.0001\nghost_zones=true\n\n<output5>\nfile_type=rst\ndt=0.0001\n\n<z4c>\n# Interior-only research prototype: exact scri is never assembled.\nhyperboloidal_layer=true\nhyperboloidal_layer_r0=0.35\nhyperboloidal_layer_r1=0.75\nhyperboloidal_gauge_r0=0.45\nhyperboloidal_gauge_r1=0.85\nhyperboloidal_gauge_q0=0.5\nhyperboloidal_layer_lapse_inner=0\nhyperboloidal_layer_lapse_outer=1.5\nhyperboloidal_layer_shift_inner=0\nhyperboloidal_layer_shift_outer=1\nhyperboloidal_preferred_source=true\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n<time>\nnlim=-1\ntlim=0.01\nndiag=100\n<problem>\nlapse_pulse=0.1\nshift_pulse=0.02\npulse_angular=true\n\n<output1>\ndt=0.01\n\n<output2>\ndt=0.01\n\n<output3>\ndt=0.01\n\n<output4>\ndt=0.01\n\n<output5>\ndt=0.01\n\n",
+          "input_sha256": "b148381da15506ebcf845a20750fc7c94219a3efeb2365163b19b2bccfaabec4",
+          "executable_sha256": "b227bfce8a9d282d27aa354227170823ca6c7443fae9a6c668e0b9aba22209d6"
+        }
+      ]
+    },
+    "post-mesh-fix-control": {
+      "executable": "/Users/hz0693/research/hyperboloidal/build-layer-validation/post-mesh-fix-control/athena-validation",
+      "sha256": "f2aa773075a57d5a33154a0c524d447c3e587ec0400bf254df98882bf04e7ce5",
+      "source_commit": "49e3ee3d17c51767abbd1b53492113869ee269be",
+      "source_dirty": true,
+      "cases": [
+        {
+          "name": "finite-angular-N24",
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-validation/post-mesh-fix-control/athena-validation",
+            "-i",
+            "/Users/hz0693/research/hyperboloidal/build-layer-validation/post-mesh-fix-control/finite-angular-N24/layer.athinput"
+          ],
+          "exit_status": 0,
+          "wall_seconds": 5.218514208,
+          "requested_time": 0.01,
+          "diagnostics": {
+            "time": 0.01,
+            "H": 0.02431852992047448,
+            "M": 0.0319656652394448,
+            "Z": 0.003742235039300173,
+            "Theta": 8.339705810996954e-05,
+            "alpha_min": 0.6680277727593441,
+            "chi_min": 0.3986031558639185,
+            "pole_deviation_max": 0.11326020390524856,
+            "null_deviation_max": 0.009295868825073886,
+            "metric_eigen_min": 0.9961700945096998,
+            "metric_eigen_max": 15.783551250560638,
+            "metric_stretch_ratio_max": 15.78370944941701,
+            "constraint_budget": {
+              "path": "/Users/hz0693/research/hyperboloidal/build-layer-validation/post-mesh-fix-control/finite-angular-N24/bin/hyp.con.00001.bin",
+              "time": 0.01,
+              "cycle": 36,
+              "active_cells": 6152,
+              "global": {
+                "H": {
+                  "rms": 0.02431852991015713,
+                  "max": 0.2974250316619873,
+                  "max_radius": 0.3788861141556919,
+                  "max_xyz": [
+                    0.21875,
+                    0.21875,
+                    0.21875
+                  ]
+                },
+                "M": {
+                  "rms": 0.03196566525578889,
+                  "max": 0.1799102936171489,
+                  "max_radius": 0.9928455003171442,
+                  "max_xyz": [
+                    0.7437500000000001,
+                    0.6562500000000002,
+                    -0.043749999999999956
+                  ]
+                },
+                "Z": {
+                  "rms": 0.0037422350378623313,
+                  "max": 0.04016226908922822,
+                  "max_radius": 0.9928455003171442,
+                  "max_xyz": [
+                    0.7437500000000001,
+                    0.6562500000000002,
+                    -0.043749999999999956
+                  ]
+                }
+              },
+              "radial_bins": [
+                {
+                  "r_min": 0.0,
+                  "r_max": 0.35,
+                  "cells": 280,
+                  "H": {
+                    "rms": 0.031751880402876964,
+                    "squared_norm_fraction": 0.07759003885780469
+                  },
+                  "M": {
+                    "rms": 0.019356226065480136,
+                    "squared_norm_fraction": 0.01668843384547784
+                  },
+                  "Z": {
+                    "rms": 0.0006100003027543723,
+                    "squared_norm_fraction": 0.0012093156809573576
+                  }
+                },
+                {
+                  "r_min": 0.35,
+                  "r_max": 0.75,
+                  "cells": 2328,
+                  "H": {
+                    "rms": 0.037918806511501695,
+                    "squared_norm_fraction": 0.9200286103166626
+                  },
+                  "M": {
+                    "rms": 0.041249934779222806,
+                    "squared_norm_fraction": 0.6301525342708743
+                  },
+                  "Z": {
+                    "rms": 0.0010784987215685428,
+                    "squared_norm_fraction": 0.03142995774223469
+                  }
+                },
+                {
+                  "r_min": 0.75,
+                  "r_max": 0.9,
+                  "cells": 2024,
+                  "H": {
+                    "rms": 0.0004893305921840828,
+                    "squared_norm_fraction": 0.00013320615178346248
+                  },
+                  "M": {
+                    "rms": 0.004414375561877167,
+                    "squared_norm_fraction": 0.0062742994861687915
+                  },
+                  "Z": {
+                    "rms": 0.0001780962152033402,
+                    "squared_norm_fraction": 0.0007451461131297192
+                  }
+                },
+                {
+                  "r_min": 0.9,
+                  "r_max": 1.0,
+                  "cells": 1520,
+                  "H": {
+                    "rms": 0.0023197213251292125,
+                    "squared_norm_fraction": 0.0022481446737492652
+                  },
+                  "M": {
+                    "rms": 0.037875878032034314,
+                    "squared_norm_fraction": 0.3468847323974791
+                  },
+                  "Z": {
+                    "rms": 0.0074019189553045945,
+                    "squared_norm_fraction": 0.9666155804636782
+                  }
+                }
+              ]
+            }
+          },
+          "input_text": "<job>\nbasename=hyp\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\nnghost=3\nx1min=-1.05\nx1max=1.05\nx2min=-1.05\nx2max=1.05\nx3min=-1.05\nx3max=1.05\nix1_bc=outflow\nox1_bc=outflow\nix2_bc=outflow\nox2_bc=outflow\nix3_bc=outflow\nox3_bc=outflow\n\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n\n<time>\nevolution=dynamic\nintegrator=rk3\ncfl_number=0.4\nnlim=2\ntlim=0.001\nndiag=1\n\n<z4c>\nhyperboloidal=true\nhyperboloidal_slicing=2\nhyperboloidal_shift_driver=0.1\nhyperboloidal_lapse_damping=1.5\nhyperboloidal_shift_damping=1\nhyperboloidal_kappa1=5\nhyperboloidal_dissipation=0.1\nhyperboloidal_pole_cfl=0.04\nhyperboloidal_ghost_degree=3\nhyperboloidal_mass_diagnostics=false\nhyperboloidal_mass_nmu=32\nfloor_chi=false\nnrad_wave_extraction=0\nspatial_order=4\n\n<problem>\npgen_name=z4c_hyperboloidal\nmass=0\nlapse_pulse=0\n\n<output1>\nfile_type=bin\nvariable=z4c\nid=z4c\ndt=0.0001\nghost_zones=true\n\n<output2>\nfile_type=bin\nvariable=adm\nid=adm\ndt=0.0001\nghost_zones=true\n\n<output3>\nfile_type=hst\ndt=0.0001\ndata_format=%24.16e\n# Experimental uniform Cartesian prototype. See docs/hyperboloidal.md.\n# Set problem/mass=0.5 for a CMC trumpet; longer stability is still under study.\n\n<output4>\nfile_type=bin\nvariable=con\nid=con\ndt=0.0001\nghost_zones=true\n\n<output5>\nfile_type=rst\ndt=0.0001\n\n<z4c>\n# Interior-only research prototype: exact scri is never assembled.\nhyperboloidal_layer=true\nhyperboloidal_layer_r0=0.35\nhyperboloidal_layer_r1=0.75\nhyperboloidal_gauge_r0=0.45\nhyperboloidal_gauge_r1=0.85\nhyperboloidal_gauge_q0=0.5\nhyperboloidal_layer_lapse_inner=0\nhyperboloidal_layer_lapse_outer=1.5\nhyperboloidal_layer_shift_inner=0\nhyperboloidal_layer_shift_outer=1\nhyperboloidal_preferred_source=true\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n<time>\nnlim=-1\ntlim=0.01\nndiag=100\n<problem>\nlapse_pulse=0.1\nshift_pulse=0.02\npulse_angular=true\n\n<output1>\ndt=0.01\n\n<output2>\ndt=0.01\n\n<output3>\ndt=0.01\n\n<output4>\ndt=0.01\n\n<output5>\ndt=0.01\n\n",
+          "input_sha256": "b148381da15506ebcf845a20750fc7c94219a3efeb2365163b19b2bccfaabec4",
+          "executable_sha256": "f2aa773075a57d5a33154a0c524d447c3e587ec0400bf254df98882bf04e7ce5"
+        }
+      ],
+      "source_dirty_note": "Only validation documentation/receipts were being edited; runtime source files match the stated validated commit and final manifest."
     }
   },
   "aurora": {
@@ -2554,14 +2903,23 @@
   "logs_sha256": {
     "hyperboloidal-layer-logs/hyp-baseline-ctest.log": "22ff38e3f88c16d4a2b5d8918d5ce3e8f869e55af749a0991e87c09fa4ca5fe1",
     "hyperboloidal-layer-logs/hyp-build-debug-final-3.log": "523ad8253fd674258ee48b986190e41731bd7cd3d4fe7d08e05682c7063ff5fe",
+    "hyperboloidal-layer-logs/hyp-build-debug-mesh-fix.log": "379d1759d99bece3915cebba665bff2444247ea8d5adab8bb6303561df5406cf",
     "hyperboloidal-layer-logs/hyp-build-release-final-2.log": "1e3a1abcc77e7c7213e294f0ac7981cc1dd1f07740736906d71ffb4082771e85",
+    "hyperboloidal-layer-logs/hyp-build-release-mesh-fix.log": "5b7264e993985c9e3f98442ef069573662676ed34798b259608c0ce60868bec7",
     "hyperboloidal-layer-logs/hyp-configure-debug-final.log": "2f8360311e1219543fe0a54affa53d577eec1197925e17ed6f969b253f0b5a5c",
     "hyperboloidal-layer-logs/hyp-configure-release-final.log": "bc937c9a1cbd1a10b1f8decf11ccfab25fe90281faff454e214f1d376a324506",
     "hyperboloidal-layer-logs/hyp-ctest-debug.log": "8d354cf51b831b72aa2a3f9f68273358b3e0c218c78bc478cd2389648ae60fc7",
     "hyperboloidal-layer-logs/hyp-ctest-release.log": "71bba22056fda82206c3723e5e42f39933a1c902e8025eaae523bd0c83714e1a",
+    "hyperboloidal-layer-logs/hyp-layer-gates-debug-committed.log": "a49e4ec9e4e82cd4c03ba80b945a8a69e6212eeef2e574a237d833463f23e32c",
     "hyperboloidal-layer-logs/hyp-layer-gates-debug-final-2.log": "5f3b3fa330173f53e9ab5b25c2abf325990101ccaea521f5708276e16730bacf",
+    "hyperboloidal-layer-logs/hyp-layer-gates-release-committed.log": "c4d202aac707fbabee8ad876733afe512db1b396ad0042996cb9027e893de589",
     "hyperboloidal-layer-logs/hyp-layer-gates-release-final-2.log": "06b6b4070bb998175478ae6b3ecb1f63c13b66c1d4759c00912ad9ed0ec79ac6",
+    "hyperboloidal-layer-logs/hyp-regression-debug-final.log": "76d7b7c4dcb885b6ff79bbe7c0efefd8fd31374d234f84d69bb4aa4ac6c28fcf",
+    "hyperboloidal-layer-logs/hyp-regression-debug-mesh-fix.log": "92be71d7770f88216f14cf2125b18d841882a9fd2b4f1f2d73c847bcface9ded",
+    "hyperboloidal-layer-logs/hyp-regression-debug-timeout-rerun.log": "1e25ddd339f9a2a88139de2604d570010bdde7f064a4ee2d10fedf9b71b689e7",
+    "hyperboloidal-layer-logs/hyp-regression-release-committed.log": "e8d264d611a889465343f7e61bfccafbd46d53137a39ee9c62d6e9769f2aa3da",
     "hyperboloidal-layer-logs/hyp-regression-release-final.log": "564a9f1ae6ade93d3dba56c326e18230ca824ab173e4f0a877f7002d237737f7",
+    "hyperboloidal-layer-logs/hyp-regression-release-mesh-fix.log": "caab1cbfaa066981fdf5727ff6724ce7e5fef5429d49a70c7f30cb51ff4cf111",
     "hyperboloidal-layer-logs/hyp-residues.log": "abe2ce9dc81cf14745a00508143aefcc284373b9f51a7e2c374113b03342433b",
     "hyperboloidal-layer-logs/hyp-symbol-gate.log": "8d9677b2ccbca1ae4412ec01315d644aaa66d6d33cca4fb30358374a13250dcb",
     "hyperboloidal-layer-logs/hyp-test-layer-final.log": "79546ce1e8dccd4363a85567dd0e2daa9dd629cf68329e2178d58a8541535194",
@@ -2570,5 +2928,80 @@
     "hyperboloidal-layer-logs/long-finite-angular-long-N16.log": "50a9105c07e37ccaf6260f08dcbc18d8a615d06377515db5df2ff272f84b1b56",
     "hyperboloidal-layer-logs/long-valid-grid-finite-angular-long-N16.log": "aaf7102383a270fc768b94141f0e6199e0f4b3a4e61b22f4d855490cb8732b7b",
     "hyperboloidal-layer-logs/quick-final-finite-radial-N36.log": "fb4431476431c55654173e179e5b925c3595f47372db8c35279512447df5907e"
+  },
+  "implementation_commit": "d21fb74ce6ad1308d77aad3be6f39da78eca93a7",
+  "debug_development_suite_provenance_note": "The long Debug pytest suite began before the final diagnostic line wrapping and executable rebuild. Each native subprocess loads the executable available at launch; all revisions use the same evolution equations. This is development sanitizer evidence. The clean implementation commit was checked with the final six Debug analytical/kernel gates, the immutable native control, and the full 100-test Release suite.",
+  "validated_source_commit": "49e3ee3d17c51767abbd1b53492113869ee269be",
+  "final_runtime_source_file_sha256": {
+    "CMakeLists.txt": "de4aafa7448e50b5fd0d9d0d968dec6b71eb31abdec374b8f02c1f0e19236ad2",
+    "inputs/z4c/hyperboloidal_layer.athinput": "4ab569ce47493a6b8b915774c4f24665fc9fa92fce9cbb727f3a1371a5890e9e",
+    "src/z4c/hyperboloidal/cartesian_patch.hpp": "25b96d3ee131c32a11f4b1e4d02c4c985a43b9dd9d19630dc9485c453b6b0f07",
+    "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "7bb5cd09a456ab8b6657fb0c5ce58df9a8c64e03ac58e4a63b68a2d6ec3cc6e6",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "59f4cdc971bcc85b41591b65fb3af9086f6401852ad8c1e3e56d8a6c88b3321a",
+    "src/z4c/z4c_hyperboloidal.cpp": "c172d005cd32385ca771a4304fe2dacc39fe58d3526bcf99f4396349d86d9ac0",
+    "src/z4c/z4c_newdt.cpp": "5901c6480d097328a1ed094747f16fb35df45ccaa63ee78316aa96ad8a607b35",
+    "tst/hyperboloidal/check_cutoff.py": "04499e2ba10e6e44f93589203a5a0f73504edffae66850d2c1bb6114dd97f989",
+    "tst/hyperboloidal/check_kernel_symbol.py": "40afbaf0955eba4c8602c7648c32dfad37668024d5f067a787a903a85620229d",
+    "tst/hyperboloidal/check_layer_geometry.py": "1ccc4a9f3df5e6e7e30bd4fbf3889a87b4195b885daf0ab22b9e74ca0f982ad8",
+    "tst/hyperboloidal/check_layer_residues.py": "f9a64f50250d87f0f9ecc34fc370677bd1b01f982662090ef09fcaed318835dd",
+    "tst/hyperboloidal/check_layer_symbolic.py": "a3d6d319b386c7715a5527c07f2077437e1afdfb3075dfa28ffb75926c355317",
+    "tst/hyperboloidal/kernel_symbol.cpp": "35542c5fa2b58c279119575dfd57fcb66647acba67839ae8017ea5286336db18",
+    "tst/hyperboloidal/run_layer_validation.py": "4e28997821bf16ee54d0e3373141351633f4ce2f6913d7d48e25c4bc4f6bd6c0",
+    "tst/hyperboloidal/test_layer.cpp": "02c5a86ced486787df03bcbdfa3a326b395de684ad063312e774543b25d770b9",
+    "tst/test_suite/z4c/test_hyperboloidal_layer_cpu.py": "36eb4e9d99def9bef337050d731258dd3b9b66bf7fc17a781edcd8a94205ab90",
+    "src/mesh/mesh.cpp": "4696157cfd1c4e3eb92ac680fb29b70b9575aff10bd5f578073721bf9b04442f"
+  },
+  "mesh_diagnostic_fix": {
+    "commit": "49e3ee3d17c51767abbd1b53492113869ee269be",
+    "file": "src/mesh/mesh.cpp",
+    "before": "new arrays of max_level; inclusive output loop through max_level-root_level",
+    "after": "arrays of max_level-root_level+1 entries",
+    "starting_commit_has_identical_defect": true,
+    "evolution_equations_changed": false
+  },
+  "post_mesh_fix_builds": {
+    "build-layer-release": {
+      "cache": {
+        "Athena_ENABLE_HYPERBOLOIDAL_ANALYSIS": "ON",
+        "Athena_ENABLE_HYPERBOLOIDAL_TESTS": "ON",
+        "Athena_ENABLE_MPI": "OFF",
+        "Athena_ENABLE_OPENMP": "OFF",
+        "Athena_SINGLE_PRECISION": "OFF",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+        "CMAKE_CXX_FLAGS": "",
+        "CMAKE_EXE_LINKER_FLAGS": "",
+        "Kokkos_ENABLE_DEBUG": "OFF",
+        "Kokkos_ENABLE_DEBUG_BOUNDS_CHECK": "OFF",
+        "Kokkos_ENABLE_SERIAL": "ON",
+        "Kokkos_ENABLE_SYCL": "OFF",
+        "PROBLEM": "built_in_pgens"
+      },
+      "executable_sha256": "f2aa773075a57d5a33154a0c524d447c3e587ec0400bf254df98882bf04e7ce5",
+      "build_exit_status": 0,
+      "matching_runtime_source_commit": "49e3ee3d17c51767abbd1b53492113869ee269be"
+    },
+    "build-layer-debug": {
+      "cache": {
+        "Athena_ENABLE_HYPERBOLOIDAL_ANALYSIS": "ON",
+        "Athena_ENABLE_HYPERBOLOIDAL_TESTS": "ON",
+        "Athena_ENABLE_MPI": "OFF",
+        "Athena_ENABLE_OPENMP": "OFF",
+        "Athena_SINGLE_PRECISION": "OFF",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+        "CMAKE_CXX_FLAGS": "-fsanitize=address,undefined -fno-omit-frame-pointer",
+        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address,undefined",
+        "Kokkos_ENABLE_DEBUG": "ON",
+        "Kokkos_ENABLE_DEBUG_BOUNDS_CHECK": "ON",
+        "Kokkos_ENABLE_SERIAL": "ON",
+        "Kokkos_ENABLE_SYCL": "OFF",
+        "PROBLEM": "built_in_pgens"
+      },
+      "executable_sha256": "2c9f175e5191718577706b28467685a8e915c8e056dfa9471fddec220706c76b",
+      "build_exit_status": 0,
+      "matching_runtime_source_commit": "49e3ee3d17c51767abbd1b53492113869ee269be"
+    }
   }
 }

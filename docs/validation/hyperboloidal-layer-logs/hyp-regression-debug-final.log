@@ -1,0 +1,369 @@
+.................................F...................................... [ 72%]
+................FF.........F                                             [100%]
+=================================== FAILURES ===================================
+__________________ test_fifth_degree_requires_interior_donors __________________
+
+tmp_path = PosixPath('/private/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/pytest-of-hz0693/pytest-32/test_fifth_degree_requires_int0')
+
+    def test_fifth_degree_requires_interior_donors(tmp_path):
+        result = run(tmp_path / 'coarse', 'z4c/hyperboloidal_ghost_degree=5', success=False)
+        assert 'no interior normal-ray rectangles' in result.stdout + result.stderr
+        fine = tmp_path / 'fine'
+        options = [f'{block}/nx{d}=36' for block in ('mesh', 'meshblock') for d in (1, 2, 3)]
+>       run(fine, *options, 'z4c/hyperboloidal_ghost_degree=5', 'problem/lapse_pulse=0.0001',
+            'time/nlim=3')
+
+tst/test_suite/z4c/test_hyperboloidal_native_cpu.py:201: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tst/test_suite/z4c/test_hyperboloidal_native_cpu.py:33: in run
+    result = subprocess.run(command + list(overrides), cwd=directory,
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:507: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:1134: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:1980: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: -9 args: ['/Users/hz0693/research/hyperboloidal/build-la...>
+endtime = 1477.602046833, orig_timeout = 120
+stdout_seq = [b'\nRoot grid = 1 x 1 x 1 MeshBlocks\nTotal number of MeshBlocks = 1\nNumber of logical  levels of refinement = 0 (1 ...e+01 cycle=1 time=7.673611e-05 dt=7.673611e-05\n', b'elapsed=1.073066e+02 cycle=2 time=1.534722e-04 dt=7.673611e-05\n']
+stderr_seq = [], skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['/Users/hz0693/research/hyperboloidal/build-layer-debug/src/athena', '-i', '/Users/hz0693/research/hyperboloidal/inputs/z4c/hyperboloidal.athinput', 'mesh/nx1=36', 'mesh/nx2=36', 'mesh/nx3=36', 'meshblock/nx1=36', 'meshblock/nx2=36', 'meshblock/nx3=36', 'z4c/hyperboloidal_ghost_degree=5', 'problem/lapse_pulse=0.0001', 'time/nlim=3']' timed out after 120 seconds
+
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:1178: TimeoutExpired
+____________________________ test_refinement_cap[0] ____________________________
+
+tmp_path = PosixPath('/private/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/pytest-of-hz0693/pytest-32/test_refinement_cap_0_0')
+cap = 0
+
+    @pytest.mark.parametrize("cap", [0, 1])
+    def test_refinement_cap(tmp_path, cap):
+>       run_case(tmp_path, f"""
+    <problem>
+    pgen_name=z4c_superposed_punctures
+    <mesh_refinement>
+    refinement=adaptive
+    num_levels=3
+    max_nmb_per_rank=64
+    <z4c_amr>
+    method=chi
+    chi_min=2
+    max_ref_lev={cap}
+    <time>
+    nlim=3
+    cfl_number=0.01
+    """)
+
+tst/test_suite/z4c/test_z4c_overhaul_cpu.py:196: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+directory = PosixPath('/private/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/pytest-of-hz0693/pytest-32/test_refinement_cap_0_0')
+extra = '\n<problem>\npgen_name=z4c_superposed_punctures\n<mesh_refinement>\nrefinement=adaptive\nnum_levels=3\nmax_nmb_per_rank=64\n<z4c_amr>\nmethod=chi\nchi_min=2\nmax_ref_lev=0\n<time>\nnlim=3\ncfl_number=0.01\n'
+executable = '/Users/hz0693/research/hyperboloidal/build-layer-debug/src/athena'
+success = True, slices = True
+
+    def run_case(directory, extra="", executable=None, success=True, slices=True):
+        directory.mkdir(parents=True, exist_ok=True)
+        executable = executable or os.environ.get("ATHENA_OVERHAUL_EXE", "./athena")
+        executable = str(Path(executable).resolve())
+        text = (ROOT / "tst/inputs/lwave_z4c.athinput").read_text()
+        text += """
+    <mesh>
+    nx1=8
+    nx2=8
+    nx3=8
+    nghost=4
+    <meshblock>
+    nx1=8
+    nx2=8
+    nx3=8
+    <mesh_refinement>
+    refinement=none
+    <problem>
+    amp=0
+    <time>
+    nlim=0
+    tlim=0.01
+    <output1>
+    file_type=tab
+    variable=adm
+    dt=0.001
+    slice_x2=0.5
+    slice_x3=0.5
+    data_format=%24.16e
+    """
+        if not slices:
+            text = "\n".join(line for line in text.splitlines()
+                             if not line.startswith("slice_"))
+        text += extra
+        if os.environ.get("ATHENA_TEST_LAUNCHER"):
+            text += "\n<mesh>\nnx1=16\n"
+    
+        source = directory / "test.athinput"
+        source.write_text(text)
+        result = subprocess.run(shlex.split(os.environ.get("ATHENA_TEST_LAUNCHER", "")) +
+                                [executable, "-i", str(source)], cwd=directory,
+                                capture_output=True, text=True, timeout=90)
+        (directory / "run.log").write_text(result.stdout + result.stderr)
+>       assert (result.returncode == 0) == success, result.stdout + result.stderr
+E       AssertionError: 
+E       Root grid = 1 x 1 x 1 MeshBlocks
+E       Total number of MeshBlocks = 1
+E       Number of logical  levels of refinement = 2 (3 levels total)
+E       Number of physical levels of refinement = 2 (3 levels total)
+E         Physical level = 0 (logical level = 0): 1 MeshBlocks, cost = 1
+E       =================================================================
+E       ==14091==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000a38 at pc 0x00010416a41c bp 0x00016d3a1f50 sp 0x00016d3a1f48
+E       READ of size 4 at 0x602000000a38 thread T0
+E           #0 0x00010416a418 in Mesh::PrintMeshDiagnostics() mesh.cpp:402
+E           #1 0x00010414fa00 in Mesh::BuildTreeFromScratch(ParameterInput*) build_tree.cpp:304
+E           #2 0x000102a5d4e8 in main main.cpp:327
+E           #3 0x00018b92c4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+E       
+E       0x602000000a38 is located 0 bytes after 8-byte region [0x602000000a30,0x602000000a38)
+E       allocated by thread T0 here:
+E           #0 0x00010a4a4268 in _Znam+0x74 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x50268)
+E           #1 0x0001041692b8 in Mesh::PrintMeshDiagnostics() mesh.cpp:391
+E           #2 0x00010414fa00 in Mesh::BuildTreeFromScratch(ParameterInput*) build_tree.cpp:304
+E           #3 0x000102a5d4e8 in main main.cpp:327
+E           #4 0x00018b92c4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+E       
+E       SUMMARY: AddressSanitizer: heap-buffer-overflow mesh.cpp:402 in Mesh::PrintMeshDiagnostics()
+E       Shadow bytes around the buggy address:
+E         0x602000000780: fa fa fd fd fa fa fd fd fa fa fd fd fa fa fd fd
+E         0x602000000800: fa fa fd fd fa fa fd fa fa fa fd fd fa fa fd fa
+E         0x602000000880: fa fa fd fd fa fa fd fd fa fa fd fd fa fa fd fd
+E         0x602000000900: fa fa fd fd fa fa fd fd fa fa fd fa fa fa 00 fa
+E         0x602000000980: fa fa 04 fa fa fa 04 fa fa fa 00 00 fa fa 04 fa
+E       =>0x602000000a00: fa fa 04 fa fa fa 00[fa]fa fa 00 fa fa fa fa fa
+E         0x602000000a80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E         0x602000000b00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E         0x602000000b80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E         0x602000000c00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E         0x602000000c80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E       Shadow byte legend (one shadow byte represents 8 application bytes):
+E         Addressable:           00
+E         Partially addressable: 01 02 03 04 05 06 07 
+E         Heap left redzone:       fa
+E         Freed heap region:       fd
+E         Stack left redzone:      f1
+E         Stack mid redzone:       f2
+E         Stack right redzone:     f3
+E         Stack after return:      f5
+E         Stack use after scope:   f8
+E         Global redzone:          f9
+E         Global init order:       f6
+E         Poisoned by user:        f7
+E         Container overflow:      fc
+E         Array cookie:            ac
+E         Intra object redzone:    bb
+E         ASan internal:           fe
+E         Left alloca redzone:     ca
+E         Right alloca redzone:    cb
+E       ==14091==ABORTING
+
+tst/test_suite/z4c/overhaul_utils.py:55: AssertionError
+____________________________ test_refinement_cap[1] ____________________________
+
+tmp_path = PosixPath('/private/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/pytest-of-hz0693/pytest-32/test_refinement_cap_1_0')
+cap = 1
+
+    @pytest.mark.parametrize("cap", [0, 1])
+    def test_refinement_cap(tmp_path, cap):
+>       run_case(tmp_path, f"""
+    <problem>
+    pgen_name=z4c_superposed_punctures
+    <mesh_refinement>
+    refinement=adaptive
+    num_levels=3
+    max_nmb_per_rank=64
+    <z4c_amr>
+    method=chi
+    chi_min=2
+    max_ref_lev={cap}
+    <time>
+    nlim=3
+    cfl_number=0.01
+    """)
+
+tst/test_suite/z4c/test_z4c_overhaul_cpu.py:196: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+directory = PosixPath('/private/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/pytest-of-hz0693/pytest-32/test_refinement_cap_1_0')
+extra = '\n<problem>\npgen_name=z4c_superposed_punctures\n<mesh_refinement>\nrefinement=adaptive\nnum_levels=3\nmax_nmb_per_rank=64\n<z4c_amr>\nmethod=chi\nchi_min=2\nmax_ref_lev=1\n<time>\nnlim=3\ncfl_number=0.01\n'
+executable = '/Users/hz0693/research/hyperboloidal/build-layer-debug/src/athena'
+success = True, slices = True
+
+    def run_case(directory, extra="", executable=None, success=True, slices=True):
+        directory.mkdir(parents=True, exist_ok=True)
+        executable = executable or os.environ.get("ATHENA_OVERHAUL_EXE", "./athena")
+        executable = str(Path(executable).resolve())
+        text = (ROOT / "tst/inputs/lwave_z4c.athinput").read_text()
+        text += """
+    <mesh>
+    nx1=8
+    nx2=8
+    nx3=8
+    nghost=4
+    <meshblock>
+    nx1=8
+    nx2=8
+    nx3=8
+    <mesh_refinement>
+    refinement=none
+    <problem>
+    amp=0
+    <time>
+    nlim=0
+    tlim=0.01
+    <output1>
+    file_type=tab
+    variable=adm
+    dt=0.001
+    slice_x2=0.5
+    slice_x3=0.5
+    data_format=%24.16e
+    """
+        if not slices:
+            text = "\n".join(line for line in text.splitlines()
+                             if not line.startswith("slice_"))
+        text += extra
+        if os.environ.get("ATHENA_TEST_LAUNCHER"):
+            text += "\n<mesh>\nnx1=16\n"
+    
+        source = directory / "test.athinput"
+        source.write_text(text)
+        result = subprocess.run(shlex.split(os.environ.get("ATHENA_TEST_LAUNCHER", "")) +
+                                [executable, "-i", str(source)], cwd=directory,
+                                capture_output=True, text=True, timeout=90)
+        (directory / "run.log").write_text(result.stdout + result.stderr)
+>       assert (result.returncode == 0) == success, result.stdout + result.stderr
+E       AssertionError: 
+E       Root grid = 1 x 1 x 1 MeshBlocks
+E       Total number of MeshBlocks = 1
+E       Number of logical  levels of refinement = 2 (3 levels total)
+E       Number of physical levels of refinement = 2 (3 levels total)
+E         Physical level = 0 (logical level = 0): 1 MeshBlocks, cost = 1
+E       =================================================================
+E       ==14093==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000a38 at pc 0x000101df641c bp 0x00016f715f50 sp 0x00016f715f48
+E       READ of size 4 at 0x602000000a38 thread T0
+E           #0 0x000101df6418 in Mesh::PrintMeshDiagnostics() mesh.cpp:402
+E           #1 0x000101ddba00 in Mesh::BuildTreeFromScratch(ParameterInput*) build_tree.cpp:304
+E           #2 0x0001006e94e8 in main main.cpp:327
+E           #3 0x00018b92c4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+E       
+E       0x602000000a38 is located 0 bytes after 8-byte region [0x602000000a30,0x602000000a38)
+E       allocated by thread T0 here:
+E           #0 0x0001080cc268 in _Znam+0x74 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x50268)
+E           #1 0x000101df52b8 in Mesh::PrintMeshDiagnostics() mesh.cpp:391
+E           #2 0x000101ddba00 in Mesh::BuildTreeFromScratch(ParameterInput*) build_tree.cpp:304
+E           #3 0x0001006e94e8 in main main.cpp:327
+E           #4 0x00018b92c4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+E       
+E       SUMMARY: AddressSanitizer: heap-buffer-overflow mesh.cpp:402 in Mesh::PrintMeshDiagnostics()
+E       Shadow bytes around the buggy address:
+E         0x602000000780: fa fa fd fd fa fa fd fd fa fa fd fd fa fa fd fd
+E         0x602000000800: fa fa fd fd fa fa fd fa fa fa fd fd fa fa fd fa
+E         0x602000000880: fa fa fd fd fa fa fd fd fa fa fd fd fa fa fd fd
+E         0x602000000900: fa fa fd fd fa fa fd fd fa fa fd fa fa fa 00 fa
+E         0x602000000980: fa fa 04 fa fa fa 04 fa fa fa 00 00 fa fa 04 fa
+E       =>0x602000000a00: fa fa 04 fa fa fa 00[fa]fa fa 00 fa fa fa fa fa
+E         0x602000000a80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E         0x602000000b00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E         0x602000000b80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E         0x602000000c00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E         0x602000000c80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+E       Shadow byte legend (one shadow byte represents 8 application bytes):
+E         Addressable:           00
+E         Partially addressable: 01 02 03 04 05 06 07 
+E         Heap left redzone:       fa
+E         Freed heap region:       fd
+E         Stack left redzone:      f1
+E         Stack mid redzone:       f2
+E         Stack right redzone:     f3
+E         Stack after return:      f5
+E         Stack use after scope:   f8
+E         Global redzone:          f9
+E         Global init order:       f6
+E         Poisoned by user:        f7
+E         Container overflow:      fc
+E         Array cookie:            ac
+E         Intra object redzone:    bb
+E         ASan internal:           fe
+E         Left alloca redzone:     ca
+E         Right alloca redzone:    cb
+E       ==14093==ABORTING
+
+tst/test_suite/z4c/overhaul_utils.py:55: AssertionError
+_______________________ test_separate_gauge_amr_outflow ________________________
+
+tmp_path = PosixPath('/private/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/pytest-of-hz0693/pytest-32/test_separate_gauge_amr_outflo0')
+
+    def test_separate_gauge_amr_outflow(tmp_path):
+        settings = SETTINGS + (ROOT / 'tst/inputs/lwave_z4c_bc.athinput').read_text()
+        settings += """
+    <mesh>
+    nx1=16
+    nx2=16
+    nx3=16
+    <mesh_refinement>
+    max_nmb_per_rank=128
+    <time>
+    nlim=15
+    <output1>
+    dt=1
+    <output2>
+    dt=1
+    """
+        shared, separate = tmp_path / 'shared', tmp_path / 'separate'
+>       run_case(shared, settings, slices=False)
+
+tst/test_suite/z4c/test_adm_gauge_storage_cpu.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tst/test_suite/z4c/overhaul_utils.py:51: in run_case
+    result = subprocess.run(shlex.split(os.environ.get("ATHENA_TEST_LAUNCHER", "")) +
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:507: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:1134: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:1980: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: -9 args: ['/Users/hz0693/research/hyperboloidal/build-la...>
+endtime = 2004.637163041, orig_timeout = 90
+stdout_seq = [b'\nRoot grid = 2 x 2 x 2 MeshBlocks\nTotal number of MeshBlocks = 8\nNumber of logical  levels of refinement = 2 (3 ...e+00 cycle=0 time=0.000000e+00 dt=1.875000e-02\n', b'elapsed=4.338023e+01 cycle=1 time=1.875000e-02 dt=9.375000e-03\n']
+stderr_seq = [b'### WARNING in /Users/hz0693/research/hyperboloidal/src/parameter_input.cpp: input parameter <problem>/punc_1_rest_...arameter_input.cpp: input parameter <problem>/punc_2_velocity_x1 = -0.1 was not used by the code (check for a typo)\n']
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['/Users/hz0693/research/hyperboloidal/build-layer-debug/src/athena', '-i', '/private/var/folders/fj/qwzwgh792dz9vbvt3_gdm6l80000gn/T/pytest-of-hz0693/pytest-32/test_separate_gauge_amr_outflo0/shared/test.athinput']' timed out after 90 seconds
+
+/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py:1178: TimeoutExpired
+=========================== short test summary info ============================
+FAILED tst/test_suite/z4c/test_hyperboloidal_native_cpu.py::test_fifth_degree_requires_interior_donors
+FAILED tst/test_suite/z4c/test_z4c_overhaul_cpu.py::test_refinement_cap[0] - ...
+FAILED tst/test_suite/z4c/test_z4c_overhaul_cpu.py::test_refinement_cap[1] - ...
+FAILED tst/test_suite/z4c/test_adm_gauge_storage_cpu.py::test_separate_gauge_amr_outflow
+4 failed, 96 passed in 2004.62s (0:33:24)

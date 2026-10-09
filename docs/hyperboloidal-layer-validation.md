@@ -56,7 +56,13 @@ ATHENA_HYP_PATCH_EXE="$ROOT/build-layer-release/hyperboloidal_cartesian_tests" \
 ```
 
 Repeat the pytest command with both executable paths changed to Debug for the
-sanitizer regressions. These explicit paths prevent accidental testing of a
+sanitizer regressions. The legacy fifth-degree N=36 donor/evolution test has a
+120-second subprocess budget. Its sanitizer trial exceeded that budget; the
+resource-only rerun uses
+`docs/validation/rerun-layer-debug-timeout.py` from the checkout root, with the
+same Debug executable environment variables, to allow 600 seconds while retaining
+every test assertion. The receipt distinguishes the original timeout and rerun.
+These explicit paths prevent accidental testing of a
 production or stale executable. The sweep script makes an immutable executable
 copy in a fresh output directory and records its hash and commands:
 
@@ -84,13 +90,40 @@ The selected 13 Debug CTests passed (197.75 seconds); the four expensive legacy
 spatial/evolution tests listed in the command above were excluded from that
 Debug run, not from the full Release run.
 
+The clean implementation commit `d21fb74ce6ad1308d77aad3be6f39da78eca93a7`
+was checked again with all six analytical/kernel gates in Release (1.52 seconds)
+and Debug/ASan/UBSan (4.82 seconds), an immutable native control, and the complete
+100-test Release regression set (31.13 seconds).
+
 The Release native/Cauchy regression set passes **100 tests**, including the
 11 new layer tests, the 37 original native hyperboloidal tests, and 52 Cauchy
-conversion/restart/overhaul/separate-gauge tests. The final validation receipt
-records the full Debug regression outcome separately. New native tests cover
+conversion/restart/overhaul/separate-gauge tests. New native tests cover
 true nonflat transition initial data, stationary reference, physical ADM map,
 radial/angular live lapse and shift, restart, invalid radii/coefficients, and
 rejection of CMC trumpet data on the layer.
+
+The original 100-test Debug/ASan/UBSan development run finished with **96 passed,
+4 failed in 2004.62 seconds**. Failures were the legacy fifth-degree N=36
+120-second timeout, two refinement-cap tests exposing a pre-existing
+`Mesh::PrintMeshDiagnostics` heap-buffer-overflow, and the 15-step separate-gauge
+AMR outflow test's 90-second timeout. The fifth-degree rerun passed unchanged
+assertions in 274.97 seconds with a 600-second subprocess allowance.
+
+The mesh diagnostic allocated `max_level` entries but read the inclusive highest
+physical level. The identical defect exists in the starting commit. Commit
+`49e3ee3d17c51767abbd1b53492113869ee269be` allocates and initializes
+`max_level-root_level+1` entries. Both affected refinement-cap tests then pass
+under ASan/UBSan (53.22 seconds), and the complete Release regression set passes
+again (100 tests in 31.11 seconds). This fixes a startup diagnostic, with no
+change to the evolution equations or AMR policy.
+
+The 15-step AMR outflow sanitizer test was not completed with a larger budget;
+its original run timed out after the first refinement cycle. Its complete
+Release test passes. It remains a Debug resource/coverage limitation rather than
+a sanitizer pass or an established numerical failure. Layer AMR execution is
+explicitly rejected. Thus this work does **not** claim a clean single-run
+100-test sanitizer suite. The original failures and successful rerun logs are
+preserved alongside the negative layer experiments.
 
 The compiled principal-symbol gate checks 180 cases: lapse .2/1/3, chi .4/1/2,
 10 radii including exact harmonic coefficients, and aligned/oblique sheared
@@ -184,6 +217,13 @@ chi=-.00329868, determinant~1, P=-1.70794 and Theta=.637537. Its last saved
 history at .026234375 has H=.272433, M=.769985, Z=.0387347, Theta=.0109638,
 null deviation=5.42798 and pole deviation=8.16786.
 
+The native null diagnostic is the interior-shell difference
+`|C-Omega^2*N_hat|`. The pole diagnostic is the maximum geometric kernel pole
+numerator difference from the reference, including the trace-free curvature
+sector. Neither is a closed live evolution for `N`, `Sij` or `W_Omega`, nor an
+evaluation at exact scri. Analytic shear checks cover the reference and the
+specified counterexample; no compatible live shear limit has been established.
+
 Even the **unperturbed** N=24 reference requested to t=2 fails at mesh time
 .19096762207, cycle 670. Its failing lapse is -7.33916e-5, chi=493.461 and
 P=-26.7647 at (-.74375,-.65625,.04375), Omega=.00712890625. The last saved history
@@ -236,6 +276,14 @@ The earlier root-level batch hash alone does not identify all cases. Final
 control and long trials use immutable executable copies and their exact hashes.
 The two diagnostic variants have the same evolution equations; the later one
 reports the first invalid state.
+
+The long Debug pytest development suite started before the final diagnostic
+line wrapping and relink; subprocesses use the executable available at launch.
+It is recorded as development sanitizer evidence rather than a single immutable
+binary run. The clean-commit gate/control reruns above have unambiguous source
+and executable identities. Exact intermediate source snapshots for the early
+dirty-tree sweeps were not retained; their executable hashes and commands are
+preserved, and the final implementation file hashes are recorded separately.
 
 A first N=16 setup on [-1.05,1.05]^3 was rejected because the cell-centered patch
 did not contain the sphere's complete halo. Enlarging it to [-1.1,1.1]^3 was
