@@ -1,0 +1,195 @@
+{
+  "name": "N20-span2.2-ray-ko0.1",
+  "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+  "export_command": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+    "20",
+    "2.2",
+    "ray",
+    "0.1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N20-span2.2-ray-ko0.1"
+  ],
+  "export": {
+    "n": 20,
+    "span": 2.2,
+    "spacing": 0.11000000000000001,
+    "active": 3112,
+    "unknowns": 6224,
+    "ghosts": 3608,
+    "closure": "ray",
+    "ko": 0.1,
+    "layer": true,
+    "boundary_rows": 2024,
+    "ghost_quadratic_moment_error": 7.616129948928574e-14,
+    "max_ghost_weight_l1": 10.318574903507491,
+    "strict_active_nonrecursive_donor_references": 88992,
+    "native_matvec_error": 4.092726157978177e-12,
+    "native_gradient_matvec_error": 4.973799150320701e-14,
+    "gradient_constant_error": 1.3433698597964394e-14,
+    "stationary_K_error": 2.6645352591003757e-15,
+    "pure_CMC_R_error": 4.440892098500626e-15,
+    "R_min": 7.336160357167035e-05,
+    "R_max": 26.372469894547066,
+    "min_abs_incoming": 0.00013291688274286542,
+    "max_abs_incoming": 0.9999999960284044,
+    "max_outgoing": 3.9540170831172574,
+    "min_L": 1.0000000025870583,
+    "outward_crossing_time": 0.7457643839234269
+  },
+  "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+  "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+  "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+  "build_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "numpy": "2.0.2",
+  "scipy": "1.13.1",
+  "matrix_sha256": "8fae66d02b91714680c6f6c922aea8f0317263f4fab21130d9f0003f85ca60c2",
+  "points_sha256": "3226bd30fa89d4210a8170eebac3fcd03a06039abf71cac893934b733b11c755",
+  "headers": {
+    "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+  },
+  "spectral": {
+    "scope": "converged ARPACK LR8, no full-spectrum proof",
+    "seconds": 1.3800391669999998,
+    "modes": [
+      {
+        "real": -0.22406904444443027,
+        "imag": 0.0,
+        "residual_l2": 6.826295748738254e-13,
+        "squared_mode_fraction_r_gt_.8": 0.8641047109021591,
+        "radius_peak": 0.9884710415586286
+      },
+      {
+        "real": -0.6962720852741263,
+        "imag": 0.0,
+        "residual_l2": 6.646067068554604e-13,
+        "squared_mode_fraction_r_gt_.8": 0.9046731000476506,
+        "radius_peak": 0.9884710415586287
+      },
+      {
+        "real": -0.6962720852741853,
+        "imag": 0.0,
+        "residual_l2": 5.440263481889685e-13,
+        "squared_mode_fraction_r_gt_.8": 0.9046731000476509,
+        "radius_peak": 0.9884710415586286
+      },
+      {
+        "real": -0.6962720852742279,
+        "imag": 0.0,
+        "residual_l2": 6.145797752060829e-13,
+        "squared_mode_fraction_r_gt_.8": 0.9046731000476512,
+        "radius_peak": 0.9884710415586286
+      },
+      {
+        "real": -0.972855746069866,
+        "imag": 0.0,
+        "residual_l2": 1.400038812523535e-12,
+        "squared_mode_fraction_r_gt_.8": 0.6945565600891871,
+        "radius_peak": 0.9884710415586287
+      },
+      {
+        "real": -1.4483080453371504,
+        "imag": 0.0,
+        "residual_l2": 1.959951043660179e-11,
+        "squared_mode_fraction_r_gt_.8": 0.9325804211772355,
+        "radius_peak": 0.9382297160077591
+      },
+      {
+        "real": -1.4483080453401795,
+        "imag": 0.0,
+        "residual_l2": 7.407782620364395e-13,
+        "squared_mode_fraction_r_gt_.8": 0.9325804211772353,
+        "radius_peak": 0.9382297160077592
+      },
+      {
+        "real": -1.4902037898593226,
+        "imag": 0.0,
+        "residual_l2": 6.868269172430822e-13,
+        "squared_mode_fraction_r_gt_.8": 0.9079055775666469,
+        "radius_peak": 0.9884710415586286
+      }
+    ]
+  },
+  "initial_exact_pulse_discrete_defect": {
+    "phi_rms": 0.0007414527663678877,
+    "pi_rms": 0.0432147608467819,
+    "linf": 0.49263857554317103
+  },
+  "pulse": {
+    "method": "RK4",
+    "dt_nominal": 0.002781980899113327,
+    "dt_factor": 0.1,
+    "stop": "requested time reached",
+    "steps": 2157,
+    "last": {
+      "time": 6.0,
+      "phi_linf": 5.906611242857932e-06,
+      "pi_linf": 1.9086957014697842e-05,
+      "both_linf": 1.9086957014697842e-05,
+      "error_linf": 1.9086957014697842e-05,
+      "error_rms": 4.818978924207847e-06,
+      "phi_error_rms": 1.927063430462338e-06,
+      "pi_error_rms": 6.536936765710186e-06,
+      "killing_energy": 4.811833537949152e-11,
+      "sampled_exact_killing_energy": 2.2356440741135045e-235,
+      "positive_normal_energy": 2.4061575940905775e-10,
+      "sampled_exact_normal_energy": 5.76972008783103e-236
+    },
+    "initial": {
+      "time": 0.0,
+      "phi_linf": 0.004028488365353679,
+      "pi_linf": 0.037149544548627816,
+      "both_linf": 0.037149544548627816,
+      "error_linf": 0.0,
+      "error_rms": 0.0,
+      "phi_error_rms": 0.0,
+      "pi_error_rms": 0.0,
+      "killing_energy": 0.00031790593520343195,
+      "sampled_exact_killing_energy": 0.0003128544623251709,
+      "positive_normal_energy": 0.00028704000276738036,
+      "sampled_exact_normal_energy": 0.0002861438309511186
+    },
+    "peak_both_linf": 0.037149544548627816,
+    "peak_positive_normal_energy": 0.00028704000276738036,
+    "peak_killing_energy": 0.0003189057880319653,
+    "history_sha256": "80eb8de07cfa9e0624af7b51d74cba0194bc8990d9f5a02dc43ad61b5584ef03",
+    "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N20-span2.2-ray-ko0.1-dt0.1-pulse.json",
+    "wall_seconds": 3.674443542
+  }
+}

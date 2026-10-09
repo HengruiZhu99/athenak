@@ -1,0 +1,27 @@
+{
+  "scope": "Necessary nonlinear scri values for the scaled spatial-norm gauge.\n\nAssume the harmonic outer collar, positive spatial geometry/lapse, finite\nconformal trace Q, vacuum Theta_phys=0 at scri, null N_raw=0, and finite gauge\nRHS. This proof does not establish preservation under evolution, constrain\nfinite A/Lambda/angular metric limits, or resolve off-constraint finite Q.\n",
+  "head": "f615acf4356206eceddc59fa929fcc15a671fe09",
+  "sympy": "1.14.0",
+  "source_sha256": {
+    "build-layer-research/spatial-norm-zerojet/proof.py": "9b2eb2c1865442e56cc23323e7d2075f596daa83e986eae2f27900260cfd707e",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/spatial_norm_control.hpp": "c44d0f2b3940d94d77f9b6c920401d2b1eb7b20dbee67a160e873a5a604781ae"
+  },
+  "assumptions": [
+    "W=1, xi*a=1",
+    "1<=rho=eta*a^2/S<=5/2",
+    "alpha>0, G>0",
+    "N_raw=0, finite Q, Theta_phys=0 at scri",
+    "both gauge pole numerators vanish"
+  ],
+  "result": "Only alpha_scri=alpha_ref, beta_rad_scri=beta_ref, G_scri=Gref; tangent beta components are fixed separately by their pole.",
+  "derivative_numerator": "d*z**2*(3*z - 4) + (1 - d)*(4 - z)",
+  "minimum_d_polynomial": "9*z**3 - 12*z**2 - 2*z + 8",
+  "bernstein_coefficients": [
+    "8",
+    "22/3",
+    "8/3",
+    "3"
+  ],
+  "evolution_preservation": "Not proven; initial jet gates and full tensor evolution are independent requirements."
+}

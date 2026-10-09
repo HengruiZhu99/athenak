@@ -1,0 +1,3245 @@
+{
+  "preserved_at_utc": "2026-10-09T06:29:54.084458+00:00",
+  "head_at_preservation": "f615acf4356206eceddc59fa929fcc15a671fe09",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "build_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "oracle_build_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/continuum_oracle.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/continuum-oracle",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "export_source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+  "export_executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+  "oracle_source_sha256": "d9f1c1e5f3669f9558a0ee2405816155278f70f7d5058c0a938826ce5fca246f",
+  "oracle_executable_sha256": "af55a97852995dc91a4ba29786741b6f26e34ce6892258ce71b82972832a3c7a",
+  "dependency_sha256": {
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/SDKSettings.json": "7b93ad7e534cc4b31c6a4e39d19b5e0288acf2168c2649479a796d1cb51939fb",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+    "/Users/hz0693/research/hyperboloidal/src/athena.hpp": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Core.hpp": "8495df3af73cbf0eb7f760f504a1e3279982c451d56cb64a473df45875a46c37",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Core_fwd.hpp": "5d7b3d94bec55f1beaec74c870819ff3371166a35813dcb60b1fc47406934aa9",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Macros.hpp": "92b786e668e577b454d254531a1e39523e1f2b7eebab43e848ef38a909c6aecf",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/KokkosCore_config.h": "e9c50e173f81b345c44926fa0e51928b81111ffddf8800da23203006f9e7d61f",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_DesulAtomicsConfig.hpp": "96ddc3c14dbb9dba2853b0d94a8f3c2455f11bcb8696456add2b2ab4ae787263",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_NvidiaGpuArchitectures.hpp": "7858fcb4f045f4f3f723a00b4a3daa3467fa969584bb207d2db4e33074860c31",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/KokkosCore_Config_SetupBackend.hpp": "3cde2dc1673dd911bbaac6024a7646eff22e0932ebbe5a7a4fed7261848c5029",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Printf.hpp": "4ca18f47716666f0485d681a4d0c90579cd71ce9a3dbc8c46d6c7430f0463116",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Error.hpp": "96424ecbae08b533bf9a8540577689717223a59c50131cf809537d109519a131",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Abort.hpp": "b04d4d4bb784e4efe97b700bc6bf01be89f30b2fe934efec983b17c36b451b04",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Assert.hpp": "716c5ef59fcca2e4e9edf50454cb9f967af3895f23a70bb023be3486e2111f63",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Utilities.hpp": "73b365e23e601cefec68930b9c8de542fa28b8836527920a654349a9a1ae7eae",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/KokkosCore_Config_FwdBackend.hpp": "a155e6bb941a833c7dce5e8df24e19fa70d23bebb1a7ff11b9f5ccf4f4486036",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/fwd/Kokkos_Fwd_SERIAL.hpp": "41792ad4f899744e7316093e1ba9c614988abbf7d61d9b1f35c414c1c65e893e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/KokkosCore_Config_DeclareBackend.hpp": "259683468913b523025b07f976de2b00b1b7ad28214ed2deefda97e5157c3086",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/decl/Kokkos_Declare_SERIAL.hpp": "7a7dcf349e159edf2ca872a6b92d7cbf502e212ea9b3cf81ca977ab24df07354",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial.hpp": "a7ff7c6ff332cb48073b93d7b9b313b70c3478eaa2cf65ee0399279b444b1bd4",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Layout.hpp": "a562e7d85709b32cab92cea5ed9e431f31b74acf321fcfa778789e0515dfe659",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Traits.hpp": "c93277d6363576a48dda83ccba026e20cac2a2b283f3952ed531a34d90ce5baa",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_HostSpace.hpp": "3c6ce24050c8de25a3fd15569596790e77746079b1ee5e102c15be41dce4c37e",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Concepts.hpp": "779486767ad65e41a13e9253b95ecda2228db2720d47704ce39fb49647369b58",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_DetectionIdiom.hpp": "a52984686cd48fb99d800cf8657eefc6c19a07122837007c24ffa7af7c1a6036",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_MemoryTraits.hpp": "58df7c4300b0033fc78befc4e406b117bb9fbae7e122ad46e2b49da123321c01",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_BitManipulation.hpp": "35325b9b9a887dafbf92effb0f2012ad6900679c01709ecbec5c3ab3e797f73b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_NumericTraits.hpp": "acb9f6ccbac75dd96dd7410f35770cc2283b89c50e4eeef118b0cba6e801bacd",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_ReductionIdentity.hpp": "adf0f291a7b4eea67f6d38086574e2a5bd87186d339fa82869a25e6e6f848b7a",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_SharedAlloc.hpp": "860cb1b87271fbaeb7e2af3aa1e50de2c791f5619f66048381e801af7deae674",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Tools.hpp": "1f7959a81fd10599e32e87d20c58d516fd14e9b499cfd3e6d0ffee4834b71bdb",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Profiling.hpp": "8f61b50bb024ba356c7f7d180940bce2e3387d0a557054f9fc15338b02570643",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_ExecPolicy.hpp": "6fdb8a85b2d1b52725f2a04cdb256468c01ddd0a06fb72540aa1832f83d45686",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_AnalyzePolicy.hpp": "6d6c85fb5276a67deb3d211aab16e3c206aeb1c6bcf743e4a3ac308407ad0a83",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_Traits_fwd.hpp": "a8c5eb59bc9b1b9a345d4f43f82e2b16376294110613dac52a6bf84be3622665",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_PolicyTraitAdaptor.hpp": "e483fadaee0b09b1be9c1ce4f0573df27f84f0d7ff21472504603ef63c4836b3",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_ExecutionSpaceTrait.hpp": "4892c2a57e766ca962ddead65dd3e567d95d52ebf0369660147cdf9364eb4050",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_GraphKernelTrait.hpp": "fd102158f39f553c2e3bb3f050bfeb071633701d14ae85e604916128290cc727",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_GraphImpl_fwd.hpp": "c476458d61fcbc9d3104f5e7029f32e72bc67b5d402baf7b7572e09bcaa70a53",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_IndexTypeTrait.hpp": "e6abc88498cfddb8c5f0d113aebf5c5d334b40efe9a9a49ea28121d51beb100a",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_IterationPatternTrait.hpp": "9d8dab7d1fa557514f6abb7623997578204a0cfee4f3df36caaac11b93b4e2b8",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Rank.hpp": "858991adccff826c6e956bd4109e268b600e948f76bc0a63b5eed797c08b2e0b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_LaunchBoundsTrait.hpp": "ad4b7317c6ee0643c93987e56477d271bd72992ea4438cb461a133adcd11490c",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_OccupancyControlTrait.hpp": "7cf5340734fda24f3e56c98e8f09769db8addf9ce92eb7e19807696e416ba481",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_ScheduleTrait.hpp": "ef7be97363d9a4aab9d62e58b8a7dda4dc354c708f322d70cc4b8258c8f82a22",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_WorkItemPropertyTrait.hpp": "bd6f94946c4be87c8025d647cc5738c4eacde26b3316a8174fadf0f71d0e355b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/traits/Kokkos_WorkTagTrait.hpp": "5618fc4e489965214a8dd4c2103f7ea5811d39955502b729bb6777031d2cc0c2",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_TypeInfo.hpp": "419993d5205284b8c17a51b5dfd7b190aa0874c19ed691318badee9f8969dd73",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Tuners.hpp": "324dc9c21b6fd2ab31cfbae037bd5c3e96f1199e68fa3e50188e496ec8cebecf",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/KokkosExp_MDRangePolicy.hpp": "2ea86d48235e8307702370f3671dd301846928f2e23173596b73b49552917025",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Array.hpp": "b456f19bfbaacbde71eac0dca33c822f9d825c515b884d35890ae759fd649c2d",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Swap.hpp": "dded76f83b034fcb56c3e26c169979e1b67d3fc14e2c176c4526ed6a0347bd50",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_StringManipulation.hpp": "c7b89c7d14a059d9658cce3011f252ad0bff2dfbcb289b524fa23a379456883b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/KokkosExp_Host_IterateTile.hpp": "cfd687b7293a0f05b711653a33629478180d62e20d6494af68a7a8f373e62fe2",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Profiling_Interface.hpp": "a606c6789f9ceae0a860501dc73a643185bfb4857f32930b23648b442ace73c2",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Profiling_DeviceInfo.hpp": "cef0e6e7ecbd890a1880bf24fffc2eae531d2826b6442847f086345d77f60ed2",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Profiling_C_Interface.h": "5c7276a527609c2d62292fe6a602addb9e945f84ab828244a4e30c287235277d",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_HostSpace_deepcopy.hpp": "79a43bd17b48e11237a0be6ce70ef9631a58b4eedea9dad58a1c54e32bb069d4",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_ScratchSpace.hpp": "070208b5af47fee9243591208752ee638fa1de0906062c9635f332978e800b85",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_HostThreadTeam.hpp": "9f86b68555943d8effb8e3781e0d1fc83963ebf18e45f03de96dab502076c008",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Pair.hpp": "0f86e28b6a15704c7e65f82c28f0c30bfed1af1e40463c34f9ab6684cf507c42",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Atomic.hpp": "4a37c86c07a7f1ed5ca11a3c91f41d7d55688df2900a85e18f9a43cd6a57ab97",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Atomics_Desul_Wrapper.hpp": "85582ca6ee4a95894f591649630e8218162388a9c7dc997b4784bc70e9632ec2",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Volatile_Load.hpp": "6c2e33f6bf4ad496508ac7d168484d57a14288c1b8a9ab4e353e4f5cad68472b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_FunctorAnalysis.hpp": "c2466e8d19c2680b44be8ae7a7d8d3bf64f8d96ed15e38a2bdb809b925389226",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_HostBarrier.hpp": "a4c8fa6b5525ab0a70bc375f089a44956bdbc55a1768d64c759e05ba390a6ea9",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_HostSharedPtr.hpp": "c4160aa157e65f335747479ca8cd0a7b1f82a49a0ac69fe4f2fb0afac1e32e77",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_InitializationSettings.hpp": "f4504fca2a3783229445630e685a53754e7e9bea7a340d1021190f9845b86d5f",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial_Parallel_Range.hpp": "eab2d67fbe71a313a9e81ce3202465b889b59237eb4c4024bff71b96cf5f9fc2",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Parallel.hpp": "a12e7d3b4e29afe7948a6f6ef1d69cb12d29c668d4a82de8802b39ae93029107",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_View.hpp": "0b6ae712a3541a7adbfbda28967122ae417bf22ca507445aeb1b2d48db110eca",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_BasicView.hpp": "98f8d0400754e3bd19f6141e430ca079436b49fb6f66e70764a8e45fdce9b69d",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewAlloc.hpp": "f7665bb2bf0f0a6bc3388477b46e358f28034d09dfbc2e12ec7a4111077f7a9e",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_ZeroMemset_fwd.hpp": "d30eada2ea1bbb1e94649be39b679e3c9936f726c330518cff41a5f30fc43cdf",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewAccessPreconditionsCheck.hpp": "dd939ce23b9a9ffe93450dcbdfbd85673129ee149babd727679af817491f103a",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Header.hpp": "6d29c398c02d36fa949f4b83f10bc1f44c8866c4277b7e6af82fcb3bae64c7e0",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewCtor.hpp": "487f1b691f8854998da030738e617653e0994ab68838fe2331024bd5c3de8b31",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewTraits.hpp": "aa798eec2753c82f118df63a13202cb12fa27bc78dd0b7af4bcfb9c46df4c2f4",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Hooks/Kokkos_ViewHooks.hpp": "b4f7970398c91f33cc88ca63a5af484c47970831689bb9c3189fbfc72ddf8451",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Layout.hpp": "d4f2314ea331ce4856d2f60fccd9c76a17a1f32d775905650c3cf00f48b93e6b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Extents.hpp": "2b251dbdbd771989575ccc432ab3a3ffb84f5f4558fb492a1a005fc62925b310",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewDataAnalysis.hpp": "b383582edf996591554af2b42bf80da57cf00ba14474dc7de72c0993ad4f58e1",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Accessor.hpp": "69af6148043601c4f24e97a366c8a54a79b8f723965f51360332e099d1f412b3",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewLegacy.hpp": "6750044d192d635b926f4832b9ad1149c51c8586ee8d00c01822da9b9da3654c",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_MinMax.hpp": "607817e9771f27f0204032ad488332fd784bde4dc31d284c76444078cfbebd86",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewMapping.hpp": "1b4de572cda19dedbd9bc63528518d183609ca1c7264414183ba37cdb332680c",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Extents.hpp": "6fdc7ee88eb49a56eddb40a683a2be36980350c88c44a218e838b89dd28fb718",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewTracker.hpp": "ee7aa425e77ba96e4fb8a87694d0fc00ffe2d16996357048184e73c41ca45b11",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewAtomic.hpp": "ce0f4e19ae7d976bbc9bc1284b954543fad9624903d03ff3390029cde9454535",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewCommonType.hpp": "3909199652489ffa3cd086af6e05159c225591492c53ea4de81fb217855d67b1",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/View/Kokkos_ViewUniformType.hpp": "427c8bc1f1a975a1bda50aba7cdabf727f5a3b7f71d26dd10d84349fad29dd33",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Tools_Generic.hpp": "3c3e9c32abfef836deec15609e520409d6aaab9d87ac71f7f9a621ab317248af",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Parallel_Reduce.hpp": "c686e148a97fce3d659d9e47534082a8e2e17970c29718f5127279202343960a",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial_Parallel_MDRange.hpp": "f7ed2f95f76d0018b648c290f33b2bae2b0fb20fbc5e54f17fd0047b899b867c",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial_Parallel_Team.hpp": "4f3894e193326aed376abd5d3af8a4bdb15a142fdc1497ea60e7ac4090c27d8f",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial_Task.hpp": "72543797c63401ad642f97cf1f4dc47f6e8bfb407f1b83e9147c164799703687",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_TaskScheduler_fwd.hpp": "1f5d184b247f6abeaf198309ba3ea48f01b548faa71f306edd26682f0d670641",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskQueue.hpp": "8ba90a53d1894689c60ea33f07042fd0d1a7dfb49cc40131c6cb645db3da6568",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_MemoryPool.hpp": "627a41e42a5a01acaa4ef54df192c89d07e543e68696fa5f081563f45cb0848f",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_ConcurrentBitset.hpp": "23818d06e06b727c7f1f474a64786067870d6beedda2dcace52242dba689f568",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_ClockTic.hpp": "4c511582297cd5f396bd12b709768d0c67d6fab62e8b29084af9d76c65487409",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskBase.hpp": "e0b005a1ac5d716555ec78b6fa16ca8d0dcc84ae09a53a5c52ca04ac1dd74a8a",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_LIFO.hpp": "f3ddbbe44a365741805c6f7c14a4b00e9c69686d2383561a8f6384c36bcd002c",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_PointerOwnership.hpp": "78105799909ab48f7f388bc58d9f5b1a53764d3f838858ffe5744f49ad34af3e",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_OptionalRef.hpp": "465c7653dea6e9247791bca86ff614175dd687563b001f474f28c7c87fd3c8fd",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_LinkedListNode.hpp": "dd2d009c57b18e891d6b2ab0373d9bd8663e4a383ac9c88afadd55702d27a0c4",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskResult.hpp": "236d0f5e93c76c5819b3b5a49a5baedabc0805969ea2c506bfbe88df76bdea6b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskNode.hpp": "e2391275340e00beb7a4e1a907dfa8bdc8215f262e1de18178eb1ad299601e17",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_VLAEmulation.hpp": "5e473d8ccf510a5528fd2f52068e3fce92405b2bc7f475aec77cda7e8fd4419c",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_ChaseLev.hpp": "640964f5f65a88166349507cb4417591959c84282ef9ac5a7e1272b875cb8dfd",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_EBO.hpp": "8b7114bd425940dc3e550cfa0da997ca618f6ed33d4586703c9d64581a8d4e43",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskTeamMember.hpp": "79a9474163ae1162c7d6e9539c314d6172725501619262e996cf679244423341",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Future.hpp": "e070ab0fdac3bde10df5a4f61dfe3c7fb21e7530e547021378cc1138be9f8213",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_SingleTaskQueue.hpp": "5ae4381b5f7e2dc44bab8e92e0079575d276d4c25c8c664fdd1041822eda07ff",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskQueueMemoryManager.hpp": "53e40da6d69d7c7ea1d04a4741794f17d3c12fd01139ebd9b66777daa38b9ba6",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskQueueCommon.hpp": "b2d5617353f582df3d4d89d11b88e91bf8e8a47ca61a18d45b7e18c5bea93522",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskQueueMultiple.hpp": "d09621919402f51d0252a9d993f394f70faa147d31cc7042f12b89a5203457c7",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskQueueMultiple_impl.hpp": "96a766de76962601521fb18ebbc49434c5e6bf04231cd894f1e1d6b27eba53fc",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TaskPolicyData.hpp": "f17f374566f751b7bf8b6f91eabd045d18f4ff68336a1c741f6218561ca1f568",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial_UniqueToken.hpp": "3b899a26a39db9616d418b1bd8d8310401c9cc5eb6fccfa95ade1780cae2822f",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_UniqueToken.hpp": "3345e1885c8863a77b0694aba34ccf1fd28cc7cfc20c0c9b95ae31ee49c51a4a",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial_MDRangePolicy.hpp": "3b83d9743810c4236d642d6e8fc13642ea99585e10163242ac1fdfcfa8096ba1",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial_ZeroMemset.hpp": "9dae717c5bec3f64b6dbc8cc6ec8c5af24515ff6a592858571ed70333f9ae273",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Half.hpp": "6b349d94e39cda920dcd4926ebc3193e332b20a337988974c675041c674d6b6d",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Half_FloatingPointWrapper.hpp": "c64132473099d73489e69990ba6fe1cf4e48e08bf8af2125b57d382485c6a33b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Half_NumericTraits.hpp": "43bbfb9e943c7a8cf03c7af3d7dde75cbc86bd1edd8e0fd498d585df20cbd5aa",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Half_MathematicalFunctions.hpp": "6f393b65b0c7d1f9cbc238601ba733466a5a32c9cca49c9020daa146ed1d9efe",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_MathematicalFunctions.hpp": "aebd6b1e3a127898bf0592959de1adf8463ef33880141d6a410d16b8f59daaad",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_AnonymousSpace.hpp": "f5a9aea55abb8d16132e19e553f356626bffe599641c37fc80757009e96373e6",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Clamp.hpp": "89042894faa0c505297e3e3d0e7fccc8f945263ef2ef2cc73e50fa1dd103db72",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_MathematicalConstants.hpp": "adca290b02b58884315f6715d135aea3c51a9c6d56e431424516ee67d49ca01a",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_MathematicalSpecialFunctions.hpp": "77785af4618adffc9a3df4db5678246debafb1c9f8cf6bf7cd2d3fb9c5e8fda1",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Complex.hpp": "d2059bb07f4ce26cc59dc9f80222f10420c25b6e3c19e8a7ff4aa44e660bfcbf",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Vectorization.hpp": "768d81bcd63205ebe8a680595bd07be518d2615d621651316bc0d0cd44093b58",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_hwloc.hpp": "a202568000d793cfe6306c9a2c8428b3a56a6a0d922e16ac7e1ef86ce1b4fb16",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Timer.hpp": "ccffd03e1c52db2d7c1713f25dd35127cf8728929085cdd65f13a63c30bf3549",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_TaskScheduler.hpp": "b2f369bf178bfb5289cddc8ec43033bed66fff6faa945feb058f53be6507eb79",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_SimpleTaskScheduler.hpp": "4b23b8b11e5e7dbb0713c5c9bea3741ec5f65f5a03f24163a8de649a68c79b4f",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_MultipleTaskQueue.hpp": "b9eac169440df837d760444b08952643301f1083ad9a5279ad3114e2533407c0",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_CopyViews.hpp": "ccc7a7ba1e5303a38699691d4c6bb48297684cb34d5b95332af945170dec1d8e",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_HostSpace_ZeroMemset.hpp": "a0416d8965f754acc5a1790a17fe9e2640d3c727e181f87d5cb84750077c5ad9",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_TeamMDPolicy.hpp": "706e787852ce98c18152ab23da02de93b69d8c45892bfb937b0c538bd3bb9395",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_Crs.hpp": "e25691b5c3ffa1cdb5ef130bb5fc77d4480c9c36dcb92cd65e91d4802e34868b",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_WorkGraphPolicy.hpp": "d1d42baa0403e625f792ca34d7659279361071fee8c9d947e25809992dabb6a2",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Serial/Kokkos_Serial_WorkGraphPolicy.hpp": "3da3e63038cc8302c08b924ac948cb94b2110570f8c45590180d9d1a9c5932e3",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/impl/Kokkos_Combined_Reducer.hpp": "f173e0da6b487da5bc7b79cda558db4c3994056f24d3bc7733a2bad942c8ed36",
+    "/Users/hz0693/research/hyperboloidal/kokkos/core/src/Kokkos_AcquireUniqueTokenImpl.hpp": "9a48e85ad6504261032b24dc1328965903c4adaf4a985b6d024a9e8fd4917a2a",
+    "/Users/hz0693/research/hyperboloidal/kokkos/containers/src/Kokkos_DualView.hpp": "336a2ea67f7ae34c6b3d5fcbe5867807095cb9c06071da103872488448421efb",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/config.hpp": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08",
+    "/Users/hz0693/research/hyperboloidal/src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+    "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+    "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+    "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+  },
+  "static_library_sha256": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a": "0977f828209a275f30a309d53232823d2365c365cc360c4a73304ae35c387449",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a": "ccf66be73da7dfc6212bdd9e9dc565c23103cb25e5930607c7435aa80ab9d27e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a": "af424c75a007f445d8168618e578d19dce510501bc415d1b99f20a1eb04eb2d2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a": "728c926314e60f3fc7aef1ec686e84153c97d4968f6c1fbc804a39acc57fdf00"
+  },
+  "production_source_headers_match_27c19d20": {
+    "src/athena.hpp": true,
+    "src/utils/finite_diff.hpp": true,
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": true,
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": true,
+    "src/z4c/hyperboloidal/layer_reference.hpp": true,
+    "src/z4c/hyperboloidal/cmc_reference.hpp": true,
+    "src/z4c/hyperboloidal/cartesian_radial.hpp": true,
+    "src/z4c/hyperboloidal/spherical_tensor.hpp": true,
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": true,
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": true
+  },
+  "numpy_version": "2.0.2",
+  "cases": [
+    {
+      "receipt": "N16-span2.2-mls-ko0.1-dt0.1-receipt.json",
+      "sha256": "67216e60067249d1cfc0e915a0162695941d1ec198f8b0298c89dcf99b1731c7",
+      "data": {
+        "name": "N16-span2.2-mls-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "16",
+          "2.2",
+          "mls",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N16-span2.2-mls-ko0.1"
+        ],
+        "export": {
+          "n": 16,
+          "span": 2.2,
+          "spacing": 0.1375,
+          "active": 1640,
+          "unknowns": 3280,
+          "ghosts": 2480,
+          "closure": "mls",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 1208,
+          "ghost_quadratic_moment_error": 1.8386681066573374e-12,
+          "max_ghost_weight_l1": 34.23537848281662,
+          "strict_active_nonrecursive_donor_references": 211096,
+          "native_matvec_error": 2.5011104298755527e-12,
+          "native_gradient_matvec_error": 2.842170943040401e-14,
+          "gradient_constant_error": 1.36501920877663e-13,
+          "stationary_K_error": 2.220446049250313e-15,
+          "pure_CMC_R_error": 6.217248937900877e-15,
+          "R_min": 0.016226492768121048,
+          "R_max": 26.07701716634274,
+          "min_abs_incoming": 1.8186290818648697e-06,
+          "max_abs_incoming": 0.9999960983038387,
+          "max_outgoing": 3.9946075563709194,
+          "min_L": 1.0000021725015915,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "eae4e7f15cb9f43ca99c2d3ecf3e9ffc5f58e719945f8a9d4771d39f9f3b9131",
+        "points_sha256": "2fd514e52789081fe4ebe40e4def5641aa00546e4bf664de94e37f3e721eafdb",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 0.7701527079999999,
+          "modes": [
+            {
+              "real": -0.16566447757188765,
+              "imag": 0.0,
+              "residual_l2": 3.2500638714408815e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8897926328750245,
+              "radius_peak": 0.9986514344354592
+            },
+            {
+              "real": -0.6584133030153075,
+              "imag": 0.0,
+              "residual_l2": 3.486522164574703e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9130567408363298,
+              "radius_peak": 0.9986514344354592
+            },
+            {
+              "real": -0.6584133030153538,
+              "imag": 0.0,
+              "residual_l2": 3.0381720840675406e-13,
+              "squared_mode_fraction_r_gt_.8": 0.913056740836331,
+              "radius_peak": 0.9986514344354591
+            },
+            {
+              "real": -0.6584133030154158,
+              "imag": 0.0,
+              "residual_l2": 3.295946690127301e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9130567408363311,
+              "radius_peak": 0.9986514344354592
+            },
+            {
+              "real": -1.0137296935950921,
+              "imag": 0.0,
+              "residual_l2": 6.204926734935439e-13,
+              "squared_mode_fraction_r_gt_.8": 0.7094075529284153,
+              "radius_peak": 0.9986514344354593
+            },
+            {
+              "real": -1.5371096280618222,
+              "imag": 0.0,
+              "residual_l2": 4.2654669014605535e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9262530034331274,
+              "radius_peak": 0.9986514344354591
+            },
+            {
+              "real": -1.537109628077095,
+              "imag": 0.0,
+              "residual_l2": 9.538762560625869e-11,
+              "squared_mode_fraction_r_gt_.8": 0.9262530034331997,
+              "radius_peak": 0.9986514344354591
+            },
+            {
+              "real": -1.67989164827719,
+              "imag": 0.0,
+              "residual_l2": 4.328884772365047e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8935680370017266,
+              "radius_peak": 0.9600415030091147
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.0002466371987239795,
+          "pi_rms": 0.0059270889560671496,
+          "linf": 0.028141603057284564
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.0034421403870000702,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 1744,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 4.455308374642108e-06,
+            "pi_linf": 1.420680576968523e-05,
+            "both_linf": 1.420680576968523e-05,
+            "error_linf": 1.420680576968523e-05,
+            "error_rms": 3.7143222254522235e-06,
+            "phi_error_rms": 1.4773196972556121e-06,
+            "pi_error_rms": 5.040823910937309e-06,
+            "killing_energy": 2.7399775958523323e-11,
+            "sampled_exact_killing_energy": 3.671674501835067e-235,
+            "positive_normal_energy": 1.4256363463629673e-10,
+            "sampled_exact_normal_energy": 9.36511358937342e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.003987616420305807,
+            "pi_linf": 0.03666397687937017,
+            "both_linf": 0.03666397687937017,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.0003114672366994993,
+            "sampled_exact_killing_energy": 0.00031333018358366743,
+            "positive_normal_energy": 0.000285528716737499,
+            "sampled_exact_normal_energy": 0.00028704560496967596
+          },
+          "peak_both_linf": 0.03666397687937017,
+          "peak_positive_normal_energy": 0.000285528716737499,
+          "peak_killing_energy": 0.00031176409632269154,
+          "history_sha256": "accf622dde3d121553821c0c59eba483f7f509ea4ab0f2970de6343ecb9c2b1c",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N16-span2.2-mls-ko0.1-dt0.1-pulse.json",
+          "wall_seconds": 2.591085583
+        }
+      }
+    },
+    {
+      "receipt": "N16-span2.2-ray-ko0.0-dt0.1-receipt.json",
+      "sha256": "b70269be5b855d122a08f5fe903c95a72632fcd50c7bdb1c39758ed3aa7e95b2",
+      "data": {
+        "name": "N16-span2.2-ray-ko0.0",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "16",
+          "2.2",
+          "ray",
+          "0.0",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N16-span2.2-ray-ko0.0"
+        ],
+        "export": {
+          "n": 16,
+          "span": 2.2,
+          "spacing": 0.1375,
+          "active": 1640,
+          "unknowns": 3280,
+          "ghosts": 2480,
+          "closure": "ray",
+          "ko": 0,
+          "layer": true,
+          "boundary_rows": 1208,
+          "ghost_quadratic_moment_error": 5.432113092673774e-14,
+          "max_ghost_weight_l1": 10.216273939988097,
+          "strict_active_nonrecursive_donor_references": 63576,
+          "native_matvec_error": 2.7284841053187847e-12,
+          "native_gradient_matvec_error": 2.842170943040401e-14,
+          "gradient_constant_error": 6.46011022453763e-15,
+          "stationary_K_error": 2.220446049250313e-15,
+          "pure_CMC_R_error": 6.217248937900877e-15,
+          "R_min": 0.016226492768121048,
+          "R_max": 26.07701716634274,
+          "min_abs_incoming": 1.8186290818648697e-06,
+          "max_abs_incoming": 0.9999960983038387,
+          "max_outgoing": 3.9946075563709194,
+          "min_L": 1.0000021725015915,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "76f0123d22f161b1cfd9b78ef9695713b92dd8f6e9b61ac444d6e123b5f2d227",
+        "points_sha256": "2fd514e52789081fe4ebe40e4def5641aa00546e4bf664de94e37f3e721eafdb",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 0.464101667,
+          "modes": [
+            {
+              "real": -0.2398528255188489,
+              "imag": 0.0,
+              "residual_l2": 5.412976687947681e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8553120012183016,
+              "radius_peak": 0.9986514344354592
+            },
+            {
+              "real": -0.7948209206328476,
+              "imag": 0.0,
+              "residual_l2": 1.3668821966189112e-10,
+              "squared_mode_fraction_r_gt_.8": 0.8920650453201339,
+              "radius_peak": 0.9986514344354591
+            },
+            {
+              "real": -0.7948209206405279,
+              "imag": 0.0,
+              "residual_l2": 4.2453133098651346e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8920650453201623,
+              "radius_peak": 0.9986514344354592
+            },
+            {
+              "real": -1.2210004681515785,
+              "imag": 0.0,
+              "residual_l2": 9.504774515833147e-13,
+              "squared_mode_fraction_r_gt_.8": 0.647033541497583,
+              "radius_peak": 0.9795367208532818
+            },
+            {
+              "real": -1.2402650297476718,
+              "imag": -26.750553995912036,
+              "residual_l2": 2.6439022323333025e-13,
+              "squared_mode_fraction_r_gt_.8": 0.22380876607526456,
+              "radius_peak": 0.11907849302036035
+            },
+            {
+              "real": -1.2402650297476718,
+              "imag": 26.750553995912036,
+              "residual_l2": 2.6439022323333025e-13,
+              "squared_mode_fraction_r_gt_.8": 0.22380876607526456,
+              "radius_peak": 0.11907849302036035
+            },
+            {
+              "real": -1.3666601589520162,
+              "imag": -22.499185246698662,
+              "residual_l2": 5.139913870760507e-13,
+              "squared_mode_fraction_r_gt_.8": 0.12470646264714927,
+              "radius_peak": 0.11907849302036028
+            },
+            {
+              "real": -1.3666601589520162,
+              "imag": 22.499185246698662,
+              "residual_l2": 5.139913870760507e-13,
+              "squared_mode_fraction_r_gt_.8": 0.12470646264714927,
+              "radius_peak": 0.11907849302036028
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.0017033288783170738,
+          "pi_rms": 0.11240205899041696,
+          "linf": 0.9929943373951226
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.0034421403870000702,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 1744,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 6.247296203389202e-06,
+            "pi_linf": 1.6797471388944923e-05,
+            "both_linf": 1.6797471388944923e-05,
+            "error_linf": 1.6797471388944923e-05,
+            "error_rms": 4.599409898094405e-06,
+            "phi_error_rms": 2.152588207486864e-06,
+            "pi_error_rms": 6.138037701934232e-06,
+            "killing_energy": 6.203160063577126e-11,
+            "sampled_exact_killing_energy": 3.671674501835067e-235,
+            "positive_normal_energy": 2.400499401833998e-10,
+            "sampled_exact_normal_energy": 9.36511358937342e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.003987616420305807,
+            "pi_linf": 0.03666397687937017,
+            "both_linf": 0.03666397687937017,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.00034889218731408276,
+            "sampled_exact_killing_energy": 0.00031333018358366743,
+            "positive_normal_energy": 0.0003084126890443585,
+            "sampled_exact_normal_energy": 0.00028704560496967596
+          },
+          "peak_both_linf": 0.03666397687937017,
+          "peak_positive_normal_energy": 0.00031532980129093675,
+          "peak_killing_energy": 0.00034889218731408276,
+          "history_sha256": "44bda437385231ceff132b509af71c6d78ba35a1a0b699b479bb67a49e665738",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N16-span2.2-ray-ko0.0-dt0.1-pulse.json",
+          "wall_seconds": 1.597038792
+        }
+      }
+    },
+    {
+      "receipt": "N16-span2.2-ray-ko0.1-dt0.1-receipt.json",
+      "sha256": "b70283744bc1b3adea35a962ced0abf975ddcddea63b24d909aaa5fcd31369f8",
+      "data": {
+        "name": "N16-span2.2-ray-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "16",
+          "2.2",
+          "ray",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N16-span2.2-ray-ko0.1"
+        ],
+        "export": {
+          "n": 16,
+          "span": 2.2,
+          "spacing": 0.1375,
+          "active": 1640,
+          "unknowns": 3280,
+          "ghosts": 2480,
+          "closure": "ray",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 1208,
+          "ghost_quadratic_moment_error": 5.432113092673774e-14,
+          "max_ghost_weight_l1": 10.216273939988097,
+          "strict_active_nonrecursive_donor_references": 63576,
+          "native_matvec_error": 3.183231456205249e-12,
+          "native_gradient_matvec_error": 2.842170943040401e-14,
+          "gradient_constant_error": 6.46011022453763e-15,
+          "stationary_K_error": 2.220446049250313e-15,
+          "pure_CMC_R_error": 6.217248937900877e-15,
+          "R_min": 0.016226492768121048,
+          "R_max": 26.07701716634274,
+          "min_abs_incoming": 1.8186290818648697e-06,
+          "max_abs_incoming": 0.9999960983038387,
+          "max_outgoing": 3.9946075563709194,
+          "min_L": 1.0000021725015915,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "668e72e8f3761c13249f4d5c442e64b1ecbb46d3ff405180e04788b998458790",
+        "points_sha256": "2fd514e52789081fe4ebe40e4def5641aa00546e4bf664de94e37f3e721eafdb",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 0.6369968749999999,
+          "modes": [
+            {
+              "real": -0.2406371174445118,
+              "imag": 0.0,
+              "residual_l2": 4.635149634352102e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8544837352338723,
+              "radius_peak": 0.9986514344354593
+            },
+            {
+              "real": -0.7984718370160755,
+              "imag": 0.0,
+              "residual_l2": 3.9946572778693756e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8914831851058631,
+              "radius_peak": 0.9986514344354592
+            },
+            {
+              "real": -0.7984718370161192,
+              "imag": 0.0,
+              "residual_l2": 3.942509087548618e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8914831851058634,
+              "radius_peak": 0.9986514344354591
+            },
+            {
+              "real": -0.7984718370161872,
+              "imag": 0.0,
+              "residual_l2": 5.110680549562275e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8914831851058638,
+              "radius_peak": 0.9986514344354592
+            },
+            {
+              "real": -1.2259609709960295,
+              "imag": 0.0,
+              "residual_l2": 8.265141835536361e-13,
+              "squared_mode_fraction_r_gt_.8": 0.6452770804479487,
+              "radius_peak": 0.9795367208532818
+            },
+            {
+              "real": -1.679423091186183,
+              "imag": 0.0,
+              "residual_l2": 2.001800155571364e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9151778008219484,
+              "radius_peak": 0.9986514344354592
+            },
+            {
+              "real": -1.6794230911862822,
+              "imag": 0.0,
+              "residual_l2": 4.392922474469787e-13,
+              "squared_mode_fraction_r_gt_.8": 0.915177800821947,
+              "radius_peak": 0.9986514344354591
+            },
+            {
+              "real": -1.8005135634472986,
+              "imag": 0.0,
+              "residual_l2": 7.19542604621293e-10,
+              "squared_mode_fraction_r_gt_.8": 0.8871324696467662,
+              "radius_peak": 0.9600415030091147
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.0017038454786418764,
+          "pi_rms": 0.11240341608202632,
+          "linf": 0.9929802792566015
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.0034421403870000702,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 1744,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 6.18787194788979e-06,
+            "pi_linf": 1.6544199756190558e-05,
+            "both_linf": 1.6544199756190558e-05,
+            "error_linf": 1.6544199756190558e-05,
+            "error_rms": 4.536898981025549e-06,
+            "phi_error_rms": 2.135434594950261e-06,
+            "pi_error_rms": 6.0503573298401925e-06,
+            "killing_energy": 6.10654258814463e-11,
+            "sampled_exact_killing_energy": 3.671674501835067e-235,
+            "positive_normal_energy": 2.340676431075208e-10,
+            "sampled_exact_normal_energy": 9.36511358937342e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.003987616420305807,
+            "pi_linf": 0.03666397687937017,
+            "both_linf": 0.03666397687937017,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.00034889218731408276,
+            "sampled_exact_killing_energy": 0.00031333018358366743,
+            "positive_normal_energy": 0.0003084126890443585,
+            "sampled_exact_normal_energy": 0.00028704560496967596
+          },
+          "peak_both_linf": 0.03666397687937017,
+          "peak_positive_normal_energy": 0.0003152445610438255,
+          "peak_killing_energy": 0.00034889218731408276,
+          "history_sha256": "90c4dcf31198c80c527f5f594f8fadee1a16924974b474296bdc142036f36473",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N16-span2.2-ray-ko0.1-dt0.1-pulse.json",
+          "wall_seconds": 1.6843332500000001
+        }
+      }
+    },
+    {
+      "receipt": "N20-span2.2-mls-ko0.1-dt0.1-receipt.json",
+      "sha256": "75e6559ed74973fd7bb4a1e23ce4a8a9f4c306a35d9a9120968278d34d04171a",
+      "data": {
+        "name": "N20-span2.2-mls-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "20",
+          "2.2",
+          "mls",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N20-span2.2-mls-ko0.1"
+        ],
+        "export": {
+          "n": 20,
+          "span": 2.2,
+          "spacing": 0.11000000000000001,
+          "active": 3112,
+          "unknowns": 6224,
+          "ghosts": 3608,
+          "closure": "mls",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 2024,
+          "ghost_quadratic_moment_error": 1.7934161100630064e-12,
+          "max_ghost_weight_l1": 34.3488840065933,
+          "strict_active_nonrecursive_donor_references": 307288,
+          "native_matvec_error": 3.637978807091713e-12,
+          "native_gradient_matvec_error": 4.263256414560601e-14,
+          "gradient_constant_error": 1.6993351170668802e-13,
+          "stationary_K_error": 2.6645352591003757e-15,
+          "pure_CMC_R_error": 4.440892098500626e-15,
+          "R_min": 7.336160357167035e-05,
+          "R_max": 26.372469894547066,
+          "min_abs_incoming": 0.00013291688274286542,
+          "max_abs_incoming": 0.9999999960284044,
+          "max_outgoing": 3.9540170831172574,
+          "min_L": 1.0000000025870583,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "ab87adcac6a4e9218333e44cb9906ba32d3e2778392fe9f3486b0ddce8ee7c9f",
+        "points_sha256": "3226bd30fa89d4210a8170eebac3fcd03a06039abf71cac893934b733b11c755",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 1.782559875,
+          "modes": [
+            {
+              "real": -0.15804696769598983,
+              "imag": 0.0,
+              "residual_l2": 5.360985925529182e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9041589371994464,
+              "radius_peak": 0.9884710415586285
+            },
+            {
+              "real": -0.5822136903339332,
+              "imag": 0.0,
+              "residual_l2": 5.05587781442512e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9269199883637655,
+              "radius_peak": 0.9884710415586286
+            },
+            {
+              "real": -0.5822136903339377,
+              "imag": 0.0,
+              "residual_l2": 4.953913190792904e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9269199883637644,
+              "radius_peak": 0.9884710415586286
+            },
+            {
+              "real": -0.5822136903339464,
+              "imag": 0.0,
+              "residual_l2": 5.31850474799562e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9269199883637648,
+              "radius_peak": 0.9884710415586285
+            },
+            {
+              "real": -0.7962309568021796,
+              "imag": 0.0,
+              "residual_l2": 1.2507533606687045e-12,
+              "squared_mode_fraction_r_gt_.8": 0.7384910006841043,
+              "radius_peak": 0.9884710415586287
+            },
+            {
+              "real": -1.394181854114403,
+              "imag": 0.0,
+              "residual_l2": 6.659384387436939e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9187620680564531,
+              "radius_peak": 0.9884710415586286
+            },
+            {
+              "real": -1.3941818541749245,
+              "imag": 0.0,
+              "residual_l2": 2.208966429695816e-10,
+              "squared_mode_fraction_r_gt_.8": 0.9187620680567964,
+              "radius_peak": 0.9884710415586286
+            },
+            {
+              "real": -1.4006806942311485,
+              "imag": 0.0,
+              "residual_l2": 6.920436689175545e-13,
+              "squared_mode_fraction_r_gt_.8": 0.936107278281056,
+              "radius_peak": 0.9510389056184821
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.00011550189127887146,
+          "pi_rms": 0.002294059926313501,
+          "linf": 0.01264420411944041
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.002781980899113327,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 2157,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 4.167309278302534e-06,
+            "pi_linf": 1.588786929716689e-05,
+            "both_linf": 1.588786929716689e-05,
+            "error_linf": 1.588786929716689e-05,
+            "error_rms": 3.784408932927697e-06,
+            "phi_error_rms": 1.2831818290435156e-06,
+            "pi_error_rms": 5.19585857552517e-06,
+            "killing_energy": 2.0118437402339658e-11,
+            "sampled_exact_killing_energy": 2.2356440741135045e-235,
+            "positive_normal_energy": 1.3762420835098086e-10,
+            "sampled_exact_normal_energy": 5.76972008783103e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004028488365353679,
+            "pi_linf": 0.037149544548627816,
+            "both_linf": 0.037149544548627816,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.00031201288108951566,
+            "sampled_exact_killing_energy": 0.0003128544623251709,
+            "positive_normal_energy": 0.0002851704471882179,
+            "sampled_exact_normal_energy": 0.0002861438309511186
+          },
+          "peak_both_linf": 0.037149544548627816,
+          "peak_positive_normal_energy": 0.0002851704471882179,
+          "peak_killing_energy": 0.00031201288108951566,
+          "history_sha256": "5ae1637aa0c9560d8a2f6470a9ae80b919422db0c775a729fc47725dfb1ca110",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N20-span2.2-mls-ko0.1-dt0.1-pulse.json",
+          "wall_seconds": 5.671778875
+        }
+      }
+    },
+    {
+      "receipt": "N20-span2.2-ray-ko0.1-dt0.1-receipt.json",
+      "sha256": "5105b61e1e41250c84c9e5cea7a0e39bae085dc880d3edcaa400b49ae0daedb1",
+      "data": {
+        "name": "N20-span2.2-ray-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "20",
+          "2.2",
+          "ray",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N20-span2.2-ray-ko0.1"
+        ],
+        "export": {
+          "n": 20,
+          "span": 2.2,
+          "spacing": 0.11000000000000001,
+          "active": 3112,
+          "unknowns": 6224,
+          "ghosts": 3608,
+          "closure": "ray",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 2024,
+          "ghost_quadratic_moment_error": 7.616129948928574e-14,
+          "max_ghost_weight_l1": 10.318574903507491,
+          "strict_active_nonrecursive_donor_references": 88992,
+          "native_matvec_error": 4.092726157978177e-12,
+          "native_gradient_matvec_error": 4.973799150320701e-14,
+          "gradient_constant_error": 1.3433698597964394e-14,
+          "stationary_K_error": 2.6645352591003757e-15,
+          "pure_CMC_R_error": 4.440892098500626e-15,
+          "R_min": 7.336160357167035e-05,
+          "R_max": 26.372469894547066,
+          "min_abs_incoming": 0.00013291688274286542,
+          "max_abs_incoming": 0.9999999960284044,
+          "max_outgoing": 3.9540170831172574,
+          "min_L": 1.0000000025870583,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "8fae66d02b91714680c6f6c922aea8f0317263f4fab21130d9f0003f85ca60c2",
+        "points_sha256": "3226bd30fa89d4210a8170eebac3fcd03a06039abf71cac893934b733b11c755",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 1.3800391669999998,
+          "modes": [
+            {
+              "real": -0.22406904444443027,
+              "imag": 0.0,
+              "residual_l2": 6.826295748738254e-13,
+              "squared_mode_fraction_r_gt_.8": 0.8641047109021591,
+              "radius_peak": 0.9884710415586286
+            },
+            {
+              "real": -0.6962720852741263,
+              "imag": 0.0,
+              "residual_l2": 6.646067068554604e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9046731000476506,
+              "radius_peak": 0.9884710415586287
+            },
+            {
+              "real": -0.6962720852741853,
+              "imag": 0.0,
+              "residual_l2": 5.440263481889685e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9046731000476509,
+              "radius_peak": 0.9884710415586286
+            },
+            {
+              "real": -0.6962720852742279,
+              "imag": 0.0,
+              "residual_l2": 6.145797752060829e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9046731000476512,
+              "radius_peak": 0.9884710415586286
+            },
+            {
+              "real": -0.972855746069866,
+              "imag": 0.0,
+              "residual_l2": 1.400038812523535e-12,
+              "squared_mode_fraction_r_gt_.8": 0.6945565600891871,
+              "radius_peak": 0.9884710415586287
+            },
+            {
+              "real": -1.4483080453371504,
+              "imag": 0.0,
+              "residual_l2": 1.959951043660179e-11,
+              "squared_mode_fraction_r_gt_.8": 0.9325804211772355,
+              "radius_peak": 0.9382297160077591
+            },
+            {
+              "real": -1.4483080453401795,
+              "imag": 0.0,
+              "residual_l2": 7.407782620364395e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9325804211772353,
+              "radius_peak": 0.9382297160077592
+            },
+            {
+              "real": -1.4902037898593226,
+              "imag": 0.0,
+              "residual_l2": 6.868269172430822e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9079055775666469,
+              "radius_peak": 0.9884710415586286
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.0007414527663678877,
+          "pi_rms": 0.0432147608467819,
+          "linf": 0.49263857554317103
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.002781980899113327,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 2157,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 5.906611242857932e-06,
+            "pi_linf": 1.9086957014697842e-05,
+            "both_linf": 1.9086957014697842e-05,
+            "error_linf": 1.9086957014697842e-05,
+            "error_rms": 4.818978924207847e-06,
+            "phi_error_rms": 1.927063430462338e-06,
+            "pi_error_rms": 6.536936765710186e-06,
+            "killing_energy": 4.811833537949152e-11,
+            "sampled_exact_killing_energy": 2.2356440741135045e-235,
+            "positive_normal_energy": 2.4061575940905775e-10,
+            "sampled_exact_normal_energy": 5.76972008783103e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004028488365353679,
+            "pi_linf": 0.037149544548627816,
+            "both_linf": 0.037149544548627816,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.00031790593520343195,
+            "sampled_exact_killing_energy": 0.0003128544623251709,
+            "positive_normal_energy": 0.00028704000276738036,
+            "sampled_exact_normal_energy": 0.0002861438309511186
+          },
+          "peak_both_linf": 0.037149544548627816,
+          "peak_positive_normal_energy": 0.00028704000276738036,
+          "peak_killing_energy": 0.0003189057880319653,
+          "history_sha256": "80eb8de07cfa9e0624af7b51d74cba0194bc8990d9f5a02dc43ad61b5584ef03",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N20-span2.2-ray-ko0.1-dt0.1-pulse.json",
+          "wall_seconds": 3.674443542
+        }
+      }
+    },
+    {
+      "receipt": "N24-span2.1-mls-ko0.1-dt0.05-receipt.json",
+      "sha256": "f2e1102c36930a6d163449893de9d90e1fb68f7b23f7af8696e3bc74ca4d0478",
+      "data": {
+        "name": "N24-span2.1-mls-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "24",
+          "2.1",
+          "mls",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-mls-ko0.1"
+        ],
+        "export": {
+          "n": 24,
+          "span": 2.1,
+          "spacing": 0.08750000000000001,
+          "active": 6152,
+          "unknowns": 12304,
+          "ghosts": 5432,
+          "closure": "mls",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 3376,
+          "ghost_quadratic_moment_error": 1.9533263895255004e-12,
+          "max_ghost_weight_l1": 34.58222322900249,
+          "strict_active_nonrecursive_donor_references": 460912,
+          "native_matvec_error": 6.366462912410498e-12,
+          "native_gradient_matvec_error": 3.552713678800501e-14,
+          "gradient_constant_error": 2.541092336549866e-13,
+          "stationary_K_error": 2.6645352591003757e-15,
+          "pure_CMC_R_error": 5.329070518200751e-15,
+          "R_min": 1.218867009865022e-10,
+          "R_max": 26.445127649319833,
+          "min_abs_incoming": 5.1186865711983065e-05,
+          "max_abs_incoming": 0.9999999999999987,
+          "max_outgoing": 3.9714331881342884,
+          "min_L": 1.000000000000001,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "944fc578ff115ba156eaf73eccc7b41faf46dd818e7f171155737363f922a9e6",
+        "points_sha256": "b2267caf0518031e8e0e285c487359c6c50578f83c12a347512a5e9177ebde95",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 6.398285616115595e-05,
+          "pi_rms": 0.0030852812213614995,
+          "linf": 0.018149262254960816
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.0011016174244279056,
+          "dt_factor": 0.05,
+          "stop": "requested time reached",
+          "steps": 5447,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 2.2586319398812067e-06,
+            "pi_linf": 9.856330061077457e-06,
+            "both_linf": 9.856330061077457e-06,
+            "error_linf": 9.856330061077457e-06,
+            "error_rms": 2.230999897218234e-06,
+            "phi_error_rms": 6.632155309678758e-07,
+            "pi_error_rms": 3.0846176817003655e-06,
+            "killing_energy": 5.2396865920654795e-12,
+            "sampled_exact_killing_energy": 2.2718415056897934e-235,
+            "positive_normal_energy": 4.603622234978182e-11,
+            "sampled_exact_normal_energy": 5.848903423427256e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004031143176210541,
+            "pi_linf": 0.03777104831750608,
+            "both_linf": 0.03777104831750608,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.0003124152009995673,
+            "sampled_exact_killing_energy": 0.0003127621206004588,
+            "positive_normal_energy": 0.0002854875032287162,
+            "sampled_exact_normal_energy": 0.0002859723865684925
+          },
+          "peak_both_linf": 0.03777104831750608,
+          "peak_positive_normal_energy": 0.0002854875032287162,
+          "peak_killing_energy": 0.0003124152009995673,
+          "history_sha256": "7ab2c81861198a09b001bfe3faaae745f889da97f73fe63122ee0d4b4530d3b9",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-mls-ko0.1-dt0.05-pulse.json",
+          "wall_seconds": 14.751353
+        }
+      }
+    },
+    {
+      "receipt": "N24-span2.1-mls-ko0.1-dt0.1-receipt.json",
+      "sha256": "b456143d72a3171ced1927157e93fd5121bdd7e9197e3e2a8fde65eb28977334",
+      "data": {
+        "name": "N24-span2.1-mls-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "24",
+          "2.1",
+          "mls",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-mls-ko0.1"
+        ],
+        "export": {
+          "n": 24,
+          "span": 2.1,
+          "spacing": 0.08750000000000001,
+          "active": 6152,
+          "unknowns": 12304,
+          "ghosts": 5432,
+          "closure": "mls",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 3376,
+          "ghost_quadratic_moment_error": 1.9533263895255004e-12,
+          "max_ghost_weight_l1": 34.58222322900249,
+          "strict_active_nonrecursive_donor_references": 460912,
+          "native_matvec_error": 6.366462912410498e-12,
+          "native_gradient_matvec_error": 3.552713678800501e-14,
+          "gradient_constant_error": 2.541092336549866e-13,
+          "stationary_K_error": 2.6645352591003757e-15,
+          "pure_CMC_R_error": 5.329070518200751e-15,
+          "R_min": 1.218867009865022e-10,
+          "R_max": 26.445127649319833,
+          "min_abs_incoming": 5.1186865711983065e-05,
+          "max_abs_incoming": 0.9999999999999987,
+          "max_outgoing": 3.9714331881342884,
+          "min_L": 1.000000000000001,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "944fc578ff115ba156eaf73eccc7b41faf46dd818e7f171155737363f922a9e6",
+        "points_sha256": "b2267caf0518031e8e0e285c487359c6c50578f83c12a347512a5e9177ebde95",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 4.087817417,
+          "modes": [
+            {
+              "real": -0.13443889562826278,
+              "imag": 0.0,
+              "residual_l2": 7.134037603410518e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9302888670793064,
+              "radius_peak": 0.9928455003171442
+            },
+            {
+              "real": -0.4985869937699402,
+              "imag": 0.0,
+              "residual_l2": 3.325830214963984e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9505186360850187,
+              "radius_peak": 0.992845500317144
+            },
+            {
+              "real": -0.49858699377025184,
+              "imag": 0.0,
+              "residual_l2": 6.476970273399238e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9505186360850367,
+              "radius_peak": 0.992845500317144
+            },
+            {
+              "real": -0.49858699377036175,
+              "imag": 0.0,
+              "residual_l2": 7.286472693220007e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9505186360850345,
+              "radius_peak": 0.992845500317144
+            },
+            {
+              "real": -0.6349347454607032,
+              "imag": 0.0,
+              "residual_l2": 1.7670053187657508e-12,
+              "squared_mode_fraction_r_gt_.8": 0.7651829134093647,
+              "radius_peak": 0.992845500317144
+            },
+            {
+              "real": -1.178053328425451,
+              "imag": 0.0,
+              "residual_l2": 7.31040932019327e-10,
+              "squared_mode_fraction_r_gt_.8": 0.9511515623086135,
+              "radius_peak": 0.9928455003171441
+            },
+            {
+              "real": -1.1780533284347792,
+              "imag": 0.0,
+              "residual_l2": 1.1392439958676116e-12,
+              "squared_mode_fraction_r_gt_.8": 0.951151562308494,
+              "radius_peak": 0.9773009707863796
+            },
+            {
+              "real": -1.2535292341941313,
+              "imag": 0.0,
+              "residual_l2": 1.275904441062262e-12,
+              "squared_mode_fraction_r_gt_.8": 0.944473475812275,
+              "radius_peak": 0.9694352415195148
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 6.398285616115595e-05,
+          "pi_rms": 0.0030852812213614995,
+          "linf": 0.018149262254960816
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.0022032348488558113,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 2724,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 2.2586319398805087e-06,
+            "pi_linf": 9.856330061067684e-06,
+            "both_linf": 9.856330061067684e-06,
+            "error_linf": 9.856330061067684e-06,
+            "error_rms": 2.2309998972171007e-06,
+            "phi_error_rms": 6.632155309677157e-07,
+            "pi_error_rms": 3.0846176816987613e-06,
+            "killing_energy": 5.239686592064774e-12,
+            "sampled_exact_killing_energy": 2.2718415056897934e-235,
+            "positive_normal_energy": 4.603622234975338e-11,
+            "sampled_exact_normal_energy": 5.848903423427256e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004031143176210541,
+            "pi_linf": 0.03777104831750608,
+            "both_linf": 0.03777104831750608,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.0003124152009995673,
+            "sampled_exact_killing_energy": 0.0003127621206004588,
+            "positive_normal_energy": 0.0002854875032287162,
+            "sampled_exact_normal_energy": 0.0002859723865684925
+          },
+          "peak_both_linf": 0.03777104831750608,
+          "peak_positive_normal_energy": 0.0002854875032287162,
+          "peak_killing_energy": 0.0003124152009995673,
+          "history_sha256": "d50a198fb23d8910752f2d775a4db3eaff406f659e0de09399b136320048f849",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-mls-ko0.1-dt0.1-pulse.json",
+          "wall_seconds": 12.061144624999999
+        }
+      }
+    },
+    {
+      "receipt": "N24-span2.1-ray-ko0.0-dt0.1-receipt.json",
+      "sha256": "ba5733f7c0d9147eb4cfce4b837e219975046026a8cc6c7be641af8ee8f335a0",
+      "data": {
+        "name": "N24-span2.1-ray-ko0.0",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "24",
+          "2.1",
+          "ray",
+          "0.0",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-ray-ko0.0"
+        ],
+        "export": {
+          "n": 24,
+          "span": 2.1,
+          "spacing": 0.08750000000000001,
+          "active": 6152,
+          "unknowns": 12304,
+          "ghosts": 5432,
+          "closure": "ray",
+          "ko": 0,
+          "layer": true,
+          "boundary_rows": 3376,
+          "ghost_quadratic_moment_error": 6.786238238021269e-14,
+          "max_ghost_weight_l1": 10.32255232,
+          "strict_active_nonrecursive_donor_references": 139224,
+          "native_matvec_error": 7.275957614183426e-12,
+          "native_gradient_matvec_error": 5.684341886080802e-14,
+          "gradient_constant_error": 1.3086753902769033e-14,
+          "stationary_K_error": 2.6645352591003757e-15,
+          "pure_CMC_R_error": 5.329070518200751e-15,
+          "R_min": 1.218867009865022e-10,
+          "R_max": 26.445127649319833,
+          "min_abs_incoming": 5.1186865711983065e-05,
+          "max_abs_incoming": 0.9999999999999987,
+          "max_outgoing": 3.9714331881342884,
+          "min_L": 1.000000000000001,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "2270cda4f8a6371c06589bc134bdc60ac27208693cfe7748d5211dc8b2e9ddb2",
+        "points_sha256": "b2267caf0518031e8e0e285c487359c6c50578f83c12a347512a5e9177ebde95",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 1.532225833,
+          "modes": [
+            {
+              "real": -0.19443481679805397,
+              "imag": 0.0,
+              "residual_l2": 1.2810246421882468e-12,
+              "squared_mode_fraction_r_gt_.8": 0.8881585652638706,
+              "radius_peak": 0.9928455003171441
+            },
+            {
+              "real": -0.5988656989189667,
+              "imag": 0.0,
+              "residual_l2": 1.086179780646376e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9276021257142343,
+              "radius_peak": 0.9928455003171442
+            },
+            {
+              "real": -0.7603438127084974,
+              "imag": 0.0,
+              "residual_l2": 1.6993106847313265e-10,
+              "squared_mode_fraction_r_gt_.8": 0.7394913743412814,
+              "radius_peak": 0.9928455003171442
+            },
+            {
+              "real": -0.8371648773746987,
+              "imag": 43.840859309289556,
+              "residual_l2": 5.023262696248359e-13,
+              "squared_mode_fraction_r_gt_.8": 0.016015585269127816,
+              "radius_peak": 0.07577722283113834
+            },
+            {
+              "real": -0.8371648773746987,
+              "imag": -43.840859309289556,
+              "residual_l2": 5.023262696248359e-13,
+              "squared_mode_fraction_r_gt_.8": 0.016015585269127816,
+              "radius_peak": 0.07577722283113834
+            },
+            {
+              "real": -0.9730299639686408,
+              "imag": 36.33526534883558,
+              "residual_l2": 6.741943696592231e-13,
+              "squared_mode_fraction_r_gt_.8": 0.015021882842129549,
+              "radius_peak": 0.07577722283113843
+            },
+            {
+              "real": -0.9730299639686408,
+              "imag": -36.33526534883558,
+              "residual_l2": 6.741943696592231e-13,
+              "squared_mode_fraction_r_gt_.8": 0.015021882842129549,
+              "radius_peak": 0.07577722283113843
+            },
+            {
+              "real": -1.0819560206194156,
+              "imag": -26.329511328974103,
+              "residual_l2": 3.4534920915228426e-10,
+              "squared_mode_fraction_r_gt_.8": 0.02868837576890168,
+              "radius_peak": 0.07577722283113852
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.0007898002538551288,
+          "pi_rms": 0.060637821313209245,
+          "linf": 1.0953443372648632
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.0022032348488558113,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 2724,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 1.1047903914508455e-06,
+            "pi_linf": 4.055233412950008e-06,
+            "both_linf": 4.055233412950008e-06,
+            "error_linf": 4.055233412950008e-06,
+            "error_rms": 9.437254755458791e-07,
+            "phi_error_rms": 3.3495780281335634e-07,
+            "pi_error_rms": 1.2919128518298128e-06,
+            "killing_energy": 1.4012701297868486e-12,
+            "sampled_exact_killing_energy": 2.2718415056897934e-235,
+            "positive_normal_energy": 8.730159247109563e-12,
+            "sampled_exact_normal_energy": 5.848903423427256e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004031143176210541,
+            "pi_linf": 0.03777104831750608,
+            "both_linf": 0.03777104831750608,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.00032123944643447215,
+            "sampled_exact_killing_energy": 0.0003127621206004588,
+            "positive_normal_energy": 0.00028890400502798403,
+            "sampled_exact_normal_energy": 0.0002859723865684925
+          },
+          "peak_both_linf": 0.03777104831750608,
+          "peak_positive_normal_energy": 0.00028890400502798403,
+          "peak_killing_energy": 0.00032123944643447215,
+          "history_sha256": "f5aa44cf3d949d0f7694788a080484bb3b24825dd1dbcdf0944412537132af6d",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-ray-ko0.0-dt0.1-pulse.json",
+          "wall_seconds": 6.575066958
+        }
+      }
+    },
+    {
+      "receipt": "N24-span2.1-ray-ko0.1-dt0.05-receipt.json",
+      "sha256": "e2b1dd5ac9edc43f8c1da6a9a7a05564c354a61cc3b29f2d7d9aed0585ae499b",
+      "data": {
+        "name": "N24-span2.1-ray-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "24",
+          "2.1",
+          "ray",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-ray-ko0.1"
+        ],
+        "export": {
+          "n": 24,
+          "span": 2.1,
+          "spacing": 0.08750000000000001,
+          "active": 6152,
+          "unknowns": 12304,
+          "ghosts": 5432,
+          "closure": "ray",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 3376,
+          "ghost_quadratic_moment_error": 6.786238238021269e-14,
+          "max_ghost_weight_l1": 10.32255232,
+          "strict_active_nonrecursive_donor_references": 139224,
+          "native_matvec_error": 7.275957614183426e-12,
+          "native_gradient_matvec_error": 5.684341886080802e-14,
+          "gradient_constant_error": 1.3086753902769033e-14,
+          "stationary_K_error": 2.6645352591003757e-15,
+          "pure_CMC_R_error": 5.329070518200751e-15,
+          "R_min": 1.218867009865022e-10,
+          "R_max": 26.445127649319833,
+          "min_abs_incoming": 5.1186865711983065e-05,
+          "max_abs_incoming": 0.9999999999999987,
+          "max_outgoing": 3.9714331881342884,
+          "min_L": 1.000000000000001,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "199244ceb144d1c5540700da9d790bee9acbc54d0deeb0cd835f18971ce9e99d",
+        "points_sha256": "b2267caf0518031e8e0e285c487359c6c50578f83c12a347512a5e9177ebde95",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.0007898211445523522,
+          "pi_rms": 0.060637521246125,
+          "linf": 1.0953375884972596
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.0011016174244279056,
+          "dt_factor": 0.05,
+          "stop": "requested time reached",
+          "steps": 5447,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 1.1483666573808e-06,
+            "pi_linf": 4.206271872336356e-06,
+            "both_linf": 4.206271872336356e-06,
+            "error_linf": 4.206271872336356e-06,
+            "error_rms": 9.798055016557736e-07,
+            "phi_error_rms": 3.483985682535594e-07,
+            "pi_error_rms": 1.3411398434871413e-06,
+            "killing_energy": 1.5156368476639517e-12,
+            "sampled_exact_killing_energy": 2.2718415056897934e-235,
+            "positive_normal_energy": 9.413872892277026e-12,
+            "sampled_exact_normal_energy": 5.848903423427256e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004031143176210541,
+            "pi_linf": 0.03777104831750608,
+            "both_linf": 0.03777104831750608,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.00032123944643447215,
+            "sampled_exact_killing_energy": 0.0003127621206004588,
+            "positive_normal_energy": 0.00028890400502798403,
+            "sampled_exact_normal_energy": 0.0002859723865684925
+          },
+          "peak_both_linf": 0.03777104831750608,
+          "peak_positive_normal_energy": 0.00028890400502798403,
+          "peak_killing_energy": 0.00032123944643447215,
+          "history_sha256": "3838ab3833a94ff59235eb105ebd736922c206d7cbc55b11669efa328a676c2b",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-ray-ko0.1-dt0.05-pulse.json",
+          "wall_seconds": 9.367952541000001
+        }
+      }
+    },
+    {
+      "receipt": "N24-span2.1-ray-ko0.1-dt0.1-receipt.json",
+      "sha256": "e7936ac2b1b6096a2396ac03c27212c53d2881ff104059316f0c9fed10be6656",
+      "data": {
+        "name": "N24-span2.1-ray-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "24",
+          "2.1",
+          "ray",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-ray-ko0.1"
+        ],
+        "export": {
+          "n": 24,
+          "span": 2.1,
+          "spacing": 0.08750000000000001,
+          "active": 6152,
+          "unknowns": 12304,
+          "ghosts": 5432,
+          "closure": "ray",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 3376,
+          "ghost_quadratic_moment_error": 6.786238238021269e-14,
+          "max_ghost_weight_l1": 10.32255232,
+          "strict_active_nonrecursive_donor_references": 139224,
+          "native_matvec_error": 7.275957614183426e-12,
+          "native_gradient_matvec_error": 5.684341886080802e-14,
+          "gradient_constant_error": 1.3086753902769033e-14,
+          "stationary_K_error": 2.6645352591003757e-15,
+          "pure_CMC_R_error": 5.329070518200751e-15,
+          "R_min": 1.218867009865022e-10,
+          "R_max": 26.445127649319833,
+          "min_abs_incoming": 5.1186865711983065e-05,
+          "max_abs_incoming": 0.9999999999999987,
+          "max_outgoing": 3.9714331881342884,
+          "min_L": 1.000000000000001,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "199244ceb144d1c5540700da9d790bee9acbc54d0deeb0cd835f18971ce9e99d",
+        "points_sha256": "b2267caf0518031e8e0e285c487359c6c50578f83c12a347512a5e9177ebde95",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 3.555365125,
+          "modes": [
+            {
+              "real": -0.1946682409656322,
+              "imag": 0.0,
+              "residual_l2": 1.0257755985394949e-12,
+              "squared_mode_fraction_r_gt_.8": 0.8878090108527682,
+              "radius_peak": 0.992845500317144
+            },
+            {
+              "real": -0.6002865084785827,
+              "imag": 0.0,
+              "residual_l2": 2.3119450436453437e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9271840956005011,
+              "radius_peak": 0.9928455003171442
+            },
+            {
+              "real": -0.6002865084788807,
+              "imag": 0.0,
+              "residual_l2": 9.065735170804623e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9271840956004888,
+              "radius_peak": 0.9928455003171442
+            },
+            {
+              "real": -0.6002865084789916,
+              "imag": 0.0,
+              "residual_l2": 9.4673110271481e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9271840956004902,
+              "radius_peak": 0.9928455003171442
+            },
+            {
+              "real": -0.7625821265217817,
+              "imag": 0.0,
+              "residual_l2": 2.140254809586292e-12,
+              "squared_mode_fraction_r_gt_.8": 0.7383730392190295,
+              "radius_peak": 0.992845500317144
+            },
+            {
+              "real": -1.253792671798011,
+              "imag": 0.0,
+              "residual_l2": 1.2421682231109519e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9418455243840652,
+              "radius_peak": 0.937312481246249
+            },
+            {
+              "real": -1.2537926718252856,
+              "imag": 0.0,
+              "residual_l2": 4.780262538721851e-10,
+              "squared_mode_fraction_r_gt_.8": 0.9418455243841269,
+              "radius_peak": 0.945445496842626
+            },
+            {
+              "real": -1.3011495370545856,
+              "imag": 0.0,
+              "residual_l2": 1.3936768999146495e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9364757027684577,
+              "radius_peak": 0.992845500317144
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.0007898211445523522,
+          "pi_rms": 0.060637521246125,
+          "linf": 1.0953375884972596
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.0022032348488558113,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 2724,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 1.1483666573803057e-06,
+            "pi_linf": 4.206271872325824e-06,
+            "both_linf": 4.206271872325824e-06,
+            "error_linf": 4.206271872325824e-06,
+            "error_rms": 9.79805501654806e-07,
+            "phi_error_rms": 3.4839856825345313e-07,
+            "pi_error_rms": 1.3411398434857551e-06,
+            "killing_energy": 1.5156368476638767e-12,
+            "sampled_exact_killing_energy": 2.2718415056897934e-235,
+            "positive_normal_energy": 9.413872892267194e-12,
+            "sampled_exact_normal_energy": 5.848903423427256e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004031143176210541,
+            "pi_linf": 0.03777104831750608,
+            "both_linf": 0.03777104831750608,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.00032123944643447215,
+            "sampled_exact_killing_energy": 0.0003127621206004588,
+            "positive_normal_energy": 0.00028890400502798403,
+            "sampled_exact_normal_energy": 0.0002859723865684925
+          },
+          "peak_both_linf": 0.03777104831750608,
+          "peak_positive_normal_energy": 0.00028890400502798403,
+          "peak_killing_energy": 0.00032123944643447215,
+          "history_sha256": "0ab730e19c4bbcc898b4d3923bc4c000ef05e61615852f475cdd16d9475a9c5d",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.1-ray-ko0.1-dt0.1-pulse.json",
+          "wall_seconds": 8.583545791
+        }
+      }
+    },
+    {
+      "receipt": "N24-span2.2-mls-ko0.1-dt0.1-receipt.json",
+      "sha256": "798e46cb4004aa97db8d6599c704cd456aaac73725a34607f63fa420c5fbcdbc",
+      "data": {
+        "name": "N24-span2.2-mls-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "24",
+          "2.2",
+          "mls",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.2-mls-ko0.1"
+        ],
+        "export": {
+          "n": 24,
+          "span": 2.2,
+          "spacing": 0.09166666666666667,
+          "active": 5520,
+          "unknowns": 11040,
+          "ghosts": 5056,
+          "closure": "mls",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 3128,
+          "ghost_quadratic_moment_error": 1.7053025658242404e-12,
+          "max_ghost_weight_l1": 34.479942900732674,
+          "strict_active_nonrecursive_donor_references": 430272,
+          "native_matvec_error": 5.9117155615240335e-12,
+          "native_gradient_matvec_error": 4.973799150320701e-14,
+          "gradient_constant_error": 2.6164487243462986e-13,
+          "stationary_K_error": 3.1086244689504383e-15,
+          "pure_CMC_R_error": 5.329070518200751e-15,
+          "R_min": 5.832130439736636e-09,
+          "R_max": 26.423264949560075,
+          "min_abs_incoming": 1.1786549690659242e-06,
+          "max_abs_incoming": 0.9999999999999019,
+          "max_outgoing": 3.995658543567254,
+          "min_L": 1.0000000000000742,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "502b1f366d928305dc6f85e66f504b6fa7479e187cf37f77e5ba0fd69afe0912",
+        "points_sha256": "9cc1d06fe4a5878e88c94417a787549e65ff925a56b617bf2cda67bf3a2c8193",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 3.9072410829999997,
+          "modes": [
+            {
+              "real": -0.12630736468541062,
+              "imag": 0.0,
+              "residual_l2": 7.431100779827014e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9350934770240642,
+              "radius_peak": 0.9989143412280711
+            },
+            {
+              "real": -0.4917439078277168,
+              "imag": 0.0,
+              "residual_l2": 7.658727290362185e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9523006372671728,
+              "radius_peak": 0.9904667109779893
+            },
+            {
+              "real": -0.4917439078277375,
+              "imag": 0.0,
+              "residual_l2": 6.329514792514455e-13,
+              "squared_mode_fraction_r_gt_.8": 0.952300637267174,
+              "radius_peak": 0.9904667109779893
+            },
+            {
+              "real": -0.49174390782774613,
+              "imag": 0.0,
+              "residual_l2": 5.938662448141898e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9523006372671733,
+              "radius_peak": 0.9989143412280712
+            },
+            {
+              "real": -0.6283128932059673,
+              "imag": 0.0,
+              "residual_l2": 1.316355082607708e-12,
+              "squared_mode_fraction_r_gt_.8": 0.7728435266934864,
+              "radius_peak": 0.9989143412280711
+            },
+            {
+              "real": -1.1977794396649535,
+              "imag": 0.0,
+              "residual_l2": 3.8071537118824934e-11,
+              "squared_mode_fraction_r_gt_.8": 0.9498844994107295,
+              "radius_peak": 0.9989143412280712
+            },
+            {
+              "real": -1.1977794396658372,
+              "imag": 0.0,
+              "residual_l2": 1.0771935814634575e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9498844994107173,
+              "radius_peak": 0.9989143412280711
+            },
+            {
+              "real": -1.2454800652662474,
+              "imag": 0.0,
+              "residual_l2": 1.1729869407002841e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9477931401779158,
+              "radius_peak": 0.9904667109779892
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 6.873456936026882e-05,
+          "pi_rms": 0.003140889435805823,
+          "linf": 0.018719851929919734
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.002294156661966122,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 2616,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 2.4678635187977654e-06,
+            "pi_linf": 1.0865735803578369e-05,
+            "both_linf": 1.0865735803578369e-05,
+            "error_linf": 1.0865735803578369e-05,
+            "error_rms": 2.5050872081452383e-06,
+            "phi_error_rms": 7.4766883749381e-07,
+            "pi_error_rms": 3.462934470974937e-06,
+            "killing_energy": 6.650391913729386e-12,
+            "sampled_exact_killing_energy": 3.5431000790765845e-235,
+            "positive_normal_energy": 5.96012852927619e-11,
+            "sampled_exact_normal_energy": 9.052258201113112e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004039069880348037,
+            "pi_linf": 0.03766412413891488,
+            "both_linf": 0.03766412413891488,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.0003128681063013344,
+            "sampled_exact_killing_energy": 0.0003132824584768457,
+            "positive_normal_energy": 0.00028636772724065446,
+            "sampled_exact_normal_energy": 0.00028694800791682586
+          },
+          "peak_both_linf": 0.03766412413891488,
+          "peak_positive_normal_energy": 0.00028636772724065446,
+          "peak_killing_energy": 0.0003128681063013344,
+          "history_sha256": "8b17b109e1e5b1b1e573b3589d880b5be0c29cf9f4d4a87cbf1c9c6b40ed0195",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.2-mls-ko0.1-dt0.1-pulse.json",
+          "wall_seconds": 11.233194291
+        }
+      }
+    },
+    {
+      "receipt": "N24-span2.2-ray-ko0.1-dt0.1-receipt.json",
+      "sha256": "f83ca2d476ac2f11056cfb2afe11eff924a4ef0bef3af7dbe5b350dbda77e255",
+      "data": {
+        "name": "N24-span2.2-ray-ko0.1",
+        "source_commit_at_export": "f615acf4356206eceddc59fa929fcc15a671fe09",
+        "export_command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "24",
+          "2.2",
+          "ray",
+          "0.1",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.2-ray-ko0.1"
+        ],
+        "export": {
+          "n": 24,
+          "span": 2.2,
+          "spacing": 0.09166666666666667,
+          "active": 5520,
+          "unknowns": 11040,
+          "ghosts": 5056,
+          "closure": "ray",
+          "ko": 0.1,
+          "layer": true,
+          "boundary_rows": 3128,
+          "ghost_quadratic_moment_error": 7.993605777301127e-14,
+          "max_ghost_weight_l1": 10.322552320000005,
+          "strict_active_nonrecursive_donor_references": 130104,
+          "native_matvec_error": 6.366462912410498e-12,
+          "native_gradient_matvec_error": 5.684341886080802e-14,
+          "gradient_constant_error": 1.2830014828324465e-14,
+          "stationary_K_error": 3.1086244689504383e-15,
+          "pure_CMC_R_error": 5.329070518200751e-15,
+          "R_min": 5.832130439736636e-09,
+          "R_max": 26.423264949560075,
+          "min_abs_incoming": 1.1786549690659242e-06,
+          "max_abs_incoming": 0.9999999999999019,
+          "max_outgoing": 3.995658543567254,
+          "min_L": 1.0000000000000742,
+          "outward_crossing_time": 0.7457643839234269
+        },
+        "source_sha256": "10010537c26949ef8b6d4df3810d2bfeca4f410f36a05d32ca742c44862137d5",
+        "executable_sha256": "5b9dd39a1d5cec144bb1d4a32932e4af611c3ab30c85c59db3b76b7582a33088",
+        "driver_sha256": "4822795f5e96300f39d2fef28b5c6f024b4cf5b733377c01cd049031cf6a56ac",
+        "build_command": [
+          "/usr/bin/c++",
+          "-DKOKKOS_DEPENDENCE",
+          "-I/Users/hz0693/research/hyperboloidal/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+          "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+          "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+          "-isystem",
+          "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+          "-O3",
+          "-DNDEBUG",
+          "-std=c++17",
+          "-arch",
+          "arm64",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export_wave.cpp",
+          "-o",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+          "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+        ],
+        "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+        "numpy": "2.0.2",
+        "scipy": "1.13.1",
+        "matrix_sha256": "413517de3736c9218d8c9dbcdb52b02619eaf75514676c8711e03907ae7c3f71",
+        "points_sha256": "9cc1d06fe4a5878e88c94417a787549e65ff925a56b617bf2cda67bf3a2c8193",
+        "headers": {
+          "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9"
+        },
+        "spectral": {
+          "scope": "converged ARPACK LR8, no full-spectrum proof",
+          "seconds": 1.8139778329999998,
+          "modes": [
+            {
+              "real": -0.1943208436030304,
+              "imag": 0.0,
+              "residual_l2": 1.0964352922870427e-12,
+              "squared_mode_fraction_r_gt_.8": 0.8912016398065978,
+              "radius_peak": 0.9989143412280711
+            },
+            {
+              "real": -0.6085583251214506,
+              "imag": 0.0,
+              "residual_l2": 5.378269408005207e-10,
+              "squared_mode_fraction_r_gt_.8": 0.9283224350068714,
+              "radius_peak": 0.9989143412280711
+            },
+            {
+              "real": -0.6085583251704649,
+              "imag": 0.0,
+              "residual_l2": 9.35193119352961e-13,
+              "squared_mode_fraction_r_gt_.8": 0.9283224350071804,
+              "radius_peak": 0.9989143412280712
+            },
+            {
+              "real": -0.7769340361486351,
+              "imag": 0.0,
+              "residual_l2": 1.837508132523468e-12,
+              "squared_mode_fraction_r_gt_.8": 0.7586087233774881,
+              "radius_peak": 0.9989143412280712
+            },
+            {
+              "real": -1.2981951505460578,
+              "imag": 0.0,
+              "residual_l2": 1.2662267895480496e-12,
+              "squared_mode_fraction_r_gt_.8": 0.942141321457266,
+              "radius_peak": 0.9646800707430878
+            },
+            {
+              "real": -1.3103027146939303,
+              "imag": 0.0,
+              "residual_l2": 1.3535170349769893e-12,
+              "squared_mode_fraction_r_gt_.8": 0.9372450668997814,
+              "radius_peak": 0.9989143412280712
+            },
+            {
+              "real": -1.7339184933426042,
+              "imag": 0.0,
+              "residual_l2": 2.1710075744769274e-11,
+              "squared_mode_fraction_r_gt_.8": 0.7261700837619987,
+              "radius_peak": 0.9904667109779893
+            },
+            {
+              "real": -2.112084550343184,
+              "imag": -25.066165231705405,
+              "residual_l2": 7.972834045772215e-13,
+              "squared_mode_fraction_r_gt_.8": 0.06382703962163687,
+              "radius_peak": 0.07938566201357351
+            }
+          ]
+        },
+        "initial_exact_pulse_discrete_defect": {
+          "phi_rms": 0.00019786826588207983,
+          "pi_rms": 0.013480656241897862,
+          "linf": 0.11216991489632705
+        },
+        "pulse": {
+          "method": "RK4",
+          "dt_nominal": 0.002294156661966122,
+          "dt_factor": 0.1,
+          "stop": "requested time reached",
+          "steps": 2616,
+          "last": {
+            "time": 6.0,
+            "phi_linf": 1.501472519549764e-06,
+            "pi_linf": 5.410390443453469e-06,
+            "both_linf": 5.410390443453469e-06,
+            "error_linf": 5.410390443453469e-06,
+            "error_rms": 1.316403657479855e-06,
+            "phi_error_rms": 4.757033031147652e-07,
+            "pi_error_rms": 1.799873202828016e-06,
+            "killing_energy": 2.81561698669371e-12,
+            "sampled_exact_killing_energy": 3.5431000790765845e-235,
+            "positive_normal_energy": 1.7506420608758875e-11,
+            "sampled_exact_normal_energy": 9.052258201113112e-236
+          },
+          "initial": {
+            "time": 0.0,
+            "phi_linf": 0.004039069880348037,
+            "pi_linf": 0.03766412413891488,
+            "both_linf": 0.03766412413891488,
+            "error_linf": 0.0,
+            "error_rms": 0.0,
+            "phi_error_rms": 0.0,
+            "pi_error_rms": 0.0,
+            "killing_energy": 0.0003151552033043521,
+            "sampled_exact_killing_energy": 0.0003132824584768457,
+            "positive_normal_energy": 0.00028571882213146584,
+            "sampled_exact_normal_energy": 0.00028694800791682586
+          },
+          "peak_both_linf": 0.03766412413891488,
+          "peak_positive_normal_energy": 0.00028571882213146584,
+          "peak_killing_energy": 0.00031556040080369784,
+          "history_sha256": "cabc349aa17d62697aa89e2e4003ce830afadbcae1a2d569cfdf440dab3a6c8e",
+          "history_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/N24-span2.2-ray-ko0.1-dt0.1-pulse.json",
+          "wall_seconds": 6.473673499999999
+        }
+      }
+    }
+  ],
+  "constant_and_zero_reference_checks": [
+    {
+      "name": "N16-span2.2-mls-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 3.8576364325138e-12,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N16-span2.2-ray-ko0.0",
+      "constant_derivative_plus_exact_reaction_error": 4.2918793519142184e-13,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N16-span2.2-ray-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 4.2918793519142184e-13,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N20-span2.2-mls-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 5.0653370387010455e-12,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N20-span2.2-ray-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 1.1365353103087728e-12,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N24-span2.1-mls-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 1.0612205558757637e-11,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N24-span2.1-mls-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 1.0612205558757637e-11,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N24-span2.1-ray-ko0.0",
+      "constant_derivative_plus_exact_reaction_error": 1.283639861071606e-12,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N24-span2.1-ray-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 1.283639861071606e-12,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N24-span2.1-ray-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 1.283639861071606e-12,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N24-span2.2-mls-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 1.2748024857955897e-11,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    },
+    {
+      "name": "N24-span2.2-ray-ko0.1",
+      "constant_derivative_plus_exact_reaction_error": 1.48991929904696e-12,
+      "zero_scalar_stationary_background_rhs_exact_zero": true
+    }
+  ],
+  "full_dense_N16_spectrum": [
+    {
+      "closure": "ray",
+      "unknowns": 3280,
+      "scope": "full dense eigenvalue spectrum",
+      "matrix_sha256": "668e72e8f3761c13249f4d5c442e64b1ecbb46d3ff405180e04788b998458790",
+      "seconds": 6.7683135,
+      "positive_real_count_gt_1e-8": 0,
+      "max_real": -0.24063711744450578,
+      "rightmost": [
+        {
+          "real": -0.24063711744450578,
+          "imag": 0.0
+        },
+        {
+          "real": -0.7984718370160261,
+          "imag": 0.0
+        },
+        {
+          "real": -0.798471837016083,
+          "imag": 0.0
+        },
+        {
+          "real": -0.7984718370162509,
+          "imag": 0.0
+        },
+        {
+          "real": -1.2259609709958856,
+          "imag": 0.0
+        },
+        {
+          "real": -1.6794230911863208,
+          "imag": 0.0
+        },
+        {
+          "real": -1.6794230911864068,
+          "imag": 0.0
+        },
+        {
+          "real": -1.679423091186419,
+          "imag": 0.0
+        },
+        {
+          "real": -1.800513563483733,
+          "imag": -1.323097976294428e-14
+        },
+        {
+          "real": -1.800513563483733,
+          "imag": 1.323097976294428e-14
+        },
+        {
+          "real": -2.080823802095784,
+          "imag": -16.658171135620027
+        },
+        {
+          "real": -2.080823802095784,
+          "imag": 16.658171135620027
+        }
+      ]
+    },
+    {
+      "closure": "mls",
+      "unknowns": 3280,
+      "scope": "full dense eigenvalue spectrum",
+      "matrix_sha256": "eae4e7f15cb9f43ca99c2d3ecf3e9ffc5f58e719945f8a9d4771d39f9f3b9131",
+      "seconds": 6.6800197919999995,
+      "positive_real_count_gt_1e-8": 0,
+      "max_real": -0.16566447757184566,
+      "rightmost": [
+        {
+          "real": -0.16566447757184566,
+          "imag": 0.0
+        },
+        {
+          "real": -0.6584133030152785,
+          "imag": 0.0
+        },
+        {
+          "real": -0.6584133030153211,
+          "imag": 0.0
+        },
+        {
+          "real": -0.658413303015358,
+          "imag": 0.0
+        },
+        {
+          "real": -1.0137296935951012,
+          "imag": 0.0
+        },
+        {
+          "real": -1.5371096280616228,
+          "imag": 0.0
+        },
+        {
+          "real": -1.5371096280616825,
+          "imag": 0.0
+        },
+        {
+          "real": -1.5371096280618417,
+          "imag": 0.0
+        },
+        {
+          "real": -1.6798916482771862,
+          "imag": 0.0
+        },
+        {
+          "real": -1.6798916482772708,
+          "imag": 0.0
+        },
+        {
+          "real": -2.080522626238775,
+          "imag": 16.655289521699366
+        },
+        {
+          "real": -2.080522626238775,
+          "imag": -16.655289521699366
+        }
+      ]
+    }
+  ],
+  "full_dense_N16_Schur_quality": [
+    {
+      "closure": "ray",
+      "matrix_sha256": "668e72e8f3761c13249f4d5c442e64b1ecbb46d3ff405180e04788b998458790",
+      "full_unknowns": 3280,
+      "schur_backward_residual_fro_over_A_fro": 2.6355727192373997e-14,
+      "orthogonality_residual_fro_over_sqrtN": 3.7547971078782744e-14,
+      "max_schur_eigenvalue_real": -0.2406371174445984,
+      "max_dense_eigenvalue_real": -0.24063711744450578,
+      "positive_real_count_gt_1e-8": 0,
+      "seconds": 17.794995915999998
+    },
+    {
+      "closure": "mls",
+      "matrix_sha256": "eae4e7f15cb9f43ca99c2d3ecf3e9ffc5f58e719945f8a9d4771d39f9f3b9131",
+      "full_unknowns": 3280,
+      "schur_backward_residual_fro_over_A_fro": 2.8563127918479006e-14,
+      "orthogonality_residual_fro_over_sqrtN": 3.6976074612769895e-14,
+      "max_schur_eigenvalue_real": -0.16566447757194627,
+      "max_dense_eigenvalue_real": -0.16566447757184566,
+      "positive_real_count_gt_1e-8": 0,
+      "seconds": 16.352020541
+    }
+  ],
+  "continuum_oracle": {
+    "stationary_K_error": 2.220446049250313e-15,
+    "pure_CMC_R_error": 6.217248937900877e-15,
+    "conformal_transform_R_error_Omega_ge_.1": 2.0889956431346945e-12,
+    "dense_R_min": 0,
+    "dense_R_max": 26.449666326531766,
+    "scri_incoming": 1.232595164407831e-32,
+    "continuous_exact_dipole_FD_oracle": [
+      {
+        "h": 0.0004,
+        "phi_rhs_max_error": 8.928621730852626e-14,
+        "pi_rhs_max_error": 2.985374373057348e-09
+      },
+      {
+        "h": 0.0002,
+        "phi_rhs_max_error": 2.0491594532323631e-13,
+        "pi_rhs_max_error": 1.0287780080088516e-08
+      },
+      {
+        "h": 0.0001,
+        "phi_rhs_max_error": 2.466152282387668e-13,
+        "pi_rhs_max_error": 4.334133952340474e-08
+      }
+    ]
+  },
+  "closure_comparison": {
+    "support_and_symmetry": [
+      {
+        "n": 16,
+        "span": 2.2,
+        "unknowns": 3280,
+        "boundary_point_rows": 1208,
+        "changed_coupled_rows": 1736,
+        "interior_coupled_rows": 864,
+        "interior_row_difference_exact_zero": true,
+        "symmetry": [
+          {
+            "closure": "ray",
+            "transform": "x_reflection",
+            "max_entry_commutator": 4.547473508864641e-13,
+            "relative_to_max_matrix_entry": 5.912766452246275e-16
+          },
+          {
+            "closure": "mls",
+            "transform": "x_reflection",
+            "max_entry_commutator": 4.547473508864641e-13,
+            "relative_to_max_matrix_entry": 6.343805649773027e-16
+          },
+          {
+            "closure": "ray",
+            "transform": "xy_swap",
+            "max_entry_commutator": 3.979039320256561e-13,
+            "relative_to_max_matrix_entry": 5.17367064571549e-16
+          },
+          {
+            "closure": "mls",
+            "transform": "xy_swap",
+            "max_entry_commutator": 5.115907697472721e-13,
+            "relative_to_max_matrix_entry": 7.136781355994655e-16
+          }
+        ]
+      },
+      {
+        "n": 20,
+        "span": 2.2,
+        "unknowns": 6224,
+        "boundary_point_rows": 2024,
+        "changed_coupled_rows": 2816,
+        "interior_coupled_rows": 2176,
+        "interior_row_difference_exact_zero": true,
+        "symmetry": [
+          {
+            "closure": "ray",
+            "transform": "x_reflection",
+            "max_entry_commutator": 6.821210263296962e-13,
+            "relative_to_max_matrix_entry": 5.673715490852772e-16
+          },
+          {
+            "closure": "mls",
+            "transform": "x_reflection",
+            "max_entry_commutator": 6.821210263296962e-13,
+            "relative_to_max_matrix_entry": 6.07130764908638e-16
+          },
+          {
+            "closure": "ray",
+            "transform": "xy_swap",
+            "max_entry_commutator": 4.547473508864641e-13,
+            "relative_to_max_matrix_entry": 3.782476993901848e-16
+          },
+          {
+            "closure": "mls",
+            "transform": "xy_swap",
+            "max_entry_commutator": 6.821210263296962e-13,
+            "relative_to_max_matrix_entry": 6.07130764908638e-16
+          }
+        ]
+      },
+      {
+        "n": 24,
+        "span": 2.2,
+        "unknowns": 11040,
+        "boundary_point_rows": 3128,
+        "changed_coupled_rows": 4328,
+        "interior_coupled_rows": 4784,
+        "interior_row_difference_exact_zero": true,
+        "symmetry": [
+          {
+            "closure": "ray",
+            "transform": "x_reflection",
+            "max_entry_commutator": 1.1368683772161603e-12,
+            "relative_to_max_matrix_entry": 6.557640155835992e-16
+          },
+          {
+            "closure": "mls",
+            "transform": "x_reflection",
+            "max_entry_commutator": 1.1368683772161603e-12,
+            "relative_to_max_matrix_entry": 6.799200395343676e-16
+          },
+          {
+            "closure": "ray",
+            "transform": "xy_swap",
+            "max_entry_commutator": 6.821210263296962e-13,
+            "relative_to_max_matrix_entry": 3.934584093501595e-16
+          },
+          {
+            "closure": "mls",
+            "transform": "xy_swap",
+            "max_entry_commutator": 7.958078640513122e-13,
+            "relative_to_max_matrix_entry": 4.759440276740573e-16
+          }
+        ]
+      },
+      {
+        "n": 24,
+        "span": 2.1,
+        "unknowns": 12304,
+        "boundary_point_rows": 3376,
+        "changed_coupled_rows": 4656,
+        "interior_coupled_rows": 5552,
+        "interior_row_difference_exact_zero": true,
+        "symmetry": [
+          {
+            "closure": "ray",
+            "transform": "x_reflection",
+            "max_entry_commutator": 1.3642420526593924e-12,
+            "relative_to_max_matrix_entry": 7.013212164219561e-16
+          },
+          {
+            "closure": "mls",
+            "transform": "x_reflection",
+            "max_entry_commutator": 1.3642420526593924e-12,
+            "relative_to_max_matrix_entry": 7.438837945840209e-16
+          },
+          {
+            "closure": "ray",
+            "transform": "xy_swap",
+            "max_entry_commutator": 1.3642420526593924e-12,
+            "relative_to_max_matrix_entry": 7.013212164219561e-16
+          },
+          {
+            "closure": "mls",
+            "transform": "xy_swap",
+            "max_entry_commutator": 1.3642420526593924e-12,
+            "relative_to_max_matrix_entry": 7.438837945840209e-16
+          }
+        ]
+      }
+    ],
+    "timestep_halving": [
+      {
+        "closure": "ray",
+        "max_state_difference_at_identical_output_times": 6.376197761795432e-08,
+        "per_time": [
+          {
+            "time": 0.0,
+            "linf_difference": 0.0
+          },
+          {
+            "time": 0.01,
+            "linf_difference": 1.1180538739621881e-08
+          },
+          {
+            "time": 0.025,
+            "linf_difference": 6.376197761795432e-08
+          },
+          {
+            "time": 0.05,
+            "linf_difference": 8.32897552316414e-09
+          },
+          {
+            "time": 0.1,
+            "linf_difference": 7.913051340915911e-09
+          },
+          {
+            "time": 0.2,
+            "linf_difference": 1.1404765500044878e-10
+          },
+          {
+            "time": 0.5,
+            "linf_difference": 2.8743594310265408e-11
+          },
+          {
+            "time": 1.0,
+            "linf_difference": 5.867320680957161e-12
+          },
+          {
+            "time": 2.0,
+            "linf_difference": 3.6218408253665653e-13
+          },
+          {
+            "time": 4.0,
+            "linf_difference": 4.287184622834969e-15
+          },
+          {
+            "time": 6.0,
+            "linf_difference": 1.1609053568294034e-16
+          }
+        ]
+      },
+      {
+        "closure": "mls",
+        "max_state_difference_at_identical_output_times": 8.61527053690192e-10,
+        "per_time": [
+          {
+            "time": 0.0,
+            "linf_difference": 0.0
+          },
+          {
+            "time": 0.01,
+            "linf_difference": 4.240716250381027e-10
+          },
+          {
+            "time": 0.025,
+            "linf_difference": 8.61527053690192e-10
+          },
+          {
+            "time": 0.05,
+            "linf_difference": 4.691368031897736e-10
+          },
+          {
+            "time": 0.1,
+            "linf_difference": 8.582668169915264e-11
+          },
+          {
+            "time": 0.2,
+            "linf_difference": 4.11427966348632e-11
+          },
+          {
+            "time": 0.5,
+            "linf_difference": 2.8507326707560843e-11
+          },
+          {
+            "time": 1.0,
+            "linf_difference": 4.501513853512329e-12
+          },
+          {
+            "time": 2.0,
+            "linf_difference": 3.501281228379498e-13
+          },
+          {
+            "time": 4.0,
+            "linf_difference": 4.369970559222616e-15
+          },
+          {
+            "time": 6.0,
+            "linf_difference": 1.1454031980567716e-16
+          }
+        ]
+      }
+    ],
+    "same_span_refinement": [
+      {
+        "closure": "ray",
+        "n": 16,
+        "spacing": 0.1375,
+        "error_rms_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 0.0007401748093431672,
+          "0.025": 0.001558964555449308,
+          "0.05": 0.0020911594523735214,
+          "0.1": 0.0019090311257457867,
+          "0.2": 0.001428562151685149,
+          "0.5": 0.00039035261051299075,
+          "1.0": 0.00026269183779224016,
+          "2.0": 0.00011331359350710643,
+          "4.0": 2.2400741722667575e-05,
+          "6.0": 4.536898981025516e-06
+        },
+        "error_linf_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 0.009375789483565298,
+          "0.025": 0.019941114553348953,
+          "0.05": 0.025839842773402958,
+          "0.1": 0.016777942508207314,
+          "0.2": 0.008658727346743727,
+          "0.5": 0.0027110907206092452,
+          "1.0": 0.0009958328053421939,
+          "2.0": 0.0004083880418846412,
+          "4.0": 8.168505249998056e-05,
+          "6.0": 1.6544199756190287e-05
+        }
+      },
+      {
+        "closure": "ray",
+        "n": 20,
+        "spacing": 0.11000000000000001,
+        "error_rms_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 0.0002953066986663068,
+          "0.025": 0.0006366614631591863,
+          "0.05": 0.0008823262356729469,
+          "0.1": 0.0009926275759493646,
+          "0.2": 0.0009546733314442211,
+          "0.5": 0.00028729526963745567,
+          "1.0": 0.0001516175969135284,
+          "2.0": 8.887092908001516e-05,
+          "4.0": 1.9409602411208692e-05,
+          "6.0": 4.8189789242078315e-06
+        },
+        "error_linf_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 0.004881412476748325,
+          "0.025": 0.010705998756760905,
+          "0.05": 0.014129998292675826,
+          "0.1": 0.012194153655713337,
+          "0.2": 0.007601959599094749,
+          "0.5": 0.0026766558643835023,
+          "1.0": 0.0006629391588238067,
+          "2.0": 0.0003416476963039994,
+          "4.0": 7.686956489075536e-05,
+          "6.0": 1.9086957014697652e-05
+        }
+      },
+      {
+        "closure": "ray",
+        "n": 24,
+        "spacing": 0.09166666666666667,
+        "error_rms_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 7.483833046715179e-05,
+          "0.025": 0.00013279564677452844,
+          "0.05": 0.00020445786489226242,
+          "0.1": 0.0003230117248485044,
+          "0.2": 0.00038971793089048756,
+          "0.5": 0.00014943704651098014,
+          "1.0": 2.5376234665365192e-05,
+          "2.0": 2.174641805339829e-05,
+          "4.0": 4.443553740186094e-06,
+          "6.0": 1.3164036574798641e-06
+        },
+        "error_linf_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 0.001170962833101738,
+          "0.025": 0.0030391710918293846,
+          "0.05": 0.004952679746785839,
+          "0.1": 0.006693433103268342,
+          "0.2": 0.005480580209596648,
+          "0.5": 0.0026642119480829885,
+          "1.0": 0.00022683264725460823,
+          "2.0": 7.537514842702035e-05,
+          "4.0": 1.8029400937540837e-05,
+          "6.0": 5.410390443453514e-06
+        }
+      },
+      {
+        "closure": "mls",
+        "n": 16,
+        "spacing": 0.1375,
+        "error_rms_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 3.9659545665751856e-05,
+          "0.025": 9.161114259959985e-05,
+          "0.05": 0.00016775271446024375,
+          "0.1": 0.00032692024466599273,
+          "0.2": 0.00052369185311324,
+          "0.5": 0.00012961901051152335,
+          "1.0": 9.043094709016194e-05,
+          "2.0": 5.969880567976968e-05,
+          "4.0": 1.3866175589446695e-05,
+          "6.0": 3.714322225452193e-06
+        },
+        "error_linf_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 0.0002734680051740901,
+          "0.025": 0.0006608340538895715,
+          "0.05": 0.0012680063449237323,
+          "0.1": 0.002344018054947118,
+          "0.2": 0.003236646263843692,
+          "0.5": 0.0007412690766939922,
+          "1.0": 0.0003496016765842945,
+          "2.0": 0.00022051222865283808,
+          "4.0": 5.302058303644478e-05,
+          "6.0": 1.4206805769684893e-05
+        }
+      },
+      {
+        "closure": "mls",
+        "n": 20,
+        "spacing": 0.11000000000000001,
+        "error_rms_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 1.3324136651904381e-05,
+          "0.025": 2.594931598368911e-05,
+          "0.05": 4.359554713773295e-05,
+          "0.1": 0.00011720875584231314,
+          "0.2": 0.0002840419323870364,
+          "0.5": 0.00011069761538636609,
+          "1.0": 5.594510889407462e-05,
+          "2.0": 4.699887408662773e-05,
+          "4.0": 1.2124468825602055e-05,
+          "6.0": 3.7844089329276984e-06
+        },
+        "error_linf_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 8.75988582405454e-05,
+          "0.025": 0.00015196401678844746,
+          "0.05": 0.00025388136359662077,
+          "0.1": 0.0008584144765570031,
+          "0.2": 0.0019807539522432157,
+          "0.5": 0.0005456460382111668,
+          "1.0": 0.00021257322454345338,
+          "2.0": 0.00018440068213298918,
+          "4.0": 5.081016489009922e-05,
+          "6.0": 1.5887869297166987e-05
+        }
+      },
+      {
+        "closure": "mls",
+        "n": 24,
+        "spacing": 0.09166666666666667,
+        "error_rms_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 1.6086701501071687e-05,
+          "0.025": 2.4869852457789875e-05,
+          "0.05": 2.366207717760574e-05,
+          "0.1": 2.569591543085751e-05,
+          "0.2": 0.00011578727134966189,
+          "0.5": 6.957284380344182e-05,
+          "1.0": 2.9115206490305305e-05,
+          "2.0": 2.4735457086538943e-05,
+          "4.0": 6.720419429019927e-06,
+          "6.0": 2.5050872081452337e-06
+        },
+        "error_linf_at_exact_times": {
+          "0.0": 0.0,
+          "0.01": 0.0001331185778307934,
+          "0.025": 0.0001964918363007136,
+          "0.05": 0.00017338416682161333,
+          "0.1": 0.00018394634782186586,
+          "0.2": 0.0008732123832822566,
+          "0.5": 0.0003691633925890232,
+          "1.0": 0.00014766104026746858,
+          "2.0": 8.808406393827025e-05,
+          "4.0": 2.8414967138768643e-05,
+          "6.0": 1.0865735803578474e-05
+        }
+      }
+    ],
+    "source_sha256": "79fcbe30197bd1cb823578f6deb6f9225d90e13f2912bef2ac248c02852fd79c"
+  },
+  "coarse_grid_rejections": [
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+        "12",
+        "2.2",
+        "ray",
+        ".1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/rejected-N12-span2.2"
+      ],
+      "exit_status": 1,
+      "stdout": "",
+      "stderr": "no interior normal-ray rectangles\n"
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+        "12",
+        "2.1",
+        "ray",
+        ".1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/rejected-N12-span2.1"
+      ],
+      "exit_status": 1,
+      "stdout": "",
+      "stderr": "spherical ghost patch does not contain ball/halo\n"
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/export-wave",
+        "16",
+        "2.1",
+        "ray",
+        ".1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/coupled-wave-isolate/rejected-N16-span2.1"
+      ],
+      "exit_status": 1,
+      "stdout": "",
+      "stderr": "spherical ghost patch does not contain ball/halo\n"
+    }
+  ],
+  "authoritative_files": [
+    "export_wave.cpp",
+    "continuum_oracle.cpp",
+    "run_wave.py",
+    "fixed_times.py",
+    "dense_spectrum.py",
+    "schur_quality.py",
+    "compare_closures.py",
+    "preserve.py",
+    "build-command.json",
+    "oracle-build-command.json",
+    "compile-dependencies.txt",
+    "dense-spectrum.json",
+    "schur-quality.json",
+    "continuum-oracle.json",
+    "closure-comparison.json"
+  ],
+  "notes": [
+    "The compact-profile initial pilot was replaced by the analytically regular Gaussian dipole before these retained receipts. pilot-driver.py and N16-ray-run.log are exploratory only.",
+    "No production edits or native Z4c runtime closure change. The operator is a two-field scalar conformal wave on fixed analytic LayerReference geometry.",
+    "Constant scalar values are not stationary solutions when Rbar !=0. Only derivative constants and the exact analytic reaction/coupling are required; zero scalar field is stationary."
+  ]
+}

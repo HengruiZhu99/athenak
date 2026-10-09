@@ -1,0 +1,2000 @@
+{
+  "scope": "Independent completed native N36 early combined spatial/time refinement; same pole.03 but actual dt differs. No pure spatial-order/stability claim.",
+  "launch": {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/run_layer_validation.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src/athena",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2",
+      "--suite",
+      "long",
+      "--overrides",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36.athinput",
+      "--duration",
+      "0.2",
+      "--output-cadence",
+      "0.025"
+    ],
+    "compiled_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+    "build_receipt": "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-build-receipt.json",
+    "build_receipt_sha256": "a39430b8c3bcf2e7cc05d03a441831edc493f050afbb687e642418f1e5f56ce6",
+    "native_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "all_recorded_sources_and_overlay_hashes_verified": true,
+    "override_sha256": "735dd23eaab97841630422b032960a381b9942ec7807cb62e80d3f2dc370d0c2",
+    "scope": "New gauge early N36 refinement control; pole.03 unchanged, so actual initial timestep differs from N24. No pure spatial-order inference."
+  },
+  "result_sha256": "cabbcd5dfe9959e3b112b34ad1481deb0e72eba50131c5b0ef58aa1537ffbb7b",
+  "case": {
+    "name": "finite-angular-long-N36",
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/athena-validation",
+      "-i",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/layer.athinput"
+    ],
+    "exit_status": 0,
+    "wall_seconds": 820.990629875,
+    "requested_time": 0.2,
+    "input_text": "<job>\nbasename=hyp\n\n<mesh>\nnx1=24\nnx2=24\nnx3=24\nnghost=3\nx1min=-1.05\nx1max=1.05\nx2min=-1.05\nx2max=1.05\nx3min=-1.05\nx3max=1.05\nix1_bc=outflow\nox1_bc=outflow\nix2_bc=outflow\nox2_bc=outflow\nix3_bc=outflow\nox3_bc=outflow\n\n<meshblock>\nnx1=24\nnx2=24\nnx3=24\n\n<time>\nevolution=dynamic\nintegrator=rk3\ncfl_number=0.4\nnlim=2\ntlim=0.001\nndiag=1\n\n<z4c>\nhyperboloidal=true\nhyperboloidal_slicing=2\nhyperboloidal_shift_driver=0.1\nhyperboloidal_lapse_damping=1.5\nhyperboloidal_shift_damping=1\nhyperboloidal_kappa1=5\nhyperboloidal_dissipation=0.1\nhyperboloidal_pole_cfl=0.04\nhyperboloidal_ghost_degree=3\nhyperboloidal_mass_diagnostics=false\nhyperboloidal_mass_nmu=32\nfloor_chi=false\nnrad_wave_extraction=0\nspatial_order=4\n\n<problem>\npgen_name=z4c_hyperboloidal\nmass=0\nlapse_pulse=0\n\n<output1>\nfile_type=bin\nvariable=z4c\nid=z4c\ndt=0.0001\nghost_zones=true\n\n<output2>\nfile_type=bin\nvariable=adm\nid=adm\ndt=0.0001\nghost_zones=true\n\n<output3>\nfile_type=hst\ndt=0.0001\ndata_format=%24.16e\n# Experimental uniform Cartesian prototype. See docs/hyperboloidal.md.\n# Layer mass>0 selects wormhole initial data; 0<M<2*layer_r0 is required.\n# The Minkowski reference remains the gauge target. Long stability is unverified.\n\n<output4>\nfile_type=bin\nvariable=con\nid=con\ndt=0.0001\nghost_zones=true\n\n<output5>\nfile_type=rst\ndt=0.0001\n\n<z4c>\n# Interior-only research prototype: exact scri is never assembled.\nhyperboloidal_layer=true\nhyperboloidal_layer_r0=0.35\nhyperboloidal_layer_r1=0.75\nhyperboloidal_gauge_r0=0.45\nhyperboloidal_gauge_r1=0.85\nhyperboloidal_gauge_q0=0.5\nhyperboloidal_layer_lapse_inner=0\nhyperboloidal_layer_lapse_outer=1.5\nhyperboloidal_layer_shift_inner=0\nhyperboloidal_layer_shift_outer=1\nhyperboloidal_preferred_source=true\n\n<mesh>\nnx1=36\nnx2=36\nnx3=36\n<meshblock>\nnx1=36\nnx2=36\nnx3=36\n<time>\nnlim=-1\ntlim=0.2\nndiag=100\n<problem>\nlapse_pulse=0.1\nshift_pulse=0.02\npulse_angular=true\n\n<output1>\ndt=0.025\n\n<output2>\ndt=0.025\n\n<output3>\ndt=0.025\n\n<output4>\ndt=0.025\n\n<output5>\ndt=0.025\n\n\n<z4c>\nhyperboloidal_physical_trace_lapse=true\nhyperboloidal_preferred_source=false\nhyperboloidal_curvature_radius=.5\nhyperboloidal_layer_r0=.05\nhyperboloidal_layer_r1=.95\nhyperboloidal_gauge_r0=.45\nhyperboloidal_gauge_r1=.85\nhyperboloidal_symmetric_ghosts=true\nhyperboloidal_ghost_degree=2\nhyperboloidal_kappa1=10\nhyperboloidal_scri_lapse_damping=2\nhyperboloidal_pole_cfl=.03\nfloor_chi=false\n<problem>\npulse_width=.5\n\n<mesh>\nnx1=36\nnx2=36\nnx3=36\n<meshblock>\nnx1=36\nnx2=36\nnx3=36\n",
+    "input_sha256": "ed06e9dde2b4cf2de8196cdf41f10db4772edb2c502d27398b4e1c0046f403a3",
+    "input_parameters": {
+      "job/basename": "hyp",
+      "mesh/nx1": "36",
+      "mesh/nx2": "36",
+      "mesh/nx3": "36",
+      "mesh/nghost": "3",
+      "mesh/x1min": "-1.05",
+      "mesh/x1max": "1.05",
+      "mesh/x2min": "-1.05",
+      "mesh/x2max": "1.05",
+      "mesh/x3min": "-1.05",
+      "mesh/x3max": "1.05",
+      "mesh/ix1_bc": "outflow",
+      "mesh/ox1_bc": "outflow",
+      "mesh/ix2_bc": "outflow",
+      "mesh/ox2_bc": "outflow",
+      "mesh/ix3_bc": "outflow",
+      "mesh/ox3_bc": "outflow",
+      "meshblock/nx1": "36",
+      "meshblock/nx2": "36",
+      "meshblock/nx3": "36",
+      "time/evolution": "dynamic",
+      "time/integrator": "rk3",
+      "time/cfl_number": "0.4",
+      "time/nlim": "-1",
+      "time/tlim": "0.2",
+      "time/ndiag": "100",
+      "z4c/hyperboloidal": "true",
+      "z4c/hyperboloidal_slicing": "2",
+      "z4c/hyperboloidal_shift_driver": "0.1",
+      "z4c/hyperboloidal_lapse_damping": "1.5",
+      "z4c/hyperboloidal_shift_damping": "1",
+      "z4c/hyperboloidal_kappa1": "10",
+      "z4c/hyperboloidal_dissipation": "0.1",
+      "z4c/hyperboloidal_pole_cfl": ".03",
+      "z4c/hyperboloidal_ghost_degree": "2",
+      "z4c/hyperboloidal_mass_diagnostics": "false",
+      "z4c/hyperboloidal_mass_nmu": "32",
+      "z4c/floor_chi": "false",
+      "z4c/nrad_wave_extraction": "0",
+      "z4c/spatial_order": "4",
+      "problem/pgen_name": "z4c_hyperboloidal",
+      "problem/mass": "0",
+      "problem/lapse_pulse": "0.1",
+      "output1/file_type": "bin",
+      "output1/variable": "z4c",
+      "output1/id": "z4c",
+      "output1/dt": "0.025",
+      "output1/ghost_zones": "true",
+      "output2/file_type": "bin",
+      "output2/variable": "adm",
+      "output2/id": "adm",
+      "output2/dt": "0.025",
+      "output2/ghost_zones": "true",
+      "output3/file_type": "hst",
+      "output3/dt": "0.025",
+      "output3/data_format": "%24.16e",
+      "output4/file_type": "bin",
+      "output4/variable": "con",
+      "output4/id": "con",
+      "output4/dt": "0.025",
+      "output4/ghost_zones": "true",
+      "output5/file_type": "rst",
+      "output5/dt": "0.025",
+      "z4c/hyperboloidal_layer": "true",
+      "z4c/hyperboloidal_layer_r0": ".05",
+      "z4c/hyperboloidal_layer_r1": ".95",
+      "z4c/hyperboloidal_gauge_r0": ".45",
+      "z4c/hyperboloidal_gauge_r1": ".85",
+      "z4c/hyperboloidal_gauge_q0": "0.5",
+      "z4c/hyperboloidal_layer_lapse_inner": "0",
+      "z4c/hyperboloidal_layer_lapse_outer": "1.5",
+      "z4c/hyperboloidal_layer_shift_inner": "0",
+      "z4c/hyperboloidal_layer_shift_outer": "1",
+      "z4c/hyperboloidal_preferred_source": "false",
+      "problem/shift_pulse": "0.02",
+      "problem/pulse_angular": "true",
+      "z4c/hyperboloidal_physical_trace_lapse": "true",
+      "z4c/hyperboloidal_curvature_radius": ".5",
+      "z4c/hyperboloidal_symmetric_ghosts": "true",
+      "z4c/hyperboloidal_scri_lapse_damping": "2",
+      "problem/pulse_width": ".5"
+    },
+    "diagnostics": {
+      "time": 0.2,
+      "H": 0.010763938154042862,
+      "M": 0.006958314541584385,
+      "Z": 0.002256118670098246,
+      "Theta": 9.863287636996766e-05,
+      "alpha_min": 0.9767406843084745,
+      "chi_min": 0.7576607106895581,
+      "pole_deviation_max": 0.11015560450343866,
+      "null_deviation_max": 0.005347258417252841,
+      "metric_eigen_min": 0.9751541491194953,
+      "metric_eigen_max": 2.3109499960278295,
+      "metric_stretch_ratio_max": 2.3172283539480425,
+      "constraint_budget": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00008.bin",
+        "time": 0.2,
+        "cycle": 1738,
+        "active_cells": 21008,
+        "global": {
+          "H": {
+            "rms": 0.010763938164580327,
+            "max": 0.06883417814970016,
+            "max_radius": 0.05051814855409208,
+            "max_xyz": [
+              -0.029166666666666563,
+              -0.029166666666666563,
+              -0.029166666666666563
+            ]
+          },
+          "M": {
+            "rms": 0.006958314538915783,
+            "max": 0.05867001815021479,
+            "max_radius": 0.9912376522980416,
+            "max_xyz": [
+              -0.7291666666666666,
+              0.6708333333333334,
+              0.029166666666666785
+            ]
+          },
+          "Z": {
+            "rms": 0.002256118669599708,
+            "max": 0.022426521844866244,
+            "max_radius": 0.9946645861238295,
+            "max_xyz": [
+              -0.6124999999999999,
+              0.5541666666666667,
+              0.5541666666666667
+            ]
+          }
+        },
+        "radial_bins": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.05,
+            "cells": 0,
+            "H": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "M": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "Z": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            }
+          },
+          {
+            "r_min": 0.05,
+            "r_max": 0.9,
+            "cells": 15312,
+            "H": {
+              "rms": 0.012312185174283941,
+              "squared_norm_fraction": 0.9536194503638848
+            },
+            "M": {
+              "rms": 0.003065239960116971,
+              "squared_norm_fraction": 0.14143863490902592
+            },
+            "Z": {
+              "rms": 0.0004740870458939788,
+              "squared_norm_fraction": 0.03218396226084524
+            }
+          },
+          {
+            "r_min": 0.9,
+            "r_max": 0.95,
+            "cells": 2736,
+            "H": {
+              "rms": 0.005255816584402511,
+              "squared_norm_fraction": 0.031050557188214478
+            },
+            "M": {
+              "rms": 0.00956966631668394,
+              "squared_norm_fraction": 0.24632974704011606
+            },
+            "Z": {
+              "rms": 0.002295407708841823,
+              "squared_norm_fraction": 0.1348115733389792
+            }
+          },
+          {
+            "r_min": 0.95,
+            "r_max": 1.0,
+            "cells": 2960,
+            "H": {
+              "rms": 0.003550493022574199,
+              "squared_norm_fraction": 0.015329992447900611
+            },
+            "M": {
+              "rms": 0.014504689371637427,
+              "squared_norm_fraction": 0.612231618050858
+            },
+            "Z": {
+              "rms": 0.0054857006229912094,
+              "squared_norm_fraction": 0.8330044644001755
+            }
+          }
+        ]
+      }
+    }
+  },
+  "source_and_overlay_hashes_still_match_build": true,
+  "history_sha256": "db0f9357fe4f43e95ea1e4cfa550b67a78e24394ebb4c8c07c34a16ec94b5675",
+  "history_rows": [
+    [
+      0.0,
+      0.00011510416666666207,
+      5.9205263358143055e-15,
+      1.0339304631414346e-15,
+      1.1027636185879319e-16,
+      0.0,
+      8.881784197001252e-16,
+      1.0800087121312207e-15,
+      1.0013085680841045,
+      0.7612904298636871,
+      4.2726895806031904e-14,
+      6.176479774936182e-15,
+      4.97231864450276e-05,
+      4.3893474817481944e-05,
+      21008.0
+    ],
+    [
+      0.02509270833333227,
+      0.00011510416666666207,
+      0.0012725955661822084,
+      0.0012850591606712676,
+      0.0003585386705262219,
+      1.7044605257434383e-05,
+      8.881784197001252e-16,
+      7.166974344557991e-16,
+      1.002121477291804,
+      0.7608841501953941,
+      0.01997103084321405,
+      0.009394471875282858,
+      0.02906727257130644,
+      0.0004303754643696174,
+      21008.0
+    ],
+    [
+      0.05007031249999826,
+      0.00011510416666666207,
+      0.002198684051211863,
+      0.001959061931576465,
+      0.00046917186619229324,
+      3.929861129220233e-05,
+      8.881784197001252e-16,
+      6.376833389985698e-16,
+      1.002570345594995,
+      0.7603565352471288,
+      0.02101750973244243,
+      0.014959971852155605,
+      0.03050164395941983,
+      0.0004424443321871535,
+      21008.0
+    ],
+    [
+      0.07504791666666367,
+      0.00011510416666666207,
+      0.0033511378509564808,
+      0.0025751190411767086,
+      0.000578529107035325,
+      5.692733445596715e-05,
+      8.881784197001252e-16,
+      6.629497259267659e-16,
+      1.0023770947438977,
+      0.7597564595407338,
+      0.0232233604785973,
+      0.01606372107309271,
+      0.04184168194173137,
+      0.0005955767625092095,
+      21008.0
+    ],
+    [
+      0.10002552083332834,
+      0.00011510416666666207,
+      0.004895708594910899,
+      0.0031438591617779462,
+      0.0007135524911153747,
+      6.393014428707249e-05,
+      8.881784197001252e-16,
+      6.858639643856587e-16,
+      1.001180856535285,
+      0.7591341109842838,
+      0.03373614243086276,
+      0.02459117421122797,
+      0.06016006259032076,
+      0.0009868481310448473,
+      21008.0
+    ],
+    [
+      0.12500312499999303,
+      0.00011510416666666207,
+      0.006513614000960427,
+      0.003670103097333222,
+      0.0009052267393946315,
+      6.636603552902338e-05,
+      8.881784197001252e-16,
+      6.826779395323036e-16,
+      0.9986359255034786,
+      0.758547310312811,
+      0.044075388046267205,
+      0.03313474011401912,
+      0.07800861552561643,
+      0.0017522802575735106,
+      21008.0
+    ],
+    [
+      0.15009583333332435,
+      0.00011510416666666207,
+      0.008017502860154279,
+      0.004257695180134399,
+      0.0011919761517665552,
+      7.194492279189647e-05,
+      8.881784197001252e-16,
+      7.069289625532368e-16,
+      0.9940931007084234,
+      0.7580556107122516,
+      0.053710420338236475,
+      0.041093457038751294,
+      0.09358516532113444,
+      0.0027027030775759967,
+      21008.0
+    ],
+    [
+      0.17507343749998902,
+      0.00011510416666666207,
+      0.009396101669691443,
+      0.005284895706335228,
+      0.0016261755072381338,
+      8.342735503674223e-05,
+      8.881784197001252e-16,
+      7.588822326340255e-16,
+      0.9844548840005152,
+      0.7577333006725948,
+      0.06136268803962708,
+      0.049902544966515354,
+      0.1049874657688786,
+      0.0037986144743776995,
+      21008.0
+    ],
+    [
+      0.2,
+      0.00011510416666666207,
+      0.010763938154042862,
+      0.006958314541584385,
+      0.002256118670098246,
+      9.863287636996766e-05,
+      8.881784197001252e-16,
+      7.038861191871145e-16,
+      0.9767406843084745,
+      0.7576607106895581,
+      0.06883417590710936,
+      0.05867001809606921,
+      0.11015560450343866,
+      0.005347258417252841,
+      21008.0
+    ]
+  ],
+  "first_dt": 0.00011510416666666207,
+  "history_dt_range": [
+    0.00011510416666666207,
+    0.00011510416666666207
+  ],
+  "rounded_log_dt_range": [
+    0.0001151042,
+    0.0001151042
+  ],
+  "audit_source_sha256": {
+    "build-layer-research/spatial-norm-native-controls/audit.py": "2a2a3e12cd0d4c7c620c1fc5126e30cc89895ccbb8568ea35b4e639620f2ae6c",
+    "vis/python/bin_convert.py": "35e3ec2ebbe2d5a24af9bf1e4796cf1f20def58ce1d76c50f0166288b6d8f37c",
+    "tst/hyperboloidal/analyze_native_constraints.py": "f3e70e2e0e5892760f6c18b986f55e1cb82e149179c8d38ac9e9939d9fc5e1c8"
+  },
+  "native_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "sha256": "d528caa4f68e43fccc73f9b9ddaeaa38037d97ec278bf6e0f85054a1614a6c83",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00000.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 1.001308560371399,
+      "chi_min": 0.761290431022644,
+      "physical_metric_eigen_min": 0.9999998743102856,
+      "physical_metric_eigen_max": 2.2664643895568473
+    },
+    {
+      "time": 0.02509270833333227,
+      "cycle": 218,
+      "sha256": "d4369472339055642551e7803dc414e339975925135cf927a0488e555367e038",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00001.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 1.0021214485168457,
+      "chi_min": 0.760884165763855,
+      "physical_metric_eigen_min": 0.9976412313320946,
+      "physical_metric_eigen_max": 2.2689883963236728
+    },
+    {
+      "time": 0.05007031249999826,
+      "cycle": 435,
+      "sha256": "e3d7ed7201f5de18b4be8b72b5a0d773cd720a1b7abfe1decc4b0e505a28b2aa",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00002.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 1.002570390701294,
+      "chi_min": 0.7603565454483032,
+      "physical_metric_eigen_min": 0.9937683087465456,
+      "physical_metric_eigen_max": 2.272765219614092
+    },
+    {
+      "time": 0.07504791666666367,
+      "cycle": 652,
+      "sha256": "b21d95784020e6e2c65aece78154a830acc6f94a9eb6e6eddf3b53a3154d4105",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00003.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 1.0023771524429321,
+      "chi_min": 0.7597564458847046,
+      "physical_metric_eigen_min": 0.9889660092514879,
+      "physical_metric_eigen_max": 2.277720590504439
+    },
+    {
+      "time": 0.10002552083332834,
+      "cycle": 869,
+      "sha256": "6c7c2b5a99ba274d0deadd4a250f1d884ba87db3fc8f922f8a2ef5af8d5fe2d8",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00004.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 1.00118088722229,
+      "chi_min": 0.7591341137886047,
+      "physical_metric_eigen_min": 0.9841659152739519,
+      "physical_metric_eigen_max": 2.2836594609287157
+    },
+    {
+      "time": 0.12500312499999303,
+      "cycle": 1086,
+      "sha256": "454ee7465277058056af8168b70d191c5074aba72e242fdb5d277c9a06aa5670",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00005.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 0.9986359477043152,
+      "chi_min": 0.758547306060791,
+      "physical_metric_eigen_min": 0.9801094669221475,
+      "physical_metric_eigen_max": 2.2903460279218533
+    },
+    {
+      "time": 0.15009583333332435,
+      "cycle": 1304,
+      "sha256": "726c9e01498b3d7100e39133c65411775713d59ee2fb57d1e2097620ae7476d0",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00006.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 0.994093120098114,
+      "chi_min": 0.7580556273460388,
+      "physical_metric_eigen_min": 0.9771770296354831,
+      "physical_metric_eigen_max": 2.297479595973321
+    },
+    {
+      "time": 0.17507343749998902,
+      "cycle": 1521,
+      "sha256": "d5491f0b64775a4d4b1ab963204e182da9cefae3d65c09ea2103692301d90a8b",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00007.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 0.984454870223999,
+      "chi_min": 0.7577332854270935,
+      "physical_metric_eigen_min": 0.9755322509140947,
+      "physical_metric_eigen_max": 2.3045358166441376
+    },
+    {
+      "time": 0.2,
+      "cycle": 1738,
+      "sha256": "7e3583ce0f84bb70e2cf0d1b0b7f63ec861a1b64e62bc8930d65536033cc5f24",
+      "path": "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00008.bin",
+      "active_cells": 21008,
+      "all_active_fields_finite": true,
+      "alpha_min": 0.9767406582832336,
+      "chi_min": 0.7576606869697571,
+      "physical_metric_eigen_min": 0.9751541491194953,
+      "physical_metric_eigen_max": 2.3109499960278295
+    }
+  ],
+  "radial_constraint_budgets": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00000.bin",
+      "time": 0.0,
+      "cycle": 0,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 5.920526341870452e-15,
+          "max": 4.272689651087583e-14,
+          "max_radius": 0.09673488971869916,
+          "max_xyz": [
+            0.029166666666666785,
+            0.029166666666666785,
+            -0.08749999999999991
+          ]
+        },
+        "M": {
+          "rms": 1.0339304629751963e-15,
+          "max": 6.176479708425496e-15,
+          "max_radius": 0.3536270398786457,
+          "max_xyz": [
+            -0.2041666666666666,
+            -0.2041666666666666,
+            -0.2041666666666666
+          ]
+        },
+        "Z": {
+          "rms": 1.1027636186520632e-16,
+          "max": 5.803326803717685e-16,
+          "max_radius": 0.4471165334053802,
+          "max_xyz": [
+            0.029166666666666785,
+            -0.4375,
+            0.08750000000000013
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 7.918855216081484e-15,
+            "squared_norm_fraction": 0.1621385949096211
+          },
+          "M": {
+            "rms": 1.8346917238595686e-15,
+            "squared_norm_fraction": 0.2853814738908014
+          },
+          "Z": {
+            "rms": 1.6299205204132594e-16,
+            "squared_norm_fraction": 0.19799317982934375
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 6.229538520712432e-15,
+            "squared_norm_fraction": 0.5771648075086049
+          },
+          "M": {
+            "rms": 1.1007361723138522e-15,
+            "squared_norm_fraction": 0.5908708170287398
+          },
+          "Z": {
+            "rms": 1.3581206173935488e-16,
+            "squared_norm_fraction": 0.7907160443988368
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 6.445936739344748e-15,
+            "squared_norm_fraction": 0.13857825753807523
+          },
+          "M": {
+            "rms": 6.348532998199401e-16,
+            "squared_norm_fraction": 0.04407656625136551
+          },
+          "Z": {
+            "rms": 3.42706496830193e-17,
+            "squared_norm_fraction": 0.011290767624685349
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 5.21764068981794e-15,
+            "squared_norm_fraction": 0.10114841586846834
+          },
+          "M": {
+            "rms": 8.08678994709829e-16,
+            "squared_norm_fraction": 0.07967114282909339
+          },
+          "Z": {
+            "rms": 2.7581581790417975e-20,
+            "squared_norm_fraction": 8.147134065219945e-09
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 2.284048105863598e-15,
+            "squared_norm_fraction": 0.020969924175230543
+          },
+          "M": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00001.bin",
+      "time": 0.02509270833333227,
+      "cycle": 218,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 0.0012725955677627407,
+          "max": 0.019971031695604324,
+          "max_radius": 0.12713455251993652,
+          "max_xyz": [
+            0.08750000000000013,
+            0.08750000000000013,
+            0.029166666666666785
+          ]
+        },
+        "M": {
+          "rms": 0.0012850591609828658,
+          "max": 0.009394471770324295,
+          "max_radius": 0.9633834329533018,
+          "max_xyz": [
+            0.6708333333333334,
+            0.6125,
+            0.3208333333333333
+          ]
+        },
+        "Z": {
+          "rms": 0.00035853867026554217,
+          "max": 0.0024104926268397565,
+          "max_radius": 0.9980797535490058,
+          "max_xyz": [
+            -0.6124999999999999,
+            -0.7875,
+            0.029166666666666785
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 0.0037231640416079273,
+            "squared_norm_fraction": 0.7757571118507911
+          },
+          "M": {
+            "rms": 0.0009762704411529298,
+            "squared_norm_fraction": 0.052308982437576
+          },
+          "Z": {
+            "rms": 9.82942854032049e-05,
+            "squared_norm_fraction": 0.0068118765354760365
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 0.0006994515190336024,
+            "squared_norm_fraction": 0.1574864339353802
+          },
+          "M": {
+            "rms": 0.0003277699375985296,
+            "squared_norm_fraction": 0.03391569486310823
+          },
+          "Z": {
+            "rms": 2.0845481420242116e-05,
+            "squared_norm_fraction": 0.001762221836299417
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 0.0005309356957755465,
+            "squared_norm_fraction": 0.020349169558317337
+          },
+          "M": {
+            "rms": 0.0007750763506262432,
+            "squared_norm_fraction": 0.04252911850799202
+          },
+          "Z": {
+            "rms": 0.00010070184888057561,
+            "squared_norm_fraction": 0.009222454798364615
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 0.0005700620600204657,
+            "squared_norm_fraction": 0.026133335706524926
+          },
+          "M": {
+            "rms": 0.0014011693767451577,
+            "squared_norm_fraction": 0.1548340288205645
+          },
+          "Z": {
+            "rms": 0.0003084543245028236,
+            "squared_norm_fraction": 0.09639202503793733
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 0.0004827319895304456,
+            "squared_norm_fraction": 0.020273948948986455
+          },
+          "M": {
+            "rms": 0.002897684514270111,
+            "squared_norm_fraction": 0.7164121753707592
+          },
+          "Z": {
+            "rms": 0.0008989864383154017,
+            "squared_norm_fraction": 0.8858114217919226
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00002.bin",
+      "time": 0.05007031249999826,
+      "cycle": 435,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 0.0021986840527573447,
+          "max": 0.021017510443925858,
+          "max_radius": 0.12713455251993652,
+          "max_xyz": [
+            0.08750000000000013,
+            0.08750000000000013,
+            0.029166666666666785
+          ]
+        },
+        "M": {
+          "rms": 0.001959061931745043,
+          "max": 0.014959971866588732,
+          "max_radius": 0.15155444566227685,
+          "max_xyz": [
+            0.08750000000000013,
+            0.08750000000000013,
+            -0.08749999999999991
+          ]
+        },
+        "Z": {
+          "rms": 0.00046917186622141225,
+          "max": 0.004344892459704395,
+          "max_radius": 0.9980797535490058,
+          "max_xyz": [
+            -0.6124999999999999,
+            -0.7875,
+            0.029166666666666785
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 0.004650403608027795,
+            "squared_norm_fraction": 0.40545053349076454
+          },
+          "M": {
+            "rms": 0.0027611075965790453,
+            "squared_norm_fraction": 0.1800331854704158
+          },
+          "Z": {
+            "rms": 0.0001453073076182164,
+            "squared_norm_fraction": 0.008693471271670658
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 0.002241742949275104,
+            "squared_norm_fraction": 0.5419443568897262
+          },
+          "M": {
+            "rms": 0.0005575063660816945,
+            "squared_norm_fraction": 0.042219400002335206
+          },
+          "Z": {
+            "rms": 6.438670418627345e-05,
+            "squared_norm_fraction": 0.00981832023165611
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 0.0008920022659498436,
+            "squared_norm_fraction": 0.019241986962471536
+          },
+          "M": {
+            "rms": 0.001062393466158706,
+            "squared_norm_fraction": 0.03438096836753708
+          },
+          "Z": {
+            "rms": 0.00015856392202853126,
+            "squared_norm_fraction": 0.013353296393353975
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 0.0008044636950232347,
+            "squared_norm_fraction": 0.017434866658356814
+          },
+          "M": {
+            "rms": 0.0017018531497464287,
+            "squared_norm_fraction": 0.0982831842797238
+          },
+          "Z": {
+            "rms": 0.0004443815683572352,
+            "squared_norm_fraction": 0.11683676815126019
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 0.000739253584164249,
+            "squared_norm_fraction": 0.015928255998681078
+          },
+          "M": {
+            "rms": 0.004191819281950988,
+            "squared_norm_fraction": 0.6450832618799881
+          },
+          "Z": {
+            "rms": 0.0011532389551677956,
+            "squared_norm_fraction": 0.851298143952059
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00003.bin",
+      "time": 0.07504791666666367,
+      "cycle": 652,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 0.0033511378518340878,
+          "max": 0.023223361000418663,
+          "max_radius": 0.4546633369868302,
+          "max_xyz": [
+            -0.26249999999999996,
+            0.26249999999999996,
+            0.26249999999999996
+          ]
+        },
+        "M": {
+          "rms": 0.002575119042734052,
+          "max": 0.016063721438676213,
+          "max_radius": 0.952728173311896,
+          "max_xyz": [
+            -0.6124999999999999,
+            0.7291666666666667,
+            0.029166666666666785
+          ]
+        },
+        "Z": {
+          "rms": 0.0005785291073457361,
+          "max": 0.005871543133204324,
+          "max_radius": 0.9980797535490058,
+          "max_xyz": [
+            -0.6124999999999999,
+            -0.7875,
+            0.029166666666666785
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 0.005378228151842954,
+            "squared_norm_fraction": 0.23344043942837012
+          },
+          "M": {
+            "rms": 0.0038747693681412017,
+            "squared_norm_fraction": 0.20520093249126167
+          },
+          "Z": {
+            "rms": 0.00016793218158763786,
+            "squared_norm_fraction": 0.007636593374883088
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 0.0039439713124958245,
+            "squared_norm_fraction": 0.7220905052430652
+          },
+          "M": {
+            "rms": 0.0006038094203184478,
+            "squared_norm_fraction": 0.028662487231751174
+          },
+          "Z": {
+            "rms": 0.00011911598438012783,
+            "squared_norm_fraction": 0.022100311036105463
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 0.0011357213325043245,
+            "squared_norm_fraction": 0.013427731044592483
+          },
+          "M": {
+            "rms": 0.0013198366548906272,
+            "squared_norm_fraction": 0.030710677963772887
+          },
+          "Z": {
+            "rms": 0.00019477607668192965,
+            "squared_norm_fraction": 0.013251482044777973
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 0.0011427430230247938,
+            "squared_norm_fraction": 0.015144116942191357
+          },
+          "M": {
+            "rms": 0.0022100711579074073,
+            "squared_norm_fraction": 0.09592885865091905
+          },
+          "Z": {
+            "rms": 0.0005463402390549341,
+            "squared_norm_fraction": 0.11614682230287494
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 0.0011256392066732151,
+            "squared_norm_fraction": 0.01589720734178085
+          },
+          "M": {
+            "rms": 0.00548609191815315,
+            "squared_norm_fraction": 0.6394970436622952
+          },
+          "Z": {
+            "rms": 0.0014133014262135413,
+            "squared_norm_fraction": 0.8408647912413585
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00004.bin",
+      "time": 0.10002552083332834,
+      "cycle": 869,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 0.004895708597411581,
+          "max": 0.03373614326119423,
+          "max_radius": 0.4546633369868302,
+          "max_xyz": [
+            -0.26249999999999996,
+            0.26249999999999996,
+            0.26249999999999996
+          ]
+        },
+        "M": {
+          "rms": 0.003143859163053385,
+          "max": 0.02459117423549299,
+          "max_radius": 0.952728173311896,
+          "max_xyz": [
+            -0.6124999999999999,
+            0.7291666666666667,
+            0.029166666666666785
+          ]
+        },
+        "Z": {
+          "rms": 0.0007135524913832206,
+          "max": 0.008500708140162135,
+          "max_radius": 0.952728173311896,
+          "max_xyz": [
+            -0.7291666666666666,
+            0.6125,
+            0.029166666666666785
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 0.008023993360276377,
+            "squared_norm_fraction": 0.24346258952484037
+          },
+          "M": {
+            "rms": 0.0041848448597975344,
+            "squared_norm_fraction": 0.16058863080833086
+          },
+          "Z": {
+            "rms": 0.0002032529291855564,
+            "squared_norm_fraction": 0.007353667819143858
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 0.00574718905589756,
+            "squared_norm_fraction": 0.7184368070291522
+          },
+          "M": {
+            "rms": 0.0006610743977008207,
+            "squared_norm_fraction": 0.023050653231285374
+          },
+          "Z": {
+            "rms": 0.000181142255157351,
+            "squared_norm_fraction": 0.03359668389866967
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 0.0013126847242618854,
+            "squared_norm_fraction": 0.008404916376750527
+          },
+          "M": {
+            "rms": 0.0016074753308097283,
+            "squared_norm_fraction": 0.03056371365133835
+          },
+          "Z": {
+            "rms": 0.00022406162264695869,
+            "squared_norm_fraction": 0.011527277644854218
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 0.001614629287466977,
+            "squared_norm_fraction": 0.014165956905691158
+          },
+          "M": {
+            "rms": 0.0029188879078146882,
+            "squared_norm_fraction": 0.11226388156567627
+          },
+          "Z": {
+            "rms": 0.0006600801108075079,
+            "squared_norm_fraction": 0.1114481399747271
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 0.0016253392138403477,
+            "squared_norm_fraction": 0.015529730163565653
+          },
+          "M": {
+            "rms": 0.006873676040388923,
+            "squared_norm_fraction": 0.6735331207433691
+          },
+          "Z": {
+            "rms": 0.0017381803846829717,
+            "squared_norm_fraction": 0.8360742306626052
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00005.bin",
+      "time": 0.12500312499999303,
+      "cycle": 1086,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 0.006513613998599121,
+          "max": 0.044075388461351395,
+          "max_radius": 0.4546633369868302,
+          "max_xyz": [
+            -0.26249999999999996,
+            0.26249999999999996,
+            0.26249999999999996
+          ]
+        },
+        "M": {
+          "rms": 0.00367010309760131,
+          "max": 0.033134740643389275,
+          "max_radius": 0.952728173311896,
+          "max_xyz": [
+            -0.7291666666666666,
+            0.6125,
+            0.029166666666666785
+          ]
+        },
+        "Z": {
+          "rms": 0.0009052267394888182,
+          "max": 0.012072288607395109,
+          "max_radius": 0.952728173311896,
+          "max_xyz": [
+            -0.7291666666666666,
+            0.6125,
+            0.029166666666666785
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 0.010772973083339243,
+            "squared_norm_fraction": 0.2479187354310581
+          },
+          "M": {
+            "rms": 0.0038267437998322365,
+            "squared_norm_fraction": 0.0985336296829975
+          },
+          "Z": {
+            "rms": 0.00025953953349800807,
+            "squared_norm_fraction": 0.0074503131359998954
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 0.007634296682708291,
+            "squared_norm_fraction": 0.716147955533282
+          },
+          "M": {
+            "rms": 0.0007652122496234633,
+            "squared_norm_fraction": 0.022662928318607143
+          },
+          "Z": {
+            "rms": 0.0002494110425558671,
+            "squared_norm_fraction": 0.03957540187680658
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 0.0014134095403638225,
+            "squared_norm_fraction": 0.005504725330017548
+          },
+          "M": {
+            "rms": 0.001953964734745277,
+            "squared_norm_fraction": 0.033137563101617695
+          },
+          "Z": {
+            "rms": 0.000245582575405015,
+            "squared_norm_fraction": 0.00860446761717316
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 0.002193857557771076,
+            "squared_norm_fraction": 0.014774207704783035
+          },
+          "M": {
+            "rms": 0.003867899098522794,
+            "squared_norm_fraction": 0.14465222827952987
+          },
+          "Z": {
+            "rms": 0.0008206852544748727,
+            "squared_norm_fraction": 0.10704586524062404
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 0.002171132846268643,
+            "squared_norm_fraction": 0.015654376000859286
+          },
+          "M": {
+            "rms": 0.008186306495032613,
+            "squared_norm_fraction": 0.7010136506172477
+          },
+          "Z": {
+            "rms": 0.0022067372715188147,
+            "squared_norm_fraction": 0.8373239521293964
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00006.bin",
+      "time": 0.15009583333332435,
+      "cycle": 1304,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 0.008017502863764906,
+          "max": 0.053710419684648514,
+          "max_radius": 0.4546633369868302,
+          "max_xyz": [
+            -0.26249999999999996,
+            0.26249999999999996,
+            0.26249999999999996
+          ]
+        },
+        "M": {
+          "rms": 0.0042576951792867085,
+          "max": 0.04109345726082969,
+          "max_radius": 0.952728173311896,
+          "max_xyz": [
+            -0.7291666666666666,
+            0.6125,
+            0.029166666666666785
+          ]
+        },
+        "Z": {
+          "rms": 0.001191976151992062,
+          "max": 0.015672800588943825,
+          "max_radius": 0.952728173311896,
+          "max_xyz": [
+            -0.7291666666666666,
+            0.6125,
+            0.029166666666666785
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 0.012880175654951562,
+            "squared_norm_fraction": 0.23390933780933734
+          },
+          "M": {
+            "rms": 0.0033403353489651717,
+            "squared_norm_fraction": 0.05578446118217076
+          },
+          "Z": {
+            "rms": 0.0003246538881699506,
+            "squared_norm_fraction": 0.006723390238788168
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 0.009477773937872157,
+            "squared_norm_fraction": 0.7285228375580038
+          },
+          "M": {
+            "rms": 0.0010925898186940665,
+            "squared_norm_fraction": 0.03433000709556772
+          },
+          "Z": {
+            "rms": 0.00032437654259478375,
+            "squared_norm_fraction": 0.038607570608473835
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 0.0015117523860440792,
+            "squared_norm_fraction": 0.004156489921221378
+          },
+          "M": {
+            "rms": 0.0024039650752242557,
+            "squared_norm_fraction": 0.03726926517379464
+          },
+          "Z": {
+            "rms": 0.00026810108641253075,
+            "squared_norm_fraction": 0.0059143315709723225
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 0.0029250505163191188,
+            "squared_norm_fraction": 0.017334841639232528
+          },
+          "M": {
+            "rms": 0.005187288554802312,
+            "squared_norm_fraction": 0.19331389318229344
+          },
+          "Z": {
+            "rms": 0.0011025606042286142,
+            "squared_norm_fraction": 0.11142975930845539
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 0.0027082034151757555,
+            "squared_norm_fraction": 0.016076493072204868
+          },
+          "M": {
+            "rms": 0.009348730290564594,
+            "squared_norm_fraction": 0.6793023733661735
+          },
+          "Z": {
+            "rms": 0.0029057689651278006,
+            "squared_norm_fraction": 0.8373249482733103
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00007.bin",
+      "time": 0.17507343749998902,
+      "cycle": 1521,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 0.00939610166746837,
+          "max": 0.06136268749833107,
+          "max_radius": 0.4546633369868302,
+          "max_xyz": [
+            -0.26249999999999996,
+            0.26249999999999996,
+            0.26249999999999996
+          ]
+        },
+        "M": {
+          "rms": 0.005284895703335681,
+          "max": 0.049902544002541745,
+          "max_radius": 0.9912376522980416,
+          "max_xyz": [
+            -0.7291666666666666,
+            0.6708333333333334,
+            0.029166666666666785
+          ]
+        },
+        "Z": {
+          "rms": 0.0016261755081601946,
+          "max": 0.019052458043296663,
+          "max_radius": 0.952728173311896,
+          "max_xyz": [
+            -0.7291666666666666,
+            0.6125,
+            0.029166666666666785
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 0.014443901220328605,
+            "squared_norm_fraction": 0.214168620904841
+          },
+          "M": {
+            "rms": 0.00437918347170569,
+            "squared_norm_fraction": 0.06222940881409803
+          },
+          "Z": {
+            "rms": 0.0003827210081253176,
+            "squared_norm_fraction": 0.0050200958285817
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 0.011214667678466477,
+            "squared_norm_fraction": 0.742653324240614
+          },
+          "M": {
+            "rms": 0.0016359378704520879,
+            "squared_norm_fraction": 0.049953911084314497
+          },
+          "Z": {
+            "rms": 0.0004066248146069137,
+            "squared_norm_fraction": 0.03259580051024051
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 0.0018377106540277306,
+            "squared_norm_fraction": 0.004472007316895739
+          },
+          "M": {
+            "rms": 0.0030709747613232186,
+            "squared_norm_fraction": 0.03947510612139355
+          },
+          "Z": {
+            "rms": 0.00031333488623778603,
+            "squared_norm_fraction": 0.004340365717506194
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 0.003907753303497552,
+            "squared_norm_fraction": 0.022526319912534468
+          },
+          "M": {
+            "rms": 0.00703884119329645,
+            "squared_norm_fraction": 0.23102600932320103
+          },
+          "Z": {
+            "rms": 0.0015795956454400805,
+            "squared_norm_fraction": 0.12288203876097124
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 0.0031840494889474225,
+            "squared_norm_fraction": 0.016179727625114552
+          },
+          "M": {
+            "rms": 0.011062073339017129,
+            "squared_norm_fraction": 0.6173155646569928
+          },
+          "Z": {
+            "rms": 0.00395912486805731,
+            "squared_norm_fraction": 0.8351616991827003
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00008.bin",
+      "time": 0.2,
+      "cycle": 1738,
+      "active_cells": 21008,
+      "global": {
+        "H": {
+          "rms": 0.010763938164580327,
+          "max": 0.06883417814970016,
+          "max_radius": 0.05051814855409208,
+          "max_xyz": [
+            -0.029166666666666563,
+            -0.029166666666666563,
+            -0.029166666666666563
+          ]
+        },
+        "M": {
+          "rms": 0.006958314538915783,
+          "max": 0.05867001815021479,
+          "max_radius": 0.9912376522980416,
+          "max_xyz": [
+            -0.7291666666666666,
+            0.6708333333333334,
+            0.029166666666666785
+          ]
+        },
+        "Z": {
+          "rms": 0.002256118669599708,
+          "max": 0.022426521844866244,
+          "max_radius": 0.9946645861238295,
+          "max_xyz": [
+            -0.6124999999999999,
+            0.5541666666666667,
+            0.5541666666666667
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.45,
+          "cells": 1904,
+          "H": {
+            "rms": 0.015496362756861566,
+            "squared_norm_fraction": 0.18784489439217167
+          },
+          "M": {
+            "rms": 0.005118179602774827,
+            "squared_norm_fraction": 0.0490348855425446
+          },
+          "Z": {
+            "rms": 0.00042882063811502057,
+            "squared_norm_fraction": 0.0032742340007773135
+          }
+        },
+        {
+          "r_min": 0.45,
+          "r_max": 0.85,
+          "cells": 10952,
+          "H": {
+            "rms": 0.012986952111857044,
+            "squared_norm_fraction": 0.7588934705009784
+          },
+          "M": {
+            "rms": 0.0021845072987172346,
+            "squared_norm_fraction": 0.05138159879931599
+          },
+          "Z": {
+            "rms": 0.0004957189059091026,
+            "squared_norm_fraction": 0.02516841188566369
+          }
+        },
+        {
+          "r_min": 0.85,
+          "r_max": 0.9,
+          "cells": 2456,
+          "H": {
+            "rms": 0.002611426720131017,
+            "squared_norm_fraction": 0.006881085470734804
+          },
+          "M": {
+            "rms": 0.004121842963143196,
+            "squared_norm_fraction": 0.04102215056716532
+          },
+          "Z": {
+            "rms": 0.0004036010894418031,
+            "squared_norm_fraction": 0.003741316374404233
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H": {
+            "rms": 0.005255816584402511,
+            "squared_norm_fraction": 0.031050557188214478
+          },
+          "M": {
+            "rms": 0.00956966631668394,
+            "squared_norm_fraction": 0.24632974704011606
+          },
+          "Z": {
+            "rms": 0.002295407708841823,
+            "squared_norm_fraction": 0.1348115733389792
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H": {
+            "rms": 0.003550493022574199,
+            "squared_norm_fraction": 0.015329992447900611
+          },
+          "M": {
+            "rms": 0.014504689371637427,
+            "squared_norm_fraction": 0.612231618050858
+          },
+          "Z": {
+            "rms": 0.0054857006229912094,
+            "squared_norm_fraction": 0.8330044644001755
+          }
+        }
+      ]
+    }
+  ],
+  "matched_physical_time_0.2": {
+    "N36-spatialnorm": {
+      "history_sha256": "db0f9357fe4f43e95ea1e4cfa550b67a78e24394ebb4c8c07c34a16ec94b5675",
+      "H": 0.010763938154042862,
+      "M": 0.006958314541584385,
+      "Z": 0.002256118670098246
+    },
+    "N24-spatialnorm": {
+      "history_sha256": "ccad5f3f168553ea58e93412feff0a55776c4f732cbcdf322ba324b77c61dc3f",
+      "H": 0.02277651922739749,
+      "M": 0.027371604158616135,
+      "Z": 0.013031455384759852
+    },
+    "N24-production": {
+      "history_sha256": "79aa1880b8be15af5990282bea14f9e9b26774d2fd82ab55abcbcd825f1a5975",
+      "H": 0.019177840626325517,
+      "M": 0.028911453228087185,
+      "Z": 0.011240650938797003
+    }
+  },
+  "all_retained_files": {
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00000.bin": {
+      "sha256": "c8260a4b7c82bf6c69fbd10a4f355a13ee56358730d2074354f9ebe283389db0",
+      "bytes": 5345607
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00001.bin": {
+      "sha256": "7b7f38ba80e038e52f1f7ae4b059e75807e3a46521f6fbb93f801d4b187a1d02",
+      "bytes": 5345797
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00002.bin": {
+      "sha256": "12d88d8d2897cbf42ecd12576afcc2c69123a1a9afb178a02c560ae4ff56741b",
+      "bytes": 5346189
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00003.bin": {
+      "sha256": "0c91be0f1426bebe4f621f1ee39432a1d87740b3733b14afba20263d5db655ce",
+      "bytes": 5346189
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00004.bin": {
+      "sha256": "de903b54107fda7ca158da60ecbc8eb385689d0f06fe00ca4bad33f0490c4c7e",
+      "bytes": 5346189
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00005.bin": {
+      "sha256": "4b35bc4321e9151981ce49829b2bdb608fee755d06224f0be7cdbc2e7f89c093",
+      "bytes": 5346190
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00006.bin": {
+      "sha256": "d8674341b8ace31909090dd9f3f5e957eb362af72805af34db53e2eb3c6c45af",
+      "bytes": 5346190
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00007.bin": {
+      "sha256": "e00bfcb9a055a2720d0d4c36311ad59519e2804bf474491f63ddea173f65d30a",
+      "bytes": 5346190
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.adm.00008.bin": {
+      "sha256": "540c5507f772a9d42ecdda335070f2549b3c832db32654749f01d5f7acfa0a17",
+      "bytes": 5346190
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00000.bin": {
+      "sha256": "ad1ad7880621fc9631506df0139e6353f5c0e94aea6cc7b06cd2be713dc42895",
+      "bytes": 2382000
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00001.bin": {
+      "sha256": "b115f5890236085267f3d83cc8b0ccc0a49acf013aa14f50ce529ed8a68de578",
+      "bytes": 2381922
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00002.bin": {
+      "sha256": "bf22551c4daea75b4306d6cec8a368bb68b3c404cc172ee9b5e05bb1cb74b66b",
+      "bytes": 2382558
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00003.bin": {
+      "sha256": "73154e603b11959c77d476faf617b8a93395161e077466422bc9acc150f41895",
+      "bytes": 2382558
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00004.bin": {
+      "sha256": "85988d6ee23703808e8524f0d45739bf6e362b8ddf319eaec1591b43f3d8e6df",
+      "bytes": 2382558
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00005.bin": {
+      "sha256": "56aa3fbc3b0288e967ae03cf26877840193c8ee6185755babe05d2d52c799a57",
+      "bytes": 2382559
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00006.bin": {
+      "sha256": "93553b44701b804d3dc548f04be588035c130d6989ea6855a71fe948e33be8d5",
+      "bytes": 2382559
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00007.bin": {
+      "sha256": "162115b35b3574876b10336c501baff07c7cbd0fc45c29aecb7e0124ca2de38f",
+      "bytes": 2382559
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.con.00008.bin": {
+      "sha256": "f4c483df20dc485bf0cefe77fb6c68e0937ec8be007455778c7fd40342476599",
+      "bytes": 2382559
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00000.bin": {
+      "sha256": "d528caa4f68e43fccc73f9b9ddaeaa38037d97ec278bf6e0f85054a1614a6c83",
+      "bytes": 7716481
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00001.bin": {
+      "sha256": "d4369472339055642551e7803dc414e339975925135cf927a0488e555367e038",
+      "bytes": 7716827
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00002.bin": {
+      "sha256": "e3d7ed7201f5de18b4be8b72b5a0d773cd720a1b7abfe1decc4b0e505a28b2aa",
+      "bytes": 7717079
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00003.bin": {
+      "sha256": "b21d95784020e6e2c65aece78154a830acc6f94a9eb6e6eddf3b53a3154d4105",
+      "bytes": 7717079
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00004.bin": {
+      "sha256": "6c7c2b5a99ba274d0deadd4a250f1d884ba87db3fc8f922f8a2ef5af8d5fe2d8",
+      "bytes": 7717079
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00005.bin": {
+      "sha256": "454ee7465277058056af8168b70d191c5074aba72e242fdb5d277c9a06aa5670",
+      "bytes": 7717080
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00006.bin": {
+      "sha256": "726c9e01498b3d7100e39133c65411775713d59ee2fb57d1e2097620ae7476d0",
+      "bytes": 7717080
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00007.bin": {
+      "sha256": "d5491f0b64775a4d4b1ab963204e182da9cefae3d65c09ea2103692301d90a8b",
+      "bytes": 7717080
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/bin/hyp.z4c.00008.bin": {
+      "sha256": "7e3583ce0f84bb70e2cf0d1b0b7f63ec861a1b64e62bc8930d65536033cc5f24",
+      "bytes": 7717080
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/hyp.z4c.user.hst": {
+      "sha256": "db0f9357fe4f43e95ea1e4cfa550b67a78e24394ebb4c8c07c34a16ec94b5675",
+      "bytes": 3653
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/layer.athinput": {
+      "sha256": "ed06e9dde2b4cf2de8196cdf41f10db4772edb2c502d27398b4e1c0046f403a3",
+      "bytes": 2447
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00000.rst": {
+      "sha256": "f50eff764a4d85308fbe769f1fca6d70ea8a4ed3baae4c60ce221ec1da4326ff",
+      "bytes": 14828642
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00001.rst": {
+      "sha256": "059b0e272c71f65cceed032aaecf21f3259d007958c074c236961008d9e8d821",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00002.rst": {
+      "sha256": "35df69b94b3f309b848831bbd491b42cb4c58bc343f03e52d7a2bef6901fe1d0",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00003.rst": {
+      "sha256": "0aa50d1b2aa847c5ad24c76bd8d7b573df615b178c07ca96d4abe7c01a32d477",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00004.rst": {
+      "sha256": "dca300902fcde2b3f928e8a8666a587e8561cee177e35807512fb2d37c83b3b3",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00005.rst": {
+      "sha256": "a98712a731edd05b8a0449f0e0ced2f1b3c4c058acc2686da0f6476c9c378d45",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00006.rst": {
+      "sha256": "aa53476b14d54163daf211cbb45cf14780a61875dfe7572f8e00886264ff05af",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00007.rst": {
+      "sha256": "1e650081b97d3788c318ef1b363e0c84ad75d976b44248937d1dd18c73d937d7",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/rst/hyp.00008.rst": {
+      "sha256": "52c9893a7f7c9736d8a6f1a2fc0d87c32fa12472e70065b8e55fd393fba18033",
+      "bytes": 14829278
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/run.log": {
+      "sha256": "c63275927c70a2c1faceef78eabc0ac223208686653a08c7381f1611e05a2aa6",
+      "bytes": 1671
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/results.json": {
+      "sha256": "cabbcd5dfe9959e3b112b34ad1481deb0e72eba50131c5b0ef58aa1537ffbb7b",
+      "bytes": 10802
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    }
+  }
+}

@@ -1,0 +1,447 @@
+{
+  "scope": "Actual native Cartesian arrays/RK3. Finite duration and positive fields do not establish nonlinear scri closure or stability.",
+  "implementation_commit": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "launch_head": "f615acf4356206eceddc59fa929fcc15a671fe09",
+  "source_equation": {
+    "xi": "1/a",
+    "eta": "rho*S/a^2",
+    "C": "(S/a)*(1-1/rho)",
+    "rho": 1.5,
+    "additional_shift_pole": "-eta*W*(beta^i-beta_ref^i+C*n^i*(G-Ghat)/Ghat)",
+    "G": "chi*gtilde_inverse^ij*Omega_i*Omega_j",
+    "difference": "factored exact reference cancellation"
+  },
+  "native_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+  "parameters": {
+    "job/basename": "hyp",
+    "mesh/nx1": "24",
+    "mesh/nx2": "24",
+    "mesh/nx3": "24",
+    "mesh/nghost": "3",
+    "mesh/x1min": "-1.05",
+    "mesh/x1max": "1.05",
+    "mesh/x2min": "-1.05",
+    "mesh/x2max": "1.05",
+    "mesh/x3min": "-1.05",
+    "mesh/x3max": "1.05",
+    "mesh/ix1_bc": "outflow",
+    "mesh/ox1_bc": "outflow",
+    "mesh/ix2_bc": "outflow",
+    "mesh/ox2_bc": "outflow",
+    "mesh/ix3_bc": "outflow",
+    "mesh/ox3_bc": "outflow",
+    "meshblock/nx1": "24",
+    "meshblock/nx2": "24",
+    "meshblock/nx3": "24",
+    "time/evolution": "dynamic",
+    "time/integrator": "rk3",
+    "time/cfl_number": "0.4",
+    "time/nlim": "-1",
+    "time/tlim": "2.0",
+    "time/ndiag": "100",
+    "z4c/hyperboloidal": "true",
+    "z4c/hyperboloidal_slicing": "2",
+    "z4c/hyperboloidal_shift_driver": "0.1",
+    "z4c/hyperboloidal_lapse_damping": "1.5",
+    "z4c/hyperboloidal_shift_damping": "1",
+    "z4c/hyperboloidal_kappa1": "10",
+    "z4c/hyperboloidal_dissipation": "0.1",
+    "z4c/hyperboloidal_pole_cfl": ".03",
+    "z4c/hyperboloidal_ghost_degree": "2",
+    "z4c/hyperboloidal_mass_diagnostics": "false",
+    "z4c/hyperboloidal_mass_nmu": "32",
+    "z4c/floor_chi": "false",
+    "z4c/nrad_wave_extraction": "0",
+    "z4c/spatial_order": "4",
+    "problem/pgen_name": "z4c_hyperboloidal",
+    "problem/mass": "0",
+    "problem/lapse_pulse": "0.1",
+    "output1/file_type": "bin",
+    "output1/variable": "z4c",
+    "output1/id": "z4c",
+    "output1/dt": "0.025",
+    "output1/ghost_zones": "true",
+    "output2/file_type": "bin",
+    "output2/variable": "adm",
+    "output2/id": "adm",
+    "output2/dt": "0.025",
+    "output2/ghost_zones": "true",
+    "output3/file_type": "hst",
+    "output3/dt": "0.025",
+    "output3/data_format": "%24.16e",
+    "output4/file_type": "bin",
+    "output4/variable": "con",
+    "output4/id": "con",
+    "output4/dt": "0.025",
+    "output4/ghost_zones": "true",
+    "output5/file_type": "rst",
+    "output5/dt": "0.025",
+    "z4c/hyperboloidal_layer": "true",
+    "z4c/hyperboloidal_layer_r0": ".05",
+    "z4c/hyperboloidal_layer_r1": ".95",
+    "z4c/hyperboloidal_gauge_r0": ".45",
+    "z4c/hyperboloidal_gauge_r1": ".85",
+    "z4c/hyperboloidal_gauge_q0": "0.5",
+    "z4c/hyperboloidal_layer_lapse_inner": "0",
+    "z4c/hyperboloidal_layer_lapse_outer": "1.5",
+    "z4c/hyperboloidal_layer_shift_inner": "0",
+    "z4c/hyperboloidal_layer_shift_outer": "1",
+    "z4c/hyperboloidal_preferred_source": "false",
+    "problem/shift_pulse": "0.02",
+    "problem/pulse_angular": "true",
+    "z4c/hyperboloidal_physical_trace_lapse": "true",
+    "z4c/hyperboloidal_curvature_radius": ".5",
+    "z4c/hyperboloidal_symmetric_ghosts": "true",
+    "z4c/hyperboloidal_scri_lapse_damping": "2",
+    "problem/pulse_width": ".5"
+  },
+  "exit_status": 0,
+  "wall_seconds": 665.06522675,
+  "final": {
+    "time": 2.0,
+    "H": 1.2221868920465926,
+    "M": 1.3483726968663203,
+    "Z": 0.3757660819069462,
+    "Theta": 0.021896188773540663,
+    "alpha_min": 0.7722402600567625,
+    "chi_min": 0.6112619206376154,
+    "pole_deviation_max": 13.81441989020361,
+    "null_deviation_max": 0.5461362342331352,
+    "metric_eigen_min": 0.6509477719184686,
+    "metric_eigen_max": 3.886436431633454,
+    "metric_stretch_ratio_max": 3.673345743450142,
+    "constraint_budget": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-long/finite-angular-long-N24/bin/hyp.con.00080.bin",
+      "time": 2.0,
+      "cycle": 4676,
+      "active_cells": 6152,
+      "global": {
+        "H": {
+          "rms": 1.2221868909172628,
+          "max": 5.493041038513184,
+          "max_radius": 0.9291082754447948,
+          "max_xyz": [
+            0.6562500000000002,
+            0.6562500000000002,
+            -0.043749999999999956
+          ]
+        },
+        "M": {
+          "rms": 1.3483726977822021,
+          "max": 8.767895083307883,
+          "max_radius": 0.9291082754447948,
+          "max_xyz": [
+            0.6562500000000002,
+            0.6562500000000002,
+            -0.043749999999999956
+          ]
+        },
+        "Z": {
+          "rms": 0.37576608227133557,
+          "max": 2.5239344246351565,
+          "max_radius": 0.9291082754447948,
+          "max_xyz": [
+            0.6562500000000002,
+            0.6562500000000002,
+            -0.043749999999999956
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H": {
+            "rms": 1.3258759924467558,
+            "squared_norm_fraction": 0.8861001200673602
+          },
+          "M": {
+            "rms": 0.8521594833627169,
+            "squared_norm_fraction": 0.30072815260674424
+          },
+          "Z": {
+            "rms": 0.12690730537308278,
+            "squared_norm_fraction": 0.08587965989207899
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H": {
+            "rms": 1.1507750074743068,
+            "squared_norm_fraction": 0.11067524536371473
+          },
+          "M": {
+            "rms": 2.4291596061115506,
+            "squared_norm_fraction": 0.4051698253965013
+          },
+          "Z": {
+            "rms": 0.7761706782464208,
+            "squared_norm_fraction": 0.532628258163818
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H": {
+            "rms": 0.19850759009587676,
+            "squared_norm_fraction": 0.0032246345689253757
+          },
+          "M": {
+            "rms": 2.0915015872520986,
+            "squared_norm_fraction": 0.29410202199675445
+          },
+          "Z": {
+            "rms": 0.6638341406017669,
+            "squared_norm_fraction": 0.381492081944103
+          }
+        }
+      ]
+    }
+  },
+  "ratios_to_matching_base": {
+    "H": 1.0189628660616274,
+    "M": 0.6838382696536398,
+    "Z": 0.8472570692335609
+  },
+  "matched_history": [
+    {
+      "time": 0.02,
+      "candidate": {
+        "H": 0.00296756674640695,
+        "M": 0.0037767570546871697,
+        "Z": 0.001007086687535479,
+        "Theta": 5.701426117853467e-05
+      },
+      "base": {
+        "H": 0.0021240298953053146,
+        "M": 0.002978333618710671,
+        "Z": 0.0007092002182397972,
+        "Theta": 4.571911756813571e-05
+      },
+      "ratios": {
+        "H": 1.3971398203792151,
+        "M": 1.2680772331751533,
+        "Z": 1.4200315533390873,
+        "Theta": 1.2470551535375916
+      }
+    },
+    {
+      "time": 0.2,
+      "candidate": {
+        "H": 0.02277651922739749,
+        "M": 0.027371604158616135,
+        "Z": 0.013031455384759852,
+        "Theta": 0.0003588667628970249
+      },
+      "base": {
+        "H": 0.019177840626325517,
+        "M": 0.028911453228087185,
+        "Z": 0.011240650938797003,
+        "Theta": 0.0005185881141120044
+      },
+      "ratios": {
+        "H": 1.1876477477934637,
+        "M": 0.9467391328508142,
+        "Z": 1.1593150126014413,
+        "Theta": 0.6920073043161129
+      }
+    },
+    {
+      "time": 0.5,
+      "candidate": {
+        "H": 0.047540335159708826,
+        "M": 0.07410060623887468,
+        "Z": 0.02524342532723475,
+        "Theta": 0.0011582643270767721
+      },
+      "base": {
+        "H": 0.04216062888821191,
+        "M": 0.07380717258023183,
+        "Z": 0.020024905913225168,
+        "Theta": 0.0010023783941430719
+      },
+      "ratios": {
+        "H": 1.1276002377896472,
+        "M": 1.0039756794412342,
+        "Z": 1.2606014448518874,
+        "Theta": 1.1555160544606176
+      }
+    },
+    {
+      "time": 0.75,
+      "candidate": {
+        "H": 0.08543481412040188,
+        "M": 0.09062588742893772,
+        "Z": 0.037027562257583066,
+        "Theta": 0.001190630275124689
+      },
+      "base": {
+        "H": 0.06676802750732823,
+        "M": 0.09946630688160449,
+        "Z": 0.02537733767736347,
+        "Theta": 0.0014409631305114534
+      },
+      "ratios": {
+        "H": 1.2795767272146066,
+        "M": 0.9111214668582238,
+        "Z": 1.4590798581133895,
+        "Theta": 0.8262739343664458
+      }
+    },
+    {
+      "time": 1.0,
+      "candidate": {
+        "H": 0.10370455020252896,
+        "M": 0.10132164396266637,
+        "Z": 0.03680440336700831,
+        "Theta": 0.001786047782763847
+      },
+      "base": {
+        "H": 0.08994405920607303,
+        "M": 0.13708609517797787,
+        "Z": 0.039260673201057854,
+        "Theta": 0.0018224042718825335
+      },
+      "ratios": {
+        "H": 1.1529894371892748,
+        "M": 0.7391095634544205,
+        "Z": 0.9374368895441314,
+        "Theta": 0.9800502612512368
+      }
+    },
+    {
+      "time": 1.25,
+      "candidate": {
+        "H": 0.21350609025907752,
+        "M": 0.23206131894735227,
+        "Z": 0.09904284982129626,
+        "Theta": 0.002785134015311599
+      },
+      "base": {
+        "H": 0.18021868105770864,
+        "M": 0.29115936585261765,
+        "Z": 0.08892729043331994,
+        "Theta": 0.0036021705476505053
+      },
+      "ratios": {
+        "H": 1.1847056531875837,
+        "M": 0.797025087164188,
+        "Z": 1.113750900749205,
+        "Theta": 0.7731821629401158
+      }
+    },
+    {
+      "time": 1.5,
+      "candidate": {
+        "H": 0.40128440099832874,
+        "M": 0.3075262550047526,
+        "Z": 0.08978608405700306,
+        "Theta": 0.005488921593354003
+      },
+      "base": {
+        "H": 0.37255031671850874,
+        "M": 0.39248022554861006,
+        "Z": 0.09349119131254276,
+        "Theta": 0.005448230124287626
+      },
+      "ratios": {
+        "H": 1.0771280629497648,
+        "M": 0.7835458578196939,
+        "Z": 0.9603694508164575,
+        "Theta": 1.0074687500597632
+      }
+    },
+    {
+      "time": 1.75,
+      "candidate": {
+        "H": 0.37105631313123477,
+        "M": 0.5445562545274598,
+        "Z": 0.23960828421888203,
+        "Theta": 0.00710243900717954
+      },
+      "base": {
+        "H": 0.47458198678009633,
+        "M": 0.6622918354170164,
+        "Z": 0.19216045885638194,
+        "Theta": 0.008409755588857521
+      },
+      "ratios": {
+        "H": 0.7818592434338821,
+        "M": 0.8222300584221703,
+        "Z": 1.2469177355470509,
+        "Theta": 0.8445476128450028
+      }
+    },
+    {
+      "time": 2.0,
+      "candidate": {
+        "H": 1.2221868920465926,
+        "M": 1.3483726968663203,
+        "Z": 0.3757660819069462,
+        "Theta": 0.021896188773540663
+      },
+      "base": {
+        "H": 1.1994420334181972,
+        "M": 1.9717713335190548,
+        "Z": 0.44350893672314684,
+        "Theta": 0.03758798795575437
+      },
+      "ratios": {
+        "H": 1.0189628660616274,
+        "M": 0.6838382696536398,
+        "Z": 0.8472570692335609,
+        "Theta": 0.5825315470281394
+      }
+    }
+  ],
+  "all_saved_snapshots_positive": true,
+  "snapshot_count": 81,
+  "reference_max_array_change": 1.1368683772161603e-13,
+  "outcome": "Rejected as pulse stabilization: finite fields through t2 and reduced M/Z, but H is1.9% worse than the matching control and all constraints still grow. Favorable frozen roots and initial BH compatibility do not establish nonlinear stability or regularity closure.",
+  "timestep_scope": {
+    "configured_pole_CFL": 0.03,
+    "shared_initial_dt": 0.00042773437499998563,
+    "candidate_final_cycle": 4676,
+    "base_final_cycle": 4679,
+    "explanation": "Derivative and live characteristic-speed bound are unchanged; the two evolutions need not take identical individual later steps. History samples alone do not record every step."
+  },
+  "finite_Q_counterexample": {
+    "scope": "a=1, beta=beta_ref; finite Q does not enforce nonlinear scri compatibility",
+    "delta_Q": 0.01,
+    "limit_Omega_Qdot": 0.02,
+    "limit_Theta_dot": -0.02
+  },
+  "BH_scope": "Verified instantaneous initial BH pole/first-jet/second-null-rate compatibility only. Original uncorrected complete jets have NrawDot=-29*Omega. No evolution-preservation proof or native BH integration.",
+  "receipt_sha256": {
+    "native-experiment-report.json": "3eb985ff7dcf0f6a5bb486875707fdf6baf5d0ebfd86b703804690fe87c52e2f",
+    "native-build-receipt.json": "a39430b8c3bcf2e7cc05d03a441831edc493f050afbb687e642418f1e5f56ce6",
+    "native-overlay-gate-receipt.json": "ed27734f2d16f8a43cc002d08623cb7f188593a8b8a300cb23ebc5554b810206",
+    "native.athinput": "0a3b3a2eb7e50f8b2d181607f3a8a4cbf6e83d617a7fa1eec381111061dd5706",
+    "native_injection.hpp": "cc83d40e1ee3fc6da0baa6be31069b200d9f6ac1ec0ecca0f448208212ef64fe",
+    "spatial_norm_control.hpp": "c44d0f2b3940d94d77f9b6c920401d2b1eb7b20dbee67a160e873a5a604781ae",
+    "BH-gate-receipt-pass-20261009.json": "2cde12d1a8c1d2e933a13ad64428ffc067ed045a573872a3df45cf5c0091e89d",
+    "BH-gate-complete-first-failure-20261009/receipt.json": "bf2799bfd30e3ae99f76d33c851089a6d160785bd0a4ad4337d582c6dd1becf1",
+    "constraint-budgets.json": "57285524f142eb65465500cccdddd688dad6d933d61f4225c819a0971f039642"
+  }
+}
