@@ -1,0 +1,18 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:12: RuntimeWarning: divide by zero encountered in matmul
+  values=np.array([m[ix,:]@np.array(coeff[(d['a'],d['r'])]['B']) for d,m in zip(meta['rows'],raw)])
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:12: RuntimeWarning: overflow encountered in matmul
+  values=np.array([m[ix,:]@np.array(coeff[(d['a'],d['r'])]['B']) for d,m in zip(meta['rows'],raw)])
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:12: RuntimeWarning: invalid value encountered in matmul
+  values=np.array([m[ix,:]@np.array(coeff[(d['a'],d['r'])]['B']) for d,m in zip(meta['rows'],raw)])
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:45: RuntimeWarning: divide by zero encountered in matmul
+  chart_rank_one_error=max(chart_rank_one_error,float(np.max(np.abs(chart[i]-chart[j]-expect[ix,:]@B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:45: RuntimeWarning: overflow encountered in matmul
+  chart_rank_one_error=max(chart_rank_one_error,float(np.max(np.abs(chart[i]-chart[j]-expect[ix,:]@B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:45: RuntimeWarning: invalid value encountered in matmul
+  chart_rank_one_error=max(chart_rank_one_error,float(np.max(np.abs(chart[i]-chart[j]-expect[ix,:]@B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:46: RuntimeWarning: divide by zero encountered in matmul
+  values_rank_one_error=max(values_rank_one_error,float(np.max(np.abs(values[i]-values[j]-expect[ix,:]@B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:46: RuntimeWarning: overflow encountered in matmul
+  values_rank_one_error=max(values_rank_one_error,float(np.max(np.abs(values[i]-values[j]-expect[ix,:]@B))))
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/check_fourier22.py:46: RuntimeWarning: invalid value encountered in matmul
+  values_rank_one_error=max(values_rank_one_error,float(np.max(np.abs(values[i]-values[j]-expect[ix,:]@B))))

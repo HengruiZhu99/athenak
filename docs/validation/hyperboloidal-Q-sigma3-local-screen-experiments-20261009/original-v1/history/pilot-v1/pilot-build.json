@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/usr/bin/c++",
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-DKOKKOS_DEPENDENCE",
+    "-Isrc",
+    "-Ibuild-layer-release",
+    "-Ibuild-layer-release/kokkos",
+    "-Ibuild-layer-release/kokkos/core/src",
+    "-Ikokkos/core/src",
+    "-Ibuild-layer-release/kokkos/containers/src",
+    "-Ikokkos/containers/src",
+    "-Ibuild-layer-release/kokkos/algorithms/src",
+    "-Ikokkos/algorithms/src",
+    "-Ibuild-layer-release/kokkos/simd/src",
+    "-Ikokkos/simd/src",
+    "-isystem",
+    "kokkos/tpls/desul/include",
+    "-isystem",
+    "kokkos/tpls/mdspan/include",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/fourier22.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/fourier22-release"
+  ],
+  "returncode": 0,
+  "seconds": 1.1939564169999999
+}

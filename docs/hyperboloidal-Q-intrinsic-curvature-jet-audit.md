@@ -162,3 +162,8 @@ Read-only verification passes without scratch dependencies or scientific
 reruns. Root/independent reviews,original reviewed draft,notation addendum
 and the separate tensor-freedom probe are preserved. Executables,objects,
 NumPy binary arrays and payloads larger than1MiB remain metadata only.
+
+The subsequent [actual σ3 local Fourier comparison](hyperboloidal-Q-sigma3-local-screen-audit.md)
+retains positive frozen primitive roots and supplies no accepted stabilization
+or source adoption. Conditional joint null/curvature tangency therefore remains
+separate from the unresolved finite-frequency and global evolution tests.

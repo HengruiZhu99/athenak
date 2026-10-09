@@ -1,0 +1,93 @@
+{
+  "status": "PASS_independent_read_only_source_math_draft_saved_result_review",
+  "reviewer": "/root/literature_gauge",
+  "head": "1d53345821c035f62ea15010076bd9e5235c7923",
+  "method": "Independent source/formula review, hash verification and saved scalar/eigenvalue aggregate readback only.",
+  "scientific_kernel_rerun": false,
+  "eigensolver_reanalysis": false,
+  "native_global_or_BH_evolution": false,
+  "frozen_files_mutated": false,
+  "verified_bundles": [
+    {
+      "index": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier/immutable-Q-sigma3-raw22-intrinsic20-frozen-Fourier-20261009/index.json",
+        "sha256": "97eca136515520bb7a551b32013ce4faa7bafde0d3a079cee2620f8367e95aa3",
+        "bytes": 48145
+      },
+      "files": 46,
+      "bytes": 90701655,
+      "unchanged_source_inputs": 381
+    },
+    {
+      "index": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-sigma3-frozen-fourier-deterministic/immutable-Q-sigma3-deterministic-reanalysis-20261009/index.json",
+        "sha256": "943db2465bb361802fdd237f7658f11f66f142ecff6d147920d0c8e9393a4077",
+        "bytes": 43814
+      },
+      "files": 13,
+      "bytes": 3272033,
+      "unchanged_source_inputs": 385
+    }
+  ],
+  "summary_common_fields_exact": 26,
+  "target_per_k_and_band_rows_exact": true,
+  "saved_root_count": 121520,
+  "saved_primitive_positive_matrix_counts": {
+    "raw22": 1570,
+    "intrinsic20": 1369,
+    "value_only_RJB20": 1364
+  },
+  "saved_raw22_intrinsic20_roots_byte_values_identical": true,
+  "saved_positive_counts_identical_each_parameter_row": true,
+  "reviewed_stage": {
+    "audit-draft.md": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/q-sigma3-stage/audit-draft.md",
+      "sha256": "0ed36d7c143069b3148df4173813b96a572d4d901c8ed26c6f97887dd1b6f5f7",
+      "bytes": 8817
+    },
+    "archive-README.md": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/q-sigma3-stage/archive-README.md",
+      "sha256": "86e3074ca4eb847f2cedf388a1a45e14de54302867db781a40dc7a8e60cb282e",
+      "bytes": 3628
+    },
+    "summary.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/q-sigma3-stage/summary.json",
+      "sha256": "9a55df3dda518770c8b7822dabc1ca379a0180f2b8a8fe5b752f2b979c9b287d",
+      "bytes": 52952
+    },
+    "ROOT-NOTATION-ADDENDUM.md": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/q-sigma3-stage/ROOT-NOTATION-ADDENDUM.md",
+      "sha256": "cbc2730d3ed15f3afc95bc21005829707154350f661814458a98b84a50aae77b",
+      "bytes": 655
+    }
+  },
+  "source_findings": [
+    "Actual C0 geometric source is called with 10/alpha and kappa2=0; P storage/evolution is untouched. Q variants use xi=1/a and preferred-source helper; physical-P source-off spatial-norm control is separately bound with rho=1.5.",
+    "Raw22 independently seeds all primitive components. Intrinsic20 completes det(g)=1 and trace_g(A)=0 in every consumed jet via exact quotient jets; values-only R J22 B(x0) omits the coefficient-lift derivatives and is a distinct comparator.",
+    "Real cosine and imaginary sine seeds reproduce exp(+ik n.x) with d=ikn and dd=-k^2 n n. Coordinate k is unweighted; Penrose k and physical spatial Omega*k_Penrose are separately recorded.",
+    "The independently reconstructed sigma3-minus-sigma5 source is -2 w alpha^2/(Omega |dOmega|^2) times outer(dOmega,dNraw). It changes beta RHS value rows with alpha/chi/metric/beta value inputs; off-diagonal symmetric metric inputs carry factor two. It adds no principal derivatives within either sigma pair.",
+    "There is no claim that Q/physical-P/global/physical-inner gauge forms all have equal principal matrices. Single beta-pole assembly and phase FD binding directly test the actual assembled sources.",
+    "Late feedback vanishes at r=.85, leaving the target a=.5 k4 radial maximum exactly sigma-independent. Earlier sigma3 reduces some finite-k maxima but has worse sampled k0 and retains positive roots.",
+    "The original C++ commands have empty stderr; the original fifth checker warnings and false clean-stderr prose are preserved. The additive warning-free checker uses unchanged actual payloads and thresholds; raw/chart roots are identical and values-only RJB roots are compared numerically without ordering or multiplicity claims.",
+    "The exact compact summary and both frozen indexes support the draft counts, equations, timings, error scales and negative comparison. Scalar pi/h bands are selections, not a native discrete-symbol/accuracy or oblique Nyquist certificate."
+  ],
+  "preserved_prose_clarifications": [
+    {
+      "location": "original frozen DERIVATION.md line 29",
+      "original": "Only beta value columns change",
+      "correction": "Only beta RHS rows change, depending on alpha/chi/metric/beta value columns. Frozen source, equations and checker are correct and unchanged; ROOT-NOTATION-ADDENDUM.md records this."
+    },
+    {
+      "location": "reviewed audit-draft.md source/control gate paragraph",
+      "original": "physical-P core identities",
+      "correction": "These sampled identities are at r=.45, where W_gauge=0 inside the geometric transition, not the exact Cauchy core r<=.05. Public copy should say W_gauge=0 inner-gauge branch identities; original reviewed draft may remain byte-exact."
+    }
+  ],
+  "blocking_scientific_corrections": [],
+  "scope": "Local finite-Omega frozen primitive negative comparison only. No subsidiary-mode classification, continuum/global/native instability theorem, uniform energy, finite-Q amplitude blowup, full nonlinear/Einstein-germ/radiative hierarchy, or stable pulse/BH admission follows. Later BH still requires wormhole-to-trumpet transition with the Minkowski hyperboloidal reference.",
+  "source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/q-sigma3-stage/independent_review.py",
+    "sha256": "80ecd2e5bfe1c62918e73ecb18478db19eb48d06cd9a00108bf3e634605a3f8f",
+    "bytes": 10111
+  }
+}
