@@ -1,0 +1,136 @@
+{
+  "passed_source_math_layout_transport_review": true,
+  "passed_scientific_seam_or_snapshot_execution": false,
+  "scope": "Independent exact-byte source review only. No source/helper/probe query, compilation, snapshot readback, scientific recomputation or evolution.",
+  "reviewed_owner_index_sha256": "23f2323dcc42cd70fa93b221b92a5eff4da312ac459b8f451b3fa698a46bf71e",
+  "source_file_count": 59,
+  "seam_source_sha256": "403bc6a6609da62ba95426b4535f7fe9a99a0853d0e57fef564b82f0fd6d967e",
+  "analyzer_source_sha256": "aec27aa1ef55235f0b65a6282d87b0acb1328cb1179e0f3668e8dc1097c21348",
+  "probe_recipe_sha256": "83640cb37b7132eb32b026801e96331768aade94fce9f89ddfade39768f44932",
+  "report_sha256": "ff203677e914bd68430f6651581ecd5946a17cab0a3af3657405a267bd85e48d",
+  "independent_source_sha256": {
+    "capture_review_inputs.py": "753478b6f8c63c3547d36df00bafcea0008b75a33819c365a61b659f90722d7f",
+    "save_review_v2.py": "9fff974a8e1d1beb21cdc2c1bb5366dcbdfba7c4392d8e0d2769aa1f47e5804c"
+  },
+  "additional_production_and_RST_context": [
+    {
+      "path": "src/outputs/restart.cpp",
+      "sha256": "305a9610ba0bcf342ffb7a1eedc16d4699c7438e49eda73b23c02302e2f45783",
+      "bytes": 29814
+    },
+    {
+      "path": "src/outputs/history.cpp",
+      "sha256": "f17fb29804b7f1b03eabb3507dbed3e8f568fc2da741d556b3b39f7f3b77cda4",
+      "bytes": 17616
+    },
+    {
+      "path": "src/outputs/io_wrapper.hpp",
+      "sha256": "8a5563177539fe25887e37f807eff7cc29fec46d3be710eb03baf3855add8f14",
+      "bytes": 2986
+    },
+    {
+      "path": "src/mesh/mesh.hpp",
+      "sha256": "35969f2e6f52e486481db170d9f17479281c8398dfc7c3150644beab746b873d",
+      "bytes": 8247
+    },
+    {
+      "path": "src/mesh/mesh.cpp",
+      "sha256": "4696157cfd1c4e3eb92ac680fb29b70b9575aff10bd5f578073721bf9b04442f",
+      "bytes": 29940
+    },
+    {
+      "path": "src/driver/driver.cpp",
+      "sha256": "1f643c2caa535d8c2e14fcb569b207dd7c02c04a48db75ef67dd01684e8c1dd5",
+      "bytes": 31396
+    },
+    {
+      "path": "src/athena.hpp",
+      "sha256": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6",
+      "bytes": 19946
+    },
+    {
+      "path": "src/z4c/z4c.hpp",
+      "sha256": "767fbd2b507a26769947f470eb20ffd8443b581ac50a3238235de4ffcc3ebc72",
+      "bytes": 10695
+    },
+    {
+      "path": "src/z4c/z4c.cpp",
+      "sha256": "79356bc144aab6eb37248d8d099d8bae2bcddbf1780ad6144462f8df575fcb5f",
+      "bytes": 16731
+    },
+    {
+      "path": "src/z4c/z4c_hyperboloidal.cpp",
+      "sha256": "1c3e8b5836e2c231622b7df823476135b7e1517aadac93c6e814c2da20d774d1",
+      "bytes": 13337
+    },
+    {
+      "path": "src/z4c/hyperboloidal/cartesian_patch.hpp",
+      "sha256": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+      "bytes": 24113
+    },
+    {
+      "path": "src/z4c/hyperboloidal/athenak_bridge.hpp",
+      "sha256": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+      "bytes": 10797
+    },
+    {
+      "path": "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py",
+      "sha256": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+      "bytes": 9731
+    },
+    {
+      "path": "build-layer-research/time-projection-controls/rst-reader-gate/abi.json",
+      "sha256": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec",
+      "bytes": 1960
+    }
+  ],
+  "fixed_seam_scope": {
+    "stored_cells": 6,
+    "t0_states": 3,
+    "rows": 18,
+    "exact_flat_core_available": false,
+    "reference_RHS_max_scope": "six fixed reference cells"
+  },
+  "findings": [
+    {
+      "id": "successful-seam-prerequisite",
+      "severity": "snapshot-admission-provenance",
+      "status": "reported-before-execution",
+      "detail": "Analyzer/auth schema do not require a pinned successful --seam receipt; root gate must provide it or analyzer must enforce it."
+    },
+    {
+      "id": "end-of-case-source-pins",
+      "severity": "snapshot-provenance",
+      "status": "reported-before-execution",
+      "detail": "Source/executable/auth pins checked before case but not after; declared mid-case immutability needs post-readback or external receipt."
+    },
+    {
+      "id": "early-failure-capture",
+      "severity": "driver-scope-note",
+      "status": "reported-before-execution",
+      "detail": "Guards/history parsing before try can fail without internal failure.json; preserve with outer command receipt."
+    }
+  ],
+  "source_query_compile_probe_snapshot_evolution_calls": 0,
+  "native_executable_hashes_reverified_not_executed": {
+    "wave-map": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/wave-map/athena-wave-map",
+      "sha256": "829d590ee02e7865744ee9ea8e2bb00e036ee0dd9b7c2609da60740c15138b8c",
+      "kind": "large_payload"
+    },
+    "c0": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/c0/athena-c0",
+      "sha256": "9297e0389dd48e65a5c650b5f7aa3ffb0d4b4c6c358fdd6e31044318ac62bade",
+      "kind": "large_payload"
+    },
+    "wave-map-half": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/wave-map-half/athena-wave-map-half",
+      "sha256": "256527de2e7476392f15d1b7800e8a1372d1834f2e91a46d20b5a1b696869bee",
+      "kind": "large_payload"
+    }
+  },
+  "gate_owner": "root",
+  "owner_source_bytes_unchanged_at_review_completion": false,
+  "owner_revision_during_review": "Expected additive analyzer hardening by owner/root; preserved as mechanical source-pin race in history/001-owner-analyzer-pin-race, not a scientific failure.",
+  "review_applies_to_stable_captured_v2_only": true
+}

@@ -1,0 +1,17 @@
+--- before-region-guard/analyze_snapshots.py
++++ after-region-guard/analyze_snapshots.py
+@@ -80,7 +80,13 @@
+     try:
+         for number,path in enumerate(paths):
+             rst=reader.read_restart(path);assert rst['time']>last;last=rst['time']
+-            assert rst['mb_indcs']['nx1']==n and rst['mb_indcs']['ng']==3
++            assert rst['mb_indcs']['ng']==3
++            for axis in [1,2,3]:
++                assert rst['mb_indcs'][f'nx{axis}']==n
++                assert rst['mesh_indcs'][f'nx{axis}']==n
++                assert rst['mesh_size'][f'x{axis}min']==-1.1
++                assert rst['mesh_size'][f'x{axis}max']==1.1
++                assert rst['mesh_size'][f'dx{axis}']==2.2/n
+             for key in critical:assert rst['parameters'][key]==parameters[key],key
+             raw=np.asarray(rst['data']);assert raw.dtype==np.dtype('<f8')
+             assert raw.shape==(1,25,n+6,n+6,n+6)

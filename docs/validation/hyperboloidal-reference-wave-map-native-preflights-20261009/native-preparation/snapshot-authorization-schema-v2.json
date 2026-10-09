@@ -1,0 +1,40 @@
+{
+  "scope": "Additive snapshot authorization v2: successful same-probe seam and pre/post input hashes; no scientific threshold or formula change.",
+  "required": [
+    "input_path",
+    "input_sha256",
+    "executable",
+    "executable_sha256",
+    "build_receipt",
+    "build_receipt_sha256",
+    "mode",
+    "command",
+    "cwd",
+    "output_directory",
+    "returncode",
+    "run_log",
+    "run_log_sha256",
+    "launch_HEAD",
+    "native_execution_authorization_sha256"
+  ],
+  "modes": [
+    "wave-map",
+    "c0",
+    "wave-map-half"
+  ],
+  "readback_authorization_required": [
+    "snapshot_readback_authorized",
+    "analyzer_sha256",
+    "launch_receipt",
+    "launch_receipt_sha256",
+    "output_directory",
+    "probe_executable",
+    "probe_executable_sha256",
+    "probe_recipe",
+    "probe_recipe_sha256",
+    "reader_sha256",
+    "abi_sha256",
+    "seam_receipt",
+    "seam_receipt_sha256"
+  ]
+}

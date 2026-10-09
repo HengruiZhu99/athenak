@@ -1,0 +1,53 @@
+{
+  "scope": "Stable guard-only analyzer revision plus accepted same-probe seam; no snapshot/native evolution executed",
+  "files": {
+    "analyze_snapshots.py": {
+      "sha256": "c1b9487717e85e920b274b7dcb429290eed6b0d96b3b6cbd8e00d6ea352f7c72",
+      "bytes": 12296
+    },
+    "review-history/pre-seam-and-postpins-guard/analyze_snapshots.py": {
+      "sha256": "aec27aa1ef55235f0b65a6282d87b0acb1328cb1179e0f3668e8dc1097c21348",
+      "bytes": 10625
+    },
+    "review-history/pre-seam-and-postpins-guard/exact-guard-repair.patch": {
+      "sha256": "199c9f3cb4271cd19a5629f0847fd315f1d1e8bf1dd945af9681c6ecbbe70fc1",
+      "bytes": 3989
+    },
+    "snapshot-authorization-schema-v2.json": {
+      "sha256": "932165d3ef0e61d82b421956bb2d75fff61310099c03c2c5a3eb1e3a4ae45a04",
+      "bytes": 910
+    },
+    "SEAM-AND-SNAPSHOT-PLAN.md": {
+      "sha256": "7b7b208b50bf3d08a763f05413bcabb886da553f3fcc9a7b37fe861b90d2fa64",
+      "bytes": 7249
+    },
+    "native_seam_and_snapshot.cpp": {
+      "sha256": "403bc6a6609da62ba95426b4535f7fe9a99a0853d0e57fef564b82f0fd6d967e",
+      "bytes": 12269
+    },
+    "probe-build-held/recipe.json": {
+      "sha256": "83640cb37b7132eb32b026801e96331768aade94fce9f89ddfade39768f44932",
+      "bytes": 7766
+    },
+    "seam-cases.json": {
+      "sha256": "339c46a649e869679646731d9f2bd0d1e1804f2d6e744cab76134bd28d685acd",
+      "bytes": 2081
+    },
+    "probe-attempts/compile-and-seam-001/receipt.json": {
+      "sha256": "54a7f3f955c294bcc45307986ec33f4d7a2fb5e10d6626c89df94a68061a2b73",
+      "bytes": 297000
+    },
+    "probe-attempts/compile-and-seam-001/seam.stdout": {
+      "sha256": "f6711c587aa928dbe8a6c7ca1b78c629a0f7f0769b59ad050961c8b3bfe5806a",
+      "bytes": 20060
+    }
+  },
+  "analyzer_sha256": "c1b9487717e85e920b274b7dcb429290eed6b0d96b3b6cbd8e00d6ea352f7c72",
+  "probe_executable_sha256": "584e74bc257e7661310fff684af6d5ccf12c18dd24886a7e0ae9941c87161a54",
+  "root_requested_changes": [
+    "successful same source/exe/recipe seam receipt required",
+    "source/exe/auth/launch/RST/history/input/dependency pre/post hashes"
+  ],
+  "original_v2_analyzer_sha256": "aec27aa1ef55235f0b65a6282d87b0acb1328cb1179e0f3668e8dc1097c21348",
+  "source_before_try_failures": "Outer preflight/readback launch must preserve command/stdout/stderr for assertions before inner analyzer try; no scientific failure relabeled."
+}

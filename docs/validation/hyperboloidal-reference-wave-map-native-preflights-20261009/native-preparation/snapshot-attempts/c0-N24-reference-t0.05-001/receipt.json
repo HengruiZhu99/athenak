@@ -1,0 +1,25 @@
+{
+  "case": "c0-N24-reference-t0.05",
+  "runner_sha256": "c30177706be107cb0d4501492dc29b1cfcd33149573006c8900ce4b7fb90495e",
+  "launch_HEAD": "e654ceb0602c5fc47d8e0c600aedda660a96c92f",
+  "scope": "Released short/reference native-array readback only; no time advance, operators or long continuation.",
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/analyze_snapshots.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/snapshot-attempts/c0-N24-reference-t0.05-001/authorization.json"
+  ],
+  "cwd": "/Users/hz0693/research/hyperboloidal",
+  "environment_overrides": {
+    "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "authorization_sha256": "02ac543d6e5606287fe7fd57c67eec621cdd7ea47728be44e591ed091ed105f2",
+  "launch_receipt_sha256": "c3144260b6ee60df8dbdf299ae917f89c50b0a0b3c35d5ca302de583529c6d3a",
+  "returncode": 0,
+  "passed_fixed_snapshot_readback": true,
+  "analyzer_receipt_sha256": "42b0747245efd357fbc1e24536683f282f4572cf019803a90bd121300e0af632",
+  "protected_before_after_equal": true,
+  "stdout_sha256": "1ec2b4e7e1136a4e67f5d199d8c31b345fbfa9576b12c73878c5780123bd0e90",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "seconds": 1.885618125
+}

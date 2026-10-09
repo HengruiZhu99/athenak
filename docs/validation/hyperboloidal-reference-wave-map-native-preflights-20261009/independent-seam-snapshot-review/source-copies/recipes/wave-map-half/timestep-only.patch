@@ -1,0 +1,11 @@
+--- public/z4c_newdt.cpp
++++ wave-map-half/z4c_newdt.cpp
+@@ -39,6 +39,8 @@
+     dtnew = std::min(Real(0.025)*h/speed,
+                      hyperboloidal_pole_cfl*hyperboloidal_patch->min_omega)
+         /pmy_pack->pmesh->cfl_no;
++    // Private timestep-only control: halve BOTH admitted native caps.
++    dtnew *= Real(0.5);
+     return TaskStatus::complete;
+   }
+   auto &indcs = pmy_pack->pmesh->mb_indcs;

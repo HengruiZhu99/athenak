@@ -1,0 +1,52 @@
+--- v2/analyze_snapshots.py
++++ v3/analyze_snapshots.py
+@@ -41,6 +41,14 @@
+     probe=Path(auth['probe_executable']).resolve();assert sha(probe)==auth['probe_executable_sha256']
+     probe_recipe=Path(auth['probe_recipe']).resolve();assert sha(probe_recipe)==auth['probe_recipe_sha256']
+     probe_info=load(probe_recipe)
++    seam_path=Path(auth['seam_receipt']).resolve();assert sha(seam_path)==auth['seam_receipt_sha256']
++    seam=load(seam_path)
++    assert seam['passed_compile_and_fixed_t0_seam'] is True
++    assert seam['probe_executable_sha256']==auth['probe_executable_sha256']
++    assert Path(seam['probe_executable']).resolve()==probe
++    assert seam['recipe_sha256']==auth['probe_recipe_sha256']
++    assert seam['seam_cases_sha256']==sha(HERE/'seam-cases.json')
++    assert seam['source_before'][str(HERE/'native_seam_and_snapshot.cpp')]==sha(HERE/'native_seam_and_snapshot.cpp')
+     for name,digest in probe_info['source_before'].items():assert sha(Path(name))==digest,name
+     assert sha(READER)==auth['reader_sha256'] and sha(ABI)==auth['abi_sha256']
+     for name,field in [('input_path','input_sha256'),('executable','executable_sha256'),('build_receipt','build_receipt_sha256')]:
+@@ -76,6 +84,16 @@
+     history=np.atleast_2d(np.loadtxt(history_paths[0]));assert history.shape[1]==15
+     assert np.isfinite(history).all() and (history[:,1]>0).all()
+     assert (np.diff(history[:,0])>0).all()
++    protected={str(p):sha(p) for p in [Path(__file__),auth_path,launch_path,probe,probe_recipe,
++        seam_path,READER,ABI,Path(launch['input_path']),Path(launch['executable']),
++        Path(launch['build_receipt']),Path(launch['run_log']),history_paths[0]]+paths}
++    protected.update(probe_info['source_before'])
++    protected.update(seam['source_before'])
++    protected.update(seam['all_compiler_dependency_sha256'])
++    protected.update(build['source_before'])
++    protected.update(build['all_compiler_dependency_sha256'])
++    for name,digest in protected.items():assert sha(Path(name))==digest,name
++    dump(output/'protected-inputs-before.json',protected)
+     result=[];calls=[];started=time.monotonic();last=-1.
+     try:
+         for number,path in enumerate(paths):
+@@ -148,12 +166,17 @@
+         console=[{'cycle':int(c),'time_printed':float(t),'dt_printed':float(d)} for c,t,d in re.findall(
+             r'cycle=(\d+)\s+time=([\d.eE+\-]+)\s+dt=([\d.eE+\-]+)',log.read_text())]
+         assert console and all(np.isfinite(x['dt_printed']) and x['dt_printed']>0 for x in console)
++        for name,digest in protected.items():assert sha(Path(name))==digest,('mid-case source/input drift',name)
++        dump(output/'protected-inputs-after.json',protected)
+         dump(output/'snapshots.json',result)
+         dump(output/'receipt.json',{'passed_saved_snapshot_finite_and_diagnostic_gates':True,
+            'reference':reference,'mode':launch['mode'],'N':n,'target_time':target,'saved_arrays':len(result),
+            'reader_sha256':sha(READER),'abi_sha256':sha(ABI),'analyzer_sha256':sha(Path(__file__)),
+            'authorization_sha256':sha(auth_path),'launch_receipt_sha256':sha(launch_path),
+            'probe_executable_sha256':sha(probe),'probe_recipe_sha256':sha(probe_recipe),
++           'seam_receipt_sha256':sha(seam_path),'protected_inputs_before_after_equal':True,
++           'protected_inputs_before_sha256':sha(output/'protected-inputs-before.json'),
++           'protected_inputs_after_sha256':sha(output/'protected-inputs-after.json'),
+            'snapshots_sha256':sha(output/'snapshots.json'),'calls':calls,'console_dt_series':console,
+            'seconds':time.monotonic()-started,
+            'scope':'Binary64 active fields and native constraint-kernel readback; no propagation. Console dt only6digits; RST/header/history dt fullprecision with distinct timing semantics. Live-state recomputed cap not presumed identical to saved dt from a prior stage. Relative improvement/long continuation not adjudicated here.'})

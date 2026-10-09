@@ -1,0 +1,9 @@
+# Final analyzer guard source review
+
+Read-only review of the ten-file guard index `defa29818d8f8c2ce95d32018ce7bc59989083c9f1429734548d10b8b93fb882` passes. The new analyzer is `c1b9487717e85e920b274b7dcb429290eed6b0d96b3b6cbd8e00d6ea352f7c72`; all ten files were copied and hashed before review. No source query, probe/analyzer run, compilation, native evolution or scientific recomputation was performed by this reviewer.
+
+The additive diff changes admission and provenance guards only. It preserves every scientific formula, fixed cell/state, grid, mask, field ordering, constraint metric, threshold and timestep interpretation reviewed in the prior stable v2 source capture. It requires a hash-pinned successful seam receipt and binds the same probe executable/path, source, recipe and case list. The accepted root-owned seam receipt `54a7f3f955c294bcc45307986ec33f4d7a2fb5e10d6626c89df94a68061a2b73` has the required schema. Its scientific result is not independently rerun here.
+
+Before snapshot calls, protected inputs include the analyzer, authorization, launch receipt, probe, recipe, seam receipt, reader/ABI, native input/executable/build receipt/run log/history and every selected RST, plus all probe, seam and native source/compiler dependency pins. Every protected hash is verified before and after the case, with two saved pin dictionaries and a recorded equality flag. This closes both prior reported plan/enforcement gaps. The remaining early-guard failure-capture limitation is explicitly assigned to the outer launcher; it is a recorded scope note, not a mathematical blocker.
+
+There is no remaining blocking source, layout, transport, normalization or admission issue in the reviewed fixed source scope. Root remains the execution gate owner. This review does not authorize native/snapshot execution, claim any readback has passed, or adjudicate stability/long continuation.

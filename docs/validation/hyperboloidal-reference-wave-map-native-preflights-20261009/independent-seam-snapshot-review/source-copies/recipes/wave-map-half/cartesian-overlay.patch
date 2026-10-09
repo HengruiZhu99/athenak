@@ -1,0 +1,32 @@
+--- public/cartesian_patch.hpp
++++ wave-map-half/cartesian_patch.hpp
+@@ -11,6 +11,7 @@
+ #include <vector>
+ #include "z4c/hyperboloidal/athenak_bridge.hpp"
+ #include "z4c/hyperboloidal/layer_gauge.hpp"
++#include "native_wave_map.hpp"
+ #include "z4c/hyperboloidal/interior_dissipation.hpp"
+ #include "z4c/hyperboloidal/spherical_ghosts.hpp"
+ 
+@@ -321,7 +322,8 @@
+       const int k = s/(g.n[0]*g.n[1]);
+       const Real spacing[3] = {g.h[0],g.h[1],g.h[2]};
+       const Real idx[3] = {1/spacing[0],1/spacing[1],1/spacing[2]};
+-      const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);
++      const Real xyz[3] = {g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]};
++      const auto p = ref.At(xyz[0],xyz[1],xyz[2]);
+       auto u = LoadMeshJet<3>(udev,idx,0,k,j,i);
+       if (initial_jets.extent(0)) AddBackgroundJet(u,initial_jets(point));
+       else AddReferenceJet(u,p,ref);
+@@ -340,10 +342,7 @@
+                                 omega.omega,rhs)
+           || !AssembleInterior(ConformalRHS(background,omega0,damping,Real(0)),
+                                 omega.omega,rhs0)
+-          || !AssembleGaugeInterior((ref.layer.enabled || lg.physical_trace_lapse)
+-              ? InteriorLayerGauge(p,u,lg)
+-              : UnfactoredReferenceGauge(ref,p,u,gauge,true,true),
+-                                     omega.omega,gauge_rhs)) {
++          || !ResearchNativeWaveMapGauge(p,u,xyz,gauge_rhs)) {
+         ++bad;
+         return;
+       }
