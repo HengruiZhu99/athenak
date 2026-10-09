@@ -1,0 +1,60 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-v2-held-20261009/check_exact.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-v3-held-20261009/check_exact.py
+@@ -1,6 +1,7 @@
+ """HELD standard-library exact algebra proposal. Not executed in preparation."""
+ from fractions import Fraction as F
+ import json
++import sys
+ 
+ 
+ def mm(a,b):
+@@ -83,4 +84,7 @@
+                       'scope':'Exact fixed-rational pencil algebra only; no kernel or evolution'},indent=2))
+ 
+ 
+-if __name__=='__main__':main()
++if __name__=='__main__':
++    if sys.flags.optimize != 0:
++        raise RuntimeError('optimized Python cannot execute assertion gates')
++    main()
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-v2-held-20261009/analyze.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-v3-held-20261009/analyze.py
+@@ -182,4 +182,6 @@
+ 
+ 
+ if __name__ == '__main__':
++    if sys.flags.optimize != 0:
++        raise RuntimeError('optimized Python cannot execute assertion gates')
+     main(sys.argv[1])
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-v2-held-20261009/run_gate.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-v3-held-20261009/run_gate.py
+@@ -64,6 +64,9 @@
+ 
+     try:
+         checkpoint()
++        if sys.flags.optimize != 0:
++            raise RuntimeError('optimized Python cannot execute assertion gates')
++        receipt['python_flags'] = dict(optimize=sys.flags.optimize, isolated=sys.flags.isolated)
+         parser = argparse.ArgumentParser(description=__doc__)
+         parser.add_argument('--authorization', required=True)
+         parser.add_argument('--recipe', default=str(P / 'recipe.json'))
+@@ -97,8 +100,8 @@
+         shutil.copyfile(args.authorization, attempt / 'authorization.json')
+         receipt['launch_HEAD'] = run(['git', 'rev-parse', 'HEAD'], 'launch-HEAD').read_text().strip()
+         run([recipe['compiler']['path'], '--version'], 'compiler-version')
+-        run([recipe['python']['path'], '--version'], 'python-version')
+-        exact_path = run([recipe['python']['path'], str(attempt / 'check_exact.py')], 'exact-scalar')
++        run([recipe['python']['path'], '-I', '--version'], 'python-version')
++        exact_path = run([recipe['python']['path'], '-I', str(attempt / 'check_exact.py')], 'exact-scalar')
+         exact = load(exact_path)
+         if exact.get('passed') is not True or exact.get('exact_scalar_cases') != 18:
+             raise ValueError('exact scalar gate did not pass all18 cases')
+@@ -130,7 +133,7 @@
+             receipt[mode + '_dependency_count'] = len(dependencies)
+             checkpoint()
+             raw = run([str(exe)], 'probe-' + mode)
+-            summary = run([recipe['python']['path'], str(attempt / 'analyze.py'), str(raw)],
++            summary = run([recipe['python']['path'], '-I', str(attempt / 'analyze.py'), str(raw)],
+                           'analyze-' + mode)
+             analyses[mode] = load(summary)
+             if analyses[mode].get('passed') is not True or analyses[mode]['actual20_cases'] != 118:

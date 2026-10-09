@@ -1,0 +1,32 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-launch-held-20261009/run_derivatives_once.py	2026-10-09 15:24:52
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-launch-held-20261009/run_derivatives_once.py	2026-10-09 15:35:21
+@@ -18,9 +18,9 @@
+ 
+ 
+ HERE = Path(__file__).resolve().parent
+-CANDIDATE = HERE.parent/"native-angular-pulse-flat-derivatives-held-20261009"
++CANDIDATE = HERE.parent/"native-angular-pulse-flat-derivatives-v2-held-20261009"
+ INDEX = CANDIDATE/"source-index.json"
+-INDEX_SHA256 = "9649d93e6f34a1c9e2b79c542509258b6a51af73eadfbfbc3cc9b7d1fc808146"
++INDEX_SHA256 = "5e30fe0fa20ab5fb1bd75a73a768a4fa29a2bc0ce5e03d4309f7a5e0ea55408b"
+ INVOCATION = HERE/"derivative-invocation001"
+ OUTPUT = HERE/"derivative-attempt001"
+ PLAN = HERE/"launch-plan.json"
+@@ -117,7 +117,7 @@
+             raise RuntimeError("held sole paths mismatch")
+         index=checked_json(INDEX,INDEX_SHA256)
+         indexed={row["path"]:row["sha256"] for row in index["files"]}
+-        if len(indexed)!=6 or len(index["files"])!=6:
++        if len(indexed)!=8 or len(index["files"])!=8:
+             raise RuntimeError("candidate source-index count mismatch")
+         for path,digest in indexed.items():
+             if sha(path)!=digest:
+@@ -141,7 +141,7 @@
+         protected={**outerpins,str(INDEX):INDEX_SHA256,**indexed,
+                    **recipe["dependency_pins"],**recipe["mpmath_python_pins"],
+                    str(runtime):recipe["python_runtime_sha256"],str(authpath):sha(authpath)}
+-        if len(protected)!=118:
++        if len(protected)!=123:
+             raise RuntimeError("unexpected protected-path inventory count")
+         before={path:hash_or_error(path) for path in protected}
+         mismatches={path:{"expected":digest,"actual":before[path]} for path,digest in protected.items() if before[path]!=digest}

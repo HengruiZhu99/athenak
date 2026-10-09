@@ -1,0 +1,18 @@
+{
+  "commands": [
+    {
+      "command": "/usr/bin/python3 -I -B verify_saved_claims.py",
+      "scope": "saved JSON/text/hash only",
+      "returncode": 0,
+      "stdout": "readback.stdout",
+      "stderr": "readback.stderr"
+    },
+    {
+      "command": "/usr/bin/python3 -I -B - < final capture/hash/readback inline stdlib source",
+      "scope": "final document + compiled compact metadata only",
+      "returncode": 0,
+      "result": "final-factual-readback.json"
+    }
+  ],
+  "no_scientific_execution": true
+}

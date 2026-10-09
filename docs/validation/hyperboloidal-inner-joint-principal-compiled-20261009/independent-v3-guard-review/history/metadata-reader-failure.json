@@ -1,0 +1,17 @@
+{
+  "mechanical_review_reader_failure": true,
+  "scientific_execution": false,
+  "returncode": 1,
+  "operation": "source-only recipe metadata comparison",
+  "error": "KeyError: 'guard_revision'",
+  "cause": "The comparison iterated v3 keys while indexing the v2 recipe, which has no guard_revision field.",
+  "completed_before_error": [
+    "All 1454 unique declared pins verified.",
+    "Seven unchanged mathematical/probe/plan files were byte-identical."
+  ],
+  "original_failing_source": "for key in r:\n if key not in ['local_sources','protected_inputs']:\n  assert r[key]==a[key],key\n",
+  "original_error_tail": "Traceback (most recent call last):\n  File \"<stdin>\", line 23, in <module>\nKeyError: 'guard_revision'\n",
+  "correction": "Compare all prior v2 keys and separately display added v3 fields.",
+  "corrected_reader_returncode": 0,
+  "scientific_source_changed": false
+}

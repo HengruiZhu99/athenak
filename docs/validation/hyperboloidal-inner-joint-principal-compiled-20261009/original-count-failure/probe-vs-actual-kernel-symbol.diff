@@ -1,0 +1,114 @@
+--- /Users/hz0693/research/hyperboloidal/tst/hyperboloidal/kernel_symbol.cpp
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-held-20261009/probe.cpp
+@@ -5,6 +5,7 @@
+ #include <iomanip>
+ #include <iostream>
+ #include "z4c/hyperboloidal/layer_gauge.hpp"
++#include "gauge_proposal.hpp"
+ 
+ namespace hyp = z4c::hyperboloidal;
+ using Jet = hyp::Z4cJet<double>;
+@@ -60,7 +61,7 @@
+ }
+ 
+ void Extract(double alpha, double chi, double radius, bool oblique,
+-             bool physical_lapse, double matrix[20][20]) {
++             const ijp::Parameters& par, double matrix[20][20]) {
+   const double b[3][3] = {{1.3, 0.2, -0.1}, {0, 0.8, 0.12}, {0, 0, 1 / 1.04}};
+   const double q[3][3] = {
+       {0.36, -0.48, 0.8}, {0.8, 0.6, 0}, {-0.48, 0.64, 0.6}};
+@@ -84,9 +85,6 @@
+   p.alpha = alpha;
+   p.radius = radius;
+   p.omega = 0.37;
+-  hyp::LayerGaugeParameters gauge;
+-  gauge.preferred_source = false; // algebraic projection has no principal part
+-  gauge.physical_trace_lapse = physical_lapse;
+   hyp::OmegaJet<double> omega{};
+   omega.omega = p.omega;
+   // Separate derivative orders to exclude lower-order physical-trace/Z4 terms.
+@@ -151,11 +149,11 @@
+       throw std::runtime_error("kernel symbol extraction failed");
+     }
+     hyp::GaugeRHS<double> gl{}, gs{}, gbase{};
+-    if (!hyp::AssembleGaugeInterior(hyp::InteriorLayerGauge(p, slicing, gauge),
++    if (!rwm::Assemble(ijp::Gauge(p, slicing, par),
+                                     omega.omega, gl) ||
+-        !hyp::AssembleGaugeInterior(hyp::InteriorLayerGauge(p, shift, gauge),
++        !rwm::Assemble(ijp::Gauge(p, shift, par),
+                                     omega.omega, gs) ||
+-        !hyp::AssembleGaugeInterior(hyp::InteriorLayerGauge(p, base, gauge),
++        !rwm::Assemble(ijp::Gauge(p, base, par),
+                                     omega.omega, gbase)) {
+       throw std::runtime_error("gauge symbol extraction failed");
+     }
+@@ -195,37 +193,35 @@
+ 
+ int main() {
+   std::cout << std::setprecision(17) << '[';
+-  bool first = true;
+-  for (double alpha : {0.2, 1., 3.})
+-    for (double chi : {0.4, 1., 2.})
+-      for (double r : {0., 0.45, 0.5, 0.65, 0.8, 0.83, 0.84, 0.849, 0.85, 1.})
+-        for (bool oblique : {false, true})
+-          for (bool physical_lapse : {false, true}) {
+-            if (!first)
+-              std::cout << ',';
+-            first = false;
+-            double matrix[20][20]{};
+-            Extract(alpha, chi, r, oblique, physical_lapse, matrix);
+-            const auto c =
+-                hyp::LayerCoefficients(r, alpha, hyp::LayerGaugeParameters{});
+-            std::cout << "{\"alpha\":" << alpha << ",\"chi\":" << chi
+-                      << ",\"r\":" << r << ",\"oblique\":" << oblique
+-                      << ",\"W\":" << c.weight
+-                      << ",\"physical_trace_lapse\":" << physical_lapse
+-                      << ",\"f\":" << c.f << ",\"mu\":" << c.mu
+-                      << ",\"q\":" << c.q << ",\"M\":[";
+-            for (int i = 0; i < 20; ++i) {
+-              if (i)
+-                std::cout << ',';
+-              std::cout << '[';
+-              for (int j = 0; j < 20; ++j) {
+-                if (j)
+-                  std::cout << ',';
+-                std::cout << matrix[i][j];
+-              }
+-              std::cout << ']';
+-            }
+-            std::cout << "]}";
+-          }
+-  std::cout << "]\n";
+-}
++  bool first=true;
++  int count=0;
++  auto emit=[&](double alpha,double chi,bool oblique,const ijp::Parameters&par){
++    if(!first)std::cout<<',';first=false;++count;
++    const double A=alpha*alpha*chi;
++    const double f=par.candidate?1+2*(1-par.W)/alpha:par.f;
++    const double mu=par.candidate?par.W+(1-par.W)*par.G0/A:par.mu;
++    const double ec=2*mu*mu/((1+mu)*(1+mu)),q=(4*mu-2*ec)/3;
++    double matrix[20][20]{};Extract(alpha,chi,0.,oblique,par,matrix);
++    std::cout<<"{\"candidate\":"<<par.candidate<<",\"alpha\":"<<alpha
++      <<",\"chi\":"<<chi<<",\"W\":"<<par.W<<",\"G0\":"<<par.G0
++      <<",\"oblique\":"<<oblique<<",\"f\":"<<f<<",\"mu\":"<<mu
++      <<",\"ec\":"<<ec<<",\"q\":"<<q<<",\"M\":[";
++    for(int i=0;i<20;++i){if(i)std::cout<<',';std::cout<<'[';
++      for(int j=0;j<20;++j){if(j)std::cout<<',';std::cout<<matrix[i][j];}std::cout<<']';}
++    std::cout<<"]}";
++  };
++  for(double alpha:{.05,1.,3.})for(double chi:{.1,1.})
++    for(double W:{0.,.5,1.})for(double G0:{.375,.75})for(bool oblique:{false,true}){
++      ijp::Parameters p;p.candidate=true;p.W=W;p.G0=G0;emit(alpha,chi,oblique,p);}
++  for(double W:{0.,.5})for(double G0:{.375,.75})for(bool oblique:{false,true}){
++    ijp::Parameters p;p.candidate=true;p.W=W;p.G0=G0;emit(1.,G0,oblique,p);}
++  for(bool oblique:{false,true}){
++    ijp::Parameters p;p.candidate=true;p.W=0.;p.G0=.375;
++    const double alpha=54./29.;emit(alpha,p.G0/(2*alpha*alpha),oblique,p);}
++  for(double mu:{.125,.375,.75,1.,2.,8.}){
++    const double ec=2*mu*mu/((1+mu)*(1+mu)),q=(4*mu-2*ec)/3;
++    for(double f:{1.,3.,q})for(bool oblique:{false,true}){
++      ijp::Parameters p;p.f=f;p.mu=mu;emit(1.,1.,oblique,p);}}
++  if(count!=262)throw std::runtime_error("declared source-only case count differs");
++  std::cout<<"]\n";
++}

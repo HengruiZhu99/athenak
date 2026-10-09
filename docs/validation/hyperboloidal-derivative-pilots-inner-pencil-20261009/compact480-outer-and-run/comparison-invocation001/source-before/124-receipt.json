@@ -1,0 +1,25 @@
+{
+  "disposition": "PASS_SOURCE_ONLY_WITH_EXPLICIT_PARTIAL_GROUP_RETENTION_LIMIT",
+  "review_sha256": "4c7e354c1b94cd32027807af81138ba4ac736d0837ebd911cb0084bfada24932",
+  "timing_candidate_index": "48486f9a2ca37e8355fd06482168bebedbb8f5bb75d6979718b823856bb8bcce",
+  "timing_outer_index": "690f4ee784e7bfeb3cb713399b429b90a382b71d720cbad7825cef95156dd9d6",
+  "full_v2_outer_index": "4281a38d66ed01dd14e1d3c024a6813573b588134630413f5055473280f91302",
+  "all_source_and_113_dependency_runtime_pins_unchanged": true,
+  "core_byte_identical_to_reviewed_v2": true,
+  "expected_counts": {
+    "rays": 480,
+    "groups": 24,
+    "checks": 4744
+  },
+  "no_blocking_source_math_defect_identified": true,
+  "nonblocking_limits": [
+    "Completed rays in unfinished group are not persisted on a midgroup exception",
+    "Group timing excludes prior graph/height-prefix construction; full-runtime extrapolation remains conditional"
+  ],
+  "original_admission_FAIL_unchanged": true,
+  "scientific_import_or_execution": false,
+  "syntax_CAS_numeric_or_array_operations": false,
+  "queries_or_inverse": false,
+  "execution_authorized_by_this_receipt": false,
+  "full_gate_admitted": false
+}

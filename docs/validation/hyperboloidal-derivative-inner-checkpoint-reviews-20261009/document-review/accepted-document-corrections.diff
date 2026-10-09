@@ -1,0 +1,45 @@
+--- original-reviewed-doc
++++ final-parent-corrected-doc
+@@ -10,12 +10,14 @@
+ 
+ ## Completed derivative pilots
+ 
+-The fixed-Lorentz-frame Kirchhoff calculation evolves the actual native
++The fixed-Lorentz-frame Kirchhoff formulation represents the actual native
+ lapse/shift pulse as four scalar coordinate displacements on physical
+-Minkowski spacetime. Analytic differentiation supplies four values, sixteen
+-first derivatives and forty symmetric second derivatives at each ray. The
+-ray direction remains fixed during differentiation. These are scalar wave
+-checks, not an independent evolution of the nonlinear Z4c equations.
++Minkowski spacetime. The completed pilots test its differentiated ray
++integrands, supplying four values, sixteen first derivatives and forty
++symmetric second derivatives at each ray. They do not perform the angular
++integration needed to obtain the displacement solution. The ray direction
++remains fixed during differentiation. These checks do not independently
++evolve the nonlinear Z4c equations.
+ 
+ The old pilot and compact-radius comparison used the same 480 rays in 24
+ groups, at 60 and 80 decimal digits, with unchanged pulse, quadrature and
+@@ -122,8 +124,20 @@
+ error `4.440892098500626e-16`, and the largest sampled infinity-norm basis
+ condition `113.32241771251452`. The sample includes oblique propagation,
+ positive-definite nontrivial metrics and `mu=1`, `q=1`, `f=1`, `q=f`
+-coincidences. This compiled result is separate from the pencil-only capsule;
+-its exact source/run evidence will be archived separately.
++coincidences. An independent saved-matrix readback reproduced the literal
++20-field coefficients and direct scalar wave relations without rerunning the
++kernel or original analyzer. Its largest direct wave-identity residual was
++`6.659118e-13`.
++
++The exact compiled source, commands, empty error logs, summaries, saved matrices,
++independent readback and count/optimization guard failure lineage are in
++[a separate compiled-gate capsule](validation/hyperboloidal-inner-joint-principal-compiled-20261009/README.md).
++Its catalog SHA256 is
++`b481b0813cfb4850358ed510bdc78344f1af93e504b613517f3a00997ac8d54a`.
++It contains 254 files, 7,679,469 bytes and 64 finite JSON files. Three compiled
++payloads are metadata only, as are 1,413 external compiler/header/runtime
++dependencies. This capsule contains the completed finite principal gate;
++the earlier derivative/pencil capsule remains unchanged.
+ 
+ These results establish neither a uniform diagonalizer at a puncture nor
+ nonlinear regularity or evolution stability. Nonflat reference identities,

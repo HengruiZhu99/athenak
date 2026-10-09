@@ -1,0 +1,28 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-held-20261009/flat_ivp_derivatives.py	2026-10-09 15:15:47
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-held-20261009/flat_ivp_derivatives.py	2026-10-09 15:33:51
+@@ -543,8 +543,15 @@
+     before={}
+     try:
+         recipepath,authpath=Path(args.recipe).resolve(),Path(args.authorization).resolve()
+-        recipe,auth=json.loads(recipepath.read_text()),json.loads(authpath.read_text())
++        if recipepath!=(HERE/"derivative-recipe.json").resolve():
++            raise PermissionError("consumed recipe must be the pinned local derivative-recipe.json")
++        recipe_bytes=recipepath.read_bytes()
++        recipe=json.loads(recipe_bytes)
++        auth=json.loads(authpath.read_text())
+         required={str(HERE/name):sha(HERE/name) for name in ["flat_ivp_derivatives.py","analytic_jets.py","values_context.py","PLAN.md","derivative-recipe.json"]}
++        consumed_recipe_sha256=hashlib.sha256(recipe_bytes).hexdigest()
++        if required[str(HERE/"derivative-recipe.json")]!=consumed_recipe_sha256:
++            raise RuntimeError("consumed recipe changed during admission")
+         if auth.get("analytic_scalar_derivative_execution_admitted") is not True or auth.get("source_pins")!=required:
+             raise PermissionError("missing exact root analytic-derivative release")
+         if str(out)!=auth.get("fresh_output_path"):
+@@ -565,7 +572,7 @@
+         if package!=recipe["mpmath_python_pins"]:
+             raise RuntimeError("mpmath source inventory mismatch")
+         before={**required,**recipe["dependency_pins"],**package,str(runtime):sha(runtime),str(authpath):sha(authpath)}
+-        receipt.update({"source_before":before,"authorization":str(authpath),"command":sys.argv,"environment":{k:os.environ.get(k) for k in recipe["required_environment"]},"python":platform.python_version(),"mpmath":mp.__version__})
++        receipt.update({"source_before":before,"consumed_recipe":{"path":str(recipepath),"sha256":consumed_recipe_sha256},"authorization":str(authpath),"command":sys.argv,"environment":{k:os.environ.get(k) for k in recipe["required_environment"]},"python":platform.python_version(),"mpmath":mp.__version__})
+         write(out/"before.json",receipt)
+         result=run(recipe,out)
+         receipt.update(result)

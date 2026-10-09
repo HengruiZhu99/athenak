@@ -1,0 +1,107 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-launch-held-20261009/run_derivatives_once.py	2026-10-09 15:35:21
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/run_derivatives_once.py	2026-10-09 15:39:56
+@@ -1,4 +1,4 @@
+-"""HELD standard-library one-shot launcher. No scientific imports.
++"""HELD standard-library one-shot tiny timing/identity launcher. No scientific imports.
+ 
+ Root must authorize these exact bytes and launch-plan.json. The child runs
+ at most once; no retry, source change, gate relaxation or inverse-map work.
+@@ -18,27 +18,18 @@
+ 
+ 
+ HERE = Path(__file__).resolve().parent
+-CANDIDATE = HERE.parent/"native-angular-pulse-flat-derivatives-v2-held-20261009"
++CANDIDATE = HERE.parent/"native-angular-pulse-flat-derivatives-timing-held-20261009"
+ INDEX = CANDIDATE/"source-index.json"
+-INDEX_SHA256 = "5e30fe0fa20ab5fb1bd75a73a768a4fa29a2bc0ce5e03d4309f7a5e0ea55408b"
+-INVOCATION = HERE/"derivative-invocation001"
+-OUTPUT = HERE/"derivative-attempt001"
++INDEX_SHA256 = "48486f9a2ca37e8355fd06482168bebedbb8f5bb75d6979718b823856bb8bcce"
++INVOCATION = HERE/"timing-invocation001"
++OUTPUT = HERE/"timing-attempt001"
+ PLAN = HERE/"launch-plan.json"
+ PROSE_PLAN = HERE/"PLAN.md"
+-RECIPE = CANDIDATE/"derivative-recipe.json"
+-CHILD = CANDIDATE/"flat_ivp_derivatives.py"
+-CHILD_NAMES = ["flat_ivp_derivatives.py", "analytic_jets.py", "values_context.py", "PLAN.md", "derivative-recipe.json"]
+-EXPECTED = {"native_rows":100,"control_rows":100,"initial_rows":28,"checks":2360}
+-COST = {"angular_nodes_sum_per_event_and_precision":9472,
+-        "native_events":5,"native_boosts":2,"precisions":2,
+-        "native_ray_integrand_evaluations":189440,
+-        "control_events":5,"control_boosts":2,
+-        "control_ray_integrand_evaluations":189440,
+-        "initial_points":7,"initial_boosts":2,"initial_nodes":4096,
+-        "initial_ray_integrand_evaluations":114688,
+-        "total_differentiated_ray_integrand_evaluations":493568,
+-        "independent_coarea_cross_bindings":10,
+-        "measured_runtime_available":False}
++RECIPE = CANDIDATE/"timing-recipe.json"
++CHILD = CANDIDATE/"timing_gate.py"
++CHILD_NAMES = ["timing_gate.py", "derivative_core.py", "analytic_jets.py", "values_context.py", "PLAN.md", "timing-recipe.json"]
++EXPECTED = {"ray_rows":480,"group_rows":24,"checks":4744}
++COST = {"events":3,"boosts":2,"precisions":2,"sampling_nodes_sum":40,"ray_integrand_evaluations":480,"group_rows":24,"measured_runtime_available":False,"scope":"single-ray local identities only; no angular integral accuracy"}
+ 
+ 
+ def sha(path):
+@@ -82,7 +73,7 @@
+     child_output_before_read=None
+     protected={str(Path(__file__).resolve()):hash_or_error(__file__),str(PLAN):hash_or_error(PLAN),str(PROSE_PLAN):hash_or_error(PROSE_PLAN),str(INDEX):hash_or_error(INDEX),str(authpath):hash_or_error(authpath)}
+     before={path:hash_or_error(path) for path in protected}
+-    receipt={"kind":"One-shot analytic derivative outer invocation",
++    receipt={"kind":"One-shot separate tiny timing/identity outer invocation",
+              "scientific_gate_accepted":False,"accepted_native":False,
+              "inverse_map_attempted":False,"invocation":str(INVOCATION),
+              "sole_child_output":str(OUTPUT),"authorization":str(authpath),
+@@ -101,7 +92,7 @@
+         auth=checked_json(authpath)
+         plan=checked_json(PLAN)
+         outerpins={str(Path(__file__).resolve()):sha(__file__),str(PLAN):sha(PLAN),str(PROSE_PLAN):sha(PROSE_PLAN)}
+-        if auth.get("one_shot_outer_derivative_launch_admitted") is not True or auth.get("outer_source_pins")!=outerpins:
++        if auth.get("one_shot_outer_timing_launch_admitted") is not True or auth.get("outer_source_pins")!=outerpins:
+             raise PermissionError("missing exact root one-shot outer release")
+         if auth.get("candidate_source_index")!={"path":str(INDEX),"sha256":INDEX_SHA256}:
+             raise PermissionError("wrong candidate source-index authorization")
+@@ -117,16 +108,16 @@
+             raise RuntimeError("held sole paths mismatch")
+         index=checked_json(INDEX,INDEX_SHA256)
+         indexed={row["path"]:row["sha256"] for row in index["files"]}
+-        if len(indexed)!=8 or len(index["files"])!=8:
++        if len(indexed)!=7 or len(index["files"])!=7:
+             raise RuntimeError("candidate source-index count mismatch")
+         for path,digest in indexed.items():
+             if sha(path)!=digest:
+                 raise RuntimeError("indexed candidate changed: "+path)
+         recipe=checked_json(RECIPE,indexed[str(RECIPE)])
+         childpins={str(CANDIDATE/name):indexed[str(CANDIDATE/name)] for name in CHILD_NAMES}
+-        if auth.get("analytic_scalar_derivative_execution_admitted") is not True or auth.get("source_pins")!=childpins:
++        if auth.get("tiny_timing_identity_execution_admitted") is not True or auth.get("source_pins")!=childpins:
+             raise PermissionError("missing exact root child derivative release")
+-        if recipe.get("anticipated_rows")!={"native":100,"closed_form_controls":100,"initial_limits":28}:
++        if recipe.get("anticipated_rows")!={"timing_ray_rows":480}:
+             raise RuntimeError("unreviewed scientific recipe row counts")
+         runtime=Path(recipe["python_runtime_path"])
+         if sha(runtime)!=recipe["python_runtime_sha256"]:
+@@ -141,7 +132,7 @@
+         protected={**outerpins,str(INDEX):INDEX_SHA256,**indexed,
+                    **recipe["dependency_pins"],**recipe["mpmath_python_pins"],
+                    str(runtime):recipe["python_runtime_sha256"],str(authpath):sha(authpath)}
+-        if len(protected)!=123:
++        if len(protected)!=125:
+             raise RuntimeError("unexpected protected-path inventory count")
+         before={path:hash_or_error(path) for path in protected}
+         mismatches={path:{"expected":digest,"actual":before[path]} for path,digest in protected.items() if before[path]!=digest}
+@@ -185,12 +176,12 @@
+             if sha(path)!=digest:
+                 raise RuntimeError("child saved-output hash mismatch: "+path)
+         receipt["child_receipt"]={"path":str(OUTPUT/"receipt.json"),"sha256":sha(OUTPUT/"receipt.json")}
+-        if childreceipt.get("passed_analytic_scalar_derivative_gate") is not True or childreceipt.get("sources_unchanged") is not True:
++        if childreceipt.get("passed_tiny_timing_identity_gate") is not True or childreceipt.get("sources_unchanged") is not True:
+             raise RuntimeError("child scientific/provenance gate did not pass")
+         for key,value in EXPECTED.items():
+             if childreceipt.get(key)!=value:
+                 raise RuntimeError("unexpected child count: "+key)
+-        if childreceipt.get("failed_checks")!=[] or childreceipt.get("accepted_native") is not False or childreceipt.get("inverse_map_attempted") is not False:
++        if childreceipt.get("failed_checks")!=[] or childreceipt.get("accepted_native") is not False or childreceipt.get("inverse_map_attempted") is not False or childreceipt.get("full_derivative_gate_passed") is not False:
+             raise RuntimeError("child scope or failed-check declaration mismatch")
+         receipt["scientific_gate_accepted"]=True
+         code=0

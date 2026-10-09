@@ -1,0 +1,355 @@
+{
+  "scope": "Completed old480 derivative pilot, compact480 comparison and independent savedDecimal readback; corrected inner joint-principal pencil only. No live full gate or v3/v4 readback.",
+  "destination": "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-derivative-pilots-inner-pencil-20261009",
+  "production_reference_commit": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "roots": [
+    {
+      "tag": "original-full-source",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-held-20261009",
+      "role": "Preserved original recipe-admission defect source only"
+    },
+    {
+      "tag": "original-full-source-review",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-independent-source-review-20261009",
+      "role": "Preserved independent original admission FAIL"
+    },
+    {
+      "tag": "corrected-full-source",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-held-20261009",
+      "role": "Corrected full source dependency only; not compact full livegate"
+    },
+    {
+      "tag": "corrected-guard-review",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-independent-guard-review-20261009",
+      "role": "Independent minimal guard correction review"
+    },
+    {
+      "tag": "old480-source",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-held-20261009",
+      "role": "Fixed old480 source and recipe"
+    },
+    {
+      "tag": "old480-outer-and-run",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009",
+      "role": "Completed old480 pilot and exact outer provenance"
+    },
+    {
+      "tag": "old480-independent-review",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-independent-source-review-20261009",
+      "role": "Independent source/math review of pilot and original v2outer"
+    },
+    {
+      "tag": "old480-root-release",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-derivatives-timing-root-release-20261009",
+      "role": "Completed root release/launch only"
+    },
+    {
+      "tag": "compact480-source",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009",
+      "role": "Reviewed compact-root acceleration source and recipe"
+    },
+    {
+      "tag": "compact480-outer-and-run",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009",
+      "role": "Completed480comparison and exact outer provenance"
+    },
+    {
+      "tag": "compact480-independent-review",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-independent-source-review-20261009",
+      "role": "Independent compact-root source/math review"
+    },
+    {
+      "tag": "compact480-root-release-readback",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-derivatives-compact-root-root-release-20261009",
+      "role": "Completed root release/launch plus independent savedDecimal readback"
+    },
+    {
+      "tag": "inner-joint-pencil",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-candidate-pencil-20261009",
+      "role": "Original wrong displayed Arow, correctedv2 and explicit erratum"
+    },
+    {
+      "tag": "inner-joint-independent-review",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-candidate-independent-review-20261009",
+      "role": "Independent corrected scalar/source/puncture pencil review only"
+    }
+  ],
+  "selected_files": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/derivative-pilots-inner-pencil-collector-held-20261009/runtime-copy-metadata.json",
+      "archive_relative": "context/runtime-copy-metadata.json",
+      "role": "Exact omitted copied runtime-source identities"
+    }
+  ],
+  "metadata_only_external_files": [],
+  "completion_gates": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-attempt001/receipt.json",
+      "sha256": "089c24b69b69805ac13879960d73449516a5861cfa4eb197b3ebda994bf5f4bd",
+      "expected": {
+        "passed_tiny_timing_identity_gate": true,
+        "ray_rows": 480,
+        "group_rows": 24,
+        "checks": 4744,
+        "failed_checks": [],
+        "sources_unchanged": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/receipt.json",
+      "sha256": "45b9967263a81cc09e0234f88f6fedf8c6a45561b10277b2cfcd0f643a0cf86f",
+      "expected": {
+        "passed_compact_root_comparison_gate": true,
+        "passed_tiny_timing_identity_gate": true,
+        "ray_rows": 480,
+        "group_rows": 24,
+        "checks": 38344,
+        "failed_checks": [],
+        "sources_unchanged": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-derivatives-compact-root-root-release-20261009/saved-readback001.json",
+      "sha256": "345f6e43fe9af8c330c32d7bf58e00629f08db1c1084cbd729a2ff22c26a5892",
+      "expected": {
+        "passed_independent_saved_decimal_readback": true,
+        "ray_rows": 480,
+        "checks": 38344
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-candidate-independent-review-20261009/receipt.json",
+      "sha256": "7193fef23e7fc646b4cc0aeb918d2c95a9dec14d562d5481b04ed01d7d77125b",
+      "expected": {
+        "passed_source_math_review": true,
+        "source_pins_unchanged": true,
+        "CAS_numeric_import_execution": false,
+        "compiled_actual20_gate": false
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/receipt.json",
+      "sha256": "b04708e4622b13916d2ec38ef6e6580d9fdfe31007addefb32490b30813befa6",
+      "expected": {
+        "scientific_gate_accepted": true,
+        "child_returncode": 0,
+        "sources_unchanged": true,
+        "child_outputs_unchanged_during_readback": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/receipt.json",
+      "sha256": "853262593ec47801f5a40a0d4dcecf1c4558903b6e728bd21b9830faf76223f3",
+      "expected": {
+        "scientific_gate_accepted": true,
+        "child_returncode": 0,
+        "sources_unchanged": true,
+        "child_outputs_unchanged_during_readback": true
+      }
+    }
+  ],
+  "identical_inventory_pairs": [],
+  "metadata_only_runtime_copy_paths": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/001-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/002-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/003-approximation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/004-calculus.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/005-differentiation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/006-extrapolation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/007-inverselaplace.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/008-odes.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/009-optimization.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/010-polynomials.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/011-quadrature.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/012-ctx_base.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/013-ctx_fp.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/014-ctx_iv.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/015-ctx_mp.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/016-ctx_mp_python.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/017-function_docs.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/018-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/019-bessel.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/020-elliptic.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/021-expintegrals.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/022-factorials.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/023-functions.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/024-hypergeometric.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/025-orthogonal.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/026-qfunctions.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/027-rszeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/028-signals.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/029-theta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/030-zeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/031-zetazeros.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/032-identification.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/033-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/034-backend.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/035-gammazeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/036-libelefun.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/037-libhyper.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/038-libintmath.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/039-libmpc.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/040-libmpf.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/041-libmpi.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/042-math2.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/043-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/044-calculus.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/045-eigen.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/046-eigen_symmetric.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/047-linalg.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/048-matrices.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/049-rational.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/050-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/051-extratest_gamma.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/052-extratest_zeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/053-runtests.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/054-test_basic_ops.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/055-test_bitwise.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/056-test_calculus.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/057-test_compatibility.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/058-test_convert.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/059-test_diff.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/060-test_division.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/061-test_eigen.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/062-test_eigen_symmetric.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/063-test_elliptic.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/064-test_fp.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/065-test_functions.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/066-test_functions2.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/067-test_gammazeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/068-test_hp.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/069-test_identify.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/070-test_interval.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/071-test_levin.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/072-test_linalg.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/073-test_matrices.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/074-test_mpmath.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/075-test_ode.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/076-test_pickle.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/077-test_power.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/078-test_quad.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/079-test_rootfinding.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/080-test_special.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/081-test_str.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/082-test_summation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/083-test_trig.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/084-test_visualization.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/085-torture.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/086-usertools.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/source-before/087-visualization.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/001-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/002-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/003-approximation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/004-calculus.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/005-differentiation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/006-extrapolation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/007-inverselaplace.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/008-odes.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/009-optimization.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/010-polynomials.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/011-quadrature.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/012-ctx_base.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/013-ctx_fp.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/014-ctx_iv.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/015-ctx_mp.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/016-ctx_mp_python.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/017-function_docs.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/018-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/019-bessel.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/020-elliptic.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/021-expintegrals.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/022-factorials.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/023-functions.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/024-hypergeometric.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/025-orthogonal.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/026-qfunctions.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/027-rszeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/028-signals.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/029-theta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/030-zeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/031-zetazeros.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/032-identification.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/033-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/034-backend.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/035-gammazeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/036-libelefun.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/037-libhyper.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/038-libintmath.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/039-libmpc.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/040-libmpf.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/041-libmpi.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/042-math2.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/043-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/044-calculus.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/045-eigen.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/046-eigen_symmetric.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/047-linalg.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/048-matrices.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/049-rational.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/050-__init__.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/051-extratest_gamma.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/052-extratest_zeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/053-runtests.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/054-test_basic_ops.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/055-test_bitwise.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/056-test_calculus.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/057-test_compatibility.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/058-test_convert.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/059-test_diff.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/060-test_division.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/061-test_eigen.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/062-test_eigen_symmetric.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/063-test_elliptic.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/064-test_fp.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/065-test_functions.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/066-test_functions2.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/067-test_gammazeta.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/068-test_hp.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/069-test_identify.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/070-test_interval.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/071-test_levin.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/072-test_linalg.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/073-test_matrices.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/074-test_mpmath.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/075-test_ode.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/076-test_pickle.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/077-test_power.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/078-test_quad.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/079-test_rootfinding.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/080-test_special.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/081-test_str.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/082-test_summation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/083-test_trig.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/084-test_visualization.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/085-torture.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/086-usertools.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/source-before/087-visualization.py"
+  ],
+  "dependency_manifests": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-attempt001/receipt.json",
+      "keys": [
+        "source_before"
+      ]
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/receipt.json",
+      "keys": [
+        "source_before"
+      ]
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-derivatives-compact-root-root-release-20261009/saved-readback001.json",
+      "keys": [
+        "pins"
+      ]
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/derivative-pilots-inner-pencil-collector-held-20261009/runtime-copy-metadata.json",
+      "keys": [
+        "inputs"
+      ]
+    }
+  ],
+  "README": "# Completed derivative pilots and inner principal pencil\n\nThis compact capsule contains completed old480 timing/identity checks, the\ncompleted compact480 same-jet comparison, root's independent savedDecimal\nreadback, their exact source/review/release/log provenance and the corrected\njoint inner principal pencil with its preserved transcription error and review.\nOld480 passed480rays/24groups/4744checks; compact480 passed480/24/38344.\nThese are finite fixed-sample scalar derivative identity/comparison gates.\nNeither pilot passes the full493568 derivative gate, performs a coordinate\ninverse or establishes native target-time coverage, Jacobian regularity,\ncontinuum/native Z4 stability or a BH gauge. The ongoing compactfull gate,\nall live/future v3/v4 arithmetic work and later actual20 inner test are excluded.\n\nThe inner review is finite-positive-lapse frozen principal algebra and source\nconsistency only. Original A_t beta transcription is preserved as incorrect;\nv2 Lambda correction is authoritative. P=Kphysical\u22122Theta storage and exact\nMinkowski reference remain unchanged. Uniform puncture hyperbolicity and the\nlater wormhole-to-trumpet transition are unproved and require separate gates.\n\nAll copied files are exact original bytes, including source/log whitespace.\nEvery NPZ/NPY/JSONL, binary/executable signature and file larger than1MiB is\nomitted with source SHA256/length metadata. External runtime/dependency files\nand copied external runtime source snapshots are metadata only. No arrays\nare decoded and no numerical source is executed by collection. Original\ninventories, completed receipt gates and byte hashes are checked before/after.\nNo existing destination may be overwritten. Original frozen indexes are not\nrewritten to account for compact omissions. Generated catalog/metadata identify\nall copied/omitted bytes; a later verifier must be catalog-aware.\n"
+}
