@@ -199,12 +199,15 @@ void Native(int n, double span, double a, bool layer, int degree, bool symmetric
           point(p, 3) = c.z4.z_conformal_norm2 / (dt * dt);
         });
     const auto host = Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(), point);
-    const double edges[5] = {0, r0, r1, .9, 1};
+    std::vector<double> edges{0, r0, r1, .9, 1};
+    std::sort(edges.begin(), edges.end());
+    edges.erase(std::unique(edges.begin(), edges.end()), edges.end());
+    const int n_bins = static_cast<int>(edges.size()) - 1;
     double sums[4][3]{}, totals[3]{};
     int counts[4]{};
     for (size_t p = 0; p < host.extent(0); ++p) {
       int bin = 0;
-      while (bin < 3 && host(p, 0) >= edges[bin + 1]) ++bin;
+      while (bin < n_bins - 1 && host(p, 0) >= edges[bin + 1]) ++bin;
       ++counts[bin];
       for (int c = 0; c < 3; ++c) {
         sums[bin][c] += host(p, c + 1);
@@ -221,7 +224,7 @@ void Native(int n, double span, double a, bool layer, int degree, bool symmetric
               << ",\"Hmax_r\":" << diagnostics.max_h_radius
               << ",\"Mdot_rms\":" << diagnostics.m_l2 / dt
               << ",\"Zdot_rms\":" << diagnostics.z_l2 / dt << ",\"radial_bins\":[";
-    for (int b = 0; b < 4; ++b) {
+    for (int b = 0; b < n_bins; ++b) {
       std::cout << (b ? "," : "") << "{\"r_min\":" << edges[b]
                 << ",\"r_max\":" << edges[b + 1] << ",\"count\":" << counts[b]
                 << ",\"squared_fractions\":[";
