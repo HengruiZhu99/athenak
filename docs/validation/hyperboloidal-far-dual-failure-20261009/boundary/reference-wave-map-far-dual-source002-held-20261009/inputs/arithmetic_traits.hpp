@@ -1,0 +1,97 @@
+// Exact extracted source003 arithmetic bodies; CPU fixed-field duals only.
+#ifndef RESEARCH_INNER_ARITHMETIC_TRAITS_HPP_
+#define RESEARCH_INNER_ARITHMETIC_TRAITS_HPP_
+#include <algorithm>
+#include <cmath>
+#include <initializer_list>
+#include <limits>
+namespace inner {
+// A scalar adapter is explicit: field duals must register BOTH components.
+// This CPU prototype is not an arbitrary AD or GPU implementation.
+template<class T> struct Number;
+template<> struct Number<double> {
+  static double Value(double x){return x;}
+  static double Derivative(double){return 0;}
+  static double Make(double x,double){return x;}
+};
+struct Audit {
+  unsigned long products=0, coefficient_calls=0, coefficient_scaled_away=0;
+  int maximum_product_exponent=0;
+  unsigned long dA_near=0,dA_far=0,dc_near=0,dc_far=0,dal_near=0,dal_far=0;
+};
+struct Parameters { double G0=.375; };
+
+inline double ProductValue(std::initializer_list<double> xs,Audit *audit=nullptr){
+  double mantissa=1;int exponent=0;bool negative=false,zero=false;
+  for(double x:xs){
+    if(!std::isfinite(x))return std::numeric_limits<double>::quiet_NaN();
+    negative=negative!=std::signbit(x);
+    if(x==0){zero=true;continue;}
+    int e=0;mantissa*=std::frexp(std::abs(x),&e);exponent+=e;
+  }
+  if(audit){++audit->products;audit->maximum_product_exponent=
+    std::max(audit->maximum_product_exponent,std::abs(exponent));}
+  if(zero)return std::copysign(0.,negative?-1.:1.);
+  return std::scalbn(negative?-mantissa:mantissa,exponent);
+}
+template<class T> T Product(std::initializer_list<T> xs,Audit *audit=nullptr){
+  // Scale each primal product and each product-rule term separately. A zero
+  // primal never discards its possibly nonzero dual tangent.
+  double mantissa=1;int exponent=0;bool negative=false,zero=false;
+  for(const T&x:xs){const double v=Number<T>::Value(x);
+    if(!std::isfinite(v)||!std::isfinite(Number<T>::Derivative(x)))
+      return Number<T>::Make(std::numeric_limits<double>::quiet_NaN(),
+                            std::numeric_limits<double>::quiet_NaN());
+    negative=negative!=std::signbit(v);if(v==0){zero=true;continue;}
+    int e=0;mantissa*=std::frexp(std::abs(v),&e);exponent+=e;}
+  if(audit){++audit->products;audit->maximum_product_exponent=
+    std::max(audit->maximum_product_exponent,std::abs(exponent));}
+  const double value=zero?std::copysign(0.,negative?-1.:1.):
+    std::scalbn(negative?-mantissa:mantissa,exponent);
+  double derivative=0;unsigned selected=0;
+  for(const T&dx:xs){const double seed=Number<T>::Derivative(dx);
+    if(seed!=0){double m=1;int e=0;bool neg=false,z=false;unsigned index=0;
+      for(const T&x:xs){const double v=index++==selected?seed:Number<T>::Value(x);
+        neg=neg!=std::signbit(v);if(v==0){z=true;continue;}
+        int ei=0;m*=std::frexp(std::abs(v),&ei);e+=ei;}
+      derivative+=z?std::copysign(0.,neg?-1.:1.):std::scalbn(neg?-m:m,e);}
+    ++selected;}
+  return Number<T>::Make(value,derivative);
+}
+// Exact [1/2,2] positive-PRIMAL closeness, without a ratio or half-product.
+inline bool NearFieldValue(double x,double reference){
+  if(!(x>0)||!(reference>0)||!std::isfinite(x)||!std::isfinite(reference))return false;
+  int ex=0,er=0;const double mx=std::frexp(x,&ex),mr=std::frexp(reference,&er);
+  const int difference=ex-er;
+  if(difference==0)return true;
+  if(difference==1)return mx<=mr;
+  if(difference==-1)return mx>=mr;
+  return false;
+}
+template<class T> T FieldSquareDifference(T a,T chi,T h,T reference_chi,
+                                         Audit *audit=nullptr){
+  const bool near=NearFieldValue(Number<T>::Value(a),Number<T>::Value(h))&&
+    NearFieldValue(Number<T>::Value(chi),Number<T>::Value(reference_chi));
+  if(audit){if(near)++audit->dA_near;else ++audit->dA_far;}
+  // Preserve exact-reference deviation arithmetic only while BOTH fields are near.
+  if(near)return Product<T>({a+h,a-h,chi},audit)+
+                 Product<T>({h,h,chi-reference_chi},audit);
+  return Product<T>({a,a,chi},audit)-Product<T>({h,h,reference_chi},audit);
+}
+enum class LogGradientField { Chi, Alpha };
+template<class T> T FieldLogGradientDifference(T x,T gradient,T reference,
+    T reference_gradient,LogGradientField field,Audit *audit=nullptr){
+  const bool near=NearFieldValue(Number<T>::Value(x),Number<T>::Value(reference));
+  if(audit){
+    if(field==LogGradientField::Chi){if(near)++audit->dc_near;else ++audit->dc_far;}
+    else {if(near)++audit->dal_near;else ++audit->dal_far;}
+  }
+  const T reference_log_gradient=reference_gradient/reference;
+  if(near)return (gradient-reference_gradient)-
+                 Product<T>({x-reference,reference_log_gradient},audit);
+  return gradient-Product<T>({x,reference_log_gradient},audit);
+}
+
+
+} // namespace inner
+#endif

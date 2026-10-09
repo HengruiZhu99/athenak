@@ -223,8 +223,8 @@ Root elapsed times were 87.4783 s for Release and 97.4468 s for Debug with
 address and undefined-behavior sanitizers. The compiler builds differ in
 72 principal and 60 source split-part rows, within the same gates; full
 cross-build bit identity is not claimed. All far rows in this main registry
-have zero dual seeds. A separately fixed complete far-dual supplement remains
-unexecuted, so the ordinary dual result does not validate that branch.
+have zero dual seeds. The separately fixed complete far-dual supplement below
+failed, so the ordinary dual result does not validate that branch.
 
 A separate source003 field-difference supplement passed 129 records and 684
 component checks in both Release and sanitized Debug (3.3535 s / 3.1254 s).
@@ -246,3 +246,51 @@ Production `src/` and root `CMakeLists.txt` remain byte-identical to
 `27c19d20696ea6dd4704032c51dfd026218f64f2`; no candidate is adopted by this
 checkpoint. Existing CPU Serial/double, vacuum, uniform single-MeshBlock
 restrictions remain in force.
+
+## Complete far-field derivative gate: actual Release failure
+
+The direct outer-helper supplement completed its fixed 2,373 records and
+4,900 helper calls after independent source review. It retains the same 112
+high-contrast state bases, 17 complete field seeds, 448 additional rows with
+zero primal lapse/chi gradients, 18 exact closed controls and three reused
+legacy negative controls. Sixteen relative-alpha representatives include
+five-level finite differences. Reference fields and coefficients have zero
+tangent. Physical P and Theta are independently stored and seeded; the direct
+gauge consumes P and has no separate Theta dependence. This tests the direct
+outer helper, rather than the compound inner/full22 equations.
+
+Compilation succeeded. The independent literal physical-P dual oracle uses
+480/560 decimal digits, a cofactor inverse, the complete nonflat reference
+connection, and unchanged `2e-10` output gates. Its precision check passed
+`1e-220`; the exact closed Fraction controls have zero error. Primal split-part
+and assembled-row errors are at most `4.9853135706e-15` and
+`1.7917888212e-14`. The fixed finite-difference checks passed.
+
+Release nevertheless failed 63 tangent comparisons: 47 split parts and
+16 assembled rows. All failures use the metric-STF seed, across 26 input rows;
+55 belong to the chi-gradient-contrast family and eight to the
+large-alpha/small-chi family. Eight saved targets are exactly zero. Failures
+occur in the Cauchy core, transition and outer collar, including `W==1`.
+The first is an axial core regular-shift tangent returned as zero with saved
+target `1.5510168630129906e29`. These results preserve the entire gate as FAIL.
+
+Root elapsed was `24.50961625 s`; source and dependency pins stayed unchanged.
+Conditional sanitized Debug and native adoption were not started. Source001's
+earlier metadata self-capture failure is retained beside the fresh source002
+scientific attempt, whose probe/oracle/runner bytes are unchanged.
+
+The saved failure association retains all 26 complete consumed contexts.
+Separate rounding of cancelling gradient terms and errors in the ordinary
+inverse-metric directional derivative are two mechanisms to investigate.
+Existing exports omit returned inverse entries and individual contraction
+summands, so they do not determine either mechanism's contribution. A new
+diagnostic must separate them before a correction is accepted. No seed change,
+tolerance relaxation or successful flux repair is implied.
+
+The [far-dual failure capsule](validation/hyperboloidal-far-dual-failure-20261009/README.md)
+preserves exact source, commands, logs, oracle, independent reviews and saved
+associations. Its scientific JSONL/query stdout and executable are metadata
+only. This additional gate leaves production unchanged and establishes no
+native evolution or black hole stability. The eventual black hole test must
+survive the inner wormhole-to-trumpet transition while keeping the Minkowski
+hyperboloidal reference throughout.

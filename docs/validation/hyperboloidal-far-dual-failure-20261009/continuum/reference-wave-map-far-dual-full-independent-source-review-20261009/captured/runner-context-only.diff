@@ -1,0 +1,39 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer-arithmetic-source001-held-20261009/run_once.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source002-held-20261009/run_once.py
+@@ -32,7 +32,7 @@
+         raise RuntimeError('Require isolated unoptimized -I -B Python')
+     here=Path(__file__).resolve().parent;recipe_path=here/'recipe.json'
+     recipe=read(recipe_path);auth=read(args.authorization)
+-    if not auth.get('outer_arithmetic_local_execution_admitted'):
++    if not auth.get('far_complete_dual_local_execution_admitted'):
+         raise RuntimeError('Exact root local authorization required')
+     if auth['recipe_sha256']!=pin(recipe_path)['sha256'] or auth['source_index_sha256']!=pin(here/'source-index.json')['sha256']:
+         raise RuntimeError('Root authorization source/recipe mismatch')
+@@ -40,16 +40,14 @@
+         raise RuntimeError('Build not admitted')
+     index=read(here/'source-index.json');inputs=read(recipe['input_pins'])
+     guard(index['files']);guard(inputs)
+-    dependency=read(recipe['principal_receipt'])
+-    if not(dependency['completed'] and dependency['passed'] and dependency['returncode']==0 and dependency['inputs_unchanged']):
+-        raise RuntimeError('Successful principal outer receipt required')
++    # Exact source/context pins and fresh root authorization govern this separate supplement.
+     for key,value in recipe['environment'].items():
+         if os.environ.get(key)!=value:raise RuntimeError('Environment guard '+key)
+     attempt=here/'attempts'/recipe['attempt_names'][args.build]
+     if attempt.exists():raise RuntimeError('One-shot attempt already exists')
+     attempt.mkdir(parents=True)
+     commands=[];receipt={'completed':False,'passed':False,'returncode':1,
+-      'scientific_scope':'finite-Omega local gauge/helper plus actual C0 analytic-jet20-dual only',
++      'scientific_scope':'direct finite-Omega RWM complete field-dual arithmetic supplement only',
+       'no_matrix_evolution_native_or_BH_admission':True,'build':args.build,
+       'source_index_sha256':pin(here/'source-index.json')['sha256'],
+       'recipe_sha256':pin(recipe_path)['sha256'],
+@@ -68,7 +66,7 @@
+         command('compiler-version',[recipe['compiler'],'--version'])
+         command('launch-HEAD',['git','rev-parse','HEAD'])
+         command('python-version',[recipe['python'],'-I','-B','--version'])
+-        exe=attempt/('inner-probe-'+args.build);dep=attempt/'dependencies.d'
++        exe=attempt/('far-dual-probe-'+args.build);dep=attempt/'dependencies.d'
+         cmd=[recipe['compiler']]+recipe['compile_flags'][args.build]+['-MD','-MF',str(dep),str(here/'probe.cpp'),'-o',str(exe)]
+         command('compile',cmd)
+         tokens=shlex.split(dep.read_text().replace('\\\n',' '))

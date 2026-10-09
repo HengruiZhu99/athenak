@@ -1,0 +1,117 @@
+{
+  "by_W_context": {
+    "0": 15,
+    "0.0010508097522784862": 4,
+    "0.5000000000000002": 4,
+    "1": 40
+  },
+  "by_a": {
+    "0.5": 32,
+    "2": 31
+  },
+  "by_component": {
+    "pole.alpha": 8,
+    "pole.beta1": 4,
+    "pole.beta2": 4,
+    "regular.beta0": 22,
+    "regular.beta2": 9,
+    "rhs.alpha": 8,
+    "rhs.beta0": 4,
+    "rhs.beta2": 4
+  },
+  "by_direction": {
+    "0": 52,
+    "1": 11
+  },
+  "by_family": {
+    "chi-gradient-contrast": 55,
+    "large-alpha-small-chi": 8
+  },
+  "by_radius": {
+    "0.025": 8,
+    "0.1": 7,
+    "0.5": 4,
+    "0.65": 4,
+    "0.84": 4,
+    "0.95": 18,
+    "0.995": 18
+  },
+  "failure_checks": {
+    "native-parts-dual": 47,
+    "native-rhs-dual": 16
+  },
+  "failure_count": 63,
+  "first_failure": {
+    "check": "native-parts-dual",
+    "error": "1.0",
+    "got": "0.0",
+    "label": {
+      "base": 3,
+      "case": null,
+      "component": 1,
+      "dual": 1,
+      "seed": 13
+    },
+    "target": "155101686301299064990064951057.84375"
+  },
+  "first_max_error_failure": {
+    "check": "native-parts-dual",
+    "error": "1.0",
+    "got": "0.0",
+    "label": {
+      "base": 3,
+      "case": null,
+      "component": 1,
+      "dual": 1,
+      "seed": 13
+    },
+    "target": "155101686301299064990064951057.84375"
+  },
+  "input_contexts_retained": 26,
+  "limitations": [
+    "This associates saved native and target strings; no oracle, inverse, gradient product, coefficient, or source target was recomputed.",
+    "The original probe does not export Geometry inverse/value/dual entries or individual flux/connection summands. Their separate numerical error contributions cannot be recovered from these rows alone.",
+    "All63 failures are consumed metric-value tangents at a fixed reference; all scalar/gradient/other seeds pass the saved gate, but that does not establish general metric contrast accuracy.",
+    "No Debug/native run is admitted by a successful saved-data association. Original far Release FAIL remains immutable."
+  ],
+  "original_actual_Release_passed": false,
+  "records_streamed": 2352,
+  "saved_fixed_counts": {
+    "FD_representatives": 16,
+    "closed_positive": 18,
+    "direct_dual": 2352,
+    "helper_calls": {
+      "closed": 36,
+      "direct": 4864
+    },
+    "legacy_negative_reuse": 3,
+    "records": 2373,
+    "total_helper_calls": 4900
+  },
+  "saved_maxima": {
+    "MP-precision-dual": "5.27059309493238e-465",
+    "MP-precision-primal": "3.60378994702055e-480",
+    "closed-literal-Fraction-identity": "0.0",
+    "closed-relative": "0.0",
+    "closed-zero": "0.0",
+    "legacy-error-metadata-only": "1.42744710797926",
+    "literal-term-condition-diagnostic": "5.03765664081687e+151",
+    "native-parts-dual": "1.0",
+    "native-parts-primal": "4.98531357063914e-15",
+    "native-rhs-dual": "1.0",
+    "native-rhs-primal": "1.79178882121895e-14"
+  },
+  "saved_readback_passed": true,
+  "seed": "metric-STF",
+  "seed_indices": {
+    "13": 63
+  },
+  "source_child_sha256": "839d123c40023f502d96804116c708ad48c02d8d572663ec4afbdc5d728d445d",
+  "source_report_sha256": "b08c324e8f964b10c98ac04218f4ee9174d7b163a2654b8b3e838930994e6ab4",
+  "target_exact_zero_strings": {
+    "False": 55,
+    "True": 8
+  },
+  "underlying_payloads_metadata_only": true,
+  "unique_failed_rows": 26
+}

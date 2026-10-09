@@ -1,0 +1,28 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source001-held-20261009/prepare_sources.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source002-held-20261009/prepare_sources.py
+@@ -13,6 +13,7 @@
+ OUTER=HERE.parent/'reference-wave-map-outer-arithmetic-source001-held-20261009'
+ PLAN=HERE.parent/'reference-wave-map-far-dual-plan-held-20261009'
+ READBACK=HERE.parent/'reference-wave-map-outer001-saved-readback-v2-20261009'
++HISTORY=HERE.parent/'reference-wave-map-far-dual-source001-held-20261009'
+ 
+ def pin(path):
+     p=Path(path).absolute();h=hashlib.sha256()
+@@ -38,6 +39,8 @@
+         index=read(root/filename)
+         for row in index['files']:add(row)
+         add(pin(root/filename))
++    for row in read(HISTORY/'history-index.json')['files']:add(row)
++    add(pin(HISTORY/'history-index.json'))
+     for row in read(OUTER/'input-pins.json')+read(PLAN/'input-pins.json')+read(READBACK/'input-pins.json'):add(row)
+     for row in protected.values():check(row)
+     inputs=HERE/'inputs';inputs.mkdir(exist_ok=False)
+@@ -113,7 +116,7 @@
+     write(HERE/'preparation-receipt.json',{'completed':True,'returncode':0,'inputs_unchanged':True,
+         'source_only':True,'protected_input_count':len(rows),'wall_seconds':time.time()-start,
+         'scientific_imports_or_numerical_targets':False,'compiler_or_queries':False})
+-    files=[pin(p) for p in sorted(HERE.rglob('*')) if p.is_file()]
++    files=[pin(p) for p in sorted(HERE.rglob('*')) if p.is_file() and not p.relative_to(HERE).parts[0].startswith('preparation-invocation')]
+     write(HERE/'source-index.json',{'files':files,'source_only':True,'execution_admitted':False,
+         'scope':recipe['scope'],'protected_input_count':len(rows),'fixed_counts':registry['counts']})
+     print(json.dumps({'source_only':True,'prepared':True,'files':len(files),'protected_inputs':len(rows),

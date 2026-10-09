@@ -1,0 +1,131 @@
+{
+  "FD_scope": "16 original alpha-relative representative rows,5levels,160 new-helper sides embedded in direct rows",
+  "approved_plan_index": {
+    "bytes": 4187,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-plan-held-20261009/index.json",
+    "sha256": "1da6c8208103786560bc7c9ec73c8ce3bbdfeafdbbf0eb6d5e4c6abb44a1af00"
+  },
+  "attempt_names": {
+    "debug": "Debug001",
+    "release": "Release001"
+  },
+  "case_registry": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source001-held-20261009/inputs/plan/CASE-REGISTRY.json",
+  "closed_negative_scope": "reuse three zero-seed legacy outputs; no extra helper calls",
+  "compile_flags": {
+    "debug": [
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source001-held-20261009/inputs",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source001-held-20261009",
+      "-std=c++17",
+      "-O0",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer"
+    ],
+    "release": [
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source001-held-20261009/inputs",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source001-held-20261009",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include"
+    ]
+  },
+  "compiler": "/usr/bin/c++",
+  "environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "error_scale": "max(1,abs(native entry),abs(target entry)); primal/tangent separately",
+  "execution_admitted": false,
+  "fixed_counts": {
+    "FD_representatives": 16,
+    "FD_side_evaluations": 160,
+    "base_dual_rows": 1904,
+    "bases": 112,
+    "closed_positive_dual_rows": 18,
+    "legacy_negative_reuse_rows": 3,
+    "physical_reference_dual_rows": 2352,
+    "positive_dual_rows": 2370,
+    "records": 2373,
+    "total_helper_evaluations": 4900,
+    "zero_gradient_variant_rows": 448
+  },
+  "input_pins": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source001-held-20261009/input-pins.json",
+  "main_registry_and_oracle_changed": false,
+  "modes": [
+    "direct",
+    "closed"
+  ],
+  "mpmath_init": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/__init__.py",
+  "mpmath_parent": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages",
+  "no_operator_spectrum_propagation_or_native_admission": true,
+  "outer_saved_local_readback_index_context_only": {
+    "bytes": 5964,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-v2-20261009/index.json",
+    "sha256": "0066ac951df874f0ae9987790d49e31acd4ee59d0a4eda46722741d1c803bbb8"
+  },
+  "outer_source_index": {
+    "bytes": 9122,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer-arithmetic-source001-held-20261009/source-index.json",
+    "sha256": "9da21a96d243441c95f276d1c076d3a4e561fc20921858be33f911cb3464f27e"
+  },
+  "precision_decimal_digits": [
+    480,
+    560
+  ],
+  "python": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+  "python_flags": [
+    "-I",
+    "-B"
+  ],
+  "repository": "/Users/hz0693/research/hyperboloidal",
+  "scope": "direct RWM finite-Omega field-dual arithmetic only, not compound inner/full22/native/evolution",
+  "source003_FAIL_preserved": true,
+  "source_index": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-far-dual-source001-held-20261009/source-index.json",
+  "source_only": true,
+  "thresholds": {
+    "FD_all_level_floor": "5e-9",
+    "FD_final_entrywise_scaled": "5e-7",
+    "FD_first_over_final_min": "2",
+    "closed_nonzero_normal_relative": "2e-10",
+    "closed_zero_absolute": "2e-10",
+    "input_seed_formula_nonzero_relative": "2e-14",
+    "input_seed_formula_zero_absolute": "0",
+    "native_entrywise_scaled": "2e-10",
+    "precision_entrywise_scaled": "1e-220",
+    "unused_source_tangent_absolute": "0"
+  }
+}

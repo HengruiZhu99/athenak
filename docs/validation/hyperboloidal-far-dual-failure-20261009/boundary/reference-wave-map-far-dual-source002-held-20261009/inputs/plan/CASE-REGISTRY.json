@@ -1,0 +1,1926 @@
+{
+  "FD": {
+    "base_filter": {
+      "a": ".5",
+      "direction": 1,
+      "families": [
+        "collapsed",
+        "small-alpha-large-chi",
+        "large-alpha-small-chi",
+        "chi-gradient-contrast"
+      ],
+      "radius": [
+        ".025",
+        ".5",
+        ".84",
+        ".995"
+      ]
+    },
+    "path": "field-linear u(s)=u0+s*udot, full registered jet",
+    "seed": "alpha-relative",
+    "sides": [
+      "plus",
+      "minus"
+    ],
+    "steps": [
+      "1e-3",
+      "5e-4",
+      "2.5e-4",
+      "1.25e-4",
+      "6.25e-5"
+    ]
+  },
+  "State_constructor": {
+    "family_definitions": [
+      {
+        "alpha": "1e-150",
+        "chi": "1e-150",
+        "index": 10,
+        "name": "collapsed"
+      },
+      {
+        "alpha": "1e-150",
+        "chi": "1e60",
+        "index": 11,
+        "name": "small-alpha-large-chi"
+      },
+      {
+        "alpha": "1e60",
+        "chi": "1e-150",
+        "index": 12,
+        "name": "large-alpha-small-chi"
+      },
+      {
+        "alpha": "1e100",
+        "chi": "1e-150",
+        "index": 13,
+        "name": "chi-gradient-contrast"
+      }
+    ],
+    "function": "State(p,family)",
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer-arithmetic-source001-held-20261009/probe.cpp",
+    "unchanged_base_fields": true
+  },
+  "base_order": "a,radius,direction,family; listed order, then seeds in listed order",
+  "bases": [
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B000",
+      "radius": ".025"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B001",
+      "radius": ".025"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B002",
+      "radius": ".025"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B003",
+      "radius": ".025"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B004",
+      "radius": ".025"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B005",
+      "radius": ".025"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B006",
+      "radius": ".025"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B007",
+      "radius": ".025"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B008",
+      "radius": ".1"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B009",
+      "radius": ".1"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B010",
+      "radius": ".1"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B011",
+      "radius": ".1"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B012",
+      "radius": ".1"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B013",
+      "radius": ".1"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B014",
+      "radius": ".1"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B015",
+      "radius": ".1"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B016",
+      "radius": ".5"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B017",
+      "radius": ".5"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B018",
+      "radius": ".5"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B019",
+      "radius": ".5"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B020",
+      "radius": ".5"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B021",
+      "radius": ".5"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B022",
+      "radius": ".5"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B023",
+      "radius": ".5"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B024",
+      "radius": ".65"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B025",
+      "radius": ".65"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B026",
+      "radius": ".65"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B027",
+      "radius": ".65"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B028",
+      "radius": ".65"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B029",
+      "radius": ".65"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B030",
+      "radius": ".65"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B031",
+      "radius": ".65"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B032",
+      "radius": ".84"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B033",
+      "radius": ".84"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B034",
+      "radius": ".84"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B035",
+      "radius": ".84"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B036",
+      "radius": ".84"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B037",
+      "radius": ".84"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B038",
+      "radius": ".84"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B039",
+      "radius": ".84"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B040",
+      "radius": ".95"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B041",
+      "radius": ".95"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B042",
+      "radius": ".95"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B043",
+      "radius": ".95"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B044",
+      "radius": ".95"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B045",
+      "radius": ".95"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B046",
+      "radius": ".95"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B047",
+      "radius": ".95"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B048",
+      "radius": ".995"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B049",
+      "radius": ".995"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B050",
+      "radius": ".995"
+    },
+    {
+      "a": ".5",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B051",
+      "radius": ".995"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B052",
+      "radius": ".995"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B053",
+      "radius": ".995"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B054",
+      "radius": ".995"
+    },
+    {
+      "a": ".5",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B055",
+      "radius": ".995"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B056",
+      "radius": ".025"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B057",
+      "radius": ".025"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B058",
+      "radius": ".025"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B059",
+      "radius": ".025"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B060",
+      "radius": ".025"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B061",
+      "radius": ".025"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B062",
+      "radius": ".025"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B063",
+      "radius": ".025"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B064",
+      "radius": ".1"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B065",
+      "radius": ".1"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B066",
+      "radius": ".1"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B067",
+      "radius": ".1"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B068",
+      "radius": ".1"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B069",
+      "radius": ".1"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B070",
+      "radius": ".1"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B071",
+      "radius": ".1"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B072",
+      "radius": ".5"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B073",
+      "radius": ".5"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B074",
+      "radius": ".5"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B075",
+      "radius": ".5"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B076",
+      "radius": ".5"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B077",
+      "radius": ".5"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B078",
+      "radius": ".5"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B079",
+      "radius": ".5"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B080",
+      "radius": ".65"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B081",
+      "radius": ".65"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B082",
+      "radius": ".65"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B083",
+      "radius": ".65"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B084",
+      "radius": ".65"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B085",
+      "radius": ".65"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B086",
+      "radius": ".65"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B087",
+      "radius": ".65"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B088",
+      "radius": ".84"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B089",
+      "radius": ".84"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B090",
+      "radius": ".84"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B091",
+      "radius": ".84"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B092",
+      "radius": ".84"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B093",
+      "radius": ".84"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B094",
+      "radius": ".84"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B095",
+      "radius": ".84"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B096",
+      "radius": ".95"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B097",
+      "radius": ".95"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B098",
+      "radius": ".95"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B099",
+      "radius": ".95"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B100",
+      "radius": ".95"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B101",
+      "radius": ".95"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B102",
+      "radius": ".95"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B103",
+      "radius": ".95"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B104",
+      "radius": ".995"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B105",
+      "radius": ".995"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B106",
+      "radius": ".995"
+    },
+    {
+      "a": "2",
+      "direction": 0,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B107",
+      "radius": ".995"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "collapsed",
+      "family_index": 10,
+      "id": "B108",
+      "radius": ".995"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "small-alpha-large-chi",
+      "family_index": 11,
+      "id": "B109",
+      "radius": ".995"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "large-alpha-small-chi",
+      "family_index": 12,
+      "id": "B110",
+      "radius": ".995"
+    },
+    {
+      "a": "2",
+      "direction": 1,
+      "family": "chi-gradient-contrast",
+      "family_index": 13,
+      "id": "B111",
+      "radius": ".995"
+    }
+  ],
+  "closed_contexts": [
+    {
+      "Omega_d": [
+        "1/2",
+        "0",
+        "0"
+      ],
+      "alpha": "2^-300",
+      "chi": "2^601",
+      "dual_target": "4*xi_alpha+2*xi_chi",
+      "id": "tensor-pole",
+      "legacy_zero_seed_primal_prediction": "0",
+      "primal_target": "1",
+      "target_component": "pole_beta_x and assembled_beta_x"
+    },
+    {
+      "Omega_d": [
+        "0",
+        "0",
+        "0"
+      ],
+      "alpha": "2^300",
+      "chi": "2^-600",
+      "chi_d": [
+        "-chi",
+        "0",
+        "0"
+      ],
+      "chi_d_dot_x": "-chi*xi_chi+chi*xi_gradient",
+      "dual_target": "-xi_alpha-xi_chi/2+xi_gradient/2",
+      "id": "chi-flux",
+      "legacy_zero_seed_primal_prediction": "0",
+      "primal_target": "-1",
+      "reference_chi_d": [
+        "1",
+        "0",
+        "0"
+      ],
+      "target_component": "regular_beta_x and assembled_beta_x"
+    },
+    {
+      "Omega_d": [
+        "0",
+        "0",
+        "0"
+      ],
+      "alpha": "2^-300",
+      "alpha_d": [
+        "alpha",
+        "0",
+        "0"
+      ],
+      "alpha_d_dot_x": "alpha*(xi_alpha+xi_gradient)",
+      "chi": "2^600",
+      "dual_target": "-2*xi_alpha-xi_chi-xi_gradient",
+      "id": "alpha-flux",
+      "legacy_zero_seed_primal_prediction": "2^301",
+      "primal_target": "1",
+      "reference_alpha_d": [
+        "2",
+        "0",
+        "0"
+      ],
+      "target_component": "regular_beta_x and assembled_beta_x"
+    }
+  ],
+  "closed_defaults": {
+    "Lambda_and_Lambdahat": "0",
+    "Omega": "1",
+    "P_and_Phat": "0",
+    "Theta_and_Thetahat": "0",
+    "beta_and_betahat": "0",
+    "connection": "all scaled entries0; valid=true supplied directly",
+    "g_and_gh": "I",
+    "metric_spatial_jets": "0",
+    "reference_P_adapter": "p.k_physical=p.state.trace.value",
+    "reference_alpha_gradient_adapter": "p.dalpha=p.state.alpha.d, fixed field dual0",
+    "reference_alpha_h_and_chi_y": "1",
+    "reference_beta_adapter": "p.beta=p.state.beta.value",
+    "unstated_gradients_and_duals": "0"
+  },
+  "closed_seed_order_xi_alpha_xi_chi_xi_gradient": [
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      "1",
+      "0",
+      "0"
+    ],
+    [
+      "0",
+      "1",
+      "0"
+    ],
+    [
+      "1",
+      "1",
+      "0"
+    ],
+    [
+      "1",
+      "-2",
+      "0"
+    ],
+    [
+      "0",
+      "0",
+      "1"
+    ]
+  ],
+  "counts": {
+    "FD_representatives": 16,
+    "FD_side_evaluations": 160,
+    "base_dual_rows": 1904,
+    "bases": 112,
+    "closed_positive_dual_rows": 18,
+    "legacy_negative_reuse_rows": 3,
+    "physical_reference_dual_rows": 2352,
+    "positive_dual_rows": 2370,
+    "records": 2373,
+    "total_helper_evaluations": 4900,
+    "zero_gradient_variant_rows": 448
+  },
+  "e": [
+    "1",
+    "-1/2",
+    "1/4"
+  ],
+  "execution_admitted": false,
+  "field_dual_formula": {
+    "alpha_d_dot[j]": "xi_alpha*alpha_d[j]+alpha*zeta_alpha[j]",
+    "alpha_dot": "xi_alpha*alpha",
+    "chi_d_dot[j]": "xi_chi*chi_d[j]+chi*zeta_chi[j]",
+    "chi_dot": "xi_chi*chi"
+  },
+  "fixed_reference": {
+    "G0_provenance_only": ".375",
+    "S": "1",
+    "directions": [
+      [
+        "1",
+        "0",
+        "0"
+      ],
+      [
+        ".36",
+        "-.48",
+        ".8"
+      ]
+    ],
+    "gauge_W_r0": ".45",
+    "gauge_W_r1": ".85",
+    "geometry_r0": ".05",
+    "geometry_r1": ".95",
+    "reference_and_xyz_field_dual": "all zero"
+  },
+  "local_seed_scope": "independent local field jets; no implicit spatial integrability/Einstein/algebraic tangent claim",
+  "negative_controls": "three zero-seed legacy exports reused; no additional helper calls",
+  "number_parsing": "strings denote exact supplied binary64 decimal/hex construction; no targets evaluated here",
+  "seeds": [
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "zero",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "alpha-relative",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "1",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "chi-relative",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "1",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "joint-relative",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "1",
+      "xi_chi": "1",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "A0-balanced",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "1",
+      "xi_chi": "-2",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "alpha-chi-balanced",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "1",
+      "xi_chi": "-1",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "alpha-gradient-only",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "1",
+        "-1/2",
+        "1/4"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "chi-gradient-only",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "1",
+        "-1/2",
+        "1/4"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "A0-balanced-plus-gradients",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "1",
+      "xi_chi": "-2",
+      "zeta_alpha": [
+        "1",
+        "-1/2",
+        "1/4"
+      ],
+      "zeta_chi": [
+        "-2",
+        "1",
+        "-1/2"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "1/16",
+        "-1/32",
+        "1/64"
+      ],
+      "id": "beta-value",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "1/32",
+          "-1/64",
+          "1/128"
+        ],
+        [
+          "-1/64",
+          "1/128",
+          "-1/256"
+        ],
+        [
+          "1/128",
+          "-1/256",
+          "1/512"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "beta-derivative",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "1/64",
+        "-1/128",
+        "1/256"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "Lambda-value",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "1/128",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "physical-P",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "metric-STF",
+      "metric_value_dot": "g E+E g; E=diag(1,-1,0)/32",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "1",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "Theta-only",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "1/64",
+        "-1/128",
+        "1/256"
+      ],
+      "P_value_dot": "1/128",
+      "Theta_value_dot": "1",
+      "beta_d_dot": [
+        [
+          "1/32",
+          "-1/64",
+          "1/128"
+        ],
+        [
+          "-1/64",
+          "1/128",
+          "-1/256"
+        ],
+        [
+          "1/128",
+          "-1/256",
+          "1/512"
+        ]
+      ],
+      "beta_value_dot": [
+        "1/16",
+        "-1/32",
+        "1/64"
+      ],
+      "id": "all-used-mixed",
+      "metric_value_dot": "g E+E g; E=diag(1,-1,0)/32",
+      "unconsumed_jets_dot": "0",
+      "xi_alpha": "1",
+      "xi_chi": "-2",
+      "zeta_alpha": [
+        "1",
+        "-1/2",
+        "1/4"
+      ],
+      "zeta_chi": [
+        "1",
+        "-1/2",
+        "1/4"
+      ]
+    },
+    {
+      "Lambda_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "P_value_dot": "0",
+      "Theta_value_dot": "0",
+      "beta_d_dot": [
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "beta_value_dot": [
+        "0",
+        "0",
+        "0"
+      ],
+      "id": "unconsumed-jet-only",
+      "metric_value_dot": "0",
+      "unconsumed_jets_dot": {
+        "A_value_dot[i][j]": "e_i e_j/64",
+        "metric_d_dot[k][i][j]": "e_k e_i e_j/128",
+        "metric_dd_dot[k][l][i][j]": "e_k e_l e_i e_j/256"
+      },
+      "xi_alpha": "0",
+      "xi_chi": "0",
+      "zeta_alpha": [
+        "0",
+        "0",
+        "0"
+      ],
+      "zeta_chi": [
+        "0",
+        "0",
+        "0"
+      ]
+    }
+  ],
+  "source_only": true,
+  "tensor_index_conventions": "beta_d[j][i]=partial_j beta^i; symmetric metric rows i,j, derivative rows k,l",
+  "zero_default": "every field jet tangent not explicitly assigned is zero; do not call Consistent or alter raw seed afterward",
+  "zero_primal_gradient_variants": {
+    "base_order": "same112",
+    "before_seeding": "alpha_d=chi_d=0 exactly",
+    "seed_ids": [
+      "alpha-gradient-only",
+      "chi-gradient-only",
+      "A0-balanced-plus-gradients",
+      "all-used-mixed"
+    ]
+  }
+}
