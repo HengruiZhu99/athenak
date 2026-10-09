@@ -11,6 +11,8 @@ derived Schwarzschild wormhole data with a Minkowski reference. **Finite-pulse
 evolution stability, nonlinear scri closure and wormhole-to-trumpet evolution
 remain unverified.** The equations and their limitations are in
 [the stabilization document](hyperboloidal-layer-stabilization.md).
+Later width, boundary and longer-time controls are retained in
+[the follow-up report](hyperboloidal-stability-followup.md).
 
 The [JSON receipt](validation/hyperboloidal-stability-20261009.json) retains
 inputs, commands, history rows, executable hashes, constraint budgets, source

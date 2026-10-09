@@ -1,0 +1,63 @@
+{
+  "compile_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/fourier_audit.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/fourier_audit",
+    "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "run_command": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/fourier_audit"
+  ],
+  "source_sha256": {
+    "build-layer-research/continuum/preferred/native-overlay/fourier_audit.cpp": "cd3ad1fbdc15a4781b1041fce21f3bd9def8f73c28904a33b06362e39be2d083",
+    "build-layer-research/continuum/preferred/native-overlay/null_feedback.hpp": "f1d898f1da656f6ed717fb844791d412e2986137012b752399fac1e750d1dc95",
+    "build-layer-research/continuum/preferred/native-overlay/run_fourier_audit.py": "be7442496fa051c4a6a8ed4010a26195d78b28ed3fa7fe11b9c5203ddf9e6309",
+    "build-layer-research/continuum/preferred/native-overlay/check_fourier.py": "f74d6b4e5b48c86e0513b26f8ddbf67b77b1869674621bdd0df0913a195d9604",
+    "build-layer-research/continuum/preferred/native-overlay/check_fourier_modes.py": "6df23123dfd36c2cf2fa7634d402ad6e7c1a122e631d36ef7958754de5e4741b"
+  },
+  "scope": "Frozen local continuum full20 operator from actual tensor/gauge kernel with analytic value/d/dd perturb jets; no grid stencils, boundary, KO or global spectral claim.",
+  "extra_run_commands": [
+    [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/fourier_audit",
+      "--modes"
+    ],
+    [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/fourier_audit",
+      "--k0-pole"
+    ]
+  ],
+  "executable_sha256": "05f7fec39e6afd8b069225e5d714cabcf78c5eec3842f25d7aa97cffb67ede30",
+  "artifact_sha256": {
+    "fourier-mode-matrices.json": "e8fed96d9dd1b0845618913644e271a804adb148f4f922c254559a5e3bbdae5b",
+    "fourier-mode-report.json": "619235904cf945019c9ab8bf06ab84aebf8bdcf7b0ee10eaef079da96c86f679",
+    "fourier-matrices.json": "bf779ebb2a0ff3701b0e73ee9354d564ee79134e3a1c8046fe9b693954389687",
+    "fourier-k0-poles.json": "31ba46abe40ff10db718766afdb597848c45f4f7715f42d4748e504fed99124f",
+    "fourier-report.json": "846974a19899b3d4ad26aad686c8a9c439593cc3e5aa7d06011396603ad40c31"
+  }
+}

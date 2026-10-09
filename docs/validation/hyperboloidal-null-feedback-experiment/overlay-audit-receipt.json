@@ -1,0 +1,93 @@
+{
+  "commands": [
+    [
+      "/usr/bin/c++",
+      "-DKOKKOS_DEPENDENCE",
+      "-O3",
+      "-DNDEBUG",
+      "-std=c++17",
+      "-arch",
+      "arm64",
+      "-include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/candidate_injection.hpp",
+      "-I/Users/hz0693/research/hyperboloidal/src",
+      "-I/Users/hz0693/research/hyperboloidal",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/core/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/containers/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/algorithms/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/simd/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+      "-isystem",
+      "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+      "-isystem",
+      "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/overlay_audit.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/overlay_audit",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/containers/src/libkokkoscontainers.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/core/src/libkokkoscore.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/simd/src/libkokkossimd.a"
+    ],
+    [
+      "/usr/bin/c++",
+      "-DKOKKOS_DEPENDENCE",
+      "-O3",
+      "-DNDEBUG",
+      "-std=c++17",
+      "-arch",
+      "arm64",
+      "-include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/candidate_injection.hpp",
+      "-I/Users/hz0693/research/hyperboloidal/src",
+      "-I/Users/hz0693/research/hyperboloidal",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/core/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/containers/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/algorithms/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/simd/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+      "-isystem",
+      "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+      "-isystem",
+      "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/overlay_symbol.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/overlay_symbol",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/containers/src/libkokkoscontainers.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/core/src/libkokkoscore.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/simd/src/libkokkossimd.a"
+    ],
+    [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/overlay_audit"
+    ],
+    [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/overlay_audit",
+      "--pole"
+    ],
+    [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/check_kernel_symbol.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/overlay_symbol"
+    ]
+  ],
+  "full20_difference_from_audited_candidate": 0,
+  "source_sha256": {
+    "build-layer-research/continuum/preferred/native-overlay/native_phase.py": "e24fbc0898508a535683c634d9fce9231016e59c99170a0ab705b5d17b5936e1",
+    "build-layer-research/continuum/preferred/native-overlay/overlay_audit.cpp": "a025ce30c687317d2c8176cfd46d106b09514555d910f7ba9ea86acf4e718724",
+    "build-layer-research/continuum/preferred/native-overlay/run_overlay_audit.py": "a993b17e21ebad687ae0185496b5163178f337080350723ffc286ab88481a54d",
+    "build-layer-research/continuum/preferred/native-overlay/null_feedback.hpp": "f1d898f1da656f6ed717fb844791d412e2986137012b752399fac1e750d1dc95",
+    "build-layer-research/continuum/preferred/native-overlay/candidate_injection.hpp": "a5bfeed7391b47b65b32ef4aa01260619d587299a477da2c0fa7b03a0da82f40",
+    "build-layer-research/continuum/preferred/native-overlay/overlay_symbol.cpp": "42e59159dbe03d14217ed678b06d98f9bdd3966473228bb9c2b4d4b9ca42c2fc"
+  }
+}
