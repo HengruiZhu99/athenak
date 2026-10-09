@@ -1,0 +1,61 @@
+{
+  "declared_before_compile_or_run": true,
+  "scope": "Held-out raw Cartesian polynomial gate for unchanged FlatFormula and ActualDual; not a claim that every arbitrary Cartesian polynomial lies in J0..2",
+  "monomial_total_degrees": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "monomials": 35,
+  "physical_tangent_columns": 20,
+  "points": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0.01,
+      -0.02,
+      0.03
+    ],
+    [
+      -0.017,
+      0.011,
+      0.025
+    ],
+    [
+      0.021,
+      0.018,
+      -0.022
+    ]
+  ],
+  "expected_cases": 2800,
+  "scalar_fields": [
+    "alpha",
+    "tau=tr(h)/sqrt3",
+    "P",
+    "Theta_phys"
+  ],
+  "vector_fields": [
+    "beta3",
+    "Lambda3"
+  ],
+  "tensor_fields": [
+    "metricSTF5",
+    "independent_A5"
+  ],
+  "constant_STF_basis": "diag(1,-1,0)/sqrt2;diag(1,1,-2)/sqrt6;symmetricxy,xz,yz/sqrt2",
+  "tolerances": {
+    "actual_full22_vs_FlatFormula_scaled": 5e-12,
+    "actual_physical8_constraints_vs_FlatConstraints_scaled": 5e-12
+  },
+  "native_bridge_source_sha256": "825d5219d18a0548e82d4692ee0301a78b91d470be58741e1d25962dace31222",
+  "frozen_core_oracle_source_sha256": "3c695e77e1876c230235c5cb0dfb11f1fda39ec1d2a63b4e3061671e857bc973",
+  "exact_extracted_formula_body_sha256": "a2cd91abdb36a11ad0aa1849b7e51d733f67f42b900ebdd928fa4f1ddf47628a",
+  "formula_extraction": "Unmodified bytes from Raw FlatFormula through before int main of frozen core_oracle.cpp. All driver changes limited to independently constructed Cartesian monomial seeds.",
+  "Release_ASan": true,
+  "no_radial_global_SAT_or_evolution": true
+}

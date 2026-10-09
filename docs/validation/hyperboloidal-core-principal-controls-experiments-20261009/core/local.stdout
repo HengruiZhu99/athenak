@@ -1,0 +1,91 @@
+{
+  "scope": "Exact flat Cauchy-core total-J polynomial-envelope action/origin formula only; no radial PDE/global matrix, SAT, eigenvalues or evolution",
+  "passed_local_flat_core_envelope_gate": true,
+  "checks": {
+    "exact_symbolic_all_m": true,
+    "no_radial_denominators": true,
+    "no_cross_L_conditions": true,
+    "native_full22": true,
+    "input_lift_layout": true,
+    "actual_raw_normals": true,
+    "saved_angular_core_blocks": true,
+    "Release_ASan_native": true,
+    "Release_ASan_polynomial": true,
+    "all_point_Omega_exact_one": true,
+    "all_processes_exit_zero": true,
+    "all_stderr_empty": true
+  },
+  "rows": 19500,
+  "exact_symbolic_counts": {
+    "exact_all_m_input_columns": 156,
+    "exact_all_m_independent_jet_actions": 468,
+    "primary_columns": 44
+  },
+  "full22_rhs_error": {
+    "absolute_L2": 1.1839584895747207e-14,
+    "absolute_max": 1.7763568394002505e-15,
+    "aggregate_scaled": 1.3446527770451718e-16,
+    "per_action_scaled": 3.9823916271308833e-16,
+    "expected_L2": 88.04938418202124,
+    "expected_action_norm_max": 6.323582003138679,
+    "expected_exact_zero_actions": 1254,
+    "expected_nearzero_nonzero_actions_below1e_minus12": 5395,
+    "expected_smallest_nonzero_action_norm": 1.9073089080355846e-81
+  },
+  "full22_input_lift_error": {
+    "absolute_L2": 1.243315038509026e-16,
+    "absolute_max": 2.7755575615628914e-17,
+    "aggregate_scaled": 1.8108234627842752e-17,
+    "per_action_scaled": 5.551115123125783e-17,
+    "expected_L2": 6.866020150839757,
+    "expected_action_norm_max": 0.28229765979878085,
+    "expected_exact_zero_actions": 1520,
+    "expected_nearzero_nonzero_actions_below1e_minus12": 7692,
+    "expected_smallest_nonzero_action_norm": 9.536544540177923e-82
+  },
+  "native_Release_ASan_rhs_error": {
+    "absolute_L2": 0.0,
+    "absolute_max": 0.0,
+    "aggregate_scaled": 0.0,
+    "per_action_scaled": 0.0,
+    "expected_L2": 88.04938418202124,
+    "expected_action_norm_max": 6.323582003138678,
+    "expected_exact_zero_actions": 1252,
+    "expected_nearzero_nonzero_actions_below1e_minus12": 5397,
+    "expected_smallest_nonzero_action_norm": 1.9073089080355846e-81
+  },
+  "polynomial_Release_ASan_rhs_error": {
+    "absolute_L2": 0.0,
+    "absolute_max": 0.0,
+    "aggregate_scaled": 0.0,
+    "per_action_scaled": 0.0,
+    "expected_L2": 88.04938418202124,
+    "expected_action_norm_max": 6.323582003138679,
+    "expected_exact_zero_actions": 1254,
+    "expected_nearzero_nonzero_actions_below1e_minus12": 5395,
+    "expected_smallest_nonzero_action_norm": 1.9073089080355846e-81
+  },
+  "raw_algebraic_normal_scaled": 4.440892098500626e-16,
+  "source_sha256": "f4fc1caa610d7e563d6dd1328c213fb25fc8aa74206757d626622fb4dbd9bd3a",
+  "plan_sha256": "705e18a133fe90440201dfcf916ed4e63235a6be7566cd5310fc5046d2071ed0",
+  "symbolic_report_sha256": "153f75a0a657a1712a1667077b47ba118f9815b18d4034bc2e54fe79d1a7ee2b",
+  "original_native_bridge_dependency_verification": {
+    "release": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-local-angular-20261009/build-attempts/release-002/receipt.json",
+      "sha256": "ba97b5c2fcf3b05ca74a4e858a1a7c3f6ffd2f7bde0a455bcb66d5ec0169221e",
+      "dependencies_verified": 1055,
+      "archives_verified": 4
+    },
+    "debug": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-local-angular-20261009/build-attempts/debug-001/receipt.json",
+      "sha256": "964b0923db2adaa7d306e32a948807696ca40e8b087543ccd948b80b5e2f0eda",
+      "dependencies_verified": 1057,
+      "archives_verified": 4
+    }
+  },
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "numpy": "2.0.2",
+  "OPENBLAS_NUM_THREADS": "1",
+  "actual_radial_PDE_global_matrix_boundary_or_evolution_admitted": false,
+  "actions_npz_sha256": "9ba69faff6f7e105fd89f167e245f365885a60b671053ae15253e02aa08f6440"
+}

@@ -1,0 +1,1946 @@
+{
+  "passed_exact_flat_core_envelope_derivation": true,
+  "scope": "Exact flat Cauchy-core total-J polynomial-envelope action/origin formula only; no radial PDE/global matrix, SAT, eigenvalues or evolution",
+  "source_sha256": "deb9a04eda69201ee9965cb5f3219f55dd726f14c0d52728cce4fea4b943bff0",
+  "plan_sha256": "705e18a133fe90440201dfcf916ed4e63235a6be7566cd5310fc5046d2071ed0",
+  "pins_sha256": "0b74e05af901f7079a7096577f382542a1f7e860598902750bc33e1579495ed1",
+  "runtime_seconds": 13.571536375,
+  "sympy": "1.14.0",
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "counts": {
+    "exact_all_m_input_columns": 156,
+    "exact_all_m_independent_jet_actions": 468,
+    "primary_columns": 44
+  },
+  "sparse_polynomial_entries": 188,
+  "maximum_rho_degree": 2,
+  "all_exact_cartesian_residuals_zero": true,
+  "r_or_rho_denominators": false,
+  "imposed_cross_L_envelope_conditions": false,
+  "all_negative_m_directly_verified": true,
+  "channel_layouts": {
+    "0": [
+      {
+        "name": "alpha",
+        "spin": 0,
+        "L": 0
+      },
+      {
+        "name": "metric_trace",
+        "spin": 0,
+        "L": 0
+      },
+      {
+        "name": "P",
+        "spin": 0,
+        "L": 0
+      },
+      {
+        "name": "Theta_phys",
+        "spin": 0,
+        "L": 0
+      },
+      {
+        "name": "beta",
+        "spin": 1,
+        "L": 1
+      },
+      {
+        "name": "Lambda",
+        "spin": 1,
+        "L": 1
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 2
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 2
+      }
+    ],
+    "1": [
+      {
+        "name": "alpha",
+        "spin": 0,
+        "L": 1
+      },
+      {
+        "name": "metric_trace",
+        "spin": 0,
+        "L": 1
+      },
+      {
+        "name": "P",
+        "spin": 0,
+        "L": 1
+      },
+      {
+        "name": "Theta_phys",
+        "spin": 0,
+        "L": 1
+      },
+      {
+        "name": "beta",
+        "spin": 1,
+        "L": 0
+      },
+      {
+        "name": "beta",
+        "spin": 1,
+        "L": 1
+      },
+      {
+        "name": "beta",
+        "spin": 1,
+        "L": 2
+      },
+      {
+        "name": "Lambda",
+        "spin": 1,
+        "L": 0
+      },
+      {
+        "name": "Lambda",
+        "spin": 1,
+        "L": 1
+      },
+      {
+        "name": "Lambda",
+        "spin": 1,
+        "L": 2
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 1
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 2
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 3
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 1
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 2
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 3
+      }
+    ],
+    "2": [
+      {
+        "name": "alpha",
+        "spin": 0,
+        "L": 2
+      },
+      {
+        "name": "metric_trace",
+        "spin": 0,
+        "L": 2
+      },
+      {
+        "name": "P",
+        "spin": 0,
+        "L": 2
+      },
+      {
+        "name": "Theta_phys",
+        "spin": 0,
+        "L": 2
+      },
+      {
+        "name": "beta",
+        "spin": 1,
+        "L": 1
+      },
+      {
+        "name": "beta",
+        "spin": 1,
+        "L": 2
+      },
+      {
+        "name": "beta",
+        "spin": 1,
+        "L": 3
+      },
+      {
+        "name": "Lambda",
+        "spin": 1,
+        "L": 1
+      },
+      {
+        "name": "Lambda",
+        "spin": 1,
+        "L": 2
+      },
+      {
+        "name": "Lambda",
+        "spin": 1,
+        "L": 3
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 0
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 1
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 2
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 3
+      },
+      {
+        "name": "metric_STF",
+        "spin": 2,
+        "L": 4
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 0
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 1
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 2
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 3
+      },
+      {
+        "name": "independent_A",
+        "spin": 2,
+        "L": 4
+      }
+    ]
+  },
+  "entries": [
+    {
+      "J": 0,
+      "output": 2,
+      "input": 0,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-6",
+      "real": -6.0
+    },
+    {
+      "J": 0,
+      "output": 2,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-4",
+      "real": -4.0
+    },
+    {
+      "J": 0,
+      "output": 7,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 0,
+      "exact": "-4*sqrt(6)/3",
+      "real": -3.265986323710904
+    },
+    {
+      "J": 0,
+      "output": 3,
+      "input": 1,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-2*sqrt(3)",
+      "real": -3.4641016151377544
+    },
+    {
+      "J": 0,
+      "output": 3,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-4*sqrt(3)/3",
+      "real": -2.309401076758503
+    },
+    {
+      "J": 0,
+      "output": 7,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 0,
+      "exact": "-2*sqrt(2)/3",
+      "real": -0.9428090415820634
+    },
+    {
+      "J": 0,
+      "output": 0,
+      "input": 2,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-3",
+      "real": -3.0
+    },
+    {
+      "J": 0,
+      "output": 1,
+      "input": 2,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2*sqrt(3)/3",
+      "real": -1.1547005383792515
+    },
+    {
+      "J": 0,
+      "output": 5,
+      "input": 2,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-8/3",
+      "real": -2.6666666666666665
+    },
+    {
+      "J": 0,
+      "output": 1,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-4*sqrt(3)/3",
+      "real": -2.309401076758503
+    },
+    {
+      "J": 0,
+      "output": 2,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "10",
+      "real": 10.0
+    },
+    {
+      "J": 0,
+      "output": 3,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-20",
+      "real": -20.0
+    },
+    {
+      "J": 0,
+      "output": 5,
+      "input": 3,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-4/3",
+      "real": -1.3333333333333333
+    },
+    {
+      "J": 0,
+      "output": 1,
+      "input": 4,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "2*sqrt(3)",
+      "real": 3.4641016151377544
+    },
+    {
+      "J": 0,
+      "output": 1,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "4*sqrt(3)/3",
+      "real": 2.309401076758503
+    },
+    {
+      "J": 0,
+      "output": 5,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "40/3",
+      "real": 13.333333333333334
+    },
+    {
+      "J": 0,
+      "output": 5,
+      "input": 4,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "16/3",
+      "real": 5.333333333333333
+    },
+    {
+      "J": 0,
+      "output": 6,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "4*sqrt(6)/3",
+      "real": 3.265986323710904
+    },
+    {
+      "J": 0,
+      "output": 3,
+      "input": 5,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "3/2",
+      "real": 1.5
+    },
+    {
+      "J": 0,
+      "output": 3,
+      "input": 5,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "1",
+      "real": 1.0
+    },
+    {
+      "J": 0,
+      "output": 4,
+      "input": 5,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "3/8",
+      "real": 0.375
+    },
+    {
+      "J": 0,
+      "output": 5,
+      "input": 5,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-10",
+      "real": -10.0
+    },
+    {
+      "J": 0,
+      "output": 7,
+      "input": 5,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "2*sqrt(6)/3",
+      "real": 1.632993161855452
+    },
+    {
+      "J": 0,
+      "output": 5,
+      "input": 6,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "50*sqrt(6)/3",
+      "real": 40.8248290463863
+    },
+    {
+      "J": 0,
+      "output": 5,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "20*sqrt(6)/3",
+      "real": 16.32993161855452
+    },
+    {
+      "J": 0,
+      "output": 7,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-7",
+      "real": -7.0
+    },
+    {
+      "J": 0,
+      "output": 7,
+      "input": 6,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 0,
+      "output": 6,
+      "input": 7,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 1,
+      "output": 2,
+      "input": 0,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-10",
+      "real": -10.0
+    },
+    {
+      "J": 1,
+      "output": 2,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-4",
+      "real": -4.0
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 0,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-4*sqrt(15)/3",
+      "real": -5.163977794943222
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-8*sqrt(15)/15",
+      "real": -2.065591117977289
+    },
+    {
+      "J": 1,
+      "output": 15,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 0,
+      "exact": "-4*sqrt(10)/5",
+      "real": -2.5298221281347035
+    },
+    {
+      "J": 1,
+      "output": 3,
+      "input": 1,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-10*sqrt(3)/3",
+      "real": -5.773502691896257
+    },
+    {
+      "J": 1,
+      "output": 3,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-4*sqrt(3)/3",
+      "real": -2.309401076758503
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 1,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-2*sqrt(5)/3",
+      "real": -1.4907119849998598
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-4*sqrt(5)/15",
+      "real": -0.5962847939999439
+    },
+    {
+      "J": 1,
+      "output": 15,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 0,
+      "exact": "-2*sqrt(30)/15",
+      "real": -0.7302967433402214
+    },
+    {
+      "J": 1,
+      "output": 0,
+      "input": 2,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-3",
+      "real": -3.0
+    },
+    {
+      "J": 1,
+      "output": 1,
+      "input": 2,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2*sqrt(3)/3",
+      "real": -1.1547005383792515
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 2,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-4*sqrt(3)/3",
+      "real": -2.309401076758503
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 2,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "-8*sqrt(3)/9",
+      "real": -1.539600717839002
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 2,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-8*sqrt(6)/9",
+      "real": -2.1773242158072694
+    },
+    {
+      "J": 1,
+      "output": 1,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-4*sqrt(3)/3",
+      "real": -2.309401076758503
+    },
+    {
+      "J": 1,
+      "output": 2,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "10",
+      "real": 10.0
+    },
+    {
+      "J": 1,
+      "output": 3,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-20",
+      "real": -20.0
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2*sqrt(3)/3",
+      "real": -1.1547005383792515
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 3,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "-4*sqrt(3)/9",
+      "real": -0.769800358919501
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 3,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-4*sqrt(6)/9",
+      "real": -1.0886621079036347
+    },
+    {
+      "J": 1,
+      "output": 1,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "4/3",
+      "real": 1.3333333333333333
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "20/3",
+      "real": 6.666666666666667
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 4,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "40/9",
+      "real": 4.444444444444445
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 4,
+      "derivative": 2,
+      "rho_power": 0,
+      "exact": "4*sqrt(2)/9",
+      "real": 0.6285393610547089
+    },
+    {
+      "J": 1,
+      "output": 10,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "4*sqrt(5)/3",
+      "real": 2.9814239699997196
+    },
+    {
+      "J": 1,
+      "output": 8,
+      "input": 5,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "10",
+      "real": 10.0
+    },
+    {
+      "J": 1,
+      "output": 8,
+      "input": 5,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "4",
+      "real": 4.0
+    },
+    {
+      "J": 1,
+      "output": 11,
+      "input": 5,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "2*sqrt(2)",
+      "real": 2.8284271247461903
+    },
+    {
+      "J": 1,
+      "output": 1,
+      "input": 6,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "10*sqrt(2)/3",
+      "real": 4.714045207910317
+    },
+    {
+      "J": 1,
+      "output": 1,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "4*sqrt(2)/3",
+      "real": 1.8856180831641267
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 6,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "5*sqrt(2)/3",
+      "real": 2.3570226039551585
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "20*sqrt(2)/9",
+      "real": 3.1426968052735447
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 6,
+      "derivative": 2,
+      "rho_power": 2,
+      "exact": "4*sqrt(2)/9",
+      "real": 0.6285393610547089
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "154/9",
+      "real": 17.11111111111111
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 6,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "44/9",
+      "real": 4.888888888888889
+    },
+    {
+      "J": 1,
+      "output": 10,
+      "input": 6,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "sqrt(10)/3",
+      "real": 1.0540925533894598
+    },
+    {
+      "J": 1,
+      "output": 10,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "2*sqrt(10)/15",
+      "real": 0.4216370213557839
+    },
+    {
+      "J": 1,
+      "output": 12,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "4*sqrt(15)/5",
+      "real": 3.0983866769659336
+    },
+    {
+      "J": 1,
+      "output": 3,
+      "input": 7,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "sqrt(3)/3",
+      "real": 0.5773502691896257
+    },
+    {
+      "J": 1,
+      "output": 4,
+      "input": 7,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "3/8",
+      "real": 0.375
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 7,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-10",
+      "real": -10.0
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 7,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "2*sqrt(5)/3",
+      "real": 1.4907119849998598
+    },
+    {
+      "J": 1,
+      "output": 5,
+      "input": 8,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "3/8",
+      "real": 0.375
+    },
+    {
+      "J": 1,
+      "output": 8,
+      "input": 8,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-10",
+      "real": -10.0
+    },
+    {
+      "J": 1,
+      "output": 14,
+      "input": 8,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "sqrt(2)",
+      "real": 1.4142135623730951
+    },
+    {
+      "J": 1,
+      "output": 3,
+      "input": 9,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "5*sqrt(6)/6",
+      "real": 2.041241452319315
+    },
+    {
+      "J": 1,
+      "output": 3,
+      "input": 9,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "sqrt(6)/3",
+      "real": 0.816496580927726
+    },
+    {
+      "J": 1,
+      "output": 6,
+      "input": 9,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "3/8",
+      "real": 0.375
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 9,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-10",
+      "real": -10.0
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 9,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "sqrt(10)/6",
+      "real": 0.5270462766947299
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 9,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "sqrt(10)/15",
+      "real": 0.21081851067789195
+    },
+    {
+      "J": 1,
+      "output": 15,
+      "input": 9,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "2*sqrt(15)/5",
+      "real": 1.5491933384829668
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 10,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "10*sqrt(5)",
+      "real": 22.360679774997898
+    },
+    {
+      "J": 1,
+      "output": 7,
+      "input": 10,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "20*sqrt(5)/3",
+      "real": 14.907119849998598
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 10,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "2*sqrt(10)/3",
+      "real": 2.1081851067789197
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 10,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-5",
+      "real": -5.0
+    },
+    {
+      "J": 1,
+      "output": 13,
+      "input": 10,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 1,
+      "output": 8,
+      "input": 11,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "25*sqrt(2)",
+      "real": 35.35533905932738
+    },
+    {
+      "J": 1,
+      "output": 8,
+      "input": 11,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "10*sqrt(2)",
+      "real": 14.142135623730951
+    },
+    {
+      "J": 1,
+      "output": 14,
+      "input": 11,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-7",
+      "real": -7.0
+    },
+    {
+      "J": 1,
+      "output": 14,
+      "input": 11,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 12,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "14*sqrt(15)",
+      "real": 54.22176684690383
+    },
+    {
+      "J": 1,
+      "output": 9,
+      "input": 12,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "4*sqrt(15)",
+      "real": 15.491933384829668
+    },
+    {
+      "J": 1,
+      "output": 15,
+      "input": 12,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-9",
+      "real": -9.0
+    },
+    {
+      "J": 1,
+      "output": 15,
+      "input": 12,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 1,
+      "output": 10,
+      "input": 13,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 1,
+      "output": 11,
+      "input": 14,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 1,
+      "output": 12,
+      "input": 15,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 2,
+      "input": 0,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-14",
+      "real": -14.0
+    },
+    {
+      "J": 2,
+      "output": 2,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-4",
+      "real": -4.0
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 0,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-sqrt(30)",
+      "real": -5.477225575051661
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 0,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "-4*sqrt(30)/3",
+      "real": -7.302967433402215
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 2,
+      "exact": "-4*sqrt(30)/15",
+      "real": -1.4605934866804429
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 0,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-4*sqrt(21)/3",
+      "real": -6.110100926607787
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-8*sqrt(21)/21",
+      "real": -1.7457431218879391
+    },
+    {
+      "J": 2,
+      "output": 19,
+      "input": 0,
+      "derivative": 2,
+      "rho_power": 0,
+      "exact": "-8*sqrt(105)/35",
+      "real": -2.3421601750764798
+    },
+    {
+      "J": 2,
+      "output": 3,
+      "input": 1,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-14*sqrt(3)/3",
+      "real": -8.082903768654761
+    },
+    {
+      "J": 2,
+      "output": 3,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-4*sqrt(3)/3",
+      "real": -2.309401076758503
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 1,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-sqrt(10)/2",
+      "real": -1.5811388300841898
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 1,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "-2*sqrt(10)/3",
+      "real": -2.1081851067789197
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 2,
+      "exact": "-2*sqrt(10)/15",
+      "real": -0.4216370213557839
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 1,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-2*sqrt(7)/3",
+      "real": -1.7638342073763937
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-4*sqrt(7)/21",
+      "real": -0.5039526306789697
+    },
+    {
+      "J": 2,
+      "output": 19,
+      "input": 1,
+      "derivative": 2,
+      "rho_power": 0,
+      "exact": "-4*sqrt(35)/35",
+      "real": -0.6761234037828132
+    },
+    {
+      "J": 2,
+      "output": 0,
+      "input": 2,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-3",
+      "real": -3.0
+    },
+    {
+      "J": 2,
+      "output": 1,
+      "input": 2,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2*sqrt(3)/3",
+      "real": -1.1547005383792515
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 2,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-4*sqrt(10)/3",
+      "real": -4.216370213557839
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 2,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "-8*sqrt(10)/15",
+      "real": -1.6865480854231356
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 2,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-8*sqrt(15)/15",
+      "real": -2.065591117977289
+    },
+    {
+      "J": 2,
+      "output": 1,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-4*sqrt(3)/3",
+      "real": -2.309401076758503
+    },
+    {
+      "J": 2,
+      "output": 2,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "10",
+      "real": 10.0
+    },
+    {
+      "J": 2,
+      "output": 3,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-20",
+      "real": -20.0
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 3,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2*sqrt(10)/3",
+      "real": -2.1081851067789197
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 3,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "-4*sqrt(10)/15",
+      "real": -0.8432740427115678
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 3,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-4*sqrt(15)/15",
+      "real": -1.0327955589886444
+    },
+    {
+      "J": 2,
+      "output": 1,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "4*sqrt(30)/15",
+      "real": 1.4605934866804429
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "34/3",
+      "real": 11.333333333333334
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 4,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "68/15",
+      "real": 4.533333333333333
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 4,
+      "derivative": 2,
+      "rho_power": 0,
+      "exact": "4*sqrt(6)/15",
+      "real": 0.6531972647421809
+    },
+    {
+      "J": 2,
+      "output": 10,
+      "input": 4,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "2*sqrt(3)",
+      "real": 3.4641016151377544
+    },
+    {
+      "J": 2,
+      "output": 10,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "4*sqrt(3)/3",
+      "real": 2.309401076758503
+    },
+    {
+      "J": 2,
+      "output": 12,
+      "input": 4,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "2*sqrt(210)/15",
+      "real": 1.9321835661585918
+    },
+    {
+      "J": 2,
+      "output": 8,
+      "input": 5,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "14",
+      "real": 14.0
+    },
+    {
+      "J": 2,
+      "output": 8,
+      "input": 5,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "4",
+      "real": 4.0
+    },
+    {
+      "J": 2,
+      "output": 11,
+      "input": 5,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "sqrt(10)",
+      "real": 3.1622776601683795
+    },
+    {
+      "J": 2,
+      "output": 11,
+      "input": 5,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "2*sqrt(10)/5",
+      "real": 1.2649110640673518
+    },
+    {
+      "J": 2,
+      "output": 13,
+      "input": 5,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "4*sqrt(10)/5",
+      "real": 2.5298221281347035
+    },
+    {
+      "J": 2,
+      "output": 1,
+      "input": 6,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "14*sqrt(5)/5",
+      "real": 6.260990336999411
+    },
+    {
+      "J": 2,
+      "output": 1,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "4*sqrt(5)/5",
+      "real": 1.7888543819998317
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 6,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "7*sqrt(6)/3",
+      "real": 5.715476066494082
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "28*sqrt(6)/15",
+      "real": 4.572380853195265
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 6,
+      "derivative": 2,
+      "rho_power": 2,
+      "exact": "4*sqrt(6)/15",
+      "real": 0.6531972647421809
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "108/5",
+      "real": 21.6
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 6,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "24/5",
+      "real": 4.8
+    },
+    {
+      "J": 2,
+      "output": 12,
+      "input": 6,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "2*sqrt(35)/5",
+      "real": 2.3664319132398464
+    },
+    {
+      "J": 2,
+      "output": 12,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "4*sqrt(35)/35",
+      "real": 0.6761234037828132
+    },
+    {
+      "J": 2,
+      "output": 14,
+      "input": 6,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "8*sqrt(7)/7",
+      "real": 3.023715784073818
+    },
+    {
+      "J": 2,
+      "output": 3,
+      "input": 7,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "sqrt(10)/5",
+      "real": 0.6324555320336759
+    },
+    {
+      "J": 2,
+      "output": 4,
+      "input": 7,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "3/8",
+      "real": 0.375
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 7,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-10",
+      "real": -10.0
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 7,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "sqrt(3)",
+      "real": 1.7320508075688772
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 7,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "2*sqrt(3)/3",
+      "real": 1.1547005383792515
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 7,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "sqrt(210)/15",
+      "real": 0.9660917830792959
+    },
+    {
+      "J": 2,
+      "output": 5,
+      "input": 8,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "3/8",
+      "real": 0.375
+    },
+    {
+      "J": 2,
+      "output": 8,
+      "input": 8,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-10",
+      "real": -10.0
+    },
+    {
+      "J": 2,
+      "output": 16,
+      "input": 8,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "sqrt(10)/2",
+      "real": 1.5811388300841898
+    },
+    {
+      "J": 2,
+      "output": 16,
+      "input": 8,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "sqrt(10)/5",
+      "real": 0.6324555320336759
+    },
+    {
+      "J": 2,
+      "output": 18,
+      "input": 8,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "2*sqrt(10)/5",
+      "real": 1.2649110640673518
+    },
+    {
+      "J": 2,
+      "output": 3,
+      "input": 9,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "7*sqrt(15)/10",
+      "real": 2.711088342345192
+    },
+    {
+      "J": 2,
+      "output": 3,
+      "input": 9,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "sqrt(15)/5",
+      "real": 0.7745966692414834
+    },
+    {
+      "J": 2,
+      "output": 6,
+      "input": 9,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "3/8",
+      "real": 0.375
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 9,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-10",
+      "real": -10.0
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 9,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "sqrt(35)/5",
+      "real": 1.1832159566199232
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 9,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "2*sqrt(35)/35",
+      "real": 0.3380617018914066
+    },
+    {
+      "J": 2,
+      "output": 19,
+      "input": 9,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "4*sqrt(7)/7",
+      "real": 1.511857892036909
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 10,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "20*sqrt(3)/3",
+      "real": 11.547005383792515
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 10,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-3",
+      "real": -3.0
+    },
+    {
+      "J": 2,
+      "output": 15,
+      "input": 10,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 8,
+      "input": 11,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "2*sqrt(10)",
+      "real": 6.324555320336759
+    },
+    {
+      "J": 2,
+      "output": 16,
+      "input": 11,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-5",
+      "real": -5.0
+    },
+    {
+      "J": 2,
+      "output": 16,
+      "input": 11,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 12,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "5*sqrt(210)/3",
+      "real": 24.1522945769824
+    },
+    {
+      "J": 2,
+      "output": 7,
+      "input": 12,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "2*sqrt(210)/3",
+      "real": 9.66091783079296
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 12,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "4*sqrt(35)/7",
+      "real": 3.3806170189140663
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 12,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-7",
+      "real": -7.0
+    },
+    {
+      "J": 2,
+      "output": 17,
+      "input": 12,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 8,
+      "input": 13,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "14*sqrt(10)",
+      "real": 44.27188724235731
+    },
+    {
+      "J": 2,
+      "output": 8,
+      "input": 13,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "4*sqrt(10)",
+      "real": 12.649110640673518
+    },
+    {
+      "J": 2,
+      "output": 18,
+      "input": 13,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-9",
+      "real": -9.0
+    },
+    {
+      "J": 2,
+      "output": 18,
+      "input": 13,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 14,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "180*sqrt(7)/7",
+      "real": 68.0336051416609
+    },
+    {
+      "J": 2,
+      "output": 9,
+      "input": 14,
+      "derivative": 1,
+      "rho_power": 1,
+      "exact": "40*sqrt(7)/7",
+      "real": 15.118578920369089
+    },
+    {
+      "J": 2,
+      "output": 19,
+      "input": 14,
+      "derivative": 1,
+      "rho_power": 0,
+      "exact": "-11",
+      "real": -11.0
+    },
+    {
+      "J": 2,
+      "output": 19,
+      "input": 14,
+      "derivative": 2,
+      "rho_power": 1,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 10,
+      "input": 15,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 11,
+      "input": 16,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 12,
+      "input": 17,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 13,
+      "input": 18,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    },
+    {
+      "J": 2,
+      "output": 14,
+      "input": 19,
+      "derivative": 0,
+      "rho_power": 0,
+      "exact": "-2",
+      "real": -2.0
+    }
+  ],
+  "block_npz_sha256": "379316edf52fd6d137862d313b9edd7977dc58e4ee34afc77212605ff24e3858",
+  "generated_header_sha256": "2ed290fa140ac7fc30275f4c04b33663cbdac9503488abb11ee830529ff4e571",
+  "actual_radial_PDE_global_matrix_boundary_or_evolution_admitted": false
+}

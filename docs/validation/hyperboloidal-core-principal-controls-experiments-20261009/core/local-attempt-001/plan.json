@@ -1,0 +1,86 @@
+{
+  "declared_before_scientific_compile_or_run": true,
+  "scope": "Exact flat Cauchy-core total-J polynomial-envelope action/origin formula only; no radial PDE/global matrix, SAT, eigenvalues or evolution",
+  "baseline": "Actual C0 physical-P spatial-norm; core Omega=alpha=chi=1, g=I,beta=A=P=Theta=Lambda=0; kappa10,kappa2zero,f3,mu3/8",
+  "J_values": [
+    0,
+    1,
+    2
+  ],
+  "channel_counts": [
+    8,
+    16,
+    20
+  ],
+  "metric_trace_normalization": "tau=tr(delta bar gamma)/sqrt(3), h_trace=tau I/sqrt(3), delta chi=-tau/sqrt(3), delta g=h_STF",
+  "symbolic_derivation": "Exact frozen CG solid Cartesian polynomial basis; independent physical core formulas from full22 oracle; homogeneous polynomial angular projection; exact Cartesian reconstruction, no radial fitting or denominator cancellation after floating evaluation",
+  "radial_jets": [
+    "W",
+    "W_rho",
+    "W_rhorho"
+  ],
+  "expected_maximum_polynomial_degree_rho_of_blocks": 2,
+  "symbolic_gate": "All expressions exact zero and all block entries polynomial in rho with no r/rho denominator, arbitrary independent channel envelopes; all m=-J..J checks",
+  "saved_coefficient_radii": [
+    0.025,
+    0.05
+  ],
+  "native_probe_radii": [
+    0,
+    1e-08,
+    1e-05,
+    0.001,
+    0.01,
+    0.025,
+    0.049
+  ],
+  "directions": [
+    [
+      0.36,
+      -0.48,
+      0.8
+    ],
+    [
+      -0.8,
+      0.6,
+      0
+    ],
+    [
+      0,
+      -0.6,
+      0.8
+    ],
+    [
+      0.3333333333333333,
+      0.6666666666666666,
+      0.6666666666666666
+    ]
+  ],
+  "envelopes": [
+    "1",
+    "rho",
+    "rho^2",
+    "rho^3",
+    "1+.3rho-.2rho^2+.1rho^3"
+  ],
+  "m_phases": "Every m>=0, real and imaginary for m>0; negative m by exact symbolic conjugacy with independent reconstruction",
+  "native_oracles": [
+    "Pinned unchanged actual dual bridge Release batch",
+    "Pinned unchanged actual dual bridge ASan/UBSan batch",
+    "Saved fitted angular coefficients at exact core radii"
+  ],
+  "tolerances": {
+    "symbolic_cartesian_residual": 0,
+    "polynomial_denominators_in_r_or_rho": 0,
+    "native_full22_scaled": 5e-11,
+    "raw_algebraic_normal_scaled": 5e-12,
+    "saved_fitted_coefficient_scaled": 2e-09,
+    "Release_ASan_numeric_scaled": 5e-12,
+    "compiled_evaluator_scaled_if_needed": 5e-11
+  },
+  "error_normalization": "L2 residual/max(1,L2 expected), also retain absolute/max-entry and exact all22 tangent normal checks",
+  "no_cross_L_conditions_or_origin_excision": true,
+  "no_scientific_run_until_plan_review": true,
+  "preserve_all_failures": true,
+  "actual_Z4c_radial_operator_or_boundary_admitted": false
+}

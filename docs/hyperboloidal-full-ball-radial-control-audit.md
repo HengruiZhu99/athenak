@@ -129,6 +129,11 @@ Interior Gauss nodes alone impose no justified outflow condition. A later
 radial solver changes bulk derivatives as well as the boundary and cannot
 uniquely attribute earlier Cartesian growth to ghosts.
 
+The subsequent [core and principal-sector controls](hyperboloidal-core-principal-controls-audit.md)
+supply an exact division-free total-J core action and a separate harmonic
+constraint/gauge/TT classification. Complete finite-radius boundary data and
+the variable-coefficient radial operator remain separate validation steps.
+
 Production remains implementation27c19d20696ea6dd4704032c51dfd026218f64f2.
 The later black-hole acceptance target includes the inner wormhole-to-trumpet
 transition with a Minkowski hyperboloidal reference retained throughout.
