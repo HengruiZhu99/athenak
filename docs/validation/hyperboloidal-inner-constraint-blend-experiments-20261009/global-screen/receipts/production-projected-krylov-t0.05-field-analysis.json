@@ -1,0 +1,280 @@
+{
+  "gauge": "production",
+  "semantics": "prescribed bulk C1 blend projected continuous global tangent; not the full covariant system; canonical short-pilot comparison recorded separately",
+  "field_derivative_executable_sha256": "ed7b19621daa99c3f129a611daa26ae6d90ed30b03638173ea12b8b840d1b807",
+  "field_derivative_source_sha256": "e4a5ca02cab53e40b8ea18b2d527edf9ae00f961d773dd8a7e9e42602c1234c3",
+  "configuration_fields": [
+    "chi",
+    "g",
+    "alpha",
+    "beta"
+  ],
+  "momentum_fields": [
+    "P",
+    "A",
+    "Lambda",
+    "Theta"
+  ],
+  "second_order_units_norm": "sqrt integral sqrtgamma [sum_configuration (value^2/S^2+gammaInv gradient^2)+sum_momenta value^2], S=1. Native stored upper tensor components counted once. This is component scaling, not invariant or proved energy.",
+  "h_balanced_norm": "sqrt integral sqrtgamma [sum_configuration value^2/h^2+sum_momenta value^2]; grid-dependent equivalent norm used only to diagnose units",
+  "histories": [
+    {
+      "name": "gauge_pulse",
+      "history": [
+        {
+          "time": 0.0,
+          "configuration_H1_momentum_L2": 0.259361901938944,
+          "h_balanced_L2": 0.385009323122269,
+          "groups": {
+            "chi": {
+              "value_l2": 0.0,
+              "gradient_l2": 0.0
+            },
+            "metric": {
+              "value_l2": 0.0,
+              "gradient_l2": 0.0
+            },
+            "P": {
+              "value_l2": 0.0,
+              "gradient_l2": 0.0
+            },
+            "A": {
+              "value_l2": 0.0,
+              "gradient_l2": 0.0
+            },
+            "Lambda": {
+              "value_l2": 0.0,
+              "gradient_l2": 0.0
+            },
+            "Theta": {
+              "value_l2": 0.0,
+              "gradient_l2": 0.0
+            },
+            "alpha": {
+              "value_l2": 0.051910737358547315,
+              "gradient_l2": 0.24897099388512547
+            },
+            "beta": {
+              "value_l2": 0.010382195290552444,
+              "gradient_l2": 0.049794836570471276
+            }
+          },
+          "configuration_H1_momentum_L2_amplification": 1.0,
+          "h_balanced_L2_amplification": 1.0
+        },
+        {
+          "time": 0.025,
+          "configuration_H1_momentum_L2": 0.2609392585050866,
+          "h_balanced_L2": 0.3887830715548586,
+          "groups": {
+            "chi": {
+              "value_l2": 0.0019157810580733858,
+              "gradient_l2": 0.013084950083996717
+            },
+            "metric": {
+              "value_l2": 0.0031004255599629267,
+              "gradient_l2": 0.024306208913487257
+            },
+            "P": {
+              "value_l2": 0.035913102565349145,
+              "gradient_l2": 0.26891387962856683
+            },
+            "A": {
+              "value_l2": 0.029671928597664623,
+              "gradient_l2": 0.24681205021709726
+            },
+            "Lambda": {
+              "value_l2": 0.03306527267903792,
+              "gradient_l2": 0.2951911732326991
+            },
+            "Theta": {
+              "value_l2": 0.0008029100453889163,
+              "gradient_l2": 0.008486917278605193
+            },
+            "alpha": {
+              "value_l2": 0.051606479969482956,
+              "gradient_l2": 0.24068004904406862
+            },
+            "beta": {
+              "value_l2": 0.010931542468542874,
+              "gradient_l2": 0.057794995069906194
+            }
+          },
+          "configuration_H1_momentum_L2_amplification": 1.0060816818289446,
+          "h_balanced_L2_amplification": 1.0098017066235851
+        },
+        {
+          "time": 0.05,
+          "configuration_H1_momentum_L2": 0.2692383358271469,
+          "h_balanced_L2": 0.38884720528198147,
+          "groups": {
+            "chi": {
+              "value_l2": 0.0037174284916261175,
+              "gradient_l2": 0.026193704718444503
+            },
+            "metric": {
+              "value_l2": 0.007467881002762746,
+              "gradient_l2": 0.05657998207364014
+            },
+            "P": {
+              "value_l2": 0.06808129947634466,
+              "gradient_l2": 0.48185590182760446
+            },
+            "A": {
+              "value_l2": 0.054447179182441574,
+              "gradient_l2": 0.4242410669746142
+            },
+            "Lambda": {
+              "value_l2": 0.0718330439180973,
+              "gradient_l2": 0.6532162594447372
+            },
+            "Theta": {
+              "value_l2": 0.0014688365918580598,
+              "gradient_l2": 0.016275335077243647
+            },
+            "alpha": {
+              "value_l2": 0.049107837270482554,
+              "gradient_l2": 0.22081830242148417
+            },
+            "beta": {
+              "value_l2": 0.011671396364357685,
+              "gradient_l2": 0.06679866931166799
+            }
+          },
+          "configuration_H1_momentum_L2_amplification": 1.0380797403719222,
+          "h_balanced_L2_amplification": 1.0099682836991812
+        }
+      ]
+    },
+    {
+      "name": "shell_random",
+      "history": [
+        {
+          "time": 0.0,
+          "configuration_H1_momentum_L2": 0.8706075331775056,
+          "h_balanced_L2": 0.2993786689473401,
+          "groups": {
+            "chi": {
+              "value_l2": 0.011452709294183322,
+              "gradient_l2": 0.24482282645414222
+            },
+            "metric": {
+              "value_l2": 0.031585440714041915,
+              "gradient_l2": 0.670644843013931
+            },
+            "P": {
+              "value_l2": 0.011946075008009103,
+              "gradient_l2": 0.25172211506503334
+            },
+            "A": {
+              "value_l2": 0.031201527148334865,
+              "gradient_l2": 0.669097030584192
+            },
+            "Lambda": {
+              "value_l2": 0.020408003600323098,
+              "gradient_l2": 0.43344809316218835
+            },
+            "Theta": {
+              "value_l2": 0.011684910397614934,
+              "gradient_l2": 0.24880132194425497
+            },
+            "alpha": {
+              "value_l2": 0.011317115133905944,
+              "gradient_l2": 0.24256884266376258
+            },
+            "beta": {
+              "value_l2": 0.020151433475308324,
+              "gradient_l2": 0.43137325120159165
+            }
+          },
+          "configuration_H1_momentum_L2_amplification": 1.0,
+          "h_balanced_L2_amplification": 1.0
+        },
+        {
+          "time": 0.025,
+          "configuration_H1_momentum_L2": 0.5550571210892172,
+          "h_balanced_L2": 0.3530967484227303,
+          "groups": {
+            "chi": {
+              "value_l2": 0.009382057414511955,
+              "gradient_l2": 0.1542680172730568
+            },
+            "metric": {
+              "value_l2": 0.021705623179556502,
+              "gradient_l2": 0.3620628656691662
+            },
+            "P": {
+              "value_l2": 0.02283610293863364,
+              "gradient_l2": 0.3635872550811233
+            },
+            "A": {
+              "value_l2": 0.17023001930171028,
+              "gradient_l2": 2.7988584939258243
+            },
+            "Lambda": {
+              "value_l2": 0.2139513440659199,
+              "gradient_l2": 3.063713440661063
+            },
+            "Theta": {
+              "value_l2": 0.020760018756624473,
+              "gradient_l2": 0.41299375226479823
+            },
+            "alpha": {
+              "value_l2": 0.004498478207570293,
+              "gradient_l2": 0.08086635872449982
+            },
+            "beta": {
+              "value_l2": 0.018613767697074787,
+              "gradient_l2": 0.26463017787146137
+            }
+          },
+          "configuration_H1_momentum_L2_amplification": 0.6375514797849197,
+          "h_balanced_L2_amplification": 1.1794318869285876
+        },
+        {
+          "time": 0.05,
+          "configuration_H1_momentum_L2": 0.3883079493634994,
+          "h_balanced_L2": 0.27593975541764415,
+          "groups": {
+            "chi": {
+              "value_l2": 0.00720587690219981,
+              "gradient_l2": 0.10641448221073907
+            },
+            "metric": {
+              "value_l2": 0.01664475464105308,
+              "gradient_l2": 0.215328948412645
+            },
+            "P": {
+              "value_l2": 0.019088913535295356,
+              "gradient_l2": 0.25993455264616716
+            },
+            "A": {
+              "value_l2": 0.1091391390845559,
+              "gradient_l2": 1.7163047822268427
+            },
+            "Lambda": {
+              "value_l2": 0.1653983021632481,
+              "gradient_l2": 2.3772691954712317
+            },
+            "Theta": {
+              "value_l2": 0.011259317559137927,
+              "gradient_l2": 0.22584522512298383
+            },
+            "alpha": {
+              "value_l2": 0.0036248923105546083,
+              "gradient_l2": 0.05155137626834464
+            },
+            "beta": {
+              "value_l2": 0.018594779519586928,
+              "gradient_l2": 0.22357981576152172
+            }
+          },
+          "configuration_H1_momentum_L2_amplification": 0.4460195146098379,
+          "h_balanced_L2_amplification": 0.9217081376835876
+        }
+      ]
+    }
+  ],
+  "seconds": 0.046504749999999984,
+  "server_exit": 0
+}

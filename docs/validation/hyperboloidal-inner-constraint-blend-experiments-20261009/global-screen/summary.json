@@ -1,0 +1,197 @@
+{
+  "scope": "prescribed bulk1\u2212Wgauge C1+covector repair; same actual native Cartesian stencils/ghosts; short verified and long exploratory screen, no adoption",
+  "parameters": {
+    "N": 16,
+    "span": 2.2,
+    "h": 0.1375,
+    "points": 1640,
+    "free20": 32800,
+    "raw22": 36080,
+    "S": 1,
+    "a": 0.5,
+    "r0": 0.05,
+    "r1": 0.95,
+    "kappa": 10,
+    "sym_ghost_degree": 2,
+    "KO": 0.1,
+    "min_Omega": 0.0026953124999994555,
+    "nominal_pole_dt": 8.085937499998367e-05,
+    "outward_crossing_time": 0.7457643839234269
+  },
+  "native_or_global_stability_accepted": false,
+  "long_canonical_comparison_completed": false,
+  "gauges": {
+    "production": {
+      "stage_consistency_checks_pass": true,
+      "short_canonical_max_relative_state_error": 2.8598957321558074e-14,
+      "short_canonical_total_seconds": 72.591160875,
+      "exploratory_long_seconds": 77.662094209,
+      "exploratory_long_matvecs": 7200,
+      "max_long_coarse_fine_relative_difference": 6.066439693531021e-11,
+      "long_error_scope": "empirical local Arnoldi truncation difference; no independent long canonical forward-error validation",
+      "max_native_constraint_amplitude_check_relative_error": 4.892813900914185e-09,
+      "long_vs_frozen_C0": [
+        {
+          "seed": "gauge_pulse",
+          "time": 2.0,
+          "C0_H_M_Z": [
+            1.7204669827293788,
+            1.2177378053974521,
+            0.27256727730234337
+          ],
+          "blend_H_M_Z": [
+            1.6915913966089198,
+            1.2180612845617154,
+            0.2647250215318513
+          ],
+          "ratios_H_M_Z": [
+            0.9832164253017804,
+            1.0002656394199387,
+            0.9712281831916562
+          ],
+          "C0_field_units_amp": 47.098332360707204,
+          "blend_field_units_amp": 46.762055699844645,
+          "C0_free20_Euclidean_amp": 106.5178110654793,
+          "blend_free20_Euclidean_amp": 104.99427478411855,
+          "blend_outer_H_M_Z_squared_fraction": [
+            0.06916579979623558,
+            0.39923252794767566,
+            0.6022983637435891
+          ],
+          "blend_peak_H_M_Z_radius": [
+            0.22801795433693378,
+            0.35723547906108105,
+            0.9986514344354591
+          ],
+          "blend_sampled_max_field_amp": [
+            46.762055699844645,
+            2.0
+          ]
+        },
+        {
+          "seed": "shell_random",
+          "time": 2.0,
+          "C0_H_M_Z": [
+            0.0034794553819018823,
+            0.0038737260252462115,
+            0.0009690997026871502
+          ],
+          "blend_H_M_Z": [
+            0.00345536214157359,
+            0.003850304627873605,
+            0.0009772722922343556
+          ],
+          "ratios_H_M_Z": [
+            0.9930755714087868,
+            0.9939537806184633,
+            1.0084331772309332
+          ],
+          "C0_field_units_amp": 0.0748867387051339,
+          "blend_field_units_amp": 0.07572145917907024,
+          "C0_free20_Euclidean_amp": 0.6155886914766828,
+          "blend_free20_Euclidean_amp": 0.6221427855092708,
+          "blend_outer_H_M_Z_squared_fraction": [
+            0.054821871263606874,
+            0.5858977781207376,
+            0.7606957895680058
+          ],
+          "blend_peak_H_M_Z_radius": [
+            0.7868797160303472,
+            0.9795367208532818,
+            0.9986514344354593
+          ],
+          "blend_sampled_max_field_amp": [
+            1.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    "spatialnorm": {
+      "stage_consistency_checks_pass": true,
+      "short_canonical_max_relative_state_error": 2.5821092527661827e-14,
+      "short_canonical_total_seconds": 70.85349820799999,
+      "exploratory_long_seconds": 77.633095292,
+      "exploratory_long_matvecs": 7200,
+      "max_long_coarse_fine_relative_difference": 7.193055627201073e-11,
+      "long_error_scope": "empirical local Arnoldi truncation difference; no independent long canonical forward-error validation",
+      "max_native_constraint_amplitude_check_relative_error": 2.833730371100731e-09,
+      "long_vs_frozen_C0": [
+        {
+          "seed": "gauge_pulse",
+          "time": 2.0,
+          "C0_H_M_Z": [
+            2.1926610682756325,
+            1.2204029340515767,
+            0.3697096997526548
+          ],
+          "blend_H_M_Z": [
+            2.2098218560786402,
+            1.2688401153917719,
+            0.3520807183057954
+          ],
+          "ratios_H_M_Z": [
+            1.0078264662292304,
+            1.0396894992536523,
+            0.9523166921001704
+          ],
+          "C0_field_units_amp": 35.72899623828097,
+          "blend_field_units_amp": 35.979789387922416,
+          "C0_free20_Euclidean_amp": 91.96706599745697,
+          "blend_free20_Euclidean_amp": 90.97707823399791,
+          "blend_outer_H_M_Z_squared_fraction": [
+            0.03470935837330264,
+            0.4884783597145481,
+            0.7290413784340749
+          ],
+          "blend_peak_H_M_Z_radius": [
+            0.35723547906108094,
+            0.9986514344354591,
+            0.9986514344354591
+          ],
+          "blend_sampled_max_field_amp": [
+            35.979789387922416,
+            2.0
+          ]
+        },
+        {
+          "seed": "shell_random",
+          "time": 2.0,
+          "C0_H_M_Z": [
+            0.00250440344602444,
+            0.002284684007983271,
+            0.0009960512768595387
+          ],
+          "blend_H_M_Z": [
+            0.002725548680046228,
+            0.0026108981138762842,
+            0.0011651998669997725
+          ],
+          "ratios_H_M_Z": [
+            1.0883025593870828,
+            1.1427830302803965,
+            1.1698191589830036
+          ],
+          "C0_field_units_amp": 0.01699430549556843,
+          "blend_field_units_amp": 0.01821989740693727,
+          "C0_free20_Euclidean_amp": 0.1653425939348881,
+          "blend_free20_Euclidean_amp": 0.1837797291692288,
+          "blend_outer_H_M_Z_squared_fraction": [
+            0.019224263310297914,
+            0.691277366972626,
+            0.9537173003041789
+          ],
+          "blend_peak_H_M_Z_radius": [
+            0.29967430236842135,
+            0.9600415030091148,
+            0.9986514344354592
+          ],
+          "blend_sampled_max_field_amp": [
+            1.0,
+            0.0
+          ]
+        }
+      ]
+    }
+  }
+}

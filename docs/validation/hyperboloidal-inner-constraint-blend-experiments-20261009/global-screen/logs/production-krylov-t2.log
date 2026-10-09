@@ -1,0 +1,44 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:15: RuntimeWarning: divide by zero encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:15: RuntimeWarning: overflow encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:15: RuntimeWarning: invalid value encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: divide by zero encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: overflow encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: invalid value encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: divide by zero encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: overflow encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: invalid value encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:22: RuntimeWarning: divide by zero encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:22: RuntimeWarning: overflow encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:22: RuntimeWarning: invalid value encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+production gauge_pulse t 0.11249999999999999 steps 5 mv 400 norm 3.9982901145036402 seconds 4.304697667
+production gauge_pulse t 0.2875 steps 10 mv 800 norm 7.111139819754092 seconds 8.522788417000001
+production gauge_pulse t 0.5375 steps 15 mv 1200 norm 7.008778120349233 seconds 12.779096500000001
+production gauge_pulse t 0.7875000000000002 steps 20 mv 1600 norm 17.00965409080136 seconds 17.020116417
+production gauge_pulse t 1.0375000000000003 steps 25 mv 2000 norm 14.440476569760497 seconds 21.28096575
+production gauge_pulse t 1.2875000000000005 steps 30 mv 2400 norm 40.895751558437404 seconds 25.528898959
+production gauge_pulse t 1.5375000000000008 steps 35 mv 2800 norm 42.011313282436745 seconds 29.778468874999998
+production gauge_pulse t 1.787500000000001 steps 40 mv 3200 norm 107.7203071147654 seconds 34.067383291999995
+production gauge_pulse t 2.0 steps 44 mv 3520 norm 104.99427478411855 seconds 37.48775525
+production shell_random t 0.1 steps 5 mv 3920 norm 1.9949782949460302 seconds 4.276208167
+production shell_random t 0.22499999999999998 steps 10 mv 4320 norm 1.0529635873143905 seconds 8.587561125
+production shell_random t 0.44999999999999996 steps 15 mv 4720 norm 0.7982998355919587 seconds 12.87967175
+production shell_random t 0.7000000000000001 steps 20 mv 5120 norm 0.7149625978429439 seconds 17.157087208999997
+production shell_random t 0.9500000000000003 steps 25 mv 5520 norm 0.668118225826994 seconds 21.463027292
+production shell_random t 1.2000000000000004 steps 30 mv 5920 norm 0.6482554403644445 seconds 25.731357791999997
+production shell_random t 1.4500000000000006 steps 35 mv 6320 norm 0.6357803444106391 seconds 30.002333291999996
+production shell_random t 1.7000000000000008 steps 40 mv 6720 norm 0.6327303944018327 seconds 34.269388291999995
+production shell_random t 1.9500000000000006 steps 45 mv 7120 norm 0.6178513653302727 seconds 38.553923084
+production shell_random t 2.0 steps 46 mv 7200 norm 0.6221427855092708 seconds 39.401388292
+done production production-projected-krylov-m50-80-h0.1-t2.0 seconds 77.662726667

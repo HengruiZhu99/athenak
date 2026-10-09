@@ -1,0 +1,19 @@
+--- /Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/overlay/z4c/hyperboloidal/cartesian_patch.hpp
+@@ -13,6 +13,7 @@
+ #include "z4c/hyperboloidal/layer_gauge.hpp"
+ #include "z4c/hyperboloidal/interior_dissipation.hpp"
+ #include "z4c/hyperboloidal/spherical_ghosts.hpp"
++#include "bulk_injection.hpp"
+ 
+ namespace z4c {
+ namespace hyperboloidal {
+@@ -355,6 +356,8 @@
+           rhs.metric[a][b] -= rhs0.metric[a][b]; rhs.a[a][b] -= rhs0.a[a][b];
+         }
+       }
++      // Private prescribed coefficient; no C1 reference subtraction.
++      if (!ResearchAddBulkC1(u,omega,p.radius,lg,rhs)) { ++bad; return; }
+       AddMeshUpwindAdvectionWithVelocity<3>(udev,full.beta_u,idx,0,k,j,i,rhs,gauge_rhs);
+       StoreMeshRHS(output,0,k,j,i,rhs,gauge_rhs);
+       const int stride[3] = {1,g.n[0],g.n[0]*g.n[1]};

@@ -1,0 +1,44 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:15: RuntimeWarning: divide by zero encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:15: RuntimeWarning: overflow encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:15: RuntimeWarning: invalid value encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: divide by zero encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: overflow encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: invalid value encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: divide by zero encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: overflow encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: invalid value encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:22: RuntimeWarning: divide by zero encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:22: RuntimeWarning: overflow encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-blended-c1/full22-candidate/krylov_propagate.py:22: RuntimeWarning: invalid value encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+spatialnorm gauge_pulse t 0.11249999999999999 steps 5 mv 400 norm 3.968327963330687 seconds 4.310765416
+spatialnorm gauge_pulse t 0.31249999999999994 steps 10 mv 800 norm 8.183022378129227 seconds 8.527056166
+spatialnorm gauge_pulse t 0.5625 steps 15 mv 1200 norm 6.532968492908329 seconds 12.77611725
+spatialnorm gauge_pulse t 0.8125000000000002 steps 20 mv 1600 norm 18.147390885843347 seconds 17.009447875000003
+spatialnorm gauge_pulse t 1.0625000000000004 steps 25 mv 2000 norm 13.967539560894918 seconds 21.265757958000002
+spatialnorm gauge_pulse t 1.3125000000000007 steps 30 mv 2400 norm 39.960224452659304 seconds 25.513052583
+spatialnorm gauge_pulse t 1.5625000000000009 steps 35 mv 2800 norm 45.34313183128778 seconds 29.759634041
+spatialnorm gauge_pulse t 1.812500000000001 steps 40 mv 3200 norm 98.31720484558392 seconds 34.04380075
+spatialnorm gauge_pulse t 2.0 steps 44 mv 3520 norm 90.97707823399791 seconds 37.466902250000004
+spatialnorm shell_random t 0.1 steps 5 mv 3920 norm 1.80492010949748 seconds 4.283770959000002
+spatialnorm shell_random t 0.22499999999999998 steps 10 mv 4320 norm 0.7054890790357173 seconds 8.595607209
+spatialnorm shell_random t 0.44999999999999996 steps 15 mv 4720 norm 0.3543542359135083 seconds 12.888496709000002
+spatialnorm shell_random t 0.7000000000000001 steps 20 mv 5120 norm 0.22848400233550686 seconds 17.165267
+spatialnorm shell_random t 0.9500000000000003 steps 25 mv 5520 norm 0.16603319677083817 seconds 21.470914167000004
+spatialnorm shell_random t 1.2000000000000004 steps 30 mv 5920 norm 0.1418613539421219 seconds 25.738396292000004
+spatialnorm shell_random t 1.4500000000000006 steps 35 mv 6320 norm 0.12095978481507538 seconds 30.01036029200001
+spatialnorm shell_random t 1.7000000000000008 steps 40 mv 6720 norm 0.13978642502384744 seconds 34.266448792
+spatialnorm shell_random t 1.9500000000000006 steps 45 mv 7120 norm 0.15087233509170622 seconds 38.550162500000006
+spatialnorm shell_random t 2.0 steps 46 mv 7200 norm 0.1837797291692288 seconds 39.39840754200001
+done spatialnorm spatialnorm-projected-krylov-m50-80-h0.1-t2.0 seconds 77.633761417

@@ -1,0 +1,184 @@
+[
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/constraint_tangent.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/constraint_tangent"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/blend_gate.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/blend_gate"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/principal_blend.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/principal_blend"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O1",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/blend_gate.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/blend_gate_debug"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/constraint_tangent",
+      "10"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "tangent-C1-kappa10.json",
+    "stdout_sha256": "7dd4cc1cf89801d454227f7b5becfdd1a4318b478bdd477e3783736474c3eb13"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/constraint_tangent",
+      "10",
+      "blend"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "tangent-blend-kappa10.json",
+    "stdout_sha256": "bd7f171cbeb43aa6dc916f76583cf1ab47db12f2716fcd7ba8c69db9d65402a8"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/blend_gate"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "blend-gate.json",
+    "stdout_sha256": "c6056173f066d9a0074dd05a6d77ad6fc4eb46179ae86493588cb0c076ad3926"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/blend_gate_debug"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "blend-gate-debug.json",
+    "stdout_sha256": "c6056173f066d9a0074dd05a6d77ad6fc4eb46179ae86493588cb0c076ad3926"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/check_kernel_symbol.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/principal_blend"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "principal.log",
+    "stdout_sha256": "876b3dad0b72950c53e58f164836b97a2bef2806259fe4001fc8142c44ac1e27"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-constraint-propagation/check_subsidiary.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "check.log",
+    "stdout_sha256": "8d8e2d5bbb22a0964e8a09bfe1286e63e29a05de9bf05a18557a9554dbf932a7"
+  }
+]

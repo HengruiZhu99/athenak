@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "gate_index_sha256": "1bb5f697691404c7a8ed19c20fc77aa79c5aa3fa31a81248d10c7e958d3ac2f0",
+  "source_paths_verified": 380,
+  "commands_exit0": 10,
+  "results": [
+    {
+      "mode": "C1",
+      "actual20_rows": 1000,
+      "local8_rows": 200,
+      "max_finest_relative_closure_error": 7.45301985124587e-09,
+      "maximum_local8_real_root": -1.151320962791646,
+      "max_error_omitting_coefficient_gradient": 7.45301985124587e-09
+    },
+    {
+      "mode": "blend",
+      "actual20_rows": 1000,
+      "local8_rows": 200,
+      "max_finest_relative_closure_error": 7.45301985124587e-09,
+      "maximum_local8_real_root": -1.151320962791646,
+      "max_error_omitting_coefficient_gradient": 0.01290836455449156
+    }
+  ],
+  "all_C1_parts_and_covector_repair_same_coefficient": true,
+  "gradient_c_source": "gamma^ja c_a DeltaS_ij-c_i gamma^ja DeltaS_ja",
+  "outer_support_bound_a05": 0.2775,
+  "tensor_gate": {
+    "rows": 4004,
+    "einstein_max": 0,
+    "outer_offconstraint_max": 0,
+    "outer_cutoff_jets_max": 0,
+    "support_Omega_bound_margin": 0.005516273521495904,
+    "reference_addition_max": 1.3971625731528928e-15
+  },
+  "physical_P_storage_and_lapse_gauge_unchanged": true,
+  "geometric_P_RHS_receives_C1_trace_addition": true,
+  "admission": "Fixed finite-Omega exploratory RHS/Jv/RK/reference/short screens only",
+  "uniform_energy_scri_native_stability_or_BH_accepted": false,
+  "source_sha256": "24750e3268e91cecebbcd063bc4f2c26c58ca23f4a1a264205de057e786d9c67"
+}

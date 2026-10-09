@@ -1,0 +1,30 @@
+{
+  "command": [
+    "/usr/bin/c++",
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-DKOKKOS_DEPENDENCE",
+    "-Isrc",
+    "-Ibuild-layer-release",
+    "-Ibuild-layer-release/kokkos",
+    "-Ibuild-layer-release/kokkos/core/src",
+    "-Ikokkos/core/src",
+    "-Ibuild-layer-release/kokkos/containers/src",
+    "-Ikokkos/containers/src",
+    "-Ibuild-layer-release/kokkos/algorithms/src",
+    "-Ikokkos/algorithms/src",
+    "-Ibuild-layer-release/kokkos/simd/src",
+    "-Ikokkos/simd/src",
+    "-isystem",
+    "kokkos/tpls/desul/include",
+    "-isystem",
+    "kokkos/tpls/mdspan/include",
+    "build-layer-research/continuum/covariant-constraint-propagation/constraint_tangent.cpp",
+    "-o",
+    "build-layer-research/continuum/covariant-constraint-propagation/constraint_tangent"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "In file included from build-layer-research/continuum/covariant-constraint-propagation/constraint_tangent.cpp:4:\nbuild-layer-research/continuum/covariant-constraint-propagation/../covariant-z4-candidate/full20.cpp:99:1: warning: non-void function does not return a value [-Wreturn-type]\n   99 | }\n      | ^\n1 warning generated.\n"
+}

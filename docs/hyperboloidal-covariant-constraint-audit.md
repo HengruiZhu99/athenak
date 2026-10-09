@@ -170,3 +170,7 @@ Verify the archive using its `verify_archive.py`; do not rerun frozen collectors
 or captured scripts in their archived paths. Production remains unchanged.
 Stable finite gauge-pulse evolution and a subsequent wormhole-to-trumpet
 transition with the Minkowski reference remain outstanding.
+
+The [inner constraint-blend audit](hyperboloidal-inner-constraint-blend-audit.md)
+records the subsequent compact-support C1 candidate. Its mixed native/global
+results do not establish stabilization; production remains unchanged.
