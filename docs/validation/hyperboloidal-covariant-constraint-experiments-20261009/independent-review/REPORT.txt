@@ -1,0 +1,56 @@
+Independent C1 finite-Omega review and undamped covector-wave check
+
+Scratch-only PASS. No production edit, live falloff assumption, uniform raw-norm
+estimate, native stability acceptance, nonlinear scri closure or BH action.
+
+The immutable candidate v1 index321439833808976b1b6ebfc99e443b0f61e0018b4a0aea257986ae55f0e846a8
+and prose-corrected v2 indexd8d137e4422dec83ec685f0fee45fc80d3363cbf6a3252fec8b8d41c53c485ed
+are hash-checked. All370 unique source inputs and four successful commands
+are verified. v2 preserves v1 numerical data, sources and receipt. The earlier
+report count374 was false; its independent failed assertion/source/log and the
+unchanged v1 remain retained. The separate native baseline has369 source plus4
+overlay records; it is a different manifest.
+
+The independent NumPy audit reads384 actual full20 k0 matrices. At the analytic
+reference, Omega² L[Lambda_r,Theta]=-2r/a² (S1) holds within1.78e-15. Defining
+y=T u with Omega on Atilde/Lambda indices12..19, B=Omega T L T^-1 reproduces
+the proposed finite-Omega scaling. RK3 polynomial similarity error is2.19e-16.
+The norm degenerates at scri and is not imposed on runtime data.
+
+All5040 local scalar RK checks independently reproduce the negative-root
+excess0; all810 exact propagator norms agree within5.41e-13 relative. Ninety-six
+smallest-Omega norm/spectrum comparisons agree within9.26e-15. The independent
+exponential uses Taylor scaling/squaring at one-norm<=.125, without SciPy or
+eigenvector decomposition. Final numerical checks enable floating exceptions
+and use unoptimized einsum. An initial missing-SciPy import and an all-finite
+but BLAS-warning first numerical run are preserved as separate history.
+
+For a.5,kappa10,repaired C1,norm gauge,Omega1e-5, the balanced generator norm
+is54.37280039, raw RK3 norm18583.22699, weighted RK3 norm1.525451387 and exact
+weighted norm1.517586522. Omega times raw RK3 norm tends.18583227. This large
+raw transient is also present in the exact propagator. Small positive slow
+primitive roots are retained at kappa10; they are not identified as subsidiary
+eigenmodes. At kappa5,a.5 the repaired norm-gauge reference has a positive
+leading scaled root Omega Re(lambda)=.22045277 atOmega1e-5 (.10493749 for the
+generic perturbed jet), rather than merely a bounded slow root. This supports
+no kappa5 native launch.
+
+The separate symbolic/100-digit wave check is kappa0 physical Minkowski,
+away from R0. For T=t+h(R),R=r/Omega,h_R=b/A,L=Omega-rOmega',A²=Omega²+b²,
+the exact outgoing covector Z=F(T-R)dT/R has
+Theta_phys=-A F/r, Z_r=h_R L F/(rOmega), Omega Z_i=h_R L F*n_i/r.
+At CMC scri these tend -F(u_scri)/a and+F(u_scri)n_i/a, respectively. Thus
+generic finite nonzero physicalTheta and divergent coordinate Zi can coexist
+for an exact undamped subsidiary wave. The statement is not a falloff rule
+for the actual damped C1 system.
+
+The tempting null polarization F(u)du/R has ThetaO(Omega²),ZrO(Omega), but is
+generally not an exact3+1 covector wave: inertial spatial components-n_i F/R
+carry an l1 angular residual+2n_i F/R³. The exact gradient wave
+d(F(u)/R)=F'(u)du/R-F(u)dR/R² instead has genericThetaO(Omega),ZrO(1).
+Symbolic scalar/gradient/angular identities and12 finite-coordinate normal
+contractions at100digits (three S/a pairs,Omega1e-3..1e-40) pass.
+
+Sources, commands and interpreter versions are in the indexed files. Large
+candidate matrices are referenced by SHA256 only and remain in their own
+frozen index. Every pre-existing frozen directory is unchanged.

@@ -1,0 +1,51 @@
+{
+  "scope": "scratch-only copied native20 build command still used original working directory, corrected before any use; production source/executable unaffected",
+  "wrong_command": [
+    "/usr/bin/c++",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-covariant-c1/overlay",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-covariant-c1/full22-candidate",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/tangent_server.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-production",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "wrong_scratch_binary_sha256": "4e458f4336ba372da533217cc0bef51753ef904eb8f9992907b6a31d1d1fae48",
+  "restored_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-production",
+  "restored_from": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/projected-v1/server-production",
+  "restored_sha256": "565f428febb35aebde603a1c511b5a4aa859de2321444ea925824e5345ba523a",
+  "expected_sha256": "565f428febb35aebde603a1c511b5a4aa859de2321444ea925824e5345ba523a",
+  "checks": {
+    "production": {
+      "working_binary_sha256": "565f428febb35aebde603a1c511b5a4aa859de2321444ea925824e5345ba523a",
+      "preserved_binary_sha256": "565f428febb35aebde603a1c511b5a4aa859de2321444ea925824e5345ba523a"
+    },
+    "spatialnorm": {
+      "working_binary_sha256": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+      "preserved_binary_sha256": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0"
+    }
+  }
+}

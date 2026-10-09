@@ -1,0 +1,224 @@
+{
+  "gauge": "spatialnorm",
+  "method": "krylov",
+  "semantics": "continuous projected semidiscrete global generator; exact native final-only RK3 one-step separately validated",
+  "outward_reference_crossing_time": 0.7457643839234269,
+  "stop_in_reference_crossings": 0.06704530422457647,
+  "component_norm_definition": "sum of squares of 22 native stored upper-tensor/scalar/vector perturbation components; gradient contracted with reference conformal spatial inverse; Cartesian quadrature h^3 sqrt(det gamma_bar). This is a reference weighted component H1 norm, not invariant tensor or proved symmetrizer energy.",
+  "native_constraint_norm_definition": "RMS H and covector M,Z contracted with reference gamma_bar inverse, matching linearized native diagnostics; no volume weight for these RMS norms",
+  "radial_bins": [
+    0,
+    0.2,
+    0.4,
+    0.6,
+    0.8,
+    0.9,
+    0.95,
+    1
+  ],
+  "histories": [
+    {
+      "name": "gauge_pulse",
+      "history": [
+        {
+          "time": 0.0,
+          "euclidean_component_l2": 1.0,
+          "max_abs_22component": 0.15825976596059085,
+          "reference_volume_component_l2": 0.05293878192931197,
+          "reference_volume_component_H1": 0.25936190193894404,
+          "native_H_M_Z_rms": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "outer_r09_squared_component_fraction": 1.343355260865279e-09,
+          "outer_r09_squared_constraints_fraction": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "peak_component_radius": 0.11907849302036032,
+          "peak_H_M_Z_radius": [
+            0.9795367208532817,
+            0.9795367208532817,
+            0.9795367208532817
+          ],
+          "reference_volume_component_l2_amplification": 1.0,
+          "reference_volume_component_H1_amplification": 1.0,
+          "euclidean_component_amplification": 1.0
+        },
+        {
+          "time": 0.025,
+          "euclidean_component_l2": 1.426022463513867,
+          "max_abs_22component": 0.17327685516474048,
+          "reference_volume_component_l2": 0.07623323698869544,
+          "reference_volume_component_H1": 0.5205204736602989,
+          "native_H_M_Z_rms": [
+            0.01673103028131548,
+            0.025897621122500585,
+            0.0052868922430602365
+          ],
+          "outer_r09_squared_component_fraction": 0.11593281738079925,
+          "outer_r09_squared_constraints_fraction": [
+            0.06243158656391183,
+            0.8477753323229245,
+            0.9660829179714842
+          ],
+          "peak_component_radius": 0.11907849302036032,
+          "peak_H_M_Z_radius": [
+            0.22801795433693378,
+            0.9986514344354592,
+            0.9986514344354592
+          ],
+          "reference_volume_component_l2_amplification": 1.4400262758309788,
+          "reference_volume_component_H1_amplification": 2.0069272694600833,
+          "euclidean_component_amplification": 1.426022463513867
+        },
+        {
+          "time": 0.05,
+          "euclidean_component_l2": 2.20732766136829,
+          "max_abs_22component": 0.32003100082792985,
+          "reference_volume_component_l2": 0.11856680577694574,
+          "reference_volume_component_H1": 0.8871127120897226,
+          "native_H_M_Z_rms": [
+            0.02848230860959247,
+            0.03560784894382101,
+            0.009185044678912306
+          ],
+          "outer_r09_squared_component_fraction": 0.1777514012498725,
+          "outer_r09_squared_constraints_fraction": [
+            0.03906347331145495,
+            0.8206153023624435,
+            0.9546316165145903
+          ],
+          "peak_component_radius": 0.11907849302036032,
+          "peak_H_M_Z_radius": [
+            0.22801795433693378,
+            0.9986514344354592,
+            0.9986514344354592
+          ],
+          "reference_volume_component_l2_amplification": 2.239696522206829,
+          "reference_volume_component_H1_amplification": 3.420366312314275,
+          "euclidean_component_amplification": 2.20732766136829
+        }
+      ],
+      "constraint_amplitude_convergence": [
+        {
+          "time": 0.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 0.0
+        },
+        {
+          "time": 0.025,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 2.131125400620534e-09
+        },
+        {
+          "time": 0.05,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 2.7485072773401163e-09
+        }
+      ]
+    },
+    {
+      "name": "shell_random",
+      "history": [
+        {
+          "time": 0.0,
+          "euclidean_component_l2": 1.0,
+          "max_abs_22component": 0.05835752143979452,
+          "reference_volume_component_l2": 0.0577254686232822,
+          "reference_volume_component_H1": 1.2323926661750164,
+          "native_H_M_Z_rms": [
+            0.7301224533252634,
+            0.18355585462419577,
+            0.11232837407083593
+          ],
+          "outer_r09_squared_component_fraction": 0.0025977675848048087,
+          "outer_r09_squared_constraints_fraction": [
+            0.017872565240736375,
+            0.6529195909272448,
+            0.7260002175811691
+          ],
+          "peak_component_radius": 0.8105505459254223,
+          "peak_H_M_Z_radius": [
+            0.8105505459254224,
+            0.9986514344354591,
+            0.9986514344354592
+          ],
+          "reference_volume_component_l2_amplification": 1.0,
+          "reference_volume_component_H1_amplification": 1.0,
+          "euclidean_component_amplification": 1.0
+        },
+        {
+          "time": 0.025,
+          "euclidean_component_l2": 4.969716290362513,
+          "max_abs_22component": 0.4866662601557936,
+          "reference_volume_component_l2": 0.2704555864297495,
+          "reference_volume_component_H1": 4.060076290121132,
+          "native_H_M_Z_rms": [
+            0.19665267028890393,
+            0.3342121919395153,
+            0.03912373448068209
+          ],
+          "outer_r09_squared_component_fraction": 0.6128022714381675,
+          "outer_r09_squared_constraints_fraction": [
+            0.009753056714243341,
+            0.3612600800054055,
+            0.5004299807277286
+          ],
+          "peak_component_radius": 0.9986514344354591,
+          "peak_H_M_Z_radius": [
+            0.8105505459254224,
+            0.8335494511425223,
+            0.9600415030091147
+          ],
+          "reference_volume_component_l2_amplification": 4.685203825624165,
+          "reference_volume_component_H1_amplification": 3.2944664485244073,
+          "euclidean_component_amplification": 4.969716290362513
+        },
+        {
+          "time": 0.05,
+          "euclidean_component_l2": 3.467566546462592,
+          "max_abs_22component": 0.29017065286633653,
+          "reference_volume_component_l2": 0.18722143988834417,
+          "reference_volume_component_H1": 2.7488458293021987,
+          "native_H_M_Z_rms": [
+            0.08274574734710356,
+            0.19159462307560537,
+            0.021685776930503553
+          ],
+          "outer_r09_squared_component_fraction": 0.5865046380817788,
+          "outer_r09_squared_constraints_fraction": [
+            0.017283680016471688,
+            0.3836053463720443,
+            0.5626367411863978
+          ],
+          "peak_component_radius": 0.9795367208532817,
+          "peak_H_M_Z_radius": [
+            0.8335494511425223,
+            0.9600415030091147,
+            0.9600415030091147
+          ],
+          "reference_volume_component_l2_amplification": 3.2433074057857514,
+          "reference_volume_component_H1_amplification": 2.2304951211968875,
+          "euclidean_component_amplification": 3.467566546462592
+        }
+      ],
+      "constraint_amplitude_convergence": [
+        {
+          "time": 0.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 2.810217541596382e-10
+        },
+        {
+          "time": 0.025,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 4.726176013552334e-10
+        },
+        {
+          "time": 0.05,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 5.317655107106524e-10
+        }
+      ]
+    }
+  ],
+  "ritz_from_history": [],
+  "diagnostic_seconds": 0.16176479200000005,
+  "diagnostic_server_exit": 0
+}

@@ -375,3 +375,7 @@ full-precision reviews are in the receipts. Original regression results for
 production implementation27 remain in the earlier validation report; no new
 production modification is inferred from private experiments or this evidence
 commit. Existing frozen archives are not rewritten.
+
+The follow-up [covariant constraint audit](hyperboloidal-covariant-constraint-audit.md)
+records finite-Omega C1 stiffness, native short-pulse and exploratory global
+negative screens. C1 is not adopted.

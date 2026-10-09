@@ -1,0 +1,61 @@
+[
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-z4-candidate/full20.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-z4-candidate/full20"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-z4-candidate/full20"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "Fourier.json",
+    "stdout_sha256": "55cd0a1e2bdd2d655179e2a4947fae918c0e4b3c52a10cdd84d5ec89e6cfd234"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-z4-candidate/full20",
+      "--small-Omega"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "small-Omega.json",
+    "stdout_sha256": "562a4ab47ef99dc57d18c5b26c050cb846ef36b78cced0f3d32cd26f71a9caef"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/covariant-z4-candidate/check_stiffness.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout_file": "check.log",
+    "stdout_sha256": "857ff2635a74a8c341dd34dba808177cc5071230bc80f22dcb0a66cf12e6c91e"
+  }
+]

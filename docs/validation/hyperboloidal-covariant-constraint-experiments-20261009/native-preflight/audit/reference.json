@@ -1,0 +1,683 @@
+{
+  "status": "PASS",
+  "scope": "Fixed finite-Omega C1 native preflight; no stability, scri closure or BH acceptance",
+  "head": "aef47b0ab6484546887fbeef72eaa7449fff064d",
+  "seconds": 0.288903791,
+  "build_verification": {
+    "status": "PASS",
+    "private_build_receipt_sha256": "d3ce419ae6406570ee95ed9e206305e5e13788f44c461a1897db907b11e54e19",
+    "baseline_sources": 369,
+    "baseline_overlays": 4,
+    "private_sources": 3,
+    "private_objects": 6,
+    "repository_dependencies": 269,
+    "all182_original_objects_and4_libraries_unchanged": true,
+    "actual_compile_and_link_replacements_verified": true,
+    "compiled_objects": [
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "object": "cfcc2f9808751ecdc708c9d2ae457f46db2135ed2b80cdfb90e50e53aa0edf52",
+        "dependency": "9b71a524d30673eeb835945c73800a6b139a543a031c01adacf59fce047b02af"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "object": "04308c2f0d02888ef9d4758d294ae8605f4c0089154d9d3edd73e52dc3ae0676",
+        "dependency": "c191e29cf78ef92b320fb54771f5196d00718788c5487b79d6bf34f521b1acbe"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "object": "8316363279e3e680101cc63682b3f6abecc9405a024dd7740fc55963ded8400d",
+        "dependency": "938d5ba34097f15003a70c8b9db99fadd938ca4f9126b813e4584faf217d43db"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "object": "4137cbdad2e6cdf842042c7ffe83b3d1c46061b636a3e47313808130a577619d",
+        "dependency": "79baaa03155ae2f0debf8e09ab758f3e48a67e228258f326636e6fe700cef218"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "object": "89c5e6f1e0a0a15825a350b7a97647fe445ebb8c8d5a97b4a624c2f1a6e56346",
+        "dependency": "66aa2c87efa627fbcb26526da1759a411aa2b5263ea99afa8a8a2af477bc03a3"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "object": "2ef7e1a134c900446552c393efa9eba946c59f02ee9f1ddde124480a3bc44516",
+        "dependency": "81147ad4cf9053b2b8d369a47497bf2e8b9f37b3793c9f71b2c9fa41ee915ae3"
+      }
+    ],
+    "native_override_byteidentical": true,
+    "as_built_gate_v1": "321439833808976b1b6ebfc99e443b0f61e0018b4a0aea257986ae55f0e846a8",
+    "launch_prose_correction_v2": "d8d137e4422dec83ec685f0fee45fc80d3363cbf6a3252fec8b8d41c53c485ed",
+    "gate_numeric_source_receipts_identical": true,
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "84bb958271395e019c1f26d56f50253f64b7e87ade1bfd40d928d443d03918b6"
+  },
+  "private_case": "reference-long-N24",
+  "baseline_case": "reference-long-N24",
+  "input_parameter_differences": {},
+  "initial_active25_binary64_bitwise_equal": true,
+  "initial_geometry_bitwise_equal_zero_reference": true,
+  "coordinates_masks_and_grid_bitwise_equal": true,
+  "exact_final_comparison_time": 0.05,
+  "original_HST_diagnostics": {
+    "H": {
+      "private": 8.42490468510105e-14,
+      "baseline": 8.477891400533267e-14,
+      "ratio": 0.9937500124820089
+    },
+    "M": {
+      "private": 2.872681839090743e-14,
+      "baseline": 2.687926841005914e-14,
+      "ratio": 1.0687351289723672
+    },
+    "Z": {
+      "private": 1.3469286015004198e-15,
+      "baseline": 1.2542892301336465e-15,
+      "ratio": 1.0738580617142846
+    },
+    "Theta": {
+      "private": 1.0529829958165314e-15,
+      "baseline": 9.974238931711035e-16,
+      "ratio": 1.0557025984897848
+    }
+  },
+  "final_equal_time_binary64_fields": {
+    "z4c_chi": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 2.220446049250313e-16,
+      "final_rms_difference": 4.003566622526982e-18
+    },
+    "z4c_gxx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_gxy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 2.346055731358705e-16,
+      "final_rms_difference": 1.2881661880534131e-17
+    },
+    "z4c_gxz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.7510505926387884e-16,
+      "final_rms_difference": 1.2605857769132366e-17
+    },
+    "z4c_gyy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_gyz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 2.443414742896905e-16,
+      "final_rms_difference": 1.2928605553387207e-17
+    },
+    "z4c_gzz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_Khat": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 5.551115123125783e-17,
+      "final_rms_difference": 7.094685199922176e-19
+    },
+    "z4c_Axx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 3.3558544940865656e-15,
+      "final_rms_difference": 2.200999094468989e-16
+    },
+    "z4c_Axy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 4.152202456665958e-15,
+      "final_rms_difference": 2.0150176344169164e-16
+    },
+    "z4c_Axz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 3.7332659366982006e-15,
+      "final_rms_difference": 1.9063403376437008e-16
+    },
+    "z4c_Ayy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 4.076258598258107e-15,
+      "final_rms_difference": 2.27359047835843e-16
+    },
+    "z4c_Ayz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 4.515496516370867e-15,
+      "final_rms_difference": 2.1353675802610054e-16
+    },
+    "z4c_Azz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 4.269822464072131e-15,
+      "final_rms_difference": 2.432246589088607e-16
+    },
+    "z4c_Gamx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 9.205324396748308e-15,
+      "final_rms_difference": 7.321581012754829e-16
+    },
+    "z4c_Gamy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 8.768232138665637e-15,
+      "final_rms_difference": 7.569047060261211e-16
+    },
+    "z4c_Gamz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.1797798727884746e-14,
+      "final_rms_difference": 7.613978769815696e-16
+    },
+    "z4c_Theta": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 6.018898825732046e-16,
+      "final_rms_difference": 7.742278822963997e-17
+    },
+    "z4c_alpha": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_betax": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 5.421010862427522e-20,
+      "final_rms_difference": 1.0208268166301392e-21
+    },
+    "z4c_betay": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 5.421010862427522e-20,
+      "final_rms_difference": 1.1110068321405323e-21
+    },
+    "z4c_betaz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 6.776263578034403e-20,
+      "final_rms_difference": 1.692562265009851e-21
+    },
+    "z4c_Bx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_By": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_Bz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    }
+  },
+  "private_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/covariant-native/reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "8c4d940b336acab135381f50101e379245b9644b9a1e4489d201efc583e802c0",
+          "bytes": 2819674
+        },
+        "build-layer-research/covariant-native/reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "8e80b2e70a575e8845f66ba0fcf6698401fc4b141615fb6d4c7dd44a4bb52c8a",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.1733545236082387e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "d92c3bae23bc4a775298ecfb96d12e6a4a8356abc8c5b942e0371659735f79a6",
+          "bytes": 2819927
+        },
+        "build-layer-research/covariant-native/reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "fae1d2c1e88adbb4a02a4e7e2e603743d890e25b426300bb0599c1bee6ac97d1",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.4934131738772984e-14
+    }
+  ],
+  "baseline_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+          "bytes": 2819674
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0872299590955965e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+          "bytes": 2819927
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.3093295951669232e-14
+    }
+  ],
+  "zero_reference_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+          "bytes": 2819674
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0872299590955965e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+          "bytes": 2819927
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.3093295951669232e-14
+    }
+  ],
+  "all_run_files": {
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "5bfd4aae1cd93f3c27abcd3e5358d2edb98b276e5b02fa52d317790619147c88",
+      "bytes": 1955271
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "c2abf3d9de384d103efdda70abd39c3be755265ee4d2222a84478e31c6cd0952",
+      "bytes": 1955460
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "e18486ebd9cdfa13e6c9c933e70450cf4d5c047290fc7d7bedeb3ed4ce1c73c2",
+      "bytes": 1955853
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "b016de811a4bbfffd2e90a2b104a6e1180ec751f416e5d88493fbac6fcd8b097",
+      "bytes": 875184
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "62e30c8ec2381820627f2937cb095567ee3f748bf712024dec200d5f04385091",
+      "bytes": 875105
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "eaa476c0aa9715df1dc42c42369558323248fffec19c00b941e5e0952049a1d5",
+      "bytes": 875742
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+      "bytes": 2819329
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+      "bytes": 2819674
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+      "bytes": 2819927
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "32fce4a8c928311c21bae52cd6cefa86dbc347988e53e7f55701bbe956773395",
+      "bytes": 1397
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/layer.athinput": {
+      "sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "bytes": 2385
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+      "bytes": 5411042
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+      "bytes": 5411678
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+      "bytes": 5411678
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/run.log": {
+      "sha256": "bd63f8dce3560f35c6b0539b4cf0da656937bab9930e08ee9e89bb6f2c1f91d2",
+      "bytes": 621
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/results.json": {
+      "sha256": "16cae97747a0b072fac20f16c7e64fbd50e007aca2e34aebb415cc5028939e46",
+      "bytes": 10838
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    },
+    "build-layer-research/covariant-native/reference/athena-validation": {
+      "sha256": "84bb958271395e019c1f26d56f50253f64b7e87ade1bfd40d928d443d03918b6",
+      "bytes": 10432592
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "5bfd4aae1cd93f3c27abcd3e5358d2edb98b276e5b02fa52d317790619147c88",
+      "bytes": 1955271
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "692cb5c3de44d628690e1411acde19cbad2716167efcd5af764899e65edf2228",
+      "bytes": 1955460
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "35296eb3a9d0ed0da538e5cd88ab9328c577080885b69e6d8cebd8a53d6e492f",
+      "bytes": 1955853
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "b016de811a4bbfffd2e90a2b104a6e1180ec751f416e5d88493fbac6fcd8b097",
+      "bytes": 875184
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "a6956b85662b63d1e0b0a8583a3dd8d061a6e0e09ac7223ff1ecc265ad8797e0",
+      "bytes": 875105
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "871fecc9659ea42d6815bf1346b7720df760a6f45045f67aea78d0619635398e",
+      "bytes": 875742
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+      "bytes": 2819329
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "8c4d940b336acab135381f50101e379245b9644b9a1e4489d201efc583e802c0",
+      "bytes": 2819674
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "d92c3bae23bc4a775298ecfb96d12e6a4a8356abc8c5b942e0371659735f79a6",
+      "bytes": 2819927
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "340672891ff36c0d006d6d23bc7c499d205151fb11d836489d882f6a3f09b7fc",
+      "bytes": 1397
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/layer.athinput": {
+      "sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "bytes": 2385
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+      "bytes": 5411042
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "8e80b2e70a575e8845f66ba0fcf6698401fc4b141615fb6d4c7dd44a4bb52c8a",
+      "bytes": 5411678
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "fae1d2c1e88adbb4a02a4e7e2e603743d890e25b426300bb0599c1bee6ac97d1",
+      "bytes": 5411678
+    },
+    "build-layer-research/covariant-native/reference/reference-long-N24/run.log": {
+      "sha256": "fb34d858f02afe6bbf3705888fef68c580428e533f5a8d68130d63c899a3db73",
+      "bytes": 621
+    },
+    "build-layer-research/covariant-native/reference/results.json": {
+      "sha256": "c16c39a95e064fc3a409ed06051ebb2ce6883a2bcb8be367eaf252b03137e90c",
+      "bytes": 10661
+    },
+    "build-layer-research/covariant-native/reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/covariant-native/reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    }
+  },
+  "launch_files": {
+    "build-layer-research/covariant-native/reference-launch.json": {
+      "sha256": "a76931addbee36e749486aff9815d78808e8f8603b3d98e553333f6b88f40a2b",
+      "bytes": 2008
+    }
+  },
+  "audit_inputs": {
+    "build-layer-research/time-projection-controls/audit_composed_native.py": "088b456a99a9ff66ad905e7cc12c38da922656393e47c2835996ce7d8ddf6e69",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec",
+    "vis/python/bin_convert.py": "35e3ec2ebbe2d5a24af9bf1e4796cf1f20def58ce1d76c50f0166288b6d8f37c",
+    "tst/hyperboloidal/run_layer_validation.py": "ca81d60cc9a00b83f9325b79abce9fa3eaaade293e2c5f73c3a3d4bdbfac5d96"
+  },
+  "auditor_sha256": "98e9bb870ac6339fe76277ab3ec0ccdf929c7c945cbb3e38ef1408509fac0fe6",
+  "precision": "State is binary64 RST; all25 active BIN fields exactly match binary32 cast. Historical physical_metric_eigen keys mean Penrose gtilde/chi values; positivity is equivalent to physical SPD for Omega>0. Headerdt is at write time."
+}

@@ -1,0 +1,76 @@
+{
+  "gauge": "production",
+  "semantics": "exp(t PJ22Lift) via independent adaptive Arnoldi; coarse/fine truncation difference is empirical error control, not a rigorous nonnormal forward-error bound",
+  "coarse": 50,
+  "fine": 80,
+  "rtol": 1e-10,
+  "max_step": 0.1,
+  "stop": 0.05,
+  "matvecs": 560,
+  "seconds": 5.914268292,
+  "columns": [
+    {
+      "name": "gauge_pulse",
+      "seconds": 2.5775930000000002,
+      "steps": [
+        {
+          "time": 0.0125,
+          "dt": 0.0125,
+          "coarse_fine_max_relative_difference": 7.401081909839375e-11,
+          "basis_size": 80,
+          "rejections": 2
+        },
+        {
+          "time": 0.03125,
+          "dt": 0.018750000000000003,
+          "coarse_fine_max_relative_difference": 9.359748259139995e-13,
+          "basis_size": 80,
+          "rejections": 1
+        },
+        {
+          "time": 0.05,
+          "dt": 0.018750000000000003,
+          "coarse_fine_max_relative_difference": 1.717879657927501e-14,
+          "basis_size": 80,
+          "rejections": 0
+        }
+      ],
+      "final_euclidean_amplification": 2.2116013006678217
+    },
+    {
+      "name": "shell_random",
+      "seconds": 3.309340541,
+      "steps": [
+        {
+          "time": 0.00625,
+          "dt": 0.00625,
+          "coarse_fine_max_relative_difference": 2.2343134806654724e-15,
+          "basis_size": 80,
+          "rejections": 3
+        },
+        {
+          "time": 0.0171875,
+          "dt": 0.010937500000000001,
+          "coarse_fine_max_relative_difference": 4.8481067991269554e-15,
+          "basis_size": 80,
+          "rejections": 2
+        },
+        {
+          "time": 0.033593750000000006,
+          "dt": 0.01640625,
+          "coarse_fine_max_relative_difference": 1.2647490555210697e-13,
+          "basis_size": 80,
+          "rejections": 1
+        },
+        {
+          "time": 0.05,
+          "dt": 0.016406249999999997,
+          "coarse_fine_max_relative_difference": 6.154869490520053e-15,
+          "basis_size": 80,
+          "rejections": 0
+        }
+      ],
+      "final_euclidean_amplification": 3.686850095252269
+    }
+  ]
+}
