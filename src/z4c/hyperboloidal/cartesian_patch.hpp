@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include "z4c/hyperboloidal/athenak_bridge.hpp"
+#include "z4c/hyperboloidal/layer_gauge.hpp"
 #include "z4c/hyperboloidal/interior_dissipation.hpp"
 #include "z4c/hyperboloidal/spherical_ghosts.hpp"
 
@@ -88,6 +89,49 @@ OmegaJet<Real> CartesianOmega(const Z4cJet<Real> &u, const CMCPoint<Real> &p) {
   return o;
 }
 
+// Layer overloads retain the same physical storage and Cartesian basis.
+KOKKOS_INLINE_FUNCTION
+Real ReferenceComponent(int f, const LayerPoint<Real> &p) {
+  const auto &u = p.state;
+  if (f == Z4c::I_Z4C_CHI) return u.chi.value;
+  if (f == Z4c::I_Z4C_KHAT) return u.trace.value;
+  if (f == Z4c::I_Z4C_ALPHA) return u.alpha.value;
+  if (f >= Z4c::I_Z4C_BETAX && f <= Z4c::I_Z4C_BETAZ) {
+    return u.beta.value[f-Z4c::I_Z4C_BETAX];
+  }
+  if (f >= Z4c::I_Z4C_GAMX && f <= Z4c::I_Z4C_GAMZ) {
+    return u.lambda.value[f-Z4c::I_Z4C_GAMX];
+  }
+  const int ti[6] = {0,0,0,1,1,2}, tj[6] = {0,1,2,1,2,2};
+  if (f >= Z4c::I_Z4C_GXX && f <= Z4c::I_Z4C_GZZ) {
+    const int k = f-Z4c::I_Z4C_GXX;
+    return u.metric.g[ti[k]][tj[k]];
+  }
+  if (f >= Z4c::I_Z4C_AXX && f <= Z4c::I_Z4C_AZZ) {
+    const int k = f-Z4c::I_Z4C_AXX;
+    return u.a.k[ti[k]][tj[k]];
+  }
+  return 0;
+}
+
+KOKKOS_INLINE_FUNCTION
+void AddReferenceJet(Z4cJet<Real> &u, const LayerPoint<Real> &p,
+                     const LayerReference<Real> &) {
+  AddBackgroundJet(u,p.state);
+}
+
+KOKKOS_INLINE_FUNCTION
+OmegaJet<Real> CartesianOmega(const Z4cJet<Real> &u, const LayerPoint<Real> &p) {
+  OmegaJet<Real> o{};
+  o.omega = p.omega;
+  for (int i = 0; i < 3; ++i) {
+    o.gradient[i] = p.domega[i];
+    for (int j = 0; j < 3; ++j) o.hessian[i][j] = p.omega_hessian[i][j];
+  }
+  SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);
+  return o;
+}
+
 struct CartesianDiagnostics {
   double h_l2 = 0, m_l2 = 0, z_l2 = 0, theta_l2 = 0;
   double max_h = 0, max_m = 0, max_det = 0, max_trace = 0, max_deviation = 0;
@@ -105,7 +149,7 @@ struct CartesianDiagnostics {
 class CartesianConformalPatch {
  public:
   const SphericalGhostGrid grid;
-  const CMCReference<Real> reference;
+  const LayerReference<Real> reference;
   const int ghost_degree;
   Kokkos::View<int *> active;
   Kokkos::View<unsigned char *> mask;
@@ -116,11 +160,21 @@ class CartesianConformalPatch {
   Real min_omega = std::numeric_limits<Real>::infinity();
   Real kappa1 = 5, dissipation = 0.1;
   GaugeParameters<Real> gauge_parameters{2,0.1,1.5,1};
+  LayerGaugeParameters layer_gauge;
 
   explicit CartesianConformalPatch(SphericalGhostGrid g, Real curvature_radius = 1,
-                                     int degree = 3)
-      : grid(g), reference{g.radius,curvature_radius}, ghost_degree(degree) {
+                                     int degree = 3, LayerParameters layer = {},
+                                     LayerGaugeParameters gauge = {})
+      : grid(g), reference{g.radius,curvature_radius,layer}, ghost_degree(degree),
+        layer_gauge(gauge) {
     reference.Validate();
+    if (layer.enabled) {
+      layer_gauge.Validate(g.radius);
+      if (layer_gauge.preferred_source && !(layer_gauge.r0 > layer.r0)) {
+        throw std::invalid_argument(
+            "preferred projection must begin beyond the Cauchy interior");
+      }
+    }
     const auto plans = PlanSphericalGhosts(grid,3,ghost_degree);
     const int cells = grid.n[0]*grid.n[1]*grid.n[2];
     std::vector<int> nodes;
@@ -135,6 +189,11 @@ class CartesianConformalPatch {
       nodes.push_back(s);
       const auto p = reference.At(grid.first[0]+i*grid.h[0],grid.first[1]+j*grid.h[1],
                                   grid.first[2]+k*grid.h[2]);
+      if (!(p.omega > 0) || !(p.L > 0) || !(p.alpha > 0)
+          || !std::isfinite(p.omega) || !std::isfinite(p.L)
+          || !Geometry(p.state.metric).valid) {
+        throw std::invalid_argument("invalid geometry on active layer grid");
+      }
       min_omega = std::min(min_omega,p.omega);
     }
     Kokkos::deep_copy(mask,mh);
@@ -165,12 +224,13 @@ class CartesianConformalPatch {
     CheckShape(data);
     const auto g = grid;
     const auto ref = reference;
-    Kokkos::parallel_for("Cartesian CMC initialization",data.size(),
+    Kokkos::parallel_for("Cartesian reference initialization",
+        grid.n[0]*grid.n[1]*grid.n[2],
         KOKKOS_LAMBDA(const int index) {
-      const int cells = g.n[0]*g.n[1]*g.n[2], f = index/cells, s = index%cells;
+      const int s = index;
       const int i = s%g.n[0], j = s/g.n[0]%g.n[1], k = s/(g.n[0]*g.n[1]);
       const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);
-      data(0,f,k,j,i) = ReferenceComponent(f,p);
+      for (int f = 0; f < Z4c::nz4c; ++f) data(0,f,k,j,i) = ReferenceComponent(f,p);
     });
   }
 
@@ -200,13 +260,15 @@ class CartesianConformalPatch {
     const auto baseline = reconstruction_values;
     const bool reconstructed = baseline.size() != 0;
     const auto inside = mask;
-    Kokkos::parallel_for("Cartesian reference deviations",data.size(),
+    Kokkos::parallel_for("Cartesian reference deviations",grid.n[0]*grid.n[1]*grid.n[2],
         KOKKOS_LAMBDA(const int index) {
-      const int cells = g.n[0]*g.n[1]*g.n[2], f = index/cells, s = index%cells;
+      const int s = index;
       const int i = s%g.n[0], j = s/g.n[0]%g.n[1], k = s/(g.n[0]*g.n[1]);
       const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);
-      dev(0,f,k,j,i) = inside(s) ? data(0,f,k,j,i)
-          -(reconstructed ? baseline(0,f,k,j,i) : ReferenceComponent(f,p)) : 0;
+      for (int f = 0; f < Z4c::nz4c; ++f) {
+        dev(0,f,k,j,i) = inside(s) ? data(0,f,k,j,i)
+            -(reconstructed ? baseline(0,f,k,j,i) : ReferenceComponent(f,p)) : 0;
+      }
     });
     for (int f = 0; f < Z4c::nz4c; ++f) {
       FillSphericalGhosts(CartesianComponent{dev,f,g.n[0],g.n[1]},ghosts);
@@ -245,6 +307,7 @@ class CartesianConformalPatch {
     const auto output = BindCartesianFields(result);
     const auto initial_jets = reconstruction_jets;
     const auto gauge = gauge_parameters;
+    const auto lg = layer_gauge;
     const Real damping = kappa1, epsilon = dissipation;
     int failures = 0;
     Kokkos::parallel_reduce("Cartesian conformal Z4c evolution",nodes.extent(0),
@@ -272,7 +335,8 @@ class CartesianConformalPatch {
                                 omega.omega,rhs)
           || !AssembleInterior(ConformalRHS(background,omega0,damping,Real(0)),
                                 omega.omega,rhs0)
-          || !AssembleGaugeInterior(UnfactoredReferenceGauge(ref,p,u,gauge,true,true),
+          || !AssembleGaugeInterior(ref.layer.enabled ? InteriorLayerGauge(p,u,lg)
+              : UnfactoredReferenceGauge(ref,p,u,gauge,true,true),
                                      omega.omega,gauge_rhs)) {
         ++bad;
         return;
@@ -335,6 +399,41 @@ class CartesianConformalPatch {
     if (failures) throw std::runtime_error("invalid metric in conformal projection");
   }
 
+  Real MaxGaugeSpeed(const DvceArray5D<Real> &data) const {
+    CheckShape(data);
+    const auto g = grid;
+    const auto nodes = active;
+    const auto q = BindCartesianFields(data);
+    const auto lg = layer_gauge;
+    Real maximum = 0;
+    Kokkos::parallel_reduce("layer gauge speed bound",nodes.extent(0),
+        KOKKOS_LAMBDA(const int p, Real &speed) {
+      const int s = nodes(p), i = s%g.n[0], j = s/g.n[0]%g.n[1], k = s/(g.n[0]*g.n[1]);
+      MetricJet<Real> metric{};
+      for (int a = 0; a < 3; ++a)
+      for (int b = 0; b < 3; ++b) metric.g[a][b] = q.g_dd(0,a,b,k,j,i);
+      const auto geo = Geometry(metric);
+      const Real x = g.first[0]+i*g.h[0];
+      const Real y = g.first[1]+j*g.h[1], z = g.first[2]+k*g.h[2];
+      const Real alpha = q.alpha(0,k,j,i), chi = q.chi(0,k,j,i);
+      const auto c = LayerCoefficients(Kokkos::sqrt(x*x+y*y+z*z),alpha,lg);
+      if (!geo.valid || !(alpha > 0) || !(chi > 0)) {
+        speed = std::numeric_limits<Real>::infinity();
+        return;
+      }
+      for (int a = 0; a < 3; ++a) {
+        const Real v = Kokkos::abs(q.beta_u(0,a,k,j,i))
+            +Kokkos::sqrt(c.alpha2f*chi*geo.inverse[a][a]);
+        speed = Kokkos::fmax(speed,
+            Kokkos::isfinite(v) ? v : std::numeric_limits<Real>::infinity());
+      }
+    },Kokkos::Max<Real>(maximum));
+    if (!(maximum > 0) || !std::isfinite(maximum)) {
+      throw std::runtime_error("invalid live layer gauge speed");
+    }
+    return maximum;
+  }
+
   CartesianDiagnostics Diagnose(const DvceArray5D<Real> &data) const {
     Prepare(data);
     const auto g = grid;
@@ -377,8 +476,7 @@ class CartesianConformalPatch {
       diagnostics(point,8) = deviation;
       diagnostics(point,9) = diagnostics(point,10) = diagnostics(point,11) = 0;
       // An outer interior shell, not an evaluation of the continuum scri limit.
-      const Real radius = Kokkos::sqrt(p.beta[0]*p.beta[0]+p.beta[1]*p.beta[1]
-          +p.beta[2]*p.beta[2])*ref.curvature_radius;
+      const Real radius = p.radius;
       const Real width = 2*Kokkos::fmax(g.h[0],Kokkos::fmax(g.h[1],g.h[2]));
       if (radius > g.radius-width) {
         const auto parts = ConformalRHS(u,CartesianOmega(u,p),
@@ -409,12 +507,8 @@ class CartesianConformalPatch {
         }
         diagnostics(point,9) = maximum;
         diagnostics(point,11) = delta;
-        Real normal0 = 0, gradient2 = 0;
-        for (int a = 0; a < 3; ++a) {
-          normal0 -= p.beta[a]*p.domega[a]/p.alpha;
-          gradient2 += p.domega[a]*p.domega[a];
-        }
-        diagnostics(point,10) = Kokkos::abs(c.null_residual-gradient2+normal0*normal0);
+        diagnostics(point,10) = Kokkos::abs(c.null_residual
+            -p.omega*p.omega*p.n_residue);
       }
     },failures);
     if (failures) throw std::runtime_error("invalid Cartesian constraints");

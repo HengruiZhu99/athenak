@@ -13,6 +13,10 @@ namespace hyperboloidal {
 
 inline void InitializeCartesianTrumpet(CartesianConformalPatch &patch,
     const DvceArray5D<Real> &data, Real mass, bool analytic_reconstruction = true) {
+  if (patch.reference.layer.enabled) {
+    throw std::invalid_argument(
+        "CMC trumpet data are incompatible with the layer foliation");
+  }
   if (patch.reference.scri_radius != 1 || patch.reference.curvature_radius != 1) {
     throw std::invalid_argument("Cartesian trumpet requires S=a=1");
   }

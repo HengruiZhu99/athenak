@@ -1,5 +1,9 @@
 # Experimental hyperboloidal Z4c prototype
 
+The new Cauchy-interior/layer implementation and its **failed nonlinear stability
+gates** are documented in [hyperboloidal-layer.md](hyperboloidal-layer.md).
+The historical CMC evidence below does not validate that scheme.
+
 ## Status
 
 The branch now contains a **single-core spherical conformal Z4c evolver**, using
