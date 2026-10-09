@@ -1,0 +1,504 @@
+{
+  "authorization": {
+    "bytes": 623,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-joint-nonlinear-source003-root-release-20261009/authorization.json",
+    "sha256": "3f8a33c11a21202ae9d26d25a9053d137d708dd365f9cd1fe84c1d7068374384"
+  },
+  "build": "release",
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/c++",
+        "--version"
+      ],
+      "name": "compiler-version",
+      "returncode": 0,
+      "seconds": 0.017213374999999975,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/compiler-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 158,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/compiler-version.stdout",
+        "sha256": "f6a41663474c412322e565ec1a1aa27bcb42151b98d527dc401b7d744b9a4237"
+      }
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "name": "launch-HEAD",
+      "returncode": 0,
+      "seconds": 0.01073054200000001,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/launch-HEAD.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/launch-HEAD.stdout",
+        "sha256": "eeab967d5487a828a0d942678d5ef6d8b1cb39aeb8104cab51ad43eb360bc6b5"
+      }
+    },
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+        "-I",
+        "-B",
+        "--version"
+      ],
+      "name": "python-version",
+      "returncode": 0,
+      "seconds": 0.008120958000000011,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/python-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 13,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/python-version.stdout",
+        "sha256": "fd0fd4290ad100adc37e4a82e45f821faeacbecae70f4d3eba08e85be138c632"
+      }
+    },
+    {
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/inputs",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009",
+        "-std=c++17",
+        "-O3",
+        "-DNDEBUG",
+        "-DKOKKOS_DEPENDENCE",
+        "-Isrc",
+        "-Ibuild-layer-release",
+        "-Ibuild-layer-release/kokkos",
+        "-Ibuild-layer-release/kokkos/core/src",
+        "-Ikokkos/core/src",
+        "-Ibuild-layer-release/kokkos/containers/src",
+        "-Ikokkos/containers/src",
+        "-Ibuild-layer-release/kokkos/algorithms/src",
+        "-Ikokkos/algorithms/src",
+        "-Ibuild-layer-release/kokkos/simd/src",
+        "-Ikokkos/simd/src",
+        "-isystem",
+        "kokkos/tpls/desul/include",
+        "-isystem",
+        "kokkos/tpls/mdspan/include",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/dependencies.d",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/probe.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release"
+      ],
+      "name": "compile",
+      "returncode": 0,
+      "seconds": 1.470505667,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/compile.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/compile.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+        "reference"
+      ],
+      "name": "reference",
+      "returncode": 0,
+      "seconds": 0.49364200000000014,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/reference.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1910570,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/reference.stdout",
+        "sha256": "cc6847824a206c167b87784db5cf79ccbd64d7ce44bfa2753d07471ed016f644"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+        "sources"
+      ],
+      "name": "sources",
+      "returncode": 0,
+      "seconds": 0.3398230419999999,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/sources.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 18833669,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/sources.stdout",
+        "sha256": "5195be0cec25291d233f9736e6fa08d7198f74b9fb101bd1b7ade18a31778e19"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+        "coefficients"
+      ],
+      "name": "coefficients",
+      "returncode": 0,
+      "seconds": 0.00871195800000013,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/coefficients.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 507576,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/coefficients.stdout",
+        "sha256": "de864e9912ac98ae285edadf245703355f261be0ea52eb387e27b69c7a60ee92"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+        "core-witnesses"
+      ],
+      "name": "core-witnesses",
+      "returncode": 0,
+      "seconds": 0.009909541999999938,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/core-witnesses.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 300424,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/core-witnesses.stdout",
+        "sha256": "6720a30c8091e789daf4121cacdb148e971e10ed0811da5e24d831c372a63e59"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+        "principal"
+      ],
+      "name": "principal",
+      "returncode": 0,
+      "seconds": 0.4681304580000001,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/principal.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 24047854,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/principal.stdout",
+        "sha256": "9b3aaebba383eb0aafe8a69cdc269b3a936e4877c28eeaa6918d169256f58d20"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+        "duals"
+      ],
+      "name": "duals",
+      "returncode": 0,
+      "seconds": 0.5207851250000002,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/duals.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 24731430,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/duals.stdout",
+        "sha256": "12e8c2cddc98cc07eed73d3cc72f1ca3f01799e213e2736c04d94725d57cce3d"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+        "invalid"
+      ],
+      "name": "invalid",
+      "returncode": 0,
+      "seconds": 0.004217250000000394,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/invalid.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1362,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/invalid.stdout",
+        "sha256": "beb0f76a96bcb854c57a592759c00128ea87bdebf2687d8d502e42d2cb0dedd6"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+        "nonrepresentable"
+      ],
+      "name": "nonrepresentable",
+      "returncode": 0,
+      "seconds": 0.004464416999999887,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/nonrepresentable.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 84505,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/nonrepresentable.stdout",
+        "sha256": "36f8168249f4e80bb18e02094b8ed3df5378c10ffcf16362838ab53c6e039f2b"
+      }
+    },
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+        "-I",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/oracle.py",
+        "--authorization",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-joint-nonlinear-source003-root-release-20261009/authorization.json",
+        "--recipe",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/recipe.json",
+        "--attempt",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001"
+      ],
+      "name": "oracle",
+      "returncode": 1,
+      "seconds": 77.793025375,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/oracle.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 426,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/oracle.stdout",
+        "sha256": "1061401dda7e7076b95e542ecf950edf8f7f94f2814b8001c81fc6c8f7464c8d"
+      }
+    }
+  ],
+  "completed": false,
+  "executable_before": {
+    "bytes": 214064,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+    "sha256": "29fd0cb6bc3f01c11d152de1efb4b11ef9c3f85aa87916737af3a478cbe3b233"
+  },
+  "failure": {
+    "message": "Command failed: oracle",
+    "type": "RuntimeError"
+  },
+  "input_count": 2644,
+  "no_matrix_evolution_native_or_BH_admission": true,
+  "output_inventory": [
+    {
+      "bytes": 507576,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/coefficients.jsonl",
+      "sha256": "de864e9912ac98ae285edadf245703355f261be0ea52eb387e27b69c7a60ee92"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/coefficients.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 507576,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/coefficients.stdout",
+      "sha256": "de864e9912ac98ae285edadf245703355f261be0ea52eb387e27b69c7a60ee92"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/compile.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/compile.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/compiler-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 158,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/compiler-version.stdout",
+      "sha256": "f6a41663474c412322e565ec1a1aa27bcb42151b98d527dc401b7d744b9a4237"
+    },
+    {
+      "bytes": 300424,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/core-witnesses.jsonl",
+      "sha256": "6720a30c8091e789daf4121cacdb148e971e10ed0811da5e24d831c372a63e59"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/core-witnesses.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 300424,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/core-witnesses.stdout",
+      "sha256": "6720a30c8091e789daf4121cacdb148e971e10ed0811da5e24d831c372a63e59"
+    },
+    {
+      "bytes": 94382,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/dependencies.d",
+      "sha256": "52702d8fbece332101ee7d2c4b5e51de9114ccc28dc34b2b890e190a298eed9d"
+    },
+    {
+      "bytes": 232683,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/dependencies.json",
+      "sha256": "cb73ad3d032fb749ccfdaf3d6bb10f71dbe791738cfec9ee68ae057995a8bb00"
+    },
+    {
+      "bytes": 24731430,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/duals.jsonl",
+      "sha256": "12e8c2cddc98cc07eed73d3cc72f1ca3f01799e213e2736c04d94725d57cce3d"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/duals.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 24731430,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/duals.stdout",
+      "sha256": "12e8c2cddc98cc07eed73d3cc72f1ca3f01799e213e2736c04d94725d57cce3d"
+    },
+    {
+      "bytes": 214064,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/inner-probe-release",
+      "sha256": "29fd0cb6bc3f01c11d152de1efb4b11ef9c3f85aa87916737af3a478cbe3b233"
+    },
+    {
+      "bytes": 1362,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/invalid.jsonl",
+      "sha256": "beb0f76a96bcb854c57a592759c00128ea87bdebf2687d8d502e42d2cb0dedd6"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/invalid.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1362,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/invalid.stdout",
+      "sha256": "beb0f76a96bcb854c57a592759c00128ea87bdebf2687d8d502e42d2cb0dedd6"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/launch-HEAD.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/launch-HEAD.stdout",
+      "sha256": "eeab967d5487a828a0d942678d5ef6d8b1cb39aeb8104cab51ad43eb360bc6b5"
+    },
+    {
+      "bytes": 84505,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/nonrepresentable.jsonl",
+      "sha256": "36f8168249f4e80bb18e02094b8ed3df5378c10ffcf16362838ab53c6e039f2b"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/nonrepresentable.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 84505,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/nonrepresentable.stdout",
+      "sha256": "36f8168249f4e80bb18e02094b8ed3df5378c10ffcf16362838ab53c6e039f2b"
+    },
+    {
+      "bytes": 12053142,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/oracle-report.json",
+      "sha256": "ccbdfc6cf765d21446e07d57cbe9c34fd32dd892f0b67585db134fdd851f7f8e"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/oracle.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 426,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/oracle.stdout",
+      "sha256": "1061401dda7e7076b95e542ecf950edf8f7f94f2814b8001c81fc6c8f7464c8d"
+    },
+    {
+      "bytes": 24047854,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/principal.jsonl",
+      "sha256": "9b3aaebba383eb0aafe8a69cdc269b3a936e4877c28eeaa6918d169256f58d20"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/principal.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 24047854,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/principal.stdout",
+      "sha256": "9b3aaebba383eb0aafe8a69cdc269b3a936e4877c28eeaa6918d169256f58d20"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/python-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 13,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/python-version.stdout",
+      "sha256": "fd0fd4290ad100adc37e4a82e45f821faeacbecae70f4d3eba08e85be138c632"
+    },
+    {
+      "bytes": 1910570,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/reference.jsonl",
+      "sha256": "cc6847824a206c167b87784db5cf79ccbd64d7ce44bfa2753d07471ed016f644"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/reference.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1910570,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/reference.stdout",
+      "sha256": "cc6847824a206c167b87784db5cf79ccbd64d7ce44bfa2753d07471ed016f644"
+    },
+    {
+      "bytes": 18833669,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/sources.jsonl",
+      "sha256": "5195be0cec25291d233f9736e6fa08d7198f74b9fb101bd1b7ade18a31778e19"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/sources.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 18833669,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/sources.stdout",
+      "sha256": "5195be0cec25291d233f9736e6fa08d7198f74b9fb101bd1b7ade18a31778e19"
+    }
+  ],
+  "passed": false,
+  "recipe_sha256": "a8b4d9393d9bd745b35dc88f79394dfc2dd2b5b9f0b567fde5658d4c22ca7ab7",
+  "returncode": 1,
+  "scientific_scope": "finite-Omega local gauge/helper plus actual C0 analytic-jet20-dual only",
+  "source_index_sha256": "6d0f91c4b7bf701f83d723f81c89df8265f76fe839ef4f522e6e056b9544d671",
+  "source_inputs_unchanged": true
+}

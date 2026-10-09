@@ -1,0 +1,89 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-launch-held-20261009/run_derivatives_once.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-launch-held-20261009/run_derivatives_once.py
+@@ -18,17 +18,18 @@
+ 
+ 
+ HERE = Path(__file__).resolve().parent
+-CANDIDATE = HERE.parent/"native-angular-pulse-flat-derivatives-v2-held-20261009"
++CANDIDATE = HERE.parent/"native-angular-pulse-flat-derivatives-compact-full-held-20261009"
+ INDEX = CANDIDATE/"source-index.json"
+-INDEX_SHA256 = "5e30fe0fa20ab5fb1bd75a73a768a4fa29a2bc0ce5e03d4309f7a5e0ea55408b"
++INDEX_SHA256 = "47503416e8d44fe51ff51e6dc38ea69ba6cce6c73d361572a9f5fc958aa16b01"
+ INVOCATION = HERE/"derivative-invocation001"
+ OUTPUT = HERE/"derivative-attempt001"
+ PLAN = HERE/"launch-plan.json"
+ PROSE_PLAN = HERE/"PLAN.md"
+ RECIPE = CANDIDATE/"derivative-recipe.json"
+-CHILD = CANDIDATE/"flat_ivp_derivatives.py"
+-CHILD_NAMES = ["flat_ivp_derivatives.py", "analytic_jets.py", "values_context.py", "PLAN.md", "derivative-recipe.json"]
++CHILD = CANDIDATE/"full_gate.py"
++CHILD_NAMES = ["full_gate.py", "compact_root.py", "derivative_core.py", "analytic_jets.py", "values_context.py", "PLAN.md", "derivative-recipe.json"]
+ EXPECTED = {"native_rows":100,"control_rows":100,"initial_rows":28,"checks":2360}
++ROOT_COUNTS = {"native":189440,"control":189440,"initial":114688}
+ COST = {"angular_nodes_sum_per_event_and_precision":9472,
+         "native_events":5,"native_boosts":2,"precisions":2,
+         "native_ray_integrand_evaluations":189440,
+@@ -38,6 +39,8 @@
+         "initial_ray_integrand_evaluations":114688,
+         "total_differentiated_ray_integrand_evaluations":493568,
+         "independent_coarea_cross_bindings":10,
++        "independent_coarea_nodes":163840,
++        "compact_root_newton_iterations":16,
+         "measured_runtime_available":False}
+ 
+ 
+@@ -82,13 +85,13 @@
+     child_output_before_read=None
+     protected={str(Path(__file__).resolve()):hash_or_error(__file__),str(PLAN):hash_or_error(PLAN),str(PROSE_PLAN):hash_or_error(PROSE_PLAN),str(INDEX):hash_or_error(INDEX),str(authpath):hash_or_error(authpath)}
+     before={path:hash_or_error(path) for path in protected}
+-    receipt={"kind":"One-shot analytic derivative outer invocation",
++    receipt={"kind":"One-shot compact-root full analytic derivative outer invocation",
+              "scientific_gate_accepted":False,"accepted_native":False,
+              "inverse_map_attempted":False,"invocation":str(INVOCATION),
+              "sole_child_output":str(OUTPUT),"authorization":str(authpath),
+              "outer_argv":sys.argv,"outer_python":sys.executable,
+              "outer_python_version":platform.python_version(),
+-             "expected_child_counts":EXPECTED,"fixed_cost_breakdown":COST,
++             "expected_child_counts":EXPECTED,"expected_completed_roots_by_kind":ROOT_COUNTS,"fixed_cost_breakdown":COST,
+              "runtime_is_not_measured_in_source_only_plan":True,
+              "inherited_environment":{key:os.environ.get(key) for key in ["PYTHONDONTWRITEBYTECODE","OPENBLAS_NUM_THREADS","VECLIB_MAXIMUM_THREADS","PYTHONPATH","PYTHONHOME","PYTHONWARNINGS"]}}
+     write(INVOCATION/"startup.json",receipt)
+@@ -109,15 +112,15 @@
+             raise PermissionError("wrong sole invocation/output path")
+         if auth.get("authorization_path")!=str(authpath):
+             raise PermissionError("authorization path mismatch")
+-        if auth.get("fixed_cost_breakdown")!=COST or auth.get("expected_child_counts")!=EXPECTED:
++        if auth.get("fixed_cost_breakdown")!=COST or auth.get("expected_child_counts")!=EXPECTED or auth.get("expected_completed_roots_by_kind")!=ROOT_COUNTS:
+             raise PermissionError("unreviewed count/cost declaration")
+-        if plan.get("candidate_source_index")!={"path":str(INDEX),"sha256":INDEX_SHA256} or plan.get("fixed_cost_breakdown")!=COST or plan.get("expected_child_counts")!=EXPECTED:
++        if plan.get("candidate_source_index")!={"path":str(INDEX),"sha256":INDEX_SHA256} or plan.get("fixed_cost_breakdown")!=COST or plan.get("expected_child_counts")!=EXPECTED or plan.get("expected_completed_roots_by_kind")!=ROOT_COUNTS:
+             raise RuntimeError("held launch-plan schema mismatch")
+         if plan.get("fresh_invocation_path")!=str(INVOCATION) or plan.get("fresh_output_path")!=str(OUTPUT):
+             raise RuntimeError("held sole paths mismatch")
+         index=checked_json(INDEX,INDEX_SHA256)
+         indexed={row["path"]:row["sha256"] for row in index["files"]}
+-        if len(indexed)!=8 or len(index["files"])!=8:
++        if len(indexed)!=11 or len(index["files"])!=11:
+             raise RuntimeError("candidate source-index count mismatch")
+         for path,digest in indexed.items():
+             if sha(path)!=digest:
+@@ -141,7 +144,7 @@
+         protected={**outerpins,str(INDEX):INDEX_SHA256,**indexed,
+                    **recipe["dependency_pins"],**recipe["mpmath_python_pins"],
+                    str(runtime):recipe["python_runtime_sha256"],str(authpath):sha(authpath)}
+-        if len(protected)!=123:
++        if len(protected)!=164:
+             raise RuntimeError("unexpected protected-path inventory count")
+         before={path:hash_or_error(path) for path in protected}
+         mismatches={path:{"expected":digest,"actual":before[path]} for path,digest in protected.items() if before[path]!=digest}
+@@ -192,6 +195,10 @@
+                 raise RuntimeError("unexpected child count: "+key)
+         if childreceipt.get("failed_checks")!=[] or childreceipt.get("accepted_native") is not False or childreceipt.get("inverse_map_attempted") is not False:
+             raise RuntimeError("child scope or failed-check declaration mismatch")
++        root_progress=childreceipt.get("root_progress",{})
++        if root_progress.get("by_kind")!=ROOT_COUNTS or root_progress.get("completed_root_calls")!=493568:
++            raise RuntimeError("child completed-root progress inventory mismatch")
++        receipt["child_root_progress"]=root_progress
+         receipt["scientific_gate_accepted"]=True
+         code=0
+     except BaseException as exc:

@@ -1,0 +1,11 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-20261009/read_saved.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-v2-20261009/read_saved.py
+@@ -55,7 +55,7 @@
+     with pathlib.Path(path).open() as stream:
+         for number,line in enumerate(stream,1):
+             assert line.strip(),(str(path),number,"blank saved row")
+-            yield number,json.loads(line)
++            yield number,json.loads(line,parse_int=lambda token: -0.0 if token=="-0" else int(token))
+ 
+ def build_readback(case,recipe):
+     child=read(case["child_receipt"]["path"]);outer=read(case["root_receipt"]["path"])

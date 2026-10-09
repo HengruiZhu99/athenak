@@ -1,0 +1,57 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-held-20261009/flat_ivp_derivatives.py::main
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/full_gate.py::main
+@@ -7,7 +7,7 @@
+     out=Path(args.output).resolve()
+     out.mkdir(parents=True,exist_ok=False)
+     start=time.monotonic()
+-    receipt={"kind":"Analytic fixed-Lorentz-ray derivative attempt","accepted_native":False,"inverse_map_attempted":False}
++    receipt={"kind":"Full analytic fixed-Lorentz-ray derivative attempt with compact root","accepted_native":False,"inverse_map_attempted":False}
+     before={}
+     try:
+         recipepath,authpath=Path(args.recipe).resolve(),Path(args.authorization).resolve()
+@@ -16,7 +16,7 @@
+         recipe_bytes=recipepath.read_bytes()
+         recipe=json.loads(recipe_bytes)
+         auth=json.loads(authpath.read_text())
+-        required={str(HERE/name):sha(HERE/name) for name in ["flat_ivp_derivatives.py","analytic_jets.py","values_context.py","PLAN.md","derivative-recipe.json"]}
++        required={str(HERE/name):sha(HERE/name) for name in NAMES}
+         consumed_recipe_sha256=hashlib.sha256(recipe_bytes).hexdigest()
+         if required[str(HERE/"derivative-recipe.json")]!=consumed_recipe_sha256:
+             raise RuntimeError("consumed recipe changed during admission")
+@@ -30,6 +30,12 @@
+         value_receipt=json.loads(Path(recipe["completed_values_receipt"]).read_text())
+         if value_receipt.get("passed_scalar_values_only") is not True or value_receipt.get("sources_unchanged") is not True:
+             raise PermissionError("completed values PASS prerequisite absent")
++        compact_receipt=json.loads(Path(recipe["completed_compact_pilot_receipt"]).read_text())
++        if compact_receipt.get("passed_compact_root_comparison_gate") is not True or compact_receipt.get("passed_tiny_timing_identity_gate") is not True or compact_receipt.get("sources_unchanged") is not True or compact_receipt.get("ray_rows")!=480 or compact_receipt.get("group_rows")!=24 or compact_receipt.get("checks")!=38344 or compact_receipt.get("failed_checks")!=[]:
++            raise PermissionError("completed compact480 comparison PASS prerequisite absent")
++        original_recipe=json.loads(Path(recipe["original_full_recipe"]).read_text())
++        if any(recipe[key]!=original_recipe[key] for key in recipe["unchanged_scientific_setting_keys"]):
++            raise PermissionError("original full scientific settings changed")
+         for key,expected in recipe["required_environment"].items():
+             if os.environ.get(key)!=expected:
+                 raise RuntimeError("unreviewed environment: "+key)
+@@ -42,7 +48,13 @@
+         before={**required,**recipe["dependency_pins"],**package,str(runtime):sha(runtime),str(authpath):sha(authpath)}
+         receipt.update({"source_before":before,"consumed_recipe":{"path":str(recipepath),"sha256":consumed_recipe_sha256},"authorization":str(authpath),"command":sys.argv,"environment":{k:os.environ.get(k) for k in recipe["required_environment"]},"python":platform.python_version(),"mpmath":mp.__version__})
+         write(out/"before.json",receipt)
++        global PROGRESS
++        PROGRESS=RootProgress(out)
++        PROGRESS.emit("full_gate_start")
+         result=run(recipe,out)
++        expected_counts={"native":189440,"control":189440,"initial":114688}
++        if dict(PROGRESS.counts)!=expected_counts:
++            raise RuntimeError("full differentiated root-call inventory differs from declared493568")
+         receipt.update(result)
+         if not result["passed_analytic_scalar_derivative_gate"]:
+             raise ArithmeticError("fixed analytic-derivative gate failed; no retry or tolerance change")
+@@ -59,6 +71,9 @@
+         receipt["sources_unchanged"]=receipt["source_after"]==before
+         if not receipt["sources_unchanged"]:
+             receipt["passed_analytic_scalar_derivative_gate"]=False
++        if PROGRESS is not None:
++            PROGRESS.emit("full_gate_stop")
++            receipt["root_progress"]=PROGRESS.summary()
+         receipt["seconds"]=time.monotonic()-start
+         receipt["output_pins"]={str(f):sha(f) for f in sorted(out.iterdir()) if f.is_file() and f.name!="receipt.json"}
+         write(out/"receipt.json",receipt)

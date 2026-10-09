@@ -1,0 +1,19 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-20261009/prepare_readback.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-v2-20261009/prepare_readback.py
+@@ -9,6 +9,7 @@
+ 
+ HERE=pathlib.Path(__file__).resolve().parent
+ OUTER=HERE.parent/"reference-wave-map-outer-arithmetic-source001-held-20261009"
++HISTORY=HERE.parent/"reference-wave-map-outer001-saved-readback-20261009"
+ ROOT=HERE.parent.parent/"outer-reference-wave-map-arithmetic-source001-root-release-20261009"
+ REVIEW=HERE.parent.parent/"continuum/reference-wave-map-outer-arithmetic-independent-review-20261009"
+ 
+@@ -42,6 +43,8 @@
+         protected[row["path"]]={k:row[k] for k in ("path","sha256","bytes")}
+     for row in read(OUTER/"input-pins.json")+read(OUTER/"source-index.json")["files"]:add(row)
+     add(outer_index)
++    for row in read(HISTORY/"index.json")["files"]:add(row)
++    add(pin(HISTORY/"index.json"))
+     add(original_recipe["source003_failed_receipt"])
+     add(original_recipe["source003_failed_report"])
+     for row in read(REVIEW/"index.json")["files"]:add(row)

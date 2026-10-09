@@ -1,0 +1,94 @@
+--- source001/probe.cpp
++++ source002/probe.cpp
+@@ -64,7 +64,7 @@
+ }
+ template<class T>void EmitGauge(const hyp::LayerPoint<T>&p,const hyp::Z4cJet<T>&u,const T*x,double G0,bool baseline=true){
+  inner::Audit a{};const auto q=inner::Gauge(p,u,x,{G0},&a);hyp::GaugeRHS<T>f{};
+- const bool assembled=rwm::Assemble(q,p.omega,f);const auto qp=Parts(q),fp=Fields(f);
++ const bool assembled=rwm::Assemble(q,p.omega,f);const auto qp=Parts(q);const auto fp=Fields(f);
+  std::cout<<",\"input\":";Pack(u);std::cout<<",\"valid\":"<<(q.valid?"true":"false")<<",\"assembled\":"<<(assembled?"true":"false")<<",\"parts\":";V(qp.data(),8);std::cout<<",\"rhs\":";V(fp.data(),4);std::cout<<",\"arithmetic\":";Audit(a);
+  if(baseline){const auto qb=rwm::Gauge(p,u,rwm::ReferenceConnection(p,x));const auto bp=Parts(qb);std::cout<<",\"baseline_valid\":"<<(qb.valid?"true":"false")<<",\"baseline_parts\":";V(bp.data(),8);bool equal=q.valid==qb.valid;for(int i=0;i<8;++i){const double v=inner::Number<T>::Value(qp[i]),b=inner::Number<T>::Value(bp[i]);equal=equal&&std::memcmp(&v,&b,sizeof(double))==0;}std::cout<<",\"outer_value_bitwise\":"<<(equal?"true":"false");}
+ }
+--- source001/recipe.json
++++ source002/recipe.json
+@@ -5,8 +5,8 @@
+   },
+   "compile_flags": {
+     "debug": [
+-      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/inputs",
+-      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009",
++      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source002-held-20261009/inputs",
++      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source002-held-20261009",
+       "-std=c++17",
+       "-O0",
+       "-DKOKKOS_DEPENDENCE",
+@@ -30,8 +30,8 @@
+       "-fno-omit-frame-pointer"
+     ],
+     "release": [
+-      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/inputs",
+-      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009",
++      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source002-held-20261009/inputs",
++      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source002-held-20261009",
+       "-std=c++17",
+       "-O3",
+       "-DNDEBUG",
+@@ -55,6 +55,7 @@
+   },
+   "compiler": "/usr/bin/c++",
+   "core_large_A_oracle": "independently simplified G0*Lambda; no240/280-digit large cancellation claim",
++  "correction_scope": "one C++ auto declaration split; mechanical fresh-prefix/pin/failure-history rebinding only",
+   "environment": {
+     "OMP_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1",
+@@ -109,7 +110,7 @@
+     "large-alpha-small-chi",
+     "chi-gradient-contrast"
+   ],
+-  "input_pins": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/input-pins.json",
++  "input_pins": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source002-held-20261009/input-pins.json",
+   "kappa2": "0",
+   "live_kappa1": "10/alpha",
+   "modes": [
+@@ -146,6 +147,21 @@
+     ]
+   },
+   "principal_receipt": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-v3-held-20261009/attempts/gate001/receipt.json",
++  "prior_compile_failure_receipt": {
++    "bytes": 8212,
++    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/attempts/Release001/receipt.json",
++    "sha256": "e965eda26ff716e62d30764a210953550572eca452b06efd542e045502eaead6"
++  },
++  "prior_compile_failure_stderr": {
++    "bytes": 1978,
++    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/attempts/Release001/compile.stderr",
++    "sha256": "27e417a29bda31d849a6f189bbbe7563b4ff3dd6984496d9a8661ea274919fdd"
++  },
++  "prior_source_index": {
++    "bytes": 7225,
++    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/source-index.json",
++    "sha256": "6b10f2625f831843745b662a18726c4587701f681f155dc858bfe6b230f225b4"
++  },
+   "python": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+   "python_flags": [
+     "-I",
+@@ -179,7 +195,7 @@
+   "repository": "/Users/hz0693/research/hyperboloidal",
+   "require_unoptimized_python": true,
+   "scope": "finite-Omega local inner nonlinear helper only",
+-  "source_index": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/source-index.json",
++  "source_index": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source002-held-20261009/source-index.json",
+   "source_only": true,
+   "thresholds": {
+     "connection_entrywise_scaled": 2e-11,
+--- source001/authorization-schema.json
++++ source002/authorization-schema.json
+@@ -4,7 +4,7 @@
+     "debug"
+   ],
+   "local_nonlinear_helper_execution_admitted": false,
+-  "recipe_sha256": "38c293cc5ece23919b6bea04f6bf2aca0e2a8891dfa8f3b5f0d97ddd48b51272",
++  "recipe_sha256": "2c1dde08c070f0a7bcde6d66123bc11378253c0365002393a9968b00529292c9",
+   "scope": "local helper/source/dual fixed query suite only; no native/global",
+   "source_index_sha256": "EXACT_RELEASE_REQUIRED"
+ }

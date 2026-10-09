@@ -1,0 +1,145 @@
+{
+  "actual_main003_release_receipt": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/receipt.json",
+  "actual_main_receipt_exact_hash_bound_by_future_root_authorization": true,
+  "actual_main_release_PASS_required_before_compile_or_arithmetic": true,
+  "attempt_names": {
+    "debug": "Debug001",
+    "release": "Release001"
+  },
+  "cancellation_plan_index": {
+    "bytes": 3824,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-cancellation-plan-held-20261009/index.json",
+    "sha256": "deb3b2e8491c41ff8a02460a3730f5a9359a4906f66724e87fe2cb28d2f3de94"
+  },
+  "compile_flags": {
+    "debug": [
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-held-20261009/inputs",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-held-20261009",
+      "-std=c++17",
+      "-O0",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer"
+    ],
+    "release": [
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-held-20261009/inputs",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-held-20261009",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include"
+    ]
+  },
+  "compiler": "/usr/bin/c++",
+  "dV_extension": false,
+  "environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONOPTIMIZE": "0",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "execution_admitted": false,
+  "expected_counts": {
+    "near-bound": 108,
+    "negative-old-near": 3,
+    "total": 129,
+    "witness": 18
+  },
+  "main003_oracle_unchanged": {
+    "bytes": 16267,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/oracle.py",
+    "sha256": "15fd453129045b45348228f6dce66bd2eba2f05daacadae448ffc0f301922160"
+  },
+  "main003_source_index_sha256": "6d0f91c4b7bf701f83d723f81c89df8265f76fe839ef4f522e6e056b9544d671",
+  "near_bound_scope": "bool, dA and both log-gradient kind values/full field duals; no C1 continuity claim",
+  "near_ratios": [
+    "1/2-2^-40",
+    "1/2",
+    "1/2+2^-40",
+    "2-2^-40",
+    "2",
+    "2+2^-40"
+  ],
+  "near_reference_exponents": [
+    -400,
+    0,
+    400
+  ],
+  "nonzero_normal_target_relative_threshold": "2e-10",
+  "old_source001_and_source002_failures_preserved": true,
+  "outer_stdout_stderr_returncode_capture_required": true,
+  "python": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+  "relative_seeds": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      -2,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ]
+  ],
+  "repository": "/Users/hz0693/research/hyperboloidal",
+  "scope": "Separate fixed scalar arithmetic supplement only; no main suite/kernel/Grid/PDE changes",
+  "source003_independent_review_index": {
+    "bytes": 16214,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-nonlinear-helper-source003-independent-review-20261009/index.json",
+    "sha256": "412dddbbc1c7f77b820b9a4000bf4c17f5c1ea7fa199d908b208cc479007cca9"
+  },
+  "source_only": true,
+  "zero_target_absolute_threshold": "2e-10"
+}

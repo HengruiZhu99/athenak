@@ -1,0 +1,137 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-held-20261009/timing_gate.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/comparison_gate.py
+@@ -1,4 +1,4 @@
+-"""HELD tiny local-ray identity/timing pilot, not the full derivative gate.
++"""HELD compact-root saved-480-ray comparison, not the full derivative gate.
+ 
+ This fresh source is not imported or executed during preparation. Future
+ execution requires exact root admission. No angular integral accuracy,
+@@ -15,10 +15,11 @@
+ 
+ import mpmath as mp
+ import derivative_core as core
++import compact_root
+ 
+ 
+ HERE=Path(__file__).resolve().parent
+-NAMES=["timing_gate.py","derivative_core.py","analytic_jets.py","values_context.py","PLAN.md","timing-recipe.json"]
++NAMES=["comparison_gate.py","compact_root.py","derivative_core.py","analytic_jets.py","values_context.py","PLAN.md","comparison-recipe.json"]
+ 
+ 
+ def sha(path):
+@@ -31,13 +32,22 @@
+ 
+ def run(recipe,out):
+     rays,checks,groups=[],[],[]
++    oldreceipt=json.loads(Path(recipe["old_timing_receipt"]).read_text())
++    if oldreceipt.get("passed_tiny_timing_identity_gate") is not True or oldreceipt.get("sources_unchanged") is not True or oldreceipt.get("ray_rows")!=480 or oldreceipt.get("group_rows")!=24 or oldreceipt.get("checks")!=4744 or oldreceipt.get("failed_checks")!=[]:
++        raise RuntimeError("saved original timing gate did not pass exactly")
++    saved=json.loads(Path(recipe["old_timing_rays"]).read_text())
++    rowkey=lambda row:(row["dps"],row["level"],row["event"],row["boost"],row["polar_index"],row["azimuth_index"])
++    oldrows={rowkey(row):row for row in saved}
++    if len(saved)!=480 or len(oldrows)!=480:
++        raise RuntimeError("saved original ray layout/count mismatch")
++    seen=set()
+     def check(name,error,tolerance):
+         checks.append({"name":name,"error":core.vc.number(error),"tolerance":tolerance,"passed":bool(error<=mp.mpf(tolerance))})
+     for dps in recipe["precisions"]:
+         mp.mp.dps=dps
+         for level in recipe["levels"]:
+             for case in recipe["events"]:
+-                graph=core.NativeGraph(recipe,level["height_order"],recipe["native_amplitudes"])
++                graph=compact_root.AcceleratedNativeGraph(recipe,level["height_order"],recipe["native_amplitudes"])
+                 T,X,omega,gamma,boost,x=graph.event(case)
+                 for mode in recipe["boosts"]:
+                     begin=time.monotonic()
+@@ -66,11 +76,36 @@
+                             check(name+"/Hessian_symmetry",symmetry,recipe["tolerances"]["local_identities"])
+                             if case["initial"]:
+                                 check(name+"/initial_zero_value",max(abs(j.v) for j in result),"0")
+-                            rays.append({"dps":dps,"level":level["name"],"event":case["name"],"boost":mode,"polar_index":im,"azimuth_index":ia,"k":core.strings(k),"jet":[core.strings(row) for row in flat],"metrics":{key:core.vc.number(v) for key,v in metrics.items()},"seconds":seconds,"scope":"single fixed ray integrand jet; not an angularly integrated scalar derivative"})
++                            key=(dps,level["name"],case["name"],mode,im,ia)
++                            if key not in oldrows or key in seen:
++                                raise RuntimeError("saved original row key missing or duplicated")
++                            seen.add(key)
++                            previous=oldrows[key]
++                            if len(previous["jet"])!=4 or any(len(row)!=15 for row in previous["jet"]):
++                                raise RuntimeError("saved original scalar/gradient/Hessian schema mismatch")
++                            for A in range(4):
++                                for component in range(15):
++                                    prior=mp.mpf(previous["jet"][A][component])
++                                    value=flat[A][component]
++                                    check(name+"/old_jet/%s/%s"%(A,component),abs(value-prior)/max(1,abs(value),abs(prior)),recipe["tolerances"]["precision"])
++                            check(name+"/old_fixed_k",core.vc.scaled(k,list(map(mp.mpf,previous["k"]))),recipe["tolerances"]["local_identities"])
++                            for metric in ["root","null","first_graph","second_graph","factor_quotient","K_jet","D_source_jet","minimum_D"]:
++                                before=mp.mpf(previous["metrics"][metric])
++                                now=metrics[metric]
++                                tolerance=recipe["tolerances"]["root"] if metric=="root" else recipe["tolerances"]["local_identities"]
++                                check(name+"/old_metric/"+metric,abs(now-before)/max(1,abs(now),abs(before)),tolerance)
++                            audit=graph.last_root
++                            check(name+"/compact_root_acceptance_certificate",mp.mpf(0) if audit is not None and audit.get("accepted") is True else mp.mpf(1),"0")
++                            record={"dps":dps,"level":level["name"],"event":case["name"],"boost":mode,"polar_index":im,"azimuth_index":ia,"k":core.strings(k),"jet":[core.strings(row) for row in flat],"metrics":{key:core.vc.number(v) for key,v in metrics.items()},"seconds":seconds,"old_seconds":previous["seconds"],"compact_root":{key:(value if isinstance(value,(str,bool,int)) else core.vc.number(value)) for key,value in audit.items()},"scope":"single fixed ray integrand jet and original saved-row comparison; no angular integral accuracy"}
++                            rays.append(record)
++                            with (out/"completed-rays.jsonl").open("a") as stream:
++                                stream.write(json.dumps(record,allow_nan=False)+"\n")
+                     groups.append({"dps":dps,"level":level["name"],"event":case["name"],"boost":mode,"ray_count":level["polar_nodes"]*level["azimuth_nodes"],"seconds":time.monotonic()-begin})
+                     write(out/"partial-rays.json",rays)
+                     write(out/"partial-groups.json",groups)
+                     print("tiny-group-complete",prefix,groups[-1]["ray_count"],groups[-1]["seconds"],flush=True)
++    if seen!=set(oldrows):
++        raise RuntimeError("original saved ray grid not exhausted exactly")
+     mp.mp.dps=max(recipe["precisions"])
+     key=lambda r:(r["level"],r["event"],r["boost"],r["polar_index"],r["azimuth_index"])
+     low={key(r):r for r in rays if r["dps"]==recipe["precisions"][0]}
+@@ -84,7 +119,7 @@
+             check("fixed-ray-precision/%s/%s"%(k,block),core.vc.scaled(a[block],b[block]),recipe["tolerances"]["precision"])
+     for name,obj in [("rays.json",rays),("groups.json",groups),("checks.json",checks)]:
+         write(out/name,obj)
+-    return {"passed_tiny_timing_identity_gate":all(c["passed"] for c in checks),"ray_rows":len(rays),"group_rows":len(groups),"checks":len(checks),"failed_checks":[c for c in checks if not c["passed"]],"scope":"Measured finite local-ray timing and analytic identity consistency only. No quadrature convergence or completed full derivative gate, inverse map, target-time/Jacobian claim, native query or evolution."}
++    return {"passed_compact_root_comparison_gate":all(c["passed"] for c in checks),"passed_tiny_timing_identity_gate":all(c["passed"] for c in checks),"ray_rows":len(rays),"group_rows":len(groups),"checks":len(checks),"failed_checks":[c for c in checks if not c["passed"]],"scope":"Measured finite local-ray timing and analytic identity consistency only. No quadrature convergence or completed full derivative gate, inverse map, target-time/Jacobian claim, native query or evolution."}
+ 
+ 
+ def main():
+@@ -96,19 +131,19 @@
+     out=Path(args.output).resolve()
+     out.mkdir(parents=True,exist_ok=False)
+     start=time.monotonic()
+-    receipt={"kind":"Separate tiny local-ray timing/identity pilot","accepted_native":False,"inverse_map_attempted":False,"full_derivative_gate_passed":False}
++    receipt={"kind":"Separate compact-radius root comparison pilot","accepted_native":False,"inverse_map_attempted":False,"full_derivative_gate_passed":False}
+     before={}
+     try:
+         recipepath,authpath=Path(args.recipe).resolve(),Path(args.authorization).resolve()
+-        if recipepath!=(HERE/"timing-recipe.json").resolve():
++        if recipepath!=(HERE/"comparison-recipe.json").resolve():
+             raise PermissionError("timing recipe must resolve to pinned local file")
+         raw=recipepath.read_bytes()
+         recipe,auth=json.loads(raw),json.loads(authpath.read_text())
+         required={str(HERE/name):sha(HERE/name) for name in NAMES}
+         digest=hashlib.sha256(raw).hexdigest()
+-        if required[str(HERE/"timing-recipe.json")]!=digest:
++        if required[str(HERE/"comparison-recipe.json")]!=digest:
+             raise RuntimeError("consumed timing recipe changed during admission")
+-        if auth.get("tiny_timing_identity_execution_admitted") is not True or auth.get("source_pins")!=required or auth.get("fresh_output_path")!=str(out):
++        if auth.get("compact_root_comparison_execution_admitted") is not True or auth.get("source_pins")!=required or auth.get("fresh_output_path")!=str(out):
+             raise PermissionError("missing exact root tiny timing release")
+         for path,expected in recipe["dependency_pins"].items():
+             if sha(path)!=expected:
+@@ -127,10 +162,10 @@
+         write(out/"before.json",receipt)
+         result=run(recipe,out)
+         receipt.update(result)
+-        if not result["passed_tiny_timing_identity_gate"]:
++        if not result["passed_compact_root_comparison_gate"]:
+             raise ArithmeticError("tiny timing identity gate failed; no retry or threshold change")
+     except BaseException as exc:
+-        receipt.update({"passed_tiny_timing_identity_gate":False,"exception_type":type(exc).__name__,"error":str(exc),"traceback":traceback.format_exc()})
++        receipt.update({"passed_compact_root_comparison_gate":False,"passed_tiny_timing_identity_gate":False,"exception_type":type(exc).__name__,"error":str(exc),"traceback":traceback.format_exc()})
+         raise
+     finally:
+         def after(path):
+@@ -141,6 +176,7 @@
+         receipt["source_after"]={path:after(path) for path in before}
+         receipt["sources_unchanged"]=receipt["source_after"]==before
+         if not receipt["sources_unchanged"]:
++            receipt["passed_compact_root_comparison_gate"]=False
+             receipt["passed_tiny_timing_identity_gate"]=False
+         receipt["seconds"]=time.monotonic()-start
+         receipt["output_pins"]={str(p):sha(p) for p in sorted(out.iterdir()) if p.is_file() and p.name!="receipt.json"}

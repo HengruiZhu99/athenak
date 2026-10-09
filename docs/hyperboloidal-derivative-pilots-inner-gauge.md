@@ -1,7 +1,8 @@
 # Derivative pilots and the coupled inner gauge
 
-This checkpoint records two completed flat-space derivative pilots and a
-candidate inner gauge. It does not repair the failed native wave-map runs in
+This checkpoint records two completed flat-space derivative pilots and private
+principal and nonlinear arithmetic checks of a candidate inner gauge. It does
+not repair the failed native wave-map runs in
 [the final matrix report](hyperboloidal-reference-wave-map-final-matrix.md).
 The later black-hole acceptance target is explicitly a resolved inner
 wormhole-to-trumpet transition with the **Minkowski hyperboloidal reference
@@ -54,8 +55,12 @@ exact formula branch, not a validated interval certificate.
 
 These finite pilots neither pass the much larger 493,568-root derivative gate
 nor establish angular quadrature convergence, global absence of caustics, or
-coverage at native coordinate time. The larger gate was still running when
-this checkpoint was prepared. A later four-dimensional inverse must solve
+coverage at native coordinate time. That larger gate was still running at the
+earlier pilot checkpoint. Its subsequent full run completed all roots and
+2,360 checks but failed 156 CMC-control ray/source-jet, exact-derivative and
+scalar-wave-trace checks. The original failure and independent diagnosis are
+preserved in [the failure capsule](validation/hyperboloidal-original-pulse-derivative-failure-20261009/README.md). A later
+four-dimensional inverse must solve
 `X+u(X)=Y_reference(t_native,x_native)` and separately check the Jacobian,
 future time orientation, coverage and injectivity. Reference time is not
 automatically native target time.
@@ -111,8 +116,9 @@ Delta beta_t^i = (B-A0)(Lambda^i-Lambda_hat^i)
 
 The resulting normalized coefficients are `f=1+2cW/alpha` and `mu=B/A0`.
 An implementation can evaluate the bounded `kappa` without forming `mu`.
-At `W=1`, every addition vanishes; an exact branch must retain the unchanged
-outer wave-map rows. At the Minkowski reference every deviation vanishes,
+At `W=1`, every addition vanishes; the branch must retain the same real outer
+wave-map equations. The subsequent arithmetic tests below distinguish their
+legacy and regrouped floating evaluations. At the Minkowski reference every deviation vanishes,
 including the nonzero reference connection in the geometric transition.
 That algebraic statement still requires nonlinear implementation and arithmetic
 tests on the nonflat reference.
@@ -140,12 +146,101 @@ dependencies. This capsule contains the completed finite principal gate;
 the earlier derivative/pencil capsule remains unchanged.
 
 These results establish neither a uniform diagonalizer at a puncture nor
-nonlinear regularity or evolution stability. Nonflat reference identities,
-collapsed-lapse/high-contrast arithmetic, variable-coefficient sources and the
-actual puncture treatment remain separate gates. In a putative radial trumpet,
+nonlinear regularity or evolution stability. The finite nonlinear arithmetic
+checks below address selected nonflat/high-contrast states; variable-coefficient
+stability and actual puncture treatment remain separate gates. In a putative radial trumpet,
 the constant connection response additionally needs `Lambda=O(r)` or derived
 cancellation of stronger connection residues. The unchanged outer wave-map
 condition also retains its conditional stationary mass-log obstruction.
+
+## Nonlinear arithmetic failures and the new outer identity
+
+Three private implementations retain their actual failed results. Source001
+failed compilation because one `auto` declaration mixed different array types.
+Source002 compiled and completed the fixed 15,740-record registry but failed
+3,236 independent source comparisons. Source003 changed only three conditioned
+field differences and their branch counters. It removed 1,364 prior failures;
+its remaining 1,872 failures all match old failed comparisons, with no new
+failure in that registry. Every remaining failure is at stored `W==1`, and
+all eight returned split parts are bitwise the legacy outer wave-map helper.
+The fixed test has no failed `W<1` comparison. Source003 overall remains FAIL.
+
+For positive live/reference lapse `a,h` and chi `x,y`, source003 uses the
+deviation expression for `a^2 x-h^2 y` only when both field ratios lie in the
+closed interval `[1/2,2]`; otherwise it forms the complete scaled products
+before subtracting. Each log-gradient difference uses its own field's near
+predicate. The predicate uses binary exponents and mantissas without forming
+a tiny ratio. Scaled products retain every registered first field-dual term,
+including a zero primal factor with a nonzero tangent. This does not certify
+arbitrary cancelling sums or arbitrary metric contrast.
+
+The remaining failed outer rows cannot be repaired while preserving their old
+floating results. A separately named outer001 implementation therefore keeps
+the same real physical-P wave-map equations and explicitly changes the far
+arithmetic contract. The legacy header differs only by its function name;
+reference connection, scaled source and single pole assembly are unchanged.
+Joint-near lapse/chi states call that legacy body directly. Far states use
+complete products, with `G` and `Gh` the live/reference inverse conformal metric:
+
+```
+dV = a^2 x G-h^2 y Gh,
+Lhat = h^2 y Gh-betaHat betaHat,
+dL = dV-(beta-betaHat) beta-betaHat (beta-betaHat).
+
+Ralpha = beta.grad(a)-(a/h) betaHat.grad(h),
+Salpha = -a^2 P+a h Phat-a (beta-betaHat).grad(Omega)-a dL:C0,
+Rbeta_i = a^2 x Lambda_i-h^2 y LambdaHat_i
+  + beta_j (beta_ji-betaHat_ji)+(beta-betaHat)_j betaHat_ji
+  + .5 a^2 Gij x_j-.5 h^2 Ghij y_j
+  - a x Gij a_j+h y Ghij h_j,
+Sbeta_i = 2 dVij Omega_j-dLjk C^(i+1)_jk
+  - dLjk beta_i C0jk-Lhat_jk (beta-betaHat)_i C0jk.
+```
+
+Repeated spatial indices are summed, `C=Omega Gamma_reference` includes the
+full nonflat physical reference connection, and each row is assembled as
+`R+S/Omega` once. Stored `P=K_phys-2Theta_phys` remains independent of Theta.
+No black-hole RHS subtraction, live-lapse division, floor or clipping is added.
+The inner coefficient/Gauge suffix remains source003 byte-for-byte. This is
+a new arithmetic implementation, not a retroactive source003 PASS.
+
+Outer001 passed the unchanged 15,740-record gate in Release and sanitized
+Debug. The independent saved-output audit retained each build's source,
+commands, executable identity, oracle and failed-history pins.
+
+| Check | Saved result in each build |
+| --- | --- |
+| Maximum split-part / assembled-row scaled error | `2.0213034860e-14` / `4.4021148870e-14`, gate `2e-10` |
+| Actual22 gauge-dual maximum | `8.8482325815e-15`, gate `2e-10` |
+| 2,520 three-level finite-difference sequences | Final maximum `1.4822275264e-8`, gate `5e-7` plus convergence/floor check |
+| Exact reference split parts | All 336 rows zero |
+| `W==1` joint-near rows | All 5,400 retain every legacy value/dual bit |
+| `W==1` far rows | 576 rows pass the unchanged MP targets; 574 intentionally differ from old primal bits |
+| Inner coefficient bypass at `W==1` | All 5,976 rows make zero coefficient calls |
+| Actual22 geometric rows | All 90,720 saved bit comparisons unchanged |
+
+Root elapsed times were 87.4783 s for Release and 97.4468 s for Debug with
+address and undefined-behavior sanitizers. The compiler builds differ in
+72 principal and 60 source split-part rows, within the same gates; full
+cross-build bit identity is not claimed. All far rows in this main registry
+have zero dual seeds. A separately fixed complete far-dual supplement remains
+unexecuted, so the ordinary dual result does not validate that branch.
+
+A separate source003 field-difference supplement passed 129 records and 684
+component checks in both Release and sanitized Debug (3.3535 s / 3.1254 s).
+It tests three exact-power normal witnesses, six relative field seeds including
+zero-primal/nonzero-gradient tangents, and 108 cases at and around both near
+thresholds over three reference scales. Three preserved old-near expressions
+produce their expected lost-normal zero controls. This accepts those named
+arithmetic units only; it leaves source003 FAIL and the original ineligible
+supplement unaltered. Floating branch continuity and universal accuracy are
+not established.
+
+Sources, failures, independent reviews, completed gates and saved readbacks are
+in [the arithmetic capsule](validation/hyperboloidal-inner-outer-arithmetic-20261009/README.md).
+Scientific JSONL/array payloads, executables and files larger than 1 MiB are
+represented by metadata and streamed hashes. The first saved-output reader's
+signed-zero parsing failure is retained alongside its corrected fresh reader.
 
 Production `src/` and root `CMakeLists.txt` remain byte-identical to
 `27c19d20696ea6dd4704032c51dfd026218f64f2`; no candidate is adopted by this

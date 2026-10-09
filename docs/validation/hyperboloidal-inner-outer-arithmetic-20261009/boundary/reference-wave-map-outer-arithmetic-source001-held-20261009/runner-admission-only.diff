@@ -1,0 +1,11 @@
+--- frozen-source003
++++ fresh-outer-source001
+@@ -32,7 +32,7 @@
+         raise RuntimeError('Require isolated unoptimized -I -B Python')
+     here=Path(__file__).resolve().parent;recipe_path=here/'recipe.json'
+     recipe=read(recipe_path);auth=read(args.authorization)
+-    if not auth.get('local_nonlinear_helper_execution_admitted'):
++    if not auth.get('outer_arithmetic_local_execution_admitted'):
+         raise RuntimeError('Exact root local authorization required')
+     if auth['recipe_sha256']!=pin(recipe_path)['sha256'] or auth['source_index_sha256']!=pin(here/'source-index.json')['sha256']:
+         raise RuntimeError('Root authorization source/recipe mismatch')

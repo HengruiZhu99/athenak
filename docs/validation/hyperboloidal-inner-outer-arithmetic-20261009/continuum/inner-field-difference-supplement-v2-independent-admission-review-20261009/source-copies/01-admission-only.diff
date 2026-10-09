@@ -1,0 +1,49 @@
+--- held-v1-full-main-PASS
++++ held-v2-exact-main-FAIL-W1-qualification
+@@ -1,4 +1,4 @@
+-"""Stdlib-only exact source and successful actual-main admission guards."""
++"""Stdlib exact FAILED-main and independent saved-association admission."""
+ import hashlib,json
+ from pathlib import Path
+ 
+@@ -15,18 +15,28 @@
+         if pin(row['path'])!=row:raise RuntimeError('Protected input drift '+row['path'])
+ def admitted(here,authorization,build):
+     recipe=read(here/'recipe.json');index=read(here/'source-index.json');auth=read(authorization)
+-    if not(auth.get('arithmetic_supplement_execution_admitted') is True and auth.get('recipe_sha256')==pin(here/'recipe.json')['sha256'] and auth.get('source_index_sha256')==pin(here/'source-index.json')['sha256'] and build in auth.get('allowed_builds',[])):
+-        raise RuntimeError('Exact fresh root supplement release required')
++    if not(auth.get('field_difference_units_execution_admitted') is True and auth.get('recipe_sha256')==pin(here/'recipe.json')['sha256'] and auth.get('source_index_sha256')==pin(here/'source-index.json')['sha256'] and build in auth.get('allowed_builds',[])):
++        raise RuntimeError('Exact fresh root field-unit release required')
+     protected=read(here/'input-pins.json');guard(protected);guard(index['files'])
+-    main_pin=auth['actual_main003_release_receipt']
+-    if main_pin['path']!=recipe['actual_main003_release_receipt'] or pin(main_pin['path'])!=main_pin:
+-        raise RuntimeError('Exact actual source003 Release receipt binding required')
+-    main=read(main_pin['path'])
+-    if not(main.get('completed') is True and main.get('passed') is True and main.get('returncode')==0 and main.get('source_inputs_unchanged') is True and main.get('build')=='release' and main.get('source_index_sha256')==recipe['main003_source_index_sha256']):
+-        raise RuntimeError('Actual main source003 Release PASS is mandatory')
+-    oracle_pin=main['oracle_report']
+-    guard([oracle_pin]);oracle=read(oracle_pin['path'])
+-    if oracle.get('passed') is not True:raise RuntimeError('Main actual oracle PASS required')
+-    protected=protected+[main_pin,oracle_pin,pin(authorization)]+main['output_inventory']
++    for key in ('actual_main003_failed_receipt','actual_main003_failed_oracle','saved_association_summary','saved_association_receipt','saved_outer_identity_summary','saved_outer_identity_receipt'):
++        guard([recipe[key]])
++    main=read(recipe['actual_main003_failed_receipt']['path'])
++    if not(main.get('completed') is False and main.get('passed') is False and main.get('returncode')==1 and main.get('source_inputs_unchanged') is True and main.get('build')=='release' and main.get('source_index_sha256')==recipe['main003_source_index_sha256']):
++        raise RuntimeError('Exact actual003 FAILED Release evidence required; no overall PASS claimed')
++    oracle=read(recipe['actual_main003_failed_oracle']['path'])
++    if not(oracle.get('passed') is False and oracle.get('counts')==recipe['actual_main_fixed_counts']):
++        raise RuntimeError('Complete failed actual main report required')
++    association=read(recipe['saved_association_summary']['path']);ar=read(recipe['saved_association_receipt']['path'])
++    identity=read(recipe['saved_outer_identity_summary']['path']);ir=read(recipe['saved_outer_identity_receipt']['path'])
++    if not(ar.get('completed') is True and ar.get('passed') is True and ar.get('returncode')==0 and ar.get('inputs_unchanged') is True and ir.get('completed') is True and ir.get('passed') is True and ir.get('returncode')==0 and ir.get('inputs_unchanged') is True):
++        raise RuntimeError('Successful independent saved association/identity receipts required')
++    case=[x for x in association['cases'] if x['source']=='source003']
++    if len(case)!=1:raise RuntimeError('Unique actual003 association required')
++    case=case[0]
++    if not(association.get('passed_saved_readback') is True and association.get('original_source002_and003_still_failed') is True and case['association']['ambiguous_failure_count']==0 and case['counts']==oracle['counts'] and case['failure_count']==len(oracle['failures'])==identity['failures_checked'] and identity.get('passed_saved_identity_readback') is True and identity.get('source003_original_failed') is True and identity.get('all_failures_W_exactly_one') is True and identity['failure_native_bits_equal_source002']==identity['failures_checked'] and identity['failure_query_all_split_parts_equal_frozen_RWM']==identity['failures_checked']):
++        raise RuntimeError('Complete unambiguous W1-only failure qualification required')
++    # No oracle targets are recomputed here. These exact saved receipts qualify
++    # the prerequisite for helper arithmetic units only, never the gauge.
++    protected=protected+[pin(authorization)]+main['output_inventory']
+     guard(protected)
+     return recipe,index,protected

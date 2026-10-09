@@ -1,0 +1,13 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/probe.cpp:67:56: error: 'auto' deduced as 'std::array<double, 8>' in declaration of 'qp' and deduced as 'std::array<double, 4>' in declaration of 'fp'
+   67 |  const bool assembled=rwm::Assemble(q,p.omega,f);const auto qp=Parts(q),fp=Fields(f);
+      |                                                        ^       ~~~~~~~~    ~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/probe.cpp:92:140: note: in instantiation of function template specialization '(anonymous namespace)::EmitGauge<double>' requested here
+   92 |   if(mode=="sources"){for(int family=0;family<14;++family){Context(p,x,a,G0,"source",d);std::cout<<",\"family\":\""<<families[family]<<'"';EmitGauge(p,State(p,family),x,G0);std::cout<<"}\n";}}
+      |                                                                                                                                            ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/probe.cpp:67:56: error: 'auto' deduced as 'std::array<D, 8>' in declaration of 'qp' and deduced as 'std::array<D, 4>' in declaration of 'fp'
+   67 |  const bool assembled=rwm::Assemble(q,p.omega,f);const auto qp=Parts(q),fp=Fields(f);
+      |                                                        ^       ~~~~~~~~    ~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source001-held-20261009/probe.cpp:99:70: note: in instantiation of function template specialization '(anonymous namespace)::EmitGauge<D>' requested here
+   99 |     Context(pd,xd,a,G0,"principal",d);std::cout<<",\"column\":"<<col;EmitGauge(pd,u,xd,G0);std::cout<<"}\n";}}
+      |                                                                      ^
+2 errors generated.

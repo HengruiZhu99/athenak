@@ -1,0 +1,238 @@
+{
+  "a": ".5",
+  "scri_radius": "1",
+  "geometry_r0": ".05",
+  "geometry_r1": ".95",
+  "native_amplitudes": [
+    ".2",
+    ".1"
+  ],
+  "pulse_width": ".35",
+  "precisions": [
+    80,
+    110
+  ],
+  "height_panels": [
+    ".05",
+    ".15",
+    ".3",
+    ".5",
+    ".7",
+    ".85",
+    ".95"
+  ],
+  "root_tolerance": "1e-55",
+  "maximum_root_iterations": 512,
+  "levels": [
+    {
+      "name": "full16",
+      "polar_order": 16,
+      "azimuth_order": 16,
+      "height_order": 24
+    },
+    {
+      "name": "full32",
+      "polar_order": 32,
+      "azimuth_order": 32,
+      "height_order": 64
+    },
+    {
+      "name": "full64",
+      "polar_order": 64,
+      "azimuth_order": 64,
+      "height_order": 128
+    },
+    {
+      "name": "polar64az32",
+      "polar_order": 64,
+      "azimuth_order": 32,
+      "height_order": 128
+    },
+    {
+      "name": "polar32az64",
+      "polar_order": 32,
+      "azimuth_order": 64,
+      "height_order": 128
+    }
+  ],
+  "final_level": "full64",
+  "comparison_levels": [
+    "full32",
+    "polar64az32",
+    "polar32az64"
+  ],
+  "native_boosts": [
+    "normal",
+    "normal_then_fixed_z_0.2"
+  ],
+  "control_boosts": [
+    "laboratory",
+    "fixed_oblique_0.35"
+  ],
+  "events": [
+    {
+      "name": "pulse_center",
+      "xyz": [
+        "0",
+        "0",
+        "0"
+      ],
+      "tau_reference": ".1",
+      "amplitudes": [
+        ".2",
+        ".1"
+      ]
+    },
+    {
+      "name": "pulse_core",
+      "xyz": [
+        ".01",
+        ".01",
+        ".01"
+      ],
+      "tau_reference": ".01",
+      "amplitudes": [
+        ".2",
+        ".1"
+      ]
+    },
+    {
+      "name": "pulse_transition_short",
+      "xyz": [
+        ".3",
+        ".2",
+        "-.1"
+      ],
+      "tau_reference": ".02",
+      "amplitudes": [
+        ".2",
+        ".1"
+      ]
+    },
+    {
+      "name": "pulse_exact_outer_short",
+      "xyz": [
+        ".98",
+        "0",
+        "0"
+      ],
+      "tau_reference": ".0001",
+      "amplitudes": [
+        ".2",
+        ".1"
+      ]
+    },
+    {
+      "name": "zero_exact_outer_short",
+      "xyz": [
+        ".98",
+        "0",
+        "0"
+      ],
+      "tau_reference": ".0001",
+      "amplitudes": [
+        "0",
+        "0"
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "name": "flat_constant",
+      "kind": "flat_constant",
+      "X": [
+        ".3",
+        "-.2",
+        ".1"
+      ],
+      "tau": ".2"
+    },
+    {
+      "name": "flat_affine",
+      "kind": "flat_affine",
+      "X": [
+        ".3",
+        "-.2",
+        ".1"
+      ],
+      "tau": ".2"
+    },
+    {
+      "name": "CMC_l0",
+      "kind": "CMC",
+      "degree": 0,
+      "X": [
+        ".3",
+        "-.2",
+        ".1"
+      ],
+      "tau": ".2"
+    },
+    {
+      "name": "CMC_l1",
+      "kind": "CMC",
+      "degree": 1,
+      "X": [
+        ".3",
+        "-.2",
+        ".1"
+      ],
+      "tau": ".2"
+    },
+    {
+      "name": "CMC_l2",
+      "kind": "CMC",
+      "degree": 2,
+      "X": [
+        ".3",
+        "-.2",
+        ".1"
+      ],
+      "tau": ".2"
+    }
+  ],
+  "initial_points": [
+    [
+      "0",
+      "0",
+      "0"
+    ],
+    [
+      ".01",
+      ".02",
+      "-.01"
+    ],
+    [
+      ".05",
+      "0",
+      "0"
+    ],
+    [
+      ".2",
+      ".1",
+      "-.05"
+    ],
+    [
+      ".5",
+      ".2",
+      ".1"
+    ],
+    [
+      ".95",
+      "0",
+      "0"
+    ],
+    [
+      ".99",
+      "0",
+      "0"
+    ]
+  ],
+  "tolerances": {
+    "convergence": "1e-10",
+    "precision": "1e-30",
+    "local_identities": "1e-50",
+    "root": "1e-40",
+    "wave_trace": "1e-10"
+  }
+}

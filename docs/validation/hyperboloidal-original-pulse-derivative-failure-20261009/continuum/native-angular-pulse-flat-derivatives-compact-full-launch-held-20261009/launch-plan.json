@@ -1,0 +1,1044 @@
+{
+  "kind": "SOURCE-ONLY compact-root full one-shot outer launcher plan",
+  "execution_admitted": false,
+  "candidate_source_index": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/source-index.json",
+    "sha256": "47503416e8d44fe51ff51e6dc38ea69ba6cce6c73d361572a9f5fc958aa16b01"
+  },
+  "launcher_source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-launch-held-20261009/run_derivatives_once.py",
+    "sha256": "68151735957d6908b49fb609690d3008e8f91a97ab7196642fc6bc40764200c8"
+  },
+  "prose_plan": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-launch-held-20261009/PLAN.md",
+    "sha256": "dbda62d7a5bb3ef4765524798dde568b271ff34c8db1a508a0906a8f0efd53b1"
+  },
+  "fresh_invocation_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-launch-held-20261009/derivative-invocation001",
+  "fresh_output_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-launch-held-20261009/derivative-attempt001",
+  "child_python_invocation_path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+  "child_python_runtime": {
+    "path": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464"
+  },
+  "child_command_template": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "-B",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/full_gate.py",
+    "--recipe",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/derivative-recipe.json",
+    "--authorization",
+    "{authorization}",
+    "--output",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-launch-held-20261009/derivative-attempt001"
+  ],
+  "held_outer_command_template": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "-B",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-launch-held-20261009/run_derivatives_once.py",
+    "--authorization",
+    "ROOT_MUST_SUPPLY_EXACT_AUTHORIZATION_PATH"
+  ],
+  "required_environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "PYTHONPATH": null,
+    "PYTHONHOME": null,
+    "PYTHONWARNINGS": null
+  },
+  "expected_child_counts": {
+    "native_rows": 100,
+    "control_rows": 100,
+    "initial_rows": 28,
+    "checks": 2360
+  },
+  "expected_completed_roots_by_kind": {
+    "native": 189440,
+    "control": 189440,
+    "initial": 114688
+  },
+  "fixed_cost_breakdown": {
+    "angular_nodes_sum_per_event_and_precision": 9472,
+    "native_events": 5,
+    "native_boosts": 2,
+    "precisions": 2,
+    "native_ray_integrand_evaluations": 189440,
+    "control_events": 5,
+    "control_boosts": 2,
+    "control_ray_integrand_evaluations": 189440,
+    "initial_points": 7,
+    "initial_boosts": 2,
+    "initial_nodes": 4096,
+    "initial_ray_integrand_evaluations": 114688,
+    "total_differentiated_ray_integrand_evaluations": 493568,
+    "independent_coarea_cross_bindings": 10,
+    "independent_coarea_nodes": 163840,
+    "compact_root_newton_iterations": 16,
+    "measured_runtime_available": false
+  },
+  "sourcepath_inventory": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/source-index.json",
+      "sha256": "47503416e8d44fe51ff51e6dc38ea69ba6cce6c73d361572a9f5fc958aa16b01",
+      "bytes": 3673,
+      "kind": "candidate_index"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/PLAN.md",
+      "sha256": "040bbdb9b09ec4f4bbecc049274c9475e233292e5d3258dee442c24270f00b1c",
+      "bytes": 6194,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/analytic_jets.py",
+      "sha256": "b2defe4517d4b052851abdff21e6912fa5c4f3814d4cc3efa819c6edfc8fe410",
+      "bytes": 3053,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/compact_root.py",
+      "sha256": "e45d3fd83a46a691518644295e63849660d854819c117f3173c80fcbfc3353e2",
+      "bytes": 9145,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/derivative-recipe.json",
+      "sha256": "ead4bf7e50343ae41624ac33f57cc503f032447ceedb7824347b702d68997457",
+      "bytes": 39425,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/derivative_core.py",
+      "sha256": "4ba5538c9443210cf00fc2a6cf37ca19a6d800f7f347ad9ef7b875c1c0b733ec",
+      "bytes": 31942,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/full_gate.py",
+      "sha256": "fd378e35a206c8dae59c7545cbff2ed0731d5f465bbb4bd6bdfb42c42b28e159",
+      "bytes": 17754,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/main-admission-only.diff",
+      "sha256": "599895d7344a67fd7fde744c888c4b34f20d7c20e55ac8721194d5d7abc363c1",
+      "bytes": 4395,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/run-constructor-progress-only.diff",
+      "sha256": "e3a422b88b10b28c851317d0cac5318c4b756ec48fb7a0d75bc74e0327f5850c",
+      "bytes": 3313,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/source-preparation001.json",
+      "sha256": "a37bb9e12eee0dfb959bb6a106eb664e417e5ddc3f470a3839bb677c7da55e5f",
+      "bytes": 47856,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/unchanged-scientific-settings.json",
+      "sha256": "77da417c35dd2011e1fe3380d411e1e98d7f51fa53e4a833a3d715d326b16d4c",
+      "bytes": 3557,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/values_context.py",
+      "sha256": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
+      "bytes": 27394,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/PLAN.md",
+      "sha256": "9c13d86a0cbb54be63216b2fbb993e095a1ee0314f7d226b8d692e28493917f5",
+      "bytes": 17990,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/KIRCHHOFF-PENCIL.md",
+      "sha256": "e0888b388dc33feb817d044876b7e82df8019edcaaa5b002015bb635efa3c63a",
+      "bytes": 7704,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-inventory.json",
+      "sha256": "20de57d71843221aa3a1027764ea9dc6e3692c5b0f8beea4bd95ab00bd471a66",
+      "bytes": 7313,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/physical-RWM-native-pulse-IVP-pencil-20261009/DERIVATION.md",
+      "sha256": "b0ce35b9dba4f6de4b83c255b6337b75e5bca5eebfd1b1c7f88240b5a3505622",
+      "bytes": 8901,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/physical-RWM-native-pulse-IVP-pencil-20261009/index.json",
+      "sha256": "3c00f8d621b0d7cd37908f1836b2cc9562f79e0550b07f14c6b149a95ef73af7",
+      "bytes": 896,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/inputs/wave-map-N24-large-t2.athinput",
+      "sha256": "35e803e86a2fb6648243f50f5badbb5b2afce636e3914d97c84b8f68ead780d1",
+      "bytes": 1602,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/flat_ivp_values.py",
+      "sha256": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
+      "bytes": 27394,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/VALUES-PLAN.md",
+      "sha256": "6db2628b6d331a4ceaed226be29823550f2ce078becd2db55d77dca22e07c57f",
+      "bytes": 7803,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-recipe.json",
+      "sha256": "664b5da4f11a1f2c483cd05ec3fb79eb863262f02d6be81c4352b53a22b0cb77",
+      "bytes": 26668,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/receipt.json",
+      "sha256": "b054132e54cbe1e63b217f2cb1d416ea87e955f5ef1dfa2c945936e127730493",
+      "bytes": 48049,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/checks.json",
+      "sha256": "230adc8bed460a364ddf8e41c8a34111fbb12a21829a0ae9c4c65d78aa521fae",
+      "bytes": 58657,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/saved-readback001.json",
+      "sha256": "9cc679f6afc8fe87d01bdd4db4aa33d6fa8576f44b6ef77406edcfcdc3912c5b",
+      "bytes": 11939,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/VALUES-REPORT.md",
+      "sha256": "0ccca1d5f878f6e54fc5727fe6dd497cc3a22e56a6427cbf3f0181ab3e996332",
+      "bytes": 4211,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/receipt.json",
+      "sha256": "f6e5ee874b40543841c520f398a12c5e9f4609af29520848d72199c576e2f267",
+      "bytes": 46107,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/fixed-Lorentz-ray-Kirchhoff-derivative-pencil-20261009/index.json",
+      "sha256": "c09efb27f523da0a101918bc29fa2dbdc07f61cf2696357613e33456633dc02e",
+      "bytes": 1070,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/fixed-Lorentz-ray-Kirchhoff-derivative-pencil-20261009/DERIVATION.md",
+      "sha256": "aba7e6f00f722022d24b75d950b7381b94caedd07d46f396ffb9e0a543f2d758",
+      "bytes": 10394,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/fixed-Lorentz-ray-Kirchhoff-derivative-pencil-20261009/receipt.json",
+      "sha256": "2edafd7a3e7c74b38ea64aff0f33578971cdb8843bb4b8a221bbde973be262dd",
+      "bytes": 940,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/fixed-Lorentz-ray-Kirchhoff-derivative-pencil-20261009/source-pins.json",
+      "sha256": "699a180148ceb97601ae21e67fee33ad6dbc0a4c658ec90711d0004adbdfae7a",
+      "bytes": 1858,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/fixed-Lorentz-ray-Kirchhoff-derivative-pencil-20261009/freeze_note.py",
+      "sha256": "6509a49027ae08be01c63b6c8dcdeb06d5368d70eb3bac941b548c225e3edbde",
+      "bytes": 2733,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-held-20261009/source-index.json",
+      "sha256": "9649d93e6f34a1c9e2b79c542509258b6a51af73eadfbfbc3cc9b7d1fc808146",
+      "bytes": 6303,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-independent-source-review-20261009/index.json",
+      "sha256": "e7858751e2fb4132c3e2523a5d956f1e192ea6812b3bf1dddf9a05cb8c1c37ea",
+      "bytes": 1739,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-independent-source-review-20261009/receipt.json",
+      "sha256": "ed3c68812e1e6b421e7ec5f4f47f451d3e1753f188878fd2057cd5100e6e3817",
+      "bytes": 4865,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-held-20261009/source-index.json",
+      "sha256": "5e30fe0fa20ab5fb1bd75a73a768a4fa29a2bc0ce5e03d4309f7a5e0ea55408b",
+      "bytes": 7608,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-independent-guard-review-20261009/index.json",
+      "sha256": "cd6dd29b4a556c85f35a9faacbd263d643618037d39e0c1eb28f381534c2f465",
+      "bytes": 2143,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-independent-guard-review-20261009/receipt.json",
+      "sha256": "467ccf2666c986327aec09fa6a630de35ae0bc31cf2e91b10057ab9743da06e0",
+      "bytes": 1093,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-held-20261009/source-index.json",
+      "sha256": "48486f9a2ca37e8355fd06482168bebedbb8f5bb75d6979718b823856bb8bcce",
+      "bytes": 7935,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-held-20261009/timing_gate.py",
+      "sha256": "e7ed665ccac127eca837e98c59cb1f3051df20a490f9f17b0fbf437037970ac9",
+      "bytes": 9444,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-held-20261009/timing-recipe.json",
+      "sha256": "2f1bd8ac4d982cc17f3c83b8ff07f9c510c8da64e6453657ca1532869d751d9d",
+      "bytes": 27932,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/source-index.json",
+      "sha256": "690f4ee784e7bfeb3cb713399b429b90a382b71d720cbad7825cef95156dd9d6",
+      "bytes": 2859,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-attempt001/receipt.json",
+      "sha256": "089c24b69b69805ac13879960d73449516a5861cfa4eb197b3ebda994bf5f4bd",
+      "bytes": 56420,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-attempt001/rays.json",
+      "sha256": "07474689a98f05fff14fc42539d5170fce8dab64d274d81fd8657f506669fccc",
+      "bytes": 2583233,
+      "kind": "large_payload"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-attempt001/groups.json",
+      "sha256": "3914e907315c1b72cbdaa01d5a1735a73767e501297b85f5fb16fa732f10895a",
+      "bytes": 4088,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-attempt001/checks.json",
+      "sha256": "14616fea4f1fd7b65da8cdef42fd2085fe8ef369324dbf3f4c5df137fb4bfe7f",
+      "bytes": 973165,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-launch-held-20261009/timing-invocation001/receipt.json",
+      "sha256": "b04708e4622b13916d2ec38ef6e6580d9fdfe31007addefb32490b30813befa6",
+      "bytes": 63898,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-independent-source-review-20261009/index.json",
+      "sha256": "080cc24a9c5b4b748ee13d1672abfe7102139dbfcdabe28d49926365a09217d7",
+      "bytes": 4680,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-timing-independent-source-review-20261009/receipt.json",
+      "sha256": "c6298fe9e71d1499e7876fc03680e556f2452af7f8f0b811257ae31a6bd7a7f8",
+      "bytes": 1177,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/PLAN.md",
+      "sha256": "ff99e315c9f4954acd978b44fb7d4a80df6be8aef0559addd56043e7f631d104",
+      "bytes": 6782,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/analytic_jets.py",
+      "sha256": "b2defe4517d4b052851abdff21e6912fa5c4f3814d4cc3efa819c6edfc8fe410",
+      "bytes": 3053,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/compact_root.py",
+      "sha256": "e45d3fd83a46a691518644295e63849660d854819c117f3173c80fcbfc3353e2",
+      "bytes": 9145,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/comparison-recipe.json",
+      "sha256": "29da512503e899070a183498ed4f8aea2461503e3ca828707ae5b78c7c0a5fdb",
+      "bytes": 31043,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/comparison-vs-old-harness.diff",
+      "sha256": "d441a75d80df19e4fb94d454106b6f40af03ec8e84c919e51be0f1707fba306a",
+      "bytes": 10788,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/comparison_gate.py",
+      "sha256": "23939c09b3e01404bf74f81c8cfa4942730cda4ecee44dbeb50d5eca70ffda59",
+      "bytes": 12803,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/derivative_core.py",
+      "sha256": "4ba5538c9443210cf00fc2a6cf37ca19a6d800f7f347ad9ef7b875c1c0b733ec",
+      "bytes": 31942,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/source-preparation001.json",
+      "sha256": "4ffb7751d3eea157d624bdce133f2c799212142c7372b944f9ff8973f0077fb3",
+      "bytes": 484,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/values_context.py",
+      "sha256": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
+      "bytes": 27394,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-held-20261009/source-index.json",
+      "sha256": "4f5a4fbbfa6c6e4af867963189f4d3a5549116e047849bf9fac8d3c96b6c9607",
+      "bytes": 3020,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-held-20261009/derivative-recipe.json",
+      "sha256": "fc8ab4c09892ff3eaa5470166168980a744affe94d194eda3aa0edbe0896151f",
+      "bytes": 29695,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-held-20261009/flat_ivp_derivatives.py",
+      "sha256": "4ba5538c9443210cf00fc2a6cf37ca19a6d800f7f347ad9ef7b875c1c0b733ec",
+      "bytes": 31942,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-held-20261009/PLAN.md",
+      "sha256": "5c063a3da69b933e16dd25ea94f53da261c1b4b8e70374a3ea40307636492802",
+      "bytes": 8881,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-independent-source-review-20261009/index.json",
+      "sha256": "12581fa5247efb7e7e30086decb9924c33319e31517f9849ce9b98c5a0ecfc79",
+      "bytes": 5855,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-independent-source-review-20261009/receipt.json",
+      "sha256": "cd7ef0fbde22a965f70fa9aca1c089346db79cf19f901b6226f9e9aa1fa0b092",
+      "bytes": 36760,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-invocation001/receipt.json",
+      "sha256": "853262593ec47801f5a40a0d4dcecf1c4558903b6e728bd21b9830faf76223f3",
+      "bytes": 71072,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/before.json",
+      "sha256": "238bf153d5826aa21ec293f5e5498d170a1a8225fe52586613bc191a87b4a978",
+      "bytes": 30854,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/rays.json",
+      "sha256": "f41d994a3951b33309ed40cc5d8aa01a0ed59ca4ddf994c124cc76818c8e44cd",
+      "bytes": 2919042,
+      "kind": "large_payload"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/partial-rays.json",
+      "sha256": "f41d994a3951b33309ed40cc5d8aa01a0ed59ca4ddf994c124cc76818c8e44cd",
+      "bytes": 2919042,
+      "kind": "large_payload"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/checks.json",
+      "sha256": "54911d1ee073b389ce23323aeb333dc2e26f23c9bf266cfabb517b47fad63177",
+      "bytes": 7801819,
+      "kind": "large_payload"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/groups.json",
+      "sha256": "0b074286ec4fb4d0b6e7e199936ba7108d4d6f1a4dfbd210b814529421f907a0",
+      "bytes": 4106,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/partial-groups.json",
+      "sha256": "0b074286ec4fb4d0b6e7e199936ba7108d4d6f1a4dfbd210b814529421f907a0",
+      "bytes": 4106,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/completed-rays.jsonl",
+      "sha256": "9c5a650a8e29fdcc5ee62d443e6241fa695144a4a24a48252f347054bd766068",
+      "bytes": 2552799,
+      "kind": "large_payload"
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-root-launch-held-20261009/comparison-attempt001/receipt.json",
+      "sha256": "45b9967263a81cc09e0234f88f6fedf8c6a45561b10277b2cfcd0f643a0cf86f",
+      "bytes": 62485,
+      "kind": "source_or_receipt"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/__init__.py",
+      "sha256": "b241584d2c1fc0304b0a1015ea923749d7b0800411dd406dcab7c82bf25d9fe8",
+      "bytes": 8765,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/__init__.py",
+      "sha256": "500802209d5899a7b24eaa4dce306509919e2332ed51930412997df5558d8eeb",
+      "bytes": 162,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/approximation.py",
+      "sha256": "bf2ceedd823aafadceab52851eb433d369865c0707db77a6a8d62126e51a159e",
+      "bytes": 8817,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/calculus.py",
+      "sha256": "034812a748714b21037ee80956263709e59a945faf2bbd3561fb73ae3490cd0e",
+      "bytes": 112,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/differentiation.py",
+      "sha256": "d8be82063f31b57f628a9f7c34f6cab0bb70b518f18b9ef5c1899330715e2fdd",
+      "bytes": 20226,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/extrapolation.py",
+      "sha256": "c4cd2bbe4d83144178891d49865f98dda4bdde25bd555257ef2f481a99b30be0",
+      "bytes": 73306,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/inverselaplace.py",
+      "sha256": "e7ea67f0dfedd0fb600535e2c6c5d9e31c6b8a12b6279818b157d329f0f1e200",
+      "bytes": 36056,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/odes.py",
+      "sha256": "81a1e2c3b2098ec38d35301aea2cc53d9a66720f6ec93a7c3142e719dcd3206a",
+      "bytes": 9908,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/optimization.py",
+      "sha256": "6ca9d285712504e9953883a515e92c0ec602a7d7d84a66302a65c3b74cf6e8c3",
+      "bytes": 32856,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/polynomials.py",
+      "sha256": "0f5e81854fd21db562d3a2313700011d1f87efb23296774db0dde6b8f4ee158b",
+      "bytes": 7877,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/calculus/quadrature.py",
+      "sha256": "9fe6afb52f04e377e857ee6daf99687e03816a2314604f0026341c588f5070a9",
+      "bytes": 42432,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/ctx_base.py",
+      "sha256": "adf8e67ccc80e79c7c47f716148354c165531257d99b2c797ab28375ab92115c",
+      "bytes": 15985,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/ctx_fp.py",
+      "sha256": "72d523c7f3685348855a4d397170d808bd99b4b64e956b359fa65aa37a5b1b68",
+      "bytes": 6572,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/ctx_iv.py",
+      "sha256": "b6a74cafe1837e4664d4486819e0806a3cbba50bfe456b6b56a8588df23caf88",
+      "bytes": 17211,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/ctx_mp.py",
+      "sha256": "777af8b7bc4736a485b66aac03d06dab5369cb759333ea5c336fe3782c840b16",
+      "bytes": 49452,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/ctx_mp_python.py",
+      "sha256": "de89585a8e259354a743403f21a675f35aaa1bcbb9a7119ab7fbfe2f842d9f76",
+      "bytes": 37815,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/function_docs.py",
+      "sha256": "8383cff27e882d798770bc80e74b312ba4e6a7f678fe944dfb00c4ad4f03d62e",
+      "bytes": 283512,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/__init__.py",
+      "sha256": "61755d86abfee8b2a6e9caf9c71b53353b6e0fdcc33ca19097c1a64b4c73db1a",
+      "bytes": 330,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/bessel.py",
+      "sha256": "7543cbbbc7eb94afaf99fdfe8ab5ffeeebf0cb0e3171cbfa1088b398867cf243",
+      "bytes": 37938,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/elliptic.py",
+      "sha256": "ab3d3254c6f895611e3930cbfc35b3e6ee5ac261883ca02cb991495e0c0724d5",
+      "bytes": 42237,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/expintegrals.py",
+      "sha256": "ef95ff31175873517f5fbddb80d88e26ac11952da1a80cdc14b97744cdad0837",
+      "bytes": 11644,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/factorials.py",
+      "sha256": "f3fea4091edee24d46c31880389bb435169d785e23036f2ac78862761bb820b9",
+      "bytes": 5273,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/functions.py",
+      "sha256": "b9bd89131beacc258b926e72026ef616be9f756999654927abdff7c3d3048a02",
+      "bytes": 18100,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/hypergeometric.py",
+      "sha256": "67438c00c0b8ca52b8da7fd29da9b21559d4c7acc72f208b0a8243499d49ac76",
+      "bytes": 51570,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/orthogonal.py",
+      "sha256": "15a6e4c4a7c1a12b1e0397e55aed5adeb7bed8161a7b0f5aba0a88b13f0b68bc",
+      "bytes": 16097,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/qfunctions.py",
+      "sha256": "6b710718a42dfe331de31f48efbd89cfe4c6167198f9aad6a8fbd91b3f5049ed",
+      "bytes": 7633,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/rszeta.py",
+      "sha256": "cae515a788a52320e65f21375930710c38f07c424dca92676cf4bec4f1f91e8c",
+      "bytes": 46184,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/signals.py",
+      "sha256": "10ba2dc10696d420e9bfe79e273399e5cdb73617da65c8fdfc691bde9b2f4b44",
+      "bytes": 703,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/theta.py",
+      "sha256": "2a080ea1c733a0c1bafc73286a5e2810fee267848a3a8bbd24513e5b3636af73",
+      "bytes": 37320,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/zeta.py",
+      "sha256": "b9eec963b197034a17f2ad3cb10265d82491ad9ee43adf07b1fb695639d3c2b1",
+      "bytes": 36410,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/functions/zetazeros.py",
+      "sha256": "baae93572641718d8c2d7ed549d55f9f44ce928c012ccf5f5ed9f2484c1a373c",
+      "bytes": 30858,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/identification.py",
+      "sha256": "eda31d9e044069e2ff31a7c350d6e61089464129251c367ca663c5b7e38b824c",
+      "bytes": 29253,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/__init__.py",
+      "sha256": "5020e32d9c386eb6e495a0a64a2c4270f74b747933f2c17ffba17fc2bd1db808",
+      "bytes": 3790,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/backend.py",
+      "sha256": "dba03ca5491a1a8bf6eafaeb14d415c962792c3b4af2c977507ad82de71a4e30",
+      "bytes": 3360,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/gammazeta.py",
+      "sha256": "5ea770e8f328b300da49c6bfb0eb3e220951ba4ddf6fc73da78dccfe56dcae57",
+      "bytes": 71469,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/libelefun.py",
+      "sha256": "8e80593f814e7713df89e5aca352cfb52afa747c9da46fcb42217f6d841858c8",
+      "bytes": 43861,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/libhyper.py",
+      "sha256": "27d7e674317abb6ec472cb045af06e55a01ade11633ef3cdd5281182ed5d11b7",
+      "bytes": 36624,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/libintmath.py",
+      "sha256": "688453d2b91467fb1d1907f74cd08b77ea4132fb505a3b2c6ef14b7caed4d237",
+      "bytes": 16688,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/libmpc.py",
+      "sha256": "2819dd523b396154b7dbe21dddf7e50df620a5d5b53ebc7acdfa3c133e506ebb",
+      "bytes": 26875,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/libmpf.py",
+      "sha256": "be93f490d56449c6c2568668809e166ad97823b09ed1de1dcc75637d57b9eeca",
+      "bytes": 45021,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/libmp/libmpi.py",
+      "sha256": "bb4239122c24a9afb8f9d5c44e2e64eccb9ac417996ef0803c5b65f7753d605d",
+      "bytes": 27622,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/math2.py",
+      "sha256": "3b90e0960f354ac5b4c1f1c3509717383f3e70268bbdb548bf2c34b159916e92",
+      "bytes": 18561,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/matrices/__init__.py",
+      "sha256": "113cc60dc8986eaf5fb622b068c6c9d79108f8a3571ebcd16fe6477a186a163b",
+      "bytes": 94,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/matrices/calculus.py",
+      "sha256": "3cd46afa9da7c604fe7f30b9e0ad9d7a98bc75d85dc7a43ce86f2aa548877946",
+      "bytes": 18609,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/matrices/eigen.py",
+      "sha256": "19b0d72370a2c7311d5f1af51bceae5169009e002f77ed39326490f93b2eff99",
+      "bytes": 24394,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/matrices/eigen_symmetric.py",
+      "sha256": "14f28f790af5706630e98e9e6b7d9ad587445900cb3fa265407100d967cd2d88",
+      "bytes": 58534,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/matrices/linalg.py",
+      "sha256": "d380b78a3ccc1689bba1be5f5c10837f23cf768dc121ba08784f31d80eafa85d",
+      "bytes": 26958,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/matrices/matrices.py",
+      "sha256": "a3bf04abad841d09f172c4742c1a160c419110ea0de0bda20ccd6addd42bc34a",
+      "bytes": 32331,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/rational.py",
+      "sha256": "eb8779e9fbd95e7818653ee73801de151517efb789d40d11deba5f58153e992a",
+      "bytes": 5976,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/extratest_gamma.py",
+      "sha256": "c627615d47a520b731b623c6a130478ea50e28827311a67fbf79e7b464325994",
+      "bytes": 7228,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/extratest_zeta.py",
+      "sha256": "b20d748fd4618c1a55d84754ab2621195d84456bccfbe12fc30188cfa1d39a5c",
+      "bytes": 1003,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/runtests.py",
+      "sha256": "ecd515f361772bfe40854f2608b5057f93a26ed4fbba5a050b03f233797bd703",
+      "bytes": 5189,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_basic_ops.py",
+      "sha256": "76c07c0d11be1ab3f305a67e6c86ae61a6da7aa5db7ea068f5220ff41a9c4d2b",
+      "bytes": 15348,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_bitwise.py",
+      "sha256": "fa72d886041b843cdadd240ceb706192d627b4009a82a318c7d89bddd3e74ca3",
+      "bytes": 7686,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_calculus.py",
+      "sha256": "e28c6d35f3293b844b2e83b3aefeebf7e87c05ca9f06c24813a529b077bb738c",
+      "bytes": 9187,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_compatibility.py",
+      "sha256": "feddc0499de385f00c9cdd6fa165fb3c33480f39fedcfa24909188753d71ef2d",
+      "bytes": 2306,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_convert.py",
+      "sha256": "24f7037132485a1e69ac8c63c790ccd5a35682a954a05d8aa47bc080adee1e2e",
+      "bytes": 8834,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_diff.py",
+      "sha256": "aa3885f0dc50f2fb9eb99e591c63d0fa48dc8ff23b261fdf11d16d680f03cc42",
+      "bytes": 2466,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_division.py",
+      "sha256": "ea551e65f99a056befb3376a9562cc1e05cf8d5b31bd6d56669778fa31560a95",
+      "bytes": 5340,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_eigen.py",
+      "sha256": "da69ea5404c66ec264bd25473e98ad7c093cf35b7015f6f72ec3b75e2915f47b",
+      "bytes": 3905,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_eigen_symmetric.py",
+      "sha256": "bf456298289c214da8c0048330168ffadfb7d2eabea5772c825b7de4a06d34ee",
+      "bytes": 8778,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_elliptic.py",
+      "sha256": "2a38b0abd05be8dfce3b3cd67b0190d4cfcf31aeef46ce36574b7dd20968671a",
+      "bytes": 26225,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_fp.py",
+      "sha256": "009a34153c87e01b949d4b2fd7be8b0fde7aa26df4f0a1989ddcbe6f9e0a1b13",
+      "bytes": 89997,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_functions.py",
+      "sha256": "6f8ed5cb07689a8397e8a98c9b3f7e8afd88a95232770292b94c36a569451eb6",
+      "bytes": 30955,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_functions2.py",
+      "sha256": "be5c3645684bd684dc89f9ce303c756bf63337de9480d34813949378a46fd476",
+      "bytes": 96990,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_gammazeta.py",
+      "sha256": "001df83b40d5ec09447fd6786eb9c269d790539fae030856470e4565ab3ae430",
+      "bytes": 27917,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_hp.py",
+      "sha256": "ea170436ee937b69253c489349e2c12113e51fb3c00e527014a6f1f31a673a18",
+      "bytes": 10461,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_identify.py",
+      "sha256": "9465083dfac1da9693834705528eb81a633317bec5f60b3d1508d7ee0c461d5f",
+      "bytes": 692,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_interval.py",
+      "sha256": "4e361dedaf5c6ba8912622e3c34ea2b0b7994ee1a81803e68257836747187c9d",
+      "bytes": 17527,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_levin.py",
+      "sha256": "3fc335d72575763fe075236fe71bb00b316217ce90c910ed3cc8d4472eb0276f",
+      "bytes": 5090,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_linalg.py",
+      "sha256": "9a22849f007c8b0595d77862d5b175720de1801e2b4ca391d1fbc355f5a65ddb",
+      "bytes": 10440,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_matrices.py",
+      "sha256": "ab2038325d82bcdbd6d37e25cc1d351bac1580dafb52b819aa1db090c5eda733",
+      "bytes": 7944,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_mpmath.py",
+      "sha256": "2d5c8951ea1f89ac56fb32ca595042cf9f4bf5442c8e55b44ecf7fa01884bffe",
+      "bytes": 196,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_ode.py",
+      "sha256": "cc0c5ec411f87e798534ee1bbc41dbba0d4d2560b9cea7c56950e56228e8c246",
+      "bytes": 1822,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_pickle.py",
+      "sha256": "63c08a9832c5b091d4a86f020da070e6296b3cfe184f5c628d576e2e943b5c51",
+      "bytes": 401,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_power.py",
+      "sha256": "b33fcad364a6371a5ae8a6f5b892cdfcde2d5d3246750ffffef3d1b2110dec69",
+      "bytes": 5227,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_quad.py",
+      "sha256": "e3d2ed7edd2f67f91d28b2f9b3e2a3f81cc05681792cf54451e354cdd3a48212",
+      "bytes": 3893,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_rootfinding.py",
+      "sha256": "ba641e80468a1e660e125e63132a03f952ca0ed5ec4c92647a9284af8734742d",
+      "bytes": 3132,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_special.py",
+      "sha256": "61b308a0c224244bef2982334b4097b612451b4fbe8faba7efeb5c13a6fb14f3",
+      "bytes": 2848,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_str.py",
+      "sha256": "d16b060fd84c3d18bccdcb98300f42bb698ebd088216c90fc0cb0c7fc9410cae",
+      "bytes": 544,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_summation.py",
+      "sha256": "7dd365b2f4553ac6d6c5b865c832c36843b64bc91326b44c288bc1e7e68d722d",
+      "bytes": 2035,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_trig.py",
+      "sha256": "ccfb642049d9693871716babe24ec15fcfb62668fe0213b5f754afbfb00d6145",
+      "bytes": 4799,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/test_visualization.py",
+      "sha256": "d4faad928531f96b0a6204d18aee68f6905cf3993085fd65cd4d9ea1b0d00893",
+      "bytes": 944,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/tests/torture.py",
+      "sha256": "2c3f79a044bb258d8aae810b2be9be8e1bed6ef65a282867b740aaee414c342c",
+      "bytes": 7868,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/usertools.py",
+      "sha256": "6be4c3c3b5d246c3dd0447dfc4ea280d5e160c57ee5e73b9f0fef975c003f3b2",
+      "bytes": 3029,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/visualization.py",
+      "sha256": "a679db8dc77d02115544165abd85f9823c78cad2bf917a030e2b1847a1295e1b",
+      "bytes": 10627,
+      "kind": "mpmath_runtime_source"
+    },
+    {
+      "path": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+      "sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464",
+      "bytes": 53200,
+      "kind": "executable_metadata_only"
+    }
+  ],
+  "protected_path_count_including_outer_three_and_auth": 164,
+  "local_source_copy_count_excluding_interpreter": 163,
+  "no_execution_during_preparation": true
+}

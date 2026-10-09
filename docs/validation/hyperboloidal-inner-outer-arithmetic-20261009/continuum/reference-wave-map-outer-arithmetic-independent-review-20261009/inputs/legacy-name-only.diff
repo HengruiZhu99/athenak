@@ -1,0 +1,11 @@
+--- frozen-source003
++++ fresh-outer-source001
+@@ -44,7 +44,7 @@
+ // counterterm. Reference deviations make both returned parts exactly zero.
+ // P remains Kphysical-2Theta physical; Lambda includes 2*gtildeInv*Zcov.
+ // The assembled rows contain no division by the LIVE lapse.
+-template<class T> KOKKOS_INLINE_FUNCTION hyp::GaugeRHSParts<T> Gauge(
++template<class T> KOKKOS_INLINE_FUNCTION hyp::GaugeRHSParts<T> LegacyGauge(
+     const hyp::LayerPoint<T>&p,const hyp::Z4cJet<T>&u,const Connection<T>&c) {
+   hyp::GaugeRHSParts<T> q{};const T a=u.alpha.value,h=p.alpha,chi=u.chi.value,ch=p.state.chi.value;
+   if(!c.valid || !(a>0) || !(chi>0) || !Kokkos::isfinite(a) || !Kokkos::isfinite(chi))return q;

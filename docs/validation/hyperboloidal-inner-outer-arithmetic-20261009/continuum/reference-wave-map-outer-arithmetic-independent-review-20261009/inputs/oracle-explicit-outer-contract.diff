@@ -1,0 +1,32 @@
+--- frozen-source003
++++ fresh-outer-source001
+@@ -32,7 +32,7 @@
+     if sys.flags.optimize or not sys.dont_write_bytecode:
+         raise RuntimeError('Unoptimized Python and bytecode-off are required')
+     auth, recipe = read(args.authorization), read(args.recipe)
+-    if not auth.get('local_nonlinear_helper_execution_admitted'):
++    if not auth.get('outer_arithmetic_local_execution_admitted'):
+         raise RuntimeError('No exact root local execution authorization')
+     if auth['recipe_sha256'] != hash_file(args.recipe):
+         raise RuntimeError('Recipe authorization mismatch')
+@@ -213,8 +213,18 @@
+                                 for name in ('ADM','embedding'):
+                                     update('connection-'+name,cs,atom(row[name][a][i][j]).v,mp.mpf('2e-11'))
+                 if row['W']==1:
+-                    require(row['outer_value_bitwise'],str(label)+' W1 native bit mismatch')
+-                    require(all(float(x[component]).hex()==float(y[component]).hex() for x,y in zip(row['parts'],row['baseline_parts']) for component in range(2)),str(label)+' W1 full dual bit mismatch')
++                    # NEW arithmetic identity, explicitly not the frozen outer
++                    # bitwise contract for far states. Original baseline parts
++                    # and old outer_value_bitwise remain recorded in every row.
++                    uref=field(row['reference']);live=field(row['input'])
++                    near=all(v.v>=r.v/2 and v.v<=2*r.v for v,r in
++                             ((live['alpha'],uref['alpha']),(live['chi'],uref['chi'])))
++                    require(row['legacy_near']==near,str(label)+' route mismatch')
++                    if near:
++                        require(row['outer_value_bitwise'],str(label)+' legacy-near W1 native bit mismatch')
++                        require(all(float(x[component]).hex()==float(y[component]).hex() for x,y in zip(row['parts'],row['baseline_parts']) for component in range(2)),str(label)+' legacy-near W1 full dual bit mismatch')
++                    # Every far state still faces all unchanged MP parts/RHS
++                    # and dual thresholds above; old bit equality is metadata.
+                     require(row['arithmetic']['coefficient_calls']==0,str(label)+' W1 evaluated inner k')
+                 if kind=='source' and row['W']==0 and row['Omega'][0]==1:
+                     exact=core_target(row)

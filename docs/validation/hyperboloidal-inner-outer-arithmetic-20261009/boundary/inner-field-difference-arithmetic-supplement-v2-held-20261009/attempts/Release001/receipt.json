@@ -1,0 +1,267 @@
+{
+  "actual_main003_release_receipt": {
+    "bytes": 26058,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-joint-nonlinear-helper-source003-held-20261009/attempts/Release001/receipt.json",
+    "sha256": "0f207c35ef15a0b765930677c5b1f220de9d5fd6ae05f04f32241fa9e58267c0"
+  },
+  "build": "release",
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/c++",
+        "--version"
+      ],
+      "name": "compiler-version",
+      "returncode": 0,
+      "seconds": 0.013249917,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/compiler-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 158,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/compiler-version.stdout",
+        "sha256": "f6a41663474c412322e565ec1a1aa27bcb42151b98d527dc401b7d744b9a4237"
+      }
+    },
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "name": "launch-HEAD",
+      "returncode": 0,
+      "seconds": 0.010882249999999982,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/launch-HEAD.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/launch-HEAD.stdout",
+        "sha256": "940c40dab3e5a56654a63066e2ba358cc781f332cd2e85d4134ad0214b54c80f"
+      }
+    },
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+        "-I",
+        "-B",
+        "--version"
+      ],
+      "name": "python-version",
+      "returncode": 0,
+      "seconds": 0.00827958299999998,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/python-version.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 13,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/python-version.stdout",
+        "sha256": "fd0fd4290ad100adc37e4a82e45f821faeacbecae70f4d3eba08e85be138c632"
+      }
+    },
+    {
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/inputs",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009",
+        "-std=c++17",
+        "-O3",
+        "-DNDEBUG",
+        "-DKOKKOS_DEPENDENCE",
+        "-Isrc",
+        "-Ibuild-layer-release",
+        "-Ibuild-layer-release/kokkos",
+        "-Ibuild-layer-release/kokkos/core/src",
+        "-Ikokkos/core/src",
+        "-Ibuild-layer-release/kokkos/containers/src",
+        "-Ikokkos/containers/src",
+        "-Ibuild-layer-release/kokkos/algorithms/src",
+        "-Ikokkos/algorithms/src",
+        "-Ibuild-layer-release/kokkos/simd/src",
+        "-Ikokkos/simd/src",
+        "-isystem",
+        "kokkos/tpls/desul/include",
+        "-isystem",
+        "kokkos/tpls/mdspan/include",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/dependencies.d",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/probe.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/field-difference-release"
+      ],
+      "name": "compile",
+      "returncode": 0,
+      "seconds": 0.711356292,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/compile.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/compile.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/field-difference-release",
+        "--all"
+      ],
+      "name": "probe",
+      "returncode": 0,
+      "seconds": 0.5054995830000002,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/probe.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 73847,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/probe.stdout",
+        "sha256": "203c09cc58a9c075e5441be532562401457f1d20c41dbce063cadd383b8c1b70"
+      }
+    },
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+        "-I",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/oracle.py",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-field-difference-supplement-v2-root-release-20261009/authorization.json",
+        "release",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001"
+      ],
+      "name": "oracle",
+      "returncode": 0,
+      "seconds": 0.8150037910000001,
+      "stderr": {
+        "bytes": 0,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/oracle.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 323,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/oracle.stdout",
+        "sha256": "0c39e4e6d9f4b6aa6f0b2b218e21dc56ccc30c32b9ed563f9855148c7266da4f"
+      }
+    }
+  ],
+  "completed": true,
+  "executable_after": {
+    "bytes": 74904,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/field-difference-release",
+    "sha256": "31906647a197926b5a76d056cffe9df3133115710f43778a63b7b9cb7560c2e2"
+  },
+  "executable_before": {
+    "bytes": 74904,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/field-difference-release",
+    "sha256": "31906647a197926b5a76d056cffe9df3133115710f43778a63b7b9cb7560c2e2"
+  },
+  "inputs_unchanged": true,
+  "output_inventory": [
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/compile.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/compile.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/compiler-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 158,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/compiler-version.stdout",
+      "sha256": "f6a41663474c412322e565ec1a1aa27bcb42151b98d527dc401b7d744b9a4237"
+    },
+    {
+      "bytes": 93988,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/dependencies.d",
+      "sha256": "e1eab62ecc4ff8dea8040fda8de11eb82e87bd80fa0d218b18af2a1948ef4324"
+    },
+    {
+      "bytes": 231914,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/dependencies.json",
+      "sha256": "bed4210e95caa4687894d7f6d5dac18efce1f1a51b74497b5eac2b0d40e271b1"
+    },
+    {
+      "bytes": 74904,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/field-difference-release",
+      "sha256": "31906647a197926b5a76d056cffe9df3133115710f43778a63b7b9cb7560c2e2"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/launch-HEAD.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 41,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/launch-HEAD.stdout",
+      "sha256": "940c40dab3e5a56654a63066e2ba358cc781f332cd2e85d4134ad0214b54c80f"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/oracle.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 323,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/oracle.stdout",
+      "sha256": "0c39e4e6d9f4b6aa6f0b2b218e21dc56ccc30c32b9ed563f9855148c7266da4f"
+    },
+    {
+      "bytes": 73847,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/probe.jsonl",
+      "sha256": "203c09cc58a9c075e5441be532562401457f1d20c41dbce063cadd383b8c1b70"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 73847,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/probe.stdout",
+      "sha256": "203c09cc58a9c075e5441be532562401457f1d20c41dbce063cadd383b8c1b70"
+    },
+    {
+      "bytes": 0,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/python-version.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 13,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/python-version.stdout",
+      "sha256": "fd0fd4290ad100adc37e4a82e45f821faeacbecae70f4d3eba08e85be138c632"
+    },
+    {
+      "bytes": 135767,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/supplement-report.json",
+      "sha256": "d7ddd0a839548ab917bbe31ff1dc1992c8070b2c0b594e873b58b6e738337e24"
+    }
+  ],
+  "passed": true,
+  "recipe_sha256": "bab172c1aec927c29cec9e423e645daad1ab69c45e190b386a914725896506ab",
+  "report": {
+    "bytes": 135767,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/inner-field-difference-arithmetic-supplement-v2-held-20261009/attempts/Release001/supplement-report.json",
+    "sha256": "d7ddd0a839548ab917bbe31ff1dc1992c8070b2c0b594e873b58b6e738337e24"
+  },
+  "returncode": 0,
+  "scope": "separate fixed scalar field-difference supplement only",
+  "source_index_sha256": "e7b31a31bef5ca4dd1745f9c68c0ba41d0c24718b38365016ae20f7e328d851e"
+}

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-20261009/read_saved.py", line 218, in <module>
+    if __name__=="__main__":main()
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-20261009/read_saved.py", line 193, in main
+    summaries=[build_readback(case,recipe) for case in recipe["cases"]]
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-20261009/read_saved.py", line 193, in <listcomp>
+    summaries=[build_readback(case,recipe) for case in recipe["cases"]]
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-outer001-saved-readback-20261009/read_saved.py", line 121, in build_readback
+    assert row["outer_value_bitwise"]==primal_equal
+AssertionError

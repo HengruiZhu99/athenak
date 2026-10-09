@@ -1,0 +1,14 @@
+{
+  "classification": "mechanical saved-reader failure; scientific Release/Debug unchanged PASS",
+  "failure": {
+    "mode": "reference",
+    "line": 19,
+    "W": 0,
+    "native_outer_value_bitwise": false,
+    "default_JSON_parser_bit_comparison": true,
+    "signed_zero_preserving_parse_bit_comparison": false
+  },
+  "cause": "JSON lexical -0 is normally parsed as int0, losing IEEE negative-zero sign before float.hex audit",
+  "diagnostic": "source reconstructed in this note from exact executed stdlib stdin tool call; no source-before receipt claimed for that one display-only diagnostic",
+  "no_targets_or_source_queries": true
+}

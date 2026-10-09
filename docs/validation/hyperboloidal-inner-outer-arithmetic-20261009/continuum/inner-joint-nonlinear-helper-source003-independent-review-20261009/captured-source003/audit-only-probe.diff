@@ -1,0 +1,14 @@
+--- source002/probe.cpp
++++ source003/probe.cpp
+@@ -36,7 +36,10 @@
+  q.pole.alpha,q.pole.beta[0],q.pole.beta[1],q.pole.beta[2]};}
+ template<class T>std::array<T,4> Fields(const hyp::GaugeRHS<T>&q){return {q.alpha,q.beta[0],q.beta[1],q.beta[2]};}
+ void Audit(const inner::Audit&a){std::cout<<"{\"products\":"<<a.products<<",\"coefficient_calls\":"<<a.coefficient_calls
+- <<",\"coefficient_scaled_away\":"<<a.coefficient_scaled_away<<",\"max_product_exponent\":"<<a.maximum_product_exponent<<'}';}
++ <<",\"coefficient_scaled_away\":"<<a.coefficient_scaled_away<<",\"max_product_exponent\":"<<a.maximum_product_exponent
++ <<",\"dA_near\":"<<a.dA_near<<",\"dA_far\":"<<a.dA_far
++ <<",\"dc_near\":"<<a.dc_near<<",\"dc_far\":"<<a.dc_far
++ <<",\"dal_near\":"<<a.dal_near<<",\"dal_far\":"<<a.dal_far<<'}';}
+ template<class T>void Context(const hyp::LayerPoint<T>&p,const T*x,double curvature,double G0,const std::string&kind,int direction){
+  std::cout<<"{\"kind\":\""<<kind<<"\",\"curvature\":"<<curvature<<",\"G0\":"<<G0<<",\"direction\":"<<direction<<",\"xyz\":";V(x,3);
+  std::cout<<",\"radius\":";S(p.radius);std::cout<<",\"Omega\":";S(p.omega);std::cout<<",\"Omega_d\":";V(p.domega,3);

@@ -1,0 +1,94 @@
+{
+  "G0_values": [
+    "0.375",
+    "0.75"
+  ],
+  "W_source": "SmoothCutoff(radius,.45,.85).value only; no LayerCoefficients",
+  "authoritative_RWM_sha256": "56d61c56bf37bf33591bec74c029c686c7d39f7abbe62dd090becda8e7176e28",
+  "authoritative_proposal_sha256": "57f4801e6713448629c0f289de1aa8da6d39f98b9a12186b86a04ff71f76027e",
+  "eta": "0",
+  "exact_outer_branch_before_inner_arithmetic": true,
+  "execution_admitted": false,
+  "forbidden": [
+    "compile or execute at this held stage",
+    "matrix generation",
+    "eigenvalues",
+    "propagation",
+    "native evolution",
+    "production edits",
+    "BH implementation",
+    "floors/clamping/warning suppression",
+    "preferred-Box identity claim for new inner rows",
+    "outer scri regularity/stability claim"
+  ],
+  "future_compile_controls": {
+    "compiler": "/usr/bin/c++",
+    "debug": [
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer"
+    ],
+    "exact_includes_and_dependencies": "fresh implementation recipe must capture all actual include flags and emitted dependency paths; do not infer from a source commit",
+    "fresh_retained_exe_per_attempt": true,
+    "release": [
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG"
+    ]
+  },
+  "future_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "python_flags": [
+      "-B"
+    ]
+  },
+  "future_reports": [
+    "all exact case labels/actual xyz and radius/branch W",
+    "regular/pole/full rows and independent targets",
+    "absolute and scaled errors; relative core witness errors",
+    "all FD levels and convergence classification",
+    "all fallback/scaled-product paths and counts",
+    "nonrepresentable classifications and rejected validity",
+    "source/compiler/dependency/executable pre-post hashes/stdout/stderr/returncodes",
+    "Release/Debug differences and sanitizer output",
+    "negative double-only coefficient-dual control"
+  ],
+  "next_stage_requires_fresh_source_checkpoint_and_root_release": true,
+  "no_runtime_mu": true,
+  "oracle_decimal_precision": {
+    "high_contrast": [
+      240,
+      280
+    ],
+    "ordinary": [
+      80,
+      110
+    ]
+  },
+  "required_principal_receipt_sha256": "bf778caf62d6596261d5c15a7307b791bb39be321f0bc0bc834adfdeeef4d83b",
+  "scaled_error_definition": "abs(got-target)/max(1,abs(got),abs(target)); retain absolute, scaled, signed values, precision readback and minima/near-zero rows",
+  "scientific_source_or_helper_implemented": false,
+  "scope": "finite-Omega nonlinear inner helper algebra/arithmetic/local generic-dual only",
+  "source_only": true,
+  "status": "HELD source-only nonlinear-plan v1",
+  "thresholds": {
+    "connection_entrywise_scaled": 2e-11,
+    "contrast_precision_entrywise_scaled": 1e-180,
+    "core_normal_nonzero_witness_relative": 2e-10,
+    "dual_MP_entrywise_scaled": 2e-10,
+    "finite_difference_all_level_floor": 5e-09,
+    "finite_difference_final_entrywise_scaled": 5e-07,
+    "finite_difference_first_over_final_min": 2.0,
+    "full_source_parts_and_assembled_entrywise_scaled": 2e-10,
+    "k_absolute": 2e-14,
+    "ordinary_precision_entrywise_scaled": 1e-65,
+    "outer_parts_bitwise": true,
+    "principal_coefficient_entrywise_scaled": 2e-11,
+    "reference_parts_absolute": 0.0
+  }
+}

@@ -1,0 +1,43 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-v2-held-20261009/flat_ivp_derivatives.py::run
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-derivatives-compact-full-held-20261009/full_gate.py::run
+@@ -12,9 +12,10 @@
+         mp.mp.dps=dps
+         for level in recipe["levels"]:
+             for case in recipe["events"]:
+-                graph=NativeGraph(recipe,level["height_order"],case["amplitudes"])
++                graph=ProgressNativeGraph(recipe,level["height_order"],case["amplitudes"])
+                 T,X,omega,gamma,boost,x=graph.event(case)
+                 for mode in recipe["native_boosts"]:
++                    PROGRESS.label="native/%s/%s/%s/%s"%(dps,level["name"],case["name"],mode)
+                     start=time.monotonic()
+                     B=fixed_boost(X,gamma,boost,mode)
+                     result,metrics=integrate_ray(graph,T,X,B,level["polar_order"],level["azimuth_order"])
+@@ -28,11 +29,12 @@
+                     print("native-complete",dps,level["name"],case["name"],mode,time.monotonic()-start,flush=True)
+             # Closed-form controls retain all four gradients and ten Hessians.
+             for ctrl in recipe["controls"]:
+-                graph=ControlGraph(ctrl["kind"],ctrl.get("degree",0))
++                graph=ProgressControlGraph(ctrl["kind"],ctrl.get("degree",0))
+                 X=list(map(mp.mpf,ctrl["X"]))
+                 T=graph.height(X)+mp.mpf(ctrl["tau"])
+                 exact=[j.flat() for j in graph.exact(T,X)]
+                 for mode in recipe["control_boosts"]:
++                    PROGRESS.label="control/%s/%s/%s/%s"%(dps,level["name"],ctrl["name"],mode)
+                     B=fixed_boost(X,mp.mpf(1),ZERO(),mode)
+                     result,metrics=integrate_ray(graph,T,X,B,level["polar_order"],level["azimuth_order"])
+                     controls.append({"name":ctrl["name"],"dps":dps,"level":level["name"],"boost":mode,"jet":[strings(r) for r in result],"exact":[strings(r) for r in exact],"metrics":{k:vc.number(v) for k,v in metrics.items()}})
+@@ -48,12 +50,13 @@
+         final=next(level for level in recipe["levels"] if level["name"]==recipe["final_level"])
+         # Exact lambda=0 boundary limit, without a finite-difference derivative.
+         for point in recipe["initial_points"]:
+-            graph=NativeGraph(recipe,final["height_order"],recipe["native_amplitudes"])
++            graph=ProgressNativeGraph(recipe,final["height_order"],recipe["native_amplitudes"])
+             case={"xyz":point,"tau_reference":"0"}
+             T,X,omega,gamma,boost,x=graph.event(case)
+             expected=initial_oracle(graph,X)
+             for mode in recipe["native_boosts"]:
+                 B=fixed_boost(X,gamma,boost,mode)
++                PROGRESS.label="initial/%s/%s/%s"%(dps,point,mode)
+                 result,metrics=integrate_ray(graph,T,X,B,final["polar_order"],final["azimuth_order"],initial=True)
+                 initials.append({"xyz":point,"dps":dps,"boost":mode,"initial_jet":[strings(r) for r in result],"independent_graph_wave_oracle":[strings(r) for r in expected],"metrics":{k:vc.number(v) for k,v in metrics.items()}})
+                 for block,numer in jet_blocks(result).items():

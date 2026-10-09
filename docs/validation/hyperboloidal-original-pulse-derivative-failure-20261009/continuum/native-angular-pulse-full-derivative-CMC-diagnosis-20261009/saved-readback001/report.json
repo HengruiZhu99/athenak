@@ -1,0 +1,1296 @@
+{
+  "classification_passed": true,
+  "checks": 2360,
+  "failed_checks": 156,
+  "passed_checks": 2204,
+  "failed_by_family": {
+    "control": 120,
+    "exact": 24,
+    "wave": 12
+  },
+  "failed_local_metric": {
+    "K_jet": 60,
+    "D_source_jet": 60
+  },
+  "all_failed_checks_are_CMC_controls": true,
+  "native_rows": 100,
+  "control_rows": 100,
+  "initial_rows": 28,
+  "root_progress": {
+    "completed_root_calls": 493568,
+    "by_kind": {
+      "native": 189440,
+      "control": 189440,
+      "initial": 114688
+    },
+    "by_method": {
+      "compact_safeguarded_Newton": 75776,
+      "Cartesian_core_exact": 37888,
+      "outer_exact": 75776,
+      "unchanged_analytic_control": 189440,
+      "initial_exact": 114688
+    },
+    "current_label": "initial/110/['.99', '0', '0']/normal_then_fixed_z_0.2",
+    "seconds_since_progress_context": 9664.028526416,
+    "scope": "Root-call progress, not integrand or gate acceptance; source/jet failures can follow a completed root"
+  },
+  "original_child_seconds": 9664.044208541,
+  "categories": {
+    "boost": {
+      "checks": 30,
+      "failed": 0,
+      "max_saved_error_row": {
+        "name": "boost/110/pulse_transition_short/hessian",
+        "error": "7.9862492581735648356531519609519970744592402830863666598993756350384030427438313580634630990723139680011321194e-58",
+        "tolerance": "1e-10",
+        "passed": true
+      }
+    },
+    "coarea-value": {
+      "checks": 40,
+      "failed": 0,
+      "max_saved_error_row": {
+        "name": "coarea-value/80/pulse_core/normal/u",
+        "error": "5.7036270934484918701519383726743728579717144056225921362264105208814463640538139e-57",
+        "tolerance": "1e-10",
+        "passed": true
+      }
+    },
+    "control": {
+      "checks": 800,
+      "failed": 120,
+      "max_saved_error_row": {
+        "name": "control/110/full64/CMC_l0/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767310210557203946086973070826953",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    },
+    "convergence": {
+      "checks": 240,
+      "failed": 0,
+      "max_saved_error_row": {
+        "name": "convergence/110/pulse_transition_short/normal_then_fixed_z_0.2/full32/hessian",
+        "error": "0.000000000000000000000000000013746220173727241725399896334536128952350243193078741035029725769015741736371373596997409646758597575508479025",
+        "tolerance": "1e-10",
+        "passed": true
+      }
+    },
+    "exact": {
+      "checks": 60,
+      "failed": 24,
+      "max_saved_error_row": {
+        "name": "exact/110/CMC_l0/fixed_oblique_0.35/hessian",
+        "error": "0.70247214999510920963850089829742721088588146858404030635201304073793860426972076339900158745759355916200145587",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    },
+    "initial": {
+      "checks": 224,
+      "failed": 0,
+      "max_saved_error_row": {
+        "name": "initial/110/['.5', '.2', '.1']/normal/root",
+        "error": "1.4471146667689788533618274300921357573810612311470454387807141634440041557874244557262012155538621636795304508e-56",
+        "tolerance": "1e-40",
+        "passed": true
+      }
+    },
+    "initial-limit": {
+      "checks": 84,
+      "failed": 0,
+      "max_saved_error_row": {
+        "name": "initial-limit/80/['.2', '.1', '-.05']/normal/hessian",
+        "error": "4.7439890744537354509568583230715085534694826220658283975349933612986649309363918e-81",
+        "tolerance": "1e-10",
+        "passed": true
+      }
+    },
+    "native": {
+      "checks": 800,
+      "failed": 0,
+      "max_saved_error_row": {
+        "name": "native/80/full64/pulse_transition_short/normal_then_fixed_z_0.2/root",
+        "error": "1.1487727940907743468255924564161480016615337014493898679184539911052696248168499e-56",
+        "tolerance": "1e-40",
+        "passed": true
+      }
+    },
+    "precision": {
+      "checks": 40,
+      "failed": 0,
+      "max_saved_error_row": {
+        "name": "precision/pulse_center/normal/hessian",
+        "error": "9.6096093907329441136802154091001167212932295678583844617219234741154743499985397214709578547450059015001413912e-81",
+        "tolerance": "1e-30",
+        "passed": true
+      }
+    },
+    "wave": {
+      "checks": 40,
+      "failed": 12,
+      "max_saved_error_row": {
+        "name": "wave/control/110/full64/CMC_l2/fixed_oblique_0.35",
+        "error": "0.23154206417066472262016413333278590099023948659142110466377304752028666513484207768709339360189501897407844672",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    },
+    "zero": {
+      "checks": 2,
+      "failed": 0,
+      "max_saved_error_row": {
+        "name": "zero/zero_exact_outer_short/normal",
+        "error": "0.0",
+        "tolerance": "0",
+        "passed": true
+      }
+    }
+  },
+  "failed_groups": {
+    "control/80/full16/CMC_l0/laboratory": [
+      {
+        "name": "control/80/full16/CMC_l0/laboratory/K_jet",
+        "error": "1.9882195324940335796604457728863290393217912488695266094416654446776576246130906",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full16/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9994757986682153438432966818894471457493252681527926450586361318792127587837251",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full16/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full16/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.9815960279784971516162064097668695611722437381880679530580380165853639759292959",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full16/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9865194896821711305758350877488593526548712004792973924752653899461261380046083",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full16/CMC_l1/laboratory": [
+      {
+        "name": "control/80/full16/CMC_l1/laboratory/K_jet",
+        "error": "1.9882195324940335796604457728863290393217912488695266094416654446776576246130906",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full16/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9994757986682153438432966818894471457493252681527926450586361318792127587837251",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full16/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full16/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.9815960279784971516162064097668695611722437381880679530580380165853639759292959",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full16/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9865194896821711305758350877488593526548712004792973924752653899461261380046083",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full16/CMC_l2/laboratory": [
+      {
+        "name": "control/80/full16/CMC_l2/laboratory/K_jet",
+        "error": "1.9882195324940335796604457728863290393217912488695266094416654446776576246130906",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full16/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9994757986682153438432966818894471457493252681527926450586361318792127587837251",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full16/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full16/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.9815960279784971516162064097668695611722437381880679530580380165853639759292959",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full16/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9865194896821711305758350877488593526548712004792973924752653899461261380046083",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full32/CMC_l0/laboratory": [
+      {
+        "name": "control/80/full32/CMC_l0/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884288",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full32/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full32/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full32/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full32/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.995832776803383523877109349044592286715180268583700769652779319055744918530918",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full32/CMC_l1/laboratory": [
+      {
+        "name": "control/80/full32/CMC_l1/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884288",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full32/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full32/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full32/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full32/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.995832776803383523877109349044592286715180268583700769652779319055744918530918",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full32/CMC_l2/laboratory": [
+      {
+        "name": "control/80/full32/CMC_l2/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884288",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full32/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full32/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full32/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full32/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.995832776803383523877109349044592286715180268583700769652779319055744918530918",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/full64/CMC_l0/laboratory": [
+      {
+        "name": "control/80/full64/CMC_l0/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full64/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083577",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/80/CMC_l0/laboratory": [
+      {
+        "name": "exact/80/CMC_l0/laboratory/gradient",
+        "error": "0.33114385447964145629609633837118331802355750349131578317145762754450168620922862",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/80/CMC_l0/laboratory/hessian",
+        "error": "0.70239259386025695279382799139583631625794998749842753024043163805070683216071036",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/80/full64/CMC_l0/laboratory": [
+      {
+        "name": "wave/control/80/full64/CMC_l0/laboratory",
+        "error": "0.22920261665863660801134417104053395212488715954873215948315477173626195486805989",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/80/full64/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full64/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.997226810639461067402975498103753250271330279550781827706375198107717260656287",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full64/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.999633256033835708149953475946819666021117547389539844740647537573855135243521",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/80/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "exact/80/CMC_l0/fixed_oblique_0.35/gradient",
+        "error": "0.33114996586680405207013695049068140574901685433179280626187149763554864329396347",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/80/CMC_l0/fixed_oblique_0.35/hessian",
+        "error": "0.70247214999510920963850089829742721088588146858404030635201304073793860426972076",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/80/full64/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "wave/control/80/full64/CMC_l0/fixed_oblique_0.35",
+        "error": "0.22893818582796020766113804483769509073215894951530417506808234623760769352747155",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/80/full64/CMC_l1/laboratory": [
+      {
+        "name": "control/80/full64/CMC_l1/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full64/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083577",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/80/CMC_l1/laboratory": [
+      {
+        "name": "exact/80/CMC_l1/laboratory/gradient",
+        "error": "0.15057671119317090837665557638556709134849653813908137010451714219803511955518813",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/80/CMC_l1/laboratory/hessian",
+        "error": "0.35860938187978215927934571701731742644579734608925922082031433997699822725035796",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/80/full64/CMC_l1/laboratory": [
+      {
+        "name": "wave/control/80/full64/CMC_l1/laboratory",
+        "error": "0.069395148677029030912639186936404316681911645043793734359662870052298768767012922",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/80/full64/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full64/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.997226810639461067402975498103753250271330279550781827706375198107717260656287",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full64/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.999633256033835708149953475946819666021117547389539844740647537573855135243521",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/80/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "exact/80/CMC_l1/fixed_oblique_0.35/gradient",
+        "error": "0.15057717225713650128606830882851609280750557583007636585448344010191089167721156",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/80/CMC_l1/fixed_oblique_0.35/hessian",
+        "error": "0.35852795850212044423521165025663952021006471097415906918290350344735503575045604",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/80/full64/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "wave/control/80/full64/CMC_l1/fixed_oblique_0.35",
+        "error": "0.069462450346109848524717877620917649428741052883545005833023460392765576037699152",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/80/full64/CMC_l2/laboratory": [
+      {
+        "name": "control/80/full64/CMC_l2/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full64/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083577",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/80/CMC_l2/laboratory": [
+      {
+        "name": "exact/80/CMC_l2/laboratory/gradient",
+        "error": "0.034985091757521056645766971952971987696150396820901859266058999852454918302396156",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/80/CMC_l2/laboratory/hessian",
+        "error": "0.27749097907870415081915489344791622039500006406287308508472246698637636544370447",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/80/full64/CMC_l2/laboratory": [
+      {
+        "name": "wave/control/80/full64/CMC_l2/laboratory",
+        "error": "0.23153340319130072291859680942813768938305911729609500023516143100635769157431796",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/80/full64/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/80/full64/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.997226810639461067402975498103753250271330279550781827706375198107717260656287",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/full64/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.999633256033835708149953475946819666021117547389539844740647537573855135243521",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/80/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "exact/80/CMC_l2/fixed_oblique_0.35/gradient",
+        "error": "0.034985136054681507830078796771446378195770120327680345383814020007315987881372408",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/80/CMC_l2/fixed_oblique_0.35/hessian",
+        "error": "0.27748566244316356567103925911814308243648650073544811212510930408758573243014416",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/80/full64/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "wave/control/80/full64/CMC_l2/fixed_oblique_0.35",
+        "error": "0.23154206417066472262016413333278590099023948659142110466377304752028666513484205",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/80/polar64az32/CMC_l0/laboratory": [
+      {
+        "name": "control/80/polar64az32/CMC_l0/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar64az32/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083577",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar64az32/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/80/polar64az32/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.997226810639461067402975498103753250271330279550781827706375198107717260656287",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar64az32/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.999633256033835708149953475946819666021117547389539844740647537573855135243521",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar64az32/CMC_l1/laboratory": [
+      {
+        "name": "control/80/polar64az32/CMC_l1/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar64az32/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083577",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar64az32/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/80/polar64az32/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.997226810639461067402975498103753250271330279550781827706375198107717260656287",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar64az32/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.999633256033835708149953475946819666021117547389539844740647537573855135243521",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar64az32/CMC_l2/laboratory": [
+      {
+        "name": "control/80/polar64az32/CMC_l2/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar64az32/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083577",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar64az32/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/80/polar64az32/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.997226810639461067402975498103753250271330279550781827706375198107717260656287",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar64az32/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.999633256033835708149953475946819666021117547389539844740647537573855135243521",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar32az64/CMC_l0/laboratory": [
+      {
+        "name": "control/80/polar32az64/CMC_l0/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884288",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar32az64/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar32az64/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/80/polar32az64/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar32az64/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9970578528257919608612800971592168086049811455636541555891557726490495170567592",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar32az64/CMC_l1/laboratory": [
+      {
+        "name": "control/80/polar32az64/CMC_l1/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884288",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar32az64/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar32az64/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/80/polar32az64/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar32az64/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9970578528257919608612800971592168086049811455636541555891557726490495170567592",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar32az64/CMC_l2/laboratory": [
+      {
+        "name": "control/80/polar32az64/CMC_l2/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884288",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar32az64/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/80/polar32az64/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/80/polar32az64/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/80/polar32az64/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9970578528257919608612800971592168086049811455636541555891557726490495170567592",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full16/CMC_l0/laboratory": [
+      {
+        "name": "control/110/full16/CMC_l0/laboratory/K_jet",
+        "error": "1.9882195324940335796604457728863290393217912488695266094416654446776576246130906305880904793173285782327023781",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full16/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9994757986682153438432966818894471457493252681527926450586361318792127587837251290828209497691043696278707889",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full16/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full16/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.9815960279784971516162064097668695611722437381880679530580380165853639759292957993336240557185800950082681682",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full16/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.986519489682171130575835087748859352654871200479297392475265389946126138004608321190789623259259094694487534",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full16/CMC_l1/laboratory": [
+      {
+        "name": "control/110/full16/CMC_l1/laboratory/K_jet",
+        "error": "1.9882195324940335796604457728863290393217912488695266094416654446776576246130906305880904793173285782327023781",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full16/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9994757986682153438432966818894471457493252681527926450586361318792127587837251290828209497691043696278707889",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full16/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full16/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.9815960279784971516162064097668695611722437381880679530580380165853639759292957993336240557185800950082681682",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full16/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.986519489682171130575835087748859352654871200479297392475265389946126138004608321190789623259259094694487534",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full16/CMC_l2/laboratory": [
+      {
+        "name": "control/110/full16/CMC_l2/laboratory/K_jet",
+        "error": "1.9882195324940335796604457728863290393217912488695266094416654446776576246130906305880904793173285782327023781",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full16/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9994757986682153438432966818894471457493252681527926450586361318792127587837251290828209497691043696278707889",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full16/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full16/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.9815960279784971516162064097668695611722437381880679530580380165853639759292957993336240557185800950082681682",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full16/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.986519489682171130575835087748859352654871200479297392475265389946126138004608321190789623259259094694487534",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full32/CMC_l0/laboratory": [
+      {
+        "name": "control/110/full32/CMC_l0/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884287598510308059724419651164055538",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full32/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617117251999516017297915479361751",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full32/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full32/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846045358333143094154494580426769",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full32/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9958327768033835238771093490445922867151802685837007696527793190557449185309180096997033616912161187430083703",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full32/CMC_l1/laboratory": [
+      {
+        "name": "control/110/full32/CMC_l1/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884287598510308059724419651164055538",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full32/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617117251999516017297915479361751",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full32/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full32/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846045358333143094154494580426769",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full32/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9958327768033835238771093490445922867151802685837007696527793190557449185309180096997033616912161187430083703",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full32/CMC_l2/laboratory": [
+      {
+        "name": "control/110/full32/CMC_l2/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884287598510308059724419651164055538",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full32/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617117251999516017297915479361751",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full32/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full32/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846045358333143094154494580426769",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full32/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9958327768033835238771093490445922867151802685837007696527793190557449185309180096997033616912161187430083703",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/full64/CMC_l0/laboratory": [
+      {
+        "name": "control/110/full64/CMC_l0/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767310210557203946086973070826953",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full64/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083576845130609208323384640256723148",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/110/CMC_l0/laboratory": [
+      {
+        "name": "exact/110/CMC_l0/laboratory/gradient",
+        "error": "0.33114385447964145629609633837118331802355750349131578317145762754450168620922862125945762024077114653247092917",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/110/CMC_l0/laboratory/hessian",
+        "error": "0.70239259386025695279382799139583631625794998749842753024043163805070683216071035149670535442233487926987970894",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/110/full64/CMC_l0/laboratory": [
+      {
+        "name": "wave/control/110/full64/CMC_l0/laboratory",
+        "error": "0.22920261665863660801134417104053395212488715954873215948315477173626195486805988388581939625043676229098928843",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/110/full64/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full64/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.9972268106394610674029754981037532502713302795507818277063751981077172606562868514122986750567852766366671706",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full64/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9996332560338357081499534759468196660211175473895398447406475375738551352435209463906193136410189357556642388",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/110/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "exact/110/CMC_l0/fixed_oblique_0.35/gradient",
+        "error": "0.33114996586680405207013695049068140574901685433179280626187149763554864329396347196169113978931432271765412302",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/110/CMC_l0/fixed_oblique_0.35/hessian",
+        "error": "0.70247214999510920963850089829742721088588146858404030635201304073793860426972076339900158745759355916200145587",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/110/full64/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "wave/control/110/full64/CMC_l0/fixed_oblique_0.35",
+        "error": "0.22893818582796020766113804483769509073215894951530417506808234623760769352747153516031645165177778863029943114",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/110/full64/CMC_l1/laboratory": [
+      {
+        "name": "control/110/full64/CMC_l1/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767310210557203946086973070826953",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full64/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083576845130609208323384640256723148",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/110/CMC_l1/laboratory": [
+      {
+        "name": "exact/110/CMC_l1/laboratory/gradient",
+        "error": "0.15057671119317090837665557638556709134849653813908137010451714219803511955518811927681773837259814172094916364",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/110/CMC_l1/laboratory/hessian",
+        "error": "0.35860938187978215927934571701731742644579734608925922082031433997699822725035795681136733451264494014333082962",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/110/full64/CMC_l1/laboratory": [
+      {
+        "name": "wave/control/110/full64/CMC_l1/laboratory",
+        "error": "0.06939514867702903091263918693640431668191164504379373435966287005229876876701293660549163158347798246443244766",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/110/full64/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full64/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.9972268106394610674029754981037532502713302795507818277063751981077172606562868514122986750567852766366671706",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full64/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9996332560338357081499534759468196660211175473895398447406475375738551352435209463906193136410189357556642388",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/110/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "exact/110/CMC_l1/fixed_oblique_0.35/gradient",
+        "error": "0.15057717225713650128606830882851609280750557583007636585448344010191089167721155013365248405775839998366495249",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/110/CMC_l1/fixed_oblique_0.35/hessian",
+        "error": "0.3585279585021204442352116502566395202100647109741590691829035034473550357504560331600338116340557053578015728",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/110/full64/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "wave/control/110/full64/CMC_l1/fixed_oblique_0.35",
+        "error": "0.069462450346109848524717877620917649428741052883545005833023460392765576037699159185983825093242779899029287716",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/110/full64/CMC_l2/laboratory": [
+      {
+        "name": "control/110/full64/CMC_l2/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767310210557203946086973070826953",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full64/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083576845130609208323384640256723148",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/110/CMC_l2/laboratory": [
+      {
+        "name": "exact/110/CMC_l2/laboratory/gradient",
+        "error": "0.034985091757521056645766971952971987696150396820901859266058999852454918302396153857269492334545024359840330701",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/110/CMC_l2/laboratory/hessian",
+        "error": "0.27749097907870415081915489344791622039500006406287308508472246698637636544370446687240547175025302501989425175",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/110/full64/CMC_l2/laboratory": [
+      {
+        "name": "wave/control/110/full64/CMC_l2/laboratory",
+        "error": "0.23153340319130072291859680942813768938305911729609500023516143100635769157431798876747917673582222565559250384",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/110/full64/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/110/full64/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.9972268106394610674029754981037532502713302795507818277063751981077172606562868514122986750567852766366671706",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/full64/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9996332560338357081499534759468196660211175473895398447406475375738551352435209463906193136410189357556642388",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "exact/110/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "exact/110/CMC_l2/fixed_oblique_0.35/gradient",
+        "error": "0.034985136054681507830078796771446378195770120327680345383814020007315987881372404692050757884387230226194050411",
+        "tolerance": "1e-10",
+        "passed": false
+      },
+      {
+        "name": "exact/110/CMC_l2/fixed_oblique_0.35/hessian",
+        "error": "0.27748566244316356567103925911814308243648650073544811212510930408758573243014415549552179721286603936681713454",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "wave/control/110/full64/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "wave/control/110/full64/CMC_l2/fixed_oblique_0.35",
+        "error": "0.23154206417066472262016413333278590099023948659142110466377304752028666513484207768709339360189501897407844672",
+        "tolerance": "1e-10",
+        "passed": false
+      }
+    ],
+    "control/110/polar64az32/CMC_l0/laboratory": [
+      {
+        "name": "control/110/polar64az32/CMC_l0/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767310210557203946086973070826953",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar64az32/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083576845130609208323384640256723148",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar64az32/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/110/polar64az32/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.9972268106394610674029754981037532502713302795507818277063751981077172606562868514122986750567852766366671706",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar64az32/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9996332560338357081499534759468196660211175473895398447406475375738551352435209463906193136410189357556642388",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar64az32/CMC_l1/laboratory": [
+      {
+        "name": "control/110/polar64az32/CMC_l1/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767310210557203946086973070826953",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar64az32/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083576845130609208323384640256723148",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar64az32/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/110/polar64az32/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.9972268106394610674029754981037532502713302795507818277063751981077172606562868514122986750567852766366671706",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar64az32/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9996332560338357081499534759468196660211175473895398447406475375738551352435209463906193136410189357556642388",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar64az32/CMC_l2/laboratory": [
+      {
+        "name": "control/110/polar64az32/CMC_l2/laboratory/K_jet",
+        "error": "1.9996383893078363518154851544252226598608073814104026147620206874033584151147767310210557203946086973070826953",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar64az32/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9974611805782806711904125956795553569557946437426340989570374526768668782083576845130609208323384640256723148",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar64az32/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/110/polar64az32/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.9972268106394610674029754981037532502713302795507818277063751981077172606562868514122986750567852766366671706",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar64az32/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.9996332560338357081499534759468196660211175473895398447406475375738551352435209463906193136410189357556642388",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar32az64/CMC_l0/laboratory": [
+      {
+        "name": "control/110/polar32az64/CMC_l0/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884287598510308059724419651164055538",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar32az64/CMC_l0/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617117251999516017297915479361751",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar32az64/CMC_l0/fixed_oblique_0.35": [
+      {
+        "name": "control/110/polar32az64/CMC_l0/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846045358333143094154494580426769",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar32az64/CMC_l0/fixed_oblique_0.35/D_source_jet",
+        "error": "1.997057852825791960861280097159216808604981145563654155589155772649049517056759233476291355930578415190991341",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar32az64/CMC_l1/laboratory": [
+      {
+        "name": "control/110/polar32az64/CMC_l1/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884287598510308059724419651164055538",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar32az64/CMC_l1/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617117251999516017297915479361751",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar32az64/CMC_l1/fixed_oblique_0.35": [
+      {
+        "name": "control/110/polar32az64/CMC_l1/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846045358333143094154494580426769",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar32az64/CMC_l1/fixed_oblique_0.35/D_source_jet",
+        "error": "1.997057852825791960861280097159216808604981145563654155589155772649049517056759233476291355930578415190991341",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar32az64/CMC_l2/laboratory": [
+      {
+        "name": "control/110/polar32az64/CMC_l2/laboratory/K_jet",
+        "error": "1.9988817593276372096704038699332185487054889727634351204349066793645019095884287598510308059724419651164055538",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar32az64/CMC_l2/laboratory/D_source_jet",
+        "error": "1.9986723287548422044348920163565959688452553789046480802466346155963701675138617117251999516017297915479361751",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ],
+    "control/110/polar32az64/CMC_l2/fixed_oblique_0.35": [
+      {
+        "name": "control/110/polar32az64/CMC_l2/fixed_oblique_0.35/K_jet",
+        "error": "1.9929007952658079094810447528005167724760964914018595810894531287012221683989846045358333143094154494580426769",
+        "tolerance": "1e-50",
+        "passed": false
+      },
+      {
+        "name": "control/110/polar32az64/CMC_l2/fixed_oblique_0.35/D_source_jet",
+        "error": "1.997057852825791960861280097159216808604981145563654155589155772649049517056759233476291355930578415190991341",
+        "tolerance": "1e-50",
+        "passed": false
+      }
+    ]
+  },
+  "first_failed_checks": [
+    {
+      "name": "control/80/full16/CMC_l0/laboratory/K_jet",
+      "error": "1.9882195324940335796604457728863290393217912488695266094416654446776576246130906",
+      "tolerance": "1e-50",
+      "passed": false
+    },
+    {
+      "name": "control/80/full16/CMC_l0/laboratory/D_source_jet",
+      "error": "1.9994757986682153438432966818894471457493252681527926450586361318792127587837251",
+      "tolerance": "1e-50",
+      "passed": false
+    },
+    {
+      "name": "control/80/full16/CMC_l0/fixed_oblique_0.35/K_jet",
+      "error": "1.9815960279784971516162064097668695611722437381880679530580380165853639759292959",
+      "tolerance": "1e-50",
+      "passed": false
+    },
+    {
+      "name": "control/80/full16/CMC_l0/fixed_oblique_0.35/D_source_jet",
+      "error": "1.9865194896821711305758350877488593526548712004792973924752653899461261380046083",
+      "tolerance": "1e-50",
+      "passed": false
+    },
+    {
+      "name": "control/80/full16/CMC_l1/laboratory/K_jet",
+      "error": "1.9882195324940335796604457728863290393217912488695266094416654446776576246130906",
+      "tolerance": "1e-50",
+      "passed": false
+    },
+    {
+      "name": "control/80/full16/CMC_l1/laboratory/D_source_jet",
+      "error": "1.9994757986682153438432966818894471457493252681527926450586361318792127587837251",
+      "tolerance": "1e-50",
+      "passed": false
+    }
+  ],
+  "unchanged_original_full_failure": true,
+  "scope": "Saved operands/flags/counts only. No ray integration, jet decode, target evaluation, repaired-control pass, inverse, native or PDE claim."
+}

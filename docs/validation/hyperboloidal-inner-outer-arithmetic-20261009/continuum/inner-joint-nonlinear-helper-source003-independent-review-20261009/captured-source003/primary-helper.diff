@@ -1,0 +1,73 @@
+--- source002/inner_gauge.hpp
++++ source003/inner_gauge.hpp
+@@ -19,6 +19,7 @@
+ struct Audit {
+   unsigned long products=0, coefficient_calls=0, coefficient_scaled_away=0;
+   int maximum_product_exponent=0;
++  unsigned long dA_near=0,dA_far=0,dc_near=0,dc_far=0,dal_near=0,dal_far=0;
+ };
+ struct Parameters { double G0=.375; };
+ 
+@@ -59,6 +60,40 @@
+     ++selected;}
+   return Number<T>::Make(value,derivative);
+ }
++// Exact [1/2,2] positive-PRIMAL closeness, without a ratio or half-product.
++inline bool NearFieldValue(double x,double reference){
++  if(!(x>0)||!(reference>0)||!std::isfinite(x)||!std::isfinite(reference))return false;
++  int ex=0,er=0;const double mx=std::frexp(x,&ex),mr=std::frexp(reference,&er);
++  const int difference=ex-er;
++  if(difference==0)return true;
++  if(difference==1)return mx<=mr;
++  if(difference==-1)return mx>=mr;
++  return false;
++}
++template<class T> T FieldSquareDifference(T a,T chi,T h,T reference_chi,
++                                         Audit *audit=nullptr){
++  const bool near=NearFieldValue(Number<T>::Value(a),Number<T>::Value(h))&&
++    NearFieldValue(Number<T>::Value(chi),Number<T>::Value(reference_chi));
++  if(audit){if(near)++audit->dA_near;else ++audit->dA_far;}
++  // Preserve exact-reference deviation arithmetic only while BOTH fields are near.
++  if(near)return Product<T>({a+h,a-h,chi},audit)+
++                 Product<T>({h,h,chi-reference_chi},audit);
++  return Product<T>({a,a,chi},audit)-Product<T>({h,h,reference_chi},audit);
++}
++enum class LogGradientField { Chi, Alpha };
++template<class T> T FieldLogGradientDifference(T x,T gradient,T reference,
++    T reference_gradient,LogGradientField field,Audit *audit=nullptr){
++  const bool near=NearFieldValue(Number<T>::Value(x),Number<T>::Value(reference));
++  if(audit){
++    if(field==LogGradientField::Chi){if(near)++audit->dc_near;else ++audit->dc_far;}
++    else {if(near)++audit->dal_near;else ++audit->dal_far;}
++  }
++  const T reference_log_gradient=reference_gradient/reference;
++  if(near)return (gradient-reference_gradient)-
++                 Product<T>({x-reference,reference_log_gradient},audit);
++  return gradient-Product<T>({x,reference_log_gradient},audit);
++}
++
+ template<class T> T Coefficient(T alpha,T chi,double W,double G0,bool&valid,
+                                 Audit *audit=nullptr,bool value_only_control=false){
+   valid=false;const double a=Number<T>::Value(alpha),ch=Number<T>::Value(chi);
+@@ -106,17 +141,17 @@
+   if(!coefficient_valid)return q;
+   const auto g=hyp::Geometry(u.metric),gh=hyp::Geometry(p.state.metric);
+   if(!g.valid||!gh.valid||!(h>0)||!(ch>0))return q;
+-  const T c=1-W,da=a-h,dchi=chi-ch;
++  const T c=1-W,da=a-h;
+   const T A0=Product<T>({a,a,chi},audit),Ah=Product<T>({h,h,ch},audit);
+   const T B=Product<T>({c,T(params.G0)},audit)+Product<T>({T(W),A0},audit);
+-  const T dA=Product<T>({a+h,da,chi},audit)+Product<T>({h,h,dchi},audit);
++  const T dA=FieldSquareDifference(a,chi,h,ch,audit);
+   if(!Kokkos::isfinite(A0)||!Kokkos::isfinite(B)||!Kokkos::isfinite(dA))return q;
+   T db[3]{},dgi[3][3]{},dV[3][3]{},Lh[3][3]{},dL[3][3]{},dc[3]{},dal[3]{};
+   T ref_adv=0;
+   for(int i=0;i<3;++i){
+     db[i]=u.beta.value[i]-p.beta[i];
+-    dc[i]=(u.chi.d[i]-p.state.chi.d[i])-Product<T>({dchi,p.state.chi.d[i]/ch},audit);
+-    dal[i]=(u.alpha.d[i]-p.dalpha[i])-Product<T>({da,p.dalpha[i]/h},audit);
++    dc[i]=FieldLogGradientDifference(chi,u.chi.d[i],ch,p.state.chi.d[i],LogGradientField::Chi,audit);
++    dal[i]=FieldLogGradientDifference(a,u.alpha.d[i],h,p.dalpha[i],LogGradientField::Alpha,audit);
+     ref_adv+=Product<T>({p.beta[i],p.dalpha[i]},audit);
+   }
+   for(int i=0;i<3;++i)for(int j=0;j<3;++j){

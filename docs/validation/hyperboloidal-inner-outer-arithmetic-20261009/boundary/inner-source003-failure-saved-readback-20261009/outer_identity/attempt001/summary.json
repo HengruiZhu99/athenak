@@ -1,0 +1,66 @@
+{
+  "W_counts": {
+    "1": 1872
+  },
+  "all_failures_W_exactly_one": true,
+  "by_family_check": [
+    {
+      "check": "source-parts",
+      "failures": 168,
+      "family": "chi-gradient-contrast"
+    },
+    {
+      "check": "source-rhs",
+      "failures": 168,
+      "family": "chi-gradient-contrast"
+    },
+    {
+      "check": "source-parts",
+      "failures": 168,
+      "family": "large-alpha-small-chi"
+    },
+    {
+      "check": "source-rhs",
+      "failures": 168,
+      "family": "large-alpha-small-chi"
+    },
+    {
+      "check": "source-parts",
+      "failures": 768,
+      "family": "small-alpha-large-chi"
+    },
+    {
+      "check": "source-rhs",
+      "failures": 432,
+      "family": "small-alpha-large-chi"
+    }
+  ],
+  "by_field": {
+    "beta_x": 288,
+    "beta_y": 240,
+    "beta_z": 240,
+    "pole.beta_x": 144,
+    "pole.beta_y": 144,
+    "pole.beta_z": 144,
+    "regular.beta_x": 288,
+    "regular.beta_y": 192,
+    "regular.beta_z": 192
+  },
+  "by_radius": {
+    "0.84": 424,
+    "0.85": 424,
+    "0.9": 424,
+    "0.95": 200,
+    "0.98": 200,
+    "0.995": 200
+  },
+  "distinct_failed_query_rows": 288,
+  "failure_native_bits_equal_source002": 1872,
+  "failure_query_all_split_parts_equal_frozen_RWM": 1872,
+  "failures_checked": 1872,
+  "interpretation": "All measured remaining failures bypass the new inner arithmetic and occur in the unchanged frozen RWM branch. Inner-only modification cannot repair these rows while retaining exact outer bitwise equality.",
+  "passed_saved_identity_readback": true,
+  "scope": "Saved values/metadata/bit identity only; no oracle target recomputation, arithmetic replay or new scientific query.",
+  "source003_original_failed": true,
+  "supplement_eligible": false
+}

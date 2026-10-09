@@ -1,0 +1,3 @@
+# Saved outer-branch identity addendum
+
+Run exactly once with stdlib only, after source/recipe/pins capture. Read original source002/003 saved sources.jsonl plus the completed, pinned monotone associations. For all uniquely mapped source003 failures require W exactly1, source003 full8 split parts bitwise equal the frozen baseline parts, compared failing native value bitwise equal source002 at the same fixed query/component, and live/reference input dictionaries equal. Report family/check/field/fixed-radius counts and distinct failing query rows. No target evaluation, multiplication replay, oracle import, source query, compiler or correction. Original actual003 FAIL and ineligible supplement remain unchanged.

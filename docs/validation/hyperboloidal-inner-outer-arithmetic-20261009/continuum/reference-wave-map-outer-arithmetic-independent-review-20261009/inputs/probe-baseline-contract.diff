@@ -1,0 +1,22 @@
+--- frozen-source003
++++ fresh-outer-source001
+@@ -68,8 +68,8 @@
+ template<class T>void EmitGauge(const hyp::LayerPoint<T>&p,const hyp::Z4cJet<T>&u,const T*x,double G0,bool baseline=true){
+  inner::Audit a{};const auto q=inner::Gauge(p,u,x,{G0},&a);hyp::GaugeRHS<T>f{};
+  const bool assembled=rwm::Assemble(q,p.omega,f);const auto qp=Parts(q);const auto fp=Fields(f);
+- std::cout<<",\"input\":";Pack(u);std::cout<<",\"valid\":"<<(q.valid?"true":"false")<<",\"assembled\":"<<(assembled?"true":"false")<<",\"parts\":";V(qp.data(),8);std::cout<<",\"rhs\":";V(fp.data(),4);std::cout<<",\"arithmetic\":";Audit(a);
+- if(baseline){const auto qb=rwm::Gauge(p,u,rwm::ReferenceConnection(p,x));const auto bp=Parts(qb);std::cout<<",\"baseline_valid\":"<<(qb.valid?"true":"false")<<",\"baseline_parts\":";V(bp.data(),8);bool equal=q.valid==qb.valid;for(int i=0;i<8;++i){const double v=inner::Number<T>::Value(qp[i]),b=inner::Number<T>::Value(bp[i]);equal=equal&&std::memcmp(&v,&b,sizeof(double))==0;}std::cout<<",\"outer_value_bitwise\":"<<(equal?"true":"false");}
++ std::cout<<",\"legacy_near\":"<<(rwm::UsesLegacyNear(p,u)?"true":"false");std::cout<<",\"input\":";Pack(u);std::cout<<",\"valid\":"<<(q.valid?"true":"false")<<",\"assembled\":"<<(assembled?"true":"false")<<",\"parts\":";V(qp.data(),8);std::cout<<",\"rhs\":";V(fp.data(),4);std::cout<<",\"arithmetic\":";Audit(a);
++ if(baseline){const auto qb=rwm::LegacyGauge(p,u,rwm::ReferenceConnection(p,x));const auto bp=Parts(qb);std::cout<<",\"baseline_valid\":"<<(qb.valid?"true":"false")<<",\"baseline_parts\":";V(bp.data(),8);bool equal=q.valid==qb.valid;for(int i=0;i<8;++i){const double v=inner::Number<T>::Value(qp[i]),b=inner::Number<T>::Value(bp[i]);equal=equal&&std::memcmp(&v,&b,sizeof(double))==0;}std::cout<<",\"outer_value_bitwise\":"<<(equal?"true":"false");}
+ }
+ hyp::LayerPoint<D> CastPoint(const hyp::LayerPoint<double>&p){hyp::LayerPoint<D>q{};
+  q.state=Lift(p.state);q.alpha=p.alpha;q.omega=p.omega;q.radius=p.radius;q.L=p.L;q.b=p.b;q.k_bar=p.k_bar;q.k_physical=p.k_physical;
+@@ -83,7 +83,7 @@
+  hyp::Z4cRHS<T>f{},f0{};hyp::GaugeRHS<T>g{};
+  if(!hyp::AssembleInterior(hyp::ConformalRHS(u,o,T(10)/u.alpha.value,T(0)),p.omega,f)||
+     !hyp::AssembleInterior(hyp::ConformalRHS(p.state,o0,T(10),T(0)),p.omega,f0))throw std::runtime_error("actual local geometry invalid");
+- const auto q=candidate?inner::Gauge(p,u,x,{G0}):rwm::Gauge(p,u,rwm::ReferenceConnection(p,x));
++ const auto q=candidate?inner::Gauge(p,u,x,{G0}):rwm::LegacyGauge(p,u,rwm::ReferenceConnection(p,x));
+  if(!rwm::Assemble(q,p.omega,g))throw std::runtime_error("actual local gauge invalid");
+  return {g.alpha,f.chi-f0.chi,f.trace-f0.trace,f.theta-f0.theta,g.beta[0],g.beta[1],g.beta[2],
+  f.metric[0][0]-f0.metric[0][0],f.metric[0][1]-f0.metric[0][1],f.metric[0][2]-f0.metric[0][2],f.metric[1][1]-f0.metric[1][1],f.metric[1][2]-f0.metric[1][2],f.metric[2][2]-f0.metric[2][2],
