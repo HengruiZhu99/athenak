@@ -1,0 +1,751 @@
+{
+  "scope": "Completed scalar flat-IVP values and initial-data checks plus saved-readback audits only; no derivative/Jacobian/inverse/native-target/global-caustic acceptance.",
+  "destination": "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-reference-wave-map-flat-IVP-values-20261009",
+  "production_reference_commit": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "README": "# Flat-IVP scalar-value checkpoint\n\nThis capsule preserves only completed finite reference-event scalar values, initial data, coarea/ray/precision controls, their values-only source/history and root independent saved readback. All 282 fixed scalar checks passed; independent PASS003 retains failed audit001/002 histories. These are not map-derivative, Jacobian, inverse, native-target coverage, global caustic, actual gauge-PDE evolution or stability results. Original held planning documents are context only. The shared continuum parent is never traversed: new derivative source/attempts and bulk008/live matrix work are excluded by an explicit selected-file list.\nCopied logs and source retain exact original bytes and whitespace. Raw arrays, RST/BIN/NPY/NPZ/HDF, JSONL, executables/libraries/objects, and every file>1MiB are metadata-only. Scientific modules are never imported; there is no new source/probe/native query, compilation, operator assembly, eigensolve or propagation. Explicit completed roots only are inventoried. Current external documents and older capsules are byte-identified, never copied or modified. A collector requires its own exact root authorization, fails before destination creation on changed inputs/gates, and never retries into an existing destination.\n",
+  "roots": [
+    {
+      "tag": "values-attempt001",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001",
+      "inventory": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/before.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/checks.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/controls.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/height.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/initial-data.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-controls.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-height.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-initial.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-rays.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-values.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/rays.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/receipt.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/values.json"
+      ]
+    },
+    {
+      "tag": "values-invocation001",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001",
+      "inventory": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/launch.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/receipt.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/running.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/00-flat_ivp_values.py",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/01-VALUES-PLAN.md",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/02-values-recipe.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/03-PLAN.md",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/04-KIRCHHOFF-PENCIL.md",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/05-authorization.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/06-review.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/07-run_values_once001.py",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/stderr.log",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/stdout.log"
+      ]
+    },
+    {
+      "tag": "values-source-history001",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only",
+      "inventory": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/VALUES-PLAN.md",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/flat_ivp_values.py",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/index.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/values-recipe.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/values-source-preparation.json"
+      ]
+    },
+    {
+      "tag": "root-values-release",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-IVP-values-root-release-20261009",
+      "inventory": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-IVP-values-root-release-20261009/authorization.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-IVP-values-root-release-20261009/pins-before.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-IVP-values-root-release-20261009/review.json"
+      ]
+    },
+    {
+      "tag": "root-independent-saved-readback",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009",
+      "inventory": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/failed-attempt001.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation002/before.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation002/receipt.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation002/stderr",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation002/stdout",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/before.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/receipt.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/stderr",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/stdout",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/read_saved.py",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/read_saved002.py",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/read_saved003.py",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/report003.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/revision002.diff",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/revision003.diff",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/source-before.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/source-before002.json",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/source-before003.json"
+      ]
+    }
+  ],
+  "planned_files": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/before.json",
+      "sha256": "b3f4829740fe336687615477e0ae229dfa0a7c808002698a4ea03d501adf7686",
+      "bytes": 23172,
+      "archive_relative": "values-attempt001/before.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/checks.json",
+      "sha256": "230adc8bed460a364ddf8e41c8a34111fbb12a21829a0ae9c4c65d78aa521fae",
+      "bytes": 58657,
+      "archive_relative": "values-attempt001/checks.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/controls.json",
+      "sha256": "d552a697762ebaa73f62d08868fb73ecad264eed21f46112409347d4679e796e",
+      "bytes": 27139,
+      "archive_relative": "values-attempt001/controls.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/height.json",
+      "sha256": "5d84ede8c55e77e945a6e7c04392426b0fba73785ee04e8c2074076ce8296098",
+      "bytes": 30487,
+      "archive_relative": "values-attempt001/height.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/initial-data.json",
+      "sha256": "f8f2ba59bda7584fe22d6a25d5dd9f087c1af5d0d881667e50af2e42b927edee",
+      "bytes": 63325,
+      "archive_relative": "values-attempt001/initial-data.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-controls.json",
+      "sha256": "d552a697762ebaa73f62d08868fb73ecad264eed21f46112409347d4679e796e",
+      "bytes": 27139,
+      "archive_relative": "values-attempt001/partial-controls.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-height.json",
+      "sha256": "5d84ede8c55e77e945a6e7c04392426b0fba73785ee04e8c2074076ce8296098",
+      "bytes": 30487,
+      "archive_relative": "values-attempt001/partial-height.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-initial.json",
+      "sha256": "f8f2ba59bda7584fe22d6a25d5dd9f087c1af5d0d881667e50af2e42b927edee",
+      "bytes": 63325,
+      "archive_relative": "values-attempt001/partial-initial.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-rays.json",
+      "sha256": "6267cc946a1c8806ee59fbdb202c2dd15e1c2d31486e17c2982b5dc53b959547",
+      "bytes": 36788,
+      "archive_relative": "values-attempt001/partial-rays.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/partial-values.json",
+      "sha256": "6ad1837f171f7cbb457afcf0972eea3cf816664b527480bba520f51ad166c232",
+      "bytes": 127847,
+      "archive_relative": "values-attempt001/partial-values.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/rays.json",
+      "sha256": "6267cc946a1c8806ee59fbdb202c2dd15e1c2d31486e17c2982b5dc53b959547",
+      "bytes": 36788,
+      "archive_relative": "values-attempt001/rays.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/receipt.json",
+      "sha256": "b054132e54cbe1e63b217f2cb1d416ea87e955f5ef1dfa2c945936e127730493",
+      "bytes": 48049,
+      "archive_relative": "values-attempt001/receipt.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/values.json",
+      "sha256": "6ad1837f171f7cbb457afcf0972eea3cf816664b527480bba520f51ad166c232",
+      "bytes": 127847,
+      "archive_relative": "values-attempt001/values.json",
+      "role": "completed scalar-value outputs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/launch.json",
+      "sha256": "3f6318875d69a56dd0a72a3f66fb02e3c2ae48f0cb6044e750714d5489d0952c",
+      "bytes": 23511,
+      "archive_relative": "values-invocation001/launch.json",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/receipt.json",
+      "sha256": "f6e5ee874b40543841c520f398a12c5e9f4609af29520848d72199c576e2f267",
+      "bytes": 46107,
+      "archive_relative": "values-invocation001/receipt.json",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/running.json",
+      "sha256": "eb92107361b9be0083d43f73994ae47a66afa4f5dabd624a4d90852aca856317",
+      "bytes": 23527,
+      "archive_relative": "values-invocation001/running.json",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/00-flat_ivp_values.py",
+      "sha256": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
+      "bytes": 27394,
+      "archive_relative": "values-invocation001/source-before/00-flat_ivp_values.py",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/01-VALUES-PLAN.md",
+      "sha256": "6db2628b6d331a4ceaed226be29823550f2ce078becd2db55d77dca22e07c57f",
+      "bytes": 7803,
+      "archive_relative": "values-invocation001/source-before/01-VALUES-PLAN.md",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/02-values-recipe.json",
+      "sha256": "664b5da4f11a1f2c483cd05ec3fb79eb863262f02d6be81c4352b53a22b0cb77",
+      "bytes": 26668,
+      "archive_relative": "values-invocation001/source-before/02-values-recipe.json",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/03-PLAN.md",
+      "sha256": "9c13d86a0cbb54be63216b2fbb993e095a1ee0314f7d226b8d692e28493917f5",
+      "bytes": 17990,
+      "archive_relative": "values-invocation001/source-before/03-PLAN.md",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/04-KIRCHHOFF-PENCIL.md",
+      "sha256": "e0888b388dc33feb817d044876b7e82df8019edcaaa5b002015bb635efa3c63a",
+      "bytes": 7704,
+      "archive_relative": "values-invocation001/source-before/04-KIRCHHOFF-PENCIL.md",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/05-authorization.json",
+      "sha256": "10e13705ce6123fce25d5181ddd185b1360cb3133395bdb121961435798907bf",
+      "bytes": 1248,
+      "archive_relative": "values-invocation001/source-before/05-authorization.json",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/06-review.json",
+      "sha256": "81578371d86263a4cc8490654b7ad78e0454f1570e2a66ceb832711442573297",
+      "bytes": 1579,
+      "archive_relative": "values-invocation001/source-before/06-review.json",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/source-before/07-run_values_once001.py",
+      "sha256": "9211af46dd3b8b7a6dce34c686e6757c9109f1a77eefd9107f54d9340697bfbb",
+      "bytes": 4526,
+      "archive_relative": "values-invocation001/source-before/07-run_values_once001.py",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "archive_relative": "values-invocation001/stderr.log",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/stdout.log",
+      "sha256": "e1b94940b8d31acc84a6c769f68909f324f77015ea9017b4c58222d5154c28ef",
+      "bytes": 523,
+      "archive_relative": "values-invocation001/stdout.log",
+      "role": "completed exact outer command/logs",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/VALUES-PLAN.md",
+      "sha256": "b3a630ffe94f7d4571e90c0ddefb8251ee702eb350e74429c7a1f432e32ef809",
+      "bytes": 7261,
+      "archive_relative": "values-source-history001/VALUES-PLAN.md",
+      "role": "preserved source-only earlier values preparation",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/flat_ivp_values.py",
+      "sha256": "a6d1938d38a5a141ea1562b44e0d68a9994d7ad9bdd48041828bcc56cc7bf503",
+      "bytes": 27167,
+      "archive_relative": "values-source-history001/flat_ivp_values.py",
+      "role": "preserved source-only earlier values preparation",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/index.json",
+      "sha256": "1eacd2ed2fcf0ec094d5539eb9d71d3ee5bf486686651fac91ec671947f9a42f",
+      "bytes": 1982,
+      "archive_relative": "values-source-history001/index.json",
+      "role": "preserved source-only earlier values preparation",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/values-recipe.json",
+      "sha256": "664b5da4f11a1f2c483cd05ec3fb79eb863262f02d6be81c4352b53a22b0cb77",
+      "bytes": 26668,
+      "archive_relative": "values-source-history001/values-recipe.json",
+      "role": "preserved source-only earlier values preparation",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/values-source-preparation.json",
+      "sha256": "df8bfe258b410794f367810880027c281559057213d0280cd02f80009ea1a050",
+      "bytes": 1922,
+      "archive_relative": "values-source-history001/values-source-preparation.json",
+      "role": "preserved source-only earlier values preparation",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-IVP-values-root-release-20261009/authorization.json",
+      "sha256": "10e13705ce6123fce25d5181ddd185b1360cb3133395bdb121961435798907bf",
+      "bytes": 1248,
+      "archive_relative": "root-values-release/authorization.json",
+      "role": "completed root scalar-values release",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-IVP-values-root-release-20261009/pins-before.json",
+      "sha256": "6d9a60826ccfaa84c62e6bfef9480a2f2c539715d346454818987182cd893fab",
+      "bytes": 21356,
+      "archive_relative": "root-values-release/pins-before.json",
+      "role": "completed root scalar-values release",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/native-angular-pulse-flat-IVP-values-root-release-20261009/review.json",
+      "sha256": "81578371d86263a4cc8490654b7ad78e0454f1570e2a66ceb832711442573297",
+      "bytes": 1579,
+      "archive_relative": "root-values-release/review.json",
+      "role": "completed root scalar-values release",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/failed-attempt001.json",
+      "sha256": "fbe84f380ae5b0f8895c92c443c1e396d29b717ac19c524cf70714de7d97b9ef",
+      "bytes": 306,
+      "archive_relative": "root-independent-saved-readback/failed-attempt001.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation002/before.json",
+      "sha256": "97640527e8ac7721a0e97803d432aa332fa78808f92b755837171cf634e7b32d",
+      "bytes": 374,
+      "archive_relative": "root-independent-saved-readback/invocation002/before.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation002/receipt.json",
+      "sha256": "b0cfd3f1c8ae9adb56128802645950c131edd74899c6bd5686fee78d71152261",
+      "bytes": 418,
+      "archive_relative": "root-independent-saved-readback/invocation002/receipt.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation002/stderr",
+      "sha256": "1b43eb1c43efafccbd7fa1e5a218241852582fd71cf7a951cdc13c2aea987cf7",
+      "bytes": 280,
+      "archive_relative": "root-independent-saved-readback/invocation002/stderr",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation002/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "archive_relative": "root-independent-saved-readback/invocation002/stdout",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/before.json",
+      "sha256": "f6275bd27af314928a5842956ded31885fa96ff1d86f6df0a20afd4c099513db",
+      "bytes": 599,
+      "archive_relative": "root-independent-saved-readback/invocation003/before.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/receipt.json",
+      "sha256": "4a1b77d12cc14f7d817d11903631b7b1dda48fb57c00119ed1284acf6a914c9e",
+      "bytes": 642,
+      "archive_relative": "root-independent-saved-readback/invocation003/receipt.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "archive_relative": "root-independent-saved-readback/invocation003/stderr",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/stdout",
+      "sha256": "446be98240637d063232958f569123bff98e2d623f2e0bc71ac4b9085d1be72a",
+      "bytes": 1990,
+      "archive_relative": "root-independent-saved-readback/invocation003/stdout",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/read_saved.py",
+      "sha256": "13e390fb5a5d9de443088a7ee39451d1a175a6ce02acf338b50a291a108a465d",
+      "bytes": 4158,
+      "archive_relative": "root-independent-saved-readback/read_saved.py",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/read_saved002.py",
+      "sha256": "e7294c737f0466291f415a3dc957b86f1502860846f41bf2af7a5e57fe275605",
+      "bytes": 4167,
+      "archive_relative": "root-independent-saved-readback/read_saved002.py",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/read_saved003.py",
+      "sha256": "3c3c245db7515787d8c63c4256d425f06d0e81010bfa413bddc0ae5fd3161cf9",
+      "bytes": 4856,
+      "archive_relative": "root-independent-saved-readback/read_saved003.py",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/report003.json",
+      "sha256": "446be98240637d063232958f569123bff98e2d623f2e0bc71ac4b9085d1be72a",
+      "bytes": 1990,
+      "archive_relative": "root-independent-saved-readback/report003.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/revision002.diff",
+      "sha256": "549415ec6eac4f8f4d09b4d04cf1a0f7e56764ed07c3c0c60ddf6745c8c456d4",
+      "bytes": 1419,
+      "archive_relative": "root-independent-saved-readback/revision002.diff",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/revision003.diff",
+      "sha256": "34ac31597b025dae02d2a7d6ae5e88cfec42aedf831858e37de9ba5672423a32",
+      "bytes": 2343,
+      "archive_relative": "root-independent-saved-readback/revision003.diff",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/source-before.json",
+      "sha256": "fe0f650a5c774040314f5ec2dc54979f56c40c532478390db7aa16ed04d540dd",
+      "bytes": 242,
+      "archive_relative": "root-independent-saved-readback/source-before.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/source-before002.json",
+      "sha256": "ea67129135e8e2340a5fff6a5e59007b0cb570de48350c81b00b4a015dd6675f",
+      "bytes": 190,
+      "archive_relative": "root-independent-saved-readback/source-before002.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/source-before003.json",
+      "sha256": "407e65da4a5ebc3ba45aa3d597c6bcb37f65d296c69b66047e402f40ccfc3774",
+      "bytes": 415,
+      "archive_relative": "root-independent-saved-readback/source-before003.json",
+      "role": "completed PASS003 and failed001/002 audits",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/KIRCHHOFF-PENCIL.md",
+      "sha256": "e0888b388dc33feb817d044876b7e82df8019edcaaa5b002015bb635efa3c63a",
+      "bytes": 7704,
+      "archive_relative": "values-source/KIRCHHOFF-PENCIL.md",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/PLAN.md",
+      "sha256": "9c13d86a0cbb54be63216b2fbb993e095a1ee0314f7d226b8d692e28493917f5",
+      "bytes": 17990,
+      "archive_relative": "values-source/PLAN.md",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/VALUES-PLAN.md",
+      "sha256": "6db2628b6d331a4ceaed226be29823550f2ce078becd2db55d77dca22e07c57f",
+      "bytes": 7803,
+      "archive_relative": "values-source/VALUES-PLAN.md",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/VALUES-REPORT.md",
+      "sha256": "0ccca1d5f878f6e54fc5727fe6dd497cc3a22e56a6427cbf3f0181ab3e996332",
+      "bytes": 4211,
+      "archive_relative": "values-source/VALUES-REPORT.md",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/flat_ivp_values.py",
+      "sha256": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
+      "bytes": 27394,
+      "archive_relative": "values-source/flat_ivp_values.py",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/outer-command001.json",
+      "sha256": "44b0d47e7eb593e5c75215076d73650cb54a68faba9c8908f788dbeacc46b3b5",
+      "bytes": 697,
+      "archive_relative": "values-source/outer-command001.json",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/read_saved_values001.py",
+      "sha256": "3da954d142d853949ca33fc90c13f47962104aa2f9d4cc713a6f8d1805a01382",
+      "bytes": 3938,
+      "archive_relative": "values-source/read_saved_values001.py",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/readback-command001.json",
+      "sha256": "3f1c26a6d0da0fbfd7f054ddad0f72e207812389d6c8fa97ad0f1ce201c96c07",
+      "bytes": 704,
+      "archive_relative": "values-source/readback-command001.json",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/run_values_once001.py",
+      "sha256": "9211af46dd3b8b7a6dce34c686e6757c9109f1a77eefd9107f54d9340697bfbb",
+      "bytes": 4526,
+      "archive_relative": "values-source/run_values_once001.py",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/saved-readback001.json",
+      "sha256": "9cc679f6afc8fe87d01bdd4db4aa33d6fa8576f44b6ef77406edcfcdc3912c5b",
+      "bytes": 11939,
+      "archive_relative": "values-source/saved-readback001.json",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-inventory.json",
+      "sha256": "20de57d71843221aa3a1027764ea9dc6e3692c5b0f8beea4bd95ab00bd471a66",
+      "bytes": 7313,
+      "archive_relative": "values-source/source-inventory.json",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-plan-diff002.patch",
+      "sha256": "9a3a06504a206400929317f4c9e99ee8460f7a171c971e3a8e5ebf322e9acf3d",
+      "bytes": 1724,
+      "archive_relative": "values-source/values-plan-diff002.patch",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-recipe.json",
+      "sha256": "664b5da4f11a1f2c483cd05ec3fb79eb863262f02d6be81c4352b53a22b0cb77",
+      "bytes": 26668,
+      "archive_relative": "values-source/values-recipe.json",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-source-diff002.patch",
+      "sha256": "94b4fff2dcfcb1c3802aa17ced68cfac3fb71cf466aec6a74cd688d96ee2291d",
+      "bytes": 5592,
+      "archive_relative": "values-source/values-source-diff002.patch",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-source-preparation.json",
+      "sha256": "df8bfe258b410794f367810880027c281559057213d0280cd02f80009ea1a050",
+      "bytes": 1922,
+      "archive_relative": "values-source/values-source-preparation.json",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-source-preparation002.json",
+      "sha256": "563da57e8c051fe7efc28f91efa2800eb1c0136ade430b0054d216cdd045cb63",
+      "bytes": 3136,
+      "archive_relative": "values-source/values-source-preparation002.json",
+      "role": "explicit completed values source/planning/readback only",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-flat-IVP-values-collector-held-20261009/collect_once.py",
+      "sha256": "1bd04e3803377848c18ab4d06825b612bcbf32bf1b9fb3f8df2efcff2dcee741",
+      "bytes": 7571,
+      "archive_relative": "collector-preparation-history001/collect_once.py",
+      "role": "preserved mechanical metadata-preparation failure; no collector/science execution",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-flat-IVP-values-collector-held-20261009/prepare_metadata.py",
+      "sha256": "070815e2f2f6e9cba950454b64b96e897471298fc23037203834f8caf5927899",
+      "bytes": 5009,
+      "archive_relative": "collector-preparation-history001/prepare_metadata.py",
+      "role": "preserved mechanical metadata-preparation failure; no collector/science execution",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-flat-IVP-values-collector-held-20261009/scope-config.json",
+      "sha256": "9a009cc9df7c6330131ad8c9a0cd8b878e0010ab77828a6f91fd27568778fa16",
+      "bytes": 10150,
+      "archive_relative": "collector-preparation-history001/scope-config.json",
+      "role": "preserved mechanical metadata-preparation failure; no collector/science execution",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-flat-IVP-values-collector-held-20261009/PLAN.md",
+      "sha256": "0a64e517871e31b65b1e1a673aba28e6493017356690f1e2e0e63a3d6fe5c5eb",
+      "bytes": 1282,
+      "archive_relative": "collector-preparation-history001/PLAN.md",
+      "role": "preserved mechanical metadata-preparation failure; no collector/science execution",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-flat-IVP-values-collector-held-20261009/release-schema.json",
+      "sha256": "0d2fbb3fca89fa443f71c073981065c3a9e1308951f904c7ad69b23f43750a67",
+      "bytes": 267,
+      "archive_relative": "collector-preparation-history001/release-schema.json",
+      "role": "preserved mechanical metadata-preparation failure; no collector/science execution",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-flat-IVP-values-collector-held-20261009/preparation.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "archive_relative": "collector-preparation-history001/preparation.stdout",
+      "role": "preserved mechanical metadata-preparation failure; no collector/science execution",
+      "omission_reason": null
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-flat-IVP-values-collector-held-20261009/preparation.stderr",
+      "sha256": "b66843f04662fc7000699fb5e29c8b2d3019f1f1d63e5a4884c0f998f93dc93d",
+      "bytes": 304,
+      "archive_relative": "collector-preparation-history001/preparation.stderr",
+      "role": "preserved mechanical metadata-preparation failure; no collector/science execution",
+      "omission_reason": null
+    }
+  ],
+  "metadata_only_external_files": [],
+  "completion_gates": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-attempt001/receipt.json",
+      "sha256": "b054132e54cbe1e63b217f2cb1d416ea87e955f5ef1dfa2c945936e127730493",
+      "expected": {
+        "passed_scalar_values_only": true,
+        "accepted_native": false,
+        "failed_checks": [],
+        "sources_unchanged": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/values-invocation001/receipt.json",
+      "sha256": "f6e5ee874b40543841c520f398a12c5e9f4609af29520848d72199c576e2f267",
+      "expected": {
+        "returncode": 0,
+        "passed_outer_process": true,
+        "accepted_native": false,
+        "sources_unchanged": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/report003.json",
+      "sha256": "446be98240637d063232958f569123bff98e2d623f2e0bc71ac4b9085d1be72a",
+      "expected": {
+        "passed_saved_readback": true,
+        "checks": 282,
+        "actual_grid_values": 96,
+        "all_fixed_tolerances_rechecked": true,
+        "no_scientific_imports_or_queries": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-values-independent-root-readback-20261009/invocation003/receipt.json",
+      "sha256": "4a1b77d12cc14f7d817d11903631b7b1dda48fb57c00119ed1284acf6a914c9e",
+      "expected": {
+        "returncode": 0,
+        "source_sha256": "3c3c245db7515787d8c63c4256d425f06d0e81010bfa413bddc0ae5fd3161cf9"
+      }
+    }
+  ],
+  "identical_inventory_pairs": [],
+  "dependency_input_manifests": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-flat-IVP-values-collector-held002-20261009/dependency-inputs/part-000.json",
+      "sha256": "ac6cf362e9972b04f5de1483f87b38aed2035e9dbfacacecd89f6981c252a52b",
+      "bytes": 29177
+    }
+  ],
+  "policy": {
+    "max_copied_bytes_per_file": 1048576,
+    "all_arrays_executables_objects_NPY_NPZ_JSONL_metadata_only": true,
+    "binary_signatures_checked": true,
+    "logs_exact_bytes_whitespace_preserved": true,
+    "large_logs_not_truncated_or_normalized": true,
+    "never_overwrite_existing_destination": true,
+    "no_live_parent_derivative_or_new008_tree": true
+  }
+}

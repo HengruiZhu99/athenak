@@ -1,0 +1,523 @@
+{
+  "final_fixed_case_bookkeeping_only": true,
+  "all_original_processes_finished": true,
+  "partial_matrix_diagnostic_only": true,
+  "fixed_registry_size": 9,
+  "cases": {
+    "wave-map-N16-large-t2": {
+      "status": "native_failed",
+      "original_native_returncode": -6,
+      "original_native_error": null,
+      "target_time": 2.0,
+      "t2_values": null,
+      "native_receipt_sha256": "9b57613601546288c06b22a0c8ac34bc76fd1379c4224e3cf1706c5dc2d9b7e7",
+      "scope": "Original process metadata only; no partial arrays/log/history inspected."
+    },
+    "wave-map-N24-large-t2": {
+      "status": "native_failed",
+      "original_native_returncode": -6,
+      "original_native_error": null,
+      "target_time": 2.0,
+      "t2_values": null,
+      "native_receipt_sha256": "5375335b4df19137389a81d6f932b2a6cb567dc99157a946246836665c9f292a",
+      "scope": "Original process metadata only; no partial arrays/log/history inspected."
+    },
+    "wave-map-N32-large-t2": {
+      "status": "native_failed",
+      "original_native_returncode": -6,
+      "original_native_error": null,
+      "target_time": 2.0,
+      "t2_values": null,
+      "native_receipt_sha256": "e9277f26a0c9242640dc1dd93696b1b6a1a8ef478ade0a424fcf95a6a185a591",
+      "scope": "Original process metadata only; no partial arrays/log/history inspected."
+    },
+    "c0-N16-large-t2": {
+      "status": "native_failed",
+      "original_native_returncode": -6,
+      "original_native_error": null,
+      "target_time": 2.0,
+      "t2_values": null,
+      "native_receipt_sha256": "4d69b3d78f2fc7db17bdf191f01486a76069cc63bf8dd2e23aa041442ddc2c5f",
+      "scope": "Original process metadata only; no partial arrays/log/history inspected."
+    },
+    "c0-N24-large-t2": {
+      "status": "completed_and_admitted",
+      "saved_arrays": 81,
+      "target_time": 2.0,
+      "actual_t2_sample_time": 2.0,
+      "actual_t1_sample_time": 0.9999999999994967,
+      "t1_selection": "exact_within_1e-12",
+      "requested_window": [
+        1.0,
+        2.0
+      ],
+      "actual_saved_window": [
+        0.9999999999994967,
+        2.0
+      ],
+      "t1_RMS4": [
+        0.1248696213125659,
+        0.11226775362114562,
+        0.03118217683357772,
+        0.0024324222522512065
+      ],
+      "t2_RMS4": [
+        2.7187330239145653,
+        2.801506056065061,
+        0.6552588612714302,
+        0.0602627987938089
+      ],
+      "saved_window_peak_RMS4": [
+        3.7887226830876704,
+        2.801506056065061,
+        0.6552588612714302,
+        0.08570067217520577
+      ],
+      "endpoint_growth_factor2_tests": [
+        {
+          "passed": false,
+          "value": 2.7187330239145653,
+          "baseline": 0.1248696213125659,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 21.772573627889855,
+          "measured_reduction_fraction": -20.772573627889855,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 2.801506056065061,
+          "baseline": 0.11226775362114562,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 24.95379096582723,
+          "measured_reduction_fraction": -23.95379096582723,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 0.6552588612714302,
+          "baseline": 0.03118217683357772,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 21.013890876464778,
+          "measured_reduction_fraction": -20.013890876464778,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 0.0602627987938089,
+          "baseline": 0.0024324222522512065,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 24.774809857965938,
+          "measured_reduction_fraction": -23.774809857965938,
+          "zero_baseline_absolute_tolerance": null
+        }
+      ],
+      "saved_window_peak_growth_factor2_tests": [
+        {
+          "passed": false,
+          "value": 3.7887226830876704,
+          "baseline": 0.1248696213125659,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 30.34142846965135,
+          "measured_reduction_fraction": -29.341428469651355,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 2.801506056065061,
+          "baseline": 0.11226775362114562,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 24.95379096582723,
+          "measured_reduction_fraction": -23.95379096582723,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 0.6552588612714302,
+          "baseline": 0.03118217683357772,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 21.013890876464778,
+          "measured_reduction_fraction": -20.013890876464778,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 0.08570067217520577,
+          "baseline": 0.0024324222522512065,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 35.23264601608122,
+          "measured_reduction_fraction": -34.23264601608122,
+          "zero_baseline_absolute_tolerance": null
+        }
+      ],
+      "scope": "Saved completed-case scalar results only; field/kernel admission not repeated."
+    },
+    "c0-N32-large-t2": {
+      "status": "completed_and_admitted",
+      "saved_arrays": 81,
+      "target_time": 2.0,
+      "actual_t2_sample_time": 2.0,
+      "actual_t1_sample_time": 1.000021289062511,
+      "t1_selection": "nearest_within_0.001_no_interpolation",
+      "requested_window": [
+        1.0,
+        2.0
+      ],
+      "actual_saved_window": [
+        1.000021289062511,
+        2.0
+      ],
+      "t1_RMS4": [
+        0.08616034984378931,
+        0.15936527361591435,
+        0.026094715529036316,
+        0.0021425488618636475
+      ],
+      "t2_RMS4": [
+        1.6758281116403082,
+        1.6469865028572601,
+        0.4050433454878752,
+        0.02815416829743529
+      ],
+      "saved_window_peak_RMS4": [
+        4.0729718752522235,
+        2.531854527840625,
+        0.4050433454878752,
+        0.08039136376323006
+      ],
+      "endpoint_growth_factor2_tests": [
+        {
+          "passed": false,
+          "value": 1.6758281116403082,
+          "baseline": 0.08616034984378931,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 19.450108021597206,
+          "measured_reduction_fraction": -18.450108021597206,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 1.6469865028572601,
+          "baseline": 0.15936527361591435,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 10.334663665979429,
+          "measured_reduction_fraction": -9.334663665979429,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 0.4050433454878752,
+          "baseline": 0.026094715529036316,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 15.522044876755686,
+          "measured_reduction_fraction": -14.522044876755686,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 0.02815416829743529,
+          "baseline": 0.0021425488618636475,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 13.140502323455076,
+          "measured_reduction_fraction": -12.140502323455076,
+          "zero_baseline_absolute_tolerance": null
+        }
+      ],
+      "saved_window_peak_growth_factor2_tests": [
+        {
+          "passed": false,
+          "value": 4.0729718752522235,
+          "baseline": 0.08616034984378931,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 47.27199788112066,
+          "measured_reduction_fraction": -46.27199788112066,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 2.531854527840625,
+          "baseline": 0.15936527361591435,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 15.887115620575146,
+          "measured_reduction_fraction": -14.887115620575145,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 0.4050433454878752,
+          "baseline": 0.026094715529036316,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 15.522044876755686,
+          "measured_reduction_fraction": -14.522044876755686,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": false,
+          "value": 0.08039136376323006,
+          "baseline": 0.0021425488618636475,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 37.52136774761975,
+          "measured_reduction_fraction": -36.52136774761975,
+          "zero_baseline_absolute_tolerance": null
+        }
+      ],
+      "scope": "Saved completed-case scalar results only; field/kernel admission not repeated."
+    },
+    "wave-map-half-N24-large-t2": {
+      "status": "native_failed",
+      "original_native_returncode": -6,
+      "original_native_error": null,
+      "target_time": 2.0,
+      "t2_values": null,
+      "native_receipt_sha256": "8a9a09062c754d20ab0f9b97d474b0edc7607e9c2ff8797b273f478a63240137",
+      "scope": "Original process metadata only; no partial arrays/log/history inspected."
+    },
+    "wave-map-N24-small-t2": {
+      "status": "native_failed",
+      "original_native_returncode": -6,
+      "original_native_error": null,
+      "target_time": 2.0,
+      "t2_values": null,
+      "native_receipt_sha256": "18373fc04bb6b7d8601744f0beae629e9710570854112baa8dfad3cc57c03db5",
+      "scope": "Original process metadata only; no partial arrays/log/history inspected."
+    },
+    "wave-map-N24-reference-long-t2": {
+      "status": "completed_and_admitted",
+      "saved_arrays": 81,
+      "target_time": 2.0,
+      "actual_t2_sample_time": 2.0,
+      "actual_t1_sample_time": 0.9999999999994967,
+      "t1_selection": "exact_within_1e-12",
+      "requested_window": [
+        1.0,
+        2.0
+      ],
+      "actual_saved_window": [
+        0.9999999999994967,
+        2.0
+      ],
+      "t1_RMS4": [
+        6.110005577121442e-14,
+        4.226912306799104e-14,
+        1.3541741031697807e-15,
+        1.0696816496615057e-15
+      ],
+      "t2_RMS4": [
+        7.015569536222238e-14,
+        5.943916799832328e-14,
+        1.415984624081873e-15,
+        1.0726351493042834e-15
+      ],
+      "saved_window_peak_RMS4": [
+        7.015569536222238e-14,
+        5.943916799832328e-14,
+        1.415984624081873e-15,
+        1.0728538605414713e-15
+      ],
+      "endpoint_growth_factor2_tests": [
+        {
+          "passed": true,
+          "value": 7.015569536222238e-14,
+          "baseline": 6.110005577121442e-14,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 1.1482100053217017,
+          "measured_reduction_fraction": -0.14821000532170173,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": true,
+          "value": 5.943916799832328e-14,
+          "baseline": 4.226912306799104e-14,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 1.4062077394582746,
+          "measured_reduction_fraction": -0.4062077394582745,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": true,
+          "value": 1.415984624081873e-15,
+          "baseline": 1.3541741031697807e-15,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 1.0456444417061361,
+          "measured_reduction_fraction": -0.04564444170613614,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": true,
+          "value": 1.0726351493042834e-15,
+          "baseline": 1.0696816496615057e-15,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 1.0027611015330704,
+          "measured_reduction_fraction": -0.0027611015330704304,
+          "zero_baseline_absolute_tolerance": null
+        }
+      ],
+      "saved_window_peak_growth_factor2_tests": [
+        {
+          "passed": true,
+          "value": 7.015569536222238e-14,
+          "baseline": 6.110005577121442e-14,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 1.1482100053217017,
+          "measured_reduction_fraction": -0.14821000532170173,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": true,
+          "value": 5.943916799832328e-14,
+          "baseline": 4.226912306799104e-14,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 1.4062077394582746,
+          "measured_reduction_fraction": -0.4062077394582745,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": true,
+          "value": 1.415984624081873e-15,
+          "baseline": 1.3541741031697807e-15,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 1.0456444417061361,
+          "measured_reduction_fraction": -0.04564444170613614,
+          "zero_baseline_absolute_tolerance": null
+        },
+        {
+          "passed": true,
+          "value": 1.0728538605414713e-15,
+          "baseline": 1.0696816496615057e-15,
+          "nominal_factor": 2.0,
+          "branch": "relative_nonzero_baseline",
+          "ratio": 1.0029655653913194,
+          "measured_reduction_fraction": -0.00296556539131946,
+          "zero_baseline_absolute_tolerance": null
+        }
+      ],
+      "scope": "Saved completed-case scalar results only; field/kernel admission not repeated."
+    }
+  },
+  "admitted_completed_cases": [
+    "c0-N24-large-t2",
+    "c0-N32-large-t2",
+    "wave-map-N24-reference-long-t2"
+  ],
+  "native_failed_cases": [
+    "wave-map-N16-large-t2",
+    "wave-map-N24-large-t2",
+    "wave-map-N32-large-t2",
+    "c0-N16-large-t2",
+    "wave-map-half-N24-large-t2",
+    "wave-map-N24-small-t2"
+  ],
+  "pending_cases": [],
+  "all_nine_admitted": false,
+  "matrix_complete_and_admitted": false,
+  "matrix_status": "finished_with_six_mandatory_failed_original_cases",
+  "comparisons": {
+    "N24_wave_map_vs_matched_C0": {
+      "status": "not_evaluable",
+      "dependencies": [
+        "wave-map-N24-large-t2",
+        "c0-N24-large-t2"
+      ],
+      "unavailable_dependencies": {
+        "wave-map-N24-large-t2": "native_failed"
+      },
+      "passed": null
+    },
+    "N32_vs_N24": {
+      "status": "not_evaluable",
+      "dependencies": [
+        "wave-map-N32-large-t2",
+        "wave-map-N24-large-t2"
+      ],
+      "unavailable_dependencies": {
+        "wave-map-N32-large-t2": "native_failed",
+        "wave-map-N24-large-t2": "native_failed"
+      },
+      "passed": null
+    },
+    "half_cap_vs_standard_N24": {
+      "status": "not_evaluable",
+      "dependencies": [
+        "wave-map-half-N24-large-t2",
+        "wave-map-N24-large-t2"
+      ],
+      "unavailable_dependencies": {
+        "wave-map-half-N24-large-t2": "native_failed",
+        "wave-map-N24-large-t2": "native_failed"
+      },
+      "passed": null
+    }
+  },
+  "large_candidate_growth_diagnostics": {
+    "wave-map-N16-large-t2": {
+      "status": "not_evaluable",
+      "dependencies": [
+        "wave-map-N16-large-t2"
+      ],
+      "unavailable_dependencies": {
+        "wave-map-N16-large-t2": "native_failed"
+      },
+      "passed": null
+    },
+    "wave-map-N24-large-t2": {
+      "status": "not_evaluable",
+      "dependencies": [
+        "wave-map-N24-large-t2"
+      ],
+      "unavailable_dependencies": {
+        "wave-map-N24-large-t2": "native_failed"
+      },
+      "passed": null
+    },
+    "wave-map-N32-large-t2": {
+      "status": "not_evaluable",
+      "dependencies": [
+        "wave-map-N32-large-t2"
+      ],
+      "unavailable_dependencies": {
+        "wave-map-N32-large-t2": "native_failed"
+      },
+      "passed": null
+    },
+    "wave-map-half-N24-large-t2": {
+      "status": "not_evaluable",
+      "dependencies": [
+        "wave-map-half-N24-large-t2"
+      ],
+      "unavailable_dependencies": {
+        "wave-map-half-N24-large-t2": "native_failed"
+      },
+      "passed": null
+    }
+  },
+  "t6_admission": false,
+  "t12_admission": false,
+  "continuation_withheld_reasons": [
+    "diagnostic_report_cannot_authorize_continuation",
+    "original_fixed_cases_failed_native_admission"
+  ],
+  "endpoint_and_saved_window_predicates_are_distinct": true,
+  "scope": "Saved scalar bookkeeping only. Missing/failed cases never acquire t2 values. No native/PDE stability, convergence order, exact-scri or BH inner-gauge claim."
+}

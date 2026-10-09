@@ -520,6 +520,12 @@ C0 N24 control and its 81 saved-state checks, and the subsequent N32 wave-map
 failure. The N24 saved-field readbacks agree independently, but the wave-map
 process failures prevent longer acceptance. No private candidate is adopted.
 
+The [final matrix and flat-wave control](hyperboloidal-reference-wave-map-final-matrix.md)
+records the finished nine-process matrix, the remaining completed controls,
+independent N32 saved-field checks and a separate multiprecision scalar-wave
+initial-value control. Its scalar-values checks do not decide coordinate
+caustics or establish nonlinear evolution stability.
+
 The later acceptance target is a substantial angular gauge disturbance on
 Minkowski followed by a single black hole surviving the inner
 wormhole-to-trumpet transition. The Minkowski hyperboloidal reference must be

@@ -1,0 +1,24 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/VALUES-PLAN.md
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/VALUES-PLAN.md
+@@ -30,6 +30,8 @@
+   constant matches at r1; the outer defect uses the analytic rationalized
+   square-root expression. Each precision and declared height quadrature order
+   computes its own height, rather than treating a previous table as exact.
++  The reference cache is bounded at16384 entries and the defect cache at4096;
++  this limits retained quadrature intermediates without changing arithmetic.
+ * Coarea endpoints solve the reviewed monotone equations in compact r by
+   bisection on [0,1], with r=1 an analytic bracket only. The fixed iteration and
+   residual gates are in the source/recipe. Every integral is split at the
+@@ -93,6 +95,12 @@
+ does not authorize tolerance relaxation. Convergence at these rules is finite
+ event numerical evidence, not an interval error certificate.
+ 
++Coarea/radial/azimuth convergence, identical-rule precision, ray convergence,
++ray/coarea agreement and exact-zero controls apply independently to both
++physical u=deltaY and conformal phi=u/Omega_event, with those same thresholds.
++All operands in both normalizations are retained. Initial s/Pi/det checks and
++the independent exact physical-wave controls retain their displayed meanings.
++
+ The future runner must use the recorded Python3.9/mpmath1.3.0 interpreter,
+ -B, PYTHONDONTWRITEBYTECODE=1 and a fresh nonexistent output directory. The
+ root authorization must set scalar_values_execution_admitted=true and bind

@@ -1,0 +1,106 @@
+--- v2/compare_subset.py
++++ v3/compare_subset.py
+@@ -11,7 +11,7 @@
+ NATIVE_PLAN = ROOT / 'docs/validation/hyperboloidal-reference-wave-map-native-preflights-20261009/native-preparation/PLAN.md'
+ NATIVE_PLAN_SHA = '7955afb3db4b227c0fe885410255452b4fcb15e249ed97b2d52c2672c4697926'
+ ZERO_ABS = 1e-10
+-STATUS = {'pending', 'native_failed', 'completed_and_admitted'}
++STATUS = {'native_failed', 'completed_and_admitted'}
+ 
+ 
+ def require(condition, message):
+@@ -83,6 +83,7 @@
+     path = pinned(path, entry['native_launch_receipt_sha256'], pins)
+     receipt = load(path)
+     require(receipt['mode'] == registry_row['mode'], 'Wrong native mode for ' + name)
++    require(receipt['sources_before_after_equal'] is True, 'Original source provenance failed: ' + name)
+     return receipt
+ 
+ 
+@@ -101,7 +102,8 @@
+             'Completed-case identity/protection mismatch: ' + name)
+     require(outer['launch_receipt_sha256'] == entry['native_launch_receipt_sha256'],
+             'Outer/native launch mismatch: ' + name)
+-    analysis_path = pinned(attempt / 'analysis/receipt.json', outer['analyzer_receipt_sha256'], pins)
++    require(outer['analyzer_receipt_sha256'] == entry['completed_analyzer_receipt_sha256'], 'Frozen analyzer pin mismatch: ' + name)
++    analysis_path = pinned(attempt / 'analysis/receipt.json', entry['completed_analyzer_receipt_sha256'], pins)
+     analysis = load(analysis_path)
+     require(analysis['passed_saved_snapshot_finite_and_diagnostic_gates'] is True,
+             'Analyzer admission failed: ' + name)
+@@ -113,7 +115,8 @@
+             'Analyzer reference-profile mismatch: ' + name)
+     require(analysis['launch_receipt_sha256'] == entry['native_launch_receipt_sha256'],
+             'Analyzer/native launch mismatch: ' + name)
+-    rows_path = pinned(attempt / 'analysis/snapshots.json', analysis['snapshots_sha256'], pins)
++    require(analysis['snapshots_sha256'] == entry['completed_snapshots_sha256'], 'Frozen saved-JSON pin mismatch: ' + name)
++    rows_path = pinned(attempt / 'analysis/snapshots.json', entry['completed_snapshots_sha256'], pins)
+     rows = load(rows_path)
+     require(isinstance(rows, list) and len(rows) == analysis['saved_arrays'] and len(rows) >= 3,
+             'Snapshot-result count mismatch: ' + name)
+@@ -167,7 +170,9 @@
+     expected_sources = {'PLAN.md': HERE / 'PLAN.md', 'registry.json': HERE / 'registry.json',
+                         'compare_subset.py': Path(__file__).resolve(), 'run_subset.py': HERE / 'run_subset.py',
+                         'original_native_PLAN': NATIVE_PLAN,
+-                        'completed_readback_recipe': READBACK / 'recipe.json'}
++                        'completed_readback_recipe': READBACK / 'recipe.json',
++                        'final_evidence_recipe': HERE / 'bookkeeping-recipe.json',
++                        'original_final_batch_receipt': LONG / 'batch001/receipt.json'}
+     require(set(auth['source_sha256']) == set(expected_sources), 'Incomplete source authorization pins')
+     for key, path in expected_sources.items():
+         pinned(path, auth['source_sha256'][key], pins)
+@@ -176,12 +181,17 @@
+     names = [row['name'] for row in registry['cases']]
+     require(len(names) == len(set(names)) == 9 and set(auth['cases']) == set(names), 'Wrong fixed nine-case registry')
+     known = set(registry['non_overridable_known_native_failures'])
++    require(len(known) == 6 and registry['pending_allowed'] is False, 'Wrong fixed final-failure set')
++    batch = load(LONG / 'batch001/receipt.json')
++    require(batch['native_cases'] == 9 and batch['passed_native_processes_and_provenance'] is False, 'Final batch status mismatch')
++    require(batch['cases'] == {name: auth['cases'][name]['native_launch_receipt_sha256'] for name in names}, 'Final batch/case pins mismatch')
+     cases = {}
+     for row in registry['cases']:
+         name = row['name']
+         entry = auth['cases'][name]
+         status = entry['status']
+-        require(status in STATUS, 'Unknown case status: ' + name)
++        require(status in STATUS, 'Unknown/pending final case status: ' + name)
++        require(status == row['status'] and entry == row['evidence'], 'Final frozen case cannot be relabeled: ' + name)
+         require(name not in known or status == 'native_failed', 'Known original failure cannot be relabeled: ' + name)
+         if status == 'completed_and_admitted':
+             cases[name] = completed_case(name, entry, row, pins)
+@@ -195,8 +205,7 @@
+                            't2_values': None, 'native_receipt_sha256': entry['native_launch_receipt_sha256'],
+                            'scope': 'Original process metadata only; no partial arrays/log/history inspected.'}
+         else:
+-            require(isinstance(entry['reason'], str) and entry['reason'].strip(), 'Pending case needs explicit reason: ' + name)
+-            cases[name] = {'status': 'pending', 'reason': entry['reason'], 't2_values': None}
++            raise ValueError('Final registry has no pending branch: ' + name)
+     w24, c24 = 'wave-map-N24-large-t2', 'c0-N24-large-t2'
+     w32, half = 'wave-map-N32-large-t2', 'wave-map-half-N24-large-t2'
+     def n24():
+@@ -228,18 +237,22 @@
+             'actual_saved_window': cases[name]['actual_saved_window'],
+             'unsaved_times_not_tested': True})
+     failed = [name for name in names if cases[name]['status'] == 'native_failed']
+-    pending = [name for name in names if cases[name]['status'] == 'pending']
++    pending = []
++    require(set(failed) == known, 'All six original failures are mandatory')
+     admitted = [name for name in names if cases[name]['status'] == 'completed_and_admitted']
+-    all_admitted = len(admitted) == 9
++    require(len(admitted) == 3, 'Exactly three completed/admitted cases required')
++    all_admitted = False
+     reasons = ['diagnostic_report_cannot_authorize_continuation']
+     if failed:
+         reasons.append('original_fixed_cases_failed_native_admission')
+     if pending:
+         reasons.append('fixed_case_evidence_pending')
+-    return {'partial_matrix_diagnostic_only': True, 'fixed_registry_size': 9,
++    return {'final_fixed_case_bookkeeping_only': True, 'all_original_processes_finished': True,
++            'partial_matrix_diagnostic_only': True, 'fixed_registry_size': 9,
+             'cases': cases, 'admitted_completed_cases': admitted,
+             'native_failed_cases': failed, 'pending_cases': pending,
+-            'all_nine_admitted': all_admitted, 'matrix_complete_and_admitted': all_admitted,
++            'all_nine_admitted': False, 'matrix_complete_and_admitted': False,
++            'matrix_status': 'finished_with_six_mandatory_failed_original_cases',
+             'comparisons': comparisons, 'large_candidate_growth_diagnostics': growth,
+             't6_admission': False, 't12_admission': False, 'continuation_withheld_reasons': reasons,
+             'endpoint_and_saved_window_predicates_are_distinct': True,

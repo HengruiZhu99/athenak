@@ -1,0 +1,11 @@
+--- template/run_released_observation001.py
++++ N32/run_released_observation001.py
+@@ -12,7 +12,7 @@
+ assert os.environ.get('PYTHONDONTWRITEBYTECODE')=='1'
+ A=Path(sys.argv[1]).resolve();expected_auth=sys.argv[2]
+ OUT=P/'invocations001';OUT.mkdir(exist_ok=False)
+-record={'partial_diagnostic_only':True,'accepted_native_run':False,'observer_completed':False,'outer_wrapper_completed':False,'scope':'Exactly one original failed N24 process; no native advance or completed analyzer.'}
++record={'partial_diagnostic_only':True,'accepted_native_run':False,'observer_completed':False,'outer_wrapper_completed':False,'scope':'Exactly one original failed N32 process; no native advance or completed analyzer.'}
+ started=time.monotonic();protected={str(Path(__file__).resolve()):sha(__file__),str(A):sha(A)}
+ try:
+  assert sha(A)==expected_auth,'root authorization SHA differs'

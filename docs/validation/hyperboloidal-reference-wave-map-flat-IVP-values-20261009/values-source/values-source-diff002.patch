@@ -1,0 +1,75 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/source-history/001-unbounded-cache-u-only/flat_ivp_values.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/native-angular-pulse-flat-IVP-held-20261009/flat_ivp_values.py
+@@ -108,7 +108,7 @@
+         q1 = self.r1/self.reference(self.r1)[0]
+         self.outer_constant = self.prefix[-1] - self.a**2/(mp.sqrt(q1*q1+self.a*self.a)+q1)
+ 
+-    @functools.lru_cache(None)
++    @functools.lru_cache(16384)
+     def reference(self, r):
+         if not (0 <= r < 1):
+             raise ArithmeticError("reference radius must satisfy 0<=r<1")
+@@ -141,7 +141,7 @@
+         omega, omega_d, b, h, L = self.reference(r)
+         return -L/(h*(h+b))
+ 
+-    @functools.lru_cache(None)
++    @functools.lru_cache(4096)
+     def defect(self, r):
+         if r <= self.r0:
+             return -r
+@@ -451,7 +451,7 @@
+             for level in recipe["ray_levels"]:
+                 begin=time.monotonic()
+                 value,phi=ray(final_layer,event,level[0],level[1])
+-                rays.append({"dps":dps,"name":event["name"],"orders":level,"u":list(map(number,value)),"phi":list(map(number,phi)),"coarea_u":list(map(number,cv)),"seconds":time.monotonic()-begin})
++                rays.append({"dps":dps,"name":event["name"],"orders":level,"u":list(map(number,value)),"phi":list(map(number,phi)),"coarea_u":list(map(number,cv)),"coarea_phi":list(map(number,cp)),"seconds":time.monotonic()-begin})
+                 write_json(output/"partial-rays.json",rays)
+         write_json(output/"partial-initial.json",all_initial)
+     # All comparison logic uses saved numerical values only; no eigensolve,
+@@ -460,16 +460,17 @@
+     checks=[]
+     def check(name,error,tolerance):
+         checks.append({"name":name,"error":number(error),"tolerance":tolerance,"passed":bool(error<=mp.mpf(tolerance))})
+-    lookup={(r["dps"],r["level"],r["name"]):[mp.mpf(v) for v in r["u"]] for r in all_rows}
+-    for event in recipe["events"]:
+-        name=event["name"]
+-        for dps in recipe["precisions"]:
+-            final=lookup[(dps,"full128",name)]
+-            for other in ["full64","rad128az64","rad64az128"]:
+-                check("coarea_convergence/%s/%d/%s"%(name,dps,other),scaled(final,lookup[(dps,other,name)]),recipe["tolerances"]["value_convergence"])
+-        check("precision/"+name,scaled(lookup[(recipe["precisions"][0],"full128",name)],lookup[(recipe["precisions"][1],"full128",name)]),recipe["tolerances"]["precision"])
+-        if event["amplitudes"]==["0","0"]:
+-            check("zero_pulse/"+name,max(abs(v) for v in lookup[(recipe["precisions"][1],"full128",name)]),"0")
++    for field in ["u","phi"]:
++        lookup={(r["dps"],r["level"],r["name"]):[mp.mpf(v) for v in r[field]] for r in all_rows}
++        for event in recipe["events"]:
++            name=event["name"]
++            for dps in recipe["precisions"]:
++                final=lookup[(dps,"full128",name)]
++                for other in ["full64","rad128az64","rad64az128"]:
++                    check("coarea_convergence/%s/%s/%d/%s"%(field,name,dps,other),scaled(final,lookup[(dps,other,name)]),recipe["tolerances"]["value_convergence"])
++            check("precision/%s/%s"%(field,name),scaled(lookup[(recipe["precisions"][0],"full128",name)],lookup[(recipe["precisions"][1],"full128",name)]),recipe["tolerances"]["precision"])
++            if event["amplitudes"]==["0","0"]:
++                check("zero_pulse/%s/%s"%(field,name),max(abs(v) for v in lookup[(recipe["precisions"][1],"full128",name)]),"0")
+     for row in all_initial:
+         for key in ["normal_data_scaled_error","determinant_scaled_error"]:
+             check("initial/%s/%s/%s"%(row["dps"],row["xyz"],key),mp.mpf(row[key]),recipe["tolerances"]["initial_data"])
+@@ -484,11 +485,12 @@
+         name=event["name"]
+         for dps in recipe["precisions"]:
+             rows=[row for row in rays if row["name"]==name and row["dps"]==dps]
+-            final=[mp.mpf(v) for v in rows[-1]["u"]]
+-            previous=[mp.mpf(v) for v in rows[-2]["u"]]
+-            check("ray_convergence/%s/%d"%(name,dps),scaled(final,previous),recipe["tolerances"]["ray_comparison"])
+-            value=[mp.mpf(v) for v in rows[-1]["coarea_u"]]
+-            check("ray_coarea/%s/%d"%(name,dps),scaled(final,value),recipe["tolerances"]["ray_comparison"])
++            for field in ["u","phi"]:
++                final=[mp.mpf(v) for v in rows[-1][field]]
++                previous=[mp.mpf(v) for v in rows[-2][field]]
++                check("ray_convergence/%s/%s/%d"%(field,name,dps),scaled(final,previous),recipe["tolerances"]["ray_comparison"])
++                value=[mp.mpf(v) for v in rows[-1]["coarea_"+field]]
++                check("ray_coarea/%s/%s/%d"%(field,name,dps),scaled(final,value),recipe["tolerances"]["ray_comparison"])
+     for filename,data in [("values.json",all_rows),("initial-data.json",all_initial),("controls.json",all_controls),("height.json",heights),("rays.json",rays),("checks.json",checks)]:
+         write_json(output/filename,data)
+     return {"passed_scalar_values_only":all(row["passed"] for row in checks),"failed_checks":[r for r in checks if not r["passed"]],"checks":len(checks),"coarea_rows":len(all_rows),"initial_rows":len(all_initial),"control_rows":len(all_controls),"ray_rows":len(rays),"scope":"Converged finite-event scalar values and initial data only. No numerical map derivatives/inversion, native target coverage, global caustic exclusion, PDE evolution or native acceptance."}

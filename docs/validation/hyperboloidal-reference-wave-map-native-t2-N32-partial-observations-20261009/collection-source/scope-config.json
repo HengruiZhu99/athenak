@@ -1,0 +1,104 @@
+{
+  "scope": "Completed N32 partial-observation/manual saved-field checks of the original failed native process only; no completed t2 or stability admission.",
+  "destination": "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-reference-wave-map-native-t2-N32-partial-observations-20261009",
+  "production_reference_commit": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "roots": [
+    {
+      "tag": "partial-N32",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-partial-N32-held-20261009",
+      "role": "completed partial observer source/recipe/outputs"
+    },
+    {
+      "tag": "root-manual-N32",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-N32-partial-fields-root-20261009",
+      "role": "completed independent field/cofactor/extrema readback"
+    },
+    {
+      "tag": "root-saved-comparison",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N32-saved-comparison-root-20261009",
+      "role": "completed owner/manual scalar comparison"
+    },
+    {
+      "tag": "root-N32-release",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-N32-root-release-20261009",
+      "role": "completed root native-failure/partial release and invocations"
+    }
+  ],
+  "selected_files": [],
+  "metadata_only_external_files": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-reference-wave-map-native-t2-wave-N32-failure-20261009/catalog.json",
+      "role": "existing N32 failure capsule; cross-link only"
+    }
+  ],
+  "completion_gates": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-partial-N32-held-20261009/attempts/wave-map-N32-large-t2-001/receipt.json",
+      "expected": {
+        "observer_completed": true,
+        "partial_diagnostic_only": true,
+        "accepted_native_run": false,
+        "native_returncode": -6,
+        "saved_restart_files": 64,
+        "arrays_with_diagnostic_guard_failures": 0,
+        "protected_before_after_equal": true
+      },
+      "sha256": "c0fe338cf4d9d5c671347daf17199c50f00600bd4f6e968b3616cadc83420184"
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-N32-partial-fields-root-20261009/attempts/wave-map-N32-large-t2-001/receipt.json",
+      "expected": {
+        "diagnostic_protocol_completed": true,
+        "partial_diagnostic_only": true,
+        "accepted_native_run": false,
+        "arrays": 64,
+        "saved_guard_failures": 0,
+        "before_after_equal": true,
+        "new_kernel_calls": 0,
+        "new_native_steps": 0
+      },
+      "sha256": "d904e8e254513c4725d05bcf2be719a49488e29ba789ab14c7df2f96cd8f15ec"
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N32-saved-comparison-root-20261009/report.json",
+      "expected": {
+        "passed_independent_saved_field_identity": true,
+        "states": 64,
+        "finite_extrema_pairs": 1600,
+        "saved_guards_failed": 0,
+        "accepted_native_run": false,
+        "partial_diagnostic_only": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-N32-root-release-20261009/partial-invocation001/receipt.json",
+      "expected": {
+        "returncode": 0,
+        "source_unchanged": true,
+        "child_source_unchanged": true,
+        "authorization_unchanged": true
+      }
+    }
+  ],
+  "identical_inventory_pairs": [
+    [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-partial-N32-held-20261009/attempts/wave-map-N32-large-t2-001/protected-inputs-before.json",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-partial-N32-held-20261009/attempts/wave-map-N32-large-t2-001/protected-inputs-after.json"
+    ],
+    [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-N32-partial-fields-root-20261009/attempts/wave-map-N32-large-t2-001/pins-before.json",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-N32-partial-fields-root-20261009/attempts/wave-map-N32-large-t2-001/pins-after.json"
+    ]
+  ],
+  "dependency_manifests": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-partial-N32-held-20261009/attempts/wave-map-N32-large-t2-001/protected-inputs-before.json",
+      "keys": []
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-N32-partial-fields-root-20261009/attempts/wave-map-N32-large-t2-001/pins-before.json",
+      "keys": []
+    }
+  ],
+  "README": "# N32 partial native observations\n\nThe original wave-map-N32-large-t2 process aborted before targett2. This capsule preserves completed observation of 64 earlier saved states and independent manual field checks (1,600 exact extrema pairs). Native diagnostic contractions are source-matched history/probe readbacks, not independently differentiated constraints. Saved finite/SPD/positive/algebraic checks do not certify the unsaved abort, identify its cause, imply convergence across grid phases or accept stability. Existing failure preservation is linked by metadata only.\nCopied logs and source retain exact original bytes and whitespace. Raw arrays, RST/BIN/NPY/NPZ/HDF, JSONL, executables/libraries/objects, and every file>1MiB are metadata-only. Scientific modules are never imported; there is no new source/probe/native query, compilation, operator assembly, eigensolve or propagation. Explicit completed roots only are inventoried. Current external documents and older capsules are byte-identified, never copied or modified. A collector requires its own exact root authorization, fails before destination creation on changed inputs/gates, and never retries into an existing destination.\n"
+}

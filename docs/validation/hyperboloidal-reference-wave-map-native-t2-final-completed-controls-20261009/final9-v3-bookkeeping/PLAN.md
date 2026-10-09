@@ -1,0 +1,7 @@
+# HELD final-nine native bookkeeping v3
+
+All nine original processes have finished. This fresh source-only v3 preserves v1/v2 unchanged. Six named failed original cases are mandatory native_failed and can never acquire t2 values from partial observations. C0N24, C0N32 and stationary waveN24 have exact successful native+completed wrapper+analyzer+saved-JSON pins. No pending status is allowed. Final batchreceipt must agree with all nine original receipt hashes.
+
+The comparator/wrapper are HELD and have not been imported or executed. Root must supply a fresh completed_subset_comparison_authorized=true JSON binding every source pin and exact fixed case entry from the retained false template. Python-B run_subset.py ROOT_AUTHORIZATION withbytecodeoff will perform only completed saved-scalar bookkeeping. No native/source/probe/array call or operator/eigensolve/propagation is permitted. All named dependencies must be completed/admitted before any ratio is evaluated; failed dependencies produce not_evaluable, never surrogate endpoint values. Existing original numerical predicate thresholds remain unchanged.
+
+All six candidate/control failures remain failed despite successful later saved-state observations. matrix_complete_and_admitted=false,t6_admission=false,t12_admission=false unconditionally. Completion of the nine processes is different from admission of the fixed scientific matrix. This report cannot authorize continuation, adoption, stability, convergence order, scri regularity or BH work. No partial histories or failed-state arrays are inspected.
