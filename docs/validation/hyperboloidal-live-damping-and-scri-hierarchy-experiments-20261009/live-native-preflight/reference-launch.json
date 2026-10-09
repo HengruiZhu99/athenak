@@ -1,0 +1,29 @@
+{
+  "scope": "Fixed finite-Omega live C0 damping-profile exploratory native preflight; no stable pulse or scri closure.",
+  "launch_head": "1959930034066ecfd43483452e723cbb197e0ad6",
+  "compiled_production_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "native_build_receipt_sha256": "5ade5d3c80b68913301957a7093929a6793af5da8a9fc19c4215f140d7e49a72",
+  "native_executable_sha256": "580b6043f906ea37ae4870db2cd63d68f344c634c28319d88dafe53308d56005",
+  "launch_script_sha256": "9af0e1878fa21e4bc986539c87a44cc18374b7655c35fe3fd8786c7116040e69",
+  "override_sha256": "0a3b3a2eb7e50f8b2d181607f3a8a4cbf6e83d617a7fa1eec381111061dd5706",
+  "all_recorded_source_private_object_dependency_link_hashes_verified": true,
+  "independent_review_index_sha256": "54e403b71a9e0398fe7700cf2ab7dad836167019463e8783831563e4a28ab54d",
+  "live_gate_index_sha256": "fcfd4a740fc25e999d0417598015608c009bf61de032aff5266f1f843e2d6b59",
+  "live_gate_receipt_sha256": "e038769458c15e7cd1c5a956ef75bd4508b777c981d7ac7da9594c273dcdf229",
+  "shell_pole_diagnostic": "Actual C0 ConformalRHS pole using same live kappa2 helper in live/reference assembly.",
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/run_layer_validation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/athena-live-damping-c0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/reference",
+    "--suite",
+    "reference-long",
+    "--overrides",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native.athinput",
+    "--duration",
+    ".05",
+    "--output-cadence",
+    ".025"
+  ],
+  "stage": "reference"
+}

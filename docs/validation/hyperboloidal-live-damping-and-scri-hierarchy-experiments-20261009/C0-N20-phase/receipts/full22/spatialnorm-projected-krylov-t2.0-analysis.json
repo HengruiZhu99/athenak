@@ -1,0 +1,2230 @@
+{
+  "gauge": "spatialnorm",
+  "method": "krylov",
+  "semantics": "continuous projected semidiscrete global generator; exact native final-only RK3 one-step separately validated",
+  "outward_reference_crossing_time": 0.7457643839234269,
+  "stop_in_reference_crossings": 2.6818121689830585,
+  "component_norm_definition": "sum of squares of 22 native stored upper-tensor/scalar/vector perturbation components; gradient contracted with reference conformal spatial inverse; Cartesian quadrature h^3 sqrt(det gamma_bar). This is a reference weighted component H1 norm, not invariant tensor or proved symmetrizer energy.",
+  "native_constraint_norm_definition": "RMS H and covector M,Z contracted with reference gamma_bar inverse, matching linearized native diagnostics; no volume weight for these RMS norms",
+  "radial_bins": [
+    0,
+    0.2,
+    0.4,
+    0.6,
+    0.8,
+    0.9,
+    0.95,
+    1
+  ],
+  "histories": [
+    {
+      "name": "gauge_pulse",
+      "history": [
+        {
+          "time": 0.0,
+          "euclidean_component_l2": 0.9999999999999999,
+          "max_abs_22component": 0.11737052782876617,
+          "reference_volume_component_l2": 0.03779557395234919,
+          "reference_volume_component_H1": 0.17765477622409506,
+          "native_H_M_Z_rms": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "outer_r09_squared_component_fraction": 2.0607958939282723e-09,
+          "outer_r09_squared_constraints_fraction": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "peak_component_radius": 0.09512022093491936,
+          "peak_H_M_Z_radius": [
+            0.9869916627676655,
+            0.9869916627676655,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 1.0,
+          "reference_volume_component_H1_amplification": 1.0,
+          "euclidean_component_amplification": 1.0
+        },
+        {
+          "time": 0.025,
+          "euclidean_component_l2": 1.368229638764354,
+          "max_abs_22component": 0.13248520340017655,
+          "reference_volume_component_l2": 0.05241405651405669,
+          "reference_volume_component_H1": 0.34640103105365205,
+          "native_H_M_Z_rms": [
+            0.005887600079871474,
+            0.007733610062744942,
+            0.0022772167436625698
+          ],
+          "outer_r09_squared_component_fraction": 0.04544842014509492,
+          "outer_r09_squared_constraints_fraction": [
+            0.03987831409609658,
+            0.7501185385181461,
+            0.964208379755084
+          ],
+          "peak_component_radius": 0.09512022093491936,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9368255300634499,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 1.3867776311622562,
+          "reference_volume_component_H1_amplification": 1.9498548725574325,
+          "euclidean_component_amplification": 1.3682296387643542
+        },
+        {
+          "time": 0.05,
+          "euclidean_component_l2": 2.078331269688063,
+          "max_abs_22component": 0.24585811827048332,
+          "reference_volume_component_l2": 0.08020668035429009,
+          "reference_volume_component_H1": 0.5947893721867457,
+          "native_H_M_Z_rms": [
+            0.010362785440962084,
+            0.011588187579209527,
+            0.004387580773665611
+          ],
+          "outer_r09_squared_component_fraction": 0.0816074985931577,
+          "outer_r09_squared_constraints_fraction": [
+            0.03667223014527127,
+            0.7744172502745407,
+            0.9780624974020705
+          ],
+          "peak_component_radius": 0.09512022093491936,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 2.122118332040962,
+          "reference_volume_component_H1_amplification": 3.3480066499111394,
+          "euclidean_component_amplification": 2.0783312696880634
+        },
+        {
+          "time": 0.07500000000000001,
+          "euclidean_component_l2": 2.810755658384859,
+          "max_abs_22component": 0.32256031826312975,
+          "reference_volume_component_l2": 0.10879707493296209,
+          "reference_volume_component_H1": 0.8190759639819646,
+          "native_H_M_Z_rms": [
+            0.012336847831933694,
+            0.017721086464027435,
+            0.006527118083569699
+          ],
+          "outer_r09_squared_component_fraction": 0.10354655234214603,
+          "outer_r09_squared_constraints_fraction": [
+            0.064080551927212,
+            0.719320405856794,
+            0.9789456489565493
+          ],
+          "peak_component_radius": 0.0951202209349194,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 2.8785665504148215,
+          "reference_volume_component_H1_amplification": 4.610492221997882,
+          "euclidean_component_amplification": 2.8107556583848594
+        },
+        {
+          "time": 0.1,
+          "euclidean_component_l2": 3.4398690937470087,
+          "max_abs_22component": 0.3508164945172256,
+          "reference_volume_component_l2": 0.13364900730996,
+          "reference_volume_component_H1": 0.9873259087876577,
+          "native_H_M_Z_rms": [
+            0.014087031161200919,
+            0.02409486894479136,
+            0.008211092444978902
+          ],
+          "outer_r09_squared_component_fraction": 0.11249475594289764,
+          "outer_r09_squared_constraints_fraction": [
+            0.098890537061578,
+            0.7073027934094508,
+            0.9640397157544809
+          ],
+          "peak_component_radius": 0.0951202209349194,
+          "peak_H_M_Z_radius": [
+            0.0951202209349194,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 3.5361020705349815,
+          "reference_volume_component_H1_amplification": 5.55755341777154,
+          "euclidean_component_amplification": 3.439869093747009
+        },
+        {
+          "time": 0.125,
+          "euclidean_component_l2": 3.926804853984859,
+          "max_abs_22component": 0.33035472853225045,
+          "reference_volume_component_l2": 0.15349267302097905,
+          "reference_volume_component_H1": 1.0938084694441756,
+          "native_H_M_Z_rms": [
+            0.01913185906325039,
+            0.029206673394481433,
+            0.009458616741279981
+          ],
+          "outer_r09_squared_component_fraction": 0.11311700183402643,
+          "outer_r09_squared_constraints_fraction": [
+            0.09073056768475736,
+            0.7423887875205948,
+            0.9341823725333599
+          ],
+          "peak_component_radius": 0.0951202209349194,
+          "peak_H_M_Z_radius": [
+            0.28536066280475825,
+            0.9368255300634499,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 4.061128247833863,
+          "reference_volume_component_H1_amplification": 6.156932522120528,
+          "euclidean_component_amplification": 3.9268048539848595
+        },
+        {
+          "time": 0.15000000000000002,
+          "euclidean_component_l2": 4.275379041293585,
+          "max_abs_22component": 0.27679749130607767,
+          "reference_volume_component_l2": 0.16860924506954117,
+          "reference_volume_component_H1": 1.1491300726266958,
+          "native_H_M_Z_rms": [
+            0.025890810638632165,
+            0.03377470218129873,
+            0.010607368615569438
+          ],
+          "outer_r09_squared_component_fraction": 0.10931481682004995,
+          "outer_r09_squared_constraints_fraction": [
+            0.07237636843714235,
+            0.7630853803963834,
+            0.8959509414029906
+          ],
+          "peak_component_radius": 0.09512022093491936,
+          "peak_H_M_Z_radius": [
+            0.28536066280475825,
+            0.9368255300634499,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 4.4610843926359065,
+          "reference_volume_component_H1_amplification": 6.4683319922520655,
+          "euclidean_component_amplification": 4.2753790412935855
+        },
+        {
+          "time": 0.17500000000000002,
+          "euclidean_component_l2": 4.514678466576353,
+          "max_abs_22component": 0.28088378318224666,
+          "reference_volume_component_l2": 0.180105690246151,
+          "reference_volume_component_H1": 1.1754467290372437,
+          "native_H_M_Z_rms": [
+            0.032499630991703214,
+            0.03883121109179078,
+            0.012170259612411881
+          ],
+          "outer_r09_squared_component_fraction": 0.10551925393873979,
+          "outer_r09_squared_constraints_fraction": [
+            0.05916175469649611,
+            0.7355243008266075,
+            0.8676548960172824
+          ],
+          "peak_component_radius": 0.1821413560377275,
+          "peak_H_M_Z_radius": [
+            0.28536066280475825,
+            0.9496155490129773,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 4.765258770067083,
+          "reference_volume_component_H1_amplification": 6.616465675848345,
+          "euclidean_component_amplification": 4.5146784665763535
+        },
+        {
+          "time": 0.2,
+          "euclidean_component_l2": 4.684560045435972,
+          "max_abs_22component": 0.26329118713257477,
+          "reference_volume_component_l2": 0.18931005512306492,
+          "reference_volume_component_H1": 1.1985713718593813,
+          "native_H_M_Z_rms": [
+            0.0392496215739456,
+            0.04391464549642144,
+            0.014469868405851941
+          ],
+          "outer_r09_squared_component_fraction": 0.10628816474885205,
+          "outer_r09_squared_constraints_fraction": [
+            0.0469235593760156,
+            0.6962160688050134,
+            0.8644070675964363
+          ],
+          "peak_component_radius": 0.1821413560377275,
+          "peak_H_M_Z_radius": [
+            0.28536066280475825,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 5.008789001636482,
+          "reference_volume_component_H1_amplification": 6.746631851583289,
+          "euclidean_component_amplification": 4.684560045435973
+        },
+        {
+          "time": 0.225,
+          "euclidean_component_l2": 4.825437475854539,
+          "max_abs_22component": 0.23611571155543007,
+          "reference_volume_component_l2": 0.19738776575361217,
+          "reference_volume_component_H1": 1.2400263807167222,
+          "native_H_M_Z_rms": [
+            0.046134919975636283,
+            0.04832370813295961,
+            0.017401304140180648
+          ],
+          "outer_r09_squared_component_fraction": 0.11531227976027704,
+          "outer_r09_squared_constraints_fraction": [
+            0.035974686291481935,
+            0.6690799569448878,
+            0.8812093308095762
+          ],
+          "peak_component_radius": 0.1821413560377275,
+          "peak_H_M_Z_radius": [
+            0.28536066280475825,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 5.222510074922238,
+          "reference_volume_component_H1_amplification": 6.979977724621057,
+          "euclidean_component_amplification": 4.82543747585454
+        },
+        {
+          "time": 0.25,
+          "euclidean_component_l2": 4.971723146814929,
+          "max_abs_22component": 0.265623093426518,
+          "reference_volume_component_l2": 0.20517829364653153,
+          "reference_volume_component_H1": 1.3113204680388422,
+          "native_H_M_Z_rms": [
+            0.052841675859850626,
+            0.05208345832999907,
+            0.020599249160622224
+          ],
+          "outer_r09_squared_component_fraction": 0.1345957322047872,
+          "outer_r09_squared_constraints_fraction": [
+            0.02733852141589386,
+            0.6486574362634607,
+            0.9059537439569635
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.28536066280475825,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 5.428632831590553,
+          "reference_volume_component_H1_amplification": 7.38128462352587,
+          "euclidean_component_amplification": 4.97172314681493
+        },
+        {
+          "time": 0.275,
+          "euclidean_component_l2": 5.144420910114291,
+          "max_abs_22component": 0.3215628762957411,
+          "reference_volume_component_l2": 0.21307388216879844,
+          "reference_volume_component_H1": 1.411613329204219,
+          "native_H_M_Z_rms": [
+            0.059363682122323104,
+            0.05553734894823879,
+            0.02370254037895958
+          ],
+          "outer_r09_squared_component_fraction": 0.16360542168254152,
+          "outer_r09_squared_constraints_fraction": [
+            0.02142318684691742,
+            0.6297875458999156,
+            0.9311147952219657
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.4756011046745969,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 5.637535295466912,
+          "reference_volume_component_H1_amplification": 7.9458225622011955,
+          "euclidean_component_amplification": 5.144420910114292
+        },
+        {
+          "time": 0.30000000000000004,
+          "euclidean_component_l2": 5.3445260590498025,
+          "max_abs_22component": 0.36391666977051407,
+          "reference_volume_component_l2": 0.22093372913750536,
+          "reference_volume_component_H1": 1.5309074349077498,
+          "native_H_M_Z_rms": [
+            0.06534883562908418,
+            0.05933541691118321,
+            0.026488360210511437
+          ],
+          "outer_r09_squared_component_fraction": 0.19878783520637616,
+          "outer_r09_squared_constraints_fraction": [
+            0.019057674551990773,
+            0.61289443238088,
+            0.9526656135451036
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 5.845492104870475,
+          "reference_volume_component_H1_amplification": 8.617316502522014,
+          "euclidean_component_amplification": 5.344526059049803
+        },
+        {
+          "time": 0.325,
+          "euclidean_component_l2": 5.554303979367881,
+          "max_abs_22component": 0.39221634210546324,
+          "reference_volume_component_l2": 0.2281915716983961,
+          "reference_volume_component_H1": 1.6569553933835435,
+          "native_H_M_Z_rms": [
+            0.07044220749233214,
+            0.0645584684745017,
+            0.028898137635677452
+          ],
+          "outer_r09_squared_component_fraction": 0.23450775993554704,
+          "outer_r09_squared_constraints_fraction": [
+            0.021103466863770477,
+            0.6001871630073669,
+            0.9673466688216588
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 6.037521006721286,
+          "reference_volume_component_H1_amplification": 9.326827167840664,
+          "euclidean_component_amplification": 5.554303979367882
+        },
+        {
+          "time": 0.35000000000000003,
+          "euclidean_component_l2": 5.747010108689566,
+          "max_abs_22component": 0.406197531179991,
+          "reference_volume_component_l2": 0.2341513824813197,
+          "reference_volume_component_H1": 1.780275466385736,
+          "native_H_M_Z_rms": [
+            0.07479179898662489,
+            0.072184801516415,
+            0.030989299374164142
+          ],
+          "outer_r09_squared_component_fraction": 0.26498877023429374,
+          "outer_r09_squared_constraints_fraction": [
+            0.028194603297273323,
+            0.5952549024438091,
+            0.9721174807068101
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.0951202209349194,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 6.195206422226219,
+          "reference_volume_component_H1_amplification": 10.020982853509569,
+          "euclidean_component_amplification": 5.747010108689567
+        },
+        {
+          "time": 0.375,
+          "euclidean_component_l2": 5.898018526787696,
+          "max_abs_22component": 0.40580763553731636,
+          "reference_volume_component_l2": 0.23828328486971387,
+          "reference_volume_component_H1": 1.894786328234917,
+          "native_H_M_Z_rms": [
+            0.07846115808033807,
+            0.08236384818634623,
+            0.032832710546237945
+          ],
+          "outer_r09_squared_component_fraction": 0.2858718553656519,
+          "outer_r09_squared_constraints_fraction": [
+            0.04055526484901402,
+            0.5990756232613793,
+            0.9652711498466933
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.0951202209349194,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 6.304528809911176,
+          "reference_volume_component_H1_amplification": 10.665552418612261,
+          "euclidean_component_amplification": 5.898018526787697
+        },
+        {
+          "time": 0.4,
+          "euclidean_component_l2": 5.99215584783482,
+          "max_abs_22component": 0.39237418290645487,
+          "reference_volume_component_l2": 0.2403923925811926,
+          "reference_volume_component_H1": 1.9958438850790117,
+          "native_H_M_Z_rms": [
+            0.08115011292093345,
+            0.09415342908428369,
+            0.03441044401594851
+          ],
+          "outer_r09_squared_component_fraction": 0.2950082965526229,
+          "outer_r09_squared_constraints_fraction": [
+            0.057900134277063045,
+            0.6087274291076389,
+            0.9475643738248621
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.2853606628047582,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 6.36033184425953,
+          "reference_volume_component_H1_amplification": 11.234394748618744,
+          "euclidean_component_amplification": 5.9921558478348205
+        },
+        {
+          "time": 0.42500000000000004,
+          "euclidean_component_l2": 6.02641393406276,
+          "max_abs_22component": 0.3677439263762943,
+          "reference_volume_component_l2": 0.24064754466993468,
+          "reference_volume_component_H1": 2.077975184826674,
+          "native_H_M_Z_rms": [
+            0.08296260681910318,
+            0.10580105751814117,
+            0.03557500235043446
+          ],
+          "outer_r09_squared_component_fraction": 0.29275605357874745,
+          "outer_r09_squared_constraints_fraction": [
+            0.07862226622378955,
+            0.6214654652657329,
+            0.9218638244562416
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.2853606628047582,
+            0.8560819884142745,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 6.367082689981936,
+          "reference_volume_component_H1_amplification": 11.696703173381055,
+          "euclidean_component_amplification": 6.026413934062761
+        },
+        {
+          "time": 0.45,
+          "euclidean_component_l2": 6.0079538126986884,
+          "max_abs_22component": 0.3344931261645389,
+          "reference_volume_component_l2": 0.23947480944845947,
+          "reference_volume_component_H1": 2.1332875590086338,
+          "native_H_M_Z_rms": [
+            0.0849654401297873,
+            0.11529796294281383,
+            0.03608129079564322
+          ],
+          "outer_r09_squared_component_fraction": 0.28152715703051606,
+          "outer_r09_squared_constraints_fraction": [
+            0.09785173898242203,
+            0.6365104362608446,
+            0.8915067509601173
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.8560819884142745,
+            0.8560819884142745,
+            0.9238584613619717
+          ],
+          "reference_volume_component_l2_amplification": 6.33605431552323,
+          "reference_volume_component_H1_amplification": 12.008050694441724,
+          "euclidean_component_amplification": 6.007953812698689
+        },
+        {
+          "time": 0.47500000000000003,
+          "euclidean_component_l2": 5.948577770653183,
+          "max_abs_22component": 0.29395674254722975,
+          "reference_volume_component_l2": 0.237373028427933,
+          "reference_volume_component_H1": 2.151381507133186,
+          "native_H_M_Z_rms": [
+            0.08832168179559899,
+            0.12092640966025041,
+            0.03566245285504028
+          ],
+          "outer_r09_squared_component_fraction": 0.2641121685249535,
+          "outer_r09_squared_constraints_fraction": [
+            0.10872679180319443,
+            0.6532538201095127,
+            0.8587019099994226
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.8560819884142745,
+            0.8560819884142745,
+            0.9238584613619717
+          ],
+          "reference_volume_component_l2_amplification": 6.280445131676034,
+          "reference_volume_component_H1_amplification": 12.109899620257984,
+          "euclidean_component_amplification": 5.948577770653184
+        },
+        {
+          "time": 0.5,
+          "euclidean_component_l2": 5.861443232255777,
+          "max_abs_22component": 0.2556452612240968,
+          "reference_volume_component_l2": 0.23485721111857408,
+          "reference_volume_component_H1": 2.1220803901943497,
+          "native_H_M_Z_rms": [
+            0.09285005479403315,
+            0.12162162999287826,
+            0.034127283559200014
+          ],
+          "outer_r09_squared_component_fraction": 0.2415433660389112,
+          "outer_r09_squared_constraints_fraction": [
+            0.10892097610025411,
+            0.6690470389246516,
+            0.8237997289080251
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.8560819884142744,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 6.21388132416432,
+          "reference_volume_component_H1_amplification": 11.944966723087376,
+          "euclidean_component_amplification": 5.861443232255778
+        },
+        {
+          "time": 0.525,
+          "euclidean_component_l2": 5.767558359907411,
+          "max_abs_22component": 0.237690987762435,
+          "reference_volume_component_l2": 0.23275481118514812,
+          "reference_volume_component_H1": 2.041557469168979,
+          "native_H_M_Z_rms": [
+            0.09717906306834041,
+            0.11713753472410184,
+            0.031479834397867675
+          ],
+          "outer_r09_squared_component_fraction": 0.2129487896228396,
+          "outer_r09_squared_constraints_fraction": [
+            0.1017731668578452,
+            0.6781958789972242,
+            0.7857696352694769
+          ],
+          "peak_component_radius": 0.18214135603772755,
+          "peak_H_M_Z_radius": [
+            0.8560819884142744,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 6.158255765042594,
+          "reference_volume_component_H1_amplification": 11.491711692534194,
+          "euclidean_component_amplification": 5.767558359907412
+        },
+        {
+          "time": 0.55,
+          "euclidean_component_l2": 5.711108825668421,
+          "max_abs_22component": 0.21340913952001225,
+          "reference_volume_component_l2": 0.232744885572694,
+          "reference_volume_component_H1": 1.9209402452166506,
+          "native_H_M_Z_rms": [
+            0.1004607153341068,
+            0.10816786330114204,
+            0.0280752818484248
+          ],
+          "outer_r09_squared_component_fraction": 0.17927031727033552,
+          "outer_r09_squared_constraints_fraction": [
+            0.09030066357263196,
+            0.6722395193401873,
+            0.7454255120456437
+          ],
+          "peak_component_radius": 0.18214135603772755,
+          "peak_H_M_Z_radius": [
+            0.8560819884142744,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 6.157993151952854,
+          "reference_volume_component_H1_amplification": 10.812770059126146,
+          "euclidean_component_amplification": 5.711108825668422
+        },
+        {
+          "time": 0.5750000000000001,
+          "euclidean_component_l2": 5.767083030149767,
+          "max_abs_22component": 0.19297963120379055,
+          "reference_volume_component_l2": 0.2375168860672925,
+          "reference_volume_component_H1": 1.7946413440660975,
+          "native_H_M_Z_rms": [
+            0.10349713236683536,
+            0.09654758104502936,
+            0.02481108625050019
+          ],
+          "outer_r09_squared_component_fraction": 0.14833185620754677,
+          "outer_r09_squared_constraints_fraction": [
+            0.07487928053946316,
+            0.6420985420147172,
+            0.7163335405344632
+          ],
+          "peak_component_radius": 0.2393806398350054,
+          "peak_H_M_Z_radius": [
+            0.8560819884142744,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 6.284251335003991,
+          "reference_volume_component_H1_amplification": 10.101846863955538,
+          "euclidean_component_amplification": 5.7670830301497675
+        },
+        {
+          "time": 0.6000000000000001,
+          "euclidean_component_l2": 6.018734285880294,
+          "max_abs_22component": 0.2464684121711889,
+          "reference_volume_component_l2": 0.24986382424853837,
+          "reference_volume_component_H1": 1.7207828233829794,
+          "native_H_M_Z_rms": [
+            0.10803736520671024,
+            0.08546263380981617,
+            0.023169725750004554
+          ],
+          "outer_r09_squared_component_fraction": 0.13294875447659815,
+          "outer_r09_squared_constraints_fraction": [
+            0.05632598733988538,
+            0.5872021855748474,
+            0.737359167827114
+          ],
+          "peak_component_radius": 0.9869916627676657,
+          "peak_H_M_Z_radius": [
+            0.42183074386605374,
+            0.8560819884142744,
+            0.9869916627676657
+          ],
+          "reference_volume_component_l2_amplification": 6.610928162211651,
+          "reference_volume_component_H1_amplification": 9.68610504010526,
+          "euclidean_component_amplification": 6.018734285880295
+        },
+        {
+          "time": 0.625,
+          "euclidean_component_l2": 6.508982586195843,
+          "max_abs_22component": 0.362891553806084,
+          "reference_volume_component_l2": 0.271045164662669,
+          "reference_volume_component_H1": 1.7594135151193193,
+          "native_H_M_Z_rms": [
+            0.11494464654763072,
+            0.07920185004715131,
+            0.024470465454799705
+          ],
+          "outer_r09_squared_component_fraction": 0.13916172872737828,
+          "outer_r09_squared_constraints_fraction": [
+            0.03842640978097,
+            0.5379607396704222,
+            0.8217186213584168
+          ],
+          "peak_component_radius": 0.9869916627676657,
+          "peak_H_M_Z_radius": [
+            0.3601193443477865,
+            0.8560819884142744,
+            0.9869916627676657
+          ],
+          "reference_volume_component_l2_amplification": 7.171346703304187,
+          "reference_volume_component_H1_amplification": 9.903553129919693,
+          "euclidean_component_amplification": 6.5089825861958435
+        },
+        {
+          "time": 0.65,
+          "euclidean_component_l2": 7.211891047151613,
+          "max_abs_22component": 0.47642163597527093,
+          "reference_volume_component_l2": 0.29995805409456866,
+          "reference_volume_component_H1": 1.9324703040765112,
+          "native_H_M_Z_rms": [
+            0.12332176509930314,
+            0.08132030004509111,
+            0.02860508015612513
+          ],
+          "outer_r09_squared_component_fraction": 0.16022065990769443,
+          "outer_r09_squared_constraints_fraction": [
+            0.025268683906417778,
+            0.5463365247784823,
+            0.9052563017566437
+          ],
+          "peak_component_radius": 0.9869916627676657,
+          "peak_H_M_Z_radius": [
+            0.3601193443477865,
+            0.9869916627676657,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 7.936327530645284,
+          "reference_volume_component_H1_amplification": 10.877671544495255,
+          "euclidean_component_amplification": 7.211891047151614
+        },
+        {
+          "time": 0.675,
+          "euclidean_component_l2": 8.052570539787792,
+          "max_abs_22component": 0.583694214646878,
+          "reference_volume_component_l2": 0.3338492127547954,
+          "reference_volume_component_H1": 2.2127488036112393,
+          "native_H_M_Z_rms": [
+            0.13146893024218267,
+            0.09189748149801245,
+            0.03439666746856145
+          ],
+          "outer_r09_squared_component_fraction": 0.1849922036840251,
+          "outer_r09_squared_constraints_fraction": [
+            0.01828333268136432,
+            0.603504377466767,
+            0.9517275710270376
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.3601193443477865,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 8.833024024868523,
+          "reference_volume_component_H1_amplification": 12.455329660374915,
+          "euclidean_component_amplification": 8.052570539787794
+        },
+        {
+          "time": 0.7000000000000001,
+          "euclidean_component_l2": 8.944591905584312,
+          "max_abs_22component": 0.6805235719428241,
+          "reference_volume_component_l2": 0.36953227473284134,
+          "reference_volume_component_H1": 2.5539174059821184,
+          "native_H_M_Z_rms": [
+            0.13819309629645676,
+            0.10805720665631365,
+            0.040771913727861576
+          ],
+          "outer_r09_squared_component_fraction": 0.20647467923248736,
+          "outer_r09_squared_constraints_fraction": [
+            0.017074903226785076,
+            0.6602365462655263,
+            0.971281110785755
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.3601193443477864,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 9.777130920110633,
+          "reference_volume_component_H1_amplification": 14.375731743685787,
+          "euclidean_component_amplification": 8.944591905584314
+        },
+        {
+          "time": 0.7250000000000001,
+          "euclidean_component_l2": 9.811024392088044,
+          "max_abs_22component": 0.7636413445984692,
+          "reference_volume_component_l2": 0.4040876504871507,
+          "reference_volume_component_H1": 2.9152650253502626,
+          "native_H_M_Z_rms": [
+            0.1432391654085795,
+            0.1266779082081132,
+            0.04705400913034462
+          ],
+          "outer_r09_squared_component_fraction": 0.22257220979695963,
+          "outer_r09_squared_constraints_fraction": [
+            0.020945990712457566,
+            0.6980467473145284,
+            0.977236300575245
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.3601193443477864,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 10.691401352883398,
+          "reference_volume_component_H1_amplification": 16.409719385607318,
+          "euclidean_component_amplification": 9.811024392088045
+        },
+        {
+          "time": 0.75,
+          "euclidean_component_l2": 10.588287235226558,
+          "max_abs_22component": 0.8300937992025588,
+          "reference_volume_component_l2": 0.43502389024670457,
+          "reference_volume_component_H1": 3.266329769217111,
+          "native_H_M_Z_rms": [
+            0.14703296160557827,
+            0.14546658422251715,
+            0.05281650399199323
+          ],
+          "outer_r09_squared_component_fraction": 0.23366572985531725,
+          "outer_r09_squared_constraints_fraction": [
+            0.02924533250759915,
+            0.7196977228356424,
+            0.9766605766856936
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.3601193443477864,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 11.509916235037505,
+          "reference_volume_component_H1_amplification": 18.385825805757896,
+          "euclidean_component_amplification": 10.58828723522656
+        },
+        {
+          "time": 0.775,
+          "euclidean_component_l2": 11.224874531472745,
+          "max_abs_22component": 0.8766382333707379,
+          "reference_volume_component_l2": 0.4602752784260924,
+          "reference_volume_component_H1": 3.5844032335206424,
+          "native_H_M_Z_rms": [
+            0.1503140882286734,
+            0.16283179228099884,
+            0.057760860456746985
+          ],
+          "outer_r09_squared_component_fraction": 0.2407912190689799,
+          "outer_r09_squared_constraints_fraction": [
+            0.04104767093691429,
+            0.7304801729224484,
+            0.9727095649215614
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.4756011046745969,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 12.178020606497071,
+          "reference_volume_component_H1_amplification": 20.176227792486984,
+          "euclidean_component_amplification": 11.224874531472746
+        },
+        {
+          "time": 0.8,
+          "euclidean_component_l2": 11.681868881203718,
+          "max_abs_22component": 0.9004640467093337,
+          "reference_volume_component_l2": 0.4782573411528434,
+          "reference_volume_component_H1": 3.8524347319528327,
+          "native_H_M_Z_rms": [
+            0.15389175637112879,
+            0.17766009739739919,
+            0.06167205308662686
+          ],
+          "outer_r09_squared_component_fraction": 0.24491412715968783,
+          "outer_r09_squared_constraints_fraction": [
+            0.05480364738474481,
+            0.7337844140782308,
+            0.9666828299918262
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.0951202209349194,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 12.653792260326748,
+          "reference_volume_component_H1_amplification": 21.684948830721797,
+          "euclidean_component_amplification": 11.68186888120372
+        },
+        {
+          "time": 0.8250000000000001,
+          "euclidean_component_l2": 11.935685092032141,
+          "max_abs_22component": 0.8998262328987878,
+          "reference_volume_component_l2": 0.487996915440553,
+          "reference_volume_component_H1": 4.058064047136333,
+          "native_H_M_Z_rms": [
+            0.15844938605175754,
+            0.18921208022400895,
+            0.06440652376371697
+          ],
+          "outer_r09_squared_component_fraction": 0.24672891900666613,
+          "outer_r09_squared_constraints_fraction": [
+            0.06835780027805306,
+            0.73139859981132,
+            0.9590088312075356
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.0951202209349194,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 12.911483129103837,
+          "reference_volume_component_H1_amplification": 22.842414560346302,
+          "euclidean_component_amplification": 11.935685092032143
+        },
+        {
+          "time": 0.8500000000000001,
+          "euclidean_component_l2": 11.981531371473801,
+          "max_abs_22component": 0.8740842648457157,
+          "reference_volume_component_l2": 0.4892908859862304,
+          "reference_volume_component_H1": 4.193133609529532,
+          "native_H_M_Z_rms": [
+            0.16435059208852745,
+            0.19707327052782825,
+            0.06588010376896797
+          ],
+          "outer_r09_squared_component_fraction": 0.24652936899723965,
+          "outer_r09_squared_constraints_fraction": [
+            0.07951283120836088,
+            0.7241604419597828,
+            0.9496662428736756
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491936,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 12.945719162860296,
+          "reference_volume_component_H1_amplification": 23.602706882703124,
+          "euclidean_component_amplification": 11.981531371473803
+        },
+        {
+          "time": 0.875,
+          "euclidean_component_l2": 11.837264178828754,
+          "max_abs_22component": 0.8232844780435806,
+          "reference_volume_component_l2": 0.4828876690178747,
+          "reference_volume_component_H1": 4.253601294059043,
+          "native_H_M_Z_rms": [
+            0.17155295764354192,
+            0.20110489672281737,
+            0.06605434352509376
+          ],
+          "outer_r09_squared_component_fraction": 0.24399028349453647,
+          "outer_r09_squared_constraints_fraction": [
+            0.08678925313646013,
+            0.7122816887506884,
+            0.9383395831322477
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491936,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 12.776302051310978,
+          "reference_volume_component_H1_amplification": 23.94307310203424,
+          "euclidean_component_amplification": 11.837264178828756
+        },
+        {
+          "time": 0.9,
+          "euclidean_component_l2": 11.548457878600537,
+          "max_abs_22component": 0.7480778606764519,
+          "reference_volume_component_l2": 0.4707214192368199,
+          "reference_volume_component_H1": 4.240088477551584,
+          "native_H_M_Z_rms": [
+            0.1797039283948313,
+            0.2013918352528289,
+            0.06493415017113924
+          ],
+          "outer_r09_squared_component_fraction": 0.23789578626755148,
+          "outer_r09_squared_constraints_fraction": [
+            0.08974391648461727,
+            0.6954700567954293,
+            0.9244515104026163
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.0951202209349194,
+            0.9991397097110272,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 12.454405900285638,
+          "reference_volume_component_H1_amplification": 23.867010882967225,
+          "euclidean_component_amplification": 11.548457878600539
+        },
+        {
+          "time": 0.925,
+          "euclidean_component_l2": 11.194694658282089,
+          "max_abs_22component": 0.6491660176959011,
+          "reference_volume_component_l2": 0.45619024286777954,
+          "reference_volume_component_H1": 4.159109527249999,
+          "native_H_M_Z_rms": [
+            0.1883348225767566,
+            0.19821628575359965,
+            0.0625852522966833
+          ],
+          "outer_r09_squared_component_fraction": 0.2260369553982915,
+          "outer_r09_squared_constraints_fraction": [
+            0.08871665170882002,
+            0.6730133996923794,
+            0.9071642501771299
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.2853606628047582,
+            0.9991397097110272,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 12.069938227235863,
+          "reference_volume_component_H1_amplification": 23.41118891171081,
+          "euclidean_component_amplification": 11.19469465828209
+        },
+        {
+          "time": 0.9500000000000001,
+          "euclidean_component_l2": 10.893665482086755,
+          "max_abs_22component": 0.5270162046267568,
+          "reference_volume_component_l2": 0.4443202257886007,
+          "reference_volume_component_H1": 4.024854835087156,
+          "native_H_M_Z_rms": [
+            0.19702803635612087,
+            0.19208093670871085,
+            0.05917207263698687
+          ],
+          "outer_r09_squared_component_fraction": 0.20589936720752816,
+          "outer_r09_squared_constraints_fraction": [
+            0.08439787203584358,
+            0.643975398143897,
+            0.885477389419892
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.2853606628047582,
+            0.8560819884142745,
+            0.9238584613619717
+          ],
+          "reference_volume_component_l2_amplification": 11.755879837908477,
+          "reference_volume_component_H1_amplification": 22.655483407944935,
+          "euclidean_component_amplification": 10.893665482086757
+        },
+        {
+          "time": 0.9750000000000001,
+          "euclidean_component_l2": 10.793700457220071,
+          "max_abs_22component": 0.38382908388374026,
+          "reference_volume_component_l2": 0.4413935308053869,
+          "reference_volume_component_H1": 3.861366117478849,
+          "native_H_M_Z_rms": [
+            0.20551140151327457,
+            0.1837817302870737,
+            0.055016761643441776
+          ],
+          "outer_r09_squared_component_fraction": 0.17703715132517725,
+          "outer_r09_squared_constraints_fraction": [
+            0.0775397334725276,
+            0.6077263175217691,
+            0.8587415051826227
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.2853606628047582,
+            0.8560819884142745,
+            0.9238584613619717
+          ],
+          "reference_volume_component_l2_amplification": 11.67844497776047,
+          "reference_volume_component_H1_amplification": 21.73522265794922,
+          "euclidean_component_amplification": 10.793700457220073
+        },
+        {
+          "time": 1.0,
+          "euclidean_component_l2": 11.042191749034657,
+          "max_abs_22component": 0.2883717006785119,
+          "reference_volume_component_l2": 0.45350799946056564,
+          "reference_volume_component_H1": 3.704538317125609,
+          "native_H_M_Z_rms": [
+            0.2136903057758766,
+            0.17450982609761848,
+            0.050684158148330265
+          ],
+          "outer_r09_squared_component_fraction": 0.14420965238047978,
+          "outer_r09_squared_constraints_fraction": [
+            0.06886535054611953,
+            0.5651846614318461,
+            0.828387005989688
+          ],
+          "peak_component_radius": 0.2393806398350054,
+          "peak_H_M_Z_radius": [
+            0.2853606628047582,
+            0.8560819884142745,
+            0.9238584613619717
+          ],
+          "reference_volume_component_l2_amplification": 11.99897109731225,
+          "reference_volume_component_H1_amplification": 20.852455508725964,
+          "euclidean_component_amplification": 11.042191749034659
+        },
+        {
+          "time": 1.0250000000000001,
+          "euclidean_component_l2": 11.732882084212187,
+          "max_abs_22component": 0.34168631077470085,
+          "reference_volume_component_l2": 0.4842971331969152,
+          "reference_volume_component_H1": 3.6018928284138867,
+          "native_H_M_Z_rms": [
+            0.22162865733692955,
+            0.16594231999520606,
+            0.04707854117766891
+          ],
+          "outer_r09_squared_component_fraction": 0.1164102040460653,
+          "outer_r09_squared_constraints_fraction": [
+            0.059106471623340553,
+            0.521109652539737,
+            0.8018887687677724
+          ],
+          "peak_component_radius": 0.18214135603772746,
+          "peak_H_M_Z_radius": [
+            0.23938063983500535,
+            0.8560819884142745,
+            0.9238584613619717
+          ],
+          "reference_volume_component_l2_amplification": 12.813593829994309,
+          "reference_volume_component_H1_amplification": 20.27467487769894,
+          "euclidean_component_amplification": 11.73288208421219
+        },
+        {
+          "time": 1.05,
+          "euclidean_component_l2": 12.867502854625839,
+          "max_abs_22component": 0.40911228553426143,
+          "reference_volume_component_l2": 0.5334378121179327,
+          "reference_volume_component_H1": 3.6059240265512886,
+          "native_H_M_Z_rms": [
+            0.22948856568823975,
+            0.16023124353371973,
+            0.04543917831115154
+          ],
+          "outer_r09_squared_component_fraction": 0.1002933587748201,
+          "outer_r09_squared_constraints_fraction": [
+            0.04907661160409239,
+            0.4864827918878133,
+            0.7957755593498342
+          ],
+          "peak_component_radius": 0.18214135603772746,
+          "peak_H_M_Z_radius": [
+            0.23938063983500535,
+            0.8560819884142745,
+            0.9238584613619717
+          ],
+          "reference_volume_component_l2_amplification": 14.113764029366639,
+          "reference_volume_component_H1_amplification": 20.297366066886653,
+          "euclidean_component_amplification": 12.86750285462584
+        },
+        {
+          "time": 1.075,
+          "euclidean_component_l2": 14.36470171267285,
+          "max_abs_22component": 0.5729362350124391,
+          "reference_volume_component_l2": 0.5972241940086059,
+          "reference_volume_component_H1": 3.758426733196354,
+          "native_H_M_Z_rms": [
+            0.23745975152298054,
+            0.15971812122903284,
+            0.046976855112475145
+          ],
+          "outer_r09_squared_component_fraction": 0.09626120555710542,
+          "outer_r09_squared_constraints_fraction": [
+            0.039697150775717775,
+            0.4763533987908892,
+            0.8234902802512944
+          ],
+          "peak_component_radius": 0.18214135603772744,
+          "peak_H_M_Z_radius": [
+            0.36011934434778636,
+            0.8560819884142745,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 15.80143206084281,
+          "reference_volume_component_H1_amplification": 21.155787719748364,
+          "euclidean_component_amplification": 14.364701712672852
+        },
+        {
+          "time": 1.1,
+          "euclidean_component_l2": 16.10020598254427,
+          "max_abs_22component": 0.7642091716120409,
+          "reference_volume_component_l2": 0.6703184757929539,
+          "reference_volume_component_H1": 4.073489559336246,
+          "native_H_M_Z_rms": [
+            0.24572107265346324,
+            0.1662616740294085,
+            0.052182431032240434
+          ],
+          "outer_r09_squared_component_fraction": 0.10100890485666834,
+          "outer_r09_squared_constraints_fraction": [
+            0.03194106464944971,
+            0.49857325826467935,
+            0.8730651313961144
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.36011934434778636,
+            0.8560819884142745,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 17.735369666248715,
+          "reference_volume_component_H1_amplification": 22.92924314175441,
+          "euclidean_component_amplification": 16.100205982544274
+        },
+        {
+          "time": 1.125,
+          "euclidean_component_l2": 17.942094420706415,
+          "max_abs_22component": 0.9522694664808815,
+          "reference_volume_component_l2": 0.7471697172732031,
+          "reference_volume_component_H1": 4.533907690930936,
+          "native_H_M_Z_rms": [
+            0.25444887417793693,
+            0.18050419022382974,
+            0.06057646819989144
+          ],
+          "outer_r09_squared_component_fraction": 0.11105899115985819,
+          "outer_r09_squared_constraints_fraction": [
+            0.02671753417875882,
+            0.5439026079612995,
+            0.919492988132073
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.36011934434778636,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 19.76870937891294,
+          "reference_volume_component_H1_amplification": 25.520888249082763,
+          "euclidean_component_amplification": 17.942094420706418
+        },
+        {
+          "time": 1.1500000000000001,
+          "euclidean_component_l2": 19.768347191087987,
+          "max_abs_22component": 1.1314032417966973,
+          "reference_volume_component_l2": 0.8226801219411046,
+          "reference_volume_component_H1": 5.102603730422881,
+          "native_H_M_Z_rms": [
+            0.2638421765894532,
+            0.2017200441975657,
+            0.07117984296708539
+          ],
+          "outer_r09_squared_component_fraction": 0.12407044281721787,
+          "outer_r09_squared_constraints_fraction": [
+            0.024739216883128513,
+            0.5939162842289556,
+            0.9512687805042158
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.4756011046745969,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 21.766573064303756,
+          "reference_volume_component_H1_amplification": 28.72201828104198,
+          "euclidean_component_amplification": 19.76834719108799
+        },
+        {
+          "time": 1.175,
+          "euclidean_component_l2": 21.472567564610237,
+          "max_abs_22component": 1.2953002902008746,
+          "reference_volume_component_l2": 0.8924130807118122,
+          "reference_volume_component_H1": 5.73630291090139,
+          "native_H_M_Z_rms": [
+            0.27412169448683366,
+            0.22831562795564034,
+            0.08299076533912846
+          ],
+          "outer_r09_squared_component_fraction": 0.13872760880106105,
+          "outer_r09_squared_constraints_fraction": [
+            0.026396870428394722,
+            0.6356138815603903,
+            0.9694138271767335
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.4756011046745969,
+            0.9869916627676655,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 23.611576367035013,
+          "reference_volume_component_H1_amplification": 32.28904413842257,
+          "euclidean_component_amplification": 21.47256756461024
+        },
+        {
+          "time": 1.2000000000000002,
+          "euclidean_component_l2": 22.965456746103605,
+          "max_abs_22component": 1.4382587162104676,
+          "reference_volume_component_l2": 0.9526518950345568,
+          "reference_volume_component_H1": 6.393237261533072,
+          "native_H_M_Z_rms": [
+            0.28549330448549926,
+            0.25841769441322504,
+            0.09513758767328419
+          ],
+          "outer_r09_squared_component_fraction": 0.15431935694260954,
+          "outer_r09_squared_constraints_fraction": [
+            0.031661706263990015,
+            0.6650347553890844,
+            0.9779840763946539
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676655,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 25.20538241423754,
+          "reference_volume_component_H1_amplification": 35.98685831822835,
+          "euclidean_component_amplification": 22.96545674610361
+        },
+        {
+          "time": 1.225,
+          "euclidean_component_l2": 24.17607448584751,
+          "max_abs_22component": 1.5526716679285393,
+          "reference_volume_component_l2": 1.00046226002451,
+          "reference_volume_component_H1": 7.035665460846743,
+          "native_H_M_Z_rms": [
+            0.29810904741504024,
+            0.29019306338588874,
+            0.10687076646729554
+          ],
+          "outer_r09_squared_component_fraction": 0.17039926435881522,
+          "outer_r09_squared_constraints_fraction": [
+            0.04004744706666786,
+            0.6832548727448785,
+            0.9801939070611271
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676655,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 26.47035500203923,
+          "reference_volume_component_H1_amplification": 39.60301890207501,
+          "euclidean_component_amplification": 24.176074485847515
+        },
+        {
+          "time": 1.25,
+          "euclidean_component_l2": 25.054373636815257,
+          "max_abs_22component": 1.6306651324973036,
+          "reference_volume_component_l2": 1.0338129655505752,
+          "reference_volume_component_H1": 7.630222632872338,
+          "native_H_M_Z_rms": [
+            0.31206223792960597,
+            0.3219401839829149,
+            0.1175323682371494
+          ],
+          "outer_r09_squared_component_fraction": 0.18654944783285604,
+          "outer_r09_squared_constraints_fraction": [
+            0.050652132720776934,
+            0.6927055166497449,
+            0.9779696835010687
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676655,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 27.352752119969285,
+          "reference_volume_component_H1_amplification": 42.94971852176673,
+          "euclidean_component_amplification": 25.05437363681526
+        },
+        {
+          "time": 1.2750000000000001,
+          "euclidean_component_l2": 25.575443924126223,
+          "max_abs_22component": 1.665609838789599,
+          "reference_volume_component_l2": 1.051772251571057,
+          "reference_volume_component_H1": 8.147892287633006,
+          "native_H_M_Z_rms": [
+            0.3274158174382397,
+            0.3520883444116308,
+            0.12654016200658277
+          ],
+          "outer_r09_squared_component_fraction": 0.20218010761533659,
+          "outer_r09_squared_constraints_fraction": [
+            0.06226664779451274,
+            0.6955879686645234,
+            0.9722852386503137
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676655,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 27.827921144869503,
+          "reference_volume_component_H1_amplification": 45.8636264152853,
+          "euclidean_component_amplification": 25.575443924126226
+        },
+        {
+          "time": 1.3,
+          "euclidean_component_l2": 25.745696850720183,
+          "max_abs_22component": 1.6516202965963827,
+          "reference_volume_component_l2": 1.0547923094276221,
+          "reference_volume_component_H1": 8.564303248363482,
+          "native_H_M_Z_rms": [
+            0.344230329475687,
+            0.3791866158359492,
+            0.13338795383469598
+          ],
+          "outer_r09_squared_component_fraction": 0.21629699032723654,
+          "outer_r09_squared_constraints_fraction": [
+            0.0735249202993055,
+            0.6934851620165128,
+            0.9634753143623135
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676655,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 27.9078262115414,
+          "reference_volume_component_H1_amplification": 48.207559798788665,
+          "euclidean_component_amplification": 25.745696850720186
+        },
+        {
+          "time": 1.3250000000000002,
+          "euclidean_component_l2": 25.611292860925257,
+          "max_abs_22component": 1.5837602327527702,
+          "reference_volume_component_l2": 1.0450973868421882,
+          "reference_volume_component_H1": 8.860647213855065,
+          "native_H_M_Z_rms": [
+            0.36256571225024214,
+            0.4019157529934897,
+            0.1376606761583523
+          ],
+          "outer_r09_squared_component_fraction": 0.22720181257631297,
+          "outer_r09_squared_constraints_fraction": [
+            0.08308036451473179,
+            0.6873811828617052,
+            0.951411886242363
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.09512022093491945,
+            0.9869916627676655,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 27.651316743060864,
+          "reference_volume_component_H1_amplification": 49.87564872828513,
+          "euclidean_component_amplification": 25.61129286092526
+        },
+        {
+          "time": 1.35,
+          "euclidean_component_l2": 25.268752492291135,
+          "max_abs_22component": 1.4582475774103445,
+          "reference_volume_component_l2": 1.0271704480593056,
+          "reference_volume_component_H1": 9.025438727328918,
+          "native_H_M_Z_rms": [
+            0.3824638270522514,
+            0.41913542193544906,
+            0.1390664563438635
+          ],
+          "outer_r09_squared_component_fraction": 0.23219270378001514,
+          "outer_r09_squared_constraints_fraction": [
+            0.08978871743261216,
+            0.6777596668151511,
+            0.9355747530408554
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.2853606628047581,
+            0.9991397097110271,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 27.177003565399264,
+          "reference_volume_component_H1_amplification": 50.803242778815935,
+          "euclidean_component_amplification": 25.26875249229114
+        },
+        {
+          "time": 1.375,
+          "euclidean_component_l2": 24.87573925371376,
+          "max_abs_22component": 1.2727129278451148,
+          "reference_volume_component_l2": 1.0082320942319358,
+          "reference_volume_component_H1": 9.057346049856548,
+          "native_H_M_Z_rms": [
+            0.40393481183294516,
+            0.42997443662656326,
+            0.13749170060306337
+          ],
+          "outer_r09_squared_component_fraction": 0.2276165821057572,
+          "outer_r09_squared_constraints_fraction": [
+            0.09286134523511297,
+            0.6646964522008305,
+            0.9150766602637077
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.2853606628047581,
+            0.9991397097110271,
+            0.9869916627676655
+          ],
+          "reference_volume_component_l2_amplification": 26.675930242601037,
+          "reference_volume_component_H1_amplification": 50.982845732396996,
+          "euclidean_component_amplification": 24.875739253713764
+        },
+        {
+          "time": 1.4000000000000001,
+          "euclidean_component_l2": 24.654912517067732,
+          "max_abs_22component": 1.0265076726654025,
+          "reference_volume_component_l2": 0.998346425742337,
+          "reference_volume_component_H1": 8.969317655758122,
+          "native_H_M_Z_rms": [
+            0.4269562156970605,
+            0.43397393738157236,
+            0.13308994974925634
+          ],
+          "outer_r09_squared_component_fraction": 0.21011660748533312,
+          "outer_r09_squared_constraints_fraction": [
+            0.09195792090091176,
+            0.6479584140131195,
+            0.8887666100933477
+          ],
+          "peak_component_radius": 0.9869916627676655,
+          "peak_H_M_Z_radius": [
+            0.2853606628047581,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 26.414373995246198,
+          "reference_volume_component_H1_amplification": 50.48734318543824,
+          "euclidean_component_amplification": 24.654912517067736
+        },
+        {
+          "time": 1.425,
+          "euclidean_component_l2": 24.876133284493047,
+          "max_abs_22component": 0.7820565900221197,
+          "reference_volume_component_l2": 1.0094237095965073,
+          "reference_volume_component_H1": 8.794096372537611,
+          "native_H_M_Z_rms": [
+            0.4514744381585446,
+            0.4312977907494503,
+            0.12642283754670736
+          ],
+          "outer_r09_squared_component_fraction": 0.17979749376103443,
+          "outer_r09_squared_constraints_fraction": [
+            0.08721144088044852,
+            0.6271771474612421,
+            0.8557597894752439
+          ],
+          "peak_component_radius": 0.18214135603772752,
+          "peak_H_M_Z_radius": [
+            0.2853606628047581,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 26.707458150235773,
+          "reference_volume_component_H1_amplification": 49.50104106092072,
+          "euclidean_component_amplification": 24.87613328449305
+        },
+        {
+          "time": 1.4500000000000002,
+          "euclidean_component_l2": 25.802052546230666,
+          "max_abs_22component": 0.8172742377154728,
+          "reference_volume_component_l2": 1.0524857071274805,
+          "reference_volume_component_H1": 8.590512366986102,
+          "native_H_M_Z_rms": [
+            0.4773983997050766,
+            0.4230262583302625,
+            0.11867525702075966
+          ],
+          "outer_r09_squared_component_fraction": 0.14333899962924207,
+          "outer_r09_squared_constraints_fraction": [
+            0.07919329001222833,
+            0.602253759192707,
+            0.8173074224894844
+          ],
+          "peak_component_radius": 0.18214135603772752,
+          "peak_H_M_Z_radius": [
+            0.2853606628047581,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 27.84679784078429,
+          "reference_volume_component_H1_amplification": 48.35508816351757,
+          "euclidean_component_amplification": 25.80205254623067
+        },
+        {
+          "time": 1.475,
+          "euclidean_component_l2": 27.607258615404017,
+          "max_abs_22component": 0.8283034034099316,
+          "reference_volume_component_l2": 1.1339777663252857,
+          "reference_volume_component_H1": 8.447671840194326,
+          "native_H_M_Z_rms": [
+            0.5045900482294757,
+            0.4115330633444808,
+            0.11192111514376311
+          ],
+          "outer_r09_squared_component_fraction": 0.11184546876140107,
+          "outer_r09_squared_constraints_fraction": [
+            0.06882771754362776,
+            0.5742838426679361,
+            0.7813649298653309
+          ],
+          "peak_component_radius": 0.18214135603772752,
+          "peak_H_M_Z_radius": [
+            0.2853606628047581,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 30.002924886256505,
+          "reference_volume_component_H1_amplification": 47.55105390208237,
+          "euclidean_component_amplification": 27.60725861540402
+        },
+        {
+          "time": 1.5,
+          "euclidean_component_l2": 30.319799700568513,
+          "max_abs_22component": 0.9229745653648027,
+          "reference_volume_component_l2": 1.253623617651881,
+          "reference_volume_component_H1": 8.479680652216222,
+          "native_H_M_Z_rms": [
+            0.5328637423900019,
+            0.4008641950253819,
+            0.1091884828609771
+          ],
+          "outer_r09_squared_component_fraction": 0.09347605109937873,
+          "outer_r09_squared_constraints_fraction": [
+            0.057269955970819304,
+            0.5472358564703044,
+            0.7670472350995943
+          ],
+          "peak_component_radius": 0.18214135603772752,
+          "peak_H_M_Z_radius": [
+            0.23938063983500527,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 33.16852971282797,
+          "reference_volume_component_H1_amplification": 47.73122812932364,
+          "euclidean_component_amplification": 30.319799700568517
+        },
+        {
+          "time": 1.5250000000000001,
+          "euclidean_component_l2": 33.82619514251263,
+          "max_abs_22component": 1.1131949253861235,
+          "reference_volume_component_l2": 1.40531632906838,
+          "reference_volume_component_H1": 8.801328788922037,
+          "native_H_M_Z_rms": [
+            0.5620002279521379,
+            0.39680283793904736,
+            0.11368140773963241
+          ],
+          "outer_r09_squared_component_fraction": 0.08937840239666944,
+          "outer_r09_squared_constraints_fraction": [
+            0.045770464023553954,
+            0.5294358623447833,
+            0.7926688934877347
+          ],
+          "peak_component_radius": 0.18214135603772752,
+          "peak_H_M_Z_radius": [
+            0.39219071804676087,
+            0.8560819884142744,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 37.182034352491485,
+          "reference_volume_component_H1_amplification": 49.541751570022384,
+          "euclidean_component_amplification": 33.82619514251264
+        },
+        {
+          "time": 1.55,
+          "euclidean_component_l2": 37.922734364397556,
+          "max_abs_22component": 1.5223655924791655,
+          "reference_volume_component_l2": 1.5796773500085763,
+          "reference_volume_component_H1": 9.487737087275633,
+          "native_H_M_Z_rms": [
+            0.5917726955881314,
+            0.40597975348828724,
+            0.12705180523577408
+          ],
+          "outer_r09_squared_component_fraction": 0.09611501531010472,
+          "outer_r09_squared_constraints_fraction": [
+            0.03554720621984346,
+            0.5310173680512288,
+            0.8477980393280312
+          ],
+          "peak_component_radius": 0.18214135603772752,
+          "peak_H_M_Z_radius": [
+            0.36011934434778636,
+            0.8560819884142744,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 41.795299947029676,
+          "reference_volume_component_H1_amplification": 53.40547149325009,
+          "euclidean_component_amplification": 37.92273436439756
+        },
+        {
+          "time": 1.5750000000000002,
+          "euclidean_component_l2": 42.36815633103114,
+          "max_abs_22component": 2.0227800533325877,
+          "reference_volume_component_l2": 1.7662497637153034,
+          "reference_volume_component_H1": 10.545183254496427,
+          "native_H_M_Z_rms": [
+            0.6219814616505315,
+            0.43367032122665394,
+            0.14851259280195908
+          ],
+          "outer_r09_squared_component_fraction": 0.10946115522490332,
+          "outer_r09_squared_constraints_fraction": [
+            0.027677756899863813,
+            0.5549576119499124,
+            0.9027167575142979
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.36011934434778636,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 46.73165609132182,
+          "reference_volume_component_H1_amplification": 59.35772445090164,
+          "euclidean_component_amplification": 42.368156331031145
+        },
+        {
+          "time": 1.6,
+          "euclidean_component_l2": 46.91596151569042,
+          "max_abs_22component": 2.50987375323148,
+          "reference_volume_component_l2": 1.9546775988183518,
+          "reference_volume_component_H1": 11.916569363119141,
+          "native_H_M_Z_rms": [
+            0.6524955790298688,
+            0.48149946417539136,
+            0.17582122990231425
+          ],
+          "outer_r09_squared_component_fraction": 0.12620283596147894,
+          "outer_r09_squared_constraints_fraction": [
+            0.02301240069952701,
+            0.5919664789076445,
+            0.941561953928788
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.4756011046745969,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 51.71710320585986,
+          "reference_volume_component_H1_amplification": 67.07711223078793,
+          "euclidean_component_amplification": 46.91596151569043
+        },
+        {
+          "time": 1.625,
+          "euclidean_component_l2": 51.3296326104911,
+          "max_abs_22component": 2.9657965122842125,
+          "reference_volume_component_l2": 2.1352015277087393,
+          "reference_volume_component_H1": 13.50911751457289,
+          "native_H_M_Z_rms": [
+            0.6832967775299978,
+            0.5470979924898881,
+            0.20651429991633002
+          ],
+          "outer_r09_squared_component_fraction": 0.1443277212980767,
+          "outer_r09_squared_constraints_fraction": [
+            0.022103305267168968,
+            0.628853580872974,
+            0.9643353204773595
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.4756011046745969,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 56.493427786033806,
+          "reference_volume_component_H1_amplification": 76.04139782615464,
+          "euclidean_component_amplification": 51.32963261049111
+        },
+        {
+          "time": 1.6500000000000001,
+          "euclidean_component_l2": 55.390146515216266,
+          "max_abs_22component": 3.371926271736194,
+          "reference_volume_component_l2": 2.298899797751042,
+          "reference_volume_component_H1": 15.218880826291866,
+          "native_H_M_Z_rms": [
+            0.7145154532397399,
+            0.6256417031506207,
+            0.23838033286744326
+          ],
+          "outer_r09_squared_component_fraction": 0.16267947039584418,
+          "outer_r09_squared_constraints_fraction": [
+            0.025144066191665346,
+            0.6580278185995408,
+            0.9756330238389468
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.4756011046745969,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 60.824576990136,
+          "reference_volume_component_H1_amplification": 85.66547519721426,
+          "euclidean_component_amplification": 55.39014651521627
+        },
+        {
+          "time": 1.675,
+          "euclidean_component_l2": 58.9021840200584,
+          "max_abs_22component": 3.7094346345646185,
+          "reference_volume_component_l2": 2.437920581793173,
+          "reference_volume_component_H1": 16.943397201090246,
+          "native_H_M_Z_rms": [
+            0.7464473116601461,
+            0.7115008640396829,
+            0.2694840479666761
+          ],
+          "outer_r09_squared_component_fraction": 0.1805884889678553,
+          "outer_r09_squared_constraints_fraction": [
+            0.03191985617687529,
+            0.6780066447695442,
+            0.9794057215906361
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491936,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 64.50280619806921,
+          "reference_volume_component_H1_amplification": 95.37259600449873,
+          "euclidean_component_amplification": 58.90218402005841
+        },
+        {
+          "time": 1.7000000000000002,
+          "euclidean_component_l2": 61.702144144437405,
+          "max_abs_22component": 3.9599163352312177,
+          "reference_volume_component_l2": 2.5458137909515646,
+          "reference_volume_component_H1": 18.586539051271473,
+          "native_H_M_Z_rms": [
+            0.7795445106374146,
+            0.7991150643729763,
+            0.29810219294706
+          ],
+          "outer_r09_squared_component_fraction": 0.1975929545886424,
+          "outer_r09_squared_constraints_fraction": [
+            0.04178020219966846,
+            0.6900541403865214,
+            0.9781524030898928
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491936,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 67.35745815531739,
+          "reference_volume_component_H1_amplification": 104.62166819442149,
+          "euclidean_component_amplification": 61.70214414443741
+        },
+        {
+          "time": 1.725,
+          "euclidean_component_l2": 63.669426410601844,
+          "max_abs_22component": 4.106062951710954,
+          "reference_volume_component_l2": 2.61801300716757,
+          "reference_volume_component_H1": 20.06065336790755,
+          "native_H_M_Z_rms": [
+            0.8143813951864075,
+            0.883295971846698,
+            0.32268721404856676
+          ],
+          "outer_r09_squared_component_fraction": 0.21322598702782605,
+          "outer_r09_squared_constraints_fraction": [
+            0.053657535481529614,
+            0.6958855731593674,
+            0.9732536087438916
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491936,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 69.26771400450838,
+          "reference_volume_component_H1_amplification": 112.91930222356021,
+          "euclidean_component_amplification": 63.66942641060185
+        },
+        {
+          "time": 1.75,
+          "euclidean_component_l2": 64.74198620941206,
+          "max_abs_22component": 4.135967159101019,
+          "reference_volume_component_l2": 2.652507920936409,
+          "reference_volume_component_H1": 21.28867798819148,
+          "native_H_M_Z_rms": [
+            0.8515978248862791,
+            0.9593230123693197,
+            0.34187222263659894
+          ],
+          "outer_r09_squared_component_fraction": 0.22681824922177599,
+          "outer_r09_squared_constraints_fraction": [
+            0.06615607768572412,
+            0.6968386193173894,
+            0.9653449369664192
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491936,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 70.18038472654393,
+          "reference_volume_component_H1_amplification": 119.8317233044035,
+          "euclidean_component_amplification": 64.74198620941208
+        },
+        {
+          "time": 1.7750000000000001,
+          "euclidean_component_l2": 64.9372222353411,
+          "max_abs_22component": 4.033802946662634,
+          "reference_volume_component_l2": 2.650754760826321,
+          "reference_volume_component_H1": 22.207274584527312,
+          "native_H_M_Z_rms": [
+            0.8918246327388021,
+            1.0230233128909514,
+            0.3545107692108106
+          ],
+          "outer_r09_squared_component_fraction": 0.23727295828222095,
+          "outer_r09_squared_constraints_fraction": [
+            0.07772134348869268,
+            0.6937293044149537,
+            0.9545460146507548
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491936,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 70.13399939813755,
+          "reference_volume_component_H1_amplification": 125.00240667053549,
+          "euclidean_component_amplification": 64.93722223534111
+        },
+        {
+          "time": 1.8,
+          "euclidean_component_l2": 64.3791104302677,
+          "max_abs_22component": 3.7888202376996456,
+          "reference_volume_component_l2": 2.6188647326772028,
+          "reference_volume_component_H1": 22.771422221260217,
+          "native_H_M_Z_rms": [
+            0.9355998970789028,
+            1.0709028274057415,
+            0.35974814110629205
+          ],
+          "outer_r09_squared_component_fraction": 0.2428091312839636,
+          "outer_r09_squared_constraints_fraction": [
+            0.08687164651385149,
+            0.6869051956540079,
+            0.9405659149248594
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.09512022093491936,
+            0.9869916627676656,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 69.29024906405547,
+          "reference_volume_component_H1_amplification": 128.1779342230359,
+          "euclidean_component_amplification": 64.37911043026772
+        },
+        {
+          "time": 1.8250000000000002,
+          "euclidean_component_l2": 63.33074001570769,
+          "max_abs_22component": 3.3947141660698863,
+          "reference_volume_component_l2": 2.5690188980326796,
+          "reference_volume_component_H1": 22.96088980833728,
+          "native_H_M_Z_rms": [
+            0.9832906787303265,
+            1.1003511377488535,
+            0.3571299254948096
+          ],
+          "outer_r09_squared_component_fraction": 0.24079779682335314,
+          "outer_r09_squared_constraints_fraction": [
+            0.09244104847112095,
+            0.6763191786969652,
+            0.9227325883734808
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.28536066280475814,
+            0.9991397097110272,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 67.97142176678075,
+          "reference_volume_component_H1_amplification": 129.24442728955535,
+          "euclidean_component_amplification": 63.3307400157077
+        },
+        {
+          "time": 1.85,
+          "euclidean_component_l2": 62.22488875469011,
+          "max_abs_22component": 2.8495048894462665,
+          "reference_volume_component_l2": 2.5207269307838085,
+          "reference_volume_component_H1": 22.78921653769341,
+          "native_H_M_Z_rms": [
+            1.035037304147709,
+            1.1099389507225814,
+            0.3467670995447466
+          ],
+          "outer_r09_squared_component_fraction": 0.2281362873403223,
+          "outer_r09_squared_constraints_fraction": [
+            0.09376790196669092,
+            0.6615918075339124,
+            0.9000167181882449
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.28536066280475814,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 66.69370688646818,
+          "reference_volume_component_H1_amplification": 128.27809655366048,
+          "euclidean_component_amplification": 62.22488875469012
+        },
+        {
+          "time": 1.875,
+          "euclidean_component_l2": 61.66959427096797,
+          "max_abs_22component": 2.1560211153157214,
+          "reference_volume_component_l2": 2.500780651866375,
+          "reference_volume_component_H1": 22.31597492598109,
+          "native_H_M_Z_rms": [
+            1.0907326521432636,
+            1.0998418477101424,
+            0.3295979650312678
+          ],
+          "outer_r09_squared_component_fraction": 0.20299448734476833,
+          "outer_r09_squared_constraints_fraction": [
+            0.09077846444504242,
+            0.6421045324892241,
+            0.8712350610051843
+          ],
+          "peak_component_radius": 0.9869916627676656,
+          "peak_H_M_Z_radius": [
+            0.28536066280475814,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 66.16596575618183,
+          "reference_volume_component_H1_amplification": 125.61426942910644,
+          "euclidean_component_amplification": 61.66959427096798
+        },
+        {
+          "time": 1.9000000000000001,
+          "euclidean_component_l2": 62.38445714776628,
+          "max_abs_22component": 1.8582754289925205,
+          "reference_volume_component_l2": 2.539839731568172,
+          "reference_volume_component_H1": 21.66243030341438,
+          "native_H_M_Z_rms": [
+            1.150039673775198,
+            1.0724443805310724,
+            0.3078137647732893
+          ],
+          "outer_r09_squared_component_fraction": 0.16807324317456207,
+          "outer_r09_squared_constraints_fraction": [
+            0.08395434259350727,
+            0.6172587207262065,
+            0.8359940162078271
+          ],
+          "peak_component_radius": 0.18214135603772746,
+          "peak_H_M_Z_radius": [
+            0.28536066280475814,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 67.19939574856774,
+          "reference_volume_component_H1_amplification": 121.9355356710997,
+          "euclidean_component_amplification": 62.384457147766284
+        },
+        {
+          "time": 1.925,
+          "euclidean_component_l2": 65.03116365702675,
+          "max_abs_22component": 1.8929540895425319,
+          "reference_volume_component_l2": 2.664375227208956,
+          "reference_volume_component_H1": 21.02719963706854,
+          "native_H_M_Z_rms": [
+            1.2124420790888222,
+            1.0331783785812498,
+            0.2855005711213726
+          ],
+          "outer_r09_squared_component_fraction": 0.13224919921058373,
+          "outer_r09_squared_constraints_fraction": [
+            0.07421201574788794,
+            0.5872119593387345,
+            0.7977239859826275
+          ],
+          "peak_component_radius": 0.18214135603772746,
+          "peak_H_M_Z_radius": [
+            0.28536066280475814,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 70.49437139301205,
+          "reference_volume_component_H1_amplification": 118.3598892412815,
+          "euclidean_component_amplification": 65.03116365702677
+        },
+        {
+          "time": 1.9500000000000002,
+          "euclidean_component_l2": 69.98848129876708,
+          "max_abs_22component": 2.0463968111121633,
+          "reference_volume_component_l2": 2.8871516843896208,
+          "reference_volume_component_H1": 20.68864969753139,
+          "native_H_M_Z_rms": [
+            1.2773190052727275,
+            0.9915325514198711,
+            0.2692723934524023
+          ],
+          "outer_r09_squared_component_fraction": 0.10610486634770433,
+          "outer_r09_squared_constraints_fraction": [
+            0.06274166969605141,
+            0.5545930415006102,
+            0.7696855368333824
+          ],
+          "peak_component_radius": 0.18214135603772746,
+          "peak_H_M_Z_radius": [
+            0.28536066280475814,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 76.38861862581054,
+          "reference_volume_component_H1_amplification": 116.45422733489907,
+          "euclidean_component_amplification": 69.9884812987671
+        },
+        {
+          "time": 1.975,
+          "euclidean_component_l2": 77.22301535987302,
+          "max_abs_22component": 2.43121335050724,
+          "reference_volume_component_l2": 3.2031705854071504,
+          "reference_volume_component_H1": 20.966652995840548,
+          "native_H_M_Z_rms": [
+            1.3440338280915212,
+            0.9616941903811715,
+            0.2676978093202603
+          ],
+          "outer_r09_squared_component_fraction": 0.09478931542655583,
+          "outer_r09_squared_constraints_fraction": [
+            0.05084758487655053,
+            0.5271063727689975,
+            0.7749599928349041
+          ],
+          "peak_component_radius": 0.18214135603772746,
+          "peak_H_M_Z_radius": [
+            0.39219071804676087,
+            0.8560819884142744,
+            0.9238584613619716
+          ],
+          "reference_volume_component_l2_amplification": 84.74988604341743,
+          "reference_volume_component_H1_amplification": 118.01907858302135,
+          "euclidean_component_amplification": 77.22301535987303
+        },
+        {
+          "time": 2.0,
+          "euclidean_component_l2": 86.3443434602022,
+          "max_abs_22component": 3.1007343984321944,
+          "reference_volume_component_l2": 3.5935214045138446,
+          "reference_volume_component_H1": 22.12532934094317,
+          "native_H_M_Z_rms": [
+            1.412027827832577,
+            0.9612664176348145,
+            0.2877141236471606
+          ],
+          "outer_r09_squared_component_fraction": 0.09666812741544775,
+          "outer_r09_squared_constraints_fraction": [
+            0.03981379075858571,
+            0.5176150249161076,
+            0.8208418809754551
+          ],
+          "peak_component_radius": 0.18214135603772755,
+          "peak_H_M_Z_radius": [
+            0.39219071804676087,
+            0.8560819884142744,
+            0.9869916627676656
+          ],
+          "reference_volume_component_l2_amplification": 95.07783660183016,
+          "reference_volume_component_H1_amplification": 124.54114553629628,
+          "euclidean_component_amplification": 86.34434346020221
+        }
+      ],
+      "constraint_amplitude_convergence": [
+        {
+          "time": 0.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 0.0
+        },
+        {
+          "time": 1.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 3.9941120380600424e-10
+        },
+        {
+          "time": 2.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 6.957325596883026e-10
+        }
+      ]
+    }
+  ],
+  "ritz_from_history": [],
+  "diagnostic_seconds": 2.444796791,
+  "diagnostic_server_exit": 0
+}

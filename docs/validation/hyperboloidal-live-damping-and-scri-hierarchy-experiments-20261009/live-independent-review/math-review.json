@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "scope": "Independent algebra/helper inspection and100-digit initial strict-bound witness only; actual compiled gate review pending",
+  "head": "1f58f7b1d18dbcf0f313f65cceb7e7e3853f7125",
+  "sources": {
+    "build-layer-research/continuum/independent-live-damping-review/review.py": "ba4022fd7fbc8cd7498d750c67a99516dc80982128841207565e82ae6128a3fb",
+    "build-layer-research/continuum/live-damping-assessment/immutable-live-math-20261009/index.json": "7f253e0ff6053543514831c3efb5b55cc1910aa52fdca875e6f9e9df3d40bef3",
+    "build-layer-research/continuum/live-damping-control/live_damping_profile.hpp": "69bbbc137486eb3398f94ed50a8b04583c375da049372b82b19330d8432fc153"
+  },
+  "algebra": {
+    "m": "V*kap*(Omega + 2*betaDotOmega/kap - 1)",
+    "m_i": "Omega*V_i*kap + Omega_i*V*kap + 2*V*partial_i_betaDotOmega + 2*V_i*betaDotOmega - V_i*kap",
+    "sigma_blended": "(-V*kap*(Omega + 2*betaDotOmega/kap - 1) + 2*betaDotOmega - kap)/Omega",
+    "sigma_where_V1": "-kap",
+    "delta_H": "-4*K*Theta*V*(Omega*kap + 2*betaDotOmega - kap)/Omega",
+    "delta_M_i": "2*Theta*(Omega_i*V*kap + 2*V*partial_i_betaDotOmega + V_i*kap*(Omega + 2*betaDotOmega/kap - 1))/Omega + 2*Theta_i*V*kap*(Omega + 2*betaDotOmega/kap - 1)/Omega - 2*Omega_i*Theta*V*kap*(Omega + 2*betaDotOmega/kap - 1)/Omega**2",
+    "delta_P_Theta_beta_j": "-2V*Theta*Omega_j/Omega",
+    "outer_eff_reference": "Omega*kap - 4*Omega/a + 2*S/a**2",
+    "difference_from_previous_fixed_profile": "-2*Omega*(-S + 2*a)/a**2"
+  },
+  "witness": {
+    "radial_negative_x_point": "0.105795598913780886133691268488387403593122911695419251909241892550783181461275299127800016",
+    "effective_kappa_excess": "0.00000000420049952085689458157090172439424425248427777942432832785650747841804286584317777233526027",
+    "positive_raw_kappa2": "0.000000000420049952085689458157090172439424425248427777942432832785650747841804286584317777233526027"
+  },
+  "reviewed_bound_scope": "50-digit interval assessment uses actual S1,a.5,kappa10 initial angular shift .02,width.5; no extension to other a/S or evolution",
+  "reviewed_derivative_scope": "Helper retains V_i,beta_i and Omega_ij; V is prescribed and kappa_input is spatially constant positive",
+  "no_principal_derivative_addition": true,
+  "limitations": [
+    "No new tensor/native execution in this review.",
+    "At finite Theta the added beta value columns are required; the autonomous eight-constraint reference linearization does not establish nonlinear closure.",
+    "No invariant0<effective_kappa<=kappa_input region, energy, scri falloff, stability or BH claim.",
+    "V=.15-.3 is distinct from geometry cutoff .05-.95 and gauge cutoff .45-.85 for S1."
+  ]
+}

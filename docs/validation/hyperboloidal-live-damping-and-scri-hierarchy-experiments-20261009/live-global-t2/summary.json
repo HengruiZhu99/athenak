@@ -1,0 +1,220 @@
+{
+  "scope": "isolated live V(.15,.3) kappa2 C0 spatialnorm actual22/native-stage/short-canonical and exploratory t2; small mixed screen, no adoption",
+  "N": 16,
+  "span": 2.2,
+  "points": 1640,
+  "free20": 32800,
+  "raw22": 36080,
+  "h": 0.1375,
+  "min_Omega": 0.0026953124999994555,
+  "nominal_pole_dt": 8.085937499998367e-05,
+  "S": 1,
+  "a": 0.5,
+  "geometry": [
+    0.05,
+    0.95
+  ],
+  "gauge": [
+    0.45,
+    0.85
+  ],
+  "kappa": 10,
+  "KO": 0.1,
+  "symmetric_ghost_degree": 2,
+  "actual_stage_checks": [
+    {
+      "name": "reference/Prepare/strict donors",
+      "pass": true,
+      "observed": {
+        "prepared_reference_change": 0,
+        "projected_reference_rhs_max": 6.083573831355486e-12,
+        "projected_reference_H": 3.239473509281292e-14,
+        "projected_reference_M": 1.3305685154844717e-15,
+        "projected_reference_Z": 6.643108248740043e-16,
+        "ghost_weight_sum_error": 1.3322676295501878e-15,
+        "strict_interior_donor_references": 63576
+      }
+    },
+    {
+      "name": "raw CSR equals actual cached stencil matvec",
+      "pass": true,
+      "observed": 1.1060667037013772e-15,
+      "threshold": 2e-14
+    },
+    {
+      "name": "raw native22 RHS amplitude sweep best pervector",
+      "pass": true,
+      "observed": 7.249624240321396e-10,
+      "threshold": 2e-08
+    },
+    {
+      "name": "native final-only one-step amplitude sweep best pervector anddt",
+      "pass": true,
+      "observed": 1.8546049517185272e-10,
+      "threshold": 1e-08
+    },
+    {
+      "name": "algebraic PL identity",
+      "pass": true,
+      "observed": 2.995033467229317e-16,
+      "threshold": 1e-13
+    },
+    {
+      "name": "native server exit",
+      "pass": true,
+      "observed": 0
+    }
+  ],
+  "matrix_attribution": {
+    "formula": "Delta P_t=Delta Theta_t=-kinput*kappa2_ref*Theta/Omega; Theta_ref=0 implies delta_kappa2*Theta_ref=0; all other reference Jacobian entries unchanged. Nonlinear finiteTheta beta couplings remain.",
+    "coefficient_schema": [
+      "x",
+      "y",
+      "z",
+      "omega",
+      "radius",
+      "alpha",
+      "betax",
+      "betay",
+      "betaz",
+      "dOmega_x",
+      "dOmega_y",
+      "dOmega_z",
+      "V",
+      "helper_k2ref"
+    ],
+    "coefficients_sha256": "b377788610632080296e4cda3780d8a3ffb25a5194144f4aafc277d463e9c4f3",
+    "coefficient_check_vs_helper_linf": 2.220446049250313e-16,
+    "core_r_le015_points": 8,
+    "transition_points": 48,
+    "noncore_points": 1632,
+    "k2ref_minmax": [
+      -0.19946093750000038,
+      -0.0
+    ],
+    "delta_entry_minmax": [
+      0.0,
+      740.0289855073964
+    ],
+    "matrices": {
+      "raw22": {
+        "candidate_matrix_sha256": "d9673ecaf3a17f228ce7b519043678a851db6b4fa5691d7e547b3cc51423655d",
+        "C0_matrix_sha256": "1f7a5297ea5a6308a707222d558f75316ae9615a6046abd581ebd8e7a90b6e65",
+        "expected_nonzero_entries": 3264,
+        "actual_nonzero_entries": 3264,
+        "max_absolute_error_vs_exact": 7.720224459717429e-11,
+        "max_unexpected_entry": 0.0,
+        "core_allrows_changed_entry_max": 0.0,
+        "passed": true
+      },
+      "projected20": {
+        "candidate_matrix_sha256": "0f20ca347d2494b92b1f18b2fb016c231515aa00d7e87c8ef365fc6188a56680",
+        "C0_matrix_sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+        "expected_nonzero_entries": 3264,
+        "actual_nonzero_entries": 3264,
+        "max_absolute_error_vs_exact": 7.720224459717429e-11,
+        "max_unexpected_entry": 0.0,
+        "core_allrows_changed_entry_max": 0.0,
+        "passed": true
+      }
+    },
+    "initial_pure_gauge_action_change_l2": 0.0,
+    "initial_pure_gauge_action_change_linf": 0.0
+  },
+  "short_canonical_max_relative_error": 1.2975538903420211e-14,
+  "short_canonical_seconds": 65.738906042,
+  "long_seconds": 76.04500695899999,
+  "long_Arnoldi_matvecs": 7040,
+  "long_direct_residual_matvecs": 248,
+  "long_local_pair_max": 9.272479209790818e-11,
+  "long_actual_curve_defect_relative_state_per_time_max": 8.696906831710527e-12,
+  "constraint_epsilon_check_max": 2.7802583875331718e-09,
+  "comparison": {
+    "time": 2.0,
+    "semantics": "exploratory only; local Arnoldi truncation check, no long independent canonical comparison",
+    "gauges": {
+      "spatialnorm": {
+        "C0_native_analysis_sha256": "6e2151986810173da2b564edae1b23bae8df36f4fe1f6f6eb8ec70f731cb23bb",
+        "rows": [
+          {
+            "seed": "gauge_pulse",
+            "time": 2.0,
+            "C0_H_M_Z": [
+              2.1926610682756325,
+              1.2204029340515767,
+              0.3697096997526548
+            ],
+            "live_H_M_Z": [
+              2.1304219078726248,
+              1.1928931976611967,
+              0.3619805685021648
+            ],
+            "ratios_H_M_Z": [
+              0.9716147829213048,
+              0.9774584806191416,
+              0.9790940533730629
+            ],
+            "C0_field_units_amp": 35.72899623828097,
+            "live_field_units_amp": 35.69591629772839,
+            "C0_free20_Euclidean_amp": 91.96706599745697,
+            "live_free20_Euclidean_amp": 91.94223275730998,
+            "live_outer_H_M_Z_squared_fraction": [
+              0.024441488902181018,
+              0.43708648165410063,
+              0.7667170512023156
+            ],
+            "live_peak_H_M_Z_radius": [
+              0.35723547906108094,
+              0.35723547906108105,
+              0.9986514344354592
+            ],
+            "live_sampled_max_field_amp": [
+              35.69591629772839,
+              2.0
+            ]
+          },
+          {
+            "seed": "shell_random",
+            "time": 2.0,
+            "C0_H_M_Z": [
+              0.00250440344602444,
+              0.002284684007983271,
+              0.0009960512768595387
+            ],
+            "live_H_M_Z": [
+              0.0024554783813932747,
+              0.00236524371396729,
+              0.0010158674920822636
+            ],
+            "ratios_H_M_Z": [
+              0.9804643837602003,
+              1.0352607650346932,
+              1.0198947741778954
+            ],
+            "C0_field_units_amp": 0.01699430549556843,
+            "live_field_units_amp": 0.016920576200807596,
+            "C0_free20_Euclidean_amp": 0.1653425939348881,
+            "live_free20_Euclidean_amp": 0.1651381583117914,
+            "live_outer_H_M_Z_squared_fraction": [
+              0.01461388449555604,
+              0.6868292445696355,
+              0.9482887186698229
+            ],
+            "live_peak_H_M_Z_radius": [
+              0.29967430236842135,
+              0.9600415030091148,
+              0.9986514344354592
+            ],
+            "live_sampled_max_field_amp": [
+              1.0,
+              0.0
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "long_canonical_or_native_or_stability_acceptance": false,
+  "guard_hit": false,
+  "minor_diagnostic_failure_preserved": "check_attribution first run indexed numpy.where tuple incorrectly; traceback retained, corrected driver rerun passed before claims; no matrix/oracle overwritten"
+}

@@ -1,0 +1,1509 @@
+{
+  "scope": "Private finite-Omega live C0 kappa2 with V(.15,.3), kappa_input10. Spatial-norm gauge, physical-P storage/stabilization, derivatives, ng3 ghosts, KO and final-only projection retained. Four live/reference evolution/pole calls use same helper. Initial kappa bounds are not evolution-preservation or exact scri closure; no C1/lapse source is combined.",
+  "live_gate_index": "build-layer-research/continuum/live-damping-control/immutable-live-damping-local-20261009/index.json",
+  "live_gate_index_sha256": "fcfd4a740fc25e999d0417598015608c009bf61de032aff5266f1f843e2d6b59",
+  "launch_head": "1959930034066ecfd43483452e723cbb197e0ad6",
+  "compiled_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "base_build_receipt_sha256": "a39430b8c3bcf2e7cc05d03a441831edc493f050afbb687e642418f1e5f56ce6",
+  "base_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+  "script_sha256": "77bde937aed445abf42a38eca921eabfe71504001bad64cca5080271446d63f8",
+  "private_source_sha256": {
+    "build-layer-research/live-damping-native/native-build/include/z4c/hyperboloidal/cartesian_patch.hpp": "a3acc7dce1c4fa98d2c7766801fb35ecb12088d23475e8f36a905ea7add4b395",
+    "build-layer-research/live-damping-native/native-build/include/live_damping_profile.hpp": "69bbbc137486eb3398f94ed50a8b04583c375da049372b82b19330d8432fc153"
+  },
+  "all_compiled_repository_dependencies_sha256": {
+    "src/outputs/history.cpp": "f17fb29804b7f1b03eabb3507dbed3e8f568fc2da741d556b3b39f7f3b77cda4",
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp": "cc83d40e1ee3fc6da0baa6be31069b200d9f6ac1ec0ecca0f448208212ef64fe",
+    "kokkos/core/src/Kokkos_Core.hpp": "8495df3af73cbf0eb7f760f504a1e3279982c451d56cb64a473df45875a46c37",
+    "kokkos/core/src/Kokkos_Core_fwd.hpp": "5d7b3d94bec55f1beaec74c870819ff3371166a35813dcb60b1fc47406934aa9",
+    "kokkos/core/src/Kokkos_Macros.hpp": "92b786e668e577b454d254531a1e39523e1f2b7eebab43e848ef38a909c6aecf",
+    "build-layer-spatial-norm-native/kokkos/KokkosCore_config.h": "e9c50e173f81b345c44926fa0e51928b81111ffddf8800da23203006f9e7d61f",
+    "kokkos/core/src/impl/Kokkos_DesulAtomicsConfig.hpp": "96ddc3c14dbb9dba2853b0d94a8f3c2455f11bcb8696456add2b2ab4ae787263",
+    "kokkos/core/src/impl/Kokkos_NvidiaGpuArchitectures.hpp": "7858fcb4f045f4f3f723a00b4a3daa3467fa969584bb207d2db4e33074860c31",
+    "build-layer-spatial-norm-native/kokkos/KokkosCore_Config_SetupBackend.hpp": "3cde2dc1673dd911bbaac6024a7646eff22e0932ebbe5a7a4fed7261848c5029",
+    "kokkos/core/src/Kokkos_Printf.hpp": "4ca18f47716666f0485d681a4d0c90579cd71ce9a3dbc8c46d6c7430f0463116",
+    "kokkos/core/src/impl/Kokkos_Error.hpp": "96424ecbae08b533bf9a8540577689717223a59c50131cf809537d109519a131",
+    "kokkos/core/src/Kokkos_Abort.hpp": "b04d4d4bb784e4efe97b700bc6bf01be89f30b2fe934efec983b17c36b451b04",
+    "kokkos/core/src/Kokkos_Assert.hpp": "716c5ef59fcca2e4e9edf50454cb9f967af3895f23a70bb023be3486e2111f63",
+    "kokkos/core/src/impl/Kokkos_Utilities.hpp": "73b365e23e601cefec68930b9c8de542fa28b8836527920a654349a9a1ae7eae",
+    "build-layer-spatial-norm-native/kokkos/KokkosCore_Config_FwdBackend.hpp": "a155e6bb941a833c7dce5e8df24e19fa70d23bebb1a7ff11b9f5ccf4f4486036",
+    "kokkos/core/src/fwd/Kokkos_Fwd_SERIAL.hpp": "41792ad4f899744e7316093e1ba9c614988abbf7d61d9b1f35c414c1c65e893e",
+    "build-layer-spatial-norm-native/kokkos/KokkosCore_Config_DeclareBackend.hpp": "259683468913b523025b07f976de2b00b1b7ad28214ed2deefda97e5157c3086",
+    "kokkos/core/src/decl/Kokkos_Declare_SERIAL.hpp": "7a7dcf349e159edf2ca872a6b92d7cbf502e212ea9b3cf81ca977ab24df07354",
+    "kokkos/core/src/Serial/Kokkos_Serial.hpp": "a7ff7c6ff332cb48073b93d7b9b313b70c3478eaa2cf65ee0399279b444b1bd4",
+    "kokkos/core/src/Kokkos_Layout.hpp": "a562e7d85709b32cab92cea5ed9e431f31b74acf321fcfa778789e0515dfe659",
+    "kokkos/core/src/impl/Kokkos_Traits.hpp": "c93277d6363576a48dda83ccba026e20cac2a2b283f3952ed531a34d90ce5baa",
+    "kokkos/core/src/Kokkos_HostSpace.hpp": "3c6ce24050c8de25a3fd15569596790e77746079b1ee5e102c15be41dce4c37e",
+    "kokkos/core/src/Kokkos_Concepts.hpp": "779486767ad65e41a13e9253b95ecda2228db2720d47704ce39fb49647369b58",
+    "kokkos/core/src/Kokkos_DetectionIdiom.hpp": "a52984686cd48fb99d800cf8657eefc6c19a07122837007c24ffa7af7c1a6036",
+    "kokkos/core/src/Kokkos_MemoryTraits.hpp": "58df7c4300b0033fc78befc4e406b117bb9fbae7e122ad46e2b49da123321c01",
+    "kokkos/core/src/Kokkos_BitManipulation.hpp": "35325b9b9a887dafbf92effb0f2012ad6900679c01709ecbec5c3ab3e797f73b",
+    "kokkos/core/src/Kokkos_NumericTraits.hpp": "acb9f6ccbac75dd96dd7410f35770cc2283b89c50e4eeef118b0cba6e801bacd",
+    "kokkos/core/src/Kokkos_ReductionIdentity.hpp": "adf0f291a7b4eea67f6d38086574e2a5bd87186d339fa82869a25e6e6f848b7a",
+    "kokkos/core/src/impl/Kokkos_SharedAlloc.hpp": "860cb1b87271fbaeb7e2af3aa1e50de2c791f5619f66048381e801af7deae674",
+    "kokkos/core/src/impl/Kokkos_Tools.hpp": "1f7959a81fd10599e32e87d20c58d516fd14e9b499cfd3e6d0ffee4834b71bdb",
+    "kokkos/core/src/impl/Kokkos_Profiling.hpp": "8f61b50bb024ba356c7f7d180940bce2e3387d0a557054f9fc15338b02570643",
+    "kokkos/core/src/Kokkos_ExecPolicy.hpp": "6fdb8a85b2d1b52725f2a04cdb256468c01ddd0a06fb72540aa1832f83d45686",
+    "kokkos/core/src/impl/Kokkos_AnalyzePolicy.hpp": "6d6c85fb5276a67deb3d211aab16e3c206aeb1c6bcf743e4a3ac308407ad0a83",
+    "kokkos/core/src/traits/Kokkos_Traits_fwd.hpp": "a8c5eb59bc9b1b9a345d4f43f82e2b16376294110613dac52a6bf84be3622665",
+    "kokkos/core/src/traits/Kokkos_PolicyTraitAdaptor.hpp": "e483fadaee0b09b1be9c1ce4f0573df27f84f0d7ff21472504603ef63c4836b3",
+    "kokkos/core/src/traits/Kokkos_ExecutionSpaceTrait.hpp": "4892c2a57e766ca962ddead65dd3e567d95d52ebf0369660147cdf9364eb4050",
+    "kokkos/core/src/traits/Kokkos_GraphKernelTrait.hpp": "fd102158f39f553c2e3bb3f050bfeb071633701d14ae85e604916128290cc727",
+    "kokkos/core/src/impl/Kokkos_GraphImpl_fwd.hpp": "c476458d61fcbc9d3104f5e7029f32e72bc67b5d402baf7b7572e09bcaa70a53",
+    "kokkos/core/src/traits/Kokkos_IndexTypeTrait.hpp": "e6abc88498cfddb8c5f0d113aebf5c5d334b40efe9a9a49ea28121d51beb100a",
+    "kokkos/core/src/traits/Kokkos_IterationPatternTrait.hpp": "9d8dab7d1fa557514f6abb7623997578204a0cfee4f3df36caaac11b93b4e2b8",
+    "kokkos/core/src/Kokkos_Rank.hpp": "858991adccff826c6e956bd4109e268b600e948f76bc0a63b5eed797c08b2e0b",
+    "kokkos/core/src/traits/Kokkos_LaunchBoundsTrait.hpp": "ad4b7317c6ee0643c93987e56477d271bd72992ea4438cb461a133adcd11490c",
+    "kokkos/core/src/traits/Kokkos_OccupancyControlTrait.hpp": "7cf5340734fda24f3e56c98e8f09769db8addf9ce92eb7e19807696e416ba481",
+    "kokkos/core/src/traits/Kokkos_ScheduleTrait.hpp": "ef7be97363d9a4aab9d62e58b8a7dda4dc354c708f322d70cc4b8258c8f82a22",
+    "kokkos/core/src/traits/Kokkos_WorkItemPropertyTrait.hpp": "bd6f94946c4be87c8025d647cc5738c4eacde26b3316a8174fadf0f71d0e355b",
+    "kokkos/core/src/traits/Kokkos_WorkTagTrait.hpp": "5618fc4e489965214a8dd4c2103f7ea5811d39955502b729bb6777031d2cc0c2",
+    "kokkos/core/src/Kokkos_TypeInfo.hpp": "419993d5205284b8c17a51b5dfd7b190aa0874c19ed691318badee9f8969dd73",
+    "kokkos/core/src/Kokkos_Tuners.hpp": "324dc9c21b6fd2ab31cfbae037bd5c3e96f1199e68fa3e50188e496ec8cebecf",
+    "kokkos/core/src/KokkosExp_MDRangePolicy.hpp": "2ea86d48235e8307702370f3671dd301846928f2e23173596b73b49552917025",
+    "kokkos/core/src/Kokkos_Array.hpp": "b456f19bfbaacbde71eac0dca33c822f9d825c515b884d35890ae759fd649c2d",
+    "kokkos/core/src/Kokkos_Swap.hpp": "dded76f83b034fcb56c3e26c169979e1b67d3fc14e2c176c4526ed6a0347bd50",
+    "kokkos/core/src/impl/Kokkos_StringManipulation.hpp": "c7b89c7d14a059d9658cce3011f252ad0bff2dfbcb289b524fa23a379456883b",
+    "kokkos/core/src/impl/KokkosExp_Host_IterateTile.hpp": "cfd687b7293a0f05b711653a33629478180d62e20d6494af68a7a8f373e62fe2",
+    "kokkos/core/src/impl/Kokkos_Profiling_Interface.hpp": "a606c6789f9ceae0a860501dc73a643185bfb4857f32930b23648b442ace73c2",
+    "kokkos/core/src/impl/Kokkos_Profiling_DeviceInfo.hpp": "cef0e6e7ecbd890a1880bf24fffc2eae531d2826b6442847f086345d77f60ed2",
+    "kokkos/core/src/impl/Kokkos_Profiling_C_Interface.h": "5c7276a527609c2d62292fe6a602addb9e945f84ab828244a4e30c287235277d",
+    "kokkos/core/src/impl/Kokkos_HostSpace_deepcopy.hpp": "79a43bd17b48e11237a0be6ce70ef9631a58b4eedea9dad58a1c54e32bb069d4",
+    "kokkos/core/src/Kokkos_ScratchSpace.hpp": "070208b5af47fee9243591208752ee638fa1de0906062c9635f332978e800b85",
+    "kokkos/core/src/impl/Kokkos_HostThreadTeam.hpp": "9f86b68555943d8effb8e3781e0d1fc83963ebf18e45f03de96dab502076c008",
+    "kokkos/core/src/Kokkos_Pair.hpp": "0f86e28b6a15704c7e65f82c28f0c30bfed1af1e40463c34f9ab6684cf507c42",
+    "kokkos/core/src/Kokkos_Atomic.hpp": "4a37c86c07a7f1ed5ca11a3c91f41d7d55688df2900a85e18f9a43cd6a57ab97",
+    "kokkos/core/src/Kokkos_Atomics_Desul_Wrapper.hpp": "85582ca6ee4a95894f591649630e8218162388a9c7dc997b4784bc70e9632ec2",
+    "kokkos/tpls/desul/include/desul/atomics.hpp": "3b4464cd05d021e3139f8c3171183b472ab2212bf113bfe7679c9eaed9232ad6",
+    "kokkos/tpls/desul/include/desul/atomics/Atomic_Ref.hpp": "560a09f728c34b741d77424964892cdc098eaa396e78cc89c3490b26116586fa",
+    "kokkos/tpls/desul/include/desul/atomics/Common.hpp": "0f99de3e3db676beea8400e863a5ccf0ddcb2920db1f6222a191cda89f66cf58",
+    "kokkos/tpls/desul/include/desul/atomics/Macros.hpp": "6742f0b7e582f5b1345a3b2425ad6487a89d6245627ed8dbb594da2e210a6297",
+    "build-layer-spatial-norm-native/kokkos/core/src/desul/atomics/Config.hpp": "8835ec26f17079d128243c0656762a4b8ccda09ee6e72a02b01d4bc01916d4f1",
+    "kokkos/tpls/desul/include/desul/atomics/Generic.hpp": "fe5db8982a914fef5632e5e798de5bd4e4ffe284943235592e6a4c5c5f53bca8",
+    "kokkos/tpls/desul/include/desul/atomics/Compare_Exchange.hpp": "2c231e55d17a43d2bb9fe1b0a1435704c680e16643a3f147bd0dd2bb09b14f83",
+    "kokkos/tpls/desul/include/desul/atomics/Compare_Exchange_GCC.hpp": "70ce7a16bd501d4dd6aeebbf173ab6511859623b4cdd58a2c6735c6ff7983d2a",
+    "kokkos/tpls/desul/include/desul/atomics/Lock_Array.hpp": "ad1633f3b78b89dfbd663d406fa483bd2b3e4c5ef19564281af485d52fef1564",
+    "kokkos/tpls/desul/include/desul/atomics/Thread_Fence_GCC.hpp": "c5528adcaad8bdc9b6719a95fbbe98e08272b3aef2add9da7fbdab34d9f073f2",
+    "kokkos/tpls/desul/include/desul/atomics/Adapt_GCC.hpp": "b0a0f62f58348695b6193ada64b482a696d60199821cb9fbefa524dfe6386625",
+    "kokkos/tpls/desul/include/desul/atomics/Compare_Exchange_ScopeCaller.hpp": "649641e9b2932ce53354ff0ee810feeddb1ac94e579a324b5ed5fd1b6b37074c",
+    "kokkos/tpls/desul/include/desul/atomics/Fetch_Op.hpp": "3868eeac956dbe90ea72aba7312adf886b5132dab205c42fa8ab852b74538b96",
+    "kokkos/tpls/desul/include/desul/atomics/Fetch_Op_GCC.hpp": "4fa0f20d79020de21d5c6de6fb36869cc518eec3be335508ea2c994c6617d02a",
+    "kokkos/tpls/desul/include/desul/atomics/Fetch_Op_ScopeCaller.hpp": "92aa293acfda19751507f10d034bf07cce6118a5f547ae90916dc8bea70243db",
+    "kokkos/tpls/desul/include/desul/atomics/Fetch_Op_Generic.hpp": "749089a5f99653f8fe0e6e0ebbfb0107d772069213954650078d90d967029480",
+    "kokkos/tpls/desul/include/desul/atomics/Lock_Based_Fetch_Op.hpp": "5b6543b593f492f71733e3e899f303818d3f7f6799d52e61fda737a1eb308c1b",
+    "kokkos/tpls/desul/include/desul/atomics/Lock_Based_Fetch_Op_Host.hpp": "47372d8e20a0a6886508f9e8bb6bbb955cd11fc7a36df5fbafc4f607385a78e7",
+    "kokkos/tpls/desul/include/desul/atomics/Thread_Fence.hpp": "b9bba064c60eaef76122b5ec69be0ab88a168285c740a23b923e99d39300735f",
+    "kokkos/tpls/desul/include/desul/atomics/Thread_Fence_ScopeCaller.hpp": "f63facfde57fa0a58d8493795e758a8d40470f928c97f80e2ba357df74fa5206",
+    "kokkos/tpls/desul/include/desul/atomics/Lock_Free_Fetch_Op.hpp": "d3d27735db14be608084393b1941e208b5359d504da440919afb22a1eee45c8b",
+    "kokkos/tpls/desul/include/desul/atomics/Operator_Function_Objects.hpp": "98d850e15e238305ca1fd35ba69b103a20c4fc4863102138c3ebb54d95c0c504",
+    "kokkos/core/src/impl/Kokkos_Volatile_Load.hpp": "6c2e33f6bf4ad496508ac7d168484d57a14288c1b8a9ab4e353e4f5cad68472b",
+    "kokkos/core/src/impl/Kokkos_FunctorAnalysis.hpp": "c2466e8d19c2680b44be8ae7a7d8d3bf64f8d96ed15e38a2bdb809b925389226",
+    "kokkos/core/src/impl/Kokkos_HostBarrier.hpp": "a4c8fa6b5525ab0a70bc375f089a44956bdbc55a1768d64c759e05ba390a6ea9",
+    "kokkos/core/src/impl/Kokkos_HostSharedPtr.hpp": "c4160aa157e65f335747479ca8cd0a7b1f82a49a0ac69fe4f2fb0afac1e32e77",
+    "kokkos/core/src/impl/Kokkos_InitializationSettings.hpp": "f4504fca2a3783229445630e685a53754e7e9bea7a340d1021190f9845b86d5f",
+    "kokkos/core/src/Serial/Kokkos_Serial_Parallel_Range.hpp": "eab2d67fbe71a313a9e81ce3202465b889b59237eb4c4024bff71b96cf5f9fc2",
+    "kokkos/core/src/Kokkos_Parallel.hpp": "a12e7d3b4e29afe7948a6f6ef1d69cb12d29c668d4a82de8802b39ae93029107",
+    "kokkos/core/src/Kokkos_View.hpp": "0b6ae712a3541a7adbfbda28967122ae417bf22ca507445aeb1b2d48db110eca",
+    "kokkos/core/src/View/Kokkos_BasicView.hpp": "98f8d0400754e3bd19f6141e430ca079436b49fb6f66e70764a8e45fdce9b69d",
+    "kokkos/core/src/View/Kokkos_ViewAlloc.hpp": "f7665bb2bf0f0a6bc3388477b46e358f28034d09dfbc2e12ec7a4111077f7a9e",
+    "kokkos/core/src/impl/Kokkos_ZeroMemset_fwd.hpp": "d30eada2ea1bbb1e94649be39b679e3c9936f726c330518cff41a5f30fc43cdf",
+    "kokkos/core/src/View/Kokkos_ViewAccessPreconditionsCheck.hpp": "dd939ce23b9a9ffe93450dcbdfbd85673129ee149babd727679af817491f103a",
+    "kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Header.hpp": "6d29c398c02d36fa949f4b83f10bc1f44c8866c4277b7e6af82fcb3bae64c7e0",
+    "kokkos/tpls/mdspan/include/mdspan/mdspan.hpp": "abf0d6cd6ef0c359a59654861df5fc0084864d6d07696ba762423531d29d6bea",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/default_accessor.hpp": "c223542656806eab4e74ea167fc7ca12a425f48e8a165464886f5a4f3e05d5f8",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/macros.hpp": "447c342dfcc74e66b74a5f4bbc3d0f8d2b76276f120fe765bd7ff947d24e97e2",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/config.hpp": "00d00945c079dc425835ed8b6eabea5247113e4f5146ffd512364ea11837465a",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/full_extent_t.hpp": "33f70b7fa2167ffad361f000f780b62bafac5a026a5c8f08ae9c8271405a2c41",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/mdspan.hpp": "19bfb3af0e0da44dbafb357534920132d5684e3f538203ef42e22f261d156345",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/layout_right.hpp": "5a411b04a160fe8ebaa06bd572cd816bb46e69ec731932d815505cb5d1fff9dc",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/trait_backports.hpp": "fa5856564e40b42941a531ae87ee1496328c29c0dc07453d8baa6a59f12d19b5",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/extents.hpp": "5552a0f633d8846d3655b05859a97820a1e81c724d4e6ce0e60d63d2e7d06808",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/dynamic_extent.hpp": "44db5333096629fe2bf6c379d78254e273cbbddd96c6dc4b6e1fcd63bd4d816f",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/layout_stride.hpp": "553859d5511995159ce79159cbb8fa597991fa6b3897fe2428bfc0ec7a6dcbef",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/compressed_pair.hpp": "b12157142839c5a18501d3c8b8390aa387fd2484a9725f3f8216436f3a458908",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/../__p2642_bits/layout_padded_fwd.hpp": "2f16852249f363913b384a1dcf87091906f205db4d4855a55895e2f07ae83030",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/../__p2642_bits/../__p0009_bits/dynamic_extent.hpp": "44db5333096629fe2bf6c379d78254e273cbbddd96c6dc4b6e1fcd63bd4d816f",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/../__p2642_bits/../__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/layout_left.hpp": "fc6fc36b7bb53546dba651c90d27bc8e9d673f3c7d0d6166ca068382d493503c",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/layout_padded.hpp": "c09e43f07a3d3c969799986f88698cc0ef3b02dc776c4b3cb2893e35ebe5bd06",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/layout_padded_fwd.hpp": "2f16852249f363913b384a1dcf87091906f205db4d4855a55895e2f07ae83030",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/dynamic_extent.hpp": "44db5333096629fe2bf6c379d78254e273cbbddd96c6dc4b6e1fcd63bd4d816f",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/extents.hpp": "5552a0f633d8846d3655b05859a97820a1e81c724d4e6ce0e60d63d2e7d06808",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/mdspan.hpp": "19bfb3af0e0da44dbafb357534920132d5684e3f538203ef42e22f261d156345",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/layout_left.hpp": "fc6fc36b7bb53546dba651c90d27bc8e9d673f3c7d0d6166ca068382d493503c",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/layout_right.hpp": "5a411b04a160fe8ebaa06bd572cd816bb46e69ec731932d815505cb5d1fff9dc",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/layout_stride.hpp": "553859d5511995159ce79159cbb8fa597991fa6b3897fe2428bfc0ec7a6dcbef",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/submdspan.hpp": "fdb1097ecf664f51a1d93126648acf527df0b1bb3e5a91840bb50d932a1839c9",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/submdspan_extents.hpp": "d27a54b212bfe517e31e490af5ccb536f05661fbc74f68a2aa65e6433df12395",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/strided_slice.hpp": "2d903163fe0367dc0301c06bc3be6e8830f1e475ba16d67a60b2cfc4b991c148",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/../__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/submdspan_mapping.hpp": "a6da27289bd82a6a40b37ba86415e7ab309b813e5b0cc2febe7addc34737046f",
+    "kokkos/tpls/mdspan/include/mdspan/../experimental/__p2389_bits/dims.hpp": "b7354bf2f10878bbe3c8dbdc808549a682d09ce04268f7b35edec2c86807d86a",
+    "kokkos/core/src/View/Kokkos_ViewCtor.hpp": "487f1b691f8854998da030738e617653e0994ab68838fe2331024bd5c3de8b31",
+    "kokkos/core/src/View/Kokkos_ViewTraits.hpp": "aa798eec2753c82f118df63a13202cb12fa27bc78dd0b7af4bcfb9c46df4c2f4",
+    "kokkos/core/src/View/Hooks/Kokkos_ViewHooks.hpp": "b4f7970398c91f33cc88ca63a5af484c47970831689bb9c3189fbfc72ddf8451",
+    "kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Layout.hpp": "d4f2314ea331ce4856d2f60fccd9c76a17a1f32d775905650c3cf00f48b93e6b",
+    "kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Extents.hpp": "2b251dbdbd771989575ccc432ab3a3ffb84f5f4558fb492a1a005fc62925b310",
+    "kokkos/core/src/View/Kokkos_ViewDataAnalysis.hpp": "b383582edf996591554af2b42bf80da57cf00ba14474dc7de72c0993ad4f58e1",
+    "kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Accessor.hpp": "69af6148043601c4f24e97a366c8a54a79b8f723965f51360332e099d1f412b3",
+    "kokkos/core/src/View/Kokkos_ViewLegacy.hpp": "6750044d192d635b926f4832b9ad1149c51c8586ee8d00c01822da9b9da3654c",
+    "kokkos/core/src/Kokkos_MinMax.hpp": "607817e9771f27f0204032ad488332fd784bde4dc31d284c76444078cfbebd86",
+    "kokkos/core/src/View/Kokkos_ViewMapping.hpp": "1b4de572cda19dedbd9bc63528518d183609ca1c7264414183ba37cdb332680c",
+    "kokkos/core/src/Kokkos_Extents.hpp": "6fdc7ee88eb49a56eddb40a683a2be36980350c88c44a218e838b89dd28fb718",
+    "kokkos/core/src/View/Kokkos_ViewTracker.hpp": "ee7aa425e77ba96e4fb8a87694d0fc00ffe2d16996357048184e73c41ca45b11",
+    "kokkos/core/src/View/Kokkos_ViewAtomic.hpp": "ce0f4e19ae7d976bbc9bc1284b954543fad9624903d03ff3390029cde9454535",
+    "kokkos/core/src/View/Kokkos_ViewCommonType.hpp": "3909199652489ffa3cd086af6e05159c225591492c53ea4de81fb217855d67b1",
+    "kokkos/core/src/View/Kokkos_ViewUniformType.hpp": "427c8bc1f1a975a1bda50aba7cdabf727f5a3b7f71d26dd10d84349fad29dd33",
+    "kokkos/core/src/impl/Kokkos_Tools_Generic.hpp": "3c3e9c32abfef836deec15609e520409d6aaab9d87ac71f7f9a621ab317248af",
+    "kokkos/core/src/Kokkos_Parallel_Reduce.hpp": "c686e148a97fce3d659d9e47534082a8e2e17970c29718f5127279202343960a",
+    "kokkos/core/src/Serial/Kokkos_Serial_Parallel_MDRange.hpp": "f7ed2f95f76d0018b648c290f33b2bae2b0fb20fbc5e54f17fd0047b899b867c",
+    "kokkos/core/src/Serial/Kokkos_Serial_Parallel_Team.hpp": "4f3894e193326aed376abd5d3af8a4bdb15a142fdc1497ea60e7ac4090c27d8f",
+    "kokkos/core/src/Serial/Kokkos_Serial_Task.hpp": "72543797c63401ad642f97cf1f4dc47f6e8bfb407f1b83e9147c164799703687",
+    "kokkos/core/src/Kokkos_TaskScheduler_fwd.hpp": "1f5d184b247f6abeaf198309ba3ea48f01b548faa71f306edd26682f0d670641",
+    "kokkos/core/src/impl/Kokkos_TaskQueue.hpp": "8ba90a53d1894689c60ea33f07042fd0d1a7dfb49cc40131c6cb645db3da6568",
+    "kokkos/core/src/Kokkos_MemoryPool.hpp": "627a41e42a5a01acaa4ef54df192c89d07e543e68696fa5f081563f45cb0848f",
+    "kokkos/core/src/impl/Kokkos_ConcurrentBitset.hpp": "23818d06e06b727c7f1f474a64786067870d6beedda2dcace52242dba689f568",
+    "kokkos/core/src/impl/Kokkos_ClockTic.hpp": "4c511582297cd5f396bd12b709768d0c67d6fab62e8b29084af9d76c65487409",
+    "kokkos/core/src/impl/Kokkos_TaskBase.hpp": "e0b005a1ac5d716555ec78b6fa16ca8d0dcc84ae09a53a5c52ca04ac1dd74a8a",
+    "kokkos/core/src/impl/Kokkos_LIFO.hpp": "f3ddbbe44a365741805c6f7c14a4b00e9c69686d2383561a8f6384c36bcd002c",
+    "kokkos/core/src/Kokkos_PointerOwnership.hpp": "78105799909ab48f7f388bc58d9f5b1a53764d3f838858ffe5744f49ad34af3e",
+    "kokkos/core/src/impl/Kokkos_OptionalRef.hpp": "465c7653dea6e9247791bca86ff614175dd687563b001f474f28c7c87fd3c8fd",
+    "kokkos/core/src/impl/Kokkos_LinkedListNode.hpp": "dd2d009c57b18e891d6b2ab0373d9bd8663e4a383ac9c88afadd55702d27a0c4",
+    "kokkos/core/src/impl/Kokkos_TaskResult.hpp": "236d0f5e93c76c5819b3b5a49a5baedabc0805969ea2c506bfbe88df76bdea6b",
+    "kokkos/core/src/impl/Kokkos_TaskNode.hpp": "e2391275340e00beb7a4e1a907dfa8bdc8215f262e1de18178eb1ad299601e17",
+    "kokkos/core/src/impl/Kokkos_VLAEmulation.hpp": "5e473d8ccf510a5528fd2f52068e3fce92405b2bc7f475aec77cda7e8fd4419c",
+    "kokkos/core/src/impl/Kokkos_ChaseLev.hpp": "640964f5f65a88166349507cb4417591959c84282ef9ac5a7e1272b875cb8dfd",
+    "kokkos/core/src/impl/Kokkos_EBO.hpp": "8b7114bd425940dc3e550cfa0da997ca618f6ed33d4586703c9d64581a8d4e43",
+    "kokkos/core/src/impl/Kokkos_TaskTeamMember.hpp": "79a9474163ae1162c7d6e9539c314d6172725501619262e996cf679244423341",
+    "kokkos/core/src/Kokkos_Future.hpp": "e070ab0fdac3bde10df5a4f61dfe3c7fb21e7530e547021378cc1138be9f8213",
+    "kokkos/core/src/impl/Kokkos_SingleTaskQueue.hpp": "5ae4381b5f7e2dc44bab8e92e0079575d276d4c25c8c664fdd1041822eda07ff",
+    "kokkos/core/src/impl/Kokkos_TaskQueueMemoryManager.hpp": "53e40da6d69d7c7ea1d04a4741794f17d3c12fd01139ebd9b66777daa38b9ba6",
+    "kokkos/core/src/impl/Kokkos_TaskQueueCommon.hpp": "b2d5617353f582df3d4d89d11b88e91bf8e8a47ca61a18d45b7e18c5bea93522",
+    "kokkos/core/src/impl/Kokkos_TaskQueueMultiple.hpp": "d09621919402f51d0252a9d993f394f70faa147d31cc7042f12b89a5203457c7",
+    "kokkos/core/src/impl/Kokkos_TaskQueueMultiple_impl.hpp": "96a766de76962601521fb18ebbc49434c5e6bf04231cd894f1e1d6b27eba53fc",
+    "kokkos/core/src/impl/Kokkos_TaskPolicyData.hpp": "f17f374566f751b7bf8b6f91eabd045d18f4ff68336a1c741f6218561ca1f568",
+    "kokkos/core/src/Serial/Kokkos_Serial_UniqueToken.hpp": "3b899a26a39db9616d418b1bd8d8310401c9cc5eb6fccfa95ade1780cae2822f",
+    "kokkos/core/src/Kokkos_UniqueToken.hpp": "3345e1885c8863a77b0694aba34ccf1fd28cc7cfc20c0c9b95ae31ee49c51a4a",
+    "kokkos/core/src/Serial/Kokkos_Serial_MDRangePolicy.hpp": "3b83d9743810c4236d642d6e8fc13642ea99585e10163242ac1fdfcfa8096ba1",
+    "kokkos/core/src/Serial/Kokkos_Serial_ZeroMemset.hpp": "9dae717c5bec3f64b6dbc8cc6ec8c5af24515ff6a592858571ed70333f9ae273",
+    "kokkos/core/src/Kokkos_Half.hpp": "6b349d94e39cda920dcd4926ebc3193e332b20a337988974c675041c674d6b6d",
+    "kokkos/core/src/impl/Kokkos_Half_FloatingPointWrapper.hpp": "c64132473099d73489e69990ba6fe1cf4e48e08bf8af2125b57d382485c6a33b",
+    "kokkos/core/src/impl/Kokkos_Half_NumericTraits.hpp": "43bbfb9e943c7a8cf03c7af3d7dde75cbc86bd1edd8e0fd498d585df20cbd5aa",
+    "kokkos/core/src/impl/Kokkos_Half_MathematicalFunctions.hpp": "6f393b65b0c7d1f9cbc238601ba733466a5a32c9cca49c9020daa146ed1d9efe",
+    "kokkos/core/src/Kokkos_MathematicalFunctions.hpp": "aebd6b1e3a127898bf0592959de1adf8463ef33880141d6a410d16b8f59daaad",
+    "kokkos/core/src/Kokkos_AnonymousSpace.hpp": "f5a9aea55abb8d16132e19e553f356626bffe599641c37fc80757009e96373e6",
+    "kokkos/core/src/Kokkos_Clamp.hpp": "89042894faa0c505297e3e3d0e7fccc8f945263ef2ef2cc73e50fa1dd103db72",
+    "kokkos/core/src/Kokkos_MathematicalConstants.hpp": "adca290b02b58884315f6715d135aea3c51a9c6d56e431424516ee67d49ca01a",
+    "kokkos/core/src/Kokkos_MathematicalSpecialFunctions.hpp": "77785af4618adffc9a3df4db5678246debafb1c9f8cf6bf7cd2d3fb9c5e8fda1",
+    "kokkos/core/src/Kokkos_Complex.hpp": "d2059bb07f4ce26cc59dc9f80222f10420c25b6e3c19e8a7ff4aa44e660bfcbf",
+    "kokkos/core/src/Kokkos_Vectorization.hpp": "768d81bcd63205ebe8a680595bd07be518d2615d621651316bc0d0cd44093b58",
+    "kokkos/core/src/Kokkos_hwloc.hpp": "a202568000d793cfe6306c9a2c8428b3a56a6a0d922e16ac7e1ef86ce1b4fb16",
+    "kokkos/core/src/Kokkos_Timer.hpp": "ccffd03e1c52db2d7c1713f25dd35127cf8728929085cdd65f13a63c30bf3549",
+    "kokkos/core/src/Kokkos_TaskScheduler.hpp": "b2f369bf178bfb5289cddc8ec43033bed66fff6faa945feb058f53be6507eb79",
+    "kokkos/core/src/impl/Kokkos_SimpleTaskScheduler.hpp": "4b23b8b11e5e7dbb0713c5c9bea3741ec5f65f5a03f24163a8de649a68c79b4f",
+    "kokkos/core/src/impl/Kokkos_MultipleTaskQueue.hpp": "b9eac169440df837d760444b08952643301f1083ad9a5279ad3114e2533407c0",
+    "kokkos/core/src/Kokkos_CopyViews.hpp": "ccc7a7ba1e5303a38699691d4c6bb48297684cb34d5b95332af945170dec1d8e",
+    "kokkos/core/src/impl/Kokkos_HostSpace_ZeroMemset.hpp": "a0416d8965f754acc5a1790a17fe9e2640d3c727e181f87d5cb84750077c5ad9",
+    "kokkos/core/src/impl/Kokkos_TeamMDPolicy.hpp": "706e787852ce98c18152ab23da02de93b69d8c45892bfb937b0c538bd3bb9395",
+    "kokkos/core/src/Kokkos_Crs.hpp": "e25691b5c3ffa1cdb5ef130bb5fc77d4480c9c36dcb92cd65e91d4802e34868b",
+    "kokkos/core/src/Kokkos_WorkGraphPolicy.hpp": "d1d42baa0403e625f792ca34d7659279361071fee8c9d947e25809992dabb6a2",
+    "kokkos/core/src/Serial/Kokkos_Serial_WorkGraphPolicy.hpp": "3da3e63038cc8302c08b924ac948cb94b2110570f8c45590180d9d1a9c5932e3",
+    "kokkos/core/src/impl/Kokkos_Combined_Reducer.hpp": "f173e0da6b487da5bc7b79cda558db4c3994056f24d3bc7733a2bad942c8ed36",
+    "kokkos/core/src/Kokkos_AcquireUniqueTokenImpl.hpp": "9a48e85ad6504261032b24dc1328965903c4adaf4a985b6d024a9e8fd4917a2a",
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/spatial_norm_control.hpp": "c44d0f2b3940d94d77f9b6c920401d2b1eb7b20dbee67a160e873a5a604781ae",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+    "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+    "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+    "src/athena.hpp": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6",
+    "kokkos/containers/src/Kokkos_DualView.hpp": "336a2ea67f7ae34c6b3d5fcbe5867807095cb9c06071da103872488448421efb",
+    "build-layer-spatial-norm-native/config.hpp": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08",
+    "src/globals.hpp": "b875795471560e77509994e20bc8af6c5cdddb44b9ace1a5ea606ea6efb66a23",
+    "src/mesh/mesh.hpp": "35969f2e6f52e486481db170d9f17479281c8398dfc7c3150644beab746b873d",
+    "src/diffusion/sts_types.hpp": "7e57de0472242773624e4b9c924fcc3bc74e5c73c280f4adc11da75490d69021",
+    "src/parameter_input.hpp": "83fec3edab61685322ac1c44618403e657da652754a8524e2d70250690d47400",
+    "src/outputs/io_wrapper.hpp": "8a5563177539fe25887e37f807eff7cc29fec46d3be710eb03baf3855add8f14",
+    "src/mesh/meshblock.hpp": "8fa8d29424ba7ecaa4125c4a082598741b95a03ebd26b18a15f643fd753edf90",
+    "src/bvals/bvals.hpp": "6f8472fc30ba21b49b3ddd517118118c347aab6ac14f758c441f3ffcee73c467",
+    "src/coordinates/coordinates.hpp": "b8dccb9b2c90dd6bf9e2494f516d96fcbcbdda38626060bd580f3c1c0b073487",
+    "src/tasklist/task_list.hpp": "9e3ce488a2381b25e235c6732e43de480c80cb151485977343f4db71e81e8767",
+    "src/mesh/meshblock_pack.hpp": "8fbdd5e15f233ecff624aeb93dc0ed4791cc21f63a7583407c72cf6d109a64af",
+    "src/diffusion/parabolic_process.hpp": "1eb94a368e989c62664f08b7063132365f9d486c43c6fc45197fdbceeb522418",
+    "src/driver/driver.hpp": "07448f061f5f804a29b55b39c038fccc6f008b46bfc08542d9ac3f254b3d1f26",
+    "src/diffusion/sts_rkl2.hpp": "50e27a0be52657993d63df32f341f8dc249c352e70946a6b986cf55782416dcf",
+    "src/outputs/outputs.hpp": "7b2b78789ba01f40ee2905daca95f8417410f1e1f77934d88e058136d817021c",
+    "kokkos/containers/src/Kokkos_ScatterView.hpp": "0211b94981b7ea19ad0719203f5a62203091ffa9935008ec7a224547530d5361",
+    "src/pgen/pgen.hpp": "44ec09dad158b422af11f724dd8a9179c9da8fbd8d22469199107e2ef414aa2c",
+    "src/geodesic-grid/spherical_grid.hpp": "ab531cceda7f3953e6f086af0f70da2de3ae09fcf3f6b7cdbbd3efb47fc3880b",
+    "src/geodesic-grid/geodesic_grid.hpp": "58bf04e1352f0700aa3a54a4adc07a808b5197a5f9e0218f40859deb0f2bd944",
+    "src/mesh/meshblock_tree.hpp": "49726ca5e189f83a6e0dfede235f94cc68a06bdc7cfb654e3d1902170ff86cb1",
+    "src/mesh/mesh_refinement.hpp": "a8d1b07ca906a4b893917c64db3cf963858c773dbee89d2ce699eb773d4e9da7",
+    "src/cyclic_zoom/cyclic_zoom.hpp": "99b982ef0a15bc6f288d27397688fd9e0d3819bbe6bb88e090e1ca9a8db86e23",
+    "src/eos/eos.hpp": "7fc1891bf5fafa789770a3feb607a95c7196bd1b64ad5dd156090afeb4bc2953",
+    "src/hydro/hydro.hpp": "c201814621c1290bab6b67575f37c5910ff253c7711d3bf6704705ba21395b83",
+    "src/mhd/mhd.hpp": "d3520184c8dd8e723c2026625844ae497274685d89e0b95cfadc9fcfacff35a7",
+    "src/z4c/z4c.hpp": "767fbd2b507a26769947f470eb20ffd8443b581ac50a3238235de4ffcc3ebc72",
+    "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+    "src/utils/cart_grid.hpp": "e0b25599d2531c2f70042191ed73922a5453af71400225b1bfa7f264e80f58a3",
+    "src/athena_tensor.hpp": "5c51811935c26f19dbed6a317c8958da29678e4a699ca17f271bfd5733115f66",
+    "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+    "build-layer-research/live-damping-native/native-build/include/z4c/hyperboloidal/cartesian_patch.hpp": "a3acc7dce1c4fa98d2c7766801fb35ecb12088d23475e8f36a905ea7add4b395",
+    "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+    "build-layer-research/live-damping-native/native-build/include/live_damping_profile.hpp": "69bbbc137486eb3398f94ed50a8b04583c375da049372b82b19330d8432fc153",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/coordinates/adm.hpp": "f14666210a4150f5c50a42ea5026f0f944e76709bbaa57cb7a507825f552cec0",
+    "src/eos/primitive-solver/ps_types.hpp": "febe1af3f71dd5fd53fe354c3c32c798bad3df13837ef984e469c70ba0317094",
+    "src/z4c/z4c.cpp": "79356bc144aab6eb37248d8d099d8bae2bcddbf1780ad6144462f8df575fcb5f",
+    "src/z4c/fastflow.hpp": "89c07aa71e19b65bed5675e44530319c823b2085eb7ffac57e76a66d449baaa9",
+    "src/geodesic-grid/gauss_legendre.hpp": "fe896b88f489258a0a69e8e59c2738a3e958f067f840b4e3a790d963286ad074",
+    "src/z4c/z4c_macros.hpp": "35bec0854572c95eef713c3e1c5c2ca09f20aecc5eb374329abeca9361d2c36a",
+    "src/z4c/compact_object_tracker.hpp": "f1d03dad4de718f12667f1c6b4ebfc95a18d37d384d5bf837fd422b35f8a6a5d",
+    "src/z4c/driftcontrol/driftcontrol.hpp": "6829f26d3668dd10cdca942797a9ad1b96947a3fb605c6d8dcaff021a780bd6f",
+    "src/z4c/horizon_dump.hpp": "38d542b7e74cad5cccc7b8f27ff87c6676bf73a4fa0f88847d6a3a27d58e7354",
+    "src/z4c/z4c_amr.hpp": "c5ec40ded940c3a202a839c0365b7d12522d6e42409a612490d98e186138fe32",
+    "src/z4c/z4c_hyperboloidal.cpp": "1c3e8b5836e2c231622b7df823476135b7e1517aadac93c6e814c2da20d774d1",
+    "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+    "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+    "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+    "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+    "src/z4c/z4c_calcrhs.cpp": "d24756f1e445a25a13715a87d46990e72ea31e75c8ceb89f7fdec648c17872ad",
+    "src/z4c/tmunu.hpp": "49afce9ea09f80bd0173ddf3a7097246701ed8ff27a48835f4d8ee4b43fbbcf4",
+    "src/coordinates/cell_locations.hpp": "f58f2490e69587b4f067b1ef801fe73c9da6079e40f22feaa415db8c89515829",
+    "src/z4c/z4c_newdt.cpp": "0aebb2b7d88907506f2dd681008b1237a2e7382368f8e3c239bfc606511950bd",
+    "src/z4c/z4c_tasks.cpp": "3a8c9158692222d0699f1d1ff38f261621e7712ad472a4fd9007c8815b1d8626",
+    "src/tasklist/numerical_relativity.hpp": "0b95550a716786cac467a8e6d94abcc3c4316bb7019dda4bac79db13aaa0dd43",
+    "src/z4c/cce/cce.hpp": "c1b7c0cd1613b3f9b411eb22e284e968065765f5e40513c08783331aefb9bfcd"
+  },
+  "compile_results": [
+    {
+      "base_source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/include",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-0.o",
+        "-c",
+        "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-0.d"
+      ],
+      "cwd": "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src",
+      "exit_status": 0,
+      "base_object_sha256": "8d798d2688de03873bcf3e098cc824320a8f4ceaa198062d823bb7cf9ce72574",
+      "private_object_sha256": "648a7fbeca209ef9675ce805c69416153f36096671ee88ae05a7e8061c97215b",
+      "dependency_file_sha256": "24f269e54e5799505d30adade75ce1e8ca17feb70645f0d5407b45dd1dac65a8"
+    },
+    {
+      "base_source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/include",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-1.o",
+        "-c",
+        "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-1.d"
+      ],
+      "cwd": "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src",
+      "exit_status": 0,
+      "base_object_sha256": "a121c896fda543383e67327affe00ab7d8de617bba58a3beba61ccebf919ed13",
+      "private_object_sha256": "0f8955ac443e57b8d161f74c978b54788106f4f7008b304a8f8e2478e5817a6b",
+      "dependency_file_sha256": "3b7b1667787ae4d8250c350619387a5b598a74f721fec978ef80e098188f53f2"
+    },
+    {
+      "base_source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/include",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-2.o",
+        "-c",
+        "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-2.d"
+      ],
+      "cwd": "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src",
+      "exit_status": 0,
+      "base_object_sha256": "38948f46ea208799fd64b74521e13369e398be59832171f9dab9e161d067ebed",
+      "private_object_sha256": "f943f411b8b3cb1c2d30b5f616c8cdbf8974bb9c04808123403f0a8f9ef3c568",
+      "dependency_file_sha256": "806a63ae768c57a75cfce641b6c43670eb6bea065c7aa2954d26cf5d11e31079"
+    },
+    {
+      "base_source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/include",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-3.o",
+        "-c",
+        "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-3.d"
+      ],
+      "cwd": "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src",
+      "exit_status": 0,
+      "base_object_sha256": "b50c64c590e384ae3d3f1a7ceb7222db9e980951e63d6f6b3a2a9c136ecfe1a5",
+      "private_object_sha256": "3a1a6fe83efa694a8e279d2a0fae3205bba2995ec102a4611c7c0f7ff3437b1d",
+      "dependency_file_sha256": "3680f9478a837b76b539894d51c72c9ee406ea44adbbb5a96ece84430cccccab"
+    },
+    {
+      "base_source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/include",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-4.o",
+        "-c",
+        "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-4.d"
+      ],
+      "cwd": "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src",
+      "exit_status": 0,
+      "base_object_sha256": "ecd68851270596058267d10d4d745baaa88af7169e5200cf8e1315ca858f6a7c",
+      "private_object_sha256": "42b2fc2e4752e6a9704eeee148185864e28bf901c83f7f4cd10deacb01aebb4c",
+      "dependency_file_sha256": "311a597b72d7bd1579a046b8152bff4f5b9152aeaf267c0f959584a77e4e1835"
+    },
+    {
+      "base_source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/include",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-5.o",
+        "-c",
+        "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-5.d"
+      ],
+      "cwd": "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src",
+      "exit_status": 0,
+      "base_object_sha256": "77858ad42bfcb8418d969a5ac262c2347bb2239239040d5e692819f524c3237d",
+      "private_object_sha256": "b47a1f3b0b820a2f78b062d2e3ecd589c14fa010cf4b90f49feff54d2b4780f5",
+      "dependency_file_sha256": "d1ea4b109bbfeb7e94c279eb8a83b056e92e91aec0151e44d4d056827248505e"
+    }
+  ],
+  "link_command": [
+    "/usr/bin/c++",
+    "-O3",
+    "-DNDEBUG",
+    "-arch",
+    "arm64",
+    "-isysroot",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+    "-Wl,-search_paths_first",
+    "-Wl,-headerpad_max_install_names",
+    "-DKOKKOS_DEPENDENCE",
+    "CMakeFiles/athena.dir/main.cpp.o",
+    "CMakeFiles/athena.dir/globals.cpp.o",
+    "CMakeFiles/athena.dir/parameter_input.cpp.o",
+    "CMakeFiles/athena.dir/bvals/bvals.cpp.o",
+    "CMakeFiles/athena.dir/bvals/buffs_cc.cpp.o",
+    "CMakeFiles/athena.dir/bvals/buffs_fc.cpp.o",
+    "CMakeFiles/athena.dir/bvals/bvals_cc.cpp.o",
+    "CMakeFiles/athena.dir/bvals/bvals_fc.cpp.o",
+    "CMakeFiles/athena.dir/bvals/bvals_part.cpp.o",
+    "CMakeFiles/athena.dir/bvals/bvals_tasks.cpp.o",
+    "CMakeFiles/athena.dir/bvals/flux_correct_cc.cpp.o",
+    "CMakeFiles/athena.dir/bvals/flux_correct_fc.cpp.o",
+    "CMakeFiles/athena.dir/bvals/prolongation.cpp.o",
+    "CMakeFiles/athena.dir/bvals/prolong_prims.cpp.o",
+    "CMakeFiles/athena.dir/bvals/physics/hydro_bcs.cpp.o",
+    "CMakeFiles/athena.dir/bvals/physics/bfield_bcs.cpp.o",
+    "CMakeFiles/athena.dir/bvals/physics/radiation_bcs.cpp.o",
+    "CMakeFiles/athena.dir/bvals/physics/z4c_bcs.cpp.o",
+    "CMakeFiles/athena.dir/coordinates/adm.cpp.o",
+    "CMakeFiles/athena.dir/coordinates/coordinates.cpp.o",
+    "CMakeFiles/athena.dir/coordinates/excision.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/cyclic_zoom.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_criteria.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_data.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_datablock.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_fluxes.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_loadbalance.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_mesh.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_refinement.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_region.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_restart.cpp.o",
+    "CMakeFiles/athena.dir/cyclic_zoom/zoom_srcterms.cpp.o",
+    "CMakeFiles/athena.dir/diffusion/ambipolar.cpp.o",
+    "CMakeFiles/athena.dir/diffusion/conduction.cpp.o",
+    "CMakeFiles/athena.dir/diffusion/resistivity.cpp.o",
+    "CMakeFiles/athena.dir/diffusion/sts_rkl2.cpp.o",
+    "CMakeFiles/athena.dir/diffusion/viscosity.cpp.o",
+    "CMakeFiles/athena.dir/driver/driver.cpp.o",
+    "CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd.cpp.o",
+    "CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd_fluxes.cpp.o",
+    "CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd_fofc.cpp.o",
+    "CMakeFiles/athena.dir/eos/eos.cpp.o",
+    "CMakeFiles/athena.dir/eos/ideal_hyd.cpp.o",
+    "CMakeFiles/athena.dir/eos/ideal_mhd.cpp.o",
+    "CMakeFiles/athena.dir/eos/isothermal_hyd.cpp.o",
+    "CMakeFiles/athena.dir/eos/isothermal_mhd.cpp.o",
+    "CMakeFiles/athena.dir/eos/ideal_srhyd.cpp.o",
+    "CMakeFiles/athena.dir/eos/ideal_grhyd.cpp.o",
+    "CMakeFiles/athena.dir/eos/ideal_srmhd.cpp.o",
+    "CMakeFiles/athena.dir/eos/ideal_grmhd.cpp.o",
+    "CMakeFiles/athena.dir/eos/noop_dyngrmhd.cpp.o",
+    "CMakeFiles/athena.dir/eos/primitive-solver/eos_compose.cpp.o",
+    "CMakeFiles/athena.dir/eos/primitive-solver/eos_hybrid.cpp.o",
+    "CMakeFiles/athena.dir/eos/primitive-solver/piecewise_polytrope.cpp.o",
+    "CMakeFiles/athena.dir/eos/primitive-solver/unit_system.cpp.o",
+    "CMakeFiles/athena.dir/geodesic-grid/geodesic_grid.cpp.o",
+    "CMakeFiles/athena.dir/geodesic-grid/spherical_grid.cpp.o",
+    "CMakeFiles/athena.dir/geodesic-grid/gauss_legendre.cpp.o",
+    "CMakeFiles/athena.dir/gravity/gravity.cpp.o",
+    "CMakeFiles/athena.dir/gravity/mg_gravity.cpp.o",
+    "CMakeFiles/athena.dir/hydro/hydro.cpp.o",
+    "CMakeFiles/athena.dir/hydro/hydro_fluxes.cpp.o",
+    "CMakeFiles/athena.dir/hydro/hydro_fofc.cpp.o",
+    "CMakeFiles/athena.dir/hydro/hydro_newdt.cpp.o",
+    "CMakeFiles/athena.dir/hydro/hydro_sts.cpp.o",
+    "CMakeFiles/athena.dir/hydro/hydro_tasks.cpp.o",
+    "CMakeFiles/athena.dir/hydro/hydro_update.cpp.o",
+    "CMakeFiles/athena.dir/ion-neutral/ion-neutral.cpp.o",
+    "CMakeFiles/athena.dir/ion-neutral/ion-neutral_tasks.cpp.o",
+    "CMakeFiles/athena.dir/mesh/build_tree.cpp.o",
+    "CMakeFiles/athena.dir/mesh/load_balance.cpp.o",
+    "CMakeFiles/athena.dir/mesh/mesh.cpp.o",
+    "CMakeFiles/athena.dir/mesh/meshblock.cpp.o",
+    "CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o",
+    "CMakeFiles/athena.dir/mesh/meshblock_tree.cpp.o",
+    "CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o",
+    "CMakeFiles/athena.dir/mesh/refinement_criteria.cpp.o",
+    "CMakeFiles/athena.dir/multigrid/multigrid.cpp.o",
+    "CMakeFiles/athena.dir/multigrid/multigrid_bvals.cpp.o",
+    "CMakeFiles/athena.dir/multigrid/multigrid_driver.cpp.o",
+    "CMakeFiles/athena.dir/multigrid/multigrid_tasks.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd_corner_e.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd_ct.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd_fluxes.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd_fofc.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd_newdt.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd_sts.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd_tasks.cpp.o",
+    "CMakeFiles/athena.dir/mhd/mhd_update.cpp.o",
+    "CMakeFiles/athena.dir/outputs/io_wrapper.cpp.o",
+    "CMakeFiles/athena.dir/outputs/outputs.cpp.o",
+    "CMakeFiles/athena.dir/outputs/basetype_output.cpp.o",
+    "CMakeFiles/athena.dir/outputs/cartgrid.cpp.o",
+    "CMakeFiles/athena.dir/outputs/derived_variables.cpp.o",
+    "CMakeFiles/athena.dir/outputs/binary.cpp.o",
+    "CMakeFiles/athena.dir/outputs/eventlog.cpp.o",
+    "CMakeFiles/athena.dir/outputs/formatted_table.cpp.o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-0.o",
+    "CMakeFiles/athena.dir/outputs/restart.cpp.o",
+    "CMakeFiles/athena.dir/outputs/spherical_surface.cpp.o",
+    "CMakeFiles/athena.dir/outputs/coarsened_binary.cpp.o",
+    "CMakeFiles/athena.dir/outputs/track_prtcl.cpp.o",
+    "CMakeFiles/athena.dir/outputs/vtk_mesh.cpp.o",
+    "CMakeFiles/athena.dir/outputs/vtk_prtcl.cpp.o",
+    "CMakeFiles/athena.dir/particles/particles.cpp.o",
+    "CMakeFiles/athena.dir/particles/particles_pushers.cpp.o",
+    "CMakeFiles/athena.dir/particles/particles_tasks.cpp.o",
+    "CMakeFiles/athena.dir/outputs/pdf.cpp.o",
+    "CMakeFiles/athena.dir/pgen/pgen.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/advection.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/cpaw.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/cshock.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/divb_amr.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/diffusion.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/gr_bondi.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/gr_monopole.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/linear_wave.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/lw_implode.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/orszag_tang.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/mri3d.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/shock_tube.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/shwave.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/rad_beam.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/rad_linear_wave.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/z4c_boosted_puncture.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/z4c_interpolation.cpp.o",
+    "CMakeFiles/athena.dir/pgen/z4c/superposed_boosted_puncture.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/z4c_linear_wave.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/jeans_wave.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/binary_gravity.cpp.o",
+    "CMakeFiles/athena.dir/pgen/tests/be_collapse.cpp.o",
+    "CMakeFiles/athena.dir/pgen/unit_tests/eos_compose.cpp.o",
+    "CMakeFiles/athena.dir/pgen/unit_tests/gauss_legendre.cpp.o",
+    "CMakeFiles/athena.dir/radiation/radiation.cpp.o",
+    "CMakeFiles/athena.dir/radiation/radiation_fluxes.cpp.o",
+    "CMakeFiles/athena.dir/radiation/radiation_newdt.cpp.o",
+    "CMakeFiles/athena.dir/radiation/radiation_source.cpp.o",
+    "CMakeFiles/athena.dir/radiation/radiation_tasks.cpp.o",
+    "CMakeFiles/athena.dir/radiation/radiation_tetrad.cpp.o",
+    "CMakeFiles/athena.dir/radiation/radiation_update.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/orbital_advection.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/orbital_advection_cc.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/orbital_advection_fc.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/orbital_advection_tasks.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/shearing_box.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/shearing_box_cc.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/shearing_box_fc.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/shearing_box_srcterms.cpp.o",
+    "CMakeFiles/athena.dir/shearing_box/shearing_box_tasks.cpp.o",
+    "CMakeFiles/athena.dir/srcterms/srcterms.cpp.o",
+    "CMakeFiles/athena.dir/srcterms/srcterms_newdt.cpp.o",
+    "CMakeFiles/athena.dir/srcterms/turb_driver.cpp.o",
+    "CMakeFiles/athena.dir/tasklist/numerical_relativity.cpp.o",
+    "CMakeFiles/athena.dir/units/units.cpp.o",
+    "CMakeFiles/athena.dir/utils/change_rundir.cpp.o",
+    "CMakeFiles/athena.dir/utils/derived_vars.cpp.o",
+    "CMakeFiles/athena.dir/utils/show_config.cpp.o",
+    "CMakeFiles/athena.dir/utils/lagrange_interpolator.cpp.o",
+    "CMakeFiles/athena.dir/utils/tov/tov.cpp.o",
+    "CMakeFiles/athena.dir/utils/tr_table.cpp.o",
+    "CMakeFiles/athena.dir/utils/cart_grid.cpp.o",
+    "CMakeFiles/athena.dir/utils/watchdog.cpp.o",
+    "CMakeFiles/athena.dir/utils/spherical_surface.cpp.o",
+    "CMakeFiles/athena.dir/z4c/compact_object_tracker.cpp.o",
+    "CMakeFiles/athena.dir/z4c/fastflow.cpp.o",
+    "CMakeFiles/athena.dir/z4c/horizon_dump.cpp.o",
+    "CMakeFiles/athena.dir/z4c/tmunu.cpp.o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-1.o",
+    "CMakeFiles/athena.dir/z4c/z4c_adm.cpp.o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-2.o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-3.o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-4.o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/object-5.o",
+    "CMakeFiles/athena.dir/z4c/z4c_update.cpp.o",
+    "CMakeFiles/athena.dir/z4c/z4c_gauge.cpp.o",
+    "CMakeFiles/athena.dir/z4c/z4c_Sbc.cpp.o",
+    "CMakeFiles/athena.dir/z4c/z4c_calculate_weyl_scalars.cpp.o",
+    "CMakeFiles/athena.dir/z4c/z4c_wave_extr.cpp.o",
+    "CMakeFiles/athena.dir/z4c/z4c_amr.cpp.o",
+    "CMakeFiles/athena.dir/z4c/cce/cce.cpp.o",
+    "CMakeFiles/athena.dir/z4c/driftcontrol/driftcontrol.cpp.o",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/live-damping-native/native-build/athena-live-damping-c0",
+    "../kokkos/containers/src/libkokkoscontainers.a",
+    "../kokkos/algorithms/src/libkokkosalgorithms.a",
+    "../kokkos/core/src/libkokkoscore.a",
+    "../kokkos/simd/src/libkokkossimd.a"
+  ],
+  "link_cwd": "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/src",
+  "link_exit_status": 0,
+  "elapsed_seconds": 9.517497667,
+  "reused_base_link_inputs_sha256": {
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/main.cpp.o": {
+      "sha256": "f3fdb802bfabc0d6f1effdfc4a9ac1328404a0d301b7d313b462dad1dddfd626",
+      "bytes": 25344
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/globals.cpp.o": {
+      "sha256": "90012201b550ecd1ddddd56352718e4c7f4056969ff3fc5483e8f02c306275c5",
+      "bytes": 3816
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/parameter_input.cpp.o": {
+      "sha256": "24af56c28eb67d5424bb6cab3836def6f4e3ac72817db941ce0bf8bb991c5f33",
+      "bytes": 71624
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/bvals.cpp.o": {
+      "sha256": "31eaf292b766b01d353416dfcb4d4c2d495588bdb80c435b13f996356644a466",
+      "bytes": 109984
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/buffs_cc.cpp.o": {
+      "sha256": "7642645e0aabf49132494dab132cd632f3b0afbc7946027f27c3fdfc1b1d4778",
+      "bytes": 8088
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/buffs_fc.cpp.o": {
+      "sha256": "57d84ece7518fc86edb0aebf485020aa78504bc5282b522556c8a51257117fd9",
+      "bytes": 10856
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/bvals_cc.cpp.o": {
+      "sha256": "861cca9cdc76863085c386f52bd786fc629edbd635940d861ba1db2e9164bf31",
+      "bytes": 40480
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/bvals_fc.cpp.o": {
+      "sha256": "159a1c178ff7e48fe9c8e0c8ec78fa6f4817fe7ba2ccb92e4ae3b27054f49085",
+      "bytes": 31008
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/bvals_part.cpp.o": {
+      "sha256": "d76c1a58282827a2a579a7cb193d7cc89337fcac93763be9c5546725d5435e2d",
+      "bytes": 101208
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/bvals_tasks.cpp.o": {
+      "sha256": "1eb04f8d11ebe9d51702fff47167f70a0a678efc0baf64acba7cb54615a028f1",
+      "bytes": 4144
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/flux_correct_cc.cpp.o": {
+      "sha256": "21316f9241fdd6fb66dca2568fbcc8877f1ca34c78df053b72ed5da08568c1af",
+      "bytes": 28720
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/flux_correct_fc.cpp.o": {
+      "sha256": "7097e0f5c768516570973dcd65640c8f04600ab505ba64adb0fe37b6a0507860",
+      "bytes": 82248
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/prolongation.cpp.o": {
+      "sha256": "de76197322ab0ba9896724e46ac57d35df7344a78406482466f8c114718947a1",
+      "bytes": 97696
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/prolong_prims.cpp.o": {
+      "sha256": "e74149f74cea280ccc6762780daa19828d3925ae46eeffcd01d28308d6a5231b",
+      "bytes": 56080
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/physics/hydro_bcs.cpp.o": {
+      "sha256": "dfd406af967d3f834aa79842945cf37e6f0d9153121ec384b80b43e5ca69b8f7",
+      "bytes": 39024
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/physics/bfield_bcs.cpp.o": {
+      "sha256": "c930e0c22a426df383cb1b941056178c3090636ac68cb4a14f1aed3254474373",
+      "bytes": 38272
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/physics/radiation_bcs.cpp.o": {
+      "sha256": "35cde01e3335fdfb1d216870a3bf1c42fbb3d75e32fdcc9d6ef0a728d5442515",
+      "bytes": 32296
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/bvals/physics/z4c_bcs.cpp.o": {
+      "sha256": "14fc15c0625e6e11169310fbf3179bd997802bd25c2a449070f291acdd1439d6",
+      "bytes": 102336
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/coordinates/adm.cpp.o": {
+      "sha256": "41e3b6a7a67440c60bbf33dd7727dde6f557567153d1b13a8a56f56afb543e2a",
+      "bytes": 103392
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/coordinates/coordinates.cpp.o": {
+      "sha256": "2c6e679462f7e0725da3b1108a597fffd9e696e3c3d0372c531fec8bc559edef",
+      "bytes": 97872
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/coordinates/excision.cpp.o": {
+      "sha256": "8d26f2cc90fce5fa91b4367f25bfb59c5ebba03937883394baf63ae839815fc4",
+      "bytes": 67376
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/cyclic_zoom.cpp.o": {
+      "sha256": "51d71c362df78d0d99c54902c6aa612098e1623f05c477b571240fa11a816688",
+      "bytes": 30528
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_criteria.cpp.o": {
+      "sha256": "ba381655e698525bbf8965e9799e10150d8f7392215e7eebd7c6b92177adcef5",
+      "bytes": 14952
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_data.cpp.o": {
+      "sha256": "91490fe2f0b516ffca3988af2c75f8f46e168ee5e67aefc103a2387f7086429d",
+      "bytes": 191008
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_datablock.cpp.o": {
+      "sha256": "6a9f09d46ec5b984099bca02b75b0a4a4db1877db320bfab576b8f3cdb56cc21",
+      "bytes": 152168
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_fluxes.cpp.o": {
+      "sha256": "c88b09a8eecfb288189a10e94676388c14b7fa8240e9e06388d5962fcce758bd",
+      "bytes": 75200
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_loadbalance.cpp.o": {
+      "sha256": "d87d61cbbe6fede47fa9706db69fb12624248a06947a6f92ada9090600289f96",
+      "bytes": 109176
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_mesh.cpp.o": {
+      "sha256": "58b64401ab8c3b432b00af41539a11eb9855168668a75b685ebfba68ecf05816",
+      "bytes": 21288
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_refinement.cpp.o": {
+      "sha256": "88b6e841362cf41064f082b8ed7dd179b7cdb9d66386fb2c6b239e47028ae006",
+      "bytes": 12296
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_region.cpp.o": {
+      "sha256": "dbc980caf25fea1004647b6b557639c3d90ffce2d46f02a091e9fba540b4f033",
+      "bytes": 54304
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_restart.cpp.o": {
+      "sha256": "c57ec890a40fcf3eaaed4f7475ddfe0508048a39972f35ad9e1781fa1e7ad599",
+      "bytes": 11488
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/cyclic_zoom/zoom_srcterms.cpp.o": {
+      "sha256": "c763ed20cdd1a6348f4864a77e2b72528d919e257992455f10fa6ff92660cf72",
+      "bytes": 31672
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/diffusion/ambipolar.cpp.o": {
+      "sha256": "aba39585c1f4091a93f42580df284d9e51fa755e99bc0ec69e5ea3188249c8d1",
+      "bytes": 75000
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/diffusion/conduction.cpp.o": {
+      "sha256": "8142f95cbeefa061efe310c3c8c523771635f3ce8f16b4203100112db58965a4",
+      "bytes": 46544
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/diffusion/resistivity.cpp.o": {
+      "sha256": "30e1e9fc6bb73fc51255b67a0762431215953334dfffc393f951e6c8a9221837",
+      "bytes": 74824
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/diffusion/sts_rkl2.cpp.o": {
+      "sha256": "611d2a0fbca18b3b88071808ad21b989f2de00e6eb812f0eb931192ea21c2ef0",
+      "bytes": 10920
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/diffusion/viscosity.cpp.o": {
+      "sha256": "2b60cd45ef7c425a4161fc5195983e8d8f7b521199089f6b781e9d3b2067acbe",
+      "bytes": 59984
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/driver/driver.cpp.o": {
+      "sha256": "f2fcd2dea86508e84bb96901951062ee668ef713ef5bcbba2b6f5209c085f971",
+      "bytes": 105592
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd.cpp.o": {
+      "sha256": "a58c923538c9b669df370c79d300a6998cd7420692a78b02e1e7f86ed9059cce",
+      "bytes": 932048
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd_fluxes.cpp.o": {
+      "sha256": "2a0b8214d907978b3de325a9f22d9be4c561ac83dcba4f9e522c61ec1bc0a789",
+      "bytes": 1090352
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/dyn_grmhd/dyn_grmhd_fofc.cpp.o": {
+      "sha256": "9bea7b084272d44982779c73a001ac67bb613d5f924dccf8e5ae8c5a368f2052",
+      "bytes": 1140320
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/eos.cpp.o": {
+      "sha256": "d4f7c1cc0feba6bb42d68b295440da40fd71c35c3bc396a074cc80f3213f8ec0",
+      "bytes": 9304
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/ideal_hyd.cpp.o": {
+      "sha256": "81c7e08a501e9ef9174b40307784c4d07f1c0adf64dfc77c23d8ece8de19bd5e",
+      "bytes": 34888
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/ideal_mhd.cpp.o": {
+      "sha256": "bc105a3b2ddb81ee93b0b6163675b2fedbadbe4d8d0b027644e0d029990ff964",
+      "bytes": 36912
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/isothermal_hyd.cpp.o": {
+      "sha256": "fa9773ea6ad96d9fd0f2cf399938bf1ff73a22d8aafe31f408e590f78da0b430",
+      "bytes": 27176
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/isothermal_mhd.cpp.o": {
+      "sha256": "65500d5e2994cb5034b171e9066f855b6a3d97fa46cee70ecaf9b332f6f49b27",
+      "bytes": 29648
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/ideal_srhyd.cpp.o": {
+      "sha256": "3e80e1b2df1d5e277b6c816c00a8c8ce556163547aeebdcd90152c64501756e6",
+      "bytes": 38968
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/ideal_grhyd.cpp.o": {
+      "sha256": "9543e5913f8364c970ef38a0e6e1c3157aaa8f5879078b58239d80fcc7540b4e",
+      "bytes": 41960
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/ideal_srmhd.cpp.o": {
+      "sha256": "149803596387e7be677aa2b5b4ea2bdb180189c3a85e65a6ed8c47dd260aadbd",
+      "bytes": 41760
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/ideal_grmhd.cpp.o": {
+      "sha256": "c06996925eb3d76fbc73684ff33545a4a4f3dedcbff31f58005a07d78b6a73ca",
+      "bytes": 45776
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/noop_dyngrmhd.cpp.o": {
+      "sha256": "ff420381dd91c9432bc896e3b7cf941959c266d3ef646f7ed29baa21e1ca0527",
+      "bytes": 6440
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/primitive-solver/eos_compose.cpp.o": {
+      "sha256": "97bdbbd9042d082a3f8af3b3577d59efbae384cb419694ed62c20588aec045c0",
+      "bytes": 170968
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/primitive-solver/eos_hybrid.cpp.o": {
+      "sha256": "4c9ec04175932d928b74afa6d28197f771c7d8ac8619358b7dc7285358251e9f",
+      "bytes": 137096
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/primitive-solver/piecewise_polytrope.cpp.o": {
+      "sha256": "5a3b544da7cfba620fb2a0a5a6f9b1d062595b452ccdf921e4eec324588c7aa1",
+      "bytes": 9592
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/eos/primitive-solver/unit_system.cpp.o": {
+      "sha256": "205a340b7c13b2002920e9fe6804e14ede62c92896b0913b6fea3874b166cbcc",
+      "bytes": 6152
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/geodesic-grid/geodesic_grid.cpp.o": {
+      "sha256": "eced1d898848620f44993e6861f2d3501d214039f3b5a2dd434caae28ccfc24a",
+      "bytes": 259376
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/geodesic-grid/spherical_grid.cpp.o": {
+      "sha256": "5da092e3cf0a6c0e1ba0a2d652550d94355b3f77899809ff9a58a9fa72cb9977",
+      "bytes": 166456
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/geodesic-grid/gauss_legendre.cpp.o": {
+      "sha256": "4d56145d4a8b0402557f45a3a1b118ff3fa6849855153795d8fed3246c65e131",
+      "bytes": 184904
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/gravity/gravity.cpp.o": {
+      "sha256": "3c06d0680b2ca6a83029f2d89b5d47bbdd8c2aeccb225295c9b935f5bd3e3020",
+      "bytes": 74968
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/gravity/mg_gravity.cpp.o": {
+      "sha256": "8f7b5f8b82dea342c48e2a09f5d15216fe3ad9c381593892812aa17cb2f95306",
+      "bytes": 152960
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/hydro/hydro.cpp.o": {
+      "sha256": "dc1af04a2658a34a1750ac2592d3de4a6bec16f974c8504fc865423e01610345",
+      "bytes": 105456
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/hydro/hydro_fluxes.cpp.o": {
+      "sha256": "cab87d66e68956a19e2b0a915da3374efa994dd964e7c4e7332e6687ec5f8c8c",
+      "bytes": 715072
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/hydro/hydro_fofc.cpp.o": {
+      "sha256": "f514fbcab678da2dde043ee5daf72b63ca65d776f13d4648dfc5588f76fbd44b",
+      "bytes": 33280
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/hydro/hydro_newdt.cpp.o": {
+      "sha256": "63a6a5deea67dc004bb7a5dd5622d39be0a48be61e6f5f44f87fc82e9a1f41f3",
+      "bytes": 32416
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/hydro/hydro_sts.cpp.o": {
+      "sha256": "dcb6accf33ba908a2b7c4e6266b95d4bfee4e3c8b3a8a2c6f32cec0e3c153806",
+      "bytes": 96200
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/hydro/hydro_tasks.cpp.o": {
+      "sha256": "ecf70c50c7180f039fed18423e977b22a6ddabfddc034c02f79da58c60065d33",
+      "bytes": 77736
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/hydro/hydro_update.cpp.o": {
+      "sha256": "26cf79822ce0c269f7ef847ee69f06f25b0b4e41d67ff907ddb292e0efe7070f",
+      "bytes": 18352
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/ion-neutral/ion-neutral.cpp.o": {
+      "sha256": "c236fb7c1e01ab67f948e333c6d5f61154568ee8c233e203696bc4a974732ffb",
+      "bytes": 5336
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/ion-neutral/ion-neutral_tasks.cpp.o": {
+      "sha256": "4a0df06622ccba1c1b59e2667ba4cc6bc0243d8aec2dac12f27a61b56714638d",
+      "bytes": 127920
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mesh/build_tree.cpp.o": {
+      "sha256": "ca62664f236bbdd8f302198d22611ccf12f3641c12be6227f0873fb2d1b429b7",
+      "bytes": 26664
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mesh/load_balance.cpp.o": {
+      "sha256": "edc3c0b0e1703d478aa7527317535579ba6668aa2e0b9de9e2e22401755357ff",
+      "bytes": 10776
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mesh/mesh.cpp.o": {
+      "sha256": "d40d6db819aa0e76b7745cf7b72bcdc167bfb1a52cb0ee440c7514e9b6337726",
+      "bytes": 47712
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mesh/meshblock.cpp.o": {
+      "sha256": "1dece8aa95fa05c4729030a53bce5e28f7c5c3f1fe998f0cb78557bdd2cdcb52",
+      "bytes": 112192
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mesh/meshblock_pack.cpp.o": {
+      "sha256": "1112359dc2021b348b66a6145f55efd76457e9ad6dc3f084e3cab707335535fc",
+      "bytes": 36320
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mesh/meshblock_tree.cpp.o": {
+      "sha256": "e120e056a9904ed4550f8f912c7fa0eaf5fd9e5b852b39ba1dbe9db8c3b8ea13",
+      "bytes": 17608
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mesh/mesh_refinement.cpp.o": {
+      "sha256": "4e6fed97c2345e879a59f6d4533b076d9ccb604fb5676965dd25106749311e1e",
+      "bytes": 428688
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mesh/refinement_criteria.cpp.o": {
+      "sha256": "6a9f3da115880547f6612f7e27303a268053117c9de3e9a85782c28bd87677b6",
+      "bytes": 125024
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/multigrid/multigrid.cpp.o": {
+      "sha256": "2c5393ec5510bd19ef4ddfe1e7e6fcd8d19b3206562f52c1699cbff8b1e1f391",
+      "bytes": 418048
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/multigrid/multigrid_bvals.cpp.o": {
+      "sha256": "d9e2a4a546f30dc97a4cbf9d9cee4ab9f4ced3dd0dd2abc2763925b635864a17",
+      "bytes": 197072
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/multigrid/multigrid_driver.cpp.o": {
+      "sha256": "c354d772b3455e1b2d8f624a8db1f165e68de9c8bbdf3e7d7cfa7ec97bc536b4",
+      "bytes": 249664
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/multigrid/multigrid_tasks.cpp.o": {
+      "sha256": "1abadf5b2d2f24fd62820da4b4ca7e547fde067fda8a44e9d7f89209fe91651e",
+      "bytes": 102200
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd.cpp.o": {
+      "sha256": "d003ee980bf5916f91abccf73cb1604ea4cb191c167724019763c67d7b79bfb7",
+      "bytes": 206088
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd_corner_e.cpp.o": {
+      "sha256": "c9b255033b6163c17f20d8a6677c439c96a8413b166fb0b2aa47a5843d5a8902",
+      "bytes": 84816
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd_ct.cpp.o": {
+      "sha256": "713bdadc7b7d64c526e5dd30b215fc6ba7381f914c907f77ad84fb9c7052e90f",
+      "bytes": 27992
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd_fluxes.cpp.o": {
+      "sha256": "1cbe8970dd52d61483853b06cab56f1e1408f158e40b9b79bd1f882fa69f8eee",
+      "bytes": 668888
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd_fofc.cpp.o": {
+      "sha256": "324f980c9014020a6814af7115e85247236f419f3433fd0799e30f4e3f640d09",
+      "bytes": 94544
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd_newdt.cpp.o": {
+      "sha256": "73d1668939aecd5b8bef69ae591933e59c7652d2180bd9d99d42effc0537f043",
+      "bytes": 33784
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd_sts.cpp.o": {
+      "sha256": "d458179762a884187c43b1b826949fba4fea157f6e83e39b35c5ebbb718254ad",
+      "bytes": 174768
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd_tasks.cpp.o": {
+      "sha256": "ffbd65ad94201f2f0cc89655847c38992cd834dc2e82adbd02ac15722d10128a",
+      "bytes": 112184
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/mhd/mhd_update.cpp.o": {
+      "sha256": "5e9870005f334a5bede0e4806baf6517c5b789e1e6a952ac39d50a5651fc0f20",
+      "bytes": 18408
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/io_wrapper.cpp.o": {
+      "sha256": "2aaede86ec70809f77e00317f7e1789f7797920a7de6554bd7957410c2178b04",
+      "bytes": 16192
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/outputs.cpp.o": {
+      "sha256": "cf3271e98a8b3c71cfa45d6b47eea2ff5a9966c993a824c35a9b73558d0e9b32",
+      "bytes": 42320
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/basetype_output.cpp.o": {
+      "sha256": "9c099410d3852bf9e827e5d736289dc9b5cf63a54d507b43b894a9c903767d57",
+      "bytes": 249496
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/cartgrid.cpp.o": {
+      "sha256": "4613ebcf374afd61ecfc4bb32a0e294b257c195facd87fc8d510bc1abc5c0c3b",
+      "bytes": 116192
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/derived_variables.cpp.o": {
+      "sha256": "48482ea9a276aec9af56cf04a4f32e703286753a12b4e90fdd62c52294289278",
+      "bytes": 316936
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/binary.cpp.o": {
+      "sha256": "a1d6ea776ec5b0cefcf218da9ef800c1bc9f6b385b499352d359f4f5873e80d8",
+      "bytes": 27992
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/eventlog.cpp.o": {
+      "sha256": "b9989e52842eeb922e536a3a0d447a1414b096419ec70ae851d4da7d9de16c07",
+      "bytes": 14984
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/formatted_table.cpp.o": {
+      "sha256": "67a6aad1de63a9500bd0b863da2c4e47f1e3a92e321b6129d0b674903ac7831c",
+      "bytes": 18704
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/history.cpp.o": {
+      "sha256": "8d798d2688de03873bcf3e098cc824320a8f4ceaa198062d823bb7cf9ce72574",
+      "bytes": 219160
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/restart.cpp.o": {
+      "sha256": "8e3ba809e25eec983d7d71ef5b0c3c5d7ac20f73f58d5779b0d225eb25e25f3a",
+      "bytes": 188464
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/spherical_surface.cpp.o": {
+      "sha256": "7ce9c847ee17f2b28d31b1ca4ea16f5173943620ebb5118e5b258b0918702934",
+      "bytes": 107632
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/coarsened_binary.cpp.o": {
+      "sha256": "98651221688bdbacadd5fe0fd9c39128ab4bdbc249ac96214b580aac4c92a1b8",
+      "bytes": 230640
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/track_prtcl.cpp.o": {
+      "sha256": "c647157055e23d2fd70ebf54e3b2d90faa800d875a5395f89e02c61c188e562c",
+      "bytes": 124760
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/vtk_mesh.cpp.o": {
+      "sha256": "a012ddaec5bcc85fb6e14df4cb638ce84014f8f759dc3c751970a0691c1621a2",
+      "bytes": 24776
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/vtk_prtcl.cpp.o": {
+      "sha256": "fff1de2c43ca20c763dd5d7717b2d080fbf4063a38c475af23eb0bb33b41e584",
+      "bytes": 165408
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/particles/particles.cpp.o": {
+      "sha256": "7d9fbe34b975c20bea28a1f40e2bc9004dfcaaf45b74b7fd54c2154e6db3f88e",
+      "bytes": 118984
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/particles/particles_pushers.cpp.o": {
+      "sha256": "cac6b8f5b3a3f7e211669bcbe4b78d70501696d56606a13b3e5a96bb80b7a028",
+      "bytes": 14880
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/particles/particles_tasks.cpp.o": {
+      "sha256": "b7450e44ffd8fe288121284e5e3f1e15975ee7d093cf27e2ac22f637931eea4c",
+      "bytes": 14320
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/outputs/pdf.cpp.o": {
+      "sha256": "030807f9e6218e30d1906ee4b1ae3962527f3e4f02801de3f3049874531a9e5b",
+      "bytes": 183720
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/pgen.cpp.o": {
+      "sha256": "ece09a5cc417c72e1001b76d8167e3915bc51a3aa41211d2457e288ef33f89e2",
+      "bytes": 225352
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/advection.cpp.o": {
+      "sha256": "a3e1123445df3bbb0c122b118d1c5b8764e905dff7d9147cc6c232899c12161e",
+      "bytes": 32256
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/cpaw.cpp.o": {
+      "sha256": "c4cd5603b3806899edb33073c148b8da838438053df4bd2af89f092db7f0357d",
+      "bytes": 124728
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/cshock.cpp.o": {
+      "sha256": "352a234328d97bd70e8781e957f54c8c7201cefc09198cb9d385bea10e77959e",
+      "bytes": 92160
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/divb_amr.cpp.o": {
+      "sha256": "f859ac9606212c43bcb7599e8e206a3d08a896b3f75833cd0bbbf3d186254010",
+      "bytes": 92048
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/diffusion.cpp.o": {
+      "sha256": "98a3cb1e9a67affba285cb9e8a821d42b82e9ead5f5557cebde0498b7db6a6d5",
+      "bytes": 55792
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/gr_bondi.cpp.o": {
+      "sha256": "e2bb90810c1477637ef38c048ca2df15665cc49f77b32518e34ea7b19540a518",
+      "bytes": 89424
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/gr_monopole.cpp.o": {
+      "sha256": "8b72ec2e079b68c91eed09e2cbcfa91cd3f30740cc9f85cbdf07e5d711b4d169",
+      "bytes": 222512
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/linear_wave.cpp.o": {
+      "sha256": "c8f8529b707b5c1190c2b0c441d98389a4f7e23ffe086b9b60ea7c084689cc02",
+      "bytes": 133320
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/lw_implode.cpp.o": {
+      "sha256": "5e814101f14fab5f3dda2e9deb22c633fd652fa19a7609a8ebdf1f230f41da9e",
+      "bytes": 20592
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/orszag_tang.cpp.o": {
+      "sha256": "8ed6bb27c66f311c746e6d70323bf44060bccb43a061f01d66c09981a29494b7",
+      "bytes": 27608
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/mri3d.cpp.o": {
+      "sha256": "bf92f4b04362e3f0d26c29e3ac0c4d2ebaf75585e886e03e3530920a373ce171",
+      "bytes": 138128
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/shock_tube.cpp.o": {
+      "sha256": "68601bae9c22a45f1e2ebe351c1ee9921a08735465ffec292bf8877f6a9fcde4",
+      "bytes": 49248
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/shwave.cpp.o": {
+      "sha256": "90788ce414cee9dc8442295aa7df1d81bf6528b7af6397a767f0070942eac9df",
+      "bytes": 148712
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/rad_beam.cpp.o": {
+      "sha256": "923197cc8aaa191fbd088ea952e06919403b6a41b668c64f4e5a2c27e3b17bca",
+      "bytes": 33400
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/rad_linear_wave.cpp.o": {
+      "sha256": "a1f4faed499f6fe0f4994427fe5545d60d7817a4d1eb1e755e1af4c2605aa462",
+      "bytes": 45656
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/z4c_boosted_puncture.cpp.o": {
+      "sha256": "51c2199268800d7312e658cffec35ab751432d506052da60489e931ef693f457",
+      "bytes": 26352
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/z4c_interpolation.cpp.o": {
+      "sha256": "7f3c74b990191b0eda9f4320ae817c65c52d72244899e201a4dc296dad8bd10b",
+      "bytes": 48368
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/z4c/superposed_boosted_puncture.cpp.o": {
+      "sha256": "6c14aa9400a9c317d7143dab2e5e3a070e4cd27208a9d8901277f3d55ba2c5cf",
+      "bytes": 31440
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/z4c_linear_wave.cpp.o": {
+      "sha256": "253545ad079b98095d661b1eb1979ccc18972baa6fc1342416660b5dbc0e3713",
+      "bytes": 51048
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/jeans_wave.cpp.o": {
+      "sha256": "b7534e32810320e6304d442bba9f8372ffc9ae82d009d1103dc6b223ff976dc6",
+      "bytes": 62672
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/binary_gravity.cpp.o": {
+      "sha256": "02edb20a1a89e9412c6a287a411618171e48a2a4d114831f4263ef87b9d52490",
+      "bytes": 67512
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/tests/be_collapse.cpp.o": {
+      "sha256": "e2666464409602b40bacdc6d21380068d18100f618517c7829311645aa5f2558",
+      "bytes": 68624
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/unit_tests/eos_compose.cpp.o": {
+      "sha256": "c5022d93d966489472f65061195c3071ae8685e9dd29b395ccc2d31e4baa9ffe",
+      "bytes": 61144
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/pgen/unit_tests/gauss_legendre.cpp.o": {
+      "sha256": "8b25378515f41c900b8543be6eaf83dd5582dd20718474772d108b2419b6c83b",
+      "bytes": 14744
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/radiation/radiation.cpp.o": {
+      "sha256": "38f78e8923caad0e129dc6923c43ac822c0b81278d053bf4c82a75f8d7d2ca3e",
+      "bytes": 198520
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/radiation/radiation_fluxes.cpp.o": {
+      "sha256": "1db01c34ea49be86e41052b4f70f907f277ac421d6d6e28238db7d2a375067fc",
+      "bytes": 43864
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/radiation/radiation_newdt.cpp.o": {
+      "sha256": "d796d26128f6fa5eefda3ad4bcac637a0ac85a642229c3e66710faa335620986",
+      "bytes": 31104
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/radiation/radiation_source.cpp.o": {
+      "sha256": "9d0ea7a34dfaf29ae9817b808a90f562f591587b2a229ba71e521c82b1c85e9b",
+      "bytes": 28504
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/radiation/radiation_tasks.cpp.o": {
+      "sha256": "c02124102ef67248ff6d27bc46f1e05bb7678c1639ac02d8934b8ca7bba3ff3a",
+      "bytes": 118040
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/radiation/radiation_tetrad.cpp.o": {
+      "sha256": "b1433c4c6b8401fdd545df0d55381bc6c58dad337bdae0f110ab851ec18b4057",
+      "bytes": 58936
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/radiation/radiation_update.cpp.o": {
+      "sha256": "3059a19fa62f0df36f8dcb17274346983eb34e4e8d7d1c79e3d0a58f5620a1b4",
+      "bytes": 19320
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/orbital_advection.cpp.o": {
+      "sha256": "593eaddf17c2cf490ec5a83fcd4134d29f34fad6359ce309421a9489501c1f39",
+      "bytes": 5936
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/orbital_advection_cc.cpp.o": {
+      "sha256": "85ea456bcf7d3496c34a74b92ae9ea13e86613ddf2e5caf68956ef7b530b8c8d",
+      "bytes": 88640
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/orbital_advection_fc.cpp.o": {
+      "sha256": "be504c5b3eaec3675819befa181b656535d6eca654667ae37278c847c0767b93",
+      "bytes": 139248
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/orbital_advection_tasks.cpp.o": {
+      "sha256": "b9876a3893416bf45a851dda76f568fd0645f555b7b312970dfe188da4bbd354",
+      "bytes": 3936
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/shearing_box.cpp.o": {
+      "sha256": "a3a775c77ba9826ceb0cfc99f92d58e17a257fad9b36f232e0999a7acea05687",
+      "bytes": 88896
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/shearing_box_cc.cpp.o": {
+      "sha256": "c8bdd9617db41531543d93a945235d46b476ec168748798b67d41dd9ffa9a4f7",
+      "bytes": 124608
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/shearing_box_fc.cpp.o": {
+      "sha256": "0c00bbaa26da3025c3d77444c0fee15789f50b15cf7d6531e59e7621f39011c5",
+      "bytes": 126648
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/shearing_box_srcterms.cpp.o": {
+      "sha256": "61c011b6d6097b5e9b80c6abfe228e2eff2ef111b47ea068dd19fc261b90a7e0",
+      "bytes": 43416
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/shearing_box/shearing_box_tasks.cpp.o": {
+      "sha256": "b9ca7a83de36486b0c79903fab1844dc2fde22b34d21651e7ce4a520dc78d6a0",
+      "bytes": 3952
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/srcterms/srcterms.cpp.o": {
+      "sha256": "ff867c79500ac91d0e933569c0fb41adcc43bb7717dddc99ac7fa0b58c07b006",
+      "bytes": 74992
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/srcterms/srcterms_newdt.cpp.o": {
+      "sha256": "6f5e29c15da882dc0cd8a4329abc9ad9af91fd5963d396c59d617b4babed3cd0",
+      "bytes": 23088
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/srcterms/turb_driver.cpp.o": {
+      "sha256": "bdf96221c75df2e406784b89d58c53747a1eacea17dca31ba59107f9b2b880d9",
+      "bytes": 303792
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/tasklist/numerical_relativity.cpp.o": {
+      "sha256": "d167066a6c4cc37e7f8468214041ff1127500a8e81efd0fe8176621918f59fc0",
+      "bytes": 18808
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/units/units.cpp.o": {
+      "sha256": "ed21b33aa63c225becea332a56331423eb8bf801378a9ac012cca3ca3ece0da3",
+      "bytes": 9624
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/change_rundir.cpp.o": {
+      "sha256": "c2d25784851b9e79b036119a4d682993ee688f9b019d1817c0935274a0b04fd0",
+      "bytes": 9016
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/derived_vars.cpp.o": {
+      "sha256": "fbff23c38961ed6a39689dd620a19b27b83c8f1295a9a8ca1e1aa128a6a9f8c7",
+      "bytes": 22272
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/show_config.cpp.o": {
+      "sha256": "889c9892fb93efece11ba151b6b42f776fc031309ec38eca1920f42027cea3b4",
+      "bytes": 8920
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/lagrange_interpolator.cpp.o": {
+      "sha256": "a6e2521ad2e0d591f7b8d20c2f9330ae3a592c111cf52d406075b03ab194830e",
+      "bytes": 100304
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/tov/tov.cpp.o": {
+      "sha256": "65b28c63e618feb7248a75a0c34b4ffe8c84f935f98c430a3f35647d7654653b",
+      "bytes": 5880
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/tr_table.cpp.o": {
+      "sha256": "0a1a08f7e85c8c42ce48eccdd094ab0c7312d18c7a8bbe5b1f03246b7e0a6e86",
+      "bytes": 39984
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/cart_grid.cpp.o": {
+      "sha256": "e7de82401743c8775159f53b771ea131009cd429def958142b7fff45cbacb0c0",
+      "bytes": 180248
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/watchdog.cpp.o": {
+      "sha256": "a905b88d1e720f5cec718b970a4da475051691caddbe578caf3046b5cfdef070",
+      "bytes": 6336
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/utils/spherical_surface.cpp.o": {
+      "sha256": "9dacb540fbc3181a00a63b1c98a319b0106bf08c0a219a896c649fa7f488c7c2",
+      "bytes": 180176
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/compact_object_tracker.cpp.o": {
+      "sha256": "c64b5055638f529c5693efcb12bc329637384fbbd19683a20ba528345fd390b4",
+      "bytes": 62040
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/fastflow.cpp.o": {
+      "sha256": "83de16f09e125840e22cfec9f840fc2bff206520fb3fc704e37937f0325b9551",
+      "bytes": 346784
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/horizon_dump.cpp.o": {
+      "sha256": "32c3e89b28b727f7e09f6637cb7a03bbb4c50d8d877e3e8b4bd112374e048cbd",
+      "bytes": 27952
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/tmunu.cpp.o": {
+      "sha256": "50a20849d7b7ecb6fefed2174322b47acff6f48468612d80b66d3906936d7db5",
+      "bytes": 71368
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c.cpp.o": {
+      "sha256": "a121c896fda543383e67327affe00ab7d8de617bba58a3beba61ccebf919ed13",
+      "bytes": 148904
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_adm.cpp.o": {
+      "sha256": "5978caf60581d08523ba646e23d63d6fdabd6f098e92c7e33760b4f0fc769135",
+      "bytes": 246040
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_hyperboloidal.cpp.o": {
+      "sha256": "38948f46ea208799fd64b74521e13369e398be59832171f9dab9e161d067ebed",
+      "bytes": 332144
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_calcrhs.cpp.o": {
+      "sha256": "b50c64c590e384ae3d3f1a7ceb7222db9e980951e63d6f6b3a2a9c136ecfe1a5",
+      "bytes": 352632
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_newdt.cpp.o": {
+      "sha256": "ecd68851270596058267d10d4d745baaa88af7169e5200cf8e1315ca858f6a7c",
+      "bytes": 52848
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_tasks.cpp.o": {
+      "sha256": "77858ad42bfcb8418d969a5ac262c2347bb2239239040d5e692819f524c3237d",
+      "bytes": 130080
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_update.cpp.o": {
+      "sha256": "7e47ae11ffa9afdb521036d3e46d2c0aca977b47366392738ec88ced0bb03e41",
+      "bytes": 14776
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_gauge.cpp.o": {
+      "sha256": "a8b1870ca83d44184ea2eda11be4bb3756d493cc0ccd9abcdc1ce3fdb05dcf8b",
+      "bytes": 16280
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_Sbc.cpp.o": {
+      "sha256": "dfd27b3da90a9dc5c1e5a40b15de2e75de3de291e6cad2891d18bcdd1b39e8dc",
+      "bytes": 31120
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_calculate_weyl_scalars.cpp.o": {
+      "sha256": "7ed809c951918fc47933446973186e8da27626c8cd8d84db00c86e7c3148ec61",
+      "bytes": 126440
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_wave_extr.cpp.o": {
+      "sha256": "3fbc3e316e0429284a03575580d925ce05439c020c0051a21e8d95a6af90ebf6",
+      "bytes": 26328
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/z4c_amr.cpp.o": {
+      "sha256": "401f872e690435b7dce6d4c4079093416932ed1f80d1adf0d9501f8b6b3f8bd0",
+      "bytes": 32840
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/cce/cce.cpp.o": {
+      "sha256": "09eff1139b2fda97a4cb6ecf2a4f7d74fd6156433959f20cb2e1c27228fb2751",
+      "bytes": 18672
+    },
+    "build-layer-spatial-norm-native/src/CMakeFiles/athena.dir/z4c/driftcontrol/driftcontrol.cpp.o": {
+      "sha256": "00d90fe849375b0959b86b988215ae11690129d6f045b5f68a6d703af8abbcac",
+      "bytes": 48648
+    },
+    "build-layer-spatial-norm-native/kokkos/containers/src/libkokkoscontainers.a": {
+      "sha256": "76c543c704d89285b0e49cd15e0e1da28ae39d696fec6faf56ecc9e361cb83ff",
+      "bytes": 6616
+    },
+    "build-layer-spatial-norm-native/kokkos/algorithms/src/libkokkosalgorithms.a": {
+      "sha256": "914ca12c563baa170e27938ba91f563d60b60155fc9e6168e835590f3c1c60dc",
+      "bytes": 816
+    },
+    "build-layer-spatial-norm-native/kokkos/core/src/libkokkoscore.a": {
+      "sha256": "a818c3ca58f8bd07d6d8c90169e9c2d7b1f64933cac8b2d7481420c37260a313",
+      "bytes": 972800
+    },
+    "build-layer-spatial-norm-native/kokkos/simd/src/libkokkossimd.a": {
+      "sha256": "ab5e05e2e2e5607e0969560b187113f6273448e6691699dfcf932a226b5553d7",
+      "bytes": 792
+    }
+  },
+  "base_source_overlay_and_link_inputs_unchanged": true,
+  "executable": "build-layer-research/live-damping-native/native-build/athena-live-damping-c0",
+  "executable_sha256": "580b6043f906ea37ae4870db2cd63d68f344c634c28319d88dafe53308d56005",
+  "build_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

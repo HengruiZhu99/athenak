@@ -1,0 +1,53 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:25: RuntimeWarning: divide by zero encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:25: RuntimeWarning: overflow encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:25: RuntimeWarning: invalid value encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: divide by zero encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: overflow encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: invalid value encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: divide by zero encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: overflow encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: invalid value encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:31: RuntimeWarning: divide by zero encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:31: RuntimeWarning: overflow encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:31: RuntimeWarning: invalid value encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:39: RuntimeWarning: divide by zero encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:39: RuntimeWarning: overflow encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-long-window-20261009/propagate_saved_C0.py:39: RuntimeWarning: invalid value encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+spatialnorm gauge_pulse t 0.31249999999999994 steps 10 matvecs 800 norm 8.133140810015753 seconds 8.664958250000002
+spatialnorm gauge_pulse t 0.8125000000000002 steps 20 matvecs 1600 norm 17.991685476957088 seconds 17.23758175
+spatialnorm gauge_pulse t 1.3125000000000007 steps 30 matvecs 2400 norm 39.31596775066653 seconds 25.912587917
+spatialnorm gauge_pulse t 1.812500000000001 steps 40 matvecs 3200 norm 95.71779445435781 seconds 34.693425
+spatialnorm gauge_pulse t 2.3125 steps 50 matvecs 4000 norm 214.6787723881287 seconds 43.51549775
+spatialnorm gauge_pulse t 2.8624999999999985 steps 60 matvecs 4800 norm 416.1460412158576 seconds 52.365775417
+spatialnorm gauge_pulse t 3.6624999999999983 steps 70 matvecs 5600 norm 3315.098369858024 seconds 61.332746042000004
+spatialnorm gauge_pulse t 4.5624999999999964 steps 80 matvecs 6400 norm 20013.33846855391 seconds 70.350206167
+spatialnorm gauge_pulse t 5.462499999999993 steps 90 matvecs 7200 norm 118064.67391761525 seconds 79.37889262499999
+spatialnorm gauge_pulse t 6.0 steps 96 matvecs 7680 norm 266326.60207699594 seconds 84.76917533299999
+spatialnorm shell_random t 0.22499999999999998 steps 10 matvecs 8480 norm 0.7074196186684211 seconds 8.760196957999995
+spatialnorm shell_random t 0.7000000000000001 steps 20 matvecs 9280 norm 0.2289310037467444 seconds 17.652951
+spatialnorm shell_random t 1.2000000000000004 steps 30 matvecs 10080 norm 0.14128830637365686 seconds 26.566666624999996
+spatialnorm shell_random t 1.7000000000000008 steps 40 matvecs 10880 norm 0.13232865499296523 seconds 35.46885791599999
+spatialnorm shell_random t 2.2 steps 50 matvecs 11680 norm 0.22533065428625992 seconds 44.30313475
+spatialnorm shell_random t 2.6999999999999984 steps 60 matvecs 12480 norm 0.4534414027074283 seconds 53.142096791
+spatialnorm shell_random t 3.1999999999999966 steps 70 matvecs 13280 norm 0.9575624895349838 seconds 61.97702699999999
+spatialnorm shell_random t 3.699999999999995 steps 80 matvecs 14080 norm 2.0735491242387445 seconds 70.818576458
+spatialnorm shell_random t 4.199999999999993 steps 90 matvecs 14880 norm 5.133984140106951 seconds 79.665668625
+spatialnorm shell_random t 4.799999999999991 steps 100 matvecs 15680 norm 28.681549937684107 seconds 88.58152125000001
+spatialnorm shell_random t 5.599999999999988 steps 110 matvecs 16480 norm 76.62945709224816 seconds 97.527058541
+spatialnorm shell_random t 6.0 steps 115 matvecs 16880 norm 175.3516884057182 seconds 101.98646641599998
+done spatialnorm spatialnorm-projected-krylov-m50-80-h0.1-t6.0 seconds 188.9805625

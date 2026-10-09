@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "scope": "Independent read-only actualfull20 value-Jacobian delta and192 all-a native-grid frequency/Omega_min scalar-eigenvalue checks; finiteOmega only",
+  "full20_rows": 1064,
+  "matched_pairs": 532,
+  "finite_Theta_beta_pairs": 247,
+  "relative_delta_error": 6.117188527987967e-15,
+  "all_other_rows_bitwise_unchanged": true,
+  "native_span": 2.1,
+  "RK_cases": 192,
+  "Omega_min_max_error": 6.088879400678593e-16,
+  "frequency_max_error": 0.0,
+  "nonpositive_root_RK3_max_excess": 0.0,
+  "RK_cases_with_excluded_positive_roots": 94,
+  "limitations": [
+    "Continuum frozen matrices sampled at native pi/h, not native finite-difference symbols.",
+    "Excludes positive roots and does not bound nonnormal propagators, global RK stability or a regularity manifold.",
+    "Full nonlinear coefficient/constraint closure and evolution preservation of kappa2 admissibility remain unproved."
+  ],
+  "sources": {
+    "build-layer-research/continuum/independent-live-damping-review/check_actual.py": "2f5378ed4d00f3e7e736ae137e73804049e931c69250cb9e07e5c50b92593548",
+    "build-layer-research/spatial-norm-native-controls/N36-t0.2/finite-angular-long-N36/layer.athinput": "ed06e9dde2b4cf2de8196cdf41f10db4772edb2c502d27398b4e1c0046f403a3",
+    "build-layer-research/continuum/live-damping-control/full20.json": "c8a1feb069054f2c249c43a7bc87e18a9a2c0426b21320de291f9e41ce4039fb",
+    "build-layer-research/continuum/live-damping-control/full20-RK-all-a.json": "5ec8a5f7e60b5c4c6b604ece8ba9d6b5514659212b915f85691dfffb01edaf73"
+  }
+}

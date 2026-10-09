@@ -1,0 +1,45 @@
+{
+  "scope": "Mathematical assessment from exact production reference/pulse formulas only. No compiled actual20/new native gates; no evolution admissibility or energy theorem.",
+  "algebra": {
+    "kappa_eff_live": "Omega*kappa + 2*betaDotOmega",
+    "kappa2_live": "-1 + (Omega*kappa + 2*betaDotOmega)/kappa",
+    "sigma_live_exact": "-kappa_input",
+    "m_blended": "V*(2*betaDotOmega + kappa*(Omega - 1))",
+    "sigma_blended": "(-Omega*V*kappa - 2*V*betaDotOmega + V*kappa + 2*betaDotOmega - kappa)/Omega",
+    "delta_RHS": "Delta P_t=Delta Theta_t=-m*Theta/Omega; all other actual geometric RHS fields unchanged",
+    "nonlinear_ADM_constraint_correction": "Delta H_t=-4 K m Theta/Omega; Delta Mi_t=2 partial_i(m Theta/Omega); Delta Zi_t=0; Delta Theta_t=-m Theta/Omega",
+    "gradient_m": "m_i=V_i[2 beta^j Omega_j+kappa(Omega-1)]+V[2 beta^j_i Omega_j+2 beta^j Omega_ij+kappa Omega_i]",
+    "linearization_about_Einstein_reference": "Derivative of live kappa2 times backgroundTheta is zero; reference-linear generator equals that of the prescribed background kappa2(r). At finiteTheta, value-only beta cross-couplings appear; principal derivative orders remain unchanged.",
+    "outer_general": "kappa_eff_ref=2S/a^2+(kappa_input-4/a)Omega. It equals the preceding core-matched fixed-Omega profile only if a=S/2."
+  },
+  "strict_bound_counterexample": {
+    "point": "x=-r,y=z=0; actual shift_pulse=.02,pulse_angular=true,width=.5",
+    "r_max_excess": "0.1057955989137808861336912684883874035931229116954192519092418925507832",
+    "kappa_eff_excess_above_10": "0.000000004200499520856894581570901724394244252484277779424328327856507478418043",
+    "positive_kappa2": "0.0000000004200499520856894581570901724394244252484277779424328327856507478418043",
+    "upper_violation_end_radius": "0.1093388090080130846247376227168582593255872962633704948137555688949667",
+    "asymptotic_reason": "Near r0+, upper admissible inward radial shift margin (kappa-eff_ref)/(2|Omega_r|)~kappa(r-r0)^2/(2width)->0, whereas pulse inward shift is nonzero. Hence no uniform strict-upper-bound neighbourhood of this reference for the uncut live formula."
+  },
+  "continuous_reference_initial_pulse_bounds": {
+    "method": "50-digit directed mpmath.iv intervals over9000 subintervals; analytic exponential tail bounds; exact outerCMC. Conditions and source-derived formulas in script.",
+    "reference": "0<eff_ref<=10 for0<=r<1; atscri limitingeff_ref8.",
+    "reference_upper_ratio_bound": 8.20276929653936,
+    "interval_count": 9000,
+    "analytic_near_core_w_bound_log10": "-390864.599417962191673684806639",
+    "initial_pulse_sufficient_relative_upper_bound": {
+      ".15": 0.3551874273701189,
+      ".2": 0.15531962160384288
+    },
+    "angular_component_bound": "|n\u00b7vector| <= sqrt((1+.15r\u00b2)^2+(.2r)^2+(.05r\u00b2)^2)",
+    "initial_pulse_eff_lower_interval_bound": 7.999998797408597,
+    "initial_positive_lower_bound": "Directed intervals separately bound eff_ref minus the all-angle pulse size positively; analytic near-core tail is near10, exact outerCMC gives at least8 minus its bounded pulse size.",
+    "smooth_turnon_implication": "Any0<=V<=1 identically0 below.15 (or.2) preserves0<eff_blend<=10 for the stated initial pulse, by convexity with baseeff10. This does not prove evolution preservation."
+  },
+  "context_samples_only": {
+    "reference_eff_min_999points": 8.003998,
+    "reference_eff_max_999points": 10.0,
+    "live_reference_minus_fixed_profile_min": -0.2556157891614411,
+    "live_reference_minus_fixed_profile_max": 0.10763585179402237,
+    "positivity_sampled_pulse": true
+  }
+}

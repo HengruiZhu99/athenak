@@ -386,3 +386,10 @@ recomputes selected archived composed-RHS states with both diagonal-Hessian
 functionals. It reduces H while leaving M/Z/Theta pointwise unchanged and retains
 all original histories. Its early matched-time ratios are separate from the
 original RHS-only comparison and establish no stability or pure-spatial order.
+
+The [live damping audit](hyperboloidal-live-damping-audit.md) retains an exact
+live subsidiary cancellation and successful short native preflights, followed
+by negative [long-window and grid-phase screens](hyperboloidal-long-window-and-resolution-audit.md).
+The [actual scri first-jet hierarchy](hyperboloidal-scri-linear-hierarchy-audit.md)
+derives the full leading residue map and demonstrates a next-level A/Λ corner
+obstruction without inferring finite-Q amplitude blowup.

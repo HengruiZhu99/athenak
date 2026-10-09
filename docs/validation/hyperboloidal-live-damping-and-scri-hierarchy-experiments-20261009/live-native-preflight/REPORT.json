@@ -1,0 +1,89 @@
+{
+  "scope": "Finite-Omega live-damping reference/short integrity and six sampled coefficient bounds only; no stable pulse, puncture, scri or BH acceptance.",
+  "freeze_head": "1959930034066ecfd43483452e723cbb197e0ad6",
+  "build": {
+    "status": "PASS",
+    "private_build_receipt_sha256": "5ade5d3c80b68913301957a7093929a6793af5da8a9fc19c4215f140d7e49a72",
+    "baseline_sources": 369,
+    "baseline_overlays": 4,
+    "private_sources": 2,
+    "private_objects": 6,
+    "repository_dependencies": 268,
+    "all182_original_objects_and4_libraries_unchanged": true,
+    "actual_compile_and_link_replacements_verified": true,
+    "compiled_objects": [
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "object": "648a7fbeca209ef9675ce805c69416153f36096671ee88ae05a7e8061c97215b",
+        "dependency": "24f269e54e5799505d30adade75ce1e8ca17feb70645f0d5407b45dd1dac65a8"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "object": "0f8955ac443e57b8d161f74c978b54788106f4f7008b304a8f8e2478e5817a6b",
+        "dependency": "3b7b1667787ae4d8250c350619387a5b598a74f721fec978ef80e098188f53f2"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "object": "f943f411b8b3cb1c2d30b5f616c8cdbf8974bb9c04808123403f0a8f9ef3c568",
+        "dependency": "806a63ae768c57a75cfce641b6c43670eb6bea065c7aa2954d26cf5d11e31079"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "object": "3a1a6fe83efa694a8e279d2a0fae3205bba2995ec102a4611c7c0f7ff3437b1d",
+        "dependency": "3680f9478a837b76b539894d51c72c9ee406ea44adbbb5a96ece84430cccccab"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "object": "42b2fc2e4752e6a9704eeee148185864e28bf901c83f7f4cd10deacb01aebb4c",
+        "dependency": "311a597b72d7bd1579a046b8152bff4f5b9152aeaf267c0f959584a77e4e1835"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "object": "b47a1f3b0b820a2f78b062d2e3ecd589c14fa010cf4b90f49feff54d2b4780f5",
+        "dependency": "d1ea4b109bbfeb7e94c279eb8a83b056e92e91aec0151e44d4d056827248505e"
+      }
+    ],
+    "native_override_byteidentical": true,
+    "frozen_live_gate_index": "fcfd4a740fc25e999d0417598015608c009bf61de032aff5266f1f843e2d6b59",
+    "same_live_helper_in_evolution_reference_and_geometric_pole_diagnostic": true,
+    "no_C1_or_covector_repair_and_no_new_double_pole": true,
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "580b6043f906ea37ae4870db2cd63d68f344c634c28319d88dafe53308d56005"
+  },
+  "source_operation": "Only helper include and four live/reference evolution/diagnostic kappa2 arguments; removal restores original full header exactly.",
+  "reference_max_drift": 1.3235193424558092e-14,
+  "short_comparisons": {
+    "H": {
+      "private": 0.0030791322613983817,
+      "baseline": 0.003110631758851493,
+      "ratio": 0.9898736012826085
+    },
+    "M": {
+      "private": 0.004895150816000932,
+      "baseline": 0.00489404887942953,
+      "ratio": 1.0002251584727797
+    },
+    "Z": {
+      "private": 0.001194796693330188,
+      "baseline": 0.001198002395651048,
+      "ratio": 0.9973241269529199
+    },
+    "Theta": {
+      "private": 6.158320406484381e-05,
+      "baseline": 6.156048106303179e-05,
+      "ratio": 1.0003691167031128
+    }
+  },
+  "live_coefficient_audit_sha256": "79e28da214ef1fb3d9bda186ab10cdcae3bc7f904a6865d3e44d11cdd30f1e4a",
+  "all_six_sampled_snapshots_within_flat_interval": true,
+  "kappa2_range": [
+    -0.19715077315037724,
+    0
+  ],
+  "caveats": [
+    "Original physical-P/spatial-norm gauge and kappa1/reference normalization unchanged.",
+    "V(.15,.3) equals one beyond .3; sigma cancellation is live algebraic identity.",
+    "Initial interval proof and six sampled snapshot bounds do not establish evolution preservation or a stability/energy bound.",
+    "Historical physical_metric_eigen keys are Penrose gtilde/chi magnitudes; SPD positivity equivalent for Omega>0."
+  ]
+}

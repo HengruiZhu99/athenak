@@ -314,3 +314,9 @@ evolution, resolved inner profiles and mass/constraint/boundary convergence
 over multiple crossing times. Runtime scope remains CPU/Serial, one uniform
 vacuum MeshBlock. MPI, AMR, matter, GPU evolution and binaries remain rejected
 until independently implemented and validated.
+
+Later [longer projected-discrete screens and grid-phase controls](hyperboloidal-long-window-and-resolution-audit.md)
+retain substantial growth through t6. The [live damping candidate](hyperboloidal-live-damping-audit.md)
+does not suppress it. The [linear scri hierarchy audit](hyperboloidal-scri-linear-hierarchy-audit.md)
+identifies the missing next-jet compatibility condition; no exact-scri boundary
+closure or wormhole-to-trumpet evolution is accepted by those experiments.

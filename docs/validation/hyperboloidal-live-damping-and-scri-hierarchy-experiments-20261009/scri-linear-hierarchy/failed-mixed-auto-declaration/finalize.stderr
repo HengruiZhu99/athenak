@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/scri-linear-hierarchy/finalize.py", line 18, in <module>
+    (p/'final-failed-receipt.json').write_text(json.dumps({'sources':sources,'commands':rows},indent=2)+'\n');r.check_returncode();assert not r.stderr
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 460, in check_returncode
+    raise CalledProcessError(self.returncode, self.args, self.stdout,
+subprocess.CalledProcessError: Command '['/usr/bin/c++', '-std=c++17', '-O3', '-DNDEBUG', '-DKOKKOS_DEPENDENCE', '-Isrc', '-Ibuild-layer-release', '-Ibuild-layer-release/kokkos', '-Ibuild-layer-release/kokkos/core/src', '-Ikokkos/core/src', '-Ibuild-layer-release/kokkos/containers/src', '-Ikokkos/containers/src', '-Ibuild-layer-release/kokkos/algorithms/src', '-Ikokkos/algorithms/src', '-Ibuild-layer-release/kokkos/simd/src', '-Ikokkos/simd/src', '-isystem', 'kokkos/tpls/desul/include', '-isystem', 'kokkos/tpls/mdspan/include', '/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/scri-linear-hierarchy/firstjet_gate.cpp', '-o', '/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/scri-linear-hierarchy/firstjet_gate']' returned non-zero exit status 1.

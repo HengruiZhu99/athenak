@@ -1,0 +1,61 @@
+{
+  "variant": "original C0 spatialnorm N20 finite\u03a9 strict interior",
+  "gauge": "spatialnorm",
+  "validation_sha256": "2ed8afeaeb45f3f20a90c1883a9f78ea287a9e156a78d86782198c7a13ceb4da",
+  "checks": [
+    {
+      "name": "reference/Prepare/strict donors",
+      "pass": true,
+      "observed": {
+        "prepared_reference_change": 0,
+        "projected_reference_rhs_max": 6.685306227241491e-13,
+        "projected_reference_H": 6.444856374744935e-14,
+        "projected_reference_M": 1.4231925260445342e-15,
+        "projected_reference_Z": 7.09754833279714e-16,
+        "ghost_weight_sum_error": 1.7763568394002505e-15,
+        "strict_interior_donor_references": 88992
+      }
+    },
+    {
+      "name": "raw CSR equals actual cached stencil matvec",
+      "pass": true,
+      "observed": 1.9594152741472073e-15,
+      "threshold": 2e-14
+    },
+    {
+      "name": "raw native22 RHS amplitude sweep best pervector",
+      "pass": true,
+      "observed": 8.989768775062128e-10,
+      "threshold": 2e-08
+    },
+    {
+      "name": "native final-only one-step amplitude sweep best pervector anddt",
+      "pass": true,
+      "observed": 2.6999564749805306e-09,
+      "threshold": 1e-08
+    },
+    {
+      "name": "algebraic PL identity",
+      "pass": true,
+      "observed": 3.927284802638963e-16,
+      "threshold": 1e-13
+    },
+    {
+      "name": "native server exit",
+      "pass": true,
+      "observed": 0
+    }
+  ],
+  "all_consistency_checks_pass": true,
+  "threshold_semantics": "implementation consistency thresholds matching previous baseline stage gate; not physical acceptance",
+  "matrix": {
+    "shape": [
+      62240,
+      62240
+    ],
+    "nnz": 25789626,
+    "sha256": "bfc114a9495b49d01b9275f4efd8a1fe49d167273f8d849631d25cddf9c2a103",
+    "trace": -2878117.0843258696,
+    "semantics": "P_ref J22 Lift, continuous projected generator, no coefficient dropping"
+  }
+}

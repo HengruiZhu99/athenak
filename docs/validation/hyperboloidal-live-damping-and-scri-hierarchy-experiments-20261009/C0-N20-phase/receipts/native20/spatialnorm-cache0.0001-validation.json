@@ -1,0 +1,300 @@
+{
+  "command": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-spatialnorm",
+    "20",
+    "2.1967074064860954",
+    "0.0001"
+  ],
+  "metadata": {
+    "points": 3184,
+    "dimension": 63680,
+    "n": 20,
+    "span": 2.1967074064860954,
+    "spacing": 0.10983537032430477,
+    "kappa": 10,
+    "ko": 0.1,
+    "degree": 2,
+    "symmetric": true,
+    "a": 0.5,
+    "r0": 0.05,
+    "r1": 0.95,
+    "local_jacobian_step": 0.0001,
+    "cache_seconds": 2.520668959,
+    "min_omega": 0.00171984047856414,
+    "spatialnorm": true,
+    "coordinates_metadata_only": {
+      "source_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-N20-phase-control-20261009/native20/spatialnorm-cache0.0001-validation.json",
+      "sha256": "c2274bec3f3863cccb169e82c4058dadd3ba3a4374d64dba5d4b93ff9de1c15b",
+      "shape": [
+        3184,
+        12
+      ]
+    }
+  },
+  "source_sha256": "2fe2b120e9b5d7881c689e02b1b7934283a806e0475f0240e476f7f81aec4013",
+  "old_jv_source_sha256": "73331d8f7aff09083ce37e7e354fe8de23c20f8b084175443a71bcf42e8bdf4f",
+  "executable_sha256": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+  "driver_sha256": "a732b4c15a1133c09d321cb924a71e334589c17567315ec4267bea948a05dd8e",
+  "build_command": [
+    "/usr/bin/c++",
+    "-DSPATIAL_NORM",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/tangent_server.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-spatialnorm",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "vectors": [
+    {
+      "name": "gauge_pulse",
+      "fast_norm": 38.897023552094815,
+      "native_epsilon_sweep": [
+        {
+          "eps_normalized_linf": 0.001,
+          "relative_l2_vs_cache": 3.191348123888566e-08,
+          "linf_vs_cache": 4.626184077846261e-07
+        },
+        {
+          "eps_normalized_linf": 0.0003,
+          "relative_l2_vs_cache": 9.573885096298939e-09,
+          "linf_vs_cache": 1.3878233010911935e-07
+        },
+        {
+          "eps_normalized_linf": 0.0001,
+          "relative_l2_vs_cache": 3.1921555607205e-09,
+          "linf_vs_cache": 4.625773288697253e-08
+        },
+        {
+          "eps_normalized_linf": 3e-05,
+          "relative_l2_vs_cache": 9.918687349218375e-10,
+          "linf_vs_cache": 1.387406100845489e-08
+        },
+        {
+          "eps_normalized_linf": 1e-05,
+          "relative_l2_vs_cache": 8.368061216965136e-10,
+          "linf_vs_cache": 4.622167806324091e-09
+        },
+        {
+          "eps_normalized_linf": 3e-06,
+          "relative_l2_vs_cache": 2.658756835182414e-09,
+          "linf_vs_cache": 5.446761583427495e-09
+        }
+      ],
+      "native_sweep_seconds": 0.23810345899999996,
+      "fast_seconds_per_call": 0.018157487499999993,
+      "initial_constraints_component_rms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "constraint_tangent_component_rms": [
+        0.29027314132436727,
+        1.0639614240671214,
+        1.0640735890178026,
+        1.0640735502592154,
+        0.031003482466146506,
+        0.018685867446812485,
+        0.018541049859544686
+      ]
+    },
+    {
+      "name": "smooth_geometry",
+      "fast_norm": 25085.687890613142,
+      "native_epsilon_sweep": [
+        {
+          "eps_normalized_linf": 0.001,
+          "relative_l2_vs_cache": 4.8805582588694365e-09,
+          "linf_vs_cache": 9.629267125887964e-06
+        },
+        {
+          "eps_normalized_linf": 0.0003,
+          "relative_l2_vs_cache": 4.393096395490221e-10,
+          "linf_vs_cache": 8.66829034107397e-07
+        },
+        {
+          "eps_normalized_linf": 0.0001,
+          "relative_l2_vs_cache": 5.427741481354887e-11,
+          "linf_vs_cache": 1.0685943152566324e-07
+        },
+        {
+          "eps_normalized_linf": 3e-05,
+          "relative_l2_vs_cache": 7.253363892991327e-11,
+          "linf_vs_cache": 2.523340185689449e-07
+        },
+        {
+          "eps_normalized_linf": 1e-05,
+          "relative_l2_vs_cache": 2.476120951725825e-10,
+          "linf_vs_cache": 9.165209746697656e-07
+        },
+        {
+          "eps_normalized_linf": 3e-06,
+          "relative_l2_vs_cache": 7.378594425409265e-10,
+          "linf_vs_cache": 2.8199882819990307e-06
+        }
+      ],
+      "native_sweep_seconds": 0.2386241250000003,
+      "fast_seconds_per_call": 0.018155545800000006,
+      "initial_constraints_component_rms": [
+        12.694483792974683,
+        0.5472859412486015,
+        0.5460815721503778,
+        0.5460815721502024,
+        0.02604213919903243,
+        0.02599395480270784,
+        0.02599395480270788
+      ],
+      "constraint_tangent_component_rms": [
+        115.94676307392508,
+        1087.1046707956325,
+        1087.1919221503256,
+        1087.1919221502449,
+        22.74841005671059,
+        22.751928671913983,
+        22.7519286719135
+      ]
+    },
+    {
+      "name": "white_random",
+      "fast_norm": 2212336.335125931,
+      "native_epsilon_sweep": [
+        {
+          "eps_normalized_linf": 0.001,
+          "relative_l2_vs_cache": 3.215346344221511e-07,
+          "linf_vs_cache": 0.23584980992018245
+        },
+        {
+          "eps_normalized_linf": 0.0003,
+          "relative_l2_vs_cache": 3.109528564271021e-08,
+          "linf_vs_cache": 0.021226470096735284
+        },
+        {
+          "eps_normalized_linf": 0.0001,
+          "relative_l2_vs_cache": 5.098154080677292e-09,
+          "linf_vs_cache": 0.0032380196266274808
+        },
+        {
+          "eps_normalized_linf": 3e-05,
+          "relative_l2_vs_cache": 1.2269063097138443e-09,
+          "linf_vs_cache": 0.0009713644346722727
+        },
+        {
+          "eps_normalized_linf": 1e-05,
+          "relative_l2_vs_cache": 4.006043176102683e-10,
+          "linf_vs_cache": 0.00032374854877706416
+        },
+        {
+          "eps_normalized_linf": 3e-06,
+          "relative_l2_vs_cache": 1.6830513375044375e-10,
+          "linf_vs_cache": 9.70829760422176e-05
+        }
+      ],
+      "native_sweep_seconds": 0.23700054099999956,
+      "fast_seconds_per_call": 0.018147891699999974,
+      "initial_constraints_component_rms": [
+        606.3388381698257,
+        22.08909479800621,
+        21.648487321601227,
+        23.00483172072606,
+        11.112046935749763,
+        11.16595795826044,
+        12.8366161443415
+      ],
+      "constraint_tangent_component_rms": [
+        91252.93556561704,
+        77009.35714616897,
+        83243.35432973992,
+        94222.59191726506,
+        4378.4066317476545,
+        4559.410960676328,
+        5116.110560177311
+      ]
+    },
+    {
+      "name": "shell_random",
+      "fast_norm": 6828.082797655804,
+      "native_epsilon_sweep": [
+        {
+          "eps_normalized_linf": 0.001,
+          "relative_l2_vs_cache": 1.7902343952927606e-07,
+          "linf_vs_cache": 0.0004578324271733436
+        },
+        {
+          "eps_normalized_linf": 0.0003,
+          "relative_l2_vs_cache": 1.6112216814436133e-08,
+          "linf_vs_cache": 4.120544213037647e-05
+        },
+        {
+          "eps_normalized_linf": 0.0001,
+          "relative_l2_vs_cache": 1.7901657274050532e-09,
+          "linf_vs_cache": 4.578522066367441e-06
+        },
+        {
+          "eps_normalized_linf": 3e-05,
+          "relative_l2_vs_cache": 1.6142083230295876e-10,
+          "linf_vs_cache": 4.1114208215731196e-07
+        },
+        {
+          "eps_normalized_linf": 1e-05,
+          "relative_l2_vs_cache": 4.44403543596149e-11,
+          "linf_vs_cache": 4.611752046912443e-08
+        },
+        {
+          "eps_normalized_linf": 3e-06,
+          "relative_l2_vs_cache": 1.2753718656653476e-10,
+          "linf_vs_cache": 1.6822355064505246e-07
+        }
+      ],
+      "native_sweep_seconds": 0.23864120799999977,
+      "fast_seconds_per_call": 0.017914562499999943,
+      "initial_constraints_component_rms": [
+        0.35319089092295797,
+        0.0473558289217147,
+        0.04930117123505494,
+        0.04669843438206254,
+        0.027143751029729234,
+        0.028417512904044515,
+        0.03205500259362833
+      ],
+      "constraint_tangent_component_rms": [
+        24.967228921533476,
+        220.67177650903557,
+        222.18163376047863,
+        213.31402065588455,
+        13.50565212500151,
+        17.75220550159117,
+        12.813835088819772
+      ]
+    }
+  ],
+  "cache_additivity_relative_l2": 4.422504895958931e-16,
+  "total_seconds": 4.588309375,
+  "server_exit_status": 0,
+  "stderr_sha256": "a2fe73d215b9b9632851718c6ea09e3ef40323441f01a3fb4b4577dc090bc970"
+}

@@ -1,0 +1,56 @@
+{
+  "formula": "Delta P_t=Delta Theta_t=-kinput*kappa2_ref*Theta/Omega; Theta_ref=0 implies delta_kappa2*Theta_ref=0; all other reference Jacobian entries unchanged. Nonlinear finiteTheta beta couplings remain.",
+  "coefficient_schema": [
+    "x",
+    "y",
+    "z",
+    "omega",
+    "radius",
+    "alpha",
+    "betax",
+    "betay",
+    "betaz",
+    "dOmega_x",
+    "dOmega_y",
+    "dOmega_z",
+    "V",
+    "helper_k2ref"
+  ],
+  "coefficients_sha256": "b377788610632080296e4cda3780d8a3ffb25a5194144f4aafc277d463e9c4f3",
+  "coefficient_check_vs_helper_linf": 2.220446049250313e-16,
+  "core_r_le015_points": 8,
+  "transition_points": 48,
+  "noncore_points": 1632,
+  "k2ref_minmax": [
+    -0.19946093750000038,
+    -0.0
+  ],
+  "delta_entry_minmax": [
+    0.0,
+    740.0289855073964
+  ],
+  "matrices": {
+    "raw22": {
+      "candidate_matrix_sha256": "d9673ecaf3a17f228ce7b519043678a851db6b4fa5691d7e547b3cc51423655d",
+      "C0_matrix_sha256": "1f7a5297ea5a6308a707222d558f75316ae9615a6046abd581ebd8e7a90b6e65",
+      "expected_nonzero_entries": 3264,
+      "actual_nonzero_entries": 3264,
+      "max_absolute_error_vs_exact": 7.720224459717429e-11,
+      "max_unexpected_entry": 0.0,
+      "core_allrows_changed_entry_max": 0.0,
+      "passed": true
+    },
+    "projected20": {
+      "candidate_matrix_sha256": "0f20ca347d2494b92b1f18b2fb016c231515aa00d7e87c8ef365fc6188a56680",
+      "C0_matrix_sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+      "expected_nonzero_entries": 3264,
+      "actual_nonzero_entries": 3264,
+      "max_absolute_error_vs_exact": 7.720224459717429e-11,
+      "max_unexpected_entry": 0.0,
+      "core_allrows_changed_entry_max": 0.0,
+      "passed": true
+    }
+  },
+  "initial_pure_gauge_action_change_l2": 0.0,
+  "initial_pure_gauge_action_change_linf": 0.0
+}

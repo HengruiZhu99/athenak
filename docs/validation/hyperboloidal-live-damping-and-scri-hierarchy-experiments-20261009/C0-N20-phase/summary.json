@@ -1,0 +1,268 @@
+{
+  "scope": "fresh N20 original C0 spatialnorm closest-shell phase control; tinyspanchange controlsOmega_min/h\u00b2, not rigorous continuum/refinement order or stability proof",
+  "default_N20_v2_index_sha256": "8ec4c4dd84898d19b055831696de6e3608542b1fd10a88e04f087b1f689f99aa",
+  "enumeration": {
+    "derivation": "centered even-N nodes have q=r\u00b2/h\u00b2=(odd\u00b2+odd\u00b2+odd\u00b2)/4; outer Omega=1\u2212r\u00b2 forS1a.5. Choose h=(qmax+69/484)^\u22121/2, qmax82.75. Strict mask retained.",
+    "target_ratio_rational": "69/484",
+    "rows": [
+      {
+        "N": 16,
+        "span": 2.2,
+        "h": 0.1375,
+        "points": 1640,
+        "outer_q": 52.75,
+        "Omega_min": 0.00269531249999988,
+        "Omega_min_over_h2": 0.14256198347106802,
+        "nominal_pole03_dt": 8.08593749999964e-05
+      },
+      {
+        "N": 20,
+        "span": 2.2,
+        "h": 0.11000000000000001,
+        "points": 3112,
+        "outer_q": 80.75,
+        "Omega_min": 0.02292499999999975,
+        "Omega_min_over_h2": 1.8946280991735327,
+        "nominal_pole03_dt": 0.0006877499999999925
+      },
+      {
+        "N": 20,
+        "span": 2.1967074064860954,
+        "h": 0.10983537032430477,
+        "points": 3184,
+        "outer_q": 82.75,
+        "Omega_min": 0.0017198404785643273,
+        "Omega_min_over_h2": 0.14256198347107607,
+        "nominal_pole03_dt": 5.159521435692982e-05
+      }
+    ],
+    "tiny_cube_span_change_relative": -0.001496633415411286
+  },
+  "phase": {
+    "N": 20,
+    "span": 2.1967074064860954,
+    "h": 0.10983537032430477,
+    "points": 3184,
+    "Omega_min": 0.00171984047856414,
+    "Omega_min_over_h2": 0.14256198347106053,
+    "nominal_pole03_dt": 5.1595214356924195e-05,
+    "outermost_r": 0.9991397097110273,
+    "pointwise_seed_Euclidean_norm": 0.801800856336363,
+    "pointwise_formula_error_linf": 2.7755575615628914e-17,
+    "H_M_Z_pointwise": [
+      1.1321651215269348,
+      0.7707442368269822,
+      0.23068943072035958
+    ],
+    "component_units_norm_pointwise": 4.374749775118865,
+    "component_units_amplification": 30.712121259376506,
+    "groups_pointwise": {
+      "chi": {
+        "value_l2": 0.29274709915234093,
+        "gradient_l2": 0.9951229046492943
+      },
+      "metric": {
+        "value_l2": 0.21948569959004044,
+        "gradient_l2": 1.6164056509092009
+      },
+      "P": {
+        "value_l2": 2.174668129509157,
+        "gradient_l2": 6.673946843667797
+      },
+      "A": {
+        "value_l2": 1.4117158467351563,
+        "gradient_l2": 9.992544185015552
+      },
+      "Lambda": {
+        "value_l2": 1.1291159522904675,
+        "gradient_l2": 12.247543646663045
+      },
+      "Theta": {
+        "value_l2": 0.05463400288480398,
+        "gradient_l2": 1.0854333486616425
+      },
+      "alpha": {
+        "value_l2": 0.403191351133973,
+        "gradient_l2": 2.452746993535678
+      },
+      "beta": {
+        "value_l2": 0.07331256277635811,
+        "gradient_l2": 1.103452450114933
+      }
+    },
+    "outer_squared_H_M_Z_fractions": [
+      0.03981379075858571,
+      0.5176150249161076,
+      0.8208418809754551
+    ],
+    "peak_H_M_Z_radius": [
+      0.39219071804676087,
+      0.8560819884142744,
+      0.9869916627676656
+    ],
+    "matrix_sha256": "d44964fd4f742f83b6709706e4977f6b2b988961df4f034ae53aee7f393ea965",
+    "seed_sha256": "0ec387eeb7bbff84f4b3953a819d5f9f71cd645d904a6dbb1bca6a71dd05a505",
+    "peaks_pointwise_H_M_Z": [
+      {
+        "value": 1.1321651215269348,
+        "time": 2.0
+      },
+      {
+        "value": 0.88995000117045,
+        "time": 1.85
+      },
+      {
+        "value": 0.2884463676044397,
+        "time": 1.8
+      }
+    ]
+  },
+  "comparisons": {
+    "phase_over_defaultN16": {
+      "H_M_Z": [
+        0.9020123202366991,
+        1.1032685707586538,
+        1.09003653844247
+      ],
+      "component_units_norm": 0.8247084100338562,
+      "component_units_amplification": 0.859585336642364
+    },
+    "phase_over_defaultN20": {
+      "H_M_Z": [
+        0.9893269936452732,
+        1.1348194439883115,
+        1.228309083438324
+      ],
+      "component_units_norm": 1.0034747912633926,
+      "component_units_amplification": 1.0034075251648564
+    }
+  },
+  "actual_initial_C_hJ_h_pointwise": {
+    "scope": "native instantaneous discrete Bianchi defect at fixed pointwise gauge seed, original C0 spatialnorm, not continuum constraint growth",
+    "runs": [
+      {
+        "N": 16,
+        "command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-spatialnorm",
+          "16",
+          "2.2",
+          "0.0001"
+        ],
+        "seconds": 1.3839458750000002,
+        "matrix_sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+        "seed_sha256": "55b4fc65becd950509eb2601a2282f17dacd91eac8b1a933cd7c030735ab3454",
+        "native20_executable_sha256": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+        "seed_original_Euclidean_norm": 0.5724344949330571,
+        "native_derivative_rows": [
+          {
+            "eps": 1e-05,
+            "Hdot_Mdot_Zdot_rms": [
+              0.8247470480559272,
+              1.872264763408878,
+              0.08218788765017068
+            ],
+            "outer_r09_squared_fractions": [
+              0.7931961424994675,
+              0.9033677891713641,
+              0.9462403704409871
+            ]
+          },
+          {
+            "eps": 3e-05,
+            "Hdot_Mdot_Zdot_rms": [
+              0.8247470480647155,
+              1.8722647634094243,
+              0.08218788765017578
+            ],
+            "outer_r09_squared_fractions": [
+              0.7931961425321559,
+              0.903367789170852,
+              0.9462403704408807
+            ]
+          }
+        ],
+        "epsilon_relative_l2": 6.832344976471887e-10
+      },
+      {
+        "N": 20,
+        "command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-propagator/server-spatialnorm",
+          "20",
+          "2.1967074064860954",
+          "0.0001"
+        ],
+        "seconds": 2.616624333,
+        "matrix_sha256": "d44964fd4f742f83b6709706e4977f6b2b988961df4f034ae53aee7f393ea965",
+        "seed_sha256": "0ec387eeb7bbff84f4b3953a819d5f9f71cd645d904a6dbb1bca6a71dd05a505",
+        "native20_executable_sha256": "495647e847aa77cca2c51615ed1fd0e007d71cdbb8b5ed310b37e332c7812bf0",
+        "seed_original_Euclidean_norm": 0.801800856336363,
+        "native_derivative_rows": [
+          {
+            "eps": 1e-05,
+            "Hdot_Mdot_Zdot_rms": [
+              0.2902731413243659,
+              1.8408429517845912,
+              0.04062005231271368
+            ],
+            "outer_r09_squared_fractions": [
+              0.646628730365246,
+              0.905560987351229,
+              0.9506386314471451
+            ]
+          },
+          {
+            "eps": 3e-05,
+            "Hdot_Mdot_Zdot_rms": [
+              0.29027314137272164,
+              1.8408429517852078,
+              0.04062005231240377
+            ],
+            "outer_r09_squared_fractions": [
+              0.6466287305412789,
+              0.9055609873506237,
+              0.9506386314616517
+            ]
+          }
+        ],
+        "epsilon_relative_l2": 8.096116766695331e-10
+      }
+    ]
+  },
+  "short_independent_canonical": {
+    "scope": "independent short Taylor canonical exp(tJ), exact constant diagonal similarity only; no eigenvalue/runtime/norm change",
+    "formula": "A=TJT^-1; exp(tJ)B=T^-1 exp(tA) T B",
+    "T_configuration_fields_1_over_h": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      16,
+      17,
+      18,
+      19
+    ],
+    "T_momenta": 1,
+    "random_matvec_similarity_relative_l2": 2.0323889771062182e-16,
+    "matrix_sha256": "d44964fd4f742f83b6709706e4977f6b2b988961df4f034ae53aee7f393ea965",
+    "checks": [
+      {
+        "time": 0.025,
+        "relative_state_l2": [
+          9.646808657929146e-15
+        ],
+        "seconds": 22.824413208
+      },
+      {
+        "time": 0.05,
+        "relative_state_l2": [
+          1.8786507871332295e-14
+        ],
+        "seconds": 34.695972708
+      }
+    ],
+    "seconds": 57.520628292000005
+  },
+  "no_t6_phase_or_native_or_long_canonical_run": true
+}
