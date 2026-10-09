@@ -1,0 +1,33 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:23: RuntimeWarning: divide by zero encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:23: RuntimeWarning: overflow encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:23: RuntimeWarning: invalid value encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: divide by zero encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: overflow encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: invalid value encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: divide by zero encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: overflow encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: invalid value encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:29: RuntimeWarning: divide by zero encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:29: RuntimeWarning: overflow encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:29: RuntimeWarning: invalid value encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:37: RuntimeWarning: divide by zero encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:37: RuntimeWarning: overflow encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/full22-candidate/krylov_propagate.py:37: RuntimeWarning: invalid value encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+spatialnorm gauge_pulse t 0.05 steps 3 matvecs 240 norm 2.252376507400586 seconds 2.593752541
+spatialnorm shell_random t 0.05 steps 3 matvecs 480 norm 3.5081085369328675 seconds 2.5585073339999997
+done spatialnorm spatialnorm-projected-krylov-m50-80-h0.1-t0.05 seconds 5.2185574589999995

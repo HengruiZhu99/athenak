@@ -1,0 +1,77 @@
+{
+  "scope": "Finite-positive-lapse inner gauge preflight only; no stable pulse, puncture or scri acceptance.",
+  "launch_head": "1959930034066ecfd43483452e723cbb197e0ad6",
+  "mode": "trace",
+  "stage": "reference",
+  "source_verification": {
+    "status": "PASS",
+    "mode": "trace",
+    "private_build_receipt_sha256": "2d93e3f2045445a2f6e255f61741397868ff0ed2d3d15f255a6d2e47ce13152c",
+    "baseline_sources": 369,
+    "baseline_overlays": 4,
+    "private_sources": 2,
+    "private_objects": 6,
+    "repository_dependencies": 268,
+    "all182_original_objects_and4_libraries_unchanged": true,
+    "actual_compile_and_link_replacements_verified": true,
+    "compiled_objects": [
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "object": "3abed14262bee3db2e6746245f5e8ce3821065a62bb77eb22a77bec15a6a6221",
+        "dependency": "61242bfc79b2ed603637071f6a1e92b8805d5fea209424a66128c72d19382927"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "object": "7ae5e20b73ba0354bdeb7d1db0f1e1223ed75fd590e3964f180dc15b1379746b",
+        "dependency": "89ba48fc8664727501b55e3b5c262baa992ab5a01970aca293d3cb4fabf3d892"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "object": "5bc255df164de398a5a1a3ec30519693fe7f690229b20adde43316966f2e36ca",
+        "dependency": "3932b9a6930c7ef68f5270f17cfb2d3def3d401fca9b4de72796dc11c7faab66"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "object": "6d7646b0b59015d8cf3946a36dd113667f85ab5c0a2f3437014ae882f55dfaee",
+        "dependency": "2777d92ec7663c550ef01f7121363b330e70acb59f5198d997f903749ad3fb88"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "object": "0f02067427cd1ea22e7589872feee1244717f26298cbe6c48c42f055d716620f",
+        "dependency": "57b605ea806ef909d44769422a92c97156c11b58d7aee8401600b78c8ad3e998"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "object": "2ad61861ddc075f2d006140883f7e2e610bf6f34f09fa671c48331bd2e81549b",
+        "dependency": "0dba44a4ac5da797594882d80706bd28a2d3eea89a89907a93109b82a15860d8"
+      }
+    ],
+    "native_override_byteidentical": true,
+    "frozen_trace_gate_index": "801b78e9cdc7755ddda8b0ce6ea375efb02a023f7cfec420ccd8543490c150f8",
+    "complete_original_C0_geometric_pole_diagnostic_unchanged": true,
+    "gauge_operation": "trace-only addition before assembly",
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "d1593cfde3cafa88f81faad78c7aeaa23486217dc68a14d2f35f861bbf3f1235"
+  },
+  "trace_gate_index_sha256": "801b78e9cdc7755ddda8b0ce6ea375efb02a023f7cfec420ccd8543490c150f8",
+  "build_receipt_sha256": "2d93e3f2045445a2f6e255f61741397868ff0ed2d3d15f255a6d2e47ce13152c",
+  "executable_sha256": "d1593cfde3cafa88f81faad78c7aeaa23486217dc68a14d2f35f861bbf3f1235",
+  "launch_script_sha256": "381e247b921ee0009231d6ab37509c539f6b4c6bf23a13a8929e78782b3935b2",
+  "auditor_sha256": "95c6ea11e88287c3991fe61941021a32642043613137dab8a2e117afee6753df",
+  "override_sha256": "0a3b3a2eb7e50f8b2d181607f3a8a4cbf6e83d617a7fa1eec381111061dd5706",
+  "reference_audit_sha256": null,
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/run_layer_validation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-trace-native/trace-build/athena-inner-trace",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-trace-native/trace/reference",
+    "--suite",
+    "reference-long",
+    "--overrides",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-trace-native/native.athinput",
+    "--duration",
+    ".05",
+    "--output-cadence",
+    ".025"
+  ]
+}

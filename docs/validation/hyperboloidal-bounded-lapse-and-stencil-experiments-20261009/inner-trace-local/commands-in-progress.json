@@ -1,0 +1,237 @@
+[
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/full20.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/full20"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.822377375,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/nonlinear.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/nonlinear"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.820899333,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-DCOMBINED_ADVECTION=0",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/principal.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/principal-trace"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.548820292,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-DCOMBINED_ADVECTION=1",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/principal.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/principal-combined"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.5468801669999999,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O1",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/nonlinear.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/nonlinear_debug"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 1.3019802079999998,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/nonlinear"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.5393934580000002,
+    "stdout_file": "nonlinear.json",
+    "stdout_sha256": "d2bbc76b143d21669c06c51b3fd914f761d4457b27188f89c5fcc410b4494e7e"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/nonlinear_debug"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 1.8486830840000001,
+    "stdout_file": "nonlinear-debug.json",
+    "stdout_sha256": "d2bbc76b143d21669c06c51b3fd914f761d4457b27188f89c5fcc410b4494e7e"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/full20",
+      "pole"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.13405591599999944,
+    "stdout_file": "poles.json",
+    "stdout_sha256": "9d8b87706ee206c8702dd6094f51230c285afd3b03b439ccb85dac0ad9bbc009"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/full20"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 1.1297581250000004,
+    "stdout_file": "full20.json",
+    "stdout_sha256": "07fa796cb4eed5e8857bf533d458a63e509ae29d50030294f8dca973e2ffaf01"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/check_kernel_symbol.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/principal-trace"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.268587417,
+    "stdout_file": "principal-trace.log",
+    "stdout_sha256": "3d72ffc18fd92bad81375e317778a53795eefffcc512074aa84608ab766e16fe"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/check_kernel_symbol.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/principal-combined"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.26184041700000016,
+    "stdout_file": "principal-combined.log",
+    "stdout_sha256": "3d72ffc18fd92bad81375e317778a53795eefffcc512074aa84608ab766e16fe"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-conformal-trace-control/check.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 2.0382355000000008,
+    "stdout_file": "check.log",
+    "stdout_sha256": "9daf1155ab8d481b761ee4eb0477f510ced1723a03244e9b18b9f322df12f6e1"
+  }
+]

@@ -1,0 +1,51 @@
+{
+  "variant": "combined",
+  "reference_formula": "Falpha=3c(h+2c)(beta_ref.gradOmega)/(hOmega); Fbeta=\u22123c(h+2c)gradOmega/Omega; combined adds\u2212c(beta_ref.gradh)/h and\u2212cgradh",
+  "combined": true,
+  "coefficient_schema": [
+    "x",
+    "y",
+    "z",
+    "Omega",
+    "r",
+    "alpha_ref",
+    "beta_x",
+    "beta_y",
+    "beta_z",
+    "dOmega_x",
+    "dOmega_y",
+    "dOmega_z",
+    "dalpha_x",
+    "dalpha_y",
+    "dalpha_z",
+    "1-Wgauge"
+  ],
+  "coefficients_sha256": "0ca8f728ac580e2152b0be70463defdd932464c77678110ad2e080ec64e23d36",
+  "outer_r_ge085_points": 672,
+  "core_r_le005_points": 0,
+  "expected_coefficients_max_abs": 10.611744430921064,
+  "matrices": {
+    "raw22": {
+      "matrix_sha256": "0e2021416318d422e3fcf0d20465549bd49ddc61fd78e8bac311c9d1b278e3a0",
+      "C0_matrix_sha256": "1f7a5297ea5a6308a707222d558f75316ae9615a6046abd581ebd8e7a90b6e65",
+      "actual_changed_entries": 6902,
+      "expected_entries": 3872,
+      "max_absolute_error_vs_exact": 6.198597191087174e-12,
+      "max_unexpected_entry": 3.552713678800501e-15,
+      "outer_allrows_changed_entry_max": 0.0,
+      "passed": true
+    },
+    "projected20": {
+      "matrix_sha256": "621a4911b359546d8059a87e75326f35f8e9b6d1c682957e276be54d7c1a0698",
+      "C0_matrix_sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+      "actual_changed_entries": 6902,
+      "expected_entries": 3872,
+      "max_absolute_error_vs_exact": 6.198597191087174e-12,
+      "max_unexpected_entry": 3.552713678800501e-15,
+      "outer_allrows_changed_entry_max": 0.0,
+      "passed": true
+    }
+  },
+  "initial_gauge_changed_action_l2": 0.7445392448692169,
+  "initial_gauge_nonalpharows_changed_action_linf": 0.0
+}

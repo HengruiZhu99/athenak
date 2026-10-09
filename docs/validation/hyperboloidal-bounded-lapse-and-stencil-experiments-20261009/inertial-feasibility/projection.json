@@ -1,0 +1,384 @@
+{
+  "status": "PASS",
+  "scope": "Exact projection and finiteOmega/asymptotic feasibility only",
+  "source": "https://arxiv.org/pdf/gr-qc/0504114v2",
+  "equations": [
+    2,
+    3,
+    13,
+    16,
+    17,
+    19
+  ],
+  "pdf_pages_one_based": [
+    2,
+    3
+  ],
+  "general_spatial_metric_projection": true,
+  "mpmath_digits": 100,
+  "limits": {
+    "Omega2_dTheta_dTheta": "-2*S*kin/a",
+    "Omega2_dLambda_dLambda": "-S*kin/a",
+    "Omega3_dLambda_n_dTheta": "2*S*kin/a",
+    "Omega2_dA_nn_dLambda_n": "2*S*kin/(3*a)",
+    "Omega2_dP_dTheta": "S*kin/a"
+  },
+  "limit_rows": [
+    {
+      "S": "1",
+      "a": ".5",
+      "kinput": "1",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-3.99998",
+      "Omega2_Lambda_diagonal_coefficient": "-1.99999",
+      "Omega3_Lambda_Theta_coefficient": "3.99997999994999974999843748906241796810546351313995324233688427982973097102967892241301139"
+    },
+    {
+      "S": "1",
+      "a": ".5",
+      "kinput": "1",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-3.99999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-1.99999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "3.9999999999999999999799999999999999999999499999999999999999997499999999999999999984375"
+    },
+    {
+      "S": "1",
+      "a": ".5",
+      "kinput": "1",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-3.9999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-1.9999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "3.999999999999999999999999999999999999999799999999999999999999999999999999999999995"
+    },
+    {
+      "S": "1",
+      "a": ".5",
+      "kinput": "10",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-39.9998",
+      "Omega2_Lambda_diagonal_coefficient": "-19.9999",
+      "Omega3_Lambda_Theta_coefficient": "39.9997999994999974999843748906241796810546351313995324233688427982973097102967892241301139"
+    },
+    {
+      "S": "1",
+      "a": ".5",
+      "kinput": "10",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-39.9999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-19.9999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "39.999999999999999999799999999999999999999499999999999999999997499999999999999999984375"
+    },
+    {
+      "S": "1",
+      "a": ".5",
+      "kinput": "10",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-39.999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-19.999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "39.99999999999999999999999999999999999999799999999999999999999999999999999999999995"
+    },
+    {
+      "S": "1",
+      "a": "1",
+      "kinput": "1",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-1.99998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.99999",
+      "Omega3_Lambda_Theta_coefficient": "1.99997999989999899998749982499737495874932967632793507484447384078117326871649310606580103"
+    },
+    {
+      "S": "1",
+      "a": "1",
+      "kinput": "1",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-1.99999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.99999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "1.9999999999999999999799999999999999999998999999999999999999989999999999999999999875"
+    },
+    {
+      "S": "1",
+      "a": "1",
+      "kinput": "1",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-1.9999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.9999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "1.99999999999999999999999999999999999999979999999999999999999999999999999999999999"
+    },
+    {
+      "S": "1",
+      "a": "1",
+      "kinput": "10",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-19.9998",
+      "Omega2_Lambda_diagonal_coefficient": "-9.9999",
+      "Omega3_Lambda_Theta_coefficient": "19.9997999989999899998749982499737495874932967632793507484447384078117326871649310606580103"
+    },
+    {
+      "S": "1",
+      "a": "1",
+      "kinput": "10",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-19.9999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-9.9999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "19.999999999999999999799999999999999999998999999999999999999989999999999999999999875"
+    },
+    {
+      "S": "1",
+      "a": "1",
+      "kinput": "10",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-19.999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-9.999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "19.9999999999999999999999999999999999999979999999999999999999999999999999999999999"
+    },
+    {
+      "S": "1",
+      "a": "2",
+      "kinput": "1",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-0.99998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.49999",
+      "Omega3_Lambda_Theta_coefficient": "0.999979999799995999899997199915997359914197139902756640682423839611414650926096028206700867"
+    },
+    {
+      "S": "1",
+      "a": "2",
+      "kinput": "1",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-0.99999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.49999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "0.9999999999999999999799999999999999999997999999999999999999959999999999999999999"
+    },
+    {
+      "S": "1",
+      "a": "2",
+      "kinput": "1",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-0.9999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.4999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "0.99999999999999999999999999999999999999979999999999999999999999999999999999999998"
+    },
+    {
+      "S": "1",
+      "a": "2",
+      "kinput": "10",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-9.9998",
+      "Omega2_Lambda_diagonal_coefficient": "-4.9999",
+      "Omega3_Lambda_Theta_coefficient": "9.99979999799995999899997199915997359914197139902756640682423839611414650926096028206700867"
+    },
+    {
+      "S": "1",
+      "a": "2",
+      "kinput": "10",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-9.9999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-4.9999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "9.999999999999999999799999999999999999997999999999999999999959999999999999999999"
+    },
+    {
+      "S": "1",
+      "a": "2",
+      "kinput": "10",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-9.999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-4.999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "9.9999999999999999999999999999999999999979999999999999999999999999999999999999998"
+    },
+    {
+      "S": "2",
+      "a": ".5",
+      "kinput": "1",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-7.99998",
+      "Omega2_Lambda_diagonal_coefficient": "-3.99999",
+      "Omega3_Lambda_Theta_coefficient": "7.99997999997499993749980468681640368651336665830595135616331979705514706205200385617242677"
+    },
+    {
+      "S": "2",
+      "a": ".5",
+      "kinput": "1",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-7.99999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-3.99999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "7.9999999999999999999799999999999999999999749999999999999999999374999999999999999998046875"
+    },
+    {
+      "S": "2",
+      "a": ".5",
+      "kinput": "1",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-7.9999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-3.9999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "7.9999999999999999999999999999999999999997999999999999999999999999999999999999999975"
+    },
+    {
+      "S": "2",
+      "a": ".5",
+      "kinput": "10",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-79.9998",
+      "Omega2_Lambda_diagonal_coefficient": "-39.9999",
+      "Omega3_Lambda_Theta_coefficient": "79.9997999997499993749980468681640368651336665830595135616331979705514706205200385617242677"
+    },
+    {
+      "S": "2",
+      "a": ".5",
+      "kinput": "10",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-79.9999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-39.9999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "79.999999999999999999799999999999999999999749999999999999999999374999999999999999998046875"
+    },
+    {
+      "S": "2",
+      "a": ".5",
+      "kinput": "10",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-79.999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-39.999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "79.999999999999999999999999999999999999997999999999999999999999999999999999999999975"
+    },
+    {
+      "S": "2",
+      "a": "1",
+      "kinput": "1",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-3.99998",
+      "Omega2_Lambda_diagonal_coefficient": "-1.99999",
+      "Omega3_Lambda_Theta_coefficient": "3.99997999994999974999843748906241796810546351313995324233688427982973097102967892241301139"
+    },
+    {
+      "S": "2",
+      "a": "1",
+      "kinput": "1",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-3.99999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-1.99999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "3.9999999999999999999799999999999999999999499999999999999999997499999999999999999984375"
+    },
+    {
+      "S": "2",
+      "a": "1",
+      "kinput": "1",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-3.9999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-1.9999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "3.999999999999999999999999999999999999999799999999999999999999999999999999999999995"
+    },
+    {
+      "S": "2",
+      "a": "1",
+      "kinput": "10",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-39.9998",
+      "Omega2_Lambda_diagonal_coefficient": "-19.9999",
+      "Omega3_Lambda_Theta_coefficient": "39.9997999994999974999843748906241796810546351313995324233688427982973097102967892241301139"
+    },
+    {
+      "S": "2",
+      "a": "1",
+      "kinput": "10",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-39.9999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-19.9999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "39.999999999999999999799999999999999999999499999999999999999997499999999999999999984375"
+    },
+    {
+      "S": "2",
+      "a": "1",
+      "kinput": "10",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-39.999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-19.999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "39.99999999999999999999999999999999999999799999999999999999999999999999999999999995"
+    },
+    {
+      "S": "2",
+      "a": "2",
+      "kinput": "1",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-1.99998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.99999",
+      "Omega3_Lambda_Theta_coefficient": "1.99997999989999899998749982499737495874932967632793507484447384078117326871649310606580103"
+    },
+    {
+      "S": "2",
+      "a": "2",
+      "kinput": "1",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-1.99999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.99999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "1.9999999999999999999799999999999999999998999999999999999999989999999999999999999875"
+    },
+    {
+      "S": "2",
+      "a": "2",
+      "kinput": "1",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-1.9999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-0.9999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "1.99999999999999999999999999999999999999979999999999999999999999999999999999999999"
+    },
+    {
+      "S": "2",
+      "a": "2",
+      "kinput": "10",
+      "Omega_exponent": 5,
+      "Omega2_Theta_coefficient": "-19.9998",
+      "Omega2_Lambda_diagonal_coefficient": "-9.9999",
+      "Omega3_Lambda_Theta_coefficient": "19.9997999989999899998749982499737495874932967632793507484447384078117326871649310606580103"
+    },
+    {
+      "S": "2",
+      "a": "2",
+      "kinput": "10",
+      "Omega_exponent": 20,
+      "Omega2_Theta_coefficient": "-19.9999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-9.9999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "19.999999999999999999799999999999999999998999999999999999999989999999999999999999875"
+    },
+    {
+      "S": "2",
+      "a": "2",
+      "kinput": "10",
+      "Omega_exponent": 40,
+      "Omega2_Theta_coefficient": "-19.999999999999999999999999999999999999998",
+      "Omega2_Lambda_diagonal_coefficient": "-9.999999999999999999999999999999999999999",
+      "Omega3_Lambda_Theta_coefficient": "19.9999999999999999999999999999999999999979999999999999999999999999999999999999999"
+    }
+  ],
+  "illustrative_fast_damping_block": [
+    {
+      "N": 24,
+      "span": 2.1,
+      "Omega_min": 0.014257812499999356,
+      "illustrative_dt": 0.00042773437499998065,
+      "Theta_damping_block_RK_argument": -83.56438356164763,
+      "RK3_absolute_amplification": 93846.16270243468
+    },
+    {
+      "N": 36,
+      "span": 2.1,
+      "Omega_min": 0.0038368055555552116,
+      "illustrative_dt": 0.00011510416666665635,
+      "Theta_damping_block_RK_argument": -312.16018099550314,
+      "RK3_absolute_amplification": 5021277.503619944
+    },
+    {
+      "N": 48,
+      "span": 2.1,
+      "Omega_min": 0.003251953124999485,
+      "illustrative_dt": 9.755859374998454e-05,
+      "Theta_damping_block_RK_argument": -368.4090090090674,
+      "RK3_absolute_amplification": 8266235.753868522
+    }
+  ],
+  "timelike_counterexample": "alpha^2=beta_ref^2-Omega^2 gives g_phys(partial_t,partial_t)=+1 with positive alpha near scri",
+  "versions": {
+    "sympy": "1.14.0",
+    "mpmath": "1.3.0"
+  },
+  "head": "1959930034066ecfd43483452e723cbb197e0ad6"
+}

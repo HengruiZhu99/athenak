@@ -1,0 +1,74 @@
+{
+  "launch_HEAD": "1959930034066ecfd43483452e723cbb197e0ad6",
+  "sources": {
+    "build-layer-research/boundary/full-tensor-global-final/sources/full22-v2/full22_server.cpp": {
+      "sha256": "e918c0d4c6536fd5182e056d01049427116e8992667ffa4a417d21bf04b60f92",
+      "bytes": 9634
+    },
+    "build-layer-research/boundary/full-tensor-global-final/sources/full22-v2/projected_base.hpp": {
+      "sha256": "9a9673cab47a75be9b3b6490734bb3bcc58697a22867bb148c9ce069980ed928",
+      "bytes": 11243
+    },
+    "build-layer-research/boundary/full-tensor-global-final/sources/full22-v2/old-jv-source.cpp": {
+      "sha256": "73331d8f7aff09083ce37e7e354fe8de23c20f8b084175443a71bcf42e8bdf4f",
+      "bytes": 5403
+    },
+    "build-layer-research/boundary/full-tensor-global-final/sources/full22-v2/native_injection.hpp": {
+      "sha256": "cc83d40e1ee3fc6da0baa6be31069b200d9f6ac1ec0ecca0f448208212ef64fe",
+      "bytes": 1616
+    },
+    "build-layer-research/boundary/full-tensor-global-final/sources/full22-v2/spatial_norm_control.hpp": {
+      "sha256": "c44d0f2b3940d94d77f9b6c920401d2b1eb7b20dbee67a160e873a5a604781ae",
+      "bytes": 2211
+    },
+    "build-layer-research/boundary/full-tensor-global-final/sources/full22-v2/build-spatialnorm.json": {
+      "sha256": "d6ff336010d7261ef000ae4224eec9a9cc41e0bf2ba64bae4c0d7281002c984d",
+      "bytes": 1714
+    },
+    "build-layer-research/boundary/full-tensor-global-final/sources/full22-v2/diagnostic_constraint_norms.cpp": {
+      "sha256": "6e7aa54ecf3caa2845b0f975a3901cd101d64ab66eae7684d0d8bfbe60b79b9d",
+      "bytes": 1183
+    },
+    "build-layer-research/boundary/full-tensor-global-final/sources/full22-v2/krylov_propagate.py": {
+      "sha256": "65ef9191f8f8ed7736a9f47411e2dd020fee78f5426f541ec56807172fcf43a2",
+      "bytes": 3344
+    },
+    "build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/athenak_bridge.hpp": {
+      "sha256": "06a790ee1cfb275d6c6db77507b2b7b2b719cdf79f3737cb934ea19c09e0d34d",
+      "bytes": 14341
+    },
+    "build-layer-research/time-projection-controls/composed-diagnostic-attribution/composed-diagnose-include/z4c/hyperboloidal/cartesian_patch.hpp": {
+      "sha256": "81de3daf08fda1b11dbf0ae2f4e685cd0cffc1188a212433a263124a03ce1a76",
+      "bytes": 24129
+    },
+    "build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/cartesian_patch.hpp": {
+      "sha256": "e0c3c657723e1aa6cf1fb6015fb14f8b31514a3462404a3448b80a9fe04000b8",
+      "bytes": 24121
+    },
+    "build-layer-research/boundary/full-tensor-propagator/full22-v2/validate22.py": {
+      "sha256": "3a76085738f94520da8cb8d178ba248e2c16b37eb7f93dc0495a1f1e47d12a08",
+      "bytes": 5000
+    },
+    "build-layer-research/boundary/full-tensor-propagator/spatialnorm-validation-vectors.npz": {
+      "sha256": "55b4fc65becd950509eb2601a2282f17dacd91eac8b1a933cd7c030735ab3454",
+      "bytes": 599552
+    },
+    "build-layer-research/boundary/full-tensor-C0-N20-20261009/full22/assemble_projected.py": {
+      "sha256": "88e2b76b58cd687643acc680a5694a533b6b61ae216e586e010fd1e34419cb16",
+      "bytes": 3228
+    }
+  },
+  "overlay_delta": [
+    "--- composed-evolution\n",
+    "+++ composed-matching-H\n",
+    "@@ -456,7 +456,7 @@\n",
+    "       const int k = s/(g.n[0]*g.n[1]);",
+    "       const Real idx[3] = {1/g.h[0],1/g.h[1],1/g.h[2]};",
+    "       const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);",
+    "-      auto u = LoadMeshJet<3>(q,idx,0,k,j,i);",
+    "+      auto u = LoadComposedMeshJet<3>(q,idx,0,k,j,i);",
+    "       if (initial_jets.extent(0)) AddBackgroundJet(u,initial_jets(point));",
+    "       else AddReferenceJet(u,p,ref);",
+    "       if (!(u.alpha.value > 0) || !Kokkos::isfinite(u.alpha.value)) {"
+  ]
+}

@@ -1,0 +1,41 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:23: RuntimeWarning: divide by zero encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:23: RuntimeWarning: overflow encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:23: RuntimeWarning: invalid value encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: divide by zero encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: overflow encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: invalid value encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: divide by zero encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: overflow encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: invalid value encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:29: RuntimeWarning: divide by zero encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:29: RuntimeWarning: overflow encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:29: RuntimeWarning: invalid value encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:37: RuntimeWarning: divide by zero encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:37: RuntimeWarning: overflow encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/combined/full22-candidate/krylov_propagate.py:37: RuntimeWarning: invalid value encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+spatialnorm gauge_pulse t 0.31249999999999994 steps 10 matvecs 800 norm 8.706087984846137 seconds 8.830060750000001
+spatialnorm gauge_pulse t 0.8125000000000002 steps 20 matvecs 1600 norm 48.11148307677871 seconds 17.662321541
+spatialnorm gauge_pulse t 1.3125000000000007 steps 30 matvecs 2400 norm 236.43989773980553 seconds 26.476139583000002
+spatialnorm gauge_pulse t 1.812500000000001 steps 40 matvecs 3200 norm 1267.0877092822718 seconds 36.045072665999996
+spatialnorm gauge_pulse t 2.0 steps 43 matvecs 3440 norm 1942.4660272403853 seconds 38.946032458
+spatialnorm shell_random t 0.22499999999999998 steps 10 matvecs 4240 norm 0.710845838237344 seconds 9.485632000000003
+spatialnorm shell_random t 0.7000000000000001 steps 20 matvecs 5040 norm 0.2622268325139594 seconds 19.145849542
+spatialnorm shell_random t 1.2000000000000004 steps 30 matvecs 5840 norm 0.4973308555605015 seconds 28.888001709
+spatialnorm shell_random t 1.7000000000000008 steps 40 matvecs 6640 norm 2.3703918271635396 seconds 38.539127959000005
+spatialnorm shell_random t 2.0 steps 46 matvecs 7120 norm 4.455862363839296 seconds 44.230651542
+done spatialnorm spatialnorm-projected-krylov-m50-80-h0.1-t2.0 seconds 84.01176025000001

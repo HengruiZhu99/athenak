@@ -1,0 +1,97 @@
+[
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/killing-damping-feasibility/normal_kernel.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/killing-damping-feasibility/normal_kernel"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.752933791,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O1",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/killing-damping-feasibility/normal_kernel.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/killing-damping-feasibility/normal_debug"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 1.1740922089999999,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/killing-damping-feasibility/normal_kernel"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.4091804170000002,
+    "stdout_file": "normal-release.json",
+    "stdout_sha256": "edd429e45769c966faf42127e58a9da568722b2186c2daf45e6a804bd8a73992"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/killing-damping-feasibility/normal_debug"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.453998833,
+    "stdout_file": "normal-debug.json",
+    "stdout_sha256": "edd429e45769c966faf42127e58a9da568722b2186c2daf45e6a804bd8a73992"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/killing-damping-feasibility/check_projection.py"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 1.3097440419999997,
+    "stdout_file": "projection.log",
+    "stdout_sha256": "c32b23eb105a328e53d42df50eda1dea3c27d662218efda5e408a32a5d39f7fa"
+  }
+]

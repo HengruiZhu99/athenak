@@ -1,0 +1,19 @@
+--- /Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-trace-family/trace-only/overlay/z4c/hyperboloidal/cartesian_patch.hpp
+@@ -13,6 +13,7 @@
+ #include "z4c/hyperboloidal/layer_gauge.hpp"
+ #include "z4c/hyperboloidal/interior_dissipation.hpp"
+ #include "z4c/hyperboloidal/spherical_ghosts.hpp"
++#include "inner_conformal_trace.hpp"
+ 
+ namespace z4c {
+ namespace hyperboloidal {
+@@ -341,7 +342,7 @@
+           || !AssembleInterior(ConformalRHS(background,omega0,damping,Real(0)),
+                                 omega.omega,rhs0)
+           || !AssembleGaugeInterior((ref.layer.enabled || lg.physical_trace_lapse)
+-              ? InteriorLayerGauge(p,u,lg)
++              ? ResearchInnerTraceGauge(p,u,lg,InteriorLayerGauge(p,u,lg),false)
+               : UnfactoredReferenceGauge(ref,p,u,gauge,true,true),
+                                      omega.omega,gauge_rhs)) {
+         ++bad;

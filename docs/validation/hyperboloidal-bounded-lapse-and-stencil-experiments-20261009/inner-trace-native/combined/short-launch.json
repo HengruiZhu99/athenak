@@ -1,0 +1,77 @@
+{
+  "scope": "Finite-positive-lapse inner gauge preflight only; no stable pulse, puncture or scri acceptance.",
+  "launch_head": "1959930034066ecfd43483452e723cbb197e0ad6",
+  "mode": "combined",
+  "stage": "short",
+  "source_verification": {
+    "status": "PASS",
+    "mode": "combined",
+    "private_build_receipt_sha256": "d84e536754f2f2ed44697d689ff32757e67f34d7220bb11979486f0559124f4c",
+    "baseline_sources": 369,
+    "baseline_overlays": 4,
+    "private_sources": 2,
+    "private_objects": 6,
+    "repository_dependencies": 268,
+    "all182_original_objects_and4_libraries_unchanged": true,
+    "actual_compile_and_link_replacements_verified": true,
+    "compiled_objects": [
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "object": "6c46bd7fc622b66d5ab5591459b630d70520c6b0fb3999b97af4691f2e5f3bae",
+        "dependency": "5b07ec82210c4b10c40bf2884cac95551fb5260e135effb3b77779049183a726"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "object": "ae923a4d81daa7830d6b3e3608eb7ec885ef5032378ef4eff57e50ed6ed76d1a",
+        "dependency": "3db6f84aefd6141c1a1725da3f3e8bcf3c639979ada285c0d19525bf6b352fb2"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "object": "bfa7b3101a2bfba0697d5f319c0c1b26c7abf2e597c82c0cc48ec6b53202d8ec",
+        "dependency": "0bc3ab7ba797a54f66a93288652b2f14ba2a6f12c680ad2f05e45d21c535e6fb"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "object": "fdbbfeafef187c898d1324418408ad770b1701c5cf03c9c0680074b6ee115200",
+        "dependency": "ade050b6a7b73b3dc4d889cc71b68ff65fa20cfbc6eb05537e0629e50b11284b"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "object": "175a5a07cfe99f7ccc442743fc13d3fbaa009437dd8b667c530b1f4a18f1ddf1",
+        "dependency": "7357fc4f00e3416683ff057fd0ae039c30a30e9bb9aa28fe43f8c71c66604cb6"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "object": "c52983d61eadb659a3069611fb28695771ef77f6f55489c4729603dc899fff69",
+        "dependency": "5d6f9f3260dbb9e152564d227e5ecfc534288a549be45fc94f51507daa0d0397"
+      }
+    ],
+    "native_override_byteidentical": true,
+    "frozen_trace_gate_index": "801b78e9cdc7755ddda8b0ce6ea375efb02a023f7cfec420ccd8543490c150f8",
+    "complete_original_C0_geometric_pole_diagnostic_unchanged": true,
+    "gauge_operation": "direct regular-lapse replacement before assembly",
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "d5a2c6c5195858306357d1a1ecb68f2a60737e78ce08ed3227fcb1bebf2084bb"
+  },
+  "trace_gate_index_sha256": "801b78e9cdc7755ddda8b0ce6ea375efb02a023f7cfec420ccd8543490c150f8",
+  "build_receipt_sha256": "d84e536754f2f2ed44697d689ff32757e67f34d7220bb11979486f0559124f4c",
+  "executable_sha256": "d5a2c6c5195858306357d1a1ecb68f2a60737e78ce08ed3227fcb1bebf2084bb",
+  "launch_script_sha256": "381e247b921ee0009231d6ab37509c539f6b4c6bf23a13a8929e78782b3935b2",
+  "auditor_sha256": "95c6ea11e88287c3991fe61941021a32642043613137dab8a2e117afee6753df",
+  "override_sha256": "0a3b3a2eb7e50f8b2d181607f3a8a4cbf6e83d617a7fa1eec381111061dd5706",
+  "reference_audit_sha256": "4f8184296dcd27643086edb9d0e914883d25a4291967deeb0045aca1ce3ff35f",
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/run_layer_validation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-trace-native/combined-build/athena-inner-combined",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-trace-native/combined/short",
+    "--suite",
+    "long",
+    "--overrides",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-trace-native/native.athinput",
+    "--duration",
+    ".02",
+    "--output-cadence",
+    ".01"
+  ]
+}

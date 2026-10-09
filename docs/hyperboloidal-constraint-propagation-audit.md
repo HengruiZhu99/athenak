@@ -393,3 +393,8 @@ by negative [long-window and grid-phase screens](hyperboloidal-long-window-and-r
 The [actual scri first-jet hierarchy](hyperboloidal-scri-linear-hierarchy-audit.md)
 derives the full leading residue map and demonstrates a next-level A/Λ corner
 obstruction without inferring finite-Q amplitude blowup.
+
+Further [bounded inner-lapse and matching composed-stencil controls](hyperboloidal-bounded-lapse-and-stencil-audit.md)
+pass implementation gates but worsen the t2 global constraints. A separate
+inertial damping-vector feasibility derivation identifies additional source
+stiffness and live timelikeness requirements before any native candidate.

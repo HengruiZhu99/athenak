@@ -1,0 +1,106 @@
+Inner conformal-trace lapse coupling: separate scratch gauge variants
+===================================================================
+
+Baseline: C_Z4c=0, kappa2=0, kappa_input=10, physical-P lapse, stabilized
+spatial-norm shift, Minkowski hyperboloidal reference. No C1/live-damping
+combination, native evolution, production edit, RHS subtraction or ADM change.
+
+Let h=alpha_ref, W=W_gauge(r;.45,.85), c=1-W, G_i=partial_i Omega,
+B=beta_ref^i G_i/h, w_n=-beta^i G_i/alpha and w_ref=-B. The existing
+alpha^2 f is alpha*(alpha+2c). Define
+
+  D=alpha B-beta^i G_i=alpha*(w_n-w_ref),
+  F=Delta alpha_dot=3c*(alpha+2c)*D/Omega.
+
+This is exactly 3c alpha^2 f (w_n-w_ref)/Omega without a live lapse division.
+The added trace part of the physical-P lapse is equivalently
+
+  -alpha^2 f * [W*(P-P_ref)/Omega + c*(Q-Q_ref)],
+  Q=(P-3w_n)/Omega.
+
+This equation is an algebraic interpretation only: the helper never forms Q
+by subtracting P and 3w_n or changes stored P. The other existing W-weighted
+physical-P outer lapse stabilizers are retained. At W=0 the trace term matches
+the existing conformal-Q lapse branch. At W=1 the physical-P lapse is unchanged.
+No exact earlier test of this compactly supported hybrid was found in checked
+docs/current scratch sources; the full conformal-Q branch and the rejected
+relative-advection-only hybrid are retained as explicit existing controls.
+
+The exact nonlinear value Jacobian and nonzero Hessians are
+
+  F_alpha=3c*[(2alpha+2c)B-beta^i G_i]/Omega,
+  F_beta_i=-3c*(alpha+2c)*G_i/Omega,
+  F_alphaalpha=6cB/Omega, F_alphabeta_i=-3cG_i/Omega.
+
+All other primitive rows/columns added by this scalar source are zero. The
+optional advection correction adds the separately established alpha row
+  J_alphaalpha=-c*(beta dot grad h)/h,
+  J_alphabeta_i=-c*alpha*(partial_i h)/h.
+Only value coefficients change, so the complete principal system is unchanged.
+The direct combined advection has the same beta dot grad(alpha) principal
+coefficient because c+W=1 exactly in the algebra.
+
+The implementation has four separate modes in its standalone actual full20
+comparison: 0 baseline; 1 byte-pinned rejected legacy advection-only control;
+2 robust trace-only; 3 robust combined direct regular advection plus trace.
+It deliberately does not apply the legacy additive advection source in mode3.
+
+Shared API in inner_conformal_trace.hpp:
+  ResearchInnerConformalTrace(p,u,g) returns the regular scalar addition F.
+  ResearchInnerTraceGauge(p,u,g,parts,combined) returns updated gauge parts.
+For trace-only, parts.regular.alpha gains F. For combined, the full regular
+lapse is evaluated directly as
+
+  -alpha*nu*log(alpha/h)
+  +c beta dot[grad(alpha)-(alpha/h)grad(h)]
+  +W[beta dot grad(alpha)-beta_ref dot grad(h)] + F.
+
+The existing stable log1p/log-difference choice is retained. Every shift and
+raw gauge-pole component is unchanged; the support-bounded F is assembled as
+a regular interior addition. The helper returns the original parts unchanged
+outside support, before evaluating any Omega denominator.
+
+Robust D evaluation uses the reference-difference form
+  sum_i[-(beta_i-beta_ref_i)+beta_ref_i*(alpha-h)/h]*G_i
+when alpha/h>.5, which is exactly zero on the analytic reference. When
+alpha/h<=.5 it uses the direct form alpha*(beta_ref dot G)/h-beta dot G;
+this retains an O(alpha) term when alpha-h rounds to -h. Both branches have
+the same exact Jacobian/Hessian. Crossbranch dual checks include ratios .49,
+.5,.5000000001,.51,1e-12 and1e-300. The combined direct advection avoids the
+known subtraction of order-one old/reference advection terms at tiny lapse.
+
+For the current S1,a.5 geometry Omega=1-w_geometry*r^2, hence Omega>=1-r^2.
+Since c>0 only for r<.85, Omega>=.2775 on this support, without a floor.
+For the tested a>=.5, the analogous lower bound is .2775/(2a). The gauge
+cutoff .45-.85 is distinct from the geometric/Cauchy transition .05-.95.
+At r<=.05 both grad(Omega) and grad(h) are exactly zero: all new sources vanish
+for arbitrary live fields, and the original core gauge is retained. At r>=.85
+all new sources and their radial jets vanish identically; outer/scri pole
+certificates are inherited by exact identity, not by extrapolated eigenvalues.
+
+For W=0, the combined complete lapse equation agrees with the existing
+conformal-Q lapse, while trace-only keeps the physical-P reference-advection
+choice. Their finite-Omega reference, nonlinear identities, Jacobians and
+actual principal/primitive symbols are tested separately. The original
+baseline and rejected advection matrices are independently compared bitwise.
+
+Dimensions: alpha,beta,Omega,c are dimensionless; G and B have dimension
+1/length, so F is a lapse time derivative with dimension1/length. No live
+lapse denominator is introduced. This is not an invariant-positive-lapse
+proof: at fixed beta dot G nonzero, F tends to -6c^2 beta dot G/Omega as
+alpha tends to0. True puncture asymptotics remain inside the exact flat core,
+but the known eta_inner=v conditional obstruction there is unchanged. No
+uniform alpha/chi-degenerate principal bound, trumpet formation, scri manifold
+preservation, tensor energy or global/nonlinear stability is established.
+
+The additive first source draft was not compiled before robust evaluation was
+requested; it is preserved only as source history. The final gate retains a
+separate failed Python report-rendering attempt (symbol shadowing) and the
+complete corrected rerun. The inherited principal fixture initially had zero
+Omega gradients, so a further fixture strengthens it with nonzero matching
+prescribed jets. Its first attempt exposed constant geometric background
+contamination in the inherited finite-unit-jet extractor; that failed attempt
+is preserved before adding explicit geometric background subtraction. Both
+trace/combined complete principal gates then pass with the nonzero jets. The
+actual full20/nonlinear tests always used nonzero physical reference jets.
+No scientific negative result is hidden.
