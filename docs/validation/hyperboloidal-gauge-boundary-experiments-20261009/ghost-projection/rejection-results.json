@@ -1,0 +1,43 @@
+{
+  "compile_command": [
+    "/usr/bin/c++",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/overlay",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/rejection_checks.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/rejection-checks",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "source_sha256": "b29b2da363125cfb3895a2118a90b3bc5cf810c8cc8129bf984f6eceb79942dd",
+  "executable_sha256": "7fc2dc7bf3cd9c715b936b8edb2575eea793bfc94a637d6c7c8f8fd9e56ce41c",
+  "measurements": {
+    "strict_interior_donor": 8379,
+    "donor_metric_spd_det_one": true,
+    "negative_weight": -3,
+    "invalid_extrapolated_ghost_rejected": true
+  },
+  "exit_status": 0
+}

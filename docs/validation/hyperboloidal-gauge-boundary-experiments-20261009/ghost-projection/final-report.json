@@ -1,0 +1,692 @@
+{
+  "verdict": "Rejected as a stabilization remedy. Reference and initial native gates pass and evolving quadratic derivative consistency improves, but full native constraints still grow and strict ghost admission fails before requested t2. No production integration, floor or SPD repair.",
+  "closure_scope": "Only nonlinear metric/A extension at ghost targets changes; native donor support/stencils/interior20-field principal system/projector/diagnostics preserved. No characteristic or nonlinear scri closure claim.",
+  "overlay_manifest": {
+    "original_path": "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp",
+    "original_sha256": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+    "overlay_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/overlay/z4c/hyperboloidal/cartesian_patch.hpp",
+    "overlay_sha256": "6ce2f1e11455af3a6bdbe5a82dfcd28640a1ab42fd7f0611fb74f492150c33d0",
+    "patch_sha256": "4389e284ade2758645f0e6d04ca56bd1dfe6342e416b2f0c02d3db756b2ad3ac"
+  },
+  "compiler_identity": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "native_build_manifest_sha256": "991534e084daf3233e7e7d59392fd5d96aed4043bdc8230c41f28eb7a5be6363",
+  "native_projected_executable_sha256": "e9b15a545065f8fe998c2a3b3e7b7b43ac2af2dd584500489b496dc89217fbb3",
+  "native_control_executable_sha256": "5ba555211db81985274f8ebe789869b8f6300f638ac8dfd7ba7736b541160788",
+  "baseline_relink_equivalence": {
+    "scope": "Baseline relink uses exact original object/library bytes. The only binary differences are Mach-O LC_UUID and linker ad-hoc code signature; all remaining bytes compare exactly. No code/data/symbol differences.",
+    "full_byte_difference_count": 48,
+    "full_byte_difference_offsets": [
+      1768,
+      1769,
+      1770,
+      1771,
+      1772,
+      1773,
+      1774,
+      1775,
+      1776,
+      1777,
+      1778,
+      1779,
+      1780,
+      1781,
+      1782,
+      1783,
+      10350019,
+      10350020,
+      10350021,
+      10350022,
+      10350023,
+      10350024,
+      10350025,
+      10350026,
+      10350027,
+      10350028,
+      10350029,
+      10350030,
+      10350031,
+      10350032,
+      10350033,
+      10350034,
+      10350035,
+      10350036,
+      10350037,
+      10350038,
+      10350039,
+      10350040,
+      10350041,
+      10350042,
+      10350043,
+      10350044,
+      10350045,
+      10350046,
+      10350047,
+      10350048,
+      10350049,
+      10350050
+    ],
+    "original_ignored_ranges": [
+      {
+        "field": "LC_UUID",
+        "offset": 1768,
+        "size": 16
+      },
+      {
+        "field": "LC_CODE_SIGNATURE payload",
+        "offset": 10349904,
+        "size": 80984
+      }
+    ],
+    "baseline_ignored_ranges": [
+      {
+        "field": "LC_UUID",
+        "offset": 1768,
+        "size": 16
+      },
+      {
+        "field": "LC_CODE_SIGNATURE payload",
+        "offset": 10349904,
+        "size": 80984
+      }
+    ],
+    "equal_after_only_uuid_signature_normalization": true,
+    "normalized_original_sha256": "c73df6e5470d04c00d4dfb435cbc4069edd06a5764e56f8aba89ece41374a38c",
+    "normalized_baseline_sha256": "c73df6e5470d04c00d4dfb435cbc4069edd06a5764e56f8aba89ece41374a38c"
+  },
+  "reference_and_fixed_reconstruction_gates": [
+    {
+      "n": 24,
+      "reference_prepare_max_change": 0,
+      "reference_rhs_max": 1.3322676295501878e-15,
+      "H": 6.091900502453727e-15,
+      "M": 9.729042585004061e-16,
+      "Z": 1.2391380160796285e-16
+    },
+    {
+      "n": 36,
+      "reference_prepare_max_change": 0,
+      "reference_rhs_max": 2.3175905639050143e-15,
+      "H": 5.9205263358143055e-15,
+      "M": 1.0339304631414346e-15,
+      "Z": 1.1027636185879319e-16
+    },
+    {
+      "n": 48,
+      "reference_prepare_max_change": 0,
+      "reference_rhs_max": 2.6298407895808396e-15,
+      "H": 5.812425246609506e-15,
+      "M": 1.0530286220272086e-15,
+      "Z": 1.0952805176739567e-16
+    },
+    {
+      "kind": "analytic_initial_reconstruction",
+      "mass": 0.05,
+      "initial_H": 7.639639727581567e-15,
+      "repeated_H": 7.639639727581567e-15,
+      "M": 1.4453993749519328e-15,
+      "Z": 1.1639051749326156e-16
+    }
+  ],
+  "instantaneous_tangent_comparison": [
+    {
+      "n": 24,
+      "source_off_physicalP_finite_native_pulse": true,
+      "Hdot_rms": {
+        "original_signed_average": 0.47241361798031367,
+        "projected_signed_average": 0.4723110946880134,
+        "relative_change_percent": -0.021702018823799296
+      },
+      "Mdot_rms": {
+        "original_signed_average": 1.7347980392653732,
+        "projected_signed_average": 1.7327856883216084,
+        "relative_change_percent": -0.11599914792485011
+      },
+      "Zdot_rms": {
+        "original_signed_average": 0.04535568137086311,
+        "projected_signed_average": 0.04532315230608289,
+        "relative_change_percent": -0.07171993407891764
+      }
+    },
+    {
+      "n": 36,
+      "source_off_physicalP_finite_native_pulse": true,
+      "Hdot_rms": {
+        "original_signed_average": 0.08225203012812438,
+        "projected_signed_average": 0.0823854234811467,
+        "relative_change_percent": 0.16217636551285608
+      },
+      "Mdot_rms": {
+        "original_signed_average": 0.6131455666758319,
+        "projected_signed_average": 0.6129473045751781,
+        "relative_change_percent": -0.03233524165047186
+      },
+      "Zdot_rms": {
+        "original_signed_average": 0.008352754329326684,
+        "projected_signed_average": 0.008488912682492975,
+        "relative_change_percent": 1.6301012552019545
+      }
+    },
+    {
+      "n": 48,
+      "source_off_physicalP_finite_native_pulse": true,
+      "Hdot_rms": {
+        "original_signed_average": 0.026092688026071335,
+        "projected_signed_average": 0.026116863684455573,
+        "relative_change_percent": 0.09265300056506831
+      },
+      "Mdot_rms": {
+        "original_signed_average": 0.2480366357830451,
+        "projected_signed_average": 0.24809366395581778,
+        "relative_change_percent": 0.022991834489549667
+      },
+      "Zdot_rms": {
+        "original_signed_average": 0.0020277817645773704,
+        "projected_signed_average": 0.0020264332325310164,
+        "relative_change_percent": -0.06650281948042958
+      }
+    }
+  ],
+  "native_negative_control": {
+    "requested_time": 2.0,
+    "exit_status": -6,
+    "wall_seconds": 618.407468125,
+    "failure_guard": "invalid full ghost matrix/trace in scratch projection: 14",
+    "exact_failing_stage_time_unknown": true,
+    "last_saved_valid_time": 1.8502979340961283,
+    "last_saved_valid_cycle": 4329,
+    "last_saved_valid": {
+      "time": 1.8502979340961283,
+      "H": 1.5623394598208677,
+      "M": 0.9922514108775902,
+      "Z": 0.1655185591357301,
+      "Theta": 0.029266207333035775,
+      "alpha_min": 1.2645849315733806,
+      "chi_min": 0.554652631529,
+      "pole_deviation_max": 3.923663535248964,
+      "null_deviation_max": 0.18752232720012502,
+      "metric_eigen_min": 0.9444401745674029,
+      "metric_eigen_max": 2.8759905233716205,
+      "metric_stretch_ratio_max": 2.1231338124776387,
+      "constraint_budget": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-kappa10-t2/finite-angular-N24/bin/hyp.con.00074.bin",
+        "time": 1.8502979340961283,
+        "cycle": 4329,
+        "active_cells": 6152,
+        "global": {
+          "H": {
+            "rms": 1.5623394599068563,
+            "max": 12.19778823852539,
+            "max_radius": 0.3788861141556919,
+            "max_xyz": [
+              -0.21875,
+              -0.21875,
+              -0.21875
+            ]
+          },
+          "M": {
+            "rms": 0.9922514109191947,
+            "max": 7.522323700248372,
+            "max_radius": 0.22733166849341518,
+            "max_xyz": [
+              0.1312500000000001,
+              0.1312500000000001,
+              -0.13124999999999987
+            ]
+          },
+          "Z": {
+            "rms": 0.16551855919777028,
+            "max": 1.1851642625974146,
+            "max_radius": 0.9928455003171441,
+            "max_xyz": [
+              -0.65625,
+              0.7437500000000001,
+              0.04375000000000018
+            ]
+          }
+        },
+        "radial_bins": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.05,
+            "cells": 0,
+            "H": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "M": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "Z": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            }
+          },
+          {
+            "r_min": 0.05,
+            "r_max": 0.9,
+            "cells": 4632,
+            "H": {
+              "rms": 1.7984035960309115,
+              "squared_norm_fraction": 0.9976443441844396
+            },
+            "M": {
+              "rms": 1.0335189817782635,
+              "squared_norm_fraction": 0.8168563479959684
+            },
+            "Z": {
+              "rms": 0.04994495814500288,
+              "squared_norm_fraction": 0.06855547376944086
+            }
+          },
+          {
+            "r_min": 0.9,
+            "r_max": 0.95,
+            "cells": 768,
+            "H": {
+              "rms": 0.19470020287302006,
+              "squared_norm_fraction": 0.0019387727083268057
+            },
+            "M": {
+              "rms": 0.7243739764523276,
+              "squared_norm_fraction": 0.06653147047280784
+            },
+            "Z": {
+              "rms": 0.18728602459751273,
+              "squared_norm_fraction": 0.15983145068154397
+            }
+          },
+          {
+            "r_min": 0.95,
+            "r_max": 1.0,
+            "cells": 752,
+            "H": {
+              "rms": 0.09123926825363184,
+              "squared_norm_fraction": 0.00041688310723368786
+            },
+            "M": {
+              "rms": 0.9691543027422518,
+              "squared_norm_fraction": 0.11661218153122381
+            },
+            "Z": {
+              "rms": 0.41585864060597777,
+              "squared_norm_fraction": 0.7716130755490151
+            }
+          }
+        ]
+      }
+    },
+    "matched_history_control": {
+      "projected_last_valid_time": 1.8502979340961283,
+      "projected_last_valid_cycle": 4329,
+      "projected_last_valid_H_M_Z": {
+        "H": 1.5623394598208677,
+        "M": 0.9922514108775902,
+        "Z": 0.1655185591357301
+      },
+      "control_H_M_Z_linearly_interpolated_to_exact_projected_last_valid_time": {
+        "H": 1.5657446684445704,
+        "M": 1.027189089093912,
+        "Z": 0.19458551965100299
+      },
+      "control_bracket_history_rows": [
+        [
+          1.8002592989053634,
+          0.00042773437499998563,
+          1.1419846414208155,
+          0.8451364189477347,
+          0.22444098740432336,
+          0.02132499574798478,
+          8.881784197001252e-16,
+          7.166665133884063e-16,
+          1.3452232418300178,
+          0.5997253397860004,
+          15.670288684653078,
+          5.400237927428745,
+          4.55359103562736,
+          0.10057929566459424,
+          6152.0
+        ],
+        [
+          1.850304220780349,
+          0.00042773437499998563,
+          1.5657979082155018,
+          1.027211961573235,
+          0.19458176871140775,
+          0.029267078746924448,
+          8.881784197001252e-16,
+          8.417006963799708e-16,
+          1.2645212403827975,
+          0.5546837390270272,
+          12.188205331811755,
+          7.517134102174718,
+          3.9740466775803296,
+          0.18939011654686508,
+          6152.0
+        ]
+      ],
+      "projected_over_control": {
+        "H": 0.9978251826799542,
+        "M": 0.9659871015110368,
+        "Z": 0.8506211532728353
+      },
+      "requested_time": 2.0,
+      "native_exit_status": -6,
+      "failure_message": "invalid full ghost matrix/trace in scratch projection: 14",
+      "failure_time_scope": "Exact failing stage time/cycle is not printed by the guard. It occurs after the last saved valid state at t=1.8502979340961283/cycle4329 and before the next scheduled snapshot at t>=1.875."
+    },
+    "all_saved_projected_snapshots": 75,
+    "all_saved_projected_snapshots_finite_positive_spd": true,
+    "control_all_saved_snapshots": 41,
+    "control_all_saved_snapshots_finite_positive_spd": true,
+    "shared_bulk_spike": {
+      "control_snapshot": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/clean-wide-kappa10-long/finite-angular-N24/bin/hyp.con.00037.bin",
+        "time": 1.850304220780349,
+        "cycle": 4329,
+        "active_cells": 6152,
+        "global": {
+          "H": {
+            "rms": 1.5657979074332113,
+            "max": 12.18820571899414,
+            "max_radius": 0.3788861141556919,
+            "max_xyz": [
+              -0.21875,
+              -0.21875,
+              -0.21875
+            ]
+          },
+          "M": {
+            "rms": 1.02721196129678,
+            "max": 7.517134104515076,
+            "max_radius": 0.22733166849341518,
+            "max_xyz": [
+              0.1312500000000001,
+              0.1312500000000001,
+              -0.13124999999999987
+            ]
+          },
+          "Z": {
+            "rms": 0.19458176870684638,
+            "max": 1.3329161448277442,
+            "max_radius": 0.992845500317144,
+            "max_xyz": [
+              -0.043749999999999956,
+              -0.74375,
+              -0.65625
+            ]
+          }
+        },
+        "radial_bins": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.05,
+            "cells": 0,
+            "H": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "M": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "Z": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            }
+          },
+          {
+            "r_min": 0.05,
+            "r_max": 0.9,
+            "cells": 4632,
+            "H": {
+              "rms": 1.8008962559810442,
+              "squared_norm_fraction": 0.9959973837752765
+            },
+            "M": {
+              "rms": 1.0378389490921491,
+              "squared_norm_fraction": 0.7685852025905532
+            },
+            "Z": {
+              "rms": 0.05210925372183705,
+              "squared_norm_fraction": 0.05399799539275083
+            }
+          },
+          {
+            "r_min": 0.9,
+            "r_max": 0.95,
+            "cells": 768,
+            "H": {
+              "rms": 0.26544307828636715,
+              "squared_norm_fraction": 0.003587701373254864
+            },
+            "M": {
+              "rms": 0.8847120063328762,
+              "squared_norm_fraction": 0.0926037555041593
+            },
+            "Z": {
+              "rms": 0.21993111874119073,
+              "squared_norm_fraction": 0.15948284212999733
+            }
+          },
+          {
+            "r_min": 0.95,
+            "r_max": 1.0,
+            "cells": 752,
+            "H": {
+              "rms": 0.09122511962919451,
+              "squared_norm_fraction": 0.00041491485146858363
+            },
+            "M": {
+              "rms": 1.0946400101340417,
+              "squared_norm_fraction": 0.1388110419052875
+            },
+            "Z": {
+              "rms": 0.49357828411804894,
+              "squared_norm_fraction": 0.7865191624772518
+            }
+          }
+        ]
+      },
+      "projected_snapshot": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-kappa10-t2/finite-angular-N24/bin/hyp.con.00074.bin",
+        "time": 1.8502979340961283,
+        "cycle": 4329,
+        "active_cells": 6152,
+        "global": {
+          "H": {
+            "rms": 1.5623394599068563,
+            "max": 12.19778823852539,
+            "max_radius": 0.3788861141556919,
+            "max_xyz": [
+              -0.21875,
+              -0.21875,
+              -0.21875
+            ]
+          },
+          "M": {
+            "rms": 0.9922514109191947,
+            "max": 7.522323700248372,
+            "max_radius": 0.22733166849341518,
+            "max_xyz": [
+              0.1312500000000001,
+              0.1312500000000001,
+              -0.13124999999999987
+            ]
+          },
+          "Z": {
+            "rms": 0.16551855919777028,
+            "max": 1.1851642625974146,
+            "max_radius": 0.9928455003171441,
+            "max_xyz": [
+              -0.65625,
+              0.7437500000000001,
+              0.04375000000000018
+            ]
+          }
+        },
+        "radial_bins": [
+          {
+            "r_min": 0.0,
+            "r_max": 0.05,
+            "cells": 0,
+            "H": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "M": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            },
+            "Z": {
+              "rms": null,
+              "squared_norm_fraction": 0.0
+            }
+          },
+          {
+            "r_min": 0.05,
+            "r_max": 0.9,
+            "cells": 4632,
+            "H": {
+              "rms": 1.7984035960309115,
+              "squared_norm_fraction": 0.9976443441844396
+            },
+            "M": {
+              "rms": 1.0335189817782635,
+              "squared_norm_fraction": 0.8168563479959684
+            },
+            "Z": {
+              "rms": 0.04994495814500288,
+              "squared_norm_fraction": 0.06855547376944086
+            }
+          },
+          {
+            "r_min": 0.9,
+            "r_max": 0.95,
+            "cells": 768,
+            "H": {
+              "rms": 0.19470020287302006,
+              "squared_norm_fraction": 0.0019387727083268057
+            },
+            "M": {
+              "rms": 0.7243739764523276,
+              "squared_norm_fraction": 0.06653147047280784
+            },
+            "Z": {
+              "rms": 0.18728602459751273,
+              "squared_norm_fraction": 0.15983145068154397
+            }
+          },
+          {
+            "r_min": 0.95,
+            "r_max": 1.0,
+            "cells": 752,
+            "H": {
+              "rms": 0.09123926825363184,
+              "squared_norm_fraction": 0.00041688310723368786
+            },
+            "M": {
+              "rms": 0.9691543027422518,
+              "squared_norm_fraction": 0.11661218153122381
+            },
+            "Z": {
+              "rms": 0.41585864060597777,
+              "squared_norm_fraction": 0.7716130755490151
+            }
+          }
+        ]
+      },
+      "interpretation": "Both at cycle4329 and times differing6.29e-6 peak H at r=.378886, with H\u00b299.600%/99.764% inside .9. This is shared bulk growth, not a projection-specific localization."
+    }
+  },
+  "receipt_files": {
+    "overlay-manifest.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/overlay-manifest.json",
+      "sha256": "29339b7c00e97120ce10d8e90e2d28bb4f10c163168efff5874e4ff90ab9789f"
+    },
+    "cartesian_patch-overlay.patch": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/cartesian_patch-overlay.patch",
+      "sha256": "4389e284ade2758645f0e6d04ca56bd1dfe6342e416b2f0c02d3db756b2ad3ac"
+    },
+    "cartesian_patch-original.hpp": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/cartesian_patch-original.hpp",
+      "sha256": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280"
+    },
+    "overlay/z4c/hyperboloidal/cartesian_patch.hpp": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/overlay/z4c/hyperboloidal/cartesian_patch.hpp",
+      "sha256": "6ce2f1e11455af3a6bdbe5a82dfcd28640a1ab42fd7f0611fb74f492150c33d0"
+    },
+    "snapshot-extraction.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/snapshot-extraction.json",
+      "sha256": "eccdb189adee20d44cda18064428725285c6b3a5c1b4c81a453911d816cc8a80"
+    },
+    "ghost-defect-original.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/ghost-defect-original.json",
+      "sha256": "48859a5189443dd58b45944e77d3da8c2a9ef627a294ab8c027f1d8b3e91eb5f"
+    },
+    "ghost-replay-comparison.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/ghost-replay-comparison.json",
+      "sha256": "8466db44d0e076930d03c3e0e059f439e2d8e5c3c7ab2c666ef8252d1fa8c8c5"
+    },
+    "audit-results.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/audit-results.json",
+      "sha256": "7fb8afc195ffa4f55d72033de898343db8a67d2c89510e750d2a43b938c2d1b6"
+    },
+    "rejection-results.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/rejection-results.json",
+      "sha256": "b84f49e5394a9ce120e319e6f0f793a61920cf6de2314d3b485a87f26c97e49f"
+    },
+    "native-build/manifest.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-build/manifest.json",
+      "sha256": "991534e084daf3233e7e7d59392fd5d96aed4043bdc8230c41f28eb7a5be6363"
+    },
+    "native-build/baseline-relink-equivalence.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-build/baseline-relink-equivalence.json",
+      "sha256": "3f49150bdd4b6f04eabcefba4798c72a133f900a2b795df4e9929d6a90d4d431"
+    },
+    "native-kappa10-t2/results.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-kappa10-t2/results.json",
+      "sha256": "42b3652e37a1f0c497d8be28b91d29d0c89d681812cbdf423084490c9d375b60"
+    },
+    "native-kappa10-t2/finite-angular-N24/layer.athinput": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-kappa10-t2/finite-angular-N24/layer.athinput",
+      "sha256": "d17cc2b0b9c00b9abefe164d6a889eca70fad8ccc613277b8f6e813bda68e783"
+    },
+    "native-kappa10-t2/finite-angular-N24/run.log": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-kappa10-t2/finite-angular-N24/run.log",
+      "sha256": "73af50297aeecd528408ecfe10de9fde7e1554c7ab6f4c693fb9e90747072d6e"
+    },
+    "native-kappa10-t2/finite-angular-N24/hyp.z4c.user.hst": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-kappa10-t2/finite-angular-N24/hyp.z4c.user.hst",
+      "sha256": "bc36fc1b710c8409a057b8f1feae98255968ea2eba308e93f6a00636204cc358"
+    },
+    "input-comparison.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/input-comparison.json",
+      "sha256": "87f53b69b13fb51927bdb9ab213cd0a1a83df4f8b4dc42de33903c9ca768ae69"
+    },
+    "matched-failure-control.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/matched-failure-control.json",
+      "sha256": "cc0ce30004270a10ff76d379980f5224a0807972fd49f3825a1af72f62be32c1"
+    },
+    "history-comparison.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/history-comparison.json",
+      "sha256": "7bfdb511eca03d5e46b3be8ccd98d209265d6f9e9eb9a8b2740d6354b119fdae"
+    },
+    "evolution-field-audit.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/evolution-field-audit.json",
+      "sha256": "3fe82a4e6b7540b327d2d5259d1416a61b70c8fbc8f887f2b7238b810a5235db"
+    },
+    "last-valid-ghost-audit.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-ghost-audit.json",
+      "sha256": "bc0a21df7b8d531fd034737f72f39f8bea7350087b893f6a43152fc9204fc022"
+    },
+    "audit-source-manifest.json": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/audit-source-manifest.json",
+      "sha256": "92542633d3e8b2958072a07d718abc55996c651afe77b8c2c8e2b5cb265c5b8f"
+    },
+    "REPORT.md": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/REPORT.md",
+      "sha256": "f640a7df002d2593c2c0aea18a4f67424e6aa2ebfcba5bc36c7a5e31b91f05fc"
+    }
+  }
+}

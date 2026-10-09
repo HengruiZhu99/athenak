@@ -1,0 +1,81 @@
+{
+  "scope": "Baseline relink uses exact original object/library bytes. The only binary differences are Mach-O LC_UUID and linker ad-hoc code signature; all remaining bytes compare exactly. No code/data/symbol differences.",
+  "full_byte_difference_count": 48,
+  "full_byte_difference_offsets": [
+    1768,
+    1769,
+    1770,
+    1771,
+    1772,
+    1773,
+    1774,
+    1775,
+    1776,
+    1777,
+    1778,
+    1779,
+    1780,
+    1781,
+    1782,
+    1783,
+    10350019,
+    10350020,
+    10350021,
+    10350022,
+    10350023,
+    10350024,
+    10350025,
+    10350026,
+    10350027,
+    10350028,
+    10350029,
+    10350030,
+    10350031,
+    10350032,
+    10350033,
+    10350034,
+    10350035,
+    10350036,
+    10350037,
+    10350038,
+    10350039,
+    10350040,
+    10350041,
+    10350042,
+    10350043,
+    10350044,
+    10350045,
+    10350046,
+    10350047,
+    10350048,
+    10350049,
+    10350050
+  ],
+  "original_ignored_ranges": [
+    {
+      "field": "LC_UUID",
+      "offset": 1768,
+      "size": 16
+    },
+    {
+      "field": "LC_CODE_SIGNATURE payload",
+      "offset": 10349904,
+      "size": 80984
+    }
+  ],
+  "baseline_ignored_ranges": [
+    {
+      "field": "LC_UUID",
+      "offset": 1768,
+      "size": 16
+    },
+    {
+      "field": "LC_CODE_SIGNATURE payload",
+      "offset": 10349904,
+      "size": 80984
+    }
+  ],
+  "equal_after_only_uuid_signature_normalization": true,
+  "normalized_original_sha256": "c73df6e5470d04c00d4dfb435cbc4069edd06a5764e56f8aba89ece41374a38c",
+  "normalized_baseline_sha256": "c73df6e5470d04c00d4dfb435cbc4069edd06a5764e56f8aba89ece41374a38c"
+}

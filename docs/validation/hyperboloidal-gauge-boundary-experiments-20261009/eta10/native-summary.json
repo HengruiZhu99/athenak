@@ -1,0 +1,221 @@
+{
+  "scope": "Actual native Cartesian arrays/RK3. Finite duration and positive fields do not establish nonlinear scri closure or stability.",
+  "implementation_commit": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "native_executable_sha256": "bc242590902321d82798d3cfb03ca4ea29410d62bb3aac12d1a8a811cc06ce0b",
+  "parameters": {
+    "job/basename": "hyp",
+    "mesh/nx1": "24",
+    "mesh/nx2": "24",
+    "mesh/nx3": "24",
+    "mesh/nghost": "3",
+    "mesh/x1min": "-1.05",
+    "mesh/x1max": "1.05",
+    "mesh/x2min": "-1.05",
+    "mesh/x2max": "1.05",
+    "mesh/x3min": "-1.05",
+    "mesh/x3max": "1.05",
+    "mesh/ix1_bc": "outflow",
+    "mesh/ox1_bc": "outflow",
+    "mesh/ix2_bc": "outflow",
+    "mesh/ox2_bc": "outflow",
+    "mesh/ix3_bc": "outflow",
+    "mesh/ox3_bc": "outflow",
+    "meshblock/nx1": "24",
+    "meshblock/nx2": "24",
+    "meshblock/nx3": "24",
+    "time/evolution": "dynamic",
+    "time/integrator": "rk3",
+    "time/cfl_number": "0.4",
+    "time/nlim": "-1",
+    "time/tlim": "2.0",
+    "time/ndiag": "100",
+    "z4c/hyperboloidal": "true",
+    "z4c/hyperboloidal_slicing": "2",
+    "z4c/hyperboloidal_shift_driver": "0.1",
+    "z4c/hyperboloidal_lapse_damping": "1.5",
+    "z4c/hyperboloidal_shift_damping": "1",
+    "z4c/hyperboloidal_kappa1": "10",
+    "z4c/hyperboloidal_dissipation": "0.1",
+    "z4c/hyperboloidal_pole_cfl": ".03",
+    "z4c/hyperboloidal_ghost_degree": "2",
+    "z4c/hyperboloidal_mass_diagnostics": "false",
+    "z4c/hyperboloidal_mass_nmu": "32",
+    "z4c/floor_chi": "false",
+    "z4c/nrad_wave_extraction": "0",
+    "z4c/spatial_order": "4",
+    "problem/pgen_name": "z4c_hyperboloidal",
+    "problem/mass": "0",
+    "problem/lapse_pulse": "0.1",
+    "output1/file_type": "bin",
+    "output1/variable": "z4c",
+    "output1/id": "z4c",
+    "output1/dt": "0.025",
+    "output1/ghost_zones": "true",
+    "output2/file_type": "bin",
+    "output2/variable": "adm",
+    "output2/id": "adm",
+    "output2/dt": "0.025",
+    "output2/ghost_zones": "true",
+    "output3/file_type": "hst",
+    "output3/dt": "0.025",
+    "output3/data_format": "%24.16e",
+    "output4/file_type": "bin",
+    "output4/variable": "con",
+    "output4/id": "con",
+    "output4/dt": "0.025",
+    "output4/ghost_zones": "true",
+    "output5/file_type": "rst",
+    "output5/dt": "0.025",
+    "z4c/hyperboloidal_layer": "true",
+    "z4c/hyperboloidal_layer_r0": ".05",
+    "z4c/hyperboloidal_layer_r1": ".95",
+    "z4c/hyperboloidal_gauge_r0": ".45",
+    "z4c/hyperboloidal_gauge_r1": ".85",
+    "z4c/hyperboloidal_gauge_q0": "0.5",
+    "z4c/hyperboloidal_layer_lapse_inner": "0",
+    "z4c/hyperboloidal_layer_lapse_outer": "1.5",
+    "z4c/hyperboloidal_layer_shift_inner": "0",
+    "z4c/hyperboloidal_layer_shift_outer": "1",
+    "z4c/hyperboloidal_preferred_source": "false",
+    "problem/shift_pulse": "0.02",
+    "problem/pulse_angular": "true",
+    "z4c/hyperboloidal_physical_trace_lapse": "true",
+    "z4c/hyperboloidal_curvature_radius": ".5",
+    "z4c/hyperboloidal_symmetric_ghosts": "true",
+    "z4c/hyperboloidal_scri_lapse_damping": "1.5",
+    "problem/pulse_width": ".5"
+  },
+  "final": {
+    "time": 2.0,
+    "H": 1.2665560319962215,
+    "M": 1.6364712275646214,
+    "Z": 0.37533786317477946,
+    "Theta": 0.029005817778037967,
+    "alpha_min": 0.6775629363880483,
+    "chi_min": 0.6043000866777231,
+    "pole_deviation_max": 18.70526762406524,
+    "null_deviation_max": 0.6322048147639946,
+    "metric_eigen_min": 0.5430292097493156,
+    "metric_eigen_max": 4.138452467779682,
+    "metric_stretch_ratio_max": 3.9559742291040303,
+    "constraint_budget": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/shift-pole-family/native-long/finite-angular-long-N24/bin/hyp.con.00080.bin",
+      "time": 2.0,
+      "cycle": 4683,
+      "active_cells": 6152,
+      "global": {
+        "H": {
+          "rms": 1.266556030781219,
+          "max": 6.544632911682129,
+          "max_radius": 0.07577722283113855,
+          "max_xyz": [
+            -0.043749999999999956,
+            0.04375000000000018,
+            0.04375000000000018
+          ]
+        },
+        "M": {
+          "rms": 1.636471226989892,
+          "max": 13.330912433826853,
+          "max_radius": 0.9291082754447948,
+          "max_xyz": [
+            0.6562500000000002,
+            0.6562500000000002,
+            -0.043749999999999956
+          ]
+        },
+        "Z": {
+          "rms": 0.3753378628326255,
+          "max": 3.368608144062926,
+          "max_radius": 0.9291082754447948,
+          "max_xyz": [
+            0.6562500000000002,
+            0.6562500000000002,
+            -0.043749999999999956
+          ]
+        }
+      },
+      "radial_bins": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H": {
+            "rms": 1.3601269923784851,
+            "squared_norm_fraction": 0.868285060157918
+          },
+          "M": {
+            "rms": 0.9863284256930236,
+            "squared_norm_fraction": 0.27351337936033965
+          },
+          "Z": {
+            "rms": 0.13503223991827185,
+            "squared_norm_fraction": 0.09745012800802695
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H": {
+            "rms": 1.2815518938099315,
+            "squared_norm_fraction": 0.127811070504606
+          },
+          "M": {
+            "rms": 2.979914321450279,
+            "squared_norm_fraction": 0.4139383845844292
+          },
+          "Z": {
+            "rms": 0.8884301737502692,
+            "squared_norm_fraction": 0.6994339998548709
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H": {
+            "rms": 0.22634519892061167,
+            "squared_norm_fraction": 0.003903869337476143
+          },
+          "M": {
+            "rms": 2.6167735599053987,
+            "squared_norm_fraction": 0.31254823605523113
+          },
+          "Z": {
+            "rms": 0.4838308438615224,
+            "squared_norm_fraction": 0.20311587213710222
+          }
+        }
+      ]
+    }
+  },
+  "ratios_to_matching_base": {
+    "H": 1.0559543493625625,
+    "M": 0.8299498018586073,
+    "Z": 0.8462915447610878
+  },
+  "all_saved_snapshots_positive": true,
+  "snapshot_count": 81,
+  "reference_max_array_change": 1.1368683772161603e-13,
+  "source_unchanged_from_27c19d20": true,
+  "outcome": "Finite fields through t2, but growing constraints; no stabilization or regularity-closure claim. H worsens relative to base.",
+  "required_later_BH_gate": "Null tangency and compatible gauge first jets with Minkowski reference; beta restoring itself is not tangent."
+}

@@ -1,0 +1,56 @@
+{
+  "commands": [
+    [
+      "/usr/bin/c++",
+      "-DKOKKOS_DEPENDENCE",
+      "-O3",
+      "-DNDEBUG",
+      "-std=c++17",
+      "-arch",
+      "arm64",
+      "-I/Users/hz0693/research/hyperboloidal/src",
+      "-I/Users/hz0693/research/hyperboloidal",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/core/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/containers/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/algorithms/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+      "-I/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/simd/src",
+      "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+      "-isystem",
+      "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+      "-isystem",
+      "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/shift-pole-family/shift_fourier.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/shift-pole-family/shift_fourier",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/containers/src/libkokkoscontainers.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/core/src/libkokkoscore.a",
+      "/Users/hz0693/research/hyperboloidal/build-layer-feedback-native/kokkos/simd/src/libkokkossimd.a"
+    ],
+    [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/shift-pole-family/shift_fourier",
+      "--shift-poles"
+    ],
+    [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/shift-pole-family/shift_fourier",
+      "--shift"
+    ]
+  ],
+  "source_sha256": "2f1515b7114ddb9d16d21e17e2fd4334adcd2c386b46e7d1e98374159bbb2992",
+  "executable_sha256": "0be8c8235d277193cd5c77b5093cd0574194f498a215a9bf48d85bc6d69284de",
+  "scope": "Scratch frozen continuum shift-restoring-pole family. Separate ignored eta10 native overlay/build; no tracked production changes.",
+  "artifacts_sha256": {
+    "native-experiment-report.json": "49f9490b6a2c55b04e26dee9b794c867e85e788646bda1aed7ae51f8d18a8394",
+    "group-report.json": "bdbb48442cb45af8bcc5fad58f66c2396b2387486df80f6c456aa4e602f01051",
+    "shift-poles.json": "2f1a61b4a8c626926385e7db3a86fe2beaf9f44b63ed3037653d00eb1e86e70d",
+    "shift-report.json": "5088f6ae4234dd8c4e1cd27f4fd6b5ffb5e09edd87f1336e993349301e37eaf0",
+    "native-build-receipt.json": "e27809ed3c332894b7df45d6adbaf3f67d0da884164ea2f6c2bd376f43c41bd0",
+    "shift-fourier.json": "0ccf13fec00f906cf5dade88960c68f2474810486585f159fa17ed512381ccf9"
+  },
+  "checker_sha256": "052381236b88e9228b601e0a6eeba1c5655609d9787d350ad5f3afe2f6ce871d"
+}

@@ -154,3 +154,6 @@ python tst/hyperboloidal/plot_stability_followup.py \
 The next candidates are algebraically consistent ghost continuation and outer
 shift restoring terms. No long black-hole evolution, trumpet transition or
 complete nonlinear scri closure is claimed by this follow-up.
+Their later negative native results, scalar boundary counterexample and
+black-hole compatibility gates are retained in
+[the gauge and boundary audit](hyperboloidal-gauge-boundary-audit.md).

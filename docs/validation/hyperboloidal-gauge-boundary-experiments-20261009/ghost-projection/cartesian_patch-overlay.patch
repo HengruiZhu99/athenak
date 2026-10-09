@@ -1,0 +1,52 @@
+--- src/z4c/hyperboloidal/cartesian_patch.hpp
++++ scratch-overlay/z4c/hyperboloidal/cartesian_patch.hpp
+@@ -279,8 +279,10 @@
+       FillSphericalGhosts(CartesianComponent{dev,f,g.n[0],g.n[1]},ghosts);
+     }
+     const auto plans = ghosts;
+-    Kokkos::parallel_for("Cartesian full ghost fields",ghosts.extent(0),
+-        KOKKOS_LAMBDA(const int point) {
++    const auto full = BindCartesianFields(data);
++    int failures = 0;
++    Kokkos::parallel_reduce("Cartesian projected full ghost fields",ghosts.extent(0),
++        KOKKOS_LAMBDA(const int point, int &bad) {
+       const int s = plans(point).target;
+       const int i = s%g.n[0], j = s/g.n[0]%g.n[1], k = s/(g.n[0]*g.n[1]);
+       const auto p = ref.At(g.first[0]+i*g.h[0],g.first[1]+j*g.h[1],g.first[2]+k*g.h[2]);
+@@ -288,7 +290,35 @@
+         data(0,f,k,j,i) = dev(0,f,k,j,i)
+             +(reconstructed ? baseline(0,f,k,j,i) : ReferenceComponent(f,p));
+       }
+-    });
++      // Scratch closure: project FULL analytic baseline plus extrapolated
++      // deviation, using the same order as the active final-stage projection.
++      // Only target ghosts change; donors remain strictly inside the sphere.
++      MetricJet<Real> metric{};
++      for (int a = 0; a < 3; ++a)
++      for (int b = 0; b < 3; ++b) metric.g[a][b] = full.g_dd(0,a,b,k,j,i);
++      const auto geo = Geometry(metric);
++      if (!geo.valid) { ++bad; return; }
++      const Real scale = 1/Kokkos::cbrt(geo.determinant);
++      Real trace = 0;
++      for (int a = 0; a < 3; ++a)
++      for (int b = 0; b < 3; ++b) trace += geo.inverse[a][b]*full.vA_dd(0,a,b,k,j,i);
++      if (!Kokkos::isfinite(scale) || !Kokkos::isfinite(trace)) { ++bad; return; }
++      for (int a = 0; a < 3; ++a)
++      for (int b = a; b < 3; ++b) {
++        full.g_dd(0,a,b,k,j,i) = scale*metric.g[a][b];
++        full.vA_dd(0,a,b,k,j,i) -= metric.g[a][b]*trace/3;
++      }
++      // LoadMeshJet differentiates deviations. Write the projected full ghost
++      // back against exactly the baseline used to assemble it above.
++      for (int f = Z4c::I_Z4C_GXX; f <= Z4c::I_Z4C_GZZ; ++f)
++        dev(0,f,k,j,i) = data(0,f,k,j,i)
++            -(reconstructed ? baseline(0,f,k,j,i) : ReferenceComponent(f,p));
++      for (int f = Z4c::I_Z4C_AXX; f <= Z4c::I_Z4C_AZZ; ++f)
++        dev(0,f,k,j,i) = data(0,f,k,j,i)
++            -(reconstructed ? baseline(0,f,k,j,i) : ReferenceComponent(f,p));
++    },failures);
++    if (failures) throw std::runtime_error(
++        "invalid full ghost matrix/trace in scratch projection: " + std::to_string(failures));
+   }
+ 
+   void RHS(const DvceArray5D<Real> &data, const DvceArray5D<Real> &result) const {

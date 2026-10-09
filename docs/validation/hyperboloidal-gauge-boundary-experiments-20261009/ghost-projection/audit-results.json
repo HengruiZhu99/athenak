@@ -1,0 +1,1208 @@
+{
+  "compiler_identity": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "source_commit": "2564570bf43aef7e8bcb2216bf0a2a9ba4ca2717",
+  "source_sha256": {
+    "tst/hyperboloidal/test_layer_constraint_tangent.cpp": "bc5142b40077467cb508e06e80ffc929a54d3a55ca7cb8ac5c7cc0417d10ff19",
+    "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+    "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+    "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+    "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+    "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+    "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+    "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+    "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+    "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7"
+  },
+  "overlay_manifest": {
+    "original_path": "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp",
+    "original_sha256": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+    "overlay_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/overlay/z4c/hyperboloidal/cartesian_patch.hpp",
+    "overlay_sha256": "6ce2f1e11455af3a6bdbe5a82dfcd28640a1ab42fd7f0611fb74f492150c33d0",
+    "patch_sha256": "4389e284ade2758645f0e6d04ca56bd1dfe6342e416b2f0c02d3db756b2ad3ac"
+  },
+  "builds": [
+    {
+      "name": "tangent-projected",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/overlay",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/test_layer_constraint_tangent.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/tangent-projected",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "source_sha256": "bc5142b40077467cb508e06e80ffc929a54d3a55ca7cb8ac5c7cc0417d10ff19",
+      "executable_sha256": "3f29ac672a8413ec61263a888075585888ec1b1550f789f6ead1154d6e14cb4e",
+      "wall_seconds": 2.141530667
+    },
+    {
+      "name": "quantify-projected",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/overlay",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/quantify.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/quantify-projected",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "source_sha256": "12845557e4a863552372928f4af337799053c894e0978e15ef256659bdbf9283",
+      "executable_sha256": "242488603308a8765a1ffa3eaa758a399a00b310f27e41cd3905387eab6242c2",
+      "wall_seconds": 1.646070542
+    },
+    {
+      "name": "reference-checks",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/overlay",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/reference_checks.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/reference-checks",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "source_sha256": "6ea84f3d583980dc1dde8b196d62ddaa0c2a75ff804a097737a3b5cb5a504c06",
+      "executable_sha256": "f1ecbd23cd373f31fba53293aa55ad174ae7cccf76b948bdb3da9a0abafa84bd",
+      "wall_seconds": 1.9934781249999998
+    }
+  ],
+  "cases": [
+    {
+      "name": "reference-checks",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/reference-checks"
+      ],
+      "exit_status": 0,
+      "measurements": [
+        {
+          "n": 24,
+          "reference_prepare_max_change": 0,
+          "reference_rhs_max": 1.3322676295501878e-15,
+          "H": 6.091900502453727e-15,
+          "M": 9.729042585004061e-16,
+          "Z": 1.2391380160796285e-16
+        },
+        {
+          "n": 36,
+          "reference_prepare_max_change": 0,
+          "reference_rhs_max": 2.3175905639050143e-15,
+          "H": 5.9205263358143055e-15,
+          "M": 1.0339304631414346e-15,
+          "Z": 1.1027636185879319e-16
+        },
+        {
+          "n": 48,
+          "reference_prepare_max_change": 0,
+          "reference_rhs_max": 2.6298407895808396e-15,
+          "H": 5.812425246609506e-15,
+          "M": 1.0530286220272086e-15,
+          "Z": 1.0952805176739567e-16
+        },
+        {
+          "kind": "analytic_initial_reconstruction",
+          "mass": 0.05,
+          "initial_H": 7.639639727581567e-15,
+          "repeated_H": 7.639639727581567e-15,
+          "M": 1.4453993749519328e-15,
+          "Z": 1.1639051749326156e-16
+        }
+      ]
+    },
+    {
+      "name": "tangent-N24",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/tangent-projected",
+        "--native",
+        "24",
+        "2.1",
+        ".5",
+        "1",
+        "2",
+        "1",
+        ".05",
+        ".95",
+        "1e-6"
+      ],
+      "exit_status": 0,
+      "wall_seconds": 0.6087198330000003,
+      "measurements": [
+        {
+          "kind": "native",
+          "n": 24,
+          "span": 2.1,
+          "a": 0.5,
+          "layer": 1,
+          "degree": 2,
+          "symmetric": 1,
+          "r0": 0.05,
+          "r1": 0.95,
+          "dt": 1e-06,
+          "sign": 1,
+          "initial_H": 6.091900502453727e-15,
+          "Hdot_rms": 0.47231112156883004,
+          "Hdot_max": 5.593899500944133,
+          "Hmax_r": 0.9928455003171442,
+          "Mdot_rms": 1.7327856880021246,
+          "Zdot_rms": 0.04532315243117336,
+          "radial_bins": [
+            {
+              "r_min": 0,
+              "r_max": 0.05,
+              "count": 0,
+              "squared_fractions": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "r_min": 0.05,
+              "r_max": 0.9,
+              "count": 4632,
+              "squared_fractions": [
+                0.09465544905510195,
+                0.07163238961150722,
+                0.019387176017964115
+              ]
+            },
+            {
+              "r_min": 0.9,
+              "r_max": 0.95,
+              "count": 768,
+              "squared_fractions": [
+                0.066914114761291,
+                0.13723284240174172,
+                0.18159028782735645
+              ]
+            },
+            {
+              "r_min": 0.95,
+              "r_max": 1,
+              "count": 752,
+              "squared_fractions": [
+                0.8384304361836091,
+                0.7911347679867562,
+                0.7990225361546816
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "native",
+          "n": 24,
+          "span": 2.1,
+          "a": 0.5,
+          "layer": 1,
+          "degree": 2,
+          "symmetric": 1,
+          "r0": 0.05,
+          "r1": 0.95,
+          "dt": 1e-06,
+          "sign": -1,
+          "initial_H": 6.091900502453727e-15,
+          "Hdot_rms": 0.4723110678071968,
+          "Hdot_max": 5.593899038203176,
+          "Hmax_r": 0.9928455003171442,
+          "Mdot_rms": 1.7327856886410924,
+          "Zdot_rms": 0.04532315218099242,
+          "radial_bins": [
+            {
+              "r_min": 0,
+              "r_max": 0.05,
+              "count": 0,
+              "squared_fractions": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "r_min": 0.05,
+              "r_max": 0.9,
+              "count": 4632,
+              "squared_fractions": [
+                0.0946553902586955,
+                0.07163238981274954,
+                0.019387169035072427
+              ]
+            },
+            {
+              "r_min": 0.9,
+              "r_max": 0.95,
+              "count": 768,
+              "squared_fractions": [
+                0.06691413082349816,
+                0.13723284224435167,
+                0.18159029001338173
+              ]
+            },
+            {
+              "r_min": 0.95,
+              "r_max": 1,
+              "count": 752,
+              "squared_fractions": [
+                0.8384304789178059,
+                0.791134767942899,
+                0.7990225409515417
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tangent-N36",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/tangent-projected",
+        "--native",
+        "36",
+        "2.1",
+        ".5",
+        "1",
+        "2",
+        "1",
+        ".05",
+        ".95",
+        "1e-6"
+      ],
+      "exit_status": 0,
+      "wall_seconds": 0.44831508400000075,
+      "measurements": [
+        {
+          "kind": "native",
+          "n": 36,
+          "span": 2.1,
+          "a": 0.5,
+          "layer": 1,
+          "degree": 2,
+          "symmetric": 1,
+          "r0": 0.05,
+          "r1": 0.95,
+          "dt": 1e-06,
+          "sign": 1,
+          "initial_H": 5.9205263358143055e-15,
+          "Hdot_rms": 0.08238544137928454,
+          "Hdot_max": 1.1255640330887218,
+          "Hmax_r": 0.998079753549006,
+          "Mdot_rms": 0.6129473046332391,
+          "Zdot_rms": 0.008488912794897012,
+          "radial_bins": [
+            {
+              "r_min": 0,
+              "r_max": 0.05,
+              "count": 0,
+              "squared_fractions": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "r_min": 0.05,
+              "r_max": 0.9,
+              "count": 15312,
+              "squared_fractions": [
+                0.366405543792938,
+                0.00926757536063333,
+                0.02932177843961732
+              ]
+            },
+            {
+              "r_min": 0.9,
+              "r_max": 0.95,
+              "count": 2736,
+              "squared_fractions": [
+                0.008002451133082372,
+                0.11213769340375446,
+                0.027728690309456062
+              ]
+            },
+            {
+              "r_min": 0.95,
+              "r_max": 1,
+              "count": 2960,
+              "squared_fractions": [
+                0.6255920050739779,
+                0.8785947312356133,
+                0.9429495312509258
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "native",
+          "n": 36,
+          "span": 2.1,
+          "a": 0.5,
+          "layer": 1,
+          "degree": 2,
+          "symmetric": 1,
+          "r0": 0.05,
+          "r1": 0.95,
+          "dt": 1e-06,
+          "sign": -1,
+          "initial_H": 5.9205263358143055e-15,
+          "Hdot_rms": 0.08238540558300887,
+          "Hdot_max": 1.125564018877867,
+          "Hmax_r": 0.998079753549006,
+          "Mdot_rms": 0.6129473045171172,
+          "Zdot_rms": 0.008488912570088937,
+          "radial_bins": [
+            {
+              "r_min": 0,
+              "r_max": 0.05,
+              "count": 0,
+              "squared_fractions": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "r_min": 0.05,
+              "r_max": 0.9,
+              "count": 15312,
+              "squared_fractions": [
+                0.36640500827028083,
+                0.009267575809443627,
+                0.029321722589335797
+              ]
+            },
+            {
+              "r_min": 0.9,
+              "r_max": 0.95,
+              "count": 2736,
+              "squared_fractions": [
+                0.008002460710989607,
+                0.11213769350964106,
+                0.027728692110363353
+              ]
+            },
+            {
+              "r_min": 0.95,
+              "r_max": 1,
+              "count": 2960,
+              "squared_fractions": [
+                0.6255925310187285,
+                0.8785947306809174,
+                0.9429495853003012
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tangent-N48",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/tangent-projected",
+        "--native",
+        "48",
+        "2.1",
+        ".5",
+        "1",
+        "2",
+        "1",
+        ".05",
+        ".95",
+        "1e-6"
+      ],
+      "exit_status": 0,
+      "wall_seconds": 1.0362551670000002,
+      "measurements": [
+        {
+          "kind": "native",
+          "n": 48,
+          "span": 2.1,
+          "a": 0.5,
+          "layer": 1,
+          "degree": 2,
+          "symmetric": 1,
+          "r0": 0.05,
+          "r1": 0.95,
+          "dt": 1e-06,
+          "sign": 1,
+          "initial_H": 5.812425246609506e-15,
+          "Hdot_rms": 0.026116883026871558,
+          "Hdot_max": 0.4636831459575596,
+          "Hmax_r": 0.1294142452553042,
+          "Mdot_rms": 0.24809366391545065,
+          "Zdot_rms": 0.002026433405154828,
+          "radial_bins": [
+            {
+              "r_min": 0,
+              "r_max": 0.05,
+              "count": 8,
+              "squared_fractions": [
+                1.8743648002117248e-06,
+                3.6646782883619556e-09,
+                4.11895268937322e-06
+              ]
+            },
+            {
+              "r_min": 0.05,
+              "r_max": 0.9,
+              "count": 36544,
+              "squared_fractions": [
+                0.6707642712173122,
+                0.000517124206553061,
+                0.07127151539735702
+              ]
+            },
+            {
+              "r_min": 0.9,
+              "r_max": 0.95,
+              "count": 6368,
+              "squared_fractions": [
+                0.0023646080674392875,
+                0.06985888985413148,
+                0.03324110638650457
+              ]
+            },
+            {
+              "r_min": 0.95,
+              "r_max": 1,
+              "count": 6984,
+              "squared_fractions": [
+                0.32686924635044173,
+                0.929623982274638,
+                0.895483259263453
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "native",
+          "n": 48,
+          "span": 2.1,
+          "a": 0.5,
+          "layer": 1,
+          "degree": 2,
+          "symmetric": 1,
+          "r0": 0.05,
+          "r1": 0.95,
+          "dt": 1e-06,
+          "sign": -1,
+          "initial_H": 5.812425246609506e-15,
+          "Hdot_rms": 0.02611684434203959,
+          "Hdot_max": 0.46366226471763455,
+          "Hmax_r": 0.1294142452553042,
+          "Mdot_rms": 0.24809366399618488,
+          "Zdot_rms": 0.0020264330599072053,
+          "radial_bins": [
+            {
+              "r_min": 0,
+              "r_max": 0.05,
+              "count": 8,
+              "squared_fractions": [
+                1.9075367931153328e-06,
+                3.664609835286608e-09,
+                4.118922868521906e-06
+              ]
+            },
+            {
+              "r_min": 0.05,
+              "r_max": 0.9,
+              "count": 36544,
+              "squared_fractions": [
+                0.6707632737740427,
+                0.0005171251644672443,
+                0.0712712046360037
+              ]
+            },
+            {
+              "r_min": 0.9,
+              "r_max": 0.95,
+              "count": 6368,
+              "squared_fractions": [
+                0.0023646215388058163,
+                0.06985888995351433,
+                0.03324111767801334
+              ]
+            },
+            {
+              "r_min": 0.95,
+              "r_max": 1,
+              "count": 6984,
+              "squared_fractions": [
+                0.32687019715035964,
+                0.9296239812174066,
+                0.895483558763124
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "projected_snapshot_measurements": [
+    {
+      "degree": 2,
+      "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-degree2-output00000.double",
+      "invalid_ghost_SPD_count": 0,
+      "min_ghost_determinant": 1,
+      "max_rebuilt_vs_saved_ghost_difference": 0,
+      "ghost_det_minus_one": {
+        "count": 5432,
+        "RMS": 0,
+        "max_abs": 0,
+        "max_radius": 0
+      },
+      "ghost_trace_A": {
+        "count": 5432,
+        "RMS": 0,
+        "max_abs": 0,
+        "max_radius": 0
+      },
+      "bulk_r_lt_.9": {
+        "det_first_identity": {
+          "count": 4632,
+          "RMS": 6.276420615574882e-16,
+          "max_abs": 2.6611183797867346e-15,
+          "max_radius": 0.7764854715318246
+        },
+        "det_second_identity": {
+          "count": 4632,
+          "RMS": 1.0205018191330415e-14,
+          "max_abs": 8.046608183247872e-14,
+          "max_radius": 0.8335494511425223
+        },
+        "trace_A_derivative_identity": {
+          "count": 4632,
+          "RMS": 1.334281399262154e-15,
+          "max_abs": 8.490184806689878e-15,
+          "max_radius": 0.3124374937487497
+        },
+        "active_det_minus_one": {
+          "count": 4632,
+          "RMS": 2.5789038412593444e-16,
+          "max_abs": 8.881784197001252e-16,
+          "max_radius": 0.7040896161001098
+        },
+        "active_trace_A": {
+          "count": 4632,
+          "RMS": 2.565539785335048e-16,
+          "max_abs": 9.439920159136376e-16,
+          "max_radius": 0.5007416374738576
+        }
+      },
+      "outer_r_gt_.9": {
+        "det_first_identity": {
+          "count": 1520,
+          "RMS": 2.081242948272367e-16,
+          "max_abs": 8.048013373169665e-16,
+          "max_radius": 0.9291082754447944
+        },
+        "det_second_identity": {
+          "count": 1520,
+          "RMS": 5.19405329091755e-16,
+          "max_abs": 1.6183987355533515e-15,
+          "max_radius": 0.9124785956393718
+        },
+        "trace_A_derivative_identity": {
+          "count": 1520,
+          "RMS": 1.1108852827737732e-16,
+          "max_abs": 4.3913822783963356e-16,
+          "max_radius": 0.9291082754447946
+        },
+        "active_det_minus_one": {
+          "count": 1520,
+          "RMS": 8.900936806205062e-17,
+          "max_abs": 4.440892098500626e-16,
+          "max_radius": 0.9124785956393718
+        },
+        "active_trace_A": {
+          "count": 1520,
+          "RMS": 1.0730813872805503e-16,
+          "max_abs": 4.440895454823323e-16,
+          "max_radius": 0.9040490514900172
+        }
+      },
+      "time": 0.0
+    },
+    {
+      "degree": 2,
+      "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-degree2-output00005.double",
+      "invalid_ghost_SPD_count": 0,
+      "min_ghost_determinant": 0.999999999999999,
+      "max_rebuilt_vs_saved_ghost_difference": 0,
+      "ghost_det_minus_one": {
+        "count": 5432,
+        "RMS": 2.678494005712565e-16,
+        "max_abs": 9.992007221626409e-16,
+        "max_radius": 1.038083420299159
+      },
+      "ghost_trace_A": {
+        "count": 5432,
+        "RMS": 6.967732136914155e-18,
+        "max_abs": 8.739637530374109e-17,
+        "max_radius": 1.052730823857647
+      },
+      "bulk_r_lt_.9": {
+        "det_first_identity": {
+          "count": 4632,
+          "RMS": 0.0005881214175953224,
+          "max_abs": 0.003359122244254519,
+          "max_radius": 0.3985814690875632
+        },
+        "det_second_identity": {
+          "count": 4632,
+          "RMS": 0.007547938273897387,
+          "max_abs": 0.032021958880781985,
+          "max_radius": 0.31243749374874974
+        },
+        "trace_A_derivative_identity": {
+          "count": 4632,
+          "RMS": 0.0029855099228023522,
+          "max_abs": 0.01375651186148075,
+          "max_radius": 0.3985814690875632
+        },
+        "active_det_minus_one": {
+          "count": 4632,
+          "RMS": 2.674686574698306e-16,
+          "max_abs": 8.881784197001252e-16,
+          "max_radius": 0.5158048928616322
+        },
+        "active_trace_A": {
+          "count": 4632,
+          "RMS": 1.0221376625253276e-16,
+          "max_abs": 7.927716988122683e-16,
+          "max_radius": 0.48521097215541215
+        }
+      },
+      "outer_r_gt_.9": {
+        "det_first_identity": {
+          "count": 1520,
+          "RMS": 0.00023311235164099632,
+          "max_abs": 0.0007154377532441088,
+          "max_radius": 0.9291082754447944
+        },
+        "det_second_identity": {
+          "count": 1520,
+          "RMS": 0.0029417383651500735,
+          "max_abs": 0.014145296494726683,
+          "max_radius": 0.9928455003171441
+        },
+        "trace_A_derivative_identity": {
+          "count": 1520,
+          "RMS": 0.0020391372689699985,
+          "max_abs": 0.008607529311490867,
+          "max_radius": 0.9291082754447946
+        },
+        "active_det_minus_one": {
+          "count": 1520,
+          "RMS": 2.6007433484848084e-16,
+          "max_abs": 8.881784197001252e-16,
+          "max_radius": 0.9773009707863797
+        },
+        "active_trace_A": {
+          "count": 1520,
+          "RMS": 2.8012864722183954e-18,
+          "max_abs": 3.105384424407329e-17,
+          "max_radius": 0.992845500317144
+        }
+      },
+      "time": 0.12532617187499637
+    },
+    {
+      "degree": 2,
+      "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-degree2-output00010.double",
+      "invalid_ghost_SPD_count": 0,
+      "min_ghost_determinant": 0.999999999999999,
+      "max_rebuilt_vs_saved_ghost_difference": 0,
+      "ghost_det_minus_one": {
+        "count": 5432,
+        "RMS": 2.6697114085225857e-16,
+        "max_abs": 9.992007221626409e-16,
+        "max_radius": 1.0157163420463413
+      },
+      "ghost_trace_A": {
+        "count": 5432,
+        "RMS": 1.711327933180205e-17,
+        "max_abs": 1.9083485684172203e-16,
+        "max_radius": 1.176378845228016
+      },
+      "bulk_r_lt_.9": {
+        "det_first_identity": {
+          "count": 4632,
+          "RMS": 0.002482435684492712,
+          "max_abs": 0.009834585962315968,
+          "max_radius": 0.8517216021095156
+        },
+        "det_second_identity": {
+          "count": 4632,
+          "RMS": 0.042442479026508,
+          "max_abs": 0.19968803361047152,
+          "max_radius": 0.8335494511425223
+        },
+        "trace_A_derivative_identity": {
+          "count": 4632,
+          "RMS": 0.009721183193321017,
+          "max_abs": 0.03788903582386538,
+          "max_radius": 0.8335494511425223
+        },
+        "active_det_minus_one": {
+          "count": 4632,
+          "RMS": 2.6898159950921324e-16,
+          "max_abs": 8.881784197001252e-16,
+          "max_radius": 0.7764854715318248
+        },
+        "active_trace_A": {
+          "count": 4632,
+          "RMS": 9.945436898275062e-17,
+          "max_abs": 6.262816704662622e-16,
+          "max_radius": 0.5585626083976623
+        }
+      },
+      "outer_r_gt_.9": {
+        "det_first_identity": {
+          "count": 1520,
+          "RMS": 0.001553673997016658,
+          "max_abs": 0.006292136811205492,
+          "max_radius": 0.9928455003171441
+        },
+        "det_second_identity": {
+          "count": 1520,
+          "RMS": 0.03163130826394695,
+          "max_abs": 0.1418035212105794,
+          "max_radius": 0.9928455003171441
+        },
+        "trace_A_derivative_identity": {
+          "count": 1520,
+          "RMS": 0.008958680944412684,
+          "max_abs": 0.038715657188805694,
+          "max_radius": 0.9928455003171441
+        },
+        "active_det_minus_one": {
+          "count": 1520,
+          "RMS": 2.632201035742924e-16,
+          "max_abs": 8.881784197001252e-16,
+          "max_radius": 0.9773009707863798
+        },
+        "active_trace_A": {
+          "count": 1520,
+          "RMS": 5.627597431252586e-18,
+          "max_abs": 5.889494871346291e-17,
+          "max_radius": 0.9928455003171441
+        }
+      },
+      "time": 0.25022460937499297
+    },
+    {
+      "degree": 2,
+      "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-degree2-output00020.double",
+      "invalid_ghost_SPD_count": 0,
+      "min_ghost_determinant": 0.9999999999999991,
+      "max_rebuilt_vs_saved_ghost_difference": 0,
+      "ghost_det_minus_one": {
+        "count": 5432,
+        "RMS": 2.6896112059411144e-16,
+        "max_abs": 8.881784197001252e-16,
+        "max_radius": 1.2021302706029828
+      },
+      "ghost_trace_A": {
+        "count": 5432,
+        "RMS": 2.2443820590538895e-17,
+        "max_abs": 3.015365835170953e-16,
+        "max_radius": 1.052730823857647
+      },
+      "bulk_r_lt_.9": {
+        "det_first_identity": {
+          "count": 4632,
+          "RMS": 0.004338516485816797,
+          "max_abs": 0.0157710713491623,
+          "max_radius": 0.8695140525028909
+        },
+        "det_second_identity": {
+          "count": 4632,
+          "RMS": 0.0811426848074998,
+          "max_abs": 0.31464784700637805,
+          "max_radius": 0.8335494511425223
+        },
+        "trace_A_derivative_identity": {
+          "count": 4632,
+          "RMS": 0.01719046601664897,
+          "max_abs": 0.08491054759588013,
+          "max_radius": 0.8335494511425223
+        },
+        "active_det_minus_one": {
+          "count": 4632,
+          "RMS": 2.685855867809189e-16,
+          "max_abs": 8.881784197001252e-16,
+          "max_radius": 0.3360501264692516
+        },
+        "active_trace_A": {
+          "count": 4632,
+          "RMS": 1.0304209170824425e-16,
+          "max_abs": 7.528680140573687e-16,
+          "max_radius": 0.5721054863397134
+        }
+      },
+      "outer_r_gt_.9": {
+        "det_first_identity": {
+          "count": 1520,
+          "RMS": 0.002773475035616331,
+          "max_abs": 0.012938515149915926,
+          "max_radius": 0.9291082754447946
+        },
+        "det_second_identity": {
+          "count": 1520,
+          "RMS": 0.09082689450788378,
+          "max_abs": 0.5190467185621094,
+          "max_radius": 0.9928455003171441
+        },
+        "trace_A_derivative_identity": {
+          "count": 1520,
+          "RMS": 0.03654463728556536,
+          "max_abs": 0.18503450874125277,
+          "max_radius": 0.9291082754447946
+        },
+        "active_det_minus_one": {
+          "count": 1520,
+          "RMS": 2.6934125708545175e-16,
+          "max_abs": 7.771561172376096e-16,
+          "max_radius": 0.9851038968047989
+        },
+        "active_trace_A": {
+          "count": 1520,
+          "RMS": 1.526733838007696e-17,
+          "max_abs": 2.085448494732745e-16,
+          "max_radius": 0.992845500317144
+        }
+      },
+      "time": 0.5
+    },
+    {
+      "degree": 4,
+      "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-degree4-output00000.double",
+      "invalid_ghost_SPD_count": 0,
+      "min_ghost_determinant": 1,
+      "max_rebuilt_vs_saved_ghost_difference": 0,
+      "ghost_det_minus_one": {
+        "count": 5432,
+        "RMS": 0,
+        "max_abs": 0,
+        "max_radius": 0
+      },
+      "ghost_trace_A": {
+        "count": 5432,
+        "RMS": 0,
+        "max_abs": 0,
+        "max_radius": 0
+      },
+      "bulk_r_lt_.9": {
+        "det_first_identity": {
+          "count": 4632,
+          "RMS": 6.276420615574882e-16,
+          "max_abs": 2.6611183797867346e-15,
+          "max_radius": 0.7764854715318246
+        },
+        "det_second_identity": {
+          "count": 4632,
+          "RMS": 1.0205018191330415e-14,
+          "max_abs": 8.046608183247872e-14,
+          "max_radius": 0.8335494511425223
+        },
+        "trace_A_derivative_identity": {
+          "count": 4632,
+          "RMS": 1.334281399262154e-15,
+          "max_abs": 8.490184806689878e-15,
+          "max_radius": 0.3124374937487497
+        },
+        "active_det_minus_one": {
+          "count": 4632,
+          "RMS": 2.5789038412593444e-16,
+          "max_abs": 8.881784197001252e-16,
+          "max_radius": 0.7040896161001098
+        },
+        "active_trace_A": {
+          "count": 4632,
+          "RMS": 2.565539785335048e-16,
+          "max_abs": 9.439920159136376e-16,
+          "max_radius": 0.5007416374738576
+        }
+      },
+      "outer_r_gt_.9": {
+        "det_first_identity": {
+          "count": 1520,
+          "RMS": 2.081242948272367e-16,
+          "max_abs": 8.048013373169665e-16,
+          "max_radius": 0.9291082754447944
+        },
+        "det_second_identity": {
+          "count": 1520,
+          "RMS": 5.19405329091755e-16,
+          "max_abs": 1.6183987355533515e-15,
+          "max_radius": 0.9124785956393718
+        },
+        "trace_A_derivative_identity": {
+          "count": 1520,
+          "RMS": 1.1108852827737732e-16,
+          "max_abs": 4.3913822783963356e-16,
+          "max_radius": 0.9291082754447946
+        },
+        "active_det_minus_one": {
+          "count": 1520,
+          "RMS": 8.900936806205062e-17,
+          "max_abs": 4.440892098500626e-16,
+          "max_radius": 0.9124785956393718
+        },
+        "active_trace_A": {
+          "count": 1520,
+          "RMS": 1.0730813872805503e-16,
+          "max_abs": 4.440895454823323e-16,
+          "max_radius": 0.9040490514900172
+        }
+      },
+      "time": 0.0
+    },
+    {
+      "degree": 4,
+      "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-degree4-output00005.double",
+      "invalid_ghost_SPD_count": 0,
+      "min_ghost_determinant": 0.9999999999999991,
+      "max_rebuilt_vs_saved_ghost_difference": 0,
+      "ghost_det_minus_one": {
+        "count": 5432,
+        "RMS": 2.7236070644942455e-16,
+        "max_abs": 8.881784197001252e-16,
+        "max_radius": 1.0743275513082593
+      },
+      "ghost_trace_A": {
+        "count": 5432,
+        "RMS": 1.07173753985344e-16,
+        "max_abs": 2.1436236195929715e-15,
+        "max_radius": 1.176378845228016
+      },
+      "bulk_r_lt_.9": {
+        "det_first_identity": {
+          "count": 4632,
+          "RMS": 0.002278984464309454,
+          "max_abs": 0.01325846257364131,
+          "max_radius": 0.869514052502891
+        },
+        "det_second_identity": {
+          "count": 4632,
+          "RMS": 0.1015082790985465,
+          "max_abs": 0.8853427910465296,
+          "max_radius": 0.869514052502891
+        },
+        "trace_A_derivative_identity": {
+          "count": 4632,
+          "RMS": 0.09638789442510504,
+          "max_abs": 0.7901603838211271,
+          "max_radius": 0.869514052502891
+        },
+        "active_det_minus_one": {
+          "count": 4632,
+          "RMS": 2.652858965221358e-16,
+          "max_abs": 8.881784197001252e-16,
+          "max_radius": 0.5007416374738575
+        },
+        "active_trace_A": {
+          "count": 4632,
+          "RMS": 1.0278844326138769e-16,
+          "max_abs": 7.029734935683735e-16,
+          "max_radius": 0.5721054863397134
+        }
+      },
+      "outer_r_gt_.9": {
+        "det_first_identity": {
+          "count": 1520,
+          "RMS": 0.15828899110898584,
+          "max_abs": 0.9222366224015396,
+          "max_radius": 0.9928455003171441
+        },
+        "det_second_identity": {
+          "count": 1520,
+          "RMS": 2.5586301414587105,
+          "max_abs": 14.279527735581105,
+          "max_radius": 0.9928455003171441
+        },
+        "trace_A_derivative_identity": {
+          "count": 1520,
+          "RMS": 1.9452528956021191,
+          "max_abs": 10.654190427296294,
+          "max_radius": 0.9928455003171442
+        },
+        "active_det_minus_one": {
+          "count": 1520,
+          "RMS": 2.690701535873751e-16,
+          "max_abs": 7.771561172376096e-16,
+          "max_radius": 0.9208309766184021
+        },
+        "active_trace_A": {
+          "count": 1520,
+          "RMS": 5.67836793192007e-17,
+          "max_abs": 7.611339897966731e-16,
+          "max_radius": 0.992845500317144
+        }
+      },
+      "time": 0.12532617187499637
+    },
+    {
+      "degree": 4,
+      "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-degree4-output00010.double",
+      "invalid_ghost_SPD_count": 0,
+      "min_ghost_determinant": 0.9999999999999991,
+      "max_rebuilt_vs_saved_ghost_difference": 0,
+      "ghost_det_minus_one": {
+        "count": 5432,
+        "RMS": 2.7055933991172713e-16,
+        "max_abs": 8.881784197001252e-16,
+        "max_radius": 1.176378845228016
+      },
+      "ghost_trace_A": {
+        "count": 5432,
+        "RMS": 3.576366521896846e-15,
+        "max_abs": 1.1348914042180911e-13,
+        "max_radius": 1.1763788452280162
+      },
+      "bulk_r_lt_.9": {
+        "det_first_identity": {
+          "count": 4632,
+          "RMS": 0.02077730657887956,
+          "max_abs": 0.25632338925867404,
+          "max_radius": 0.869514052502891
+        },
+        "det_second_identity": {
+          "count": 4632,
+          "RMS": 0.7196269219942676,
+          "max_abs": 11.533582758742936,
+          "max_radius": 0.869514052502891
+        },
+        "trace_A_derivative_identity": {
+          "count": 4632,
+          "RMS": 2.9046580318774042,
+          "max_abs": 36.20837381394508,
+          "max_radius": 0.869514052502891
+        },
+        "active_det_minus_one": {
+          "count": 4632,
+          "RMS": 2.6967815623773327e-16,
+          "max_abs": 7.771561172376096e-16,
+          "max_radius": 0.6355054582771104
+        },
+        "active_trace_A": {
+          "count": 4632,
+          "RMS": 1.0353758112156625e-16,
+          "max_abs": 7.461343728850143e-16,
+          "max_radius": 0.5721054863397134
+        }
+      },
+      "outer_r_gt_.9": {
+        "det_first_identity": {
+          "count": 1520,
+          "RMS": 1.6006946184661126,
+          "max_abs": 12.499968621830574,
+          "max_radius": 0.9928455003171442
+        },
+        "det_second_identity": {
+          "count": 1520,
+          "RMS": 20.056830719881443,
+          "max_abs": 146.42381629687216,
+          "max_radius": 0.9928455003171442
+        },
+        "trace_A_derivative_identity": {
+          "count": 1520,
+          "RMS": 154.093529588504,
+          "max_abs": 1371.3372769916095,
+          "max_radius": 0.9928455003171442
+        },
+        "active_det_minus_one": {
+          "count": 1520,
+          "RMS": 2.6516916981851193e-16,
+          "max_abs": 7.771561172376096e-16,
+          "max_radius": 0.985103896804799
+        },
+        "active_trace_A": {
+          "count": 1520,
+          "RMS": 4.425674633064775e-16,
+          "max_abs": 8.33722731126281e-15,
+          "max_radius": 0.9928455003171441
+        }
+      },
+      "time": 0.25020444935164937
+    }
+  ]
+}

@@ -1,0 +1,402 @@
+[
+  {
+    "label": "control",
+    "time": 1.850304220780349,
+    "cycle": 4329,
+    "checkpoint": "/Users/hz0693/research/hyperboloidal/build-layer-research/clean-wide-kappa10-long/finite-angular-N24/rst/hyp.00037.rst",
+    "checkpoint_sha256": "a691451c090c011c8dc955d7b543fa4769e2cdf9cecada448666c26ff411708c",
+    "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-control.double",
+    "payload_sha256": "f370e9a609fccbbf27e5cdbb2a485dedaa3c070dfb567d0cb6c3bca9c22575e3",
+    "every_active_field_float32_roundtrip_exact": true,
+    "cases": [
+      {
+        "command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/quantify-original",
+          "2",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-control.double",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-control-quantify-original"
+        ],
+        "exit_status": 0,
+        "stdout": "{\"degree\":2,\"payload\":\"/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-control.double\",\"invalid_ghost_SPD_count\":0,\"min_ghost_determinant\":0.15038168626417245,\"max_rebuilt_vs_saved_ghost_difference\":0,\"ghost_det_minus_one\":{\"count\":5432,\"RMS\":0.19836149242779702,\"max_abs\":0.84961831373582752,\"max_radius\":1.1828692605271303},\"ghost_trace_A\":{\"count\":5432,\"RMS\":1.5241385378311363,\"max_abs\":19.343855795855099,\"max_radius\":1.1828692605271303},\"bulk_r_lt_.9\":{\"det_first_identity\":{\"count\":4632,\"RMS\":0.063436609524331417,\"max_abs\":0.18142457859886574,\"max_radius\":0.2273316684934151},\"det_second_identity\":{\"count\":4632,\"RMS\":1.4662146762687669,\"max_abs\":6.8360484503685131,\"max_radius\":0.89554016520756907},\"trace_A_derivative_identity\":{\"count\":4632,\"RMS\":0.17784374939354414,\"max_abs\":0.88405132491370353,\"max_radius\":0.31243749374874985},\"active_det_minus_one\":{\"count\":4632,\"RMS\":2.6537615881870829e-16,\"max_abs\":8.8817841970012523e-16,\"max_radius\":0.89554016520756907},\"active_trace_A\":{\"count\":4632,\"RMS\":1.3228409031288223e-16,\"max_abs\":8.4170069637997077e-16,\"max_radius\":0.41734840061991368}},\"outer_r_gt_.9\":{\"det_first_identity\":{\"count\":1520,\"RMS\":0.60146542400083591,\"max_abs\":2.3218493580343758,\"max_radius\":0.99284550031714414},\"det_second_identity\":{\"count\":1520,\"RMS\":14.093819397832631,\"max_abs\":43.55740494395566,\"max_radius\":0.99284550031714414},\"trace_A_derivative_identity\":{\"count\":1520,\"RMS\":0.82827442542097107,\"max_abs\":4.1369860372060741,\"max_radius\":0.99284550031714414},\"active_det_minus_one\":{\"count\":1520,\"RMS\":2.625569047673156e-16,\"max_abs\":8.8817841970012523e-16,\"max_radius\":0.93731248124624911},\"active_trace_A\":{\"count\":1520,\"RMS\":3.6206516448033225e-17,\"max_abs\":1.7002340413906337e-16,\"max_radius\":0.92083097661840196}}}\n",
+        "stderr": "",
+        "measurements": {
+          "degree": 2,
+          "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-control.double",
+          "invalid_ghost_SPD_count": 0,
+          "min_ghost_determinant": 0.15038168626417245,
+          "max_rebuilt_vs_saved_ghost_difference": 0,
+          "ghost_det_minus_one": {
+            "count": 5432,
+            "RMS": 0.19836149242779702,
+            "max_abs": 0.8496183137358275,
+            "max_radius": 1.1828692605271303
+          },
+          "ghost_trace_A": {
+            "count": 5432,
+            "RMS": 1.5241385378311363,
+            "max_abs": 19.3438557958551,
+            "max_radius": 1.1828692605271303
+          },
+          "bulk_r_lt_.9": {
+            "det_first_identity": {
+              "count": 4632,
+              "RMS": 0.06343660952433142,
+              "max_abs": 0.18142457859886574,
+              "max_radius": 0.2273316684934151
+            },
+            "det_second_identity": {
+              "count": 4632,
+              "RMS": 1.466214676268767,
+              "max_abs": 6.836048450368513,
+              "max_radius": 0.8955401652075691
+            },
+            "trace_A_derivative_identity": {
+              "count": 4632,
+              "RMS": 0.17784374939354414,
+              "max_abs": 0.8840513249137035,
+              "max_radius": 0.31243749374874985
+            },
+            "active_det_minus_one": {
+              "count": 4632,
+              "RMS": 2.653761588187083e-16,
+              "max_abs": 8.881784197001252e-16,
+              "max_radius": 0.8955401652075691
+            },
+            "active_trace_A": {
+              "count": 4632,
+              "RMS": 1.3228409031288223e-16,
+              "max_abs": 8.417006963799708e-16,
+              "max_radius": 0.4173484006199137
+            }
+          },
+          "outer_r_gt_.9": {
+            "det_first_identity": {
+              "count": 1520,
+              "RMS": 0.6014654240008359,
+              "max_abs": 2.3218493580343758,
+              "max_radius": 0.9928455003171441
+            },
+            "det_second_identity": {
+              "count": 1520,
+              "RMS": 14.09381939783263,
+              "max_abs": 43.55740494395566,
+              "max_radius": 0.9928455003171441
+            },
+            "trace_A_derivative_identity": {
+              "count": 1520,
+              "RMS": 0.8282744254209711,
+              "max_abs": 4.136986037206074,
+              "max_radius": 0.9928455003171441
+            },
+            "active_det_minus_one": {
+              "count": 1520,
+              "RMS": 2.625569047673156e-16,
+              "max_abs": 8.881784197001252e-16,
+              "max_radius": 0.9373124812462491
+            },
+            "active_trace_A": {
+              "count": 1520,
+              "RMS": 3.6206516448033225e-17,
+              "max_abs": 1.7002340413906337e-16,
+              "max_radius": 0.920830976618402
+            }
+          }
+        }
+      },
+      {
+        "command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/quantify-projected",
+          "2",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-control.double",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-control-quantify-projected"
+        ],
+        "exit_status": 0,
+        "stdout": "{\"degree\":2,\"payload\":\"/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-control.double\",\"invalid_ghost_SPD_count\":0,\"min_ghost_determinant\":0.99999999999999911,\"max_rebuilt_vs_saved_ghost_difference\":0,\"ghost_det_minus_one\":{\"count\":5432,\"RMS\":2.6640106175328133e-16,\"max_abs\":1.3322676295501878e-15,\"max_radius\":1.1828692605271305},\"ghost_trace_A\":{\"count\":5432,\"RMS\":3.2040641766960245e-16,\"max_abs\":9.1270730693136181e-15,\"max_radius\":1.1828692605271305},\"bulk_r_lt_.9\":{\"det_first_identity\":{\"count\":4632,\"RMS\":0.055206526807918203,\"max_abs\":0.18142457859886574,\"max_radius\":0.2273316684934151},\"det_second_identity\":{\"count\":4632,\"RMS\":0.92715344953316192,\"max_abs\":2.8205862843542455,\"max_radius\":0.83354945114252232},\"trace_A_derivative_identity\":{\"count\":4632,\"RMS\":0.17477054068076966,\"max_abs\":0.88405132491370353,\"max_radius\":0.31243749374874985},\"active_det_minus_one\":{\"count\":4632,\"RMS\":2.6537615881870829e-16,\"max_abs\":8.8817841970012523e-16,\"max_radius\":0.89554016520756907},\"active_trace_A\":{\"count\":4632,\"RMS\":1.3228409031288223e-16,\"max_abs\":8.4170069637997077e-16,\"max_radius\":0.41734840061991368}},\"outer_r_gt_.9\":{\"det_first_identity\":{\"count\":1520,\"RMS\":0.10308864252284133,\"max_abs\":0.53232931489094593,\"max_radius\":0.99284550031714414},\"det_second_identity\":{\"count\":1520,\"RMS\":2.4011351188063021,\"max_abs\":8.8052939787405098,\"max_radius\":0.99284550031714414},\"trace_A_derivative_identity\":{\"count\":1520,\"RMS\":0.5517676861076124,\"max_abs\":2.9721681694645712,\"max_radius\":0.99284550031714414},\"active_det_minus_one\":{\"count\":1520,\"RMS\":2.625569047673156e-16,\"max_abs\":8.8817841970012523e-16,\"max_radius\":0.93731248124624911},\"active_trace_A\":{\"count\":1520,\"RMS\":3.6206516448033225e-17,\"max_abs\":1.7002340413906337e-16,\"max_radius\":0.92083097661840196}}}\n",
+        "stderr": "",
+        "measurements": {
+          "degree": 2,
+          "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-control.double",
+          "invalid_ghost_SPD_count": 0,
+          "min_ghost_determinant": 0.9999999999999991,
+          "max_rebuilt_vs_saved_ghost_difference": 0,
+          "ghost_det_minus_one": {
+            "count": 5432,
+            "RMS": 2.6640106175328133e-16,
+            "max_abs": 1.3322676295501878e-15,
+            "max_radius": 1.1828692605271305
+          },
+          "ghost_trace_A": {
+            "count": 5432,
+            "RMS": 3.2040641766960245e-16,
+            "max_abs": 9.127073069313618e-15,
+            "max_radius": 1.1828692605271305
+          },
+          "bulk_r_lt_.9": {
+            "det_first_identity": {
+              "count": 4632,
+              "RMS": 0.0552065268079182,
+              "max_abs": 0.18142457859886574,
+              "max_radius": 0.2273316684934151
+            },
+            "det_second_identity": {
+              "count": 4632,
+              "RMS": 0.9271534495331619,
+              "max_abs": 2.8205862843542455,
+              "max_radius": 0.8335494511425223
+            },
+            "trace_A_derivative_identity": {
+              "count": 4632,
+              "RMS": 0.17477054068076966,
+              "max_abs": 0.8840513249137035,
+              "max_radius": 0.31243749374874985
+            },
+            "active_det_minus_one": {
+              "count": 4632,
+              "RMS": 2.653761588187083e-16,
+              "max_abs": 8.881784197001252e-16,
+              "max_radius": 0.8955401652075691
+            },
+            "active_trace_A": {
+              "count": 4632,
+              "RMS": 1.3228409031288223e-16,
+              "max_abs": 8.417006963799708e-16,
+              "max_radius": 0.4173484006199137
+            }
+          },
+          "outer_r_gt_.9": {
+            "det_first_identity": {
+              "count": 1520,
+              "RMS": 0.10308864252284133,
+              "max_abs": 0.5323293148909459,
+              "max_radius": 0.9928455003171441
+            },
+            "det_second_identity": {
+              "count": 1520,
+              "RMS": 2.401135118806302,
+              "max_abs": 8.80529397874051,
+              "max_radius": 0.9928455003171441
+            },
+            "trace_A_derivative_identity": {
+              "count": 1520,
+              "RMS": 0.5517676861076124,
+              "max_abs": 2.972168169464571,
+              "max_radius": 0.9928455003171441
+            },
+            "active_det_minus_one": {
+              "count": 1520,
+              "RMS": 2.625569047673156e-16,
+              "max_abs": 8.881784197001252e-16,
+              "max_radius": 0.9373124812462491
+            },
+            "active_trace_A": {
+              "count": 1520,
+              "RMS": 3.6206516448033225e-17,
+              "max_abs": 1.7002340413906337e-16,
+              "max_radius": 0.920830976618402
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "label": "projected",
+    "time": 1.8502979340961283,
+    "cycle": 4329,
+    "checkpoint": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/native-kappa10-t2/finite-angular-N24/rst/hyp.00074.rst",
+    "checkpoint_sha256": "69af66625ab745145d3b1a74d45574b28fcac73048dbf0338d2938756b1a1b72",
+    "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-projected.double",
+    "payload_sha256": "a83e5a0785f9e0c1d6c0983e95c90195dff49f8a703655de88ff7b08ca02820c",
+    "every_active_field_float32_roundtrip_exact": true,
+    "cases": [
+      {
+        "command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/quantify-original",
+          "2",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-projected.double",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-projected-quantify-original"
+        ],
+        "exit_status": 0,
+        "stdout": "{\"degree\":2,\"payload\":\"/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-projected.double\",\"invalid_ghost_SPD_count\":0,\"min_ghost_determinant\":0.1510361850554148,\"max_rebuilt_vs_saved_ghost_difference\":0,\"ghost_det_minus_one\":{\"count\":5432,\"RMS\":0.19930322196140199,\"max_abs\":0.84896381494458517,\"max_radius\":1.1828692605271303},\"ghost_trace_A\":{\"count\":5432,\"RMS\":1.5156474671272193,\"max_abs\":19.207950660217389,\"max_radius\":1.1828692605271303},\"bulk_r_lt_.9\":{\"det_first_identity\":{\"count\":4632,\"RMS\":0.063255735669133964,\"max_abs\":0.18159043805100167,\"max_radius\":0.2273316684934151},\"det_second_identity\":{\"count\":4632,\"RMS\":1.4619460495528349,\"max_abs\":6.8292439504957292,\"max_radius\":0.89554016520756907},\"trace_A_derivative_identity\":{\"count\":4632,\"RMS\":0.18180619573435478,\"max_abs\":0.88404495729198707,\"max_radius\":0.31243749374874985},\"active_det_minus_one\":{\"count\":4632,\"RMS\":2.6751839779671997e-16,\"max_abs\":8.8817841970012523e-16,\"max_radius\":0.31243749374874985},\"active_trace_A\":{\"count\":4632,\"RMS\":1.3572336721557524e-16,\"max_abs\":7.1037197335885218e-16,\"max_radius\":0.41734840061991363}},\"outer_r_gt_.9\":{\"det_first_identity\":{\"count\":1520,\"RMS\":0.59457875563641216,\"max_abs\":2.2663376603458425,\"max_radius\":0.99284550031714414},\"det_second_identity\":{\"count\":1520,\"RMS\":14.034807890174251,\"max_abs\":42.766901975104332,\"max_radius\":0.99284550031714414},\"trace_A_derivative_identity\":{\"count\":1520,\"RMS\":0.79886659070003641,\"max_abs\":3.9621900459271435,\"max_radius\":0.99284550031714414},\"active_det_minus_one\":{\"count\":1520,\"RMS\":2.6460281368468112e-16,\"max_abs\":7.7715611723760958e-16,\"max_radius\":0.93731248124624922},\"active_trace_A\":{\"count\":1520,\"RMS\":3.7858248762223808e-17,\"max_abs\":2.5868738943985122e-16,\"max_radius\":0.92910827544479446}}}\n",
+        "stderr": "",
+        "measurements": {
+          "degree": 2,
+          "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-projected.double",
+          "invalid_ghost_SPD_count": 0,
+          "min_ghost_determinant": 0.1510361850554148,
+          "max_rebuilt_vs_saved_ghost_difference": 0,
+          "ghost_det_minus_one": {
+            "count": 5432,
+            "RMS": 0.199303221961402,
+            "max_abs": 0.8489638149445852,
+            "max_radius": 1.1828692605271303
+          },
+          "ghost_trace_A": {
+            "count": 5432,
+            "RMS": 1.5156474671272193,
+            "max_abs": 19.20795066021739,
+            "max_radius": 1.1828692605271303
+          },
+          "bulk_r_lt_.9": {
+            "det_first_identity": {
+              "count": 4632,
+              "RMS": 0.06325573566913396,
+              "max_abs": 0.18159043805100167,
+              "max_radius": 0.2273316684934151
+            },
+            "det_second_identity": {
+              "count": 4632,
+              "RMS": 1.461946049552835,
+              "max_abs": 6.829243950495729,
+              "max_radius": 0.8955401652075691
+            },
+            "trace_A_derivative_identity": {
+              "count": 4632,
+              "RMS": 0.18180619573435478,
+              "max_abs": 0.8840449572919871,
+              "max_radius": 0.31243749374874985
+            },
+            "active_det_minus_one": {
+              "count": 4632,
+              "RMS": 2.6751839779671997e-16,
+              "max_abs": 8.881784197001252e-16,
+              "max_radius": 0.31243749374874985
+            },
+            "active_trace_A": {
+              "count": 4632,
+              "RMS": 1.3572336721557524e-16,
+              "max_abs": 7.103719733588522e-16,
+              "max_radius": 0.41734840061991363
+            }
+          },
+          "outer_r_gt_.9": {
+            "det_first_identity": {
+              "count": 1520,
+              "RMS": 0.5945787556364122,
+              "max_abs": 2.2663376603458425,
+              "max_radius": 0.9928455003171441
+            },
+            "det_second_identity": {
+              "count": 1520,
+              "RMS": 14.034807890174251,
+              "max_abs": 42.76690197510433,
+              "max_radius": 0.9928455003171441
+            },
+            "trace_A_derivative_identity": {
+              "count": 1520,
+              "RMS": 0.7988665907000364,
+              "max_abs": 3.9621900459271435,
+              "max_radius": 0.9928455003171441
+            },
+            "active_det_minus_one": {
+              "count": 1520,
+              "RMS": 2.646028136846811e-16,
+              "max_abs": 7.771561172376096e-16,
+              "max_radius": 0.9373124812462492
+            },
+            "active_trace_A": {
+              "count": 1520,
+              "RMS": 3.785824876222381e-17,
+              "max_abs": 2.586873894398512e-16,
+              "max_radius": 0.9291082754447945
+            }
+          }
+        }
+      },
+      {
+        "command": [
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/quantify-projected",
+          "2",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-projected.double",
+          "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-projected-quantify-projected"
+        ],
+        "exit_status": 0,
+        "stdout": "{\"degree\":2,\"payload\":\"/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-projected.double\",\"invalid_ghost_SPD_count\":0,\"min_ghost_determinant\":0.99999999999999922,\"max_rebuilt_vs_saved_ghost_difference\":0,\"ghost_det_minus_one\":{\"count\":5432,\"RMS\":2.6844599026501869e-16,\"max_abs\":1.1102230246251565e-15,\"max_radius\":1.1828692605271303},\"ghost_trace_A\":{\"count\":5432,\"RMS\":3.7584049442055166e-16,\"max_abs\":1.4464874941800122e-14,\"max_radius\":1.1828692605271305},\"bulk_r_lt_.9\":{\"det_first_identity\":{\"count\":4632,\"RMS\":0.05515945556078411,\"max_abs\":0.18159043805100167,\"max_radius\":0.2273316684934151},\"det_second_identity\":{\"count\":4632,\"RMS\":0.92359782905092436,\"max_abs\":2.7183106988874446,\"max_radius\":0.83354945114252232},\"trace_A_derivative_identity\":{\"count\":4632,\"RMS\":0.17857702569744929,\"max_abs\":0.88404495729198707,\"max_radius\":0.31243749374874985},\"active_det_minus_one\":{\"count\":4632,\"RMS\":2.6751839779671997e-16,\"max_abs\":8.8817841970012523e-16,\"max_radius\":0.31243749374874985},\"active_trace_A\":{\"count\":4632,\"RMS\":1.3572336721557524e-16,\"max_abs\":7.1037197335885218e-16,\"max_radius\":0.41734840061991363}},\"outer_r_gt_.9\":{\"det_first_identity\":{\"count\":1520,\"RMS\":0.09582262516594961,\"max_abs\":0.48298349180036138,\"max_radius\":0.99284550031714414},\"det_second_identity\":{\"count\":1520,\"RMS\":2.4415935214309905,\"max_abs\":8.9344072216597485,\"max_radius\":0.99284550031714414},\"trace_A_derivative_identity\":{\"count\":1520,\"RMS\":0.52078445383048666,\"max_abs\":2.7528292042662157,\"max_radius\":0.99284550031714425},\"active_det_minus_one\":{\"count\":1520,\"RMS\":2.6460281368468112e-16,\"max_abs\":7.7715611723760958e-16,\"max_radius\":0.93731248124624922},\"active_trace_A\":{\"count\":1520,\"RMS\":3.7858248762223808e-17,\"max_abs\":2.5868738943985122e-16,\"max_radius\":0.92910827544479446}}}\n",
+        "stderr": "",
+        "measurements": {
+          "degree": 2,
+          "payload": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/ghost-projection/last-valid-kappa10-projected.double",
+          "invalid_ghost_SPD_count": 0,
+          "min_ghost_determinant": 0.9999999999999992,
+          "max_rebuilt_vs_saved_ghost_difference": 0,
+          "ghost_det_minus_one": {
+            "count": 5432,
+            "RMS": 2.684459902650187e-16,
+            "max_abs": 1.1102230246251565e-15,
+            "max_radius": 1.1828692605271303
+          },
+          "ghost_trace_A": {
+            "count": 5432,
+            "RMS": 3.7584049442055166e-16,
+            "max_abs": 1.4464874941800122e-14,
+            "max_radius": 1.1828692605271305
+          },
+          "bulk_r_lt_.9": {
+            "det_first_identity": {
+              "count": 4632,
+              "RMS": 0.05515945556078411,
+              "max_abs": 0.18159043805100167,
+              "max_radius": 0.2273316684934151
+            },
+            "det_second_identity": {
+              "count": 4632,
+              "RMS": 0.9235978290509244,
+              "max_abs": 2.7183106988874446,
+              "max_radius": 0.8335494511425223
+            },
+            "trace_A_derivative_identity": {
+              "count": 4632,
+              "RMS": 0.1785770256974493,
+              "max_abs": 0.8840449572919871,
+              "max_radius": 0.31243749374874985
+            },
+            "active_det_minus_one": {
+              "count": 4632,
+              "RMS": 2.6751839779671997e-16,
+              "max_abs": 8.881784197001252e-16,
+              "max_radius": 0.31243749374874985
+            },
+            "active_trace_A": {
+              "count": 4632,
+              "RMS": 1.3572336721557524e-16,
+              "max_abs": 7.103719733588522e-16,
+              "max_radius": 0.41734840061991363
+            }
+          },
+          "outer_r_gt_.9": {
+            "det_first_identity": {
+              "count": 1520,
+              "RMS": 0.09582262516594961,
+              "max_abs": 0.4829834918003614,
+              "max_radius": 0.9928455003171441
+            },
+            "det_second_identity": {
+              "count": 1520,
+              "RMS": 2.4415935214309905,
+              "max_abs": 8.934407221659749,
+              "max_radius": 0.9928455003171441
+            },
+            "trace_A_derivative_identity": {
+              "count": 1520,
+              "RMS": 0.5207844538304867,
+              "max_abs": 2.7528292042662157,
+              "max_radius": 0.9928455003171442
+            },
+            "active_det_minus_one": {
+              "count": 1520,
+              "RMS": 2.646028136846811e-16,
+              "max_abs": 7.771561172376096e-16,
+              "max_radius": 0.9373124812462492
+            },
+            "active_trace_A": {
+              "count": 1520,
+              "RMS": 3.785824876222381e-17,
+              "max_abs": 2.586873894398512e-16,
+              "max_radius": 0.9291082754447945
+            }
+          }
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,331 @@
+{
+  "source_commit": "b0313c43c8f1af6fc9e3315a75a072694d14ec67",
+  "compiler_identity": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "compile_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export_operator.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "numpy": "2.0.2",
+  "scipy": "1.13.1",
+  "export_source_sha256": "072c79dbcd79cfead833eb489a59e24c3287cc47e7bd3c7b70cd5727d5a75c43",
+  "export_executable_sha256": "4b89dc58a2c372add21be89d8be2e6f74158bebec1a4a2b1e87acf7e239e19c3",
+  "consumed_headers": {
+    "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/athena.hpp": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6"
+  },
+  "command_environment": {
+    "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "continuum": {
+    "equation": "q_t+x.dot(grad q)=0 on unit ball, all boundary speeds outward",
+    "unweighted_energy": "E'=3E-boundary_integral(q^2), E=integral(q^2 d3x)",
+    "time_weighted_energy": "exp(-3t)E is nonincreasing; no regular positive time-independent spatial L2 weight contracts all smooth core data while admitting constants",
+    "pointwise": "Exact q(x,t)=q0(exp(-t)x), hence L-infinity never exceeds initial continuous sup. L2 changes alone do not imply instability."
+  },
+  "cases": [
+    {
+      "name": "N24-span2.1-nearest-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.1",
+        "nearest",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.1-nearest-centered-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.1,
+        "spacing": 0.08750000000000001,
+        "active": 6152,
+        "ghosts": 5432,
+        "closure": "nearest",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 105224,
+        "constant_residual_linf": 4.440892098500626e-15,
+        "native_fill_stencil_matvec_max_error": 1.0658141036401503e-14,
+        "original_plan_constant_error": 2.220446049250313e-15,
+        "original_plan_max_weight_l1": 10.32255232,
+        "strict_inside_nonrecursive_donor_references": 139224,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "5470e762e4dcf8e545521d29001ff2c6717f7a066e9fff26e1a2bd2cdaea97ec",
+      "points_sha256": "2ccd6c014021c2b34d25d81bc45733293c285b3e1ec1b717b84552eb2630fcdd",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.315879417,
+        "rightmost_found": [
+          {
+            "real": -5.31797746599127e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.791602388155313e-14,
+            "radius_peak": 0.8055229279790861,
+            "squared_fraction_r_gt_.8": 0.48244473342002775,
+            "squared_fraction_r_lt_.3": 0.026007802340702078
+          },
+          {
+            "real": -0.47941209882285896,
+            "imag": 15.16204727787855,
+            "absolute_residual_l2": 1.0001978897738882e-13,
+            "radius_peak": 0.9291082754447945,
+            "squared_fraction_r_gt_.8": 0.819269322782004,
+            "squared_fraction_r_lt_.3": 1.3791904054563197e-09
+          },
+          {
+            "real": -0.47941209882285896,
+            "imag": -15.16204727787855,
+            "absolute_residual_l2": 1.0001978897738882e-13,
+            "radius_peak": 0.9291082754447945,
+            "squared_fraction_r_gt_.8": 0.819269322782004,
+            "squared_fraction_r_lt_.3": 1.3791904054563197e-09
+          },
+          {
+            "real": -0.48204080895601614,
+            "imag": 15.161734675652685,
+            "absolute_residual_l2": 1.546469827780073e-11,
+            "radius_peak": 0.9291082754447946,
+            "squared_fraction_r_gt_.8": 0.8191191709684129,
+            "squared_fraction_r_lt_.3": 1.1076519331618823e-09
+          },
+          {
+            "real": -0.48204080895601614,
+            "imag": -15.161734675652685,
+            "absolute_residual_l2": 1.546469827780073e-11,
+            "radius_peak": 0.9291082754447946,
+            "squared_fraction_r_gt_.8": 0.8191191709684129,
+            "squared_fraction_r_lt_.3": 1.1076519331618823e-09
+          },
+          {
+            "real": -0.4820408089564244,
+            "imag": 15.161734675653427,
+            "absolute_residual_l2": 3.0993295533204314e-13,
+            "radius_peak": 0.9291082754447946,
+            "squared_fraction_r_gt_.8": 0.8191191709684219,
+            "squared_fraction_r_lt_.3": 1.107651933189177e-09
+          },
+          {
+            "real": -0.4820408089564244,
+            "imag": -15.161734675653427,
+            "absolute_residual_l2": 3.0993295533204314e-13,
+            "radius_peak": 0.9291082754447946,
+            "squared_fraction_r_gt_.8": 0.8191191709684219,
+            "squared_fraction_r_lt_.3": 1.107651933189177e-09
+          },
+          {
+            "real": -0.4820408089564393,
+            "imag": -15.161734675653314,
+            "absolute_residual_l2": 2.3640950630640547e-13,
+            "radius_peak": 0.9291082754447945,
+            "squared_fraction_r_gt_.8": 0.8191191709684219,
+            "squared_fraction_r_lt_.3": 1.1076519331891025e-09
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 4.654443912742819,
+      "constant_residual_linf_reloaded": 4.440892098500626e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00525,
+        "stop": "requested t12 reached",
+        "steps": 2286,
+        "last": {
+          "time": 12.0,
+          "energy": 0.00043668815967958115,
+          "analytic_sampled_energy": 0.000437769982861102,
+          "time_weighted_energy": 1.012908156073838e-19,
+          "analytic_sampled_time_weighted_energy": 1.0154174696416623e-19,
+          "linf": 0.0103015891370464,
+          "analytic_sampled_linf": 0.010307753744517013,
+          "error_linf": 4.5658888153828764e-05,
+          "error_rms": 1.2911835421878798e-05
+        },
+        "initial_sampled_linf": 0.9779804244963912,
+        "peak_sampled_linf": 1.079640788384694,
+        "peak_error_linf": 0.3356443376340861,
+        "peak_energy": 0.08622898036110713,
+        "initial_energy": 0.011981134235671315,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "14c7750af5981d8f8fa3623e726e2169cf9c3a2e0a24f3444c8ab8b40993da48"
+      }
+    },
+    {
+      "name": "N24-span2.1-fallback-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.1",
+        "fallback",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.1-fallback-centered-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.1,
+        "spacing": 0.08750000000000001,
+        "active": 6152,
+        "ghosts": 5432,
+        "closure": "fallback",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 102536,
+        "constant_residual_linf": 6.349087922075114e-15,
+        "native_fill_stencil_matvec_max_error": 1.4210854715202004e-14,
+        "original_plan_constant_error": 2.220446049250313e-15,
+        "original_plan_max_weight_l1": 10.32255232,
+        "strict_inside_nonrecursive_donor_references": 139224,
+        "fallback_axis_count": 4752,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "dd51384540b31f45543803fe7351bb8468735d645f9ea29558a90d176f116425",
+      "points_sha256": "2ccd6c014021c2b34d25d81bc45733293c285b3e1ec1b717b84552eb2630fcdd",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.38450454199999995,
+        "rightmost_found": [
+          {
+            "real": -4.005889881026682e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.1945482355854984e-14,
+            "radius_peak": 0.945445496842626,
+            "squared_fraction_r_gt_.8": 0.482444733420027,
+            "squared_fraction_r_lt_.3": 0.02600780234070208
+          },
+          {
+            "real": -1.0000000000000369,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.4966868582988846e-14,
+            "radius_peak": 0.9851038968047992,
+            "squared_fraction_r_gt_.8": 0.6664611668197428,
+            "squared_fraction_r_lt_.3": 0.0022646921905864355
+          },
+          {
+            "real": -1.000000000000102,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.131313032931405e-14,
+            "radius_peak": 0.985103896804799,
+            "squared_fraction_r_gt_.8": 0.6664611668197508,
+            "squared_fraction_r_lt_.3": 0.002264692190586157
+          },
+          {
+            "real": -1.0000000000112237,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.863183372381746e-11,
+            "radius_peak": 0.9928455003171441,
+            "squared_fraction_r_gt_.8": 0.6664611668213786,
+            "squared_fraction_r_lt_.3": 0.0022646921905356936
+          },
+          {
+            "real": -1.4464711404466857,
+            "imag": -7.92728585779024,
+            "absolute_residual_l2": 7.579451697057738e-14,
+            "radius_peak": 0.8426845124362974,
+            "squared_fraction_r_gt_.8": 0.6046775411467658,
+            "squared_fraction_r_lt_.3": 2.4791548880989353e-06
+          },
+          {
+            "real": -1.4464711404466857,
+            "imag": 7.92728585779024,
+            "absolute_residual_l2": 7.579451697057738e-14,
+            "radius_peak": 0.8426845124362974,
+            "squared_fraction_r_gt_.8": 0.6046775411467658,
+            "squared_fraction_r_lt_.3": 2.4791548880989353e-06
+          },
+          {
+            "real": -1.4464711404466897,
+            "imag": -7.927285857790241,
+            "absolute_residual_l2": 9.888487487142837e-14,
+            "radius_peak": 0.8426845124362974,
+            "squared_fraction_r_gt_.8": 0.6046775411467662,
+            "squared_fraction_r_lt_.3": 2.4791548880988718e-06
+          },
+          {
+            "real": -1.4464711404466897,
+            "imag": 7.927285857790241,
+            "absolute_residual_l2": 9.888487487142837e-14,
+            "radius_peak": 0.8426845124362974,
+            "squared_fraction_r_gt_.8": 0.6046775411467662,
+            "squared_fraction_r_lt_.3": 2.4791548880988718e-06
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.8050190620823237,
+      "constant_residual_linf_reloaded": 6.349087922075114e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00525,
+        "stop": "requested t12 reached",
+        "steps": 2286,
+        "last": {
+          "time": 12.0,
+          "energy": 0.00043732211098435606,
+          "analytic_sampled_energy": 0.000437769982861102,
+          "time_weighted_energy": 1.0143786205985261e-19,
+          "analytic_sampled_time_weighted_energy": 1.0154174696416623e-19,
+          "linf": 0.010302467135090811,
+          "analytic_sampled_linf": 0.010307753744517013,
+          "error_linf": 5.287354859434892e-06,
+          "error_rms": 5.273415214905963e-06
+        },
+        "initial_sampled_linf": 0.9779804244963912,
+        "peak_sampled_linf": 0.9865939792324117,
+        "peak_error_linf": 0.1097386131944117,
+        "peak_energy": 0.08428806119467583,
+        "initial_energy": 0.011981134235671315,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "b0e95827dd48107df3a7773e757a7c13e09381b097bcd0004e1afdf6bfb7bf15"
+      }
+    }
+  ],
+  "rejections": [
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "12",
+        "2.2",
+        "ray",
+        "upwind",
+        ".1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/rejected-N12"
+      ],
+      "exit_status": 1,
+      "stdout": "",
+      "stderr": "no interior normal-ray rectangles\n"
+    }
+  ]
+}

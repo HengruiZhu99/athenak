@@ -1,0 +1,14 @@
+PASS independent fixed-ADM scri first-jet derivation
+geometry null contribution = (-14*M/(3*a**2) + 2*S*(4*M/(S*a) - 3*(a1 + b1)/S - 3/S)/(3*a) + 2*b1/a + 2/a)/a**2 ; original geometric BH jets = 0
+alpha dot = -S*(4*M + 2*a**2*a1*xi - a*b1)/a**3 ; original geometric BH jets = 2*M*S*(a*xi - 1)/a**3
+beta dot = S*(M + a*a1 + a*b1)/a**3 ; original geometric BH jets = 2*M*S/a**3
+baseline Ndot = -4*(2*M + a**2*a1*xi - a*b1)/a**4 ; original geometric BH jets = 4*M*xi/a**3
+eta Ndot = -2*(4*M*S + 2*S*a**2*a1*xi - 2*S*a*b1 + a**3*b1*eta)/(S*a**4) ; original geometric BH jets = 4*M*(S*xi - a*eta)/(S*a**3)
+preferred Ndot = 8*(-M + a*a1 + a*b1)/a**4 ; original geometric BH jets = 0
+feedback Ndot = -4*(sigma - 2)*(-M + a*a1 + a*b1)/a**4 ; original geometric BH jets = 0
+N_raw first coefficient = 2*(-M + a*a1 + a*b1)/(S*a**2) ; original geometric BH jets = 0
+numerical original Ndot baseline/eta10/preferred: [24, -56, 0]
+compatible free gauge first jets: {a1: (2*M*S + M*a**2*eta)/(-2*S*a**2*xi - 2*S*a + a**3*eta), b1: (-2*M*S*a*xi - 4*M*S)/(-2*S*a**2*xi - 2*S*a + a**3*eta)}
+eta10 numerical compatible jets: {a1: -9/2, b1: 11/2}
+trace Q=(P-3*wn)/Omega scri limit: (4*M - 3*a*(a1 + b1 + 1))/(S*a)
+a1+b1=M/a keeps trace Q limit -3/S+M/(a*S), separately from N_raw null jets

@@ -1,0 +1,44 @@
+build-kernel_audit-release PASS  
+test-kernel_audit-release PASS {"mode":"baseline","da1":0,"db1":0,"da2":0,"r":0.94999999999999996,"Omega":0.097500000000000087,"N_raw":0.0085675568217883219,"Ndot_factored":18.844470620644376,"Ndot_raw":18.844470620644344,"alpha_dot":-0.20641909308585848,"beta_dot":5.1648195486323116,"chi_dot":-1.3322676295501878e-15,"g_rr_dot":-1.7763568394002505e-15,"g_tt_dot":0,"Qtrace":-2.0480278270187746}
+{"mode":"preferred","da1":0,"db1":0,"da2":0,"r":0.94999999999999996,"Omega":0.097500000000000087,"N_raw":0.0085675568217883219,"Ndot_factored":-0.11622862654612411,"Ndot_raw":-0.11622862654624673,"alpha_dot":-0.20641909308585848,"beta_dot":0.16531601441279964,"chi_dot":-1.3322676295501878e-15,"g_rr_dot":-1.7763568394002505e-15,"g_tt_dot":0,"Qtrace":-2.0480278270187746}
+{"mode":"feedback","da1":0,"db1":0,"da2":0,"r":0.94999999999999996,"Omega":0.097500000000000087,"N_raw":0.0085675568217883219,"Ndot_factored":0.18927928892264426,"Ndot_raw":0.18927928892261844,"alpha_dot":-0.20641909308585848,"beta_dot":0.24587147722593738,"chi_ PASS rows=104 raw/factored agreement(Omega>=1e-4)=1.6051160400820663e-10 fixedADM_H=1.9539925233402755e-14 fixedADM_M=8.8817841970012523e-16 freeGauge_first=3.5917587003269258e-08 freeGauge_second=0.0001939491884644786 minAlpha=1.8447046141282153
+build-kernel_audit-debug PASS  
+test-kernel_audit-debug PASS {"mode":"baseline","da1":0,"db1":0,"da2":0,"r":0.94999999999999996,"Omega":0.097500000000000087,"N_raw":0.0085675568217883219,"Ndot_factored":18.844470620644376,"Ndot_raw":18.844470620644344,"alpha_dot":-0.20641909308585848,"beta_dot":5.1648195486323116,"chi_dot":-1.3322676295501878e-15,"g_rr_dot":-1.7763568394002505e-15,"g_tt_dot":0,"Qtrace":-2.0480278270187746}
+{"mode":"preferred","da1":0,"db1":0,"da2":0,"r":0.94999999999999996,"Omega":0.097500000000000087,"N_raw":0.0085675568217883219,"Ndot_factored":-0.11622862654612411,"Ndot_raw":-0.11622862654624673,"alpha_dot":-0.20641909308585848,"beta_dot":0.16531601441279964,"chi_dot":-1.3322676295501878e-15,"g_rr_dot":-1.7763568394002505e-15,"g_tt_dot":0,"Qtrace":-2.0480278270187746}
+{"mode":"feedback","da1":0,"db1":0,"da2":0,"r":0.94999999999999996,"Omega":0.097500000000000087,"N_raw":0.0085675568217883219,"Ndot_factored":0.18927928892264426,"Ndot_raw":0.18927928892261844,"alpha_dot":-0.20641909308585848,"beta_dot":0.24587147722593738,"chi_ PASS rows=104 raw/factored agreement(Omega>=1e-4)=1.6051160400820663e-10 fixedADM_H=1.9539925233402755e-14 fixedADM_M=8.8817841970012523e-16 freeGauge_first=3.5917587003269258e-08 freeGauge_second=0.0001939491884644786 minAlpha=1.8447046141282153
+first_jet PASS PASS independent fixed-ADM scri first-jet derivation
+geometry null contribution = (-14*M/(3*a**2) + 2*S*(4*M/(S*a) - 3*(a1 + b1)/S - 3/S)/(3*a) + 2*b1/a + 2/a)/a**2 ; original geometric BH jets = 0
+alpha dot = -S*(4*M + 2*a**2*a1*xi - a*b1)/a**3 ; original geometric BH jets = 2*M*S*(a*xi - 1)/a**3
+beta dot = S*(M + a*a1 + a*b1)/a**3 ; original geometric BH jets = 2*M*S/a**3
+baseline Ndot = -4*(2*M + a**2*a1*xi - a*b1)/a**4 ; original geometric BH jets = 4*M*xi/a**3
+eta Ndot = -2*(4*M*S + 2*S*a**2*a1*xi - 2*S*a*b1 + a**3*b1*eta)/(S*a**4) ; original geometric BH jets = 4*M*(S*xi - a*eta)/(S*a**3)
+preferred Ndot = 8*(-M + a*a1 + a*b1)/a**4 ; original geometric BH jets = 0
+feedback Ndot = -4*(sigma - 2)*(-M + a*a1 + a*b1)/a**4 ; original geometric BH jets = 0
+N_raw first coefficient = 2*(-M + a*a1 + a*b1)/(S*a**2) ; original geometric BH jets = 0
+numerical original Ndot baseline/eta10/preferred: [24, -56, 0]
+compatible free gauge first jets: {a1: (2*M*S + M*a**2*eta)/(-2*S*a**2*xi - 2*S*a  
+second_jet PASS PASS exact fixed-ADM first/second gauge jet gates; initial N_raw=O(Omega^2), Qtrace_scri=-2
+dt N_raw = 8*Omega*delta_a2 + 24*Omega*delta_b2 - 575*Omega/2 + O(Omega^2)
+delta_a2=575/16,delta_b2=0 cancels this second gate only; no dynamic manifold proof 
+leading_compatibility PASS original {'alphaDot': -2, 'betaDot': -12, 'chiDot': 0, 'g_rrDot': 0, 'g_ttDot': 0, 'Pdot': 0, 'Ndot': -56, 'dtSalpha': -28}
+null_only {'alphaDot': 33, 'betaDot': -47, 'chiDot': 14/3, 'g_rrDot': -28/3, 'g_ttDot': 14/3, 'Pdot': -42, 'Ndot': 0, 'dtSalpha': -350}
+beta_only {'alphaDot': -14, 'betaDot': 0, 'chiDot': -8/5, 'g_rrDot': 16/5, 'g_ttDot': -8/5, 'Pdot': 72/5, 'Ndot': -376/5, 'dtSalpha': 412/5}
+PASS full leading finite-pole gate: original jets, xi=1/a, eta=S/a^2
+paired beta/null condition alone: eta*a^2/S = (2*d + 2)/(d + 3) with d=xi*a; for d>=0, c in [2/3,2)
+eta10 overdetermined for fixed mass ADM data retaining N_raw=O(Omega^2)
+alpha pole = -(alpha-alphaRef)*[(3alpha+alphaRef)/a+xi(alpha+alphaRef)] on beta-pin/finite-trace vacuum manifold 
+zero_jet_second PASS PASS exact zero-jet pair second gate; original first jets, initial N_raw=O(Omega^2), Qtrace_scri=-2
+dt N_raw = 48*Omega*delta_b2 - 36*Omega + O(Omega^2)
+delta_a2=0,delta_b2=3/4 cancels this second gate only; no dynamic manifold proof 
+outer_oracle PASS PASS 100-digit factored outer rates; original Ndot limits {'baseline': 24, 'preferred': 0, 'feedback': 0, 'eta10': -56}
+{
+  "compatible_gauge_da1": "-3.5",
+  "compatible_gauge_db1": "3.5",
+  "eta10_compatible_Ndot0": "0.0",
+  "eta10_compatible_Ndot_Omega_coefficient": "-287.5",
+  "da2_linear_coefficient": "8.0",
+  "db2_linear_coefficient": "24.0",
+  "example_da2_canceling_second_gate": "35.9375",
+  "second_gate_residual": "0.0"
+} 
+Saved receipt /Users/hz0693/research/hyperboloidal/build-layer-research/detached-wormhole/gauge-gate/receipt.json

@@ -1,0 +1,3298 @@
+{
+  "source_commit": "b0313c43c8f1af6fc9e3315a75a072694d14ec67",
+  "compiler_identity": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "compile_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/research/hyperboloidal/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+    "-I/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src",
+    "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "-arch",
+    "arm64",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export_operator.cpp",
+    "-o",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-release/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "numpy": "2.0.2",
+  "scipy": "1.13.1",
+  "export_source_sha256": "072c79dbcd79cfead833eb489a59e24c3287cc47e7bd3c7b70cd5727d5a75c43",
+  "export_executable_sha256": "4b89dc58a2c372add21be89d8be2e6f74158bebec1a4a2b1e87acf7e239e19c3",
+  "consumed_headers": {
+    "src/utils/finite_diff.hpp": "203074210997f5d2bf6ce1960b4a9574d96c9c4e2df8a34f89b0b5f023f4cd42",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/athena.hpp": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6"
+  },
+  "command_environment": {
+    "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "continuum": {
+    "equation": "q_t+x.dot(grad q)=0 on unit ball, all boundary speeds outward",
+    "unweighted_energy": "E'=3E-boundary_integral(q^2), E=integral(q^2 d3x)",
+    "time_weighted_energy": "exp(-3t)E is nonincreasing; no regular positive time-independent spatial L2 weight contracts all smooth core data while admitting constants",
+    "pointwise": "Exact q(x,t)=q0(exp(-t)x), hence L-infinity never exceeds initial continuous sup. L2 changes alone do not imply instability."
+  },
+  "cases": [
+    {
+      "name": "N16-span2.2-ray-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "ray",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-ray-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "ray",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 43208,
+        "constant_residual_linf": 6.411537967210279e-15,
+        "native_fill_stencil_matvec_max_error": 2.842170943040401e-14,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "98755c3023334592eac236a319866a5904787b44daa915ce95f6543b5b8c56b8",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 1.581768666,
+        "rightmost_found": [
+          {
+            "real": 1.2724673036649701e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 4.341315697358049e-14,
+            "radius_peak": 0.9198123110178511,
+            "squared_fraction_r_gt_.8": 0.48780487804878137,
+            "squared_fraction_r_lt_.3": 0.034146341463414547
+          },
+          {
+            "real": -0.9999999999999788,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.01781600806063e-14,
+            "radius_peak": 0.9795367208532818,
+            "squared_fraction_r_gt_.8": 0.6716060640601812,
+            "squared_fraction_r_lt_.3": 0.0035335689045938113
+          },
+          {
+            "real": -1.0000000000000082,
+            "imag": 4.107230348872857e-15,
+            "absolute_residual_l2": 4.4030664193697793e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.6716060640601846,
+            "squared_fraction_r_lt_.3": 0.0035335689045936304
+          },
+          {
+            "real": -1.0000000000000082,
+            "imag": -4.107230348872857e-15,
+            "absolute_residual_l2": 4.4030664193697793e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.6716060640601846,
+            "squared_fraction_r_lt_.3": 0.0035335689045936304
+          },
+          {
+            "real": -1.9999999999998919,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.548385365791861e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7971846617835525,
+            "squared_fraction_r_lt_.3": 0.00041515842159419185
+          },
+          {
+            "real": -1.9999999999999651,
+            "imag": 3.0531685647220396e-14,
+            "absolute_residual_l2": 5.565743805154512e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7895264605020278,
+            "squared_fraction_r_lt_.3": 0.00036376685901170016
+          },
+          {
+            "real": -1.9999999999999651,
+            "imag": -3.0531685647220396e-14,
+            "absolute_residual_l2": 5.565743805154512e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7895264605020278,
+            "squared_fraction_r_lt_.3": 0.00036376685901170016
+          },
+          {
+            "real": -1.9999999999999851,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.487609701555867e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7889706329414353,
+            "squared_fraction_r_lt_.3": 0.00036003689086183113
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 2.3924109887668803,
+      "constant_residual_linf_reloaded": 6.411537967210279e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "requested t12 reached",
+        "steps": 1455,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0005163715286376913,
+          "analytic_sampled_energy": 0.0004528531950242433,
+          "time_weighted_energy": 1.1977355495628962e-19,
+          "analytic_sampled_time_weighted_energy": 1.0504033246074761e-19,
+          "linf": 0.011007149170992693,
+          "analytic_sampled_linf": 0.010307748994227284,
+          "error_linf": 0.0006994696160072655,
+          "error_rms": 0.0006990841024976729
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 0.872873942812259,
+        "peak_error_linf": 0.22987356095968858,
+        "peak_energy": 0.07587567022408832,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "b57bc4307efc1ccd7fdc77988b01be3408be6fdbdcf08deea53a539294626242"
+      }
+    },
+    {
+      "name": "N16-span2.2-ray-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "ray",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-ray-centered-ko0.1"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "ray",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 66568,
+        "constant_residual_linf": 6.016021014687567e-15,
+        "native_fill_stencil_matvec_max_error": 2.842170943040401e-14,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "845c3893f144c4ab225340cacc5c194639cbe35aaadf86959d960a9c79a759ef",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 1.5352255000000001,
+        "rightmost_found": [
+          {
+            "real": 5.348849996065577,
+            "imag": 0.0,
+            "absolute_residual_l2": 8.565499229226627e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.9410212468405073,
+            "squared_fraction_r_lt_.3": 6.412580179079913e-07
+          },
+          {
+            "real": 5.2979894982586595,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.3267091894778435e-13,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9417589541337195,
+            "squared_fraction_r_lt_.3": 6.828184414412843e-07
+          },
+          {
+            "real": 5.2979894982586,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.750318406805279e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.9417589541337195,
+            "squared_fraction_r_lt_.3": 6.828184414412926e-07
+          },
+          {
+            "real": 5.297989498258576,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.795859613719649e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9417589541337196,
+            "squared_fraction_r_lt_.3": 6.828184414412864e-07
+          },
+          {
+            "real": 5.2337936855400224,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.652905343016703e-13,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9425470410850211,
+            "squared_fraction_r_lt_.3": 7.18515164854471e-07
+          },
+          {
+            "real": 5.233793685539909,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.537268261204276e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9425470410850211,
+            "squared_fraction_r_lt_.3": 7.185151648544815e-07
+          },
+          {
+            "real": 5.233793685539837,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.694984477563022e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.942547041085021,
+            "squared_fraction_r_lt_.3": 7.185151648544697e-07
+          },
+          {
+            "real": 5.143358995003505,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.5884038386254515e-13,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.9433975033512451,
+            "squared_fraction_r_lt_.3": 6.686002590046299e-07
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 192
+      },
+      "euclidean_log_norm_mu2": 14.928641717009416,
+      "constant_residual_linf_reloaded": 6.016021014687567e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "nonfinite or amplitude threshold1e8",
+        "steps": 477,
+        "last": {
+          "time": 3.86099999999998,
+          "energy": 175931610852249.72,
+          "analytic_sampled_energy": 0.0004908968549520896,
+          "time_weighted_energy": 1640253205.9696155,
+          "analytic_sampled_time_weighted_energy": 4.576750796716017e-09,
+          "linf": 70536887.18745112,
+          "analytic_sampled_linf": 0.01646678487458482,
+          "error_linf": 70536887.2039179,
+          "error_rms": 6423858.533828088
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 70536887.18745112,
+        "peak_error_linf": 70536887.2039179,
+        "peak_energy": 175931610852249.72,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 136916561674.64525,
+        "history_sha256": "f37a3f1a168e10cc0a7170bb348e93085e577055ecd8e82a413dd84e2756286d"
+      }
+    },
+    {
+      "name": "N16-span2.2-nearest-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "nearest",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-nearest-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "nearest",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 25760,
+        "constant_residual_linf": 4.9404924595819466e-15,
+        "native_fill_stencil_matvec_max_error": 1.4210854715202004e-14,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "3944bd1dc9603c3a174c4a17da52955139b541b5858049d838af59e1f7c5daed",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 1.5282625000000003,
+        "rightmost_found": [
+          {
+            "real": -2.0178376713336726e-14,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.2799513735025565e-14,
+            "radius_peak": 0.9795367208532818,
+            "squared_fraction_r_gt_.8": 0.48780487804878003,
+            "squared_fraction_r_lt_.3": 0.034146341463414734
+          },
+          {
+            "real": -0.9998889121322578,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.262665260782071e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.6787525349726647,
+            "squared_fraction_r_lt_.3": 0.003460796350026218
+          },
+          {
+            "real": -0.999888912132277,
+            "imag": -6.257053487272912e-16,
+            "absolute_residual_l2": 8.1676858264427e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.678752534972664,
+            "squared_fraction_r_lt_.3": 0.003460796350026217
+          },
+          {
+            "real": -0.999888912132277,
+            "imag": 6.257053487272912e-16,
+            "absolute_residual_l2": 8.1676858264427e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.678752534972664,
+            "squared_fraction_r_lt_.3": 0.003460796350026217
+          },
+          {
+            "real": -1.9938603075806582,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.863504654163263e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.8015390140486265,
+            "squared_fraction_r_lt_.3": 0.00034601651973005043
+          },
+          {
+            "real": -1.9941681817487027,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.420137219149062e-14,
+            "radius_peak": 0.899022907105264,
+            "squared_fraction_r_gt_.8": 0.7932663695833323,
+            "squared_fraction_r_lt_.3": 0.00023016033380765486
+          },
+          {
+            "real": -1.9941681817487542,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.526943625711748e-14,
+            "radius_peak": 0.899022907105264,
+            "squared_fraction_r_gt_.8": 0.7932663695833339,
+            "squared_fraction_r_lt_.3": 0.0002301603338076532
+          },
+          {
+            "real": -1.9998302563640264,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.078323664219439e-13,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.8078749096826082,
+            "squared_fraction_r_lt_.3": 0.0004158152847719113
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.6000495880626588,
+      "constant_residual_linf_reloaded": 4.9404924595819466e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "requested t12 reached",
+        "steps": 1455,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0005163845180610619,
+          "analytic_sampled_energy": 0.0004528531950242433,
+          "time_weighted_energy": 1.197765678826956e-19,
+          "analytic_sampled_time_weighted_energy": 1.0504033246074761e-19,
+          "linf": 0.011007349864292264,
+          "analytic_sampled_linf": 0.010307748994227284,
+          "error_linf": 0.0006996695975401545,
+          "error_rms": 0.000699222524525957
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 0.8728736555469871,
+        "peak_error_linf": 0.19778584585638348,
+        "peak_energy": 0.07352169141271206,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "c3fc4f44c46af910ced7d71e510410d42ea24fc7760cc812299d4b1531f47313"
+      }
+    },
+    {
+      "name": "N16-span2.2-nearest-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "nearest",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-nearest-centered-ko0.1"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "nearest",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 26312,
+        "constant_residual_linf": 2.321060010856968e-15,
+        "native_fill_stencil_matvec_max_error": 7.105427357601002e-15,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "796eb0d1ff4a3ce839db69233ebd2a4f1897efeea032350a148830fdb088250b",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 1.4915164580000004,
+        "rightmost_found": [
+          {
+            "real": 8.2094446206546e-16,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.025311433167166e-14,
+            "radius_peak": 0.8559305973617254,
+            "squared_fraction_r_gt_.8": 0.4878048780487797,
+            "squared_fraction_r_lt_.3": 0.0341463414634148
+          },
+          {
+            "real": -0.557904824088697,
+            "imag": -5.155053976083985,
+            "absolute_residual_l2": 7.628310605143123e-14,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.6397940164951187,
+            "squared_fraction_r_lt_.3": 3.2505405333213806e-05
+          },
+          {
+            "real": -0.557904824088697,
+            "imag": 5.155053976083985,
+            "absolute_residual_l2": 7.628310605143123e-14,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.6397940164951187,
+            "squared_fraction_r_lt_.3": 3.2505405333213806e-05
+          },
+          {
+            "real": -0.5579048240886987,
+            "imag": -5.155053976083979,
+            "absolute_residual_l2": 7.908510316940167e-14,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.6397940164951191,
+            "squared_fraction_r_lt_.3": 3.250540533321391e-05
+          },
+          {
+            "real": -0.5579048240886987,
+            "imag": 5.155053976083979,
+            "absolute_residual_l2": 7.908510316940167e-14,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.6397940164951191,
+            "squared_fraction_r_lt_.3": 3.250540533321391e-05
+          },
+          {
+            "real": -0.577416198962714,
+            "imag": -5.12773106954293,
+            "absolute_residual_l2": 1.1309418717272347e-13,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.6661074954926295,
+            "squared_fraction_r_lt_.3": 4.594403170558482e-05
+          },
+          {
+            "real": -0.577416198962714,
+            "imag": 5.12773106954293,
+            "absolute_residual_l2": 1.1309418717272347e-13,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.6661074954926295,
+            "squared_fraction_r_lt_.3": 4.594403170558482e-05
+          },
+          {
+            "real": -0.5774161989627146,
+            "imag": 5.127731069542861,
+            "absolute_residual_l2": 8.603101714234327e-14,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.6661074954926237,
+            "squared_fraction_r_lt_.3": 4.594403170558676e-05
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.4962171918070069,
+      "constant_residual_linf_reloaded": 2.321060010856968e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "requested t12 reached",
+        "steps": 1455,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0003692670493289264,
+          "analytic_sampled_energy": 0.0004528531950242433,
+          "time_weighted_energy": 8.565233513751233e-20,
+          "analytic_sampled_time_weighted_energy": 1.0504033246074761e-19,
+          "linf": 0.009362987452891033,
+          "analytic_sampled_linf": 0.010307748994227284,
+          "error_linf": 0.0010159511202055896,
+          "error_rms": 0.0009997424579618684
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 0.9627194569424856,
+        "peak_error_linf": 0.3475125745499178,
+        "peak_energy": 0.08434449682041331,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "248a25353e8183ed044051e958d974bd8fe8b5757e11077ad5f9bec75a0b7657"
+      }
+    },
+    {
+      "name": "N16-span2.2-fallback-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "fallback",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-fallback-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "fallback",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 25256,
+        "constant_residual_linf": 5.329070518200751e-15,
+        "native_fill_stencil_matvec_max_error": 1.0658141036401503e-14,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 1080,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "b7c64b01b45fc31a5a3b732648003decba888036f246eaeff3e426981b55494b",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 1.547664042000001,
+        "rightmost_found": [
+          {
+            "real": -1.2137861241183064e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.5320725820955912e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.48780487804878064,
+            "squared_fraction_r_lt_.3": 0.034146341463414616
+          },
+          {
+            "real": -0.9999999999999685,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.318885213810306e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.6716060640601832,
+            "squared_fraction_r_lt_.3": 0.003533568904593688
+          },
+          {
+            "real": -0.9999999999999941,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.006889614324776e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.6716060640601845,
+            "squared_fraction_r_lt_.3": 0.0035335689045936456
+          },
+          {
+            "real": -1.0000000000000122,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.980463802505453e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.6716060640601867,
+            "squared_fraction_r_lt_.3": 0.003533568904593536
+          },
+          {
+            "real": -1.9977415340565956,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.70930389712432e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7936828206750743,
+            "squared_fraction_r_lt_.3": 0.0003561809225085926
+          },
+          {
+            "real": -1.9979040405696573,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.717888290331371e-14,
+            "radius_peak": 0.899022907105264,
+            "squared_fraction_r_gt_.8": 0.7782418590798214,
+            "squared_fraction_r_lt_.3": 0.00024336830860868428
+          },
+          {
+            "real": -1.9979040405696908,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.731118206533808e-14,
+            "radius_peak": 0.899022907105264,
+            "squared_fraction_r_gt_.8": 0.7782418590798209,
+            "squared_fraction_r_lt_.3": 0.00024336830860868742
+          },
+          {
+            "real": -1.99999999999998,
+            "imag": 2.194007204570844e-14,
+            "absolute_residual_l2": 6.93120800265617e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7999067588879514,
+            "squared_fraction_r_lt_.3": 0.00043342548177613475
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.6301100236661918,
+      "constant_residual_linf_reloaded": 5.329070518200751e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "requested t12 reached",
+        "steps": 1455,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0005163601225888326,
+          "analytic_sampled_energy": 0.0004528531950242433,
+          "time_weighted_energy": 1.1977090929721657e-19,
+          "analytic_sampled_time_weighted_energy": 1.0504033246074761e-19,
+          "linf": 0.011007027538534596,
+          "analytic_sampled_linf": 0.010307748994227284,
+          "error_linf": 0.0006993480270029266,
+          "error_rms": 0.0006989625537415612
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 0.8728736485781767,
+        "peak_error_linf": 0.24421780780819358,
+        "peak_energy": 0.07325211904155789,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "424a16fac4b4d14bcc3bb5eb2d091555b0cbd88510f43523b5dd68ffac668b55"
+      }
+    },
+    {
+      "name": "N16-span2.2-fallback-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "fallback",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-fallback-centered-ko0.1"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "fallback",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 25256,
+        "constant_residual_linf": 5.329070518200751e-15,
+        "native_fill_stencil_matvec_max_error": 7.105427357601002e-15,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 1968,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "2bcda107c93da4b96839bc503ab3d9a9bd19a7ab1694746ca8bb5800a4f3d57b",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 1.605686500000001,
+        "rightmost_found": [
+          {
+            "real": -2.425201036341844e-14,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.604155709068467e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.48780487804878425,
+            "squared_fraction_r_lt_.3": 0.03414634146341438
+          },
+          {
+            "real": -0.9999999999999547,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.325145471299356e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.6716060640601765,
+            "squared_fraction_r_lt_.3": 0.0035335689045937215
+          },
+          {
+            "real": -1.0000000000000022,
+            "imag": -4.556220505720297e-15,
+            "absolute_residual_l2": 7.736929603620664e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.6716060640601834,
+            "squared_fraction_r_lt_.3": 0.0035335689045935662
+          },
+          {
+            "real": -1.0000000000000022,
+            "imag": 4.556220505720297e-15,
+            "absolute_residual_l2": 7.736929603620664e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.6716060640601834,
+            "squared_fraction_r_lt_.3": 0.0035335689045935662
+          },
+          {
+            "real": -1.217325669860681,
+            "imag": 3.537175860051186,
+            "absolute_residual_l2": 1.0755276051861915e-13,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.5805190768044667,
+            "squared_fraction_r_lt_.3": 0.00023116640949126491
+          },
+          {
+            "real": -1.217325669860681,
+            "imag": -3.537175860051186,
+            "absolute_residual_l2": 1.0755276051861915e-13,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.5805190768044667,
+            "squared_fraction_r_lt_.3": 0.00023116640949126491
+          },
+          {
+            "real": -1.2173256698606854,
+            "imag": -3.537175860051163,
+            "absolute_residual_l2": 9.586328452178167e-14,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.5805190768044677,
+            "squared_fraction_r_lt_.3": 0.0002311664094912645
+          },
+          {
+            "real": -1.2173256698606854,
+            "imag": 3.537175860051163,
+            "absolute_residual_l2": 9.586328452178167e-14,
+            "radius_peak": 0.8335494511425223,
+            "squared_fraction_r_gt_.8": 0.5805190768044677,
+            "squared_fraction_r_lt_.3": 0.0002311664094912645
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.677875537833362,
+      "constant_residual_linf_reloaded": 5.329070518200751e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "requested t12 reached",
+        "steps": 1455,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0004511683910556481,
+          "analytic_sampled_energy": 0.0004528531950242433,
+          "time_weighted_energy": 1.0464953833378345e-19,
+          "analytic_sampled_time_weighted_energy": 1.0504033246074761e-19,
+          "linf": 0.01028870385756211,
+          "analytic_sampled_linf": 0.010307748994227284,
+          "error_linf": 1.9294791177982065e-05,
+          "error_rms": 1.9189837320825938e-05
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 0.9261695463791898,
+        "peak_error_linf": 0.27315396037799045,
+        "peak_energy": 0.07933785958806987,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "a273651aa877418b9861c00836d1e6bde6bfb9afbb6b3aa2095432fd969ec6f6"
+      }
+    },
+    {
+      "name": "N16-span2.2-monotone-upwind-ko0.0",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "monotone",
+        "upwind",
+        "0.0",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-monotone-upwind-ko0.0"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "monotone",
+        "derivative": "upwind",
+        "ko": 0,
+        "nonzeros": 6560,
+        "constant_residual_linf": 1.7763568394002505e-15,
+        "native_fill_stencil_matvec_max_error": 7.105427357601002e-15,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 4920,
+        "matrix_is_metzler": 1
+      },
+      "matrix_sha256": "595776362150a88b098727808429cad3a195e1b2a3664b56b6e55f2d70a5212a",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 0.6394246250000002,
+        "rightmost_found": [
+          {
+            "real": -1.0694060555697989e-14,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.1172495307026425e-14,
+            "radius_peak": 0.9600415030091147,
+            "squared_fraction_r_gt_.8": 0.4878048780487823,
+            "squared_fraction_r_lt_.3": 0.03414634146341411
+          },
+          {
+            "real": -0.9999999999999862,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.3417051027105103e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.6716060640601802,
+            "squared_fraction_r_lt_.3": 0.003533568904593996
+          },
+          {
+            "real": -0.9999999999999982,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.73090127840577e-14,
+            "radius_peak": 0.9795367208532818,
+            "squared_fraction_r_gt_.8": 0.6716060640601834,
+            "squared_fraction_r_lt_.3": 0.0035335689045937727
+          },
+          {
+            "real": -1.0000000000000686,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.1657356017161245e-14,
+            "radius_peak": 0.9986514344354593,
+            "squared_fraction_r_gt_.8": 0.6716060640601941,
+            "squared_fraction_r_lt_.3": 0.0035335689045930996
+          },
+          {
+            "real": -1.4999999999998679,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.4849834167069163e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7480297956136688,
+            "squared_fraction_r_lt_.3": 0.0006193033133248014
+          },
+          {
+            "real": -1.499999999999971,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.8820028483386056e-14,
+            "radius_peak": 0.9795367208532818,
+            "squared_fraction_r_gt_.8": 0.7524393137944447,
+            "squared_fraction_r_lt_.3": 0.00059767219119049
+          },
+          {
+            "real": -1.5000000000000087,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.6242128179032116e-14,
+            "radius_peak": 0.9600415030091147,
+            "squared_fraction_r_gt_.8": 0.7349689240602695,
+            "squared_fraction_r_lt_.3": 0.0006833741020517344
+          },
+          {
+            "real": -1.5000000000000202,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.524004638919119e-14,
+            "radius_peak": 0.9795367208532818,
+            "squared_fraction_r_gt_.8": 0.744690583026803,
+            "squared_fraction_r_lt_.3": 0.0006356839953711525
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.5000189643447375,
+      "constant_residual_linf_reloaded": 1.7763568394002505e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "requested t12 reached",
+        "steps": 1455,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0017915243307566515,
+          "analytic_sampled_energy": 0.0004528531950242433,
+          "time_weighted_energy": 4.1554815861268854e-19,
+          "analytic_sampled_time_weighted_energy": 1.0504033246074761e-19,
+          "linf": 0.020501341293958825,
+          "analytic_sampled_linf": 0.010307748994227284,
+          "error_linf": 0.01019359345273601,
+          "error_rms": 0.010192828638966521
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 0.8576873627290864,
+        "peak_error_linf": 0.6590469430945302,
+        "peak_energy": 0.02586236854058058,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "4dbdf76b4a0a0817cddca8e0720fafd3305c98b0e3f2ce06014449070ee61edc"
+      }
+    },
+    {
+      "name": "N20-span2.2-ray-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "20",
+        "2.2",
+        "ray",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N20-span2.2-ray-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 20,
+        "span": 2.2,
+        "spacing": 0.11000000000000001,
+        "active": 3112,
+        "ghosts": 3608,
+        "closure": "ray",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 75472,
+        "constant_residual_linf": 1.0269562977782698e-14,
+        "native_fill_stencil_matvec_max_error": 3.552713678800501e-14,
+        "original_plan_constant_error": 1.7763568394002505e-15,
+        "original_plan_max_weight_l1": 10.318574903507491,
+        "strict_inside_nonrecursive_donor_references": 88992,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "9d94cd27f43c1279cb52388e6be9014cc91fd5be65419c587b6dddb099727592",
+      "points_sha256": "8bbe93279e29dd9958a392535d76776469a04560407ef94a75f9db4ac7869187",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.05537108400000079,
+        "rightmost_found": [
+          {
+            "real": 5.551115123125783e-16,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.4715674952507713e-14,
+            "radius_peak": 0.9510389056184821,
+            "squared_fraction_r_gt_.8": 0.4730077120822623,
+            "squared_fraction_r_lt_.3": 0.02827763496143962
+          },
+          {
+            "real": -0.9999999999999832,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.9498046601570802e-14,
+            "radius_peak": 0.9884710415586286,
+            "squared_fraction_r_gt_.8": 0.6561899909863971,
+            "squared_fraction_r_lt_.3": 0.0026257005133834377
+          },
+          {
+            "real": -1.0000000000000013,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.7390680275777555e-14,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.6561899909864012,
+            "squared_fraction_r_lt_.3": 0.0026257005133832486
+          },
+          {
+            "real": -1.0000000000000193,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.5660534394689025e-14,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.6561899909864016,
+            "squared_fraction_r_lt_.3": 0.002625700513383222
+          },
+          {
+            "real": -1.999999999999848,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.7564251810827783e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.7738911305564086,
+            "squared_fraction_r_lt_.3": 0.0002379289532152993
+          },
+          {
+            "real": -2.000000000000011,
+            "imag": -2.1996824791998314e-14,
+            "absolute_residual_l2": 3.417321862991762e-14,
+            "radius_peak": 0.9761531642114369,
+            "squared_fraction_r_gt_.8": 0.7738366645595998,
+            "squared_fraction_r_lt_.3": 0.00023775144228107127
+          },
+          {
+            "real": -2.000000000000011,
+            "imag": 2.1996824791998314e-14,
+            "absolute_residual_l2": 3.417321862991762e-14,
+            "radius_peak": 0.9761531642114369,
+            "squared_fraction_r_gt_.8": 0.7738366645595998,
+            "squared_fraction_r_lt_.3": 0.00023775144228107127
+          },
+          {
+            "real": -2.0000000000000115,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.7175219045133075e-14,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.7776565136557307,
+            "squared_fraction_r_lt_.3": 0.0002502007688508921
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 2.537435217632681,
+      "constant_residual_linf_reloaded": 1.0269562977782698e-14,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.006600000000000001,
+        "stop": "requested t12 reached",
+        "steps": 1819,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0004486064068866535,
+          "analytic_sampled_energy": 0.0004399700738271755,
+          "time_weighted_energy": 1.0405528025671288e-19,
+          "analytic_sampled_time_weighted_energy": 1.0205206308660825e-19,
+          "linf": 0.010408540907885155,
+          "analytic_sampled_linf": 0.010307751606949972,
+          "error_linf": 0.00010082357168964169,
+          "error_rms": 0.00010066149806995978
+        },
+        "initial_sampled_linf": 0.9396479454382838,
+        "peak_sampled_linf": 0.9396479454382838,
+        "peak_error_linf": 0.15873501972046017,
+        "peak_energy": 0.07872691916096111,
+        "initial_energy": 0.011981145630900698,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "7073918b14a3039fc35560070e563097ee7fe77ac412ae1848d7fb5bbae72f76"
+      }
+    },
+    {
+      "name": "N20-span2.2-ray-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "20",
+        "2.2",
+        "ray",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N20-span2.2-ray-centered-ko0.1"
+      ],
+      "export": {
+        "n": 20,
+        "span": 2.2,
+        "spacing": 0.11000000000000001,
+        "active": 3112,
+        "ghosts": 3608,
+        "closure": "ray",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 115224,
+        "constant_residual_linf": 1.021405182655144e-14,
+        "native_fill_stencil_matvec_max_error": 7.105427357601002e-14,
+        "original_plan_constant_error": 1.7763568394002505e-15,
+        "original_plan_max_weight_l1": 10.318574903507491,
+        "strict_inside_nonrecursive_donor_references": 88992,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "74c802c5e71dcbc5e95db469d3a3055beaf2f9a10815ee8612f58efd9d193197",
+      "points_sha256": "8bbe93279e29dd9958a392535d76776469a04560407ef94a75f9db4ac7869187",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.07071333299999871,
+        "rightmost_found": [
+          {
+            "real": 7.35992147207186,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.050888432522755e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.9275218446922514,
+            "squared_fraction_r_lt_.3": 1.930825223402034e-09
+          },
+          {
+            "real": 7.359921472071806,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.3285836228575225e-14,
+            "radius_peak": 0.9761531642114367,
+            "squared_fraction_r_gt_.8": 0.9275218446922513,
+            "squared_fraction_r_lt_.3": 1.930825223401997e-09
+          },
+          {
+            "real": 7.359917759962323,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.2065943861516159e-13,
+            "radius_peak": 0.9761531642114367,
+            "squared_fraction_r_gt_.8": 0.9275220723760493,
+            "squared_fraction_r_lt_.3": 2.427970341779702e-09
+          },
+          {
+            "real": 7.359917759962215,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.786096576807198e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.9275220723760496,
+            "squared_fraction_r_lt_.3": 2.427970341779649e-09
+          },
+          {
+            "real": 7.359917759962207,
+            "imag": 0.0,
+            "absolute_residual_l2": 4.104215431696535e-14,
+            "radius_peak": 0.9761531642114367,
+            "squared_fraction_r_gt_.8": 0.9275220723760493,
+            "squared_fraction_r_lt_.3": 2.427970341779701e-09
+          },
+          {
+            "real": 7.35414109066527,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.652291640479031e-14,
+            "radius_peak": 0.9761531642114367,
+            "squared_fraction_r_gt_.8": 0.9284717653654265,
+            "squared_fraction_r_lt_.3": 5.463412378541824e-09
+          },
+          {
+            "real": 7.354141090665262,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.84606604831304e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.9284717653654269,
+            "squared_fraction_r_lt_.3": 5.463412378541885e-09
+          },
+          {
+            "real": 7.354141090665223,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.2131770126874406e-14,
+            "radius_peak": 0.9761531642114367,
+            "squared_fraction_r_gt_.8": 0.9284717653654267,
+            "squared_fraction_r_lt_.3": 5.463412378541893e-09
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 8
+      },
+      "euclidean_log_norm_mu2": 18.325208138485547,
+      "constant_residual_linf_reloaded": 1.021405182655144e-14,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.006600000000000001,
+        "stop": "nonfinite or amplitude threshold1e8",
+        "steps": 431,
+        "last": {
+          "time": 2.7456000000000125,
+          "energy": 75684221398366.98,
+          "analytic_sampled_energy": 0.0008359830278782009,
+          "time_weighted_energy": 20035886321.096737,
+          "analytic_sampled_time_weighted_energy": 2.2130981337274195e-07,
+          "linf": 48618013.25100099,
+          "analytic_sampled_linf": 0.03982739187622661,
+          "error_linf": 48618013.29011024,
+          "error_rms": 4274583.961962425
+        },
+        "initial_sampled_linf": 0.9396479454382838,
+        "peak_sampled_linf": 48618013.25100099,
+        "peak_error_linf": 48618013.29011024,
+        "peak_energy": 75684221398366.98,
+        "initial_energy": 0.011981145630900698,
+        "max_time_weighted_energy_over_initial": 1672284682812.132,
+        "history_sha256": "2125270c58f940b7c3e721e502897d986441de3a28ad7bcf8c196002960c1993"
+      }
+    },
+    {
+      "name": "N20-span2.2-nearest-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "20",
+        "2.2",
+        "nearest",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N20-span2.2-nearest-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 20,
+        "span": 2.2,
+        "spacing": 0.11000000000000001,
+        "active": 3112,
+        "ghosts": 3608,
+        "closure": "nearest",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 50560,
+        "constant_residual_linf": 6.661338147750939e-15,
+        "native_fill_stencil_matvec_max_error": 1.4210854715202004e-14,
+        "original_plan_constant_error": 1.7763568394002505e-15,
+        "original_plan_max_weight_l1": 10.318574903507491,
+        "strict_inside_nonrecursive_donor_references": 88992,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "16deaf857bf0b60a21d529330c57a6dc706267fefd2540c2d39aa99b43fac841",
+      "points_sha256": "8bbe93279e29dd9958a392535d76776469a04560407ef94a75f9db4ac7869187",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.045743166999999474,
+        "rightmost_found": [
+          {
+            "real": 1.402845031519835e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.5816230296562964e-14,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.473007712082262,
+            "squared_fraction_r_lt_.3": 0.028277634961439587
+          },
+          {
+            "real": -0.9999932143763297,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.0776244921620473e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.6607933766991972,
+            "squared_fraction_r_lt_.3": 0.0025883871636452308
+          },
+          {
+            "real": -0.9999932143763439,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.533808683831032e-14,
+            "radius_peak": 0.9761531642114367,
+            "squared_fraction_r_gt_.8": 0.6607933766992002,
+            "squared_fraction_r_lt_.3": 0.0025883871636451098
+          },
+          {
+            "real": -0.9999932143763574,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.7797191198494683e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.6607933766992005,
+            "squared_fraction_r_lt_.3": 0.0025883871636451132
+          },
+          {
+            "real": -1.9997848144249712,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.5241234182476744e-13,
+            "radius_peak": 0.9382297160077591,
+            "squared_fraction_r_gt_.8": 0.7995549554169268,
+            "squared_fraction_r_lt_.3": 0.0002715552090449825
+          },
+          {
+            "real": -1.9997848144250592,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.189251619125886e-13,
+            "radius_peak": 0.9382297160077591,
+            "squared_fraction_r_gt_.8": 0.7995549554169334,
+            "squared_fraction_r_lt_.3": 0.0002715552090449605
+          },
+          {
+            "real": -1.9997866475729533,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.8942751426495698e-14,
+            "radius_peak": 0.9884710415586286,
+            "squared_fraction_r_gt_.8": 0.7838961975478647,
+            "squared_fraction_r_lt_.3": 0.00023416044171123402
+          },
+          {
+            "real": -1.9999962691906727,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.6445688753263896e-14,
+            "radius_peak": 0.9884710415586285,
+            "squared_fraction_r_gt_.8": 0.7728234014656309,
+            "squared_fraction_r_lt_.3": 0.00020733706454381662
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.5990615963821082,
+      "constant_residual_linf_reloaded": 6.661338147750939e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.006600000000000001,
+        "stop": "requested t12 reached",
+        "steps": 1819,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0004486059733922138,
+          "analytic_sampled_energy": 0.0004399700738271755,
+          "time_weighted_energy": 1.0405517970668793e-19,
+          "analytic_sampled_time_weighted_energy": 1.0205206308660825e-19,
+          "linf": 0.010408581625693495,
+          "analytic_sampled_linf": 0.010307751606949972,
+          "error_linf": 0.0001008554079436879,
+          "error_rms": 0.00010065647305669769
+        },
+        "initial_sampled_linf": 0.9396479454382838,
+        "peak_sampled_linf": 0.9396479454382838,
+        "peak_error_linf": 0.10684177377006565,
+        "peak_energy": 0.07742108834432278,
+        "initial_energy": 0.011981145630900698,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "afa357dbfc2dbd9b80e7e8a3e946d84deabaac1004c87300dcabbf6c14cf03df"
+      }
+    },
+    {
+      "name": "N20-span2.2-nearest-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "20",
+        "2.2",
+        "nearest",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N20-span2.2-nearest-centered-ko0.1"
+      ],
+      "export": {
+        "n": 20,
+        "span": 2.2,
+        "spacing": 0.11000000000000001,
+        "active": 3112,
+        "ghosts": 3608,
+        "closure": "nearest",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 51640,
+        "constant_residual_linf": 3.814656923672999e-15,
+        "native_fill_stencil_matvec_max_error": 7.105427357601002e-15,
+        "original_plan_constant_error": 1.7763568394002505e-15,
+        "original_plan_max_weight_l1": 10.318574903507491,
+        "strict_inside_nonrecursive_donor_references": 88992,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "1de9f9478fee69ff0f223d01f767dcf3f938463ab2413916544a83cc64e9bcbe",
+      "points_sha256": "8bbe93279e29dd9958a392535d76776469a04560407ef94a75f9db4ac7869187",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.14628820899999972,
+        "rightmost_found": [
+          {
+            "real": -4.116609696054838e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.213618560365983e-14,
+            "radius_peak": 0.9252432112693398,
+            "squared_fraction_r_gt_.8": 0.47300771208226217,
+            "squared_fraction_r_lt_.3": 0.02827763496143958
+          },
+          {
+            "real": -0.5410891037193578,
+            "imag": 7.453054777599206,
+            "absolute_residual_l2": 1.0891727039945718e-13,
+            "radius_peak": 0.8573651497465944,
+            "squared_fraction_r_gt_.8": 0.6851236075853007,
+            "squared_fraction_r_lt_.3": 1.0251923433463312e-05
+          },
+          {
+            "real": -0.5410891037193578,
+            "imag": -7.453054777599206,
+            "absolute_residual_l2": 1.0891727039945718e-13,
+            "radius_peak": 0.8573651497465944,
+            "squared_fraction_r_gt_.8": 0.6851236075853007,
+            "squared_fraction_r_lt_.3": 1.0251923433463312e-05
+          },
+          {
+            "real": -0.5929833456609527,
+            "imag": 7.390870408484214,
+            "absolute_residual_l2": 1.0863705423585052e-11,
+            "radius_peak": 0.8713638734765174,
+            "squared_fraction_r_gt_.8": 0.691359003016009,
+            "squared_fraction_r_lt_.3": 9.08656491453417e-06
+          },
+          {
+            "real": -0.5929833456609527,
+            "imag": -7.390870408484214,
+            "absolute_residual_l2": 1.0863705423585052e-11,
+            "radius_peak": 0.8713638734765174,
+            "squared_fraction_r_gt_.8": 0.691359003016009,
+            "squared_fraction_r_lt_.3": 9.08656491453417e-06
+          },
+          {
+            "real": -0.5929833456610585,
+            "imag": 7.390870408484155,
+            "absolute_residual_l2": 7.08973490908444e-14,
+            "radius_peak": 0.8987074051102506,
+            "squared_fraction_r_gt_.8": 0.6913590030160218,
+            "squared_fraction_r_lt_.3": 9.086564914551479e-06
+          },
+          {
+            "real": -0.5929833456610585,
+            "imag": -7.390870408484155,
+            "absolute_residual_l2": 7.08973490908444e-14,
+            "radius_peak": 0.8987074051102506,
+            "squared_fraction_r_gt_.8": 0.6913590030160218,
+            "squared_fraction_r_lt_.3": 9.086564914551479e-06
+          },
+          {
+            "real": -0.614733849005795,
+            "imag": -7.34638543371427,
+            "absolute_residual_l2": 7.54636487858391e-14,
+            "radius_peak": 0.8713638734765173,
+            "squared_fraction_r_gt_.8": 0.6940433695849607,
+            "squared_fraction_r_lt_.3": 9.200641653077183e-06
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.541892827502425,
+      "constant_residual_linf_reloaded": 3.814656923672999e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.006600000000000001,
+        "stop": "requested t12 reached",
+        "steps": 1819,
+        "last": {
+          "time": 12.0,
+          "energy": 0.000422897608932302,
+          "analytic_sampled_energy": 0.0004399700738271755,
+          "time_weighted_energy": 9.809206587738914e-20,
+          "analytic_sampled_time_weighted_energy": 1.0205206308660825e-19,
+          "linf": 0.010132687560699022,
+          "analytic_sampled_linf": 0.010307751606949972,
+          "error_linf": 0.00023163197204612365,
+          "error_rms": 0.00020202163129006721
+        },
+        "initial_sampled_linf": 0.9396479454382838,
+        "peak_sampled_linf": 1.2014937183779575,
+        "peak_error_linf": 0.31271839048408406,
+        "peak_energy": 0.08446747931581094,
+        "initial_energy": 0.011981145630900698,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "415a03f6c340090be03d106251782acf4bb5dcbb48810c3cba7758da4e396b43"
+      }
+    },
+    {
+      "name": "N20-span2.2-fallback-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "20",
+        "2.2",
+        "fallback",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N20-span2.2-fallback-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 20,
+        "span": 2.2,
+        "spacing": 0.11000000000000001,
+        "active": 3112,
+        "ghosts": 3608,
+        "closure": "fallback",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 49912,
+        "constant_residual_linf": 6.661338147750939e-15,
+        "native_fill_stencil_matvec_max_error": 2.1316282072803006e-14,
+        "original_plan_constant_error": 1.7763568394002505e-15,
+        "original_plan_max_weight_l1": 10.318574903507491,
+        "strict_inside_nonrecursive_donor_references": 88992,
+        "fallback_axis_count": 1632,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "36a0efeb59ad47c671cdbe42eb8046e2460de8d74c99d48c3b92c6ec4916ff58",
+      "points_sha256": "8bbe93279e29dd9958a392535d76776469a04560407ef94a75f9db4ac7869187",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.05662195799999914,
+        "rightmost_found": [
+          {
+            "real": 4.99428951062339e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.9064070350996742e-14,
+            "radius_peak": 0.8573651497465944,
+            "squared_fraction_r_gt_.8": 0.4730077120822612,
+            "squared_fraction_r_lt_.3": 0.028277634961439792
+          },
+          {
+            "real": -1.0000000000000078,
+            "imag": -2.128452027708103e-15,
+            "absolute_residual_l2": 2.284644579553679e-14,
+            "radius_peak": 0.9761531642114369,
+            "squared_fraction_r_gt_.8": 0.6561899909864007,
+            "squared_fraction_r_lt_.3": 0.0026257005133832408
+          },
+          {
+            "real": -1.0000000000000078,
+            "imag": 2.128452027708103e-15,
+            "absolute_residual_l2": 2.284644579553679e-14,
+            "radius_peak": 0.9761531642114369,
+            "squared_fraction_r_gt_.8": 0.6561899909864007,
+            "squared_fraction_r_lt_.3": 0.0026257005133832408
+          },
+          {
+            "real": -1.000000000000025,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.759881081874719e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.6561899909864042,
+            "squared_fraction_r_lt_.3": 0.0026257005133831254
+          },
+          {
+            "real": -1.999941817499199,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.862019337887931e-14,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.7778821323642294,
+            "squared_fraction_r_lt_.3": 0.00024123425413015336
+          },
+          {
+            "real": -1.9999446784848842,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.539962328059972e-14,
+            "radius_peak": 0.9382297160077591,
+            "squared_fraction_r_gt_.8": 0.7910614669939087,
+            "squared_fraction_r_lt_.3": 0.00028425141941833086
+          },
+          {
+            "real": -1.99994467848491,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.92591920491451e-14,
+            "radius_peak": 0.9382297160077592,
+            "squared_fraction_r_gt_.8": 0.7910614669939108,
+            "squared_fraction_r_lt_.3": 0.0002842514194183168
+          },
+          {
+            "real": -1.9999999999999316,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.6126727974848584e-14,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.7664102108167398,
+            "squared_fraction_r_lt_.3": 0.00021354777727396377
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.609990811165177,
+      "constant_residual_linf_reloaded": 6.661338147750939e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.006600000000000001,
+        "stop": "requested t12 reached",
+        "steps": 1819,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0004486066069127612,
+          "analytic_sampled_energy": 0.0004399700738271755,
+          "time_weighted_energy": 1.0405532665322523e-19,
+          "analytic_sampled_time_weighted_energy": 1.0205206308660825e-19,
+          "linf": 0.010408543225598104,
+          "analytic_sampled_linf": 0.010307751606949972,
+          "error_linf": 0.00010082589044377484,
+          "error_rms": 0.00010066381821334335
+        },
+        "initial_sampled_linf": 0.9396479454382838,
+        "peak_sampled_linf": 0.9396479454382838,
+        "peak_error_linf": 0.140880306636329,
+        "peak_energy": 0.07739740591677766,
+        "initial_energy": 0.011981145630900698,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "3096ddc46f27d7fb470aede51ab58ed03f1b9f0bec6fced20bdf385b2ee4f54c"
+      }
+    },
+    {
+      "name": "N20-span2.2-fallback-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "20",
+        "2.2",
+        "fallback",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N20-span2.2-fallback-centered-ko0.1"
+      ],
+      "export": {
+        "n": 20,
+        "span": 2.2,
+        "spacing": 0.11000000000000001,
+        "active": 3112,
+        "ghosts": 3608,
+        "closure": "fallback",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 49912,
+        "constant_residual_linf": 4.2049697057677804e-15,
+        "native_fill_stencil_matvec_max_error": 2.1316282072803006e-14,
+        "original_plan_constant_error": 1.7763568394002505e-15,
+        "original_plan_max_weight_l1": 10.318574903507491,
+        "strict_inside_nonrecursive_donor_references": 88992,
+        "fallback_axis_count": 3072,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "40a4dd5248ffc9c490c4522b40cadc8e13cf8256c1b38f258560fb378b8c510f",
+      "points_sha256": "8bbe93279e29dd9958a392535d76776469a04560407ef94a75f9db4ac7869187",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.05809150000000152,
+        "rightmost_found": [
+          {
+            "real": 6.001145994277143e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.876681757065766e-14,
+            "radius_peak": 0.9510389056184823,
+            "squared_fraction_r_gt_.8": 0.4730077120822623,
+            "squared_fraction_r_lt_.3": 0.02827763496143964
+          },
+          {
+            "real": -1.0000000000003018,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.7920993452428766e-13,
+            "radius_peak": 0.9884710415586286,
+            "squared_fraction_r_gt_.8": 0.6561899909864548,
+            "squared_fraction_r_lt_.3": 0.002625700513381274
+          },
+          {
+            "real": -1.2334101884366935,
+            "imag": -5.7101852904886865,
+            "absolute_residual_l2": 4.9751774673333127e-14,
+            "radius_peak": 0.7021929934142037,
+            "squared_fraction_r_gt_.8": 0.496118799362841,
+            "squared_fraction_r_lt_.3": 9.37781424271517e-05
+          },
+          {
+            "real": -1.2334101884366935,
+            "imag": 5.7101852904886865,
+            "absolute_residual_l2": 4.9751774673333127e-14,
+            "radius_peak": 0.7021929934142037,
+            "squared_fraction_r_gt_.8": 0.496118799362841,
+            "squared_fraction_r_lt_.3": 9.37781424271517e-05
+          },
+          {
+            "real": -1.2777459643102504,
+            "imag": -5.7305248605347705,
+            "absolute_residual_l2": 3.6294240620169914e-13,
+            "radius_peak": 0.7192183256842112,
+            "squared_fraction_r_gt_.8": 0.5261129587041348,
+            "squared_fraction_r_lt_.3": 7.359262177741648e-05
+          },
+          {
+            "real": -1.2777459643102504,
+            "imag": 5.7305248605347705,
+            "absolute_residual_l2": 3.6294240620169914e-13,
+            "radius_peak": 0.7192183256842112,
+            "squared_fraction_r_gt_.8": 0.5261129587041348,
+            "squared_fraction_r_lt_.3": 7.359262177741648e-05
+          },
+          {
+            "real": -1.3036271184893136,
+            "imag": -5.746931369812413,
+            "absolute_residual_l2": 1.3940508244913826e-12,
+            "radius_peak": 0.7192183256842113,
+            "squared_fraction_r_gt_.8": 0.5401577332057841,
+            "squared_fraction_r_lt_.3": 6.526330140139819e-05
+          },
+          {
+            "real": -1.3036271184893136,
+            "imag": 5.746931369812413,
+            "absolute_residual_l2": 1.3940508244913826e-12,
+            "radius_peak": 0.7192183256842113,
+            "squared_fraction_r_gt_.8": 0.5401577332057841,
+            "squared_fraction_r_lt_.3": 6.526330140139819e-05
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.741369345956672,
+      "constant_residual_linf_reloaded": 4.2049697057677804e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.006600000000000001,
+        "stop": "requested t12 reached",
+        "steps": 1819,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0004374947671925356,
+          "analytic_sampled_energy": 0.0004399700738271755,
+          "time_weighted_energy": 1.0147791006151818e-19,
+          "analytic_sampled_time_weighted_energy": 1.0205206308660825e-19,
+          "linf": 0.01027871981627864,
+          "analytic_sampled_linf": 0.010307751606949972,
+          "error_linf": 2.9044455470941116e-05,
+          "error_rms": 2.903292306470586e-05
+        },
+        "initial_sampled_linf": 0.9396479454382838,
+        "peak_sampled_linf": 0.9630035236423269,
+        "peak_error_linf": 0.1727910514906562,
+        "peak_energy": 0.08097319840188816,
+        "initial_energy": 0.011981145630900698,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "b94affb8aadd412deb6fb60f5b4ab575ed6e89c3c9b9bee368fa245424c51906"
+      }
+    },
+    {
+      "name": "N20-span2.2-monotone-upwind-ko0.0",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "20",
+        "2.2",
+        "monotone",
+        "upwind",
+        "0.0",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N20-span2.2-monotone-upwind-ko0.0"
+      ],
+      "export": {
+        "n": 20,
+        "span": 2.2,
+        "spacing": 0.11000000000000001,
+        "active": 3112,
+        "ghosts": 3608,
+        "closure": "monotone",
+        "derivative": "upwind",
+        "ko": 0,
+        "nonzeros": 12448,
+        "constant_residual_linf": 1.7763568394002505e-15,
+        "native_fill_stencil_matvec_max_error": 1.0658141036401503e-14,
+        "original_plan_constant_error": 1.7763568394002505e-15,
+        "original_plan_max_weight_l1": 10.318574903507491,
+        "strict_inside_nonrecursive_donor_references": 88992,
+        "fallback_axis_count": 9336,
+        "matrix_is_metzler": 1
+      },
+      "matrix_sha256": "bfa8dadbbc3f95298b937d46c0860740c80ecfd07bbdfd33883410746bf26653",
+      "points_sha256": "8bbe93279e29dd9958a392535d76776469a04560407ef94a75f9db4ac7869187",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.014579749999999336,
+        "rightmost_found": [
+          {
+            "real": 2.417835654156702e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.98377454460209e-15,
+            "radius_peak": 0.09526279441628828,
+            "squared_fraction_r_gt_.8": 0.47300771208226117,
+            "squared_fraction_r_lt_.3": 0.02827763496143976
+          },
+          {
+            "real": -1.0000000000000064,
+            "imag": 0.0,
+            "absolute_residual_l2": 9.618973406135452e-15,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.6561899909864011,
+            "squared_fraction_r_lt_.3": 0.002625700513383234
+          },
+          {
+            "real": -1.0000000000000075,
+            "imag": -5.193020108169103e-15,
+            "absolute_residual_l2": 1.0911937413361143e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.6561899909864012,
+            "squared_fraction_r_lt_.3": 0.0026257005133832295
+          },
+          {
+            "real": -1.0000000000000075,
+            "imag": 5.193020108169103e-15,
+            "absolute_residual_l2": 1.0911937413361143e-14,
+            "radius_peak": 0.9761531642114368,
+            "squared_fraction_r_gt_.8": 0.6561899909864012,
+            "squared_fraction_r_lt_.3": 0.0026257005133832295
+          },
+          {
+            "real": -1.4999999999999976,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.2461512523111694e-14,
+            "radius_peak": 0.9884710415586286,
+            "squared_fraction_r_gt_.8": 0.7357583793719129,
+            "squared_fraction_r_lt_.3": 0.0005919428639717529
+          },
+          {
+            "real": -1.500000000000005,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.3451288155411492e-14,
+            "radius_peak": 0.9761531642114367,
+            "squared_fraction_r_gt_.8": 0.7362119174881728,
+            "squared_fraction_r_lt_.3": 0.000622774873756443
+          },
+          {
+            "real": -1.5000000000000118,
+            "imag": -8.203090450057788e-15,
+            "absolute_residual_l2": 1.650833561834729e-14,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.7352407312845987,
+            "squared_fraction_r_lt_.3": 0.0005567525892825351
+          },
+          {
+            "real": -1.5000000000000118,
+            "imag": 8.203090450057788e-15,
+            "absolute_residual_l2": 1.650833561834729e-14,
+            "radius_peak": 0.9884710415586287,
+            "squared_fraction_r_gt_.8": 0.7352407312845987,
+            "squared_fraction_r_lt_.3": 0.0005567525892825351
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.5352521887100856,
+      "constant_residual_linf_reloaded": 1.7763568394002505e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.006600000000000001,
+        "stop": "requested t12 reached",
+        "steps": 1819,
+        "last": {
+          "time": 12.0,
+          "energy": 0.001138457574755091,
+          "analytic_sampled_energy": 0.0004399700738271755,
+          "time_weighted_energy": 2.640678335908159e-19,
+          "analytic_sampled_time_weighted_energy": 1.0205206308660825e-19,
+          "linf": 0.016580586472134506,
+          "analytic_sampled_linf": 0.010307751606949972,
+          "error_linf": 0.006272855765058214,
+          "error_rms": 0.006272367607196625
+        },
+        "initial_sampled_linf": 0.9396479454382838,
+        "peak_sampled_linf": 0.9396479454382838,
+        "peak_error_linf": 0.6024199101649268,
+        "peak_energy": 0.030119602978496345,
+        "initial_energy": 0.011981145630900698,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "e99a72cfee516aef56df2aa024a16439eb7061594ad5528e300d57ca5838206e"
+      }
+    },
+    {
+      "name": "N24-span2.2-ray-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.2",
+        "ray",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.2-ray-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.2,
+        "spacing": 0.09166666666666667,
+        "active": 5520,
+        "ghosts": 5056,
+        "closure": "ray",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 129576,
+        "constant_residual_linf": 1.0658141036401503e-14,
+        "native_fill_stencil_matvec_max_error": 3.552713678800501e-14,
+        "original_plan_constant_error": 1.887379141862766e-15,
+        "original_plan_max_weight_l1": 10.322552320000005,
+        "strict_inside_nonrecursive_donor_references": 130104,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "bdac8444ec78b6ccc71b4adf3b25ac5e317f45d3d3455cebea3e0bd33ffc94c0",
+      "points_sha256": "672c8fba7379673d966ec136185c0e8d336d6108e4007d841db8581a745383cf",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.08909358300000036,
+        "rightmost_found": [
+          {
+            "real": -1.868709232940228e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.0010992026219795e-14,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.49275362318840593,
+            "squared_fraction_r_lt_.3": 0.02463768115942018
+          },
+          {
+            "real": -0.9999999999999579,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.548428306005068e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.6772375124348068,
+            "squared_fraction_r_lt_.3": 0.0020649323244809016
+          },
+          {
+            "real": -1.0000000000000004,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.619671730137793e-14,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.6772375124348105,
+            "squared_fraction_r_lt_.3": 0.002064932324480774
+          },
+          {
+            "real": -1.0000000000000144,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.8791502314347064e-14,
+            "radius_peak": 0.9989143412280712,
+            "squared_fraction_r_gt_.8": 0.677237512434812,
+            "squared_fraction_r_lt_.3": 0.0020649323244807194
+          },
+          {
+            "real": -1.9999999999999594,
+            "imag": 0.0,
+            "absolute_residual_l2": 8.247203691604458e-14,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.7925833713304529,
+            "squared_fraction_r_lt_.3": 0.00016965629152318996
+          },
+          {
+            "real": -2.0000000000000875,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.817833346906106e-13,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.7957807166306331,
+            "squared_fraction_r_lt_.3": 0.0001726357634174592
+          },
+          {
+            "real": -2.000000000000296,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.545728143927657e-14,
+            "radius_peak": 0.9989143412280712,
+            "squared_fraction_r_gt_.8": 0.794188961211577,
+            "squared_fraction_r_lt_.3": 0.0001711524733474796
+          },
+          {
+            "real": -2.0000000000167333,
+            "imag": 0.0,
+            "absolute_residual_l2": 4.3748743098099345e-11,
+            "radius_peak": 0.9904667109779892,
+            "squared_fraction_r_gt_.8": 0.79452188640499,
+            "squared_fraction_r_lt_.3": 0.00017146271236120376
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 2.9378084360540164,
+      "constant_residual_linf_reloaded": 1.0658141036401503e-14,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.0055000000000000005,
+        "stop": "requested t12 reached",
+        "steps": 2182,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0004522981943407788,
+          "analytic_sampled_energy": 0.00045162595058883154,
+          "time_weighted_energy": 1.0491159878513792e-19,
+          "analytic_sampled_time_weighted_energy": 1.047556703121249e-19,
+          "linf": 0.010315483858562369,
+          "analytic_sampled_linf": 0.010307770764962457,
+          "error_linf": 7.740826931458208e-06,
+          "error_rms": 7.667664870609526e-06
+        },
+        "initial_sampled_linf": 0.9576918938583749,
+        "peak_sampled_linf": 0.9576918938583749,
+        "peak_error_linf": 0.09378885286881666,
+        "peak_energy": 0.0854580859014073,
+        "initial_energy": 0.011981134249628935,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "a38fc9830bfbd22f21729fc1804b352e7b1913fd84323e453a19b4ecbb958f05"
+      }
+    },
+    {
+      "name": "N24-span2.2-ray-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.2",
+        "ray",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.2-ray-centered-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.2,
+        "spacing": 0.09166666666666667,
+        "active": 5520,
+        "ghosts": 5056,
+        "closure": "ray",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 191088,
+        "constant_residual_linf": 1.2139594884885696e-14,
+        "native_fill_stencil_matvec_max_error": 4.973799150320701e-14,
+        "original_plan_constant_error": 1.887379141862766e-15,
+        "original_plan_max_weight_l1": 10.322552320000005,
+        "strict_inside_nonrecursive_donor_references": 130104,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "8a2ec1139849540cede72a2b6c947bf0af901c2b6f365de64b5edb5202d1ae6d",
+      "points_sha256": "672c8fba7379673d966ec136185c0e8d336d6108e4007d841db8581a745383cf",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.13828058300000023,
+        "rightmost_found": [
+          {
+            "real": 7.636623166408029,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.1185186123082614e-11,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.9586125340597885,
+            "squared_fraction_r_lt_.3": 9.940465802138861e-10
+          },
+          {
+            "real": 7.636623166407645,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.916603327694072e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.9586125340597849,
+            "squared_fraction_r_lt_.3": 9.940465802137165e-10
+          },
+          {
+            "real": 7.636555255045721,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.935520228404658e-14,
+            "radius_peak": 0.9904667109779892,
+            "squared_fraction_r_gt_.8": 0.9586129583265589,
+            "squared_fraction_r_lt_.3": 9.408271741000946e-10
+          },
+          {
+            "real": 7.636555255038567,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.7782739908317624e-11,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.9586129583265246,
+            "squared_fraction_r_lt_.3": 9.408271740967859e-10
+          },
+          {
+            "real": 7.612898370825393,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.271846742760318e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.9588537177562814,
+            "squared_fraction_r_lt_.3": 1.1861390561027918e-09
+          },
+          {
+            "real": 7.612898370825367,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.9878925414988036e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.9588537177562811,
+            "squared_fraction_r_lt_.3": 1.1861390561027575e-09
+          },
+          {
+            "real": 7.585817478994217,
+            "imag": 0.0,
+            "absolute_residual_l2": 9.851503010835587e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.9590954317523448,
+            "squared_fraction_r_lt_.3": 1.2788243381234236e-09
+          },
+          {
+            "real": 7.585817478994149,
+            "imag": 0.0,
+            "absolute_residual_l2": 4.9161477924256316e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.9590954317523449,
+            "squared_fraction_r_lt_.3": 1.2788243381234114e-09
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 8
+      },
+      "euclidean_log_norm_mu2": 24.853114371183906,
+      "constant_residual_linf_reloaded": 1.2139594884885696e-14,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.0055000000000000005,
+        "stop": "nonfinite or amplitude threshold1e8",
+        "steps": 524,
+        "last": {
+          "time": 2.8215000000000154,
+          "energy": 62608784867991.64,
+          "analytic_sampled_energy": 0.0007998615190256507,
+          "time_weighted_energy": 13199261493.919094,
+          "analytic_sampled_time_weighted_energy": 1.6862779513774602e-07,
+          "linf": 63024950.08140097,
+          "analytic_sampled_linf": 0.036956299904774635,
+          "error_linf": 63024950.109893695,
+          "error_rms": 3837345.825189507
+        },
+        "initial_sampled_linf": 0.9576918938583749,
+        "peak_sampled_linf": 63024950.08140097,
+        "peak_error_linf": 63024950.109893695,
+        "peak_energy": 62608784867991.64,
+        "initial_energy": 0.011981134249628935,
+        "max_time_weighted_energy_over_initial": 1101670444459.6208,
+        "history_sha256": "c0773d37d554c17e8f45cd8f0b372271fb36162ebe12af9ed253fd7675b08b10"
+      }
+    },
+    {
+      "name": "N24-span2.2-nearest-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.2",
+        "nearest",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.2-nearest-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.2,
+        "spacing": 0.09166666666666667,
+        "active": 5520,
+        "ghosts": 5056,
+        "closure": "nearest",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 92304,
+        "constant_residual_linf": 7.33441085642994e-15,
+        "native_fill_stencil_matvec_max_error": 2.1316282072803006e-14,
+        "original_plan_constant_error": 1.887379141862766e-15,
+        "original_plan_max_weight_l1": 10.322552320000005,
+        "strict_inside_nonrecursive_donor_references": 130104,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "ef72431f51e32cc31d4e91b86524fa5d9732a750714b78ebc26a2af1a4d37905",
+      "points_sha256": "672c8fba7379673d966ec136185c0e8d336d6108e4007d841db8581a745383cf",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.10024108300000023,
+        "rightmost_found": [
+          {
+            "real": -1.9472846942748032e-16,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.0178572334885935e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.4927536231884056,
+            "squared_fraction_r_lt_.3": 0.02463768115942028
+          },
+          {
+            "real": -1.0000001621642307,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.071034613206661e-14,
+            "radius_peak": 0.9989143412280712,
+            "squared_fraction_r_gt_.8": 0.6802521879727929,
+            "squared_fraction_r_lt_.3": 0.00204552050631805
+          },
+          {
+            "real": -1.0000001621642407,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.1367080358694124e-14,
+            "radius_peak": 0.9904667109779892,
+            "squared_fraction_r_gt_.8": 0.6802521879727921,
+            "squared_fraction_r_lt_.3": 0.0020455205063180243
+          },
+          {
+            "real": -1.0000001621642716,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.5948251847325055e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.6802521879727973,
+            "squared_fraction_r_lt_.3": 0.002045520506317888
+          },
+          {
+            "real": -2.000000264187401,
+            "imag": -5.343629133825872e-14,
+            "absolute_residual_l2": 3.840512371161844e-13,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.7962927824964694,
+            "squared_fraction_r_lt_.3": 0.00016633978396373412
+          },
+          {
+            "real": -2.000000264187401,
+            "imag": 5.343629133825872e-14,
+            "absolute_residual_l2": 3.840512371161844e-13,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.7962927824964694,
+            "squared_fraction_r_lt_.3": 0.00016633978396373412
+          },
+          {
+            "real": -2.000014730132243,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.0047632352090928e-11,
+            "radius_peak": 0.9646800707430878,
+            "squared_fraction_r_gt_.8": 0.805336927314045,
+            "squared_fraction_r_lt_.3": 0.0001677903961067948
+          },
+          {
+            "real": -2.0000147301372886,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.2346660601996898e-13,
+            "radius_peak": 0.9646800707430878,
+            "squared_fraction_r_gt_.8": 0.805336927314558,
+            "squared_fraction_r_lt_.3": 0.00016779039610595055
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.5954694760664772,
+      "constant_residual_linf_reloaded": 7.33441085642994e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.0055000000000000005,
+        "stop": "requested t12 reached",
+        "steps": 2182,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0004522981836236797,
+          "analytic_sampled_energy": 0.00045162595058883154,
+          "time_weighted_energy": 1.0491159629928233e-19,
+          "analytic_sampled_time_weighted_energy": 1.047556703121249e-19,
+          "linf": 0.010315526403660031,
+          "analytic_sampled_linf": 0.010307770764962457,
+          "error_linf": 7.768099113382443e-06,
+          "error_rms": 7.667557049183971e-06
+        },
+        "initial_sampled_linf": 0.9576918938583749,
+        "peak_sampled_linf": 0.9576918938583749,
+        "peak_error_linf": 0.06704465779974522,
+        "peak_energy": 0.08429101871039132,
+        "initial_energy": 0.011981134249628935,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "25d610006379363f40363723460ece2a6297855e61a44b2eed978f55e8705a94"
+      }
+    },
+    {
+      "name": "N24-span2.2-nearest-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.2",
+        "nearest",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.2-nearest-centered-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.2,
+        "spacing": 0.09166666666666667,
+        "active": 5520,
+        "ghosts": 5056,
+        "closure": "nearest",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 93864,
+        "constant_residual_linf": 5.329070518200751e-15,
+        "native_fill_stencil_matvec_max_error": 1.0658141036401503e-14,
+        "original_plan_constant_error": 1.887379141862766e-15,
+        "original_plan_max_weight_l1": 10.322552320000005,
+        "strict_inside_nonrecursive_donor_references": 130104,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "3103b42ae1d88df9032d3c237844062e81e367248b7207dc2120417643bb1c92",
+      "points_sha256": "672c8fba7379673d966ec136185c0e8d336d6108e4007d841db8581a745383cf",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.24765316699999929,
+        "rightmost_found": [
+          {
+            "real": 6.341265305808308e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.88518754447096e-14,
+            "radius_peak": 0.9904667109779892,
+            "squared_fraction_r_gt_.8": 0.49275362318840454,
+            "squared_fraction_r_lt_.3": 0.02463768115942056
+          },
+          {
+            "real": -0.7125825996553209,
+            "imag": 9.651724839790067,
+            "absolute_residual_l2": 8.697932534232933e-14,
+            "radius_peak": 0.9016477970915252,
+            "squared_fraction_r_gt_.8": 0.7965444052962896,
+            "squared_fraction_r_lt_.3": 3.815348505945269e-07
+          },
+          {
+            "real": -0.7125825996553209,
+            "imag": -9.651724839790067,
+            "absolute_residual_l2": 8.697932534232933e-14,
+            "radius_peak": 0.9016477970915252,
+            "squared_fraction_r_gt_.8": 0.7965444052962896,
+            "squared_fraction_r_lt_.3": 3.815348505945269e-07
+          },
+          {
+            "real": -0.7165030260413321,
+            "imag": 9.703084011143984,
+            "absolute_residual_l2": 1.1057213479498983e-13,
+            "radius_peak": 0.8828123463618353,
+            "squared_fraction_r_gt_.8": 0.7970545143318056,
+            "squared_fraction_r_lt_.3": 2.2182001062777298e-07
+          },
+          {
+            "real": -0.7165030260413321,
+            "imag": -9.703084011143984,
+            "absolute_residual_l2": 1.1057213479498983e-13,
+            "radius_peak": 0.8828123463618353,
+            "squared_fraction_r_gt_.8": 0.7970545143318056,
+            "squared_fraction_r_lt_.3": 2.2182001062777298e-07
+          },
+          {
+            "real": -0.7165030260491877,
+            "imag": 9.703084011169098,
+            "absolute_residual_l2": 1.8664073856134127e-10,
+            "radius_peak": 0.9381849349793581,
+            "squared_fraction_r_gt_.8": 0.7970545143324136,
+            "squared_fraction_r_lt_.3": 2.2182001080975378e-07
+          },
+          {
+            "real": -0.7165030260491877,
+            "imag": -9.703084011169098,
+            "absolute_residual_l2": 1.8664073856134127e-10,
+            "radius_peak": 0.9381849349793581,
+            "squared_fraction_r_gt_.8": 0.7970545143324136,
+            "squared_fraction_r_lt_.3": 2.2182001080975378e-07
+          },
+          {
+            "real": -0.7170636368990222,
+            "imag": -9.685548344858217,
+            "absolute_residual_l2": 1.6735558599332117e-10,
+            "radius_peak": 0.9016477970915252,
+            "squared_fraction_r_gt_.8": 0.7971537341198313,
+            "squared_fraction_r_lt_.3": 2.73497275095286e-07
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.5254937705461327,
+      "constant_residual_linf_reloaded": 5.329070518200751e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.0055000000000000005,
+        "stop": "requested t12 reached",
+        "steps": 2182,
+        "last": {
+          "time": 12.0,
+          "energy": 0.00044131569029900113,
+          "analytic_sampled_energy": 0.00045162595058883154,
+          "time_weighted_energy": 1.0236418189932338e-19,
+          "analytic_sampled_time_weighted_energy": 1.047556703121249e-19,
+          "linf": 0.010192751737340655,
+          "analytic_sampled_linf": 0.010307770764962457,
+          "error_linf": 0.000122905186476778,
+          "error_rms": 0.00011832576120188442
+        },
+        "initial_sampled_linf": 0.9576918938583749,
+        "peak_sampled_linf": 1.0779297619622377,
+        "peak_error_linf": 0.33818972264960084,
+        "peak_energy": 0.08796469354079413,
+        "initial_energy": 0.011981134249628935,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "e148f95df974e314cc28595a7f169bd1697786a84d155cca9db64819a307ebfc"
+      }
+    },
+    {
+      "name": "N24-span2.2-fallback-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.2",
+        "fallback",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.2-fallback-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.2,
+        "spacing": 0.09166666666666667,
+        "active": 5520,
+        "ghosts": 5056,
+        "closure": "fallback",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 91344,
+        "constant_residual_linf": 7.33441085642994e-15,
+        "native_fill_stencil_matvec_max_error": 2.1316282072803006e-14,
+        "original_plan_constant_error": 1.887379141862766e-15,
+        "original_plan_max_weight_l1": 10.322552320000005,
+        "strict_inside_nonrecursive_donor_references": 130104,
+        "fallback_axis_count": 2352,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "3558e6980e59519c9abd8fd66d01b1d6b511902490620c3ea746087e50ff0284",
+      "points_sha256": "672c8fba7379673d966ec136185c0e8d336d6108e4007d841db8581a745383cf",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.0837080419999996,
+        "rightmost_found": [
+          {
+            "real": -6.183373979968335e-16,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.762480392627348e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.49275362318840565,
+            "squared_fraction_r_lt_.3": 0.02463768115942033
+          },
+          {
+            "real": -0.9999999999999967,
+            "imag": -8.313953715889498e-15,
+            "absolute_residual_l2": 2.2830196595837145e-14,
+            "radius_peak": 0.9989143412280712,
+            "squared_fraction_r_gt_.8": 0.6772375124348113,
+            "squared_fraction_r_lt_.3": 0.0020649323244807485
+          },
+          {
+            "real": -0.9999999999999967,
+            "imag": 8.313953715889498e-15,
+            "absolute_residual_l2": 2.2830196595837145e-14,
+            "radius_peak": 0.9989143412280712,
+            "squared_fraction_r_gt_.8": 0.6772375124348113,
+            "squared_fraction_r_lt_.3": 0.0020649323244807485
+          },
+          {
+            "real": -1.0000000000000124,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.4239258228841102e-14,
+            "radius_peak": 0.9989143412280712,
+            "squared_fraction_r_gt_.8": 0.6772375124348126,
+            "squared_fraction_r_lt_.3": 0.0020649323244807173
+          },
+          {
+            "real": -1.9999999999999594,
+            "imag": -4.453817146195588e-14,
+            "absolute_residual_l2": 7.001580166476242e-13,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.7924133720379165,
+            "squared_fraction_r_lt_.3": 0.00016949787631726445
+          },
+          {
+            "real": -1.9999999999999594,
+            "imag": 4.453817146195588e-14,
+            "absolute_residual_l2": 7.001580166476242e-13,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.7924133720379165,
+            "squared_fraction_r_lt_.3": 0.00016949787631726445
+          },
+          {
+            "real": -2.000003252529304,
+            "imag": 0.0,
+            "absolute_residual_l2": 9.771484293456305e-12,
+            "radius_peak": 0.9646800707430879,
+            "squared_fraction_r_gt_.8": 0.7989835928007876,
+            "squared_fraction_r_lt_.3": 0.00017334818738441832
+          },
+          {
+            "real": -2.000003252545601,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.998279554055937e-14,
+            "radius_peak": 0.9646800707430879,
+            "squared_fraction_r_gt_.8": 0.7989835928284381,
+            "squared_fraction_r_lt_.3": 0.00017334818740359832
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.6020616109597916,
+      "constant_residual_linf_reloaded": 7.33441085642994e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.0055000000000000005,
+        "stop": "requested t12 reached",
+        "steps": 2182,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0004522981955274522,
+          "analytic_sampled_energy": 0.00045162595058883154,
+          "time_weighted_energy": 1.0491159906038954e-19,
+          "analytic_sampled_time_weighted_energy": 1.047556703121249e-19,
+          "linf": 0.010315483872462098,
+          "analytic_sampled_linf": 0.010307770764962457,
+          "error_linf": 7.740840910317945e-06,
+          "error_rms": 7.66767840068349e-06
+        },
+        "initial_sampled_linf": 0.9576918938583749,
+        "peak_sampled_linf": 0.9576918938583749,
+        "peak_error_linf": 0.09251202685901161,
+        "peak_energy": 0.0845182821378199,
+        "initial_energy": 0.011981134249628935,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "cd098326301ff125ddef95c5c1e978b162843d2ab936c99e6eb05380471899b9"
+      }
+    },
+    {
+      "name": "N24-span2.2-fallback-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.2",
+        "fallback",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.2-fallback-centered-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.2,
+        "spacing": 0.09166666666666667,
+        "active": 5520,
+        "ghosts": 5056,
+        "closure": "fallback",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 91344,
+        "constant_residual_linf": 5.252742685257772e-15,
+        "native_fill_stencil_matvec_max_error": 2.1316282072803006e-14,
+        "original_plan_constant_error": 1.887379141862766e-15,
+        "original_plan_max_weight_l1": 10.322552320000005,
+        "strict_inside_nonrecursive_donor_references": 130104,
+        "fallback_axis_count": 4512,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "fb983038030093d64457bd77239637796307bc77c0678fe59d481dcd97584253",
+      "points_sha256": "672c8fba7379673d966ec136185c0e8d336d6108e4007d841db8581a745383cf",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.09880062500000086,
+        "rightmost_found": [
+          {
+            "real": -5.956806842025206e-16,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.0073254625246166e-14,
+            "radius_peak": 0.998914341228071,
+            "squared_fraction_r_gt_.8": 0.49275362318840593,
+            "squared_fraction_r_lt_.3": 0.024637681159420263
+          },
+          {
+            "real": -0.999999999999801,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.82437881246771e-13,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.6772375124347834,
+            "squared_fraction_r_lt_.3": 0.0020649323244816453
+          },
+          {
+            "real": -1.3298383854158242,
+            "imag": -7.980190175764481,
+            "absolute_residual_l2": 1.0368994560268988e-12,
+            "radius_peak": 0.8030648756136982,
+            "squared_fraction_r_gt_.8": 0.5969723993183499,
+            "squared_fraction_r_lt_.3": 2.937712899685628e-06
+          },
+          {
+            "real": -1.3298383854158242,
+            "imag": 7.980190175764481,
+            "absolute_residual_l2": 1.0368994560268988e-12,
+            "radius_peak": 0.8030648756136982,
+            "squared_fraction_r_gt_.8": 0.5969723993183499,
+            "squared_fraction_r_lt_.3": 2.937712899685628e-06
+          },
+          {
+            "real": -1.339241748434954,
+            "imag": -7.982910421577252,
+            "absolute_residual_l2": 2.686091609363151e-12,
+            "radius_peak": 0.8134609701761972,
+            "squared_fraction_r_gt_.8": 0.5939507367928627,
+            "squared_fraction_r_lt_.3": 3.183062811242849e-06
+          },
+          {
+            "real": -1.339241748434954,
+            "imag": 7.982910421577252,
+            "absolute_residual_l2": 2.686091609363151e-12,
+            "radius_peak": 0.8134609701761972,
+            "squared_fraction_r_gt_.8": 0.5939507367928627,
+            "squared_fraction_r_lt_.3": 3.183062811242849e-06
+          },
+          {
+            "real": -1.359849219515203,
+            "imag": -7.989414248163116,
+            "absolute_residual_l2": 2.4949915367398535e-12,
+            "radius_peak": 0.8237258679655237,
+            "squared_fraction_r_gt_.8": 0.5891564476753317,
+            "squared_fraction_r_lt_.3": 3.583692137045534e-06
+          },
+          {
+            "real": -1.359849219515203,
+            "imag": 7.989414248163116,
+            "absolute_residual_l2": 2.4949915367398535e-12,
+            "radius_peak": 0.8237258679655237,
+            "squared_fraction_r_gt_.8": 0.5891564476753317,
+            "squared_fraction_r_lt_.3": 3.583692137045534e-06
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.7912067498516318,
+      "constant_residual_linf_reloaded": 5.252742685257772e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.0055000000000000005,
+        "stop": "requested t12 reached",
+        "steps": 2182,
+        "last": {
+          "time": 12.0,
+          "energy": 0.00045127863176861344,
+          "analytic_sampled_energy": 0.00045162595058883154,
+          "time_weighted_energy": 1.04675108918838e-19,
+          "analytic_sampled_time_weighted_energy": 1.047556703121249e-19,
+          "linf": 0.010303793744126724,
+          "analytic_sampled_linf": 0.010307770764962457,
+          "error_linf": 3.977993139099231e-06,
+          "error_rms": 3.9637495432264785e-06
+        },
+        "initial_sampled_linf": 0.9576918938583749,
+        "peak_sampled_linf": 0.9862978394518064,
+        "peak_error_linf": 0.11935561051239307,
+        "peak_energy": 0.08614634014906611,
+        "initial_energy": 0.011981134249628935,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "9d73159f77ea0d871217196b89e6461b84a85dcda5f7acf23300d26e0b0267a2"
+      }
+    },
+    {
+      "name": "N24-span2.2-monotone-upwind-ko0.0",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.2",
+        "monotone",
+        "upwind",
+        "0.0",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.2-monotone-upwind-ko0.0"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.2,
+        "spacing": 0.09166666666666667,
+        "active": 5520,
+        "ghosts": 5056,
+        "closure": "monotone",
+        "derivative": "upwind",
+        "ko": 0,
+        "nonzeros": 22080,
+        "constant_residual_linf": 2.6645352591003757e-15,
+        "native_fill_stencil_matvec_max_error": 1.4210854715202004e-14,
+        "original_plan_constant_error": 1.887379141862766e-15,
+        "original_plan_max_weight_l1": 10.322552320000005,
+        "strict_inside_nonrecursive_donor_references": 130104,
+        "fallback_axis_count": 16560,
+        "matrix_is_metzler": 1
+      },
+      "matrix_sha256": "ec747f6ffea07c538458fa5490f6b888daecb1e9436bd50050bf52dc456badcd",
+      "points_sha256": "672c8fba7379673d966ec136185c0e8d336d6108e4007d841db8581a745383cf",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.018459291999999294,
+        "rightmost_found": [
+          {
+            "real": -3.774758283725532e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 8.329723747212694e-15,
+            "radius_peak": 0.9733515266564513,
+            "squared_fraction_r_gt_.8": 0.492753623188406,
+            "squared_fraction_r_lt_.3": 0.024637681159420183
+          },
+          {
+            "real": -1.000000000000003,
+            "imag": 0.0,
+            "absolute_residual_l2": 8.701505424231583e-15,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.6772375124348111,
+            "squared_fraction_r_lt_.3": 0.0020649323244807576
+          },
+          {
+            "real": -1.0000000000000038,
+            "imag": 0.0,
+            "absolute_residual_l2": 8.740097603005507e-15,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.6772375124348115,
+            "squared_fraction_r_lt_.3": 0.002064932324480755
+          },
+          {
+            "real": -1.0000000000002394,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.6383972782774983e-13,
+            "radius_peak": 0.9904667109779892,
+            "squared_fraction_r_gt_.8": 0.6772375124348484,
+            "squared_fraction_r_lt_.3": 0.002064932324479749
+          },
+          {
+            "real": -1.4999999999357068,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.20551173508037e-10,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.7510874970164365,
+            "squared_fraction_r_lt_.3": 0.00043660945245066354
+          },
+          {
+            "real": -1.49999999999998,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.6167490822333683e-14,
+            "radius_peak": 0.9989143412280711,
+            "squared_fraction_r_gt_.8": 0.7521851191493484,
+            "squared_fraction_r_lt_.3": 0.0003765852269726813
+          },
+          {
+            "real": -1.5000000000000142,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.340983563416527e-14,
+            "radius_peak": 0.9904667109779893,
+            "squared_fraction_r_gt_.8": 0.7511891431499623,
+            "squared_fraction_r_lt_.3": 0.0004310508636560169
+          },
+          {
+            "real": -1.9999999999999578,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.092694159222693e-14,
+            "radius_peak": 0.9989143412280712,
+            "squared_fraction_r_gt_.8": 0.7924133720379137,
+            "squared_fraction_r_lt_.3": 0.00016949787631727575
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 1.5558198200370192,
+      "constant_residual_linf_reloaded": 2.6645352591003757e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.0055000000000000005,
+        "stop": "requested t12 reached",
+        "steps": 2182,
+        "last": {
+          "time": 12.0,
+          "energy": 0.0009011750181647374,
+          "analytic_sampled_energy": 0.00045162595058883154,
+          "time_weighted_energy": 2.090296028678272e-19,
+          "analytic_sampled_time_weighted_energy": 1.047556703121249e-19,
+          "linf": 0.014560352001729905,
+          "analytic_sampled_linf": 0.010307770764962457,
+          "error_linf": 0.004252583041865097,
+          "error_rms": 0.0042522424776491015
+        },
+        "initial_sampled_linf": 0.9576918938583749,
+        "peak_sampled_linf": 0.9576918938583749,
+        "peak_error_linf": 0.5391744342727289,
+        "peak_energy": 0.035145973875931234,
+        "initial_energy": 0.011981134249628935,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "89b7c0199f81ebb8561e31400f2d9bcb14770ca6b244c75cde964651f4fae8dc"
+      }
+    },
+    {
+      "name": "N24-span2.1-ray-upwind-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.1",
+        "ray",
+        "upwind",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.1-ray-upwind-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.1,
+        "spacing": 0.08750000000000001,
+        "active": 6152,
+        "ghosts": 5432,
+        "closure": "ray",
+        "derivative": "upwind",
+        "ko": 0.1,
+        "nonzeros": 143976,
+        "constant_residual_linf": 1.176836406102666e-14,
+        "native_fill_stencil_matvec_max_error": 3.197442310920451e-14,
+        "original_plan_constant_error": 2.220446049250313e-15,
+        "original_plan_max_weight_l1": 10.32255232,
+        "strict_inside_nonrecursive_donor_references": 139224,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "dd269a32a52da42f416e761ebc95077f42569caceb8da721cab910092b3d9425",
+      "points_sha256": "2ccd6c014021c2b34d25d81bc45733293c285b3e1ec1b717b84552eb2630fcdd",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.11659341600000062,
+        "rightmost_found": [
+          {
+            "real": 1.031174170979144e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.2160840289504616e-14,
+            "radius_peak": 0.9291082754447946,
+            "squared_fraction_r_gt_.8": 0.48244473342002564,
+            "squared_fraction_r_lt_.3": 0.02600780234070229
+          },
+          {
+            "real": -0.9999999999999668,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.853361487229058e-14,
+            "radius_peak": 0.992845500317144,
+            "squared_fraction_r_gt_.8": 0.6664611668197398,
+            "squared_fraction_r_lt_.3": 0.0022646921905865197
+          },
+          {
+            "real": -0.9999999999999954,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.6499058060926823e-14,
+            "radius_peak": 0.9928455003171441,
+            "squared_fraction_r_gt_.8": 0.6664611668197428,
+            "squared_fraction_r_lt_.3": 0.0022646921905864485
+          },
+          {
+            "real": -1.0000000000000147,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.6709392379415034e-14,
+            "radius_peak": 0.9851038968047989,
+            "squared_fraction_r_gt_.8": 0.6664611668197435,
+            "squared_fraction_r_lt_.3": 0.002264692190586441
+          },
+          {
+            "real": -1.9999999999998257,
+            "imag": 0.0,
+            "absolute_residual_l2": 2.903929895714088e-14,
+            "radius_peak": 0.992845500317144,
+            "squared_fraction_r_gt_.8": 0.786218387949657,
+            "squared_fraction_r_lt_.3": 0.0002089356925910701
+          },
+          {
+            "real": -1.999999999999959,
+            "imag": 0.0,
+            "absolute_residual_l2": 3.8230606641220364e-14,
+            "radius_peak": 0.9928455003171441,
+            "squared_fraction_r_gt_.8": 0.7865291418729823,
+            "squared_fraction_r_lt_.3": 0.0002124760108664885
+          },
+          {
+            "real": -1.999999999999986,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.949689153698641e-14,
+            "radius_peak": 0.9928455003171441,
+            "squared_fraction_r_gt_.8": 0.7865519548818896,
+            "squared_fraction_r_lt_.3": 0.00021273591204964254
+          },
+          {
+            "real": -2.000000000000025,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.885260443547586e-14,
+            "radius_peak": 0.9928455003171441,
+            "squared_fraction_r_gt_.8": 0.7856599003582064,
+            "squared_fraction_r_lt_.3": 0.0002025730252893551
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 2.9334291682698703,
+      "constant_residual_linf_reloaded": 1.176836406102666e-14,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00525,
+        "stop": "requested t12 reached",
+        "steps": 2286,
+        "last": {
+          "time": 12.0,
+          "energy": 0.00043784141623687695,
+          "analytic_sampled_energy": 0.000437769982861102,
+          "time_weighted_energy": 1.0155831609876136e-19,
+          "analytic_sampled_time_weighted_energy": 1.0154174696416623e-19,
+          "linf": 0.010308635808235286,
+          "analytic_sampled_linf": 0.010307753744517013,
+          "error_linf": 8.983815357847813e-07,
+          "error_rms": 8.412539763329978e-07
+        },
+        "initial_sampled_linf": 0.9779804244963912,
+        "peak_sampled_linf": 0.9779804244963912,
+        "peak_error_linf": 0.08962819025819369,
+        "peak_energy": 0.08365447956243953,
+        "initial_energy": 0.011981134235671315,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "a10f9bff5873b52afcba976ee3ece1b57073f91fb03a492e494e361d87b25ebc"
+      }
+    },
+    {
+      "name": "N16-span2.2-ray-upwind-ko0.0",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "ray",
+        "upwind",
+        "0.0",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-ray-upwind-ko0.0"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "ray",
+        "derivative": "upwind",
+        "ko": 0,
+        "nonzeros": 38192,
+        "constant_residual_linf": 7.105427357601002e-15,
+        "native_fill_stencil_matvec_max_error": 3.552713678800501e-14,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "90e9f3f6d29aaed7f95e3713a530e5f3e9a5781a4edbb536aa2a95ad7d4f3dd1",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 1.5552158329999983,
+        "rightmost_found": [
+          {
+            "real": 1.4288391059438834e-15,
+            "imag": 0.0,
+            "absolute_residual_l2": 4.5762129497440623e-14,
+            "radius_peak": 0.9401421102684424,
+            "squared_fraction_r_gt_.8": 0.48780487804878,
+            "squared_fraction_r_lt_.3": 0.03414634146341482
+          },
+          {
+            "real": -0.999999999999979,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.556421876868547e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.6716060640601839,
+            "squared_fraction_r_lt_.3": 0.003533568904593668
+          },
+          {
+            "real": -0.9999999999999961,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.6510927357856066e-14,
+            "radius_peak": 0.9795367208532818,
+            "squared_fraction_r_gt_.8": 0.6716060640601855,
+            "squared_fraction_r_lt_.3": 0.0035335689045936053
+          },
+          {
+            "real": -1.000000000000035,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.476654512002667e-14,
+            "radius_peak": 0.9795367208532818,
+            "squared_fraction_r_gt_.8": 0.6716060640601849,
+            "squared_fraction_r_lt_.3": 0.003533568904593638
+          },
+          {
+            "real": -1.9999999999998643,
+            "imag": 9.742811095398703e-14,
+            "absolute_residual_l2": 7.17638086338319e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7970993887640815,
+            "squared_fraction_r_lt_.3": 0.00041458618360313193
+          },
+          {
+            "real": -1.9999999999998643,
+            "imag": -9.742811095398703e-14,
+            "absolute_residual_l2": 7.17638086338319e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7970993887640815,
+            "squared_fraction_r_lt_.3": 0.00041458618360313193
+          },
+          {
+            "real": -1.999999999999873,
+            "imag": 0.0,
+            "absolute_residual_l2": 6.461057700977302e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.7885720087385409,
+            "squared_fraction_r_lt_.3": 0.00035736186053604303
+          },
+          {
+            "real": -1.9999999999999627,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.882241777815261e-14,
+            "radius_peak": 0.9795367208532818,
+            "squared_fraction_r_gt_.8": 0.7856061286301628,
+            "squared_fraction_r_lt_.3": 0.00033745885621443036
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 0
+      },
+      "euclidean_log_norm_mu2": 2.446832132378619,
+      "constant_residual_linf_reloaded": 7.105427357601002e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "requested t12 reached",
+        "steps": 1455,
+        "last": {
+          "time": 12.0,
+          "energy": 0.00046224685131162274,
+          "analytic_sampled_energy": 0.0004528531950242433,
+          "time_weighted_energy": 1.0721921248255136e-19,
+          "analytic_sampled_time_weighted_energy": 1.0504033246074761e-19,
+          "linf": 0.010414283556553647,
+          "analytic_sampled_linf": 0.010307748994227284,
+          "error_linf": 0.00010662510087396625,
+          "error_rms": 0.00010634459964904809
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 0.8812569509819633,
+        "peak_error_linf": 0.23212174454955298,
+        "peak_energy": 0.07688982026507048,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 1.0,
+        "history_sha256": "484c8eabacf7c2093226c4ec58716be50f71ad7f50637cd8cb172323e0632263"
+      }
+    },
+    {
+      "name": "N24-span2.1-ray-centered-ko0.1",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "24",
+        "2.1",
+        "ray",
+        "centered",
+        "0.1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N24-span2.1-ray-centered-ko0.1"
+      ],
+      "export": {
+        "n": 24,
+        "span": 2.1,
+        "spacing": 0.08750000000000001,
+        "active": 6152,
+        "ghosts": 5432,
+        "closure": "ray",
+        "derivative": "centered",
+        "ko": 0.1,
+        "nonzeros": 211040,
+        "constant_residual_linf": 1.8207657603852567e-14,
+        "native_fill_stencil_matvec_max_error": 7.105427357601002e-14,
+        "original_plan_constant_error": 2.220446049250313e-15,
+        "original_plan_max_weight_l1": 10.32255232,
+        "strict_inside_nonrecursive_donor_references": 139224,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "2b0c6c788e3cef785224b76c8cd8a38d0b0a42dbe57f07a573095b80cb0f2ade",
+      "points_sha256": "2ccd6c014021c2b34d25d81bc45733293c285b3e1ec1b717b84552eb2630fcdd",
+      "spectral": {
+        "scope": "sparse rightmost LR8 (ARPACK converged)",
+        "seconds": 0.117972457999997,
+        "rightmost_found": [
+          {
+            "real": 5.12319167930394,
+            "imag": -5.338164065833716,
+            "absolute_residual_l2": 4.991992740092229e-11,
+            "radius_peak": 0.985103896804799,
+            "squared_fraction_r_gt_.8": 0.9662707315644453,
+            "squared_fraction_r_lt_.3": 5.507963348318406e-10
+          },
+          {
+            "real": 5.12319167930394,
+            "imag": 5.338164065833716,
+            "absolute_residual_l2": 4.991992740092229e-11,
+            "radius_peak": 0.985103896804799,
+            "squared_fraction_r_gt_.8": 0.9662707315644453,
+            "squared_fraction_r_lt_.3": 5.507963348318406e-10
+          },
+          {
+            "real": 5.119157309332985,
+            "imag": -5.340550004723482,
+            "absolute_residual_l2": 1.3434990562767023e-10,
+            "radius_peak": 0.9851038968047989,
+            "squared_fraction_r_gt_.8": 0.9662543706339932,
+            "squared_fraction_r_lt_.3": 5.884242040985276e-10
+          },
+          {
+            "real": 5.119157309332985,
+            "imag": 5.340550004723482,
+            "absolute_residual_l2": 1.3434990562767023e-10,
+            "radius_peak": 0.9851038968047989,
+            "squared_fraction_r_gt_.8": 0.9662543706339932,
+            "squared_fraction_r_lt_.3": 5.884242040985276e-10
+          },
+          {
+            "real": 5.115117941383852,
+            "imag": -5.342972970823468,
+            "absolute_residual_l2": 9.016364585278199e-11,
+            "radius_peak": 0.985103896804799,
+            "squared_fraction_r_gt_.8": 0.9662379928953888,
+            "squared_fraction_r_lt_.3": 6.257932732332393e-10
+          },
+          {
+            "real": 5.115117941383852,
+            "imag": 5.342972970823468,
+            "absolute_residual_l2": 9.016364585278199e-11,
+            "radius_peak": 0.985103896804799,
+            "squared_fraction_r_gt_.8": 0.9662379928953888,
+            "squared_fraction_r_lt_.3": 6.257932732332393e-10
+          },
+          {
+            "real": 5.111073940456553,
+            "imag": -5.34543312258634,
+            "absolute_residual_l2": 1.0199549599375267e-10,
+            "radius_peak": 0.985103896804799,
+            "squared_fraction_r_gt_.8": 0.9662215948331885,
+            "squared_fraction_r_lt_.3": 6.629243023760819e-10
+          },
+          {
+            "real": 5.111073940456553,
+            "imag": 5.34543312258634,
+            "absolute_residual_l2": 1.0199549599375267e-10,
+            "radius_peak": 0.985103896804799,
+            "squared_fraction_r_gt_.8": 0.9662215948331885,
+            "squared_fraction_r_lt_.3": 6.629243023760819e-10
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 8
+      },
+      "euclidean_log_norm_mu2": 24.000204201415105,
+      "constant_residual_linf_reloaded": 1.8207657603852567e-14,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00525,
+        "stop": "nonfinite or amplitude threshold1e8",
+        "steps": 794,
+        "last": {
+          "time": 4.095000000000072,
+          "energy": 84413586959006.72,
+          "analytic_sampled_energy": 0.000460110471875367,
+          "time_weighted_energy": 390035955.9182596,
+          "analytic_sampled_time_weighted_energy": 2.1259566639794637e-09,
+          "linf": 64249298.42728128,
+          "analytic_sampled_linf": 0.014987861367883274,
+          "error_linf": 64249298.44200931,
+          "error_rms": 4525701.798025132
+        },
+        "initial_sampled_linf": 0.9779804244963912,
+        "peak_sampled_linf": 64249298.42728128,
+        "peak_error_linf": 64249298.44200931,
+        "peak_energy": 84413586959006.72,
+        "initial_energy": 0.011981134235671315,
+        "max_time_weighted_energy_over_initial": 32554176277.986214,
+        "history_sha256": "1e6ba153d85fb1cb37f4c0e98e32b60854dd92335dba9b7090f2eb6bd2197d55"
+      }
+    },
+    {
+      "name": "N16-span2.2-ray-centered-ko0.0",
+      "export_command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "16",
+        "2.2",
+        "ray",
+        "centered",
+        "0.0",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/N16-span2.2-ray-centered-ko0.0"
+      ],
+      "export": {
+        "n": 16,
+        "span": 2.2,
+        "spacing": 0.1375,
+        "active": 1640,
+        "ghosts": 2480,
+        "closure": "ray",
+        "derivative": "centered",
+        "ko": 0,
+        "nonzeros": 59392,
+        "constant_residual_linf": 6.682154829462661e-15,
+        "native_fill_stencil_matvec_max_error": 2.842170943040401e-14,
+        "original_plan_constant_error": 1.3322676295501878e-15,
+        "original_plan_max_weight_l1": 10.216273939988097,
+        "strict_inside_nonrecursive_donor_references": 63576,
+        "fallback_axis_count": 0,
+        "matrix_is_metzler": 0
+      },
+      "matrix_sha256": "d0e3c4e0bc2963140ce71cbd888e491bad4569cb3deae83486a0c15b24f925db",
+      "points_sha256": "44c376afc08d42b2038a97588c44af7660e93692a00f3bed6ba5cdcad616a27a",
+      "spectral": {
+        "scope": "full dense scalar spectrum",
+        "seconds": 1.5349407920000004,
+        "rightmost_found": [
+          {
+            "real": 5.528399070796716,
+            "imag": 0.0,
+            "absolute_residual_l2": 1.889968913295398e-13,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9222931763509428,
+            "squared_fraction_r_lt_.3": 2.7392722358187013e-06
+          },
+          {
+            "real": 5.4196968429837264,
+            "imag": 0.0,
+            "absolute_residual_l2": 8.158887694589788e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.9229482202776639,
+            "squared_fraction_r_lt_.3": 3.7801157468147447e-06
+          },
+          {
+            "real": 5.4196968429836945,
+            "imag": 0.0,
+            "absolute_residual_l2": 5.014548260283087e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9229482202776639,
+            "squared_fraction_r_lt_.3": 3.780115746814809e-06
+          },
+          {
+            "real": 5.419696842983626,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.311405950701866e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9229482202776637,
+            "squared_fraction_r_lt_.3": 3.7801157468147057e-06
+          },
+          {
+            "real": 5.236494290118425,
+            "imag": 0.0,
+            "absolute_residual_l2": 7.363293741878624e-14,
+            "radius_peak": 0.9986514344354591,
+            "squared_fraction_r_gt_.8": 0.9234476708428611,
+            "squared_fraction_r_lt_.3": 4.913145075945951e-06
+          },
+          {
+            "real": 5.236494290118404,
+            "imag": 0.0,
+            "absolute_residual_l2": 4.826873442467986e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9234476708428611,
+            "squared_fraction_r_lt_.3": 4.913145075945943e-06
+          },
+          {
+            "real": 5.2364942901183875,
+            "imag": 0.0,
+            "absolute_residual_l2": 4.445341309829726e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9234476708428611,
+            "squared_fraction_r_lt_.3": 4.91314507594591e-06
+          },
+          {
+            "real": 4.956787061983795,
+            "imag": -0.41750537109296226,
+            "absolute_residual_l2": 6.009558072756312e-14,
+            "radius_peak": 0.9986514344354592,
+            "squared_fraction_r_gt_.8": 0.9224339282197728,
+            "squared_fraction_r_lt_.3": 6.523489522923642e-06
+          }
+        ],
+        "positive_real_pair_count_gt_1e-8": 307
+      },
+      "euclidean_log_norm_mu2": 15.097636575400529,
+      "constant_residual_linf_reloaded": 6.682154829462661e-15,
+      "pulse": {
+        "rk": "SSPRK3",
+        "dt_nominal": 0.00825,
+        "stop": "nonfinite or amplitude threshold1e8",
+        "steps": 469,
+        "last": {
+          "time": 3.86099999999998,
+          "energy": 393740428758150.5,
+          "analytic_sampled_energy": 0.0004908968549520896,
+          "time_weighted_energy": 3670937800.5569983,
+          "analytic_sampled_time_weighted_energy": 4.576750796716017e-09,
+          "linf": 97959295.9446526,
+          "analytic_sampled_linf": 0.01646678487458482,
+          "error_linf": 97959295.96111938,
+          "error_rms": 9610124.935119238
+        },
+        "initial_sampled_linf": 0.8576873627290864,
+        "peak_sampled_linf": 97959295.9446526,
+        "peak_error_linf": 97959295.96111938,
+        "peak_energy": 393740428758150.5,
+        "initial_energy": 0.011979947392101098,
+        "max_time_weighted_energy_over_initial": 306423532625.6447,
+        "history_sha256": "8fa1634cc01ddedd54181deb969c30b1a1d607c01d323159066e115575ce9c52"
+      }
+    }
+  ],
+  "rejections": [
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/export-operator",
+        "12",
+        "2.2",
+        "ray",
+        "upwind",
+        ".1",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/scalar-isolate/rejected-N12"
+      ],
+      "exit_status": 1,
+      "stdout": "",
+      "stderr": "no interior normal-ray rectangles\n"
+    }
+  ]
+}
