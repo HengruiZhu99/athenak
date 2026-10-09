@@ -1,0 +1,24 @@
+{
+  "status": "read-only mathematical source review PASS",
+  "launch_HEAD": "35d348712d11ae4db9ce8568476b27b0f64e113a",
+  "sources": {
+    "build-layer-research/reference-wave-map-proposal-20261009/DERIVATION.md": "8616d5d48e7d1cf84e4d7223b3331a20cdb7940ab6c9c7a649424471166dc656",
+    "build-layer-research/reference-wave-map-proposal-20261009/SCRI-IDENTITY.md": "9242cace48785f0abdf75f0bd1b3d88cec7598851d18fbf1562d190f281cc582",
+    "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/FACTORING-IDENTITY.md": "e3da003876a0730710f8090fa30e8841805f9cd2dfa88ae547f14173073032f5"
+  },
+  "checks": {
+    "radial_physical_connection": "n.Gamma=(Lprime/L-2Oprime/O)nn-(Oprime/L)tt agrees direct radial map",
+    "Box_identity": "barInv:HessOmega minus contracted physical-reference source plus2Z.Omega gives rho4[Osecond-Oprime Lprime/L+4Oprime\u00b2/O]+T4 O Oprime/(rL)+2Zbar.Omega",
+    "reference_reduction": "rho4=O\u00b2/L\u00b2,T4=2 gives O/L\u00b2[Osecond+2Oprime/r-Oprime Lprime/L]+4O Oprime\u00b2/L\u00b2=O*What",
+    "oracle_null_weight": "r(Y(X)) gradient O\u00b2/L[n+eps(n.a)dphi]; bar inverse contraction O^-2 gives rho4=O\u00b2/L\u00b2[1+O(O)] for localized smooth outgoing phi, invertible map",
+    "Schwarzschild_height": "f^-1-f(1-a\u00b2/R\u00b2+O(R^-4))=4M/R+O(R^-2), bar gamma_rr=4ML\u00b2/(rO)+O(1)",
+    "coordinate_factoring": "physical conformal connection and lapse-gradient cross terms cancel; Omega*chi[deltaKcov-P*hphys/3]=Q0+q*barGamma. Trace/inverse variation yields displayed deltaP and deltaA, with AbarRaised:hbar=AbarRaised:h0 by TF."
+  },
+  "corrections": [],
+  "caveats": [
+    "Exact radial identity is finite Omega, conditional falloff/preservation is separate.",
+    "Localized outgoing oracle assumptions are necessary; no arbitrary finite physicalTheta falloff follows.",
+    "No source/operator query or numerical gate was run for this review.",
+    "Boundary factoring identity does not override its still-failed outer actual geometry gate."
+  ]
+}

@@ -492,3 +492,18 @@ and a discrete analysis for their particular discretization, not our sphere mask
 characteristics. [Zenginoğlu](https://arxiv.org/pdf/0808.0810) motivates preferred
 conformal gauge under smooth conformal-extension assumptions. Our source identity
 implements one part of that condition and does not establish those assumptions.
+
+## Subsequent private gauge work
+
+The [physical reference wave-map local audit](hyperboloidal-reference-wave-map-local-audit.md)
+records a private alternative gauge, complete higher reference derivatives,
+independent high-precision readbacks, and the retained failed coordinate controls.
+Its local source/dual checks pass; production equations and the unresolved
+regularity/boundary claims above are unchanged. Its global harmonic core is a
+diagnostic choice, with no moving-puncture blend selected.
+
+The later acceptance target is a substantial angular gauge disturbance on
+Minkowski followed by a single black hole surviving the inner
+wormhole-to-trumpet transition. The Minkowski hyperboloidal reference must be
+retained throughout; consistent physical black-hole initial foliation and gauge
+adjustment must be derived without a black-hole fixed-point subtraction.

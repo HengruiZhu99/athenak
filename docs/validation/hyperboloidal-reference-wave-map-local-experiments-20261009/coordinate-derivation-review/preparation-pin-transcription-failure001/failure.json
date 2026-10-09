@@ -1,0 +1,13 @@
+{
+  "classification": "Review metadata guard failure before scientific execution",
+  "observed_returncode": 1,
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "build-layer-research/continuum/einstein-coordinate-source-independent-review-20261009/review_source.py"
+  ],
+  "error_type": "AssertionError",
+  "line": 16,
+  "expected_in_failed_source": "5f6f91568d30040bb99233b8ba2fead883db5bce3e478630b18df595e491d60c",
+  "observed_actual_sha256": "5f6f91561068f5fa2cfc555c1889a8b8ab3c7029bd7900c7cb044a973d4fa1d6",
+  "explanation": "Reviewer expanded an abbreviated preparation hash incorrectly. Full actual source hash matches supplied prefix5f6f9156; exact failed source retained. No source-owner or scientific formula changed."
+}

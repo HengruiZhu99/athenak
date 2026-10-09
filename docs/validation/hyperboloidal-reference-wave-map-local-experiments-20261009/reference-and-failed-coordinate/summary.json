@@ -1,0 +1,171 @@
+{
+  "kind": "complete-reference plus broad-coordinate failed local gate checkpoint",
+  "passed_radial_owner_reference_gate": true,
+  "passed_independent_radial_reference_gate": true,
+  "passed_complete_Cartesian_coordinate_gate": false,
+  "downstream_operator_eigen_or_evolution_admitted": false,
+  "reference_receipt_sha256": "a60a08e05633646e89bd7036a2fa1491bed68fab2fdf68f54dd7cffe3791d010",
+  "independent_reference_index": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/immutable-independent-higher-reference-jets-20261009/index.json",
+    "sha256": "7c556fcf4bc82671ebf0a8de7751a316363d541b7dd77e0e9a7ac86f7e94f8eb"
+  },
+  "attempts": [
+    {
+      "path": "coordinate-lift/local-gates-release-001/receipt.json",
+      "sha256": "0477ee4eaefaac035c01f34990f0c36c78cdd3347ba2a151632f1516a9cc9a8c",
+      "passed": false,
+      "checks": {
+        "geometry": false,
+        "gauge": true,
+        "physical_constraint": true,
+        "input_normal": true,
+        "output_normal": true,
+        "spatial_normal": true,
+        "reference_rhs": true,
+        "reference_constraint": true,
+        "core_lift": true,
+        "core_acceleration": true,
+        "coordinate_directional_FD": false,
+        "raw22_and_chart20_directional_FD": true,
+        "negative_double_only_wrapper": true
+      },
+      "maxima": {
+        "geometry_entry_scaled": 2.74733863066633e-07,
+        "geometry_absolute": 2.74733863066633e-07,
+        "gauge_entry_scaled": 3.3508508145203357e-15,
+        "gauge_absolute": 1.1641532182693481e-10,
+        "physical_constraint_scaled": 4.414458235881623e-13,
+        "physical_constraint_absolute": 9.89530235528946e-10,
+        "input_normal_scaled": 7.186123369187695e-14,
+        "input_normal_absolute": 2.4901587460050202e-11,
+        "output_normal_scaled": 3.452407670760763e-13,
+        "output_normal_absolute": 1.9371509552001953e-07,
+        "spatial_normal_scaled": 2.8365833393457295e-11,
+        "spatial_normal_absolute": 1.0105435804167529e-07,
+        "reference_rhs_absolute": 3.1086244689504383e-15,
+        "reference_constraint_absolute": 8.881784197001252e-15,
+        "core_full_jet_scaled": 3.51540321247563e-16,
+        "core_acceleration_scaled": 1.1271656825341395e-16,
+        "fd_final_scaled": 2.5047586277846347e-06
+      },
+      "coordinate_cases": 629,
+      "binding_cases": 420,
+      "negative_wrapper_difference": 31.578941457304698,
+      "coordinate_fd_classifications": {
+        "truncation_decrease": 302,
+        "within_absolute_floor": 314,
+        "fail_final": 13
+      },
+      "binding_fd_final_max": 1.1543728770056168e-09,
+      "seconds": 0.670179125
+    },
+    {
+      "path": "coordinate-lift-factored-002/local-gates-release-001/receipt.json",
+      "sha256": "e3e0cd7e373df6667193b57c65d60df7834b5216f4cbdc7498db2eb5b1e98fa5",
+      "passed": false,
+      "checks": {
+        "physical_vs_factored_identity_moderate_r": true,
+        "geometry": false,
+        "gauge": true,
+        "physical_constraint": true,
+        "input_normal": true,
+        "output_normal": true,
+        "spatial_normal": true,
+        "reference_rhs": true,
+        "reference_constraint": true,
+        "core_lift": true,
+        "core_acceleration": true,
+        "coordinate_directional_FD": true,
+        "raw22_and_chart20_directional_FD": true,
+        "negative_double_only_wrapper": true
+      },
+      "maxima": {
+        "geometry_entry_scaled": 2.9802322387695312e-08,
+        "geometry_absolute": 2.9802322387695312e-08,
+        "gauge_entry_scaled": 2.0105104887122014e-15,
+        "gauge_absolute": 2.3283064365386963e-10,
+        "physical_constraint_scaled": 8.634898486399131e-15,
+        "physical_constraint_absolute": 5.4569682106375694e-12,
+        "input_normal_scaled": 1.2457051266267706e-15,
+        "input_normal_absolute": 2.1316282072803006e-14,
+        "output_normal_scaled": 4.989366070665859e-14,
+        "output_normal_absolute": 3.259629011154175e-08,
+        "spatial_normal_scaled": 1.2457051363857061e-15,
+        "spatial_normal_absolute": 1.2434497875801753e-13,
+        "reference_rhs_absolute": 3.1086244689504383e-15,
+        "reference_constraint_absolute": 8.881784197001252e-15,
+        "core_full_jet_scaled": 3.51540321247563e-16,
+        "core_acceleration_scaled": 1.1271656825341395e-16,
+        "physical_vs_factored_moderate_r_scaled": 1.8189894035458565e-11,
+        "fd_final_scaled": 1.2735618735210004e-07
+      },
+      "coordinate_cases": 629,
+      "binding_cases": 420,
+      "negative_wrapper_difference": 31.578941457304698,
+      "coordinate_fd_classifications": {
+        "truncation_decrease": 266,
+        "within_absolute_floor": 363
+      },
+      "binding_fd_final_max": 8.78982898853158e-09,
+      "seconds": 0.623873
+    },
+    {
+      "path": "coordinate-lift-factored-002/local-gates-debug-001/receipt.json",
+      "sha256": "f1ad15521a27bb3fe9385e63dc3f71965dba764610c1c28387d72a833416fc35",
+      "passed": false,
+      "checks": {
+        "physical_vs_factored_identity_moderate_r": true,
+        "geometry": false,
+        "gauge": true,
+        "physical_constraint": true,
+        "input_normal": true,
+        "output_normal": true,
+        "spatial_normal": true,
+        "reference_rhs": true,
+        "reference_constraint": true,
+        "core_lift": true,
+        "core_acceleration": true,
+        "coordinate_directional_FD": true,
+        "raw22_and_chart20_directional_FD": true,
+        "negative_double_only_wrapper": true
+      },
+      "maxima": {
+        "geometry_entry_scaled": 2.9802322387695312e-08,
+        "geometry_absolute": 2.9802322387695312e-08,
+        "gauge_entry_scaled": 2.0105104887122014e-15,
+        "gauge_absolute": 2.3283064365386963e-10,
+        "physical_constraint_scaled": 8.634898486399131e-15,
+        "physical_constraint_absolute": 5.4569682106375694e-12,
+        "input_normal_scaled": 1.2457051266267706e-15,
+        "input_normal_absolute": 2.1316282072803006e-14,
+        "output_normal_scaled": 4.989366070665859e-14,
+        "output_normal_absolute": 3.259629011154175e-08,
+        "spatial_normal_scaled": 1.2457051363857061e-15,
+        "spatial_normal_absolute": 1.2434497875801753e-13,
+        "reference_rhs_absolute": 3.1086244689504383e-15,
+        "reference_constraint_absolute": 8.881784197001252e-15,
+        "core_full_jet_scaled": 3.51540321247563e-16,
+        "core_acceleration_scaled": 1.1271656825341395e-16,
+        "physical_vs_factored_moderate_r_scaled": 1.8189894035458565e-11,
+        "fd_final_scaled": 1.2735618735210004e-07
+      },
+      "coordinate_cases": 629,
+      "binding_cases": 420,
+      "negative_wrapper_difference": 31.578941457304698,
+      "coordinate_fd_classifications": {
+        "truncation_decrease": 266,
+        "within_absolute_floor": 363
+      },
+      "binding_fd_final_max": 8.78982898853158e-09,
+      "seconds": 9.797520707999999
+    }
+  ],
+  "factored_release_debug_stdout_bit_identical": true,
+  "unresolved": {
+    "independent_CPP_cartesian_reference_export_readback_pending": true,
+    "remaining_outer_geometry_entry_failure": true,
+    "roundoff_or_conditioning_cause_not_independently_proved": true,
+    "actual_Cref_of_actual_momentum_source_not_computed": true
+  },
+  "failed_prequery_transcription_guard_preserved": "coordinate-lift/history/001-prequery-independent-index-transcription"
+}

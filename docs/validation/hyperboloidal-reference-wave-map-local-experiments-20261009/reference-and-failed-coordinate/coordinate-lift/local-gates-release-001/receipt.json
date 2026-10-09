@@ -1,0 +1,310 @@
+{
+  "kind": "finite-Omega coordinate/source local gates",
+  "mode": "release",
+  "launch_HEAD": "35d348712d11ae4db9ce8568476b27b0f64e113a",
+  "recipe_sha256": "b386900069d5a8c5f75f1a0dde84c25bb3f7fbbdd922666ee8073b21d05a8dfb",
+  "admission_sha256": "bb811592f4ac0dcb88622be8f940d4d0fd6149ba6b1a41975951d2691795a3ea",
+  "driver_sha256": "b49174f93f305e9b7f3efa800411c7f6f6cbc24de0c5699c1280329cc68caa57",
+  "build_receipt_sha256": "bd4d4104e9df00072bb755aae95510d83b6b0e8f9092170fd155e57f0bdfe3f8",
+  "executable_sha256": "59522ad84f6290f56c30e2295ae7c82f8139bba861b3da837078e0c922557aa3",
+  "runs": [
+    {
+      "name": "synthetic",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/coordinate-lift/build-attempts/release-001/probe",
+        "--synthetic"
+      ],
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0,
+      "seconds": 0.534054167,
+      "stdout_sha256": "f3027ace1e45563710e826c93c9adc2c705dc9c503ed1822d0a32b154ce4c1a8",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "reference-cartesian",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/coordinate-lift/build-attempts/release-001/probe",
+        "--reference"
+      ],
+      "input_sha256": "04a17bfa5501c18ff17f95eabca689cfd69c0ac0a2b50c76981a0f303aca5542",
+      "exit_code": 0,
+      "seconds": 0.008369292000000028,
+      "stdout_sha256": "72c053ab6cb0ca240ef85603b40138e4eb25ef36b069a1ae4cfdd2250b5844b5",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "coordinate",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/coordinate-lift/build-attempts/release-001/probe",
+        "--batch"
+      ],
+      "input_sha256": "0ff3005de7b69fa458fdd1650487798c887c7f8805ada54079e6133c4e1b0556",
+      "exit_code": 0,
+      "seconds": 0.07210649999999996,
+      "stdout_sha256": "9d803435772439951ce85eddb50095c3edcaafdde6283230894984f5f2ee7c5a",
+      "stderr_bytes": 0
+    },
+    {
+      "name": "binding",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/coordinate-lift/build-attempts/release-001/probe",
+        "--binding"
+      ],
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0,
+      "seconds": 0.018337083000000032,
+      "stdout_sha256": "0cbb7fe1382df3be755358231f37a2db9fd5ff5f3fc3262d88e325da9411b0e9",
+      "stderr_bytes": 0
+    }
+  ],
+  "passed": false,
+  "synthetic": {
+    "derivative": 2.805755627832696e-17,
+    "reciprocal": 2.585023006748498e-16,
+    "radial_composition": 9.637352644315595e-16,
+    "matrix_inverse": 1.1102230246251565e-16
+  },
+  "cartesian_reference_export_only": {
+    "rows": 8,
+    "independent_CPP_composition_readback_pending": true
+  },
+  "coordinate_cases": 629,
+  "coordinate_maxima": {
+    "geometry_entry_scaled": 2.74733863066633e-07,
+    "geometry_absolute": 2.74733863066633e-07,
+    "gauge_entry_scaled": 3.3508508145203357e-15,
+    "gauge_absolute": 1.1641532182693481e-10,
+    "physical_constraint_scaled": 4.414458235881623e-13,
+    "physical_constraint_absolute": 9.89530235528946e-10,
+    "input_normal_scaled": 7.186123369187695e-14,
+    "input_normal_absolute": 2.4901587460050202e-11,
+    "output_normal_scaled": 3.452407670760763e-13,
+    "output_normal_absolute": 1.9371509552001953e-07,
+    "spatial_normal_scaled": 2.8365833393457295e-11,
+    "spatial_normal_absolute": 1.0105435804167529e-07,
+    "reference_rhs_absolute": 3.1086244689504383e-15,
+    "reference_constraint_absolute": 8.881784197001252e-15,
+    "core_full_jet_scaled": 3.51540321247563e-16,
+    "core_acceleration_scaled": 1.1271656825341395e-16,
+    "fd_final_scaled": 2.5047586277846347e-06
+  },
+  "coordinate_worst": {
+    "geometry_entry_scaled": {
+      "case": 583,
+      "r": 0.995,
+      "name": "field1-rho1",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 2.74733863066633e-07
+    },
+    "geometry_absolute": {
+      "case": 583,
+      "r": 0.995,
+      "name": "field1-rho1",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 2.74733863066633e-07
+    },
+    "spatial_normal_absolute": {
+      "case": 582,
+      "r": 0.995,
+      "name": "field1-rho0",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 1.0105435804167529e-07
+    },
+    "core_full_jet_scaled": {
+      "case": 152,
+      "r": 0.05,
+      "name": "mixed",
+      "point": [
+        0.018,
+        -0.024,
+        0.04000000000000001
+      ],
+      "value": 3.51540321247563e-16
+    },
+    "fd_final_scaled": {
+      "case": 585,
+      "r": 0.995,
+      "name": "field1-rho3",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 2.5047586277846347e-06
+    },
+    "spatial_normal_scaled": {
+      "case": 579,
+      "r": 0.995,
+      "name": "field0-rho1",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 2.8365833393457295e-11
+    },
+    "output_normal_absolute": {
+      "case": 582,
+      "r": 0.995,
+      "name": "field1-rho0",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 1.9371509552001953e-07
+    },
+    "output_normal_scaled": {
+      "case": 581,
+      "r": 0.995,
+      "name": "field0-rho3",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 3.452407670760763e-13
+    },
+    "physical_constraint_absolute": {
+      "case": 585,
+      "r": 0.995,
+      "name": "field1-rho3",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 9.89530235528946e-10
+    },
+    "physical_constraint_scaled": {
+      "case": 579,
+      "r": 0.995,
+      "name": "field0-rho1",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 4.414458235881623e-13
+    },
+    "input_normal_absolute": {
+      "case": 601,
+      "r": 0.995,
+      "name": "field1-rho2",
+      "point": [
+        0.35819999999999996,
+        -0.47759999999999997,
+        0.796
+      ],
+      "value": 2.4901587460050202e-11
+    },
+    "core_acceleration_scaled": {
+      "case": 101,
+      "r": 0.049,
+      "name": "mixed",
+      "point": [
+        0.01764,
+        -0.02352,
+        0.039200000000000006
+      ],
+      "value": 1.1271656825341395e-16
+    },
+    "input_normal_scaled": {
+      "case": 594,
+      "r": 0.995,
+      "name": "mixed",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 7.186123369187695e-14
+    },
+    "reference_constraint_absolute": {
+      "case": 272,
+      "r": 0.45,
+      "name": "field0-rho0",
+      "point": [
+        0.45,
+        0.0,
+        0.0
+      ],
+      "value": 8.881784197001252e-15
+    },
+    "gauge_entry_scaled": {
+      "case": 327,
+      "r": 0.6,
+      "name": "field1-rho0",
+      "point": [
+        0.6,
+        0.0,
+        0.0
+      ],
+      "value": 3.3508508145203357e-15
+    },
+    "gauge_absolute": {
+      "case": 582,
+      "r": 0.995,
+      "name": "field1-rho0",
+      "point": [
+        0.995,
+        0.0,
+        0.0
+      ],
+      "value": 1.1641532182693481e-10
+    },
+    "reference_rhs_absolute": {
+      "case": 408,
+      "r": 0.85,
+      "name": "field0-rho0",
+      "point": [
+        0.68,
+        0.306,
+        -0.408
+      ],
+      "value": 3.1086244689504383e-15
+    }
+  },
+  "coordinate_checks": {
+    "geometry": false,
+    "gauge": true,
+    "physical_constraint": true,
+    "input_normal": true,
+    "output_normal": true,
+    "spatial_normal": true,
+    "reference_rhs": true,
+    "reference_constraint": true,
+    "core_lift": true,
+    "core_acceleration": true,
+    "coordinate_directional_FD": false,
+    "raw22_and_chart20_directional_FD": true,
+    "negative_double_only_wrapper": true
+  },
+  "coordinate_fd_classifications": {
+    "truncation_decrease": 302,
+    "within_absolute_floor": 314,
+    "fail_final": 13
+  },
+  "binding_cases": 420,
+  "binding_fd_final_max": 1.1543728770056168e-09,
+  "binding_fd_classifications": {
+    "truncation_decrease": 135,
+    "within_absolute_floor": 285
+  },
+  "negative_wrapper_difference": 31.578941457304698,
+  "seconds": 0.670179125,
+  "executable_unchanged": true,
+  "sources_unchanged": true
+}

@@ -1,0 +1,29 @@
+{
+  "catalog_sha256": "e92403c8c05f57c1f1228e686e372838d6b61c1c5d730deba495e2d4cf5850fa",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "docs/validation/hyperboloidal-reference-wave-map-local-experiments-20261009/verify_archive.py"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "0df42ed96a8a820a5ee477bcbd168d0babfea39c1785b055e46c34bed30b1f03",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "docs/validation/hyperboloidal-reference-wave-map-local-experiments-20261009/wave-map-local/verify_capsule.py",
+        "docs/validation/hyperboloidal-reference-wave-map-local-experiments-20261009/wave-map-local",
+        "--metadata-only"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "5948608244b58aef9eb390942e84fdbc79fe0a5740d758d044d160e96dad1197",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "saved compact artifact verification only; large comparison arithmetic/executables not replayed; original freezes unchanged",
+  "launch_HEAD": "35d348712d11ae4db9ce8568476b27b0f64e113a"
+}

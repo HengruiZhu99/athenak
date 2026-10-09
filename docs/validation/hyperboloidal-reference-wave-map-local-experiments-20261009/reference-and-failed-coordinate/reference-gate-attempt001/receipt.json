@@ -1,0 +1,94 @@
+{
+  "kind": "local complete-reference/synthetic owner gates",
+  "recipe_sha256": "3e7107cdb0b3904a8881a3ee8bb25b1e8b25e0dba2b266f50ac2238f664cad36",
+  "driver_sha256": "7af859fba1c735fc81270d6718609768cc84b0ad4ee178c9f647ee8cd45d9e7f",
+  "results": [
+    {
+      "target": "synthetic",
+      "mode": "release",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/build-attempts/synthetic-release-001/probe"
+      ],
+      "launch_utc": "2026-10-09T16:06:50.143197+00:00",
+      "exit_code": 0,
+      "seconds": 0.625415375,
+      "executable_sha256": "6e774ee6cc9a188f79b5fa419de963edddd8cbbf08aa381ac37a9c3688fff6ad",
+      "build_receipt_sha256": "742a412661aaa54464bb95f4bffe0cf3caad6c91bb560e62122af1d4a0b4b2a1",
+      "stdout_sha256": "61262c76791b1f922c13d02c88ebee44c17013c4c5e947e27f87b8f877f5673d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "output": {
+        "algebra_scaled": 2.814030636673664e-16,
+        "tail_relative": 0,
+        "tail_zero_value": true,
+        "tail_fourth_coefficient": 7.923687347812486e-304,
+        "derivative_coefficients": 0
+      },
+      "passed": true
+    },
+    {
+      "target": "synthetic",
+      "mode": "debug",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/build-attempts/synthetic-debug-001/probe"
+      ],
+      "launch_utc": "2026-10-09T16:06:50.649727+00:00",
+      "exit_code": 0,
+      "seconds": 0.504610416,
+      "executable_sha256": "89b831fccbeda2802e605044abbff28d70feeb62a124c91f639fe9a18ea1a16e",
+      "build_receipt_sha256": "60cc122b436e2d8d1aa56afa228437df2214ba27b52607e3cb22fe255e9c7cb6",
+      "stdout_sha256": "61262c76791b1f922c13d02c88ebee44c17013c4c5e947e27f87b8f877f5673d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "output": {
+        "algebra_scaled": 2.814030636673664e-16,
+        "tail_relative": 0,
+        "tail_zero_value": true,
+        "tail_fourth_coefficient": 7.923687347812486e-304,
+        "derivative_coefficients": 0
+      },
+      "passed": true
+    },
+    {
+      "target": "reference",
+      "mode": "release",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/build-attempts/reference-release-001/probe"
+      ],
+      "launch_utc": "2026-10-09T16:06:51.159599+00:00",
+      "exit_code": 0,
+      "seconds": 0.5089319999999999,
+      "executable_sha256": "3d1ac3cb3069be2289193ff8163f1bbea46d8c309d4dcd2a35f54e28ab7685cb",
+      "build_receipt_sha256": "46643993bd51f561239997831a2adac79c04019b046e9a894d74dc72bd95e870",
+      "stdout_sha256": "887c6494c242925b171a1079d89aa20d6c34a7cc1b93cbc1637ac5f1e8865e00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rows": 38,
+      "columns": 57,
+      "finite": true,
+      "old_consumed_max_scaled": 3.08455518072126e-14,
+      "old_consumed_max_absolute": 6.927791673660977e-14,
+      "passed": true
+    },
+    {
+      "target": "reference",
+      "mode": "debug",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/build-attempts/reference-debug-001/probe"
+      ],
+      "launch_utc": "2026-10-09T16:06:51.813347+00:00",
+      "exit_code": 0,
+      "seconds": 0.6491505419999999,
+      "executable_sha256": "1d9d74d0c4ad393a92d5b15f495baf61a11b49964dc36fc415c519c55fa49625",
+      "build_receipt_sha256": "3816a3b8d372aea1cfe25f528b84b63ede5c17fdfc1f501bc7434d58dc5ba6ba",
+      "stdout_sha256": "887c6494c242925b171a1079d89aa20d6c34a7cc1b93cbc1637ac5f1e8865e00",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rows": 38,
+      "columns": 57,
+      "finite": true,
+      "old_consumed_max_scaled": 3.08455518072126e-14,
+      "old_consumed_max_absolute": 6.927791673660977e-14,
+      "passed": true
+    }
+  ],
+  "passed_owner_reference_and_synthetic": true,
+  "independent_high_precision_reference_gate": "pending separate oracle",
+  "coordinate_lift_or_gauge_query": false
+}

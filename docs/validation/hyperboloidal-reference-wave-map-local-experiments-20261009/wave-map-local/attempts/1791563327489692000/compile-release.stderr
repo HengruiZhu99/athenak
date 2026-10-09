@@ -1,0 +1,8 @@
+In file included from /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-gauge-20261009/attempts/1791563327489692000/local_gate.cpp:3:
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-gauge-20261009/attempts/1791563327489692000/test_support.hpp:45:15: error: no matching function for call to 'SmoothCutoff'
+   45 |  const auto w=hyp::SmoothCutoff(r,geo.r0,geo.r1);const long double Sl=S,al=a;const long double out=(Sl-r)*(Sl+r)/(2*al*Sl),op0=-r/(al*Sl),opp0=-1/(al*Sl);
+      |               ^~~~~~~~~~~~~~~~~
+src/z4c/hyperboloidal/layer_reference.hpp:20:37: note: candidate template ignored: deduced conflicting types for parameter 'T' ('long double' vs. 'double')
+   20 | KOKKOS_INLINE_FUNCTION CutoffJet<T> SmoothCutoff(T r, T r0, T r1) {
+      |                                     ^
+1 error generated.

@@ -1,0 +1,7 @@
+// Private off-constraint finite SPD jet construction.
+hyp::OmegaJet<double> DoubleOmega(const hyp::Z4cJet<double>&u,const hyp::LayerPoint<double>&p){hyp::OmegaJet<double>o{};o.omega=p.omega;for(int i=0;i<3;++i){o.gradient[i]=p.domega[i];for(int j=0;j<3;++j)o.hessian[i][j]=p.omega_hessian[i][j];}hyp::SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);return o;}
+hyp::Z4cJet<double> Values(const Jet&u){hyp::Z4cJet<double>v{};auto s=[](auto&a,const auto&b){a.value=b.value.v;for(int i=0;i<3;++i){a.d[i]=b.d[i].v;for(int j=0;j<3;++j)a.dd[i][j]=b.dd[i][j].v;}};
+ s(v.alpha,u.alpha);s(v.chi,u.chi);s(v.trace,u.trace);s(v.theta,u.theta);
+ for(int i=0;i<3;++i){v.beta.value[i]=u.beta.value[i].v;v.lambda.value[i]=u.lambda.value[i].v;for(int j=0;j<3;++j){v.beta.d[j][i]=u.beta.d[j][i].v;v.lambda.d[j][i]=u.lambda.d[j][i].v;v.metric.g[i][j]=u.metric.g[i][j].v;v.a.k[i][j]=u.a.k[i][j].v;for(int k=0;k<3;++k){v.beta.dd[k][j][i]=u.beta.dd[k][j][i].v;v.lambda.dd[k][j][i]=u.lambda.dd[k][j][i].v;v.metric.dg[k][i][j]=u.metric.dg[k][i][j].v;v.a.dk[k][i][j]=u.a.dk[k][i][j].v;for(int l=0;l<3;++l)v.metric.ddg[k][l][i][j]=u.metric.ddg[k][l][i][j].v;}}}return v;}
+hyp::Z4cJet<double> Off(const hyp::LayerPoint<double>&p){auto u=Lift(p.state);
+ for(int c=0;c<20;++c){J x(D(.006*std::sin(c+1.)));for(int i=0;i<3;++i){x.d[i]=.003*std::cos((i+1.)*(c+1.));for(int j=0;j<3;++j)x.dd[i][j]=.002*std::sin((i+j+2.)*(c+1.));}Seed(u,c,x);}Consistent(u);return Values(u);}

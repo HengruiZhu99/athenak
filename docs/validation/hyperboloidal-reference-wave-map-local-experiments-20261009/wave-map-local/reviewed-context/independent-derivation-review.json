@@ -1,0 +1,54 @@
+{
+  "source_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-proposal-20261009/DERIVATION.md",
+  "source_sha256": "8616d5d48e7d1cf84e4d7223b3331a20cdb7940ab6c9c7a649424471166dc656",
+  "review_HEAD": "ab95fd1a23ae779019707365b3da2b31e6ca12f8",
+  "review_type": "Independent read-only mathematical/source review; no symbolic or numerical operator execution.",
+  "passed_math_source_review": true,
+  "mathematical_corrections": [],
+  "checks": [
+    {
+      "topic": "Conformal connection contraction",
+      "identity": "Gamma[g]-Gamma[ghat]=Gamma[barg]-Gamma[barghat]+Omega^-1(barg_bc barg^ai-barghat_bc barghat^ai)Omega_i; contracting gives4barg^ai-s barghat^ai.",
+      "result": "Both Fbar forms agree, including signs and spacetime dimension4; s must remain the full four-metric trace."
+    },
+    {
+      "topic": "Z normalization and ADM lapse",
+      "identity": "Zbar^0=Theta_phys/(Omega alpha); Zbar^i=gammaBarInv^ij Z_j-beta^i Theta_phys/(Omega alpha). GammaBar^0+2Zbar^0=-Q/alpha-D0alpha/alpha^3.",
+      "result": "P=Kphys-2Theta_phys and Q=(P-3omega_n)/Omega give the stated lapse row without discarding constraints."
+    },
+    {
+      "topic": "ADM integrated shift",
+      "identity": "Zbar^i+beta^i Zbar^0=gammaBarInv^ij Z_j; GammaBarSpatial^i=chi GammaTilde^i+(1/2)gtildeInv^ij chi_j.",
+      "result": "Lambda absorbs exactly the spatial Z terms; Fbar^i+beta^i Fbar^0=Hhat^i+beta^i Hhat^0-2gammaBarInv^ij Omega_j/Omega, yielding the second stored-P implementation."
+    },
+    {
+      "topic": "Reference embedding",
+      "identity": "Yhat^0=t+h(R(r)),Yhat^I=x^I/Omega have all second derivatives with a time index zero. gbar_tr=-Omega^2 h_r=-b L/alpha_hat.",
+      "result": "Gamma[ghat]^a_0b=0 and h_r=bL/(alpha_hat Omega^2) are consistent; no height integral is needed for the connection."
+    },
+    {
+      "topic": "Pure-coordinate linearization",
+      "identity": "delta g=Lie_xi ghat gives delta(g^bc connection_difference^a_bc)=BoxHat xi^a+RicHat^a_b xi^b.",
+      "result": "Reference flatness reduces the pushed-forward inertial Xi components to four scalar Minkowski waves. This is Einstein-sector continuum gauge only."
+    },
+    {
+      "topic": "Finite-amplitude harmonic-map oracle",
+      "identity": "Y(X)=X+epsilon a phi(X),Box_eta phi=0; if invertible, Y(X(x))=Yhat(x) makes the Yhat coordinates harmonic in X-pullback eta.",
+      "result": "The physical reference wave-map condition holds with Z=0, and the regular radial phi center limit is-2Fprime(T)."
+    }
+  ],
+  "precision_clarifications": [
+    "For the finite-amplitude construction Y=X+epsilon a phi and inverse X(Y), its linearized physical metric is minus Lie_(a phi) eta in target inertial coordinates; compare to the earlier active convention using xi=-a phi. This is a sign convention for the comparison, not an error in the nonlinear oracle.",
+    "The exact core gauge rows are harmonic lapse and integrated shift. If q=1 is retained in prose, distinguish the harmonic characteristic description from the existing LayerGaugeParameters.q0 coefficient map; no parameter-validation or full principal completeness gate has been performed.",
+    "The future source tests should explicitly retain Zbar=Omega^-2 Zphysical and the ADM decomposition above rather than infer the scalar/spatial Z signs."
+  ],
+  "not_checked": [
+    "Actual full20/full22 principal symbols",
+    "Finite-Omega actual source residuals or reference cancellation",
+    "Reference connection versus ADM numerical oracle",
+    "Nonlinear inverse-map admissibility/complete stored jets",
+    "Boundary/CPBC/constraint propagation or any native evolution",
+    "Inner BM/BH wormhole-to-trumpet compatibility"
+  ],
+  "scope": "Separate finite-Omega source candidate only; no C0 adoption, production edit, native/global run or exact-scri closure. Existing frozen bytes unchanged."
+}

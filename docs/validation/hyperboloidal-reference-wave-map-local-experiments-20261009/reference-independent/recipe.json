@@ -1,0 +1,103 @@
+{
+  "kind": "Fixed independent direct-function high-precision radial oracle recipe, saved before execution",
+  "source_sha256": "b52d538658a73c373f8ac9a7757e5f9ab75a14e53218c723ca30f33190b22eaf",
+  "inputs": [
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/reference-local-recipe.json",
+      "sha256": "3e7107cdb0b3904a8881a3ee8bb25b1e8b25e0dba2b266f50ac2238f664cad36"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/reference-radii.txt",
+      "sha256": "3990385ff898d037f27a77dc44991b75cd9321bfa5e50fc511521f009a243d66"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/taylor.hpp",
+      "sha256": "966c1349274e53a0a0a6f7635fe4bd2a84fb78034e2b91521f9e339310e2f675"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/complete_reference.hpp",
+      "sha256": "3e7e662a7115662d52faef07f8e1bb4ed1badaeaab87104f4527333f840ec3c7"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/reference_probe.cpp",
+      "sha256": "5a610e614d54ab14efc92c8349fef30547557fc1fed349c6d3b500e549672f71"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/reference-gate-attempt001/receipt.json",
+      "sha256": "a60a08e05633646e89bd7036a2fa1491bed68fab2fdf68f54dd7cffe3791d010"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/reference-gate-attempt001/reference-release.stdout",
+      "sha256": "887c6494c242925b171a1079d89aa20d6c34a7cc1b93cbc1637ac5f1e8865e00"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/reference-gate-attempt001/reference-debug.stdout",
+      "sha256": "887c6494c242925b171a1079d89aa20d6c34a7cc1b93cbc1637ac5f1e8865e00"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/build-attempts/reference-release-001/probe",
+      "sha256": "3d1ac3cb3069be2289193ff8163f1bbea46d8c309d4dcd2a35f54e28ab7685cb"
+    },
+    {
+      "path": "build-layer-research/boundary/einstein-coordinate-gauge-local-20261009/build-attempts/reference-debug-001/probe",
+      "sha256": "1d9d74d0c4ad393a92d5b15f495baf61a11b49964dc36fc415c519c55fa49625"
+    }
+  ],
+  "precision_digits": [
+    100,
+    130
+  ],
+  "method": "mpmath direct analytic functions differentiated by mp.diff; core/outer backgrounds and small transition defects differentiated separately; no owner Taylor/backend import",
+  "coefficient_semantics": "radii and fixed literals .05,.95,.9 are exact binary64 rationals; a=.5 and S=1 exact. Width .9 matches captured complete backend literal.",
+  "thresholds": {
+    "native_scaled": 2e-10,
+    "precision_scaled": 1e-80,
+    "tail_relative": 2e-08,
+    "tail_relative_min_abs": 1e-300,
+    "tail_nonzero_min_abs": 1e-320
+  },
+  "separate_composition_plan": {
+    "points": [
+      [
+        0.1,
+        1,
+        2,
+        3
+      ],
+      [
+        0.5,
+        -2,
+        1,
+        2
+      ],
+      [
+        0.84,
+        1,
+        -3,
+        2
+      ],
+      [
+        0.96,
+        -1,
+        2,
+        2
+      ]
+    ],
+    "scalar_max_derivative": 4,
+    "vector_max_derivative": 3,
+    "tensor_max_derivative": 3,
+    "precision_digits": [
+      100,
+      130
+    ],
+    "scaled_threshold": "1e-70",
+    "scope": "Independent algebraic Cartesian radial composition versus direct multivariate differentiation, not a C++ Cartesian lift admission"
+  },
+  "scope": "Local fixed-reference radial values/jets and independently labeled Cartesian composition only; no PDE operator/eigenvalue/propagation, gauge/BH evolution, or complete coordinate lift gate.",
+  "tail_domain": "min(weight,complement)<=1/4; both derivative tails, but zero-order only the small function. Small derivatives at the transition midpoint are cancellation zeros, not endpoint tails.",
+  "history": {
+    "failed_recipe_sha256": "c0d5d59849a41b33e60b5f744020de4bc51b7e3bd2ed732bd971b32711a96723",
+    "failed_source_sha256": "daa4574db985fb7cac6089f748a8ddb219d3c58c23a52bb220386aab4023e5cc",
+    "failure": "First tail classifier mistakenly used small derivative magnitude as endpoint-tail criterion, four midpoint cancellation-relative checks failed. All scaled errors passed. Complete original attempt retained."
+  }
+}
