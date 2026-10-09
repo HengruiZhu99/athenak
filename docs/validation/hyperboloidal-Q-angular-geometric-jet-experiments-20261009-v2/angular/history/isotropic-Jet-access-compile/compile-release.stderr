@@ -1,0 +1,4 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-null-angular-ideal/angular.cpp:13:204: error: assigning to 'double' from incompatible type 'D'
+   13 |  else{J iso;if(col>=64){J rr{D(p.radius)};for(int z=0;z<3;++z)rr.d[z]=n[z];iso=J(D(2/a))*rr*OmegaJ(p)*Ang(p,n,col-64);}for(int i=0;i<3;++i)for(int j=0;j<3;++j){bar[i][j]=u.beta.d[i][j].d+u.beta.d[j][i].d+(i==j?iso.v:0);for(int z=0;z<3;++z)dbar[z][i][j]=u.beta.dd[z][i][j].d+u.beta.dd[z][j][i].d+(i==j?iso.d[z].v:0);}}
+      |                                                                                                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+1 error generated.

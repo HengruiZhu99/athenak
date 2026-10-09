@@ -1,0 +1,4 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-null-spatial-diffeo/diffeo.cpp:7:86: warning: temporary whose address is used as value of local variable 'inv' will be destroyed at the end of the full-expression [-Wdangling]
+    7 | double Null(const hyp::LayerPoint<double>&p,const Jet&u){auto om=Omega(u,p);auto inv=hyp::Geometry(u.metric).inverse;D G{};for(int i=0;i<3;++i)for(int j=0;j<3;++j)G+=u.chi.value*inv[i][j]*om.gradient[i]*om.gradient[j];return (G-om.normal*om.normal).d;}
+      |                                                                                      ^~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

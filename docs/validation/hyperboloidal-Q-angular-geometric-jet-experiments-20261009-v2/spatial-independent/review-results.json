@@ -1,0 +1,168 @@
+{
+  "passed_read_only_independent_spatial_pullback_review": true,
+  "scientific_index_sha256": "de31bb51e55c159100a58d14acaae0f00231a7d6128bc6c3771d535b75ff5662",
+  "scientific_files_verified": 44,
+  "source_inputs_verified": 374,
+  "commands_all_zero": 6,
+  "release_ASan_UBSan_debug_byte_equal": true,
+  "fields": 120,
+  "controls": 1920,
+  "sampled_actual_kernel_points": 23040,
+  "finite_coordinate_pullback_radial_proof": [
+    {
+      "generator": "xi=Omega*n",
+      "N2": "-2/a",
+      "stationary_Box1": "-4/a",
+      "N1_time": "4*(sigma - 2)/a**3",
+      "exact_Ndot": "-2*r*(r - 1)*(r + 1)*(r**8 + 8*r**6*sigma - 18*r**6 + 8*r**4*sigma - 30*r**4 + 14*r**2 + 1)/(a**4*(r**2 + 1)**4)"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "N2": "-2/a",
+      "stationary_Box1": "-4/a",
+      "N1_time": "4*(sigma - 2)/a**3",
+      "exact_Ndot": "2*r**2*(r - 1)*(r + 1)*(2*r**8*sigma - 8*r**8 - 6*r**6*sigma + 11*r**6 - 10*r**4*sigma + 39*r**4 - 2*r**2*sigma - 7*r**2 - 3)/(a**4*(r**2 + 1)**4)"
+    }
+  ],
+  "100_digit_radial_limit_checks": [
+    {
+      "generator": "xi=Omega*n",
+      "a": "0.5",
+      "sigma": 3,
+      "Omega": "1e-40",
+      "absolute_limit_error": "9.13575331470581e-61"
+    },
+    {
+      "generator": "xi=Omega*n",
+      "a": "0.5",
+      "sigma": 5,
+      "Omega": "1e-40",
+      "absolute_limit_error": "6.4e-39"
+    },
+    {
+      "generator": "xi=Omega*n",
+      "a": "0.75",
+      "sigma": 3,
+      "Omega": "1e-40",
+      "absolute_limit_error": "4.55170936801469e-62"
+    },
+    {
+      "generator": "xi=Omega*n",
+      "a": "0.75",
+      "sigma": 5,
+      "Omega": "1e-40",
+      "absolute_limit_error": "2.84444444444444e-39"
+    },
+    {
+      "generator": "xi=Omega*n",
+      "a": "1.0",
+      "sigma": 3,
+      "Omega": "1e-40",
+      "absolute_limit_error": "5.73530149529236e-62"
+    },
+    {
+      "generator": "xi=Omega*n",
+      "a": "1.0",
+      "sigma": 5,
+      "Omega": "1e-40",
+      "absolute_limit_error": "1.6e-39"
+    },
+    {
+      "generator": "xi=Omega*n",
+      "a": "2.0",
+      "sigma": 3,
+      "Omega": "1e-40",
+      "absolute_limit_error": "3.52092425055465e-63"
+    },
+    {
+      "generator": "xi=Omega*n",
+      "a": "2.0",
+      "sigma": 5,
+      "Omega": "1e-40",
+      "absolute_limit_error": "4.0e-40"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "a": "0.5",
+      "sigma": 3,
+      "Omega": "1e-40",
+      "absolute_limit_error": "1.6e-39"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "a": "0.5",
+      "sigma": 5,
+      "Omega": "1e-40",
+      "absolute_limit_error": "8.0e-39"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "a": "0.75",
+      "sigma": 3,
+      "Omega": "1e-40",
+      "absolute_limit_error": "7.11111111111111e-40"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "a": "0.75",
+      "sigma": 5,
+      "Omega": "1e-40",
+      "absolute_limit_error": "3.55555555555556e-39"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "a": "1.0",
+      "sigma": 3,
+      "Omega": "1e-40",
+      "absolute_limit_error": "4.0e-40"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "a": "1.0",
+      "sigma": 5,
+      "Omega": "1e-40",
+      "absolute_limit_error": "2.0e-39"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "a": "2.0",
+      "sigma": 3,
+      "Omega": "1e-40",
+      "absolute_limit_error": "1.0e-40"
+    },
+    {
+      "generator": "xi=Omega*x",
+      "a": "2.0",
+      "sigma": 5,
+      "Omega": "1e-40",
+      "absolute_limit_error": "5.0e-40"
+    }
+  ],
+  "angular_rate": "-2*(Y*degree**2 + Y*degree - 2*Y*sigma + 4*Y - lapY)/a**3",
+  "actual_angular_N1_errors": [
+    5.738646180475371e-07,
+    2.571377969218247e-06,
+    8.085790383915992e-06
+  ],
+  "actual_summary": {
+    "initial_constraints_max": 1.865174681370263e-14,
+    "initial_R0_max": 1.6973089600469396e-14,
+    "stationary_geometric_first_RHS_max": 5.1064930062239e-11,
+    "Ndot_geometric_residual_max": 4.075009427118026e-11,
+    "initial_4D_Box_identity_max_error": 2.0134020273232522e-07,
+    "initial_coordinate_shear_over_Omega_max": 31.994000047720306,
+    "initial_coordinate_curvature_max": 71.99999846486023
+  },
+  "boundary_errors": {
+    "initial_N0_boundary": 2.220446049250313e-15,
+    "initial_N1_boundary": 2.5845992013273646e-15,
+    "initial_Q0_boundary": 1.3322676295501878e-15,
+    "next_R0_error": 2.1351240775402403e-08
+  },
+  "frame_distinction": "For xi=Omega X e_j, f=xi.dOmega/Omega -> -Y/a and delta q_AB=2Y q_AB/a. Fixing this frame is an additional unproved restriction, not a consequence of initial Einstein constraints or smoothness.",
+  "scope": "Linear smooth-time quadratic-null compatibility obstruction on exact-Einstein initial pullback tangents. No finite-Omega amplitude instability, universal candidate rejection, invariant fixed-frame restriction, radiative-data closure, PDE stability or evolution admission inferred.",
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "sympy_version": "1.14.0",
+  "sympy_module_sha256": "4e9476348ba105feab28d82f5bcf6cdba2e3e84de6e059bbfe7a13728c0a4ab0",
+  "mpmath_version": "1.3.0"
+}

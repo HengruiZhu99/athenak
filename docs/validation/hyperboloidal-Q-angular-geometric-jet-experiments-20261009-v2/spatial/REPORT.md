@@ -1,0 +1,9 @@
+# Negative Einstein geometric time-jet gate
+
+The actual full20 kernel confirms a spatially perturbed Einstein witness omitted by the gauge-only reference test. For the stationary physical spatial pullback xi=Omega*x, initial H/M/Z/Theta constraints vanish exactly and all R0/N0/N1/Q0/Theta1/shear compatibility conditions hold. The Q/null source nevertheless gives N1_t=4(sigma-2)/a^3; at a.5 sigma3 gives+32 and sigma5+96.
+
+The independent four-dimensional stationary divergence/projection derivation and complete analytic Cartesian jets agree. Since the earlier pure gauge beta=Omega^2*n direction requires sigma3, no constant sigma cancels both directions in the full linear smooth Taylor ideal containing these two Einstein subsets. This is a time-corner obstruction, not an inference of finiteOmega amplitude blowup or a rejection of every finiteOmega sigma3 implementation. No native/global admission follows.
+
+The final120-field/1920-control actual audit gives initial constraints1.865175e-14,R0 1.697309e-14,N0/N1/Q0 below2.59e-15; stationary geometric firstRHS5.106494e-11. Full4D normalized Box error2.013403e-7 is retained, while sampled shear/Omega and scalar curvature maxima are31.9941 and72. Normalized N1-map discrepancies grow from5.738647e-7 to2.571378e-6 and8.085791e-6 asOmega shrinks; no FD-order claim. Actual nextR0 max2.135125e-8. All374inputs/6commands pass with identical Release/ASan outputs.
+
+Read DERIVATION.md and the final check-report.json/receipt.json for exact formulas, measured precision and scope. The expanded-polynomial cancellation pilot and a compile warning from a temporary Geometry inverse reference are preserved with their exact source/output. They affected scratch evaluation only; all frozen core helpers and production sources remain byte-identical. Later unreceipted pilot outputs are retained as exploration, while the final generated source/build/Release/ASan receipts are authoritative.

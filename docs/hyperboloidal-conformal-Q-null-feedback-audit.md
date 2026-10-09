@@ -224,3 +224,8 @@ quadratic shift shows that sigma-five fails null-jet time tangency even when
 the next leading RHS pole vanishes. A separate initial gauge-only ADM/Box
 identity motivates further analysis of sigma-three; it admits no evolution
 candidate or nonlinear closure.
+
+The [complete angular and geometric jet audit](hyperboloidal-Q-angular-geometric-jet-audit.md)
+confirms sigma-three's initial gauge-only cancellation and exposes an
+independent Einstein geometric null time-jet defect. It adopts no new
+production gauge or boundary prescription.

@@ -1,0 +1,75 @@
+{
+  "passed_gauge_only_reference_firstjet_checks": true,
+  "full_Einstein_geometry_ideal_proved": false,
+  "sigma3_admitted_for_evolution": false,
+  "controls": 1120,
+  "sampled_kernel_points": 13440,
+  "secondjet_basis_maps": [
+    {
+      "a": 0.5,
+      "dir": 0,
+      "compatible_gauge_secondjet_basis_rank": 31
+    },
+    {
+      "a": 0.5,
+      "dir": 1,
+      "compatible_gauge_secondjet_basis_rank": 31
+    },
+    {
+      "a": 0.75,
+      "dir": 0,
+      "compatible_gauge_secondjet_basis_rank": 31
+    },
+    {
+      "a": 0.75,
+      "dir": 1,
+      "compatible_gauge_secondjet_basis_rank": 31
+    },
+    {
+      "a": 1,
+      "dir": 0,
+      "compatible_gauge_secondjet_basis_rank": 31
+    },
+    {
+      "a": 1,
+      "dir": 1,
+      "compatible_gauge_secondjet_basis_rank": 31
+    },
+    {
+      "a": 2,
+      "dir": 0,
+      "compatible_gauge_secondjet_basis_rank": 31
+    },
+    {
+      "a": 2,
+      "dir": 1,
+      "compatible_gauge_secondjet_basis_rank": 31
+    }
+  ],
+  "reconstruction_error": 3.552713678800501e-15,
+  "N1_time_expected_map_max_error_by_h": [
+    {
+      "h": 0.001,
+      "error": 1.276409664143153e-07
+    },
+    {
+      "h": 0.0005,
+      "error": 6.062951379794456e-07
+    },
+    {
+      "h": 0.00025,
+      "error": 1.9541220876525074e-06
+    }
+  ],
+  "next_R0_max_error": 5.566729299744111e-09,
+  "next_leading_constraint_max_error": 6.926192952505517e-10,
+  "actual": {
+    "initial_constraints_error": 0,
+    "initial_R0_error": 2.3684757858670005e-15,
+    "actual_ADM_first_RHS_geometry_field_error": 7.556621994808665e-12,
+    "actual_arbitrary_angular_N_transport_identity_error": 2.358907565236327e-10
+  },
+  "weighted_N_reaction": "-(3*r**6 - 16*r**4*sigma + 53*r**4 - 11*r**2 + 3)/(4*a*r**2*(r - 1)*(r + 1))",
+  "sigma3_weighted_reaction": "-(r**2 + 3)*(3*r**2 - 1)/(4*a*r**2)",
+  "scope": "Gauge-only tangent data at fixed exact analytic-reference spatial geometry. 31-dimensional compatible secondjet space; exact transport plus finite compiled checks, with binary64 cancellation amplified at smallOmega. No nonlinear/geometrically perturbed ideal or stability/adoption claim."
+}

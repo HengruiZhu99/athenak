@@ -220,3 +220,10 @@ finite JSON files. Catalog SHA:
 `8da0e1eae87e5ed54a76d5d04a90038139ec145b458cca55af964e5bcdc07f43`.
 All original source/index bytes and failed independent checkers are preserved.
 Large arrays and numeric payloads over 1 MiB remain metadata-only.
+
+The [angular and Einstein-geometric follow-up](hyperboloidal-Q-angular-geometric-jet-audit.md)
+proves completeness of the compatible local gauge second jets and verifies
+sigma-three tangency on that reference-geometry subset. A larger genuine
+Einstein spatial-pullback family fails null-jet time tangency, so no constant
+sigma closes the smooth ideal containing both tested families. The conformal
+frame distinction and the limits of this time-corner result remain explicit.

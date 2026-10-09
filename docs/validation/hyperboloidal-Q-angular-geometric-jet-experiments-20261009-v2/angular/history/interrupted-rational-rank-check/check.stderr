@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/q-null-angular-ideal/check_angular.py", line 6, in <module>
+    M=s.Matrix(t['M']).applyfunc(rat);assert M.rank()==31;ranks.append({'a':t['a'],'dir':t['dir'],'compatible_gauge_secondjet_basis_rank':31});err=max(err,max(abs(float(M[i,k])-t['M'][i][k])for i in range(40)for k in range(70)))
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/matrices/matrixbase.py", line 3115, in rank
+    return _rank(self, iszerofunc=iszerofunc, simplify=simplify)
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/matrices/reductions.py", line 242, in _rank
+    _, pivots, _ = _row_reduce(mat, iszerofunc, simpfunc, normalize_last=True,
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/matrices/reductions.py", line 127, in _row_reduce
+    mat, pivot_cols, swaps = _row_reduce_list(list(M), M.rows, M.cols, M.one,
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/matrices/reductions.py", line 109, in _row_reduce_list
+    cross_cancel(pivot_val, row, val, piv_row)
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/matrices/reductions.py", line 58, in cross_cancel
+    mat[p] = isimp(a*mat[p] - b*mat[p + q])
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/decorators.py", line 76, in __sympifyit_wrapper
+    return func(a, b)
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/numbers.py", line 1471, in __sub__
+    return Rational(self.p*other.q - self.q*other.p, self.q*other.q)
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/cache.py", line 72, in wrapper
+    retval = cfunc(*args, **kwargs)
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/numbers.py", line 1372, in __new__
+    return cls._new(p, q)
+  File "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/numbers.py", line 1393, in _new
+    q //= gcd
+KeyboardInterrupt

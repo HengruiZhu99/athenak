@@ -1,0 +1,239 @@
+{
+  "passed_actual_linear_Einstein_pullback_and_negative_tangency_gate": true,
+  "sigma3_full_compatible_Taylor_ideal_invariant": false,
+  "finite_Omega_amplitude_instability_inferred": false,
+  "sigma3_evolution_admitted": false,
+  "controls": 1920,
+  "sampled_kernel_points": 23040,
+  "input_fields": 120,
+  "initial_boundary_checks": {
+    "initial_N0_boundary": 2.220446049250313e-15,
+    "initial_N1_boundary": 2.5845992013273646e-15,
+    "initial_Q0_boundary": 1.3322676295501878e-15,
+    "next_R0_error": 2.1351240775402403e-08
+  },
+  "actual": {
+    "initial_constraints_max": 1.865174681370263e-14,
+    "initial_R0_max": 1.6973089600469396e-14,
+    "stationary_geometric_first_RHS_max": 5.1064930062239e-11,
+    "Ndot_geometric_residual_max": 4.075009427118026e-11,
+    "initial_4D_Box_identity_max_error": 2.0134020273232522e-07,
+    "initial_coordinate_shear_over_Omega_max": 31.994000047720306,
+    "initial_coordinate_curvature_max": 71.99999846486023
+  },
+  "N1_time_expected_angular_map_max_error_by_h": [
+    {
+      "h": 0.001,
+      "error": 5.738646180475371e-07
+    },
+    {
+      "h": 0.0005,
+      "error": 2.571377969218247e-06
+    },
+    {
+      "h": 0.00025,
+      "error": 8.085790383915992e-06
+    }
+  ],
+  "independent_exact_radial_4D_divergence": [
+    {
+      "field": "Omega*n",
+      "deltaN2": "-2/a",
+      "deltaBox_stationary1": "-4/a",
+      "N1_time": "4*(sigma - 2)/a**3",
+      "exact_radial_Ndot": "-2*r*(r - 1)*(r + 1)*(r**8 + 8*r**6*sigma - 18*r**6 + 8*r**4*sigma - 30*r**4 + 14*r**2 + 1)/(a**4*(r**2 + 1)**4)"
+    },
+    {
+      "field": "Omega*x",
+      "deltaN2": "-2/a",
+      "deltaBox_stationary1": "-4/a",
+      "N1_time": "4*(sigma - 2)/a**3",
+      "exact_radial_Ndot": "2*r**2*(r - 1)*(r + 1)*(2*r**8*sigma - 8*r**8 - 6*r**6*sigma + 11*r**6 - 10*r**4*sigma + 39*r**4 - 2*r**2*sigma - 7*r**2 - 3)/(a**4*(r**2 + 1)**4)"
+    }
+  ],
+  "actual_radial_Omega_x_controls": [
+    {
+      "a": 0.5,
+      "sigma": 3,
+      "dir": 0,
+      "expected": 32.0,
+      "actual": [
+        32.0000000277533,
+        31.999999377683487,
+        32.00000302965192
+      ]
+    },
+    {
+      "a": 0.5,
+      "sigma": 3,
+      "dir": 1,
+      "expected": 32.0,
+      "actual": [
+        31.999999930699282,
+        31.99999881422628,
+        32.000000520798885
+      ]
+    },
+    {
+      "a": 0.5,
+      "sigma": 5,
+      "dir": 0,
+      "expected": 96.0,
+      "actual": [
+        96.00000002063464,
+        95.99999914206717,
+        96.00000392735305
+      ]
+    },
+    {
+      "a": 0.5,
+      "sigma": 5,
+      "dir": 1,
+      "expected": 96.0,
+      "actual": [
+        95.99999980352541,
+        95.99999814977126,
+        96.00000048696938
+      ]
+    },
+    {
+      "a": 0.75,
+      "sigma": 3,
+      "dir": 0,
+      "expected": 9.481481481481481,
+      "actual": [
+        9.48148146160791,
+        9.481481323298468,
+        9.481482735743352
+      ]
+    },
+    {
+      "a": 0.75,
+      "sigma": 3,
+      "dir": 1,
+      "expected": 9.481481481481481,
+      "actual": [
+        9.481481459192608,
+        9.481481393666542,
+        9.481482447000591
+      ]
+    },
+    {
+      "a": 0.75,
+      "sigma": 5,
+      "dir": 0,
+      "expected": 28.444444444444443,
+      "actual": [
+        28.444444417451383,
+        28.444444159984705,
+        28.444446473522234
+      ]
+    },
+    {
+      "a": 0.75,
+      "sigma": 5,
+      "dir": 1,
+      "expected": 28.444444444444443,
+      "actual": [
+        28.4444444095003,
+        28.44444425620774,
+        28.44444632077517
+      ]
+    },
+    {
+      "a": 1.0,
+      "sigma": 3,
+      "dir": 0,
+      "expected": 4.0,
+      "actual": [
+        4.000000001406364,
+        4.00000000349451,
+        3.999999922163579
+      ]
+    },
+    {
+      "a": 1.0,
+      "sigma": 3,
+      "dir": 1,
+      "expected": 4.0,
+      "actual": [
+        4.000000011290069,
+        3.999999991340281,
+        3.9999998518147484
+      ]
+    },
+    {
+      "a": 1.0,
+      "sigma": 5,
+      "dir": 0,
+      "expected": 12.0,
+      "actual": [
+        12.000000002913373,
+        12.000000002605656,
+        11.999999892706983
+      ]
+    },
+    {
+      "a": 1.0,
+      "sigma": 5,
+      "dir": 1,
+      "expected": 12.0,
+      "actual": [
+        12.000000020372163,
+        11.999999975444442,
+        11.999999768743528
+      ]
+    },
+    {
+      "a": 2.0,
+      "sigma": 3,
+      "dir": 0,
+      "expected": 0.5,
+      "actual": [
+        0.5000000009865883,
+        0.5000000001776644,
+        0.5000000004356859
+      ]
+    },
+    {
+      "a": 2.0,
+      "sigma": 3,
+      "dir": 1,
+      "expected": 0.5,
+      "actual": [
+        0.5000000012171673,
+        0.500000001412196,
+        0.4999999989155767
+      ]
+    },
+    {
+      "a": 2.0,
+      "sigma": 5,
+      "dir": 0,
+      "expected": 1.5,
+      "actual": [
+        1.499999999662134,
+        1.5000000003658802,
+        1.500000000324456
+      ]
+    },
+    {
+      "a": 2.0,
+      "sigma": 5,
+      "dir": 1,
+      "expected": 1.5,
+      "actual": [
+        1.4999999999614677,
+        1.5000000025474187,
+        1.49999999692843
+      ]
+    }
+  ],
+  "independent_exact_angular_m1_coefficient": {
+    "N2": "-2*Y/a",
+    "Box_stationary1": "(L - Y*ell**2 - Y*ell - 4*Y)/a",
+    "N1_time": "2*(L - Y*ell**2 - Y*ell + 2*Y*sigma - 4*Y)/a**3"
+  },
+  "m1_angular_formula": "N1_t=(2/a^3)[Delta_S Y+(2*sigma-4)Y], Y=n_j X(n)",
+  "constant_sigma_obstruction": "Gauge-only beta=Omega^2*n requires sigma3; Einstein spatial pullback xi=Omega*x requires sigma2 for smooth quadratic-null time tangency. No single constant sigma cancels both directions. This is not a finite-Omega amplitude blowup or full PDE stability statement."
+}
