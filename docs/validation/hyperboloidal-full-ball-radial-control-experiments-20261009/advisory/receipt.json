@@ -1,0 +1,46 @@
+{
+  "passed_advisory_checks": true,
+  "scope": "Mathematical representation/source and local frozen harmonic principal/SAT algebra only; no radial PDE operator, new kernel run, global eigensolve, propagation or boundary admission.",
+  "git_head": "40d843254ff96a12825f6b82ed06ee2d6853a6cf",
+  "python_executable": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+  "python_executable_sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464",
+  "python_version": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "runner_sha256": "9c6b8bd7af9127e629c1fccddb488f96f8b3cfd0bb57c32e1e005269bfa39a37",
+  "seconds": 1.029520792,
+  "commands": [
+    {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+        "build-layer-research/continuum/full-ball-radial-assessment/check_identities.py"
+      ],
+      "returncode": 0,
+      "seconds": 0.576834041,
+      "stdout_sha256": "461e49fef65b9e0937003c046089ec74456d302a1c323b2cb03638f265f2f492",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+        "build-layer-research/continuum/full-ball-radial-assessment/check_boundary_principal.py"
+      ],
+      "returncode": 0,
+      "seconds": 0.44039495900000014,
+      "stdout_sha256": "407158b22d89e80d881f80fd51a68fad6e19a03c2fca0a64e855340b4bd7e8b5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source_hashes_before_equals_after": {
+    "build-layer-research/continuum/full-ball-radial-assessment/check_identities.py": "537307887bde8c6eeb65fb797043ad63b4cd145dd4370d17cb659600e797e23f",
+    "build-layer-research/continuum/full-ball-radial-assessment/check_boundary_principal.py": "ca2c69138a25350b824bee84302c3c47e7fce90e64df663e016a1082cb2bd9d7",
+    "build-layer-research/continuum/full-ball-radial-assessment/ASSESSMENT.md": "104c0461dd921e4f4ca4328efb59d2cee84dfd641c2fe927757ac5fde70ab2a4",
+    "build-layer-research/continuum/full-ball-radial-assessment/FINITE-RADIUS.md": "09050ae710fbcb14130d05c1dc921a5232b85fccc877d5a44bee8a5cd3d94e6d",
+    "build-layer-research/continuum/full-ball-radial-assessment/VARIATIONAL-SAT.md": "621789ff46eaebe12fef286b04da76d7463eb669277a8b11660c6da60752e252"
+  },
+  "report_hashes": {
+    "identity-report.json": "461e49fef65b9e0937003c046089ec74456d302a1c323b2cb03638f265f2f492",
+    "boundary-principal-report.json": "407158b22d89e80d881f80fd51a68fad6e19a03c2fca0a64e855340b4bd7e8b5"
+  },
+  "failure_history": {
+    "failed-structural-kin-assertion": "Initial exact source/tool-observed structural assertion retained; mathematically equivalent square factors now compared by simplify."
+  }
+}

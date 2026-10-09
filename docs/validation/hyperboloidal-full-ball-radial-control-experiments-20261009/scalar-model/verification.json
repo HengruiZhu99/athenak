@@ -1,0 +1,59 @@
+{
+  "passed_saved_scalar_model_readback": true,
+  "no_scientific_rerun_by_verifier": true,
+  "cases": 50,
+  "case_checks": 600,
+  "all_json_finite": true,
+  "all_saved_matrices_finite": true,
+  "matrix_arrays": 500,
+  "matrix_entries": 85760,
+  "source_plan_result_matrix_stdout_identities_passed": true,
+  "first_failed_serialization_matrix_bytes_equal_accepted": true,
+  "second_serialization_attempt_summary_matrix_bytes_equal_accepted": true,
+  "supplementary_saved_mass_stiffness_congruence_below_declared_2e_minus_9": true,
+  "maxima": {
+    "nodal_IBP": {
+      "absolute": 3.75869738448094e-09,
+      "scaled": 2.886144806942105e-13,
+      "absolute_max": 8.581082511227578e-10
+    },
+    "modal_IBP": {
+      "absolute": 1.1381531843200096e-06,
+      "scaled": 2.453067652210396e-13,
+      "absolute_max": 2.2514723241329193e-07
+    },
+    "wave_energy_matrix": {
+      "absolute": 1.6098860127654e-06,
+      "scaled": 3.8211227490746727e-13,
+      "absolute_max": 2.251181285828352e-07
+    },
+    "strong_weak_action": {
+      "absolute": 1.1381481710591798e-06,
+      "scaled": 5.41403320182006e-13,
+      "absolute_max": 2.251402846194626e-07
+    },
+    "common_collocation_action": {
+      "absolute": 8.904393024454404e-07,
+      "scaled": 5.827192539615416e-13,
+      "absolute_max": 3.729655873030424e-07
+    },
+    "mass_congruence": {
+      "absolute": 4.1736008983395856e-13,
+      "scaled": 8.519327159127707e-14,
+      "absolute_max": 1.4166445794216997e-13
+    },
+    "stiffness_congruence": {
+      "absolute": 2.4154819340952587e-07,
+      "scaled": 2.4312436512200833e-13,
+      "absolute_max": 9.39471647143364e-08
+    },
+    "modal_mass_identity": {
+      "absolute": 9.768909453023519e-13,
+      "scaled": 9.970351459732698e-14,
+      "absolute_max": 7.915890165577366e-14
+    }
+  },
+  "sampled_energy_rate_absolute_error_max": 1.6615686604382063e-10,
+  "L0_static_constant_preserved_without_regularization": true,
+  "actual_Z4c_radial_matrix_or_boundary_admitted": false
+}

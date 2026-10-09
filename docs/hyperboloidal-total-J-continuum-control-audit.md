@@ -126,6 +126,11 @@ linearized angular closure result. Cartesian finite-h Dxx,DxDx,Lx and KO
 anisotropy is absent. A later radial discretization changes the bulk operator
 too and cannot uniquely attribute prior growth to primitive ghosts.
 
+The subsequent [full-ball radial control audit](hyperboloidal-full-ball-radial-control-audit.md)
+checks regular polynomial representation, dense scalar mass and scalar-wave
+energy identities. Its finite-radius principal boundary algebra still supplies
+no complete Z4c boundary condition or radial evolution.
+
 No radial operator,eigenvalue,propagation,exact-scri closure or stable finite
 pulse is accepted. The later black-hole target remains the inner
 wormhole-to-trumpet transition with a Minkowski hyperboloidal reference.

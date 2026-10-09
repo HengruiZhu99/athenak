@@ -1,0 +1,90 @@
+{
+  "passed_frozen_boundary_principal_algebra": true,
+  "scope": "Advisory local harmonic principal algebra and retained extraction record check. No radial differentiation/PDE operator, SAT bulk certificate, constraint boundary condition or evolution.",
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "sympy_version": "1.14.0",
+  "actual_retained_harmonic_rows": 288,
+  "max_retained_extraction_error": 8.881784197001252e-16,
+  "exact_A_squared_I": true,
+  "exact_HA_AplusAT": true,
+  "positive_symmetrizer_reason": "y^T H y=||y||^2+||A y||^2",
+  "projector_ranks": [
+    10,
+    10
+  ],
+  "q_normal_derivative_indices": [
+    0,
+    1,
+    2,
+    7,
+    8,
+    11,
+    12,
+    15,
+    16,
+    18
+  ],
+  "V_stored_momentum_indices": [
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    13,
+    14,
+    17,
+    19
+  ],
+  "det_A_qV": "128/3",
+  "H_qV_cross_block_rank": 6,
+  "det_Gplus_gram": "13573175/41472",
+  "Gplus_positive_leading_minors": [
+    "19/9",
+    "47/18",
+    "235/36",
+    "4487/648",
+    "22435/1296",
+    "49357/2592",
+    "246785/5184",
+    "542927/10368",
+    "2714635/20736",
+    "13573175/41472"
+  ],
+  "R_singular_values_squared_polynomial": "25*(z - 1)**4*(11*z**2 - 23*z + 11)**2*(4487*z**2 - 13821*z + 4487)/41472",
+  "R_norm_squared_exact": "sqrt(110487365)/8974 + 13821/8974",
+  "R_norm_squared": 2.711421553150291,
+  "R_norm": 1.6466394727293194,
+  "boundary_negative_semidefinite_condition": "k_in*||R||^2 <= |k_out|",
+  "variational_adjoint_boundary_energy_identity_exact": true,
+  "reference_finite_boundary_examples": [
+    {
+      "S": 1,
+      "a": 0.5,
+      "rb": 0.98,
+      "Omega": 0.0396,
+      "incoming_outward_speed": -0.0004,
+      "outgoing_outward_speed": 3.9204,
+      "incoming_R2_over_outgoing": 0.00027664743935825847,
+      "kappa10_over_Omega": 252.5252525252525
+    },
+    {
+      "S": 1,
+      "a": 0.5,
+      "rb": 0.995,
+      "Omega": 0.009975,
+      "incoming_outward_speed": -2.5e-05,
+      "outgoing_outward_speed": 3.980025,
+      "incoming_R2_over_outgoing": 1.703143543790737e-05,
+      "kappa10_over_Omega": 1002.5062656641604
+    }
+  ],
+  "source_pins": {
+    "tst/hyperboloidal/kernel_symbol.cpp": "7d80a9a1561eded36c7dbd001b2562bb8cccee2cc9cbf593a90b38a499d14b17",
+    "tst/hyperboloidal/check_kernel_symbol.py": "40afbaf0955eba4c8602c7648c32dfad37668024d5f067a787a903a85620229d",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "build-layer-research/continuum/conformal-q-null-feedback/immutable-conformal-Q-null-feedback-local-20261009/index.json": "dac759becbe666c71443328b61324a50aeaf0f72e76b4e751a9cabfa3a87cd96",
+    "build-layer-research/continuum/conformal-q-null-feedback/immutable-conformal-Q-null-feedback-local-20261009/principal.json": "02e4e4b1c4b6d2fccd6f442687d12ad5798e38a85ea52d61fab24b63f162dbc9"
+  }
+}

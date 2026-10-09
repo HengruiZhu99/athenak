@@ -1,0 +1,32 @@
+{
+  "declared_before_mathematical_runs": true,
+  "scope": "scalar polynomial radial wave mathematics only; no actual Z4c radial matrix or boundary adoption",
+  "N_values": [4, 8, 12, 16, 24],
+  "L_values": [0, 1, 2, 3, 4],
+  "rb_values": [0.7, 1.0],
+  "common_collocation": "N-point Gauss-Jacobi(alpha=0,beta=.5), mapped to rho in [0,rb^2]",
+  "polynomial_degree_W_max": "N-1",
+  "mass_quadrature_orders": ["2*N+8", "3*N+17"],
+  "mass_quadrature_weight": "rho^(L+.5)/2",
+  "stiffness_quadrature_weight": "rho^(L-.5)/2",
+  "modal_energy_check": "orthonormal Jacobi(alpha=0,beta=L+.5) polynomial congruence, still represented on common rho nodes",
+  "tolerances": {
+    "common_node_barycentric_vs_modal_D_scaled": 2e-9,
+    "independent_overintegration_scaled": 2e-9,
+    "nodal_IBP_scaled": 2e-9,
+    "modal_IBP_scaled": 2e-9,
+    "strong_weak_polynomial_action_scaled": 2e-9,
+    "wave_energy_matrix_scaled": 2e-9,
+    "sampled_wave_energy_rate_scaled": 2e-9,
+    "modal_mass_identity_scaled": 2e-9,
+    "L0_static_constant_absolute": 1e-10,
+    "origin_flux_absolute_at_zero": 0,
+    "naive_diagonal_common_weight_mass_negative_control_min_relative": 1e-3
+  },
+  "random_polynomial_seed": 20261009,
+  "random_energy_samples_per_case": 8,
+  "matrix_residual_scale": "Frobenius residual/max(1,sum Frobenius norms of independent terms); retain absolute residual too",
+  "wave_rate_scale": "abs(actual+boundary_loss)/max(1,abs(actual),abs(boundary_loss),norm(H z)*norm(J z)); retain unscaled rate",
+  "no_tolerance_changes_without_separate_preserved_attempt": true,
+  "no_actual_Z4c_operator_eigensolve_propagation_or_native_evolution": true
+}
