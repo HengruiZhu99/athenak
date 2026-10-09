@@ -1,0 +1,36 @@
+In file included from /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial_bridge.cpp:2:
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/actual_bridge.cpp:123:211: warning: non-void function does not return a value in all control paths [-Wreturn-type]
+  123 | int FrozenBridgeMain(int argc,char**argv){try{std::cout<<std::setprecision(17);if(argc>1&&std::string(argv[1])=="--batch")Batch();else Local();}catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 1;}}
+      |                                                                                                                                                                                                                   ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial_bridge.cpp:14:1: error: must use 'struct' tag to refer to type 'Point' in this scope
+   14 | Point EvaluatePoint(int J,int m,int channel,int phase,const X3&x,
+      | ^
+      | struct 
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/spatial_dual.hpp:86:8: note: struct 'Point' is hidden by a non-type declaration of 'Point' here
+   86 | Sample Point(const hyp::LayerReference<double>&ref,const std::array<double,3>&x,double k,const std::array<double,3>&n,double kappa){const auto p=ref.At(x[0],x[1],x[2]);Sample s;
+      |        ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial_bridge.cpp:19:72: error: must use 'struct' tag to refer to type 'Point' in this scope
+   19 |   const auto state=LiftPhysical(p,SeedPhysical(J,m,channel,phase,x,w));Point out{};
+      |                                                                        ^
+      |                                                                        struct 
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/spatial_dual.hpp:86:8: note: struct 'Point' is hidden by a non-type declaration of 'Point' here
+   86 | Sample Point(const hyp::LayerReference<double>&ref,const std::array<double,3>&x,double k,const std::array<double,3>&n,double kappa){const auto p=ref.At(x[0],x[1],x[2]);Sample s;
+      |        ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial_bridge.cpp:32:39: error: must use 'struct' tag to refer to type 'Point' in this scope
+   32 | std::array<double,50> PackInput(const Point&p){std::array<double,50>a{};for(int i=0;i<10;++i){a[i]=p.normalized.u[i].v;a[10+i]=p.normalized.u[i].d;a[20+i]=p.normalized.u[i].dd;a[30+i]=p.normalized.v[i].v;a[40+i]=p.normalized.v[i].d;}return a;}
+      |                                       ^
+      |                                       struct 
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/spatial_dual.hpp:86:8: note: struct 'Point' is hidden by a non-type declaration of 'Point' here
+   86 | Sample Point(const hyp::LayerReference<double>&ref,const std::array<double,3>&x,double k,const std::array<double,3>&n,double kappa){const auto p=ref.At(x[0],x[1],x[2]);Sample s;
+      |        ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial_bridge.cpp:33:40: error: must use 'struct' tag to refer to type 'Point' in this scope
+   33 | std::array<double,30> PackSource(const Point&p){std::array<double,30>a{};for(int i=0;i<10;++i){a[i]=p.normalized_rhs.u[i].v;a[10+i]=p.coefficients.c.v*p.normalized_rhs.u[i].d;a[20+i]=p.normalized_rhs.v[i].v;}return a;}
+      |                                        ^
+      |                                        struct 
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/spatial_dual.hpp:86:8: note: struct 'Point' is hidden by a non-type declaration of 'Point' here
+   86 | Sample Point(const hyp::LayerReference<double>&ref,const std::array<double,3>&x,double k,const std::array<double,3>&n,double kappa){const auto p=ref.At(x[0],x[1],x[2]);Sample s;
+      |        ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial_bridge.cpp:67:71: error: 'auto' deduced as 'std::array<double, 50>' in declaration of 'normalized' and deduced as 'std::array<double, 30>' in declaration of 'source'
+   67 |         const auto point=EvaluatePoint(J,0,channel,0,y,wy,true);const auto normalized=PackInput(point),source=PackSource(point);
+      |                                                                       ^               ~~~~~~~~~~~~~~~~        ~~~~~~~~~~~~~~~~~
+1 warning and 5 errors generated.

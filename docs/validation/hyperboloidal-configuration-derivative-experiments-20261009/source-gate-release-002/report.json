@@ -1,0 +1,57 @@
+{
+  "passed_source_configuration_derivative_gate": true,
+  "checks": {
+    "actual_configuration_rows": true,
+    "unused_mixed_extensions_exact_independent": true,
+    "input_raw22_normals": true,
+    "output_raw22_normals": true,
+    "final_h_and_convergence": true,
+    "empty_stderr": true
+  },
+  "numbers": {
+    "configuration_actual_full22_scaled": 3.9876504894905472e-16,
+    "finite_unused_extension_difference": 0,
+    "raw22_normals_scaled": 5.549497778660224e-16,
+    "input_normal_scaled": 1.3335285594754532e-16,
+    "output_normal_scaled": 5.549497778660224e-16,
+    "input_normal_absolute": 1.3335285594754532e-16,
+    "output_normal_absolute": 5.684341886080802e-14,
+    "configuration_derivative_best_h_scaled": 6.15406963974717e-09,
+    "complete_UV_map_derivative_best_h_scaled": 1.0019669205441062e-08
+  },
+  "convergence": {
+    "configuration_derivative_sequences": {
+      "rows": 220,
+      "last_h_max": 6.15406963974717e-09,
+      "fourth_order_evidence_rows": 67,
+      "within_tolerance_order_unclassified_rows": 153,
+      "unresolved_rows": [],
+      "all_final_h_pass": true
+    },
+    "map_derivative_sequences": {
+      "rows": 220,
+      "last_h_max": 1.8247330498736127e-08,
+      "fourth_order_evidence_rows": 71,
+      "within_tolerance_order_unclassified_rows": 149,
+      "unresolved_rows": [],
+      "all_final_h_pass": true
+    }
+  },
+  "receipt": {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial-bridge-release",
+      "--gate"
+    ],
+    "exit_code": 0,
+    "seconds": 0.5818509159999999,
+    "executable_sha256": "eaf81162dabb6cefea329020cfdd47a04ce0a734155a70410d0c38c38ccb7f58",
+    "source_sha256": "65cc3df6ff7655a28beb61aab445055f7d84123c07101e6e4e5cfd6ab4251438",
+    "build_latest_sha256": "dfb56595aec98a7c6a533eb2a8a765f21a6ba5f10f565dbe32a366e3fb88c075",
+    "stdout_sha256": "da02927e9d7784a3bfd9abdc7ee6788d4ee454d0cb26793b16e4a813b8c4f69a",
+    "stderr_bytes": 0,
+    "scope": "Radial first-spatial derivative at m0/single oblique ray. r=.98 binding samples may exceed finite rb but remain inside scri; not the strict-inside-rb constraint-rate gate.",
+    "screen": "Locked center n/T/U along every radial FD ray; O(2) covariance is separately gated."
+  },
+  "source_sha256": "2dec7b7889ee7204b0d2aaa9dca28e0c7f2ae93bcd1fe55ce5175f1ca2fd6cef",
+  "no_radial_operator_generated": true
+}

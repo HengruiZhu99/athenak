@@ -161,3 +161,8 @@ The read-only verifier passes without scratch dependencies or scientific
 reruns. Original reviewed drafts,source/math reviews and historical failures
 are preserved. Executables,objects,NumPy binary arrays and payloads larger
 than1MiB remain hashes/sizes/metadata only.
+
+The subsequent [configuration derivative and reference/frame control](hyperboloidal-configuration-derivative-audit.md)
+validates the actual linearized configuration-source derivative used by the
+planned radial weak/strong energy comparison, with its scope and historical
+binary preservation limitation stated explicitly.

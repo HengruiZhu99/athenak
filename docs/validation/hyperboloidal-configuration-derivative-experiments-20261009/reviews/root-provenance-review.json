@@ -1,0 +1,41 @@
+{
+  "status": "PASS_as_built_source_dependency_output_readback_with_explicit_binary_preservation_limitation",
+  "builds": [
+    {
+      "mode": "release",
+      "compiler_dependencies": 1060,
+      "link_archives": 4,
+      "historical_executable_sha256": "eaf81162dabb6cefea329020cfdd47a04ce0a734155a70410d0c38c38ccb7f58",
+      "old_executable_retained": false,
+      "fresh_executable_readback": false
+    },
+    {
+      "mode": "debug",
+      "compiler_dependencies": 1062,
+      "link_archives": 4,
+      "historical_executable_sha256": "eaee555e728f85b44cb051e5c6fa0469b7078d580423d860da29348877a2b7ba",
+      "old_executable_retained": false,
+      "fresh_executable_readback": false
+    }
+  ],
+  "unique_dependency_and_link_inputs_verified": 1066,
+  "all_compiled_production_headers_match_27c19": true,
+  "numerical_outputs_byte_equal": true,
+  "pointer_reconstruction": [
+    {
+      "mode": "release",
+      "sha256": "dfb56595aec98a7c6a533eb2a8a765f21a6ba5f10f565dbe32a366e3fb88c075",
+      "matches_original_gate_record": true,
+      "method": "Additive reconstruction from retained attempt path, exact receipt hash and historical executable hash; original superseded pointer not rewritten."
+    },
+    {
+      "mode": "debug",
+      "sha256": "7d56102983c08a8b508845661835480aa296cb92144fda13a8a8b8342ec7fde0",
+      "matches_original_gate_record": true,
+      "method": "Additive reconstruction from retained attempt path, exact receipt hash and historical executable hash; original superseded pointer not rewritten."
+    }
+  ],
+  "preservation_error": "Reused builder overwrote both accepted executable working paths before copying them; exact historical binary hashes and scientific source/build/output records remain, but old binaries are no longer locally inspectable. Future unique-path retention is required.",
+  "scope": "Source/configuration derivative only; no actual radial matrix/constraint rate/eigen/propagation admission.",
+  "scientific_rerun_performed": false
+}
