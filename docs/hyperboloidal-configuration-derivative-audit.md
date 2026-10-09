@@ -75,3 +75,7 @@ reruns. Exact reviewed drafts,source/build/dependency records and failed
 attempts are retained; executables,objects,NumPy arrays and payloads larger
 than1MiB are represented only by hashes,sizes and metadata. Historical
 executable hashes retain the explicit preservation limitation above.
+
+The subsequent [coefficient-aware continuum constraint-rate control](hyperboloidal-continuum-constraint-rate-audit.md)
+checks the actual physical8 source/constraint chain in the exact core and at
+transition/collar points, before radial projection or boundary penalty.

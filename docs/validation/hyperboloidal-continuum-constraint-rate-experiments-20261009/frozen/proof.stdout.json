@@ -1,0 +1,85 @@
+{
+  "passed_exact_flat_core_constraint_rate_identity": true,
+  "identity": "C(d) L(d) T = B(d) C(d) T",
+  "raw22_order": [
+    "chi",
+    "gxx",
+    "gxy",
+    "gxz",
+    "gyy",
+    "gyz",
+    "gzz",
+    "P",
+    "Axx",
+    "Axy",
+    "Axz",
+    "Ayy",
+    "Ayz",
+    "Azz",
+    "Lambda_x",
+    "Lambda_y",
+    "Lambda_z",
+    "Theta",
+    "alpha",
+    "beta_x",
+    "beta_y",
+    "beta_z"
+  ],
+  "physical8_order": [
+    "H",
+    "M_x",
+    "M_y",
+    "M_z",
+    "Z_x",
+    "Z_y",
+    "Z_z",
+    "Theta_phys"
+  ],
+  "kappa_input": "arbitrary; numerical driver sets10",
+  "kappa2": 0,
+  "core_gauge": "alpha_t=-3P, beta_t=(3/8)Lambda, no inner restoring",
+  "matrix_dimensions": {
+    "C": [
+      8,
+      22
+    ],
+    "L": [
+      22,
+      22
+    ],
+    "T": [
+      22,
+      20
+    ],
+    "B": [
+      8,
+      8
+    ]
+  },
+  "matched_entries": 160,
+  "exact_nonzero_matched_entries": 0,
+  "formal_raw22_extension_chain_residual": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+  ],
+  "raw_extension_caveat": "C shown in raw22 is the algebraic extension of the tracefree formula; actual off-normal constraints are not asserted equal",
+  "constraint_rate_formulas": [
+    "-2*M_x*d_x - 2*M_y*d_y - 2*M_z*d_z",
+    "-H*d_x/2 + 2*Theta_phys*d_x*kappa_input + Z_x*d_y**2 + Z_x*d_z**2 - Z_y*d_x*d_y - Z_z*d_x*d_z",
+    "-H*d_y/2 + 2*Theta_phys*d_y*kappa_input - Z_x*d_x*d_y + Z_y*d_x**2 + Z_y*d_z**2 - Z_z*d_y*d_z",
+    "-H*d_z/2 + 2*Theta_phys*d_z*kappa_input - Z_x*d_x*d_z - Z_y*d_y*d_z + Z_z*d_x**2 + Z_z*d_y**2",
+    "M_x + Theta_phys*d_x - Z_x*kappa_input",
+    "M_y + Theta_phys*d_y - Z_y*kappa_input",
+    "M_z + Theta_phys*d_z - Z_z*kappa_input",
+    "H/2 - 2*Theta_phys*kappa_input + Z_x*d_x + Z_y*d_y + Z_z*d_z"
+  ],
+  "physical_lift": "chi=-tau/sqrt(3), g=h_STF, A=independent_STF_A; Kphysical=P+2Theta",
+  "scope": "commuting Cartesian continuum differential identity at exact flat reference; no radial/FD/stability theorem",
+  "source_sha256": "d5604436e19ee5f4aae2e720fd5e5b71bb9e40d35ddd556267816278670b45ad"
+}

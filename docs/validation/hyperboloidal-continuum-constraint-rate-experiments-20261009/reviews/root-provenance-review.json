@@ -1,0 +1,55 @@
+{
+  "status": "PASS_read_only_API_build_dependency_retained_binary_and_all_saved_case_arithmetic",
+  "review_HEAD": "5ef1c97d10f17a8af0890e5cb39ac463b25ee084",
+  "scientific_rerun_performed": false,
+  "root_review_source_sha256": "40696bf7d14ffce7306f13e742126b50fd337a3d053e3a2a4fe16ee3f60ded7a",
+  "frozen_index_sha256": "3d4c613a814a8a3325a7f980c2e20dcabf3ea08ddbcb10d42026ddca732d4e2f",
+  "draft_sha256": "5c71cf30c4c607c52482bd50f69fb5b38be93751ffbc863c872cf3e833c91f01",
+  "builds": [
+    {
+      "mode": "release",
+      "attempt": "release-005",
+      "compiler_dependencies": 1062,
+      "link_archives": 4,
+      "compiler_seconds": 1.985850458,
+      "receipt_sha256": "127fecae3ee38485903f1ac1519ad602b6b3bdfa879266a9ae6c2b7a858b5fab",
+      "retained_executable_sha256": "2293e9be6f75042f926f22232039c3c3bdd28826eb9e80061905c272b7adce15",
+      "frozen_executable_readback_matches": true
+    },
+    {
+      "mode": "debug",
+      "attempt": "debug-003",
+      "compiler_dependencies": 1064,
+      "link_archives": 4,
+      "compiler_seconds": 1.1091573339999998,
+      "receipt_sha256": "5fb6913caefeae86f5c52ffef2411e9109d7af9f037f225d8ba73f7d95e04bdc",
+      "retained_executable_sha256": "75193a3b023eb0004f285fabb1a532efd24881db4cb660b3fa96e084a6e95507",
+      "frozen_executable_readback_matches": true
+    }
+  ],
+  "unique_dependency_and_link_inputs": 1068,
+  "compiled_production_headers_matching_27c19": [
+    "src/z4c/hyperboloidal/cartesian_radial.hpp",
+    "src/z4c/hyperboloidal/cmc_reference.hpp",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp",
+    "src/z4c/hyperboloidal/layer_gauge.hpp",
+    "src/z4c/hyperboloidal/layer_reference.hpp",
+    "src/z4c/hyperboloidal/reference_gauge.hpp",
+    "src/z4c/hyperboloidal/spherical_tensor.hpp"
+  ],
+  "full_saved_data_readback": {
+    "command": [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/verify_frozen.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009"
+    ],
+    "seconds": 0.501891292,
+    "exit_code": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "0277fe589008e865a6e9ab74eb9459784a722fec5abe9db8687ebc41e9771abb",
+    "cases": 7896,
+    "files": 117
+  },
+  "source_math_review": "Read exact algebraic-chart core proof, physical8 API and both Cartesian FD drivers; no higher reference jets, primitive off-normal closure, integrated-energy or stability claims. Original launch provenance and Debug permission failure preserved."
+}

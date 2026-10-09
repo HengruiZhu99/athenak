@@ -1,0 +1,99 @@
+{
+  "status": "PASS_read_only_math_source_saved_data_and_draft_review",
+  "reviewer": "/root/literature_gauge",
+  "review_HEAD": "5ef1c97d10f17a8af0890e5cb39ac463b25ee084",
+  "source_sha256": "879dc0b957ca580990e132072055ff3b731d5170be9d37a0888a0bc691c615d0",
+  "input_pins": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/constraint-rate-stage/audit-draft.md",
+      "sha256": "5c71cf30c4c607c52482bd50f69fb5b38be93751ffbc863c872cf3e833c91f01",
+      "bytes": 3627
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/constraint-rate-stage/archive-README.md",
+      "sha256": "22730b4e725d4f935405a320482b42b076db3c11274949bb0993bc40368259ec",
+      "bytes": 2052
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/index.json",
+      "sha256": "3d4c613a814a8a3325a7f980c2e20dcabf3ea08ddbcb10d42026ddca732d4e2f",
+      "bytes": 44298
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/summary.json",
+      "sha256": "dd3879fb64864e1dad4877dd8264cdb88b56778baa006496ce2fe51b626da3d9",
+      "bytes": 14335
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/REPORT.md",
+      "sha256": "e13cce4c8f87ff909c207906bb3784e1c9e0caade5c4769dec026b09e199b0b6",
+      "bytes": 6703
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/verify_frozen.py",
+      "sha256": "125a739752ab11a583f5702ba02afe3be8ec545a297b56cf91bfe07b8b1c16ef",
+      "bytes": 4395
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/prove_flat_core.py",
+      "sha256": "d5604436e19ee5f4aae2e720fd5e5b71bb9e40d35ddd556267816278670b45ad",
+      "bytes": 4271
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/context/boundary/constraint_rate_api.hpp",
+      "sha256": "d60ea8266abebf5263eb78b81997b60af472dc7b1fe102bd6f2c21baca1a6017",
+      "bytes": 4868
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/run_constraint_rates_v2.py",
+      "sha256": "cbd7b341492f5f920ddb3935be1c78e83bcc0a2c7ab6f33e26d23cb28d484f31",
+      "bytes": 22681
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/constraint-rate-stage/independent-saved-readback.stdout.json",
+      "sha256": "0277fe589008e865a6e9ab74eb9459784a722fec5abe9db8687ebc41e9771abb",
+      "bytes": 1558
+    }
+  ],
+  "frozen_index_files_rehashed_by_saved_data_verifier": 117,
+  "frozen_index_bytes": 300712718,
+  "saved_cases_recomputed_by_verifier": 7896,
+  "API_receipts_rechecked_empty_stderr_exit_zero": 23688,
+  "independently_recomputed_order_classification": {
+    "gauge": {
+      "actual": {
+        "classified_at_least_one_pair": 512,
+        "within_tolerance_order_unclassified": 202
+      },
+      "subsidiary": {
+        "within_tolerance_order_unclassified": 714
+      }
+    },
+    "shell": {
+      "actual": {
+        "classified_at_least_one_pair": 2100,
+        "within_tolerance_order_unclassified": 651
+      },
+      "subsidiary": {
+        "classified_at_least_one_pair": 2021,
+        "within_tolerance_order_unclassified": 730
+      }
+    }
+  },
+  "corrections": [],
+  "math_source_scope": [
+    "Core commuting-derivative C(d)L(d)T=B(d)C(d)T identity, physical K=P+2Theta, alpha_t=-3P, beta_t=3Lambda/8 and all kappa signs match the earlier independent source review. The complete trace/determinant tangent T is essential.",
+    "ConstraintRateBatch evaluates DC_ref on the full raw22 source jet without a hidden projection; SubsidiaryBatch retains physical Cartesian H,M,Z,Theta and the frozen coefficient-aware C0 equations.",
+    "Transition/collar h stencils remain strictly inside rb=.98 and differentiate complete sampled functions; no unavailable higher analytic reference jets are invented.",
+    "Saved final/extrapolated discrepancies and all classified/unclassified counts agree. A classified sequence means at least one non-floor increment ratio>=8, not uniform fourth-order convergence over every h.",
+    "Pointwise/sample Euclidean statistics do not define an integrated physical/constraint energy. Selected stationary-reference tests do not establish nonlinear live subsidiary closure, discrete Bianchi, CPBC, exact-scri regularity or stability."
+  ],
+  "provenance_scope": [
+    "Launch and freeze HEADs are distinguished; core/Debug launch context is explicitly reconstructed additively, while FD stages record launch directly.",
+    "The frozen package binds API binaries/source/output and preserves the failed Debug executable-permission launch; exact API compiler/dependency attempt context is being collected separately by root.",
+    "Metadata-only publication must retain explicit omitted-large-payload entries and must not claim full numerical readback from omitted bytes."
+  ],
+  "scientific_kernel_or_SymPy_rerun": false,
+  "generator_spectrum_or_propagation": false,
+  "scope": "Completed continuum point-rate checkpoint only. Radial projection/SAT constraint production, rb=.995 and later wormhole-to-trumpet BH with Minkowski reference remain separate unaccepted gates."
+}

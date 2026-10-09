@@ -1,0 +1,62 @@
+{
+  "scope": "pointwise continuum constraint rates only; no radial assembly/spectrum/evolution",
+  "physical_order": [
+    "H",
+    "Mx",
+    "My",
+    "Mz",
+    "Zx",
+    "Zy",
+    "Zz",
+    "Theta_physical"
+  ],
+  "kappa_input": 10,
+  "kappa2": 0,
+  "reference": {
+    "S": 1,
+    "a": 0.5,
+    "geometry": [
+      0.05,
+      0.95
+    ]
+  },
+  "gauge": "C0 physical-P plus frozen spatial-norm control xi2; unchanged complete reference jets",
+  "radii": [
+    0.15,
+    0.3,
+    0.5,
+    0.7,
+    0.9,
+    0.96,
+    0.975
+  ],
+  "extra_r_if_rb_0995": 0.99,
+  "directions": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.2672612419124244,
+      0.5345224838248488,
+      0.8017837257372732
+    ],
+    [
+      0.5345224838248488,
+      -0.8017837257372732,
+      0.2672612419124244
+    ]
+  ],
+  "h": "min(.002,(rb-r)/4)/2^j, j0..4",
+  "stencil": "61 Cartesian points; standard fourth-order first/diagonal second and composed mixed",
+  "tolerances": {
+    "core": 5e-11,
+    "gauge_initial": 5e-11,
+    "final_rate": 2e-07,
+    "order_floor": 1e-10
+  },
+  "no_omega_rescaling": true,
+  "norm_scope": "Euclidean point comparisons and sample RMS/peaks only; no integrated energy assertion",
+  "source_authorization": "requires explicit API-admission JSON and matching executable/API hashes"
+}

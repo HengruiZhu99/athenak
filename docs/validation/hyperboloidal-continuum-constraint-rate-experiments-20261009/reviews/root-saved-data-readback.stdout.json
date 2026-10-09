@@ -1,0 +1,42 @@
+{
+  "passed_saved_data_readback": true,
+  "verified_index_files": 117,
+  "explicitly_omitted_large_payloads": [],
+  "total_cases": 7896,
+  "stage_checks": {
+    "core": {
+      "cases": 4431,
+      "max_final_scaled_l2_recomputed": 9.443344815751814e-16,
+      "max_extrapolated_scaled_l2_recomputed": 0.0,
+      "max_final_zero_rate_l2": 0.0,
+      "max_initial_constraint_l2": 0.0,
+      "order_status_counts": {}
+    },
+    "gauge": {
+      "cases": 714,
+      "max_final_scaled_l2_recomputed": 1.1358454594426693e-07,
+      "max_extrapolated_scaled_l2_recomputed": 1.1902447320355384e-07,
+      "max_final_zero_rate_l2": 1.1358454594426693e-07,
+      "max_initial_constraint_l2": 0.0,
+      "order_status_counts": {
+        "actual_sequence:classified_at_least_one_pair": 512,
+        "subsidiary_sequence:within_tolerance_order_unclassified": 714,
+        "actual_sequence:within_tolerance_order_unclassified": 202
+      }
+    },
+    "shell": {
+      "cases": 2751,
+      "max_final_scaled_l2_recomputed": 1.9787618738191072e-08,
+      "max_extrapolated_scaled_l2_recomputed": 2.1074959408003147e-08,
+      "max_final_zero_rate_l2": 0.0,
+      "max_initial_constraint_l2": 0.0,
+      "order_status_counts": {
+        "actual_sequence:classified_at_least_one_pair": 2100,
+        "subsidiary_sequence:classified_at_least_one_pair": 2021,
+        "actual_sequence:within_tolerance_order_unclassified": 651,
+        "subsidiary_sequence:within_tolerance_order_unclassified": 730
+      }
+    }
+  },
+  "no_scientific_batch_or_spectral_recomputation": true
+}

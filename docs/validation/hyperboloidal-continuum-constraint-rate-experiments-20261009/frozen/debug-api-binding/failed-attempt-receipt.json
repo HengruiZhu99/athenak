@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "build-layer-research/continuum/finite-rb-constraint-rate-oracle/check_debug_api.py"
+  ],
+  "returncode": 1,
+  "failure": "PermissionError: [Errno 13] Permission denied on retained byte-copy Debug executable",
+  "failure_phase": "one Release manufactured call succeeded; Debug executable spawn failed before any Debug query or completed comparison",
+  "no_scientific_gate_failure": true,
+  "source_sha256": "9fb05a339f2bd81d4a9f5353592954bd6fa5d0e60dcdbd678b4646244b5e0f6a",
+  "debug_sha256": "75193a3b023eb0004f285fabb1a532efd24881db4cb660b3fa96e084a6e95507",
+  "retained_copy_mode": "-rw-r--r--",
+  "remedy": "new v2 script uses hash-identical already executable working Debug; retained copy and failed source remain unchanged"
+}

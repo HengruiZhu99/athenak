@@ -1,0 +1,27 @@
+{
+  "driver_command": [
+    "python3",
+    "build-layer-research/boundary/total-j-finite-rb-control-20261009/run_constraint_rates.py",
+    "--execute",
+    "--exe",
+    "build-layer-research/boundary/total-j-finite-rb-control-20261009/radial-bridge-release",
+    "--authorization",
+    "build-layer-research/boundary/total-j-finite-rb-control-20261009/constraint-rate-api-authorization.json",
+    "--stage",
+    "core",
+    "--rb",
+    ".98",
+    "--j",
+    "0",
+    "1",
+    "2"
+  ],
+  "exec_session_id": 91802,
+  "attempt_creation_utc": "2026-10-09T14:19:56.293519+00:00",
+  "head_reconstructed_from_reflog": "2e0aa3b0d5ade2fef4d86807a4569fef61f6b202",
+  "head_scope": "HEAD was not directly recorded by v1 driver at launch; reconstructed from git reflog with the attempt timestamp. Compiled source is separately pinned by source-before and boundary build receipt.",
+  "source_identity_scope": "Public runtime implementation; current HEAD contains documentation/validation updates.",
+  "git_reflog_at_addendum": "2e0aa3b0 HEAD@{2026-10-09 10:02:14 -0400}: commit: Record negative sigma3 local Fourier control and preserved corrections\n1d533458 HEAD@{2026-10-09 09:47:41 -0400}: commit: Validate regular tensor core action and harmonic constraint sectors\n85419e2f HEAD@{2026-10-09 09:37:47 -0400}: commit: Test joint null and intrinsic-curvature boundary jet tangency\na7260897 HEAD@{2026-10-09 09:23:16 -0400}: commit: Validate full-ball scalar mass and boundary energy controls\n",
+  "driver_sha256": "e20c6de97f5ec82c29600e93e5cf0b53c275ee3771913dab8f77120f7b514ae1",
+  "public_runtime_implementation_commit": "27c19d20696ea6dd4704032c51dfd026218f64f2"
+}

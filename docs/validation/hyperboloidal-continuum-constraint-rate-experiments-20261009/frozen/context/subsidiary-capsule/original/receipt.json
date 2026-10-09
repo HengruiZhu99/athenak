@@ -1,0 +1,128 @@
+{
+  "scope": "Exploratory continuum C_Z4c0 subsidiary identity and coefficient-gradient audit; no production changes/global stability/nonlinear scri closure.",
+  "launch_head": "b37a20f2d7a8ccc42148f1a814a80b2957e17b53",
+  "compiled_runtime_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "source_before": {
+    "build-layer-research/continuum/constraint-propagation/constraint_tangent.cpp": "7528fd067ca21eb7df039e764955263c41b96777e02e47be84b97a45d66107cc",
+    "build-layer-research/continuum/constraint-propagation/subsidiary.hpp": "3d840f2f731ec7fab34579ec2a0132acc4066311b5a4876ae9f484d41f78be54",
+    "build-layer-research/continuum/constraint-propagation/DERIVATION.md": "30782bb87798b051a24bb07acba2d5aaa5713e7f2cd28185a60097c82473b690",
+    "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+    "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+    "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+    "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+    "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+    "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+    "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761"
+  },
+  "source_after": {
+    "build-layer-research/continuum/constraint-propagation/constraint_tangent.cpp": "7528fd067ca21eb7df039e764955263c41b96777e02e47be84b97a45d66107cc",
+    "build-layer-research/continuum/constraint-propagation/subsidiary.hpp": "3d840f2f731ec7fab34579ec2a0132acc4066311b5a4876ae9f484d41f78be54",
+    "build-layer-research/continuum/constraint-propagation/DERIVATION.md": "30782bb87798b051a24bb07acba2d5aaa5713e7f2cd28185a60097c82473b690",
+    "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+    "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+    "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+    "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+    "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+    "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+    "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761"
+  },
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/c++",
+        "-std=c++17",
+        "-O3",
+        "-DNDEBUG",
+        "-DKOKKOS_DEPENDENCE",
+        "-Isrc",
+        "-Ibuild-layer-release",
+        "-Ibuild-layer-release/kokkos",
+        "-Ibuild-layer-release/kokkos/core/src",
+        "-Ikokkos/core/src",
+        "-Ibuild-layer-release/kokkos/containers/src",
+        "-Ikokkos/containers/src",
+        "-Ibuild-layer-release/kokkos/algorithms/src",
+        "-Ikokkos/algorithms/src",
+        "-Ibuild-layer-release/kokkos/simd/src",
+        "-Ikokkos/simd/src",
+        "-isystem",
+        "kokkos/tpls/desul/include",
+        "-isystem",
+        "kokkos/tpls/mdspan/include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/constraint-propagation/constraint_tangent.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/constraint-propagation/constraint_tangent"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/constraint-propagation/constraint_tangent",
+        "5"
+      ],
+      "returncode": 0,
+      "stdout_file": "build-layer-research/continuum/constraint-propagation/tangent-kappa5.json",
+      "stdout_sha256": "d76e67c52529fda696e0547d9b949fe48a4cfbf6a47a2d84849a053c6a7190c9",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/constraint-propagation/constraint_tangent",
+        "10"
+      ],
+      "returncode": 0,
+      "stdout_file": "build-layer-research/continuum/constraint-propagation/tangent-kappa10.json",
+      "stdout_sha256": "590ba1e841316d0ef9b913d4054372a5772d8bf4e6843d0657724091e9d783b2",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/constraint-propagation/constraint_tangent",
+        "5",
+        "--generator-only"
+      ],
+      "returncode": 0,
+      "stdout_file": "build-layer-research/continuum/constraint-propagation/generator-kappa5.json",
+      "stdout_sha256": "ffa9d47e5c0c99f2aff9350f7156966b57292f73e13ea6e93cb1e98b8e46f9b7",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/constraint-propagation/constraint_tangent",
+        "10",
+        "--generator-only"
+      ],
+      "returncode": 0,
+      "stdout_file": "build-layer-research/continuum/constraint-propagation/generator-kappa10.json",
+      "stdout_sha256": "6c552c3dd2675ed71fb6593dafaf97915f1dee7610a52883f5bf41aad0a2524a",
+      "stderr": ""
+    }
+  ],
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "binary_sha256": "cfec1f6cfe394381af1c97285e15779103bb130e975d64d5f9f95cdd939b1fb9",
+  "seconds": 17.163783292
+}
