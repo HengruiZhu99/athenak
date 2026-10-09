@@ -511,7 +511,10 @@ The [native preflight audit](hyperboloidal-reference-wave-map-native-audit.md)
 records the compiled array seam and eight passing stationary-reference/short
 angular-pulse controls with independent binary64 field checks. In the subsequent
 fixed t2 matrix, the N16 wave-map control fails its positive-state guard near
-t=1.367; the other controls continue. Longer acceptance remains open.
+t=1.367. The subsequent [failed-pulse audit](hyperboloidal-reference-wave-map-failure-audit.md)
+records failures of matched C0 N16 and wave-map N24, all 167 saved partial
+observations, and a separate conditional stationary black-hole source analysis.
+The other original controls continue; longer acceptance remains open.
 
 The later acceptance target is a substantial angular gauge disturbance on
 Minkowski followed by a single black hole surviving the inner
