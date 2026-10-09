@@ -1,0 +1,820 @@
+{
+  "scope": "Reviewed regular Cartesian total-J basis and actual linearized C0 physical-P/spatial-norm angular kernel control. No radial PDE operator, boundary stability, eigenvalue or finite-pulse admission.",
+  "compiled_production_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "collection_head": "40d843254ff96a12825f6b82ed06ee2d6853a6cf",
+  "files": {
+    "basis/DERIVATION.md": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/DERIVATION.md",
+      "sha256": "f477192b8ab833c15d99c299814b6eed8fcff7b774f805999b37b61ed12fe936",
+      "bytes": 6012
+    },
+    "basis/basis-data.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/basis-data.json",
+      "sha256": "ddc8c8d91d211aad70a4df4560a75c32807417248abdf025663ad411cfd4e738",
+      "bytes": 326337
+    },
+    "basis/check_basis.py": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/check_basis.py",
+      "sha256": "b8886ac53eb6b9392330b1acb34eb5d353e1310d1e6b96851e208e2402a76b7f",
+      "bytes": 6861
+    },
+    "basis/check_compiled.py": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/check_compiled.py",
+      "sha256": "d5d6e9d6c0c5becae4c9b261ce1cffc525ffe37184407d6bcb97da0f2ca3d513",
+      "bytes": 3554
+    },
+    "basis/compile-debug.stderr": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/compile-debug.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "basis/compile-debug.stdout": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/compile-debug.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "basis/compile-release.stderr": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/compile-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "basis/compile-release.stdout": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/compile-release.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "basis/compiled-check-report.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/compiled-check-report.json",
+      "sha256": "e05970267c35b4399216155bc1ac7614e348336b99c88b75da5d3d67c8916b55",
+      "bytes": 547
+    },
+    "basis/compiled-check.stderr": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/compiled-check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "basis/compiled-check.stdout": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/compiled-check.stdout",
+      "sha256": "e05970267c35b4399216155bc1ac7614e348336b99c88b75da5d3d67c8916b55",
+      "bytes": 547
+    },
+    "basis/environment.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/environment.json",
+      "sha256": "c32fb7f58e3503ce9182fcba08002443317a4c1477f840bc133f077cf62f4b54",
+      "bytes": 537
+    },
+    "basis/freeze_basis.py": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/freeze_basis.py",
+      "sha256": "ab1ff92670e6b0cb7c619b062ba92041af357e6b4d9e3ea076c5870cf1918b8c",
+      "bytes": 3401
+    },
+    "basis/probe-debug.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/probe-debug.json",
+      "sha256": "811a9743598698839bacada3af49fe822ce222ebfbcf60a7e45be86c8ca67095",
+      "bytes": 295834
+    },
+    "basis/probe-debug.stderr": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/probe-debug.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "basis/probe-debug.stdout": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/probe-debug.stdout",
+      "sha256": "811a9743598698839bacada3af49fe822ce222ebfbcf60a7e45be86c8ca67095",
+      "bytes": 295834
+    },
+    "basis/probe-release.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/probe-release.json",
+      "sha256": "811a9743598698839bacada3af49fe822ce222ebfbcf60a7e45be86c8ca67095",
+      "bytes": 295834
+    },
+    "basis/probe-release.stderr": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/probe-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "basis/probe-release.stdout": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/probe-release.stdout",
+      "sha256": "811a9743598698839bacada3af49fe822ce222ebfbcf60a7e45be86c8ca67095",
+      "bytes": 295834
+    },
+    "basis/probe_basis.cpp": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/probe_basis.cpp",
+      "sha256": "c1783cbed9e1132aa889efe0adba3360a588ca22efa0fc2c3e2e21b9f1b3c3fe",
+      "bytes": 3313
+    },
+    "basis/receipt.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/receipt.json",
+      "sha256": "4abacb64603539fe345fae5bf2a8130c8917bf02b659cf411430b9cc17d68065",
+      "bytes": 4693
+    },
+    "basis/reference_conversion.hpp": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/reference_conversion.hpp",
+      "sha256": "c57fb192ae8cc5d2b88270721409721384558c3a0b875348380a4e48d99b19bf",
+      "bytes": 4179
+    },
+    "basis/reviews/boundary-REVIEW.md": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/reviews/boundary-REVIEW.md",
+      "sha256": "8508c262e3b76bc8835643e932dd808b65125ecab10318b1d4f538c9374c0161",
+      "bytes": 4846
+    },
+    "basis/reviews/boundary-review-receipt.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/reviews/boundary-review-receipt.json",
+      "sha256": "40a3824a8b109408bd0587259071fbc2124165422f758f2807cd83d0319122f2",
+      "bytes": 4016
+    },
+    "basis/reviews/root-review.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/reviews/root-review.json",
+      "sha256": "5315c569daee5d87210954bbd06db14891748e25969a3312a2ce157f1fe5952a",
+      "bytes": 2196
+    },
+    "basis/run_basis_gate.py": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/run_basis_gate.py",
+      "sha256": "5f3807e383a53531d7e2a319a86874262803e156b4b5ab76c4f0a002bbc1f8f5",
+      "bytes": 2967
+    },
+    "basis/symbolic-report.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/symbolic-report.json",
+      "sha256": "aeaea5dd49a7c78e722a1963caab532e19e103c3d0453cfabe9501ed436bf196",
+      "bytes": 9068
+    },
+    "basis/symbolic.stderr": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/symbolic.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "basis/symbolic.stdout": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/symbolic.stdout",
+      "sha256": "e5fafb28aecad6ede8edbc11ad158d41ac7823a389477fbf77c2fcc08f52974b",
+      "bytes": 319
+    },
+    "basis/total_j_basis.hpp": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/total_j_basis.hpp",
+      "sha256": "32ca43fc4e7af4023c6af0531d9f540d0738902f2ac082604493dd7ac5f8261e",
+      "bytes": 8197
+    },
+    "basis/total_j_basis.py": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/total_j_basis.py",
+      "sha256": "289b7b522fdca778c7206614f30d97253384578cac232149703959fe61f2c384",
+      "bytes": 7865
+    },
+    "basis/index.json": {
+      "source": "build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/index.json",
+      "sha256": "414f241e986e0c46b7d94820fb060b704166d973284854c53d2e8c64ee6c489e",
+      "bytes": 5717
+    },
+    "actual-angular/REPORT.md": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/REPORT.md",
+      "sha256": "e38c524ab4b1a1892a9d08e0ecf5738e22c0300ee5195a4b62c7df827c6cafb1",
+      "bytes": 9653
+    },
+    "actual-angular/all_m_data.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/all_m_data.hpp",
+      "sha256": "b3b5b1a6fda834de05d17501f8912fd319bb91c02c4b1a9df5b92c5d4fa1b438",
+      "bytes": 43067
+    },
+    "actual-angular/angular-analysis-001.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-analysis-001.json",
+      "sha256": "8bb5ce7759a810cb5d3e11d31c32e2032abd0b4b017fa55dfc48f6772665b75e",
+      "bytes": 109156
+    },
+    "actual-angular/angular-analysis-002.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-analysis-002.json",
+      "sha256": "cc2348109e7d16d11fbe492b8b6cfa14949d1ceee037593f545a8628eb5b2586",
+      "bytes": 109152
+    },
+    "actual-angular/angular-plan.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-plan.json",
+      "sha256": "91ef3546718754944334536b6881a7de82ee7d23c75ba0e1e15f8e2c611c8b14",
+      "bytes": 3013
+    },
+    "actual-angular/angular-queries.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-queries.json",
+      "sha256": "08dd3344dad539133b599a987e99e884cbf2445dc2ea97c5fcce6e839126d151",
+      "bytes": 300594
+    },
+    "actual-angular/angular-runtime.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-runtime.json",
+      "sha256": "2c744e3ca1fcebe8a9d6654f88250e6485000ba600eea61b016ab66808288a06",
+      "bytes": 569
+    },
+    "actual-angular/angular-stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/angular-warning-free.stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-warning-free.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/angular-warning-free.stdout": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-warning-free.stdout",
+      "sha256": "cd55920ab809768a2573a1210a779ccb1435acd2829ed97da65efbb9b5e0c1ec",
+      "bytes": 1951
+    },
+    "actual-angular/baseline_dual.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/baseline_dual.hpp",
+      "sha256": "b69020222be0ebe1d0cede0ac189918d71dc77114b9a3fdf4e6dd3c5ed946d2c",
+      "bytes": 1821
+    },
+    "actual-angular/bridge.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/bridge.cpp",
+      "sha256": "825d5219d18a0548e82d4692ee0301a78b91d470be58741e1d25962dace31222",
+      "bytes": 22416
+    },
+    "actual-angular/build-attempts/debug-001/all_m_data.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/all_m_data.hpp",
+      "sha256": "b3b5b1a6fda834de05d17501f8912fd319bb91c02c4b1a9df5b92c5d4fa1b438",
+      "bytes": 43067
+    },
+    "actual-angular/build-attempts/debug-001/baseline_dual.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/baseline_dual.hpp",
+      "sha256": "b69020222be0ebe1d0cede0ac189918d71dc77114b9a3fdf4e6dd3c5ed946d2c",
+      "bytes": 1821
+    },
+    "actual-angular/build-attempts/debug-001/bridge.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/bridge.cpp",
+      "sha256": "825d5219d18a0548e82d4692ee0301a78b91d470be58741e1d25962dace31222",
+      "bytes": 22416
+    },
+    "actual-angular/build-attempts/debug-001/build.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/build.py",
+      "sha256": "fb529ef0930695cfa9a3a427fee19a18b2d8f3d0c35ba1e02938e534e5529af9",
+      "bytes": 3301
+    },
+    "actual-angular/build-attempts/debug-001/dependencies.make": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/dependencies.make",
+      "sha256": "e8f3252eeb5ec9f7934a6f4053f43eb612345961569a7896d4d0901e4140ae1b",
+      "bytes": 102147
+    },
+    "actual-angular/build-attempts/debug-001/dependency.stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/dependency.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/debug-001/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/receipt.json",
+      "sha256": "964b0923db2adaa7d306e32a948807696ca40e8b087543ccd948b80b5e2f0eda",
+      "bytes": 183750
+    },
+    "actual-angular/build-attempts/debug-001/stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/debug-001/stdout": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/debug-001/tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/debug-001/tolerances.json",
+      "sha256": "3d61b6201c753e6242ebbf7417454c3bc2251129dd3ef97c5948635bd6179fd1",
+      "bytes": 1378
+    },
+    "actual-angular/build-attempts/release-001/all_m_data.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/all_m_data.hpp",
+      "sha256": "b3b5b1a6fda834de05d17501f8912fd319bb91c02c4b1a9df5b92c5d4fa1b438",
+      "bytes": 43067
+    },
+    "actual-angular/build-attempts/release-001/baseline_dual.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/baseline_dual.hpp",
+      "sha256": "b69020222be0ebe1d0cede0ac189918d71dc77114b9a3fdf4e6dd3c5ed946d2c",
+      "bytes": 1821
+    },
+    "actual-angular/build-attempts/release-001/bridge.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/bridge.cpp",
+      "sha256": "666acb4323a76ed5b7df8c71eff54eba269e3488017d26a4906699f6bdde19b5",
+      "bytes": 16670
+    },
+    "actual-angular/build-attempts/release-001/build.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/build.py",
+      "sha256": "fb529ef0930695cfa9a3a427fee19a18b2d8f3d0c35ba1e02938e534e5529af9",
+      "bytes": 3301
+    },
+    "actual-angular/build-attempts/release-001/dependencies.make": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/dependencies.make",
+      "sha256": "6912d8a3303b3793bb612770f8bc408f9c2d8180002032a67c0f3ff37666b822",
+      "bytes": 101986
+    },
+    "actual-angular/build-attempts/release-001/dependency.stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/dependency.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/release-001/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/receipt.json",
+      "sha256": "3002577439c6844082713694195f958f7d99a78e9840b5f23157a00cc3dda5d3",
+      "bytes": 183326
+    },
+    "actual-angular/build-attempts/release-001/stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/release-001/stdout": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/release-001/tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-001/tolerances.json",
+      "sha256": "3d61b6201c753e6242ebbf7417454c3bc2251129dd3ef97c5948635bd6179fd1",
+      "bytes": 1378
+    },
+    "actual-angular/build-attempts/release-002/all_m_data.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/all_m_data.hpp",
+      "sha256": "b3b5b1a6fda834de05d17501f8912fd319bb91c02c4b1a9df5b92c5d4fa1b438",
+      "bytes": 43067
+    },
+    "actual-angular/build-attempts/release-002/baseline_dual.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/baseline_dual.hpp",
+      "sha256": "b69020222be0ebe1d0cede0ac189918d71dc77114b9a3fdf4e6dd3c5ed946d2c",
+      "bytes": 1821
+    },
+    "actual-angular/build-attempts/release-002/bridge.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/bridge.cpp",
+      "sha256": "825d5219d18a0548e82d4692ee0301a78b91d470be58741e1d25962dace31222",
+      "bytes": 22416
+    },
+    "actual-angular/build-attempts/release-002/build.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/build.py",
+      "sha256": "fb529ef0930695cfa9a3a427fee19a18b2d8f3d0c35ba1e02938e534e5529af9",
+      "bytes": 3301
+    },
+    "actual-angular/build-attempts/release-002/dependencies.make": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/dependencies.make",
+      "sha256": "6912d8a3303b3793bb612770f8bc408f9c2d8180002032a67c0f3ff37666b822",
+      "bytes": 101986
+    },
+    "actual-angular/build-attempts/release-002/dependency.stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/dependency.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/release-002/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/receipt.json",
+      "sha256": "ba97b5c2fcf3b05ca74a4e858a1a7c3f6ffd2f7bde0a455bcb66d5ec0169221e",
+      "bytes": 183326
+    },
+    "actual-angular/build-attempts/release-002/stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/release-002/stdout": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/build-attempts/release-002/tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-attempts/release-002/tolerances.json",
+      "sha256": "3d61b6201c753e6242ebbf7417454c3bc2251129dd3ef97c5948635bd6179fd1",
+      "bytes": 1378
+    },
+    "actual-angular/build-debug-latest.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-debug-latest.json",
+      "sha256": "dacec9cd60660529b9f993b149cb97ebafaf751deb343c926468ce9442ae262d",
+      "bytes": 321
+    },
+    "actual-angular/build-release-latest.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build-release-latest.json",
+      "sha256": "71835ffbe7c3145e479fda675d0caab3bf4de515f34386eef6500b18a8e285f8",
+      "bytes": 323
+    },
+    "actual-angular/build.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/build.py",
+      "sha256": "fb529ef0930695cfa9a3a427fee19a18b2d8f3d0c35ba1e02938e534e5529af9",
+      "bytes": 3301
+    },
+    "actual-angular/check_local.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/check_local.py",
+      "sha256": "d60a87262fd75148bf60d88c8018c521f432e3007bddd6325bdb837394a6979f",
+      "bytes": 4442
+    },
+    "actual-angular/core-oracle-attempts/debug/build.stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/debug/build.stderr",
+      "sha256": "dc9252d91521ca5b7c7b416b5f98054dedec7e3cae31ed67604a2ac2c9634998",
+      "bytes": 782
+    },
+    "actual-angular/core-oracle-attempts/debug/build.stdout": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/debug/build.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/core-oracle-attempts/debug/core_oracle.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/debug/core_oracle.cpp",
+      "sha256": "3c695e77e1876c230235c5cb0dfb11f1fda39ec1d2a63b4e3061671e857bc973",
+      "bytes": 3182
+    },
+    "actual-angular/core-oracle-attempts/debug/dependencies.make": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/debug/dependencies.make",
+      "sha256": "0ea4003658e8c90c17dcb6389ebd1da05ff808685a754133b67ce10e85ae6f7d",
+      "bytes": 102270
+    },
+    "actual-angular/core-oracle-attempts/debug/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/debug/receipt.json",
+      "sha256": "4f84dbbaebffc62a964d21a0b6c69060917a29f9c9315c87c877d96dd72e76e4",
+      "bytes": 181973
+    },
+    "actual-angular/core-oracle-attempts/debug/run_core_oracle.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/debug/run_core_oracle.py",
+      "sha256": "4331c16afeb6f90e478b8275b2f882c9b6a166706a0c87e6a5d2b6184ba781eb",
+      "bytes": 2292
+    },
+    "actual-angular/core-oracle-attempts/debug/stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/debug/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/core-oracle-attempts/debug/stdout.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/debug/stdout.json",
+      "sha256": "b903c4c90e695a0fd230b3c5f169d622b5c0d6bc97e57f6e6695b64a8d87f1d9",
+      "bytes": 217
+    },
+    "actual-angular/core-oracle-attempts/release/build.stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/release/build.stderr",
+      "sha256": "dc9252d91521ca5b7c7b416b5f98054dedec7e3cae31ed67604a2ac2c9634998",
+      "bytes": 782
+    },
+    "actual-angular/core-oracle-attempts/release/build.stdout": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/release/build.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/core-oracle-attempts/release/core_oracle.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/release/core_oracle.cpp",
+      "sha256": "3c695e77e1876c230235c5cb0dfb11f1fda39ec1d2a63b4e3061671e857bc973",
+      "bytes": 3182
+    },
+    "actual-angular/core-oracle-attempts/release/dependencies.make": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/release/dependencies.make",
+      "sha256": "4886f16effa3e7bd72bb36bfb4c5a4e7773cdb58e7c6d3d22ca490b043b0ead0",
+      "bytes": 102109
+    },
+    "actual-angular/core-oracle-attempts/release/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/release/receipt.json",
+      "sha256": "8a1ca3d9f810ca91c69e5789c08e319929e681a5f141a8de17a910038c3f3781",
+      "bytes": 181600
+    },
+    "actual-angular/core-oracle-attempts/release/run_core_oracle.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/release/run_core_oracle.py",
+      "sha256": "4331c16afeb6f90e478b8275b2f882c9b6a166706a0c87e6a5d2b6184ba781eb",
+      "bytes": 2292
+    },
+    "actual-angular/core-oracle-attempts/release/stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/release/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/core-oracle-attempts/release/stdout.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core-oracle-attempts/release/stdout.json",
+      "sha256": "b903c4c90e695a0fd230b3c5f169d622b5c0d6bc97e57f6e6695b64a8d87f1d9",
+      "bytes": 217
+    },
+    "actual-angular/core_oracle.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/core_oracle.cpp",
+      "sha256": "3c695e77e1876c230235c5cb0dfb11f1fda39ec1d2a63b4e3061671e857bc973",
+      "bytes": 3182
+    },
+    "actual-angular/environment.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/environment.json",
+      "sha256": "afcbf01f0e9a83fe2f066501262d1d199366394471b08c47622387e9561b257d",
+      "bytes": 520
+    },
+    "actual-angular/freeze.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/freeze.py",
+      "sha256": "aa025ed7a8bb51661a44bf0e68e6a6cfa6cc4e0524f276b0338ac094a560a4f1",
+      "bytes": 6947
+    },
+    "actual-angular/history/first-analysis-matmul-warnings/angular-analysis-001.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/history/first-analysis-matmul-warnings/angular-analysis-001.json",
+      "sha256": "8bb5ce7759a810cb5d3e11d31c32e2032abd0b4b017fa55dfc48f6772665b75e",
+      "bytes": 109156
+    },
+    "actual-angular/history/first-analysis-matmul-warnings/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/history/first-analysis-matmul-warnings/receipt.json",
+      "sha256": "6d50f5b35e32e2e7e7dbd0c4deaf14c942d34d1eef0f051b75a4290f7794378b",
+      "bytes": 765
+    },
+    "actual-angular/history/first-analysis-matmul-warnings/run_angular.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/history/first-analysis-matmul-warnings/run_angular.py",
+      "sha256": "c3000909686d5bb902aeb8a64df5703db9f025286fa6e7326b1ade59f0d3ea34",
+      "bytes": 9606
+    },
+    "actual-angular/history/freeze-byte-equality-assertion/REPORT.md": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/history/freeze-byte-equality-assertion/REPORT.md",
+      "sha256": "0f51384d3ff2ed69f33fa50bea7b11eb74f8ac79a35cf43f778515633907613e",
+      "bytes": 9322
+    },
+    "actual-angular/history/freeze-byte-equality-assertion/freeze.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/history/freeze-byte-equality-assertion/freeze.py",
+      "sha256": "7b8785ac7dcb388d218df1bff6e11edff92aa7869c52e742e387e16995ca0042",
+      "bytes": 6876
+    },
+    "actual-angular/history/freeze-byte-equality-assertion/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/history/freeze-byte-equality-assertion/receipt.json",
+      "sha256": "466d373fd50bdfe0cbbcf7feeee4acff37aa5e58d84699e8c314c2a783d85315",
+      "bytes": 10517
+    },
+    "actual-angular/inputs/basis/basis-data.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/basis/basis-data.json",
+      "sha256": "ddc8c8d91d211aad70a4df4560a75c32807417248abdf025663ad411cfd4e738",
+      "bytes": 326337
+    },
+    "actual-angular/inputs/basis/reference_conversion.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/basis/reference_conversion.hpp",
+      "sha256": "c57fb192ae8cc5d2b88270721409721384558c3a0b875348380a4e48d99b19bf",
+      "bytes": 4179
+    },
+    "actual-angular/inputs/basis/total_j_basis.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/basis/total_j_basis.hpp",
+      "sha256": "32ca43fc4e7af4023c6af0531d9f540d0738902f2ac082604493dd7ac5f8261e",
+      "bytes": 8197
+    },
+    "actual-angular/inputs/basis-index.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/basis-index.json",
+      "sha256": "414f241e986e0c46b7d94820fb060b704166d973284854c53d2e8c64ee6c489e",
+      "bytes": 5717
+    },
+    "actual-angular/inputs/frozen-full20.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/frozen-full20.cpp",
+      "sha256": "7f73bbe8f59060ab59d9060ceb5e37e12c4dbb2e92acba03ec31bcea5bf6414f",
+      "bytes": 5504
+    },
+    "actual-angular/inputs/held/API-CONTRACT.md": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/held/API-CONTRACT.md",
+      "sha256": "8f6595c70d89a338cf6907d630c1c1c8a1252bb46294e2a287e90e5d20cbe6b8",
+      "bytes": 3513
+    },
+    "actual-angular/inputs/held/RECIPE.md": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/held/RECIPE.md",
+      "sha256": "2d122f4cf85eca3c5fad6eaf7135918f5277ac4037d91e3c26e57dc48892350b",
+      "bytes": 10516
+    },
+    "actual-angular/inputs/held/admission.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/held/admission.json",
+      "sha256": "bb8db333ecae27ac7c6581b49cdbe6cc5ad02fc2ede4c7ccccfdf255e2097742",
+      "bytes": 952
+    },
+    "actual-angular/inputs/held/preparation-receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/held/preparation-receipt.json",
+      "sha256": "bf79cca0eb151c56c955e5390c3b12ef0568c615cb129fa507aff0ef6cad50e9",
+      "bytes": 2254
+    },
+    "actual-angular/inputs/held/source-pins.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/held/source-pins.json",
+      "sha256": "156fcf4af720616e0b16a94a25acc3013acb447f0f98754568dc220a2d45e1e2",
+      "bytes": 11394
+    },
+    "actual-angular/inputs/root-local-release.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/inputs/root-local-release.json",
+      "sha256": "0c4d415d79e6bb50acfe6f0d6262c4bcda263a537b98221282931cede87c742c",
+      "bytes": 1904
+    },
+    "actual-angular/local-attempts/001/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/001/receipt.json",
+      "sha256": "3b5eae2b40ec13fa659cf7df6ebac7f4d121a90e15179064cea53a973c06ecc3",
+      "bytes": 379
+    },
+    "actual-angular/local-attempts/001/stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/001/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/local-attempts/001/stdout.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/001/stdout.json",
+      "sha256": "561de8f30d8da1a70465a34e48ecf0c52ef3412bc77e49cbd6aef2f495f8ccf9",
+      "bytes": 28767
+    },
+    "actual-angular/local-attempts/debug-001/bridge.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/debug-001/bridge.cpp",
+      "sha256": "825d5219d18a0548e82d4692ee0301a78b91d470be58741e1d25962dace31222",
+      "bytes": 22416
+    },
+    "actual-angular/local-attempts/debug-001/check_local.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/debug-001/check_local.py",
+      "sha256": "d60a87262fd75148bf60d88c8018c521f432e3007bddd6325bdb837394a6979f",
+      "bytes": 4442
+    },
+    "actual-angular/local-attempts/debug-001/local-supplement-tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/debug-001/local-supplement-tolerances.json",
+      "sha256": "333b5ca9d3f1f390d48fe67937d4b64db814df0141dc6981c6debea71d295b4d",
+      "bytes": 496
+    },
+    "actual-angular/local-attempts/debug-001/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/debug-001/receipt.json",
+      "sha256": "72f0dcdab7c0350d6bb374b810c25fa1a0ab80ebbbde1d4e53ba860d4070f744",
+      "bytes": 1538
+    },
+    "actual-angular/local-attempts/debug-001/stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/debug-001/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/local-attempts/debug-001/stdout.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/debug-001/stdout.json",
+      "sha256": "1c699e80c9b07f2a0572dc2a5b0c3e97b0797833669d8357a458131744a47943",
+      "bytes": 30806
+    },
+    "actual-angular/local-attempts/debug-001/tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/debug-001/tolerances.json",
+      "sha256": "3d61b6201c753e6242ebbf7417454c3bc2251129dd3ef97c5948635bd6179fd1",
+      "bytes": 1378
+    },
+    "actual-angular/local-attempts/release-001/bridge.cpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/release-001/bridge.cpp",
+      "sha256": "825d5219d18a0548e82d4692ee0301a78b91d470be58741e1d25962dace31222",
+      "bytes": 22416
+    },
+    "actual-angular/local-attempts/release-001/check_local.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/release-001/check_local.py",
+      "sha256": "d60a87262fd75148bf60d88c8018c521f432e3007bddd6325bdb837394a6979f",
+      "bytes": 4442
+    },
+    "actual-angular/local-attempts/release-001/local-supplement-tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/release-001/local-supplement-tolerances.json",
+      "sha256": "333b5ca9d3f1f390d48fe67937d4b64db814df0141dc6981c6debea71d295b4d",
+      "bytes": 496
+    },
+    "actual-angular/local-attempts/release-001/receipt.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/release-001/receipt.json",
+      "sha256": "33d839533c2199c9d64392d027421f0d32b113845327ae6e69175d7023a284df",
+      "bytes": 1532
+    },
+    "actual-angular/local-attempts/release-001/stderr": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/release-001/stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "actual-angular/local-attempts/release-001/stdout.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/release-001/stdout.json",
+      "sha256": "c60955cdf47a897420e49ffb7c4d5e400d2acd4c637ccea99ccc4c505b1b5ed6",
+      "bytes": 30809
+    },
+    "actual-angular/local-attempts/release-001/tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-attempts/release-001/tolerances.json",
+      "sha256": "3d61b6201c753e6242ebbf7417454c3bc2251129dd3ef97c5948635bd6179fd1",
+      "bytes": 1378
+    },
+    "actual-angular/local-debug-latest.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-debug-latest.json",
+      "sha256": "a1cde36758074bf23b769e66cee83bb1f1a176126dde3bdc994ba656d2d170ee",
+      "bytes": 264
+    },
+    "actual-angular/local-release-latest.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-release-latest.json",
+      "sha256": "821efe0f0c69f7f7c40b16daed86f982af647de40829b0a26b222fccdc34302a",
+      "bytes": 266
+    },
+    "actual-angular/local-supplement-tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/local-supplement-tolerances.json",
+      "sha256": "333b5ca9d3f1f390d48fe67937d4b64db814df0141dc6981c6debea71d295b4d",
+      "bytes": 496
+    },
+    "actual-angular/preparation.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/preparation.json",
+      "sha256": "b432e9e9fb72a0bb3234db10f8db7df395a952ee5e060276dec35c2beb2b700f",
+      "bytes": 3231
+    },
+    "actual-angular/prepare.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/prepare.py",
+      "sha256": "294ab3f6a9153ea17edaa9c0262434e4c74b5d62b4a5a5adf4b2a6e226cd670d",
+      "bytes": 5557
+    },
+    "actual-angular/release-debug-numeric-comparison.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/release-debug-numeric-comparison.json",
+      "sha256": "466d373fd50bdfe0cbbcf7feeee4acff37aa5e58d84699e8c314c2a783d85315",
+      "bytes": 10517
+    },
+    "actual-angular/run_angular.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/run_angular.py",
+      "sha256": "15d28cef89fa43a5ecd8b548d39ee91a4d82c1e2abd2e13def9a4125c85514aa",
+      "bytes": 9923
+    },
+    "actual-angular/run_core_oracle.py": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/run_core_oracle.py",
+      "sha256": "4331c16afeb6f90e478b8275b2f882c9b6a166706a0c87e6a5d2b6184ba781eb",
+      "bytes": 2292
+    },
+    "actual-angular/source-review.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/source-review.json",
+      "sha256": "49e62677f41d8f072718538a8fb5d201fde68b93cf3bb5d009730d00716942be",
+      "bytes": 1019
+    },
+    "actual-angular/tolerances.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/tolerances.json",
+      "sha256": "3d61b6201c753e6242ebbf7417454c3bc2251129dd3ef97c5948635bd6179fd1",
+      "bytes": 1378
+    },
+    "actual-angular/warning-free-control.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/warning-free-control.json",
+      "sha256": "036cad9c8f5548fd406bd61558230820a78461dee9a5cdc269280e6ec55211e6",
+      "bytes": 5163
+    },
+    "actual-angular/compiled-sources/external-research/continuum/discrete-bianchi/immutable-discrete-bulk-20261009/dual_helpers.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/external-research/continuum/discrete-bianchi/immutable-discrete-bulk-20261009/dual_helpers.hpp",
+      "sha256": "137b3764da923bbd7fe73a29587a413151fbc92c00b656e9c19b2c95931e9bb3",
+      "bytes": 6721
+    },
+    "actual-angular/compiled-sources/external-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/external-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+      "sha256": "cc83d40e1ee3fc6da0baa6be31069b200d9f6ac1ec0ecca0f448208212ef64fe",
+      "bytes": 1616
+    },
+    "actual-angular/compiled-sources/external-research/continuum/preferred/native-overlay/spatial-norm-family/spatial_norm_control.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/external-research/continuum/preferred/native-overlay/spatial-norm-family/spatial_norm_control.hpp",
+      "sha256": "c44d0f2b3940d94d77f9b6c920401d2b1eb7b20dbee67a160e873a5a604781ae",
+      "bytes": 2211
+    },
+    "actual-angular/compiled-sources/production/src/z4c/hyperboloidal/cartesian_radial.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/production/src/z4c/hyperboloidal/cartesian_radial.hpp",
+      "sha256": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+      "bytes": 3396
+    },
+    "actual-angular/compiled-sources/production/src/z4c/hyperboloidal/cmc_reference.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/production/src/z4c/hyperboloidal/cmc_reference.hpp",
+      "sha256": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+      "bytes": 3201
+    },
+    "actual-angular/compiled-sources/production/src/z4c/hyperboloidal/conformal_constraints.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/production/src/z4c/hyperboloidal/conformal_constraints.hpp",
+      "sha256": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+      "bytes": 9049
+    },
+    "actual-angular/compiled-sources/production/src/z4c/hyperboloidal/conformal_rhs.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/production/src/z4c/hyperboloidal/conformal_rhs.hpp",
+      "sha256": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+      "bytes": 11906
+    },
+    "actual-angular/compiled-sources/production/src/z4c/hyperboloidal/layer_gauge.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/production/src/z4c/hyperboloidal/layer_gauge.hpp",
+      "sha256": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+      "bytes": 6735
+    },
+    "actual-angular/compiled-sources/production/src/z4c/hyperboloidal/layer_reference.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/production/src/z4c/hyperboloidal/layer_reference.hpp",
+      "sha256": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+      "bytes": 9343
+    },
+    "actual-angular/compiled-sources/production/src/z4c/hyperboloidal/reference_gauge.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/production/src/z4c/hyperboloidal/reference_gauge.hpp",
+      "sha256": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+      "bytes": 5142
+    },
+    "actual-angular/compiled-sources/production/src/z4c/hyperboloidal/spherical_tensor.hpp": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/compiled-sources/production/src/z4c/hyperboloidal/spherical_tensor.hpp",
+      "sha256": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+      "bytes": 5093
+    },
+    "actual-angular/index.json": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/index.json",
+      "sha256": "b4131aa02f093b7744d3de1b600e829b7213a59779672978bd84c71f6912c513",
+      "bytes": 26822
+    },
+    "root-review/root-angular-review.json": {
+      "source": "build-layer-research/total-j-stage/root-angular-review.json",
+      "sha256": "f73be0e144b4ae4a3adfc04742d099264d0b57081827ed290d92388e25005851",
+      "bytes": 1592
+    },
+    "root-review/root-build-pin-readback.json": {
+      "source": "build-layer-research/total-j-stage/root-build-pin-readback.json",
+      "sha256": "e262547e9d54c862c791785bc464dcc23efc0a10d5ea2b77b0714e9d6b3efe47",
+      "bytes": 311
+    },
+    "root-review/independent-draft-review.json": {
+      "source": "build-layer-research/total-j-stage/independent-draft-review.json",
+      "sha256": "c853b8496562338038be2b72458c2d624d8d4aee07329beea934eb898b61147b",
+      "bytes": 3302
+    },
+    "README.md": {
+      "source": "build-layer-research/total-j-stage/archive-README.md",
+      "sha256": "00af958d04bd054498bd79b382cf7eac93600ff948b2b844f29380851ac9ee38",
+      "bytes": 2006
+    },
+    "collect_total_j_stage.py": {
+      "source": "build-layer-research/total-j-stage/collect_total_j_stage.py",
+      "sha256": "fd71fb5fa4dd1386bfe13e8c3a3c8d2c4fe9abbb1d8ee4d75012108d7e96acf7",
+      "bytes": 4460
+    },
+    "verify_archive.py": {
+      "source": "docs/validation/hyperboloidal-constraint-propagation-experiments-20261009/verify_constraint_archive.py",
+      "sha256": "204735f24c55568198485556721bb732196bad36daf064261f033a8494b17607",
+      "bytes": 1323
+    }
+  },
+  "omitted_large_payloads": {
+    "actual-angular/angular-coefficients.npz": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-coefficients.npz",
+      "sha256": "ae13994adcadd8f68e90c371345f7366faf8aa3ca4cf10eb1bb5322d75d8814a",
+      "bytes": 193309
+    },
+    "actual-angular/history/first-analysis-matmul-warnings/angular-coefficients.npz": {
+      "source": "build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/history/first-analysis-matmul-warnings/angular-coefficients.npz",
+      "sha256": "ae13994adcadd8f68e90c371345f7366faf8aa3ca4cf10eb1bb5322d75d8814a",
+      "bytes": 193309
+    }
+  },
+  "large_artifacts": "Metadata/hashes only in original copied indexes and receipts."
+}

@@ -1,0 +1,28 @@
+{
+  "scope": "Read-only root mathematical/source review before freeze. No PDE kernel, radial operator, boundary prescription or evolution admitted by this record.",
+  "reviewed_files": {
+    "DERIVATION.md": "f477192b8ab833c15d99c299814b6eed8fcff7b774f805999b37b61ed12fe936",
+    "total_j_basis.py": "289b7b522fdca778c7206614f30d97253384578cac232149703959fe61f2c384",
+    "check_basis.py": "b8886ac53eb6b9392330b1acb34eb5d353e1310d1e6b96851e208e2402a76b7f",
+    "total_j_basis.hpp": "32ca43fc4e7af4023c6af0531d9f540d0738902f2ac082604493dd7ac5f8261e",
+    "reference_conversion.hpp": "c57fb192ae8cc5d2b88270721409721384558c3a0b875348380a4e48d99b19bf",
+    "probe_basis.cpp": "c1783cbed9e1132aa889efe0adba3360a588ca22efa0fc2c3e2e21b9f1b3c3fe",
+    "check_compiled.py": "d5d6e9d6c0c5becae4c9b261ce1cffc525ffe37184407d6bcb97da0f2ca3d513",
+    "run_basis_gate.py": "5f3807e383a53531d7e2a319a86874262803e156b4b5ab76c4f0a002bbc1f8f5",
+    "basis-data.json": "ddc8c8d91d211aad70a4df4560a75c32807417248abdf025663ad411cfd4e738",
+    "symbolic-report.json": "aeaea5dd49a7c78e722a1963caab532e19e103c3d0453cfabe9501ed436bf196",
+    "compiled-check-report.json": "e05970267c35b4399216155bc1ac7614e348336b99c88b75da5d3d67c8916b55",
+    "receipt.json": "4abacb64603539fe345fae5bf2a8130c8917bf02b659cf411430b9cc17d68065"
+  },
+  "checks": [
+    "CG solid harmonics and differential SO(3) generators consistent; m0 phase and conjugacy consistent",
+    "J0/J1/J2 channel counts 8/16/20 retain physical metric trace and STF sectors",
+    "Polynomial W(rho) jets avoid origin division and retain complete Cartesian derivatives",
+    "Metric lift enforces determinant tangent; A lift includes nonzero reference-A inverse-metric variation",
+    "Generic matrix cofactor/inverse and spatial product/inverse rules checked against independent formulas",
+    "Existing exact symbolic and independently differentiated compiled-oracle receipts checked; Release/ASan-UBSan outputs byte equal"
+  ],
+  "corrections_required": [],
+  "source_unchanged": true,
+  "admissible_next_step": "Freeze these exact basis bytes in a fresh immutable destination. Scientific kernel work requires a separate release after the second review."
+}

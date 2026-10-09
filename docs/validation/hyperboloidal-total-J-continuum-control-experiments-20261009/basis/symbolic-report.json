@@ -1,0 +1,566 @@
+{
+  "passed_symbolic_harmonic_basis": true,
+  "checks": {
+    "norm": 69,
+    "J2": 69,
+    "Jz": 69,
+    "conjugacy": 69,
+    "parity": 69,
+    "homogeneity": 69,
+    "STF": 35,
+    "m0_orthogonality": 57
+  },
+  "spin_normalization_checks": [
+    {
+      "spin": 0,
+      "m": 0,
+      "norm": 1
+    },
+    {
+      "spin": 1,
+      "m": -1,
+      "norm": 1
+    },
+    {
+      "spin": 1,
+      "m": 0,
+      "norm": 1
+    },
+    {
+      "spin": 1,
+      "m": 1,
+      "norm": 1
+    },
+    {
+      "spin": 2,
+      "m": -2,
+      "norm": 1
+    },
+    {
+      "spin": 2,
+      "m": -1,
+      "norm": 1
+    },
+    {
+      "spin": 2,
+      "m": 0,
+      "norm": 1
+    },
+    {
+      "spin": 2,
+      "m": 1,
+      "norm": 1
+    },
+    {
+      "spin": 2,
+      "m": 2,
+      "norm": 1
+    }
+  ],
+  "stacked_rank_checks": [
+    {
+      "J": 0,
+      "spin": 0,
+      "L_values": [
+        0
+      ],
+      "stacked_rows": 4,
+      "exact_rank": 1
+    },
+    {
+      "J": 0,
+      "spin": 1,
+      "L_values": [
+        1
+      ],
+      "stacked_rows": 12,
+      "exact_rank": 1
+    },
+    {
+      "J": 0,
+      "spin": 2,
+      "L_values": [
+        2
+      ],
+      "stacked_rows": 36,
+      "exact_rank": 1
+    },
+    {
+      "J": 1,
+      "spin": 0,
+      "L_values": [
+        1
+      ],
+      "stacked_rows": 4,
+      "exact_rank": 1
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L_values": [
+        0,
+        1,
+        2
+      ],
+      "stacked_rows": 12,
+      "exact_rank": 3
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L_values": [
+        1,
+        2,
+        3
+      ],
+      "stacked_rows": 36,
+      "exact_rank": 3
+    },
+    {
+      "J": 2,
+      "spin": 0,
+      "L_values": [
+        2
+      ],
+      "stacked_rows": 4,
+      "exact_rank": 1
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L_values": [
+        1,
+        2,
+        3
+      ],
+      "stacked_rows": 12,
+      "exact_rank": 3
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L_values": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "stacked_rows": 36,
+      "exact_rank": 5
+    }
+  ],
+  "full_m0_channel_counts": [
+    8,
+    16,
+    20
+  ],
+  "all_m_records": 69,
+  "regular_polynomial_oracles": [
+    {
+      "J": 0,
+      "spin": 0,
+      "L": 0,
+      "W_rho_power": 0,
+      "homogeneous_degree": 0
+    },
+    {
+      "J": 0,
+      "spin": 0,
+      "L": 0,
+      "W_rho_power": 1,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 0,
+      "spin": 0,
+      "L": 0,
+      "W_rho_power": 2,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 0,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 0,
+      "homogeneous_degree": 1
+    },
+    {
+      "J": 0,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 1,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 0,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 2,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 0,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 0,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 0,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 1,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 0,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 2,
+      "homogeneous_degree": 6
+    },
+    {
+      "J": 1,
+      "spin": 0,
+      "L": 1,
+      "W_rho_power": 0,
+      "homogeneous_degree": 1
+    },
+    {
+      "J": 1,
+      "spin": 0,
+      "L": 1,
+      "W_rho_power": 1,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 1,
+      "spin": 0,
+      "L": 1,
+      "W_rho_power": 2,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 0,
+      "W_rho_power": 0,
+      "homogeneous_degree": 0
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 0,
+      "W_rho_power": 1,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 0,
+      "W_rho_power": 2,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 0,
+      "homogeneous_degree": 1
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 1,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 2,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 2,
+      "W_rho_power": 0,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 2,
+      "W_rho_power": 1,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 1,
+      "spin": 1,
+      "L": 2,
+      "W_rho_power": 2,
+      "homogeneous_degree": 6
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 1,
+      "W_rho_power": 0,
+      "homogeneous_degree": 1
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 1,
+      "W_rho_power": 1,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 1,
+      "W_rho_power": 2,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 0,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 1,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 2,
+      "homogeneous_degree": 6
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 3,
+      "W_rho_power": 0,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 3,
+      "W_rho_power": 1,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 1,
+      "spin": 2,
+      "L": 3,
+      "W_rho_power": 2,
+      "homogeneous_degree": 7
+    },
+    {
+      "J": 2,
+      "spin": 0,
+      "L": 2,
+      "W_rho_power": 0,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 2,
+      "spin": 0,
+      "L": 2,
+      "W_rho_power": 1,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 2,
+      "spin": 0,
+      "L": 2,
+      "W_rho_power": 2,
+      "homogeneous_degree": 6
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 0,
+      "homogeneous_degree": 1
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 1,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 1,
+      "W_rho_power": 2,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 2,
+      "W_rho_power": 0,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 2,
+      "W_rho_power": 1,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 2,
+      "W_rho_power": 2,
+      "homogeneous_degree": 6
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 3,
+      "W_rho_power": 0,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 3,
+      "W_rho_power": 1,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 2,
+      "spin": 1,
+      "L": 3,
+      "W_rho_power": 2,
+      "homogeneous_degree": 7
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 0,
+      "W_rho_power": 0,
+      "homogeneous_degree": 0
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 0,
+      "W_rho_power": 1,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 0,
+      "W_rho_power": 2,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 1,
+      "W_rho_power": 0,
+      "homogeneous_degree": 1
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 1,
+      "W_rho_power": 1,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 1,
+      "W_rho_power": 2,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 0,
+      "homogeneous_degree": 2
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 1,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 2,
+      "W_rho_power": 2,
+      "homogeneous_degree": 6
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 3,
+      "W_rho_power": 0,
+      "homogeneous_degree": 3
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 3,
+      "W_rho_power": 1,
+      "homogeneous_degree": 5
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 3,
+      "W_rho_power": 2,
+      "homogeneous_degree": 7
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 4,
+      "W_rho_power": 0,
+      "homogeneous_degree": 4
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 4,
+      "W_rho_power": 1,
+      "homogeneous_degree": 6
+    },
+    {
+      "J": 2,
+      "spin": 2,
+      "L": 4,
+      "W_rho_power": 2,
+      "homogeneous_degree": 8
+    }
+  ],
+  "seconds": 26.893182875,
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "sympy_version": "1.14.0",
+  "basis_data_sha256": "ddc8c8d91d211aad70a4df4560a75c32807417248abdf025663ad411cfd4e738",
+  "generated_header_sha256": "32ca43fc4e7af4023c6af0531d9f540d0738902f2ac082604493dd7ac5f8261e",
+  "scope": "Basis/jet mathematics only; no actual full tensor operator, boundary closure, evolution or stability claim."
+}

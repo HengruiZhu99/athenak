@@ -1,0 +1,19 @@
+{
+  "kind": "preserved first finite analysis with NumPy2 matmul floating-status RuntimeWarnings",
+  "observed_warning_types": [
+    "divide by zero encountered in matmul",
+    "overflow encountered in matmul",
+    "invalid value encountered in matmul"
+  ],
+  "affected_source_lines": [
+    91,
+    92,
+    100,
+    105
+  ],
+  "observed_outputs_all_finite": true,
+  "first_report_pass_boolean_not_used_for_final_acceptance": true,
+  "planned_control": "Replace small dense matmul contractions with explicit einsum(optimize=False), promote runtime warnings to errors, reanalyze SAME pinned kernel batch; compare coefficient matrices.",
+  "kernel_batch_sha256": "6195f82e08714cdc76810e29dd85ec2d77a0acb82c9c009ee08da0980ea2a12b",
+  "no_kernel_rerun_requested": true
+}

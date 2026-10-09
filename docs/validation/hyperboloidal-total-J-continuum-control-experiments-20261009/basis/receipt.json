@@ -1,0 +1,108 @@
+{
+  "kind": "math-only-Cartesian-total-J-basis-prototype",
+  "HEAD": "6825a1d2a2b3481eaefe1083d8dbb10937319b39",
+  "source_before": {
+    "total_j_basis.py": "289b7b522fdca778c7206614f30d97253384578cac232149703959fe61f2c384",
+    "check_basis.py": "b8886ac53eb6b9392330b1acb34eb5d353e1310d1e6b96851e208e2402a76b7f",
+    "reference_conversion.hpp": "c57fb192ae8cc5d2b88270721409721384558c3a0b875348380a4e48d99b19bf",
+    "probe_basis.cpp": "c1783cbed9e1132aa889efe0adba3360a588ca22efa0fc2c3e2e21b9f1b3c3fe",
+    "check_compiled.py": "d5d6e9d6c0c5becae4c9b261ce1cffc525ffe37184407d6bcb97da0f2ca3d513",
+    "run_basis_gate.py": "5f3807e383a53531d7e2a319a86874262803e156b4b5ab76c4f0a002bbc1f8f5"
+  },
+  "commands": [
+    {
+      "name": "symbolic",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/check_basis.py"
+      ],
+      "returncode": 0,
+      "seconds": 27.169314041,
+      "stdout": "symbolic.stdout",
+      "stderr": "symbolic.stderr"
+    },
+    {
+      "name": "compile-release",
+      "command": [
+        "/usr/bin/c++",
+        "-std=c++17",
+        "-O3",
+        "-DNDEBUG",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/probe_basis.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/probe-release"
+      ],
+      "returncode": 0,
+      "seconds": 0.3748058329999999,
+      "stdout": "compile-release.stdout",
+      "stderr": "compile-release.stderr"
+    },
+    {
+      "name": "probe-release",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/probe-release"
+      ],
+      "returncode": 0,
+      "seconds": 0.4375607909999992,
+      "stdout": "probe-release.stdout",
+      "stderr": "probe-release.stderr"
+    },
+    {
+      "name": "compile-debug",
+      "command": [
+        "/usr/bin/c++",
+        "-std=c++17",
+        "-O0",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/probe_basis.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/probe-debug"
+      ],
+      "returncode": 0,
+      "seconds": 0.2800666249999999,
+      "stdout": "compile-debug.stdout",
+      "stderr": "compile-debug.stderr"
+    },
+    {
+      "name": "probe-debug",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/probe-debug"
+      ],
+      "returncode": 0,
+      "seconds": 0.4172996249999983,
+      "stdout": "probe-debug.stdout",
+      "stderr": "probe-debug.stderr"
+    },
+    {
+      "name": "compiled-check",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/check_compiled.py"
+      ],
+      "returncode": 0,
+      "seconds": 14.368877542,
+      "stdout": "compiled-check.stdout",
+      "stderr": "compiled-check.stderr"
+    }
+  ],
+  "no_PDE_kernel_or_evolution": true,
+  "python_binary_sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464",
+  "compiler_version": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "source_after": {
+    "total_j_basis.py": "289b7b522fdca778c7206614f30d97253384578cac232149703959fe61f2c384",
+    "check_basis.py": "b8886ac53eb6b9392330b1acb34eb5d353e1310d1e6b96851e208e2402a76b7f",
+    "reference_conversion.hpp": "c57fb192ae8cc5d2b88270721409721384558c3a0b875348380a4e48d99b19bf",
+    "probe_basis.cpp": "c1783cbed9e1132aa889efe0adba3360a588ca22efa0fc2c3e2e21b9f1b3c3fe",
+    "check_compiled.py": "d5d6e9d6c0c5becae4c9b261ce1cffc525ffe37184407d6bcb97da0f2ca3d513",
+    "run_basis_gate.py": "5f3807e383a53531d7e2a319a86874262803e156b4b5ab76c4f0a002bbc1f8f5"
+  },
+  "source_unchanged": true,
+  "generated_header_sha256": "32ca43fc4e7af4023c6af0531d9f540d0738902f2ac082604493dd7ac5f8261e",
+  "basis_data_sha256": "ddc8c8d91d211aad70a4df4560a75c32807417248abdf025663ad411cfd4e738",
+  "binaries": {
+    "probe-release": "f42abdd7f8eae29c07f0aebed35380e685a8718034328b400fc407af6749244a",
+    "probe-debug": "25b7e79f87f8e06aa36c51ce9204e047fc68f14b498b5843d9315f1f1c4f21fa"
+  }
+}

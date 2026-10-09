@@ -145,6 +145,11 @@ nonlinear scri closure, stable finite pulse or black-hole transition is
 accepted here. The later black-hole target remains the inner
 wormhole-to-trumpet transition with a Minkowski hyperboloidal reference.
 
+The subsequent [actual total-J angular control](hyperboloidal-total-J-continuum-control-audit.md)
+passes local/core and independent angular checks for J=0,1,2. It supplies the
+regular Cartesian tensor representation needed for radial work, while radial
+boundary closure and finite-pulse evolution remain unvalidated.
+
 The byte-preserved [compact archive](validation/hyperboloidal-mode-subsidiary-closure-experiments-20261009/README.md)
 contains 71 cataloged blobs totaling 1,778,500 bytes, including 28 finite JSON
 files. Its catalog SHA256 is
