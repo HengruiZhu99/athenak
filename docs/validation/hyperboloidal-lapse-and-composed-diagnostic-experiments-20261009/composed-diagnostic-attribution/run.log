@@ -1,0 +1,63 @@
+N24-t0 0.0 H original/composed 6.0048545660552085e-15 6.0048545660552085e-15 M 9.986961755370912e-16
+N24-t.02 0.02 H original/composed 0.0035362766396929116 0.0018367597677237562 M 0.006033101720397809
+N24-before-t.2 0.17537109374999502 H original/composed 0.022090817970973866 0.013681061370785346 M 0.025935507955927077
+N24-near-t.2 0.20017968749999435 H original/composed 0.02733392267063976 0.0168030422711933 M 0.032110971164793195
+N24-t2 2.0 H original/composed 1.1547240717092662 0.782654232194165 M 1.4019679771363431
+N36-t0 0.0 H original/composed 5.881141483419905e-15 5.881141483419905e-15 M 1.0075360934212766e-15
+N36-t.2 0.2 H original/composed 0.013556367384844933 0.003553582506181876 M 0.007134943119924887
+reference-t0 0.0 H original/composed 6.0048545660552085e-15 6.0048545660552085e-15 M 9.986961755370912e-16
+reference-t.05 0.05 H original/composed 8.570966360071176e-14 3.6025354061095557e-14 M 1.342725689271298e-14
+PASS nine stored states, two Diagnose loaders, exact unchanged M/Z/Theta, independently predicted delta H
+{
+  "target_time": 0.2,
+  "N24_bracketing_times": [
+    0.17537109374999502,
+    0.20017968749999435
+  ],
+  "linear_interpolation_fraction": 0.9927570461346952,
+  "scope": "Linear interpolation of diagnostic RMS values, never interpolation of state fields; two-resolution descriptive ratios, not a spatial convergence-order claim",
+  "dt_at_nearest_checkpoint_N24_N36": [
+    0.00042773437499998563,
+    0.00011510416666666207
+  ],
+  "nearest_checkpoint": {
+    "H": {
+      "N24": 0.0168030422711933,
+      "N36": 0.003553582506181876,
+      "N24_over_N36": 4.728479567299318,
+      "log_ratio_over_log_1.5": 3.8316581999687678
+    },
+    "M": {
+      "N24": 0.032110971164793195,
+      "N36": 0.007134943119924887,
+      "N24_over_N36": 4.500522376292082,
+      "log_ratio_over_log_1.5": 3.7097975721705914
+    },
+    "Z": {
+      "N24": 0.013339564585129927,
+      "N36": 0.00209046098243833,
+      "N24_over_N36": 6.381159321888206,
+      "log_ratio_over_log_1.5": 4.570923010838664
+    }
+  },
+  "interpolated_diagnostic": {
+    "H": {
+      "N24": 0.016780429907563284,
+      "N36": 0.003553582506181876,
+      "N24_over_N36": 4.722116308928173,
+      "log_ratio_over_log_1.5": 3.8283369853639084
+    },
+    "M": {
+      "N24": 0.03206624256967449,
+      "N36": 0.007134943119924887,
+      "N24_over_N36": 4.494253427210512,
+      "log_ratio_over_log_1.5": 3.7063597692355343
+    },
+    "Z": {
+      "N24": 0.013322792353050545,
+      "N36": 0.00209046098243833,
+      "N24_over_N36": 6.373136100110673,
+      "log_ratio_over_log_1.5": 4.567820102899849
+    }
+  }
+}

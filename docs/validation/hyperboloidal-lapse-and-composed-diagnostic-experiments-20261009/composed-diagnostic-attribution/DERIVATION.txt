@@ -1,0 +1,64 @@
+Read-only composed constraint-functional attribution
+===================================================
+
+The archived private evolution uses LoadComposedMeshJet<3> in RHS, but its
+CartesianConformalPatch::Diagnose deliberately retains LoadMeshJet<3>. No
+evolution is performed here. The original private build and all its captured
+repository/link/source inputs are verified by SHA256 before/after this audit.
+
+A fresh include overlay changes exactly one statement in Diagnose from
+LoadMeshJet<3>(q,idx,0,k,j,i) to LoadComposedMeshJet<3>(q,idx,0,k,j,i). Two
+standalone executables compile the same check_snapshot.cpp, once against the
+unchanged private header and once against the overlay. Both use the original
+private radius-four symmetric quadratic ghost reconstruction and analytic
+Minkowski reference jets. They read stored binary64 restart states, with no
+projection, RHS invocation, time integration, or modification of those states.
+
+The two mesh loaders use identical field values and first/mixed derivatives.
+Only diagonal second derivatives change: the original centered fourth-order
+Dxx is replaced by the square of centered fourth-order Dx. Both loaders add
+the same exact analytic reference jets after differentiating deviations.
+Thus this experiment is not a raw composed finite difference of the full
+reference-plus-deviation metric.
+
+Let g_ij be the twice-conformal metric, g^ij its inverse, chi the conformal
+factor, and b_ij=g_ij/chi the Penrose spatial metric. Write delta for composed
+minus original jets; only delta(g_ij,dd) and delta(chi,dd) can contribute to
+the changed Hamiltonian. Their change to b's diagonal Hessian is
+
+  delta(b_ij,dd)=delta(g_ij,dd)/chi-g_ij*delta(chi,dd)/chi^2.
+
+All connections and all value/first-derivative curvature terms are identical.
+Contracting the linear second-derivative terms of the Ricci scalar gives
+
+  delta R[b] = sum_dij (b^di*b^dj-b^dd*b^ij)*delta(b_ij,dd)
+             = chi*sum_dij (g^di*g^dj-g^dd*g^ij)*delta(g_ij,dd)
+                 +2*sum_d g^dd*delta(chi,dd).
+
+The evolved physical vacuum Hamiltonian diagnostic therefore changes by
+
+  delta H = Omega^2 * delta R[b].
+
+EvolvedConstraints momentum is constructed from A, first derivatives of A,
+metric and chi, the first derivative of P+2Theta, and the fixed Omega gradient.
+Its value has no second derivatives. Z is the metric-lowered difference
+between Lambda and contracted metric connection and also has no second
+derivatives. Theta is stored directly. Hence M, Z and Theta must be identical
+pointwise under this loader change. The utility checks these exact equalities,
+checks the Ricci difference formula independently at every active cell, and
+checks that each actual Diagnose agrees with direct per-cell constraints.
+
+The original Diagnose must first reproduce native HST H/M/Z/Theta at every
+selected exact restart time. The N24 checkpoint nearest t=.2 is actually
+.20017968749999435. Its preceding output is .17537109374999502. A separate
+comparison linearly interpolates diagnostic RMS values between those two
+times to .2; it never constructs an interpolated state. N36 has an exact .2
+checkpoint. Different native dt/Omega_min and only two resolutions prevent
+interpreting the resulting log-ratios as established pure-spatial order.
+
+Consistent composed RHS and composed linear constraint functionals are needed
+for the flat constant-coefficient linear closure argument. This attribution
+does not establish nonlinear or variable-coefficient discrete product rules,
+an energy estimate, global convergence, stability, scri regularity, or BH
+admission. The archived momentum/Z/Theta growth is unaffected by the choice
+between these two diagnostic functionals.

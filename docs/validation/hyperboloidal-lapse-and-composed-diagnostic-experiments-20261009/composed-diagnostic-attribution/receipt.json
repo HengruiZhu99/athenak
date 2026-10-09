@@ -1,0 +1,2311 @@
+{
+  "status": "PASS",
+  "scope": "Read-only constraint-functional attribution of archived composed-RHS states; no evolution/stability/convergence claim",
+  "seconds": 6.902264583,
+  "head_at_analysis": "1f58f7b1d18dbcf0f313f65cceb7e7e3853f7125",
+  "compiled_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "compiles": [
+    {
+      "mode": "original",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+        "-DDIAGNOSTIC_LOADER=\"original\"",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_snapshot.cpp",
+        "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "returncode": 0,
+      "seconds": 1.7720405000000001
+    },
+    {
+      "mode": "composed",
+      "command": [
+        "/usr/bin/c++",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/composed-diagnose-include",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-derivative-build/include",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/research/hyperboloidal/src",
+        "-I/Users/hz0693/research/hyperboloidal",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/core/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/containers/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/algorithms/src",
+        "-I/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src",
+        "-I/Users/hz0693/research/hyperboloidal/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/research/hyperboloidal/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-arch",
+        "arm64",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-include",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native_injection.hpp",
+        "-DDIAGNOSTIC_LOADER=\"composed\"",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_snapshot.cpp",
+        "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/research/hyperboloidal/build-layer-spatial-norm-native/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "returncode": 0,
+      "seconds": 1.821251125
+    }
+  ],
+  "rows": [
+    {
+      "label": "N24-t0",
+      "requested_time": 0.0,
+      "exact_restart_time": 0.0,
+      "time_offset_from_request": 0.0,
+      "cycle": 0,
+      "dt": 0.00042773437499998563,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/rst/hyp.00000.rst",
+        "sha256": "07cdb051744e4085cff295d139535a50d2b4059d05a97495f1b3b2add74f8f59",
+        "bytes": 6564642
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t0.raw",
+        "sha256": "d06db2a1bf2967c2093fd76c04d1eaff800793e0aa65bc40eb439e8366f4237c",
+        "bytes": 6553660
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t0-original.cells",
+        "sha256": "d88c4dc973880391b27fef2b14fe7da80e548bbe3f4eea9545f7118dfcf116bd",
+        "bytes": 590592
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/results.json",
+        "sha256": "e1a78bd629affd725f0dddd0c7d94eaa30d4145b4afa48384a4422c3b699e6d3",
+        "bytes": 10675
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/layer.athinput",
+        "sha256": "4aedf9ffc27886cfa059f05bedd3f62f9d122cf124273c2c614a7ab6325a12be",
+        "bytes": 2402
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/hyp.z4c.user.hst",
+        "sha256": "e1a192cfcd7ed83b7db49a3d041e8084f0a1bf2a840c7728d90e48969ff9bf9d",
+        "bytes": 30725
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 6.0048545660552085e-15,
+          "native_HST": 6.0048545660552085e-15,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 9.986961755370912e-16,
+          "native_HST": 9.986961755370912e-16,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 1.2395298299904818e-16,
+          "native_HST": 1.2395298299904818e-16,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 0,
+          "native_HST": 0.0,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 6.0048545660552085e-15,
+          "M": 9.986961755370912e-16,
+          "Z": 1.2395298299904818e-16,
+          "Theta": 0,
+          "max_H": 7.071633878716858e-14,
+          "max_H_radius": 0.07577722283113836,
+          "max_M": 7.1039781084251215e-15
+        },
+        "direct": {
+          "H_original": 6.0048545660552085e-15,
+          "H_composed": 6.0048545660552085e-15,
+          "M": 9.986961755370912e-16,
+          "Z": 1.2395298299904818e-16
+        },
+        "H_difference_rms": 0,
+        "H_difference_max": 0,
+        "Ricci_H_difference_prediction_max_error": 0,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 6.0048545660552085e-15,
+          "M": 9.986961755370912e-16,
+          "Z": 1.2395298299904818e-16,
+          "Theta": 0,
+          "max_H": 7.071633878716858e-14,
+          "max_H_radius": 0.07577722283113836,
+          "max_M": 7.1039781084251215e-15
+        },
+        "direct": {
+          "H_original": 6.0048545660552085e-15,
+          "H_composed": 6.0048545660552085e-15,
+          "M": 9.986961755370912e-16,
+          "Z": 1.2395298299904818e-16
+        },
+        "H_difference_rms": 0,
+        "H_difference_max": 0,
+        "Ricci_H_difference_prediction_max_error": 0,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H_original": {
+            "rms": 6.70010681939846e-15,
+            "squared_norm_fraction": 0.9373692234394646
+          },
+          "H_composed": {
+            "rms": 6.70010681939846e-15,
+            "squared_norm_fraction": 0.9373692234394646
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 1.1268812486923564e-15,
+            "squared_norm_fraction": 0.9586095581617872
+          },
+          "Z": {
+            "rms": 1.4285020583497602e-16,
+            "squared_norm_fraction": 0.9999999985733061
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H_original": {
+            "rms": 3.774894338016831e-15,
+            "squared_norm_fraction": 0.04933436084625848
+          },
+          "H_composed": {
+            "rms": 3.774894338016831e-15,
+            "squared_norm_fraction": 0.04933436084625848
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 5.750571019925524e-16,
+            "squared_norm_fraction": 0.04139044183821283
+          },
+          "Z": {
+            "rms": 1.3251038673571614e-20,
+            "squared_norm_fraction": 1.4266937892497173e-09
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H_original": {
+            "rms": 1.9804734700873673e-15,
+            "squared_norm_fraction": 0.013296415714276685
+          },
+          "H_composed": {
+            "rms": 1.9804734700873673e-15,
+            "squared_norm_fraction": 0.013296415714276685
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t0.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t0-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.22813258299999983
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t0.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t0-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.21627079200000043
+        }
+      ]
+    },
+    {
+      "label": "N24-t.02",
+      "requested_time": 0.02,
+      "exact_restart_time": 0.02,
+      "time_offset_from_request": 0.0,
+      "cycle": 47,
+      "dt": 0.00042773437499998563,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/rst/hyp.00002.rst",
+        "sha256": "bbfb980a70f70e0f1855d87883e9a8963c6300d577a02d3bdf4ad79db8dea040",
+        "bytes": 6564642
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t.02.raw",
+        "sha256": "ebfcc5e8e30f2c16a99b830c655f6fd2f01092c22a1fb2574845d5f12093130b",
+        "bytes": 6553660
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t.02-original.cells",
+        "sha256": "f59c4753c1917a7a7e3250f91284d3c183af2ae905dccfe6fb61870c13fd89cc",
+        "bytes": 590592
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-short/results.json",
+        "sha256": "25ca8adb147aa77c3362b9f156deb0414751834a1e7c86da22abcd80d5276df4",
+        "bytes": 10741
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/layer.athinput",
+        "sha256": "176c33dfb50c672f7dfb1477bdfeec6f4a9ecbf1457dbef163c0dcdb30095cf3",
+        "bytes": 2398
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-short/finite-angular-long-N24/hyp.z4c.user.hst",
+        "sha256": "f75a5aae34b724a1d20d73639421948f95f55cb3dc8727410de0ee74d6390e24",
+        "bytes": 1397
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 0.0035362766396929116,
+          "native_HST": 0.0035362766396929116,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 0.006033101720397809,
+          "native_HST": 0.006033101720397809,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 0.001575446706696139,
+          "native_HST": 0.001575446706696139,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 9.231136527888631e-05,
+          "native_HST": 9.231136527888631e-05,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 0.0035362766396929116,
+          "M": 0.006033101720397809,
+          "Z": 0.001575446706696139,
+          "Theta": 9.231136527888631e-05,
+          "max_H": 0.03130000724072285,
+          "max_H_radius": 0.1907018287799044,
+          "max_M": 0.03723737545761177
+        },
+        "direct": {
+          "H_original": 0.0035362766396929116,
+          "H_composed": 0.0018367597677237562,
+          "M": 0.006033101720397809,
+          "Z": 0.001575446706696139
+        },
+        "H_difference_rms": 0.0033461660397061787,
+        "H_difference_max": 0.03284635381550505,
+        "Ricci_H_difference_prediction_max_error": 8.355295622042291e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 0.0018367597677237562,
+          "M": 0.006033101720397809,
+          "Z": 0.001575446706696139,
+          "Theta": 9.231136527888631e-05,
+          "max_H": 0.011451750785384613,
+          "max_H_radius": 0.0757772228311383,
+          "max_M": 0.03723737545761177
+        },
+        "direct": {
+          "H_original": 0.0035362766396929116,
+          "H_composed": 0.0018367597677237562,
+          "M": 0.006033101720397809,
+          "Z": 0.001575446706696139
+        },
+        "H_difference_rms": 0.0033461660397061787,
+        "H_difference_max": 0.03284635381550505,
+        "Ricci_H_difference_prediction_max_error": 8.355295622042291e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H_original": {
+            "rms": 0.003702749818501664,
+            "squared_norm_fraction": 0.8254836927882507
+          },
+          "H_composed": {
+            "rms": 0.0015257435646017334,
+            "squared_norm_fraction": 0.5195299649872719
+          },
+          "H_difference": {
+            "rms": 0.003808842772828564,
+            "squared_norm_fraction": 0.9755360895883609
+          },
+          "M": {
+            "rms": 0.0025239249330383426,
+            "squared_norm_fraction": 0.13177219984785907
+          },
+          "Z": {
+            "rms": 0.00022234860254837923,
+            "squared_norm_fraction": 0.014997317959208991
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H_original": {
+            "rms": 0.0034439185204991497,
+            "squared_norm_fraction": 0.11840176185690278
+          },
+          "H_composed": {
+            "rms": 0.0028209125081569814,
+            "squared_norm_fraction": 0.29445532334774194
+          },
+          "H_difference": {
+            "rms": 0.0014449490472936816,
+            "squared_norm_fraction": 0.023278499601984106
+          },
+          "M": {
+            "rms": 0.01247960042721464,
+            "squared_norm_fraction": 0.5341521223663133
+          },
+          "Z": {
+            "rms": 0.002209431139495683,
+            "squared_norm_fraction": 0.24552651589552707
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H_original": {
+            "rms": 0.002395980060573407,
+            "squared_norm_fraction": 0.05611454535484648
+          },
+          "H_composed": {
+            "rms": 0.0022658191753005394,
+            "squared_norm_fraction": 0.18601471166498607
+          },
+          "H_difference": {
+            "rms": 0.00032951953943663264,
+            "squared_norm_fraction": 0.0011854108096550344
+          },
+          "M": {
+            "rms": 0.009973838230407329,
+            "squared_norm_fraction": 0.3340756777858276
+          },
+          "Z": {
+            "rms": 0.0038749406069976027,
+            "squared_norm_fraction": 0.7394761661452639
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t.02.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t.02-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.09465279199999976
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t.02.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t.02-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.10332050000000059
+        }
+      ]
+    },
+    {
+      "label": "N24-before-t.2",
+      "requested_time": 0.175,
+      "exact_restart_time": 0.17537109374999502,
+      "time_offset_from_request": 0.0003710937499950273,
+      "cycle": 410,
+      "dt": 0.00042773437499998563,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/rst/hyp.00007.rst",
+        "sha256": "2986db56d4df63bca2023e3a62163ecf97d6ec8f5fba429585732c4f221c2ce5",
+        "bytes": 6565278
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-before-t.2.raw",
+        "sha256": "cbe37b3e04ee6647e07d67caf3c212a70899bf3302cb1e37ee3662215b5b0b58",
+        "bytes": 6553660
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-before-t.2-original.cells",
+        "sha256": "883a31658e3d0857bbb3125fe4d98b86bc7102b38c39f436bfd9b37912d0252a",
+        "bytes": 590592
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/results.json",
+        "sha256": "e1a78bd629affd725f0dddd0c7d94eaa30d4145b4afa48384a4422c3b699e6d3",
+        "bytes": 10675
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/layer.athinput",
+        "sha256": "4aedf9ffc27886cfa059f05bedd3f62f9d122cf124273c2c614a7ab6325a12be",
+        "bytes": 2402
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/hyp.z4c.user.hst",
+        "sha256": "e1a192cfcd7ed83b7db49a3d041e8084f0a1bf2a840c7728d90e48969ff9bf9d",
+        "bytes": 30725
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 0.022090817970973866,
+          "native_HST": 0.022090817970973866,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 0.025935507955927077,
+          "native_HST": 0.025935507955927077,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 0.011023902716879707,
+          "native_HST": 0.011023902716879707,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 0.00046002608167804697,
+          "native_HST": 0.00046002608167804697,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 0.022090817970973866,
+          "M": 0.025935507955927077,
+          "Z": 0.011023902716879707,
+          "Theta": 0.00046002608167804697,
+          "max_H": 0.24667533344215398,
+          "max_H_radius": 0.0757772228311383,
+          "max_M": 0.1479060071945218
+        },
+        "direct": {
+          "H_original": 0.022090817970973866,
+          "H_composed": 0.013681061370785346,
+          "M": 0.025935507955927077,
+          "Z": 0.011023902716879707
+        },
+        "H_difference_rms": 0.02316004657026164,
+        "H_difference_max": 0.2277761156057674,
+        "Ricci_H_difference_prediction_max_error": 8.239936510889834e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 0.013681061370785346,
+          "M": 0.025935507955927077,
+          "Z": 0.011023902716879707,
+          "Theta": 0.00046002608167804697,
+          "max_H": 0.0859270178905521,
+          "max_H_radius": 0.2273316684934151,
+          "max_M": 0.1479060071945218
+        },
+        "direct": {
+          "H_original": 0.022090817970973866,
+          "H_composed": 0.013681061370785346,
+          "M": 0.025935507955927077,
+          "Z": 0.011023902716879707
+        },
+        "H_difference_rms": 0.02316004657026164,
+        "H_difference_max": 0.2277761156057674,
+        "Ricci_H_difference_prediction_max_error": 8.239936510889834e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H_original": {
+            "rms": 0.024478252294275603,
+            "squared_norm_fraction": 0.9244628067005923
+          },
+          "H_composed": {
+            "rms": 0.014031940136787402,
+            "squared_norm_fraction": 0.7920417747888884
+          },
+          "H_difference": {
+            "rms": 0.025840483030300135,
+            "squared_norm_fraction": 0.9372913787593835
+          },
+          "M": {
+            "rms": 0.008241085967621103,
+            "squared_norm_fraction": 0.07602065314025967
+          },
+          "Z": {
+            "rms": 0.0014606671324373932,
+            "squared_norm_fraction": 0.013218555347827659
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H_original": {
+            "rms": 0.016728533152321666,
+            "squared_norm_fraction": 0.07158747126744087
+          },
+          "H_composed": {
+            "rms": 0.016403217331407646,
+            "squared_norm_fraction": 0.17945823380022244
+          },
+          "H_difference": {
+            "rms": 0.0144258649487248,
+            "squared_norm_fraction": 0.048433935691735576
+          },
+          "M": {
+            "rms": 0.030498441662563294,
+            "squared_norm_fraction": 0.172627776019611
+          },
+          "Z": {
+            "rms": 0.007332134034523742,
+            "squared_norm_fraction": 0.055224900244092746
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H_original": {
+            "rms": 0.00397094897350199,
+            "squared_norm_fraction": 0.00394972203196672
+          },
+          "H_composed": {
+            "rms": 0.006606043037422985,
+            "squared_norm_fraction": 0.02849999141088941
+          },
+          "H_difference": {
+            "rms": 0.007914471991359457,
+            "squared_norm_fraction": 0.014274685548880797
+          },
+          "M": {
+            "rms": 0.06430068517193803,
+            "squared_norm_fraction": 0.7513515708401293
+          },
+          "Z": {
+            "rms": 0.030432611771373415,
+            "squared_norm_fraction": 0.9315565444080797
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-before-t.2.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-before-t.2-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.09536308299999963
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-before-t.2.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-before-t.2-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.10015637500000008
+        }
+      ]
+    },
+    {
+      "label": "N24-near-t.2",
+      "requested_time": 0.2,
+      "exact_restart_time": 0.20017968749999435,
+      "time_offset_from_request": 0.00017968749999433542,
+      "cycle": 468,
+      "dt": 0.00042773437499998563,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/rst/hyp.00008.rst",
+        "sha256": "98f3b2e2b2a30d9fc3588b83b645c33c3f4077592632722058d9e092346dc045",
+        "bytes": 6565278
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-near-t.2.raw",
+        "sha256": "c29bba6719ce8bc66043cd92ad98148d8129427b59eed2f2ab89d70171357c2e",
+        "bytes": 6553660
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-near-t.2-original.cells",
+        "sha256": "3153dc461dbfadb910f711bf7a7164f46bfe4e6effa7a387d5f8ea1c48a728b8",
+        "bytes": 590592
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/results.json",
+        "sha256": "e1a78bd629affd725f0dddd0c7d94eaa30d4145b4afa48384a4422c3b699e6d3",
+        "bytes": 10675
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/layer.athinput",
+        "sha256": "4aedf9ffc27886cfa059f05bedd3f62f9d122cf124273c2c614a7ab6325a12be",
+        "bytes": 2402
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/hyp.z4c.user.hst",
+        "sha256": "e1a192cfcd7ed83b7db49a3d041e8084f0a1bf2a840c7728d90e48969ff9bf9d",
+        "bytes": 30725
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 0.02733392267063976,
+          "native_HST": 0.02733392267063976,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 0.032110971164793195,
+          "native_HST": 0.032110971164793195,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 0.013339564585129927,
+          "native_HST": 0.013339564585129927,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 0.0005681957058700952,
+          "native_HST": 0.0005681957058700952,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 0.02733392267063976,
+          "M": 0.032110971164793195,
+          "Z": 0.013339564585129927,
+          "Theta": 0.0005681957058700952,
+          "max_H": 0.3037016746492702,
+          "max_H_radius": 0.0757772228311383,
+          "max_M": 0.16373890764279472
+        },
+        "direct": {
+          "H_original": 0.02733392267063976,
+          "H_composed": 0.0168030422711933,
+          "M": 0.032110971164793195,
+          "Z": 0.013339564585129927
+        },
+        "H_difference_rms": 0.027794869165491592,
+        "H_difference_max": 0.2868443923735962,
+        "Ricci_H_difference_prediction_max_error": 8.944234242136417e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 0.0168030422711933,
+          "M": 0.032110971164793195,
+          "Z": 0.013339564585129927,
+          "Theta": 0.0005681957058700952,
+          "max_H": 0.09901785919948303,
+          "max_H_radius": 0.9291082754447945,
+          "max_M": 0.16373890764279472
+        },
+        "direct": {
+          "H_original": 0.02733392267063976,
+          "H_composed": 0.0168030422711933,
+          "M": 0.032110971164793195,
+          "Z": 0.013339564585129927
+        },
+        "H_difference_rms": 0.027794869165491592,
+        "H_difference_max": 0.2868443923735962,
+        "Ricci_H_difference_prediction_max_error": 8.944234242136417e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H_original": {
+            "rms": 0.02976597503457074,
+            "squared_norm_fraction": 0.892870609076734
+          },
+          "H_composed": {
+            "rms": 0.016991345659219594,
+            "squared_norm_fraction": 0.7698957707338248
+          },
+          "H_difference": {
+            "rms": 0.031041122850457965,
+            "squared_norm_fraction": 0.9390696418589001
+          },
+          "M": {
+            "rms": 0.010362839019023561,
+            "squared_norm_fraction": 0.07841566794653859
+          },
+          "Z": {
+            "rms": 0.00180577506972874,
+            "squared_norm_fraction": 0.013797367167408061
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H_original": {
+            "rms": 0.02482257577532993,
+            "squared_norm_fraction": 0.10295196983507639
+          },
+          "H_composed": {
+            "rms": 0.0214489135920421,
+            "squared_norm_fraction": 0.20341344387469115
+          },
+          "H_difference": {
+            "rms": 0.017508733453730017,
+            "squared_norm_fraction": 0.04953647368135923
+          },
+          "M": {
+            "rms": 0.04020801427567989,
+            "squared_norm_fraction": 0.1957326441285559
+          },
+          "Z": {
+            "rms": 0.00873703236894085,
+            "squared_norm_fraction": 0.053553699146142525
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H_original": {
+            "rms": 0.005053070202299547,
+            "squared_norm_fraction": 0.004177421088189777
+          },
+          "H_composed": {
+            "rms": 0.007851774886437303,
+            "squared_norm_fraction": 0.026690785391483857
+          },
+          "H_difference": {
+            "rms": 0.008485936600454344,
+            "squared_norm_fraction": 0.011393884459740785
+          },
+          "M": {
+            "rms": 0.07824860958487076,
+            "squared_norm_fraction": 0.7258516879249056
+          },
+          "Z": {
+            "rms": 0.03684681859080488,
+            "squared_norm_fraction": 0.9326489336864494
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-near-t.2.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-near-t.2-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.0954934999999999
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-near-t.2.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-near-t.2-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.0994195419999997
+        }
+      ]
+    },
+    {
+      "label": "N24-t2",
+      "requested_time": 2.0,
+      "exact_restart_time": 2.0,
+      "time_offset_from_request": 0.0,
+      "cycle": 4676,
+      "dt": 0.00042773437499998563,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/rst/hyp.00080.rst",
+        "sha256": "b531715a864e4aa1c14314c0bfafcbe2a76cc77fcb4075f51cce8ae94887d721",
+        "bytes": 6565278
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t2.raw",
+        "sha256": "b68111085f7777ac115506d9ad843f14e0e08ada9a5427ff7f7b770af478bed5",
+        "bytes": 6553660
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t2-original.cells",
+        "sha256": "9f20b2f5add50e90b0724f98eb5441b7bd4d49d60866df03dba06c67d8f21529",
+        "bytes": 590592
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/results.json",
+        "sha256": "e1a78bd629affd725f0dddd0c7d94eaa30d4145b4afa48384a4422c3b699e6d3",
+        "bytes": 10675
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/layer.athinput",
+        "sha256": "4aedf9ffc27886cfa059f05bedd3f62f9d122cf124273c2c614a7ab6325a12be",
+        "bytes": 2402
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-N24-t2/finite-angular-long-N24/hyp.z4c.user.hst",
+        "sha256": "e1a192cfcd7ed83b7db49a3d041e8084f0a1bf2a840c7728d90e48969ff9bf9d",
+        "bytes": 30725
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 1.1547240717092662,
+          "native_HST": 1.1547240717092662,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 1.4019679771363431,
+          "native_HST": 1.4019679771363431,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 0.3650457564542648,
+          "native_HST": 0.3650457564542648,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 0.02886699639843221,
+          "native_HST": 0.02886699639843221,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 1.1547240717092662,
+          "M": 1.4019679771363431,
+          "Z": 0.3650457564542648,
+          "Theta": 0.02886699639843221,
+          "max_H": 5.399580608704737,
+          "max_H_radius": 0.22733166849341516,
+          "max_M": 5.97611972038339
+        },
+        "direct": {
+          "H_original": 1.1547240717092662,
+          "H_composed": 0.782654232194165,
+          "M": 1.4019679771363431,
+          "Z": 0.3650457564542648
+        },
+        "H_difference_rms": 1.0205708163609712,
+        "H_difference_max": 5.188586768796071,
+        "Ricci_H_difference_prediction_max_error": 1.176836406102666e-14,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 0.782654232194165,
+          "M": 1.4019679771363431,
+          "Z": 0.3650457564542648,
+          "Theta": 0.02886699639843221,
+          "max_H": 4.275371275963699,
+          "max_H_radius": 0.8869496533062066,
+          "max_M": 5.97611972038339
+        },
+        "direct": {
+          "H_original": 1.1547240717092662,
+          "H_composed": 0.782654232194165,
+          "M": 1.4019679771363431,
+          "Z": 0.3650457564542648
+        },
+        "H_difference_rms": 1.0205708163609712,
+        "H_difference_max": 5.188586768796071,
+        "Ricci_H_difference_prediction_max_error": 1.176836406102666e-14,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H_original": {
+            "rms": 1.154800154850618,
+            "squared_norm_fraction": 0.7530250994814903
+          },
+          "H_composed": {
+            "rms": 0.8073324082490159,
+            "squared_norm_fraction": 0.801156057602084
+          },
+          "H_difference": {
+            "rms": 1.1083603922392056,
+            "squared_norm_fraction": 0.8880305949194867
+          },
+          "M": {
+            "rms": 0.5888722554483676,
+            "squared_norm_fraction": 0.13283674416367452
+          },
+          "Z": {
+            "rms": 0.09879355406706615,
+            "squared_norm_fraction": 0.05514610381109463
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H_original": {
+            "rms": 1.6072474905347969,
+            "squared_norm_fraction": 0.24185438577443558
+          },
+          "H_composed": {
+            "rms": 0.9334845651052578,
+            "squared_norm_fraction": 0.17759032417715878
+          },
+          "H_difference": {
+            "rms": 0.9368055279678557,
+            "squared_norm_fraction": 0.10518589149288085
+          },
+          "M": {
+            "rms": 2.1752399748742,
+            "squared_norm_fraction": 0.30052669622775174
+          },
+          "Z": {
+            "rms": 0.4422115478431405,
+            "squared_norm_fraction": 0.18319366178744578
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H_original": {
+            "rms": 0.2363383901407995,
+            "squared_norm_fraction": 0.0051205147440742445
+          },
+          "H_composed": {
+            "rms": 0.32635150412698216,
+            "squared_norm_fraction": 0.021253618220757168
+          },
+          "H_difference": {
+            "rms": 0.24041952682328038,
+            "squared_norm_fraction": 0.006783513587632552
+          },
+          "M": {
+            "rms": 3.018489246041806,
+            "squared_norm_fraction": 0.5666365596085735
+          },
+          "Z": {
+            "rms": 0.9112282774228914,
+            "squared_norm_fraction": 0.7616602344014596
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t2.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t2-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.09553079199999992
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t2.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N24-t2-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.09898999999999969
+        }
+      ]
+    },
+    {
+      "label": "N36-t0",
+      "requested_time": 0.0,
+      "exact_restart_time": 0.0,
+      "time_offset_from_request": 0.0,
+      "cycle": 0,
+      "dt": 0.00011510416666666207,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00000.rst",
+        "sha256": "b464dc75e4f8e6fdded8bab327eb44d20b2379434d62a8254c3fa0e75273b2a7",
+        "bytes": 17047842
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t0.raw",
+        "sha256": "9465649fb4e50cddbace0c797a108d2dd4b18395d8087661f13c60c8b1cbd6ab",
+        "bytes": 17036860
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t0-original.cells",
+        "sha256": "cddfa3d3ae90c149680faf7bf79e95ef32019e73f3cce59d5f62c6d78d1bc481",
+        "bytes": 2016768
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-N36-t0.2/results.json",
+        "sha256": "f7779d12144ebadfcbbba99e91452e85f0be646c2b4a0a59d772f004a2af47cf",
+        "bytes": 10839
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/layer.athinput",
+        "sha256": "2bfe956ff26b6f213fa31a7f8a73ae1487c7a926e6eafec9d92dfdd18a091e25",
+        "bytes": 2464
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/hyp.z4c.user.hst",
+        "sha256": "5c5f8760b5aa692b2f58a4deafaf9780cc696b08b05539d4b344151184591d73",
+        "bytes": 3653
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 5.881141483419905e-15,
+          "native_HST": 5.881141483419905e-15,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 1.0075360934212766e-15,
+          "native_HST": 1.0075360934212766e-15,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 1.1038670280509313e-16,
+          "native_HST": 1.1038670280509313e-16,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 0,
+          "native_HST": 0.0,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 21008,
+        "diagnose": {
+          "H": 5.881141483419905e-15,
+          "M": 1.0075360934212766e-15,
+          "Z": 1.1038670280509313e-16,
+          "Theta": 0,
+          "max_H": 4.272695001614032e-14,
+          "max_H_radius": 0.09673488971869917,
+          "max_M": 5.899368691122903e-15
+        },
+        "direct": {
+          "H_original": 5.881141483419905e-15,
+          "H_composed": 5.881141483419905e-15,
+          "M": 1.0075360934212766e-15,
+          "Z": 1.1038670280509313e-16
+        },
+        "H_difference_rms": 0,
+        "H_difference_max": 0,
+        "Ricci_H_difference_prediction_max_error": 0,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 21008,
+        "diagnose": {
+          "H": 5.881141483419905e-15,
+          "M": 1.0075360934212766e-15,
+          "Z": 1.1038670280509313e-16,
+          "Theta": 0,
+          "max_H": 4.272695001614032e-14,
+          "max_H_radius": 0.09673488971869917,
+          "max_M": 5.899368691122903e-15
+        },
+        "direct": {
+          "H_original": 5.881141483419905e-15,
+          "H_composed": 5.881141483419905e-15,
+          "M": 1.0075360934212766e-15,
+          "Z": 1.1038670280509313e-16
+        },
+        "H_difference_rms": 0,
+        "H_difference_max": 0,
+        "Ricci_H_difference_prediction_max_error": 0,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 15312,
+          "H_original": {
+            "rms": 6.450770723412749e-15,
+            "squared_norm_fraction": 0.8768941431017828
+          },
+          "H_composed": {
+            "rms": 6.450770723412749e-15,
+            "squared_norm_fraction": 0.8768941431017828
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 1.1281588414821771e-15,
+            "squared_norm_fraction": 0.9138322662038104
+          },
+          "Z": {
+            "rms": 1.2929840090817323e-16,
+            "squared_norm_fraction": 0.9999999919882093
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H_original": {
+            "rms": 5.135289021908518e-15,
+            "squared_norm_fraction": 0.09929740803648923
+          },
+          "H_composed": {
+            "rms": 5.135289021908518e-15,
+            "squared_norm_fraction": 0.09929740803648923
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 8.195345295263382e-16,
+            "squared_norm_fraction": 0.08616773379618956
+          },
+          "Z": {
+            "rms": 2.7378891381414345e-20,
+            "squared_norm_fraction": 8.011790403370897e-09
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H_original": {
+            "rms": 2.4175400477060207e-15,
+            "squared_norm_fraction": 0.02380844886172779
+          },
+          "H_composed": {
+            "rms": 2.4175400477060207e-15,
+            "squared_norm_fraction": 0.02380844886172779
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t0.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t0-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.2568796659999997
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t0.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t0-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.2684432079999999
+        }
+      ]
+    },
+    {
+      "label": "N36-t.2",
+      "requested_time": 0.2,
+      "exact_restart_time": 0.2,
+      "time_offset_from_request": 0.0,
+      "cycle": 1738,
+      "dt": 0.00011510416666666207,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/rst/hyp.00008.rst",
+        "sha256": "9a2cad76d278722b12727ed05555b41f447625b5609e64ed05df01cc14431f7b",
+        "bytes": 17048478
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t.2.raw",
+        "sha256": "d4b645674c8956757c6985eb3a14364fd6f589892d9510c8a4cdb419e3aebe10",
+        "bytes": 17036860
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t.2-original.cells",
+        "sha256": "6db0cea513be6798053cfdd18d3d8b931f21ba7a451372230b35ccc401659a8c",
+        "bytes": 2016768
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-N36-t0.2/results.json",
+        "sha256": "f7779d12144ebadfcbbba99e91452e85f0be646c2b4a0a59d772f004a2af47cf",
+        "bytes": 10839
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/layer.athinput",
+        "sha256": "2bfe956ff26b6f213fa31a7f8a73ae1487c7a926e6eafec9d92dfdd18a091e25",
+        "bytes": 2464
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-N36-t0.2/finite-angular-long-N36/hyp.z4c.user.hst",
+        "sha256": "5c5f8760b5aa692b2f58a4deafaf9780cc696b08b05539d4b344151184591d73",
+        "bytes": 3653
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 0.013556367384844933,
+          "native_HST": 0.013556367384844933,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 0.007134943119924887,
+          "native_HST": 0.007134943119924887,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 0.00209046098243833,
+          "native_HST": 0.00209046098243833,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 9.767460026751781e-05,
+          "native_HST": 9.767460026751781e-05,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 21008,
+        "diagnose": {
+          "H": 0.013556367384844933,
+          "M": 0.007134943119924887,
+          "Z": 0.00209046098243833,
+          "Theta": 9.767460026751781e-05,
+          "max_H": 0.10708011745867618,
+          "max_H_radius": 0.1271345525199363,
+          "max_M": 0.07016776876317424
+        },
+        "direct": {
+          "H_original": 0.013556367384844933,
+          "H_composed": 0.003553582506181876,
+          "M": 0.007134943119924887,
+          "Z": 0.00209046098243833
+        },
+        "H_difference_rms": 0.012475375919548198,
+        "H_difference_max": 0.09458254166215772,
+        "Ricci_H_difference_prediction_max_error": 8.921682836948719e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 21008,
+        "diagnose": {
+          "H": 0.003553582506181876,
+          "M": 0.007134943119924887,
+          "Z": 0.00209046098243833,
+          "Theta": 9.767460026751781e-05,
+          "max_H": 0.02832849972447793,
+          "max_H_radius": 0.927389930575771,
+          "max_M": 0.07016776876317424
+        },
+        "direct": {
+          "H_original": 0.013556367384844933,
+          "H_composed": 0.003553582506181876,
+          "M": 0.007134943119924887,
+          "Z": 0.00209046098243833
+        },
+        "H_difference_rms": 0.012475375919548198,
+        "H_difference_max": 0.09458254166215772,
+        "Ricci_H_difference_prediction_max_error": 8.921682836948719e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 15312,
+          "H_original": {
+            "rms": 0.0155889811317444,
+            "squared_norm_fraction": 0.9638201788795695
+          },
+          "H_composed": {
+            "rms": 0.0036558171080558854,
+            "squared_norm_fraction": 0.7714065585769186
+          },
+          "H_difference": {
+            "rms": 0.014322246279045802,
+            "squared_norm_fraction": 0.9606434022877587
+          },
+          "M": {
+            "rms": 0.002354238557858017,
+            "squared_norm_fraction": 0.07935368840893041
+          },
+          "Z": {
+            "rms": 0.00025408878721224165,
+            "squared_norm_fraction": 0.010767976032805741
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 2736,
+          "H_original": {
+            "rms": 0.005726278590626098,
+            "squared_norm_fraction": 0.023237514338914893
+          },
+          "H_composed": {
+            "rms": 0.004126219581845766,
+            "squared_norm_fraction": 0.17559140317949323
+          },
+          "H_difference": {
+            "rms": 0.006058144672268676,
+            "squared_norm_fraction": 0.030711666484220808
+          },
+          "M": {
+            "rms": 0.00778177229740484,
+            "squared_norm_fraction": 0.1549199653973234
+          },
+          "Z": {
+            "rms": 0.0017547351726327628,
+            "squared_norm_fraction": 0.0917635940364172
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 2960,
+          "H_original": {
+            "rms": 0.004108617142099481,
+            "squared_norm_fraction": 0.01294230678151566
+          },
+          "H_composed": {
+            "rms": 0.0021795116142514113,
+            "squared_norm_fraction": 0.05300203824358816
+          },
+          "H_difference": {
+            "rms": 0.0030901596063926343,
+            "squared_norm_fraction": 0.008644931228020451
+          },
+          "M": {
+            "rms": 0.016633123383817557,
+            "squared_norm_fraction": 0.7657263461937462
+          },
+          "Z": {
+            "rms": 0.005275919434888599,
+            "squared_norm_fraction": 0.897468429930777
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t.2.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t.2-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.25631220799999976
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t.2.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/N36-t.2-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.26824070799999955
+        }
+      ]
+    },
+    {
+      "label": "reference-t0",
+      "requested_time": 0.0,
+      "exact_restart_time": 0.0,
+      "time_offset_from_request": 0.0,
+      "cycle": 0,
+      "dt": 0.00042773437499998563,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/rst/hyp.00000.rst",
+        "sha256": "b03660c9a6c0dc952005bb52905c1ca0e81bb7ad46a65f710980c92a4bb8397a",
+        "bytes": 6564642
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t0.raw",
+        "sha256": "d893bc17eec3fe3425600305a51ead0778155081cd75e049f5c6bb32de56e1d4",
+        "bytes": 6553660
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t0-original.cells",
+        "sha256": "d88c4dc973880391b27fef2b14fe7da80e548bbe3f4eea9545f7118dfcf116bd",
+        "bytes": 590592
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-reference/results.json",
+        "sha256": "7d39ffc2728266f78ea6d2f5a46e8dbb6380bc1ee8cfc282e23778a92430f253",
+        "bytes": 10770
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/layer.athinput",
+        "sha256": "8f92f510088446f15ae305bb10cc1ebd88f719f6aff4cd8fde219a991b699cf8",
+        "bytes": 2402
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/hyp.z4c.user.hst",
+        "sha256": "68b319e918cb799bcec2f62eff21a824bb2b4c6473ed0782c00c3ed720a89e6f",
+        "bytes": 1397
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 6.0048545660552085e-15,
+          "native_HST": 6.0048545660552085e-15,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 9.986961755370912e-16,
+          "native_HST": 9.986961755370912e-16,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 1.2395298299904818e-16,
+          "native_HST": 1.2395298299904818e-16,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 0,
+          "native_HST": 0.0,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 6.0048545660552085e-15,
+          "M": 9.986961755370912e-16,
+          "Z": 1.2395298299904818e-16,
+          "Theta": 0,
+          "max_H": 7.071633878716858e-14,
+          "max_H_radius": 0.07577722283113836,
+          "max_M": 7.1039781084251215e-15
+        },
+        "direct": {
+          "H_original": 6.0048545660552085e-15,
+          "H_composed": 6.0048545660552085e-15,
+          "M": 9.986961755370912e-16,
+          "Z": 1.2395298299904818e-16
+        },
+        "H_difference_rms": 0,
+        "H_difference_max": 0,
+        "Ricci_H_difference_prediction_max_error": 0,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 6.0048545660552085e-15,
+          "M": 9.986961755370912e-16,
+          "Z": 1.2395298299904818e-16,
+          "Theta": 0,
+          "max_H": 7.071633878716858e-14,
+          "max_H_radius": 0.07577722283113836,
+          "max_M": 7.1039781084251215e-15
+        },
+        "direct": {
+          "H_original": 6.0048545660552085e-15,
+          "H_composed": 6.0048545660552085e-15,
+          "M": 9.986961755370912e-16,
+          "Z": 1.2395298299904818e-16
+        },
+        "H_difference_rms": 0,
+        "H_difference_max": 0,
+        "Ricci_H_difference_prediction_max_error": 0,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H_original": {
+            "rms": 6.70010681939846e-15,
+            "squared_norm_fraction": 0.9373692234394646
+          },
+          "H_composed": {
+            "rms": 6.70010681939846e-15,
+            "squared_norm_fraction": 0.9373692234394646
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 1.1268812486923564e-15,
+            "squared_norm_fraction": 0.9586095581617872
+          },
+          "Z": {
+            "rms": 1.4285020583497602e-16,
+            "squared_norm_fraction": 0.9999999985733061
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H_original": {
+            "rms": 3.774894338016831e-15,
+            "squared_norm_fraction": 0.04933436084625848
+          },
+          "H_composed": {
+            "rms": 3.774894338016831e-15,
+            "squared_norm_fraction": 0.04933436084625848
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 5.750571019925524e-16,
+            "squared_norm_fraction": 0.04139044183821283
+          },
+          "Z": {
+            "rms": 1.3251038673571614e-20,
+            "squared_norm_fraction": 1.4266937892497173e-09
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H_original": {
+            "rms": 1.9804734700873673e-15,
+            "squared_norm_fraction": 0.013296415714276685
+          },
+          "H_composed": {
+            "rms": 1.9804734700873673e-15,
+            "squared_norm_fraction": 0.013296415714276685
+          },
+          "H_difference": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": 0.0,
+            "squared_norm_fraction": 0.0
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t0.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t0-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.09453850000000052
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t0.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t0-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.09883408299999985
+        }
+      ]
+    },
+    {
+      "label": "reference-t.05",
+      "requested_time": 0.05,
+      "exact_restart_time": 0.05,
+      "time_offset_from_request": 0.0,
+      "cycle": 117,
+      "dt": 0.00042773437499998563,
+      "restart": {
+        "path": "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/rst/hyp.00002.rst",
+        "sha256": "bbd83cc67f679c30b3500d4fa5488f4478fd6cf6e1ce0b91cfc42522441f0d9f",
+        "bytes": 6565278
+      },
+      "raw": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t.05.raw",
+        "sha256": "fa5dbc64458bd1b37efc26c3db298468df71e96048b6b689ce86b2ce8b9a08a2",
+        "bytes": 6553660
+      },
+      "cell_data": {
+        "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t.05-original.cells",
+        "sha256": "404be62dbd03c32646215abfd8c50e3549d4b87efc834f4cbb35d7dd8f5c26f6",
+        "bytes": 590592
+      },
+      "native_results": {
+        "path": "build-layer-research/time-projection-controls/composed-reference/results.json",
+        "sha256": "7d39ffc2728266f78ea6d2f5a46e8dbb6380bc1ee8cfc282e23778a92430f253",
+        "bytes": 10770
+      },
+      "native_input": {
+        "path": "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/layer.athinput",
+        "sha256": "8f92f510088446f15ae305bb10cc1ebd88f719f6aff4cd8fde219a991b699cf8",
+        "bytes": 2402
+      },
+      "native_HST": {
+        "path": "build-layer-research/time-projection-controls/composed-reference/reference-long-N24/hyp.z4c.user.hst",
+        "sha256": "68b319e918cb799bcec2f62eff21a824bb2b4c6473ed0782c00c3ed720a89e6f",
+        "bytes": 1397
+      },
+      "native_executable_sha256": "e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16",
+      "original_HST_reproduction": {
+        "H": {
+          "original_recomputed": 8.570966360071176e-14,
+          "native_HST": 8.570966360071176e-14,
+          "absolute_difference": 0.0
+        },
+        "M": {
+          "original_recomputed": 1.342725689271298e-14,
+          "native_HST": 1.342725689271298e-14,
+          "absolute_difference": 0.0
+        },
+        "Z": {
+          "original_recomputed": 1.2072542544375931e-15,
+          "native_HST": 1.2072542544375931e-15,
+          "absolute_difference": 0.0
+        },
+        "Theta": {
+          "original_recomputed": 4.60522195461597e-16,
+          "native_HST": 4.60522195461597e-16,
+          "absolute_difference": 0.0
+        }
+      },
+      "original": {
+        "diagnose_loader": "original",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 8.570966360071176e-14,
+          "M": 1.342725689271298e-14,
+          "Z": 1.2072542544375931e-15,
+          "Theta": 4.60522195461597e-16,
+          "max_H": 6.587508316613366e-13,
+          "max_H_radius": 0.3985814690875631,
+          "max_M": 8.194923099222265e-14
+        },
+        "direct": {
+          "H_original": 8.570966360071176e-14,
+          "H_composed": 3.6025354061095557e-14,
+          "M": 1.342725689271298e-14,
+          "Z": 1.2072542544375931e-15
+        },
+        "H_difference_rms": 5.764877161815489e-14,
+        "H_difference_max": 5.115907697472721e-13,
+        "Ricci_H_difference_prediction_max_error": 6.5767995691014456e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "composed": {
+        "diagnose_loader": "composed",
+        "active_cells": 6152,
+        "diagnose": {
+          "H": 3.6025354061095557e-14,
+          "M": 1.342725689271298e-14,
+          "Z": 1.2072542544375931e-15,
+          "Theta": 4.60522195461597e-16,
+          "max_H": 3.1702570256475493e-13,
+          "max_H_radius": 0.19070182877990455,
+          "max_M": 8.194923099222265e-14
+        },
+        "direct": {
+          "H_original": 8.570966360071176e-14,
+          "H_composed": 3.6025354061095557e-14,
+          "M": 1.342725689271298e-14,
+          "Z": 1.2072542544375931e-15
+        },
+        "H_difference_rms": 5.764877161815489e-14,
+        "H_difference_max": 5.115907697472721e-13,
+        "Ricci_H_difference_prediction_max_error": 6.5767995691014456e-15,
+        "momentum_difference_max": 0,
+        "Z_difference_max": 0,
+        "Theta_difference_max": 0,
+        "first_metric_chi_jet_difference_max": 0
+      },
+      "regions": [
+        {
+          "r_min": 0.0,
+          "r_max": 0.05,
+          "cells": 0,
+          "H_original": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_composed": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "H_difference": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "M": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          },
+          "Z": {
+            "rms": null,
+            "squared_norm_fraction": 0.0
+          }
+        },
+        {
+          "r_min": 0.05,
+          "r_max": 0.9,
+          "cells": 4632,
+          "H_original": {
+            "rms": 9.873511736912716e-14,
+            "squared_norm_fraction": 0.9991620637097475
+          },
+          "H_composed": {
+            "rms": 4.1445732846003365e-14,
+            "squared_norm_fraction": 0.9965414212148491
+          },
+          "H_difference": {
+            "rms": 6.641992194591581e-14,
+            "squared_norm_fraction": 0.9994678534636461
+          },
+          "M": {
+            "rms": 1.4357809961291875e-14,
+            "squared_norm_fraction": 0.860902619839549
+          },
+          "Z": {
+            "rms": 7.77298101392159e-16,
+            "squared_norm_fraction": 0.31212600134198026
+          }
+        },
+        {
+          "r_min": 0.9,
+          "r_max": 0.95,
+          "cells": 768,
+          "H_original": {
+            "rms": 6.226246468239375e-15,
+            "squared_norm_fraction": 0.0006587762426918586
+          },
+          "H_composed": {
+            "rms": 5.2924189127969595e-15,
+            "squared_norm_fraction": 0.0026942432478868268
+          },
+          "H_difference": {
+            "rms": 3.612350223958206e-15,
+            "squared_norm_fraction": 0.0004901674592401284
+          },
+          "M": {
+            "rms": 7.785318799871724e-15,
+            "squared_norm_fraction": 0.04196846638726672
+          },
+          "Z": {
+            "rms": 1.4033991133712498e-15,
+            "squared_norm_fraction": 0.16869794791916776
+          }
+        },
+        {
+          "r_min": 0.95,
+          "r_max": 1.0,
+          "cells": 752,
+          "H_original": {
+            "rms": 3.2813278017500556e-15,
+            "squared_norm_fraction": 0.00017916004756072273
+          },
+          "H_composed": {
+            "rms": 2.8487184415152225e-15,
+            "squared_norm_fraction": 0.0007643355372640176
+          },
+          "H_difference": {
+            "rms": 1.068330787435985e-15,
+            "squared_norm_fraction": 4.1979077113764144e-05
+          },
+          "M": {
+            "rms": 1.1969081027446302e-14,
+            "squared_norm_fraction": 0.09712891377318453
+          },
+          "Z": {
+            "rms": 2.4880282828323848e-15,
+            "squared_norm_fraction": 0.519176050738852
+          }
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t.05.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t.05-original.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.09631158300000031
+        },
+        {
+          "command": [
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t.05.raw",
+            "/Users/hz0693/research/hyperboloidal/build-layer-research/time-projection-controls/composed-diagnostic-attribution/reference-t.05-composed.cells"
+          ],
+          "returncode": 0,
+          "seconds": 0.09899254100000032
+        }
+      ]
+    }
+  ],
+  "two_resolution_t.2_comparison": {
+    "target_time": 0.2,
+    "N24_bracketing_times": [
+      0.17537109374999502,
+      0.20017968749999435
+    ],
+    "linear_interpolation_fraction": 0.9927570461346952,
+    "scope": "Linear interpolation of diagnostic RMS values, never interpolation of state fields; two-resolution descriptive ratios, not a spatial convergence-order claim",
+    "dt_at_nearest_checkpoint_N24_N36": [
+      0.00042773437499998563,
+      0.00011510416666666207
+    ],
+    "nearest_checkpoint": {
+      "H": {
+        "N24": 0.0168030422711933,
+        "N36": 0.003553582506181876,
+        "N24_over_N36": 4.728479567299318,
+        "log_ratio_over_log_1.5": 3.8316581999687678
+      },
+      "M": {
+        "N24": 0.032110971164793195,
+        "N36": 0.007134943119924887,
+        "N24_over_N36": 4.500522376292082,
+        "log_ratio_over_log_1.5": 3.7097975721705914
+      },
+      "Z": {
+        "N24": 0.013339564585129927,
+        "N36": 0.00209046098243833,
+        "N24_over_N36": 6.381159321888206,
+        "log_ratio_over_log_1.5": 4.570923010838664
+      }
+    },
+    "interpolated_diagnostic": {
+      "H": {
+        "N24": 0.016780429907563284,
+        "N36": 0.003553582506181876,
+        "N24_over_N36": 4.722116308928173,
+        "log_ratio_over_log_1.5": 3.8283369853639084
+      },
+      "M": {
+        "N24": 0.03206624256967449,
+        "N36": 0.007134943119924887,
+        "N24_over_N36": 4.494253427210512,
+        "log_ratio_over_log_1.5": 3.7063597692355343
+      },
+      "Z": {
+        "N24": 0.013322792353050545,
+        "N36": 0.00209046098243833,
+        "N24_over_N36": 6.373136100110673,
+        "log_ratio_over_log_1.5": 4.567820102899849
+      }
+    }
+  },
+  "private_build": {
+    "path": "build-layer-research/time-projection-controls/composed-derivative-build/build-receipt.json",
+    "sha256": "f2c884662b04b68b4efef0cb1dedb2e11b26f242683427642d233afbf433c886",
+    "bytes": 100181
+  },
+  "original_private_inputs_unchanged": true,
+  "source_sha256": {
+    "build-layer-research/time-projection-controls/composed-diagnostic-attribution/run_audit.py": "c472014327f9e61622911872139a5e1155c12e9373c5689d5e3bc8bb976b5fd9",
+    "build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_snapshot.cpp": "bf74a2e4dce68b587d88a45aa8f205649322e28de480192ad419ad992ba9af88",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec",
+    "build-layer-research/time-projection-controls/composed-derivative-build/include/z4c/hyperboloidal/cartesian_patch.hpp": "e0c3c657723e1aa6cf1fb6015fb14f8b31514a3462404a3448b80a9fe04000b8",
+    "build-layer-research/time-projection-controls/composed-diagnostic-attribution/composed-diagnose-include/z4c/hyperboloidal/cartesian_patch.hpp": "81de3daf08fda1b11dbf0ae2f4e685cd0cffc1188a212433a263124a03ce1a76"
+  },
+  "executables": {
+    "original": {
+      "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_original",
+      "sha256": "ac4bc21c2bbfe07055385134c6fab925e38fc6b6f024a9d5150806382d1c0ed4",
+      "bytes": 737056
+    },
+    "composed": {
+      "path": "build-layer-research/time-projection-controls/composed-diagnostic-attribution/check_composed",
+      "sha256": "6c9d4a782125ad7aa7ae01a2d711c3ec095c94b7495a904f37b312608d3c0d70",
+      "bytes": 737056
+    }
+  },
+  "cell_columns": [
+    "x",
+    "y",
+    "z",
+    "H_original",
+    "H_composed",
+    "predicted_delta_H",
+    "M_conformal_norm",
+    "Z_conformal_norm",
+    "Theta_physical",
+    "delta_H",
+    "delta_M_norm",
+    "delta_Z_norm"
+  ],
+  "limitations": [
+    "N24-near-t.2 uses the nearest actual checkpoint, not interpolated state fields.",
+    "Only the diagonal second-derivative functional changes; first/mixed derivatives and reconstruction/ghost plans remain the original private ones.",
+    "A composed flat linear constraint closure does not establish variable-coefficient product-rule closure."
+  ]
+}

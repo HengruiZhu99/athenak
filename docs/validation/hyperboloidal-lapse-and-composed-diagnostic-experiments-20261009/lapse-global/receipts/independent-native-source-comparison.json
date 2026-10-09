@@ -1,0 +1,15 @@
+{
+  "tangent_patch": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/overlay/z4c/hyperboloidal/cartesian_patch.hpp",
+    "sha256": "58a60d4b0494a99248768dcccc8e2195bf2ace45d8d00e295ea66af8a10e4ba4"
+  },
+  "independent_native_patch": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/inner-lapse-advection-native/native-build/include/z4c/hyperboloidal/cartesian_patch.hpp",
+    "sha256": "bff35deb7709a6937d0c17b84ec97bf372064d1e025e49be75e031cfcee1072a"
+  },
+  "helper_sha256": "39f125347e050bbf662ce3dc1e354791b37cafa7949fdf1ff19cedda3d8d85e1",
+  "both_patches_remove_include_and_one_addition_to_bitwise_production": true,
+  "placement_difference": "native adds scalar gauge_rhs.alpha before geometry-only reference residual subtraction; tangent adds after same block. That block writes only rhs geometry and never reads/writes gauge_rhs, so alpha/gauge/upwind/KO floating operation ordering is identical.",
+  "include_difference": "helper immediately after layer_gauge vs after spherical_ghosts, both after layer_gauge definition",
+  "scope": "source-level equivalence for finite valid inputs; patch headers are not byteidentical; no native time-run claim"
+}

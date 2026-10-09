@@ -1,0 +1,192 @@
+[
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/full20.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/full20"
+    ],
+    "returncode": 0,
+    "seconds": 0.800534792,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear"
+    ],
+    "returncode": 0,
+    "seconds": 0.7806431249999999,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/principal.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/principal"
+    ],
+    "returncode": 0,
+    "seconds": 0.5286896249999997,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O1",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear_debug"
+    ],
+    "returncode": 0,
+    "seconds": 1.2040669999999998,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear"
+    ],
+    "returncode": 0,
+    "seconds": 0.2973570830000001,
+    "stderr": "",
+    "stdout_file": "nonlinear.json",
+    "stdout_sha256": "567cbb0e0396dd1baf7ef27eba9e868b6809c7b32baff787b3891519679523fc"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear_debug"
+    ],
+    "returncode": 0,
+    "seconds": 1.0916739589999995,
+    "stderr": "",
+    "stdout_file": "nonlinear-debug.json",
+    "stdout_sha256": "567cbb0e0396dd1baf7ef27eba9e868b6809c7b32baff787b3891519679523fc"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/full20",
+      "pole"
+    ],
+    "returncode": 0,
+    "seconds": 0.15615795800000054,
+    "stderr": "",
+    "stdout_file": "poles.json",
+    "stdout_sha256": "1dec2ae013c8aeb3dc2233adbc6eeb1aa911392384abd984e04e31ee3d20e57b"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/full20"
+    ],
+    "returncode": 0,
+    "seconds": 0.5512485829999996,
+    "stderr": "",
+    "stdout_file": "full20.json",
+    "stdout_sha256": "90e0f662000e27a24c4d30834df44351dd423cccee562113fe7e40146c155b65"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/check_kernel_symbol.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/principal"
+    ],
+    "returncode": 0,
+    "seconds": 0.3074164160000006,
+    "stderr": "",
+    "stdout_file": "principal.log",
+    "stdout_sha256": "876b3dad0b72950c53e58f164836b97a2bef2806259fe4001fc8142c44ac1e27"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/check.py"
+    ],
+    "returncode": 0,
+    "seconds": 1.1489319580000004,
+    "stderr": "",
+    "stdout_file": "check.log",
+    "stdout_sha256": "0d3b8b72c795389a6f730f7b3e31e51eba4a7f0e1a533a1d21a3a6d2e0b5ca86"
+  }
+]

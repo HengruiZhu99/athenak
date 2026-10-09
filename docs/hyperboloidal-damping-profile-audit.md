@@ -88,7 +88,8 @@ recorded; native reference roundoff subtraction is tested independently below.
 
 ## Native reference and finite pulse
 
-Six objects are privately rebuilt in9.548 seconds, with369 original sources,
+Six objects are privately rebuilt in9.548 seconds, with369 baseline source/input/
+helper files (365 src/CMake files and four auxiliary files),
 four norm overlays,268 repository dependencies and182 original link objects plus
 four Kokkos libraries verified unchanged. The private Cartesian source changes
 only its helper include and four kappa2 arguments: live/reference evolution and
@@ -168,3 +169,8 @@ frequency supplement, native build/launch/audits, global screens and inner
 calibration. Large arrays, binaries and objects are represented by hashes and
 metadata. Use its verifier read-only; do not rerun collectors or scientific
 scripts in frozen paths.
+
+
+The later [relative-lapse advection audit](hyperboloidal-lapse-advection-audit.md)
+records a separate rejected regular gauge source. Neither candidate changes the
+production equations or accepts the later black-hole transition.

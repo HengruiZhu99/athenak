@@ -1,0 +1,192 @@
+[
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/full20.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/full20"
+    ],
+    "returncode": 0,
+    "seconds": 0.808039625,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear"
+    ],
+    "returncode": 0,
+    "seconds": 0.7778283340000001,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/principal.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/principal"
+    ],
+    "returncode": 0,
+    "seconds": 0.5180382080000001,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O1",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear_debug"
+    ],
+    "returncode": 0,
+    "seconds": 1.194376042,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear"
+    ],
+    "returncode": 0,
+    "seconds": 0.6586203749999999,
+    "stderr": "",
+    "stdout_file": "nonlinear.json",
+    "stdout_sha256": "567cbb0e0396dd1baf7ef27eba9e868b6809c7b32baff787b3891519679523fc"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/nonlinear_debug"
+    ],
+    "returncode": 0,
+    "seconds": 1.2008041660000002,
+    "stderr": "",
+    "stdout_file": "nonlinear-debug.json",
+    "stdout_sha256": "567cbb0e0396dd1baf7ef27eba9e868b6809c7b32baff787b3891519679523fc"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/full20",
+      "pole"
+    ],
+    "returncode": 0,
+    "seconds": 0.5068007080000001,
+    "stderr": "",
+    "stdout_file": "poles.json",
+    "stdout_sha256": "1dec2ae013c8aeb3dc2233adbc6eeb1aa911392384abd984e04e31ee3d20e57b"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/full20"
+    ],
+    "returncode": 0,
+    "seconds": 0.567041208,
+    "stderr": "",
+    "stdout_file": "full20.json",
+    "stdout_sha256": "90e0f662000e27a24c4d30834df44351dd423cccee562113fe7e40146c155b65"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/check_kernel_symbol.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/principal"
+    ],
+    "returncode": 0,
+    "seconds": 0.5438130829999999,
+    "stderr": "",
+    "stdout_file": "principal.log",
+    "stdout_sha256": "876b3dad0b72950c53e58f164836b97a2bef2806259fe4001fc8142c44ac1e27"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/check.py"
+    ],
+    "returncode": 1,
+    "seconds": 1.2080621249999997,
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/check.py\", line 106, in <module>\n    if __name__=='__main__':main()\n  File \"/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-lapse-advection-control/check.py\", line 89, in main\n    'value_jacobian_beta':str(sp.diff(delta,beta)),'nonlinear_mixed_hessian':str(sp.diff(delta,alpha,beta)),\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/function.py\", line 2511, in diff\n    return f.diff(*symbols, **kwargs)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/expr.py\", line 3606, in diff\n    return _derivative_dispatch(self, *symbols, **assumptions)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/function.py\", line 1938, in _derivative_dispatch\n    return Derivative(expr, *variables, **kwargs)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/function.py\", line 1466, in __new__\n    obj = cls._dispatch_eval_derivative_n_times(expr, v, count)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/function.py\", line 1927, in _dispatch_eval_derivative_n_times\n    return expr._eval_derivative_n_times(v, count)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/cache.py\", line 72, in wrapper\n    retval = cfunc(*args, **kwargs)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/mul.py\", line 996, in _eval_derivative_n_times\n    return super()._eval_derivative_n_times(s, n)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/basic.py\", line 1975, in _eval_derivative_n_times\n    obj = obj._eval_derivative(s)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/cache.py\", line 72, in wrapper\n    retval = cfunc(*args, **kwargs)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/mul.py\", line 982, in _eval_derivative\n    d = args[i].diff(s)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/expr.py\", line 3606, in diff\n    return _derivative_dispatch(self, *symbols, **assumptions)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/function.py\", line 1937, in _derivative_dispatch\n    return ArrayDerivative(expr, *variables, **kwargs)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/tensor/array/array_derivatives.py\", line 19, in __new__\n    obj = super().__new__(cls, expr, *variables, **kwargs)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/function.py\", line 1466, in __new__\n    obj = cls._dispatch_eval_derivative_n_times(expr, v, count)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/tensor/array/array_derivatives.py\", line 98, in _dispatch_eval_derivative_n_times\n    result = cls._call_derive_scalar_by_array(expr, v)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/tensor/array/array_derivatives.py\", line 60, in _call_derive_scalar_by_array\n    return v.applyfunc(lambda x: expr.diff(x))\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/tensor/array/ndim_array.py\", line 353, in applyfunc\n    return type(self)(map(f, Flatten(self)), self.shape)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/tensor/array/dense_ndim_array.py\", line 134, in __new__\n    return cls._new(iterable, shape, **kwargs)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/tensor/array/dense_ndim_array.py\", line 141, in _new\n    flat_list = flatten(flat_list)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/utilities/iterables.py\", line 112, in flatten\n    for el in iterable:\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/tensor/array/array_derivatives.py\", line 60, in <lambda>\n    return v.applyfunc(lambda x: expr.diff(x))\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/expr.py\", line 3606, in diff\n    return _derivative_dispatch(self, *symbols, **assumptions)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/function.py\", line 1938, in _derivative_dispatch\n    return Derivative(expr, *variables, **kwargs)\n  File \"/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/sympy/core/function.py\", line 1364, in __new__\n    raise ValueError(filldedent('''\nValueError: \nCan't calculate derivative wrt -0.509579242646629.\n",
+    "stdout_file": "check.log",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

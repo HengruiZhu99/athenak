@@ -1,0 +1,60 @@
+Composed-RHS native states: diagnostic-functional attribution
+==========================================================
+
+PASS: two fresh Release standalone utilities, nine binary64 restart states,
+18 read-only snapshot utility executions. No RHS or integrator was invoked.
+Original Diagnose H/M/Z/Theta reproduce HST exactly (maximum error 0).
+All active-cell M, Z and Theta values agree exactly between loaders.
+Maximum independent Ricci delta-H prediction error: 1.1768364061026659e-14.
+
+State                       exact time          H original           H composed
+--------------------------------------------------------------------------
+N24-t0                     0  6.00485456606e-15  6.00485456606e-15
+N24-t.02                   0.02  0.00353627663969  0.00183675976772
+N24-before-t.2             0.17537109374999502  0.022090817971  0.0136810613708
+N24-near-t.2               0.20017968749999435  0.0273339226706  0.0168030422712
+N24-t2                     2  1.15472407171  0.782654232194
+N36-t0                     0  5.88114148342e-15  5.88114148342e-15
+N36-t.2                    0.20000000000000001  0.0135563673848  0.00355358250618
+reference-t0               0  6.00485456606e-15  6.00485456606e-15
+reference-t.05             0.050000000000000003  8.57096636007e-14  3.60253540611e-14
+
+The diagonal second derivative functional explains part of the Hamiltonian
+magnitude. It does not remove the archived momentum/Z/Theta growth: at N24
+t=2 those unchanged norms are 1.40196797714 / 0.365045756454 / 0.0288669963984.
+
+The original initial H is unchanged (~6e-15); reference endpoint H remains
+roundoff under either loader. These are functional comparisons on the same
+stored states, not demonstrations of improved dynamics or an energy bound.
+
+Matched diagnostic-time comparison at t=.2:
+N24 diagnostic RMS values are linearly interpolated between exact times
+.17537109374999502 and .20017968749999435; no state field is interpolated.
+N36 uses its exact t=.2 checkpoint.
+
+quantity      N24 interpolated       N36 exact        ratio    log(ratio)/log(1.5)
+H        0.0167804299076 0.00355358250618 4.72211631 3.82833699
+M        0.0320662425697 0.00713494311992 4.49425343 3.70635977
+Z        0.0133227923531 0.00209046098244 6.3731361 4.5678201
+
+Nearest actual N24 checkpoint versus exact N36 t=.2 (unequal times):
+H ratio 4.7284795673, descriptive log-ratio 3.83165819997.
+M ratio 4.50052237629, descriptive log-ratio 3.70979757217.
+Z ratio 6.38115932189, descriptive log-ratio 4.57092301084.
+
+The different native dt values near .2 are .00042773437499998563 (N24)
+and .00011510416666666207 (N36); only two resolutions are available. The
+log-ratios describe this early-time evidence and are not established pure
+spatial convergence orders. Variable-coefficient/nonlinear product rules
+remain unproved. No stability, scri regularity or BH acceptance follows.
+
+Provenance: compiled implementation 27c19d20696ea6dd4704032c51dfd026218f64f2.
+Original private build receipt f2c884662b04b68b4efef0cb1dedb2e11b26f242683427642d233afbf433c886.
+Original native executable e337453cae3553d05393478204f91131c620cb84c469e5c1a6fce3db073cfa16.
+Current receipt SHA256 56453f897546a4370cac629738082e8a0cfff35b9a0565b015b24db0e9a3d54b.
+The one-line private Diagnose overlay, full commands, all small sources and
+logs are frozen together. RST/raw/cell arrays and executables are indexed by
+hash/size only. Original archived/private/frozen files are unchanged.
+
+The first completed eight-state PASS is preserved separately as history;
+the later nine-state run adds the requested interpolation bracket.

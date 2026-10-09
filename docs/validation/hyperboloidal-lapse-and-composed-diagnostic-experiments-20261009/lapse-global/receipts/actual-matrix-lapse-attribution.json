@@ -1,0 +1,28 @@
+{
+  "formula": "Delta alpha_t=\u2212c*(delta beta\u00b7grad alpha_ref+(beta_ref\u00b7grad alpha_ref)*delta alpha/alpha_ref)",
+  "semantics": "local value-only alpha row; no derivative/geometry/pole/gauge-shift change; no stability theorem",
+  "candidate_matrix_sha256": "0c9d05aa5192e003272c3842e2b0ec30cf12a41d3398dfe560b58cfb6d2cd13a",
+  "C0_matrix_sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+  "reference_coefficients_sha256": "e981b3ab86ba3d4a03340ad6bf9fe5f504ea23ab0185b983d5162237ff6b5964",
+  "expected_nnz": 3872,
+  "max_expected_entry": 1.3742470173151193,
+  "max_changed_entry": 1.3742470173149681,
+  "max_absolute_error_vs_expected": 7.05546732149287e-13,
+  "max_absolute_unexpected_entry": 0.0,
+  "outer_nodes": 672,
+  "outer_all20_rows_max_change": 0.0,
+  "all_nonalpha_rows_max_change": 0.0,
+  "gauge_seed_action_change_l2": 0.051323339076438566,
+  "gauge_seed_action_change_linf": 0.004832846144612756,
+  "changed_gauge_action_nonalpha_linf": 0.0,
+  "core_nodes_r_le_005": 0,
+  "core_scope": "this N16 cell-centred grid has no core<=.05 nodes; exact-core source identity is provided by the independent frozen local gate",
+  "full22": {
+    "matrix_sha256": "dfff619546baecf5613c2071737d903c1a1a867bea838cacde2e1b5278ebb056",
+    "C0_matrix_sha256": "1f7a5297ea5a6308a707222d558f75316ae9615a6046abd581ebd8e7a90b6e65",
+    "max_absolute_error_vs_expected": 7.05546732149287e-13,
+    "all_nonalpha_rows_max_change": 0.0,
+    "outer_all22_rows_max_change": 0.0
+  },
+  "passed_attribution_1e-8": true
+}

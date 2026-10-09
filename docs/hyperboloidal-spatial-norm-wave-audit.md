@@ -62,7 +62,8 @@ at a=1, P-Pref=.01*Omega gives Omega*Qdot -> .02 and Theta_phys_dot -> -.02.
 The private executable retains production source 27c19d20 with an explicitly
 audited include wrapper. Its SHA256 is
 `dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d`.
-All 369 recorded production files and four overlay inputs were verified
+All 369 recorded baseline source/input/helper files (365 src/CMake and four
+auxiliary files) and four overlay inputs were verified
 before and after the independent N36 run. Build source and launch HEAD
 f615acf4 are recorded separately.
 

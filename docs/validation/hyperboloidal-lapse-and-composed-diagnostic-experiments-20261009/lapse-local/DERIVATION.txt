@@ -1,0 +1,71 @@
+Regular physical-P lapse advection: separate lower-order candidate
+
+Baseline is the C_Z4c=0, kappa2=0 tensor system, spatial-norm shift control,
+and physical-P lapse source with xi=1/a. All geometric RHS, physical-P pole,
+shift regular/pole sources, storage, reference, principal derivatives and
+outer source prescriptions remain unchanged.
+
+Let h=alpha_ref>0, G_i=partial_i h, W=W_gauge, c=1-W, and delta beta=beta-beta_ref.
+The added REGULAR lapse source is
+
+  Delta Falpha = -c sum_i[(beta_i-beta_ref_i)+beta_i(alpha-h)/h] G_i
+               = -c[(alpha/h)beta-beta_ref] dot G.
+
+The old advection beta dot grad alpha - beta_ref dot G therefore becomes
+
+  c beta dot(grad alpha-alpha G/h)
+    +W[beta dot grad alpha-beta_ref dot G]
+  =c alpha beta dot grad log(alpha/h)
+    +W[beta dot grad alpha-beta_ref dot G].
+
+The logarithmic expression is an algebraic identity, not a stronger live-field
+falloff or a new physical-P trace definition. The old conformal-Q lapse branch
+already uses log-relative advection, but its trace/pole source differs. Searches
+of prior documentation and scratch sources found no exact prior test of this
+physical-P hybrid. The authoritative baseline locations are layer_gauge.hpp
+lines85-110, docs/hyperboloidal-layer.md lines156-169 and
+docs/hyperboloidal-layer-stabilization.md lines28-52.
+
+For the full20 ordering {alpha,chi,P,Theta,beta[3],g[5],A[5],Lambda[3]}, the
+candidate-minus-base frozen value Jacobian at arbitrary finite live states is
+
+  Delta J[0,0] = -c beta dot G/h
+  Delta J[0,4+i] = -c(alpha/h)G_i,
+  all other entries zero.
+
+The mixed Hessian partial_alpha partial_beta_i Delta Falpha=-cG_i/h is nonzero.
+Using only the reference linear row at finite amplitude would be incorrect.
+No live derivative coefficient changes: beta dot grad alpha still supplies
+the same Fourier advection and the complete principal system is unchanged.
+At the reference, the full lapse value-to-shift row becomes
+W[G_i-alpha_ref Omega_i/Omega]; only that background-gradient feedback is
+suppressed where W=0. Positive primitive roots have not been identified as
+pure gauge, and reducing a chosen matrix entry proves no stability result.
+
+The reference fixed point is exact because alpha=h and beta=beta_ref make
+Delta Falpha=0. The helper returns0 for the old nonphysical lapse flag.
+It divides only known h, and adds no live alpha or Omega denominator.
+The geometry layer has radii(.05,.95); the independent gauge layer is(.45,.85).
+For r<=.05 the geometry is exact Cauchy/Minkowski, h=1 and G=0, so the new
+source is exactly0 for arbitrary live data. The gauge interior c=1 extends
+to r=.45 and includes nonflat reference geometry, where the source is active.
+For r>=.85 c and all its spatial jets vanish; the entire old outer equation,
+pole spectrum, null-compatibility conditions and known failures are retained.
+
+Future wormhole-to-trumpet limitation: the exact Cauchy core equation is
+unchanged. In particular, regular differentiated radial power/log expansions
+still require eta_inner=v>0 for the previously derived stationary collapsed-
+lapse endpoint; current eta_inner0 obstruction is not repaired. No global
+matched stationary trumpet or BH formation is asserted. The direct formula
+above should be used for future collapsed-lapse evaluation in nonflat regions:
+adding old+Delta as two large cancelling terms can leave binary64 roundoff of
+order1e-15 when alpha is order1e-300. This is numerical cancellation, not a
+mathematical singularity. The present finite positive-lapse gate does not admit
+puncture-scale accuracy or positivity preservation.
+
+All native and global runs require separate admission. This gate changes no
+production file and launches no native evolution. It does not change the
+initial geometric constraint RHS directly, since the new pointwise RHS has
+only a lapse component and the ADM/Z constraints do not depend on lapse values.
+Subsequent discrete gauge/geometry feedback can change and needs measurement;
+no stronger continuum constraint energy or Bianchi closure is inferred.

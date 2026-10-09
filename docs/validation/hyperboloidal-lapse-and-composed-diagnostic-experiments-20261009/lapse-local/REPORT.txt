@@ -1,0 +1,60 @@
+Physical-P inner regular lapse-advection candidate: finite-Omega local gate PASS
+
+No exact prior physical-P hybrid test was found. The original conformal-Q lapse
+uses log-relative advection but a different trace source. This candidate changes
+only the regular lapse advection by the formula in DERIVATION.txt and the shared
+inner_lapse_advection.hpp, SHA39f125347e050bbf662ce3dc1e354791b37cafa7949fdf1ff19cedda3d8d85e1.
+API ResearchInnerLapseAdvection(p,u,g) returns the regular alpha addition.
+The caller retains normal validity checks; nonphysical lapse flag returns0.
+
+All10 commands pass with empty stderr;376 recorded inputs (365 tracked src/
+CMake plus11 gate/helper/test files) are unchanged. No production edit/native
+evolution or accepted/frozen-directory change occurs. The exact compile flags,
+AppleClang version, Python/NumPy versions, source manifests and binary hashes
+are preserved in receipt.json. Production implementation stays27c19d20.
+
+Release and ASan/UBSan nonlinear checks agree on4004 points at a=.5,.75,1,2,
+including source parts at Omega0. Nonlinear identity error1.07119e-16; arbitrary
+finite-state value Jacobian error4.44089e-16. Reference addition, arbitrary
+offconstraint outer addition, exact Cauchy-core addition, nonphysical-lapse
+addition, every shift/pole difference and cutoff first-three outer jets are
+exactly0. At W_gauge0 the log-relative regular-lapse identity has error1.75e-17.
+The assembled reference full20 RHS at these grid points is1.04272e-12, without
+new reference subtraction.
+
+The actual360-case principal extraction remains complete: symbol error
+3.55271e-15,left-eigenfield error8.88178e-16,basis condition11.5292. The copied
+extractor differs only by nonzero prescribed reference lapse/shift first jets;
+both physical-lapse flags, SPD/oblique frames and transition cases are covered.
+
+1900 actual full20 matrices compare candidate/base at reference and .01 generic
+physical jets, a=.5,.75,1,2. Extra bulk radii .025,.05,.1,.2,.4,.45,.5,.55,.8
+supplement prior .3,.65,.75,.85,.95,.98 and four small-Omega locations. At a=.5,
+directions are radial/oblique and frequencies include0,32,64,128,256 plus
+pi*N/2.2(global tangent span) and pi*N/2.1(actual native span),N24/36/48.
+Other curvatures cover k0. Only the exact predicted regular-lapse value row
+changes, normalized error2.63562e-15. All outer r>=.85 and exact Cauchy-core
+r<=.05 matrices are bitwise identical; four curvatures' scri pole matrices are
+bitwise identical.380 shared independent prior C0 baseline matrices match
+bitwise. No C1 or kappa2 profile is combined with this candidate.
+
+132 scalar RK3 tests of sampled nonpositive primitive roots pass at native
+Omega minima and dt=.03Omega,including both global/native Nyquist frequencies.
+This is neither matrix contractivity nor an all-negative spectrum claim.
+Positive finite primitive roots remain. At a=.5,the worst sampled reference
+root increases3.145118116041608 to3.1475400320540015; with .01 perturbed jets,
+3.1617006955898272 to3.163805331483015. They are not assigned a gauge/subsidiary
+interpretation. Raw assembled reference maximum at Omega as small as1e-5 is
+1.0838485664521613e-10. These results do not demonstrate stabilization.
+
+The first checker attempt failed only while rendering its final symbolic output:
+a NumPy beta array shadowed the SymPy beta symbol after all numerical assertions
+passed. Exact failed sources, compiler/run commands, logs, receipt and large
+output hashes remain in failed-checker-symbol-shadowing. The helper and C++
+scientific sources did not change. Corrected checker plus all10 commands reran
+successfully; failures are not silently discarded.
+
+Finite positive-lapse/source/principal admission does not establish pulse
+stability, exact scri, uniform energy, live falloff, nonlinear closure, collapsed
+lapse accuracy, or BH transition. Current exact-core eta_inner0 obstruction
+remains. Root owns any later separate native/global experiment.

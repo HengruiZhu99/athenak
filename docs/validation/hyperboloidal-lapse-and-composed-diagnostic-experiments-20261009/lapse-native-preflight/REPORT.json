@@ -1,0 +1,83 @@
+{
+  "scope": "Finite-positive-lapse reference/short integrity only; no stable pulse, puncture, scri or BH acceptance.",
+  "freeze_head": "1f58f7b1d18dbcf0f313f65cceb7e7e3853f7125",
+  "build": {
+    "status": "PASS",
+    "private_build_receipt_sha256": "d9cf0f305fb0474c4a24e961249ab0fca5ab4b53989241c77a9090e323b37e89",
+    "baseline_sources": 369,
+    "baseline_overlays": 4,
+    "private_sources": 2,
+    "private_objects": 6,
+    "repository_dependencies": 268,
+    "all182_original_objects_and4_libraries_unchanged": true,
+    "actual_compile_and_link_replacements_verified": true,
+    "compiled_objects": [
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "object": "a91698ff2a54d25f2f4b3f18de8ddfccb30108828e9ae99a9f8a6380ae9cc30f",
+        "dependency": "a3ea25e06b5743dbee6713e6d21880ac83dac2257a11fb943a810323d7c032f2"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "object": "5f6469193de91d687d2ac7fde16a77ece5ee03355ecd369af05983c0630d7301",
+        "dependency": "598d1a2503cef36b10a193346150271b918a8329e35b7192c1daa3797e79bda9"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "object": "4b0e49209313d90101905110e0f01a9c74e3d4cf9ae37f6375422f960510663c",
+        "dependency": "406274c56330131656c2cb1e79bbce7ed6ca63d8b21496f1c02946a78d23a345"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "object": "a308bde3143ac2e6b8f30530c854fe608d0a1ac1f764f5c82ba2c11b22feeb6a",
+        "dependency": "76e3d189e25e53765365216d1fd1a0c1ee90c57ed879e9a229ef1fbd958cb00d"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "object": "aa2037dfb77689359025f82e2d192d7651fef3a7d03a38841b2db90217872b07",
+        "dependency": "ed701c9a662bf0ab484103027b39c5dced1ff3380fb2d1ba7e5869a30100ee5b"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "object": "2094679dd5dda7c55d5ab1676eb0b6c6243779a98a430307fc0cbd8458c65dd6",
+        "dependency": "153c56193566611de084ab436238b741937f115200da23fe18d8c23a560c2c87"
+      }
+    ],
+    "native_override_byteidentical": true,
+    "frozen_lapse_gate_index": "4ff923dfabbae02c509b1cfeecbe18aa173bdcd5640e6d562d1d04934c8a7e8c",
+    "only_regular_lapse_advection_changed_geometric_and_gauge_poles_unchanged": true,
+    "no_C1_or_covector_repair_and_no_new_double_pole": true,
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "604846c7bc9f6f19042d35de9aa83fc0d95909a4d87f74d775ca8f737cf48203"
+  },
+  "source_operation": "Only helper include plus regular gauge_rhs.alpha addition; removal restores original full header exactly.",
+  "reference_max_drift": 1.3093295951669232e-14,
+  "short_comparisons": {
+    "H": {
+      "private": 0.00310109454629805,
+      "baseline": 0.003110631758851493,
+      "ratio": 0.9969339949911127
+    },
+    "M": {
+      "private": 0.004872043800523539,
+      "baseline": 0.00489404887942953,
+      "ratio": 0.9955037067573065
+    },
+    "Z": {
+      "private": 0.001194585133091141,
+      "baseline": 0.001198002395651048,
+      "ratio": 0.9971475327826452
+    },
+    "Theta": {
+      "private": 6.10626592828996e-05,
+      "baseline": 6.156048106303179e-05,
+      "ratio": 0.9919132896375116
+    }
+  },
+  "caveats": [
+    "Original geometric/gauge poles unchanged.",
+    "Additive source can cancel when lapse collapses; future BH implementation requires direct equivalent advection evaluation and fresh gates.",
+    "Initial precompile syntax, precompile receipt key and auditor index-schema failures preserved; none altered scientific source or evolution.",
+    "Historical physical_metric_eigen keys are Penrose gtilde/chi magnitudes; SPD positivity equivalent for Omega>0."
+  ]
+}

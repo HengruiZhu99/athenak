@@ -379,3 +379,10 @@ commit. Existing frozen archives are not rewritten.
 The follow-up [covariant constraint audit](hyperboloidal-covariant-constraint-audit.md)
 records finite-Omega C1 stiffness, native short-pulse and exploratory global
 negative screens. C1 is not adopted.
+
+
+A later [composed diagnostic attribution](hyperboloidal-composed-diagnostic-audit.md)
+recomputes selected archived composed-RHS states with both diagonal-Hessian
+functionals. It reduces H while leaving M/Z/Theta pointwise unchanged and retains
+all original histories. Its early matched-time ratios are separate from the
+original RHS-only comparison and establish no stability or pure-spatial order.

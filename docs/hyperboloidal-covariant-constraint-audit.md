@@ -66,7 +66,8 @@ No as-built receipt or first frozen snapshot is rewritten.
 Six native objects are privately recompiled, with182 original objects and four
 Kokkos libraries verified unchanged. The C1 delta is added after existing C0
 Minkowski reference roundoff subtraction. No C1 reference RHS is subtracted.
-All369 baseline sources, four norm-overlay files, three private headers,269
+All369 baseline source/input/helper files (365 src/CMake and four auxiliary
+files), four norm-overlay files, three private headers,269
 compiled repository dependencies and all link replacements are independently
 verified. Compiled production identity is27c19d20; launch HEAD isaef47b0a.
 

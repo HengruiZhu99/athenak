@@ -1,0 +1,222 @@
+{
+  "semantics": "Exact invocations recorded from this scratch screen; final analyses complete only when logs/receipts present; no invented launch timestamps",
+  "launch_HEAD": "2392ccd1345430fe11786a7583793c2060d16f9c",
+  "runtime_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "python_version": "3.9.6",
+  "commands": [
+    {
+      "label": "build",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/build_candidate.py"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/build-all.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {}
+    },
+    {
+      "label": "field-build",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/build_fields.py"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/build-diagnostic-fields.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {}
+    },
+    {
+      "label": "analytic-reference-coefficient-build",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/build_reference.py"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/build-reference.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {}
+    },
+    {
+      "label": "native-stage",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/validate22.py",
+        "spatialnorm"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-validation.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "project-actual-matrix",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/assemble_projected.py",
+        "spatialnorm"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-assemble.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "short-Arnoldi",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/krylov_propagate.py",
+        "spatialnorm",
+        "--stop",
+        ".05"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-krylov-pilot.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "short-independent-Taylor",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/validate_krylov_pilot.py",
+        "spatialnorm"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-pilot-independent.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "short-native-constraints",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/analyze_history.py",
+        "spatialnorm",
+        "--stop",
+        ".05"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-pilot-history-analysis.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "short-native-fields",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/analyze_fields.py",
+        "spatialnorm",
+        "--stop",
+        ".05"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-pilot-fields-analysis.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "exploratory-t2-Arnoldi",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/krylov_propagate.py",
+        "spatialnorm",
+        "--stop",
+        "2"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-krylov-t2.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "exploratory-t2-native-constraints",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/analyze_history.py",
+        "spatialnorm",
+        "--stop",
+        "2"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-t2-history-analysis.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "exploratory-t2-native-fields",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/analyze_fields.py",
+        "spatialnorm",
+        "--stop",
+        "2"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/spatialnorm-t2-fields-analysis.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "actual-matrix-lapse-attribution",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/check_attribution.py"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/matrix-attribution.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "short-C0-comparison",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/compare_controls.py",
+        "--stop",
+        ".05"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/pilot-comparison.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    },
+    {
+      "label": "exploratory-t2-C0-comparison",
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/compare_controls.py",
+        "--stop",
+        "2"
+      ],
+      "stdout_stderr_log": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-inner-lapse-advection/full22-candidate/t2-comparison.log",
+      "working_directory": "/Users/hz0693/research/hyperboloidal",
+      "environment_overrides": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "build-layer-research/boundary/python-deps"
+      }
+    }
+  ],
+  "long_session": 53793,
+  "no_long_canonical_or_native_evolution_run": true,
+  "no_kappa2_C1_or_other_source_combination": true
+}
