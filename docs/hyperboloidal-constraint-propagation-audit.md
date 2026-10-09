@@ -409,3 +409,9 @@ The [factored Q/null-feedback audit](hyperboloidal-conformal-Q-null-feedback-aud
 preserves physical-P geometry, passes local and short native integrity gates,
 and records much worse constraints in its t=2 Cartesian comparison. Its
 stable reference pole does not establish finite-radius or global stability.
+
+The [saved-mode discrete closure audit](hyperboloidal-mode-subsidiary-closure-audit.md)
+compares actual native constraint derivatives with the separately discretized
+coefficient-aware subsidiary on N16 and N20. Substantial defects remain on
+exactly checked interior support; their size does not establish a convergence
+rate or identify the cause of the sampled direction's growth.

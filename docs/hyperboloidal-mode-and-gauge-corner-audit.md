@@ -75,3 +75,9 @@ A subsequent [factored Q/null-feedback control](hyperboloidal-conformal-Q-null-f
 cancels the displayed initial gauge corner and passes local source and pole
 checks, but fails short native constraint comparisons and the actual global
 t=2 screen. It supplies no stable gauge or closed scri prescription.
+
+The [saved-mode discrete closure follow-up](hyperboloidal-mode-subsidiary-closure-audit.md)
+measures native constraint actions on the original N16 direction and a fresh
+export of the previously specified N20 reduced direction. It retains exact
+nested-support masks, transport/KO commutators and an explicitly chosen
+constraint extension, without identifying a unique instability cause.

@@ -1,0 +1,60 @@
+{
+  "passed_readback_and_source_pins": true,
+  "sources_unchanged": true,
+  "originals": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-global-final/manifest.json",
+      "sha256": "4f62819e2337c0cb20571071fe10d0e80d8b43895a928ccd4418faec0bc590d2",
+      "small_files_reverified": 71
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/immutable-discrete-mode-diagnostic-20261009/index.json",
+      "sha256": "396899199b3e94afdf28133c3db094690c18c094aa86e38ad42edfc8829c1d69",
+      "small_files_reverified": 52
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/constraint-propagation/immutable-constraint-propagation-20261009/manifest.json",
+      "sha256": "1ef4735a5b1136c7836daf4fc8783a24f5b83e42eca8281fa63bff8735c4040a",
+      "small_files_reverified": 17
+    }
+  ],
+  "compiler_dependencies_reverified": 1082,
+  "finite_JSON_count_before_freeze": 12,
+  "runtime_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "numpy": "2.0.2",
+  "scipy": "1.13.1",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONPATH": "build-layer-research/boundary/python-deps"
+  },
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/mode-subsidiary-defect/prepare_build.py"
+      ],
+      "output": "build.log"
+    },
+    {
+      "argv": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/mode-subsidiary-defect/comparator",
+        "--manufactured"
+      ],
+      "output": "manufactured.json"
+    },
+    {
+      "argv": [
+        "python3",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/mode-subsidiary-defect/run_comparator.py"
+      ],
+      "environment": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps"
+      },
+      "output": "run.log"
+    }
+  ],
+  "claims": "Sampled fixed-grid intertwining defect only; chosen same-ray constraint extension is not induced primitive closure. No propagation/eigensolve/native-long/production edits or global/continuum stability claims."
+}

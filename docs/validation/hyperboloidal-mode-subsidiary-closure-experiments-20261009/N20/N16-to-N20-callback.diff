@@ -1,0 +1,11 @@
+--- frozen-N16/comparator.cpp
++++ fresh-N20/comparator.cpp
+@@ -55,7 +55,7 @@
+       nested.push_back(ok);
+     }
+   }
+-  static hyp::SphericalGhostGrid Grid(){hyp::SphericalGhostGrid g;g.radius=1;for(int a=0;a<3;++a){g.n[a]=22;g.h[a]=2.2/16;g.first[a]=-.5*21*g.h[a];}return g;}
++  static hyp::SphericalGhostGrid Grid(){hyp::SphericalGhostGrid g;g.radius=1;for(int a=0;a<3;++a){g.n[a]=26;g.h[a]=2.2/20;g.first[a]=-.5*25*g.h[a];}return g;}
+   static hyp::LayerGaugeParameters Gauge(){hyp::LayerGaugeParameters g;g.physical_trace_lapse=true;g.preferred_source=false;g.scri_lapse_damping=2;return g;}
+   bool Inside(const Cell&c,const std::vector<std::array<int,3>>&st)const{for(const auto&d:st)if(!patch.grid.Interior(c.i+d[0],c.j+d[1],c.k+d[2]))return false;return true;}
+   void PrintMetadata(){const auto&g=patch.grid;auto gh=Kokkos::create_mirror_view_and_copy(Kokkos::HostSpace(),patch.ghosts);double sumerr=0;size_t refs=0;

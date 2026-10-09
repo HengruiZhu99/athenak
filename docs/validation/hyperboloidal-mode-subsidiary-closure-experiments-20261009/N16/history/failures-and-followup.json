@@ -1,0 +1,24 @@
+{
+  "failures": [
+    {
+      "stage": "first scratch callback compile",
+      "exit": 1,
+      "cause": "Field::operator()(flattened_index) returned a value, but native FillSphericalGhosts assigns through it.",
+      "repair": "Return a mutable double reference from the flattened field adapter; native operators unchanged.",
+      "captured_sources_command_log": "first-build-nonassignable-field",
+      "scientific_output_produced": false
+    },
+    {
+      "stage": "second build preparation before compiler launch",
+      "exit": 1,
+      "cause": "copy2 tried to overwrite an existing read-only copy of the frozen subsidiary header; PermissionError.",
+      "repair": "When a pinned input already exists, verify identical bytes and keep it; copy only missing inputs.",
+      "scientific_output_produced": false
+    }
+  ],
+  "followup": {
+    "first_completed_mode_comparison": "first-mode-comparison-before-K-sensitivity",
+    "reason_for_one_repeated_diagnostic": "Outer subsidiary coefficients can amplify constraint directional-derivative noise. Added explicit K_h sensitivity to all four native constraint amplitudes before freezing; no changed matrix, kernel or propagation.",
+    "first_and_final_physical_results": "Identical primary comparator numbers; final adds K_h amplitude controls."
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "reviewer": "/root/continuum_stabilization",
+  "communication": "Read-only collaboration messages before freeze; no independent propagation or scientific rerun.",
+  "reviewed_comparator_cpp_sha256": "0a8b8589d295496b22f24cf16731d28b0e1ab15f90a0216cdecbe73966a642f8",
+  "review": "Binding/scales agree frozen reference-only subsidiary. CartesianOmega is equivalent to stored .normal/.dnormal at analytic reference; K=P here because Theta_ref=0. Physical H, M covector, Z covector, Theta components/no Omega weights are correct. Nested S2+S3 mask appropriately excludes primitive and constraint donor dependency; AddMeshUpwind on deviations linearizes only reference beta velocity since baseline deviation=0. Separately projecting native U/KO is appropriate; no commutation assumption. No formula/scoping error found.",
+  "limitations": "Keep nested32 results a strict interior sampled attribution (coarse FD/product-chain inconsistency), not outer/global or continuum subsidiary classification. Independent constraint same-ray extension can be violently different from primitive-induced C_h closure, so its huge M ratio cannot be attributed to native boundary instability. Four-amplitude sensitivity is separate empirical readback rather than exact discrete subsidiary closure."
+}

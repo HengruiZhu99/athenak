@@ -1,0 +1,61 @@
+{
+  "status": "WARNING_FREE_REPLAY_OF_PREVIOUSLY_SCREENED_FIXED_REDUCED_EXPORTS",
+  "scope": "Approximate/pseudospectral vectors only; singular fraction1e-10 is a screening heuristic, not eigenvalue certification. No global eigensolve/search/evolution/newmatrix.",
+  "coordinates": "Complex unit Euclidean free20 point-major active k/j/i; largest entry phased real positive; no field rescaling.",
+  "candidates": [
+    {
+      "key": "candidate0",
+      "case": "n20-late2-gauge-s2",
+      "rank": 32,
+      "method": "rayleigh-ritz",
+      "window": [
+        2.0,
+        6.0
+      ],
+      "stride": 2,
+      "lambda": [
+        1.9182802861785322,
+        6.805508834100131
+      ],
+      "actual_J_residual_generator_units": 3.823879262878925e-07,
+      "singular_value_fraction_at_rank": 1.4100894213604591e-09,
+      "difference_from_prior_lambda": 0.0,
+      "difference_from_prior_residual": 2.5803482309562972e-17
+    },
+    {
+      "key": "candidate1",
+      "case": "n20-late4-gauge-s1",
+      "rank": 16,
+      "method": "rayleigh-ritz",
+      "window": [
+        4.0,
+        6.0
+      ],
+      "stride": 1,
+      "lambda": [
+        1.9182801782503716,
+        6.8055088123862655
+      ],
+      "actual_J_residual_generator_units": 3.6971821612144466e-07,
+      "singular_value_fraction_at_rank": 1.4245325183079827e-10,
+      "difference_from_prior_lambda": 0.0,
+      "difference_from_prior_residual": 1.064144538173641e-15
+    }
+  ],
+  "phase_aligned_candidate_distance": 6.460480773884449e-08,
+  "seconds": 1.478718334,
+  "candidate_vectors_sha256": "4a96923a3ebe57e983a9b89bb65d0826c01037092c44d45fde24fb4617e3edc7",
+  "source_sha256": "5b386a0a682aaf1cfe51f43bfedcf16522f7e97cade4ac5607614e1c8c9b6b51",
+  "input_sha256": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-N20-20261009/immutable-C0-N20-default-span-v2-20261009/index.json": "8ec4c4dd84898d19b055831696de6e3608542b1fd10a88e04f087b1f689f99aa",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/immutable-discrete-mode-diagnostic-20261009/index.json": "396899199b3e94afdf28133c3db094690c18c094aa86e38ad42edfc8829c1d69",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/immutable-discrete-mode-diagnostic-20261009/check_and_freeze.py": "6e839bf9c0d91338d47b03110c1e5dc1f65c97a9954baf00d43971207d4829b2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-N20-20261009/full22/spatialnorm-projected-J20.npz": "bfc114a9495b49d01b9275f4efd8a1fe49d167273f8d849631d25cddf9c2a103",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-N20-20261009/full22/spatialnorm-projected-krylov-m50-80-h0.1-t6.0.npz": "2e777543e187896882e7a97f4f23a63fee057145a8c4f034932a782ebe0154c7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-C0-N20-20261009/full22/spatialnorm-cache0.0001-metadata.json": "cd72ca5486a65e90744ed04f00a4da58f7246e2f63e5743147fba19209babb86",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/immutable-discrete-mode-diagnostic-20261009/n20-late2-gauge-s2.json": "6dbb47b2c4b697e780f85ba55c3cc57c7ea7d91212c2baa6f1eee8d1d72d7363",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/discrete-mode-identification/immutable-discrete-mode-diagnostic-20261009/n20-late4-gauge-s1.json": "b45603c28f1ecf9d3dd213b49981dd2130627cd1a7c4fc18227e9754cd3e682c"
+  },
+  "launch_HEAD": "6825a1d2a2b3481eaefe1083d8dbb10937319b39",
+  "runtime_warnings_promoted_to_errors": true
+}

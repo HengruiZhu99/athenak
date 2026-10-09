@@ -1,0 +1,13 @@
+In file included from /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/mode-subsidiary-defect/comparator.cpp:4:
+In file included from /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/mode-subsidiary-defect/inputs/old-jv-source.cpp:6:
+In file included from /Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp:15:
+/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/spherical_ghosts.hpp:279:17: error: expression is not assignable
+  279 |     q(s.target) = value;
+      |     ~~~~~~~~~~~ ^
+/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/spherical_ghosts.hpp:275:34: note: while substituting into a lambda expression here
+  275 |       KOKKOS_LAMBDA(const int p) {
+      |                                  ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/mode-subsidiary-defect/comparator.cpp:71:43: note: in instantiation of function template specialization 'z4c::hyperboloidal::FillSphericalGhosts<Field, Kokkos::View<z4c::hyperboloidal::SphericalGhostStencil *>>' requested here
+   71 |     if(extension)for(int f=0;f<8;++f)hyp::FillSphericalGhosts(Field{&field,g.n[0],g.n[1],f},patch.ghosts);
+      |                                           ^
+1 error generated.
