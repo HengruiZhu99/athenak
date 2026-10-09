@@ -4,6 +4,8 @@ Ongoing work, 2026-10-08–09 (America/New_York), branch
 `z4c_hyperboloidal_layer`, following `5c0951e7`. The first formulation and its
 negative results remain in [the formulation](hyperboloidal-layer.md) and
 [the initial validation receipt](hyperboloidal-layer-validation.md).
+This stage's exact builds, checks and experiments are recorded in
+[the stabilization validation](hyperboloidal-stability-validation.md).
 
 The acceptance objective is stable evolution of finite radial and angular gauge
 pulses on Minkowski over several gauge/layer crossing times, followed by a single
