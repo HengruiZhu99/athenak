@@ -1,0 +1,39 @@
+{
+  "passed_independent_tensor_freedom_source_math_and_saved_result_review": true,
+  "HEAD": "a7260897b92d12d5fc1ceb2f3dc6a886676a663f",
+  "index_sha256": "c16dbe6eb947a9c5f8710c297c042868c3dd74581742df9cf81786875316380d",
+  "indexed_files_verified": 9,
+  "reviewed_source_sha256": "92c5a93f23410dc4a1ace62af5685cd06975357ff57ab1c437345f87e0ff27c6",
+  "reviewed_report_sha256": "0509a9ea818df951d61dd964ee07be9ffc4e8db7cdbdc7e43350efac1b14e534",
+  "review_script_sha256": "aac068f9894039166fa701de5c9cf176628cdb5865d8308cd10dda514e5aad22",
+  "parent_cubic_index_sha256": "0302a9da72f1a36f5fd6bf7dc9311fccc08c97ac1eace3282423a2ee38517f13",
+  "parent_cubic_actual_sha256": "1e01f0e8f4244daa7c0a0a40f91fe30673200e3d6c0d2637d182616012c1cd20",
+  "cheap_exact_readback": {
+    "parameter_values": [
+      0.5,
+      0.75,
+      1.0,
+      2.0
+    ],
+    "shear_identity_columns": 1600,
+    "saved_preimages": 16,
+    "all_selected_reconstructed_E_and_curvature_kernel_residuals_exact_zero": true,
+    "targets_exact_identity_and_shear_relations_exact": true,
+    "rank_proof": "Two exact saved preimages of independent two-component targets establish image rank2 directly; no full rank/nullspace rerun.",
+    "arithmetic": "Python Fraction, same denominator<=1000000 reconstruction as the frozen source."
+  },
+  "q1_definition": "At fixed angular labels q_AB=r^2 bargamma_AB. With r^2=1-2a Omega, the linear first-normal coefficient is q1_TF=(bargamma_AB,1-2a bargamma_AB,0)^TF, using the fixed reference unit-cut metric at the base point.",
+  "TF_scope": "This is reference-TF of the coefficient. Linearizing a TF projection of q1 with respect to the perturbed live q0 instead gives q1_TF+2a h0_TF. No identification with physical radiation is made.",
+  "explicit_S_components": {
+    "plus": "(partial_y h_ny-partial_z h_nz)/2",
+    "cross": "(partial_y h_nz+partial_z h_ny)/2",
+    "tensor": "(partial_(A h_nB))^TF with unit-weight symmetrization"
+  },
+  "shear_identity": "A0_TF-q1_TF/(2a)-2h0_TF-S=-a^2 R0_A_TF/2",
+  "representative_scope": "h0_TF=S=0 adds four independent rows only to choose transparent preimages; neither an extra necessary condition nor a boundary prescription or falloff. Their A0_TF=q1_TF/(2a) follows from the imposed shear identity.",
+  "scientific_corrections": [],
+  "notation_clarification": "Frozen receipt wording .5(sym derivative) is ambiguous; the explicit S components above state the actual code and the usual unit-weight convention. Frozen bytes remain unchanged.",
+  "scope": "Two necessary finite Taylor-jet tensor freedoms only; no genuine radiative Weyl data, exact Einstein germ, hierarchy preservation, native/global evolution or source admission.",
+  "kernel_or_evolution_rerun": false,
+  "frozen_mutation": false
+}

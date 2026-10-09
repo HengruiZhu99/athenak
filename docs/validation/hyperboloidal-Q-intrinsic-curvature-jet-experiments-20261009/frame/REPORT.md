@@ -1,0 +1,7 @@
+# Fixed initial scri frame: negative local gate
+
+The exact Einstein/scri identity is q_t=Lie_Y q with geometric Y=beta+alpha*s. At the reference, deltaY_T=deltabeta_T-deltabargamma_nT/a. Fixing conformal class alone retains the earlier xi=Omega*n pure-scale obstruction. Fixing initial q and Y excludes that direction but is still not invariant under the current actual Q shift gauge.
+
+A pure gauge initial perturbation beta=Omega*T with T=n_z(e_z-n_z*n) on scri has exact initial physical constraints, normal compatibility and shear residues zero. The complete actual first-RHS jets give Y_t=2T/a^2 and q_tt=Lie_(2T/a^2)q. At a.5 the actual tracefree q_tt has eigenvalues ±8 in the north tangent frame. A Killing control has zero q_tt. Additional tangential first-time/higher-time gauge conditions are required for fixed coordinate components; no boundary values or stronger falloffs are imposed. This drift is a pure sphere Lie derivative and preserves intrinsic roundness. R[q]=2 is a distinct, conditionally transported restriction if the full null/Einstein hierarchy already preserves Box0=0; its full coupled closure is unproved.
+
+The final Release/ASan gate and read-only frozen Einstein spatial-pullback postprocess are recorded separately in receipt/check-report. The main pure-gauge control uses eta_outer1, with a boundary response independent of eta. The additional spatial-pullback family gives (eta*a-1)T/a^3 and is not conflated with it. No fixed-frame invariance, retained full radiative sector, nonlinear closure or sigma3 evolution admission is claimed.

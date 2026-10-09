@@ -1,0 +1,151 @@
+{
+  "coordinate_q_drift_changes_intrinsic_roundness": false,
+  "intrinsic_roundness_preservation_proved_without_null_hierarchy": false,
+  "passed_local_boundary_frame_negative_gate": true,
+  "fixed_initial_q_and_Y_sufficient_for_invariance": false,
+  "sigma3_evolution_admitted": false,
+  "eta_outer": 1,
+  "rows": 16,
+  "kernel_radial_points": 192,
+  "actual": {
+    "initial_constraints_max": 0,
+    "initial_R0_max": 0,
+    "first_RHS_next_R0_max": 6.217248937900877e-15,
+    "actual_complete_first_RHS_field_match_error": 1.7763568394002505e-15,
+    "initial_N0_max": 0,
+    "initial_N1_max": 9.992007221626408e-17,
+    "initial_Q0_max": 0,
+    "first_RHS_N1_time_max": 3.137490267590693e-15
+  },
+  "errors": {
+    "Y_t": 2.7035051974877433e-10,
+    "q_t": 2.1705176115318638e-15,
+    "q_tt": 1.4201972931005002e-11
+  },
+  "nonKilling_q_tt_tracefree_max": 8.000000000000004,
+  "Killing_q_tt_max": 7.110066186129416e-12,
+  "geometric_shift_formula": "Y=beta+alpha*s on null branch; deltaY_T=deltabeta_T-deltabargamma_nT/a",
+  "boundary_two_metric_evolution": "qdot=Lie_Y q+(alpha Box0/(2nu))q; Einstein N=O(Omega^2),preferredBox=O(Omega) gives qdot=Lie_Y q",
+  "gauge_only_beta_Omega_T": "Y_t=2T/a^2 including moving spatial normal; q_tt=Lie_(2T/a^2)q",
+  "additional_frozen_spatial_pullback_readback": {
+    "prior_index_sha256": "de31bb51e55c159100a58d14acaae0f00231a7d6128bc6c3771d535b75ff5662",
+    "actual_file_sha256": "f8a2754231b5b8a7aa6bdcfb1c6a8d68364da334f00b812ee741c42731b61b2d",
+    "scope": "xi=Omega(r^2 e_y-y*x), exact Einstein spatial-pullback family, eta_outer1. Distinct from gauge-only family.",
+    "formula": "Y_t=(eta*a-1)T/a^3",
+    "max_error": 7.682743330406083e-14,
+    "rows": [
+      {
+        "a": 0.5,
+        "dir": 0,
+        "Y_t_actual": [
+          0.0,
+          -3.9999999999999485,
+          0.0
+        ],
+        "Y_t_expected": [
+          -0.0,
+          -4.0,
+          -0.0
+        ]
+      },
+      {
+        "a": 0.5,
+        "dir": 1,
+        "Y_t_actual": [
+          -0.6911999999999867,
+          -3.0783999999999234,
+          -1.53599999999996
+        ],
+        "Y_t_expected": [
+          -0.6911999999999999,
+          -3.0784000000000002,
+          -1.536
+        ]
+      },
+      {
+        "a": 0.75,
+        "dir": 0,
+        "Y_t_actual": [
+          0.0,
+          -0.5925925925926316,
+          0.0
+        ],
+        "Y_t_expected": [
+          -0.0,
+          -0.5925925925925926,
+          -0.0
+        ]
+      },
+      {
+        "a": 0.75,
+        "dir": 1,
+        "Y_t_actual": [
+          -0.10240000000001115,
+          -0.4560592592592918,
+          -0.22755555555557003
+        ],
+        "Y_t_expected": [
+          -0.10239999999999999,
+          -0.4560592592592593,
+          -0.22755555555555557
+        ]
+      },
+      {
+        "a": 1.0,
+        "dir": 0,
+        "Y_t_actual": [
+          0.0,
+          -1.9984014443252818e-15,
+          0.0
+        ],
+        "Y_t_expected": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "a": 1.0,
+        "dir": 1,
+        "Y_t_actual": [
+          -1.183053655040864e-15,
+          3.797850922638401e-15,
+          2.811084698351672e-15
+        ],
+        "Y_t_expected": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "a": 2.0,
+        "dir": 0,
+        "Y_t_actual": [
+          0.0,
+          0.12500000000000216,
+          0.0
+        ],
+        "Y_t_expected": [
+          0.0,
+          0.125,
+          0.0
+        ]
+      },
+      {
+        "a": 2.0,
+        "dir": 1,
+        "Y_t_actual": [
+          0.021600000000000046,
+          0.09620000000000058,
+          0.04800000000000033
+        ],
+        "Y_t_expected": [
+          0.021599999999999998,
+          0.09620000000000001,
+          0.048
+        ]
+      }
+    ]
+  }
+}

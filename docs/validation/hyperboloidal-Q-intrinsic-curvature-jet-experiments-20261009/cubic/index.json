@@ -1,0 +1,291 @@
+{
+  "kind": "exploratory-actual-full20-cubic-Einstein-null-curvature-first-time-jet-audit",
+  "freeze_HEAD": "0ec45fc71fcddad35393759019a1f6bc738cb4f9",
+  "compiled_production_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "source_inputs": 373,
+  "commands": 5,
+  "sources_unchanged": true,
+  "Release_ASan_UBSan_json_equal": true,
+  "files": [
+    {
+      "path": "DERIVATION.md",
+      "sha256": "db6bb5561e740a1de0e473842ab7c5b9340068eeeef88a876ababa2110079459",
+      "bytes": 8874
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "46e7fdd8067cd7871ea174bdfa21d225819ed5f5a65697a25a21343736a63ec7",
+      "bytes": 2981
+    },
+    {
+      "path": "SCOPE.md",
+      "sha256": "8fa5b5685f6c22e3378895d1c941e79fe209bb40250d879aa2deba6f94b2c50b",
+      "bytes": 3050
+    },
+    {
+      "path": "actual-debug.json",
+      "sha256": "1e01f0e8f4244daa7c0a0a40f91fe30673200e3d6c0d2637d182616012c1cd20",
+      "bytes": 2868571
+    },
+    {
+      "path": "actual-release.json",
+      "sha256": "1e01f0e8f4244daa7c0a0a40f91fe30673200e3d6c0d2637d182616012c1cd20",
+      "bytes": 2868571
+    },
+    {
+      "path": "check-report.json",
+      "sha256": "a2ac204baef868c2119b6a09ee7eebde2735e2ea38c2b67f7ec4353c0c55dfbd",
+      "bytes": 19054
+    },
+    {
+      "path": "check.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "check.stdout",
+      "sha256": "a2ac204baef868c2119b6a09ee7eebde2735e2ea38c2b67f7ec4353c0c55dfbd",
+      "bytes": 19054
+    },
+    {
+      "path": "check_curvature.py",
+      "sha256": "0b777e257bd49103dcc030d5d89b1a20d0be4f682580cdf51bb10ed773a1683f",
+      "bytes": 7690
+    },
+    {
+      "path": "check_pilot.py",
+      "sha256": "5e5ae4286c1ee6ff64cd0890610df243838149a10de5fa20526b3bf40bdae17c",
+      "bytes": 1455
+    },
+    {
+      "path": "compile-command.json",
+      "sha256": "9d95c5df826fcd6c637ec20726e35cfa711b5e6a230c02695300ba7d4f624459",
+      "bytes": 852
+    },
+    {
+      "path": "compile-debug.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "compile-debug.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "compile-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "compile-release.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "curvature.cpp",
+      "sha256": "641dced7d54755d11a17af005069ff96a0c3b199d33a97767c07ffe7ad5ac12f",
+      "bytes": 18118
+    },
+    {
+      "path": "final-run.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "final-run.stdout",
+      "sha256": "41f2b92a8af19f0e3069850ebd757c30b07050a9c3e3f0b99bb3475f1c2b490d",
+      "bytes": 83
+    },
+    {
+      "path": "history/passed-four-radii-FD/actual-release.json",
+      "sha256": "6a5c962a0c04f5185541a9cb306fbda002e676e25de231ef81c89d308a80df8f",
+      "bytes": 2653598
+    },
+    {
+      "path": "history/passed-four-radii-FD/compile-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/passed-four-radii-FD/compile-release.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/passed-four-radii-FD/curvature.cpp",
+      "sha256": "d7224ebc94e24c72ec4a3fe5ad54b29f1a350b26a7523f64eecbd39aac471d71",
+      "bytes": 17016
+    },
+    {
+      "path": "history/passed-four-radii-FD/run-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/passed-point-oracles-a05/actual-release.json",
+      "sha256": "b0acfdd0830cda340188389754d22f877261634f0633adc63e50449ae4e484c9",
+      "bytes": 650117
+    },
+    {
+      "path": "history/passed-point-oracles-a05/compile-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/passed-point-oracles-a05/compile-release.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/passed-point-oracles-a05/curvature.cpp",
+      "sha256": "d07f6151a097f8d500738e3d4bff9126f133967a9e75a2bf34c9987f3fe62a41",
+      "bytes": 12635
+    },
+    {
+      "path": "history/passed-point-oracles-a05/run-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/passed-point-oracles-a05/taylor.hpp",
+      "sha256": "a13c33a6e6beca7f638c600ce304da5500a3582c909a950f6a30cc1e091eefac",
+      "bytes": 4703
+    },
+    {
+      "path": "history/pilot-before-point-oracles/check_pilot.py",
+      "sha256": "5e5ae4286c1ee6ff64cd0890610df243838149a10de5fa20526b3bf40bdae17c",
+      "bytes": 1455
+    },
+    {
+      "path": "history/pilot-before-point-oracles/compile-command.json",
+      "sha256": "9d95c5df826fcd6c637ec20726e35cfa711b5e6a230c02695300ba7d4f624459",
+      "bytes": 852
+    },
+    {
+      "path": "history/pilot-before-point-oracles/compile-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/pilot-before-point-oracles/compile-release.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/pilot-before-point-oracles/curvature.cpp",
+      "sha256": "69b87fd3391484771750979c9b51c2b177aadfeaafc7390669bb4860719b0dfc",
+      "bytes": 9504
+    },
+    {
+      "path": "history/pilot-before-point-oracles/pilot-actual.json",
+      "sha256": "55cd85f58aa63111be143927e1354d8e40558d507aeb00e2f33cfbeda30c02ba",
+      "bytes": 649329
+    },
+    {
+      "path": "history/pilot-before-point-oracles/pilot-rowspace.json",
+      "sha256": "d9630b22024602fab7059db081c716d73bff7ad958c45a1da4ae8a7b540fdf0d",
+      "bytes": 423
+    },
+    {
+      "path": "history/pilot-before-point-oracles/pilot-rowspace.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/pilot-before-point-oracles/pilot-rowspace.stdout",
+      "sha256": "1a60cbf4d079977c279d98eaceff96c00b1f7e129d5c41efd13f1bb5508c3d53",
+      "bytes": 291
+    },
+    {
+      "path": "history/pilot-before-point-oracles/pilot-run.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "history/pilot-before-point-oracles/taylor.hpp",
+      "sha256": "a13c33a6e6beca7f638c600ce304da5500a3582c909a950f6a30cc1e091eefac",
+      "bytes": 4703
+    },
+    {
+      "path": "inputs/factored_base.hpp",
+      "sha256": "216bb80c18ee33e553de8defd027e6d3e0394eab38a19a56f66699583e0eca7a",
+      "bytes": 4338
+    },
+    {
+      "path": "inputs/q_null_feedback.hpp",
+      "sha256": "f3f3acfe16ba3ce36d0b687225aa1e3b33c159781e46d05e1441ccea7c57e049",
+      "bytes": 3122
+    },
+    {
+      "path": "pilot-actual.json",
+      "sha256": "55cd85f58aa63111be143927e1354d8e40558d507aeb00e2f33cfbeda30c02ba",
+      "bytes": 649329
+    },
+    {
+      "path": "pilot-minimal-identity.json",
+      "sha256": "3d030d5f0383b4066d9849633b27877405dea1eb29a3a45973da1c4d969375cc",
+      "bytes": 761
+    },
+    {
+      "path": "pilot-rowspace.json",
+      "sha256": "d9630b22024602fab7059db081c716d73bff7ad958c45a1da4ae8a7b540fdf0d",
+      "bytes": 423
+    },
+    {
+      "path": "pilot-rowspace.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "pilot-rowspace.stdout",
+      "sha256": "1a60cbf4d079977c279d98eaceff96c00b1f7e129d5c41efd13f1bb5508c3d53",
+      "bytes": 291
+    },
+    {
+      "path": "pilot-run.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "receipt.json",
+      "sha256": "4a0d3e0c2e2031aa60a613dd2caf94d67ff2379d1b3aa9433fd0a04936f43bd6",
+      "bytes": 82810
+    },
+    {
+      "path": "run-debug.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "run-debug.stdout",
+      "sha256": "1e01f0e8f4244daa7c0a0a40f91fe30673200e3d6c0d2637d182616012c1cd20",
+      "bytes": 2868571
+    },
+    {
+      "path": "run-release.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "run-release.stdout",
+      "sha256": "1e01f0e8f4244daa7c0a0a40f91fe30673200e3d6c0d2637d182616012c1cd20",
+      "bytes": 2868571
+    },
+    {
+      "path": "run_audit.py",
+      "sha256": "a2eb27cd7af25d34226970aa190198f3f92a8c5b6256f08c49d846a5ff955421",
+      "bytes": 2465
+    },
+    {
+      "path": "taylor.hpp",
+      "sha256": "a13c33a6e6beca7f638c600ce304da5500a3582c909a950f6a30cc1e091eefac",
+      "bytes": 4703
+    }
+  ],
+  "omitted_binaries": {
+    "curvature-release": "25bbd0938d4dad1150a4526777ae11dc65246e7247a320e9be22b0962cb07b06",
+    "curvature-debug": "d921cd86192683c833ea94a70c53489f55b4c5c7f19997b02a406a68c7317cfd"
+  },
+  "scope": "Conditional joint first-time tangency of N1 and intrinsic curvature on stated necessary finite linear Einstein/null/shear jets. Exact reconstructed matrices at four a values; no full hierarchy/nonlinear/radiative/native admission."
+}

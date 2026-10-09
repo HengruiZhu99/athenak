@@ -160,6 +160,12 @@ physical and gauge data, followed by discrete and finite-pulse validation.
 Stable finite Minkowski disturbances and the later wormhole-to-trumpet
 transition with a Minkowski hyperboloidal reference remain unvalidated.
 
+The subsequent [intrinsic-curvature finite-jet audit](hyperboloidal-Q-intrinsic-curvature-jet-audit.md)
+finds a conditional sigma3 null/roundness tangency on general compatible cubic
+jets. Intrinsic roundness differs from fixing coordinate two-metric components;
+two finite-jet tensor directions remain. This restricted first-time result
+does not establish higher hierarchy invariance or stable evolution.
+
 The frozen angular gate and independent completeness review have indices
 `8c569fdf6faf0fa9afff76bebfcd8ea888c5b31734b6fb90b092188f5aab3a65`
 and `32f9738ae32e062ea8c5cf75e1160b2a6e1d50bd62b24d8888c54d776449ff37`.
