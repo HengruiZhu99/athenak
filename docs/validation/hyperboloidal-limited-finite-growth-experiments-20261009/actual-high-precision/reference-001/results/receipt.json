@@ -1,0 +1,207 @@
+{
+  "status": "PASS_finite_matrix_accuracy_only",
+  "time": 6,
+  "J": 0,
+  "N": 8,
+  "rb": 0.98,
+  "scope": "one actual finite-matrix accuracy check; no PDE/native/nonlinear/scri/BH acceptance",
+  "inputs_before": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/prepared-001/inputs.npz": "9ba1f42023409040ce3e3a4d13faa86399705cc49d94cf8b637a388c34bd0e71",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/prepared-001/receipt.json": "0107646c8c8b9b73c7ba25206234c6201e8778ae4036ca53a77568cc167b57c8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/PLAN.md": "9d92e9b95b97d3e3f6938a6c490cb031897b61bc26158dbe7847731a73587a89",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/pade13_einsum.py": "0654c3ba8884dc467aa1c4665fc4758a3abddf58189e2702f7e8cfc90d2e79b7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/check_mpmath.py": "dbc3247c8dc36beef9c869197640e329837ae3ef3e5d3e8dee3c3e517d822ab7"
+  },
+  "numpy_error_mode": {
+    "divide": "raise",
+    "over": "raise",
+    "under": "raise",
+    "invalid": "raise"
+  },
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "executable": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+  "numpy": "2.0.2",
+  "mpmath": "1.3.0",
+  "mpmath_expm_method": "taylor",
+  "mpmath_expm_source": {
+    "path": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages/mpmath/matrices/calculus.py",
+    "sha256": "3cd46afa9da7c604fe7f30b9e0ad9d7a98bc75d85dc7a43ce86f2aa548877946"
+  },
+  "thresholds": {
+    "oracle_agreement": "1e-80",
+    "float_scaled_comparison": 2e-07
+  },
+  "generator_eigensolve": false,
+  "PDE_queries": false,
+  "both_ordinary_FD_attempts_and_original_Scipy_attempt_remain_failed": true,
+  "general_nongauge_continuum_comparator_unresolved": true,
+  "precision_100_seconds": 8.983368292,
+  "precision_130_seconds": 10.101782792,
+  "float_argument_rounding_peak": "9.094947017729282379150390625e-13",
+  "oracle_100_130_relative_peak": [
+    "2.749383469455294576155802931645805021986e-102",
+    "3.816815047137946153822677887313898772911e-102",
+    "1.213193494107995432327889796911301800376e-101"
+  ],
+  "floating_helper_info": {
+    "degree": 13,
+    "squarings": 14,
+    "argument_one_norm": 68584.22823421266,
+    "scaled_one_norm": 4.186049086560831,
+    "rational_solve_residual": 9.460267787534894e-17,
+    "matrix_products": 21
+  },
+  "full_propagator_comparison": {
+    "absolute_frobenius": 5.199253160215285e-06,
+    "scaled_frobenius": 4.382086678594264e-12,
+    "absolute_peak": 1.4005927368998528e-06,
+    "scaled_peak": 4.743609029944668e-12
+  },
+  "energy_seed_comparison": {
+    "absolute_frobenius": 4.068365996097263e-08,
+    "scaled_frobenius": 3.916783046837662e-12,
+    "absolute_peak": 2.340675564482808e-08,
+    "scaled_peak": 3.8083977758396894e-12
+  },
+  "saved_modal_seed_comparison": {
+    "absolute_frobenius": 1.596298453887515e-08,
+    "scaled_frobenius": 4.5820698553837345e-12,
+    "absolute_peak": 8.283222996396944e-09,
+    "scaled_peak": 4.5879901827397725e-12
+  },
+  "per_column": [
+    {
+      "column": 0,
+      "energy": {
+        "absolute_frobenius": 4.053937948220051e-08,
+        "scaled_frobenius": 3.916502674256391e-12,
+        "absolute_peak": 2.340675564482808e-08,
+        "scaled_peak": 3.8083977758396894e-12
+      },
+      "saved_modal": {
+        "absolute_frobenius": 1.5882397920417126e-08,
+        "scaled_frobenius": 4.5835185417633125e-12,
+        "absolute_peak": 8.283222996396944e-09,
+        "scaled_peak": 4.5879901827397725e-12
+      }
+    },
+    {
+      "column": 1,
+      "energy": {
+        "absolute_frobenius": 1.0661391501317297e-09,
+        "scaled_frobenius": 5.4352163879658354e-12,
+        "absolute_peak": 4.646381057682447e-10,
+        "scaled_peak": 5.394998865258223e-12
+      },
+      "saved_modal": {
+        "absolute_frobenius": 5.574585205355677e-10,
+        "scaled_frobenius": 5.321273950524136e-12,
+        "absolute_peak": 1.9410606455494417e-10,
+        "scaled_peak": 5.224447776064629e-12
+      }
+    },
+    {
+      "column": 2,
+      "energy": {
+        "absolute_frobenius": 1.7129280881482199e-09,
+        "scaled_frobenius": 4.360291722063773e-12,
+        "absolute_peak": 6.363052307278849e-10,
+        "scaled_peak": 3.674131200848733e-12
+      },
+      "saved_modal": {
+        "absolute_frobenius": 8.403040273110743e-10,
+        "scaled_frobenius": 4.127130560503519e-12,
+        "absolute_peak": 2.7681323899741983e-10,
+        "scaled_peak": 3.568381064157611e-12
+      }
+    },
+    {
+      "column": 3,
+      "energy": {
+        "absolute_frobenius": 2.1120700961040574e-10,
+        "scaled_frobenius": 5.571321821629345e-12,
+        "absolute_peak": 1.2239809166203486e-10,
+        "scaled_peak": 5.506055489651157e-12
+      },
+      "saved_modal": {
+        "absolute_frobenius": 8.173046423518907e-11,
+        "scaled_frobenius": 6.716903496071019e-12,
+        "absolute_peak": 4.262901143192721e-11,
+        "scaled_peak": 6.623923221363988e-12
+      }
+    },
+    {
+      "column": 4,
+      "energy": {
+        "absolute_frobenius": 2.6619054870319713e-09,
+        "scaled_frobenius": 3.730092912783113e-12,
+        "absolute_peak": 1.346904809906846e-09,
+        "scaled_peak": 3.233345070928731e-12
+      },
+      "saved_modal": {
+        "absolute_frobenius": 1.2016773885254175e-09,
+        "scaled_frobenius": 4.53158956857861e-12,
+        "absolute_peak": 5.724700713471975e-10,
+        "scaled_peak": 4.1068272676780176e-12
+      }
+    },
+    {
+      "column": 5,
+      "energy": {
+        "absolute_frobenius": 1.0497796739628755e-10,
+        "scaled_frobenius": 1.5850114130892534e-11,
+        "absolute_peak": 4.2300829505848014e-11,
+        "scaled_peak": 1.25419655580641e-11
+      },
+      "saved_modal": {
+        "absolute_frobenius": 4.041943630730283e-11,
+        "scaled_frobenius": 1.3633055324527802e-11,
+        "absolute_peak": 1.4204915022020259e-11,
+        "scaled_peak": 1.0105028174174334e-11
+      }
+    },
+    {
+      "column": 6,
+      "energy": {
+        "absolute_frobenius": 6.772994783904554e-10,
+        "scaled_frobenius": 3.321109336835639e-12,
+        "absolute_peak": 3.5214497984270565e-10,
+        "scaled_peak": 3.0410985069308474e-12
+      },
+      "saved_modal": {
+        "absolute_frobenius": 2.986027750756333e-10,
+        "scaled_frobenius": 3.7055895106335315e-12,
+        "absolute_peak": 1.4598100506191258e-10,
+        "scaled_peak": 3.5181846589508937e-12
+      }
+    },
+    {
+      "column": 7,
+      "energy": {
+        "absolute_frobenius": 2.1913355678816587e-10,
+        "scaled_frobenius": 3.757017471528934e-12,
+        "absolute_peak": 1.2356338174868142e-10,
+        "scaled_peak": 3.582666696389552e-12
+      },
+      "saved_modal": {
+        "absolute_frobenius": 8.907896762105538e-11,
+        "scaled_frobenius": 4.312871451897597e-12,
+        "absolute_peak": 4.5778492108183855e-11,
+        "scaled_peak": 4.199461395936283e-12
+      }
+    }
+  ],
+  "seconds": 19.139150417,
+  "inputs_after": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/prepared-001/inputs.npz": "9ba1f42023409040ce3e3a4d13faa86399705cc49d94cf8b637a388c34bd0e71",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/prepared-001/receipt.json": "0107646c8c8b9b73c7ba25206234c6201e8778ae4036ca53a77568cc167b57c8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/PLAN.md": "9d92e9b95b97d3e3f6938a6c490cb031897b61bc26158dbe7847731a73587a89",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/pade13_einsum.py": "0654c3ba8884dc467aa1c4665fc4758a3abddf58189e2702f7e8cfc90d2e79b7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-actual-expm-high-precision-20261009/check_mpmath.py": "dbc3247c8dc36beef9c869197640e329837ae3ef3e5d3e8dee3c3e517d822ab7"
+  },
+  "output_sha256": {
+    "oracle-100.json": "b60397d359cfaca8a52abc76e01d6c96002851e29f600135263dcd431bda021d",
+    "oracle-130.json": "4fb9d83e011d99a5d26ecd118f140efcbd3705a9e9086981b09beddfd16124b1",
+    "comparisons.npz": "ec0024d51a5f5359cdfee26c94cc64bfc3f82d5983359f2b40c632c27a32c468"
+  }
+}

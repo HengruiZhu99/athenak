@@ -1,0 +1,53 @@
+{
+  "status": "PASS_source_and_scope_review",
+  "source_sha256": {
+    "review_analyzer.py": "4898b865ace1809d10e0044e9541f994bbbcb1c70883c17e1795b0372fdd2ac4",
+    "old_analyzer": "7634bf135c20df9588f2e6cc33dd434d6e63925e6716586445443033dc7224e3",
+    "new_analyzer": "cf51853026bd8647ff497559f2b741db17a8cb4c7653fa164f9096523099f2a0",
+    "helper": "0654c3ba8884dc467aa1c4665fc4758a3abddf58189e2702f7e8cfc90d2e79b7",
+    "exponential_addendum": "4505c4ce343697c9616a7cfd99935ad6682eeb06fedef39d360182964d028cc8",
+    "PLAN.md": "54606ea8de498f79ddf222019f57f377a1e0b80d328d41396c4859dcaeda46eb",
+    "FINAL-ADDENDUM.md": "b65de2768c9960f2dce2b8cbb3b719597c32e483321cf802aee196ee3f979fd8",
+    "LIMITED-MATRIX-SCOPE.md": "96f489d8ee95dd7931499d19d2e6c8e4cb89712848852303cb951f245674ed4f"
+  },
+  "synthetic_gate_pins": {
+    "synthetic-001": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-expm-diagnosis-20261009/pade13-candidate/synthetic-001/results/receipt.json",
+      "sha256": "6339f68391752fd4f6bcf1cfee1b1a56d5722e99b1767c10c7696f1ba362f91a"
+    },
+    "large-norm-001": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-expm-diagnosis-20261009/pade13-candidate/large-norm-001/results/receipt.json",
+      "sha256": "f21fc2e29f057a8416d37ffa004703dda62abbf24b5515f59432fe931a29a4da"
+    },
+    "failure-runtime-001": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-expm-diagnosis-20261009/pade13-candidate/failure-runtime-001/results/receipt.json",
+      "sha256": "fca3667d1179a170a6c253d74d4915aae17cb2d85e87ca34768ecb862cb1f3f2"
+    }
+  },
+  "unchanged_functions_ast": [
+    "sha",
+    "mm",
+    "error",
+    "dump",
+    "energy_transform",
+    "energy_form",
+    "make_seeds",
+    "rk3",
+    "main"
+  ],
+  "complete_numeric_try_except_body_ast_identical": true,
+  "source_operation": "replace SciPy expm binding with copied reviewed fixed-Pade13 wrapper only",
+  "admission_changes": "mandatory helper/addendum review pins; exponential diagnostics and historical failure flag",
+  "wrapper_review": [
+    "Each CLI exponential call records scaling, rational solve residual, and status.",
+    "The existing algebra threshold 2e-9 applies only to the rational solve residual; it is not an exponential error bound.",
+    "Helper enforces all NumPy floating errors, including underflow, and performs no fallback or suppression.",
+    "Original numerical E transform, eigensolve, physical seeds, exp times, half-time consistency, RK3 and guards are unchanged.",
+    "Original failed SciPy attempt remains failed, with no propagation acceptance.",
+    "EXPM_DIAGNOSTICS is a per-process list; normal reviewed admission is one CLI analyze call per process."
+  ],
+  "corrections": [],
+  "analyzer_imported_or_executed": false,
+  "scientific_operator_loaded": false,
+  "scope": "Supports parent consideration of a separately admitted J0/N8 finite-matrix replay only; no PDE/native/nonlinear/scri/BH acceptance."
+}

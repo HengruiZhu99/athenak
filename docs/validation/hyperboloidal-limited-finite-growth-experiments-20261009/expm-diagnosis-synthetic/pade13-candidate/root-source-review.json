@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "driver_sha256": "cf51853026bd8647ff497559f2b741db17a8cb4c7653fa164f9096523099f2a0",
+  "helper_sha256": "0654c3ba8884dc467aa1c4665fc4758a3abddf58189e2702f7e8cfc90d2e79b7",
+  "primary_source": "https://eprints.maths.manchester.ac.uk/1217/1/paper9.pdf",
+  "review": "Checked degree13 U/V polynomial factorization, powers, (V-U)R=(V+U) solve, norm-one scaling and repeated squares against eq3.5/3.6 and Algorithm3.1. Coefficients verified by independent exact/synthetic gates. Literal einsum avoids the failed matmul path; helper arithmetic errors remain enabled. Wrapper preserves original generator/seed/SAT/time/RK3 body and records all scaling/solve diagnostics.",
+  "limitations": "Overscaling/nonnormal forward error not rigorously bounded. Full nongauge comparator unresolved. Original SciPy attempt and both FD attempts stay failed. No PDE/native/nonlinear/BH acceptance.",
+  "time_ns": 1791560597900827000
+}

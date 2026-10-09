@@ -1,0 +1,49 @@
+{
+  "status": "predeclared degree controls; scientific launch after N8 freeze",
+  "J_order": [
+    0,
+    1,
+    2
+  ],
+  "priority": [
+    "J0 N12",
+    "J0 N16"
+  ],
+  "N": [
+    12,
+    16
+  ],
+  "rb": 0.98,
+  "primary_radial_nodes_per_fixed_panel": 64,
+  "paired_radial_nodes_per_panel": 32,
+  "fixed_panel_edges_r": [
+    0,
+    0.05,
+    0.45,
+    0.85,
+    0.9,
+    0.95,
+    0.98
+  ],
+  "primary_angular_rule": [
+    12,
+    24
+  ],
+  "comparison_angular_rule": [
+    16,
+    32
+  ],
+  "all_equations_and_SAT_unchanged": true,
+  "new_point_kernel_queries_needed_for_primary_or_pair": false,
+  "thresholds": {
+    "source_fit_and_normals": 5e-11,
+    "algebra_forcing_and_mass": 2e-09,
+    "weak_strong_volume_and_quadrature": 2e-08,
+    "coupled_modal_E_condition_max": 1000000000000.0
+  },
+  "forcing_family": "every independent channel W=1,rho,rho^2,rho^3 plus mixed; fresh cached pointwise replay",
+  "polynomial_mass_oracle": "exact Jacobi polynomial coefficient integrals and independently overintegrated numerical dense mass at each N",
+  "no_generator_eigs_or_propagation": true,
+  "source_sha256": "ad83b89d6dfe4b9fdc2a85333af443318b38f6ae993c69eace2bbe359e0b0069",
+  "point_executable_sha256": "2293e9be6f75042f926f22232039c3c3bdd28826eb9e80061905c272b7adce15"
+}

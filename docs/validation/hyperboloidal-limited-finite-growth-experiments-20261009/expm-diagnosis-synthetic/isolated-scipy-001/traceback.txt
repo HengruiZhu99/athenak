@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-expm-diagnosis-20261009/diagnose_scipy.py", line 81, in <module>
+    output = scipy.linalg.expm(.25*A)
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py", line 326, in expm
+    m, s = pick_pade_structure(Am)
+  File "scipy/linalg/_matfuncs_expm.pyx", line 128, in scipy.linalg._matfuncs_expm.pick_pade_structure
+FloatingPointError: divide by zero encountered in matmul

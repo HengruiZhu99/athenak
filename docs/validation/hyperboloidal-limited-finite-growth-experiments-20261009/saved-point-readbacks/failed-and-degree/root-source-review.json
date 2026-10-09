@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "source_pins": {
+    "point_constraints.py": "99f1679c07ec7079e2386bbd54194772329a77e2a0d60e3eb9b81f10b0bee687",
+    "readback_growth_payload.py": "cab3e5ef3aea7942d28a7e204cf35d7addbc8089ff946177e89d7c09747f6717",
+    "GROWTH-PLAN.md": "0c13b8d649b9335b1d904295bdd0a6d037c9a4c8b34e04156aca375801eac5e9",
+    "readback_degree_projection.py": "589325dce40aa215ca15183be71b4aeaeea8fd5bb88fcb46f69809eeadb07699",
+    "DEGREE-PLAN.md": "dc175426ce42648f27ffe61a4d860c98050fe4dab79269e45551c51641b72d09"
+  },
+  "time_ns": 1791560548790942000,
+  "review": "Jacobi rho derivatives, channel-major modal normalization and complete degree-independent physical8 maps agree with original reviewed point stage. N-specific T/Riesz/Cholesky and scalar-fsum checks preserve all coefficients and initial data. Failed payload requires original failed stage, t0 only; actual Jv is checked independently and never replaced by lambda*v. Real/imag maps preserve linearity.",
+  "scope": "No kernel/spectrum/propagation calls. Sample coordinate physical8 measurements only; missing nongauge comparator and both FD failures stay explicit. Original failed growth remains failed.",
+  "corrections_remaining": []
+}

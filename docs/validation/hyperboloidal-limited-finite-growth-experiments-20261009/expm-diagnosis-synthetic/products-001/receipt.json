@@ -1,0 +1,85 @@
+{
+  "source_sha256": "53c3bd8b8feda00299599da20b4de932b679dbd858c5549bf915d059a7e95784",
+  "input_sha256": "4ced570e79ea509b4d502b9544d4d0272a4b313b761088ad61e46ca21d11a7f1",
+  "rows": [
+    {
+      "name": "A2",
+      "inputs_finite": true,
+      "left_maxabs": 715.8823634561378,
+      "right_maxabs": 715.8823634561378,
+      "reference_maxabs": 72403.94825858301,
+      "returned": false,
+      "error_type": "FloatingPointError",
+      "message": "divide by zero encountered in matmul",
+      "seconds": 0.0002974589999999999,
+      "out_array_finite_after_call": true,
+      "out_vs_literal_einsum_scaled": 0.0,
+      "out_vs_literal_einsum_peak": 0.0
+    },
+    {
+      "name": "A4",
+      "inputs_finite": true,
+      "left_maxabs": 72403.94825858301,
+      "right_maxabs": 72403.94825858301,
+      "reference_maxabs": 1714275994.9541728,
+      "returned": false,
+      "error_type": "FloatingPointError",
+      "message": "divide by zero encountered in matmul",
+      "seconds": 0.00010637499999999883,
+      "out_array_finite_after_call": true,
+      "out_vs_literal_einsum_scaled": 0.0,
+      "out_vs_literal_einsum_peak": 0.0
+    },
+    {
+      "name": "A6",
+      "inputs_finite": true,
+      "left_maxabs": 1714275994.9541728,
+      "right_maxabs": 72403.94825858301,
+      "reference_maxabs": 42189014334392.1,
+      "returned": false,
+      "error_type": "FloatingPointError",
+      "message": "divide by zero encountered in matmul",
+      "seconds": 8.720799999999834e-05,
+      "out_array_finite_after_call": true,
+      "out_vs_literal_einsum_scaled": 0.0,
+      "out_vs_literal_einsum_peak": 0.0
+    },
+    {
+      "name": "synthetic_identity",
+      "inputs_finite": true,
+      "left_maxabs": 1.0,
+      "right_maxabs": 1.0,
+      "reference_maxabs": 1.0,
+      "returned": false,
+      "error_type": "FloatingPointError",
+      "message": "divide by zero encountered in matmul",
+      "seconds": 0.0001389170000000023,
+      "out_array_finite_after_call": true,
+      "out_vs_literal_einsum_scaled": 0.0,
+      "out_vs_literal_einsum_peak": 0.0
+    },
+    {
+      "name": "synthetic_zero",
+      "inputs_finite": true,
+      "left_maxabs": 0.0,
+      "right_maxabs": 1.0,
+      "reference_maxabs": 0.0,
+      "returned": false,
+      "error_type": "FloatingPointError",
+      "message": "divide by zero encountered in matmul",
+      "seconds": 0.00013916700000000254,
+      "out_array_finite_after_call": true,
+      "out_vs_literal_einsum_scaled": 0.0,
+      "out_vs_literal_einsum_peak": 0.0
+    }
+  ],
+  "errstate": {
+    "divide": "raise",
+    "over": "raise",
+    "under": "ignore",
+    "invalid": "raise"
+  },
+  "warnings_suppressed": false,
+  "propagation_or_generator_eigensolve": false,
+  "interpretation": "Matmul-only finite power products with caught original exceptions. A finite accurate out array after an exception suggests a backend floating-status issue, but does not identify its C-level cause or excuse the failed original exponential."
+}

@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-degree-independent-matrix-readback-20261009/verify_operator.py",
+    "--npz",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/J0-N12-sector-readback001/operator.npz",
+    "--expect-sha256",
+    "1df586b980dd7ce21555b762236dcd3ecac8cbeb2b5c848a9e8321e1d7da0aac",
+    "--metadata",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/J0-N12-sector-readback001/matrix-metadata.json",
+    "--expect-metadata-sha256",
+    "cbc228937d6426be1f9e8973a4bc3af6c3fdde66b48939d7316b707bae76df63",
+    "--output",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-degree-independent-matrix-readback-20261009/N12-readback001/result.json"
+  ],
+  "cwd": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-degree-independent-matrix-readback-20261009",
+  "environment_overrides": {
+    "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "verifier_sha256": "855245e3e4429dc713d817285ec79f05dda112ec159b9b821c9983e95987d95b"
+}

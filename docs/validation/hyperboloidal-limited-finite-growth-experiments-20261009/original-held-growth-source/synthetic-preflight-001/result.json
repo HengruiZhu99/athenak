@@ -1,0 +1,350 @@
+{
+  "status": "PASS_bounded_synthetic_helpers_only",
+  "source_sha256": "33148db2d49d439f658d9bea7047e046c1c1e616cc987015b6cac8915d3f1d7c",
+  "reviewed_analyzer_sha256": "85e6b721ad143a73955811ce546afed78ac3ba88c3d8419348cd6e108f2aecda",
+  "extracted_helpers": [
+    "mm",
+    "energy_transform",
+    "energy_form",
+    "rk3"
+  ],
+  "helper_extraction": "Exact four AST function definitions, with actual NumPy and SciPy solve_triangular; analyzer module/analyze()/execute are never invoked.",
+  "E": [
+    [
+      4.0,
+      1.0,
+      0.5
+    ],
+    [
+      1.0,
+      3.0,
+      0.25
+    ],
+    [
+      0.5,
+      0.25,
+      2.0
+    ]
+  ],
+  "E_strict_diagonal_dominance_lower_bound": 1.25,
+  "E_Cholesky": [
+    [
+      2.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.5,
+      1.6583123951777,
+      0.0
+    ],
+    [
+      0.25,
+      0.07537783614444091,
+      1.3898986228564232
+    ]
+  ],
+  "synthetic_initial_columns_X": [
+    [
+      1.0,
+      -0.3,
+      0.2
+    ],
+    [
+      0.4,
+      0.8,
+      -1.0
+    ],
+    [
+      0.2,
+      -0.5,
+      0.7
+    ]
+  ],
+  "synthetic_symmetric_form_F": [
+    [
+      1.0,
+      2.0,
+      -3.0
+    ],
+    [
+      2.0,
+      4.0,
+      0.5
+    ],
+    [
+      -3.0,
+      0.5,
+      -2.0
+    ]
+  ],
+  "energy_form_scaled_error": 9.955816140562523e-17,
+  "quadratic_form_scaled_error": 1.5014190487170004e-16,
+  "cases": [
+    {
+      "name": "zero",
+      "generator_J": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "energy_generator_A": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "similarity_scaled_error": 0.0,
+      "action_scaled_error": 0.0,
+      "symmetric_energy_identity_scaled_error": 0.0,
+      "wrong_L_vs_LT_transform_difference": 0.0,
+      "closed_exponential": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "T": 0.5,
+      "steps": [
+        8,
+        16,
+        32,
+        64
+      ],
+      "RK_scaled_errors": [
+        6.582169994925915e-17,
+        6.582169994925915e-17,
+        6.582169994925915e-17,
+        6.582169994925915e-17
+      ],
+      "RK_error_ratios": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "RK_observed_orders": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "diagonal",
+      "generator_J": [
+        [
+          -2.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.5,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.75
+        ]
+      ],
+      "energy_generator_A": [
+        [
+          -2.0,
+          0.45226701686664544,
+          0.47011276949555486
+        ],
+        [
+          0.0,
+          -0.5,
+          0.06779076806833007
+        ],
+        [
+          0.0,
+          0.0,
+          0.75
+        ]
+      ],
+      "similarity_scaled_error": 2.499018048787825e-17,
+      "action_scaled_error": 6.25599392371643e-18,
+      "symmetric_energy_identity_scaled_error": 1.8044734238611143e-17,
+      "wrong_L_vs_LT_transform_difference": 0.3608344654838232,
+      "closed_exponential": [
+        [
+          0.36787944117144233,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.7788007830714049,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.4549914146182013
+        ]
+      ],
+      "T": 0.5,
+      "steps": [
+        8,
+        16,
+        32,
+        64
+      ],
+      "RK_scaled_errors": [
+        2.6998352434860292e-05,
+        3.211020202786712e-06,
+        3.9153242531758904e-07,
+        4.8338156452197535e-08
+      ],
+      "RK_error_ratios": [
+        8.408029451645785,
+        8.201160351360716,
+        8.099862594155457
+      ],
+      "RK_observed_orders": [
+        3.071767722781169,
+        3.035828045672414,
+        3.0178974343661604
+      ]
+    },
+    {
+      "name": "Jordan_upper_triangular",
+      "generator_J": [
+        [
+          -1.0,
+          2.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          3.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      ],
+      "energy_generator_A": [
+        [
+          -1.0,
+          2.412090756622109,
+          0.9484014132432064
+        ],
+        [
+          0.0,
+          -1.0,
+          3.579352554007827
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      ],
+      "similarity_scaled_error": 9.356109475733695e-17,
+      "action_scaled_error": 1.295761950381172e-16,
+      "symmetric_energy_identity_scaled_error": 6.214909647464234e-17,
+      "wrong_L_vs_LT_transform_difference": 0.2890252150528185,
+      "closed_exponential": [
+        [
+          0.6065306597126334,
+          0.6065306597126334,
+          0.45489799478447507
+        ],
+        [
+          0.0,
+          0.6065306597126334,
+          0.9097959895689501
+        ],
+        [
+          0.0,
+          0.0,
+          0.6065306597126334
+        ]
+      ],
+      "T": 0.5,
+      "steps": [
+        8,
+        16,
+        32,
+        64
+      ],
+      "RK_scaled_errors": [
+        8.351838756362424e-05,
+        1.0013195808582492e-05,
+        1.2257589410378855e-06,
+        1.5162539250331696e-07
+      ],
+      "RK_error_ratios": [
+        8.340832353646686,
+        8.168976356887946,
+        8.084127076611331
+      ],
+      "RK_observed_orders": [
+        3.060191361195026,
+        3.0301553075795606,
+        3.015092000015031
+      ]
+    }
+  ],
+  "thresholds": {
+    "helper_algebra": 2e-13,
+    "zero_RK_roundoff": 2e-13,
+    "nonzero_RK_order_interval": [
+      2.7,
+      3.4
+    ],
+    "nonzero_final_RK_error": 2e-07,
+    "wrong_transpose_sensitivity_minimum": 0.001
+  },
+  "versions": {
+    "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+    "executable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "numpy": "2.0.2",
+    "scipy": "1.13.1",
+    "numpy_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/numpy/__init__.py",
+    "scipy_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/__init__.py"
+  },
+  "actual_scientific_operator_loaded": false,
+  "analyzer_analyze_or_execute_called": false,
+  "generator_eigensolver_called": false,
+  "scope": "Only helper algebra and third-order time integration on independent three-dimensional analytic examples. No saved finite-rb matrix, expm accuracy, PDE/native/BH result or scientific growth admission follows."
+}

@@ -1,0 +1,48 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-growth-control-20261009/immutable-growth-helper-review-synthetic-20261009/analyze_growth.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-20261009/analyze_growth.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Held saved-matrix finite-radius linear growth control; no PDE assembly."""
++"""Held limited finite-matrix growth diagnostic; missing continuum comparator is explicit."""
+ from __future__ import annotations
+ import argparse
+ import hashlib
+@@ -102,21 +102,22 @@
+ 
+ def analyze(matrix, authorization, output):
+     adm = json.loads(authorization.read_text())
+-    if adm.get('finite_linear_growth_admitted') is not True:
++    if adm.get('limited_finite_matrix_growth_admitted') is not True:
+         raise ValueError('finite matrix growth stage has not been admitted')
+     if sha(matrix) != adm['matrix_sha256']:
+         raise ValueError('matrix hash mismatch')
+     required = ('source_configuration', 'mass_bulk_trace_forcing', 'paired_quadrature',
+-                'angular', 'incoming_sectors', 'continuum_rates', 'radial_constraint_defects_recorded')
++                'angular', 'incoming_sectors', 'continuum_rates', 'analytic_projected_points',
++                'unresolved_nongauge_continuum_comparator_recorded')
+     if not all(adm.get('gates', {}).get(k) is True for k in required):
+         raise ValueError('a required source/matrix/rate gate is missing')
+     if adm['J'] not in (0, 1, 2) or adm['N'] not in (8, 12, 16) or adm['rb'] not in (.98, .995):
+         raise ValueError('undeclared finite-domain control')
+-    pins = [matrix, authorization, Path(__file__), HERE/'PLAN.md', HERE/'FINAL-ADDENDUM.md',
++    pins = [matrix, authorization, Path(__file__), HERE/'PLAN.md', HERE/'FINAL-ADDENDUM.md', HERE/'LIMITED-MATRIX-SCOPE.md',
+             Path(adm['basis_layout'])]
+     pins += [Path(v['path']) for v in adm.get('review_inputs', [])]
+     reviewed = {str(Path(v['path']).resolve()) for v in adm.get('review_inputs', [])}
+-    mandatory = {str(p.resolve()) for p in (Path(__file__), HERE/'PLAN.md', HERE/'FINAL-ADDENDUM.md', Path(adm['basis_layout']))}
++    mandatory = {str(p.resolve()) for p in (Path(__file__), HERE/'PLAN.md', HERE/'FINAL-ADDENDUM.md', HERE/'LIMITED-MATRIX-SCOPE.md', Path(adm['basis_layout']))}
+     if not mandatory.issubset(reviewed):
+         raise ValueError('source/plan/addendum/basis review pins must be explicitly admitted')
+     for item in adm.get('review_inputs', []):
+@@ -125,7 +126,10 @@
+     before = {str(p.resolve()): sha(p) for p in pins}
+     output.mkdir(parents=True, exist_ok=False)
+     begin = time.monotonic()
+-    receipt = {'launch_HEAD': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
++    receipt = {'original_full_projection_defect_gate_passed': False,
++               'general_nongauge_continuum_comparator_unresolved': True,
++               'both_original_FD_attempts_remain_failed': True,
++               'launch_HEAD': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+                'command': [sys.executable, *sys.argv], 'inputs_before': before,
+                'J': adm['J'], 'N': adm['N'], 'rb': adm['rb'],
+                'scope': 'Saved finite energy-Galerkin matrix only; no continuum, nonlinear, exact-scri or native stability admission',

@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/limited-growth-stage-20261009/collect_growth_stage.py", line 58, in <module>
+    frozen('build-layer-research/continuum/finite-rb-growth-control-20261009/immutable-growth-helper-review-synthetic-20261009','original-held-growth-source','0d753253f577211bfab2c56dc6eed3bcaeada81810636a4fbb63d9d6e69839cb')
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/limited-growth-stage-20261009/collect_growth_stage.py", line 44, in frozen
+    queue(source/item['path'],label+'/'+item['path'],item.get('role')=='large_payload',item)
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/limited-growth-stage-20261009/collect_growth_stage.py", line 33, in queue
+    if source.suffix=='.json': finite(json.loads(data))
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

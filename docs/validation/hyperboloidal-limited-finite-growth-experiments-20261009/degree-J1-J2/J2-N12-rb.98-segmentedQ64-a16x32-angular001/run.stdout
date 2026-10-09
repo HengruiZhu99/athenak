@@ -1,0 +1,85 @@
+{
+  "J": 2,
+  "N": 12,
+  "rb": 0.98,
+  "Q_per_panel": 64,
+  "Q_total": 384,
+  "quadrature_panels_r": [
+    0.0,
+    0.05,
+    0.45,
+    0.85,
+    0.9,
+    0.95,
+    0.98
+  ],
+  "angular_rule": [
+    16,
+    32
+  ],
+  "dofs": 240,
+  "dof_order": "channel-major modal degree; nodal_from_modal maps modal to common-rho nodal coefficients",
+  "kin": 0.00039999999999995595,
+  "kout": -3.9204,
+  "expected_incoming_rank": 10,
+  "observed_incoming_rank": 10,
+  "energy_modal_min": 0.2636327611456677,
+  "energy_modal_condition": 268474.92717552703,
+  "energy_nodal_condition": 348867575024.0612,
+  "energy_diagonally_scaled_nodal_condition": 3809917.772645952,
+  "checks": {
+    "E_symmetry": {
+      "scaled": 1.1813329400641032e-16,
+      "absolute": 1.618378227680123e-11,
+      "absolute_max": 3.637978807091713e-12
+    },
+    "G_symmetry": {
+      "scaled": 1.067670380512085e-15,
+      "absolute": 5.3612701031124086e-08,
+      "absolute_max": 1.0244548320770264e-08
+    },
+    "weak_strong": {
+      "scaled": 1.2846540771938175e-13,
+      "absolute": 7.593385143323724e-06,
+      "absolute_max": 1.3848766684532166e-06
+    },
+    "bulk_identity": {
+      "scaled": 1.000181275205478e-13,
+      "absolute": 1.1110864956312604e-05,
+      "absolute_max": 2.5313347578048706e-06
+    },
+    "bulk_solve": {
+      "scaled": 5.872609051231774e-16,
+      "absolute": 3.471205448518884e-08,
+      "absolute_max": 7.450580596923828e-09
+    },
+    "SAT_solve": {
+      "scaled": 8.3375953034034245e-16,
+      "absolute": 7.365417171063256e-12,
+      "absolute_max": 1.3642420526593924e-12
+    },
+    "modal_congruence": {
+      "scaled": 4.4134428993131194e-14,
+      "absolute": 6.0462378175708925e-09,
+      "absolute_max": 2.2610038286074996e-09
+    },
+    "manufactured_forced_rhs": {
+      "scaled": 1.1057484948863032e-10,
+      "absolute": 1.1057484948863032e-10,
+      "absolute_max": 4.3293223472190766e-11
+    }
+  },
+  "operator_sha256": "f46e4c26b2ee03abf5b7b7dee1229d61a54d95657d19973a133d45d65d8b65e4",
+  "executable": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/radial-bridge-release",
+  "executable_sha256": "2293e9be6f75042f926f22232039c3c3bdd28826eb9e80061905c272b7adce15",
+  "source_sha256": "ad83b89d6dfe4b9fdc2a85333af443318b38f6ae993c69eace2bbe359e0b0069",
+  "coefficient_source_sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+  "canceled_source_sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+  "scope": "Actual finite-rb normal-energy Galerkin operator gate only; no generator spectra/propagation/CPBC/scri result",
+  "thresholds": {
+    "algebra": 2e-09,
+    "bulk_weak_strong_and_quadrature": 2e-08,
+    "energy_condition_max": 1000000000000.0
+  },
+  "passed_single_quadrature_algebra": true
+}

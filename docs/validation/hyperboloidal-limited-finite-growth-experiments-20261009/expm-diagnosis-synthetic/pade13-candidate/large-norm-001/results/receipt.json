@@ -1,0 +1,104 @@
+{
+  "status": "PASS",
+  "scope": "four large-norm synthetic inputs only",
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "executable": "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+  "numpy": "2.0.2",
+  "mpmath": "1.3.0",
+  "numpy_error_mode": {
+    "divide": "raise",
+    "over": "raise",
+    "under": "raise",
+    "invalid": "raise"
+  },
+  "source_sha256": {
+    "pade13_einsum.py": "0654c3ba8884dc467aa1c4665fc4758a3abddf58189e2702f7e8cfc90d2e79b7",
+    "check_synthetic.py": "dad9eb425065bca5bbd281c1cd7d72bfa7d1fa4f5c43e9a77d3e71ab69cab070",
+    "check_large_norm.py": "f014d5ac8d4193d6ef787e66f3fc24d86daca82850f15677e2e373d8723d224b",
+    "PLAN-STIFF-SUPPLEMENT.md": "170641b15fd4a4f7d9b7beb22ebeff8c27b1a70b83e6564a844ecf87b8b5331b"
+  },
+  "thresholds": {
+    "forward": 2e-11,
+    "solve": 2e-14,
+    "oracle": "1e-85"
+  },
+  "cases": [
+    {
+      "name": "nilpotent3_1024",
+      "shape": [
+        3,
+        3
+      ],
+      "info": {
+        "degree": 13,
+        "squarings": 8,
+        "argument_one_norm": 1024.0,
+        "scaled_one_norm": 4.0,
+        "rational_solve_residual": 3.602782751564055e-17,
+        "matrix_products": 15
+      },
+      "closed_form_error": 2.842170943040401e-14,
+      "mpmath_forward_error": 2.842170943040401e-14,
+      "oracle_100_130_difference": "0.0"
+    },
+    {
+      "name": "nilpotent3_16384",
+      "shape": [
+        3,
+        3
+      ],
+      "info": {
+        "degree": 13,
+        "squarings": 12,
+        "argument_one_norm": 16384.0,
+        "scaled_one_norm": 4.0,
+        "rational_solve_residual": 3.602782751564055e-17,
+        "matrix_products": 19
+      },
+      "closed_form_error": 4.547473508864641e-13,
+      "mpmath_forward_error": 4.547473508864641e-13,
+      "oracle_100_130_difference": "0.0"
+    },
+    {
+      "name": "nilpotent3_131072",
+      "shape": [
+        3,
+        3
+      ],
+      "info": {
+        "degree": 13,
+        "squarings": 15,
+        "argument_one_norm": 131072.0,
+        "scaled_one_norm": 4.0,
+        "rational_solve_residual": 3.602782751564055e-17,
+        "matrix_products": 22
+      },
+      "closed_form_error": 3.637978807091713e-12,
+      "mpmath_forward_error": 3.637978807091713e-12,
+      "oracle_100_130_difference": "0.0"
+    },
+    {
+      "name": "large_nonnormal_similarity",
+      "shape": [
+        3,
+        3
+      ],
+      "info": {
+        "degree": 13,
+        "squarings": 14,
+        "argument_one_norm": 50193.0,
+        "scaled_one_norm": 3.06353759765625,
+        "rational_solve_residual": 6.745477720404124e-17,
+        "matrix_products": 21
+      },
+      "closed_form_error": 7.386505595180108e-13,
+      "mpmath_forward_error": 7.386505595180108e-13,
+      "oracle_100_130_difference": "1.1286968740625772279e-100"
+    }
+  ],
+  "seconds": 0.016072000000000003,
+  "output_sha256": {
+    "synthetic-arrays.npz": "efa470837231b8705b9025e92b626e2d7db84f1d7204aad0cec341088fb53700",
+    "high-precision-oracles.json": "425a0b98e1f4634f0c1939e5fbb87a9ecd5045d420add490496d11f878cafb1d"
+  }
+}

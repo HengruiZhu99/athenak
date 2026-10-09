@@ -1,0 +1,81 @@
+{
+  "source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-expm-diagnosis-20261009/diagnose_scipy.py",
+    "sha256": "9e6f4092fd626fbfc2aa04027552ef88a38ba4c19491de4039643525c0cfb4dd",
+    "bytes": 4400
+  },
+  "reviewed_analyzer": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-20261009/analyze_growth.py",
+    "sha256": "7634bf135c20df9588f2e6cc33dd434d6e63925e6716586445443033dc7224e3",
+    "bytes": 15776
+  },
+  "original_failed_receipt": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-20261009/J0-N8-rb98-growth001/receipt.json",
+    "sha256": "2774bc40f893d8d5fc1f8667a039546624dcfd99f932253c0c3ae2a2eaae1537",
+    "bytes": 15811
+  },
+  "matrix": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-segmented-Q64-sector-readback001/operator.npz",
+    "sha256": "8b4b9a5b33151d86359aa9e35f0ae44dc436ef4ab2d6c17796e77983f9422a27",
+    "bytes": 412854
+  },
+  "input": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-expm-diagnosis-20261009/isolated-scipy-001/isolated-input.npz",
+    "sha256": "4ced570e79ea509b4d502b9544d4d0272a4b313b761088ad61e46ca21d11a7f1",
+    "bytes": 111110
+  },
+  "t": 0.25,
+  "argument_one_norm": 2857.676176425527,
+  "argument_maxabs": 715.8823634561378,
+  "argument_finite": true,
+  "dtype": "float64",
+  "array_flags": "  C_CONTIGUOUS : True\n  F_CONTIGUOUS : False\n  OWNDATA : False\n  WRITEABLE : True\n  ALIGNED : True\n  WRITEBACKIFCOPY : False\n",
+  "runtime": {
+    "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+    "executable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "numpy": "2.0.2",
+    "scipy": "1.13.1",
+    "platform": "macOS-26.7.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "numpy_file": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/numpy/__init__.py",
+    "scipy_file": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/__init__.py",
+    "errstate": {
+      "divide": "raise",
+      "over": "raise",
+      "under": "ignore",
+      "invalid": "raise"
+    },
+    "environment": {
+      "PYTHONPATH": "build-layer-research/boundary/python-deps",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    }
+  },
+  "library_pins": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py",
+      "sha256": "a03ecd8b647b110b0935189046dfcbbcce9ccfe0c258e604cd478e9b57b9a541",
+      "bytes": 24331
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs_expm.cpython-39-darwin.so",
+      "sha256": "3081995ceb629205f5404c094da4dd3196922f0cbd85ee12a5f00457979af2d4",
+      "bytes": 380624
+    }
+  ],
+  "original_failure_preserved": true,
+  "warning_suppression": false,
+  "generator_eigensolve": false,
+  "propagation_acceptance": false,
+  "isolated_call": {
+    "returned": false,
+    "error_type": "FloatingPointError",
+    "message": "divide by zero encountered in matmul",
+    "traceback": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-expm-diagnosis-20261009/isolated-scipy-001/traceback.txt",
+      "sha256": "f9306772586b83848ca1270f535daf876b0530ce69c64c641e2f1e38aa30b1ea",
+      "bytes": 552
+    }
+  },
+  "isolated_seconds": 0.0013402910000000212
+}

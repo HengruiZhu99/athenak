@@ -1,0 +1,540 @@
+{
+  "status": "PASS",
+  "scope": "synthetic-only same-runtime check",
+  "cases": [
+    {
+      "name": "empty",
+      "shape": [
+        0,
+        0
+      ],
+      "forward_error": 0.0,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 0.0,
+        "scaled_one_norm": 0.0,
+        "rational_solve_residual": 0.0,
+        "matrix_products": 0
+      }
+    },
+    {
+      "name": "zero3",
+      "shape": [
+        3,
+        3
+      ],
+      "forward_error": 0.0,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 0.0,
+        "scaled_one_norm": 0.0,
+        "rational_solve_residual": 0.0,
+        "matrix_products": 0
+      }
+    },
+    {
+      "name": "diagonal_growth_decay",
+      "shape": [
+        5,
+        5
+      ],
+      "forward_error": 1.525507413600789e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 2,
+        "argument_one_norm": 12.0,
+        "scaled_one_norm": 3.0,
+        "rational_solve_residual": 3.598600286173759e-18,
+        "matrix_products": 9
+      }
+    },
+    {
+      "name": "nilpotent4",
+      "shape": [
+        4,
+        4
+      ],
+      "forward_error": 1.7763568394002506e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 5.0,
+        "scaled_one_norm": 5.0,
+        "rational_solve_residual": 1.1072177483798293e-17,
+        "matrix_products": 7
+      }
+    },
+    {
+      "name": "shifted_jordan4",
+      "shape": [
+        4,
+        4
+      ],
+      "forward_error": 9.401368646300921e-17,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 1,
+        "argument_one_norm": 5.75,
+        "scaled_one_norm": 2.875,
+        "rational_solve_residual": 2.690441335803641e-17,
+        "matrix_products": 8
+      }
+    },
+    {
+      "name": "rotation20",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 2.7755575615628914e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 2,
+        "argument_one_norm": 20.0,
+        "scaled_one_norm": 5.0,
+        "rational_solve_residual": 3.4706163567564004e-17,
+        "matrix_products": 9
+      }
+    },
+    {
+      "name": "dense_fixed4",
+      "shape": [
+        4,
+        4
+      ],
+      "forward_error": 2.1065324229404672e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 1,
+        "argument_one_norm": 7.25,
+        "scaled_one_norm": 3.625,
+        "rational_solve_residual": 3.336892291486449e-17,
+        "matrix_products": 8
+      }
+    },
+    {
+      "name": "nonnormal_exact_similarity",
+      "shape": [
+        3,
+        3
+      ],
+      "forward_error": 5.896848326835534e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 4,
+        "argument_one_norm": 78.5,
+        "scaled_one_norm": 4.90625,
+        "rational_solve_residual": 2.666862929332816e-17,
+        "matrix_products": 11
+      }
+    },
+    {
+      "name": "spd_energy_similarity_J",
+      "shape": [
+        3,
+        3
+      ],
+      "forward_error": 1.9817939302806828e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 2.71875,
+        "scaled_one_norm": 2.71875,
+        "rational_solve_residual": 3.141730530218973e-17,
+        "matrix_products": 7
+      }
+    },
+    {
+      "name": "spd_energy_similarity_A",
+      "shape": [
+        3,
+        3
+      ],
+      "forward_error": 1.9817939302806828e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 2.0,
+        "scaled_one_norm": 2.0,
+        "rational_solve_residual": 1.7602527629651524e-17,
+        "matrix_products": 7
+      }
+    },
+    {
+      "name": "scale_1_below",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 3.3067445592721537e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 5.371920351148151,
+        "scaled_one_norm": 5.371920351148151,
+        "rational_solve_residual": 5.909671710294445e-17,
+        "matrix_products": 7
+      }
+    },
+    {
+      "name": "scale_1_at",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 1.6533722796360766e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 5.371920351148152,
+        "scaled_one_norm": 5.371920351148152,
+        "rational_solve_residual": 2.272950657805555e-17,
+        "matrix_products": 7
+      }
+    },
+    {
+      "name": "scale_1_above",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 4.960116838908229e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 1,
+        "argument_one_norm": 5.371920351148153,
+        "scaled_one_norm": 2.6859601755740763,
+        "rational_solve_residual": 7.875572349800863e-17,
+        "matrix_products": 8
+      }
+    },
+    {
+      "name": "scale_2_below",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 4.960116838908231e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 1,
+        "argument_one_norm": 10.743840702296302,
+        "scaled_one_norm": 5.371920351148151,
+        "rational_solve_residual": 5.909671710294445e-17,
+        "matrix_products": 8
+      }
+    },
+    {
+      "name": "scale_2_at",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 3.306744559272153e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 1,
+        "argument_one_norm": 10.743840702296303,
+        "scaled_one_norm": 5.371920351148152,
+        "rational_solve_residual": 2.272950657805555e-17,
+        "matrix_products": 8
+      }
+    },
+    {
+      "name": "scale_2_above",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 6.613489118544305e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 2,
+        "argument_one_norm": 10.743840702296305,
+        "scaled_one_norm": 2.6859601755740763,
+        "rational_solve_residual": 7.875572349800863e-17,
+        "matrix_products": 9
+      }
+    },
+    {
+      "name": "scale_32_below",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 3.802756243162977e-15,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 5,
+        "argument_one_norm": 171.90145123674083,
+        "scaled_one_norm": 5.371920351148151,
+        "rational_solve_residual": 5.909671710294445e-17,
+        "matrix_products": 12
+      }
+    },
+    {
+      "name": "scale_32_at",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 3.637419015199368e-15,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 5,
+        "argument_one_norm": 171.90145123674085,
+        "scaled_one_norm": 5.371920351148152,
+        "rational_solve_residual": 2.272950657805555e-17,
+        "matrix_products": 12
+      }
+    },
+    {
+      "name": "scale_32_above",
+      "shape": [
+        2,
+        2
+      ],
+      "forward_error": 7.274838030398736e-15,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 6,
+        "argument_one_norm": 171.90145123674088,
+        "scaled_one_norm": 2.6859601755740763,
+        "rational_solve_residual": 7.875572349800863e-17,
+        "matrix_products": 13
+      }
+    },
+    {
+      "name": "zero64",
+      "shape": [
+        64,
+        64
+      ],
+      "forward_error": 0.0,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 0.0,
+        "scaled_one_norm": 0.0,
+        "rational_solve_residual": 0.0,
+        "matrix_products": 0
+      }
+    },
+    {
+      "name": "identity64",
+      "shape": [
+        64,
+        64
+      ],
+      "forward_error": 1.6337129034990842e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 1.0,
+        "scaled_one_norm": 1.0,
+        "rational_solve_residual": 7.529654280194072e-17,
+        "matrix_products": 7
+      }
+    },
+    {
+      "name": "diagonal64",
+      "shape": [
+        64,
+        64
+      ],
+      "forward_error": 3.606056339842905e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 3.0,
+        "scaled_one_norm": 3.0,
+        "rational_solve_residual": 7.197200572347518e-18,
+        "matrix_products": 7
+      }
+    },
+    {
+      "name": "nilpotent_jordan64",
+      "shape": [
+        64,
+        64
+      ],
+      "forward_error": 7.894919286223335e-16,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 0,
+        "argument_one_norm": 3.0,
+        "scaled_one_norm": 3.0,
+        "rational_solve_residual": 5.361510982270879e-17,
+        "matrix_products": 7
+      }
+    },
+    {
+      "name": "nilpotent3_1024",
+      "shape": [
+        3,
+        3
+      ],
+      "forward_error": 2.842170943040401e-14,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 8,
+        "argument_one_norm": 1024.0,
+        "scaled_one_norm": 4.0,
+        "rational_solve_residual": 3.602782751564055e-17,
+        "matrix_products": 15
+      }
+    },
+    {
+      "name": "nilpotent3_16384",
+      "shape": [
+        3,
+        3
+      ],
+      "forward_error": 4.547473508864641e-13,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 12,
+        "argument_one_norm": 16384.0,
+        "scaled_one_norm": 4.0,
+        "rational_solve_residual": 3.602782751564055e-17,
+        "matrix_products": 19
+      }
+    },
+    {
+      "name": "nilpotent3_131072",
+      "shape": [
+        3,
+        3
+      ],
+      "forward_error": 3.637978807091713e-12,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 15,
+        "argument_one_norm": 131072.0,
+        "scaled_one_norm": 4.0,
+        "rational_solve_residual": 3.602782751564055e-17,
+        "matrix_products": 22
+      }
+    },
+    {
+      "name": "large_nonnormal_similarity",
+      "shape": [
+        3,
+        3
+      ],
+      "forward_error": 7.386505595180108e-13,
+      "prior_runtime_error": 0.0,
+      "prior_runtime_bitwise_equal": true,
+      "info": {
+        "degree": 13,
+        "squarings": 14,
+        "argument_one_norm": 50193.0,
+        "scaled_one_norm": 3.06353759765625,
+        "rational_solve_residual": 6.745477720404124e-17,
+        "matrix_products": 21
+      }
+    }
+  ],
+  "case_count": 27,
+  "source_sha256": {
+    "pade13_einsum.py": "0654c3ba8884dc467aa1c4665fc4758a3abddf58189e2702f7e8cfc90d2e79b7",
+    "check_failure_runtime.py": "ec55641ffbd070c916aceab6871ddf96526a8ed1b711969eb4ed041f2aaf443d",
+    "isolated_failure_receipt": "98d16311b607b3903ae47a69d321e6f3c207f227d1a070c4dd579b533aac72f5",
+    "synthetic-001/results/receipt.json": "6339f68391752fd4f6bcf1cfee1b1a56d5722e99b1767c10c7696f1ba362f91a",
+    "synthetic-001/results/synthetic-arrays.npz": "e5215771c69dd3c65ba83b1bee3bc9fdd8a2a3afc33bd4dc453e7ea8cb3c1b88",
+    "large-norm-001/results/receipt.json": "f21fc2e29f057a8416d37ffa004703dda62abbf24b5515f59432fe931a29a4da",
+    "large-norm-001/results/synthetic-arrays.npz": "efa470837231b8705b9025e92b626e2d7db84f1d7204aad0cec341088fb53700"
+  },
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "executable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+  "executable_sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464",
+  "numpy": "2.0.2",
+  "scipy": "1.13.1",
+  "numpy_file": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/numpy/__init__.py",
+  "scipy_file": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/__init__.py",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "library_pins": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py",
+      "sha256": "a03ecd8b647b110b0935189046dfcbbcce9ccfe0c258e604cd478e9b57b9a541",
+      "bytes": 24331
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs_expm.cpython-39-darwin.so",
+      "sha256": "3081995ceb629205f5404c094da4dd3196922f0cbd85ee12a5f00457979af2d4",
+      "bytes": 380624
+    }
+  ],
+  "numpy_error_mode": {
+    "divide": "raise",
+    "over": "raise",
+    "under": "raise",
+    "invalid": "raise"
+  },
+  "warnings_as_errors": true,
+  "original_underflow_mode": "ignore",
+  "new_underflow_mode_stricter": "raise",
+  "scipy_expm_called": false,
+  "scientific_array_loaded": false,
+  "seconds": 0.019041625,
+  "environment": {
+    "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "output_sha256": "3025c1f4955f7a1912762aa8af9e731232a565eab7e73580befe3e666f800b01"
+}

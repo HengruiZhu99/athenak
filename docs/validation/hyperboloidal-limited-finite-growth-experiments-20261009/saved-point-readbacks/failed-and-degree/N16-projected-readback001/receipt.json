@@ -1,0 +1,120 @@
+{
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "build-layer-research/continuum/finite-rb-saved-point-readback-20261009/readback_degree_projection.py",
+    "--execute",
+    "--N",
+    "16",
+    "--authorization",
+    "build-layer-research/continuum/finite-rb-saved-point-readback-20261009/N16-authorization001.json",
+    "--output",
+    "build-layer-research/continuum/finite-rb-saved-point-readback-20261009/N16-projected-readback001"
+  ],
+  "launch_HEAD": "ecab931ffc8fb0f5c1f70c9678563c82b6fbc090",
+  "source_before": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/immutable-J0-projection-constraint-defect-20261009/index.json": "970a117d2790f668fc3e086de7477c4ea94b683a8772c27a751f2625a623ef28",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/immutable-J0-projection-constraint-defect-20261009/exact-projected/attempt-1791559237496324000/analytic-center-maps.npz": "44a6e015931a506e0d328d29f86362647e24cffa5f62d4be9ac52adbd49cface",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/immutable-J0-projection-constraint-defect-20261009/exact-projected/attempt-1791559237496324000/receipt.json": "98f18f39011601946df3b78d242a42e7ba2be3c6dfe37a174591e1d83e1ab78c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/J0-N16-rb.98-segmentedQ64-a12x24-primary001/operator.npz": "466c6386ed4ece0698bd0652c8bf064102fbca11bc606717755ad49459fb0cb6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/J0-N16-rb.98-segmentedQ64-a12x24-primary001/report.json": "f8247ff66846c3b36afe11fa47d4f09b14c627c1bb7dc8317f80fa40fc14b599",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/readback_projected_defect.py": "abd42a99db4d53fa52a546ce2f316f4d5b83686f3ed6911fa2585b895212ebcd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-saved-point-readback-20261009/readback_degree_projection.py": "589325dce40aa215ca15183be71b4aeaeea8fd5bb88fcb46f69809eeadb07699",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-saved-point-readback-20261009/point_constraints.py": "99f1679c07ec7079e2386bbd54194772329a77e2a0d60e3eb9b81f10b0bee687",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-saved-point-readback-20261009/DEGREE-PLAN.md": "dc175426ce42648f27ffe61a4d860c98050fe4dab79269e45551c51641b72d09",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-saved-point-readback-20261009/N16-authorization001.json": "c53f5bd89991649c9f9f9609470f413a2ff984245311c1238eec60d7158b7100"
+  },
+  "J": 0,
+  "N": 16,
+  "rb": 0.98,
+  "error": null,
+  "passed_degree_projected_point_readback": true,
+  "both_ordinary_FD_attempts_remain_failed": true,
+  "general_nongauge_continuum_comparator_unresolved": true,
+  "original_full_projection_defect_gate_passed": false,
+  "physical8_order": [
+    "H",
+    "Mx",
+    "My",
+    "Mz",
+    "Zx",
+    "Zy",
+    "Zz",
+    "Theta_physical"
+  ],
+  "scope": "Saved J0 polynomial projected fields at21 Cartesian centers; bulk/SAT/total split. No new API, generator spectrum, propagation or CPBC test.",
+  "checks": {
+    "bulk_Riesz": {
+      "absolute_l2": 7.267930594577878e-08,
+      "scaled_l2": 4.503127195404291e-16
+    },
+    "SAT_Riesz": {
+      "absolute_l2": 1.9301879729742397e-11,
+      "scaled_l2": 7.271304304296795e-16
+    },
+    "analytic_T": {
+      "absolute_l2": 8.763029964004884e-14,
+      "scaled_l2": 2.1084919700635934e-17
+    },
+    "saved_Cholesky": {
+      "absolute_l2": 6.709899197847964e-11,
+      "scaled_l2": 2.5718746865513125e-16
+    },
+    "nodal_seed_solve": {
+      "absolute_l2": 5.975188895999262e-15,
+      "scaled_l2": 6.761015819781109e-16
+    },
+    "scalar_initial": {
+      "absolute_l2": 8.916521205087973e-15,
+      "scaled_l2": 3.1931944789148246e-16
+    },
+    "scalar_bulk": {
+      "absolute_l2": 2.0065114328389307e-12,
+      "scaled_l2": 1.1334597728095674e-16
+    },
+    "scalar_SAT": {
+      "absolute_l2": 3.211106852781787e-15,
+      "scaled_l2": 3.02614905820304e-16
+    },
+    "scalar_total": {
+      "absolute_l2": 4.191074921859156e-12,
+      "scaled_l2": 2.3664787982913016e-16
+    },
+    "bulk_SAT_total_linearity": {
+      "absolute_l2": 5.057145371679503e-12,
+      "scaled_l2": 2.8555030690426553e-16
+    }
+  },
+  "case_count": 294,
+  "initial_gauge_zero_count": 84,
+  "outputs": [
+    {
+      "path": "projected-physical8.npz",
+      "sha256": "74a9c21af3d2210aa2d1b6f63e479c16c4ab205c7e65ee5c796e883078383745",
+      "role": "large_payload"
+    },
+    {
+      "path": "cases.jsonl",
+      "sha256": "d10b45fb74351d666cf313ecb3d576502e9bbb706613dfa74ba47ef1ff3d52e0",
+      "role": "source_or_receipt"
+    },
+    {
+      "path": "summary.json",
+      "sha256": "826f31fee1cd023eb1bde24fdc91da31576c3682d14c6002815f60c7918667a4",
+      "role": "source_or_receipt"
+    }
+  ],
+  "source_after": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/immutable-J0-projection-constraint-defect-20261009/index.json": "970a117d2790f668fc3e086de7477c4ea94b683a8772c27a751f2625a623ef28",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/immutable-J0-projection-constraint-defect-20261009/exact-projected/attempt-1791559237496324000/analytic-center-maps.npz": "44a6e015931a506e0d328d29f86362647e24cffa5f62d4be9ac52adbd49cface",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/immutable-J0-projection-constraint-defect-20261009/exact-projected/attempt-1791559237496324000/receipt.json": "98f18f39011601946df3b78d242a42e7ba2be3c6dfe37a174591e1d83e1ab78c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/J0-N16-rb.98-segmentedQ64-a12x24-primary001/operator.npz": "466c6386ed4ece0698bd0652c8bf064102fbca11bc606717755ad49459fb0cb6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-degree-control-20261009/J0-N16-rb.98-segmentedQ64-a12x24-primary001/report.json": "f8247ff66846c3b36afe11fa47d4f09b14c627c1bb7dc8317f80fa40fc14b599",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/readback_projected_defect.py": "abd42a99db4d53fa52a546ce2f316f4d5b83686f3ed6911fa2585b895212ebcd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-saved-point-readback-20261009/readback_degree_projection.py": "589325dce40aa215ca15183be71b4aeaeea8fd5bb88fcb46f69809eeadb07699",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-saved-point-readback-20261009/point_constraints.py": "99f1679c07ec7079e2386bbd54194772329a77e2a0d60e3eb9b81f10b0bee687",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-saved-point-readback-20261009/DEGREE-PLAN.md": "dc175426ce42648f27ffe61a4d860c98050fe4dab79269e45551c51641b72d09",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-saved-point-readback-20261009/N16-authorization001.json": "c53f5bd89991649c9f9f9609470f413a2ff984245311c1238eec60d7158b7100"
+  },
+  "sources_unchanged": true,
+  "seconds": 0.161806958
+}

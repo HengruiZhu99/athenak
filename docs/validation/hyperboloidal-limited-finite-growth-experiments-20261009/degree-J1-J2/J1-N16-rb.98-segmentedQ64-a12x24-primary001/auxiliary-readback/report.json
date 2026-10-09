@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "matrix_sha256": "5e1f035d2284c8e8fef02908122e131e40ae3ef66b41a5a4f02bfc229245e245",
+  "source_output_sha256": "c30c1e7a579e1e2fba6d25498e391277e3f142f77dc2f242b55fb807408ae389",
+  "checker_sha256": "ac2584ee45e24ba265389a9fa891b74eec67b7722f66bb2812f81b551857d0e2",
+  "polynomial_exact_sha256": "a9190ccf8213b40da4a40acfc88aa856e3eb11670de20207ce7d3591f2738469",
+  "mass": [
+    {
+      "L": 0,
+      "modal_I": {
+        "scaled": 2.6076216273067873e-14,
+        "absolute": 1.0430486509227198e-13,
+        "maxabs": 1.3138337736215056e-14
+      },
+      "nodal_exact_congruence": {
+        "scaled": 7.796354818857037e-16,
+        "absolute": 7.796354818857037e-16,
+        "maxabs": 5.39499001028787e-16
+      },
+      "back_congruence": {
+        "scaled": 2.608030819932214e-14,
+        "absolute": 1.0432123279728907e-13,
+        "maxabs": 1.3265799263645062e-14
+      },
+      "nodal_condition": 44.04794709210072
+    },
+    {
+      "L": 1,
+      "modal_I": {
+        "scaled": 7.091405835489491e-14,
+        "absolute": 2.836562334195825e-13,
+        "maxabs": 3.1250297948357066e-14
+      },
+      "nodal_exact_congruence": {
+        "scaled": 2.182232530765642e-15,
+        "absolute": 2.182232530765642e-15,
+        "maxabs": 1.3201245652183502e-15
+      },
+      "back_congruence": {
+        "scaled": 7.223670825408166e-14,
+        "absolute": 2.889468330163295e-13,
+        "maxabs": 3.182883773604285e-14
+      },
+      "nodal_condition": 3732.587173281143
+    },
+    {
+      "L": 2,
+      "modal_I": {
+        "scaled": 1.9911847789685138e-14,
+        "absolute": 7.964739115874055e-14,
+        "maxabs": 1.509903313490213e-14
+      },
+      "nodal_exact_congruence": {
+        "scaled": 1.8695009078524395e-16,
+        "absolute": 1.8695009078524395e-16,
+        "maxabs": 1.205632815803881e-16
+      },
+      "back_congruence": {
+        "scaled": 6.020994917236898e-14,
+        "absolute": 2.408397966894759e-13,
+        "maxabs": 6.623804153189295e-14
+      },
+      "nodal_condition": 159047.25851382595
+    },
+    {
+      "L": 3,
+      "modal_I": {
+        "scaled": 6.328984906404823e-14,
+        "absolute": 2.531593962561946e-13,
+        "maxabs": 2.4136552136204173e-14
+      },
+      "nodal_exact_congruence": {
+        "scaled": 1.6526556099159125e-15,
+        "absolute": 1.6526556099159125e-15,
+        "maxabs": 1.1050188541972261e-15
+      },
+      "back_congruence": {
+        "scaled": 2.303504934250416e-13,
+        "absolute": 9.214019737001665e-13,
+        "maxabs": 1.772889429164462e-13
+      },
+      "nodal_condition": 4126817.273195423
+    },
+    {
+      "L": 4,
+      "modal_I": {
+        "scaled": 2.440602723692651e-14,
+        "absolute": 9.762410894770604e-14,
+        "maxabs": 1.3114701006599995e-14
+      },
+      "nodal_exact_congruence": {
+        "scaled": 6.520913113354969e-16,
+        "absolute": 6.520913113354969e-16,
+        "maxabs": 2.931682674400804e-16
+      },
+      "back_congruence": {
+        "scaled": 1.7631281827107767e-12,
+        "absolute": 7.052512730843124e-12,
+        "maxabs": 2.172386308360549e-12
+      },
+      "nodal_condition": 72668409.73886144
+    }
+  ],
+  "normals": {
+    "rows": 369600,
+    "input_scaled": 3.3782755742208594e-16,
+    "output_scaled": 2.090587946632019e-15,
+    "input_absolute": 3.3782755742208594e-16,
+    "output_absolute": 1.2789769243681803e-13
+  },
+  "origin_flux_proof": {
+    "origin_frame_evaluated": false,
+    "statement": "Every solid-CG component is r^L W(r^2) times a bounded angular polynomial. In the exact core normalization coefficients are constant; Ds of L0 is 2r W_rho, and Ds of L>=1 has leading L r^(L-1) W. Thus all q/V trial fields remain bounded at r=0, H/Kn remain bounded, and r^2 y_i^T H Kn y_j tends to zero. No origin trace or cross-L condition is imposed.",
+    "dependencies": [
+      "Frozen regular basis and exact polynomial core local gate"
+    ]
+  },
+  "tolerances": {
+    "exact_polynomial_and_normals_scaled": 5e-11
+  },
+  "scope": "Source normals and independent polynomial dense mass; coupled E checks are separate"
+}

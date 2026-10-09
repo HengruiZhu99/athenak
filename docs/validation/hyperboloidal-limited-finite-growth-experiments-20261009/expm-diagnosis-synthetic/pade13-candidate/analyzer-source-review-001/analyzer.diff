@@ -1,0 +1,58 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-20261009/analyze_growth.py	2026-10-09 11:20:50
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-limited-matrix-growth-pade13-20261009/analyze_growth.py	2026-10-09 11:40:16
+@@ -12,14 +12,31 @@
+ import warnings
+ 
+ import numpy as np
+-from scipy.linalg import expm, solve_triangular
++from scipy.linalg import solve_triangular
++from pade13_einsum import expm_pade13
+ from scipy.special import roots_jacobi, eval_jacobi
+ 
+ warnings.filterwarnings('error', category=RuntimeWarning)
+ np.seterr(all='raise', under='ignore')
+ HERE = Path(__file__).resolve().parent
++EXPM_DIAGNOSTICS = []
+ 
+ 
++def expm(argument):
++    entry = {'call': len(EXPM_DIAGNOSTICS), 'status': 'started'}
++    EXPM_DIAGNOSTICS.append(entry)
++    try:
++        result, info = expm_pade13(argument, return_info=True)
++        entry.update(info)
++        if info['rational_solve_residual'] > 2e-9:
++            raise RuntimeError('Pade rational solve residual exceeds existing algebra tolerance')
++        entry['status'] = 'passed_rational_solve_check'
++        return result
++    except Exception as exc:
++        entry.update({'status': 'failed', 'type': type(exc).__name__, 'message': str(exc)})
++        raise
++
++
+ def sha(path):
+     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+ 
+@@ -113,11 +130,11 @@
+         raise ValueError('a required source/matrix/rate gate is missing')
+     if adm['J'] not in (0, 1, 2) or adm['N'] not in (8, 12, 16) or adm['rb'] not in (.98, .995):
+         raise ValueError('undeclared finite-domain control')
+-    pins = [matrix, authorization, Path(__file__), HERE/'PLAN.md', HERE/'FINAL-ADDENDUM.md', HERE/'LIMITED-MATRIX-SCOPE.md',
++    pins = [matrix, authorization, Path(__file__), HERE/'PLAN.md', HERE/'FINAL-ADDENDUM.md', HERE/'LIMITED-MATRIX-SCOPE.md', HERE/'EXPONENTIAL-ADDENDUM.md', HERE/'pade13_einsum.py',
+             Path(adm['basis_layout'])]
+     pins += [Path(v['path']) for v in adm.get('review_inputs', [])]
+     reviewed = {str(Path(v['path']).resolve()) for v in adm.get('review_inputs', [])}
+-    mandatory = {str(p.resolve()) for p in (Path(__file__), HERE/'PLAN.md', HERE/'FINAL-ADDENDUM.md', HERE/'LIMITED-MATRIX-SCOPE.md', Path(adm['basis_layout']))}
++    mandatory = {str(p.resolve()) for p in (Path(__file__), HERE/'PLAN.md', HERE/'FINAL-ADDENDUM.md', HERE/'LIMITED-MATRIX-SCOPE.md', HERE/'EXPONENTIAL-ADDENDUM.md', HERE/'pade13_einsum.py', Path(adm['basis_layout']))}
+     if not mandatory.issubset(reviewed):
+         raise ValueError('source/plan/addendum/basis review pins must be explicitly admitted')
+     for item in adm.get('review_inputs', []):
+@@ -250,6 +267,8 @@
+         if arrays:
+             np.savez_compressed(output/'failed-partial-payload.npz', **arrays)
+             receipt['failed_partial_payload_sha256'] = sha(output/'failed-partial-payload.npz')
++    receipt['exponential_evaluations'] = EXPM_DIAGNOSTICS
++    receipt['original_SciPy_expm_attempt_remains_failed'] = True
+     receipt['inputs_after'] = {str(p.resolve()): sha(p) for p in pins}
+     receipt['input_pins_unchanged'] = receipt['inputs_before'] == receipt['inputs_after']
+     receipt['seconds'] = time.monotonic()-begin
