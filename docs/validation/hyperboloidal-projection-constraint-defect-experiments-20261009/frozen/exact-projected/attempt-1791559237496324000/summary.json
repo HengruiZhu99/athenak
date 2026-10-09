@@ -1,0 +1,1123 @@
+{
+  "analytic_point_gate_passed": true,
+  "full_nongauge_continuum_defect_gate_passed": false,
+  "cases": 294,
+  "commands": 1,
+  "query_rows": 1176,
+  "seconds": 0.10924841700000001,
+  "controls": {
+    "held_envelope_rows": 672,
+    "held_all30_global": {
+      "absolute_l2": 6.785413786053527e-13,
+      "scaled_l2": 5.950945560061225e-16,
+      "absolute_peak": 2.2737367544323206e-13
+    },
+    "held_all30_max_row_scaled": 5.2683291811380855e-14,
+    "held_constraints8_global": {
+      "absolute_l2": 6.146769783079633e-14,
+      "scaled_l2": 1.1948451651112656e-15,
+      "absolute_peak": 4.085620730620576e-14
+    },
+    "held_constraints8_max_row_scaled": 1.4184255475321274e-14,
+    "source_rhs22_global": {
+      "absolute_l2": 1.866359804109638e-13,
+      "scaled_l2": 2.829833831664431e-16,
+      "absolute_peak": 3.952393967665557e-14
+    },
+    "source_rhs22_max_row_scaled": 6.389938720601894e-14,
+    "query_rows": 1176,
+    "all_eight_fields_are_physical_Cartesian": true,
+    "Omega_rescaling": false
+  },
+  "scope": "Saved-data readback of pointwise physical8 Euclidean quantities, not integrated energy or a generator spectrum. Gauge continuum zero is derived Einstein-sector tangency; no numerical pass of either failed FD attempt. General nongauge continuum comparator unresolved.",
+  "by_witness": [
+    {
+      "name": "poly-alpha",
+      "gauge": true,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 0.0,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 986.1128649121832,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          981.9281245196399,
+          -2.576214815016958,
+          0.0,
+          0.0,
+          -90.71437753766038,
+          0.0,
+          0.0,
+          -0.07380947101229818
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.011203592334805695,
+        "r": 0.15,
+        "direction": 2,
+        "physical8": [
+          0.008062042033809658,
+          0.00415833110797183,
+          -0.0062374966619577425,
+          0.002079165553985914,
+          -2.7415077371349027e-05,
+          4.112261605702335e-05,
+          -1.3707538685674492e-05,
+          -1.781248511463348e-05
+        ]
+      },
+      "total": {
+        "max_sample_l2": 986.1208771681678,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          981.9361865616721,
+          -2.5684352898635616,
+          0.0,
+          0.0,
+          -90.71442882657375,
+          0.0,
+          0.0,
+          -0.0738272834974128
+        ]
+      }
+    },
+    {
+      "name": "poly-P",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 2.1764490714650013,
+        "r": 0.975,
+        "direction": 1,
+        "physical8": [
+          -2.145330891440343,
+          -0.09801090570246704,
+          -0.19602181140493408,
+          -0.2940327171074011,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 3139.3640481804982,
+        "r": 0.975,
+        "direction": 2,
+        "physical8": [
+          853.339765480916,
+          1614.7156010071305,
+          -2422.073401510707,
+          807.3578005035658,
+          0.30246835143916256,
+          -0.4537025271629136,
+          0.15123417571958128,
+          -42.95228721427964
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.9068528893077571,
+        "r": 0.975,
+        "direction": 0,
+        "physical8": [
+          0.06950900594889825,
+          0.9001824235822968,
+          0.0,
+          0.0,
+          0.08498381084101134,
+          0.0,
+          0.0,
+          -0.00013079091866421714
+        ]
+      },
+      "total": {
+        "max_sample_l2": 3140.24916684232,
+        "r": 0.975,
+        "direction": 2,
+        "physical8": [
+          853.4092744868649,
+          1615.196768752079,
+          -2422.7951531281296,
+          807.5983843760401,
+          0.34789410909479646,
+          -0.5218411636463764,
+          0.17394705454739823,
+          -42.952418005198304
+        ]
+      }
+    },
+    {
+      "name": "poly-Theta",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 4.318126199483911,
+        "r": 0.975,
+        "direction": 1,
+        "physical8": [
+          -4.078810357350952,
+          -0.37268646893363266,
+          -0.7453729378672653,
+          -1.118059406800898,
+          0.0,
+          0.0,
+          0.0,
+          0.2549256473344345
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 7054.931802450844,
+        "r": 0.975,
+        "direction": 2,
+        "physical8": [
+          2071.296412913974,
+          3604.173530889393,
+          -5406.260296334112,
+          1802.0867654446974,
+          -2.0016096406048263,
+          3.0024144609049666,
+          -1.0008048203024131,
+          -128.63102994503325
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 1.5140503820008264,
+        "r": 0.975,
+        "direction": 0,
+        "physical8": [
+          0.17945255396114643,
+          1.5029151389715305,
+          0.0,
+          0.0,
+          0.03634573324455812,
+          0.0,
+          0.0,
+          -0.0083912358309611
+        ]
+      },
+      "total": {
+        "max_sample_l2": 7056.4210476065255,
+        "r": 0.975,
+        "direction": 2,
+        "physical8": [
+          2071.475865467935,
+          3604.976872822454,
+          -5407.465309233704,
+          1802.4884364112281,
+          -1.9821820289945231,
+          2.9732730434895065,
+          -0.9910910144972616,
+          -128.63942118086422
+        ]
+      }
+    },
+    {
+      "name": "poly-beta",
+      "gauge": true,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 0.0,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 2651.1084252266605,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          2600.368520137322,
+          -504.9117060516696,
+          0.0,
+          0.0,
+          -107.32625754416455,
+          0.0,
+          0.0,
+          -2.164560041608257
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.21487320377862298,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          0.20026384111387016,
+          -0.07766543534376275,
+          0.0,
+          0.0,
+          -0.005708461983184457,
+          0.0,
+          0.0,
+          -0.0006174617871126374
+        ]
+      },
+      "total": {
+        "max_sample_l2": 2651.3198796897946,
+        "r": 0.15,
+        "direction": 2,
+        "physical8": [
+          2600.568783978438,
+          -269.9281731523877,
+          404.89225972858134,
+          -134.96408657619378,
+          -57.37134906341028,
+          86.05702359511542,
+          -28.685674531705136,
+          -2.1651775033953697
+        ]
+      }
+    },
+    {
+      "name": "poly-all-mixed",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 1.749276853470352,
+        "r": 0.3,
+        "direction": 1,
+        "physical8": [
+          1.7436678427787784,
+          0.016472739536602006,
+          0.032945479073204054,
+          0.049418218609806025,
+          -0.027427936475903313,
+          -0.05485587295180662,
+          -0.08228380942770994,
+          -0.07253250503050532
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 1914.5357878668465,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          1892.6750867083497,
+          -247.65973754320976,
+          0.0,
+          0.0,
+          -147.9604689711483,
+          0.0,
+          0.0,
+          -0.8082068639411706
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.23730808441381276,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          -0.2333792215063363,
+          0.04177736150156164,
+          0.0,
+          0.0,
+          0.009309072265517967,
+          0.0,
+          0.0,
+          -0.004154411724045821
+        ]
+      },
+      "total": {
+        "max_sample_l2": 1914.2989515973047,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          1892.4417074868443,
+          -247.6179601817081,
+          0.0,
+          0.0,
+          -147.95115989888276,
+          0.0,
+          0.0,
+          -0.8123612756652171
+        ]
+      }
+    },
+    {
+      "name": "gauge-alpha",
+      "gauge": true,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 0.0,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 14.311411416965466,
+        "r": 0.15,
+        "direction": 2,
+        "physical8": [
+          14.25825810696648,
+          -0.6407313005081364,
+          0.961096950762209,
+          -0.32036565025406716,
+          -0.15242507382385695,
+          0.22863761073578528,
+          -0.07621253691192842,
+          -0.019429146671824743
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.000615919566051214,
+        "r": 0.15,
+        "direction": 2,
+        "physical8": [
+          0.0004432122557207615,
+          0.00022860502372965523,
+          -0.00034290753559448276,
+          0.00011430251186482757,
+          -1.5071489617781753e-06,
+          2.2607234426672548e-06,
+          -7.535744808890871e-07,
+          -9.792446721007867e-07
+        ]
+      },
+      "total": {
+        "max_sample_l2": 14.311817226329682,
+        "r": 0.15,
+        "direction": 2,
+        "physical8": [
+          14.258701319222217,
+          -0.6405026954844062,
+          0.9607540432266173,
+          -0.3202513477422021,
+          -0.15242658097281878,
+          0.2286398714592281,
+          -0.07621329048640933,
+          -0.019430125916496843
+        ]
+      }
+    },
+    {
+      "name": "gauge-beta",
+      "gauge": true,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 0.0,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 5.899415359783157,
+        "r": 0.15,
+        "direction": 1,
+        "physical8": [
+          5.818103074035401,
+          0.25105177991334193,
+          0.5021035598266844,
+          0.753155339740025,
+          -0.07091242422593928,
+          -0.1418248484518782,
+          -0.21273727267781803,
+          0.000503630495659502
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.002164204567118018,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          -0.002017058953583166,
+          0.0007822468643067712,
+          0.0,
+          0.0,
+          5.74956731595033e-05,
+          0.0,
+          0.0,
+          6.219079886150601e-06
+        ]
+      },
+      "total": {
+        "max_sample_l2": 5.897548173574234,
+        "r": 0.15,
+        "direction": 1,
+        "physical8": [
+          5.8160860150818205,
+          0.2512608441817787,
+          0.5025216883635577,
+          0.7537825325453357,
+          -0.07089705786092601,
+          -0.14179411572185166,
+          -0.21269117358277811,
+          0.0005098495755456535
+        ]
+      }
+    },
+    {
+      "name": "shell-channel-1",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 7.928866884785856,
+        "r": 0.5,
+        "direction": 1,
+        "physical8": [
+          -7.875677341045198,
+          -0.24306001876966016,
+          -0.48612003753932037,
+          -0.7291800563089799,
+          0.031101307116189577,
+          0.06220261423237919,
+          0.0933039213485687,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 431.8804470112544,
+        "r": 0.96,
+        "direction": 0,
+        "physical8": [
+          -161.5217084176276,
+          -400.4874480928512,
+          0.0,
+          0.0,
+          -0.03411938064094605,
+          0.0,
+          0.0,
+          6.423470746836363
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.1848924148305883,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          0.18403582356042433,
+          0.01572037501426733,
+          0.0,
+          0.0,
+          -0.008133675564792008,
+          0.0,
+          0.0,
+          0.0016534326536683714
+        ]
+      },
+      "total": {
+        "max_sample_l2": 431.83038850393774,
+        "r": 0.96,
+        "direction": 0,
+        "physical8": [
+          -161.51399540330198,
+          -400.43657188249256,
+          0.0,
+          0.0,
+          -0.034188400659205045,
+          0.0,
+          0.0,
+          6.4237414700909845
+        ]
+      }
+    },
+    {
+      "name": "shell-channel-2",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 2.044345749072105,
+        "r": 0.7,
+        "direction": 0,
+        "physical8": [
+          -2.04301553241172,
+          0.07373653147282096,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 495.46064089318907,
+        "r": 0.975,
+        "direction": 2,
+        "physical8": [
+          -36.15940753173543,
+          -263.5158276596891,
+          395.27374148953646,
+          -131.75791382984468,
+          17.973774737781447,
+          -26.96066210667614,
+          8.986887368890724,
+          0.9878775262768628
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.04627450228678851,
+        "r": 0.975,
+        "direction": 0,
+        "physical8": [
+          -0.003546875896480595,
+          -0.045934124607997937,
+          0.0,
+          0.0,
+          -0.004336517637501408,
+          0.0,
+          0.0,
+          6.673943189883204e-06
+        ]
+      },
+      "total": {
+        "max_sample_l2": 495.50631085549816,
+        "r": 0.975,
+        "direction": 2,
+        "physical8": [
+          -36.162954407631915,
+          -263.54038048206684,
+          395.3105707231031,
+          -131.7701902410336,
+          17.971456771602696,
+          -26.957185157408013,
+          8.985728385801348,
+          0.9878842002200526
+        ]
+      }
+    },
+    {
+      "name": "shell-channel-3",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 4.096661887726085,
+        "r": 0.7,
+        "direction": 0,
+        "physical8": [
+          -4.08603106482344,
+          0.14747306294564191,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.25542211210210414
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 1091.2531040338772,
+        "r": 0.975,
+        "direction": 2,
+        "physical8": [
+          -98.18492778670408,
+          -580.8609457002013,
+          871.291418550308,
+          -290.43047285010095,
+          8.629248864222822,
+          -12.943873296336136,
+          4.314624432111411,
+          5.865100523936378
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.0804438951023807,
+        "r": 0.975,
+        "direction": 0,
+        "physical8": [
+          -0.009534598450828182,
+          -0.07985226200163542,
+          0.0,
+          0.0,
+          -0.0019311063801458648,
+          0.0,
+          0.0,
+          0.0004458396516984234
+        ]
+      },
+      "total": {
+        "max_sample_l2": 1091.3334541935308,
+        "r": 0.975,
+        "direction": 2,
+        "physical8": [
+          -98.1944623851549,
+          -580.9036285296254,
+          871.3554427944441,
+          -290.451814264813,
+          8.628216644443976,
+          -12.942324966667869,
+          4.314108322221988,
+          5.865546363588077
+        ]
+      }
+    },
+    {
+      "name": "shell-channel-5",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 0.1412149132071947,
+        "r": 0.7,
+        "direction": 0,
+        "physical8": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.1412149132071947,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 11.568386352644456,
+        "r": 0.7,
+        "direction": 1,
+        "physical8": [
+          -3.4924984602989815,
+          -2.899766462178303,
+          -5.799532924356595,
+          -8.699299386534932,
+          -0.525415850544902,
+          -1.0508317010898043,
+          -1.576247551634712,
+          0.2100342647496704
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.0016166225998827425,
+        "r": 0.15,
+        "direction": 2,
+        "physical8": [
+          -0.0015409429200702392,
+          -0.00026079699013273035,
+          0.00039119548519909536,
+          -0.0001303984950663651,
+          1.47711740169226e-05,
+          -2.2156761025383878e-05,
+          7.385587008461296e-06,
+          -1.2130366135832165e-05
+        ]
+      },
+      "total": {
+        "max_sample_l2": 11.568567445747021,
+        "r": 0.7,
+        "direction": 1,
+        "physical8": [
+          -3.4927758303304164,
+          -2.899796073940677,
+          -5.799592147881343,
+          -8.699388221822053,
+          -0.5254055190954686,
+          -1.0508110381909375,
+          -1.5762165572864117,
+          0.21003458460152494
+        ]
+      }
+    },
+    {
+      "name": "shell-channel-6",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 2.6154081069923834,
+        "r": 0.5,
+        "direction": 0,
+        "physical8": [
+          2.6028422087985765,
+          0.24103954568006614,
+          0.0,
+          0.0,
+          -0.0864403819772752,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 1306.5717343039305,
+        "r": 0.975,
+        "direction": 0,
+        "physical8": [
+          371.08792291852336,
+          1247.3705997063184,
+          0.0,
+          0.0,
+          -115.64447463325844,
+          0.0,
+          0.0,
+          -10.788550463070795
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.3099689450057081,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          -0.25905468483266536,
+          0.16982868546792532,
+          0.0,
+          0.0,
+          0.011313447719365608,
+          0.0,
+          0.0,
+          0.0012808696802423481
+        ]
+      },
+      "total": {
+        "max_sample_l2": 1306.4301248785366,
+        "r": 0.975,
+        "direction": 0,
+        "physical8": [
+          371.1278626877743,
+          1247.2086986244983,
+          0.0,
+          0.0,
+          -115.66265587821252,
+          0.0,
+          0.0,
+          -10.788551225098388
+        ]
+      }
+    },
+    {
+      "name": "shell-channel-7",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 0.6902267027472814,
+        "r": 0.7,
+        "direction": 1,
+        "physical8": [
+          0.056530925765030535,
+          0.18385109573035502,
+          0.3677021914607096,
+          0.5515532871910673,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 26.86310654242322,
+        "r": 0.975,
+        "direction": 1,
+        "physical8": [
+          5.40230735903681,
+          6.9904061604479075,
+          13.980812320895815,
+          20.97121848134553,
+          -0.7709304332430695,
+          -1.541860866486152,
+          -2.3127912997294127,
+          -0.00012248796097364613
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.004163535998214884,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          0.003479650213951555,
+          -0.0022811570541737105,
+          0.0,
+          0.0,
+          -0.0001519634389265822,
+          0.0,
+          0.0,
+          -1.7204778441944226e-05
+        ]
+      },
+      "total": {
+        "max_sample_l2": 26.865089858018383,
+        "r": 0.975,
+        "direction": 1,
+        "physical8": [
+          5.401770883787543,
+          6.9909873661570066,
+          13.981974732314013,
+          20.972962098472827,
+          -0.7708651647269664,
+          -1.5417303294539457,
+          -2.312595494181103,
+          -0.0001224777253375481
+        ]
+      }
+    },
+    {
+      "name": "shell-mixed",
+      "gauge": false,
+      "points": 21,
+      "initial": {
+        "max_sample_l2": 4.374604983853666,
+        "r": 0.5,
+        "direction": 1,
+        "physical8": [
+          4.3361094886670735,
+          0.1535372589652226,
+          0.3070745179304452,
+          0.4606117768956676,
+          -0.019346970039629152,
+          -0.03869394007925832,
+          -0.05804091011888742,
+          -0.007164850657945955
+        ]
+      },
+      "bulk": {
+        "max_sample_l2": 406.8094469226583,
+        "r": 0.975,
+        "direction": 1,
+        "physical8": [
+          127.62608756435009,
+          103.19175429098885,
+          206.3835085819777,
+          309.5752628729737,
+          -2.4434559555208453,
+          -4.886911911041718,
+          -7.330367866562461,
+          -6.510533719607416
+        ]
+      },
+      "sat": {
+        "max_sample_l2": 0.11960379574536976,
+        "r": 0.15,
+        "direction": 0,
+        "physical8": [
+          -0.11860502912562863,
+          0.014487498824505698,
+          0.0,
+          0.0,
+          0.005271955966608407,
+          0.0,
+          0.0,
+          -0.00048361234992838517
+        ]
+      },
+      "total": {
+        "max_sample_l2": 406.7149638990218,
+        "r": 0.975,
+        "direction": 1,
+        "physical8": [
+          127.61425995114884,
+          103.1661790091592,
+          206.3323580183184,
+          309.4985370274848,
+          -2.4441817469069296,
+          -4.888363493813887,
+          -7.332545240720714,
+          -6.509938235778741
+        ]
+      }
+    }
+  ],
+  "max_old_FD_projected_comparisons": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/attempt-1791558113840144000/bulk/final": {
+      "error": {
+        "absolute_l2": 1.0165450208648128e-06,
+        "scaled_l2": 1.7713099750202463e-08,
+        "absolute_peak": 1.0165450206045534e-06
+      },
+      "witness": "poly-alpha",
+      "r": 0.7,
+      "direction": 1,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/attempt-1791558113840144000/bulk/richardson": {
+      "error": {
+        "absolute_l2": 1.0680512050639742e-06,
+        "scaled_l2": 1.8610584999892943e-08,
+        "absolute_peak": 1.0680512048111268e-06
+      },
+      "witness": "poly-alpha",
+      "r": 0.7,
+      "direction": 1,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/attempt-1791558113840144000/sat/final": {
+      "error": {
+        "absolute_l2": 7.42357408715011e-11,
+        "scaled_l2": 7.42357408715011e-11,
+        "absolute_peak": 7.42357408184402e-11
+      },
+      "witness": "poly-alpha",
+      "r": 0.15,
+      "direction": 0,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/attempt-1791558113840144000/sat/richardson": {
+      "error": {
+        "absolute_l2": 7.916905499297762e-11,
+        "scaled_l2": 7.916905499297762e-11,
+        "absolute_peak": 7.916905499227855e-11
+      },
+      "witness": "poly-alpha",
+      "r": 0.15,
+      "direction": 0,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/attempt-1791558113840144000/total/final": {
+      "error": {
+        "absolute_l2": 5.015569405379915e-07,
+        "scaled_l2": 8.739202452458762e-09,
+        "absolute_peak": 5.015569399802189e-07
+      },
+      "witness": "poly-alpha",
+      "r": 0.7,
+      "direction": 1,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/attempt-1791558113840144000/total/richardson": {
+      "error": {
+        "absolute_l2": 5.240996335748618e-07,
+        "scaled_l2": 9.131989672794483e-09,
+        "absolute_peak": 5.240996330257985e-07
+      },
+      "witness": "poly-alpha",
+      "r": 0.7,
+      "direction": 1,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/attempt-1791558113840144000/initial/final": {
+      "error": {
+        "absolute_l2": 0.0,
+        "scaled_l2": 0.0,
+        "absolute_peak": 0.0
+      },
+      "witness": "poly-alpha",
+      "r": 0.15,
+      "direction": 0,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/attempt-1791558113840144000/initial/richardson": {
+      "error": {
+        "absolute_l2": 0.0,
+        "scaled_l2": 0.0,
+        "absolute_peak": 0.0
+      },
+      "witness": "poly-alpha",
+      "r": 0.15,
+      "direction": 0,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/refined-h0-half/attempt-1791558482849376000/bulk/final": {
+      "error": {
+        "absolute_l2": 1.8509271512838646e-05,
+        "scaled_l2": 2.4568228591613023e-08,
+        "absolute_peak": 1.850927151281212e-05
+      },
+      "witness": "poly-alpha",
+      "r": 0.3,
+      "direction": 0,
+      "old_case_passed": false
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/refined-h0-half/attempt-1791558482849376000/bulk/richardson": {
+      "error": {
+        "absolute_l2": 1.9640439177267065e-05,
+        "scaled_l2": 2.6069680715921543e-08,
+        "absolute_peak": 1.9640439177237567e-05
+      },
+      "witness": "poly-alpha",
+      "r": 0.3,
+      "direction": 0,
+      "old_case_passed": false
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/refined-h0-half/attempt-1791558482849376000/sat/final": {
+      "error": {
+        "absolute_l2": 1.382887572089556e-10,
+        "scaled_l2": 1.382887572089556e-10,
+        "absolute_peak": 1.3828875718158162e-10
+      },
+      "witness": "poly-alpha",
+      "r": 0.15,
+      "direction": 0,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/refined-h0-half/attempt-1791558482849376000/sat/richardson": {
+      "error": {
+        "absolute_l2": 1.5245705742715864e-10,
+        "scaled_l2": 1.5245705742715864e-10,
+        "absolute_peak": 1.5245705739519444e-10
+      },
+      "witness": "poly-alpha",
+      "r": 0.15,
+      "direction": 0,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/refined-h0-half/attempt-1791558482849376000/total/final": {
+      "error": {
+        "absolute_l2": 2.095762431510243e-05,
+        "scaled_l2": 2.7818175268581804e-08,
+        "absolute_peak": 2.0957624315087742e-05
+      },
+      "witness": "poly-alpha",
+      "r": 0.3,
+      "direction": 0,
+      "old_case_passed": false
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/refined-h0-half/attempt-1791558482849376000/total/richardson": {
+      "error": {
+        "absolute_l2": 2.228029688923622e-05,
+        "scaled_l2": 2.957382924211636e-08,
+        "absolute_peak": 2.2280296889221063e-05
+      },
+      "witness": "poly-alpha",
+      "r": 0.3,
+      "direction": 0,
+      "old_case_passed": false
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/refined-h0-half/attempt-1791558482849376000/initial/final": {
+      "error": {
+        "absolute_l2": 0.0,
+        "scaled_l2": 0.0,
+        "absolute_peak": 0.0
+      },
+      "witness": "poly-alpha",
+      "r": 0.15,
+      "direction": 0,
+      "old_case_passed": true
+    },
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/refined-h0-half/attempt-1791558482849376000/initial/richardson": {
+      "error": {
+        "absolute_l2": 0.0,
+        "scaled_l2": 0.0,
+        "absolute_peak": 0.0
+      },
+      "witness": "poly-alpha",
+      "r": 0.15,
+      "direction": 0,
+      "old_case_passed": true
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "status": "PASS_read_only_source_binding_and_saved_triangular_map_review",
+  "reviewer": "/root/literature_gauge",
+  "input_pins": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/readback_exact_projected.py",
+      "sha256": "831ee903907124d374ed4a30d7c68b11968e0278a2df0c49a3393cd193d40f0d",
+      "bytes": 13451
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/PLAN.md",
+      "sha256": "721747086675c8c55b75d6fb8b02901c73b713b65370b40f6a3ae5bd18a42e2b",
+      "bytes": 5140
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/root-saved-data-review.json",
+      "sha256": "2521ec540599d4ea3047d8f4051d11fe23c54cd67941cf9de7cd9d9697faef0f",
+      "bytes": 479
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/attempt-1791559237496324000/receipt.json",
+      "sha256": "98f18f39011601946df3b78d242a42e7ba2be3c6dfe37a174591e1d83e1ab78c",
+      "bytes": 14548
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/attempt-1791559237496324000/calls.json",
+      "sha256": "94a880bbcb85e3f700a55ebcf1145a26d907c34aa514a67f03e1527fed3872de",
+      "bytes": 567
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/attempt-1791559237496324000/cases.jsonl",
+      "sha256": "beb64e62639d0f086cdb725898c77acdc9b85c376a771d2ff5f60537895f04df",
+      "bytes": 404601
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/attempt-1791559237496324000/analytic-center-maps.npz",
+      "sha256": "44a6e015931a506e0d328d29f86362647e24cffa5f62d4be9ac52adbd49cface",
+      "bytes": 32542
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/attempt-1791559237496324000/held-map-controls.json",
+      "sha256": "c6ecb5e66d2d5c7da30ce5584e042e7c70aefae096cc5864b893e1a48aded855",
+      "bytes": 782
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/attempt-1791559237496324000/coefficients.json",
+      "sha256": "922e43ab19d33416f263d3fa74a861eaf9cb92a1d3f2584a429a7bf2f1a9fc23",
+      "bytes": 70942
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-projection-defect/exact-projected/attempt-1791559237496324000/matrix-schema-checks.json",
+      "sha256": "59fb31d610b959ddd538761b7763b35a2189db91e2ddcd904ad416bbcb1a0a3c",
+      "bytes": 390
+    }
+  ],
+  "source_run_pins_rehashed": 24,
+  "saved_query_rows": 1176,
+  "saved_case_rows": 294,
+  "witnesses": 14,
+  "gauge_initial_exact_zero_points": 84,
+  "saved_triangular_maps_bitwise_recovered": true,
+  "total_linearity_max_scaled": 8.16909256970141e-15,
+  "source_math_findings": [
+    "Monomial WJets (1,0,0),(rho,1,0),(rho\u00b2,2rho,2) form a triangular map with determinant2; the recovered maps are coefficients of W,W_rho,W_rhorho, not radial interpolation or an exact-arithmetic claim.",
+    "The existing manufactured API analytically seeds physical fields and the complete reference-dependent lift before actual dual RHS22 and physical constraint8 evaluation. Its initial constraint map consumes at most second spatial jets, so three envelope-jet coefficients suffice.",
+    "Held envelopes and separate constraint-only global/per-row thresholds prevent large primitive RHS entries from hiding constraint-map defects. Recovered RHS maps are also compared to the earlier actual point maps.",
+    "The named Jacobi interpolants X,JbulkX,JsatX and sum are contracted with the same full coefficient-aware physical Cartesian constraint map, without an extra solid-harmonic r^L or Omega weight.",
+    "For the four gauge-only seeds, C_ref[L_actualPhi]=0 follows from positive-Omega Einstein-sector ADM constraint tangency and vanishing Z4 additions. This is a derived identity, not a successful numerical classification of either failed ordinary-FD sequence.",
+    "For nongauge seeds the full C_ref[L_actualPhi] comparator is not evaluated and remains unresolved. No full14-witness projection-defect gate is passed."
+  ],
+  "corrections": [],
+  "scientific_query_or_compile": false,
+  "generator_eigensolve_or_propagation": false,
+  "scope": "Analytically seeded point-map/source binding and saved output review only; no integrated constraint energy, CPBC, PDE closure, stability or native/BH admission."
+}
