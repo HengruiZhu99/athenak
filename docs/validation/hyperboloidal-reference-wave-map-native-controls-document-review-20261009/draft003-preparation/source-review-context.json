@@ -1,0 +1,57 @@
+{
+  "scope": "Additive exact source context for fixed DRAFT003; saved-data generation and draft bytes unchanged. Source-only, no compile/query/array/native calls.",
+  "inputs": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/wave-map/include/native_wave_map.hpp",
+      "sha256": "642d92864a64c9f09ecf85f84a7dc24c3814495dbdab92e92ef483217e3777b8",
+      "bytes": 1010
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/wave-map/include/reference_wave_map.hpp",
+      "sha256": "56d61c56bf37bf33591bec74c029c686c7d39f7abbe62dd090becda8e7176e28",
+      "bytes": 5436
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/wave-map/include/z4c/hyperboloidal/cartesian_patch.hpp",
+      "sha256": "b7386d93c8701aab4494ce7a1d27aff92bb65ccec66718239f3a7039064400eb",
+      "bytes": 24001
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/wave-map/cartesian-overlay.patch",
+      "sha256": "8a218f7caaf0e9e25c59e7f3fd4ec4cb3d815f66d7a2cfa9adb1e57ea1596dd6",
+      "bytes": 1486
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/wave-map/recipe.json",
+      "sha256": "fc62d4ae1174838dd13c7ac7a0bf919b9fd06a4e570c8487864ec7c9bf06ca0f",
+      "bytes": 115908
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/reference-wave-map-native-held-20261009/recipes/c0/recipe.json",
+      "sha256": "619e2a27c14f0eea16d10cd912be218aa7d6a59d28b0a3d1f07bf00253b656bb",
+      "bytes": 115644
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp",
+      "sha256": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+      "bytes": 24113
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/layer_gauge.hpp",
+      "sha256": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+      "bytes": 6735
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+      "sha256": "1c3e8b5836e2c231622b7df823476135b7e1517aadac93c6e814c2da20d774d1",
+      "bytes": 13337
+    }
+  ],
+  "claims_to_review": [
+    "private ResearchNativeWaveMapGauge has no LayerGauge parameter and calls frozen rwm::Gauge/Assemble globally",
+    "once-only alpha/beta poles and unchanged mesh upwind/geometry seam",
+    "public C0 gauge is different from private spatial-norm helper",
+    "runtime initial pulse has vanishing tail but no compact sub-scri cutoff"
+  ],
+  "draft_sha256": "341ded9cb7590f2c919963b402f81196cda287758662ee42d447c8ef43fdea94"
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "Source-only schema; this file is not an execution authorization.",
+  "required": [
+    "completed_t2_snapshot_readback_authorized",
+    "wrapper_sha256",
+    "recipe_sha256",
+    "cases"
+  ],
+  "per_case_required": [
+    "launch_receipt_sha256",
+    "attempt_directory"
+  ],
+  "constraints": [
+    "Root must separately release this exact wrapper and recipe.",
+    "Each case must be one of the nine original fixed t2 cases and a completed successful native process.",
+    "Each attempt_directory must be a fresh direct child of this tree's attempts directory.",
+    "No partial results acceptance, source/input/analyzer mutation or gate relaxation."
+  ]
+}

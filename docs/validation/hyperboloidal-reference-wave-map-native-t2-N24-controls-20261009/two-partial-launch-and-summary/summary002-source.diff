@@ -1,0 +1,12 @@
+--- failed-summary001.py
++++ summary002.py
+@@ -2,7 +2,8 @@
+ from pathlib import Path
+ import hashlib,json
+ R=Path(__file__).resolve().parents[3];P=Path(__file__).resolve().parent
+-def pin(p):return {'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'bytes':p.stat().st_size}
++def pin(p):
++ p=Path(p).resolve();return {'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'bytes':p.stat().st_size}
+ def load(p):return json.loads(p.read_text(),parse_constant=lambda x:(_ for _ in ()).throw(ValueError(x)))
+ rows=[];inputs=[]
+ for suffix,case,abort in [('half','wave-map-half-N24-large-t2',.79280598958281545),('small','wave-map-N24-small-t2',1.0180338541661471)]:

@@ -1,0 +1,40 @@
+--- unexecuted001
++++ source002
+@@ -16,7 +16,7 @@
+ # These exact sources are already jointly pinned in the completed root comparison recipe.
+ for tag in ('standard','half','small'):
+  entry=next(x for x in recipe['cases'] if x['tag']==tag)
+- for key in ('owner_observations','owner_receipt','manual_rows','manual_receipt','failure_stderr'):
++ for key in ('owner_observations','owner_receipt','manual_rows','manual_receipt','native_stderr'):
+   if key in entry:
+    v=entry[key];inputs.append(Path(v['source'] if isinstance(v,dict) else v))
+ # Use explicit paths, not directory traversal, if historical recipe keys differ.
+@@ -27,12 +27,14 @@
+ for x in observations.values():inputs.append(x)
+ capsules={tag:R/('docs/validation/hyperboloidal-reference-wave-map-native-t2-'+name+'-N24-failure-20261009/catalog.json') for tag,name in [('standard','wave'),('half','wave-half'),('small','wave-small')]}
+ inputs+=list(capsules.values())
++n32catalog=R/'docs/validation/hyperboloidal-reference-wave-map-native-t2-wave-N32-failure-20261009/catalog.json';inputs.append(n32catalog)
++controls_catalog=R/'docs/validation/hyperboloidal-reference-wave-map-native-t2-N24-controls-20261009/catalog.json';inputs.append(controls_catalog)
+ for case in ('wave-map-N24-large-t2','wave-map-half-N24-large-t2','wave-map-N24-small-t2','c0-N24-large-t2'):
+  inputs.append(B/('reference-wave-map-native-held-20261009/inputs/'+case+'.athinput'))
+ inputs=list(dict.fromkeys(x.resolve() for x in inputs));before=[pin(x) for x in inputs]
+ report=load(comparison);assert report['passed_scalar_readback'] and report['native_t2_complete'] is False
+-assert report['all_saved_independent_field_pairs']['count']==105 if isinstance(report['all_saved_independent_field_pairs'],dict) and 'count' in report['all_saved_independent_field_pairs'] else True
+-cw=load(c0/'receipt.json');ca=load(c0/'analysis/receipt.json');assert cw['completed'] and cw['returncode']==0 and cw['passed_completed_t2_snapshot_gates'] and cw['inputs_unchanged'];assert ca['passed_saved_snapshot_finite_and_diagnostic_gates'] and ca['snapshots']==81 and ca['protected_inputs_unchanged']
++assert report['all_saved_independent_field_pairs']==105
++cw=load(c0/'receipt.json');ca=load(c0/'analysis/receipt.json');assert cw['returncode']==0 and cw['passed_completed_t2_snapshot_gates'] and cw['protected_before_after_equal'];assert ca['passed_saved_snapshot_finite_and_diagnostic_gates'] and ca['saved_arrays']==81 and ca['protected_inputs_before_after_equal']
+ obs={k:load(v) for k,v in observations.items()};saved=load(c0/'analysis/snapshots.json');assert len(saved)==81 and saved[-1]['time']==2
+ minimum_keys=('alpha_min','chi_min','minimum_conformal_metric_eigenvalue','minimum_Penrose_spatial_metric_eigenvalue')
+ numbers={'scope':'Saved scalar and source metadata only; no new scientific calls.','wave_cases':report['cases'],'failures':report['failure_metadata'],'half_minus_standard_abort_time_decimal':report['half_minus_standard_abort_time_decimal'],'last_matched':report['matched_standard_half_saved_pairs'][-1],'wave_saved_limits':{tag:{k:min(q[k] for q in rows) for k in minimum_keys} for tag,rows in obs.items()},'C0':{'saved_states':len(saved),'final_time':saved[-1]['time'],'final_norms':saved[-1]['rms_H_Mcon_Zcon_Theta'],'saved_limits':{k:min(q[k] for q in saved) for k in minimum_keys},'max_det_error':max(q['det_max'] for q in saved),'max_trace_error':max(q['trace_max'] for q in saved),'history_diagnostic_max_error':max(q['history_scaled_rms_error'] for q in saved),'nonterminal_saved_dt_min':min(q['history_dt'] for q in saved[:-1]),'nonterminal_saved_dt_max':max(q['history_dt'] for q in saved[:-1]),'terminal_clipped_dt':saved[-1]['history_dt'],'Omega_min':saved[-1]['Omega_min']},'failure_capsules':{k:pin(v) for k,v in capsules.items()},'figure':{'png':pin(figure/'attempt001/N24-controls.png'),'recipe':pin(figure/'recipe.json'),'root_visual_review':pin(B/'wave-map-N24-figure-root-review-20261009/review.json')}}
+@@ -88,9 +90,9 @@
+ 
+ '''+captext+'''
+ 
+-The fresh N24-controls archive is proposed at `docs/validation/hyperboloidal-reference-wave-map-native-t2-N24-controls-20261009`; collection is still held until parent review. Its fixed scope includes completed half/small partial observers, saved summaries/root comparison/manual checks, the figure, failed original case records and completed C0N24 native/readback/release evidence. Raw arrays, executables, objects, NPY/NPZ/JSONL and every file>1MiB are metadata-only. Exact logs are not normalized.
++The fresh N24-controls archive is at `docs/validation/hyperboloidal-reference-wave-map-native-t2-N24-controls-20261009`, catalog SHA256 `3a84d6803831500d338c46cfee56951bb511ebbffae310e879461cc910672a42`; its one-shot collector completed successfully. Its fixed scope includes completed half/small partial observers, saved summaries/root comparison/manual checks, the figure, failed original case records and completed C0N24 native/readback/release evidence. Raw arrays, executables, objects, NPY/NPZ/JSONL and every file>1MiB are metadata-only. Exact logs are not normalized.
+ 
+-The later N32 large-pulse wave-map process reportedly failed at t=1.5837303635638276. Its new failure/partial-observation capsule is separate and pending; no N32 diagnostic, grid trend or measured convergence order is asserted here. Omega_min is nonmonotone across these Cartesian resolutions. This N24 evidence does not supply a causal mechanism, CPBC/SBP proof, global energy bound, continuum eigenmode classification or production adoption.
++The later N32 large-pulse wave-map process failed at t=1.5837303635638276. Its separate failure catalog is `docs/validation/hyperboloidal-reference-wave-map-native-t2-wave-N32-failure-20261009/catalog.json`, SHA256 `e23e7fa5308b73058c696c585fd646f1cb1a172c7a08c08d838826aff0fbd158`. The separate N32 partial-observation readback is still pending; no N32 diagnostic, grid trend or measured convergence order is asserted here. Omega_min is nonmonotone across these Cartesian resolutions. This N24 evidence does not supply a causal mechanism, CPBC/SBP proof, global energy bound, continuum eigenmode classification or production adoption.
+ '''
+ (P/'DRAFT.md').write_text(text);dump(P/'numbers.json',numbers);assert before==[pin(x) for x in inputs]
+ dump(P/'input-pins.json',{'inputs':before,'scope':'Saved JSON/source metadata/failure catalogs/PNG bytes only; no arrays/probes/native calls.'})

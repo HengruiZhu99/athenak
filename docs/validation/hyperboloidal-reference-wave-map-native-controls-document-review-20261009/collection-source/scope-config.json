@@ -1,0 +1,110 @@
+{
+  "scope": "Completed N24 document preparation/review side evidence only; final current prose and overview are external metadata, not duplicate frozen documents.",
+  "destination": "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-reference-wave-map-native-controls-document-review-20261009",
+  "production_reference_commit": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "roots": [
+    {
+      "tag": "draft001-unexecuted-source",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-controls-document-draft-20261009",
+      "role": "historical document/source preparation; not a new final-document copy"
+    },
+    {
+      "tag": "draft002-preparation",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-controls-document-draft002-20261009",
+      "role": "historical document/source preparation; not a new final-document copy"
+    },
+    {
+      "tag": "draft003-preparation",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-controls-document-draft003-20261009",
+      "role": "historical document/source preparation; not a new final-document copy"
+    },
+    {
+      "tag": "root-final-document-history",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N24-controls-final-document-root-20261009",
+      "role": "completed source/review evidence only"
+    },
+    {
+      "tag": "root-independent-number-review",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N24-controls-independent-document-review-20261009",
+      "role": "completed source/review evidence only"
+    },
+    {
+      "tag": "root-figure-QA",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N24-figure-root-review-20261009",
+      "role": "completed source/review evidence only"
+    },
+    {
+      "tag": "root-N24-collection-release",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N24-controls-collection-root-release-20261009",
+      "role": "completed source/review evidence only"
+    },
+    {
+      "tag": "root-new-archives-QA",
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-new-native-archives-root-QA-20261009",
+      "role": "completed source/review evidence only"
+    }
+  ],
+  "selected_files": [],
+  "metadata_only_external_files": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/docs/hyperboloidal-reference-wave-map-native-controls.md",
+      "role": "current final document; external metadata only"
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/docs/hyperboloidal-layer.md",
+      "role": "current evolving overview; external metadata only"
+    }
+  ],
+  "completion_gates": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N24-controls-independent-document-review-20261009/report001.json",
+      "expected": {
+        "passed_saved_number_source_review": true,
+        "final_document_sha256": "170aa2f1f74f4b4da4fa54dfa748882d1246fd0c442e562e1e2ed8c353e7a54d",
+        "review_source_sha256": "d139c8c39f957296633904d299355690d92ec263d5d208042c5a8cb48c404d3c",
+        "saved_wave_states": 105,
+        "manual_extrema_pairs": 2625,
+        "C0_states": 81
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N24-controls-independent-document-review-20261009/invocation001/receipt.json",
+      "expected": {
+        "returncode": 0,
+        "source_unchanged": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-new-native-archives-root-QA-20261009/report.json",
+      "expected": {
+        "all_passed": true
+      }
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-controls-document-draft003-20261009/receipt.json",
+      "expected": {
+        "completed": true,
+        "inputs_unchanged": true,
+        "new_source_queries": 0,
+        "new_array_decodes": 0,
+        "new_native_steps": 0
+      }
+    }
+  ],
+  "identical_inventory_pairs": [],
+  "dependency_manifests": [
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-controls-document-draft003-20261009/input-pins.json",
+      "keys": [
+        "inputs"
+      ]
+    },
+    {
+      "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-controls-document-draft003-20261009/source-review-context.json",
+      "keys": [
+        "inputs"
+      ]
+    }
+  ],
+  "README": "# N24 document and review side evidence\n\nThis capsule preserves draft001/002/003 preparation histories, the root finalization diff/receipt, independent saved-number review, figure QA and archive/release QA. The current final document and overview have external byte identities only; copying these histories does not freeze or supersede the evolving overview. Native failures and completed C0 saved-state scope remain as recorded in their separate archives. No new scientific result is produced.\nCopied logs and source retain exact original bytes and whitespace. Raw arrays, RST/BIN/NPY/NPZ/HDF, JSONL, executables/libraries/objects, and every file>1MiB are metadata-only. Scientific modules are never imported; there is no new source/probe/native query, compilation, operator assembly, eigensolve or propagation. Explicit completed roots only are inventoried. Current external documents and older capsules are byte-identified, never copied or modified. A collector requires its own exact root authorization, fails before destination creation on changed inputs/gates, and never retries into an existing destination.\n"
+}

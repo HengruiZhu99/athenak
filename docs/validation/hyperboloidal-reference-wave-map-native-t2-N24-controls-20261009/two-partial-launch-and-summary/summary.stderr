@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-two-new-N24-partial-launch-20261009/summarize_saved.py", line 23, in <module>
+    summary={'scope':'Saved partial observer JSON summaries only. All73 saved states precede two original native aborts. Finite/SPD/det/trace status is limited to saved active arrays; no unsaved abort-state admission, continuation or completed-run acceptance.','source':pin(__file__),'input_pins':inputs,'results':rows,'no_scientific_import_or_array_decode_or_new_probe':True}
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-two-new-N24-partial-launch-20261009/summarize_saved.py", line 5, in pin
+    def pin(p):return {'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'bytes':p.stat().st_size}
+AttributeError: 'str' object has no attribute 'read_bytes'

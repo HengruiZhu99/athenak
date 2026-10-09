@@ -1,0 +1,11 @@
+--- draft002
++++ draft003
+@@ -50,7 +50,7 @@
+ 
+ This addendum records three failed N24 wave-map pulse runs and one completed N24 C0 control. Halving the wave-map timestep changes the matched saved constraint RMS values by less than 0.085% at the last common output, yet both large-pulse runs abort at almost the same time and first reported cell. Reducing the input pulse amplitudes by ten delays the reported abort to about t=1.018. These are finite native outcomes; they do not identify the cause or establish continuum stability or instability.
+ 
+-All four use the same centered Cartesian cube span 2.2, N24 active spherical mask (5,520 points), a=.5, geometry transition .05–.95, gauge transition .45–.85, kappa=10, fourth-order derivatives, KO=.1 and symmetric quadratic ray continuation. The smallest active Omega is 0.00217013888888851. The input large lapse/shift amplitudes are .2/.1; the small amplitudes are .02/.01. The production profile is smooth with a vanishing scri tail, not a compact sub-scri pulse. The wave-map overlay replaces the gauge with its pinned reference-wave-map helper and keeps full C0 geometric evolution. The completed C0 control uses the public C0 gauge; it is not the earlier private spatial-norm global operator.
++All four use the same centered Cartesian cube span 2.2, N24 active spherical mask (5,520 points), a=.5, geometry transition .05–.95, kappa=10, fourth-order derivatives, KO=.1 and symmetric quadratic ray continuation. The smallest active Omega is 0.00217013888888851. The input large lapse/shift amplitudes are .2/.1; the small amplitudes are .02/.01. The production profile is smooth with a vanishing scri tail, not a compact sub-scri pulse. The inputs retain the old gauge-cutoff parameters .45–.85. The wave-map overlay instead uses its pinned reference-wave-map helper globally; those cutoff parameters do not blend it with physical-P gauge. It keeps full C0 geometric evolution. The completed C0 control uses the public C0 gauge; it is not the earlier private spatial-norm global operator.
+ 
+ ## Failed wave-map controls
+ 

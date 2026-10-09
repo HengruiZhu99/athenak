@@ -1,0 +1,19 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-N24-partial-fields-root-20261009/observe_fields.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-native-two-N24-partial-fields-root-20261009/observe_fields.py
+@@ -1,4 +1,4 @@
+-"""Independent manual-struct readback of stopped N24 wave-map failure; never acceptance.
++"""Independent manual-struct readback of two stopped N24 wave-map failures; never acceptance.
+ 
+ No original restart-reader import, kernel, native executable or PDE spectrum.
+ The parser is a byte-exact copy of the separately validated root preflight
+@@ -15,8 +15,8 @@
+ HERE=Path(__file__).resolve().parent
+ PARSER=HERE/'independent_parser.py'
+ ABI=ROOT/'build-layer-research/time-projection-controls/rst-reader-gate/abi.json'
+-NAMES=['wave-map-N24-large-t2']
+-POINTS={'wave-map-N24-large-t2':[.1375,-.9625,-.2291666666666667]}
++NAMES=['wave-map-half-N24-large-t2','wave-map-N24-small-t2']
++POINTS={name:[.1375,-.9625,-.2291666666666667] for name in NAMES}
+ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+ def dump(p,x):Path(p).write_text(json.dumps(x,indent=2,allow_nan=False)+'\n')
+ def load(p):return json.loads(Path(p).read_text(),parse_constant=lambda s:(_ for _ in ()).throw(ValueError(s)))

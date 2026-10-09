@@ -1,0 +1,195 @@
+{
+  "scope": "Saved scalar and source metadata only; no new scientific calls.",
+  "wave_cases": [
+    {
+      "tag": "standard",
+      "case": "wave-map-N24-large-t2",
+      "saved_states": 32,
+      "extrema_pairs_exact": 800,
+      "history_probe_max_absolute": 2.7755575615628914e-17,
+      "last_saved_time": 0.7749999999997014,
+      "last_norms": [
+        0.17339563371202144,
+        0.3949131398366063,
+        0.09939222638493118,
+        0.0071977420382171265
+      ],
+      "last_alpha_min": 0.9673808270396452,
+      "last_chi_min": 0.7577951830054781,
+      "last_metric_eigen_min": 0.5617888005220195,
+      "last_Z_shell_squared_fraction": 0.983584092524872,
+      "saved_field_guards_passed": true,
+      "accepted_native_run": false
+    },
+    {
+      "tag": "half",
+      "case": "wave-map-half-N24-large-t2",
+      "saved_states": 32,
+      "extrema_pairs_exact": 800,
+      "history_probe_max_absolute": 1.3877787807814457e-17,
+      "last_saved_time": 0.7749999999994983,
+      "last_norms": [
+        0.17330334095187205,
+        0.39472014699327723,
+        0.09931705038531856,
+        0.007191687778464943
+      ],
+      "last_alpha_min": 0.9673808129723559,
+      "last_chi_min": 0.7577950404922136,
+      "last_metric_eigen_min": 0.5620319464506067,
+      "last_Z_shell_squared_fraction": 0.9835807558159518,
+      "saved_field_guards_passed": true,
+      "accepted_native_run": false
+    },
+    {
+      "tag": "small",
+      "case": "wave-map-N24-small-t2",
+      "saved_states": 41,
+      "extrema_pairs_exact": 1025,
+      "history_probe_max_absolute": 1.3877787807814457e-17,
+      "last_saved_time": 0.9999999999994967,
+      "last_norms": [
+        0.1487677390917456,
+        0.36306977501232174,
+        0.09842149021685016,
+        0.006928805735691863
+      ],
+      "last_alpha_min": 0.9807354646045532,
+      "last_chi_min": 0.7611943363444307,
+      "last_metric_eigen_min": 0.5678837625272557,
+      "last_Z_shell_squared_fraction": 0.9889335910995648,
+      "saved_field_guards_passed": true,
+      "accepted_native_run": false
+    }
+  ],
+  "failures": [
+    {
+      "tag": "standard",
+      "time_decimal": "0.79277343749968521",
+      "cycle": 12177,
+      "xyz": "0.13749999999999996,-0.96250000000000013,-0.22916666666666674",
+      "Omega": "0.0021701388888885099"
+    },
+    {
+      "tag": "half",
+      "time_decimal": "0.79280598958281545",
+      "cycle": 24355,
+      "xyz": "0.13749999999999996,-0.96250000000000013,-0.22916666666666674",
+      "Omega": "0.0021701388888885099"
+    },
+    {
+      "tag": "small",
+      "time_decimal": "1.0180338541661471",
+      "cycle": 15637,
+      "xyz": "0.13749999999999996,-0.96250000000000013,-0.22916666666666674",
+      "Omega": "0.0021701388888885099"
+    }
+  ],
+  "half_minus_standard_abort_time_decimal": "0.00003255208313024",
+  "last_matched": {
+    "standard_time": 0.7749999999997014,
+    "half_time": 0.7749999999994983,
+    "standard_norms": [
+      0.17339563371202144,
+      0.3949131398366063,
+      0.09939222638493118,
+      0.0071977420382171265
+    ],
+    "half_norms": [
+      0.17330334095187205,
+      0.39472014699327723,
+      0.09931705038531856,
+      0.007191687778464943
+    ],
+    "relative_differences": [
+      0.0005322669214535308,
+      0.0004886969408233066,
+      0.0007563569340068929,
+      0.0008411331942764466
+    ],
+    "absolute_differences": [
+      9.22927601493817e-05,
+      0.00019299284332907618,
+      7.517599961262555e-05,
+      6.054259752183433e-06
+    ],
+    "interpretation": "matched saved partial states only; no t2 timestep gate or continuum convergence order"
+  },
+  "wave_saved_limits": {
+    "standard": {
+      "alpha_min": 0.93874510733032,
+      "chi_min": 0.7493673636672651,
+      "minimum_conformal_metric_eigenvalue": 0.5617888005220195,
+      "minimum_Penrose_spatial_metric_eigenvalue": 0.4997847747612064
+    },
+    "half": {
+      "alpha_min": 0.9387451082891282,
+      "chi_min": 0.7493673766957848,
+      "minimum_conformal_metric_eigenvalue": 0.5620319464506067,
+      "minimum_Penrose_spatial_metric_eigenvalue": 0.5000795456637533
+    },
+    "small": {
+      "alpha_min": 0.9786867871802042,
+      "chi_min": 0.759966231033957,
+      "minimum_conformal_metric_eigenvalue": 0.5678837625272557,
+      "minimum_Penrose_spatial_metric_eigenvalue": 0.5153275333567763
+    }
+  },
+  "C0": {
+    "saved_states": 81,
+    "final_time": 2.0,
+    "final_norms": [
+      2.7187330239145653,
+      2.801506056065061,
+      0.6552588612714302,
+      0.0602627987938089
+    ],
+    "saved_limits": {
+      "alpha_min": 0.4673179518385342,
+      "chi_min": 0.34246120123402846,
+      "minimum_conformal_metric_eigenvalue": 0.5906893746677077,
+      "minimum_Penrose_spatial_metric_eigenvalue": 0.6345982321576152
+    },
+    "max_det_error": 1.1102230246251565e-15,
+    "max_trace_error": 1.387371346580746e-15,
+    "history_diagnostic_max_error": 1.711491126477736e-16,
+    "nonterminal_saved_dt_min": 6.51041666666553e-05,
+    "nonterminal_saved_dt_max": 6.51041666666553e-05,
+    "terminal_clipped_dt": 2.8252955530660984e-12,
+    "Omega_min": 0.00217013888888851
+  },
+  "failure_capsules": {
+    "standard": {
+      "path": "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-reference-wave-map-native-t2-wave-N24-failure-20261009/catalog.json",
+      "sha256": "604c95ee039caf4d05fc83d10cef06842beefe35b682f5138249e976b98b0e40",
+      "bytes": 52991
+    },
+    "half": {
+      "path": "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-reference-wave-map-native-t2-wave-half-N24-failure-20261009/catalog.json",
+      "sha256": "31621ce63dc95641c03a3311c89c524b2c6d9acc2ed2fba88543a5e5b3459e6e",
+      "bytes": 55003
+    },
+    "small": {
+      "path": "/Users/hz0693/research/hyperboloidal/docs/validation/hyperboloidal-reference-wave-map-native-t2-wave-small-N24-failure-20261009/catalog.json",
+      "sha256": "44978fd4ec4e89030cc44fe5fc850fbc1ffc67f26531d2a5f5192e1b91c15b69",
+      "bytes": 66921
+    }
+  },
+  "figure": {
+    "png": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-saved-comparison-figure-20261009/attempt001/N24-controls.png",
+      "sha256": "377b182e683b03e463a2470a5c1e7800dd9e8b57a11c326a8ea8977cf735b40d",
+      "bytes": 315602
+    },
+    "recipe": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-saved-comparison-figure-20261009/recipe.json",
+      "sha256": "20b2767b1189ad9be86263abad34390d2a69a08a6f9a6722ccb08a5aee434aea",
+      "bytes": 1800
+    },
+    "root_visual_review": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-N24-figure-root-review-20261009/review.json",
+      "sha256": "be9a18ce9d8ea48a6a71c0c4b0a03f2facd682c1b3c50b9e9a3e5605eed77b73",
+      "bytes": 651
+    }
+  }
+}

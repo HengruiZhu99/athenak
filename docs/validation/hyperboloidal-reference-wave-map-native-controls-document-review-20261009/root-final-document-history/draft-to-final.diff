@@ -1,0 +1,17 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-controls-document-draft003-20261009/DRAFT.md
++++ /Users/hz0693/research/hyperboloidal/docs/hyperboloidal-reference-wave-map-native-controls.md
+@@ -31,7 +31,7 @@
+ 
+ At the last saved state, the r≥.9 shell contains 0.98358409 / 0.98358076 / 0.98893359 of the summed squared native Z diagnostic for standard / half / small. This is a discrete localization fraction, not a physical energy or a boundary-cause certificate.
+ 
+-![Saved N24 comparison](/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-N24-saved-comparison-figure-20261009/attempt001/N24-controls.png)
++![Saved N24 comparison](validation/hyperboloidal-reference-wave-map-native-t2-N24-controls-20261009/savedJSON-comparison-figure/attempt001/N24-controls.png)
+ 
+ The figure uses only completed owner/manual saved JSONs, the root scalar comparison and exact failure stderr. Solid/dashed large-pulse curves separate standard/half timesteps; the small pulse has a separate panel. Curves stop at their last saved states; shaded intervals extend only to the reported aborts. Log RMS limits are [8e-6,.6], relative-difference percent limits [1e-6,.2], and the time axis is [0,1.06]. Near-roundoff t0 is omitted from the log panels without changing saved data. Figure source, input/runtime pins, exact logs, PNG/PDF and both visual reviews are retained separately.
+ 
+@@ -51,4 +51,4 @@
+ 
+ The fresh N24-controls archive is at `docs/validation/hyperboloidal-reference-wave-map-native-t2-N24-controls-20261009`, catalog SHA256 `3a84d6803831500d338c46cfee56951bb511ebbffae310e879461cc910672a42`; its one-shot collector completed successfully. Its fixed scope includes completed half/small partial observers, saved summaries/root comparison/manual checks, the figure, failed original case records and completed C0N24 native/readback/release evidence. Raw arrays, executables, objects, NPY/NPZ/JSONL and every file>1MiB are metadata-only. Exact logs are not normalized.
+ 
+-The later N32 large-pulse wave-map process failed at t=1.5837303635638276. Its separate failure catalog is `docs/validation/hyperboloidal-reference-wave-map-native-t2-wave-N32-failure-20261009/catalog.json`, SHA256 `e23e7fa5308b73058c696c585fd646f1cb1a172c7a08c08d838826aff0fbd158`. The separate N32 partial-observation readback is still pending; no N32 diagnostic, grid trend or measured convergence order is asserted here. Omega_min is nonmonotone across these Cartesian resolutions. This N24 evidence does not supply a causal mechanism, CPBC/SBP proof, global energy bound, continuum eigenmode classification or production adoption.
++The later N32 large-pulse wave-map process failed at t=1.5837303635638276. Its separate failure catalog is `docs/validation/hyperboloidal-reference-wave-map-native-t2-wave-N32-failure-20261009/catalog.json`, SHA256 `e23e7fa5308b73058c696c585fd646f1cb1a172c7a08c08d838826aff0fbd158`. The separate N32 partial observations are outside this frozen N24-controls archive; no N32 diagnostic, grid trend or measured convergence order is asserted here. Omega_min is nonmonotone across these Cartesian resolutions. This N24 evidence does not supply a causal mechanism, CPBC/SBP proof, global energy bound, continuum eigenmode classification or production adoption.

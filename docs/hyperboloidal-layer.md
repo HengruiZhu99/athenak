@@ -514,7 +514,11 @@ fixed t2 matrix, the N16 wave-map control fails its positive-state guard near
 t=1.367. The subsequent [failed-pulse audit](hyperboloidal-reference-wave-map-failure-audit.md)
 records failures of matched C0 N16 and wave-map N24, all 167 saved partial
 observations, and a separate conditional stationary black-hole source analysis.
-The other original controls continue; longer acceptance remains open.
+The [native controls follow-up](hyperboloidal-reference-wave-map-native-controls.md)
+records the failed standard/half-timestep/small-pulse N24 controls, the completed
+C0 N24 control and its 81 saved-state checks, and the subsequent N32 wave-map
+failure. The N24 saved-field readbacks agree independently, but the wave-map
+process failures prevent longer acceptance. No private candidate is adopted.
 
 The later acceptance target is a substantial angular gauge disturbance on
 Minkowski followed by a single black hole surviving the inner
