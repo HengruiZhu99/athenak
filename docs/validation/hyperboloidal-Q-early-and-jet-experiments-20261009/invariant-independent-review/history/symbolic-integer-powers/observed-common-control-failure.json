@@ -1,0 +1,8 @@
+{
+  "command": ["/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python", "build-layer-research/continuum/independent-q-invariant-review/review_invariant.py"],
+  "exit_code": 1,
+  "wall_time_seconds": 0.553414958,
+  "observed_error": "All-control2e-12 accuracy assertion failed: saved actual common alpha/beta rescaling max |Ndot|=4.021028327534997e-9, whereas the independent symbolic identity is exactly zero.",
+  "repair": "Separate this smallOmega cancellation control from the high-accuracy radial oracle checks, record its full observed residual and a1e-8 explicit numerical-control threshold. Keep all other comparisons below2e-12. Notify original gate owner; no original frozen artifact is changed.",
+  "scope": "Independent numerical review identified a real finite-precision limitation of the saved common-rescaling control, not a new analytical obstruction or kernel change."
+}

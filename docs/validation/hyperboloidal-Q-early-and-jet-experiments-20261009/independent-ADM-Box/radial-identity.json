@@ -1,0 +1,175 @@
+{
+  "scope": "linear Einstein gauge-only initial data; exact ADM metric rate and prescribed preferred Box source; positiveOmega radial identity",
+  "radial_identity": {
+    "transport": "-(r**4 + 6*r**2 + 1)/(4*a*r)",
+    "reaction": "(r**6 + 16*r**4*sigma - 29*r**4 + 15*r**2 - 3)/(4*a*r**2*(r - 1)*(r + 1))",
+    "arbitrary_F_B_error": "0",
+    "weighted_reaction": "-(3*r**6 - 16*r**4*sigma + 53*r**4 - 11*r**2 + 3)/(4*a*r**2*(r - 1)*(r + 1))",
+    "weighted_sigma3_reaction": "-(r**2 + 3)*(3*r**2 - 1)/(4*a*r**2)",
+    "weighted_sigma3_boundary_limit": "-2/a"
+  },
+  "rows": [
+    {
+      "case": "matched_radial",
+      "m": 0,
+      "deltaN": "-8*r**3*(r - 1)**2/(a*(r**2 + 1)**3)",
+      "deltaNdot": "-4*r**2*(r - 1)*(r**7 - r**6 + 8*r**5*sigma - 15*r**5 - 7*r**4 + 8*r**3*sigma - 29*r**3 - 7*r**2 + 11*r - 1)/(a**2*(r + 1)*(r**2 + 1)**4)",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "2*(sigma - 3)/a"
+    },
+    {
+      "case": "exact_proportional",
+      "m": 0,
+      "deltaN": "0",
+      "deltaNdot": "0",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "radial_shift",
+      "m": 1,
+      "deltaN": "-4*r**3*(r - 1)*(r + 1)/(a**2*(r**2 + 1)**2)",
+      "deltaNdot": "-8*r**3*(2*r**4*sigma - 5*r**4 + 2*r**2*sigma - 6*r**2 + 3)/(a**3*(r**2 + 1)**3)",
+      "leading": "4*(2 - sigma)/a**3",
+      "N0dot": "4*(2 - sigma)/a**3",
+      "N1dot": "4*(3*sigma - 8)/a**2"
+    },
+    {
+      "case": "lapse",
+      "m": 1,
+      "deltaN": "-8*r**4*(r - 1)*(r + 1)/(a**2*(r**2 + 1)**3)",
+      "deltaNdot": "-2*r**2*(r**8 + 16*r**6*sigma - 36*r**6 + 16*r**4*sigma - 58*r**4 + 28*r**2 + 1)/(a**3*(r**2 + 1)**4)",
+      "leading": "4*(2 - sigma)/a**3",
+      "N0dot": "4*(2 - sigma)/a**3",
+      "N1dot": "4*(3*sigma - 8)/a**2"
+    },
+    {
+      "case": "matched_radial",
+      "m": 1,
+      "deltaN": "4*r**3*(r - 1)**3*(r + 1)/(a**2*(r**2 + 1)**3)",
+      "deltaNdot": "-2*r**2*(r - 1)**2*(r**6 - 8*r**5*sigma + 22*r**5 + 7*r**4 - 8*r**3*sigma + 36*r**3 + 7*r**2 - 10*r + 1)/(a**3*(r**2 + 1)**4)",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "exact_proportional",
+      "m": 1,
+      "deltaN": "0",
+      "deltaNdot": "0",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "radial_shift",
+      "m": 2,
+      "deltaN": "2*r**3*(r - 1)**2*(r + 1)**2/(a**3*(r**2 + 1)**2)",
+      "deltaNdot": "-r**3*(r - 1)*(r + 1)*(r**6 - 8*r**4*sigma + 27*r**4 - 8*r**2*sigma + 31*r**2 - 11)/(a**4*(r**2 + 1)**3)",
+      "leading": "4*(3 - sigma)/a**3",
+      "N0dot": "0",
+      "N1dot": "4*(3 - sigma)/a**3"
+    },
+    {
+      "case": "lapse",
+      "m": 2,
+      "deltaN": "4*r**4*(r - 1)**2*(r + 1)**2/(a**3*(r**2 + 1)**3)",
+      "deltaNdot": "-r**2*(r - 1)*(r + 1)*(r**8 - 16*r**6*sigma + 50*r**6 - 16*r**4*sigma + 72*r**4 - 26*r**2 - 1)/(a**4*(r**2 + 1)**4)",
+      "leading": "4*(3 - sigma)/a**3",
+      "N0dot": "0",
+      "N1dot": "4*(3 - sigma)/a**3"
+    },
+    {
+      "case": "matched_radial",
+      "m": 2,
+      "deltaN": "-2*r**3*(r - 1)**4*(r + 1)**2/(a**3*(r**2 + 1)**3)",
+      "deltaNdot": "r**2*(r - 1)**3*(r + 1)*(r**7 + r**6 - 8*r**5*sigma + 29*r**5 + 7*r**4 - 8*r**3*sigma + 43*r**3 + 7*r**2 - 9*r + 1)/(a**4*(r**2 + 1)**4)",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "exact_proportional",
+      "m": 2,
+      "deltaN": "0",
+      "deltaNdot": "0",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "radial_shift",
+      "m": 3,
+      "deltaN": "-r**3*(r - 1)**3*(r + 1)**3/(a**4*(r**2 + 1)**2)",
+      "deltaNdot": "r**3*(r - 1)**2*(r + 1)**2*(r**6 - 4*r**4*sigma + 17*r**4 - 4*r**2*sigma + 19*r**2 - 5)/(a**5*(r**2 + 1)**3)",
+      "leading": "4*(4 - sigma)/a**3",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "lapse",
+      "m": 3,
+      "deltaN": "-2*r**4*(r - 1)**3*(r + 1)**3/(a**4*(r**2 + 1)**3)",
+      "deltaNdot": "r**2*(r - 1)**2*(r + 1)**2*(3*r**8 - 16*r**6*sigma + 64*r**6 - 16*r**4*sigma + 86*r**4 - 24*r**2 - 1)/(2*a**5*(r**2 + 1)**4)",
+      "leading": "4*(4 - sigma)/a**3",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "matched_radial",
+      "m": 3,
+      "deltaN": "r**3*(r - 1)**5*(r + 1)**3/(a**4*(r**2 + 1)**3)",
+      "deltaNdot": "-r**2*(r - 1)**4*(r + 1)**2*(2*r**7 + r**6 - 8*r**5*sigma + 36*r**5 + 7*r**4 - 8*r**3*sigma + 50*r**3 + 7*r**2 - 8*r + 1)/(2*a**5*(r**2 + 1)**4)",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "exact_proportional",
+      "m": 3,
+      "deltaN": "0",
+      "deltaNdot": "0",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "radial_shift",
+      "m": 4,
+      "deltaN": "r**3*(r - 1)**4*(r + 1)**4/(2*a**5*(r**2 + 1)**2)",
+      "deltaNdot": "-r**3*(r - 1)**3*(r + 1)**3*(3*r**6 - 8*r**4*sigma + 41*r**4 - 8*r**2*sigma + 45*r**2 - 9)/(4*a**6*(r**2 + 1)**3)",
+      "leading": "4*(5 - sigma)/a**3",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "lapse",
+      "m": 4,
+      "deltaN": "r**4*(r - 1)**4*(r + 1)**4/(a**5*(r**2 + 1)**3)",
+      "deltaNdot": "-r**2*(r - 1)**3*(r + 1)**3*(5*r**8 - 16*r**6*sigma + 78*r**6 - 16*r**4*sigma + 100*r**4 - 22*r**2 - 1)/(4*a**6*(r**2 + 1)**4)",
+      "leading": "4*(5 - sigma)/a**3",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "matched_radial",
+      "m": 4,
+      "deltaN": "-r**3*(r - 1)**6*(r + 1)**4/(2*a**5*(r**2 + 1)**3)",
+      "deltaNdot": "r**2*(r - 1)**5*(r + 1)**3*(3*r**7 + r**6 - 8*r**5*sigma + 43*r**5 + 7*r**4 - 8*r**3*sigma + 57*r**3 + 7*r**2 - 7*r + 1)/(4*a**6*(r**2 + 1)**4)",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    },
+    {
+      "case": "exact_proportional",
+      "m": 4,
+      "deltaN": "0",
+      "deltaNdot": "0",
+      "leading": "0",
+      "N0dot": "0",
+      "N1dot": "0"
+    }
+  ]
+}

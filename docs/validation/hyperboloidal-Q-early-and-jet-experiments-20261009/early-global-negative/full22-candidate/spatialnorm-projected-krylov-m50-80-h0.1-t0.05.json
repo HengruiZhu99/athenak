@@ -1,0 +1,143 @@
+{
+  "status": "completed",
+  "gauge": "spatialnorm",
+  "semantics": "exploratory exp(t PJ22Lift), short independent canonical action recorded separately; long exploratory; empirical truncation pair and actual Krylov curve residuals are not nonnormal forward-error bounds",
+  "pins": {
+    "matrix_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-early-weight/full22-candidate/spatialnorm-projected-J20.npz",
+    "matrix_sha256": "714e6e509a8b7ad22c8fde4e95c8bbb5f5d7cad77c94d262b6501407c5fb5880",
+    "seed_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-early-weight/spatialnorm-validation-vectors.npz",
+    "seed_sha256": "55b4fc65becd950509eb2601a2282f17dacd91eac8b1a933cd7c030735ab3454",
+    "driver_sha256": "85bfc75bbd61784fcf786baf50816a4748bc150318759c511d61c8fc81dc8bdf"
+  },
+  "coarse": 50,
+  "fine": 80,
+  "rtol": 1e-10,
+  "max_step": 0.1,
+  "stop": 0.05,
+  "guard_euclidean_amplification": 1000000000000.0,
+  "matvecs": 480,
+  "residual_matvecs": 10,
+  "seconds": 5.063135375000001,
+  "columns": [
+    {
+      "name": "gauge_pulse",
+      "seconds": 2.499627041,
+      "steps": [
+        {
+          "time": 0.0125,
+          "dt": 0.0125,
+          "coarse_fine_max_relative_difference": 5.163515394758337e-13,
+          "basis_size": 80,
+          "rejections": 2,
+          "accepted_curve_defect": {
+            "absolute_l2": 1.882652340713121e-12,
+            "relative_state_l2_per_time": 1.6452991926191034e-12,
+            "relative_rhs_l2": 4.0523468256338377e-14
+          },
+          "output_curve_defects": []
+        },
+        {
+          "time": 0.03125,
+          "dt": 0.018750000000000003,
+          "coarse_fine_max_relative_difference": 2.670922751944372e-14,
+          "basis_size": 80,
+          "rejections": 1,
+          "accepted_curve_defect": {
+            "absolute_l2": 2.255317922295727e-12,
+            "relative_state_l2_per_time": 1.303068936874147e-12,
+            "relative_rhs_l2": 4.417104471429348e-14
+          },
+          "output_curve_defects": [
+            {
+              "time": 0.025,
+              "absolute_l2": 1.6573234694816685e-12,
+              "relative_state_l2_per_time": 1.1054018338050967e-12,
+              "relative_rhs_l2": 3.307486662852711e-14
+            }
+          ]
+        },
+        {
+          "time": 0.05,
+          "dt": 0.018750000000000003,
+          "coarse_fine_max_relative_difference": 2.1218879625416952e-16,
+          "basis_size": 80,
+          "rejections": 0,
+          "accepted_curve_defect": {
+            "absolute_l2": 4.4745636207100074e-12,
+            "relative_state_l2_per_time": 1.7739784982732948e-12,
+            "relative_rhs_l2": 8.846360697808949e-14
+          },
+          "output_curve_defects": [
+            {
+              "time": 0.05,
+              "absolute_l2": 4.4745636207100074e-12,
+              "relative_state_l2_per_time": 1.7739784982732948e-12,
+              "relative_rhs_l2": 8.846360697808949e-14
+            }
+          ]
+        }
+      ],
+      "final_euclidean_amplification": 2.522332500120679
+    },
+    {
+      "name": "shell_random",
+      "seconds": 2.498689834,
+      "steps": [
+        {
+          "time": 0.0125,
+          "dt": 0.0125,
+          "coarse_fine_max_relative_difference": 2.213167225430991e-11,
+          "basis_size": 80,
+          "rejections": 2,
+          "accepted_curve_defect": {
+            "absolute_l2": 2.3382827514819485e-11,
+            "relative_state_l2_per_time": 4.16682987755828e-12,
+            "relative_rhs_l2": 8.820852958410372e-14
+          },
+          "output_curve_defects": []
+        },
+        {
+          "time": 0.03125,
+          "dt": 0.018750000000000003,
+          "coarse_fine_max_relative_difference": 9.415248249738202e-13,
+          "basis_size": 80,
+          "rejections": 1,
+          "accepted_curve_defect": {
+            "absolute_l2": 5.118531884906466e-12,
+            "relative_state_l2_per_time": 1.0030464136072602e-12,
+            "relative_rhs_l2": 3.032954451090532e-14
+          },
+          "output_curve_defects": [
+            {
+              "time": 0.025,
+              "absolute_l2": 5.355326220128477e-12,
+              "relative_state_l2_per_time": 9.960235360446992e-13,
+              "relative_rhs_l2": 2.7776956159265313e-14
+            }
+          ]
+        },
+        {
+          "time": 0.05,
+          "dt": 0.018750000000000003,
+          "coarse_fine_max_relative_difference": 1.308800733328352e-15,
+          "basis_size": 80,
+          "rejections": 0,
+          "accepted_curve_defect": {
+            "absolute_l2": 4.3516899810705376e-12,
+            "relative_state_l2_per_time": 1.0249913265642618e-12,
+            "relative_rhs_l2": 3.6621466209616095e-14
+          },
+          "output_curve_defects": [
+            {
+              "time": 0.05,
+              "absolute_l2": 4.3516899810705376e-12,
+              "relative_state_l2_per_time": 1.0249913265642618e-12,
+              "relative_rhs_l2": 3.6621466209616095e-14
+            }
+          ]
+        }
+      ],
+      "final_euclidean_amplification": 4.245587126729417
+    }
+  ]
+}

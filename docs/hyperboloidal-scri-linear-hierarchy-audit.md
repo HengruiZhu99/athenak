@@ -55,3 +55,9 @@ It also identifies the nonzero higher Einstein coefficients of the Ω²P witness
 A distinct initially constraint-free lapse/shift witness still violates null
 time compatibility, so those constraint conditions alone do not close the gauge
 hierarchy.
+
+The subsequent [Q-gauge first-jet audit](hyperboloidal-Q-early-and-jet-audit.md)
+derives its complete leading residue map and separates the missing Theta/shear
+conditions from null-jet time tangency. A genuinely Einstein initial quadratic
+shift violates the latter under sigma-five despite cancellation of the next
+leading RHS pole. No exact-scri closure or amplitude blowup theorem follows.

@@ -216,3 +216,11 @@ The malformed historical FD-reader output retains its exact leading-dot
 decimals. The first collector stopped on it; its collector, observed-error
 receipt and partial copied archive remain preserved. A fresh v2 collection
 hash-checks this specific opaque failure without treating it as valid JSON.
+
+The [earlier-feedback and first-jet follow-up](hyperboloidal-Q-early-and-jet-audit.md)
+also rejects moving the onset earlier. Its actual complete residue map
+identifies omitted Theta/shear conditions, and an initially Einstein-compatible
+quadratic shift shows that sigma-five fails null-jet time tangency even when
+the next leading RHS pole vanishes. A separate initial gauge-only ADM/Box
+identity motivates further analysis of sigma-three; it admits no evolution
+candidate or nonlinear closure.

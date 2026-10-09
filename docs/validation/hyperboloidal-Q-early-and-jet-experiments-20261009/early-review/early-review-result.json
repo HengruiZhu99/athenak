@@ -1,0 +1,173 @@
+{
+  "status": "PASS_READ_ONLY_EARLY_SUPPORT_LOCAL_REVIEW",
+  "seconds": 0.28362491700000003,
+  "frozen_index_sha256": "902d875e6da80bf3b10e7103aa59cf123c4d8a034862f0a5d9be6f9e220c56c0",
+  "files_rechecked": 36,
+  "sources_rechecked": 376,
+  "commands_rechecked": 8,
+  "helper_sha256": "562d01b4382c5f9c36afc83b29208f5db3d90ca37f12890c92c03b101eb36a69",
+  "matrix_count": 560,
+  "rank_one_weight_change_Jacobian_max_error": 7.105427357601002e-14,
+  "outer_and_W0_matrix_equality_error": 0.0,
+  "saved_max_root_recomputation_error": 0.0,
+  "positive_primitive_count_threshold": 1e-08,
+  "positive_primitive_root_counts_sum": 1046,
+  "matrices_with_positive_primitive_roots": 377,
+  "worst_by_a_form": [
+    {
+      "a": 0.5,
+      "r": 0.98,
+      "Omega": 0.03960000000000004,
+      "k": 64,
+      "dir": 0,
+      "form": 4,
+      "max_real": 20.168940777918813,
+      "positive_roots": 2
+    },
+    {
+      "a": 0.5,
+      "r": 0.98,
+      "Omega": 0.03960000000000004,
+      "k": 64,
+      "dir": 0,
+      "form": 5,
+      "max_real": 20.168940777918813,
+      "positive_roots": 2
+    },
+    {
+      "a": 0.75,
+      "r": 0.98,
+      "Omega": 0.026400000000000024,
+      "k": 64,
+      "dir": 0,
+      "form": 4,
+      "max_real": 15.061211667551268,
+      "positive_roots": 1
+    },
+    {
+      "a": 0.75,
+      "r": 0.98,
+      "Omega": 0.026400000000000024,
+      "k": 64,
+      "dir": 0,
+      "form": 5,
+      "max_real": 15.061211667551268,
+      "positive_roots": 1
+    },
+    {
+      "a": 1,
+      "r": 0.98,
+      "Omega": 0.01980000000000002,
+      "k": 64,
+      "dir": 0,
+      "form": 4,
+      "max_real": 12.445686656487245,
+      "positive_roots": 1
+    },
+    {
+      "a": 1,
+      "r": 0.98,
+      "Omega": 0.01980000000000002,
+      "k": 64,
+      "dir": 0,
+      "form": 5,
+      "max_real": 12.445686656487245,
+      "positive_roots": 1
+    },
+    {
+      "a": 2,
+      "r": 0.98,
+      "Omega": 0.00990000000000001,
+      "k": 64,
+      "dir": 0,
+      "form": 4,
+      "max_real": 6.921415703972186,
+      "positive_roots": 1
+    },
+    {
+      "a": 2,
+      "r": 0.98,
+      "Omega": 0.00990000000000001,
+      "k": 64,
+      "dir": 0,
+      "form": 5,
+      "max_real": 6.921415703972186,
+      "positive_roots": 1
+    }
+  ],
+  "target_a05_max_by_k": [
+    {
+      "k": 0.0,
+      "max_real_by_form": {
+        "3": 1.5180163658961063,
+        "2": 20.39934419143786,
+        "4": 1.5180163658961063,
+        "5": 1.5180163658961063
+      }
+    },
+    {
+      "k": 4.0,
+      "max_real_by_form": {
+        "3": 1.5319523359620948,
+        "2": 22.467615596732056,
+        "4": 3.3431056096934206,
+        "5": 3.169341017451581
+      }
+    },
+    {
+      "k": 16.0,
+      "max_real_by_form": {
+        "3": 1.2696519549181247,
+        "2": 21.298014344920315,
+        "4": 8.745174885766524,
+        "5": 8.745174885766524
+      }
+    },
+    {
+      "k": 64.0,
+      "max_real_by_form": {
+        "3": -0.25915512560938125,
+        "2": 20.168940777918813,
+        "4": 20.168940777918813,
+        "5": 20.168940777918813
+      }
+    },
+    {
+      "k": 256.0,
+      "max_real_by_form": {
+        "3": -0.25321806484688986,
+        "2": 15.2902895679772,
+        "4": 15.137306523841273,
+        "5": 15.137306523841273
+      }
+    }
+  ],
+  "coordinate_Nyquist": {
+    "N16_span2.2": 22.84794657156213,
+    "N24_span2.1": 35.90391604102621,
+    "interpretation": "k0/4/16 lie below coordinate Nyquist; this does not certify FD accuracy, the actual discrete spectrum, KO effect or mode convergence."
+  },
+  "source_and_principal": {
+    "source": {
+      "source_rows": 192,
+      "outer_rows": 32,
+      "pole_columns": 160,
+      "reference_fixedpoint_error": 7.549466163688232e-15,
+      "generic_4D_Box_feedback_delta_error": 2.6645352591003757e-15,
+      "identical_outer_gauge_error": 0,
+      "identical_leading_gauge_pole_error": 0,
+      "min_sampled_gradient_norm2_on_support": 0.20251357968160807
+    },
+    "principal": {
+      "passed_kernel_cases": 504,
+      "max_kernel_symbol_error": 3.552713678800501e-15,
+      "max_left_eigenfield_error": 8.881784197001252e-16,
+      "max_normalized_basis_condition": 11.529152606733899,
+      "old_endpoint_geometric_multiplicity": 3,
+      "harmonic_endpoint_complete": true
+    }
+  },
+  "support_admissibility": "Target S1,a>=.5,geometry(.05,.95),gauge(.45,.85),finite sigma5. Omega prime is strictly negative outside geometric core: wprime*(Omegaout-1)+w*Omegaoutprime<0. Both feedback supports lie there. Base qnf still requires suppliedg.r1<=.85; mode1 has fixed.65/.85. No arbitrary-radius or NaN/inf parameter admission.",
+  "source_scope": "Generic deltaBox=V*sigma*deltaNraw/Omega holds for the new feedback at any admitted support point. Full preferred-source Box identity remains W1-only; no transition identity is inherited.",
+  "scope": "Read-only local algebra/source and saved Fourier matrix review. Positive primitive roots retained; no tensor rerun, global/native/constraint-subsidiary/energy/BH or smooth-hierarchy claim."
+}

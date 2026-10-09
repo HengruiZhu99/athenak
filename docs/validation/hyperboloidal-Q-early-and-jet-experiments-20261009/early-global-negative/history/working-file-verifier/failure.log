@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-early-weight/verify_sources.py", line 28, in <module>
+    if n!='freeze.log':assert sha(late/n)==h['sha256']
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-early-weight/verify_sources.py", line 4, in <lambda>
+    w=Path(__file__).resolve().parent;root=w.parents[2];sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest();r={};auth=json.loads((w/'gate-authorization.json').read_text())
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1249, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1242, in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1110, in _opener
+    return self._accessor.open(self, flags, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/large-artifacts-metadata-only.json'

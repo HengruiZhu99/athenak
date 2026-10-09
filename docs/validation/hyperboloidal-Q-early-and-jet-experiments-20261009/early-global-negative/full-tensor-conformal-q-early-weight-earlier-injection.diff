@@ -1,0 +1,15 @@
+--- frozen-late-Q/native_injection.hpp
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-early-weight/native_injection.hpp
+@@ -1,10 +1,10 @@
+ #ifndef SCRATCH_NATIVE_Q_NULL_INJECTION_HPP_
+ #define SCRATCH_NATIVE_Q_NULL_INJECTION_HPP_
+-#include "q_null_feedback.hpp"
++#include "early_feedback.hpp"
+ namespace z4c {namespace hyperboloidal {
+ template<class T> GaugeRHSParts<T> ResearchNativeQGauge(
+  const LayerPoint<T>&p,const Z4cJet<T>&u,const LayerGaugeParameters&g){
+- return qnf::Gauge(p,u,g,{.85,.95,5,true});
++ return earlynf::Gauge(p,u,g,{5,0});
+ }
+ template<class T> bool ResearchNativeQAssemble(
+  const GaugeRHSParts<T>&parts,T omega,GaugeRHS<T>&rhs){

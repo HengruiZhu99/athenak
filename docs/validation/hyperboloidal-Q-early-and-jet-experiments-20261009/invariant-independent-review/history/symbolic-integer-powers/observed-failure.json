@@ -1,0 +1,8 @@
+{
+  "command": ["/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python", "build-layer-research/continuum/independent-q-invariant-review/review_invariant.py"],
+  "exit_code": 1,
+  "wall_time_seconds": 0.277171416,
+  "observed_error": "AssertionError at line89: factor(bf-bf_expected)==0 for an unspecified symbolic integer power m",
+  "diagnosis": "SymPy retained differently factored symbolic integer powers; substituting m=2 gives exact zero. The final checker verifies exact rational equality for each tested m=2,3,4, avoiding unjustified complex-power simplification.",
+  "scope": "Independent algebra checker assertion only; no original source, gate, kernel, native run or evolution changed."
+}
