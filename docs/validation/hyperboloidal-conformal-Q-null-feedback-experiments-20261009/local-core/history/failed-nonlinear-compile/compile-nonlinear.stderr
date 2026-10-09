@@ -1,0 +1,28 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/conformal-q-null-feedback/nonlinear.cpp:14:20: error: use of undeclared identifier 'blenderror'; did you mean 'blenderr'?
+   14 |  blenderr=std::max(blenderror,std::abs(q.regular.alpha-(inner?(1-W)*ph.regular.alpha+W*b.regular.alpha:b.regular.alpha)));
+      |                    ^~~~~~~~~~
+      |                    blenderr
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/conformal-q-null-feedback/nonlinear.cpp:9:99: note: 'blenderr' declared here
+    9 | int main(){hyp::LayerGaugeParameters g;double referr=0,factorerr=0,nullerr=0,sourceerr=0,boxerr=0,blenderr=0,coreerr=0;int rows=0,source_rows=0,tiny_rows=0;
+      |                                                                                                   ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/conformal-q-null-feedback/nonlinear.cpp:15:20: error: use of undeclared identifier 'blenderror'; did you mean 'blenderr'?
+   15 |  blenderr=std::max(blenderror,std::abs(q.pole.alpha-(inner?(1-W)*ph.pole.alpha+W*b.pole.alpha:b.pole.alpha)));
+      |                    ^~~~~~~~~~
+      |                    blenderr
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/conformal-q-null-feedback/nonlinear.cpp:9:99: note: 'blenderr' declared here
+    9 | int main(){hyp::LayerGaugeParameters g;double referr=0,factorerr=0,nullerr=0,sourceerr=0,boxerr=0,blenderr=0,coreerr=0;int rows=0,source_rows=0,tiny_rows=0;
+      |                                                                                                   ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/conformal-q-null-feedback/nonlinear.cpp:19:21: error: no member named 'CartesianOmega' in namespace 'z4c::hyperboloidal'
+   19 |  const auto ol=hyp::CartesianOmega(u,p),oh=hyp::CartesianOmega(p.state,p);const auto gl=hyp::Geometry(u.metric),gh=hyp::Geometry(p.state.metric);double G=0,Gh=0;for(int i=0;i<3;++i)for(int j=0;j<3;++j){G+=u.chi.value*gl.inverse[i][j]*p.domega[i]*p.domega[j];Gh+=p.state.chi.value*gh.inverse[i][j]*p.domega[i]*p.domega[j];}
+      |                     ^~~~~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/conformal-q-null-feedback/nonlinear.cpp:19:49: error: no member named 'CartesianOmega' in namespace 'z4c::hyperboloidal'
+   19 |  const auto ol=hyp::CartesianOmega(u,p),oh=hyp::CartesianOmega(p.state,p);const auto gl=hyp::Geometry(u.metric),gh=hyp::Geometry(p.state.metric);double G=0,Gh=0;for(int i=0;i<3;++i)for(int j=0;j<3;++j){G+=u.chi.value*gl.inverse[i][j]*p.domega[i]*p.domega[j];Gh+=p.state.chi.value*gh.inverse[i][j]*p.domega[i]*p.domega[j];}
+      |                                                 ^~~~~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/conformal-q-null-feedback/nonlinear.cpp:35:242: error: use of undeclared identifier 'blenderror'; did you mean 'blenderr'?
+   35 |  std::cout<<std::setprecision(17)<<"{\"reference_and_blend_rows\":"<<rows<<",\"source_rows\":"<<source_rows<<",\"tiny_positive_core_rows\":"<<tiny_rows<<",\"reference_fixedpoint_error\":"<<referr<<",\"production_blend_equivalence_error\":"<<blenderror<<",\"factored_Q_pole_error\":"<<factorerr<<",\"factored_null_difference_error\":"<<nullerr<<",\"independent_4D_source_error\":"<<sourceerr<<",\"preferred_Box_extension_error\":"<<boxerr<<",\"exact_physical_inner_tiny_lapse_error\":"<<coreerr<<"}\n";
+      |                                                                                                                                                                                                                                                  ^~~~~~~~~~
+      |                                                                                                                                                                                                                                                  blenderr
+/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/conformal-q-null-feedback/nonlinear.cpp:9:99: note: 'blenderr' declared here
+    9 | int main(){hyp::LayerGaugeParameters g;double referr=0,factorerr=0,nullerr=0,sourceerr=0,boxerr=0,blenderr=0,coreerr=0;int rows=0,source_rows=0,tiny_rows=0;
+      |                                                                                                   ^
+5 errors generated.

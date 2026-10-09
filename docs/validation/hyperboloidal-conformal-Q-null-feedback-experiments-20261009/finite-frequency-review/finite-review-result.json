@@ -1,0 +1,39 @@
+{
+  "status": "PASS_READ_ONLY_NEGATIVE_FOURIER_AND_COEFFICIENT_REVIEW",
+  "seconds": 0.246999125,
+  "frozen_index_sha256": "adaa2b1437054f4ba4cf6471eafb6f83af96a31e9ea376d723a2666abcf5e72a",
+  "file_count": 19,
+  "frozen_bytes": 12749009,
+  "source_inputs_rechecked": 371,
+  "commands_rechecked": 3,
+  "matrix_count": 1120,
+  "recorded_max_real_recomputation_error": 0.0,
+  "positive_primitive_root_counts_sum": 2551,
+  "independent_alpha_blend_Jacobian_max_error": 7.105427357601002e-15,
+  "independent_feedback_Jacobian_max_error": 2.2737367544323206e-13,
+  "endpoint_onset_matrix_equality_error": 0.0,
+  "target_worst": {
+    "a": 0.5,
+    "r": 0.85,
+    "Omega": 0.2777745388119084,
+    "k": 4,
+    "dir": 0,
+    "form": 2,
+    "max_real": 22.467615596732056,
+    "imag": -14.009667653364426,
+    "positive_roots": 2
+  },
+  "matched_baseline_worst": {
+    "a": 0.5,
+    "r": 0.45,
+    "Omega": 0.9211544448747174,
+    "k": 4,
+    "dir": 0,
+    "form": 3,
+    "max_real": 1.5319523359620948,
+    "imag": -2.542496878105736,
+    "positive_roots": 2
+  },
+  "phase_convention": "exp(+i*k*n.x), forward column action dq/dt=Lq; temporal growth is Re(lambda) in coordinate generator units.",
+  "scope": "Read-only source/coefficient and saved-matrix eigenscreen verification. No tensor rerun, physical subsidiary classification, global/PDE/native/energy/BH inference."
+}

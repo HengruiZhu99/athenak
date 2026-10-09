@@ -1,0 +1,47 @@
+{
+  "status": "PASS_SMALL_INDEPENDENT_SYMBOLIC_REVIEW",
+  "source_sha256": "230f5f9d83fbaebe3ea848d5b2fefa9cb51b62371c0f6733ed74c42732abcca0",
+  "sympy": "1.14.0",
+  "seconds": 0.412513417,
+  "D": "-B + Bh*alpha/h",
+  "weighted_null": "alpha**2*dG + (-B + Bh*alpha/h)*(B + Bh*alpha/h)",
+  "Gamma_variations": [
+    "-alphaDotDelta/alpha**3",
+    "-(alpha*v0 - alphaDotDelta*b0)/alpha**3",
+    "-(alpha*v1 - alphaDotDelta*b1)/alpha**3",
+    "-(alpha*v2 - alphaDotDelta*b2)/alpha**3"
+  ],
+  "Q_harmonic_temporal_source_trace_cancellation": "-Kbar_ref/alpha, with P=K_phys-2Theta_phys and Gamma4^0+2Z4^0 convention",
+  "sigma5_cubic": "2*K*z**2 + 20*K*z + 28*K + z**3 + 10*z**2 + 11*z - 30",
+  "sigma5_Hurwitz_domain": "K=kappa_input*a^2>15/14; no finite-Omega or PDE stability inference",
+  "witness_Nraw_series": "-Omega**3*a + O(Omega**4)",
+  "witness_Q_series": "3*Omega**2*a**2/2 + O(Omega**3)",
+  "witness_linear_radial_RHS": {
+    "alpha": "-(-a*nu*r**4 + a*nu + 3*r**5 - 6*r**4 + 6*r**3 - 10*r**2 + 3*r)/(2*a**2*(r**2 + 1))",
+    "beta_unprojected": "-(r - 1)*(a*eta*r + a*eta + 3*r + 1)/(2*a**2)",
+    "chi": "2*(r**2 - 3*r + 1)/(3*a*r)",
+    "gtilde_nn": "2*(r**2 + 1)/(3*a*r)",
+    "P": "3/a**2",
+    "Theta": "0"
+  },
+  "witness_Q_corner_RHS": [
+    "a**(-2)",
+    "0",
+    "3/a**2",
+    "-2/(3*a)",
+    "4/(3*a)"
+  ],
+  "prior_physicalP_projected_corner_RHS": [
+    "(-2*a*xi - 1)/a**2",
+    "(2*a*xi + 2)/a**2"
+  ],
+  "finite_Q_only_counterexample": {
+    "seed": "deltaP=q*Omega, every other field equal reference",
+    "alpha_dot0": "-q/a**2",
+    "P_dot0": "-q/a**2",
+    "Theta_dot0": "-2*q/a**2",
+    "Qnumerator_dot0": "2*q/a**2"
+  },
+  "witness_initial_null_and_Qnumerator_time_corner": "Both zero for Q gauge and prior physical-P with fully rederived preferred projection; no unique repair or higher hierarchy closure",
+  "scope": "Factoring, independent 4D source sign and limited initial-corner proof; no duplicate tensor/native/global gate"
+}

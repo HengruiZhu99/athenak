@@ -1,0 +1,51 @@
+{
+  "scope": "exact value-only local reference delta of Q physical-inner/preferred/null gauge minus original C0 spatialnorm, expanded into native global ordering; no changed stencil/principal",
+  "formula_notes": [
+    "deltaT=deltaChi*ginv-chi*ginv*deltaGmetric*ginv",
+    "alpha_delta=W*(Qalpha-Palpha), including regular reference-advection difference and xi2 physical source",
+    "beta_delta=preferred regular projection + sigma5 weighted-null pole - original spatialnorm pole",
+    "all delta input derivatives are zero; only value columns chi/g/alpha/beta change; physical P/Theta/A/Lambda rows unchanged"
+  ],
+  "coefficient_schema": [
+    "x",
+    "y",
+    "z",
+    "r",
+    "Omega",
+    "alpha",
+    "chi",
+    "Kbar",
+    "wOmega",
+    "Wgauge",
+    "nu",
+    "eta",
+    "Vnull",
+    "beta[3]",
+    "dOmega[3]",
+    "dalpha[3]",
+    "dchi[3]",
+    "Lambda_ref[3]",
+    "ginv[9]",
+    "OmegaHessian[9]"
+  ],
+  "coefficients_sha256": "de110cd7b0fb5b6b7046f0f627edd0e68ab468dd3eb273888a222b79e4c806d6",
+  "raw22": {
+    "matrix_sha256": "fd16cf31a31533ff5d7d135bdc9f9dfdca5a05fc7db9927c155b65d3250397c4",
+    "original_matrix_sha256": "1f7a5297ea5a6308a707222d558f75316ae9615a6046abd581ebd8e7a90b6e65",
+    "actual_changed_entries": 260801,
+    "expected_value_entries": 55648,
+    "max_absolute_error_vs_independent_formula": 2.2519088815897703e-09,
+    "unchanged_geometry_rows_max": 0.0,
+    "max_expected_entry": 11214.483882254397,
+    "tolerance": 1e-07
+  },
+  "projected20": {
+    "matrix_sha256": "dbec9872290d912d43ee7c6464bfd7a223eb0880729c3fc460f6e05add29a4ca",
+    "max_absolute_error_vs_independent_formula": 2.1746018319390714e-09,
+    "actual_changed_entries": 256307,
+    "expected_value_entries": 50711,
+    "max_expected_entry": 11214.483882254397,
+    "tolerance": 1e-07
+  },
+  "passed": true
+}

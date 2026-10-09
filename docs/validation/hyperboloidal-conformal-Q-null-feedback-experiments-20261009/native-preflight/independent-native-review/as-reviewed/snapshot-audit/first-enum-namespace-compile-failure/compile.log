@@ -1,0 +1,51 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:28:37: error: use of undeclared identifier 'Z4c'; did you mean 'z4c'?
+   28 |   auto u=p.state;u.chi.value=fields[Z4c::I_Z4C_CHI*cells+s];
+      |                                     ^~~
+      |                                     z4c
+/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp:17:11: note: 'z4c' declared here
+   17 | namespace z4c {
+      |           ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:28:42: error: no member named 'I_Z4C_CHI' in namespace 'z4c'
+   28 |   auto u=p.state;u.chi.value=fields[Z4c::I_Z4C_CHI*cells+s];
+      |                                          ^~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:29:24: error: use of undeclared identifier 'Z4c'; did you mean 'z4c'?
+   29 |   u.alpha.value=fields[Z4c::I_Z4C_ALPHA*cells+s];u.trace.value=fields[Z4c::I_Z4C_KHAT*cells+s];
+      |                        ^~~
+      |                        z4c
+/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp:17:11: note: 'z4c' declared here
+   17 | namespace z4c {
+      |           ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:29:29: error: no member named 'I_Z4C_ALPHA' in namespace 'z4c'
+   29 |   u.alpha.value=fields[Z4c::I_Z4C_ALPHA*cells+s];u.trace.value=fields[Z4c::I_Z4C_KHAT*cells+s];
+      |                             ^~~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:29:71: error: use of undeclared identifier 'Z4c'; did you mean 'z4c'?
+   29 |   u.alpha.value=fields[Z4c::I_Z4C_ALPHA*cells+s];u.trace.value=fields[Z4c::I_Z4C_KHAT*cells+s];
+      |                                                                       ^~~
+      |                                                                       z4c
+/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp:17:11: note: 'z4c' declared here
+   17 | namespace z4c {
+      |           ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:29:76: error: no member named 'I_Z4C_KHAT' in namespace 'z4c'
+   29 |   u.alpha.value=fields[Z4c::I_Z4C_ALPHA*cells+s];u.trace.value=fields[Z4c::I_Z4C_KHAT*cells+s];
+      |                                                                            ^~~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:31:93: error: use of undeclared identifier 'Z4c'; did you mean 'z4c'?
+   31 |   for(int c=0;c<6;++c)u.metric.g[ij[c][0]][ij[c][1]]=u.metric.g[ij[c][1]][ij[c][0]]=fields[(Z4c::I_Z4C_GXX+c)*cells+s];
+      |                                                                                             ^~~
+      |                                                                                             z4c
+/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp:17:11: note: 'z4c' declared here
+   17 | namespace z4c {
+      |           ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:31:98: error: no member named 'I_Z4C_GXX' in namespace 'z4c'
+   31 |   for(int c=0;c<6;++c)u.metric.g[ij[c][0]][ij[c][1]]=u.metric.g[ij[c][1]][ij[c][0]]=fields[(Z4c::I_Z4C_GXX+c)*cells+s];
+      |                                                                                                  ^~~~~~~~~
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:33:48: error: use of undeclared identifier 'Z4c'; did you mean 'z4c'?
+   33 |   for(int d=0;d<3;++d){u.beta.value[d]=fields[(Z4c::I_Z4C_BETAX+d)*cells+s];B+=u.beta.value[d]*p.domega[d];Bh+=p.beta[d]*p.domega[d];norm+=p.domega[d]*p.domega[d];}
+      |                                                ^~~
+      |                                                z4c
+/Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp:17:11: note: 'z4c' declared here
+   17 | namespace z4c {
+      |           ^
+/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/snapshot-audit/check_snapshot.cpp:33:53: error: no member named 'I_Z4C_BETAX' in namespace 'z4c'
+   33 |   for(int d=0;d<3;++d){u.beta.value[d]=fields[(Z4c::I_Z4C_BETAX+d)*cells+s];B+=u.beta.value[d]*p.domega[d];Bh+=p.beta[d]*p.domega[d];norm+=p.domega[d]*p.domega[d];}
+      |                                                     ^~~~~~~~~~~
+10 errors generated.

@@ -1,0 +1,40 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:23: RuntimeWarning: divide by zero encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:23: RuntimeWarning: overflow encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:23: RuntimeWarning: invalid value encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: divide by zero encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: overflow encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: invalid value encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: divide by zero encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: overflow encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: invalid value encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:29: RuntimeWarning: divide by zero encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:29: RuntimeWarning: overflow encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:29: RuntimeWarning: invalid value encountered in matmul
+  c=min(50,k);coef=expm(dt*H)[:,0];f=beta*(V@coef);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0])
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:37: RuntimeWarning: divide by zero encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:37: RuntimeWarning: overflow encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-conformal-q-null-feedback/full22-candidate/krylov_propagate.py:37: RuntimeWarning: invalid value encountered in matmul
+  rhs=A@q;residual_matvecs+=1;r=beta*(V@(H@coef))-rhs
+spatialnorm gauge_pulse t 0.31249999999999994 steps 10 matvecs 800 norm 10.928465465454495 seconds 8.321249583
+spatialnorm gauge_pulse t 0.8125000000000002 steps 20 matvecs 1600 norm 446.85915332612683 seconds 16.633163666
+spatialnorm gauge_pulse t 1.3125000000000007 steps 30 matvecs 2400 norm 9914.164590003584 seconds 25.017450166
+spatialnorm gauge_pulse t 2.0 steps 39 matvecs 3120 norm 675035.9716277218 seconds 32.584738832999996
+spatialnorm shell_random t 0.25 steps 10 matvecs 3920 norm 6.057783970429906 seconds 8.291820834
+spatialnorm shell_random t 0.7500000000000001 steps 20 matvecs 4720 norm 62.237757251027496 seconds 16.600254417000002
+spatialnorm shell_random t 1.2500000000000004 steps 30 matvecs 5520 norm 1155.3291856186017 seconds 24.990314833999996
+spatialnorm shell_random t 1.800000000000001 steps 40 matvecs 6320 norm 30181.055764791396 seconds 33.317082084000006
+spatialnorm shell_random t 2.0 steps 43 matvecs 6560 norm 100091.27438837325 seconds 35.824422834
+done spatialnorm spatialnorm-projected-krylov-m50-80-h0.1-t2.0 seconds 69.16659824999999

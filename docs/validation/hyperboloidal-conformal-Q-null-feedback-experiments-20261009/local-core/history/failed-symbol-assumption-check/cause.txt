@@ -1,0 +1,1 @@
+SymPy charpoly(z) creates its polynomial generator without the real=True assumption carried by the caller z; direct symbolic subtraction therefore compared distinct symbols. Repaired by substituting poly.gen explicitly. No numeric matrix or helper change.

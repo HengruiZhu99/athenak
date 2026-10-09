@@ -1,0 +1,38 @@
+{
+  "scope": "independent short Taylor canonical exp(tJ), exact constant diagonal similarity only; no eigenvalue/runtime/norm change",
+  "formula": "A=TJT^-1; exp(tJ)B=T^-1 exp(tA) T B",
+  "T_configuration_fields_1_over_h": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    16,
+    17,
+    18,
+    19
+  ],
+  "T_momenta": 1,
+  "random_matvec_similarity_relative_l2": 2.4374112550561373e-16,
+  "matrix_sha256": "dbec9872290d912d43ee7c6464bfd7a223eb0880729c3fc460f6e05add29a4ca",
+  "checks": [
+    {
+      "time": 0.025,
+      "relative_state_l2": [
+        1.4414459980415992e-14,
+        2.3528526912400643e-14
+      ],
+      "seconds": 34.044694083
+    },
+    {
+      "time": 0.05,
+      "relative_state_l2": [
+        1.2291313205848388e-14,
+        2.874442744685215e-14
+      ],
+      "seconds": 61.87813320800001
+    }
+  ],
+  "seconds": 95.92299054200001
+}

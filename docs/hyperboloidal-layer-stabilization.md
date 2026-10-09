@@ -320,3 +320,8 @@ retain substantial growth through t6. The [live damping candidate](hyperboloidal
 does not suppress it. The [linear scri hierarchy audit](hyperboloidal-scri-linear-hierarchy-audit.md)
 identifies the missing next-jet compatibility condition; no exact-scri boundary
 closure or wormhole-to-trumpet evolution is accepted by those experiments.
+
+The later [factored Q/null-feedback trial](hyperboloidal-conformal-Q-null-feedback-audit.md)
+also fails its Cartesian stability screen despite successful local source,
+principal-symbol and reference-pole checks. It remains a private rejected
+gauge control.

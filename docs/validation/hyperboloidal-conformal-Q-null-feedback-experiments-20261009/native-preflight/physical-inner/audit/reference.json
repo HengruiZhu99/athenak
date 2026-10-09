@@ -1,0 +1,693 @@
+{
+  "status": "PASS",
+  "scope": "Fixed finite-Omega factored Q/null-feedback gauge native preflight; no stability, scri closure or BH acceptance",
+  "head": "ad68e9701060cec99651368e36377f482653bc32",
+  "seconds": 0.257997834,
+  "build_verification": {
+    "status": "PASS",
+    "mode": "physical-inner",
+    "private_build_receipt_sha256": "8f7e60ef5d5df9dad31f8feba359b244b36859aa115d525d2f52b057a8813508",
+    "baseline_sources": 369,
+    "baseline_overlays": 4,
+    "private_sources": 3,
+    "private_objects": 6,
+    "repository_dependencies": 268,
+    "all182_original_objects_and4_libraries_unchanged": true,
+    "actual_compile_and_link_replacements_verified": true,
+    "compiled_objects": [
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "object": "8d798d2688de03873bcf3e098cc824320a8f4ceaa198062d823bb7cf9ce72574",
+        "dependency": "b5df4e44e57439fe4ac7c508031bdb2ecdaa4ba383337151827c3745a9b29ed3"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "object": "a121c896fda543383e67327affe00ab7d8de617bba58a3beba61ccebf919ed13",
+        "dependency": "868a6204a3f87d3d800874ac2dd2af883456e3cf7406e3724bbe5f7e7fb9f2a0"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "object": "38948f46ea208799fd64b74521e13369e398be59832171f9dab9e161d067ebed",
+        "dependency": "3be682d83c518ef095e4ff5a08f6154659da65a6cd9e5a6b9511701695be876e"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "object": "2cc8e07834d4b98745c968a854fcebf93fb96bf861c64a2c3e6287bab1a1a177",
+        "dependency": "1db1baf682917d3ec3e8e4901a6505418e8c3d0e64910e6d7c6061326f9cde58"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "object": "ecd68851270596058267d10d4d745baaa88af7169e5200cf8e1315ca858f6a7c",
+        "dependency": "610b4c111d28040676afc84265d5cd8e6a44d8941edb04dbab0c381adf27dd75"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "object": "77858ad42bfcb8418d969a5ac262c2347bb2239239040d5e692819f524c3237d",
+        "dependency": "5131c5422387dc017602f2e0adfcc7809c25a4038bbd4c09da994b7f6972e08b"
+      }
+    ],
+    "native_override_only_two_gauge_bool_changes": true,
+    "frozen_trace_gate_index": "dac759becbe666c71443328b61324a50aeaf0f72e76b4e751a9cabfa3a87cd96",
+    "complete_original_C0_geometric_pole_diagnostic_unchanged": true,
+    "gauge_operation": "PhysicalP/Q alpha blend, preferred spatial extension, sigma5 null beta pole; baseline P geometric evolution/storage and C0 damping unchanged",
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "5d7ce0c747ef0a8519deed61d1d2cbdbba71d8924728127bbbd4f8b1aa39e43e"
+  },
+  "private_case": "reference-long-N24",
+  "baseline_case": "reference-long-N24",
+  "input_parameter_differences": {
+    "z4c/hyperboloidal_physical_trace_lapse": [
+      "true",
+      "false"
+    ],
+    "z4c/hyperboloidal_preferred_source": [
+      "false",
+      "true"
+    ]
+  },
+  "initial_active25_binary64_bitwise_equal": true,
+  "initial_geometry_bitwise_equal_zero_reference": true,
+  "coordinates_masks_and_grid_bitwise_equal": true,
+  "exact_final_comparison_time": 0.05,
+  "original_HST_diagnostics": {
+    "H": {
+      "private": 8.477227915110053e-14,
+      "baseline": 8.477891400533267e-14,
+      "ratio": 0.9999217393344797
+    },
+    "M": {
+      "private": 2.6885765615274125e-14,
+      "baseline": 2.687926841005914e-14,
+      "ratio": 1.0002417180823475
+    },
+    "Z": {
+      "private": 1.2592435847867702e-15,
+      "baseline": 1.2542892301336465e-15,
+      "ratio": 1.003949929995489
+    },
+    "Theta": {
+      "private": 9.981125721222706e-16,
+      "baseline": 9.974238931711035e-16,
+      "ratio": 1.0006904576438185
+    }
+  },
+  "final_equal_time_binary64_fields": {
+    "z4c_chi": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 3.3306690738754696e-16,
+      "final_rms_difference": 9.806695376428935e-18
+    },
+    "z4c_gxx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_gxy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.642660651000278e-16,
+      "final_rms_difference": 1.0009002231122816e-17
+    },
+    "z4c_gxz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 2.311691866332927e-16,
+      "final_rms_difference": 1.0047270301625905e-17
+    },
+    "z4c_gyy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_gyz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.5215009158162618e-16,
+      "final_rms_difference": 9.92438771273424e-18
+    },
+    "z4c_gzz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_Khat": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 2.630377802368942e-26,
+      "final_rms_difference": 3.408891109526411e-28
+    },
+    "z4c_Axx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.0584313605014149e-15,
+      "final_rms_difference": 6.862659524660646e-17
+    },
+    "z4c_Axy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 7.273794355339223e-16,
+      "final_rms_difference": 4.338617863312113e-17
+    },
+    "z4c_Axz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 7.464054331204895e-16,
+      "final_rms_difference": 4.406903872203745e-17
+    },
+    "z4c_Ayy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.0090609432511783e-15,
+      "final_rms_difference": 6.795861170215164e-17
+    },
+    "z4c_Ayz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 7.892612137939436e-16,
+      "final_rms_difference": 4.3778538913714465e-17
+    },
+    "z4c_Azz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 9.223991170057247e-16,
+      "final_rms_difference": 6.918222964792921e-17
+    },
+    "z4c_Gamx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 4.0085846357147996e-15,
+      "final_rms_difference": 2.71496505859622e-16
+    },
+    "z4c_Gamy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 3.4947566431475477e-15,
+      "final_rms_difference": 2.744749468534648e-16
+    },
+    "z4c_Gamz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 4.379207814073121e-15,
+      "final_rms_difference": 2.7728979244390524e-16
+    },
+    "z4c_Theta": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 6.370900758290415e-16,
+      "final_rms_difference": 3.0400998596220845e-17
+    },
+    "z4c_alpha": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.5543122344752192e-15,
+      "final_rms_difference": 2.4352745039059723e-17
+    },
+    "z4c_betax": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 9.992007221626409e-16,
+      "final_rms_difference": 4.294768538578024e-17
+    },
+    "z4c_betay": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.3322676295501878e-15,
+      "final_rms_difference": 4.443940635100759e-17
+    },
+    "z4c_betaz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 9.992007221626409e-16,
+      "final_rms_difference": 4.3490585236647177e-17
+    },
+    "z4c_Bx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_By": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_Bz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    }
+  },
+  "private_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "093d67c56a55207f27773314552719c2e4f5a0175c460d09354760ebe9ab0c22",
+          "bytes": 2819329
+        },
+        "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "ffd8df1455448b5caa49c9c36d3e7c9bbb64238341878c2958255a9fb3666add",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "760f74afac2597cada0431b2f04ee11500a9af60196c9cdfbc566fbe525af9f4",
+          "bytes": 2819674
+        },
+        "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "6d780f6c7fde9d360d420f47454cb7dd077721cafcb6cf88ae496e1b768dd0ea",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0911305900105451e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "88629878bac7187f489d2fa1457c410f3bbaf4adb29ee6fba05b6a3d9ecd0c4d",
+          "bytes": 2819927
+        },
+        "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "5e0fa927c634a984b4c7349703e56869841bbdbf49e7968906fde1716c644d5c",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.301278606700433e-14
+    }
+  ],
+  "baseline_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+          "bytes": 2819674
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0872299590955965e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+          "bytes": 2819927
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.3093295951669232e-14
+    }
+  ],
+  "zero_reference_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+          "bytes": 2819674
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0872299590955965e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+          "bytes": 2819927
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.3093295951669232e-14
+    }
+  ],
+  "all_run_files": {
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "5bfd4aae1cd93f3c27abcd3e5358d2edb98b276e5b02fa52d317790619147c88",
+      "bytes": 1955271
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "c2abf3d9de384d103efdda70abd39c3be755265ee4d2222a84478e31c6cd0952",
+      "bytes": 1955460
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "e18486ebd9cdfa13e6c9c933e70450cf4d5c047290fc7d7bedeb3ed4ce1c73c2",
+      "bytes": 1955853
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "b016de811a4bbfffd2e90a2b104a6e1180ec751f416e5d88493fbac6fcd8b097",
+      "bytes": 875184
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "62e30c8ec2381820627f2937cb095567ee3f748bf712024dec200d5f04385091",
+      "bytes": 875105
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "eaa476c0aa9715df1dc42c42369558323248fffec19c00b941e5e0952049a1d5",
+      "bytes": 875742
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+      "bytes": 2819329
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+      "bytes": 2819674
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+      "bytes": 2819927
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "32fce4a8c928311c21bae52cd6cefa86dbc347988e53e7f55701bbe956773395",
+      "bytes": 1397
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/layer.athinput": {
+      "sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "bytes": 2385
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+      "bytes": 5411042
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+      "bytes": 5411678
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+      "bytes": 5411678
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/run.log": {
+      "sha256": "bd63f8dce3560f35c6b0539b4cf0da656937bab9930e08ee9e89bb6f2c1f91d2",
+      "bytes": 621
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/results.json": {
+      "sha256": "16cae97747a0b072fac20f16c7e64fbd50e007aca2e34aebb415cc5028939e46",
+      "bytes": 10838
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/athena-validation": {
+      "sha256": "5d7ce0c747ef0a8519deed61d1d2cbdbba71d8924728127bbbd4f8b1aa39e43e",
+      "bytes": 10431824
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "f525665b36613fa934d034c41c8d3245f77664c6e3c04e51978d43b84bf229fa",
+      "bytes": 1955271
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "a007f4eb978618501e1a59ef800bff49499637087b0d685949158d0ae74842a6",
+      "bytes": 1955460
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "ed50f87e391ce6b2032499044c4714cfb81c4af188f3de0b551b1fe4720208b3",
+      "bytes": 1955853
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "3747f03c644e53d10eb750edabaea0d4c796658103de73a40aedafeb3ae43174",
+      "bytes": 875184
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "141a441e168100173550d4c9576687f12a82fe1e3abc59f64199383d3b018044",
+      "bytes": 875105
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "3cc48ab776559182c9bbccad543a22eee1f2f4a8f10f449df40ae5e2fd9b8a02",
+      "bytes": 875742
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "093d67c56a55207f27773314552719c2e4f5a0175c460d09354760ebe9ab0c22",
+      "bytes": 2819329
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "760f74afac2597cada0431b2f04ee11500a9af60196c9cdfbc566fbe525af9f4",
+      "bytes": 2819674
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "88629878bac7187f489d2fa1457c410f3bbaf4adb29ee6fba05b6a3d9ecd0c4d",
+      "bytes": 2819927
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "823ba498abc6652d38365e949be9c72ffe54d3be7be0807f68b01de5f1c8dc6d",
+      "bytes": 1397
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/layer.athinput": {
+      "sha256": "775b08c6c6bc42a3fde9a3733e4327fb1f143f8bb40673f78c0a69d2236dfb93",
+      "bytes": 2385
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "ffd8df1455448b5caa49c9c36d3e7c9bbb64238341878c2958255a9fb3666add",
+      "bytes": 5411042
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "6d780f6c7fde9d360d420f47454cb7dd077721cafcb6cf88ae496e1b768dd0ea",
+      "bytes": 5411678
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "5e0fa927c634a984b4c7349703e56869841bbdbf49e7968906fde1716c644d5c",
+      "bytes": 5411678
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/reference-long-N24/run.log": {
+      "sha256": "68402f165543d55f846214f474e40398f0844817a65f6354b90d8d9701bf6116",
+      "bytes": 621
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/results.json": {
+      "sha256": "f5ff9c8b691d89b210675dcfcd979689ee97ed3ca5193f8aba5a7258c08b052c",
+      "bytes": 10732
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/q-null-native/physical-inner/reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    }
+  },
+  "launch_files": {
+    "build-layer-research/q-null-native/physical-inner/reference-launch.json": {
+      "sha256": "eefbcc4b9fb3240bb917ae1e37f5e1b9200bd293d617acfa15457d4fee741ef2",
+      "bytes": 4176
+    }
+  },
+  "audit_inputs": {
+    "build-layer-research/time-projection-controls/audit_composed_native.py": "088b456a99a9ff66ad905e7cc12c38da922656393e47c2835996ce7d8ddf6e69",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec",
+    "vis/python/bin_convert.py": "35e3ec2ebbe2d5a24af9bf1e4796cf1f20def58ce1d76c50f0166288b6d8f37c",
+    "tst/hyperboloidal/run_layer_validation.py": "ca81d60cc9a00b83f9325b79abce9fa3eaaade293e2c5f73c3a3d4bdbfac5d96"
+  },
+  "auditor_sha256": "080b001eb71a4c2d0578b3566cc6774af28bdc7e604f8b2e5b3c6d9f44d5df8a",
+  "precision": "State is binary64 RST; all25 active BIN fields exactly match binary32 cast. Historical physical_metric_eigen keys mean Penrose gtilde/chi values; positivity is equivalent to physical SPD for Omega>0. Headerdt is at write time."
+}

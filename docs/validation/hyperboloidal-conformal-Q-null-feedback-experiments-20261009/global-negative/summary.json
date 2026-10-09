@@ -1,0 +1,317 @@
+{
+  "scope": "negative exploratory fixed-N16 finiteOmega projected-continuous global source-alone screen; canonical verification only through .05; no native long run, eigenvalue or continuum instability claim",
+  "explicit_settings": {
+    "physical_trace_lapse": false,
+    "preferred_source": true,
+    "scri_lapse_damping": 2,
+    "sigma": 5,
+    "source_r0": 0.85,
+    "source_r1": 0.95,
+    "physical_inner": true
+  },
+  "matrix_sha256": "dbec9872290d912d43ee7c6464bfd7a223eb0880729c3fc460f6e05add29a4ca",
+  "raw22_matrix_sha256": "fd16cf31a31533ff5d7d135bdc9f9dfdca5a05fc7db9927c155b65d3250397c4",
+  "seed_sha256": "55b4fc65becd950509eb2601a2282f17dacd91eac8b1a933cd7c030735ab3454",
+  "same_original_seed_archive_sha256": true,
+  "all_saved_states_finite": true,
+  "short_to_t2_prefix_max_relative_l2": 1.1004340554673114e-14,
+  "short_to_t2_prefix_per_snapshot_per_seed": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      1.1004340554673114e-14,
+      3.496604242501811e-15
+    ]
+  ],
+  "long_action_seconds": 69.16659824999999,
+  "matvecs": 6560,
+  "residual_matvecs": 242,
+  "max_local_coarse_fine_relative_difference": 9.694849109652314e-11,
+  "max_accepted_curve_defect_per_state_per_time": 1.3253350726234816e-10,
+  "max_sampled_curve_defect_per_state_per_time": 1.3251548121292233e-10,
+  "guard_triggered": false,
+  "histories": [
+    {
+      "seed": "gauge_pulse",
+      "final": {
+        "time": 2.0,
+        "euclidean_component_l2": 675035.9716277218,
+        "max_abs_22component": 44986.98588037203,
+        "reference_volume_component_l2": 36685.61125871414,
+        "reference_volume_component_H1": 446487.1673016025,
+        "native_H_M_Z_rms": [
+          10866.01924600812,
+          31087.374803537976,
+          5713.472975600768
+        ],
+        "outer_r09_squared_component_fraction": 0.7487485908878738,
+        "outer_r09_squared_constraints_fraction": [
+          0.056402425789722085,
+          0.7449202944534521,
+          0.9257984464879704
+        ],
+        "peak_component_radius": 0.9986514344354591,
+        "peak_H_M_Z_radius": [
+          0.8559305973617254,
+          0.9198123110178511,
+          0.9986514344354592
+        ],
+        "reference_volume_component_l2_amplification": 692981.7786079713,
+        "reference_volume_component_H1_amplification": 1721483.240073977,
+        "euclidean_component_amplification": 675035.9716277218
+      },
+      "final_fields": {
+        "time": 2.0,
+        "configuration_H1_momentum_L2": 109941.72525436165,
+        "h_balanced_L2": 83444.7523864906,
+        "groups": {
+          "chi": {
+            "value_l2": 1554.2129376634794,
+            "gradient_l2": 25944.332876362136
+          },
+          "metric": {
+            "value_l2": 2976.82427787222,
+            "gradient_l2": 32618.430473817098
+          },
+          "P": {
+            "value_l2": 8882.231558514828,
+            "gradient_l2": 176454.38026387605
+          },
+          "A": {
+            "value_l2": 27596.224738004134,
+            "gradient_l2": 293314.47598507063
+          },
+          "Lambda": {
+            "value_l2": 19908.59007058621,
+            "gradient_l2": 263942.22719486704
+          },
+          "Theta": {
+            "value_l2": 888.747695054595,
+            "gradient_l2": 20702.12983757568
+          },
+          "alpha": {
+            "value_l2": 5821.786515536054,
+            "gradient_l2": 55060.90731828136
+          },
+          "beta": {
+            "value_l2": 7942.060579123727,
+            "gradient_l2": 77282.43622449378
+          }
+        },
+        "configuration_H1_momentum_L2_amplification": 423893.117811277,
+        "h_balanced_L2_amplification": 216734.3681700682
+      },
+      "constraint_amplitude_convergence": [
+        {
+          "time": 0.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 0.0
+        },
+        {
+          "time": 1.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 5.575761824444644e-10
+        },
+        {
+          "time": 2.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 5.337823241472645e-10
+        }
+      ],
+      "sampled_H_M_Z_peaks": [
+        [
+          10866.01924600812,
+          2.0
+        ],
+        [
+          31087.374803537976,
+          2.0
+        ],
+        [
+          5713.472975600768,
+          2.0
+        ]
+      ],
+      "sampled_field_unit_peak": [
+        423893.117811277,
+        2.0
+      ]
+    },
+    {
+      "seed": "shell_random",
+      "final": {
+        "time": 2.0,
+        "euclidean_component_l2": 100091.27438837325,
+        "max_abs_22component": 9293.464717350023,
+        "reference_volume_component_l2": 5435.330589590846,
+        "reference_volume_component_H1": 65932.83566046036,
+        "native_H_M_Z_rms": [
+          1580.8215280198397,
+          4535.784687252259,
+          841.2355463009018
+        ],
+        "outer_r09_squared_component_fraction": 0.7451658174198832,
+        "outer_r09_squared_constraints_fraction": [
+          0.05622234571264601,
+          0.7431938888296301,
+          0.9257780413904384
+        ],
+        "peak_component_radius": 0.9986514344354591,
+        "peak_H_M_Z_radius": [
+          0.8559305973617254,
+          0.9198123110178511,
+          0.9986514344354591
+        ],
+        "reference_volume_component_l2_amplification": 94158.27570083397,
+        "reference_volume_component_H1_amplification": 53499.860450400476,
+        "euclidean_component_amplification": 100091.27438837325
+      },
+      "final_fields": {
+        "time": 2.0,
+        "configuration_H1_momentum_L2": 16306.475647543233,
+        "h_balanced_L2": 12481.173560359464,
+        "groups": {
+          "chi": {
+            "value_l2": 225.95754734321608,
+            "gradient_l2": 3775.625366367375
+          },
+          "metric": {
+            "value_l2": 440.91666061092667,
+            "gradient_l2": 4826.342071358012
+          },
+          "P": {
+            "value_l2": 1335.717005954929,
+            "gradient_l2": 25984.426903607906
+          },
+          "A": {
+            "value_l2": 4069.8439782200894,
+            "gradient_l2": 43112.65265294221
+          },
+          "Lambda": {
+            "value_l2": 2957.297807592603,
+            "gradient_l2": 39221.89328840562
+          },
+          "Theta": {
+            "value_l2": 129.537664300068,
+            "gradient_l2": 2998.2489516531587
+          },
+          "alpha": {
+            "value_l2": 871.3710493827649,
+            "gradient_l2": 8121.829679196278
+          },
+          "beta": {
+            "value_l2": 1194.9504346700344,
+            "gradient_l2": 11525.853000580384
+          }
+        },
+        "configuration_H1_momentum_L2_amplification": 18729.996038546284,
+        "h_balanced_L2_amplification": 41690.256704811756
+      },
+      "constraint_amplitude_convergence": [
+        {
+          "time": 0.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 2.810217541596382e-10
+        },
+        {
+          "time": 1.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 8.207426879669978e-10
+        },
+        {
+          "time": 2.0,
+          "eps1e-5_vs3e-5_relative_constraints_l2": 7.52183925659426e-10
+        }
+      ],
+      "sampled_H_M_Z_peaks": [
+        [
+          1580.8215280198397,
+          2.0
+        ],
+        [
+          4535.784687252259,
+          2.0
+        ],
+        [
+          841.2355463009018,
+          2.0
+        ]
+      ],
+      "sampled_field_unit_peak": [
+        18729.996038546284,
+        2.0
+      ]
+    }
+  ],
+  "stage_nominal_dt": [
+    {
+      "seed": "gauge_pulse",
+      "dt": 8.085937499998367e-05,
+      "native22_vs_projected20_relative_input_l2": 1.4792566226610274e-09,
+      "native22_vs_projected20_relative_increment_l2": 3.730546199279262e-07,
+      "normal_fraction": 2.439943768905674e-12
+    },
+    {
+      "seed": "smooth_geometry",
+      "dt": 8.085937499998367e-05,
+      "native22_vs_projected20_relative_input_l2": 1.569817850757243e-08,
+      "native22_vs_projected20_relative_increment_l2": 3.511207288904778e-08,
+      "normal_fraction": 5.544182787255019e-13
+    },
+    {
+      "seed": "shell_random",
+      "dt": 8.085937499998367e-05,
+      "native22_vs_projected20_relative_input_l2": 1.5394660598394944e-05,
+      "native22_vs_projected20_relative_increment_l2": 2.3188591502207395e-05,
+      "normal_fraction": 0.00019562288407656958
+    },
+    {
+      "seed": "white_random",
+      "dt": 8.085937499998367e-05,
+      "native22_vs_projected20_relative_input_l2": 1.1516450680212472e-05,
+      "native22_vs_projected20_relative_increment_l2": 2.2726771123165605e-05,
+      "normal_fraction": 0.00026687468709412563
+    }
+  ],
+  "canonical_short": {
+    "scope": "independent short Taylor canonical exp(tJ), exact constant diagonal similarity only; no eigenvalue/runtime/norm change",
+    "formula": "A=TJT^-1; exp(tJ)B=T^-1 exp(tA) T B",
+    "T_configuration_fields_1_over_h": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      16,
+      17,
+      18,
+      19
+    ],
+    "T_momenta": 1,
+    "random_matvec_similarity_relative_l2": 2.4374112550561373e-16,
+    "matrix_sha256": "dbec9872290d912d43ee7c6464bfd7a223eb0880729c3fc460f6e05add29a4ca",
+    "checks": [
+      {
+        "time": 0.025,
+        "relative_state_l2": [
+          1.4414459980415992e-14,
+          2.3528526912400643e-14
+        ],
+        "seconds": 34.044694083
+      },
+      {
+        "time": 0.05,
+        "relative_state_l2": [
+          1.2291313205848388e-14,
+          2.874442744685215e-14
+        ],
+        "seconds": 61.87813320800001
+      }
+    ],
+    "seconds": 95.92299054200001
+  },
+  "no_t6_reason": "catastrophic t2 growth in both native constraints and reference field-unit norms on tested operator; root conditional extension not met",
+  "numerical_warnings": "BLAS/scipy floating-status RuntimeWarnings retained in pilot/t2 logs; all saved states and receipt values finite, short canonical independently matches; no cause assigned"
+}

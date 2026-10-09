@@ -1,0 +1,77 @@
+{
+  "scope": "Finite-positive-lapse Q/null gauge preflight only; no stable pulse, puncture or scri acceptance.",
+  "launch_head": "ad68e9701060cec99651368e36377f482653bc32",
+  "mode": "physical-inner",
+  "stage": "short",
+  "source_verification": {
+    "status": "PASS",
+    "mode": "physical-inner",
+    "private_build_receipt_sha256": "8f7e60ef5d5df9dad31f8feba359b244b36859aa115d525d2f52b057a8813508",
+    "baseline_sources": 369,
+    "baseline_overlays": 4,
+    "private_sources": 3,
+    "private_objects": 6,
+    "repository_dependencies": 268,
+    "all182_original_objects_and4_libraries_unchanged": true,
+    "actual_compile_and_link_replacements_verified": true,
+    "compiled_objects": [
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "object": "8d798d2688de03873bcf3e098cc824320a8f4ceaa198062d823bb7cf9ce72574",
+        "dependency": "b5df4e44e57439fe4ac7c508031bdb2ecdaa4ba383337151827c3745a9b29ed3"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "object": "a121c896fda543383e67327affe00ab7d8de617bba58a3beba61ccebf919ed13",
+        "dependency": "868a6204a3f87d3d800874ac2dd2af883456e3cf7406e3724bbe5f7e7fb9f2a0"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "object": "38948f46ea208799fd64b74521e13369e398be59832171f9dab9e161d067ebed",
+        "dependency": "3be682d83c518ef095e4ff5a08f6154659da65a6cd9e5a6b9511701695be876e"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "object": "2cc8e07834d4b98745c968a854fcebf93fb96bf861c64a2c3e6287bab1a1a177",
+        "dependency": "1db1baf682917d3ec3e8e4901a6505418e8c3d0e64910e6d7c6061326f9cde58"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "object": "ecd68851270596058267d10d4d745baaa88af7169e5200cf8e1315ca858f6a7c",
+        "dependency": "610b4c111d28040676afc84265d5cd8e6a44d8941edb04dbab0c381adf27dd75"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "object": "77858ad42bfcb8418d969a5ac262c2347bb2239239040d5e692819f524c3237d",
+        "dependency": "5131c5422387dc017602f2e0adfcc7809c25a4038bbd4c09da994b7f6972e08b"
+      }
+    ],
+    "native_override_only_two_gauge_bool_changes": true,
+    "frozen_trace_gate_index": "dac759becbe666c71443328b61324a50aeaf0f72e76b4e751a9cabfa3a87cd96",
+    "complete_original_C0_geometric_pole_diagnostic_unchanged": true,
+    "gauge_operation": "PhysicalP/Q alpha blend, preferred spatial extension, sigma5 null beta pole; baseline P geometric evolution/storage and C0 damping unchanged",
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "5d7ce0c747ef0a8519deed61d1d2cbdbba71d8924728127bbbd4f8b1aa39e43e"
+  },
+  "trace_gate_index_sha256": "dac759becbe666c71443328b61324a50aeaf0f72e76b4e751a9cabfa3a87cd96",
+  "build_receipt_sha256": "8f7e60ef5d5df9dad31f8feba359b244b36859aa115d525d2f52b057a8813508",
+  "executable_sha256": "5d7ce0c747ef0a8519deed61d1d2cbdbba71d8924728127bbbd4f8b1aa39e43e",
+  "launch_script_sha256": "031cd71499f832f159b936a28c09a92cdd095e5b5af8757426df9aec10cb541f",
+  "auditor_sha256": "080b001eb71a4c2d0578b3566cc6774af28bdc7e604f8b2e5b3c6d9f44d5df8a",
+  "override_sha256": "72682d58fe2ebc3c83787bed12104a604f8428cb0e43b95739fb9b7b25fc0f97",
+  "reference_audit_sha256": "b2548eb4c87b401d793dfaac1631af324a6f7e15819d23a2259b0675761004d5",
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/run_layer_validation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/native-build/athena-q-null",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/physical-inner/short",
+    "--suite",
+    "long",
+    "--overrides",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/q-null-native/native.athinput",
+    "--duration",
+    ".02",
+    "--output-cadence",
+    ".01"
+  ]
+}

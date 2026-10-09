@@ -1,0 +1,128 @@
+{
+  "outcome": "failed collection, no scientific rerun or source change",
+  "collector_sha256": "45a833ea97a66b4e943c2f0fe170bf55d1b91299b26f76d9c9e559ed7c5741c2",
+  "observed_exception": "json.decoder.JSONDecodeError: Expecting value: line 1 column 78322 (char 78321)",
+  "failing_source": "build-layer-research/continuum/conformal-q-null-feedback/immutable-conformal-Q-null-feedback-local-20261009/history/failed-fd-JSON-reader/full20.json",
+  "source_sha256": "d99e084eaee1ba5bf69382ec693d4137dfce2849b96b6e5cea55414685748326",
+  "cause": "Preserved historical failed JSON reader output uses invalid JSON leading-dot numbers [.001,.0001,.00001].",
+  "partial_files": {
+    "local-core/compile-nonlinear.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/check-gate.stdout": {
+      "bytes": 5247,
+      "sha256": "67ed20cd8bc6a1b9150b5e4c7cde7e66eb8ed5e9bcca0b04878d25cd3a0a3776"
+    },
+    "local-core/compile-prior_corner.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/compile-full20.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/compile-full20-debug.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/full20.cpp": {
+      "bytes": 2976,
+      "sha256": "a9489f6f730e79c9bae5e19060d38cccfb063d81af0d4ba4c6a60a544216650b"
+    },
+    "local-core/check-report.json": {
+      "bytes": 5247,
+      "sha256": "67ed20cd8bc6a1b9150b5e4c7cde7e66eb8ed5e9bcca0b04878d25cd3a0a3776"
+    },
+    "local-core/REPORT.md": {
+      "bytes": 5408,
+      "sha256": "4d654a0634f1e5c57eef41b2c84d37e2ff3d784b7a1bbf0aea2b182a8a5375d6"
+    },
+    "local-core/full20.json": {
+      "bytes": 80244,
+      "sha256": "51938e191b0e8484be4b4fb21f526213ae11369290150f4252a7e160818063a5"
+    },
+    "local-core/compile-full20-debug.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/compile-prior_corner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/compile-full20.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/compile-nonlinear.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/factored_base.hpp": {
+      "bytes": 4338,
+      "sha256": "216bb80c18ee33e553de8defd027e6d3e0394eab38a19a56f66699583e0eca7a"
+    },
+    "local-core/check-gate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/compile-principal.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/four_gamma.hpp": {
+      "bytes": 1878,
+      "sha256": "3fa26b5a32e9c115bf90d3d0664a1d0580900aeb890a85167203d2df816e05d4"
+    },
+    "local-core/check-principal.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/compile-nonlinear-debug.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/audit_helpers.hpp": {
+      "bytes": 2247,
+      "sha256": "f8c3c08873cddbb4a41c4c269df19754730ab308091499c82260c4364b3581d9"
+    },
+    "local-core/freeze.py": {
+      "bytes": 2866,
+      "sha256": "d68fcfa68080b059850caf13c0b9f2c8a467d15e49ee1ecbf2edceb3f7a55989"
+    },
+    "local-core/compile-nonlinear-debug.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/check_gate.py": {
+      "bytes": 6948,
+      "sha256": "70f5c8527a171a6fe90ee9918eee989d2fcc0c3ab6579d0a8a8d5351b7502e32"
+    },
+    "local-core/check-principal.stdout": {
+      "bytes": 277,
+      "sha256": "5c4c7127c21b366b38b71d1cd4e3897e76a8dbdae7474fbbac97011872fa61ab"
+    },
+    "local-core/full20-debug.json": {
+      "bytes": 80244,
+      "sha256": "51938e191b0e8484be4b4fb21f526213ae11369290150f4252a7e160818063a5"
+    },
+    "local-core/compile-principal.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local-core/DERIVATION.md": {
+      "bytes": 9939,
+      "sha256": "cea9530f25e88762915e1be37b78800534a052e104c92b684bfd8f77d851f5fb"
+    },
+    "local-core/history/failed-fd-JSON-reader/full20.cpp": {
+      "bytes": 2307,
+      "sha256": "e049ef6663dff744de86adc6634842e61a0934b042a15db359c7d353212e7973"
+    },
+    "local-core/history/failed-fd-JSON-reader/failure.txt": {
+      "bytes": 261,
+      "sha256": "a5f14aadf54b288860164a4cbb97681de37db0dc8cf9b05d56306ec5ebbd522f"
+    }
+  },
+  "catalog_written": false,
+  "preservation": "Exact collector and all 29 partial copied files retained; receipt records observed exception rather than reconstructing a missing raw stderr log."
+}

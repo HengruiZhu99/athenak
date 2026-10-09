@@ -404,3 +404,8 @@ identifies a reproducible constraint-carrying approximate discrete direction,
 checks its actual finite-step action, derives Einstein Taylor compatibility,
 and exhibits a separate initial gauge/null time-corner obstruction. The full-C1
 t6 extension and wide flat-reference screen also remain negative.
+
+The [factored Q/null-feedback audit](hyperboloidal-conformal-Q-null-feedback-audit.md)
+preserves physical-P geometry, passes local and short native integrity gates,
+and records much worse constraints in its t=2 Cartesian comparison. Its
+stable reference pole does not establish finite-radius or global stability.

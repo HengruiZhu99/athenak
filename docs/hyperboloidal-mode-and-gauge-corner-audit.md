@@ -70,3 +70,8 @@ Release/ASan-UBSan checks at214 points and a100-digit1936-scalar oracle pass. Ac
 Production remains implementation27c19d20696ea6dd4704032c51dfd026218f64f2. None of these diagnostics changes a runtime option, boundary prescription or supported configuration. Stable finite gauge pulses, nonlinear regular closure and the eventual wormhole-to-trumpet transition with a Minkowski hyperboloidal reference remain unvalidated.
 
 The byte-preserved [compact archive](validation/hyperboloidal-mode-and-gauge-corner-experiments-20261009/README.md) contains275 cataloged blobs totaling10,856,783 bytes. Catalog SHA256 ise47b17b70a02295548f3ed15992b2d12fa7fcbd90cf86d57df59183a9770f2dc. Native binaries, objects and large state/matrix/vector arrays remain metadata-only. The first uncommitted collection included one vector NPZ; precommit validation rejected that payload. The retained collector/receipt and fresh v2 collection record its exclusion without changing scientific evidence. The retained draft review prompted the finite-step residual-units correction and explicit norm/linear-scope clarifications in this readable note.
+
+A subsequent [factored Q/null-feedback control](hyperboloidal-conformal-Q-null-feedback-audit.md)
+cancels the displayed initial gauge corner and passes local source and pole
+checks, but fails short native constraint comparisons and the actual global
+t=2 screen. It supplies no stable gauge or closed scri prescription.
