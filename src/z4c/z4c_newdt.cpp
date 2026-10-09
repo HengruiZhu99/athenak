@@ -33,7 +33,8 @@ TaskStatus Z4c::NewTimeStep(Driver *pdriver, int stage) {
   if (hyperboloidal_patch) {
     const auto g = hyperboloidal_patch->grid;
     const Real h = std::min(g.h[0],std::min(g.h[1],g.h[2]));
-    const Real speed = hyperboloidal_patch->reference.layer.enabled
+    const Real speed = (hyperboloidal_patch->reference.layer.enabled
+        || hyperboloidal_patch->layer_gauge.physical_trace_lapse)
         ? hyperboloidal_patch->MaxGaugeSpeed(u0) : Real(1);
     dtnew = std::min(Real(0.025)*h/speed,
                      hyperboloidal_pole_cfl*hyperboloidal_patch->min_omega)

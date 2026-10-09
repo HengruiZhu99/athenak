@@ -25,7 +25,8 @@ void Invert(const double e[3][3], double inv[3][3]) {
 double TensorFrame(const double v[3][3], const double inv[3][3], int i, int j) {
   double out = 0;
   for (int a = 0; a < 3; ++a)
-    for (int b = 0; b < 3; ++b) out += inv[a][i] * inv[b][j] * v[a][b];
+    for (int b = 0; b < 3; ++b)
+      out += inv[a][i] * inv[b][j] * v[a][b];
   return out;
 }
 
@@ -59,9 +60,10 @@ void TensorInput(int column, double h[3][3], double a[3][3]) {
 }
 
 void Extract(double alpha, double chi, double radius, bool oblique,
-             double matrix[20][20]) {
+             bool physical_lapse, double matrix[20][20]) {
   const double b[3][3] = {{1.3, 0.2, -0.1}, {0, 0.8, 0.12}, {0, 0, 1 / 1.04}};
-  const double q[3][3] = {{0.36, -0.48, 0.8}, {0.8, 0.6, 0}, {-0.48, 0.64, 0.6}};
+  const double q[3][3] = {
+      {0.36, -0.48, 0.8}, {0.8, 0.6, 0}, {-0.48, 0.64, 0.6}};
   double e[3][3]{}, inv[3][3];
   for (int i = 0; i < 3; ++i)
     for (int j = 0; j < 3; ++j) {
@@ -75,14 +77,16 @@ void Extract(double alpha, double chi, double radius, bool oblique,
   base.chi.value = chi;
   for (int i = 0; i < 3; ++i)
     for (int j = 0; j < 3; ++j)
-      for (int k = 0; k < 3; ++k) base.metric.g[i][j] += chi * e[k][i] * e[k][j];
+      for (int k = 0; k < 3; ++k)
+        base.metric.g[i][j] += chi * e[k][i] * e[k][j];
   hyp::LayerPoint<double> p{};
   p.state = base;
   p.alpha = alpha;
   p.radius = radius;
   p.omega = 0.37;
   hyp::LayerGaugeParameters gauge;
-  gauge.preferred_source = false;  // algebraic projection has no principal part
+  gauge.preferred_source = false; // algebraic projection has no principal part
+  gauge.physical_trace_lapse = physical_lapse;
   hyp::OmegaJet<double> omega{};
   omega.omega = p.omega;
   // Separate derivative orders to exclude lower-order physical-trace/Z4 terms.
@@ -112,7 +116,8 @@ void Extract(double alpha, double chi, double radius, bool oblique,
           }
       }
     }
-    Jet first = base, second = base, connection = base, slicing = base, shift = base;
+    Jet first = base, second = base, connection = base, slicing = base,
+        shift = base;
     first.trace.value = column == 3 ? omega.omega : 0;
     first.theta.value = column == 4 ? omega.omega : 0;
     slicing.trace.value = first.trace.value;
@@ -137,21 +142,21 @@ void Extract(double alpha, double chi, double radius, bool oblique,
       }
     }
     RHS r1{}, r2{}, r3{};
-    if (!hyp::AssembleInterior(hyp::ConformalRHS(first, omega, 0., 0.), omega.omega,
-                               r1) ||
-        !hyp::AssembleInterior(hyp::ConformalRHS(second, omega, 0., 0.), omega.omega,
-                               r2) ||
-        !hyp::AssembleInterior(hyp::ConformalRHS(connection, omega, 0., 0.), omega.omega,
-                               r3)) {
+    if (!hyp::AssembleInterior(hyp::ConformalRHS(first, omega, 0., 0.),
+                               omega.omega, r1) ||
+        !hyp::AssembleInterior(hyp::ConformalRHS(second, omega, 0., 0.),
+                               omega.omega, r2) ||
+        !hyp::AssembleInterior(hyp::ConformalRHS(connection, omega, 0., 0.),
+                               omega.omega, r3)) {
       throw std::runtime_error("kernel symbol extraction failed");
     }
     hyp::GaugeRHS<double> gl{}, gs{}, gbase{};
     if (!hyp::AssembleGaugeInterior(hyp::InteriorLayerGauge(p, slicing, gauge),
                                     omega.omega, gl) ||
-        !hyp::AssembleGaugeInterior(hyp::InteriorLayerGauge(p, shift, gauge), omega.omega,
-                                    gs) ||
-        !hyp::AssembleGaugeInterior(hyp::InteriorLayerGauge(p, base, gauge), omega.omega,
-                                    gbase)) {
+        !hyp::AssembleGaugeInterior(hyp::InteriorLayerGauge(p, shift, gauge),
+                                    omega.omega, gs) ||
+        !hyp::AssembleGaugeInterior(hyp::InteriorLayerGauge(p, base, gauge),
+                                    omega.omega, gbase)) {
       throw std::runtime_error("gauge symbol extraction failed");
     }
     matrix[0][column] = (gl.alpha - gbase.alpha) / (alpha * alpha);
@@ -169,8 +174,10 @@ void Extract(double alpha, double chi, double radius, bool oblique,
     matrix[6][column] = lframe[0];
     matrix[7][column] = bframe[0];
     for (int v = 0; v < 2; ++v) {
-      matrix[8 + 4 * v][column] = TensorFrame(r1.metric, inv, 0, 1 + v) / (alpha * chi);
-      matrix[9 + 4 * v][column] = TensorFrame(r2.a, inv, 0, 1 + v) / (alpha * chi);
+      matrix[8 + 4 * v][column] =
+          TensorFrame(r1.metric, inv, 0, 1 + v) / (alpha * chi);
+      matrix[9 + 4 * v][column] =
+          TensorFrame(r2.a, inv, 0, 1 + v) / (alpha * chi);
       matrix[10 + 4 * v][column] = lframe[1 + v];
       matrix[11 + 4 * v][column] = bframe[1 + v];
     }
@@ -192,29 +199,33 @@ int main() {
   for (double alpha : {0.2, 1., 3.})
     for (double chi : {0.4, 1., 2.})
       for (double r : {0., 0.45, 0.5, 0.65, 0.8, 0.83, 0.84, 0.849, 0.85, 1.})
-        for (bool oblique : {false, true}) {
-          if (!first)
-            std::cout << ',';
-          first = false;
-          double matrix[20][20]{};
-          Extract(alpha, chi, r, oblique, matrix);
-          const auto c = hyp::LayerCoefficients(r, alpha, hyp::LayerGaugeParameters{});
-          std::cout << "{\"alpha\":" << alpha << ",\"chi\":" << chi << ",\"r\":" << r
-                    << ",\"oblique\":" << oblique << ",\"W\":" << c.weight
-                    << ",\"f\":" << c.f << ",\"mu\":" << c.mu << ",\"q\":" << c.q
-                    << ",\"M\":[";
-          for (int i = 0; i < 20; ++i) {
-            if (i)
+        for (bool oblique : {false, true})
+          for (bool physical_lapse : {false, true}) {
+            if (!first)
               std::cout << ',';
-            std::cout << '[';
-            for (int j = 0; j < 20; ++j) {
-              if (j)
+            first = false;
+            double matrix[20][20]{};
+            Extract(alpha, chi, r, oblique, physical_lapse, matrix);
+            const auto c =
+                hyp::LayerCoefficients(r, alpha, hyp::LayerGaugeParameters{});
+            std::cout << "{\"alpha\":" << alpha << ",\"chi\":" << chi
+                      << ",\"r\":" << r << ",\"oblique\":" << oblique
+                      << ",\"W\":" << c.weight
+                      << ",\"physical_trace_lapse\":" << physical_lapse
+                      << ",\"f\":" << c.f << ",\"mu\":" << c.mu
+                      << ",\"q\":" << c.q << ",\"M\":[";
+            for (int i = 0; i < 20; ++i) {
+              if (i)
                 std::cout << ',';
-              std::cout << matrix[i][j];
+              std::cout << '[';
+              for (int j = 0; j < 20; ++j) {
+                if (j)
+                  std::cout << ',';
+                std::cout << matrix[i][j];
+              }
+              std::cout << ']';
             }
-            std::cout << ']';
+            std::cout << "]}";
           }
-          std::cout << "]}";
-        }
   std::cout << "]\n";
 }

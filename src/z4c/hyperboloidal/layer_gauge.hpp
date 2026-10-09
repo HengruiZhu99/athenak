@@ -14,6 +14,8 @@ struct LayerGaugeParameters {
   double r0 = 0.45, r1 = 0.85, q0 = 0.5;
   double lapse_inner = 0, lapse_outer = 1.5, shift_inner = 0, shift_outer = 1;
   bool preferred_source = true;
+  bool physical_trace_lapse = false;
+  double scri_lapse_damping = 1.5;
   void Validate(double s) const {
     if (!std::isfinite(r0) || !std::isfinite(r1) || !std::isfinite(q0) ||
         !(0 < r0 && r0 < r1 && r1 < s) || !(0 < q0 && q0 < 1)) {
@@ -26,6 +28,13 @@ struct LayerGaugeParameters {
     }
     if (lapse_outer < lapse_inner || shift_outer < shift_inner) {
       throw std::invalid_argument("layer restoring rates must increase outward");
+    }
+    if (!std::isfinite(scri_lapse_damping) || scri_lapse_damping < 0) {
+      throw std::invalid_argument("scri lapse damping must be finite >=0");
+    }
+    if (physical_trace_lapse && preferred_source) {
+      throw std::invalid_argument(
+          "physical-trace lapse requires its preferred source to be rederived");
     }
   }
 };
@@ -67,7 +76,11 @@ KOKKOS_INLINE_FUNCTION GaugeRHSParts<T> InteriorLayerGauge(
     return out;
   const auto c = LayerCoefficients(p.radius, alpha, g);
   const T da = alpha - p.alpha;
-  const T loga = Kokkos::log1p(da / p.alpha);
+  const T relative_da = da / p.alpha;
+  // Near a puncture, da may round to -alpha_hat despite alpha remaining
+  // positive. Log differences retain that lapse; log1p handles small changes.
+  const T loga = Kokkos::abs(relative_da) < T(0.5)
+      ? Kokkos::log1p(relative_da) : Kokkos::log(alpha) - Kokkos::log(p.alpha);
   T db[3], du[3], dv[3], ref_advection[3]{};
   T q_numerator = u.trace.value - p.k_physical, ref_log_advection = 0;
   for (int i = 0; i < 3; ++i) {
@@ -84,6 +97,19 @@ KOKKOS_INLINE_FUNCTION GaugeRHSParts<T> InteriorLayerGauge(
   }
   out.regular.alpha -= alpha * ref_log_advection + alpha * c.nu * loga;
   out.pole.alpha = -c.alpha2f * q_numerator;
+  if (g.physical_trace_lapse) {
+    // Cartesian extension of arXiv:2408.08952 Eq. (9), retaining the
+    // coupled-shift principal part. Physical P is the paper's tilde K.
+    // Match the full analytic reference advection in a nonflat layer.
+    out.regular.alpha = -alpha * c.nu * loga;
+    out.pole.alpha = -c.alpha2f * (u.trace.value - p.k_physical)
+        - c.weight * T(g.scri_lapse_damping) * (alpha + p.alpha) * da;
+    for (int i = 0; i < 3; ++i) {
+      out.regular.alpha += u.beta.value[i] * u.alpha.d[i]
+          - p.beta[i] * p.dalpha[i];
+      out.pole.alpha -= c.weight * (alpha * db[i] + p.beta[i] * da) * p.domega[i];
+    }
+  }
   for (int i = 0; i < 3; ++i) {
     out.regular.beta[i] =
         alpha * alpha * chi * c.mu * (u.lambda.value[i] - p.state.lambda.value[i]) -

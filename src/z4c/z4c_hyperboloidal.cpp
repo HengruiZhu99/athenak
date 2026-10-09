@@ -13,6 +13,7 @@
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/hyperboloidal/cartesian_trumpet.hpp"
+#include "z4c/hyperboloidal/cartesian_wormhole.hpp"
 
 namespace z4c {
 namespace hyp = hyperboloidal;
@@ -72,9 +73,22 @@ void Z4c::SetupHyperboloidal(ParameterInput *pin) {
   lg.lapse_outer = pin->GetOrAddReal("z4c","hyperboloidal_layer_lapse_outer",1.5);
   lg.shift_inner = pin->GetOrAddReal("z4c","hyperboloidal_layer_shift_inner",0);
   lg.shift_outer = pin->GetOrAddReal("z4c","hyperboloidal_layer_shift_outer",1);
-  lg.preferred_source = pin->GetOrAddBoolean("z4c","hyperboloidal_preferred_source",true);
-  hyperboloidal_patch = std::make_unique<hyp::CartesianConformalPatch>(grid,1,
-      pin->GetOrAddInteger("z4c","hyperboloidal_ghost_degree",3),layer,lg);
+  lg.physical_trace_lapse =
+      pin->GetOrAddBoolean("z4c","hyperboloidal_physical_trace_lapse",false);
+  lg.scri_lapse_damping =
+      pin->GetOrAddReal("z4c","hyperboloidal_scri_lapse_damping",1.5);
+  lg.preferred_source = pin->GetOrAddBoolean(
+      "z4c","hyperboloidal_preferred_source",!lg.physical_trace_lapse);
+  const Real curvature_radius =
+      pin->GetOrAddReal("z4c","hyperboloidal_curvature_radius",1);
+  if (!layer.enabled && !lg.physical_trace_lapse && curvature_radius != 1) {
+    throw std::invalid_argument(
+        "curvature control requires layer or physical-trace lapse mode");
+  }
+  hyperboloidal_patch = std::make_unique<hyp::CartesianConformalPatch>(grid,
+      curvature_radius,
+      pin->GetOrAddInteger("z4c","hyperboloidal_ghost_degree",3),layer,lg,
+      pin->GetOrAddBoolean("z4c","hyperboloidal_symmetric_ghosts",false));
   hyperboloidal_mass_diagnostics =
       pin->GetOrAddBoolean("z4c","hyperboloidal_mass_diagnostics",false);
   hyperboloidal_mass_nmu = pin->GetOrAddInteger("z4c","hyperboloidal_mass_nmu",32);
@@ -108,7 +122,8 @@ void Z4c::SetupHyperboloidal(ParameterInput *pin) {
   }
   // Construct the immutable analytic initial profile before restart loading.
   // A restart must not pair its evolved values with the initial analytic jets.
-  if (mass > 0) hyp::InitializeCartesianTrumpet(patch,u0,mass);
+  if (mass > 0 && layer.enabled) hyp::InitializeCartesianWormhole(patch,u0,mass);
+  else if (mass > 0) hyp::InitializeCartesianTrumpet(patch,u0,mass);
   else patch.InitializeReference(u0);
   pin->SetBoolean("adm","separate_z4c_gauge",true);
   hyperboloidal_active = DvceArray5D<Real>("hyperboloidal active domain",1,1,

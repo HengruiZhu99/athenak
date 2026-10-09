@@ -12,6 +12,13 @@ lower-order pole eigenvalue, and nonsymmetric embedded-boundary weights.
 A finite-duration successful run is not an acceptance test for stability.
 See [validation results](hyperboloidal-layer-validation.md).
 
+This describes the first implementation (`d21fb74c` and its validation receipt).
+The subsequent opt-in physical-trace lapse, symmetric ghost plans and derived
+wormhole initial data are documented in
+[the ongoing stabilization work](hyperboloidal-layer-stabilization.md).
+The initial negative results remain reproducible; the follow-up has not yet
+passed the nonlinear evolution acceptance gates.
+
 ## Storage, conventions and unchanged geometric equations
 
 Signature is (-,+,+,+), `K_ij=-Lie_n(gamma_ij)/2`. Penrose compactification is

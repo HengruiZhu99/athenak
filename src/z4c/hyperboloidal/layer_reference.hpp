@@ -87,7 +87,8 @@ struct LayerPoint : CMCPoint<T> {
 };
 
 // Inherits the legacy descriptor so existing CMC-only utilities remain usable
-// when enabled=false. Layer black-hole initial data are rejected separately.
+// when enabled=false. Massive initial data are derived by a separate helper;
+// this descriptor and all of its reference fields remain Minkowski.
 template <typename T>
 struct LayerReference : CMCReference<T> {
   LayerParameters layer;

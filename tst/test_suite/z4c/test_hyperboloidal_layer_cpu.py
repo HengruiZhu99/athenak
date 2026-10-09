@@ -73,12 +73,40 @@ def test_native_layer_reference(tmp_path):
     ('<z4c>\nhyperboloidal_gauge_q0=1', '0<q0<1'),
     ('<z4c>\nhyperboloidal_gauge_r0=0.2', 'beyond the Cauchy interior'),
     ('<z4c>\nhyperboloidal_layer_shift_outer=-1', 'restoring rates'),
-    ('<problem>\nmass=0.5', 'incompatible with the layer foliation'),
+    ('<problem>\nmass=0.7', '0<M<2*layer_r0'),
     ('<problem>\npulse_width=0', 'gauge pulse'),
+    ('<z4c>\nhyperboloidal_physical_trace_lapse=true', 'preferred source'),
+    ('<z4c>\nhyperboloidal_scri_lapse_damping=-1', 'scri lapse damping'),
+    ('<z4c>\nhyperboloidal_curvature_radius=0.4', 'a>=S/2'),
+    ('<z4c>\nhyperboloidal_layer=false\nhyperboloidal_curvature_radius=.5',
+     'curvature control requires layer or physical-trace lapse mode'),
 ])
 def test_layer_rejections(tmp_path, extra, diagnostic):
     result = run_layer(tmp_path, extra, success=False)
     assert diagnostic in result.stdout + result.stderr
+
+
+@pytest.mark.parametrize('layer', ['true', 'false'])
+@pytest.mark.parametrize('symmetric', ['true', 'false'])
+def test_physical_lapse_native_options(tmp_path, layer, symmetric):
+    extra = f'''<z4c>
+hyperboloidal_physical_trace_lapse=true
+hyperboloidal_preferred_source=false
+hyperboloidal_curvature_radius=.5
+hyperboloidal_layer={layer}
+hyperboloidal_symmetric_ghosts={symmetric}
+<problem>
+lapse_pulse=.1
+shift_pulse=.02
+'''
+    run_layer(tmp_path, extra)
+    initial, final = fields(tmp_path, 'z4c', True), fields(tmp_path, 'z4c')
+    mask = final['z4c_active'].astype(bool)
+    assert np.min(final['z4c_alpha'][mask]) > 0
+    assert np.min(final['z4c_chi'][mask]) > 0
+    for key in final:
+        assert np.isfinite(final[key][mask]).all(), key
+    assert np.max(np.abs(final['z4c_alpha'][mask] - initial['z4c_alpha'][mask])) > 1e-8
 
 
 @pytest.mark.parametrize('angular', ['true', 'false'])

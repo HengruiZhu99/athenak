@@ -151,6 +151,7 @@ class CartesianConformalPatch {
   const SphericalGhostGrid grid;
   const LayerReference<Real> reference;
   const int ghost_degree;
+  const bool symmetric_ghosts;
   Kokkos::View<int *> active;
   Kokkos::View<unsigned char *> mask;
   Kokkos::View<SphericalGhostStencil *> ghosts;
@@ -164,18 +165,22 @@ class CartesianConformalPatch {
 
   explicit CartesianConformalPatch(SphericalGhostGrid g, Real curvature_radius = 1,
                                      int degree = 3, LayerParameters layer = {},
-                                     LayerGaugeParameters gauge = {})
+                                     LayerGaugeParameters gauge = {},
+                                     bool symmetric = false)
       : grid(g), reference{g.radius,curvature_radius,layer}, ghost_degree(degree),
-        layer_gauge(gauge) {
+        symmetric_ghosts(symmetric), layer_gauge(gauge) {
     reference.Validate();
-    if (layer.enabled) {
+    if (layer.enabled || layer_gauge.physical_trace_lapse) {
       layer_gauge.Validate(g.radius);
-      if (layer_gauge.preferred_source && !(layer_gauge.r0 > layer.r0)) {
+      if (layer.enabled && layer_gauge.preferred_source
+          && !(layer_gauge.r0 > layer.r0)) {
         throw std::invalid_argument(
             "preferred projection must begin beyond the Cauchy interior");
       }
     }
-    const auto plans = PlanSphericalGhosts(grid,3,ghost_degree);
+    const auto plans = symmetric_ghosts
+        ? PlanSymmetricSphericalGhosts(grid,3,ghost_degree)
+        : PlanSphericalGhosts(grid,3,ghost_degree);
     const int cells = grid.n[0]*grid.n[1]*grid.n[2];
     std::vector<int> nodes;
     mask = Kokkos::View<unsigned char *>("conformal active mask",cells);
@@ -335,7 +340,8 @@ class CartesianConformalPatch {
                                 omega.omega,rhs)
           || !AssembleInterior(ConformalRHS(background,omega0,damping,Real(0)),
                                 omega.omega,rhs0)
-          || !AssembleGaugeInterior(ref.layer.enabled ? InteriorLayerGauge(p,u,lg)
+          || !AssembleGaugeInterior((ref.layer.enabled || lg.physical_trace_lapse)
+              ? InteriorLayerGauge(p,u,lg)
               : UnfactoredReferenceGauge(ref,p,u,gauge,true,true),
                                      omega.omega,gauge_rhs)) {
         ++bad;

@@ -1,3 +1,5 @@
+# Two-step wormhole diagnostic with a Minkowski reference.
+# Trumpet formation and long black-hole stability remain unverified.
 <job>
 basename=hyp
 
@@ -99,3 +101,12 @@ hyperboloidal_layer_lapse_outer=1.5
 hyperboloidal_layer_shift_inner=0
 hyperboloidal_layer_shift_outer=1
 hyperboloidal_preferred_source=true
+
+<z4c>
+hyperboloidal_physical_trace_lapse=true
+hyperboloidal_preferred_source=false
+hyperboloidal_symmetric_ghosts=true
+<problem>
+mass=.5
+lapse_pulse=0
+shift_pulse=0

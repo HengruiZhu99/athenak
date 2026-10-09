@@ -4,9 +4,13 @@
 #define Z4C_HYPERBOLOIDAL_SPHERICAL_GHOSTS_HPP_
 
 #include <algorithm>
+#include <array>
 #include <cmath>
+#include <functional>
 #include <limits>
+#include <map>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 #include <Kokkos_Core.hpp>
 
@@ -167,6 +171,97 @@ inline std::vector<SphericalGhostStencil> PlanSphericalGhosts(
     }
     if (!found) throw std::invalid_argument("no interior normal-ray rectangles");
     plans.push_back(best);
+  }
+  return plans;
+}
+
+// Optional cube-equivariant version of the same strictly interior normal-ray
+// extrapolation. Plan one representative in the positive sorted-coordinate
+// sector and transport its donor map to every reflected/permuted target. Average
+// the representative's stabilizer when coordinates coincide; choosing just one
+// dominant axis or tied rectangle would break that symmetry. Polynomial
+// consistency is retained, but neither an energy estimate nor a reduction of
+// the worst extrapolation amplification follows from this symmetrization.
+// The original PlanSphericalGhosts behavior remains unchanged. This variant
+// requires a centered isotropic cube and rejects a non-invariant mask or a donor
+// union exceeding the existing fixed stencil capacity instead of degrading it.
+inline std::vector<SphericalGhostStencil> PlanSymmetricSphericalGhosts(
+    const SphericalGhostGrid &g, int halo, int degree) {
+  for (int a = 0; a < 3; ++a) {
+    const double scale = std::max({1.0,std::abs(g.first[a]),
+                                  std::abs((g.n[a]-1)*g.h[a])});
+    if (g.n[a] != g.n[0] || g.h[a] != g.h[0] || !std::isfinite(g.first[a])
+        || !std::isfinite(g.h[a])
+        || std::abs(2*g.first[a]+(g.n[a]-1)*g.h[a])
+            > 64*std::numeric_limits<double>::epsilon()*scale) {
+      throw std::invalid_argument(
+          "symmetric spherical ghosts need a centered isotropic cube");
+    }
+  }
+  const auto old = PlanSphericalGhosts(g,halo,degree);
+  std::map<int,const SphericalGhostStencil *> lookup;
+  for (const auto &plan : old) lookup[plan.target] = &plan;
+  const auto transform = [&g](int s, const std::array<int,3> &perm, int reflect) {
+    const int index[3] = {s%g.n[0],s/g.n[0]%g.n[1],s/(g.n[0]*g.n[1])};
+    int out[3];
+    for (int a = 0; a < 3; ++a) {
+      out[a] = reflect & (1 << a) ? g.n[a]-1-index[perm[a]] : index[perm[a]];
+    }
+    return g.Index(out[0],out[1],out[2]);
+  };
+  const std::array<int,3> identity = {0,1,2}, xy = {1,0,2}, yz = {0,2,1};
+  for (const auto &plan : old) {
+    for (const auto &tr : {std::make_pair(identity,1),std::make_pair(identity,2),
+                          std::make_pair(identity,4),std::make_pair(xy,0),
+                          std::make_pair(yz,0)}) {
+      if (lookup.find(transform(plan.target,tr.first,tr.second)) == lookup.end()) {
+        throw std::invalid_argument("spherical ghost target mask is not cube invariant");
+      }
+    }
+  }
+  std::vector<SphericalGhostStencil> plans;
+  plans.reserve(old.size());
+  for (const auto &raw : old) {
+    std::array<int,3> canonical = {raw.target%g.n[0],raw.target/g.n[0]%g.n[1],
+                                  raw.target/(g.n[0]*g.n[1])};
+    for (int a = 0; a < 3; ++a) {
+      canonical[a] = std::max(canonical[a],g.n[a]-1-canonical[a]);
+    }
+    std::sort(canonical.begin(),canonical.end(),std::greater<int>());
+    const int representative = g.Index(canonical[0],canonical[1],canonical[2]);
+    const auto found = lookup.find(representative);
+    if (found == lookup.end()) {
+      throw std::invalid_argument("spherical ghost mask is not cube invariant");
+    }
+    const auto &base = *found->second;
+    std::map<int,double> weights;
+    int multiplicity = 0;
+    std::array<int,3> perm = {0,1,2};
+    do {
+      for (int reflect = 0; reflect < 8; ++reflect) {
+        if (transform(representative,perm,reflect) != raw.target) continue;
+        ++multiplicity;
+        for (int l = 0; l < base.count; ++l) {
+          weights[transform(base.donors[l],perm,reflect)] += base.weights[l];
+        }
+      }
+    } while (std::next_permutation(perm.begin(),perm.end()));
+    SphericalGhostStencil plan{};
+    plan.target = raw.target;
+    for (const auto &item : weights) {
+      if (item.second == 0) continue;
+      const int s = item.first;
+      if (!g.Interior(s%g.n[0],s/g.n[0]%g.n[1],s/(g.n[0]*g.n[1]))) {
+        throw std::invalid_argument("spherical donor mask is not cube invariant");
+      }
+      if (plan.count == 216) {
+        throw std::invalid_argument(
+            "symmetric spherical ghost donor union exceeds capacity");
+      }
+      plan.donors[plan.count] = s;
+      plan.weights[plan.count++] = item.second/multiplicity;
+    }
+    plans.push_back(plan);
   }
   return plans;
 }
