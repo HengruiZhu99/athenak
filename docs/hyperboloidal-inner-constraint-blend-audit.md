@@ -97,5 +97,8 @@ Use its `verify_archive.py` for read-only verification. Captured files retain
 original bytes; do not rerun frozen collectors or scripts in archived paths.
 The pole snapshot utility is a Release check; ASan/UBSan coverage applies to
 the separately recorded nonlinear tensor gate. Neither validates exact scri.
-Production remains unchanged. The next candidate investigates the existing
-constraint-damping coefficient; it is separate from these completed results.
+Production remains unchanged. The completed
+[constraint-damping profile audit](hyperboloidal-damping-profile-audit.md)
+records the next separate candidate and its marginal mixed outcome. The
+[inner trumpet calibration](hyperboloidal-inner-trumpet-calibration.md)
+prepares the later black-hole transition without changing the Minkowski reference.

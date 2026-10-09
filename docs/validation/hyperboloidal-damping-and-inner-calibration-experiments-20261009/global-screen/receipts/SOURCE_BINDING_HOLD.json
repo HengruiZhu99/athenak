@@ -1,0 +1,13 @@
+{
+  "status": "SOURCE BINDING ONLY; no compile/run until final continuum frozen index is verified",
+  "shared_helper_source": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/damping_profile.hpp",
+  "shared_helper_sha256": "64ba382f509e81fe347b96e915d3933ee7188c97fd6a054524b1aa187a891532",
+  "overlay_sha256": "82eb628d5d43ccdeff6b8a6b59d87539736bad138040df1f50c99115cdab40e1",
+  "cached_Point_sha256": "c6514461d8b5475fe6028983c17e3ad8ae4220aba0cf4c88070c4557c94920f1",
+  "native20_Point_sha256": "f17585955566e76f3320a6cc6a4f21d0c4268b8e9c23417866c69cf58fd94555",
+  "variant": "C0 kappa1=input/alpha; prescribed kappa2=(2*S/a^2/input-1)*(1-Omega)",
+  "actual_native_changes": "include plus four kappa2 ConformalRHS arguments (two evolution/reference, two pole diagnostics)",
+  "reference_subtraction": "existing C0 reference residual only, using same prescribed profile",
+  "unchanged_gauge_stencils_ghosts_projector": true,
+  "profile_depends_on_fixed_analytic_Omega": true
+}

@@ -1,0 +1,51 @@
+Independent C0 damping-profile local gate review: PASS for finite-Omega
+exploratory preflight admission only. The final v2 index is c9180b5bbedb2a0069a54853768a96f8b0f69736c30a8bc9c277b77f11fc39ea.
+Original v1 remains immutable. Only REPORT.md changes among shared files:
+rational reconstruction and launch-versus-freeze prose corrections. Numerical
+receipt, formulas, compiled source and matrices are identical.
+
+The 378 source paths and12 exit0 empty-stderr commands verify unchanged.
+All frozen small-file and seven external large-output hashes verify. Actual
+4004 tensor points agree Release/ASan/UBSan, and the360-case complete principal
+basis is unchanged. No existing frozen file or production source was edited.
+
+Independent exact normalization gives m=-(kappa_input-2S/a^2)(1-Omega),
+Delta Pdot=Delta Thetadot=-mTheta/Omega and Delta Kij=-mTheta gammaij/Omega.
+Delta Hdot=-4K mTheta/Omega. The complete momentum correction is
+2m partial_iTheta/Omega+2(kappa_input-2S/a^2)Omega_iTheta/Omega^2.
+The isolated d-kappa2 piece has only1/Omega; the full coefficient gradient
+combines it with the derivative of1/Omega and has1/Omega^2.
+Reference sigma_C0=-4/a-(kappa_input-2S/a^2), and sigma_C1=-2/a-d only
+describes a hypothetical reference comparison; no C1 repair is included.
+Constant sigma is an exact outer reference-background statement, not live closure.
+
+Recomputed760 primitive matrix differences contain exactly the two predicted
+Theta columns. The worst sampled reference real roots are positive:
+base3.145118116041608 and profile3.146001179647556. All96 sampled nonpositive
+root RK3 tests pass at actual native minimum Omega/pole timesteps and include
+actual grid Nyquist frequencies. This is not matrix contractivity or an
+all-negative primitive spectrum claim.
+
+Eight rationally reconstructed analytic pole matrices have five semisimple
+zero modes and exact positive Hurwitz minors in each nonzero factor. This
+exact algebra applies to the reconstructed matrix, not floating eigenvalues.
+Recomputed1000 coefficient-aware actual20 constraint-chain rows have finest
+error7.45301985124587e-9. All200 sampled local eight-system roots are negative,
+worst-1.1313836327929108. Omitting the isolated d-kappa2 term gives .008004626
+relative closure error. Pure-gauge initial constraint columns vanish exactly;
+the differentiated coefficient-FD gauge cancellation has roundoff/truncation
+residual, with finest absolute maximum4.35026833e-4 in the large outer matrix.
+
+The primary Eq19 comparison is pinned separately to independent-damping-mapping
+frozen index3a2b38c659820243b4d850afeff0d819e4c946f01e25cf22ae6d8fb5ababd5d6.
+Its all-frequency flat interval requires kappa_input>=2S/a^2>0 for this
+family with0<=Omega<=1. This supplies no variable-coefficient energy theorem.
+
+The one failed independent reader attempt is preserved in
+failure-0-large-output-location. It incorrectly looked for metadata-only
+large stdout arrays inside the immutable folder. The corrected reader uses
+the externally indexed original array path. It is a review-path failure,
+not a failed scientific gate; original source/log/observation are retained.
+
+No global energy, exact-scri regularity, nonlinear constraint preservation,
+stable finite pulse, native evolution acceptance or BH compatibility follows.

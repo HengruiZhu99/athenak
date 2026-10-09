@@ -1,0 +1,137 @@
+{
+  "status": "PASS",
+  "final_gate_index_sha256": "c9180b5bbedb2a0069a54853768a96f8b0f69736c30a8bc9c277b77f11fc39ea",
+  "preserved_v1_index_sha256": "5f12b22de8c9fb75761cf6c723d55938f4dfdc144505d3368a45b93f94d5ec4d",
+  "v2_shared_file_changes": [
+    "REPORT.md"
+  ],
+  "unchanged_source_paths": 378,
+  "commands_exit0": 12,
+  "helper_sha256": "64ba382f509e81fe347b96e915d3933ee7188c97fd6a054524b1aa187a891532",
+  "exact_general_profile": {
+    "m": "(1 - Omega)*(2*S/a**2 - kappa)",
+    "effective": "(-2*Omega*S + Omega*a**2*kappa + 2*S)/a**2",
+    "Delta_Hdot": "-4*K*Theta*(Omega - 1)*(-2*S + a**2*kappa)/(Omega*a**2)",
+    "isolated_dkappa2_M_value": "Omega_i*Theta*(-4*S/a**2 + 2*kappa)/Omega",
+    "total_M_value": "2*Omega_i*Theta*(-2*S + a**2*kappa)/(Omega**2*a**2)",
+    "full_Delta_Mdot": "2m Theta_i/Omega + 2(kappa_input-2S/a^2)Omega_i Theta/Omega^2",
+    "sigma_C0_reference": "(2*S - a**2*kappa - 4*a)/a**2",
+    "sigma_C1_reference_only": "(2*S - a**2*kappa - 2*a)/a**2",
+    "flat_interval_restriction": "kappa_input>=2S/a^2>0 with0<=Omega<=1; rho=kappa2",
+    "dimensions": "Omega,kappa2 dimensionless; S,a length; kappa_input,Kcrit,d,m inverse length"
+  },
+  "tensor": {
+    "rows": 4004,
+    "exact_core_kappa2_zero": true,
+    "Einstein_addition_max": 0,
+    "nonlinear_parts_identity_error": 1.413277749057836e-16,
+    "reference_fixedpoint": 1.042721464727947e-12,
+    "kappa2_min": -0.95,
+    "kappa2_max": 0,
+    "no_new_double_pole": true
+  },
+  "principal": {
+    "passed_kernel_cases": 360,
+    "max_kernel_symbol_error": 3.552713678800501e-15,
+    "max_left_eigenfield_error": 8.881784197001252e-16,
+    "max_normalized_basis_condition": 11.529152606733899,
+    "old_endpoint_geometric_multiplicity": 3,
+    "harmonic_endpoint_complete": true
+  },
+  "finite_full20_rows": 760,
+  "only_two_Theta_column_difference_error": 3.0952025874438033e-15,
+  "reference_primitive_worst": [
+    {
+      "a": 0.5,
+      "profile": 0,
+      "perturb": 0,
+      "r": 0.3,
+      "Omega": 0.9911460315197576,
+      "k": 0,
+      "oblique": 0,
+      "max_real": 3.145118116041608
+    },
+    {
+      "a": 0.5,
+      "profile": 1,
+      "perturb": 0,
+      "r": 0.3,
+      "Omega": 0.9911460315197576,
+      "k": 0,
+      "oblique": 0,
+      "max_real": 3.146001179647556
+    }
+  ],
+  "negative_root_scalar_RK3_cases": 96,
+  "maximum_RK3_excess": 0.0,
+  "reconstructed_analytic_poles": [
+    {
+      "a": 0.5,
+      "profile": 0,
+      "reconstruction_max": 8.881784197001252e-16,
+      "zero_nullity": 5,
+      "square_zero_nullity": 5
+    },
+    {
+      "a": 0.5,
+      "profile": 1,
+      "reconstruction_max": 8.881784197001252e-16,
+      "zero_nullity": 5,
+      "square_zero_nullity": 5
+    },
+    {
+      "a": 0.75,
+      "profile": 0,
+      "reconstruction_max": 3.552713678800501e-15,
+      "zero_nullity": 5,
+      "square_zero_nullity": 5
+    },
+    {
+      "a": 0.75,
+      "profile": 1,
+      "reconstruction_max": 1.7763568394002505e-15,
+      "zero_nullity": 5,
+      "square_zero_nullity": 5
+    },
+    {
+      "a": 1,
+      "profile": 0,
+      "reconstruction_max": 2.220446049250313e-16,
+      "zero_nullity": 5,
+      "square_zero_nullity": 5
+    },
+    {
+      "a": 1,
+      "profile": 1,
+      "reconstruction_max": 2.220446049250313e-16,
+      "zero_nullity": 5,
+      "square_zero_nullity": 5
+    },
+    {
+      "a": 2,
+      "profile": 0,
+      "reconstruction_max": 5.551115123125783e-17,
+      "zero_nullity": 5,
+      "square_zero_nullity": 5
+    },
+    {
+      "a": 2,
+      "profile": 1,
+      "reconstruction_max": 5.551115123125783e-17,
+      "zero_nullity": 5,
+      "square_zero_nullity": 5
+    }
+  ],
+  "constraint_chain_rows": 1000,
+  "finest_constraint_rows": 200,
+  "max_finest_relative_closure_error": 7.45301985124587e-09,
+  "maximum_local8_real_root": -1.1313836327929108,
+  "omitted_dkappa2_negative_control": 0.008004626004653587,
+  "finest_gauge_D_absolute_max": 0.0004350268331568213,
+  "source_notes": "C0 only; no C1/covector repair or new double pole; direct spatial-Z damping, physical-P storage and gauge unchanged",
+  "admission": "Fixed finite-Omega exploratory global/native reference/short gates only",
+  "limitations": "Reference sigma cancellation is not live closure; positive finite primitive roots remain; sampled scalar RK admission is not matrix contractivity; no global energy, nonlinear scri, stable finite pulse or BH acceptance",
+  "source_sha256": "4bfb9986808c8734895b7bbeeff72a2973521986efbbce7150e617d811a1d568",
+  "numpy": "2.0.2",
+  "sympy": "1.14.0"
+}

@@ -1,0 +1,40 @@
+--- /Users/hz0693/research/hyperboloidal/src/z4c/hyperboloidal/cartesian_patch.hpp
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-kappa2-profile/overlay/z4c/hyperboloidal/cartesian_patch.hpp
+@@ -13,6 +13,7 @@
+ #include "z4c/hyperboloidal/layer_gauge.hpp"
+ #include "z4c/hyperboloidal/interior_dissipation.hpp"
+ #include "z4c/hyperboloidal/spherical_ghosts.hpp"
++#include "damping_profile.hpp"
+ 
+ namespace z4c {
+ namespace hyperboloidal {
+@@ -336,9 +337,9 @@
+       GaugeRHS<Real> gauge_rhs{};
+       if (!(u.metric.g[0][0] > 0)
+           || !(u.metric.g[0][0]*u.metric.g[1][1]-u.metric.g[0][1]*u.metric.g[0][1] > 0)
+-          || !AssembleInterior(ConformalRHS(u,omega,damping/u.alpha.value,Real(0)),
++          || !AssembleInterior(ConformalRHS(u,omega,damping/u.alpha.value,ResearchKappa2Profile(omega.omega,ref.scri_radius,ref.curvature_radius,damping)),
+                                 omega.omega,rhs)
+-          || !AssembleInterior(ConformalRHS(background,omega0,damping,Real(0)),
++          || !AssembleInterior(ConformalRHS(background,omega0,damping,ResearchKappa2Profile(omega0.omega,ref.scri_radius,ref.curvature_radius,damping)),
+                                 omega.omega,rhs0)
+           || !AssembleGaugeInterior((ref.layer.enabled || lg.physical_trace_lapse)
+               ? InteriorLayerGauge(p,u,lg)
+@@ -486,7 +487,7 @@
+       const Real width = 2*Kokkos::fmax(g.h[0],Kokkos::fmax(g.h[1],g.h[2]));
+       if (radius > g.radius-width) {
+         const auto parts = ConformalRHS(u,CartesianOmega(u,p),
+-                                        damping/u.alpha.value,Real(0));
++                                        damping/u.alpha.value,ResearchKappa2Profile(p.omega,ref.scri_radius,ref.curvature_radius,damping));
+         if (!parts.valid) {
+           ++bad;
+           return;
+@@ -495,7 +496,7 @@
+         Z4cJet<Real> background{};
+         AddReferenceJet(background,p,ref);
+         const auto pole0 = ConformalRHS(background,CartesianOmega(background,p),
+-                                        damping,Real(0)).pole;
++                                        damping,ResearchKappa2Profile(p.omega,ref.scri_radius,ref.curvature_radius,damping)).pole;
+         Real delta = Kokkos::fmax(Kokkos::abs(pole.chi-pole0.chi),
+                                   Kokkos::abs(pole.trace-pole0.trace));
+         delta = Kokkos::fmax(delta,Kokkos::abs(pole.theta-pole0.theta));

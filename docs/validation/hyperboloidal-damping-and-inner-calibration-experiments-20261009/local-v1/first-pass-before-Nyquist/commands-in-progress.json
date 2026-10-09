@@ -1,0 +1,222 @@
+[
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/constraint_tangent.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/constraint_tangent"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.938649,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/full20_profile.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/full20_profile"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.787034458,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/tensor_gate.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/tensor_gate"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.7726004590000002,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/principal_profile.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/principal_profile"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.5325421250000004,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/usr/bin/c++",
+      "-std=c++17",
+      "-O1",
+      "-DKOKKOS_DEPENDENCE",
+      "-Isrc",
+      "-Ibuild-layer-release",
+      "-Ibuild-layer-release/kokkos",
+      "-Ibuild-layer-release/kokkos/core/src",
+      "-Ikokkos/core/src",
+      "-Ibuild-layer-release/kokkos/containers/src",
+      "-Ikokkos/containers/src",
+      "-Ibuild-layer-release/kokkos/algorithms/src",
+      "-Ikokkos/algorithms/src",
+      "-Ibuild-layer-release/kokkos/simd/src",
+      "-Ikokkos/simd/src",
+      "-isystem",
+      "kokkos/tpls/desul/include",
+      "-isystem",
+      "kokkos/tpls/mdspan/include",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/tensor_gate.cpp",
+      "-o",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/tensor_gate_debug"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 1.2182898329999996,
+    "stdout": ""
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/tensor_gate"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.5957003329999999,
+    "stdout_file": "tensor-gate.json",
+    "stdout_sha256": "70ecb178cf713bca2647490ea783ab43c669cf8a641ebb11fcc48cd7180d9ea5"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/tensor_gate_debug"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.7452749170000006,
+    "stdout_file": "tensor-gate-debug.json",
+    "stdout_sha256": "70ecb178cf713bca2647490ea783ab43c669cf8a641ebb11fcc48cd7180d9ea5"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/full20_profile",
+      "pole"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.5104047089999995,
+    "stdout_file": "leading-pole.json",
+    "stdout_sha256": "9946558a8856408e59e94626033f370e5f2a1c4b80140bfbf719dcd482e0a238"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/full20_profile"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.17653904199999992,
+    "stdout_file": "full20.json",
+    "stdout_sha256": "9d036a2bab639ac431243ca7cc396501283802ff702bfde9ad823000c5c9b090"
+  },
+  {
+    "command": [
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/constraint_tangent"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 15.453257208,
+    "stdout_file": "constraint-profile.json",
+    "stdout_sha256": "5cb9d59443cea63f1ae9545b8b18ade25ba2190366a27d977d399ed1211819a3"
+  },
+  {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/check_kernel_symbol.py",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/damping-profile-control/principal_profile"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "seconds": 0.6020832919999997,
+    "stdout_file": "principal.log",
+    "stdout_sha256": "876b3dad0b72950c53e58f164836b97a2bef2806259fe4001fc8142c44ac1e27"
+  }
+]

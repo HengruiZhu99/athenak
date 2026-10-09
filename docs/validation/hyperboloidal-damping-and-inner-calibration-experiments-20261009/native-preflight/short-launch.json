@@ -1,0 +1,29 @@
+{
+  "scope": "Fixed finite-Omega C0 damping-profile exploratory native preflight; no stable pulse or scri closure.",
+  "launch_head": "2392ccd1345430fe11786a7583793c2060d16f9c",
+  "compiled_production_implementation": "27c19d20696ea6dd4704032c51dfd026218f64f2",
+  "native_build_receipt_sha256": "062ba8b3103f90233354134ab61a99892eb5cd8a7b61de5cf0d396dc61129cfe",
+  "native_executable_sha256": "b7e82aea627cd10b89958c993c1429b0322df60bcb62dd1cd7ce46b2a5341b84",
+  "launch_script_sha256": "6fd88589fc3fa214e2e1b6e08f96c52939d98e5e053afbe28e81659c861ac055",
+  "override_sha256": "0a3b3a2eb7e50f8b2d181607f3a8a4cbf6e83d617a7fa1eec381111061dd5706",
+  "all_recorded_source_private_object_dependency_link_hashes_verified": true,
+  "profile_gate_index_sha256": "c9180b5bbedb2a0069a54853768a96f8b0f69736c30a8bc9c277b77f11fc39ea",
+  "profile_gate_receipt_sha256": "d832017b2091f9f9e618fd9f4b6cfdbce0afcb19972ad43eb8217bd4681bdbaa",
+  "shell_pole_diagnostic": "Actual C0 ConformalRHS pole using same prescribed kappa2 profile in live/reference assembly.",
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "/Users/hz0693/research/hyperboloidal/tst/hyperboloidal/run_layer_validation.py",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/profiled-damping-native/native-build/athena-profiled-c0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/profiled-damping-native/short",
+    "--suite",
+    "long",
+    "--overrides",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/profiled-damping-native/native.athinput",
+    "--duration",
+    ".02",
+    "--output-cadence",
+    ".01"
+  ],
+  "stage": "short",
+  "reference_audit_sha256": "2fb507ba42a25a78ce2fe8eb77b501c4db5be9dca3b0047b00af7350ddb19a78"
+}

@@ -1,0 +1,30 @@
+{
+  "formula": "Delta P_t=Delta Theta_t=-kinput*kappa2(Omega)*Theta/Omega; other native RHS fields unchanged",
+  "semantics": "Actual sampled matrix attribution only; no boundary/global stability theorem",
+  "gauges": {
+    "production": {
+      "profile_matrix_sha256": "6fcf31f4cf59c527bbfa4d6bd23b7987dce82c0bf90d88580e6b393785fd88b4",
+      "C0_matrix_sha256": "bfb62f29aaa426f173aa75ddcfa0c86d9784c0542ea4a2a6b69debb5a85eb22a",
+      "expected_nonzero_entries": 3280,
+      "max_expected_Theta_coupling": 740.0289855073963,
+      "max_actual_changed_entry": 740.0289855073952,
+      "max_absolute_error_vs_exact_Theta_only_change": 6.77347067323808e-11,
+      "max_absolute_unexpected_entry": 0.0,
+      "initial_pure_gauge_action_change_l2": 0.0,
+      "initial_pure_gauge_action_change_linf": 0.0,
+      "passed_matrix_attribution_1e-8": true
+    },
+    "spatialnorm": {
+      "profile_matrix_sha256": "510ca1a9beb45209bd26ff2506c473c2d6641da1ee4ee2bd1dd8cc490d321393",
+      "C0_matrix_sha256": "767b7c998e27db4d598e260f80e2181afe31d427c3f58c9a7bb60e30c35dede6",
+      "expected_nonzero_entries": 3280,
+      "max_expected_Theta_coupling": 740.0289855073963,
+      "max_actual_changed_entry": 740.0289855073952,
+      "max_absolute_error_vs_exact_Theta_only_change": 6.77347067323808e-11,
+      "max_absolute_unexpected_entry": 0.0,
+      "initial_pure_gauge_action_change_l2": 0.0,
+      "initial_pure_gauge_action_change_linf": 0.0,
+      "passed_matrix_attribution_1e-8": true
+    }
+  }
+}

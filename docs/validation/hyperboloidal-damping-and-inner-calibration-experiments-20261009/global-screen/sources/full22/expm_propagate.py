@@ -1,0 +1,12 @@
+"""Projected continuous global tangent propagation, explicitly not finite-RK3 map."""
+from pathlib import Path
+import argparse,json,time
+import numpy as np
+from scipy.sparse import csr_matrix,block_diag,load_npz,save_npz
+from scipy.sparse.linalg import expm_multiply
+w=Path(__file__).resolve().parent;p=argparse.ArgumentParser();p.add_argument('gauge',choices=['production','spatialnorm']);p.add_argument('--stop',type=float,default=2.);p.add_argument('--samples',type=int,default=81);a=p.parse_args();g=a.gauge;prefix=w/f'{g}-cache0.0001';meta=json.loads(Path(str(prefix)+'-metadata.json').read_text());N=meta['points'];t0=time.monotonic()
+A=load_npz(str(prefix)+'-J22.npz');L=np.fromfile(str(prefix)+'-lift.bin',dtype='<f8').reshape(N,22,20);P=np.fromfile(str(prefix)+'-restrict.bin',dtype='<f8').reshape(N,20,22);Ls=block_diag(L,format='csr');Ls.eliminate_zeros();Ps=block_diag(P,format='csr');Ps.eliminate_zeros();J=Ps@A@Ls;J.eliminate_zeros();J.sort_indices();save_npz(w/f'{g}-projected-J20.npz',J);print('assembled',g,J.shape,J.nnz,'seconds',time.monotonic()-t0,flush=True)
+vectors=dict(np.load(w.parent/f'{g}-validation-vectors.npz'));names=['gauge_pulse','shell_random'];B=np.column_stack([vectors[name] for name in names]);norm=np.sqrt(np.sum(B*B,axis=0));B=B/norm[None,:];t=time.monotonic();small=expm_multiply(J,B,start=0,stop=.01,num=2,traceA=float(J.diagonal().sum()))[-1];print('pilot',g,'seconds',time.monotonic()-t,'relative euclidean amplifications',np.linalg.norm(small,axis=0).tolist(),flush=True)
+t=time.monotonic();times=np.linspace(0,a.stop,a.samples);values=expm_multiply(J,B,start=0,stop=a.stop,num=a.samples,traceA=float(J.diagonal().sum()));seconds=time.monotonic()-t;print('propagated',g,'seconds',seconds,'final euclidean norms',np.linalg.norm(values[-1],axis=0).tolist(),flush=True)
+np.savez_compressed(w/f'{g}-projected-expm-t{a.stop}.npz',times=times,values=values,names=np.asarray(names),initial_original_norms=norm,pilot_t01=small)
+receipt={'gauge':g,'semantics':'exp(t P_ref J22 Lift): continuous projected semidiscrete global native generator; not exact finite-RK3 stroboscopic map','stop':a.stop,'samples':a.samples,'shape':list(J.shape),'nnz':int(J.nnz),'trace':float(J.diagonal().sum()),'seconds':seconds,'total_seconds':time.monotonic()-t0,'final_euclidean_amplification':np.linalg.norm(values[-1],axis=0).tolist(),'names':names,'initial_original_norms':norm.tolist()};(w/f'{g}-projected-expm-t{a.stop}.json').write_text(json.dumps(receipt,indent=2)+'\n')

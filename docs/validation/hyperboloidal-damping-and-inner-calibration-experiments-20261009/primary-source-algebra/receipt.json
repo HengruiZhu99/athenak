@@ -1,0 +1,103 @@
+{
+  "status": "PASS",
+  "paper": "Gundlach, Calabrese, Hinder, Martin-Garcia, Constraint damping in the Z4 formulation and harmonic gauge",
+  "primary_url": "https://arxiv.org/pdf/gr-qc/0504114v2",
+  "version": "arXiv:gr-qc/0504114v2, 14 July 2005",
+  "equation_locations": "Eq2 and Eqs6-8: PDF page2; Eq19 and prose after Eq23: PDF page3",
+  "mapping": "rho=kappa2, kappa=physical kappa1; K sign and future normal agree",
+  "polynomial": "-k**2*rho*w**2 + s**4 + s**3*(k*rho + 3*k) + s**2*(k**2*rho + 2*k**2 + 2*w**2) + s*(k*rho*w**2 + 3*k*w**2) + w**4",
+  "delta2": "k*(rho + 3)*(k**2*rho + 2*k**2 + w**2)",
+  "delta3": "2*k**4*w**2*(rho + 1)*(rho + 3)**2",
+  "all_nonzero_frequency_flat_Hurwitz_range": "kappa>0 and -1<rho<=0",
+  "rho_positive_restriction": "For rho>0, stability additionally requires omega\u00b2>kappa\u00b2rho; below that threshold at least one positive real root exists",
+  "positive_counterexample": {
+    "kappa": 1,
+    "rho": ".1",
+    "omega": ".1",
+    "polynomial": "s**4 + 31*s**3/10 + 53*s**2/25 + 31*s/1000 - 9/10000",
+    "constant": "-9/10000",
+    "positive_root_80digits": "0.014449912902564825050064862579600167148098163249546848566715220412469188699317627"
+  },
+  "safe_parameter_checks": [
+    {
+      "rho": "-1/5",
+      "omega_over_kappa": "1/100",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/5",
+      "omega_over_kappa": "1/10",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/5",
+      "omega_over_kappa": "1",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/5",
+      "omega_over_kappa": "10",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/5",
+      "omega_over_kappa": "100",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/10",
+      "omega_over_kappa": "1/100",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/10",
+      "omega_over_kappa": "1/10",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/10",
+      "omega_over_kappa": "1",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/10",
+      "omega_over_kappa": "10",
+      "Hurwitz": true
+    },
+    {
+      "rho": "-1/10",
+      "omega_over_kappa": "100",
+      "Hurwitz": true
+    },
+    {
+      "rho": "0",
+      "omega_over_kappa": "1/100",
+      "Hurwitz": true
+    },
+    {
+      "rho": "0",
+      "omega_over_kappa": "1/10",
+      "Hurwitz": true
+    },
+    {
+      "rho": "0",
+      "omega_over_kappa": "1",
+      "Hurwitz": true
+    },
+    {
+      "rho": "0",
+      "omega_over_kappa": "10",
+      "Hurwitz": true
+    },
+    {
+      "rho": "0",
+      "omega_over_kappa": "100",
+      "Hurwitz": true
+    }
+  ],
+  "printed_equation_vs_prose": "Printed Eq19 gives the restriction above; the later broader rho>-1 prose is not a sufficient all-frequency claim. No author-intent inference.",
+  "scope": "Constant-coefficient inertial flat frozen calculation only; variable damping/normal gradients, curved lower-order terms, scri limits, nonlinear closure and native RK remain separate gates",
+  "profile_condition": "For kappa_input(1+kappa2)=2S/a\u00b2+d*Omega, all-frequency flat interval requires 0<2S/a\u00b2+d*Omega<=kappa_input at each point",
+  "source_sha256": "79e4092c7d2360501df5fe64d27144b44c2205e5b3a8e93743c55386b46591c3",
+  "sympy": "1.14.0"
+}

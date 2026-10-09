@@ -1,0 +1,43 @@
+Independent C0 kappa2-profile native reference/short preflight: PASS
+data/build integrity only. Production remains27c19d20; no stable pulse,
+scri closure, global energy or BH acceptance.
+
+Verified369 original sources plus4 norm overlays,2 private headers,6
+compile/object/dependency replacements,268 repository dependencies,182
+unchanged original objects plus4 libraries and exact link/executable.
+The original norm build receipt is copied byte-identically in dependencies.
+Profile gatev2 c9180b5b... and receipt d832017b... pin12 passing commands
+and378 unchanged inputs; historical v1 is preserved separately. Only4
+ConformalRHS kappa2 callsites plus an include change in the private patch,
+verified by restoring the entire production header byte-identically.
+Evolution, analytic reference residual and live/reference geometric pole
+diagnostics all use the same prescribed profile. Physical-P/gauge, ng3,
+ghosts, derivatives, KO and final-only projection are retained. No C1 or
+covector repair/new double pole is added.
+
+Reference t=.05:3 binary64 snapshots; runner wall17.562575875seconds.
+Maximum full-state drift1.3235296584782815e-14. Final H/M/Z=
+8.468871252039659e-14/2.7207503121927156e-14/1.2532372547752724e-15.
+Short angular pulse t=.02:3 binary64 snapshots versus2 original baseline;
+runner wall7.452683209seconds. Final H/M/Z=.0030791450287825455/
+.004895142602895229/.0011948044333206062; same-grid baseline ratios
+.9898777057170621/1.0002234802905825/.9973305876999488. Theta ratio
+1.000329439816572. This early mixed change is not finite-pulse acceptance.
+
+All25 active binary64 evolved fields are finite; lapse/chi positive,
+metric SPD,det/trace below1e-12; all active BIN fields equal exact binary32
+casts. Initial fields,coordinates,masks bitwise equal the original norm
+baseline; initial geometry also bitwise equals zero reference. Only short
+generated-input differences are output cadence .02 to .01. Historical
+physical_metric_eigen keys are Penrose gtilde/chi magnitudes; positivity
+is equivalent to physical SPD on Omega>0.
+
+The original HOLD and GATED_BUILD history and prelaunch-index-format
+failure are retained. That launcher guard expected dict records while
+the profile gate stores string hashes. It failed before any launch/RHS;
+corrected launch reads both formats without changing the as-built kernel.
+
+Frozen content is reference+short only. Root DRAFT, later live profiles,
+global/long results and separate redundant pole utility are excluded.
+Large exes/objects/dependencies/BIN/RST have hashes/metadata only. Prior
+accepted helpers and frozen gates remain unchanged.

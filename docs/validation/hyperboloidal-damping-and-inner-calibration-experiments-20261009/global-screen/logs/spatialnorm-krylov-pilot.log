@@ -1,0 +1,27 @@
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-kappa2-profile/full22-candidate/krylov_propagate.py:15: RuntimeWarning: divide by zero encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-kappa2-profile/full22-candidate/krylov_propagate.py:15: RuntimeWarning: overflow encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-kappa2-profile/full22-candidate/krylov_propagate.py:15: RuntimeWarning: invalid value encountered in matmul
+  q=V[:,:j+1].T@z;H[:j+1,j]+=q;z-=V[:,:j+1]@q
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: divide by zero encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: overflow encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:326: RuntimeWarning: invalid value encountered in matmul
+  m, s = pick_pade_structure(Am)
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: divide by zero encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: overflow encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps/scipy/linalg/_matfuncs.py:358: RuntimeWarning: invalid value encountered in matmul
+  eAw = eAw @ eAw
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-kappa2-profile/full22-candidate/krylov_propagate.py:22: RuntimeWarning: divide by zero encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-kappa2-profile/full22-candidate/krylov_propagate.py:22: RuntimeWarning: overflow encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/full-tensor-kappa2-profile/full22-candidate/krylov_propagate.py:22: RuntimeWarning: invalid value encountered in matmul
+  c=min(a.coarse,k);f=beta*(V@expm(dt*H)[:,0]);q=beta*(V[:,:c]@expm(dt*H[:c,:c])[:,0]);return f,float(np.linalg.norm(f-q)/max(np.linalg.norm(f),1e-300))
+spatialnorm gauge_pulse t 0.05 steps 3 mv 240 norm 2.290204286472337 seconds 2.57799575
+spatialnorm shell_random t 0.05 steps 3 mv 480 norm 3.5376819611731056 seconds 2.576849208
+done spatialnorm spatialnorm-projected-krylov-m50-80-h0.1-t0.05 seconds 5.182540791

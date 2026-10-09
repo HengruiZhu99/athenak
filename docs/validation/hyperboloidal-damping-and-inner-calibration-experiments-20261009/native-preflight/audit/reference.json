@@ -1,0 +1,683 @@
+{
+  "status": "PASS",
+  "scope": "Fixed finite-Omega C0 damping-profile native preflight; no stability, scri closure or BH acceptance",
+  "head": "2392ccd1345430fe11786a7583793c2060d16f9c",
+  "seconds": 0.281751959,
+  "build_verification": {
+    "status": "PASS",
+    "private_build_receipt_sha256": "062ba8b3103f90233354134ab61a99892eb5cd8a7b61de5cf0d396dc61129cfe",
+    "baseline_sources": 369,
+    "baseline_overlays": 4,
+    "private_sources": 2,
+    "private_objects": 6,
+    "repository_dependencies": 268,
+    "all182_original_objects_and4_libraries_unchanged": true,
+    "actual_compile_and_link_replacements_verified": true,
+    "compiled_objects": [
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/outputs/history.cpp",
+        "object": "54571b9830de434fb8313ed5f7bd2f9017982609c58dfd51b7f65fa9e8ff742d",
+        "dependency": "281c50138d1906cec4cea94689f0992296f4963fa977066e156d56ae49dcb705"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c.cpp",
+        "object": "0e9d17df7fb446916312be88542aaf45efa9a75afaa9757c038802476acf5692",
+        "dependency": "1d03030b2e26ca89396d7748b40631a7699d5661689553898e4369239388b1d7"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_hyperboloidal.cpp",
+        "object": "2da8696516a7567353a18dc1bd261726986329b74cedc0d9553fab04319dcaa1",
+        "dependency": "4c6075930b8daae2f885d32d049fc1bc691cbf2219a9fb1744005c949cd12617"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_calcrhs.cpp",
+        "object": "c1b46c5ea6b1bc08937a213a4375c9fa5f77877796be8dffe5b0af6291471568",
+        "dependency": "124d3570a4c65b612cad5192aadf4fba5b51637ec6e689a10bac1cfd24938e6a"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_newdt.cpp",
+        "object": "aa7679d413d638d7f995fec9551a429f3db48e1f1e98566d705a277371fea583",
+        "dependency": "dc4664df17828d9cac8575d23661e87b292d8418b493ffcb3236583e2d2e2d18"
+      },
+      {
+        "source": "/Users/hz0693/research/hyperboloidal/src/z4c/z4c_tasks.cpp",
+        "object": "160c9b32b0a91a67f402c3fc9c1aa39b3a3de90c96e2d795e5372d03af23a109",
+        "dependency": "dbe2dec3a7caefe860f384543b773eec18fff0dde6d042abc8bc083b55f46eb4"
+      }
+    ],
+    "native_override_byteidentical": true,
+    "frozen_profile_gate_index": "c9180b5bbedb2a0069a54853768a96f8b0f69736c30a8bc9c277b77f11fc39ea",
+    "same_profile_in_evolution_reference_and_geometric_pole_diagnostic": true,
+    "no_C1_or_covector_repair_and_no_new_double_pole": true,
+    "baseline_executable_sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+    "private_executable_sha256": "b7e82aea627cd10b89958c993c1429b0322df60bcb62dd1cd7ce46b2a5341b84"
+  },
+  "private_case": "reference-long-N24",
+  "baseline_case": "reference-long-N24",
+  "input_parameter_differences": {},
+  "initial_active25_binary64_bitwise_equal": true,
+  "initial_geometry_bitwise_equal_zero_reference": true,
+  "coordinates_masks_and_grid_bitwise_equal": true,
+  "exact_final_comparison_time": 0.05,
+  "original_HST_diagnostics": {
+    "H": {
+      "private": 8.468871252039659e-14,
+      "baseline": 8.477891400533267e-14,
+      "ratio": 0.9989360386837415
+    },
+    "M": {
+      "private": 2.7207503121927156e-14,
+      "baseline": 2.687926841005914e-14,
+      "ratio": 1.01221144515024
+    },
+    "Z": {
+      "private": 1.2532372547752724e-15,
+      "baseline": 1.2542892301336465e-15,
+      "ratio": 0.9991612976233065
+    },
+    "Theta": {
+      "private": 1.008461260419289e-15,
+      "baseline": 9.974238931711035e-16,
+      "ratio": 1.011065874122079
+    }
+  },
+  "final_equal_time_binary64_fields": {
+    "z4c_chi": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_gxx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_gxy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 7.234269199434067e-18,
+      "final_rms_difference": 5.567568126798064e-19
+    },
+    "z4c_gxz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 5.293496164289296e-18,
+      "final_rms_difference": 5.327587361133573e-19
+    },
+    "z4c_gyy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_gyz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 7.239296534849734e-18,
+      "final_rms_difference": 5.288005764110083e-19
+    },
+    "z4c_gzz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_Khat": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 3.1632383239341e-22,
+      "final_rms_difference": 7.55418505034476e-24
+    },
+    "z4c_Axx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 2.6466670829665546e-16,
+      "final_rms_difference": 1.687774397302037e-17
+    },
+    "z4c_Axy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.2810309372938636e-16,
+      "final_rms_difference": 9.606153624018699e-18
+    },
+    "z4c_Axz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.0165576701820797e-16,
+      "final_rms_difference": 9.460155393304772e-18
+    },
+    "z4c_Ayy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 2.0879523586855497e-16,
+      "final_rms_difference": 1.6466978550036833e-17
+    },
+    "z4c_Ayz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.2142749406837e-16,
+      "final_rms_difference": 9.344214016251642e-18
+    },
+    "z4c_Azz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.7298887807011676e-16,
+      "final_rms_difference": 1.6001414730439054e-17
+    },
+    "z4c_Gamx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 5.249721312856137e-16,
+      "final_rms_difference": 4.202519050892179e-17
+    },
+    "z4c_Gamy": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 6.310413581660221e-16,
+      "final_rms_difference": 4.190736729528987e-17
+    },
+    "z4c_Gamz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 3.6899326742700523e-16,
+      "final_rms_difference": 4.1235253836661927e-17
+    },
+    "z4c_Theta": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 3.8457538033045716e-16,
+      "final_rms_difference": 2.5429081414900994e-17
+    },
+    "z4c_alpha": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_betax": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 9.4700693977415e-24,
+      "final_rms_difference": 2.5460014344474894e-25
+    },
+    "z4c_betay": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 1.0151268809941148e-23,
+      "final_rms_difference": 2.452641621040276e-25
+    },
+    "z4c_betaz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 9.127920282542161e-24,
+      "final_rms_difference": 2.6192212790687244e-25
+    },
+    "z4c_Bx": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_By": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    },
+    "z4c_Bz": {
+      "initial_max_difference": 0.0,
+      "final_max_difference": 0.0,
+      "final_rms_difference": 0.0
+    }
+  },
+  "private_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/profiled-damping-native/reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "048dd1c5c608af024ddde2c631b3d536bda9f3550553d8925b31114b45720c11",
+          "bytes": 2819674
+        },
+        "build-layer-research/profiled-damping-native/reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "a5d92f2e6825b858faf3c32e540559913044dad9d1418617c149d7815c5dfb10",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0886129623461526e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "3e6696c915eafb612c379bfd21a2b2d0354dc867dccfae7f651c6ffb4c89ea76",
+          "bytes": 2819927
+        },
+        "build-layer-research/profiled-damping-native/reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "03bde917c1818fbfd5af3a725035a318e8970dfe1005a6cd7a37d831dcd7bc20",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.3235296584782815e-14
+    }
+  ],
+  "baseline_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+          "bytes": 2819674
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0872299590955965e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+          "bytes": 2819927
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.3093295951669232e-14
+    }
+  ],
+  "zero_reference_snapshots": [
+    {
+      "time": 0.0,
+      "cycle": 0,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353704,
+      "physical_metric_eigen_min": 0.9999999999999981,
+      "physical_metric_eigen_max": 2.2666419165287124,
+      "det_error_max": 8.881784197001252e-16,
+      "trace_error_max": 8.326672684688674e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+          "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+          "bytes": 2819329
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+          "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+          "bytes": 5411042
+        }
+      },
+      "full_precision_drift_from_initial_max": 0.0
+    },
+    {
+      "time": 0.02523632812499913,
+      "cycle": 59,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+          "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+          "bytes": 2819674
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+          "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.0872299590955965e-14
+    },
+    {
+      "time": 0.05,
+      "cycle": 117,
+      "restart_header_dt": 0.00042773437499998563,
+      "nghost": 3,
+      "physical_box_shape": [
+        25,
+        24,
+        24,
+        24
+      ],
+      "active_cells": 6152,
+      "all_25_active_fields_finite": true,
+      "all_25_BIN_quantizations_bitwise_equal": true,
+      "alpha_min": 0.9812130534015334,
+      "chi_min": 0.7612705478353703,
+      "physical_metric_eigen_min": 0.9999999999999982,
+      "physical_metric_eigen_max": 2.2666419165287133,
+      "det_error_max": 6.661338147750939e-16,
+      "trace_error_max": 4.440892098500626e-16,
+      "mask_box_sha256": "fbf06e232d2d0630e8fa3bc6fcb8173f45cd157ba503237d6d226f2228024da9",
+      "files": {
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+          "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+          "bytes": 2819927
+        },
+        "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+          "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+          "bytes": 5411678
+        }
+      },
+      "full_precision_drift_from_initial_max": 1.3093295951669232e-14
+    }
+  ],
+  "all_run_files": {
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/athena-validation": {
+      "sha256": "dd1d189210abd4e094da339dd73e3014357924b343c9f08f658eaf8cd4ae172d",
+      "bytes": 10432216
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "5bfd4aae1cd93f3c27abcd3e5358d2edb98b276e5b02fa52d317790619147c88",
+      "bytes": 1955271
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "c2abf3d9de384d103efdda70abd39c3be755265ee4d2222a84478e31c6cd0952",
+      "bytes": 1955460
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "e18486ebd9cdfa13e6c9c933e70450cf4d5c047290fc7d7bedeb3ed4ce1c73c2",
+      "bytes": 1955853
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "b016de811a4bbfffd2e90a2b104a6e1180ec751f416e5d88493fbac6fcd8b097",
+      "bytes": 875184
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "62e30c8ec2381820627f2937cb095567ee3f748bf712024dec200d5f04385091",
+      "bytes": 875105
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "eaa476c0aa9715df1dc42c42369558323248fffec19c00b941e5e0952049a1d5",
+      "bytes": 875742
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+      "bytes": 2819329
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "5a24850fffec9e3fce120f4fcb29b9d192e3b19dbb9c738c9389cb08fb5a31f8",
+      "bytes": 2819674
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "36cda0915a41327ffcc123b1d7bb29e5c6610ea561af196ee2bee066959a1448",
+      "bytes": 2819927
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "32fce4a8c928311c21bae52cd6cefa86dbc347988e53e7f55701bbe956773395",
+      "bytes": 1397
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/layer.athinput": {
+      "sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "bytes": 2385
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+      "bytes": 5411042
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "a6be34aec55a8d3a829b55f972c6ea6f9781af01ba5e2d11bb986425168978a4",
+      "bytes": 5411678
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "b4bbd5becbdeca65444d160e0c2a1ee05d7342388e0b7813ac89a8e7a9b17ade",
+      "bytes": 5411678
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/reference-long-N24/run.log": {
+      "sha256": "bd63f8dce3560f35c6b0539b4cf0da656937bab9930e08ee9e89bb6f2c1f91d2",
+      "bytes": 621
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/results.json": {
+      "sha256": "16cae97747a0b072fac20f16c7e64fbd50e007aca2e34aebb415cc5028939e46",
+      "bytes": 10838
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/continuum/preferred/native-overlay/spatial-norm-family/native-reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    },
+    "build-layer-research/profiled-damping-native/reference/athena-validation": {
+      "sha256": "b7e82aea627cd10b89958c993c1429b0322df60bcb62dd1cd7ce46b2a5341b84",
+      "bytes": 10432224
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.adm.00000.bin": {
+      "sha256": "5bfd4aae1cd93f3c27abcd3e5358d2edb98b276e5b02fa52d317790619147c88",
+      "bytes": 1955271
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.adm.00001.bin": {
+      "sha256": "27ecddcc7d66ec2e56166c03d390fd62b03e28be517519e41a8987fd2f20f34f",
+      "bytes": 1955460
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.adm.00002.bin": {
+      "sha256": "6f06493a6e09f14989d5427d371ab351b2012f35196323b1854b58d6f7f0388f",
+      "bytes": 1955853
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.con.00000.bin": {
+      "sha256": "b016de811a4bbfffd2e90a2b104a6e1180ec751f416e5d88493fbac6fcd8b097",
+      "bytes": 875184
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.con.00001.bin": {
+      "sha256": "5dc71cf8361f57a27e0a9dfbe6fbf53b4f29516e1735d04c4cd84469ca447777",
+      "bytes": 875105
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.con.00002.bin": {
+      "sha256": "403a37e174dbc5827e29d0e720fa73389bb42f14e44e3988fa5e3260ec66fe44",
+      "bytes": 875742
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.z4c.00000.bin": {
+      "sha256": "857c0e4c8ded5c2e7998af6591e887de879ed9cb5c8bc243758ce2dfb3950b62",
+      "bytes": 2819329
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.z4c.00001.bin": {
+      "sha256": "048dd1c5c608af024ddde2c631b3d536bda9f3550553d8925b31114b45720c11",
+      "bytes": 2819674
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/bin/hyp.z4c.00002.bin": {
+      "sha256": "3e6696c915eafb612c379bfd21a2b2d0354dc867dccfae7f651c6ffb4c89ea76",
+      "bytes": 2819927
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/hyp.z4c.user.hst": {
+      "sha256": "596fe20c8b909bc5e628b801505c91f461d288b5c73c918b1b550f48095feafc",
+      "bytes": 1397
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/layer.athinput": {
+      "sha256": "2ba186c3d67ff55647ee399a74381607b9a9f06f1df60a58470876cb6930f28f",
+      "bytes": 2385
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/rst/hyp.00000.rst": {
+      "sha256": "c99c4bba4dbc6df2dab9c0c127469f37f77c6b165cfe1460ba25967b1c8d8ba6",
+      "bytes": 5411042
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/rst/hyp.00001.rst": {
+      "sha256": "a5d92f2e6825b858faf3c32e540559913044dad9d1418617c149d7815c5dfb10",
+      "bytes": 5411678
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/rst/hyp.00002.rst": {
+      "sha256": "03bde917c1818fbfd5af3a725035a318e8970dfe1005a6cd7a37d831dcd7bc20",
+      "bytes": 5411678
+    },
+    "build-layer-research/profiled-damping-native/reference/reference-long-N24/run.log": {
+      "sha256": "7a30a471237a2dc622623b3737a916fc00a2cbc22fe2eb75a7b4a2381ec0d8ee",
+      "bytes": 621
+    },
+    "build-layer-research/profiled-damping-native/reference/results.json": {
+      "sha256": "13c8ac5f2a62f1ddcace64ae8976e2fb7cd7395407d26974ec1b26df5e01febc",
+      "bytes": 10685
+    },
+    "build-layer-research/profiled-damping-native/reference/source-at-launch/changes.patch": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "build-layer-research/profiled-damping-native/reference/source-at-launch/manifest.json": {
+      "sha256": "96736e038c9c4ba0d50d2d06118f6715ca89420ece6922adc829a81e2b5128b1",
+      "bytes": 203
+    }
+  },
+  "launch_files": {
+    "build-layer-research/profiled-damping-native/reference-launch.json": {
+      "sha256": "f805c3fcb4ea8517ce2957683f8eb0c2bac7fb9246a86ec6eacee817c9e2aa81",
+      "bytes": 1733
+    }
+  },
+  "audit_inputs": {
+    "build-layer-research/time-projection-controls/audit_composed_native.py": "088b456a99a9ff66ad905e7cc12c38da922656393e47c2835996ce7d8ddf6e69",
+    "build-layer-research/time-projection-controls/rst-reader-gate/restart_reader.py": "74c62c97afd113819438d8be42be84cc605902983bd974022ebb7e0747f3cb13",
+    "build-layer-research/time-projection-controls/rst-reader-gate/abi.json": "4e7599223e62ea4aa020b0efc691168a7ec2fcd6d83c38f6f45c4c6945d04cec",
+    "vis/python/bin_convert.py": "35e3ec2ebbe2d5a24af9bf1e4796cf1f20def58ce1d76c50f0166288b6d8f37c",
+    "tst/hyperboloidal/run_layer_validation.py": "ca81d60cc9a00b83f9325b79abce9fa3eaaade293e2c5f73c3a3d4bdbfac5d96"
+  },
+  "auditor_sha256": "4af15f168d8701c6605aae76de5abf96304a08d47966093140521c7a5cef0038",
+  "precision": "State is binary64 RST; all25 active BIN fields exactly match binary32 cast. Historical physical_metric_eigen keys mean Penrose gtilde/chi values; positivity is equivalent to physical SPD for Omega>0. Headerdt is at write time."
+}
