@@ -1,0 +1,24 @@
+{
+  "status": "analytical_regional_bounds_and_exact_counterexample; restricted_native_domain_unresolved",
+  "scientific_execution": false,
+  "original_note_preserved_after_parent_counterexample_message": true,
+  "notes": [
+    {"path": "DERIVATION.md", "sha256": "bd3aaff775c515150abdd4873a8896ccf835ff8f991021d253734b37cf5865cf", "scope": "Explicit exterior/core/high-time bounds; original finite box left unproved."},
+    {"path": "COUNTEREXAMPLE-AND-NATIVE-DOMAIN.md", "sha256": "a8a8cf90998856fae220518362c7c84d941feba8e7e354109127526554b7c0f3", "scope": "Exact negative CMC events, future-native angular restriction, and amplitude-domain caveat."}
+  ],
+  "parameters": {"a": "1/2", "sigma": ["7/20", "1/2"], "regional_bounds_amplitude": "|epsilon|<=3/4", "requested_future_native_amplitude": "0<=epsilon<=3/4"},
+  "analytical_bounds": [
+    {"region": "R>=32,T>=0", "bound": "R^2 D_CMC>3/80", "advanced_terms": "all retained; R^m|f_j(T+R)|<2^-2000 for j=0..3,m=0,1"},
+    {"region": "0<=R<=1/50,all T", "bound": "D_CMC>126/616225"},
+    {"region": "0<=R<=32,T>=32+8sigma", "bound": "D_CMC>1/32776"}
+  ],
+  "unrestricted_all_future_physical_CMC_positivity": false,
+  "exact_counterexample": "T=0,R=2sigma,p=-1/2 gives F=gradF=0,FT=-4exp(-2),D_CMC=(1-4epsilon exp(-2))^2-4sigma^2/(1/4+4sigma^2). Negative for sigma=1/2,epsilon=1/4,1/2,3/4 and sigma=7/20,epsilon=1/2,3/4.",
+  "future_native_failure_inferred": false,
+  "remaining_native_domain": "T+epsilon R^2 p C(T,R)>=H_actual(R), with exact angular interval and amplitude dependence retained",
+  "rigorous_interval_certificate_executed": false,
+  "manufactured_family_globally_admitted": false,
+  "native_or_PDE_stability_accepted": false,
+  "independent_math_review_pending": true,
+  "old_or_production_files_edited": false
+}

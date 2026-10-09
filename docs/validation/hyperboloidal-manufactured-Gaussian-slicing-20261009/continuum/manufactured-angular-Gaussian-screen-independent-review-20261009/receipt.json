@@ -1,0 +1,24 @@
+{
+  "scope": "Source-only mathematical/admission/metadata review. No reviewed import, scientific numerical execution, CAS, kernel, inverse, native or evolution calls.",
+  "mathematical_formulas_passed": true,
+  "fixed_grid_and_source_metadata_passed": true,
+  "execution_admission_passed": false,
+  "disposition": "FAIL_execution_binding_only; preserve v1 unexecuted; fresh guard-only sibling required",
+  "blocking_findings": [
+    "Expected interpreter file is hashed but actual sys.executable is not compared.",
+    "Expected mpmath files are hashed but import search path and imported package origin are unbound; isolated pinned CLT Python3.9 needs the pinned venv package parent."
+  ],
+  "records_per_precision": 28032,
+  "total_fixed_records": 56064,
+  "runtime_and_context_pins": 95,
+  "unique_rehashed_originals": 100,
+  "scientific_formula_changes_recommended": false,
+  "threshold_changes_recommended": false,
+  "original_inputs_unchanged": true,
+  "source_index_sha256": "b7cfe471f620e0b9b261fea8ad7b8be98d6f9437921c28ce5157217b1915cd3a",
+  "screen_sha256": "070c0f296102b8f07af09f2b6a3533b05100e759ee6c26719d501740edd1ebcb",
+  "recipe_sha256": "1cf3e91ddb86db89a794c5693af1c78b20fe8b57aa3391e2558d1f31b2286da5",
+  "review_sha256": "6280c99e93862054754045f67ab3274376db701bbffe8007594601803ae1a791",
+  "metadata_readback_sha256": "391d24247f91b1afc8d8db82a21ff86ca29f6043922af790497f1d3c23fd7988",
+  "root_additional_runtime_observation": "Root reports pinned CLT Python3.9 under -I cannot discover venv mpmath without explicit parent; not independently executed in this review."
+}

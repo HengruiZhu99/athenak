@@ -1,0 +1,31 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/manufactured-angular-Gaussian-screen-held-20261009/screen.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/manufactured-angular-Gaussian-screen-v2-held-20261009/screen.py
+@@ -23,7 +23,10 @@
+         if sha(p)!=d:raise RuntimeError('changed pinned input '+p)
+ 
+ def run(recipe,out):
++    sys.path.insert(0,recipe['mpmath_parent'])
+     import mpmath as mp
++    if str(Path(mp.__file__).resolve())!=recipe['mpmath_init']:
++        raise RuntimeError('unexpected mpmath import origin')
+     def rat(s):
+         f=Fraction(s);return mp.mpf(f.numerator)/f.denominator
+     records=[]
+@@ -134,11 +137,16 @@
+     out.mkdir(parents=True,exist_ok=False)
+     pins={};started=time.monotonic();receipt=dict(completed=False,returncode=1,scientific_scope='finite Gaussian physical-event screen')
+     try:
+-        if sys.flags.optimize!=0 or os.environ.get('PYTHONDONTWRITEBYTECODE')!='1':raise RuntimeError('unoptimized bytecode-off runtime required')
++        if sys.flags.optimize!=0 or not sys.flags.isolated or not sys.dont_write_bytecode:
++            raise RuntimeError('isolated unoptimized bytecode-off runtime required')
+         if sha(args.authorization)!=args.authorization_sha256:raise RuntimeError('authorization digest differs')
+         auth=load(args.authorization);recipe=load(HERE/'recipe.json');index=load(HERE/'source-index.json')
+         if not(auth.get('finite_Gaussian_screen_authorized') is True and auth.get('recipe_sha256')==sha(HERE/'recipe.json') and auth.get('source_index_sha256')==sha(HERE/'source-index.json') and auth.get('screen_source_sha256')==sha(__file__)):
+             raise RuntimeError('exact root source/math release required')
++        if sha(Path(sys.executable).resolve())!=recipe['python_runtime_sha256']:
++            raise RuntimeError('actual Python runtime differs')
++        for key,value in recipe['environment'].items():
++            if os.environ.get(key)!=value:raise RuntimeError('fixed environment differs '+key)
+         pins.update(recipe['pins'])
+         for row in index['files']:pins[row['path']]=row['sha256']
+         pins[str(HERE/'source-index.json')]=sha(HERE/'source-index.json')
