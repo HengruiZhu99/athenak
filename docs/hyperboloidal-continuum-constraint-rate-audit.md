@@ -70,3 +70,5 @@ are likewise metadata only. Catalog verification and the explicitly limited
 compact-bundle verifier pass without scientific reruns. Full local saved-case
 readback was independently repeated before collection; the compact archive
 cannot recompute its absent large numerical case logs.
+
+The subsequent [actual finite-ball energy-Galerkin control](hyperboloidal-finite-rb-energy-Galerkin-audit.md) validates J=0,1,2 at N=8, rb=.98 with complete manufactured forcing families and independent radial/angular quadrature checks. It supplies operator consistency evidence; the full nongauge projection-defect comparator and stability acceptance remain unresolved.

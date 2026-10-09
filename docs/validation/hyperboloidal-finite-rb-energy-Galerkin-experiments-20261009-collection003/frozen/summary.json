@@ -1,0 +1,60 @@
+{
+  "passed_source_mass_normal_trace_weak_strong_and_integration_controls": true,
+  "passed_complete_fixed_forcing_family": true,
+  "forcing_family": [
+    {
+      "J": 0,
+      "fields": 33,
+      "coefficient_error_max_scaled": 7.366928097851683e-11,
+      "energy_error_max_scaled": 7.650986652119387e-11
+    },
+    {
+      "J": 1,
+      "fields": 65,
+      "coefficient_error_max_scaled": 9.247354473484582e-11,
+      "energy_error_max_scaled": 1.9162807873137245e-10
+    },
+    {
+      "J": 2,
+      "fields": 81,
+      "coefficient_error_max_scaled": 1.0200065666325116e-10,
+      "energy_error_max_scaled": 1.4024832224418577e-10
+    }
+  ],
+  "source_release_executable_sha256": "2293e9be6f75042f926f22232039c3c3bdd28826eb9e80061905c272b7adce15",
+  "source_debug_executable_sha256": "75193a3b023eb0004f285fabb1a532efd24881db4cb660b3fa96e084a6e95507",
+  "failed_global_Q64_Q128_and_segmented_Q32_preserved": true,
+  "projected_constraint_defect_readback": "separate analytic point PASS; general nongauge continuum comparator unresolved; two ordinary-FD stops preserved; no full projected-constraint admission by this capsule",
+  "generator_spectrum_or_propagation_performed": false,
+  "stability_CPBC_or_exact_scri_accepted": false,
+  "large_data_policy": "all scientific NPZ, raw queries/outputs and executable bytes retained locally and represented only by metadata here",
+  "pre_API_executable_preservation_limitation": "eaf81162/eaee accepted source-gate binaries were overwritten before retention; exact source/commands/deps/gates and correction retained; current API2293/7519 bytes retained",
+  "compiler_binary_identity": "compiler version and exact commands recorded at build; compiler executable byte hash was not captured at build",
+  "upstream_input_indices": [
+    {
+      "kind": "basis",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/total-j-harmonic-basis/immutable-Cartesian-total-J-basis-20261009/index.json",
+      "sha256": "414f241e986e0c46b7d94820fb060b704166d973284854c53d2e8c64ee6c489e"
+    },
+    {
+      "kind": "continuum_rates",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-constraint-rate-oracle/immutable-finite-rb-C0-constraint-rates-20261009/index.json",
+      "sha256": "3d4c613a814a8a3325a7f980c2e20dcabf3ea08ddbcb10d42026ddca732d4e2f"
+    },
+    {
+      "kind": "local_angular",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/index.json",
+      "sha256": "b4131aa02f093b7744d3de1b600e829b7213a59779672978bd84c71f6912c513"
+    },
+    {
+      "kind": "core",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-flat-core-envelope-20261009/immutable-total-J-flat-core-envelope-20261009/index.json",
+      "sha256": "b0fde1e0eb95d6660a9fa3d190eda69207e6153c88da35366b038369ac3aa3d4"
+    },
+    {
+      "kind": "principal",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/harmonic-principal-constraint-sectors/immutable-harmonic-normal-principal-sectors-20261009/index.json",
+      "sha256": "05d4d7308477efe26d26ec7256fd9ba824040849363ed7f723031e5760adc0fc"
+    }
+  ]
+}

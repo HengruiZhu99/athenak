@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/finite-rb-matrix-stage/collect_matrix_stage_v2.py", line 48, in <module>
+    tree(HERE/'history','collection-history')
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/finite-rb-matrix-stage/collect_matrix_stage_v2.py", line 27, in tree
+    if source.is_file():queue(source,target+'/'+str(source.relative_to(folder)))
+  File "/Users/hz0693/research/hyperboloidal/build-layer-research/finite-rb-matrix-stage/collect_matrix_stage_v2.py", line 23, in queue
+    if source.suffix=='.json':finite(json.loads(data))
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

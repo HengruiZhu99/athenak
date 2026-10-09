@@ -147,3 +147,5 @@ Original frozen advisory/scalar/additive-review index SHA256 values are
 and `62d8cea2a833b86bebe0a2a1929c16b921f3f81513c84afcb6692535d335560d`.
 The read-only verifier passes without scratch dependencies or scientific
 reruns. NumPy binary arrays and payloads larger than1MiB remain metadata only.
+
+The subsequent [actual finite-ball energy-Galerkin control](hyperboloidal-finite-rb-energy-Galerkin-audit.md) validates J=0,1,2 at N=8, rb=.98 with complete manufactured forcing families and independent radial/angular quadrature checks. It supplies operator consistency evidence; the full nongauge projection-defect comparator and stability acceptance remain unresolved.

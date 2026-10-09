@@ -1,0 +1,982 @@
+{
+  "status": "FAIL_preserved",
+  "method": "Independent saved-matrix algebra/Cholesky/energy/trace readback only.",
+  "scientific_operator_assembled": false,
+  "generator_eigenvalues_computed": false,
+  "evolution_or_propagation": false,
+  "source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/verify_operator.py",
+    "sha256": "855245e3e4429dc713d817285ec79f05dda112ec159b9b821c9983e95987d95b",
+    "bytes": 14415
+  },
+  "outputs": {
+    "npz": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-base-Q128-sector-readback001/operator.npz",
+      "sha256": "ca54faeecd0f1952c8e29704c243a4f46a10666d005f543bef8f6f9582dc35ab",
+      "bytes": 409089
+    },
+    "metadata": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-base-Q128-sector-readback001/matrix-metadata.json",
+      "sha256": "7d22c7abce879393c163cf1219ca94936d4136b0168faaf7c0431a0b2afcfd50",
+      "bytes": 3918
+    }
+  },
+  "input_pins": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/operator.npz",
+      "sha256": "f5b0f9c3b7a003ee029707436257fb850dbf7cf39dcb79609724e7de7595b10e",
+      "bytes": 408124
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/report.json",
+      "sha256": "736474e529677ed7da4aeecdf6683b7d01e5388a98f7128f2547fb9ae1478d24",
+      "bytes": 132224
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/assemble.py",
+      "sha256": "b903ff6bc78789db0973e0f3696c02272f44b820d54938e977c7cf464fdffe6d",
+      "bytes": 15116
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/energy_coefficients.py",
+      "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+      "bytes": 2279
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/canceled_basis_complex.py",
+      "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+      "bytes": 1767
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/source/receipt.json",
+      "sha256": "836ac73ce6d46889de510a8f7e13461cf06d4bf0300f5dc82168ab068065d5c7",
+      "bytes": 396
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/input/receipt.json",
+      "sha256": "159389a0464d4f3844b50bbc9e08d41ccafd872444545f2d33ade12c38312992",
+      "bytes": 397
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/harmonic-principal-constraint-sectors/immutable-harmonic-normal-principal-sectors-20261009/index.json",
+      "sha256": "05d4d7308477efe26d26ec7256fd9ba824040849363ed7f723031e5760adc0fc",
+      "bytes": 3468
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/harmonic-principal-constraint-sectors/immutable-harmonic-normal-principal-sectors-20261009/report.json",
+      "sha256": "3b7b2cbdba0c754a05c3e9c2e576dec7799802456a69a3d04ff2bf0628695520",
+      "bytes": 23306
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/constraint-rate-api-authorization.json",
+      "sha256": "6e8cbb63e906e57b86240b9f62188a500b114beb021e8220e1b4acf01a9cf88b",
+      "bytes": 773
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/decorate_operator.py",
+      "sha256": "1093a8b4e0dcc8b58565c7fd5c4b3deef8c747dc018f88d7fa20f207c5b0445a",
+      "bytes": 2926
+    }
+  ],
+  "parameters": {
+    "matrix_sha256": "ca54faeecd0f1952c8e29704c243a4f46a10666d005f543bef8f6f9582dc35ab",
+    "J": 0,
+    "N": 8,
+    "rb": 0.98,
+    "degree_order": "channel-major modal degree",
+    "nodal_map": "X_nodal=T X_modal",
+    "boundary_measure": "B includes rb*sqrt(w_angle)",
+    "k_in": 0.00039999999999995595,
+    "k_out": -3.9204,
+    "expected_incoming_rank": 4,
+    "rank_rtol": 1e-10,
+    "rank_atol": 1e-11,
+    "thresholds": {
+      "mass_solve_SAT_forcing": 2e-09,
+      "weak_strong_volume": 2e-08,
+      "point_normal_adapter": 5e-11,
+      "modal_condition": 1000000000000.0
+    },
+    "input_pins": [
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/operator.npz",
+        "sha256": "f5b0f9c3b7a003ee029707436257fb850dbf7cf39dcb79609724e7de7595b10e",
+        "bytes": 408124
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/report.json",
+        "sha256": "736474e529677ed7da4aeecdf6683b7d01e5388a98f7128f2547fb9ae1478d24",
+        "bytes": 132224
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/assemble.py",
+        "sha256": "b903ff6bc78789db0973e0f3696c02272f44b820d54938e977c7cf464fdffe6d",
+        "bytes": 15116
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/energy_coefficients.py",
+        "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+        "bytes": 2279
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/canceled_basis_complex.py",
+        "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+        "bytes": 1767
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/source/receipt.json",
+        "sha256": "836ac73ce6d46889de510a8f7e13461cf06d4bf0300f5dc82168ab068065d5c7",
+        "bytes": 396
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/input/receipt.json",
+        "sha256": "159389a0464d4f3844b50bbc9e08d41ccafd872444545f2d33ade12c38312992",
+        "bytes": 397
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/harmonic-principal-constraint-sectors/immutable-harmonic-normal-principal-sectors-20261009/index.json",
+        "sha256": "05d4d7308477efe26d26ec7256fd9ba824040849363ed7f723031e5760adc0fc",
+        "bytes": 3468
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/harmonic-principal-constraint-sectors/immutable-harmonic-normal-principal-sectors-20261009/report.json",
+        "sha256": "3b7b2cbdba0c754a05c3e9c2e576dec7799802456a69a3d04ff2bf0628695520",
+        "bytes": 23306
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/constraint-rate-api-authorization.json",
+        "sha256": "6e8cbb63e906e57b86240b9f62188a500b114beb021e8220e1b4acf01a9cf88b",
+        "bytes": 773
+      },
+      {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/decorate_operator.py",
+        "sha256": "1093a8b4e0dcc8b58565c7fd5c4b3deef8c747dc018f88d7fa20f207c5b0445a",
+        "bytes": 2926
+      }
+    ],
+    "scope": "Saved algebraic readback decoration: all input arrays preserved bitwise; principal fixed-\u03a9 sector maps only, not physical constraint boundary conditions."
+  },
+  "array_shapes": {
+    "E": [
+      64,
+      64
+    ],
+    "Kweak": [
+      64,
+      64
+    ],
+    "Kstrong": [
+      64,
+      64
+    ],
+    "Gvolume": [
+      64,
+      64
+    ],
+    "Fboundary": [
+      64,
+      64
+    ],
+    "SATload": [
+      64,
+      64
+    ],
+    "Jbulk": [
+      64,
+      64
+    ],
+    "Jsat": [
+      64,
+      64
+    ],
+    "B": [
+      5760,
+      64
+    ],
+    "Hb": [
+      20,
+      20
+    ],
+    "Knb": [
+      20,
+      20
+    ],
+    "Pplus": [
+      20,
+      20
+    ],
+    "nodal_from_modal": [
+      64,
+      64
+    ],
+    "E_nodal": [
+      64,
+      64
+    ],
+    "manufactured_X": [
+      64
+    ],
+    "manufactured_load": [
+      64
+    ],
+    "manufactured_boundary_load": [
+      64
+    ],
+    "energy_cholesky": [
+      64,
+      64
+    ],
+    "radial_rho": [
+      128
+    ],
+    "radial_weights": [
+      128
+    ],
+    "angular_directions": [
+      288,
+      3
+    ],
+    "angular_weights": [
+      288
+    ],
+    "incoming_singular_values": [
+      64
+    ],
+    "constraint_left": [
+      4,
+      20
+    ],
+    "gauge_left": [
+      4,
+      20
+    ],
+    "TT_left": [
+      2,
+      20
+    ],
+    "incoming_left": [
+      10,
+      20
+    ]
+  },
+  "versions": {
+    "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+    "numpy": "2.0.2"
+  },
+  "mass": {
+    "symmetry": {
+      "scaled_frobenius": 1.3967788437601087e-16,
+      "max_absolute": 7.958078640513122e-13
+    },
+    "minimum_energy_eigenvalue": 0.24007799009491565,
+    "maximum_energy_eigenvalue": 13308.247679876838,
+    "spectral_condition": 55433.0185562424,
+    "minimum_Cholesky_diagonal": 0.9833853154307699,
+    "Cholesky_reconstruction": {
+      "scaled_frobenius": 1.7132847370673043e-16,
+      "max_absolute": 1.3642420526593924e-12
+    }
+  },
+  "nodal_mass": {
+    "symmetry": {
+      "scaled_frobenius": 1.611447309154291e-16,
+      "max_absolute": 2.3092638912203256e-14
+    },
+    "minimum_energy_eigenvalue": 9.26933109546738e-06,
+    "maximum_energy_eigenvalue": 420.9722606709528,
+    "spectral_condition": 45415602.952925526,
+    "minimum_Cholesky_diagonal": 0.004363743609346363,
+    "Cholesky_reconstruction": {
+      "scaled_frobenius": 1.8856241851185464e-16,
+      "max_absolute": 4.263256414560601e-14
+    }
+  },
+  "boundary_H": [
+    {
+      "symmetry": {
+        "scaled_frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "minimum_energy_eigenvalue": 1.1239919471204562,
+      "maximum_energy_eigenvalue": 9.065039893506293,
+      "spectral_condition": 8.065039893506292,
+      "minimum_Cholesky_diagonal": 1.1015914168306853,
+      "Cholesky_reconstruction": {
+        "scaled_frobenius": 1.2360088506768842e-16,
+        "max_absolute": 8.881784197001252e-16
+      }
+    }
+  ],
+  "normal_principal": [
+    {
+      "A_involution": {
+        "scaled_frobenius": 1.655022768831515e-17,
+        "max_absolute": 4.9343245538895844e-17
+      },
+      "P_definition": {
+        "scaled_frobenius": 0.0,
+        "max_absolute": 0.0
+      },
+      "P_idempotence": {
+        "scaled_frobenius": 2.0372824612661116e-17,
+        "max_absolute": 5.551115123125783e-17
+      },
+      "H_A_symmetry": {
+        "scaled_frobenius": 1.4240402579931873e-16,
+        "max_absolute": 8.881784197001252e-16
+      },
+      "H_P_symmetry": {
+        "scaled_frobenius": 7.726499646724443e-17,
+        "max_absolute": 4.440892098500626e-16
+      },
+      "H_D_definition": {
+        "scaled_frobenius": 0.0,
+        "max_absolute": 0.0
+      }
+    }
+  ],
+  "checks": {
+    "weak_strong": {
+      "scaled_frobenius": 4.44439900725629e-06,
+      "max_absolute": 7.0487250398728065
+    },
+    "G_symmetry": {
+      "scaled_frobenius": 1.0102119646919405e-15,
+      "max_absolute": 1.862645149230957e-09
+    },
+    "F_symmetry": {
+      "scaled_frobenius": 2.0827874747788838e-16,
+      "max_absolute": 2.764863893389702e-10
+    },
+    "bulk_energy_identity": {
+      "scaled_frobenius": 3.510261767844752e-06,
+      "max_absolute": 7.048730477341451
+    },
+    "strong_energy_identity": {
+      "scaled_frobenius": 1.8582115782745496e-06,
+      "max_absolute": 7.048719602404162
+    },
+    "boundary_flux": {
+      "scaled_frobenius": 3.947488784461336e-15,
+      "max_absolute": 1.280568540096283e-08
+    },
+    "adjoint_SAT_load": {
+      "scaled_frobenius": 3.494280202029944e-15,
+      "max_absolute": 8.668621376273222e-13
+    },
+    "principal_flux_after_SAT": {
+      "scaled_frobenius": 5.858540385983049e-15,
+      "max_absolute": 1.792795956134796e-08
+    },
+    "modal_congruence": {
+      "scaled_frobenius": 3.589030979062928e-15,
+      "max_absolute": 2.637534635141492e-11
+    },
+    "bulk_solve_backward": {
+      "scaled_frobenius": 4.168455179359069e-16,
+      "max_absolute": 6.984919309616089e-10
+    },
+    "SAT_solve_backward": {
+      "scaled_frobenius": 5.492441353366064e-16,
+      "max_absolute": 8.526512829121202e-14
+    },
+    "independent_bulk_solve_backward": {
+      "scaled_frobenius": 3.849154402778178e-16,
+      "max_absolute": 5.238689482212067e-10
+    },
+    "independent_SAT_solve_backward": {
+      "scaled_frobenius": 5.844767635192443e-16,
+      "max_absolute": 1.1546319456101628e-13
+    }
+  },
+  "independent_solve_forward_comparison": {
+    "bulk": {
+      "scaled_frobenius": 3.3121555351865575e-14,
+      "max_absolute": 1.90084392670542e-10
+    },
+    "SAT": {
+      "scaled_frobenius": 3.1891441741974815e-14,
+      "max_absolute": 3.6415315207705135e-14
+    },
+    "scope": "Reported, not a forward-error certificate from backward stability alone."
+  },
+  "manufactured": {
+    "cases": 1,
+    "forced_solve_backward": {
+      "scaled_frobenius": 3.874409727747904e-16,
+      "max_absolute": 1.4210854715202004e-14
+    },
+    "exact_Xdot_E_norm_error": 0.06396582483653111,
+    "exact_Xdot_coefficient_error": {
+      "scaled_frobenius": 0.04032214137803996,
+      "max_absolute": 0.016588804731350357
+    },
+    "direct_forcing_load_consistency": {
+      "scaled_frobenius": 4.3721285383901986e-05,
+      "max_absolute": 3.0675670594573603
+    },
+    "exact_incoming_data_load": {
+      "scaled_frobenius": 4.273281930351799e-15,
+      "max_absolute": 9.547918011776346e-15
+    },
+    "scope": "Algebraic readback only; independent pointwise forcing construction must also be source-reviewed."
+  },
+  "incoming_trace_rank": {
+    "rank": 4,
+    "threshold": 7.585165517928415e-08,
+    "singular_values": [
+      758.5165517928415,
+      526.823935317419,
+      488.6753379130916,
+      386.9718363600589,
+      7.511772755780561e-13,
+      5.016589363965856e-13,
+      1.255994904929257e-13,
+      9.724276751713101e-14,
+      7.972219629284416e-14,
+      7.336026562017951e-14,
+      5.1441540101520845e-14,
+      4.7183582895199386e-14,
+      4.20510709452709e-14,
+      4.1025431431924e-14,
+      3.4271489775658635e-14,
+      2.4927425187642327e-14,
+      2.078463147812543e-14,
+      1.7801226166237956e-14,
+      1.5978728038091607e-14,
+      1.402885954923988e-14,
+      1.3559639339800951e-14,
+      1.2288516635969567e-14,
+      1.2011113974665346e-14,
+      1.0811998427972189e-14,
+      1.0576377002916464e-14,
+      8.883897389560636e-15,
+      8.71120947128942e-15,
+      7.567067860333504e-15,
+      7.157645410288598e-15,
+      6.93138721749381e-15,
+      6.3358703194041435e-15,
+      6.0114251279117014e-15,
+      5.22337819723478e-15,
+      4.7281717726718365e-15,
+      4.638394165737141e-15,
+      4.13089191253767e-15,
+      3.4548561693294384e-15,
+      3.04512296952902e-15,
+      2.9954234430256313e-15,
+      2.5318530667237827e-15,
+      2.4691950610428564e-15,
+      2.2676710224530756e-15,
+      1.7805804875674655e-15,
+      1.4404114220798882e-15,
+      1.1071656374937431e-15,
+      9.48634386536546e-16,
+      7.732039980052366e-16,
+      6.848863147332135e-16,
+      6.311241211005676e-16,
+      6.139274635752092e-16,
+      5.754814707137476e-16,
+      4.837550232554342e-16,
+      4.484206267242582e-16,
+      3.882056067885059e-16,
+      3.825867659254473e-16,
+      3.390771843522948e-16,
+      3.339539903554844e-16,
+      2.9202005985395843e-16,
+      2.6034302260774544e-16,
+      2.0892884252342477e-16,
+      1.6158532776916803e-16,
+      1.421429259983874e-16,
+      2.13616691734688e-18,
+      2.886025606784807e-30
+    ],
+    "matrix_shape": [
+      5760,
+      64
+    ]
+  },
+  "sector_ranks": {
+    "constraint": {
+      "rank": 2,
+      "threshold": 1.7835627589360515e-07,
+      "singular_values": [
+        1783.5627589360515,
+        386.3460424260206,
+        2.1825187807022067e-12,
+        3.534833009471657e-13,
+        2.8484864488385446e-13,
+        1.0847129855123045e-13,
+        4.0471768536667186e-14,
+        3.49134969077766e-14,
+        2.574770772191802e-14,
+        2.494085376820498e-14,
+        2.3331116151538256e-14,
+        1.8365794085917146e-14,
+        1.522324845821754e-14,
+        1.3279782584184747e-14,
+        1.1964587624099998e-14,
+        9.43907525273151e-15,
+        8.723554660008908e-15,
+        7.988790285317835e-15,
+        6.516595911028684e-15,
+        5.6966307708241635e-15,
+        4.3415259388725214e-15,
+        4.060127712286956e-15,
+        3.7209324851037185e-15,
+        3.600870086988404e-15,
+        2.630892536321079e-15,
+        2.565452017708145e-15,
+        2.1214442921502286e-15,
+        1.8749915291068452e-15,
+        1.7114865509221218e-15,
+        1.5560216926773922e-15,
+        1.5282726856173596e-15,
+        1.3503160160648139e-15,
+        1.2763165779258295e-15,
+        6.089156950900915e-16,
+        5.7328775422133e-16,
+        5.419548739423026e-16,
+        4.672985727069372e-16,
+        3.973578568172275e-16,
+        3.175879758694181e-16,
+        2.6842302246139697e-16,
+        1.980346951855655e-16,
+        1.5712316816356302e-16,
+        1.24761029800124e-16,
+        1.0913182500411417e-16,
+        8.775835020486208e-17,
+        6.541233426441806e-17,
+        4.7024987915880474e-17,
+        2.822476893040072e-17,
+        2.5392243218280433e-17,
+        8.206720105484198e-30,
+        5.7064652022285824e-30,
+        3.768230213516506e-30,
+        2.4656772145745774e-30,
+        2.0448725234615892e-30,
+        8.043711011625978e-31,
+        1.0546132288105305e-31,
+        9.154269352181387e-32,
+        4.4676787888417726e-32,
+        2.948197661732479e-32,
+        2.771859602499212e-32,
+        2.1981540216815815e-32,
+        1.5809099491938555e-32,
+        1.1534837804300755e-32,
+        0.0
+      ],
+      "matrix_shape": [
+        1152,
+        64
+      ]
+    },
+    "gauge": {
+      "rank": 2,
+      "threshold": 6.824177343729147e-08,
+      "singular_values": [
+        682.4177343729148,
+        507.0204250731982,
+        9.620149686043295e-13,
+        2.907808264906059e-13,
+        1.71211428078179e-13,
+        1.1273564507693085e-13,
+        1.4328951341681763e-14,
+        1.2979442157750814e-14,
+        1.0172979646543708e-14,
+        9.069795798736687e-15,
+        8.234908955461383e-15,
+        6.7993994609348555e-15,
+        4.860040002593404e-15,
+        3.665248870037069e-15,
+        3.4265195560340298e-15,
+        2.762124575920681e-15,
+        2.5078285237934253e-15,
+        2.204819339816862e-15,
+        1.947376162475463e-15,
+        1.7498778421698011e-15,
+        1.5414155605427204e-15,
+        1.4031414412593398e-15,
+        1.1534994386706633e-15,
+        9.858797162376654e-16,
+        7.554117947824256e-16,
+        6.416900505235467e-16,
+        5.655976413563243e-16,
+        4.840225504991846e-16,
+        3.8170609938468327e-16,
+        2.934122390981958e-16,
+        2.828917152665337e-16,
+        2.4096407893054993e-16,
+        1.8718255837336307e-16,
+        1.415969113848968e-16,
+        1.0867335227617251e-16,
+        9.072845471376857e-17,
+        8.710746911613448e-17,
+        5.485876989219237e-17,
+        4.2262452685909565e-17,
+        2.2774379078128295e-17,
+        1.0035430753608149e-30,
+        6.736223582498123e-31,
+        5.2419356589041405e-31,
+        4.407053152908842e-31,
+        3.2965807774111696e-31,
+        2.2185103413474223e-31,
+        1.0795168452195116e-31,
+        1.6995968829593835e-32,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "matrix_shape": [
+        1152,
+        64
+      ]
+    },
+    "TT": {
+      "rank": 0,
+      "threshold": 1e-11,
+      "singular_values": [
+        3.167659924308008e-14,
+        4.999940190549777e-16,
+        2.703732866860703e-16,
+        3.892531991724594e-30,
+        1.6553125476833647e-30,
+        1.1566001592276318e-30,
+        8.271126824069684e-31,
+        5.369441323861984e-31,
+        4.016299210715557e-31,
+        2.2253612613188183e-31,
+        1.031949262414966e-31,
+        9.463506531420743e-32,
+        4.593503490703915e-32,
+        3.4271377448039446e-32,
+        3.012631206139298e-32,
+        2.1754556423489924e-32,
+        1.7770827890919277e-32,
+        1.4090979126452513e-32,
+        1.104987031268103e-32,
+        6.585182238947953e-33,
+        2.9950751362904044e-46,
+        1.2071349612658517e-46,
+        9.7946262200847e-47,
+        7.621450744561925e-47,
+        5.172737798863152e-47,
+        4.3427386021303415e-47,
+        3.1937760673954936e-47,
+        2.619385506421428e-47,
+        2.1687563199340009e-47,
+        8.016083468152837e-48,
+        3.330622385286741e-48,
+        1.5300251229570324e-48,
+        9.82103154044284e-49,
+        5.863423781203471e-49,
+        4.105387365865105e-49,
+        2.9547038780933212e-49,
+        1.2444901524636124e-62,
+        6.765332225531888e-63,
+        4.5259830560201233e-63,
+        3.254090996748157e-63,
+        2.4806254438766746e-63,
+        2.1071421362017415e-63,
+        1.3720750149160916e-63,
+        7.966399181904037e-64,
+        5.130946794147091e-64,
+        3.477903893459104e-64,
+        1.4685120843748686e-64,
+        9.070232848685404e-65,
+        5.230409635590736e-65,
+        2.127419672064801e-65,
+        1.517179441076121e-65,
+        1.200331666296907e-65,
+        1.2127855145250982e-78,
+        5.587515828284107e-79,
+        3.190680551520044e-79,
+        1.44612943871655e-79,
+        1.2543455941845151e-79,
+        1.0574507701273329e-79,
+        7.543630352568093e-80,
+        2.2811660582715797e-80,
+        1.876737801221145e-80,
+        7.254872112577992e-81,
+        3.603307545244933e-81,
+        0.0
+      ],
+      "matrix_shape": [
+        576,
+        64
+      ]
+    },
+    "combined": {
+      "rank": 4,
+      "threshold": 1.7914578839430943e-07,
+      "singular_values": [
+        1791.4578839430942,
+        663.4578348848364,
+        509.74582346467747,
+        379.18940127364755,
+        2.0814783585038646e-12,
+        1.2098400264339473e-12,
+        7.908686139299642e-13,
+        1.7731863469219977e-13,
+        1.5387805894142123e-13,
+        9.498103034668096e-14,
+        7.382047664799141e-14,
+        4.8965959988895975e-14,
+        4.64041375043994e-14,
+        3.8903404307439235e-14,
+        3.421432798582611e-14,
+        3.150834564072414e-14,
+        3.030984182367743e-14,
+        2.6681628148853133e-14,
+        2.4048138161726353e-14,
+        2.182271507604319e-14,
+        1.89624856626582e-14,
+        1.4074013972794021e-14,
+        1.3320123573545722e-14,
+        1.1514398639345408e-14,
+        1.1059041866720893e-14,
+        1.0368497295492378e-14,
+        9.991116175861593e-15,
+        8.09639146342041e-15,
+        7.54826599680544e-15,
+        6.9304727508590824e-15,
+        6.5517534001256705e-15,
+        6.269265875508897e-15,
+        5.7393483758842665e-15,
+        4.294612807758118e-15,
+        4.0967585840721846e-15,
+        3.864254686438414e-15,
+        3.658841800348406e-15,
+        3.104673082178919e-15,
+        2.8158178752560754e-15,
+        2.390428033024485e-15,
+        2.1396593826451877e-15,
+        2.0546806621021186e-15,
+        1.5923372762522175e-15,
+        1.0682810752157455e-15,
+        9.44580363910207e-16,
+        8.836100758245873e-16,
+        8.085246258697121e-16,
+        7.253341460471685e-16,
+        6.943896101446731e-16,
+        6.522691773372428e-16,
+        5.966829072469186e-16,
+        5.300332852219182e-16,
+        4.2650027952167727e-16,
+        3.9119981985810183e-16,
+        3.4845912162025513e-16,
+        2.611335483213089e-16,
+        2.3055442071858327e-16,
+        1.82426676316929e-16,
+        1.6526869934458434e-16,
+        1.2308062302741246e-16,
+        1.0608250799965633e-16,
+        5.242253584075892e-17,
+        3.0541834886746144e-17,
+        1.2444821051676903e-30
+      ],
+      "matrix_shape": [
+        2880,
+        64
+      ]
+    },
+    "incoming_left": {
+      "rank": 4,
+      "threshold": 1.791457883943095e-07,
+      "singular_values": [
+        1791.4578839430949,
+        663.4578348848357,
+        509.7458234646769,
+        379.1894012736468,
+        2.0825566445093076e-12,
+        7.970509421345663e-13,
+        2.0581760310005277e-13,
+        1.9946100703034544e-13,
+        1.6131029857553803e-13,
+        1.1655645771420895e-13,
+        7.583651547500468e-14,
+        4.4185409439998793e-14,
+        3.69438882912254e-14,
+        3.565058012051176e-14,
+        3.151177201817941e-14,
+        2.9015612747276355e-14,
+        2.6979634542920724e-14,
+        2.3850607790405307e-14,
+        2.0049908422843996e-14,
+        1.777006286594362e-14,
+        1.717909307821732e-14,
+        1.5420955647653374e-14,
+        1.4589254041868776e-14,
+        1.242403516713028e-14,
+        1.1078881692881945e-14,
+        9.98144330985076e-15,
+        8.874071440164156e-15,
+        8.476649808304838e-15,
+        7.620370638207761e-15,
+        6.294138360919144e-15,
+        5.461913929919988e-15,
+        5.2875095788207396e-15,
+        4.606795153473499e-15,
+        4.376980333431676e-15,
+        3.6657769338517096e-15,
+        2.9579668188003287e-15,
+        2.914745850945966e-15,
+        2.5664613559113553e-15,
+        2.3323513145189146e-15,
+        2.2034780945080482e-15,
+        1.993886451825459e-15,
+        1.4337599843934479e-15,
+        1.3203940019541852e-15,
+        1.2555671982833072e-15,
+        9.166970880165876e-16,
+        8.090487290213646e-16,
+        7.975520276207655e-16,
+        6.16326332260756e-16,
+        5.593323272538744e-16,
+        5.087165376143331e-16,
+        4.687346738999306e-16,
+        4.423024937807765e-16,
+        4.0585134528293915e-16,
+        3.725717221832364e-16,
+        3.5411587263701245e-16,
+        2.8385769076034813e-16,
+        1.920781506195164e-16,
+        1.6759848167780324e-16,
+        1.6463921820137775e-16,
+        1.20210570899343e-16,
+        9.396435001701908e-17,
+        4.586281850777233e-17,
+        1.5383779448172227e-17,
+        2.8912355938851556e-30
+      ],
+      "matrix_shape": [
+        2880,
+        64
+      ]
+    }
+  },
+  "sector_classification_complete": true,
+  "nodal_modal_transform_rank": {
+    "rank": 64,
+    "threshold": 3.167712727653531e-08,
+    "singular_values": [
+      316.7712727653531,
+      316.7712727653531,
+      78.57526592821841,
+      78.57526592821841,
+      52.76555832382489,
+      52.76555832382489,
+      20.8011477772299,
+      20.8011477772299,
+      18.98550376791904,
+      18.98550376791904,
+      13.743953184516336,
+      13.743953184516336,
+      13.743953184516336,
+      13.743953184516336,
+      10.195284082129934,
+      10.195284082129934,
+      9.91229883238939,
+      9.91229883238939,
+      7.159903339347923,
+      7.159903339347923,
+      7.159903339347923,
+      7.159903339347923,
+      7.102659502794449,
+      7.102659502794449,
+      6.897891528644548,
+      6.897891528644548,
+      6.696224536061274,
+      6.696224536061274,
+      6.696224536061274,
+      6.696224536061274,
+      6.615018976695244,
+      6.615018976695244,
+      6.601115408492659,
+      6.601115408492659,
+      5.359142563495822,
+      5.359142563495822,
+      5.274755233785313,
+      5.274755233785313,
+      5.148462881825858,
+      5.148462881825858,
+      5.122485158380074,
+      5.122485158380074,
+      5.122485158380074,
+      5.122485158380074,
+      4.941765093278658,
+      4.941765093278658,
+      4.6551283052884855,
+      4.6551283052884855,
+      4.604054806341144,
+      4.604054806341144,
+      4.604054806341144,
+      4.604054806341144,
+      4.263497054670695,
+      4.263497054670695,
+      4.263497054670695,
+      4.263497054670695,
+      4.015673675938924,
+      4.015673675938924,
+      4.015673675938924,
+      4.015673675938924,
+      3.943123923875994,
+      3.943123923875994,
+      3.943123923875994,
+      3.943123923875994
+    ],
+    "matrix_shape": [
+      64,
+      64
+    ]
+  },
+  "thresholds": {
+    "mass_solve_SAT_forcing": 2e-09,
+    "weak_strong_volume": 2e-08,
+    "point_normal_adapter": 5e-11,
+    "modal_condition": 1000000000000.0
+  },
+  "passed_checks": {
+    "weak_strong": false,
+    "G_symmetry": true,
+    "F_symmetry": true,
+    "bulk_energy_identity": false,
+    "strong_energy_identity": false,
+    "boundary_flux": true,
+    "adjoint_SAT_load": true,
+    "principal_flux_after_SAT": true,
+    "modal_congruence": true,
+    "bulk_solve_backward": true,
+    "SAT_solve_backward": true,
+    "independent_bulk_solve_backward": true,
+    "independent_SAT_solve_backward": true,
+    "mass_symmetry": true,
+    "nodal_mass_symmetry": true,
+    "modal_condition": true,
+    "Cholesky_reconstruction": true,
+    "boundary_H_checks": true,
+    "normal_principal_checks": true,
+    "manufactured_E_norm": false,
+    "manufactured_algebra": false,
+    "rank_incoming": true,
+    "rank_constraint": true,
+    "rank_gauge": true,
+    "rank_TT": true,
+    "rank_combined": true,
+    "rank_nodal_modal_invertible": true,
+    "rank_incoming_left": true
+  },
+  "scope": "Finite-dimensional output verification, not independent continuum-action binding, CPBC, a uniform energy bound, exact-scri closure or pulse/BH acceptance."
+}

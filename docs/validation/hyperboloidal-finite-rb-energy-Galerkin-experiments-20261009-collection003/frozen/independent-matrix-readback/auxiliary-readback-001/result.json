@@ -1,0 +1,252 @@
+{
+  "status": "PASS_saved_array_attribution_and_energy_readback",
+  "source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/readback_auxiliary.py",
+    "sha256": "c8e2193f4a1459cdc1ad94fb3fd94f03fd4c474044d51993810dcf9e032872b8",
+    "bytes": 8669
+  },
+  "Q128_verifier_run": {
+    "command": [
+      "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/verify_operator.py",
+      "--npz",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-base-Q128-sector-readback001/operator.npz",
+      "--expect-sha256",
+      "ca54faeecd0f1952c8e29704c243a4f46a10666d005f543bef8f6f9582dc35ab",
+      "--metadata",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-base-Q128-sector-readback001/matrix-metadata.json",
+      "--expect-metadata-sha256",
+      "7d22c7abce879393c163cf1219ca94936d4136b0168faaf7c0431a0b2afcfd50",
+      "--output",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/auxiliary-readback-001/failed-global-Q128-result.json"
+    ],
+    "returncode": 1,
+    "seconds": 0.11226333299999999,
+    "stderr_bytes": 0,
+    "status": "FAIL_preserved",
+    "source": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/verify_operator.py",
+      "sha256": "855245e3e4429dc713d817285ec79f05dda112ec159b9b821c9983e95987d95b",
+      "bytes": 14415
+    },
+    "result": {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/auxiliary-readback-001/failed-global-Q128-result.json",
+      "sha256": "e455a56b2a5f5f0f125f30d0041b745e858a083f8f96bb1fb9d8051e69eb8d7d",
+      "bytes": 30353
+    }
+  },
+  "cases": [
+    {
+      "name": "global-Q64",
+      "matrix": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q64-a12x24-readback002/operator.npz",
+        "sha256": "26ddb5877c20d4ee5277427989ef9aaf1a9c0ca416a33cf756e53d96f5ae1d6f",
+        "bytes": 407063
+      },
+      "metadata": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q64-a12x24-readback002/matrix-metadata.json",
+        "sha256": "fae33d587b03d382f68dcc940f4f2df17d0840d6537681d9ec45f8842875dcc3",
+        "bytes": 3254
+      },
+      "direct_strong_forcing_load": {
+        "absolute_frobenius": 1.1053133453385094e-10,
+        "max_absolute": 5.820766091346741e-11,
+        "scaled_frobenius": 1.0240793166176466e-15
+      },
+      "direct_boundary_forcing_load": {
+        "absolute_frobenius": 1.3386971017597841e-14,
+        "max_absolute": 9.547918011776346e-15,
+        "scaled_frobenius": 4.273281930351799e-15
+      },
+      "rate_defect": {
+        "absolute_coefficient_L2": 1.5281223419948535,
+        "E_norm": 5.078729396269554
+      },
+      "weak_minus_strong_rate_prediction": {
+        "absolute_frobenius": 8.631761970171025e-12,
+        "max_absolute": 5.3071436134644046e-12,
+        "scaled_frobenius": 5.648606615420478e-12
+      },
+      "full_rate_defect_decomposition": {
+        "absolute_frobenius": 6.409620925459407e-12,
+        "max_absolute": 3.3646418984289994e-12,
+        "scaled_frobenius": 4.194442257216205e-12
+      },
+      "symmetric_energy_readback": {
+        "G_normalized_skew": {
+          "absolute_frobenius": 1.099561075938653e-09,
+          "max_absolute": 2.105906560245785e-10,
+          "scaled_frobenius": 7.445504814601832e-14
+        },
+        "post_SAT_flux_normalized_skew": {
+          "absolute_frobenius": 5.885109554646059e-11,
+          "max_absolute": 9.350742402602918e-12,
+          "scaled_frobenius": 4.006829559330897e-14
+        },
+        "G_over_E_minimum": -9587.550265823964,
+        "G_over_E_maximum": 8913.80584332747,
+        "G_energy_norm_rate_bound": 4456.902921663735,
+        "post_SAT_flux_over_E_maximum": 3.151584488878591e-10,
+        "G_plus_post_SAT_flux_over_E_maximum": 8777.441827886847,
+        "interpretation": "Symmetric quadratic energy-production spectrum only; not generator eigenvalues, not a uniform/refined stability bound."
+      },
+      "energy_normalized_full_trace_norm": 12.391683221984215,
+      "energy_normalized_full_trace_norm_squared": 153.5538130740051,
+      "trace_interpretation": "||B L^-T||2 with E=LL^T; finite N=8 and rb=.98 only.",
+      "decoration": null
+    },
+    {
+      "name": "global-Q128-sector",
+      "matrix": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-base-Q128-sector-readback001/operator.npz",
+        "sha256": "ca54faeecd0f1952c8e29704c243a4f46a10666d005f543bef8f6f9582dc35ab",
+        "bytes": 409089
+      },
+      "metadata": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-base-Q128-sector-readback001/matrix-metadata.json",
+        "sha256": "7d22c7abce879393c163cf1219ca94936d4136b0168faaf7c0431a0b2afcfd50",
+        "bytes": 3918
+      },
+      "direct_strong_forcing_load": {
+        "absolute_frobenius": 1.1392079543371927e-10,
+        "max_absolute": 6.548361852765083e-11,
+        "scaled_frobenius": 1.0554873813171948e-15
+      },
+      "direct_boundary_forcing_load": {
+        "absolute_frobenius": 1.3386971017597841e-14,
+        "max_absolute": 9.547918011776346e-15,
+        "scaled_frobenius": 4.273281930351799e-15
+      },
+      "rate_defect": {
+        "absolute_coefficient_L2": 0.04032214137803996,
+        "E_norm": 0.1819622587558676
+      },
+      "weak_minus_strong_rate_prediction": {
+        "absolute_frobenius": 1.1454384745340077e-11,
+        "max_absolute": 4.299456624057285e-12,
+        "scaled_frobenius": 1.1454384745340077e-11
+      },
+      "full_rate_defect_decomposition": {
+        "absolute_frobenius": 3.6047875815894575e-12,
+        "max_absolute": 1.5737237901713996e-12,
+        "scaled_frobenius": 3.6047875815894575e-12
+      },
+      "symmetric_energy_readback": {
+        "G_normalized_skew": {
+          "absolute_frobenius": 4.714247994405151e-10,
+          "max_absolute": 8.100897730400902e-11,
+          "scaled_frobenius": 3.1921981326329524e-14
+        },
+        "post_SAT_flux_normalized_skew": {
+          "absolute_frobenius": 6.011643401996362e-11,
+          "max_absolute": 9.204803586015942e-12,
+          "scaled_frobenius": 4.092999306781454e-14
+        },
+        "G_over_E_minimum": -9587.475116702492,
+        "G_over_E_maximum": 8913.726351124304,
+        "G_energy_norm_rate_bound": 4456.863175562152,
+        "post_SAT_flux_over_E_maximum": 3.13152419640711e-10,
+        "G_plus_post_SAT_flux_over_E_maximum": 8777.365162078813,
+        "interpretation": "Symmetric quadratic energy-production spectrum only; not generator eigenvalues, not a uniform/refined stability bound."
+      },
+      "energy_normalized_full_trace_norm": 12.391656777716637,
+      "energy_normalized_full_trace_norm_squared": 153.55315769673066,
+      "trace_interpretation": "||B L^-T||2 with E=LL^T; finite N=8 and rb=.98 only.",
+      "decoration": {
+        "all_original_arrays_bitwise_unchanged": true,
+        "original_array_count": 23,
+        "original": {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-Q128-a12x24-attempt001/operator.npz",
+          "sha256": "f5b0f9c3b7a003ee029707436257fb850dbf7cf39dcb79609724e7de7595b10e",
+          "bytes": 408124
+        },
+        "principal_source": {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/harmonic-principal-constraint-sectors/immutable-harmonic-normal-principal-sectors-20261009/report.json",
+          "sha256": "3b7b2cbdba0c754a05c3e9c2e576dec7799802456a69a3d04ff2bf0628695520",
+          "bytes": 23306
+        },
+        "sector_left_rows_match_exact_frozen_sign_plus": true
+      }
+    },
+    {
+      "name": "segmented-Q64-sector",
+      "matrix": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-segmented-Q64-sector-readback001/operator.npz",
+        "sha256": "8b4b9a5b33151d86359aa9e35f0ae44dc436ef4ab2d6c17796e77983f9422a27",
+        "bytes": 412854
+      },
+      "metadata": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-segmented-Q64-sector-readback001/matrix-metadata.json",
+        "sha256": "8449fc9b52f0137498e35b0f5e9b8e35b73998eebe37726bf1eaf4cdd2649d04",
+        "bytes": 4005
+      },
+      "direct_strong_forcing_load": {
+        "absolute_frobenius": 6.800250397886905e-11,
+        "max_absolute": 3.637978807091713e-11,
+        "scaled_frobenius": 6.300499191259697e-16
+      },
+      "direct_boundary_forcing_load": {
+        "absolute_frobenius": 1.3386971017597841e-14,
+        "max_absolute": 9.547918011776346e-15,
+        "scaled_frobenius": 4.273281930351799e-15
+      },
+      "rate_defect": {
+        "absolute_coefficient_L2": 3.467501530386947e-11,
+        "E_norm": 5.753387899520968e-11
+      },
+      "weak_minus_strong_rate_prediction": {
+        "absolute_frobenius": 8.19096921531422e-12,
+        "max_absolute": 3.4181845207266897e-12,
+        "scaled_frobenius": 8.19096921531422e-12
+      },
+      "full_rate_defect_decomposition": {
+        "absolute_frobenius": 2.3573286024208333e-12,
+        "max_absolute": 8.822821687125365e-13,
+        "scaled_frobenius": 2.3573286024208333e-12
+      },
+      "symmetric_energy_readback": {
+        "G_normalized_skew": {
+          "absolute_frobenius": 3.246284400089497e-10,
+          "max_absolute": 4.872191539107007e-11,
+          "scaled_frobenius": 2.198183674893136e-14
+        },
+        "post_SAT_flux_normalized_skew": {
+          "absolute_frobenius": 6.79304703580607e-11,
+          "max_absolute": 1.787814341014382e-11,
+          "scaled_frobenius": 4.6250141586713435e-14
+        },
+        "G_over_E_minimum": -9587.474194296476,
+        "G_over_E_maximum": 8913.725591522081,
+        "G_energy_norm_rate_bound": 4456.862795761041,
+        "post_SAT_flux_over_E_maximum": 3.139132220850298e-10,
+        "G_plus_post_SAT_flux_over_E_maximum": 8777.364235103527,
+        "interpretation": "Symmetric quadratic energy-production spectrum only; not generator eigenvalues, not a uniform/refined stability bound."
+      },
+      "energy_normalized_full_trace_norm": 12.391655438804543,
+      "energy_normalized_full_trace_norm_squared": 153.55312451405422,
+      "trace_interpretation": "||B L^-T||2 with E=LL^T; finite N=8 and rb=.98 only.",
+      "decoration": {
+        "all_original_arrays_bitwise_unchanged": true,
+        "original_array_count": 23,
+        "original": {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/operator.npz",
+          "sha256": "2ed0da45a995669f7e3e2fedba231eeda0dcb06f43577125d4a194974c4f4742",
+          "bytes": 411889
+        },
+        "principal_source": {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/harmonic-principal-constraint-sectors/immutable-harmonic-normal-principal-sectors-20261009/report.json",
+          "sha256": "3b7b2cbdba0c754a05c3e9c2e576dec7799802456a69a3d04ff2bf0628695520",
+          "bytes": 23306
+        },
+        "sector_left_rows_match_exact_frozen_sign_plus": true
+      }
+    }
+  ],
+  "versions": {
+    "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+    "numpy": "2.0.2"
+  },
+  "scientific_kernel_or_assembler_run": false,
+  "generator_eigenvalues_or_propagation": false,
+  "scope": "GlobalQ64/Q128 failures remain failures. Segmented output retains its independent matrix-only PASS. Auxiliary values do not establish a PDE/CPBC/scri, uniform energy or nonlinear stability claim."
+}

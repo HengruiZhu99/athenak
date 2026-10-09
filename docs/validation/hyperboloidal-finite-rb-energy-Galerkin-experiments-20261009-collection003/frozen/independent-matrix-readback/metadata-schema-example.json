@@ -1,0 +1,27 @@
+{
+  "matrix_sha256": "OWNER_NPZ_PIN_REQUIRED",
+  "J": 0,
+  "N": 8,
+  "rb": 0.98,
+  "degree_order": "channel-major modal degree",
+  "nodal_map": "X_nodal=T X_modal",
+  "boundary_measure": "B includes rb*sqrt(w_angle)",
+  "k_in": 0.0004,
+  "k_out": -3.9204,
+  "expected_incoming_rank": 4,
+  "rank_rtol": 1e-10,
+  "rank_atol": 1e-11,
+  "thresholds": {
+    "mass_solve_SAT_forcing": 2e-09,
+    "weak_strong_volume": 2e-08,
+    "point_normal_adapter": 5e-11,
+    "modal_condition": 1000000000000.0
+  },
+  "input_pins": [
+    {
+      "path": "OWNER_SOURCE_BUILD_INDEX_PATH_REQUIRED",
+      "sha256": "OWNER_PIN_REQUIRED"
+    }
+  ],
+  "schema_note": "Only an example. Owner must save actual exact k_in/k_out, dimensions, source/build/input/output pins and hashes. Hb/Knb/Pplus common20 blocks preferred; all NPZ arrays real binary64. Optional incoming_left, constraint_left, gauge_left, TT_left are common local rows with 20 columns; sectors not claimed complete unless all three supplied."
+}

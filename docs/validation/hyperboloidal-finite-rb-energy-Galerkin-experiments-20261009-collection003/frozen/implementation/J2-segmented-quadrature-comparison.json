@@ -1,0 +1,67 @@
+{
+  "kind": "radial_quadrature",
+  "input_paths": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ32-a12x24-refinement001",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a12x24-refinement001"
+  ],
+  "input_matrix_sha256": [
+    "71a9d7ed88f0a678ca0dede9c7f6895013adb0cdc6e65076a818739a037a3694",
+    "9d559481bf9e54663ea1d62a49c1bee14eff26b20521f24ae29265bcbd68e087"
+  ],
+  "source_sha256": "5fd9be77026bbc97441d0b4201e8b4b8234dcbfae734a228c8721095b42c0c42",
+  "threshold": 2e-08,
+  "rows": {
+    "E": {
+      "scaled": 5.309332173127118e-12,
+      "absolute": 1.734817612754607e-07,
+      "maxabs": 7.986909622559324e-08
+    },
+    "Kweak": {
+      "scaled": 7.172254297313291e-12,
+      "absolute": 7.322172060850557e-05,
+      "maxabs": 1.5345460269600153e-05
+    },
+    "Kstrong": {
+      "scaled": 2.7516144848823934e-12,
+      "absolute": 2.8091299984977095e-05,
+      "maxabs": 6.201531505212188e-06
+    },
+    "Gvolume": {
+      "scaled": 5.249480026689333e-12,
+      "absolute": 6.59841997594863e-05,
+      "maxabs": 1.5339083347498672e-05
+    },
+    "Fboundary": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "SATload": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "Jbulk": {
+      "scaled": 1.433306321705331e-10,
+      "absolute": 4.532401753923959e-06,
+      "maxabs": 1.4293268577603158e-06
+    },
+    "Jsat": {
+      "scaled": 2.0458703394248592e-10,
+      "absolute": 1.2440186457396137e-09,
+      "maxabs": 2.942618926304874e-10
+    },
+    "manufactured_load": {
+      "scaled": 4.530156031836734e-12,
+      "absolute": 5.896937057113846e-07,
+      "maxabs": 4.210066890664166e-07
+    },
+    "manufactured_boundary_load": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    }
+  },
+  "passed": true,
+  "scope": "Same finite trial/equations/SAT; integration readback only"
+}

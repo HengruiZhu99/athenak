@@ -1,0 +1,68 @@
+{
+  "kind": "angular",
+  "input_paths": [
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a16x32-BLAS-angular001"
+  ],
+  "input_matrix_sha256": [
+    "ce0c07a08ecb9ea0f114c7f4b7b6cd87f1239b8eef6f1f595ef58d99440d4b39",
+    "0ea2cd92e96912eb0946948782d0b78e425474a656f814f418af7a83f2220a02"
+  ],
+  "source_sha256": "cd062bc379969e26662cf19eadca59b26cb2b617cb43e76f9fc2e0bb3cfb82de",
+  "BLAS_equivalence_sha256": "8dce9242db7bd5f810abc03d5a67180df6a3a39214f8e782b470ff1c47469d87",
+  "threshold": 2e-08,
+  "rows": {
+    "E": {
+      "scaled": 1.726713139896503e-15,
+      "absolute": 4.588759769382895e-11,
+      "maxabs": 1.6370904631912708e-11
+    },
+    "Kweak": {
+      "scaled": 9.513507437813213e-15,
+      "absolute": 8.004210173445976e-08,
+      "maxabs": 2.7241185307502747e-08
+    },
+    "Kstrong": {
+      "scaled": 1.6263450972277836e-15,
+      "absolute": 1.3683289846417193e-08,
+      "maxabs": 2.3283064365386963e-09
+    },
+    "Gvolume": {
+      "scaled": 1.67116714592853e-15,
+      "absolute": 1.792464400249845e-08,
+      "maxabs": 4.190951585769653e-09
+    },
+    "Fboundary": {
+      "scaled": 4.268408576536875e-15,
+      "absolute": 3.3321399935880783e-08,
+      "maxabs": 8.614733815193176e-09
+    },
+    "SATload": {
+      "scaled": 4.5733580976550875e-15,
+      "absolute": 3.642897874463366e-12,
+      "maxabs": 7.673861546209082e-13
+    },
+    "Jbulk": {
+      "scaled": 3.2311665013126845e-13,
+      "absolute": 6.788091955501027e-09,
+      "maxabs": 1.7511752048449125e-09
+    },
+    "Jsat": {
+      "scaled": 1.1800803044518517e-13,
+      "absolute": 5.806285945641944e-13,
+      "maxabs": 1.4317713681322175e-13
+    },
+    "manufactured_load": {
+      "scaled": 1.853021957367092e-15,
+      "absolute": 2.2243748057422904e-10,
+      "maxabs": 1.1641532182693481e-10
+    },
+    "manufactured_boundary_load": {
+      "scaled": 4.001402785060813e-15,
+      "absolute": 1.3189554125723844e-14,
+      "maxabs": 7.993605777301127e-15
+    }
+  },
+  "passed": true,
+  "scope": "Same finite trial/equations/SAT; integration readback only"
+}

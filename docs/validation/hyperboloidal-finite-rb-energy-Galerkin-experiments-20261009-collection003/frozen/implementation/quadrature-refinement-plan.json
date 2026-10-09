@@ -1,0 +1,33 @@
+{
+  "scope": "Single explicitly allowed quadrature refinement; no equation/SAT/trial/tolerance change",
+  "baseline_source_sha256": "b903ff6bc78789db0973e0f3696c02272f44b820d54938e977c7cf464fdffe6d",
+  "refinement_source_sha256": "d28f652a641293f525c4f6a091dfd17edb97831bdc72d066f8368c78bfd99e0d",
+  "panels_r": [
+    0,
+    0.05,
+    0.45,
+    0.85,
+    0.9,
+    0.95,
+    0.98
+  ],
+  "nodes_per_panel": [
+    32,
+    64
+  ],
+  "first_panel": "Gauss-Jacobi rho^.5",
+  "other_panels": "Gauss-Legendre times sqrt(rho), positive endpoints",
+  "common_nodal_rule": "Original N-node common-rho Gauss-Jacobi unchanged",
+  "J": 0,
+  "N": 8,
+  "rb": 0.98,
+  "angular": [
+    12,
+    24
+  ],
+  "thresholds_unchanged": true,
+  "failures_preserved": [
+    "J0-N8-rb.98-Q64-a12x24-readback002",
+    "J0-N8-rb.98-Q128-a12x24-attempt001"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "status": "PASS_independent_source_math_only_numerical_gate_not_admitted_here",
+  "reviewer": "/root/literature_gauge",
+  "head": "2e0aa3b0d5ade2fef4d86807a4569fef61f6b202",
+  "method": "Independent source/formula inspection with exact-byte pin/copy and unchanged readback; no compile, scientific batch, numerical rerun or operator assembly.",
+  "source_pin_sha256": "0f53f3a967a5252e1b2301f3f70b00df255b8073a69e62c3cd720d8086ea296f",
+  "sources": {
+    "spatial_dual.hpp": {
+      "original_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/spatial_dual.hpp",
+      "sha256": "f8f36334183b129752a91e11de7b84b927b4cd18ebe84d5c230611f77405ba59",
+      "bytes": 8880
+    },
+    "generic_gauge.hpp": {
+      "original_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/generic_gauge.hpp",
+      "sha256": "453c14fbe90a92057c87838905960086fa9aa10480a67ea13c06ce50a44d4e42",
+      "bytes": 1276
+    },
+    "configuration_rows.hpp": {
+      "original_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/configuration_rows.hpp",
+      "sha256": "41800f0a8e4adfb48867fbee0c904987768e656b9ef2a29edbc0eef7c5f6ad1e",
+      "bytes": 4053
+    },
+    "radial_normalization.hpp": {
+      "original_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial_normalization.hpp",
+      "sha256": "49ed38fca6cc5f7be8d349e8e62ab50beff1081275ecea8e33dd71e934d67f1a",
+      "bytes": 5056
+    },
+    "radial_bridge.cpp": {
+      "original_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/radial_bridge.cpp",
+      "sha256": "65cc3df6ff7655a28beb61aab445055f7d84123c07101e6e4e5cfd6ab4251438",
+      "bytes": 8821
+    },
+    "actual_bridge.cpp": {
+      "original_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/actual_bridge.cpp",
+      "sha256": "4565f196850af12ebe9176aa1317fb2070dbb3c2020e5f997fde611c802c6860",
+      "bytes": 22309
+    },
+    "baseline_dual_spatial.hpp": {
+      "original_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/baseline_dual_spatial.hpp",
+      "sha256": "3decada94c7f988d29282d3d888e368c2c5f1f4972282bbad3ee73233fafe889",
+      "bytes": 1703
+    },
+    "point_energy.hpp": {
+      "original_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/point_energy.hpp",
+      "sha256": "eadd408e947bc4bb0fd790baf8d85f52149a19ba498c088e80d6f736cbdffc20",
+      "bytes": 4510
+    }
+  },
+  "findings": [
+    "S1<D> correctly implements a first Cartesian spatial jet over the perturbation dual, including mixed product/quotient/elementary-function derivatives; overloads precede production template definitions.",
+    "GenericGauge now accepts Z4cJet<T>, retains physical-P/source-off spatial-norm xi=2 and rho=1.5 source and single beta-pole assembly. Preferred-source Hessian/Box derivatives are absent in this baseline.",
+    "ConfigurationSpatial evaluates only chi, six metric entries, alpha and beta. Chi/metric formulas agree with the actual first-order C0 configuration equations; their spatial derivatives require at most second configuration jets and first A jets. No A/P/Theta/Lambda evolution is differentiated.",
+    "SpatialReference retains complete radius, Omega gradient/Hessian, lapse/trace/beta reference coefficient jets. Higher placeholders are unused by equation rows; Geometry still evaluates curvature for its finite-validity check, so arbitrary finite extensions rather than NaN poisoning are appropriate. Extensions now vary both D value and perturbation components.",
+    "MakeReferenceRadial correctly contracts Cartesian reference jets along a fixed ray, including reference inverse/raised A and radial frame/coframe factors. Normal frame evaluation is excluded at origin, whose separate exact polynomial core remains necessary.",
+    "Complete U uses lapse/alpha_ref, chi/chi_ref, the declared metric component chart and coframe beta/alpha_ref. V uses P/Omega, Theta/Omega, independent-A trace subtraction and chi_ref coframe Lambda. All reference coefficient derivatives remain in the reduction.",
+    "The A subtraction Aref_up:delta_g is retained when the same fixed map acts on raw RHS; thus V_t includes the configuration metric RHS contribution. No orthonormal-STF or CG amplitude normalization is substituted for the exact kernel chart.",
+    "Input normalization consumes U value/first/second and V value/first only. V has no second-derivative accessor; internal unused second A-reference terms cannot be treated as supplied analytic jets. Source packing consumes Ut, DsUt and Vt only.",
+    "Point-energy packing, independent Gamma=Ds(HKn)+(div s)HKn, weak/strong source densities, symmetric volume remainder and complete adjoint SAT work match the held addendum.",
+    "The revised derivative sampler locks the same center normal/screen for every radial FD point. This avoids a representation-chart switch on the sampled ray. It does not remove the separate required O(2) rotation/work covariance gate."
+  ],
+  "resolved_source_preflight_issues": [
+    "GenericGauge hard-coded Jet changed to hyp::Z4cJet<T>.",
+    "Undefined FixedPolynomial Dot helper removed.",
+    "Higher-jet extension changed from D(unused) to D(unused,unused).",
+    "V second derivative accessor removed.",
+    "Point-name/mixed-size-auto compile failures retained under release-001 by implementation owner.",
+    "Earlier source-gate-release-001 screen-flip failure and earlier source pins retained. Screen threshold moved away from sampled ray and center frame now explicitly locked.",
+    "Independent capture aborted on active source-pin mismatch before PASS; history/001-source-pin-race.json preserves that failed capture."
+  ],
+  "numerical_gate_scope_and_pending_requirements": [
+    "Current DerivativeGate covers m0, a single oblique radial ray, five radii and all J<=2 channels. It is not an all-m/all-angle derivative certificate.",
+    "The checker now requires final-h error <=2e-7 and preserves complete sequences. Rows without observed fourth-order evidence are explicitly order unclassified within tolerance; do not automatically call these rows roundoff-limited.",
+    "Actual full22/configuration binding, double-only-wrapper negative control, raw normals and finite extension independence must pass with exact build/source pins. This receipt does not assert their numerical outcome.",
+    "Symmetrizer/volume coefficient derivative implementation, mass/weak/strong/G-volume assembly, restricted incoming ranks, manufactured forcing and physical subsidiary-rate gates remain independent work. No radial operator, eigenvalue or propagation is admitted by this source review."
+  ],
+  "blocking_source_math_corrections": [],
+  "scientific_execution_by_reviewer": false,
+  "frozen_files_mutated": false,
+  "scope": "Read-only source/math review of exact chunk002. Parent controls subsequent releases. No CPBC/exact-scri/continuum stability, native/global pulse or BH acceptance; eventual single BH must survive wormhole-to-trumpet interior with the Minkowski hyperboloidal reference throughout.",
+  "review_script_sha256": "5a19b0f5782786977db9b39a9c79f6c3ddcf0821b05716e88a204d10821a9fa3"
+}

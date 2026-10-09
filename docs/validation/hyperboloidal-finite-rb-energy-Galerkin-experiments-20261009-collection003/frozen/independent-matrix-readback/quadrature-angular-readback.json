@@ -1,0 +1,259 @@
+{
+  "status": "PASS",
+  "source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/readback_comparisons.py",
+    "sha256": "8dbf880b28b634c3e7b341f16790e6189b8ff4bceaddc7cf71144f6247bc4b70",
+    "bytes": 5110
+  },
+  "comparisons": [
+    {
+      "name": "segmented-radial-32-64",
+      "inputs": [
+        {
+          "matrix": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ32-a12x24-refinement001/operator.npz",
+            "sha256": "1eef30acecef90bb7b8f852524562b4273765b7f6713a99bb1bd9b5caead15dc",
+            "bytes": 409024
+          },
+          "report": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ32-a12x24-refinement001/report.json",
+            "sha256": "f9ef813357fa278689456c37c9432f623db34f8b247310a33565566764d3b31b",
+            "bytes": 200290
+          },
+          "assembler_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ32-a12x24-refinement001/assemble_segmented.py",
+            "sha256": "d28f652a641293f525c4f6a091dfd17edb97831bdc72d066f8368c78bfd99e0d",
+            "bytes": 15740
+          },
+          "energy_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ32-a12x24-refinement001/energy_coefficients.py",
+            "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+            "bytes": 2279
+          },
+          "canceled_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ32-a12x24-refinement001/canceled_basis_complex.py",
+            "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+            "bytes": 1767
+          }
+        },
+        {
+          "matrix": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/operator.npz",
+            "sha256": "2ed0da45a995669f7e3e2fedba231eeda0dcb06f43577125d4a194974c4f4742",
+            "bytes": 411889
+          },
+          "report": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/report.json",
+            "sha256": "ec016348c9829b114b058998ce9acc30317b0494bbb7182f9c9cb75338b2fbe1",
+            "bytes": 396896
+          },
+          "assembler_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/assemble_segmented.py",
+            "sha256": "d28f652a641293f525c4f6a091dfd17edb97831bdc72d066f8368c78bfd99e0d",
+            "bytes": 15740
+          },
+          "energy_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/energy_coefficients.py",
+            "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+            "bytes": 2279
+          },
+          "canceled_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/canceled_basis_complex.py",
+            "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+            "bytes": 1767
+          }
+        }
+      ],
+      "source_execution_identity": "Same captured assembler, energy coefficients, canceled basis and historical actual-kernel executable hashes.",
+      "owner_comparison": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-segmented-quadrature-comparison.json",
+        "sha256": "668951d0aedb13d46ba9214141d27c4ebeeac3710ee3bebd4cc318a4e4341514",
+        "bytes": 1348
+      },
+      "all_owner_saved_comparison_numbers_match": true,
+      "expanded_comparison_rows": {
+        "E": {
+          "scaled": 9.120461879730684e-12,
+          "absolute": 1.7854259853784934e-07,
+          "maxabs": 7.795370038365945e-08
+        },
+        "Kweak": {
+          "scaled": 1.0437380622833364e-11,
+          "absolute": 7.106514038904044e-05,
+          "maxabs": 1.6884179785847664e-05
+        },
+        "Kstrong": {
+          "scaled": 3.462028367163829e-12,
+          "absolute": 2.3571961283566892e-05,
+          "maxabs": 6.716581992805004e-06
+        },
+        "Gvolume": {
+          "scaled": 6.118085761542254e-12,
+          "absolute": 5.5443010037040756e-05,
+          "maxabs": 1.4945850580261322e-05
+        },
+        "Fboundary": {
+          "scaled": 0.0,
+          "absolute": 0.0,
+          "maxabs": 0.0
+        },
+        "SATload": {
+          "scaled": 0.0,
+          "absolute": 0.0,
+          "maxabs": 0.0
+        },
+        "Jbulk": {
+          "scaled": 2.9210664986331725e-10,
+          "absolute": 4.5855662800173085e-06,
+          "maxabs": 1.5741525203338824e-06
+        },
+        "Jsat": {
+          "scaled": 3.971121191138557e-10,
+          "absolute": 1.3067328117762306e-09,
+          "maxabs": 2.950965583004006e-10
+        },
+        "manufactured_load": {
+          "scaled": 7.140161809996979e-12,
+          "absolute": 7.70651447059403e-07,
+          "maxabs": 4.4380431063473225e-07
+        },
+        "manufactured_boundary_load": {
+          "scaled": 0.0,
+          "absolute": 0.0,
+          "maxabs": 0.0
+        }
+      },
+      "maximum_scaled": 3.971121191138557e-10,
+      "threshold": 2e-08,
+      "passed": true
+    },
+    {
+      "name": "angular-12x24-16x32",
+      "inputs": [
+        {
+          "matrix": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/operator.npz",
+            "sha256": "2ed0da45a995669f7e3e2fedba231eeda0dcb06f43577125d4a194974c4f4742",
+            "bytes": 411889
+          },
+          "report": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/report.json",
+            "sha256": "ec016348c9829b114b058998ce9acc30317b0494bbb7182f9c9cb75338b2fbe1",
+            "bytes": 396896
+          },
+          "assembler_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/assemble_segmented.py",
+            "sha256": "d28f652a641293f525c4f6a091dfd17edb97831bdc72d066f8368c78bfd99e0d",
+            "bytes": 15740
+          },
+          "energy_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/energy_coefficients.py",
+            "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+            "bytes": 2279
+          },
+          "canceled_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/canceled_basis_complex.py",
+            "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+            "bytes": 1767
+          }
+        },
+        {
+          "matrix": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a16x32-angular001/operator.npz",
+            "sha256": "8a5e9be63e323ddd08862eedad96400fdee21ebee873440c6ade47b4bc848117",
+            "bytes": 519751
+          },
+          "report": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a16x32-angular001/report.json",
+            "sha256": "9937362dfec016cf3ea6e1490b65d09b2359d1718f4930ecbb1eec77decdac94",
+            "bytes": 396896
+          },
+          "assembler_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a16x32-angular001/assemble_segmented.py",
+            "sha256": "d28f652a641293f525c4f6a091dfd17edb97831bdc72d066f8368c78bfd99e0d",
+            "bytes": 15740
+          },
+          "energy_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a16x32-angular001/energy_coefficients.py",
+            "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+            "bytes": 2279
+          },
+          "canceled_source": {
+            "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a16x32-angular001/canceled_basis_complex.py",
+            "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+            "bytes": 1767
+          }
+        }
+      ],
+      "source_execution_identity": "Same captured assembler, energy coefficients, canceled basis and historical actual-kernel executable hashes.",
+      "owner_comparison": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-angular-comparison.json",
+        "sha256": "c24b8d97fc32c277e579280e41a8e8d734459a6acce2628a06f9f02b906b059d",
+        "bytes": 2193
+      },
+      "all_owner_saved_comparison_numbers_match": true,
+      "expanded_comparison_rows": {
+        "E": {
+          "scaled": 6.2015846089226675e-16,
+          "absolute": 1.2140251729900556e-11,
+          "maxabs": 2.9558577807620168e-12
+        },
+        "Kweak": {
+          "scaled": 7.622932020023995e-15,
+          "absolute": 5.1902364563946464e-08,
+          "maxabs": 2.3399479687213898e-08
+        },
+        "Kstrong": {
+          "scaled": 7.556434203500696e-16,
+          "absolute": 5.144959994439622e-09,
+          "maxabs": 1.280568540096283e-09
+        },
+        "Gvolume": {
+          "scaled": 9.890534648012709e-16,
+          "absolute": 8.962950719135334e-09,
+          "maxabs": 2.0954757928848267e-09
+        },
+        "Fboundary": {
+          "scaled": 3.956954580701911e-15,
+          "absolute": 2.1661441953921487e-08,
+          "maxabs": 9.080395102500916e-09
+        },
+        "SATload": {
+          "scaled": 5.004988068828666e-15,
+          "absolute": 2.7956523499382186e-12,
+          "maxabs": 1.4210854715202004e-12
+        },
+        "Jbulk": {
+          "scaled": 2.781866749429678e-13,
+          "absolute": 4.367046887703838e-09,
+          "maxabs": 1.1254428500251379e-09
+        },
+        "Jsat": {
+          "scaled": 7.702130541741443e-14,
+          "absolute": 2.5344546829586326e-13,
+          "maxabs": 6.650235917504688e-14
+        },
+        "manufactured_load": {
+          "scaled": 5.085422852824738e-16,
+          "absolute": 5.488795050766504e-11,
+          "maxabs": 3.637978807091713e-11
+        },
+        "manufactured_boundary_load": {
+          "scaled": 3.597948429484269e-15,
+          "absolute": 1.1271344164355752e-14,
+          "maxabs": 7.327471962526033e-15
+        }
+      },
+      "maximum_scaled": 2.781866749429678e-13,
+      "threshold": 2e-08,
+      "passed": true
+    }
+  ],
+  "versions": {
+    "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+    "numpy": "2.0.2"
+  },
+  "scientific_kernel_or_assembler_run": false,
+  "generator_spectrum_or_propagation": false,
+  "scope": "Saved integration-rule sensitivity for fixed J0,N8,rb.98 and the named unchanged energy-Galerkin/SAT problem; not degree/PDE convergence or a ghost-closure attribution."
+}

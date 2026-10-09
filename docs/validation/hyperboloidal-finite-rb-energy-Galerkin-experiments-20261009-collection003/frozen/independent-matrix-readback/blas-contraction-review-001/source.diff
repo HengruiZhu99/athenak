@@ -1,0 +1,18 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/assemble_segmented.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-BLAS-equivalence001/assemble_blas.py
+@@ -113,11 +113,13 @@
+     normalized=error(predicted,actual)
+     assert max(fit['scaled'],held['scaled'],normalized['scaled'])<=5e-11
+     return A.reshape(nc+len(conf),nc,3),{'r':float(r),'scaled_condition':cond,'fit':fit,'heldout':held,'source_normalization':normalized,'exact_core_action':core_error}
+-def angle_work(a,b,w):return np.einsum('afi,a,afj->ij',a,w,b,optimize=False)
++def angle_work(a,b,w):
++    # Identical angular bilinear form, BLAS matrix contraction only.
++    return np.dot(a.reshape(-1,a.shape[-1]).T,(w[:,None,None]*b).reshape(-1,b.shape[-1]))
+ 
+ def assemble(J,N,rb,Q,nt,np_,name,exe):
+     dest=P/name;assert not (dest/'operator.npz').exists(),'New output prefix required';dest.mkdir(exist_ok=True)
+-    for f in ('assemble_segmented.py','energy_coefficients.py','canceled_basis_complex.py'):shutil.copyfile(P/f,dest/f)
++    for f in ('assemble_blas.py','energy_coefficients.py','canceled_basis_complex.py'):shutil.copyfile(P/f,dest/f)
+     rho,wr=quadrature(Q,rb);radii=np.sqrt(rho);dirs,wa=angular(nt,np_);nc=len(layout[str(J)]);nd=nc*N
+     conf=np.array([i for i,x in enumerate(layout[str(J)]) if x['name'] in ('alpha','metric_trace','beta','metric_STF')]);assert len(conf)==nc//2
+     source=run_queries(dest/'source','--source-batch',np.r_[radii,rb],np.r_[fitdirs,holddirs],J,exe)

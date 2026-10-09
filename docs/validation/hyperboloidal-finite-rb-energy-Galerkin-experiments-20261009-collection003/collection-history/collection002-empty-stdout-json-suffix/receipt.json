@@ -1,0 +1,5 @@
+{
+  "failed": true,
+  "destination_was_not_created": true,
+  "reason": "The byte-preserved empty stdout log has a .json suffix, so the generic queue tried to parse it as JSON. Fresh collector maps known empty *.stdout.json logs to *.stdout in the archive, preserving bytes and source paths. Scientific JSON parsing is unchanged."
+}

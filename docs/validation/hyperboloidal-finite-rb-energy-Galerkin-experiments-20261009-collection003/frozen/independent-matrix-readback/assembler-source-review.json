@@ -1,0 +1,43 @@
+{
+  "status": "PASS_read_only_source_math_review",
+  "reviewer": "/root/literature_gauge",
+  "review_HEAD": "5ef1c97d10f17a8af0890e5cb39ac463b25ee084",
+  "input_pins": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/assemble_segmented.py",
+      "sha256": "d28f652a641293f525c4f6a091dfd17edb97831bdc72d066f8368c78bfd99e0d",
+      "bytes": 15740
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/energy_coefficients.py",
+      "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+      "bytes": 2279
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/canceled_basis_complex.py",
+      "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+      "bytes": 1767
+    }
+  ],
+  "corrections": [],
+  "source_math_findings": [
+    "Envelope Jacobi normalization and first/second rho derivatives agree with the channel solid-harmonic radial mass; common nodes carry an invertible full channel map and do not assert diagonal common mass.",
+    "Segmented quadrature integrates the same .5 sqrt(rho) d(rho) radial measure, with Jacobi treatment at zero and Legendre panels at fixed geometry/gauge/symmetrizer endpoints. It changes integration only.",
+    "The extended fit includes raw22 values and eleven configuration radial derivatives, plus independent first-envelope-derivative output columns. Core replacement uses C0_rho, C0+C1_rho, C1+C2_rho consistently; configuration rows require no third input-envelope derivative.",
+    "Actual normalized-source held-out fitting checks complete Ut,DsUt,Vt. Reference normalization retains the A-trace tangent coupling through the captured raw field/source lift. It does not differentiate momentum evolution.",
+    "Y=(q,V), q=c Ur, DsY=(c(cr Ur+c Urr),c Vr), dV=(r^2/c)dr dOmega and dSigma=rb^2 dOmega are consistent. Origin surface terms vanish for the regular solid-envelope fields; no origin boundary data are imposed.",
+    "Strong K pairs the point source with the energy test map; weak K integrates only the q_t=DsUt term by parts and retains the correct div_s=2c/r and rb^2 outer term.",
+    "G independently uses R=Yt-Kn DsY, Gamma=Ds(HKn)+(2c/r)HKn and the symmetric U Ut mass contribution. Missing coefficient derivatives are not hidden by deriving G from a matrix residual.",
+    "H_C=Lc^T Lc is analytic in positive alpha and the admitted cutoff branch; algebraic transpose in complex-step differentiation is correct. H_D blending is restricted to Wgauge=1. Screen rotations use the same nonorthonormal STF chart.",
+    "SAT=-kin B^T H Pplus B, B=rb sqrt(wangle)Y, with positive incoming kin for RHS y_t=Kn y_r, has the declared adjoint sign. The forcing is assembled from pointwise (Y-Yt)X and (U-Ut)X before matrix solves, while prescribed incoming data gives boundaryload=-SAT X.",
+    "Weak/strong, volume and manufactured tests are non-tautological integration-by-parts/coefficient checks: the preserved global quadrature failures occur despite point-forcing consistency with strong K. E_nodal congruence, by contrast, is an algebraic conversion readback and not an independently assembled nodal mass certificate."
+  ],
+  "limitations": [
+    "Source review and saved-array checks do not independently reproduce the actual point kernel; existing pinned local source/angular/core gates supply that binding.",
+    "The fixed radial symmetrizer and measured incoming sector ranks do not establish all-direction symmetrization, constraint-preserving boundary conditions, exact-scri closure or PDE stability.",
+    "This is fixed J0,N8,rb.98 evidence. J1/J2, physical constraint rates and degree/radius controls require their own gates.",
+    "Generalized symmetric energy production and trace norms are finite-dimensional diagnostics, distinct from generator spectra or nonlinear pulse/BH acceptance."
+  ],
+  "scientific_kernel_or_assembler_run": false,
+  "generator_spectrum_or_propagation": false
+}

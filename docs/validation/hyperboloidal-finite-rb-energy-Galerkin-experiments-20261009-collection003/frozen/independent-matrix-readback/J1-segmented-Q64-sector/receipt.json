@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/bin/python",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/verify_operator.py",
+    "--npz",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-segmented-Q64-sector-readback001/operator.npz",
+    "--expect-sha256",
+    "b184d230785ce044f1a168b1296177cbcc23214eae49eb70b808e2b6d7ebabb7",
+    "--metadata",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-segmented-Q64-sector-readback001/matrix-metadata.json",
+    "--expect-metadata-sha256",
+    "e866f721e4a1e999406a182a5e04addf17e7c119578b7f12fc6233abb26a8be8",
+    "--output",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/J1-segmented-Q64-sector/result.json"
+  ],
+  "seconds": 0.24143562500000001,
+  "returncode": 0,
+  "stderr_bytes": 0,
+  "source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/readback_next.py",
+    "sha256": "f5fc25f822e887a1adbef605a9c79c3dd3a95a354e137db0ad1501ef4e07135b",
+    "bytes": 6243
+  },
+  "verifier": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/verify_operator.py",
+    "sha256": "855245e3e4429dc713d817285ec79f05dda112ec159b9b821c9983e95987d95b",
+    "bytes": 14415
+  },
+  "result": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/J1-segmented-Q64-sector/result.json",
+    "sha256": "cd515e9963962d177e32795a9976414c3de1b17352811f398dd17a35ecc29ebd",
+    "bytes": 43443
+  },
+  "auxiliary": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/J1-segmented-Q64-sector/auxiliary.json",
+    "sha256": "840621bc7a084a7efb07acaf2d79db9944b633df5e29d80880fff76faf3d61d4",
+    "bytes": 2537
+  },
+  "versions": {
+    "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+    "numpy": "2.0.2"
+  },
+  "scientific_kernel_or_assembler_run": false,
+  "generator_spectrum_or_propagation": false
+}

@@ -1,0 +1,346 @@
+{
+  "status": "PASS_read_only_source_binding_coverage_and_saved_array_review",
+  "reviewer": "/root/literature_gauge",
+  "source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-forcing-family-independent-review-20261009/review.py",
+    "sha256": "1675c5c5b6fbff188be569be28a578a3a06ca50ce03e469aea8831b303ecd397",
+    "bytes": 14061
+  },
+  "reviewed_replay_source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/replay_forcing_family.py",
+    "sha256": "34fb0f7a6d1ae23a54a5dfc8a18e8b394c2c29462a272cf0fe3a7a93b19fd6f4",
+    "bytes": 8371
+  },
+  "dependencies": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/assemble_blas.py",
+      "sha256": "a3b140d7ef41bd5d83ffd9e03cba373f1c10f9486b07c815fd5d80c061926fd7",
+      "bytes": 15840
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/energy_coefficients.py",
+      "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+      "bytes": 2279
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/canceled_basis_complex.py",
+      "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+      "bytes": 1767
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/inputs/basis/basis-data.json",
+      "sha256": "ddc8c8d91d211aad70a4df4560a75c32807417248abdf025663ad411cfd4e738",
+      "bytes": 326337
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-local-angular-20261009/immutable-C0-spatialnorm-total-J-local-angular-20261009/angular-plan.json",
+      "sha256": "91ef3546718754944334536b6881a7de82ee7d23c75ba0e1e15f8e2c611c8b14",
+      "bytes": 3013
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-flat-core-envelope-20261009/immutable-total-J-flat-core-envelope-20261009/core-envelope-blocks.npz",
+      "sha256": "379316edf52fd6d137862d313b9edd7977dc58e4ee34afc77212605ff24e3858",
+      "bytes": 2114
+    }
+  ],
+  "total_fixed_fields": 179,
+  "rows": [
+    {
+      "J": 0,
+      "family_count": 33,
+      "report": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-forcing-family-replay001/report.json",
+        "sha256": "77067f75469f1475a70cf2964b3baf96471652e44ae227445a761da445326978",
+        "bytes": 260205
+      },
+      "arrays": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-forcing-family-replay001/forcing-family.npz",
+        "sha256": "4faa4629704480369944c23ba41a84ed262b0b939685b931523b8b39fb9540f0",
+        "bytes": 65201
+      },
+      "plan": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-forcing-family-replay001/plan.json",
+        "sha256": "2c6abdf68a097b576efbec66d1c2b4fec4baa49d79aa0f256f9fe8cedec10c30",
+        "bytes": 562
+      },
+      "execution_readback": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-forcing-family-replay001/execution-readback.json",
+        "sha256": "467b089b6cb18e60705969c5eae5cdb763cdc3e7ede6edbd2ef96b24c127f901",
+        "bytes": 905
+      },
+      "input_pins": [
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/operator.npz",
+          "sha256": "2ed0da45a995669f7e3e2fedba231eeda0dcb06f43577125d4a194974c4f4742",
+          "bytes": 411889
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/report.json",
+          "sha256": "ec016348c9829b114b058998ce9acc30317b0494bbb7182f9c9cb75338b2fbe1",
+          "bytes": 396896
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/reference.txt",
+          "sha256": "b2d43a4122e0c6c2fc6649e5c013b50d239fab26a2998c2cdf05d2c53cb6a755",
+          "bytes": 89183
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/reference-receipt.json",
+          "sha256": "6aa17dd24fc222e58ebb2f258863a49f0836f9632914be6c904e8bb796712d85",
+          "bytes": 495
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/source/receipt.json",
+          "sha256": "d8910cdf452e599b9f51670c565feb514e64d6a31cb8655a9ba79197683ace29",
+          "bytes": 396
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/input/receipt.json",
+          "sha256": "212f23e80f0b1c02408cdf76a205de80b6cda64ee83aa707a4fe223e9be266c5",
+          "bytes": 398
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/assemble_blas.py",
+          "sha256": "a3b140d7ef41bd5d83ffd9e03cba373f1c10f9486b07c815fd5d80c061926fd7",
+          "bytes": 15840
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/energy_coefficients.py",
+          "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+          "bytes": 2279
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/canceled_basis_complex.py",
+          "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+          "bytes": 1767
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/source/output.txt",
+          "sha256": "8d83f3c1344237dc7362c9e84e082f914688dad7273626f16504e8003fad58b0",
+          "bytes": 175171040
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/input/output.bin",
+          "sha256": "fef360c294e96e42bdf115c833d5bd254db539c6fba12ec345fa457b7484b648",
+          "bytes": 1064448000
+        }
+      ],
+      "fixed_family_coverage_complete": true,
+      "held_and_common_polynomial_evaluation_error": 4.092024068820812e-16,
+      "all_saved_case_metrics_match": true,
+      "point_source_fit_max_scaled": 1.9892203337743926e-14,
+      "maximum_saved_coefficient_error_scaled": 7.366928097851683e-11,
+      "maximum_saved_energy_error_scaled": 7.650986652119387e-11,
+      "independent_saved_load_solve_max_coefficient_error_scaled": 7.366928097851683e-11,
+      "saved_solution_backward_error": {
+        "scaled": 3.4021409561767544e-16,
+        "absolute": 2.9073879808802674e-13,
+        "absolute_max": 7.105427357601002e-14
+      },
+      "passed": true
+    },
+    {
+      "J": 1,
+      "family_count": 65,
+      "report": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-forcing-family-replay001/report.json",
+        "sha256": "5f92214cf21585e45c2a579b65808e75b0c60325bcdf09d3ec5869248411715d",
+        "bytes": 273465
+      },
+      "arrays": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-forcing-family-replay001/forcing-family.npz",
+        "sha256": "381cd1785ef074981d198ea93f3f37a6e29aa8be1653ea61bc5f8a34b1250277",
+        "bytes": 256909
+      },
+      "plan": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-forcing-family-replay001/plan.json",
+        "sha256": "2c6abdf68a097b576efbec66d1c2b4fec4baa49d79aa0f256f9fe8cedec10c30",
+        "bytes": 562
+      },
+      "execution_readback": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-forcing-family-replay001/execution-readback.json",
+        "sha256": "e8c1d3cff927ddd9412149cea9549ac2030aced10bd76c7b4106f28ea5a5db49",
+        "bytes": 905
+      },
+      "input_pins": [
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001/operator.npz",
+          "sha256": "ce0c07a08ecb9ea0f114c7f4b7b6cd87f1239b8eef6f1f595ef58d99440d4b39",
+          "bytes": 1595464
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001/report.json",
+          "sha256": "7e527aecce9f5fb9b5d278c5c89fd4882be335ccbb7b1bbdcb180767b25d6fa8",
+          "bytes": 397181
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001/reference.txt",
+          "sha256": "b2d43a4122e0c6c2fc6649e5c013b50d239fab26a2998c2cdf05d2c53cb6a755",
+          "bytes": 89183
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001/reference-receipt.json",
+          "sha256": "62c08a6f512b0120dea0716aae14e53bdf5ea639506de89c5cf960456d5cd440",
+          "bytes": 495
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001/source/receipt.json",
+          "sha256": "a6a32854731e9d40a3153e3557fa8e7c53837c1fd99239231c90bc38fc1134f2",
+          "bytes": 398
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001/input/receipt.json",
+          "sha256": "49fa837064dc073a0a2141544a3c03170b21ab51a75e83b86e82dcb678f26175",
+          "bytes": 403
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/assemble_blas.py",
+          "sha256": "a3b140d7ef41bd5d83ffd9e03cba373f1c10f9486b07c815fd5d80c061926fd7",
+          "bytes": 15840
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/energy_coefficients.py",
+          "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+          "bytes": 2279
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/canceled_basis_complex.py",
+          "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+          "bytes": 1767
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001/source/output.txt",
+          "sha256": "c30c1e7a579e1e2fba6d25498e391277e3f142f77dc2f242b55fb807408ae389",
+          "bytes": 368947825
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J1-N8-rb.98-segmentedQ64-a12x24-refinement001/input/output.bin",
+          "sha256": "466c07b99fee13fbe0120d026ba69117d4d1db83282421da6a6b421485c339ea",
+          "bytes": 2128896000
+        }
+      ],
+      "fixed_family_coverage_complete": true,
+      "held_and_common_polynomial_evaluation_error": 4.495396629186411e-16,
+      "all_saved_case_metrics_match": true,
+      "point_source_fit_max_scaled": 3.0784334575857977e-14,
+      "maximum_saved_coefficient_error_scaled": 9.247354473484582e-11,
+      "maximum_saved_energy_error_scaled": 1.9162807873137245e-10,
+      "independent_saved_load_solve_max_coefficient_error_scaled": 9.247354473484582e-11,
+      "saved_solution_backward_error": {
+        "scaled": 4.3786676695716005e-16,
+        "absolute": 3.7816047240477767e-13,
+        "absolute_max": 8.526512829121202e-14
+      },
+      "passed": true
+    },
+    {
+      "J": 2,
+      "family_count": 81,
+      "report": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-forcing-family-replay001/report.json",
+        "sha256": "44b05f66652393ad6180efd77e37856066fa0ae09633c77845d9f7054d429935",
+        "bytes": 279903
+      },
+      "arrays": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-forcing-family-replay001/forcing-family.npz",
+        "sha256": "20d8061c8c902cc2813c2010f5c995b2bb74921506d5223d3f57ac80241f17b5",
+        "bytes": 397619
+      },
+      "plan": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-forcing-family-replay001/plan.json",
+        "sha256": "2c6abdf68a097b576efbec66d1c2b4fec4baa49d79aa0f256f9fe8cedec10c30",
+        "bytes": 562
+      },
+      "execution_readback": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-forcing-family-replay001/execution-readback.json",
+        "sha256": "baeeecfe3cd23716095fb9d32a5e691bd4a4d062ef5b2f98ec5c5aa7a9e87c12",
+        "bytes": 907
+      },
+      "input_pins": [
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a16x32-BLAS-angular001/operator.npz",
+          "sha256": "4893c04cba599be97f291157337c91e1263f872ddbf291b2ae808b806bd82125",
+          "bytes": 3017733
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a16x32-BLAS-angular001/report.json",
+          "sha256": "5fbdc07d3232ccd86a16a60fc56791680516fcb61d3a51ac27d38529ca6d0d73",
+          "bytes": 397068
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a16x32-BLAS-angular001/reference.txt",
+          "sha256": "b2d43a4122e0c6c2fc6649e5c013b50d239fab26a2998c2cdf05d2c53cb6a755",
+          "bytes": 89183
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a16x32-BLAS-angular001/reference-receipt.json",
+          "sha256": "1841b5641d0ab512577909abed9de0d5e267ba3bc10a7905e2cd39e6d0618d5a",
+          "bytes": 494
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a12x24-refinement001/source/receipt.json",
+          "sha256": "29020644fce2d5c217ef8bd7e63357077609891c70cf81a31c1892ef95a19af5",
+          "bytes": 398
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a16x32-BLAS-angular001/input/receipt.json",
+          "sha256": "d4a47f2ee45d65623fb7cca656b87c5ec394e9889eabe67892e3aa7eb59b9d02",
+          "bytes": 400
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/assemble_blas.py",
+          "sha256": "a3b140d7ef41bd5d83ffd9e03cba373f1c10f9486b07c815fd5d80c061926fd7",
+          "bytes": 15840
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/energy_coefficients.py",
+          "sha256": "eb15ff31262e5907d2825c357f055c1f8c0fc3c189f1fe8f7b51e0b0cf0c3e40",
+          "bytes": 2279
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/canceled_basis_complex.py",
+          "sha256": "a5cc08bff29916f39358602c25842c20e98a86205437ffdf7bd6107e9b10f33b",
+          "bytes": 1767
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a12x24-refinement001/source/output.txt",
+          "sha256": "6d1e6b3e9cb7580e7742e178b0df79e147f4793289783a92217a27147b544282",
+          "bytes": 484828579
+        },
+        {
+          "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J2-N8-rb.98-segmentedQ64-a16x32-BLAS-angular001/input/output.bin",
+          "sha256": "ef4dfbbfb2ea8429e7c4e8d56dd9e341218b860ca250ba170f96dea8fbd784fc",
+          "bytes": 4730880000
+        }
+      ],
+      "fixed_family_coverage_complete": true,
+      "held_and_common_polynomial_evaluation_error": 4.495396629186411e-16,
+      "all_saved_case_metrics_match": true,
+      "point_source_fit_max_scaled": 8.102597735346359e-15,
+      "maximum_saved_coefficient_error_scaled": 1.0200065666325116e-10,
+      "maximum_saved_energy_error_scaled": 1.4024832224418577e-10,
+      "independent_saved_load_solve_max_coefficient_error_scaled": 1.0200065666325116e-10,
+      "saved_solution_backward_error": {
+        "scaled": 4.919765659969318e-16,
+        "absolute": 4.388726558343872e-13,
+        "absolute_max": 1.1368683772161603e-13
+      },
+      "passed": true
+    }
+  ],
+  "seconds": 3.0945172910000003,
+  "source_math_findings": [
+    "Each channel independently receives W=1,rho,rho^2,rho^3 in the N8 modal envelope; all other channels are exactly zero. The saved alternating mixed cubic is an additional control.",
+    "At each cached quadrature point the prescribed input maps and fitted raw22-plus-configuration-derivative action produce Phi and L_actual Phi. Volume forcing is their difference before integration; E/Kweak/Kstrong/SATload do not define that load.",
+    "The c*d_r configuration RHS map includes derivative-of-envelope output rows. This retains q=c*d_r U rather than independently evolving q, and the underlying source-normalization/input maps retain the reference metric/A trace tangent.",
+    "The positive incoming load rb^2*k_in integral Y_test^T H Pplus Y_prescribed is independently built at rb and cancels the homogeneous negative adjoint SAT on the manufactured field. Radial weights divided by c and boundary rb^2 carry the declared physical measures.",
+    "Only after those point loads are constructed does the replay solve E*Xdot=Kweak*X+SATload*X+loads; Xdot=X is the manufactured exponential-time target.",
+    "All source/output/input/reference hashes and receipts match the named matrix cache, including zero exit/stderr and executable identity. Imported basis/angular/core data are pinned additively here.",
+    "All saved finite arrays and 179 case metrics were read back independently; common and held-node polynomial evaluation verifies intended family coverage. No point-source contractions or matrix assembly were repeated."
+  ],
+  "execution_provenance_limit": "Owner execution-readback records are explicitly additive: observed tool exit and report duration are preserved, but exact launch wall-clock time was not recorded.",
+  "corrections": [],
+  "scientific_kernel_or_assembler_run": false,
+  "generator_eigensolve_or_propagation": false,
+  "scope": "Closes the fixed N8 prescribed forcing-family coverage gap only. No general independent continuum-action equivalence, constraint preservation, CPBC, uniform stability, exact scri, finite-pulse or BH acceptance follows. Earlier mixed-only readback freeze remains unchanged."
+}

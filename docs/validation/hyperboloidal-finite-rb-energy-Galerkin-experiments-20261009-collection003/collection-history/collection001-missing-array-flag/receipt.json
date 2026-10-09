@@ -1,0 +1,39 @@
+{
+  "collection001_failed": true,
+  "destination_was_not_created": true,
+  "reason": "One external NPZ entry did not contain numeric_arrays_finite; collector asserted presence rather than reading it. No frozen bytes changed.",
+  "payload_sha256": "379316edf52fd6d137862d313b9edd7977dc58e4ee34afc77212605ff24e3858",
+  "arrays": {
+    "J0": {
+      "shape": [
+        3,
+        3,
+        8,
+        8
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    "J1": {
+      "shape": [
+        3,
+        3,
+        16,
+        16
+      ],
+      "dtype": "float64",
+      "finite": true
+    },
+    "J2": {
+      "shape": [
+        3,
+        3,
+        20,
+        20
+      ],
+      "dtype": "float64",
+      "finite": true
+    }
+  },
+  "fresh_retry_destination": "docs/validation/hyperboloidal-finite-rb-energy-Galerkin-experiments-20261009-collection002"
+}

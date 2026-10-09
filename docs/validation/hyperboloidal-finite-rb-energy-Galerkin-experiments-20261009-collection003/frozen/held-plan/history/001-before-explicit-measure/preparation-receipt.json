@@ -1,0 +1,37 @@
+{
+  "status": "held_for_root_review",
+  "source_only": true,
+  "scientific_compile_performed": false,
+  "actual_radial_matrix_generated": false,
+  "spectrum_or_evolution_performed": false,
+  "recipe_sha256": "a1f24ee5206bb9900765dd8eca7d497a54dcb5944aaac38fb0f93405735d4761",
+  "source_pins_sha256": "3bb48f6a36bdcc702ba2b128657dfeb0cfbfc76ea349d5525294b10ef9571aa6",
+  "documentation_HEAD": "85419e2fa74aa5cc0c357584bdb24e2604897739",
+  "proposed_baseline": "C0 physical-P spatialnorm S1 a.5 geometry.05/.95 gauge.45/.85 kappa10 kappa2zero xi2",
+  "proposed_bulk": "Energy Galerkin projection Jbulk=E^-1<Phi,LactualPhi>_E with independent weak/strong and volume/boundary work gates",
+  "proposed_radii": [
+    0.98,
+    0.995
+  ],
+  "proposed_N": [
+    8,
+    12,
+    16
+  ],
+  "J_values": [
+    0,
+    1,
+    2
+  ],
+  "configuration_momentum_amplitudes_per_J": [
+    4,
+    8,
+    10
+  ],
+  "proposed_energy_positive_U_mass_epsilon": 1,
+  "symmetrizer_blend": "(1-SmoothCutoff(.85,.9)) L^T L + SmoothCutoff(.85,.9)(I+A1^T A1), only in W=1",
+  "lower_order_reduction_explicit": "q=Ds of complete reference-normalized configurations, not normalize Ds afterward",
+  "boundary_control": "Adjoint incoming principal SAT with full derivative/momentum trace and matching dense energy; not CPBC",
+  "no_hidden_inner_boundary_or_cross_L_conditions": true,
+  "no_J3_or_nonlinear_full_pulse_exoneration": true
+}

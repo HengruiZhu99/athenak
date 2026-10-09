@@ -1,0 +1,16 @@
+usage: verify_operator.py [-h] --npz NPZ --expect-sha256 EXPECT_SHA256
+                          --metadata METADATA --expect-metadata-sha256
+                          EXPECT_METADATA_SHA256 --output OUTPUT
+
+Independent algebraic readback of pinned finite-rb Galerkin matrix outputs.
+Never assembles an operator, calls a point kernel, computes generator spectra,
+or propagates a state. Energy eigenvalues and trace singular values are used
+only for positivity/conditioning and algebraic rank respectively.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --npz NPZ
+  --expect-sha256 EXPECT_SHA256
+  --metadata METADATA
+  --expect-metadata-sha256 EXPECT_METADATA_SHA256
+  --output OUTPUT

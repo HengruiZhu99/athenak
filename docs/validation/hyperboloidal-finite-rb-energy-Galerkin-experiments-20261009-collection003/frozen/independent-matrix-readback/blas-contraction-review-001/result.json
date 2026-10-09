@@ -1,0 +1,182 @@
+{
+  "status": "PASS_static_contraction_diff_and_complete_saved_arrays",
+  "source": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/finite-rb-matrix-readback-20261009/review_blas.py",
+    "sha256": "7cb774826bf69efb983a923c805df01285d6d64eb4c8309f48dbcd24d96e6fbd",
+    "bytes": 5535
+  },
+  "input_pins": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/assemble_segmented.py",
+      "sha256": "d28f652a641293f525c4f6a091dfd17edb97831bdc72d066f8368c78bfd99e0d",
+      "bytes": 15740
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-BLAS-equivalence001/assemble_blas.py",
+      "sha256": "a3b140d7ef41bd5d83ffd9e03cba373f1c10f9486b07c815fd5d80c061926fd7",
+      "bytes": 15840
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/BLAS-equivalence-report.json",
+      "sha256": "8dce9242db7bd5f810abc03d5a67180df6a3a39214f8e782b470ff1c47469d87",
+      "bytes": 3169
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/BLAS-equivalence-plan.json",
+      "sha256": "f41431c6cf91e08faa61a3e5caf66b97b61d3ae3b6a14d99cffdbe430adae6b8",
+      "bytes": 762
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/check_blas_equivalence.py",
+      "sha256": "5aef228e436267145c7ee27fadfd0daf40bbc68bcee7720efd0086bfb442d498",
+      "bytes": 1985
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/operator.npz",
+      "sha256": "2ed0da45a995669f7e3e2fedba231eeda0dcb06f43577125d4a194974c4f4742",
+      "bytes": 411889
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-BLAS-equivalence001/operator.npz",
+      "sha256": "1a420c90e12c8071613d9217271e3af6c1f8d2f9760c4c4518899da7f0d82282",
+      "bytes": 411786
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-refinement001/report.json",
+      "sha256": "ec016348c9829b114b058998ce9acc30317b0494bbb7182f9c9cb75338b2fbe1",
+      "bytes": 396896
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-N8-rb.98-segmentedQ64-a12x24-BLAS-equivalence001/report.json",
+      "sha256": "a669a5630fb9d0f8ed4747627ba617df76c07f01c20c0dc79c8c986841f1500c",
+      "bytes": 396896
+    }
+  ],
+  "AST_diff_scope": "Only angle_work body and source-copy basename differ; all other AST statements are identical.",
+  "contraction_math": "Flattened (angle,component) dot gives sum_a,f A[a,f,i]*w[a]*B[a,f,j], exactly the original afi,a,afj einsum over real arrays. All integrands, cutoffs, fits, trial functions, quadrature, weak/G/SAT/forcing expressions and thresholds are unchanged.",
+  "complete_array_count": 23,
+  "rows": {
+    "E": {
+      "scaled": 1.0379686899936289e-16,
+      "absolute": 2.0319324783777856e-12,
+      "maxabs": 9.094947017729282e-13
+    },
+    "Kweak": {
+      "scaled": 2.27200850842002e-16,
+      "absolute": 1.5469456317679835e-09,
+      "maxabs": 6.693881005048752e-10
+    },
+    "Kstrong": {
+      "scaled": 9.849057831896336e-17,
+      "absolute": 6.705941871968318e-10,
+      "maxabs": 2.3283064365386963e-10
+    },
+    "Gvolume": {
+      "scaled": 9.754297005546486e-17,
+      "absolute": 8.839490125853727e-10,
+      "maxabs": 4.656612873077393e-10
+    },
+    "Fboundary": {
+      "scaled": 1.2288131049275294e-16,
+      "absolute": 6.726856020643042e-10,
+      "maxabs": 3.4924596548080444e-10
+    },
+    "SATload": {
+      "scaled": 1.4192511722359106e-16,
+      "absolute": 7.927557109526691e-14,
+      "maxabs": 4.263256414560601e-14
+    },
+    "Jbulk": {
+      "scaled": 5.996418827792132e-14,
+      "absolute": 9.413334475724592e-10,
+      "maxabs": 2.5227109290426597e-10
+    },
+    "Jsat": {
+      "scaled": 5.212878094038293e-14,
+      "absolute": 1.7153439850865795e-13,
+      "maxabs": 4.030109579389318e-14
+    },
+    "B": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "Hb": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "Knb": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "Pplus": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "nodal_from_modal": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "E_nodal": {
+      "scaled": 1.6062094891033037e-16,
+      "absolute": 1.0563727656591848e-13,
+      "maxabs": 2.842170943040401e-14
+    },
+    "manufactured_X": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "manufactured_load": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "manufactured_boundary_load": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "energy_cholesky": {
+      "scaled": 2.5836053159912123e-15,
+      "absolute": 5.719794839681524e-13,
+      "maxabs": 2.3447910280083306e-13
+    },
+    "radial_rho": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "radial_weights": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "angular_directions": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "angular_weights": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    },
+    "incoming_singular_values": {
+      "scaled": 0.0,
+      "absolute": 0.0,
+      "maxabs": 0.0
+    }
+  },
+  "maximum_scaled_difference": 5.996418827792132e-14,
+  "B_and_incoming_singular_values_bitwise_unchanged": true,
+  "saved_full_equivalence_report_numbers_match": true,
+  "threshold": 2e-09,
+  "scientific_assembler_or_point_kernel_run": false,
+  "generator_spectrum_or_propagation": false,
+  "scope": "Contraction-only numerical equivalence at fixed J0,N8,rb.98 and the saved rule. No generic platform equivalence, new PDE/CPBC/stability or higher-J matrix admission follows."
+}

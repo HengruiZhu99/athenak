@@ -1,0 +1,23 @@
+{
+  "declared_before_scientific_compile": true,
+  "scope": "actual continuum C0/spatial-norm local bridge and angular closure only",
+  "reference_raw_rhs_and_constraints_absolute_max": 5e-9,
+  "double_dual_directional_fd_relative_vector_error": 1e-5,
+  "double_dual_fd_epsilons": [0.0001, 0.00003, 0.00001, 0.000003, 0.000001],
+  "double_only_wrapper_negative_control_minimum_difference": 1e-3,
+  "input_algebraic_normal_scaled_max": 2e-11,
+  "output_algebraic_normal_scaled_max": 1e-8,
+  "actual_reference_coefficient_jet_fd_scaled_max": 5e-5,
+  "coefficient_jet_fd_steps": [0.001, 0.0005, 0.00025],
+  "core_TT_and_origin_oracle_absolute_max": 5e-12,
+  "pure_gauge_initial_constraints_absolute_max": 5e-11,
+  "coefficient_aware_pure_gauge_Cdot_scaled_max": 1e-5,
+  "pure_gauge_coefficient_fd_steps": [0.001, 0.0005, 0.00025],
+  "scaled_basis_fit_condition_max": 1000000,
+  "angular_fit_relative_residual_max": 2e-9,
+  "heldout_angles_m_rotation_relative_error_max": 5e-9,
+  "primary_vs_all_m_m0_basis_scaled_max": 5e-14,
+  "local_gate_failures_must_block_angular_extraction": true,
+  "normalization": "FD vector denominator max(1,L2 directional RHS); jet entries max(1,abs(exact)); angular action max(1,L2 actual action); raw algebraic normals scale by max(1,input/output L2) and explicit reference contractions",
+  "no_radial_operator_evolution_or_boundary_admission": true
+}
