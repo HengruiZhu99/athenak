@@ -1,0 +1,41 @@
+{
+  "passed_source_review": true,
+  "source_math_algorithm_review_passed": true,
+  "execution_released": false,
+  "reviewed_source_index_sha256": "36c72f687bad50fa61c3f1ac684cf5b9b28cfa99348e71e627ea60bad5489a09",
+  "recipe_sha256": "8199914356681f54022745c40ec46513a0eb806cf6937c15d8641f770ae2a986",
+  "protected_paths": 2420,
+  "inputs_unchanged": true,
+  "compiler_or_numerical_targets_executed": false,
+  "finding": null,
+  "full_root_reads": [
+    "PLAN.md",
+    "IMPLEMENTATION.md",
+    "PREPARATION.md",
+    "signed_products.hpp",
+    "probe.cpp",
+    "fraction_oracle.py",
+    "run_gate.py",
+    "recipe.json",
+    "registry.json control definitions/IDs/statuses and cases metadata"
+  ],
+  "reviewed_math": [
+    "Finite binary64 atom sign/significand/exponent decoding is exact; four53-bit integer significands fit212bits in four64-bit limbs; unsigned128 word-times-significand plus carry is below2^117.",
+    "Minimum admitted product exponent -4297 exceeds BASE_E=-4352; at most128 monomials of magnitude below2^4096 give separately signed accumulators below2^4103 within136words.",
+    "AddWord propagation and shifted four-limb AddProduct are exact, with all shifts defined; Subtract uses Wide rhs for the b[i]+borrow==2^64 edge.",
+    "Maxfinite exact comparison precedes nearest-even encoding; normal retain53bits and subnormal2^-1074 grid use guard/sticky/odd correctly; normal carry/subnormal-to-normal carry and nonzero-negative rounded zero handled.",
+    "AnyBelow and Quotient indices remain within136words after maxfinite guard; normal trim is at least3278, subnormal trim exactly3278.",
+    "All consumed primal/tangent atoms validated before zero shortcuts; unused atoms excluded by contract; zeroarity constants and nullptr/count validation are distinct.",
+    "EvaluateDual generates every factor replacement term, including zero primals, repeated factors and zero tangents, with at most128 terms; no division by primal or seed recognition.",
+    "Independent Fraction formal polynomial recurrence and CPython rational-to-float conversion differ structurally from integer candidate; explicit hand bit/status controls add fixed tie/overflow expectations.",
+    "Fixed44scalar+26dual controls cover cancellation/range/ties/subnormal/signedzero/invalid/independentoverflow/128term edges; exact result/status/echo/audit gates, no tolerance relaxation.",
+    "Unit runner binds source/recipe/review/runtime/header universe, requires fresh destination and zero stderr, checks compiler dependencies, Release/ASanUB oracle reports and byte-identical stdout."
+  ],
+  "scope": "Submitted binary64 product sums only; cannot recover rounded inverse inputs; no RWM replacement, original63-failure upgrade, native PDE or evolution admission.",
+  "read_order": "Root text reads preceded this receipt; supplied exact source-index identity was subsequently rehashed in full. No false pre-pinning claim.",
+  "source001_review_sha256": "32caabc1a880cefb58fbc7d8c27a771a6c4267c477c6dba7351bdd24bdcfebaf",
+  "source001_mechanical_finding_preserved": true,
+  "narrow_correction": "Only literal clang++ invocation and resolved target/content guards, recipe/external/history metadata; all arithmetic/probe/oracle/70controls unchanged. Exact reverse bytes and AST verified.",
+  "compiler_invocation_path": "/Library/Developer/CommandLineTools/usr/bin/clang++",
+  "compiler_resolved_path": "/Library/Developer/CommandLineTools/usr/bin/clang"
+}

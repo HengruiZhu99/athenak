@@ -1,0 +1,78 @@
+{
+  "Release_Debug_stdout_equal_hash": true,
+  "actual_Release_Debug_passed": true,
+  "actual_child_receipt": {
+    "bytes": 15524,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/receipt.json",
+    "sha256": "daf60646128b2a89d9f3abc7776fc73fc980924adcc13a8c7703ff0d5e864b2d"
+  },
+  "actual_root_receipt": {
+    "bytes": 15862,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/exact-signed-product-sum-root-release-20261009/units-invocation001/receipt.json",
+    "sha256": "6b873f9c560febaef35eba49f31b03f7413f00304676322ff3b561d428ada111"
+  },
+  "all9_recorded_commands_successful": true,
+  "all_stderr_and_compile_stdout_empty": true,
+  "debug_executable": {
+    "bytes": 303272,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-debug",
+    "sha256": "41d25d723e7d5a61f613f8e0ef913fada87dd41e189c15d802f285eb60e9f9f0"
+  },
+  "dependency_counts": {
+    "debug": 830,
+    "release": 829
+  },
+  "dual_cases": 26,
+  "exact_source_index": {
+    "bytes": 5556,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/source-index.json",
+    "sha256": "36c72f687bad50fa61c3f1ac684cf5b9b28cfa99348e71e627ea60bad5489a09"
+  },
+  "fixed_cases": 70,
+  "no_target_recomputed": true,
+  "oracle_reports_identical": true,
+  "probe_stdout_not_decoded_or_copied": true,
+  "release_executable": {
+    "bytes": 57440,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-release",
+    "sha256": "7ac3632f6e05046d7b2d0670b73fd09d4e99d314530d09b2e4a3206bff36dac4"
+  },
+  "reports": {
+    "debug": {
+      "cases": 70,
+      "generated_terms_sum": 288,
+      "hand_bits_cases": 45,
+      "invalid_status_cases": 16,
+      "statuses": {
+        "exact_overflow": 6,
+        "ok": 67,
+        "validation:factor_cap": 2,
+        "validation:invalid_atom": 4,
+        "validation:invalid_shift": 3,
+        "validation:invalid_sign": 3,
+        "validation:null_input": 2,
+        "validation:term_cap": 2
+      },
+      "valid_hand_status_cases": 6
+    },
+    "release": {
+      "cases": 70,
+      "generated_terms_sum": 288,
+      "hand_bits_cases": 45,
+      "invalid_status_cases": 16,
+      "statuses": {
+        "exact_overflow": 6,
+        "ok": 67,
+        "validation:factor_cap": 2,
+        "validation:invalid_atom": 4,
+        "validation:invalid_shift": 3,
+        "validation:invalid_sign": 3,
+        "validation:null_input": 2,
+        "validation:term_cap": 2
+      },
+      "valid_hand_status_cases": 6
+    }
+  },
+  "scalar_cases": 44,
+  "scope": "Bounded submitted-atom CPU arithmetic only; no metric inverse, RWM, gauge or PDE qualification"
+}

@@ -1,0 +1,89 @@
+{
+  "scope": "standalone-exact-short-signed-product-sum-CPU-units70",
+  "execution_admitted": false,
+  "source_only": true,
+  "attempt_relative": "attempts/units001",
+  "fixed_cases": 70,
+  "scalar_cases": 44,
+  "dual_cases": 26,
+  "compiler": {
+    "path": "/Library/Developer/CommandLineTools/usr/bin/clang",
+    "bytes": 124676976,
+    "sha256": "1590ac950a3d627817d09ade5cb60b2115f17a72182a3141e010b4bcc482a0c9"
+  },
+  "python": {
+    "path": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "bytes": 53200,
+    "sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464"
+  },
+  "environment": {
+    "PYTHONOPTIMIZE": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "LC_ALL": "C",
+    "LANG": "C"
+  },
+  "sanitized_environment": [
+    "PYTHONHOME",
+    "PYTHONPATH",
+    "PYTHONWARNINGS",
+    "CPATH",
+    "CPLUS_INCLUDE_PATH",
+    "C_INCLUDE_PATH",
+    "LIBRARY_PATH",
+    "SDKROOT",
+    "MACOSX_DEPLOYMENT_TARGET"
+  ],
+  "release_flags": [
+    "-std=c++17",
+    "-isysroot",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX27.0.sdk",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fno-fast-math",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "debug_flags": [
+    "-std=c++17",
+    "-isysroot",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX27.0.sdk",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fno-fast-math",
+    "-O0",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-omit-frame-pointer"
+  ],
+  "local_sources": [
+    "signed_products.hpp",
+    "probe.cpp",
+    "fraction_oracle.py",
+    "run_gate.py",
+    "registry.json",
+    "cases.txt",
+    "registry-preparation.json",
+    "PLAN.md",
+    "IMPLEMENTATION.md",
+    "PREPARATION.md",
+    "authorization-schema.json"
+  ],
+  "external_inputs_file": "external-pins.json",
+  "strong_exact_domain": "abs(exact_result)<=maxfinite; strictly greater rejected before rounding",
+  "no_gauge_adoption": true,
+  "no_scientific_execution_in_preparation": true,
+  "review_receipt_required_fields": [
+    "passed or passed_source_review true",
+    "reviewed_source_index_sha256 equal to exact index digest"
+  ],
+  "header_universe_origin": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/inner-joint-principal-gate-v3-held-20261009/recipe.json",
+    "bytes": 315954,
+    "sha256": "9123c2182d8df050f4fe41a8545667c3d1626d3ed40149cda3aa22ceb0a4a4a5"
+  }
+}

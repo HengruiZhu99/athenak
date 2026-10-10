@@ -1,0 +1,322 @@
+{
+  "completed": true,
+  "passed": true,
+  "returncode": 0,
+  "inputs_unchanged": true,
+  "stage": "exact-short-signed-product-sum-CPU-units70",
+  "commands": [
+    {
+      "name": "launch-HEAD",
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "seconds": 0.022474582999999992,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/launch-HEAD.stdout",
+        "bytes": 41,
+        "sha256": "3a6e27a8bc40b707c39369161be8e534b77d50b17ff054a358495b46d282fb8d"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/launch-HEAD.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": null
+    },
+    {
+      "name": "compiler-version",
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/clang++",
+        "--version"
+      ],
+      "returncode": 0,
+      "seconds": 0.006118000000000012,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/compiler-version.stdout",
+        "bytes": 158,
+        "sha256": "f6a41663474c412322e565ec1a1aa27bcb42151b98d527dc401b7d744b9a4237"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/compiler-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": null
+    },
+    {
+      "name": "python-version",
+      "command": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+        "-I",
+        "-B",
+        "--version"
+      ],
+      "returncode": 0,
+      "seconds": 0.009771874999999985,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/python-version.stdout",
+        "bytes": 13,
+        "sha256": "fd0fd4290ad100adc37e4a82e45f821faeacbecae70f4d3eba08e85be138c632"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/python-version.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": null
+    },
+    {
+      "name": "compile-release",
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/clang++",
+        "-std=c++17",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX27.0.sdk",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fno-fast-math",
+        "-O3",
+        "-DNDEBUG",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-release.d",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-release"
+      ],
+      "returncode": 0,
+      "seconds": 0.346320791,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/compile-release.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/compile-release.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": null
+    },
+    {
+      "name": "probe-release",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-release"
+      ],
+      "returncode": 0,
+      "seconds": 0.5429362919999999,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-release.stdout",
+        "bytes": 86295,
+        "sha256": "9e2e5e12461e1b35146d987eb0f9b2bf771102de6a683e68d62e203742d2d36d"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-release.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/cases.txt",
+        "bytes": 43025,
+        "sha256": "552fb2c4472814ab0af6bf99da8f0edcfae175dba67064d14186b76d9ce081f6"
+      }
+    },
+    {
+      "name": "oracle-release",
+      "command": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+        "-I",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/fraction_oracle.py",
+        "--registry",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/registry.json",
+        "--output",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-release.stdout",
+        "--report",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/oracle-release.json"
+      ],
+      "returncode": 0,
+      "seconds": 0.0909445419999999,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/oracle-release.stdout",
+        "bytes": 74,
+        "sha256": "91fe1776362d608110905533b160cc4bfbb049f6203f09663f9660a65209d12d"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/oracle-release.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": null
+    },
+    {
+      "name": "compile-debug",
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/clang++",
+        "-std=c++17",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX27.0.sdk",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fno-fast-math",
+        "-O0",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-MD",
+        "-MF",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-debug.d",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe.cpp",
+        "-o",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-debug"
+      ],
+      "returncode": 0,
+      "seconds": 0.35055383399999984,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/compile-debug.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/compile-debug.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": null
+    },
+    {
+      "name": "probe-debug",
+      "command": [
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-debug"
+      ],
+      "returncode": 0,
+      "seconds": 0.42787579100000017,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-debug.stdout",
+        "bytes": 86295,
+        "sha256": "9e2e5e12461e1b35146d987eb0f9b2bf771102de6a683e68d62e203742d2d36d"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-debug.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/cases.txt",
+        "bytes": 43025,
+        "sha256": "552fb2c4472814ab0af6bf99da8f0edcfae175dba67064d14186b76d9ce081f6"
+      }
+    },
+    {
+      "name": "oracle-debug",
+      "command": [
+        "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+        "-I",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/fraction_oracle.py",
+        "--registry",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/registry.json",
+        "--output",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-debug.stdout",
+        "--report",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/oracle-debug.json"
+      ],
+      "returncode": 0,
+      "seconds": 0.09684758299999974,
+      "stdout": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/oracle-debug.stdout",
+        "bytes": 74,
+        "sha256": "91fe1776362d608110905533b160cc4bfbb049f6203f09663f9660a65209d12d"
+      },
+      "stderr": {
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/oracle-debug.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "input": null
+    }
+  ],
+  "no_RWM_adoption_or_saved_failure_upgrade": true,
+  "compiler_or_arithmetic_executed_before_authorization": false,
+  "source_index": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/source-index.json",
+    "bytes": 5556,
+    "sha256": "36c72f687bad50fa61c3f1ac684cf5b9b28cfa99348e71e627ea60bad5489a09"
+  },
+  "recipe": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/recipe.json",
+    "bytes": 2867,
+    "sha256": "8199914356681f54022745c40ec46513a0eb806cf6937c15d8641f770ae2a986"
+  },
+  "authorization": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/exact-signed-product-sum-root-release-20261009/units-authorization.json",
+    "bytes": 643,
+    "sha256": "e1b5d5358f948e72ac62abb27e791a70b0d67decf1ed519224f559dbc75ff2d4"
+  },
+  "source_review": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/exact-signed-product-sum-source002-independent-review-20261009/receipt.json",
+    "bytes": 850,
+    "sha256": "6b8dbbd241fc7d8e13f60740e32dddc870c1238d043184983d113bfe6a3b6180"
+  },
+  "consumed_recipe_path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/recipe.json",
+  "python": {
+    "path": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "bytes": 53200,
+    "sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464"
+  },
+  "python_flags": {
+    "optimize": 0,
+    "isolated": 1,
+    "dont_write_bytecode": true
+  },
+  "environment": {
+    "PYTHONOPTIMIZE": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "LC_ALL": "C",
+    "LANG": "C"
+  },
+  "protected_count": 2422,
+  "release_executable": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-release",
+    "bytes": 57440,
+    "sha256": "7ac3632f6e05046d7b2d0670b73fd09d4e99d314530d09b2e4a3206bff36dac4"
+  },
+  "release_dependencies": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/dependencies-release.json",
+    "bytes": 182404,
+    "sha256": "4c7b9c1a943a17c4dfc766af8bf7bb4744f1a3817905bb011a363be1e8609c5f"
+  },
+  "release_oracle_report": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/oracle-release.json",
+    "bytes": 31694,
+    "sha256": "c539c19bd47cd0375ad422f346cd489241006d73a7d1a968fa6aebe7f4132769"
+  },
+  "debug_executable": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/probe-debug",
+    "bytes": 303272,
+    "sha256": "41d25d723e7d5a61f613f8e0ef913fada87dd41e189c15d802f285eb60e9f9f0"
+  },
+  "debug_dependencies": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/dependencies-debug.json",
+    "bytes": 182606,
+    "sha256": "14b58f53c5a7f25f1367bfb1d7699123bfa32a3bc39f5240649a46df2be9cf7a"
+  },
+  "debug_oracle_report": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/oracle-debug.json",
+    "bytes": 31694,
+    "sha256": "c539c19bd47cd0375ad422f346cd489241006d73a7d1a968fa6aebe7f4132769"
+  },
+  "release_debug_probe_byte_equal": true,
+  "fixed_cases": 70,
+  "scalar_cases": 44,
+  "dual_cases": 26,
+  "input_drift": []
+}

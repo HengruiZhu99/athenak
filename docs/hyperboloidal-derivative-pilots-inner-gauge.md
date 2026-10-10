@@ -318,3 +318,57 @@ only. This additional gate leaves production unchanged and establishes no
 native evolution or black hole stability. The eventual black hole test must
 survive the inner wormhole-to-trumpet transition while keeping the Minkowski
 hyperboloidal reference throughout.
+
+## Observed inverse error and standalone exact product sums
+
+A later observational diagnostic completed all 26 failed contexts and 52
+unchanged new/legacy helper calls. It exported the actual inverse derivatives,
+gradient products and auxiliary flux values, binding the original input and
+full output bits, all 63 failure labels and all eight exact-zero targets. An
+independent exact cofactor calculation checks `dG=-G(dg)G`; the diagnostic does
+not replace the helper. Root elapsed was `5.028837334 s`.
+
+The saved inverse-stage tangent absolute error is at most `1.6289810810e-17`.
+In an exact downstream calculation holding the native inverse fixed, the
+inverse-effect component-scaled tangent maximum is nevertheless exactly one
+at base 11/component 3, whose exact target is zero. Remaining arithmetic after
+holding that inverse fixed also has component-scaled maximum one, at
+base 3/component 1, a nonzero target. The final products and sums after holding
+native auxiliary values fixed have the same component-scaled maximum. These
+separate maxima can occur in different entries. The algebraic telescope does
+not assign unique causal percentages or prove a floating-point error bound;
+it shows that an inverse correction alone is not demonstrated sufficient.
+
+A separately compiled CPU primitive now forms exact signed integer sums of
+up to 32 products, each with at most four submitted finite binary64 atoms and
+binary shift zero or minus one, before one nearest-even output rounding. Its
+first dual retains every product-rule term, including zero-primal factors
+with nonzero tangents, with at most 128 generated terms. The 136-word workspace
+proof applies to that bounded contract. Invalid input, exact-domain overflow,
+subnormal results, exact positive zero and negative underflow zero have
+explicit statuses or audits. This primitive cannot recover an inverse or
+other atom already rounded upstream.
+
+All 70 fixed cases (44 scalar and 26 dual) passed actual Release and
+Address/UndefinedBehavior-sanitized Debug in `3.052251042 s` enclosing time.
+The independent Fraction oracle uses a formal primal/dual recurrence;
+registered hand-bit and status controls supplement it. All nine commands
+succeeded with empty stderr. Query stdout and compact oracle reports are
+byte-identical across builds. Independent saved-only review associated all
+70 labels, 45 hand-bit cases, 16 invalid status cases, six valid hand-status
+cases and 288 generated terms without recomputing targets. These counts
+describe overlapping controls and individual output statuses, rather than
+additional test cases.
+
+Source001 was held unexecuted after a C++ driver admission finding. Fresh
+source002 invokes literal `clang++` while separately guarding its resolved
+binary; reverse source/AST proof confines the change to that guard and recipe
+metadata. Arithmetic, probe, oracle and registry bytes are unchanged.
+
+The [exact arithmetic and diagnostic capsule](validation/hyperboloidal-exact-arithmetic-diagnostic-20261009/README.md)
+preserves both stages and their independent source and saved-result reviews.
+The saved diagnostic audit checks the compact report and provenance; it does
+not decode scientific JSONL or independently recompute entry-level extrema.
+The standalone primitive is not included by an RWM header. The original
+63-comparison far-dual failure, production source identity, native stability
+gates and later wormhole-to-trumpet criterion remain unchanged.

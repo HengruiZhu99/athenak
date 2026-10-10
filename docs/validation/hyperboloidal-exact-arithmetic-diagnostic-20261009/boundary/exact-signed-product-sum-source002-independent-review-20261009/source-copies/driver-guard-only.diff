@@ -1,0 +1,17 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source001-held-20261009/run_gate.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/run_gate.py
+@@ -107,6 +107,14 @@
+                 'passed review does not bind this exact source index')
+         require(str(Path(sys.executable).resolve()) == recipe['python']['path'] and
+                 sha(sys.executable) == recipe['python']['sha256'], 'Python interpreter identity')
++        # Keep the literal clang++ driver basename in argv; bind its target too.
++        require(recipe['compiler']['path'] == '/Library/Developer/CommandLineTools/usr/bin/clang++',
++                'literal C++ driver invocation path required')
++        require(str(Path(recipe['compiler']['path']).resolve()) == recipe['compiler']['resolved_path'],
++                'C++ driver resolved target changed')
++        require(sha(recipe['compiler']['path']) == recipe['compiler']['sha256'] and
++                sha(recipe['compiler']['resolved_path']) == recipe['compiler']['resolved_sha256'],
++                'C++ driver invocation/target byte identity')
+         for key, value in recipe['environment'].items():
+             require(os.environ.get(key) == value, 'launch environment mismatch: ' + key)
+         for key in recipe['sanitized_environment']:
