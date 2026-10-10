@@ -1,0 +1,258 @@
+--- v1/diagnostics.py
++++ v2/diagnostics.py
+@@ -44,7 +44,7 @@
+     return row
+ 
+ 
+-def all_checks(data,graph_radius):
++def all_checks(data,nominal_radius,graph_radius):
+     ref, compact = data["ref"],data["compact"]
+     omega, embedding = ref["omega"],data["embedding"]
+     gamma, alpha, beta = compact["gamma"],compact["alpha"],compact["beta"]
+@@ -87,7 +87,7 @@
+     # The field Lambda is the contracted metric connection by construction;
+     # retain that definition explicitly rather than imply independent Z data.
+     # Independent raw graph and physical curvature are admitted only here.
+-    finite = ref["rvalue"] <= graph_radius
++    finite = nominal_radius <= graph_radius
+     graph = graph_comparisons(data)
+     pairs = [("alpha",graph["alpha"])]+[("beta%d"%i,p) for i,p in enumerate(graph["beta"])]
+     pairs += [("gamma%d"%i,p) for i,p in enumerate(graph["gamma"])]
+@@ -111,7 +111,8 @@
+             checks.append(zero_row('physical_Ricci_%d%d'%(b,d),pieces,finite,'raw_physical_embedding'))
+     # Reference connections from independent embedding and ADM four-metric.
+     Ghat = embedding_connection(ref["embedding"])
+-    reference_metric = metric_from_adm(*reference_adm(ref))
++    reference_bar = metric_from_adm(*reference_adm(ref))
++    reference_metric = [[entry/omega**2 for entry in row] for row in reference_bar]
+     _,Ghat_metric = connection(reference_metric,(0,1,2,3))
+     Gphysical = embedding_connection(embedding)
+     scaled_Ghat = [[[omega.v*Ghat[a][b][c].v for c in range(4)] for b in range(4)] for a in range(4)]
+--- v1/run_oracle.py
++++ v2/run_oracle.py
+@@ -51,9 +51,9 @@
+             for tlabel in recipe["times"]:
+                 for dlabel,n in ([("origin",[mp.mpf(0)]*3)] if r==0 else directions):
+                     key="eps"+eps+"/r"+rlabel+"/t"+tlabel+"/"+dlabel
+-                    yield key,[rat(tlabel)]+[r*v for v in n],rat("7/20"),rat(eps),False
++                    yield key,[rat(tlabel)]+[r*v for v in n],rat("7/20"),rat(eps),False,Fraction(rlabel)
+     q=rat("3/4")/mp.sqrt(2)
+-    yield "negative/sigma1/2/eps3/4/r3/4/t1/10/p1/2",[rat("1/10"),q,q,mp.mpf(0)],rat("1/2"),rat("3/4"),True
++    yield "negative/sigma1/2/eps3/4/r3/4/t1/10/p1/2",[rat("1/10"),q,q,mp.mpf(0)],rat("1/2"),rat("3/4"),True,Fraction("3/4")
+ 
+ 
+ def scientific(stage,recipe,out):
+@@ -109,7 +109,7 @@
+             if stage=="timing":
+                 by_key={entry[0]:entry for entry in events}
+                 events=[by_key[key] for key in recipe["timing_keys"]]
+-            for key,event,sigma,epsilon,negative in events:
++            for key,event,sigma,epsilon,negative,nominal_radius in events:
+                 print(json.dumps(dict(event="begin",key=key,digits=level["digits"],elapsed=time.monotonic()-begin)),flush=True)
+                 started=time.monotonic()
+                 data=oracle.construct(event,layer,sigma,epsilon,level["roots"])
+@@ -120,7 +120,7 @@
+                                 no_ADM_square_root=True,admission="negative_control_only")
+                 else:
+                     if negative:raise ArithmeticError("negative slicing control unexpectedly admitted")
+-                    rows,aux=diagnostics.all_checks(data,mp.mpf(recipe["graph_radius"]))
++                    rows,aux=diagnostics.all_checks(data,nominal_radius,Fraction(recipe["graph_radius"]))
+                     check_rows(rows,recipe["identity_tolerance"])
+                     identity_count+=len(rows)
+                     record=diagnostics.export_record(data,rows,aux)
+@@ -141,6 +141,8 @@
+                             precision_sink.write(json.dumps(row,allow_nan=False)+"\n")
+                             check_rows([row],recipe["component_tolerance"])
+                             precision_count+=1
++                record["nominal_radius"]=str(nominal_radius)
++                record["finite_graph_admission"]=not negative and nominal_radius<=Fraction(recipe["graph_radius"])
+                 record["elapsed_seconds"]=time.monotonic()-started
+                 sink.write(json.dumps(record,allow_nan=False)+"\n");sink.flush()
+                 record_count+=1
+@@ -202,12 +204,26 @@
+             timing_path=Path(auth['timing_receipt']['path']).resolve()
+             prerequisite_pins[str(timing_path)]=auth['timing_receipt']['sha256']
+             prerequisite_pins.update({str(timing_path.parent/rel):h for rel,h in timing['output_hashes'].items()})
++            review_pin=auth["measured_timing_review"]
++            review_path=Path(review_pin["path"]).resolve()
++            if sha(review_path)!=review_pin["sha256"]:
++                raise RuntimeError("measured timing review pin mismatch")
++            measured_review=load(review_path)
++            review_required={"source_index_sha256":required["source_index_sha256"],
++                             "timing_receipt_sha256":auth["timing_receipt"]["sha256"],
++                             "timing_result_sha256":timing["output_hashes"]["result.json"]}
++            if any(measured_review.get(k)!=v for k,v in review_required.items()):
++                raise RuntimeError("measured timing review source/receipt/result binding mismatch")
++            if not(measured_review.get("full_stage_source_review_passed") is True and
++                   measured_review.get("full_stage_cost_admission") is True):
++                raise RuntimeError("explicit source and measured-cost full-stage approval required")
++            prerequisite_pins[str(review_path)]=review_pin["sha256"]
+         if Path(sys.executable).resolve()!=Path(recipe["python_runtime_path"]).resolve():raise RuntimeError("unexpected Python runtime")
+         for name,value in recipe["environment"].items():
+             if os.environ.get(name)!=value:raise RuntimeError("fixed environment mismatch: "+name)
+         if any(name in os.environ for name in ("PYTHONHOME","PYTHONPATH","PYTHONWARNINGS","PYTHONSTARTUP","PYTHONUSERBASE")):
+             raise RuntimeError("injected Python environment is not admitted")
+-        pins={**recipe["protected_inputs"],**index["files"],**prerequisite_pins}
++        pins={**recipe["protected_inputs"],**index["files"],**auth["review_pins"],**prerequisite_pins}
+         pins[str(HERE/"source-index.json")]=required["source_index_sha256"]
+         pins[str(Path(args.authorization).resolve())]=sha(args.authorization)
+         verify(pins);before={p:sha(p) for p in pins}
+--- v1/outer_once.py
++++ v2/outer_once.py
+@@ -54,10 +54,23 @@
+         if child_output.exists() or child_output==invocation:raise RuntimeError('child output must be fresh and separate')
+         expected={'source_index_sha256':sha(HERE/'source-index.json'),'recipe_sha256':sha(HERE/'recipe.json'),'driver_sha256':sha(HERE/'run_oracle.py')}
+         if any(auth.get(k)!=v for k,v in expected.items()):raise RuntimeError('source/index/recipe release binding')
++        if stage=='full':
++            timing=load(auth['timing_receipt']['path'])
++            measured_pin=auth['measured_timing_review']
++            if sha(measured_pin['path'])!=measured_pin['sha256']:
++                raise RuntimeError('measured timing review pin mismatch')
++            measured=load(measured_pin['path'])
++            measured_expected={'source_index_sha256':expected['source_index_sha256'],
++                'timing_receipt_sha256':auth['timing_receipt']['sha256'],
++                'timing_result_sha256':timing['output_hashes']['result.json']}
++            if any(measured.get(k)!=v for k,v in measured_expected.items()) or not(
++                    measured.get('full_stage_source_review_passed') is True and
++                    measured.get('full_stage_cost_admission') is True):
++                raise RuntimeError('explicit same-source measured timing review required for full stage')
+         pins={**recipe['protected_inputs'],**index['files'],**auth['review_pins']}
+         pins[str(HERE/'source-index.json')]=expected['source_index_sha256']
+         pins[str(Path(args.authorization).resolve())]=args.authorization_sha256
+-        for name in ('unit_receipt','timing_receipt'):
++        for name in ('unit_receipt','timing_receipt','measured_timing_review'):
+             if name in auth:pins[auth[name]['path']]=auth[name]['sha256']
+         before=snapshot(pins)
+         if before!=pins:raise RuntimeError('before pin mismatch')
+--- v1/recipe.json
++++ v2/recipe.json
+@@ -1,5 +1,5 @@
+ {
+-  "status": "HELD source-only analytic Gaussian third-jet oracle; root stage release required",
++  "status": "HELD source-only Gaussian v2: physical reference normalization, nominal admission, measured timing guard",
+   "execution_admitted": false,
+   "layer": {
+     "a": ".5",
+@@ -276,12 +276,82 @@
+     "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-jets-RHS-independent-definition-review-20261009/GATE-DEFINITIONS.md": "fe5dd6286d06c92f2b1e1b9b2d440dd9a67c063ce21c472e4924a526b63d8bbd",
+     "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-gauge-20261009/immutable-local-reference-wave-map-20261009/reference_wave_map.hpp": "56d61c56bf37bf33591bec74c029c686c7d39f7abbe62dd090becda8e7176e28",
+     "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-26-context-independent-saved-review-20261009/index.json": "5667d09828fdd32df4ee39e6617e9029237a6187c849ab1ea3633846bc80ebef",
+-    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-26-context-independent-saved-review-20261009/receipt.json": "848b049292a27bd4d6d5c16769278510a19b17a1dabe3f88e43cfde8035e3508"
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-26-context-independent-saved-review-20261009/receipt.json": "848b049292a27bd4d6d5c16769278510a19b17a1dabe3f88e43cfde8035e3508",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/PLAN.md": "b24b2084d4ed130bdff1f0c8ba3d289f2ee6f1d63b78b3ebc159249e2af256ce",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/SCHEMA.md": "332474eace72422eaca58a551cbe90a898088e194f65036bbf132a805fd0f1e7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/authorization-schema.json": "e77907376207ce427244865373c37820752b4cb2584aba817109fd7c417d01f4",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/diagnostics.py": "b5afa45245a97a98c926af4cd4ac2bfb094903ab7f1bc68a5b3c8c349ee02784",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/oracle.py": "57d3f3fac46d3ad099554c20408fcb394b0a9460db464fc648ee0cdeb91f53e1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/outer_once.py": "dd53a472bb8407fbd1b88c6465f551c379cbae55641116878fcfc64a4846c181",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/prepare_source.py": "0906dce06211d9c1762ccafbd22ade33afde1107bf247c5cf11aafbb2c3612fd",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/recipe.json": "313e9692fc4c9fd3070334e6ddfc94f51b758a5324f62b1f3dc88342cb9a300b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/reference3.py": "a8116c5431188bea91d0a87bfdbc172e8251f616c652958511fd8d8a92a87b8a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/run_oracle.py": "1996ea6be98c24840cca66f662e0e3806597b637023af48c0b6ab5691eb9e49a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/diagnostics.py": "da946925d3eda8d9152ca30ccc134e1d299d67610a5d6c9c4914b2d7f6fca416",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/inventory.json": "c2f0c5fa5a48fd734b4762689c4be2d3264186f3f1ec3836241d7594f8704bb9",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/oracle.py": "d63ab5b18fe01286bcd96eccbe3a7a025c3437b567a625842bc374dcc9844109",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/reference3.py": "eb74c3ca420e7d846260a70598815c6af7b38e0b14dc59e5018071647cac8b96",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/run_oracle.py": "2a074f2e84cb04a22c77c0b3f2051e7c7276ae93e8acc6653d44d6c3f6189419",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/taylor3.py": "1edb6d65313b9ce0950b3b6c198bf26c0b8fd3f37804e23dbb49169fb8048939",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/units.py": "c8eb8908e686ed0da008ad2662a8ed9e78222071b17f44bc758f1964232a0c95",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-history/pre-review-WIP001/values_context.py": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-preparation.json": "c93ca9006939c903961752e9b47e7fab82670c97b2dc30b8f1026bf6b7430c89",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/taylor3.py": "df00e773f5fd8b0e324826398756c78e15546cf5c648bb88a82c3168f37c0a9d",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/units.py": "db3df258d1b88cec6262e1133978cc967fa559cc8bb3d9c48e43c0ab34046abe",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/values_context.py": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/source-index.json": "2348bbf4391444606dc2f946067a3a75eb55d472cc0c738795d8f0617f161d88",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/REVIEW.md": "7c16db97a85a3e9fbf0ebd83e8b76495e8e8b41e42c1bf0333b232bff2cd25d1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/PLAN.md": "b24b2084d4ed130bdff1f0c8ba3d289f2ee6f1d63b78b3ebc159249e2af256ce",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/SCHEMA.md": "332474eace72422eaca58a551cbe90a898088e194f65036bbf132a805fd0f1e7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/authorization-schema.json": "e77907376207ce427244865373c37820752b4cb2584aba817109fd7c417d01f4",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/diagnostics.py": "b5afa45245a97a98c926af4cd4ac2bfb094903ab7f1bc68a5b3c8c349ee02784",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/oracle.py": "57d3f3fac46d3ad099554c20408fcb394b0a9460db464fc648ee0cdeb91f53e1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/outer_once.py": "dd53a472bb8407fbd1b88c6465f551c379cbae55641116878fcfc64a4846c181",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/prepare_source.py": "0906dce06211d9c1762ccafbd22ade33afde1107bf247c5cf11aafbb2c3612fd",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/recipe.json": "313e9692fc4c9fd3070334e6ddfc94f51b758a5324f62b1f3dc88342cb9a300b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/reference3.py": "a8116c5431188bea91d0a87bfdbc172e8251f616c652958511fd8d8a92a87b8a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/run_oracle.py": "1996ea6be98c24840cca66f662e0e3806597b637023af48c0b6ab5691eb9e49a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/diagnostics.py": "da946925d3eda8d9152ca30ccc134e1d299d67610a5d6c9c4914b2d7f6fca416",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/inventory.json": "c2f0c5fa5a48fd734b4762689c4be2d3264186f3f1ec3836241d7594f8704bb9",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/oracle.py": "d63ab5b18fe01286bcd96eccbe3a7a025c3437b567a625842bc374dcc9844109",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/reference3.py": "eb74c3ca420e7d846260a70598815c6af7b38e0b14dc59e5018071647cac8b96",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/run_oracle.py": "2a074f2e84cb04a22c77c0b3f2051e7c7276ae93e8acc6653d44d6c3f6189419",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/taylor3.py": "1edb6d65313b9ce0950b3b6c198bf26c0b8fd3f37804e23dbb49169fb8048939",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/units.py": "c8eb8908e686ed0da008ad2662a8ed9e78222071b17f44bc758f1964232a0c95",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-history/pre-review-WIP001/values_context.py": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-index.json": "2348bbf4391444606dc2f946067a3a75eb55d472cc0c738795d8f0617f161d88",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/source-preparation.json": "c93ca9006939c903961752e9b47e7fab82670c97b2dc30b8f1026bf6b7430c89",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/taylor3.py": "df00e773f5fd8b0e324826398756c78e15546cf5c648bb88a82c3168f37c0a9d",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/units.py": "db3df258d1b88cec6262e1133978cc967fa559cc8bb3d9c48e43c0ab34046abe",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/captured/values_context.py": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/index.json": "d61ddb62752163f938540f23d02aeb49b65147174f6ebb0edaaef1851ff7ba57",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/inputs-before-review.json": "e1d834a47a6610058e9a6166a5ca467b8f335041408909ba150402dcc74498c8",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/receipt.json": "f4e87fb024bef6d125ca72b3856753db8eee694c19a9f0e8172756a680f7185a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/review_static.py": "c9dba7fe1b1b66015cf79f6d17b8f1d6143ee4929a4b8f6e7ade5bf8885cf17c",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/static-readback.json": "c44eae13777bc81337500cd2ea8fcf7565eb512c00ec10563c9567611e96fdda"
+   },
+   "numeric_modules_imported_in_preparation": false,
+   "native_queries_admitted": false,
+   "native_binding": "future unchanged physical-reference RWM only; no compound inner BM",
+   "native_coefficient_error_protocol_admitted": false,
+   "full_release_requires_measured_timing_review": true,
+-  "all_jsonl_npz_npy_large_payload_regardless_size": true
++  "all_jsonl_npz_npy_large_payload_regardless_size": true,
++  "v1_ineligible_source_index_sha256": "2348bbf4391444606dc2f946067a3a75eb55d472cc0c738795d8f0617f161d88",
++  "v1_failed_source_review_index_sha256": "d61ddb62752163f938540f23d02aeb49b65147174f6ebb0edaaef1851ff7ba57",
++  "graph_admission_selector": "exact Fraction nominal registry radius <= exact Fraction graph_radius; geometry evaluation unchanged",
++  "full_measured_timing_review_required_fields": [
++    "source_index_sha256",
++    "timing_receipt_sha256",
++    "timing_result_sha256",
++    "full_stage_source_review_passed=true",
++    "full_stage_cost_admission=true"
++  ]
+ }
+--- v1/authorization-schema.json
++++ v2/authorization-schema.json
+@@ -7,6 +7,7 @@
+   "outer_output": "fresh absolute outer invocation path",
+   "unit_receipt": "timing/full only: exact same-source completed/pass/unchanged units receipt path and sha256",
+   "timing_receipt": "full only: exact same-source completed/pass/unchanged timing receipt path and sha256",
+-  "review_pins": "exact root and independent source review path-to-sha256 map",
+-  "scope": "analytic oracle only; no native query, BH adoption, full-domain inverse or source integration"
++  "review_pins": "exact root and independent source review path-to-sha256 map, protected by BOTH child and outer",
++  "scope": "analytic oracle only; no native query, BH adoption, full-domain inverse or source integration",
++  "measured_timing_review": "full only: path/sha256 of explicit same-index timing-receipt/result-bound source and measured-cost approval record"
+ }
+--- v1/PLAN.md
++++ v2/PLAN.md
+@@ -45,3 +45,14 @@
+ A future raw RHS gate must retain physical P, kappa1=10/alpha,kappa2=0 and the unchanged private physical-reference RWM gauge. Assemble every pole once. Raw live RHS-ut is the acceptance quantity; paired reference subtraction is diagnostic only with both raw errors retained. No native or compound-inner-BM claim follows from this analytic candidate. No global inverse coverage, continuous D bound, native pulse stability, BH gauge choice, wormhole-to-trumpet result or radiation theorem is asserted. The Minkowski hyperboloidal reference remains required throughout later BH work.
+ 
+ All NPZ/NPY/JSONL files, executables and files>1MiB are large payload metadata in later compact collections regardless of size. Preserve every original source/history byte and every failure. No frozen prior experiment is modified.
++
++
++## Fresh v2 correction and admission history
++
++The original index2348bbf4 is preserved, unexecuted and ineligible. Its independent source review d61ddb62 reports three blocking issues. This sibling makes only the following corrections.
++
++1. The independent reference ADM route first constructs the conformal four-metric, then divides every jet component by Omega squared before computing the physical reference Christoffel connection. The embedding connection is physical already. The geometric fields, implicit solve and compact source formulas are unchanged.
++2. Graph/configuration, physical-curvature and reference-connection admission uses the exact Fraction nominal registry radius compared with the exact Fraction .98 cutoff. It does not use the norm of rounded angular MP coordinates. Those rounded coordinates still define the actual geometry evaluation, unchanged. Each record retains nominal_radius and finite_graph_admission; the planned 1,880 native-eligible valid case count refers to nominal admission only, with native queries still held. Units that construct exact known core/negative radii do not invoke all_checks and are unchanged.
++3. Full-stage child and outer require a pinned measured_timing_review whose source-index, timing receipt and timing result hashes match the exact successful same-source timing prerequisite, and whose explicit source-review and measured-cost admissions are true. Both child and outer protect this record, authorization and review_pins before/after execution. A generic passing timing receipt does not authorize the full stage.
++
++Numerical thresholds, precision, 5,010/3,330,320/470,752 full counts, 318 units, 20 timing records, geometry and source implementation are otherwise unchanged. Exact source transformation/reverse-byte and AST proofs are recorded by stdlib preparation. No candidate was imported, compiled or evaluated in preparing this sibling. New unit/timing/full executions remain separately held for exact root releases, and no v1 execution or result is relabeled.
+--- v1/SCHEMA.md
++++ v2/SCHEMA.md
+@@ -11,3 +11,6 @@
+ The negative control is a refused record containing J,D and root metadata, no ADM fields and no invalid square root. A full completion requires exactly5,010records,3,330,320identity rows and470,752paired compact-component rows. Separate height context contains50 comparisons at1e-30. A complete units stage has318checks; a complete timing stage has20records. Those arithmetic counts are fixed source declarations, not measured cost or proof of completion.
+ 
+ Later compact archives must tag everyJSONL/NPZ/NPY as large_payload regardless of size, along with executables and anyfile>1MiB. Keep source/receipts/log bytes unchanged. A failed or timed-out stage is retained and cannot satisfy the next-stage prerequisite.
++
++
++V2 records add exact nominal_radius (rational string) and finite_graph_admission (boolean). Admission uses this exact nominal radius; evaluated event coordinates and all physical geometry remain unchanged. The reference ADM connection comparator is formed from physical ghat=Omega^-2 bar(ghat), matching the inertial-embedding route. Full stage additionally requires the explicit pinned measured-timing-review schema.

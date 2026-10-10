@@ -1,0 +1,106 @@
+{
+  "attempt_relative": "attempts/units001",
+  "backend_source_review": {
+    "bytes": 1279,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-rational-backend-independent-source-review-20261009/receipt.json",
+    "sha256": "752f644df4203d6d1e5c0df6b846c29ada61ccc164b10854b9c06d4278012d69"
+  },
+  "base_cases": 74,
+  "canonical_object_contract": "only factory/operation-created Dyadics, no raw mutated fields or arbitrary exponent helper arguments",
+  "carry_range_cases": 8,
+  "closed_dependency_contract": "both -MD lists checked before any probe/oracle import; unknown header is a preserved failure",
+  "command_timeout_seconds": 60,
+  "compiler": {
+    "bytes": 124676976,
+    "path": "/Library/Developer/CommandLineTools/usr/bin/clang++",
+    "resolved_bytes": 124676976,
+    "resolved_path": "/Library/Developer/CommandLineTools/usr/bin/clang",
+    "resolved_sha256": "1590ac950a3d627817d09ade5cb60b2115f17a72182a3141e010b4bcc482a0c9",
+    "sha256": "1590ac950a3d627817d09ade5cb60b2115f17a72182a3141e010b4bcc482a0c9"
+  },
+  "completed_signed_product_receipt": {
+    "bytes": 15524,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/attempts/units001/receipt.json",
+    "sha256": "daf60646128b2a89d9f3abc7776fc73fc980924adcc13a8c7703ff0d5e864b2d"
+  },
+  "debug_flags": [
+    "-std=c++17",
+    "-isysroot",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX27.0.sdk",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fno-fast-math",
+    "-O0",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-omit-frame-pointer"
+  ],
+  "environment": {
+    "LANG": "C",
+    "LC_ALL": "C",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONOPTIMIZE": "0",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "execution_admitted": false,
+  "external_inputs_file": "external-pins.json",
+  "fixed_cases": 82,
+  "full_exact_operand_comparisons": 76,
+  "local_sources": [
+    "exact_dyadic_ratio.hpp",
+    "probe.cpp",
+    "fraction_units.py",
+    "carry_range_units.py",
+    "gate_common.py",
+    "run_gate.py",
+    "oracle_driver.py",
+    "PLAN.md",
+    "authorization-schema.json",
+    "source-equalities.json",
+    "old-compiler-runtime-context.json",
+    "prepare_source.py"
+  ],
+  "no_gauge_or_native_adoption": true,
+  "no_scientific_execution_in_preparation": true,
+  "python": {
+    "bytes": 53200,
+    "path": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464"
+  },
+  "range_contract": "abs(exact quotient)<=maxfinite; strictly greater explicit exact_overflow even when IEEE would round maxfinite",
+  "release_flags": [
+    "-std=c++17",
+    "-isysroot",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX27.0.sdk",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fno-fast-math",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "resource_contract": "4096 limbs/131072 bits, normalized exponents within +/-131072; conservative failures permitted",
+  "root_process_group_cap_seconds": 120,
+  "sanitized_environment": [
+    "PYTHONHOME",
+    "PYTHONPATH",
+    "PYTHONWARNINGS",
+    "CPATH",
+    "CPLUS_INCLUDE_PATH",
+    "C_INCLUDE_PATH",
+    "LIBRARY_PATH",
+    "SDKROOT",
+    "MACOSX_DEPLOYMENT_TARGET"
+  ],
+  "scope": "standalone-exact-rational-CPU-units82",
+  "source_only": true,
+  "whole_row_pencil_index": {
+    "bytes": 2383,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-complete-rational-rows-independent-pencil-20261009/index.json",
+    "sha256": "9a578e512d590f8baddd59ada26ee8b4ddf1a5478874c8443c5c16c9a3096c88"
+  },
+  "zero_contract": "exact zero +0; nonzero negative tiny result -0"
+}

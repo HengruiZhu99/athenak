@@ -1,0 +1,130 @@
+{
+  "saved_only": true,
+  "source_index_sha256": "41a050d288076d6b54ff396b09851835dac03dd3518f74dca65890f6fd025a8a",
+  "timing_receipt_sha256": "b5d3a0263dfeb536a9a71b8263b46e61b7d26b124ed6620bcc85e9b6ea939e44",
+  "timing_result_sha256": "e9efd42805d6eca7d3e537cae219b22049a1063056c4b9abda3e0b225ebd6139",
+  "full_stage_source_review_passed": true,
+  "full_stage_cost_admission": false,
+  "root_cost_decision_required": true,
+  "full_records": 5010,
+  "timing_records": 20,
+  "full_registry_records_per_level": {
+    "origin": 8,
+    "nonzero_core": 312,
+    "transition": 1248,
+    "outer": 936,
+    "negative_control": 1
+  },
+  "branch_empirical_table": [
+    {
+      "digits": 180,
+      "branch": "origin",
+      "full_record_count": 8,
+      "sample_record_count": 2,
+      "sample_min_seconds": "0.979649083",
+      "sample_mean_seconds": "0.9816987705",
+      "sample_max_seconds": "0.983748458"
+    },
+    {
+      "digits": 180,
+      "branch": "nonzero_core",
+      "full_record_count": 312,
+      "sample_record_count": 1,
+      "sample_min_seconds": "1.97565825",
+      "sample_mean_seconds": "1.97565825",
+      "sample_max_seconds": "1.97565825"
+    },
+    {
+      "digits": 180,
+      "branch": "transition",
+      "full_record_count": 1248,
+      "sample_record_count": 3,
+      "sample_min_seconds": "1.940604334",
+      "sample_mean_seconds": "2.02234534733333266666667",
+      "sample_max_seconds": "2.173608332999998"
+    },
+    {
+      "digits": 180,
+      "branch": "outer",
+      "full_record_count": 936,
+      "sample_record_count": 3,
+      "sample_min_seconds": "2.229824500000002",
+      "sample_mean_seconds": "2.38336097199999933333333",
+      "sample_max_seconds": "2.463107707999998"
+    },
+    {
+      "digits": 180,
+      "branch": "negative_control",
+      "full_record_count": 1,
+      "sample_record_count": 1,
+      "sample_min_seconds": "1.04525075",
+      "sample_mean_seconds": "1.04525075",
+      "sample_max_seconds": "1.04525075"
+    },
+    {
+      "digits": 220,
+      "branch": "origin",
+      "full_record_count": 8,
+      "sample_record_count": 2,
+      "sample_min_seconds": "0.983234290999996",
+      "sample_mean_seconds": "1.0073965625",
+      "sample_max_seconds": "1.031558834000004"
+    },
+    {
+      "digits": 220,
+      "branch": "nonzero_core",
+      "full_record_count": 312,
+      "sample_record_count": 1,
+      "sample_min_seconds": "2.017682292",
+      "sample_mean_seconds": "2.017682292",
+      "sample_max_seconds": "2.017682292"
+    },
+    {
+      "digits": 220,
+      "branch": "transition",
+      "full_record_count": 1248,
+      "sample_record_count": 3,
+      "sample_min_seconds": "1.972946708",
+      "sample_mean_seconds": "2.065678194",
+      "sample_max_seconds": "2.231189166"
+    },
+    {
+      "digits": 220,
+      "branch": "outer",
+      "full_record_count": 936,
+      "sample_record_count": 3,
+      "sample_min_seconds": "2.267670291",
+      "sample_mean_seconds": "2.420330222",
+      "sample_max_seconds": "2.50757975"
+    },
+    {
+      "digits": 220,
+      "branch": "negative_control",
+      "full_record_count": 1,
+      "sample_record_count": 1,
+      "sample_min_seconds": "1.043879125",
+      "sample_mean_seconds": "1.043879125",
+      "sample_max_seconds": "1.043879125"
+    }
+  ],
+  "timed_event_seconds": "36.735805288999996",
+  "child_non_event_seconds": "18.203020336000004",
+  "root_non_event_seconds": "19.058680961000004",
+  "naive_root_total_times_5010_over20_seconds": "13976.518805625",
+  "branch_weighted_min_sample_model_seconds": "10376.539951724001844",
+  "branch_weighted_mean_sample_model_seconds": "10881.091159771998548",
+  "branch_weighted_max_sample_model_seconds": "11432.943257715995668",
+  "mean_model_with_25percent_event_inflation_seconds": "13596.599279474748184",
+  "max_model_with_25percent_event_inflation_seconds": "14286.414401904744584",
+  "full_soft_cap_seconds": 14400,
+  "full_outer_cap_seconds": 14460,
+  "max_model_event_inflation_factor_fitting_soft_cap": "1.25995152853802102923102",
+  "limitations": [
+    "These are empirical branch-weighted scenarios, not prediction intervals or a worst-case runtime proof.",
+    "No nonorigin epsilon=0 event was timed; its reference-rate checks and zero-jet costs are unmeasured.",
+    "Only one nonzero core radius and one direction there were timed; unsampled directions, native times, nonlinear roots, Gaussian regime switching and scheduling can change cost.",
+    "Every admitted event still forms raw graph and physical-curvature diagnostics, even where their admission_gate is false; those diagnostics were not omitted from the cost model.",
+    "The full output volume and 470752 precision-component rows are larger than the timing output; this audit does not decode payloads to measure serialization scaling.",
+    "No full stage is authorized by this audit. Root must make a separate bounded cost decision using exact source/timing pins."
+  ]
+}

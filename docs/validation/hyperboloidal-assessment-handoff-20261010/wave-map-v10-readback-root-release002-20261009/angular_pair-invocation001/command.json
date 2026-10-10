@@ -1,0 +1,38 @@
+{
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "-I",
+    "-B",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release002-20261009/child_review_gate.py",
+    "angular_pair",
+    "--release-sha256",
+    "70a81f3eb10970937c9f2b78d8da8b8011fd94c39dbb9ef519b3dcd9cd318510"
+  ],
+  "actual_after_stdlib_review_gate": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "-B",
+    "-s",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/verify_retained.py",
+    "--authorization",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release002-20261009/authorization.json",
+    "--authorization-sha256",
+    "ee8d0eb923ef096c45c57cffc999b93b78e9747176d1c9623082bc49b350fd13",
+    "--case",
+    "angular_pair",
+    "--output",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/attempts/independent-angular_pair001"
+  ],
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps:/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "PYTHONOPTIMIZE": "0",
+    "OMP_NUM_THREADS": "1"
+  },
+  "cwd": "/Users/hz0693/research/hyperboloidal",
+  "new_process_group": true,
+  "process_group_cap_seconds": 900,
+  "cap_is_new_not_historical": true,
+  "source_and_runtime_inputs_readonly": true
+}

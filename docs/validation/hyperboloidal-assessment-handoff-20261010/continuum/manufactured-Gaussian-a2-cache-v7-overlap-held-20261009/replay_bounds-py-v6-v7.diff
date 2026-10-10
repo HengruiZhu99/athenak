@@ -1,0 +1,14 @@
+--- v6/replay_bounds.py
++++ v7/replay_bounds.py
+@@ -76,9 +76,9 @@
+ def lower_bound(ctx, box, sigma, K):
+     rlo, rhi, tlo, thi = box
+     R, T = ctx.enclose(rlo, rhi), ctx.enclose(tlo, thi)
+-    if rhi <= sigma:
++    if rhi <= 2 * sigma:
+         C, CT, Crho = regular(ctx, R, T, rhi, sigma, K)
+-    elif rlo >= sigma:
++    elif rlo >= 2 * sigma:
+         C, CT, Crho = separated(ctx, R, T, sigma)
+     else:
+         raise ValueError("replay cell crosses series interface")

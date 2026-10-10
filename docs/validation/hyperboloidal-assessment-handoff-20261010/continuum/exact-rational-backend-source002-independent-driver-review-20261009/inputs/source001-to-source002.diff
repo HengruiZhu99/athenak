@@ -1,0 +1,18 @@
+--- source001/oracle_driver.py
++++ source002/oracle_driver.py
+@@ -1,5 +1,6 @@
+ """Future admitted82-case registry/independent Fraction checker; no import-time math."""
+ import argparse
++import json
+ from pathlib import Path
+ import sys
+ 
+@@ -47,7 +48,7 @@
+         require(generated.get('passed') is True and generated.get('source_index_sha256')==sha(P/'source-index.json'),
+                 'registry receipt mismatch')
+         check(generated['registry']);check(generated['protocol'])
+-        require(load(attempt/'registry.json')==cases and (attempt/'cases.txt').read_text()==protocol,'registry/protocol drift')
++        require(load(attempt/'registry.json')==json.loads(json.dumps(cases,allow_nan=False)) and (attempt/'cases.txt').read_text()==protocol,'registry/protocol drift')
+         observed=pin(path)
+         lines=path.read_text().splitlines()
+         require(len(lines)==82,'native output count')

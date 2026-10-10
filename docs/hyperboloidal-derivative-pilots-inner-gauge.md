@@ -372,3 +372,14 @@ not decode scientific JSONL or independently recompute entry-level extrema.
 The standalone primitive is not included by an RWM header. The original
 63-comparison far-dual failure, production source identity, native stability
 gates and later wormhole-to-trumpet criterion remain unchanged.
+
+## Uncompiled complete-row prototype at handoff
+
+The [2026-10-10 assessment handoff](hyperboloidal-assessment-handoff-20261010.md)
+preserves a private exact dyadic/rational backend and a complete-row header
+that consumes original input atoms and rounds each assembled row separately.
+Source/math review passed; neither new backend nor whole-row gauge was compiled
+or executed. Backend source002's independent driver review remains unfinished.
+The original 63 tangent comparisons remain FAIL, and no native arithmetic or
+production equation has changed. The handoff also records the separate v10
+readback passes and Gaussian oracle results with their limits.

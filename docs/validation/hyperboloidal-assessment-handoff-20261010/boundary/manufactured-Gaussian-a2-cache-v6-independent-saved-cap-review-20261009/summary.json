@@ -1,0 +1,88 @@
+{
+  "scope": "Observed compact work/provenance of a failed finite-box certificate attempt only",
+  "passed_saved_audit": true,
+  "actual_certificate_completed": false,
+  "actual_certificate_passed": false,
+  "producer_domain_cap_reached": true,
+  "outer_process_group_cap_reached": false,
+  "caps_seconds": {
+    "producer": 600,
+    "inner_wrapper": 660,
+    "root_process_group": 720
+  },
+  "saved_wall_seconds": {
+    "root": "600.37384975",
+    "child_wrapper": "600.191606875",
+    "last_progress": "600.024774459"
+  },
+  "observed_nodes": 8677,
+  "observed_leaves": 4331,
+  "observed_pending": 19,
+  "reported_root_counts": [
+    [
+      0,
+      557,
+      279,
+      0
+    ],
+    [
+      1,
+      8120,
+      4052,
+      17
+    ],
+    [
+      2,
+      0,
+      0,
+      1
+    ],
+    [
+      3,
+      0,
+      0,
+      1
+    ]
+  ],
+  "most_recent_node_role": "most recently visited; pending stack is future work",
+  "reported_cache": {
+    "entries": 4096,
+    "evictions": 12332,
+    "hits": 17164,
+    "misses": 16428,
+    "semantics": "same exact Fraction/precision keys and FIFO insertion order"
+  },
+  "method_evaluations": {
+    "lower_tail": 0,
+    "regular": 556,
+    "separated": 8120,
+    "upper_tail": 1
+  },
+  "positive_leaf_methods_as_reported": {
+    "lower_tail": 0,
+    "regular": 278,
+    "separated": 4052,
+    "upper_tail": 1
+  },
+  "source_root_pins_verified": 343,
+  "source_and_output_hashes_verified": true,
+  "partial_certificate_metadata_only": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v6-instrumented-held-20261009/attempts/certificate001/certificate.jsonl",
+    "bytes": 2161493,
+    "sha256": "27ae847e229656277a91467682c15969ab3f74d5a2fb837245dafb31cc1568cc"
+  },
+  "partial_certificate_decoded": false,
+  "unchanged179_units_associated": true,
+  "accepted_report_present": false,
+  "coverage_fraction_claimed": false,
+  "regional_or_global_positivity_inferred": false,
+  "runtime_cause_theorem_claimed": false,
+  "replay_or_resume_executed": false,
+  "limits": [
+    "These are producer instrumentation counters, not independent interval or certificate replay.",
+    "Root0 reports no pending stack nodes, but no accepted footer/report or replay exists; no regional certificate is inferred.",
+    "Root1 reports17 pending nodes and roots2/3 are unvisited; no covered-volume fraction is inferred from counts.",
+    "Cache counters describe observed operations only; no timing-cause or cache-performance theorem follows.",
+    "No interval bound, Gaussian target, partial JSONL record or positivity arithmetic was evaluated."
+  ]
+}

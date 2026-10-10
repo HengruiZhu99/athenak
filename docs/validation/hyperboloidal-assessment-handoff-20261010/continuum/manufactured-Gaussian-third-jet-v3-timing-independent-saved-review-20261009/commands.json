@@ -1,0 +1,54 @@
+{
+  "environment": {
+    "PYTHONOPTIMIZE": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "interpreter": "/Library/Developer/CommandLineTools/usr/bin/python3",
+  "interpreter_resolved": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+  "interpreter_sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464",
+  "commands": [
+    [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-I",
+      "-B",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v3-timing-independent-saved-review-20261009/capture_inputs.py"
+    ],
+    [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-I",
+      "-B",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v3-timing-independent-saved-review-20261009/review_saved_timing.py"
+    ],
+    [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-I",
+      "-B",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v3-timing-independent-saved-review-20261009/review_saved_timing_v2.py"
+    ],
+    [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-I",
+      "-B",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v3-timing-independent-saved-review-20261009/finalize_review.py"
+    ]
+  ],
+  "successful_reader_returncode": 0,
+  "first_reader_returncode": 1,
+  "successful_reader_stdout": "review-v2.stdout",
+  "successful_reader_stderr": "review-v2.stderr",
+  "shell_preparation_read_failures": [
+    {
+      "command": "rg -n registry|def scientific|timing|progress|identity|precision_checks .../driver.py",
+      "reason": "actual indexed driver is run_oracle.py; path did not exist"
+    },
+    {
+      "command": "cat .../inputs/031-timing001-result.json",
+      "reason": "capture names are enumerated; actual captured result is042-timing001-result.json"
+    }
+  ],
+  "metadata_only": true,
+  "no_candidate_import_or_target_rerun": true
+}

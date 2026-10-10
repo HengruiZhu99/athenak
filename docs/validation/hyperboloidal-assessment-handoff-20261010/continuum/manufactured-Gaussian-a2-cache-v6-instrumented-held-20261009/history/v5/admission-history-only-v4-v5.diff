@@ -1,0 +1,36 @@
+--- preserved-v4/admission.py
++++ fresh-v5/admission.py
+@@ -69,8 +69,31 @@
+     if recipe["source_only"] is not True or stage not in recipe["stage_timeouts"]:
+         raise RuntimeError("invalid held recipe")
+     if stage not in ("certificate", "replay"):
+-        raise RuntimeError("cache v4 admits certificate/replay only after exact release")
+-    dependencies = {}
++        raise RuntimeError("cache v5 admits certificate/replay only after exact release")
++    # Admission/history only: the old cached producer remains failed.
++    prior_pin = recipe["cached_v4_timeout_receipt"]
++    if authorization.get("prior_timeout_receipt") != prior_pin:
++        raise RuntimeError("exact failed cached-v4 receipt pin required")
++    verify_pin(prior_pin)
++    prior = load(prior_pin["path"])
++    if not (prior.get("completed") is False and prior.get("passed") is False
++            and type(prior.get("returncode")) is int and prior.get("returncode") == 1
++            and prior.get("inputs_unchanged") is True and prior.get("stage") == "certificate"
++            and prior.get("source_index_sha256") == recipe["cached_v4_source_index_sha256"]
++            and prior.get("recipe_sha256") == recipe["cached_v4_recipe_sha256"]):
++        raise RuntimeError("cached-v4 timeout history classification differs")
++    for pin in (recipe["cached_v4_progress"], recipe["cached_v4_stderr"],
++                recipe["cached_v4_command"], recipe["cached_v4_partial_certificate_metadata"]):
++        if pin not in prior.get("outputs", []):
++            raise RuntimeError("failed cached-v4 receipt does not bind history payload")
++    for pin in (recipe["cached_v4_progress"], recipe["cached_v4_stderr"], recipe["cached_v4_command"]):
++        verify_pin(pin)
++    if "UNRESOLVED: declared domain time limit" not in Path(recipe["cached_v4_stderr"]["path"]).read_text():
++        raise RuntimeError("cached-v4 failure was not the declared time cap")
++    if (Path(prior_pin["path"]).parent / "report.json").exists():
++        raise RuntimeError("failed cached-v4 unexpectedly has a producer report")
++    # The partial tree is bound as metadata only; no decode or resume.
++    dependencies = {"prior_timeout": prior}
+     if stage in ("certificate", "replay"):
+         unit_pin = recipe["cached_v3_units_receipt"]
+         if authorization.get("units_receipt") != unit_pin:

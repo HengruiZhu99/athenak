@@ -1,0 +1,2022 @@
+{
+  "all_three_actual_pass_receipts_associated": true,
+  "cases": {
+    "angular_pair": {
+      "actual_acceptance_associated": true,
+      "cap_reached": false,
+      "child_pins_before_count": 4587,
+      "child_receipt": {
+        "bytes": 164,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/attempts/independent-angular_pair001/receipt.json",
+        "sha256": "dfbcefbbed29955d18051f36b46c9bcf6091c184e7e4c39218309cf509f56350"
+      },
+      "child_recorded_seconds": 377.51011770900004,
+      "child_wall_seconds": 380.4097635,
+      "numerical_review": {
+        "energy_condition": 51776.03469204095,
+        "energy_min": 0.2608754958845023,
+        "forcing_channels": [
+          "Lambda",
+          "P",
+          "Theta_phys",
+          "alpha",
+          "beta",
+          "independent_A",
+          "metric_STF",
+          "metric_trace"
+        ],
+        "forcing_family_fields": 33,
+        "limitations": "Saved scalar comparisons only; no array reconstruction, target recomputation or independent boundary-work scale recomputation.",
+        "recounted_checks": 3534,
+        "schemas": {
+          "recorded_boundary_work_acceptance_only": 1,
+          "saved_rank_vs_expected": 4,
+          "saved_scaled_vs_saved_tolerance": 3529
+        },
+        "selected_saved_metrics": {
+          "dissipative_boundary_work": {
+            "max_eigenvalue": 1.500684995002296e-09,
+            "name": "dissipative_boundary_work",
+            "passed": true
+          },
+          "incoming_rank_Pplus": {
+            "expected": 4,
+            "name": "incoming_rank_Pplus",
+            "passed": true,
+            "rank": 4
+          },
+          "incoming_rank_TT_left": {
+            "expected": 0,
+            "name": "incoming_rank_TT_left",
+            "passed": true,
+            "rank": 0
+          },
+          "incoming_rank_constraint_left": {
+            "expected": 2,
+            "name": "incoming_rank_constraint_left",
+            "passed": true,
+            "rank": 2
+          },
+          "incoming_rank_gauge_left": {
+            "expected": 2,
+            "name": "incoming_rank_gauge_left",
+            "passed": true,
+            "rank": 2
+          },
+          "nodal_congruence": {
+            "absolute": 2.3450813443208883e-10,
+            "absolute_max": 7.003109203651547e-11,
+            "name": "nodal_congruence",
+            "passed": true,
+            "scaled": 1.1875994907360439e-14,
+            "tolerance": 2e-09
+          },
+          "retained_family_solved": {
+            "absolute": 2.8788926557164622e-11,
+            "absolute_max": 5.119243079902853e-12,
+            "name": "retained_family_solved",
+            "passed": true,
+            "scaled": 1.4092736789008622e-11,
+            "tolerance": 2e-09
+          },
+          "volume_trace_identity": {
+            "absolute": 5.695537579087091e-07,
+            "absolute_max": 1.4901161193847656e-07,
+            "name": "volume_trace_identity",
+            "passed": true,
+            "scaled": 3.220212687840697e-14,
+            "tolerance": 2e-08
+          },
+          "weak_strong": {
+            "absolute": 3.718854465817292e-07,
+            "absolute_max": 1.3015232980251312e-07,
+            "name": "weak_strong",
+            "passed": true,
+            "scaled": 3.907748001964224e-14,
+            "tolerance": 2e-08
+          }
+        },
+        "source_absolute_maxima": {
+          "manual_normal": 4.083832778363627e-14,
+          "normal_input_scaled": 2.7755575615628914e-16,
+          "normal_output_scaled": 1.0658141036401503e-13,
+          "normalized_action": 8.185452315956354e-11,
+          "normalized_configuration_derivative": 1.7763568394002505e-15,
+          "normalized_values": 7.72715225139109e-14,
+          "raw_action": 1.418811734765768e-10
+        },
+        "source_checks": {
+          "manual_normal": 4.0840267309249203e-14,
+          "normal_input_scaled": 2.7755575615628914e-16,
+          "normal_output_scaled": 1.6521410763451041e-15,
+          "normalized_action": 1.3407395274460242e-14,
+          "normalized_configuration_derivative": 1.777382206565991e-15,
+          "normalized_values": 1.091851237393938e-14,
+          "raw_action": 1.1770077114592105e-14,
+          "source_condition": 3298.0387864888116
+        },
+        "worst_forcing_saved_scaled": {
+          "absolute": 4.73408609955872e-11,
+          "absolute_max": 2.8209137548416935e-11,
+          "name": "direct_forced_family_metric_STF_rho_power_0",
+          "passed": true,
+          "scaled": 4.73408609955872e-11,
+          "tolerance": 2e-09
+        }
+      },
+      "result_metadata_only": {
+        "bytes": 670893,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/attempts/independent-angular_pair001/result.json",
+        "sha256": "27c9049038a1f5b46417958fdef4ddaffc47fc454a999c899abb2526a55892ff"
+      },
+      "root_pins_before_after_count": 4643,
+      "root_receipt": {
+        "bytes": 1236,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release002-20261009/angular_pair-invocation001/receipt.json",
+        "sha256": "2ee07cbfed1968efe1dbf3b73027c8e7627e8c225e214c98aad39a3448174c86"
+      },
+      "root_seconds": 385.948976167,
+      "stderr_bytes": 0,
+      "ten_rounding_audits": {
+        "tiny-bilinear-weighting-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 7219200,
+            "exact_nonzero_below_min_normal": 17834,
+            "exact_nonzero_below_min_subnormal": 466,
+            "fallback_multiply": 18946,
+            "inexact": 18946,
+            "rounded_nonzero_subnormal": 17530,
+            "rounded_zero": 304
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 4099614720,
+              "calls": 9224,
+              "delegated_broadcast_entries": 7219200,
+              "delegated_fallback_calls": 13,
+              "proved_normal_or_zero_calls": 9211,
+              "proved_normal_or_zero_entries": 4092395520
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1072
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1075
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1072
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1075
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1070
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1073
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1072
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1075
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              }
+            ],
+            "labels": {
+              "bilinear:left_root_times_a": 4612,
+              "bilinear:right_root_times_b": 4612
+            },
+            "minimum_proven_exponent_sum": -1019,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "bilinear:left_root_times_a": 12818,
+            "bilinear:right_root_times_b": 6128
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.47007057690581369461961622735768077001637697E-324",
+            "denominator": "7292309700590022739414262022877422190801598279886340981745171257367098068725104131911619179029222940482597888335407858675057769817714232283870412932659462176092204209742620236052248859049791622115618325727203836689963075885156833957320229072129729133236389394983621105149364781798798084034090722628823189432924536844353025348744168091942912",
+            "numerator": "18012519629112259"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the two broadcast products sqrt(weights)*a and sqrt(weights)*b in bilinear(); no normalization audit mixing",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "4.67979571500575462582632490435186198687302780E-320",
+            "denominator": "3646154850295011369707131011438711095400799139943170490872585628683549034362552065955809589514611470241298944167703929337528884908857116141935206466329731088046102104871310118026124429524895811057809162863601918344981537942578416978660114536064864566618194697491810552574682390899399042017045361314411594716462268422176512674372084045971456",
+            "numerator": "170632598446580429507"
+          }
+        },
+        "tiny-derivative-product-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 983040,
+            "exact_nonzero_below_min_normal": 43554,
+            "exact_nonzero_below_min_subnormal": 38668,
+            "fallback_multiply": 43556,
+            "inexact": 43556,
+            "rounded_nonzero_subnormal": 4890,
+            "rounded_zero": 38664
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 126156800,
+              "calls": 385,
+              "delegated_broadcast_entries": 983040,
+              "delegated_fallback_calls": 3,
+              "proved_all_zero_products_calls": 136,
+              "proved_normal_or_zero_calls": 246,
+              "proved_normal_or_zero_entries": 80609280,
+              "proved_zero_entries": 44564480
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -560,
+                  -677
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1237
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -719,
+                  -836
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1555
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -956,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -2029
+              }
+            ],
+            "labels": {
+              "line353:rounded_c_cr_times_ur": 385
+            },
+            "minimum_proven_exponent_sum": -1008,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "line353:rounded_c_cr_times_ur": 43556
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.47029235616470971325459721258979857763370503E-324",
+            "denominator": "31320231676337699569680585584233332126277536636641689113700043556310885271599082660754874336336881557665712387519236631830763012277778509132970811847787840351265010161398078491192208996872168652601371039816615896109116302374314853677592643664025611696588719088575879102271898933000013823033879402787802745580823671382443286151515196625621528139005952",
+            "numerator": "77370128903364831700083575"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the second multiply (rounded c*cr)*ur in the left-associated line353 derivative expression; separate from normalization and bilinear weighting audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "1.07596053865110096270517236191561266847413656E-319",
+            "denominator": "7830057919084424892420146396058333031569384159160422278425010889077721317899770665188718584084220389416428096879809157957690753069444627283242702961946960087816252540349519622798052249218042163150342759954153974027279075593578713419398160916006402924147179772143969775567974733250003455758469850696950686395205917845610821537878799156405382034751488",
+            "numerator": "842483333628739652382210048175"
+          }
+        },
+        "tiny-normalization-rounding.json": {
+          "counts": {
+            "candidate_entries_divide": 32155200,
+            "candidate_entries_multiply": 48061338,
+            "exact_nonzero_below_min_normal": 6964,
+            "exact_nonzero_below_min_subnormal": 4972,
+            "fallback_divide": 778,
+            "fallback_matrix_contractions": 494,
+            "fallback_multiply": 6189,
+            "inexact": 6098,
+            "normalizations_attempted": 369600,
+            "ordinary_matrix_contractions": 4434706,
+            "ordinary_vector_contractions": 1478400,
+            "rounded_nonzero_subnormal": 2032,
+            "rounded_zero": 4932
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "labels": {
+            "A_frame_chi": 247,
+            "A_frame_left:product": 78,
+            "A_trace_metric_product": 120,
+            "A_trace_third": 120,
+            "Lambda_chi": 39,
+            "STF_chart_half": 53,
+            "chi_r_over_chi_squared": 6,
+            "h_chi": 103,
+            "h_chi_r_over_chi": 141,
+            "h_times_chi_r": 1873,
+            "hd_chi": 108,
+            "hd_dg_frame_derivative:product": 1740,
+            "hd_frame_derivative_left:product": 1745,
+            "hd_frame_derivative_right:product": 168,
+            "hd_metric_derivative:product": 26,
+            "metric_frame_left:product": 32,
+            "raw_chi_times_chi_r": 6,
+            "reference_A_trace_tangent": 362
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.46951677958899502608214600760551929940895811E-324",
+            "denominator": "2004494827285612772459557477390933256081762344745068103276802787603896657382341290288311957525560419690605592801231144437168832785777824584510131958258421782480960650329477023436301375799818793766487746548263417350983443351956150635365929194497639148581678021668856262545401531712000884674168281778419375717172714968476370313696972584039777800896380928",
+            "numerator": "4950133610581165249964202541"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Products/quotients inside normalized() only; no error suppression or floor",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "1.72051234033965283467143112349876529589822111E-320",
+            "denominator": "2004494827285612772459557477390933256081762344745068103276802787603896657382341290288311957525560419690605592801231144437168832785777824584510131958258421782480960650329477023436301375799818793766487746548263417350983443351956150635365929194497639148581678021668856262545401531712000884674168281778419375717172714968476370313696972584039777800896380928",
+            "numerator": "34487580864918978296500599103147"
+          }
+        },
+        "tiny-outer-measure-E-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1572864,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 1572864
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:E": 384
+            },
+            "minimum_proven_exponent_sum": -967,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing E point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-G-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1572864,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 1572864
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:G": 384
+            },
+            "minimum_proven_exponent_sum": -423,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing G point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-Ks-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1572864,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 1572864
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:Ks": 384
+            },
+            "minimum_proven_exponent_sum": -433,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing Ks point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-Kw-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1572864,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 1572864
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:Kw": 384
+            },
+            "minimum_proven_exponent_sum": -424,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing Kw point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-loads-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 811008,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 811008
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:loads": 384
+            },
+            "minimum_proven_exponent_sum": -429,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing loads point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-retained-basis-division-rounding.json": {
+          "counts": {
+            "candidate_entries_divide": 1829520
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only retained-basis flat/col immediately before SVD; separate from normalization and all three product audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-weak-product-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 327680,
+            "exact_nonzero_below_min_normal": 592,
+            "exact_nonzero_below_min_subnormal": 0,
+            "fallback_multiply": 594,
+            "inexact": 594,
+            "rounded_nonzero_subnormal": 592,
+            "rounded_zero": 0
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 125829120,
+              "calls": 384,
+              "delegated_broadcast_entries": 327680,
+              "delegated_fallback_calls": 1,
+              "proved_normal_or_zero_calls": 383,
+              "proved_normal_or_zero_entries": 125501440
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "line394:div_times_hy_q",
+                "minimum_nonzero_frexp_exponents": [
+                  2,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1071
+              }
+            ],
+            "labels": {
+              "line394:div_times_hy_q": 384
+            },
+            "minimum_proven_exponent_sum": -834,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "line394:div_times_hy_q": 594
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.45809145598433897361892466507657142877950097E-324",
+            "denominator": "455769356286876421213391376429838886925099892492896311359073203585443629295319008244476198689326433780162368020962991167191110613607139517741900808291216386005762763108913764753265553690611976382226145357950239793122692242822302122332514317008108070827274337186476319071835298862424880252130670164301449339557783552772064084296510505746432",
+            "numerator": "1120322760588253"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only div*hy[:,qidx] in the weak derivative bilinear; separate from normalization/derivative/weighting audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "1.46010632485469735032964125105548342869502358E-321",
+            "denominator": "227884678143438210606695688214919443462549946246448155679536601792721814647659504122238099344663216890081184010481495583595555306803569758870950404145608193002881381554456882376632776845305988191113072678975119896561346121411151061166257158504054035413637168593238159535917649431212440126065335082150724669778891776386032042148255252873216",
+            "numerator": "332735859894711141"
+          }
+        }
+      }
+    },
+    "primary": {
+      "actual_acceptance_associated": true,
+      "cap_reached": false,
+      "child_pins_before_count": 4587,
+      "child_receipt": {
+        "bytes": 159,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/attempts/independent-primary001/receipt.json",
+        "sha256": "a4211bb36a26893a424c035cd884afbaf785c502f3b7a6c86de25dabd1a65a6f"
+      },
+      "child_recorded_seconds": 341.875618292,
+      "child_wall_seconds": 344.732887333,
+      "numerical_review": {
+        "energy_condition": 51776.03469198495,
+        "energy_min": 0.26087549588478454,
+        "forcing_channels": [
+          "Lambda",
+          "P",
+          "Theta_phys",
+          "alpha",
+          "beta",
+          "independent_A",
+          "metric_STF",
+          "metric_trace"
+        ],
+        "forcing_family_fields": 33,
+        "limitations": "Saved scalar comparisons only; no array reconstruction, target recomputation or independent boundary-work scale recomputation.",
+        "recounted_checks": 3534,
+        "schemas": {
+          "recorded_boundary_work_acceptance_only": 1,
+          "saved_rank_vs_expected": 4,
+          "saved_scaled_vs_saved_tolerance": 3529
+        },
+        "selected_saved_metrics": {
+          "dissipative_boundary_work": {
+            "max_eigenvalue": 1.4499006801603815e-09,
+            "name": "dissipative_boundary_work",
+            "passed": true
+          },
+          "incoming_rank_Pplus": {
+            "expected": 4,
+            "name": "incoming_rank_Pplus",
+            "passed": true,
+            "rank": 4
+          },
+          "incoming_rank_TT_left": {
+            "expected": 0,
+            "name": "incoming_rank_TT_left",
+            "passed": true,
+            "rank": 0
+          },
+          "incoming_rank_constraint_left": {
+            "expected": 2,
+            "name": "incoming_rank_constraint_left",
+            "passed": true,
+            "rank": 2
+          },
+          "incoming_rank_gauge_left": {
+            "expected": 2,
+            "name": "incoming_rank_gauge_left",
+            "passed": true,
+            "rank": 2
+          },
+          "nodal_congruence": {
+            "absolute": 2.3542732625306676e-10,
+            "absolute_max": 7.09405867382884e-11,
+            "name": "nodal_congruence",
+            "passed": true,
+            "scaled": 1.1922544752683532e-14,
+            "tolerance": 2e-09
+          },
+          "retained_family_solved": {
+            "absolute": 2.815932184021143e-11,
+            "absolute_max": 5.2176514033886396e-12,
+            "name": "retained_family_solved",
+            "passed": true,
+            "scaled": 1.3784533093414475e-11,
+            "tolerance": 2e-09
+          },
+          "volume_trace_identity": {
+            "absolute": 5.662870924678354e-07,
+            "absolute_max": 1.494772732257843e-07,
+            "name": "volume_trace_identity",
+            "passed": true,
+            "scaled": 3.201743215286855e-14,
+            "tolerance": 2e-08
+          },
+          "weak_strong": {
+            "absolute": 3.692177028135898e-07,
+            "absolute_max": 1.3085082173347473e-07,
+            "name": "weak_strong",
+            "passed": true,
+            "scaled": 3.879715524556136e-14,
+            "tolerance": 2e-08
+          }
+        },
+        "source_absolute_maxima": {
+          "manual_normal": 4.083832778363627e-14,
+          "normal_input_scaled": 2.7755575615628914e-16,
+          "normal_output_scaled": 1.0658141036401503e-13,
+          "normalized_action": 8.185452315956354e-11,
+          "normalized_configuration_derivative": 1.7763568394002505e-15,
+          "normalized_values": 7.72715225139109e-14,
+          "raw_action": 1.418811734765768e-10
+        },
+        "source_checks": {
+          "manual_normal": 4.0840267309249203e-14,
+          "normal_input_scaled": 2.7755575615628914e-16,
+          "normal_output_scaled": 1.6521410763451041e-15,
+          "normalized_action": 1.3407395274460242e-14,
+          "normalized_configuration_derivative": 1.777382206565991e-15,
+          "normalized_values": 1.091851237393938e-14,
+          "raw_action": 1.1770077114592105e-14,
+          "source_condition": 3298.0387864888116
+        },
+        "worst_forcing_saved_scaled": {
+          "absolute": 5.052519049341626e-11,
+          "absolute_max": 2.7806874710503935e-11,
+          "name": "direct_forced_family_metric_STF_rho_power_0",
+          "passed": true,
+          "scaled": 5.052519049341626e-11,
+          "tolerance": 2e-09
+        }
+      },
+      "result_metadata_only": {
+        "bytes": 670739,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/attempts/independent-primary001/result.json",
+        "sha256": "e431e8e073a058ef575007a761ea81583513701cdcba998b1946c279b1c2d5c1"
+      },
+      "root_pins_before_after_count": 4643,
+      "root_receipt": {
+        "bytes": 1233,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release002-20261009/primary-invocation001/receipt.json",
+        "sha256": "47ef00e583384988b957990aae771684af750ed4eda6da664eddc867b3fe36ca"
+      },
+      "root_seconds": 350.105694125,
+      "stderr_bytes": 0,
+      "ten_rounding_audits": {
+        "tiny-bilinear-weighting-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 4060800,
+            "exact_nonzero_below_min_normal": 9910,
+            "exact_nonzero_below_min_subnormal": 214,
+            "fallback_multiply": 10950,
+            "inexact": 10950,
+            "rounded_nonzero_subnormal": 9756,
+            "rounded_zero": 154
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 2306033280,
+              "calls": 9224,
+              "delegated_broadcast_entries": 4060800,
+              "delegated_fallback_calls": 13,
+              "proved_normal_or_zero_calls": 9211,
+              "proved_normal_or_zero_entries": 2301972480
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1072
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1075
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1071
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1074
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1072
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1075
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1070
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1073
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1072
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1075
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              }
+            ],
+            "labels": {
+              "bilinear:left_root_times_a": 4612,
+              "bilinear:right_root_times_b": 4612
+            },
+            "minimum_proven_exponent_sum": -1009,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "bilinear:left_root_times_a": 7222,
+            "bilinear:right_root_times_b": 3728
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.46955435226429765811298519895200568416900419E-324",
+            "denominator": "455769356286876421213391376429838886925099892492896311359073203585443629295319008244476198689326433780162368020962991167191110613607139517741900808291216386005762763108913764753265553690611976382226145357950239793122692242822302122332514317008108070827274337186476319071835298862424880252130670164301449339557783552772064084296510505746432",
+            "numerator": "1125547197446953"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the two broadcast products sqrt(weights)*a and sqrt(weights)*b in bilinear(); no normalization audit mixing",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "2.70416201572940593563371879285244622416505959E-320",
+            "denominator": "227884678143438210606695688214919443462549946246448155679536601792721814647659504122238099344663216890081184010481495583595555306803569758870950404145608193002881381554456882376632776845305988191113072678975119896561346121411151061166257158504054035413637168593238159535917649431212440126065335082150724669778891776386032042148255252873216",
+            "numerator": "6162370906022067675"
+          }
+        },
+        "tiny-derivative-product-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 552960,
+            "exact_nonzero_below_min_normal": 23496,
+            "exact_nonzero_below_min_subnormal": 21312,
+            "fallback_multiply": 23496,
+            "inexact": 23496,
+            "rounded_nonzero_subnormal": 2184,
+            "rounded_zero": 21312
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 70963200,
+              "calls": 385,
+              "delegated_broadcast_entries": 552960,
+              "delegated_fallback_calls": 3,
+              "proved_all_zero_products_calls": 136,
+              "proved_normal_or_zero_calls": 246,
+              "proved_normal_or_zero_entries": 45342720,
+              "proved_zero_entries": 25067520
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -560,
+                  -677
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1237
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -719,
+                  -837
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1556
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -956,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -2029
+              }
+            ],
+            "labels": {
+              "line353:rounded_c_cr_times_ur": 385
+            },
+            "minimum_proven_exponent_sum": -1009,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "line353:rounded_c_cr_times_ur": 23496
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.47029235616470971325459721258979857763370503E-324",
+            "denominator": "31320231676337699569680585584233332126277536636641689113700043556310885271599082660754874336336881557665712387519236631830763012277778509132970811847787840351265010161398078491192208996872168652601371039816615896109116302374314853677592643664025611696588719088575879102271898933000013823033879402787802745580823671382443286151515196625621528139005952",
+            "numerator": "77370128903364831700083575"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the second multiply (rounded c*cr)*ur in the left-associated line353 derivative expression; separate from normalization and bilinear weighting audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "5.80419892004460194226300161070099073800815335E-320",
+            "denominator": "3915028959542212446210073198029166515784692079580211139212505444538860658949885332594359292042110194708214048439904578978845376534722313641621351480973480043908126270174759811399026124609021081575171379977076987013639537796789356709699080458003201462073589886071984887783987366625001727879234925348475343197602958922805410768939399578202691017375744",
+            "numerator": "227236068589182510703145459775"
+          }
+        },
+        "tiny-normalization-rounding.json": {
+          "counts": {
+            "candidate_entries_divide": 32155200,
+            "candidate_entries_multiply": 48061338,
+            "exact_nonzero_below_min_normal": 6964,
+            "exact_nonzero_below_min_subnormal": 4972,
+            "fallback_divide": 778,
+            "fallback_matrix_contractions": 494,
+            "fallback_multiply": 6189,
+            "inexact": 6098,
+            "normalizations_attempted": 369600,
+            "ordinary_matrix_contractions": 4434706,
+            "ordinary_vector_contractions": 1478400,
+            "rounded_nonzero_subnormal": 2032,
+            "rounded_zero": 4932
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "labels": {
+            "A_frame_chi": 247,
+            "A_frame_left:product": 78,
+            "A_trace_metric_product": 120,
+            "A_trace_third": 120,
+            "Lambda_chi": 39,
+            "STF_chart_half": 53,
+            "chi_r_over_chi_squared": 6,
+            "h_chi": 103,
+            "h_chi_r_over_chi": 141,
+            "h_times_chi_r": 1873,
+            "hd_chi": 108,
+            "hd_dg_frame_derivative:product": 1740,
+            "hd_frame_derivative_left:product": 1745,
+            "hd_frame_derivative_right:product": 168,
+            "hd_metric_derivative:product": 26,
+            "metric_frame_left:product": 32,
+            "raw_chi_times_chi_r": 6,
+            "reference_A_trace_tangent": 362
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.46951677958899502608214600760551929940895811E-324",
+            "denominator": "2004494827285612772459557477390933256081762344745068103276802787603896657382341290288311957525560419690605592801231144437168832785777824584510131958258421782480960650329477023436301375799818793766487746548263417350983443351956150635365929194497639148581678021668856262545401531712000884674168281778419375717172714968476370313696972584039777800896380928",
+            "numerator": "4950133610581165249964202541"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Products/quotients inside normalized() only; no error suppression or floor",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "1.72051234033965283467143112349876529589822111E-320",
+            "denominator": "2004494827285612772459557477390933256081762344745068103276802787603896657382341290288311957525560419690605592801231144437168832785777824584510131958258421782480960650329477023436301375799818793766487746548263417350983443351956150635365929194497639148581678021668856262545401531712000884674168281778419375717172714968476370313696972584039777800896380928",
+            "numerator": "34487580864918978296500599103147"
+          }
+        },
+        "tiny-outer-measure-E-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1572864,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 1572864
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:E": 384
+            },
+            "minimum_proven_exponent_sum": -967,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing E point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-G-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1572864,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 1572864
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:G": 384
+            },
+            "minimum_proven_exponent_sum": -423,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing G point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-Ks-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1572864,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 1572864
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:Ks": 384
+            },
+            "minimum_proven_exponent_sum": -433,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing Ks point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-Kw-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1572864,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 1572864
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:Kw": 384
+            },
+            "minimum_proven_exponent_sum": -424,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing Kw point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-loads-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 811008,
+              "calls": 384,
+              "proved_normal_or_zero_calls": 384,
+              "proved_normal_or_zero_entries": 811008
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:loads": 384
+            },
+            "minimum_proven_exponent_sum": -429,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing loads point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-retained-basis-division-rounding.json": {
+          "counts": {
+            "candidate_entries_divide": 1829520
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only retained-basis flat/col immediately before SVD; separate from normalization and all three product audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-weak-product-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 184320,
+            "exact_nonzero_below_min_normal": 422,
+            "exact_nonzero_below_min_subnormal": 0,
+            "fallback_multiply": 422,
+            "inexact": 422,
+            "rounded_nonzero_subnormal": 422,
+            "rounded_zero": 0
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 70778880,
+              "calls": 384,
+              "delegated_broadcast_entries": 184320,
+              "delegated_fallback_calls": 1,
+              "proved_normal_or_zero_calls": 383,
+              "proved_normal_or_zero_entries": 70594560
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "line394:div_times_hy_q",
+                "minimum_nonzero_frexp_exponents": [
+                  2,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1071
+              }
+            ],
+            "labels": {
+              "line394:div_times_hy_q": 384
+            },
+            "minimum_proven_exponent_sum": -835,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "line394:div_times_hy_q": 422
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.45809145598433897361892466507657142877950097E-324",
+            "denominator": "455769356286876421213391376429838886925099892492896311359073203585443629295319008244476198689326433780162368020962991167191110613607139517741900808291216386005762763108913764753265553690611976382226145357950239793122692242822302122332514317008108070827274337186476319071835298862424880252130670164301449339557783552772064084296510505746432",
+            "numerator": "1120322760588253"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only div*hy[:,qidx] in the weak derivative bilinear; separate from normalization/derivative/weighting audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "1.03731459442539104686718620866231314294494941E-321",
+            "denominator": "227884678143438210606695688214919443462549946246448155679536601792721814647659504122238099344663216890081184010481495583595555306803569758870950404145608193002881381554456882376632776845305988191113072678975119896561346121411151061166257158504054035413637168593238159535917649431212440126065335082150724669778891776386032042148255252873216",
+            "numerator": "236388102484121383"
+          }
+        }
+      }
+    },
+    "radial_pair": {
+      "actual_acceptance_associated": true,
+      "cap_reached": false,
+      "child_pins_before_count": 4587,
+      "child_receipt": {
+        "bytes": 163,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/attempts/independent-radial_pair001/receipt.json",
+        "sha256": "0f0274220c3cb43d1bbd454f4ccb4ce7bb1815aa8d560abc6cd2560920089e36"
+      },
+      "child_recorded_seconds": 679.8700697090001,
+      "child_wall_seconds": 682.7351398750001,
+      "numerical_review": {
+        "acceptance_association": "Actual successful root and child receipts only; oversized result is stream-hashed metadata, never decoded.",
+        "independent_final_numerical_recount": false,
+        "result_bytes": 1276457
+      },
+      "result_metadata_only": {
+        "bytes": 1276457,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/attempts/independent-radial_pair001/result.json",
+        "sha256": "de9e6916a3b6bf17ff3a7a60b96c9e50b410c389d5f04f871c3b779a57c230af"
+      },
+      "root_pins_before_after_count": 4643,
+      "root_receipt": {
+        "bytes": 1240,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release002-20261009/radial_pair-invocation001/receipt.json",
+        "sha256": "f8e9d8bf4e62e3a26378ea7b273500b5612e6fff41adcf66d7e042b36ee4d9a6"
+      },
+      "root_seconds": 687.94382875,
+      "stderr_bytes": 0,
+      "ten_rounding_audits": {
+        "tiny-bilinear-weighting-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 10065600,
+            "exact_nonzero_below_min_normal": 55050,
+            "exact_nonzero_below_min_subnormal": 15730,
+            "fallback_multiply": 55440,
+            "inexact": 55440,
+            "rounded_nonzero_subnormal": 42262,
+            "rounded_zero": 12788
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 4609664640,
+              "calls": 18440,
+              "delegated_broadcast_entries": 10065600,
+              "delegated_fallback_calls": 35,
+              "proved_normal_or_zero_calls": 18405,
+              "proved_normal_or_zero_entries": 4599599040
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1054
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1057
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1068
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1071
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1072
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1075
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1068
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1071
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1069
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1072
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1026
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1029
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1034
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1037
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1033
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1036
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1034
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1037
+              },
+              {
+                "label": "bilinear:right_root_times_b",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1076
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1072
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1075
+              },
+              {
+                "label": "bilinear:left_root_times_a",
+                "minimum_nonzero_frexp_exponents": [
+                  -3,
+                  -1033
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1036
+              }
+            ],
+            "labels": {
+              "bilinear:left_root_times_a": 9220,
+              "bilinear:right_root_times_b": 9220
+            },
+            "minimum_proven_exponent_sum": -1010,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "bilinear:left_root_times_a": 31770,
+            "bilinear:right_root_times_b": 23670
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.46959785699764467040705344303795640908301102E-324",
+            "denominator": "227884678143438210606695688214919443462549946246448155679536601792721814647659504122238099344663216890081184010481495583595555306803569758870950404145608193002881381554456882376632776845305988191113072678975119896561346121411151061166257158504054035413637168593238159535917649431212440126065335082150724669778891776386032042148255252873216",
+            "numerator": "562783512785633"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the two broadcast products sqrt(weights)*a and sqrt(weights)*b in bilinear(); no normalization audit mixing",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "1.36914505191949420527367042882024303319562131E-319",
+            "denominator": "14242792383964888162918480513432465216409371640403009729971037612045113415478719007639881209041451055630074000655093473974722206675223109929434400259100512062680086347153555148539548552831624261944567042435944993535084132588196941322891072406503377213352323037077384970994853089450777507879083442634420291861180736024127002634265953304576",
+            "numerator": "1950044871802218345"
+          }
+        },
+        "tiny-derivative-product-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 1474560,
+            "exact_nonzero_below_min_normal": 72056,
+            "exact_nonzero_below_min_subnormal": 61310,
+            "fallback_multiply": 72436,
+            "inexact": 72436,
+            "rounded_nonzero_subnormal": 10780,
+            "rounded_zero": 61276
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 141742080,
+              "calls": 769,
+              "delegated_broadcast_entries": 1474560,
+              "delegated_fallback_calls": 8,
+              "proved_all_zero_products_calls": 271,
+              "proved_normal_or_zero_calls": 490,
+              "proved_normal_or_zero_entries": 90316800,
+              "proved_zero_entries": 49950720
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -561,
+                  -680
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1241
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -481,
+                  -598
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1079
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -539,
+                  -655
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1194
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -608,
+                  -726
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1334
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -691,
+                  -808
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1499
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -791,
+                  -909
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1700
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -914,
+                  -1034
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1948
+              },
+              {
+                "label": "line353:rounded_c_cr_times_ur",
+                "minimum_nonzero_frexp_exponents": [
+                  -1067,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -2140
+              }
+            ],
+            "labels": {
+              "line353:rounded_c_cr_times_ur": 769
+            },
+            "minimum_proven_exponent_sum": -978,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "line353:rounded_c_cr_times_ur": 72436
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.46977212253765172460124098998346022895710123E-324",
+            "denominator": "227884678143438210606695688214919443462549946246448155679536601792721814647659504122238099344663216890081184010481495583595555306803569758870950404145608193002881381554456882376632776845305988191113072678975119896561346121411151061166257158504054035413637168593238159535917649431212440126065335082150724669778891776386032042148255252873216",
+            "numerator": "562823225232129"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the second multiply (rounded c*cr)*ur in the left-associated line353 derivative expression; separate from normalization and bilinear weighting audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "1.78900413468137340323215492350441925144736585E-319",
+            "denominator": "56971169535859552651673922053729860865637486561612038919884150448180453661914876030559524836165804222520296002620373895898888826700892439717737601036402048250720345388614220594158194211326497047778268169743779974140336530352787765291564289626013508853409292148309539883979412357803110031516333770537681167444722944096508010537063813218304",
+            "numerator": "10192165785728624061"
+          }
+        },
+        "tiny-normalization-rounding.json": {
+          "counts": {
+            "candidate_entries_divide": 64226880,
+            "candidate_entries_multiply": 96019044,
+            "exact_nonzero_below_min_normal": 38435,
+            "exact_nonzero_below_min_subnormal": 15278,
+            "fallback_divide": 4954,
+            "fallback_matrix_contractions": 1652,
+            "fallback_multiply": 33508,
+            "fallback_vector_contractions": 360,
+            "inexact": 33259,
+            "normalizations_attempted": 738240,
+            "ordinary_matrix_contractions": 8857228,
+            "ordinary_vector_contractions": 2952600,
+            "rounded_nonzero_subnormal": 23739,
+            "rounded_zero": 14696
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "labels": {
+            "A_frame_chi": 314,
+            "A_frame_left:product": 1065,
+            "A_frame_right:product": 1296,
+            "A_normal": 105,
+            "Lambda_chart:product": 389,
+            "Lambda_chi": 159,
+            "STF_chart_half": 141,
+            "chi_r_over_chi_squared": 144,
+            "chi_radial": 27,
+            "coframe_radial_derivative_product": 2880,
+            "coframe_radial_derivative_quotient": 2880,
+            "frame_radial_derivative": 2880,
+            "h_chi": 298,
+            "h_chi_r_over_chi": 539,
+            "h_times_chi_r": 5136,
+            "hd_chi": 591,
+            "hd_dg_frame:product": 907,
+            "hd_dg_frame_derivative:product": 4629,
+            "hd_frame_derivative_left:product": 4767,
+            "hd_frame_derivative_right:product": 800,
+            "hd_gdr_frame:product": 2040,
+            "hd_metric_derivative:product": 1961,
+            "lapse_times_alpha_r": 80,
+            "metric_frame_left:product": 911,
+            "metric_frame_right:product": 907,
+            "metric_normal": 96,
+            "physical_P_omega": 20,
+            "raw_chi_times_chi_r": 285,
+            "reference_A_trace_tangent": 1084,
+            "shift_chart_frame_derivative:product": 882,
+            "shift_chart_times_alpha_r": 249
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.47032822920623272088284396434110686182529901E-324",
+            "denominator": "404804506614621236704990693437834614099113299528284236713802716054860679135990693783920767402874248990374155728633623822779617474771586953734026799881477019843034848553132722728933815484186432682479535356945490137124014966849385397236206711298319112681620113024717539104666829230461005064372655017292012526615415482186989568",
+            "numerator": "1"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Products/quotients inside normalized() only; no error suppression or floor",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "9.50137643517301229105959445564876521195246506E-320",
+            "denominator": "202402253307310618352495346718917307049556649764142118356901358027430339567995346891960383701437124495187077864316811911389808737385793476867013399940738509921517424276566361364466907742093216341239767678472745068562007483424692698618103355649159556340810056512358769552333414615230502532186327508646006263307707741093494784",
+            "numerator": "19231"
+          }
+        },
+        "tiny-outer-measure-E-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 4096,
+            "exact_nonzero_below_min_normal": 28,
+            "exact_nonzero_below_min_subnormal": 28,
+            "fallback_multiply": 28,
+            "inexact": 28,
+            "rounded_nonzero_subnormal": 8,
+            "rounded_zero": 20
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 3145728,
+              "calls": 768,
+              "delegated_broadcast_entries": 4096,
+              "delegated_fallback_calls": 1,
+              "proved_normal_or_zero_calls": 767,
+              "proved_normal_or_zero_entries": 3141632
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "outer_measure:E",
+                "minimum_nonzero_frexp_exponents": [
+                  -12,
+                  -1068
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1080
+              }
+            ],
+            "labels": {
+              "outer_measure:E": 768
+            },
+            "minimum_proven_exponent_sum": -926,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "outer_measure:E": 28
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.20305979915772242683892412191376969807992795E-324",
+            "denominator": "933415641675522910645025538928310040422604579825451645663381920942988552796813328884687254915740536381772529706932205910407394536667421732335412855380411158539802138847055390214687853958373327630799145693082091096315273713300074746536989321232605329054257842557903501459118692070246154756363612496489368247414340716077187244639253515768692736",
+            "numerator": "2056370476080354107"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing E point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "6.16856743764162279514898754135855515462379827E-323",
+            "denominator": "233353910418880727661256384732077510105651144956362911415845480235747138199203332221171813728935134095443132426733051477601848634166855433083853213845102789634950534711763847553671963489593331907699786423270522774078818428325018686634247330308151332263564460639475875364779673017561538689090903124122342061853585179019296811159813378942173184",
+            "numerator": "14394593332562478749"
+          }
+        },
+        "tiny-outer-measure-G-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 3145728,
+              "calls": 768,
+              "proved_normal_or_zero_calls": 768,
+              "proved_normal_or_zero_entries": 3145728
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:G": 768
+            },
+            "minimum_proven_exponent_sum": -638,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing G point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-Ks-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 3145728,
+              "calls": 768,
+              "proved_normal_or_zero_calls": 768,
+              "proved_normal_or_zero_entries": 3145728
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:Ks": 768
+            },
+            "minimum_proven_exponent_sum": -653,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing Ks point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-Kw-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 3145728,
+              "calls": 768,
+              "proved_normal_or_zero_calls": 768,
+              "proved_normal_or_zero_entries": 3145728
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:Kw": 768
+            },
+            "minimum_proven_exponent_sum": -639,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing Kw point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-outer-measure-loads-rounding.json": {
+          "counts": {},
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 1622016,
+              "calls": 768,
+              "proved_normal_or_zero_calls": 768,
+              "proved_normal_or_zero_entries": 1622016
+            },
+            "first_delegated_bounds": [],
+            "labels": {
+              "outer_measure:loads": 768
+            },
+            "minimum_proven_exponent_sum": -646,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {},
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only the final rounded radial measure times the existing loads point-sum array; separate instance/audit for each of five sites",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "0",
+            "denominator": "1",
+            "numerator": "0"
+          }
+        },
+        "tiny-retained-basis-division-rounding.json": {
+          "counts": {
+            "candidate_entries_divide": 3654288,
+            "exact_nonzero_below_min_normal": 84,
+            "exact_nonzero_below_min_subnormal": 0,
+            "fallback_divide": 84,
+            "inexact": 84,
+            "rounded_nonzero_subnormal": 84,
+            "rounded_zero": 0
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "labels": {
+            "retained_basis_flat_over_col": 84
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.45546851302136947149438560450927584708044710E-324",
+            "denominator": "1028561293269287053066460387708926722200932139802558709375961851170086638734976376095580396640121869256085846784046600750615896629666848843589352887112227000641799513016903963985384360277100649172700618962162782694910698100436572626139223401955631050767740114010021564411647927768738231977650702837598032345881740930866149382544433667375104",
+            "numerator": "2525599869335273"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only retained-basis flat/col immediately before SVD; separate from normalization and all three product audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "2.06259355093795035605528390778779171154757556E-322",
+            "denominator": "257140323317321763266615096927231680550233034950639677343990462792521659683744094023895099160030467314021461696011650187653974157416712210897338221778056750160449878254225990996346090069275162293175154740540695673727674525109143156534805850488907762691935028502505391102911981942184557994412675709399508086470435232716537345636108416843776",
+            "numerator": "53037597256040733"
+          }
+        },
+        "tiny-weak-product-rounding.json": {
+          "counts": {
+            "candidate_entries_multiply": 368640,
+            "exact_nonzero_below_min_normal": 3204,
+            "exact_nonzero_below_min_subnormal": 0,
+            "fallback_multiply": 3204,
+            "inexact": 3204,
+            "rounded_nonzero_subnormal": 3204,
+            "rounded_zero": 0
+          },
+          "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+          "fast_weighting_proof": {
+            "counts": {
+              "broadcast_entries": 141557760,
+              "calls": 768,
+              "delegated_broadcast_entries": 368640,
+              "delegated_fallback_calls": 2,
+              "proved_normal_or_zero_calls": 766,
+              "proved_normal_or_zero_entries": 141189120
+            },
+            "first_delegated_bounds": [
+              {
+                "label": "line394:div_times_hy_q",
+                "minimum_nonzero_frexp_exponents": [
+                  2,
+                  -1033
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1031
+              },
+              {
+                "label": "line394:div_times_hy_q",
+                "minimum_nonzero_frexp_exponents": [
+                  2,
+                  -1073
+                ],
+                "normal_proof_requires_sum_at_least": -1020,
+                "sum": -1071
+              }
+            ],
+            "labels": {
+              "line394:div_times_hy_q": 768
+            },
+            "minimum_proven_exponent_sum": -907,
+            "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained.",
+            "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+            "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero."
+          },
+          "labels": {
+            "line394:div_times_hy_q": 3204
+          },
+          "maximum_absolute_local_rounding_error_exact": {
+            "decimal_display_not_bound": "2.46781849495958008629649497488802683512585483E-324",
+            "denominator": "7121396191982444081459240256716232608204685820201504864985518806022556707739359503819940604520725527815037000327546736987361103337611554964717200129550256031340043173576777574269774276415812130972283521217972496767542066294098470661445536203251688606676161518538692485497426544725388753939541721317210145930590368012063501317132976652288",
+            "numerator": "17574313232509"
+          },
+          "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+          "scope": "Only div*hy[:,qidx] in the weak derivative bilinear; separate from normalization/derivative/weighting audits",
+          "sum_absolute_local_rounding_errors_upper_bound": {
+            "decimal_display_not_bound": "7.90689045785049459649396989954123797974323888E-321",
+            "denominator": "1780349047995611020364810064179058152051171455050376216246379701505639176934839875954985151130181381953759250081886684246840275834402888741179300032387564007835010793394194393567443569103953032743070880304493124191885516573524617665361384050812922151669040379634673121374356636181347188484885430329302536482647592003015875329283244163072",
+            "numerator": "14077024899239709"
+          }
+        }
+      }
+    }
+  },
+  "generator_spectrum_or_propagation_admitted": false,
+  "historical_failures": {
+    "root001_metadata_preparation": {
+      "receipt": {
+        "bytes": 483,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release-20261009/preparation001/receipt.json",
+        "sha256": "5ce106adddc5dd8a0dbd2acb9c210f5e4f05f01058857a869bcbaed3fed35bdb"
+      },
+      "recorded_completed": false,
+      "recorded_error": "FileNotFoundError: [Errno 2] No such file or directory: '/Users/hz0693/research/hyperboloidal/REVIEW.md'",
+      "recorded_returncode": 1,
+      "scope": "Original failure remains unchanged; no reinterpretation as a successful scientific run."
+    },
+    "v8_radial_underflow": {
+      "receipt": {
+        "bytes": 210,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/receipt.json",
+        "sha256": "7e7bbb4cb92ec3c03b914832af76066995696bcb5d6c9afb7960dbe04c880eb8"
+      },
+      "recorded_completed": false,
+      "recorded_error": "FloatingPointError: underflow encountered in divide",
+      "recorded_returncode": 1,
+      "scope": "Original failure remains unchanged; no reinterpretation as a successful scientific run."
+    },
+    "v9_radial_underflow": {
+      "receipt": {
+        "bytes": 216,
+        "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/attempts/independent-radial_pair001/receipt.json",
+        "sha256": "bfab682d017693316e885f22bb00b13707aa6f211bf851198a54e05bf03dc4d1"
+      },
+      "recorded_completed": false,
+      "recorded_error": "FloatingPointError: underflow encountered in multiply",
+      "recorded_returncode": 1,
+      "scope": "Original failure remains unchanged; no reinterpretation as a successful scientific run."
+    }
+  },
+  "no_arrays_maps_jsonl_or_large_json_decoded": true,
+  "no_targets_or_scientific_queries_recomputed": true,
+  "passed": true,
+  "primary_angular_saved_checks_recounted": 7068,
+  "radial_final_numerical_recount_performed": false,
+  "root_protected_pins": 4639,
+  "saved_data_only": true,
+  "scope": "Independent compact saved-scalar and provenance audit, not continuum/native stability or a new operator result.",
+  "source_index_file_counts": {
+    "owner": 15,
+    "root_launcher": 8
+  },
+  "source_runtime_review_pins_rehashed_before_after": 4711
+}

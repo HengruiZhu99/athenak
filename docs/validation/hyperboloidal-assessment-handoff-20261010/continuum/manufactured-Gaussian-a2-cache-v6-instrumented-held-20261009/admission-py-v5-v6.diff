@@ -1,0 +1,43 @@
+--- v5/admission.py
++++ v6/admission.py
+@@ -68,8 +68,8 @@
+         raise RuntimeError("wrong interpreter")
+     if recipe["source_only"] is not True or stage not in recipe["stage_timeouts"]:
+         raise RuntimeError("invalid held recipe")
+-    if stage not in ("certificate", "replay"):
+-        raise RuntimeError("cache v5 admits certificate/replay only after exact release")
++    if stage != "certificate":
++        raise RuntimeError("cache v6 instrumentation admits only a fresh diagnostic producer")
+     # Admission/history only: the old cached producer remains failed.
+     prior_pin = recipe["cached_v4_timeout_receipt"]
+     if authorization.get("prior_timeout_receipt") != prior_pin:
+@@ -93,6 +93,29 @@
+     if (Path(prior_pin["path"]).parent / "report.json").exists():
+         raise RuntimeError("failed cached-v4 unexpectedly has a producer report")
+     # The partial tree is bound as metadata only; no decode or resume.
++    # BEGIN_OBSERVATION_ONLY
++    v5_pin = recipe["cached_v5_timeout_receipt"]
++    if authorization.get("prior_v5_timeout_receipt") != v5_pin:
++        raise RuntimeError("exact failed cached-v5 receipt pin required")
++    verify_pin(v5_pin)
++    v5 = load(v5_pin["path"])
++    if not (v5.get("completed") is False and v5.get("passed") is False
++            and type(v5.get("returncode")) is int and v5.get("returncode") == 1
++            and v5.get("inputs_unchanged") is True and v5.get("stage") == "certificate"
++            and v5.get("source_index_sha256") == recipe["cached_v5_source_index_sha256"]
++            and v5.get("recipe_sha256") == recipe["cached_v5_recipe_sha256"]):
++        raise RuntimeError("cached-v5 timeout history classification differs")
++    for entry in (recipe["cached_v5_progress"], recipe["cached_v5_stderr"],
++                  recipe["cached_v5_command"], recipe["cached_v5_partial_certificate_metadata"]):
++        if entry not in v5.get("outputs", []):
++            raise RuntimeError("v5 failed receipt does not bind history output")
++    for entry in (recipe["cached_v5_progress"], recipe["cached_v5_stderr"], recipe["cached_v5_command"]):
++        verify_pin(entry)
++    if "UNRESOLVED: declared domain time limit" not in Path(recipe["cached_v5_stderr"]["path"]).read_text():
++        raise RuntimeError("v5 failure is not the declared time cap")
++    if (Path(v5_pin["path"]).parent / "report.json").exists():
++        raise RuntimeError("failed v5 unexpectedly has a producer report")
++    # END_OBSERVATION_ONLY
+     dependencies = {"prior_timeout": prior}
+     if stage in ("certificate", "replay"):
+         unit_pin = recipe["cached_v3_units_receipt"]

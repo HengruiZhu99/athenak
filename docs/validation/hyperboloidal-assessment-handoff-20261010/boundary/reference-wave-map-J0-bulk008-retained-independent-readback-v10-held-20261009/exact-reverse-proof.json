@@ -1,0 +1,74 @@
+{
+  "source_only": true,
+  "candidate_imported": false,
+  "scientific_execution": false,
+  "baseline": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/verify_retained.py",
+    "bytes": 34871,
+    "sha256": "345d5d5a87278c8a793a9ce8fcfcaeb1a50171a6ba68206b4df27d5de4f8bdb6"
+  },
+  "candidate": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/verify_retained.py",
+    "bytes": 39001,
+    "sha256": "ee7de62d0faa1f221a636d03d1ba43901cb4b28c0bfbc63ce946fe9c5fc10b11"
+  },
+  "reverse_source_sha256": "345d5d5a87278c8a793a9ce8fcfcaeb1a50171a6ba68206b4df27d5de4f8bdb6",
+  "byte_exact_reverse": true,
+  "AST_exact_reverse": true,
+  "new_final_measure_multiply_calls": 5,
+  "adapter_dictionary_Store_count": 1,
+  "distinct_labels": [
+    "outer_measure:E",
+    "outer_measure:G",
+    "outer_measure:Ks",
+    "outer_measure:Kw",
+    "outer_measure:loads"
+  ],
+  "other_scientific_expressions_unchanged": true,
+  "helpers_byte_exact": {
+    "tiny_normalization.py": true,
+    "fast_weighting.py": true,
+    "column_norm.py": true
+  },
+  "changes": [
+    {
+      "scope": "audit global only"
+    },
+    {
+      "scope": "metadata clarification: the historical weak operand correction itself is unchanged"
+    },
+    {
+      "scope": "new summary function only"
+    },
+    {
+      "scope": "audit global declaration only"
+    },
+    {
+      "scope": "five independent unchanged helper instances; no arithmetic performed here"
+    },
+    {
+      "scope": "SOLE numerical expression E: final outer measure multiplication"
+    },
+    {
+      "scope": "SOLE numerical expression Ks: final outer measure multiplication"
+    },
+    {
+      "scope": "SOLE numerical expression Kw: final outer measure multiplication"
+    },
+    {
+      "scope": "SOLE numerical expression G: final outer measure multiplication"
+    },
+    {
+      "scope": "SOLE numerical expression loads: final outer measure multiplication"
+    },
+    {
+      "scope": "result metadata: five separate summaries"
+    },
+    {
+      "scope": "pre-import evidence guard only; no numeric import or target arithmetic"
+    },
+    {
+      "scope": "success/failure audit persistence only"
+    }
+  ]
+}

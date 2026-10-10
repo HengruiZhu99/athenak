@@ -1,0 +1,333 @@
+--- frozen-v2/prepare_timing001.py
++++ held-v3/prepare_timing001.py
+@@ -1,41 +1,88 @@
+-"""Prepare one 20-event timing sample after independent saved units review."""
++"""HELD metadata-only preparation; root must review and invoke it separately."""
+ from pathlib import Path
+-import argparse,hashlib,json
+-HERE=Path(__file__).resolve().parent
+-def sha(p):
+- h=hashlib.sha256()
+- with Path(p).open('rb') as f:
+-  for b in iter(lambda:f.read(1048576),b''):h.update(b)
+- return h.hexdigest()
+-def load(p):return json.loads(Path(p).read_text())
+-def write(p,v):
+- with Path(p).open('x') as f:json.dump(v,f,indent=2,allow_nan=False);f.write('\n')
+-ap=argparse.ArgumentParser();ap.add_argument('--review',type=Path,required=True);ap.add_argument('--review-index-sha256',required=True);ap.add_argument('--review-receipt-sha256',required=True);a=ap.parse_args()
+-review=a.review.resolve()
+-assert sha(review/'index.json')==a.review_index_sha256 and sha(review/'receipt.json')==a.review_receipt_sha256
+-rv=load(review/'receipt.json');assert rv.get('passed') is True
+-old=load(HERE/'units-release.json');owner=Path(old['owner']);indexsha='92a412f36e668bb2e2414bd65e5dee381e42534d94e2df712fd7e9f3a52ce5d3'
+-assert sha(owner/'source-index.json')==indexsha
+-unit=owner/'attempts/units001/receipt.json';assert sha(unit)=='2cac8cc11cdef7993ea8cb18e2af82d14cfa062d42b8df3c1b0c3ba4e4fed774'
+-u=load(unit);assert u['completed'] and u['passed'] and u['sources_unchanged'] and u['stage']=='units' and u['source_index_sha256']==indexsha
+-assert load(unit.parent/'result.json')==dict(passed=True,records=0,checks=318,failed=[],failed_total=0)
+-root=load(HERE/'units-invocation001/receipt.json');assert root['completed'] and root['accepted_stage'] and root['inputs_unchanged'] and root['root_process_group_cap_seconds']==60 and root['elapsed_seconds']<60
+-assert rv['reviewed_source_index_sha256']==indexsha and rv['child_receipt_sha256']==sha(unit) and rv['result_sha256']==sha(unit.parent/'result.json')
+-assert rv['root_receipt_sha256']==sha(HERE/'units-invocation001/receipt.json') and rv['outer_receipt_sha256']==sha(HERE/'units-outer001/receipt.json')
+-assert rv['saved_only'] is True and rv['checks']==318 and rv['failed_total']==0 and rv['root_process_group_cap_seconds']==60
+-pins=dict(old['pins']);reviewpins={}
+-for folder in (review,HERE/'units-invocation001',HERE/'units-outer001',unit.parent):
+- for p in folder.rglob('*'):
+-  if p.is_file():reviewpins[str(p)]=sha(p)
+-for n in ('units-authorization.json','units-release.json','prepare_timing001.py','launch_timing.py'):
+- reviewpins[str(HERE/n)]=sha(HERE/n)
+-for p,h in reviewpins.items():
+- assert p not in pins or pins[p]==h,p
+- pins[p]=h
+-for p,h in pins.items():assert sha(p)==h,p
+-recipe=load(owner/'recipe.json');assert len(recipe['timing_keys'])==10 and recipe['outer_seconds']['timing']==660 and recipe['stage_seconds']['timing']==600
+-output=owner/'attempts/timing001';outer=HERE/'timing-outer001';assert not output.exists() and not outer.exists() and not (HERE/'timing-invocation001').exists()
+-auth={'Gaussian_third_jet_oracle_stage_authorized':'timing','source_index_sha256':indexsha,'recipe_sha256':sha(owner/'recipe.json'),'driver_sha256':sha(owner/'run_oracle.py'),'output':str(output),'outer_output':str(outer),'unit_receipt':{'path':str(unit),'sha256':sha(unit)},'review_pins':reviewpins,'scope':'Only20 fixed timing records,600s scientific/660s outer/690s root group caps. Full stage requires separate actual measured-cost review and release. No native queries.'}
+-write(HERE/'timing-authorization.json',auth)
+-write(HERE/'timing-release.json',{'owner':str(owner),'stage':'timing','pins':pins,'authorization_sha256':sha(HERE/'timing-authorization.json'),'output':str(output),'outer_output':str(outer),'independent_unit_review_receipt_sha256':sha(review/'receipt.json')})
+-print(json.dumps({'prepared':True,'pins':len(pins),'authorization_sha256':sha(HERE/'timing-authorization.json'),'timing_records_only':20}))
++import argparse
++import hashlib
++import importlib.util
++import json
++import os
++import sys
++import traceback
++
++HERE = Path(__file__).resolve().parent
++SUPPORT_SHA = "6ba37e3ea43ae9244ad1cfd283b470bbf937c080ff5e17a1562f53e60df6b154"
++support = HERE / "timing_support.py"
++if hashlib.sha256(support.read_bytes()).hexdigest() != SUPPORT_SHA:
++    raise RuntimeError("held timing support changed before stdlib-only import")
++spec = importlib.util.spec_from_file_location("gaussian_v3_timing_support", support)
++s = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(s)
++c = s.c
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--source-index-sha256", required=True)
++    parser.add_argument("--review", type=Path, required=True)
++    parser.add_argument("--review-index-sha256", required=True)
++    parser.add_argument("--review-receipt-sha256", required=True)
++    args = parser.parse_args()
++    output = HERE / "timing-preparation-invocation001"
++    output.mkdir(exist_ok=False)
++    receipt = {"completed": False, "passed": False, "metadata_only": True, "candidate_imports": False,
++               "numeric_target_calls": False, "command": sys.argv, "interpreter": str(Path(sys.executable).resolve()),
++               "flags": {"isolated": sys.flags.isolated, "dont_write_bytecode": sys.flags.dont_write_bytecode, "optimize": sys.flags.optimize},
++               "environment": {"PYTHONOPTIMIZE": os.environ.get("PYTHONOPTIMIZE")}}
++    pins, before = {}, {}
++    try:
++        s.guard()
++        c.merge(pins, s.source_pins(args.source_index_sha256))
++        prior, recipe, unit_path = s.prerequisites(args.review, args.review_index_sha256, args.review_receipt_sha256)
++        c.merge(pins, prior)
++        c.verify(pins)
++        before = {name: c.sha(name) for name in pins}
++        c.write(output / "pins-before.json", before)
++        child = c.OWNER / "attempts/timing001"
++        outer = HERE / "timing-outer001"
++        invocation = HERE / "timing-invocation001"
++        c.require(not any(path.exists() for path in (child, outer, invocation, HERE / "timing-authorization.json", HERE / "timing-release.json")),
++                  "all timing destinations must be fresh; no rerun into partial paths")
++        review_pins = dict(pins)
++        authorization = {"Gaussian_third_jet_oracle_stage_authorized": "timing",
++                         "source_index_sha256": s.SOURCE_INDEX, "recipe_sha256": c.IDENTITIES["recipe_sha256"],
++                         "driver_sha256": c.IDENTITIES["driver_sha256"], "output": str(child), "outer_output": str(outer),
++                         "unit_receipt": {"path": str(unit_path), "sha256": s.UNIT_RECEIPT}, "review_pins": review_pins,
++                         "scope": "Only fixed20 v3 timing records,600s child/660s outer/690s root process-group cap. Full/native remain held."}
++        c.write(HERE / "timing-authorization.json", authorization)
++        release = {"owner": str(c.OWNER), "stage": "timing", "pins": pins,
++                   "timing_root_source_index_sha256": args.source_index_sha256,
++                   "authorization_sha256": c.sha(HERE / "timing-authorization.json"),
++                   "output": str(child), "outer_output": str(outer), "invocation": str(invocation),
++                   "required_base_pins": 437, "root_process_group_cap_seconds": 690,
++                   "independent_unit_review_index_sha256": args.review_index_sha256,
++                   "independent_unit_review_receipt_sha256": args.review_receipt_sha256,
++                   "actual_unit_receipt_sha256": s.UNIT_RECEIPT, "actual_unit_result_sha256": s.UNIT_RESULT}
++        c.write(HERE / "timing-release.json", release)
++        receipt.update(completed=True, passed=True, result={"prepared": True, "stage": "timing", "records_only": 20,
++                       "protected_pins": len(pins), "required_base_pins": 437, "no_execution": True,
++                       "authorization_sha256": release["authorization_sha256"], "timing_release_sha256": c.sha(HERE / "timing-release.json")})
++    except BaseException as error:
++        receipt.update(error_type=type(error).__name__, error=str(error))
++        (output / "failure.txt").write_text(traceback.format_exc())
++    finally:
++        after = {}
++        for name in pins:
++            try:
++                after[name] = c.sha(name)
++            except OSError as error:
++                after[name] = {"error": str(error)}
++        receipt["inputs_unchanged"] = bool(before) and before == after
++        if not receipt["inputs_unchanged"]:
++            receipt["passed"] = False
++        c.write(output / "pins-after.json", after)
++        c.write(output / "receipt.json", receipt)
++    print(json.dumps(receipt, allow_nan=False))
++    return 0 if receipt["passed"] else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+--- frozen-v2/launch_timing.py
++++ held-v3/launch_timing.py
+@@ -1,48 +1,152 @@
+-"""Run one reviewed timing stage with an enclosing 690-second group cap."""
++"""HELD timing-only root launcher; never call without separate root release."""
+ from pathlib import Path
+-import hashlib,json,os,signal,subprocess,time,traceback
+-HERE=Path(__file__).resolve().parent
+-def sha(p):
+- h=hashlib.sha256()
+- with Path(p).open('rb') as f:
+-  for b in iter(lambda:f.read(1048576),b''):h.update(b)
+- return h.hexdigest()
+-def load(p):return json.loads(Path(p).read_text())
+-def write(p,v):
+- with Path(p).open('x') as f:json.dump(v,f,indent=2,allow_nan=False);f.write('\n')
+-def verify(pins):
+- for p,h in pins.items():
+-  if sha(p)!=h:raise RuntimeError('changed input '+p)
+-release=load(HERE/'timing-release.json');owner=Path(release['owner']);recipe=load(owner/'recipe.json')
+-auth=HERE/'timing-authorization.json';out=HERE/'timing-invocation001';out.mkdir(exist_ok=False)
+-pins=dict(release['pins']);pins[str(auth)]=release['authorization_sha256'];pins[str(HERE/'timing-release.json')]=sha(HERE/'timing-release.json')
+-start=time.monotonic();record={'completed':False,'accepted_stage':False,'stage':'timing','returncode':None,'root_process_group_cap_seconds':690,'science_imports_in_root':False};process=None
+-try:
+- verify(pins);write(out/'pins-before.json',pins)
+- env=os.environ.copy()
+- for name in ('PYTHONHOME','PYTHONPATH','PYTHONWARNINGS','PYTHONSTARTUP','PYTHONUSERBASE'):env.pop(name,None)
+- env.update(recipe['environment'])
+- cmd=[recipe['python_runtime_path'],'-I','-B',str(owner/'outer_once.py'),'--authorization',str(auth),'--authorization-sha256',release['authorization_sha256'],'--invocation',release['outer_output']]
+- write(out/'invocation.json',{'command':cmd,'cwd':str(owner),'environment':recipe['environment'],'root_process_group_timeout_seconds':690})
+- with (out/'stdout.log').open('xb') as stdout,(out/'stderr.log').open('xb') as stderr:
+-  process=subprocess.Popen(cmd,cwd=owner,env=env,stdout=stdout,stderr=stderr,start_new_session=True)
+-  try:record['returncode']=process.wait(timeout=690)
+-  except subprocess.TimeoutExpired:
+-   os.killpg(process.pid,signal.SIGKILL);record['returncode']=process.wait();raise TimeoutError('root690second timing group cap; partial evidence preserved')
+- child=Path(release['output']);c=load(child/'receipt.json');r=load(child/'result.json');o=load(Path(release['outer_output'])/'receipt.json')
+- accepted=bool(record['returncode']==0 and c.get('completed') and c.get('passed') and c.get('sources_unchanged') and c.get('stage')=='timing' and r.get('passed') and r.get('records')==20 and o.get('completed') and o.get('accepted_stage') and o.get('inputs_unchanged'))
+- record.update(completed=accepted,accepted_stage=accepted,child_receipt_sha256=sha(child/'receipt.json'),result_sha256=sha(child/'result.json'),outer_receipt_sha256=sha(Path(release['outer_output'])/'receipt.json'))
+-except BaseException as e:
+- record['error']=repr(e);(out/'failure.txt').open('x').write(traceback.format_exc())
+-finally:
+- if process is not None and process.poll() is None:
+-  try:os.killpg(process.pid,signal.SIGKILL)
+-  except ProcessLookupError:pass
+-  record['returncode']=process.wait();record['unexpected_exit_group_cleanup']=True
+- try:verify(pins);record['inputs_unchanged']=True
+- except BaseException as e:record.update(inputs_unchanged=False,accepted_stage=False,post_pin_error=repr(e))
+- record['elapsed_seconds']=time.monotonic()-start
+- record['output_inventory']=[{'path':str(p),'bytes':p.stat().st_size,'sha256':sha(p),'metadata_only':p.suffix.lower() in {'.jsonl','.npy','.npz'} or p.stat().st_size>1048576} for folder in (out,Path(release['outer_output']),Path(release['output'])) if folder.exists() for p in sorted(folder.rglob('*')) if p.is_file()]
+- write(out/'receipt.json',record)
+-print(json.dumps({k:v for k,v in record.items() if k!='output_inventory'}))
+-raise SystemExit(0 if record['accepted_stage'] else 1)
++import argparse
++import hashlib
++import importlib.util
++import json
++import os
++import signal
++import subprocess
++import sys
++import time
++import traceback
++
++HERE = Path(__file__).resolve().parent
++SUPPORT_SHA = "6ba37e3ea43ae9244ad1cfd283b470bbf937c080ff5e17a1562f53e60df6b154"
++support = HERE / "timing_support.py"
++if hashlib.sha256(support.read_bytes()).hexdigest() != SUPPORT_SHA:
++    raise RuntimeError("held timing support changed before stdlib-only import")
++spec = importlib.util.spec_from_file_location("gaussian_v3_timing_support", support)
++s = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(s)
++c = s.c
++
++
++def kill_group(process):
++    try:
++        os.killpg(process.pid, signal.SIGKILL)
++    except ProcessLookupError:
++        pass
++    return process.wait()
++
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--release-sha256", required=True)
++    args = parser.parse_args()
++    output = HERE / "timing-invocation001"
++    output.mkdir(exist_ok=False)
++    start = time.monotonic()
++    record = {"completed": False, "accepted_stage": False, "stage": "timing", "returncode": None,
++              "root_process_group_cap_seconds": 690, "candidate_imports_in_root": False,
++              "root_command": sys.argv, "root_interpreter": str(Path(sys.executable).resolve())}
++    process = None
++    pins, before = {}, {}
++    child, outer = c.OWNER / "attempts/timing001", HERE / "timing-outer001"
++    try:
++        s.guard()
++        release_path = HERE / "timing-release.json"
++        c.require(c.sha(release_path) == args.release_sha256, "exact root timing release hash required")
++        release = c.load(release_path)
++        c.require(release["owner"] == str(c.OWNER) and release["stage"] == "timing"
++                  and release["root_process_group_cap_seconds"] == 690 and release["required_base_pins"] == 437,
++                  "release owner/stage/caps changed")
++        c.require(release["output"] == str(child) and release["outer_output"] == str(outer) and release["invocation"] == str(output),
++                  "release paths differ from exact fresh timing001")
++        c.require(not child.exists() and not outer.exists(), "no reuse of completed or partial timing outputs")
++        c.merge(pins, release["pins"])
++        c.merge(pins, s.source_pins(release["timing_root_source_index_sha256"]))
++        prior, recipe, unit_path = s.prerequisites(s.UNIT_REVIEW, release["independent_unit_review_index_sha256"],
++                                                 release["independent_unit_review_receipt_sha256"])
++        c.require(all(release["pins"].get(name) == digest for name, digest in prior.items()), "release lacks exact source/unit/review closure")
++        c.merge(pins, prior)
++        authorization_path = HERE / "timing-authorization.json"
++        c.merge(pins, {str(release_path): args.release_sha256, str(authorization_path): release["authorization_sha256"]})
++        authorization = c.load(authorization_path)
++        c.require(authorization["Gaussian_third_jet_oracle_stage_authorized"] == "timing"
++                  and authorization["output"] == str(child) and authorization["outer_output"] == str(outer)
++                  and authorization["unit_receipt"] == {"path": str(unit_path), "sha256": s.UNIT_RECEIPT},
++                  "exact timing authorization/unit/output binding required")
++        for key in ("source_index_sha256", "recipe_sha256", "driver_sha256"):
++            c.require(authorization[key] == c.IDENTITIES[key], "authorization candidate mismatch: " + key)
++        c.require(all(authorization["review_pins"].get(name) == digest for name, digest in release["pins"].items()),
++                  "child and outer must protect every release source/review input")
++        prep_path = HERE / "timing-preparation-invocation001/receipt.json"
++        prep = c.load(prep_path)
++        c.require(prep["completed"] is True and prep["passed"] is True and prep["inputs_unchanged"] is True
++                  and prep["result"]["timing_release_sha256"] == args.release_sha256
++                  and prep["result"]["authorization_sha256"] == release["authorization_sha256"],
++                  "successful exact separate metadata preparation required")
++        for p in sorted(prep_path.parent.rglob("*")):
++            if p.is_file():
++                c.merge(pins, {str(p): c.sha(p)})
++        c.verify(pins)
++        before = {name: c.sha(name) for name in pins}
++        c.write(output / "pins-before.json", before)
++        environment = os.environ.copy()
++        removed = ("PYTHONHOME", "PYTHONPATH", "PYTHONWARNINGS", "PYTHONSTARTUP", "PYTHONUSERBASE")
++        for name in removed:
++            environment.pop(name, None)
++        environment.update(recipe["environment"])
++        c.require(environment["PYTHONOPTIMIZE"] == "0" and environment["PYTHONDONTWRITEBYTECODE"] == "1"
++                  and all(environment[name] == "1" for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "VECLIB_MAXIMUM_THREADS")),
++                  "fixed isolated single-thread environment required")
++        command = [recipe["python_runtime_path"], "-I", "-B", str(c.OWNER / "outer_once.py"),
++                   "--authorization", str(authorization_path), "--authorization-sha256", release["authorization_sha256"],
++                   "--invocation", str(outer)]
++        c.write(output / "invocation.json", {"command": command, "cwd": str(c.OWNER),
++                "fixed_environment": recipe["environment"], "removed_environment_keys": list(removed),
++                "root_process_group_cap_seconds": 690, "required_base_pins": 437,
++                "source_index_sha256": s.SOURCE_INDEX, "release_sha256": args.release_sha256,
++                "authorization_sha256": release["authorization_sha256"]})
++        with (output / "stdout.log").open("xb") as stdout, (output / "stderr.log").open("xb") as stderr:
++            process = subprocess.Popen(command, cwd=c.OWNER, env=environment, stdout=stdout, stderr=stderr, start_new_session=True)
++            record.update(pid=process.pid, process_group=process.pid)
++            try:
++                record["returncode"] = process.wait(timeout=690)
++            except subprocess.TimeoutExpired:
++                record["returncode"] = kill_group(process)
++                record["root_group_timeout"] = True
++                raise TimeoutError("fixed690-second timing group cap; partial evidence preserved")
++        actual, result, enclosing = c.load(child / "receipt.json"), c.load(child / "result.json"), c.load(outer / "receipt.json")
++        for rel, digest in actual["output_hashes"].items():
++            c.require(c.sha(child / rel) == digest, "actual child output drift: " + rel)
++        accepted = (type(record["returncode"]) is int and record["returncode"] == 0
++                    and all(actual.get(key) is True for key in ("completed", "passed", "sources_unchanged"))
++                    and actual.get("stage") == "timing" and all(actual.get(key) == c.IDENTITIES[key] for key in ("source_index_sha256", "recipe_sha256", "driver_sha256"))
++                    and result.get("passed") is True and type(result.get("records")) is int and result["records"] == 20
++                    and type(result.get("failed_total")) is int and result["failed_total"] == 0
++                    and all(enclosing.get(key) is True for key in ("completed", "accepted_stage", "inputs_unchanged")))
++        record.update(completed=True, accepted_stage=accepted, child_receipt_sha256=c.sha(child / "receipt.json"),
++                      result_sha256=c.sha(child / "result.json"), outer_receipt_sha256=c.sha(outer / "receipt.json"))
++        c.require(accepted, "actual same-source20-record timing acceptance required")
++    except BaseException as error:
++        record.update(error_type=type(error).__name__, error=str(error), accepted_stage=False)
++        if process is not None and process.poll() is None:
++            record["returncode"] = kill_group(process)
++            record["exception_process_group_cleanup"] = True
++        (output / "failure.txt").write_text(traceback.format_exc())
++    finally:
++        after = {}
++        for name in pins:
++            try:
++                after[name] = c.sha(name)
++            except OSError as error:
++                after[name] = {"error": str(error)}
++        record["inputs_unchanged"] = bool(before) and before == after
++        if not record["inputs_unchanged"]:
++            record["accepted_stage"] = False
++        c.write(output / "pins-after.json", after)
++        record["elapsed_seconds"] = time.monotonic() - start
++        record["full_native_or_BH_admission"] = False
++        record["output_inventory"] = [{"path": str(p), "bytes": p.stat().st_size, "sha256": c.sha(p),
++                                       "policy": "large_payload" if p.suffix.lower() in (".jsonl", ".npz", ".npy") or p.stat().st_size > 1048576 else "source_or_receipt"}
++                                      for folder in (output, outer, child) if folder.exists()
++                                      for p in sorted(folder.rglob("*")) if p.is_file()]
++        c.write(output / "receipt.json", record)
++    print(json.dumps({key: value for key, value in record.items() if key != "output_inventory"}, allow_nan=False))
++    return 0 if record["accepted_stage"] else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())

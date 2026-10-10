@@ -1,0 +1,47 @@
+--- v2/interval.py
++++ v3/interval.py
+@@ -121,10 +121,15 @@
+ 
+ 
+ class Context:
+-    def __init__(self, bits):
++    def __init__(self, bits, exp_endpoint_cap=4096):
+         if type(bits) is not int or bits < 8:
+             raise ValueError("invalid precision")
++        if type(exp_endpoint_cap) is not int or not 0 <= exp_endpoint_cap <= 4096:
++            raise ValueError("invalid exact endpoint cache cap")
+         self.bits = bits
++        self._exp_endpoint_cap = exp_endpoint_cap
++        self._exp_endpoint_cache = {}
++        self._exp_endpoint_audit = {"hits": 0, "misses": 0, "evictions": 0}
+ 
+     def enclose(self, lo, hi=None):
+         lo, hi = Fraction(lo), Fraction(lo if hi is None else hi)
+@@ -186,5 +191,26 @@
+                 result = result.square()
+             return result
+ 
+-        lower, upper = endpoint(value.hi), endpoint(value.lo)
++        def cached_endpoint(y):
++            # Exact Fraction and precision keys, private to this Context.
++            if not isinstance(y, Fraction):
++                raise TypeError("exact Fraction endpoint required")
++            key = (self.bits, y)
++            if key in self._exp_endpoint_cache:
++                self._exp_endpoint_audit["hits"] += 1
++                result = self._exp_endpoint_cache[key]
++                if result.ctx is not self:
++                    raise RuntimeError("cross-context cached interval")
++                return result
++            self._exp_endpoint_audit["misses"] += 1
++            result = endpoint(y)  # The original uncached body above is unchanged.
++            if self._exp_endpoint_cap:
++                if len(self._exp_endpoint_cache) >= self._exp_endpoint_cap:
++                    oldest = next(iter(self._exp_endpoint_cache))
++                    del self._exp_endpoint_cache[oldest]
++                    self._exp_endpoint_audit["evictions"] += 1
++                self._exp_endpoint_cache[key] = result
++            return result
++
++        lower, upper = cached_endpoint(value.hi), cached_endpoint(value.lo)
+         return self.enclose(lower.lo, upper.hi)

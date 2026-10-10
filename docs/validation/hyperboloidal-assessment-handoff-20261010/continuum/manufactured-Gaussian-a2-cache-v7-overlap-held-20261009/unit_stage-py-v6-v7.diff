@@ -1,0 +1,29 @@
+--- v6/unit_stage.py
++++ v7/unit_stage.py
+@@ -97,12 +97,26 @@
+     if cache_report["case_count"] != recipe["expected_cache_unit_count"]:
+         raise RuntimeError("cache-unit recipe count mismatch")
+     (out / "cache-report.json").write_text(json.dumps(cache_report, indent=2, sort_keys=True, allow_nan=False) + "\n")
++    # BEGIN_V7_ADMISSION_OR_UNIT_ONLY
++    from overlap_units import run_overlap_units
++    overlap_report = run_overlap_units(recipe)
++    if overlap_report["case_count"] != recipe["expected_overlap_unit_count"]:
++        raise RuntimeError("overlap-unit recipe count mismatch")
++    (out / "overlap-report.json").write_text(json.dumps(overlap_report, indent=2, sort_keys=True, allow_nan=False) + "\n")
++    # END_V7_ADMISSION_OR_UNIT_ONLY
+     report = {"passed": True, "stage": "units", "source_index_sha256": index_sha,
+               "case_count": len(rows), "cases": rows,
+               "cache_unit_count": cache_report["case_count"], "cache_units_passed": True,
+               "cache_report": "cache-report.json", "combined_unit_count": len(rows)+cache_report["case_count"],
+               "global_slicing_certificate_passed": False,
+               "domain_boxes_evaluated": 0, "mpmath_oracle_used": False}
++    # BEGIN_V7_ADMISSION_OR_UNIT_ONLY
++    report.update({"overlap_unit_count": overlap_report["case_count"], "overlap_units_passed": True,
++                   "overlap_report": "overlap-report.json",
++                   "combined_unit_count": len(rows)+cache_report["case_count"]+overlap_report["case_count"]})
++    if report["combined_unit_count"] != recipe["expected_combined_unit_count"]:
++        raise RuntimeError("combined v7-unit registry count mismatch")
++    # END_V7_ADMISSION_OR_UNIT_ONLY
+     (out / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True, allow_nan=False) + "\n")
+ 
+ 

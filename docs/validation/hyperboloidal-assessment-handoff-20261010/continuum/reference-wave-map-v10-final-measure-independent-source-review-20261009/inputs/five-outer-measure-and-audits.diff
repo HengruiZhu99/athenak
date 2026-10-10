@@ -1,0 +1,141 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/verify_retained.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/verify_retained.py
+@@ -15,6 +15,7 @@
+ DERIVATIVE_AUDIT = None
+ WEAK_AUDIT = None
+ BASIS_DIVISION_AUDIT = None
++OUTER_MEASURE_AUDITS = None
+ 
+ 
+ def sha(path):
+@@ -76,7 +77,7 @@
+                        'separate from normalization/derivative/weighting audits')
+     result['operation_order'] = ('div=2*c/r and H action retain their original '
+                                  'rounding; strict addition, all three bilinears, '
+-                                 'weak-sum addition and final measure multiplication unchanged')
++                                 'weak-sum addition unchanged; v10 final measure products have separate audits')
+     result['measured_scope'] = ('Primary diagnostic window289..320 has one flag at313, '
+                               '422 inexact tiny subnormal products/141 unique pairs; '
+                               'other grids require their unchanged readback gates')
+@@ -100,6 +101,28 @@
+     return result
+ 
+ 
++def outer_measure_summary(name):
++    if OUTER_MEASURE_AUDITS is None:
++        return None
++    result = OUTER_MEASURE_AUDITS[name].summary()
++    result['scope'] = ('Only the final rounded radial measure times the existing ' +
++                       name + ' point-sum array; separate instance/audit for each of five sites')
++    result['operation_label'] = 'outer_measure:' + name
++    result['operand_scope'] = ('measure=weights[ir]/c and every original inner sum, '
++                               'bilinear, H/Gamma action and incoming/boundary expression are unchanged')
++    result['operation_order'] = ('Only this final multiplication uses the unchanged tested '
++                                 'fast proof/exact-tiny adapter; the original strict augmented '
++                                 'addition and all preceding operations retain their order')
++    result['unchanged_scope'] = ('No BLAS, einsum, reduction, sqrt, SVD, derivative, source, '
++                                'quadrature, trial, solve, gate or tolerance change')
++    result['measured_scope'] = ('Saved radial E-only diagnostic observed 28 tiny products '
++                               'at627 in609..640,20 rounded zero and8 nonzero subnormal; '
++                               'no occurrence is asserted for the other four products or grids')
++    result['error_scope'] = ('Exact local rounding counts/bounds only; no propagated matrix, '
++                            'solve, continuum or native error certificate')
++    return result
++
++
+ def scientific_readback(case, context, out):
+     # Only called after the standard-library admission/byte checks in main.
+     import numpy as np
+@@ -109,7 +132,7 @@
+     from tiny_normalization import NormalizationArithmetic
+     from fast_weighting import FastWeightingArithmetic
+     from column_norm import finite_positive_column2_norm
+-    global NORMALIZATION_AUDIT, WEIGHTING_AUDIT, DERIVATIVE_AUDIT, WEAK_AUDIT, BASIS_DIVISION_AUDIT
++    global NORMALIZATION_AUDIT, WEIGHTING_AUDIT, DERIVATIVE_AUDIT, WEAK_AUDIT, BASIS_DIVISION_AUDIT, OUTER_MEASURE_AUDITS
+     norm = NormalizationArithmetic(np)
+     NORMALIZATION_AUDIT = norm
+     weighting = FastWeightingArithmetic(np)
+@@ -120,6 +143,9 @@
+     WEAK_AUDIT = weak_arithmetic
+     basis_division_arithmetic = NormalizationArithmetic(np)
+     BASIS_DIVISION_AUDIT = basis_division_arithmetic
++    outer_measure_arithmetic = {name: FastWeightingArithmetic(np)
++                                for name in ('E', 'Ks', 'Kw', 'G', 'loads')}
++    OUTER_MEASURE_AUDITS = outer_measure_arithmetic
+     folder = Path(case['directory'])
+     report = load(folder / 'report.json')
+     z = np.load(folder / 'operator.npz', allow_pickle=False)
+@@ -428,17 +454,17 @@
+             Kw+=weak
+             break
+         measure=weights[ir]/c
+-        E+=measure*(bilinear(y,hy,angles)+bilinear(u,u,angles))
+-        Ks+=measure*(bilinear(y,hyt,angles)+bilinear(u,ut,angles))
+-        Kw+=measure*(-bilinear(action(H,dy)[:,qidx]+weak_arithmetic.mul(div,hy[:,qidx],"line394:div_times_hy_q"),ut,angles)+
+-                     bilinear(hy[:,vidx],vt,angles)+bilinear(u,ut,angles))
++        E+=outer_measure_arithmetic['E'].mul(measure,(bilinear(y,hy,angles)+bilinear(u,u,angles)),'outer_measure:E')
++        Ks+=outer_measure_arithmetic['Ks'].mul(measure,(bilinear(y,hyt,angles)+bilinear(u,ut,angles)),'outer_measure:Ks')
++        Kw+=outer_measure_arithmetic['Kw'].mul(measure,(-bilinear(action(H,dy)[:,qidx]+weak_arithmetic.mul(div,hy[:,qidx],"line394:div_times_hy_q"),ut,angles)+
++                     bilinear(hy[:,vidx],vt,angles)+bilinear(u,ut,angles)),'outer_measure:Kw')
+         remainder=yt-action(Kn,dy)
+         sourcepart=bilinear(y,action(H,remainder),angles)
+         umass=bilinear(u,ut,angles)
+-        G+=measure*(sourcepart+sourcepart.T-bilinear(y,action(gamma,y),angles)+umass+umass.T)
++        G+=outer_measure_arithmetic['G'].mul(measure,(sourcepart+sourcepart.T-bilinear(y,action(gamma,y),angles)+umass+umass.T),'outer_measure:G')
+         fy=np.einsum('afd,dk->afk',y-yt,family,optimize=False)
+         fu=np.einsum('afd,dk->afk',u-ut,family,optimize=False)
+-        loads+=measure*(bilinear(y,action(H,fy),angles)+bilinear(u,fu,angles))
++        loads+=outer_measure_arithmetic['loads'].mul(measure,(bilinear(y,action(H,fy),angles)+bilinear(u,fu,angles)),'outer_measure:loads')
+         if ir%32==0:write(out/'progress.json',{'radius_index':ir,'total_radii':nr,'source_max':source_max})
+     if source_stream.read().strip() or source_query.read().strip() or input_query.read().strip():
+         raise ValueError('unexpected extra source/query rows')
+@@ -491,6 +517,8 @@
+         'tiny_derivative_product_arithmetic':derivative_summary(),
+         'tiny_weak_product_arithmetic':weak_summary(),
+         'tiny_retained_basis_division_arithmetic':basis_division_summary(),
++        'tiny_outer_measure_arithmetic':{name:outer_measure_summary(name)
++            for name in ('E','Ks','Kw','G','loads')},
+         'source_absolute_maxima':source_absolute_max,'source_passed':source_pass,
+         'energy_condition':float(eigen[-1]/eigen[0]),'energy_min':float(eigen[0]),
+         'root_pinned_outer_receipt':case['outer_receipt_sha256'],
+@@ -573,6 +601,30 @@
+                 and column_unit.get('checks') == column_unit.get('expected_checks') == 24
+                 and column_unit.get('helper_source_sha256') == sha(HERE/'column_norm.py')):
+             raise RuntimeError('exact24 column2-norm unit prerequisite did not pass')
++        evidence = recipe['outer_measure_correction']['evidence']
++        diagnostic = load(evidence['diagnostic_receipt']['path'])
++        diagnostic_result = load(evidence['diagnostic_result']['path'])
++        saved_review = load(evidence['saved_review_receipt']['path'])
++        old_radial = load(evidence['preserved_v9_radial_failure']['path'])
++        expected_counts = recipe['outer_measure_correction']['diagnosed_E_counts']
++        if not (diagnostic.get('completed') is True and diagnostic.get('returncode') == 0
++                and diagnostic.get('inputs_unchanged') is True
++                and diagnostic.get('diagnostic_completed') is True
++                and diagnostic_result.get('diagnostic_completed') is True
++                and diagnostic_result.get('counts') == expected_counts
++                and diagnostic_result.get('input_map_radius_window') == [609, 640]
++                and diagnostic_result.get('E_accumulated') is False
++                and diagnostic_result.get('SVD_executed') is False
++                and diagnostic_result.get('query_or_generator_executed') is False
++                and saved_review.get('passed') is True
++                and saved_review.get('inputs_unchanged') is True
++                and saved_review.get('no_scientific_reexecution') is True
++                and saved_review.get('original_v9_radial_FAIL_preserved') is True
++                and old_radial.get('completed') is False
++                and old_radial.get('returncode') == 1
++                and old_radial.get('inputs_unchanged') is True
++                and old_radial.get('failure') == 'FloatingPointError: underflow encountered in multiply'):
++            raise RuntimeError('completed E-only diagnosis/saved review and preserved v9 FAIL required')
+         write(out/'pins-before.json',protected)
+         result=scientific_readback(case,recipe['context'],out)
+         record.update(completed=True,returncode=0,passed=result['passed'])
+@@ -590,6 +642,9 @@
+             write(out/'tiny-weak-product-rounding.json',weak_summary())
+         if BASIS_DIVISION_AUDIT is not None:
+             write(out/'tiny-retained-basis-division-rounding.json',basis_division_summary())
++        if OUTER_MEASURE_AUDITS is not None:
++            for name in ('E','Ks','Kw','G','loads'):
++                write(out/('tiny-outer-measure-'+name+'-rounding.json'),outer_measure_summary(name))
+         try:verify(protected);record['inputs_unchanged']=True
+         except BaseException as exc:record['inputs_unchanged']=False;record['post_pin_failure']=str(exc)
+         record['seconds']=time.monotonic()-started;write(out/'receipt.json',record)

@@ -1,0 +1,32 @@
+{
+  "kind": "historical review-runtime limitation, no scientific rerun",
+  "frozen_review_index_sha256": "a8d0797e9707c4108fbbc5b228eb9749921daed645abf0140212367115bc8448",
+  "frozen_review_receipt_sha256": "ef04dd1f1cf98a4ed93a57bbbb669feac7a575b81137c5671a744b943959b20f",
+  "actual_review_command": [
+    "python3",
+    "build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/review_saved_timing.py"
+  ],
+  "historical_reviewer_interpreter_resolved_path_recorded": false,
+  "historical_reviewer_environment_recorded": false,
+  "explicit_I_B_flags": false,
+  "explicit_PYTHONOPTIMIZE_setting": false,
+  "review_uses_assert": false,
+  "review_imports_candidate": false,
+  "review_imports": [
+    "pathlib",
+    "fractions",
+    "decimal",
+    "json",
+    "hashlib",
+    "sys"
+  ],
+  "limitation": "The frozen receipt command was literal, not abbreviated. The reviewer invocation lacked explicit isolation/bytecode/optimization flags and did not record its resolved interpreter or inherited environment. No historical environment or bytecode behavior is inferred. This does not alter the separately pinned scientific child/outer invocation guards. The original audit remains unchanged and was not rerun.",
+  "current_addendum_command": [
+    "PYTHONOPTIMIZE=0",
+    "python3",
+    "-I",
+    "-B",
+    "stdin stdlib note writer"
+  ],
+  "future_own_review_policy": "Explicit -I -B and PYTHONOPTIMIZE=0 for stdlib saved reviews; -B -s with explicit pinned path/environment for scientific runtimes when authorized."
+}

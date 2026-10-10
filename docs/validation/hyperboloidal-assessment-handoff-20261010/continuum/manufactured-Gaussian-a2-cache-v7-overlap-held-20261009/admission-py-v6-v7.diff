@@ -1,0 +1,79 @@
+--- v6/admission.py
++++ v7/admission.py
+@@ -68,8 +68,8 @@
+         raise RuntimeError("wrong interpreter")
+     if recipe["source_only"] is not True or stage not in recipe["stage_timeouts"]:
+         raise RuntimeError("invalid held recipe")
+-    if stage != "certificate":
+-        raise RuntimeError("cache v6 instrumentation admits only a fresh diagnostic producer")
++    if stage not in ("units", "certificate", "replay"):
++        raise RuntimeError("cache v7 admits only exact separately released stages")
+     # Admission/history only: the old cached producer remains failed.
+     prior_pin = recipe["cached_v4_timeout_receipt"]
+     if authorization.get("prior_timeout_receipt") != prior_pin:
+@@ -116,6 +116,27 @@
+     if (Path(v5_pin["path"]).parent / "report.json").exists():
+         raise RuntimeError("failed v5 unexpectedly has a producer report")
+     # END_OBSERVATION_ONLY
++    # BEGIN_V7_ADMISSION_OR_UNIT_ONLY
++    v6_pin = recipe["cached_v6_timeout_receipt"]
++    if authorization.get("prior_v6_timeout_receipt") != v6_pin:
++        raise RuntimeError("exact failed cached-v6 receipt pin required")
++    verify_pin(v6_pin)
++    v6 = load(v6_pin["path"])
++    if not (v6.get("completed") is False and v6.get("passed") is False
++            and type(v6.get("returncode")) is int and v6.get("returncode") == 1
++            and v6.get("inputs_unchanged") is True and v6.get("stage") == "certificate"
++            and v6.get("source_index_sha256") == recipe["cached_v6_source_index_sha256"]
++            and v6.get("recipe_sha256") == recipe["cached_v6_recipe_sha256"]):
++        raise RuntimeError("v6 timeout classification differs")
++    for entry in (recipe["cached_v6_progress"], recipe["cached_v6_stderr"],
++                  recipe["cached_v6_command"], recipe["cached_v6_partial_certificate_metadata"]):
++        if entry not in v6.get("outputs", []):
++            raise RuntimeError("v6 failed receipt does not bind history output")
++    if "UNRESOLVED: declared domain time limit" not in Path(recipe["cached_v6_stderr"]["path"]).read_text():
++        raise RuntimeError("v6 failure is not the declared cap")
++    if (Path(v6_pin["path"]).parent / "report.json").exists():
++        raise RuntimeError("failed v6 unexpectedly has a producer report")
++    # END_V7_ADMISSION_OR_UNIT_ONLY
+     dependencies = {"prior_timeout": prior}
+     if stage in ("certificate", "replay"):
+         unit_pin = recipe["cached_v3_units_receipt"]
+@@ -142,6 +163,37 @@
+                 and review.get("original_uncached_endpoint_body_AST_identical") is True):
+             raise RuntimeError("cached v3 unit/report/root-review prerequisite failed")
+         dependencies["units"] = units
++    # BEGIN_V7_ADMISSION_OR_UNIT_ONLY
++    if stage in ("certificate", "replay"):
++        fresh_unit_pin = authorization["new_units_receipt"]
++        fresh_units = verify_receipt(fresh_unit_pin, "units", index_sha)
++        if fresh_units.get("recipe_sha256") != recipe_sha:
++            raise RuntimeError("new overlap units have a wrong recipe")
++        report_pin = authorization["new_units_report"]
++        overlap_pin = authorization["new_overlap_report"]
++        cache_pin = authorization["new_cache_report"]
++        for entry in (report_pin, overlap_pin, cache_pin):
++            verify_pin(entry)
++            if entry not in fresh_units.get("outputs", []):
++                raise RuntimeError("new unit receipt does not bind required report")
++        report, overlap, cache = load(report_pin["path"]), load(overlap_pin["path"]), load(cache_pin["path"])
++        if not (report.get("passed") is True and report.get("stage") == "units"
++                and report.get("source_index_sha256") == index_sha
++                and report.get("case_count") == recipe["expected_unit_count"]
++                and report.get("cache_unit_count") == recipe["expected_cache_unit_count"]
++                and report.get("overlap_unit_count") == recipe["expected_overlap_unit_count"]
++                and report.get("combined_unit_count") == recipe["expected_combined_unit_count"]
++                and report.get("cache_units_passed") is True and report.get("overlap_units_passed") is True
++                and overlap.get("passed") is True
++                and overlap.get("case_count") == recipe["expected_overlap_unit_count"]
++                and len(overlap.get("cases", [])) == recipe["expected_overlap_unit_count"]
++                and all(row.get("passed") is True for row in overlap["cases"])
++                and cache.get("passed") is True and cache.get("case_count") == 35
++                and len(cache.get("cases", [])) == 35
++                and all(row.get("passed") is True for row in cache["cases"])):
++            raise RuntimeError("fresh 237-unit overlap prerequisite failed")
++        dependencies["new_units"] = fresh_units
++    # END_V7_ADMISSION_OR_UNIT_ONLY
+     if stage == "replay":
+         dependencies["certificate"] = verify_receipt(authorization["certificate_receipt"], "certificate", index_sha)
+         certificate_pin = authorization["certificate_payload"]

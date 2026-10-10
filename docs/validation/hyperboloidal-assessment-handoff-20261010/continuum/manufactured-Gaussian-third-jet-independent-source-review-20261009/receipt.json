@@ -1,0 +1,63 @@
+{
+  "reviewed_source_index_sha256": "2348bbf4391444606dc2f946067a3a75eb55d472cc0c738795d8f0617f161d88",
+  "reviewed_recipe_sha256": "313e9692fc4c9fd3070334e6ddfc94f51b758a5324f62b1f3dc88342cb9a300b",
+  "review_completed": true,
+  "passed": false,
+  "source_admission_passed": false,
+  "unaffected_formula_source_consistency": true,
+  "candidate_executed": false,
+  "candidate_imported": false,
+  "target_arithmetic_CAS_compile_queries_eigen_propagation": false,
+  "inputs_captured_before_content_reads": true,
+  "all_original_inputs_unchanged": true,
+  "metadata_readback_passed": true,
+  "findings": [
+    {
+      "id": "physical-reference-connection-normalization",
+      "blocking": true,
+      "disclosed_by": "continuum self-review and root during independent review"
+    },
+    {
+      "id": "nominal-rational-graph-admission",
+      "blocking": true,
+      "disclosed_by": "root during independent review"
+    },
+    {
+      "id": "separate-measured-timing-review-prerequisite",
+      "blocking": true,
+      "disclosed_by": "independent reviewer; accepted by root"
+    }
+  ],
+  "limitations": [
+    "No unit/timing/full numerical result exists or is inferred.",
+    "No native coefficient protocol or actual RHS gate is admitted.",
+    "Shared Taylor/mpmath primitives limit arithmetic independence.",
+    "Finite/term-scaled checks do not prove global slicing, physical absolute curvature, scri/native stability, or BH acceptance.",
+    "Future wormhole-to-trumpet evolution must retain a Minkowski hyperboloidal reference."
+  ],
+  "commands": [
+    {
+      "purpose": "source text inspections",
+      "tools": "sed, rg, cat; text only; no candidate execution"
+    },
+    {
+      "purpose": "independent stdlib metadata/hash/AST and integer registry readback",
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/review_static.py"
+      ],
+      "returncode": 0,
+      "stdout_summary": {
+        "external_pins": 132,
+        "metadata_readback_passed": true,
+        "source_admission_passed": false,
+        "source_files": 26
+      }
+    }
+  ],
+  "review_sha256": "7c16db97a85a3e9fbf0ebd83e8b76495e8e8b41e42c1bf0333b232bff2cd25d1",
+  "static_readback_sha256": "c44eae13777bc81337500cd2ea8fcf7565eb512c00ec10563c9567611e96fdda",
+  "pre_read_input_inventory_sha256": "e1d834a47a6610058e9a6166a5ca467b8f335041408909ba150402dcc74498c8"
+}

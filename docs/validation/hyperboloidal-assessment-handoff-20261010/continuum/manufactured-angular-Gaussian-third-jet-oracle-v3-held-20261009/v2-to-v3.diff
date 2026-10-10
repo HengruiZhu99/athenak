@@ -1,0 +1,329 @@
+--- v2/run_oracle.py
++++ v3/run_oracle.py
+@@ -137,7 +137,7 @@
+                     else:
+                         if set(component)!=set(comparisons[key]):raise RuntimeError("precision component schema drift")
+                         for label,value in component.items():
+-                            row=diagnostics.comparison(key+"/"+label,mp.mpf(comparisons[key][label]),mp.mpf(value),True,"110_vs_150_compact_component")
++                            row=diagnostics.comparison(key+"/"+label,mp.mpf(comparisons[key][label]),mp.mpf(value),True,"180_vs_220_compact_component")
+                             precision_sink.write(json.dumps(row,allow_nan=False)+"\n")
+                             check_rows([row],recipe["component_tolerance"])
+                             precision_count+=1
+--- v2/recipe.json
++++ v3/recipe.json
+@@ -1,5 +1,5 @@
+ {
+-  "status": "HELD source-only Gaussian v2: physical reference normalization, nominal admission, measured timing guard",
++  "status": "HELD source-only Gaussian v3 precision sibling: 180/220 digits, unchanged formulas/gates/registry",
+   "execution_admitted": false,
+   "layer": {
+     "a": ".5",
+@@ -68,21 +68,21 @@
+   "sigma": "7/20",
+   "levels": [
+     {
+-      "digits": 110,
++      "digits": 180,
+       "roots": {
+-        "absolute": "1e-85",
+-        "width": "1e-90",
++        "absolute": "1e-155",
++        "width": "1e-160",
+         "newton": 16,
+-        "bisection": 512
++        "bisection": 768
+       }
+     },
+     {
+-      "digits": 150,
++      "digits": 220,
+       "roots": {
+-        "absolute": "1e-125",
+-        "width": "1e-130",
++        "absolute": "1e-195",
++        "width": "1e-200",
+         "newton": 16,
+-        "bisection": 512
++        "bisection": 768
+       }
+     }
+   ],
+@@ -336,7 +336,193 @@
+     "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/inputs-before-review.json": "e1d834a47a6610058e9a6166a5ca467b8f335041408909ba150402dcc74498c8",
+     "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/receipt.json": "f4e87fb024bef6d125ca72b3856753db8eee694c19a9f0e8172756a680f7185a",
+     "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/review_static.py": "c9dba7fe1b1b66015cf79f6d17b8f1d6143ee4929a4b8f6e7ade5bf8885cf17c",
+-    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/static-readback.json": "c44eae13777bc81337500cd2ea8fcf7565eb512c00ec10563c9567611e96fdda"
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-independent-source-review-20261009/static-readback.json": "c44eae13777bc81337500cd2ea8fcf7565eb512c00ec10563c9567611e96fdda",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/PLAN.md": "5130485b0ccca892d15a7bfd538f0e20b6bae1ca94e0c92ed2a8d3c55ee4f3cb",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/SCHEMA.md": "97a15aeabe1e95e37290fcedc5e6cff810703c032db641f5458f46c824f722dd",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/authorization-schema.json": "18aad44732ac904986577ad7a767bf41c739dcac71f098695dbe62ee692fca43",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/diagnostics.py": "b009d5b17ecc46f15295a1b1424dacec0b0a232a58052b30e1a8037fa075a582",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/measured-timing-review-schema.json": "01e7f1fc485f7ab3d80114090602b49253b36ab938a1d5beaa461aa76711a547",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/oracle.py": "57d3f3fac46d3ad099554c20408fcb394b0a9460db464fc648ee0cdeb91f53e1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/outer_once.py": "68706de821c990be9302848aeea41d16d774c506bb8dea71221b1e2a675cea04",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/prepare_v2.py": "6430923c3c4e7e2c36f12dfe7fff5424b3b21e00aa44fa1a235084d379ac5787",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/recipe.json": "b3fdabcb50016d8bba414f7a4999ff51438d3a1e8e00f6b8a15ca20e1cd76ea2",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/reference3.py": "a8116c5431188bea91d0a87bfdbc172e8251f616c652958511fd8d8a92a87b8a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/run_oracle.py": "78ce07e5ce78ab317afbc47948de15ceb9d7ea4bb2b88565273f565be3bb4d14",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/diagnostics.py": "da946925d3eda8d9152ca30ccc134e1d299d67610a5d6c9c4914b2d7f6fca416",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/inventory.json": "c2f0c5fa5a48fd734b4762689c4be2d3264186f3f1ec3836241d7594f8704bb9",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/oracle.py": "d63ab5b18fe01286bcd96eccbe3a7a025c3437b567a625842bc374dcc9844109",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/reference3.py": "eb74c3ca420e7d846260a70598815c6af7b38e0b14dc59e5018071647cac8b96",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/run_oracle.py": "2a074f2e84cb04a22c77c0b3f2051e7c7276ae93e8acc6653d44d6c3f6189419",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/taylor3.py": "1edb6d65313b9ce0950b3b6c198bf26c0b8fd3f37804e23dbb49169fb8048939",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/units.py": "c8eb8908e686ed0da008ad2662a8ed9e78222071b17f44bc758f1964232a0c95",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/pre-review-WIP001/values_context.py": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/PLAN.md": "b24b2084d4ed130bdff1f0c8ba3d289f2ee6f1d63b78b3ebc159249e2af256ce",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/SCHEMA.md": "332474eace72422eaca58a551cbe90a898088e194f65036bbf132a805fd0f1e7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/authorization-schema.json": "e77907376207ce427244865373c37820752b4cb2584aba817109fd7c417d01f4",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/diagnostics.py": "b5afa45245a97a98c926af4cd4ac2bfb094903ab7f1bc68a5b3c8c349ee02784",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/outer_once.py": "dd53a472bb8407fbd1b88c6465f551c379cbae55641116878fcfc64a4846c181",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/prepare_source.py": "0906dce06211d9c1762ccafbd22ade33afde1107bf247c5cf11aafbb2c3612fd",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/recipe.json": "313e9692fc4c9fd3070334e6ddfc94f51b758a5324f62b1f3dc88342cb9a300b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/run_oracle.py": "1996ea6be98c24840cca66f662e0e3806597b637023af48c0b6ab5691eb9e49a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/source-index.json": "2348bbf4391444606dc2f946067a3a75eb55d472cc0c738795d8f0617f161d88",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-history/v1-final/source-preparation.json": "c93ca9006939c903961752e9b47e7fab82670c97b2dc30b8f1026bf6b7430c89",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-preparation-v2.json": "078329fa088ec4f6bdebe1dc9cdc72e70a7ba8ad4d3957f8b4ce3e91a0134d57",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/taylor3.py": "df00e773f5fd8b0e324826398756c78e15546cf5c648bb88a82c3168f37c0a9d",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/units.py": "db3df258d1b88cec6262e1133978cc967fa559cc8bb3d9c48e43c0ab34046abe",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/v1-to-v2.diff": "38e8a61d80ff13551c65107319f60eeb9150a10af639e6cf65bae1f8b1535844",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/values_context.py": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-index.json": "92a412f36e668bb2e2414bd65e5dee381e42534d94e2df712fd7e9f3a52ce5d3",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/receipt.json": "2cac8cc11cdef7993ea8cb18e2af82d14cfa062d42b8df3c1b0c3ba4e4fed774",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/timing001/receipt.json": "368ffb6f2435efedefac5e24d43ca6550ffe5b7737fcfeab055af1557358c0a1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/index.json": "d69f8df5f2b40e1f8434684711edf789affbfa9b93a04930f8a22bf932eda979",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/index.json": "225745a0f7ce9a4414936d15f37b3d77739dfd58d52b8ebbf3a9fe87ebf3441f",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/index.json": "a8d0797e9707c4108fbbc5b228eb9749921daed645abf0140212367115bc8448",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-review-runtime-addendum-20261009/index.json": "7ee4afcf83dc458049cc72b876e4a61a2bc56b924cc48d539fb0ef12638e01b2",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/index.json": "60d6c2b1178193981e5314ea3292ddda4e194f82650e5327f75bf936e1929ca1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/ASSESSMENT.md": "ad64c7bbd7d025056a36eb1ed4858ef50ea03f7b115d1fb82722bf1a83556dcf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/00-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-source-index.json": "92a412f36e668bb2e2414bd65e5dee381e42534d94e2df712fd7e9f3a52ce5d3",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/01-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-recipe.json": "b3fdabcb50016d8bba414f7a4999ff51438d3a1e8e00f6b8a15ca20e1cd76ea2",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/02-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-run_oracle.py": "78ce07e5ce78ab317afbc47948de15ceb9d7ea4bb2b88565273f565be3bb4d14",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/03-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-diagnostics.py": "b009d5b17ecc46f15295a1b1424dacec0b0a232a58052b30e1a8037fa075a582",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/04-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/05-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-taylor3.py": "df00e773f5fd8b0e324826398756c78e15546cf5c648bb88a82c3168f37c0a9d",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/06-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-oracle.py": "57d3f3fac46d3ad099554c20408fcb394b0a9460db464fc648ee0cdeb91f53e1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/07-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/08-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-reference3.py": "a8116c5431188bea91d0a87bfdbc172e8251f616c652958511fd8d8a92a87b8a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/09-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-PLAN.md": "5130485b0ccca892d15a7bfd538f0e20b6bae1ca94e0c92ed2a8d3c55ee4f3cb",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/10-manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009-SCHEMA.md": "97a15aeabe1e95e37290fcedc5e6cff810703c032db641f5458f46c824f722dd",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/11-timing001-receipt.json": "368ffb6f2435efedefac5e24d43ca6550ffe5b7737fcfeab055af1557358c0a1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/12-timing001-result.json": "9ea24c4ba44cad69548e75191178350ae28bdfaedaf4c3f56e51037f596f7901",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/13-timing-outer001-stdout.log": "5d8b86db5d64e755ea4e76d4f3d39733b3a80a4b448c16892f775ea4d472b20d",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/14-timing-outer001-receipt.json": "3ef09ca35563b867257348aff24c657b7fc33d1fd3af8f0b81489a9a5229ee1f",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/15-timing-outer001-failure.txt": "3531da51fe92841aaea9ccf8fac89d085592f692b909165408388cd2e8d465dc",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/16-timing-invocation001-receipt.json": "63b3f6a21f888f12a8dca3ecf35a95c953fe21232f0c9a209967e04e44df4fe8",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/17-timing-invocation001-invocation.json": "221360ee5db18831aa78767c4e398b1f1a6bc996a6889d278482202adf64feb1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/18-manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009-index.json": "a8d0797e9707c4108fbbc5b228eb9749921daed645abf0140212367115bc8448",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/19-manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009-receipt.json": "ef04dd1f1cf98a4ed93a57bbbb669feac7a575b81137c5671a744b943959b20f",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/captured/20-manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009-REVIEW.md": "f940a86da8aa7115bfe385bcc12b5533c44f8b31686112ffceecce9e89610936",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/freeze_assessment.py": "e7894337e17425060fe17365403ada32ec525a72ad65d2db5d9b152a2fca672b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/precision-proposal.json": "fa7df15cc39ce049c8274d05f25d6c1ed5030515306e11196a9a518127e507cb",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/protected-inputs.json": "5ed8eaa101384e3e63c2260c40137f89f45b7a54675edba4fba5aa31f47c06b8",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/receipt.json": "275be5f91f17e0e4060a28b5ac21ac1fe4c06e180c754bafca9769d1d950b6a7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/saved-association.json": "3a5577dac9f6d43e1ee5062bd6e363f23d04996f32a27a32b2e479abe34bb3cd",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/source-history/freeze_assessment-WIP001.py": "3fffc494992e7de645299c50e0cc7b70f1aa8bfe9f8471037fa490cd4687bb98",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/source-history/mechanical-index-schema-inspection-failure.json": "0c9a992ff70f91c1400dcd8c9df694a499e37fa8bd452f3c6c8045987b2289b2",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/REVIEW.md": "28efcdc80e71b3812fbc929fd5d2062a6598363b25179cf9a4ec8895d890d719",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/PLAN.md": "5130485b0ccca892d15a7bfd538f0e20b6bae1ca94e0c92ed2a8d3c55ee4f3cb",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/SCHEMA.md": "97a15aeabe1e95e37290fcedc5e6cff810703c032db641f5458f46c824f722dd",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/authorization-schema.json": "18aad44732ac904986577ad7a767bf41c739dcac71f098695dbe62ee692fca43",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/diagnostics.py": "b009d5b17ecc46f15295a1b1424dacec0b0a232a58052b30e1a8037fa075a582",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/measured-timing-review-schema.json": "01e7f1fc485f7ab3d80114090602b49253b36ab938a1d5beaa461aa76711a547",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/oracle.py": "57d3f3fac46d3ad099554c20408fcb394b0a9460db464fc648ee0cdeb91f53e1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/outer_once.py": "68706de821c990be9302848aeea41d16d774c506bb8dea71221b1e2a675cea04",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/prepare_v2.py": "6430923c3c4e7e2c36f12dfe7fff5424b3b21e00aa44fa1a235084d379ac5787",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/recipe.json": "b3fdabcb50016d8bba414f7a4999ff51438d3a1e8e00f6b8a15ca20e1cd76ea2",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/reference3.py": "a8116c5431188bea91d0a87bfdbc172e8251f616c652958511fd8d8a92a87b8a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/run_oracle.py": "78ce07e5ce78ab317afbc47948de15ceb9d7ea4bb2b88565273f565be3bb4d14",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/diagnostics.py": "da946925d3eda8d9152ca30ccc134e1d299d67610a5d6c9c4914b2d7f6fca416",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/gaussian3.py": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/geometry.py": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/inventory.json": "c2f0c5fa5a48fd734b4762689c4be2d3264186f3f1ec3836241d7594f8704bb9",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/oracle.py": "d63ab5b18fe01286bcd96eccbe3a7a025c3437b567a625842bc374dcc9844109",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/reference3.py": "eb74c3ca420e7d846260a70598815c6af7b38e0b14dc59e5018071647cac8b96",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/run_oracle.py": "2a074f2e84cb04a22c77c0b3f2051e7c7276ae93e8acc6653d44d6c3f6189419",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/taylor3.py": "1edb6d65313b9ce0950b3b6c198bf26c0b8fd3f37804e23dbb49169fb8048939",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/units.py": "c8eb8908e686ed0da008ad2662a8ed9e78222071b17f44bc758f1964232a0c95",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/pre-review-WIP001/values_context.py": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/PLAN.md": "b24b2084d4ed130bdff1f0c8ba3d289f2ee6f1d63b78b3ebc159249e2af256ce",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/SCHEMA.md": "332474eace72422eaca58a551cbe90a898088e194f65036bbf132a805fd0f1e7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/authorization-schema.json": "e77907376207ce427244865373c37820752b4cb2584aba817109fd7c417d01f4",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/diagnostics.py": "b5afa45245a97a98c926af4cd4ac2bfb094903ab7f1bc68a5b3c8c349ee02784",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/outer_once.py": "dd53a472bb8407fbd1b88c6465f551c379cbae55641116878fcfc64a4846c181",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/prepare_source.py": "0906dce06211d9c1762ccafbd22ade33afde1107bf247c5cf11aafbb2c3612fd",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/recipe.json": "313e9692fc4c9fd3070334e6ddfc94f51b758a5324f62b1f3dc88342cb9a300b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/run_oracle.py": "1996ea6be98c24840cca66f662e0e3806597b637023af48c0b6ab5691eb9e49a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/source-index.json": "2348bbf4391444606dc2f946067a3a75eb55d472cc0c738795d8f0617f161d88",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-history/v1-final/source-preparation.json": "c93ca9006939c903961752e9b47e7fab82670c97b2dc30b8f1026bf6b7430c89",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-index.json": "92a412f36e668bb2e2414bd65e5dee381e42534d94e2df712fd7e9f3a52ce5d3",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/source-preparation-v2.json": "078329fa088ec4f6bdebe1dc9cdc72e70a7ba8ad4d3957f8b4ce3e91a0134d57",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/taylor3.py": "df00e773f5fd8b0e324826398756c78e15546cf5c648bb88a82c3168f37c0a9d",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/units.py": "db3df258d1b88cec6262e1133978cc967fa559cc8bb3d9c48e43c0ab34046abe",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/v1-to-v2.diff": "38e8a61d80ff13551c65107319f60eeb9150a10af639e6cf65bae1f8b1535844",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/captured/values_context.py": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/inputs-before-review.json": "f8a7efcb706ef69e8faa28b2820ad824e834de89d0e4a11ebbe1c3049651e992",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/receipt.json": "355ff615e4eed530d30cde532af6a205f9f8a0d6202fbebd34b8652f1ac5c0b5",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/review_static_v2.py": "c87763642704daa9f474cf95348740555c28d7b4e07f6aa6eeb747a0186df560",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/static-readback-v2.json": "fd659d7800ba9be8987c5bc6693b260bb61165d68bcccddeb15e21657892f7f0",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/REVIEW.md": "a5904c71542971cf4a93223272ad53380c2bd2321acdf6e67c38224e88b63c49",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/capture-history001.json": "b164fe415e0d0e589bc9681371f2f3646d354f23488532a854a54e9973136411",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/capture-preflight-failure001.txt": "a99208706cd3ce21c57f3c98e26d0e70166b406f310d34c3961bcd7e5504317b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/REVIEW-source001.md": "904bd86dece3cca083351ab9f841a84f980903aa4365e3f090b8a4ce6b0328e5",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/finalize_review002.py": "6b6fecd142c5f7ad91bbdf31596519b6fb92d4967eb850df2985141b828c3717",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/launch_units.py": "92b2cbdf175300ae7accbb53e0af89c6c543b6cd6bf9b5517c5493a22f02b279",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/prepare_units001.py": "e7388e0f9ee2148accec0fcbb913573526e52cb9c42b78f73902c18bd1444509",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/source-pins002.json": "bf2723ecce247adee2630745af3d8acb1b275caa7200636323b8cff76fa39c38",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/source-review002.json": "5990fa5d98b836de2857b4e50c62fc52ebd29a6a46bd3f39a3177172a57db444",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-authorization.json": "0342e727ff564b6179efd4b4348b37677b75f490630f21afc33f0097a56dee2a",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-invocation001/invocation.json": "a270b3ef0e50f6b51805b8c11b563823ca2c5dbe785360570ab7b8a20cc14601",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-invocation001/pins-before.json": "9f0cc9ddad4c77e13350e88e992611afa58670345f52ddd93794cc2b9020e5f3",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-invocation001/receipt.json": "48313edbcbdc6dab5a13f4cbd440a5f0a584d02494919d16ba89c137a6d38b17",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-invocation001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-invocation001/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-outer001/invocation.json": "af9421a2f6e4f4d78adacb0eeae1b954749fba6618cee91f5361811515065347",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-outer001/pins-after.json": "4b7ba040cea856ddf12d01863622347f600b74a9baafc7f4dcfe88f827b0643c",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-outer001/pins-before.json": "4b7ba040cea856ddf12d01863622347f600b74a9baafc7f4dcfe88f827b0643c",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-outer001/receipt.json": "c77483befe0428772f8edb9889159548e5c9ef7e4cd3e41e743ba8b8f9427a3b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-outer001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-outer001/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/units-release.json": "db0d3cc28509b7c445cf02dccd72d3eb2f3cd994e12e065e66dfd4a0e2155621",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/receipt.json": "2cac8cc11cdef7993ea8cb18e2af82d14cfa062d42b8df3c1b0c3ba4e4fed774",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/result.json": "c569c2e3d8fe884e3a4f14723fc91ce7c25c8cf447b577cff6ddb8244c98db89",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/source-after.json": "4b7ba040cea856ddf12d01863622347f600b74a9baafc7f4dcfe88f827b0643c",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/source-before.json": "4b7ba040cea856ddf12d01863622347f600b74a9baafc7f4dcfe88f827b0643c",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/captured/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/unit-checks.json": "871110768b57abc0e742b87d68cacef240a392b498bed6e0755f774430cdf781",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/inputs-captured-before-further-review.json": "f3587818329fc4aa2336c7ba842481b8ad677e5f479019f40f818f8991506d83",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/receipt.json": "5d4918978bf2a28ff224cad0516961228eb81007808caab628cb819f1aa4e8b7",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/review_saved_units.py": "2565878f55b43c98de09e221d9bf704586dd9d475d09622830f6a652bc4231f1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-units-independent-saved-review-20261009/saved-readback.json": "de093534c1c1cf19fd42bcf7b50240d93060182c9f7fcd42b3541a9b8c9a0083",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/REVIEW.md": "f940a86da8aa7115bfe385bcc12b5533c44f8b31686112ffceecce9e89610936",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/capture.json": "ee076477c13d7c503f02b647c0e528c802e244fe3d23054b0850d62de6e69847",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/00-timing001-receipt.json": "368ffb6f2435efedefac5e24d43ca6550ffe5b7737fcfeab055af1557358c0a1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/01-timing001-result.json": "9ea24c4ba44cad69548e75191178350ae28bdfaedaf4c3f56e51037f596f7901",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/02-timing001-source-before.json": "46e87b5922a68ba62ced579eeeffffd5d2973e802d1a730c7289564074a68cfc",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/03-timing001-source-after.json": "46e87b5922a68ba62ced579eeeffffd5d2973e802d1a730c7289564074a68cfc",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/04-Gaussian-third-jet-oracle-root-release-20261009-timing-authorization.json": "1d57d58eba7f638669bfe560aeb02858917a77e6be53d5673c3fc17310486e96",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/05-Gaussian-third-jet-oracle-root-release-20261009-timing-release.json": "78ade1e2cb54c8ad3371740f06a6b2aeffb65655d3c22cd4898ef4cf88508fd5",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/06-timing-outer001-receipt.json": "3ef09ca35563b867257348aff24c657b7fc33d1fd3af8f0b81489a9a5229ee1f",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/07-timing-outer001-invocation.json": "1bcb77e01a03f1fa6ebe186874b6e4e60cae17f9c7009ffabd6882d244270c9b",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/08-timing-outer001-pins-before.json": "46e87b5922a68ba62ced579eeeffffd5d2973e802d1a730c7289564074a68cfc",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/09-timing-outer001-stdout.log": "5d8b86db5d64e755ea4e76d4f3d39733b3a80a4b448c16892f775ea4d472b20d",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/10-timing-outer001-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/11-timing-invocation001-receipt.json": "63b3f6a21f888f12a8dca3ecf35a95c953fe21232f0c9a209967e04e44df4fe8",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/12-timing-invocation001-invocation.json": "221360ee5db18831aa78767c4e398b1f1a6bc996a6889d278482202adf64feb1",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/13-timing-invocation001-pins-before.json": "d82eb9a75440d1748f6a26eb65efa4c917fd78ca33717ff500bffb5a9f8c7ca9",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/14-timing-invocation001-stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/15-timing-invocation001-stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/16-timing-outer001-pins-after.json": "46e87b5922a68ba62ced579eeeffffd5d2973e802d1a730c7289564074a68cfc",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/inputs/17-timing-outer001-failure.txt": "3531da51fe92841aaea9ccf8fac89d085592f692b909165408388cd2e8d465dc",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/receipt.json": "ef04dd1f1cf98a4ed93a57bbbb669feac7a575b81137c5671a744b943959b20f",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/review.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/review.stdout": "73c5904a4e0680746be3fc82c18cc7eaf2f37b653bf175c5833c1089bc5b1728",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/review_saved_timing.py": "75d10e656332bac8e00526410139bbc6641ecc5a4240451e7edf0ea31c04b57d",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/saved-readback.json": "73c5904a4e0680746be3fc82c18cc7eaf2f37b653bf175c5833c1089bc5b1728",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-review-runtime-addendum-20261009/ADDENDUM.json": "7c0ca69695b7eea04af7693396c546e4d83281459f62b657079f6873aeace1c6",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/result.json": "c569c2e3d8fe884e3a4f14723fc91ce7c25c8cf447b577cff6ddb8244c98db89",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/source-before.json": "4b7ba040cea856ddf12d01863622347f600b74a9baafc7f4dcfe88f827b0643c",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/source-after.json": "4b7ba040cea856ddf12d01863622347f600b74a9baafc7f4dcfe88f827b0643c",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/unit-checks.json": "871110768b57abc0e742b87d68cacef240a392b498bed6e0755f774430cdf781",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/timing001/precision-checks.jsonl": "5a39aee29ec77b694716e3af083d7cfb8022974ba22f142311869f85c5d0de18",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/timing001/result.json": "9ea24c4ba44cad69548e75191178350ae28bdfaedaf4c3f56e51037f596f7901",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/timing001/source-before.json": "46e87b5922a68ba62ced579eeeffffd5d2973e802d1a730c7289564074a68cfc",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/timing001/source-after.json": "46e87b5922a68ba62ced579eeeffffd5d2973e802d1a730c7289564074a68cfc",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/timing001/height-context.json": "cce7a55192d0e2d5dd314eec2e61887efbc6dce39061d8a80aeecdf3b63ba7c2",
++    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/timing001/oracle.jsonl": "6c42937800d4cf5ff58eb6bbfdcd9db3369ec2807af838ea4bdf7fb00582e3cf"
+   },
+   "numeric_modules_imported_in_preparation": false,
+   "native_queries_admitted": false,
+@@ -353,5 +539,36 @@
+     "timing_result_sha256",
+     "full_stage_source_review_passed=true",
+     "full_stage_cost_admission=true"
+-  ]
++  ],
++  "v3_precision_lineage": {
++    "v2_source_index": {
++      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/source-index.json",
++      "sha256": "92a412f36e668bb2e2414bd65e5dee381e42534d94e2df712fd7e9f3a52ce5d3"
++    },
++    "v2_units_receipt": {
++      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/units001/receipt.json",
++      "sha256": "2cac8cc11cdef7993ea8cb18e2af82d14cfa062d42b8df3c1b0c3ba4e4fed774",
++      "classification": "PASS_318"
++    },
++    "v2_timing_receipt": {
++      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-v2-held-20261009/attempts/timing001/receipt.json",
++      "sha256": "368ffb6f2435efedefac5e24d43ca6550ffe5b7737fcfeab055af1557358c0a1",
++      "classification": "COMPLETE_FAIL_20_RECORDS_6_IDENTITIES"
++    },
++    "v2_failure_saved_review": {
++      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-failure-independent-saved-review-20261009/index.json",
++      "sha256": "a8d0797e9707c4108fbbc5b228eb9749921daed645abf0140212367115bc8448"
++    },
++    "v2_failure_saved_review_runtime_addendum": {
++      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-review-runtime-addendum-20261009/index.json",
++      "sha256": "7ee4afcf83dc458049cc72b876e4a61a2bc56b924cc48d539fb0ef12638e01b2"
++    },
++    "precision_mechanism_proposal": {
++      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-timing-mechanism-assessment-20261009/index.json",
++      "sha256": "60d6c2b1178193981e5314ea3292ddda4e194f82650e5327f75bf936e1929ca1"
++    },
++    "historical_timing_reviewer_isolated_route_not_recorded": true,
++    "historical_v2_unit_pass_does_not_authorize_v3_timing": true,
++    "fresh_same_index_units_timing_and_measured_cost_review_required": true
++  }
+ }
+--- v2/PLAN.md
++++ v3/PLAN.md
+@@ -24,7 +24,7 @@
+ 
+ ## Fixed registry and gates
+ 
+-The exact recipe retains the old21 rational radii and adds .05±1e-6,.95±1e-6, giving25. Times are0,.1,2,6. The nine p values from-.5 to+.5 in increments1/8 use n1=sqrt[(1+sqrt(1-4p^2))/2],n2=p/n1,n3=0; add e2,e3,(1,1,1)/sqrt3,(2,-3,6)/7. The origin appears once per time. Sigma7/20,epsilon0 and3/4 give2,504 valid records per precision. One sigma1/2,epsilon3/4,r.75,t.1,p+.5 negative refusal makes2,505 per precision and5,010 at110/150 digits.
++The exact recipe retains the old21 rational radii and adds .05±1e-6,.95±1e-6, giving25. Times are0,.1,2,6. The nine p values from-.5 to+.5 in increments1/8 use n1=sqrt[(1+sqrt(1-4p^2))/2],n2=p/n1,n3=0; add e2,e3,(1,1,1)/sqrt3,(2,-3,6)/7. The origin appears once per time. Sigma7/20,epsilon0 and3/4 give2,504 valid records per precision. One sigma1/2,epsilon3/4,r.75,t.1,p+.5 negative refusal makes2,505 per precision and5,010 at180/220 digits.
+ 
+ Every compact component comparison retains both operands, absolute residual and max(1,|left|,|right|) scale, with the fixed1e-55 gate. The188 compared entries per valid point comprise154 consumed spatial field coefficients,22 rates,10 spatial Omega coefficients and J/D. Total paired component checks are470,752.
+ 
+@@ -56,3 +56,14 @@
+ 3. Full-stage child and outer require a pinned measured_timing_review whose source-index, timing receipt and timing result hashes match the exact successful same-source timing prerequisite, and whose explicit source-review and measured-cost admissions are true. Both child and outer protect this record, authorization and review_pins before/after execution. A generic passing timing receipt does not authorize the full stage.
+ 
+ Numerical thresholds, precision, 5,010/3,330,320/470,752 full counts, 318 units, 20 timing records, geometry and source implementation are otherwise unchanged. Exact source transformation/reverse-byte and AST proofs are recorded by stdlib preparation. No candidate was imported, compiled or evaluated in preparing this sibling. New unit/timing/full executions remain separately held for exact root releases, and no v1 execution or result is relabeled.
++
++
++## Fresh v3 precision-only sibling and preserved failure
++
++The frozen v2 actual units passed all 318 checks. Its subsequent timing stage completed 20 records but FAILED six conformal-connection identities, all introduced at 110 digits for nominal r=1-10^-18 and no new failures at 150 digits. The original receipts/results/source capsule and independent saved audit remain immutable. The separately pinned runtime addendum states that the historical saved reviewer did not record an isolated invocation, resolved interpreter or environment; this sibling does not retroactively infer those facts.
++
++V3 changes only the two geometry levels to 180/220 digits, their scalar residual gates to 1e-155/1e-195 and numerical widths to 1e-160/1e-200, and their bisection budgets to 768. Newton remains 16. The compact precision branch label is truthfully 180_vs_220_compact_component. All nine other runtime mathematical/outer modules are byte-identical; the driver's only mathematical-output change is that label. The full registry, nominal admission, all counts, 1e-55 identity/component thresholds, 80-digit unit recipe, unit roots, height 128/256 and separate 1e-30 context, resource/payload caps and raw physical-reference RWM scope are unchanged.
++
++The pinned source assessment estimates up to four inverse powers of Omega of raw embedding-connection conditioning; it is not a uniform forward-error theorem or a promised PASS. No connection comparator is replaced or disabled. Original failed rows remain gated. A 768-step pure-bisection fallback supports the tighter numerical widths for initial spans below 2, without relying on Newton success. Endpoint signs/residuals and width remain numerical checks, not interval enclosures.
++
++The old v2 units/timing are provenance, not same-index admission for v3. Fresh v3 units and timing need separate exact root releases and source/independent review. The full stage remains held until actual same-index units and timing PASS plus an explicit timing-receipt/result-bound source and measured-cost approval record. Preparing this sibling performs stdlib hashing/AST/text bookkeeping only; no oracle import, units, timing, full registry, native query, inverse coverage, BH adoption or equation replacement occurs.
+--- v2/SCHEMA.md
++++ v3/SCHEMA.md
+@@ -6,7 +6,7 @@
+ 
+ The scaled_reference_connection is the full4×4×4 array Omega Gammahat_phys^a_bc. scaled_source is Omega Fbar; unscaled_source is Fbar. They are expected source values, not zero assertions. The separate wave-map and conformal-source identity rows retain both the scaled terms and an unscaled diagnostic subrecord. The manufactured data are Einstein-sector physical-reference RWM data only; no compound inner BM or alternate arithmetic binding is accepted.
+ 
+-Every zero row stores name,branch,admission_gate,ordered terms,signed residual,absolute residual,term_sum and scaled residual abs(sum)/max(1,term_sum). Component comparisons additionally store component_scale=max(1,abs(left),abs(right)) and use abs(left-right)/component_scale. Values110/150 are retained as the two ordered operands of each precision row. Diagnostic admission_gate=false never contributes to pass/fail; its errors remain saved.
++Every zero row stores name,branch,admission_gate,ordered terms,signed residual,absolute residual,term_sum and scaled residual abs(sum)/max(1,term_sum). Component comparisons additionally store component_scale=max(1,abs(left),abs(right)) and use abs(left-right)/component_scale. Values180/220 are retained as the two ordered operands of each precision row. Diagnostic admission_gate=false never contributes to pass/fail; its errors remain saved.
+ 
+ The negative control is a refused record containing J,D and root metadata, no ADM fields and no invalid square root. A full completion requires exactly5,010records,3,330,320identity rows and470,752paired compact-component rows. Separate height context contains50 comparisons at1e-30. A complete units stage has318checks; a complete timing stage has20records. Those arithmetic counts are fixed source declarations, not measured cost or proof of completion.
+ 
+--- v2/measured-timing-review-schema.json
++++ v3/measured-timing-review-schema.json
+@@ -1,5 +1,5 @@
+ {
+-  "source_index_sha256": "exact current v2 source-index hash",
++  "source_index_sha256": "exact current v3 source-index hash",
+   "timing_receipt_sha256": "exact same-source successful timing child receipt hash",
+   "timing_result_sha256": "exact timing receipt output_hashes[result.json]",
+   "full_stage_source_review_passed": true,

@@ -1,0 +1,9 @@
+{
+  "stage": "stdlib-only metadata shape inspection before freeze reader execution",
+  "error_type": "AttributeError",
+  "error": "list object has no attribute items",
+  "peer_index_files_actual_schema": "list of path/bytes/sha256 objects",
+  "candidate_or_freeze_main_executed": false,
+  "scientific_imports_or_payload_decode": false,
+  "correction": "iterate peer indexed list by each row.path and row.sha256"
+}

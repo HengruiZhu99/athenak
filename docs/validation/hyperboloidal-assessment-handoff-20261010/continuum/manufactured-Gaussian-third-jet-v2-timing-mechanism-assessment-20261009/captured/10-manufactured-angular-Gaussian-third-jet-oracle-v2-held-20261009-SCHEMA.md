@@ -1,0 +1,16 @@
+All high-precision ordinary coefficients are decimal strings. Multiindices in complete spacetime jets use axes(t,x,y,z); their sum never exceeds the explicitly declared order. Spatial consumed jets omit the time entry and retain axes(x,y,z). Taylor factorials have been converted to ordinary derivatives before export. The22 exact_time_rates follow this raw field order:
+
+0 chi;1–6 gtilde_xx,xy,xz,yy,yz,zz;7 physical P;8–13 Atilde_xx,xy,xz,yy,yz,zz;14–16 Lambda_x,y,z;17 physical Theta;18 alpha;19–21 beta_x,y,z.
+
+Each nonrefused oracle record contains complete embedding/reference_embedding3, physical_metric2/conformal_metric2, Omega_native3, consumed Omega spatial2, consumed fields,22rates,J,D,primary branch, numerical root sign/width/residual record and all identity rows. Configuration fields0–6 and18–21 have spatial order2; all remaining fields have spatial order1. Missing P/A/Lambda/Theta seconds remain absent and explicitly listed. No unavailable derivative is zero-filled.
+
+The scaled_reference_connection is the full4×4×4 array Omega Gammahat_phys^a_bc. scaled_source is Omega Fbar; unscaled_source is Fbar. They are expected source values, not zero assertions. The separate wave-map and conformal-source identity rows retain both the scaled terms and an unscaled diagnostic subrecord. The manufactured data are Einstein-sector physical-reference RWM data only; no compound inner BM or alternate arithmetic binding is accepted.
+
+Every zero row stores name,branch,admission_gate,ordered terms,signed residual,absolute residual,term_sum and scaled residual abs(sum)/max(1,term_sum). Component comparisons additionally store component_scale=max(1,abs(left),abs(right)) and use abs(left-right)/component_scale. Values110/150 are retained as the two ordered operands of each precision row. Diagnostic admission_gate=false never contributes to pass/fail; its errors remain saved.
+
+The negative control is a refused record containing J,D and root metadata, no ADM fields and no invalid square root. A full completion requires exactly5,010records,3,330,320identity rows and470,752paired compact-component rows. Separate height context contains50 comparisons at1e-30. A complete units stage has318checks; a complete timing stage has20records. Those arithmetic counts are fixed source declarations, not measured cost or proof of completion.
+
+Later compact archives must tag everyJSONL/NPZ/NPY as large_payload regardless of size, along with executables and anyfile>1MiB. Keep source/receipts/log bytes unchanged. A failed or timed-out stage is retained and cannot satisfy the next-stage prerequisite.
+
+
+V2 records add exact nominal_radius (rational string) and finite_graph_admission (boolean). Admission uses this exact nominal radius; evaluated event coordinates and all physical geometry remain unchanged. The reference ADM connection comparator is formed from physical ghat=Omega^-2 bar(ghat), matching the inertial-embedding route. Full stage additionally requires the explicit pinned measured-timing-review schema.

@@ -1,0 +1,1270 @@
+{
+  "cases": {
+    "angular_pair": {
+      "directory": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001",
+      "expected_incoming_ranks": [
+        2,
+        2,
+        0,
+        4
+      ],
+      "name": "angular_pair",
+      "operator_sha256": "cc1861698be95e3469d16b03440f7a946f46fe418a9f238b10a10b77015fd88a",
+      "outer_receipt_sha256": "eee749dd7ee098cabdbd30cd8e32eb0427f5109f89799532dc07b68db447bab6",
+      "report_sha256": "dbb526d05b085010b6ca30e86d3991fcaed35e7c2be8c8e060b137a20900f63e",
+      "shape_schema": [
+        64,
+        64
+      ]
+    },
+    "primary": {
+      "directory": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001",
+      "expected_incoming_ranks": [
+        2,
+        2,
+        0,
+        4
+      ],
+      "name": "primary",
+      "operator_sha256": "3b2c3a7798c549c2b0e93c2a476f7ed49028280a2b01413c90f0312f3bfa52cf",
+      "outer_receipt_sha256": "b8c9b5a380a62671ad52f7ca8e67d09869373e05a6c55f03c6eeb1efe68d1dcd",
+      "report_sha256": "116479f1a41a864c3dea5d1279d358f5b8659e705be94bb267718e46e8a6db9a",
+      "shape_schema": [
+        64,
+        64
+      ]
+    },
+    "radial_pair": {
+      "directory": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001",
+      "expected_incoming_ranks": [
+        2,
+        2,
+        0,
+        4
+      ],
+      "name": "radial_pair",
+      "operator_sha256": "8e1ead124ac15386f523d3445b294d1a16859155af09b75398545f2e8d140c3c",
+      "outer_receipt_sha256": "85d97819236e73617a538a5bb7f274e8611ae6ab5d4f073365f4f8b62cb86a87",
+      "report_sha256": "eb06b180698849547610cdfde39c9e7624471173f5f690d169821766d112ecff",
+      "shape_schema": [
+        64,
+        64
+      ]
+    }
+  },
+  "column_norm_correction": {
+    "definition": "Same finite positive Euclidean column2-norm via math.hypot; SVD and threshold1e4 unchanged.",
+    "division_changed": false,
+    "exact_relative_envelope_bound": "1/2253336280347616",
+    "fixed_enclosure": "two adjacent binary64 steps on each side",
+    "following_inexact_tiny_quotients": 0,
+    "following_nonzero_quotients": 295089,
+    "full_saved_primary_columns": 4620,
+    "helper": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/column_norm.py",
+    "limits": "48-column narrow and primary4620 dataset proofs are preserved separately; no general error theorem or paired-grid proof.",
+    "sha256": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "units": "Exact24 synthetic receipt required from root authorization column_norm_units before imports."
+  },
+  "context": {
+    "basis_data": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/inputs/basis-data.json",
+    "old_boundary_blocks_ONLY": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-segmented-Q64-sector-readback001/operator.npz",
+    "owner_source_index": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/source-index.json",
+    "paired_receipt": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/paired-readback001/receipt.json",
+    "paired_report": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/paired-readback001/report.json",
+    "queries": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/queries.json"
+  },
+  "declared_payloads_not_read_during_preparation": [
+    {
+      "bytes": 1292817,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/operator.npz",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "3b2c3a7798c549c2b0e93c2a476f7ed49028280a2b01413c90f0312f3bfa52cf"
+    },
+    {
+      "bytes": 14088960,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/source/queries.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "b30c2ffbf800183a6c655d491f6c84e5077b2d930e6e9768b1a457fe500155ed"
+    },
+    {
+      "bytes": 181045749,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/source/output.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "a6b0f3f13cebcf9192265c20598e927bf7dbb79f9607a9e990788ce3cf2409f5"
+    },
+    {
+      "bytes": 201705312,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/input/queries.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "c6f48d612bd438a7353e99b937094f7e0479958f94946acf6a9812ba4e313e38"
+    },
+    {
+      "bytes": 1064448000,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/input/output.bin",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "96e823c2cdb5ea5d4249f169c6d0dbba08d123d9e14007291adf9c4d6d863ef5"
+    },
+    {
+      "bytes": 86167,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/reference.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "42c579c87e5c35b497768e2aef7b05815188549f0b3dffbba53108afda2ee5bf"
+    },
+    {
+      "bytes": 2131694,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/operator.npz",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "8e1ead124ac15386f523d3445b294d1a16859155af09b75398545f2e8d140c3c"
+    },
+    {
+      "bytes": 28145664,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/source/queries.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "e5b5b6f8f47936c221f340e362a2ed6fb748dc34e0a20cd152814b4693b16d94"
+    },
+    {
+      "bytes": 361624718,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/source/output.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "256183c1c20e34fa28f733ca4471690dbb441dd62865aa5ee7524d91f89aa500"
+    },
+    {
+      "bytes": 402843072,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/input/queries.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "c6ec33d30aa7160f4807e7f11270875238261255595b189ca15f8094ec25c8c9"
+    },
+    {
+      "bytes": 2126131200,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/input/output.bin",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "125279d9c3e87c3e4e2496c6130767b11d38d45fb72662efe8531b5fd05973ab"
+    },
+    {
+      "bytes": 172207,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/reference.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "94b580398bb7d1857ac1036de225372850db57aef3405a0c88cbf130de84d6d8"
+    },
+    {
+      "bytes": 1400666,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/operator.npz",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "cc1861698be95e3469d16b03440f7a946f46fe418a9f238b10a10b77015fd88a"
+    },
+    {
+      "bytes": 14088960,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/source/queries.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "b30c2ffbf800183a6c655d491f6c84e5077b2d930e6e9768b1a457fe500155ed"
+    },
+    {
+      "bytes": 181045749,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/source/output.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "a6b0f3f13cebcf9192265c20598e927bf7dbb79f9607a9e990788ce3cf2409f5"
+    },
+    {
+      "bytes": 359640048,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/input/queries.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "9416867bd618494f556ab9c71c56d8943a2792f888752adc9763d1b6be75e6a9"
+    },
+    {
+      "bytes": 1892352000,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/input/output.bin",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "067f7d57cbe09ffd168203041c661a2767d79937329d630a31bbff0c94cc8c8a"
+    },
+    {
+      "bytes": 86167,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/reference.txt",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "42c579c87e5c35b497768e2aef7b05815188549f0b3dffbba53108afda2ee5bf"
+    },
+    {
+      "bytes": 412854,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-segmented-Q64-sector-readback001/operator.npz",
+      "preparation": "launch/producer-declared; not read or rehashed here",
+      "sha256": "8b4b9a5b33151d86359aa9e35f0ae44dc436ef4ab2d6c17796e77983f9422a27"
+    },
+    {
+      "bytes": 4053663,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/diagnostic-attempt001/stages.jsonl",
+      "sha256": "30eb718b81175669eebab98e58375f09a3fdce62a34041704ec8808de9b84c32"
+    },
+    {
+      "bytes": 71895,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/diagnostic-attempt001/stages.jsonl",
+      "sha256": "14861453b7330d5988c782001133bc50e2a8a9b2ffe60af35c39a812d5ecc7c3"
+    },
+    {
+      "bytes": 450675,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/reconstructed.npz",
+      "sha256": "a380f20605f7d265052583f9f25cc0c10261494c807cf6b23d055323aa0ddb23"
+    },
+    {
+      "bytes": 344084,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/reconstructed.npz",
+      "sha256": "a494e6974d7c0cc2837f6093fec88be3b1c9afc5cba24ef238fa27c0a2c112cc"
+    }
+  ],
+  "derivative_product_correction": {
+    "affected_sites": [
+      "line353:rounded_c_cr_times_ur"
+    ],
+    "diagnostic_index": {
+      "bytes": 5100,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/source-index.json",
+      "sha256": "3a5ee02109aa33490f08085f14345efdf8963c1a3cc293d82563b02b2e3c7dcd"
+    },
+    "diagnostic_receipt": {
+      "bytes": 3302,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/diagnostic-attempt001/receipt.json",
+      "sha256": "cf76261810b1a08e3913651414f8d5a2b891f3c72fc24b01b3169b8c763f713d"
+    },
+    "diagnostic_result": {
+      "bytes": 16612,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/diagnostic-attempt001/result.json",
+      "sha256": "94962b45c4e89afc35d674d362a22feeece3ee7ed891813aa7426359aa0f6c35"
+    },
+    "helper": {
+      "bytes": 9172,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/tiny_normalization.py",
+      "sha256": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272"
+    },
+    "measured_primary_only": true,
+    "no_addition_contraction_reduction_threshold_or_other_site_changes": true,
+    "original_order": "round(c*cr) then second multiply then unchanged strict add with c*c*urr",
+    "paired_grid_other_sites_unmeasured": true,
+    "saved_stage_index": {
+      "bytes": 4738,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/index.json",
+      "sha256": "bd198bd635103395787850738ba5e2bcb0b6f7c47b5e9a6fd1b04117187b30d8"
+    },
+    "saved_stage_receipt": {
+      "bytes": 873,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/attempt001/receipt.json",
+      "sha256": "83751318192559f86891f8f231c8bd059d6b78a36ca4a0bc82a9e855bf9690d1"
+    },
+    "saved_stage_report": {
+      "bytes": 14901,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/attempt001/report.json",
+      "sha256": "a420b6ce34ddcee650b622142de6afcfc7787117e1be686381dab4f56ee96bd6"
+    },
+    "separate_audit": "tiny-derivative-product-rounding.json",
+    "wrapper": {
+      "bytes": 3318,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/fast_weighting.py",
+      "sha256": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095"
+    },
+    "wrapper_changed": false
+  },
+  "environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps:/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "exact_operand_diagnosis": {
+    "bytes": 24229,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-v2-held-20261009/attempts/diagnosis001/diagnosis.json",
+    "sha256": "4149531d6d7917875ac18e216f5ff58acdcf1f275627cab6814ad9115c5fc2d6"
+  },
+  "fast_weighting_proof": {
+    "preflight": "Separate reviewed20-case wrapper bit/control gate, exact PASS receipt path/hash supplied in root authorization fast_weighting_wrapper_units",
+    "scope": "Only skips per-entry classification when its predicate is proved false for every pair; no math/tolerance/BLAS change",
+    "sha256": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/fast_weighting.py",
+    "threshold_exponent_sum": -1020,
+    "unchanged_fallback_sha256": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272"
+  },
+  "future_commands": [
+    [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-B",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/verify_retained.py",
+      "--authorization",
+      "ROOT_EXACT_AUTHORIZATION.json",
+      "--authorization-sha256",
+      "ROOT_HASH",
+      "--case",
+      "primary",
+      "--output",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/attempts/independent-primary001"
+    ],
+    [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-B",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/verify_retained.py",
+      "--authorization",
+      "ROOT_EXACT_AUTHORIZATION.json",
+      "--authorization-sha256",
+      "ROOT_HASH",
+      "--case",
+      "radial_pair",
+      "--output",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/attempts/independent-radial_pair001"
+    ],
+    [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-B",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/verify_retained.py",
+      "--authorization",
+      "ROOT_EXACT_AUTHORIZATION.json",
+      "--authorization-sha256",
+      "ROOT_HASH",
+      "--case",
+      "angular_pair",
+      "--output",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/attempts/independent-angular_pair001"
+    ]
+  ],
+  "gates": {
+    "algebra": 2e-09,
+    "energy_condition": 1000000000000.0,
+    "incoming_rank_atol": 1e-11,
+    "incoming_rank_rtol": 1e-10,
+    "source_condition": 10000.0,
+    "source_scaled": 5e-11,
+    "weak_strong_volume_flux_pairs": 2e-08
+  },
+  "historical_failed_verifier_sha256": "d3643f80bdea8e1aba52c939061397158e5eabe963675b1edea41e3b183b96c2",
+  "historical_v2_failed_readback": {
+    "classification": "FAILED underflow in bilinear root*a; never relabeled PASS",
+    "receipt": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/receipt.json",
+    "receipt_sha256": "44fd001bba24de456ae3215e7b2d0fca7dad3820fea39d3463fc24527f07b540",
+    "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/verify_retained.py",
+    "source_sha256": "8d5c501f0bf91b812c91b952b1acd054ed654f2b7776bf77a13090dcf1bd720f"
+  },
+  "history": [
+    {
+      "bytes": 25482,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/00-verify_retained.py",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/verify_retained.py",
+      "sha256": "d3643f80bdea8e1aba52c939061397158e5eabe963675b1edea41e3b183b96c2"
+    },
+    {
+      "bytes": 1625,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/01-source-index.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/source-index.json",
+      "sha256": "1c38b0fcbc9c792c1dc7c75316ea9997983f88aea6cf6772d2aa970b326b83c0"
+    },
+    {
+      "bytes": 22160,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/02-recipe.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/recipe.json",
+      "sha256": "56695950a40000d07105d15c1e25cde1f842021cb4230c38eb77cca0444eafe6"
+    },
+    {
+      "bytes": 211,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/03-receipt.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/attempts/independent-primary001/receipt.json",
+      "sha256": "21d235115921f72ec0649f1e7946b694c1db33f784cae8d39b348c0fe9a132b2"
+    },
+    {
+      "bytes": 837,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/04-failure.txt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/attempts/independent-primary001/failure.txt",
+      "sha256": "de9046587f42a8840943f131cc407b5c24f45422a046809f15401aea07f43932"
+    },
+    {
+      "bytes": 445,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/05-progress.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/attempts/independent-primary001/progress.json",
+      "sha256": "25a31423b18b199215d847f47169f71b4d3cb970a1f6417743bf722bfb466985"
+    },
+    {
+      "bytes": 3277,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/06-source-index.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-held-20261009/source-index.json",
+      "sha256": "becb969f9148b91156075d6a2cf318feb8812bf49818642b76e9fb267a929357"
+    },
+    {
+      "bytes": 266,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/07-receipt.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-held-20261009/attempts/diagnosis001/receipt.json",
+      "sha256": "d63a5d5fd1113e4048582a40cac00269da25e63bbcf38f2084b11855c3864696"
+    },
+    {
+      "bytes": 667,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/08-failure.txt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-held-20261009/attempts/diagnosis001/failure.txt",
+      "sha256": "79f04a9b689e36cc1afcb2fe04e2752632a24d10275d5d8c9a559531f840b0b4"
+    },
+    {
+      "bytes": 4493,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/09-source-index.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-v2-held-20261009/source-index.json",
+      "sha256": "d1ab892a9666585ad72bd1e0b239987f68a94b9b39a4f505112d4d42ca9ee0df"
+    },
+    {
+      "bytes": 282,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/10-receipt.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-v2-held-20261009/attempts/diagnosis001/receipt.json",
+      "sha256": "0e712526ecb366ff291cfc02f12eb95e5a694f19607fb55f10360445b6b6d622"
+    },
+    {
+      "bytes": 24229,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/history/11-diagnosis.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-v2-held-20261009/attempts/diagnosis001/diagnosis.json",
+      "sha256": "4149531d6d7917875ac18e216f5ff58acdcf1f275627cab6814ad9115c5fc2d6"
+    }
+  ],
+  "history_v3": [
+    {
+      "bytes": 27838,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/00-verify_retained.py",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/verify_retained.py",
+      "sha256": "8d5c501f0bf91b812c91b952b1acd054ed654f2b7776bf77a13090dcf1bd720f"
+    },
+    {
+      "bytes": 6175,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/01-source-index.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/source-index.json",
+      "sha256": "1bc5ecb62ed4bd3a3898d01f288ee909f77f41806a163ec9cf6e5a1ace512a62"
+    },
+    {
+      "bytes": 31980,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/02-recipe.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/recipe.json",
+      "sha256": "9279ba77fd6079b65348f30ebcf07a0ef39e431ec1f9fd41c39383825dae4a83"
+    },
+    {
+      "bytes": 3412,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/03-PLAN.md",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/PLAN.md",
+      "sha256": "d50fa386c680ad08b3c06d9106f16072637f486b4dfa28c393566b1387114cff"
+    },
+    {
+      "bytes": 2414,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/04-MATH.md",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/MATH.md",
+      "sha256": "49bf54221998cd284f95b8961c1fa7c8771fe440a9cf05d3b4b9b54d5a32e7c1"
+    },
+    {
+      "bytes": 857,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/05-failure.txt",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/failure.txt",
+      "sha256": "9fa757aff4b82028ec01817f6048592345ac874f1044a5ac512099571c3b5986"
+    },
+    {
+      "bytes": 456831,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/06-pins-before.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/pins-before.json",
+      "sha256": "744f9b7cab18e964b0d0a1728a2992794ee6429b379b057c2c4439bef7d40e19"
+    },
+    {
+      "bytes": 467,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/07-progress.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/progress.json",
+      "sha256": "fde9582265edd498117ee2c2455d701ddfd2da6227a8f3531b0ead3196bf9a86"
+    },
+    {
+      "bytes": 212,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/08-receipt.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/receipt.json",
+      "sha256": "44fd001bba24de456ae3215e7b2d0fca7dad3820fea39d3463fc24527f07b540"
+    },
+    {
+      "bytes": 12554,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/09-tiny-normalization-rounding.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/tiny-normalization-rounding.json",
+      "sha256": "744aaddae9d066ee4d67e04e1b4e5f583f168efcd8402051a4144e7f699778ca"
+    },
+    {
+      "bytes": 184042,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/10-unit-recipe.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-normalization-correction-independent-review-20261009/unit-recipe.json",
+      "sha256": "24bdbf0af36a936aa8de2af047b0b31c1feb5b9dddff0bb7b7672a1bba6ce494"
+    },
+    {
+      "bytes": 2811,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/11-unit-source-index.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-normalization-correction-independent-review-20261009/unit-source-index.json",
+      "sha256": "cb6dcb385f606ec1af35a4bbbafc6b6330ced1e13c86d24be29de66f111a55b1"
+    },
+    {
+      "bytes": 25021,
+      "copied_to": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/history/12-receipt.json",
+      "kind": "source_or_receipt",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-normalization-correction-independent-review-20261009/attempts/unit001/receipt.json",
+      "sha256": "76e9fdf4130bed732b9e4e982adda5256a8db143ff8c2ece8090f01a125505f6"
+    }
+  ],
+  "history_v4": [
+    {
+      "bytes": 29359,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v4-held-20261009/history/00-verify_retained.py",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/verify_retained.py",
+      "sha256": "4064d2b506951f653276d6e6cf3bd5186e1bad0897ccb55e17acd19c7ea4a744"
+    },
+    {
+      "bytes": 44014,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v4-held-20261009/history/01-recipe.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/recipe.json",
+      "sha256": "03bd40feb7be2ce76479d3248a0c267bb3ad451dfc94d9be543b38527166e979"
+    },
+    {
+      "bytes": 7290,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v4-held-20261009/history/02-source-index.json",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/source-index.json",
+      "sha256": "270872ddba236b9c43254a54be1b6b9f2e43f2921fcda987165850f871bf2539"
+    },
+    {
+      "bytes": 3574,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v4-held-20261009/history/03-PLAN.md",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/PLAN.md",
+      "sha256": "893ee96538697f35697d912f5260acbfb87ce7c0f4412979f01e08912d7d9b79"
+    },
+    {
+      "bytes": 931,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v4-held-20261009/history/04-MATH.md",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/MATH.md",
+      "sha256": "e2eb9713dd9d19c9a9fa5d6070b90a455851e0c2e60392d17cadc13e6af3ebe0"
+    },
+    {
+      "bytes": 4514,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v4-held-20261009/history/05-weighting-only.diff",
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/weighting-only.diff",
+      "sha256": "e7861f2018fc4ed9dbc08be1f53c6d6600d8721478db22f7fa48159ff635bb8d"
+    }
+  ],
+  "history_v5": {
+    "full4620_completed_index": {
+      "bytes": 4197,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/completed-index.json",
+      "sha256": "49e96bfcf7ce5a5552a56093f06c76e2267391f5704e596cb2531b88cf851a6d"
+    },
+    "narrow48_completed_index": {
+      "bytes": 3401,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/completed-index.json",
+      "sha256": "a3da41804ed23a64ce58dc61cc7e3f7eb8719930cd559635f66bc732841e65e5"
+    },
+    "preserved_v4_failed_receipt": {
+      "bytes": 217,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v4-held-20261009/attempts/independent-primary001/receipt.json",
+      "sha256": "6efa114439fd5ac590fcb0ca7f829732654262ae04db6517b65377a056bc7ccc"
+    },
+    "preserved_v4_index": {
+      "bytes": 4847,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v4-held-20261009/source-index.json",
+      "sha256": "5951940c6bff90d4fbcc4ea0fd47ed8cf2cb0f9016196da925e73a8f780b09d1"
+    },
+    "scope": "Only primary385x12 saved columns covered by complete norm/quotient diagnostic; paired grids not inferred."
+  },
+  "history_v6": {
+    "no_old_failure_relabelled": true,
+    "preserved_original_v5_files": true,
+    "v5_failure": {
+      "bytes": 217,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/attempts/independent-primary001/receipt.json",
+      "sha256": "c4045b3d03287051f8e0c15ce918070a2feb039b2e8d39b2d2d278aff5ac3dad"
+    },
+    "v5_failure_trace": {
+      "bytes": 592,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/attempts/independent-primary001/failure.txt",
+      "sha256": "d4ac029a27889289f0061a8674f8b32b0276dcce1d337ea3edc638f7b5453a5c"
+    },
+    "v5_index": {
+      "bytes": 4882,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/source-index.json",
+      "sha256": "cdeb3784c6017df1251000374439c640633a77f182a929ce491c4f07cc65c475"
+    }
+  },
+  "history_v7": {
+    "changed_adapter_references": 3,
+    "helpers_science_grids_thresholds_operation_order_unchanged": true,
+    "sole_scientific_source_diff": {
+      "bytes": 1171,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/adapter-name-only.diff",
+      "sha256": "7f4dff3185f23bb19b12ba9b442518fd98b2eb29db664d7799405fdca73f7919"
+    },
+    "v6_admission": "FAIL: local derivative adapter overwritten by unchanged loops; math/order PASS",
+    "v6_authorized_or_executed": false,
+    "v6_index": {
+      "bytes": 9107,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/source-index.json",
+      "sha256": "7e92b1e174c14b608af26e41ea502691defeee23cc93c946fc7147482deea2fd"
+    },
+    "v6_review_index": {
+      "bytes": 13334,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/index.json",
+      "sha256": "8575f6a3a880e2c91dc77634ab325d6f4def724be2fa9f59b9fcc44abf3c5664"
+    },
+    "v6_review_line_number_addendum_index": {
+      "bytes": 644,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009-line-number-addendum/index.json",
+      "sha256": "2c350037928f227660bfe7d7fef0d79518e45b4e8ea1e5f737dc45261a0d605a"
+    },
+    "v6_review_receipt": {
+      "bytes": 1619,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/receipt.json",
+      "sha256": "8d79994d9efcc3168c169c6c721358ea8c2eb076ea276b52c265cc1b56465f21"
+    }
+  },
+  "history_v8": {
+    "paired_grids_unverified": true,
+    "scientific_product_sites_changed": 1,
+    "v7_failure": {
+      "bytes": 212,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/attempts/independent-primary001/receipt.json",
+      "sha256": "e9757731331281bee2c4a71f473c0c7d8377c60d728eeadfc36914ec8c8b1684"
+    },
+    "v7_index": {
+      "bytes": 21794,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/source-index.json",
+      "sha256": "0c0e2a0591ad17cca1e71eeed37aa77e69f2f054c25b8a42fdf8464ae36657ba"
+    }
+  },
+  "history_v9": {
+    "all3fresh_v9_readbacks_required": true,
+    "scientific_product_sites_changed": 0,
+    "scientific_quotient_sites_changed": 1,
+    "v8_angular_pass": {
+      "bytes": 164,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/receipt.json",
+      "sha256": "c0429e59fb2ebb9263545493325bd53648654b99e8c7ed021b9ec0cfde4c2c08"
+    },
+    "v8_index": {
+      "bytes": 40074,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/source-index.json",
+      "sha256": "327b99f7fbad0017bc5392da6bd268c50575af1f959367b39ee98f38ffaf28a4"
+    },
+    "v8_primary_pass": {
+      "bytes": 157,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/receipt.json",
+      "sha256": "eb329c25070b60a2c5af44ea043bdad928777328cba5e71da170f0d372ba4343"
+    },
+    "v8_radial_failure": {
+      "bytes": 210,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/receipt.json",
+      "sha256": "7e7bbb4cb92ec3c03b914832af76066995696bcb5d6c9afb7960dbe04c880eb8"
+    }
+  },
+  "mandatory_preflight": "Separately reviewed targeted exact-rounding/adapter unit gate before full saved-matrix rerun; no tests executed by this preparation",
+  "no_threshold_changes": true,
+  "normalization_correction": "Previous normalization, bilinear weighting and column2-norm changes byte-preserved; new separate exact-tiny audit only for second multiply (rounded c*cr)*ur",
+  "pins": {
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/input/output.bin": "125279d9c3e87c3e4e2496c6130767b11d38d45fb72662efe8531b5fd05973ab",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/input/queries.txt": "c6ec33d30aa7160f4807e7f11270875238261255595b189ca15f8094ec25c8c9",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/input/receipt.json": "a6768cd034d26ee7ddc7ed6e59920a5ea0392d3478436b1a6998660b5444abbb",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/operator.npz": "8e1ead124ac15386f523d3445b294d1a16859155af09b75398545f2e8d140c3c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/receipt.json": "85d97819236e73617a538a5bb7f274e8611ae6ab5d4f073365f4f8b62cb86a87",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/reference-receipt.json": "9b9c7a8c9eaa4abab3d400f13cb2e8e5712b88f306fc437bc369f991238c6e1f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/reference.txt": "94b580398bb7d1857ac1036de225372850db57aef3405a0c88cbf130de84d6d8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/report.json": "eb06b180698849547610cdfde39c9e7624471173f5f690d169821766d112ecff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/source/output.txt": "256183c1c20e34fa28f733ca4471690dbb441dd62865aa5ee7524d91f89aa500",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/source/queries.txt": "e5b5b6f8f47936c221f340e362a2ed6fb748dc34e0a20cd152814b4693b16d94",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/source/receipt.json": "2d8614b99ca87bddbbfa1a1e5008992581097256085bb580df82f88447a23985",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/input/output.bin": "96e823c2cdb5ea5d4249f169c6d0dbba08d123d9e14007291adf9c4d6d863ef5",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/input/queries.txt": "c6f48d612bd438a7353e99b937094f7e0479958f94946acf6a9812ba4e313e38",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/input/receipt.json": "6e395cf426dc05b7980238c41c0be046d81658c2f6470b07c7abfb5775c140f5",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/operator.npz": "3b2c3a7798c549c2b0e93c2a476f7ed49028280a2b01413c90f0312f3bfa52cf",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/receipt.json": "b8c9b5a380a62671ad52f7ca8e67d09869373e05a6c55f03c6eeb1efe68d1dcd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/reference-receipt.json": "a939faace5a49d7af4c646587a96efff93bddb3d87eef44bb50d920c62e853cd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/reference.txt": "42c579c87e5c35b497768e2aef7b05815188549f0b3dffbba53108afda2ee5bf",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/report.json": "116479f1a41a864c3dea5d1279d358f5b8659e705be94bb267718e46e8a6db9a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/source/output.txt": "a6b0f3f13cebcf9192265c20598e927bf7dbb79f9607a9e990788ce3cf2409f5",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/source/queries.txt": "b30c2ffbf800183a6c655d491f6c84e5077b2d930e6e9768b1a457fe500155ed",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a12x24-001/source/receipt.json": "17a41341c306d40b36db89a08a177b22a2881c7b15c60ac55ca96394cd4d5482",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/input/output.bin": "067f7d57cbe09ffd168203041c661a2767d79937329d630a31bbff0c94cc8c8a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/input/queries.txt": "9416867bd618494f556ab9c71c56d8943a2792f888752adc9763d1b6be75e6a9",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/input/receipt.json": "8d2b4aaf404801ec0f2ac83c71cf5f5b55c2a617b18063f25c38b526d995915d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/operator.npz": "cc1861698be95e3469d16b03440f7a946f46fe418a9f238b10a10b77015fd88a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/receipt.json": "eee749dd7ee098cabdbd30cd8e32eb0427f5109f89799532dc07b68db447bab6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/reference-receipt.json": "204d84b479c35b58c8d28278675c3a7aa08d8374d39b9b1008c5c9175cb0bb81",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/reference.txt": "42c579c87e5c35b497768e2aef7b05815188549f0b3dffbba53108afda2ee5bf",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/report.json": "dbb526d05b085010b6ca30e86d3991fcaed35e7c2be8c8e060b137a20900f63e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/source/output.txt": "a6b0f3f13cebcf9192265c20598e927bf7dbb79f9607a9e990788ce3cf2409f5",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/source/queries.txt": "b30c2ffbf800183a6c655d491f6c84e5077b2d930e6e9768b1a457fe500155ed",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q64-a16x32-001/source/receipt.json": "4817d9fa21ec53756e49f66c9d10992d7be5b8cd5924a9f2af3cf30fc33764b5",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/inputs/basis-data.json": "ddc8c8d91d211aad70a4df4560a75c32807417248abdf025663ad411cfd4e738",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/paired-readback001/receipt.json": "9489653a39986fc43bbceb185158f3ae92f21117fda2ee570395502f4ec7f512",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/paired-readback001/report.json": "5085cf42d44e6c78ce8bc322352ad735ca69bfbdb8ebc87a3243324145626d24",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/queries.json": "fca0735a9951b93fd558eab1da8ad94179f9b6bc1b516ae79f4a05f0d3993130",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/source-index.json": "e92870a8ffd5a9945e2171e088c4dce30edd915f5090536736019a5c824b37d3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-held-20261009/attempts/diagnosis001/failure.txt": "79f04a9b689e36cc1afcb2fe04e2752632a24d10275d5d8c9a559531f840b0b4",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-held-20261009/attempts/diagnosis001/receipt.json": "d63a5d5fd1113e4048582a40cac00269da25e63bbcf38f2084b11855c3864696",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-held-20261009/source-index.json": "becb969f9148b91156075d6a2cf318feb8812bf49818642b76e9fb267a929357",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-v2-held-20261009/attempts/diagnosis001/diagnosis.json": "4149531d6d7917875ac18e216f5ff58acdcf1f275627cab6814ad9115c5fc2d6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-v2-held-20261009/attempts/diagnosis001/receipt.json": "0e712526ecb366ff291cfc02f12eb95e5a694f19607fb55f10360445b6b6d622",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-normalization-underflow-diagnostic-v2-held-20261009/source-index.json": "d1ab892a9666585ad72bd1e0b239987f68a94b9b39a4f505112d4d42ca9ee0df",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/attempts/independent-primary001/failure.txt": "de9046587f42a8840943f131cc407b5c24f45422a046809f15401aea07f43932",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/attempts/independent-primary001/progress.json": "25a31423b18b199215d847f47169f71b4d3cb970a1f6417743bf722bfb466985",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/attempts/independent-primary001/receipt.json": "21d235115921f72ec0649f1e7946b694c1db33f784cae8d39b348c0fe9a132b2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/recipe.json": "56695950a40000d07105d15c1e25cde1f842021cb4230c38eb77cca0444eafe6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/source-index.json": "1c38b0fcbc9c792c1dc7c75316ea9997983f88aea6cf6772d2aa970b326b83c0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-held-20261009/verify_retained.py": "d3643f80bdea8e1aba52c939061397158e5eabe963675b1edea41e3b183b96c2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/MATH.md": "49bf54221998cd284f95b8961c1fa7c8771fe440a9cf05d3b4b9b54d5a32e7c1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/PLAN.md": "d50fa386c680ad08b3c06d9106f16072637f486b4dfa28c393566b1387114cff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/failure.txt": "9fa757aff4b82028ec01817f6048592345ac874f1044a5ac512099571c3b5986",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/pins-before.json": "744f9b7cab18e964b0d0a1728a2992794ee6429b379b057c2c4439bef7d40e19",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/progress.json": "fde9582265edd498117ee2c2455d701ddfd2da6227a8f3531b0ead3196bf9a86",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/receipt.json": "44fd001bba24de456ae3215e7b2d0fca7dad3820fea39d3463fc24527f07b540",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/attempts/independent-primary001/tiny-normalization-rounding.json": "744aaddae9d066ee4d67e04e1b4e5f583f168efcd8402051a4144e7f699778ca",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/recipe.json": "9279ba77fd6079b65348f30ebcf07a0ef39e431ec1f9fd41c39383825dae4a83",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/source-index.json": "1bc5ecb62ed4bd3a3898d01f288ee909f77f41806a163ec9cf6e5a1ace512a62",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v2-held-20261009/verify_retained.py": "8d5c501f0bf91b812c91b952b1acd054ed654f2b7776bf77a13090dcf1bd720f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/MATH.md": "e2eb9713dd9d19c9a9fa5d6070b90a455851e0c2e60392d17cadc13e6af3ebe0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/PLAN.md": "893ee96538697f35697d912f5260acbfb87ce7c0f4412979f01e08912d7d9b79",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/recipe.json": "03bd40feb7be2ce76479d3248a0c267bb3ad451dfc94d9be543b38527166e979",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/source-index.json": "270872ddba236b9c43254a54be1b6b9f2e43f2921fcda987165850f871bf2539",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/verify_retained.py": "4064d2b506951f653276d6e6cf3bd5186e1bad0897ccb55e17acd19c7ea4a744",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v3-held-20261009/weighting-only.diff": "e7861f2018fc4ed9dbc08be1f53c6d6600d8721478db22f7fa48159ff635bb8d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/PLAN.md": "4840f6166fa5f5ab0b9bb00a0bb63d4158bb68208ded9c3d86daf0a883c4dd8a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/attempts/independent-primary001/failure.txt": "d4ac029a27889289f0061a8674f8b32b0276dcce1d337ea3edc638f7b5453a5c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/attempts/independent-primary001/pins-before.json": "7075c70269e3db6797644a0cb96c281cd5f224e44bb3d7f994f4c0847a6082a3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/attempts/independent-primary001/progress.json": "f3e7ca32206fe69336c4adfff8b11e57afed7e8588e670b2541aa2ff9ccb40ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/attempts/independent-primary001/receipt.json": "c4045b3d03287051f8e0c15ce918070a2feb039b2e8d39b2d2d278aff5ac3dad",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/attempts/independent-primary001/tiny-bilinear-weighting-rounding.json": "4774ebd0a56d64155a81de86faa50f72727362702f6c8612c18ec09acc6c449f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/attempts/independent-primary001/tiny-normalization-rounding.json": "d074662eba8ff58d1eaa08f92537245fe9c565c16644da63c7a17cae26e984f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/column-norm-only.diff": "2543441d3c34851282a301f59ea99a769776cdb4f18c1fea2898fc5b13baac2a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/fast_weighting.py": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/history-v4/PLAN.md": "1326e3f9b4b8efd7bfcd4345aadc92cb7cb6c2797113c98b8e0c5a76c04304cc",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/history-v4/failed-failure.txt": "b67cb9c24cca1463fc783c98d43bfcca1a84c49586e53e5f1e68d69336b0a7f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/history-v4/failed-progress.json": "fde9582265edd498117ee2c2455d701ddfd2da6227a8f3531b0ead3196bf9a86",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/history-v4/failed-receipt.json": "6efa114439fd5ac590fcb0ca7f829732654262ae04db6517b65377a056bc7ccc",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/history-v4/recipe.json": "5d147c763c726352ef3dd40841e26fabb238a38b80576bd0b36fe0650d99a277",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/history-v4/source-index.json": "5951940c6bff90d4fbcc4ea0fd47ed8cf2cb0f9016196da925e73a8f780b09d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/history-v4/verify_retained.py": "0f7b7276ac1e5f7c20124eacafcec40dcf3444232f3bab00b9b9773e09027195",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/prepare_source.py": "62a9acaecdd3d3d44a6b7a3a350a93ee77f235e26a0ba1c168295175d34620fa",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/recipe.json": "6c68e88fbeffc3b37eb5c1fcaaa650bfcd33aa085e5d0a04696758d9eedcbe4e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/source-index.json": "cdeb3784c6017df1251000374439c640633a77f182a929ce491c4f07cc65c475",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v5-held-20261009/verify_retained.py": "556dfd815f8a8dc2b3f7afc5d1e294c429bc01fe06a130fc2008a84d09e2a40f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/PLAN.md": "c8b009a066f5cc51e1a078db34bf42acf095b8c1191df524746a14262e9b5670",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/authorization-schema.json": "9c24a7bb8f5418f949a9c2cf6d4cdf06af52315ac1da9e75810e89c0738ece15",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/derivative-product-only.diff": "fc0683302dec307218f352cd8fd9648391f74286392807cbbf65b38710a952a6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/evidence/fast-v3-diagnostic-receipt.json": "cf76261810b1a08e3913651414f8d5a2b891f3c72fc24b01b3169b8c763f713d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/evidence/fast-v3-diagnostic-result.json": "94962b45c4e89afc35d674d362a22feeece3ee7ed891813aa7426359aa0f6c35",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/evidence/saved-stage-index.json": "bd198bd635103395787850738ba5e2bcb0b6f7c47b5e9a6fd1b04117187b30d8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/evidence/saved-stage-receipt.json": "83751318192559f86891f8f231c8bd059d6b78a36ca4a0bc82a9e855bf9690d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/evidence/saved-stage-report.json": "a420b6ce34ddcee650b622142de6afcfc7787117e1be686381dab4f56ee96bd6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/fast_weighting.py": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/PLAN.md": "4840f6166fa5f5ab0b9bb00a0bb63d4158bb68208ded9c3d86daf0a883c4dd8a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/failed-failure.txt": "d4ac029a27889289f0061a8674f8b32b0276dcce1d337ea3edc638f7b5453a5c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/failed-progress.json": "f3e7ca32206fe69336c4adfff8b11e57afed7e8588e670b2541aa2ff9ccb40ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/failed-receipt.json": "c4045b3d03287051f8e0c15ce918070a2feb039b2e8d39b2d2d278aff5ac3dad",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/failed-tiny-bilinear-weighting-rounding.json": "4774ebd0a56d64155a81de86faa50f72727362702f6c8612c18ec09acc6c449f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/failed-tiny-normalization-rounding.json": "d074662eba8ff58d1eaa08f92537245fe9c565c16644da63c7a17cae26e984f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/prepare_source-initial-unexecuted.py": "c30b8350fd881d7cf6d2d6631f3df23ead0d7727c4306ab3e37f1e049f8c6217",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/recipe.json": "6c68e88fbeffc3b37eb5c1fcaaa650bfcd33aa085e5d0a04696758d9eedcbe4e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/source-index.json": "cdeb3784c6017df1251000374439c640633a77f182a929ce491c4f07cc65c475",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/history-v5/verify_retained.py": "556dfd815f8a8dc2b3f7afc5d1e294c429bc01fe06a130fc2008a84d09e2a40f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/preparation-history.json": "2a5bcba1f4d55793dc1edb19b1c6d60d3301ce4ce9dbcc16eb0da367a07054f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/preparation-inputs-after.json": "373ec4c46b16aac473412ce641161be7abc326348ef714ce14d6ab581741291c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/preparation-inputs-before.json": "373ec4c46b16aac473412ce641161be7abc326348ef714ce14d6ab581741291c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/preparation-pending.json": "2a34b78339b3b2b2f0864f328df3e1d72d7bc09ac4324b919335597d23f4100d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/prepare_source.py": "8550997304117f037aec31ff3ab103ae872bd9c1cab213e5519879a1ddbf3774",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/recipe.json": "bce0dae3ec04c9b9fb5fb119595a6783e7817004a4d27f6446cc0ad2d8ba6c56",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/source-index.json": "7e92b1e174c14b608af26e41ea502691defeee23cc93c946fc7147482deea2fd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/source-preparation.json": "4245f4f7fd9cb9154affd3c75f548759c0a493142e063ea7e8af7cf1d6eb69f3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v6-held-20261009/verify_retained.py": "d947a19d82389f749124ab666d79f1c8ea8d92538f6ce68bd7cfb209394b13d7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/PLAN.md": "a4a78b197fb7e80e70d96e2429e2f07f4ded4cc13cc8f49632b4cdce06e1323b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/adapter-name-only.diff": "7f4dff3185f23bb19b12ba9b442518fd98b2eb29db664d7799405fdca73f7919",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/attempts/independent-primary001/failure.txt": "1e59d72491efcd77b9c732fae3d91d984fc68382931c83aa4bcc948822c8bc88",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/attempts/independent-primary001/pins-before.json": "0cdaec429a3630b9f092a4be5231a20eba322a8ea681b03071fc745e00ee3861",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/attempts/independent-primary001/progress.json": "f3e7ca32206fe69336c4adfff8b11e57afed7e8588e670b2541aa2ff9ccb40ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/attempts/independent-primary001/receipt.json": "e9757731331281bee2c4a71f473c0c7d8377c60d728eeadfc36914ec8c8b1684",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/attempts/independent-primary001/tiny-bilinear-weighting-rounding.json": "6ca00682fe342c7b269c214a34830e1cb5f054b4dc81aa8d5a63b4fd3591234d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/attempts/independent-primary001/tiny-derivative-product-rounding.json": "de7300e32df6c833f3e8bf074f1cb0b5067062af02e052d542ae9982ad1c4ed4",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/attempts/independent-primary001/tiny-normalization-rounding.json": "a3f74e154716f71dd26aef4b6fea2825241d5233e06fb7d1028cd47413e56061",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/authorization-schema.json": "746fa477f51ec92869db3a436dc277b941b16d903a3789cdfbd907adf1e0af49",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/evidence/fast-v3-diagnostic-receipt.json": "cf76261810b1a08e3913651414f8d5a2b891f3c72fc24b01b3169b8c763f713d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/evidence/fast-v3-diagnostic-result.json": "94962b45c4e89afc35d674d362a22feeece3ee7ed891813aa7426359aa0f6c35",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/evidence/saved-stage-index.json": "bd198bd635103395787850738ba5e2bcb0b6f7c47b5e9a6fd1b04117187b30d8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/evidence/saved-stage-receipt.json": "83751318192559f86891f8f231c8bd059d6b78a36ca4a0bc82a9e855bf9690d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/evidence/saved-stage-report.json": "a420b6ce34ddcee650b622142de6afcfc7787117e1be686381dab4f56ee96bd6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/fast_weighting.py": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/PLAN.md": "c8b009a066f5cc51e1a078db34bf42acf095b8c1191df524746a14262e9b5670",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/authorization-schema.json": "9c24a7bb8f5418f949a9c2cf6d4cdf06af52315ac1da9e75810e89c0738ece15",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/REVIEW.md": "ca957677c3cb8d1016a7f8222437f286098780e690a25290fd068e75d4103730",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/PLAN.md": "c8b009a066f5cc51e1a078db34bf42acf095b8c1191df524746a14262e9b5670",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/authorization-schema.json": "9c24a7bb8f5418f949a9c2cf6d4cdf06af52315ac1da9e75810e89c0738ece15",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/derivative-product-only.diff": "fc0683302dec307218f352cd8fd9648391f74286392807cbbf65b38710a952a6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/evidence/fast-v3-diagnostic-receipt.json": "cf76261810b1a08e3913651414f8d5a2b891f3c72fc24b01b3169b8c763f713d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/evidence/fast-v3-diagnostic-result.json": "94962b45c4e89afc35d674d362a22feeece3ee7ed891813aa7426359aa0f6c35",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/evidence/saved-stage-index.json": "bd198bd635103395787850738ba5e2bcb0b6f7c47b5e9a6fd1b04117187b30d8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/evidence/saved-stage-receipt.json": "83751318192559f86891f8f231c8bd059d6b78a36ca4a0bc82a9e855bf9690d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/evidence/saved-stage-report.json": "a420b6ce34ddcee650b622142de6afcfc7787117e1be686381dab4f56ee96bd6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/fast_weighting.py": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/PLAN.md": "4840f6166fa5f5ab0b9bb00a0bb63d4158bb68208ded9c3d86daf0a883c4dd8a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/failed-failure.txt": "d4ac029a27889289f0061a8674f8b32b0276dcce1d337ea3edc638f7b5453a5c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/failed-progress.json": "f3e7ca32206fe69336c4adfff8b11e57afed7e8588e670b2541aa2ff9ccb40ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/failed-receipt.json": "c4045b3d03287051f8e0c15ce918070a2feb039b2e8d39b2d2d278aff5ac3dad",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/failed-tiny-bilinear-weighting-rounding.json": "4774ebd0a56d64155a81de86faa50f72727362702f6c8612c18ec09acc6c449f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/failed-tiny-normalization-rounding.json": "d074662eba8ff58d1eaa08f92537245fe9c565c16644da63c7a17cae26e984f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/prepare_source-initial-unexecuted.py": "c30b8350fd881d7cf6d2d6631f3df23ead0d7727c4306ab3e37f1e049f8c6217",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/recipe.json": "6c68e88fbeffc3b37eb5c1fcaaa650bfcd33aa085e5d0a04696758d9eedcbe4e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/source-index.json": "cdeb3784c6017df1251000374439c640633a77f182a929ce491c4f07cc65c475",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/history-v5/verify_retained.py": "556dfd815f8a8dc2b3f7afc5d1e294c429bc01fe06a130fc2008a84d09e2a40f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/preparation-history.json": "2a5bcba1f4d55793dc1edb19b1c6d60d3301ce4ce9dbcc16eb0da367a07054f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/preparation-inputs-after.json": "373ec4c46b16aac473412ce641161be7abc326348ef714ce14d6ab581741291c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/preparation-inputs-before.json": "373ec4c46b16aac473412ce641161be7abc326348ef714ce14d6ab581741291c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/preparation-pending.json": "2a34b78339b3b2b2f0864f328df3e1d72d7bc09ac4324b919335597d23f4100d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/prepare_source.py": "8550997304117f037aec31ff3ab103ae872bd9c1cab213e5519879a1ddbf3774",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/recipe.json": "bce0dae3ec04c9b9fb5fb119595a6783e7817004a4d27f6446cc0ad2d8ba6c56",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/source-index.json": "7e92b1e174c14b608af26e41ea502691defeee23cc93c946fc7147482deea2fd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/source-preparation.json": "4245f4f7fd9cb9154affd3c75f548759c0a493142e063ea7e8af7cf1d6eb69f3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/captured/verify_retained.py": "d947a19d82389f749124ab666d79f1c8ea8d92538f6ce68bd7cfb209394b13d7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/check_name_binding.py": "06430c7953d63c4f92dd1f75f07cb0164e550e954044e372ad876243cc7fb2ee",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/check_source_metadata.py": "b225b99b237d14bfad0312fac61892e9fabd5e36a228fdc86702b908c732e344",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/index.json": "8575f6a3a880e2c91dc77634ab325d6f4def724be2fa9f59b9fcc44abf3c5664",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/inputs-before.json": "07b1542e95c5ff1021e8ff24e51f24c1fabe82c47a4aa912f9f9dc05ae5ff978",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/name-binding-result.json": "a038857c1340958f0bb9629d0438d66a748e240c89726c049802dbd1c18078ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/receipt.json": "8d79994d9efcc3168c169c6c721358ea8c2eb076ea276b52c265cc1b56465f21",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/independent-admission-FAIL/source-metadata-result.json": "1a82a9d3667a224d0bc36c7a8fc8698bf53ef3587aa0095f42b434e7b4a2f38d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/prepare_source.py": "8550997304117f037aec31ff3ab103ae872bd9c1cab213e5519879a1ddbf3774",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/recipe.json": "bce0dae3ec04c9b9fb5fb119595a6783e7817004a4d27f6446cc0ad2d8ba6c56",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/review-line-number-addendum/CORRECTION.md": "ef384dfd74e71d17b39988ed39687edc49697727cd124dd2ed7b6ebb0671508e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/review-line-number-addendum/index.json": "2c350037928f227660bfe7d7fef0d79518e45b4e8ea1e5f737dc45261a0d605a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/review-line-number-addendum/receipt.json": "91ff5300800b19fc827ca565362eb059e73c3aed73092debc1f55e79e6ca520e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/source-index.json": "7e92b1e174c14b608af26e41ea502691defeee23cc93c946fc7147482deea2fd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/source-preparation.json": "4245f4f7fd9cb9154affd3c75f548759c0a493142e063ea7e8af7cf1d6eb69f3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/history-v6/verify_retained.py": "d947a19d82389f749124ab666d79f1c8ea8d92538f6ce68bd7cfb209394b13d7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/preparation-inputs-after.json": "d3407a83ff91f1b6aa413edcd3428e2cbe998c73d8d4c24b998f479f93ad758d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/preparation-inputs-before.json": "d3407a83ff91f1b6aa413edcd3428e2cbe998c73d8d4c24b998f479f93ad758d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/prepare_source.py": "6668e9ff22b0d548030f259413e691fab3b1189886f6dcce26e6787f8c23ca52",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/recipe.json": "d1eb40b4a697db482706df3b339ec82fdc735e271917314e55f1c52cda0996e0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/source-index.json": "0c0e2a0591ad17cca1e71eeed37aa77e69f2f054c25b8a42fdf8464ae36657ba",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/source-preparation.json": "6ee0c27ae9ef5c9242d916b97ddb63573b390243e6546ce90f86727520d95d4a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v7-held-20261009/verify_retained.py": "45d94de7879af22ee7c61436afb998bbdc459ca2947bcfa2428603ccfb98a00f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/PLAN.md": "16543f4f7f6ff7a97a479083d3d85c9740b645e910e04cab5889bf8043368930",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/pins-before.json": "dfc86541da18f0aedb5c1c569c97835c5a324037e63f5a4513dce768a3ef1e07",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/progress.json": "dfc0d00358029df21fe8ee6e7bfbaa335581ad89c3eb7063d7eedf44bd86b8f7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/receipt.json": "c0429e59fb2ebb9263545493325bd53648654b99e8c7ed021b9ec0cfde4c2c08",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/reconstructed.npz": "a380f20605f7d265052583f9f25cc0c10261494c807cf6b23d055323aa0ddb23",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/result.json": "352abcb70c3ec2fb272151a3c9f40cc69491361933127a6717ec298766a7cc70",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/tiny-bilinear-weighting-rounding.json": "3b3d95cd7c0f4b28ea1927b9ea9f5922b10e1067c6d179811889a78e5c47f96e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/tiny-derivative-product-rounding.json": "7fb6fcde91b3458a60f5b8d745c20ea5a06d1b4ddc913dc22dff4c08231ded01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/tiny-normalization-rounding.json": "e6a52613d0ab7e461241b391aa64f26270026bfd87436f3db9e968e76c7c2d16",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-angular_pair001/tiny-weak-product-rounding.json": "cac0a3ae86e98033c0aa37cf0f44479ca18821404f5b2b221559da81cbf48d34",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/pins-before.json": "dfc86541da18f0aedb5c1c569c97835c5a324037e63f5a4513dce768a3ef1e07",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/progress.json": "dfc0d00358029df21fe8ee6e7bfbaa335581ad89c3eb7063d7eedf44bd86b8f7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/receipt.json": "eb329c25070b60a2c5af44ea043bdad928777328cba5e71da170f0d372ba4343",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/reconstructed.npz": "a494e6974d7c0cc2837f6093fec88be3b1c9afc5cba24ef238fa27c0a2c112cc",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/result.json": "404988e471637fb088468fe0242f95dff8d1445b0eebfd70148c707ff27170ed",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/tiny-bilinear-weighting-rounding.json": "81ac59d5ea51bcfa664a4031e66526bfaf38c018ac423634bddf367d88792c08",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/tiny-derivative-product-rounding.json": "287540316a57f635aebd5913634e005d123e8f159febd0f556b77e3c48676728",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/tiny-normalization-rounding.json": "e6a52613d0ab7e461241b391aa64f26270026bfd87436f3db9e968e76c7c2d16",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-primary001/tiny-weak-product-rounding.json": "e310a44a74e57ad3e9ead98547b60554725839f6baa9b2b58bbbb744ca93981d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/failure.txt": "5cf7b6debeec33169b7b5dc66b88cbc76fd9d1423d5f22f0a13c31607ea11eb4",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/pins-before.json": "dfc86541da18f0aedb5c1c569c97835c5a324037e63f5a4513dce768a3ef1e07",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/progress.json": "ea250c5d77895bc7cc8a56fd72e4111c4f20f19ec198c2e70730af9dac106d4e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/receipt.json": "7e7bbb4cb92ec3c03b914832af76066995696bcb5d6c9afb7960dbe04c880eb8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/tiny-bilinear-weighting-rounding.json": "ba8d5f99e2823b6eda2c53949465b64e59a4d037f97ec352025e7de3c2388950",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/tiny-derivative-product-rounding.json": "4f43927723337d4cce4374a52e6aa29ddb42e671366fe43e22e39ca04127f76d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/tiny-normalization-rounding.json": "4f8534778cf44fdbc6ec9645c3448a8f11a7610734e18d31a5a2cd5b28d84cbb",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/tiny-weak-product-rounding.json": "8dcba0def15c345fc75c80e620b844c7a617f6015724cae667a4297f8f94b5fe",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/authorization-schema.json": "271dade811377f88aa541146e158d0e0c2657555ed0d8e44f69019f48d9fba22",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/PLAN.md": "7b7dc0f13cbf2d2a740de9231d59abcbc1587eebb9ffbc8dd32c269a1f02418a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/attempt001/pins-after.json": "870330650a6ee718d67a7a39b86bd0f60d36f758760f5ea23e5008f1437c4d5d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/attempt001/pins-before.json": "870330650a6ee718d67a7a39b86bd0f60d36f758760f5ea23e5008f1437c4d5d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/attempt001/receipt.json": "08e40e63e63c211f1f7d0a9c6f0734495d16e2f3a25a732f221a63c8a5bb9626",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/attempt001/result.json": "788670a99bdddfec2f54628e2248ca3f2f6473c84b60508f33ee1b90b1c6b1a9",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/authorization.json": "2f5da833342ef94328844f97677fc39f222537d0fad6ddd6cd627f24a0de0d51",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/index.json": "ca2395d7a1ca25e05ea4cd8e1db9ac92bedbb96deda2822dd07484c4fdf865df",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/invocation001/invocation.json": "92b655ed5cd0547c240d79cb650d04ce2926165949e557aecb164f827717218f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/invocation001/pins-after.json": "b80b1c9b778c7eaf8d34e39a61e393bf9557771438622374e84409d3412cc953",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/invocation001/pins-before.json": "b80b1c9b778c7eaf8d34e39a61e393bf9557771438622374e84409d3412cc953",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/invocation001/receipt.json": "d12cef68642e3129518f9a969a7a0fdf549e06bf11fe9f64a7e8d2fb3bcd801c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/invocation001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/invocation001/stdout.log": "08e40e63e63c211f1f7d0a9c6f0734495d16e2f3a25a732f221a63c8a5bb9626",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/launch_once.py": "81354b7086d0f5e38553b381b3423cc59f1bd531dfa1e3fda978261bca7e9f6f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/read_saved_stages.py": "76f235912bd7cedef2c563e54576f5a61b7b30794c7937dd35060e6814607365",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/recipe.json": "beb978d1e2249da34f48346633070399ea50117f160253d64f9f34977b10174e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/saved-stage-readback/source-pin.json": "23e5b5a8fc6c00b94294bad74d429d3f02c34d9ed30c0053738a04295a09fd7b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/weak-diagnostic/diagnose_weak.py": "2474a9f2fc7d57000acfd38407869bca222381eebc86fa7499ea45644ef42189",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/weak-diagnostic/diagnostic-attempt001/receipt.json": "d7f1cbadee885af7b3fbc16d46584aeb8767edf8e28890ad08a8934ee3e774d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/weak-diagnostic/diagnostic-attempt001/result.json": "5f0fd2781d7ffc8a784cc0d621b082451997aacf1b4734a442a6408f499e3ec6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/weak-diagnostic/outer-invocation001/receipt.json": "f39f3bc9eb4dc3af240b8a8417f258a112611574a4ef4337dbffadf17e98b706",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/weak-diagnostic/recipe.json": "576ecee90d31aa709ce2c44d815c63aa484588d3218c698fcce6635e8df52ece",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/evidence/weak-diagnostic/source-index.json": "e009255a85b49faa6c0caa34a2d28c78700068148df820afc9086e4e46134f0f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/fast_weighting.py": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/PLAN.md": "a4a78b197fb7e80e70d96e2429e2f07f4ded4cc13cc8f49632b4cdce06e1323b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/adapter-name-only.diff": "7f4dff3185f23bb19b12ba9b442518fd98b2eb29db664d7799405fdca73f7919",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/authorization-schema.json": "746fa477f51ec92869db3a436dc277b941b16d903a3789cdfbd907adf1e0af49",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/evidence/fast-v3-diagnostic-receipt.json": "cf76261810b1a08e3913651414f8d5a2b891f3c72fc24b01b3169b8c763f713d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/evidence/fast-v3-diagnostic-result.json": "94962b45c4e89afc35d674d362a22feeece3ee7ed891813aa7426359aa0f6c35",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/evidence/saved-stage-index.json": "bd198bd635103395787850738ba5e2bcb0b6f7c47b5e9a6fd1b04117187b30d8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/evidence/saved-stage-receipt.json": "83751318192559f86891f8f231c8bd059d6b78a36ca4a0bc82a9e855bf9690d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/evidence/saved-stage-report.json": "a420b6ce34ddcee650b622142de6afcfc7787117e1be686381dab4f56ee96bd6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/failed-primary001/failure.txt": "1e59d72491efcd77b9c732fae3d91d984fc68382931c83aa4bcc948822c8bc88",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/failed-primary001/pins-before.json": "0cdaec429a3630b9f092a4be5231a20eba322a8ea681b03071fc745e00ee3861",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/failed-primary001/progress.json": "f3e7ca32206fe69336c4adfff8b11e57afed7e8588e670b2541aa2ff9ccb40ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/failed-primary001/receipt.json": "e9757731331281bee2c4a71f473c0c7d8377c60d728eeadfc36914ec8c8b1684",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/failed-primary001/tiny-bilinear-weighting-rounding.json": "6ca00682fe342c7b269c214a34830e1cb5f054b4dc81aa8d5a63b4fd3591234d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/failed-primary001/tiny-derivative-product-rounding.json": "de7300e32df6c833f3e8bf074f1cb0b5067062af02e052d542ae9982ad1c4ed4",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/failed-primary001/tiny-normalization-rounding.json": "a3f74e154716f71dd26aef4b6fea2825241d5233e06fb7d1028cd47413e56061",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/fast_weighting.py": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/PLAN.md": "c8b009a066f5cc51e1a078db34bf42acf095b8c1191df524746a14262e9b5670",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/authorization-schema.json": "9c24a7bb8f5418f949a9c2cf6d4cdf06af52315ac1da9e75810e89c0738ece15",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/REVIEW.md": "ca957677c3cb8d1016a7f8222437f286098780e690a25290fd068e75d4103730",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/PLAN.md": "c8b009a066f5cc51e1a078db34bf42acf095b8c1191df524746a14262e9b5670",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/authorization-schema.json": "9c24a7bb8f5418f949a9c2cf6d4cdf06af52315ac1da9e75810e89c0738ece15",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/derivative-product-only.diff": "fc0683302dec307218f352cd8fd9648391f74286392807cbbf65b38710a952a6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/evidence/fast-v3-diagnostic-receipt.json": "cf76261810b1a08e3913651414f8d5a2b891f3c72fc24b01b3169b8c763f713d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/evidence/fast-v3-diagnostic-result.json": "94962b45c4e89afc35d674d362a22feeece3ee7ed891813aa7426359aa0f6c35",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/evidence/saved-stage-index.json": "bd198bd635103395787850738ba5e2bcb0b6f7c47b5e9a6fd1b04117187b30d8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/evidence/saved-stage-receipt.json": "83751318192559f86891f8f231c8bd059d6b78a36ca4a0bc82a9e855bf9690d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/evidence/saved-stage-report.json": "a420b6ce34ddcee650b622142de6afcfc7787117e1be686381dab4f56ee96bd6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/fast_weighting.py": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/PLAN.md": "4840f6166fa5f5ab0b9bb00a0bb63d4158bb68208ded9c3d86daf0a883c4dd8a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/failed-failure.txt": "d4ac029a27889289f0061a8674f8b32b0276dcce1d337ea3edc638f7b5453a5c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/failed-progress.json": "f3e7ca32206fe69336c4adfff8b11e57afed7e8588e670b2541aa2ff9ccb40ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/failed-receipt.json": "c4045b3d03287051f8e0c15ce918070a2feb039b2e8d39b2d2d278aff5ac3dad",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/failed-tiny-bilinear-weighting-rounding.json": "4774ebd0a56d64155a81de86faa50f72727362702f6c8612c18ec09acc6c449f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/failed-tiny-normalization-rounding.json": "d074662eba8ff58d1eaa08f92537245fe9c565c16644da63c7a17cae26e984f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/prepare_source-initial-unexecuted.py": "c30b8350fd881d7cf6d2d6631f3df23ead0d7727c4306ab3e37f1e049f8c6217",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/recipe.json": "6c68e88fbeffc3b37eb5c1fcaaa650bfcd33aa085e5d0a04696758d9eedcbe4e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/source-index.json": "cdeb3784c6017df1251000374439c640633a77f182a929ce491c4f07cc65c475",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/history-v5/verify_retained.py": "556dfd815f8a8dc2b3f7afc5d1e294c429bc01fe06a130fc2008a84d09e2a40f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/preparation-history.json": "2a5bcba1f4d55793dc1edb19b1c6d60d3301ce4ce9dbcc16eb0da367a07054f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/preparation-inputs-after.json": "373ec4c46b16aac473412ce641161be7abc326348ef714ce14d6ab581741291c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/preparation-inputs-before.json": "373ec4c46b16aac473412ce641161be7abc326348ef714ce14d6ab581741291c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/preparation-pending.json": "2a34b78339b3b2b2f0864f328df3e1d72d7bc09ac4324b919335597d23f4100d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/prepare_source.py": "8550997304117f037aec31ff3ab103ae872bd9c1cab213e5519879a1ddbf3774",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/recipe.json": "bce0dae3ec04c9b9fb5fb119595a6783e7817004a4d27f6446cc0ad2d8ba6c56",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/source-index.json": "7e92b1e174c14b608af26e41ea502691defeee23cc93c946fc7147482deea2fd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/source-preparation.json": "4245f4f7fd9cb9154affd3c75f548759c0a493142e063ea7e8af7cf1d6eb69f3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/captured/verify_retained.py": "d947a19d82389f749124ab666d79f1c8ea8d92538f6ce68bd7cfb209394b13d7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/check_name_binding.py": "06430c7953d63c4f92dd1f75f07cb0164e550e954044e372ad876243cc7fb2ee",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/check_source_metadata.py": "b225b99b237d14bfad0312fac61892e9fabd5e36a228fdc86702b908c732e344",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/index.json": "8575f6a3a880e2c91dc77634ab325d6f4def724be2fa9f59b9fcc44abf3c5664",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/inputs-before.json": "07b1542e95c5ff1021e8ff24e51f24c1fabe82c47a4aa912f9f9dc05ae5ff978",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/name-binding-result.json": "a038857c1340958f0bb9629d0438d66a748e240c89726c049802dbd1c18078ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/receipt.json": "8d79994d9efcc3168c169c6c721358ea8c2eb076ea276b52c265cc1b56465f21",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/independent-admission-FAIL/source-metadata-result.json": "1a82a9d3667a224d0bc36c7a8fc8698bf53ef3587aa0095f42b434e7b4a2f38d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/prepare_source.py": "8550997304117f037aec31ff3ab103ae872bd9c1cab213e5519879a1ddbf3774",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/recipe.json": "bce0dae3ec04c9b9fb5fb119595a6783e7817004a4d27f6446cc0ad2d8ba6c56",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/review-line-number-addendum/CORRECTION.md": "ef384dfd74e71d17b39988ed39687edc49697727cd124dd2ed7b6ebb0671508e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/review-line-number-addendum/index.json": "2c350037928f227660bfe7d7fef0d79518e45b4e8ea1e5f737dc45261a0d605a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/review-line-number-addendum/receipt.json": "91ff5300800b19fc827ca565362eb059e73c3aed73092debc1f55e79e6ca520e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/source-index.json": "7e92b1e174c14b608af26e41ea502691defeee23cc93c946fc7147482deea2fd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/source-preparation.json": "4245f4f7fd9cb9154affd3c75f548759c0a493142e063ea7e8af7cf1d6eb69f3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/history-v6/verify_retained.py": "d947a19d82389f749124ab666d79f1c8ea8d92538f6ce68bd7cfb209394b13d7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/preparation-inputs-after.json": "d3407a83ff91f1b6aa413edcd3428e2cbe998c73d8d4c24b998f479f93ad758d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/preparation-inputs-before.json": "d3407a83ff91f1b6aa413edcd3428e2cbe998c73d8d4c24b998f479f93ad758d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/prepare_source.py": "6668e9ff22b0d548030f259413e691fab3b1189886f6dcce26e6787f8c23ca52",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/recipe.json": "d1eb40b4a697db482706df3b339ec82fdc735e271917314e55f1c52cda0996e0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/source-index.json": "0c0e2a0591ad17cca1e71eeed37aa77e69f2f054c25b8a42fdf8464ae36657ba",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/source-preparation.json": "6ee0c27ae9ef5c9242d916b97ddb63573b390243e6546ce90f86727520d95d4a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/history-v7/verify_retained.py": "45d94de7879af22ee7c61436afb998bbdc459ca2947bcfa2428603ccfb98a00f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/preparation-inputs-after.json": "74e88c751888b24b11fbd417c297b68f60d80c1c286a1e655245bfb64d27c6a8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/preparation-inputs-before.json": "74e88c751888b24b11fbd417c297b68f60d80c1c286a1e655245bfb64d27c6a8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/prepare_source.py": "794df36976a82808200f414c0b176804997b09f5a70c2040eaf876dd0b6baa99",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/recipe.json": "07c34b90b1ba269e5fd39020eea11ce06d96185cbcf5f40c99b914cac15e50a6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/single-weak-product-and-audit.diff": "94803012c6f58ebf7d0d19acde1b808660c44fcfc30b1c4088e72ce56107261b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/source-index.json": "327b99f7fbad0017bc5392da6bd268c50575af1f959367b39ee98f38ffaf28a4",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/source-preparation.json": "ac7a5133fae0fddadd9e6189590caf2a0b91c28663303cea8fcf5b97c58feb41",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/verify_retained.py": "1a0b00a9a89ca6d1bce1829ac83de6778cfb1b7d582e7a066362fe0d30b59505",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-normalization-correction-independent-review-20261009/attempts/unit001/receipt.json": "76e9fdf4130bed732b9e4e982adda5256a8db143ff8c2ece8090f01a125505f6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-normalization-correction-independent-review-20261009/unit-recipe.json": "24bdbf0af36a936aa8de2af047b0b31c1feb5b9dddff0bb7b7672a1bba6ce494",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-normalization-correction-independent-review-20261009/unit-source-index.json": "cb6dcb385f606ec1af35a4bbbafc6b6330ced1e13c86d24be29de66f111a55b1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/PLAN.md": "605e7b8a6e1bb39cd014469c924c1effb5bde6036fcc8839b7eef215349fa9f8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/REPORT.md": "e13b2707411ccf64e8223deff783876c13522d4e7c441d230af9b8293b6a3254",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/completed-index.json": "a3da41804ed23a64ce58dc61cc7e3f7eb8719930cd559635f66bc732841e65e5",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/diagnose.py": "0a09fa90dafff9f065ee625f88a34986714f3679057bd753b36455958bf696c0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/diagnostic-attempt001/pins-after.json": "4458c75adfbe815147414d715262b45edccb497c119f8db8c20d9305195fbbf0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/diagnostic-attempt001/pins-before.json": "4458c75adfbe815147414d715262b45edccb497c119f8db8c20d9305195fbbf0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/diagnostic-attempt001/receipt.json": "3dab5bf83e083b85e8c22d820d729d022675d7d3e307f53ec7694ab6711a2586",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/diagnostic-attempt001/result.json": "6edc65ca6ad0ee575ef15f1acd596810ae2693c757d733bc2da00e92bcdc93be",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/outer-invocation001/receipt.json": "8a67fb20636c39e01cf304a13a501e91609e8869cd3dff6d2f9fb1bf63730dbc",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/outer-invocation001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/outer-invocation001/stdout.log": "57b36f48661bd281e8ad84c541c2bcccb68f1f4316c65b92820c405fc1226b65",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/recipe.json": "03696f30abd8b232b518395458c2618baa0730eae771f8bf9b46798315b3e2c8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v4-norm-diagnostic-20261009/source-index.json": "dd2faaa50da4ce010cf74b115337394bc36bbb3ce0b68a653cacf41f9ffc084b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/AUTHORIZATION-SCHEMA.json": "945fb4b19d32c85a9dda2c997255d548db9b372e592cc96870ab8c7a48d8eb44",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/PLAN.md": "6ea09c95311bd6f6d7e44e1cf3522bb5b2a5e23c3ba5151090531a230bebcb6c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/diagnose_derivatives.py": "837244a93d86b00c2ca86c891b5ecf0197fd1f819b9e5da8bc41d34eecdce6aa",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/diagnostic-attempt001/pins-after.json": "3d3d7b64378035d220da6a406c68efefbefb70d86d80b622da2c330a43dc5f95",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/diagnostic-attempt001/pins-before.json": "3d3d7b64378035d220da6a406c68efefbefb70d86d80b622da2c330a43dc5f95",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/diagnostic-attempt001/receipt.json": "cf76261810b1a08e3913651414f8d5a2b891f3c72fc24b01b3169b8c763f713d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/diagnostic-attempt001/result.json": "94962b45c4e89afc35d674d362a22feeece3ee7ed891813aa7426359aa0f6c35",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/exact_rounding.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/fast-v3.diff": "d326a4707ed3919f11cb233944621e1aa772cf64cb15199e36632923bae62e65",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/history-v2/AUTHORIZATION-SCHEMA.json": "2f7dd6fff1790c0fd9086f7ba6422fa6bc611a00622f3716ebab5cc4d5cef35b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/history-v2/PLAN.md": "b18bc96e3bb95eaf75755969ef6d9c55223417c5890c9ec3e316cc8990f78895",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/history-v2/diagnose_derivatives.py": "39b5292dbfda356c4fcfb016f7686fdd9639fd5e16be2acaeb54a16ad4da0dd1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/history-v2/launch_once.py": "c4ba9b3f66939bf7fda08f1cdc4b18927d587271d5b776cd21dd805da933789c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/history-v2/recipe.json": "d4d7d0da340302649662dd6c6ad8dde1f08761decbac12a16c5eadc55e099f34",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/history-v2/source-index.json": "20621aa1d8729d1c93a25c57d797c8686cec9572283b91d0c55140df52812bf4",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/launch_once.py": "c4ba9b3f66939bf7fda08f1cdc4b18927d587271d5b776cd21dd805da933789c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/preparation-history.json": "d4800eb8442b34e98ff5798dfa35dea4498178c652cb7bad0c8c57dbb27d3da0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/recipe.json": "a932141176e90f43682c3f62f455d6d35d08994d0e9726908ac75f7094f130f3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-derivative-arithmetic-diagnostic-fast-v3-held-20261009/source-index.json": "3a5ee02109aa33490f08085f14345efdf8963c1a3cc293d82563b02b2e3c7dcd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/PLAN.md": "16d183e58578b240ffb71a0569d85ae55a1979246ae13ce5affb81086785f7a7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/REPORT.md": "4d248d8c9b9cfca5e54ec3be0045f12c1e4dc3c8d53d821202803e9c1353c1f3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/completed-index.json": "49e96bfcf7ce5a5552a56093f06c76e2267391f5704e596cb2531b88cf851a6d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/diagnose_columns.py": "ea767036efc1c65f31a7c1f40f0a3959a69d5bb3df6bf7389b750973bf5701a6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/diagnostic-attempt001/pins-after.json": "e56799ee37bedbfe12cad194d140e640283699a8d417fd149d276fc24d3fb925",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/diagnostic-attempt001/pins-before.json": "e56799ee37bedbfe12cad194d140e640283699a8d417fd149d276fc24d3fb925",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/diagnostic-attempt001/receipt.json": "2e9e22be4f3c04efce678acae0a23a2be265cde06d55f048e89bbb2913ba3cfd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/diagnostic-attempt001/result.json": "7dad1e9e8d84b23aa585925d8ee57829fc64ec96806176f47ff3d93c311e3d92",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/history/summary-reader-failure.json": "818d51eff6d0438bc69a3ff7519d130e16c35b63419e915f4ee7b7c7c9fea490",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/outer-invocation001/receipt.json": "fbd7217d0d53fc059e0237808fa3fe49ec913b2c57c408013313a1c8bc420e7b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/outer-invocation001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/outer-invocation001/stdout.log": "226fc9bd17efa8c8c718ad69024c45ac00508f83cd7154a0273400554c100803",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/recipe.json": "7eb66dff26017d91e9086ba5d875de43cc668bd55c885cab851fc924a12e7b6d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v5-full-column-diagnostic-20261009/source-index.json": "1ac5c629c333340a58066c3d6d31e3eab66f740211b510328777f7075b574662",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/diagnose_weak.py": "2474a9f2fc7d57000acfd38407869bca222381eebc86fa7499ea45644ef42189",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/diagnostic-attempt001/receipt.json": "d7f1cbadee885af7b3fbc16d46584aeb8767edf8e28890ad08a8934ee3e774d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/diagnostic-attempt001/result.json": "5f0fd2781d7ffc8a784cc0d621b082451997aacf1b4734a442a6408f499e3ec6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/diagnostic-attempt001/stages.jsonl": "14861453b7330d5988c782001133bc50e2a8a9b2ffe60af35c39a812d5ecc7c3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/outer-invocation001/receipt.json": "f39f3bc9eb4dc3af240b8a8417f258a112611574a4ef4337dbffadf17e98b706",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/recipe.json": "576ecee90d31aa709ce2c44d815c63aa484588d3218c698fcce6635e8df52ece",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/source-index.json": "e009255a85b49faa6c0caa34a2d28c78700068148df820afc9086e4e46134f0f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/REPORT.md": "5eccbc39518e6df51a016588c614fd3630e966aa9852279072dd1cd4a73d63b6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/attempt001/pins-before.json": "0ec4b14279d4c798e63f1d228fc8ee43a1ac98e0c3369fb9a0f2e05c3c26c8fa",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/attempt001/receipt.json": "393879e90ce5f6a7a10c286c1bfbc44f9d7ebb60ae9eeb500ca184f9e590d161",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/attempt001/summary.json": "344cb7fc23e2d24defeec4da8d50176f0b8b92bf996843a08807b639a6ed82ca",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/history.json": "acf1d345d6172b3dd7b493870cc017b2089b6ac0de8b0c891857cee4bdb7697f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/index.json": "febfec1c0d865ffc5dedf615f8c2d00233a586e8083df0f3230307da1a156f42",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/recipe.json": "4a0f34e4ffafa9a9a7dabf8222b1166c73789308bcfe5e1c5a85898511dc0678",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/review_saved.py": "aeb51e951ddb92cadc972494ee71997ab02a46f407967cbb7de6aa8e03f08674",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/source-before-execution.json": "44c65a87750cdb7a8ca870697dcfae677a1329044d9d7bc577b284a45b886b3d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/source-before.json": "3100ba3b8263734de96027f2f6fbff303c2630f10d4afd811653e093209f7032",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/stdout": "ea7c9464bf11d36e0a40d84ef26e225c914593d1c14edf76ce54aaf0df1827dc",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/total-j-finite-rb-control-20261009/J0-segmented-Q64-sector-readback001/operator.npz": "8b4b9a5b33151d86359aa9e35f0ae44dc436ef4ab2d6c17796e77983f9422a27",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/CORRECTION.md": "b1cc8e2f52380d87d699c476732b5a0b6dee99969ba9a40531302504d7760650",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/PLAN.md": "5a3f7097f2bacdbe012c25ee922d1e9c26fffa5dc159b9fba83d153d8b0e947a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/REPORT.md": "26f41fd663f863676880496d4a9dd448cbddfaa3e765336b98200007a317b53f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/attempt001/pins-after.json": "fea7775f64f7f1d2c4d27e3a67dff76534723c2287b64afe1209370b37968c2b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/attempt001/pins-before.json": "fea7775f64f7f1d2c4d27e3a67dff76534723c2287b64afe1209370b37968c2b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/attempt001/receipt.json": "83751318192559f86891f8f231c8bd059d6b78a36ca4a0bc82a9e855bf9690d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/attempt001/report.json": "a420b6ce34ddcee650b622142de6afcfc7787117e1be686381dab4f56ee96bd6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/checker-v1-to-v2.diff": "d190a6c5cfe97cffec0133398b0e93563f660d63417af7b9669762196647ae48",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/index.json": "bd198bd635103395787850738ba5e2bcb0b6f7c47b5e9a6fd1b04117187b30d8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/invocation001/invocation.json": "89537a24df06d55590dab120b18d01764d2c24fb07fca1bf2d6d68851d16fff9",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/invocation001/receipt.json": "0ca165057d84021365fa9df75446c1d343ed38bbbd70ea4d8aba85a859acd991",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/invocation001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/invocation001/stdout.log": "6174d55e1b6f83b9b879f15a7620eacaa77126186c3a0184ff95dc687d830fca",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/read_saved_stages.py": "77eb37b32f1febef3e71189381a028e76d05a8949f4ff18073f2b4f72c7f79cf",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/run_readback_once.py": "3be8910d0f7769fa3d60b4146c45bb65bba1c794b589db0a757860912baccfb2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/v5-derivative-fast-v3-saved-readback-v2-20261009/source-index.json": "00290200d5266eb0ee0dd16c1629d4dfe10f91362e2b360aeb9e0dff68a7c097",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009-line-number-addendum/CORRECTION.md": "ef384dfd74e71d17b39988ed39687edc49697727cd124dd2ed7b6ebb0671508e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009-line-number-addendum/index.json": "2c350037928f227660bfe7d7fef0d79518e45b4e8ea1e5f737dc45261a0d605a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009-line-number-addendum/receipt.json": "91ff5300800b19fc827ca565362eb059e73c3aed73092debc1f55e79e6ca520e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/REVIEW.md": "ca957677c3cb8d1016a7f8222437f286098780e690a25290fd068e75d4103730",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/PLAN.md": "c8b009a066f5cc51e1a078db34bf42acf095b8c1191df524746a14262e9b5670",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/authorization-schema.json": "9c24a7bb8f5418f949a9c2cf6d4cdf06af52315ac1da9e75810e89c0738ece15",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/derivative-product-only.diff": "fc0683302dec307218f352cd8fd9648391f74286392807cbbf65b38710a952a6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/evidence/fast-v3-diagnostic-receipt.json": "cf76261810b1a08e3913651414f8d5a2b891f3c72fc24b01b3169b8c763f713d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/evidence/fast-v3-diagnostic-result.json": "94962b45c4e89afc35d674d362a22feeece3ee7ed891813aa7426359aa0f6c35",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/evidence/saved-stage-index.json": "bd198bd635103395787850738ba5e2bcb0b6f7c47b5e9a6fd1b04117187b30d8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/evidence/saved-stage-receipt.json": "83751318192559f86891f8f231c8bd059d6b78a36ca4a0bc82a9e855bf9690d1",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/evidence/saved-stage-report.json": "a420b6ce34ddcee650b622142de6afcfc7787117e1be686381dab4f56ee96bd6",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/fast_weighting.py": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/PLAN.md": "4840f6166fa5f5ab0b9bb00a0bb63d4158bb68208ded9c3d86daf0a883c4dd8a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/failed-failure.txt": "d4ac029a27889289f0061a8674f8b32b0276dcce1d337ea3edc638f7b5453a5c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/failed-progress.json": "f3e7ca32206fe69336c4adfff8b11e57afed7e8588e670b2541aa2ff9ccb40ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/failed-receipt.json": "c4045b3d03287051f8e0c15ce918070a2feb039b2e8d39b2d2d278aff5ac3dad",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/failed-tiny-bilinear-weighting-rounding.json": "4774ebd0a56d64155a81de86faa50f72727362702f6c8612c18ec09acc6c449f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/failed-tiny-normalization-rounding.json": "d074662eba8ff58d1eaa08f92537245fe9c565c16644da63c7a17cae26e984f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/prepare_source-initial-unexecuted.py": "c30b8350fd881d7cf6d2d6631f3df23ead0d7727c4306ab3e37f1e049f8c6217",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/recipe.json": "6c68e88fbeffc3b37eb5c1fcaaa650bfcd33aa085e5d0a04696758d9eedcbe4e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/source-index.json": "cdeb3784c6017df1251000374439c640633a77f182a929ce491c4f07cc65c475",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/history-v5/verify_retained.py": "556dfd815f8a8dc2b3f7afc5d1e294c429bc01fe06a130fc2008a84d09e2a40f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/preparation-history.json": "2a5bcba1f4d55793dc1edb19b1c6d60d3301ce4ce9dbcc16eb0da367a07054f2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/preparation-inputs-after.json": "373ec4c46b16aac473412ce641161be7abc326348ef714ce14d6ab581741291c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/preparation-inputs-before.json": "373ec4c46b16aac473412ce641161be7abc326348ef714ce14d6ab581741291c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/preparation-pending.json": "2a34b78339b3b2b2f0864f328df3e1d72d7bc09ac4324b919335597d23f4100d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/prepare_source.py": "8550997304117f037aec31ff3ab103ae872bd9c1cab213e5519879a1ddbf3774",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/recipe.json": "bce0dae3ec04c9b9fb5fb119595a6783e7817004a4d27f6446cc0ad2d8ba6c56",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/source-index.json": "7e92b1e174c14b608af26e41ea502691defeee23cc93c946fc7147482deea2fd",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/source-preparation.json": "4245f4f7fd9cb9154affd3c75f548759c0a493142e063ea7e8af7cf1d6eb69f3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/captured/verify_retained.py": "d947a19d82389f749124ab666d79f1c8ea8d92538f6ce68bd7cfb209394b13d7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/check_name_binding.py": "06430c7953d63c4f92dd1f75f07cb0164e550e954044e372ad876243cc7fb2ee",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/check_source_metadata.py": "b225b99b237d14bfad0312fac61892e9fabd5e36a228fdc86702b908c732e344",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/index.json": "8575f6a3a880e2c91dc77634ab325d6f4def724be2fa9f59b9fcc44abf3c5664",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/inputs-before.json": "07b1542e95c5ff1021e8ff24e51f24c1fabe82c47a4aa912f9f9dc05ae5ff978",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/name-binding-result.json": "a038857c1340958f0bb9629d0438d66a748e240c89726c049802dbd1c18078ff",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/receipt.json": "8d79994d9efcc3168c169c6c721358ea8c2eb076ea276b52c265cc1b56465f21",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-bulk008-v6-independent-source-review-20261009/source-metadata-result.json": "1a82a9d3667a224d0bc36c7a8fc8698bf53ef3587aa0095f42b434e7b4a2f38d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/PLAN.md": "7b7dc0f13cbf2d2a740de9231d59abcbc1587eebb9ffbc8dd32c269a1f02418a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/attempt001/pins-after.json": "870330650a6ee718d67a7a39b86bd0f60d36f758760f5ea23e5008f1437c4d5d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/attempt001/pins-before.json": "870330650a6ee718d67a7a39b86bd0f60d36f758760f5ea23e5008f1437c4d5d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/attempt001/receipt.json": "08e40e63e63c211f1f7d0a9c6f0734495d16e2f3a25a732f221a63c8a5bb9626",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/attempt001/result.json": "788670a99bdddfec2f54628e2248ca3f2f6473c84b60508f33ee1b90b1c6b1a9",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/authorization.json": "2f5da833342ef94328844f97677fc39f222537d0fad6ddd6cd627f24a0de0d51",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/index.json": "ca2395d7a1ca25e05ea4cd8e1db9ac92bedbb96deda2822dd07484c4fdf865df",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/invocation001/invocation.json": "92b655ed5cd0547c240d79cb650d04ce2926165949e557aecb164f827717218f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/invocation001/pins-after.json": "b80b1c9b778c7eaf8d34e39a61e393bf9557771438622374e84409d3412cc953",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/invocation001/pins-before.json": "b80b1c9b778c7eaf8d34e39a61e393bf9557771438622374e84409d3412cc953",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/invocation001/receipt.json": "d12cef68642e3129518f9a969a7a0fdf549e06bf11fe9f64a7e8d2fb3bcd801c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/invocation001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/invocation001/stdout.log": "08e40e63e63c211f1f7d0a9c6f0734495d16e2f3a25a732f221a63c8a5bb9626",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/launch_once.py": "81354b7086d0f5e38553b381b3423cc59f1bd531dfa1e3fda978261bca7e9f6f",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/read_saved_stages.py": "76f235912bd7cedef2c563e54576f5a61b7b30794c7937dd35060e6814607365",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/recipe.json": "beb978d1e2249da34f48346633070399ea50117f160253d64f9f34977b10174e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/source-pin.json": "23e5b5a8fc6c00b94294bad74d429d3f02c34d9ed30c0053738a04295a09fd7b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/PLAN.md": "e675dd5706158da0787459be09f365afca2483fe93cb1571253e06ff675b1e5d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/attempts/diagnostic001/receipt.json": "10901fa4a997c77c88f320b8e31ca69781ad5ec19b8903f37de762190655607e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/attempts/diagnostic001/result.json": "148fc20dbcab576e8364d5376ec1d113026c93435165f8b4a774074b87bd6c3c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/authorization-schema.json": "58fbe74cb6e486a0d726a3cab45635f6b3741261ee398275f6e87f297b019978",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/column_norm.py": "f768c26318712035452c6d45d5a9fd88b5c147a16161b9ac671317ebf9bf0f01",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/diagnose_division.py": "16132ae361bfbe654a969ca95859ffcc96377487221dd111ad8932563b4a40c9",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/failed-v8/failure.txt": "5cf7b6debeec33169b7b5dc66b88cbc76fd9d1423d5f22f0a13c31607ea11eb4",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/failed-v8/pins-before.json": "dfc86541da18f0aedb5c1c569c97835c5a324037e63f5a4513dce768a3ef1e07",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/failed-v8/progress.json": "ea250c5d77895bc7cc8a56fd72e4111c4f20f19ec198c2e70730af9dac106d4e",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/failed-v8/receipt.json": "7e7bbb4cb92ec3c03b914832af76066995696bcb5d6c9afb7960dbe04c880eb8",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/failed-v8/tiny-bilinear-weighting-rounding.json": "ba8d5f99e2823b6eda2c53949465b64e59a4d037f97ec352025e7de3c2388950",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/failed-v8/tiny-derivative-product-rounding.json": "4f43927723337d4cce4374a52e6aa29ddb42e671366fe43e22e39ca04127f76d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/failed-v8/tiny-normalization-rounding.json": "4f8534778cf44fdbc6ec9645c3448a8f11a7610734e18d31a5a2cd5b28d84cbb",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/failed-v8/tiny-weak-product-rounding.json": "8dcba0def15c345fc75c80e620b844c7a617f6015724cae667a4297f8f94b5fe",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/input-pins.json": "bba16d1449ff4453da59d12504acfab40414abac760e4ef64e398de24ce332c7",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/prepare_metadata.py": "05e8329ed9a6be4b886332d3edb80439ecbbfe4beabecc9fe02650e8a89edadb",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/recipe.json": "9c30c66c237f481e87a52147236b8dbce5f115de42a2dd21f0b734dabf79125c",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/run_once.py": "5b92e7778d88b4414b630701330271f32146a92885ddbee0dccea135708ce251",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/saved-metadata-before-reading.json": "e85e1434ccb58ebb9598b2a0d577b9440adebbf74b36b2fa4ee9b271d25912a9",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/source-index.json": "27e7295b9d1265ebb6706c035732da73f0235cd054f7d1fabf1ef23a8b32933b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/source-preparation.json": "42ea8fcb059f25c303cd2cd8aa378217ca1327dc20b5e0974d2d7144382408b0",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/tiny_normalization.py": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/authorization.json": "8f70c63fe37507f4bebe9f73a7b7772328c92efde4988ae48423f18ca595d529",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/launch.py": "45da91c04f4160ab5b29c59f31973bcb4b86f374a27cbb032a3442b91d9f462a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/launcher-rebinding-only.diff": "4c10787e2523f1447c66bc485c54328c63209a5a698a50927692fb2350f1de66",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/prepare_release001.py": "fb2311ec52bbac8a4209e578f7021a05584e2f837726ab72a2f45213504bb19d",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/primary-invocation001/before.json": "60afe130edaa9db9a11f6916c4fc20922c212eb31027ce26a70a0734ad9c6901",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/primary-invocation001/receipt.json": "596bd6be7b7d413a72d118295bd5f8829a5417cf210c90e4f9a0df65d661160b",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/primary-invocation001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/primary-invocation001/stdout.log": "a0fe7d80f434107423d5eba0cbc544857c976ce1da616ff0c46d828affe55cf5",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v5-root-release-20261009/review.json": "15d59814f939f19dd42b15cc58435202d78a7ed804a0ff2a815124471d252067",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/authorization.json": "bd66b5fa8b7d251c2b2e7200f82192c5274e1b8380c4ad13071675d660c19c50",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/failed-preparation001.json": "5198e1713a62e5ee98f19ba6a0c0dff3011fb91d2517c4f3a8b46b4e43f44c54",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/invocation001/invocation.json": "efe574c420e2eb5e73ba84377f67a6dc150e76aa60cfa479c6f2f0aef6da1489",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/invocation001/pins-before.json": "d73512d3b52dacd878110f405ac2ac8d8a31699517cf474fecbc4757d7f30311",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/invocation001/receipt.json": "a5c6368a388061d23ea4eb0d1b5658400cb5a13dd60a8a979f802356e96f40d3",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/invocation001/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/invocation001/stdout.log": "b2bc0aa50ea08a8b1b42073761efa2d3ad9533d917a2c17dd072ab53cefb338a",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/launch.py": "af1da42c6af5d880dda9ab5ebdd2ca126cd449a17c429520c56aab9a35018846",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/prepare_release001.py": "1ba34d6997d6919f3544cff890e1e1773201310bb98a0592c8c460c49d395632",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/prepare_release002.py": "53e6425651c08d05a208201c0370f435347eeff532a312ba3b2bf8a5bb92cff2",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/release.json": "afac1416050555712df44da9dbc8d0590411f3aa460699aef5a11598ad724935",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v5-derivative-diagnostic-fast-v3-root-release-20261009/source-review001.json": "bffc38b0afab251754ae2e2a3edc05b2e2908a3c7d7c69897d375dcf29e5084f"
+  },
+  "producer_input_manifest_expansion": "Before scientific imports the verifier expands all owner-index files and external_inputs",
+  "python": "/Library/Developer/CommandLineTools/usr/bin/python3",
+  "readiness": "SOURCE-ONLY filesystem/hash/JSON preparation; no AST parse, import, syntax check, array payload load or execution",
+  "remaining_limits": [
+    "No raw second-configuration/first-momentum export to reconstruct all50 map entries",
+    "Point source tables and50 maps retain producer dependencies and qualification",
+    "Independent source, basis/normal/measure algebra and contraction order; same BLAS runtime",
+    "Owner32 integrated-array pair report is pinned; independent reconstruction runs compare each control",
+    "All failures remain failed; no finite-matrix or continuum/native/BH stability admission",
+    "Bilinear weighting has a separate local rounding audit; original dgemm and all outside arithmetic remain strict and can fail",
+    "Local fallback error sum is not a global matrix or solve error certificate",
+    "Array-wide possible-tiny classification introduces Python loop overhead; v3 runtime is unmeasured",
+    "Whole-array minima proof has vectorized scans and temporary arrays; v4 runtime unmeasured",
+    "Arrays with any possible tiny cross pair delegate per-entry unchanged, even if actual tiny operands do not overlap",
+    "Only primary derivative products were diagnosed; paired-grid arithmetic is not pre-certified.",
+    "No changes to unmeasured c*udt or other normalization-style products.",
+    "Three fresh independent readbacks required before any separate generator admission."
+  ],
+  "retained_basis_division_correction": {
+    "affected_site": "flat/col in original SVD argument ONLY",
+    "audit": "tiny-retained-basis-division-rounding.json",
+    "diagnostic_index": {
+      "bytes": 5655,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/source-index.json",
+      "sha256": "27e7295b9d1265ebb6706c035732da73f0235cd054f7d1fabf1ef23a8b32933b"
+    },
+    "diagnostic_receipt": {
+      "bytes": 392,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/attempts/diagnostic001/receipt.json",
+      "sha256": "10901fa4a997c77c88f320b8e31ca69781ad5ec19b8903f37de762190655607e"
+    },
+    "diagnostic_result": {
+      "bytes": 175342,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v8-radial-division-diagnostic-held-20261009/attempts/diagnostic001/result.json",
+      "sha256": "148fc20dbcab576e8364d5376ec1d113026c93435165f8b4a774074b87bd6c3c"
+    },
+    "helper": {
+      "bytes": 9172,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/tiny_normalization.py",
+      "sha256": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272"
+    },
+    "independent_review_index": {
+      "bytes": 3260,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v8-division-independent-review-v2-20261009/index.json",
+      "sha256": "febfec1c0d865ffc5dedf615f8c2d00233a586e8083df0f3230307da1a156f42"
+    },
+    "measured": "84 inexact nonzero subnormal quotients at radial ir627 only; no other flags in609..640",
+    "new_object": "basis_division_arithmetic; one AST Store, no loop shadowing",
+    "unchanged": "column norm, SVD, conditioning definition, contractions, all scientific grids and thresholds"
+  },
+  "scientific_execution": false,
+  "scope": "Independent saved point/coefficient reconstruction; no query, generator spectrum or propagation",
+  "source_only": true,
+  "status": "HELD v9 only measured retained-basis flat/col quotient uses unchanged exact helper; root review/release required",
+  "weak_product_correction": {
+    "affected_site": "div*hy[:,qidx] ONLY",
+    "audit": "tiny-weak-product-rounding.json",
+    "diagnostic_index": {
+      "bytes": 32206,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/source-index.json",
+      "sha256": "e009255a85b49faa6c0caa34a2d28c78700068148df820afc9086e4e46134f0f"
+    },
+    "diagnostic_result": {
+      "bytes": 7419,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v7-weak-arithmetic-diagnostic-v2-prepared-held-20261009/diagnostic-attempt001/result.json",
+      "sha256": "5f0fd2781d7ffc8a784cc0d621b082451997aacf1b4734a442a6408f499e3ec6"
+    },
+    "helper": {
+      "bytes": 3318,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/fast_weighting.py",
+      "sha256": "5781ed73f9da31e0be3164e141125ad7b0d436333ecacee1ecbc124cf61ab095"
+    },
+    "independent_saved_readback_index": {
+      "bytes": 5083,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/reference-wave-map-v7-weak-saved-readback-20261009/index.json",
+      "sha256": "ca2395d7a1ca25e05ea4cd8e1db9ac92bedbb96deda2822dd07484c4fdf865df"
+    },
+    "new_object": "weak_arithmetic; never reused as a loop variable",
+    "observed": "one primary flag ir313;422 inexact tiny rounded subnormals/141 unique pairs",
+    "source": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/verify_retained.py",
+    "unchanged_fallback": {
+      "bytes": 9172,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/tiny_normalization.py",
+      "sha256": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272"
+    },
+    "unmodified": "measure product, all additions, derivatives, einsums, BLAS, reductions, gates/tolerances"
+  },
+  "weighting_rounding_prerequisite": {
+    "helper_sha256": "d27a49639ffc20de508e8b72bf63cfea68b6a703fdcd130f25c8689291a59272",
+    "receipt": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-normalization-correction-independent-review-20261009/attempts/unit001/receipt.json",
+    "receipt_sha256": "76e9fdf4130bed732b9e4e982adda5256a8db143ff8c2ece8090f01a125505f6",
+    "recipe": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-normalization-correction-independent-review-20261009/unit-recipe.json",
+    "recipe_sha256": "24bdbf0af36a936aa8de2af047b0b31c1feb5b9dddff0bb7b7672a1bba6ce494",
+    "scope": "Same copied helper byte-exact, prior unit gate only; no v3 scientific execution yet",
+    "unit_cases": 96
+  }
+}

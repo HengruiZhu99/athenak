@@ -1,0 +1,11 @@
+{
+  "mechanical_capture_only_failure": true,
+  "target_rerun": false,
+  "reason": "supplied outer c774 hash was initially checked against enclosing root units-invocation001 receipt instead of units-outer001 receipt",
+  "before_capture_content_reads": [
+    "child units result.json",
+    "child units receipt.json",
+    "enclosing root units-invocation001 receipt.json"
+  ],
+  "before_capture_candidate_or_target_arithmetic": false
+}

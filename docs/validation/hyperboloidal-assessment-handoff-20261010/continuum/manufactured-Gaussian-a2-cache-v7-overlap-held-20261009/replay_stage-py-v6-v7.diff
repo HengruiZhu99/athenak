@@ -1,0 +1,13 @@
+--- v6/replay_stage.py
++++ v7/replay_stage.py
+@@ -32,8 +32,8 @@
+     roots = []
+     for sigma_text in recipe["sigma"]:
+         sigma = Q(sigma_text)
+-        roots.extend([(sigma, (Q(1, 50), sigma, Q(0), Q(4) + 8 * sigma)),
+-                      (sigma, (sigma, Q(4), Q(0), Q(4) + 8 * sigma))])
++        roots.extend([(sigma, (Q(1, 50), 2 * sigma, Q(0), Q(4) + 8 * sigma)),
++                      (sigma, (2 * sigma, Q(4), Q(0), Q(4) + 8 * sigma))])
+     stack = [(i, "", b, 0) for i, (_, b) in reversed(list(enumerate(roots)))]
+     started = time.monotonic()
+     nodes, leaves, minimum, producer_minimum = 0, 0, None, None

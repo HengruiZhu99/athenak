@@ -1,0 +1,58 @@
+{
+  "review_completed": true,
+  "passed": true,
+  "source_only": true,
+  "candidate_execution_authorized_by_this_receipt": false,
+  "reviewed_source_index_sha256": "92a412f36e668bb2e2414bd65e5dee381e42534d94e2df712fd7e9f3a52ce5d3",
+  "reviewed_diff_sha256": "38e8a61d80ff13551c65107319f60eeb9150a10af639e6cf65bae1f8b1535844",
+  "v1_failed_review_index_sha256": "d61ddb62752163f938540f23d02aeb49b65147174f6ebb0edaaef1851ff7ba57",
+  "closed_v1_findings": [
+    "physical reference metric normalization before independent connection",
+    "exact rational nominal graph gate",
+    "separate actual measured timing review full-stage prerequisite"
+  ],
+  "candidate_imported_executed_target_arithmetic_CAS_compile_queries_eigen_propagation": false,
+  "all_original_source_and_archive_bytes_unchanged": true,
+  "source_files": 38,
+  "external_pins": 192,
+  "source_index_plus_unique_pins": 231,
+  "seven_diff_files": [
+    "diagnostics.py",
+    "run_oracle.py",
+    "outer_once.py",
+    "recipe.json",
+    "authorization-schema.json",
+    "PLAN.md",
+    "SCHEMA.md"
+  ],
+  "seven_unchanged_math_modules": [
+    "taylor3.py",
+    "gaussian3.py",
+    "reference3.py",
+    "geometry.py",
+    "oracle.py",
+    "units.py",
+    "values_context.py"
+  ],
+  "resource_condition": "Root exact units release must bind its stated60-second process-group timeout; candidate inner units60s soft check is not reached, outer hard cap120s. No limiter execution or numerical pass inferred.",
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-B",
+        "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v2-independent-source-review-20261009/review_static_v2.py"
+      ],
+      "purpose": "saved-source/hash/AST/reverse-diff and recipe metadata only",
+      "returncode": 0
+    }
+  ],
+  "review_sha256": "28efcdc80e71b3812fbc929fd5d2062a6598363b25179cf9a4ec8895d890d719",
+  "static_readback_sha256": "fd659d7800ba9be8987c5bc6693b260bb61165d68bcccddeb15e21657892f7f0",
+  "inputs_before_review_sha256": "f8a7efcb706ef69e8faa28b2820ad824e834de89d0e4a11ebbe1c3049651e992",
+  "limits": [
+    "No numerical check has been run by this reviewer.",
+    "No native protocol, actual RHS, compound inner BM or BH gate admitted.",
+    "No global positivity or native/scri stability claim."
+  ]
+}

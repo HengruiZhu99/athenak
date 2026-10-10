@@ -1,0 +1,316 @@
+{
+  "scope": "Only the two broadcast products sqrt(weights)*a and sqrt(weights)*b in bilinear(); no normalization audit mixing",
+  "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+  "counts": {
+    "candidate_entries_multiply": 4060800,
+    "fallback_multiply": 10950,
+    "inexact": 10950,
+    "exact_nonzero_below_min_subnormal": 214,
+    "exact_nonzero_below_min_normal": 9910,
+    "rounded_zero": 154,
+    "rounded_nonzero_subnormal": 9756
+  },
+  "labels": {
+    "bilinear:left_root_times_a": 7222,
+    "bilinear:right_root_times_b": 3728
+  },
+  "maximum_absolute_local_rounding_error_exact": {
+    "numerator": "1125547197446953",
+    "denominator": "455769356286876421213391376429838886925099892492896311359073203585443629295319008244476198689326433780162368020962991167191110613607139517741900808291216386005762763108913764753265553690611976382226145357950239793122692242822302122332514317008108070827274337186476319071835298862424880252130670164301449339557783552772064084296510505746432",
+    "decimal_display_not_bound": "2.46955435226429765811298519895200568416900419E-324"
+  },
+  "sum_absolute_local_rounding_errors_upper_bound": {
+    "numerator": "6162370906022067675",
+    "denominator": "227884678143438210606695688214919443462549946246448155679536601792721814647659504122238099344663216890081184010481495583595555306803569758870950404145608193002881381554456882376632776845305988191113072678975119896561346121411151061166257158504054035413637168593238159535917649431212440126065335082150724669778891776386032042148255252873216",
+    "decimal_display_not_bound": "2.70416201572940593563371879285244622416505959E-320"
+  },
+  "maximum_error_case": {
+    "label": "bilinear:right_root_times_b",
+    "operation": "multiply",
+    "a_hex": "0x1.fa5995ffe77bep-3",
+    "b_hex": "0x0.000000000b048p-1022",
+    "result_hex": "0x0.0000000002b96p-1022",
+    "exact_value": {
+      "numerator": "25124456773902550231",
+      "denominator": "455769356286876421213391376429838886925099892492896311359073203585443629295319008244476198689326433780162368020962991167191110613607139517741900808291216386005762763108913764753265553690611976382226145357950239793122692242822302122332514317008108070827274337186476319071835298862424880252130670164301449339557783552772064084296510505746432",
+      "decimal_display_not_bound": "5.51253752086140251015634329230371887228092038E-320"
+    }
+  },
+  "first_fallback_examples": [
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "-0x1.67363cff49cf4p-1020",
+      "result_hex": "-0x0.9fae43b9a1eddp-1022",
+      "rounding_error": {
+        "numerator": "19721419103541",
+        "denominator": "455769356286876421213391376429838886925099892492896311359073203585443629295319008244476198689326433780162368020962991167191110613607139517741900808291216386005762763108913764753265553690611976382226145357950239793122692242822302122332514317008108070827274337186476319071835298862424880252130670164301449339557783552772064084296510505746432",
+        "decimal_display_not_bound": "4.32706122768106454404019326579012398938267589E-326"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "-0x1.3d5535fb89706p-1020",
+      "result_hex": "-0x0.8d10702e7340ap-1022",
+      "rounding_error": {
+        "numerator": "1252107526699125",
+        "denominator": "911538712573752842426782752859677773850199784985792622718146407170887258590638016488952397378652867560324736041925982334382221227214279035483801616582432772011525526217827529506531107381223952764452290715900479586245384485644604244665028634016216141654548674372952638143670597724849760504261340328602898679115567105544128168593021011492864",
+        "decimal_display_not_bound": "1.37361969319302677801916067991001294298655259E-324"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "-0x1.75851351f0a23p-1021",
+      "result_hex": "-0x0.5305411079e28p-1022",
+      "rounding_error": {
+        "numerator": "7360080884994773",
+        "denominator": "3646154850295011369707131011438711095400799139943170490872585628683549034362552065955809589514611470241298944167703929337528884908857116141935206466329731088046102104871310118026124429524895811057809162863601918344981537942578416978660114536064864566618194697491810552574682390899399042017045361314411594716462268422176512674372084045971456",
+        "decimal_display_not_bound": "2.01858702857868663362609353927907247606267177E-324"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "-0x0.2564dfa44bee4p-1022",
+      "result_hex": "-0x0.0427dbf27565fp-1022",
+      "rounding_error": {
+        "numerator": "1563785200411567",
+        "denominator": "1823077425147505684853565505719355547700399569971585245436292814341774517181276032977904794757305735120649472083851964668764442454428558070967603233164865544023051052435655059013062214762447905528904581431800959172490768971289208489330057268032432283309097348745905276287341195449699521008522680657205797358231134211088256337186042022985728",
+        "decimal_display_not_bound": "8.57772236571379144139291896294161633210256548E-325"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "0x1.4b118cbe7ad4fp-1021",
+      "result_hex": "0x0.4995c78ca5ca8p-1022",
+      "rounding_error": {
+        "numerator": "3864129936465033",
+        "denominator": "3646154850295011369707131011438711095400799139943170490872585628683549034362552065955809589514611470241298944167703929337528884908857116141935206466329731088046102104871310118026124429524895811057809162863601918344981537942578416978660114536064864566618194697491810552574682390899399042017045361314411594716462268422176512674372084045971456",
+        "decimal_display_not_bound": "1.05978218016505393550092858715646605609879044E-324"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "0x1.23793ae8a3d71p-1020",
+      "result_hex": "0x0.8191a73854afbp-1022",
+      "rounding_error": {
+        "numerator": "3733960309278391",
+        "denominator": "1823077425147505684853565505719355547700399569971585245436292814341774517181276032977904794757305735120649472083851964668764442454428558070967603233164865544023051052435655059013062214762447905528904581431800959172490768971289208489330057268032432283309097348745905276287341195449699521008522680657205797358231134211088256337186042022985728",
+        "decimal_display_not_bound": "2.04816331866776051323654586850713247808910531E-324"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "0x1.5021cea68fa74p-1020",
+      "result_hex": "0x0.956bc907b787dp-1022",
+      "rounding_error": {
+        "numerator": "909944797732245",
+        "denominator": "455769356286876421213391376429838886925099892492896311359073203585443629295319008244476198689326433780162368020962991167191110613607139517741900808291216386005762763108913764753265553690611976382226145357950239793122692242822302122332514317008108070827274337186476319071835298862424880252130670164301449339557783552772064084296510505746432",
+        "decimal_display_not_bound": "1.99650280384251068580213849534201902074660011E-324"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "0x1.211c46571dd2fp-1020",
+      "result_hex": "0x0.8084bb6118cdep-1022",
+      "rounding_error": {
+        "numerator": "3088418039031895",
+        "denominator": "1823077425147505684853565505719355547700399569971585245436292814341774517181276032977904794757305735120649472083851964668764442454428558070967603233164865544023051052435655059013062214762447905528904581431800959172490768971289208489330057268032432283309097348745905276287341195449699521008522680657205797358231134211088256337186042022985728",
+        "decimal_display_not_bound": "1.69406850001557682922673999608729322508673255E-324"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "0x1.5960bb79929e8p-1019",
+      "result_hex": "0x1.330fe99adcac3p-1022",
+      "rounding_error": {
+        "numerator": "115146258737973",
+        "denominator": "113942339071719105303347844107459721731274973123224077839768300896360907323829752061119049672331608445040592005240747791797777653401784879435475202072804096501440690777228441188316388422652994095556536339487559948280673060705575530583128579252027017706818584296619079767958824715606220063032667541075362334889445888193016021074127626436608",
+        "decimal_display_not_bound": "1.01056604310620749621857725706717765353206277E-324"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "0x1.67569fe6aa348p-1019",
+      "result_hex": "0x1.3f795292d8e97p-1022",
+      "rounding_error": {
+        "numerator": "31463370158719",
+        "denominator": "113942339071719105303347844107459721731274973123224077839768300896360907323829752061119049672331608445040592005240747791797777653401784879435475202072804096501440690777228441188316388422652994095556536339487559948280673060705575530583128579252027017706818584296619079767958824715606220063032667541075362334889445888193016021074127626436608",
+        "decimal_display_not_bound": "2.76134143067880204876827923243834428672742825E-325"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "0x0.8fe5add58161ep-1022",
+      "result_hex": "0x0.0ffddec9b4c30p-1022",
+      "rounding_error": {
+        "numerator": "6245376791889097",
+        "denominator": "3646154850295011369707131011438711095400799139943170490872585628683549034362552065955809589514611470241298944167703929337528884908857116141935206466329731088046102104871310118026124429524895811057809162863601918344981537942578416978660114536064864566618194697491810552574682390899399042017045361314411594716462268422176512674372084045971456",
+        "decimal_display_not_bound": "1.71286658090886674323239587041202750786287894E-324"
+      }
+    },
+    {
+      "label": "bilinear:left_root_times_a",
+      "operation": "multiply",
+      "a_hex": "0x1.c73311971dab2p-4",
+      "b_hex": "-0x1.3e7fb4f730a8bp-1019",
+      "result_hex": "-0x1.1b2a41fb70fe0p-1022",
+      "rounding_error": {
+        "numerator": "1276428706994515",
+        "denominator": "911538712573752842426782752859677773850199784985792622718146407170887258590638016488952397378652867560324736041925982334382221227214279035483801616582432772011525526217827529506531107381223952764452290715900479586245384485644604244665028634016216141654548674372952638143670597724849760504261340328602898679115567105544128168593021011492864",
+        "decimal_display_not_bound": "1.40030114946021978191498657358443879570057216E-324"
+      }
+    }
+  ],
+  "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+  "contraction_scope": "BLAS dgemm and its operand/reduction order are unchanged; the fallback here performs no contraction",
+  "fast_weighting_proof": {
+    "counts": {
+      "calls": 9224,
+      "broadcast_entries": 2306033280,
+      "proved_normal_or_zero_calls": 9211,
+      "proved_normal_or_zero_entries": 2301972480,
+      "delegated_fallback_calls": 13,
+      "delegated_broadcast_entries": 4060800
+    },
+    "labels": {
+      "bilinear:left_root_times_a": 4612,
+      "bilinear:right_root_times_b": 4612
+    },
+    "minimum_proven_exponent_sum": -1009,
+    "first_delegated_bounds": [
+      {
+        "label": "bilinear:left_root_times_a",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1072
+        ],
+        "sum": -1075,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:left_root_times_a",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1073
+        ],
+        "sum": -1076,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:right_root_times_b",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1073
+        ],
+        "sum": -1076,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:left_root_times_a",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1073
+        ],
+        "sum": -1076,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:right_root_times_b",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1071
+        ],
+        "sum": -1074,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:left_root_times_a",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1072
+        ],
+        "sum": -1075,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:left_root_times_a",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1073
+        ],
+        "sum": -1076,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:left_root_times_a",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1073
+        ],
+        "sum": -1076,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:right_root_times_b",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1070
+        ],
+        "sum": -1073,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:left_root_times_a",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1073
+        ],
+        "sum": -1076,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:right_root_times_b",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1072
+        ],
+        "sum": -1075,
+        "normal_proof_requires_sum_at_least": -1020
+      },
+      {
+        "label": "bilinear:left_root_times_a",
+        "minimum_nonzero_frexp_exponents": [
+          -3,
+          -1073
+        ],
+        "sum": -1076,
+        "normal_proof_requires_sum_at_least": -1020
+      }
+    ],
+    "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+    "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero.",
+    "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained."
+  },
+  "weighting_sqrt_scope": "The original NumPy sqrt and rounded root operands are unchanged"
+}

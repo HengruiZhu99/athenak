@@ -1,0 +1,42 @@
+{
+  "scope": "Only the final rounded radial measure times the existing E point-sum array; separate instance/audit for each of five sites",
+  "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+  "counts": {},
+  "labels": {},
+  "maximum_absolute_local_rounding_error_exact": {
+    "numerator": "0",
+    "denominator": "1",
+    "decimal_display_not_bound": "0"
+  },
+  "sum_absolute_local_rounding_errors_upper_bound": {
+    "numerator": "0",
+    "denominator": "1",
+    "decimal_display_not_bound": "0"
+  },
+  "maximum_error_case": null,
+  "first_fallback_examples": [],
+  "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+  "contraction_scope": "Tiny contractions use fixed ascending index multiply/add order; ordinary einsum/dot graph identity is not asserted for fallback contractions",
+  "fast_weighting_proof": {
+    "counts": {
+      "calls": 384,
+      "broadcast_entries": 1572864,
+      "proved_normal_or_zero_calls": 384,
+      "proved_normal_or_zero_entries": 1572864
+    },
+    "labels": {
+      "outer_measure:E": 384
+    },
+    "minimum_proven_exponent_sum": -967,
+    "first_delegated_bounds": [],
+    "proof": "Every nonzero |a|>=2^(ea_min-1), |b|>=2^(eb_min-1). Sum>=-1020 implies every nonzero product>=2^-1022; possible_tiny is false for every pair.",
+    "scope": "Sufficient whole-array proof only; inconclusive arrays delegate unchanged, including disjoint tiny nonzero entries whose actual products are all zero.",
+    "overflow": "Normal lower bound does not bound maximum products; original strict NumPy overflow behavior retained."
+  },
+  "operation_label": "outer_measure:E",
+  "operand_scope": "measure=weights[ir]/c and every original inner sum, bilinear, H/Gamma action and incoming/boundary expression are unchanged",
+  "operation_order": "Only this final multiplication uses the unchanged tested fast proof/exact-tiny adapter; the original strict augmented addition and all preceding operations retain their order",
+  "unchanged_scope": "No BLAS, einsum, reduction, sqrt, SVD, derivative, source, quadrature, trial, solve, gate or tolerance change",
+  "measured_scope": "Saved radial E-only diagnostic observed 28 tiny products at627 in609..640,20 rounded zero and8 nonzero subnormal; no occurrence is asserted for the other four products or grids",
+  "error_scope": "Exact local rounding counts/bounds only; no propagated matrix, solve, continuum or native error certificate"
+}

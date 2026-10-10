@@ -1,0 +1,15 @@
+--- v6/producer_bounds.py
++++ v7/producer_bounds.py
+@@ -85,10 +85,10 @@
+ def coefficients(ctx, box, sigma, K):
+     rlo, rhi, tlo, thi = box
+     R, T = ctx.enclose(rlo, rhi), ctx.enclose(tlo, thi)
+-    if rhi <= sigma:
++    if rhi <= 2 * sigma:
+         c, ct, crho = regular(ctx, R, T, rhi, sigma, K)
+         method = "regular"
+-    elif rlo >= sigma:
++    elif rlo >= 2 * sigma:
+         c, ct, crho = separated(ctx, R, T, sigma)
+         method = "separated"
+     else:

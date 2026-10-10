@@ -1,0 +1,40 @@
+--- v3/admission.py
++++ v4/admission.py
+@@ -68,11 +68,34 @@
+         raise RuntimeError("wrong interpreter")
+     if recipe["source_only"] is not True or stage not in recipe["stage_timeouts"]:
+         raise RuntimeError("invalid held recipe")
+-    if stage != "units":
+-        raise RuntimeError("cache v3 admits units only; certificate/replay remain held")
++    if stage not in ("certificate", "replay"):
++        raise RuntimeError("cache v4 admits certificate/replay only after exact release")
+     dependencies = {}
+     if stage in ("certificate", "replay"):
+-        dependencies["units"] = verify_receipt(authorization["units_receipt"], "units", index_sha)
++        unit_pin = recipe["cached_v3_units_receipt"]
++        if authorization.get("units_receipt") != unit_pin:
++            raise RuntimeError("exact successful cached v3 units pin required")
++        units = verify_receipt(unit_pin, "units", recipe["cached_v3_source_index_sha256"])
++        if units.get("recipe_sha256") != recipe["cached_v3_recipe_sha256"]:
++            raise RuntimeError("wrong cached v3 unit recipe")
++        report_pin, cache_pin = recipe["cached_v3_units_report"], recipe["cached_v3_cache_report"]
++        for entry in (report_pin, cache_pin, recipe["cached_v3_root_source_review"]):
++            verify_pin(entry)
++        if report_pin not in units["outputs"] or cache_pin not in units["outputs"]:
++            raise RuntimeError("successful v3 receipt does not bind both reports")
++        report, cache = load(report_pin["path"]), load(cache_pin["path"])
++        review = load(recipe["cached_v3_root_source_review"]["path"])
++        if not (report.get("passed") is True and report.get("stage") == "units"
++                and report.get("source_index_sha256") == recipe["cached_v3_source_index_sha256"]
++                and report.get("case_count") == 144 and report.get("cache_unit_count") == 35
++                and report.get("combined_unit_count") == 179 and report.get("cache_units_passed") is True
++                and cache.get("passed") is True and cache.get("case_count") == 35
++                and len(cache.get("cases", [])) == 35 and all(x.get("passed") is True for x in cache["cases"])
++                and review.get("passed") is True
++                and review.get("root_full_cache_source_math_and_admission_review") is True
++                and review.get("original_uncached_endpoint_body_AST_identical") is True):
++            raise RuntimeError("cached v3 unit/report/root-review prerequisite failed")
++        dependencies["units"] = units
+     if stage == "replay":
+         dependencies["certificate"] = verify_receipt(authorization["certificate_receipt"], "certificate", index_sha)
+         certificate_pin = authorization["certificate_payload"]

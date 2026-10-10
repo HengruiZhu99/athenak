@@ -1,0 +1,1 @@
+These are the exact wrap-up collector sources, preserved metadata-reader failure, successful collection receipt and supporting handoff draft. Collector002 completed successfully without scientific execution. Its destination is immutable; never rerun it into the existing archive. The tracked main assessment handoff is authoritative about acceptance scope.

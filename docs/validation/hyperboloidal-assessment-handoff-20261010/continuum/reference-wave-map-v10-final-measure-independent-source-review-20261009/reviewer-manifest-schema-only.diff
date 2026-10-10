@@ -1,0 +1,15 @@
+--- review_source_metadata.py
++++ review_source_metadata_v2.py
+@@ -77,9 +77,9 @@
+ for path,h in pins.items():need(sha(path)==h,'protected input drift '+path)
+ scipy=next(load(P/x['copy']) for x in ev['files'] if x['label']=='runtime:manifest')
+ need(len(scipy['files'])==1332 and scipy['bytecode_excluded'] is True and scipy['imports_executed'] is False,'SciPy runtime inventory count/scope')
+-for row in scipy['files']:
+-    need(row['path'] in r['pins'] and r['pins'][row['path']]==row['sha256'],'SciPy protected before imports')
+-    need('__pycache__' not in Path(row['path']).parts and not row['path'].endswith(('.pyc','.pyo')),'runtime bytecode excluded')
++for runtime_path,runtime_hash in scipy['files'].items():
++    need(runtime_path in r['pins'] and r['pins'][runtime_path]==runtime_hash,'SciPy protected before imports')
++    need('__pycache__' not in Path(runtime_path).parts and not runtime_path.endswith(('.pyc','.pyo')),'runtime bytecode excluded')
+ need(scipy['roots']==r['runtime_inventory_addendum']['roots'],'SciPy actual package roots')
+ need(r['environment']['PYTHONPATH'].split(':')[0] in str(Path(scipy['roots'][0]).parent),'actual first-PYTHONPATH runtime')
+ D={x['label']:load(P/x['copy']) for x in ev['files'] if Path(x['copy']).suffix=='.json'}

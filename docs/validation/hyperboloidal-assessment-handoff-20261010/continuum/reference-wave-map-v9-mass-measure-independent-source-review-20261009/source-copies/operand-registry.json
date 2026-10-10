@@ -1,0 +1,71 @@
+{
+  "J0_L_layout": {
+    "access": "channel_layouts[0] only",
+    "bytes": 326337,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/inputs/basis-data.json",
+    "sha256": "ddc8c8d91d211aad70a4df4560a75c32807417248abdf025663ad411cfd4e738"
+  },
+  "forbidden_access": [
+    "E",
+    "Kweak",
+    "Kstrong",
+    "Gvolume",
+    "Fboundary",
+    "SATload",
+    "Jbulk",
+    "Jsat",
+    "source_coefficients",
+    "source/output.txt",
+    "source/queries.txt",
+    "coefficient queries"
+  ],
+  "input_map": {
+    "access": "read-only memmap indices609..640 only",
+    "bytes": 2126131200,
+    "dtype": "<f8",
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/input/output.bin",
+    "sha256": "125279d9c3e87c3e4e2496c6130767b11d38d45fb72662efe8531b5fd05973ab",
+    "shape": [
+      769,
+      288,
+      8,
+      3,
+      50
+    ]
+  },
+  "operator_npz": {
+    "access": "lazy selected arrays only after release",
+    "arrays": [
+      {
+        "name": "source_coefficient_radii",
+        "shape": [
+          769
+        ]
+      },
+      {
+        "name": "radial_weights",
+        "shape": [
+          768
+        ]
+      },
+      {
+        "name": "angular_weights",
+        "shape": [
+          288
+        ]
+      },
+      {
+        "name": "source_reference_rows",
+        "shape": [
+          769,
+          17
+        ]
+      }
+    ],
+    "bytes": 2131694,
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk-source008-20261009/bulk-N8-Q128-a12x24-001/operator.npz",
+    "sha256": "8e1ead124ac15386f523d3445b294d1a16859155af09b75398545f2e8d140c3c"
+  },
+  "original_metadata_only_payloads": true,
+  "preparation_decoded_any_operand": false
+}

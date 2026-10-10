@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "-I",
+    "-B",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v6-instrumented-held-20261009/run_once.py",
+    "--stage",
+    "certificate",
+    "--recipe",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v6-instrumented-held-20261009/recipe.json",
+    "--authorization",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-a2-cache-v6-root-release-20261009/certificate-authorization.json",
+    "--output",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v6-instrumented-held-20261009/attempts/certificate001"
+  ],
+  "environment": {
+    "PYTHONOPTIMIZE": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "removed_environment": [
+    "PYTHONHOME",
+    "PYTHONPATH",
+    "PYTHONWARNINGS"
+  ],
+  "cwd": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-a2-cache-v6-root-release-20261009",
+  "producer_seconds": 600,
+  "inner_wrapper_seconds": 660,
+  "root_process_group_seconds": 720,
+  "start_new_session": true,
+  "timeout_action": "SIGKILL entire new process group; preserve all partial output"
+}

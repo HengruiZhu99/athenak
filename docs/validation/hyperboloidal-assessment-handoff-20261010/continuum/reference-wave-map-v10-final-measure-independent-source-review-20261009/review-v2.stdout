@@ -1,0 +1,38 @@
+{
+  "source_review_only": true,
+  "passed": true,
+  "inputs_unchanged": true,
+  "reviewed_source_index_sha256": "a67f587c07e18ee98e6aaaedfba1249fc334f51905a84c64aa3751df150408ff",
+  "reviewed_recipe_sha256": "05ba2b41afdcb39aeecfc7dbf659670b3e0011d7a6635a25cf42106f617e3fb2",
+  "reviewed_verifier_sha256": "ee7de62d0faa1f221a636d03d1ba43901cb4b28c0bfbc63ce946fe9c5fc10b11",
+  "independent_reverse_bytes_AST": true,
+  "hunks": 9,
+  "five_inner_operand_ASTs_identical": true,
+  "adapter_store_count": 1,
+  "original_gates_cases_context_environment_equal": true,
+  "source_files_captured": 16,
+  "compact_evidence_captured": 12,
+  "unique_protected_pins_rehashed": 4583,
+  "recipe_pin_count": 2048,
+  "SciPy_metadata_files": 1332,
+  "actual96_20_24_prerequisites_verified": true,
+  "actual_diagnostic_saved_audit_failure_verified": true,
+  "no_candidate_import": true,
+  "no_array_decode": true,
+  "no_scientific_evaluation": true,
+  "no_generator_admission": true,
+  "caveats": [
+    "Only the E product was measured in the bounded diagnostic; no underflow occurrence is inferred for Ks/Kw/G/loads.",
+    "The five adapters preserve exact local multiplication of original rounded operands. Audit error bounds are not propagated matrix/solve/continuum error bounds.",
+    "All three fresh v10 case readbacks and separate independent saved-result/provenance review remain required.",
+    "Candidate main retains inherited environment keys; exact root launcher must bind OPTIMIZE0/OMP1 and sanitize PYTHONHOME/PYTHONWARNINGS as separately reviewed, rather than infer them from candidate environment dictionary."
+  ],
+  "reviewer_runtime": {
+    "executable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "resolved": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "isolated": 1,
+    "dont_write_bytecode": true,
+    "optimize": 0,
+    "PYTHONOPTIMIZE": "0"
+  }
+}

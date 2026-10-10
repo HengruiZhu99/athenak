@@ -1,0 +1,56 @@
+{
+  "source_only": true,
+  "root_preparer_executed": false,
+  "root_launcher_executed": false,
+  "child_review_gate_executed": false,
+  "candidate_imported": false,
+  "scientific_execution": false,
+  "source_AST_sanity_only": true,
+  "imports": {
+    "child_review_gate.py": [
+      "pathlib",
+      "argparse",
+      "hashlib",
+      "json",
+      "os",
+      "sys"
+    ],
+    "launch.py": [
+      "pathlib",
+      "argparse",
+      "hashlib",
+      "json",
+      "os",
+      "signal",
+      "subprocess",
+      "sys",
+      "time",
+      "traceback"
+    ],
+    "prepare_release001.py": [
+      "pathlib",
+      "argparse",
+      "ast",
+      "hashlib",
+      "json",
+      "re",
+      "sys",
+      "time",
+      "traceback"
+    ]
+  },
+  "new_process_group_cap_seconds": 900,
+  "cap_is_new_not_historical": true,
+  "independent_review_external_root_supplied": true,
+  "parallel_cases_have_disjoint_outputs": true,
+  "scientific_suite_unchanged": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009/source-index.json",
+    "bytes": 4755,
+    "sha256": "a67f587c07e18ee98e6aaaedfba1249fc334f51905a84c64aa3751df150408ff"
+  },
+  "context_old_v9_launcher": {
+    "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-J0-bulk008-independent-v9-root-release-20261009/launch.py",
+    "bytes": 3591,
+    "sha256": "7dca4ab2ca42ab6b5d87baf609df91a900c0c6b3d97861d0e22b4910b7d7657a"
+  }
+}

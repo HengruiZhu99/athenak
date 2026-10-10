@@ -1,0 +1,165 @@
+{
+  "source_only": true,
+  "candidate_imports": false,
+  "numeric_calls": false,
+  "compiler_calls": false,
+  "registry_counts_by_integer_counting": {
+    "radii": 25,
+    "points_per_epsilon": 1252,
+    "valid_per_level": 2504,
+    "negative_per_level": 1,
+    "levels": 2,
+    "total_records": 5010,
+    "identity_checks": 3330320,
+    "component_checks": 470752,
+    "units": 318,
+    "timing_records": 20
+  },
+  "protected_external_inputs": 132,
+  "modules": [
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/diagnostics.py",
+      "sha256": "b5afa45245a97a98c926af4cd4ac2bfb094903ab7f1bc68a5b3c8c349ee02784",
+      "AST_parse": true,
+      "imports": [
+        "import mpmath as mp",
+        "from taylor3 import Jet, determinant, inverse, indices, factorial",
+        "from gaussian3 import wave",
+        "from geometry import metric_from_adm, metric_from_embedding, connection, curvature, embedding_connection, adm_constraints, extract_fields",
+        "from oracle import graph_comparisons",
+        "from reference3 import reference_adm"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/gaussian3.py",
+      "sha256": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b",
+      "AST_parse": true,
+      "imports": [
+        "import mpmath as mp",
+        "from taylor3 import Jet, indices"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/geometry.py",
+      "sha256": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf",
+      "AST_parse": true,
+      "imports": [
+        "import mpmath as mp",
+        "from taylor3 import Jet, determinant, inverse"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/oracle.py",
+      "sha256": "57d3f3fac46d3ad099554c20408fcb394b0a9460db464fc648ee0cdeb91f53e1",
+      "AST_parse": true,
+      "imports": [
+        "import mpmath as mp",
+        "from taylor3 import Jet, compose_radial, compose_jet, inverse",
+        "from reference3 import make_reference, height_physical_derivatives",
+        "from gaussian3 import wave, fderivative, outer_profiles, numerical_root, implicit_jet",
+        "from geometry import metric_from_embedding, adm_from_metric, extract_fields"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/outer_once.py",
+      "sha256": "dd53a472bb8407fbd1b88c6465f551c379cbae55641116878fcfc64a4846c181",
+      "AST_parse": true,
+      "imports": [
+        "from pathlib import Path",
+        "import argparse",
+        "import hashlib",
+        "import json",
+        "import os",
+        "import subprocess",
+        "import sys",
+        "import time",
+        "import traceback"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/prepare_source.py",
+      "sha256": "0906dce06211d9c1762ccafbd22ade33afde1107bf247c5cf11aafbb2c3612fd",
+      "AST_parse": true,
+      "imports": [
+        "from pathlib import Path",
+        "import ast",
+        "import hashlib",
+        "import json"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/reference3.py",
+      "sha256": "a8116c5431188bea91d0a87bfdbc172e8251f616c652958511fd8d8a92a87b8a",
+      "AST_parse": true,
+      "imports": [
+        "import mpmath as mp",
+        "from taylor3 import Jet, compose_radial"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/run_oracle.py",
+      "sha256": "1996ea6be98c24840cca66f662e0e3806597b637023af48c0b6ab5691eb9e49a",
+      "AST_parse": true,
+      "imports": [
+        "from pathlib import Path",
+        "from fractions import Fraction",
+        "import argparse",
+        "import hashlib",
+        "import json",
+        "import os",
+        "import sys",
+        "import time",
+        "import traceback",
+        "import mpmath as mp",
+        "import values_context, oracle, diagnostics, units, taylor3, reference3, gaussian3, geometry"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/taylor3.py",
+      "sha256": "df00e773f5fd8b0e324826398756c78e15546cf5c648bb88a82c3168f37c0a9d",
+      "AST_parse": true,
+      "imports": [
+        "from functools import lru_cache",
+        "import itertools",
+        "import math",
+        "import mpmath as mp"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/units.py",
+      "sha256": "db3df258d1b88cec6262e1133978cc967fa559cc8bb3d9c48e43c0ab34046abe",
+      "AST_parse": true,
+      "imports": [
+        "import math",
+        "import mpmath as mp",
+        "from taylor3 import Jet, indices, factorial, inverse, compose_jet",
+        "from reference3 import radial_coefficients",
+        "from gaussian3 import implicit_jet, wave, fderivative",
+        "from oracle import construct",
+        "from diagnostics import zero_row, comparison"
+      ]
+    },
+    {
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-angular-Gaussian-third-jet-oracle-held-20261009/values_context.py",
+      "sha256": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7",
+      "AST_parse": true,
+      "imports": [
+        "from pathlib import Path",
+        "import argparse",
+        "import functools",
+        "import hashlib",
+        "import json",
+        "import os",
+        "import platform",
+        "import sys",
+        "import time",
+        "import traceback",
+        "import mpmath as mp"
+      ]
+    }
+  ],
+  "historical_WIP_executed": false,
+  "identity_count_change_from_unfrozen_WIP": "ten explicit physical Ricci rows per valid record; full5010 registry unchanged",
+  "reference_independence": "embedding connection versus independent radial ADM metric",
+  "graph_independence": "graph-chart implicit3 composed back through full Q(x) third jets"
+}

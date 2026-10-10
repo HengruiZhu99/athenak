@@ -19,6 +19,11 @@ wormhole initial data are documented in
 The initial negative results remain reproducible; the follow-up has not yet
 passed the nonlinear evolution acceptance gates.
 
+The [2026-10-10 assessment handoff](hyperboloidal-assessment-handoff-20261010.md)
+records the latest completed private diagnostics, uncompiled exact-arithmetic
+work, unresolved failures and a prompt for independent assessment. Research
+stopped at the user's request; this does not mark the scientific goal complete.
+
 ## Storage, conventions and unchanged geometric equations
 
 Signature is (-,+,+,+), `K_ij=-Lie_n(gamma_ij)/2`. Penrose compactification is

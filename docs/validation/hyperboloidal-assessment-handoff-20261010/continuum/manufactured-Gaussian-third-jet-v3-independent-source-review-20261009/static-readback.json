@@ -1,0 +1,99 @@
+{
+  "PLAN_SCHEMA_timing_schema_reverse_bytes": true,
+  "candidate_imports": false,
+  "captured_source_files": 59,
+  "diff_sha256": "103c7e971f28c11a8af88b6f027e098b2fe1b8a02572eacda51b594d07994d02",
+  "driver_reverse_bytes_and_AST": true,
+  "driver_sha256": "de0b83ba44f1a837c2b477d6d60f5a8f2a947b8a885159a638bbbaeee94e7915",
+  "execution_authorized_by_this_review": false,
+  "history": {
+    "historical_reviewer_runtime_limit_preserved": true,
+    "v2_history_does_not_satisfy_same_source_v3_prerequisites": true,
+    "v2_timing": "completed FAIL 20 records / 6 identities; unchanged inputs",
+    "v2_units": "completed PASS 318; unchanged inputs"
+  },
+  "inputs_unchanged": true,
+  "limitations": [
+    "Units return before the later child soft time-cap check; retain a separate 60-second root process-group cap as in v2.",
+    "Higher precision and finite bisection budget provide no uniform connection forward-error theorem or promised numerical pass.",
+    "Fresh same-index units and timing plus exact timing-bound measured-cost/source approval remain required for full stage."
+  ],
+  "passed": true,
+  "payload_decoding": false,
+  "protected_external_pins": 378,
+  "published_full_diff_matches_actual": true,
+  "recipe_reverse_bytes_and_structure": true,
+  "recipe_sha256": "847cd099b7d98f16963fbbdfc6f8a0eb6f7913529b9a2d72dcabb909c287c8cf",
+  "reviewed_source_index_sha256": "41a050d288076d6b54ff396b09851835dac03dd3518f74dca65890f6fd025a8a",
+  "runtime": {
+    "command": [
+      "python3",
+      "-I",
+      "-B",
+      "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v3-independent-source-review-20261009/review_static.py"
+    ],
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONOPTIMIZE": "0",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "executable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "executable_sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464",
+    "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=1, no_site=0, ignore_environment=1, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=1, dev_mode=False, utf8_mode=0)",
+    "resolved_executable": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "version": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]"
+  },
+  "science_recipe_unchanged_except_precision_root_settings": true,
+  "source_review_only": true,
+  "target_evaluation": false,
+  "unchanged_runtime_modules": [
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "taylor3.py",
+      "sha256": "df00e773f5fd8b0e324826398756c78e15546cf5c648bb88a82c3168f37c0a9d"
+    },
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "reference3.py",
+      "sha256": "a8116c5431188bea91d0a87bfdbc172e8251f616c652958511fd8d8a92a87b8a"
+    },
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "gaussian3.py",
+      "sha256": "9e1d75964644e73764818258998db71e10408d21c84bba7b552e702b6a8bb65b"
+    },
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "geometry.py",
+      "sha256": "8a5389c4ce1fd85349f422fbbac855a8e9a85375cba2c6b70a77e03f14618cdf"
+    },
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "oracle.py",
+      "sha256": "57d3f3fac46d3ad099554c20408fcb394b0a9460db464fc648ee0cdeb91f53e1"
+    },
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "units.py",
+      "sha256": "db3df258d1b88cec6262e1133978cc967fa559cc8bb3d9c48e43c0ab34046abe"
+    },
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "values_context.py",
+      "sha256": "89c96ee729b8cc741757740534566c9557dd6fdce2e66213c2fe8ff1c7e8ffe7"
+    },
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "diagnostics.py",
+      "sha256": "b009d5b17ecc46f15295a1b1424dacec0b0a232a58052b30e1a8037fa075a582"
+    },
+    {
+      "bytes_and_AST_equal_v2": true,
+      "file": "outer_once.py",
+      "sha256": "68706de821c990be9302848aeea41d16d774c506bb8dea71221b1e2a675cea04"
+    }
+  ],
+  "unique_total_input_pins": 437
+}

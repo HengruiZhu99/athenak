@@ -1,0 +1,13 @@
+{
+  "Gaussian_third_jet_oracle_stage_authorized": "units | timing | full; exactly one root release",
+  "source_index_sha256": "exact frozen source-index.json hash",
+  "recipe_sha256": "exact local recipe.json hash",
+  "driver_sha256": "exact run_oracle.py hash",
+  "output": "fresh absolute child output path",
+  "outer_output": "fresh absolute outer invocation path",
+  "unit_receipt": "timing/full only: exact same-source completed/pass/unchanged units receipt path and sha256",
+  "timing_receipt": "full only: exact same-source completed/pass/unchanged timing receipt path and sha256",
+  "review_pins": "exact root and independent source review path-to-sha256 map, protected by BOTH child and outer",
+  "scope": "analytic oracle only; no native query, BH adoption, full-domain inverse or source integration",
+  "measured_timing_review": "full only: path/sha256 of explicit same-index timing-receipt/result-bound source and measured-cost approval record"
+}

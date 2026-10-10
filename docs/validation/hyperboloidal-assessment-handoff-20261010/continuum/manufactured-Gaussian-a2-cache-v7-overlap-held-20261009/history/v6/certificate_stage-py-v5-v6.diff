@@ -1,0 +1,94 @@
+--- v5/certificate_stage.py
++++ v6/certificate_stage.py
+@@ -20,12 +20,19 @@
+     from fractions import Fraction as Q
+     from interval import Context, directed, encode, pow2
+     from producer_bounds import coefficients
++    # BEGIN_OBSERVATION_ONLY
++    from instrumentation import ObservedEndpointCache, ProgressObserver
++    # END_OBSERVATION_ONLY
+ 
+     out = Path(args.output)
+     target = out / "certificate.jsonl"
+     if target.exists() or (out / "report.json").exists():
+         raise RuntimeError("certificate output already exists")
+     ctx, K = Context(recipe["bits"]), recipe["series_order"]
++    # BEGIN_OBSERVATION_ONLY
++    cache = ObservedEndpointCache()
++    ctx._exp_endpoint_cache = cache
++    # END_OBSERVATION_ONLY
+     roots = []
+     for sigma_text in recipe["sigma"]:
+         sigma = Q(sigma_text)
+@@ -37,6 +44,9 @@
+     minimum = None
+     transcript = hashlib.sha256()
+     counts = {"regular": 0, "separated": 0, "upper_tail": 0, "lower_tail": 0}
++    # BEGIN_OBSERVATION_ONLY
++    observer = ProgressObserver(out, roots, started, cache)
++    # END_OBSERVATION_ONLY
+ 
+     def write(handle, row):
+         nonlocal encoded_bytes
+@@ -48,12 +58,18 @@
+         transcript.update(raw)
+ 
+     with target.open("xb") as handle:
++        # BEGIN_OBSERVATION_ONLY
++        observer.progress(nodes, leaves, stack, counts, minimum, "initial")
++        # END_OBSERVATION_ONLY
+         write(handle, {"kind": "header", "source_index_sha256": index_sha,
+                        "roots": [[str(s), [str(x) for x in b]] for s, b in roots],
+                        "bits": ctx.bits, "series_order": K,
+                        "scope": "exact physical-event pure-CMC a2 compact endpoint box only"})
+         while stack:
+             if time.monotonic() - started > recipe["domain_wall_seconds"]:
++                # BEGIN_OBSERVATION_ONLY
++                observer.progress(nodes, leaves, stack, counts, minimum, "domain_time_cap")
++                # END_OBSERVATION_ONLY
+                 raise RuntimeError("UNRESOLVED: declared domain time limit")
+             root_id, path, box, depth = stack.pop()
+             sigma = roots[root_id][0]
+@@ -61,6 +77,9 @@
+             nodes += 1
+             if nodes > 2 * recipe["max_leaves"] + len(roots):
+                 raise RuntimeError("UNRESOLVED: node limit")
++            # BEGIN_OBSERVATION_ONLY
++            observer.active(root_id, path, box, depth)
++            # END_OBSERVATION_ONLY
+             result = None
+             if tlo - rhi >= 8 * sigma:
+                 method = "upper_tail"
+@@ -72,11 +91,17 @@
+                 result = coefficients(ctx, box, sigma, K)
+                 method, low = result["method"], result["lower"]
+             low = directed(low, ctx.bits, False)
++            # BEGIN_OBSERVATION_ONLY
++            observer.lower(method, low)
++            # END_OBSERVATION_ONLY
+             if low > 0:
+                 leaves += 1
+                 if leaves > recipe["max_leaves"]:
+                     raise RuntimeError("UNRESOLVED: leaf limit")
+                 counts[method] += 1
++                # BEGIN_OBSERVATION_ONLY
++                observer.leaf(root_id)
++                # END_OBSERVATION_ONLY
+                 minimum = low if minimum is None else min(minimum, low)
+                 row = {"root": root_id, "path": path, "kind": "leaf", "method": method,
+                        "lower": encode(low)}
+@@ -100,8 +125,14 @@
+                 handle.flush()
+                 (out / "progress.json").write_text(json.dumps({"nodes": nodes, "leaves": leaves,
+                     "pending": len(stack), "elapsed_seconds": time.monotonic() - started}, allow_nan=False) + "\n")
++                # BEGIN_OBSERVATION_ONLY
++                observer.progress(nodes, leaves, stack, counts, minimum, "checkpoint")
++                # END_OBSERVATION_ONLY
+         write(handle, {"kind": "footer", "nodes": nodes, "leaves": leaves,
+                        "counts": counts, "minimum_lower": encode(minimum)})
++    # BEGIN_OBSERVATION_ONLY
++    observer.progress(nodes, leaves, stack, counts, minimum, "producer_finished")
++    # END_OBSERVATION_ONLY
+     report = {"passed": True, "stage": "certificate", "source_index_sha256": index_sha,
+               "nodes": nodes, "leaves": leaves, "counts": counts,
+               "minimum_compact_box_lower": encode(minimum), "certificate_bytes": encoded_bytes,

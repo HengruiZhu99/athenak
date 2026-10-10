@@ -1,0 +1,49 @@
+{
+  "source_only": true,
+  "runner_reverse_bytes_equal": true,
+  "runner_reverse_AST_equal": true,
+  "added_guard": "        # Keep the literal clang++ driver basename in argv; bind its target too.\n        require(recipe['compiler']['path'] == '/Library/Developer/CommandLineTools/usr/bin/clang++',\n                'literal C++ driver invocation path required')\n        require(str(Path(recipe['compiler']['path']).resolve()) == recipe['compiler']['resolved_path'],\n                'C++ driver resolved target changed')\n        require(sha(recipe['compiler']['path']) == recipe['compiler']['sha256'] and\n                sha(recipe['compiler']['resolved_path']) == recipe['compiler']['resolved_sha256'],\n                'C++ driver invocation/target byte identity')\n",
+  "unchanged_files": [
+    {
+      "name": "signed_products.hpp",
+      "sha256": "26c3889e0058758debfbfd54be13ece7a91310764ebf8a232a41c81eb5a4b306"
+    },
+    {
+      "name": "probe.cpp",
+      "sha256": "a763ea523fca1a33ba47f0899ee59b1590b177c8da7af44d4a6dd88beef73b8a"
+    },
+    {
+      "name": "fraction_oracle.py",
+      "sha256": "c7c8d33a0e707b3604582b9be774713ab14dfdf36443c12eae6507a428138c73"
+    },
+    {
+      "name": "registry.json",
+      "sha256": "83b10f61ece65bb177cddb1d013c6529a0fa38e79fa7d6cbaeb698cd3b9f5db4"
+    },
+    {
+      "name": "cases.txt",
+      "sha256": "552fb2c4472814ab0af6bf99da8f0edcfae175dba67064d14186b76d9ce081f6"
+    },
+    {
+      "name": "PLAN.md",
+      "sha256": "90174eb4305c4ffe2d4bd4aba49320daf9e338fe765947028fe9b10a96d6076d"
+    },
+    {
+      "name": "IMPLEMENTATION.md",
+      "sha256": "824702fe29dfcc38e435f8422b5dd323765c0822ef3af4e14b631316860a6e3a"
+    },
+    {
+      "name": "authorization-schema.json",
+      "sha256": "e50ff6eccb338ab56a651cd0eb547018a2fcf3d0fc1747f5c6511e221e02250b"
+    },
+    {
+      "name": "registry-preparation.json",
+      "sha256": "17c00c8e3f88f5755cfdee1a9cb4a2bfb954bbf3f64b2f6af8b9f86bbd04498e"
+    },
+    {
+      "name": "PREPARATION.md",
+      "sha256": "433519a95df27d6a3b1ace245a497eb9abcdf6bd0c6ad831c7d1c7380735c9b4"
+    }
+  ],
+  "no_execution": true
+}

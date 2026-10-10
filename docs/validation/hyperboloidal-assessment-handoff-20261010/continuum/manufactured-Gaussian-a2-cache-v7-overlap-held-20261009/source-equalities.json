@@ -1,0 +1,133 @@
+{
+  "admission_reverse_byte_AST_equal": true,
+  "caps_unchanged": true,
+  "combined_units": 237,
+  "diffs": {
+    "admission.py": {
+      "bytes": 5085,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v7-overlap-held-20261009/admission-py-v6-v7.diff",
+      "sha256": "dae09a3f2d01b84fa236ca991bc909b9ac5f45082c00f69556f2a21073691bfc"
+    },
+    "certificate_stage.py": {
+      "bytes": 477,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v7-overlap-held-20261009/certificate_stage-py-v6-v7.diff",
+      "sha256": "7611a8b74b7ec8253860cf137736b0f0fbe016c800cacd14e6b575b5dd9eeb6c"
+    },
+    "producer_bounds.py": {
+      "bytes": 475,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v7-overlap-held-20261009/producer_bounds-py-v6-v7.diff",
+      "sha256": "a572810d89bfc6bc90063e0ec8c136c4bab25c15badb43b11a51a415555d73cd"
+    },
+    "recipe.json": {
+      "bytes": 111346,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v7-overlap-held-20261009/recipe-json-v6-v7.diff",
+      "sha256": "1f0a365432a867713c7f9e5b786f03fde700d091c9a4bc530c9b491c797d21a4"
+    },
+    "replay_bounds.py": {
+      "bytes": 476,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v7-overlap-held-20261009/replay_bounds-py-v6-v7.diff",
+      "sha256": "952e5fd428d0d314fb8f3fe8a9ba558f7d0697b1d8c30bb80aebde6dfa99e21b"
+    },
+    "replay_stage.py": {
+      "bytes": 629,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v7-overlap-held-20261009/replay_stage-py-v6-v7.diff",
+      "sha256": "4ff80d4682f02f2fee6b88f615231e2c5aaf735a919c066dfdee682ed02c17d0"
+    },
+    "run_once.py": {
+      "bytes": 669,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v7-overlap-held-20261009/run_once-py-v6-v7.diff",
+      "sha256": "416cc3f9a6d09ff8873a1994e7b3bcee5ff1756c31e1dc91c9dd366763cb77b6"
+    },
+    "unit_stage.py": {
+      "bytes": 1852,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-a2-cache-v7-overlap-held-20261009/unit_stage-py-v6-v7.diff",
+      "sha256": "26806d6b7b1b169b434b998b7a89272560a28b6659881fbe073c5ce2228f7458"
+    }
+  },
+  "domain_union_unchanged": true,
+  "formula_and_interval_arithmetic_bodies_unchanged": true,
+  "new_overlap_units": 58,
+  "no_candidate_imports_or_numerical_execution": true,
+  "original_144_units_and_35_cache_units_unchanged": true,
+  "proofs": [
+    {
+      "exact_replacements": [
+        [
+          "if rhi <= sigma:",
+          "if rhi <= 2 * sigma:"
+        ],
+        [
+          "elif rlo >= sigma:",
+          "elif rlo >= 2 * sigma:"
+        ]
+      ],
+      "file": "producer_bounds.py",
+      "reverse_AST_equal": true,
+      "reverse_byte_equal": true
+    },
+    {
+      "exact_replacements": [
+        [
+          "if rhi <= sigma:",
+          "if rhi <= 2 * sigma:"
+        ],
+        [
+          "elif rlo >= sigma:",
+          "elif rlo >= 2 * sigma:"
+        ]
+      ],
+      "file": "replay_bounds.py",
+      "reverse_AST_equal": true,
+      "reverse_byte_equal": true
+    },
+    {
+      "exact_replacements": [
+        [
+          "[(Q(1, 50), sigma), (sigma, Q(4))]",
+          "[(Q(1, 50), 2 * sigma), (2 * sigma, Q(4))]"
+        ]
+      ],
+      "file": "certificate_stage.py",
+      "reverse_AST_equal": true,
+      "reverse_byte_equal": true
+    },
+    {
+      "exact_replacements": [
+        [
+          "(Q(1, 50), sigma, Q(0), Q(4) + 8 * sigma)",
+          "(Q(1, 50), 2 * sigma, Q(0), Q(4) + 8 * sigma)"
+        ],
+        [
+          "(sigma, Q(4), Q(0), Q(4) + 8 * sigma)",
+          "(2 * sigma, Q(4), Q(0), Q(4) + 8 * sigma)"
+        ]
+      ],
+      "file": "replay_stage.py",
+      "reverse_AST_equal": true,
+      "reverse_byte_equal": true
+    },
+    {
+      "AST_equal": true,
+      "byte_equal": true,
+      "file": "interval.py"
+    },
+    {
+      "AST_equal": true,
+      "byte_equal": true,
+      "file": "interval_uncached.py"
+    },
+    {
+      "AST_equal": true,
+      "byte_equal": true,
+      "file": "cache_units.py"
+    },
+    {
+      "AST_equal": true,
+      "byte_equal": true,
+      "file": "instrumentation.py"
+    }
+  ],
+  "science_dispatch_boundary_changed": true,
+  "unit_stage_addition_erased_byte_AST_equal": true,
+  "wrapper_new_dynamic_keys_reverse_byte_AST_equal": true
+}

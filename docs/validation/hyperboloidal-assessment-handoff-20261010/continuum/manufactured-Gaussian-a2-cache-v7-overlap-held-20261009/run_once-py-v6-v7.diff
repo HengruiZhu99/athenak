@@ -1,0 +1,11 @@
+--- v6/run_once.py
++++ v7/run_once.py
+@@ -41,7 +41,7 @@
+         auth_path = Path(args.authorization).resolve()
+         dynamic_pins = [{"path": str(auth_path), "bytes": auth_path.stat().st_size,
+                          "sha256": receipt["authorization_sha256"]}]
+-        for key in ("units_receipt", "certificate_receipt", "certificate_payload"):
++        for key in ("units_receipt", "new_units_receipt", "new_units_report", "new_overlap_report", "new_cache_report", "certificate_receipt", "certificate_payload"):
+             if key in authorization:
+                 dynamic_pins.append(authorization[key])
+         receipt["dynamic_input_pins"] = dynamic_pins

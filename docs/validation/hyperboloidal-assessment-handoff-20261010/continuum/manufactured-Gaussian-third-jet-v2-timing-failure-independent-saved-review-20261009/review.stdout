@@ -1,0 +1,53 @@
+{
+  "saved_only_review_passed": true,
+  "scientific_timing_passed": false,
+  "full_stage_admitted": false,
+  "source_index_sha256": "92a412f36e668bb2e2414bd65e5dee381e42534d94e2df712fd7e9f3a52ce5d3",
+  "recipe_sha256": "b3fdabcb50016d8bba414f7a4999ff51438d3a1e8e00f6b8a15ca20e1cd76ea2",
+  "driver_sha256": "78ce07e5ce78ab317afbc47948de15ceb9d7ea4bb2b88565273f565be3bb4d14",
+  "child_receipt_sha256": "368ffb6f2435efedefac5e24d43ca6550ffe5b7737fcfeab055af1557358c0a1",
+  "result_sha256": "9ea24c4ba44cad69548e75191178350ae28bdfaedaf4c3f56e51037f596f7901",
+  "outer_receipt_sha256": "3ef09ca35563b867257348aff24c657b7fc33d1fd3af8f0b81489a9a5229ee1f",
+  "root_receipt_sha256": "63b3f6a21f888f12a8dca3ecf35a95c953fe21232f0c9a209967e04e44df4fe8",
+  "progress_stdout_sha256": "5d8b86db5d64e755ea4e76d4f3d39733b3a80a4b448c16892f775ea4d472b20d",
+  "copied_compact_inputs": 18,
+  "metadata_only_inputs": 6,
+  "unique_protected_pins_rehashed": 337,
+  "complete_records_independently_associated": 20,
+  "reported_identity_checks_not_payload_recounted": 11816,
+  "reported_precision_checks_not_payload_recounted": 1692,
+  "failure_events": [
+    {
+      "record": 9,
+      "key": "eps3/4/r999999999999999999/1000000000000000000/t1/10/2,-3,6",
+      "digits": 110,
+      "new_failures": 6,
+      "prior_failed": 0,
+      "final_failed": 6
+    }
+  ],
+  "failed_components": [
+    "connection_conformal_011",
+    "connection_conformal_012",
+    "connection_conformal_013",
+    "connection_conformal_022",
+    "connection_conformal_023",
+    "connection_conformal_033"
+  ],
+  "scaled_minimum": "2.42028156378602088697680E-43",
+  "scaled_maximum": "2.18526753449356905723620E-42",
+  "saved_decimal_scaling_max_absolute_difference": "8.47320652984485901883123E-152",
+  "unchanged_scientific_tolerance": "1e-55",
+  "saved_decimal_serialization_only_tolerance": "1e-100",
+  "root_elapsed_seconds": 33.217198083,
+  "child_elapsed_seconds": 32.871405042,
+  "all_originals_and_protected_pins_unchanged": true,
+  "JSONL_decoded": false,
+  "height_context_decoded": false,
+  "candidate_import_or_target_rerun": false,
+  "limitations": [
+    "Aggregate identity and precision counts are checked as reported; the JSONL rows were not decoded or independently recounted.",
+    "Cumulative progress localizes all failures to the single 110-digit near-scri event; no new failures at 150 digits is a scoped saved observation.",
+    "This audit does not prove cancellation as the cause, bound unreported residuals, change precision or tolerances, or admit the full stage."
+  ]
+}

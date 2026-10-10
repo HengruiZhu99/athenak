@@ -161,3 +161,14 @@ Production `src/` and root `CMakeLists.txt` remain unchanged from
 `27c19d20696ea6dd4704032c51dfd026218f64f2`. These private controls add no
 production gauge and establish no stable finite disturbance, black-hole run,
 puncture regularity, or discrete boundary closure.
+
+## Subsequent oracle and interval checkpoint
+
+The [2026-10-10 handoff](hyperboloidal-assessment-handoff-20261010.md) supersedes
+the earlier implementation status of the held third-derivative plan. The v3
+oracle is implemented privately, with 318 units and a 20-record timing stage
+passing. Its full 5,010-record geometric gate and native RHS binding never ran.
+The v2 timing's six connection failures remain preserved. The interval v6
+producer reached its 600-second cap; v7 has source review only, with proposed
+237 units, producer and replay unexecuted. The remaining compact-region
+positivity certificate and evolution stability are still open.

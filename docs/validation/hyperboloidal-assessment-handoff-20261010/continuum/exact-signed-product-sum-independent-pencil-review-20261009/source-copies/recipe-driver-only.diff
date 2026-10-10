@@ -1,0 +1,31 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source001-held-20261009/recipe.json
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/continuum/exact-signed-product-sum-source002-held-20261009/recipe.json
+@@ -7,9 +7,12 @@
+   "scalar_cases": 44,
+   "dual_cases": 26,
+   "compiler": {
+-    "path": "/Library/Developer/CommandLineTools/usr/bin/clang",
++    "path": "/Library/Developer/CommandLineTools/usr/bin/clang++",
+     "bytes": 124676976,
+-    "sha256": "1590ac950a3d627817d09ade5cb60b2115f17a72182a3141e010b4bcc482a0c9"
++    "sha256": "1590ac950a3d627817d09ade5cb60b2115f17a72182a3141e010b4bcc482a0c9",
++    "resolved_path": "/Library/Developer/CommandLineTools/usr/bin/clang",
++    "resolved_sha256": "1590ac950a3d627817d09ade5cb60b2115f17a72182a3141e010b4bcc482a0c9",
++    "resolved_bytes": 124676976
+   },
+   "python": {
+     "path": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+@@ -71,7 +74,12 @@
+     "PLAN.md",
+     "IMPLEMENTATION.md",
+     "PREPARATION.md",
+-    "authorization-schema.json"
++    "authorization-schema.json",
++    "DRIVER-CORRECTION.md",
++    "driver-guard-only.diff",
++    "recipe-driver-only.diff",
++    "source001-context.json",
++    "driver-reverse-proof.json"
+   ],
+   "external_inputs_file": "external-pins.json",
+   "strong_exact_domain": "abs(exact_result)<=maxfinite; strictly greater rejected before rounding",

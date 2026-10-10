@@ -1,0 +1,45 @@
+{
+  "candidate_imports": false,
+  "captured_source_files": 59,
+  "diff_sha256": "103c7e971f28c11a8af88b6f027e098b2fe1b8a02572eacda51b594d07994d02",
+  "disposition": "PASS narrow precision-only source/math/admission review; execution remains separately held",
+  "driver_sha256": "de0b83ba44f1a837c2b477d6d60f5a8f2a947b8a885159a638bbbaeee94e7915",
+  "execution_authorized": false,
+  "finalization_command": [
+    "python3",
+    "-I",
+    "-B",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/continuum/manufactured-Gaussian-third-jet-v3-independent-source-review-20261009/finalize_review.py"
+  ],
+  "finalization_runtime": {
+    "executable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "executable_sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464",
+    "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=1, no_site=0, ignore_environment=1, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=1, dev_mode=False, utf8_mode=0)",
+    "resolved_executable": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "version": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]"
+  },
+  "future_prerequisites": [
+    "exact separate root units release with a 60-second process-group cap",
+    "fresh same-index units PASS before timing release",
+    "fresh same-index timing PASS and exact timing-bound source/cost review before full release"
+  ],
+  "inputs_unchanged": true,
+  "kernel_native_compile_CAS_calls": false,
+  "limitations": [
+    "Units return before the later child soft time-cap check; retain a separate 60-second root process-group cap as in v2.",
+    "Higher precision and finite bisection budget provide no uniform connection forward-error theorem or promised numerical pass.",
+    "Fresh same-index units and timing plus exact timing-bound measured-cost/source approval remain required for full stage."
+  ],
+  "passed": true,
+  "protected_external_pins": 378,
+  "recipe_sha256": "847cd099b7d98f16963fbbdfc6f8a0eb6f7913529b9a2d72dcabb909c287c8cf",
+  "review_process_returncode": 0,
+  "review_sha256": "cf3556b260f1d148518e3f4b791a9d28745b1d80e28fa9f59c6cc8a4443c28ea",
+  "review_stderr_bytes": 0,
+  "reviewed_source_index_sha256": "41a050d288076d6b54ff396b09851835dac03dd3518f74dca65890f6fd025a8a",
+  "scientific_payload_decoding": false,
+  "source_review_only": true,
+  "static_readback_sha256": "93ec7acdfd97b7d3af1306b089afa9769800683cab7299ed8db36a98984d53f2",
+  "target_evaluation": false,
+  "unique_total_input_pins": 437
+}

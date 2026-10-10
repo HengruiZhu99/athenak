@@ -1,0 +1,12 @@
+--- /Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release-20261009/prepare_release001.py
++++ /Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release002-20261009/prepare_release001.py
+@@ -61,7 +61,8 @@
+             add(pins, Path(name) if Path(name).is_absolute() else path.parent/name, item['sha256'])
+     else:
+         for item in files:
+-            add(pins, item['path'], item['sha256'])
++            item_path = Path(item['path'])
++            add(pins, item_path if item_path.is_absolute() else path.parent/item_path, item['sha256'])
+     for item in index.get('external_inputs', []):
+         add(pins, item['path'], item['sha256'])
+ 

@@ -1,0 +1,24 @@
+{
+  "scope": "Only retained-basis flat/col immediately before SVD; separate from normalization and all three product audits",
+  "rounding": "Integer rational nearest binary64 with ties to even; bit construction",
+  "counts": {
+    "candidate_entries_divide": 1829520
+  },
+  "labels": {},
+  "maximum_absolute_local_rounding_error_exact": {
+    "numerator": "0",
+    "denominator": "1",
+    "decimal_display_not_bound": "0"
+  },
+  "sum_absolute_local_rounding_errors_upper_bound": {
+    "numerator": "0",
+    "denominator": "1",
+    "decimal_display_not_bound": "0"
+  },
+  "maximum_error_case": null,
+  "first_fallback_examples": [],
+  "error_bound_scope": "Local fallback roundings only, not a propagated output/solve error certificate",
+  "contraction_scope": "This adapter performs no contraction; the original NumPy SVD, input layout and conditioning gate are unchanged",
+  "operand_scope": "The original flat array and finite_positive_column2_norm rounded positive col operands are unchanged",
+  "measured_scope": "Completed radial diagnostic covers609..640: 84 inexact nonzero subnormal quotients only at627; all152064components classified, no other window flags"
+}

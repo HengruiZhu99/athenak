@@ -1,0 +1,117 @@
+{
+  "actual_base_pins_rehashed_unchanged": true,
+  "candidate_imported": false,
+  "child_seconds": 600,
+  "context_copies": [
+    {
+      "bytes": 3762,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-timing-root-release-20261009/source-context/v2/prepare_timing001.py",
+      "origin": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/prepare_timing001.py",
+      "sha256": "e3c21cf9baabb8bb1cfdc0a2354ae51ab65ed18bb512f5d070c6f2d7624e636c"
+    },
+    {
+      "bytes": 3764,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-timing-root-release-20261009/source-context/v2/launch_timing.py",
+      "origin": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-root-release-20261009/launch_timing.py",
+      "sha256": "4d400aa8a860479b6b7b143f2407c7350082f0eea20673fa3bd71442e23638fe"
+    },
+    {
+      "bytes": 11367,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-timing-root-release-20261009/source-context/frozen-v3-units/root_common.py",
+      "origin": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-root-release-20261009/root_common.py",
+      "sha256": "83fcc9cfc666c11a9001812b6b5ce6a3c5d363a2372bc8797d6637fcc085aad7"
+    },
+    {
+      "bytes": 9607,
+      "copy": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-timing-root-release-20261009/source-context/frozen-v3-units/launch_units.py",
+      "origin": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-root-release-20261009/launch_units.py",
+      "sha256": "a0bf653a8a6aa6ead6dcda5090c1610395f05dab1b791d6117217e3e203b2e6c"
+    }
+  ],
+  "execution_admitted": false,
+  "expected_base_pins": 437,
+  "full_stage_held": true,
+  "note": "Only stdlib source generation, AST, compact JSON metadata and hashing ran; prepare_timing001.py, launch_timing.py and timing_support.py were not imported or executed. Context templates had been read before this additive copy.",
+  "outer_seconds": 660,
+  "preparation_command": [
+    "python3",
+    "-I",
+    "-B",
+    "-"
+  ],
+  "preparation_runtime": {
+    "environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "PYTHONOPTIMIZE": "0",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "executable": "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=1, no_site=0, ignore_environment=1, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=1, dev_mode=False, utf8_mode=0)",
+    "resolved_executable": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/bin/python3.9",
+    "sha256": "6e7ae61f68a3838094fc56590f84c52069a97d7816f6bb79e0e85995b340e464",
+    "version": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]"
+  },
+  "prepared_scripts_imported_or_executed": false,
+  "read_only_frozen_units_helper_sha256": "83fcc9cfc666c11a9001812b6b5ce6a3c5d363a2372bc8797d6637fcc085aad7",
+  "recipe_sha256": "847cd099b7d98f16963fbbdfc6f8a0eb6f7913529b9a2d72dcabb909c287c8cf",
+  "root_process_group_seconds": 690,
+  "source_index_sha256": "41a050d288076d6b54ff396b09851835dac03dd3518f74dca65890f6fd025a8a",
+  "source_modules": [
+    {
+      "AST_parse_only": true,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-timing-root-release-20261009/timing_support.py",
+      "sha256": "6ba37e3ea43ae9244ad1cfd283b470bbf937c080ff5e17a1562f53e60df6b154",
+      "stdlib_imports": [
+        "pathlib",
+        "hashlib",
+        "importlib.util",
+        "os",
+        "sys"
+      ]
+    },
+    {
+      "AST_parse_only": true,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-timing-root-release-20261009/prepare_timing001.py",
+      "sha256": "82403e4eaa15daf3fe219b489aa0622bf816fc7342eb56a14de5dacdfe6bfd95",
+      "stdlib_imports": [
+        "pathlib",
+        "argparse",
+        "hashlib",
+        "importlib.util",
+        "json",
+        "os",
+        "sys",
+        "traceback"
+      ]
+    },
+    {
+      "AST_parse_only": true,
+      "path": "/Users/hz0693/research/hyperboloidal/build-layer-research/Gaussian-third-jet-oracle-v3-timing-root-release-20261009/launch_timing.py",
+      "sha256": "b40742793ab370ea39230d40cc98f29213f425be84f44aad99b89c1bf18c7d5c",
+      "stdlib_imports": [
+        "pathlib",
+        "argparse",
+        "hashlib",
+        "importlib.util",
+        "json",
+        "os",
+        "signal",
+        "subprocess",
+        "sys",
+        "time",
+        "traceback"
+      ]
+    }
+  ],
+  "source_only": true,
+  "status": "SOURCE-ONLY held timing root controls; root review and separate metadata preparation required",
+  "support_sha256": "6ba37e3ea43ae9244ad1cfd283b470bbf937c080ff5e17a1562f53e60df6b154",
+  "target_arithmetic_or_scientific_payload_decoding": false,
+  "timing_records_only": 20,
+  "unit_receipt_sha256": "d41b648021152f62c7972c483be08c2f70d6b949ad01cecabe7b621787f34e16",
+  "unit_result_sha256": "c569c2e3d8fe884e3a4f14723fc91ce7c25c8cf447b577cff6ddb8244c98db89",
+  "unit_review_index_sha256": "151feb06c55bf3ed3aad70c6dc3e8a8adee5a3020cfae3772f58e5b46f068b1b",
+  "unit_review_receipt_sha256": "4120ae1d1d07ee107c9c8bb741fb3f12b18657037b372605e75f0742f93cbfb9"
+}

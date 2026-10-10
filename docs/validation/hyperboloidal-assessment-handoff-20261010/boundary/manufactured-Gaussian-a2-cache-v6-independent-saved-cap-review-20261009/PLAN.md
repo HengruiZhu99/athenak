@@ -1,0 +1,7 @@
+# Compact saved v6 cap audit
+
+Run this stdlib-only saved-data review once after source/hash/AST preparation. It reads only compact receipt/progress/command/manifest JSON and the producer's fixed domain-cap stderr, and streams original files only for metadata hashing. The2161493-byte partial certificate JSONL is never decoded or copied. No scientific package, candidate module, interval, Gaussian target, replay or source query is executed.
+
+Require the actual child1b30e041... failed receipt, exact cafc4df2 source/9a7ee237 recipe, root/child linkage and unchanged pre/post source/runtime pins. Associate the producer600-second cap, wrapper660-second cap and root720-second process-group cap; the saved process did not reach the outer group cap. Verify the saved8677nodes/4331leaves/19pending counters and their root0/1/2/3 integer associations, together with cache4096entries/12332evictions/17164hits/16428misses and the unchanged179-unit prerequisite. Hash original logs without interpreting duplicate stdout progress payloads. Preserve all failure and absent-report evidence.
+
+The summary reports observed instrumentation only. Counts do not imply volume coverage, a positivity certificate, a runtime-cause theorem or independent interval correctness. Root0 reporting no pending nodes is not an accepted regional certificate without the required final footer/report and replay. Original v5/v6 failures and all sources remain unchanged. Any later v7 plan is a separate source and release.

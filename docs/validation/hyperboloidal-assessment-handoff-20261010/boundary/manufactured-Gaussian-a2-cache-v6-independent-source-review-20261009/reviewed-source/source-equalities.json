@@ -1,0 +1,62 @@
+{
+  "proofs": [
+    {
+      "file": "interval.py",
+      "byte_equal": true,
+      "AST_equal": true
+    },
+    {
+      "file": "interval_uncached.py",
+      "byte_equal": true,
+      "AST_equal": true
+    },
+    {
+      "file": "producer_bounds.py",
+      "byte_equal": true,
+      "AST_equal": true
+    },
+    {
+      "file": "replay_bounds.py",
+      "byte_equal": true,
+      "AST_equal": true
+    },
+    {
+      "file": "replay_stage.py",
+      "byte_equal": true,
+      "AST_equal": true
+    },
+    {
+      "file": "unit_stage.py",
+      "byte_equal": true,
+      "AST_equal": true
+    },
+    {
+      "file": "cache_units.py",
+      "byte_equal": true,
+      "AST_equal": true
+    },
+    {
+      "file": "run_once.py",
+      "byte_equal": true,
+      "AST_equal": true
+    },
+    {
+      "file": "certificate_stage.py",
+      "observation_erased_byte_equal": true,
+      "observation_erased_AST_equal": true
+    }
+  ],
+  "admission_reverse_byte_equal": true,
+  "scientific_recipe_equal_except_resource_fields": true,
+  "original_domain_cap": 1800,
+  "new_domain_cap": 600,
+  "original_wrapper_cap": 1860,
+  "new_wrapper_cap": 660,
+  "diffs": {
+    "certificate_stage.py": "a7641a4c57a8884c5ae1f1a5f2950894f8077bb6a1d11470527a258a17f6ebc3",
+    "admission.py": "771639a75444074a58d309d91c28a33ea31062a07264e8841976fab24d3d25ad",
+    "recipe.json": "22b7c4e13211a33c3fbc1fb53ad5218b14f50f095efd79b48b4497bbc5a5bb76"
+  },
+  "numerical_execution": false,
+  "cache_protocol_scope": "dict membership/delete return/exception/order unchanged; observer integer counters only"
+}

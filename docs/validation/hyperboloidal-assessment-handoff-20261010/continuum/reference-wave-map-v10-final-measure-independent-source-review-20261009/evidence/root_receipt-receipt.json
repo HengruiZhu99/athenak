@@ -1,0 +1,70 @@
+{
+  "actual_child_returncode": 0,
+  "all_prepared_inputs_verified": true,
+  "child_receipt_sha256": "80c93fe0ab717c8cbaaedd7ab14bfd0dc77b905f001de8b783418382a6e57d98",
+  "child_started": true,
+  "child_wall_seconds": 11.461643041,
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "-B",
+    "-s",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v9-mass-measure-diagnostic-held-20261009/run_once.py",
+    "--authorization",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v9-mass-measure-diagnostic-root-release-20261009/release.json",
+    "--authorization-sha256",
+    "00363a1298766f9d6b7dbb6ec57e7f9f941650ed081c451df15d120b2ec3593d"
+  ],
+  "completed": true,
+  "counts": {
+    "exact_below_min_normal": 28,
+    "exact_below_min_subnormal": 28,
+    "inexact_tiny_after_rounding": 28,
+    "inexact_tiny_before_rounding": 28,
+    "multiply_components": 131072,
+    "potential_tiny_products": 28,
+    "rounded_nonzero_subnormal": 8,
+    "rounded_zero": 20,
+    "strict_scalar_underflow_observed": 28,
+    "whole_array_underflow_observed": 1,
+    "zero_or_provably_normal_products": 131044
+  },
+  "cwd": "/Users/hz0693/research/hyperboloidal",
+  "environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONOPTIMIZE": "0",
+    "PYTHONPATH": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/python-deps:/Users/hz0693/Documents/Codex/2026-10-06/referenced-chatgpt-conversation-this-is-an/work/venv/lib/python3.9/site-packages",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "first_strict_array_exception": {
+    "exception": "underflow encountered in multiply",
+    "operation": "measure*mass_sum",
+    "radius_index": 627
+  },
+  "inputs_unchanged": true,
+  "last_strict_array_exception": {
+    "exception": "underflow encountered in multiply",
+    "operation": "measure*mass_sum",
+    "radius_index": 627
+  },
+  "original_v9_radial_readback_passed": false,
+  "process_group_id": 46885,
+  "protected_pins": 4653,
+  "result_sha256": "862459d97b8ae5704f376d6cf5758826da863187ea5fd30cad797da48ff10926",
+  "returncode": 0,
+  "root_cap_seconds": 180,
+  "scipy_metadata_files": 1332,
+  "scope": "Bounded saved E product classification only",
+  "seconds": 18.992963,
+  "start_new_session": true,
+  "stderr.log_bytes": 0,
+  "stderr.log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout.log_bytes": 1468,
+  "stdout.log_sha256": "153936e95a14e26904fc2adde9d02e671876963c6bad0cc305da8979aa70c9e6",
+  "unset_environment": [
+    "PYTHONHOME",
+    "PYTHONWARNINGS"
+  ],
+  "wrapper_receipt_sha256": "92d16b76f4ada57eea4f6a8dc8571d7d5b0fce8b78d6f48b0ef954a43e2badec"
+}

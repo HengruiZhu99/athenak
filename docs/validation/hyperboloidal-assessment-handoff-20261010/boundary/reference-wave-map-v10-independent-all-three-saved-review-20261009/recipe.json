@@ -1,0 +1,41 @@
+{
+  "command": [
+    "/Library/Developer/CommandLineTools/usr/bin/python3",
+    "-I",
+    "-B",
+    "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-v10-independent-all-three-saved-review-20261009/review_saved.py"
+  ],
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONOPTIMIZE": "0"
+  },
+  "expected_cases": {
+    "angular_pair": {
+      "child_receipt_sha256": "dfbcefbbed29955d18051f36b46c9bcf6091c184e7e4c39218309cf509f56350",
+      "result_sha256": "27c9049038a1f5b46417958fdef4ddaffc47fc454a999c899abb2526a55892ff"
+    },
+    "primary": {
+      "child_receipt_sha256": "a4211bb36a26893a424c035cd884afbaf785c502f3b7a6c86de25dabd1a65a6f",
+      "result_sha256": "e431e8e073a058ef575007a761ea81583513701cdcba998b1946c279b1c2d5c1"
+    },
+    "radial_pair": {
+      "child_receipt_sha256": "0f0274220c3cb43d1bbd454f4ccb4ce7bb1815aa8d560abc6cd2560920089e36",
+      "result_sha256": "de9e6916a3b6bf17ff3a7a60b96c9e50b410c389d5f04f871c3b779a57c230af"
+    }
+  },
+  "generator_execution": false,
+  "historical_failures": {
+    "root001_metadata_preparation": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release-20261009/preparation001/receipt.json",
+    "v8_radial_underflow": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v8-held-20261009/attempts/independent-radial_pair001/receipt.json",
+    "v9_radial_underflow": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v9-held-20261009/attempts/independent-radial_pair001/receipt.json"
+  },
+  "input_pins_sha256": "4878678a648fd28686744d59e40c130ca1b28882c8ea51c6fffa88263119526e",
+  "large_radial_result_policy": "streamhash metadata only; never decode/copy",
+  "no_target_recomputation": true,
+  "owner": "/Users/hz0693/research/hyperboloidal/build-layer-research/boundary/reference-wave-map-J0-bulk008-retained-independent-readback-v10-held-20261009",
+  "protected_input_count": 4711,
+  "review_source_sha256": "b2a05375f28a79d4097409dae0fbb53cf63362bfd868383730a279089fe626e3",
+  "root": "/Users/hz0693/research/hyperboloidal/build-layer-research/wave-map-v10-readback-root-release002-20261009",
+  "scientific_execution": false,
+  "scope": "Stdlib compact saved-data provenance and scalar acceptance audit only"
+}

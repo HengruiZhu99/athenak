@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "root_instrumentation_source_review_complete": true,
+  "independent_review_required_before_execution": true,
+  "source_index_sha256": "cafc4df240ba9988919f2f4d97522bda2f71a19f1899a625d2be98afa2144397",
+  "inventory_addendum_sha256": "67253feac124033dd249568d89e62f70fab0396b0b2333dd3258c37aef6307c2",
+  "protected_inputs": 237,
+  "inputs_unchanged": true,
+  "mathematical_sources_byte_AST_equal_to_v5": [
+    "interval.py",
+    "interval_uncached.py",
+    "producer_bounds.py",
+    "replay_bounds.py",
+    "replay_stage.py",
+    "unit_stage.py",
+    "cache_units.py",
+    "run_once.py"
+  ],
+  "marked_producer_observation_removal_byte_AST_equal": true,
+  "cache_semantics": "dict membership returns original boolean; deletion returns or raises before its counter; inherited lookup/set/iteration preserve FIFO",
+  "progress_scope": "between nodes; exact pending boxes in DFS order, no regional fraction",
+  "prior179units_retained": true,
+  "prior_v5_actual_timeout_preserved": true,
+  "fresh600second_diagnostic_only": true,
+  "replay_admitted": false,
+  "candidate_imported": false,
+  "interval_or_target_evaluated": false,
+  "partial_certificate_decoded_or_resumed": false,
+  "global_slicing_accepted": false,
+  "read_order": "Text sources/diffs read before capture; all supplied source/external/history pins reverified twice"
+}

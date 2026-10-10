@@ -1,0 +1,11 @@
+--- v6/certificate_stage.py
++++ v7/certificate_stage.py
+@@ -36,7 +36,7 @@
+     roots = []
+     for sigma_text in recipe["sigma"]:
+         sigma = Q(sigma_text)
+-        for rlo, rhi in [(Q(1, 50), sigma), (sigma, Q(4))]:
++        for rlo, rhi in [(Q(1, 50), 2 * sigma), (2 * sigma, Q(4))]:
+             roots.append((sigma, (rlo, rhi, Q(0), Q(4) + 8 * sigma)))
+     stack = [(i, "", box, 0) for i, (_, box) in reversed(list(enumerate(roots)))]
+     started = time.monotonic()

@@ -1,0 +1,12 @@
+--- review_saved_timing.py
++++ review_saved_timing_v2.py
+@@ -52,7 +52,8 @@
+ require(root['root_process_group_cap_seconds']==690 and root['elapsed_seconds']<690,'root process cap')
+ for s in ('/timing-outer001/invocation.json','/timing-invocation001/invocation.json'):
+     inv=load(pick(s));require('-I' in inv['command'] and '-B' in inv['command'],'actual isolated command')
+-    require(inv['environment']['PYTHONOPTIMIZE']=='0' and inv['environment']['PYTHONDONTWRITEBYTECODE']=='1','actual optimization/bytecode guards')
++    env=inv['fixed_environment'] if s=='/timing-invocation001/invocation.json' else inv['environment']
++    require(env['PYTHONOPTIMIZE']=='0' and env['PYTHONDONTWRITEBYTECODE']=='1','actual optimization/bytecode guards')
+ before=load(pick('/attempts/timing001/source-before.json'));after=load(pick('/attempts/timing001/source-after.json'))
+ require(before==after==load(pick('/timing-outer001/pins-before.json'))==load(pick('/timing-outer001/pins-after.json')),'child and outer pin identity')
+ require(load(pick('/timing-invocation001/pins-before.json'))==load(pick('/timing-invocation001/pins-after.json')),'root pre/post identity')
