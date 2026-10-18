@@ -33,10 +33,14 @@ def validate_migration(path,source):
     if not re.fullmatch('[0-9a-f]{64}',consumer) or consumer==proof['producer_library_sha256']:
         raise ValueError('distinct bound consumer required')
     token=source['parameterization']
-    custom=re.fullmatch(r'modal_P_C2prolate_map_v3_r([0-9eE+.-]+)_k([0-9eE+.-]+)',token)
+    custom=re.fullmatch(r'modal_P_(?:C2prolate_map_v3|C4prolate_map_v4|C2tauC4_map_v5)_r([0-9eE+.-]+)_k([0-9eE+.-]+)',token)
     if token=='modal_P_C2prolate_mapped_v2':maps=dict(radial_stretch=.2,angular_stretch=2.)
     elif custom:maps=dict(radial_stretch=float(custom[1]),angular_stretch=float(custom[2]))
     else:raise ValueError('unsupported migration continuous basis/maps')
+    if (not all(math.isfinite(v) for v in maps.values())
+        or not .001<=maps['radial_stretch']<=1
+        or not .1<=maps['angular_stretch']<=6):
+        raise ValueError('invalid migration continuous maps')
     if proof['parameterization']!=token or proof['maps']!=maps:
         raise ValueError('migration continuous basis/maps differ')
     workers=proof['workers']

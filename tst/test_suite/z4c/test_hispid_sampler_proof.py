@@ -56,5 +56,29 @@ class SamplerProofTests(unittest.TestCase):
         Path(self.proof['workers'][1]['artifact']).write_bytes(b'changed witness')
         with self.assertRaises(ValueError):validate_migration(self.path,self.source)
 
+    def set_basis(self,token):
+        self.source['parameterization']=self.proof['parameterization']=token
+        for worker in self.proof['workers']:worker['parameterization']=token
+        self.save()
+
+    def test_known_modal_families_preserve_exact_basis_binding(self):
+        for family in ('C2prolate_map_v3','C4prolate_map_v4','C2tauC4_map_v5'):
+            with self.subTest(family=family):
+                token='modal_P_'+family+'_r0.20000000000000001_k2'
+                self.set_basis(token)
+                self.assertTrue(validate_migration(self.path,self.source)['passed'])
+        self.proof['workers'][1]['parameterization']='modal_P_C4prolate_map_v4_r0.20000000000000001_k2'
+        self.save()
+        with self.assertRaises(ValueError):validate_migration(self.path,self.source)
+
+    def test_unknown_basis_and_invalid_maps_fail(self):
+        for token in ('modal_P_C2tauC4_map_v6_r.2_k2',
+                      'modal_P_C2tauC4_map_v5_r1e309_k2',
+                      'modal_P_C2tauC4_map_v5_r0_k2',
+                      'modal_P_C2tauC4_map_v5_r.2_k7'):
+            with self.subTest(token=token):
+                self.set_basis(token)
+                with self.assertRaises(ValueError):validate_migration(self.path,self.source)
+
 
 if __name__=='__main__':unittest.main()
