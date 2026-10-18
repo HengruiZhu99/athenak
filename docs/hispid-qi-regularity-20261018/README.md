@@ -21,8 +21,8 @@ is 4.083e-16, with no evolution. Final horizon quantities are:
 | - | 0.416086392 | 0.409618329 | 0.345813441 | 5.626e-9 |
 
 After the observed angular refinement buffer, continuous enclosure margins
-for the modified balls are 0.03205/0.01867. Mass and spin-vector angular changes
-are below 3.23e-13/4.18e-12. These are coordinate rotation integrals, not AKV
+for the modified balls are 0.03205/0.01867. Across all consecutive angular/quadrature pairs, mass and spin-vector changes
+are below 2.01e-12/2.79e-11. These are coordinate rotation integrals, not AKV
 spins. The checkpoint remains diagnostic: the fixed native QI 160/192/224
 sequence meets absolute exterior constraints but fails its strict bulk RMS
 trend. No trumpet or full-binary qualification is inferred from these horizons.
