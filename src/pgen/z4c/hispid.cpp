@@ -160,7 +160,7 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
     std::cout << "HiSpID import source=" << checkpoint.library_sha << " acceptance=" << checkpoint.acceptance
               << " consumer=" << HISPID_LIBRARY_SHA256
               << " ADM/Z4c relative error=" << std::setprecision(17) << error
-              << " seed_family=" << (checkpoint.seed_family==HISPID_SEED_QI?"qi":"trumpet_r0_m") << std::endl;
+              << " seed_family=" << (checkpoint.seed_family==HISPID_SEED_QI?"qi":checkpoint.seed_family==HISPID_SEED_LIU?"liu":"trumpet_r0_m") << std::endl;
   }
   if (pin->GetOrAddBoolean("problem","hispid_mesh_constraints",false)) {
     switch (ind.ng) {
@@ -296,7 +296,8 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
     if (seed_guess && !common && !flat) {
       const double s2=hole.spin[0]*hole.spin[0]+hole.spin[1]*hole.spin[1]+hole.spin[2]*hole.spin[2];
       const double radius_factor=checkpoint.seed_family==HISPID_SEED_QI?.5:1.;
-      const double rh=radius_factor*hole.mass*std::sqrt(1-s2/std::pow(hole.mass,4));
+      const double root=std::sqrt(1-s2/std::pow(hole.mass,4));
+      const double rh=checkpoint.seed_family==HISPID_SEED_LIU?.25*hole.mass*(1+root):radius_factor*hole.mass*root;
       const double v2=hole.velocity[0]*hole.velocity[0]+hole.velocity[1]*hole.velocity[1]+hole.velocity[2]*hole.velocity[2];
       finder.initial_shape=[=](Real th,Real ph) {
         double vn=hole.velocity[0]*std::sin(th)*std::cos(ph)+hole.velocity[1]*std::sin(th)*std::sin(ph)+hole.velocity[2]*std::cos(th);

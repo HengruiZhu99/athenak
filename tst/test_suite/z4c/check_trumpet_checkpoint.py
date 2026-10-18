@@ -24,21 +24,21 @@ def main():
     c=b.config();c.n[:]=[8,args.polar_extent,4];c.far_radius=0;c.inner_max[:]=[0,0];c.inner_flatten=0
     c.hole[0]=Hole(1,center=(0,0,0),spin=(.2,-.3,.7),velocity=(.25,.1,-.2));c.hole[1].mass=0
     xyz=np.array([[1.2,.7,-.4],[2,-1,.8]]);records=[]
-    for family in (['qi','trumpet_r0_m'] if args.polar_extent==8 else ['trumpet_r0_m']):
+    for family in (['qi','trumpet_r0_m','liu'] if args.polar_extent==8 else ['trumpet_r0_m']):
         c.seed_family=family;p=out/(family+'.checkpoint')
-        meta=write_checkpoint(p,c,np.zeros(4*np.prod(c.n)),b.library_sha256(),'analytic_seed')
+        meta=write_checkpoint(p,c,np.zeros(4*np.prod(c.n)),b.library_sha256(),'analytic_seed',b.parameterization())
         process=subprocess.run([str(exe),str(p),b.library_sha256()],capture_output=True,text=True,check=True,cwd=native)
         result=json.loads(process.stdout)
         with b.create_sampler(c) as s:
             v=s.sample_with_derivatives(xyz)
         expected=np.concatenate([np.concatenate([v['gamma'][i],v['Kij'][i]]) for i in range(2)]+[v['dgamma'].ravel()])
         actual=np.array(result['values']);error=float(np.max(np.abs(actual-expected)/(1+np.abs(expected))))
-        assert error<1e-12 and result['seed_family']==(family=='trumpet_r0_m')
+        assert error<1e-12 and result['seed_family']=={'qi':0,'trumpet_r0_m':1,'liu':2}[family]
         records.append(dict(family=family,scaled_linf=error,metadata=meta))
     original=p.read_text();rejected=[]
-    invalid_cases=[('unknown_family',original.replace('trumpet_r0_m','invalid')),
+    invalid_cases=[('unknown_family',original.replace(family,'invalid')),
                        ('mislabelled_v1',original.replace('HISPID_CHECKPOINT 2','HISPID_CHECKPOINT 1')),
-                       ('missing_family',original.replace('seed_family trumpet_r0_m\n',''))]
+                       ('missing_family',original.replace('seed_family '+family+'\n',''))]
     if args.polar_extent!=8:
         invalid_cases=[('oversized_polar',original.replace(f'n 8 {args.polar_extent} 4', 'n 8 513 4'))]
     for label,text in invalid_cases:

@@ -58,11 +58,14 @@ class SamplerProofTests(unittest.TestCase):
 
     def set_basis(self,token):
         self.source['parameterization']=self.proof['parameterization']=token
+        if 'poly2_map_v7' in token:self.proof['maps']['radial_kind']='quadratic'
+        elif 'beta14_map_v8' in token:self.proof['maps']['radial_kind']='endpoint_beta14'
+        else:self.proof['maps'].pop('radial_kind',None)
         for worker in self.proof['workers']:worker['parameterization']=token
         self.save()
 
     def test_known_modal_families_preserve_exact_basis_binding(self):
-        for family in ('C2prolate_map_v3','C4prolate_map_v4','C2tauC4_map_v5'):
+        for family in ('C2prolate_map_v3','C4prolate_map_v4','C2tauC4_map_v5','C2tauC4_inf2_map_v6','C2tauC4_poly2_map_v7','C2tauC4_beta14_map_v8','C2tauC4_focus_map_v9','C2tauC4_focus2_map_v10'):
             with self.subTest(family=family):
                 token='modal_P_'+family+'_r0.20000000000000001_k2'
                 self.set_basis(token)
@@ -75,7 +78,8 @@ class SamplerProofTests(unittest.TestCase):
         for token,radial,angular in (('modal_P_C2tauC4_map_v6_r.2_k2',.2,2.),
                                     ('modal_P_C2tauC4_map_v5_r1e309_k2',float('inf'),2.),
                                     ('modal_P_C2tauC4_map_v5_r0_k2',0.,2.),
-                                    ('modal_P_C2tauC4_map_v5_r.2_k7',.2,7.)):
+                                    ('modal_P_C2tauC4_map_v5_r.2_k7',.2,7.),
+                                    ('modal_P_C2tauC4_beta14_map_v8_r.8_k3',.8,3.)):
             with self.subTest(token=token):
                 # Match the invalid values everywhere: a mere map mismatch
                 # must not be the reason these proofs are rejected.

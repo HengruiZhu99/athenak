@@ -53,7 +53,7 @@ def checkpoint_metadata(path,require_two_active=True):
     if version not in (['1'],['2']):raise ValueError('checkpoint version')
     family='qi'
     if version==['2']:
-        if meta.get('seed_family') not in (['qi'],['trumpet_r0_m']):raise ValueError('checkpoint seed family')
+        if meta.get('seed_family') not in (['qi'],['trumpet_r0_m'],['liu']):raise ValueError('checkpoint seed family')
         family=meta['seed_family'][0]
     elif 'seed_family' in meta:raise ValueError('v1 checkpoint cannot carry a seed family')
     holes=[list(map(float,meta['hole'+str(h)])) for h in range(2)]

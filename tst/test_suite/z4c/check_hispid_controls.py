@@ -39,9 +39,10 @@ def shape_error(path,lmax,chi,speed=.885,seed_family='qi'):
     radius=cosine[:,0,None]+np.zeros((len(mu),len(phi)))
     for m in range(1,lmax+1):radius+=cosine[:,m,None]*np.cos(m*phi)+sine[:,m,None]*np.sin(m*phi)
     nx=np.sqrt(1-mu*mu)[:,None]*np.cos(phi);G=1/np.sqrt(1-speed**2)
-    if seed_family not in ('qi','trumpet_r0_m'):raise ValueError('unsupported surface seed family')
+    if seed_family not in ('qi','trumpet_r0_m','liu'):raise ValueError('unsupported surface seed family')
     factor=.5 if seed_family=='qi' else 1.
-    expected=factor*np.sqrt(1-chi*chi)/np.sqrt(1+(G*G-1)*nx*nx)
+    rest_radius=.25*(1+np.sqrt(1-chi*chi)) if seed_family=='liu' else factor*np.sqrt(1-chi*chi)
+    expected=rest_radius/np.sqrt(1+(G*G-1)*nx*nx)
     if not np.isfinite(radius).all():raise ValueError('nonfinite independent surface oracle')
     return float(np.max(abs(radius/expected-1)))
 

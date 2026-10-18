@@ -37,6 +37,7 @@ inline Checkpoint Read(const std::string &filename, const std::string &expected_
     label("seed_family");std::string family;in>>family;
     if (family=="qi") result.seed_family=HISPID_SEED_QI;
     else if (family=="trumpet_r0_m") result.seed_family=HISPID_SEED_TRUMPET_R0_M;
+    else if (family=="liu") result.seed_family=HISPID_SEED_LIU;
     else throw std::runtime_error("Unsupported HiSpID seed family");
   }
   label("library_sha256");in>>result.library_sha;

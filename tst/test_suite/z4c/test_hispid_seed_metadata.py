@@ -51,6 +51,22 @@ class ExactSeedMetadataTests(unittest.TestCase):
             self.assertLess(shape_error(path,0,0,0,'trumpet_r0_m'),1e-14)
             self.assertGreater(shape_error(path,0,0,0,'qi'),.9)
 
+    def test_liu_chart_radius_and_metadata(self):
+        import math
+        from check_hispid_binary import checkpoint_metadata
+        from check_hispid_controls import shape_error
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'seed.txt';text=self.fixture(path,.99,0.)
+            text=text.replace('HISPID_CHECKPOINT 1','HISPID_CHECKPOINT 2').replace(
+                'library_sha256','seed_family liu\nlibrary_sha256')
+            path.write_text(text)
+            self.assertEqual(checkpoint_metadata(path,False)['seed_family'],'liu')
+            shape=Path(directory)/'shape.txt'
+            radius=(1+math.sqrt(1-.99**2))/4
+            shape.write_text(str(radius*math.sqrt(4*math.pi))+'\n')
+            self.assertLess(shape_error(shape,0,.99,0.,'liu'),1e-14)
+            self.assertGreater(shape_error(shape,0,.99,0.,'qi'),1.)
+
     def test_targets_are_checked_against_actual_zero_correction_file(self):
         import math
         with tempfile.TemporaryDirectory() as directory:
