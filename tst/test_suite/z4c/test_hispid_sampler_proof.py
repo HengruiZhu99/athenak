@@ -72,11 +72,15 @@ class SamplerProofTests(unittest.TestCase):
         with self.assertRaises(ValueError):validate_migration(self.path,self.source)
 
     def test_unknown_basis_and_invalid_maps_fail(self):
-        for token in ('modal_P_C2tauC4_map_v6_r.2_k2',
-                      'modal_P_C2tauC4_map_v5_r1e309_k2',
-                      'modal_P_C2tauC4_map_v5_r0_k2',
-                      'modal_P_C2tauC4_map_v5_r.2_k7'):
+        for token,radial,angular in (('modal_P_C2tauC4_map_v6_r.2_k2',.2,2.),
+                                    ('modal_P_C2tauC4_map_v5_r1e309_k2',float('inf'),2.),
+                                    ('modal_P_C2tauC4_map_v5_r0_k2',0.,2.),
+                                    ('modal_P_C2tauC4_map_v5_r.2_k7',.2,7.)):
             with self.subTest(token=token):
+                # Match the invalid values everywhere: a mere map mismatch
+                # must not be the reason these proofs are rejected.
+                self.proof['maps']=dict(radial_stretch=radial,angular_stretch=angular)
+                for worker in self.proof['workers']:worker['maps']=self.proof['maps']
                 self.set_basis(token)
                 with self.assertRaises(ValueError):validate_migration(self.path,self.source)
 
