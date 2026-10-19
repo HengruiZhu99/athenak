@@ -210,3 +210,21 @@ horizon searches plus ntheta32->48 quadrature check. Final measured mass is
 and finder, not superradiant amplification or global constraint bounds.
 Detailed bound evidence and the PRD report are in the companion branch's
 `validation/trumpet/wave22/` and `docs/TRUMPET_FORMULATION_VALIDATION.tex`.
+
+
+The companion also qualifies one perturbed Liu seed at chi=.9999 with an
+ingoing prograde electric l=m=2 packet (amplitude.001, four cycles,
+omega=.99(2 Omega_H), r0=12, cutoff2--4). Its three fixed radial/polar
+resolutions have decreasing independent physical constraints and sampled
+solution differences; see `validation/trumpet/wave9999/` in the companion.
+The same finest version3 checkpoint passes bitwise9-field pure-CPU migration
+at1602 points and this unchanged executable's lmax8/12/16 searches plus
+ntheta32->48 refinement. Final measured area25.48816340684645,
+Mirr=.7120891092880841, MH=1.000000000118978, coordinate-spin
+chi=.999899999762024, expansion RMS9.8172e-8. Every search passes unchanged
+expansion1e-7 and interior enclosure, with final buffered margin.0535357.
+The first near-extreme mean-radius flow is slow (686s); previous passed
+shapes initialize the later orders. These are direct-native-geometry
+initial-time finder checks with zero evolution. Coordinate spin is not AKV
+spin, and no scattering amplification or global constraint bound is claimed.
+No consumer code or acceptance tolerance changed for this study.
