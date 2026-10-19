@@ -1,4 +1,4 @@
-"""Exact-control configuration guards; no native sampler or finder is run."""
+"""Free-data metadata and exact-control guards; no native sampler/finder is run."""
 import hashlib
 from pathlib import Path
 import tempfile
@@ -40,6 +40,23 @@ class ExactSeedMetadataTests(unittest.TestCase):
             self.assertTrue(import_evidence(line+' seed_family=trumpet_r0_m',source)['passed'])
             for bad in (text.replace('trumpet_r0_m','unknown'),text.replace('HISPID_CHECKPOINT 2','HISPID_CHECKPOINT 1')):
                 path.write_text(bad)
+                with self.assertRaises(ValueError):checkpoint_metadata(path,False)
+
+    def test_wave22_metadata_cannot_be_dropped_or_called_an_exact_seed(self):
+        from check_hispid_binary import checkpoint_metadata
+        from hispid_sampler_proof import import_evidence
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'packet.txt';original=self.fixture(path,.99,0.)
+            text=original.replace('HISPID_CHECKPOINT 1','HISPID_CHECKPOINT 3').replace(
+                'library_sha256','seed_family liu\nwave22 1 1 0.001 0.5 1 6 0 2 4\nlibrary_sha256')
+            path.write_text(text);source=checkpoint_metadata(path,False)
+            self.assertEqual(source['wave22'][2],.001)
+            with self.assertRaises(ValueError):exact_seed_source(self.entry(path),'kerr99')
+            line='HiSpID import source='+('a'*64)+' acceptance=analytic_seed consumer='+('a'*64)+' ADM/Z4c relative error=1e-16'
+            self.assertFalse(import_evidence(line+' seed_family=liu',source)['passed'])
+            self.assertTrue(import_evidence(line+' wave22=1 seed_family=liu',source)['passed'])
+            for changed in (text.replace(' 2 4\n',' 4 2\n'),text.replace('HISPID_CHECKPOINT 3','HISPID_CHECKPOINT 2')):
+                path.write_text(changed)
                 with self.assertRaises(ValueError):checkpoint_metadata(path,False)
 
     def test_surface_oracle_uses_trumpet_coordinate_radius(self):

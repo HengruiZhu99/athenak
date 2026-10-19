@@ -1,4 +1,4 @@
-"""Initial-time solved-binary FastFlow refinement and inner-ball enclosure.
+"""Initial-time binary/single-hole FastFlow refinement and inner-ball enclosure.
 
 Uses direct native geometry. Mesh round trips are checked by the pgen; this
 is not a mesh-resolved horizon or production evolution test.
@@ -50,19 +50,25 @@ def checkpoint_metadata(path,require_two_active=True):
             if words[0] in meta:raise ValueError('duplicate checkpoint field')
             meta[words[0]]=words[1:]
     version=meta.get('HISPID_CHECKPOINT')
-    if version not in (['1'],['2']):raise ValueError('checkpoint version')
+    if version not in (['1'],['2'],['3']):raise ValueError('checkpoint version')
     family='qi'
-    if version==['2']:
+    if version in (['2'],['3']):
         if meta.get('seed_family') not in (['qi'],['trumpet_r0_m'],['liu']):raise ValueError('checkpoint seed family')
         family=meta['seed_family'][0]
     elif 'seed_family' in meta:raise ValueError('v1 checkpoint cannot carry a seed family')
+    wave=None
+    if version==['3']:
+        wave=list(map(float,meta.get('wave22',[])))
+        if (len(wave)!=9 or not np.isfinite(wave).all() or wave[0] not in (-1,1)
+            or wave[1] not in (-1,1) or wave[3]==0 or wave[4]<=0 or wave[7]<=0 or wave[8]<=wave[7]):raise ValueError('invalid wave22 metadata')
+    elif 'wave22' in meta:raise ValueError('wave22 requires checkpoint version3')
     holes=[list(map(float,meta['hole'+str(h)])) for h in range(2)]
     if require_two_active and any(x[0]<=0 for x in holes):raise ValueError('two active holes required')
     if hashlib.sha256(path.read_bytes()).hexdigest()!=initial_sha:raise ValueError('checkpoint changed while reading metadata')
     return dict(path=str(path),file_sha256=initial_sha,
                 source_library_sha256=meta['library_sha256'][0],acceptance=meta['acceptance'][0],
                 holes=holes,inner_max=list(map(float,meta['inner_max'])),
-                inner_flatten=int(meta['inner_flatten'][0]),parameterization=meta['parameterization'][0],seed_family=family)
+                inner_flatten=int(meta['inner_flatten'][0]),parameterization=meta['parameterization'][0],seed_family=family,wave22=wave)
 
 
 def main():
@@ -81,6 +87,7 @@ def main():
     p.add_argument('--consumer-memory-mib',type=int,default=32768)
     p.add_argument('--enclosure-axis',choices=('x','y','z'),help='optional outward interval range of the retained SH surface about this Cartesian axis')
     p.add_argument('--enclosure-intervals',type=int,default=1024)
+    p.add_argument('--single',action='store_true',help='one stationary active hole0; reuse component-horizon checks')
     p.add_argument('--common',action='store_true',help='separate common-surface search; a failed search does not establish absence')
     p.add_argument('--common-center',default='0,0,0',help='explicit Cartesian common-search center')
     p.add_argument('--common-radius',type=float,help='positive initial common-search sphere radius')
@@ -104,12 +111,14 @@ def main():
         raise ValueError('common center/radius options require --common')
     if a.affine_chart and (a.common or a.initial_shapes):
         raise ValueError("affine chart requires component searches and no untagged external shape guesses")
-    surface_count=1 if a.common else 2
+    if a.single and a.common:raise ValueError("single and common searches are mutually exclusive")
+    surface_count=1 if (a.common or a.single) else 2
     guess_files=[Path(x).resolve(strict=True) for x in a.initial_shapes] if a.initial_shapes else None
     if guess_files is not None and len(guess_files)!=surface_count:
         raise ValueError('one initial coefficient file per surface required')
-    exe=Path(a.executable).resolve(strict=True);source=checkpoint_metadata(Path(a.checkpoint).resolve(strict=True))
-    if any(max(abs(x) for x in hole[1:4])+radius>=a.domain_half_width for hole,radius in zip(source['holes'],source['inner_max'])):
+    exe=Path(a.executable).resolve(strict=True);source=checkpoint_metadata(Path(a.checkpoint).resolve(strict=True),not a.single)
+    if a.single and not (source['holes'][0][0]>0 and source['holes'][1][0]==0):raise ValueError('single requires only active hole0')
+    if any(max(abs(x) for x in hole[1:4])+radius>=a.domain_half_width for hole,radius in zip(source['holes'],source['inner_max']) if hole[0]>0):
         raise ValueError('mesh domain does not enclose the active holes and modified balls')
     if source['acceptance'] not in ('preliminary','strong') and not (a.allow_diagnostic and source['acceptance']=='diagnostic'):
         raise ValueError('checked binary or explicit --allow-diagnostic required')
@@ -311,12 +320,12 @@ def main():
                     hole['center_change']=float(np.linalg.norm(center-previous_centers[h]))
                     hole['shape_change_uniform_bound']=hole['coefficient_change_uniform_bound']+hole['center_change']
                 row['holes'].append(hole)
-            if not a.common:
+            if not a.common and not a.single:
                 row['component_separation_margin']=float(np.linalg.norm(centers[0]-centers[1])-
                     sum(h['continuous_radius_upper_bound']+h['rounding_allowance'] for h in row['holes']))
                 row['distinct_components_verified']=row['component_separation_margin']>0
             row['surface_kind_verified']=bool(not a.common or ' kind=common' in stdout)
-            row['passed']=row['shape_guess_verified'] and row.get('import',{}).get('passed',False) and row['harmonic_allocation']['passed'] and row['zero_evolution_verified'] and row['surface_kind_verified'] and (a.common or row['distinct_components_verified']) and all(
+            row['passed']=row['shape_guess_verified'] and row.get('import',{}).get('passed',False) and row['harmonic_allocation']['passed'] and row['zero_evolution_verified'] and row['surface_kind_verified'] and (a.common or a.single or row['distinct_components_verified']) and all(
                 h['expansion_pass'] and h['retained_surface_encloses_inner_ball'] for h in row['holes'])
         (root/'binary.json').write_text(json.dumps(result,indent=2)+'\n')
         print(lmax,ntheta,kind,'returncode',row['returncode'],'passed',row['passed'],'seconds',row['seconds'],flush=True)

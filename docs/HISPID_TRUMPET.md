@@ -189,3 +189,24 @@ expansion with angular order remains unchanged for that chart. It is inapplicabl
 to the exact degree-zero affine sphere: its remaining expansion is the nonlinear
 stopping residual, not unresolved angular structure. No physical tolerance was
 relaxed, and the stricter coarse-order exact checks remain enforced.
+
+## Stationary Kerr metric/time-derivative free data
+
+The companion initial-data branch now exports version3 checkpoints carrying
+a native rotating electric l=m=2 packet on one QI/Liu Kerr hole. Build this
+reader against the companion's new HiSpID.h and pure reference CPU library.
+The reader explicitly reconstructs the wave parameters and verifies the
+loaded wave constructor image. Version1/2 checkpoints keep their old meaning.
+
+`check_hispid_binary.py --single` reuses component-horizon checks for active
+hole0 with hole1 disabled. Metadata checks bind packet presence to the import
+log, and exact-Kerr controls reject wave metadata. No evolution is implied.
+
+A chi=.9 Liu packet passes independent three-resolution constraints in the
+producer, bitwise CPU reading at1602 points, and this fork's lmax8/12/16
+horizon searches plus ntheta32->48 quadrature check. Final measured mass is
+1.00000003473985 and coordinate-spin chi=.89999993746827, with expansion RMS
+7.34e-8. The source checkpoint remains preliminary; this verifies the import
+and finder, not superradiant amplification or global constraint bounds.
+Detailed bound evidence and the PRD report are in the companion branch's
+`validation/trumpet/wave22/` and `docs/TRUMPET_FORMULATION_VALIDATION.tex`.

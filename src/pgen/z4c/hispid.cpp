@@ -59,7 +59,7 @@ void VerifyConsumerImage() {
       throw std::runtime_error(std::string("HiSpID consumer symbol unavailable: ")+name);
     return error?nullptr:value;
   };
-  for (const auto name:{"HiSpID_create_sampler","HiSpID_create_with_seed_family","HiSpID_seed_family","HiSpID_sample","HiSpID_sample_with_derivatives"}) {
+  for (const auto name:{"HiSpID_create_sampler","HiSpID_create_with_wave22","HiSpID_create_with_seed_family","HiSpID_seed_family","HiSpID_sample","HiSpID_sample_with_derivatives"}) {
     Dl_info info{};
     if (!dladdr(address(name,true),&info) || !info.dli_fname ||
         std::filesystem::canonical(info.dli_fname)!=expected)
@@ -92,7 +92,9 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
     throw std::runtime_error("Checkpoint/consumer-library SHA differs; validate the new build before explicit migration");
   if (checkpoint.acceptance=="diagnostic" && !pin->GetOrAddBoolean("problem","hispid_allow_diagnostic",false))
     throw std::runtime_error("Diagnostic checkpoint requires hispid_allow_diagnostic=true");
-  hispid_import::Context data(checkpoint.seed_family==HISPID_SEED_QI
+  hispid_import::Context data(checkpoint.has_wave22
+      ? HiSpID_create_with_wave22(&checkpoint.config,checkpoint.seed_family,0,1,&checkpoint.wave22)
+      : checkpoint.seed_family==HISPID_SEED_QI
       ? HiSpID_create_sampler(&checkpoint.config)
       : HiSpID_create_with_seed_family(&checkpoint.config,checkpoint.seed_family,0,0,1));
   if (data && HiSpID_seed_family(data.get())!=checkpoint.seed_family)
@@ -160,6 +162,7 @@ void Initialize(MeshBlockPack *pack, ParameterInput *pin) {
     std::cout << "HiSpID import source=" << checkpoint.library_sha << " acceptance=" << checkpoint.acceptance
               << " consumer=" << HISPID_LIBRARY_SHA256
               << " ADM/Z4c relative error=" << std::setprecision(17) << error
+              << " wave22=" << checkpoint.has_wave22
               << " seed_family=" << (checkpoint.seed_family==HISPID_SEED_QI?"qi":checkpoint.seed_family==HISPID_SEED_LIU?"liu":"trumpet_r0_m") << std::endl;
   }
   if (pin->GetOrAddBoolean("problem","hispid_mesh_constraints",false)) {

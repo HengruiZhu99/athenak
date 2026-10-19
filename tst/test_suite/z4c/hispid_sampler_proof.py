@@ -94,6 +94,9 @@ def import_evidence(stdout,source,migration=None):
     family=re.search(r'HiSpID import[^\n]* seed_family=(\w+)',stdout)
     result['seed_family']=family[1] if family else 'qi'
     result['passed'] &= result['seed_family']==source.get('seed_family','qi')
+    wave=re.search(r'HiSpID import[^\n]* wave22=([01])',stdout)
+    result['wave22']=bool(wave and wave[1]=='1')
+    result['passed'] &= result['wave22']==(source.get('wave22') is not None)
     image=re.search(r'HiSpID consumer_image=("(?:[^"\\]|\\.)*")',stdout)
     if image:
         loaded=Path(json.loads(image[1])).resolve(strict=True)

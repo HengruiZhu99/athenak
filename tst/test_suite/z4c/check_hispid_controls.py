@@ -87,6 +87,7 @@ def exact_seed_source(entry,case):
     path=Path(entry['path']).resolve(strict=True);source=checkpoint_metadata(path,False)
     if any(source[key]!=entry[key] for key in ('file_sha256','source_library_sha256','acceptance')):
         raise ValueError('manifest/checkpoint binding differs')
+    if source.get('wave22') is not None:raise ValueError('exact Kerr controls cannot carry wave free data')
     if source['acceptance']!='analytic_seed':raise ValueError('exact analytic seed checkpoint required')
     chi,speed=seed_targets(case);hole=source['holes'][0]
     expected=np.r_[1.,np.zeros(3),[0.,0.,chi],[speed,0.,0.]]
