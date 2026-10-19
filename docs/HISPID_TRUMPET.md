@@ -212,7 +212,7 @@ Detailed bound evidence and the PRD report are in the companion branch's
 `validation/trumpet/wave22/` and `docs/TRUMPET_FORMULATION_VALIDATION.tex`.
 
 
-The companion also qualifies one perturbed Liu seed at chi=.9999 with an
+The companion also tests one perturbed Liu seed at chi=.9999 with an
 ingoing prograde electric l=m=2 packet (amplitude.001, four cycles,
 omega=.99(2 Omega_H), r0=12, cutoff2--4). Its three fixed radial/polar
 resolutions have decreasing independent physical constraints and sampled
@@ -228,3 +228,28 @@ shapes initialize the later orders. These are direct-native-geometry
 initial-time finder checks with zero evolution. Coordinate spin is not AKV
 spin, and no scattering amplification or global constraint bound is claimed.
 No consumer code or acceptance tolerance changed for this study.
+
+
+A subsequent physical radial-resolution audit finds that the original
+160x320x16 packet grid is under-resolved, despite its passed finite-observer
+and horizon checks. Those horizon numbers describe that original exported
+solution; they do not validate a refined waveform. The companion
+`validation/trumpet/wave9999-radial/` retains the audit. A revised numerical
+map uses radial stretch1 and inactive focus z=-16 at unchanged physical
+free data. Its typed basis ends in `_r1_k2`, so this import must use the
+matching CPU library, not the original `_r0.2_k2` reader. The existing
+reader checks the basis and loaded-image bindings; keep these checks.
+
+The revised first-grid solve currently fails its unchanged1e-12 native
+stopping gate (maximum9.57e-11), even after restart200 and4000 inner
+iterations. No revised finest checkpoint or horizon qualification is
+claimed. The original horizon results above do not establish radial
+resolution of the ingoing wave; the companion now checks wave-normalized
+metric/time/radial derivatives and both m=+/-2 characteristics separately.
+
+The companion dense audit confirms the original finest pair differs by
+10.47% in the worst wave-normalized time derivative and5.23% in the
+ingoing characteristic, versus a0.1% criterion. Its485-point packet
+constraint maxima are H=6.36e-8, M=6.86e-7, above1e-8. The original
+horizon/import passes remain measurements of that particular data set;
+the ingoing wave is not yet qualified as radially resolved.
