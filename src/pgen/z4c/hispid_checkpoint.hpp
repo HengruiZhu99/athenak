@@ -84,7 +84,7 @@ inline Checkpoint Read(const std::string &filename, const std::string &expected_
     throw std::runtime_error("Checkpoint unknown count mismatch");
   // Preserve the producer's requested budget. The linked native sampler
   // validates its own supported cap and allocation formula independently.
-  if (c.memory_limit_mib<16 || c.memory_limit_mib>65536 ||
+  if (c.memory_limit_mib<16 || c.memory_limit_mib>HISPID_MAX_MEMORY_MIB ||
       double(count/4)*128>double(c.memory_limit_mib)*1024*1024)
     throw std::runtime_error("Checkpoint exceeds sampling-context allocation budget");
   result.unknowns.resize(count);for (double &x:result.unknowns) real(x);

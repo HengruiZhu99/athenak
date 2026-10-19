@@ -253,3 +253,22 @@ ingoing characteristic, versus a0.1% criterion. Its485-point packet
 constraint maxima are H=6.36e-8, M=6.86e-7, above1e-8. The original
 horizon/import passes remain measurements of that particular data set;
 the ingoing wave is not yet qualified as radially resolved.
+
+## Radially refined Liu reader (19 October 2026)
+
+The companion native header now permits radial extents through 1024, polar
+extents through 512, and azimuthal extents through 256. Its explicit aggregate
+memory budget cap is 131072 MiB. The pgen reads these shared constants instead
+of imposing a separate 65536 MiB cap; the linked sampler still validates its
+own allocation budget and the checkpoint's exact basis and image binding.
+The native configuration structure layout is unchanged.
+
+The focused reader control now accepts `--radial-extent` and
+`--memory-limit-mib`. A local 576x8x4 analytic Liu hole at seed spin 0.9999,
+with budget 98304 MiB, passes the actual C++ parser and native CPU sampler
+comparison exactly. The same control rejects radial extent 1025 and budget
+131073 MiB. This checks the import path only; it is not a solved refined wave
+or a horizon-finder result. The receipt is in the companion initial-data
+branch at `validation/trumpet/wave9999-curved/reader576/result.json`.
+A full refined horizon check requires rebuilding AthenaK against this header
+and binding its reader image to the accepted checkpoint producer.
