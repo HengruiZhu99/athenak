@@ -35,6 +35,9 @@ In particular, see the complete list of [requirements](https://ias-astrophysics.
 instructions on how to [download](https://ias-astrophysics.github.io/athenak-docs/download.html) and [build](https://ias-astrophysics.github.io/athenak-docs/build.html) the code for various devices.
 Other pages give instructions for running the code.
 
+For the fixed-radius Z4c constraint diagnostics on this branch, see
+[constraint history definitions](tst/test_suite/z4c/constraint_histories.md).
+
 Since AthenaK is very similar to Athena++, the [Athena++ documention](https://github.com/PrincetonUniversity/athena/wiki) may also be helpful.
 
 ## Tutorials ##

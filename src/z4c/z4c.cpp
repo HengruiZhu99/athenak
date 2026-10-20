@@ -17,6 +17,7 @@
 #include <Kokkos_Core.hpp>
 
 #include "athena.hpp"
+#include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals/bvals.hpp"
@@ -192,12 +193,14 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
 
   opt.excise_chi = pin->GetOrAddReal("z4c", "excise_chi", 0.0625);
   opt.history_interior_radius = pin->GetOrAddReal("z4c", "history_interior_radius", 0.0);
-  opt.history_inner_radius = pin->GetOrAddReal("z4c", "history_inner_radius", 0.0);
+  if (pin->DoesParameterExist("z4c", "history_inner_radius") &&
+      global_variable::my_rank == 0) {
+    std::cerr << "WARNING: z4c/history_inner_radius is ignored. Interior histories "
+              << "use only history_interior_radius and excise_chi." << std::endl;
+  }
   opt.history_boundary_speed = pin->GetOrAddReal("z4c", "history_boundary_speed", 8.0);
   opt.history_boundary_buffer = pin->GetOrAddReal("z4c", "history_boundary_buffer", 4.0);
-  if (!std::isfinite(opt.history_inner_radius) || opt.history_inner_radius<0 ||
-      (opt.history_interior_radius>0 && opt.history_inner_radius>=opt.history_interior_radius) ||
-      !std::isfinite(opt.history_interior_radius) || opt.history_interior_radius<0 ||
+  if (!std::isfinite(opt.history_interior_radius) || opt.history_interior_radius<0 ||
       !std::isfinite(opt.history_boundary_speed) || opt.history_boundary_speed<=0 ||
       !std::isfinite(opt.history_boundary_buffer) || opt.history_boundary_buffer<0) {
     std::cerr << "Interior histories require radius>=0, speed>0, buffer>=0." << std::endl;
