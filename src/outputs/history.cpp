@@ -198,10 +198,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
   int &nhist_ = pdata->nhist;
   auto &opt = pm->pmb_pack->pz4c->opt;
 
-  // Keep all legacy column positions. The new norms use a fixed spherical shell, a chi
-  // mask, and a conservative boundary-travel exclusion. Invalid-volume and
-  // sampled speed-violation columns prevent treating a changing domain as
-  // a fixed-domain convergence test.
+  // Keep column positions. Interior norms use only r<R and chi>=excise_chi,
+  // including retained cells inside r=2. Boundary exposure is reported separately;
+  // it never shrinks the integration region. The evolving chi mask can change volume.
   const bool interior = opt.history_interior_radius>0;
   if (interior) {
     pdata->nhist = 18;
@@ -209,7 +208,7 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
     pdata->label[10] = "interior-M2";
     pdata->label[11] = "interior-C2";
     pdata->label[12] = "interior-volume";
-    pdata->label[13] = "boundary-excluded-volume";
+    pdata->label[13] = "boundary-exposed-volume";
     pdata->label[14] = "speed-bound-violation-volume";
     pdata->label[15] = "interior-coordinate-volume";
     pdata->label[16] = "interior-chi-excluded-volume";
@@ -275,15 +274,15 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       const Real y = CellCenterX(j-js,nx2,size.d_view(m).x2min,size.d_view(m).x2max);
       const Real z = CellCenterX(k-ks,nx3,size.d_view(m).x3min,size.d_view(m).x3max);
       const Real radius2 = x*x+y*y+z*z;
-      const bool shell = radius2<SQR(opt.history_interior_radius) &&
-                         radius2>=SQR(opt.history_inner_radius);
+      const bool ball = radius2<SQR(opt.history_interior_radius);
+      const bool retained = z4c.chi(m,k,j,i)>=opt.excise_chi;
       const Real dist = fmin(fmin(x-domain.x1min,domain.x1max-x),
                         fmin(fmin(y-domain.x2min,domain.x2max-y),
                              fmin(z-domain.x3min,domain.x3max-z)));
       const bool safe = dist>boundary_distance;
-      if (shell && safe && z4c.chi(m,k,j,i)<opt.excise_chi) hvars.the_array[16] = vol;
-      if (shell && !safe) hvars.the_array[13] = vol;
-      if (shell && safe && z4c.chi(m,k,j,i)>=opt.excise_chi) {
+      if (ball && !retained) hvars.the_array[16] = vol;
+      if (ball && retained && !safe) hvars.the_array[13] = vol;
+      if (ball && retained) {
         hvars.the_array[9] = hvars.the_array[1];
         hvars.the_array[10] = hvars.the_array[2];
         hvars.the_array[11] = hvars.the_array[0];
@@ -310,10 +309,9 @@ void HistoryOutput::LoadZ4cHistoryData(HistoryData *pdata, Mesh *pm) {
       }
       if (violation) {
         hvars.the_array[14] = vol;  // Retain the full-grid diagnostic, including puncture.
-        // Boundary signals must cross this unexcised exterior before reaching
-        // the measured shell. Singular/underresolved puncture cells inside the
-        // excision sphere are not part of this boundary transit-speed audit.
-        if (radius2>=SQR(opt.history_inner_radius)) hvars.the_array[17] = vol;
+        // Audit every chi-retained cell on the grid, including r<2 and outside
+        // the measured ball. Keep puncture flags in the full-grid column above.
+        if (retained) hvars.the_array[17] = vol;
       }
     }
 

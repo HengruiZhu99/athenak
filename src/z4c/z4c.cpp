@@ -191,16 +191,22 @@ Z4c::Z4c(MeshBlockPack *ppack, ParameterInput *pin) :
   opt.user_Sbc = pin->GetOrAddBoolean("z4c", "user_Sbc", false);
 
   opt.excise_chi = pin->GetOrAddReal("z4c", "excise_chi", 0.0625);
-  opt.history_interior_radius = pin->GetOrAddReal("z4c", "history_interior_radius", 0.0);
-  opt.history_inner_radius = pin->GetOrAddReal("z4c", "history_inner_radius", 0.0);
+  opt.history_interior_radius = pin->GetOrAddReal("z4c", "history_interior_radius", 16.0);
+  // Fail explicitly on old shell decks instead of silently relabeling their diagnostic.
+  const Real history_inner_radius = pin->GetOrAddReal("z4c", "history_inner_radius", 0.0);
+  if (history_inner_radius != 0.0) {
+    std::cerr << "Chi-masked ball histories require history_inner_radius=0; "
+              << "the legacy inner-radius cut is no longer supported." << std::endl;
+    std::exit(EXIT_FAILURE);
+  }
   opt.history_boundary_speed = pin->GetOrAddReal("z4c", "history_boundary_speed", 8.0);
   opt.history_boundary_buffer = pin->GetOrAddReal("z4c", "history_boundary_buffer", 4.0);
-  if (!std::isfinite(opt.history_inner_radius) || opt.history_inner_radius<0 ||
-      (opt.history_interior_radius>0 && opt.history_inner_radius>=opt.history_interior_radius) ||
+  if (!std::isfinite(opt.excise_chi) || opt.excise_chi<0 ||
       !std::isfinite(opt.history_interior_radius) || opt.history_interior_radius<0 ||
       !std::isfinite(opt.history_boundary_speed) || opt.history_boundary_speed<=0 ||
       !std::isfinite(opt.history_boundary_buffer) || opt.history_boundary_buffer<0) {
-    std::cerr << "Interior histories require radius>=0, speed>0, buffer>=0." << std::endl;
+    std::cerr << "Interior histories require finite chi>=0, radius>=0, speed>0, buffer>=0."
+              << std::endl;
     std::exit(EXIT_FAILURE);
   }
 

@@ -29,7 +29,7 @@ def main():
             base['mesh']['x'+str(a)+'max'] = 8
             base['meshblock']['nx'+str(a)] = 16
         base['time'].update(nlim=0, tlim=.1)
-        base['z4c'].update(horizon_finder='none',history_interior_radius=3,history_inner_radius=2)
+        base['z4c'].update(horizon_finder='none',history_interior_radius=3,history_inner_radius=0)
         base['problem']['lapse_pulse_width'] = 1.5
         for n in (1,2,3,4): base['output'+str(n)]['dt'] = .00001
         def run(name, amp=.2, overrides=(), restart=None):
@@ -65,9 +65,9 @@ def main():
         assert sum(b[alpha_col]>a[alpha_col] for a,b in zip(z0,zp))>0
         assert fields(zero,'con')==fields(pulse,'con'), 'pulse changed initial constraints'
         hz=table(next(zero.rglob('*.hst')))[0]
-        # The sphere excludes cube corners: its sampled volume is below the old cubical shell.
-        assert 0<hz[17]<(2*3)**3-(2*2)**3
-        assert len(hz)==20 and hz[14]>0 and hz[15]==0 and hz[16]==0 and hz[18]==0 and hz[19]==0, hz
+        # The chi-masked ball excludes cube corners and puncture cells, not r<2.
+        assert 0<hz[17]<(2*3)**3
+        assert len(hz)==20 and hz[14]>0 and hz[15]==0 and hz[18]>0, hz
         bad=run('boundary',overrides=('z4c/history_boundary_buffer=8',))
         assert table(next(bad.rglob('*.hst')))[0][15]>0
         badspeed=run('speed',overrides=('z4c/history_boundary_speed=0.01',))
@@ -81,6 +81,6 @@ def main():
         assert len(a)==len(b)
         assert all(math.isclose(x,y,rel_tol=1e-12,abs_tol=1e-13) for r,s in zip(a,b) for x,y in zip(r,s)), 'restart changed evolved fields'
         print(json.dumps(dict(pulse_only_lapse=True,initial_constraints_unchanged=True,
-              clean_shell=True,boundary_veto=True,speed_veto=True,restart_matches=True),indent=2))
+              chi_ball=True,boundary_flag=True,speed_flag=True,restart_matches=True),indent=2))
 
 if __name__=='__main__': main()

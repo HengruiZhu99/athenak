@@ -1,5 +1,12 @@
 # Bounded single-hole gauge campaign (2026-10-01)
 
+**Historical diagnostic:** the executed decks, results and controller audits below
+use the original fixed shell. The October 22 source update uses a chi-masked ball
+with no inner cut and reports boundary exposure without shrinking the norm region.
+See [the updated diagnostic and new decks](../chi_ball_history_20261022/README.md).
+Do not regenerate this campaign's inputs or apply its old shell audit to new data.
+`check_local.py` tests the current code; it does not revalidate historical runs.
+
 This is the user's single-black-hole-only follow-up. Binary collisions and Chau's
 calibration remain manuscript placeholders. Do not submit to debug-scaling or
 alter the unrelated SANE job there. Project: `CompactBinaryMerger`.
