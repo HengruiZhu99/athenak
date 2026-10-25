@@ -43,6 +43,15 @@ class CMCTrumpet {
   double radius() const { return radius_; }
   double integration_constant() const { return c_; }
 
+  // First integral d(1/R)/d(-log r), also used by constrained radial evolution
+  // after replacing -log r by the proper conformal radial coordinate integral.
+  double InverseArealDerivative(double u) const {
+    if (!std::isfinite(u) || u < 0 || u >= 1/radius_) {
+      throw std::invalid_argument("inverse areal radius outside the trumpet exterior");
+    }
+    return RootF(u);
+  }
+
   double InverseAreal(double r, double step = 0.001) const {
     if (!(r > 0 && r < 1) || !(step > 0) || !std::isfinite(step)) {
       throw std::invalid_argument("trumpet sample requires 0<r<1 and finite step");

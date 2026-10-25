@@ -9,6 +9,7 @@
 //! reads data from restart file, as well as re-initializing problem-specific data.
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <algorithm>
@@ -25,6 +26,7 @@
 #include "coordinates/adm.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
+#include "spherical_cmc/spherical_cmc.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
 #include "pgen.hpp"
@@ -258,6 +260,10 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
     data_size_ += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
   } else if (padm != nullptr) {
     data_size_ += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
+  }
+
+  if (pm->pmb_pack->pspherical_cmc != nullptr) {
+    data_size_ += nout1*nout2*nout3*spherical_cmc::NVAR*sizeof(Real);
   }
 
   if (data_size_ != data_size) {
@@ -629,6 +635,14 @@ ProblemGenerator::ProblemGenerator(ParameterInput *pin, Mesh *pm, IOWrapper resf
 
   // call problem generator again to re-initialize data, fn ptrs, as needed
   // second argument true since this IS a restart
+  if (pm->pmb_pack->pspherical_cmc != nullptr) {
+    Kokkos::realloc(ccin,nmb,spherical_cmc::NVAR,nout3,nout2,nout1);
+    if (resfile.Read_Reals_at_all(ccin.data(),ccin.size(),myoffset,
+                                 single_file_per_rank) != ccin.size()) {
+      throw std::runtime_error("spherical_cmc restart read failed");
+    }
+    Kokkos::deep_copy(pm->pmb_pack->pspherical_cmc->u0,ccin);
+  }
   CallProblemGenerator(pin, true);
 
   // Read cyclic zoom restart data if enabled
@@ -915,6 +929,10 @@ void ProblemGenerator::OutputErrors(ParameterInput *pin, Mesh *pm) {
 //! user-defined problem generator function compiled with the code.
 
 void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart) {
+  if (pmy_mesh_->pmb_pack->pspherical_cmc != nullptr) {
+    pmy_mesh_->pmb_pack->pspherical_cmc->Initialize(pin,is_restart);
+    return;
+  }
   auto *z4c = pmy_mesh_->pmb_pack->pz4c;
   if (z4c != nullptr && z4c->hyperboloidal_patch) {
     z4c->InitializeHyperboloidal(pin,is_restart);

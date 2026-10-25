@@ -1,0 +1,456 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.85in]{geometry}
+\usepackage{amsmath,amssymb,mathrsfs,booktabs,longtable,array}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage{listings}
+\lstset{basicstyle=\small\ttfamily,breaklines=true,columns=fullflexible}
+\newcommand{\Om}{\Omega}
+\newcommand{\bc}{\bar\chi}
+\newcommand{\ba}{\bar\alpha}
+\newcommand{\Ac}{\bar{\tilde A}}
+\newcommand{\tg}{\tilde\gamma}
+\newcommand{\scri}{\mathscr{I}^+}
+\newcommand{\pathfile}[1]{\nolinkurl{#1}}
+\title{A native spherical CMC/Dirac module for AthenaK\\\large Equations, implementation, and verification}
+\author{Research implementation for the HengruiZhu99/AthenaK fork}
+\date{25 October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+The \texttt{spherical\_cmc} physics module implements a vacuum, spherically
+symmetric constrained evolution on compactified constant-mean-curvature slices.
+The Hamiltonian and momentum constraints and CMC lapse are solved through their
+radial first integrals; a differential elliptic shift controls the metric-derived
+Dirac connection. Exact boundary values keep future null infinity fixed and null.
+The module uses AthenaK's mesh, Runge--Kutta coefficients, task graph, outputs,
+and restart infrastructure, and reuses the fork's hyperboloidal tensor kernels.
+Its present scope is one radial block, double precision, and host computation.
+It is a numerical research prototype, not a freely evolving Z4c system or a proof
+of the earlier proposed three-dimensional hyperboloidal initial-boundary problem.
+\end{abstract}
+
+\section{Scope and relation to the existing fork}
+The implementation branches from \texttt{z4c\_hyperboloidal}, revision
+\texttt{ca77b353a60a} (25 October checkout). It adds an exclusive physics
+module, selected by an input block \texttt{<spherical\_cmc>}, without changing
+the existing Cauchy Z4c or hyperboloidal evolution choices. The new native module
+is distinct from the pre-existing standalone spherical driver.
+
+Spherical vacuum gravity has no radiative degrees of freedom. Here the mass
+and CMC momentum integration constant are fixed, while a nonstationary radial
+coordinate distortion evolves under an elliptic gauge. The two supported
+families are regular-center Minkowski geometry and excised Schwarzschild CMC
+trumpets. This is a useful test of scri limits, constrained stage projection,
+elliptic gauge evolution, and black-hole excision; it is not a gravitational-wave
+or matter-collapse test. A lapse pulse independent of the constraints is not
+an allowed datum in this formulation.
+
+The design follows the CMC/conformal-Dirac direction of the earlier report.
+Published constrained hyperboloidal formulations provide motivation
+\cite{moncrief,rinne}, while CMC/spatial-harmonic well-posedness on other domains
+\cite{andersson} cannot be transferred without a new scri boundary argument.
+
+\section{Notation and the change from ordinary Z4c}
+Following the physical and spatial-conformal notation of Daszuta et al.,
+Sec.~3 \cite{daszuta}, use signature $(-,+,+,+)$,
+$K_{ij}=-\frac12\mathcal L_n\gamma_{ij}$, and
+\begin{align}
+ \chi&=\psi^{-4}, & \tg_{ij}&=\chi\gamma_{ij}, &
+ \tilde A_{ij}&=\chi(K_{ij}-\tfrac13 K\gamma_{ij}), &
+ \widehat K&=K-2\Theta.
+\end{align}
+Bars denote a separate Penrose compactification, not the spatial conformal
+transformation:
+\begin{equation}
+ \bar g_{ab}=\Om^2g_{ab},\quad \ba=\Om\alpha,\quad
+ \bc=\Om^{-2}\chi,\quad \Ac_{ij}=\Om^{-1}\tilde A_{ij}.
+\end{equation}
+The module fixes $\Om=(1-r^2)/2$, $0\leq r\leq1$, $K=-3$, and units in which
+the scri radius and CMC curvature scale equal one. The shift is unchanged by
+Penrose rescaling. In Cartesian tensor components, with $n_i=x_i/r$,
+\begin{equation}
+ \tg_{ij}=b\delta_{ij}+(a-b)n_i n_j,\qquad b=a^{-1/2},\qquad \det\tg=ab^2=1.
+ \label{eq:metric}
+\end{equation}
+Thus the spherical line element is
+$\bar\gamma_{ij}dx^idx^j=\bc^{-1}(a\,dr^2+b r^2d\omega_2^2)$.
+The code variable \texttt{scmc\_a} is $a$; it is not a curvature length scale.
+
+The changes from free Z4c evolution are explicit:
+\begin{center}
+\begin{tabular}{p{0.27\linewidth}p{0.65\linewidth}}
+\toprule
+Ordinary Z4c quantity & Treatment in this module\\\midrule
+$\tg_{ij}$ & Only its spherical radial eigenvalue $a$ is evolved; determinant one is algebraic.\\
+$\chi,\tilde A_{ij}$ & Replace their evolution by radial vacuum constraint reconstruction of $\bc,\Ac_{ij}$.\\
+$\widehat K,\Theta$ & Set $\widehat K=-3$, $\Theta=0$ at every stage.\\
+Evolved connection & Replace by the metric-derived contracted conformal connection; $Z_i=0$ is imposed.\\
+Lapse driver & Use the CMC lapse solution, with $\ba|_{\scri}=1$.\\
+Gamma driver & Replace by the elliptic Dirac-relaxation shift below.\\
+Tangential shift & Zero by spherical symmetry.\\\bottomrule
+\end{tabular}
+\end{center}
+The projected variables are stored for native output and restart, but are not
+independent evolved degrees of freedom. Existing full tensor equations are used
+as independent differential compatibility diagnostics. This distinction is
+essential when interpreting constraint propagation and hyperbolicity.
+
+\section{Solving the constraints and the CMC lapse}
+Let $R$ be the physical areal radius, $U=1/R$, and
+\begin{equation}
+ D(R)=1-\frac{2M}{R}+\left(-R+\frac{C}{R^2}\right)^2,
+ \qquad F(U)=U^2D(1/U)=U^2-2MU^3+(-1+CU^3)^2.
+\end{equation}
+In areal coordinates the physical spatial metric is
+$dR^2/D+R^2d\omega_2^2$. The trace-free physical extrinsic curvature has mixed
+eigenvalues $(-2C/R^3,C/R^3,C/R^3)$. Hence
+\begin{align}
+ {}^{(3)}R&=\frac{2(1-D-RD')}{R^2}=-6+\frac{6C^2}{R^6},\\
+ A_{ij}A^{ij}&=\frac{6C^2}{R^6},\qquad
+ {}^{(3)}R-A_{ij}A^{ij}+\tfrac23K^2=0,\\
+ \partial_R(-2C/R^3)+\frac2R(-2C/R^3-C/R^3)&=0.
+\end{align}
+The last equation is the radial momentum constraint.
+
+Matching the angular and radial metric components gives
+\begin{equation}
+ \frac{dR}{dr}=\frac{a^{3/4}R\sqrt D}{r},\qquad
+ \tau(r)=\int_r^1\frac{a(s)^{3/4}}s\,ds=-\log r+J(r),\qquad
+ J(r)=\int_r^1\frac{a(s)^{3/4}-1}s\,ds.
+\end{equation}
+Consequently $dU/d\tau=\sqrt{F(U)}$, $U(\tau=0)=0$ is a regular scri initial
+value. The reconstructed fields, for $r<1$, are
+\begin{align}
+ \bc&=b\left(\frac{rU}{\Om}\right)^2,&
+ \Ac_{rr}&=-\frac{2aCU^3}{\Om},\label{eq:project}\\
+ c_t&=a(1)^{3/4},&
+ \ba&=c_t\Om\frac{\sqrt F}{U},&
+ \beta_{\rm stat}^r&=c_t r a^{-3/4}(-1+CU^3).\label{eq:static}
+\end{align}
+The transverse eigenvalue of $\Ac_{ij}$ is $-b\Ac_{rr}/(2a)$, so its conformal
+trace vanishes identically. The radial component is a Cartesian radial
+eigenvalue, as used by the existing spherical tensor kernel.
+
+The physical CMC lapse equation is
+\begin{equation}
+ -\Delta_\gamma\alpha+(3+6C^2/R^6)\alpha=0.
+ \label{eq:lapse}
+\end{equation}
+Its selected solution is $\alpha=c_t\sqrt D$. Indeed
+$\Delta_\gamma\sqrt D/\sqrt D=D''/2+D'/R=3+6C^2/R^6$.
+An excision boundary would allow other homogeneous lapse choices; this module
+selects the lapse inherited from the fixed trumpet, rather than claiming a
+uniqueness theorem from the scri value alone. No lapse matrix solve is necessary
+for this restricted vacuum family.
+
+\subsection{Regular-center family}
+Smoothness requires $a(0)=1$ and $a-1=O(r^2)$. Regularity selects $M=C=0$ and
+$U=\sinh\tau$. The expression evaluated in the code is
+\begin{equation}
+ \bc=b\left[e^{-J}\left(1+\frac{\operatorname{expm1}(2J)}{1-r^2}\right)\right]^2,
+ \quad \ba=c_t\sqrt{\Om^2+r^2b/\bc},\quad
+ \beta_{\rm stat}^r=-r\left[\frac{a(1)}{a(r)}\right]^{3/4}.
+\end{equation}
+This avoids forming $U=\infty$ at the origin. The reference $a=1$ has
+$\bc=1$, $\ba=(1+r^2)/2$, $\beta^r=-r$, and vanishing trace-free curvature.
+The lapse calculation uses a rationalized difference from this reference to
+preserve the exact stationary state to roundoff.
+
+\subsection{Excised black-hole family}
+For $M>0$ use $r_{\rm in}>0$ and the critical $C$ supplied by the fork's existing
+\pathfile{CMCTrumpet}. It solves for a double zero of $D$ at the trumpet radius
+and evaluates $\sqrt F$ in factored form, avoiding cancellation near that zero.
+The new public method \pathfile{InverseArealDerivative} exposes that existing
+first integral for reuse. Radial integration uses RK4 with conformal-distance
+substeps at most $0.002$. The inner boundary must satisfy $R_{\rm in}<2M$ and
+have purely inward physical characteristic flow. The example uses $M=0.5$,
+$r_{\rm in}=0.05$. Neither a puncture floor nor evaluation at $r=0$ is used for
+black holes.
+
+\section{Elliptic Dirac gauge and metric evolution}
+Write $u=1/a$ and let $V$ be the radial coefficient of the metric-derived
+contracted conformal connection:
+\begin{equation}
+ \widehat\Gamma^i=Vn^i,\qquad
+ V=-u'-\frac{2(u-u^{-1/2})}{r}.
+ \label{eq:dirac}
+\end{equation}
+This connection is not a separately evolved Z4 variable. The gauge prescribes
+\begin{equation}
+ \partial_t V=-\eta V,\quad \eta\geq0,\qquad
+ \beta^r=\beta_{\rm stat}^r+r y.
+\end{equation}
+The static shift and reconstructed extrinsic curvature cancel exactly in the
+continuum metric equation. Its remaining part is
+\begin{equation}
+ \partial_t a=r\left(ya'+\tfrac43 ay'\right),\qquad
+ W:=\partial_tu=r y u'-\tfrac43ur y'.
+ \label{eq:evolution}
+\end{equation}
+Taking the variation of \eqref{eq:dirac} gives $V_t=-W'-cW$, where
+$c=(2+u^{-3/2})/r$. Direct substitution yields the scalar elliptic equation
+\begin{align}
+ y''+P y'+Qy&=-\frac{3\eta V}{4ur},\label{eq:elliptic}\\
+ P&=\frac{u'}{4u}+\frac1r+c,\qquad
+ Q=-\frac3{4u}\left[u''+u'\left(\frac1r+c\right)\right].
+\end{align}
+The coefficient of $y''$ is one, independent of the metric and of $\Om$.
+Boundary conditions are
+\begin{equation}
+ y(1)=0,\qquad
+ \begin{cases} y'(0)=0, & M=0,\\ y(r_{\rm in})=0, & M>0.\end{cases}
+ \label{eq:bc}
+\end{equation}
+At a regular center $P=4/r+O(r)$ and $Q$ and $V/r$ are finite. The leading
+operator is the radial Laplacian in five dimensions. Even reflection supplies
+the regular branch without evaluating $1/r$ at $r=0$.
+
+Using $y$ is important numerically: evaluating $v'-v/r$ for $v=ry$ using unrelated
+finite differences leaves a truncation error at the first cell that need not
+respect $a_t=O(r^2)$. The form \eqref{eq:evolution} preserves the required radial
+scaling. This corrected a nonconvergent center error found during development.
+
+There is a useful continuum uniqueness argument beyond the flat reference.
+For the homogeneous shift problem $V_t=0$, factorization gives
+\begin{equation}
+ W'+cW=0,\qquad (u^{-3/4}y)'=-\frac{3}{4r}u^{-7/4}W.
+ \label{eq:factor}
+\end{equation}
+On the ball, $c=3/r+O(r)$, so a nonzero homogeneous $W$ behaves as $r^{-3}$.
+Regularity excludes it. Then $y$ is proportional to $u^{3/4}$, and $y(1)=0$
+sets that constant to zero. On an excised annulus write
+$W=A\exp(-\int c\,dr)$. Integrating the second equation between two zero
+Dirichlet values gives $A$ times a strictly positive integral equal to zero.
+Thus $A=0$ and again $y=0$. This proves absence of a homogeneous kernel for
+smooth positive $u$ satisfying the stated center regularity or annular boundary
+conditions. Standard elliptic Fredholm theory then gives invertibility: on the
+ball the operator is understood as a smooth radial five-dimensional elliptic
+operator, since $P-4/r=O(r)$ and $Q$ is regular. Bounds require positive lower
+bounds on $u$, controlled smooth coefficients, and a fixed annular inner radius;
+no uniform estimate as those assumptions degenerate is asserted.
+
+The same identities explain the reduced continuum dynamics. $V(t,r)$ is known
+as $e^{-\eta t}V(0,r)$; recovering $u$ solves the first-order equation
+\eqref{eq:dirac}. On the ball its regular branch fixes the integration constant.
+On an annulus the conserved conformal radial distance
+$I=\int_{r_{\rm in}}^1u^{-3/4}dr/r$ fixes it, since
+$I_t=[u^{-3/4}y]_{r_{\rm in}}^1=0$. The derivative of $I$ with respect to the
+inner value of $u$ is strictly negative: the corresponding first-order variation
+is $z'= -cz$, with $z(r_{\rm in})=1$, so
+$I'=-\frac34\int u^{-7/4}z\,dr/r<0$.
+This gives a constructive local smooth solution on a positive branch via the
+implicit function theorem, rather than a hyperbolic characteristic argument.
+It is specific to the fixed-mass spherical constraint manifold. The code checks
+pivots, finite values and the original matrix residual as additional discrete
+safeguards; continuum invertibility alone does not validate a discretization.
+
+Linearizing on the regular-center reference, $a=1+\epsilon f$ gives
+$V=\epsilon(f'+3f/r)+O(\epsilon^2)$. Thus
+$(\partial_r+3/r)(f_t+\eta f)=0$ and regularity implies $f_t=-\eta f$.
+This proves bounded damping of this reduced linear gauge degree of freedom.
+It does not analyze the full off-constraint Z4c symbol. On an excised annulus
+there is an additional homogeneous radial distortion, and the two shift boundary
+conditions determine its evolution; simple pointwise damping of $a-1$ is not
+expected there.
+
+\section{Scri fixing, regularity, and boundary interpretation}
+At $r=1$ the analytic limits are imposed as exact assignments:
+\begin{equation}
+ \bc=a(1),\qquad \ba=1,\qquad \beta^r=-1,\qquad \Ac_{rr}=0.
+ \label{eq:scri}
+\end{equation}
+Since $U=a(1)^{3/4}(1-r)+O((1-r)^2)$ and
+$\Om=(1-r)+O((1-r)^2)$, these are the limits of
+\eqref{eq:project}--\eqref{eq:static}, not floors or extrapolated values.
+With $\partial_t\Om=0$,
+\begin{equation}
+ \bar g^{ab}\partial_a\Om\partial_b\Om
+ =\Om'^2\left(\frac{\bc}{a}-\frac{(\beta^r)^2}{\ba^2}\right)=0
+ \quad\hbox{at }r=1.
+\end{equation}
+Physical radial null coordinate speeds there are
+$-\beta^r\pm\ba\sqrt{\bc/a}=0,2$: no physical characteristic enters from beyond
+scri. At the excision boundary the code checks
+$-\beta^r+\ba\sqrt{\bc/a}<0$ after every solve.
+
+The gauge is elliptic, so finite-speed hyperbolic gauge characteristics are not
+its appropriate boundary description. Its boundary data are explicitly fixed
+by \eqref{eq:bc} and the lapse choice. Constraints are projected rather than
+freely propagated; truncation error remains and is measured independently.
+There are no independent incoming constraint characteristics in this reduced
+state vector, but this does not prove immunity to numerical constraint errors.
+
+Smooth reconstructed spherical data have finite scri limits. The existing
+unregularized tensor diagnostic kernel is only evaluated at interior cell
+centers with $\Om>0$; it is never called at the exact boundary. Its cancellations
+can amplify differentiation error by $1/\Om$. In particular, a low-order
+quadrature for $J$, followed by division by $\Om$ and two derivatives, generated
+boundary defects during development. The present higher-order quadrature and
+closures address the tested cases; they do not constitute a general uniform
+error estimate for arbitrary perturbed data. A naive mass diagnostic close to
+scri also suffers cancellation, so the history maximum is restricted to
+$r\leq0.8$, with the unrestricted field still available for inspection.
+
+\section{Discretization and native AthenaK integration}
+There are $N$ ordinary AthenaK radial cell centers and two exact endpoint nodes:
+$r_i=r_{\rm in}+(i-\frac12)h$ for $1\leq i\leq N$, with
+$h=(1-r_{\rm in})/N$. The nearest ghost slots store the two endpoint metric
+degrees of freedom for restart; they are not ordinary field samples at ghost
+cell coordinates. Other ghost slots are zero. Field output with ghost zones is
+therefore rejected.
+
+Differential operators have fourth-order spatial accuracy on smooth data:
+five-point centered formulas in the interior, six-point polynomial closures on
+the unequal endpoint intervals, and reflected even/odd stencils at a regular
+center. The PDE remains second order in space. Quintic interpolation and
+three-point Gaussian quadrature integrate $J$ on each interval. The elliptic
+matrix has fixed bandwidth; banded elimination uses $O(N)$ work and storage,
+with no pivoting and explicit small-pivot rejection. The residual is measured
+against the original, uneliminated operator and must be below $10^{-8}$ after
+normalization by $1+|\mathrm{source}|$. A three-dimensional multigrid hierarchy
+would add unnecessary machinery to this single radial solve.
+
+The native RK3 task sequence is
+\begin{center}
+\texttt{CopyState $\to$ SolveGauge $\to$ RKUpdate $\to$ SolveGauge $\to$ NewTimeStep}.
+\end{center}
+At each stage, projection supplies the fields on which the RHS is evaluated;
+after the metric update it is repeated. The endpoint $a(1)$ evolves too; fixing
+it independently would change the elliptic boundary problem. The regular-center
+endpoint is reset to $a(0)=1$. The task uses AthenaK's $\gamma_0,\gamma_1,\beta$
+RK coefficients and the mesh time step. The reported time-step estimate is
+\begin{equation}
+ \Delta t_{\rm module}=\min\left\{\frac{h}{\max(1,|\beta^r|+\ba\sqrt{\bc/a})},
+                         \frac1{1+\eta}\right\},
+\end{equation}
+with the native CFL multiplier applied by the mesh. This is an operational
+conservative choice, not a stability theorem for all nonlinear data.
+
+\begin{longtable}{p{0.43\linewidth}p{0.50\linewidth}}
+\toprule File or component & Role\\\midrule\endhead
+\pathfile{src/spherical_cmc/radial_solver.hpp} & Radial projection, banded elliptic solve, metric RHS, and tensor diagnostics.\\
+\pathfile{src/spherical_cmc/spherical_cmc.hpp/.cpp} & Native arrays, validation, initialization, field packing, time step, and history.\\
+\pathfile{src/spherical_cmc/spherical_cmc_tasks.cpp} & Native RK stage task assembly and updates.\\
+\pathfile{MeshBlockPack} & Owns the module, selects exclusive physics, destroys its state.\\
+\pathfile{Mesh}, \pathfile{ProblemGenerator} & Native CFL selection and initial/restart setup.\\
+\pathfile{BaseTypeOutput}, history, restart & Field selection, module histories, versioned restart payload.\\
+Existing \pathfile{spherical_tensor.hpp}, \pathfile{conformal_constraints.hpp}, and conformal RHS & Reused geometry, vacuum constraints, physical mass and full tensor RHS; no analytic reference RHS is subtracted.\\
+Existing \pathfile{cmc_trumpet.hpp} & Critical trumpet constant and factored first integral.\\\bottomrule
+\end{longtable}
+All radial solves currently execute on the host. Native Kokkos arrays and explicit
+host/device copies keep the storage interface consistent with other modules.
+GPU performance, multi-block decomposition, MPI with more than one rank, AMR,
+zooming, matter coupling, and arbitrary $K$ or scri radius are not supported.
+Unsupported physics combinations and integrators fail explicitly.
+
+\section{Inputs, outputs, and reproduction}
+From the repository root, a serial build and example runs are:
+\begin{lstlisting}
+cmake -S . -B build-cmc -DCMAKE_BUILD_TYPE=Release \
+  -DAthena_ENABLE_MPI=OFF -DKokkos_ENABLE_SERIAL=ON \
+  -DAthena_ENABLE_SPHERICAL_CMC_TESTS=ON
+cmake --build build-cmc -j4
+mkdir -p run-cmc
+cd run-cmc
+../build-cmc/src/athena -i ../inputs/spherical_cmc/minkowski.athinput
+# Or use ../inputs/spherical_cmc/schwarzschild.athinput
+\end{lstlisting}
+Both examples use $a(0,r)=\exp[A r^2(1-r^2)^2]$, with $A=0.05$, $\eta=1$.
+Set \pathfile{spherical_cmc/metric_pulse=0} for a stationary reference,
+or \texttt{dirac\_damping=0} for a stationary distorted coordinate metric.
+Keep \texttt{mesh/nx1} and \texttt{meshblock/nx1} equal when changing resolution.
+The minimum radial resolution is eight cells and at least two ghost slots are
+required. The mesh ends exactly at $r=1$.
+
+Native \texttt{variable=spherical\_cmc} exposes 13 fields:
+\begin{center}
+\begin{tabular}{p{0.46\linewidth}p{0.47\linewidth}}
+\toprule Name & Meaning\\\midrule
+\texttt{scmc\_a, scmc\_chi, scmc\_alpha, scmc\_beta} & $a,\bc,\ba,\beta^r$\\
+\texttt{scmc\_Khat, scmc\_Theta, scmc\_Arr} & $-3,0,\Ac_{rr}$\\
+\texttt{scmc\_Gamma} & Metric-derived $V$\\
+\texttt{scmc\_H, scmc\_Mr} & Independent physical Hamiltonian and radial momentum residuals\\
+\texttt{scmc\_Krhs, scmc\_Arhs} & Full tensor RHS for $K$ and $\Ac_{rr}$\\
+\texttt{scmc\_mass\_error} & Spherical physical mass diagnostic minus prescribed $M$\\\bottomrule
+\end{tabular}
+\end{center}
+The $\Ac_{rr}$ RHS need not vanish during a black-hole gauge evolution: it must
+agree with the tangent of the reconstructed $\Ac_{rr}$, which a separate test
+checks. $K_t$ should vanish in the continuum. Exact endpoint diagnostics are in
+the history file, not in cell-centered tables. Restart retains the endpoint
+metric values and the ordinary AthenaK time-step state. Dependent fields are
+recomputed after reading. \texttt{state\_version=1} identifies the payload layout;
+changing the physics family or mass during restart is not a supported physical
+continuation.
+
+\section{Verification and remaining limits}
+The reproducible checks are
+\begin{lstlisting}
+python3 tst/spherical_cmc/check_equations.py
+ctest --test-dir build-cmc -R spherical_cmc --output-on-failure
+ATHENA_CMC_EXE="$PWD/build-cmc/src/athena" python3 -m pytest -q \
+  tst/test_suite/spherical_cmc/test_native_cpu.py
+\end{lstlisting}
+The symbolic script verifies the Dirac operator, the physical Hamiltonian and
+momentum first integrals, the CMC lapse, exact nullness, and the regular-center
+linear gauge damping identity. The C++ test checks reference preservation,
+spatial refinement, rejection of nonfinite metrics, and agreement between the
+constraint-projection tangent and the existing tensor $\Ac_{rr}$ equation.
+The native tests cover finite-amplitude gauge evolution, exact scri nullness,
+regular-center and black-hole refinement, bitwise restart equivalence (including
+both native restart file organizations), and invalid configurations.
+
+Representative double-precision runs with $A=0.05$, $\eta=1$, $t=2$ gave:
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule Family & $N$ & $\|H\|_\infty$ & $\|K_t\|_\infty$\\\midrule
+Regular center &32&$2.03\,10^{-7}$&$9.61\,10^{-7}$\\
+ &64&$1.31\,10^{-8}$&$1.51\,10^{-7}$\\
+ &128&$9.93\,10^{-10}$&$2.07\,10^{-8}$\\
+Black hole, $M=0.5$ &64&$1.01\,10^{-3}$&$7.48\,10^{-6}$\\
+ &128&$1.85\,10^{-4}$&$8.67\,10^{-7}$\\
+ &256&$3.77\,10^{-5}$&$9.29\,10^{-8}$\\\bottomrule
+\end{tabular}
+\end{center}
+These are measured errors, not a claim of fourth-order global evolution or
+uniform convergence in every diagnostic. The black-hole Hamiltonian converges
+more slowly than the smooth static projection; the regular-center Hamiltonian
+encounters a floating-point differentiation floor at higher resolution. The
+null residual at the exact outer boundary is exactly zero in these runs. The
+native solver uses third-order time integration.
+
+The global source modifications were also checked with the existing Z4c
+CPU overhaul, binary-conversion and restart regressions. The radial kernel is
+suitable for address/undefined-behavior sanitizer checks; hardware backend and
+MPI validation remain future work. Detailed recorded commands and pass counts
+are in the companion \pathfile{spherical_cmc.md}.
+
+This module is ready for controlled spherical numerical experiments within the
+stated scope. It does not establish uniform strong hyperbolicity of an
+unconstrained three-dimensional Z4c system, nor nonlinear well-posedness of the
+full conformal elliptic-hyperbolic scri problem. The next scientific extensions
+are a consistent spherical matter sector (introducing physical dynamics),
+regular mass extraction at scri, and boundary estimates for the intended
+three-dimensional formulation. These must precede interpreting spherical
+success as resolution of the original oblique-direction hyperbolicity problem.
+
+\begin{thebibliography}{9}
+\bibitem{daszuta} B. Daszuta et al., \emph{GR-Athena++: puncture evolutions on
+vertex-centered oct-tree AMR}, arXiv:2101.08289,
+\url{https://arxiv.org/abs/2101.08289}.
+\bibitem{moncrief} V. Moncrief and O. Rinne, \emph{Regularity of the Einstein
+Equations at Future Null Infinity}, arXiv:0811.4109,
+\url{https://arxiv.org/abs/0811.4109}.
+\bibitem{rinne} O. Rinne and V. Moncrief, \emph{Hyperboloidal Einstein-matter
+evolution and tails for scalar and Yang--Mills fields}, arXiv:1301.6174,
+\url{https://arxiv.org/abs/1301.6174}.
+\bibitem{andersson} L. Andersson and V. Moncrief, \emph{Elliptic-hyperbolic
+systems and the Einstein equations}, arXiv:gr-qc/0110111,
+\url{https://arxiv.org/abs/gr-qc/0110111}.
+\bibitem{vano} A. Va\~n\'o-Vi\~nuales, S. Husa and D. Hilditch,
+\emph{Spherical symmetry as a test case for unconstrained hyperboloidal evolution},
+arXiv:1412.3827, \url{https://arxiv.org/abs/1412.3827}.
+\end{thebibliography}
+\end{document}

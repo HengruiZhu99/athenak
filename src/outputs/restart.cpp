@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <stdexcept>
 #include <sstream>
 #include <string>
 #include <utility> // make_pair
@@ -27,6 +28,7 @@
 #include "coordinates/adm.hpp"
 #include "z4c/compact_object_tracker.hpp"
 #include "z4c/z4c.hpp"
+#include "spherical_cmc/spherical_cmc.hpp"
 #include "z4c/horizon_dump.hpp"
 #include "radiation/radiation.hpp"
 #include "srcterms/turb_driver.hpp"
@@ -122,6 +124,11 @@ void RestartOutput::LoadOutputData(Mesh *pm) {
     Kokkos::realloc(outarray_adm, nmb, nadm, nout3, nout2, nout1);
     Kokkos::deep_copy(outarray_adm, Kokkos::subview(padm->u_adm, std::make_pair(0,nmb),
                       Kokkos::ALL, Kokkos::ALL, Kokkos::ALL, Kokkos::ALL));
+  }
+
+  if (pm->pmb_pack->pspherical_cmc != nullptr) {
+    Kokkos::realloc(outarray_spherical_cmc,nmb,spherical_cmc::NVAR,nout3,nout2,nout1);
+    Kokkos::deep_copy(outarray_spherical_cmc,pm->pmb_pack->pspherical_cmc->u0);
   }
 
   // calculate max/min number of MeshBlocks across all ranks
@@ -301,6 +308,9 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     data_size += nout1*nout2*nout3*nz4c*sizeof(Real);   // z4c u0
   } else if (padm != nullptr) {
     data_size += nout1*nout2*nout3*nadm*sizeof(Real);   // adm u_adm
+  }
+  if (pm->pmb_pack->pspherical_cmc != nullptr) {
+    data_size += nout1*nout2*nout3*spherical_cmc::NVAR*sizeof(Real);
   }
   if (global_variable::my_rank == 0 || single_file_per_rank) {
     resfile.Write_any_type(&(data_size), sizeof(IOWrapperSizeT), "byte",
@@ -633,6 +643,15 @@ void RestartOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
     }
     offset_myrank += nout1*nout2*nout3*nadm*sizeof(Real); // adm u_adm
     myoffset = offset_myrank;
+  }
+
+  if (pm->pmb_pack->pspherical_cmc != nullptr) {
+    // Constructor guards one rank, one block and exclusive physics.
+    const auto count=outarray_spherical_cmc.size();
+    if (resfile.Write_any_type_at_all(outarray_spherical_cmc.data(),count,myoffset,
+                                     "Real",single_file_per_rank) != count) {
+      throw std::runtime_error("spherical_cmc restart write failed");
+    }
   }
 
   //--- STEP 5.  Write cyclic zoom restart data if enabled

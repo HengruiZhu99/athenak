@@ -23,6 +23,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "spherical_cmc/spherical_cmc.hpp"
 #include "diffusion/viscosity.hpp"
 #include "diffusion/resistivity.hpp"
 #include "diffusion/conduction.hpp"
@@ -636,6 +637,9 @@ void Mesh::NewTimeStep(const Real tlim) {
     dt_parabolic_sts = 1.0/sts_inverse_dt;
   }
   // z4c timestep
+  if (pmb_pack->pspherical_cmc != nullptr) {
+    dt_cycle = std::min(dt_cycle, cfl_no*pmb_pack->pspherical_cmc->dtnew);
+  }
   if (pmb_pack->pz4c != nullptr) {
     dt_cycle = std::min(dt_cycle, (cfl_no)*(pmb_pack->pz4c->dtnew) );
   }

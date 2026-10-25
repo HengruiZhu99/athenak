@@ -21,6 +21,7 @@
 #include "hydro/hydro.hpp"
 #include "mhd/mhd.hpp"
 #include "z4c/z4c.hpp"
+#include "spherical_cmc/spherical_cmc.hpp"
 #include "z4c/hyperboloidal/cartesian_hawking.hpp"
 #include "coordinates/adm.hpp"
 #include "outputs.hpp"
@@ -50,6 +51,9 @@ HistoryOutput::HistoryOutput(ParameterInput *pin, Mesh *pm, OutputParameters op)
   if (pm->pmb_pack->pz4c != nullptr) {
     hist_data.emplace_back(PhysicsModule::SpaceTimeDynamics);
   }
+  if (pm->pmb_pack->pspherical_cmc != nullptr) {
+    hist_data.emplace_back(PhysicsModule::SphericalCMC);
+  }
 }
 
 //----------------------------------------------------------------------------------------
@@ -65,6 +69,8 @@ void HistoryOutput::LoadOutputData(Mesh *pm) {
       LoadMHDHistoryData(&data, pm);
     } else if (data.physics == PhysicsModule::SpaceTimeDynamics) {
       LoadZ4cHistoryData(&data, pm);
+    } else if (data.physics == PhysicsModule::SphericalCMC) {
+      pm->pmb_pack->pspherical_cmc->History(&data);
     } else if (data.physics == PhysicsModule::UserDefined) {
       (pm->pgen->user_hist_func)(&data, pm);
     }
@@ -435,6 +441,9 @@ void HistoryOutput::WriteOutputFile(Mesh *pm, ParameterInput *pin) {
           break;
         case PhysicsModule::MagnetoHydroDynamics:
           fname.append(".mhd");
+          break;
+        case PhysicsModule::SphericalCMC:
+          fname.append(".spherical_cmc");
           break;
         case PhysicsModule::SpaceTimeDynamics:
           fname.append(".z4c");

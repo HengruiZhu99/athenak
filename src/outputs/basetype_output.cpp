@@ -27,6 +27,7 @@
 #include "coordinates/adm.hpp"
 #include "z4c/tmunu.hpp"
 #include "z4c/z4c.hpp"
+#include "spherical_cmc/spherical_cmc.hpp"
 #include "srcterms/srcterms.hpp"
 #include "srcterms/turb_driver.hpp"
 #include "gravity/gravity.hpp"
@@ -57,6 +58,18 @@ BaseTypeOutput::BaseTypeOutput(ParameterInput *pin, Mesh *pm, OutputParameters o
 
   // initialize vector containing number of output MBs per rank
   noutmbs.assign(global_variable::nranks, 0);
+
+  if (out_params.variable == "spherical_cmc") {
+    auto *solver=pm->pmb_pack->pspherical_cmc;
+    if (solver == nullptr || out_params.include_gzs || out_params.file_type == "pdf") {
+      throw std::invalid_argument("spherical_cmc output requires its physics block, "
+          "interior cells only, and a field output format");
+    }
+    for (int v=0; v<spherical_cmc::NVAR; ++v) {
+      outvars.emplace_back(spherical_cmc::SphericalCMC::names[v],v,&solver->u0);
+    }
+    return;
+  }
 
   // check for valid choice of variables
   int ivar = -1;

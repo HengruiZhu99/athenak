@@ -21,7 +21,7 @@
     #error NHISTORY > NREDUCTION in outputs.hpp
 #endif
 
-#define NOUTPUT_CHOICES 175
+#define NOUTPUT_CHOICES 176
 // choices for output variables used in <ouput> blocks in input file
 // TO ADD MORE CHOICES:
 //   - add more strings to array below, change NOUTPUT_CHOICES above appropriately
@@ -121,7 +121,8 @@ static const char *var_choice[NOUTPUT_CHOICES] = {
   "z4c_Py",
   "z4c_Pz",
   "z4c_Pnorm",
-  "z4c_diag"
+  "z4c_diag",
+  "spherical_cmc"  // constrained radial CMC experiment (175)
 };
 
 
@@ -267,7 +268,7 @@ class BaseTypeOutput {
   // for restarts, where dims are (m,n,k,j,i)
   HostArray5D<Real> outarray;
   HostArray5D<Real> outarray_hyd, outarray_mhd, outarray_rad,
-                    outarray_force, outarray_z4c, outarray_adm;
+                    outarray_force, outarray_z4c, outarray_adm, outarray_spherical_cmc;
   HostFaceFld4D<Real> outfield;  // FC output field on host
   std::vector<int> noutmbs;   // with MPI, number of output MBs across all ranks
   int noutmbs_min;            // with MPI, minimum number of output MBs across all ranks

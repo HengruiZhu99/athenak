@@ -32,6 +32,7 @@
 #include "units/units.hpp"
 #include "meshblock_pack.hpp"
 #include "gravity/gravity.hpp"
+#include "spherical_cmc/spherical_cmc.hpp"
 
 //----------------------------------------------------------------------------------------
 // MeshBlockPack constructor:
@@ -56,6 +57,7 @@ MeshBlockPack::MeshBlockPack(Mesh *pm, int igids, int igide) :
 // MeshBlock destructor
 
 MeshBlockPack::~MeshBlockPack() {
+  delete pspherical_cmc;
   if (ppart  != nullptr) {delete ppart;}
   if (pnr    != nullptr) {delete pnr;}
   if (pdyngr != nullptr) {delete pdyngr;}
@@ -105,6 +107,13 @@ void MeshBlockPack::AddCoordinates(ParameterInput *pin) {
 void MeshBlockPack::AddPhysics(ParameterInput *pin) {
   int nphysics = 0;
   TaskID none(0);
+
+  // Exclusive spherical constrained Einstein experiment.
+  if (pin->DoesBlockExist("spherical_cmc")) {
+    pspherical_cmc = new spherical_cmc::SphericalCMC(this, pin);
+    pspherical_cmc->AssembleTasks(tl_map);
+    return;
+  }
 
   // (1) Units.  Create first so that they can be used in other physics constructors
   // Default units are simply code units
