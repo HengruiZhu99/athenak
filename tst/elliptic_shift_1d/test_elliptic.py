@@ -21,6 +21,7 @@ class EllipticTests(unittest.TestCase):
         errors=[]
         for n in (24,48,96):
             r=(np.arange(n)+.5)/(n-.5);op=RadialOperators(r)
+            op.elliptic_quadrature='inward'
             a=np.exp(.3*r*r);da=.6*r*a;dda=(.6+.36*r*r)*a
             alpha=(1+r*r)/2;dalpha=r
             b=-r+.2*r*(r*r-1)+.01*r**7
@@ -36,6 +37,23 @@ class EllipticTests(unittest.TestCase):
         self.assertLess(errors[-1],2e-11)
         self.assertGreater(errors[0]/max(errors[1],1e-16),20)
         print('manufactured_solution_errors',errors)
+
+    def test_inward_quadrature_polynomial_and_dynamic_range(self):
+        import math
+        for grid in ['half','nodal','cutoff']:
+            r=(np.arange(129)+.5)/128.5 if grid=='half' else np.linspace(0 if grid=='nodal' else .03,1,129)
+            op=RadialOperators(r,puncture=grid=='cutoff')
+            for degree in range(7):
+                got=op.tail_integral(r**degree,origin=float(degree==0))
+                np.testing.assert_allclose(got,(1-r**(degree+1))/(degree+1),atol=2e-14,rtol=0)
+        r=(np.arange(513)+.5)/512.5;op=RadialOperators(r)
+        f=1e12*np.maximum(1-r/.4,0.)**8+1e-12*r*r
+        inc=np.sum(op.qweights*np.r_[1e12,f][op.qindex],axis=1)
+        i=480;reference=math.fsum(inc[i+1:]);inward=op.tail_integral(f,origin=1e12)[i]
+        prefix=op.integral(f,origin=1e12);old=prefix[-1]-prefix[i]
+        self.assertGreater(reference,0)
+        self.assertLess(abs(inward-reference),2e-15*reference)
+        self.assertGreater(abs(old-reference),.9*reference)
 
     def test_damped_connection_independent_bvp(self):
         errors=[]

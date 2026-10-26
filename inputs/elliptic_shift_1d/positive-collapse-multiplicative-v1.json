@@ -1,0 +1,55 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 3,
+    "scalar": true,
+    "scalar_amplitude": 0.07,
+    "initial_precision": "decimal",
+    "initial_tolerance": 1e-11,
+    "lapse_restoring_form": "multiplicative"
+  },
+  "cases": [
+    {
+      "name": "n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    },
+    {
+      "name": "reference-damping-n512",
+      "arguments": {
+        "n": 512,
+        "damping_form": "reference-lapse"
+      }
+    },
+    {
+      "name": "published-damping-n512",
+      "arguments": {
+        "n": 512,
+        "kappa1": 1.5,
+        "kappa2": 0
+      }
+    }
+  ],
+  "scope": "Coupled scalar collapse with the explicit multiplicative restoring source -2 xi alpha(alpha-Aref), removing the constant restoring drive at alpha=0 while preserving linear Minkowski equations. Positive variables do not project constraints. Constant candidate damping is the main three-resolution study; reference-lapse and published damping are separate controls. This is preliminary collapse validation, not ringing/tail completion."
+}

@@ -9,7 +9,7 @@ import numpy as np
 from evolve import Evolution
 from wormhole_data import Jet
 from numerics import puncture_dissipation
-from gauge import rational_correction,af_slicing_strength,collapsed_background_correction
+from gauge import rational_correction,af_slicing_strength,collapsed_background_correction,blended_correction
 import g1_rhs,scri_limits
 
 
@@ -85,6 +85,7 @@ class PunctureChart(Evolution):
         # Direct multiplicative expression avoids subtracting two O(1) sources.
         S[:,6]-=2*self.args.lapse_restoring*alpha[1:]*q[1:,6]
         if getattr(self.args,'slicing_family','linear')=='rational':S[:,6]+=rational_correction(self.r[1:],alpha[1:],q[1:,6],q[1:,3],self.args.slicing,self.args.slicing_scale)
+        if getattr(self.args,'slicing_family','linear')=='blended-log':S[:,6]+=blended_correction(self.r[1:],alpha[1:],q[1:,3],self.args.slicing)
         if getattr(self.args,'lapse_background_source','reference')=='collapsed-inner':S[:,6]+=collapsed_background_correction(self.r[1:],q[1:,6])
         if getattr(self.args,'damping_form','constant')=='reference-lapse':
             D=-self.args.kappa1*q[1:,6]
@@ -106,7 +107,7 @@ class PunctureChart(Evolution):
         self.regularity=np.array([q[-1,0],0.,q[-1,2]+2*dp[-1,0]/3,q[-1,3],q[-1,4],q[-1,5],0.,0.])
         return R,S,diag,beta
 
-    def rhs(self,state):
+    def rhs(self,state,accepted=False):
         start=time.perf_counter();R,S,diag,beta=self.parts(state)
         rate=np.zeros_like(state);rate[1:-1]=R[1:-1]+S[1:-1]/self.omega[1:-1,None]
         if self.args.endpoint=='analytic-g1':
@@ -144,6 +145,11 @@ class PunctureChart(Evolution):
         maxima['max_Bondi_nonaffinity']=float(abs(nonaffinity(self.total_chi[-1],self.total_alpha[-1],
             self.geometry_first[-1,0],1+self.geometry_first[-1,6],beta[-1]+1.5*self.total_alpha[-1]*self.geometry_state[-1,2],self.total_chi[-1]*result[-1,0])))
         for i,name in enumerate(['H','M','Theta','Z']):maxima['max_'+name+'_rms']=float(np.sqrt(np.sum(self.r**2*diag[:,i]**2)/np.sum(self.r**2)))
+        if accepted:
+            for i,name in enumerate(['H','M','Theta','Z']):maxima['max_accepted_'+name+'_rms']=maxima['max_'+name+'_rms']
+            for i,name in enumerate(['H','M']):
+                maxima['max_accepted_'+name+'_bulk']=float(max(abs(diag[self.r<.8,i])))
+                maxima['max_accepted_'+name+'_endpoint']=float(max(abs(diag[self.r>.9,i])))
         for key,value in maxima.items():metrics[key]=max(metrics.get(key,0),value)
         for key,value in [('min_chi',float(min(self.total_chi[1:]))),('min_alpha',float(min(self.total_alpha[1:])))] :metrics[key]=min(metrics.get(key,float('inf')),value)
         self.rhs_seconds+=time.perf_counter()-start

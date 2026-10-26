@@ -1,0 +1,7 @@
+{
+  "created_UTC": "2026-10-26T09:04:40.033864+00:00",
+  "scope": "Independent quadrature at the actual finest principal spatial grid N2048. Retain the failed middle-grid isolation result; compare this new experiment to the predeclared 10% fraction of a Richardson-estimated finest spatial error using the observed three-grid order, and disclose the larger raw spatial difference separately. Same equations, fixed CFL .05, exact t1.",
+  "acceptance": "acceptance.json",
+  "estimator": "E_finest = middle_to_finest_difference / [(h_middle/h_finest)^p-1], with p from the unequal-ratio three-grid fit.",
+  "predeclaration": "Before executing or inspecting finest quadrature controls; does not relabel failed middle-grid controls."
+}

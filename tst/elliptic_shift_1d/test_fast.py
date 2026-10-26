@@ -55,6 +55,25 @@ for origin,puncture in [(False,False),(True,False),(False,True)]:
       np.testing.assert_allclose(stats[key],min(x[key] for x in observed),atol=2e-13)
      np.testing.assert_allclose(stats['max_Bondi_nonaffinity'],max(abs(x['Bondi_frame_nonaffinity']) for x in observed),atol=2e-12,rtol=1e-8)
     fast.close();cases.append(dict(origin=origin,puncture=puncture,scalar=scalar,appendix=appendix,ko=ko,endpoint=endpoint,corner=corner,advection=advection,restoring_form=form,damping_form=damping,rhs_error=error,step_error=step_error))
+# Strong-field controls also exercise the immutable analytic lapse forcing.
+from trumpet_data import CMCTrumpet
+for mass in [.1,1/3]:
+ for reference in ['minkowski','CMC-trumpet']:
+  for endpoint in ['raw-lhopital','analytic-g1']:
+    opts=SimpleNamespace(n=129,origin_grid=False,puncture=True,origin_variables=False,backend='spherical-g1',
+        width=7,quadrature_width=7,library=a.library,kappa1=4.,kappa2=-.99,eta=0.,theta='appendix-c',
+        slicing=1.,lapse_restoring=1.,lapse_restoring_form='multiplicative',damping_form='constant',endpoint=endpoint,
+        gauge_corner_sat=0.,advection='centered',scri_sat=4.,regularity_sat=8.,origin_ko=0.,origin_ko_radius=.4,
+        initial_data='trumpet',mass=mass,initial_quadrature_order=96,lapse_reference=reference)
+    ev=Evolution(opts);q,*_=CMCTrumpet(mass).data(ev.r);engine=FastEngine(ev,8,a.fast_library)
+    expected=ev.rhs(q);got,_=engine.rhs(q);error=float(np.max(abs(expected-got)));assert error<2e-9,error
+    state=q.copy();dt=.01*ev.h
+    for _ in range(20):
+      k1=ev.rhs(state);k2=ev.rhs(state+dt*k1/2);k3=ev.rhs(state+dt*k2/2);k4=ev.rhs(state+dt*k3)
+      state+=dt*(k1+2*k2+2*k3+k4)/6
+    done,_,failed=engine.advance(q,20,dt);assert done==20 and not failed
+    step_error=float(np.max(abs(q-state)));assert step_error<2e-12,step_error
+    cases.append(dict(trumpet_mass=mass,lapse_reference=reference,endpoint=endpoint,rhs_error=error,step_error=step_error));engine.close()
 record=dict(cases=cases,scope='Compiled/Python agreement; no new continuum equations or stability claim')
 if a.output:a.output.write_text(json.dumps(record,indent=2)+'\n')
 print(json.dumps(dict(cases=len(cases),max_rhs_error=max(x['rhs_error'] for x in cases),max_step_error=max(x['step_error'] for x in cases))))

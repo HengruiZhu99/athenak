@@ -1,0 +1,9 @@
+{
+  "created_UTC": "2026-10-26T08:52:49.350085+00:00",
+  "scope": "Accepted-step accuracy instrumentation and cancellation-free positive-lapse chains. Preserve all-stage pole/positivity/nonaffinity monitors, and measure physical constraint convergence on accepted RK steps. Compare with the previous source-bound study; no threshold or constraint projection changes.",
+  "unchanged_acceptance": "acceptance.json",
+  "accepted_constraint_accuracy": "Every RK4 step input plus the final report, measured independently of all-stage safety maxima.",
+  "all_stage_safety": "All original positivity, nullness, clock and pole gates remain enforced across every RK stage.",
+  "reason": "RK4 intermediate stages are not fourth-order approximations to the solution and need not preserve nonlinear constraints to fourth order. Fixed-grid timestep controls expose an O(dt^2) internal-stage Hamiltonian contribution, while accepted-state errors remain much smaller.",
+  "predeclaration": "Recorded before inspecting this newly instrumented principal trajectory study."
+}

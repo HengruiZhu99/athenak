@@ -1,0 +1,41 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 3,
+    "scalar": true,
+    "scalar_amplitude": 0.07,
+    "initial_precision": "decimal",
+    "initial_tolerance": 1e-11,
+    "lapse_restoring_form": "multiplicative",
+    "slicing_family": "blended-log"
+  },
+  "cases": [
+    {
+      "name": "n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ],
+  "scope": "Coupled scalar collapse control with F=(1-4 Omega^2) alpha^2+8 nu Omega^3 alpha: exact physical 1+log slicing at the center for nu=1 and harmonic at scri. Changes interior linear gauge, retains Minkowski reference, live Khat/free Z4c and multiplicative restoring. Three resolutions; every failure retained. No survival-only admission."
+}

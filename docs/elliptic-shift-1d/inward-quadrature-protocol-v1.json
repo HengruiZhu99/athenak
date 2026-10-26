@@ -1,0 +1,13 @@
+{
+  "created_UTC": "2026-10-26T09:00:48.816077+00:00",
+  "scope": "Same accepted-step finite gauge pulse control, using inward summation of the same interval quadrature to avoid prefix subtraction at scri. Adds coarser timesteps to distinguish resolved RK4 error from the bulk roundoff floor; baseline CFL .05 and all thresholds unchanged.",
+  "unchanged_acceptance": "acceptance.json",
+  "checks": [
+    "Native geometric rates and compiled/Python consistency",
+    "Polynomial and large-dynamic-range quadrature controls",
+    "Three spatial resolutions at fixed CFL .05, t1 then verified t6",
+    "Independent degree 6/8/10 quadrature",
+    "CFL .2/.1/.05/.025/.0125 at fixed N1024; retain failed cases and roundoff-limited orders"
+  ],
+  "reason": "Previous endpoint quadrature variation exceeded the 10% finest spatial-error gate. Reverse integration computes a small tail directly instead of subtracting two accumulated integrals. No evolution equation, boundary condition or error threshold changes."
+}

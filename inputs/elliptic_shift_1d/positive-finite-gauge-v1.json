@@ -1,0 +1,37 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 6,
+    "amplitude": 0.1,
+    "pulse": "published-gaussian"
+  },
+  "cases": [
+    {
+      "name": "n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ],
+  "scope": "Independent variable/discretization control for the finite published-amplitude lapse pulse; equations, live lapse gauge, elliptic shift and original gates stay unchanged. No positivity floor or differential constraint projection."
+}

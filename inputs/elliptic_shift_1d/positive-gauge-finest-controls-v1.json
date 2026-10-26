@@ -1,0 +1,34 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 1,
+    "amplitude": 0.1,
+    "pulse": "published-gaussian",
+    "elliptic_quadrature": "inward"
+  },
+  "cases": [
+    {
+      "name": "quadrature-q9-n2048",
+      "arguments": {
+        "n": 2048,
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "quadrature-q11-n2048",
+      "arguments": {
+        "n": 2048,
+        "quadrature_width": 11
+      }
+    }
+  ],
+  "scope": "Independent quadrature at the actual finest principal spatial grid N2048. Retain the failed middle-grid isolation result; compare this new experiment to the predeclared 10% fraction of a Richardson-estimated finest spatial error using the observed three-grid order, and disclose the larger raw spatial difference separately. Same equations, fixed CFL .05, exact t1."
+}

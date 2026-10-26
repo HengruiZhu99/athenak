@@ -67,3 +67,17 @@ add_test(NAME collapsed_source_AF_native_rates
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c> --lapse-background-source collapsed-inner)
 add_test(NAME collapsed_source_AF_limits
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c> --lapse-background-source collapsed-inner)
+add_test(NAME stationary_CMC_trumpet_native_geometry
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_trumpet_data.py --library $<TARGET_FILE:spherical_z4c>)
+add_test(NAME positive_trumpet_lapse_chart_native_rates
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_trumpet_lapse_chart.py --library $<TARGET_FILE:spherical_z4c>)
+add_test(NAME positive_regular_scalar_and_native_geometry
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_positive_regular.py --library $<TARGET_FILE:spherical_z4c>)
+add_test(NAME compiled_positive_fields_and_stage_monitors
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_fast_positive.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast>)
+add_test(NAME high_order_invariant_horizon_extraction
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_horizon.py)
+add_test(NAME blended_log_AF_native_rates
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c> --slicing-family blended-log)
+add_test(NAME blended_log_AF_limits
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c> --slicing-family blended-log)

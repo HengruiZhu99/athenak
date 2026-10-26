@@ -13,19 +13,21 @@ struct Engine {
   int n,nf,w,qw; double h; Vec r,d1,d2,qweights,params;
   std::vector<int> index,qindex;
   std::vector<int> aleft,aright;Vec awleft,awright;
-  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage;
+  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha;
   long calls=0; double solve_seconds=0;
   bool puncture=false;
   std::string error;
-  std::array<double,13> diagnostics{};
+  std::array<double,21> diagnostics{};
   Engine(int N,int F,int W,int QW,const double* rr,const int* ix,
       const double* D1,const double* D2,const int* qi,const double* qwt,
       const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
       d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
-      params(p,p+16),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      params(p,p+21),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
       aleft(al,al+N*W),aright(ar,ar+N*W),awleft(alw,alw+N*W),awright(arw,arw+N*W) {
     for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
+    lapse_source.resize(n,0.);
+    primitive.resize(n*nf);total_chi.resize(n);total_alpha.resize(n);
     if(nf!=8&&nf!=10)throw std::runtime_error("invalid field count");
     diagnostics[3]=diagnostics[4]=std::numeric_limits<double>::infinity();
     puncture=p[12]!=0;if(puncture)diagnostics[11]=-std::numeric_limits<double>::infinity();
@@ -52,39 +54,72 @@ struct Engine {
     return sum;
   }
   double ratio(double a,int i,double limit=0)const{return r[i]>0?a/r[i]:limit;}
-  double rhs(const double* q,double* out) {
-    derivatives(q);calls++;
-    double kap=params[0],kap2=params[1],slicing=params[2],xi=params[3];
+  double lapse_coefficient(double x,double alpha)const {
+    double O=(1-x*x)/2,A=(1+x*x)/2,nu=params[2];int family=static_cast<int>(params[18]);
+    if(family==1)return alpha*alpha+4*nu*O*O*alpha*(A+params[19])/(alpha+params[19]);
+    if(family==2)return (1-4*O*O)*alpha*alpha+8*nu*O*O*O*alpha;
+    return alpha*alpha+4*nu*O*O*alpha;
+  }
+  double rhs(const double* state,double* out,bool accepted=false) {
+    derivatives(state);calls++;
+    const bool logchi=params[16]!=0,logalpha=params[17]!=0;
+    const double* q=state;
+    if(logchi||logalpha) {
+      std::copy(state,state+n*nf,primitive.begin());q=primitive.data();
+      for(int i=0;i<n;i++) {
+        int k=i*nf;double A=(1+r[i]*r[i])/2;
+        if(logchi) {
+          double chi=std::exp(state[k]);primitive[k]=std::expm1(state[k]);
+          dd[k]=chi*(dd[k]+d[k]*d[k]);d[k]*=chi;
+        }
+        if(logalpha) {
+          double factor=std::exp(state[k+6]),small=std::expm1(state[k+6]);primitive[k+6]=A*small;
+          dd[k+6]=small+factor*(2*r[i]*d[k+6]+A*(dd[k+6]+d[k+6]*d[k+6]));
+          d[k+6]=r[i]*small+A*factor*d[k+6];
+        }
+      }
+    }
+    for(int i=0;i<n;i++) {
+      total_chi[i]=logchi?std::exp(state[i*nf]):1+q[i*nf];
+      total_alpha[i]=logalpha?(1+r[i]*r[i])/2*std::exp(state[i*nf+6]):(1+r[i]*r[i])/2+q[i*nf+6];
+    }
+    double kap=params[0],kap2=params[1],xi=params[3];
     double sat=params[4],tau=params[5],ko=params[6],radius=params[7];
     bool appendix=params[8]!=0;
     auto solve_start=std::chrono::steady_clock::now();
     for(int i=0;i<n;i++) {
-      double chi=1+q[i*nf],alpha=(1+r[i]*r[i])/2+q[i*nf+6];
+      double chi=total_chi[i],alpha=total_alpha[i];
       diagnostics[3]=std::min(diagnostics[3],chi);diagnostics[4]=std::min(diagnostics[4],alpha);
-      if(q[i*nf+1]!=0||chi<=0||alpha<=0)
+      if(q[i*nf+1]!=0||chi<=0||alpha<=0||!std::isfinite(chi)||!std::isfinite(alpha))
         throw std::runtime_error("g=1 gauge or positivity violation");
-      z[i]=1.5*((1+r[i]*r[i])/2+q[i*nf+6])*ratio(q[i*nf+2],i);
+      z[i]=1.5*alpha*ratio(q[i*nf+2],i);
     }
     Vec integral(n,0);double sum=0;bool first_node=r[0]==0||puncture;int intervals=(first_node?n-1:n);
+    Vec increments(intervals,0);
     for(int i=0;i<intervals;i++) {
       double increment=0;
       for(int j=0;j<qw;j++) {
         int k=qindex[i*qw+j];double value=(first_node?z[k]:(k==0?0:z[k-1]));
         increment+=qweights[i*qw+j]*value;
       }
-      sum+=increment;integral[first_node?i+1:i]=sum;
+      increments[i]=increment;sum+=increment;integral[first_node?i+1:i]=sum;
     }
-    int e=(n-1)*nf;double cS=q[e],uS=q[e+6],alphaS=(1+r.back()*r.back())/2+uS;
-    double outer=-(cS+(2*uS+uS*uS)*(1+cS))/(1+alphaS*std::sqrt(1+cS));
+    bool inward=params[20]!=0;
+    if(inward) {
+      integral.back()=0;
+      for(int i=n-2;i>=0;i--)integral[i]=integral[i+1]+increments[i+(first_node?0:1)];
+    }
+    int e=(n-1)*nf;double cS=q[e],uS=q[e+6],alphaS=total_alpha.back();
+    double outer=-(cS+(2*uS+uS*uS)*total_chi.back())/(1+alphaS*std::sqrt(total_chi.back()));
     for(int i=0;i<n;i++) {
-      phase[i]=outer+integral[i]-integral.back();v[i]=r[i]*phase[i];beta[i]=-r[i]+v[i];
-      double alpha=(1+r[i]*r[i])/2+q[i*nf+6];
+      phase[i]=inward?outer-integral[i]:outer+integral[i]-integral.back();v[i]=r[i]*phase[i];beta[i]=-r[i]+v[i];
+      double alpha=total_alpha[i];
       U[i]=alpha*(q[i*nf+3]+2*q[i*nf+4])/3-q[i*nf+6]-r[i]*v[i];
     }
     solve_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-solve_start).count();
     if(puncture) {
-      double alpha=(1+r[0]*r[0])/2+q[6],chi=1+q[0],O=(1-r[0]*r[0])/2;
-      double F=alpha*alpha+4*slicing*O*O*alpha;
+      double alpha=total_alpha[0],chi=total_chi[0];
+      double F=lapse_coefficient(r[0],alpha);
       diagnostics[11]=std::max(diagnostics[11],std::max(-beta[0]+alpha*std::sqrt(chi),-beta[0]+std::sqrt(F*chi)));
       if(params[14]!=0&&diagnostics[11]>0)throw std::runtime_error("puncture inner characteristic became incoming");
     }
@@ -94,11 +129,12 @@ struct Engine {
     if(params[9]!=0)dU=analytic_dU;
     std::fill(R.begin(),R.end(),0);std::fill(S.begin(),S.end(),0);
     std::array<double,4> normsum{};double volume=0;
+    double bulkH=0,bulkM=0,endH=0,endM=0;
     for(int i=0;i<n;i++) {
       int k=i*nf;double x=r[i],O=(1-x*x)/2,A0=(1+x*x)/2;
-      double c=q[k],chi=1+c,Ar=q[k+2],p=q[k+3]-3,T=q[k+4],lam=q[k+5],u=q[k+6];
+      double c=q[k],chi=total_chi[i],Ar=q[k+2],p=q[k+3]-3,T=q[k+4],lam=q[k+5],u=q[k+6];
       double cp=d[k],cpp=dd[k],ap=d[k+2],pp=d[k+3],Tp=d[k+4],lp=d[k+5],up=d[k+6],upp=dd[k+6];
-      double alpha=A0+u,alphap=x+up,K=p+2*T,dk=q[k+3]+2*T,b=beta[i],vv=v[i],vr=phase[i];
+      double alpha=total_alpha[i],alphap=x+up,K=p+2*T,dk=q[k+3]+2*T,b=beta[i],vv=v[i],vr=phase[i];
       double ar=ratio(Ar,i),cr=ratio(cp,i,cpp),ur=ratio(up,i,upp),lr=ratio(lam,i,lp);
       double ww=b*x/alpha,divb=-3+3*vr+1.5*alpha*Ar;
       R[k]=b*cp-2*chi*vr-alpha*chi*Ar;
@@ -114,10 +150,9 @@ struct Engine {
       if(!appendix)S[k+4]-=3*alpha*ww*T;
       R[k+5]=b*lp+2*lam*divb/3+2*alpha*(ap+3*ar-1.5*Ar*cp/chi);
       S[k+5]=-alpha*(2*K/3+kap)*lam-2*alpha/3*(2*pp+Tp)+4*alpha*Ar*x;
-      double F=alpha*alpha+4*slicing*O*O*alpha;
+      double F=lapse_coefficient(x,alpha);
       R[k+6]=b*up+vv*x;
-      S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-xi*(alpha+A0)*u;
-      if(params[13]!=0)S[k+6]-=xi*u*u;
+      S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-xi*(params[13]!=0?2*alpha:alpha+A0)*u;
       if(params[15]!=0) {
         double D=-kap*u;S[k+3]+=D*(1-kap2)*T;S[k+4]-=D*(2+kap2)*T;S[k+5]-=D*lam;
       }
@@ -146,8 +181,15 @@ struct Engine {
       }
       normsum[0]+=x*x*H*H;normsum[1]+=x*x*M*M;
       normsum[2]+=x*x*T*T;normsum[3]+=x*x*lam*lam/4;volume+=x*x;
+      if(accepted&&x<.8){bulkH=std::max(bulkH,std::abs(H));bulkM=std::max(bulkM,std::abs(M));}
+      if(accepted&&x>.9){endH=std::max(endH,std::abs(H));endM=std::max(endM,std::abs(M));}
     }
     for(int f=0;f<4;f++)diagnostics[5+f]=std::max(diagnostics[5+f],std::sqrt(normsum[f]/volume));
+    if(accepted) {
+      for(int f=0;f<4;f++)diagnostics[13+f]=std::max(diagnostics[13+f],std::sqrt(normsum[f]/volume));
+      diagnostics[17]=std::max(diagnostics[17],bulkH);diagnostics[18]=std::max(diagnostics[18],bulkM);
+      diagnostics[19]=std::max(diagnostics[19],endH);diagnostics[20]=std::max(diagnostics[20],endM);
+    }
     if(params[11]!=0)for(int i=0;i<n;i++) {
       const auto& ai=beta[i]<0?aleft:aright;const auto& aw=beta[i]<0?awleft:awright;
       for(int f=0;f<nf;f++)if(f!=7) {
@@ -158,6 +200,7 @@ struct Engine {
         R[i*nf+f]+=beta[i]*(adv-d[i*nf+f]);
       }
     }
+    for(int i=0;i<n;i++)S[i*nf+6]+=lapse_source[i];
     for(int i=0;i<n-1;i++)for(int f=0;f<nf;f++)out[i*nf+f]=R[i*nf+f]+S[i*nf+f]/((1-r[i]*r[i])/2);
     std::array<double,10> trace{};
     trace[0]=q[e];trace[2]=q[e+2]+2*d[e]/3;trace[3]=q[e+3];trace[4]=q[e+4];trace[5]=q[e+5];
@@ -172,9 +215,9 @@ struct Engine {
     for(int f=0;f<nf;f++)ds[f]=endpoint_derivative(S,f);
     auto sampled_ds=ds;
     if(params[9]!=0||params[10]!=0) {
-      double c=q[e],chi=1+c,Ar=q[e+2],T=q[e+4],lam=q[e+5],u=q[e+6];
+      double c=q[e],chi=total_chi.back(),Ar=q[e+2],T=q[e+4],lam=q[e+5],u=q[e+6];
       double cp=d[e],ap=d[e+2],pp=d[e+3],Tp=d[e+4],lp=d[e+5],up=d[e+6];
-      double alpha=1+u,alphap=1+up,K=q[e+3]-3+2*T,dk=q[e+3]+2*T,Kp=pp+2*Tp;
+      double alpha=total_alpha.back(),alphap=1+up,K=q[e+3]-3+2*T,dk=q[e+3]+2*T,Kp=pp+2*Tp;
       double vv=v.back(),vp=vv+1.5*alpha*Ar,b=-1+vv,bp=-1+vp,ww=b/alpha;
       double wp=(bp+b)/alpha-ww*alphap/alpha;
       ds[0]=2*(cp*U.back()+chi*analytic_dU);
@@ -207,8 +250,12 @@ struct Engine {
     }
     if(params[9]==0)ds=sampled_ds;
     for(int f=0;f<nf;f++)out[e+f]=R[e+f]-ds[f]+sat/h*S[e+f]-tau/h*trace[f];
+    if(logchi||logalpha)for(int i=0;i<n;i++) {
+      if(logchi)out[i*nf]/=total_chi[i];
+      if(logalpha)out[i*nf+6]/=total_alpha[i];
+    }
     if(ko!=0) {
-      std::copy(q,q+n*nf,z.begin());
+      std::copy(state,state+n*nf,z.begin());
       for(int i=0;i<n;i++)if(r[i]>0) {z[i*nf+2]/=r[i]*r[i];z[i*nf+5]/=r[i];}
       if(r[0]==0){z[2]=dd[2]/2;z[5]=d[5];}
       constexpr int coefficients[7]={1,-6,15,-20,15,-6,1};
@@ -228,9 +275,9 @@ struct Engine {
       }
     }
     out[e+6]=0;for(int i=0;i<n;i++)out[i*nf+7]=0;
-    const double chiS=1+cS,rootChi=std::sqrt(chiS);
+    const double chiS=total_chi.back(),rootChi=std::sqrt(chiS);
     const double dbS=beta.back()+1.5*alphaS*q[e+2];
-    const double affinity=out[e]/(2*alphaS*chiS)-d[e]/(2*rootChi)
+    const double affinity=out[e]*(logchi?chiS:1)/(2*alphaS*chiS)-d[e]/(2*rootChi)
         -rootChi*(1+d[e+6])/alphaS-dbS/alphaS;
     diagnostics[12]=std::max(diagnostics[12],std::abs(affinity));
     for(int k=0;k<n*nf;k++)if(!std::isfinite(out[k]))throw std::runtime_error("nonfinite RHS");
@@ -238,7 +285,10 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 17;}
+int spherical_fast_abi(){return 22;}
+void spherical_fast_set_lapse_source(void* handle,const double* source){
+  auto& e=*static_cast<Engine*>(handle);std::copy(source,source+e.n,e.lapse_source.begin());
+}
 const char* spherical_fast_last_error(void* handle){return static_cast<Engine*>(handle)->error.c_str();}
 void* spherical_fast_create(int n,int nf,int w,int qw,const double* r,const int* ix,
     const double* d1,const double* d2,const int* qi,const double* qwt,
@@ -248,18 +298,18 @@ void* spherical_fast_create(int n,int nf,int w,int qw,const double* r,const int*
 void spherical_fast_destroy(void* handle){delete static_cast<Engine*>(handle);}
 void spherical_fast_stats(void* handle,double* stats) {
   auto& e=*static_cast<Engine*>(handle);stats[0]=e.calls;stats[1]=e.solve_seconds;
-  for(int i=0;i<13;i++)stats[i+2]=e.diagnostics[i];
+  for(int i=0;i<21;i++)stats[i+2]=e.diagnostics[i];
 }
 int spherical_fast_rhs(void* handle,const double* q,double* result,double* flux) {
   auto& engine=*static_cast<Engine*>(handle);
-  try{*flux=engine.rhs(q,result);return 0;}catch(const std::exception& failure){engine.error=failure.what();return -1;}
+  try{*flux=engine.rhs(q,result,true);return 0;}catch(const std::exception& failure){engine.error=failure.what();return -1;}
 }
 // q is committed only after a complete RK4 step, just as in the Python driver.
 int spherical_fast_advance(void* handle,double* q,int steps,double dt,double* energy) {
   auto& e=*static_cast<Engine*>(handle);int size=e.n*e.nf,done=0;
   try {
     for(;done<steps;done++) {
-      double f1=e.rhs(q,e.k1.data());
+      double f1=e.rhs(q,e.k1.data(),true);
       for(int j=0;j<size;j++)e.stage[j]=q[j]+dt*e.k1[j]/2;
       double f2=e.rhs(e.stage.data(),e.k2.data());
       for(int j=0;j<size;j++)e.stage[j]=q[j]+dt*e.k2[j]/2;

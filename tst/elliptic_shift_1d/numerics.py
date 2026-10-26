@@ -100,6 +100,17 @@ class RadialOperators:
         result=np.cumsum(np.sum(self.qweights*f[self.qindex],axis=1))
         return np.r_[0.,result] if self.origin_on_grid or self.puncture else result
 
+    def tail_integral(self, values, origin=0.):
+        """Integrate from each physical node to scri without prefix subtraction.
+
+        The same interval weights are used as in integral(). Reverse summation
+        avoids losing a small outer tail in the difference of two large prefixes.
+        """
+        f=np.asarray(values) if self.origin_on_grid or self.puncture else np.r_[origin,values]
+        increments=np.sum(self.qweights*f[self.qindex],axis=1)
+        tails=np.r_[np.cumsum(increments[::-1])[::-1],0.]
+        return tails if self.origin_on_grid or self.puncture else tails[1:]
+
     def endpoint_first(self,values):
         return self.d1[-1]@values[-self.width:]
 

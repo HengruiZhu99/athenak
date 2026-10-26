@@ -1,0 +1,87 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "initial_data": "trumpet",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 0.025,
+    "t": 6,
+    "cfl": 0.05,
+    "lapse_reference": "CMC-trumpet"
+  },
+  "cases": [
+    {
+      "name": "M0.1-n256",
+      "arguments": {
+        "mass": 0.1,
+        "n": 256
+      }
+    },
+    {
+      "name": "M0.1-n512",
+      "arguments": {
+        "mass": 0.1,
+        "n": 512
+      }
+    },
+    {
+      "name": "M0.1-n1024",
+      "arguments": {
+        "mass": 0.1,
+        "n": 1024
+      }
+    },
+    {
+      "name": "M0.3333333333333333-n256",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 256
+      }
+    },
+    {
+      "name": "M0.3333333333333333-n512",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 512
+      }
+    },
+    {
+      "name": "M0.3333333333333333-n1024",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 1024
+      }
+    },
+    {
+      "name": "pulse-Mthird-n256",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 256,
+        "amplitude": 0.001,
+        "pulse": "published-gaussian"
+      }
+    },
+    {
+      "name": "pulse-Mthird-n512",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 512,
+        "amplitude": 0.001,
+        "pulse": "published-gaussian"
+      }
+    },
+    {
+      "name": "pulse-Mthird-n1024",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 1024,
+        "amplitude": 0.001,
+        "pulse": "published-gaussian"
+      }
+    }
+  ],
+  "scope": "Labeled black-hole lapse-reference control using an immutable analytically derived source G(r), evaluated from exact CMC geometry and not a numerical evolution RHS. Full geometric Einstein RHS is unchanged. Distinct from the main Minkowski lapse-reference experiment and from wormhole-to-trumpet evolution."
+}

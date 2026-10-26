@@ -17,15 +17,22 @@ stability is inferred. See `nonlinear-formulation.md` for new independent deriva
 
 See [the active scientific work record](progress.md) for passing component checks,
 resolved failures, source/checkpoint ancestry and the next derivation steps.
-Twenty-five CTest groups pass. Nonlinear physical ADM, native tensor, scalar,
-inner/scri limit, Bondi-frame, compiled/Python and SBP algebra audits are included.
-The small .001 gauge pulse reaches t=10,000 at N256 and1000 at N1024;
-matching finer durations are in progress. Finite-amplitude scri peaks still fail
-acceptance. Strong coupled dispersal has three resolutions and approximately
-fifth-order mass-budget convergence; its finest final discrepancy is8.2e-9.
-Full principal time/elliptic/dissipation studies and long scalar evolutions remain
-unfinished. No trumpet, wormhole-to-trumpet, collapse, or literature reproduction
-acceptance is complete.
+Thirty-two CTest groups pass, including nonlinear tensor/ADM, scalar, scri,
+inner-end, positive-field, Bondi and compiled/Python audits. The positive-variable
+finite .1 gauge pulse reaches t=6 at N512/1024/2048. Physical-field and accepted
+constraint convergence are near fifth order; finest boundary/affinity gates pass.
+Independent endpoint quadrature isolation still fails, so this is **not an
+admitted principal result**. An analytic-limit control is in progress. See
+`positive-variables.md` for variables, source changes and diagnostic coverage.
+
+The small .001 pulse completes t=10,000 at N256/N512 and3000 at N1024;
+N1024 is continuing to10,000 from its exact frozen checkpoint. These older runs
+have sampled diagnostics. Strong coupled dispersal has three resolutions and
+approximately fifth-order mass-budget convergence, with finest discrepancy
+8.2e-9 at t=6. Long scalar evolutions and its principal controls remain unfinished.
+No successful collapse, wormhole-to-trumpet or full literature reproduction is
+claimed. Already-trumpet constructions and labeled excision/source controls are
+implemented, but their longer runs still fail an inner characteristic guard.
 
 The new isotropic wormhole construction and separate inner-end analysis are in
 `puncture-asymptotics.md`. An evolved AF coefficient endpoint replaces the old

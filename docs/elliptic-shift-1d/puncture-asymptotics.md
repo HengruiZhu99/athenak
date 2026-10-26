@@ -236,3 +236,48 @@ New parameter matrices freeze their entire numerical source and both supplied
 binaries once before any case starts. This prevents live edits during a long
 matrix from changing the method between its resolution cases. Each individual
 case retains its own source binding and checkpoint ancestry as before.
+
+## Separate already-trumpet CMC control
+
+`trumpet_data.py` constructs a stationary Schwarzschild CMC slice with K=-3,
+H=n(R)=R-C/R^2 and f=1-2M/R+H^2. A double root at R0 obeys
+
+    C=R0^2 sqrt(R0^2+1/3),
+    M=R0^3+2R0/3-C,
+    gamma=sqrt(2+9R0^2).
+
+The second relation is rationalized for the root solve. The isotropic map is
+r=exp[-J(y)], y=1/R, J=integral_0^y ds/sqrt(D(s)), with
+D=1+y^2-2(M+C)y^3+C^2 y^6. Evaluate its exact double-root factorization
+
+    D=(y0-y)^2 P(y), y0=1/R0,
+    P=R0^2+2R0^3 y+3C^2 y^2/R0^2+2C^2 y^3/R0+C^2 y^4.
+
+All P coefficients are positive. Subtract the logarithmic singularity
+analytically in J, and invert in v=-log(1-y/y0), where J_v=1/sqrt(P).
+This avoids resolving a near-double root by subtracting nearly equal
+polynomial values. Near scri, subtract asinh(y) analytically; its regular
+integrand numerator is2(M+C)y^3-C^2y^6. The log1p/expm1 metric construction
+then retains its mass jets. The exterior conformal metric depends on M+C;
+the independent tracefree curvature cancels the C contribution in the
+invariant mass, which is M.
+
+The fields are g=1, chi=[r/(Omega R)]^2, A_rr=-2C/(Omega R^3),
+Khat=-3, Theta=Lambda=0, alpha=Omega sqrt(f), beta=-r H/R.
+Analytic metric/curvature rates vanish without subtracting any numerical RHS.
+Near r=0, R-R0 is proportional to r^gamma, chi~4r^2/R0^2,
+physical lapse~r^gamma, and proper-distance density~R0/r. The limiting
+areal radius is finite with logarithmically divergent proper distance.
+The inner shift is positive and proportional to r, dominating the vanishing
+physical and gauge light speeds asymptotically. The horizon R=2M has zero
+outward physical light speed. No regular-center parity or AF r^4 chart is used.
+
+For M=.1 and1/3, the native initial constraints are below6.5e-12,
+geometric RHS below4.5e-13, and bulk mass error below7.3e-12.
+Coordinate quadrature96-to128 changes the fields by at most1.3e-14.
+The measured inner lapse powers agree with gamma. These are initial-geometry
+audits only. The main evolution still uses the live Minkowski-reference lapse,
+which need not make this CMC slice gauge-stationary. A separate six-case
+three-resolution matrix tests that relaxation. This already-trumpet control
+must never be labeled as a wormhole-to-trumpet experiment or as an identical
+published-coordinate reproduction without the remaining parameter audit.

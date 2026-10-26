@@ -1,0 +1,63 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "initial_data": "trumpet",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 0.025,
+    "t": 6,
+    "cfl": 0.05,
+    "radial_operator": "sbp63",
+    "advection": "centered",
+    "puncture_boundary": "gauge-robin",
+    "puncture_ko": 0.5
+  },
+  "cases": [
+    {
+      "name": "M0.1-n129",
+      "arguments": {
+        "mass": 0.1,
+        "n": 129
+      }
+    },
+    {
+      "name": "M0.1-n257",
+      "arguments": {
+        "mass": 0.1,
+        "n": 257
+      }
+    },
+    {
+      "name": "M0.1-n513",
+      "arguments": {
+        "mass": 0.1,
+        "n": 513
+      }
+    },
+    {
+      "name": "M0.3333333333333333-n129",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 129
+      }
+    },
+    {
+      "name": "M0.3333333333333333-n257",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 257
+      }
+    },
+    {
+      "name": "M0.3333333333333333-n513",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "n": 513
+      }
+    }
+  ],
+  "scope": "Main Minkowski lapse-reference already-trumpet evolution with finite-cutoff SBP and incoming-gauge Robin SAT; halt if physical/constraint characteristics enter. No CMC lapse-source forcing. Distinct numerical control from the centered one-sided FD matrix."
+}

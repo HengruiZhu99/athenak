@@ -5,10 +5,11 @@ Copy only files in the parent's source manifest, verifying each hash. This avoid
 invalidating a trajectory merely because unrelated analysis scripts were added.
 The numerical source and library must match byte for byte; no compatibility bypass.
 """
-import argparse,hashlib,json,shutil,subprocess,sys
+import argparse,hashlib,json,shutil,subprocess,sys,math
 from pathlib import Path
 import numpy as np
-p=argparse.ArgumentParser();p.add_argument('--checkpoint',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--t',type=float,required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--checkpoint',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--t',type=float,required=True);p.add_argument('--report-dt',type=float);a=p.parse_args()
+if a.report_dt is not None and (not math.isfinite(a.report_dt) or a.report_dt<=0):raise SystemExit('Report cadence must be finite and positive')
 repo=Path(__file__).resolve().parents[2];a.output=a.output.resolve();a.checkpoint=a.checkpoint.resolve()
 with np.load(a.checkpoint,allow_pickle=False) as z:
  parent=json.loads(str(z['metadata']));parent_t=float(z['t']);q=z['q_physical'] if 'q_physical' in z else z['q']
@@ -46,7 +47,8 @@ for key,value in parent['arguments'].items():
  if isinstance(value,bool):
   if value:cmd+=['--'+key.replace('_','-')]
   continue
+ if key=='report_dt' and a.report_dt is not None:value=a.report_dt
  cmd+=['--'+key.replace('_','-'),str(value)]
-receipt={'parent_checkpoint':str(a.checkpoint),'parent_sha256':sha(a.checkpoint),'parent_time':parent_t,'target_time':a.t,'verified_binding':parent['binding'],'command':cmd,'source_copy':str(bundle)}
+receipt={'parent_checkpoint':str(a.checkpoint),'parent_sha256':sha(a.checkpoint),'parent_time':parent_t,'target_time':a.t,'report_dt_override':a.report_dt,'verified_binding':parent['binding'],'command':cmd,'source_copy':str(bundle)}
 (bundle/'continuation-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
 result=subprocess.run(cmd,cwd=repo);sys.exit(result.returncode)

@@ -1,0 +1,61 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "initial_data": "trumpet",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 0.025,
+    "t": 6,
+    "cfl": 0.05,
+    "mass": 0.3333333333333333,
+    "inner_radius": 0.03
+  },
+  "cases": [
+    {
+      "name": "minkowski-n256",
+      "arguments": {
+        "n": 256,
+        "lapse_reference": "minkowski"
+      }
+    },
+    {
+      "name": "minkowski-n512",
+      "arguments": {
+        "n": 512,
+        "lapse_reference": "minkowski"
+      }
+    },
+    {
+      "name": "minkowski-n1024",
+      "arguments": {
+        "n": 1024,
+        "lapse_reference": "minkowski"
+      }
+    },
+    {
+      "name": "CMC-trumpet-n256",
+      "arguments": {
+        "n": 256,
+        "lapse_reference": "CMC-trumpet"
+      }
+    },
+    {
+      "name": "CMC-trumpet-n512",
+      "arguments": {
+        "n": 512,
+        "lapse_reference": "CMC-trumpet"
+      }
+    },
+    {
+      "name": "CMC-trumpet-n1024",
+      "arguments": {
+        "n": 1024,
+        "lapse_reference": "CMC-trumpet"
+      }
+    }
+  ],
+  "scope": "Independent fixed-excision control on an already-trumpet slice, with actual scri and every physical/gauge characteristic required to remain outflow. The fixed cutoff is below the initial apparent/gauge horizons. This neither substitutes for puncture controls nor demonstrates wormhole-to-trumpet evolution."
+}

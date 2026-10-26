@@ -1,0 +1,39 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 3,
+    "scalar": true,
+    "scalar_amplitude": 0.07,
+    "initial_precision": "decimal",
+    "initial_tolerance": 1e-11
+  },
+  "cases": [
+    {
+      "name": "n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ],
+  "scope": "Same fully coupled free-Z4c Einstein-scalar equations with chi=exp(U), alpha=Aref exp(V). Positivity by representation is not collapse acceptance: constraints, horizons, mass/flux and scri gates must converge; original failed primitive-variable collapse is retained."
+}

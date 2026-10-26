@@ -1,0 +1,91 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 1,
+    "amplitude": 0.1,
+    "pulse": "published-gaussian",
+    "elliptic_quadrature": "inward",
+    "endpoint": "analytic-g1"
+  },
+  "cases": [
+    {
+      "name": "spatial-n512",
+      "arguments": {
+        "n": 512
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "spatial-n1024",
+      "arguments": {
+        "n": 1024
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "spatial-n2048",
+      "arguments": {
+        "n": 2048
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "time-cfl0.025",
+      "arguments": {
+        "n": 1024,
+        "cfl": 0.025
+      }
+    },
+    {
+      "name": "time-cfl0.0125",
+      "arguments": {
+        "n": 1024,
+        "cfl": 0.0125
+      }
+    },
+    {
+      "name": "quadrature-q9",
+      "arguments": {
+        "n": 1024,
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "quadrature-q11",
+      "arguments": {
+        "n": 1024,
+        "quadrature_width": 11
+      }
+    },
+    {
+      "name": "time-cfl0.1",
+      "arguments": {
+        "n": 1024,
+        "cfl": 0.1
+      }
+    },
+    {
+      "name": "quadrature-q9-n2048",
+      "arguments": {
+        "n": 2048,
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "quadrature-q11-n2048",
+      "arguments": {
+        "n": 2048,
+        "quadrature_width": 11
+      }
+    }
+  ],
+  "scope": "Positive-variable finite pulse with the independently derived local analytic scri limit and inward elliptic integration. Same weak boundary penalties, clock, actual scri, gauge/damping and thresholds. Tests whether differentiating a quadrature-generated shift in the raw lHopital endpoint causes the failed independent elliptic-error isolation; no constraint projection."
+}

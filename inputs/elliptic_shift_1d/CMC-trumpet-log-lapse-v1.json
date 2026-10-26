@@ -1,0 +1,61 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "initial_data": "trumpet",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 0.025,
+    "t": 6,
+    "cfl": 0.05,
+    "lapse_variable": "log-trumpet",
+    "mass": 0.3333333333333333
+  },
+  "cases": [
+    {
+      "name": "minkowski-n129",
+      "arguments": {
+        "n": 129,
+        "lapse_reference": "minkowski"
+      }
+    },
+    {
+      "name": "minkowski-n257",
+      "arguments": {
+        "n": 257,
+        "lapse_reference": "minkowski"
+      }
+    },
+    {
+      "name": "minkowski-n513",
+      "arguments": {
+        "n": 513,
+        "lapse_reference": "minkowski"
+      }
+    },
+    {
+      "name": "CMC-trumpet-n129",
+      "arguments": {
+        "n": 129,
+        "lapse_reference": "CMC-trumpet"
+      }
+    },
+    {
+      "name": "CMC-trumpet-n257",
+      "arguments": {
+        "n": 257,
+        "lapse_reference": "CMC-trumpet"
+      }
+    },
+    {
+      "name": "CMC-trumpet-n513",
+      "arguments": {
+        "n": 513,
+        "lapse_reference": "CMC-trumpet"
+      }
+    }
+  ],
+  "scope": "Same nonlinear equations in an invertible positive lapse variable alpha=alpha_CMC exp(U), with analytic reference derivatives. This variable profile is distinct from the selected physical lapse gauge/reference. Compare the main Minkowski gauge and labeled analytic CMC lapse-source control; no metric/curvature RHS subtraction or differential constraint reset."
+}

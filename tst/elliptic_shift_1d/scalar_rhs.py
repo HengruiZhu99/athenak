@@ -8,8 +8,9 @@ import numpy as np
 from g1_rhs import radial_ratio
 
 
-def matter(ops,q,d,fields,dfields,beta):
+def matter(ops,q,d,fields,dfields,beta,total_chi=None):
     r=ops.r;O=(1-r*r)/2;chi=1+q[:,0];cp=d[:,0]
+    if total_chi is not None:chi=np.asarray(total_chi)
     K=q[:,3]-3+2*q[:,4];Arr=q[:,2];k=K/3-O*Arr/2
     f=fields[:,0];P=fields[:,1]
     phi=O*np.sqrt(chi)*f
@@ -18,8 +19,10 @@ def matter(ops,q,d,fields,dfields,beta):
     return phi,phi_r,normal_phi
 
 
-def add_sources(r,q,R,diagnostic,phi_r,normal_phi):
+def add_sources(r,q,R,diagnostic,phi_r,normal_phi,total_chi=None,total_alpha=None):
     O=(1-r*r)/2;chi=1+q[:,0];alpha=(1+r*r)/2+q[:,6]
+    if total_chi is not None:chi=np.asarray(total_chi)
+    if total_alpha is not None:alpha=np.asarray(total_alpha)
     density=normal_phi*normal_phi+chi*phi_r*phi_r
     R[:,2]-=16*np.pi/3*alpha*chi*phi_r*phi_r
     R[:,3]+=8*np.pi*alpha*O*normal_phi*normal_phi
@@ -29,20 +32,24 @@ def add_sources(r,q,R,diagnostic,phi_r,normal_phi):
     diagnostic[:,1]+=8*np.pi*O*normal_phi*phi_r
 
 
-def angular_ricci(r,q,d,beta,kappa1=4.,kappa2=-.99,appendix_c=True,damping_form='constant'):
+def angular_ricci(r,q,d,beta,kappa1=4.,kappa2=-.99,appendix_c=True,damping_form='constant',total_chi=None,total_alpha=None):
     O=(1-r*r)/2;chi=1+q[:,0];cp=d[:,0];lam=q[:,5];T=q[:,4]
-    alpha=(1+r*r)/2+q[:,6];w=beta*r/alpha
+    alpha=(1+r*r)/2+q[:,6]
+    if total_chi is not None:chi=np.asarray(total_chi)
+    if total_alpha is not None:alpha=np.asarray(total_alpha)
     Ric=(-O*O*chi*radial_ratio(lam,r,d[0,5])+O*O*cp*lam/3-2*O*r*chi*lam/3+kappa1*(1+kappa2)*T)
     if damping_form=='reference-lapse':Ric+=kappa1*(1+kappa2)*(-q[:,6])*T/alpha
-    if not appendix_c:Ric+=2*w*T
+    if not appendix_c:Ric+=2*beta*r*T/alpha
     return Ric
 
 
-def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,geometry_second=None,origin_beta_derivative=None,analytic_endpoint=False,damping_form='constant'):
+def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,geometry_second=None,origin_beta_derivative=None,analytic_endpoint=False,damping_form='constant',total_chi=None,total_alpha=None):
     r=ops.r;O=(1-r*r)/2;A0=(1+r*r)/2
     c=q[:,0];chi=1+c;cp=d[:,0];Arr=q[:,2];T=q[:,4];lam=q[:,5];u=q[:,6]
     alpha=A0+u;alphap=r+d[:,6];K=q[:,3]-3+2*T;dk=q[:,3]+2*T
-    v=beta_deviation;w=beta*r/alpha
+    if total_chi is not None:chi=np.asarray(total_chi)
+    if total_alpha is not None:alpha=np.asarray(total_alpha)
+    v=beta_deviation
     f=fields[:,0];P=fields[:,1];fp=dfields[:,0];Pp=dfields[:,1];fpp=ddfields[:,0]
     U=alpha*dk/3-u-r*v
     akr=np.empty_like(r);akr[:-1]=-1+alpha[:-1]*Arr[:-1]+U[:-1]/O[:-1]
@@ -59,7 +66,7 @@ def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.9
     N=dk*(K-3)/9-c+O*(-K*Arr/3+A0*radial_ratio(cp,r,chi_second0))+O*O*(Arr*Arr/4-cp*cp/(4*chi))
     B=N-kappa1*(1+kappa2)*T+2*O*r*chi*lam/3
     if damping_form=='reference-lapse':B-=kappa1*(1+kappa2)*(-u)*T/alpha
-    if not appendix_c:B-=2*w*T
+    if not appendix_c:B-=2*beta*r*T/alpha
     V=np.empty_like(r);V[:-1]=B[:-1]/(O[:-1]*O[:-1])+chi[:-1]*radial_ratio(lam,r,d[0,5])[:-1]-cp[:-1]*lam[:-1]/3
     # Finite mass and the compatible Theta/Z weights give this analytic limit.
     V[-1]=0.

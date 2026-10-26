@@ -3,17 +3,17 @@
 import argparse,hashlib,json
 from pathlib import Path
 import numpy as np
+from trajectory import read_trajectory
 p=argparse.ArgumentParser();p.add_argument('--input',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
 p.add_argument('--suite',choices=['general','noise','scalar'],default='general')
 p.add_argument('--affinity-protocol',type=Path);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
 affinity=json.loads(a.affinity_protocol.read_text()) if a.affinity_protocol else None
 records=[]
 for path in sorted(a.input.glob('*/manifest.json')):
-    m=json.loads(path.read_text());folder=path.parent
-    rows=[json.loads(s) for s in (folder/'history.jsonl').read_text().splitlines()] if (folder/'history.jsonl').exists() else []
-    stages=m.get('all_RK_stages',{})
+    folder=path.parent;m,rows,stages,segments=read_trajectory(folder)
     record=dict(name=folder.name,status=m['status'],time=m.get('time'),arguments=m['arguments'],binding=m['binding'],
         manifest_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),all_RK_stages=stages,failure=m.get('failure'))
+    record['checkpoint_segments']=segments
     if not rows:records.append(record);continue
     gates={}
     for field,stage,tolerance in [('scri_pole','max_scri_pole',1e-7),('scri_lapse_pole','max_lapse_pole',1e-7),

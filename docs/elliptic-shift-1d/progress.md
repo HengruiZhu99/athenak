@@ -2,6 +2,62 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Current positive-variable and black-hole controls
+
+Thirty-two CTest groups pass (`evidence/ctest-v26.log`). The current compiled
+engine is ABI22. Its648 broad cases and48 positive-field cases include exact
+stage/accepted constraint, scalar flux and Bondi monitors. The log-variable
+native tensor, tiny-deviation, collapsed-total, CMC initial-data, analytic lapse
+source, high-order horizon and blended-log checks pass. Positive/inward compiled
+restart is bitwise identical in state, grid, time, step, physical totals and flux.
+The variable/source derivations and important numerical distinctions are in
+`positive-variables.md`. Older records below remain historical.
+
+The finite .1 published-shape gauge pulse is now evolved with generic log chi
+and log(alpha/A), KO.5 and CFL.05. Three exact t1 controls and verified t6
+continuations finish at N512/1024/2048. Finest stage pole1.77e-8 and
+6*peak Bondi nonaffinity4.67e-8 pass component gates; the two coarser boundary
+cases fail. Accepted bulk H/M peak orders exceed5.1 and physical field orders
+are5.04 in the bulk and4.95 near scri. RK intermediate-stage Hamiltonian errors
+have an O(dt^2) contribution; accepted-step constraints are independently
+instrumented, without projecting any field. The accepted-accuracy protocol
+predates the new runs. Complete ancestry is combined before assessing peaks.
+
+At the middle grid CFL.1/.05/.025 resolves RK4 order3.98 in bulk and4.00 near
+scri. Smaller bulk steps reach a roundoff floor. CFL.2 fails positivity at.10591
+and remains recorded. Standard-to-half timestep error is below.02% of the raw
+middle-to-finest spatial difference. Independent quadrature isolation **fails**:
+width9/11 changes the finest endpoint fields by20%/42% of the Richardson
+finest spatial error. Inward integration fixes a demonstrated prefix-subtraction
+cancellation but does not cure this failure. A fixed-state diagnosis identifies
+endpoint amplification when differentiating quadrature-generated shift tails;
+the separately audited analytic scri limit is being tested with all controls.
+No threshold has been relaxed and the failed raw-limit controls remain in
+`evidence/positive-gauge-inward-controls-v4`.
+
+CMC trumpet initial geometry is independently constraint-satisfying and
+stationary in geometric variables. Main Minkowski lapse relaxation, optional
+positive trumpet charts, SBP and Robin controls are run and remain unaccepted.
+The labeled analytic CMC lapse-source, fixed-rmin=.03 excision control keeps
+excellent horizon mass through its evolution, but its continuations halt at
+15.176/18.788/22.375 for N256/512/1024 when a gauge characteristic becomes
+incoming. Finest horizon mass drift is6.96e-12; that does not override the
+boundary failure. Source-bound read-only analysis is in
+`evidence/CMC-trumpet-excision-long-v1`. The local derivative of the
+multiplicative restoring source is positive at collapsed lapse; a separate
+symmetric-restoring control tests that hypothesis with the same characteristic
+guard. It is not yet an accepted repair or a replacement for main-gauge tests.
+
+Positive-field scalar A=.07 collapse trials, including multiplicative restoring
+and a slicing coefficient giving exact interior1+log, can reach t=3 while
+constraints grow catastrophically. They remain failed controls. No successful
+collapse, scalar black-hole perturbation, QNM or tail result exists yet.
+
+The small .001 gauge pulse has completed10,000 at N256/N512 and3000 at N1024.
+The latter is continuing to10,000 from its exact source/binary checkpoint, with
+report-only cadence change recorded. It does not cover the missing finite-pulse
+or fully coupled scalar long durations.
+
 ## Current coefficient-chart and independent-geometry audit
 
 Twenty-five CTest groups pass (`evidence/ctest-v20.log`). The compiled engine is

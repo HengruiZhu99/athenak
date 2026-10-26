@@ -1,0 +1,64 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "initial_data": "trumpet",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 0.025,
+    "t": 6,
+    "cfl": 0.05,
+    "mass": 0.3333333333333333,
+    "inner_radius": 0.03,
+    "radial_operator": "sbp63",
+    "advection": "centered",
+    "puncture_boundary": "gauge-robin"
+  },
+  "cases": [
+    {
+      "name": "n129-ko0",
+      "arguments": {
+        "n": 129,
+        "puncture_ko": 0
+      }
+    },
+    {
+      "name": "n257-ko0",
+      "arguments": {
+        "n": 257,
+        "puncture_ko": 0
+      }
+    },
+    {
+      "name": "n513-ko0",
+      "arguments": {
+        "n": 513,
+        "puncture_ko": 0
+      }
+    },
+    {
+      "name": "n129-ko0.5",
+      "arguments": {
+        "n": 129,
+        "puncture_ko": 0.5
+      }
+    },
+    {
+      "name": "n257-ko0.5",
+      "arguments": {
+        "n": 257,
+        "puncture_ko": 0.5
+      }
+    },
+    {
+      "name": "n513-ko0.5",
+      "arguments": {
+        "n": 513,
+        "puncture_ko": 0.5
+      }
+    }
+  ],
+  "scope": "Main Minkowski gauge on a fixed already-trumpet excision domain. All physical/constraint characteristics must remain outflow; an incoming gauge characteristic receives the derived Robin SAT and constraint-free principal Ar/Khat lift. This is distinct from the failed strict-outflow control and from wormhole evolution."
+}

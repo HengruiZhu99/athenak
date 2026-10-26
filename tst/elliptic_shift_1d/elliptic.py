@@ -23,8 +23,10 @@ def solve(ops, a, da, dda, alpha, dalpha, arr, darr, outer_beta, eta=0.):
     dQ = -P*Q-eta*a*a*V
     # nu beta = a**(3/4) beta/r. Integrate from outer boundary inward.
     integrand = .75*a**(-.25)*(Q+2*alpha*arr)/r
-    integral = ops.integral(integrand)
-    b = r*a**(-.75)*(a[-1]**.75*outer_beta/r[-1]+integral-integral[-1])
+    if getattr(ops,'elliptic_quadrature','prefix')=='inward':tail=ops.tail_integral(integrand)
+    else:
+        integral=ops.integral(integrand);tail=integral[-1]-integral
+    b = r*a**(-.75)*(a[-1]**.75*outer_beta/r[-1]-tail)
     b[-1] = outer_beta  # Impose the stated Dirichlet gauge datum exactly.
     B = .75*da/a-1/r
     source = .75*(Q+2*alpha*arr)/a

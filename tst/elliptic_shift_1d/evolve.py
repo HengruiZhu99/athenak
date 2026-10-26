@@ -9,7 +9,8 @@ import numpy as np
 from elliptic import solve,residual,connection
 from numerics import RadialOperators,weights
 from kernel import Kernel,PARITY
-from gauge import lapse_coefficient,rational_correction,collapsed_background_correction
+from gauge import lapse_coefficient,rational_correction,collapsed_background_correction,blended_correction
+from horizon import apparent_horizons
 
 
 def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -17,23 +18,85 @@ def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 class Evolution:
     def __init__(self,args):
-        self.args=args;nodal=getattr(args,'origin_grid',False) or getattr(args,'puncture_chart',False)
-        self.r=np.linspace(0,1,args.n) if nodal else (np.arange(args.n)+.5)/(args.n-.5)
-        self.h=1/(args.n-1) if nodal else 1/(args.n-.5);self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width,puncture=getattr(args,'puncture',False),allow_puncture_node=getattr(args,'puncture_chart',False))
+        self.args=args;inner=getattr(args,'inner_radius',0.)
+        nodal=getattr(args,'origin_grid',False) or getattr(args,'puncture_chart',False) or inner>0
+        self.r=np.linspace(inner,1,args.n) if nodal else (np.arange(args.n)+.5)/(args.n-.5)
+        self.h=(1-inner)/(args.n-1) if nodal else 1/(args.n-.5);self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width,puncture=getattr(args,'puncture',False),allow_puncture_node=getattr(args,'puncture_chart',False))
         if getattr(args,'radial_operator','fd')=='sbp63':
             from sbp import SBPOperators
             self.op=SBPOperators(self.r,args.width,args.quadrature_width)
+        self.op.elliptic_quadrature=getattr(args,'elliptic_quadrature','prefix')
         self.kernel=Kernel(args.library);self.calls=0;self.solve_seconds=0.
         self.stage_metrics={};self.stage_calls=0
+        self.lapse_source=np.zeros(args.n)
+        if getattr(args,'lapse_reference','minkowski')=='CMC-trumpet':
+            from trumpet_data import CMCTrumpet
+            self.lapse_source=CMCTrumpet(args.mass,args.initial_quadrature_order).lapse_source(
+                self.r,args.lapse_restoring,getattr(args,'lapse_restoring_form','symmetric'))
+        self.alpha_profile=None
+        self.metric_scale=None
+        self.trumpet_metric=getattr(args,'metric_variable','deviation')=='log-trumpet'
+        if getattr(args,'metric_variable','deviation')=='log':self.metric_scale=(np.ones(args.n),np.zeros(args.n))
+        if getattr(args,'metric_variable','deviation')=='log-trumpet':
+            A=(1+self.r*self.r)/2;O=(1-self.r*self.r)/2
+            self.metric_scale=(self.r*self.r/A**2,-O**2/A**2)
+        if getattr(args,'lapse_variable','deviation')=='log-trumpet':
+            from trumpet_data import CMCTrumpet
+            ref,rd,rdd,meta=CMCTrumpet(args.mass,args.initial_quadrature_order).data(self.r)
+            alpha=np.ones(args.n);alpha[:-1]=self.omega_from_grid()[:-1]*np.array([z['physical_lapse'] for z in meta[:-1]])
+            self.alpha_profile=(alpha,self.r+rd[:,6],1+rdd[:,6],ref[:,6],rd[:,6],rdd[:,6])
+        if getattr(args,'lapse_variable','deviation')=='log-reference':
+            self.alpha_profile=((1+self.r*self.r)/2,self.r,np.ones(args.n),np.zeros(args.n),np.zeros(args.n),np.zeros(args.n))
         self.rhs_seconds=0.;self.elliptic_differential_residual=0.
         self.omega=(1-self.r*self.r)/2
         self.scri_quotient_weights=weights(self.r[-args.width:-1],1.)
         self.mass_jet_weights=[weights(self.r[-args.width:],1.,k) for k in [1,2,3]]
 
+    def omega_from_grid(self):return (1-self.r*self.r)/2
+
+    def from_physical(self,q,total_chi=None):
+        result=q.copy()
+        if self.metric_scale is not None:
+            scale,base=self.metric_scale;inner=self.r<.5
+            result[:,0]=np.log1p((q[:,0]-base)/scale)
+            if total_chi is not None:result[inner,0]=np.log(total_chi[inner]/scale[inner])
+        if self.alpha_profile is not None:
+            alpha=self.alpha_profile[0];u=self.alpha_profile[3];result[:,6]=np.log1p((q[:,6]-u)/alpha)
+        return result
+
+    def to_physical(self,q):
+        result=q.copy()
+        with np.errstate(over='raise',invalid='raise'):
+            if self.alpha_profile is not None:
+                alpha=self.alpha_profile[0];u=self.alpha_profile[3];result[:,6]=u+alpha*np.expm1(q[:,6])
+            if self.metric_scale is not None:
+                scale,base=self.metric_scale;result[:,0]=base+scale*np.expm1(q[:,0])
+        return result
+
     def parts(self,q):
         parity=PARITY.copy()
         if getattr(self.args,'origin_variables',False):parity[5]=1
         d,dd=self.op.derivatives(q,parity)
+        total_alpha=None;total_chi=None;trumpet_chi=None;stored=q
+        if self.metric_scale is not None:
+            q=self.to_physical(stored)
+            if self.trumpet_metric:
+                A=(1+self.r*self.r)/2
+                with np.errstate(over='raise',invalid='raise'):X=np.exp(stored[:,0])/A**2
+                total_chi=self.r*self.r*X;ell=d[:,0]-2*self.r/A;ellp=dd[:,0]-2/A+2*self.r*self.r/A**2
+                trumpet_chi=dict(X=X,ell=ell,ellp=ellp)
+                d[:,0]=2*self.r*X+total_chi*ell
+                dd[:,0]=2*X+4*self.r*X*ell+total_chi*(ellp+ell*ell)
+            else:
+                with np.errstate(over='raise',invalid='raise'):total_chi=np.exp(stored[:,0])
+                dd[:,0]=total_chi*(dd[:,0]+d[:,0]**2);d[:,0]*=total_chi
+        if self.alpha_profile is not None:
+            alpha,ap,app,u,base_up,base_upp=self.alpha_profile
+            with np.errstate(over='raise',invalid='raise'):factor=np.exp(stored[:,6])
+            q=self.to_physical(stored);total_alpha=alpha*factor
+            small=np.expm1(stored[:,6])
+            dd[:,6]=base_upp+app*small+factor*(2*ap*d[:,6]+alpha*(dd[:,6]+d[:,6]**2))
+            d[:,6]=base_up+ap*small+alpha*factor*d[:,6]
         if getattr(self.args,'origin_variables',False):
             # Invertible regular-center variables: (g-1)/r^2, A_rr/r^2,
             # Lambda/r. Curvature/connection remain independently evolved.
@@ -46,6 +109,10 @@ class Evolution:
             d,dd=dp,ddp
         self.geometry_state=q;self.geometry_first=d;self.geometry_second=dd
         a=1+q[:,1];chi=1+q[:,0];alpha=(1+self.r*self.r)/2+q[:,6]
+        if total_chi is not None:chi=total_chi
+        if total_alpha is not None:alpha=total_alpha
+        self.total_alpha=alpha
+        self.total_chi=chi
         if min(np.min(a),np.min(chi),np.min(alpha))<=0:
             raise FloatingPointError('Nonpositive metric or lapse')
         start=time.perf_counter()
@@ -53,8 +120,9 @@ class Evolution:
             import g1_rhs
             timing={}
             R,S,diag,beta,db,ddb=g1_rhs.parts(self.op,q,d,dd,self.args.kappa1,self.args.kappa2,
-                self.args.theta=='appendix-c',self.args.slicing,self.args.lapse_restoring,timing,
-                puncture_cancellation=getattr(self.args,'puncture',False))
+                self.args.theta=='appendix-c',self.args.slicing,0. if getattr(self.args,'lapse_restoring_form','symmetric')=='multiplicative' else self.args.lapse_restoring,timing,
+                puncture_cancellation=getattr(self.args,'puncture',False),total_alpha=total_alpha,total_chi=total_chi,
+                trumpet_chi=trumpet_chi)
             self.solve_seconds+=timing['elliptic_seconds']
             self.shift_deviation=timing['beta_deviation'];self.origin_shift_slope=timing['origin_shift_slope']
             self.mass_numerator=timing['mass_numerator']
@@ -68,7 +136,8 @@ class Evolution:
         if getattr(self.args,'lapse_restoring_form','symmetric')=='multiplicative':
             # -2xi alpha*(alpha-A) replaces -xi(alpha+A)*(alpha-A).
             # Their difference is quadratic and preserves alpha=0 at the puncture.
-            S[:,6]-=self.args.lapse_restoring*q[:,6]**2
+            if getattr(self.args,'backend','native')=='spherical-g1':S[:,6]-=2*self.args.lapse_restoring*alpha*q[:,6]
+            else:S[:,6]-=self.args.lapse_restoring*q[:,6]**2
         if getattr(self.args,'damping_form','constant')=='reference-lapse':
             D=-self.args.kappa1*q[:,6]
             S[:,3]+=D*(1-self.args.kappa2)*q[:,4]
@@ -76,14 +145,18 @@ class Evolution:
             S[:,5]-=D*q[:,5]
         if getattr(self.args,'slicing_family','linear')=='rational':
             S[:,6]+=rational_correction(self.r,alpha,q[:,6],q[:,3],self.args.slicing,self.args.slicing_scale)
+        if getattr(self.args,'slicing_family','linear')=='blended-log':S[:,6]+=blended_correction(self.r,alpha,q[:,3],self.args.slicing)
         if getattr(self.args,'lapse_background_source','reference')=='collapsed-inner':
             S[:,6]+=collapsed_background_correction(self.r,q[:,6])
+        S[:,6]+=self.lapse_source
         if getattr(self.args,'advection','centered')=='upwind':
             adv=self.op.advection_derivative(q,PARITY,beta)
             R[:,:7]+=beta[:,None]*(adv[:,:7]-d[:,:7])
-        if getattr(self.args,'initial_data',None)=='wormhole':
+        if getattr(self.args,'initial_data',None) in ('wormhole','trumpet'):
             F=lapse_coefficient(self.r[0],alpha[0],self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1))
             light=-beta[0]+alpha[0]*np.sqrt(chi[0]);gauge=-beta[0]+np.sqrt(F*chi[0])
+            self.stage_metrics['max_inner_physical_characteristic']=max(self.stage_metrics.get('max_inner_physical_characteristic',-float('inf')),float(light))
+            self.stage_metrics['max_inner_gauge_characteristic']=max(self.stage_metrics.get('max_inner_gauge_characteristic',-float('inf')),float(gauge))
             if light>0:raise FloatingPointError('Puncture inner boundary has an incoming physical characteristic')
             if gauge>0 and getattr(self.args,'puncture_boundary','outflow')=='outflow':
                 raise FloatingPointError('Puncture inner boundary has an incoming gauge characteristic without boundary data')
@@ -105,7 +178,7 @@ class Evolution:
             q[-1,5]-connection(self.r[-1],a[-1],d[-1,1]),0.,0.])
         return R,S,diag,beta
 
-    def rhs(self,q):
+    def rhs(self,q,accepted=False):
         start=time.perf_counter();R,S,diag,beta=self.parts(q)
         if getattr(self.args,'origin_variables',False):
             R=R.copy();S=S.copy()
@@ -156,6 +229,8 @@ class Evolution:
                 appendix_c=self.args.theta=='appendix-c',slicing=self.args.slicing,restoring=self.args.lapse_restoring,
                 restoring_form=getattr(self.args,'lapse_restoring_form','symmetric'))
             result[-2,[0,3]]+=correction
+        if self.alpha_profile is not None:result[:,6]/=self.total_alpha
+        if self.metric_scale is not None:result[:,0]/=self.total_chi
         if self.args.origin_ko:
             # KO6 on regular spherical tensor coefficients, with a fixed
             # C5 taper to zero at r0. No scri/constraint values are reset.
@@ -184,6 +259,8 @@ class Evolution:
             result[0,3]+=penalty;result[0,2]+=2*penalty/(3*self.omega[0])
             self.stage_metrics['max_inner_gauge_incoming_speed']=max(self.stage_metrics.get('max_inner_gauge_incoming_speed',0.),speed)
             self.stage_metrics['max_inner_gauge_Robin_residual']=max(self.stage_metrics.get('max_inner_gauge_Robin_residual',0.),abs(residual))
+            active=abs(residual)*speed/np.sqrt(F*chi)
+            self.stage_metrics['max_active_inner_gauge_Robin_residual']=max(self.stage_metrics.get('max_active_inner_gauge_Robin_residual',0.),float(active))
         if getattr(self.args,'puncture_ko',0.):
             from numerics import puncture_dissipation
             diss=puncture_dissipation(q,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius,include_first=True)
@@ -194,8 +271,13 @@ class Evolution:
         if getattr(self.args,'backend','native')=='spherical-g1':
             from bondi import nonaffinity
             maxima['max_Bondi_nonaffinity']=float(abs(nonaffinity(diag[-1,8],diag[-1,7],
-                self.geometry_first[-1,0],1+self.geometry_first[-1,6],beta[-1]+1.5*diag[-1,7]*self.geometry_state[-1,2],result[-1,0])))
+                self.geometry_first[-1,0],1+self.geometry_first[-1,6],beta[-1]+1.5*diag[-1,7]*self.geometry_state[-1,2],result[-1,0]*(self.total_chi[-1] if self.metric_scale is not None else 1))))
         for i,name in enumerate(['H','M','Theta','Z']):maxima['max_'+name+'_rms']=float(np.sqrt(np.sum(self.r**2*diag[:,i]**2)/np.sum(self.r**2)))
+        if accepted:
+            for i,name in enumerate(['H','M','Theta','Z']):maxima['max_accepted_'+name+'_rms']=maxima['max_'+name+'_rms']
+            for i,name in enumerate(['H','M']):
+                maxima['max_accepted_'+name+'_bulk']=float(max(abs(diag[self.r<.8,i])))
+                maxima['max_accepted_'+name+'_endpoint']=float(max(abs(diag[self.r>.9,i])))
         for key,value in maxima.items():self.stage_metrics[key]=max(self.stage_metrics.get(key,0.),value)
         for key,value in [('min_chi',float(min(diag[:,8]))),('min_alpha',float(min(diag[:,7])))]:self.stage_metrics[key]=min(self.stage_metrics.get(key,float('inf')),value)
         if not np.all(np.isfinite(result)):raise FloatingPointError('Nonfinite RHS')
@@ -265,14 +347,7 @@ class Evolution:
             row.update(mass_numerator_scri=float(self.mass_numerator[-1]),
                 mass_numerator_d1_scri=jet[0],mass_numerator_d2_scri=jet[1],
                 mass_scri_third_jet=-jet[2]/(12*c[-1,8]**1.5))
-        crossings=np.flatnonzero((c[:-1,11]<=0)&(c[1:,11]>0))
-        row['apparent_horizon_count']=len(crossings)
-        if len(crossings):
-            i=crossings[-1];fraction=-c[i,11]/(c[i+1,11]-c[i,11])
-            rh=float(self.r[i]+fraction*(self.r[i+1]-self.r[i]));ch=float(c[i,8]+fraction*(c[i+1,8]-c[i,8]))
-            radius=rh/(((1-rh*rh)/2)*np.sqrt(ch))
-            row.update(apparent_horizon_r=rh,apparent_horizon_areal_radius=radius,
-                apparent_horizon_mass=radius/2)
+        row.update(apparent_horizons(self.r,c[:,8],c[:,11]))
         return row,b,c
 
 
@@ -283,13 +358,13 @@ class CoupledEvolution(Evolution):
         R,S,diag,beta=super().parts(geom)
         geom=self.geometry_state;d=self.geometry_first;dd=self.geometry_second
         df,ddf=self.op.derivatives(fields,np.ones(2))
-        phi,phir,normal=scalar_rhs.matter(self.op,geom,d,fields,df,beta)
-        scalar_rhs.add_sources(self.r,geom,R,diag,phir,normal)
+        phi,phir,normal=scalar_rhs.matter(self.op,geom,d,fields,df,beta,total_chi=self.total_chi)
+        scalar_rhs.add_sources(self.r,geom,R,diag,phir,normal,total_chi=self.total_chi,total_alpha=self.total_alpha)
         # Use the same stage solve, including its analytically small deviation.
         v=self.shift_deviation
         wave,info=scalar_rhs.rhs(self.op,geom,d,fields,df,ddf,beta,v,
             self.args.kappa1,self.args.kappa2,self.args.theta=='appendix-c',geometry_second=dd,origin_beta_derivative=self.origin_shift_slope,
-            analytic_endpoint=self.args.endpoint=='analytic-g1',damping_form=getattr(self.args,'damping_form','constant'))
+            analytic_endpoint=self.args.endpoint=='analytic-g1',damping_form=getattr(self.args,'damping_form','constant'),total_chi=self.total_chi,total_alpha=self.total_alpha)
         self.scalar_info=info;self.scalar_phi=phi;self.scalar_phir=phir;self.scalar_normal=normal
         self.scalar_scri_rate=wave[-1,0]
         if getattr(self.args,'advection','centered')=='upwind':
@@ -302,7 +377,7 @@ class CoupledEvolution(Evolution):
         row,b,c=super().report(q,t)
         B=self.scalar_info['potential_numerator'];dB,_=self.op.derivatives(B,1)
         row.update(scalar_max=float(max(abs(self.scalar_phi))),
-            scalar_rescaled_scri=float(np.sqrt(1+q[-1,0])*q[-1,8]),
+            scalar_rescaled_scri=float(np.sqrt(self.total_chi[-1])*q[-1,8]),
             radius_weighted_scalar_scri=float(q[-1,8]),
             coordinate_time_scalar_flux_scri=float(4*np.pi*self.scalar_scri_rate**2),
             scalar_potential_pole0=float(B[-1]),scalar_potential_pole1=float(dB[-1]))
@@ -319,7 +394,7 @@ def main():
     p.add_argument('--puncture-chart',action='store_true')
     p.add_argument('--puncture-ko',type=float,default=0.)
     p.add_argument('--puncture-ko-radius',type=float,default=.8)
-    p.add_argument('--initial-data',choices=['minkowski','wormhole'],default='minkowski')
+    p.add_argument('--initial-data',choices=['minkowski','wormhole','trumpet'],default='minkowski')
     p.add_argument('--mass',type=float,default=.1)
     p.add_argument('--initial-quadrature-order',type=int,choices=[64,96,128,192],default=96)
     p.add_argument('--perturbation',choices=['none','constraint','noise','noise-balanced'],default='none')
@@ -335,6 +410,7 @@ def main():
     p.add_argument('--origin-ko-radius',type=float,default=.4)
     p.add_argument('--backend',choices=['native','spherical-g1'],default='native')
     p.add_argument('--quadrature-width',type=int,choices=[5,7,9,11],default=7)
+    p.add_argument('--elliptic-quadrature',choices=['prefix','inward'],default='prefix')
     p.add_argument('--library',required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--n',type=int,default=64);p.add_argument('--t',type=float,default=1.)
     p.add_argument('--cfl',type=float,default=.05);p.add_argument('--amplitude',type=float,default=0.)
@@ -345,9 +421,13 @@ def main():
     p.add_argument('--lapse-restoring',type=float,default=0.)
     p.add_argument('--lapse-restoring-form',choices=['symmetric','multiplicative'],default='symmetric')
     p.add_argument('--eta',type=float,default=0.);p.add_argument('--slicing',type=float,default=1.)
-    p.add_argument('--slicing-family',choices=['linear','rational'],default='linear')
+    p.add_argument('--slicing-family',choices=['linear','rational','blended-log'],default='linear')
     p.add_argument('--slicing-scale',type=float,default=.1)
     p.add_argument('--lapse-background-source',choices=['reference','collapsed-inner'],default='reference')
+    p.add_argument('--lapse-reference',choices=['minkowski','CMC-trumpet'],default='minkowski')
+    p.add_argument('--lapse-variable',choices=['deviation','log-reference','log-trumpet'],default='deviation')
+    p.add_argument('--metric-variable',choices=['deviation','log','log-trumpet'],default='deviation')
+    p.add_argument('--inner-radius',type=float,default=0.)
     p.add_argument('--theta',choices=['appendix-c','repository'],default='appendix-c')
     p.add_argument('--width',type=int,choices=[5,7,9],default=7)
     p.add_argument('--radial-operator',choices=['fd','sbp63'],default='fd')
@@ -358,15 +438,27 @@ def main():
     p.add_argument('--scri-sat',type=float,default=0.)
     p.add_argument('--report-dt',type=float,default=.1);p.add_argument('--resume',type=Path)
     args=p.parse_args()
-    numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude,args.gauge_corner_sat,args.mass,args.puncture_ko,args.puncture_ko_radius,args.slicing_scale,args.puncture_lapse_power]
+    numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude,args.gauge_corner_sat,args.mass,args.puncture_ko,args.puncture_ko_radius,args.slicing_scale,args.puncture_lapse_power,args.inner_radius]
     if not all(np.isfinite(x) for x in numeric):raise ValueError('Nonfinite input')
     if (args.n<16 or args.cfl<=0 or args.t<0 or args.pulse_width<=0 or not 0<=args.center<1
         or args.report_dt<=0 or args.origin_ko<0 or not 0<args.origin_ko_radius<=.75
         or args.kappa1<0 or args.eta<0 or args.slicing<0 or args.lapse_restoring<0
         or args.initial_tolerance<=0 or args.gauge_corner_sat<0 or args.mass<=0 or args.puncture_ko<0
-        or not 0<args.puncture_ko_radius<.95 or args.slicing_scale<=0 or args.puncture_lapse_power<0):raise ValueError('Invalid input')
-    if args.fast_library and args.slicing_family=='rational':raise ValueError('The rational slicing prototype currently uses Python integration')
+        or not 0<args.puncture_ko_radius<.95 or args.slicing_scale<=0 or args.puncture_lapse_power<0 or not 0<=args.inner_radius<1):raise ValueError('Invalid input')
+    if args.inner_radius and (not args.puncture or args.initial_data!='trumpet' or args.puncture_chart):
+        raise ValueError('Fixed-radius excision is a separate already-trumpet control; it does not replace wormhole evolution')
+    if args.slicing_family=='blended-log' and args.slicing==0:raise ValueError('Blended-log slicing requires a positive interior strength')
     if args.fast_library and args.lapse_background_source!='reference':raise ValueError('The collapsed-inner source prototype uses Python integration')
+    if args.lapse_reference=='CMC-trumpet' and (args.initial_data!='trumpet' or args.lapse_background_source!='reference'):
+        raise ValueError('The CMC lapse-reference control requires already-trumpet data and the reference background source')
+    if args.lapse_variable=='log-trumpet' and (args.initial_data!='trumpet' or args.fast_library or args.advection!='centered'):
+        raise ValueError('Log-trumpet lapse variables currently require Python already-trumpet evolution and centered transport')
+    if args.metric_variable=='log-trumpet' and (args.initial_data!='trumpet' or args.fast_library or args.advection!='centered'):
+        raise ValueError('Log-trumpet metric variables currently require Python already-trumpet evolution and centered transport')
+    if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and (args.backend!='spherical-g1' or args.advection!='centered' or args.puncture_chart):
+        raise ValueError('Positive-variable prototypes require g=1 centered evolution and their own representation')
+    if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and args.origin_variables:
+        raise ValueError('Combined positive and scaled-origin charts have not been implemented/audited')
     if args.radial_operator=='sbp63' and (not args.puncture or args.advection!='centered' or args.fast_library):
         raise ValueError('The SBP prototype requires a Python puncture evolution and centered transport')
     if args.puncture_boundary=='gauge-robin' and (not args.puncture or args.puncture_chart or args.radial_operator!='sbp63'):
@@ -375,9 +467,9 @@ def main():
         raise ValueError('Puncture dissipation requires an AF chart or finite-cutoff SBP path')
     if args.puncture and (args.backend!='spherical-g1' or args.origin_grid or args.origin_variables or args.origin_ko):
         raise ValueError('Puncture uses unscaled g=1, excluded inner endpoint and no regular-center KO filter')
-    if args.initial_data=='wormhole' and (not args.puncture or args.scalar):raise ValueError('Wormhole initialization requires the vacuum puncture path')
-    if args.puncture and args.initial_data!='wormhole':raise ValueError('Only wormhole puncture initial data are currently implemented')
-    if args.puncture_chart and (not args.puncture or args.fast_library or args.lapse_restoring_form!='multiplicative'
+    if args.initial_data in ('wormhole','trumpet') and (not args.puncture or args.scalar):raise ValueError('Black-hole initialization currently requires the vacuum puncture path')
+    if args.puncture and args.initial_data not in ('wormhole','trumpet'):raise ValueError('The puncture path requires black-hole initial data')
+    if args.puncture_chart and (not args.puncture or args.initial_data!='wormhole' or args.fast_library or args.lapse_restoring_form!='multiplicative'
         or args.perturbation!='none' or args.amplitude or args.gauge_corner_sat or args.endpoint not in ('raw-lhopital','analytic-g1')):
         raise ValueError('AF coefficient prototype requires vacuum wormhole, Python RK, multiplicative restoring and an unperturbed initial lapse')
     if args.origin_grid and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Actual-origin grid uses the analytic g=1 limits with unscaled fields')
@@ -388,13 +480,14 @@ def main():
     args.output.mkdir(parents=True,exist_ok=False)
     root=Path(__file__).resolve().parents[2]
     # Bind all actual header dependencies, adapter and Python implementation.
-    module_names=['evolve.py','numerics.py','elliptic.py','kernel.py','gauge.py','bondi.py']
+    module_names=['evolve.py','numerics.py','elliptic.py','kernel.py','gauge.py','bondi.py','horizon.py']
     if args.radial_operator=='sbp63':module_names+=['sbp.py']
     if args.backend=='spherical-g1':module_names+=['g1_rhs.py']
     if args.scalar:module_names+=['scalar_rhs.py','scalar_initial_data.py']
     if args.fast_library:module_names+=['fast.py','fast_integrator.cpp']
     if args.endpoint=='analytic-g1' or args.gauge_corner_sat:module_names+=['scri_limits.py']
     if args.initial_data=='wormhole':module_names+=['wormhole_isotropic.py','wormhole_data.py']
+    if args.initial_data=='trumpet':module_names+=['trumpet_data.py','wormhole_isotropic.py','wormhole_data.py']
     if args.puncture_chart:module_names+=['puncture_chart.py','scri_limits.py']
     source=[*sorted((root/'src/z4c/hyperboloidal').glob('*.hpp')),
             *[Path(__file__).with_name(name) for name in module_names],
@@ -411,6 +504,10 @@ def main():
         from puncture_chart import PunctureChart
         ev=PunctureChart(args);manifest['representation']='puncture-log-AF-v1'
     else:ev=CoupledEvolution(args) if args.scalar else Evolution(args)
+    if args.lapse_variable=='log-trumpet':manifest['representation']='log-trumpet-lapse-v1; geometric/gauge reference selected independently'
+    if args.metric_variable=='log-trumpet':manifest['representation']='log-trumpet-metric-v1; geometric/gauge reference selected independently'
+    if args.metric_variable=='log' or args.lapse_variable=='log-reference':manifest['representation']='positive-reference-variables-v1; free Z4c fields retained'
+    if args.inner_radius:manifest['inner_boundary_kind']='fixed excision control; stage characteristic guards required; no wormhole-to-trumpet claim'
     # Freeze before initialization too: a failed Newton solve is an experiment.
     snapshot=args.output/'frozen-source';snapshot.mkdir()
     for f in source:
@@ -438,6 +535,15 @@ def main():
             inner_lapse='physical psi_iso^-2, psi_iso=1+M/(2rho)',outer_lapse='physical sqrt(F+R^2)',
             reference='Minkowski; no Schwarzschild RHS subtraction',inner_boundary='evolved AF coefficients' if args.puncture_chart else 'one-sided outflow, no regular-center parity')
         np.savez(args.output/'wormhole-initial-data.npz',r=ev.r,q=iq if args.puncture_chart else q,q_stored=q,d=id1,dd=id2,
+            chi_total=np.array([g['chi_total'] for g in geometry]),R_areal=np.array([g['R'] for g in geometry]))
+    if args.initial_data=='trumpet' and not args.resume:
+        from trumpet_data import CMCTrumpet
+        initial=CMCTrumpet(args.mass,args.initial_quadrature_order)
+        iq,id1,id2,geometry=initial.data(ev.r);q+=iq
+        manifest['trumpet_initial_data']=dict(mass=args.mass,R0=initial.R0,C=initial.C,gamma=initial.gamma,
+            K_CMC=-3.,H='R-C/R^2',lapse='stationary physical sqrt(1-2M/R+H^2)',
+            reference='Minkowski; no Schwarzschild RHS subtraction',classification='Already-trumpet control; not wormhole-to-trumpet evidence')
+        np.savez(args.output/'trumpet-initial-data.npz',r=ev.r,q=q,d=id1,dd=id2,
             chi_total=np.array([g['chi_total'] for g in geometry]),R_areal=np.array([g['R'] for g in geometry]))
     if args.scalar and not args.resume:
         from scalar_initial_data import solve_data
@@ -472,14 +578,16 @@ def main():
             else:profile=sum(rng.normal()*ev.r**(2*k) for k in range(4))
             scale=ev.h**(2 if field==0 else 1) if args.perturbation=='noise-balanced' else 1.
             q[:,field]+=args.perturbation_amplitude*scale*ev.r**power*envelope*profile
+    if (args.lapse_variable!='deviation' or args.metric_variable!='deviation') and not args.resume:
+        q=ev.from_physical(q,total_chi=np.array([g['chi_total'] for g in geometry]) if args.metric_variable=='log-trumpet' else None)
     if args.resume:
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','backend','quadrature_width','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
+            for key in ('n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','backend','quadrature_width','elliptic_quadrature','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
-            for key in ['scalar_initial_data','wormhole_initial_data']:
+            for key in ['scalar_initial_data','wormhole_initial_data','trumpet_initial_data']:
                 if key in old:manifest[key]=old[key]
         manifest['checkpoint_parent']={'path':str(args.resume.resolve()),'sha256':sha(args.resume)}
     radiated_energy=float(old.get('radiated_energy',0.)) if args.resume else 0.
@@ -514,7 +622,7 @@ def main():
                     if failed:raise FloatingPointError(compiled.failure_message)
                     continue
                 h=dt if args.t-t>=dt*(1-1e-12) else args.t-t
-                k1=ev.rhs(q);flux1=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
+                k1=ev.rhs(q,accepted=True);flux1=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k2=ev.rhs(q+h*k1/2);flux2=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k3=ev.rhs(q+h*k2/2);flux3=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k4=ev.rhs(q+h*k3);flux4=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
@@ -528,7 +636,7 @@ def main():
         if compiled:
             calls,seconds=compiled.stats();ev.calls+=calls;ev.solve_seconds+=seconds
             manifest['all_RK_stages']=compiled.diagnostics();manifest['compiled_rk_seconds']=compiled.advance_seconds;compiled.close()
-        if args.puncture_chart:manifest['all_RK_stages']=dict(ev.stage_metrics)
+        if not compiled:manifest['all_RK_stages']=dict(ev.stage_metrics)
         manifest.update(status='failed' if failure else 'finished',time=t,steps=step,
             runtime_seconds=time.perf_counter()-start,rhs_seconds=ev.rhs_seconds,radiated_energy=radiated_energy,
             elliptic_seconds=ev.solve_seconds,elliptic_calls=ev.calls,failure=failure)
@@ -536,6 +644,13 @@ def main():
         if args.puncture_chart:
             try:
                 physical,chi_total,alpha_total,_=ev.reconstruct(q)
+                extra.update(q_physical=physical,chi_total=chi_total,alpha_total=alpha_total)
+            except FloatingPointError:manifest['checkpoint_physical_reconstruction']='failed'
+        elif args.lapse_variable!='deviation' or args.metric_variable!='deviation':
+            try:
+                physical=ev.to_physical(q)
+                alpha_total=ev.alpha_profile[0]*np.exp(q[:,6]) if ev.alpha_profile is not None else (1+ev.r**2)/2+physical[:,6]
+                chi_total=ev.metric_scale[0]*np.exp(q[:,0]) if ev.metric_scale is not None else 1+physical[:,0]
                 extra.update(q_physical=physical,chi_total=chi_total,alpha_total=alpha_total)
             except FloatingPointError:manifest['checkpoint_physical_reconstruction']='failed'
         np.savez(args.output/'checkpoint.npz',q=q,r=ev.r,t=t,step=step,metadata=json.dumps(manifest),**extra)

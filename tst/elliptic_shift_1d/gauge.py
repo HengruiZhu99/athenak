@@ -6,6 +6,7 @@ def lapse_coefficient(r,alpha,slicing=1.,family='linear',scale=.1):
     O=(1-r*r)/2;A=(1+r*r)/2
     if family=='linear':return alpha*alpha+4*slicing*O*O*alpha
     if family=='rational':return alpha*alpha+4*slicing*O*O*alpha*(A+scale)/(alpha+scale)
+    if family=='blended-log':return (1-4*O*O)*alpha*alpha+8*slicing*O**3*alpha
     raise ValueError('Unknown lapse principal coefficient')
 
 
@@ -15,7 +16,12 @@ def rational_correction(r,alpha,u,khat_deviation,slicing=1.,scale=.1):
 
 
 def af_slicing_strength(slicing=1.,family='linear',scale=.1):
-    return slicing if family=='linear' else slicing*(.5+scale)/scale
+    return slicing*(.5+scale)/scale if family=='rational' else slicing
+
+
+def blended_correction(r,alpha,khat_deviation,slicing=1.):
+    O=(1-r*r)/2
+    return 4*O*O*alpha*(alpha+slicing*r*r)*khat_deviation
 
 
 def collapsed_background_correction(r,u):
