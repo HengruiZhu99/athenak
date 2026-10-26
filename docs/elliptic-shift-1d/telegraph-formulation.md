@@ -39,3 +39,12 @@ On the mapped grid, the dissipative term is -epsilon J^{-1} D3^T W D3/(64 dx), w
 The optional numerical-map setter leaves the geometry ABI and uniform path intact; a saved pre-map library gives bitwise identical uniform states and diagnostics for the checked nonzero-flux evolution. The full 52-test suite passed after the geometry-kernel additions. Independent mapped checks include physical-coordinate polynomial quadrature, smooth-function derivative convergence, the weighted KO identity, nonzero-flux Python/compiled rates and RK stages, characteristic interval selection, and exact checkpoint restart.
 
 The global sinh pilot improves the late inner error but coarsens scri. The inner-only map is a separate controlled response to that failure. Neither mapping is accepted on a coarse run alone.
+
+
+## What characteristic compression does and does not show
+
+For the original gauge the frozen lapse-trace speeds are c_±=-beta±sqrt(chi*F), F=alpha^2+4 nu Omega^2 alpha. Both the metric coefficient and the shift are essential. Characteristics are integrated as dot r=c_± and dot log(J)=partial_r c_± using each RK stage. At t=2.5 the zero-flux controls give minimum inward J=.000652882 (N513) and .0000126791 (N1025); the kappa=.001 candidate gives about .142 on the resolved grids. At t=3 the baseline minima shrink further to 1.26247e-5 and 1.21675e-8. These stage results supersede the much weaker compression inferred from snapshots separated by .1 in time.
+
+This trend supports a nonlinear steepening diagnosis, but no characteristic intersection in a regularized finite-grid velocity field is a proof of continuum noncrossing. Conversely, tiny J is not an observed intersection. The source system also has elliptic shift feedback, radial geometry and conformal sources. The simple Bona–Masso condition 1-f-alpha*f'/2=0 applies to its specified one-dimensional model, not automatically to this full system; see [Alcubierre, Eqs. (21)–(24)](https://arxiv.org/html/gr-qc/0503030). For the local original coefficient f=F/alpha^2, the corresponding expression is -2 nu Omega^2/alpha, which is nonzero in the interior. This is a useful diagnostic comparison, not a shock theorem for our formulation.
+
+The telegrapher extension changes the principal speeds and damps the frozen three-field subsystem. Its damping does not guarantee nonlinear shock avoidance. Late AF coordinate compression remains a separate resolution challenge even after the initial steep front is smoothed.
