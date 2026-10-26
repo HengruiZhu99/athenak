@@ -115,3 +115,17 @@ The control retains width7 after the observed width9 scri failure. It addresses 
 This choice changes neither the geometry/flux RHS nor their dissipation, elliptic shift, stage guards, state layout or compensated updates. The mode is recorded in the run configuration and checked on restart. Exits remain terminal. Geometry, flux and their compensation are verified bitwise against the linear mode; the default linear trajectory is also checked against the preceding frozen library. An optional isolated SciPy 1.13.1 installation supplies an independent value/derivative and actual nonzero-flux RK-stage oracle. No SciPy dependency is added to the solver.
 
 For any Lipschitz interpolated speed, the finite-grid ray flow has J=exp(integral partial_r(c) dt)>0 while it remains regular. Thus a positive tracked J cannot by itself establish continuum absence of crossing. The relevant evidence is convergence of the speed gradients, ray compression and geometry under both spatial and independent timestep refinement. Improving diagnostic smoothness must not be presented as smoothing the evolved lapse.
+
+## Dense characteristic exit events
+
+`--ray-exit dense` uses the classical RK4 continuous extension for passive ray positions and log(J). With stage rates k1,...,k4 and normalized step coordinate theta, its weights are
+
+b1(theta)=theta-3 theta^2/2+2 theta^3/3,
+b2(theta)=b3(theta)=theta^2-2 theta^3/3,
+b4(theta)=-theta^2/2+2 theta^3/3.
+
+They recover the accepted RK4 weights at theta=1 and satisfy the continuous order conditions through degree three. See the [classical RK interpolator documentation](https://hipparchus.org/apidocs-4.0.3/org/hipparchus/ode/nonstiff/interpolators/ClassicalRungeKuttaStateInterpolator.html). The extension has local error O(dt^4) for smooth ODEs; the actual grid-interpolated speed is only C1 and must still pass measured timestep controls.
+
+For a ray interior at the start of a step, intermediate stages may evaluate the endpoint speed polynomial outside the domain by at most one boundary-cell width. Exceeding that continuation range stops the run. No geometry, flux or elliptic evaluation occurs outside the domain. The cubic position polynomial is split at its internal stationary points, and the first segment reaching either boundary is bisected to floating-point resolution. This detects an exit followed by a return even when the full-step position lies inside. Position is set exactly to the encountered boundary, and log(J) is evaluated with the same dense weights at that event time. Both values then remain terminal; matched compensated state restarts exactly.
+
+The default remains `legacy`, reproducing the previous stage stopping and position clamping bitwise. The new flag is recorded and checked on restart and in convergence grouping. Pure event-kernel tests cover both boundaries, within-step returns and ensembles of affine/time-dependent exact flows; their exit-time and terminal-compression errors converge approximately at fourth order. A separate SciPy/Python oracle checks an actual coupled RK step with near-scri exits and nonzero auxiliary flux. Event processing does not feed back into the evolved geometry or B.

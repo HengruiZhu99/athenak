@@ -53,7 +53,8 @@ def python_rhs(ev,q,B,kappa,tau,support,accepted=False):
 
 
 class TelegraphEngine:
-    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar",ray_interpolation="linear"):
+    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar",ray_interpolation="linear",ray_exit="legacy"):
+        if ray_exit not in ('legacy','dense'):raise ValueError('Unknown ray exit treatment')
         if ray_interpolation not in ('linear','pchip'):raise ValueError('Unknown ray interpolation')
         if not np.isfinite(kappa+tau) or kappa<0 or tau<=0:raise ValueError('Need kappa>=0,tau>0')
         if not ev.args.puncture_chart or ev.r[0]!=0:raise ValueError('First telegraph implementation requires the full AF domain')
@@ -73,6 +74,9 @@ class TelegraphEngine:
         if ray_interpolation=='pchip':
             lib.telegraph_set_ray_interpolation.argtypes=[C.c_void_p,C.c_int]
             if lib.telegraph_set_ray_interpolation(self.handle,1):raise RuntimeError('Ray interpolation setup failed')
+        if ray_exit=='dense':
+            lib.telegraph_set_ray_exit.argtypes=[C.c_void_p,C.c_int]
+            if lib.telegraph_set_ray_exit(self.handle,1):raise RuntimeError('Ray exit setup failed')
     def close(self):
         if self.handle:self.base.lib.telegraph_destroy(self.handle);self.handle=None
         self.base.close()

@@ -1,0 +1,106 @@
+{
+  "common": {
+    "mass": 0.3333333333333333,
+    "t": 10,
+    "tau": 0.02,
+    "kappa": 0.005,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "inner_profile": "af-regular",
+    "transition": 0.24,
+    "grid_map": "inner-exp-scri",
+    "grid_stretch": 16,
+    "mapped_ko": "local",
+    "width": 7,
+    "ko_order": 8,
+    "ray_interpolation": "pchip",
+    "ray_exit": "dense"
+  },
+  "cases": [
+    {
+      "name": "k0045-n1025",
+      "arguments": {
+        "n": 1025,
+        "kappa": 0.0045
+      }
+    },
+    {
+      "name": "k0045-n2049",
+      "arguments": {
+        "n": 2049,
+        "kappa": 0.0045
+      }
+    },
+    {
+      "name": "k0045-n4097",
+      "arguments": {
+        "n": 4097,
+        "kappa": 0.0045
+      }
+    },
+    {
+      "name": "k0055-n1025",
+      "arguments": {
+        "n": 1025,
+        "kappa": 0.0055
+      }
+    },
+    {
+      "name": "k0055-n2049",
+      "arguments": {
+        "n": 2049,
+        "kappa": 0.0055
+      }
+    },
+    {
+      "name": "k0055-n4097",
+      "arguments": {
+        "n": 4097,
+        "kappa": 0.0055
+      }
+    },
+    {
+      "name": "tau018-n1025",
+      "arguments": {
+        "n": 1025,
+        "tau": 0.018
+      }
+    },
+    {
+      "name": "tau018-n2049",
+      "arguments": {
+        "n": 2049,
+        "tau": 0.018
+      }
+    },
+    {
+      "name": "tau018-n4097",
+      "arguments": {
+        "n": 4097,
+        "tau": 0.018
+      }
+    },
+    {
+      "name": "tau022-n1025",
+      "arguments": {
+        "n": 1025,
+        "tau": 0.022
+      }
+    },
+    {
+      "name": "tau022-n2049",
+      "arguments": {
+        "n": 2049,
+        "tau": 0.022
+      }
+    },
+    {
+      "name": "tau022-n4097",
+      "arguments": {
+        "n": 4097,
+        "tau": 0.022
+      }
+    }
+  ]
+}

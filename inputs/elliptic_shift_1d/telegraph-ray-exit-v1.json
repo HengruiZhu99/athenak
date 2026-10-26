@@ -1,0 +1,71 @@
+{
+  "common": {
+    "mass": 0.3333333333333333,
+    "t": 3,
+    "tau": 0.02,
+    "kappa": 0.005,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "inner_profile": "af-regular",
+    "transition": 0.24,
+    "grid_map": "inner-exp-scri",
+    "grid_stretch": 16,
+    "mapped_ko": "local",
+    "width": 7,
+    "ko_order": 8,
+    "n": 513,
+    "ray_exit": "dense"
+  },
+  "cases": [
+    {
+      "name": "linear-base",
+      "arguments": {
+        "ray_interpolation": "linear",
+        "cfl": 0.05
+      }
+    },
+    {
+      "name": "linear-half",
+      "arguments": {
+        "ray_interpolation": "linear",
+        "cfl": 0.025
+      }
+    },
+    {
+      "name": "linear-quarter",
+      "arguments": {
+        "ray_interpolation": "linear",
+        "cfl": 0.0125
+      }
+    },
+    {
+      "name": "pchip-base",
+      "arguments": {
+        "ray_interpolation": "pchip",
+        "cfl": 0.05
+      }
+    },
+    {
+      "name": "pchip-half",
+      "arguments": {
+        "ray_interpolation": "pchip",
+        "cfl": 0.025
+      }
+    },
+    {
+      "name": "pchip-quarter",
+      "arguments": {
+        "ray_interpolation": "pchip",
+        "cfl": 0.0125
+      }
+    },
+    {
+      "name": "pchip-fine",
+      "arguments": {
+        "ray_interpolation": "pchip",
+        "n": 1025
+      }
+    }
+  ]
+}

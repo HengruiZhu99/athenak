@@ -1,0 +1,35 @@
+{
+  "common": {
+    "mass": 0.3333333333333333,
+    "t": 10,
+    "tau": 0.02,
+    "kappa": 0.005,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "inner_profile": "af-regular",
+    "transition": 0.24,
+    "grid_map": "inner-exp-scri",
+    "grid_stretch": 16,
+    "mapped_ko": "local",
+    "width": 7,
+    "ko_order": 8,
+    "ray_interpolation": "pchip",
+    "ray_exit": "dense",
+    "n": 2049
+  },
+  "cases": [
+    {
+      "name": "q9-n2049",
+      "arguments": {
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "q11-n2049",
+      "arguments": {
+        "quadrature_width": 11
+      }
+    }
+  ]
+}

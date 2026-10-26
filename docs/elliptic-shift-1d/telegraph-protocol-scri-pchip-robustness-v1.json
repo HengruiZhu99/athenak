@@ -1,0 +1,18 @@
+{
+  "declared_before_launch": true,
+  "purpose": "Complete the independent quadrature, numerical-dissipation and adjacent continuum-parameter controls in the original robustness protocol.",
+  "input_sha256": {
+    "inputs/elliptic_shift_1d/telegraph-scri-pchip-quadrature-v1.json": "d812c1639eaf28f31d34e0c744e32a0ae89c4989e932d8ca127bee07226198bc",
+    "inputs/elliptic_shift_1d/telegraph-scri-pchip-ko-robustness-v1.json": "982c29345efb0f4581ac1a2787a846b7838bbbed5165e0676cb4af45b9ba44cd",
+    "inputs/elliptic_shift_1d/telegraph-scri-pchip-parameter-robustness-v1.json": "5153314d3faa125ff2b32270971a07588039ba8af4ec0595de870e316b01a26e"
+  },
+  "candidate": "Fixed refined-scri exponential grid b16, width7, KO8, PCHIP stage rays and dense exits; no projections.",
+  "source_rule": "Dispatch from the completed main candidate matrix-source/run_telegraph_matrix.py and its frozen libraries, so all numerical dependencies match the main run. Keep at most two evolution workers.",
+  "quadrature": "At N2049 compare quadrature7 baseline with9 and11 through t10. Report all full-time field, constraint, gradient, ray and finite-mass differences. Require changes to be below10% of the matching main N2049-to4097 spatial differences; treat zero denominators explicitly. This tests shift quadrature, not spatial-stencil width.",
+  "KO": "At fixed amplitude .25 and .75 run three related grids through t10. Each amplitude must retain the original convergence, magnitude, boundary and positivity gates. Compare fine-grid differences with baseline spatial errors; dissipation changes are numerical, not distinct continuum physics.",
+  "continuum_parameters": "At fixed kappa .0045 and .0055 with tau .02, and tau .018 and .022 with kappa .005, run three grids each through t10. Each is a distinct coordinate gauge and need not have identical lapse profiles. Require original full-domain convergence, front, constraint, boundary and positivity gates separately. Parameters are fixed across resolution; no h-dependent tuning.",
+  "temporal": "The main N2049 dt/dt2/dt4 study remains mandatory. Additional time refinement is required if any control reveals new sharp fronts, stage-CFL pressure, or uncertainty about whether its observed spatial differences dominate time error.",
+  "dispatch_gate": "Prepared only. Inspect the full main three-grid and time-control results before dispatch; failures must be repaired or documented rather than bypassed.",
+  "acceptance": "No relaxation of telegraph-protocol-v1.json thresholds. These controls remain unrun and cannot support completion.",
+  "status": "Prepared, not dispatched."
+}

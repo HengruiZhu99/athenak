@@ -26,10 +26,48 @@ void pchip_value(double x,double r0,double r1,double c0,double c1,double m0,doub
   out[0]=c0+t*delta+t*(1-t)*C;
   out[1]=(delta+(1-2*t)*C+t*(1-t)*(B-A))/h;
 }
+struct RayCubic {
+  double a,b,c;
+  double operator()(double t)const{return ((a*t+b)*t+c)*t;}
+};
+RayCubic ray_cubic(const double* k,int component,double dt) {
+  double k1=k[component],k2=k[2+component],k3=k[4+component],k4=k[6+component];
+  return {dt*(2./3)*(k1-k2-k3+k4),dt*(-1.5*k1+k2+k3-.5*k4),dt*k1};
+}
+// Classical RK4 third-order continuous extension. Its order conditions are
+// verified independently; the first event may precede a return into the domain.
+double ray_increment(const double* state,const double* k,double dt,double lo,double hi,double* inc) {
+  RayCubic x=ray_cubic(k,0,dt);std::array<double,4> cuts{0,1,0,0};int count=2;
+  auto add=[&](double t){if(t>0&&t<1)cuts[count++]=t;};
+  if(x.a==0) {if(x.b!=0)add(-x.c/(2*x.b));}
+  else {
+    double disc=x.b*x.b-3*x.a*x.c;
+    if(disc>=0) {
+      double q=-x.b-std::copysign(std::sqrt(disc),x.b);
+      if(q!=0){add(q/(3*x.a));add(x.c/q);}
+      else add(-x.b/(3*x.a));
+    }
+  }
+  std::sort(cuts.begin(),cuts.begin()+count);
+  for(int j=1;j<count;j++) {
+    double right=cuts[j],value=state[0]+x(right);
+    if(value>lo&&value<hi)continue;
+    const double wall=value<=lo?lo:hi;double left=cuts[j-1];
+    for(int it=0;it<64;it++) {
+      double mid=left+(right-left)/2;if(mid==left||mid==right)break;
+      double v=state[0]+x(mid);
+      if(wall==lo?v<=lo:v>=hi)right=mid;else left=mid;
+    }
+    double theta=left+(right-left)/2;
+    inc[0]=wall-state[0];inc[1]=ray_cubic(k,1,dt)(theta);return theta;
+  }
+  for(int f=0;f<2;f++)inc[f]=dt*(k[f]+2*k[2+f]+2*k[4+f]+k[6+f])/6;
+  return -1.;
+}
 }
 struct Telegraph {
   Engine& e;double kappa,tau,start;int nr;Vec w,wp,comp;
-  bool cubic_rays=false;Vec speed_slopes;
+  bool cubic_rays=false,dense_exits=false;Vec speed_slopes;
   Vec q1,q2,q3,q4,qs,b1,b2,b3,b4,bs,j1,j2,j3,j4,js,speeds;
   std::array<double,5> stats{};
   Telegraph(Engine& E,double K,double T,const double* W,const double* WP,int NR,double START):
@@ -82,12 +120,16 @@ struct Telegraph {
       stats[4]=std::max(stats[4],-(speeds[2*i+2]-speeds[2*i])/(e.r[i+1]-e.r[i]));
     for(int i=0;i<n;i++)if(!std::isfinite(dB[i])||!std::isfinite(dq[8*i+6]))throw std::runtime_error("nonfinite telegraph rate");
   }
-  void rays(const double* state,double* rate,bool active) {
+  void rays(const double* state,double* rate,bool active,const double* initial=nullptr) {
     std::fill(rate,rate+2*nr,0.);
     if(!active)return;
     if(cubic_rays)pchip_slopes(e.r,speeds,speed_slopes);
     for(int j=0;j<nr;j++) {
-      const double x=state[2*j];if(x<=e.r.front()||x>=e.r.back())continue;
+      const double x=state[2*j],seed=(dense_exits&&initial)?initial[2*j]:x;
+      if(seed<=e.r.front()||seed>=e.r.back())continue;
+      // Extend only the endpoint polynomial, at most one boundary cell, to
+      // evaluate stages needed for an event from an initially interior ray.
+      if(dense_exits&&(x<2*e.r.front()-e.r[1]||x>2*e.r.back()-e.r[e.n-2]))throw std::runtime_error("ray exit stage exceeds one-cell continuation");
       int i=std::min(e.n-2,std::max(0,static_cast<int>((x-e.r[0])/e.h)));
       if(!e.grid_jacobian.empty())i=std::min(e.n-2,std::max(0,static_cast<int>(std::upper_bound(e.r.begin(),e.r.end(),x)-e.r.begin())-1));
       const int family=j%2;double left=speeds[2*i+family],slope=(speeds[2*(i+1)+family]-left)/(e.r[i+1]-e.r[i]);
@@ -108,6 +150,19 @@ struct Telegraph {
       else q[j]+=inc;
     }
   }
+  void update_rays(double* state,double dt) {
+    for(int j=0;j<nr;j++) {
+      int i=2*j,offset=9*e.n+i;
+      if(state[i]<=e.r.front()||state[i]>=e.r.back())continue;
+      double k[8]={j1[i],j1[i+1],j2[i],j2[i+1],j3[i],j3[i+1],j4[i],j4[i+1]},inc[2];
+      double event=ray_increment(state+i,k,dt,e.r.front(),e.r.back(),inc);
+      for(int f=0;f<2;f++) {
+        if(f==0&&event>=0) {state[i]=inc[0]<0?e.r.front():e.r.back();comp[offset]=0.;}
+        else if(e.params[27]!=0) {double v=inc[f]-comp[offset+f],next=state[i+f]+v;comp[offset+f]=(next-state[i+f])-v;state[i+f]=next;}
+        else state[i+f]+=inc[f];
+      }
+    }
+  }
 };
 extern "C" {
 void* telegraph_create(void* handle,double kappa,double tau,const double* w,const double* wp,int nr,double start) {
@@ -117,6 +172,16 @@ void telegraph_destroy(void* handle){delete static_cast<Telegraph*>(handle);}
 int telegraph_set_ray_interpolation(void* handle,int mode) {
  if(mode!=0&&mode!=1)return -1;
  static_cast<Telegraph*>(handle)->cubic_rays=(mode==1);return 0;
+}
+int telegraph_set_ray_exit(void* handle,int mode) {
+ if(mode!=0&&mode!=1)return -1;
+ static_cast<Telegraph*>(handle)->dense_exits=(mode==1);return 0;
+}
+// Pure continuous-step/event kernel, also used by the production ray update.
+void telegraph_dense_ray_step(const double* state,const double* rates,double dt,double lo,double hi,double* out) {
+ if(state[0]<=lo||state[0]>=hi){out[0]=state[0];out[1]=state[1];out[2]=0.;return;}
+ double inc[2];out[2]=ray_increment(state,rates,dt,lo,hi,inc);
+ out[0]=out[2]>=0?(inc[0]<0?lo:hi):state[0]+inc[0];out[1]=state[1]+inc[1];
 }
 // Pure interpolation entry point for independent diagnostic-kernel verification.
 void telegraph_ray_rates(void* handle,const double* speeds,const double* state,double* rate) {
@@ -133,21 +198,22 @@ int telegraph_advance(void* handle,double* q,double* B,double* rays,int count,do
  try {
   for(;done<count;done++) {
    double now=time+done*dt;const bool active=now>=t.start-8*std::numeric_limits<double>::epsilon()*std::max(1.,t.start);
-   t.rhs(q,B,t.q1.data(),t.b1.data(),true);t.check_dt(dt);t.rays(rays,t.j1.data(),active);
+   t.rhs(q,B,t.q1.data(),t.b1.data(),true);t.check_dt(dt);t.rays(rays,t.j1.data(),active,rays);
    for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q1[i]/2;
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b1[i]/2;
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j1[i]/2;
-   t.rhs(t.qs.data(),t.bs.data(),t.q2.data(),t.b2.data());t.check_dt(dt);t.rays(t.js.data(),t.j2.data(),active);
+   t.rhs(t.qs.data(),t.bs.data(),t.q2.data(),t.b2.data());t.check_dt(dt);t.rays(t.js.data(),t.j2.data(),active,rays);
    for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q2[i]/2;
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b2[i]/2;
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j2[i]/2;
-   t.rhs(t.qs.data(),t.bs.data(),t.q3.data(),t.b3.data());t.check_dt(dt);t.rays(t.js.data(),t.j3.data(),active);
+   t.rhs(t.qs.data(),t.bs.data(),t.q3.data(),t.b3.data());t.check_dt(dt);t.rays(t.js.data(),t.j3.data(),active,rays);
    for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q3[i];
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b3[i];
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j3[i];
-   t.rhs(t.qs.data(),t.bs.data(),t.q4.data(),t.b4.data());t.check_dt(dt);t.rays(t.js.data(),t.j4.data(),active);
+   t.rhs(t.qs.data(),t.bs.data(),t.q4.data(),t.b4.data());t.check_dt(dt);t.rays(t.js.data(),t.j4.data(),active,rays);
    t.update(q,t.q1,t.q2,t.q3,t.q4,nq,0,dt);t.update(B,t.b1,t.b2,t.b3,t.b4,n,nq,dt);
-   t.update(rays,t.j1,t.j2,t.j3,t.j4,nj,nq+n,dt);
+   if(t.dense_exits)t.update_rays(rays,dt);
+   else t.update(rays,t.j1,t.j2,t.j3,t.j4,nj,nq+n,dt);
    // Exited rays are terminal records, never reinjected or interpreted as crossing.
    for(int i=0;i<t.nr;i++)if(rays[2*i]<=t.e.r.front()||rays[2*i]>=t.e.r.back()) {
     rays[2*i]=std::max(t.e.r.front(),std::min(t.e.r.back(),rays[2*i]));t.comp[nq+n+2*i]=0;

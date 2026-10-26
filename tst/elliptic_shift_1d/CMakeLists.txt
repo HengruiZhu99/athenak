@@ -139,3 +139,6 @@ add_test(NAME telegraph_analysis_evidence_guards
 
 add_test(NAME telegraph_ray_interpolation_and_no_feedback
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_rays.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)
+
+add_test(NAME telegraph_dense_exit_exact_flows_and_restart
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_exit.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)
