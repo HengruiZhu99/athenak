@@ -1,0 +1,8 @@
+{
+  "parent": "telegraph-protocol-inner-mapped-v1.json",
+  "status": "Declared before nonlinear pilot.",
+  "purpose": "Test coupling and relaxation time after resolving the inner layer better. Uniform coarse parameter failures may conflate changed gauge with underresolution; they do not prove larger kappa can never help.",
+  "controls": "The existing kappa=.001,tau=.02 inner-c7 run is the reference. Vary kappa alone at tau=.02, and tau alone at kappa=.001/.005. Hold the same physical support, map, mass, nu, CFL and KO.",
+  "interpretation": "Low-frequency frozen damping is chi*kappa*w^2*k^2/2; high-frequency damping depends on tau as well. Neither is a nonlinear pass criterion.",
+  "acceptance": "Pilot selection only; every candidate still needs at least three grids, both constraint and field convergence, timestep/shift/dissipation controls, and t=10 extension."
+}

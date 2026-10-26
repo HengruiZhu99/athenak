@@ -19,7 +19,7 @@ with tempfile.TemporaryDirectory() as tmp:
    np.testing.assert_allclose(m,mass,atol=2e-12,rtol=2e-12)
  for profile in ['collar','af-regular']:
   controls=['--inner-profile',profile]
-  if profile=='af-regular':controls+=['--quadrature-width','9','--puncture-ko','.25']
+  if profile=='af-regular':controls+=['--quadrature-width','9','--puncture-ko','.25','--grid-stretch','4']
   whole=run(profile+'-whole',*controls,'--t','.03125');first=run(profile+'-first',*controls,'--t','.015625')
   split=run(profile+'-split',*controls,'--t','.03125','--resume',str(first/'checkpoint.npz'))
   with np.load(whole/'checkpoint.npz') as x,np.load(split/'checkpoint.npz') as y:

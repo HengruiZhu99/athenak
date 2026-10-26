@@ -1,0 +1,13 @@
+{
+  "parent": "telegraph-protocol-v1.json",
+  "status": "Declared before mapped evolutions.",
+  "motivation": "At t=6 the uniform-grid front reaches the first physical cell. Increasing kappa alone did not cure this; the AF-regular source remains finite and preserves leading AF coefficients.",
+  "continuum": "Unchanged AF-regular gauge at kappa=.001,tau=.02,outer=.8,transition=.24. The uniform width=.24 control was already run at N513.",
+  "grid": "Uniform x in [0,1], physical r=sinh(s*x)/sinh(s), s=4 or 6 fixed under refinement. All geometric derivatives and elliptic quadrature are in physical r; this only changes collocation points.",
+  "dissipation": "Mapped computational third-difference KO with division by J=dr/dx; negative semidefinite in the discrete dr measure. Same fixed epsilon=.5, vanishes with grid refinement.",
+  "boundary": "Same analytic AF coefficient evolution and actual scri. Boundary penalties use dx*J(scri). No inner excision, filtering or constraint projection.",
+  "diagnostics": "Physical radial RMS weights r^2*J; compare nested physical r grids. Stage rays locate intervals by binary search and use physical dr slopes.",
+  "timestep": "dt=CFL*dx; guards use max |c|/J and relaxation dt/tau, plus dt*epsilon/(dx*min J)<=2 for KO. No assumption that CFL*dx alone is sufficient.",
+  "validation": "Independent Python/compiled nonzero-flux rates, mapped ray RK oracle, mapped quadrature, analytic gradient, physical-measure KO energy identity, checkpoint restart, and bitwise uniform legacy-library check.",
+  "acceptance": "All original convergence, constraints, scri, extension and independent-control requirements retained. A map improves resolution distribution but cannot by itself establish stability."
+}

@@ -16,6 +16,8 @@ struct Engine {
   Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha,af_reference,metric_reference,chart_d,total_khat,update_compensation,ell_values,ellp_values;
   long calls=0; double solve_seconds=0;
   bool puncture=false,af=false,af_endpoint=false;
+  Vec grid_jacobian;
+  double jac(int i)const{return grid_jacobian.empty()?1.:grid_jacobian[i];}
   std::string error;
   std::array<double,22> diagnostics{};
   Vec ode_lu,ode_matrix;int ode_band=0,ode_skip=0,ode_refinements=0;double ode_scale=1;
@@ -285,8 +287,9 @@ struct Engine {
         R[k+8]=b*fp+br*f+alpha*P;
         R[k+9]=b*Pp+(br+ak)*P+alpha*chi*(fpp+2*ratio(fp,i,fpp))+mix*fp+(ratio(mix,i,mixlimit)-alpha*V)*f;
       }
-      normsum[0]+=x*x*H*H;normsum[1]+=x*x*M*M;
-      normsum[2]+=x*x*T*T;normsum[3]+=x*x*lam*lam/4;volume+=x*x;
+      const double measure=x*x*jac(i);
+      normsum[0]+=measure*H*H;normsum[1]+=measure*M*M;
+      normsum[2]+=measure*T*T;normsum[3]+=measure*lam*lam/4;volume+=measure;
       if(accepted&&x<.8){bulkH=std::max(bulkH,std::abs(H));bulkM=std::max(bulkM,std::abs(M));}
       if(accepted&&x>.9){endH=std::max(endH,std::abs(H));endM=std::max(endM,std::abs(M));}
     }
@@ -358,7 +361,8 @@ struct Engine {
       out[(n-2)*nf]+=crate*lift;out[(n-2)*nf+3]+=prate*lift;
     }
     if(params[9]==0)ds=sampled_ds;
-    for(int f=0;f<nf;f++)out[e+f]=R[e+f]-ds[f]+sat/h*S[e+f]-tau/h*trace[f];
+    const double hs=h*jac(n-1);
+    for(int f=0;f<nf;f++)out[e+f]=R[e+f]-ds[f]+sat/hs*S[e+f]-tau/hs*trace[f];
     if(logchi||logalpha)for(int i=0;i<n;i++) {
       if(logchi)out[i*nf]/=total_chi[i];
       if(logalpha)out[i*nf+6]/=total_alpha[i];
@@ -400,7 +404,7 @@ struct Engine {
           double value=taper*third;z[i*nf+f]+=value;z[(i+1)*nf+f]-=3*value;z[(i+2)*nf+f]+=3*value;z[(i+3)*nf+f]-=value;
         }
       }
-      for(int k=0;k<n*nf;k++)out[k]+=params[25]*z[k]/(64*h);
+      for(int k=0;k<n*nf;k++)out[k]+=params[25]*z[k]/(64*h*jac(k/nf));
     }
     if(ko!=0) {
       std::copy(state,state+n*nf,z.begin());
@@ -434,6 +438,12 @@ struct Engine {
 };
 extern "C" {
 int spherical_fast_abi(){return 32;}
+int spherical_fast_set_grid_jacobian(void* handle,double dx,const double* values){
+  auto& e=*static_cast<Engine*>(handle);
+  if(!e.af_endpoint||dx<=0||!std::isfinite(dx)||e.params[6]!=0||e.params[10]!=0||e.ode_band)return -1;
+  for(int i=0;i<e.n;i++)if(values[i]<=0||!std::isfinite(values[i]))return -1;
+  e.grid_jacobian.assign(values,values+e.n);e.h=dx;return 0;
+}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);

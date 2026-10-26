@@ -10,10 +10,13 @@ from telegraph import TelegraphEngine,options,window,python_rhs
 from compensated_update import accumulate
 from telegraph_analysis_io import physical_lapse_gradient
 from wormhole_data import Jet
+from numerics import puncture_dissipation,RadialOperators
+from radial_grid import mapped_grid
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args()
 errors=[]
-for n,inner_profile in product([33,65,129],['collar','af-regular']):
- ev=PunctureChart(options(n,a.library));q,*_=ev.initial_wormhole(IsotropicWormhole());r=ev.r
+for n,inner_profile,stretch,kind in product([33,65,129],['collar','af-regular'],[0.,4.,6.],['sinh','inner-c7']):
+ opts=options(n,a.library);opts.grid_stretch=stretch;opts.grid_map=kind
+ ev=PunctureChart(opts);q,*_=ev.initial_wormhole(IsotropicWormhole());r=ev.r
  support=window(r,inner_profile=inner_profile);w,wp=support;B=.001*r*(1-r)**8
  for j,amp in [(0,.001),(2,.001),(3,.002),(4,.003),(5,.004),(6,.0015)]:q[:,j]+=amp*(1-r)**6
  engine=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.,inner_profile=inner_profile)
@@ -21,6 +24,8 @@ for n,inner_profile in product([33,65,129],['collar','af-regular']):
  np.testing.assert_allclose(got,expected,rtol=2e-11,atol=2e-10)
  np.testing.assert_allclose(gb,eb,rtol=2e-11,atol=2e-11);np.testing.assert_allclose(gs,es,rtol=2e-13,atol=2e-13)
  errors.append(float(np.max(abs(got-expected))))
+ for name in ['max_accepted_H_rms','max_accepted_M_rms','max_accepted_Theta_rms','max_accepted_Z_rms']:
+  np.testing.assert_allclose(engine.diagnostics()[name],ev.stage_metrics[name],rtol=2e-10,atol=2e-10)
  # Independent Cartesian tensor derivative for B_i=x_i*r^2:
  # delta^ij partial_i B_j=5*r^2, including two angular directions.
  xx=np.array([.13,.21,.34]);radius=np.linalg.norm(xx);tensor=2*np.outer(xx,xx)+radius**2*np.eye(3)
@@ -37,7 +42,7 @@ for n,inner_profile in product([33,65,129],['collar','af-regular']):
   out=np.zeros_like(y)
   for j in range(len(y)):
    i=np.clip(np.searchsorted(r,y[j,0],side='right')-1,0,len(r)-2)
-   slope=(speeds[i+1,j]-speeds[i,j])/ev.h
+   slope=(speeds[i+1,j]-speeds[i,j])/(r[i+1]-r[i])
    out[j]=[speeds[i,j]+slope*(y[j,0]-r[i]),slope]
   return out
  for _ in range(4):
@@ -99,4 +104,23 @@ for x in r[:-1]:
  z=Jet(x,1);O=(1-z*z)/2;A=(1+z*z)/2;ref=A*z*z/(z*z+O**4)/O
  expected.append(np.exp(.1+.2*x+.03*x*x)*(ref.d+ref.v*(.2+.06*x)))
 np.testing.assert_allclose(actual[:-1],expected,rtol=5e-14,atol=5e-14);assert actual[0]==0
+# Mapped dissipation is negative semidefinite in the physical dr measure.
+x=np.linspace(0,1,129);r=np.sinh(6*x)/np.sinh(6);J=6*np.cosh(6*x)/np.sinh(6);dx=x[1]
+v=np.random.default_rng(314159).normal(size=(len(x),1));Q=puncture_dissipation(v,r,dx,.5,.8)/J[:,None]
+third=np.diff(v[1:,0],n=3);mid=(r[1:-3]+r[4:])/2;W=np.maximum(1-(mid/.8)**2,0)**6
+np.testing.assert_allclose(np.sum(J[:,None]*v*Q),-.5*np.sum(W*third**2)/(64*dx),rtol=3e-15)
+# An independently specified smooth physical function has the expected order
+# on the nested mapped grids; polynomial quadrature also remains exact.
+de=[]
+for n in [65,129,257]:
+ x=np.linspace(0,1,n);r=np.sinh(6*x)/np.sinh(6)
+ op=RadialOperators(r,puncture=True,allow_puncture_node=True,subtract_local=True)
+ df,_=op.derivatives(np.sin(2*r),1);de.append(max(abs(df-2*np.cos(2*r))))
+ np.testing.assert_allclose(op.integral(r**4),r**5/5,rtol=3e-13,atol=3e-15)
+assert np.log2(de[-2]/de[-1])>5.,de
+for kind in ['sinh','inner-c7']:
+ x=np.linspace(.001,.999,1000);r,J=mapped_grid(x,6,kind);eps=1e-6
+ np.testing.assert_allclose(J,(mapped_grid(x+eps,6,kind)[0]-mapped_grid(x-eps,6,kind)[0])/(2*eps),rtol=2e-8,atol=2e-9)
+ assert min(J)>0 and np.all(np.diff(r)>0)
+ if kind=='inner-c7':assert np.array_equal(r[x>=.4],x[x>=.4]) and np.array_equal(J[x>=.4],np.ones(sum(x>=.4)))
 print(json.dumps(dict(max_python_compiled_rate_difference=max(errors),resolutions=[33,65,129],nonzero_flux_RK=True,free_constraints=True,disabled_bitwise_equivalence=True,restart_bitwise=True,stage_characteristic_oracle=True,ray_activation=True,scope='Implementation validation only; nonlinear convergence remains unproven.')))

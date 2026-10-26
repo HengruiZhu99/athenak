@@ -16,6 +16,8 @@ def main():
  p.add_argument('--inner-profile',choices=['collar','af-regular'],default='collar')
  p.add_argument('--mass',type=float,default=1/3);p.add_argument('--nu',type=float,default=1.);p.add_argument('--cfl',type=float,default=.05)
  p.add_argument('--quadrature-width',type=int,choices=[7,9,11],default=7)
+ p.add_argument('--grid-stretch',type=float,default=0.)
+ p.add_argument('--grid-map',choices=['sinh','inner-c7'],default='sinh')
  p.add_argument('--puncture-ko',type=float,default=.5);p.add_argument('--puncture-ko-radius',type=float,default=.8)
  p.add_argument('--inner',type=float,default=.01);p.add_argument('--outer',type=float,default=.8);p.add_argument('--transition',type=float,default=.08)
  p.add_argument('--report-dt',type=float,default=.05);p.add_argument('--ray-start',type=float,default=1.)
@@ -25,6 +27,7 @@ def main():
  if args.n<17 or args.ray_seeds<2 or not all(np.isfinite(x) for x in [args.t,args.kappa,args.tau,args.nu,args.cfl,args.report_dt,args.ray_start,args.mass]):raise ValueError('Invalid finite inputs')
  if args.t<0 or args.nu<0 or args.kappa<0 or min(args.tau,args.cfl,args.report_dt,args.mass)<=0 or args.ray_start<0:raise ValueError('Invalid positive inputs')
  if not np.isfinite(args.puncture_ko) or args.puncture_ko<0 or not 0<args.puncture_ko_radius<=1:raise ValueError('Invalid dissipation control')
+ if not 0<=args.grid_stretch<=6:raise ValueError('Grid stretch must lie in [0,6]')
  args.output.mkdir(parents=True,exist_ok=False);here=Path(__file__).resolve().parent
  sources=[*sorted(here.glob('*.py')),here/'telegraph_integrator.cpp',here/'fast_integrator.cpp']
  binding=dict(source_sha256={x.name:sha(x) for x in sources},library_sha256=sha(args.library),fast_sha256=sha(args.fast_library))
@@ -39,7 +42,7 @@ def main():
   ray_scope='Alternating minus/plus seeds in .12:.4, held until ray_start. Each RK stage uses that stage geometry, linear radial speed interpolation and its derivative. Exits terminate the ray; no reinjection.',resource_authorization='User explicitly requested controlled local telegrapher evolutions.')
  mp=args.output/'manifest.json';mp.write_text(json.dumps(manifest,indent=2)+'\n')
  opts=options(args.n,args.library,args.nu,args.cfl)
- for key in ['quadrature_width','puncture_ko','puncture_ko_radius']:setattr(opts,key,getattr(args,key))
+ for key in ['quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map']:setattr(opts,key,getattr(args,key))
  ev=PunctureChart(opts);support=window(ev.r,args.inner,args.outer,args.transition,args.inner_profile)
  ev.args.mass=args.mass
  initial=IsotropicWormhole(args.mass,ev.args.initial_quadrature_order)
@@ -84,7 +87,7 @@ def main():
       row[f'ray_{label}_active']=int(sum(active));row[f'ray_{label}_min_logJ']=float(min(rr[active,1])) if active.any() else None
       if np.any(np.diff(rr[active,0])<-1e-12):raise FloatingPointError('Stage ray ordering lost; characteristic integration unresolved')
      history.append(row);log.write(json.dumps(row)+'\n');log.flush()
-     np.savez_compressed(args.output/f'profile-{len(history):04d}.npz',r=ev.r,q=q,q_physical=ev.geometry_state,B=B,beta=b,diagnostic=diag,rays=rays,gauge_speeds=speeds,t=clock.t,step=clock.step)
+     np.savez_compressed(args.output/f'profile-{len(history):04d}.npz',r=ev.r,grid_jacobian=ev.grid_jacobian,q=q,q_physical=ev.geometry_state,B=B,beta=b,diagnostic=diag,rays=rays,gauge_speeds=speeds,t=clock.t,step=clock.step)
      checkpoint();ri+=1;next_report=max(clock.step+1,clock.report_step(report_start+ri*args.report_dt))
      if clock.complete:break
     available=clock.full_steps_available;count=max(1,min(4096,available,next_report-clock.step));h=dt if available else clock.final_delta

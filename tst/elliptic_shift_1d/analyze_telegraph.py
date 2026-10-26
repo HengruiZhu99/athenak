@@ -8,13 +8,13 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 p=argparse.ArgumentParser();p.add_argument('--cases',type=Path,nargs='+',required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 records=[];groups={};profiles={}
-configuration_keys=['inner','outer','transition','cfl','inner_profile','quadrature_width','puncture_ko','puncture_ko_radius']
+configuration_keys=['inner','outer','transition','cfl','inner_profile','quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map']
 from telegraph_analysis_io import trajectory,physical_lapse_gradient
 for folder in a.cases:
  m=json.loads((folder/'manifest.json').read_text());assert m['status']=='finished',str(folder)
  assert m.get('initial_data',{}).get('mass')==1/3,'Reject the misconfigured M=.1 pilots'
  args=m['arguments']
- for k,v in dict(inner_profile='collar',quadrature_width=7,puncture_ko=.5,puncture_ko_radius=.8).items():args.setdefault(k,v)
+ for k,v in dict(inner_profile='collar',quadrature_width=7,puncture_ko=.5,puncture_ko_radius=.8,grid_stretch=0.,grid_map='sinh').items():args.setdefault(k,v)
  for existing in records:
   if (existing['kappa'],existing['tau'],existing['nu'])==(args['kappa'],args['tau'],args['nu']):
    assert existing['configuration']==[args[x] for x in configuration_keys],'Analyze separate support/CFL/solver controls in separate invocations'
@@ -43,7 +43,8 @@ for key,ns in groups.items():
    e1=fields[0]-fields[1][::rat1];e2=fields[1][::rat1]-fields[2][::rat1*rat2]
    row=dict(t=t)
    for name,mask in [('bulk',r<.8),('endpoint',r>.9)]:
-    norm=lambda e:float(np.sqrt(np.sum(r[mask,None]**2*e[mask]**2)/(7*np.sum(r[mask]**2))))
+    measure=r**2*A[t]['grid_jacobian']
+    norm=lambda e:float(np.sqrt(np.sum(measure[mask,None]*e[mask]**2)/(7*np.sum(measure[mask]))))
     row[name+'_coarse']=norm(e1);row[name+'_fine']=norm(e2)
    rows.append(row)
   out=dict(kappa=key[0],tau=key[1],nu=key[2],grids=[na,nb,nc],rows=rows)

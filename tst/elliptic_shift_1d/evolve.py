@@ -22,7 +22,14 @@ class Evolution:
         self.args=args;inner=getattr(args,'inner_radius',0.)
         nodal=getattr(args,'origin_grid',False) or getattr(args,'puncture_chart',False) or inner>0
         self.r=np.linspace(inner,1,args.n) if nodal else (np.arange(args.n)+.5)/(args.n-.5)
-        self.h=(1-inner)/(args.n-1) if nodal else 1/(args.n-.5);self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width,puncture=getattr(args,'puncture',False),allow_puncture_node=getattr(args,'puncture_chart',False),subtract_local=getattr(args,'subtract_local',False))
+        self.h=(1-inner)/(args.n-1) if nodal else 1/(args.n-.5)
+        self.grid_jacobian=np.ones(args.n)
+        stretch=getattr(args,'grid_stretch',0.)
+        if stretch:
+            if not getattr(args,'puncture_chart',False) or inner!=0 or not 0<stretch<=6:raise ValueError('Mapped prototype requires the full AF chart and 0<stretch<=6')
+            from radial_grid import mapped_grid
+            self.r,self.grid_jacobian=mapped_grid(self.r,stretch,getattr(args,'grid_map','sinh'))
+        self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width,puncture=getattr(args,'puncture',False),allow_puncture_node=getattr(args,'puncture_chart',False),subtract_local=getattr(args,'subtract_local',False))
         if getattr(args,'radial_operator','fd')=='sbp63':
             from sbp import SBPOperators
             self.op=SBPOperators(self.r,args.width,args.quadrature_width)
@@ -307,7 +314,7 @@ class Evolution:
         return result
 
     def report(self,q,t):
-        R,S,c,b=self.parts(q);shape=self.r*self.r
+        R,S,c,b=self.parts(q);shape=self.r*self.r*self.grid_jacobian
         norm=lambda x:float(np.sqrt(np.sum(shape*x*x)/np.sum(shape)))
         core=self.r<.8;end=self.r>.9
         names=['H','M','Theta','Z']
@@ -358,7 +365,8 @@ class Evolution:
                 ct=R[-1,0]+self.scri_quotient_weights@(S[-self.args.width:-1,0]/self.omega[-self.args.width:-1])
             else:ct=R[-1,0]-self.op.endpoint_first(S[:,0])
             if self.args.endpoint=='compatible-trace':ct=0.
-            ct+=self.args.scri_sat/self.h*S[-1,0]-self.args.regularity_sat/self.h*self.regularity[0]
+            hs=self.h*self.grid_jacobian[-1]
+            ct+=self.args.scri_sat/hs*S[-1,0]-self.args.regularity_sat/hs*self.regularity[0]
             if getattr(self.args,'puncture_chart',False) and self.args.advection=='upwind':
                 adv=self.op.advection_derivative(q,np.ones(8),b)
                 ct+=c[-1,8]*b[-1]*(adv[-1,0]-self.chart_first[-1,0])

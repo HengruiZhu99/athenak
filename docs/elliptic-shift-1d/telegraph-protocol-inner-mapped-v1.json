@@ -1,0 +1,9 @@
+{
+  "parent": "telegraph-protocol-mapped-v1.json",
+  "status": "Declared before inner-map evolutions.",
+  "reason": "The global sinh map reduces N513 late Hmax from 46.4475 to .110355 but raises the scri pole residual to .0229351. Isolate the numerical clustering to the inner region.",
+  "map": "r=x*[a+(1-a)S(x/.4)], a=6/sinh(6), S(z)=sum[k=8..15] binom(15,k) z^k(1-z)^(15-k), z clipped to [0,1]. J=a+(1-a)*(S+z*Sprime)>0. r=x and J=1 exactly for x>=.4.",
+  "fixed": "Same continuum equations, support, kappa, tau, CFL, differential/quadrature widths and KO coefficient as global-map runs; only the map changes.",
+  "validation": "Independent numerical map derivative, monotonicity, exact outer identity, mapped Python/compiled rates, stages, constraints and rays passed. The complete 52-test suite passed after grid-measure implementation.",
+  "acceptance": "All original gates retained. Single-grid improvement is diagnosis, not admission."
+}

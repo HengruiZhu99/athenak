@@ -40,10 +40,10 @@ struct Telegraph {
       const double taper=std::pow(std::max(1-midpoint*midpoint/(e.params[26]*e.params[26]),0.),6);
       const double third=3*(B[i+1]-B[i])-3*(B[i+2]-B[i])+(B[i+3]-B[i]);
       const double value=e.params[25]*taper*third/(64*e.h);
-      dB[i]+=value;dB[i+1]-=3*value;dB[i+2]+=3*value;dB[i+3]-=value;
+      dB[i]+=value/e.jac(i);dB[i+1]-=3*value/e.jac(i+1);dB[i+2]+=3*value/e.jac(i+2);dB[i+3]-=value/e.jac(i+3);
     }
     for(int i=0;i<n-1;i++)if(e.r[i]>.03&&e.r[i]<.3)
-      stats[4]=std::max(stats[4],-(speeds[2*i+2]-speeds[2*i])/e.h);
+      stats[4]=std::max(stats[4],-(speeds[2*i+2]-speeds[2*i])/(e.r[i+1]-e.r[i]));
     for(int i=0;i<n;i++)if(!std::isfinite(dB[i])||!std::isfinite(dq[8*i+6]))throw std::runtime_error("nonfinite telegraph rate");
   }
   void rays(const double* state,double* rate,bool active)const {
@@ -52,14 +52,16 @@ struct Telegraph {
     for(int j=0;j<nr;j++) {
       const double x=state[2*j];if(x<=e.r.front()||x>=e.r.back())continue;
       int i=std::min(e.n-2,std::max(0,static_cast<int>((x-e.r[0])/e.h)));
-      const int family=j%2;double left=speeds[2*i+family],slope=(speeds[2*(i+1)+family]-left)/e.h;
+      if(!e.grid_jacobian.empty())i=std::min(e.n-2,std::max(0,static_cast<int>(std::upper_bound(e.r.begin(),e.r.end(),x)-e.r.begin())-1));
+      const int family=j%2;double left=speeds[2*i+family],slope=(speeds[2*(i+1)+family]-left)/(e.r[i+1]-e.r[i]);
       rate[2*j]=left+slope*(x-e.r[i]);rate[2*j+1]=slope;
     }
   }
   void check_dt(double dt) {
-    double speed=0;for(double c:speeds)speed=std::max(speed,std::abs(c));
+    double speed=0;for(int i=0;i<e.n;i++)for(int f=0;f<2;f++)speed=std::max(speed,std::abs(speeds[2*i+f])/e.jac(i));
     stats[1]=std::max(stats[1],dt*speed/e.h);stats[2]=std::max(stats[2],dt/tau);
     if(dt*speed/e.h>.4||dt/tau>.4)throw std::runtime_error("telegraph coupled-speed/relaxation timestep guard");
+    for(int i=0;i<e.n;i++)if(dt*e.params[25]/(e.h*e.jac(i))>2.)throw std::runtime_error("mapped-grid dissipation timestep guard");
   }
   void update(double* q,const Vec& a,const Vec& b,const Vec& c,const Vec& d,int size,int offset,double dt) {
     for(int j=0;j<size;j++) {

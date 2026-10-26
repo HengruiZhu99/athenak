@@ -133,7 +133,8 @@ class PunctureChart(Evolution):
                 self.shift_deviation[-1],self.args.kappa1,self.args.kappa2,self.args.theta=='appendix-c',self.args.slicing,self.args.lapse_restoring,restoring_form='multiplicative',damping_form=getattr(self.args,'damping_form','constant'))
         else:ds=self.op.endpoint_first(S)
         rate[-1]=R[-1]-ds
-        rate[-1]+=self.args.scri_sat/self.h*S[-1]-self.args.regularity_sat/self.h*self.regularity
+        hs=self.h*self.grid_jacobian[-1]
+        rate[-1]+=self.args.scri_sat/hs*S[-1]-self.args.regularity_sat/hs*self.regularity
         rate[-1,6]=0.;rate[:,7]=0.
         result=np.zeros_like(state);positive=self.r>0;w=self.refs['w'][:,0]
         result[positive,0]=rate[positive,0]/self.total_chi[positive]
@@ -153,6 +154,7 @@ class PunctureChart(Evolution):
         if self.args.advection=='upwind':result+=beta[:,None]*(self.op.advection_derivative(state,np.ones(8),beta)-self.chart_first)
         if getattr(self.args,'puncture_ko',0.):
             diss=puncture_dissipation(state,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius,inner_width=getattr(self.args,'puncture_ko_inner_width',0.))
+            diss/=self.grid_jacobian[:,None]
             if getattr(self.args,'radial_operator','fd')=='sbp63':diss/=self.op.norm[:,None]
             result+=diss
         result[:,1]=0.;result[:,7]=0.;result[-1,6]=0.
@@ -163,7 +165,8 @@ class PunctureChart(Evolution):
         from bondi import nonaffinity
         maxima['max_Bondi_nonaffinity']=float(abs(nonaffinity(self.total_chi[-1],self.total_alpha[-1],
             self.geometry_first[-1,0],1+self.geometry_first[-1,6],beta[-1]+1.5*self.total_alpha[-1]*self.geometry_state[-1,2],self.total_chi[-1]*result[-1,0])))
-        for i,name in enumerate(['H','M','Theta','Z']):maxima['max_'+name+'_rms']=float(np.sqrt(np.sum(self.r**2*diag[:,i]**2)/np.sum(self.r**2)))
+        measure=self.r**2*self.grid_jacobian
+        for i,name in enumerate(['H','M','Theta','Z']):maxima['max_'+name+'_rms']=float(np.sqrt(np.sum(measure*diag[:,i]**2)/np.sum(measure)))
         if accepted:
             for i,name in enumerate(['H','M','Theta','Z']):maxima['max_accepted_'+name+'_rms']=maxima['max_'+name+'_rms']
             for i,name in enumerate(['H','M']):

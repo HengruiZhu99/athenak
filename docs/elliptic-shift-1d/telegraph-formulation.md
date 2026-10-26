@@ -15,7 +15,7 @@ The frozen radial lapse-trace-flux principal subsystem has speeds -beta and -bet
 
 Both characteristic families are advanced at every RK stage, using that stage's geometry and elliptic shift. The same piecewise-linear spatial interpolant supplies the ray speed and its derivative; log(J) obeys D_ray log(J)=partial_r c. Rays are injected on an exact time-lattice point and cease evolving after a domain exit. Ray positions and log(J), as well as their compensated accumulation state, are checkpointed. This eliminates coarse saved-time interpolation from the earlier diagnosis, although spatial interpolation and finite-grid regularization still require convergence checks.
 
-The core geometry implementation remains unchanged in fast_integrator.cpp. A separate library builds telegraph_integrator.cpp around it; the Python oracle independently evaluates the flux and stored-variable conversion. All constraint diagnostics are inherited unmodified and reported for accepted states and RK stages. The original scalar and puncture experiments are not reclassified by a telegrapher success.
+The initial uniform-grid geometry implementation remained unchanged in fast_integrator.cpp. A separate library builds telegraph_integrator.cpp around it; the Python oracle independently evaluates the flux and stored-variable conversion. All constraint diagnostics are inherited unmodified and reported for accepted states and RK stages. The original scalar and puncture experiments are not reclassified by a telegrapher success.
 
 ## AF-regular inner coupling (second candidate)
 
@@ -26,3 +26,16 @@ The `af-regular` variant instead sets w=1 throughout the inner region, retaining
   dot b_B = b1 b_B + [kappa(2a2-1)-b_B]/tau.
 
 Consequently the added conformal lapse rate is 3 X0 b_B r^4+O(r^5), and its stored logarithmic rate is (3 X0 b_B/a2)r^2+O(r^3). The leading AF lapse coefficient ODE is unchanged. This is an asymptotic derivation, not regular-center parity; the implementation continues to use one-sided puncture stencils. B(0)=0 is preserved by its own evolution equation. The additional characteristic speed is O(r^2), so it also vanishes at the endpoint. The independent Python/compiled tests exercise this variant with nonzero B and off-constraint fields. Its nonlinear behavior is still to be established.
+
+
+## Fixed numerical maps for resolving the inward layer
+
+The uniform-grid AF-regular run still brings the late front into the first physical cell. A fixed numerical map distributes collocation points while retaining r as the coordinate in all continuum equations. It is neither inner excision nor a change of the Einstein constraints. Two declared controls are used: r=sinh(s*x)/sinh(s), and an inner-only map r=x[a+(1-a)S(x/.4)] with a=s/sinh(s) and a C7 Bernstein smoothstep S. The second map has r=x and J=dr/dx=1 exactly for x>=.4. The strength s is fixed under refinement; both include the AF endpoint and actual scri.
+
+Derivative and quadrature weights are constructed directly on the physical r nodes. The seven-point physical-r polynomial stencils and elliptic integration therefore retain their original continuum targets. The map changes numerical resolution, not tensor transformation rules. The step is dt=CFL*dx. Stage guards use max(abs(c)/J), dt/tau, and the KO bound dt*epsilon/(dx*min(J))<=2. The last bound is conservative relative to RK4's negative-real-axis stability limit.
+
+On the mapped grid, the dissipative term is -epsilon J^{-1} D3^T W D3/(64 dx), with the same excluded AF coefficient column and physical-r taper as before. Thus sum_i J_i u_i Q_i=-epsilon sum_i W_i(D3 u)_i^2/(64 dx)<=0. It vanishes under refinement at fixed map. The geometry and auxiliary field use the same construction. Boundary penalties use the local scri spacing dx*J(scri). Full-domain radial RMS diagnostics use r^2 J weights. No nodes are removed from constraints or field comparisons.
+
+The optional numerical-map setter leaves the geometry ABI and uniform path intact; a saved pre-map library gives bitwise identical uniform states and diagnostics for the checked nonzero-flux evolution. The full 52-test suite passed after the geometry-kernel additions. Independent mapped checks include physical-coordinate polynomial quadrature, smooth-function derivative convergence, the weighted KO identity, nonzero-flux Python/compiled rates and RK stages, characteristic interval selection, and exact checkpoint restart.
+
+The global sinh pilot improves the late inner error but coarsens scri. The inner-only map is a separate controlled response to that failure. Neither mapping is accepted on a coarse run alone.

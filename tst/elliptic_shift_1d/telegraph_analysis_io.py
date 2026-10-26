@@ -6,8 +6,8 @@ from functools import lru_cache
 from numerics import weights
 
 @lru_cache(maxsize=8)
-def first_derivative_stencil(n):
- r=np.linspace(0,1,n);indices=[];coefficients=[]
+def first_derivative_stencil(nodes):
+ r=np.array(nodes);n=len(r);indices=[];coefficients=[]
  for i,x in enumerate(r):
   start=min(max(i-3,0),n-7);idx=np.arange(start,start+7)
   indices.append(idx);coefficients.append(weights(r[idx],x,1))
@@ -20,8 +20,8 @@ def physical_lapse_gradient(d):
  when the shrinking AF layer becomes underresolved. The analytic factor has
  exactly alpha'(0)=0 at every finite time in this chart.
  """
- r=d['r'];assert np.array_equal(r,np.linspace(0,1,len(r)))
- idx,coeff=first_derivative_stencil(len(r));q=d['q'][:,6]
+ r=d['r']
+ idx,coeff=first_derivative_stencil(tuple(r));q=d['q'][:,6]
  qp=np.sum(coeff*(q[idx]-q[:,None]),axis=1)
  O=(1-r*r)/2;A=(1+r*r)/2;den=r*r+O**4
  g=r*r/den;gp=(2*r*O**4+4*r**3*O**3)/den**2
@@ -42,6 +42,7 @@ def trajectory(folder,seen=None):
  for path in sorted(folder.glob('profile-*.npz')):
   with np.load(path,allow_pickle=False) as z:
    t=round(float(z['t']),9);d={k:z[k].copy() for k in ['r','q','q_physical','diagnostic','rays','B','beta','gauge_speeds']}
+   d['grid_jacobian']=z['grid_jacobian'].copy() if 'grid_jacobian' in z else np.ones_like(d['r'])
   if t in data:
    for k in d:assert np.array_equal(data[t][k],d[k],equal_nan=True),f'Inconsistent restart overlap: {path}, {k}'
   data[t]=d

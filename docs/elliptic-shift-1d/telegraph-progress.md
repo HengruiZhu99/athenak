@@ -51,3 +51,14 @@ Direct finite differences of physical lapse gave a spurious nonzero endpoint der
 The AF-regular N2049 run and a separately declared coarse parameter pilot are in progress. The pilot varies kappa at fixed support, and broadens the outer transition at fixed kappa; it cannot establish convergence. Its input and pre-run protocol are `telegraph-af-parameter-pilot-v1.json` and `telegraph-protocol-af-parameter-v1.json`.
 
 Each dispatcher records PID, child PID, command and terminal status in its `launch.json`. Revalidate those handles before waiting or restarting. The t=10 extension, independent dt/shift/KO controls, and parameter-robustness checks remain required. The driver now exposes independent quadrature and dissipation controls; making them available is not evidence that those experiments passed. Historical suspended jobs remain suspended. The goal remains active and incomplete.
+
+
+## Mapped-grid iteration
+
+All four uniform-grid AF parameter pilots finished t=6 and failed. Raising kappa to .005/.02 worsened the coarse late Hamiltonian maximum to 62.472/141.830. Broadening the outer transition from .08 to .24 barely changed that late inner maximum. These are rejection/diagnosis pilots, not evidence against all relaxation parameters at adequate resolution.
+
+The first numerical map r=sinh(6x)/sinh(6) reduced the N513 maximum H on r<.8 from 46.4475 (uniform, transition=.24) to .110355, but raised the scri pole residual to .0229351 because its outer grid is coarser. N1025 reached t=6 with H maximum .0721403 and scri pole .00158487. Neither passes.
+
+A second C7 map clusters only the inner region and preserves r=x exactly for x>=.4. Its N513 scri pole .000159142 is much closer to the uniform-grid value, but its H maximum .281583 still fails. Both mapped studies are continuing at N2049; the inner-only N1025 also finished. These maps retain the continuum equations, actual scri, the AF endpoint, and unprojected constraints. The optional geometry-kernel changes apply physical-measure quadrature weights, mapped dissipative operators and local scri penalty spacing. Uniform nonzero-flux evolution agrees bitwise with the pre-map library, and all 52 tests passed; the later inner-map helper also passes its targeted tests.
+
+Active output roots: `telegraph-mapped-v1` and `telegraph-inner-mapped-v1`. The next separately declared pilot is `telegraph-inner-mapped-parameters-v1`; it tests fixed kappa/tau on the better-resolved inner grid after a worker becomes free. It is prepared, not yet presumed launched. Read current `launch.json` and manifests for live status. Do not mark this goal complete.
