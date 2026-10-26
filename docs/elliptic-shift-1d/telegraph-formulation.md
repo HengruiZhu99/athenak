@@ -96,3 +96,14 @@ Because Jbar_i<=(p+1)J_j for every stencil node and the absolute difference coef
 On a fixed smooth map, Q_(2p) has an interior truncation term of order dx^(2p-1). Thus KO6 and KO8 denote sixth/eighth derivative dissipation with fifth/seventh-order interior truncation respectively. Both exclude the AF coefficient column and taper to zero before scri. Geometry and auxiliary flux use the same order. Neither changes the Einstein constraints or projects their errors. The default width7/KO6 path retains the checked bitwise baseline behavior.
 
 The independent implementation checks cover the weighted energy identity and complete dissipative spectrum for both orders, nonzero-flux Python/compiled rates, free-constraint RK stages and rays, and exact restart. High-width b16 rate agreement is tested at N129; N33/65 transition stencils are too ill-conditioned for the original absolute rate tolerance. The underresolved N33 evolution is a negative CFL-guard test, not a claimed solution. The four-case pilot varies differentiation width and KO order separately before any combined candidate is selected.
+
+## Outer-resolution control with the original derivative stencil
+
+`inner-exp-scri` retains the inner-exp map exactly for x<=.8. Beyond that point let L=1-.8 and y=(x-.8)/L, and use
+
+  r=x+.5 L y^8(1-y),
+  J=1+.5 y^7(8-9y).
+
+This is C7 at x=.8, fixes r(1)=1, and gives J(1)=.5. It is monotone: .5<=J<=1+.5(7/9)^7 in this outer interval, and 1-r=L(1-y)(1-.5y^8)>=0. The inner front resolution is unchanged; slight coarsening earlier in the outer interval compensates for finer scri spacing. This changes the numerical node distribution only. All physical-r derivative/quadrature weights, mapped dissipation, stage-speed guards and local scri SAT spacing use the actual map Jacobian.
+
+The control retains width7 after the observed width9 scri failure. It addresses the early pole-residual maximum, reached around t=.2-.25, separately from the late inner Hamiltonian error. A prepared pilot compares both maps at N513 through t6 and N1025/2049 through .5. The short fine runs cannot establish late boundary stability or the full objective; any selected map must subsequently pass complete main/extension convergence and independent controls.

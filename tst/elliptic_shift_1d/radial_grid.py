@@ -4,7 +4,12 @@ import numpy as np
 
 def mapped_grid(x,strength=0.,kind='sinh'):
     if not np.isfinite(strength) or not 0<=strength<=20:raise ValueError('Grid stretch must be in [0,20]')
-    if kind not in ['sinh','inner-c7','inner-exp']:raise ValueError('Unknown grid map')
+    if kind not in ['sinh','inner-c7','inner-exp','inner-exp-scri']:raise ValueError('Unknown grid map')
+    if kind=='inner-exp-scri':
+        r,J=mapped_grid(x,strength,'inner-exp')
+        # C7 join at x=.8; J(1)=1/2, with only mild coarsening earlier.
+        length=1.-.8;y=np.clip((x-.8)/length,0,1)
+        return r+.5*length*y**8*(1-y),J+.5*y**7*(8-9*y)
     if strength==0:return x.copy(),np.ones_like(x)
     if kind=='sinh':return np.sinh(strength*x)/np.sinh(strength),strength*np.cosh(strength*x)/np.sinh(strength)
     if kind=='inner-exp':

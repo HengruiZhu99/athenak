@@ -50,7 +50,7 @@ class FastEngine:
             np.asarray(op.qindex,dtype=np.int32),op.qweights,
             np.asarray(op.aindex[0],dtype=np.int32),op.ad1[0],np.asarray(op.aindex[1],dtype=np.int32),op.ad1[1],params)
         if not self.handle:raise RuntimeError('Compiled engine initialization failed')
-        if getattr(a,'grid_stretch',0.):
+        if getattr(a,'grid_stretch',0.) or getattr(a,'grid_map','sinh')=='inner-exp-scri':
             self.lib.spherical_fast_set_grid_jacobian.argtypes=[C.c_void_p,C.c_double,fp]
             if self.lib.spherical_fast_set_grid_jacobian(self.handle,evolution.h,np.ascontiguousarray(evolution.grid_jacobian)):
                 raise ValueError('Unsupported mapped-grid geometry configuration')

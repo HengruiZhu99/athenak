@@ -1,0 +1,18 @@
+{
+  "declared_before_launch": true,
+  "purpose": "Isolate outer-grid refinement for the early scri residual while retaining width7, KO8, all continuum parameters and the inner grid.",
+  "map": "For x>=.8, r=x+.5*(1-.8)*y^8*(1-y), y=(x-.8)/(1-.8); elsewhere use the identical inner-exp map. J(1)=.5 and the join is C7. No boundary field is frozen or projected.",
+  "grids": [
+    513,
+    1025,
+    2049
+  ],
+  "durations": {
+    "513": 6,
+    "1025": 0.5,
+    "2049": 0.5
+  },
+  "controls": "At each N compare inner-exp and inner-exp-scri with identical parameters. N513 full t6 detects delayed instabilities such as the width9 failure; finer short runs isolate the early scri peak only.",
+  "acceptance": "Original gates unchanged. A short boundary pilot cannot admit the t10 goal; any selected map requires complete three-grid main/extension and independent controls.",
+  "execution": "Prepared before launch; start when one of the current evolution workers finishes, without interrupting existing trajectories."
+}

@@ -25,8 +25,8 @@ class Evolution:
         self.h=(1-inner)/(args.n-1) if nodal else 1/(args.n-.5)
         self.grid_jacobian=np.ones(args.n)
         stretch=getattr(args,'grid_stretch',0.)
-        if stretch:
-            if not getattr(args,'puncture_chart',False) or inner!=0 or not 0<stretch<=20:raise ValueError('Mapped prototype requires the full AF chart and 0<stretch<=20')
+        if stretch or getattr(args,'grid_map','sinh')=='inner-exp-scri':
+            if not getattr(args,'puncture_chart',False) or inner!=0 or not 0<=stretch<=20:raise ValueError('Mapped prototype requires the full AF chart and 0<=stretch<=20')
             from radial_grid import mapped_grid
             self.r,self.grid_jacobian=mapped_grid(self.r,stretch,getattr(args,'grid_map','sinh'))
         self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width,puncture=getattr(args,'puncture',False),allow_puncture_node=getattr(args,'puncture_chart',False),subtract_local=getattr(args,'subtract_local',False))

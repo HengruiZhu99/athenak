@@ -16,6 +16,7 @@ p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argu
 errors=[]
 grid_cases=[(s,k,'physical') for s,k in product([0.,4.,6.],['sinh','inner-c7'])]+[(s,k,'local') for s,k in product([0.,6.,10.,14.,16.,20.],['inner-c7','inner-exp'])]
 grid_cases=[(*grid,7,6) for grid in grid_cases]+[(stretch,kind,'local',width,ko_order) for stretch,kind in [(0.,'inner-exp'),(6.,'inner-c7'),(16.,'inner-exp')] for width,ko_order in [(7,8),(9,6),(9,8)]]
+grid_cases += [(s,'inner-exp-scri','local',7,k) for s in [0.,6.,16.] for k in [6,8]]
 for n,inner_profile,grid in product([33,65,129],['collar','af-regular'],grid_cases):
  stretch,kind,ko_frame,width,ko_order=grid
  # Nine-node physical-r stencils on the b=16 transition need a resolved
@@ -126,12 +127,20 @@ for n in [65,129,257]:
  df,_=op.derivatives(np.sin(2*r),1);de.append(max(abs(df-2*np.cos(2*r))))
  np.testing.assert_allclose(op.integral(r**4),r**5/5,rtol=3e-13,atol=3e-15)
 assert np.log2(de[-2]/de[-1])>5.,de
-for kind in ['sinh','inner-c7','inner-exp']:
+for kind in ['sinh','inner-c7','inner-exp','inner-exp-scri']:
  x=np.linspace(.001,.999,1000);r,J=mapped_grid(x,6,kind);eps=1e-6
  np.testing.assert_allclose(J,(mapped_grid(x+eps,6,kind)[0]-mapped_grid(x-eps,6,kind)[0])/(2*eps),rtol=2e-8,atol=2e-9)
  assert min(J)>0 and np.all(np.diff(r)>0)
  if kind=='inner-c7':assert np.array_equal(r[x>=.4],x[x>=.4]) and np.array_equal(J[x>=.4],np.ones(sum(x>=.4)))
  if kind=='inner-exp':assert np.array_equal(r[x>=.5],x[x>=.5]) and np.array_equal(J[x>=.5],np.ones(sum(x>=.5)))
+ if kind=='inner-exp-scri':
+  old,oldJ=mapped_grid(x,6,'inner-exp');mask=x<=.8
+  assert np.array_equal(r[mask],old[mask]) and np.array_equal(J[mask],oldJ[mask])
+  rr,jj=mapped_grid(np.array([0.,.8,1.]),6,kind)
+  np.testing.assert_allclose(rr,[0.,.8,1.],atol=0,rtol=0)
+  np.testing.assert_allclose(jj[-1],.5,atol=2e-15,rtol=0)
+  outer=x>.8;assert min(J[outer])>=.5 and max(J[outer])<=1.5
+
 # Harmonic-mean Jacobian weights preserve the dr energy inequality without
 # a time-step bound proportional to the smallest J. Check the complete matrix.
 for order in [6,8]:

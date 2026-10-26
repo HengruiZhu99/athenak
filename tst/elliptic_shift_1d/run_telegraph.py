@@ -19,7 +19,7 @@ def main():
  p.add_argument('--mass',type=float,default=1/3);p.add_argument('--nu',type=float,default=1.);p.add_argument('--cfl',type=float,default=.05)
  p.add_argument('--quadrature-width',type=int,choices=[7,9,11],default=7)
  p.add_argument('--grid-stretch',type=float,default=0.)
- p.add_argument('--grid-map',choices=['sinh','inner-c7','inner-exp'],default='sinh')
+ p.add_argument('--grid-map',choices=['sinh','inner-c7','inner-exp','inner-exp-scri'],default='sinh')
  p.add_argument('--mapped-ko',choices=['physical','local'],default='physical')
  p.add_argument('--puncture-ko',type=float,default=.5);p.add_argument('--puncture-ko-radius',type=float,default=.8)
  p.add_argument('--inner',type=float,default=.01);p.add_argument('--outer',type=float,default=.8);p.add_argument('--transition',type=float,default=.08)
