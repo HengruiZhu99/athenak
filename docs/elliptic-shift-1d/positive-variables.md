@@ -182,3 +182,22 @@ and flux. These checks establish implementation agreement through a failed
 evolution; they are not nonlinear stability or wormhole-to-trumpet admission.
 The new frozen N513/1025/2049/4097 and independent timestep controls retain
 the same physical-log gauge, independent fields and acceptance thresholds.
+
+## Biased transport in the positive chart (API29)
+
+Generic log chi and log(alpha/A) now support upwind transport in Python and
+the compiled engine. Only the stored-variable advective derivative changes.
+Its physical correction is beta*chi*(D_up-D_center)U or
+beta*alpha*(D_up-D_center)V, with reference-profile derivatives evaluated
+analytically. Other fields retain their ordinary independent biased transport.
+Both regular-center layouts and coupled scalar rates/flux are checked. The
+native physical equations remain the independent centered reference; an
+additional exact centered/upwind identity agrees within4.1e-18.
+All44 groups pass (`evidence/ctest-v37.log`), including96 positive-field
+compiled/Python rate/RK/monitor cases. A compensated scalar/noise upwind
+discrete-shift restart preserves state, low part and flux bitwise.
+
+The predeclared positive-upwind-protocol-v1.json governs separate finite pulse
+and coupled-collapse matrices. The scalar study distinguishes reduced positive
+log strength and transport at a middle grid. Neither these tests nor the new
+method's availability establish successful collapse.

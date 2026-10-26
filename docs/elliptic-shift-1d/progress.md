@@ -2,6 +2,17 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Positive-chart transport controls running
+
+API29 and44 CTest groups pass. Generic positive chi/lapse variables now
+support stored-variable upwind transport, checked against native rates, an
+independent transport identity and96 compiled/Python cases. The compensated
+scalar restart is bitwise reproducible including its low part. Frozen pulse
+and fully coupled A=.07 collapse matrices test this method; neither is yet
+admitted. Exact-source nu=.25 N4097/8193 wormhole prefixes through3.2 are
+also running under an explicit full-prefix/causal-domain protocol. No domain
+transfer has been implemented and no corrupted interior has been discarded.
+
 ## Local rational source control remains failed
 
 API28 and44 test groups pass, including local rational source identities,

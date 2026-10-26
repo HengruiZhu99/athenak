@@ -1,0 +1,58 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "t": 3,
+    "scalar": true,
+    "scalar_amplitude": 0.07,
+    "initial_precision": "decimal",
+    "initial_tolerance": 1e-11,
+    "lapse_restoring_form": "multiplicative",
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner",
+    "advection": "upwind",
+    "slicing": 0.25
+  },
+  "cases": [
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    },
+    {
+      "name": "n2048",
+      "arguments": {
+        "n": 2048
+      }
+    },
+    {
+      "name": "nu1-n1024",
+      "arguments": {
+        "n": 1024,
+        "slicing": 1.0
+      }
+    },
+    {
+      "name": "centered-n1024",
+      "arguments": {
+        "n": 1024,
+        "advection": "centered"
+      }
+    }
+  ],
+  "scope": "Fully coupled A=.07 Einstein-scalar collapse with stored-positive-field upwind transport. Candidate damping4,-.99 and main Minkowski reference preserved. Three fixed-CFL grids at positive log strength nu=.25; separate nu1 and centered middle-grid controls distinguish slicing and transport. No constraints reset, no positivity floor, no survival-only admission."
+}

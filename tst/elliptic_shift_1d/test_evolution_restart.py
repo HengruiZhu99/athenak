@@ -7,6 +7,7 @@ import numpy as np
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library');p.add_argument('--output',type=Path,required=True)
 p.add_argument('--scenario',choices=['scalar-noise','puncture-chart','trumpet-log'],default='scalar-noise')
 p.add_argument('--slicing-family',choices=['linear','rational'],default='linear')
+p.add_argument('--advection',choices=['centered','upwind'],default='centered')
 p.add_argument('--slicing-scale',type=float,default=.1)
 p.add_argument('--radial-operator',choices=['fd','sbp63'],default='fd')
 p.add_argument('--lapse-reference',choices=['minkowski','CMC-trumpet'],default='minkowski')
@@ -42,6 +43,7 @@ if a.scenario=='trumpet-log':
         '--lapse-reference',a.lapse_reference,'--metric-variable',a.metric_variable,'--lapse-restoring','1','--lapse-restoring-form','multiplicative',
         '--scri-sat','4','--regularity-sat','8','--amplitude','.001']
 if a.fast_library:common+=['--fast-library',a.fast_library]
+common+=['--advection',a.advection]
 common+=['--slicing-family',a.slicing_family,'--slicing-scale',str(a.slicing_scale)]
 common+=['--elliptic-quadrature',a.elliptic_quadrature,'--elliptic-method',a.elliptic_method]
 common+=['--lapse-restoring-profile',a.lapse_restoring_profile,'--lapse-background-source',a.lapse_background_source]
@@ -56,7 +58,7 @@ for name,steps,resume in [('full',40,None),('first',20,None),('resumed',40,'firs
     assert result.returncode==0,(name,result.stderr)
     manifest=json.loads((a.output/name/'manifest.json').read_text())
     assert manifest['status']=='finished',manifest
-    for key in ['slicing_family','slicing_scale','lapse_restoring_profile','lapse_background_source','compensated_update']:
+    for key in ['advection','slicing_family','slicing_scale','lapse_restoring_profile','lapse_background_source','compensated_update']:
         assert manifest['arguments'][key]==getattr(a,key),(key,manifest['arguments'][key],getattr(a,key))
 with np.load(a.output/'full/checkpoint.npz',allow_pickle=False) as x,np.load(a.output/'resumed/checkpoint.npz',allow_pickle=False) as y:
     keys=['q','r','t','step']
@@ -66,6 +68,6 @@ with np.load(a.output/'full/checkpoint.npz',allow_pickle=False) as x,np.load(a.o
     mx=json.loads(str(x['metadata']));my=json.loads(str(y['metadata']))
     assert mx['radiated_energy']==my['radiated_energy']
 record=dict(bitwise_state_time_grid_step_and_flux=True,steps=40,n=64 if a.scenario=='scalar-noise' else 65,
-    scenario=a.scenario,slicing_family=a.slicing_family,slicing_scale=a.slicing_scale,compared_keys=keys,
+    scenario=a.scenario,advection=a.advection,slicing_family=a.slicing_family,slicing_scale=a.slicing_scale,compared_keys=keys,
     scope='Short restart consistency; no stability assertion')
 (a.output/'review.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record))

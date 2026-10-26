@@ -1,0 +1,20 @@
+{
+  "bitwise_state_time_grid_step_and_flux": true,
+  "steps": 40,
+  "n": 64,
+  "scenario": "scalar-noise",
+  "advection": "upwind",
+  "slicing_family": "linear",
+  "slicing_scale": 0.1,
+  "compared_keys": [
+    "q",
+    "r",
+    "t",
+    "step",
+    "update_compensation",
+    "q_physical",
+    "chi_total",
+    "alpha_total"
+  ],
+  "scope": "Short restart consistency; no stability assertion"
+}

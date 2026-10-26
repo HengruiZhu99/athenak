@@ -4,7 +4,7 @@ import argparse,json
 from types import SimpleNamespace
 import numpy as np
 from evolve import Evolution,CoupledEvolution
-from kernel import Kernel
+from kernel import Kernel,PARITY
 import scalar_rhs
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);a=p.parse_args();records=[]
 for origin in [False,True]:
@@ -30,6 +30,17 @@ for origin in [False,True]:
     error=float(max(abs(physical[positive]-native).ravel()));assert error<2e-10,error
     diagnostic_error=float(max(abs(diag[positive,:4]-nDiag[:,:4]).ravel()));assert diagnostic_error<2e-10,diagnostic_error
     assert all(max(abs(diag[:,i]))>0 for i in range(4))
+    # Invertible positive charts have advective part beta*d(stored)/dr.
+    # An independent centered/upwind difference must be exactly that stencil
+    # difference, while all geometric/matter sources and free constraints remain.
+    upopts=SimpleNamespace(**vars(opts));upopts.advection='upwind'
+    upev=(CoupledEvolution if scalar else Evolution)(upopts);up_rate=upev.rhs(q)
+    parity=np.r_[PARITY,np.ones(2)] if scalar else PARITY
+    first,_=ev.op.derivatives(q,parity);adv=ev.op.advection_derivative(q,parity,b)
+    expected=b[:,None]*(adv-first);expected[-1,6]=0.;expected[:,7]=0.
+    upwind_error=float(max(abs(up_rate-rate-expected).ravel()))
+    assert upwind_error<3e-12,upwind_error
+    records.append(dict(positive_chart_upwind_transport_identity_error=upwind_error))
     records.append(dict(origin_on_grid=origin,scalar=scalar,native_rate_error=error,native_constraint_error=diagnostic_error,
         scope='Invertible positive fields and regular-center chain derivatives; nonlinear evolution gates remain independent'))
 # Total fields must not be recovered from exp(U)-1 when they are below the

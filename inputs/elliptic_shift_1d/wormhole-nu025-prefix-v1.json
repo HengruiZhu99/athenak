@@ -1,0 +1,37 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 3.2,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 0.25,
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner"
+  },
+  "cases": [
+    {
+      "name": "n4097",
+      "arguments": {
+        "n": 4097
+      }
+    },
+    {
+      "name": "n8193",
+      "arguments": {
+        "n": 8193
+      }
+    }
+  ],
+  "scope": "Exact frozen nu=.25 source refinements through3.2, before the late inner AF underresolution in the t6 matrices. Combine prefix with existing N2049 only through the explicitly declared common time3.2. Native full-prefix constraints, physical fields, stage poles and characteristic speeds must converge. This prepares a possible future causal inner-domain transfer; no transfer, constraint removal or success claim occurs in this run."
+}

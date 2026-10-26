@@ -8,12 +8,12 @@ from evolve import Evolution,CoupledEvolution
 from fast import FastEngine
 from compensated_update import accumulate
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args();records=[]
-for index,(origin,scalar,variables,endpoint,ko) in enumerate(product([False,True],[False,True],
-    [('log','deviation'),('deviation','log-reference'),('log','log-reference')],['raw-lhopital','analytic-g1'],[0.,.5])):
+for index,(origin,scalar,variables,endpoint,ko,advection) in enumerate(product([False,True],[False,True],
+    [('log','deviation'),('deviation','log-reference'),('log','log-reference')],['raw-lhopital','analytic-g1'],[0.,.5],['centered','upwind'])):
     opts=SimpleNamespace(n=65,origin_grid=origin,puncture=False,origin_variables=False,backend='spherical-g1',
         width=7,quadrature_width=7,library=a.library,kappa1=4.,kappa2=-.99,eta=0.,theta='appendix-c' if index%2 else 'repository',
         slicing=1.,lapse_restoring=1.,lapse_restoring_form='multiplicative' if index%3 else 'symmetric',
-        damping_form='reference-lapse' if index%5 else 'constant',endpoint=endpoint,gauge_corner_sat=0.,advection='centered',
+        damping_form='reference-lapse' if index%5 else 'constant',endpoint=endpoint,gauge_corner_sat=0.,advection=advection,
         scri_sat=4.,regularity_sat=8.,origin_ko=ko,origin_ko_radius=.4,metric_variable=variables[0],lapse_variable=variables[1])
     opts.subtract_local=index%3!=0
     opts.compensated_update=index%2==0
@@ -49,7 +49,7 @@ for index,(origin,scalar,variables,endpoint,ko) in enumerate(product([False,True
         'max_accepted_H_rms','max_accepted_M_rms','max_accepted_Theta_rms','max_accepted_Z_rms',
         'max_accepted_H_bulk','max_accepted_M_bulk','max_accepted_H_endpoint','max_accepted_M_endpoint']:
         np.testing.assert_allclose(stats[key],ev.stage_metrics[key],atol=2e-11,rtol=1e-8,err_msg=key)
-    engine.close();records.append(dict(origin=origin,scalar=scalar,variables=variables,endpoint=endpoint,KO=ko,rhs_error=error,step_error=step_error))
+    engine.close();records.append(dict(origin=origin,scalar=scalar,variables=variables,endpoint=endpoint,advection=advection,KO=ko,rhs_error=error,step_error=step_error))
 # A separate RHS-only test checks total fields below reference relative
 # precision. Such highly off-constraint data can be stiff and are not evolved.
 opts.origin_ko=0.;ev=CoupledEvolution(opts);q=np.zeros((65,10));q[:,0]=q[:,6]=-40*(1-ev.r**2)**4;q[:,9]=1.

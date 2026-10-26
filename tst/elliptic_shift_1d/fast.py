@@ -16,8 +16,6 @@ class FastEngine:
             or getattr(a,'slicing_family','linear') not in ('linear','rational','blended-log') or getattr(a,'lapse_background_source','reference') not in ('reference','collapsed-inner')
             or getattr(a,'puncture_boundary','outflow')!='outflow' or (getattr(a,'puncture_ko',0.) and not self.af)):
             raise ValueError('This operator/gauge/boundary prototype is not implemented in the compiled engine')
-        if (getattr(a,'metric_variable','deviation')=='log' or getattr(a,'lapse_variable','deviation')=='log-reference') and getattr(a,'advection','centered')!='centered':
-            raise ValueError('Compiled positive variables currently use centered transport')
         if getattr(a,'lapse_restoring_profile','constant')=='physical-local' and (getattr(a,'slicing_family','linear') not in ('linear','rational') or getattr(a,'lapse_reference','minkowski')!='minkowski'):raise ValueError('Unsupported local restoring source')
         if self.af and (fields!=8 or self.ode_method or getattr(a,'elliptic_quadrature','prefix')!='prefix' or getattr(a,'lapse_restoring_form','symmetric')!='multiplicative'):raise ValueError('Compiled AF uses vacuum quadrature shift')
         if self.puncture and a.origin_ko:raise ValueError('Regular-center KO is inapplicable to a puncture')
@@ -25,7 +23,7 @@ class FastEngine:
             raise ValueError('Compiled engine implements unscaled g=1 and raw/analytic endpoints')
         self.lib=C.CDLL(str(library));self.calls=0;self.advance_seconds=0.
         self.lib.spherical_fast_abi.restype=C.c_int
-        if self.lib.spherical_fast_abi()!=28:raise ValueError('Compiled engine ABI does not match this wrapper')
+        if self.lib.spherical_fast_abi()!=29:raise ValueError('Compiled engine ABI does not match this wrapper')
         self.lib.spherical_fast_last_error.argtypes=[C.c_void_p];self.lib.spherical_fast_last_error.restype=C.c_char_p
         self.failure_message=''
         fp=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')

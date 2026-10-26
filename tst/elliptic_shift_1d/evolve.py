@@ -83,6 +83,7 @@ class Evolution:
         parity=PARITY.copy()
         if getattr(self.args,'origin_variables',False):parity[5]=1
         d,dd=self.op.derivatives(q,parity)
+        stored_first=d.copy()
         total_alpha=None;total_chi=None;trumpet_chi=None;stored=q
         if self.metric_scale is not None:
             q=self.to_physical(stored)
@@ -163,6 +164,10 @@ class Evolution:
         S[:,6]+=self.lapse_source
         if getattr(self.args,'advection','centered')=='upwind':
             adv=self.op.advection_derivative(q,PARITY,beta)
+            if self.metric_scale is not None or self.alpha_profile is not None:
+                chart_adv=self.op.advection_derivative(stored,PARITY,beta)
+                if self.metric_scale is not None:adv[:,0]=d[:,0]+chi*(chart_adv[:,0]-stored_first[:,0])
+                if self.alpha_profile is not None:adv[:,6]=d[:,6]+alpha*(chart_adv[:,6]-stored_first[:,6])
             R[:,:7]+=beta[:,None]*(adv[:,:7]-d[:,:7])
         if getattr(self.args,'initial_data',None) in ('wormhole','trumpet'):
             F=lapse_coefficient(self.r[0],alpha[0],self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1))
@@ -480,7 +485,7 @@ def main():
         raise ValueError('Log-trumpet lapse variables currently require Python already-trumpet evolution and centered transport')
     if args.metric_variable=='log-trumpet' and (args.initial_data!='trumpet' or args.fast_library or args.advection!='centered'):
         raise ValueError('Log-trumpet metric variables currently require Python already-trumpet evolution and centered transport')
-    if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and (args.backend!='spherical-g1' or args.advection!='centered' or args.puncture_chart):
+    if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and (args.backend!='spherical-g1' or args.puncture_chart):
         raise ValueError('Positive-variable prototypes require g=1 centered evolution and their own representation')
     if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and args.origin_variables:
         raise ValueError('Combined positive and scaled-origin charts have not been implemented/audited')

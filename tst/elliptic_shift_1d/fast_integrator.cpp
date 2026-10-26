@@ -121,6 +121,7 @@ struct Engine {
         if(!std::isfinite(ec)||!std::isfinite(ea))throw std::runtime_error("nonfinite AF logarithm");
       }
     } else if(logchi||logalpha) {
+      chart_d=d;
       std::copy(state,state+n*nf,primitive.begin());q=primitive.data();
       for(int i=0;i<n;i++) {
         int k=i*nf;double A=(1+r[i]*r[i])/2;
@@ -270,11 +271,14 @@ struct Engine {
     if(params[11]!=0&&!af)for(int i=0;i<n;i++) {
       const auto& ai=beta[i]<0?aleft:aright;const auto& aw=beta[i]<0?awleft:awright;
       for(int f=0;f<nf;f++)if(f!=7) {
+        bool chart_transport=(f==0&&logchi)||(f==6&&logalpha);
+        const double* adv_state=chart_transport?state:q;
         double adv=0;for(int j=0;j<w;j++) {
-          int k=ai[i*w+j],ii=reflected(k);double value=q[ii*nf+f]*(k<w?parity(f):1);
-          if(puncture||params[23]!=0)value-=q[i*nf+f];adv+=aw[i*w+j]*value;
+          int k=ai[i*w+j],ii=reflected(k);double value=adv_state[ii*nf+f]*(k<w?parity(f):1);
+          if(puncture||params[23]!=0)value-=adv_state[i*nf+f];adv+=aw[i*w+j]*value;
         }
-        R[i*nf+f]+=beta[i]*(adv-d[i*nf+f]);
+        double correction=chart_transport?(f==0?total_chi[i]:total_alpha[i])*(adv-chart_d[i*nf+f]):adv-d[i*nf+f];
+        R[i*nf+f]+=beta[i]*correction;
       }
     }
     for(int i=0;i<n;i++)S[i*nf+6]+=lapse_source[i];
@@ -395,7 +399,7 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 28;}
+int spherical_fast_abi(){return 29;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);

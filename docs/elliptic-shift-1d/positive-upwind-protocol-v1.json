@@ -1,0 +1,11 @@
+{
+  "created_UTC": "2026-10-26T11:48:26.882490+00:00",
+  "scope": "Stored positive field upwind transport; stage metric-derived shift and independent free constraints retained.",
+  "identity": "For chi=chi_ref expU or alpha=alpha_ref expV, replace only the advective derivative of U/V by the biased stencil. Reference profile derivatives remain analytic. Physical rates receive chi or alpha times beta(D_up-D_center)(stored). This is an explicitly invertible-variable transport discretization, not continuum equation subtraction.",
+  "checks": "Independent centered/upwind transport identity and native tensor rates;96 positive compiled/Python RK/flux/monitor cases; bitwise compensated scalar restart with upwind. All44 CTest groups pass.",
+  "inputs": [
+    "inputs/elliptic_shift_1d/collapse-positive-upwind-v1.json",
+    "inputs/elliptic_shift_1d/gauge-positive-upwind-v1.json"
+  ],
+  "acceptance": "Existing field/accepted-constraint/endpoint/clock/null/pole/affinity, solve/dt/dissipation and physical collapse/flux/mass criteria. Continue only from verified source-bound checkpoints. No result admitted by this protocol alone."
+}
