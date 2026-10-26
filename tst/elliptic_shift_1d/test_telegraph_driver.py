@@ -17,11 +17,12 @@ with tempfile.TemporaryDirectory() as tmp:
    normal=R*(K/3-O*q[:,2]/2);spatial=(1+r*r)/(2*O)-r*d[:,0]/(2*chi)
    m=R/2*(1+normal*normal-spatial*spatial)
    np.testing.assert_allclose(m,mass,atol=2e-12,rtol=2e-12)
- for case,profile in [('collar','collar'),('sinh','af-regular'),('local','af-regular'),('high-order','af-regular'),('scri-map','af-regular')]:
+ for case,profile in [('collar','collar'),('sinh','af-regular'),('local','af-regular'),('high-order','af-regular'),('scri-map','af-regular'),('pchip','af-regular')]:
   controls=['--inner-profile',profile]
   if case=='sinh':controls+=['--quadrature-width','9','--puncture-ko','.25','--grid-stretch','4']
   if case=='local':controls+=['--grid-stretch','14','--grid-map','inner-c7','--mapped-ko','local']
   if case=='high-order':controls+=['--n','129','--width','9','--ko-order','8','--grid-stretch','16','--grid-map','inner-exp','--mapped-ko','local']
+  if case=='pchip':controls+=['--ray-interpolation','pchip','--grid-stretch','4']
   if case=='scri-map':controls+=['--grid-stretch','0','--grid-map','inner-exp-scri','--mapped-ko','local','--ko-order','8']
   whole=run(case+'-whole',*controls,'--t','.03125');first=run(case+'-first',*controls,'--t','.015625')
   split=run(case+'-split',*controls,'--t','.03125','--resume',str(first/'checkpoint.npz'))

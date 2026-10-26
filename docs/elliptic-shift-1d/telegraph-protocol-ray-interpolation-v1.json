@@ -16,5 +16,25 @@
     "Any selected mode still needs complete t10 three-grid ray/geometry convergence and independent timestep controls.",
     "A finite smooth interpolant cannot prove absence of continuum characteristic crossing."
   ],
-  "status": "Prepared; not implemented or admitted. Original linear-mode dt/4 run remains active."
+  "status": "Implemented and tested; completed t3 pilot reduces active-ray logJ timestep differences by about100 but fails all-ray time/space ratio .253519 due terminal exit integration. Dense exit repair is separately declared; no candidate admitted.",
+  "pilot": {
+    "n": 513,
+    "additional_spatial_n": 1025,
+    "t": 3,
+    "cfl": [
+      0.05,
+      0.025,
+      0.0125
+    ],
+    "modes": [
+      "linear",
+      "pchip"
+    ],
+    "grid_map": "inner-exp-scri",
+    "grid_stretch": 16,
+    "ko_order": 8,
+    "kappa": 0.005,
+    "tau": 0.02,
+    "interpretation": "Pilot tests diagnostic timestep sensitivity only. Coarse physical runs need not pass main acceptance; no thresholds relaxed."
+  }
 }

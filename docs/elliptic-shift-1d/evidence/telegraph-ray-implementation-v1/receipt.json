@@ -1,0 +1,15 @@
+{
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "numpy": "2.0.2",
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "scipy_install": "python3 -m pip install --only-binary=:all: --no-deps --target build-elliptic-shift-1d/pchip-oracle scipy==1.13.1",
+  "oracle_command": "python3 tst/elliptic_shift_1d/test_telegraph_rays.py --library build-elliptic-shift-1d/libspherical_z4c.dylib --fast-library build-elliptic-shift-1d/libspherical_telegraph.dylib --scipy-path build-elliptic-shift-1d/pchip-oracle",
+  "ctest": "54/54 passed",
+  "sha256": {
+    "tst/elliptic_shift_1d/telegraph_integrator.cpp": "27b6eb580f0740fbb9f8308961f34e7aa53d197464dbcc81113cb9afc1e0e70f",
+    "tst/elliptic_shift_1d/telegraph.py": "05ed81b7ff0e9ffa7c7e98de9729e6a308381408f1eb3f03a9d58f8149be423e",
+    "tst/elliptic_shift_1d/test_telegraph_rays.py": "84d17461708f7534448fcb64cd3d9d0a3e1535d5095379951b94f4d62c6f02c2",
+    "tst/elliptic_shift_1d/test_telegraph_driver.py": "9ff83604206a03c6bee191797d0e276e8c6bb5c587ba66f4800d1b7c5747d2b0",
+    "build-elliptic-shift-1d/libspherical_telegraph.dylib": "6d790e42dbb3b4f60889f684b512c30e315ee6f1c6ae814714d4aba45c9a2baa"
+  }
+}

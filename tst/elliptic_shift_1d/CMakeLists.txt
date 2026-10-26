@@ -136,3 +136,6 @@ add_test(NAME telegraph_initial_invariant_mass_and_cli_restart
 
 add_test(NAME telegraph_analysis_evidence_guards
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_time_analysis.py)
+
+add_test(NAME telegraph_ray_interpolation_and_no_feedback
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_rays.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)

@@ -1,0 +1,17 @@
+{
+  "declared_before_implementation": true,
+  "purpose": "Eliminate timestep-dependent accumulated logJ at terminal characteristic exits without changing any evolved field.",
+  "evidence": "The completed N513 t3 PCHIP pilot has base-to-quarter logJ difference 1.4944003e-4 for already exited rays, but 9.88614e-7 for rays active in both runs. Full time-to-space ratio .253519 fails.",
+  "candidate": "Optional dense RK4 exit localization. Keep the legacy terminal clamp as a control. Evaluate stage velocities and their consistent spatial derivative through a bounded continuation of the endpoint interpolant for rays that were interior at step start. Find the first boundary event in a continuous RK extension and evaluate logJ at the same event time; freeze the matched terminal state thereafter.",
+  "requirements": [
+    "Separate configuration flag and restart binding; preserve default legacy behavior bitwise.",
+    "Continuous RK weights must reproduce all full-step classical RK4 weights and initial rates; verify their order with an independent exact flow.",
+    "Locate the first boundary crossing, not merely clamp the last position; account for possible interior extrema of the continuous position polynomial.",
+    "Analytic affine and time-dependent speed tests at non-grid-aligned exit times, both endpoints, and dt/dt2/dt4; verify terminal compression and event time.",
+    "Geometry, auxiliary flux and their compensation remain bitwise identical across diagnostic modes.",
+    "Actual coupled-stage Python oracle and exact checkpoint restart, including terminal rays.",
+    "Repeat completed t3 timestep pilot, report all rays and active/exited categories; categories are causal diagnostics, never a waiver of the all-ray error criterion.",
+    "Then complete the original t10 three-grid and independent-control protocol."
+  ],
+  "status": "Prepared; not implemented. Main scri/PCHIP matrix remains undispatched until exit accuracy is repaired."
+}

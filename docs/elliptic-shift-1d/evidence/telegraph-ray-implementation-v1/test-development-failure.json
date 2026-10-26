@@ -1,0 +1,9 @@
+{
+  "failure": "Terminal-ray assertion failed on first test attempt.",
+  "cause": "Test replaced interior ray positions with boundary values while retaining compensation from unrelated prior interior positions. This is an invalid restart state.",
+  "repair": "Use a fresh engine with zero compensation for the prescribed terminal initial data; retain the separate exact continuation test with matched state and compensation.",
+  "oracle_roundoff_failure": {
+    "observed": "Random order-one speeds on the strongest mapped grid gave near-zero derivative disagreements up to 3.93e-8 against SciPy; adjacent secants are order 1e8.",
+    "repair": "Check values separately and derivative differences against 3e-12 relative error plus 64 machine eps times adjacent secant scale. This tests the arithmetic conditioning of the polynomial evaluation; no evolution acceptance threshold changed."
+  }
+}

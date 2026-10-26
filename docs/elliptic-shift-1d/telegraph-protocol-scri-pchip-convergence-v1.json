@@ -1,0 +1,37 @@
+{
+  "declared_before_launch": true,
+  "purpose": "Full-duration three-grid validation after the KO8, refined-scri and diagnostic interpolation pilots.",
+  "gating": "Launch only after the short PCHIP pilot demonstrates reduced ray logJ timestep sensitivity and unchanged geometry/flux.",
+  "inputs": {
+    "inputs/elliptic_shift_1d/telegraph-scri-pchip-convergence-v1.json": "dc40d5f1ab54800bdd7034fe40e635ebd1b05f507a796bcca82e4bf00a1d939e",
+    "inputs/elliptic_shift_1d/telegraph-scri-pchip-time-v1.json": "bb5b996ac3fdeef3fd3798544c88cbbb464155cd6e878b34d406814a8fd8849e"
+  },
+  "duration": 10,
+  "grids": [
+    1025,
+    2049,
+    4097
+  ],
+  "fixed": {
+    "mass": 0.3333333333333333,
+    "t": 10,
+    "tau": 0.02,
+    "kappa": 0.005,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "inner_profile": "af-regular",
+    "transition": 0.24,
+    "grid_map": "inner-exp-scri",
+    "grid_stretch": 16,
+    "mapped_ko": "local",
+    "width": 7,
+    "ko_order": 8,
+    "ray_interpolation": "pchip"
+  },
+  "independent_time": "N2049 baseline CFL .05, half .025, quarter .0125 from initial data with identical frozen numerical dependencies.",
+  "acceptance": "All original telegraph-protocol-v1.json thresholds unchanged; a pilot improvement or completed trajectory cannot admit a candidate.",
+  "remaining_controls": "Independent shift quadrature and KO-amplitude variations, plus adjacent fixed kappa/tau spatial convergence, remain required. This matrix alone cannot complete the goal.",
+  "execution": "At most two concurrent evolution workers including the already-running old KO6 quarter-step control. Three-grid matrix starts with one worker; new time matrix dispatch waits for a free worker slot.",
+  "status": "Undispatched. Short PCHIP pilot improves active-ray errors but fails all-ray accuracy due terminal exit integration. Requires additional exit-event repair and pilot before launch."
+}

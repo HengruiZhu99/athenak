@@ -1,7 +1,35 @@
 // Reuse the frozen eight-field geometry kernel without changing its ABI/state.
 #include "fast_integrator.cpp"
+namespace {
+double pchip_endpoint(double h0,double h1,double d0,double d1) {
+  double m=((2*h0+h1)*d0-h0*d1)/(h0+h1);
+  if(d0==0||std::signbit(m)!=std::signbit(d0))return 0.;
+  if(std::signbit(d0)!=std::signbit(d1)&&std::abs(m)>3*std::abs(d0))return 3*d0;
+  return m;
+}
+// Local Fritsch--Butland slopes; coordinate is physical r, not the grid chart.
+void pchip_slopes(const Vec& r,const Vec& values,Vec& slopes) {
+  int n=r.size();
+  for(int f=0;f<2;f++) {
+    auto secant=[&](int i){return (values[2*i+2+f]-values[2*i+f])/(r[i+1]-r[i]);};
+    slopes[f]=pchip_endpoint(r[1]-r[0],r[2]-r[1],secant(0),secant(1));
+    slopes[2*(n-1)+f]=pchip_endpoint(r[n-1]-r[n-2],r[n-2]-r[n-3],secant(n-2),secant(n-3));
+    for(int i=1;i<n-1;i++) {
+      double a=secant(i-1),b=secant(i),hp=r[i]-r[i-1],hn=r[i+1]-r[i];
+      double w1=2*hn+hp,w2=hn+2*hp;
+      slopes[2*i+f]=(a==0||b==0||std::signbit(a)!=std::signbit(b))?0.:(w1+w2)/(w1/a+w2/b);
+    }
+  }
+}
+void pchip_value(double x,double r0,double r1,double c0,double c1,double m0,double m1,double* out) {
+  double h=r1-r0,t=(x-r0)/h,delta=c1-c0,A=h*m0-delta,B=delta-h*m1,C=(1-t)*A+t*B;
+  out[0]=c0+t*delta+t*(1-t)*C;
+  out[1]=(delta+(1-2*t)*C+t*(1-t)*(B-A))/h;
+}
+}
 struct Telegraph {
   Engine& e;double kappa,tau,start;int nr;Vec w,wp,comp;
+  bool cubic_rays=false;Vec speed_slopes;
   Vec q1,q2,q3,q4,qs,b1,b2,b3,b4,bs,j1,j2,j3,j4,js,speeds;
   std::array<double,5> stats{};
   Telegraph(Engine& E,double K,double T,const double* W,const double* WP,int NR,double START):
@@ -11,6 +39,7 @@ struct Telegraph {
     for(Vec* v:{&b1,&b2,&b3,&b4,&bs})v->resize(e.n);
     for(Vec* v:{&j1,&j2,&j3,&j4,&js})v->resize(2*nr);
     speeds.resize(e.n*2);
+    speed_slopes.resize(e.n*2);
   }
   void rhs(const double* q,const double* B,double* dq,double* dB,bool accepted=false) {
     e.rhs(q,dq,accepted);const int n=e.n;
@@ -53,15 +82,17 @@ struct Telegraph {
       stats[4]=std::max(stats[4],-(speeds[2*i+2]-speeds[2*i])/(e.r[i+1]-e.r[i]));
     for(int i=0;i<n;i++)if(!std::isfinite(dB[i])||!std::isfinite(dq[8*i+6]))throw std::runtime_error("nonfinite telegraph rate");
   }
-  void rays(const double* state,double* rate,bool active)const {
+  void rays(const double* state,double* rate,bool active) {
     std::fill(rate,rate+2*nr,0.);
     if(!active)return;
+    if(cubic_rays)pchip_slopes(e.r,speeds,speed_slopes);
     for(int j=0;j<nr;j++) {
       const double x=state[2*j];if(x<=e.r.front()||x>=e.r.back())continue;
       int i=std::min(e.n-2,std::max(0,static_cast<int>((x-e.r[0])/e.h)));
       if(!e.grid_jacobian.empty())i=std::min(e.n-2,std::max(0,static_cast<int>(std::upper_bound(e.r.begin(),e.r.end(),x)-e.r.begin())-1));
       const int family=j%2;double left=speeds[2*i+family],slope=(speeds[2*(i+1)+family]-left)/(e.r[i+1]-e.r[i]);
-      rate[2*j]=left+slope*(x-e.r[i]);rate[2*j+1]=slope;
+      if(cubic_rays)pchip_value(x,e.r[i],e.r[i+1],left,speeds[2*(i+1)+family],speed_slopes[2*i+family],speed_slopes[2*(i+1)+family],rate+2*j);
+      else {rate[2*j]=left+slope*(x-e.r[i]);rate[2*j+1]=slope;}
     }
   }
   void check_dt(double dt) {
@@ -83,6 +114,14 @@ void* telegraph_create(void* handle,double kappa,double tau,const double* w,cons
  try{return new Telegraph(*static_cast<Engine*>(handle),kappa,tau,w,wp,nr,start);}catch(...){return nullptr;}
 }
 void telegraph_destroy(void* handle){delete static_cast<Telegraph*>(handle);}
+int telegraph_set_ray_interpolation(void* handle,int mode) {
+ if(mode!=0&&mode!=1)return -1;
+ static_cast<Telegraph*>(handle)->cubic_rays=(mode==1);return 0;
+}
+// Pure interpolation entry point for independent diagnostic-kernel verification.
+void telegraph_ray_rates(void* handle,const double* speeds,const double* state,double* rate) {
+ auto& t=*static_cast<Telegraph*>(handle);std::copy(speeds,speeds+t.speeds.size(),t.speeds.begin());t.rays(state,rate,true);
+}
 void telegraph_stats(void* handle,double* out){auto& t=*static_cast<Telegraph*>(handle);std::copy(t.stats.begin(),t.stats.end(),out);}
 void telegraph_get_compensation(void* handle,double* out){auto& t=*static_cast<Telegraph*>(handle);std::copy(t.comp.begin(),t.comp.end(),out);}
 void telegraph_set_compensation(void* handle,const double* in){auto& t=*static_cast<Telegraph*>(handle);std::copy(in,in+t.comp.size(),t.comp.begin());}

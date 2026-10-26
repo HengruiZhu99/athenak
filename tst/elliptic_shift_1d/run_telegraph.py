@@ -24,6 +24,7 @@ def main():
  p.add_argument('--puncture-ko',type=float,default=.5);p.add_argument('--puncture-ko-radius',type=float,default=.8)
  p.add_argument('--inner',type=float,default=.01);p.add_argument('--outer',type=float,default=.8);p.add_argument('--transition',type=float,default=.08)
  p.add_argument('--report-dt',type=float,default=.05);p.add_argument('--ray-start',type=float,default=1.)
+ p.add_argument('--ray-interpolation',choices=['linear','pchip'],default='linear')
  p.add_argument('--ray-seeds',type=int,default=81);p.add_argument('--resume',type=Path)
  p.add_argument('--library',type=Path,required=True);p.add_argument('--fast-library',type=Path,required=True)
  p.add_argument('--output',type=Path,required=True);args=p.parse_args()
@@ -42,7 +43,7 @@ def main():
  manifest=dict(arguments=config,binding=binding,status='initializing',command=sys.argv,platform=platform.platform(),
   method='free-Z4c full AF chart, spherical conformal telegraph, RK4 stage rays; no projection',
   characteristic_scope='Coupled frozen lapse-trace-flux speeds; independent Z4/elliptic-shift nonlinear stability not assumed.',
-  ray_scope='Alternating minus/plus seeds in .12:.4, held until ray_start. Each RK stage uses that stage geometry, linear radial speed interpolation and its derivative. Exits terminate the ray; no reinjection.',resource_authorization='User explicitly requested controlled local telegrapher evolutions.')
+  ray_scope=f'Alternating minus/plus seeds in .12:.4, held until ray_start. Each RK stage uses that stage geometry, {args.ray_interpolation} radial speed interpolation and its derivative. Exits terminate the ray; no reinjection.',resource_authorization='User explicitly requested controlled local telegrapher evolutions.')
  mp=args.output/'manifest.json';mp.write_text(json.dumps(manifest,indent=2)+'\n')
  opts=options(args.n,args.library,args.nu,args.cfl)
  for key in ['width','ko_order','quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map','mapped_ko']:setattr(opts,key,getattr(args,key))
@@ -53,7 +54,7 @@ def main():
  manifest['initial_data']=dict(mass=initial.mass,quadrature_order=initial.nodes.size,radial_map_scale=initial.k)
  np.savez_compressed(args.output/'initial-data.npz',r=ev.r,q=q,q_physical=initial_q,d=initial_d,dd=initial_dd)
  rays=np.zeros((2*args.ray_seeds,2));rays[:,0]=np.repeat(np.linspace(.12,.4,args.ray_seeds),2)
- engine=TelegraphEngine(ev,args.fast_library,args.kappa,args.tau,args.inner,args.outer,args.transition,len(rays),args.ray_start,args.inner_profile)
+ engine=TelegraphEngine(ev,args.fast_library,args.kappa,args.tau,args.inner,args.outer,args.transition,len(rays),args.ray_start,args.inner_profile,args.ray_interpolation)
  t=0.;step=0;previous={};lattice=None
  if args.resume:
   with np.load(args.resume,allow_pickle=False) as z:

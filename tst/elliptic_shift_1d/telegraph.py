@@ -53,7 +53,8 @@ def python_rhs(ev,q,B,kappa,tau,support,accepted=False):
 
 
 class TelegraphEngine:
-    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar"):
+    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar",ray_interpolation="linear"):
+        if ray_interpolation not in ('linear','pchip'):raise ValueError('Unknown ray interpolation')
         if not np.isfinite(kappa+tau) or kappa<0 or tau<=0:raise ValueError('Need kappa>=0,tau>0')
         if not ev.args.puncture_chart or ev.r[0]!=0:raise ValueError('First telegraph implementation requires the full AF domain')
         self.base=FastEngine(ev,8,library);lib=self.base.lib;self.n=len(ev.r);self.nray=nray;self.start=start
@@ -68,6 +69,10 @@ class TelegraphEngine:
         w,wp=window(ev.r,inner,outer,width,inner_profile)
         self.handle=lib.telegraph_create(self.base.handle,kappa,tau,w,wp,nray,start)
         if not self.handle:raise RuntimeError('Telegraph engine creation failed')
+        # Old frozen libraries remain valid linear-mode controls.
+        if ray_interpolation=='pchip':
+            lib.telegraph_set_ray_interpolation.argtypes=[C.c_void_p,C.c_int]
+            if lib.telegraph_set_ray_interpolation(self.handle,1):raise RuntimeError('Ray interpolation setup failed')
     def close(self):
         if self.handle:self.base.lib.telegraph_destroy(self.handle);self.handle=None
         self.base.close()
