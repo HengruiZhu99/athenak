@@ -2,6 +2,91 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Latest audit: compiled integration and complete-stage diagnostics
+
+The compiled g=1 RK4 engine uses the supplied FD/quadrature weights and the
+same equations as Python. Across64 combinations of origin grid, scalar/vacuum,
+Theta source, dissipation, endpoint formula and optional gauge-corner penalty,
+RHS agreement is better than8.6e-14 and20-step state agreement better than
+1.2e-16. A full weak-scalar trajectory differs by2.46e-14 with flux difference
+8.7e-19. Observed runtime falls from30.3s to1.91s in that pilot; this is a
+specific comparison, not a universal performance claim. Every binary is frozen
+with its run. Exact restarts include the compiled binary hash.
+
+Eight CTest groups pass (`evidence/ctest-v9.log`). The tests include an
+independent native-tensor check of the complete analytically differentiated
+scri limit. R/S decompositions are nonunique up to Omega multiples; comparing
+S derivatives alone is incorrect. The complete R-S' limit converges against
+native source differentiation with orders7.60 and7.82.
+
+The `.058` initial-data solve at N1024 stalls in double precision near1.13e-10.
+A50-digit Decimal iterate/residual with double Newton corrections reaches
+1.25e-21 at the unchanged requested tolerance1e-11; its mass agrees with the
+double iterate to displayed precision. Rounding the accepted solution back to
+double gives residual2.96e-10, explicitly reported separately. No tolerance
+was loosened. Failed initializations now preserve their own source, iterate,
+Newton history and failure receipt before evolution.
+
+The small lapse pulse has reached t=100 at N256/512/1024, CFL.1, with final
+H/M RMS below1e-43. These older runs have sampled diagnostics; they do not
+certify all-stage peak gates. The10,000-unit published target remains unrun.
+The matching short control gives all-field bulk/endpoint self-convergence
+orders5.06/5.13, RK4 orders4.003/3.969, and standard timestep error about
+2.9e-5 of the coarse spatial difference (`evidence/regular-controls-v1`).
+
+Important negative results remain. The finite amplitude.1 pulse exceeds the
+scri-pole gate during propagation; a.1 output cadence substantially misses
+the peak. New compiled runs monitor positivity, H/M/Theta/Z RMS, nullness,
+clock, pole and regularity maxima at **every RK stage**. A separate test
+compares these monitors with Python stage diagnostics. Quadrature degree5
+can trigger a large scri failure; degree7/9/11 differences must be assessed
+against spatial error at the same resolution. The finest N1024 differences
+are near roundoff in the bulk but still material relative to the small
+endpoint spatial error. This isolation gate is not yet admitted.
+
+Analytic pole-numerator derivatives (`--endpoint analytic-g1`) are verified but
+do not cure finite-amplitude scri errors. Stronger value penalties are not a
+robust repair either. A weak first-normal-jet gauge penalty has the correct
+isolated directional damping Jacobian, but **all nonzero tested strengths
+fail in the coupled system** by t=.36-.57. It is retained as a rejected
+variant, never the default. This is another example where a component audit
+does not establish coupled stability. Next investigate published upwind
+advection and an energy-compatible/regular-variable boundary treatment,
+rather than declaring a scalar damping calculation sufficient.
+
+Refined `.058` dispersal with50-digit initial solves is in the all-stage
+512/1024/2048 matrix. N512/1024 stage H peaks are.0111/.000351 and their pole
+peaks1.49e-6/1.42e-7, so both fail the pole gate despite tiny final errors.
+N2048 is finishing. The `.07` N512 collapse pilot develops horizon roots but
+fails at t=1.66764 with H/M peaks23/103; horizon formation is **not accepted**
+from that unresolved run. No valid puncture evolution is implemented yet.
+
+The smooth supported-constraint sequence128/256/512 reaches t=10 and decays.
+The original fixed-amplitude nodal-noise sequence reaches t=6 but its finest
+Theta amplification129.5 fails the declared100 per-component gate. It is
+retained as failed. H initially scales like k^2 delta-chi, while Theta_t
+contains alpha H/(2Omega); over a wave time1/k it can generate O(k delta-chi)
+Theta from initially unrelated noise. A distinct derivative-balanced dataset
+uses chi amplitude proportional h^2 and independent curvature/Khat/Theta/Lambda
+amplitudes proportional h. Its separately declared protocol is
+`constraint-noise-gates-v2.json`, not a relabeling of the original test.
+The four128/256/512/1024 trajectories finish with small all-stage poles;
+per-component acceptance analysis is saved and passes all four resolutions
+(`evidence/balanced-noise-v1`). The original unscaled failure remains unchanged.
+
+The all-stage `.058` scalar matrix is complete: peak H RMS for512/1024/2048
+is.01107,.0003515,1.152e-5; mass-minus-flux is-6.99e-6,-2.53e-7,-8.19e-9.
+The latter converges at roughly fifth order. Stage pole maxima are1.49e-6,
+1.42e-7,1.26e-8; only the finest passes the pole gate. This is encouraging
+resolved dispersal evidence, not admission of the full three-grid case.
+The plotted sampled constraints are explicitly labeled as sampled; acceptance
+uses the separate every-stage maxima (`evidence/scalar-allstage-v1`).
+
+The compiled checkpoint continuation helper was tested with exact frozen
+Python sources and both matching libraries. An N256 small-pulse trajectory
+is now continuing from t=100 to1000 using its verified original source/binary,
+without changing its equations or timestep. Longer paper durations still remain.
+
 ## Update: 2026-10-26, coupled scalar and central instability
 
 Five CTest groups pass (`evidence/ctest-v5.log`), now including the canceled

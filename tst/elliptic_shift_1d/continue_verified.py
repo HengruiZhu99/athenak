@@ -33,8 +33,13 @@ library=next((f for f in candidates if f.is_file() and sha(f)==parent['binding']
 if library is None:raise SystemExit('No exact saved library is available')
 runtime=bundle/'runtime';runtime.mkdir();saved_library=runtime/library.name;shutil.copy2(library,saved_library);library=saved_library
 cmd=[sys.executable,str(bundle/'tst/elliptic_shift_1d/evolve.py'),'--library',str(library),'--output',str(a.output),'--resume',str(a.checkpoint),'--t',str(a.t)]
+if parent['arguments'].get('fast_library'):
+ fast=Path(parent['arguments']['fast_library']);fast=fast if fast.is_absolute() else repo/fast
+ fast=next((f for f in [fast,source_repo/'runtime'/fast.name] if f.is_file() and sha(f)==parent['binding']['fast_executable_sha256']),None)
+ if fast is None:raise SystemExit('No exact compiled integration library is available')
+ saved=runtime/fast.name;shutil.copy2(fast,saved);cmd+=['--fast-library',str(saved)]
 for key,value in parent['arguments'].items():
- if key in ('library','output','resume','t') or value is None:continue
+ if key in ('library','fast_library','output','resume','t') or value is None:continue
  if isinstance(value,bool):
   if value:cmd+=['--'+key.replace('_','-')]
   continue

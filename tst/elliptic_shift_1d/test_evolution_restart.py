@@ -4,13 +4,14 @@ import argparse,json,subprocess,sys
 from pathlib import Path
 import numpy as np
 
-p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--output',type=Path,required=True)
+p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library');p.add_argument('--output',type=Path,required=True)
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 dt=.05/63.5;driver=Path(__file__).with_name('evolve.py')
 common=[sys.executable,str(driver),'--library',a.library,'--backend','spherical-g1',
     '--n','64','--scalar','--lapse-restoring','1','--scri-sat','4',
     '--regularity-sat','8','--origin-ko','.5','--perturbation','noise',
     '--perturbation-amplitude','1e-12']
+if a.fast_library:common+=['--fast-library',a.fast_library]
 for name,steps,resume in [('full',40,None),('first',20,None),('resumed',40,'first')]:
     command=common+['--t',str(steps*dt),'--output',str(a.output/name)]
     if resume:command+=['--resume',str(a.output/resume/'checkpoint.npz')]

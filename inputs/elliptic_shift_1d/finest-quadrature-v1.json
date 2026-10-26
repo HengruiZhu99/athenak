@@ -1,0 +1,36 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.001,
+    "report_dt": 0.1,
+    "n": 1024,
+    "t": 1,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "raw-q7",
+      "arguments": {
+        "quadrature_width": 7
+      }
+    },
+    {
+      "name": "raw-q9",
+      "arguments": {
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "raw-q11",
+      "arguments": {
+        "quadrature_width": 11
+      }
+    }
+  ],
+  "scope": "Fixed-CFL spatial and finite-amplitude study; independent time/quadrature controls. acceptance.json unchanged."
+}

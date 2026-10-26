@@ -86,7 +86,12 @@ class Evolution:
         parity=PARITY.copy() if q.shape[1]==8 else np.r_[PARITY,1,1]
         if getattr(self.args,'origin_variables',False):parity[5]=1
         dS,_=self.op.derivatives(S,parity)
-        if self.args.endpoint in ('raw-lhopital','compatible-trace'):
+        if self.args.endpoint=='analytic-g1':
+            import scri_limits
+            derivative,_=scri_limits.derivatives(self.geometry_state[-1],self.geometry_first[-1],self.geometry_second[-1],
+                self.shift_deviation[-1],self.args.kappa1,self.args.kappa2,self.args.theta=='appendix-c',self.args.slicing,self.args.lapse_restoring)
+            result[-1]=R[-1];result[-1,:8]-=derivative
+        elif self.args.endpoint in ('raw-lhopital','compatible-trace'):
             result[-1]=R[-1]-dS[-1] # Omega'(1)=-1; full combined numerator.
         else:
             # Reconstruct the regular quotient p in S=Omega*p. This discretizes
@@ -94,7 +99,7 @@ class Evolution:
             # Keep the independently evaluated S(scri) for compatibility tests;
             # never reset a field or a constraint to force it to vanish.
             result[-1]=R[-1]+self.scri_quotient_weights @ (S[-self.args.width:-1]/self.omega[-self.args.width:-1,None])
-        self.raw_endpoint=R[-1]-dS[-1]
+        self.raw_endpoint=result[-1].copy()
         if self.args.endpoint=='compatible-trace':
             # Tangent evolution of analytically required regularity traces.
             # Initial data must satisfy them; no post-step field reset occurs.
@@ -108,6 +113,13 @@ class Evolution:
         # phase. It damps boundary incompatibility without resetting any field.
         result[-1]+=self.args.scri_sat/self.h*S[-1]
         result[-1]-=self.args.regularity_sat/self.h*self.regularity
+        if getattr(self.args,'gauge_corner_sat',0.):
+            import scri_limits
+            correction,_=scri_limits.corner_correction(self.geometry_state[-1],self.geometry_first[-1],
+                self.geometry_second[-1],R[-1,:8],self.shift_deviation[-1],self.h,self.args.gauge_corner_sat,
+                1/self.op.d1[-1,-2],kappa1=self.args.kappa1,kappa2=self.args.kappa2,
+                appendix_c=self.args.theta=='appendix-c',slicing=self.args.slicing,restoring=self.args.lapse_restoring)
+            result[-2,[0,3]]+=correction
         if self.args.origin_ko:
             # KO6 on regular spherical tensor coefficients, with a fixed
             # C5 taper to zero at r0. No scri/constraint values are reset.
@@ -185,7 +197,8 @@ class CoupledEvolution(Evolution):
         # Use the same stage solve, including its analytically small deviation.
         v=self.shift_deviation
         wave,info=scalar_rhs.rhs(self.op,geom,d,fields,df,ddf,beta,v,
-            self.args.kappa1,self.args.kappa2,self.args.theta=='appendix-c',geometry_second=dd,origin_beta_derivative=self.origin_shift_slope)
+            self.args.kappa1,self.args.kappa2,self.args.theta=='appendix-c',geometry_second=dd,origin_beta_derivative=self.origin_shift_slope,
+            analytic_endpoint=self.args.endpoint=='analytic-g1')
         self.scalar_info=info;self.scalar_phi=phi;self.scalar_phir=phir;self.scalar_normal=normal
         self.scalar_scri_rate=wave[-1,0]
         self.regularity=np.r_[self.regularity,0.,0.]
@@ -205,13 +218,16 @@ class CoupledEvolution(Evolution):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--origin-grid',action='store_true')
-    p.add_argument('--perturbation',choices=['none','constraint','noise'],default='none')
+    p.add_argument('--fast-library',help='Optional audited compiled g=1 RK4 engine')
+    p.add_argument('--gauge-corner-sat',type=float,default=0.)
+    p.add_argument('--perturbation',choices=['none','constraint','noise','noise-balanced'],default='none')
     p.add_argument('--perturbation-amplitude',type=float,default=1e-8)
     p.add_argument('--seed',type=int,default=7419)
     p.add_argument('--origin-variables',action='store_true')
     p.add_argument('--scalar',action='store_true')
     p.add_argument('--scalar-amplitude',type=float,default=.01)
     p.add_argument('--initial-tolerance',type=float,default=1e-10)
+    p.add_argument('--initial-precision',choices=['float','decimal'],default='float')
     p.add_argument('--origin-ko',type=float,default=0.)
     p.add_argument('--origin-ko-radius',type=float,default=.4)
     p.add_argument('--backend',choices=['native','spherical-g1'],default='native')
@@ -226,35 +242,51 @@ def main():
     p.add_argument('--eta',type=float,default=0.);p.add_argument('--slicing',type=float,default=1.)
     p.add_argument('--theta',choices=['appendix-c','repository'],default='appendix-c')
     p.add_argument('--width',type=int,choices=[5,7,9],default=7)
-    p.add_argument('--endpoint',choices=['raw-lhopital','quotient-extrapolation','compatible-trace'],default='raw-lhopital')
+    p.add_argument('--endpoint',choices=['raw-lhopital','analytic-g1','quotient-extrapolation','compatible-trace'],default='raw-lhopital')
     p.add_argument('--regularity-sat',type=float,default=0.)
     p.add_argument('--scri-sat',type=float,default=0.)
     p.add_argument('--report-dt',type=float,default=.1);p.add_argument('--resume',type=Path)
     args=p.parse_args()
-    numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude]
+    numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude,args.gauge_corner_sat]
     if not all(np.isfinite(x) for x in numeric):raise ValueError('Nonfinite input')
     if (args.n<16 or args.cfl<=0 or args.t<0 or args.pulse_width<=0 or not 0<=args.center<1
         or args.report_dt<=0 or args.origin_ko<0 or not 0<args.origin_ko_radius<=.75
         or args.kappa1<0 or args.eta<0 or args.slicing<0 or args.lapse_restoring<0
-        or args.initial_tolerance<=0):raise ValueError('Invalid input')
+        or args.initial_tolerance<=0 or args.gauge_corner_sat<0):raise ValueError('Invalid input')
     if args.origin_grid and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Actual-origin grid uses the analytic g=1 limits with unscaled fields')
+    if args.endpoint=='analytic-g1' and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Analytic endpoint requires unscaled g=1')
+    if args.gauge_corner_sat and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Gauge corner penalty requires unscaled g=1')
+    if args.fast_library and (args.backend!='spherical-g1' or args.origin_variables or args.endpoint not in ('raw-lhopital','analytic-g1')):
+        raise ValueError('Compiled engine requires unscaled g=1 and a supported endpoint')
     args.output.mkdir(parents=True,exist_ok=False)
     root=Path(__file__).resolve().parents[2]
     # Bind all actual header dependencies, adapter and Python implementation.
     module_names=['evolve.py','numerics.py','elliptic.py','kernel.py']
     if args.backend=='spherical-g1':module_names+=['g1_rhs.py']
     if args.scalar:module_names+=['scalar_rhs.py','scalar_initial_data.py']
+    if args.fast_library:module_names+=['fast.py','fast_integrator.cpp']
+    if args.endpoint=='analytic-g1' or args.gauge_corner_sat:module_names+=['scri_limits.py']
     source=[*sorted((root/'src/z4c/hyperboloidal').glob('*.hpp')),
             *[Path(__file__).with_name(name) for name in module_names],
             Path(__file__).with_name('spherical_api.cpp')]
     binding={'source_sha256':{str(f.relative_to(root)):sha(f) for f in source},
              'executable_sha256':sha(args.library)}
+    if args.fast_library:binding['fast_executable_sha256']=sha(args.fast_library)
     manifest={'arguments':{k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()},
         'command':sys.argv,'platform':platform.platform(),'python':sys.version,'numpy':np.__version__,
         'binding':binding,'checkpoint_parent':None,'status':'running','method':'actual-scri free-Z4c regular-center prototype; coupled scalar optional',
         'resource_authorization':'2026-10-25 user: given the code will be run on 1 spatial dimension, just run the tests locally'}
     if args.scalar and args.backend!='spherical-g1':raise ValueError('Coupled scalar currently requires spherical-g1 backend')
     ev=CoupledEvolution(args) if args.scalar else Evolution(args)
+    # Freeze before initialization too: a failed Newton solve is an experiment.
+    snapshot=args.output/'frozen-source';snapshot.mkdir()
+    for f in source:
+        destination=snapshot/f.relative_to(root);destination.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(f,destination)
+        if sha(destination)!=binding['source_sha256'][str(f.relative_to(root))]:raise RuntimeError('Source changed during packaging')
+    (snapshot/'runtime').mkdir();shutil.copy2(args.library,snapshot/'runtime'/Path(args.library).name)
+    if args.fast_library:shutil.copy2(args.fast_library,snapshot/'runtime'/Path(args.fast_library).name)
+    manifest['status']='initializing';(args.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     q=np.zeros((args.n,10 if args.scalar else 8));t=0.;step=0
     # Smooth compact pulse in r^2, exact regular parity, support strictly inside scri.
     x=(ev.r**2-args.center**2)/(2*args.center*args.pulse_width+args.pulse_width**2)
@@ -266,52 +298,72 @@ def main():
     if args.scalar and not args.resume:
         from scalar_initial_data import solve_data
         initial_grid=ev.r if args.origin_grid else np.r_[0.,ev.r]
-        initial=solve_data(len(initial_grid)-1,args.scalar_amplitude,args.initial_tolerance,grid=initial_grid)
+        initial=solve_data(len(initial_grid)-1,args.scalar_amplitude,args.initial_tolerance,grid=initial_grid,precision=args.initial_precision)
         use=slice(None) if args.origin_grid else slice(1,None)
-        if not initial['converged']:raise RuntimeError('Initial-data Newton tolerance not achieved; preserve/diagnose before evolution')
+        manifest['scalar_initial_data']={'amplitude':args.scalar_amplitude,'regular_residual':float(initial['residual']),
+            'rounded_double_residual':initial['rounded_double_residual'],'arithmetic':args.initial_precision,
+            'Newton_history':initial['iterations'],'Bondi_mass':float(8*initial['w'][-1]),'normal_physical_scalar':'n_bar(phi)=0'}
+        if not initial['converged']:
+            failure={'type':'InitialDataConvergenceFailure','message':'Requested Newton tolerance not achieved','time':0.}
+            manifest.update(status='initial-data-failed',failure=failure)
+            (args.output/'failure.json').write_text(json.dumps(failure,indent=2)+'\n')
+            (args.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+            np.savez(args.output/'failed-initial-data.npz',r=initial_grid,w=initial['w'],phi=initial['phi'])
+            print(json.dumps(failure));return 1
         O=ev.omega;w=initial['w'][use];psi=initial['psi'][use]
         q[:,0]=np.expm1(-4*np.log1p(O**3*w))
         phi=initial['phi'][use]
         q[:-1,8]=phi[:-1]/(O[:-1]*np.sqrt(1+q[:-1,0]));q[-1,8]=0.
         q[:-1,9]=q[:-1,8]/O[:-1];q[-1,9]=0.
-        manifest['scalar_initial_data']={'amplitude':args.scalar_amplitude,'regular_residual':float(initial['residual']),'Newton_history':initial['iterations'],'Bondi_mass':float(8*w[-1]),'normal_physical_scalar':'n_bar(phi)=0'}
     if args.perturbation!='none' and not args.resume:
         # Compact support strictly inside scri; independent free constraint
         # errors obey center tensor parity. No differential constraint solve.
         rng=np.random.default_rng(args.seed);x=ev.r/.7;envelope=np.zeros_like(x)
         inside=x<1;envelope[inside]=np.exp(1-1/(1-x[inside]**2))
         for field,power in [(0,0),(2,2),(3,0),(4,0),(5,1)]:
-            if args.perturbation=='noise':profile=rng.uniform(-1,1,args.n)
+            if args.perturbation in ('noise','noise-balanced'):profile=rng.uniform(-1,1,args.n)
             else:profile=sum(rng.normal()*ev.r**(2*k) for k in range(4))
-            q[:,field]+=args.perturbation_amplitude*ev.r**power*envelope*profile
+            scale=ev.h**(2 if field==0 else 1) if args.perturbation=='noise-balanced' else 1.
+            q[:,field]+=args.perturbation_amplitude*scale*ev.r**power*envelope*profile
     if args.resume:
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('n','cfl','kappa1','kappa2','eta','slicing','theta','width','endpoint','scri_sat','regularity_sat','lapse_restoring','backend','quadrature_width','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed'):
+            for key in ('n','cfl','kappa1','kappa2','eta','slicing','theta','width','endpoint','scri_sat','regularity_sat','lapse_restoring','backend','quadrature_width','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
         manifest['checkpoint_parent']={'path':str(args.resume.resolve()),'sha256':sha(args.resume)}
-    # Preserve exact runnable sources and the matching compiled reference library.
-    snapshot=args.output/'frozen-source';snapshot.mkdir()
-    for f in source:
-        destination=snapshot/f.relative_to(root);destination.parent.mkdir(parents=True,exist_ok=True)
-        shutil.copy2(f,destination)
-        if sha(destination)!=binding['source_sha256'][str(f.relative_to(root))]:raise RuntimeError('Source changed during packaging')
-    (snapshot/'runtime').mkdir();shutil.copy2(args.library,snapshot/'runtime'/Path(args.library).name)
     radiated_energy=float(old.get('radiated_energy',0.)) if args.resume else 0.
+    manifest['status']='running'
     (args.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     start=time.perf_counter();failure=None;history=[];next_report=t
     # Constant CFL until the final landing; resume reproduces aligned timesteps.
     dt=args.cfl*ev.h
+    compiled=None
+    if args.fast_library:
+        from fast import FastEngine
+        compiled=FastEngine(ev,q.shape[1],args.fast_library)
     try:
         with (args.output/'history.jsonl').open('w') as log:
             while True:
                 if t>=next_report-1e-12 or t>=args.t-1e-12:
-                    row,b,c=ev.report(q,t);row['radiated_energy']=radiated_energy;history.append(row);log.write(json.dumps(row)+'\n');log.flush()
+                    row,b,c=ev.report(q,t);row['radiated_energy']=radiated_energy
+                    if compiled:
+                        calls,seconds=compiled.stats();row['elliptic_calls']+=calls;row['elliptic_seconds']+=seconds
+                        row['all_RK_stages']=compiled.diagnostics()
+                    history.append(row);log.write(json.dumps(row)+'\n');log.flush()
                     np.savez(args.output/f'profile-{len(history):04d}.npz',r=ev.r,q=q,q_physical=np.c_[ev.geometry_state,q[:,8:]],beta=b,diagnostic=c,t=t)
                     next_report+=args.report_dt
                 if t>=args.t-1e-12:break
+                if compiled:
+                    available=int(np.floor((args.t-t)/dt+1e-12))
+                    count=max(1,min(4096,available,int(np.ceil((min(next_report,args.t)-t-1e-12)/dt))))
+                    h=dt if available>=1 else args.t-t
+                    done,radiated_energy,failed=compiled.advance(q,count,h,radiated_energy)
+                    for _ in range(done):t+=h
+                    step+=done
+                    if failed:raise FloatingPointError('Compiled stage rejected gauge/positivity/finiteness')
+                    continue
                 h=dt if args.t-t>=dt*(1-1e-12) else args.t-t
                 k1=ev.rhs(q);flux1=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k2=ev.rhs(q+h*k1/2);flux2=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
@@ -324,6 +376,9 @@ def main():
         failure={'type':type(e).__name__,'message':str(e),'time':t,'step':step}
         (args.output/'failure.json').write_text(json.dumps(failure,indent=2)+'\n')
     finally:
+        if compiled:
+            calls,seconds=compiled.stats();ev.calls+=calls;ev.solve_seconds+=seconds
+            manifest['all_RK_stages']=compiled.diagnostics();manifest['compiled_rk_seconds']=compiled.advance_seconds;compiled.close()
         manifest.update(status='failed' if failure else 'finished',time=t,steps=step,
             runtime_seconds=time.perf_counter()-start,rhs_seconds=ev.rhs_seconds,radiated_energy=radiated_energy,
             elliptic_seconds=ev.solve_seconds,elliptic_calls=ev.calls,failure=failure)

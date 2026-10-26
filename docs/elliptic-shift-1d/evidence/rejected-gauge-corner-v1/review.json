@@ -1,0 +1,769 @@
+{
+  "scope": "Component gates and experiment records only. Convergence, physical extraction, durations and remaining experiments require separate assessment.",
+  "suite": "general",
+  "records": [
+    {
+      "name": "corner0",
+      "status": "finished",
+      "time": 0.999999999999625,
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "build-elliptic-shift-1d/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "library": "build-elliptic-shift-1d/libspherical_z4c.dylib",
+        "output": "output/elliptic-shift-1d/compiled-gauge-corner-v1/corner0",
+        "n": 512,
+        "t": 1.0,
+        "cfl": 0.025,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "lapse_restoring": 1.0,
+        "eta": 0.0,
+        "slicing": 1.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "d67d03d63d125a5e928f36a2301cd1a54b522e03a0b82b4adaf1be1b40636216",
+          "tst/elliptic_shift_1d/numerics.py": "8feb2a56e9ef93d95d8d459adbc0dc721295cc021a7d34c848342046d3aa18f7",
+          "tst/elliptic_shift_1d/elliptic.py": "b0d6e26341da46b261f2b67fb12406aca75410937ef48195595b70d88503c1f7",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/g1_rhs.py": "d315178fa6bf45609e628f00b8a6fd5c31cd147c3352ed7f119d54d3f3053d92",
+          "tst/elliptic_shift_1d/fast.py": "505a33210e965cf9f3c0d3a017965a861eeb55b0e2acc6f22581cc009b7200af",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "0af7dc8a587c34f7d68eced6592f2eec6d3fe2fcda8fa765d0458ee65bc8f46b",
+          "tst/elliptic_shift_1d/scri_limits.py": "a8d88509ea0bcaa53681a33a8a40a16aa7215be8f3f788cf75781c069b8e73d6",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "fb2e1ca5d2d9a28906cbbeb720f92d82a5ac1f6b89e439154636878ae5ea953e"
+      },
+      "manifest_sha256": "4f6ea1a4dfba378f7a664226cac74d0937d47138bdc4f00a234348849beaa8c1",
+      "all_RK_stages": {
+        "max_scri_pole": 1.0242336234728144e-05,
+        "max_lapse_pole": 8.820362765829705e-09,
+        "max_regularity_trace": 3.4209156710186817e-06,
+        "min_chi": 0.9433140905836898,
+        "min_alpha": 0.28778271700533964,
+        "max_H_rms": 1.2957645817931071e-06,
+        "max_M_rms": 1.9055971231653172e-06,
+        "max_Theta_rms": 1.1915295875997011e-09,
+        "max_Z_rms": 1.3157318196416331e-07,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0
+      },
+      "failure": null,
+      "gates": {
+        "scri_pole": {
+          "maximum": 1.0242336234728144e-05,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_lapse_pole": {
+          "maximum": 8.820362765829705e-09,
+          "tolerance": 1e-07,
+          "pass_gate": true
+        },
+        "scri_clock": {
+          "maximum": 0.0,
+          "tolerance": 1e-13,
+          "pass_gate": true
+        },
+        "scri_null": {
+          "maximum": 2.220446049250313e-16,
+          "tolerance": 1e-12,
+          "pass_gate": true
+        },
+        "positive_chi": {
+          "minimum": 0.9433140905836898,
+          "pass_gate": true
+        },
+        "positive_alpha": {
+          "minimum": 0.28778271700533964,
+          "pass_gate": true
+        }
+      },
+      "diagnostic_coverage": "all RK stages plus reports",
+      "complete_component_gates": false
+    },
+    {
+      "name": "corner1",
+      "status": "failed",
+      "time": 0.5715542521994281,
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "build-elliptic-shift-1d/libspherical_fast.dylib",
+        "gauge_corner_sat": 1.0,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "library": "build-elliptic-shift-1d/libspherical_z4c.dylib",
+        "output": "output/elliptic-shift-1d/compiled-gauge-corner-v1/corner1",
+        "n": 512,
+        "t": 1.0,
+        "cfl": 0.025,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "lapse_restoring": 1.0,
+        "eta": 0.0,
+        "slicing": 1.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "d67d03d63d125a5e928f36a2301cd1a54b522e03a0b82b4adaf1be1b40636216",
+          "tst/elliptic_shift_1d/numerics.py": "8feb2a56e9ef93d95d8d459adbc0dc721295cc021a7d34c848342046d3aa18f7",
+          "tst/elliptic_shift_1d/elliptic.py": "b0d6e26341da46b261f2b67fb12406aca75410937ef48195595b70d88503c1f7",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/g1_rhs.py": "d315178fa6bf45609e628f00b8a6fd5c31cd147c3352ed7f119d54d3f3053d92",
+          "tst/elliptic_shift_1d/fast.py": "505a33210e965cf9f3c0d3a017965a861eeb55b0e2acc6f22581cc009b7200af",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "0af7dc8a587c34f7d68eced6592f2eec6d3fe2fcda8fa765d0458ee65bc8f46b",
+          "tst/elliptic_shift_1d/scri_limits.py": "a8d88509ea0bcaa53681a33a8a40a16aa7215be8f3f788cf75781c069b8e73d6",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "fb2e1ca5d2d9a28906cbbeb720f92d82a5ac1f6b89e439154636878ae5ea953e"
+      },
+      "manifest_sha256": "0e13e2643ac71eaaf7c89d9eb1fe3fe7ae789b005b434c8697ab87ca524d685a",
+      "all_RK_stages": {
+        "max_scri_pole": 19512.952147843716,
+        "max_lapse_pole": 1.2875206428405153,
+        "max_regularity_trace": 10005.177888663438,
+        "min_chi": -0.0221289981470969,
+        "min_alpha": 0.28778271700533964,
+        "max_H_rms": 0.7740341653268995,
+        "max_M_rms": 635.1765049693037,
+        "max_Theta_rms": 0.06453803908500909,
+        "max_Z_rms": 383.7151047898326,
+        "max_scri_null": 4.440892098500626e-16,
+        "max_scri_clock": 0.0
+      },
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "Compiled stage rejected gauge/positivity/finiteness",
+        "time": 0.5715542521994281,
+        "step": 11694
+      },
+      "gates": {
+        "scri_pole": {
+          "maximum": 19512.952147843716,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_lapse_pole": {
+          "maximum": 1.2875206428405153,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_clock": {
+          "maximum": 0.0,
+          "tolerance": 1e-13,
+          "pass_gate": true
+        },
+        "scri_null": {
+          "maximum": 4.440892098500626e-16,
+          "tolerance": 1e-12,
+          "pass_gate": true
+        },
+        "positive_chi": {
+          "minimum": -0.0221289981470969,
+          "pass_gate": false
+        },
+        "positive_alpha": {
+          "minimum": 0.28778271700533964,
+          "pass_gate": true
+        }
+      },
+      "diagnostic_coverage": "all RK stages plus reports",
+      "complete_component_gates": false
+    },
+    {
+      "name": "corner2",
+      "status": "failed",
+      "time": 0.45698924731189794,
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "build-elliptic-shift-1d/libspherical_fast.dylib",
+        "gauge_corner_sat": 2.0,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "library": "build-elliptic-shift-1d/libspherical_z4c.dylib",
+        "output": "output/elliptic-shift-1d/compiled-gauge-corner-v1/corner2",
+        "n": 512,
+        "t": 1.0,
+        "cfl": 0.025,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "lapse_restoring": 1.0,
+        "eta": 0.0,
+        "slicing": 1.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "d67d03d63d125a5e928f36a2301cd1a54b522e03a0b82b4adaf1be1b40636216",
+          "tst/elliptic_shift_1d/numerics.py": "8feb2a56e9ef93d95d8d459adbc0dc721295cc021a7d34c848342046d3aa18f7",
+          "tst/elliptic_shift_1d/elliptic.py": "b0d6e26341da46b261f2b67fb12406aca75410937ef48195595b70d88503c1f7",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/g1_rhs.py": "d315178fa6bf45609e628f00b8a6fd5c31cd147c3352ed7f119d54d3f3053d92",
+          "tst/elliptic_shift_1d/fast.py": "505a33210e965cf9f3c0d3a017965a861eeb55b0e2acc6f22581cc009b7200af",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "0af7dc8a587c34f7d68eced6592f2eec6d3fe2fcda8fa765d0458ee65bc8f46b",
+          "tst/elliptic_shift_1d/scri_limits.py": "a8d88509ea0bcaa53681a33a8a40a16aa7215be8f3f788cf75781c069b8e73d6",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "fb2e1ca5d2d9a28906cbbeb720f92d82a5ac1f6b89e439154636878ae5ea953e"
+      },
+      "manifest_sha256": "7a813f12e975bfb28efd6de15ee067132235fa2f89b760b0e0409d56b8357664",
+      "all_RK_stages": {
+        "max_scri_pole": 3219.2919996413343,
+        "max_lapse_pole": 0.6703415815387803,
+        "max_regularity_trace": 400.8928829860025,
+        "min_chi": -0.00039767165801918303,
+        "min_alpha": 0.28778271700533964,
+        "max_H_rms": 47.77594887177107,
+        "max_M_rms": 7065.55568488286,
+        "max_Theta_rms": 0.05835844553540665,
+        "max_Z_rms": 13.55520675201705,
+        "max_scri_null": 4.440892098500626e-16,
+        "max_scri_clock": 0.0
+      },
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "Compiled stage rejected gauge/positivity/finiteness",
+        "time": 0.45698924731189794,
+        "step": 9350
+      },
+      "gates": {
+        "scri_pole": {
+          "maximum": 3219.2919996413343,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_lapse_pole": {
+          "maximum": 0.6703415815387803,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_clock": {
+          "maximum": 0.0,
+          "tolerance": 1e-13,
+          "pass_gate": true
+        },
+        "scri_null": {
+          "maximum": 4.440892098500626e-16,
+          "tolerance": 1e-12,
+          "pass_gate": true
+        },
+        "positive_chi": {
+          "minimum": -0.00039767165801918303,
+          "pass_gate": false
+        },
+        "positive_alpha": {
+          "minimum": 0.28778271700533964,
+          "pass_gate": true
+        }
+      },
+      "diagnostic_coverage": "all RK stages plus reports",
+      "complete_component_gates": false
+    },
+    {
+      "name": "corner4",
+      "status": "failed",
+      "time": 0.42184750733144033,
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "build-elliptic-shift-1d/libspherical_fast.dylib",
+        "gauge_corner_sat": 4.0,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "library": "build-elliptic-shift-1d/libspherical_z4c.dylib",
+        "output": "output/elliptic-shift-1d/compiled-gauge-corner-v1/corner4",
+        "n": 512,
+        "t": 1.0,
+        "cfl": 0.025,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "lapse_restoring": 1.0,
+        "eta": 0.0,
+        "slicing": 1.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "d67d03d63d125a5e928f36a2301cd1a54b522e03a0b82b4adaf1be1b40636216",
+          "tst/elliptic_shift_1d/numerics.py": "8feb2a56e9ef93d95d8d459adbc0dc721295cc021a7d34c848342046d3aa18f7",
+          "tst/elliptic_shift_1d/elliptic.py": "b0d6e26341da46b261f2b67fb12406aca75410937ef48195595b70d88503c1f7",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/g1_rhs.py": "d315178fa6bf45609e628f00b8a6fd5c31cd147c3352ed7f119d54d3f3053d92",
+          "tst/elliptic_shift_1d/fast.py": "505a33210e965cf9f3c0d3a017965a861eeb55b0e2acc6f22581cc009b7200af",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "0af7dc8a587c34f7d68eced6592f2eec6d3fe2fcda8fa765d0458ee65bc8f46b",
+          "tst/elliptic_shift_1d/scri_limits.py": "a8d88509ea0bcaa53681a33a8a40a16aa7215be8f3f788cf75781c069b8e73d6",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "fb2e1ca5d2d9a28906cbbeb720f92d82a5ac1f6b89e439154636878ae5ea953e"
+      },
+      "manifest_sha256": "bf53799c9a5c715e9f053f4b60a4d7d87255b80e49f5f6a68482be80f6088b30",
+      "all_RK_stages": {
+        "max_scri_pole": 3450.953537829452,
+        "max_lapse_pole": 1.271667727260846,
+        "max_regularity_trace": 1160.003013823593,
+        "min_chi": -0.01752076854586182,
+        "min_alpha": 0.28778271700533964,
+        "max_H_rms": 8.420106991752705,
+        "max_M_rms": 1504.6519872110262,
+        "max_Theta_rms": 0.0831578909641609,
+        "max_Z_rms": 29.960892703578622,
+        "max_scri_null": 4.440892098500626e-16,
+        "max_scri_clock": 0.0
+      },
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "Compiled stage rejected gauge/positivity/finiteness",
+        "time": 0.42184750733144033,
+        "step": 8631
+      },
+      "gates": {
+        "scri_pole": {
+          "maximum": 3450.953537829452,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_lapse_pole": {
+          "maximum": 1.271667727260846,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_clock": {
+          "maximum": 0.0,
+          "tolerance": 1e-13,
+          "pass_gate": true
+        },
+        "scri_null": {
+          "maximum": 4.440892098500626e-16,
+          "tolerance": 1e-12,
+          "pass_gate": true
+        },
+        "positive_chi": {
+          "minimum": -0.01752076854586182,
+          "pass_gate": false
+        },
+        "positive_alpha": {
+          "minimum": 0.28778271700533964,
+          "pass_gate": true
+        }
+      },
+      "diagnostic_coverage": "all RK stages plus reports",
+      "complete_component_gates": false
+    },
+    {
+      "name": "corner8",
+      "status": "failed",
+      "time": 0.3569892473118753,
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "build-elliptic-shift-1d/libspherical_fast.dylib",
+        "gauge_corner_sat": 8.0,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "library": "build-elliptic-shift-1d/libspherical_z4c.dylib",
+        "output": "output/elliptic-shift-1d/compiled-gauge-corner-v1/corner8",
+        "n": 512,
+        "t": 1.0,
+        "cfl": 0.025,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "lapse_restoring": 1.0,
+        "eta": 0.0,
+        "slicing": 1.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "d67d03d63d125a5e928f36a2301cd1a54b522e03a0b82b4adaf1be1b40636216",
+          "tst/elliptic_shift_1d/numerics.py": "8feb2a56e9ef93d95d8d459adbc0dc721295cc021a7d34c848342046d3aa18f7",
+          "tst/elliptic_shift_1d/elliptic.py": "b0d6e26341da46b261f2b67fb12406aca75410937ef48195595b70d88503c1f7",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/g1_rhs.py": "d315178fa6bf45609e628f00b8a6fd5c31cd147c3352ed7f119d54d3f3053d92",
+          "tst/elliptic_shift_1d/fast.py": "505a33210e965cf9f3c0d3a017965a861eeb55b0e2acc6f22581cc009b7200af",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "0af7dc8a587c34f7d68eced6592f2eec6d3fe2fcda8fa765d0458ee65bc8f46b",
+          "tst/elliptic_shift_1d/scri_limits.py": "a8d88509ea0bcaa53681a33a8a40a16aa7215be8f3f788cf75781c069b8e73d6",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "fb2e1ca5d2d9a28906cbbeb720f92d82a5ac1f6b89e439154636878ae5ea953e"
+      },
+      "manifest_sha256": "7313bbe845929bd2656636dcead17fcc1b109589c9d98e878e75349497323bd3",
+      "all_RK_stages": {
+        "max_scri_pole": 14323.548764401261,
+        "max_lapse_pole": 3.040729867860375,
+        "max_regularity_trace": 7240.6520194841105,
+        "min_chi": -33.74118297713569,
+        "min_alpha": 0.3143285553684315,
+        "max_H_rms": 2.0683486720514743,
+        "max_M_rms": 790.7983590591483,
+        "max_Theta_rms": 0.13572721204839147,
+        "max_Z_rms": 31.81321502860104,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0
+      },
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "Compiled stage rejected gauge/positivity/finiteness",
+        "time": 0.3569892473118753,
+        "step": 7304
+      },
+      "gates": {
+        "scri_pole": {
+          "maximum": 14323.548764401261,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_lapse_pole": {
+          "maximum": 3.040729867860375,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_clock": {
+          "maximum": 0.0,
+          "tolerance": 1e-13,
+          "pass_gate": true
+        },
+        "scri_null": {
+          "maximum": 2.220446049250313e-16,
+          "tolerance": 1e-12,
+          "pass_gate": true
+        },
+        "positive_chi": {
+          "minimum": -33.74118297713569,
+          "pass_gate": false
+        },
+        "positive_alpha": {
+          "minimum": 0.3143285553684315,
+          "pass_gate": true
+        }
+      },
+      "diagnostic_coverage": "all RK stages plus reports",
+      "complete_component_gates": false
+    },
+    {
+      "name": "raw-corner4",
+      "status": "failed",
+      "time": 0.4346041055719124,
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "build-elliptic-shift-1d/libspherical_fast.dylib",
+        "gauge_corner_sat": 4.0,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "library": "build-elliptic-shift-1d/libspherical_z4c.dylib",
+        "output": "output/elliptic-shift-1d/compiled-gauge-corner-v1/raw-corner4",
+        "n": 512,
+        "t": 1.0,
+        "cfl": 0.025,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "lapse_restoring": 1.0,
+        "eta": 0.0,
+        "slicing": 1.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "endpoint": "raw-lhopital",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "d67d03d63d125a5e928f36a2301cd1a54b522e03a0b82b4adaf1be1b40636216",
+          "tst/elliptic_shift_1d/numerics.py": "8feb2a56e9ef93d95d8d459adbc0dc721295cc021a7d34c848342046d3aa18f7",
+          "tst/elliptic_shift_1d/elliptic.py": "b0d6e26341da46b261f2b67fb12406aca75410937ef48195595b70d88503c1f7",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/g1_rhs.py": "d315178fa6bf45609e628f00b8a6fd5c31cd147c3352ed7f119d54d3f3053d92",
+          "tst/elliptic_shift_1d/fast.py": "505a33210e965cf9f3c0d3a017965a861eeb55b0e2acc6f22581cc009b7200af",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "0af7dc8a587c34f7d68eced6592f2eec6d3fe2fcda8fa765d0458ee65bc8f46b",
+          "tst/elliptic_shift_1d/scri_limits.py": "a8d88509ea0bcaa53681a33a8a40a16aa7215be8f3f788cf75781c069b8e73d6",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "fb2e1ca5d2d9a28906cbbeb720f92d82a5ac1f6b89e439154636878ae5ea953e"
+      },
+      "manifest_sha256": "65bc84639e1ae65dca1a076623b5280ade28b16207775df971a4b871a1455a50",
+      "all_RK_stages": {
+        "max_scri_pole": 8887.150839062193,
+        "max_lapse_pole": 2.7710075728119987,
+        "max_regularity_trace": 2955.524121539749,
+        "min_chi": -0.36648485330713365,
+        "min_alpha": 0.28778271700533964,
+        "max_H_rms": 1.2683216384601683,
+        "max_M_rms": 509.0003231614618,
+        "max_Theta_rms": 0.10007874876049515,
+        "max_Z_rms": 73.45372728781243,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0
+      },
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "Compiled stage rejected gauge/positivity/finiteness",
+        "time": 0.4346041055719124,
+        "step": 8892
+      },
+      "gates": {
+        "scri_pole": {
+          "maximum": 8887.150839062193,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_lapse_pole": {
+          "maximum": 2.7710075728119987,
+          "tolerance": 1e-07,
+          "pass_gate": false
+        },
+        "scri_clock": {
+          "maximum": 0.0,
+          "tolerance": 1e-13,
+          "pass_gate": true
+        },
+        "scri_null": {
+          "maximum": 2.220446049250313e-16,
+          "tolerance": 1e-12,
+          "pass_gate": true
+        },
+        "positive_chi": {
+          "minimum": -0.36648485330713365,
+          "pass_gate": false
+        },
+        "positive_alpha": {
+          "minimum": 0.28778271700533964,
+          "pass_gate": true
+        }
+      },
+      "diagnostic_coverage": "all RK stages plus reports",
+      "complete_component_gates": false
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.001,
+    "report_dt": 1,
+    "t": 100,
+    "cfl": 0.1
+  },
+  "cases": [
+    {
+      "name": "n256-t100",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "n512-t100",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024-t100",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ],
+  "scope": "Intermediate100-unit long-drift control; original published10000-unit targets remain outstanding"
+}

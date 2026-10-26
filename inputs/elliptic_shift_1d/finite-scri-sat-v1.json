@@ -1,0 +1,58 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.1,
+    "report_dt": 0.02,
+    "n": 512,
+    "t": 1,
+    "cfl": 0.025
+  },
+  "cases": [
+    {
+      "name": "sigma4-tau8",
+      "arguments": {
+        "scri_sat": 4,
+        "regularity_sat": 8
+      }
+    },
+    {
+      "name": "sigma4-tau16",
+      "arguments": {
+        "scri_sat": 4,
+        "regularity_sat": 16
+      }
+    },
+    {
+      "name": "sigma4-tau32",
+      "arguments": {
+        "scri_sat": 4,
+        "regularity_sat": 32
+      }
+    },
+    {
+      "name": "sigma8-tau16",
+      "arguments": {
+        "scri_sat": 8,
+        "regularity_sat": 16
+      }
+    },
+    {
+      "name": "sigma8-tau32",
+      "arguments": {
+        "scri_sat": 8,
+        "regularity_sat": 32
+      }
+    },
+    {
+      "name": "sigma16-tau32",
+      "arguments": {
+        "scri_sat": 16,
+        "regularity_sat": 32
+      }
+    }
+  ],
+  "scope": "Weak regularity/pole penalty sensitivity; all continuum vanishing traces remain free evolved fields"
+}

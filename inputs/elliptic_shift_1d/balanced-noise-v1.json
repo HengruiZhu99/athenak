@@ -1,0 +1,40 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "perturbation": "noise-balanced",
+    "perturbation_amplitude": 1e-05,
+    "report_dt": 0.1,
+    "t": 6,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "n128",
+      "arguments": {
+        "n": 128
+      }
+    },
+    {
+      "name": "n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "pulse": "published-gaussian",
+    "amplitude": 0.001,
+    "report_dt": 0.1,
+    "n": 256,
+    "t": 3,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "ko1-q7",
+      "arguments": {
+        "origin_ko": 1,
+        "quadrature_width": 7
+      }
+    },
+    {
+      "name": "ko1-q9",
+      "arguments": {
+        "origin_ko": 1,
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "ko1-q11",
+      "arguments": {
+        "origin_ko": 1,
+        "quadrature_width": 11
+      }
+    },
+    {
+      "name": "ko2-q7",
+      "arguments": {
+        "origin_ko": 2,
+        "quadrature_width": 7
+      }
+    },
+    {
+      "name": "ko2-q9",
+      "arguments": {
+        "origin_ko": 2,
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "ko2-q11",
+      "arguments": {
+        "origin_ko": 2,
+        "quadrature_width": 11
+      }
+    },
+    {
+      "name": "ko2-q5",
+      "arguments": {
+        "origin_ko": 2,
+        "quadrature_width": 5
+      }
+    }
+  ],
+  "scope": "Diagnose quadrature-dependent central growth; no gates relaxed"
+}

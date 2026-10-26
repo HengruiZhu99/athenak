@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 project(elliptic_shift_1d LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+add_library(spherical_fast SHARED fast_integrator.cpp)
+target_compile_options(spherical_fast PRIVATE -Wall -Wextra -ffp-contract=off)
 get_filename_component(HYP_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
 add_subdirectory("${HYP_ROOT}/kokkos" kokkos)
 add_library(spherical_z4c SHARED spherical_api.cpp)
@@ -24,3 +26,10 @@ add_test(NAME scalar_nonlinear_geometry_and_analytic_wave
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_scalar_rhs.py --library $<TARGET_FILE:spherical_z4c>)
 add_test(NAME analytic_regular_center_limits
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_origin_limits.py)
+add_test(NAME compiled_spherical_engine_agreement
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_fast.py
+    --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast>)
+add_test(NAME initial_data_arithmetic_isolation
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_initial_precision.py)
+add_test(NAME analytic_scri_numerator_derivatives
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_scri_limits.py --library $<TARGET_FILE:spherical_z4c>)

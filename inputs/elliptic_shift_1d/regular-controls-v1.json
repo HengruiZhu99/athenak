@@ -1,0 +1,96 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.001,
+    "report_dt": 0.1,
+    "n": 256,
+    "t": 1,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "spatial-n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "spatial-n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "spatial-n1024",
+      "arguments": {
+        "n": 1024
+      }
+    },
+    {
+      "name": "time-cfl0.1",
+      "arguments": {
+        "cfl": 0.1
+      }
+    },
+    {
+      "name": "time-cfl0.025",
+      "arguments": {
+        "cfl": 0.025
+      }
+    },
+    {
+      "name": "time-cfl0.0125",
+      "arguments": {
+        "cfl": 0.0125
+      }
+    },
+    {
+      "name": "quadrature-q5",
+      "arguments": {
+        "quadrature_width": 5
+      }
+    },
+    {
+      "name": "quadrature-q9",
+      "arguments": {
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "quadrature-q11",
+      "arguments": {
+        "quadrature_width": 11
+      }
+    },
+    {
+      "name": "nonlinear-n256",
+      "arguments": {
+        "n": 256,
+        "t": 6,
+        "amplitude": 0.1
+      }
+    },
+    {
+      "name": "nonlinear-n512",
+      "arguments": {
+        "n": 512,
+        "t": 6,
+        "amplitude": 0.1
+      }
+    },
+    {
+      "name": "nonlinear-n1024",
+      "arguments": {
+        "n": 1024,
+        "t": 6,
+        "amplitude": 0.1
+      }
+    }
+  ],
+  "scope": "Fixed-CFL spatial and finite-amplitude study; independent time/quadrature controls. acceptance.json unchanged."
+}

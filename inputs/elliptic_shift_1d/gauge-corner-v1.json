@@ -1,0 +1,56 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "endpoint": "analytic-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.1,
+    "report_dt": 0.02,
+    "n": 512,
+    "t": 1,
+    "cfl": 0.025
+  },
+  "cases": [
+    {
+      "name": "corner0",
+      "arguments": {
+        "gauge_corner_sat": 0
+      }
+    },
+    {
+      "name": "corner1",
+      "arguments": {
+        "gauge_corner_sat": 1
+      }
+    },
+    {
+      "name": "corner2",
+      "arguments": {
+        "gauge_corner_sat": 2
+      }
+    },
+    {
+      "name": "corner4",
+      "arguments": {
+        "gauge_corner_sat": 4
+      }
+    },
+    {
+      "name": "corner8",
+      "arguments": {
+        "gauge_corner_sat": 8
+      }
+    },
+    {
+      "name": "raw-corner4",
+      "arguments": {
+        "gauge_corner_sat": 4,
+        "endpoint": "raw-lhopital"
+      }
+    }
+  ],
+  "scope": "Derived weak first-normal-jet gauge compatibility penalty; no differential constraint projection; all stages monitored"
+}

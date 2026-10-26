@@ -1,0 +1,67 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "endpoint": "analytic-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.001,
+    "report_dt": 0.1,
+    "n": 256,
+    "t": 3,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "quadrature-q5",
+      "arguments": {
+        "quadrature_width": 5
+      }
+    },
+    {
+      "name": "quadrature-q7",
+      "arguments": {
+        "quadrature_width": 7
+      }
+    },
+    {
+      "name": "quadrature-q9",
+      "arguments": {
+        "quadrature_width": 9
+      }
+    },
+    {
+      "name": "quadrature-q11",
+      "arguments": {
+        "quadrature_width": 11
+      }
+    },
+    {
+      "name": "nonlinear-n256",
+      "arguments": {
+        "n": 256,
+        "t": 6,
+        "amplitude": 0.1
+      }
+    },
+    {
+      "name": "nonlinear-n512",
+      "arguments": {
+        "n": 512,
+        "t": 6,
+        "amplitude": 0.1
+      }
+    },
+    {
+      "name": "nonlinear-n1024",
+      "arguments": {
+        "n": 1024,
+        "t": 6,
+        "amplitude": 0.1
+      }
+    }
+  ],
+  "scope": "Analytically differentiated combined g=1 pole numerators; raw sampled derivative controls retained"
+}

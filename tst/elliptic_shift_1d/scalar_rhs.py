@@ -37,7 +37,7 @@ def angular_ricci(r,q,d,beta,kappa1=4.,kappa2=-.99,appendix_c=True):
     return Ric
 
 
-def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,geometry_second=None,origin_beta_derivative=None):
+def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,geometry_second=None,origin_beta_derivative=None,analytic_endpoint=False):
     r=ops.r;O=(1-r*r)/2;A0=(1+r*r)/2
     c=q[:,0];chi=1+c;cp=d[:,0];Arr=q[:,2];T=q[:,4];lam=q[:,5];u=q[:,6]
     alpha=A0+u;alphap=r+d[:,6];K=q[:,3]-3+2*T;dk=q[:,3]+2*T
@@ -46,6 +46,9 @@ def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.9
     U=alpha*dk/3-u-r*v
     akr=np.empty_like(r);akr[:-1]=-1+alpha[:-1]*Arr[:-1]+U[:-1]/O[:-1]
     dU,_=ops.derivatives(U,1)
+    if analytic_endpoint:
+        dU[-1]=(alphap[-1]*dk[-1]/3+alpha[-1]*(d[-1,3]+2*d[-1,4])/3-d[-1,6]
+            -v[-1]-(v[-1]+1.5*alpha[-1]*Arr[-1]))
     akr[-1]=-1+alpha[-1]*Arr[-1]-dU[-1]
     # The exact 2D wave potential: 2m/(Omega^2 R^3)-Ricci_angular/Omega^2.
     chi_second0=0.;alpha_second0=0.

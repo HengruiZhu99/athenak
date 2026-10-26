@@ -13,4 +13,8 @@ for name,digest in m['binding']['source_sha256'].items():
 lib=Path(m['arguments']['library']);lib=lib if lib.is_absolute() else repo/lib
 if sha(lib)!=m['binding']['executable_sha256']:raise SystemExit('Library mismatch')
 (root/'runtime').mkdir();shutil.copy2(lib,root/'runtime'/lib.name)
+if m['arguments'].get('fast_library'):
+ fast=Path(m['arguments']['fast_library']);fast=fast if fast.is_absolute() else repo/fast
+ if sha(fast)!=m['binding']['fast_executable_sha256']:raise SystemExit('Compiled integration library mismatch')
+ shutil.copy2(fast,root/'runtime'/fast.name)
 (root/'source-binding.json').write_text(json.dumps(m['binding'],indent=2)+'\n');print(root)

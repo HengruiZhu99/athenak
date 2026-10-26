@@ -1,0 +1,233 @@
+// Compiled copy of the audited g=1 regular-center RHS. No fast-math,
+// constraint projection, equilibrium subtraction, or Omega floor.
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <vector>
+#include <stdexcept>
+#include <chrono>
+#include <limits>
+using Vec=std::vector<double>;
+struct Engine {
+  int n,nf,w,qw; double h; Vec r,d1,d2,qweights,params;
+  std::vector<int> index,qindex;
+  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage;
+  long calls=0; double solve_seconds=0;
+  std::array<double,12> diagnostics{};
+  Engine(int N,int F,int W,int QW,const double* rr,const int* ix,
+      const double* D1,const double* D2,const int* qi,const double* qwt,
+      const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
+      d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+(rr[0]==0?N-1:N)*QW),
+      params(p,p+11),index(ix,ix+N*W),qindex(qi,qi+(rr[0]==0?N-1:N)*QW) {
+    for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
+    for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
+    if(nf!=8&&nf!=10)throw std::runtime_error("invalid field count");
+    diagnostics[3]=diagnostics[4]=std::numeric_limits<double>::infinity();
+  }
+  int reflected(int k)const{return k<w?(r[0]==0?w-k:w-1-k):k-w;}
+  int parity(int f)const{return f==5?-1:1;}
+  void derivatives(const double* q) {
+    std::fill(d.begin(),d.end(),0);std::fill(dd.begin(),dd.end(),0);
+    for(int i=0;i<n;i++)for(int j=0;j<w;j++) {
+      int k=index[i*w+j],ii=reflected(k);
+      for(int f=0;f<nf;f++) {
+        double val=q[ii*nf+f]*(k<w?parity(f):1);
+        d[i*nf+f]+=d1[i*w+j]*val;dd[i*nf+f]+=d2[i*w+j]*val;
+      }
+    }
+    if(r[0]==0)for(int f=0;f<nf;f++) {
+      if(parity(f)>0)d[f]=0;else dd[f]=0;
+    }
+  }
+  double endpoint_derivative(const Vec& a,int f)const {
+    double sum=0;
+    for(int j=0;j<w;j++)sum+=d1[(n-1)*w+j]*a[reflected(index[(n-1)*w+j])*nf+f];
+    return sum;
+  }
+  double ratio(double a,int i,double limit=0)const{return r[i]>0?a/r[i]:limit;}
+  double rhs(const double* q,double* out) {
+    derivatives(q);calls++;
+    double kap=params[0],kap2=params[1],slicing=params[2],xi=params[3];
+    double sat=params[4],tau=params[5],ko=params[6],radius=params[7];
+    bool appendix=params[8]!=0;
+    auto solve_start=std::chrono::steady_clock::now();
+    for(int i=0;i<n;i++) {
+      double chi=1+q[i*nf],alpha=(1+r[i]*r[i])/2+q[i*nf+6];
+      diagnostics[3]=std::min(diagnostics[3],chi);diagnostics[4]=std::min(diagnostics[4],alpha);
+      if(q[i*nf+1]!=0||chi<=0||alpha<=0)
+        throw std::runtime_error("g=1 gauge or positivity violation");
+      z[i]=1.5*((1+r[i]*r[i])/2+q[i*nf+6])*ratio(q[i*nf+2],i);
+    }
+    Vec integral(n,0);double sum=0;int intervals=(r[0]==0?n-1:n);
+    for(int i=0;i<intervals;i++) {
+      double increment=0;
+      for(int j=0;j<qw;j++) {
+        int k=qindex[i*qw+j];double value=(r[0]==0?z[k]:(k==0?0:z[k-1]));
+        increment+=qweights[i*qw+j]*value;
+      }
+      sum+=increment;integral[r[0]==0?i+1:i]=sum;
+    }
+    int e=(n-1)*nf;double cS=q[e],uS=q[e+6],alphaS=(1+r.back()*r.back())/2+uS;
+    double outer=-(cS+(2*uS+uS*uS)*(1+cS))/(1+alphaS*std::sqrt(1+cS));
+    for(int i=0;i<n;i++) {
+      phase[i]=outer+integral[i]-integral.back();v[i]=r[i]*phase[i];beta[i]=-r[i]+v[i];
+      double alpha=(1+r[i]*r[i])/2+q[i*nf+6];
+      U[i]=alpha*(q[i*nf+3]+2*q[i*nf+4])/3-q[i*nf+6]-r[i]*v[i];
+    }
+    solve_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-solve_start).count();
+    double dU=0;for(int j=0;j<w;j++)dU+=d1[(n-1)*w+j]*U[reflected(index[(n-1)*w+j])];
+    double analytic_dU=(1+d[e+6])*(q[e+3]+2*q[e+4])/3+alphaS*(d[e+3]+2*d[e+4])/3
+        -d[e+6]-2*v.back()-1.5*alphaS*q[e+2];
+    if(params[9]!=0)dU=analytic_dU;
+    std::fill(R.begin(),R.end(),0);std::fill(S.begin(),S.end(),0);
+    std::array<double,4> normsum{};double volume=0;
+    for(int i=0;i<n;i++) {
+      int k=i*nf;double x=r[i],O=(1-x*x)/2,A0=(1+x*x)/2;
+      double c=q[k],chi=1+c,Ar=q[k+2],p=q[k+3]-3,T=q[k+4],lam=q[k+5],u=q[k+6];
+      double cp=d[k],cpp=dd[k],ap=d[k+2],pp=d[k+3],Tp=d[k+4],lp=d[k+5],up=d[k+6],upp=dd[k+6];
+      double alpha=A0+u,alphap=x+up,K=p+2*T,dk=q[k+3]+2*T,b=beta[i],vv=v[i],vr=phase[i];
+      double ar=ratio(Ar,i),cr=ratio(cp,i,cpp),ur=ratio(up,i,upp),lr=ratio(lam,i,lp);
+      double ww=b*x/alpha,divb=-3+3*vr+1.5*alpha*Ar;
+      R[k]=b*cp-2*chi*vr-alpha*chi*Ar;
+      S[k]=2*chi/3*(alpha*dk-3*u-3*x*vv);
+      R[k+2]=b*ap-2*chi/3*(upp-ur)-2*cp*alphap/3+alpha/3*(cpp-cr)-alpha*cp*cp/(6*chi)
+        +2*alpha*chi/3*(lp-lr)+2*alpha*cp*lam/3;
+      S[k+2]=-4*alpha*x/3*(cp+chi*lam)+alpha*Ar*(K-ww);
+      R[k+3]=b*pp+1.5*O*alpha*Ar*Ar-O*chi*(upp+2*ur)+.5*O*cp*alphap
+        -3*chi*x*up-6*A0*c+3*u-3*c*u+.5*alpha*x*cp;
+      S[k+3]=alpha*(dk*(K-3)/3-3*c*x*x+kap*(1-kap2)*T);
+      R[k+4]=b*Tp+alpha*x*cp+O*alpha/2*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar+chi*(lp+2*lr));
+      S[k+4]=alpha*(dk*(K-3)/3-3*c-kap*(2+kap2)*T);
+      if(!appendix)S[k+4]-=3*alpha*ww*T;
+      R[k+5]=b*lp+2*lam*divb/3+2*alpha*(ap+3*ar-1.5*Ar*cp/chi);
+      S[k+5]=-alpha*(2*K/3+kap)*lam-2*alpha/3*(2*pp+Tp)+4*alpha*Ar*x;
+      double F=alpha*alpha+4*slicing*O*O*alpha;
+      R[k+6]=b*up+vv*x;
+      S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-xi*(alpha+A0)*u;
+      double H=2*dk*(K-3)/3-6*c+2*O*x*cp+O*O*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar);
+      double M=O*(ap+3*ar-1.5*Ar*cp/chi)-2*(pp+2*Tp)/3+2*x*Ar;
+      if(nf==10) {
+        constexpr double pi=3.1415926535897932384626433832795;
+        double f=q[k+8],P=q[k+9],fp=d[k+8],Pp=d[k+9],fpp=dd[k+8];
+        double phir=std::sqrt(chi)*(O*fp+(-x+.5*O*cp/chi)*f);
+        double normal=std::sqrt(chi)*(O*P+(K/3-O*Ar/2)*f);
+        R[k+2]-=16*pi/3*alpha*chi*phir*phir;
+        R[k+3]+=8*pi*alpha*O*normal*normal;
+        R[k+4]-=4*pi*alpha*O*(normal*normal+chi*phir*phir);
+        R[k+5]+=16*pi*alpha*normal*phir;
+        H-=8*pi*O*O*(normal*normal+chi*phir*phir);M+=8*pi*O*normal*phir;
+        double ak=-1+alpha*Ar+(i==n-1?-dU:U[i]/O);
+        double N=dk*(K-3)/9-c+O*(-K*Ar/3+A0*cr)+O*O*(Ar*Ar/4-cp*cp/(4*chi));
+        double B=N-kap*(1+kap2)*T+2*O*x*chi*lam/3;
+        if(!appendix)B-=2*ww*T;
+        double V=i==n-1?0:B/(O*O)+chi*lr-cp*lam/3;
+        double br=-1+vr,mix=.5*alpha*cp+chi*alphap;
+        double mixlimit=.5*alpha*cpp+chi*(1+upp);
+        R[k+8]=b*fp+br*f+alpha*P;
+        R[k+9]=b*Pp+(br+ak)*P+alpha*chi*(fpp+2*ratio(fp,i,fpp))+mix*fp+(ratio(mix,i,mixlimit)-alpha*V)*f;
+      }
+      normsum[0]+=x*x*H*H;normsum[1]+=x*x*M*M;
+      normsum[2]+=x*x*T*T;normsum[3]+=x*x*lam*lam/4;volume+=x*x;
+    }
+    for(int f=0;f<4;f++)diagnostics[5+f]=std::max(diagnostics[5+f],std::sqrt(normsum[f]/volume));
+    for(int i=0;i<n-1;i++)for(int f=0;f<nf;f++)out[i*nf+f]=R[i*nf+f]+S[i*nf+f]/((1-r[i]*r[i])/2);
+    std::array<double,10> trace{};
+    trace[0]=q[e];trace[2]=q[e+2]+2*d[e]/3;trace[3]=q[e+3];trace[4]=q[e+4];trace[5]=q[e+5];
+    for(int f=0;f<6;f++) {
+      diagnostics[0]=std::max(diagnostics[0],std::abs(S[e+f]));
+      diagnostics[2]=std::max(diagnostics[2],std::abs(trace[f]));
+    }
+    diagnostics[1]=std::max(diagnostics[1],std::abs(S[e+6]));
+    diagnostics[9]=std::max(diagnostics[9],std::abs(1+cS-beta.back()*beta.back()/(alphaS*alphaS)));
+    diagnostics[10]=std::max(diagnostics[10],std::abs(uS));
+    std::array<double,10> ds{};
+    for(int f=0;f<nf;f++)ds[f]=endpoint_derivative(S,f);
+    auto sampled_ds=ds;
+    if(params[9]!=0||params[10]!=0) {
+      double c=q[e],chi=1+c,Ar=q[e+2],T=q[e+4],lam=q[e+5],u=q[e+6];
+      double cp=d[e],ap=d[e+2],pp=d[e+3],Tp=d[e+4],lp=d[e+5],up=d[e+6];
+      double alpha=1+u,alphap=1+up,K=q[e+3]-3+2*T,dk=q[e+3]+2*T,Kp=pp+2*Tp;
+      double vv=v.back(),vp=vv+1.5*alpha*Ar,b=-1+vv,bp=-1+vp,ww=b/alpha;
+      double wp=(bp+b)/alpha-ww*alphap/alpha;
+      ds[0]=2*(cp*U.back()+chi*analytic_dU);
+      ds[2]=-4./3*((alphap+alpha)*(cp+chi*lam)+alpha*(dd[e]+cp*lam+chi*lp))
+        +(alphap*Ar+alpha*ap)*(K-ww)+alpha*Ar*(Kp-wp);
+      double Y=dk*(K-3)/3-3*c+kap*(1-kap2)*T;
+      double Yp=2*K*Kp/3-3*cp-6*c+kap*(1-kap2)*Tp;
+      ds[3]=alphap*Y+alpha*Yp;
+      double Z=dk*(K-3)/3-3*c-kap*(2+kap2)*T;
+      double Zp=2*K*Kp/3-3*cp-kap*(2+kap2)*Tp;
+      if(!appendix){Z-=3*ww*T;Zp-=3*(wp*T+ww*Tp);}
+      ds[4]=alphap*Z+alpha*Zp;
+      ds[5]=-alphap*(2*K/3+kap)*lam-alpha*(2*Kp*lam/3+(2*K/3+kap)*lp)
+        -2./3*(alphap*(2*pp+Tp)+alpha*(2*dd[e+3]+dd[e+4]))+4*(alphap*Ar+alpha*ap+alpha*Ar);
+      ds[6]=-2*alpha*alphap*q[e+3]-alpha*alpha*pp+(vv-u+u*vv)
+        +(vv+vp-u-up+up*vv+u*vp)-xi*((alphap+1)*u+(alpha+1)*up);
+    }
+    if(params[10]!=0) {
+      double rawchi=R[e]-ds[0],rawclock=R[e+6]-ds[6];
+      double Jchi=beta.back()-2*U.back(),Jp=-2*(1+cS)*alphaS/3;
+      double prate=-params[10]/h*rawclock/(alphaS*alphaS);
+      double crate=(-params[10]/h*rawchi-Jp*prate)/Jchi;
+      double lift=1/d1[(n-1)*w+w-2];
+      out[(n-2)*nf]+=crate*lift;out[(n-2)*nf+3]+=prate*lift;
+    }
+    if(params[9]==0)ds=sampled_ds;
+    for(int f=0;f<nf;f++)out[e+f]=R[e+f]-ds[f]+sat/h*S[e+f]-tau/h*trace[f];
+    if(ko!=0) {
+      std::copy(q,q+n*nf,z.begin());
+      for(int i=0;i<n;i++)if(r[i]>0) {z[i*nf+2]/=r[i]*r[i];z[i*nf+5]/=r[i];}
+      if(r[0]==0){z[2]=dd[2]/2;z[5]=d[5];}
+      constexpr int coefficients[7]={1,-6,15,-20,15,-6,1};
+      for(int i=0;i<n;i++) {
+        double taper=std::pow(std::max(1-(r[i]/radius)*(r[i]/radius),0.),6);
+        if(taper==0)continue;
+        for(int f=0;f<nf;f++) {
+          if(f==1||f==7)continue;
+          double val=0;for(int j=0;j<7;j++) {
+            int ii=i+j-3;double sign=1;
+            if(ii<0){ii=r[0]==0?-ii:-ii-1;if(f==5)sign=1;else sign=parity(f);}
+            if(ii<n)val+=coefficients[j]*sign*z[ii*nf+f];
+          }
+          if(f==2)val*=r[i]*r[i];if(f==5)val*=r[i];
+          out[i*nf+f]+=ko*taper*val/(64*h);
+        }
+      }
+    }
+    out[e+6]=0;for(int i=0;i<n;i++)out[i*nf+7]=0;
+    for(int k=0;k<n*nf;k++)if(!std::isfinite(out[k]))throw std::runtime_error("nonfinite RHS");
+    return nf==10?4*3.14159265358979323846*R[e+8]*R[e+8]:0;
+  }
+};
+extern "C" {
+void* spherical_fast_create(int n,int nf,int w,int qw,const double* r,const int* ix,
+    const double* d1,const double* d2,const int* qi,const double* qwt,const double* p) {
+  try{return new Engine(n,nf,w,qw,r,ix,d1,d2,qi,qwt,p);}catch(...){return nullptr;}
+}
+void spherical_fast_destroy(void* handle){delete static_cast<Engine*>(handle);}
+void spherical_fast_stats(void* handle,double* stats) {
+  auto& e=*static_cast<Engine*>(handle);stats[0]=e.calls;stats[1]=e.solve_seconds;
+  for(int i=0;i<12;i++)stats[i+2]=e.diagnostics[i];
+}
+int spherical_fast_rhs(void* handle,const double* q,double* result,double* flux) {
+  try{*flux=static_cast<Engine*>(handle)->rhs(q,result);return 0;}catch(...){return -1;}
+}
+// q is committed only after a complete RK4 step, just as in the Python driver.
+int spherical_fast_advance(void* handle,double* q,int steps,double dt,double* energy) {
+  auto& e=*static_cast<Engine*>(handle);int size=e.n*e.nf,done=0;
+  try {
+    for(;done<steps;done++) {
+      double f1=e.rhs(q,e.k1.data());
+      for(int j=0;j<size;j++)e.stage[j]=q[j]+dt*e.k1[j]/2;
+      double f2=e.rhs(e.stage.data(),e.k2.data());
+      for(int j=0;j<size;j++)e.stage[j]=q[j]+dt*e.k2[j]/2;
+      double f3=e.rhs(e.stage.data(),e.k3.data());
+      for(int j=0;j<size;j++)e.stage[j]=q[j]+dt*e.k3[j];
+      double f4=e.rhs(e.stage.data(),e.k4.data());
+      for(int j=0;j<size;j++)q[j]+=dt*(e.k1[j]+2*e.k2[j]+2*e.k3[j]+e.k4[j])/6;
+      *energy+=dt*(f1+2*f2+2*f3+f4)/6;
+    }
+  }catch(...){return -done-1;}
+  return done;
+}
+}

@@ -28,7 +28,7 @@ def operators(n,width=7,grid=None):
     return r,D1,D2
 
 
-def solve_data(n,amplitude=.058,tolerance=1e-11,grid=None):
+def solve_data(n,amplitude=.058,tolerance=1e-11,grid=None,precision='float'):
     start=time.perf_counter();r,D1,D2=operators(n,grid=grid);O=(1-r*r)/2;A=(1+r*r)/2
     phi=amplitude*np.exp(-(r*r-.25**2)**2/(4*.1**4))
     phi_r=-r*(r*r-.25**2)/.1**4*phi
@@ -44,7 +44,43 @@ def solve_data(n,amplitude=.058,tolerance=1e-11,grid=None):
         linear=O*ddz+coef*dz-15*z;linear[0]=3*O[0]*ddz[0]-15*z[0]
         return (linear+source+np.pi*O*phi_r**2*z-7.5*O**2*z**2
                 -7.5*O**5*z**3-3.75*O**8*z**4-.75*O**11*z**5)
-    for step in range(30):
+    if precision not in ('float','decimal'):raise ValueError('Unknown initial-data arithmetic')
+    if precision=='decimal':
+        # High-precision residual and iterate; double Jacobian solves supply
+        # Newton corrections (iterative refinement), never loosen the tolerance.
+        from decimal import Decimal,localcontext
+        with localcontext() as context:
+            context.prec=50;D=Decimal.from_float
+            nodes=[np.flatnonzero((D1[i]!=0)|(D2[i]!=0)) for i in range(n+1)]
+            rows=[[(int(j),D(float(D1[i,j])),D(float(D2[i,j]))) for j in nodes[i]] for i in range(n+1)]
+            od=[D(float(x)) for x in O];cd=[D(float(x)) for x in coef];sd=[D(float(x)) for x in source]
+            matter=[D(float(x)) for x in np.pi*O*phi_r**2]
+            def precise_residual(z):
+                values=[]
+                for i,row in enumerate(rows):
+                    dz=sum((a*(z[j]-z[i]) for j,a,b in row),Decimal(0))
+                    ddz=sum((b*(z[j]-z[i]) for j,a,b in row),Decimal(0))
+                    x=z[i];o=od[i]
+                    linear=(3*o*ddz if i==0 else o*ddz+cd[i]*dz)-15*x
+                    values.append(linear+sd[i]+matter[i]*x-Decimal('7.5')*o**2*x**2
+                        -Decimal('7.5')*o**5*x**3-Decimal('3.75')*o**8*x**4-Decimal('.75')*o**11*x**5)
+                return values
+            wd=[Decimal(0)]*(n+1)
+            for step in range(30):
+                E=precise_residual(wd);norm=max(abs(x) for x in E)
+                iterations.append({'iteration':step,'max_regular_residual':float(norm),'arithmetic':'50-digit Decimal residual/iterate, double Jacobian correction'})
+                if norm<D(float(tolerance)):converged=True;break
+                w=np.array([float(x) for x in wd])
+                J=L+np.diag(np.pi*O*phi_r**2-15*O**2*w-22.5*O**5*w**2-15*O**8*w**3-3.75*O**11*w**4)
+                delta=np.linalg.solve(J,-np.array([float(x) for x in E]));fraction=1.
+                while fraction>2**-16:
+                    trial=[x+D(float(fraction*y)) for x,y in zip(wd,delta)]
+                    if min(1+o**3*x for o,x in zip(od,trial))>0 and max(abs(x) for x in precise_residual(trial))<norm:break
+                    fraction/=2
+                else:break
+                wd=trial;iterations[-1]['accepted_fraction']=fraction
+            w=np.array([float(x) for x in wd]);precise_norm=float(max(abs(x) for x in precise_residual(wd)))
+    for step in range(30 if precision=='float' else 0):
         E=residual(w);norm=float(max(abs(E)));iterations.append({'iteration':step,'max_regular_residual':norm})
         if norm<tolerance:converged=True;break
         J=L+np.diag(np.pi*O*phi_r**2-15*O**2*w-22.5*O**5*w**2-15*O**8*w**3-3.75*O**11*w**4)
@@ -63,7 +99,9 @@ def solve_data(n,amplitude=.058,tolerance=1e-11,grid=None):
     # elliptic equation are included in the BVP and extraction integrals.
     return dict(n=n,r=r,omega=O,alpha_ref=A,w=w,psi=psi,chi=chi,q=q,d=d,dd=dd,
         phi=phi,phi_r=phi_r,D1=D1,D2=D2,iterations=iterations,converged=converged,
-        residual=max(abs(residual(w))),runtime_seconds=time.perf_counter()-start)
+        residual=max(abs(residual(w))) if precision=='float' else precise_norm,
+        rounded_double_residual=float(max(abs(residual(w)))),precision=precision,
+        runtime_seconds=time.perf_counter()-start)
 
 
 def main():
