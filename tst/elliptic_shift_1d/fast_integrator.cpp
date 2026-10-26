@@ -23,7 +23,7 @@ struct Engine {
       const double* D1,const double* D2,const int* qi,const double* qwt,
       const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
       d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
-      params(p,p+23),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      params(p,p+24),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
       aleft(al,al+N*W),aright(ar,ar+N*W),awleft(alw,alw+N*W),awright(arw,arw+N*W) {
     for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
@@ -41,7 +41,7 @@ struct Engine {
       int k=index[i*w+j],ii=reflected(k);
       for(int f=0;f<nf;f++) {
         double val=q[ii*nf+f]*(k<w?parity(f):1);
-        if(puncture)val-=q[i*nf+f];
+        if(puncture||params[23]!=0)val-=q[i*nf+f];
         d[i*nf+f]+=d1[i*w+j]*val;dd[i*nf+f]+=d2[i*w+j]*val;
       }
     }
@@ -51,7 +51,7 @@ struct Engine {
   }
   double endpoint_derivative(const Vec& a,int f)const {
     double sum=0;
-    for(int j=0;j<w;j++)sum+=d1[(n-1)*w+j]*(a[reflected(index[(n-1)*w+j])*nf+f]-(puncture?a[(n-1)*nf+f]:0));
+    for(int j=0;j<w;j++)sum+=d1[(n-1)*w+j]*(a[reflected(index[(n-1)*w+j])*nf+f]-((puncture||params[23]!=0)?a[(n-1)*nf+f]:0));
     return sum;
   }
   double ratio(double a,int i,double limit=0)const{return r[i]>0?a/r[i]:limit;}
@@ -154,7 +154,7 @@ struct Engine {
       diagnostics[11]=std::max(diagnostics[11],std::max(-beta[0]+alpha*std::sqrt(chi),-beta[0]+std::sqrt(F*chi)));
       if(params[14]!=0&&diagnostics[11]>0)throw std::runtime_error("puncture inner characteristic became incoming");
     }
-    double dU=0;for(int j=0;j<w;j++)dU+=d1[(n-1)*w+j]*U[reflected(index[(n-1)*w+j])];
+    double dU=0;for(int j=0;j<w;j++)dU+=d1[(n-1)*w+j]*(U[reflected(index[(n-1)*w+j])]-((puncture||params[23]!=0)?U.back():0));
     double analytic_dU=(1+d[e+6])*(q[e+3]+2*q[e+4])/3+alphaS*(d[e+3]+2*d[e+4])/3
         -d[e+6]-2*v.back()-1.5*alphaS*q[e+2];
     if(params[9]!=0)dU=analytic_dU;
@@ -232,7 +232,7 @@ struct Engine {
       for(int f=0;f<nf;f++)if(f!=7) {
         double adv=0;for(int j=0;j<w;j++) {
           int k=ai[i*w+j],ii=reflected(k);double value=q[ii*nf+f]*(k<w?parity(f):1);
-          if(puncture)value-=q[i*nf+f];adv+=aw[i*w+j]*value;
+          if(puncture||params[23]!=0)value-=q[i*nf+f];adv+=aw[i*w+j]*value;
         }
         R[i*nf+f]+=beta[i]*(adv-d[i*nf+f]);
       }
@@ -322,7 +322,7 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 24;}
+int spherical_fast_abi(){return 25;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);

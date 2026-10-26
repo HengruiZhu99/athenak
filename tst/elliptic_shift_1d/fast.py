@@ -21,7 +21,7 @@ class FastEngine:
             raise ValueError('Compiled engine implements unscaled g=1 and raw/analytic endpoints')
         self.lib=C.CDLL(str(library));self.calls=0;self.advance_seconds=0.
         self.lib.spherical_fast_abi.restype=C.c_int
-        if self.lib.spherical_fast_abi()!=24:raise ValueError('Compiled engine ABI does not match this wrapper')
+        if self.lib.spherical_fast_abi()!=25:raise ValueError('Compiled engine ABI does not match this wrapper')
         self.lib.spherical_fast_last_error.argtypes=[C.c_void_p];self.lib.spherical_fast_last_error.restype=C.c_char_p
         self.failure_message=''
         fp=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')
@@ -35,7 +35,7 @@ class FastEngine:
         self.lib.spherical_fast_rhs.argtypes=[C.c_void_p,fp,fp,C.POINTER(C.c_double)]
         self.lib.spherical_fast_advance.argtypes=[C.c_void_p,fp,C.c_int,C.c_double,C.POINTER(C.c_double)]
         params=np.array([a.kappa1,a.kappa2,a.slicing,a.lapse_restoring,a.scri_sat,
-            a.regularity_sat,a.origin_ko,a.origin_ko_radius,a.theta=='appendix-c',a.endpoint=='analytic-g1',getattr(a,'gauge_corner_sat',0.),getattr(a,'advection','centered')=='upwind',getattr(a,'puncture',False),getattr(a,'lapse_restoring_form','symmetric')=='multiplicative',getattr(a,'initial_data',None) in ('wormhole','trumpet'),getattr(a,'damping_form','constant')=='reference-lapse',getattr(a,'metric_variable','deviation')=='log',getattr(a,'lapse_variable','deviation')=='log-reference',{'linear':0,'rational':1,'blended-log':2}[getattr(a,'slicing_family','linear')],getattr(a,'slicing_scale',.1),getattr(a,'elliptic_quadrature','prefix')=='inward',getattr(a,'lapse_background_source','reference')=='collapsed-inner',getattr(a,'lapse_restoring_profile','constant')=='physical-log'],dtype=float)
+            a.regularity_sat,a.origin_ko,a.origin_ko_radius,a.theta=='appendix-c',a.endpoint=='analytic-g1',getattr(a,'gauge_corner_sat',0.),getattr(a,'advection','centered')=='upwind',getattr(a,'puncture',False),getattr(a,'lapse_restoring_form','symmetric')=='multiplicative',getattr(a,'initial_data',None) in ('wormhole','trumpet'),getattr(a,'damping_form','constant')=='reference-lapse',getattr(a,'metric_variable','deviation')=='log',getattr(a,'lapse_variable','deviation')=='log-reference',{'linear':0,'rational':1,'blended-log':2}[getattr(a,'slicing_family','linear')],getattr(a,'slicing_scale',.1),getattr(a,'elliptic_quadrature','prefix')=='inward',getattr(a,'lapse_background_source','reference')=='collapsed-inner',getattr(a,'lapse_restoring_profile','constant')=='physical-log',getattr(a,'subtract_local',False)],dtype=float)
         self.handle=self.lib.spherical_fast_create(len(op.r),fields,op.width,len(op.qindex[0]),
             op.r,np.asarray(op.index,dtype=np.int32),op.d1,op.d2,
             np.asarray(op.qindex,dtype=np.int32),op.qweights,

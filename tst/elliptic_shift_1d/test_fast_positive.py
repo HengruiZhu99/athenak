@@ -14,6 +14,7 @@ for index,(origin,scalar,variables,endpoint,ko) in enumerate(product([False,True
         slicing=1.,lapse_restoring=1.,lapse_restoring_form='multiplicative' if index%3 else 'symmetric',
         damping_form='reference-lapse' if index%5 else 'constant',endpoint=endpoint,gauge_corner_sat=0.,advection='centered',
         scri_sat=4.,regularity_sat=8.,origin_ko=ko,origin_ko_radius=.4,metric_variable=variables[0],lapse_variable=variables[1])
+    opts.subtract_local=index%3!=0
     opts.elliptic_quadrature='inward' if index%2 else 'prefix'
     opts.elliptic_method='discrete-ode' if index%4==0 else 'quadrature'
     opts.elliptic_bias='right'

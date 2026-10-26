@@ -16,6 +16,7 @@ p.add_argument('--lapse-restoring-profile',choices=['constant','physical-log'],d
 p.add_argument('--lapse-background-source',choices=['reference','collapsed-inner'],default='reference')
 p.add_argument('--lapse-restoring-form',choices=['symmetric','multiplicative'],default='symmetric')
 p.add_argument('--positive-variables',action='store_true')
+p.add_argument('--subtract-local',action='store_true')
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 dt=.05/63.5;driver=Path(__file__).with_name('evolve.py')
 common=[sys.executable,str(driver),'--library',a.library,'--backend','spherical-g1',
@@ -43,6 +44,7 @@ if a.scenario=='trumpet-log':
 common+=['--elliptic-quadrature',a.elliptic_quadrature,'--elliptic-method',a.elliptic_method]
 common+=['--lapse-restoring-profile',a.lapse_restoring_profile,'--lapse-background-source',a.lapse_background_source]
 if a.scenario=='scalar-noise':common+=['--lapse-restoring-form',a.lapse_restoring_form]
+if a.subtract_local:common+=['--subtract-local']
 for name,steps,resume in [('full',40,None),('first',20,None),('resumed',40,'first')]:
     command=common+['--t',str(steps*dt),'--output',str(a.output/name)]
     if resume:command+=['--resume',str(a.output/resume/'checkpoint.npz')]

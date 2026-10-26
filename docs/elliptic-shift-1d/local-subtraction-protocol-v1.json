@@ -1,0 +1,7 @@
+{
+  "created_UTC": "2026-10-26T11:17:50.907558+00:00",
+  "scope": "Gauge arithmetic isolation plus separate exact-source higher-resolution wormhole check",
+  "controls": "gauge-local-subtraction-v1.json and wormhole-physical-log-refined-v1.json",
+  "acceptance": "Existing acceptance.json; no relaxation. Gauge comparison requires physical trajectories, accepted constraints, stage poles, nullness, clock, affinity and discrete solve residual. Wormhole requires full prefix and trumpet geometry, not solely survival.",
+  "precision": "All calculations binary64; ARM long double is also binary64. Subtraction enforces exact constant derivative nullspace without changing PDE or constraints."
+}

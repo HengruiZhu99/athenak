@@ -26,6 +26,8 @@ class BandedShift:
                 offset=physical-i+b
                 if not 0<=offset<2*b+1:raise ValueError('Derivative stencil exceeds shift bandwidth')
                 self.matrix[i,offset]+=self.scale*coefficient
+        if op.puncture or getattr(op,'subtract_local',False):
+            for i in range(n-1):self.matrix[i,b+self.skip]-=self.scale*np.sum(coefficients[i+self.skip])
         self.matrix[-1,b]=1.;self.lu=self.matrix.copy()
         for k in range(n):
             diagonal=self.lu[k,b]

@@ -82,3 +82,18 @@ peak difference from6.08e-8 to2.21e-10. The resulting unusually high ratio
 is not evidence of eighth-order accuracy. An N8192 check is running to test
 its asymptotic interpretation; exact-clock t6 continuations are also running.
 No final principal admission or full-goal completion is implied.
+
+## Selectable constant-nullspace arithmetic (API25)
+
+`--subtract-local` evaluates derivatives as sum_j D_ij(f_j-f_i),
+including transport and endpoint derivatives. It removes the floating-point
+row-sum acting on a constant. The shift matrix includes the identical diagonal
+correction at the derivative target, including the shifted centered nodal row.
+No PDE, field, differential constraint, boundary penalty or projection changes.
+The puncture path already used subtraction for bulk derivatives; its endpoint
+derivative now follows the same convention. Constants, even polynomials and
+independently assembled dense matrices are checked on half-cell, nodal and
+finite-cutoff grids with both shift biases. All39 tests pass, and a positive
+scalar/noise discrete-shift restart is bitwise reproducible. The predeclared
+local-subtraction-protocol-v1.json governs the running arithmetic comparisons.
+These algebraic tests do not establish that it cures evolved roundoff.

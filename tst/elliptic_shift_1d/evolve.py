@@ -22,7 +22,7 @@ class Evolution:
         self.args=args;inner=getattr(args,'inner_radius',0.)
         nodal=getattr(args,'origin_grid',False) or getattr(args,'puncture_chart',False) or inner>0
         self.r=np.linspace(inner,1,args.n) if nodal else (np.arange(args.n)+.5)/(args.n-.5)
-        self.h=(1-inner)/(args.n-1) if nodal else 1/(args.n-.5);self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width,puncture=getattr(args,'puncture',False),allow_puncture_node=getattr(args,'puncture_chart',False))
+        self.h=(1-inner)/(args.n-1) if nodal else 1/(args.n-.5);self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width,puncture=getattr(args,'puncture',False),allow_puncture_node=getattr(args,'puncture_chart',False),subtract_local=getattr(args,'subtract_local',False))
         if getattr(args,'radial_operator','fd')=='sbp63':
             from sbp import SBPOperators
             self.op=SBPOperators(self.r,args.width,args.quadrature_width)
@@ -403,6 +403,7 @@ def main():
     p.add_argument('--fast-library',help='Optional audited compiled g=1 RK4 engine')
     p.add_argument('--gauge-corner-sat',type=float,default=0.)
     p.add_argument('--advection',choices=['centered','upwind'],default='centered')
+    p.add_argument('--subtract-local',action='store_true')
     p.add_argument('--puncture',action='store_true')
     p.add_argument('--puncture-chart',action='store_true')
     p.add_argument('--puncture-ko',type=float,default=0.)
@@ -477,6 +478,7 @@ def main():
         raise ValueError('Positive-variable prototypes require g=1 centered evolution and their own representation')
     if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and args.origin_variables:
         raise ValueError('Combined positive and scaled-origin charts have not been implemented/audited')
+    if args.subtract_local and args.radial_operator!='fd':raise ValueError('Local subtraction currently requires FD operators')
     if args.radial_operator=='sbp63' and (not args.puncture or args.advection!='centered' or args.fast_library):
         raise ValueError('The SBP prototype requires a Python puncture evolution and centered transport')
     if args.puncture_boundary=='gauge-robin' and (not args.puncture or args.puncture_chart or args.radial_operator!='sbp63'):
@@ -603,7 +605,7 @@ def main():
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
+            for key in ('subtract_local','n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
             for key in ['scalar_initial_data','wormhole_initial_data','trumpet_initial_data']:

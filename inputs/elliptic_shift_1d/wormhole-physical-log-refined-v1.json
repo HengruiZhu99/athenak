@@ -1,0 +1,37 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 6,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 1,
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner"
+  },
+  "cases": [
+    {
+      "name": "n1025",
+      "arguments": {
+        "n": 1025
+      }
+    },
+    {
+      "name": "n2049",
+      "arguments": {
+        "n": 2049
+      }
+    }
+  ],
+  "scope": "Additional exact-source refinements of the failed physical-log wormhole study; combine with N513 only after full constraint, boundary, geometry and convergence assessment. No source/numerical/threshold modification. Frozen parent matrix source and native library used."
+}

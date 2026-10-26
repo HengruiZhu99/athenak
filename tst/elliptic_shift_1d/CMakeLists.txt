@@ -93,3 +93,6 @@ add_test(NAME physical_log_AF_coefficient_limits
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c> --lapse-restoring-profile physical-log --lapse-background-source collapsed-inner)
 add_test(NAME physical_log_finite_Khat_native_collapsed_limit
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_physical_log_source.py --library $<TARGET_FILE:spherical_z4c>)
+
+add_test(NAME local_subtraction_constant_nullspace_and_dense_shift
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_local_subtraction.py)

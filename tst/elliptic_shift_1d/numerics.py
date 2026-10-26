@@ -33,11 +33,12 @@ def weights(nodes, target, derivative=0, interval=None):
 
 
 class RadialOperators:
-    def __init__(self, r, width=7,quadrature_width=None,puncture=False,allow_puncture_node=False):
+    def __init__(self, r, width=7,quadrature_width=None,puncture=False,allow_puncture_node=False,subtract_local=False):
         self.r = np.asarray(r)
         self.width = width
         self.origin_on_grid=bool(r[0]==0)
         self.puncture=puncture
+        self.subtract_local=subtract_local
         if puncture and self.origin_on_grid and not allow_puncture_node:raise ValueError('A physical puncture is excluded; only an asymptotic coefficient chart may include it')
         if len(r) < width or not np.all(np.diff(r) > 0) or r[0] < 0:
             raise ValueError('Need increasing positive grid and enough points')
@@ -82,7 +83,7 @@ class RadialOperators:
         reflected=values[1:self.width+1][::-1] if self.origin_on_grid else values[:self.width][::-1]
         ext = np.concatenate([reflected*parity, values], axis=0)
         sample = ext[self.index]
-        if self.puncture:sample=sample-(values[:,None] if values.ndim==1 else values[:,None,:])
+        if self.puncture or self.subtract_local:sample=sample-(values[:,None] if values.ndim==1 else values[:,None,:])
         if values.ndim == 1:
             first=np.sum(self.d1*sample,axis=1);second=np.sum(self.d2*sample,axis=1)
             if self.origin_on_grid and not self.puncture:
@@ -112,7 +113,9 @@ class RadialOperators:
         return tails if self.origin_on_grid or self.puncture else tails[1:]
 
     def endpoint_first(self,values):
-        return self.d1[-1]@values[-self.width:]
+        sample=values[-self.width:]
+        if self.puncture or self.subtract_local:sample=sample-values[-1]
+        return self.d1[-1]@sample
 
     def advection_derivative(self,values,parity,beta):
         """One-point off-centered derivative for u_t=beta*u_r.
@@ -125,5 +128,5 @@ class RadialOperators:
         direction=np.where(beta<0,0,1);row=np.arange(len(self.r))
         indices=self.aindex[direction,row];coefficients=self.ad1[direction,row]
         sample=ext[indices]
-        if self.puncture:sample=sample-values[:,None,:]
+        if self.puncture or self.subtract_local:sample=sample-values[:,None,:]
         return np.einsum('ij,ijf->if',coefficients,sample)
