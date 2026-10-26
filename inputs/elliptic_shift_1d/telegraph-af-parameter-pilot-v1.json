@@ -1,0 +1,42 @@
+{
+  "common": {
+    "n": 513,
+    "mass": 0.3333333333333333,
+    "t": 6,
+    "tau": 0.02,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "inner_profile": "af-regular"
+  },
+  "cases": [
+    {
+      "name": "k005-width008",
+      "arguments": {
+        "kappa": 0.005,
+        "transition": 0.08
+      }
+    },
+    {
+      "name": "k020-width008",
+      "arguments": {
+        "kappa": 0.02,
+        "transition": 0.08
+      }
+    },
+    {
+      "name": "k001-width024",
+      "arguments": {
+        "kappa": 0.001,
+        "transition": 0.24
+      }
+    },
+    {
+      "name": "k005-width024",
+      "arguments": {
+        "kappa": 0.005,
+        "transition": 0.24
+      }
+    }
+  ]
+}

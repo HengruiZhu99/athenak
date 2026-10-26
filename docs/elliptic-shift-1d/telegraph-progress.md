@@ -28,9 +28,26 @@ This is not admission: full-trajectory field peak orders on these grids are only
 
 Saved assessments: `evidence/telegraph-front-pilot-v1` and `evidence/telegraph-front-convergence-v1`. Original simulations and source/executable hashes are under the corresponding `output/elliptic-shift-1d` directories.
 
-## Live follow-up at this checkpoint
+## Finer early-front result
 
-- `telegraph-fine-front-v1`: N4097, kappa=.001, tau=.02, full initial data through t=3.
-- `telegraph-long-v1`: exact-source checkpoint continuations of the three kappa=.001 grids through t=6, one at a time.
+The completed N1025/2049/4097 collar sequence through t=3 gives bulk/endpoint field peak orders 3.832/4.819. Finest accepted H RMS is 4.326997e-8 and H point maximum on r<.8 is 3.813122e-6. At t=2.5 the local front Hamiltonian maximum is 5.439811e-7, the sampled physical-lapse gradient is 8.343414, and inward log(J) minimum is -1.948491. These support convergence of the early smoothed front. They do not complete the goal: finest momentum RMS order is 2.389, connection-constraint RMS order is 3.415, and the scri pole maximum is 1.057454e-7, slightly above the unchanged 1e-7 threshold. Evidence: `evidence/telegraph-fine-front-v1`.
 
-Each dispatcher records PID, child PID, command and terminal status in its `launch.json`. Revalidate process handles before deciding whether to wait or restart. These runs are not presumed completed. The t=10 extension, independent dt/shift/KO controls, and parameter-robustness checks remain required. Do not mark the goal complete from the t=3 results.
+## Longer failure and second candidate
+
+Exact-source continuations of the original collar candidate reached t=6 at N513/1025/2049. Maximum accepted Hamiltonian RMS is .0617382/.00711459/.000523335 and the corresponding point maxima on r<.8 are 43.754/10.9438/2.07120. Bulk field peak order drops to 1.300. This candidate fails the declared test.
+
+The inward front traverses the inner coupling taper after t=3. The coupling then vanishes and the front steepens again. By t=6 the gradient maximum also reaches the first physical cell on the middle and fine grids. Thus taper loss and eventual coordinate underresolution both matter; removing the taper alone is not a demonstrated cure. Evidence with verified checkpoint ancestry is `evidence/telegraph-collar-long-v3`.
+
+The `af-regular` candidate removes only the inner taper. The derivation in `telegraph-formulation.md` shows that the added stored lapse rate vanishes quadratically at the AF endpoint, preserving its leading coefficient equation. Independent compiled/Python tests, nonzero-flux RK stages, both-profile CLI restarts and an analytic-factor lapse-gradient check pass. The middle grid's t=6 inward ray-map minimum changes from log(J)=-10.1769 to -8.62071, but its Hamiltonian point maximum is still 11.9187. Stronger ray separation alone does not establish restored Einstein accuracy. See `evidence/telegraph-characteristics-long-v2`.
+
+The characteristic plots distinguish measured ray compression from a continuum crossing claim. A local frozen damping rate cannot be used as a nonlinear acceptance threshold. The AF shift has leading behavior beta=b1*r: its inward advection can compress coordinates exponentially without a finite-time crossing. The saved front approaching the first physical cell requires spatial-resolution assessment before interpreting its endpoint behavior.
+
+## Diagnostic correction
+
+Direct finite differences of physical lapse gave a spurious nonzero endpoint derivative once the AF layer became underresolved. New trajectory plots differentiate the stored log lapse and the analytic AF factor, enforcing the exact finite-time alpha'(0)=0 without altering evolved data. An independent Jet derivative verifies the formula. Earlier plot versions remain preserved with supersession notes. Their field/constraint results are unaffected.
+
+## Work remaining
+
+The AF-regular N2049 run and a separately declared coarse parameter pilot are in progress. The pilot varies kappa at fixed support, and broadens the outer transition at fixed kappa; it cannot establish convergence. Its input and pre-run protocol are `telegraph-af-parameter-pilot-v1.json` and `telegraph-protocol-af-parameter-v1.json`.
+
+Each dispatcher records PID, child PID, command and terminal status in its `launch.json`. Revalidate those handles before waiting or restarting. The t=10 extension, independent dt/shift/KO controls, and parameter-robustness checks remain required. The driver now exposes independent quadrature and dissipation controls; making them available is not evidence that those experiments passed. Historical suspended jobs remain suspended. The goal remains active and incomplete.

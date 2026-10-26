@@ -16,3 +16,13 @@ The frozen radial lapse-trace-flux principal subsystem has speeds -beta and -bet
 Both characteristic families are advanced at every RK stage, using that stage's geometry and elliptic shift. The same piecewise-linear spatial interpolant supplies the ray speed and its derivative; log(J) obeys D_ray log(J)=partial_r c. Rays are injected on an exact time-lattice point and cease evolving after a domain exit. Ray positions and log(J), as well as their compensated accumulation state, are checkpointed. This eliminates coarse saved-time interpolation from the earlier diagnosis, although spatial interpolation and finite-grid regularization still require convergence checks.
 
 The core geometry implementation remains unchanged in fast_integrator.cpp. A separate library builds telegraph_integrator.cpp around it; the Python oracle independently evaluates the flux and stored-variable conversion. All constraint diagnostics are inherited unmodified and reported for accepted states and RK stages. The original scalar and puncture experiments are not reclassified by a telegrapher success.
+
+## AF-regular inner coupling (second candidate)
+
+The collar version loses its smoothing mechanism as the inward front enters the taper. In the corrected N1025 run its Hamiltonian peak moves from r=.0703 at t=3 to .0391 at 3.5, .0205 at 4, and .00684 at 6. The error grows while B becomes negligible. The collar was an initial simplification, not a mathematical requirement at the AF end.
+
+The `af-regular` variant instead sets w=1 throughout the inner region, retaining only the outer taper. No other gauge/source parameters change. At the AF end, chi=X0 r^4+O(r^5), alpha=a2 r^2+O(r^3), beta=b1 r+O(r^2), and u_r=(2a2-1)r+O(r^2). The auxiliary equation preserves B=b_B r+O(r^2), with
+
+  dot b_B = b1 b_B + [kappa(2a2-1)-b_B]/tau.
+
+Consequently the added conformal lapse rate is 3 X0 b_B r^4+O(r^5), and its stored logarithmic rate is (3 X0 b_B/a2)r^2+O(r^3). The leading AF lapse coefficient ODE is unchanged. This is an asymptotic derivation, not regular-center parity; the implementation continues to use one-sided puncture stencils. B(0)=0 is preserved by its own evolution equation. The additional characteristic speed is O(r^2), so it also vanishes at the endpoint. The independent Python/compiled tests exercise this variant with nonzero B and off-constraint fields. Its nonlinear behavior is still to be established.

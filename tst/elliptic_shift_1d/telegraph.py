@@ -12,12 +12,14 @@ from gauge import lapse_coefficient
 from numerics import puncture_dissipation
 
 
-def window(r,inner=.01,outer=.8,width=.08):
+def window(r,inner=.01,outer=.8,width=.08,inner_profile="collar"):
     if not 0<=inner<inner+width<outer-width<outer<1:raise ValueError('Invalid telegraph support')
     def ramp(x):
         y=np.clip(x,0,1);a=y**8;b=(1-y)**8
         return a/(a+b),8*y**7*(1-y)**7/(a+b)**2
+    if inner_profile not in ('collar','af-regular'):raise ValueError('Invalid inner coupling profile')
     left,dl=ramp((r-inner)/width);right,dr=ramp((outer-r)/width)
+    if inner_profile=='af-regular':left=np.ones_like(r);dl=np.zeros_like(r)
     return left*right,(dl*right-left*dr)/width
 
 
@@ -50,7 +52,7 @@ def python_rhs(ev,q,B,kappa,tau,support,accepted=False):
 
 
 class TelegraphEngine:
-    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.):
+    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar"):
         if not np.isfinite(kappa+tau) or kappa<0 or tau<=0:raise ValueError('Need kappa>=0,tau>0')
         if not ev.args.puncture_chart or ev.r[0]!=0:raise ValueError('First telegraph implementation requires the full AF domain')
         self.base=FastEngine(ev,8,library);lib=self.base.lib;self.n=len(ev.r);self.nray=nray;self.start=start
@@ -62,7 +64,7 @@ class TelegraphEngine:
         lib.telegraph_stats.argtypes=[C.c_void_p,fp]
         lib.telegraph_get_compensation.argtypes=[C.c_void_p,fp]
         lib.telegraph_set_compensation.argtypes=[C.c_void_p,fp]
-        w,wp=window(ev.r,inner,outer,width)
+        w,wp=window(ev.r,inner,outer,width,inner_profile)
         self.handle=lib.telegraph_create(self.base.handle,kappa,tau,w,wp,nray,start)
         if not self.handle:raise RuntimeError('Telegraph engine creation failed')
     def close(self):

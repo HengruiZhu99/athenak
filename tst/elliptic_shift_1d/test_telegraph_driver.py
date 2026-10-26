@@ -17,8 +17,11 @@ with tempfile.TemporaryDirectory() as tmp:
    normal=R*(K/3-O*q[:,2]/2);spatial=(1+r*r)/(2*O)-r*d[:,0]/(2*chi)
    m=R/2*(1+normal*normal-spatial*spatial)
    np.testing.assert_allclose(m,mass,atol=2e-12,rtol=2e-12)
- whole=run('whole','--t','.03125');first=run('first','--t','.015625')
- split=run('split','--t','.03125','--resume',str(first/'checkpoint.npz'))
- with np.load(whole/'checkpoint.npz') as x,np.load(split/'checkpoint.npz') as y:
-  for key in ['q','B','rays','compensation','t','step']:assert np.array_equal(x[key],y[key]),key
- print(json.dumps(dict(initial_invariant_masses=[1/3,.2],cli_checkpoint_bitwise=True,auxiliary_and_stage_rays_included=True)))
+ for profile in ['collar','af-regular']:
+  controls=['--inner-profile',profile]
+  if profile=='af-regular':controls+=['--quadrature-width','9','--puncture-ko','.25']
+  whole=run(profile+'-whole',*controls,'--t','.03125');first=run(profile+'-first',*controls,'--t','.015625')
+  split=run(profile+'-split',*controls,'--t','.03125','--resume',str(first/'checkpoint.npz'))
+  with np.load(whole/'checkpoint.npz') as x,np.load(split/'checkpoint.npz') as y:
+   for key in ['q','B','rays','compensation','t','step']:assert np.array_equal(x[key],y[key]),key
+ print(json.dumps(dict(initial_invariant_masses=[1/3,.2],cli_checkpoint_bitwise=True,inner_profiles=['collar','af-regular'],nondefault_quadrature_and_KO=True,auxiliary_and_stage_rays_included=True)))

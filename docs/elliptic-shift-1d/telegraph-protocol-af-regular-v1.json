@@ -1,0 +1,9 @@
+{
+  "parent_protocol": "telegraph-protocol-v1.json",
+  "reason": "The collar run steepens again as the inward front enters the inner taper after t=3. Keep coupling active to the AF end, with derived asymptotics.",
+  "change": "inner_profile=af-regular removes only the inner taper; outer support, kappa=.001, tau=.02, M=1/3, nu=1, CFL=.05 unchanged.",
+  "derivation": "telegraph-formulation.md: B=b_B*r+O(r^2), chi=X0*r^4+O(r^5), alpha=a2*r^2+O(r^3); added log(alpha) rate=3*X0*b_B/a2*r^2+O(r^3), preserving the leading AF ODE.",
+  "tests": "Independent Python/C++ rates and RK, radial divergence, AF vanishing rate, exact CLI restart passed for both profiles before launch.",
+  "input": "inputs/elliptic_shift_1d/telegraph-af-regular-v1.json",
+  "acceptance": "All parent protocol gates retained; no admission on survival or t=2.5 smoothing alone."
+}

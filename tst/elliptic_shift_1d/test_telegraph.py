@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 """Nonzero-flux cross-implementation, radial tensor, baseline and restart checks."""
 import argparse,json
+from itertools import product
 import numpy as np
 from puncture_chart import PunctureChart
 from wormhole_isotropic import IsotropicWormhole
 from fast import FastEngine
 from telegraph import TelegraphEngine,options,window,python_rhs
 from compensated_update import accumulate
+from telegraph_analysis_io import physical_lapse_gradient
+from wormhole_data import Jet
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args()
 errors=[]
-for n in [33,65,129]:
+for n,inner_profile in product([33,65,129],['collar','af-regular']):
  ev=PunctureChart(options(n,a.library));q,*_=ev.initial_wormhole(IsotropicWormhole());r=ev.r
- support=window(r);w,wp=support;B=.001*r*(1-r)**8
+ support=window(r,inner_profile=inner_profile);w,wp=support;B=.001*r*(1-r)**8
  for j,amp in [(0,.001),(2,.001),(3,.002),(4,.003),(5,.004),(6,.0015)]:q[:,j]+=amp*(1-r)**6
- engine=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.)
+ engine=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.,inner_profile=inner_profile)
  expected,eb,es=python_rhs(ev,q,B,.02,.03,support,True);got,gb,gs=engine.rhs(q,B)
  np.testing.assert_allclose(got,expected,rtol=2e-11,atol=2e-10)
  np.testing.assert_allclose(gb,eb,rtol=2e-11,atol=2e-11);np.testing.assert_allclose(gs,es,rtol=2e-13,atol=2e-13)
@@ -51,20 +54,20 @@ for n in [33,65,129]:
  np.testing.assert_allclose(rays,expected_rays,rtol=2e-12,atol=2e-12)
  # Save/reconstruct all geometry, auxiliary and ray compensated state.
  correction=engine.compensation();q2=cq.copy();B2=cb.copy();ray2=rays.copy()
- restarted=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.);restarted.compensation(correction)
+ restarted=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.,inner_profile=inner_profile);restarted.compensation(correction)
  assert engine.advance(cq,cb,rays,5,dt,4*dt)[1] is None
  assert restarted.advance(q2,B2,ray2,5,dt,4*dt)[1] is None
  assert np.array_equal(cq,q2) and np.array_equal(cb,B2) and np.array_equal(rays,ray2)
  assert np.array_equal(engine.compensation(),restarted.compensation())
  restarted.close();engine.close()
  # kappa=0, B=0 must reproduce the actual existing solver bitwise.
- ref=FastEngine(ev,8,a.fast_library);new=TelegraphEngine(ev,a.fast_library,0.,.03)
+ ref=FastEngine(ev,8,a.fast_library);new=TelegraphEngine(ev,a.fast_library,0.,.03,inner_profile=inner_profile)
  cq=q.copy();rq=q.copy();cb=np.zeros(n);rays=np.zeros((0,2))
  done,_,failed=ref.advance(rq,8,dt);assert not failed
  done,failure=new.advance(cq,cb,rays,8,dt,0.);assert failure is None
  assert np.array_equal(cq,rq) and np.array_equal(cb,np.zeros(n))
  ref.close();new.close()
- event=TelegraphEngine(ev,a.fast_library,0.,.03,nray=2,start=2*dt)
+ event=TelegraphEngine(ev,a.fast_library,0.,.03,nray=2,start=2*dt,inner_profile=inner_profile)
  cq=q.copy();cb=np.zeros(n);ray=np.array([[.25,0.],[.25,0.]]);seed=ray.copy()
  assert event.advance(cq,cb,ray,2,dt,0.)[1] is None
  assert np.array_equal(ray,seed),'Last RK stage before injection must not advance rays early'
@@ -77,8 +80,23 @@ np.testing.assert_allclose(wp,(window(r+eps)[0]-window(r-eps)[0])/(2*eps),atol=2
 # The new forcing vanishes on exact Minkowski u=0,B=0. Both endpoint
 # collars have identically zero coupling, including all support derivatives.
 w,wp=window(np.array([0.,.005,.9,1.]));assert np.array_equal(w,np.zeros(4)) and np.array_equal(wp,np.zeros(4))
+# AF asymptotic extension: chi=X*r^4, alpha=a*r^2, B=b*r.
+# Added stored log-alpha rate is 3 X b r^2/a, so the leading AF
+# coefficient equation is unchanged even though w(0)=1.
+r=np.array([1e-2,5e-3,2.5e-3]);X=2.;alpha_coeff=3.;b=.4
+w,wp=window(r,inner_profile='af-regular');assert np.array_equal(w,np.ones(3))
+correction=X*r**4*(w*b+(wp+2*w/r)*(b*r))/(alpha_coeff*r*r)
+np.testing.assert_allclose(correction,3*X*b*r*r/alpha_coeff,rtol=2e-15)
+np.testing.assert_allclose(correction[:-1]/correction[1:],4.,rtol=2e-15)
 # Frozen coupled dispersion: independently computed roots must be damped.
 for k in [.01,1,100]:
  cg2=.2;ct2=.3;tau=.03
  roots=np.roots([1,1/tau,(cg2+ct2)*k*k,cg2*k*k/tau]);assert np.max(roots.real)<0
+# Independent analytic derivative of an AF lapse with a polynomial log chart.
+r=np.linspace(0,1,129);q=np.zeros((129,8));q[:,6]=.1+.2*r+.03*r*r
+actual=physical_lapse_gradient(dict(r=r,q=q));expected=[]
+for x in r[:-1]:
+ z=Jet(x,1);O=(1-z*z)/2;A=(1+z*z)/2;ref=A*z*z/(z*z+O**4)/O
+ expected.append(np.exp(.1+.2*x+.03*x*x)*(ref.d+ref.v*(.2+.06*x)))
+np.testing.assert_allclose(actual[:-1],expected,rtol=5e-14,atol=5e-14);assert actual[0]==0
 print(json.dumps(dict(max_python_compiled_rate_difference=max(errors),resolutions=[33,65,129],nonzero_flux_RK=True,free_constraints=True,disabled_bitwise_equivalence=True,restart_bitwise=True,stage_characteristic_oracle=True,ray_activation=True,scope='Implementation validation only; nonlinear convergence remains unproven.')))

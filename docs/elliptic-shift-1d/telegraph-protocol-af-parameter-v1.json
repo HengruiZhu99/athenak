@@ -1,0 +1,27 @@
+{
+  "parent_protocol": "telegraph-protocol-v1.json",
+  "status": "Declared before this parameter pilot.",
+  "reason": "AF-regular kappa=.001 still fails at t=6 on N513/1025. Independently inspect stronger fixed continuum coupling and broader outer taper.",
+  "fixed": {
+    "mass": 0.3333333333333333,
+    "nu": 1,
+    "tau": 0.02,
+    "cfl": 0.05,
+    "n": 513,
+    "t": 6,
+    "inner_profile": "af-regular"
+  },
+  "axes": {
+    "kappa": [
+      0.001,
+      0.005,
+      0.02
+    ],
+    "transition": [
+      0.08,
+      0.24
+    ]
+  },
+  "design": "kappa=.001,width=.08 is the existing AF-regular control; compare kappa at width=.08 and width at fixed kappa. Incomplete factorial, no extrapolation to unrun combinations.",
+  "selection": "Only reject or prioritize candidates; a coarse single-grid pilot cannot pass. All original duration, three-grid, independent-control and constraint gates retained."
+}
