@@ -133,3 +133,6 @@ add_test(NAME spherical_conformal_telegraph_rates_RK_and_restart
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)
 add_test(NAME telegraph_initial_invariant_mass_and_cli_restart
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_driver.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)
+
+add_test(NAME telegraph_analysis_evidence_guards
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_time_analysis.py)
