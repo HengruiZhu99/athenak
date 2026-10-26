@@ -41,3 +41,29 @@ add_test(NAME isotropic_hyperboloidal_wormhole_geometry
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_wormhole_isotropic.py --library $<TARGET_FILE:spherical_z4c>)
 add_test(NAME puncture_asymptotic_coefficient_limits
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c>)
+add_test(NAME puncture_chart_independent_native_tensor_rates
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c>)
+add_test(NAME reference_lapse_damping_scalar_geometry
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_scalar_rhs.py --library $<TARGET_FILE:spherical_z4c> --damping-form reference-lapse)
+add_test(NAME reference_lapse_damping_AF_limits
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c> --damping-form reference-lapse)
+add_test(NAME reference_lapse_damping_AF_tensor_agreement
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c> --damping-form reference-lapse)
+add_test(NAME rational_lapse_AF_limits
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c> --slicing-family rational)
+add_test(NAME rational_lapse_AF_tensor_agreement
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c> --slicing-family rational)
+add_test(NAME independent_physical_ADM_nonlinear_rates
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_physical_adm.py --library $<TARGET_FILE:spherical_z4c>)
+add_test(NAME Bondi_frame_independent_Christoffel_audit
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_bondi.py)
+add_test(NAME SBP_radial_algebra_and_compatible_D2
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_sbp.py)
+add_test(NAME SBP_AF_chart_native_tensor_rates
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c> --radial-operator sbp63)
+add_test(NAME incoming_puncture_gauge_principal_boundary
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_gauge_boundary.py)
+add_test(NAME collapsed_source_AF_native_rates
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c> --lapse-background-source collapsed-inner)
+add_test(NAME collapsed_source_AF_limits
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c> --lapse-background-source collapsed-inner)

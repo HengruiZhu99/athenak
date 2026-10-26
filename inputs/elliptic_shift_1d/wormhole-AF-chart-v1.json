@@ -1,0 +1,38 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "mass": 0.1,
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 0.05,
+    "t": 1,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "n257",
+      "arguments": {
+        "n": 257
+      }
+    },
+    {
+      "name": "n513",
+      "arguments": {
+        "n": 513
+      }
+    },
+    {
+      "name": "n1025",
+      "arguments": {
+        "n": 1025
+      }
+    }
+  ],
+  "scope": "Evolved actual asymptotic-infinity coefficients; no regular-center parity, finite-cutoff incoming-data assumption or constraint projection"
+}

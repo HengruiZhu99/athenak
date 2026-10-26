@@ -106,3 +106,133 @@ settling is the limiting behavior outside an increasingly unresolved inner
 wormhole core. Demonstration requires converged limiting areal radius,
 proper-distance behavior, lapse collapse, horizon/invariant mass and settling
 profiles, starting from the verified genuine wormhole above.
+
+## Implemented positive coefficient chart and its failed controls
+
+`puncture_chart.py` now evolves an actual r=0 coefficient node and positive
+physical points through actual scri. Define
+
+    w=r^2/(r^2+Omega^4), gap=1-w,
+    chi_ref=r^4/(r^4+Omega^4), alpha_ref=Aref*w,
+    chi=chi_ref exp(U_chi), alpha=alpha_ref exp(U_alpha),
+    A_rr=w Bstored, Khat=w(kstored-3), Theta=w taustored.
+
+Lambda remains an independent unweighted coordinate field. Analytic reference
+derivatives and numerical coefficient derivatives are combined by the chain
+rule. Near scri, reference deviations and expm1 avoid losing the mass jets.
+Near the inner end, total chi/alpha/Khat are supplied separately rather than
+recovered by subtracting order-one reference deviations. Equivalent inner
+R/S rearrangements cancel the flat-end reference constants analytically.
+No field rate, constraint, or Schwarzschild numerical RHS is subtracted.
+
+The zero node evolves the six coefficient ODEs above. Its metric/lapse values
+are zero because it represents spatial infinity; positivity applies to the
+physical r>0 nodes. The inner ADM mass is differentiated from U_chi and is
+a diagnostic, not an enforced conserved quantity. Short aligned restarts,
+including reconstructed physical chi/alpha, are bitwise identical. Native
+off-constraint tensor rates agree to5.8e-14 with H/M/Theta/Z all nonzero.
+
+Optional puncture dissipation is -epsilon B^T W B/(64h), where B is the
+forward third difference on nodes1..N and W is a nonnegative taper vanishing
+before scri. Column0 is excluded, leaving its exact coefficient ODE unchanged.
+This negative semidefinite operator uses no ghosts or parity. Its boundary
+truncation error still requires measured convergence; its sign is not a
+stability proof for the coupled system.
+
+These changes remove the finite-cutoff incoming-characteristic assumption,
+but do not yet give an admitted wormhole evolution. At M=.1, epsilon=.5,
+N129/257/513 survive t=1 with nonconvergent H/M errors. A variable damping
+control gives final H RMS .924/1.162/1.874 and M RMS2.676/3.536/5.325
+(`evidence/wormhole-reference-damping-v1`). At M=1/3 the corresponding
+three-resolution controls reach t=6, but final H RMS
+.01241/.007176/.01393 and M RMS .09671/.07351/.08653 do not converge.
+Every scri-pole peak exceeds its declared gate. These are failed controls,
+not wormhole-to-trumpet results (`evidence/wormhole-Mthird-convergence-v1`).
+
+## Explicit optional equation changes
+
+The reference-lapse damping control uses kappa_eff=kappa1*Aref/alpha but
+evaluates every damping product without dividing by the collapsed lapse.
+With D=-kappa1*(alpha-Aref), add
+
+    Delta S_Khat=D(1-kappa2)Theta,
+    Delta S_Theta=-D(2+kappa2)Theta,
+    Delta S_Lambda=-D Lambda.
+
+This is quadratic about Minkowski and vanishes on the constraint surface.
+The scalar angular-Ricci/potential expression receives the same change.
+The inner k/tau/L ODEs gain kappa1(1-kappa2)tau,
+-kappa1(2+kappa2)tau and -kappa1 L, respectively. Independent pointwise
+native-kappa and limiting tests pass. Scalar and wormhole evolution controls
+do not improve sufficiently, so constant damping remains the default.
+
+A Python-only rational lapse prototype replaces F=alpha^2+4nu Omega^2 alpha by
+
+    F=alpha^2+4nu Omega^2 alpha*(Aref+delta)/(alpha+delta), delta>0.
+
+The exact source difference is
++4nu Omega^2 alpha*(alpha-Aref)*(Khat+3)/(alpha+delta).
+It preserves the Minkowski solution and its linearized equations, harmonic
+scri, and F=O(alpha) at the puncture. Delta is a gauge parameter, not a floor
+on any physical field or Omega. The inner lapse ODE replaces nu by
+nu*(.5+delta)/delta. The off-constraint tensor replacement and inner limit
+are independently checked. The rational family reduces the local
+Bona-Masso steepening indicator for alpha well above delta, but this is not
+evidence that the observed failures are gauge shocks. Both tested scale
+matrices contain failed/large-error evolutions; none is adopted as a cure.
+
+## SBP and incoming-gauge boundary controls
+
+The optional radial SBP6/3 operator copies the repository's scalar-operator
+coefficients into a portable module. Its diagonal H norm obeys
+H D+D^T H=diag(-1,0,...,1). D2=D*D consequently obeys
+H D2+D^T H D=E D. Both identities, polynomial differentiation, the scalar
+SAT energy relation, and H-negative KO are checked independently. D2 is
+only second order at the boundary. These algebra checks neither establish
+the full Z4c energy estimate nor meet the nonlinear endpoint-convergence gate.
+The M=.1, KO2 AF-chart control has final H RMS
+.2557/.06274/.1200 at N129/257/513 and does not converge
+(`evidence/wormhole-SBP-ko2-v1`). Increasing the original FD KO to2 or8 also
+does not give admitted H/M convergence (`evidence/wormhole-strong-dissipation-v1`).
+
+A distinct finite-cutoff prototype supplies incoming lapse-gauge data rather
+than pretending that mode is outflow. Write A=alpha_r, a=F/Omega,
+b=Omega*chi, c=sqrt(F*chi). The principal pair is
+A_t=beta A_r-a Khat_r and Khat_t=beta Khat_r-b A_r. The incoming left
+gauge combination is Khat+Omega*sqrt(chi/F) A. Its full principal gauge
+eigenvector, in [dchi,A_rr,Khat,Theta,Lambda,dalpha], is
+[0,2/(3Omega),1,0,0,c/(Omega chi)]. It has zero principal differential
+constraints. Consequently the weak Robin Khat-rate penalty
+
+    P=-Omega chi/H0 * max(c-beta,0)/c * (alpha_r-p alpha/r)
+
+is lifted simultaneously into A_rr_t by2P/(3Omega). Theta, Lambda and
+Hamiltonian/momentum errors are not reset. For homogeneous Neumann data,
+its frozen left energy flux reduces to
+-beta/2 [A-sqrt(a/b)Khat]^2 for0<=beta<c, and it switches off continuously
+at pure gauge outflow. Robin p>0 adds lower-order boundary-energy terms;
+no complete nonlinear estimate is claimed.
+
+This treatment is allowed only while every physical/constraint characteristic
+is outflow. N257/513/1025, p1/p2 runs all halt near
+t=.2154/.2161/.2163 because a physical characteristic becomes incoming.
+The actual AF shift slope is negative during this phase. Supplying gauge
+data alone cannot justify physical incoming data from the other AF end.
+These are preserved boundary-validity failures, not accepted excisions.
+A pilot using physical-field boundary KO fails too; its low-order closure
+contaminates the initial r^4 metric factor. The no-KO matrix isolates that
+effect and still reaches the same physical-characteristic obstruction.
+
+Another optional lapse-source control replaces the additive inner r^2
+driving by r^2 alpha/Aref through a (2Omega)^4 taper. Precisely, add
+Delta S_alpha=(2Omega)^4 r^2 (alpha-Aref)/Aref. It leaves the scri limits
+unchanged but changes the interior linearized lapse source; it must not be
+advertised as preserving the whole linear Minkowski model. Its AF A ODE
+loses the additive +2. All Einstein equations and F stay unchanged. The
+native off-constraint and limiting audits pass, but the first matrix still
+develops large errors/failures. It is a diagnostic prototype, not an adoption.
+
+New parameter matrices freeze their entire numerical source and both supplied
+binaries once before any case starts. This prevents live edits during a long
+matrix from changing the method between its resolution cases. Each individual
+case retains its own source binding and checkpoint ancestry as before.

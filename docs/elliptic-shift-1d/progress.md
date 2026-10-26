@@ -2,7 +2,60 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
-## Latest puncture and gauge preparation
+## Current coefficient-chart and independent-geometry audit
+
+Twenty-five CTest groups pass (`evidence/ctest-v20.log`). The compiled engine is
+ABI17, with640 Python agreement cases. The AF puncture coefficient chart is
+implemented, including analytic reference derivatives, positive logarithmic
+metric/lapse variables, free curvature/Khat/Theta/Lambda coefficients and a
+true asymptotic endpoint. No center reflection, differential constraint reset,
+Omega clamp or Schwarzschild RHS subtraction is used. Chart and rational-chart
+restarts are bitwise identical on aligned steps; verified continuation retains
+the exact source/library closure.
+
+The old finite-cutoff incoming-characteristic failure is addressed by this
+chart, but **wormhole-to-trumpet evolution remains unaccepted**. At M=.1 the
+new runs still develop inner constraint growth and sharp lapse gradients.
+Reference-lapse damping and two rational-lapse scale matrices do not cure it.
+At M=1/3, N129/257/513 all reach t=6, but final H/M errors fail convergence
+and every scri-pole peak exceeds its gate. Source-bound plots and outcomes
+are in `evidence/wormhole-reference-damping-v1`,
+`evidence/wormhole-rational-lapse-v1`, and
+`evidence/wormhole-Mthird-convergence-v1`. Stronger dissipation and SBP controls also fail H/M convergence. The finite-cutoff
+incoming-gauge Robin treatment supplies only a constraint-free principal gauge
+mode, and correctly halts when physical characteristics become incoming near
+t=.216. A collapsed-inner lapse-source control passes independent equation
+audits but still fails nonlinear evolutions. All variants and their failures
+are documented in `puncture-asymptotics.md`. Survival is not admitted as a
+trumpet result.
+
+An additional audit compares nonlinear geometric rates with physical ADM
+Ricci/Hessian formulas on the constraint-satisfying Schwarzschild transition,
+including nonzero radial tracefree curvature. Both native and canceled Z4c
+rates agree to4.1e-13 (`evidence/physical-ADM-nonlinear-v1.json`). This rules
+out a simple on-constraint tensor-reduction error in the tested initial slice;
+it does not establish nonlinear stability.
+
+The Bondi conformal frame is now explicitly checked: g_B=chi*g_bar and
+Omega_B=sqrt(chi)*Omega give unit-sphere cuts and n_B^t=1/alpha. Its generator
+nonaffinity is checked against independent2D Christoffel calculations. Frozen
+source replay of the strong dispersal trajectories gives sampled maximum
+nonaffinity3.93e-7/7.26e-8/9.86e-10 at N512/1024/2048; the largest integrated
+finest defect is3.02e-11. These are sampled diagnostics, not all-stage bounds. ABI17 adds an independently
+checked all-stage nonaffinity monitor; a fresh matching scalar matrix is running.
+Its conservative supplemental affinity gate was recorded before inspecting
+the new all-stage trajectory results (`affinity-acceptance-v1.json`).
+Coarse output quadrature of the sharply peaked scalar flux differs materially
+from its RK-stage accumulator, so the latter remains the mass-budget quantity.
+See `evidence/scalar-Bondi-time-n{512,1024,2048}-v1`.
+
+The small .001 gauge pulse has completed t=10,000 at N256 and t=3000 at
+N512. N512 is continuing to10,000 with its exact frozen source and binary;
+N1024 has completed1000 and is continuing to3000. These older trajectories have sampled diagnostics.
+Their small amplitude and incomplete finer durations do not constitute a
+published nonlinear pulse reproduction.
+
+## Previous puncture and gauge preparation
 
 Twelve CTest groups pass (`evidence/ctest-v15.log`). Compiled/Python agreement
 now includes320 cases with one-sided puncture stencils and the multiplicative
@@ -42,8 +95,8 @@ beta=b1r+..., the native tensor equations independently verify the finite
 coefficient ODEs there with second-order limiting convergence. All six
 coefficients remain free. A true r=0 asymptotic coefficient endpoint can
 therefore replace the finite-cutoff outflow assumption without regular-center
-parity or invented incoming data. The logarithmic/weighted chart and its
-evolution are still to be implemented and tested.
+parity or invented incoming data. The subsequent implementation and failed evolution controls are recorded in
+the current update above.
 
 ## Latest audit: compiled integration and complete-stage diagnostics
 
@@ -78,7 +131,8 @@ Newton history and failure receipt before evolution.
 
 The small lapse pulse has reached t=100 at N256/512/1024, CFL.1, with final
 H/M RMS below1e-43. These older runs have sampled diagnostics; they do not
-certify all-stage peak gates. The10,000-unit published target remains unrun.
+certify all-stage peak gates. The later N256 continuation reaches10,000; matching finer-duration and
+finite-amplitude published controls remain unfinished.
 The matching short control gives all-field bulk/endpoint self-convergence
 orders5.06/5.13, RK4 orders4.003/3.969, and standard timestep error about
 2.9e-5 of the coarse spatial difference (`evidence/regular-controls-v1`).
@@ -308,8 +362,8 @@ bulk curvature/constraint function or the shift.
 3. Validate coupled scalar evolution and constraint-solved data with principal
    resolution/time/elliptic/dissipation studies, followed by all required
    dispersal, collapse, BH perturbation, ringing/tail and mass-balance cases.
-4. Derive puncture inner-end conditions and a puncture driver, then execute
-   published trumpet controls and genuine wormhole-to-trumpet evolution.
+4. Repair the implemented puncture chart's nonlinear constraint growth, then
+   execute published trumpet controls and genuine wormhole-to-trumpet evolution.
 5. Complete the reproduction inventory, physical diagnostics/flux/Bondi-time
    extraction, principal three-resolution and independent timestep studies,
    paper-length durations, and final assessment. All unrun tests remain unfinished.

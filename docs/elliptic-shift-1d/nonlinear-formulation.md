@@ -399,3 +399,41 @@ is not a continuum stability proof. Unperturbed N64 Minkowski remains within
 5e-13 through t=3, but the 1e-3 lapse pulse has order-unity drift and violates
 pole/constraint thresholds by t=6. These penalties are not an accepted repair.
 No claim of completing the main hybrid formulation follows from these screens.
+
+## Bondi conformal frame and measured time affinity
+
+For g=1, the unit-sphere frame is g_B=chi*g_bar and
+Omega_B=sqrt(chi)*Omega. At null scri with beta=-alpha*sqrt(chi), its generator
+has n_B^t=1/alpha and n_B^r=0. The radial2D metric is
+
+    ds_B^2=(-chi alpha^2+beta^2)dt^2+2beta dt dr+dr^2.
+
+Using the null shift and its time derivative, direct Christoffel calculation
+gives n_B^b nabla^B_b n_B^a=kappa n_B^a, where
+
+    kappa=chi_t/(2alpha chi)-chi_r/(2sqrt(chi))
+          -sqrt(chi)*alpha_r/alpha-beta_r/alpha.
+
+Only the null shift's time derivative is eliminated; radial derivatives stay
+independent. `test_bondi.py` compares this formula with full2D Christoffel
+evaluation on50 arbitrary positive metric/lapse states (maximum3.7e-13).
+The actual numerical endpoint chi_t, including its boundary penalties, is
+used in `report`. Minkowski gives kappa=0. With alpha(S)=1, an affine
+parameter satisfies d lambda/dt=exp(integral kappa dt), normalized initially
+to1. This is measured, not assumed. A reparameterization alone cannot repair
+a nonregular Einstein boundary phase or prove a Bondi mass-loss law.
+
+In the regular chart chi=1+Omega C, alpha=Aref+Omega L, compatibility gives
+A_rr(S)=2C0/3. If chi_t(S)=0, the nonaffinity is L0-C0/2. Thus the independent
+geometric diagnostic recovers the necessary gauge-corner condition C0=2L0.
+It does not replace the higher normal-jet conditions.
+
+The current compiled ABI17 and Python paths monitor |kappa| at every RK
+stage. Old trajectories retain their original binaries and sampled evidence;
+they are not retrospectively relabeled as all-stage monitored. Frozen-source
+replay of the strong scalar dispersal runs shows a finest sampled maximum
+9.86e-10 and maximum integrated defect3.02e-11. Its sampled flux quadrature
+differs from the RK-stage integral by about6.1e-6, much larger than the final
+mass-budget error, because the output cadence underresolves a narrow pulse.
+Use the RK accumulator for mass budgets. Sampled affinity/reparameterization
+and cadence-coarsening results are preserved separately.

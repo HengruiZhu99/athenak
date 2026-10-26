@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Polynomial consistency and interior dissipative sign of biased transport."""
 import numpy as np
-from numerics import RadialOperators
+from numerics import RadialOperators,puncture_dissipation
 r=(np.arange(129)+.5)/128.5;op=RadialOperators(r);h=r[1]-r[0]
 for power in range(7):
     q=(r**power)[:,None];expected=np.zeros_like(r) if power==0 else power*r**(power-1)
@@ -23,3 +23,10 @@ for power in range(7):
     assert np.array_equal(d1,e1) and np.array_equal(d2,e2)
     np.testing.assert_allclose(puncture.integral(q),(r**(power+1)-r[0]**(power+1))/(power+1),atol=2e-15)
 print('Puncture stencils never read reflected values; quadrature excludes the puncture.')
+rnode=np.linspace(0,1,129);rng=np.random.default_rng(903);values=rng.normal(size=(len(rnode),6))
+Q=puncture_dissipation(values,rnode,1/128,.5)
+assert np.sum(values*Q)<0 and max(abs(Q[0]))==0 and max(abs(Q[rnode>.9]).ravel())==0
+for power in range(3):
+    polynomial=(rnode**power)[:,None]
+    assert max(abs(puncture_dissipation(polynomial,rnode,1/128,.5)).ravel())<1e-13
+print('Puncture coefficient dissipation is negative semidefinite and leaves both endpoint limits untouched.')

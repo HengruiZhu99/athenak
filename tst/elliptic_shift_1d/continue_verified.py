@@ -11,10 +11,13 @@ import numpy as np
 p=argparse.ArgumentParser();p.add_argument('--checkpoint',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--t',type=float,required=True);a=p.parse_args()
 repo=Path(__file__).resolve().parents[2];a.output=a.output.resolve();a.checkpoint=a.checkpoint.resolve()
 with np.load(a.checkpoint,allow_pickle=False) as z:
- parent=json.loads(str(z['metadata']));parent_t=float(z['t']);q=z['q']
+ parent=json.loads(str(z['metadata']));parent_t=float(z['t']);q=z['q_physical'] if 'q_physical' in z else z['q']
  n=parent['arguments']['n'];r=z['r'] if 'r' in z else (np.arange(n)+.5)/(n-.5)
+ physical=r>0 if parent['arguments'].get('puncture_chart') else np.ones(len(r),dtype=bool)
+ chi=z['chi_total'] if 'chi_total' in z else 1+q[:,0]
+ alpha=z['alpha_total'] if 'alpha_total' in z else (1+r*r)/2+q[:,6]
  if (parent.get('status')!='finished' or not np.all(np.isfinite(q)) or
-     min(np.min(1+q[:,0]),np.min(1+q[:,1]),np.min((1+r*r)/2+q[:,6]))<=0):
+     min(np.min(chi[physical]),np.min(1+q[physical,1]),np.min(alpha[physical]))<=0):
   raise SystemExit('Checkpoint is not a completed finite positive state')
 if parent_t>=a.t:raise SystemExit('No unfinished continuation segment')
 if a.output.exists():raise SystemExit('Never overwrite an existing continuation')

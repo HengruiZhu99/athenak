@@ -1,0 +1,66 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": false,
+    "initial_data": "wormhole",
+    "advection": "centered",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0,
+    "report_dt": 0.025,
+    "t": 1,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.1,
+    "radial_operator": "sbp63",
+    "puncture_boundary": "gauge-robin"
+  },
+  "cases": [
+    {
+      "name": "n257-p2",
+      "arguments": {
+        "n": 257,
+        "puncture_lapse_power": 2
+      }
+    },
+    {
+      "name": "n513-p2",
+      "arguments": {
+        "n": 513,
+        "puncture_lapse_power": 2
+      }
+    },
+    {
+      "name": "n1025-p2",
+      "arguments": {
+        "n": 1025,
+        "puncture_lapse_power": 2
+      }
+    },
+    {
+      "name": "n257-p1",
+      "arguments": {
+        "n": 257,
+        "puncture_lapse_power": 1
+      }
+    },
+    {
+      "name": "n513-p1",
+      "arguments": {
+        "n": 513,
+        "puncture_lapse_power": 1
+      }
+    },
+    {
+      "name": "n1025-p1",
+      "arguments": {
+        "n": 1025,
+        "puncture_lapse_power": 1
+      }
+    }
+  ],
+  "scope": "Finite-cutoff incoming gauge Robin SAT with a principal constraint-free Ar/Khat lift; all physical/constraint characteristics must remain outflow. No fixed AF coefficient phase is imposed at a shrinking cutoff. No physical-field boundary KO, whose low-order closure contaminates the initial r^4 factor."
+}

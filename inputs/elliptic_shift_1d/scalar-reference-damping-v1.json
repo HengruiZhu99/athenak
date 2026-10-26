@@ -1,0 +1,33 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "scalar": true,
+    "scalar_amplitude": 0.058,
+    "initial_precision": "decimal",
+    "initial_tolerance": 1e-11,
+    "report_dt": 0.02,
+    "t": 6,
+    "cfl": 0.05,
+    "damping_form": "reference-lapse"
+  },
+  "cases": [
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ],
+  "existing_middle_case": "output/elliptic-shift-1d/compiled-scalar0058-n1024-t6-decimal-v1",
+  "scope": "Same A.058 scalar data/reference lapse, reference-scaled damping and consistently modified off-constraint scalar potential."
+}

@@ -1,0 +1,58 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.025,
+    "t": 1,
+    "cfl": 0.05,
+    "n": 257,
+    "slicing_family": "rational",
+    "mass": 0.1
+  },
+  "cases": [
+    {
+      "name": "scale0.001-nu0.1",
+      "arguments": {
+        "slicing_scale": 0.001,
+        "slicing": 0.1
+      }
+    },
+    {
+      "name": "scale0.001-nu0.25",
+      "arguments": {
+        "slicing_scale": 0.001,
+        "slicing": 0.25
+      }
+    },
+    {
+      "name": "scale0.001-nu0.5",
+      "arguments": {
+        "slicing_scale": 0.001,
+        "slicing": 0.5
+      }
+    },
+    {
+      "name": "scale0.01-nu0.2",
+      "arguments": {
+        "slicing_scale": 0.01,
+        "slicing": 0.2
+      }
+    },
+    {
+      "name": "scale0.01-nu0.4",
+      "arguments": {
+        "slicing_scale": 0.01,
+        "slicing": 0.4
+      }
+    }
+  ],
+  "scope": "Resolve the nearly constant-F regime while retaining F=O(alpha) at the asymptotic puncture. Small scale strengthens AF coefficient stiffness; fixed-CFL resolution/timestep studies remain required for any promising candidate."
+}

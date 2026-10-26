@@ -1,0 +1,62 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "mass": 0.1,
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 0.05,
+    "t": 1,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "ko0.1-n129",
+      "arguments": {
+        "n": 129,
+        "puncture_ko": 0.1
+      }
+    },
+    {
+      "name": "ko0.1-n257",
+      "arguments": {
+        "n": 257,
+        "puncture_ko": 0.1
+      }
+    },
+    {
+      "name": "ko0.1-n513",
+      "arguments": {
+        "n": 513,
+        "puncture_ko": 0.1
+      }
+    },
+    {
+      "name": "ko0.5-n129",
+      "arguments": {
+        "n": 129,
+        "puncture_ko": 0.5
+      }
+    },
+    {
+      "name": "ko0.5-n257",
+      "arguments": {
+        "n": 257,
+        "puncture_ko": 0.5
+      }
+    },
+    {
+      "name": "ko0.5-n513",
+      "arguments": {
+        "n": 513,
+        "puncture_ko": 0.5
+      }
+    }
+  ],
+  "scope": "Negative-semidefinite KO on independent AF coefficients; endpoint ODE preserved; no reflected values."
+}

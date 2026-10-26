@@ -1,0 +1,8 @@
+{
+  "scope": "Supplemental Bondi-time gate for newly instrumented ABI17 trajectories; original acceptance gates stay unchanged.",
+  "quantity": "kappa of n_B in the unit-sphere conformal frame",
+  "bound": "duration * max_all_RK_stages_abs_kappa <= 1e-7",
+  "threshold": 1e-07,
+  "rationale": "This bounds the logarithmic affine-rate error by1e-7 over the measured segment, without assuming cancellation between sampled values. It is sufficient and conservative; long-duration admission may instead require an accurately integrated absolute defect.",
+  "predeclaration": "Written before inspecting the ABI17 full-trajectory all-stage affinity results. Older sampled replays are not all-stage evidence."
+}

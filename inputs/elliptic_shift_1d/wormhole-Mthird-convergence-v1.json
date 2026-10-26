@@ -1,0 +1,41 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.05,
+    "t": 6,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 1
+  },
+  "cases": [
+    {
+      "name": "n129",
+      "arguments": {
+        "n": 129
+      }
+    },
+    {
+      "name": "n257",
+      "arguments": {
+        "n": 257
+      }
+    },
+    {
+      "name": "n513",
+      "arguments": {
+        "n": 513
+      }
+    }
+  ],
+  "scope": "Fixed-CFL convergence of invariant/constraint quantities on a genuine two-ended isotropic wormhole. Survival alone does not establish trumpet settling."
+}

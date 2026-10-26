@@ -1,0 +1,58 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.05,
+    "t": 1,
+    "cfl": 0.05,
+    "n": 257,
+    "slicing_family": "rational",
+    "mass": 0.1
+  },
+  "cases": [
+    {
+      "name": "scale0.1-nu1",
+      "arguments": {
+        "slicing_scale": 0.1,
+        "slicing": 1
+      }
+    },
+    {
+      "name": "scale0.1-nu0.5",
+      "arguments": {
+        "slicing_scale": 0.1,
+        "slicing": 0.5
+      }
+    },
+    {
+      "name": "scale0.1-nu0.16666666666666666",
+      "arguments": {
+        "slicing_scale": 0.1,
+        "slicing": 0.16666666666666666
+      }
+    },
+    {
+      "name": "scale0.25-nu1",
+      "arguments": {
+        "slicing_scale": 0.25,
+        "slicing": 1
+      }
+    },
+    {
+      "name": "scale0.25-nu0.3333333333333333",
+      "arguments": {
+        "slicing_scale": 0.25,
+        "slicing": 0.3333333333333333
+      }
+    }
+  ],
+  "scope": "Gauge-family diagnostic: same initial data, RK stages, constraints and dissipation. No trumpet acceptance inferred from survival."
+}

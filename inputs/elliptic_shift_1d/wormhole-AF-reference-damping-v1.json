@@ -1,0 +1,40 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "mass": 0.1,
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 0.05,
+    "t": 1,
+    "cfl": 0.05,
+    "puncture_ko": 0.5,
+    "damping_form": "reference-lapse"
+  },
+  "cases": [
+    {
+      "name": "n129",
+      "arguments": {
+        "n": 129
+      }
+    },
+    {
+      "name": "n257",
+      "arguments": {
+        "n": 257
+      }
+    },
+    {
+      "name": "n513",
+      "arguments": {
+        "n": 513
+      }
+    }
+  ],
+  "scope": "Reference-scaled constraint damping; same physical data and gauge, endpoint coefficients retain damping-consistent free evolution."
+}

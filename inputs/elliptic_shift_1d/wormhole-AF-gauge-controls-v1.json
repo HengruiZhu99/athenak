@@ -1,0 +1,86 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.05,
+    "t": 1,
+    "cfl": 0.05,
+    "n": 257
+  },
+  "cases": [
+    {
+      "name": "M0.1-nu0.25",
+      "arguments": {
+        "mass": 0.1,
+        "slicing": 0.25
+      }
+    },
+    {
+      "name": "M0.1-nu0.5",
+      "arguments": {
+        "mass": 0.1,
+        "slicing": 0.5
+      }
+    },
+    {
+      "name": "M0.1-nu1.0",
+      "arguments": {
+        "mass": 0.1,
+        "slicing": 1.0
+      }
+    },
+    {
+      "name": "M0.3333333333333333-nu0.25",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "slicing": 0.25
+      }
+    },
+    {
+      "name": "M0.3333333333333333-nu0.5",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "slicing": 0.5
+      }
+    },
+    {
+      "name": "M0.3333333333333333-nu1.0",
+      "arguments": {
+        "mass": 0.3333333333333333,
+        "slicing": 1.0
+      }
+    },
+    {
+      "name": "published-damping",
+      "arguments": {
+        "mass": 0.1,
+        "kappa1": 1.5,
+        "kappa2": 0
+      }
+    },
+    {
+      "name": "k4-k2zero",
+      "arguments": {
+        "mass": 0.1,
+        "kappa1": 4,
+        "kappa2": 0
+      }
+    },
+    {
+      "name": "repository-theta",
+      "arguments": {
+        "mass": 0.1,
+        "theta": "repository"
+      }
+    }
+  ],
+  "scope": "Diagnose strong gauge/constraint growth; mass-to-curvature ratio, interior slicing strength, published damping and original Theta source are labeled controls."
+}

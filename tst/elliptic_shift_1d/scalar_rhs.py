@@ -29,15 +29,16 @@ def add_sources(r,q,R,diagnostic,phi_r,normal_phi):
     diagnostic[:,1]+=8*np.pi*O*normal_phi*phi_r
 
 
-def angular_ricci(r,q,d,beta,kappa1=4.,kappa2=-.99,appendix_c=True):
+def angular_ricci(r,q,d,beta,kappa1=4.,kappa2=-.99,appendix_c=True,damping_form='constant'):
     O=(1-r*r)/2;chi=1+q[:,0];cp=d[:,0];lam=q[:,5];T=q[:,4]
     alpha=(1+r*r)/2+q[:,6];w=beta*r/alpha
     Ric=(-O*O*chi*radial_ratio(lam,r,d[0,5])+O*O*cp*lam/3-2*O*r*chi*lam/3+kappa1*(1+kappa2)*T)
+    if damping_form=='reference-lapse':Ric+=kappa1*(1+kappa2)*(-q[:,6])*T/alpha
     if not appendix_c:Ric+=2*w*T
     return Ric
 
 
-def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,geometry_second=None,origin_beta_derivative=None,analytic_endpoint=False):
+def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,geometry_second=None,origin_beta_derivative=None,analytic_endpoint=False,damping_form='constant'):
     r=ops.r;O=(1-r*r)/2;A0=(1+r*r)/2
     c=q[:,0];chi=1+c;cp=d[:,0];Arr=q[:,2];T=q[:,4];lam=q[:,5];u=q[:,6]
     alpha=A0+u;alphap=r+d[:,6];K=q[:,3]-3+2*T;dk=q[:,3]+2*T
@@ -57,6 +58,7 @@ def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.9
         alpha_second0=1+(geometry_second[0,6] if geometry_second is not None else ops.derivatives(d[:,6],-1)[0][0])
     N=dk*(K-3)/9-c+O*(-K*Arr/3+A0*radial_ratio(cp,r,chi_second0))+O*O*(Arr*Arr/4-cp*cp/(4*chi))
     B=N-kappa1*(1+kappa2)*T+2*O*r*chi*lam/3
+    if damping_form=='reference-lapse':B-=kappa1*(1+kappa2)*(-u)*T/alpha
     if not appendix_c:B-=2*w*T
     V=np.empty_like(r);V[:-1]=B[:-1]/(O[:-1]*O[:-1])+chi[:-1]*radial_ratio(lam,r,d[0,5])[:-1]-cp[:-1]*lam[:-1]/3
     # Finite mass and the compatible Theta/Z weights give this analytic limit.

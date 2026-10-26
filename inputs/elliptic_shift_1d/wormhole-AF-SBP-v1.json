@@ -1,0 +1,65 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "centered",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.05,
+    "t": 1,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.1,
+    "radial_operator": "sbp63"
+  },
+  "cases": [
+    {
+      "name": "n129-ko0.5",
+      "arguments": {
+        "n": 129,
+        "puncture_ko": 0.5
+      }
+    },
+    {
+      "name": "n257-ko0.5",
+      "arguments": {
+        "n": 257,
+        "puncture_ko": 0.5
+      }
+    },
+    {
+      "name": "n513-ko0.5",
+      "arguments": {
+        "n": 513,
+        "puncture_ko": 0.5
+      }
+    },
+    {
+      "name": "n129-ko2",
+      "arguments": {
+        "n": 129,
+        "puncture_ko": 2
+      }
+    },
+    {
+      "name": "n257-ko2",
+      "arguments": {
+        "n": 257,
+        "puncture_ko": 2
+      }
+    },
+    {
+      "name": "n513-ko2",
+      "arguments": {
+        "n": 513,
+        "puncture_ko": 2
+      }
+    }
+  ],
+  "scope": "Same continuum AF-chart equations with nodal SBP6/3 D1, D2=D1^2 and H-negative third-difference KO. Scalar/operator energy identities do not imply coupled stability. Measure all constraints and invariant convergence."
+}

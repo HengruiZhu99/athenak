@@ -1,0 +1,48 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.05,
+    "t": 1,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.1,
+    "lapse_background_source": "collapsed-inner"
+  },
+  "cases": [
+    {
+      "name": "n129",
+      "arguments": {
+        "n": 129
+      }
+    },
+    {
+      "name": "n257",
+      "arguments": {
+        "n": 257
+      }
+    },
+    {
+      "name": "n513",
+      "arguments": {
+        "n": 513
+      }
+    },
+    {
+      "name": "n257-nu05",
+      "arguments": {
+        "n": 257,
+        "slicing": 0.5
+      }
+    }
+  ],
+  "scope": "Only the lapse background source changes: the additive inner r^2 driving is multiplied by alpha/Aref through a (2Omega)^4 taper. The actual AF coefficient ODE removes its additive +2. No Einstein source or constraint projection changes. Test whether the source-driven lapse upturn contributes to strong-field steepening."
+}

@@ -1,0 +1,50 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.05,
+    "t": 1,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.1
+  },
+  "cases": [
+    {
+      "name": "n257-ko2",
+      "arguments": {
+        "n": 257,
+        "puncture_ko": 2
+      }
+    },
+    {
+      "name": "n513-ko2",
+      "arguments": {
+        "n": 513,
+        "puncture_ko": 2
+      }
+    },
+    {
+      "name": "n257-ko8",
+      "arguments": {
+        "n": 257,
+        "puncture_ko": 8
+      }
+    },
+    {
+      "name": "n513-ko8",
+      "arguments": {
+        "n": 513,
+        "puncture_ko": 8
+      }
+    }
+  ],
+  "scope": "Independent numerical dissipation variation with the original nonlinear equations and gauge. Assess constraints and invariant convergence, not survival; stiffest KO RK4 symbol remains inside stability interval at fixed CFL .05."
+}

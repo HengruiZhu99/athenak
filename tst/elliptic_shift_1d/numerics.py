@@ -3,6 +3,22 @@ import math
 import numpy as np
 
 
+def puncture_dissipation(values,r,h,coefficient,radius=.8,include_first=False):
+    """-epsilon B^T W B/(64h), B the forward third difference.
+
+    Column zero is excluded, retaining the exact asymptotic endpoint ODE.
+    No ghost/parity values enter; W vanishes in the scri collar.
+    """
+    k=0 if include_first else 1;anchor=values[k:-3]
+    third=3*(values[k+1:-2]-anchor)-3*(values[k+2:-1]-anchor)+(values[k+3:]-anchor)
+    midpoint=(r[k:-3]+r[k+3:])/2
+    taper=np.maximum(1-(midpoint/radius)**2,0.)**6
+    weighted=taper[:,None]*third;result=np.zeros_like(values)
+    result[k:-3]+=weighted;result[k+1:-2]-=3*weighted
+    result[k+2:-1]+=3*weighted;result[k+3:]-=weighted
+    return coefficient*result/(64*h)
+
+
 def weights(nodes, target, derivative=0, interval=None):
     """Local polynomial weights in scaled coordinates (avoid Vandermonde scaling)."""
     scale = max(abs(nodes-target))
@@ -17,12 +33,12 @@ def weights(nodes, target, derivative=0, interval=None):
 
 
 class RadialOperators:
-    def __init__(self, r, width=7,quadrature_width=None,puncture=False):
+    def __init__(self, r, width=7,quadrature_width=None,puncture=False,allow_puncture_node=False):
         self.r = np.asarray(r)
         self.width = width
         self.origin_on_grid=bool(r[0]==0)
         self.puncture=puncture
-        if puncture and self.origin_on_grid:raise ValueError('A puncture is excluded from the grid')
+        if puncture and self.origin_on_grid and not allow_puncture_node:raise ValueError('A physical puncture is excluded; only an asymptotic coefficient chart may include it')
         if len(r) < width or not np.all(np.diff(r) > 0) or r[0] < 0:
             raise ValueError('Need increasing positive grid and enough points')
         # Reflection only applies to regular-center data. Never use for a puncture.
@@ -69,12 +85,12 @@ class RadialOperators:
         if self.puncture:sample=sample-(values[:,None] if values.ndim==1 else values[:,None,:])
         if values.ndim == 1:
             first=np.sum(self.d1*sample,axis=1);second=np.sum(self.d2*sample,axis=1)
-            if self.origin_on_grid:
+            if self.origin_on_grid and not self.puncture:
                 if parity>0:first[0]=0.
                 else:second[0]=0.
             return first,second
         first=np.einsum('ij,ijf->if',self.d1,sample);second=np.einsum('ij,ijf->if',self.d2,sample)
-        if self.origin_on_grid:
+        if self.origin_on_grid and not self.puncture:
             first[0,np.asarray(parity)>0]=0.;second[0,np.asarray(parity)<0]=0.
         return first,second
 
@@ -83,6 +99,9 @@ class RadialOperators:
         f=np.asarray(values) if self.origin_on_grid or self.puncture else np.r_[origin,values]
         result=np.cumsum(np.sum(self.qweights*f[self.qindex],axis=1))
         return np.r_[0.,result] if self.origin_on_grid or self.puncture else result
+
+    def endpoint_first(self,values):
+        return self.d1[-1]@values[-self.width:]
 
     def advection_derivative(self,values,parity,beta):
         """One-point off-centered derivative for u_t=beta*u_r.

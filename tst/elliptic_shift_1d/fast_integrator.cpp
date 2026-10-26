@@ -17,12 +17,12 @@ struct Engine {
   long calls=0; double solve_seconds=0;
   bool puncture=false;
   std::string error;
-  std::array<double,12> diagnostics{};
+  std::array<double,13> diagnostics{};
   Engine(int N,int F,int W,int QW,const double* rr,const int* ix,
       const double* D1,const double* D2,const int* qi,const double* qwt,
       const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
       d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
-      params(p,p+15),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      params(p,p+16),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
       aleft(al,al+N*W),aright(ar,ar+N*W),awleft(alw,alw+N*W),awright(arw,arw+N*W) {
     for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
@@ -118,6 +118,9 @@ struct Engine {
       R[k+6]=b*up+vv*x;
       S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-xi*(alpha+A0)*u;
       if(params[13]!=0)S[k+6]-=xi*u*u;
+      if(params[15]!=0) {
+        double D=-kap*u;S[k+3]+=D*(1-kap2)*T;S[k+4]-=D*(2+kap2)*T;S[k+5]-=D*lam;
+      }
       double H=2*dk*(K-3)/3-6*c+2*O*x*cp+O*O*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar);
       double M=O*(ap+3*ar-1.5*Ar*cp/chi)-2*(pp+2*Tp)/3+2*x*Ar;
       if(nf==10) {
@@ -133,6 +136,7 @@ struct Engine {
         double ak=-1+alpha*Ar+(i==n-1?-dU:U[i]/O);
         double N=dk*(K-3)/9-c+O*(-K*Ar/3+A0*cr)+O*O*(Ar*Ar/4-cp*cp/(4*chi));
         double B=N-kap*(1+kap2)*T+2*O*x*chi*lam/3;
+        if(params[15]!=0)B-=kap*(1+kap2)*(-u)*(T/alpha);
         if(!appendix)B-=2*ww*T;
         double V=i==n-1?0:B/(O*O)+chi*lr-cp*lam/3;
         double br=-1+vr,mix=.5*alpha*cp+chi*alphap;
@@ -188,6 +192,10 @@ struct Engine {
       ds[6]=-2*alpha*alphap*q[e+3]-alpha*alpha*pp+(vv-u+u*vv)
         +(vv+vp-u-up+up*vv+u*vp)-xi*((alphap+1)*u+(alpha+1)*up);
       if(params[13]!=0)ds[6]-=2*xi*u*up;
+      if(params[15]!=0) {
+        ds[3]-=kap*(1-kap2)*(up*T+u*Tp);ds[4]+=kap*(2+kap2)*(up*T+u*Tp);
+        ds[5]+=kap*(up*lam+u*lp);
+      }
     }
     if(params[10]!=0) {
       double rawchi=R[e]-ds[0],rawclock=R[e+6]-ds[6];
@@ -220,12 +228,17 @@ struct Engine {
       }
     }
     out[e+6]=0;for(int i=0;i<n;i++)out[i*nf+7]=0;
+    const double chiS=1+cS,rootChi=std::sqrt(chiS);
+    const double dbS=beta.back()+1.5*alphaS*q[e+2];
+    const double affinity=out[e]/(2*alphaS*chiS)-d[e]/(2*rootChi)
+        -rootChi*(1+d[e+6])/alphaS-dbS/alphaS;
+    diagnostics[12]=std::max(diagnostics[12],std::abs(affinity));
     for(int k=0;k<n*nf;k++)if(!std::isfinite(out[k]))throw std::runtime_error("nonfinite RHS");
     return nf==10?4*3.14159265358979323846*R[e+8]*R[e+8]:0;
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 15;}
+int spherical_fast_abi(){return 17;}
 const char* spherical_fast_last_error(void* handle){return static_cast<Engine*>(handle)->error.c_str();}
 void* spherical_fast_create(int n,int nf,int w,int qw,const double* r,const int* ix,
     const double* d1,const double* d2,const int* qi,const double* qwt,
@@ -235,7 +248,7 @@ void* spherical_fast_create(int n,int nf,int w,int qw,const double* r,const int*
 void spherical_fast_destroy(void* handle){delete static_cast<Engine*>(handle);}
 void spherical_fast_stats(void* handle,double* stats) {
   auto& e=*static_cast<Engine*>(handle);stats[0]=e.calls;stats[1]=e.solve_seconds;
-  for(int i=0;i<12;i++)stats[i+2]=e.diagnostics[i];
+  for(int i=0;i<13;i++)stats[i+2]=e.diagnostics[i];
 }
 int spherical_fast_rhs(void* handle,const double* q,double* result,double* flux) {
   auto& engine=*static_cast<Engine*>(handle);

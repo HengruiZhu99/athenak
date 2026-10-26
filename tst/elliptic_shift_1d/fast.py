@@ -8,12 +8,16 @@ class FastEngine:
     def __init__(self,evolution,fields,library):
         a=evolution.args;op=evolution.op
         self.puncture=getattr(a,'puncture',False)
+        if (getattr(a,'puncture_chart',False) or getattr(a,'radial_operator','fd')!='fd'
+            or getattr(a,'slicing_family','linear')!='linear' or getattr(a,'lapse_background_source','reference')!='reference'
+            or getattr(a,'puncture_boundary','outflow')!='outflow' or getattr(a,'puncture_ko',0.)):
+            raise ValueError('This operator/gauge/boundary prototype is not implemented in the compiled engine')
         if self.puncture and a.origin_ko:raise ValueError('Regular-center KO is inapplicable to a puncture')
         if a.backend!='spherical-g1' or a.origin_variables or a.endpoint not in ('raw-lhopital','analytic-g1'):
             raise ValueError('Compiled engine implements unscaled g=1 and raw/analytic endpoints')
         self.lib=C.CDLL(str(library));self.calls=0;self.advance_seconds=0.
         self.lib.spherical_fast_abi.restype=C.c_int
-        if self.lib.spherical_fast_abi()!=15:raise ValueError('Compiled engine ABI does not match this wrapper')
+        if self.lib.spherical_fast_abi()!=17:raise ValueError('Compiled engine ABI does not match this wrapper')
         self.lib.spherical_fast_last_error.argtypes=[C.c_void_p];self.lib.spherical_fast_last_error.restype=C.c_char_p
         self.failure_message=''
         fp=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')
@@ -25,7 +29,7 @@ class FastEngine:
         self.lib.spherical_fast_rhs.argtypes=[C.c_void_p,fp,fp,C.POINTER(C.c_double)]
         self.lib.spherical_fast_advance.argtypes=[C.c_void_p,fp,C.c_int,C.c_double,C.POINTER(C.c_double)]
         params=np.array([a.kappa1,a.kappa2,a.slicing,a.lapse_restoring,a.scri_sat,
-            a.regularity_sat,a.origin_ko,a.origin_ko_radius,a.theta=='appendix-c',a.endpoint=='analytic-g1',getattr(a,'gauge_corner_sat',0.),getattr(a,'advection','centered')=='upwind',getattr(a,'puncture',False),getattr(a,'lapse_restoring_form','symmetric')=='multiplicative',getattr(a,'initial_data',None)=='wormhole'],dtype=float)
+            a.regularity_sat,a.origin_ko,a.origin_ko_radius,a.theta=='appendix-c',a.endpoint=='analytic-g1',getattr(a,'gauge_corner_sat',0.),getattr(a,'advection','centered')=='upwind',getattr(a,'puncture',False),getattr(a,'lapse_restoring_form','symmetric')=='multiplicative',getattr(a,'initial_data',None)=='wormhole',getattr(a,'damping_form','constant')=='reference-lapse'],dtype=float)
         self.handle=self.lib.spherical_fast_create(len(op.r),fields,op.width,len(op.qindex[0]),
             op.r,np.asarray(op.index,dtype=np.int32),op.d1,op.d2,
             np.asarray(op.qindex,dtype=np.int32),op.qweights,
@@ -36,14 +40,14 @@ class FastEngine:
         if self.handle:self.lib.spherical_fast_destroy(self.handle);self.handle=None
 
     def stats(self):
-        values=np.zeros(14);self.lib.spherical_fast_stats(self.handle,values)
+        values=np.zeros(15);self.lib.spherical_fast_stats(self.handle,values)
         return int(values[0]),float(values[1])
 
     def diagnostics(self):
-        values=np.zeros(14);self.lib.spherical_fast_stats(self.handle,values)
+        values=np.zeros(15);self.lib.spherical_fast_stats(self.handle,values)
         if values[0]==0:return {}
         names=['max_scri_pole','max_lapse_pole','max_regularity_trace','min_chi','min_alpha',
-            'max_H_rms','max_M_rms','max_Theta_rms','max_Z_rms','max_scri_null','max_scri_clock','max_inner_characteristic']
+            'max_H_rms','max_M_rms','max_Theta_rms','max_Z_rms','max_scri_null','max_scri_clock','max_inner_characteristic','max_Bondi_nonaffinity']
         result={key:float(value) for key,value in zip(names,values[2:])}
         if not self.puncture:result.pop('max_inner_characteristic')
         return result
