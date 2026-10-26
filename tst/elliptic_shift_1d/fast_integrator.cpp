@@ -17,7 +17,8 @@ struct Engine {
   long calls=0; double solve_seconds=0;
   bool puncture=false;
   std::string error;
-  std::array<double,21> diagnostics{};
+  std::array<double,22> diagnostics{};
+  Vec ode_lu,ode_matrix;int ode_band=0,ode_skip=0,ode_refinements=0;double ode_scale=1;
   Engine(int N,int F,int W,int QW,const double* rr,const int* ix,
       const double* D1,const double* D2,const int* qi,const double* qwt,
       const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
@@ -54,6 +55,34 @@ struct Engine {
     return sum;
   }
   double ratio(double a,int i,double limit=0)const{return r[i]>0?a/r[i]:limit;}
+  Vec ode_triangular(Vec x)const {
+    const int b=ode_band,stride=2*b+1;
+    for(int i=0;i<n;i++)for(int j=std::max(0,i-b);j<i;j++)x[i]-=ode_lu[i*stride+b+j-i]*x[j];
+    for(int i=n-1;i>=0;i--) {
+      for(int j=i+1;j<std::min(n,i+b+1);j++)x[i]-=ode_lu[i*stride+b+j-i]*x[j];
+      x[i]/=ode_lu[i*stride+b];
+    }
+    return x;
+  }
+  Vec ode_residual(const Vec& rhs,const Vec& x)const {
+    Vec residual(n);const int b=ode_band,stride=2*b+1;
+    for(int i=0;i<n;i++) {
+      long double value=rhs[i];
+      for(int j=std::max(0,i-b);j<std::min(n,i+b+1);j++)value-=static_cast<long double>(ode_matrix[i*stride+b+j-i])*x[j];
+      residual[i]=static_cast<double>(value);
+    }
+    return residual;
+  }
+  Vec solve_shift_ode(double outer) {
+    Vec rhs(n);for(int i=0;i<n-1;i++)rhs[i]=ode_scale*z[i+ode_skip];rhs.back()=outer;
+    Vec x=ode_triangular(rhs);
+    for(int pass=0;pass<ode_refinements;pass++) {
+      Vec correction=ode_triangular(ode_residual(rhs,x));for(int i=0;i<n;i++)x[i]+=correction[i];
+    }
+    Vec residual=ode_residual(rhs,x);
+    for(int i=0;i<n-1;i++)diagnostics[21]=std::max(diagnostics[21],std::abs(residual[i])/ode_scale);
+    return x;
+  }
   double lapse_coefficient(double x,double alpha)const {
     double O=(1-x*x)/2,A=(1+x*x)/2,nu=params[2];int family=static_cast<int>(params[18]);
     if(family==1)return alpha*alpha+4*nu*O*O*alpha*(A+params[19])/(alpha+params[19]);
@@ -111,8 +140,10 @@ struct Engine {
     }
     int e=(n-1)*nf;double cS=q[e],uS=q[e+6],alphaS=total_alpha.back();
     double outer=-(cS+(2*uS+uS*uS)*total_chi.back())/(1+alphaS*std::sqrt(total_chi.back()));
+    if(ode_band)phase=solve_shift_ode(outer);
     for(int i=0;i<n;i++) {
-      phase[i]=inward?outer-integral[i]:outer+integral[i]-integral.back();v[i]=r[i]*phase[i];beta[i]=-r[i]+v[i];
+      if(!ode_band)phase[i]=inward?outer-integral[i]:outer+integral[i]-integral.back();
+      v[i]=r[i]*phase[i];beta[i]=-r[i]+v[i];
       double alpha=total_alpha[i];
       U[i]=alpha*(q[i*nf+3]+2*q[i*nf+4])/3-q[i*nf+6]-r[i]*v[i];
     }
@@ -285,7 +316,11 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 22;}
+int spherical_fast_abi(){return 23;}
+void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
+  auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
+  const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);
+}
 void spherical_fast_set_lapse_source(void* handle,const double* source){
   auto& e=*static_cast<Engine*>(handle);std::copy(source,source+e.n,e.lapse_source.begin());
 }
@@ -298,7 +333,7 @@ void* spherical_fast_create(int n,int nf,int w,int qw,const double* r,const int*
 void spherical_fast_destroy(void* handle){delete static_cast<Engine*>(handle);}
 void spherical_fast_stats(void* handle,double* stats) {
   auto& e=*static_cast<Engine*>(handle);stats[0]=e.calls;stats[1]=e.solve_seconds;
-  for(int i=0;i<21;i++)stats[i+2]=e.diagnostics[i];
+  for(int i=0;i<22;i++)stats[i+2]=e.diagnostics[i];
 }
 int spherical_fast_rhs(void* handle,const double* q,double* result,double* flux) {
   auto& engine=*static_cast<Engine*>(handle);

@@ -90,7 +90,9 @@ def controls(zs,time_controls,quad_controls,acceptance,coarse_time=None):
         quadrature=[]
         for z in quad_controls:
             error=norm(z['q']-base['q'],r,mask)
-            quadrature.append(dict(width=z['manifest']['arguments']['quadrature_width'],difference=error,
+            opts=z['manifest']['arguments'];ode=opts.get('elliptic_method')=='discrete-ode'
+            quadrature.append(dict(parameter='elliptic_refinements' if ode else 'quadrature_width',
+                value=opts['elliptic_refinements' if ode else 'quadrature_width'],difference=error,
                 spatial_fraction=error/denominator,pass_fraction=error/denominator<acceptance['elliptic_error_fraction_of_finest_spatial_error_max']))
         result[region]=dict(temporal=dict(cfl=cfl,differences=errors,orders=temporal_orders,
             standard_to_half_fraction=standard_error/denominator,pass_fraction=standard_error/denominator<.1,
@@ -115,11 +117,12 @@ def main():
     p.add_argument('--output',type=Path,required=True);p.add_argument('--resolutions',type=int,nargs=3,default=[512,1024,2048])
     p.add_argument('--acceptance',type=Path,default=Path(__file__).resolve().parents[2]/'docs/elliptic-shift-1d/acceptance.json')
     p.add_argument('--dissipation-input',type=Path);p.add_argument('--coarse-time-controls',action='store_true')
-    p.add_argument('--finest-quadrature-input',type=Path);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+    p.add_argument('--finest-quadrature-input','--finest-elliptic-input',dest='finest_quadrature_input',type=Path)
+    p.add_argument('--elliptic-solver-controls',action='store_true');a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     acceptance=json.loads(a.acceptance.read_text())['preliminary_evolution_gates']
     zs=[load(a.input/f'spatial-n{n}') for n in a.resolutions]
     time=[load(a.input/name) for name in ['time-cfl0.025','time-cfl0.0125']]
-    quad=[load(a.input/f'quadrature-q{n}') for n in [9,11]]
+    quad=[load(a.input/(f'elliptic-refinement{n}-n{a.resolutions[1]}' if a.elliptic_solver_controls else f'quadrature-q{n}')) for n in ([0,4] if a.elliptic_solver_controls else [9,11])]
     coarse=load(a.input/'time-cfl0.1') if a.coarse_time_controls else None
     space,independent=controls(zs,time,quad,acceptance,coarse);constraints=constraint_convergence(zs)
     runs={}
@@ -134,7 +137,9 @@ def main():
         # A previous source-bound matrix is labeled separately. It cannot be
         # used to fabricate missing all-step instrumentation in the new one.
         for strength in [.25,.5,1.]:
-            dz=[load(a.dissipation_input/(f'spatial-n{n}' if strength==.5 else f'KO{strength}-n{n}')) for n in a.resolutions]
+            dz=zs if strength==.5 else [load(a.dissipation_input/f'KO{strength}-n{n}') for n in a.resolutions]
+            for z,standard in zip(dz,zs):
+                if z['manifest']['binding']!=standard['manifest']['binding']:raise ValueError('Dissipation control source/library differs from its baseline')
             dissipation[str(strength)]=dict(spatial=spatial(dz),runs=[dict(folder=z['folder'],checkpoint_sha256=z['checkpoint_sha256'],segments=z['segments'],stages=z['stages']) for z in dz])
     gates=dict(accepted_bulk_constraints=bool(constraints and all(min(constraints[f+'_bulk']['pair_orders'])>=acceptance['gauge_pulse_constraint_bulk_order_min'] for f in ['H','M'])),
         physical_endpoint_order=space['regions']['endpoint']['order'] is not None and space['regions']['endpoint']['order']>=acceptance['endpoint_error_order_min'],
@@ -143,7 +148,7 @@ def main():
         elliptic_error_fractions=all(v['pass_fraction'] for z in independent.values() for v in z['quadrature']))
     finest={}
     if a.finest_quadrature_input:
-        base=zs[-1];qcontrols=[load(a.finest_quadrature_input/f'quadrature-q{q}-n{a.resolutions[-1]}') for q in [9,11]]
+        base=zs[-1];qcontrols=[load(a.finest_quadrature_input/(f'elliptic-refinement{q}-n{a.resolutions[-1]}' if a.elliptic_solver_controls else f'quadrature-q{q}-n{a.resolutions[-1]}')) for q in ([0,4] if a.elliptic_solver_controls else [9,11])]
         require_same_time([base]+qcontrols)
         if any(not np.array_equal(z['r'],base['r']) for z in qcontrols):raise ValueError('Finest quadrature grid mismatch')
         for region in ['bulk','endpoint']:
@@ -151,15 +156,19 @@ def main():
             spatial_error=difference/np.expm1(order*np.log(space['h'][-2]/space['h'][-1]))
             r=base['r'];mask=r<.8 if region=='bulk' else r>.9
             finest[region]=dict(Richardson_finest_spatial_error=spatial_error,raw_middle_to_finest_difference=difference,
-                quadrature=[dict(width=z['manifest']['arguments']['quadrature_width'],difference=norm(z['q']-base['q'],r,mask),
+                quadrature=[dict(parameter='elliptic_refinements' if a.elliptic_solver_controls else 'quadrature_width',
+                    value=z['manifest']['arguments']['elliptic_refinements' if a.elliptic_solver_controls else 'quadrature_width'],difference=norm(z['q']-base['q'],r,mask),
                     fraction=norm(z['q']-base['q'],r,mask)/spatial_error,
                     pass_fraction=bool(norm(z['q']-base['q'],r,mask)/spatial_error<acceptance['elliptic_error_fraction_of_finest_spatial_error_max'])) for z in qcontrols])
         gates['finest_elliptic_error_fractions']=all(q['pass_fraction'] for region in finest.values() for q in region['quadrature'])
         for z in qcontrols:runs[Path(z['folder']).name]={k:z[k] for k in ['folder','t','checkpoint_sha256','segments','stages']}
+    if a.elliptic_solver_controls:
+        gates['all_stage_discrete_ODE_residual']=all(z['stages'].get('max_elliptic_discrete_residual',float('inf'))<=1e-11 for z in zs+time+quad)
     result=dict(scope='Finite-amplitude positive-variable gauge pulse at the exact control time. Boundary safety and duration assessed separately; no full-goal admission.',
         physical_fields='chi-1, g-1, Ar, Khat+3, Theta, Lambda, alpha-Aref; shift placeholder excluded',
         comparison_norm='r^2 weighted RMS of physical fields; bulk r<.8 and endpoint r>.9; degree-8 parity interpolation',
-        spatial=space,accepted_constraint_convergence=constraints,independent_controls=independent,finest_quadrature_controls=finest,gates=gates,runs=runs,dissipation=dissipation,
+        spatial=space,accepted_constraint_convergence=constraints,independent_controls=independent,finest_elliptic_controls=finest,gates=gates,runs=runs,dissipation=dissipation,
+        elliptic_control_kind='Direct banded arithmetic refinement; distinct from the failed sampled-source quadrature discretization study.' if a.elliptic_solver_controls else 'Independent quadrature discretization degree',
         provenance=dict(analysis_sha256=digest(__file__),trajectory_sha256=digest(Path(__file__).with_name('trajectory.py')),acceptance_sha256=digest(a.acceptance)))
     (a.output/'review.json').write_text(json.dumps(result,indent=2)+'\n')
     import matplotlib

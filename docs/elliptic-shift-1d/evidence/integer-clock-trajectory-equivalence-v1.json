@@ -1,0 +1,25 @@
+{
+  "scope": "Clock repair comparison at nominally aligned t1 targets. N1024 state is bitwise identical; N2048 differs by3.74e-13 in stored fields with the same step count, because the legacy accumulated clock can shorten the final landing even at a nominal lattice target. New-source cadence/restart bitwise consistency is assessed separately. No blanket cross-source bitwise claim.",
+  "records": [
+    {
+      "n": 1024,
+      "old_checkpoint_sha256": "76b8225f92c5f630973a59ee294b8d959b509519d98f166eeaced0f1f4c74a3f",
+      "new_checkpoint_sha256": "ed3bf5513dbf7e0d7f9ad0e0ba993611ee271d8589a92da51b221418d9109281",
+      "bitwise_state": true,
+      "max_state_difference": 0.0,
+      "same_step_count": true,
+      "old_reported_time": 0.9999999999999453,
+      "new_reported_time": 1.0
+    },
+    {
+      "n": 2048,
+      "old_checkpoint_sha256": "0de1e7742777b4e91b6facba1c3f5b0d24c3f1a6d09fe0f2fe8e0f26a6cd922a",
+      "new_checkpoint_sha256": "ea7b4795535de176581b1ab63ed9c7d9d49c39fb966d91c2061829a0cf79bcff",
+      "bitwise_state": false,
+      "max_state_difference": 3.7391964524680077e-13,
+      "same_step_count": true,
+      "old_reported_time": 1.0,
+      "new_reported_time": 1.0
+    }
+  ]
+}

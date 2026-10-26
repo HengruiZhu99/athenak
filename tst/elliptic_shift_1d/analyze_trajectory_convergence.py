@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+"""Spatial self-convergence at common saved CFL-aligned physical times.
+
+No interpolation in time. Independent constraints remain all-step/stage monitors.
+"""
+import argparse,hashlib,json
+from pathlib import Path
+import numpy as np
+from numerics import weights
+from kernel import PARITY
+from trajectory import read_trajectory
+from analyze_principal_controls import fit_order,norm
+p=argparse.ArgumentParser();inputs=p.add_mutually_exclusive_group(required=True);inputs.add_argument('--input',type=Path)
+inputs.add_argument('--case-paths',type=Path,nargs=3);p.add_argument('--output',type=Path,required=True)
+p.add_argument('--resolutions',type=int,nargs=3,default=[512,1024,2048]);p.add_argument('--interval',type=float,default=.1);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+runs=[]
+for case_index,n in enumerate(a.resolutions):
+ folder=a.input/f'spatial-n{n}' if a.input else a.case_paths[case_index];m,rows,stages,segments=read_trajectory(folder)
+ if m['arguments']['n']!=n:raise ValueError('Resolution label differs from source-bound input')
+ if m['status']!='finished':raise ValueError('Require completed trajectories at the same final time')
+ profiles={}
+ for segment in segments:
+  for path in sorted(Path(segment['folder']).glob('profile-*.npz')):
+   with np.load(path,allow_pickle=False) as z:
+    t=float(z['t']);tick=int(round(t/a.interval))
+    if abs(t-tick*a.interval)>1e-10:continue
+    q=z['q_physical' if 'q_physical' in z else 'q'].copy();r=z['r'].copy();frame_step=int(z['step']) if 'step' in z else None
+    if 'time_lattice' in z:
+        epoch=json.loads(str(z['time_lattice']));represented=epoch['origin_time']+(frame_step-epoch['origin_step'])*epoch['dt']
+        if abs(t-represented)>1e-10:raise ValueError('Saved frame differs from its timestep lattice')
+   if tick in profiles and not np.array_equal(profiles[tick]['q'],q):raise ValueError('Duplicate continuation landing states differ')
+   profiles[tick]=dict(t=t,step=frame_step,r=r,q=q,path=str(path),sha256=sha(path))
+ runs.append(dict(n=n,manifest=m,stages=stages,segments=segments,profiles=profiles))
+if np.ptp([r['manifest']['time'] for r in runs])>1e-10:raise ValueError('Different final times')
+if len({r['manifest']['arguments']['cfl'] for r in runs})!=1:raise ValueError('Spatial study requires a fixed CFL')
+end=int(round(runs[0]['manifest']['time']/a.interval));requested=list(range(end+1))
+missing={z['n']:sorted(set(requested)-set(z['profiles'])) for z in runs}
+ticks=sorted(set.intersection(*[set(z['profiles']) for z in runs]))
+if len(ticks)<3 or ticks[0]!=0 or ticks[-1]!=end:raise ValueError('Common profiles do not cover the trajectory interval')
+hs=[float(np.diff(z['profiles'][0]['r'])[0]) for z in runs];errors={key:[] for key in ['bulk','endpoint']}
+for lo,hi in zip(runs[:-1],runs[1:]):
+ coarse=lo['profiles'][0]['r'];fine=hi['profiles'][0]['r'];width=9
+ if coarse[0]<=0 or fine[0]<=0:raise ValueError('Current interpolation expects regular half-cell origins')
+ ext=np.r_[-fine[:width][::-1],fine];indices=[];coefficients=[]
+ for x in coarse:
+  start=min(max(np.searchsorted(ext,x)-width//2,0),len(ext)-width);idx=np.arange(start,start+width)
+  indices.append(idx);coefficients.append(weights(ext[idx],x))
+ indices=np.array(indices);coefficients=np.array(coefficients);series={key:[] for key in errors}
+ for tick in ticks:
+  q=hi['profiles'][tick]['q'];parity=np.r_[PARITY,np.ones(max(0,q.shape[1]-len(PARITY)))];values=np.r_[q[:width][::-1]*parity,q]
+  sampled=np.einsum('ij,ijf->if',coefficients,values[indices]);delta=lo['profiles'][tick]['q']-sampled
+  for key,mask in [('bulk',coarse<.8),('endpoint',coarse>.9)]:series[key].append(norm(delta,coarse,mask))
+ for key in errors:errors[key].append(series[key])
+result={}
+times=np.array(ticks)*a.interval
+for region,series in errors.items():
+ maximum=[float(max(e)) for e in series];l2=[float(np.sqrt(np.sum(np.diff(times)*(np.array(e[:-1])**2+np.array(e[1:])**2)/2)/(times[-1]-times[0]))) for e in series]
+ result[region]=dict(sampled_differences=series,maximum_differences=maximum,maximum_order=fit_order(maximum,hs),
+  time_RMS_differences=l2,time_RMS_order=fit_order(l2,hs),sampled_orders=[fit_order([e[i] for e in series],hs) for i in range(len(ticks))])
+record=dict(scope='Full-duration fields at common exact saved times; no temporal interpolation. Sampled field errors supplement all-stage safety and every-accepted-step constraints.',
+ interval=a.interval,times=times.tolist(),h=hs,regions=result,missing_requested_ticks=missing,
+ coverage_note='Only common reported-time matches within1e-10 are compared. Older cumulative-clock frames can miss a requested tick by one RK step; none are shifted or interpolated in time. The integer-step clock repair is a separate source-bound change.',
+ runs=[dict(n=z['n'],binding=z['manifest']['binding'],segments=z['segments'],all_stage_extrema=z['stages'],
+       selected_profiles=[{key:value for key,value in z['profiles'][i].items() if key not in ['q','r']} for i in ticks]) for z in runs],
+ source_sha256={p.name:sha(p) for p in [Path(__file__),Path(__file__).with_name('analyze_principal_controls.py'),Path(__file__).with_name('trajectory.py')]})
+(a.output/'review.json').write_text(json.dumps(record,indent=2)+'\n')
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+fig,axes=plt.subplots(1,2,figsize=(9,3.5),layout='constrained')
+for ax,region in zip(axes,['bulk','endpoint']):
+ for pair,e in zip(zip(a.resolutions[:-1],a.resolutions[1:]),errors[region]):ax.semilogy(record['times'],e,label=f'{pair[0]} to {pair[1]}')
+ ax.set_title(region+': physical field differences');ax.set_xlabel('Coordinate time');ax.legend();ax.grid(alpha=.25)
+fig.savefig(a.output/'trajectory.png',dpi=160);fig.savefig(a.output/'trajectory.pdf');plt.close(fig)
+print(json.dumps({key:{k:v for k,v in value.items() if not k.startswith('sampled_')} for key,value in result.items()}))

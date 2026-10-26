@@ -1,0 +1,72 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 1,
+    "amplitude": 0.1,
+    "pulse": "published-gaussian",
+    "elliptic_quadrature": "inward",
+    "endpoint": "analytic-g1",
+    "elliptic_method": "discrete-ode",
+    "elliptic_refinements": 2,
+    "elliptic_bias": "right"
+  },
+  "cases": [
+    {
+      "name": "KO0.25-n512",
+      "arguments": {
+        "n": 512,
+        "origin_ko": 0.25
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "KO0.25-n1024",
+      "arguments": {
+        "n": 1024,
+        "origin_ko": 0.25
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "KO0.25-n2048",
+      "arguments": {
+        "n": 2048,
+        "origin_ko": 0.25
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "KO1.0-n512",
+      "arguments": {
+        "n": 512,
+        "origin_ko": 1.0
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "KO1.0-n1024",
+      "arguments": {
+        "n": 1024,
+        "origin_ko": 1.0
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "KO1.0-n2048",
+      "arguments": {
+        "n": 2048,
+        "origin_ko": 1.0
+      },
+      "continue_to": 6
+    }
+  ],
+  "scope": "Independent dissipation controls for the right-biased discrete shift ODE candidate. Compare KO .25/.5/1 at each of the same three resolutions and exact t1; continue every successful control to6. Only KO strength changes. The .5 baseline is the existing source-bound principal matrix. Same predeclared constraints, scri and affinity gates; survival alone is insufficient."
+}

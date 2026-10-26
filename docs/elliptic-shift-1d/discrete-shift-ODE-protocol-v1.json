@@ -1,0 +1,9 @@
+{
+  "created_UTC": "2026-10-26T09:22:43.636625+00:00",
+  "scope": "Direct banded solve of D_r(v/r)=3 alpha Ar/(2r), where v=beta+r. Uses the same physical shift equation, regular-center parity, outer null datum and free Z4c variables, but a derivative-compatible discrete integration. The ODE unknown in code is v/r. Fixed CFL .05, analytic scri limit, positive fields. Independent 0/2/4 long-double-residual refinements test linear solve error; they are distinct from the retained failed quadrature-discretization controls.",
+  "acceptance": "acceptance.json",
+  "spatial_and_temporal": "Three fixed-CFL principal spatial resolutions; middle CFL .1/.025/.0125; all three standard prefixes continued to6.",
+  "solve_accuracy": "Keep predeclared 10% finest spatial-error fraction: compare 0/4 refinement runs to2 using Richardson finest error, and report all-stage normalized ODE residuals. Differentiate solve error from the discretization error of integrating a sampled source.",
+  "additional_residual_gate": 1e-11,
+  "predeclaration": "Before executing this principal ODE trajectory matrix. Native/dense/manufactured and compiled audits precede it. All earlier raw/analytic quadrature failures remain failures."
+}

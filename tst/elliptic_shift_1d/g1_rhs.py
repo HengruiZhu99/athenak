@@ -30,7 +30,8 @@ def parts(ops,q,d,dd,kappa1=4.,kappa2=-.99,appendix_c=True,slicing=1.,restoring=
     Arr_over_r=radial_ratio(Arr,r,0.)
     outer_v=-(c[-1]+(2*u[-1]+u[-1]*u[-1])*chi[-1])/(1+alpha[-1]*np.sqrt(chi[-1]))
     integrand=1.5*alpha*Arr_over_r
-    if getattr(ops,'elliptic_quadrature','prefix')=='inward':v_over_r=outer_v-ops.tail_integral(integrand)
+    if hasattr(ops,'shift_ode_solver'):v_over_r=ops.shift_ode_solver.solve(integrand,outer_v)
+    elif getattr(ops,'elliptic_quadrature','prefix')=='inward':v_over_r=outer_v-ops.tail_integral(integrand)
     else:
         integral=ops.integral(integrand);v_over_r=outer_v+integral-integral[-1]
     v=r*v_over_r;beta=-r+v

@@ -11,6 +11,7 @@ p.add_argument('--radial-operator',choices=['fd','sbp63'],default='fd')
 p.add_argument('--lapse-reference',choices=['minkowski','CMC-trumpet'],default='minkowski')
 p.add_argument('--metric-variable',choices=['deviation','log-trumpet'],default='deviation')
 p.add_argument('--elliptic-quadrature',choices=['prefix','inward'],default='prefix')
+p.add_argument('--elliptic-method',choices=['quadrature','discrete-ode'],default='quadrature')
 p.add_argument('--positive-variables',action='store_true')
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 dt=.05/63.5;driver=Path(__file__).with_name('evolve.py')
@@ -36,7 +37,7 @@ if a.scenario=='trumpet-log':
         '--n','65','--puncture','--initial-data','trumpet','--mass',str(1/3),'--lapse-variable','log-trumpet',
         '--lapse-reference',a.lapse_reference,'--metric-variable',a.metric_variable,'--lapse-restoring','1','--lapse-restoring-form','multiplicative',
         '--scri-sat','4','--regularity-sat','8','--amplitude','.001']
-common+=['--elliptic-quadrature',a.elliptic_quadrature]
+common+=['--elliptic-quadrature',a.elliptic_quadrature,'--elliptic-method',a.elliptic_method]
 for name,steps,resume in [('full',40,None),('first',20,None),('resumed',40,'first')]:
     command=common+['--t',str(steps*dt),'--output',str(a.output/name)]
     if resume:command+=['--resume',str(a.output/resume/'checkpoint.npz')]

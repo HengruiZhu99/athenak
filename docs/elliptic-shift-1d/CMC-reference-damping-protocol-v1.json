@@ -1,0 +1,7 @@
+{
+  "created_UTC": "2026-10-26T09:44:14.663071+00:00",
+  "scope": "Labeled CMC lapse-source/excision control with symmetric restoring, changing only constant kappa1 to kappa1_eff=kappa1 Aref/alpha. Retains kappa1=4,kappa2=-.99 and every physical/gauge outflow guard. Uses the exact frozen numerical source/binaries of the constant-damping symmetric matrix. Tests whether lapse-suppressed constraint damping is related to late constraint growth; does not assume it is the sole cause or replace main Minkowski-reference cases.",
+  "acceptance": "excision-acceptance-v1.json",
+  "hypothesis": "Constant kappa terms enter with alpha, becoming weak where lapse collapses. Reference-lapse products instead give alpha*kappa_eff=kappa1*Aref. The modification is quadratic about Minkowski and changes off-constraint sources, already independently audited.",
+  "reproducibility": "Use the previous symmetric-control source and both binaries verbatim, so only damping_form changes. Compare common physical times through100; do not infer convergence between failed trajectories at different times."
+}

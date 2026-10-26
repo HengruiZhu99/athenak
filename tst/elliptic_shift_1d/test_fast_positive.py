@@ -15,6 +15,8 @@ for index,(origin,scalar,variables,endpoint,ko) in enumerate(product([False,True
         damping_form='reference-lapse' if index%5 else 'constant',endpoint=endpoint,gauge_corner_sat=0.,advection='centered',
         scri_sat=4.,regularity_sat=8.,origin_ko=ko,origin_ko_radius=.4,metric_variable=variables[0],lapse_variable=variables[1])
     opts.elliptic_quadrature='inward' if index%2 else 'prefix'
+    opts.elliptic_method='discrete-ode' if index%4==0 else 'quadrature'
+    opts.elliptic_bias='right'
     opts.slicing_family=['linear','rational','blended-log'][index%3];opts.slicing_scale=.1
     ev=(CoupledEvolution if scalar else Evolution)(opts);r=ev.r;nf=10 if scalar else 8;q=np.zeros((len(r),nf));f=(1-r*r)**4
     for field,amplitude,power in [(0,.002,0),(2,.001,2),(3,.0015,0),(4,.0001,0),(5,.0002,1),(6,.002,0)]:q[:,field]=amplitude*r**power*f

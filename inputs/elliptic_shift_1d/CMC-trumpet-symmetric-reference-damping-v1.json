@@ -1,0 +1,41 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "initial_data": "trumpet",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "symmetric",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "report_dt": 1,
+    "t": 100,
+    "cfl": 0.05,
+    "mass": 0.3333333333333333,
+    "inner_radius": 0.03,
+    "damping_form": "reference-lapse"
+  },
+  "cases": [
+    {
+      "name": "n256",
+      "arguments": {
+        "n": 256,
+        "lapse_reference": "CMC-trumpet"
+      }
+    },
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512,
+        "lapse_reference": "CMC-trumpet"
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024,
+        "lapse_reference": "CMC-trumpet"
+      }
+    }
+  ],
+  "scope": "Labeled CMC lapse-source/excision control with symmetric restoring, changing only constant kappa1 to kappa1_eff=kappa1 Aref/alpha. Retains kappa1=4,kappa2=-.99 and every physical/gauge outflow guard. Uses the exact frozen numerical source/binaries of the constant-damping symmetric matrix. Tests whether lapse-suppressed constraint damping is related to late constraint growth; does not assume it is the sole cause or replace main Minkowski-reference cases."
+}

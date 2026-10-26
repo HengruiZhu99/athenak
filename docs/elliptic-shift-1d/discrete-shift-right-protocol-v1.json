@@ -1,0 +1,7 @@
+{
+  "created_UTC": "2026-10-26T09:28:02.804424+00:00",
+  "scope": "Same direct banded shift ODE as the failed centered case, changing only its discrete derivative to the one-point right-biased stencil. Physical/gauge PDE, hyperbolic operators, penalties, resolution/time/refinement controls and thresholds unchanged. A preliminary finite-grid Jacobian shows the centered outer mode grows with refinement, while right-biased spectra at N32/64/128/256 have negative dominant real parts. This motivates, but does not certify, the nonlinear trial.",
+  "acceptance": "acceptance.json",
+  "controls": "Same three spatial, fixed-grid timestep and independent 0/2/4 arithmetic-refinement controls as the centered ODE study. Retain failed centered cases; no comparing fields at their unequal failure times.",
+  "limitation": "Right-biased regular nodal-origin closure has a parasitic static mode and is rejected. The present main study has half-cell regular-center grids and actual scri. Additional origin-layout controls remain distinct."
+}

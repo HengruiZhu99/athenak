@@ -1,0 +1,2090 @@
+{
+  "scope": "Finite-amplitude positive-variable gauge pulse at the exact control time. Boundary safety and duration assessed separately; no full-goal admission.",
+  "physical_fields": "chi-1, g-1, Ar, Khat+3, Theta, Lambda, alpha-Aref; shift placeholder excluded",
+  "comparison_norm": "r^2 weighted RMS of physical fields; bulk r<.8 and endpoint r>.9; degree-8 parity interpolation",
+  "spatial": {
+    "h": [
+      0.0019550342130987292,
+      0.0009770395701025891,
+      0.0004884004884004884
+    ],
+    "regions": {
+      "bulk": {
+        "differences": [
+          2.2921968785255216e-08,
+          6.969638742230362e-10
+        ],
+        "order": 5.035897459633041,
+        "per_field_differences": [
+          [
+            1.7716953007064585e-10,
+            0.0,
+            2.023739800662773e-08,
+            9.385224822463087e-09,
+            5.037889694440564e-10,
+            5.229809830706157e-09,
+            3.8187263833332673e-10,
+            0.0
+          ],
+          [
+            4.719398632026369e-12,
+            0.0,
+            6.166803233308412e-10,
+            2.843797337264763e-10,
+            1.4762535868909104e-11,
+            1.5565382434264534e-10,
+            1.1129672636321436e-11,
+            0.0
+          ]
+        ],
+        "per_field_orders": [
+          5.226648626799172,
+          null,
+          5.032753495729279,
+          5.040891552811985,
+          5.089165212339067,
+          5.0667188968233585,
+          5.09696135977847,
+          null
+        ]
+      },
+      "endpoint": {
+        "differences": [
+          1.0234814398109805e-08,
+          3.611496796566997e-10
+        ],
+        "order": 4.821283218033427,
+        "per_field_differences": [
+          [
+            1.39626637529352e-10,
+            0.0,
+            1.0126064674746043e-08,
+            1.452747443338497e-09,
+            1.0969167993077331e-12,
+            2.1148202756101986e-10,
+            1.988551819139256e-10,
+            0.0
+          ],
+          [
+            4.309070914950294e-12,
+            0.0,
+            3.580324932601957e-10,
+            4.597947420741339e-11,
+            2.114978926531972e-14,
+            8.214139121071079e-12,
+            6.4554021308133475e-12,
+            0.0
+          ]
+        ],
+        "per_field_orders": [
+          5.014462224754597,
+          null,
+          4.818380201059055,
+          4.978083391127086,
+          5.692614461077529,
+          4.682913847103682,
+          4.941525313166746,
+          null
+        ]
+      }
+    }
+  },
+  "accepted_constraint_convergence": {
+    "H_rms": {
+      "maxima": [
+        1.223665510504299e-06,
+        3.8992278124712425e-08,
+        1.2347436539270906e-09
+      ],
+      "pair_orders": [
+        4.968374501929454,
+        4.9791505864525725
+      ]
+    },
+    "H_bulk": {
+      "maxima": [
+        0.0020740693135561372,
+        5.1129837292052116e-05,
+        1.3618860936759347e-06
+      ],
+      "pair_orders": [
+        5.338391525345415,
+        5.228645176043245
+      ]
+    },
+    "H_endpoint": {
+      "maxima": [
+        2.8582847776668398e-08,
+        1.0486112105214794e-09,
+        1.7047141727568918e-11
+      ],
+      "pair_orders": [
+        4.765238593317066,
+        5.940712992450178
+      ]
+    },
+    "M_rms": {
+      "maxima": [
+        1.8295405921719095e-06,
+        5.990426795848531e-08,
+        1.9136116119857847e-09
+      ],
+      "pair_orders": [
+        4.929203943424154,
+        4.966538881663217
+      ]
+    },
+    "M_bulk": {
+      "maxima": [
+        0.0007780484696503921,
+        2.0071119060231426e-05,
+        5.607896113123513e-07
+      ],
+      "pair_orders": [
+        5.272949867233905,
+        5.159699604702174
+      ]
+    },
+    "M_endpoint": {
+      "maxima": [
+        7.986551912426976e-06,
+        5.270762674196294e-07,
+        1.68165616362681e-08
+      ],
+      "pair_orders": [
+        3.918726599697535,
+        4.968306490014938
+      ]
+    },
+    "Theta_rms": {
+      "maxima": [
+        1.0752366866884058e-09,
+        3.049329805581113e-11,
+        9.276487944327981e-13
+      ],
+      "pair_orders": [
+        5.136397321420284,
+        5.036994895196541
+      ]
+    },
+    "Z_rms": {
+      "maxima": [
+        2.5643096973869154e-08,
+        1.0926869254817226e-09,
+        2.7522817603046506e-11
+      ],
+      "pair_orders": [
+        4.549411362147625,
+        5.309237413532796
+      ]
+    }
+  },
+  "independent_controls": {
+    "bulk": {
+      "temporal": {
+        "cfl": [
+          0.1,
+          0.05,
+          0.025,
+          0.0125
+        ],
+        "differences": [
+          1.8980680078115398e-12,
+          1.1999746827526772e-13,
+          2.76115696466407e-14
+        ],
+        "orders": [
+          3.983455812005507,
+          2.1196591590884513
+        ],
+        "standard_to_half_fraction": 0.00017217171895607777,
+        "pass_fraction": true,
+        "resolved_RK4_order": true,
+        "interpretation": "Each order uses successive differences at the three listed CFL values. Small-step bulk differences may reach the roundoff floor; retain their measured order."
+      },
+      "quadrature": [
+        {
+          "parameter": "elliptic_refinements",
+          "value": 0,
+          "difference": 1.5605728616909175e-14,
+          "spatial_fraction": 2.2391015078516346e-05,
+          "pass_fraction": true
+        },
+        {
+          "parameter": "elliptic_refinements",
+          "value": 4,
+          "difference": 1.5181498794776074e-14,
+          "spatial_fraction": 2.1782332422466167e-05,
+          "pass_fraction": true
+        }
+      ]
+    },
+    "endpoint": {
+      "temporal": {
+        "cfl": [
+          0.1,
+          0.05,
+          0.025,
+          0.0125
+        ],
+        "differences": [
+          5.2338765251273e-13,
+          3.269861465067642e-14,
+          2.155640769924585e-15
+        ],
+        "orders": [
+          4.000578470325934,
+          3.9230408309464995
+        ],
+        "standard_to_half_fraction": 9.054033962250484e-05,
+        "pass_fraction": true,
+        "resolved_RK4_order": true,
+        "interpretation": "Each order uses successive differences at the three listed CFL values. Small-step bulk differences may reach the roundoff floor; retain their measured order."
+      },
+      "quadrature": [
+        {
+          "parameter": "elliptic_refinements",
+          "value": 0,
+          "difference": 3.147044808204667e-16,
+          "spatial_fraction": 8.713962618480441e-07,
+          "pass_fraction": true
+        },
+        {
+          "parameter": "elliptic_refinements",
+          "value": 4,
+          "difference": 3.32321990292713e-16,
+          "spatial_fraction": 9.201780010122406e-07,
+          "pass_fraction": true
+        }
+      ]
+    }
+  },
+  "finest_elliptic_controls": {
+    "bulk": {
+      "Richardson_finest_spatial_error": 2.188503685686239e-11,
+      "raw_middle_to_finest_difference": 6.969638742230362e-10,
+      "quadrature": [
+        {
+          "parameter": "elliptic_refinements",
+          "value": 0,
+          "difference": 4.1863963720068597e-14,
+          "fraction": 0.0019129035054351075,
+          "pass_fraction": true
+        },
+        {
+          "parameter": "elliptic_refinements",
+          "value": 4,
+          "difference": 4.203095392976655e-14,
+          "fraction": 0.001920533842582362,
+          "pass_fraction": true
+        }
+      ]
+    },
+    "endpoint": {
+      "Richardson_finest_spatial_error": 1.3226532295044748e-11,
+      "raw_middle_to_finest_difference": 3.611496796566997e-10,
+      "quadrature": [
+        {
+          "parameter": "elliptic_refinements",
+          "value": 0,
+          "difference": 8.60581793396085e-16,
+          "fraction": 6.506480868900895e-05,
+          "pass_fraction": true
+        },
+        {
+          "parameter": "elliptic_refinements",
+          "value": 4,
+          "difference": 8.970757231783988e-16,
+          "fraction": 6.782395439464383e-05,
+          "pass_fraction": true
+        }
+      ]
+    }
+  },
+  "gates": {
+    "accepted_bulk_constraints": true,
+    "physical_endpoint_order": true,
+    "timestep_error_fractions": true,
+    "resolved_temporal_order": true,
+    "elliptic_error_fractions": true,
+    "finest_elliptic_error_fractions": true,
+    "all_stage_discrete_ODE_residual": true
+  },
+  "runs": {
+    "spatial-n512": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n512",
+      "t": 1.0,
+      "checkpoint_sha256": "41f3e0b55ec27ff06c95e22e7dadc6c6ec94242218a74a07891ab1d4affce6f4",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n512",
+          "status": "finished",
+          "time": 1.0,
+          "manifest_sha256": "523fa673a960ec506137816ad5134a4651f35a3dd00d4755b1f1c32d5bcf6a4f",
+          "history_sha256": "41b05fc98fc0c5c3c2d4edcf82e94d047173f158ef4c53e60b7326bfd3d87afd"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 6.192818091194097e-06,
+        "max_lapse_pole": 3.248595827357126e-09,
+        "max_regularity_trace": 1.2812789161806282e-06,
+        "min_chi": 0.9433140887610861,
+        "min_alpha": 0.2877827043101088,
+        "max_H_rms": 1.5046223193537205e-06,
+        "max_M_rms": 1.8299847566719195e-06,
+        "max_Theta_rms": 1.0824602237384833e-09,
+        "max_Z_rms": 2.564348259536366e-08,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 3.3820371081461076e-06,
+        "max_accepted_H_rms": 1.223665510504299e-06,
+        "max_accepted_M_rms": 1.8295405921719095e-06,
+        "max_accepted_Theta_rms": 1.0752366866884058e-09,
+        "max_accepted_Z_rms": 2.5643096973869154e-08,
+        "max_accepted_H_bulk": 0.0020740693135561372,
+        "max_accepted_M_bulk": 0.0007780484696503921,
+        "max_accepted_H_endpoint": 2.8582847776668398e-08,
+        "max_accepted_M_endpoint": 7.986551912426976e-06,
+        "max_elliptic_discrete_residual": 6.814548925149211e-13
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "centered",
+        "puncture": false,
+        "puncture_chart": false,
+        "puncture_ko": 0.0,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "minkowski",
+        "mass": 0.1,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "inward",
+        "elliptic_method": "discrete-ode",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "right",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n512",
+        "n": 512,
+        "t": 1.0,
+        "cfl": 0.05,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "symmetric",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "linear",
+        "slicing_scale": 0.1,
+        "lapse_background_source": "reference",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "log-reference",
+        "metric_variable": "log",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f84b5b05c89613401a067c7dad45260567c9ac660062ea7c161665dc20b3915d",
+          "tst/elliptic_shift_1d/numerics.py": "9d5147dbbad881d1e84303a3ee3b85de6bb896e33a0729602787f9d97ac7f8ea",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "ed40ee9c39a427a6ba9a9cfe48b568fba15ebc72f74b7f82d413e3a9398e6278",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/shift_ode.py": "c7eeb721ac331b250c3fecf32705f23f71793e8e122930d25226dea084efe813",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1b203fff1831778c0d7483fb456fed4320228d381b65e1f64577d0135c622bcb",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "cc656ae3d21c4355757cca701c14a2a86685ed4b9c8708d0edfa59a915821b4c",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "076c179bbe441b442876ffffa7219db95447af5d475ee07c342a4f12a1a82e17"
+      }
+    },
+    "spatial-n1024": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n1024",
+      "t": 0.9999999999999453,
+      "checkpoint_sha256": "76b8225f92c5f630973a59ee294b8d959b509519d98f166eeaced0f1f4c74a3f",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n1024",
+          "status": "finished",
+          "time": 0.9999999999999453,
+          "manifest_sha256": "5311f9fddd4f7f7821b2bc847b7b150a34ea7d9e8485032e70f85a108d157cbf",
+          "history_sha256": "7ec459003680e84d726151b481bc1f7c471353a850e52b5419f2df1936c4ab16"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 4.377269538502482e-07,
+        "max_lapse_pole": 9.372598887420767e-11,
+        "max_regularity_trace": 8.182815777052488e-08,
+        "min_chi": 0.9433128556187828,
+        "min_alpha": 0.2877673576201244,
+        "max_H_rms": 2.777051282663894e-07,
+        "max_M_rms": 6.000999098047687e-08,
+        "max_Theta_rms": 3.049396339010539e-11,
+        "max_Z_rms": 1.0926928477572945e-09,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.8845049587490337e-07,
+        "max_accepted_H_rms": 3.8992278124712425e-08,
+        "max_accepted_M_rms": 5.990426795848531e-08,
+        "max_accepted_Theta_rms": 3.049329805581113e-11,
+        "max_accepted_Z_rms": 1.0926869254817226e-09,
+        "max_accepted_H_bulk": 5.1129837292052116e-05,
+        "max_accepted_M_bulk": 2.0071119060231426e-05,
+        "max_accepted_H_endpoint": 1.0486112105214794e-09,
+        "max_accepted_M_endpoint": 5.270762674196294e-07,
+        "max_elliptic_discrete_residual": 1.335168087202021e-12
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "centered",
+        "puncture": false,
+        "puncture_chart": false,
+        "puncture_ko": 0.0,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "minkowski",
+        "mass": 0.1,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "inward",
+        "elliptic_method": "discrete-ode",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "right",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n1024",
+        "n": 1024,
+        "t": 1.0,
+        "cfl": 0.05,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "symmetric",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "linear",
+        "slicing_scale": 0.1,
+        "lapse_background_source": "reference",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "log-reference",
+        "metric_variable": "log",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f84b5b05c89613401a067c7dad45260567c9ac660062ea7c161665dc20b3915d",
+          "tst/elliptic_shift_1d/numerics.py": "9d5147dbbad881d1e84303a3ee3b85de6bb896e33a0729602787f9d97ac7f8ea",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "ed40ee9c39a427a6ba9a9cfe48b568fba15ebc72f74b7f82d413e3a9398e6278",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/shift_ode.py": "c7eeb721ac331b250c3fecf32705f23f71793e8e122930d25226dea084efe813",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1b203fff1831778c0d7483fb456fed4320228d381b65e1f64577d0135c622bcb",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "cc656ae3d21c4355757cca701c14a2a86685ed4b9c8708d0edfa59a915821b4c",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "076c179bbe441b442876ffffa7219db95447af5d475ee07c342a4f12a1a82e17"
+      }
+    },
+    "spatial-n2048": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n2048",
+      "t": 1.0,
+      "checkpoint_sha256": "0de1e7742777b4e91b6facba1c3f5b0d24c3f1a6d09fe0f2fe8e0f26a6cd922a",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n2048",
+          "status": "finished",
+          "time": 1.0,
+          "manifest_sha256": "ddb72bc9deb421cc59ba95cdf337e8fff1b2e56b90400758e5ebe26a0352b562",
+          "history_sha256": "7c46e2161516b31de0d16a7f4f8a642efadb87d238fa261378d9325029984c92"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 1.4938883984016993e-08,
+        "max_lapse_pole": 1.288361640814561e-12,
+        "max_regularity_trace": 2.4742445210723663e-09,
+        "min_chi": 0.9433125450756202,
+        "min_alpha": 0.2877635352077918,
+        "max_H_rms": 6.887759675036609e-08,
+        "max_M_rms": 5.271494725478147e-09,
+        "max_Theta_rms": 1.6393271231760021e-12,
+        "max_Z_rms": 2.7523083510958284e-11,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 5.384845680467265e-09,
+        "max_accepted_H_rms": 1.2347436539270906e-09,
+        "max_accepted_M_rms": 1.9136116119857847e-09,
+        "max_accepted_Theta_rms": 9.276487944327981e-13,
+        "max_accepted_Z_rms": 2.7522817603046506e-11,
+        "max_accepted_H_bulk": 1.3618860936759347e-06,
+        "max_accepted_M_bulk": 5.607896113123513e-07,
+        "max_accepted_H_endpoint": 1.7047141727568918e-11,
+        "max_accepted_M_endpoint": 1.68165616362681e-08,
+        "max_elliptic_discrete_residual": 2.9835509063325105e-12
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "centered",
+        "puncture": false,
+        "puncture_chart": false,
+        "puncture_ko": 0.0,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "minkowski",
+        "mass": 0.1,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "inward",
+        "elliptic_method": "discrete-ode",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "right",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n2048",
+        "n": 2048,
+        "t": 1.0,
+        "cfl": 0.05,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "symmetric",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "linear",
+        "slicing_scale": 0.1,
+        "lapse_background_source": "reference",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "log-reference",
+        "metric_variable": "log",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f84b5b05c89613401a067c7dad45260567c9ac660062ea7c161665dc20b3915d",
+          "tst/elliptic_shift_1d/numerics.py": "9d5147dbbad881d1e84303a3ee3b85de6bb896e33a0729602787f9d97ac7f8ea",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "ed40ee9c39a427a6ba9a9cfe48b568fba15ebc72f74b7f82d413e3a9398e6278",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/shift_ode.py": "c7eeb721ac331b250c3fecf32705f23f71793e8e122930d25226dea084efe813",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1b203fff1831778c0d7483fb456fed4320228d381b65e1f64577d0135c622bcb",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "cc656ae3d21c4355757cca701c14a2a86685ed4b9c8708d0edfa59a915821b4c",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "076c179bbe441b442876ffffa7219db95447af5d475ee07c342a4f12a1a82e17"
+      }
+    },
+    "time-cfl0.025": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.025",
+      "t": 0.9999999999999443,
+      "checkpoint_sha256": "b65010990c7322dcd79abc42112a27c966e87b0688deb34e4e5b373d6b4933b2",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.025",
+          "status": "finished",
+          "time": 0.9999999999999443,
+          "manifest_sha256": "2709097631d71bff9715f9585b94bad38d6765ed71d50597864c7ba97ea46722",
+          "history_sha256": "d5d0a8abc15a79eb8170a6215d59d591665447d220e3ded41cb92e795864500e"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 4.3772579011447377e-07,
+        "max_lapse_pole": 9.372552575421407e-11,
+        "max_regularity_trace": 8.182785424769301e-08,
+        "min_chi": 0.9433128567247336,
+        "min_alpha": 0.2877673679526841,
+        "max_H_rms": 7.420199015824419e-08,
+        "max_M_rms": 5.993010016385679e-08,
+        "max_Theta_rms": 3.049396367318233e-11,
+        "max_Z_rms": 1.0926893806707306e-09,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.884500557824964e-07,
+        "max_accepted_H_rms": 3.899211421986875e-08,
+        "max_accepted_M_rms": 5.990392601112498e-08,
+        "max_accepted_Theta_rms": 3.0493889394174806e-11,
+        "max_accepted_Z_rms": 1.0926875454824099e-09,
+        "max_accepted_H_bulk": 5.1131402630133493e-05,
+        "max_accepted_M_bulk": 2.0071727110890945e-05,
+        "max_accepted_H_endpoint": 1.0486112208247882e-09,
+        "max_accepted_M_endpoint": 5.270762655877614e-07,
+        "max_elliptic_discrete_residual": 1.328066129291372e-12
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "centered",
+        "puncture": false,
+        "puncture_chart": false,
+        "puncture_ko": 0.0,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "minkowski",
+        "mass": 0.1,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "inward",
+        "elliptic_method": "discrete-ode",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "right",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.025",
+        "n": 1024,
+        "t": 1.0,
+        "cfl": 0.025,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "symmetric",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "linear",
+        "slicing_scale": 0.1,
+        "lapse_background_source": "reference",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "log-reference",
+        "metric_variable": "log",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f84b5b05c89613401a067c7dad45260567c9ac660062ea7c161665dc20b3915d",
+          "tst/elliptic_shift_1d/numerics.py": "9d5147dbbad881d1e84303a3ee3b85de6bb896e33a0729602787f9d97ac7f8ea",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "ed40ee9c39a427a6ba9a9cfe48b568fba15ebc72f74b7f82d413e3a9398e6278",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/shift_ode.py": "c7eeb721ac331b250c3fecf32705f23f71793e8e122930d25226dea084efe813",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1b203fff1831778c0d7483fb456fed4320228d381b65e1f64577d0135c622bcb",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "cc656ae3d21c4355757cca701c14a2a86685ed4b9c8708d0edfa59a915821b4c",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "076c179bbe441b442876ffffa7219db95447af5d475ee07c342a4f12a1a82e17"
+      }
+    },
+    "time-cfl0.0125": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.0125",
+      "t": 0.9999999999999437,
+      "checkpoint_sha256": "9c463e46a24b91fed45f20bbda434b42390450e53fd4b5427b42adc7f9bb5230",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.0125",
+          "status": "finished",
+          "time": 0.9999999999999437,
+          "manifest_sha256": "5dab91d5d19baa1140d3902405afe31aba76758269f9209cf44dcd7ebcaf58a9",
+          "history_sha256": "4d918cc9fe746f259b5846d9092c6e000bdf4f33142f94cbf92c42de8eab061c"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 4.3772533918351453e-07,
+        "max_lapse_pole": 9.37255046039252e-11,
+        "max_regularity_trace": 8.182779756039926e-08,
+        "min_chi": 0.9433128572777262,
+        "min_alpha": 0.28776736958766874,
+        "max_H_rms": 3.916264216054025e-08,
+        "max_M_rms": 5.991044277413449e-08,
+        "max_Theta_rms": 3.049400754316242e-11,
+        "max_Z_rms": 1.0926883286909545e-09,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.8844983595833753e-07,
+        "max_accepted_H_rms": 3.8992064552540036e-08,
+        "max_accepted_M_rms": 5.990391139076919e-08,
+        "max_accepted_Theta_rms": 3.049400003271996e-11,
+        "max_accepted_Z_rms": 1.0926880478639075e-09,
+        "max_accepted_H_bulk": 5.1131080855526534e-05,
+        "max_accepted_M_bulk": 2.0071824890926695e-05,
+        "max_accepted_H_endpoint": 1.0486112090103727e-09,
+        "max_accepted_M_endpoint": 5.270762648348915e-07,
+        "max_elliptic_discrete_residual": 1.4203915821298096e-12
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "centered",
+        "puncture": false,
+        "puncture_chart": false,
+        "puncture_ko": 0.0,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "minkowski",
+        "mass": 0.1,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "inward",
+        "elliptic_method": "discrete-ode",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "right",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.0125",
+        "n": 1024,
+        "t": 1.0,
+        "cfl": 0.0125,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "symmetric",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "linear",
+        "slicing_scale": 0.1,
+        "lapse_background_source": "reference",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "log-reference",
+        "metric_variable": "log",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f84b5b05c89613401a067c7dad45260567c9ac660062ea7c161665dc20b3915d",
+          "tst/elliptic_shift_1d/numerics.py": "9d5147dbbad881d1e84303a3ee3b85de6bb896e33a0729602787f9d97ac7f8ea",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "ed40ee9c39a427a6ba9a9cfe48b568fba15ebc72f74b7f82d413e3a9398e6278",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/shift_ode.py": "c7eeb721ac331b250c3fecf32705f23f71793e8e122930d25226dea084efe813",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1b203fff1831778c0d7483fb456fed4320228d381b65e1f64577d0135c622bcb",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "cc656ae3d21c4355757cca701c14a2a86685ed4b9c8708d0edfa59a915821b4c",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "076c179bbe441b442876ffffa7219db95447af5d475ee07c342a4f12a1a82e17"
+      }
+    },
+    "elliptic-refinement0-n1024": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement0-n1024",
+      "t": 0.9999999999999453,
+      "checkpoint_sha256": "36f0d91e50db8c8b0a6f51d7ba3cb2c46feccf0b28d2d5f2ef2d66bbb421add0",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement0-n1024",
+          "status": "finished",
+          "time": 0.9999999999999453,
+          "manifest_sha256": "311b860033e837d427b50d58c060da6f34c53c14ddb5b759869e5019e36b92da",
+          "history_sha256": "ce039f69c1fdb503251dabc20c0645fbe0b722d58d7c66c8055ddee4e49e67fe"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 4.3772695443311527e-07,
+        "max_lapse_pole": 9.372598892583464e-11,
+        "max_regularity_trace": 8.182815772368734e-08,
+        "min_chi": 0.9433128556187838,
+        "min_alpha": 0.2877673576201258,
+        "max_H_rms": 2.777051241248588e-07,
+        "max_M_rms": 6.000998657140922e-08,
+        "max_Theta_rms": 3.0493948156948197e-11,
+        "max_Z_rms": 1.0926928551532396e-09,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.8845049609694797e-07,
+        "max_accepted_H_rms": 3.899227567523738e-08,
+        "max_accepted_M_rms": 5.990426314876341e-08,
+        "max_accepted_Theta_rms": 3.049328261864649e-11,
+        "max_accepted_Z_rms": 1.092686931840115e-09,
+        "max_accepted_H_bulk": 5.113005274637317e-05,
+        "max_accepted_M_bulk": 2.0071090233421183e-05,
+        "max_accepted_H_endpoint": 1.048611206552283e-09,
+        "max_accepted_M_endpoint": 5.270762664516537e-07,
+        "max_elliptic_discrete_residual": 2.1376893311053635e-12
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "centered",
+        "puncture": false,
+        "puncture_chart": false,
+        "puncture_ko": 0.0,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "minkowski",
+        "mass": 0.1,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "inward",
+        "elliptic_method": "discrete-ode",
+        "elliptic_refinements": 0,
+        "elliptic_bias": "right",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement0-n1024",
+        "n": 1024,
+        "t": 1.0,
+        "cfl": 0.05,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "symmetric",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "linear",
+        "slicing_scale": 0.1,
+        "lapse_background_source": "reference",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "log-reference",
+        "metric_variable": "log",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f84b5b05c89613401a067c7dad45260567c9ac660062ea7c161665dc20b3915d",
+          "tst/elliptic_shift_1d/numerics.py": "9d5147dbbad881d1e84303a3ee3b85de6bb896e33a0729602787f9d97ac7f8ea",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "ed40ee9c39a427a6ba9a9cfe48b568fba15ebc72f74b7f82d413e3a9398e6278",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/shift_ode.py": "c7eeb721ac331b250c3fecf32705f23f71793e8e122930d25226dea084efe813",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1b203fff1831778c0d7483fb456fed4320228d381b65e1f64577d0135c622bcb",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "cc656ae3d21c4355757cca701c14a2a86685ed4b9c8708d0edfa59a915821b4c",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "076c179bbe441b442876ffffa7219db95447af5d475ee07c342a4f12a1a82e17"
+      }
+    },
+    "elliptic-refinement4-n1024": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement4-n1024",
+      "t": 0.9999999999999453,
+      "checkpoint_sha256": "c319c1d55c0a74308a311751129dd459031c339bb1f7121bd65f6cb020ffa2f2",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement4-n1024",
+          "status": "finished",
+          "time": 0.9999999999999453,
+          "manifest_sha256": "e8b82da7d0a2473302e87a8b54a12ea90396d994718f8e3f2304682a986e76a8",
+          "history_sha256": "df4cc22faf7c2d4a500c752f9d9124a1581a2a8f8fa176a0d1754d65b86b3e2a"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 4.3772695480781554e-07,
+        "max_lapse_pole": 9.372598879413336e-11,
+        "max_regularity_trace": 8.182815789889442e-08,
+        "min_chi": 0.9433128556187826,
+        "min_alpha": 0.287767357620127,
+        "max_H_rms": 2.777051228175261e-07,
+        "max_M_rms": 6.000999311802591e-08,
+        "max_Theta_rms": 3.0493962814575526e-11,
+        "max_Z_rms": 1.0926928492498437e-09,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.8845049609694797e-07,
+        "max_accepted_H_rms": 3.8992291325611475e-08,
+        "max_accepted_M_rms": 5.990426903044626e-08,
+        "max_accepted_Theta_rms": 3.049329669741177e-11,
+        "max_accepted_Z_rms": 1.0926869263549726e-09,
+        "max_accepted_H_bulk": 5.11296303269404e-05,
+        "max_accepted_M_bulk": 2.0071115450680305e-05,
+        "max_accepted_H_endpoint": 1.048611205728967e-09,
+        "max_accepted_M_endpoint": 5.270762667881901e-07,
+        "max_elliptic_discrete_residual": 1.3848817925765644e-12
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "centered",
+        "puncture": false,
+        "puncture_chart": false,
+        "puncture_ko": 0.0,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "minkowski",
+        "mass": 0.1,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "inward",
+        "elliptic_method": "discrete-ode",
+        "elliptic_refinements": 4,
+        "elliptic_bias": "right",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement4-n1024",
+        "n": 1024,
+        "t": 1.0,
+        "cfl": 0.05,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "symmetric",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "linear",
+        "slicing_scale": 0.1,
+        "lapse_background_source": "reference",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "log-reference",
+        "metric_variable": "log",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f84b5b05c89613401a067c7dad45260567c9ac660062ea7c161665dc20b3915d",
+          "tst/elliptic_shift_1d/numerics.py": "9d5147dbbad881d1e84303a3ee3b85de6bb896e33a0729602787f9d97ac7f8ea",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "ed40ee9c39a427a6ba9a9cfe48b568fba15ebc72f74b7f82d413e3a9398e6278",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/shift_ode.py": "c7eeb721ac331b250c3fecf32705f23f71793e8e122930d25226dea084efe813",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1b203fff1831778c0d7483fb456fed4320228d381b65e1f64577d0135c622bcb",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "cc656ae3d21c4355757cca701c14a2a86685ed4b9c8708d0edfa59a915821b4c",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "076c179bbe441b442876ffffa7219db95447af5d475ee07c342a4f12a1a82e17"
+      }
+    },
+    "time-cfl0.1": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.1",
+      "t": 0.9999999999999474,
+      "checkpoint_sha256": "856d67a501e97ffb4b7a32fe0fc68fa5f5c19f94de8b42d30f1baf6b8395d88c",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.1",
+          "status": "finished",
+          "time": 0.9999999999999474,
+          "manifest_sha256": "49fd0647eb35020b595a9e32412045f1394a57ccac037be713bb5c7ede7ba288",
+          "history_sha256": "1d92f774df900525fb600cbb5fcac79e0e8c415053c794912c0a21dbf029dcb1"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 4.3773289339077426e-07,
+        "max_lapse_pole": 9.372690700528084e-11,
+        "max_regularity_trace": 8.182876328616251e-08,
+        "min_chi": 0.943312847685442,
+        "min_alpha": 0.2877673369614884,
+        "max_H_rms": 1.1029850446016297e-06,
+        "max_M_rms": 8.596751398930178e-08,
+        "max_Theta_rms": 1.0111198860180527e-10,
+        "max_Z_rms": 1.0927042085750895e-09,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.8845368399134088e-07,
+        "max_accepted_H_rms": 3.899574800121623e-08,
+        "max_accepted_M_rms": 5.9909705749742e-08,
+        "max_accepted_Theta_rms": 3.0482764938891813e-11,
+        "max_accepted_Z_rms": 1.0926859660553526e-09,
+        "max_accepted_H_bulk": 5.112838026910538e-05,
+        "max_accepted_M_bulk": 2.006432692849383e-05,
+        "max_accepted_H_endpoint": 1.0485966484953746e-09,
+        "max_accepted_M_endpoint": 5.270663453495195e-07,
+        "max_elliptic_discrete_residual": 1.3706778767552663e-12
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "centered",
+        "puncture": false,
+        "puncture_chart": false,
+        "puncture_ko": 0.0,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "minkowski",
+        "mass": 0.1,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.5,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "inward",
+        "elliptic_method": "discrete-ode",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "right",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/time-cfl0.1",
+        "n": 1024,
+        "t": 1.0,
+        "cfl": 0.1,
+        "amplitude": 0.1,
+        "pulse": "published-gaussian",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "symmetric",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "linear",
+        "slicing_scale": 0.1,
+        "lapse_background_source": "reference",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "log-reference",
+        "metric_variable": "log",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "analytic-g1",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.02,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f84b5b05c89613401a067c7dad45260567c9ac660062ea7c161665dc20b3915d",
+          "tst/elliptic_shift_1d/numerics.py": "9d5147dbbad881d1e84303a3ee3b85de6bb896e33a0729602787f9d97ac7f8ea",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "ed40ee9c39a427a6ba9a9cfe48b568fba15ebc72f74b7f82d413e3a9398e6278",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/shift_ode.py": "c7eeb721ac331b250c3fecf32705f23f71793e8e122930d25226dea084efe813",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1b203fff1831778c0d7483fb456fed4320228d381b65e1f64577d0135c622bcb",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "cc656ae3d21c4355757cca701c14a2a86685ed4b9c8708d0edfa59a915821b4c",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "076c179bbe441b442876ffffa7219db95447af5d475ee07c342a4f12a1a82e17"
+      }
+    },
+    "elliptic-refinement0-n2048": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement0-n2048",
+      "t": 1.0,
+      "checkpoint_sha256": "b4f202750be4bfcb8b39e50415b6f3a67487b023ea967b9130e46874ade511a5",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement0-n2048",
+          "status": "finished",
+          "time": 1.0,
+          "manifest_sha256": "28cb2ee7284a5b2b7b2fd60113112b41af340af5c98a45700c6f1113fdc635d1",
+          "history_sha256": "9d1a0a0f8525c00d3e380343dff596c0ca8cd622ff20b5b3a8b88215363fa09e"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 1.4938884289328325e-08,
+        "max_lapse_pole": 1.2883614872404283e-12,
+        "max_regularity_trace": 2.4742444933167906e-09,
+        "min_chi": 0.9433125450756162,
+        "min_alpha": 0.2877635352077962,
+        "max_H_rms": 6.887762321763098e-08,
+        "max_M_rms": 5.271494666536961e-09,
+        "max_Theta_rms": 1.6393621676403383e-12,
+        "max_Z_rms": 2.752307605855343e-11,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 5.38484545842266e-09,
+        "max_accepted_H_rms": 1.2347409556843406e-09,
+        "max_accepted_M_rms": 1.913625857823222e-09,
+        "max_accepted_Theta_rms": 9.276822105799993e-13,
+        "max_accepted_Z_rms": 2.752281007726067e-11,
+        "max_accepted_H_bulk": 1.3643075309488495e-06,
+        "max_accepted_M_bulk": 5.607787289504452e-07,
+        "max_accepted_H_endpoint": 1.7047142564119833e-11,
+        "max_accepted_M_endpoint": 1.6816561598104185e-08,
+        "max_elliptic_discrete_residual": 4.290630351011515e-12
+      }
+    },
+    "elliptic-refinement4-n2048": {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement4-n2048",
+      "t": 1.0,
+      "checkpoint_sha256": "0e5d2ea7fbacd308be7b6a4b538a58265fa410a1c58bb62d6e69875ed707f74e",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/elliptic-refinement4-n2048",
+          "status": "finished",
+          "time": 1.0,
+          "manifest_sha256": "3347df3f5256bf9006df0767f905e2798aee98547ed20f83aa6405fb199053e4",
+          "history_sha256": "0e1ada29a87ffb90be7c3e14092fbc32d66c1a5e83566a1212d0ee095e8d0518"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 1.4938884448922884e-08,
+        "max_lapse_pole": 1.2883615310494958e-12,
+        "max_regularity_trace": 2.474244552297389e-09,
+        "min_chi": 0.9433125450756148,
+        "min_alpha": 0.2877635352077989,
+        "max_H_rms": 6.887762185479071e-08,
+        "max_M_rms": 5.271494879979115e-09,
+        "max_Theta_rms": 1.6393160025003562e-12,
+        "max_Z_rms": 2.752304407497585e-11,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 5.384845680467265e-09,
+        "max_accepted_H_rms": 1.234774818108562e-09,
+        "max_accepted_M_rms": 1.9136182745379337e-09,
+        "max_accepted_Theta_rms": 9.276723955911328e-13,
+        "max_accepted_Z_rms": 2.7522778217147726e-11,
+        "max_accepted_H_bulk": 1.3655629977904482e-06,
+        "max_accepted_M_bulk": 5.607675895212766e-07,
+        "max_accepted_H_endpoint": 1.7047141581773372e-11,
+        "max_accepted_M_endpoint": 1.6816561549531928e-08,
+        "max_elliptic_discrete_residual": 2.9551361357960104e-12
+      }
+    }
+  },
+  "dissipation": {
+    "0.25": {
+      "spatial": {
+        "h": [
+          0.0019550342130987292,
+          0.0009770395701025891,
+          0.0004884004884004884
+        ],
+        "regions": {
+          "bulk": {
+            "differences": [
+              1.2463319578221254e-08,
+              3.616613485480626e-10
+            ],
+            "order": 5.103253755956565,
+            "per_field_differences": [
+              [
+                1.2488728055577138e-10,
+                0.0,
+                1.0910788140186895e-08,
+                5.099708473992956e-09,
+                3.089937145776918e-10,
+                3.1811108658306163e-09,
+                2.268705796615496e-10,
+                0.0
+              ],
+              [
+                2.870868241973183e-12,
+                0.0,
+                3.1927111941063257e-10,
+                1.4795457926983534e-10,
+                7.94054756338215e-12,
+                8.286696222963681e-11,
+                6.008178403944436e-12,
+                0.0
+              ]
+            ],
+            "per_field_orders": [
+              5.4391161182108885,
+              null,
+              5.091186232609585,
+              5.103536941766659,
+              5.278424995964361,
+              5.258832922983055,
+              5.235057329879915,
+              null
+            ]
+          },
+          "endpoint": {
+            "differences": [
+              5.078504338863858e-09,
+              2.2482680281858782e-10
+            ],
+            "order": 4.494276007416685,
+            "per_field_differences": [
+              [
+                7.136997751074735e-11,
+                0.0,
+                5.021992968614679e-09,
+                7.153454737499587e-10,
+                1.0973630978057666e-12,
+                2.1148656346516682e-10,
+                9.618914599496035e-11,
+                0.0
+              ],
+              [
+                2.1779242225683343e-12,
+                0.0,
+                2.2348285013841145e-10,
+                2.2807459190513082e-11,
+                2.113254978135429e-14,
+                8.214159253772343e-12,
+                3.179709446372356e-12,
+                0.0
+              ]
+            ],
+            "per_field_orders": [
+              5.030689360476854,
+              null,
+              4.4867872567356315,
+              4.967502913285122,
+              5.694376560572007,
+              4.6829412355588325,
+              4.9153828350866515,
+              null
+            ]
+          }
+        }
+      },
+      "runs": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO0.25-n512",
+          "checkpoint_sha256": "2653200e306c8ea387f9716b36f51987a2458ea8378c3eeb6841fc66cd89b26f",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO0.25-n512",
+              "status": "finished",
+              "time": 1.0,
+              "manifest_sha256": "dd60587c0c5c18a2028a52be1a71d84d48294215e5599044f1818875bb6a1964",
+              "history_sha256": "015f2331c66dc49fa62f3631f27f5ee0a354322fb3a7f0dad2b36f60310bdeef"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 6.19281831594487e-06,
+            "max_lapse_pole": 3.248595954083698e-09,
+            "max_regularity_trace": 1.281278963351229e-06,
+            "min_chi": 0.9433140965058738,
+            "min_alpha": 0.2877826975103534,
+            "max_H_rms": 1.2327819547863986e-06,
+            "max_M_rms": 1.0157715015648665e-06,
+            "max_Theta_rms": 8.868684650789745e-10,
+            "max_Z_rms": 2.499650401213272e-08,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 3.3820372542514576e-06,
+            "max_accepted_H_rms": 6.834511956878898e-07,
+            "max_accepted_M_rms": 1.0026840035179922e-06,
+            "max_accepted_Theta_rms": 8.793616934441833e-10,
+            "max_accepted_Z_rms": 2.4996177026071765e-08,
+            "max_accepted_H_bulk": 0.0015740081569610709,
+            "max_accepted_M_bulk": 0.0005456652266121716,
+            "max_accepted_H_endpoint": 2.858285076218171e-08,
+            "max_accepted_M_endpoint": 7.986552212742304e-06,
+            "max_elliptic_discrete_residual": 6.175684963416472e-13
+          }
+        },
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO0.25-n1024",
+          "checkpoint_sha256": "4a017849aa4a359bf4ec6d9e20b86b93d7e4346e72d2d04ec046a46951d2a1da",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO0.25-n1024",
+              "status": "finished",
+              "time": 0.9999999999999453,
+              "manifest_sha256": "67e4d8c8188e4cac50202eae1ef4b7e0daf7a4f4dce0fc03c4196fe6d70690d8",
+              "history_sha256": "53e2d970be27abb16f256370e7e7ea4f0570985fb66bd711dd00e9605547ce15"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 4.377269550714935e-07,
+            "max_lapse_pole": 9.372598910340099e-11,
+            "max_regularity_trace": 8.182815799083476e-08,
+            "min_chi": 0.9433128558648259,
+            "min_alpha": 0.28776735740793036,
+            "max_H_rms": 2.7601119244216446e-07,
+            "max_M_rms": 3.239934748078483e-08,
+            "max_Theta_rms": 1.8647843884855054e-11,
+            "max_Z_rms": 1.0753176430355334e-09,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 1.8845049609694797e-07,
+            "max_accepted_H_rms": 1.9744906936922422e-08,
+            "max_accepted_M_rms": 3.096685703772117e-08,
+            "max_accepted_Theta_rms": 1.6867089655487058e-11,
+            "max_accepted_Z_rms": 1.07531526292907e-09,
+            "max_accepted_H_bulk": 3.474186247842681e-05,
+            "max_accepted_M_bulk": 1.2318197568631193e-05,
+            "max_accepted_H_endpoint": 1.0486112050157653e-09,
+            "max_accepted_M_endpoint": 5.270762673398321e-07,
+            "max_elliptic_discrete_residual": 1.3635759188446173e-12
+          }
+        },
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO0.25-n2048",
+          "checkpoint_sha256": "455005e5f6bf5f6455a595f299f411c58b3b6226257aad01f84015df373b9f70",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO0.25-n2048",
+              "status": "finished",
+              "time": 1.0,
+              "manifest_sha256": "9e2f290b7af75d7949f45161bd9b155ffd7a089171e59dd7e3cfa3d4105f919c",
+              "history_sha256": "3eeb8c7cea3f1745b0e37008b69ab5658083422a7f5b2dc2dd55c32d10e221fa"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 1.493888358850004e-08,
+            "max_lapse_pole": 1.2883615890145753e-12,
+            "max_regularity_trace": 2.47424444300981e-09,
+            "min_chi": 0.943312545083319,
+            "min_alpha": 0.287763535201165,
+            "max_H_rms": 6.88364179834316e-08,
+            "max_M_rms": 5.255640120001245e-09,
+            "max_Theta_rms": 1.5814244999546346e-12,
+            "max_Z_rms": 2.680215681467994e-11,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 5.384845680467265e-09,
+            "max_accepted_H_rms": 6.153683093761219e-10,
+            "max_accepted_M_rms": 9.433325656651215e-10,
+            "max_accepted_Theta_rms": 4.770555938328966e-13,
+            "max_accepted_Z_rms": 2.6801997007282553e-11,
+            "max_accepted_H_bulk": 8.371642508109289e-07,
+            "max_accepted_M_bulk": 3.135423055029759e-07,
+            "max_accepted_H_endpoint": 1.7047142224036104e-11,
+            "max_accepted_M_endpoint": 1.681656191035441e-08,
+            "max_elliptic_discrete_residual": 2.88409920945476e-12
+          }
+        }
+      ]
+    },
+    "0.5": {
+      "spatial": {
+        "h": [
+          0.0019550342130987292,
+          0.0009770395701025891,
+          0.0004884004884004884
+        ],
+        "regions": {
+          "bulk": {
+            "differences": [
+              2.2921968785255216e-08,
+              6.969638742230362e-10
+            ],
+            "order": 5.035897459633041,
+            "per_field_differences": [
+              [
+                1.7716953007064585e-10,
+                0.0,
+                2.023739800662773e-08,
+                9.385224822463087e-09,
+                5.037889694440564e-10,
+                5.229809830706157e-09,
+                3.8187263833332673e-10,
+                0.0
+              ],
+              [
+                4.719398632026369e-12,
+                0.0,
+                6.166803233308412e-10,
+                2.843797337264763e-10,
+                1.4762535868909104e-11,
+                1.5565382434264534e-10,
+                1.1129672636321436e-11,
+                0.0
+              ]
+            ],
+            "per_field_orders": [
+              5.226648626799172,
+              null,
+              5.032753495729279,
+              5.040891552811985,
+              5.089165212339067,
+              5.0667188968233585,
+              5.09696135977847,
+              null
+            ]
+          },
+          "endpoint": {
+            "differences": [
+              1.0234814398109805e-08,
+              3.611496796566997e-10
+            ],
+            "order": 4.821283218033427,
+            "per_field_differences": [
+              [
+                1.39626637529352e-10,
+                0.0,
+                1.0126064674746043e-08,
+                1.452747443338497e-09,
+                1.0969167993077331e-12,
+                2.1148202756101986e-10,
+                1.988551819139256e-10,
+                0.0
+              ],
+              [
+                4.309070914950294e-12,
+                0.0,
+                3.580324932601957e-10,
+                4.597947420741339e-11,
+                2.114978926531972e-14,
+                8.214139121071079e-12,
+                6.4554021308133475e-12,
+                0.0
+              ]
+            ],
+            "per_field_orders": [
+              5.014462224754597,
+              null,
+              4.818380201059055,
+              4.978083391127086,
+              5.692614461077529,
+              4.682913847103682,
+              4.941525313166746,
+              null
+            ]
+          }
+        }
+      },
+      "runs": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n512",
+          "checkpoint_sha256": "41f3e0b55ec27ff06c95e22e7dadc6c6ec94242218a74a07891ab1d4affce6f4",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n512",
+              "status": "finished",
+              "time": 1.0,
+              "manifest_sha256": "523fa673a960ec506137816ad5134a4651f35a3dd00d4755b1f1c32d5bcf6a4f",
+              "history_sha256": "41b05fc98fc0c5c3c2d4edcf82e94d047173f158ef4c53e60b7326bfd3d87afd"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 6.192818091194097e-06,
+            "max_lapse_pole": 3.248595827357126e-09,
+            "max_regularity_trace": 1.2812789161806282e-06,
+            "min_chi": 0.9433140887610861,
+            "min_alpha": 0.2877827043101088,
+            "max_H_rms": 1.5046223193537205e-06,
+            "max_M_rms": 1.8299847566719195e-06,
+            "max_Theta_rms": 1.0824602237384833e-09,
+            "max_Z_rms": 2.564348259536366e-08,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 3.3820371081461076e-06,
+            "max_accepted_H_rms": 1.223665510504299e-06,
+            "max_accepted_M_rms": 1.8295405921719095e-06,
+            "max_accepted_Theta_rms": 1.0752366866884058e-09,
+            "max_accepted_Z_rms": 2.5643096973869154e-08,
+            "max_accepted_H_bulk": 0.0020740693135561372,
+            "max_accepted_M_bulk": 0.0007780484696503921,
+            "max_accepted_H_endpoint": 2.8582847776668398e-08,
+            "max_accepted_M_endpoint": 7.986551912426976e-06,
+            "max_elliptic_discrete_residual": 6.814548925149211e-13
+          }
+        },
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n1024",
+          "checkpoint_sha256": "76b8225f92c5f630973a59ee294b8d959b509519d98f166eeaced0f1f4c74a3f",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n1024",
+              "status": "finished",
+              "time": 0.9999999999999453,
+              "manifest_sha256": "5311f9fddd4f7f7821b2bc847b7b150a34ea7d9e8485032e70f85a108d157cbf",
+              "history_sha256": "7ec459003680e84d726151b481bc1f7c471353a850e52b5419f2df1936c4ab16"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 4.377269538502482e-07,
+            "max_lapse_pole": 9.372598887420767e-11,
+            "max_regularity_trace": 8.182815777052488e-08,
+            "min_chi": 0.9433128556187828,
+            "min_alpha": 0.2877673576201244,
+            "max_H_rms": 2.777051282663894e-07,
+            "max_M_rms": 6.000999098047687e-08,
+            "max_Theta_rms": 3.049396339010539e-11,
+            "max_Z_rms": 1.0926928477572945e-09,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 1.8845049587490337e-07,
+            "max_accepted_H_rms": 3.8992278124712425e-08,
+            "max_accepted_M_rms": 5.990426795848531e-08,
+            "max_accepted_Theta_rms": 3.049329805581113e-11,
+            "max_accepted_Z_rms": 1.0926869254817226e-09,
+            "max_accepted_H_bulk": 5.1129837292052116e-05,
+            "max_accepted_M_bulk": 2.0071119060231426e-05,
+            "max_accepted_H_endpoint": 1.0486112105214794e-09,
+            "max_accepted_M_endpoint": 5.270762674196294e-07,
+            "max_elliptic_discrete_residual": 1.335168087202021e-12
+          }
+        },
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n2048",
+          "checkpoint_sha256": "0de1e7742777b4e91b6facba1c3f5b0d24c3f1a6d09fe0f2fe8e0f26a6cd922a",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-v1/prefix/spatial-n2048",
+              "status": "finished",
+              "time": 1.0,
+              "manifest_sha256": "ddb72bc9deb421cc59ba95cdf337e8fff1b2e56b90400758e5ebe26a0352b562",
+              "history_sha256": "7c46e2161516b31de0d16a7f4f8a642efadb87d238fa261378d9325029984c92"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 1.4938883984016993e-08,
+            "max_lapse_pole": 1.288361640814561e-12,
+            "max_regularity_trace": 2.4742445210723663e-09,
+            "min_chi": 0.9433125450756202,
+            "min_alpha": 0.2877635352077918,
+            "max_H_rms": 6.887759675036609e-08,
+            "max_M_rms": 5.271494725478147e-09,
+            "max_Theta_rms": 1.6393271231760021e-12,
+            "max_Z_rms": 2.7523083510958284e-11,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 5.384845680467265e-09,
+            "max_accepted_H_rms": 1.2347436539270906e-09,
+            "max_accepted_M_rms": 1.9136116119857847e-09,
+            "max_accepted_Theta_rms": 9.276487944327981e-13,
+            "max_accepted_Z_rms": 2.7522817603046506e-11,
+            "max_accepted_H_bulk": 1.3618860936759347e-06,
+            "max_accepted_M_bulk": 5.607896113123513e-07,
+            "max_accepted_H_endpoint": 1.7047141727568918e-11,
+            "max_accepted_M_endpoint": 1.68165616362681e-08,
+            "max_elliptic_discrete_residual": 2.9835509063325105e-12
+          }
+        }
+      ]
+    },
+    "1.0": {
+      "spatial": {
+        "h": [
+          0.0019550342130987292,
+          0.0009770395701025891,
+          0.0004884004884004884
+        ],
+        "regions": {
+          "bulk": {
+            "differences": [
+              4.415775201362504e-08,
+              1.3704920276237122e-09
+            ],
+            "order": 5.006315069871272,
+            "per_field_differences": [
+              [
+                2.964404062763776e-10,
+                0.0,
+                3.907504183919922e-08,
+                1.803131656708124e-08,
+                9.329747033601187e-10,
+                9.82139282409061e-09,
+                7.083186448598799e-10,
+                0.0
+              ],
+              [
+                8.653171646490749e-12,
+                0.0,
+                1.2131888930662138e-09,
+                5.579382729770646e-10,
+                2.8803117004265844e-11,
+                3.0619754015776975e-10,
+                2.155366653091673e-11,
+                0.0
+              ]
+            ],
+            "per_field_orders": [
+              5.094723662090566,
+              null,
+              5.005785857075498,
+              5.010666650920857,
+              5.013950135942586,
+              4.99981161336834,
+              5.034788238803667,
+              null
+            ]
+          },
+          "endpoint": {
+            "differences": [
+              2.060599131985756e-08,
+              6.729685744821796e-10
+            ],
+            "order": 4.932844716394417,
+            "per_field_differences": [
+              [
+                2.763061306327525e-10,
+                0.0,
+                2.0390263912741535e-08,
+                2.925674972871082e-09,
+                1.0972863473415637e-12,
+                2.1147302444064155e-10,
+                4.0419633098609953e-10,
+                0.0
+              ],
+              [
+                8.578675996936442e-12,
+                0.0,
+                6.663723586433076e-10,
+                9.232716913340337e-11,
+                2.1246924462870402e-14,
+                8.214097049779125e-12,
+                1.3008081830480623e-11,
+                0.0
+              ]
+            ],
+            "per_field_orders": [
+              5.00578329916309,
+              null,
+              4.931872528440346,
+              4.982300845389549,
+              5.686493870332425,
+              4.682859853480201,
+              4.954025580726238,
+              null
+            ]
+          }
+        }
+      },
+      "runs": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO1.0-n512",
+          "checkpoint_sha256": "05c2d3b4feb1ecdad72ab4e05b4a4cd187fe642b36e3545a39e6924959a07661",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO1.0-n512",
+              "status": "finished",
+              "time": 1.0,
+              "manifest_sha256": "d071bba222cdfb9b6b2ca69521019e1f720cbe1332b89ba697c661723a9664e6",
+              "history_sha256": "8559bfad935f928b44ecb3e28fa425984fd4293453512a3455e2b9cf078a67e2"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 6.192817643413395e-06,
+            "max_lapse_pole": 3.2485955733007315e-09,
+            "max_regularity_trace": 1.2812788221620852e-06,
+            "min_chi": 0.9433140729238261,
+            "min_alpha": 0.2877827179104342,
+            "max_H_rms": 2.4254226350197466e-06,
+            "max_M_rms": 3.7198476443096032e-06,
+            "max_Theta_rms": 1.9032954603676713e-09,
+            "max_Z_rms": 2.8589889596238004e-08,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 3.3820368163794967e-06,
+            "max_accepted_H_rms": 2.414427346447527e-06,
+            "max_accepted_M_rms": 3.71931614348751e-06,
+            "max_accepted_Theta_rms": 1.9032819665635765e-09,
+            "max_accepted_Z_rms": 2.8589537996214393e-08,
+            "max_accepted_H_bulk": 0.0031177340104093787,
+            "max_accepted_M_bulk": 0.0012488389841451622,
+            "max_accepted_H_endpoint": 2.8582841798567354e-08,
+            "max_accepted_M_endpoint": 7.986551314044521e-06,
+            "max_elliptic_discrete_residual": 6.921026252104667e-13
+          }
+        },
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO1.0-n1024",
+          "checkpoint_sha256": "2be6c5186d8c216d3f866a0887b51a28d0f8a0a33c77a9e312443c1789682e13",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO1.0-n1024",
+              "status": "finished",
+              "time": 0.9999999999999453,
+              "manifest_sha256": "401d93c967d05044b32398d0918e9339bf08b06acc37c2bc93f85f642e2fec4c",
+              "history_sha256": "7df96fe8fe9b34db4071c6af7d51d9a26994846f572c9aa65f16df6a4910eb61"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 4.3772695345473123e-07,
+            "max_lapse_pole": 9.372598900236015e-11,
+            "max_regularity_trace": 8.182815747388716e-08,
+            "min_chi": 0.9433128551266867,
+            "min_alpha": 0.28776735804453013,
+            "max_H_rms": 2.8200669596531607e-07,
+            "max_M_rms": 1.216955373519027e-07,
+            "max_Theta_rms": 5.924185884420963e-11,
+            "max_Z_rms": 1.1603341227344033e-09,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 1.8845049565285876e-07,
+            "max_accepted_H_rms": 7.837894135216413e-08,
+            "max_accepted_M_rms": 1.2158757629256678e-07,
+            "max_accepted_Theta_rms": 5.924093894288703e-11,
+            "max_accepted_Z_rms": 1.1603259694767128e-09,
+            "max_accepted_H_bulk": 8.569035077421461e-05,
+            "max_accepted_M_bulk": 3.566339084223378e-05,
+            "max_accepted_H_endpoint": 1.0486112044973811e-09,
+            "max_accepted_M_endpoint": 5.270762651991834e-07,
+            "max_elliptic_discrete_residual": 1.313862213470074e-12
+          }
+        },
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO1.0-n2048",
+          "checkpoint_sha256": "a32918134c1ce541c974b259692278206c26de8029cc527fa9cb071fd1faddd6",
+          "segments": [
+            {
+              "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/positive-gauge-ode-right-KO-v1/prefix/KO1.0-n2048",
+              "status": "finished",
+              "time": 1.0,
+              "manifest_sha256": "1f2377a9a5203c10477cbbe6ddc47e4babfe108791bc027def908e44cfc687be",
+              "history_sha256": "28674994dfe8b219d9788674a70382d47b4badb8ebadcb182c44ab6f5a487599"
+            }
+          ],
+          "stages": {
+            "max_scri_pole": 1.4938884206061598e-08,
+            "max_lapse_pole": 1.2883615698604248e-12,
+            "max_regularity_trace": 2.4742444967862376e-09,
+            "min_chi": 0.9433125450602167,
+            "min_alpha": 0.2877635352210445,
+            "max_H_rms": 6.896266792212554e-08,
+            "max_M_rms": 5.346701307982312e-09,
+            "max_Theta_rms": 1.8421648723242277e-12,
+            "max_Z_rms": 3.024951112975247e-11,
+            "max_scri_null": 2.220446049250313e-16,
+            "max_scri_clock": 0.0,
+            "max_Bondi_nonaffinity": 5.38484545842266e-09,
+            "max_accepted_H_rms": 2.4809863287430855e-09,
+            "max_accepted_M_rms": 3.86001240360466e-09,
+            "max_accepted_Theta_rms": 1.842009709386853e-12,
+            "max_accepted_Z_rms": 3.024906950742211e-11,
+            "max_accepted_H_bulk": 2.47456778801336e-06,
+            "max_accepted_M_bulk": 1.0592649764693462e-06,
+            "max_accepted_H_endpoint": 1.7047142367184673e-11,
+            "max_accepted_M_endpoint": 1.6816561063809354e-08,
+            "max_elliptic_discrete_residual": 2.85568443891826e-12
+          }
+        }
+      ]
+    }
+  },
+  "elliptic_control_kind": "Direct banded arithmetic refinement; distinct from the failed sampled-source quadrature discretization study.",
+  "provenance": {
+    "analysis_sha256": "4b43eac04887dc49b0fc5da49f3214553a138ae8ade3eaf73da20e961ec11223",
+    "trajectory_sha256": "ea8d4a2dd2cf8a203ad8617c1b718fecd126ae04c9d5d41eabc300b59a3b6cb8",
+    "acceptance_sha256": "233053f2d74209790c08960d7d279aa1b328fc066f1623b1461ccc9ba0da894c"
+  }
+}

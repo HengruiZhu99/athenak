@@ -1,0 +1,7 @@
+{
+  "created_UTC": "2026-10-26T10:11:24.545931+00:00",
+  "scope": "Three systematically refined grids with the integer-step clock. Diagnose the transient t=.5 endpoint convergence failure seen at N512/1024/2048; do not admit based only on t1 endpoint errors. All fixed-CFL, field/constraint and boundary criteria remain unchanged. Same biased ODE/positive-field numerical formulation; source/binaries frozen before cases.",
+  "diagnosis": "Full common-time field comparison finds endpoint order1.28 at t.5 and1.86 for the sampled peak, despite final-t1 order4.82. At fixed N1024, halving dt changes that t.5 endpoint field by5.76e-14, much less than its spatial difference6.08e-8. This is a spatial convergence problem. All failing results remain data.",
+  "comparison": "Use common .1 ticks throughout0--1, with integer-step scheduling and frame step numbers. No time interpolation, no final-time-only admission.",
+  "acceptance": "acceptance.json"
+}

@@ -148,11 +148,11 @@ common[p]=dict(equations='fully coupled EMKG inherited from2505.17176;uncharged 
  gauge_reference='M1,K_CMC=-1 CMC critical trumpet; gauges from2505.17176',
  damping=None,grid='staggered inherited',dissipation=None,resolution=None,CFL=None,dt=None,method='FD4/RK4 inherited')
 add(p,'neutral-QNM','Sec.III-IV,Figs.3-4,Eqs.(22),(27)',
-    'Q0;rescaled real scalar Gaussian A.001,mu.5,width.1;initial momentum sigma0;Hamiltonian solve',
+    'Q=q=0;Eq.(29) rescaled real scalar r^2 A exp[-(r^2-mu^2)^2/width^4], A=.0005,mu=.4,width=.05;Eq.(22) coordinate-time derivative, equivalent to zero physical normal momentum (sigma=0);Hamiltonian solve',
     'scalar ringing;fully coupled versus Cowling;frequency fit',
     'fundamental omega~.11-.10i under exp(-i omega t)')
 add(p,'charged-tails','Sec.V-VI,Figs.5-8',
-    'M=q1;Q=.0001,.3,.6,1 and other values;A.001,mu.5,width.1;momentum sigma=-1',
+    'M=q1;Q=.0001,.3,.6,1 and other values;Eq.(29) r^2 A exp[-(r^2-mu^2)^2/width^4],A.001,mu.5,width.1;Eq.(27) momentum sigma=-1, requiring momentum as well as Hamiltonian solve',
     'scri/finite-radius local power indices,frequency;intermediate/asymptotic distinction',
     'v4 revised results agree with Hod-Piran;Q.001 requires6000 to reach asymptotic tail',
     duration={'value':6000,'case':'Q=.001 asymptotic control; not universal duration'},

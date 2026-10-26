@@ -6,7 +6,7 @@ import numpy as np
 
 class FastEngine:
     def __init__(self,evolution,fields,library):
-        a=evolution.args;op=evolution.op
+        a=evolution.args;op=evolution.op;self.ode_method=hasattr(op,'shift_ode_solver')
         self.puncture=getattr(a,'puncture',False)
         if (getattr(a,'puncture_chart',False) or getattr(a,'radial_operator','fd')!='fd'
             or getattr(a,'lapse_variable','deviation') not in ('deviation','log-reference')
@@ -21,7 +21,7 @@ class FastEngine:
             raise ValueError('Compiled engine implements unscaled g=1 and raw/analytic endpoints')
         self.lib=C.CDLL(str(library));self.calls=0;self.advance_seconds=0.
         self.lib.spherical_fast_abi.restype=C.c_int
-        if self.lib.spherical_fast_abi()!=22:raise ValueError('Compiled engine ABI does not match this wrapper')
+        if self.lib.spherical_fast_abi()!=23:raise ValueError('Compiled engine ABI does not match this wrapper')
         self.lib.spherical_fast_last_error.argtypes=[C.c_void_p];self.lib.spherical_fast_last_error.restype=C.c_char_p
         self.failure_message=''
         fp=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')
@@ -31,6 +31,7 @@ class FastEngine:
         self.lib.spherical_fast_destroy.argtypes=[C.c_void_p]
         self.lib.spherical_fast_stats.argtypes=[C.c_void_p,fp]
         self.lib.spherical_fast_set_lapse_source.argtypes=[C.c_void_p,fp]
+        self.lib.spherical_fast_set_shift_ode.argtypes=[C.c_void_p,C.c_int,C.c_int,C.c_int,C.c_double,fp,fp]
         self.lib.spherical_fast_rhs.argtypes=[C.c_void_p,fp,fp,C.POINTER(C.c_double)]
         self.lib.spherical_fast_advance.argtypes=[C.c_void_p,fp,C.c_int,C.c_double,C.POINTER(C.c_double)]
         params=np.array([a.kappa1,a.kappa2,a.slicing,a.lapse_restoring,a.scri_sat,
@@ -41,22 +42,26 @@ class FastEngine:
             np.asarray(op.aindex[0],dtype=np.int32),op.ad1[0],np.asarray(op.aindex[1],dtype=np.int32),op.ad1[1],params)
         if not self.handle:raise RuntimeError('Compiled engine initialization failed')
         self.lib.spherical_fast_set_lapse_source(self.handle,np.ascontiguousarray(evolution.lapse_source,dtype=float))
+        if hasattr(op,'shift_ode_solver'):
+            solver=op.shift_ode_solver
+            self.lib.spherical_fast_set_shift_ode(self.handle,solver.bandwidth,solver.skip,solver.refinements,solver.scale,solver.lu,solver.matrix)
 
     def close(self):
         if self.handle:self.lib.spherical_fast_destroy(self.handle);self.handle=None
 
     def stats(self):
-        values=np.zeros(23);self.lib.spherical_fast_stats(self.handle,values)
+        values=np.zeros(24);self.lib.spherical_fast_stats(self.handle,values)
         return int(values[0]),float(values[1])
 
     def diagnostics(self):
-        values=np.zeros(23);self.lib.spherical_fast_stats(self.handle,values)
+        values=np.zeros(24);self.lib.spherical_fast_stats(self.handle,values)
         if values[0]==0:return {}
         names=['max_scri_pole','max_lapse_pole','max_regularity_trace','min_chi','min_alpha',
             'max_H_rms','max_M_rms','max_Theta_rms','max_Z_rms','max_scri_null','max_scri_clock','max_inner_characteristic','max_Bondi_nonaffinity',
             'max_accepted_H_rms','max_accepted_M_rms','max_accepted_Theta_rms','max_accepted_Z_rms',
             'max_accepted_H_bulk','max_accepted_M_bulk','max_accepted_H_endpoint','max_accepted_M_endpoint']
         result={key:float(value) for key,value in zip(names,values[2:])}
+        if getattr(self,'ode_method',False):result['max_elliptic_discrete_residual']=float(values[-1])
         if not self.puncture:result.pop('max_inner_characteristic')
         return result
 

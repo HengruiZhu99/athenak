@@ -11,6 +11,7 @@ from numerics import RadialOperators,weights
 from kernel import Kernel,PARITY
 from gauge import lapse_coefficient,rational_correction,collapsed_background_correction,blended_correction
 from horizon import apparent_horizons
+from time_lattice import FixedStepClock
 
 
 def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -26,6 +27,9 @@ class Evolution:
             from sbp import SBPOperators
             self.op=SBPOperators(self.r,args.width,args.quadrature_width)
         self.op.elliptic_quadrature=getattr(args,'elliptic_quadrature','prefix')
+        if getattr(args,'elliptic_method','quadrature')=='discrete-ode':
+            from shift_ode import BandedShift
+            self.op.shift_ode_solver=BandedShift(self.op,getattr(args,'elliptic_refinements',2),getattr(args,'elliptic_bias','centered'))
         self.kernel=Kernel(args.library);self.calls=0;self.solve_seconds=0.
         self.stage_metrics={};self.stage_calls=0
         self.lapse_source=np.zeros(args.n)
@@ -273,6 +277,7 @@ class Evolution:
             maxima['max_Bondi_nonaffinity']=float(abs(nonaffinity(diag[-1,8],diag[-1,7],
                 self.geometry_first[-1,0],1+self.geometry_first[-1,6],beta[-1]+1.5*diag[-1,7]*self.geometry_state[-1,2],result[-1,0]*(self.total_chi[-1] if self.metric_scale is not None else 1))))
         for i,name in enumerate(['H','M','Theta','Z']):maxima['max_'+name+'_rms']=float(np.sqrt(np.sum(self.r**2*diag[:,i]**2)/np.sum(self.r**2)))
+        if hasattr(self.op,'shift_ode_solver'):maxima['max_elliptic_discrete_residual']=self.op.shift_ode_solver.last_residual
         if accepted:
             for i,name in enumerate(['H','M','Theta','Z']):maxima['max_accepted_'+name+'_rms']=maxima['max_'+name+'_rms']
             for i,name in enumerate(['H','M']):
@@ -307,6 +312,9 @@ class Evolution:
             # The linear theorem weights are diagnostic, not imposed constraints.
             power=4 if name in ('H','Theta') else 3
             row[name+'_weighted_interior_max']=float(max(abs(c[:-1,i]/self.omega[:-1]**power)))
+        if hasattr(self.op,'shift_ode_solver'):
+            row['elliptic_discrete_residual']=self.op.shift_ode_solver.last_residual
+            row['elliptic_backward_error']=self.op.shift_ode_solver.last_backward_error
         if self.stage_metrics:row['all_RK_stages']=dict(self.stage_metrics)
         for location in [.25,.5,.75,.9,.98]:
             row['mass_r'+str(location)]=float(np.interp(location,self.r[:-1],c[:-1,10]))
@@ -411,6 +419,9 @@ def main():
     p.add_argument('--backend',choices=['native','spherical-g1'],default='native')
     p.add_argument('--quadrature-width',type=int,choices=[5,7,9,11],default=7)
     p.add_argument('--elliptic-quadrature',choices=['prefix','inward'],default='prefix')
+    p.add_argument('--elliptic-method',choices=['quadrature','discrete-ode'],default='quadrature')
+    p.add_argument('--elliptic-refinements',type=int,choices=[0,1,2,4],default=2)
+    p.add_argument('--elliptic-bias',choices=['centered','right'],default='centered')
     p.add_argument('--library',required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--n',type=int,default=64);p.add_argument('--t',type=float,default=1.)
     p.add_argument('--cfl',type=float,default=.05);p.add_argument('--amplitude',type=float,default=0.)
@@ -447,6 +458,8 @@ def main():
         or not 0<args.puncture_ko_radius<.95 or args.slicing_scale<=0 or args.puncture_lapse_power<0 or not 0<=args.inner_radius<1):raise ValueError('Invalid input')
     if args.inner_radius and (not args.puncture or args.initial_data!='trumpet' or args.puncture_chart):
         raise ValueError('Fixed-radius excision is a separate already-trumpet control; it does not replace wormhole evolution')
+    if args.elliptic_method=='discrete-ode' and (args.backend!='spherical-g1' or args.radial_operator!='fd' or args.puncture_chart):
+        raise ValueError('Discrete shift ODE prototype requires the g=1 FD regular-center or fixed-cutoff path')
     if args.slicing_family=='blended-log' and args.slicing==0:raise ValueError('Blended-log slicing requires a positive interior strength')
     if args.fast_library and args.lapse_background_source!='reference':raise ValueError('The collapsed-inner source prototype uses Python integration')
     if args.lapse_reference=='CMC-trumpet' and (args.initial_data!='trumpet' or args.lapse_background_source!='reference'):
@@ -480,8 +493,9 @@ def main():
     args.output.mkdir(parents=True,exist_ok=False)
     root=Path(__file__).resolve().parents[2]
     # Bind all actual header dependencies, adapter and Python implementation.
-    module_names=['evolve.py','numerics.py','elliptic.py','kernel.py','gauge.py','bondi.py','horizon.py']
+    module_names=['evolve.py','numerics.py','elliptic.py','kernel.py','gauge.py','bondi.py','horizon.py','time_lattice.py']
     if args.radial_operator=='sbp63':module_names+=['sbp.py']
+    if args.elliptic_method=='discrete-ode':module_names+=['shift_ode.py']
     if args.backend=='spherical-g1':module_names+=['g1_rhs.py']
     if args.scalar:module_names+=['scalar_rhs.py','scalar_initial_data.py']
     if args.fast_library:module_names+=['fast.py','fast_integrator.cpp']
@@ -584,18 +598,20 @@ def main():
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','backend','quadrature_width','elliptic_quadrature','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
+            for key in ('n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
             for key in ['scalar_initial_data','wormhole_initial_data','trumpet_initial_data']:
                 if key in old:manifest[key]=old[key]
         manifest['checkpoint_parent']={'path':str(args.resume.resolve()),'sha256':sha(args.resume)}
     radiated_energy=float(old.get('radiated_energy',0.)) if args.resume else 0.
+    dt=args.cfl*ev.h
+    clock=FixedStepClock(dt,t,step,args.t,old.get('time_lattice') if args.resume else None)
+    t=clock.t;manifest['time_lattice']=clock.metadata()
     manifest['status']='running'
     (args.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    start=time.perf_counter();failure=None;history=[];next_report=t
+    start=time.perf_counter();failure=None;history=[];report_start=t;report_index=0;next_report_step=step
     # Constant CFL until the final landing; resume reproduces aligned timesteps.
-    dt=args.cfl*ev.h
     compiled=None
     if args.fast_library:
         from fast import FastEngine
@@ -603,32 +619,32 @@ def main():
     try:
         with (args.output/'history.jsonl').open('w') as log:
             while True:
-                if t>=next_report-1e-12 or t>=args.t-1e-12:
-                    row,b,c=ev.report(q,t);row['radiated_energy']=radiated_energy
+                if step>=next_report_step or clock.complete:
+                    row,b,c=ev.report(q,t);row['radiated_energy']=radiated_energy;row['step']=step
                     if compiled:
                         calls,seconds=compiled.stats();row['elliptic_calls']+=calls;row['elliptic_seconds']+=seconds
                         row['all_RK_stages']=compiled.diagnostics()
                     history.append(row);log.write(json.dumps(row)+'\n');log.flush()
-                    np.savez(args.output/f'profile-{len(history):04d}.npz',r=ev.r,q=q,q_physical=np.c_[ev.geometry_state,q[:,8:]],beta=b,diagnostic=c,t=t)
-                    next_report+=args.report_dt
-                if t>=args.t-1e-12:break
+                    np.savez(args.output/f'profile-{len(history):04d}.npz',r=ev.r,q=q,q_physical=np.c_[ev.geometry_state,q[:,8:]],beta=b,diagnostic=c,t=t,step=step,time_lattice=json.dumps(clock.metadata()))
+                    report_index=max(report_index+1,int(np.floor((t-report_start)/args.report_dt))+1)
+                    next_report_step=max(step+1,clock.report_step(report_start+report_index*args.report_dt))
+                if clock.complete:break
                 if compiled:
-                    available=int(np.floor((args.t-t)/dt+1e-12))
-                    count=max(1,min(4096,available,int(np.ceil((min(next_report,args.t)-t-1e-12)/dt))))
-                    h=dt if available>=1 else args.t-t
+                    available=clock.full_steps_available
+                    count=max(1,min(4096,available,next_report_step-step))
+                    h=dt if available>=1 else clock.final_delta
                     done,radiated_energy,failed=compiled.advance(q,count,h,radiated_energy)
-                    for _ in range(done):t+=h
-                    step+=done
+                    clock.advance(done,h);t=clock.t;step=clock.step
                     if failed:raise FloatingPointError(compiled.failure_message)
                     continue
-                h=dt if args.t-t>=dt*(1-1e-12) else args.t-t
+                h=dt if clock.full_steps_available else clock.final_delta
                 k1=ev.rhs(q,accepted=True);flux1=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k2=ev.rhs(q+h*k1/2);flux2=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k3=ev.rhs(q+h*k2/2);flux3=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k4=ev.rhs(q+h*k3);flux4=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 q=q+h*(k1+2*k2+2*k3+k4)/6
                 radiated_energy+=h*(flux1+2*flux2+2*flux3+flux4)/6
-                step+=1;t+=h
+                clock.advance(1,h);t=clock.t;step=clock.step
     except Exception as e:
         failure={'type':type(e).__name__,'message':str(e),'time':t,'step':step}
         (args.output/'failure.json').write_text(json.dumps(failure,indent=2)+'\n')
@@ -638,6 +654,7 @@ def main():
             manifest['all_RK_stages']=compiled.diagnostics();manifest['compiled_rk_seconds']=compiled.advance_seconds;compiled.close()
         if not compiled:manifest['all_RK_stages']=dict(ev.stage_metrics)
         manifest.update(status='failed' if failure else 'finished',time=t,steps=step,
+            time_lattice=clock.metadata(),
             runtime_seconds=time.perf_counter()-start,rhs_seconds=ev.rhs_seconds,radiated_energy=radiated_energy,
             elliptic_seconds=ev.solve_seconds,elliptic_calls=ev.calls,failure=failure)
         extra={}

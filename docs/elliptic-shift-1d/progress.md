@@ -2,6 +2,58 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Current discrete-shift, clock and transient audit
+
+Thirty-five CTest groups pass (`evidence/ctest-v31.log`). API23 supports a
+banded discrete shift ODE and records its stage residual. The centered ODE
+solves accurately but evolves unstably; its retained finite-grid Jacobian
+locates an outer Ar/Lambda mode growing from.534 at N64 to44.657 at N512.
+The right-biased variant removes that mode in N32--512 spectra. Independent
+native, dense, polynomial, compiled/Python and restart checks pass. See
+`discrete-shift.md`. Long double is binary64 on this arm64 host; no higher
+precision is claimed for the working-precision correction passes.
+
+The biased positive-variable finite .1 pulse reaches6 at N512/1024/2048.
+All its t1 spatial/time/solve-refinement gates pass, as do finest t6 stage
+pole1.49e-8 and affinity-bound3.23e-8 gates. KO.25/.5/1 finest controls
+also reach6 and pass component gates. The coarser boundary/affinity cases fail.
+**The full result remains unaccepted**: common-time profiles expose endpoint
+order1.28 at.5 and1.86 for the sampled peak. Timestep error there is only
+5.76e-14, so final-time-only convergence was insufficient. All failures remain
+in evidence. N1024/2048/4096 with an exact step clock reduces the transient
+peak difference by about275; this is not an eighth-order-method claim. N8192
+and exact-clock continuations to6 are underway.
+
+Accumulating t+=dt made some old report frames arrive one step late and could
+shorten a final landing. `time_lattice.py` now uses integer full-step counts,
+explicit fractional epochs and step/epoch data in profiles. A102,350,000-step
+clock test passes. A25,400-step scalar evolution has bitwise state/time/step/
+physical-total/flux agreement across report cadences and an aligned restart.
+At t1 N1024 matches its old stored state bitwise; N2048 differs3.74e-13 because
+the legacy final landing was shortened. No blanket cross-source bitwise claim
+is made. Frozen older trajectories continue with their original code. The new
+`freeze_and_run.py` also snapshots standalone diagnostic/analysis source and
+optional binaries before execution, extending the existing evolution discipline.
+
+The symmetric-restoring, labeled CMC lapse-source/excision controls reach100
+at all three resolutions. Constant damping develops late constraint growth.
+An otherwise identical source/binary control with reference-lapse products
+suppresses that growth: finest H/M peaks1.11e-9/1.69e-9, Theta/Z near1e-12,
+and relative horizon-mass drift1.37e-12. The finest constraints hit a spatial
+roundoff/differentiation floor; stationarity is not yet a converged principal
+result. It is a black-hole reference/source control, not main Minkowski-reference
+or wormhole success.
+
+An explicit conditional obstruction is documented: the untapered symmetric
+Minkowski restoring term gives alpha_t(0)=xi/2 at a stationary collapsed lapse
+with finite curvature. Candidate source changes and open stationary/scalar-BH
+initial-data derivations are in `open-black-hole-derivations.md`; they are not
+implemented results. The neutral QNM inventory is corrected against the pinned
+primary text: Fig.3 uses A=.0005,mu=.4,width=.05 and an r^2 Gaussian in r^2.
+Its coordinate-time scalar momentum convention differs from a conformal normal
+momentum; sigma=0 corresponds to zero physical normal momentum. No BH scalar
+experiment or QNM/tail result is admitted yet.
+
 ## Current positive-variable and black-hole controls
 
 Thirty-two CTest groups pass (`evidence/ctest-v26.log`). The current compiled

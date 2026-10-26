@@ -132,3 +132,23 @@ h ratios and records failed timestep cases. `assess_black_hole.py` re-extracts
 horizons from saved profiles with a tested local polynomial interpolant; it
 changes no evolved data and binds every analyzed profile by hash. Sampled
 exterior constraints are labeled as sampled, not full-stage certification.
+
+## Conditional puncture obstruction in the symmetric Minkowski source
+
+For the main Minkowski-reference lapse, assume a regular stationary trumpet
+with alpha~a r^gamma (gamma>0), beta=O(r), finite Khat and Omega(0)=A(0)=1/2.
+The transport and geometric-reference lapse terms then vanish at the inner end,
+as does F(Khat+3), since F=O(alpha). The symmetric restoring source instead gives
+
+    alpha_t(0) = -xi[alpha^2-A^2]/Omega at r=0 = xi/2.
+
+Thus xi>0 with that *untapered symmetric Minkowski restoring term* cannot admit
+the desired stationary collapsed-lapse endpoint under these regularity
+assumptions. Diverging Khat would violate the assumed regular trumpet. This
+conditional statement does not establish an obstruction to free Z4c or the
+elliptic shift, and does not explain every numerical failure. It identifies a
+gauge source that must change or taper for a regular main-reference trumpet.
+The multiplicative form removes the constant term, but has the positive local
+restoring derivative described above. The analytic CMC source control cancels
+the constant on its own reference and therefore does not test this obstruction
+for the main Minkowski gauge.

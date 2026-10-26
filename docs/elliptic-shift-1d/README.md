@@ -17,13 +17,16 @@ stability is inferred. See `nonlinear-formulation.md` for new independent deriva
 
 See [the active scientific work record](progress.md) for passing component checks,
 resolved failures, source/checkpoint ancestry and the next derivation steps.
-Thirty-two CTest groups pass, including nonlinear tensor/ADM, scalar, scri,
+Thirty-five CTest groups pass, including nonlinear tensor/ADM, scalar, scri,
 inner-end, positive-field, Bondi and compiled/Python audits. The positive-variable
 finite .1 gauge pulse reaches t=6 at N512/1024/2048. Physical-field and accepted
 constraint convergence are near fifth order; finest boundary/affinity gates pass.
-Independent endpoint quadrature isolation still fails, so this is **not an
-admitted principal result**. An analytic-limit control is in progress. See
-`positive-variables.md` for variables, source changes and diagnostic coverage.
+The quadrature-discretization variant fails independent endpoint isolation. A
+biased discrete shift-ODE alternative passes t1 solve/time/spatial controls and
+finest t6 stage gates, but fails transient endpoint convergence at the original
+three grids. Finer exact-clock studies are in progress. Neither is an admitted
+full principal result. See `discrete-shift.md`, `positive-variables.md` and
+`progress.md` for the distinctions and preserved failures.
 
 The small .001 pulse completes t=10,000 at N256/N512 and3000 at N1024;
 N1024 is continuing to10,000 from its exact frozen checkpoint. These older runs
@@ -32,7 +35,7 @@ approximately fifth-order mass-budget convergence, with finest discrepancy
 8.2e-9 at t=6. Long scalar evolutions and its principal controls remain unfinished.
 No successful collapse, wormhole-to-trumpet or full literature reproduction is
 claimed. Already-trumpet constructions and labeled excision/source controls are
-implemented, but their longer runs still fail an inner characteristic guard.
+implemented, but the initial longer control fails an inner characteristic guard. Symmetric restoring plus reference-lapse damping now reaches100 with very small invariant mass drift; its full principal assessment remains incomplete.
 
 The new isotropic wormhole construction and separate inner-end analysis are in
 `puncture-asymptotics.md`. An evolved AF coefficient endpoint replaces the old

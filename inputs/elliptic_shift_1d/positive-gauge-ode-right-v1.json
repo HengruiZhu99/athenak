@@ -1,0 +1,94 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 1,
+    "amplitude": 0.1,
+    "pulse": "published-gaussian",
+    "elliptic_quadrature": "inward",
+    "endpoint": "analytic-g1",
+    "elliptic_method": "discrete-ode",
+    "elliptic_refinements": 2,
+    "elliptic_bias": "right"
+  },
+  "cases": [
+    {
+      "name": "spatial-n512",
+      "arguments": {
+        "n": 512
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "spatial-n1024",
+      "arguments": {
+        "n": 1024
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "spatial-n2048",
+      "arguments": {
+        "n": 2048
+      },
+      "continue_to": 6
+    },
+    {
+      "name": "time-cfl0.025",
+      "arguments": {
+        "n": 1024,
+        "cfl": 0.025
+      }
+    },
+    {
+      "name": "time-cfl0.0125",
+      "arguments": {
+        "n": 1024,
+        "cfl": 0.0125
+      }
+    },
+    {
+      "name": "time-cfl0.1",
+      "arguments": {
+        "n": 1024,
+        "cfl": 0.1
+      }
+    },
+    {
+      "name": "elliptic-refinement0-n1024",
+      "arguments": {
+        "n": 1024,
+        "elliptic_refinements": 0
+      }
+    },
+    {
+      "name": "elliptic-refinement4-n1024",
+      "arguments": {
+        "n": 1024,
+        "elliptic_refinements": 4
+      }
+    },
+    {
+      "name": "elliptic-refinement0-n2048",
+      "arguments": {
+        "n": 2048,
+        "elliptic_refinements": 0
+      }
+    },
+    {
+      "name": "elliptic-refinement4-n2048",
+      "arguments": {
+        "n": 2048,
+        "elliptic_refinements": 4
+      }
+    }
+  ],
+  "scope": "Same direct banded shift ODE as the failed centered case, changing only its discrete derivative to the one-point right-biased stencil. Physical/gauge PDE, hyperbolic operators, penalties, resolution/time/refinement controls and thresholds unchanged. A preliminary finite-grid Jacobian shows the centered outer mode grows with refinement, while right-biased spectra at N32/64/128/256 have negative dominant real parts. This motivates, but does not certify, the nonlinear trial."
+}
