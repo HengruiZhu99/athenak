@@ -1,0 +1,34 @@
+{
+  "purpose": "Independent timestep refinement of the full t=10 exponential-grid candidate; cannot certify spatial convergence or remove existing failures.",
+  "declared_before_launch": true,
+  "input": "inputs/elliptic_shift_1d/telegraph-exp-time-controls-v1.json",
+  "input_sha256": "8d738e0a69d89dae873f4cba678856c96ab9a59dea47228ddda7823637f02592",
+  "baseline": "output/elliptic-shift-1d/telegraph-exp-extension-v2/n2049",
+  "spatial_reference_pending": "output/elliptic-shift-1d/telegraph-exp-fine-v1/n4097",
+  "fixed": {
+    "n": 2049,
+    "kappa": 0.005,
+    "tau": 0.02,
+    "grid_map": "inner-exp",
+    "grid_stretch": 16,
+    "mapped_ko": "local",
+    "quadrature_width": 7,
+    "puncture_ko": 0.5,
+    "inner_profile": "af-regular",
+    "transition": 0.24
+  },
+  "cfl": [
+    0.05,
+    0.025,
+    0.0125
+  ],
+  "duration": 10,
+  "assessment": [
+    "Compare exact common-time full trajectories, including baseline ancestry.",
+    "Report bulk and endpoint field differences, physical lapse gradients, H/M/Theta/Z, all-stage compatibility and invariant diagnostics.",
+    "Track characteristic position and logJ differences separately; finite-grid crossing claims are prohibited.",
+    "Time error must be below 10 percent of spatial error under the original acceptance protocol; when the spatial reference is incomplete leave this gate pending.",
+    "No time refinement changes damping parameters, boundary conditions, grid, dissipation or continuum equations."
+  ],
+  "execution": "One new worker, alongside the existing N4097 refinement. Frozen numerical source and libraries must match the completed baseline."
+}

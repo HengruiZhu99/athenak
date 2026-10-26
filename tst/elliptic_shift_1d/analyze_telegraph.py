@@ -68,7 +68,11 @@ for key,ns in groups.items():
  rs=sorted([x for x in records if (x['kappa'],x['tau'],x['nu'])==key[:3]],key=lambda x:x['n'])
  axes[1,0].loglog([x['n'] for x in rs],[x['stages']['max_accepted_H_rms'] for x in rs],'o-',label=f'k={key[0]:g}, tau={key[1]:g}')
 axes[0,0].set(title='Physical lapse at t=2.5',xlabel='r',ylabel=r'$\widetilde\alpha$')
-axes[0,1].set(title='Front Hamiltonian at t=2.5',xlabel='r',ylabel=r'$\mathcal{H}$');axes[0,1].set_yscale('symlog',linthresh=1e-5)
+axes[0,1].set(title='Front Hamiltonian at t=2.5',xlabel='r',ylabel=r'$\mathcal{H}$')
+front_extent=max(max(abs(line.get_ydata())) for line in axes[0,1].lines)
+if front_extent<=1e-5:
+ axes[0,1].ticklabel_format(axis='y',style='sci',scilimits=(0,0),useMathText=True)
+else:axes[0,1].set_yscale('symlog',linthresh=1e-5)
 axes[1,0].set(title='Full-domain accepted-state maximum',xlabel='N',ylabel=r'$\max_t\|\mathcal{H}\|_r$')
 axes[1,1].set(title='Ingoing rays integrated at RK stages',xlabel='t',ylabel=r'$\min\log J$')
 for ax in axes.flat:ax.grid(alpha=.2)
