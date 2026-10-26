@@ -13,9 +13,9 @@ struct Engine {
   int n,nf,w,qw; double h; Vec r,d1,d2,qweights,params;
   std::vector<int> index,qindex;
   std::vector<int> aleft,aright;Vec awleft,awright;
-  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha;
+  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha,af_reference,chart_d,total_khat;
   long calls=0; double solve_seconds=0;
-  bool puncture=false;
+  bool puncture=false,af=false;
   std::string error;
   std::array<double,22> diagnostics{};
   Vec ode_lu,ode_matrix;int ode_band=0,ode_skip=0,ode_refinements=0;double ode_scale=1;
@@ -23,15 +23,16 @@ struct Engine {
       const double* D1,const double* D2,const int* qi,const double* qwt,
       const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
       d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
-      params(p,p+24),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      params(p,p+27),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
       aleft(al,al+N*W),aright(ar,ar+N*W),awleft(alw,alw+N*W),awright(arw,arw+N*W) {
     for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
     lapse_source.resize(n,0.);
     primitive.resize(n*nf);total_chi.resize(n);total_alpha.resize(n);
+    chart_d.resize(n*nf);total_khat.resize(n);af=p[24]!=0;
     if(nf!=8&&nf!=10)throw std::runtime_error("invalid field count");
     diagnostics[3]=diagnostics[4]=std::numeric_limits<double>::infinity();
-    puncture=p[12]!=0;if(puncture)diagnostics[11]=-std::numeric_limits<double>::infinity();
+    puncture=p[12]!=0;if(puncture&&!af)diagnostics[11]=-std::numeric_limits<double>::infinity();
   }
   int reflected(int k)const{return k<w?(r[0]==0?w-k:w-1-k):k-w;}
   int parity(int f)const{return f==5?-1:1;}
@@ -45,7 +46,7 @@ struct Engine {
         d[i*nf+f]+=d1[i*w+j]*val;dd[i*nf+f]+=d2[i*w+j]*val;
       }
     }
-    if(r[0]==0)for(int f=0;f<nf;f++) {
+    if(r[0]==0&&!puncture)for(int f=0;f<nf;f++) {
       if(parity(f)>0)d[f]=0;else dd[f]=0;
     }
   }
@@ -54,6 +55,7 @@ struct Engine {
     for(int j=0;j<w;j++)sum+=d1[(n-1)*w+j]*(a[reflected(index[(n-1)*w+j])*nf+f]-((puncture||params[23]!=0)?a[(n-1)*nf+f]:0));
     return sum;
   }
+  double ref(int i,int field,int derivative=0)const {return af_reference[(i*6+field)*3+derivative];}
   double ratio(double a,int i,double limit=0)const{return r[i]>0?a/r[i]:limit;}
   Vec ode_triangular(Vec x)const {
     const int b=ode_band,stride=2*b+1;
@@ -93,7 +95,32 @@ struct Engine {
     derivatives(state);calls++;
     const bool logchi=params[16]!=0,logalpha=params[17]!=0;
     const double* q=state;
-    if(logchi||logalpha) {
+    if(af) {
+      if(af_reference.size()!=static_cast<size_t>(n*18))throw std::runtime_error("AF reference not supplied");
+      chart_d=d;std::copy(state,state+n*nf,primitive.begin());q=primitive.data();
+      for(int i=0;i<n;i++) {
+        int k=i*nf;double ec=std::exp(state[k]),ea=std::exp(state[k+6]);
+        primitive[k]=ref(i,3)+ref(i,0)*std::expm1(state[k]);
+        primitive[k+6]=ref(i,4)+ref(i,2)*std::expm1(state[k+6]);
+        total_khat[i]=ref(i,1)*(state[k+3]-3);
+        for(int f:{0,6}) {
+          int j=f==0?0:2;double ex=f==0?ec:ea;double first=d[k+f],second=dd[k+f];
+          if(f==0) {d[k+f]=ex*(ref(i,j,1)+ref(i,j)*first);
+            dd[k+f]=ex*(ref(i,j,2)+2*ref(i,j,1)*first+ref(i,j)*(second+first*first));}
+          else {double small=std::expm1(state[k+f]);
+            d[k+f]=ref(i,4,1)+ref(i,j,1)*small+ref(i,j)*ex*first;
+            dd[k+f]=ref(i,4,2)+ref(i,j,2)*small+ex*(2*ref(i,j,1)*first+ref(i,j)*(second+first*first));}
+        }
+        for(int f:{2,3,4}) {
+          double value=state[k+f]-(f==3?3:0),first=d[k+f];
+          primitive[k+f]=f==3?3*ref(i,5)+ref(i,1)*state[k+f]:ref(i,1)*state[k+f];
+          dd[k+f]=ref(i,1,2)*value+2*ref(i,1,1)*first+ref(i,1)*dd[k+f];
+          d[k+f]=ref(i,1,1)*value+ref(i,1)*first;
+        }
+        total_chi[i]=ref(i,0)*ec;total_alpha[i]=ref(i,2)*ea;
+        if(!std::isfinite(ec)||!std::isfinite(ea))throw std::runtime_error("nonfinite AF logarithm");
+      }
+    } else if(logchi||logalpha) {
       std::copy(state,state+n*nf,primitive.begin());q=primitive.data();
       for(int i=0;i<n;i++) {
         int k=i*nf;double A=(1+r[i]*r[i])/2;
@@ -108,7 +135,7 @@ struct Engine {
         }
       }
     }
-    for(int i=0;i<n;i++) {
+    if(!af)for(int i=0;i<n;i++) {
       total_chi[i]=logchi?std::exp(state[i*nf]):1+q[i*nf];
       total_alpha[i]=logalpha?(1+r[i]*r[i])/2*std::exp(state[i*nf+6]):(1+r[i]*r[i])/2+q[i*nf+6];
     }
@@ -118,6 +145,7 @@ struct Engine {
     auto solve_start=std::chrono::steady_clock::now();
     for(int i=0;i<n;i++) {
       double chi=total_chi[i],alpha=total_alpha[i];
+      if(af&&i==0){z[i]=0;continue;}
       diagnostics[3]=std::min(diagnostics[3],chi);diagnostics[4]=std::min(diagnostics[4],alpha);
       if(q[i*nf+1]!=0||chi<=0||alpha<=0||!std::isfinite(chi)||!std::isfinite(alpha))
         throw std::runtime_error("g=1 gauge or positivity violation");
@@ -148,7 +176,7 @@ struct Engine {
       U[i]=alpha*(q[i*nf+3]+2*q[i*nf+4])/3-q[i*nf+6]-r[i]*v[i];
     }
     solve_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-solve_start).count();
-    if(puncture) {
+    if(puncture&&!af) {
       double alpha=total_alpha[0],chi=total_chi[0];
       double F=lapse_coefficient(r[0],alpha);
       diagnostics[11]=std::max(diagnostics[11],std::max(-beta[0]+alpha*std::sqrt(chi),-beta[0]+std::sqrt(F*chi)));
@@ -161,9 +189,9 @@ struct Engine {
     std::fill(R.begin(),R.end(),0);std::fill(S.begin(),S.end(),0);
     std::array<double,4> normsum{};double volume=0;
     double bulkH=0,bulkM=0,endH=0,endM=0;
-    for(int i=0;i<n;i++) {
+    for(int i=af?1:0;i<n;i++) {
       int k=i*nf;double x=r[i],O=(1-x*x)/2,A0=(1+x*x)/2;
-      double c=q[k],chi=total_chi[i],Ar=q[k+2],p=q[k+3]-3,T=q[k+4],lam=q[k+5],u=q[k+6];
+      double c=q[k],chi=total_chi[i],Ar=q[k+2],p=af?total_khat[i]:q[k+3]-3,T=q[k+4],lam=q[k+5],u=q[k+6];
       double cp=d[k],cpp=dd[k],ap=d[k+2],pp=d[k+3],Tp=d[k+4],lp=d[k+5],up=d[k+6],upp=dd[k+6];
       double alpha=total_alpha[i],alphap=x+up,K=p+2*T,dk=q[k+3]+2*T,b=beta[i],vv=v[i],vr=phase[i];
       double ar=ratio(Ar,i),cr=ratio(cp,i,cpp),ur=ratio(up,i,upp),lr=ratio(lam,i,lp);
@@ -189,11 +217,22 @@ struct Engine {
       }
       R[k+6]=b*up+vv*x;
       S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-local_xi*(params[13]!=0?2*alpha:alpha+A0)*u;
+      if(af&&x<.5) {
+        S[k]=2*chi/3*(alpha*K+3*A0-3*x*vv);
+        R[k+3]=b*pp+1.5*O*alpha*Ar*Ar-O*chi*(upp+2*ur)+.5*O*cp*alphap
+          -3*chi*x*up-3*chi*(A0+alpha)+.5*alpha*x*cp;
+        S[k+3]=alpha*(K*K/3-3*chi*x*x+kap*(1-kap2)*T);
+        S[k+4]=alpha*(K*K/3-3*chi-kap*(2+kap2)*T);
+        if(!appendix)S[k+4]-=3*alpha*ww*T;
+        R[k+6]=b*alphap;
+        S[k+6]=-F*q[k+3]+x*alpha*b+x*x-2*local_xi*alpha*u;
+      }
       if(params[21]!=0)S[k+6]+=16*O*O*O*O*x*x*u/A0;
       if(params[15]!=0) {
         double D=-kap*u;S[k+3]+=D*(1-kap2)*T;S[k+4]-=D*(2+kap2)*T;S[k+5]-=D*lam;
       }
       double H=2*dk*(K-3)/3-6*c+2*O*x*cp+O*O*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar);
+      if(af&&x<.5)H=2*K*K/3-6*chi+2*O*x*cp+O*O*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar);
       double M=O*(ap+3*ar-1.5*Ar*cp/chi)-2*(pp+2*Tp)/3+2*x*Ar;
       if(nf==10) {
         constexpr double pi=3.1415926535897932384626433832795;
@@ -227,7 +266,7 @@ struct Engine {
       diagnostics[17]=std::max(diagnostics[17],bulkH);diagnostics[18]=std::max(diagnostics[18],bulkM);
       diagnostics[19]=std::max(diagnostics[19],endH);diagnostics[20]=std::max(diagnostics[20],endM);
     }
-    if(params[11]!=0)for(int i=0;i<n;i++) {
+    if(params[11]!=0&&!af)for(int i=0;i<n;i++) {
       const auto& ai=beta[i]<0?aleft:aright;const auto& aw=beta[i]<0?awleft:awright;
       for(int f=0;f<nf;f++)if(f!=7) {
         double adv=0;for(int j=0;j<w;j++) {
@@ -291,6 +330,39 @@ struct Engine {
       if(logchi)out[i*nf]/=total_chi[i];
       if(logalpha)out[i*nf+6]/=total_alpha[i];
     }
+    if(af) {
+      for(int i=1;i<n;i++) {
+        out[i*nf]/=total_chi[i];out[i*nf+6]/=total_alpha[i];
+        for(int f:{2,3,4})out[i*nf+f]/=ref(i,1);
+      }
+      double b1=-1+phase[0],nu=params[2],inner_xi=xi;
+      if(static_cast<int>(params[18])==1)nu*=(.5+params[19])/params[19];
+      if(params[22]!=0)inner_xi=3*nu;
+      out[0]=2*b1;out[6]=2*b1-6*nu+2*inner_xi;
+      if(params[21]==0)out[6]+=2/(8*std::exp(state[6]));
+      out[2]=2*b1*state[2];out[3]=2*b1*(state[3]-3);out[4]=2*b1*state[4];out[5]=2*b1*state[5];
+      if(params[15]!=0){out[3]+=kap*(1-kap2)*state[4];out[4]-=kap*(2+kap2)*state[4];out[5]-=kap*state[5];}
+      if(params[11]!=0)for(int i=0;i<n;i++) {
+        const auto& ai=beta[i]<0?aleft:aright;const auto& aw=beta[i]<0?awleft:awright;
+        for(int f=0;f<nf;f++) {
+          double adv=0;for(int j=0;j<w;j++)adv+=aw[i*w+j]*(state[reflected(ai[i*w+j])*nf+f]-state[i*nf+f]);
+          out[i*nf+f]+=beta[i]*(adv-chart_d[i*nf+f]);
+        }
+      }
+      if(params[25]!=0) {
+        std::fill(z.begin(),z.end(),0);
+        for(int i=1;i<n-3;i++) {
+          double midpoint=(r[i]+r[i+3])/2,taper=std::pow(std::max(1-midpoint*midpoint/(params[26]*params[26]),0.),6);
+          for(int f=0;f<nf;f++) {
+            double anchor=state[i*nf+f];
+            double third=3*(state[(i+1)*nf+f]-anchor)-3*(state[(i+2)*nf+f]-anchor)+(state[(i+3)*nf+f]-anchor);
+            double value=taper*third;z[i*nf+f]+=value;z[(i+1)*nf+f]-=3*value;z[(i+2)*nf+f]+=3*value;z[(i+3)*nf+f]-=value;
+          }
+        }
+        for(int k=0;k<n*nf;k++)out[k]+=params[25]*z[k]/(64*h);
+      }
+      for(int i=0;i<n;i++)out[i*nf+1]=0;
+    }
     if(ko!=0) {
       std::copy(state,state+n*nf,z.begin());
       for(int i=0;i<n;i++)if(r[i]>0) {z[i*nf+2]/=r[i]*r[i];z[i*nf+5]/=r[i];}
@@ -314,7 +386,7 @@ struct Engine {
     out[e+6]=0;for(int i=0;i<n;i++)out[i*nf+7]=0;
     const double chiS=total_chi.back(),rootChi=std::sqrt(chiS);
     const double dbS=beta.back()+1.5*alphaS*q[e+2];
-    const double affinity=out[e]*(logchi?chiS:1)/(2*alphaS*chiS)-d[e]/(2*rootChi)
+    const double affinity=out[e]*((logchi||af)?chiS:1)/(2*alphaS*chiS)-d[e]/(2*rootChi)
         -rootChi*(1+d[e+6])/alphaS-dbS/alphaS;
     diagnostics[12]=std::max(diagnostics[12],std::abs(affinity));
     for(int k=0;k<n*nf;k++)if(!std::isfinite(out[k]))throw std::runtime_error("nonfinite RHS");
@@ -322,10 +394,13 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 25;}
+int spherical_fast_abi(){return 26;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);
+}
+void spherical_fast_set_af_reference(void* handle,const double* source){
+  auto& e=*static_cast<Engine*>(handle);e.af_reference.assign(source,source+e.n*18);
 }
 void spherical_fast_set_lapse_source(void* handle,const double* source){
   auto& e=*static_cast<Engine*>(handle);std::copy(source,source+e.n,e.lapse_source.begin());

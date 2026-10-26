@@ -26,7 +26,7 @@ for case in data['cases']:
     options={**data['common'],**case['arguments']}
     command=[sys.executable,str(bundle/'tst/elliptic_shift_1d/evolve.py'),
         '--library',a.library,'--output',str(a.output/case['name'])]
-    if a.fast_library and not options.get('puncture_chart'):command+=['--fast-library',a.fast_library]
+    if a.fast_library:command+=['--fast-library',a.fast_library]
     for key,value in options.items():
         if isinstance(value,bool):
             if value:command+=['--'+key.replace('_','-')]

@@ -23,12 +23,10 @@ common=[sys.executable,str(driver),'--library',a.library,'--backend','spherical-
     '--n','64','--scalar','--lapse-restoring','1','--scri-sat','4',
     '--regularity-sat','8','--origin-ko','.5','--perturbation','noise',
     '--perturbation-amplitude','1e-12']
-if a.fast_library:common+=['--fast-library',a.fast_library]
 if a.positive_variables:
     if a.scenario!='scalar-noise':raise ValueError('Regular positive-variable restart uses scalar/noise')
     common+=['--metric-variable','log','--lapse-variable','log-reference']
 if a.scenario=='puncture-chart':
-    if a.fast_library:raise ValueError('The AF chart uses Python RK')
     dt=.0625/64
     common=[sys.executable,str(driver),'--library',a.library,'--backend','spherical-g1',
         '--n','65','--cfl','.0625','--puncture','--puncture-chart','--initial-data','wormhole',
@@ -41,6 +39,7 @@ if a.scenario=='trumpet-log':
         '--n','65','--puncture','--initial-data','trumpet','--mass',str(1/3),'--lapse-variable','log-trumpet',
         '--lapse-reference',a.lapse_reference,'--metric-variable',a.metric_variable,'--lapse-restoring','1','--lapse-restoring-form','multiplicative',
         '--scri-sat','4','--regularity-sat','8','--amplitude','.001']
+if a.fast_library:common+=['--fast-library',a.fast_library]
 common+=['--elliptic-quadrature',a.elliptic_quadrature,'--elliptic-method',a.elliptic_method]
 common+=['--lapse-restoring-profile',a.lapse_restoring_profile,'--lapse-background-source',a.lapse_background_source]
 if a.scenario=='scalar-noise':common+=['--lapse-restoring-form',a.lapse_restoring_form]

@@ -2,6 +2,17 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Compiled puncture resolution study
+
+API26 supports the AF coefficient chart without changing its free equations.
+All40 CTest groups pass;96 AF rate/RK/monitor comparisons and an actual t6
+Python/compiler comparison pass, as does a bitwise compiled AF restart. The
+maximum t6 physical discrepancy is3.10e-12 at N129, with about20x speedup.
+The frozen N513/1025/2049/4097 wormhole matrix and middle-grid timestep
+controls are running; finer resolution is a test of the failed inward front,
+not an admitted fix. A separate three-grid regular-center finite pulse tests
+the physical-log source itself.
+
 ## Physical-log source and completed finer controls
 
 Thirty-eight CTest groups pass (`evidence/ctest-v32.log`). Compiled API24

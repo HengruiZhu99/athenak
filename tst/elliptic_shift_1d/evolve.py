@@ -489,9 +489,9 @@ def main():
         raise ValueError('Puncture uses unscaled g=1, excluded inner endpoint and no regular-center KO filter')
     if args.initial_data in ('wormhole','trumpet') and (not args.puncture or args.scalar):raise ValueError('Black-hole initialization currently requires the vacuum puncture path')
     if args.puncture and args.initial_data not in ('wormhole','trumpet'):raise ValueError('The puncture path requires black-hole initial data')
-    if args.puncture_chart and (not args.puncture or args.initial_data!='wormhole' or args.fast_library or args.lapse_restoring_form!='multiplicative'
-        or args.perturbation!='none' or args.amplitude or args.gauge_corner_sat or args.endpoint not in ('raw-lhopital','analytic-g1')):
-        raise ValueError('AF coefficient prototype requires vacuum wormhole, Python RK, multiplicative restoring and an unperturbed initial lapse')
+    if args.puncture_chart and (not args.puncture or args.initial_data!='wormhole' or args.lapse_restoring_form!='multiplicative'
+        or args.elliptic_quadrature!='prefix' or args.perturbation!='none' or args.amplitude or args.gauge_corner_sat or args.endpoint not in ('raw-lhopital','analytic-g1')):
+        raise ValueError('AF coefficient prototype requires vacuum wormhole, multiplicative restoring and an unperturbed initial lapse')
     if args.origin_grid and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Actual-origin grid uses the analytic g=1 limits with unscaled fields')
     if args.endpoint=='analytic-g1' and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Analytic endpoint requires unscaled g=1')
     if args.gauge_corner_sat and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Gauge corner penalty requires unscaled g=1')

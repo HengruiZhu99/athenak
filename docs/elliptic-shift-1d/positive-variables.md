@@ -152,3 +152,33 @@ The multiplicative form removes the constant term, but has the positive local
 restoring derivative described above. The analytic CMC source control cancels
 the constant on its own reference and therefore does not test this obstruction
 for the main Minkowski gauge.
+
+## Compiled AF coefficient evolution (API26)
+
+The compiled engine now reconstructs the same positive AF chart and reference
+jets as PunctureChart. The r=0 value evolves the asymptotic coefficient ODEs;
+it is excluded from physical metric positivity checks and receives no regular
+center parity, inner outflow guard or KO filter. Every r>0 curvature, Khat,
+Theta and Lambda rate remains independent. Total Khat is reconstructed without
+subtracting3, and the inner canceled R/S algebra matches the separately
+audited Python formulas. Transport and puncture dissipation act on stored
+coefficients after physical-rate conversion. Every RK stage solves the same
+metric-derived shift quadrature. This path currently supports vacuum with
+prefix quadrature and multiplicative restoring. Unsupported choices are rejected.
+
+Both implementations now differentiate lapse deviation directly from the
+reference deviation jets and expm1(V); subtracting A derivatives from total
+alpha loses small outer-collar deviations. This is an algebraic arithmetic
+repair. It changes no continuum equation or inner/scri condition.
+
+All40 test groups pass (`evidence/ctest-v34.log`). The96 independent compiled/
+Python AF cases cover two grids, both endpoint limits and transport choices,
+three slicing families, two damping products and both source profiles.
+Maximum RHS/short-RK differences are2.04e-12/8.89e-16; stage constraint and
+Bondi monitors agree. An actual t6 wormhole trajectory has maximum physical
+field difference3.10e-12 and is about20 times faster compiled at N129.
+AF restart is bitwise reproducible in state, physical totals, grid/time/steps
+and flux. These checks establish implementation agreement through a failed
+evolution; they are not nonlinear stability or wormhole-to-trumpet admission.
+The new frozen N513/1025/2049/4097 and independent timestep controls retain
+the same physical-log gauge, independent fields and acceptance thresholds.

@@ -1,0 +1,46 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.1,
+    "t": 1,
+    "amplitude": 0.1,
+    "pulse": "published-gaussian",
+    "elliptic_quadrature": "inward",
+    "endpoint": "analytic-g1",
+    "elliptic_method": "discrete-ode",
+    "elliptic_refinements": 2,
+    "elliptic_bias": "right",
+    "lapse_restoring_form": "multiplicative",
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner",
+    "subtract_local": true
+  },
+  "cases": [
+    {
+      "name": "spatial-n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "spatial-n1024",
+      "arguments": {
+        "n": 1024
+      }
+    },
+    {
+      "name": "spatial-n2048",
+      "arguments": {
+        "n": 2048
+      }
+    }
+  ],
+  "scope": "Regular-center finite .1 pulse with the same physical-log source used for wormhole/collapse, candidate damping4,-.99. Three fixed-CFL controls plus future time/elliptic refinements if stable. No equivalence to the old symmetric source is claimed; new interior linearization is explicit."
+}

@@ -1,0 +1,63 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 6,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 1,
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner"
+  },
+  "cases": [
+    {
+      "name": "n513",
+      "arguments": {
+        "n": 513
+      }
+    },
+    {
+      "name": "n1025",
+      "arguments": {
+        "n": 1025
+      }
+    },
+    {
+      "name": "n2049",
+      "arguments": {
+        "n": 2049
+      }
+    },
+    {
+      "name": "n4097",
+      "arguments": {
+        "n": 4097
+      }
+    },
+    {
+      "name": "half-dt-n1025",
+      "arguments": {
+        "n": 1025,
+        "cfl": 0.025
+      }
+    },
+    {
+      "name": "quarter-dt-n1025",
+      "arguments": {
+        "n": 1025,
+        "cfl": 0.0125
+      }
+    }
+  ],
+  "scope": "Compiled AF exact formulation with stable lapse-deviation chain rule. Independent Python/compiler audit and bitwise restart precede launch. Source choices and all thresholds fixed. Baseline N513 overlaps the failed Python matrix. Higher resolutions resolve the inward gauge front, with separate timestep refinement at N1025; no constraint projection/excision."
+}

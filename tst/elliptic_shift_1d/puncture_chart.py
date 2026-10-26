@@ -41,7 +41,11 @@ class PunctureChart(Evolution):
         for f,ref,exponential in [(0,cr,ex),(6,ar,ea)]:
             dp[:,f]=exponential*(ref[:,1]+ref[:,0]*d[:,f])
             ddp[:,f]=exponential*(ref[:,2]+2*ref[:,1]*d[:,f]+ref[:,0]*(dd[:,f]+d[:,f]**2))
-        dp[:,6]-=self.r;ddp[:,6]-=1
+        # Differentiate the deviation directly: total-alpha minus A loses tiny
+        # deviations in the regular scri collar.
+        small=np.expm1(state[:,6]);uref=self.refs['u']
+        dp[:,6]=uref[:,1]+ar[:,1]*small+ar[:,0]*ea*d[:,6]
+        ddp[:,6]=uref[:,2]+ar[:,2]*small+ea*(2*ar[:,1]*d[:,6]+ar[:,0]*(dd[:,6]+d[:,6]**2))
         for f in [2,3,4]:
             value=state[:,f]-(3 if f==3 else 0)
             dp[:,f]=w[:,1]*value+w[:,0]*d[:,f]

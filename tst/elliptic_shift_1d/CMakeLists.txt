@@ -96,3 +96,6 @@ add_test(NAME physical_log_finite_Khat_native_collapsed_limit
 
 add_test(NAME local_subtraction_constant_nullspace_and_dense_shift
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_local_subtraction.py)
+
+add_test(NAME compiled_AF_chart_rates_RK_and_stage_monitors
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_fast_puncture.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast>)
