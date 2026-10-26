@@ -1,0 +1,20 @@
+{
+  "declared_before_implementation": true,
+  "purpose": "Reduce timestep sensitivity of log ray-map Jacobians without changing geometry or the telegrapher PDE.",
+  "motivation": "Completed KO6 N2049 dt/2-to-spatial logJ difference ratio .224876 exceeds the 10 percent target; field and constraint ratios are much smaller. Piecewise-linear speed interpolation has a discontinuous derivative at each grid node.",
+  "candidate": "Optional monotonic C1 piecewise-cubic Hermite speed interpolation (PCHIP), using the derivative of that same interpolant for logJ. Keep linear interpolation as a control. No ray value may feed back into geometry, flux, elliptic shift or timestep guards.",
+  "reference": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.PchipInterpolator.html",
+  "implementation_checks": [
+    "Independent value/derivative oracle, affine-field exactness, monotonicity and continuity across nodes on mapped grids.",
+    "Actual nonzero-flux RK-stage rays against an independent implementation.",
+    "Geometry and auxiliary flux bitwise unchanged between ray interpolation choices.",
+    "Exact checkpoint preservation of positions, logJ and compensated state.",
+    "Default linear path preserves existing results."
+  ],
+  "nonlinear_checks": [
+    "Short dt/dt2/dt4 pilot compares interpolation choices at identical physical parameters.",
+    "Any selected mode still needs complete t10 three-grid ray/geometry convergence and independent timestep controls.",
+    "A finite smooth interpolant cannot prove absence of continuum characteristic crossing."
+  ],
+  "status": "Prepared; not implemented or admitted. Original linear-mode dt/4 run remains active."
+}
