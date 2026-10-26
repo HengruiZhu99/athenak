@@ -10,6 +10,7 @@ class FastEngine:
         self.puncture=getattr(a,'puncture',False)
         self.shape=(len(op.r),fields)
         self.af=getattr(a,'puncture_chart',False)
+        self.af_endpoint=self.af and op.r[0]==0
         if (getattr(a,'radial_operator','fd')!='fd'
             or getattr(a,'lapse_variable','deviation') not in ('deviation','log-reference')
             or getattr(a,'metric_variable','deviation') not in ('deviation','log')
@@ -23,7 +24,7 @@ class FastEngine:
             raise ValueError('Compiled engine implements unscaled g=1 and raw/analytic endpoints')
         self.lib=C.CDLL(str(library));self.calls=0;self.advance_seconds=0.
         self.lib.spherical_fast_abi.restype=C.c_int
-        if self.lib.spherical_fast_abi()!=29:raise ValueError('Compiled engine ABI does not match this wrapper')
+        if self.lib.spherical_fast_abi()!=30:raise ValueError('Compiled engine ABI does not match this wrapper')
         self.lib.spherical_fast_last_error.argtypes=[C.c_void_p];self.lib.spherical_fast_last_error.restype=C.c_char_p
         self.failure_message=''
         fp=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')
@@ -77,7 +78,7 @@ class FastEngine:
             'max_accepted_H_bulk','max_accepted_M_bulk','max_accepted_H_endpoint','max_accepted_M_endpoint']
         result={key:float(value) for key,value in zip(names,values[2:])}
         if getattr(self,'ode_method',False):result['max_elliptic_discrete_residual']=float(values[-1])
-        if not self.puncture or self.af:result.pop('max_inner_characteristic')
+        if not self.puncture or self.af_endpoint:result.pop('max_inner_characteristic')
         return result
 
     def rhs(self,q):

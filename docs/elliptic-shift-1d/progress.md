@@ -2,6 +2,22 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Causal-domain implementation and current failed controls
+
+API30 and46 CTest groups pass. Exact retained AF fields, native finite-left
+physical rates, source-hash guards, stage causal guards and bitwise strict
+restart pass. `causal-domain-transfer.md` documents the separate domain event
+and explicit prefix/retained-only analysis scopes. Coarse nu=.25 pilot domains
+remain unaccepted: their characteristics stay outward but constraints become
+large at the left closure. Fine full-AF prefixes are still running.
+
+The nu1 physical-log N1025/2049/4097 t6 physical trajectories do not converge:
+bulk peak order-.67, endpoint-.63, with growing inward-front spikes. Timestep
+refinement does not repair the Hamiltonian peak. The new positive upwind .1
+pulse again has good bulk order5.05 but endpoint peak order2.13 fails. The
+positive-upwind coupled A=.07 collapse still has enormous and nonconvergent
+constraints. These outcomes and their exact source bundles remain retained.
+
 ## Positive-chart transport controls running
 
 API29 and44 CTest groups pass. Generic positive chi/lapse variables now

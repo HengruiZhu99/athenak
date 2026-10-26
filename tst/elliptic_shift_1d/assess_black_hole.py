@@ -16,10 +16,10 @@ def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--input',type=Path,action='append',required=True)
-    p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False);records=[]
+    p.add_argument('--output',type=Path,required=True);p.add_argument('--retained-only',action='store_true');a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False);records=[]
     for root in a.input:
       for path in sorted(root.glob('*/manifest.json')):
-        folder=path.parent;m,rows,stages,segments=read_trajectory(folder)
+        folder=path.parent;m,rows,stages,segments=read_trajectory(folder,allow_domain_transfer=a.retained_only)
         if m['status']=='running':raise ValueError('Read completed or failed trajectories only')
         expected=m['arguments']['mass'] if not m['arguments']['scalar'] else None
         sampled=[]
@@ -33,12 +33,12 @@ def main():
                 exterior_mask_lower_radius=max(.03,1.2*radius),exterior_constraint_rms=exterior))
         peak={field:max(max(row[field+'_rms'] for row in rows),stages.get('max_'+field+'_rms',0)) for field in ['H','M','Theta','Z']}
         mass=[v['horizon']['apparent_horizon_mass'] for v in sampled if 'apparent_horizon_mass' in v['horizon']]
-        summary=dict(name=folder.name,folder=str(folder.resolve()),status=m['status'],time=m.get('time'),failure=m.get('failure'),
+        summary=dict(domain_transfer_parent=m.get('domain_transfer_parent'),retained_only=a.retained_only,name=folder.name,folder=str(folder.resolve()),status=m['status'],time=m.get('time'),failure=m.get('failure'),
             arguments=m['arguments'],binding=m['binding'],segments=segments,all_RK_stages=stages,
             peak_constraints=peak,sampled_horizon_profiles=sampled,expected_vacuum_mass=expected,
             max_absolute_horizon_mass_error=None if expected is None or not mass else max(abs(np.array(mass)-expected)),
             relative_horizon_mass_drift=None if not mass else float(max(abs(np.array(mass)-mass[0]))/mass[0]),
-            admission=False,scope='Read-only component evidence; no successful collapse, trumpet or wormhole-to-trumpet admission inferred.')
+            admission=False,scope='Explicit retained-domain-only evidence; original full AF prefix must be assessed separately. No physical admission.' if m.get('domain_transfer_parent') else 'Read-only component evidence; no successful collapse, trumpet or wormhole-to-trumpet admission inferred.')
         if mass:summary['final_extracted_horizon_mass']=mass[-1]
         records.append(summary)
     result=dict(analysis_sha256=sha(__file__),horizon_analysis_sha256=sha(Path(__file__).with_name('horizon.py')),records=records)

@@ -332,7 +332,7 @@ class Evolution:
         for location in [.25,.5,.75,.9,.98]:
             row['mass_r'+str(location)]=float(np.interp(location,self.r[:-1],c[:-1,10]))
         if getattr(self.args,'puncture',False):
-            first=1 if getattr(self.args,'puncture_chart',False) else 0
+            first=int(getattr(self.args,'puncture_chart',False) and self.r[0]==0)
             rr=self.r[first:-1];radius=rr/(self.omega[first:-1]*np.sqrt(c[first:-1,8]));density=radius/rr
             alpha=c[:,7];F=lapse_coefficient(self.r,alpha,self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1))
             row.update(inner_areal_radius=float(radius[0]),inner_proper_distance_density=float(density[0]),
@@ -464,6 +464,7 @@ def main():
     p.add_argument('--regularity-sat',type=float,default=0.)
     p.add_argument('--scri-sat',type=float,default=0.)
     p.add_argument('--report-dt',type=float,default=.1);p.add_argument('--resume',type=Path)
+    p.add_argument('--transfer-af-profile',type=Path)
     args=p.parse_args()
     numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude,args.gauge_corner_sat,args.mass,args.puncture_ko,args.puncture_ko_radius,args.slicing_scale,args.puncture_lapse_power,args.inner_radius]
     if not all(np.isfinite(x) for x in numeric):raise ValueError('Nonfinite input')
@@ -474,7 +475,10 @@ def main():
         or not 0<args.puncture_ko_radius<.95 or args.slicing_scale<=0 or args.puncture_lapse_power<0 or not 0<=args.inner_radius<1):raise ValueError('Invalid input')
     if args.lapse_restoring_profile=='physical-local' and (args.slicing_family not in ('linear','rational') or args.lapse_reference!='minkowski'):
         raise ValueError('Local restoring requires linear/rational slicing with the Minkowski lapse reference')
-    if args.inner_radius and (not args.puncture or args.initial_data!='trumpet' or args.puncture_chart):
+    transfer_requested=args.transfer_af_profile is not None
+    if transfer_requested and not (args.puncture and args.puncture_chart and args.inner_radius>0 and args.initial_data=='wormhole' and not args.scalar):
+        raise ValueError('AF domain transfer requires an evolved vacuum wormhole and a positive cutoff')
+    if args.inner_radius and not transfer_requested and (not args.puncture or args.initial_data!='trumpet' or args.puncture_chart):
         raise ValueError('Fixed-radius excision is a separate already-trumpet control; it does not replace wormhole evolution')
     if args.elliptic_method=='discrete-ode' and (args.backend!='spherical-g1' or args.radial_operator!='fd' or args.puncture_chart):
         raise ValueError('Discrete shift ODE prototype requires the g=1 FD regular-center or fixed-cutoff path')
@@ -486,7 +490,7 @@ def main():
     if args.metric_variable=='log-trumpet' and (args.initial_data!='trumpet' or args.fast_library or args.advection!='centered'):
         raise ValueError('Log-trumpet metric variables currently require Python already-trumpet evolution and centered transport')
     if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and (args.backend!='spherical-g1' or args.puncture_chart):
-        raise ValueError('Positive-variable prototypes require g=1 centered evolution and their own representation')
+        raise ValueError('Positive-variable prototypes require g=1 evolution and their own representation')
     if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and args.origin_variables:
         raise ValueError('Combined positive and scaled-origin charts have not been implemented/audited')
     if args.subtract_local and args.radial_operator!='fd':raise ValueError('Local subtraction currently requires FD operators')
@@ -512,6 +516,7 @@ def main():
     root=Path(__file__).resolve().parents[2]
     # Bind all actual header dependencies, adapter and Python implementation.
     module_names=['evolve.py','numerics.py','elliptic.py','kernel.py','gauge.py','bondi.py','horizon.py','time_lattice.py']
+    if transfer_requested:module_names+=['domain_transfer.py']
     if args.compensated_update:module_names+=['compensated_update.py']
     if args.radial_operator=='sbp63':module_names+=['sbp.py']
     if args.elliptic_method=='discrete-ode':module_names+=['shift_ode.py']
@@ -535,12 +540,12 @@ def main():
     if args.scalar and args.backend!='spherical-g1':raise ValueError('Coupled scalar currently requires spherical-g1 backend')
     if args.puncture_chart:
         from puncture_chart import PunctureChart
-        ev=PunctureChart(args);manifest['representation']='puncture-log-AF-v1'
+        ev=PunctureChart(args);manifest['representation']='positive-AF-reference-chart on retained finite domain' if args.inner_radius else 'puncture-log-AF-v1'
     else:ev=CoupledEvolution(args) if args.scalar else Evolution(args)
     if args.lapse_variable=='log-trumpet':manifest['representation']='log-trumpet-lapse-v1; geometric/gauge reference selected independently'
     if args.metric_variable=='log-trumpet':manifest['representation']='log-trumpet-metric-v1; geometric/gauge reference selected independently'
     if args.metric_variable=='log' or args.lapse_variable=='log-reference':manifest['representation']='positive-reference-variables-v1; free Z4c fields retained'
-    if args.inner_radius:manifest['inner_boundary_kind']='fixed excision control; stage characteristic guards required; no wormhole-to-trumpet claim'
+    if args.inner_radius:manifest['inner_boundary_kind']='causal transferred domain; original full AF prefix remains required' if transfer_requested else 'fixed excision control; stage characteristic guards required; no wormhole-to-trumpet claim'
     # Freeze before initialization too: a failed Newton solve is an experiment.
     snapshot=args.output/'frozen-source';snapshot.mkdir()
     for f in source:
@@ -558,7 +563,7 @@ def main():
     if args.pulse=='published-gaussian':
         q[:,6]=args.amplitude*np.exp(-(ev.r**2-args.center**2)**2/(4*args.pulse_width**4))
     if q[-1,6]!=0.:raise ValueError('Initial lapse pulse must vanish at scri for clock-compatible data')
-    if args.initial_data=='wormhole' and not args.resume:
+    if args.initial_data=='wormhole' and not args.resume and not transfer_requested:
         from wormhole_isotropic import IsotropicWormhole
         initial=IsotropicWormhole(args.mass,args.initial_quadrature_order)
         if args.puncture_chart:q,iq,id1,id2,geometry=ev.initial_wormhole(initial)
@@ -613,23 +618,47 @@ def main():
             q[:,field]+=args.perturbation_amplitude*scale*ev.r**power*envelope*profile
     if (args.lapse_variable!='deviation' or args.metric_variable!='deviation') and not args.resume:
         q=ev.from_physical(q,total_chi=np.array([g['chi_total'] for g in geometry]) if args.metric_variable=='log-trumpet' else None)
+    transfer=None
+    if transfer_requested and not args.resume:
+        from domain_transfer import load_af_transfer
+        try:
+            transfer=load_af_transfer(args)
+            if not np.array_equal(ev.r,transfer['r']):raise ValueError('Constructed grid differs from exact retained subset')
+            q=transfer['q'];t=transfer['t'];step=transfer['step']
+            physical,chi,alpha,_=ev.reconstruct(q)
+            receipt=transfer['receipt']
+            receipt['maximum_physical_field_reconstruction_difference']=float(max(abs(physical-transfer['physical']).ravel()))
+            receipt['maximum_relative_total_chi_difference']=float(max(abs(chi/transfer['chi']-1)))
+            receipt['maximum_relative_total_alpha_difference']=float(max(abs(alpha/transfer['alpha']-1)))
+            if max(receipt['maximum_relative_total_chi_difference'],receipt['maximum_relative_total_alpha_difference'])>3e-14:
+                raise ValueError('Transfer changed the positive physical totals')
+            _,_,_,transferred_beta=ev.parts(q)
+            receipt['maximum_shift_change_after_new_boundary_discretization']=float(max(abs(transferred_beta-transfer['beta'])))
+            manifest['domain_transfer_parent']=receipt
+            (args.output/'domain-transfer.json').write_text(json.dumps(receipt,indent=2)+'\n')
+        except Exception as error:
+            failure={'type':type(error).__name__,'message':str(error),'phase':'domain-transfer'}
+            manifest.update(status='domain-transfer-rejected',failure=failure)
+            (args.output/'failure.json').write_text(json.dumps(failure,indent=2)+'\n')
+            (args.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+            print(json.dumps(failure));return 1
     update_compensation=np.zeros_like(q)
     if args.resume:
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('compensated_update','subtract_local','n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
+            for key in ('transfer_af_profile','compensated_update','subtract_local','n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
             if args.compensated_update:
                 update_compensation=z['update_compensation'].copy()
                 if update_compensation.shape!=q.shape or not np.all(np.isfinite(update_compensation)):raise ValueError('Invalid checkpoint compensation')
-            for key in ['scalar_initial_data','wormhole_initial_data','trumpet_initial_data']:
+            for key in ['domain_transfer_parent','scalar_initial_data','wormhole_initial_data','trumpet_initial_data']:
                 if key in old:manifest[key]=old[key]
         manifest['checkpoint_parent']={'path':str(args.resume.resolve()),'sha256':sha(args.resume)}
     radiated_energy=float(old.get('radiated_energy',0.)) if args.resume else 0.
     dt=args.cfl*ev.h
-    clock=FixedStepClock(dt,t,step,args.t,old.get('time_lattice') if args.resume else None)
+    clock=FixedStepClock(dt,t,step,args.t,old.get('time_lattice') if args.resume else (transfer['lattice'] if transfer else None))
     t=clock.t;manifest['time_lattice']=clock.metadata()
     manifest['status']='running'
     (args.output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')

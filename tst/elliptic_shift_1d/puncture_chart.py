@@ -56,6 +56,7 @@ class PunctureChart(Evolution):
     def to_physical(self,state):return self.reconstruct(state)[0]
 
     def initial_wormhole(self,initial):
+        if self.r[0]!=0:raise ValueError('Finite-cutoff AF charts require an explicit domain transfer')
         iq,id1,id2,meta=initial.data(self.r[1:]);q=np.vstack([np.array([-1.,0,0,3,0,0,-.5,0]),iq])
         chi=np.r_[0.,[z['chi_total'] for z in meta]]
         alpha=np.zeros_like(self.r);alpha[1:-1]=np.array([z['physical_lapse'] for z in meta[:-1]])*self.omega[1:-1];alpha[-1]=1.
@@ -74,50 +75,59 @@ class PunctureChart(Evolution):
         return state,q,np.vstack([np.zeros(8),id1]),np.vstack([endpoint_dd,id2]),[dict(R=float('inf'),chi_total=0.,branch='AF coefficient endpoint'),*meta]
 
     def parts(self,state):
+        first=int(self.r[0]==0);physical=slice(first,None);rr=self.r[physical]
         d,dd=self.op.derivatives(state,np.ones(8))
         q,chi,alpha,khat,dp,ddp=self.reconstruct(state,d,dd)
-        if min(chi[1:])<=0 or min(alpha[1:])<=0:raise FloatingPointError('Nonpositive physical puncture geometry')
+        if min(chi[physical])<=0 or min(alpha[physical])<=0:raise FloatingPointError('Nonpositive physical puncture geometry')
         self.geometry_state=q;self.geometry_first=dp;self.geometry_second=ddp
         self.chart_first=d;self.chart_second=dd;self.total_chi=chi;self.total_alpha=alpha;self.total_khat=khat
-        start=time.perf_counter();integrand=np.zeros(len(self.r));integrand[1:]=1.5*alpha[1:]*q[1:,2]/self.r[1:]
+        start=time.perf_counter();integrand=np.zeros(len(self.r));integrand[physical]=1.5*alpha[physical]*q[physical,2]/rr
         integral=self.op.integral(integrand);integral_seconds=time.perf_counter()-start
-        sub=SimpleNamespace(r=self.r[1:],integral=lambda _:integral[1:])
+        sub=SimpleNamespace(r=rr,integral=lambda _:integral[physical])
         timing={}
-        R,S,diag,b,db,ddb=g1_rhs.parts(sub,q[1:],dp[1:],ddp[1:],self.args.kappa1,self.args.kappa2,
+        R,S,diag,b,db,ddb=g1_rhs.parts(sub,q[physical],dp[physical],ddp[physical],self.args.kappa1,self.args.kappa2,
             self.args.theta=='appendix-c',self.args.slicing,0.,timing,
-            total_chi=chi[1:],total_alpha=alpha[1:],total_khat=khat[1:],puncture_cancellation=True)
-        # Direct multiplicative expression avoids subtracting two O(1) sources.
+            total_chi=chi[physical],total_alpha=alpha[physical],total_khat=khat[physical],puncture_cancellation=True)
         if getattr(self.args,'lapse_restoring_profile','constant')=='physical-local':
             self.restoring_strength=restoring_coefficient(self.r,self.args.lapse_restoring,self.args.slicing,
                 getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1),'physical-local',alpha)
-        strength=self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[1:]
-        S[:,6]-=2*strength*alpha[1:]*q[1:,6]
-        if getattr(self.args,'slicing_family','linear')=='rational':S[:,6]+=rational_correction(self.r[1:],alpha[1:],q[1:,6],q[1:,3],self.args.slicing,self.args.slicing_scale)
-        if getattr(self.args,'slicing_family','linear')=='blended-log':S[:,6]+=blended_correction(self.r[1:],alpha[1:],q[1:,3],self.args.slicing)
-        if getattr(self.args,'lapse_background_source','reference')=='collapsed-inner':S[:,6]+=collapsed_background_correction(self.r[1:],q[1:,6])
+        strength=self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[physical]
+        S[:,6]-=2*strength*alpha[physical]*q[physical,6]
+        if getattr(self.args,'slicing_family','linear')=='rational':S[:,6]+=rational_correction(rr,alpha[physical],q[physical,6],q[physical,3],self.args.slicing,self.args.slicing_scale)
+        if getattr(self.args,'slicing_family','linear')=='blended-log':S[:,6]+=blended_correction(rr,alpha[physical],q[physical,3],self.args.slicing)
+        if getattr(self.args,'lapse_background_source','reference')=='collapsed-inner':S[:,6]+=collapsed_background_correction(rr,q[physical,6])
         if getattr(self.args,'damping_form','constant')=='reference-lapse':
-            D=-self.args.kappa1*q[1:,6]
-            S[:,3]+=D*(1-self.args.kappa2)*q[1:,4]
-            S[:,4]-=D*(2+self.args.kappa2)*q[1:,4];S[:,5]-=D*q[1:,5]
-        R=np.vstack([np.zeros(8),R]);S=np.vstack([np.zeros(8),S]);diag=np.vstack([np.zeros(12),diag])
-        beta=np.r_[0.,b];v=np.r_[0.,timing['beta_deviation']]
+            D=-self.args.kappa1*q[physical,6]
+            S[:,3]+=D*(1-self.args.kappa2)*q[physical,4]
+            S[:,4]-=D*(2+self.args.kappa2)*q[physical,4];S[:,5]-=D*q[physical,5]
+        beta=b;v=timing['beta_deviation'];self.mass_numerator=timing['mass_numerator']
         cS=q[-1,0];uS=q[-1,6]
         outer=-(cS+(2*uS+uS*uS)*chi[-1])/(1+alpha[-1]*np.sqrt(chi[-1]))
         self.b1=-1+outer-integral[-1]
-        diag[0,7]=0.;diag[0,8]=0.;diag[0,9]=1.;diag[0,3]=state[0,5]/2
-        X0=16*np.exp(state[0,0]);diag[0,10]=-d[0,0]/np.sqrt(X0);diag[0,11]=0.
-        self.mass_numerator=np.r_[0.,timing['mass_numerator']]
+        if first:
+            R=np.vstack([np.zeros(8),R]);S=np.vstack([np.zeros(8),S]);diag=np.vstack([np.zeros(12),diag])
+            beta=np.r_[0.,b];v=np.r_[0.,v];self.mass_numerator=np.r_[0.,self.mass_numerator]
+            diag[0,7]=0.;diag[0,8]=0.;diag[0,9]=1.;diag[0,3]=state[0,5]/2
+            X0=16*np.exp(state[0,0]);diag[0,10]=-d[0,0]/np.sqrt(X0);diag[0,11]=0.
+        else:
+            from gauge import lapse_coefficient
+            F=lapse_coefficient(rr[0],alpha[0],self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1))
+            light=-beta[0]+alpha[0]*np.sqrt(chi[0]);gauge=-beta[0]+np.sqrt(F*chi[0])
+            metrics=self.stage_metrics
+            metrics['max_inner_characteristic']=max(metrics.get('max_inner_characteristic',-float('inf')),float(max(light,gauge)))
+            if max(light,gauge)>0:raise FloatingPointError('Transferred inner boundary has an incoming physical or gauge characteristic')
         self.shift_deviation=v;self.origin_shift_slope=self.b1
         self.calls+=1;self.solve_seconds+=integral_seconds+timing['elliptic_seconds']
-        fd,fdd=self.op.derivatives(v,-1);r=self.r[1:]
-        er=4/3*(fdd[1:]+2*(fd[1:]-v[1:]/r)/r)-2*((self.r[1:]+dp[1:,6])*q[1:,2]+alpha[1:]*dp[1:,2])-6*alpha[1:]*q[1:,2]/r
+        fd,fdd=self.op.derivatives(v,-1)
+        er=4/3*(fdd[physical]+2*(fd[physical]-v[physical]/rr)/rr)-2*((rr+dp[physical,6])*q[physical,2]+alpha[physical]*dp[physical,2])-6*alpha[physical]*q[physical,2]/rr
         self.elliptic_differential_residual=float(max(abs(er)))
         self.regularity=np.array([q[-1,0],0.,q[-1,2]+2*dp[-1,0]/3,q[-1,3],q[-1,4],q[-1,5],0.,0.])
         return R,S,diag,beta
 
     def rhs(self,state,accepted=False):
         start=time.perf_counter();R,S,diag,beta=self.parts(state)
-        rate=np.zeros_like(state);rate[1:-1]=R[1:-1]+S[1:-1]/self.omega[1:-1,None]
+        first=int(self.r[0]==0)
+        rate=np.zeros_like(state);rate[first:-1]=R[first:-1]+S[first:-1]/self.omega[first:-1,None]
         if self.args.endpoint=='analytic-g1':
             ds,_=scri_limits.derivatives(self.geometry_state[-1],self.geometry_first[-1],self.geometry_second[-1],
                 self.shift_deviation[-1],self.args.kappa1,self.args.kappa2,self.args.theta=='appendix-c',self.args.slicing,self.args.lapse_restoring,restoring_form='multiplicative',damping_form=getattr(self.args,'damping_form','constant'))
@@ -130,15 +140,16 @@ class PunctureChart(Evolution):
         result[positive,6]=rate[positive,6]/self.total_alpha[positive]
         for f in [2,3,4]:result[positive,f]=rate[positive,f]/w[positive]
         result[:,5]=rate[:,5]
-        b1=self.b1;xi=float(self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[0]);nu=af_slicing_strength(self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1));A0=8*np.exp(state[0,6])
-        result[0,0]=2*b1;result[0,6]=2*b1-6*nu+2*xi
-        if getattr(self.args,'lapse_background_source','reference')=='reference':result[0,6]+=2/A0
-        result[0,2]=2*b1*state[0,2];result[0,3]=2*b1*(state[0,3]-3)
-        result[0,4]=2*b1*state[0,4];result[0,5]=2*b1*state[0,5]
-        if getattr(self.args,'damping_form','constant')=='reference-lapse':
-            result[0,3]+=self.args.kappa1*(1-self.args.kappa2)*state[0,4]
-            result[0,4]-=self.args.kappa1*(2+self.args.kappa2)*state[0,4]
-            result[0,5]-=self.args.kappa1*state[0,5]
+        if first:
+            b1=self.b1;xi=float(self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[0]);nu=af_slicing_strength(self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1));A0=8*np.exp(state[0,6])
+            result[0,0]=2*b1;result[0,6]=2*b1-6*nu+2*xi
+            if getattr(self.args,'lapse_background_source','reference')=='reference':result[0,6]+=2/A0
+            result[0,2]=2*b1*state[0,2];result[0,3]=2*b1*(state[0,3]-3)
+            result[0,4]=2*b1*state[0,4];result[0,5]=2*b1*state[0,5]
+            if getattr(self.args,'damping_form','constant')=='reference-lapse':
+                result[0,3]+=self.args.kappa1*(1-self.args.kappa2)*state[0,4]
+                result[0,4]-=self.args.kappa1*(2+self.args.kappa2)*state[0,4]
+                result[0,5]-=self.args.kappa1*state[0,5]
         if self.args.advection=='upwind':result+=beta[:,None]*(self.op.advection_derivative(state,np.ones(8),beta)-self.chart_first)
         if getattr(self.args,'puncture_ko',0.):
             diss=puncture_dissipation(state,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius)
@@ -159,12 +170,16 @@ class PunctureChart(Evolution):
                 maxima['max_accepted_'+name+'_bulk']=float(max(abs(diag[self.r<.8,i])))
                 maxima['max_accepted_'+name+'_endpoint']=float(max(abs(diag[self.r>.9,i])))
         for key,value in maxima.items():metrics[key]=max(metrics.get(key,0),value)
-        for key,value in [('min_chi',float(min(self.total_chi[1:]))),('min_alpha',float(min(self.total_alpha[1:])))] :metrics[key]=min(metrics.get(key,float('inf')),value)
+        for key,value in [('min_chi',float(min(self.total_chi[positive]))),('min_alpha',float(min(self.total_alpha[positive])))] :metrics[key]=min(metrics.get(key,float('inf')),value)
         self.rhs_seconds+=time.perf_counter()-start
         return result
 
     def report(self,state,t):
         row,b,c=super().report(state,t)
+        if self.r[0]>0:
+            row['inner_boundary_treatment']='causal finite cutoff in positive AF-reference variables'
+            if self.stage_metrics:row['all_RK_stages']=dict(self.stage_metrics)
+            return row,b,c
         row.update(AF_log_chi_coefficient=float(state[0,0]),AF_log_lapse_coefficient=float(state[0,6]),
             AF_inner_mass=float(c[0,10]),AF_shift_slope=float(self.b1),inner_boundary_treatment='evolved AF coefficient endpoint')
         if self.stage_metrics:row['all_RK_stages']=dict(self.stage_metrics)

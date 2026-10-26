@@ -15,7 +15,7 @@ struct Engine {
   std::vector<int> aleft,aright;Vec awleft,awright;
   Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha,af_reference,chart_d,total_khat,update_compensation;
   long calls=0; double solve_seconds=0;
-  bool puncture=false,af=false;
+  bool puncture=false,af=false,af_endpoint=false;
   std::string error;
   std::array<double,22> diagnostics{};
   Vec ode_lu,ode_matrix;int ode_band=0,ode_skip=0,ode_refinements=0;double ode_scale=1;
@@ -29,10 +29,10 @@ struct Engine {
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
     lapse_source.resize(n,0.);
     primitive.resize(n*nf);total_chi.resize(n);total_alpha.resize(n);
-    chart_d.resize(n*nf);total_khat.resize(n);update_compensation.resize(n*nf,0);af=p[24]!=0;
+    chart_d.resize(n*nf);total_khat.resize(n);update_compensation.resize(n*nf,0);af=p[24]!=0;af_endpoint=af&&rr[0]==0;
     if(nf!=8&&nf!=10)throw std::runtime_error("invalid field count");
     diagnostics[3]=diagnostics[4]=std::numeric_limits<double>::infinity();
-    puncture=p[12]!=0;if(puncture&&!af)diagnostics[11]=-std::numeric_limits<double>::infinity();
+    puncture=p[12]!=0;if(puncture&&!af_endpoint)diagnostics[11]=-std::numeric_limits<double>::infinity();
   }
   int reflected(int k)const{return k<w?(r[0]==0?w-k:w-1-k):k-w;}
   int parity(int f)const{return f==5?-1:1;}
@@ -146,7 +146,7 @@ struct Engine {
     auto solve_start=std::chrono::steady_clock::now();
     for(int i=0;i<n;i++) {
       double chi=total_chi[i],alpha=total_alpha[i];
-      if(af&&i==0){z[i]=0;continue;}
+      if(af_endpoint&&i==0){z[i]=0;continue;}
       diagnostics[3]=std::min(diagnostics[3],chi);diagnostics[4]=std::min(diagnostics[4],alpha);
       if(q[i*nf+1]!=0||chi<=0||alpha<=0||!std::isfinite(chi)||!std::isfinite(alpha))
         throw std::runtime_error("g=1 gauge or positivity violation");
@@ -177,7 +177,7 @@ struct Engine {
       U[i]=alpha*(q[i*nf+3]+2*q[i*nf+4])/3-q[i*nf+6]-r[i]*v[i];
     }
     solve_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-solve_start).count();
-    if(puncture&&!af) {
+    if(puncture&&!af_endpoint) {
       double alpha=total_alpha[0],chi=total_chi[0];
       double F=lapse_coefficient(r[0],alpha);
       diagnostics[11]=std::max(diagnostics[11],std::max(-beta[0]+alpha*std::sqrt(chi),-beta[0]+std::sqrt(F*chi)));
@@ -190,7 +190,7 @@ struct Engine {
     std::fill(R.begin(),R.end(),0);std::fill(S.begin(),S.end(),0);
     std::array<double,4> normsum{};double volume=0;
     double bulkH=0,bulkM=0,endH=0,endM=0;
-    for(int i=af?1:0;i<n;i++) {
+    for(int i=af_endpoint?1:0;i<n;i++) {
       int k=i*nf;double x=r[i],O=(1-x*x)/2,A0=(1+x*x)/2;
       double c=q[k],chi=total_chi[i],Ar=q[k+2],p=af?total_khat[i]:q[k+3]-3,T=q[k+4],lam=q[k+5],u=q[k+6];
       double cp=d[k],cpp=dd[k],ap=d[k+2],pp=d[k+3],Tp=d[k+4],lp=d[k+5],up=d[k+6],upp=dd[k+6];
@@ -336,17 +336,19 @@ struct Engine {
       if(logalpha)out[i*nf+6]/=total_alpha[i];
     }
     if(af) {
-      for(int i=1;i<n;i++) {
+      for(int i=af_endpoint?1:0;i<n;i++) {
         out[i*nf]/=total_chi[i];out[i*nf+6]/=total_alpha[i];
         for(int f:{2,3,4})out[i*nf+f]/=ref(i,1);
       }
-      double b1=-1+phase[0],nu=params[2],inner_xi=xi;
-      if(static_cast<int>(params[18])==1)nu*=(.5+params[19])/params[19];
-      if(params[22]!=0)inner_xi=3*nu;
-      out[0]=2*b1;out[6]=2*b1-6*nu+2*inner_xi;
-      if(params[21]==0)out[6]+=2/(8*std::exp(state[6]));
-      out[2]=2*b1*state[2];out[3]=2*b1*(state[3]-3);out[4]=2*b1*state[4];out[5]=2*b1*state[5];
-      if(params[15]!=0){out[3]+=kap*(1-kap2)*state[4];out[4]-=kap*(2+kap2)*state[4];out[5]-=kap*state[5];}
+      if(af_endpoint) {
+        double b1=-1+phase[0],nu=params[2],inner_xi=xi;
+        if(static_cast<int>(params[18])==1)nu*=(.5+params[19])/params[19];
+        if(params[22]!=0)inner_xi=3*nu;
+        out[0]=2*b1;out[6]=2*b1-6*nu+2*inner_xi;
+        if(params[21]==0)out[6]+=2/(8*std::exp(state[6]));
+        out[2]=2*b1*state[2];out[3]=2*b1*(state[3]-3);out[4]=2*b1*state[4];out[5]=2*b1*state[5];
+        if(params[15]!=0){out[3]+=kap*(1-kap2)*state[4];out[4]-=kap*(2+kap2)*state[4];out[5]-=kap*state[5];}
+      }
       if(params[11]!=0)for(int i=0;i<n;i++) {
         const auto& ai=beta[i]<0?aleft:aright;const auto& aw=beta[i]<0?awleft:awright;
         for(int f=0;f<nf;f++) {
@@ -399,7 +401,7 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 29;}
+int spherical_fast_abi(){return 30;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);

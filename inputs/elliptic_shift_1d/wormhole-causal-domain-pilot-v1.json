@@ -1,0 +1,47 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 10,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 0.25,
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner",
+    "inner_radius": 0.015625
+  },
+  "cases": [
+    {
+      "name": "parent-n513",
+      "arguments": {
+        "n": 505,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n513/profile-0033.npz"
+      }
+    },
+    {
+      "name": "parent-n1025",
+      "arguments": {
+        "n": 1009,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n1025/profile-0033.npz"
+      }
+    },
+    {
+      "name": "parent-n2049",
+      "arguments": {
+        "n": 2017,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n2049/profile-0033.npz"
+      }
+    }
+  ],
+  "scope": "Exploratory causal finite-domain transfers at3.2 from actual evolved nu=.25 wormholes. Exact retained AF-reference variables, same equations and numerical parameters, stage guard for every physical/gauge characteristic, separate provenance receipts. Coarse full-prefix scri gates are not admitted; no post-cut survival or clean exterior can erase those failures. Fine full AF prefixes and boundary/shift/cut/time controls remain mandatory before scientific admission."
+}

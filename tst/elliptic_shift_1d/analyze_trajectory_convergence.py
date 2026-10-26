@@ -8,17 +8,20 @@ from pathlib import Path
 import numpy as np
 from numerics import weights
 from kernel import PARITY
-from trajectory import read_trajectory
+from trajectory import read_trajectory,prefix_stage_extrema
 from analyze_principal_controls import fit_order,norm
 p=argparse.ArgumentParser();inputs=p.add_mutually_exclusive_group(required=True);inputs.add_argument('--input',type=Path)
 inputs.add_argument('--case-paths',type=Path,nargs=3);p.add_argument('--output',type=Path,required=True)
-p.add_argument('--resolutions',type=int,nargs=3,default=[512,1024,2048]);p.add_argument('--interval',type=float,default=.1);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+p.add_argument('--resolutions',type=int,nargs=3,default=[512,1024,2048]);p.add_argument('--interval',type=float,default=.1);p.add_argument('--start',type=float,default=0.);p.add_argument('--end',type=float);p.add_argument('--retained-only',action='store_true');a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 runs=[]
 for case_index,n in enumerate(a.resolutions):
- folder=a.input/f'spatial-n{n}' if a.input else a.case_paths[case_index];m,rows,stages,segments=read_trajectory(folder)
+ folder=a.input/f'spatial-n{n}' if a.input else a.case_paths[case_index];m,rows,stages,segments=read_trajectory(folder,allow_domain_transfer=a.retained_only)
  if m['arguments']['n']!=n:raise ValueError('Resolution label differs from source-bound input')
- if m['status']!='finished':raise ValueError('Require completed trajectories at the same final time')
+ if m['status']!='finished':raise ValueError('Require completed trajectories')
+ if a.end is not None:
+  if a.end>m['time']+1e-10:raise ValueError('Prefix end exceeds completed trajectory')
+  stages=prefix_stage_extrema(rows,a.end)
  profiles={}
  for segment in segments:
   for path in sorted(Path(segment['folder']).glob('profile-*.npz')):
@@ -32,17 +35,20 @@ for case_index,n in enumerate(a.resolutions):
    if tick in profiles and not np.array_equal(profiles[tick]['q'],q):raise ValueError('Duplicate continuation landing states differ')
    profiles[tick]=dict(t=t,step=frame_step,r=r,q=q,path=str(path),sha256=sha(path))
  runs.append(dict(n=n,manifest=m,stages=stages,segments=segments,profiles=profiles))
-if np.ptp([r['manifest']['time'] for r in runs])>1e-10:raise ValueError('Different final times')
+if a.end is None and np.ptp([r['manifest']['time'] for r in runs])>1e-10:raise ValueError('Different final times')
 if len({r['manifest']['arguments']['cfl'] for r in runs})!=1:raise ValueError('Spatial study requires a fixed CFL')
 if any(z['manifest']['binding']!=runs[0]['manifest']['binding'] for z in runs):raise ValueError('Spatial study requires identical numerical source and binaries')
-end=int(round(runs[0]['manifest']['time']/a.interval));requested=list(range(end+1))
+end=int(round((runs[0]['manifest']['time'] if a.end is None else a.end)/a.interval));start_tick=int(round(a.start/a.interval))
+if start_tick<0 or end<=start_tick or abs(start_tick*a.interval-a.start)>1e-10:raise ValueError('Invalid exact analysis window')
+requested=list(range(start_tick,end+1))
 missing={z['n']:sorted(set(requested)-set(z['profiles'])) for z in runs}
-ticks=sorted(set.intersection(*[set(z['profiles']) for z in runs]))
-if len(ticks)<3 or ticks[0]!=0 or ticks[-1]!=end:raise ValueError('Common profiles do not cover the trajectory interval')
-hs=[float(np.diff(z['profiles'][0]['r'])[0]) for z in runs];errors={key:[] for key in ['bulk','endpoint']}
+ticks=sorted(set(requested)&set.intersection(*[set(z['profiles']) for z in runs]))
+if len(ticks)<3 or ticks[0]!=start_tick or ticks[-1]!=end:raise ValueError('Common profiles do not cover the trajectory interval')
+hs=[float(np.diff(z['profiles'][start_tick]['r'])[0]) for z in runs];errors={key:[] for key in ['bulk','endpoint']}
 for lo,hi in zip(runs[:-1],runs[1:]):
- coarse=lo['profiles'][0]['r'];fine=hi['profiles'][0]['r'];width=9
- nested=coarse[0]==0 and fine[0]==0
+ coarse=lo['profiles'][start_tick]['r'];fine=hi['profiles'][start_tick]['r'];width=9
+ ratio=(len(fine)-1)//(len(coarse)-1)
+ nested=coarse[0]==fine[0] and ratio*(len(coarse)-1)==len(fine)-1
  if nested:
   ratio=(len(fine)-1)//(len(coarse)-1)
   if ratio*(len(coarse)-1)!=len(fine)-1 or not np.array_equal(coarse,fine[::ratio]):raise ValueError('Nodal study requires exactly nested grids')
@@ -63,7 +69,8 @@ for region,series in errors.items():
  maximum=[float(max(e)) for e in series];l2=[float(np.sqrt(np.sum(np.diff(times)*(np.array(e[:-1])**2+np.array(e[1:])**2)/2)/(times[-1]-times[0]))) for e in series]
  result[region]=dict(sampled_differences=series,maximum_differences=maximum,maximum_order=fit_order(maximum,hs),
   time_RMS_differences=l2,time_RMS_order=fit_order(l2,hs),sampled_orders=[fit_order([e[i] for e in series],hs) for i in range(len(ticks))])
-record=dict(scope='Full-duration physical fields at common exact saved times; no temporal interpolation. Nested nodal grids use exact restriction; regular half-cell grids use degree8 spatial interpolation. AF node has zero radial norm weight and is not a physical metric sample. Field errors supplement all-stage safety and every-accepted-step constraints.',
+record=dict(scope='Physical fields on the explicitly recorded time window at common exact saved times; no temporal interpolation. Nested nodal grids use exact restriction; regular half-cell grids use degree8 spatial interpolation. AF node has zero radial norm weight and is not a physical metric sample. Field errors supplement all-stage safety and every-accepted-step constraints.',
+ analysis_window=dict(start=a.start,end=end*a.interval,retained_only=a.retained_only,actual_trajectory_ends=[z['manifest']['time'] for z in runs],stage_scope='Recorded cumulative stages through exact report at end' if a.end is not None else 'Entire completed trajectory'),
  interval=a.interval,times=times.tolist(),h=hs,regions=result,missing_requested_ticks=missing,
  coverage_note='Only common reported-time matches within1e-10 are compared. Older cumulative-clock frames can miss a requested tick by one RK step; none are shifted or interpolated in time. The integer-step clock repair is a separate source-bound change.',
  runs=[dict(n=z['n'],binding=z['manifest']['binding'],segments=z['segments'],all_stage_extrema=z['stages'],

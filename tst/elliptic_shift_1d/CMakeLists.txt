@@ -110,3 +110,9 @@ add_test(NAME rational_local_restoring_AF_coefficient_limits
 
 add_test(NAME rational_local_restoring_source_and_steepening_identities
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_local_restoring.py)
+
+add_test(NAME causal_domain_transfer_exact_fields_native_and_strict_restart
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_domain_transfer.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast>)
+
+add_test(NAME prefix_stage_scope_and_missing_coverage_guards
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_trajectory_scope.py)

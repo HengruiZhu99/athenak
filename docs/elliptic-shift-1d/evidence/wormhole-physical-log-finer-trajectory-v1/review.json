@@ -1,0 +1,1819 @@
+{
+  "scope": "Full-duration physical fields at common exact saved times; no temporal interpolation. Nested nodal grids use exact restriction; regular half-cell grids use degree8 spatial interpolation. AF node has zero radial norm weight and is not a physical metric sample. Field errors supplement all-stage safety and every-accepted-step constraints.",
+  "interval": 0.1,
+  "times": [
+    0.0,
+    0.1,
+    0.2,
+    0.30000000000000004,
+    0.4,
+    0.5,
+    0.6000000000000001,
+    0.7000000000000001,
+    0.8,
+    0.9,
+    1.0,
+    1.1,
+    1.2000000000000002,
+    1.3,
+    1.4000000000000001,
+    1.5,
+    1.6,
+    1.7000000000000002,
+    1.8,
+    1.9000000000000001,
+    2.0,
+    2.1,
+    2.2,
+    2.3000000000000003,
+    2.4000000000000004,
+    2.5,
+    2.6,
+    2.7,
+    2.8000000000000003,
+    2.9000000000000004,
+    3.0,
+    3.1,
+    3.2,
+    3.3000000000000003,
+    3.4000000000000004,
+    3.5,
+    3.6,
+    3.7,
+    3.8000000000000003,
+    3.9000000000000004,
+    4.0,
+    4.1000000000000005,
+    4.2,
+    4.3,
+    4.4,
+    4.5,
+    4.6000000000000005,
+    4.7,
+    4.800000000000001,
+    4.9,
+    5.0,
+    5.1000000000000005,
+    5.2,
+    5.300000000000001,
+    5.4,
+    5.5,
+    5.6000000000000005,
+    5.7,
+    5.800000000000001,
+    5.9,
+    6.0
+  ],
+  "h": [
+    0.0009765625,
+    0.00048828125,
+    0.000244140625
+  ],
+  "regions": {
+    "bulk": {
+      "sampled_differences": [
+        [
+          0.0,
+          3.2185858856254474e-06,
+          1.9303954557320147e-06,
+          1.1789373802525375e-06,
+          7.787871035323006e-07,
+          5.494060394792607e-07,
+          4.132673448025377e-07,
+          3.4033866057786245e-07,
+          3.239634981622272e-07,
+          3.695435999852887e-07,
+          5.290507100282421e-07,
+          1.1297100859889277e-06,
+          3.59308637109741e-06,
+          1.4172190265792483e-05,
+          6.457257420944959e-05,
+          0.0003256672050223373,
+          0.0016835627212575782,
+          0.008099143004619941,
+          0.032928145459092506,
+          0.10044428641809766,
+          0.21330381632410694,
+          0.3313232905213952,
+          0.3708483853972025,
+          0.3121213404619258,
+          0.3374322043185956,
+          0.2642839556328994,
+          0.25161401511749376,
+          0.26476242968788455,
+          0.22572304232694473,
+          0.2074814060714671,
+          0.18671815881840362,
+          0.15887704273484263,
+          0.13280917855836574,
+          0.1119154529629936,
+          0.08806592030430402,
+          0.06952979514629085,
+          0.052316681678386996,
+          0.0393428728986407,
+          0.028932247065107927,
+          0.021074448922612177,
+          0.015166365867276453,
+          0.011136054607577916,
+          0.008382692374738833,
+          0.006645752173417595,
+          0.005642505235798896,
+          0.005071809197353478,
+          0.00474117893531471,
+          0.004554481478981623,
+          0.004464077053474712,
+          0.0044342080029070715,
+          0.004405799576015274,
+          0.004354512536731561,
+          0.004296817473544947,
+          0.004248299944538784,
+          0.0042753795135667405,
+          0.004393305142368772,
+          0.004503211840806595,
+          0.004494940510265761,
+          0.004401333937433403,
+          0.004475267729066013,
+          0.005243460486452524
+        ],
+        [
+          0.0,
+          6.407833289323776e-08,
+          3.854414143051365e-08,
+          2.3558291577755613e-08,
+          1.557959071486089e-08,
+          1.1034585417659571e-08,
+          8.427321193098241e-09,
+          7.250164122105684e-09,
+          7.455802163489522e-09,
+          9.265442640447403e-09,
+          1.4611425824211877e-08,
+          3.432605474213611e-08,
+          1.142909810114747e-07,
+          4.6984298736172734e-07,
+          2.367868748797052e-06,
+          1.5402315029156525e-05,
+          0.00013295043985131467,
+          0.0013745308256123015,
+          0.013360832810134296,
+          0.09093798229188146,
+          0.2899001615814393,
+          0.44444430190629,
+          0.4366949550351867,
+          0.5289126677773397,
+          0.5146753927297976,
+          0.5885496165620882,
+          0.5608798960672758,
+          0.5451325755661286,
+          0.5091351348266557,
+          0.4300380771838247,
+          0.36186106483818137,
+          0.30341102257661584,
+          0.244865375078454,
+          0.1991693750795218,
+          0.16072404660618267,
+          0.1297328800967076,
+          0.10271564300405725,
+          0.0806125425081453,
+          0.06258940777128708,
+          0.04763529393238668,
+          0.03575499403665161,
+          0.026355468334239407,
+          0.019255564894784475,
+          0.014175989068188281,
+          0.010809332367732382,
+          0.008778380840488506,
+          0.007660563872677077,
+          0.00707859868778327,
+          0.006767505031502428,
+          0.0065800348610032125,
+          0.006449687234464103,
+          0.006353696318207371,
+          0.00628464699274178,
+          0.006236249633608779,
+          0.006195266120341424,
+          0.006151839611204425,
+          0.006140136085219312,
+          0.006158601800974065,
+          0.006243408051023243,
+          0.006432259383702012,
+          0.006642679928030579
+        ]
+      ],
+      "maximum_differences": [
+        0.3708483853972025,
+        0.5885496165620882
+      ],
+      "maximum_order": -0.6663345562562535,
+      "time_RMS_differences": [
+        0.12395015177536205,
+        0.2167771986409678
+      ],
+      "time_RMS_order": -0.8064529791401818,
+      "sampled_orders": [
+        null,
+        5.650446542333942,
+        5.646241021855202,
+        5.645108360530431,
+        5.643499755132256,
+        5.637768437675948,
+        5.615857448260876,
+        5.5528135787016595,
+        5.441323880508659,
+        5.3177408780047575,
+        5.178237140316984,
+        5.040504724566372,
+        4.974440148990341,
+        4.914740213136472,
+        4.7692605222362605,
+        4.4021793312440245,
+        3.662557014573001,
+        2.5588299985515217,
+        1.3013113234466056,
+        0.1434406020351484,
+        -0.4426463596332807,
+        -0.42376300886938223,
+        -0.23579637651615692,
+        -0.7609225281647194,
+        -0.6090651370412907,
+        -1.1550752007426244,
+        -1.1564795888063646,
+        -1.0419087188143616,
+        -1.1734949280800544,
+        -1.0514823553162245,
+        -0.9545736462463583,
+        -0.933362823445208,
+        -0.8826339295585566,
+        -0.8315865778139191,
+        -0.8679300538700494,
+        -0.8998409251103923,
+        -0.9733129704140784,
+        -1.0349020151224884,
+        -1.1132401487569803,
+        -1.1765359845236874,
+        -1.2372693312531808,
+        -1.2428641380305985,
+        -1.199789855694215,
+        -1.0929449968318963,
+        -0.9378696613480375,
+        -0.791454389333961,
+        -0.6922047464219132,
+        -0.6361769713070491,
+        -0.6002621256239851,
+        -0.5694187806413935,
+        -0.5498253344595125,
+        -0.5450849102876862,
+        -0.54856321753651,
+        -0.5537930505193709,
+        -0.5351137655724658,
+        -0.485711183251204,
+        -0.44731628395963463,
+        -0.45430082825389306,
+        -0.5043929233802256,
+        -0.5233515920488072,
+        -0.3412461505596829
+      ]
+    },
+    "endpoint": {
+      "sampled_differences": [
+        [
+          0.0,
+          1.4692552285779556e-13,
+          7.441210253288345e-07,
+          7.371620984557485e-09,
+          4.66102242674097e-10,
+          7.260728500406467e-11,
+          3.1627121970741915e-11,
+          2.8023019432631586e-11,
+          2.803749577067626e-11,
+          2.80294452960657e-11,
+          2.8146539865016067e-11,
+          2.8213465017094688e-11,
+          2.8209154325555495e-11,
+          2.8093662765361086e-11,
+          2.786155219052898e-11,
+          2.762414846134262e-11,
+          2.7613951389517788e-11,
+          2.8293610441767674e-11,
+          3.0667532113943954e-11,
+          3.703630120494581e-11,
+          5.335530157654663e-11,
+          9.685631199803322e-11,
+          2.24014985711673e-10,
+          6.487411509646656e-10,
+          2.3193653275768026e-09,
+          1.007293021923748e-08,
+          5.03169205296786e-08,
+          2.592485563107757e-07,
+          1.1995738431190424e-06,
+          4.283019778583651e-06,
+          9.693627240779903e-06,
+          9.054859584189826e-06,
+          3.479564706082382e-05,
+          0.0001288464657273452,
+          0.00027980566555660586,
+          0.00046707439349346415,
+          0.0006664111398792259,
+          0.0008569460713225999,
+          0.001024796477363983,
+          0.001171015989671232,
+          0.0012915504408697997,
+          0.0013861802568960486,
+          0.0014565551867820135,
+          0.001505252212692348,
+          0.0015352091575334282,
+          0.0015493972552272888,
+          0.0015506360827407817,
+          0.0015414858237464545,
+          0.001524199285221654,
+          0.0015005572192753477,
+          0.0014722468360518636,
+          0.0014409043126503488,
+          0.0014077598538766133,
+          0.0013737329721941333,
+          0.0013395323132464184,
+          0.0013057048769433742,
+          0.0012726712705417224,
+          0.001240750862860519,
+          0.001210180547249664,
+          0.0011811291893500525,
+          0.0011537094815554487
+        ],
+        [
+          0.0,
+          2.6243114541333542e-14,
+          1.6171608300878304e-08,
+          1.2466709194319244e-10,
+          7.817097920163415e-12,
+          1.1803114160163767e-12,
+          5.297449179826085e-13,
+          4.617000125491968e-13,
+          4.55037768476593e-13,
+          4.457157545204346e-13,
+          4.428784449844222e-13,
+          4.4555865405002804e-13,
+          4.4245101485237895e-13,
+          4.399367105649002e-13,
+          4.429117819850464e-13,
+          4.407840647125287e-13,
+          4.542272676986278e-13,
+          4.873916061978534e-13,
+          5.720385258813916e-13,
+          7.608887844771328e-13,
+          1.20095091434538e-12,
+          2.292057126331279e-12,
+          5.308033444235552e-12,
+          1.4931126645943144e-11,
+          5.210038500548524e-11,
+          2.375076761145294e-10,
+          1.5156077051284768e-09,
+          1.3633489155084812e-08,
+          1.4344328305562816e-07,
+          1.2146614468113302e-06,
+          4.5581890757011105e-06,
+          1.2973785663048021e-05,
+          0.00010178335905420476,
+          0.0002932274281144914,
+          0.0005650593171978658,
+          0.0008770164415740689,
+          0.0011912390412986416,
+          0.0014842558823762314,
+          0.0017266051532414226,
+          0.0019298832282133758,
+          0.0020927325350558745,
+          0.0022167691899126736,
+          0.0023055565851644137,
+          0.002363569328663725,
+          0.002395499245917747,
+          0.0024058597888443564,
+          0.0023987858924755553,
+          0.002377950811944782,
+          0.0023466043930111323,
+          0.002307351855326082,
+          0.002262042823518382,
+          0.0022126991094411986,
+          0.0021612414526215895,
+          0.0021089799353419805,
+          0.002056903037647129,
+          0.002005756571452177,
+          0.0019560999561632386,
+          0.001908349462439363,
+          0.0018628074043095725,
+          0.0018196831885145227,
+          0.0017791098675319266
+        ]
+      ],
+      "maximum_differences": [
+        0.0015506360827407817,
+        0.0024058597888443564
+      ],
+      "maximum_order": -0.63369242469112,
+      "time_RMS_differences": [
+        0.0008592679487847223,
+        0.0013459304132337681
+      ],
+      "time_RMS_order": -0.647423834519788,
+      "sampled_orders": [
+        null,
+        2.4850741776507492,
+        5.524002213064895,
+        5.885829300040644,
+        5.897869534594536,
+        5.9428748485137906,
+        5.899720625710673,
+        5.923512830252665,
+        5.945227392409398,
+        5.9746754272660105,
+        5.989902985767879,
+        5.9846246872489,
+        5.994501867472723,
+        5.996804928534756,
+        5.975112448554645,
+        5.969714114283589,
+        5.925839218399872,
+        5.8592510698249125,
+        5.744455950616377,
+        5.605110617193322,
+        5.473382538528778,
+        5.401131163604182,
+        5.39927397514599,
+        5.44124801982132,
+        5.476292235648623,
+        5.40636547342128,
+        5.053075345296568,
+        4.249109218357848,
+        3.063969651021548,
+        1.818074080843732,
+        1.0885758366311835,
+        -0.5188353354357318,
+        -1.5485229678615675,
+        -1.1863670931548795,
+        -1.0139771478815223,
+        -0.9089515352020605,
+        -0.8379785198129843,
+        -0.7924635090592593,
+        -0.7526007778112902,
+        -0.7207527814353767,
+        -0.696283949182384,
+        -0.6773436888937039,
+        -0.6625547100245524,
+        -0.650961944563976,
+        -0.6418911369648985,
+        -0.6348454770686418,
+        -0.6294442518758887,
+        -0.625397251378079,
+        -0.6225230988249548,
+        -0.6207396890328318,
+        -0.6196066686581412,
+        -0.6188327493366956,
+        -0.6184590089040314,
+        -0.6184437708421506,
+        -0.6187444034425369,
+        -0.6193176766057904,
+        -0.6201202725243584,
+        -0.6211119280643622,
+        -0.6222562220005825,
+        -0.6235205231781262,
+        -0.6248756247533607
+      ]
+    }
+  },
+  "missing_requested_ticks": {
+    "1025": [],
+    "2049": [],
+    "4097": []
+  },
+  "coverage_note": "Only common reported-time matches within1e-10 are compared. Older cumulative-clock frames can miss a requested tick by one RK step; none are shifted or interpolated in time. The integer-step clock repair is a separate source-bound change.",
+  "runs": [
+    {
+      "n": 1025,
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "1896cf717a480220ac5dbdf8d9b1c4ac6c561389bd9c4d0c428a33aee5f0b757",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "c8cb14cc85c84f93558c01054cc76f67ba129da2dba834a7d2657060c6677ed7",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1243f86a65648d09d358206ca9a803bd6e32593404eee9551a8d7f58d4bc7e0a",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "a4235e8725bf83039e36d23faf10d2d8badae172cd4ce550aedb2b689d0a7c78",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "0abdc3ece7c3fb44009c204c8b1a6433415cf627afb96e2ac9e9f0fb72f883e6",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "b31d54ca5dd75c1ff605048e0abb17beafc54d09847f9a1da01fcc3f05c821f2"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025",
+          "status": "finished",
+          "time": 6.0,
+          "manifest_sha256": "f5a7e0d6330cd6256c43ce7ec3cd7e7a191a41362a2b262889071f3e149b8e0b",
+          "history_sha256": "0a41b38ceec8ebb270b41ce5cccfb1e18a129661e5ea7abad0c0e54abf79afb1"
+        }
+      ],
+      "all_stage_extrema": {
+        "max_scri_pole": 2.4022587822289387e-05,
+        "max_lapse_pole": 6.941272589129459e-09,
+        "max_regularity_trace": 7.0648870698318544e-06,
+        "min_chi": 2.7979546843738966e-08,
+        "min_alpha": 0.00010465781533856821,
+        "max_H_rms": 0.0061604919977734885,
+        "max_M_rms": 0.1760665778646597,
+        "max_Theta_rms": 5.447471061190835e-05,
+        "max_Z_rms": 0.002097851843812342,
+        "max_scri_null": 3.3306690738754696e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 8.042079675751879e-06,
+        "max_accepted_H_rms": 0.006160449808514833,
+        "max_accepted_M_rms": 0.1760665778645473,
+        "max_accepted_Theta_rms": 5.447471057904381e-05,
+        "max_accepted_Z_rms": 0.0020978518409950236,
+        "max_accepted_H_bulk": 7.382791819853767,
+        "max_accepted_M_bulk": 325.4463429120384,
+        "max_accepted_H_endpoint": 3.133475752433758e-07,
+        "max_accepted_M_endpoint": 3.999247966125774e-05
+      },
+      "selected_profiles": [
+        {
+          "t": 0.0,
+          "step": 0,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0001.npz",
+          "sha256": "303be10a4abd5b1223f0699c1de3f528a4bb8284e60f6cb275eb20aaf0924369"
+        },
+        {
+          "t": 0.1,
+          "step": 2048,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0002.npz",
+          "sha256": "a985e0e8a4ac7e3715b6091abb932e1531e025cde68d06801e5eca4dc577c462"
+        },
+        {
+          "t": 0.2,
+          "step": 4096,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0003.npz",
+          "sha256": "ee1293bb7564e88779a38659734e6fca0a616141a017276e9dfcd78d7c497db7"
+        },
+        {
+          "t": 0.30000000000000004,
+          "step": 6144,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0004.npz",
+          "sha256": "8f7314c2d63d43d7fdf0a34e46c4f0f18946e21f8b28df4ef9a38a5a0949a5c3"
+        },
+        {
+          "t": 0.4,
+          "step": 8192,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0005.npz",
+          "sha256": "787da930fa30a31bfcf68edc63374cb5ddf0ccdd08ff1bf3d4008cf4f426db62"
+        },
+        {
+          "t": 0.5,
+          "step": 10240,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0006.npz",
+          "sha256": "9a67d2c6388e73fd383901b5f6716173d71e436362c3dee316341b8c745de8ab"
+        },
+        {
+          "t": 0.6000000000000001,
+          "step": 12288,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0007.npz",
+          "sha256": "591a38efd94063a38b9aaed6459854228d1171895039ff5239de56113f22375b"
+        },
+        {
+          "t": 0.7000000000000001,
+          "step": 14336,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0008.npz",
+          "sha256": "8cbe49c92340d5f90fcc715c2b9b2475b84d6bcd81403b7360093e9f6893ea42"
+        },
+        {
+          "t": 0.8,
+          "step": 16384,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0009.npz",
+          "sha256": "58c872aa62fd165eb15535bd4b8ef6a86db54c3dc036cebd27e1aea031b35aa0"
+        },
+        {
+          "t": 0.9,
+          "step": 18432,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0010.npz",
+          "sha256": "dbda0c434b0719bc3f8e28c8bf52639e3f192c51730b0f78be53b6f22c42d79d"
+        },
+        {
+          "t": 1.0,
+          "step": 20480,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0011.npz",
+          "sha256": "1e75e74f5be9beea23c25fd3a2f0f7fef4752c48660baa1dffcddf6f577e45fd"
+        },
+        {
+          "t": 1.1,
+          "step": 22528,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0012.npz",
+          "sha256": "36077ae99345edd6e1015597246af5b05e4896dd76afa1a968b839c2074855e8"
+        },
+        {
+          "t": 1.2000000000000002,
+          "step": 24576,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0013.npz",
+          "sha256": "7104baa5930c2cb200abb61095d8f5473529ac7df56dea002835268e80f71fb4"
+        },
+        {
+          "t": 1.3,
+          "step": 26624,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0014.npz",
+          "sha256": "075b84c1cd1e775c5d04d0aee57e60daee875fc7a8b1d30c3ee420f7b93f0f13"
+        },
+        {
+          "t": 1.4000000000000001,
+          "step": 28672,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0015.npz",
+          "sha256": "430ffea81f35c2487a4dd2a4ad2f1cb8f3fb4b51f90fcf0a99afe2a0532abbc8"
+        },
+        {
+          "t": 1.5,
+          "step": 30720,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0016.npz",
+          "sha256": "afa1b40b746a0edb0b340cb7889aba5faf3d32d96626cd6ffe6ef04cab19cecb"
+        },
+        {
+          "t": 1.6,
+          "step": 32768,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0017.npz",
+          "sha256": "76f2b325085e649328e6e8ef54e658957c43eebb7aa5c6161e8c558c19a47925"
+        },
+        {
+          "t": 1.7000000000000002,
+          "step": 34816,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0018.npz",
+          "sha256": "beaf37f27a5d0aa2f86605e5703a484a57056fde177e9e2c0a4613aac80de2aa"
+        },
+        {
+          "t": 1.8,
+          "step": 36864,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0019.npz",
+          "sha256": "5c6fa9d01cc19136da20186337b3a606031a4eb06a732c5832cd1e0f0af973fe"
+        },
+        {
+          "t": 1.9000000000000001,
+          "step": 38912,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0020.npz",
+          "sha256": "c54470ebe10931d0582792247ca0c89f1082fa5798d6a1d98c76e7e8bad21c85"
+        },
+        {
+          "t": 2.0,
+          "step": 40960,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0021.npz",
+          "sha256": "02877d1bb52cc0e326220fef78df77d8b1e195aea1d3a35de15b866fc72716ba"
+        },
+        {
+          "t": 2.1,
+          "step": 43008,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0022.npz",
+          "sha256": "f6c4cfd3f9269fc7e73560332f06ac64fcec8b4524b0234a535e7eec692fd098"
+        },
+        {
+          "t": 2.2,
+          "step": 45056,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0023.npz",
+          "sha256": "c84f713ffa98f3600948d0bec74d7a70829e0387f8cb2cafbce4aafdd1d8490f"
+        },
+        {
+          "t": 2.3000000000000003,
+          "step": 47104,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0024.npz",
+          "sha256": "b70174d25fb5473b6e3848bdffd7627565d15ebeee866ea27612f3cadfe12c2a"
+        },
+        {
+          "t": 2.4000000000000004,
+          "step": 49152,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0025.npz",
+          "sha256": "6f800ca7be29b4ca943c2a25020bee1dc85a895d51a77f6c57a11ebc91aff55a"
+        },
+        {
+          "t": 2.5,
+          "step": 51200,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0026.npz",
+          "sha256": "96a4bae5e08e145cb456a852cdafb96bd0c3908493605ba3d50dd1f8b8364c1b"
+        },
+        {
+          "t": 2.6,
+          "step": 53248,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0027.npz",
+          "sha256": "8b571bb51f790d919d537df1d1942bcdd3c9af8f0dda45c54a49ecf6e63bd4b5"
+        },
+        {
+          "t": 2.7,
+          "step": 55296,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0028.npz",
+          "sha256": "c4482fb61ad64b7ed7fec03784484c4fde3b24ddc9e4d3dbc0f3333ec3139316"
+        },
+        {
+          "t": 2.8000000000000003,
+          "step": 57344,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0029.npz",
+          "sha256": "22d7585cb5f0e8ffb5c1e2b4e5b9adb459b670e212f8fa24c97a2e2bfae25018"
+        },
+        {
+          "t": 2.9000000000000004,
+          "step": 59392,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0030.npz",
+          "sha256": "92947af10bf9ba4874eb54a24b97373962ba8dd634627871041f2a0d4cb8b6ef"
+        },
+        {
+          "t": 3.0,
+          "step": 61440,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0031.npz",
+          "sha256": "c69b2361411fa4e3c34b146624f138e47e97c27ad2958bcdcb42f42bd7abf502"
+        },
+        {
+          "t": 3.1,
+          "step": 63488,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0032.npz",
+          "sha256": "9a32eeac75500ce09fa6606e200da6aee025e971d155301b0174b7c06d2d8274"
+        },
+        {
+          "t": 3.2,
+          "step": 65536,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0033.npz",
+          "sha256": "533ae400b8054e64a476bc138a631441fc28caedfc9648832a3a7e3e091ebd42"
+        },
+        {
+          "t": 3.3000000000000003,
+          "step": 67584,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0034.npz",
+          "sha256": "f68b7a1a613cc288a4ccfcb71e65b82fa603acc17a187969088112cbe727a756"
+        },
+        {
+          "t": 3.4000000000000004,
+          "step": 69632,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0035.npz",
+          "sha256": "c26700e22f12f2c1c9c05ea4307ea27548f53532f615fd59abcc39c09dc9a523"
+        },
+        {
+          "t": 3.5,
+          "step": 71680,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0036.npz",
+          "sha256": "067a4f25e415d21d6e31a100392729001bb1cc82ecfaafb4e95c49ae3cc73c5a"
+        },
+        {
+          "t": 3.6,
+          "step": 73728,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0037.npz",
+          "sha256": "cbcc28305544435e22aee54e033bd4a00401d90790f8f94ff39961c178aecf53"
+        },
+        {
+          "t": 3.7,
+          "step": 75776,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0038.npz",
+          "sha256": "a9e1d07fa206a56fad72e7714e06904532aafba4d1e256ee3b4dd573a7ff7071"
+        },
+        {
+          "t": 3.8000000000000003,
+          "step": 77824,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0039.npz",
+          "sha256": "810f7d2b253314494895ed03be120c174ad5f107170e59f0d68f31bda09a5044"
+        },
+        {
+          "t": 3.9000000000000004,
+          "step": 79872,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0040.npz",
+          "sha256": "bc45e553aa4ed88a82759f2b02be35b8ebe96c89dd59e0a00f981263b1bf963d"
+        },
+        {
+          "t": 4.0,
+          "step": 81920,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0041.npz",
+          "sha256": "a905e8debe4e24f07b222856f4218b523da22911b3c2f3cdf3b7238735ba0d8c"
+        },
+        {
+          "t": 4.1000000000000005,
+          "step": 83968,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0042.npz",
+          "sha256": "abd7ca11a546ddafaf20d5f9407e1e113af46c3513e0ca1e07be9979c513e17c"
+        },
+        {
+          "t": 4.2,
+          "step": 86016,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0043.npz",
+          "sha256": "147610ed344754ec3dda63fc5e8e48e11cb078ac313bcdf89be0e36e6efdb1af"
+        },
+        {
+          "t": 4.3,
+          "step": 88064,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0044.npz",
+          "sha256": "76550490b8d00a52ef5b5f8babee5a605deb905a9c10e0e3d36c16a512fa4663"
+        },
+        {
+          "t": 4.4,
+          "step": 90112,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0045.npz",
+          "sha256": "d24be8fe2ca6f4bfad1dbd7c1f046ff396a29bd434018188065910d0d4540c33"
+        },
+        {
+          "t": 4.5,
+          "step": 92160,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0046.npz",
+          "sha256": "52b32688c1d24ef65baa34c06720e610955d6aafe89663bad240c42c32d6b328"
+        },
+        {
+          "t": 4.6000000000000005,
+          "step": 94208,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0047.npz",
+          "sha256": "dd1ad62009e8a5e88574c926966f0c587d2d5d51eef66a978967e11abd7ca6c8"
+        },
+        {
+          "t": 4.7,
+          "step": 96256,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0048.npz",
+          "sha256": "91e4d00ba20802fc3ef69146038678abfa4d281014b7990cb32ebafd1d45f646"
+        },
+        {
+          "t": 4.800000000000001,
+          "step": 98304,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0049.npz",
+          "sha256": "27d50f6d28de8a9f7c9cb049f78b5b16a3cb5370bc5ab4c4814afdd366029f99"
+        },
+        {
+          "t": 4.9,
+          "step": 100352,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0050.npz",
+          "sha256": "6f00441c3570403ef084994afd9816aed325f453bcddbe016a103273154a61e4"
+        },
+        {
+          "t": 5.0,
+          "step": 102400,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0051.npz",
+          "sha256": "8c58932fc76b7384c7c8c1371d075161a0827f3cb81c2ebb1c69a231b71dcb02"
+        },
+        {
+          "t": 5.1000000000000005,
+          "step": 104448,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0052.npz",
+          "sha256": "07f437abe615dfeb3958d67e73508da678a77890f8ad7e1bcf90aaaf16c2e99e"
+        },
+        {
+          "t": 5.2,
+          "step": 106496,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0053.npz",
+          "sha256": "05d2e3d08b1535e4226ad6a77df439ec71f9bff08bec72b806632c42c9576a03"
+        },
+        {
+          "t": 5.300000000000001,
+          "step": 108544,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0054.npz",
+          "sha256": "d7e92b9cabc942fa1a679eaddff596792f36423de7626b1fb33387df405c341b"
+        },
+        {
+          "t": 5.4,
+          "step": 110592,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0055.npz",
+          "sha256": "c1b42ceb9864d45a22fee0ebd6fbeebb16fd9af93ea46698419feda626b02c98"
+        },
+        {
+          "t": 5.5,
+          "step": 112640,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0056.npz",
+          "sha256": "3d029d42c33842ca872effa5291a1188844bbbc682fba3a73f516fc4ed5315ef"
+        },
+        {
+          "t": 5.6000000000000005,
+          "step": 114688,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0057.npz",
+          "sha256": "efd1a7e1744ddbede3a638cd89efdc83da862229c7da8b488340b0498eb369de"
+        },
+        {
+          "t": 5.7,
+          "step": 116736,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0058.npz",
+          "sha256": "515d60d86fb2249cf8f30223cd1ca2019f8f62e37328249b82dc8ecafcbddc06"
+        },
+        {
+          "t": 5.800000000000001,
+          "step": 118784,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0059.npz",
+          "sha256": "d80cd5496d36f4d9ffbb40a1f6e981ee642a3c6d533f6db8453ded79b9ef169e"
+        },
+        {
+          "t": 5.9,
+          "step": 120832,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0060.npz",
+          "sha256": "00d0f3443098f7f9fef52c7ebd22a3a941cd893828f72d6a6d852c4490709d74"
+        },
+        {
+          "t": 6.0,
+          "step": 122880,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n1025/profile-0061.npz",
+          "sha256": "a6b33db36f6e6ec888e00b10fafec42860772707f1b03221613cd9761cc4441f"
+        }
+      ]
+    },
+    {
+      "n": 2049,
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "1896cf717a480220ac5dbdf8d9b1c4ac6c561389bd9c4d0c428a33aee5f0b757",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "c8cb14cc85c84f93558c01054cc76f67ba129da2dba834a7d2657060c6677ed7",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1243f86a65648d09d358206ca9a803bd6e32593404eee9551a8d7f58d4bc7e0a",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "a4235e8725bf83039e36d23faf10d2d8badae172cd4ce550aedb2b689d0a7c78",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "0abdc3ece7c3fb44009c204c8b1a6433415cf627afb96e2ac9e9f0fb72f883e6",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "b31d54ca5dd75c1ff605048e0abb17beafc54d09847f9a1da01fcc3f05c821f2"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049",
+          "status": "finished",
+          "time": 6.0,
+          "manifest_sha256": "4b07f75ff35aa4ca4e52009708ba426f6ea4608d1ca67336fce3e637fde75787",
+          "history_sha256": "51c597e1aaa556cb9b53a5b7ebedafe21191a6710d03f7fcdbcd4840673b46d0"
+        }
+      ],
+      "all_stage_extrema": {
+        "max_scri_pole": 2.1431398905084886e-06,
+        "max_lapse_pole": 2.7625689201991006e-10,
+        "max_regularity_trace": 5.902852174841447e-07,
+        "min_chi": 1.8002591184994513e-09,
+        "min_alpha": 2.658850827737096e-05,
+        "max_H_rms": 0.007757505167259884,
+        "max_M_rms": 0.06481073585657916,
+        "max_Theta_rms": 0.00010211862767117877,
+        "max_Z_rms": 0.003569175269993471,
+        "max_scri_null": 3.3306690738754696e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 6.191239854125286e-07,
+        "max_accepted_H_rms": 0.007757453984119851,
+        "max_accepted_M_rms": 0.0648107358565925,
+        "max_accepted_Theta_rms": 0.00010211862765835538,
+        "max_accepted_Z_rms": 0.0035691752692646288,
+        "max_accepted_H_bulk": 1.1929263328594288,
+        "max_accepted_M_bulk": 329.91267825180296,
+        "max_accepted_H_endpoint": 1.3809554828131398e-07,
+        "max_accepted_M_endpoint": 3.4391726843052695e-06
+      },
+      "selected_profiles": [
+        {
+          "t": 0.0,
+          "step": 0,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0001.npz",
+          "sha256": "524616011a300a914a5128da6a2caf2027a196439b203c3f8f29212852c50db2"
+        },
+        {
+          "t": 0.1,
+          "step": 4096,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0002.npz",
+          "sha256": "8a6bb711c3271329a15480bfba9bd710367c7db5a929854e660a9c1cb8982b8f"
+        },
+        {
+          "t": 0.2,
+          "step": 8192,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0003.npz",
+          "sha256": "509e168b53d996f1d7ba08d12fd523228a5a01cba6538d5921d12b24962eef0c"
+        },
+        {
+          "t": 0.30000000000000004,
+          "step": 12288,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0004.npz",
+          "sha256": "1e4764fa90a1a33e3ea97a3948cb283a88b2433ccaf61e1e55c30d32c634cdd8"
+        },
+        {
+          "t": 0.4,
+          "step": 16384,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0005.npz",
+          "sha256": "f0bfd98680ce4fb37a9c0364160c9c069b4719de1c5e5d46333cfc3754e0638c"
+        },
+        {
+          "t": 0.5,
+          "step": 20480,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0006.npz",
+          "sha256": "d8110d78e0ee5764fa64ebb2a6a57737fd6b9518731b73e77ba59b3965d609e0"
+        },
+        {
+          "t": 0.6000000000000001,
+          "step": 24576,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0007.npz",
+          "sha256": "36495558358470f4563c1b88c2e1723d68aab6873bfac1f9dc5504c6b7d40a14"
+        },
+        {
+          "t": 0.7000000000000001,
+          "step": 28672,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0008.npz",
+          "sha256": "81287f9a06ada8a7e498caf3c60f9cdc8d0c84cc0603f0617439667b1049f61b"
+        },
+        {
+          "t": 0.8,
+          "step": 32768,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0009.npz",
+          "sha256": "eb3e84a3f1cccbadd64f09b2b62dcca9c38ee78a000d46a7b9aeec61c5b36846"
+        },
+        {
+          "t": 0.9,
+          "step": 36864,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0010.npz",
+          "sha256": "8ddea2c7acc031ba76a7bb9a1ea73955defabbffd021e48eb69be10fdc6090bd"
+        },
+        {
+          "t": 1.0,
+          "step": 40960,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0011.npz",
+          "sha256": "da368f5cfa22bb09ca451b47813ba7d169481e030d5bf6533b70bf2c6a0c3499"
+        },
+        {
+          "t": 1.1,
+          "step": 45056,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0012.npz",
+          "sha256": "df575ab5781ceba9d8a022512cdf308d6dbce8f3baa08178bc81058035003253"
+        },
+        {
+          "t": 1.2000000000000002,
+          "step": 49152,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0013.npz",
+          "sha256": "cb368641d6c8e005fc5619fc9a8c534de97ed2fe4f103e25fe71da2f232c4e7a"
+        },
+        {
+          "t": 1.3,
+          "step": 53248,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0014.npz",
+          "sha256": "fa4bcd8553115adbbaaa1cc92ab570b103e1a6aec08fa3b44635c8924930746c"
+        },
+        {
+          "t": 1.4000000000000001,
+          "step": 57344,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0015.npz",
+          "sha256": "f90199d724a514ccadc9ffdc13bcb2048b2063721ea9f875319461e0364826ce"
+        },
+        {
+          "t": 1.5,
+          "step": 61440,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0016.npz",
+          "sha256": "7f87b0e230a5f5b18b0288f54cd3a8e983635ee866613d83c4599158cc67742e"
+        },
+        {
+          "t": 1.6,
+          "step": 65536,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0017.npz",
+          "sha256": "6be197da599c7287a173426f4103731b46184469abce49bc8199f369c8a9a97f"
+        },
+        {
+          "t": 1.7000000000000002,
+          "step": 69632,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0018.npz",
+          "sha256": "ff55d0a6c74052a17c193e7038686687788f0fb5dddbe96c7581218082dbe23b"
+        },
+        {
+          "t": 1.8,
+          "step": 73728,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0019.npz",
+          "sha256": "e63ae6fb4d2bddf25ab73d658b40fc1b68aedd6091295b4bc859a0158b2ec258"
+        },
+        {
+          "t": 1.9000000000000001,
+          "step": 77824,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0020.npz",
+          "sha256": "e6a4972fbffd4e96ca8d406c27111bf14bd732ac30035521accbdbbf746569d7"
+        },
+        {
+          "t": 2.0,
+          "step": 81920,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0021.npz",
+          "sha256": "06b146b669c733563855ca4414bdd8cb8e1a52ce718dbb8263b4b222163b9b5a"
+        },
+        {
+          "t": 2.1,
+          "step": 86016,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0022.npz",
+          "sha256": "91845ad4f9817b955f78f42efe67f2a978ef3c38f94e6e9d3493b47fdd5d35aa"
+        },
+        {
+          "t": 2.2,
+          "step": 90112,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0023.npz",
+          "sha256": "cdcb830b3683a7c412e191ea9462a3c120e73abe0e5f12e432417f0515ce8d74"
+        },
+        {
+          "t": 2.3000000000000003,
+          "step": 94208,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0024.npz",
+          "sha256": "362675fd9632c4cb1fb7166d1ef77631c1b285d1a8b8ccdbd31f39c8af2cf641"
+        },
+        {
+          "t": 2.4000000000000004,
+          "step": 98304,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0025.npz",
+          "sha256": "c9d9f717dc77b72ecad3a69371beb2738d1d653050ec592abbc66ea45d149c94"
+        },
+        {
+          "t": 2.5,
+          "step": 102400,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0026.npz",
+          "sha256": "07babbf2f9a4fb00d274471cbe713a34b744160a27b652813ba4503bb9dd4847"
+        },
+        {
+          "t": 2.6,
+          "step": 106496,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0027.npz",
+          "sha256": "ddc5515c3c2ebdb1a4f71d31a36c6606d211c469b53910cd7dad80a40cffa503"
+        },
+        {
+          "t": 2.7,
+          "step": 110592,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0028.npz",
+          "sha256": "83b1b1b1a02a7c50c6e682dda237fcf39f9a0b74ba0736e683ce1be1aa3c5ff3"
+        },
+        {
+          "t": 2.8000000000000003,
+          "step": 114688,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0029.npz",
+          "sha256": "410e3738b2ff0bcafb1fb30c7f821f3b0b9f6e5a693f2702bd07f589e7f72842"
+        },
+        {
+          "t": 2.9000000000000004,
+          "step": 118784,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0030.npz",
+          "sha256": "0b467c77b6fbabcc01662f0a5d9e9045c1d1d407516420257f860591fbe25247"
+        },
+        {
+          "t": 3.0,
+          "step": 122880,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0031.npz",
+          "sha256": "844d2bf355c18b87d9729636dc4dca134630bdf5e6d636656b960b89e05b4c63"
+        },
+        {
+          "t": 3.1,
+          "step": 126976,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0032.npz",
+          "sha256": "fa02c873ea3f853e5634f7f1e8358588712be8eb13ee7082d60364b08e5b3745"
+        },
+        {
+          "t": 3.2,
+          "step": 131072,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0033.npz",
+          "sha256": "caf37cb80ce2f98c033a47d2a452be4f0fecacd2e332de04cf1aa938d7e49026"
+        },
+        {
+          "t": 3.3000000000000003,
+          "step": 135168,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0034.npz",
+          "sha256": "2884e1841c691d4474f29fdd4c2c56fbed1d6e946c4db76bb940251df8973c6a"
+        },
+        {
+          "t": 3.4000000000000004,
+          "step": 139264,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0035.npz",
+          "sha256": "437dcb1113ba7fec8f1caa0dc449efed6382f625c01674fe24295a736d62b6ea"
+        },
+        {
+          "t": 3.5,
+          "step": 143360,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0036.npz",
+          "sha256": "1335e7c97cb7a186623ec1a9e8008c6af6067db82ea4ceb2ba7e60d7c3b09ef5"
+        },
+        {
+          "t": 3.6,
+          "step": 147456,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0037.npz",
+          "sha256": "43c0d3d0d01c7517101769d9fd47853f7e3592cee0537839374f6567037cd418"
+        },
+        {
+          "t": 3.7,
+          "step": 151552,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0038.npz",
+          "sha256": "7517ce3610606e4afcf967c9ef59c3cc91110ac6ce5cd124f1d44f2007417adf"
+        },
+        {
+          "t": 3.8000000000000003,
+          "step": 155648,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0039.npz",
+          "sha256": "d0c47466bbbf860c237d1ea6077d81132915af57eab60e8a5e97431f9cce3555"
+        },
+        {
+          "t": 3.9000000000000004,
+          "step": 159744,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0040.npz",
+          "sha256": "c1805720a40422ce7b1e9e009f82a4a5557c5ef16e2f8c5a120d399e3cf0fa1e"
+        },
+        {
+          "t": 4.0,
+          "step": 163840,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0041.npz",
+          "sha256": "ab8036c129fa16c63f390b466494c5a5fc24b73313641725b2dd90c5a08c7914"
+        },
+        {
+          "t": 4.1000000000000005,
+          "step": 167936,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0042.npz",
+          "sha256": "d1c41238bb3afed32ee498189ea80939749c91d0214d4e0270ff1c39a34d2509"
+        },
+        {
+          "t": 4.2,
+          "step": 172032,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0043.npz",
+          "sha256": "2d0291fd15d66ceface373addb6516f24cfc04d2bf58c0253f15106e0a94d910"
+        },
+        {
+          "t": 4.3,
+          "step": 176128,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0044.npz",
+          "sha256": "bcc32fd95840929e08b3f846348af12c01ec34379a7d5ae1ed6209b3e8700a92"
+        },
+        {
+          "t": 4.4,
+          "step": 180224,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0045.npz",
+          "sha256": "0f0a2e9e4f8266f604d2fb12ceddacbefd0334291948079448b4f9df218c54f8"
+        },
+        {
+          "t": 4.5,
+          "step": 184320,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0046.npz",
+          "sha256": "1ef07c81388db01b68bd08f23b544631b340ed25ea3730c5c203dc36f6edc5d7"
+        },
+        {
+          "t": 4.6000000000000005,
+          "step": 188416,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0047.npz",
+          "sha256": "5d006762eb80ed5ace3e63d40f2f6525231889a2a90bfa2956bbcac46cebcd5e"
+        },
+        {
+          "t": 4.7,
+          "step": 192512,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0048.npz",
+          "sha256": "86339389285844c34d9dfc5e843565053aee947bdc3d6f860ca58f4ca71a8ade"
+        },
+        {
+          "t": 4.800000000000001,
+          "step": 196608,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0049.npz",
+          "sha256": "b9cd4ebcd1dd5193e57e9df36b040ff0a596293dea2b87284ad3965a5876c13b"
+        },
+        {
+          "t": 4.9,
+          "step": 200704,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0050.npz",
+          "sha256": "8724c01c4306454b96f1a8006e21b43df80a4a23bb09cbb50e8ec47865ebc2be"
+        },
+        {
+          "t": 5.0,
+          "step": 204800,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0051.npz",
+          "sha256": "8f39787bd9a0fd50874a51c283964392fb1f415c221717f8600dfcca32956236"
+        },
+        {
+          "t": 5.1000000000000005,
+          "step": 208896,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0052.npz",
+          "sha256": "efa34162a79cd58eb0a35fdde976748c14a2891895b009a9157938715aa81a9f"
+        },
+        {
+          "t": 5.2,
+          "step": 212992,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0053.npz",
+          "sha256": "23f05ce141ba3402813ce0ba152d35c8026599151de2f060d89268e24f4c4893"
+        },
+        {
+          "t": 5.300000000000001,
+          "step": 217088,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0054.npz",
+          "sha256": "cbd6be27931c65cc9857e404522d34e8f23fe3d5f7de638fe8b1759b6d4b9706"
+        },
+        {
+          "t": 5.4,
+          "step": 221184,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0055.npz",
+          "sha256": "a4df1d1e52157f63b7a021251c60664ae5790705f3c77494ea82629266adb4d5"
+        },
+        {
+          "t": 5.5,
+          "step": 225280,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0056.npz",
+          "sha256": "56c4e9a8b8e59b2e60cfbc2b05f3413383e946fee56d2f02de25a93d761d28c0"
+        },
+        {
+          "t": 5.6000000000000005,
+          "step": 229376,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0057.npz",
+          "sha256": "b3686fa18ce087884cd60d29a327c357a4f1db028680e7373930e5e9450bb463"
+        },
+        {
+          "t": 5.7,
+          "step": 233472,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0058.npz",
+          "sha256": "39544965a5363597d4fd04acb5ace21e236d7108637aac21ca6703478713e732"
+        },
+        {
+          "t": 5.800000000000001,
+          "step": 237568,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0059.npz",
+          "sha256": "192ed81064e6f3c25a9d84dee0bea0adc827cfdd5cb3bcf69f3d2b8bf646edab"
+        },
+        {
+          "t": 5.9,
+          "step": 241664,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0060.npz",
+          "sha256": "6f1fd4f7f457fd11662d50e332b393bded2fca16aa915b5068ac28b29d1f1ae7"
+        },
+        {
+          "t": 6.0,
+          "step": 245760,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n2049/profile-0061.npz",
+          "sha256": "24119b5ec687edd862d360599356cdc1719dbd53f6f56851c9d778c8edef4cdd"
+        }
+      ]
+    },
+    {
+      "n": 4097,
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "1896cf717a480220ac5dbdf8d9b1c4ac6c561389bd9c4d0c428a33aee5f0b757",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "c8cb14cc85c84f93558c01054cc76f67ba129da2dba834a7d2657060c6677ed7",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "1243f86a65648d09d358206ca9a803bd6e32593404eee9551a8d7f58d4bc7e0a",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "a4235e8725bf83039e36d23faf10d2d8badae172cd4ce550aedb2b689d0a7c78",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "0abdc3ece7c3fb44009c204c8b1a6433415cf627afb96e2ac9e9f0fb72f883e6",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "b31d54ca5dd75c1ff605048e0abb17beafc54d09847f9a1da01fcc3f05c821f2"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097",
+          "status": "finished",
+          "time": 6.0,
+          "manifest_sha256": "d261de755fc721d79b0579157b9d089e1e1aa323751bab30eb2b092b616a9746",
+          "history_sha256": "05ea05ba7569ad9575675f000401129560a294946a157c42e56997bd30de3204"
+        }
+      ],
+      "all_stage_extrema": {
+        "max_scri_pole": 1.1256974188043889e-07,
+        "max_lapse_pole": 6.393773367633607e-12,
+        "max_regularity_trace": 2.8831628050285385e-08,
+        "min_chi": 1.1414409129932112e-10,
+        "min_alpha": 6.697072524560418e-06,
+        "max_H_rms": 0.00995427749941359,
+        "max_M_rms": 0.05959217406695322,
+        "max_Theta_rms": 0.00019454687729337418,
+        "max_Z_rms": 0.005774670571814795,
+        "max_scri_null": 4.440892098500626e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 2.849723945708149e-08,
+        "max_accepted_H_rms": 0.009954226669865939,
+        "max_accepted_M_rms": 0.059592063121512176,
+        "max_accepted_Theta_rms": 0.00019454687728788945,
+        "max_accepted_Z_rms": 0.005774670571417196,
+        "max_accepted_H_bulk": 1.928236458426909,
+        "max_accepted_M_bulk": 120.12525568145719,
+        "max_accepted_H_endpoint": 3.651481169366852e-07,
+        "max_accepted_M_endpoint": 5.499040150291901e-06
+      },
+      "selected_profiles": [
+        {
+          "t": 0.0,
+          "step": 0,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0001.npz",
+          "sha256": "66378a46e2fc38ffde81d6a157e6f8faa656ff6e677c5f699ac5ae49be50175b"
+        },
+        {
+          "t": 0.1,
+          "step": 8192,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0002.npz",
+          "sha256": "7d3f6d3fd5d15f438576550e213c9029bf41df1e4162ba4295cf8f50bcd0cd34"
+        },
+        {
+          "t": 0.2,
+          "step": 16384,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0003.npz",
+          "sha256": "71d24a1804b106714a4ccaa3f575058308ae8b3a52965ed943b928d20fefce43"
+        },
+        {
+          "t": 0.30000000000000004,
+          "step": 24576,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0004.npz",
+          "sha256": "758300bf4a58946d7247c33a6760ef3e320b252c8e8954a102baf9733dffaef4"
+        },
+        {
+          "t": 0.4,
+          "step": 32768,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0005.npz",
+          "sha256": "82720d01f8030fbcfa34e3ffaa66b1226a0a81aef8cc5a697829b59151d88227"
+        },
+        {
+          "t": 0.5,
+          "step": 40960,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0006.npz",
+          "sha256": "195b539fb2537b12d3b5200a67c6bd430ec4a085864d940f5210ac6c554e84e5"
+        },
+        {
+          "t": 0.6000000000000001,
+          "step": 49152,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0007.npz",
+          "sha256": "89088fee7aae277fff5d53b6639d9dbbf1f98ca20875b3294f5646d5e3871f01"
+        },
+        {
+          "t": 0.7000000000000001,
+          "step": 57344,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0008.npz",
+          "sha256": "f946ebdf2788c0587ca67fa47052f3fec0e0da0786747b081cadd5b53e17b143"
+        },
+        {
+          "t": 0.8,
+          "step": 65536,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0009.npz",
+          "sha256": "82f5644028d75175755d7b9a0d4e3146cd75f1edab593d546d942cc9b74a499c"
+        },
+        {
+          "t": 0.9,
+          "step": 73728,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0010.npz",
+          "sha256": "a076a8fd1041271716e98153238174ee8b56816597ac8d492b8f31819f8ef3c8"
+        },
+        {
+          "t": 1.0,
+          "step": 81920,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0011.npz",
+          "sha256": "aeb511ca076a56155d8c6f2c0a8370bc6ebc41c76d758afeb9a31512c469649a"
+        },
+        {
+          "t": 1.1,
+          "step": 90112,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0012.npz",
+          "sha256": "780d822c8fa324f47a9fc726d46f7c9b32c9904e36738aad9159c405f680e4cb"
+        },
+        {
+          "t": 1.2000000000000002,
+          "step": 98304,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0013.npz",
+          "sha256": "64542e9d3cbf45f186c90213d69b91410c052ee614b37d898291c25b8daf5f1e"
+        },
+        {
+          "t": 1.3,
+          "step": 106496,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0014.npz",
+          "sha256": "47599b7e9729b0ca55be7befc0064fec6d2df7d7fb699a956d5fcff0ef14e185"
+        },
+        {
+          "t": 1.4000000000000001,
+          "step": 114688,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0015.npz",
+          "sha256": "844f007437a3a6987544d47f73f0614793e0db165e475299740efe91073c3143"
+        },
+        {
+          "t": 1.5,
+          "step": 122880,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0016.npz",
+          "sha256": "a5b9fe7bf1815af941f71b9783222b80375a83f5789790e5941e75d3803dd240"
+        },
+        {
+          "t": 1.6,
+          "step": 131072,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0017.npz",
+          "sha256": "67a81d6af99029e57311ca86dbc03fb67c461899ed4381229f519565639c15a3"
+        },
+        {
+          "t": 1.7000000000000002,
+          "step": 139264,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0018.npz",
+          "sha256": "3152a49473c2f6031d1b90cc43d0569bea2bb1580e9b2e8276de0939c107178a"
+        },
+        {
+          "t": 1.8,
+          "step": 147456,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0019.npz",
+          "sha256": "e20c35195af7601af6b998bead4ee5b6441cee854f13ea4683422285deb02df5"
+        },
+        {
+          "t": 1.9000000000000001,
+          "step": 155648,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0020.npz",
+          "sha256": "f8f37d5c87ffedabbee5c0b131886671b7c4624169131fc71985b6d421a354fc"
+        },
+        {
+          "t": 2.0,
+          "step": 163840,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0021.npz",
+          "sha256": "8e1cb79f20547c6f41a2c14e7144c2dbf573184a3a641e73fe683c3c456b6855"
+        },
+        {
+          "t": 2.1,
+          "step": 172032,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0022.npz",
+          "sha256": "04766e75c557497bb4f5d13e1cfc5b8c1204be8cd65164f3d13e30720c2e0d5e"
+        },
+        {
+          "t": 2.2,
+          "step": 180224,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0023.npz",
+          "sha256": "8c151e1f63ba9761114d6ad88971671cad83d846e1721d3eac9f5900aa55730f"
+        },
+        {
+          "t": 2.3000000000000003,
+          "step": 188416,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0024.npz",
+          "sha256": "628c3ae94fabe6a26d32961d65ea91894d168e2cee25400e8667280bc96145fd"
+        },
+        {
+          "t": 2.4000000000000004,
+          "step": 196608,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0025.npz",
+          "sha256": "d801913502bc0b7bf19264c999e606d73d1fa012110f1989586c16b45abce842"
+        },
+        {
+          "t": 2.5,
+          "step": 204800,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0026.npz",
+          "sha256": "46ef98354a940c006ad720bcca6f2156437f0f36b3db7deeb9498718c954dc9e"
+        },
+        {
+          "t": 2.6,
+          "step": 212992,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0027.npz",
+          "sha256": "841d35db0733d4759d98cb7625ddd664c1338fb57c5ee5c6649e3e31ce7d2cde"
+        },
+        {
+          "t": 2.7,
+          "step": 221184,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0028.npz",
+          "sha256": "6143315549dd5519f86b26d8db9116475be28331965e4a67a164bead017ce609"
+        },
+        {
+          "t": 2.8000000000000003,
+          "step": 229376,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0029.npz",
+          "sha256": "db39fe185b3ad35ced2ab75312cd1aef25b69003ce33380362cc4387fdf0533b"
+        },
+        {
+          "t": 2.9000000000000004,
+          "step": 237568,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0030.npz",
+          "sha256": "2fed63356c64ff8f5c3bc68fdaa1f8082028662fd99c57a5441f0ab53245f3da"
+        },
+        {
+          "t": 3.0,
+          "step": 245760,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0031.npz",
+          "sha256": "10bb7289d45029eded7f6e6ed7ced3d4957d606f3d3cffe557503c234f2ab6cc"
+        },
+        {
+          "t": 3.1,
+          "step": 253952,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0032.npz",
+          "sha256": "98f3846ef760eee31d9bdbfbb72494d1134e5c6d7567a6bdf8be174936583655"
+        },
+        {
+          "t": 3.2,
+          "step": 262144,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0033.npz",
+          "sha256": "ed530e38bba4e7db00efa55560b646837f571d3f3129c291f70fa98256b2a213"
+        },
+        {
+          "t": 3.3000000000000003,
+          "step": 270336,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0034.npz",
+          "sha256": "3c35bd4b1ec5f310955b0dccc6f5907def4528d9c0f7a86d724e71cb4d32fd94"
+        },
+        {
+          "t": 3.4000000000000004,
+          "step": 278528,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0035.npz",
+          "sha256": "e4009bf4d27f1e6375f2da163a00179b19541e6af7dbaf83585ed61c0a30fdbf"
+        },
+        {
+          "t": 3.5,
+          "step": 286720,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0036.npz",
+          "sha256": "16a3901d14504e39ced4185bf56fc9a6b26aa285eabbcd0c28864c49b22bcd2a"
+        },
+        {
+          "t": 3.6,
+          "step": 294912,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0037.npz",
+          "sha256": "88dcef4faaf5a0637a54bbe9168454c38f08c0a05e4dc7578ebbe313798352f7"
+        },
+        {
+          "t": 3.7,
+          "step": 303104,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0038.npz",
+          "sha256": "5e0a4b395e69314b8c3b6a52d8e21569613f4f1750d7c7b4e6334fab5b901b0f"
+        },
+        {
+          "t": 3.8000000000000003,
+          "step": 311296,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0039.npz",
+          "sha256": "5a7a03a2455cff390dc7c6fc38f04f3f387f3cee7d0271d180e87020b9b89de1"
+        },
+        {
+          "t": 3.9000000000000004,
+          "step": 319488,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0040.npz",
+          "sha256": "2bfc04958b64410f0f2e5ea59e088b68490e0cdd1d316626037dfe1f6aa0eab6"
+        },
+        {
+          "t": 4.0,
+          "step": 327680,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0041.npz",
+          "sha256": "29f0638a09ca276e47eee38c0fd4a7994a9f877fb53cd912469c62b4206287a6"
+        },
+        {
+          "t": 4.1000000000000005,
+          "step": 335872,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0042.npz",
+          "sha256": "a5212429f7bf6b5f39c84d03a3099bb8c1cdfffb21e043ff7dd8dca46d8901ea"
+        },
+        {
+          "t": 4.2,
+          "step": 344064,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0043.npz",
+          "sha256": "ef881ebc2b798b75f7802f2b49130913f190c381aef1c9dfaa6d523fe740f75a"
+        },
+        {
+          "t": 4.3,
+          "step": 352256,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0044.npz",
+          "sha256": "e6bfaa19455a25f68bcae2518d38ff26c09d3d6fbc4c5f3efa2cc04860d8093e"
+        },
+        {
+          "t": 4.4,
+          "step": 360448,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0045.npz",
+          "sha256": "b243e4337088b07b4c76db9225e67d8bb568b4a513572ffeafd9cddf41734425"
+        },
+        {
+          "t": 4.5,
+          "step": 368640,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0046.npz",
+          "sha256": "23fc4f8233580052b505a77e7658dc2262053f55d4ee8d8d09a21193446784b9"
+        },
+        {
+          "t": 4.6000000000000005,
+          "step": 376832,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0047.npz",
+          "sha256": "ea2f0a8972e8130e7665cc4177f0e5ea49b07b8f875cc5339f58e992572664af"
+        },
+        {
+          "t": 4.7,
+          "step": 385024,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0048.npz",
+          "sha256": "8463b947513503d07f4b5af743362328210419a8666b23ac2ddb5d37286d83f7"
+        },
+        {
+          "t": 4.800000000000001,
+          "step": 393216,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0049.npz",
+          "sha256": "0f661ee560d35e10de99a2921b28a7e68c0c1edea4725f8efef255675d0bc26b"
+        },
+        {
+          "t": 4.9,
+          "step": 401408,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0050.npz",
+          "sha256": "884dc471a607f5205e23288f1d5f1e875e0e6a802a6295e7f36d94eb64e994bc"
+        },
+        {
+          "t": 5.0,
+          "step": 409600,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0051.npz",
+          "sha256": "347aa81fb3d29dcebb1fb309048f5308e5c41f3027808f7040a4eb86c5395468"
+        },
+        {
+          "t": 5.1000000000000005,
+          "step": 417792,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0052.npz",
+          "sha256": "6977fba0c2c6e5df40bccca8f1daf9ef3056bef6ac2822837fc5041ef42f6478"
+        },
+        {
+          "t": 5.2,
+          "step": 425984,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0053.npz",
+          "sha256": "a2c1571e781aae204da18e824fbde1fc2d967d9ba62a3a8a5793a225e84e06f6"
+        },
+        {
+          "t": 5.300000000000001,
+          "step": 434176,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0054.npz",
+          "sha256": "873aa5db25249324dcbf6117a44a023a3e7737ffb5de09f2ae2153fdcdd404a2"
+        },
+        {
+          "t": 5.4,
+          "step": 442368,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0055.npz",
+          "sha256": "2599a370f3945aa67312c3de42a67b55b3b2b1a34f26f2b229aa979e50c4d559"
+        },
+        {
+          "t": 5.5,
+          "step": 450560,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0056.npz",
+          "sha256": "40de1494bc03b6f13c364a6434516aee78f042e6aa9a4a212549031a71cf0b41"
+        },
+        {
+          "t": 5.6000000000000005,
+          "step": 458752,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0057.npz",
+          "sha256": "09f0b784cfb482b642925fae570ecd41c28fa42ff87d5609a0ed21fa08799800"
+        },
+        {
+          "t": 5.7,
+          "step": 466944,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0058.npz",
+          "sha256": "56f521b61b69ad844398906b7878ebb599c12b68b95893f5e5caee90b24ab276"
+        },
+        {
+          "t": 5.800000000000001,
+          "step": 475136,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0059.npz",
+          "sha256": "f4e47886080c4629bab964829f5e7cadc1a44dee311961913b4cc327e07a7ce8"
+        },
+        {
+          "t": 5.9,
+          "step": 483328,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0060.npz",
+          "sha256": "afcd10eff671a5fb7cc1e63c841eb1fad77209e1fa02053dd4846dfca786af44"
+        },
+        {
+          "t": 6.0,
+          "step": 491520,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-physical-log-compiled-v1/n4097/profile-0061.npz",
+          "sha256": "ecb89d054c9ffa792c292014d7df38da6055b115f26970d05ddba2181f1abf88"
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "analyze_trajectory_convergence.py": "6bca194c1cd57f0e190aa408f59701c0990265ae7c31e55b2033a1e414be7ba6",
+    "analyze_principal_controls.py": "4b43eac04887dc49b0fc5da49f3214553a138ae8ade3eaf73da20e961ec11223",
+    "trajectory.py": "ea8d4a2dd2cf8a203ad8617c1b718fecd126ae04c9d5d41eabc300b59a3b6cb8"
+  }
+}
