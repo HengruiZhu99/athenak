@@ -13,7 +13,7 @@ struct Engine {
   int n,nf,w,qw; double h; Vec r,d1,d2,qweights,params;
   std::vector<int> index,qindex;
   std::vector<int> aleft,aright;Vec awleft,awright;
-  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha,af_reference,chart_d,total_khat,update_compensation;
+  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha,af_reference,metric_reference,chart_d,total_khat,update_compensation,ell_values,ellp_values;
   long calls=0; double solve_seconds=0;
   bool puncture=false,af=false,af_endpoint=false;
   std::string error;
@@ -29,7 +29,7 @@ struct Engine {
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
     lapse_source.resize(n,0.);
     primitive.resize(n*nf);total_chi.resize(n);total_alpha.resize(n);
-    chart_d.resize(n*nf);total_khat.resize(n);update_compensation.resize(n*nf,0);af=p[24]!=0;af_endpoint=af&&rr[0]==0;
+    ell_values.resize(n);ellp_values.resize(n);chart_d.resize(n*nf);total_khat.resize(n);update_compensation.resize(n*nf,0);af=p[24]!=0;af_endpoint=af&&rr[0]==0;
     if(nf!=8&&nf!=10)throw std::runtime_error("invalid field count");
     diagnostics[3]=diagnostics[4]=std::numeric_limits<double>::infinity();
     puncture=p[12]!=0;if(puncture&&!af_endpoint)diagnostics[11]=-std::numeric_limits<double>::infinity();
@@ -55,6 +55,7 @@ struct Engine {
     for(int j=0;j<w;j++)sum+=d1[(n-1)*w+j]*(a[reflected(index[(n-1)*w+j])*nf+f]-((puncture||params[23]!=0)?a[(n-1)*nf+f]:0));
     return sum;
   }
+  double metric_ref(int i,int field)const {return metric_reference[i*8+field];}
   double ref(int i,int field,int derivative=0)const {return af_reference[(i*6+field)*3+derivative];}
   double ratio(double a,int i,double limit=0)const{return r[i]>0?a/r[i]:limit;}
   Vec ode_triangular(Vec x)const {
@@ -93,7 +94,7 @@ struct Engine {
   }
   double rhs(const double* state,double* out,bool accepted=false) {
     derivatives(state);calls++;
-    const bool logchi=params[16]!=0,logalpha=params[17]!=0;
+    const bool logchi=params[16]!=0,logalpha=params[17]!=0,trumpet=params[16]>=2;
     const double* q=state;
     if(af) {
       if(af_reference.size()!=static_cast<size_t>(n*18))throw std::runtime_error("AF reference not supplied");
@@ -126,8 +127,15 @@ struct Engine {
       for(int i=0;i<n;i++) {
         int k=i*nf;double A=(1+r[i]*r[i])/2;
         if(logchi) {
-          double chi=std::exp(state[k]);primitive[k]=std::expm1(state[k]);
-          dd[k]=chi*(dd[k]+d[k]*d[k]);d[k]*=chi;
+          double factor=std::exp(state[k]),small=std::expm1(state[k]);
+          if(trumpet) {
+            if(metric_reference.size()!=static_cast<size_t>(n*8))throw std::runtime_error("metric reference not supplied");
+            double first=d[k],second=dd[k],chi=metric_ref(i,0)*factor;
+            ell_values[i]=first+metric_ref(i,6);ellp_values[i]=second+metric_ref(i,7);
+            primitive[k]=metric_ref(i,3)+metric_ref(i,0)*small;
+            dd[k]=metric_ref(i,5)+metric_ref(i,2)*small+factor*(2*metric_ref(i,1)*first+metric_ref(i,0)*(second+first*first));
+            d[k]=metric_ref(i,4)+metric_ref(i,1)*small+chi*first;
+          } else {primitive[k]=small;dd[k]=factor*(dd[k]+d[k]*d[k]);d[k]*=factor;}
         }
         if(logalpha) {
           double factor=std::exp(state[k+6]),small=std::expm1(state[k+6]);primitive[k+6]=A*small;
@@ -137,7 +145,7 @@ struct Engine {
       }
     }
     if(!af)for(int i=0;i<n;i++) {
-      total_chi[i]=logchi?std::exp(state[i*nf]):1+q[i*nf];
+      total_chi[i]=logchi?(trumpet?metric_ref(i,0):1)*std::exp(state[i*nf]):1+q[i*nf];
       total_alpha[i]=logalpha?(1+r[i]*r[i])/2*std::exp(state[i*nf+6]):(1+r[i]*r[i])/2+q[i*nf+6];
     }
     double kap=params[0],kap2=params[1],xi=params[3];
@@ -219,7 +227,7 @@ struct Engine {
       }
       R[k+6]=b*up+vv*x;
       S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-local_xi*(params[13]!=0?2*alpha:alpha+A0)*u;
-      if(af&&x<.5) {
+      if((af||trumpet)&&x<.5) {
         S[k]=2*chi/3*(alpha*K+3*A0-3*x*vv);
         R[k+3]=b*pp+1.5*O*alpha*Ar*Ar-O*chi*(upp+2*ur)+.5*O*cp*alphap
           -3*chi*x*up-3*chi*(A0+alpha)+.5*alpha*x*cp;
@@ -227,15 +235,34 @@ struct Engine {
         S[k+4]=alpha*(K*K/3-3*chi-kap*(2+kap2)*T);
         if(!appendix)S[k+4]-=3*alpha*ww*T;
         R[k+6]=b*alphap;
-        S[k+6]=-F*q[k+3]+x*alpha*b+x*x-2*local_xi*alpha*u;
+        S[k+6]=-F*q[k+3]+x*alpha*b+x*x-local_xi*(params[13]!=0?2*alpha:alpha+A0)*u;
+      }
+      double X=0,ell=0,ellp=0,curvature_scalar=0;
+      if(trumpet&&x<.5) {
+        X=chi/(x*x);ell=ell_values[i];ellp=ellp_values[i];double alphapp=1+upp;
+        double curvature=alpha*X*(-2./3+x*ell/3+x*x*ellp/3+x*x*ell*ell/6);
+        double hessian=-2*X/3*(x*x*alphapp+x*alphap+x*x*ell*alphap);
+        double connection=2*alpha*X/3*(x*x*lp+x*lam+x*x*ell*lam);
+        R[k]=chi*(b*ell-alpha*Ar);S[k]=chi*(2*alpha*K/3-2*x*b);
+        R[k+2]=b*ap+curvature+hessian+connection;
+        S[k+2]=-4*alpha*chi/3*(2+x*(ell+lam))+alpha*Ar*K-b*x*Ar;
+        R[k+3]=b*pp+1.5*O*alpha*Ar*Ar-O*X*(x*x*alphapp+x*alphap)+.5*O*chi*ell*alphap
+          -3*chi*x*alphap-2*chi*alpha+.5*alpha*chi*x*ell;
+        curvature_scalar=2*X+2*x*X*ell+2*chi*ellp-.5*chi*ell*ell;
+        R[k+4]=b*Tp+alpha*chi*(2+x*ell)+O*alpha/2*(curvature_scalar-1.5*Ar*Ar+chi*lp+2*x*X*lam);
+        R[k+5]=b*lp+2*lam*divb/3+2*alpha*(ap-1.5*Ar*ell);
       }
       if(params[21]!=0)S[k+6]+=16*O*O*O*O*x*x*u/A0;
       if(params[15]!=0) {
         double D=-kap*u;S[k+3]+=D*(1-kap2)*T;S[k+4]-=D*(2+kap2)*T;S[k+5]-=D*lam;
       }
       double H=2*dk*(K-3)/3-6*c+2*O*x*cp+O*O*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar);
-      if(af&&x<.5)H=2*K*K/3-6*chi+2*O*x*cp+O*O*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar);
+      if((af||trumpet)&&x<.5)H=2*K*K/3-6*chi+2*O*x*cp+O*O*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar);
       double M=O*(ap+3*ar-1.5*Ar*cp/chi)-2*(pp+2*Tp)/3+2*x*Ar;
+      if(trumpet&&x<.5) {
+        H=2*K*K/3-6*chi+2*O*chi*(2+x*ell)+O*O*(curvature_scalar-1.5*Ar*Ar);
+        M=O*(ap-1.5*Ar*ell)-2*(pp+2*Tp)/3+2*x*Ar;
+      }
       if(nf==10) {
         constexpr double pi=3.1415926535897932384626433832795;
         double f=q[k+8],P=q[k+9],fp=d[k+8],Pp=d[k+9],fpp=dd[k+8];
@@ -248,6 +275,7 @@ struct Engine {
         H-=8*pi*O*O*(normal*normal+chi*phir*phir);M+=8*pi*O*normal*phir;
         double ak=-1+alpha*Ar+(i==n-1?-dU:U[i]/O);
         double N=dk*(K-3)/9-c+O*(-K*Ar/3+A0*cr)+O*O*(Ar*Ar/4-cp*cp/(4*chi));
+        if(trumpet&&x<.5)N=K*K/9-chi+O*(-K*Ar/3+A0*X*(2+x*ell))+O*O*(Ar*Ar/4-X*(1+x*ell+x*x*ell*ell/4));
         double B=N-kap*(1+kap2)*T+2*O*x*chi*lam/3;
         if(params[15]!=0)B-=kap*(1+kap2)*(-u)*(T/alpha);
         if(!appendix)B-=2*ww*T;
@@ -356,23 +384,23 @@ struct Engine {
           out[i*nf+f]+=beta[i]*(adv-chart_d[i*nf+f]);
         }
       }
-      if(params[25]!=0) {
-        std::fill(z.begin(),z.end(),0);
-        for(int i=1;i<n-3;i++) {
-          double midpoint=(r[i]+r[i+3])/2,taper=std::pow(std::max(1-midpoint*midpoint/(params[26]*params[26]),0.),6);
-          if(params[28]!=0) {
-            double distance=midpoint-r[0],fraction=distance/(params[28]+distance);
-            double a=std::pow(fraction,6),b=std::pow(1-fraction,6);taper*=a/(a+b);
-          }
-          for(int f=0;f<nf;f++) {
-            double anchor=state[i*nf+f];
-            double third=3*(state[(i+1)*nf+f]-anchor)-3*(state[(i+2)*nf+f]-anchor)+(state[(i+3)*nf+f]-anchor);
-            double value=taper*third;z[i*nf+f]+=value;z[(i+1)*nf+f]-=3*value;z[(i+2)*nf+f]+=3*value;z[(i+3)*nf+f]-=value;
-          }
-        }
-        for(int k=0;k<n*nf;k++)out[k]+=params[25]*z[k]/(64*h);
-      }
       for(int i=0;i<n;i++)out[i*nf+1]=0;
+    }
+    if(params[25]!=0) {
+      std::fill(z.begin(),z.end(),0);
+      for(int i=af?1:0;i<n-3;i++) {
+        double midpoint=(r[i]+r[i+3])/2,taper=std::pow(std::max(1-midpoint*midpoint/(params[26]*params[26]),0.),6);
+        if(params[28]!=0) {
+          double distance=midpoint-r[0],fraction=distance/(params[28]+distance);
+          double a=std::pow(fraction,6),b=std::pow(1-fraction,6);taper*=a/(a+b);
+        }
+        for(int f=0;f<nf;f++) {
+          double anchor=state[i*nf+f];
+          double third=3*(state[(i+1)*nf+f]-anchor)-3*(state[(i+2)*nf+f]-anchor)+(state[(i+3)*nf+f]-anchor);
+          double value=taper*third;z[i*nf+f]+=value;z[(i+1)*nf+f]-=3*value;z[(i+2)*nf+f]+=3*value;z[(i+3)*nf+f]-=value;
+        }
+      }
+      for(int k=0;k<n*nf;k++)out[k]+=params[25]*z[k]/(64*h);
     }
     if(ko!=0) {
       std::copy(state,state+n*nf,z.begin());
@@ -405,10 +433,13 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 31;}
+int spherical_fast_abi(){return 32;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);
+}
+void spherical_fast_set_metric_reference(void* handle,const double* source){
+  auto& e=*static_cast<Engine*>(handle);e.metric_reference.assign(source,source+e.n*8);
 }
 void spherical_fast_set_af_reference(void* handle,const double* source){
   auto& e=*static_cast<Engine*>(handle);e.af_reference.assign(source,source+e.n*18);

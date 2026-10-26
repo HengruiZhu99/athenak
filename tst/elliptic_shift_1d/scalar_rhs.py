@@ -43,7 +43,7 @@ def angular_ricci(r,q,d,beta,kappa1=4.,kappa2=-.99,appendix_c=True,damping_form=
     return Ric
 
 
-def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,geometry_second=None,origin_beta_derivative=None,analytic_endpoint=False,damping_form='constant',total_chi=None,total_alpha=None):
+def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,geometry_second=None,origin_beta_derivative=None,analytic_endpoint=False,damping_form='constant',total_chi=None,total_alpha=None,mass_numerator=None):
     r=ops.r;O=(1-r*r)/2;A0=(1+r*r)/2
     c=q[:,0];chi=1+c;cp=d[:,0];Arr=q[:,2];T=q[:,4];lam=q[:,5];u=q[:,6]
     alpha=A0+u;alphap=r+d[:,6];K=q[:,3]-3+2*T;dk=q[:,3]+2*T
@@ -64,6 +64,7 @@ def rhs(ops,q,d,fields,dfields,ddfields,beta,beta_deviation,kappa1=4.,kappa2=-.9
         chi_second0=geometry_second[0,0] if geometry_second is not None else ops.derivatives(cp,-1)[0][0]
         alpha_second0=1+(geometry_second[0,6] if geometry_second is not None else ops.derivatives(d[:,6],-1)[0][0])
     N=dk*(K-3)/9-c+O*(-K*Arr/3+A0*radial_ratio(cp,r,chi_second0))+O*O*(Arr*Arr/4-cp*cp/(4*chi))
+    if mass_numerator is not None:N=np.asarray(mass_numerator)
     B=N-kappa1*(1+kappa2)*T+2*O*r*chi*lam/3
     if damping_form=='reference-lapse':B-=kappa1*(1+kappa2)*(-u)*T/alpha
     if not appendix_c:B-=2*beta*r*T/alpha

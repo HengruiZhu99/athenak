@@ -1,6 +1,8 @@
 """Explicit AF-to-finite-domain transfer; never a checkpoint-binding bypass.
 
-Copies every retained stored field exactly. A new domain has its own source
+Copies every retained stored field exactly in the original chart. Optional
+positive target charts preserve physical curvature/Theta/Lambda bitwise and
+record the invertible log conversion error. A new domain has its own source
 binding and receipt. Scientific admission additionally requires the original
 full AF prefix, convergence, cut-location and boundary controls.
 """
@@ -19,8 +21,9 @@ def load_af_transfer(args):
       'lapse_reference','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','lapse_background_source']
     for key in equations:
         if getattr(args,key)!=old[key]:raise ValueError('Domain transfer changes an equation/physical input: '+key)
-    if not (args.puncture and args.puncture_chart and args.inner_radius>0 and not args.scalar and args.initial_data=='wormhole'):
-        raise ValueError('Transfer requires the same vacuum wormhole AF-reference chart on a positive cutoff')
+    target_chart=args.puncture_chart or (args.metric_variable in ('log-trumpet','log-inner-trumpet') and args.lapse_variable=='log-reference')
+    if not (args.puncture and target_chart and args.inner_radius>0 and not args.scalar and args.initial_data=='wormhole'):
+        raise ValueError('Transfer requires the same vacuum wormhole in a supported positive chart on a physical cutoff')
     raw=path.read_bytes()
     with np.load(io.BytesIO(raw),allow_pickle=False) as z:
         r=z['r'].copy();q=z['q'].copy();physical=z['q_physical'].copy();diagnostic=z['diagnostic'].copy();beta=z['beta'].copy()
@@ -43,7 +46,7 @@ def load_af_transfer(args):
     receipt=dict(profile=str(path),profile_sha256=hashlib.sha256(raw).hexdigest(),source_manifest=str(manifest_path),
         source_manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest(),source_binding=source['binding'],time=t,step=step,
         original_grid_points=len(r),dropped_grid_points=cut,retained_grid_points=len(grid),inner_radius=float(grid[0]),
-        stored_fields_copied_bitwise=True,equation_inputs_verified=equations,numerical_input_changes=changes,
+        stored_fields_copied_bitwise=bool(args.puncture_chart),target_metric_variable=args.metric_variable,target_lapse_variable=args.lapse_variable,target_AF_chart=bool(args.puncture_chart),equation_inputs_verified=equations,numerical_input_changes=changes,
         source_physical_characteristic=light,source_gauge_characteristic=gauge,
         inner_elliptic_condition='Inherited Q=0 metric-freezing branch; outer null shift fixes phase. No differential Einstein constraint enters.',
         scope='Domain transition only; original full-prefix convergence and later stage characteristic/boundary/physical checks remain mandatory. No wormhole-to-trumpet admission.')

@@ -2,6 +2,18 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Physical curvature and compact trumpet metric profile
+
+API32 and50 CTest groups pass. A causal transfer can now preserve physical
+curvature/Theta/Lambda bitwise while switching the positive metric/lapse chart.
+The coordinate-only inner trumpet metric profile becomes exactly flat outside
+.3, preserving the Minkowski outer frame and gauge source. All128 new native/
+compiled vacuum/scalar/transport/damping/flux cases pass, with native error
+3.91e-14. A new-chart domain fixture passes native physical-left equations,
+causal/hash guards and bitwise strict restart. The frozen three-grid evolution
+and separate no-KO/global-profile/AF controls are running; none is admitted.
+See `physical-trumpet-variables.md` for the algebra and scope.
+
 ## Boundary consistency and variable-conditioning controls
 
 API31 and47 test groups pass. A fixed-width nonnegative inner KO weight

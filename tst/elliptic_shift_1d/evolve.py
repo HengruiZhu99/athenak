@@ -40,12 +40,13 @@ class Evolution:
             self.lapse_source=CMCTrumpet(args.mass,args.initial_quadrature_order).lapse_source(
                 self.r,self.restoring_strength,getattr(args,'lapse_restoring_form','symmetric'))
         self.alpha_profile=None
-        self.metric_scale=None
-        self.trumpet_metric=getattr(args,'metric_variable','deviation')=='log-trumpet'
+        self.metric_scale=None;self.metric_profile=None
+        self.trumpet_metric=getattr(args,'metric_variable','deviation') in ('log-trumpet','log-inner-trumpet')
         if getattr(args,'metric_variable','deviation')=='log':self.metric_scale=(np.ones(args.n),np.zeros(args.n))
-        if getattr(args,'metric_variable','deviation')=='log-trumpet':
-            A=(1+self.r*self.r)/2;O=(1-self.r*self.r)/2
-            self.metric_scale=(self.r*self.r/A**2,-O**2/A**2)
+        if self.trumpet_metric:
+            from variable_profiles import trumpet_metric_profile
+            self.metric_profile=trumpet_metric_profile(self.r,getattr(args,'metric_variable')=='log-inner-trumpet')
+            self.metric_scale=(self.metric_profile[:,0],self.metric_profile[:,3])
         if getattr(args,'lapse_variable','deviation')=='log-trumpet':
             from trumpet_data import CMCTrumpet
             ref,rd,rdd,meta=CMCTrumpet(args.mass,args.initial_quadrature_order).data(self.r)
@@ -88,12 +89,14 @@ class Evolution:
         if self.metric_scale is not None:
             q=self.to_physical(stored)
             if self.trumpet_metric:
-                A=(1+self.r*self.r)/2
-                with np.errstate(over='raise',invalid='raise'):X=np.exp(stored[:,0])/A**2
-                total_chi=self.r*self.r*X;ell=d[:,0]-2*self.r/A;ellp=dd[:,0]-2/A+2*self.r*self.r/A**2
+                profile=self.metric_profile
+                with np.errstate(over='raise',invalid='raise'):factor=np.exp(stored[:,0])
+                total_chi=profile[:,0]*factor;X=total_chi/(self.r*self.r)
+                ell=d[:,0]+profile[:,6];ellp=dd[:,0]+profile[:,7]
                 trumpet_chi=dict(X=X,ell=ell,ellp=ellp)
-                d[:,0]=2*self.r*X+total_chi*ell
-                dd[:,0]=2*X+4*self.r*X*ell+total_chi*(ellp+ell*ell)
+                small=np.expm1(stored[:,0]);first=d[:,0].copy()
+                dd[:,0]=profile[:,5]+profile[:,2]*small+factor*(2*profile[:,1]*first+profile[:,0]*(dd[:,0]+first*first))
+                d[:,0]=profile[:,4]+profile[:,1]*small+total_chi*first
             else:
                 with np.errstate(over='raise',invalid='raise'):total_chi=np.exp(stored[:,0])
                 dd[:,0]=total_chi*(dd[:,0]+d[:,0]**2);d[:,0]*=total_chi
@@ -172,6 +175,7 @@ class Evolution:
         if getattr(self.args,'initial_data',None) in ('wormhole','trumpet'):
             F=lapse_coefficient(self.r[0],alpha[0],self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1))
             light=-beta[0]+alpha[0]*np.sqrt(chi[0]);gauge=-beta[0]+np.sqrt(F*chi[0])
+            self.stage_metrics['max_inner_characteristic']=max(self.stage_metrics.get('max_inner_characteristic',-float('inf')),float(max(light,gauge)))
             self.stage_metrics['max_inner_physical_characteristic']=max(self.stage_metrics.get('max_inner_physical_characteristic',-float('inf')),float(light))
             self.stage_metrics['max_inner_gauge_characteristic']=max(self.stage_metrics.get('max_inner_gauge_characteristic',-float('inf')),float(gauge))
             if light>0:raise FloatingPointError('Puncture inner boundary has an incoming physical characteristic')
@@ -280,8 +284,8 @@ class Evolution:
             self.stage_metrics['max_active_inner_gauge_Robin_residual']=max(self.stage_metrics.get('max_active_inner_gauge_Robin_residual',0.),float(active))
         if getattr(self.args,'puncture_ko',0.):
             from numerics import puncture_dissipation
-            diss=puncture_dissipation(q,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius,include_first=True)
-            diss[:,1]=0.;diss[:,7]=0.;result+=diss/self.op.norm[:,None]
+            diss=puncture_dissipation(q,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius,include_first=True,inner_width=getattr(self.args,'puncture_ko_inner_width',0.))
+            diss[:,1]=0.;diss[:,7]=0.;result+=diss/(self.op.norm[:,None] if hasattr(self.op,'norm') else 1.)
         self.stage_calls+=1
         maxima=dict(max_scri_pole=float(max(abs(S[-1,:6]))),max_lapse_pole=float(abs(S[-1,6])),
             max_regularity_trace=float(max(abs(self.regularity))),max_scri_null=float(abs(diag[-1,6])),max_scri_clock=float(abs(self.geometry_state[-1,6])))
@@ -385,7 +389,7 @@ class CoupledEvolution(Evolution):
         v=self.shift_deviation
         wave,info=scalar_rhs.rhs(self.op,geom,d,fields,df,ddf,beta,v,
             self.args.kappa1,self.args.kappa2,self.args.theta=='appendix-c',geometry_second=dd,origin_beta_derivative=self.origin_shift_slope,
-            analytic_endpoint=self.args.endpoint=='analytic-g1',damping_form=getattr(self.args,'damping_form','constant'),total_chi=self.total_chi,total_alpha=self.total_alpha)
+            analytic_endpoint=self.args.endpoint=='analytic-g1',damping_form=getattr(self.args,'damping_form','constant'),total_chi=self.total_chi,total_alpha=self.total_alpha,mass_numerator=self.mass_numerator if self.trumpet_metric else None)
         self.scalar_info=info;self.scalar_phi=phi;self.scalar_phir=phir;self.scalar_normal=normal
         self.scalar_scri_rate=wave[-1,0]
         if getattr(self.args,'advection','centered')=='upwind':
@@ -454,7 +458,7 @@ def main():
     p.add_argument('--lapse-background-source',choices=['reference','collapsed-inner'],default='reference')
     p.add_argument('--lapse-reference',choices=['minkowski','CMC-trumpet'],default='minkowski')
     p.add_argument('--lapse-variable',choices=['deviation','log-reference','log-trumpet'],default='deviation')
-    p.add_argument('--metric-variable',choices=['deviation','log','log-trumpet'],default='deviation')
+    p.add_argument('--metric-variable',choices=['deviation','log','log-trumpet','log-inner-trumpet'],default='deviation')
     p.add_argument('--inner-radius',type=float,default=0.)
     p.add_argument('--theta',choices=['appendix-c','repository'],default='appendix-c')
     p.add_argument('--width',type=int,choices=[5,7,9],default=7)
@@ -477,7 +481,7 @@ def main():
     if args.lapse_restoring_profile=='physical-local' and (args.slicing_family not in ('linear','rational') or args.lapse_reference!='minkowski'):
         raise ValueError('Local restoring requires linear/rational slicing with the Minkowski lapse reference')
     transfer_requested=args.transfer_af_profile is not None
-    if transfer_requested and not (args.puncture and args.puncture_chart and args.inner_radius>0 and args.initial_data=='wormhole' and not args.scalar):
+    if transfer_requested and not (args.puncture and (args.puncture_chart or (args.metric_variable in ('log-trumpet','log-inner-trumpet') and args.lapse_variable=='log-reference')) and args.inner_radius>0 and args.initial_data=='wormhole' and not args.scalar):
         raise ValueError('AF domain transfer requires an evolved vacuum wormhole and a positive cutoff')
     if args.inner_radius and not transfer_requested and (not args.puncture or args.initial_data!='trumpet' or args.puncture_chart):
         raise ValueError('Fixed-radius excision is a separate already-trumpet control; it does not replace wormhole evolution')
@@ -488,8 +492,8 @@ def main():
         raise ValueError('The CMC lapse-reference control requires already-trumpet data and the reference background source')
     if args.lapse_variable=='log-trumpet' and (args.initial_data!='trumpet' or args.fast_library or args.advection!='centered'):
         raise ValueError('Log-trumpet lapse variables currently require Python already-trumpet evolution and centered transport')
-    if args.metric_variable=='log-trumpet' and (args.initial_data!='trumpet' or args.fast_library or args.advection!='centered'):
-        raise ValueError('Log-trumpet metric variables currently require Python already-trumpet evolution and centered transport')
+    if args.metric_variable in ('log-trumpet','log-inner-trumpet') and (not args.puncture or (args.initial_data!='trumpet' and not transfer_requested)):
+        raise ValueError('Trumpet metric profiles require a positive puncture/cutoff domain and analytic trumpet data or explicit transfer')
     if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and (args.backend!='spherical-g1' or args.puncture_chart):
         raise ValueError('Positive-variable prototypes require g=1 evolution and their own representation')
     if (args.metric_variable!='deviation' or args.lapse_variable!='deviation') and args.origin_variables:
@@ -499,8 +503,8 @@ def main():
         raise ValueError('The SBP prototype requires a Python puncture evolution and centered transport')
     if args.puncture_boundary=='gauge-robin' and (not args.puncture or args.puncture_chart or args.radial_operator!='sbp63'):
         raise ValueError('Incoming-gauge Robin SAT requires the finite-cutoff SBP puncture path')
-    if args.puncture_ko_inner_width and not (args.inner_radius>0 and args.puncture_chart):raise ValueError('Inner KO taper requires a positive-cutoff AF-reference chart')
-    if args.puncture_ko and not (args.puncture_chart or (args.puncture and args.radial_operator=='sbp63')):
+    if args.puncture_ko_inner_width and not (args.inner_radius>0 and (args.puncture_chart or args.metric_variable in ('log-trumpet','log-inner-trumpet'))):raise ValueError('Inner KO taper requires a positive-cutoff AF-reference chart')
+    if args.puncture_ko and not (args.puncture_chart or (args.puncture and args.radial_operator=='sbp63') or (transfer_requested and args.inner_radius>0)):
         raise ValueError('Puncture dissipation requires an AF chart or finite-cutoff SBP path')
     if args.puncture and (args.backend!='spherical-g1' or args.origin_grid or args.origin_variables or args.origin_ko):
         raise ValueError('Puncture uses unscaled g=1, excluded inner endpoint and no regular-center KO filter')
@@ -518,6 +522,7 @@ def main():
     root=Path(__file__).resolve().parents[2]
     # Bind all actual header dependencies, adapter and Python implementation.
     module_names=['evolve.py','numerics.py','elliptic.py','kernel.py','gauge.py','bondi.py','horizon.py','time_lattice.py']
+    if args.metric_variable in ('log-trumpet','log-inner-trumpet'):module_names+=['variable_profiles.py','wormhole_data.py']
     if transfer_requested:module_names+=['domain_transfer.py']
     if args.compensated_update:module_names+=['compensated_update.py']
     if args.radial_operator=='sbp63':module_names+=['sbp.py']
@@ -618,17 +623,27 @@ def main():
             else:profile=sum(rng.normal()*ev.r**(2*k) for k in range(4))
             scale=ev.h**(2 if field==0 else 1) if args.perturbation=='noise-balanced' else 1.
             q[:,field]+=args.perturbation_amplitude*scale*ev.r**power*envelope*profile
-    if (args.lapse_variable!='deviation' or args.metric_variable!='deviation') and not args.resume:
-        q=ev.from_physical(q,total_chi=np.array([g['chi_total'] for g in geometry]) if args.metric_variable=='log-trumpet' else None)
+    if (args.lapse_variable!='deviation' or args.metric_variable!='deviation') and not args.resume and not transfer_requested:
+        q=ev.from_physical(q,total_chi=np.array([g['chi_total'] for g in geometry]) if args.metric_variable in ('log-trumpet','log-inner-trumpet') else None)
+        if args.lapse_variable=='log-reference' and args.initial_data in ('wormhole','trumpet'):
+            alpha_total=np.r_[np.array([g['physical_lapse'] for g in geometry[:-1]])*ev.omega[:-1],1.]
+            inner=ev.r<.5;q[inner,6]=np.log(alpha_total[inner]/ev.alpha_profile[0][inner])
     transfer=None
     if transfer_requested and not args.resume:
         from domain_transfer import load_af_transfer
         try:
             transfer=load_af_transfer(args)
             if not np.array_equal(ev.r,transfer['r']):raise ValueError('Constructed grid differs from exact retained subset')
-            q=transfer['q'];t=transfer['t'];step=transfer['step']
-            physical,chi,alpha,_=ev.reconstruct(q)
+            t=transfer['t'];step=transfer['step']
+            if args.puncture_chart:
+                q=transfer['q'];physical,chi,alpha,_=ev.reconstruct(q)
+            else:
+                q=ev.from_physical(transfer['physical'],total_chi=transfer['chi'])
+                inner=ev.r<.5;q[inner,6]=np.log(transfer['alpha'][inner]/ev.alpha_profile[0][inner])
+                physical=ev.to_physical(q);chi=ev.metric_scale[0]*np.exp(q[:,0]);alpha=ev.alpha_profile[0]*np.exp(q[:,6])
             receipt=transfer['receipt']
+            receipt['stored_fields_copied_bitwise']=bool(args.puncture_chart)
+            receipt['physical_curvature_trace_Theta_Lambda_copied_bitwise']=bool(np.array_equal(physical[:,2:6],transfer['physical'][:,2:6]))
             receipt['maximum_physical_field_reconstruction_difference']=float(max(abs(physical-transfer['physical']).ravel()))
             receipt['maximum_relative_total_chi_difference']=float(max(abs(chi/transfer['chi']-1)))
             receipt['maximum_relative_total_alpha_difference']=float(max(abs(alpha/transfer['alpha']-1)))

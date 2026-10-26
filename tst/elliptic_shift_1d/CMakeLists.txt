@@ -119,3 +119,10 @@ add_test(NAME prefix_stage_scope_and_missing_coverage_guards
 
 add_test(NAME finite_cutoff_KO_boundary_consistency_and_negative_energy
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_ko_inner_consistency.py)
+
+add_test(NAME coordinate_metric_profiles_independent_jets_and_flat_outer_frame
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_variable_profiles.py)
+add_test(NAME compiled_trumpet_metric_profiles_native_scalar_and_stage_audits
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_fast_trumpet_metric.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast>)
+add_test(NAME physical_trumpet_domain_transfer_native_and_strict_restart
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_domain_transfer.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast> --target-chart log-inner-trumpet)
