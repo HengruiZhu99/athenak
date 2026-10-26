@@ -6,6 +6,7 @@ from types import SimpleNamespace
 import numpy as np
 from evolve import Evolution,CoupledEvolution
 from fast import FastEngine
+from compensated_update import accumulate
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args();records=[]
 for index,(origin,scalar,variables,endpoint,ko) in enumerate(product([False,True],[False,True],
     [('log','deviation'),('deviation','log-reference'),('log','log-reference')],['raw-lhopital','analytic-g1'],[0.,.5])):
@@ -15,6 +16,7 @@ for index,(origin,scalar,variables,endpoint,ko) in enumerate(product([False,True
         damping_form='reference-lapse' if index%5 else 'constant',endpoint=endpoint,gauge_corner_sat=0.,advection='centered',
         scri_sat=4.,regularity_sat=8.,origin_ko=ko,origin_ko_radius=.4,metric_variable=variables[0],lapse_variable=variables[1])
     opts.subtract_local=index%3!=0
+    opts.compensated_update=index%2==0
     opts.elliptic_quadrature='inward' if index%2 else 'prefix'
     opts.elliptic_method='discrete-ode' if index%4==0 else 'quadrature'
     opts.elliptic_bias='right'
@@ -27,14 +29,18 @@ for index,(origin,scalar,variables,endpoint,ko) in enumerate(product([False,True
     engine=FastEngine(ev,nf,a.fast_library);expected=ev.rhs(q,accepted=True);got,flux=engine.rhs(q)
     error=float(max(abs(expected-got).ravel()));assert error<2e-11,error
     if scalar:np.testing.assert_allclose(flux,4*np.pi*ev.scalar_scri_rate**2,rtol=1e-11,atol=1e-20)
-    state=q.copy();energy=0.;dt=.01*ev.h
+    state=q.copy();correction=np.zeros_like(state);energy=0.;dt=.01*ev.h
     for _ in range(20):
         k1=ev.rhs(state,accepted=True);f1=4*np.pi*ev.scalar_scri_rate**2 if scalar else 0.
         k2=ev.rhs(state+dt*k1/2);f2=4*np.pi*ev.scalar_scri_rate**2 if scalar else 0.
         k3=ev.rhs(state+dt*k2/2);f3=4*np.pi*ev.scalar_scri_rate**2 if scalar else 0.
         k4=ev.rhs(state+dt*k3);f4=4*np.pi*ev.scalar_scri_rate**2 if scalar else 0.
-        state+=dt*(k1+2*k2+2*k3+k4)/6;energy+=dt*(f1+2*f2+2*f3+f4)/6
+        increment=dt*(k1+2*k2+2*k3+k4)/6
+        if opts.compensated_update:state,correction=accumulate(state,correction,increment)
+        else:state+=increment
+        energy+=dt*(f1+2*f2+2*f3+f4)/6
     done,got_energy,failed=engine.advance(q,20,dt);assert done==20 and not failed
+    if opts.compensated_update:np.testing.assert_allclose(engine.get_update_compensation(),correction,atol=2e-17,rtol=0)
     step_error=float(max(abs(q-state).ravel()));assert step_error<2e-13,step_error
     np.testing.assert_allclose(energy,got_energy,rtol=1e-10,atol=1e-20)
     stats=engine.diagnostics()

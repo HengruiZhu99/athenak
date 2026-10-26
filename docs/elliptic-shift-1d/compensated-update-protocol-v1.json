@@ -1,0 +1,8 @@
+{
+  "created_UTC": "2026-10-26T11:27:46.594966+00:00",
+  "hypothesis": "Accumulation of accepted RK increments can amplify binary64 noise under two spatial derivatives. Local derivative subtraction alone only slightly reduces the observed N4096 constraint floor. Kahan accumulation may reduce accumulation error; this is not established for evolved states.",
+  "method": "Selectable compensated accepted state update; unmodified RK4 stage evaluation and elliptic solve. Low part is numerical integrator state in checkpoints, never a constraint projection or physical source.",
+  "acceptance": "Existing physical field, accepted constraints, boundary, affinity, solve error and independent timestep gates. Every failed direct/subtracted result remains retained.",
+  "preregistered_input": "inputs/elliptic_shift_1d/gauge-compensated-update-v1.json",
+  "unit_and_restart": "41 test groups pass, including rational constant-increment oracle, independent Python/compiled scalar and AF rates/steps/monitors; scalar compiled and AF compiled/Python restart low parts are bitwise identical."
+}

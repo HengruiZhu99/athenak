@@ -97,3 +97,27 @@ finite-cutoff grids with both shift biases. All39 tests pass, and a positive
 scalar/noise discrete-shift restart is bitwise reproducible. The predeclared
 local-subtraction-protocol-v1.json governs the running arithmetic comparisons.
 These algebraic tests do not establish that it cures evolved roundoff.
+
+## Accepted-increment accumulation control (API27)
+
+`--compensated-update` applies Kahan accumulation only to the accepted RK4
+state increment. Stage state/RHS evaluation, field equations, shift solves
+and constraints are unchanged. The residual low part is explicit integrator
+state, restored from and written to checkpoints. It persists across compiled
+advance batches and reports. Both compiled and Python paths implement it;
+this is binary64 compensation, not higher-precision evolution.
+
+All41 groups pass (`evidence/ctest-v35.log`), including an exact rational
+constant-increment oracle. Positive scalar and AF independent rate/step/monitor
+checks cover compensation; scalar compiled, AF compiled and AF Python restart
+checks reproduce the low part and all state/time/flux data bitwise.
+The frozen gauge-compensated-update-v1 matrix tests N2048/4096/8192 plus
+independent time, solve and same-binary uncompensated controls. Its physical
+accuracy is not established by these arithmetic tests.
+
+The physical-log source's .1 finite pulse has bulk peak/RMS orders5.03/5.06
+through1 at N512/1024/2048. Its endpoint peak order2.15 and RMS2.55 fail
+the existing3.0 gate. No admission follows from the small finest pole or
+constraints. The earlier source's subtracted N1024/2048/4096 pulse matches
+the previous trajectory behavior; derivative subtraction alone has only
+slightly reduced the N4096 accepted constraint floor.

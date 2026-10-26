@@ -17,6 +17,7 @@ p.add_argument('--lapse-background-source',choices=['reference','collapsed-inner
 p.add_argument('--lapse-restoring-form',choices=['symmetric','multiplicative'],default='symmetric')
 p.add_argument('--positive-variables',action='store_true')
 p.add_argument('--subtract-local',action='store_true')
+p.add_argument('--compensated-update',action='store_true')
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 dt=.05/63.5;driver=Path(__file__).with_name('evolve.py')
 common=[sys.executable,str(driver),'--library',a.library,'--backend','spherical-g1',
@@ -44,6 +45,7 @@ common+=['--elliptic-quadrature',a.elliptic_quadrature,'--elliptic-method',a.ell
 common+=['--lapse-restoring-profile',a.lapse_restoring_profile,'--lapse-background-source',a.lapse_background_source]
 if a.scenario=='scalar-noise':common+=['--lapse-restoring-form',a.lapse_restoring_form]
 if a.subtract_local:common+=['--subtract-local']
+if a.compensated_update:common+=['--compensated-update']
 for name,steps,resume in [('full',40,None),('first',20,None),('resumed',40,'first')]:
     command=common+['--t',str(steps*dt),'--output',str(a.output/name)]
     if resume:command+=['--resume',str(a.output/resume/'checkpoint.npz')]
@@ -54,6 +56,7 @@ for name,steps,resume in [('full',40,None),('first',20,None),('resumed',40,'firs
     assert manifest['status']=='finished',manifest
 with np.load(a.output/'full/checkpoint.npz',allow_pickle=False) as x,np.load(a.output/'resumed/checkpoint.npz',allow_pickle=False) as y:
     keys=['q','r','t','step']
+    if a.compensated_update:keys+=['update_compensation']
     if a.scenario in ('puncture-chart','trumpet-log') or a.positive_variables:keys+=['q_physical','chi_total','alpha_total']
     for key in keys:assert np.array_equal(x[key],y[key]),key
     mx=json.loads(str(x['metadata']));my=json.loads(str(y['metadata']))

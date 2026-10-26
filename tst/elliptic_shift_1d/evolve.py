@@ -403,6 +403,7 @@ def main():
     p.add_argument('--fast-library',help='Optional audited compiled g=1 RK4 engine')
     p.add_argument('--gauge-corner-sat',type=float,default=0.)
     p.add_argument('--advection',choices=['centered','upwind'],default='centered')
+    p.add_argument('--compensated-update',action='store_true')
     p.add_argument('--subtract-local',action='store_true')
     p.add_argument('--puncture',action='store_true')
     p.add_argument('--puncture-chart',action='store_true')
@@ -501,6 +502,7 @@ def main():
     root=Path(__file__).resolve().parents[2]
     # Bind all actual header dependencies, adapter and Python implementation.
     module_names=['evolve.py','numerics.py','elliptic.py','kernel.py','gauge.py','bondi.py','horizon.py','time_lattice.py']
+    if args.compensated_update:module_names+=['compensated_update.py']
     if args.radial_operator=='sbp63':module_names+=['sbp.py']
     if args.elliptic_method=='discrete-ode':module_names+=['shift_ode.py']
     if args.backend=='spherical-g1':module_names+=['g1_rhs.py']
@@ -601,13 +603,17 @@ def main():
             q[:,field]+=args.perturbation_amplitude*scale*ev.r**power*envelope*profile
     if (args.lapse_variable!='deviation' or args.metric_variable!='deviation') and not args.resume:
         q=ev.from_physical(q,total_chi=np.array([g['chi_total'] for g in geometry]) if args.metric_variable=='log-trumpet' else None)
+    update_compensation=np.zeros_like(q)
     if args.resume:
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('subtract_local','n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
+            for key in ('compensated_update','subtract_local','n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
+            if args.compensated_update:
+                update_compensation=z['update_compensation'].copy()
+                if update_compensation.shape!=q.shape or not np.all(np.isfinite(update_compensation)):raise ValueError('Invalid checkpoint compensation')
             for key in ['scalar_initial_data','wormhole_initial_data','trumpet_initial_data']:
                 if key in old:manifest[key]=old[key]
         manifest['checkpoint_parent']={'path':str(args.resume.resolve()),'sha256':sha(args.resume)}
@@ -623,6 +629,7 @@ def main():
     if args.fast_library:
         from fast import FastEngine
         compiled=FastEngine(ev,q.shape[1],args.fast_library)
+        if args.compensated_update:compiled.set_update_compensation(update_compensation)
     try:
         with (args.output/'history.jsonl').open('w') as log:
             while True:
@@ -649,7 +656,11 @@ def main():
                 k2=ev.rhs(q+h*k1/2);flux2=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k3=ev.rhs(q+h*k2/2);flux3=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
                 k4=ev.rhs(q+h*k3);flux4=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.
-                q=q+h*(k1+2*k2+2*k3+k4)/6
+                increment=h*(k1+2*k2+2*k3+k4)/6
+                if args.compensated_update:
+                    from compensated_update import accumulate
+                    q,update_compensation=accumulate(q,update_compensation,increment)
+                else:q=q+increment
                 radiated_energy+=h*(flux1+2*flux2+2*flux3+flux4)/6
                 clock.advance(1,h);t=clock.t;step=clock.step
     except Exception as e:
@@ -658,13 +669,16 @@ def main():
     finally:
         if compiled:
             calls,seconds=compiled.stats();ev.calls+=calls;ev.solve_seconds+=seconds
-            manifest['all_RK_stages']=compiled.diagnostics();manifest['compiled_rk_seconds']=compiled.advance_seconds;compiled.close()
+            manifest['all_RK_stages']=compiled.diagnostics();manifest['compiled_rk_seconds']=compiled.advance_seconds
+            if args.compensated_update:update_compensation=compiled.get_update_compensation()
+            compiled.close()
         if not compiled:manifest['all_RK_stages']=dict(ev.stage_metrics)
         manifest.update(status='failed' if failure else 'finished',time=t,steps=step,
             time_lattice=clock.metadata(),
             runtime_seconds=time.perf_counter()-start,rhs_seconds=ev.rhs_seconds,radiated_energy=radiated_energy,
             elliptic_seconds=ev.solve_seconds,elliptic_calls=ev.calls,failure=failure)
         extra={}
+        if args.compensated_update:extra['update_compensation']=update_compensation
         if args.puncture_chart:
             try:
                 physical,chi_total,alpha_total,_=ev.reconstruct(q)

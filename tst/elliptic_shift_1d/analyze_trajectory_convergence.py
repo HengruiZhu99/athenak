@@ -34,6 +34,7 @@ for case_index,n in enumerate(a.resolutions):
  runs.append(dict(n=n,manifest=m,stages=stages,segments=segments,profiles=profiles))
 if np.ptp([r['manifest']['time'] for r in runs])>1e-10:raise ValueError('Different final times')
 if len({r['manifest']['arguments']['cfl'] for r in runs})!=1:raise ValueError('Spatial study requires a fixed CFL')
+if any(z['manifest']['binding']!=runs[0]['manifest']['binding'] for z in runs):raise ValueError('Spatial study requires identical numerical source and binaries')
 end=int(round(runs[0]['manifest']['time']/a.interval));requested=list(range(end+1))
 missing={z['n']:sorted(set(requested)-set(z['profiles'])) for z in runs}
 ticks=sorted(set.intersection(*[set(z['profiles']) for z in runs]))
@@ -41,7 +42,11 @@ if len(ticks)<3 or ticks[0]!=0 or ticks[-1]!=end:raise ValueError('Common profil
 hs=[float(np.diff(z['profiles'][0]['r'])[0]) for z in runs];errors={key:[] for key in ['bulk','endpoint']}
 for lo,hi in zip(runs[:-1],runs[1:]):
  coarse=lo['profiles'][0]['r'];fine=hi['profiles'][0]['r'];width=9
- if coarse[0]<=0 or fine[0]<=0:raise ValueError('Current interpolation expects regular half-cell origins')
+ nested=coarse[0]==0 and fine[0]==0
+ if nested:
+  ratio=(len(fine)-1)//(len(coarse)-1)
+  if ratio*(len(coarse)-1)!=len(fine)-1 or not np.array_equal(coarse,fine[::ratio]):raise ValueError('Nodal study requires exactly nested grids')
+ elif coarse[0]<=0 or fine[0]<=0:raise ValueError('Unsupported inner grid')
  ext=np.r_[-fine[:width][::-1],fine];indices=[];coefficients=[]
  for x in coarse:
   start=min(max(np.searchsorted(ext,x)-width//2,0),len(ext)-width);idx=np.arange(start,start+width)
@@ -49,7 +54,7 @@ for lo,hi in zip(runs[:-1],runs[1:]):
  indices=np.array(indices);coefficients=np.array(coefficients);series={key:[] for key in errors}
  for tick in ticks:
   q=hi['profiles'][tick]['q'];parity=np.r_[PARITY,np.ones(max(0,q.shape[1]-len(PARITY)))];values=np.r_[q[:width][::-1]*parity,q]
-  sampled=np.einsum('ij,ijf->if',coefficients,values[indices]);delta=lo['profiles'][tick]['q']-sampled
+  sampled=q[::ratio] if nested else np.einsum('ij,ijf->if',coefficients,values[indices]);delta=lo['profiles'][tick]['q']-sampled
   for key,mask in [('bulk',coarse<.8),('endpoint',coarse>.9)]:series[key].append(norm(delta,coarse,mask))
  for key in errors:errors[key].append(series[key])
 result={}
@@ -58,7 +63,7 @@ for region,series in errors.items():
  maximum=[float(max(e)) for e in series];l2=[float(np.sqrt(np.sum(np.diff(times)*(np.array(e[:-1])**2+np.array(e[1:])**2)/2)/(times[-1]-times[0]))) for e in series]
  result[region]=dict(sampled_differences=series,maximum_differences=maximum,maximum_order=fit_order(maximum,hs),
   time_RMS_differences=l2,time_RMS_order=fit_order(l2,hs),sampled_orders=[fit_order([e[i] for e in series],hs) for i in range(len(ticks))])
-record=dict(scope='Full-duration fields at common exact saved times; no temporal interpolation. Sampled field errors supplement all-stage safety and every-accepted-step constraints.',
+record=dict(scope='Full-duration physical fields at common exact saved times; no temporal interpolation. Nested nodal grids use exact restriction; regular half-cell grids use degree8 spatial interpolation. AF node has zero radial norm weight and is not a physical metric sample. Field errors supplement all-stage safety and every-accepted-step constraints.',
  interval=a.interval,times=times.tolist(),h=hs,regions=result,missing_requested_ticks=missing,
  coverage_note='Only common reported-time matches within1e-10 are compared. Older cumulative-clock frames can miss a requested tick by one RK step; none are shifted or interpolated in time. The integer-step clock repair is a separate source-bound change.',
  runs=[dict(n=z['n'],binding=z['manifest']['binding'],segments=z['segments'],all_stage_extrema=z['stages'],

@@ -2,6 +2,23 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Current arithmetic and inward-front diagnosis
+
+All41 CTest groups pass (API27). Accepted-step compensated accumulation is
+selectable and checkpointed; scalar/AF compiled and Python restarts preserve
+its low part bitwise. Three-grid pulse arithmetic controls and independent
+time/solve variations are running under a predeclared protocol. Derivative
+subtraction alone only slightly reduces the observed N4096 floor.
+
+Refinement resolves a sharp physical lapse jump with growing Khat/H/M spikes
+in the physical-log wormhole, rather than a smooth front: at t2.5 its measured
+gradient nearly doubles on each grid refinement. `puncture-asymptotics.md`
+records the snapshot evidence, limits of the gauge-shock inference and primary
+literature comparison. Reduced positive log strength and a separate harmonic
+principal control are running; no equation/gauge alternative is admitted.
+The physical-log regular finite pulse has good bulk convergence but endpoint
+peak/RMS orders2.15/2.55 fail the declared gate.
+
 ## Compiled puncture resolution study
 
 API26 supports the AF coefficient chart without changing its free equations.

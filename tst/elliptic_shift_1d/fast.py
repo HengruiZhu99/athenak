@@ -8,6 +8,7 @@ class FastEngine:
     def __init__(self,evolution,fields,library):
         a=evolution.args;op=evolution.op;self.ode_method=hasattr(op,'shift_ode_solver')
         self.puncture=getattr(a,'puncture',False)
+        self.shape=(len(op.r),fields)
         self.af=getattr(a,'puncture_chart',False)
         if (getattr(a,'radial_operator','fd')!='fd'
             or getattr(a,'lapse_variable','deviation') not in ('deviation','log-reference')
@@ -23,7 +24,7 @@ class FastEngine:
             raise ValueError('Compiled engine implements unscaled g=1 and raw/analytic endpoints')
         self.lib=C.CDLL(str(library));self.calls=0;self.advance_seconds=0.
         self.lib.spherical_fast_abi.restype=C.c_int
-        if self.lib.spherical_fast_abi()!=26:raise ValueError('Compiled engine ABI does not match this wrapper')
+        if self.lib.spherical_fast_abi()!=27:raise ValueError('Compiled engine ABI does not match this wrapper')
         self.lib.spherical_fast_last_error.argtypes=[C.c_void_p];self.lib.spherical_fast_last_error.restype=C.c_char_p
         self.failure_message=''
         fp=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')
@@ -34,11 +35,13 @@ class FastEngine:
         self.lib.spherical_fast_stats.argtypes=[C.c_void_p,fp]
         self.lib.spherical_fast_set_lapse_source.argtypes=[C.c_void_p,fp]
         self.lib.spherical_fast_set_af_reference.argtypes=[C.c_void_p,fp]
+        self.lib.spherical_fast_set_update_compensation.argtypes=[C.c_void_p,fp]
+        self.lib.spherical_fast_get_update_compensation.argtypes=[C.c_void_p,fp]
         self.lib.spherical_fast_set_shift_ode.argtypes=[C.c_void_p,C.c_int,C.c_int,C.c_int,C.c_double,fp,fp]
         self.lib.spherical_fast_rhs.argtypes=[C.c_void_p,fp,fp,C.POINTER(C.c_double)]
         self.lib.spherical_fast_advance.argtypes=[C.c_void_p,fp,C.c_int,C.c_double,C.POINTER(C.c_double)]
         params=np.array([a.kappa1,a.kappa2,a.slicing,a.lapse_restoring,a.scri_sat,
-            a.regularity_sat,a.origin_ko,a.origin_ko_radius,a.theta=='appendix-c',a.endpoint=='analytic-g1',getattr(a,'gauge_corner_sat',0.),getattr(a,'advection','centered')=='upwind',getattr(a,'puncture',False),getattr(a,'lapse_restoring_form','symmetric')=='multiplicative',getattr(a,'initial_data',None) in ('wormhole','trumpet'),getattr(a,'damping_form','constant')=='reference-lapse',getattr(a,'metric_variable','deviation')=='log',getattr(a,'lapse_variable','deviation')=='log-reference',{'linear':0,'rational':1,'blended-log':2}[getattr(a,'slicing_family','linear')],getattr(a,'slicing_scale',.1),getattr(a,'elliptic_quadrature','prefix')=='inward',getattr(a,'lapse_background_source','reference')=='collapsed-inner',getattr(a,'lapse_restoring_profile','constant')=='physical-log',getattr(a,'subtract_local',False),self.af,getattr(a,'puncture_ko',0.),getattr(a,'puncture_ko_radius',.8)],dtype=float)
+            a.regularity_sat,a.origin_ko,a.origin_ko_radius,a.theta=='appendix-c',a.endpoint=='analytic-g1',getattr(a,'gauge_corner_sat',0.),getattr(a,'advection','centered')=='upwind',getattr(a,'puncture',False),getattr(a,'lapse_restoring_form','symmetric')=='multiplicative',getattr(a,'initial_data',None) in ('wormhole','trumpet'),getattr(a,'damping_form','constant')=='reference-lapse',getattr(a,'metric_variable','deviation')=='log',getattr(a,'lapse_variable','deviation')=='log-reference',{'linear':0,'rational':1,'blended-log':2}[getattr(a,'slicing_family','linear')],getattr(a,'slicing_scale',.1),getattr(a,'elliptic_quadrature','prefix')=='inward',getattr(a,'lapse_background_source','reference')=='collapsed-inner',getattr(a,'lapse_restoring_profile','constant')=='physical-log',getattr(a,'subtract_local',False),self.af,getattr(a,'puncture_ko',0.),getattr(a,'puncture_ko_radius',.8),getattr(a,'compensated_update',False)],dtype=float)
         self.handle=self.lib.spherical_fast_create(len(op.r),fields,op.width,len(op.qindex[0]),
             op.r,np.asarray(op.index,dtype=np.int32),op.d1,op.d2,
             np.asarray(op.qindex,dtype=np.int32),op.qweights,
@@ -51,6 +54,13 @@ class FastEngine:
         if hasattr(op,'shift_ode_solver'):
             solver=op.shift_ode_solver
             self.lib.spherical_fast_set_shift_ode(self.handle,solver.bandwidth,solver.skip,solver.refinements,solver.scale,solver.lu,solver.matrix)
+
+    def set_update_compensation(self,correction):
+        if correction.shape!=self.shape or not np.all(np.isfinite(correction)):raise ValueError('Invalid accepted-step compensation')
+        self.lib.spherical_fast_set_update_compensation(self.handle,np.ascontiguousarray(correction,dtype=float))
+
+    def get_update_compensation(self):
+        result=np.zeros(self.shape);self.lib.spherical_fast_get_update_compensation(self.handle,result);return result
 
     def close(self):
         if self.handle:self.lib.spherical_fast_destroy(self.handle);self.handle=None

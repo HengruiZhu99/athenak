@@ -99,3 +99,6 @@ add_test(NAME local_subtraction_constant_nullspace_and_dense_shift
 
 add_test(NAME compiled_AF_chart_rates_RK_and_stage_monitors
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_fast_puncture.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast>)
+
+add_test(NAME compensated_accepted_increment_rational_oracle
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_compensated_update.py)

@@ -1,0 +1,73 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 6,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 1,
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner"
+  },
+  "cases": [
+    {
+      "name": "nu025-n513",
+      "arguments": {
+        "n": 513,
+        "slicing": 0.25
+      }
+    },
+    {
+      "name": "nu025-n1025",
+      "arguments": {
+        "n": 1025,
+        "slicing": 0.25
+      }
+    },
+    {
+      "name": "nu025-n2049",
+      "arguments": {
+        "n": 2049,
+        "slicing": 0.25
+      }
+    },
+    {
+      "name": "harmonic-n513",
+      "arguments": {
+        "n": 513,
+        "slicing": 0.0
+      }
+    },
+    {
+      "name": "harmonic-n1025",
+      "arguments": {
+        "n": 1025,
+        "slicing": 0.0
+      }
+    },
+    {
+      "name": "harmonic-n2049",
+      "arguments": {
+        "n": 2049,
+        "slicing": 0.0
+      }
+    },
+    {
+      "name": "baseline-n513",
+      "arguments": {
+        "n": 513
+      }
+    }
+  ],
+  "scope": "Slicing dependence of the resolved inward steep front: three grids at positive reduced 1+log strength nu=.25 and separate nu=0 harmonic-principal control. Source profile uses its derived nu_inner consistently. Main nu1 failed runs retained; harmonic control is distinct from required log-like hybrid target, and neither survival nor reduced front is admission. Candidate damping, independent constraints, Minkowski reference and all other controls fixed."
+}

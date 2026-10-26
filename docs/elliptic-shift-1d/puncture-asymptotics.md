@@ -166,7 +166,7 @@ The inner k/tau/L ODEs gain kappa1(1-kappa2)tau,
 native-kappa and limiting tests pass. Scalar and wormhole evolution controls
 do not improve sufficiently, so constant damping remains the default.
 
-A Python-only rational lapse prototype replaces F=alpha^2+4nu Omega^2 alpha by
+The rational lapse prototype (now also compiled) replaces F=alpha^2+4nu Omega^2 alpha by
 
     F=alpha^2+4nu Omega^2 alpha*(Aref+delta)/(alpha+delta), delta>0.
 
@@ -281,3 +281,32 @@ which need not make this CMC slice gauge-stationary. A separate six-case
 three-resolution matrix tests that relaxation. This already-trumpet control
 must never be labeled as a wormhole-to-trumpet experiment or as an identical
 published-coordinate reproduction without the remaining parameter audit.
+
+## Resolved inward front in the physical-log source trial
+
+Saved t2.5 snapshots at N513/1025/2049 show physical lapse gradients
+22.856/40.645/76.922 at r≈.119. Khat develops an increasingly narrow negative
+spike at the same location. Local H maxima increase.409/.654/.974 and
+M1.387/2.039/4.341 on.03<r<.3. At t3 the front moves inward to r≈.078;
+constraints still increase there with refinement. These data contradict a
+smooth resolved-front convergence claim. They support, but do not prove, a
+gauge-shock diagnosis. The immutable snapshot diagnostic explicitly captures
+running-parent manifests and does not claim later trajectory completion.
+See `evidence/physical-log-front-v1`. No physical constraint is projected.
+
+The source of comparison is Alcubierre's [gr-qc/0503030v2, Sec.III](https://arxiv.org/html/gr-qc/0503030v2):
+for its simple1+1 zero-shift setting, suppressing the quadratic self-steepening
+coefficient requires1-f-alpha f'/2=0, giving f=1+k/alpha^2. In our local
+F notation f=F/alpha^2, this indicator is1-F_alpha/(2alpha). The linear family
+F=alpha^2+4nu Omega^2 alpha gives -2nu Omega^2/alpha. This is a local
+principal comparison only: spherical Z4c, a nonlocal elliptic shift and our
+lower-order sources prevent importing its full shock theorem.
+
+[Baumgarte and Hilditch2207.06376v1](https://arxiv.org/html/2207.06376v1) compare
+alternative shock-avoiding slicing with1+log in black-hole and other tests.
+Their added constant in F can permit negative lapse, so it cannot simply be
+inserted into a positive-lapse chart with the old AF ODE/source. That extension
+needs its own derivation. The current, predeclared slicing-front controls instead
+compare positive reduced nu=.25 with a separately labeled nu=0 harmonic
+principal control, retaining all other choices. Harmonic success would not
+replace the required log-like target.

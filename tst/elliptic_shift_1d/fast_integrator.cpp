@@ -13,7 +13,7 @@ struct Engine {
   int n,nf,w,qw; double h; Vec r,d1,d2,qweights,params;
   std::vector<int> index,qindex;
   std::vector<int> aleft,aright;Vec awleft,awright;
-  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha,af_reference,chart_d,total_khat;
+  Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha,af_reference,chart_d,total_khat,update_compensation;
   long calls=0; double solve_seconds=0;
   bool puncture=false,af=false;
   std::string error;
@@ -23,13 +23,13 @@ struct Engine {
       const double* D1,const double* D2,const int* qi,const double* qwt,
       const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
       d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
-      params(p,p+27),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      params(p,p+28),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
       aleft(al,al+N*W),aright(ar,ar+N*W),awleft(alw,alw+N*W),awright(arw,arw+N*W) {
     for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
     lapse_source.resize(n,0.);
     primitive.resize(n*nf);total_chi.resize(n);total_alpha.resize(n);
-    chart_d.resize(n*nf);total_khat.resize(n);af=p[24]!=0;
+    chart_d.resize(n*nf);total_khat.resize(n);update_compensation.resize(n*nf,0);af=p[24]!=0;
     if(nf!=8&&nf!=10)throw std::runtime_error("invalid field count");
     diagnostics[3]=diagnostics[4]=std::numeric_limits<double>::infinity();
     puncture=p[12]!=0;if(puncture&&!af)diagnostics[11]=-std::numeric_limits<double>::infinity();
@@ -394,13 +394,19 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 26;}
+int spherical_fast_abi(){return 27;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);
 }
 void spherical_fast_set_af_reference(void* handle,const double* source){
   auto& e=*static_cast<Engine*>(handle);e.af_reference.assign(source,source+e.n*18);
+}
+void spherical_fast_set_update_compensation(void* handle,const double* source){
+  auto& e=*static_cast<Engine*>(handle);std::copy(source,source+e.n*e.nf,e.update_compensation.begin());
+}
+void spherical_fast_get_update_compensation(void* handle,double* destination){
+  auto& e=*static_cast<Engine*>(handle);std::copy(e.update_compensation.begin(),e.update_compensation.end(),destination);
 }
 void spherical_fast_set_lapse_source(void* handle,const double* source){
   auto& e=*static_cast<Engine*>(handle);std::copy(source,source+e.n,e.lapse_source.begin());
@@ -432,7 +438,13 @@ int spherical_fast_advance(void* handle,double* q,int steps,double dt,double* en
       double f3=e.rhs(e.stage.data(),e.k3.data());
       for(int j=0;j<size;j++)e.stage[j]=q[j]+dt*e.k3[j];
       double f4=e.rhs(e.stage.data(),e.k4.data());
-      for(int j=0;j<size;j++)q[j]+=dt*(e.k1[j]+2*e.k2[j]+2*e.k3[j]+e.k4[j])/6;
+      for(int j=0;j<size;j++) {
+        double increment=dt*(e.k1[j]+2*e.k2[j]+2*e.k3[j]+e.k4[j])/6;
+        if(e.params[27]!=0) {
+          double adjusted=increment-e.update_compensation[j],updated=q[j]+adjusted;
+          e.update_compensation[j]=(updated-q[j])-adjusted;q[j]=updated;
+        } else q[j]+=increment;
+      }
       *energy+=dt*(f1+2*f2+2*f3+f4)/6;
     }
   }catch(const std::exception& failure){e.error=failure.what();return -done-1;}
