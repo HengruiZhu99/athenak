@@ -87,3 +87,9 @@ add_test(NAME long_integer_step_clock_and_fractional_epochs
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_time_lattice.py)
 add_test(NAME scalar_clock_cadence_and_long_aligned_restart
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_clock_evolution.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast>)
+add_test(NAME physical_log_AF_native_rates
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c> --lapse-restoring-profile physical-log --lapse-background-source collapsed-inner)
+add_test(NAME physical_log_AF_coefficient_limits
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c> --lapse-restoring-profile physical-log --lapse-background-source collapsed-inner)
+add_test(NAME physical_log_finite_Khat_native_collapsed_limit
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_physical_log_source.py --library $<TARGET_FILE:spherical_z4c>)

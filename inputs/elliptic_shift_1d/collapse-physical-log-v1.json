@@ -1,0 +1,42 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.02,
+    "t": 3,
+    "scalar": true,
+    "scalar_amplitude": 0.07,
+    "initial_precision": "decimal",
+    "initial_tolerance": 1e-11,
+    "lapse_restoring_form": "multiplicative",
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner"
+  },
+  "cases": [
+    {
+      "name": "n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ],
+  "scope": "Same constraint-solved fully coupled scalar A=.07 collapse with the explicitly derived physical collapsed-lapse source profile and background correction. Main Minkowski reference, independent free Z4c fields, log positive variables, kappa4,-.99. No survival-only acceptance and no horizon/constraint projection."
+}

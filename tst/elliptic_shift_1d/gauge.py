@@ -19,6 +19,18 @@ def af_slicing_strength(slicing=1.,family='linear',scale=.1):
     return slicing*(.5+scale)/scale if family=='rational' else slicing
 
 
+def restoring_coefficient(r,strength,slicing=1.,family='linear',scale=.1,profile='constant'):
+    """Smooth inner reference-offset cancellation; same first scri jets.
+
+    With multiplicative restoring and collapsed-inner background source,
+    xi(0)=3 nu_inner recovers physical1+log leading collapsed-lapse behavior.
+    This changes the interior linear gauge source, not an Einstein equation.
+    """
+    if profile=='constant':return strength
+    if profile=='physical-log':return strength+(3*af_slicing_strength(slicing,family,scale)-strength)*(1-r*r)**4
+    raise ValueError('Unknown restoring profile')
+
+
 def blended_correction(r,alpha,khat_deviation,slicing=1.):
     O=(1-r*r)/2
     return 4*O*O*alpha*(alpha+slicing*r*r)*khat_deviation

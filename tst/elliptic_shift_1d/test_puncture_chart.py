@@ -6,12 +6,12 @@ import numpy as np
 from puncture_chart import PunctureChart
 from wormhole_isotropic import IsotropicWormhole
 from kernel import Kernel
-p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--damping-form',choices=['constant','reference-lapse'],default='constant');p.add_argument('--slicing-family',choices=['linear','rational','blended-log'],default='linear');p.add_argument('--radial-operator',choices=['fd','sbp63'],default='fd');p.add_argument('--lapse-background-source',choices=['reference','collapsed-inner'],default='reference');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--damping-form',choices=['constant','reference-lapse'],default='constant');p.add_argument('--slicing-family',choices=['linear','rational','blended-log'],default='linear');p.add_argument('--radial-operator',choices=['fd','sbp63'],default='fd');p.add_argument('--lapse-background-source',choices=['reference','collapsed-inner'],default='reference');p.add_argument('--lapse-restoring-profile',choices=['constant','physical-log'],default='constant');a=p.parse_args()
 args=SimpleNamespace(n=129,origin_grid=False,puncture=True,puncture_chart=True,origin_variables=False,
     backend='spherical-g1',width=7,quadrature_width=7,library=a.library,kappa1=4.,kappa2=-.99,
     theta='appendix-c',slicing=1.,lapse_restoring=1.,lapse_restoring_form='multiplicative',
     endpoint='raw-lhopital',scri_sat=4.,regularity_sat=8.,origin_ko=0.,origin_ko_radius=.4,
-    advection='centered',eta=0.,gauge_corner_sat=0.,damping_form=a.damping_form,slicing_family=a.slicing_family,slicing_scale=.1,radial_operator=a.radial_operator,lapse_background_source=a.lapse_background_source)
+    advection='centered',eta=0.,gauge_corner_sat=0.,damping_form=a.damping_form,slicing_family=a.slicing_family,slicing_scale=.1,radial_operator=a.radial_operator,lapse_background_source=a.lapse_background_source,lapse_restoring_profile=a.lapse_restoring_profile)
 ev=PunctureChart(args);state,initial,*_=ev.initial_wormhole(IsotropicWormhole())
 np.testing.assert_allclose(ev.to_physical(state),initial,atol=3e-14,rtol=3e-14)
 f=(1-ev.r)**6
@@ -26,7 +26,9 @@ if a.damping_form=='reference-lapse':
     for i in range(len(r)):
         native.append(kernel.parts(r[i:i+1],q[i+1:i+2],d[i+1:i+2],dd[i+1:i+2],beta[i+1:i+2],db[i:i+1],ddb[i:i+1],kappa1=effective[i],total_chi=ev.total_chi[i+1:i+2]))
     nativeR=np.concatenate([z[0] for z in native]);nativeS=np.concatenate([z[1] for z in native])
-nativeS[:,6]-=2*alpha*q[1:,6]
+nu_inner=6. if a.slicing_family=='rational' else 1.
+strength=1+(3*nu_inner-1)*(1-r*r)**4 if a.lapse_restoring_profile=='physical-log' else 1.
+nativeS[:,6]-=2*strength*alpha*q[1:,6]
 if a.slicing_family!='linear':
     # Independent replacement of the principal lapse factor in the native RHS.
     O=(1-r*r)/2;A=(1+r*r)/2

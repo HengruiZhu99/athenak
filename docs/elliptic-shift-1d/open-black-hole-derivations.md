@@ -1,8 +1,8 @@
-# Open black-hole derivations (not implemented or admitted)
+# Black-hole source trials and open derivations
 
-These are candidate next steps. None is a successful evolution, an initial-data
-solver, or permission to replace a failed experiment with a different physical
-one. Native constraints and independent convergence remain required.
+The physical-log source below has been implemented and tested, with failed
+scientific gates retained. The other sections are candidate derivations, not
+completed solvers. Native constraints and independent convergence remain required.
 
 ## A nonlinear restoring-source candidate
 
@@ -135,8 +135,20 @@ Khat(0)=0. More generally at a collapsed trumpet the leading physical lapse
 source becomes -2nu_inner alpha_physical Khat, retaining the intended live
 reference-reduced Khat choice off constraint. Minkowski equilibrium remains
 exact; the interior linear source changes, while the first scri limits remain
-unchanged. This is an unimplemented source-profile proposal, not a successful
-wormhole evolution. Test its native/AF limits, regular pulse behavior, separated
-source-only/profile-only controls and genuine wormhole/collapse evolutions
-before considering adoption. Keep kappa4,-.99 and a separately labeled
-reference-lapse damping control so source and damping effects remain visible.
+unchanged. This source profile is now implemented in Python and compiled API24. Independent
+native AF and finite-Khat collapsed-trumpet limits pass; 48 compiled/Python
+positive-field cases and bitwise scalar/AF restart checks pass. The full suite
+has 38 passing groups. Its predeclared physical-log-source-protocol-v1.json
+separates both changes and the reference-lapse damping control.
+
+The genuine wormhole trials reach6 at N129/257/513 but fail the constraint
+criteria: all-stage H peaks1.862/.367/.0513 and M13.36/6.47/1.85. The inward
+gauge front steepens and the final near-inner areal radius appears to approach
+a nonzero limit, but its profiles and constraints are not converged. The
+profile-only run has small horizon-mass error while retaining large constraint
+errors. Source-only fails at3.0953 with overflow. Reference damping does not
+repair the main failed trial. Coupled A=.07 collapse reaches3 at N256/512/1024
+with H peaks805/17247/179174 and increasing momentum errors. Survival and
+trumpet-like geometry are not admissions. See evidence/physical-log-invariants-v1
+and the frozen output matrices. Resolution of the inward front, regularity,
+and independent arithmetic controls remain required.

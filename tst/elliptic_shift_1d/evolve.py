@@ -9,7 +9,7 @@ import numpy as np
 from elliptic import solve,residual,connection
 from numerics import RadialOperators,weights
 from kernel import Kernel,PARITY
-from gauge import lapse_coefficient,rational_correction,collapsed_background_correction,blended_correction
+from gauge import lapse_coefficient,rational_correction,collapsed_background_correction,blended_correction,restoring_coefficient
 from horizon import apparent_horizons
 from time_lattice import FixedStepClock
 
@@ -32,11 +32,13 @@ class Evolution:
             self.op.shift_ode_solver=BandedShift(self.op,getattr(args,'elliptic_refinements',2),getattr(args,'elliptic_bias','centered'))
         self.kernel=Kernel(args.library);self.calls=0;self.solve_seconds=0.
         self.stage_metrics={};self.stage_calls=0
+        self.restoring_strength=restoring_coefficient(self.r,args.lapse_restoring,args.slicing,
+            getattr(args,'slicing_family','linear'),getattr(args,'slicing_scale',.1),getattr(args,'lapse_restoring_profile','constant'))
         self.lapse_source=np.zeros(args.n)
         if getattr(args,'lapse_reference','minkowski')=='CMC-trumpet':
             from trumpet_data import CMCTrumpet
             self.lapse_source=CMCTrumpet(args.mass,args.initial_quadrature_order).lapse_source(
-                self.r,args.lapse_restoring,getattr(args,'lapse_restoring_form','symmetric'))
+                self.r,self.restoring_strength,getattr(args,'lapse_restoring_form','symmetric'))
         self.alpha_profile=None
         self.metric_scale=None
         self.trumpet_metric=getattr(args,'metric_variable','deviation')=='log-trumpet'
@@ -124,7 +126,7 @@ class Evolution:
             import g1_rhs
             timing={}
             R,S,diag,beta,db,ddb=g1_rhs.parts(self.op,q,d,dd,self.args.kappa1,self.args.kappa2,
-                self.args.theta=='appendix-c',self.args.slicing,0. if getattr(self.args,'lapse_restoring_form','symmetric')=='multiplicative' else self.args.lapse_restoring,timing,
+                self.args.theta=='appendix-c',self.args.slicing,0. if getattr(self.args,'lapse_restoring_form','symmetric')=='multiplicative' else self.restoring_strength,timing,
                 puncture_cancellation=getattr(self.args,'puncture',False),total_alpha=total_alpha,total_chi=total_chi,
                 trumpet_chi=trumpet_chi)
             self.solve_seconds+=timing['elliptic_seconds']
@@ -140,8 +142,11 @@ class Evolution:
         if getattr(self.args,'lapse_restoring_form','symmetric')=='multiplicative':
             # -2xi alpha*(alpha-A) replaces -xi(alpha+A)*(alpha-A).
             # Their difference is quadratic and preserves alpha=0 at the puncture.
-            if getattr(self.args,'backend','native')=='spherical-g1':S[:,6]-=2*self.args.lapse_restoring*alpha*q[:,6]
+            if getattr(self.args,'backend','native')=='spherical-g1':S[:,6]-=2*self.restoring_strength*alpha*q[:,6]
             else:S[:,6]-=self.args.lapse_restoring*q[:,6]**2
+        if getattr(self.args,'lapse_restoring_profile','constant')!='constant' and self.args.backend!='spherical-g1':
+            factor=2*alpha if getattr(self.args,'lapse_restoring_form','symmetric')=='multiplicative' else alpha+(1+self.r*self.r)/2
+            S[:,6]-=(self.restoring_strength-self.args.lapse_restoring)*factor*q[:,6]
         if getattr(self.args,'damping_form','constant')=='reference-lapse':
             D=-self.args.kappa1*q[:,6]
             S[:,3]+=D*(1-self.args.kappa2)*q[:,4]
@@ -431,6 +436,7 @@ def main():
     p.add_argument('--damping-form',choices=['constant','reference-lapse'],default='constant')
     p.add_argument('--lapse-restoring',type=float,default=0.)
     p.add_argument('--lapse-restoring-form',choices=['symmetric','multiplicative'],default='symmetric')
+    p.add_argument('--lapse-restoring-profile',choices=['constant','physical-log'],default='constant')
     p.add_argument('--eta',type=float,default=0.);p.add_argument('--slicing',type=float,default=1.)
     p.add_argument('--slicing-family',choices=['linear','rational','blended-log'],default='linear')
     p.add_argument('--slicing-scale',type=float,default=.1)
@@ -461,7 +467,6 @@ def main():
     if args.elliptic_method=='discrete-ode' and (args.backend!='spherical-g1' or args.radial_operator!='fd' or args.puncture_chart):
         raise ValueError('Discrete shift ODE prototype requires the g=1 FD regular-center or fixed-cutoff path')
     if args.slicing_family=='blended-log' and args.slicing==0:raise ValueError('Blended-log slicing requires a positive interior strength')
-    if args.fast_library and args.lapse_background_source!='reference':raise ValueError('The collapsed-inner source prototype uses Python integration')
     if args.lapse_reference=='CMC-trumpet' and (args.initial_data!='trumpet' or args.lapse_background_source!='reference'):
         raise ValueError('The CMC lapse-reference control requires already-trumpet data and the reference background source')
     if args.lapse_variable=='log-trumpet' and (args.initial_data!='trumpet' or args.fast_library or args.advection!='centered'):
@@ -598,7 +603,7 @@ def main():
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
+            for key in ('n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
             for key in ['scalar_initial_data','wormhole_initial_data','trumpet_initial_data']:

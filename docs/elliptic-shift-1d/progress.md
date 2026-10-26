@@ -2,6 +2,25 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Physical-log source and completed finer controls
+
+Thirty-eight CTest groups pass (`evidence/ctest-v32.log`). Compiled API24
+supports the separately selectable physical-log restoring profile and
+collapsed-inner background correction. Native AF/trumpet limits, independent
+constraint variables, cross-implementation stage/flux agreement and bitwise
+restarts pass. The derivation and failed nonlinear outcomes are recorded in
+`open-black-hole-derivations.md`; no wormhole or scalar-collapse result is
+admitted.
+
+The N8192 exact-clock pulse check is finished. For N2048/4096/8192, common-time
+physical-field peak orders are3.88 in the bulk and4.20 near scri through1.
+The finest accepted H/M constraints increase relative to N4096, so this is
+not a full convergence admission. Independent constant-field diagnostics
+expose growing roundoff in direct derivative sums; an arithmetic-controlled
+evolution is needed to establish its contribution to the observed upturn.
+N1024/2048/4096 exact-clock continuations to6 have also finished; the full
+trajectory analysis is retained under `evidence/clock-gauge-duration-trajectory-v1`.
+
 ## Current discrete-shift, clock and transient audit
 
 Thirty-five CTest groups pass (`evidence/ctest-v31.log`). API23 supports a

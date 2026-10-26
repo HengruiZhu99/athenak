@@ -17,6 +17,8 @@ for index,(origin,scalar,variables,endpoint,ko) in enumerate(product([False,True
     opts.elliptic_quadrature='inward' if index%2 else 'prefix'
     opts.elliptic_method='discrete-ode' if index%4==0 else 'quadrature'
     opts.elliptic_bias='right'
+    opts.lapse_restoring_profile='physical-log' if index%5 in (1,2) else 'constant'
+    opts.lapse_background_source='collapsed-inner' if index%5 in (2,3) else 'reference'
     opts.slicing_family=['linear','rational','blended-log'][index%3];opts.slicing_scale=.1
     ev=(CoupledEvolution if scalar else Evolution)(opts);r=ev.r;nf=10 if scalar else 8;q=np.zeros((len(r),nf));f=(1-r*r)**4
     for field,amplitude,power in [(0,.002,0),(2,.001,2),(3,.0015,0),(4,.0001,0),(5,.0002,1),(6,.002,0)]:q[:,field]=amplitude*r**power*f

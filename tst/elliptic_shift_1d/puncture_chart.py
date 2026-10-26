@@ -83,7 +83,8 @@ class PunctureChart(Evolution):
             self.args.theta=='appendix-c',self.args.slicing,0.,timing,
             total_chi=chi[1:],total_alpha=alpha[1:],total_khat=khat[1:],puncture_cancellation=True)
         # Direct multiplicative expression avoids subtracting two O(1) sources.
-        S[:,6]-=2*self.args.lapse_restoring*alpha[1:]*q[1:,6]
+        strength=self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[1:]
+        S[:,6]-=2*strength*alpha[1:]*q[1:,6]
         if getattr(self.args,'slicing_family','linear')=='rational':S[:,6]+=rational_correction(self.r[1:],alpha[1:],q[1:,6],q[1:,3],self.args.slicing,self.args.slicing_scale)
         if getattr(self.args,'slicing_family','linear')=='blended-log':S[:,6]+=blended_correction(self.r[1:],alpha[1:],q[1:,3],self.args.slicing)
         if getattr(self.args,'lapse_background_source','reference')=='collapsed-inner':S[:,6]+=collapsed_background_correction(self.r[1:],q[1:,6])
@@ -122,7 +123,7 @@ class PunctureChart(Evolution):
         result[positive,6]=rate[positive,6]/self.total_alpha[positive]
         for f in [2,3,4]:result[positive,f]=rate[positive,f]/w[positive]
         result[:,5]=rate[:,5]
-        b1=self.b1;xi=self.args.lapse_restoring;nu=af_slicing_strength(self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1));A0=8*np.exp(state[0,6])
+        b1=self.b1;xi=float(self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[0]);nu=af_slicing_strength(self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1));A0=8*np.exp(state[0,6])
         result[0,0]=2*b1;result[0,6]=2*b1-6*nu+2*xi
         if getattr(self.args,'lapse_background_source','reference')=='reference':result[0,6]+=2/A0
         result[0,2]=2*b1*state[0,2];result[0,3]=2*b1*(state[0,3]-3)

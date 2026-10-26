@@ -1,0 +1,72 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 6,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 1,
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner"
+  },
+  "cases": [
+    {
+      "name": "n129",
+      "arguments": {
+        "n": 129
+      }
+    },
+    {
+      "name": "n257",
+      "arguments": {
+        "n": 257
+      }
+    },
+    {
+      "name": "n513",
+      "arguments": {
+        "n": 513
+      }
+    },
+    {
+      "name": "baseline-n257",
+      "arguments": {
+        "n": 257,
+        "lapse_restoring_profile": "constant",
+        "lapse_background_source": "reference"
+      }
+    },
+    {
+      "name": "source-only-n257",
+      "arguments": {
+        "n": 257,
+        "lapse_restoring_profile": "constant"
+      }
+    },
+    {
+      "name": "profile-only-n257",
+      "arguments": {
+        "n": 257,
+        "lapse_background_source": "reference"
+      }
+    },
+    {
+      "name": "reference-damping-n257",
+      "arguments": {
+        "n": 257,
+        "damping_form": "reference-lapse"
+      }
+    }
+  ],
+  "scope": "Genuine isotropic wormhole with physical psi^-2 inner lapse and derived hyperboloidal exterior, main Minkowski reference. Multiplicative xi_eff=xi+(3nu_inner-xi)(2Omega)^4 plus the collapsed-inner additive-source correction gives physical1+log leading inner behavior and preserves first scri limits. Main kappa4,-.99 three-resolution study, isolated source/profile controls and separately labeled reference-lapse damping. Every failed result remains; no initial trumpet or constraint projection."
+}

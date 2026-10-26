@@ -23,7 +23,7 @@ struct Engine {
       const double* D1,const double* D2,const int* qi,const double* qwt,
       const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
       d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
-      params(p,p+21),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      params(p,p+23),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
       aleft(al,al+N*W),aright(ar,ar+N*W),awleft(alw,alw+N*W),awright(arw,arw+N*W) {
     for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
@@ -182,8 +182,14 @@ struct Engine {
       R[k+5]=b*lp+2*lam*divb/3+2*alpha*(ap+3*ar-1.5*Ar*cp/chi);
       S[k+5]=-alpha*(2*K/3+kap)*lam-2*alpha/3*(2*pp+Tp)+4*alpha*Ar*x;
       double F=lapse_coefficient(x,alpha);
+      double local_xi=xi;
+      if(params[22]!=0) {
+        double nu_inner=params[2];if(static_cast<int>(params[18])==1)nu_inner*=(.5+params[19])/params[19];
+        local_xi+=(3*nu_inner-xi)*16*O*O*O*O;
+      }
       R[k+6]=b*up+vv*x;
-      S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-xi*(params[13]!=0?2*alpha:alpha+A0)*u;
+      S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-local_xi*(params[13]!=0?2*alpha:alpha+A0)*u;
+      if(params[21]!=0)S[k+6]+=16*O*O*O*O*x*x*u/A0;
       if(params[15]!=0) {
         double D=-kap*u;S[k+3]+=D*(1-kap2)*T;S[k+4]-=D*(2+kap2)*T;S[k+5]-=D*lam;
       }
@@ -316,7 +322,7 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 23;}
+int spherical_fast_abi(){return 24;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);
