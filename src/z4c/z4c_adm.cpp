@@ -17,6 +17,7 @@
 #include "parameter_input.hpp"
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/cubed_sphere/derivatives.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/tmunu.hpp"
@@ -59,6 +60,7 @@ void Z4c::ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
+  auto geometry = pmbp->pcoord->z4c_geometry;
   int &is = indcs.is; int &ie = indcs.ie;
   int &js = indcs.js; int &je = indcs.je;
   int &ks = indcs.ks; int &ke = indcs.ke;
@@ -155,7 +157,7 @@ void Z4c::ADMToZ4c(MeshBlockPack *pmbp, ParameterInput *pin) {
   par_for("initialize Gamma",DevExeSpace(),0,nmb-1,ks,ke,js,je,is,ie,
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     // Usage of Dx: pmbp->pz4c->Dx(blockn, posvar, k,j,i, dir, nghost, dx, quantity);
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto idx = cubed_sphere::MakeStencil(geometry,size.d_view(m),indcs,m,k,j,i);
     /*AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> Gamma_udd;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> dg_ddd;
@@ -282,6 +284,7 @@ void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
+  auto geometry = pmbp->pcoord->z4c_geometry;
   int &is = indcs.is; int &ie = indcs.ie;
   int &js = indcs.js; int &je = indcs.je;
   int &ks = indcs.ks; int &ke = indcs.ke;
@@ -313,7 +316,7 @@ void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
 
     AthenaPointTensor<Real, TensorSymm::SYM22, 3, 4> ddg_dddd;
 
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto idx = cubed_sphere::MakeStencil(geometry,size.d_view(m),indcs,m,k,j,i);
 
     // -----------------------------------------------------------------------------------
     // derivatives
@@ -444,7 +447,7 @@ void Z4c::ADMConstraints(MeshBlockPack *pmbp) {
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> DK_udd;
 
 
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto idx = cubed_sphere::MakeStencil(geometry,size.d_view(m),indcs,m,k,j,i);
 
     // -----------------------------------------------------------------------------------
     // derivatives

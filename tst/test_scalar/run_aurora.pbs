@@ -1,0 +1,37 @@
+#!/bin/bash -l
+#PBS -N frozen-scalar
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+export SCALAR_ALLOCATION_WALL_SECONDS=1800
+ulimit -c 0
+export SCALAR_JOB_STARTED=$(date +%s)
+cd "${PBS_O_WORKDIR:?}"
+result="$PWD/results/${PBS_JOBID:?}"
+mkdir -p "$result"
+exec >"$result/job.log" 2>&1
+module load oneapi/release/2025.3.1
+module list
+date -u
+# This isolated tree contains no production Z4c executable or writable baseline.
+sha256sum -c source.sha256
+cmake -S source/src/test_scalar -B build-sycl \
+  -DCMAKE_CXX_COMPILER=icpx -DCMAKE_CXX_FLAGS=-fsycl -DKokkos_ENABLE_SYCL=ON \
+  -DKokkos_ARCH_INTEL_PVC=ON -DKokkos_ENABLE_SERIAL=ON \
+  -DCMAKE_BUILD_TYPE=Release >"$result/configure.log" 2>&1
+cmake --build build-sycl -j 8 >"$result/build.log" 2>&1
+cp build-sycl/test_scalar "$result/test_scalar"
+sha256sum "$result/test_scalar" >"$result/executable.sha256"
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_AFFINITY_MASK=0.0
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export OMP_NUM_THREADS=1
+# CPU admission receipt selects the stage and is validated by the submitter.
+/usr/bin/python3.11 source/tst/test_scalar/gpu_worker.py \
+  --exe "$result/test_scalar" --output "$result" --admission cpu-admission.json
+sha256sum -c source.sha256
+date -u

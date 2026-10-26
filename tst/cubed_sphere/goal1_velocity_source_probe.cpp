@@ -1,0 +1,35 @@
+#include "goal1_velocity_reduced_source.hpp"
+#include "goal1_holonomic_momentum.hpp"
+#include "goal1_endpoint_point.hpp"
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <random>
+#include "mesh/mesh.hpp"
+#include "mesh/cubed_sphere/derivatives.hpp"
+#include "mesh/cubed_sphere/interior_radial.hpp"
+#include "mesh/cubed_sphere/research_radial_sbp.hpp"
+namespace cubed_sphere {namespace hyp=z4c::hyperboloidal;using Z=z4c::Z4c;
+#include "native_v2_loader.hpp"
+}
+namespace cs=cubed_sphere;namespace h=z4c::hyperboloidal;namespace hc=cs::holonomic_chart;namespace vm=cs::velocity_momentum;namespace vr=cs::velocity_reduced_source;namespace old=cs::native_reduced_source;using State=h::Z4cJet<Real>;
+Real Scaled(Real a,Real b){return std::abs(a-b)/std::max({Real(1),std::abs(a),std::abs(b)});}
+std::array<Real,10>Check(const State&u,const h::LayerPoint<Real>&p,const Real*x,const std::string&kind,int index){
+ static int next=0;int ordinal=next++;h::LayerReference<Real>descriptor(1.,.5,{true,.05,.95});hc::Config q,q0;hc::Encode(u,q);hc::Encode(p.state,q0);old::Vector qbar{},P{},W{};old::Gradient g{},DP{};old::Hessian Dg{},curl{};vm::AssembleInterior(vm::MomentumParts(u,p,rwm::ReferenceConnection(p,x)),p.omega,W);
+ for(int n=0;n<10;++n){qbar[n]=q[n].f-q0[n].f;P[n]=W[n]+qbar[n];for(int i=0;i<3;++i){g[i][n]=q[n].d[i]-q0[n].d[i];DP[i][n]=.001*sin((ordinal+1)*(n+1)*(.13+.07*i));for(int j=i;j<3;++j)Dg[i][j][n]=Dg[j][i][n]=.002*cos((ordinal+1)*(n+1)*(.11+.03*(i+1)*(j+1)));}}
+ curl=Dg;for(int n=0;n<10;++n)for(int i=0;i<3;++i)for(int j=i+1;j<3;++j){Real v=.003*sin((ordinal+1)*(n+1)*(i+j+.3));curl[i][j][n]+=v;curl[j][i][n]-=v;}
+ auto source=vr::Source(descriptor,p,x,qbar,g,P);auto e=vr::Evaluate(descriptor,p,x,qbar,g,P,Dg,DP);auto ec=vr::Evaluate(descriptor,p,x,qbar,g,P,curl,DP);if(!source.valid||!e.valid||!ec.valid)throw std::runtime_error("velocity full source invalid");auto geometry=h::Geometry(e.native.metric);Real a[3][3];for(int i=0;i<3;++i)for(int j=0;j<3;++j)a[i][j]=e.native.alpha.value*e.native.alpha.value*e.native.chi.value*geometry.inverse[i][j];Real source_error=0,curl_error=0,rawcurl=0,qerror=0,gerror=0;Real Ae[3][10][10]{};
+ for(int i=0;i<3;++i)for(int col=0;col<10;++col){if(col>=1&&col<=5)continue;auto var=cs::typed_support::Map<cs::Jet>(e.native,[](int,Real v){return cs::Jet(v);});if(col==0)var.chi.d[i].d[0]=1;else if(col==6)var.alpha.d[i].d[0]=1;else var.beta.d[i][col-7].d[0]=1;auto ref=cs::typed_support::Constant<cs::Jet>(p);std::array<cs::Jet,10>pi;cs::typed_momentum::Momentum(var,ref.state,cs::Jet(p.omega),pi);for(int n=0;n<10;++n)Ae[i][n][col]=pi[n].d[0];}
+ for(int n=0;n<10;++n){Real expect=source.P[n],expectc=source.P[n];for(int i=0;i<3;++i){expect+=e.native.beta.value[i]*DP[i][n];expectc+=e.native.beta.value[i]*DP[i][n];for(int j=0;j<3;++j){expect+=a[i][j]*Dg[i][j][n];expectc+=a[i][j]*curl[i][j][n];}}Real correction=0;for(int i=0;i<3;++i)for(int j=i+1;j<3;++j)for(int col=0;col<10;++col){Real comm=0;for(int k=0;k<10;++k)comm+=Ae[i][n][k]*Ae[j][k][col]-Ae[j][n][k]*Ae[i][k][col];correction+=.5*comm*(curl[i][j][col]-curl[j][i][col]);}source_error=std::max(source_error,Scaled(e.Pdot[n],expect));curl_error=std::max(curl_error,Scaled(ec.Pdot[n],expectc+correction));rawcurl=std::max(rawcurl,std::abs(ec.Pdot[n]-expectc));Real qexpect=P[n]-qbar[n];for(int i=0;i<3;++i)qexpect+=e.native.beta.value[i]*g[i][n];qerror=std::max(qerror,Scaled(e.qdot[n],qexpect));for(int i=0;i<3;++i){Real ge=DP[i][n]-g[i][n];for(int j=0;j<3;++j)ge+=e.native.beta.value[j]*Dg[j][i][n]+e.native.beta.d[i][j]*g[j][n];gerror=std::max(gerror,Scaled(e.gdot[i][n],ge));}}
+ // Exact change of variables against the preserved old full native reduction.
+ auto spatial=cs::endpoint_point::First(e.native);auto conn=cs::reference_connection_ad::Build(descriptor,p,x);auto ref=cs::native_source_ad::ReferenceFirst(p,conn.omega_third);std::array<cs::Jet,10>F;vm::AssembleInterior(vm::SourceParts(spatial,ref,conn.connection),ref.omega,F);old::Vector Pold;old::Gradient DPold;for(int n=0;n<10;++n){Pold[n]=P[n]-F[n].f;for(int i=0;i<3;++i)DPold[i][n]=DP[i][n]-F[n].d[i];}auto eo=old::Evaluate(descriptor,p,x,qbar,g,Pold,Dg,DPold);auto time=vr::Time(e.native,e.rhs,e.gdot);auto fixed=cs::typed_support::Constant<cs::Jet>(p);auto connection=cs::typed_support::Constant<cs::Jet>(rwm::ReferenceConnection(p,x));std::array<cs::Jet,10>Ft;vm::AssembleInterior(vm::SourceParts(time,fixed,connection),cs::Jet(p.omega),Ft);Real oldchange=0,invariant=0;std::array<cs::Jet,10>changed;vm::AssembleInterior(vm::MomentumParts(vr::Time(e.native,e.rhs,e.gdot,.123),fixed,connection),cs::Jet(p.omega),changed);for(int n=0;n<10;++n){oldchange=std::max(oldchange,Scaled(e.Pdot[n],eo.Pdot[n]+Ft[n].d[0]));invariant=std::max(invariant,Scaled(changed[n].d[0]+e.qdot[n],e.Pdot[n]));}
+ std::cout<<"{\"kind\":\""<<kind<<"\",\"case\":"<<index<<",\"ordinal\":"<<ordinal<<",\"full_native_source_scaled\":"<<source_error<<",\"explicit_curl_corrected_scaled\":"<<curl_error<<",\"raw_curl_omission_absolute\":"<<rawcurl<<",\"q_equation_scaled\":"<<qerror<<",\"g_equation_scaled\":"<<gerror<<",\"old_full_source_change_of_variables_scaled\":"<<oldchange<<",\"unused_metric_gradient_time_invariance_scaled\":"<<invariant<<",\"det_time_absolute\":"<<std::abs(e.det_time)<<",\"A_trace_time_absolute\":"<<std::abs(e.A_trace_time);
+ if(kind=="synthetic"||index%23==0){
+  // Core<Jet> native q spatial gradients are independent of the reduced gdot.
+  auto qt=cs::typed_support::Core(spatial,ref,conn.connection);h::Z4cRHS<cs::Jet>f{};h::GaugeRHS<cs::Jet>gg{};f.chi=qt[0];gg.alpha=qt[18];int ai[6]={0,0,0,1,1,2},bi[6]={0,1,2,1,2,2};for(int n=0;n<6;++n)f.metric[ai[n]][bi[n]]=f.metric[bi[n]][ai[n]]=qt[1+n];for(int i=0;i<3;++i)gg.beta[i]=qt[19+i];std::array<cs::Jet,10>qtime;cs::typed_momentum::Velocity(spatial,f,gg,qtime);old::Gradient actualgdot{};for(int i=0;i<3;++i)for(int n=0;n<10;++n)actualgdot[i][n]=qtime[n].d[i];std::array<cs::Jet,10>actualWtime;vm::AssembleInterior(vm::MomentumParts(vr::Time(e.native,e.rhs,actualgdot),fixed,connection),cs::Jet(p.omega),actualWtime);Real qgraderror=0;for(int i=0;i<3;++i)for(int n=0;n<10;++n)qgraderror=std::max(qgraderror,Scaled(actualgdot[i][n],e.gdot[i][n]));Real independent=0;for(int n=0;n<10;++n)independent=std::max(independent,Scaled(actualWtime[n].d[0]+e.qdot[n],e.Pdot[n]));std::cout<<",\"independent_q_gradient_scaled\":"<<qgraderror<<",\"independent_native_time_chain_scaled\":"<<independent;
+ }std::cout<<"}"<<std::endl;return source.P;
+}
+void Audit(const State&u,const h::LayerPoint<Real>&p,const Real*x,const Real*,const std::string&kind,int index){Check(u,p,x,kind,index);}
+#include "chart_native_cases.hpp"
+#include "ad_synthetic_cases.hpp"
+int main(int argc,char**argv){Kokkos::initialize(argc,argv);std::cout<<std::setprecision(17);int status=0;try{if(argc==1)Synthetic();else if(argc==4)NativeCase(argv[1],argv[2],argv[3]);else throw std::runtime_error("use noargs or checkpoint reference label");}catch(const std::exception&e){std::cerr<<e.what()<<std::endl;status=2;}Kokkos::finalize();return status;}

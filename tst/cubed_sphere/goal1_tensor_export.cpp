@@ -1,0 +1,12 @@
+// Passive native TT target/continuum-constraint export; no evolution or forcing.
+#include <map>
+#include "goal1_typed_support.hpp"
+#include "goal1_tensor_runtime.hpp"
+#include "goal1_operator_oracle.hpp"
+#include <fstream>
+#include <cstdint>
+int main(int argc,char**argv){if(argc!=3)return 2;std::ifstream in(argv[1],std::ios::binary);std::ofstream out(argv[2],std::ios::binary);double time,eps;std::uint64_t sector,mode,count,cols=294;in.read(reinterpret_cast<char*>(&time),8);in.read(reinterpret_cast<char*>(&eps),8);in.read(reinterpret_cast<char*>(&sector),8);in.read(reinterpret_cast<char*>(&mode),8);in.read(reinterpret_cast<char*>(&count),8);out.write(reinterpret_cast<const char*>(&count),8);out.write(reinterpret_cast<const char*>(&cols),8);cubed_sphere::clock_oracle::Height height(48);std::map<Real,cubed_sphere::tensor_oracle::Coeff>cache;z4c::hyperboloidal::LayerReference<Real>descriptor(1.,.5,{true,.05,.95});
+for(std::uint64_t k=0;k<count;++k){Real x[4],n[3]{};in.read(reinterpret_cast<char*>(x),32);Real r=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);if(r)for(int i=0;i<3;++i)n[i]=x[i]/r;auto it=cache.find(r);if(it==cache.end())it=cache.emplace(r,cubed_sphere::tensor_oracle::Evaluate(r,time,height)).first;auto delta=cubed_sphere::tensor_oracle::NativeJet(it->second,r,n,sector);auto ref=descriptor.At(x[0],x[1],x[2]);std::array<Real,184>flat{};cubed_sphere::typed_support::Map<Real>(delta,[&](int i,Real v){flat[i]=v;return v;});auto target=mode?cubed_sphere::typed_support::Map<Real>(ref.state,[&](int i,Real v){return v+eps*flat[i];}):delta;
+ for(int field=0;field<22;++field){auto q=cubed_sphere::operator_oracle::Component(target,field);out.write(reinterpret_cast<const char*>(&q.value),8);out.write(reinterpret_cast<const char*>(q.d),24);out.write(reinterpret_cast<const char*>(q.dd),72);}
+ Real extra[8]{};if(mode){auto c=z4c::hyperboloidal::EvolvedConstraints(target,z4c::hyperboloidal::CartesianOmega(target,ref));auto g=z4c::hyperboloidal::Geometry(target.metric);Real tr=0;for(int i=0;i<3;++i)for(int j=0;j<3;++j)tr+=g.inverse[i][j]*target.a.k[i][j];extra[0]=c.hamiltonian;extra[1]=std::sqrt(c.momentum_conformal_norm2);extra[2]=std::sqrt(c.momentum_physical_norm2);extra[3]=std::sqrt(c.z4.z_conformal_norm2);extra[4]=std::sqrt(c.z4.z_physical_norm2);extra[5]=g.determinant-1;extra[6]=tr;extra[7]=target.theta.value;}out.write(reinterpret_cast<const char*>(extra),sizeof(extra));}
+return in&&out?0:3;}

@@ -1,0 +1,21 @@
+#!/bin/bash -l
+#PBS -N sphere-core
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+module load oneapi/release/2025.3.1
+cd "${PBS_O_WORKDIR:?}"
+result="$PWD/static-core-results/${PBS_JOBID:?}"
+mkdir -p "$result"
+exec >"$result/job.log" 2>&1
+export OMP_NUM_THREADS=1
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+mpiexec -n 1 -ppn 1 --cpu-bind=list:1-8 \
+  timeout 420s /usr/bin/python3.11 "$PWD/source/tst/cubed_sphere/run_static_core.py" \
+  "$PWD/build-sycl-release/src/athena" "$PWD/source" "$result/case" --timeout 300

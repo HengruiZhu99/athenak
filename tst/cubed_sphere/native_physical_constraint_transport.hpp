@@ -1,0 +1,10 @@
+// Diagnostic live-raising identities, no production integration.
+struct PhysicalTransportCheck {double theta=0,zup=0,c=0,omitted_metric_time=0;};
+PhysicalTransportCheck PhysicalTransport(const h::Z4cJet<AD>&u,const h::OmegaJet<AD>&o,const h::Z4cRHS<AD>&f,const h::Z4cJet<AD>&timed,const h::OmegaJet<AD>&ot,double k1,double k2){
+ PhysicalTransportCheck r;auto gt=h::Geometry(u.metric),gtime=h::Geometry(timed.metric);auto con=h::EvolvedConstraints(u,o);AD N=u.alpha.value/o.omega,K=u.trace.value+2*u.theta.value,C[3]{},Zup[3]{},ZupTime[3]{},ZcovTime[3]{};
+ for(int i=0;i<3;++i){C[i]=o.gradient[i]/o.omega+u.chi.d[i]/(2*u.chi.value);Zup[i]=o.omega*o.omega*u.chi.value*(u.lambda.value[i]-gt.contracted[i])/2;ZupTime[i]=ot.omega*ot.omega*timed.chi.value*(timed.lambda.value[i]-gtime.contracted[i])/2;for(int j=0;j<3;++j)ZcovTime[i]+=.5*timed.metric.g[i][j]*(timed.lambda.value[j]-gtime.contracted[j]);}
+ double predictedTheta=0,divZ=0,contract=0;for(int i=0;i<3;++i){predictedTheta+=u.beta.value[i].v*u.theta.d[i].v;divZ+=Zup[i].d[i];contract+=C[i].v*Zup[i].v;}predictedTheta+=N.v*(con.hamiltonian.v/2+divZ-2*contract-(3*o.normal.v+k1*(2+k2))*u.theta.value.v);r.theta=std::abs(predictedTheta-f.theta.v)/std::max(1.,std::abs(f.theta.v));
+ for(int i=0;i<3;++i){double predicted=0,wrong=0;for(int j=0;j<3;++j){predicted+=u.beta.value[j].v*Zup[i].d[j]+N.v*o.omega.v*o.omega.v*u.chi.value.v*gt.inverse[i][j].v*(con.momentum[j].v+u.theta.d[j].v);wrong+=o.omega.v*o.omega.v*u.chi.value.v*gt.inverse[i][j].v*ZcovTime[j].d[0];}predicted-=N.v*k1*Zup[i].v;r.zup=std::max(r.zup,std::abs(predicted-ZupTime[i].d[0])/std::max(1.,std::abs(ZupTime[i].d[0])));r.omitted_metric_time=std::max(r.omitted_metric_time,std::abs(wrong-ZupTime[i].d[0])/std::max(1.,std::abs(ZupTime[i].d[0])));
+ AD ct=timed.chi.d[i]/(2*timed.chi.value);double actual=ct.d[0],ddiv=0,pred=(N.d[i]*K.v+N.v*(u.trace.d[i].v+2*u.theta.d[i].v))/3;for(int j=0;j<3;++j){actual-=u.beta.value[j].v*C[i].d[j];ddiv+=u.beta.dd[i][j][j].v;pred+=u.beta.d[i][j].v*C[j].v;}pred-=ddiv/3;r.c=std::max(r.c,std::abs(actual-pred)/std::max(1.,std::abs(actual)));
+ }return r;
+}

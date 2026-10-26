@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+"""Pre-evolution native TT amplitude normalization and nonlinear continuum floors."""
+from pathlib import Path
+import argparse,json,struct,hashlib,subprocess,ast
+import numpy as np
+p=argparse.ArgumentParser();p.add_argument('work',type=Path);p.add_argument('evidence',type=Path);a=p.parse_args();a.work.mkdir(exist_ok=True);root=Path(__file__).resolve().parents[2];snapshot=root/'build-goal1-minkowski-20261018/native-clock-late-v1/clock-late-segment10/cubed_sphere_native_last_jets.bin'
+with snapshot.open('rb')as f:n,c=np.fromfile(f,np.uint64,2);x=np.fromfile(f,np.float64).reshape(int(n),int(c))
+assert c==300;coords=x[:,:4].copy();utility=Path(__file__).with_name('review_goal1_clock_pilots.py');tree=ast.parse(utility.read_text());ns={'np':np};exec(compile(ast.Module(body=[f for f in tree.body if isinstance(f,ast.FunctionDef)and f.name in ['reference_weights','norm']],type_ignores=[]),str(utility),'exec'),ns);weights=ns['reference_weights'](x)['fixed_reference_Penrose'];length=.15;config=[0,1,2,3,4,5,6,18,19,20,21];fieldscale=np.full(22,length);fieldscale[config]=1;sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();records=[]
+def export(label,sector,eps,mode):
+ inp=a.work/(label+'-input.bin');out=a.work/(label+'-target.bin');assert not out.exists()
+ with inp.open('wb')as f:f.write(struct.pack('<ddQQQ',0,eps,sector,mode,len(x)));coords.tofile(f)
+ cmd=[str((a.work.parent/'tensor_export').resolve()),str(inp.resolve()),str(out.resolve())];run=subprocess.run(cmd,capture_output=True,text=True);assert run.returncode==0,run.stderr
+ with out.open('rb')as f:nn,cc=np.fromfile(f,np.uint64,2);values=np.fromfile(f,np.float64).reshape(int(nn),int(cc))
+ assert nn==len(x)and cc==294 and np.isfinite(values).all();records.append({'label':label,'command':cmd,'input_sha256':sha(inp),'output_sha256':sha(out)});return values
+units=[];unitMax=[]
+for sector in [0,1]:
+ values=export('unit-'+str(sector),sector,1,0);q=values[:,:286].reshape(-1,22,13)[:,:,0];norm=np.sqrt(np.sum((q*fieldscale[None,:])**2,axis=1));index=int(np.argmax(norm));unitMax.append({'sector':sector,'max_initial_native_joint_scale':float(norm[index]),'node':index,'xyz':x[index,:3].tolist()});units.append(float(norm[index]))
+unit=max(units);amplitude=.0005;epsilon=amplitude/unit;assert epsilon<=.1;floors=[]
+for sector in [0,1]:
+ for factor in [1,.5,.25]:
+  eps=epsilon*factor;A=amplitude*factor;v=export(f'floor-sector{sector}-factor{factor}',sector,eps,1);extra=v[:,286:];raw={name:ns['norm'](extra[:,i],weights,np.ones(len(x),bool))for i,name in enumerate(['H','M_conformal','M_physical','Z_conformal','Z_physical','det_minus_one','A_trace','Theta'])};dimensionless={k:{stat:z/(A/length**2 if k in ['H','M_conformal','M_physical']else A/length)for stat,z in raw[k].items()}for k in ['H','M_conformal','M_physical','Z_conformal','Z_physical','Theta']};floors.append({'sector':sector,'factor':factor,'epsilon':eps,'initial_scale':A,'raw':raw,'normalized':dimensionless,'short_constraint_floor_budget_pass':all(z['rms']<=.01and z['linf']<=.05for z in dimensionless.values())})
+report={'scope':'Before-evolution static native TT normalization/floors on all26568 existing fine coordinates; no trajectory.','norm':'Euclidean22 native perturbations; configuration chi,g,alpha,beta unscaled, native curvature/trace/Theta/Lambda multiply L=.15. Common max over both polarizations on fixed fine-map coordinates, held fixed across pilot grids/times.','reference_volume':'Fixed immutable-reference Penrose Lref/Aref dx³','unit_maxima':unitMax,'fixed_common_unit_scale':unit,'fixed_length':length,'chosen_full_initial_scale':amplitude,'chosen_full_epsilon':epsilon,'amplitude_ladder_factors':[1,.5,.25],'floors':floors,'all_floors_below_short_budgets':all(r['short_constraint_floor_budget_pass']for r in floors),'source_sha256':sha(Path(__file__)),'coordinate_snapshot_sha256':sha(snapshot),'payloads':records,'TT_data_are_linear_not_nonlinear_constraint_satisfying':True,'before_native_evolution':True};(a.evidence/'normalization-and-floors.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'unit':unit,'epsilon':epsilon,'initial_scale':amplitude,'all_floor_budgets':report['all_floors_below_short_budgets'],'floor_max_normalized_RMS':max(v['rms']for r in floors for v in r['normalized'].values()),'floor_max_normalized_Linf':max(v['linf']for r in floors for v in r['normalized'].values())},indent=2))

@@ -1,0 +1,35 @@
+#!/bin/bash -l
+#PBS -N sphere-hyp
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+module load oneapi/release/2025.3.1
+cd "${PBS_O_WORKDIR:?}"
+result="$PWD/conformal-results/${PBS_JOBID:?}"
+mkdir -p "$result"
+exec >"$result/job.log" 2>&1
+date -u
+module list
+export OMP_NUM_THREADS=1
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+source_root=/lus/flare/projects/CompactBinaryMerger/hzhu/cubed-sphere-20261012/source
+mode=${SPHERE_MODE:-smoke}
+if [[ "$mode" == smoke ]]; then
+  mpiexec -n 1 -ppn 1 --cpu-bind=list:1-8 timeout 540s /usr/bin/python3.11 \
+    "$source_root/tst/cubed_sphere/run_conformal_spherical.py" \
+    "$PWD/athena-mapped-probe" "$source_root" "$result" --mode smoke --timeout 180 \
+    --cpu-golden "$PWD/cpu-golden.json"
+else
+  mpiexec -n 1 -ppn 1 --cpu-bind=list:1-8 timeout 540s /usr/bin/python3.11 \
+    "$source_root/tst/cubed_sphere/run_conformal_spherical.py" \
+    "$PWD/athena-mapped-probe" "$source_root" "$result" --mode comparison --timeout 450 \
+    --nr "${SPHERE_NR:-272}" --na "${SPHERE_NA:-12}" --bulk "${SPHERE_BULK:-16}" \
+    --tlim "${SPHERE_TLIM:-2}" --cfl "${SPHERE_CFL:-0.1}" --pole-cfl "${SPHERE_POLE_CFL:-0.03}"
+fi
+date -u

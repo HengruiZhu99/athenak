@@ -1,0 +1,30 @@
+#!/bin/bash -l
+#PBS -N sphere-puncture
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+module load oneapi/release/2025.3.1
+cd "${PBS_O_WORKDIR:?}"
+result="$PWD/puncture-results/${PBS_JOBID:?}"
+mkdir -p "$PWD/puncture-results"
+exec >"$result.job.log" 2>&1
+trap 'if [[ -d "$result" ]]; then cp "$result.job.log" "$result/job.log"; fi' EXIT
+date -u
+module list
+export OMP_NUM_THREADS=1
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+source_root=/lus/flare/projects/CompactBinaryMerger/hzhu/cubed-sphere-20261012/source
+mode=${PUNCTURE_MODE:-admission}
+extra=()
+if [[ "$mode" == admission ]]; then extra=(--cpu-golden "$PWD/puncture-cpu-golden.json"); fi
+mpiexec -n 1 -ppn 1 --cpu-bind=list:1-8 timeout 540s /usr/bin/python3.11 \
+  "$source_root/tst/cubed_sphere/run_spherical_puncture.py" \
+  "$PWD/athena-puncture-probe" "$source_root" "$result" \
+  --mode "$mode" --timeout 450 --tlim "${PUNCTURE_TLIM:-0.2}" "${extra[@]}"
+date -u

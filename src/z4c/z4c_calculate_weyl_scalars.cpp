@@ -17,6 +17,7 @@
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/cubed_sphere/derivatives.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
 #include "coordinates/cell_locations.hpp"
@@ -41,6 +42,7 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
   // capture variables for the kernel
   auto &indcs = pmbp->pmesh->mb_indcs;
   auto &size = pmbp->pmb->mb_size;
+  auto geometry = pmbp->pcoord->z4c_geometry;
   int &is = indcs.is; int &ie = indcs.ie;
   int &js = indcs.js; int &je = indcs.je;
   int &ks = indcs.ks; int &ke = indcs.ke;
@@ -69,6 +71,10 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
     Real &x3max = size.d_view(m).x3max;
     int nx3 = indcs.nx3;
     Real x3v = CellCenterX(k-ks, nx3, x3min, x3max);
+    if (geometry.extent(0)) {
+      const auto &p=geometry(m,k,j,i);
+      x1v=p.x[0]; x2v=p.x[1]; x3v=p.x[2];
+    }
 
     // Scalars
     Real detg = 0.0;         // det(g)
@@ -143,7 +149,7 @@ void Z4c::Z4cWeyl(MeshBlockPack *pmbp) {
       }
     }
 
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto idx = cubed_sphere::MakeStencil(geometry,size.d_view(m),indcs,m,k,j,i);
     // -----------------------------------------------------------------------------------
     // derivatives
     //

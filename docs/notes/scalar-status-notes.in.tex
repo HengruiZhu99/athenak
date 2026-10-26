@@ -1,0 +1,642 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.76in,headheight=15pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype,amsmath,amssymb,mathtools,mathrsfs}
+\usepackage{booktabs,tabularx,array,enumitem,caption,xcolor}
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{arrows.meta,calc,patterns}
+\pgfplotsset{compat=1.18}
+\usepackage{xurl,hyperref,fancyhdr}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black,pdftitle={Frozen-background scalar: equations and validation status}}
+\definecolor{good}{HTML}{007D70}
+\definecolor{bad}{HTML}{B44D17}
+\definecolor{blue}{HTML}{236A9B}
+\definecolor{purple}{HTML}{8356A0}
+\definecolor{muted}{HTML}{53616D}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small Frozen-background scalar notes}
+\fancyhead[R]{\small Evidence snapshot: 17 October 2026}
+\fancyfoot[C]{\thepage}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0.42em}
+\setlist{nosep,leftmargin=1.3em}
+\captionsetup{font=small,labelfont=bf,skip=7pt,hypcap=false}
+\newcommand{\scri}{\mathscr{I}^{+}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\G}{\bar g}
+\newcommand{\pass}{\textcolor{good}{\textbf{PASS}}}
+\newcommand{\fail}{\textcolor{bad}{\textbf{FAIL}}}
+\newcommand{\pending}{\textcolor{muted}{\textbf{PENDING}}}
+\newcommand{\epath}[1]{\texttt{\small\nolinkurl{#1}}}
+\newcommand{\boxnote}[1]{\begin{center}\fcolorbox{muted!35}{blue!4}{\begin{minipage}{0.94\linewidth}#1\end{minipage}}\end{center}}
+\pgfplotsset{every axis/.append style={font=\small,grid=major,grid style={black!10},tick label style={font=\small},label style={font=\small},title style={font=\small},legend style={font=\scriptsize,draw=black!15,fill=white},unbounded coords=jump}}
+\begin{document}
+\begin{center}
+{\LARGE\bfseries A massless test scalar on frozen\par hyperboloidal trumpet backgrounds}\par\vspace{0.65em}
+{\large Equations, computational domain, and validation status}\par\vspace{0.45em}
+17 October 2026\quad\textcolor{muted}{\small Research notes, evidence snapshot}\par\vspace{0.25em}
+\end{center}
+
+\boxnote{\textbf{Current conclusion.} The corrected angular Minkowski implementation passes its CPU and direct Aurora GPU gates. Schwarzschild has accurate waveforms and scalar quasinormal frequencies, but its completed finer family still fails a required late field-convergence test. A separate dyadic family is unfinished. No nonzero-spin Kerr evolution has begun. Scalar success would not validate the original metric-evolution project.}
+
+\section{Scope and status at a glance}
+The evolved state contains only five scalar quantities,
+\begin{equation}
+ U=(\psi,\Pi,q_1,q_2,q_3),\qquad \Phi=\Omega\psi.
+\end{equation}
+The physical metric, its geometric coefficients and derivatives, the independent Minkowski reference, coordinate maps, height function, and conformal factors are selected before each run and then held fixed. There is no Einstein/Z4c evolution, gauge evolution, metric perturbation evolution, separately evolved constraint system, or scalar backreaction. The scalar equation is linear in the field; the black-hole geometry is retained exactly, including strong-field terms.
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}p{2.8cm}p{2.3cm}X@{}}\toprule
+Stage & Status & What the evidence establishes \\\midrule
+Minkowski & \pass & Corrected-source $N=24,32,40$ tests to $t=12$, regional field/derivative/reduction convergence, time and finite-cap controls; separate coarse $t=100$ stability control; direct GPU agreement. \\
+Schwarzschild & \fail\ /\ \pending & Completed $N=36,48,60$ family fails late $\psi$ volume-RMS order: $1.40169<1.5$. New $24,48,96$ family has verified early convergence and collected evolution through $@@PARTIALTIME@@M$. \\
+Kerr, $a/M=0.5$ & \pending & Exact geometry, source, reconstruction and zero-spin reference checks exist. Nonzero-spin time evolution and ringdown validation remain outstanding. \\
+Metric evolution & \pending & No admission follows from these scalar experiments. The protected production baseline is unchanged. \\\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Evidence cutoff.} The latest collected and assessed fine Schwarzschild segment ends at $@@PARTIALTIME@@M$. Job \texttt{8938884} completed that segment; its payload and unchanged frozen fingerprints are verified. Access recovered after an SSH interruption, and continuation job \texttt{8939561} was submitted from the same exact checkpoint. The $100M$ target and scientific admission remain incomplete. A scheduler exit code is not scientific validation. All figures use existing data; writing the notes adds no evolution run.
+
+\textbf{Units and notation.} We use signature $(-,+,+,+)$ and $G=c_{\rm light}=1$. Black-hole tests set $M=1$. Flat-space times are code units, not $t/M$ with $M=0$. Greek indices cover spacetime; Latin indices cover the three compact Cartesian coordinates. The symbol $c$ below denotes $\sqrt{M^2-a^2}$, not the speed of light. A bar denotes the conformal \emph{physical} metric. A separately labelled reference is never substituted for that metric.
+
+\clearpage
+\section{Exact stationary trumpet backgrounds}
+\subsection{Physical four-metric before hyperboloidal compactification}
+The black-hole chart uses the analytic Dennison--Baumgarte--Montero trumpet family with $R_0=M$ \cite{trumpet}. Let $T_{\rm tr}$ be its time coordinate and let
+\begin{equation}
+ x^i=r n^i,\quad R=r+M,\quad c=\sqrt{M^2-a^2},\quad
+ w=(-n_y,n_x,0),\quad \Sigma=R^2+a^2n_z^2,
+\end{equation}
+\begin{equation}
+ A=R^2+a^2,\qquad X=A^2-a^2r^2(1-n_z^2),\qquad |a|<M.
+\end{equation}
+The relation to Boyer--Lindquist coordinates identifies the slicing and azimuth unambiguously:
+\begin{equation}
+ \dd T_{\rm BL}=\dd T_{\rm tr}-\frac{c(R^2+a^2)}{r\Delta}\dd R,\qquad
+ \dd\phi_{\rm BL}=\dd\phi_{\rm tr}-\frac{ac}{r\Delta}\dd R,\qquad
+ \Delta=r^2-c^2.
+\end{equation}
+These differentials identify the chart; the implementation evaluates the regular trumpet metric below, not singular Boyer--Lindquist expressions at the horizon.
+An exact Cartesian representation is
+\begin{align}
+ \alpha_{\rm tr}&=r\sqrt{\frac{\Sigma}{X}},\\
+ \beta^i_{\rm tr}&=\frac{cAr n^i-a(2Mr+M^2+a^2)r w^i}{X},\\
+ (\gamma_{\rm tr})_{ij}&=\frac{1}{r^2}\left[\Sigma\delta_{ij}
+ +a^2\left(1+\frac{2MR}{\Sigma}\right)w_iw_j
+ -ac(n_iw_j+w_in_j)\right],\\
+ \dd s^2&=-\alpha_{\rm tr}^{,2}\dd T_{\rm tr}^{,2}
+ +(\gamma_{\rm tr})_{ij}(\dd x^i+\beta^i_{\rm tr}\dd T_{\rm tr})
+ (\dd x^j+\beta^j_{\rm tr}\dd T_{\rm tr}),\qquad
+ \sqrt{-g_{\rm tr}}=\frac{\Sigma}{r^2}.
+\end{align}
+These expressions specify every physical metric component. Its inverse follows without a weak-field approximation:
+\begin{equation}
+ g^{TT}_{\rm tr}=-\alpha_{\rm tr}^{-2},\quad
+ g^{Ti}_{\rm tr}=\beta^i_{\rm tr}\alpha_{\rm tr}^{-2},\quad
+ g^{ij}_{\rm tr}=\gamma_{\rm tr}^{ij}-\beta^i_{\rm tr}\beta^j_{\rm tr}\alpha_{\rm tr}^{-2}.
+\end{equation}
+For Schwarzschild, $a=0$ and $c=M$:
+\begin{equation}
+ \alpha_{\rm tr}=\frac{r}{r+M},\qquad
+ \beta^i_{\rm tr}=\frac{Mx^i}{(r+M)^2},\qquad
+ (\gamma_{\rm tr})_{ij}=\left(\frac{r+M}{r}\right)^2\delta_{ij}.
+\end{equation}
+The event horizon is at $r=c$. The limiting trumpet is at $r=0$: it has finite nonzero area, vanishing lapse and infinite proper distance from exterior points. The chart penetrates the event horizon. The numerical grid omits the puncture.
+
+\subsection{What ``trumpet'' means here}
+This is an analytic stationary trumpet, \emph{not} a stationary $1+\log$ moving-puncture solution. In Kerr the spatial metric is not conformally flat. The original trumpet paper also warns that its trace $K$ is direction-dependent at the limiting surface and that the coordinate system is not automatically suitable for numerical evolution \cite{trumpet}. Our static checks and characteristic tests do not remove the need for actual nonzero-spin convergence tests.
+
+The AthenaK provenance is branch \epath{origin/project/kerr-trumpet-spin09}, commit \epath{81c7d8030c49489577c54b977b8b7f7b42d9a96e}, provider \epath{src/coordinates/kerr_trumpet.hpp}. A preserved copy supplies provenance; the standalone scalar build does not import its Einstein or gauge state. Static checks at spin $0.9$ are not spin-$0.9$ evolutions.
+
+\clearpage
+\section{Frozen hyperboloidal maps and the independent reference}
+\subsection{Physical coordinates}
+Let $y^i$ be compact Cartesian coordinates and define
+\begin{equation}\label{eq:map}
+ \rho=|y|,\quad x^i=\frac{y^i}{\Omega(\rho)},\quad r=\frac{\rho}{\Omega},\quad
+ T_{\rm tr}=t+h(r),\quad \lambda=\Omega-\rho\Omega',\quad
+ \frac{\dd r}{\dd\rho}=\frac{\lambda}{\Omega^2}.
+\end{equation}
+In the corrected physical layer,
+\begin{align}
+ W(z)&=\begin{cases}0,&z\leq0,\\
+ \displaystyle\frac{e^{-1/z}}{e^{-1/z}+e^{-1/(1-z)}},&0<z<1,\\
+ 1,&z\geq1,\end{cases}\\
+ \Omega(\rho)&=1-W\!\left(\frac{\rho-8}{8}\right)\frac{\rho}{S},\qquad S=24,\quad C=10,\\
+ h'_{\rm BH}(r)&=W\!\left(\frac{r-8}{8}\right)
+ \left[\frac{r}{\sqrt{r^2+C^2}}+\frac{2M+c}{r}\right],\qquad h_{\rm BH}(0)=0.
+\end{align}
+Minkowski instead uses $h_0(r)=\sqrt{r^2+C^2}-C$ throughout. The black-hole height transition is specified in physical $r$; the compactification transition is specified in $\rho$. They do not occupy the same compact interval.
+
+\subsection{Why the mass-dependent logarithm is necessary}
+In the physical trumpet chart, at large $r$,
+\begin{equation}
+ g^{TT}_{\rm tr}=-1-\frac{2M}{r}+O(r^{-2}),\quad
+ g^{Tr}_{\rm tr}=\frac{c}{r}+O(r^{-2}),\quad
+ g^{rr}_{\rm tr}=1-\frac{2M}{r}+O(r^{-2}).
+\end{equation}
+Writing $h'=1+A_1/r+O(r^{-2})$, the time coefficient after $t=T_{\rm tr}-h(r)$ is
+\begin{equation}
+ g^{tt}=g^{TT}_{\rm tr}-2h'g^{Tr}_{\rm tr}+h'^2g^{rr}_{\rm tr}
+ =\frac{2A_1-4M-2c}{r}+O(r^{-2}).
+\end{equation}
+Regular conformal compactification requires $A_1=2M+c$, hence
+\begin{equation}
+ h(r)=r+(2M+c)\log(r/r_*)+\frac{C^2}{2r}+\text{constant}+O(r^{-3}).
+\end{equation}
+The arbitrary scale $r_*$ changes only a time offset. A height appropriate to another physical chart cannot be copied without rederiving this coefficient.
+
+\subsection{The immutable Minkowski reference is a separate tensor}
+The reference retains $\Omega_0=1-W_5((\rho-8)/8)\rho/S$, where
+$W_5(z)=z^3(10-15z+6z^2)$ between its constant endpoint extensions. It uses $M=a=0$ and $h_0$, even when the physical geometry uses $W$. With the respective pullbacks understood,
+\begin{equation}
+ \G=\Omega^2g_{\rm phys},\qquad
+ \bar\eta_{\rm ref}=\Omega_0^2\eta,\qquad
+ \delta G^{\mu\nu}=\G^{\mu\nu}-\bar\eta_{\rm ref}^{\mu\nu}.
+\end{equation}
+Both tensors are represented on the same computational $(t,y)$ domain. The difference is exact, not assumed small. The saved horizon audit has $\delta G^{tt}\simeq-3.01$ in Schwarzschild. The physical RHS uses $\G$ directly; neither the reference inverse nor reference curvature replaces it.
+
+\clearpage
+\subsection{Illustration of the fixed coordinate choices}
+@@MAPFIG@@
+\captionof{figure}{Physical and reference compactification factors, and their distinct height derivatives, evaluated from the stated formulas. The physical black-hole height retains the inner trumpet chart and supplies its required asymptotic logarithm. The reference remains the original quintic Minkowski construction. Curves illustrate the selected maps, not an evolving gauge.}
+
+\subsection{Exact conformal pullback and the scri limit}
+For $Z^a=(T_{\rm tr},x^i)$ and $z^\mu=(t,y^i)$ the full inverse is
+\begin{equation}\label{eq:pullback}
+ \G^{\mu\nu}=\Omega^{-2}
+ \frac{\partial z^\mu}{\partial Z^a}\frac{\partial z^\nu}{\partial Z^b}g_{\rm tr}^{ab},
+ \qquad \frac{\partial t}{\partial x^i}=-h'n_i,
+\end{equation}
+\begin{equation}
+ \frac{\partial y^i}{\partial x^j}
+ =\Omega(\delta^i{}_j-n^in_j)+\frac{\Omega^2}{\lambda}n^in_j.
+\end{equation}
+The implementation factors the nominally cancelling $\Omega^2$ analytically, retaining all higher-order mass and spin terms. It evaluates $\Omega=0$ directly, without a large-radius cutoff. Define
+\begin{equation}
+ \bar\Sigma=(\rho+M\Omega)^2+a^2\Omega^2n_z^2,\quad
+ D=\sqrt{-\G}=\frac{\lambda\bar\Sigma}{\rho^2},\quad
+ C_{\rm eff}^{,2}=C^2+4M(M+c)-a^2(1-n_z^2).
+\end{equation}
+At $\rho=S$, the regular limits are
+\begin{equation}\label{eq:scrilimit}
+ \G^{tt}=-\frac{C_{\rm eff}^{,2}}{S^2},\qquad
+ \G^{ti}=-n^i,\qquad \G^{ij}=\delta^{ij}-n^in^j,\qquad D=1.
+\end{equation}
+The inverse spacetime metric is regular there; only its radial spatial block becomes characteristic. Spacelike time slices require $\G^{tt}<0$, which is checked on the actual geometry.
+
+\clearpage
+\section{Scalar equation and conformal curvature}
+\subsection{Physical equation and exact rescaling}
+The physical target is
+\begin{equation}\label{eq:physical}
+ \Box_g\Phi=\frac{1}{\sqrt{-g}}\partial_a\!\left(\sqrt{-g}\,g^{ab}\partial_b\Phi\right)=0.
+\end{equation}
+In four spacetime dimensions the conformal identity is
+\begin{equation}\label{eq:confid}
+ \left(\Box_{\G}-\frac{R[\G]}{6}\right)\psi
+ =\Omega^{-3}\left(\Box_g-\frac{R[g]}{6}\right)(\Omega\psi).
+\end{equation}
+Every physical background here is vacuum, so $R[g]=0$. Consequently
+\begin{equation}\label{eq:conformal}
+ (\Box_{\G}-V)\psi=0,\qquad
+ V=\frac{R[\G]}6=-\Omega^{-3}\Box_g\Omega.
+\end{equation}
+The physical scalar is minimally coupled and massless. The curvature term in the rescaled equation is forced by the transformation; it is not an added physical scalar mass. This is the same conformal identity used for fixed-background scalar evolution in \cite{matching}.
+
+For the exact trumpet, $\Delta=R^2-2MR+a^2=r^2-c^2$. A radial $\Omega$ gives
+\begin{align}
+ \Box_g\Omega&=\frac1\Sigma\partial_r(\Delta\partial_r\Omega),\\
+ V&=-\frac{\Omega}{\lambda\bar\Sigma}\partial_\rho
+ \left[\frac{(\rho^2-c^2\Omega^2)\Omega'}{\lambda}\right],
+ \qquad V|_{\scri}=0.
+\end{align}
+The radial-azimuthal flux has zero azimuthal divergence. The height transformation does not change this stationary scalar contraction. Crucially, $R[\G]$ is the curvature of the \emph{actual conformal physical metric}, not $R[\bar\eta_{\rm ref}]$.
+
+\subsection{Frozen wave-operator coefficients}
+Stationarity allows the equation to be written
+\begin{equation}\label{eq:expanded}
+ \G^{tt}\psi_{tt}+2\G^{ti}\psi_{ti}+\G^{ij}\psi_{ij}
+ +B^t\psi_t+B^i\psi_i-V\psi=0,\qquad
+ B^\mu=\frac1D\partial_i(D\G^{i\mu}).
+\end{equation}
+All $\G^{\mu\nu},B^\mu,D,V$ and required lapse/shift derivatives are cached before evolution. First spatial coefficient derivatives use analytic jets. Independent value-only, high-precision pullbacks check the cached coefficients, their derivatives and the curvature identity.
+
+The current endpoint audit has scaled error about $2.1\times10^{-16}$; the corrected critical conformal-curvature probes agree to about $1.95\times10^{-18}$. A separate million-point Minkowski check agrees within $4.33\times10^{-15}$. These are coefficient checks, not substitutes for field convergence.
+
+\clearpage
+\section{First-order scalar evolution systems}
+\subsection{Current normal-momentum system}
+From the conformal physical inverse define
+\begin{equation}
+ \alpha=(-\G^{tt})^{-1/2},\qquad \beta^i=-\frac{\G^{ti}}{\G^{tt}},\qquad
+ \gamma^{ij}=\G^{ij}-\frac{\G^{ti}\G^{tj}}{\G^{tt}},
+\end{equation}
+The defining derivative equalities below hold on the scalar reduction surface. Numerical deviations are measured, rather than reset to zero.
+\begin{equation}
+ q_i=\partial_i\psi,\qquad \Pi=-n^\mu\partial_\mu\psi
+ =\frac{\beta^iq_i-\partial_t\psi}{\alpha},\qquad C_i=q_i-\partial_i\psi.
+\end{equation}
+Here $\alpha,\beta,\gamma,K$ belong to $\G$, not to the untransformed physical trumpet decomposition. With $K_{ij}=-(1/2)\mathcal L_n\gamma_{ij}$ and $\Gamma^i=\gamma^{jk}{}^{(3)}\Gamma^i{}_{jk}$,
+\begin{align}\label{eq:normal}
+ \partial_t\psi&=\beta^i\partial_i\psi-\alpha\Pi,\\
+ \partial_t\Pi&=\beta^i\partial_i\Pi-\alpha\gamma^{ij}\partial_iq_j
+ +\alpha K\Pi+(\alpha\Gamma^j-\gamma^{ij}\partial_i\alpha)q_j+\alpha V\psi,\\
+ \partial_tq_i&=\beta^j\partial_jq_i-\alpha\partial_i\Pi
+ +(\partial_i\beta^j)q_j-(\partial_i\alpha)\Pi-\kappa C_i.
+\end{align}
+The current configuration has $\kappa=0$. A nonzero $\kappa$ is scalar auxiliary feedback computed from the derived reduction residual; it introduces no extra evolved field. Its diagnostic trial is discussed below.
+
+The code obtains the stationary source coefficients from the same frozen wave operator:
+\begin{align}
+ s_\Pi&=\alpha^2B^t+\frac{\beta^i\partial_i\alpha}{\alpha}=\alpha K,\\
+ s_q^{,i}&=-\alpha(B^t\beta^i+B^i)
+ -\frac{\beta^j\partial_j\beta^i}{\alpha}
+ =\alpha\Gamma^i-\gamma^{ji}\partial_j\alpha.
+\end{align}
+Thus the symbols $K$ and $\Gamma^i$ describe fixed coefficients, not gravitational evolution variables.
+
+\subsection{Reduction and derivative diagnostics}
+At the continuum level the derived residual obeys
+\begin{equation}
+ \partial_t C_i=\beta^j\partial_jC_i+(\partial_i\beta^j)C_j-\kappa C_i.
+\end{equation}
+This equation explains the reduction; it is not separately integrated. The measured residual is $C_i^h=q_i-D_i^c\psi$. Snapshots contain the independent centred gradient and
+\begin{equation}
+ v_{\rm rec}=\beta^iD_i^c\psi-\alpha\Pi,
+ \qquad (\psi_t)_h=\beta^iD_i^{\rm up}\psi-\alpha\Pi.
+\end{equation}
+These differ at truncation order. Both the reconstruction and the actual compiled scalar RHS are checked. Calling the evolved $q_i$ an exact derivative would miss reduction error.
+
+\clearpage
+\subsection{Earlier coordinate-velocity reduction}
+The earlier five-field form uses $v=\partial_t\psi$ and $q_i=\partial_i\psi$:
+\begin{align}
+ \psi_t&=v,\\
+ v_t&=-\frac{2\G^{ti}\partial_iv+\G^{ij}\partial_iq_j+B^tv+B^iq_i-V\psi}{\G^{tt}},\\
+ (q_i)_t&=\partial_iv+\beta^j(\partial_jq_i-\partial_iq_j).
+\end{align}
+The curl term vanishes on the reduction surface and transports reduction modes. Its damped variant changes $\psi_t$ to $v-\beta^iC_i$, adds $-\kappa C_i$ to $q_{i,t}$ and $-\kappa\beta^iC_i$ to $v_t$. In that variant $v$ is an auxiliary off the reduction surface; the physical coordinate derivative is $v-\beta\cdot C$. These historical settings are not the current undamped normal-momentum configuration.
+
+\subsection{Actual characteristics and the outer boundary}
+For any spatial covector $m_i$, set $\beta^m=\beta^im_i$ and $s_m^2=\gamma^{ij}m_im_j$. The principal scalar speeds and fields are
+\begin{equation}
+ c_\pm=-\beta^m\pm\alpha s_m,\qquad c_0=-\beta^m,\qquad
+ U_\pm=\Pi\pm\frac{\gamma^{ij}m_iq_j}{s_m}.
+\end{equation}
+Equivalently, with $b=\G^{ti}m_i/\G^{tt}$,
+\begin{equation}
+ c_\pm=b\pm\sqrt{b^2-\frac{\G^{ij}m_im_j}{\G^{tt}}}.
+\end{equation}
+At exact scri and outward radial $m=n$, equation~\eqref{eq:scrilimit} gives
+\begin{equation}
+ c_-=0,\qquad c_+=\frac{2S^2}{C_{\rm eff}^{,2}}.
+\end{equation}
+No incoming boundary data are prescribed at scri. Logical-coordinate speeds include the map Jacobian; their signs, rather than unscaled magnitudes, identify inflow and outflow.
+
+At a finite cap there is an incoming mode. The implemented asymptotic scalar penalty uses
+\begin{align}
+ \delta&=\Pi-q_n-\frac{c_+}{\alpha}A_\rho\psi,\qquad
+ q_n=\frac{\gamma^{ij}n_iq_j}{\sqrt{\gamma^{ij}n_in_j}},\qquad
+ A_\rho=\frac{1+M\Omega'}{\rho+M\Omega},\\
+ \Pi_t&\longmapsto\Pi_t-\tfrac12\sigma\delta,\qquad
+ q_{i,t}\longmapsto q_{i,t}+\tfrac12\sigma\frac{n_i}{s_n}\delta.
+\end{align}
+Here $\sigma\geq0$ is the mapped incoming speed divided by the radial norm weight and grid spacing. This is an asymptotic finite-radius condition, not exact black-hole radiation data. Boundary sensitivity must be measured. Analytic incoming ghosts are restricted to flat-space verification controls.
+
+\clearpage
+\section{Computational domain and patch maps}
+@@DOMAINFIG@@
+\captionof{figure}{Compact spatial domain. Left: an equatorial cut of the actual cube-to-sphere map, with illustrative coarse mesh lines. The $\pm Z$ blocks lie out of this plane. Right: the six outer faces in an orthographic wireframe and a Schwarzschild inner-boundary inset. The inset is enlarged; it is not to the scale of the full domain. These are coordinate diagrams, not isometric embeddings of the trumpet.}
+
+The uniform Cartesian bulk is $[-L,L]^3$ with $L=3$. Six shell blocks have $q^A=(s,u,v)$, $0\leq s\leq1$, $-1\leq u,v\leq1$. For face axis $a$, sign $\epsilon$ and cyclic axes $(a,b,c)$,
+\begin{align}
+ f(s)&=\frac{1-e^{-k s}}{1-e^{-k}},\quad k=-2,\qquad
+ d=(1-f)L+f\frac{S_{\rm cap}}{\sqrt{1+u^2+v^2}},\\
+ y_a&=\epsilon d,\qquad y_b=du,\qquad y_c=dv,\qquad S_{\rm cap}\in\{S,0.95S,0.9S,0.6S\}.
+\end{align}
+The $k=0$ limit is $f=s$. Negative $k$ clusters samples toward the inner shell. Changing a cap truncates the same continuous physical map; each run keeps its selection fixed. The bulk has $(2N)^3$ cell centres before optional excision; each shell block has $(2N+1)N^2$ points, including the outer radial endpoint. No scalar AMR result is claimed.
+
+\textbf{Inner characteristics.} In the unmodified inner trumpet chart let $u_i=cn_i-aw_i$. Then $g^{ij}=(r^2\delta^{ij}-u^iu^j)/\Sigma$. On every inward face of a cube of halfwidth $d$, the sufficient bound
+\begin{equation}
+ d<\frac{c-|a|}{3}
+\end{equation}
+ensures strict scalar outflow, including edges and corners. Schwarzschild $d=0.25$ satisfies it. For spin $0.5$, the bound is $d<0.1220M$; larger cubes can have incoming corner modes even inside the horizon. Planned Kerr uses the full puncture and a small verified outflow-cube sensitivity control. Point probes and an independent dense face audit supplement the analytic bound.
+
+\clearpage
+\section{Discretization and what its checks prove}
+All evolved scalar components use the common compact Cartesian basis. Patch maps transform derivative directions:
+\begin{equation}
+ \partial_i=J^A{}_i\partial_A,\qquad
+ \partial_i\partial_j=J^A{}_iJ^B{}_j\partial_A\partial_B+H^A{}_{ij}\partial_A.
+\end{equation}
+Ghost transfer uses active-donor, tensor-product six-point Lagrange interpolation. In one dimension,
+\begin{equation}
+ (If)(x)=\sum_{a=0}^{5}\ell_a(x)f(x_a),\qquad
+ \ell_a(x)=\prod_{b\ne a}\frac{x-x_b}{x_a-x_b}.
+\end{equation}
+Anchor subtraction reduces cancellation, $If=f(x_0)+\sum_a\ell_a[f(x_a)-f(x_0)]$. Donor selection does not use inactive excised points. The current method uses four halo cells.
+
+\subsection{Characteristic upwinding and the radial SBP pair}
+Cartesian and angular directions use fourth-order upwind differences selected by the actual frozen scalar characteristic speeds. The shell radial direction uses a diagonal-norm SBP $6/3$ operator $D_c$ satisfying
+\begin{equation}
+ HD_c+D_c^{T}H=E_{\rm out}-E_{\rm in},\qquad
+ D_\pm=D_c\pm Q,\qquad Q=\frac{H^{-1}D_4^{T}D_4}{128h}.
+\end{equation}
+Here $H$ is the dimensionless diagonal norm, and $D_4$ has truncated fourth-difference rows $[1,-4,6,-4,1]$. Thus $HQ$ is positive semidefinite and $D_4$ annihilates cubics. The pair has sixth-order interior and third-order endpoint consistency. For $u_t+c\,u_x=0$, selecting $D_c+\operatorname{sgn}(c)Q$ yields
+\begin{equation}
+ \frac{\dd}{\dd t}\|u\|_H^2
+ =-c\,u^T(E_{\rm out}-E_{\rm in})u-2|c|u^THQu,
+\end{equation}
+before any inflow treatment. Independent matrix, polynomial, positivity and homogeneous-inflow checks pass. This one-dimensional calculation is \emph{not} a global energy proof for variable coefficients or the nonconforming multipatch interpolation.
+
+Time integration is classical RK4, with ghost filling at every stage:
+\begin{align}
+ k_1&=L_h(U^n),&k_2&=L_h(U^n+\tfrac12\Delta t k_1),\\
+ k_3&=L_h(U^n+\tfrac12\Delta t k_2),&k_4&=L_h(U^n+\Delta t k_3),\\
+ U^{n+1}&=U^n+\tfrac16\Delta t(k_1+2k_2+2k_3+k_4).&&
+\end{align}
+The current CFL parameter is $0.18$, KO dissipation is zero and scalar reduction damping is zero. Wall-time stops occur only after a completed RK4 report. Restarts retain the exact executable, parameters and full five-field checkpoint. These choices define the validated configuration, not a stability theorem.
+
+\clearpage
+\section{Independent solutions, diagnostics and quantitative gates}
+\subsection{Analytic angular Minkowski wave}
+In physical Minkowski coordinates,
+\begin{equation}
+ \Phi=\partial_X\partial_Y\frac{F(T-r)-F(T+r)}r,\qquad
+ F(u)=\exp\left[-\left(\frac{u+4}{1.2}\right)^2\right].
+\end{equation}
+With $T=t+h_0(r)$ and $Y(n)=n_xn_y$, the corresponding exact compact field is
+\begin{align}
+ \psi=Y(n)\bigg[&\frac{F''(u)-F''(v)}\rho
+ +\frac{3\Omega[F'(u)+F'(v)]}{\rho^2}
+ +\frac{3\Omega^2[F(u)-F(v)]}{\rho^3}\bigg],\\
+ u&=t-C+\frac{C^2\Omega}{\sqrt{\rho^2+C^2\Omega^2}+\rho},\qquad
+ v=t-C+\frac{\sqrt{\rho^2+C^2\Omega^2}+\rho}{\Omega}.
+\end{align}
+The ingoing Gaussian terms vanish at scri, giving $\psi|_{\scri}=YF''(t-C)/S$. Time and compact Cartesian derivatives are obtained analytically, not with the evolution differences.
+
+\subsection{Black-hole data, independent profiles and extraction}
+The primary black-hole data are
+\begin{equation}
+ \psi(0,y)=\frac{n_xn_y}{\rho}e^{-[(r-6)/1.2]^2}W\!\left(\frac{r-1.2}{0.8}\right),\quad
+ \psi_t(0,y)=0,\quad q_i(0)=\partial_i\psi(0),\quad \Pi(0)=\beta\cdot q/\alpha.
+\end{equation}
+They vanish exactly for $r\leq1.2$. Schwarzschild spherical separation provides an independent one-dimensional scalar solution and full radial profiles. The current selected reference has 4800 radial points; it has its own resolution, timestep, inner-boundary and QNM checks. It uses an independent coefficient calculation and no Cartesian/shell interfaces. Six-point smooth profile sampling avoids PCHIP limiter artefacts in measuring very small errors.
+
+The extracted mode is $z_{22}(t)=\int\psi(t,\rho=10,\theta,\phi)Y_{22}^*\dd\omega$, evaluated with fixed $24\times48$ midpoint quadrature and interpolation to the extraction sphere. Independent profiles use the same projection quadrature. Field and derivative comparisons additionally test the full 3D spatial data, not only this mode.
+
+For planned Kerr, $m=2$ separation writes $\psi=\Re[e^{2i\phi}(1-z^2)W_2(t,\rho,z)]$, $z=\cos\theta$. The independent $2+1$ code uses regular angular functions and complex scalar auxiliaries. Its zero-spin waveform agrees with the separate Schwarzschild reference to $9.2\times10^{-16}$. This is a reduction test, not a nonzero-spin ringdown result.
+
+\clearpage
+\subsection{Norms, convergence and admission criteria}
+On each grid, for scalar or Euclidean vector error $e$,
+\begin{equation}
+ E_2(e)=\sqrt{\frac{\sum_p w_p|e_p|^2}{\sum_p w_p}},\qquad
+ E_\infty(e)=\max_p|e_p|,\qquad
+ p_{ab}=\frac{\log[E(N_a)/E(N_b)]}{\log(N_b/N_a)}.
+\end{equation}
+Weights are compact coordinate-volume quadrature weights. These are volume-RMS errors, not physical-volume energy norms. Minkowski checks global, bulk and shell regions. Black-hole field checks use the common exterior $\rho\geq1.2$; since $\Omega=1$ there at the inner cut, this excludes the same inner physical region in every run. The reduction norm uses $C_i^h=q_i-D_i^c\psi$.
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}p{3.2cm}X@{}}\toprule
+Gate & Quantitative requirement \\\midrule
+Three resolutions & Strictly decreasing errors; both pair orders at least $1.5$ for $\psi,v,D\psi,C$, both norms. Times $2,6,12$; black holes also $100M$. \\
+Reduction amplitude & Finest $\max_t\|C\|_\infty/\max|D\psi(0)|\leq0.02$, checking all available half-time reports. \\
+Timestep & Medium-grid half/quarter steps. Half-step difference $<0.1$ of the measured medium/fine spatial-error gap; quarter/half difference ratio $<0.2$. \\
+Boundary sensitivity & Finest inner and finite-cap controls; full-waveform relative L2 difference $\leq0.01$ for required controls. Actual characteristics must have the correct signs. \\
+Independent waveform & Finest relative waveform L2 error $\leq0.02$. \\
+Free scalar QNMs & $s=0$, $\ell=2$, $n=0$; real-frequency error $\leq2\%$, decay-rate error $\leq5\%$, window spreads $\leq2\%$. \\
+Reference uncertainty & Coarse/fine independent-profile difference $\leq10\%$ of the actual finest 3D error, both norms and each field/derivative. \\
+Direct GPU check & Admitted CPU configuration first; actual Intel SYCL backend; scaled CPU/GPU field/derivative difference $<10^{-9}$ and coordinate/weight difference $<10^{-11}$. \\\bottomrule
+\end{tabularx}
+\end{center}
+
+For example, if $d_{1/2}=\|U_{\Delta t}-U_{\Delta t/2}\|$ and $d_{1/4}=\|U_{\Delta t/2}-U_{\Delta t/4}\|$, the time gates are
+\begin{equation}
+ \frac{d_{1/2}}{|E_{\rm medium}-E_{\rm fine}|}<0.1,\qquad
+ \frac{d_{1/4}}{d_{1/2}}<0.2.
+\end{equation}
+These thresholds were declared before the corresponding candidate evolutions. Later plans changed declared resolution families or added controls, while preserving earlier failures and the numerical thresholds. Passing QNMs alone, a small reduction residual, or a scheduler exit zero cannot waive another gate. Apparent high pair orders over a short range are not a claim that the whole method has that formal order.
+
+\clearpage
+\section{Results: corrected Minkowski is admitted}
+@@MINKFIG@@
+\captionof{figure}{Corrected-source Minkowski errors at $t=12$ against the analytic angular wave, $N=24,32,40$. Both field derivatives and the independently measured reduction residual decrease. The full admission also includes the earlier times and separate bulk/shell checks; the minimum pair order across all of them is $@@MINKMIN@@$.}
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}Xr@{}}\toprule
+Measured quantity & Value \\\midrule
+Minimum field/velocity/gradient/reduction pair order & $@@MINKMIN@@$ \\
+Minimum actual compiled $\psi_t$ pair order & $3.833$ \\
+Finest normalized reduction maximum & $1.1993\times10^{-3}$ \\
+Maximum timestep fraction & $@@TIMEFRAC@@$ \\
+Maximum quarter/half difference ratio & $@@TIMERATIO@@$ \\
+Finite-cap waveform differences, $0.9S$, $0.95S$ & $1.254\times10^{-5}$, $7.580\times10^{-6}$ \\
+Coarse $t=100$ late peak / initial peak & $8.723\times10^{-4}$ \\
+Maximum scaled CPU/GPU field/derivative difference & $@@GPUDELTA@@$ \\\bottomrule
+\end{tabularx}
+\end{center}
+
+Aurora job \texttt{8937736} validates the corrected configuration on an Intel Data Center GPU Max 1550 using SYCL. Its three-resolution fields are compared directly with the analytic wave and matching CPU trajectories. The $t=100$ flat-space stability run is a separate coarse control; the three fine CPU/GPU convergence trajectories end at $t=12$.
+
+\textbf{A corrected evaluation defect matters.} An earlier smooth-layer evaluation formed $W(1-W)$ by subtracting a rounded $W$ from one. Near the layer endpoint, CPU/GPU shift gradients differed by about $0.01338$, and a strict evolved-field comparison failed at $1.85\times10^{-4}$. The corrected evaluator computes $W(1-W)=ab/(a+b)^2$, with $a=e^{-1/z}$ and $b=e^{-1/(1-z)}$, and differentiates the quotient without that cancellation. It changes no continuous map or physical background. The original reference stays bitwise unchanged. Earlier affected admissions are superseded, not erased.
+
+\clearpage
+\section{Results: completed Schwarzschild families still fail a gate}
+The fixed actual excision cube has halfwidth $0.25M$. The following matrices use the corrected undamped operator. Matching completed trajectories are reused.
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}p{2.5cm}X@{}}\toprule
+Family & Outcome \\\midrule
+$24,36,48$ & Late coarse-pair maximum-norm orders fail: velocity $1.441$, gradient $0.611$, reduction $0.685$. The $36/48$ pair passes. \\
+$36,48,60$ & After resolving profile interpolation and independent-reference uncertainty, the remaining failure is $\psi$ volume-RMS order at $100M$: $p_{48,60}=1.40169<1.5$. \\
+$24,48,96$ & Separately declared dyadic family. Early $2/6/12M$ checks pass. Fine evolution and full controls are unfinished. It does not retroactively change either failed matrix. \\\bottomrule
+\end{tabularx}\end{center}
+@@SCHFAILFIG@@
+\captionof{figure}{Completed $36/48/60$ family using the resolved 2400-point independent reference and six-point sampling. Left: late field RMS error. Right: the minimum of the two norm orders for each quantity on the $48/60$ pair. The field at $100M$ falls below the declared order threshold. Errors decrease, so this is a failure of the required convergence rate, not evidence of error growth or a proof of inconsistency.}
+
+At $100M$, the field RMS errors are
+\begin{equation}
+ E_{36}=9.12728\times10^{-7},\qquad E_{48}=3.80575\times10^{-8},\qquad
+ E_{60}=2.78357\times10^{-8}.
+\end{equation}
+The coarse pair gives $p=11.045$, followed by $1.402$. That variation does not demonstrate an asymptotic regime. The actual compiled time-derivative audit passes with minimum order $2.791$, and the finest waveform/QNM/reduction-amplitude checks pass. The late field gate remains unresolved; its cause has not been established.
+
+\clearpage
+\subsection{Reference sampling, refinement and free-frequency fits}
+PCHIP sampling introduced two early maximum-norm measurement failures when errors became very small. An independent polynomial and smooth-function instrument verified sixth-order local interpolation; reevaluating the same saved states with six-point sampling removed those early failures. The remaining late field order did not pass. Refining the reference from 1200 to 2400 points bounded its uncertainty by $2.08\%$ of the finest errors for the completed $36/48/60$ family.
+
+The new $N96$ grid exposed a stricter reference requirement: at $2M$, the 1200/2400 velocity-reference difference was $13.80\%$ of the primary error, exceeding the unchanged $10\%$ bound. Only the independent oracle was refined to 4800 points. The 2400/4800 maximum early uncertainty is now $0.860\%$. No primary state was rerun or changed for this measurement.
+
+The scalar target is $M\omega=0.4836438722-0.0967587760i$ \cite{qnm}. With $\omega=\omega_R-i\Gamma$, a Schwarzschild fit is
+\begin{equation}
+ z(t)\simeq e^{-\Gamma(t-t_0)}\left[A\cos\omega_R(t-t_0)+B\sin\omega_R(t-t_0)\right].
+\end{equation}
+Frequencies and amplitudes are fitted freely by multi-start variable projection; the independent target is used only for evaluation. Windows are $[35,65]$, $[40,70]$, $[45,75]M$. Kerr will use two free complex branches,
+\begin{equation}
+ z(t)\simeq A_+e^{-i\omega_+(t-t_0)}+A_-e^{-i\omega_-(t-t_0)},
+\end{equation}
+with both amplitudes and frequencies free. The negative-frequency branch is compared with the symmetry-related $m=-2$ scalar target; it is not silently discarded from real initial data.
+@@QNMFIG@@
+\captionof{figure}{Free Schwarzschild ringdown fits from the independent 4800-point reference and the completed 3D $N60$ trajectory. The rectangle is the declared $2\%$ real-frequency and $5\%$ decay tolerance; the cross is the independent spin-zero Leaver target. These fits pass, while the separate late spatial field-convergence gate still fails.}
+
+\clearpage
+\subsection{Unfinished dyadic family: what is already measured}
+The $24/48/96$ family doubles every logical resolution and keeps the actual excision cube commensurate. The new $N96$ trajectory uses the same preserved CPU executable and scalar parameters as the reused $N24$ and $N48$ cases. The first five collected allocations close at $13,26,39,52,65M$ with identical physical/reference and derivative fingerprints.
+@@PARTIALFIG@@
+\captionof{figure}{Collected dyadic evidence only. Left: the extracted waveform through $@@PARTIALTIME@@M$, with the independently resolved reference. Right: minimum pair orders over field, coordinate velocity, independent gradient and reduction, both norms, at the three available field-comparison times. There is no $100M$ point for $N96$; no late order is inferred or plotted.}
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}Xr@{}}\toprule
+Partial diagnostic & Measured value \\\midrule
+Minimum early pair order & $3.55115$ \\
+Largest 2400/4800 reference difference / finest error & $0.0085991$ \\
+Independent waveform relative L2 error through $@@PARTIALTIME@@M$ & $@@PARTIALWAVE@@$ \\
+Maximum normalized reduction through collected reports & $0.00041615$ \\\bottomrule
+\end{tabularx}\end{center}
+
+These indicators pass their corresponding partial checks. The missing late field comparison is precisely the test that failed in the preceding completed family, so early success cannot settle it. The final reference-uncertainty certificate, actual compiled derivative audit, half/quarter timesteps, inner-cube and outer-cap controls remain required before Schwarzschild CPU admission. Its GPU stage and all nonzero-spin Kerr evolution remain gated on that admission.
+
+\clearpage
+\section{Boundary reach, failed alternatives and present limitations}
+\subsection{Finite caps do not test all late reflections}
+Required caps are $\rho=0.9S$ and $0.95S$, compared with exact scri. For the chosen Schwarzschild chart, radial round-trip estimates to the extraction region are about $430M$ and $913M$. Agreement through $100M$ therefore does not establish immunity to reflections that can return later. A closer $0.6S$ supplement has a radial return estimate near $60.4M$ and is declared to report its late sensitivity, field errors and QNM behaviour separately. The largest sampled radial return time is not a universal upper bound for all null rays; angular motion and trapping can delay them.
+
+\subsection{Failed or superseded methods are preserved}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}p{3.4cm}X@{}}\toprule
+Attempt & What prevented promotion \\\midrule
+Compatible discrete reduction & Small residuals were accompanied by field growth at the Cartesian/shell interface. Constraint control alone was insufficient. \\
+Normal upwind with the earlier endpoint closure & Short tests passed, but long controls failed near $51$ flat-space time units and $62M$ in Schwarzschild. \\
+Fixed or grid-scaled scalar damping matrices & Several late reduction-convergence orders missed $1.5$. No roundoff exemption was used. \\
+Smooth-layer v21 coefficient evaluator & Independent endpoint audit and strict CPU/GPU agreement exposed a derivative-evaluation defect; source-bound admissions were superseded. \\
+Schwarzschild $N36$, $\kappa=2$ diagnostic & Same initial data and frozen coefficients; late field RMS error became $2.2484$ times worse and QNM window consistency failed, despite a smaller reduction residual. \\\bottomrule
+\end{tabularx}\end{center}
+
+\subsection{What has not been demonstrated}
+There is no global multipatch energy estimate, admitted Schwarzschild $100M$ three-resolution family with all controls, nonzero-spin Kerr ringdown result, validated near-extremal evolution, or late Price-tail study. Physical energy and angular-momentum balance diagnostics have not been established as part of these admissions. A read-only CPU memory-placement audit found bitwise identical full scalar RHS values, but HBM placement was slower ($63.8$ versus $43.7$ ms per fill/evaluate pair); it supplied no scientific admission and the default placement was retained.
+
+All black-hole fields in this document are test fields on an exact stationary geometry. Their evolution cannot test gauge-driver stability, Einstein/Z4c constraints, nonlinear gravitational radiation, or scalar backreaction. Reusing the mesh and interpolation is useful numerical evidence, with that limited scope.
+
+\clearpage
+\section{Relationship to previous literature}
+This is a validation experiment for an existing Cartesian-plus-shell infrastructure, not a claim of a new conformal scalar equation or the first fixed-background hyperboloidal Kerr evolution. The comparisons below concern the cited methods, not a reproduction of all their published results.
+
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}p{3.0cm}X X@{}}\toprule
+Work & Shared treatment & Present distinction \\\midrule
+Zengino\u glu (2008) \cite{scrifixing} & Stationary height transformation and conformal compactification with scri at a fixed coordinate location. & The inner chart here is the selected analytic trumpet; the map is frozen, with a separate immutable Minkowski reference. \\
+Zengino\u glu--Tiglio (2009) \cite{matching} & Fixed-Kerr massless scalar, actual conformal curvature, inner/outer matching, RK4 and direct access to scri. & Their angular pseudospectral and radial finite-difference treatment is replaced by full 3D Cartesian components on seven patches. The current radial closure is SBP $6/3$. \\
+R\'acz--T\'oth (2011) \cite{tails} & Fixed Kerr, compactification, scalar ringing/tails, and convergence tests. & Their spherical-harmonic angular representation and imposed radial reduction contrast with our 3D evolved gradient auxiliaries and measured residuals. They also test energy/angular-momentum balances. \\
+Dennison et al. (2014/2015) \cite{trumpet} & Their exact $R_0=M$ trumpet supplies the inner stationary geometry. & The outer hyperboloidal layer, its mass-dependent asymptotics, scalar evolution and seven-patch validation are additional construction. Their coordinate caveat remains relevant. \\
+Panosso Macedo (2020) \cite{macedo} & Hyperboloidal Kerr geometry and regular spin-zero wave propagation; relation to independent mode calculations. & The present inner-trumpet-plus-layer coordinates are not the minimal gauge. We use explicit 3D time evolution, not a separated frequency-domain evolution. \\\bottomrule
+\end{tabularx}\end{center}
+
+The closest PDE comparison is \cite{matching}: its conformal and coordinate-based treatments are equivalent when the rescaling and maps are chosen consistently. Our use of $R[\G]/6$ follows that principle. Its reported matching errors also motivate testing the layer and patch interfaces instead of trusting formal bulk order. These notes do not transfer another method's stability or convergence evidence to the present interpolation.
+
+The reduced angular approaches in \cite{tails,macedo} avoid evolving a full 3D grid for a single azimuthal mode. Here the extra cost deliberately exercises the reusable Cartesian bulk, six shell blocks and their transfers. The independent reduced solvers are therefore valuable precisely because they do not share those interfaces. This does not make their error negligible: their uncertainty is measured against the actual finest 3D errors.
+
+\clearpage
+\subsection{A useful literature diagnostic not yet completed here}
+For the physical test field one may compute, without backreaction,
+\begin{equation}
+ T_{ab}[\Phi]=\partial_a\Phi\partial_b\Phi-\tfrac12g_{ab}\partial_c\Phi\partial^c\Phi,
+ \qquad \nabla_aT^{ab}=0\quad\hbox{when }\Box_g\Phi=0.
+\end{equation}
+The stationary and axial Killing fields yield
+\begin{equation}
+ J_E^a=-T^a{}_b\xi^b,\qquad J_L^a=T^a{}_b\eta^b,\qquad
+ \nabla_aJ_E^a=\nabla_aJ_L^a=0.
+\end{equation}
+Flux-balance checks of this kind would complement the present error and QNM diagnostics, as illustrated by \cite{tails}. They have not been implemented and passed as a complete budget here. Computing a stress tensor for diagnostics would still not source Einstein's equations.
+
+\section{What remains, and how evidence is preserved}
+The next scientific decision is the $N96$ field and derivative comparison at $100M$ against the selected resolved reference, with the unchanged $1.5$ gate. If it passes, the declared time, inner and outer controls and actual-RHS audit must also pass. Only then can the source-bound Schwarzschild CPU result authorize a short direct GPU validation. Kerr subsequently needs its own independent solution, three-resolution fields and derivatives, reference uncertainty, characteristic/boundary checks, free two-branch QNMs and matching GPU result.
+
+Aurora submissions use \texttt{debug}, account \texttt{CompactBinaryMerger}, one node and at most 60 minutes, with at most one task allocation queued or running. Bounded native checkpoints continue the same trajectory, rather than repeat completed runs. Native scalar payloads, source and executable SHA256 hashes, scheduler records, checkpoint ancestry and plots are retained. Physical and reference coefficient caches, and their derivative caches, have four separate before/after fingerprints. External SHA256 manifests cover files.
+
+The production protection manifest covers 642 original source/input files, including pre-existing user changes. The latest checked snapshot has zero mismatches. The standalone scalar code is confined to \epath{src/test_scalar}; diagnostics and controllers are under \epath{tst/test_scalar}. Its build does not link production Z4c state or tasks.
+
+\boxnote{\textbf{Decision rule.} Preserve and report every failure. Refine an unresolved independent reference without repeating the primary trajectory. Do not replace a failed declared family with a favourable plot. Claim admission only for the exact source, settings and complete set of passed gates. Scalar admission never completes the metric-evolution goal.}
+
+\clearpage
+\appendix
+\section{Independent radial equation and scalar QNM conventions}
+For Schwarzschild write $\psi=P(t,\rho)Y_{\ell m}$. With $\bar\Sigma=(\rho+M\Omega)^2$ and $D_r=\lambda\bar\Sigma$, define
+\begin{equation}
+ B_r^t=D_r^{-1}\partial_\rho(D_r\G^{\rho t}),\qquad
+ B_r^\rho=D_r^{-1}\partial_\rho(D_r\G^{\rho\rho}).
+\end{equation}
+The independent radial equation is
+\begin{equation}
+ \G^{tt}P_{tt}+2\G^{t\rho}P_{t\rho}+\G^{\rho\rho}P_{\rho\rho}
+ +B_r^tP_t+B_r^\rho P_\rho
+ -\left[V+\frac{\ell(\ell+1)}{\bar\Sigma}\right]P=0.
+\end{equation}
+Its separate normal-momentum implementation evolves $(P,\Pi_r,Q_\rho)$ on a uniform radial grid and includes its own scalar auxiliary damping. The latter vanishes on $Q_\rho=P_\rho$ and is independently resolution/time/inner-boundary controlled. No primary cached metric or multipatch RHS is imported.
+
+For regular $m=2$ Kerr angular dependence,
+\begin{equation}
+ \Delta_{S^2}\{(1-z^2)W_2e^{2i\phi}\}
+ =(1-z^2)e^{2i\phi}\{(1-z^2)W_{2,zz}-6zW_{2,z}-6W_2\}.
+\end{equation}
+Substitution into the full frozen operator, with $\partial_\phi\mapsto2i$, retains the exact Kerr radial-azimuthal cross terms. Factoring the polar zero makes the independent angular function regular; it does not discard angular mode coupling.
+
+Independent frequency targets use spin-weight-zero separation in Boyer--Lindquist coordinates,
+\begin{equation}
+ \Phi=e^{-i\omega T_{\rm BL}}e^{im\phi_{\rm BL}}S_{\ell m}(\theta)\mathcal R(R),\qquad
+ K_\omega=(R^2+a^2)\omega-am,
+\end{equation}
+\begin{align}
+ \frac1{\sin\theta}\partial_\theta(\sin\theta\,\partial_\theta S)
+ +\left(a^2\omega^2\cos^2\theta-\frac{m^2}{\sin^2\theta}+A_{\ell m}\right)S&=0,\\
+ \partial_R(\Delta\partial_R\mathcal R)
+ +\left[\frac{K_\omega^2}{\Delta}-a^2\omega^2+2am\omega-A_{\ell m}\right]\mathcal R&=0.
+\end{align}
+QNM conditions are ingoing at the future horizon and outgoing at infinity. With $\dd R_*/\dd R=(R^2+a^2)/\Delta$, $\Omega_H=a/(R_+^2+a^2)$, the leading radial factors are $e^{-i(\omega-m\Omega_H)R_*}$ at the horizon and $R^{-1}e^{+i\omega R_*}$ at infinity. Stationary radial time/azimuth transformations change those factors, not the Killing frequency. The \texttt{qnm} Leaver solver supplies the evaluation targets \cite{qnm}.
+
+\clearpage
+\section{Mode targets and evidence map}
+\begin{center}\small
+\begin{tabular}{@{}ccrr@{}}\toprule
+$a/M$ & $(s,\ell,m,n)$ & $\Re(M\omega)$ & $-\Im(M\omega)$ \\\midrule
+$0$ & $(0,2,2,0)$ & $0.483643872211$ & $0.096758775978$ \\
+$0.5$ & $(0,2,2,0)$ & $0.585989629305$ & $0.093494418992$ \\
+$0.5$ & $(0,2,-2,0)$ & $0.422751280000$ & $0.095615863282$ \\\bottomrule
+\end{tabular}\end{center}
+These are scalar frequencies. They are not spin-two gravitational ringdown frequencies. The Kerr values are targets, not measurements from an admitted Kerr run. The table lists positive-frequency solver targets; in an $m=2$ two-branch fit the symmetry-related branch is
+\begin{equation}
+ M\omega_-=-\big(M\omega_{s=0,\ell=2,m=-2,n=0}\big)^*
+ =-0.422751280000-0.095615863282i.
+\end{equation}
+
+All evidence paths below are relative to \epath{docs/validation/test-scalar-20261016/}. Figure coordinates and reported numerical values are generated from the corresponding saved JSON/CSV files. The adjacent notes manifest binds the input hashes, generated source, generator and template. Figures are vector TikZ/PGFPlots embedded in the standalone \LaTeX{} source; no external images or bibliography files are required to compile it.
+
+\begin{description}[style=nextline,font=\normalfont\bfseries]
+\item[Current Minkowski admission] \epath{minkowski-stable-sbp-cpu-admission.json}; \epath{cpu-v22/stable-full-review.json}; \epath{aurora/minkowski-stable-gpu-v5-review.json}.
+\item[Completed failed Schwarzschild matrices] \epath{cpu-schwarzschild-commensurate/primary-review.json}; \epath{cpu-schwarzschild-commensurate-finer/primary-resolved-reference-review.json}.
+\item[Actual scalar time derivative] \epath{cpu-schwarzschild-commensurate-finer/actual-resolved-rhs-review.json}.
+\item[Unfinished dyadic family] \epath{schwarzschild-dyadic-plan.json}; \epath{cpu-schwarzschild-dyadic/closed-prefix-t65-review.json}; \epath{cpu-schwarzschild-dyadic/reference-selection.json}.
+\item[Verified continuation after access recovery] \epath{aurora/cpu-schwarzschild-dyadic-n96-resume5/submission.json}, job \texttt{8939561}; its parent is the verified $65M$ checkpoint.
+\item[Independent QNM and reference checks] \epath{radial-oracle/smooth/qnm-n4800-review.json}; \epath{radial-oracle/smooth/resolved-reference-certificate-v1.json}; \epath{reference-interpolation-diagnostic-v1.json}.
+\item[Protected baseline and access interruption] \epath{frozen-baseline-sha256.json}; \epath{access-recovery-20261017/status.json}; \epath{access-recovery-20261017/handoff.json}.
+\end{description}
+
+\begin{center}\small
+\begin{tabular}{@{}ll@{}}\toprule
+Current scalar source & SHA256 prefix (full digests in manifest) \\\midrule
+@@HASHROWS@@
+\bottomrule\end{tabular}\end{center}
+These notes are a dated evidence summary. Later resumed jobs may create additional results; the existing failure and admission records remain immutable.
+
+\clearpage
+\begin{thebibliography}{9}
+\bibitem{scrifixing} A.~Zengino\u glu, \emph{Hyperboloidal foliations and scri-fixing} (2008), \href{https://arxiv.org/abs/0712.4333}{arXiv:0712.4333}. Stationary compactifications of Minkowski, Schwarzschild and Kerr.
+\bibitem{matching} A.~Zengino\u glu and M.~Tiglio, \emph{Spacelike matching to null infinity} (2009), \href{https://arxiv.org/abs/0906.3342}{arXiv:0906.3342}. Fixed-background scalar equation, equivalent conformal/coordinate treatments and numerical matching tests; see Sections III--V.
+\bibitem{tails} I.~R\'acz and G.~Zs.~T\'oth, \emph{Numerical investigation of the late-time Kerr tails} (2011), \href{https://arxiv.org/abs/1104.4199}{arXiv:1104.4199}. Angular spectral evolution, radial reduction and conservation diagnostics; see Section 2.
+\bibitem{trumpet} K.~A.~Dennison, T.~W.~Baumgarte and P.~J.~Montero, \emph{Trumpet Slices in Kerr Spacetimes} (2014; revised 2015), \href{https://arxiv.org/abs/1409.1887}{arXiv:1409.1887}. Exact stationary trumpet family and the limiting-surface coordinate caveat.
+\bibitem{macedo} R.~Panosso Macedo, \emph{Hyperboloidal framework for the Kerr spacetime} (2020), \href{https://arxiv.org/abs/1910.13452}{arXiv:1910.13452}. General Kerr hyperboloidal gauges, Teukolsky equations and minimal-gauge/frequency-domain connections.
+\bibitem{qnm} L.~C.~Stein, \emph{qnm: A Python package for calculating Kerr quasinormal modes, separation constants, and spherical-spheroidal mixing coefficients} (2019), \href{https://arxiv.org/abs/1908.10377}{arXiv:1908.10377}, \href{https://doi.org/10.21105/joss.01683}{doi:10.21105/joss.01683}. The saved scalar targets use package version 0.4.4, spin weight $s=0$.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,35 @@
+#!/bin/bash -l
+#PBS -N cubed-sphere
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+
+# Submit from a directory containing source/ and a SYCL build.
+# CUBED_SPHERE_BUILD may select a different build directory.
+# CUBED_SPHERE_MATRIX=half selects a three-minute worker; the queue still
+# requires at least a five-minute requested walltime.
+# Uses one PVC tile on one node; this is a bounded debug regression, not a run
+# intended to establish long-time stability or scaling.
+set -euo pipefail
+ulimit -c 0
+module load oneapi/release/2025.3.1
+cd "${PBS_O_WORKDIR:?}"
+result="$PWD/results/${PBS_JOBID:?}"
+build="${CUBED_SPHERE_BUILD:-$PWD/build-sycl-release}"
+mkdir -p "$result"
+exec >"$result/job.log" 2>&1
+date -u
+module list
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+export ZE_AFFINITY_MASK=0.0
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export OMP_NUM_THREADS=1
+worker_limit=540
+if [[ "${CUBED_SPHERE_MATRIX:-0}" == half ]]; then worker_limit=180; fi
+mpiexec -n 1 -ppn 1 --cpu-bind=list:1-8 \
+  timeout "${worker_limit}s" bash "$PWD/source/tst/cubed_sphere/run_aurora_worker.sh" \
+  "$build" "$PWD/source" "$result"
+date -u

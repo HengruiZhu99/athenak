@@ -110,6 +110,12 @@ endif()
 #------ create configuration header file from template in /src directory -----------------
 
 # add subdirectories for source code and include files
+option(Athena_ENABLE_CUBED_SPHERE_CONFORMAL_PROBE
+       "Build mapped conformal research probe (not production support)" OFF)
+if(Athena_ENABLE_CUBED_SPHERE_CONFORMAL_PROBE AND
+   (Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_HIP OR Kokkos_ENABLE_OPENMP))
+  message(FATAL_ERROR "Mapped conformal probe supports Serial or SYCL; one rank at runtime")
+endif()
 add_subdirectory(src)
 add_subdirectory(kokkos)
 include_directories(${Kokkos_INCLUDE_DIRS_RET})
@@ -358,5 +364,37 @@ if (Athena_ENABLE_HYPERBOLOIDAL_TESTS)
     add_test(NAME hyperboloidal_evolution COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_SOURCE_DIR}/tst/hyperboloidal/check_evolution.py
       $<TARGET_FILE:hyperboloidal_spherical>)
+  endif()
+endif()
+
+option(Athena_ENABLE_CUBED_SPHERE_TESTS "Build cubed sphere mapped-grid tests" OFF)
+if(Athena_ENABLE_CUBED_SPHERE_TESTS)
+  enable_testing()
+  add_executable(cubed_sphere_map_tests tst/cubed_sphere/test_map.cpp)
+  target_include_directories(cubed_sphere_map_tests PRIVATE
+      ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(cubed_sphere_map_tests PRIVATE Kokkos::kokkos)
+  add_test(NAME cubed_sphere_map COMMAND cubed_sphere_map_tests)
+  if(Athena_ENABLE_CUBED_SPHERE_CONFORMAL_PROBE)
+    add_executable(cubed_sphere_conformal_bridge_tests tst/cubed_sphere/test_conformal_bridge.cpp)
+    target_include_directories(cubed_sphere_conformal_bridge_tests PRIVATE
+        ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+    target_link_libraries(cubed_sphere_conformal_bridge_tests PRIVATE Kokkos::kokkos)
+    add_test(NAME cubed_sphere_conformal_bridge COMMAND cubed_sphere_conformal_bridge_tests)
+  endif()
+  find_package(Python3 QUIET COMPONENTS Interpreter)
+  if(Python3_Interpreter_FOUND)
+    add_test(NAME cubed_sphere_regular_z4c
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tst/cubed_sphere/check_evolution.py
+        $<TARGET_FILE:athena> --suite smoke --output ${CMAKE_BINARY_DIR}/Testing/cubed_sphere)
+    set_tests_properties(cubed_sphere_regular_z4c PROPERTIES TIMEOUT 300)
+    add_test(NAME cubed_sphere_scalar_transport
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tst/cubed_sphere/check_evolution.py
+        $<TARGET_FILE:athena> --suite scalar --output ${CMAKE_BINARY_DIR}/Testing/cubed_sphere_scalar)
+    set_tests_properties(cubed_sphere_scalar_transport PROPERTIES TIMEOUT 300)
+    add_test(NAME cubed_sphere_failure_capture
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tst/cubed_sphere/check_evolution.py
+        $<TARGET_FILE:athena> --suite failure --output ${CMAKE_BINARY_DIR}/Testing/cubed_sphere_failure)
+    set_tests_properties(cubed_sphere_failure_capture PROPERTIES TIMEOUT 120)
   endif()
 endif()

@@ -17,6 +17,7 @@
 
 #include "athena.hpp"
 #include "mesh/mesh.hpp"
+#include "mesh/cubed_sphere/derivatives.hpp"
 #include "coordinates/adm.hpp"
 #include "z4c/z4c.hpp"
 #include "z4c/hyperboloidal/cartesian_patch.hpp"
@@ -36,6 +37,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   }
   auto &indcs = pmy_pack->pmesh->mb_indcs;
   auto &size = pmy_pack->pmb->mb_size;
+  auto geometry = pmy_pack->pcoord->z4c_geometry;
   int &is = indcs.is; int &ie = indcs.ie;
   int &js = indcs.js; int &je = indcs.je;
   int &ks = indcs.ks; int &ke = indcs.ke;
@@ -195,7 +197,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     // Lie derivative of A
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> LA_dd;
 
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto idx = cubed_sphere::MakeStencil(geometry,size.d_view(m),indcs,m,k,j,i);
 
     // -----------------------------------------------------------------------------------
     // Initialize everything to zero
@@ -547,7 +549,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
     AthenaPointTensor<Real, TensorSymm::NONE, 3, 2> dbeta_du;
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 3> Gamma_ddd, Gamma_udd, dg_ddd;
     AthenaPointTensor<Real, TensorSymm::ISYM2, 3, 3> ddbeta_ddu;
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto idx = cubed_sphere::MakeStencil(geometry,size.d_view(m),indcs,m,k,j,i);
     Real detg = 0.0, dbeta = 0.0;
     Real chi_guarded = fmax(z4c.chi(m,k,j,i),opt.chi_div_floor);
     Gamma_u.ZeroClear();
@@ -667,7 +669,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   KOKKOS_LAMBDA(const int m, const int k, const int j, const int i) {
     AthenaPointTensor<Real, TensorSymm::SYM2, 3, 2> g_uu;
     AthenaPointTensor<Real, TensorSymm::NONE, 3, 1> dalpha_d, dchi_d, Lbeta_u;
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto idx = cubed_sphere::MakeStencil(geometry,size.d_view(m),indcs,m,k,j,i);
     Real Lalpha = 0.0;
     Real detg = 0.0;
     Real chi_guarded = fmax(z4c.chi(m,k,j,i),opt.chi_div_floor);
@@ -779,7 +781,7 @@ TaskStatus Z4c::CalcRHS(Driver *pdriver, int stage) {
   par_for("K-O Dissipation",
   DevExeSpace(),0,nmb-1,0,nz4c-1,ks,ke,js,je,is,ie,
   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
-    Real idx[] = {1/size.d_view(m).dx1, 1/size.d_view(m).dx2, 1/size.d_view(m).dx3};
+    auto idx = cubed_sphere::MakeStencil(geometry,size.d_view(m),indcs,m,k,j,i);
     for(int a = 0; a < 3; ++a) {
       u_rhs(m,n,k,j,i) += Diss<NGHOST>(a, idx, u0, m, n, k, j, i)*diss;
     }

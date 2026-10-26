@@ -13,6 +13,7 @@
 #include <algorithm>
 
 #include "athena.hpp"
+#include "mesh/cubed_sphere/extension.hpp"
 #include "mesh/mesh.hpp"
 #include "driver/driver.hpp"
 #include "coordinates/adm.hpp"
@@ -93,6 +94,7 @@ TaskStatus Z4c::NewTimeStep(Driver *pdriver, int stage) {
   if (pmy_pack->pmesh->multi_d) { dtnew = std::min(dtnew, dt2); }
   if (pmy_pack->pmesh->three_d) { dtnew = std::min(dtnew, dt3); }
 
+  if (cubed_sphere) dtnew = std::min(dtnew,cubed_sphere->TimeStep(pdriver));
   return TaskStatus::complete;
 }
 } // namespace z4c

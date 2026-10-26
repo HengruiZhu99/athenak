@@ -1,0 +1,29 @@
+#!/bin/bash -l
+#PBS -N sphere-pulse
+#PBS -A CompactBinaryMerger
+#PBS -q capacity
+#PBS -l select=1
+#PBS -l walltime=00:30:00
+#PBS -l filesystems=home:flare
+#PBS -j oe
+set -euo pipefail
+ulimit -c 0
+module load oneapi/release/2025.3.1
+cd "${PBS_O_WORKDIR:?}"
+result="$PWD/results/${PBS_JOBID:?}"
+mkdir -p "$PWD/results"
+exec >"$result.job.log" 2>&1
+trap 'if [[ -d "$result" ]]; then cp "$result.job.log" "$result/job.log"; fi' EXIT
+date -u
+module list
+export OMP_NUM_THREADS=1
+export ZE_ENABLE_PCI_ID_DEVICE_ORDER=1
+export ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+mode=${PULSE_MODE:-admission}
+extra=()
+if [[ "$mode" == admission ]]; then extra=(--cpu-golden "$PWD/cpu-golden.json"); fi
+if [[ ${PULSE_PREVIOUS:-none} != none ]]; then extra+=(--previous "$PULSE_PREVIOUS"); fi
+mpiexec -n 1 -ppn 1 --cpu-bind=list:1-12 timeout 540s /usr/bin/python3.11 \
+  "$PWD/source/tst/cubed_sphere/run_checkpoint_pulse.py" "$PWD/athena" "$PWD/source" "$result" \
+  --mode "$mode" --affinity "${PULSE_AFFINITY:-root}" --wall 300 --tlim 2 "${extra[@]}"
+date -u

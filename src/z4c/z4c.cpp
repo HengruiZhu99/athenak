@@ -18,6 +18,7 @@
 #include <Kokkos_Core.hpp>
 
 #include "athena.hpp"
+#include "mesh/cubed_sphere/extension.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 #include "bvals/bvals.hpp"

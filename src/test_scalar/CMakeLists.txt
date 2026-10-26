@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.20)
+project(frozen_test_scalar LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "" FORCE)
+endif()
+# Independent project: never builds or links any Einstein/Z4c implementation.
+add_subdirectory(../../kokkos ${CMAKE_BINARY_DIR}/kokkos)
+file(WRITE ${CMAKE_BINARY_DIR}/config.hpp "#define SINGLE_PRECISION_ENABLED 0\n#define MPI_PARALLEL_ENABLED 0\n")
+add_executable(test_scalar main.cpp)
+target_include_directories(test_scalar PRIVATE .. ${CMAKE_BINARY_DIR})
+target_link_libraries(test_scalar PRIVATE Kokkos::kokkos)

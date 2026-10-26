@@ -1,0 +1,18 @@
+// Diagnostic independently derived physical ADM source/constraint closure candidate.
+// Requires diagnostic AD and namespace h; not production integration.
+struct ClosureCheck {long double source=0,hamiltonian=0,momentum=0;};
+ClosureCheck ClosedCandidate(const h::Z4cJet<AD>&u,const h::OmegaJet<AD>&o,const h::Z4cRHS<AD>&f,long double k1,long double k2,const long double actual[4]){
+ ClosureCheck out;const AD Om=o.omega,K=u.trace.value+2*u.theta.value,N=u.alpha.value/Om;h::ScalarJet<AD>cp{};cp.value=u.chi.value*Om*Om;
+ for(int i=0;i<3;++i){cp.d[i]=u.chi.d[i]*Om*Om+2*u.chi.value*Om*o.gradient[i];for(int j=0;j<3;++j)cp.dd[i][j]=u.chi.dd[i][j]*Om*Om+2*Om*(u.chi.d[i]*o.gradient[j]+u.chi.d[j]*o.gradient[i])+2*u.chi.value*(o.gradient[i]*o.gradient[j]+Om*o.hessian[i][j]);}
+ const auto physical=h::PenroseMetric(u.metric,cp);const auto gg=h::Geometry(physical);const auto gt=h::Geometry(u.metric);const auto con=h::EvolvedConstraints(u,o);AD Z[3]{},dZ[3][3]{},kp[3][3]{},E[3][3]{},L{};
+ for(int i=0;i<3;++i)for(int j=0;j<3;++j){Z[i]+=.5L*u.metric.g[i][j]*(u.lambda.value[j]-gt.contracted[j]);for(int d=0;d<3;++d)dZ[d][i]+=.5L*(u.metric.dg[d][i][j]*(u.lambda.value[j]-gt.contracted[j])+u.metric.g[i][j]*(u.lambda.d[d][j]-gt.dcontracted[d][j]));}
+ for(int i=0;i<3;++i)for(int j=0;j<3;++j)L+=(2*u.alpha.value*u.chi.value*o.gradient[i]+Om*u.alpha.value*u.chi.d[i])*gt.inverse[i][j]*Z[j];L-=N*(6*o.normal+3*k1*(1+k2))*u.theta.value;
+ for(int i=0;i<3;++i)for(int j=0;j<3;++j){kp[i][j]=u.a.k[i][j]/(Om*u.chi.value)+K*physical.g[i][j]/3;E[i][j]=N*(dZ[i][j]+dZ[j][i])+physical.g[i][j]*L/3;for(int k=0;k<3;++k)E[i][j]-=2*N*gg.connection[k][i][j]*Z[k];}
+ AD traceE{};for(int i=0;i<3;++i)for(int j=0;j<3;++j)traceE+=gg.inverse[i][j]*E[i][j];
+ // Independent comparison of proposed source against transformed native Kij time derivative.
+ for(int i=0;i<3;++i)for(int j=0;j<3;++j){long double gamdot=(f.metric[i][j].v-u.metric.g[i][j].v*f.chi.v/u.chi.value.v)/(Om.v*Om.v*u.chi.value.v);long double kt=(f.a[i][j].v-u.a.k[i][j].v*f.chi.v/u.chi.value.v)/(Om.v*u.chi.value.v)+(f.trace.v+2*f.theta.v)*physical.g[i][j].v/3+K.v*gamdot/3;long double adm=-N.dd[i][j]+N.v*(gg.ricci[i][j].v+K.v*kp[i][j].v);for(int k=0;k<3;++k){adm+=gg.connection[k][i][j].v*N.d[k]+u.beta.value[k].v*kp[i][j].d[k]+kp[k][j].v*u.beta.d[i][k].v+kp[i][k].v*u.beta.d[j][k].v;for(int l=0;l<3;++l)adm-=2*N.v*gg.inverse[k][l].v*kp[i][k].v*kp[l][j].v;}long double src=kt-adm;out.source=std::max(out.source,std::abs(src-E[i][j].v)/std::max(1.L,std::abs(src)));}
+ long double hdot=2*N.v*K.v*con.hamiltonian.v;for(int i=0;i<3;++i){hdot+=u.beta.value[i].v*con.hamiltonian.d[i];for(int j=0;j<3;++j){long double cov=con.momentum[j].d[i];for(int k=0;k<3;++k)cov-=gg.connection[k][i][j].v*con.momentum[k].v;hdot-=2*N.v*gg.inverse[i][j].v*cov+4*gg.inverse[i][j].v*con.momentum[j].v*N.d[i];long double raised=0;for(int k=0;k<3;++k)for(int l=0;l<3;++l)raised+=gg.inverse[i][k].v*gg.inverse[j][l].v*kp[k][l].v;hdot+=2*(K.v*gg.inverse[i][j].v-raised)*E[i][j].v;}}
+ out.hamiltonian=std::abs(hdot-actual[0])/std::max(1.L,std::abs(actual[0]));
+ for(int i=0;i<3;++i){long double mdot=-.5L*N.v*con.hamiltonian.d[i]+N.v*K.v*con.momentum[i].v-con.hamiltonian.v*N.d[i]-traceE.d[i];for(int j=0;j<3;++j){mdot+=u.beta.value[j].v*con.momentum[i].d[j]+con.momentum[j].v*u.beta.d[i][j].v;for(int k=0;k<3;++k){long double cov=E[k][i].d[j];for(int l=0;l<3;++l)cov-=gg.connection[l][j][k].v*E[l][i].v+gg.connection[l][j][i].v*E[k][l].v;mdot+=gg.inverse[j][k].v*cov;}}out.momentum=std::max(out.momentum,std::abs(mdot-actual[i+1])/std::max(1.L,std::abs(actual[i+1])));}
+ return out;
+}

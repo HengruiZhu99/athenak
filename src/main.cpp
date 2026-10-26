@@ -36,6 +36,7 @@
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
+#include "z4c/z4c.hpp"
 #include "mesh/mesh_refinement.hpp"
 #include "outputs/outputs.hpp"
 #include "driver/driver.hpp"
@@ -374,6 +375,10 @@ int main(int argc, char *argv[]) {
   // in Driver.Initialize(). Add wall clock timer to Driver if necessary.
 
   ChangeRunDir(run_dir);
+  if (pmesh->pmb_pack->pz4c != nullptr) {
+    pmesh->pmb_pack->pz4c->InitializeCubedSphere(pinput,res_flag);
+  }
+
   Driver* pdriver = new Driver(pinput, pmesh, wtlim, &timer);
   Outputs* pout = new Outputs(pinput, pmesh);
 

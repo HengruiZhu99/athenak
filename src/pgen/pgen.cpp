@@ -963,6 +963,8 @@ void ProblemGenerator::CallProblemGenerator(ParameterInput *pin, bool is_restart
     Z4cSuperposedPunctures(pin, is_restart);
   } else if (pgen_fun_name.compare("z4c_boosted_puncture") == 0) {
     Z4cBoostedPuncture(pin, is_restart);
+  } else if (pgen_fun_name.compare("z4c_cubed_sphere") == 0) {
+    Z4cCubedSphere(pin,is_restart);
   } else if (pgen_fun_name.compare("z4c_linear_wave") == 0) {
     Z4cLinearWave(pin, is_restart);
   } else if (pgen_fun_name.compare("diffusion") == 0) {

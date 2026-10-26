@@ -12,6 +12,7 @@
 //! Cartesian Kerr-Schild)
 
 #include "athena.hpp"
+#include "mesh/cubed_sphere/map.hpp"
 #include "parameter_input.hpp"
 #include "mesh/mesh.hpp"
 
@@ -64,6 +65,9 @@ class Coordinates {
 
   // data needed to compute metric in GR
   CoordData coord_data;
+
+  // Empty for Cartesian blocks; populated only for mapped Z4c exterior patches.
+  cubed_sphere::GeometryView z4c_geometry;
 
   // excision masks
   DvceArray4D<bool> excision_floor;  // cell-centered mask for C2P flooring about horizon

@@ -88,6 +88,11 @@ add_executable(
         ion-neutral/ion-neutral.cpp
         ion-neutral/ion-neutral_tasks.cpp
 
+        mesh/cubed_sphere/extension.cpp
+        mesh/cubed_sphere/diagnostics.cpp
+        mesh/cubed_sphere/scalar_probe.cpp
+        pgen/tests/z4c_cubed_sphere.cpp
+
         mesh/build_tree.cpp
         mesh/load_balance.cpp
         mesh/mesh.cpp
@@ -217,6 +222,12 @@ add_executable(
 )
 
 # custom problem generator to be included in compile
+if(Athena_ENABLE_CUBED_SPHERE_CONFORMAL_PROBE)
+  target_sources(athena PRIVATE mesh/cubed_sphere/conformal_probe.cpp)
+  set_source_files_properties(mesh/cubed_sphere/extension.cpp PROPERTIES
+      COMPILE_DEFINITIONS ATHENA_CUBED_SPHERE_CONFORMAL_PROBE)
+endif()
+
 # specify on command line using '-D PROBLEM=file' where 'file' is name of file in
 # pgen/ directory (not including .cpp extension)
 

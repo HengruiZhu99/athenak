@@ -1,0 +1,77 @@
+# Opt-in Serial/SYCL research control; the ordinary driver runs zero cycles.
+<job>
+basename = cubed_sphere_conformal
+<time>
+evolution = dynamic
+integrator = rk3
+cfl_number = 0.15
+tlim = 0.1
+ndiag = 10
+nlim = 0
+<mesh>
+nx1 = 16
+nx2 = 16
+nx3 = 16
+nghost = 4
+x1min = -0.25
+x1max = 0.25
+x2min = -0.25
+x2max = 0.25
+x3min = -0.25
+x3max = 0.25
+ix1_bc = outflow
+ox1_bc = outflow
+ix2_bc = outflow
+ox2_bc = outflow
+ix3_bc = outflow
+ox3_bc = outflow
+<meshblock>
+nx1 = 8
+nx2 = 8
+nx3 = 8
+<mesh_refinement>
+refinement = none
+<z4c>
+spatial_order = 4
+diss = 0.1
+damp_kappa1 = 0
+lapse_harmonic = 1
+lapse_harmonicf = 1
+lapse_oplog = 0
+shift_Gamma = 0
+shift_eta = 0
+<problem>
+pgen_name = z4c_cubed_sphere
+initial_data = minkowski
+pulse_width = 0.35
+<cubed_sphere>
+enabled = true
+outer_radius = 1
+radial_stretch = 0
+nr = 12
+nangular = 12
+outer_boundary = sommerfeld
+scalar_probe_tlim = 0
+conformal_probe_tlim = 0.01
+conformal_amplitude = 0
+conformal_cfl = 0.025
+conformal_pole_cfl = 0.03
+conformal_kappa1 = 0
+conformal_diss = 0.1
+conformal_max_cycles = 10000
+conformal_outer_degree = 2
+# Research stencil control only; not a constraint-preserving boundary condition.
+conformal_interior_radial = false
+conformal_quadrupole = false
+conformal_binary_reference = false
+conformal_mass = 0
+conformal_curvature_radius = 0.5
+conformal_layer_r0 = 0.05
+conformal_layer_r1 = 0.95
+conformal_native_layer_gauge = false
+conformal_fixed_dt = 0
+conformal_probe_steps = 0
+conformal_checkpoint = none
+conformal_restart = none
+conformal_checkpoint_tag = none
+conformal_wall_seconds = 0

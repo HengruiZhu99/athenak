@@ -9,6 +9,7 @@
 //  and partial time step appropriate to stage.
 
 #include "athena.hpp"
+#include "mesh/cubed_sphere/extension.hpp"
 #include "mesh/mesh.hpp"
 #include "driver/driver.hpp"
 #include "coordinates/coordinates.hpp"
@@ -39,6 +40,7 @@ TaskStatus Z4c::ExpRKUpdate(Driver *pdriver, int stage) {
   KOKKOS_LAMBDA(const int m, const int n, const int k, const int j, const int i) {
     u0(m,n,k,j,i) = gam0*u0(m,n,k,j,i) + gam1*u1(m,n,k,j,i) + beta_dt*u_rhs(m,n,k,j,i);
   });
+  if (cubed_sphere) cubed_sphere->Update(pdriver,stage);
   return TaskStatus::complete;
 }
 } // namespace z4c

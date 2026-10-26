@@ -13,6 +13,7 @@
 #include <cstdio>
 
 #include "athena.hpp"
+#include "mesh/cubed_sphere/extension.hpp"
 #include "globals.hpp"
 #include "parameter_input.hpp"
 #include "tasklist/task_list.hpp"
@@ -153,6 +154,7 @@ TaskStatus Z4c::ClearSend(Driver *pdrive, int stage) {
 //! \brief  copy u0 --> u1 in first stage
 
 TaskStatus Z4c::CopyU(Driver *pdrive, int stage) {
+  if (cubed_sphere) cubed_sphere->BeginStage(pdrive,stage);
   auto integrator = pdrive->integrator;
 
   auto &indcs = pmy_pack->pmesh->mb_indcs;
@@ -211,6 +213,7 @@ TaskStatus Z4c::EnforceAlgConstr(Driver *pdrive, int stage) {
   if (pmy_pack->pdyngr != nullptr || stage == pdrive->nexp_stages) {
     AlgConstr(pmy_pack);
   }
+  if (cubed_sphere) cubed_sphere->FinishStage(pdrive,stage);
   return TaskStatus::complete;
 }
 
@@ -285,6 +288,8 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
       pbval_u->Z4cBCsCoarse(pmy_pack, pbval_u->u_in, coarse_u0);
     }
 
+    if (cubed_sphere) cubed_sphere->FillCoarse();
+
     // Note: FillCoarseInBndryCC is intentionally not called here. For Z4c the
     // coarse-array data in same-level boundary regions (including edges and
     // corners) is communicated directly via the isame_z4c buffers in
@@ -301,6 +306,11 @@ TaskStatus Z4c::Prolongate(Driver *pdrive, int stage) {
 //! \brief
 
 TaskStatus Z4c::ApplyPhysicalBCs(Driver *pdrive, int stage) {
+  if (cubed_sphere) {
+    const Real c = stage==2 ? 0.5 : (stage>0 ? 1.0 : 0.0);
+    cubed_sphere->Fill(pmy_pack->pmesh->time+c*pmy_pack->pmesh->dt);
+    return TaskStatus::complete;
+  }
   if (hyperboloidal_patch) {
     hyperboloidal_patch->Prepare(u0);
     return TaskStatus::complete;

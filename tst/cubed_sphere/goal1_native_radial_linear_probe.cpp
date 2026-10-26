@@ -1,0 +1,22 @@
+// Native full tensor RHS on complete scalar radial jets, for analysis only.
+#include "goal1_tensor_endpoint_amplitude.hpp"
+#include <iostream>
+#include <iomanip>
+#include <cstdlib>
+#include <string>
+namespace cs=cubed_sphere;namespace h=z4c::hyperboloidal;using D=cs::tensor_endpoint::D;using J=cs::Jet;
+Real Read(){std::string s;if(!(std::cin>>s))throw std::runtime_error("short radial linear input");char*e;Real v=std::strtod(s.c_str(),&e);if(*e||!std::isfinite(v))throw std::runtime_error("invalid radial token");return v;}
+h::Z4cJet<Real> Profile(int col,Real s,Real omega,Real radius,const Real n[3]){
+ h::Z4cJet<Real>axis{};auto scalar=[&](h::ScalarJet<Real>&a,Real exponent,Real factor){a.value=factor*std::pow(omega,exponent);a.d[0]=-2*radius*exponent*factor*std::pow(omega,exponent-1);a.dd[0][0]=factor*(4*radius*radius*exponent*(exponent-1)*std::pow(omega,exponent-2)-2*exponent*std::pow(omega,exponent-1));};
+ if(col==0)scalar(axis.chi,s,1);if(col==2)scalar(axis.alpha,s,1);if(col==5)scalar(axis.trace,s,1);if(col==6)scalar(axis.theta,s,1);
+ if(col==1||col==4){for(int i=0;i<3;++i){h::ScalarJet<Real>a{};scalar(a,s-(col==4?1:0),i==0?1:-.5);if(col==1){axis.metric.g[i][i]=a.value;axis.metric.dg[0][i][i]=a.d[0];axis.metric.ddg[0][0][i][i]=a.dd[0][0];}else{axis.a.k[i][i]=a.value;axis.a.dk[0][i][i]=a.d[0];}}}
+ if(col==3||col==7){h::ScalarJet<Real>a{};scalar(a,s-(col==7?1:0),1);auto&v=col==3?axis.beta:axis.lambda;v.value[0]=a.value;v.d[0][0]=a.d[0];v.dd[0][0][0]=a.dd[0][0];}
+ return h::CartesianRadialJet(axis,radius,n);
+}
+int main(int argc,char**argv){Kokkos::initialize(argc,argv);int code=0;std::cout<<std::setprecision(17);try{while(std::cin>>std::ws,std::cin.peek()!=EOF){int id=Read();Real n[3];for(auto&v:n)v=Read();Real s=Read(),rho=Read(),r=std::sqrt(1-rho),x[3];for(int i=0;i<3;++i)x[i]=r*n[i];h::LayerReference<Real>descriptor(1.,.5,{true,.05,.95});auto p=descriptor.At(x[0],x[1],x[2]);for(int i=0;i<3;++i)n[i]=x[i]/p.radius;auto connection=rwm::ReferenceConnection(p,x);Real M[8][8]{},C[4][8]{},background=0,leak=0;
+ for(int col=0;col<8;++col){auto delta=Profile(col,s,p.omega,p.radius,n);std::vector<Real>flat;cs::typed_support::Map<Real>(delta,[&](int,Real v){flat.push_back(v);return v;});auto u=cs::typed_support::Map<D>(p.state,[&](int j,Real v){return D(J(v),J(flat[j]));});auto ref=cs::typed_support::Constant<D>(p);auto con=cs::typed_support::Constant<D>(connection);auto F=cs::typed_support::Core(u,ref,con);h::OmegaJet<D>o{};o.omega=D(p.omega);for(int i=0;i<3;++i){o.gradient[i]=D(p.domega[i]);for(int j=0;j<3;++j)o.hessian[i][j]=D(p.omega_hessian[i][j]);}h::SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);auto constraints=h::EvolvedConstraints(u,o);if(!constraints.valid)throw std::runtime_error("invalid radial constraints");Real f[22];for(int j=0;j<22;++j){background=std::max(background,std::abs(F[j].f.f));f[j]=F[j].a.f*std::pow(p.omega,(j>=8&&j<=16?2:1)-s);}Real fh=0,fa=0,fb=0,fl=0;for(int i=0;i<3;++i){fb+=n[i]*f[19+i];fl+=n[i]*f[14+i];for(int j=0;j<3;++j){int m=0;for(;m<6;++m)if(cs::native_endpoint::ma[m]==std::min(i,j)&&cs::native_endpoint::mb[m]==std::max(i,j))break;fh+=n[i]*n[j]*f[1+m];fa+=n[i]*n[j]*f[8+m];}}
+ Real rows[8]={f[0],fh,f[18],fb,fa,f[7],f[17],fl};for(int j=0;j<8;++j)M[j][col]=rows[j];for(int i=0;i<3;++i){leak=std::max({leak,std::abs(f[19+i]-fb*n[i]),std::abs(f[14+i]-fl*n[i])});for(int j=i;j<3;++j){int m=0;for(;m<6;++m)if(cs::native_endpoint::ma[m]==i&&cs::native_endpoint::mb[m]==j)break;Real tf=1.5*n[i]*n[j]-(i==j?.5:0);leak=std::max({leak,std::abs(f[1+m]-fh*tf),std::abs(f[8+m]-fa*tf)});}}
+ C[0][col]=constraints.hamiltonian.a.f*std::pow(p.omega,-s);C[2][col]=u.theta.value.a.f*std::pow(p.omega,-s);for(int i=0;i<3;++i){C[1][col]+=n[i]*constraints.momentum[i].a.f*std::pow(p.omega,1-s);C[3][col]+=n[i]*constraints.z4.z_covector[i].a.f*std::pow(p.omega,1-s);}
+ }
+ std::cout<<"{\"id\":"<<id<<",\"s\":"<<s<<",\"Omega\":"<<p.omega<<",\"radius\":"<<p.radius<<",\"raw_background_RHS\":"<<background<<",\"native22_sector_leak\":"<<leak<<",\"M\":[";for(int i=0;i<8;++i){if(i)std::cout<<",";std::cout<<"[";for(int j=0;j<8;++j)std::cout<<(j?",":"")<<M[i][j];std::cout<<"]";}std::cout<<"],\"C\":[";for(int i=0;i<4;++i){if(i)std::cout<<",";std::cout<<"[";for(int j=0;j<8;++j)std::cout<<(j?",":"")<<C[i][j];std::cout<<"]";}std::cout<<"]}"<<std::endl;
+ }}catch(const std::exception&e){std::cerr<<e.what()<<'\n';code=1;}Kokkos::finalize();return code;}
