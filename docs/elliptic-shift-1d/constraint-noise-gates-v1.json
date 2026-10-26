@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "declared_before_runs": true,
+  "candidate": {
+    "backend": "spherical-g1",
+    "xi": 1,
+    "sigma": 4,
+    "tau": 8,
+    "origin_ko": 0.5,
+    "origin_ko_radius": 0.4,
+    "width": 7,
+    "quadrature_width": 7,
+    "cfl": 0.05
+  },
+  "regular_constraints": {
+    "amplitude": 1e-05,
+    "n": [
+      128,
+      256,
+      512
+    ],
+    "duration": 10,
+    "maximum_RMS_amplification": 100,
+    "final_over_initial_RMS_max": 1,
+    "fields": [
+      "H",
+      "M",
+      "Theta",
+      "Z"
+    ]
+  },
+  "supported_noise": {
+    "amplitude": 1e-10,
+    "seed": 7419,
+    "n": [
+      128,
+      256,
+      512
+    ],
+    "duration": 6,
+    "maximum_RMS_amplification": 100,
+    "final_over_initial_RMS_max": 1,
+    "note": "Compare each resolution to its own initial norm; fixed-amplitude nodal noise has derivatives growing with N. This is not a spatial convergence study."
+  },
+  "common": "Also require every finite/positive/clock/null/pole gate in acceptance.json. Passing this extension does not complete the goal."
+}

@@ -8,7 +8,7 @@ namespace h = z4c::hyperboloidal;
 static int SphericalParts(int n, const double *r, const double *q,
     const double *d, const double *dd, const double *beta, const double *dbeta,
     const double *ddbeta, double kappa1, double kappa2, int appendix_c,
-    double slicing, double *regular, double *pole, double *diagnostic, bool total_chi) {
+    double slicing, double *regular, double *pole, double *diagnostic, bool total_chi, double lapse_restoring=0) {
   const h::CMCReference<double> ref{1, 1};
   for (int i=0; i<n; ++i) {
     if (!(r[i]>0 && r[i]<=1)) return i+1;
@@ -25,7 +25,7 @@ static int SphericalParts(int n, const double *r, const double *q,
     // remain the repository C_Z4c=0 equations; this does not claim full paper equivalence.
     if(appendix_c)parts.pole.theta+=3*u.alpha.value*o.normal*u.theta.value;
     const auto gauge=h::UnfactoredReferenceGauge(ref,ref.At(r[i],0.,0.),u,
-        h::GaugeParameters<double>{slicing,0,0,0},false,true);
+        h::GaugeParameters<double>{slicing,0,lapse_restoring,0},false,true);
     if(!gauge.valid)return i+1;
     auto pack=[](const h::Z4cRHS<double>& x,double* y) {
       y[0]=x.chi; y[1]=x.metric[0][0]; y[2]=x.a[0][0];
@@ -60,5 +60,9 @@ extern "C" int spherical_parts(SPHERICAL_ARGUMENTS) {
 extern "C" int spherical_parts_total_chi(SPHERICAL_ARGUMENTS) {
   return SphericalParts(n,r,q,d,dd,beta,dbeta,ddbeta,kappa1,kappa2,appendix_c,
       slicing,regular,pole,diagnostic,true);
+}
+extern "C" int spherical_parts_restoring(SPHERICAL_ARGUMENTS,double restoring) {
+  return SphericalParts(n,r,q,d,dd,beta,dbeta,ddbeta,kappa1,kappa2,appendix_c,
+      slicing,regular,pole,diagnostic,false,restoring);
 }
 #undef SPHERICAL_ARGUMENTS

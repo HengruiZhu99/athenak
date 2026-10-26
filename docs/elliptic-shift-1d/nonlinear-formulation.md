@@ -1,8 +1,8 @@
 # Nonlinear spherical hybrid: derivation and implementation audit
 
-Status: nonlinear vacuum interior kernel and regular-center elliptic gauge implemented;
+Status: nonlinear vacuum and coupled scalar regular-center kernels implemented;
 actual-scri finite-difference closure is an experimental candidate, not yet admitted.
-Matter and puncture formulae below are derivations awaiting independent tests.
+Scalar weak dispersal is a pilot; puncture evolution remains unimplemented.
 The supplied linear theorem is not evidence of nonlinear stability.
 
 ## Variables and exact spherical restriction
@@ -83,8 +83,9 @@ A_rr, T, and Lambda remain free. In particular K_phys=p+2T need not be constant.
 
 ## Lapse and actual scri
 
-Retain the reference-reduced lapse from `UnfactoredReferenceGauge` with zero
-additional restoring coefficient, one-plus-log interior coefficient,
+The original control retains the reference-reduced lapse from
+`UnfactoredReferenceGauge` with zero additional restoring coefficient,
+one-plus-log interior coefficient,
 `F_lapse=alpha^2+4 nu Omega^2 alpha`, nu>=0, and p-p* as driver. Thus
 
     R_alpha = beta (alpha'-A') + (beta-B) A',
@@ -96,6 +97,106 @@ live coefficients. Its linearization is the supplied reference lapse. Clock
 condition alpha(S)=A(S)=1 is imposed only on lapse. Scri null-normal shift is
 `beta(S)=-alpha(S) sqrt(chi(S)/g(S))`. Its linearization is
 `delta beta_n=-delta alpha + A(delta g_nn-delta chi)/2`, as required.
+
+The current candidate adds `-xi (alpha+A)(alpha-A)` to `S_alpha`, xi=1.
+This changes the lapse gauge and leaves Einstein/Z4 bulk sources and the lapse
+principal coefficient unchanged. It is authorized by the user's equation/gauge
+revision, but is not identical to the original linear-note prescription. For
+`chi=1+Omega C`, `alpha=A+Omega L`, g=1, the raw boundary rates are
+`chi_t=C0-2L0` and `alpha_t=C0-2xi L0`. Thus xi=1 aligns these two necessary
+gauge compatibility rates. This Taylor identity alone does not prove closure.
+Zero-restoring controls lose scri compatibility in resolved pulse evolutions.
+
+## Canceled g=1 implementation and regular-center limitations
+
+For initial g=1, metric-connection freezing implies g_t=0 exactly. The separate
+`g1_rhs.py` backend analytically cancels common reference and trace-free terms;
+it does not subtract a numerical equilibrium RHS. Its independent, nonlinear,
+off-constraint native-tensor comparison has maximum error 7.6e-14 over 24 cases,
+including both Theta sources and lapse restoring coefficients 0 and 1.
+Curvature, Khat, Theta and Lambda are independent evolved fields. This backend
+currently cannot initialize general g(r) or positive puncture chi/lapse variables.
+
+Regular-center parity is even for chi, g, A_rr, Khat, Theta, alpha and odd for
+Lambda. Isotropy additionally requires g-1,A_rr=O(r^2), Lambda=O(r). Current
+finite differences use reflected data, with a candidate KO6 filter on A_rr/r^2,
+Lambda/r and the scalar deviations. The filter has fixed taper
+`max(1-(r/.4)^2,0)^6` and coefficient epsilon/(64h). It vanishes near scri and
+does not reset differential constraints. Epsilon=.1 admits sixth-order bulk
+convergence at t=1 but a fine-grid central instability by t=3. Increasing the
+coefficient and reducing derivative order are controlled experiments, not
+accepted defaults. An invertible origin-variable chain-rule discretization
+failed earlier and is rejected.
+
+The optional actual-origin grid uses analytic limits f'/r=f''(0), Lambda/r=
+Lambda'(0), A_rr/r=0. Its scalar wave and geometric coefficient checks pass,
+but its N1025 lapse-pulse evolution fails positivity at t=2.256494. It is not a
+stability repair. The actual-scri endpoint is present in both origin-grid variants.
+
+## Coupled scalar equation actually implemented
+
+Use `f=R phi/r=phi/(Omega sqrt(chi))` and `P=n_bar(R phi)/r`, both even at a
+regular center. Here R=r/(Omega sqrt(chi)), n_bar is the normal for the conformal
+spacetime metric, K=Khat+2Theta, and `k=K/3-Omega A_rr/2`. Then
+
+    phi_r=sqrt(chi)[Omega f_r+(-r+Omega chi_r/(2chi))f],
+    n_bar(phi)=sqrt(chi)[Omega P+k f].
+
+The matter additions to the regular RHS are
+
+    R_A -= (16pi/3) alpha chi phi_r^2,
+    R_Khat += 8pi alpha Omega n_bar(phi)^2,
+    R_Theta -= 4pi alpha Omega [n_bar(phi)^2+chi phi_r^2],
+    R_Lambda += 16pi alpha n_bar(phi) phi_r.
+
+Hamiltonian and momentum diagnostics include respectively
+`-8pi Omega^2[n_bar(phi)^2+chi phi_r^2]` and
+`+8pi Omega n_bar(phi) phi_r`. The exact radius-weighted equation is
+`box_bar2(R phi)-V(R phi)=0`, with
+`V=2m/(Omega^2 R^3)-Ric4_angular/Omega^2`. On the free-Z4c equations,
+
+    Ric4_angular = -Omega^2 chi Lambda/r +Omega^2 chi_r Lambda/3
+                   -(2/3)Omega r chi Lambda +kappa1(1+kappa2)Theta.
+
+The repository Theta variant adds `2 w Theta`, w=beta r/alpha. Retaining these
+off-constraint terms matters: dropping them silently changes the scalar wave
+equation. Eight independent comparisons with the native geometric evolution
+give angular Ricci error below 1.8e-15. A separately evaluated analytic Minkowski
+wave gives RHS convergence orders 5.95 and 5.99.
+
+With `alpha Kbar_rad=-1+alpha A_rr+U/Omega`,
+`U=alpha(K+3)/3-(alpha-A)-r(beta+r)`, the evolved scalar equations are
+
+    f_t=beta f_r+(beta/r)f+alpha P,
+    P_t=beta P_r+(beta/r+alpha Kbar_rad)P
+        +alpha chi(f_rr+2f_r/r)+(.5alpha chi_r+chi alpha_r)f_r
+        +[(.5alpha chi_r+chi alpha_r)/r-alpha V]f.
+
+The actual-scri limits use U/Omega=-U_r and V=0 for finite mass and compatible
+constraint weights. The unfactored potential numerator and its first derivative
+are measured separately. No Omega floor is used. At a regular origin, the flat
+limit is `f_t=-f+P/2`, `P_t=-2P+3f_2+f_0` for f=f_0+f_2 r^2+... .
+
+Constraint-solved scalar initial data use psi=1+Omega^3 w, chi=psi^-4,
+A_rr=Theta=Lambda=0, K=-3 and n_bar(phi)=0. The nonlinear regular Hamiltonian
+equation is
+
+    Omega w''+(5Omega'+2Omega/r)w'-15w
+      -7.5Omega^2w^2-7.5Omega^5w^3-3.75Omega^8w^4-.75Omega^11w^5
+      +pi(1+Omega^3w)phi_r^2/Omega^2=0.
+
+Evenness at the origin and w'(1)=-3w(1) close the solve. Bondi initial mass is
+8w(1). For amplitude .058, independent ADM residuals and volume-integrated
+scalar energy show approximately sixth-order convergence. Newton tolerance
+1e-11 encounters a double-precision residual floor about1.6e-11 at N512;
+the explicit candidate tolerance1e-10 remains below measured discretization
+error. Tightening/precision isolation is still required. This solve is only at
+initialization; evolution never projects Hamiltonian or momentum errors.
+
+At amplitude .01, N256 reaches t=3 with H/M RMS about3.1e-12/3.8e-12. The
+initial mass .003132366825394506 minus RK4-integrated coordinate-time scalar
+flux .003132355606598225 is1.1219e-8. The full Bondi-time normalization,
+three-resolution flux study, tails and collapse remain unaccepted.
 
 For each geometric/Z4 field, combine its entire pole numerator before division.
 If S_U(S)=0 and sufficient differentiability holds, the nonlinear limiting

@@ -17,9 +17,11 @@ class Kernel:
         self.lib.spherical_parts.restype = ctypes.c_int
         self.lib.spherical_parts_total_chi.argtypes=self.lib.spherical_parts.argtypes
         self.lib.spherical_parts_total_chi.restype=ctypes.c_int
+        self.lib.spherical_parts_restoring.argtypes=self.lib.spherical_parts.argtypes+[ctypes.c_double]
+        self.lib.spherical_parts_restoring.restype=ctypes.c_int
 
     def parts(self, r, q, d, dd, beta, dbeta, ddbeta, kappa1=4., kappa2=-.99,
-              appendix_c=True, slicing=1., total_chi=None):
+              appendix_c=True, slicing=1., total_chi=None, lapse_restoring=0.):
         args = [np.ascontiguousarray(a,dtype=np.float64) for a in (r,q,d,dd,beta,dbeta,ddbeta)]
         n=len(r)
         if any(a.shape!=(n,8) for a in args[1:4]) or any(a.shape!=(n,) for a in [args[0],*args[4:]]):
@@ -29,6 +31,10 @@ class Kernel:
         if total_chi is not None:
             args[1]=args[1].copy();args[1][:,0]=total_chi
             function=self.lib.spherical_parts_total_chi
-        bad=function(n,*args,kappa1,kappa2,int(appendix_c),slicing,R,S,diagnostic)
+        if lapse_restoring:
+            if total_chi is not None: raise ValueError('Restoring adapter currently uses deviation chi')
+            bad=self.lib.spherical_parts_restoring(n,*args,kappa1,kappa2,int(appendix_c),slicing,R,S,diagnostic,lapse_restoring)
+        else:
+            bad=function(n,*args,kappa1,kappa2,int(appendix_c),slicing,R,S,diagnostic)
         if bad: raise FloatingPointError(f'Invalid geometry/RHS at point {bad-1}, r={r[bad-1]}')
         return R,S,diagnostic

@@ -17,13 +17,14 @@ def weights(nodes, target, derivative=0, interval=None):
 
 
 class RadialOperators:
-    def __init__(self, r, width=7):
+    def __init__(self, r, width=7,quadrature_width=None):
         self.r = np.asarray(r)
         self.width = width
-        if len(r) < width or not np.all(np.diff(r) > 0) or r[0] <= 0:
+        self.origin_on_grid=bool(r[0]==0)
+        if len(r) < width or not np.all(np.diff(r) > 0) or r[0] < 0:
             raise ValueError('Need increasing positive grid and enough points')
         # Reflection only applies to regular-center data. Never use for a puncture.
-        self.ext = np.r_[-r[:width][::-1], r]
+        self.ext = np.r_[-r[1:width+1][::-1],r] if self.origin_on_grid else np.r_[-r[:width][::-1], r]
         self.index = []
         self.d1 = []; self.d2 = []
         for i, x in enumerate(r):
@@ -35,10 +36,13 @@ class RadialOperators:
             self.d2.append(weights(self.ext[idx], x, 2))
         self.index = np.array(self.index)
         self.d1 = np.array(self.d1); self.d2 = np.array(self.d2)
+        # Quadrature is independently refinable with fixed differentiation.
+        width=quadrature_width or width
+        if len(r)+1<width:raise ValueError("Not enough quadrature nodes")
         # Include the analytically regular origin value in integration.
-        self.nodes = np.r_[0., r]
+        self.nodes = r if self.origin_on_grid else np.r_[0., r]
         self.qindex = []; self.qweights = []
-        for i in range(len(r)):
+        for i in range(len(self.nodes)-1):
             start = min(max(i-width//2, 0), len(self.nodes)-width)
             idx = np.arange(start, start+width)
             self.qindex.append(idx)
@@ -48,14 +52,22 @@ class RadialOperators:
 
     def derivatives(self, values, parity):
         values = np.asarray(values)
-        ext = np.concatenate([values[:self.width][::-1]*parity, values], axis=0)
+        reflected=values[1:self.width+1][::-1] if self.origin_on_grid else values[:self.width][::-1]
+        ext = np.concatenate([reflected*parity, values], axis=0)
         sample = ext[self.index]
         if values.ndim == 1:
-            return np.sum(self.d1*sample, axis=1), np.sum(self.d2*sample, axis=1)
-        return (np.einsum('ij,ijf->if', self.d1, sample),
-                np.einsum('ij,ijf->if', self.d2, sample))
+            first=np.sum(self.d1*sample,axis=1);second=np.sum(self.d2*sample,axis=1)
+            if self.origin_on_grid:
+                if parity>0:first[0]=0.
+                else:second[0]=0.
+            return first,second
+        first=np.einsum('ij,ijf->if',self.d1,sample);second=np.einsum('ij,ijf->if',self.d2,sample)
+        if self.origin_on_grid:
+            first[0,np.asarray(parity)>0]=0.;second[0,np.asarray(parity)<0]=0.
+        return first,second
 
     def integral(self, values, origin=0.):
         """Cumulative degree-(width-1) interpolatory quadrature."""
-        f = np.r_[origin, values]
-        return np.cumsum(np.sum(self.qweights*f[self.qindex], axis=1))
+        f=np.asarray(values) if self.origin_on_grid else np.r_[origin,values]
+        result=np.cumsum(np.sum(self.qweights*f[self.qindex],axis=1))
+        return np.r_[0.,result] if self.origin_on_grid else result

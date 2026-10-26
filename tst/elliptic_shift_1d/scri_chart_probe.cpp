@@ -8,8 +8,8 @@
 using T=scri_series::Taylor;
 using scri_series::Dx;using scri_series::DivX;using scri_series::Integral;
 namespace h=z4c::hyperboloidal;
-struct Result {long double residue[3],H4,M3,T4,Z3,low_poles;};
-Result Evaluate(long double pf,long double af1,long double ell0,long double gauge_scale) {
+struct Result {long double residue[3],H4,M3,T4,Z3,low_poles,clock_rate,chi_rate;};
+Result Evaluate(long double pf,long double af1,long double ell0,long double gauge_scale,long double restoring=0) {
   T x;x.c[1]=1;T r=Kokkos::sqrt(1-2*x),r2=1-2*x;
   T C;C.c[0]=.02L*gauge_scale;C.c[1]=-.01L*gauge_scale;
   C.c[2]=.003L*gauge_scale;C.c[3]=.001L*gauge_scale;C.c[4]=.0002L*gauge_scale;
@@ -47,7 +47,10 @@ Result Evaluate(long double pf,long double af1,long double ell0,long double gaug
   T P0t=Dx(Ct)/2-Ct/2-C*Ct/4;
   T P1t=((27*C*C+36*C-18*Dx(C))*Ct-(18*C+20)*Dx(Ct)+4*Dx(Dx(Ct)))/8;
   T Pnumer=p_t+2*theta_t+2*x*Ct-x*x*P0t-x*x*x*P1t;
-  Result out{};out.residue[0]=theta_t.c[3];out.residue[1]=lambda_t.c[2];out.residue[2]=Pnumer.c[3];
+  const auto gp=h::UnfactoredReferenceGauge(ref,ref.At(r,T(0),T(0)),u,
+      h::GaugeParameters<T>{T(1),T(0),T(restoring),T(0)},false,true);
+  T alpha_t=assemble(gp.regular.alpha,gp.pole.alpha);
+  Result out{};out.clock_rate=alpha_t.c[0];out.chi_rate=chi_t.c[0];out.residue[0]=theta_t.c[3];out.residue[1]=lambda_t.c[2];out.residue[2]=Pnumer.c[3];
   out.H4=con.hamiltonian.c[4];out.M3=con.momentum[0].c[3];out.T4=theta.c[4];out.Z3=con.z4.z_covector[0].c[3];
   for(int i=0;i<4;++i)out.low_poles=std::max(out.low_poles,std::abs(con.hamiltonian.c[i]));
   for(int i=0;i<3;++i)out.low_poles=std::max(out.low_poles,std::abs(con.momentum[0].c[i]));
@@ -56,7 +59,7 @@ Result Evaluate(long double pf,long double af1,long double ell0,long double gaug
   return out;
 }
 int main(int argc,char**argv){
-  if(argc!=5)return 2;
-  auto z=Evaluate(std::stold(argv[1]),std::stold(argv[2]),std::stold(argv[3]),std::stold(argv[4]));
-  std::cout<<std::setprecision(19)<<"{\"residue\":["<<z.residue[0]<<","<<z.residue[1]<<","<<z.residue[2]<<"],\"H4\":"<<z.H4<<",\"M3\":"<<z.M3<<",\"T4\":"<<z.T4<<",\"Z3\":"<<z.Z3<<",\"lower_weight_defect\":"<<z.low_poles<<"}\n";
+  if(argc!=5 && argc!=6)return 2;
+  auto z=Evaluate(std::stold(argv[1]),std::stold(argv[2]),std::stold(argv[3]),std::stold(argv[4]),argc==6?std::stold(argv[5]):0);
+  std::cout<<std::setprecision(19)<<"{\"residue\":["<<z.residue[0]<<","<<z.residue[1]<<","<<z.residue[2]<<"],\"H4\":"<<z.H4<<",\"M3\":"<<z.M3<<",\"T4\":"<<z.T4<<",\"Z3\":"<<z.Z3<<",\"lower_weight_defect\":"<<z.low_poles<<",\"raw_clock_rate\":"<<z.clock_rate<<",\"raw_chi_rate\":"<<z.chi_rate<<"}\n";
 }

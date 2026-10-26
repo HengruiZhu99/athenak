@@ -17,12 +17,12 @@ stability is inferred. See `nonlinear-formulation.md` for new independent deriva
 
 See [the active scientific work record](progress.md) for passing component checks,
 resolved failures, source/checkpoint ancestry and the next derivation steps.
-The two CTest groups pass. The independent scalar oracle passes its declared
-preliminary convergence/error gate, and the wormhole initial-data constraints
-are verified. The nonlinear actual-scri pulse evolution remains **unaccepted**:
-resolved runs lose boundary compatibility as the pulse reaches scri. No coupled
-scalar, trumpet evolution, wormhole-to-trumpet, long-duration or literature
-reproduction acceptance is complete.
+Five CTest groups pass. The scalar oracle and wormhole initial-data constraints
+are verified. A revised lapse and analytically canceled g=1 backend improve
+actual-scri pulse behavior, but a fine-grid central instability remains unresolved.
+The weak coupled-scalar pilot reaches t=3 with mass/flux discrepancy1.12e-8;
+principal resolution/time studies are outstanding. No trumpet evolution,
+wormhole-to-trumpet, long-duration or literature reproduction acceptance is complete.
 
 ## Reproducible build and tests
 
@@ -33,6 +33,7 @@ git submodule update --init --depth 1 kokkos
 cmake -S tst/elliptic_shift_1d -B build-elliptic-shift-1d -DCMAKE_BUILD_TYPE=Release -DKokkos_ENABLE_SERIAL=ON
 cmake --build build-elliptic-shift-1d --target spherical_z4c -j 2
 python3 tst/elliptic_shift_1d/test_elliptic.py --library build-elliptic-shift-1d/libspherical_z4c.dylib
+ctest --test-dir build-elliptic-shift-1d --output-on-failure
 ```
 
 Linux uses `libspherical_z4c.so`. To reproduce the failed endpoint pilot, choose

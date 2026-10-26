@@ -2,6 +2,76 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Update: 2026-10-26, coupled scalar and central instability
+
+Five CTest groups pass (`evidence/ctest-v5.log`), now including the canceled
+nonlinear g=1 kernel, exact off-constraint angular Ricci/scalar geometry, and
+analytic regular-center limits. The latest scalar+supported-noise checkpoint
+test reproduces state, grid, time, step and integrated flux bitwise across an
+aligned restart (`output/elliptic-shift-1d/coupled-restart-noise-v1`).
+
+The revised lapse adds `-xi(alpha+A)(alpha-A)/Omega`, xi=1, as an explicitly
+labeled gauge change. It substantially improves scri behavior; xi=0 remains a
+failed control. Native primitive evaluation suffers central cancellation errors.
+A separately implemented exact g=1 reduction cancels those analytically and
+agrees with 24 nonlinear off-constraint native cases to7.6e-14. It preserves
+independent curvature, Khat, Theta and Lambda evolution. No numerical
+Schwarzschild/background RHS is subtracted.
+
+With xi=1, sigma=4, tau=8 and origin KO coefficient .1, the published-shaped
+amplitude .001 lapse pulse gives H RMS3.75e-9,6.37e-11,1.11e-12 at t=1 for
+N256/512/1024; bulk orders5.88/5.84. Endpoint momentum order falls to2.31 on
+the fine pair, failing the predeclared endpoint-order gate. At t=3 the fine
+grid's central mode is growing (H RMS7.87e-10) although scri poles stay small.
+These are not robust accepted evolutions. See the source-bound summary and
+plot in `evidence/regular-center-review-v1/`.
+
+Two attempted center repairs are rejected: direct chain-rule origin variables
+fail earlier on refinement; an actual-origin grid with correctly tested analytic
+limits fails positivity at t=2.256494 for N1025. The separate fourth-order
+stencil control fails positivity at t=4.417098 after large central growth.
+With stronger localized KO .5, N256/512/1024 reach t=6 with final H RMS
+at or below8e-16 and M RMS below8e-15. The N512 amplitude .1 pulse also reaches
+t=6 (H/M RMS1.4e-14/1.2e-14). These are improved short-duration controls;
+convergence, elliptic/time/dissipation isolation and long runs still remain.
+Supported smooth free
+constraint errors and seeded nodal noise are now available via `--perturbation`.
+
+Fully coupled scalar evolution is implemented, including the free-Z4c angular
+Ricci contribution to the wave potential, all Einstein matter sources and a
+nonlinear Hamiltonian initial-data solve. Fixed analytic wave RHS convergence
+is sixth order. Amplitude .058 initial data give independent sixth-order ADM
+constraint/energy checks, but strict Newton1e-11 reaches a double-precision
+floor near1.6e-11 at N512. Candidate tolerance1e-10 is explicit; independent
+tolerance/precision isolation remains outstanding.
+
+The amplitude .01, N256 coupled pilot reaches t=3 with H/M RMS about
+3.15e-12/3.84e-12. Initial mass .003132366825394506 minus RK4 stage-integrated
+coordinate-time scalar flux .003132355606598225 is1.1219e-8. This is a useful
+weak-dispersal pilot only. Bondi-time normalization, three resolutions,
+timestep refinement, subcritical paper-amplitude runs, collapse, BH scalar
+perturbations and tails remain unaccepted or unrun.
+
+For a matching KO .5 weak-scalar sequence, N256/512 mass-minus-flux residuals
+are2.13e-8 and5.35e-10 at t=3; N1024 is still running. Earlier KO .1 data
+must not be mixed into this dissipation-controlled sequence. At amplitude .058,
+N256 reaches t=6 but transient H/M RMS peaks .35/.47, scri pole5.35e-6, and
+mass-minus-flux -1.40e-4: this fails acceptance despite its small final
+constraints. N512/1024 refinements are in progress. The third-jet scri mass
+diagnostic reports lower numerator jets explicitly; it is not admitted as a
+Bondi mass extraction while these compatibility/roundoff errors are unresolved.
+
+The source-linked literature inventory now has91 rows with exact retrieved
+versions, including separate follow-up gauge/violation/solved-scalar/BH cases.
+The2026v4 revision of2506.15311 agrees with earlier analytical charged tails;
+the superseded disagreement is not a current finding. Parameter/figure audit
+and all published-formulation controls remain unfinished.
+
+Latest trajectories automatically preserve exact runnable sources and matching
+libraries at startup. Older source-bound continuations use verified frozen
+closures, including manually reconstructed, hash-matched source dependencies.
+All failed variants and checkpoint ancestry remain available.
+
 ## User revisions
 
 On 2026-10-25 the user authorized local one-dimensional builds/tests after Aurora
@@ -11,7 +81,7 @@ with continued iteration until the full goal passes robustly. These revisions
 supersede the corresponding restrictions in the preserved original objective.
 They do not authorize hiding failures or projecting away differential constraints.
 
-## Implemented and verified components
+## Earlier component record (superseded where the update above is newer)
 
 1. Isolated baseline snapshot and experimental branch; source and Kokkos revision
    preserved, large generated outputs excluded and inventoried. Portable linear
@@ -89,18 +159,16 @@ RHS before evolving the new chart. A collar-only variable chart can avoid
 ill-conditioned Omega differentiation at the regular center without slaving any
 bulk curvature/constraint function or the shift.
 
-## Next required work
+## Outstanding required work
 
-1. Complete the new chart's nonlinear gauge and subsidiary time-corner audit,
-   implement analytically factored RHS/endpoint limits and appropriate origin
-   discretization, then repeat resolved pulse, violation and noise studies.
+1. Resolve the fine-grid central instability; repeat resolved pulse, violation
+   and noise studies and test long-time behavior. The formal spatial chart
+   below remains research, not an adopted time-closed method.
 2. Complete published gauge/formulation controls, exact-scri/staggered comparison,
    elliptic quadrature isolation and temporal/endpoint convergence.
-3. Implement and validate coupled scalar evolution and constraint-solved data.
-   The independent oracle is only the first prerequisite. A radius-weighted field
-   psi=R phi is promising: exact spherical geometry gives
-   box_2 psi-[2m/R^3-Ricci_theta_theta/R^2]psi=0. Dropping the Ricci term is an
-   off-constraint modification and must be audited/disclosed if used.
+3. Validate coupled scalar evolution and constraint-solved data with principal
+   resolution/time/elliptic/dissipation studies, followed by all required
+   dispersal, collapse, BH perturbation, ringing/tail and mass-balance cases.
 4. Derive puncture inner-end conditions and a puncture driver, then execute
    published trumpet controls and genuine wormhole-to-trumpet evolution.
 5. Complete the reproduction inventory, physical diagnostics/flux/Bondi-time

@@ -6,11 +6,11 @@ from types import SimpleNamespace
 import numpy as np
 from evolve import Evolution,sha
 
-p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--n',type=int,default=24)
-p.add_argument('--regularity-sat',type=float,default=0.);p.add_argument('--scri-sat',type=float,default=0.);p.add_argument('--endpoint',default='raw-lhopital');p.add_argument('--epsilon',type=float,default=1e-6)
+p=argparse.ArgumentParser();p.add_argument('--origin-variables',action='store_true');p.add_argument('--backend',choices=['native','spherical-g1'],default='native');p.add_argument('--library',required=True);p.add_argument('--n',type=int,default=24)
+p.add_argument('--origin-ko',type=float,default=0.);p.add_argument('--lapse-restoring',type=float,default=0.);p.add_argument('--regularity-sat',type=float,default=0.);p.add_argument('--scri-sat',type=float,default=0.);p.add_argument('--endpoint',default='raw-lhopital');p.add_argument('--epsilon',type=float,default=1e-6)
 p.add_argument('--output',type=Path,required=True);args=p.parse_args();args.output.mkdir(parents=True,exist_ok=False)
-opts=SimpleNamespace(n=args.n,width=7,library=args.library,eta=0.,kappa1=4.,kappa2=-.99,theta='appendix-c',slicing=1.,endpoint=args.endpoint,scri_sat=args.scri_sat,regularity_sat=args.regularity_sat)
-ev=Evolution(opts);shape=(args.n,8);indices=[i*8+f for i in range(args.n) for f in range(7) if not (i==args.n-1 and f==6)]
+opts=SimpleNamespace(origin_variables=args.origin_variables,backend=args.backend,n=args.n,width=7,quadrature_width=7,origin_ko=args.origin_ko,origin_ko_radius=.4,library=args.library,eta=0.,kappa1=4.,kappa2=-.99,theta='appendix-c',slicing=1.,endpoint=args.endpoint,scri_sat=args.scri_sat,regularity_sat=args.regularity_sat,lapse_restoring=args.lapse_restoring)
+ev=Evolution(opts);shape=(args.n,8);indices=[i*8+f for i in range(args.n) for f in range(7) if not (i==args.n-1 and f==6) and not (args.backend=='spherical-g1' and f==1)]
 J=np.empty((len(indices),len(indices)));start=time.perf_counter()
 for col,k in enumerate(indices):
     q=np.zeros(shape);q.flat[k]=args.epsilon;plus=ev.rhs(q).ravel()[indices]
@@ -22,7 +22,7 @@ fields=['chi','g','Arr','Khat','Theta','Lambda','alpha','beta'];shares=np.sum(ab
 # Minimal model: T_t=-c T/Omega, with l'Hopital endpoint T_t=c T'.
 # Its endpoint-only eigenvalue is +c D_1(S,S); c=4.04 for the damping term.
 D,_=ev.op.derivatives(np.eye(args.n),1);minimal_rate=4.04*D[-1,-1]
-record={'n':args.n,'h':ev.h,'endpoint':args.endpoint,'scri_sat':args.scri_sat,'regularity_sat':args.regularity_sat,'epsilon':args.epsilon,
+record={'n':args.n,'h':ev.h,'backend':args.backend,'origin_ko':args.origin_ko,'endpoint':args.endpoint,'scri_sat':args.scri_sat,'regularity_sat':args.regularity_sat,'lapse_restoring':args.lapse_restoring,'epsilon':args.epsilon,
  'dominant_real':float(values[k].real),'dominant_imag':float(values[k].imag),
  'h_times_dominant_real':float(ev.h*values[k].real),'endpoint_eigenvector_energy_fraction':end_fraction,
  'field_energy_fraction':dict(zip(fields,shares.tolist())),
