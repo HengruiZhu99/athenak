@@ -1,0 +1,8 @@
+{
+  "scope": "Locally compensated rational log-to-harmonic slicing, with positive alpha and finite gauge scale delta=.001. Three spatial resolutions and separate gauge-scale/time controls. Near alpha<<delta retains derived physical1+log AF coefficients; for alpha>>delta reduces local self-steepening indicator. Physical-local cancellation uses nu_eff=nu(A+delta)/(alpha+delta), avoiding the globally large AF restoring factor of old rational controls. All other source, Minkowski reference, free constraints and thresholds preserved; no projection or floor.",
+  "predeclaration": "Before nonlinear locally compensated rational runs. Independent native AF/constraint, principal algebra, compiled/Python and restart checks precede launch.",
+  "input": "inputs/elliptic_shift_1d/wormhole-local-rational-v1.json",
+  "acceptance": "Existing full-prefix fields/constraints, boundaries, scri affinity, inner geometry/mass and fixed-CFL convergence, followed by solve/dt/dissipation controls if promising. No goal completion from t6 alone.",
+  "source_change": "S_restore=-2alpha u[xi+(3nu_eff-xi)(2Omega)^4], nu_eff=nu(A+delta)/(alpha+delta). Delta is a slicing parameter, never a floor. Minkowski linearization equals the physical-log linear-slicing source; first3 scri corrections vanish. Collapsed background correction unchanged.",
+  "local_steepening_only": "For fixed r, 1-F_alpha/(2alpha)=-2nu Omega^2(A+delta)delta/[alpha(alpha+delta)^2]. Spherical/nonlocal/lower-order effects preclude claiming exact shock avoidance."
+}

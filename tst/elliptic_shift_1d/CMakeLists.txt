@@ -102,3 +102,11 @@ add_test(NAME compiled_AF_chart_rates_RK_and_stage_monitors
 
 add_test(NAME compensated_accepted_increment_rational_oracle
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_compensated_update.py)
+
+add_test(NAME rational_local_restoring_AF_native_rates
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_chart.py --library $<TARGET_FILE:spherical_z4c> --slicing-family rational --lapse-background-source collapsed-inner --lapse-restoring-profile physical-local)
+add_test(NAME rational_local_restoring_AF_coefficient_limits
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c> --slicing-family rational --lapse-background-source collapsed-inner --lapse-restoring-profile physical-local)
+
+add_test(NAME rational_local_restoring_source_and_steepening_identities
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_local_restoring.py)

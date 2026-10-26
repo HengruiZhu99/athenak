@@ -119,6 +119,9 @@ class Evolution:
         if total_alpha is not None:alpha=total_alpha
         self.total_alpha=alpha
         self.total_chi=chi
+        if getattr(self.args,'lapse_restoring_profile','constant')=='physical-local':
+            self.restoring_strength=restoring_coefficient(self.r,self.args.lapse_restoring,self.args.slicing,
+                getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1),'physical-local',alpha)
         if min(np.min(a),np.min(chi),np.min(alpha))<=0:
             raise FloatingPointError('Nonpositive metric or lapse')
         start=time.perf_counter()
@@ -438,7 +441,7 @@ def main():
     p.add_argument('--damping-form',choices=['constant','reference-lapse'],default='constant')
     p.add_argument('--lapse-restoring',type=float,default=0.)
     p.add_argument('--lapse-restoring-form',choices=['symmetric','multiplicative'],default='symmetric')
-    p.add_argument('--lapse-restoring-profile',choices=['constant','physical-log'],default='constant')
+    p.add_argument('--lapse-restoring-profile',choices=['constant','physical-log','physical-local'],default='constant')
     p.add_argument('--eta',type=float,default=0.);p.add_argument('--slicing',type=float,default=1.)
     p.add_argument('--slicing-family',choices=['linear','rational','blended-log'],default='linear')
     p.add_argument('--slicing-scale',type=float,default=.1)
@@ -464,6 +467,8 @@ def main():
         or args.kappa1<0 or args.eta<0 or args.slicing<0 or args.lapse_restoring<0
         or args.initial_tolerance<=0 or args.gauge_corner_sat<0 or args.mass<=0 or args.puncture_ko<0
         or not 0<args.puncture_ko_radius<.95 or args.slicing_scale<=0 or args.puncture_lapse_power<0 or not 0<=args.inner_radius<1):raise ValueError('Invalid input')
+    if args.lapse_restoring_profile=='physical-local' and (args.slicing_family not in ('linear','rational') or args.lapse_reference!='minkowski'):
+        raise ValueError('Local restoring requires linear/rational slicing with the Minkowski lapse reference')
     if args.inner_radius and (not args.puncture or args.initial_data!='trumpet' or args.puncture_chart):
         raise ValueError('Fixed-radius excision is a separate already-trumpet control; it does not replace wormhole evolution')
     if args.elliptic_method=='discrete-ode' and (args.backend!='spherical-g1' or args.radial_operator!='fd' or args.puncture_chart):

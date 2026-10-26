@@ -152,3 +152,48 @@ with H peaks805/17247/179174 and increasing momentum errors. Survival and
 trumpet-like geometry are not admissions. See evidence/physical-log-invariants-v1
 and the frozen output matrices. Resolution of the inward front, regularity,
 and independent arithmetic controls remain required.
+
+## Locally compensated rational control: implemented and failed
+
+For the existing rational slicing, let nu_eff=nu(A+delta)/(alpha+delta).
+The physical-local source uses
+
+    xi_eff=xi+(3nu_eff-xi)(2Omega)^4,
+    S_restore=-2xi_eff alpha u, u=alpha-A.
+
+It retains finite delta>0 and the old collapsed-inner additive correction.
+At the AF end xi_eff tends to3nu_inner, so A0_t=2b1 A0 still holds.
+At fixed r, its difference from the physical-log *linear-slicing* source is
+
+    Delta S=4nu Omega^2 alpha u (Khat+3)/(alpha+delta)
+            +6nu alpha u^2 (2Omega)^4/(alpha+delta).
+
+Both terms are quadratic about Minkowski. Thus this control preserves that
+source's Minkowski linearization and first scri limits. Its local principal
+steepening indicator becomes
+
+    1-F_alpha/(2alpha)=-2nu Omega^2(A+delta)delta/[alpha(alpha+delta)^2].
+
+It is reduced for alpha sufficiently above delta, not uniformly at a collapsed
+lapse. Delta never replaces alpha or Omega; no field is floored. The original
+rational AF coefficient nu_inner=nu(.5+delta)/delta can still be large.
+Independent source identities, AF native rates and limiting equations pass.
+Compiled API28 matches128 AF and48 positive-field cases; all44 test groups
+pass, with the corrected native limit independently rerun in
+`evidence/local-restoring-limits-v2.log`. The standalone restart tester now
+forwards and verifies the requested slicing family and scale in every scenario;
+its older regular-center branch had ignored the family argument. Only the
+verified v2 rational delta=.001 restart receipts are used here.
+
+The nonlinear N513/1025/2049 delta=.001 cases fail at
+1.001465/1.015479/1.075317 with nonfinite AF logarithms and large inner
+curvature/constraint errors. At N1025 half dt fails at1.015454; scale .0005
+and .002 fail at.928223/1.121973. This is not a successful repair. Before
+large errors, tested finite cutoffs still have incoming characteristics;
+excision after their corruption would not validate the failed prefix.
+The exact initial finite-grid spectra at N33/65/129 and two finite-difference
+probes do not expose a new rapidly diverging initial mode: leading real parts
+are about.268/.233/.311, versus.268/.233/.280 for the linear physical-log
+source. These are nonstationary finite-grid observations, not a continuum
+stability claim or an explanation of the later blow-up. All failures and
+source-bound snapshot/spectral evidence remain retained.

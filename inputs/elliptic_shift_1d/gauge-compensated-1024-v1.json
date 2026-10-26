@@ -1,0 +1,32 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "lapse_variable": "log-reference",
+    "metric_variable": "log",
+    "lapse_restoring": 1,
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "origin_ko": 0.5,
+    "cfl": 0.05,
+    "report_dt": 0.1,
+    "t": 1,
+    "amplitude": 0.1,
+    "pulse": "published-gaussian",
+    "elliptic_quadrature": "inward",
+    "endpoint": "analytic-g1",
+    "elliptic_method": "discrete-ode",
+    "elliptic_refinements": 2,
+    "elliptic_bias": "right",
+    "subtract_local": true,
+    "compensated_update": true
+  },
+  "cases": [
+    {
+      "name": "spatial-n1024",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ],
+  "scope": "N1024 extension of compensated pulse, using the exact frozen source/binaries from its parent matrix. All prior acceptance and full-trajectory requirements unchanged."
+}

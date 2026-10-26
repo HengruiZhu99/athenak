@@ -2,6 +2,25 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Local rational source control remains failed
+
+API28 and44 test groups pass, including local rational source identities,
+independent AF limits and128 AF compiled/Python cases. The delta=.001
+physical-local source preserves the physical-log linear-slicing Minkowski
+linearization and first scri limits. Every nonlinear wormhole case fails near1,
+with almost unchanged onset under half dt. Two gauge-scale controls fail too.
+The initial coarse spectra do not identify a new rapid grid-divergent mode.
+`open-black-hole-derivations.md` records the equations, corrected restart
+tester forwarding and failure evidence. This control is not adopted.
+
+At N4096, Kahan accepted updates reduce the pulse's accepted H/M RMS peaks
+from1.83e-10/1.43e-10 to4.09e-11/6.10e-11. N8192 and same-binary time/solve
+controls remain active; these preliminary reductions are not final admission.
+Positive reduced log strength nu=.25 reaches6 at three resolutions, with
+excellent horizon mass but still large inner momentum errors. Its full-prefix
+convergence and possible later causal inner cutoff need separate assessment;
+no cutoff has been applied and no wormhole result is admitted.
+
 ## Current arithmetic and inward-front diagnosis
 
 All41 CTest groups pass (API27). Accepted-step compensated accumulation is

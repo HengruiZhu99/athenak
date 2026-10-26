@@ -9,13 +9,14 @@ from wormhole_isotropic import IsotropicWormhole
 from fast import FastEngine
 from compensated_update import accumulate
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args();records=[]
-for n,endpoint,advection,family,damping,profile in product([33,65],['raw-lhopital','analytic-g1'],['centered','upwind'],['linear','rational','blended-log'],['constant','reference-lapse'],['constant','physical-log']):
+for n,endpoint,advection,family,damping,profile in product([33,65],['raw-lhopital','analytic-g1'],['centered','upwind'],['linear','rational','blended-log'],['constant','reference-lapse'],['constant','physical-log','physical-local']):
+ if profile=='physical-local' and family=='blended-log':continue
  opts=SimpleNamespace(n=n,origin_grid=False,puncture=True,puncture_chart=True,origin_variables=False,
   backend='spherical-g1',width=7,quadrature_width=7,library=a.library,kappa1=4.,kappa2=-.99,
   theta='appendix-c' if n==33 else 'repository',slicing=1.,lapse_restoring=1.,lapse_restoring_form='multiplicative',
   endpoint=endpoint,scri_sat=4.,regularity_sat=8.,origin_ko=0.,origin_ko_radius=.4,
-  advection=advection,eta=0.,gauge_corner_sat=0.,damping_form=damping,slicing_family=family,slicing_scale=.1,
-  lapse_background_source='collapsed-inner' if profile=='physical-log' else 'reference',lapse_restoring_profile=profile,
+  advection=advection,eta=0.,gauge_corner_sat=0.,damping_form=damping,slicing_family=family,slicing_scale=.001 if profile=='physical-local' else .1,
+  lapse_background_source='collapsed-inner' if profile in ('physical-log','physical-local') else 'reference',lapse_restoring_profile=profile,
   puncture_ko=.5 if advection=='upwind' else 0.,puncture_ko_radius=.8)
  opts.compensated_update=n==65
  ev=PunctureChart(opts);q,*_=ev.initial_wormhole(IsotropicWormhole());f=(1-ev.r)**6

@@ -213,6 +213,7 @@ struct Engine {
       double local_xi=xi;
       if(params[22]!=0) {
         double nu_inner=params[2];if(static_cast<int>(params[18])==1)nu_inner*=(.5+params[19])/params[19];
+        if(params[22]==2&&static_cast<int>(params[18])==1)nu_inner=params[2]*(A0+params[19])/(alpha+params[19]);
         local_xi+=(3*nu_inner-xi)*16*O*O*O*O;
       }
       R[k+6]=b*up+vv*x;
@@ -394,7 +395,7 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 27;}
+int spherical_fast_abi(){return 28;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);

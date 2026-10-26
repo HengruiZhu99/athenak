@@ -9,7 +9,7 @@ import numpy as np
 from evolve import Evolution
 from wormhole_data import Jet
 from numerics import puncture_dissipation
-from gauge import rational_correction,af_slicing_strength,collapsed_background_correction,blended_correction
+from gauge import rational_correction,af_slicing_strength,collapsed_background_correction,blended_correction,restoring_coefficient
 import g1_rhs,scri_limits
 
 
@@ -87,6 +87,9 @@ class PunctureChart(Evolution):
             self.args.theta=='appendix-c',self.args.slicing,0.,timing,
             total_chi=chi[1:],total_alpha=alpha[1:],total_khat=khat[1:],puncture_cancellation=True)
         # Direct multiplicative expression avoids subtracting two O(1) sources.
+        if getattr(self.args,'lapse_restoring_profile','constant')=='physical-local':
+            self.restoring_strength=restoring_coefficient(self.r,self.args.lapse_restoring,self.args.slicing,
+                getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1),'physical-local',alpha)
         strength=self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[1:]
         S[:,6]-=2*strength*alpha[1:]*q[1:,6]
         if getattr(self.args,'slicing_family','linear')=='rational':S[:,6]+=rational_correction(self.r[1:],alpha[1:],q[1:,6],q[1:,3],self.args.slicing,self.args.slicing_scale)

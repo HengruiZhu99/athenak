@@ -1,0 +1,66 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 6,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 1,
+    "lapse_restoring_profile": "physical-local",
+    "lapse_background_source": "collapsed-inner",
+    "slicing_family": "rational",
+    "slicing_scale": 0.001
+  },
+  "cases": [
+    {
+      "name": "n513",
+      "arguments": {
+        "n": 513
+      }
+    },
+    {
+      "name": "n1025",
+      "arguments": {
+        "n": 1025
+      }
+    },
+    {
+      "name": "n2049",
+      "arguments": {
+        "n": 2049
+      }
+    },
+    {
+      "name": "scale0005-n1025",
+      "arguments": {
+        "n": 1025,
+        "slicing_scale": 0.0005
+      }
+    },
+    {
+      "name": "scale002-n1025",
+      "arguments": {
+        "n": 1025,
+        "slicing_scale": 0.002
+      }
+    },
+    {
+      "name": "half-dt-n1025",
+      "arguments": {
+        "n": 1025,
+        "cfl": 0.025
+      }
+    }
+  ],
+  "scope": "Locally compensated rational log-to-harmonic slicing, with positive alpha and finite gauge scale delta=.001. Three spatial resolutions and separate gauge-scale/time controls. Near alpha<<delta retains derived physical1+log AF coefficients; for alpha>>delta reduces local self-steepening indicator. Physical-local cancellation uses nu_eff=nu(A+delta)/(alpha+delta), avoiding the globally large AF restoring factor of old rational controls. All other source, Minkowski reference, free constraints and thresholds preserved; no projection or floor."
+}

@@ -1,0 +1,2436 @@
+{
+  "analysis_sha256": "07ecdf478b4f1774e9f24fd48f12b2d10552649b3e4874e9ab16d4d28dd6de55",
+  "horizon_analysis_sha256": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+  "records": [
+    {
+      "name": "half-dt-n1025",
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025",
+      "status": "failed",
+      "time": 1.0154541015625,
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "nonfinite AF logarithm",
+        "time": 1.0154541015625,
+        "step": 41593
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "upwind",
+        "compensated_update": false,
+        "subtract_local": false,
+        "puncture": true,
+        "puncture_chart": true,
+        "puncture_ko": 0.5,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "wormhole",
+        "mass": 0.3333333333333333,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.0,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "prefix",
+        "elliptic_method": "quadrature",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "centered",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025",
+        "n": 1025,
+        "t": 6.0,
+        "cfl": 0.025,
+        "amplitude": 0.0,
+        "pulse": "compact",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "multiplicative",
+        "lapse_restoring_profile": "physical-local",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "rational",
+        "slicing_scale": 0.001,
+        "lapse_background_source": "collapsed-inner",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "deviation",
+        "metric_variable": "deviation",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "raw-lhopital",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.1,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f50da11a37ceb46ef109eb1c19f9b02aa743e7c659aa600f6d56617a7d5b89eb",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "1a1188bc7e84dcdf5703d67180989b65ba3993847be2fd09e66d20e2f08f1955",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "5318e676c11f3d6f6c559b4e4077138ba217249b4f360354e6f032190d83a140",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "5da2dd5ffe370ab55df1147805e62fbaea991d8a11bec6c60b5e8ccfb64b0659",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "a1f6b7a1589d43221610b1db06dda0a07e0e9beb00edad26c0a9af79de785d36",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "36216e2bc7b3adc4dfe8acad4abe58f6443159f1633d83899de1f0412c4e2d53"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025",
+          "status": "failed",
+          "time": 1.0154541015625,
+          "manifest_sha256": "137c1688ef2ac0f6c06da202acabfe574257869482af7f0f169c10dabf879ddc",
+          "history_sha256": "60a79a92da3de6f798bf7d437b3786973abee991ba5077226fe4c31e0ede6b0e"
+        }
+      ],
+      "all_RK_stages": {
+        "max_scri_pole": 2.381249447140632e-05,
+        "max_lapse_pole": 6.887101027440567e-09,
+        "max_regularity_trace": 7.006102108780138e-06,
+        "min_chi": 3.1096598262140625e-08,
+        "min_alpha": 8.406713561329074e-62,
+        "max_H_rms": 6.656758883119269,
+        "max_M_rms": 102.3570427037313,
+        "max_Theta_rms": 0.07049729755549887,
+        "max_Z_rms": 2.968928046954026,
+        "max_scri_null": 9.847678228425139e-14,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 7.975744463539769e-06,
+        "max_accepted_H_rms": 6.656743184504199,
+        "max_accepted_M_rms": 24.546485875585056,
+        "max_accepted_Theta_rms": 0.0704972955373407,
+        "max_accepted_Z_rms": 0.9088472244462662,
+        "max_accepted_H_bulk": 392.90887306757213,
+        "max_accepted_M_bulk": 22943.35137254597,
+        "max_accepted_H_endpoint": 3.1696147100848324e-07,
+        "max_accepted_M_endpoint": 3.964951973447345e-05
+      },
+      "peak_constraints": {
+        "H": 6.656758883119269,
+        "M": 102.3570427037313,
+        "Theta": 0.07049729755549887,
+        "Z": 2.968928046954026
+      },
+      "sampled_horizon_profiles": [
+        {
+          "time": 0.0,
+          "profile_sha256": "4a7092f11731ff07c3d0f1adc1bd74e85f88cac2eda8347fe97ff31a967f7581",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0001.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0629244910359561,
+            "apparent_horizon_areal_radius": 0.6666666666667193,
+            "apparent_horizon_mass": 0.3333333333333596,
+            "apparent_horizon_mass_linear": 0.3333280216940169,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07550938924314732,
+          "exterior_constraint_rms": {
+            "H": 6.244496574059829e-08,
+            "M": 2.2133177273121134e-07,
+            "Theta": 0.0,
+            "Z": 0.0
+          }
+        },
+        {
+          "time": 0.1,
+          "profile_sha256": "3dc4033b0f09f99b9a13e10f904f7e1c045a54af11ae0d0e6d1eb90174b18df9",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0002.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06282714248767857,
+            "apparent_horizon_areal_radius": 0.6666666666349641,
+            "apparent_horizon_mass": 0.33333333331748205,
+            "apparent_horizon_mass_linear": 0.33332876736470696,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07539257098521428,
+          "exterior_constraint_rms": {
+            "H": 5.212845284975876e-07,
+            "M": 1.0280959365557845e-06,
+            "Theta": 4.568329168928077e-10,
+            "Z": 7.886515771942609e-09
+          }
+        },
+        {
+          "time": 0.2,
+          "profile_sha256": "e8566dcb202704e6049f12718c6a763c94762e29e2cd8d1b629d0bc24d1ae34b",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0003.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.062221617913179414,
+            "apparent_horizon_areal_radius": 0.6666666665928739,
+            "apparent_horizon_mass": 0.33333333329643694,
+            "apparent_horizon_mass_linear": 0.3333291243699892,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07466594149581529,
+          "exterior_constraint_rms": {
+            "H": 3.687718811914414e-07,
+            "M": 1.620520154654316e-06,
+            "Theta": 6.501436026127683e-10,
+            "Z": 1.31289815061831e-07
+          }
+        },
+        {
+          "time": 0.30000000000000004,
+          "profile_sha256": "46a97af1b2f78762b030beeba35233af17ab6753373d61843e7ec8ed9f0d29f9",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0004.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06240494849317069,
+            "apparent_horizon_areal_radius": 0.6666666665435591,
+            "apparent_horizon_mass": 0.33333333327177955,
+            "apparent_horizon_mass_linear": 0.33333154109663027,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07488593819180482,
+          "exterior_constraint_rms": {
+            "H": 2.9746706464811676e-07,
+            "M": 5.851126715194492e-07,
+            "Theta": 6.431732360443038e-10,
+            "Z": 4.044716049055741e-09
+          }
+        },
+        {
+          "time": 0.4,
+          "profile_sha256": "8393f2ff58af64e9eb3cefc0815205133e70b20707213a3ec7d5d32184a36aed",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0005.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06319444758432205,
+            "apparent_horizon_areal_radius": 0.6666666664928935,
+            "apparent_horizon_mass": 0.33333333324644676,
+            "apparent_horizon_mass_linear": 0.3333293142941491,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07583333710118646,
+          "exterior_constraint_rms": {
+            "H": 2.583492892407349e-07,
+            "M": 5.095346068528471e-07,
+            "Theta": 6.297589942784353e-10,
+            "Z": 3.1095870123147586e-09
+          }
+        },
+        {
+          "time": 0.5,
+          "profile_sha256": "7389abfc46cc79181c41a6445532e9316c68511e86da4b690fc1ef12116e714f",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0006.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06435474167336713,
+            "apparent_horizon_areal_radius": 0.6666666664449344,
+            "apparent_horizon_mass": 0.3333333332224672,
+            "apparent_horizon_mass_linear": 0.3333316152198834,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07722569000804055,
+          "exterior_constraint_rms": {
+            "H": 2.3325130206168873e-07,
+            "M": 4.5843535246125253e-07,
+            "Theta": 6.050815868411557e-10,
+            "Z": 2.7524678897361625e-09
+          }
+        },
+        {
+          "time": 0.6000000000000001,
+          "profile_sha256": "bae2da1ae3e0d2e8f442f025de0588c641e7e857093a2211a601a862ad2ef9d9",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0007.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06573396934707199,
+            "apparent_horizon_areal_radius": 0.6666666664016386,
+            "apparent_horizon_mass": 0.3333333332008193,
+            "apparent_horizon_mass_linear": 0.3333295385691022,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07888076321648638,
+          "exterior_constraint_rms": {
+            "H": 4.1737174635380965e-07,
+            "M": 7.368199523219497e-05,
+            "Theta": 5.783902496381886e-10,
+            "Z": 2.5771007307103338e-09
+          }
+        },
+        {
+          "time": 0.7000000000000001,
+          "profile_sha256": "893a2eb904ad1c84070868b64cbd8d88ad803948ebbe1706a93805589b2837f9",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0008.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06722716357139338,
+            "apparent_horizon_areal_radius": 0.6666666663633791,
+            "apparent_horizon_mass": 0.33333333318168956,
+            "apparent_horizon_mass_linear": 0.33333101143313904,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.08067259628567205,
+          "exterior_constraint_rms": {
+            "H": 0.14730976534703774,
+            "M": 3.050284200893607,
+            "Theta": 1.3708411765149767e-05,
+            "Z": 0.0008369195517044025
+          }
+        },
+        {
+          "time": 0.8,
+          "profile_sha256": "31891a703cef17f1034e628a347fa2139f7bf7bf4e7a42d3b46fb5bee23e2b87",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0009.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 3,
+            "apparent_horizon_r": 0.14487105036963072,
+            "apparent_horizon_areal_radius": 0.9302816317300139,
+            "apparent_horizon_mass": 0.46514081586500694,
+            "apparent_horizon_mass_linear": 0.4651380801408637,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.17384526044355686,
+          "exterior_constraint_rms": {
+            "H": 5.127307566081313,
+            "M": 10.755828287212088,
+            "Theta": 0.05957150916103361,
+            "Z": 0.40725795573063694
+          }
+        },
+        {
+          "time": 0.9,
+          "profile_sha256": "372b2e8ca61f5a2247e4f692b34e2674beaf9628b0af307d4a77a336d3ac8fe3",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0010.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 4,
+            "apparent_horizon_r": 0.13703147386592762,
+            "apparent_horizon_areal_radius": 0.93985720296156,
+            "apparent_horizon_mass": 0.46992860148078,
+            "apparent_horizon_mass_linear": 0.4699257005948649,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.16443776863911314,
+          "exterior_constraint_rms": {
+            "H": 2.6662527384695167,
+            "M": 5.377489491416048,
+            "Theta": 0.045418894820337494,
+            "Z": 0.3261397682899489
+          }
+        },
+        {
+          "time": 1.0,
+          "profile_sha256": "6fae3ddd9f61aeb82d2c05b0c6b0513171fe6bb63b2ce6c2859ab2dbc7090757",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/half-dt-n1025/profile-0011.npz",
+          "horizon": {
+            "apparent_horizon_count": 3,
+            "marginal_surface_crossings_total": 6,
+            "apparent_horizon_r": 0.13229721111724724,
+            "apparent_horizon_areal_radius": 0.9460193925021291,
+            "apparent_horizon_mass": 0.47300969625106454,
+            "apparent_horizon_mass_linear": 0.47300621448846275,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.1587566533406967,
+          "exterior_constraint_rms": {
+            "H": 1.692274405149267,
+            "M": 3.350437868179528,
+            "Theta": 0.03531992743067734,
+            "Z": 0.2672248996868779
+          }
+        }
+      ],
+      "expected_vacuum_mass": 0.3333333333333333,
+      "max_absolute_horizon_mass_error": 0.13967636291773122,
+      "relative_horizon_mass_drift": 0.4190290887530817,
+      "admission": false,
+      "scope": "Read-only component evidence; no successful collapse, trumpet or wormhole-to-trumpet admission inferred.",
+      "final_extracted_horizon_mass": 0.47300969625106454
+    },
+    {
+      "name": "n1025",
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025",
+      "status": "failed",
+      "time": 1.0154785156250001,
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "nonfinite AF logarithm",
+        "time": 1.0154785156250001,
+        "step": 20797
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "upwind",
+        "compensated_update": false,
+        "subtract_local": false,
+        "puncture": true,
+        "puncture_chart": true,
+        "puncture_ko": 0.5,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "wormhole",
+        "mass": 0.3333333333333333,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.0,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "prefix",
+        "elliptic_method": "quadrature",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "centered",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025",
+        "n": 1025,
+        "t": 6.0,
+        "cfl": 0.05,
+        "amplitude": 0.0,
+        "pulse": "compact",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "multiplicative",
+        "lapse_restoring_profile": "physical-local",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "rational",
+        "slicing_scale": 0.001,
+        "lapse_background_source": "collapsed-inner",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "deviation",
+        "metric_variable": "deviation",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "raw-lhopital",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.1,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f50da11a37ceb46ef109eb1c19f9b02aa743e7c659aa600f6d56617a7d5b89eb",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "1a1188bc7e84dcdf5703d67180989b65ba3993847be2fd09e66d20e2f08f1955",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "5318e676c11f3d6f6c559b4e4077138ba217249b4f360354e6f032190d83a140",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "5da2dd5ffe370ab55df1147805e62fbaea991d8a11bec6c60b5e8ccfb64b0659",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "a1f6b7a1589d43221610b1db06dda0a07e0e9beb00edad26c0a9af79de785d36",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "36216e2bc7b3adc4dfe8acad4abe58f6443159f1633d83899de1f0412c4e2d53"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025",
+          "status": "failed",
+          "time": 1.0154785156250001,
+          "manifest_sha256": "7ac5461340fc4aeff00c7b0f69d2749136a1763cf45af9f0f0633811e1d2a48d",
+          "history_sha256": "364d66b8b3a50a397fbc86454e38fc4f3373d3f247044c24a2f084f50b966722"
+        }
+      ],
+      "all_RK_stages": {
+        "max_scri_pole": 2.3812592695432455e-05,
+        "max_lapse_pole": 6.8871996993625364e-09,
+        "max_regularity_trace": 7.006127723318406e-06,
+        "min_chi": 3.109659657065398e-08,
+        "min_alpha": 3.860335937963385e-15,
+        "max_H_rms": 6.656389676809767,
+        "max_M_rms": 24.68992741955732,
+        "max_Theta_rms": 0.07049140067463303,
+        "max_Z_rms": 1.2468360599997133,
+        "max_scri_null": 1.3522516439934407e-13,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.4104362120903602e-05,
+        "max_accepted_H_rms": 6.656326011242604,
+        "max_accepted_M_rms": 24.49205461234013,
+        "max_accepted_Theta_rms": 0.07049139070491256,
+        "max_accepted_Z_rms": 0.8635096920781467,
+        "max_accepted_H_bulk": 392.62380669468257,
+        "max_accepted_M_bulk": 23316.044744279716,
+        "max_accepted_H_endpoint": 3.1696170769025117e-07,
+        "max_accepted_M_endpoint": 3.96495198133201e-05
+      },
+      "peak_constraints": {
+        "H": 6.656389676809767,
+        "M": 24.68992741955732,
+        "Theta": 0.07049140067463303,
+        "Z": 1.2468360599997133
+      },
+      "sampled_horizon_profiles": [
+        {
+          "time": 0.0,
+          "profile_sha256": "303be10a4abd5b1223f0699c1de3f528a4bb8284e60f6cb275eb20aaf0924369",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0001.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0629244910359561,
+            "apparent_horizon_areal_radius": 0.6666666666667193,
+            "apparent_horizon_mass": 0.3333333333333596,
+            "apparent_horizon_mass_linear": 0.3333280216940169,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07550938924314732,
+          "exterior_constraint_rms": {
+            "H": 6.244496574059829e-08,
+            "M": 2.2133177273121134e-07,
+            "Theta": 0.0,
+            "Z": 0.0
+          }
+        },
+        {
+          "time": 0.1,
+          "profile_sha256": "ce458b78e2f80ab20514c892eb7068d48114f35ee1fb7fa9ba63545081bf80d0",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0002.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06282714248767829,
+            "apparent_horizon_areal_radius": 0.6666666666349629,
+            "apparent_horizon_mass": 0.33333333331748144,
+            "apparent_horizon_mass_linear": 0.3333287673647067,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07539257098521394,
+          "exterior_constraint_rms": {
+            "H": 5.212853695357001e-07,
+            "M": 1.0280952935578728e-06,
+            "Theta": 4.5683175697582204e-10,
+            "Z": 7.886518069429739e-09
+          }
+        },
+        {
+          "time": 0.2,
+          "profile_sha256": "dcadd4abb4f95ec1bd1a667c63c210d68ba310706cef00eb975d924c0acd52cf",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0003.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0622216179132154,
+            "apparent_horizon_areal_radius": 0.6666666665928715,
+            "apparent_horizon_mass": 0.3333333332964358,
+            "apparent_horizon_mass_linear": 0.3333291243699877,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07466594149585848,
+          "exterior_constraint_rms": {
+            "H": 3.6877193980117853e-07,
+            "M": 1.6205205552367295e-06,
+            "Theta": 6.501450531646238e-10,
+            "Z": 1.3128981694310877e-07
+          }
+        },
+        {
+          "time": 0.30000000000000004,
+          "profile_sha256": "b5043362f37ec214f2fdd33c8165ef59a8acf2b3ef6a3da8f015438bdd3745fa",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0004.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06240494849315645,
+            "apparent_horizon_areal_radius": 0.666666666543543,
+            "apparent_horizon_mass": 0.3333333332717715,
+            "apparent_horizon_mass_linear": 0.333331541096622,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07488593819178774,
+          "exterior_constraint_rms": {
+            "H": 2.974668787637648e-07,
+            "M": 5.851142432298384e-07,
+            "Theta": 6.431734568857791e-10,
+            "Z": 4.044717305614923e-09
+          }
+        },
+        {
+          "time": 0.4,
+          "profile_sha256": "fa43c9857dc230efd113542eef0de5050bc36124bcd268c246c0fbcda7406945",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0005.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0631944475843815,
+            "apparent_horizon_areal_radius": 0.6666666664929047,
+            "apparent_horizon_mass": 0.33333333324645237,
+            "apparent_horizon_mass_linear": 0.3333293142941539,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.0758333371012578,
+          "exterior_constraint_rms": {
+            "H": 2.583499019090308e-07,
+            "M": 5.09533836610889e-07,
+            "Theta": 6.297558484308353e-10,
+            "Z": 3.1095876377058092e-09
+          }
+        },
+        {
+          "time": 0.5,
+          "profile_sha256": "94db0152d3844d4ceb01fb1df2c80577b9865bd8569f608d2b70a50bfdd9bfce",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0006.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06435474167337463,
+            "apparent_horizon_areal_radius": 0.666666666444925,
+            "apparent_horizon_mass": 0.3333333332224625,
+            "apparent_horizon_mass_linear": 0.33333161521987875,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07722569000804955,
+          "exterior_constraint_rms": {
+            "H": 2.3324953618236348e-07,
+            "M": 4.584369793173798e-07,
+            "Theta": 6.050854789441656e-10,
+            "Z": 2.752467276234154e-09
+          }
+        },
+        {
+          "time": 0.6000000000000001,
+          "profile_sha256": "9436c952604695fb26425a52a5ad7c12ef617c83b3674feaf27d1daa17e32db9",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0007.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06573396934707582,
+            "apparent_horizon_areal_radius": 0.6666666664016253,
+            "apparent_horizon_mass": 0.33333333320081265,
+            "apparent_horizon_mass_linear": 0.3333295385690954,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07888076321649097,
+          "exterior_constraint_rms": {
+            "H": 4.1737342577468e-07,
+            "M": 7.368199385281313e-05,
+            "Theta": 5.783954098134939e-10,
+            "Z": 2.5771016548235964e-09
+          }
+        },
+        {
+          "time": 0.7000000000000001,
+          "profile_sha256": "bce2bc47549278549e3a618f6645fd0010832823a3ce69c621582a241db6ca0d",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0008.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06722716357041505,
+            "apparent_horizon_areal_radius": 0.6666666663633674,
+            "apparent_horizon_mass": 0.3333333331816837,
+            "apparent_horizon_mass_linear": 0.33333101143312094,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.08067259628449806,
+          "exterior_constraint_rms": {
+            "H": 0.14730980982379746,
+            "M": 3.050285496614112,
+            "Theta": 1.3708413664567554e-05,
+            "Z": 0.0008369196150211703
+          }
+        },
+        {
+          "time": 0.8,
+          "profile_sha256": "9e5760a42c8eba5153f009000764c0eacf9d3e4c5952a54b85acc2a3636640cb",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0009.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 3,
+            "apparent_horizon_r": 0.1448596211289691,
+            "apparent_horizon_areal_radius": 0.9302808655741628,
+            "apparent_horizon_mass": 0.4651404327870814,
+            "apparent_horizon_mass_linear": 0.4651377436536844,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.17383154535476292,
+          "exterior_constraint_rms": {
+            "H": 5.126581480433587,
+            "M": 10.754322127100103,
+            "Theta": 0.05956145603402789,
+            "Z": 0.4072488909483051
+          }
+        },
+        {
+          "time": 0.9,
+          "profile_sha256": "98528096be16c94f25cd59b9a3fb778e065b3c692e36aa43ff5dd558b5354e6a",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0010.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 4,
+            "apparent_horizon_r": 0.13702707399614,
+            "apparent_horizon_areal_radius": 0.939855210884447,
+            "apparent_horizon_mass": 0.4699276054422235,
+            "apparent_horizon_mass_linear": 0.4699247264687431,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.164432488795368,
+          "exterior_constraint_rms": {
+            "H": 2.6659944166936085,
+            "M": 5.376988861180009,
+            "Theta": 0.045411708979658086,
+            "Z": 0.32612625139868645
+          }
+        },
+        {
+          "time": 1.0,
+          "profile_sha256": "a2c03a57be6a45d99504f06e5d33eaa2f60a0718f1b149e03e3b869a2247327e",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n1025/profile-0011.npz",
+          "horizon": {
+            "apparent_horizon_count": 3,
+            "marginal_surface_crossings_total": 6,
+            "apparent_horizon_r": 0.13229512546064415,
+            "apparent_horizon_areal_radius": 0.9460167589303347,
+            "apparent_horizon_mass": 0.47300837946516733,
+            "apparent_horizon_mass_linear": 0.4730048994722265,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.15875415055277298,
+          "exterior_constraint_rms": {
+            "H": 1.692230098464981,
+            "M": 3.3503603911484023,
+            "Theta": 0.03531602718841161,
+            "Z": 0.2672190455637437
+          }
+        }
+      ],
+      "expected_vacuum_mass": 0.3333333333333333,
+      "max_absolute_horizon_mass_error": 0.139675046131834,
+      "relative_horizon_mass_drift": 0.4190251383953901,
+      "admission": false,
+      "scope": "Read-only component evidence; no successful collapse, trumpet or wormhole-to-trumpet admission inferred.",
+      "final_extracted_horizon_mass": 0.47300837946516733
+    },
+    {
+      "name": "n2049",
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049",
+      "status": "failed",
+      "time": 1.0753173828125,
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "nonfinite AF logarithm",
+        "time": 1.0753173828125,
+        "step": 44045
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "upwind",
+        "compensated_update": false,
+        "subtract_local": false,
+        "puncture": true,
+        "puncture_chart": true,
+        "puncture_ko": 0.5,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "wormhole",
+        "mass": 0.3333333333333333,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.0,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "prefix",
+        "elliptic_method": "quadrature",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "centered",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049",
+        "n": 2049,
+        "t": 6.0,
+        "cfl": 0.05,
+        "amplitude": 0.0,
+        "pulse": "compact",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "multiplicative",
+        "lapse_restoring_profile": "physical-local",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "rational",
+        "slicing_scale": 0.001,
+        "lapse_background_source": "collapsed-inner",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "deviation",
+        "metric_variable": "deviation",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "raw-lhopital",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.1,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f50da11a37ceb46ef109eb1c19f9b02aa743e7c659aa600f6d56617a7d5b89eb",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "1a1188bc7e84dcdf5703d67180989b65ba3993847be2fd09e66d20e2f08f1955",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "5318e676c11f3d6f6c559b4e4077138ba217249b4f360354e6f032190d83a140",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "5da2dd5ffe370ab55df1147805e62fbaea991d8a11bec6c60b5e8ccfb64b0659",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "a1f6b7a1589d43221610b1db06dda0a07e0e9beb00edad26c0a9af79de785d36",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "36216e2bc7b3adc4dfe8acad4abe58f6443159f1633d83899de1f0412c4e2d53"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049",
+          "status": "failed",
+          "time": 1.0753173828125,
+          "manifest_sha256": "ac44c43c5896944f53e083fb72163c8a4e0c08d37d26d09b3598b1579c7bbab6",
+          "history_sha256": "d38541e4cac92083abfdd6c55eecd5326a3c1d53928d4d6265e793116cc84a9b"
+        }
+      ],
+      "all_RK_stages": {
+        "max_scri_pole": 2.136393990669755e-06,
+        "max_lapse_pole": 2.7607617052698006e-10,
+        "max_regularity_trace": 5.892291225799082e-07,
+        "min_chi": 2.0043582701022398e-09,
+        "min_alpha": 7.142967433064591e-31,
+        "max_H_rms": 13.18713440733028,
+        "max_M_rms": 117.56633933523925,
+        "max_Theta_rms": 0.0983683323385522,
+        "max_Z_rms": 16.82616275991624,
+        "max_scri_null": 2.2700730184510576e-12,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 0.8346909565352962,
+        "max_accepted_H_rms": 13.186984398856191,
+        "max_accepted_M_rms": 38.006732681106676,
+        "max_accepted_Theta_rms": 0.09836832310676319,
+        "max_accepted_Z_rms": 2.073819878358153,
+        "max_accepted_H_bulk": 1029.638717130204,
+        "max_accepted_M_bulk": 19856.889604046315,
+        "max_accepted_H_endpoint": 7.415859577461492e-09,
+        "max_accepted_M_endpoint": 3.430730195224177e-06
+      },
+      "peak_constraints": {
+        "H": 13.18713440733028,
+        "M": 117.56633933523925,
+        "Theta": 0.0983683323385522,
+        "Z": 16.82616275991624
+      },
+      "sampled_horizon_profiles": [
+        {
+          "time": 0.0,
+          "profile_sha256": "524616011a300a914a5128da6a2caf2027a196439b203c3f8f29212852c50db2",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0001.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06292449103608658,
+            "apparent_horizon_areal_radius": 0.6666666666666669,
+            "apparent_horizon_mass": 0.3333333333333334,
+            "apparent_horizon_mass_linear": 0.33333271299668793,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07550938924330389,
+          "exterior_constraint_rms": {
+            "H": 1.087931648970134e-09,
+            "M": 4.0253081857591e-09,
+            "Theta": 0.0,
+            "Z": 0.0
+          }
+        },
+        {
+          "time": 0.1,
+          "profile_sha256": "96e0b599d97b41697cad008fe90632e8bf9b0b07b662d385b31c26f18e0dcb52",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0002.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06282714251594276,
+            "apparent_horizon_areal_radius": 0.6666666666656695,
+            "apparent_horizon_mass": 0.33333333333283477,
+            "apparent_horizon_mass_linear": 0.33333218770167033,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07539257101913131,
+          "exterior_constraint_rms": {
+            "H": 8.989999536883464e-09,
+            "M": 1.788326441719315e-08,
+            "Theta": 6.7884278633066925e-12,
+            "Z": 1.3112366478885002e-10
+          }
+        },
+        {
+          "time": 0.2,
+          "profile_sha256": "09589830ffc945f149c96cbf5b805b5fc341bcd5af6f03494fd387025ad7ff2a",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0003.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06222161798843638,
+            "apparent_horizon_areal_radius": 0.666666666664368,
+            "apparent_horizon_mass": 0.333333333332184,
+            "apparent_horizon_mass_linear": 0.3333320825941672,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07466594158612365,
+          "exterior_constraint_rms": {
+            "H": 6.423566603027534e-09,
+            "M": 6.639853081298637e-08,
+            "Theta": 1.0611336122656887e-11,
+            "Z": 2.8692283467736134e-09
+          }
+        },
+        {
+          "time": 0.30000000000000004,
+          "profile_sha256": "31763ade0d8ec016e70145ea65667cd3446747aa4247ed44322e07198ceeab58",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0004.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06240494862609958,
+            "apparent_horizon_areal_radius": 0.6666666666628477,
+            "apparent_horizon_mass": 0.33333333333142384,
+            "apparent_horizon_mass_linear": 0.3333325432033665,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07488593835131949,
+          "exterior_constraint_rms": {
+            "H": 5.210273092672876e-09,
+            "M": 1.0230916748764513e-08,
+            "Theta": 1.0386993961730774e-11,
+            "Z": 6.657240478186164e-11
+          }
+        },
+        {
+          "time": 0.4,
+          "profile_sha256": "a0aff385685871495823899501574e3d61e32d04eab842cb73ab440df0842ff0",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0005.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0631944477786624,
+            "apparent_horizon_areal_radius": 0.6666666666612749,
+            "apparent_horizon_mass": 0.33333333333063747,
+            "apparent_horizon_mass_linear": 0.3333321539751599,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07583333733439487,
+          "exterior_constraint_rms": {
+            "H": 4.536808855009038e-09,
+            "M": 8.936220803783839e-09,
+            "Theta": 1.0246698406638054e-11,
+            "Z": 5.100889560406966e-11
+          }
+        },
+        {
+          "time": 0.5,
+          "profile_sha256": "2614eea775ad5760909399a0e79845ff372d3ed23dd930edfbf0b6c61a995979",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0006.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06435474192736795,
+            "apparent_horizon_areal_radius": 0.666666666659755,
+            "apparent_horizon_mass": 0.3333333333298775,
+            "apparent_horizon_mass_linear": 0.3333325792437597,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07722569031284154,
+          "exterior_constraint_rms": {
+            "H": 4.1063387933882835e-09,
+            "M": 8.060295972371596e-09,
+            "Theta": 9.886854855514527e-12,
+            "Z": 4.513175720843937e-11
+          }
+        },
+        {
+          "time": 0.6000000000000001,
+          "profile_sha256": "761e9c06139fc377cc2ee17674dc3d62fb21e798b751b58a6baa6b7d780af4c7",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0007.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06573396965485234,
+            "apparent_horizon_areal_radius": 0.666666666658365,
+            "apparent_horizon_mass": 0.3333333333291825,
+            "apparent_horizon_mass_linear": 0.3333322832198579,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07888076358582281,
+          "exterior_constraint_rms": {
+            "H": 2.3071303298606883e-08,
+            "M": 8.104239209518286e-06,
+            "Theta": 9.469039903708453e-12,
+            "Z": 4.9729283867477445e-11
+          }
+        },
+        {
+          "time": 0.7000000000000001,
+          "profile_sha256": "d285e40d1dec490894d64f9559b5aa60d5cc437ade7da2d7744d505f38e262f3",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0008.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 4,
+            "apparent_horizon_r": 0.17465452451544078,
+            "apparent_horizon_areal_radius": 0.9356671500883587,
+            "apparent_horizon_mass": 0.46783357504417933,
+            "apparent_horizon_mass_linear": 0.46783306083736337,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.20958542941852892,
+          "exterior_constraint_rms": {
+            "H": 10.679295059715955,
+            "M": 23.52279433389374,
+            "Theta": 0.017504983757811204,
+            "Z": 0.17720930514867625
+          }
+        },
+        {
+          "time": 0.8,
+          "profile_sha256": "f770977b45dfb2059ab38e19aff0de18d698b3ba2cddd80b310382ba689f76fc",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0009.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 3,
+            "apparent_horizon_r": 0.12596950477451047,
+            "apparent_horizon_areal_radius": 0.9478124477824035,
+            "apparent_horizon_mass": 0.47390622389120174,
+            "apparent_horizon_mass_linear": 0.4739061658509069,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.15116340572941256,
+          "exterior_constraint_rms": {
+            "H": 6.091933555416291,
+            "M": 12.517597614578989,
+            "Theta": 0.06971029911503977,
+            "Z": 0.5039576243233438
+          }
+        },
+        {
+          "time": 0.9,
+          "profile_sha256": "617287dc5ba44814a03e04f5241e1b6103c69b353a40b489fec6100404c034b8",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0010.npz",
+          "horizon": {
+            "apparent_horizon_count": 3,
+            "marginal_surface_crossings_total": 5,
+            "apparent_horizon_r": 0.13013158509224432,
+            "apparent_horizon_areal_radius": 0.9588043384417646,
+            "apparent_horizon_mass": 0.4794021692208823,
+            "apparent_horizon_mass_linear": 0.47940121641293837,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.15615790211069316,
+          "exterior_constraint_rms": {
+            "H": 3.0714765255519163,
+            "M": 6.11413255456867,
+            "Theta": 0.04619188076106986,
+            "Z": 0.3503864532972291
+          }
+        },
+        {
+          "time": 1.0,
+          "profile_sha256": "e513562becd2cd1e1d8beaef6e85dbe1a763c8a67c84a7bf95904bf3c9289f28",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n2049/profile-0011.npz",
+          "horizon": {
+            "apparent_horizon_count": 4,
+            "marginal_surface_crossings_total": 7,
+            "apparent_horizon_r": 0.12831597334248085,
+            "apparent_horizon_areal_radius": 0.9643821968438138,
+            "apparent_horizon_mass": 0.4821910984219069,
+            "apparent_horizon_mass_linear": 0.4821904673059693,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.15397916801097702,
+          "exterior_constraint_rms": {
+            "H": 1.9854769197777946,
+            "M": 3.8927969436122836,
+            "Theta": 0.035338795748209396,
+            "Z": 0.27985068423876425
+          }
+        }
+      ],
+      "expected_vacuum_mass": 0.3333333333333333,
+      "max_absolute_horizon_mass_error": 0.14885776508857357,
+      "relative_horizon_mass_drift": 0.44657329526572026,
+      "admission": false,
+      "scope": "Read-only component evidence; no successful collapse, trumpet or wormhole-to-trumpet admission inferred.",
+      "final_extracted_horizon_mass": 0.4821910984219069
+    },
+    {
+      "name": "n513",
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513",
+      "status": "failed",
+      "time": 1.00146484375,
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "nonfinite AF logarithm",
+        "time": 1.00146484375,
+        "step": 10255
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "upwind",
+        "compensated_update": false,
+        "subtract_local": false,
+        "puncture": true,
+        "puncture_chart": true,
+        "puncture_ko": 0.5,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "wormhole",
+        "mass": 0.3333333333333333,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.0,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "prefix",
+        "elliptic_method": "quadrature",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "centered",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513",
+        "n": 513,
+        "t": 6.0,
+        "cfl": 0.05,
+        "amplitude": 0.0,
+        "pulse": "compact",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "multiplicative",
+        "lapse_restoring_profile": "physical-local",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "rational",
+        "slicing_scale": 0.001,
+        "lapse_background_source": "collapsed-inner",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "deviation",
+        "metric_variable": "deviation",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "raw-lhopital",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.1,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f50da11a37ceb46ef109eb1c19f9b02aa743e7c659aa600f6d56617a7d5b89eb",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "1a1188bc7e84dcdf5703d67180989b65ba3993847be2fd09e66d20e2f08f1955",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "5318e676c11f3d6f6c559b4e4077138ba217249b4f360354e6f032190d83a140",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "5da2dd5ffe370ab55df1147805e62fbaea991d8a11bec6c60b5e8ccfb64b0659",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "a1f6b7a1589d43221610b1db06dda0a07e0e9beb00edad26c0a9af79de785d36",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "36216e2bc7b3adc4dfe8acad4abe58f6443159f1633d83899de1f0412c4e2d53"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513",
+          "status": "failed",
+          "time": 1.00146484375,
+          "manifest_sha256": "34035bb9c6439bc8553549ff5cddeefbbe4731fb32795a8ef047830cef7f13fe",
+          "history_sha256": "b916a927755acdc1532e5777bdff228376607b2639f3b3b7407ada265800a4e6"
+        }
+      ],
+      "all_RK_stages": {
+        "max_scri_pole": 0.00016242152951678746,
+        "max_lapse_pole": 1.0303767182167585e-07,
+        "max_regularity_trace": 5.0298284357444545e-05,
+        "min_chi": 4.637103145581709e-07,
+        "min_alpha": 2.0374842946641787e-14,
+        "max_H_rms": 3.3675746134066165,
+        "max_M_rms": 15.456825078332717,
+        "max_Theta_rms": 0.0479966872407711,
+        "max_Z_rms": 1.1224711589739427,
+        "max_scri_null": 2.0872192862952943e-13,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 6.29635434914455e-05,
+        "max_accepted_H_rms": 3.3493403509303823,
+        "max_accepted_M_rms": 15.414936009728269,
+        "max_accepted_Theta_rms": 0.047996677089129115,
+        "max_accepted_Z_rms": 0.5937375209624364,
+        "max_accepted_H_bulk": 252.22448683088697,
+        "max_accepted_M_bulk": 14124.090267199512,
+        "max_accepted_H_endpoint": 6.7203562869799435e-06,
+        "max_accepted_M_endpoint": 0.0002778245454111844
+      },
+      "peak_constraints": {
+        "H": 3.3675746134066165,
+        "M": 15.456825078332717,
+        "Theta": 0.0479966872407711,
+        "Z": 1.1224711589739427
+      },
+      "sampled_horizon_profiles": [
+        {
+          "time": 0.0,
+          "profile_sha256": "0d8eea87d2e4109ad25a470229aecd41c91488a8dab7d1bd6ec51b1b39e2259d",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0001.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06292449102782299,
+            "apparent_horizon_areal_radius": 0.6666666666710475,
+            "apparent_horizon_mass": 0.33333333333552373,
+            "apparent_horizon_mass_linear": 0.33331893389215694,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07550938923338758,
+          "exterior_constraint_rms": {
+            "H": 3.2120351313361264e-06,
+            "M": 8.886599564033994e-06,
+            "Theta": 0.0,
+            "Z": 0.0
+          }
+        },
+        {
+          "time": 0.1,
+          "profile_sha256": "d3b3ff6e73d981c9d52feb0a2e3ab277584bead8dd0dacd0f5bb39ddbb9f5f52",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0002.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0628271415776245,
+            "apparent_horizon_areal_radius": 0.6666666656502412,
+            "apparent_horizon_mass": 0.3333333328251206,
+            "apparent_horizon_mass_linear": 0.33332215054115577,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07539256989314941,
+          "exterior_constraint_rms": {
+            "H": 1.93469027754546e-05,
+            "M": 3.771687422644817e-05,
+            "Theta": 2.7564090366829035e-08,
+            "Z": 3.751822396639947e-07
+          }
+        },
+        {
+          "time": 0.2,
+          "profile_sha256": "46dfb34256951bc5b8655d78c9cb0788e7212260ce3d8511964b641718eb4850",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0003.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06222161549043066,
+            "apparent_horizon_areal_radius": 0.6666666642962544,
+            "apparent_horizon_mass": 0.3333333321481272,
+            "apparent_horizon_mass_linear": 0.33332299633383483,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07466593858851679,
+          "exterior_constraint_rms": {
+            "H": 1.3589558465740322e-05,
+            "M": 2.8701172544547327e-05,
+            "Theta": 3.070393988845751e-08,
+            "Z": 6.442310942569208e-07
+          }
+        },
+        {
+          "time": 0.30000000000000004,
+          "profile_sha256": "dd490da0c396749a0be650ef77a2986f020d37458532d01c10b060df7274edd4",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0004.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06240494423437418,
+            "apparent_horizon_areal_radius": 0.6666666627171263,
+            "apparent_horizon_mass": 0.33333333135856313,
+            "apparent_horizon_mass_linear": 0.3333294629700808,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07488593308124901,
+          "exterior_constraint_rms": {
+            "H": 1.0852310232817096e-05,
+            "M": 2.1419032301423417e-05,
+            "Theta": 3.1301558540528056e-08,
+            "Z": 1.8296953546823466e-07
+          }
+        },
+        {
+          "time": 0.4,
+          "profile_sha256": "677cfa0ca766f83330b98407e641534215199c9332e93cafb26bd13b0863e496",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0005.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06319444127704746,
+            "apparent_horizon_areal_radius": 0.6666666610700032,
+            "apparent_horizon_mass": 0.3333333305350016,
+            "apparent_horizon_mass_linear": 0.33331580610093176,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07583332953245694,
+          "exterior_constraint_rms": {
+            "H": 9.36851137922231e-06,
+            "M": 1.8511499603142063e-05,
+            "Theta": 3.0257855698615214e-08,
+            "Z": 1.4767649519444605e-07
+          }
+        },
+        {
+          "time": 0.5,
+          "profile_sha256": "123f156eac26cefaf0d9c0e21964dd80a8cc5a8b05466f70abdbae3759040229",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0006.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06435473311194614,
+            "apparent_horizon_areal_radius": 0.6666666594453482,
+            "apparent_horizon_mass": 0.3333333297226741,
+            "apparent_horizon_mass_linear": 0.33332961618803375,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07722567973433538,
+          "exterior_constraint_rms": {
+            "H": 8.42014385408239e-06,
+            "M": 1.6580551804795684e-05,
+            "Theta": 2.8868112443133846e-08,
+            "Z": 1.305218207791002e-07
+          }
+        },
+        {
+          "time": 0.6000000000000001,
+          "profile_sha256": "265898d3f49077591bb4408ed37912b56699c7a65c45df54cc44be8ec9498b52",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0007.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06573395978770405,
+            "apparent_horizon_areal_radius": 0.6666666581279712,
+            "apparent_horizon_mass": 0.3333333290639856,
+            "apparent_horizon_mass_linear": 0.3333169940331662,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07888075174524485,
+          "exterior_constraint_rms": {
+            "H": 8.507745535618682e-06,
+            "M": 0.000319335572857682,
+            "Theta": 2.746415189852661e-08,
+            "Z": 1.1874116166700191e-07
+          }
+        },
+        {
+          "time": 0.7000000000000001,
+          "profile_sha256": "cc18088668da13c70b76f56fa57fc70c598016a283a8ed0446c72d8025226d8d",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0008.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06723307884335172,
+            "apparent_horizon_areal_radius": 0.6666666571626173,
+            "apparent_horizon_mass": 0.33333332858130865,
+            "apparent_horizon_mass_linear": 0.33331676537350136,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.08067969461202207,
+          "exterior_constraint_rms": {
+            "H": 0.003299329460615533,
+            "M": 0.17895535690151745,
+            "Theta": 1.1691060382005105e-07,
+            "Z": 5.811949194063589e-05
+          }
+        },
+        {
+          "time": 0.8,
+          "profile_sha256": "5475859108f1cd2c18e82b0898418264920e43d181a5a6e57f77b145ed935527",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0009.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 3,
+            "apparent_horizon_r": 0.15929183972564998,
+            "apparent_horizon_areal_radius": 0.9108697176305978,
+            "apparent_horizon_mass": 0.4554348588152989,
+            "apparent_horizon_mass_linear": 0.45542488805680426,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.19115020767077998,
+          "exterior_constraint_rms": {
+            "H": 3.1014703870021614,
+            "M": 6.759537181395302,
+            "Theta": 0.029753402151851665,
+            "Z": 0.2709219994201887
+          }
+        },
+        {
+          "time": 0.9,
+          "profile_sha256": "2819145910603d8b67e8d485ebebb58ab9bc411685eea9ef9d8d145ba81565c7",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0010.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 4,
+            "apparent_horizon_r": 0.14442720236071876,
+            "apparent_horizon_areal_radius": 0.916527335513518,
+            "apparent_horizon_mass": 0.458263667756759,
+            "apparent_horizon_mass_linear": 0.45826130582206187,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.17331264283286252,
+          "exterior_constraint_rms": {
+            "H": 2.1373637930321414,
+            "M": 4.4304911124597215,
+            "Theta": 0.03972408737671184,
+            "Z": 0.2927600573609983
+          }
+        },
+        {
+          "time": 1.0,
+          "profile_sha256": "d6925e8e0bd51c61d751d5fccd6da3b6769b75d390d01aae1ab8afbceeeeff53",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/n513/profile-0011.npz",
+          "horizon": {
+            "apparent_horizon_count": 3,
+            "marginal_surface_crossings_total": 6,
+            "apparent_horizon_r": 0.1366070629359119,
+            "apparent_horizon_areal_radius": 0.9220036285168276,
+            "apparent_horizon_mass": 0.4610018142584138,
+            "apparent_horizon_mass_linear": 0.46099906642486976,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.16392847552309428,
+          "exterior_constraint_rms": {
+            "H": 1.3751969226853693,
+            "M": 2.7798251582608726,
+            "Theta": 0.033460124622013934,
+            "Z": 0.2530876874931616
+          }
+        }
+      ],
+      "expected_vacuum_mass": 0.3333333333333333,
+      "max_absolute_horizon_mass_error": 0.12766848092508049,
+      "relative_horizon_mass_drift": 0.3830054427661534,
+      "admission": false,
+      "scope": "Read-only component evidence; no successful collapse, trumpet or wormhole-to-trumpet admission inferred.",
+      "final_extracted_horizon_mass": 0.4610018142584138
+    },
+    {
+      "name": "scale0005-n1025",
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025",
+      "status": "failed",
+      "time": 0.92822265625,
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "nonfinite AF logarithm",
+        "time": 0.92822265625,
+        "step": 19010
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "upwind",
+        "compensated_update": false,
+        "subtract_local": false,
+        "puncture": true,
+        "puncture_chart": true,
+        "puncture_ko": 0.5,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "wormhole",
+        "mass": 0.3333333333333333,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.0,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "prefix",
+        "elliptic_method": "quadrature",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "centered",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025",
+        "n": 1025,
+        "t": 6.0,
+        "cfl": 0.05,
+        "amplitude": 0.0,
+        "pulse": "compact",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "multiplicative",
+        "lapse_restoring_profile": "physical-local",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "rational",
+        "slicing_scale": 0.0005,
+        "lapse_background_source": "collapsed-inner",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "deviation",
+        "metric_variable": "deviation",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "raw-lhopital",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.1,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f50da11a37ceb46ef109eb1c19f9b02aa743e7c659aa600f6d56617a7d5b89eb",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "1a1188bc7e84dcdf5703d67180989b65ba3993847be2fd09e66d20e2f08f1955",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "5318e676c11f3d6f6c559b4e4077138ba217249b4f360354e6f032190d83a140",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "5da2dd5ffe370ab55df1147805e62fbaea991d8a11bec6c60b5e8ccfb64b0659",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "a1f6b7a1589d43221610b1db06dda0a07e0e9beb00edad26c0a9af79de785d36",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "36216e2bc7b3adc4dfe8acad4abe58f6443159f1633d83899de1f0412c4e2d53"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025",
+          "status": "failed",
+          "time": 0.92822265625,
+          "manifest_sha256": "88eab97dcb61d7899b0a66f3ac4aeac27c59cdca39216cdd88dd8ce11c528c60",
+          "history_sha256": "66dff8150527c077d4bec9555e223e5207d952a12f7166d7582d3ff1e7445b2e"
+        }
+      ],
+      "all_RK_stages": {
+        "max_scri_pole": 2.3812433360401175e-05,
+        "max_lapse_pole": 6.8871588896960445e-09,
+        "max_regularity_trace": 7.006083587370038e-06,
+        "min_chi": 3.1100748627892243e-08,
+        "min_alpha": 3.1111789744027844e-14,
+        "max_H_rms": 6.345524559352417,
+        "max_M_rms": 24.198732703080502,
+        "max_Theta_rms": 0.07007018310869716,
+        "max_Z_rms": 1.3589353357656255,
+        "max_scri_null": 2.149391775674303e-13,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 7.975773504309558e-06,
+        "max_accepted_H_rms": 6.345470580397965,
+        "max_accepted_M_rms": 24.127961507542395,
+        "max_accepted_Theta_rms": 0.07007017647011066,
+        "max_accepted_Z_rms": 1.3589353357656255,
+        "max_accepted_H_bulk": 735.2286074580004,
+        "max_accepted_M_bulk": 48565.81920489911,
+        "max_accepted_H_endpoint": 3.169642952948609e-07,
+        "max_accepted_M_endpoint": 3.9649259246765656e-05
+      },
+      "peak_constraints": {
+        "H": 6.345524559352417,
+        "M": 24.198732703080502,
+        "Theta": 0.07007018310869716,
+        "Z": 1.3589353357656255
+      },
+      "sampled_horizon_profiles": [
+        {
+          "time": 0.0,
+          "profile_sha256": "303be10a4abd5b1223f0699c1de3f528a4bb8284e60f6cb275eb20aaf0924369",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0001.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0629244910359561,
+            "apparent_horizon_areal_radius": 0.6666666666667193,
+            "apparent_horizon_mass": 0.3333333333333596,
+            "apparent_horizon_mass_linear": 0.3333280216940169,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07550938924314732,
+          "exterior_constraint_rms": {
+            "H": 6.244496574059829e-08,
+            "M": 2.2133177273121134e-07,
+            "Theta": 0.0,
+            "Z": 0.0
+          }
+        },
+        {
+          "time": 0.1,
+          "profile_sha256": "363e3f16641fb4f83e2a6eb00fb46721291e194d0edce805d97cbd629023c64e",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0002.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06282548406310756,
+            "apparent_horizon_areal_radius": 0.6666666666349669,
+            "apparent_horizon_mass": 0.33333333331748344,
+            "apparent_horizon_mass_linear": 0.3333287787899151,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07539058087572907,
+          "exterior_constraint_rms": {
+            "H": 5.212716542773917e-07,
+            "M": 1.0280714766922614e-06,
+            "Theta": 4.5685420520470455e-10,
+            "Z": 7.886556402465555e-09
+          }
+        },
+        {
+          "time": 0.2,
+          "profile_sha256": "bae5fea007502519e5c61c745658fee6815f0decdbd0697d131c7d31636e40bc",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0003.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06221672019576528,
+            "apparent_horizon_areal_radius": 0.6666666665928741,
+            "apparent_horizon_mass": 0.33333333329643705,
+            "apparent_horizon_mass_linear": 0.33332907995953776,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07466006423491833,
+          "exterior_constraint_rms": {
+            "H": 3.68764571740752e-07,
+            "M": 1.6205174690706114e-06,
+            "Theta": 6.501454782954615e-10,
+            "Z": 1.312898259294504e-07
+          }
+        },
+        {
+          "time": 0.30000000000000004,
+          "profile_sha256": "ec84017f66e81d5af9ac5a140c5375396cd6b9e8ce4c1afda111866039241ccd",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0004.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06239630767223496,
+            "apparent_horizon_areal_radius": 0.6666666665435659,
+            "apparent_horizon_mass": 0.33333333327178294,
+            "apparent_horizon_mass_linear": 0.33333139696602104,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07487556920668195,
+          "exterior_constraint_rms": {
+            "H": 2.974710204852764e-07,
+            "M": 5.851229408025229e-07,
+            "Theta": 6.431837047632379e-10,
+            "Z": 4.044743595907086e-09
+          }
+        },
+        {
+          "time": 0.4,
+          "profile_sha256": "027b47e90d460e0844b11f92c285da2d67c3021a54487a9f4cb23f57a0587f06",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0005.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06318191481148339,
+            "apparent_horizon_areal_radius": 0.6666666664929449,
+            "apparent_horizon_mass": 0.33333333324647246,
+            "apparent_horizon_mass_linear": 0.3333292102216912,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07581829777378006,
+          "exterior_constraint_rms": {
+            "H": 2.583660325541317e-07,
+            "M": 5.095614106117848e-07,
+            "Theta": 6.297751596411497e-10,
+            "Z": 3.109658108735526e-09
+          }
+        },
+        {
+          "time": 0.5,
+          "profile_sha256": "11cc0fd34232cd3bcb8f735551b2f8d052af8bab581a2f27921eae969a3e7b7b",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0006.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06433832961287109,
+            "apparent_horizon_areal_radius": 0.6666666664449911,
+            "apparent_horizon_mass": 0.33333333322249553,
+            "apparent_horizon_mass_linear": 0.33333136524251944,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.0772059955354453,
+          "exterior_constraint_rms": {
+            "H": 2.3327506667175505e-07,
+            "M": 4.5848465692709076e-07,
+            "Theta": 6.051205449783596e-10,
+            "Z": 2.7525653059230895e-09
+          }
+        },
+        {
+          "time": 0.6000000000000001,
+          "profile_sha256": "f432ac3d738197870f5f293e1977091e650e1bb21acc98c74435964b8550ac61",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0007.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0657133973855544,
+            "apparent_horizon_areal_radius": 0.6666666664016941,
+            "apparent_horizon_mass": 0.33333333320084707,
+            "apparent_horizon_mass_linear": 0.3333296848117747,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07885607686266528,
+          "exterior_constraint_rms": {
+            "H": 1.3324300432322334e-05,
+            "M": 0.0015762750203378167,
+            "Theta": 5.790390645304856e-10,
+            "Z": 2.1806264630748826e-08
+          }
+        },
+        {
+          "time": 0.7000000000000001,
+          "profile_sha256": "200d52924e8d2bd6ab1d7b4ce4f0f605054e7e93f4a4867c3a0f8e90513a66bc",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0008.npz",
+          "horizon": {
+            "apparent_horizon_count": 3,
+            "marginal_surface_crossings_total": 6,
+            "apparent_horizon_r": 0.17293384784802457,
+            "apparent_horizon_areal_radius": 0.93659785828576,
+            "apparent_horizon_mass": 0.46829892914288,
+            "apparent_horizon_mass_linear": 0.46829818766562764,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.20752061741762948,
+          "exterior_constraint_rms": {
+            "H": 5.793612773482962,
+            "M": 12.699860439642947,
+            "Theta": 0.022565071213128594,
+            "Z": 0.2219609906772477
+          }
+        },
+        {
+          "time": 0.8,
+          "profile_sha256": "19ad8cc90f3209a396eae0df7f2b15052408eeab2da2e1ae90498879431c30f8",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0009.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.14443294382281147,
+            "apparent_horizon_areal_radius": 0.9438805255182479,
+            "apparent_horizon_mass": 0.47194026275912393,
+            "apparent_horizon_mass_linear": 0.47193914412188165,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.17331953258737376,
+          "exterior_constraint_rms": {
+            "H": 4.032500678377332,
+            "M": 8.308375111796408,
+            "Theta": 0.05557455187873415,
+            "Z": 0.3799225620911112
+          }
+        },
+        {
+          "time": 0.9,
+          "profile_sha256": "d111c4c28ec3995720937556de91fa9f6c291f6fec2257de8fd9200e3bba155c",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale0005-n1025/profile-0010.npz",
+          "horizon": {
+            "apparent_horizon_count": 3,
+            "marginal_surface_crossings_total": 6,
+            "apparent_horizon_r": 0.13756665877929136,
+            "apparent_horizon_areal_radius": 0.9520239468820925,
+            "apparent_horizon_mass": 0.47601197344104623,
+            "apparent_horizon_mass_linear": 0.4760104352688707,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.16507999053514963,
+          "exterior_constraint_rms": {
+            "H": 2.274889264059287,
+            "M": 4.552700201388948,
+            "Theta": 0.04222825591897155,
+            "Z": 0.30511585228185883
+          }
+        }
+      ],
+      "expected_vacuum_mass": 0.3333333333333333,
+      "max_absolute_horizon_mass_error": 0.14267864010771292,
+      "relative_horizon_mass_drift": 0.42803592032302606,
+      "admission": false,
+      "scope": "Read-only component evidence; no successful collapse, trumpet or wormhole-to-trumpet admission inferred.",
+      "final_extracted_horizon_mass": 0.47601197344104623
+    },
+    {
+      "name": "scale002-n1025",
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025",
+      "status": "failed",
+      "time": 1.12197265625,
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "nonfinite AF logarithm",
+        "time": 1.12197265625,
+        "step": 22978
+      },
+      "arguments": {
+        "origin_grid": false,
+        "fast_library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_fast.dylib",
+        "gauge_corner_sat": 0.0,
+        "advection": "upwind",
+        "compensated_update": false,
+        "subtract_local": false,
+        "puncture": true,
+        "puncture_chart": true,
+        "puncture_ko": 0.5,
+        "puncture_ko_radius": 0.8,
+        "initial_data": "wormhole",
+        "mass": 0.3333333333333333,
+        "initial_quadrature_order": 96,
+        "perturbation": "none",
+        "perturbation_amplitude": 1e-08,
+        "seed": 7419,
+        "origin_variables": false,
+        "scalar": false,
+        "scalar_amplitude": 0.01,
+        "initial_tolerance": 1e-10,
+        "initial_precision": "float",
+        "initial_lapse": "reference",
+        "origin_ko": 0.0,
+        "origin_ko_radius": 0.4,
+        "backend": "spherical-g1",
+        "quadrature_width": 7,
+        "elliptic_quadrature": "prefix",
+        "elliptic_method": "quadrature",
+        "elliptic_refinements": 2,
+        "elliptic_bias": "centered",
+        "library": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/matrix-source/runtime/libspherical_z4c.dylib",
+        "output": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025",
+        "n": 1025,
+        "t": 6.0,
+        "cfl": 0.05,
+        "amplitude": 0.0,
+        "pulse": "compact",
+        "center": 0.25,
+        "pulse_width": 0.1,
+        "kappa1": 4.0,
+        "kappa2": -0.99,
+        "damping_form": "constant",
+        "lapse_restoring": 1.0,
+        "lapse_restoring_form": "multiplicative",
+        "lapse_restoring_profile": "physical-local",
+        "eta": 0.0,
+        "slicing": 1.0,
+        "slicing_family": "rational",
+        "slicing_scale": 0.002,
+        "lapse_background_source": "collapsed-inner",
+        "lapse_reference": "minkowski",
+        "lapse_variable": "deviation",
+        "metric_variable": "deviation",
+        "inner_radius": 0.0,
+        "theta": "appendix-c",
+        "width": 7,
+        "radial_operator": "fd",
+        "puncture_boundary": "outflow",
+        "puncture_lapse_power": 2.0,
+        "endpoint": "raw-lhopital",
+        "regularity_sat": 8.0,
+        "scri_sat": 4.0,
+        "report_dt": 0.1,
+        "resume": null
+      },
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "f50da11a37ceb46ef109eb1c19f9b02aa743e7c659aa600f6d56617a7d5b89eb",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "1a1188bc7e84dcdf5703d67180989b65ba3993847be2fd09e66d20e2f08f1955",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "5318e676c11f3d6f6c559b4e4077138ba217249b4f360354e6f032190d83a140",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "5da2dd5ffe370ab55df1147805e62fbaea991d8a11bec6c60b5e8ccfb64b0659",
+          "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+          "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+          "tst/elliptic_shift_1d/puncture_chart.py": "a1f6b7a1589d43221610b1db06dda0a07e0e9beb00edad26c0a9af79de785d36",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "36216e2bc7b3adc4dfe8acad4abe58f6443159f1633d83899de1f0412c4e2d53"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025",
+          "status": "failed",
+          "time": 1.12197265625,
+          "manifest_sha256": "e3ea834d2513f35c3ad2bf0dacd90f08504621b81927a953b0e850fde23cbaf4",
+          "history_sha256": "e9a0e8e58a791440a84bd93e5cfbc99d983ef3a5a9cfe637e10921cbf394f26d"
+        }
+      ],
+      "all_RK_stages": {
+        "max_scri_pole": 2.3812910657797226e-05,
+        "max_lapse_pole": 6.887280876396077e-09,
+        "max_regularity_trace": 7.006216061585663e-06,
+        "min_chi": 3.049895700146535e-08,
+        "min_alpha": 9.607792738362469e-14,
+        "max_H_rms": 6.747089147133643,
+        "max_M_rms": 24.114791594871967,
+        "max_Theta_rms": 0.06832538831864082,
+        "max_Z_rms": 2.637539789010977,
+        "max_scri_null": 1.092459456231154e-13,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 0.010266483048336994,
+        "max_accepted_H_rms": 6.747020957038411,
+        "max_accepted_M_rms": 24.037259113474136,
+        "max_accepted_Theta_rms": 0.0683253760360631,
+        "max_accepted_Z_rms": 1.0603581579292716,
+        "max_accepted_H_bulk": 468.4070918077923,
+        "max_accepted_M_bulk": 23173.168002686067,
+        "max_accepted_H_endpoint": 3.1695651645001835e-07,
+        "max_accepted_M_endpoint": 3.9650040903782546e-05
+      },
+      "peak_constraints": {
+        "H": 6.747089147133643,
+        "M": 24.114791594871967,
+        "Theta": 0.06832538831864082,
+        "Z": 2.637539789010977
+      },
+      "sampled_horizon_profiles": [
+        {
+          "time": 0.0,
+          "profile_sha256": "303be10a4abd5b1223f0699c1de3f528a4bb8284e60f6cb275eb20aaf0924369",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0001.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0629244910359561,
+            "apparent_horizon_areal_radius": 0.6666666666667193,
+            "apparent_horizon_mass": 0.3333333333333596,
+            "apparent_horizon_mass_linear": 0.3333280216940169,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07550938924314732,
+          "exterior_constraint_rms": {
+            "H": 6.244496574059829e-08,
+            "M": 2.2133177273121134e-07,
+            "Theta": 0.0,
+            "Z": 0.0
+          }
+        },
+        {
+          "time": 0.1,
+          "profile_sha256": "30b8bb98982cce72fa451f9782027605666e20997fc848530c3504eccdcb9a3a",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0002.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06283040750568411,
+            "apparent_horizon_areal_radius": 0.6666666666349669,
+            "apparent_horizon_mass": 0.33333333331748344,
+            "apparent_horizon_mass_linear": 0.333328745218877,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07539648900682093,
+          "exterior_constraint_rms": {
+            "H": 5.213116060912195e-07,
+            "M": 1.0281439466608912e-06,
+            "Theta": 4.5678837818674695e-10,
+            "Z": 7.886441585354837e-09
+          }
+        },
+        {
+          "time": 0.2,
+          "profile_sha256": "b7588ee58bc43ec29af4c64e491bfd6df0d20cc4bec352d492c04c9662cfcdb5",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0003.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06223119390140912,
+            "apparent_horizon_areal_radius": 0.6666666665928701,
+            "apparent_horizon_mass": 0.33333333329643505,
+            "apparent_horizon_mass_linear": 0.3333292141813524,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07467743268169094,
+          "exterior_constraint_rms": {
+            "H": 3.687873397011451e-07,
+            "M": 1.620526990895738e-06,
+            "Theta": 6.501456565148464e-10,
+            "Z": 1.312897952995779e-07
+          }
+        },
+        {
+          "time": 0.30000000000000004,
+          "profile_sha256": "3fe14fa4bd8eceb57468be9e7ef759d1a31f4cde797c66d1cac6089e6994356b",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0004.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.062421694165908134,
+            "apparent_horizon_areal_radius": 0.6666666665435473,
+            "apparent_horizon_mass": 0.33333333327177367,
+            "apparent_horizon_mass_linear": 0.33333182935391376,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07490603299908975,
+          "exterior_constraint_rms": {
+            "H": 2.9745837136207677e-07,
+            "M": 5.850968462908642e-07,
+            "Theta": 6.431536670514298e-10,
+            "Z": 4.0446666408619575e-09
+          }
+        },
+        {
+          "time": 0.4,
+          "profile_sha256": "518294a2b3ee319e9cd3c3c9bdba2910d4f55f1dfcbf724b408cd168653483a6",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0005.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0632184933566955,
+            "apparent_horizon_areal_radius": 0.6666666664929061,
+            "apparent_horizon_mass": 0.33333333324645303,
+            "apparent_horizon_mass_linear": 0.33332953185142955,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07586219202803458,
+          "exterior_constraint_rms": {
+            "H": 2.5831839270755525e-07,
+            "M": 5.094767488968192e-07,
+            "Theta": 6.297135762914344e-10,
+            "Z": 3.1094469567234627e-09
+          }
+        },
+        {
+          "time": 0.5,
+          "profile_sha256": "f2ce5386ec8b831b1c32a5a852e20d900f1cc8ea6abf532f46372969c2f4eda3",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0006.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.0643859608429451,
+            "apparent_horizon_areal_radius": 0.6666666664449248,
+            "apparent_horizon_mass": 0.3333333332224624,
+            "apparent_horizon_mass_linear": 0.33333211969323323,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07726315301153411,
+          "exterior_constraint_rms": {
+            "H": 2.332006650354855e-07,
+            "M": 4.5834748592315416e-07,
+            "Theta": 6.050200618757604e-10,
+            "Z": 2.752270222189978e-09
+          }
+        },
+        {
+          "time": 0.6000000000000001,
+          "profile_sha256": "2ba63b7b5499bb5afd7a3a2a905855c651bedec7a88053621c6c21536b56a134",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0007.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06577268077130946,
+            "apparent_horizon_areal_radius": 0.6666666664016501,
+            "apparent_horizon_mass": 0.33333333320082503,
+            "apparent_horizon_mass_linear": 0.33332930642481234,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.07892721692557135,
+          "exterior_constraint_rms": {
+            "H": 2.1564230454187052e-07,
+            "M": 1.3297430441710388e-06,
+            "Theta": 5.783125177884532e-10,
+            "Z": 2.4940035339020708e-09
+          }
+        },
+        {
+          "time": 0.7000000000000001,
+          "profile_sha256": "437eb9d77635c70a65171f4f65aabfc11f6bd63791790aa4043e3fb4faf07918",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0008.npz",
+          "horizon": {
+            "apparent_horizon_count": 1,
+            "marginal_surface_crossings_total": 2,
+            "apparent_horizon_r": 0.06728342588256078,
+            "apparent_horizon_areal_radius": 0.666666666363427,
+            "apparent_horizon_mass": 0.3333333331817135,
+            "apparent_horizon_mass_linear": 0.3333317507680072,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.08074011105907293,
+          "exterior_constraint_rms": {
+            "H": 0.0002681997732614685,
+            "M": 0.022514012854616332,
+            "Theta": 1.4699821787477597e-09,
+            "Z": 9.909421374994491e-07
+          }
+        },
+        {
+          "time": 0.8,
+          "profile_sha256": "038407b67af86ad41398cab5b551845a40f721c75a384130db639e0627503ee5",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0009.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 4,
+            "apparent_horizon_r": 0.15253592151602524,
+            "apparent_horizon_areal_radius": 0.9101666271867759,
+            "apparent_horizon_mass": 0.45508331359338794,
+            "apparent_horizon_mass_linear": 0.4550813181874865,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.18304310581923028,
+          "exterior_constraint_rms": {
+            "H": 6.733157583436837,
+            "M": 14.649705682030866,
+            "Theta": 0.05001748581237598,
+            "Z": 0.37999254443875896
+          }
+        },
+        {
+          "time": 0.9,
+          "profile_sha256": "f66379f197647292685ee324c1541e81284d82c4c778aac6a46f3d6a576c6f1b",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0010.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 3,
+            "apparent_horizon_r": 0.13603587814945145,
+            "apparent_horizon_areal_radius": 0.9203457848803365,
+            "apparent_horizon_mass": 0.46017289244016824,
+            "apparent_horizon_mass_linear": 0.46017007936677595,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.16324305377934173,
+          "exterior_constraint_rms": {
+            "H": 3.4437496242307453,
+            "M": 7.070938549385157,
+            "Theta": 0.050366166379385194,
+            "Z": 0.36159788196215054
+          }
+        },
+        {
+          "time": 1.0,
+          "profile_sha256": "573e36cebffe4ab863e3759eb035dbc9b755947f7790c7c60d2d61817adb4655",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0011.npz",
+          "horizon": {
+            "apparent_horizon_count": 2,
+            "marginal_surface_crossings_total": 4,
+            "apparent_horizon_r": 0.1319322634706357,
+            "apparent_horizon_areal_radius": 0.928123931662052,
+            "apparent_horizon_mass": 0.464061965831026,
+            "apparent_horizon_mass_linear": 0.46406073903798184,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.1583187161647628,
+          "exterior_constraint_rms": {
+            "H": 1.9922874794861842,
+            "M": 3.981305282730384,
+            "Theta": 0.03781704097270661,
+            "Z": 0.2852850914903232
+          }
+        },
+        {
+          "time": 1.1,
+          "profile_sha256": "a9dbedace7034891f157744197ab8758014f4752d843319204cfa6a5f42c3d0b",
+          "profile": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/wormhole-local-rational-v1/scale002-n1025/profile-0012.npz",
+          "horizon": {
+            "apparent_horizon_count": 3,
+            "marginal_surface_crossings_total": 6,
+            "apparent_horizon_r": 0.12833147359816793,
+            "apparent_horizon_areal_radius": 0.9330152864987973,
+            "apparent_horizon_mass": 0.46650764324939864,
+            "apparent_horizon_mass_linear": 0.46650419094578693,
+            "apparent_horizon_interpolation": "local-polynomial",
+            "apparent_horizon_interpolation_degree": 6
+          },
+          "exterior_mask_lower_radius": 0.15399776831780151,
+          "exterior_constraint_rms": {
+            "H": 1.3747993506535008,
+            "M": 2.7036779267405757,
+            "Theta": 0.03059608569561572,
+            "Z": 0.23976329840446742
+          }
+        }
+      ],
+      "expected_vacuum_mass": 0.3333333333333333,
+      "max_absolute_horizon_mass_error": 0.13317430991606533,
+      "relative_horizon_mass_drift": 0.3995229297480855,
+      "admission": false,
+      "scope": "Read-only component evidence; no successful collapse, trumpet or wormhole-to-trumpet admission inferred.",
+      "final_extracted_horizon_mass": 0.46650764324939864
+    }
+  ]
+}
