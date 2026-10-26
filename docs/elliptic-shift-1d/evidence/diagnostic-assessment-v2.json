@@ -1,0 +1,85 @@
+{
+  "kind": "failed actual-scri diagnostic; no nonlinear stability or physical reproduction acceptance",
+  "spatial": [
+    {
+      "n": 32,
+      "scri_pole_max": 0.024527069561741027,
+      "H_rms": 0.0004601930843149818,
+      "H_bulk_max": 0.006381186081498824,
+      "H_endpoint_max": 0.0006716635279366834,
+      "M_rms": 0.014701604091093994,
+      "M_bulk_max": 0.006722080842019508,
+      "M_endpoint_max": 0.04788072488867777,
+      "Theta_rms": 7.92392059325156e-05,
+      "Z_rms": 0.0016448750376021682,
+      "elliptic_sampled_residual": 3.024095795708931
+    },
+    {
+      "n": 64,
+      "scri_pole_max": 0.050973620313313706,
+      "H_rms": 0.0006679180553169163,
+      "H_bulk_max": 0.051696435533593085,
+      "H_endpoint_max": 0.001097309878093533,
+      "M_rms": 0.022793427306576138,
+      "M_bulk_max": 0.02617583025384078,
+      "M_endpoint_max": 0.10381726399180218,
+      "Theta_rms": 6.453395819501955e-05,
+      "Z_rms": 0.0025347133270158997,
+      "elliptic_sampled_residual": 12.800782435495803
+    },
+    {
+      "n": 128,
+      "scri_pole_max": 0.06618092127745277,
+      "H_rms": 0.0007682066271690316,
+      "H_bulk_max": 0.0350852846785932,
+      "H_endpoint_max": 0.002450248997438509,
+      "M_rms": 0.023189548889688508,
+      "M_bulk_max": 0.05194880218217942,
+      "M_endpoint_max": 0.14652484698285417,
+      "Theta_rms": 3.897215297588139e-05,
+      "Z_rms": 0.0020354513035144377,
+      "elliptic_sampled_residual": 32.02425621887387
+    }
+  ],
+  "endpoint_gate": 1e-07,
+  "plot_sha256": {
+    "endpoint-refinement-v2.png": "e7138db94bf4c228acf5564debeafa24c0186e9faa669cd962aa8717381ccabb",
+    "endpoint-refinement-v2.pdf": "0b29a156773371cabc77db3dfeecaa4007ab5dd59126542aa2c89e065e680767"
+  },
+  "source_sha256": "d4438b602e9c2fae0c6e3b33c4d2fd920d0519479abcf08a88890480174d87c6",
+  "H_rms_pair_orders": [
+    -0.5313716430121641,
+    -0.20068565890846593
+  ],
+  "H_bulk_max_pair_orders": [
+    -2.9841349474616954,
+    0.5560466523698292
+  ],
+  "M_rms_pair_orders": [
+    -0.6255104949038349,
+    -0.024716772019604788
+  ],
+  "M_bulk_max_pair_orders": [
+    -1.9391400661631704,
+    -0.9832812111191445
+  ],
+  "scri_pole_max_pair_orders": [
+    -1.0434753580824225,
+    -0.3745413717177671
+  ],
+  "temporal": {
+    "state_difference_L2": [
+      4.763010229939977e-08,
+      2.9882054860322073e-09
+    ],
+    "ratio": 15.939366459916341,
+    "observed_order": 3.9945223827288534,
+    "interpretation": "RK4 temporal consistency of this failed spatial discretization; not continuum correctness"
+  },
+  "restart": {
+    "state_bitwise": true,
+    "time_bitwise": true,
+    "steps_equal": true
+  },
+  "all_endpoint_pole_gates_passed": false
+}

@@ -5,14 +5,15 @@
 #include "z4c/hyperboloidal/spherical_tensor.hpp"
 #include "z4c/hyperboloidal/reference_gauge.hpp"
 namespace h = z4c::hyperboloidal;
-extern "C" int spherical_parts(int n, const double *r, const double *q,
+static int SphericalParts(int n, const double *r, const double *q,
     const double *d, const double *dd, const double *beta, const double *dbeta,
     const double *ddbeta, double kappa1, double kappa2, int appendix_c,
-    double slicing, double *regular, double *pole, double *diagnostic) {
+    double slicing, double *regular, double *pole, double *diagnostic, bool total_chi) {
   const h::CMCReference<double> ref{1, 1};
   for (int i=0; i<n; ++i) {
     if (!(r[i]>0 && r[i]<=1)) return i+1;
     auto u=h::SphericalJet(r[i], q+8*i, d+8*i, dd+8*i, ref);
+    if(total_chi)u.chi=h::RadialScalar(q[8*i],d[8*i],dd[8*i],r[i]);
     u.beta=h::RadialVector(beta[i], dbeta[i], ddbeta[i], r[i]);
     h::OmegaJet<double> o{};
     o.omega=(1-r[i]*r[i])/2; o.gradient[0]=-r[i];
@@ -46,3 +47,18 @@ extern "C" int spherical_parts(int n, const double *r, const double *q,
   }
   return 0;
 }
+
+// Positive-chi input avoids cancellation of 1+(chi-1) at a puncture.
+#define SPHERICAL_ARGUMENTS int n,const double*r,const double*q,const double*d,\
+ const double*dd,const double*beta,const double*dbeta,const double*ddbeta,\
+ double kappa1,double kappa2,int appendix_c,double slicing,double*regular,\
+ double*pole,double*diagnostic
+extern "C" int spherical_parts(SPHERICAL_ARGUMENTS) {
+  return SphericalParts(n,r,q,d,dd,beta,dbeta,ddbeta,kappa1,kappa2,appendix_c,
+      slicing,regular,pole,diagnostic,false);
+}
+extern "C" int spherical_parts_total_chi(SPHERICAL_ARGUMENTS) {
+  return SphericalParts(n,r,q,d,dd,beta,dbeta,ddbeta,kappa1,kappa2,appendix_c,
+      slicing,regular,pole,diagnostic,true);
+}
+#undef SPHERICAL_ARGUMENTS

@@ -1,0 +1,51 @@
+{
+  "kind": "initial-data validation only; no wormhole-to-trumpet evolution",
+  "mass": 0.1,
+  "a": 1.0,
+  "transition_R": [
+    0.4,
+    0.8
+  ],
+  "n_points": 405,
+  "max_H": 4.815460571832057e-12,
+  "max_M": 2.7533531010703882e-14,
+  "max_Z": 6.200179719628688e-14,
+  "max_mass_error": 2.6083732396209314e-10,
+  "scri_poles": [
+    0.0,
+    0.0,
+    -4.440892098500626e-16,
+    0.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0
+  ],
+  "scri_null": 0.0,
+  "puncture": [
+    {
+      "r": 0.001,
+      "R": 2.5985010010010012,
+      "lapse_phys": 0.0003852224804282905,
+      "sqrt_gamma_rr": 2601.1021031041037,
+      "chi": 5.920050459851112e-07
+    },
+    {
+      "r": 0.0005,
+      "R": 5.0980002501250645,
+      "lapse_phys": 9.81267360766134e-05,
+      "sqrt_gamma_rr": 10201.101050775515,
+      "chi": 3.8464112006586504e-08
+    },
+    {
+      "r": 0.00025,
+      "R": 10.09775006251563,
+      "lapse_phys": 2.4764181533585092e-05,
+      "sqrt_gamma_rr": 40401.10052519381,
+      "chi": 2.4514240637429907e-09
+    }
+  ],
+  "embedding": "T=t+h(R); h_R=s(R)(R/a)/(F sqrt(F+(R/a)^2)); unchanged Einstein-Rosen interior",
+  "physical_lapse": "psi^-2 in isotropic interior; smooth conformal lapse (1-s)Omega psi^-2+s A",
+  "shift": "beta=-r used for gauge-independent diagnostics only; puncture elliptic boundary conditions not yet admitted"
+}

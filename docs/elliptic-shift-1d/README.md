@@ -15,19 +15,14 @@ stability is inferred. See `nonlinear-formulation.md` for new independent deriva
 
 ## Current evidence
 
-- Five automated tests pass: polynomial radial operators; nonlinear manufactured
-  shift; independent FD elliptic boundary-value solve; nonlinear tensor-kernel
-  metric-connection damping and scalar-Theta source audit; unsubtracted Minkowski
-  residual. They do not complete the full equation audit.
-- Finest manufactured shift error: 3.77e-15; independent BVP discrepancy: 2.00e-14.
-- Raw actual-scri l'Hopital endpoint candidate **fails**: N64 Minkowski and a
-  1e-3 lapse pulse lose positivity at t=0.0598425, CFL=.05. N32 reaches t=.1 but
-  already violates the pole and drift gates (pole max~1.36, field drift~.302).
-  Survival to .1 was not a pass. Endpoint compatibility/discretization needs repair.
-- Aurora SSH failed. User subsequently authorized local one-dimensional testing;
-  that instruction supersedes the initial execution-resource restriction for this work.
-- No published experiment has yet been reproduced. No coupled scalar, trumpet,
-  wormhole-to-trumpet, long-duration, convergence, or restart acceptance is complete.
+See [the active scientific work record](progress.md) for passing component checks,
+resolved failures, source/checkpoint ancestry and the next derivation steps.
+The two CTest groups pass. The independent scalar oracle passes its declared
+preliminary convergence/error gate, and the wormhole initial-data constraints
+are verified. The nonlinear actual-scri pulse evolution remains **unaccepted**:
+resolved runs lose boundary compatibility as the pulse reaches scri. No coupled
+scalar, trumpet evolution, wormhole-to-trumpet, long-duration or literature
+reproduction acceptance is complete.
 
 ## Reproducible build and tests
 

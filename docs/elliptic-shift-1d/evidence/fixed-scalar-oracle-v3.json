@@ -1,0 +1,80 @@
+{
+  "scope": "independent fixed-background spherical scalar; not a coupled evolution",
+  "analytic": "phi=[F(T-R)-F(T+R)]/R, f=phi/Omega, u=t+(1-r)/(1+r),v=t+(1+r)/(1-r); f(scri)=F(t)",
+  "method": "order-2 upwind characteristic transport/RK4; no Z4c kernel dependency",
+  "source_sha256": "166b6733c147af9bfb559c08fd6b82183b0e74b5d5aa6dc9ee1e0b3eb3397b88",
+  "command": [
+    "tst/elliptic_shift_1d/scalar_oracle.py",
+    "--output",
+    "output/elliptic-shift-1d/fixed-scalar-oracle-v3"
+  ],
+  "platform": "macOS-26.7.1-arm64-arm-64bit",
+  "criteria_declared_before_runs": {
+    "finite": true,
+    "expected_spatial_order": 2,
+    "minimum_preasymptotic_order": 1.5,
+    "finest_max_scri_error": 0.01
+  },
+  "weighted_L2_orders": [
+    1.958447776223767,
+    1.9958517743791582
+  ],
+  "scri_orders": [
+    1.8978982849059014,
+    1.9840375819929252
+  ],
+  "passed_preliminary_control": true,
+  "spatial_runs": [
+    {
+      "n": 200,
+      "h": 0.005,
+      "cfl": 0.2,
+      "duration": 3.0,
+      "max_weighted_field_L2": 0.04890078053079965,
+      "max_scri_error": 0.05094319725263552,
+      "runtime_seconds": 0.266087166
+    },
+    {
+      "n": 400,
+      "h": 0.0025,
+      "cfl": 0.2,
+      "duration": 3.0,
+      "max_weighted_field_L2": 0.012582422543585206,
+      "max_scri_error": 0.013669791352870941,
+      "runtime_seconds": 0.5991600420000001
+    },
+    {
+      "n": 800,
+      "h": 0.00125,
+      "cfl": 0.2,
+      "duration": 3.0,
+      "max_weighted_field_L2": 0.003154663308622415,
+      "max_scri_error": 0.003455469477172235,
+      "runtime_seconds": 1.500885875
+    }
+  ],
+  "temporal_controls": [
+    {
+      "n": 400,
+      "h": 0.0025,
+      "cfl": 0.1,
+      "duration": 3.0,
+      "max_weighted_field_L2": 0.01258242276746195,
+      "max_scri_error": 0.013669818468564854,
+      "runtime_seconds": 1.1995433329999998
+    },
+    {
+      "n": 400,
+      "h": 0.0025,
+      "cfl": 0.05,
+      "duration": 3.0,
+      "max_weighted_field_L2": 0.012582425465679153,
+      "max_scri_error": 0.013669826146821329,
+      "runtime_seconds": 2.383656541
+    }
+  ],
+  "plots": {
+    "fixed-scalar-oracle-v3.png": "20dc9a7b2b2c659f7c780acce662c124e5dafa0342e79a99f7bd9659060bc846",
+    "fixed-scalar-oracle-v3.pdf": "91e3b9d13f93f9b548b30cbb926c14f87af70db1d2950897a9838d73c7dcdb62"
+  }
+}

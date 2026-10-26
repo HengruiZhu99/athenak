@@ -183,3 +183,83 @@ psi^-2 to A/Omega in the exterior using the same regular transition region.
 This is a construction recipe, not yet constraint-verified initial data or an
 executed wormhole-to-trumpet evolution. In particular the elliptic inner-end
 uniqueness argument must be re-derived before applying the center solver.
+
+## Implemented wormhole embedding and precision audit
+
+`wormhole_data.py` now implements the preceding construction for a=S=1, M=.1.
+Set rho=r/(1-r), R=rho+M+M^2/(4rho), F=1-2M/R. On the outer exterior only,
+let s(R) be an infinitely smooth transition from zero at R0=4M to one at R1=8M.
+The second asymptotically flat end is explicitly excluded from this transition.
+Define `P=s (R/a)/sqrt(F+(R/a)^2)`, `h_R=P/F`. Then
+
+    gamma_RR=(1-P^2)/F,
+    H=n_phys(R)=P sqrt(F/(1-P^2)),
+    K_R^R=-dH/dR, K_theta^theta=-H/R,
+    K_phys=-dH/dR-2H/R.
+
+The whole neighborhood of the Einstein-Rosen throat remains on the ordinary
+isotropic time-symmetric slice; the height transition is strictly outside the
+horizon, avoiding Schwarzschild static-coordinate singularities. In the outer
+region H=R/a, hence K_phys=-3/a and the physical trace-free curvature vanishes.
+
+With bar_rr=Omega^2 gamma_rr, bar_tt=Omega^2 R^2/r^2, set
+`chi=(bar_rr bar_tt^2)^(-1/3)`, `g=chi bar_rr`,
+`A_rr=g(K_R^R-K_phys/3)/Omega`, and `Lambda=V(g)` initially. The latter sets the
+initial connection constraint correctly; Lambda is not subsequently slaved.
+Initial conformal lapse is `(1-s)Omega psi^(-2)+s A`. The physical lapse is
+therefore exactly psi^(-2) in the interior and A/Omega in the outer hyperboloidal
+region. The hyperboloidal Minkowski reference is unchanged.
+
+Actual-scri evaluation uses the regular rational functions Y=Omega R and
+W=Omega^2 R', with `bar_rr=W^2/(Omega^2 F+Y^2/a^2)` in the outer region.
+This avoids infinity times zero at r=1. Jets are computed by second-order
+forward automatic differentiation. Kr derivatives use H'' and R'', sufficient
+for A_rr' and p'; their unused second derivatives are not claimed exact.
+
+The tests cover 405 points, the actual scri pole numerators, invariant mass,
+and explicit puncture samples. First testing found loss of accuracy from
+reconstructing small chi as 1+(chi-1). A separate positive-chi adapter fixes
+that cancellation for these initial-data checks. Generic Misner-Sharp mass
+extraction still loses precision near scri by subtracting large R^2 terms;
+its maximum error here is about 2.61e-10. The evolved vacuum prototype still
+uses chi deviations and has not been admitted for puncture evolution.
+The initial-data test uses beta=-r only for gauge-independent diagnostics;
+it is not evidence of solving the puncture elliptic gauge or evolving the data.
+
+## Endpoint discretization experiments and disclosed penalties
+
+The raw l'Hopital candidate fails through a discrete endpoint mode whose
+N24 growth rate is about232.44. Over99.999% of its nodal energy is at r>.9,
+mostly Lambda and A_rr. The minimal uncoupled model
+`T_t=-c T/Omega` with endpoint `T_t=c D_r T` already has a positive endpoint
+rate c D_r(S,S), about232.60 for c=4.04. This mode does not belong to the
+compatible weighted continuum phase. It explains why a naive raw nodal
+extension does not follow from the supplied linear graph-phase theorem.
+
+The quotient reconstruction candidate extrapolates the *combined* interior
+S/Omega to scri, consistent with the regular quotient trace. It does not change
+or reset fields and records the independently computed S(S). It reduces but
+does not remove the instability; N64 pulse positivity fails near t=1.012.
+
+Two optional weak boundary penalties are now explicit numerical experiments:
+
+    U_t(S) <- U_t(S) + sigma S_U(S)/h - tau C_U(S)/h,
+    C = [chi-g, 0, A_rr-g'/6+2chi'/3, p+3, T, Lambda-V, 0, 0].
+
+Clock and elliptic shift conditions are applied separately. These trace
+relations follow from the nonlinear pole cancellations, alpha(S)=1 and nullness:
+S_chi=0 gives K_phys=3w; S_p=0 then gives T=0; S_alpha=0 gives beta=-1,
+chi=g and p=-3. The trace-free curvature residue gives A_rr=g'/6-2chi'/3.
+The compatible phase requires Z=0 at scri. The penalties vanish identically
+on such regular continuum solutions and never reset a field or an interior
+Hamiltonian, momentum, Theta or connection error. They are additional *boundary
+numerical terms*, not part of the continuum bulk equations. Their effect on
+constraint propagation and convergence must be tested, not presumed acceptable.
+
+Parameter screens preserve every result. sigma=4,tau=8 removes the observed
+O(1/h) endpoint growth of the sampled Jacobian. A remaining positive complex
+mode has real part about1.32,1.27,1.22 at N16,32,64; this finite growth rate
+is not a continuum stability proof. Unperturbed N64 Minkowski remains within
+5e-13 through t=3, but the 1e-3 lapse pulse has order-unity drift and violates
+pole/constraint thresholds by t=6. These penalties are not an accepted repair.
+No claim of completing the main hybrid formulation follows from these screens.

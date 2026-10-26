@@ -1,0 +1,2357 @@
+{
+  "status": "initial source-linked inventory; follow-up full-text audit and figure-axis duration extraction unfinished",
+  "retrieval": "retrieval.json",
+  "rows": [
+    {
+      "equations": "Appendix C (48a-j),(49a-c); C_Z4c=0,1 and GBSSN compared",
+      "gauge_reference": "S=a=1 CMC Minkowski; harmonic reference-reduced lapse (40),(48g), fixed beta=-r/a",
+      "damping": {
+        "xi_alpha": 1,
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.2,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "regular-gauge",
+      "paper": "1412.3827",
+      "section_figure": "Sec. 3.2,8.1-8.2; Fig.3",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "alpha perturbation A=.1, sigma=.1,c=.25, Eq.(23)",
+      "measured_quantities": "all fields; outgoing/center-reflected pulses",
+      "expected_result": "return to Minkowski",
+      "duration": 6,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": []
+    },
+    {
+      "equations": "Appendix C (48a-j),(49a-c); C_Z4c=0,1 and GBSSN compared",
+      "gauge_reference": "S=a=1 CMC Minkowski; harmonic reference-reduced lapse (40),(48g), fixed beta=-r/a",
+      "damping": {
+        "xi_alpha": 1,
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.2,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "regular-scalar",
+      "paper": "1412.3827",
+      "section_figure": "Sec.3.3,8; Figs.4-6",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "physical scalar A=.058,sigma=.1,c=.25; Hamiltonian solve Eq.(24)",
+      "measured_quantities": "rescaled phi,Pi at scri; Bondi corrected signal; constraint convergence",
+      "expected_result": "subcritical dispersal and two outgoing signals",
+      "duration": 10000,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": []
+    },
+    {
+      "equations": "Appendix C (48a-j),(49a-c); C_Z4c=0,1 and GBSSN compared",
+      "gauge_reference": "S=a=1 CMC Minkowski; harmonic reference-reduced lapse (40),(48g), fixed beta=-r/a",
+      "damping": {
+        "xi_alpha": 1,
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        1200,
+        1800,
+        2700
+      ],
+      "CFL": 0.108,
+      "dt": [
+        9e-05,
+        6e-05,
+        4e-05
+      ],
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "scalar-convergence",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.1-8.2; Fig.6",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "same .058 pulse; three resolutions",
+      "measured_quantities": "scri rescaled waveform differences",
+      "expected_result": "fourth order while differences resolved",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN",
+      "gauge_reference": "a=1000, fixed beta=-r/a",
+      "damping": {
+        "kappa1": 0.003,
+        "kappa2": 0
+      },
+      "grid": "staggered with fifth-order ghost extrapolation",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.2,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "large-a-GBSSN",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "same lapse/scalar families, a=1000",
+      "measured_quantities": "stability and endpoint propagation",
+      "expected_result": "stable reported",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c C=0",
+      "gauge_reference": "a=1000, fixed beta=-r/a",
+      "damping": {
+        "kappa1": 0.003,
+        "kappa2": 0
+      },
+      "grid": "staggered with fifth-order ghost extrapolation",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.2,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "large-a-Z4c C=0",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "same lapse/scalar families, a=1000",
+      "measured_quantities": "stability and endpoint propagation",
+      "expected_result": "stable reported",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c C=1",
+      "gauge_reference": "a=1000, fixed beta=-r/a",
+      "damping": {
+        "kappa1": 0.003,
+        "kappa2": 0
+      },
+      "grid": "staggered with fifth-order ghost extrapolation",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.2,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "large-a-Z4c C=1",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "same lapse/scalar families, a=1000",
+      "measured_quantities": "stability and endpoint propagation",
+      "expected_result": "stable reported",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN",
+      "gauge_reference": "a=0.8",
+      "damping": {
+        "kappa1": 3,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.2,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "small-a-GBSSN",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "same regular data",
+      "measured_quantities": "bounded evolution",
+      "expected_result": "reported stable lower-a example",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c C=1",
+      "gauge_reference": "a=0.88",
+      "damping": {
+        "kappa1": 1,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.2,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "small-a-Z4c C=1",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "same regular data",
+      "measured_quantities": "bounded evolution",
+      "expected_result": "reported stable lower-a example",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN",
+      "gauge_reference": "S=a=1 CMC Minkowski; harmonic reference-reduced lapse (40),(48g), fixed beta=-r/a",
+      "damping": {
+        "xi_alpha": 1,
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.252,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "CFL-GBSSN",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "regular data, S=a=1",
+      "measured_quantities": "largest stable CFL",
+      "expected_result": "source threshold comparison; hybrid threshold separately measured",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c C=1",
+      "gauge_reference": "S=a=1 CMC Minkowski; harmonic reference-reduced lapse (40),(48g), fixed beta=-r/a",
+      "damping": {
+        "xi_alpha": 1,
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.224,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "CFL-Z4c C=1",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "regular data, S=a=1",
+      "measured_quantities": "largest stable CFL",
+      "expected_result": "source threshold comparison; hybrid threshold separately measured",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c C=0",
+      "gauge_reference": "S=a=1 CMC Minkowski; harmonic reference-reduced lapse (40),(48g), fixed beta=-r/a",
+      "damping": {
+        "xi_alpha": 1,
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.2,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "CFL-Z4c C=0",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "regular data, S=a=1",
+      "measured_quantities": "largest stable CFL",
+      "expected_result": "source threshold comparison; hybrid threshold separately measured",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c C=0 k2=-1",
+      "gauge_reference": "S=a=1 CMC Minkowski; harmonic reference-reduced lapse (40),(48g), fixed beta=-r/a",
+      "damping": {
+        "xi_alpha": 1,
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered regular center to scri",
+      "dissipation": 0.5,
+      "resolution": [
+        400
+      ],
+      "CFL": 0.224,
+      "dt": 0.0005,
+      "method": "FD4/RK4; polynomial ghost extrapolation",
+      "id": "CFL-Z4c C=0 k2=-1",
+      "paper": "1412.3827",
+      "section_figure": "Sec.8.2",
+      "evidence_url": "https://arxiv.org/html/1412.3827",
+      "initial_data": "regular data, S=a=1",
+      "measured_quantities": "largest stable CFL",
+      "expected_result": "source threshold comparison; hybrid threshold separately measured",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix C of 1412.3827; gauges (9)-(11)",
+      "gauge_reference": "CMC Schwarzschild trumpet; harmonic lapse with restoring initial Schwarzschild lapse; Gamma driver",
+      "damping": {
+        "xi_beta": 5,
+        "lambda": 0.75,
+        "mu": "0.15+4(1-r^2)",
+        "eta": 0.1,
+        "kappa1": null,
+        "kappa2": null
+      },
+      "grid": "staggered; scri extrapolated",
+      "dissipation": null,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4+KO",
+      "id": "trumpet-lapse",
+      "paper": "1412.4801",
+      "section_figure": "Sec.4 (unplotted gauge-wave experiment)",
+      "evidence_url": "https://arxiv.org/html/1412.4801",
+      "initial_data": "already-CMC trumpet plus lapse perturbation; amplitude/width not specified here",
+      "measured_quantities": "relaxation, mass, horizon",
+      "expected_result": "stable nonlinear trumpet perturbation; not wormhole-to-trumpet",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix C of 1412.3827; gauges (9)-(11)",
+      "gauge_reference": "CMC Schwarzschild trumpet; harmonic lapse with restoring initial Schwarzschild lapse; Gamma driver",
+      "damping": {
+        "xi_beta": 5,
+        "lambda": 0.75,
+        "mu": "0.15+4(1-r^2)",
+        "eta": 0.1,
+        "kappa1": null,
+        "kappa2": null
+      },
+      "grid": "staggered; scri extrapolated",
+      "dissipation": null,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4+KO",
+      "id": "BH-scalar-tail",
+      "paper": "1412.4801",
+      "section_figure": "Sec.4; Figs.3-4",
+      "evidence_url": "https://arxiv.org/html/1412.4801",
+      "initial_data": "CMC trumpet plus Eq.(12) scalar A=1e-4; c,sigma not given in this section",
+      "measured_quantities": "phi/Omega finite radius and scri; tail slopes, convergence",
+      "expected_result": "finite-radius slope -3, scri -2; reported scri -2.08 +/- .09; fourth order until about100",
+      "duration": 100,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "fixed shift, harmonic lapse",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "scalar-signal-fixed-harmonic",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5,5.1; Figs.2-3",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "constraint-solved .058 physical scalar pulse,sigma=.1,c=.25",
+      "measured_quantities": "phi/Omega,omega,delta-alpha,delta-beta at scri; Bondi reference",
+      "expected_result": "source-dependent gauge distortion and relaxation; retain distinct profiles",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "fixed shift,cK m=1",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "scalar-signal-fixed-cK",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5,5.1; Figs.2-3",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "constraint-solved .058 physical scalar pulse,sigma=.1,c=.25",
+      "measured_quantities": "phi/Omega,omega,delta-alpha,delta-beta at scri; Bondi reference",
+      "expected_result": "source-dependent gauge distortion and relaxation; retain distinct profiles",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "fixed shift,cK m=1 superposed n_alpha=2",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "scalar-signal-fixed-matched-cK",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5,5.1; Figs.2-3",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "constraint-solved .058 physical scalar pulse,sigma=.1,c=.25",
+      "measured_quantities": "phi/Omega,omega,delta-alpha,delta-beta at scri; Bondi reference",
+      "expected_result": "source-dependent gauge distortion and relaxation; retain distinct profiles",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "1+log n=1,integrated Gamma lambda=.75,xi_beta=2",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "scalar-signal-1log-Gamma",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5,5.1; Figs.2-3",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "constraint-solved .058 physical scalar pulse,sigma=.1,c=.25",
+      "measured_quantities": "phi/Omega,omega,delta-alpha,delta-beta at scri; Bondi reference",
+      "expected_result": "source-dependent gauge distortion and relaxation; retain distinct profiles",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "harmonic lapse/shift with lambda=.1,n_beta=2 origin stabilization",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "scalar-signal-harmonic-both",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5,5.1; Figs.2-3",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "constraint-solved .058 physical scalar pulse,sigma=.1,c=.25",
+      "measured_quantities": "phi/Omega,omega,delta-alpha,delta-beta at scri; Bondi reference",
+      "expected_result": "source-dependent gauge distortion and relaxation; retain distinct profiles",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "preferred conformal gauge matched r-=0,r+=.05;cK n=.4,Gamma lambda=1",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "scalar-signal-PCG-origin",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5,5.1; Figs.2-3",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "constraint-solved .058 physical scalar pulse,sigma=.1,c=.25",
+      "measured_quantities": "phi/Omega,omega,delta-alpha,delta-beta at scri; Bondi reference",
+      "expected_result": "source-dependent gauge distortion and relaxation; retain distinct profiles",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "preferred conformal gauge matched r-=.4,r+=.9;cK n=.4,Gamma lambda=1",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "scalar-signal-PCG-layer",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5,5.1; Figs.2-3",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "constraint-solved .058 physical scalar pulse,sigma=.1,c=.25",
+      "measured_quantities": "phi/Omega,omega,delta-alpha,delta-beta at scri; Bondi reference",
+      "expected_result": "source-dependent gauge distortion and relaxation; retain distinct profiles",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "CMC=-3, S=1; specified lapse/shift family",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "actual scri and staggered pair",
+      "dissipation": 0.25,
+      "resolution": [
+        1600,
+        2400,
+        3600
+      ],
+      "CFL": 0.1,
+      "dt": null,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "actual-v-staggered",
+      "paper": "1705.06298",
+      "section_figure": "Sec.6.1-6.3; Figs.4-5",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "same scalar pulse; preferred conformal gauge",
+      "measured_quantities": "rescaled scri waveform convergence",
+      "expected_result": "fourth order in both layouts",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "CMC=-3, S=1; specified lapse/shift family",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "gauge-sensitivity-restoring-strength",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "same regular scalar data",
+      "measured_quantities": "origin/scri fluctuations; relaxation times about6 or30",
+      "expected_result": "xi1=2,xi2=0 or xi1=0,xi2=2; weak fixed-shift xi1=1 fails",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "CMC=-3, S=1; specified lapse/shift family",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "gauge-sensitivity-matching-location",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "same regular scalar data",
+      "measured_quantities": "origin/scri fluctuations; relaxation times about6 or30",
+      "expected_result": "r-<=.4 stable; later matching can oscillate",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "CMC=-3, S=1; specified lapse/shift family",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "gauge-sensitivity-origin-shift",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "same regular scalar data",
+      "measured_quantities": "origin/scri fluctuations; relaxation times about6 or30",
+      "expected_result": "alpha^2 chi coefficient can excite origin instability; lambda=.1,n_beta=2 cure",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Appendix A; drop nonprincipal C_Z4c terms; gauge equations Sections 3-4 and Appendix B",
+      "gauge_reference": "CMC=-3, S=1; specified lapse/shift family",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      },
+      "grid": "staggered except Section 6",
+      "dissipation": 0.25,
+      "resolution": [
+        200
+      ],
+      "CFL": 0.1,
+      "dt": 0.0005,
+      "method": "FD4/RK4, one-point off-centered advection",
+      "id": "gauge-sensitivity-shift-scri",
+      "paper": "1705.06298",
+      "section_figure": "Sec.5",
+      "evidence_url": "https://arxiv.org/html/1705.06298",
+      "initial_data": "same regular scalar data",
+      "measured_quantities": "origin/scri fluctuations; relaxation times about6 or30",
+      "expected_result": "integrated harmonic-coefficient Gamma needs xi_beta>=2",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "slicing(10),shift(12)",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0,
+        "eta": 0
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        456
+      ],
+      "CFL": null,
+      "dt": 0.0006667,
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "CMC-advective-eta0",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.2; Fig.12",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "CMC trumpet data",
+      "measured_quantities": "profiles, constraints,horizon, invariant mass",
+      "expected_result": "eta=0 growing oscillations; eta=1 relaxation to common final slice",
+      "duration": 100,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "slicing(10),shift(12)",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0,
+        "eta": 1
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        456
+      ],
+      "CFL": null,
+      "dt": 0.0006667,
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "CMC-advective-eta1",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.2; Fig.12",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "CMC trumpet data",
+      "measured_quantities": "profiles, constraints,horizon, invariant mass",
+      "expected_result": "eta=0 growing oscillations; eta=1 relaxation to common final slice",
+      "duration": 100,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "slicing(10),shift(13)",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        304,
+        456,
+        684
+      ],
+      "CFL": null,
+      "dt": [
+        0.001,
+        0.0006667,
+        0.0004444
+      ],
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "CMC-nonadvective",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.3; Figs.13-14",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "CMC trumpet data",
+      "measured_quantities": "Lambda norm,H profiles,self-convergence",
+      "expected_result": "statio visually stationary; CMC relaxes; preserve reported convergence failures",
+      "duration": 1000,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "M=1, K_CMC=-1, CMC trumpet (24),(25) or gauge-adapted statio data",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        304,
+        456,
+        684
+      ],
+      "CFL": null,
+      "dt": [
+        0.001,
+        0.0006667,
+        0.0004444
+      ],
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "CMC-lapse-pulse",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.3; Fig.15",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "CMC trumpet plus Eq.(41) lapse A=.05,sigma=.1,rc=.25",
+      "measured_quantities": "H radial convergence at .1 and4; outgoing/ingoing gauge waves",
+      "expected_result": "constraint convergence; coordinate profiles need not match hybrid",
+      "duration": 4,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "slicing(10),shift(12)",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0,
+        "eta": 0
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        456
+      ],
+      "CFL": null,
+      "dt": 0.0006667,
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "statio-advective-eta0",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.2; Fig.12",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "statio trumpet data",
+      "measured_quantities": "profiles, constraints,horizon, invariant mass",
+      "expected_result": "eta=0 growing oscillations; eta=1 relaxation to common final slice",
+      "duration": 100,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "slicing(10),shift(12)",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0,
+        "eta": 1
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        456
+      ],
+      "CFL": null,
+      "dt": 0.0006667,
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "statio-advective-eta1",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.2; Fig.12",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "statio trumpet data",
+      "measured_quantities": "profiles, constraints,horizon, invariant mass",
+      "expected_result": "eta=0 growing oscillations; eta=1 relaxation to common final slice",
+      "duration": 100,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "slicing(10),shift(13)",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        304,
+        456,
+        684
+      ],
+      "CFL": null,
+      "dt": [
+        0.001,
+        0.0006667,
+        0.0004444
+      ],
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "statio-nonadvective",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.3; Figs.13-14",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "statio trumpet data",
+      "measured_quantities": "Lambda norm,H profiles,self-convergence",
+      "expected_result": "statio visually stationary; CMC relaxes; preserve reported convergence failures",
+      "duration": 1000,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "M=1, K_CMC=-1, CMC trumpet (24),(25) or gauge-adapted statio data",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        304,
+        456,
+        684
+      ],
+      "CFL": null,
+      "dt": [
+        0.001,
+        0.0006667,
+        0.0004444
+      ],
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "statio-lapse-pulse",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.3; Fig.15",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "statio trumpet plus Eq.(41) lapse A=.05,sigma=.1,rc=.25",
+      "measured_quantities": "H radial convergence at .1 and4; outgoing/ingoing gauge waves",
+      "expected_result": "constraint convergence; coordinate profiles need not match hybrid",
+      "duration": 4,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "slicing(10),shift(13)",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 0.1,
+        "xi_cK": 0.5,
+        "lambda": 1,
+        "xi_beta": 0
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        304,
+        456,
+        684
+      ],
+      "CFL": null,
+      "dt": 0.0006667,
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "CMC-nonadvective-kappa1",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.3; Figs.13-14",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "CMC trumpet",
+      "measured_quantities": "field and lapse convergence; long-term constraint floor",
+      "expected_result": "retain loss of convergence; stronger lapse case recovers fourth order near300",
+      "duration": 1000,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "GBSSN, Section II; lapse (10), integrated Gamma shift (12) or (13)",
+      "gauge_reference": "slicing(10),shift(13)",
+      "damping": {
+        "kappa1": 0.5,
+        "kappa2": 0,
+        "kappa0": 0,
+        "m_cK": 1,
+        "xi_cK": 1,
+        "lambda": 1,
+        "xi_beta": 0
+      },
+      "grid": "staggered at puncture and scri; outflow polynomial extrapolation",
+      "dissipation": 0.1,
+      "resolution": [
+        304,
+        456,
+        684
+      ],
+      "CFL": null,
+      "dt": 0.0006667,
+      "method": "FD4/RK4, shift-dependent upwind advection",
+      "id": "CMC-nonadvective-slicing",
+      "paper": "2304.05384",
+      "section_figure": "Sec.VI.3; Figs.13-14",
+      "evidence_url": "https://arxiv.org/html/2304.05384",
+      "initial_data": "CMC trumpet",
+      "measured_quantities": "field and lapse convergence; long-term constraint floor",
+      "expected_result": "retain loss of convergence; stronger lapse case recovers fourth order near300",
+      "duration": 1000,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Einstein+scalar setup of prior work; eikonal/advection diagram equations (49)",
+      "gauge_reference": "CMC trumpet relaxation or regular scalar collapse",
+      "damping": null,
+      "grid": null,
+      "dissipation": null,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": null,
+      "id": "diagram-trumpet",
+      "paper": "2311.04972",
+      "section_figure": "Sec.IV.2; Figs.9-11",
+      "evidence_url": "https://arxiv.org/html/2311.04972",
+      "initial_data": "CMC trumpet, metric evolution plus diagram eikonal fields",
+      "measured_quantities": "relaxing slices, stationary height-function cross-check with time rescaling c",
+      "expected_result": "visible settling by about4; independent height/eikonal agreement",
+      "duration": 8,
+      "status": "unrun",
+      "relationship": "Physical relaxation overlaps 2304.05384; eikonal diagram diagnostic is an additional extraction test",
+      "additional_physics": false,
+      "missing_information": [
+        "damping: not yet extracted or not specified; consult source figures/supporting files",
+        "grid: not yet extracted or not specified; consult source figures/supporting files",
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Einstein+scalar setup of prior work; eikonal/advection diagram equations (49)",
+      "gauge_reference": "CMC trumpet relaxation or regular scalar collapse",
+      "damping": null,
+      "grid": null,
+      "dissipation": null,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": null,
+      "id": "scalar-collapse",
+      "paper": "2311.04972",
+      "section_figure": "Sec.IV.3; Fig.12",
+      "evidence_url": "https://arxiv.org/html/2311.04972",
+      "initial_data": "regular constraint-solved scalar pulse amplitude .07; Fig.6 initial slice",
+      "measured_quantities": "horizon onset and mass; inner limiting R; conformal diagrams",
+      "expected_result": "AH around4.4, final mass about.11, limiting R about.16 in source gauge",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "damping: not yet extracted or not specified; consult source figures/supporting files",
+        "grid: not yet extracted or not specified; consult source figures/supporting files",
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Einstein+scalar setup of prior work; eikonal/advection diagram equations (49)",
+      "gauge_reference": "CMC trumpet relaxation or regular scalar collapse",
+      "damping": null,
+      "grid": null,
+      "dissipation": null,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": null,
+      "id": "stationary-diagrams",
+      "paper": "2311.04972",
+      "section_figure": "Sec.III; Figs.1-8,Appendix B",
+      "evidence_url": "https://arxiv.org/html/2311.04972",
+      "initial_data": "CMC and stationary Schwarzschild slices",
+      "measured_quantities": "height functions and diagrams",
+      "expected_result": "analytic/numerical initial-data construction only",
+      "duration": null,
+      "status": "not_an_evolution",
+      "relationship": "Initial-data/diagram verification supporting trumpet evolution",
+      "additional_physics": false,
+      "missing_information": [
+        "damping: not yet extracted or not specified; consult source figures/supporting files",
+        "grid: not yet extracted or not specified; consult source figures/supporting files",
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "CMC reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-CMC-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "CMC Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "CMC reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-CMC-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "CMC Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "c+=1 reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-c+=1-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "c+=1 Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "c+=1 reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-c+=1-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "c+=1 Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "cos reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-cos-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "cos Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "cos reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-cos-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "cos Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "sin reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-sin-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "sin Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "sin reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-sin-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "sin Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "sim reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-sim-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "sim Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "sim reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-sim-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "sim Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "mod reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-mod-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "mod Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "mod reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-mod-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "mod Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "modvar reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-modvar-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "modvar Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "modvar reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-modvar-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "modvar Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "layCMC reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-layCMC-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "layCMC Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "layCMC reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-layCMC-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "layCMC Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "laymod reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-laymod-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "laymod Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "laymod reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-laymod-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "laymod Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN Section II",
+      "gauge_reference": "layvar reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-layvar-BSSN",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "layvar Minkowski reference; unperturbed",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "Z4c Section II",
+      "gauge_reference": "layvar reference, equations(9),(10), C=2.8 for mod,2 otherwise",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": null,
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "reference-layvar-Z4c",
+      "paper": "2408.08952",
+      "section_figure": "Secs.V-VI; Fig.4",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "layvar Minkowski reference; noise amplitude1e-4",
+      "measured_quantities": "constraint monitor Eq.(38); drift; origin and layer errors",
+      "expected_result": "Z4c all reported stable; BSSN only CMC,sin,sim stable; retain constraint floors",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN/Z4c Section II; reference-reduced gauges (9),(10)",
+      "gauge_reference": "Minkowski; K_CMC=-1, S=1; reference metrics Section V",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": [
+        [
+          200,
+          600,
+          1800
+        ],
+        [
+          300,
+          900,
+          2700
+        ],
+        [
+          400,
+          1200,
+          3600
+        ]
+      ],
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "convergence-CMC",
+      "paper": "2408.08952",
+      "section_figure": "Sec.VI; Fig.5",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "CMC with small Gaussian-like lapse pulse; amplitude not specified in text",
+      "measured_quantities": "all-field norm self-convergence; Arr pointwise near layer at .2",
+      "expected_result": "CMC/modvar approach4; sin drift; layvar first order near joint",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN/Z4c Section II; reference-reduced gauges (9),(10)",
+      "gauge_reference": "Minkowski; K_CMC=-1, S=1; reference metrics Section V",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": [
+        [
+          200,
+          600,
+          1800
+        ],
+        [
+          300,
+          900,
+          2700
+        ],
+        [
+          400,
+          1200,
+          3600
+        ]
+      ],
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "convergence-modvar",
+      "paper": "2408.08952",
+      "section_figure": "Sec.VI; Fig.5",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "modvar with small Gaussian-like lapse pulse; amplitude not specified in text",
+      "measured_quantities": "all-field norm self-convergence; Arr pointwise near layer at .2",
+      "expected_result": "CMC/modvar approach4; sin drift; layvar first order near joint",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN/Z4c Section II; reference-reduced gauges (9),(10)",
+      "gauge_reference": "Minkowski; K_CMC=-1, S=1; reference metrics Section V",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": [
+        [
+          200,
+          600,
+          1800
+        ],
+        [
+          300,
+          900,
+          2700
+        ],
+        [
+          400,
+          1200,
+          3600
+        ]
+      ],
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "convergence-sin",
+      "paper": "2408.08952",
+      "section_figure": "Sec.VI; Fig.5",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "sin with small Gaussian-like lapse pulse; amplitude not specified in text",
+      "measured_quantities": "all-field norm self-convergence; Arr pointwise near layer at .2",
+      "expected_result": "CMC/modvar approach4; sin drift; layvar first order near joint",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN/Z4c Section II; reference-reduced gauges (9),(10)",
+      "gauge_reference": "Minkowski; K_CMC=-1, S=1; reference metrics Section V",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": [
+        [
+          200,
+          600,
+          1800
+        ],
+        [
+          300,
+          900,
+          2700
+        ],
+        [
+          400,
+          1200,
+          3600
+        ]
+      ],
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "convergence-layvar",
+      "paper": "2408.08952",
+      "section_figure": "Sec.VI; Fig.5",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "layvar with small Gaussian-like lapse pulse; amplitude not specified in text",
+      "measured_quantities": "all-field norm self-convergence; Arr pointwise near layer at .2",
+      "expected_result": "CMC/modvar approach4; sin drift; layvar first order near joint",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "equations": "BSSN/Z4c Section II; reference-reduced gauges (9),(10)",
+      "gauge_reference": "Minkowski; K_CMC=-1, S=1; reference metrics Section V",
+      "damping": {
+        "kappa1": 1.5,
+        "kappa2": 0,
+        "xi_cK": 1.5,
+        "n_cK": 1,
+        "eta": 0,
+        "lambda": 1
+      },
+      "grid": "staggered; reference-dependent origin parity",
+      "dissipation": 0.1,
+      "resolution": [
+        [
+          200,
+          600,
+          1800
+        ],
+        [
+          300,
+          900,
+          2700
+        ],
+        [
+          400,
+          1200,
+          3600
+        ]
+      ],
+      "CFL": null,
+      "dt": null,
+      "method": "FD4/RK4; upwind advection",
+      "id": "modvar-unperturbed",
+      "paper": "2408.08952",
+      "section_figure": "Sec.VI; Fig.5 top-right",
+      "evidence_url": "https://arxiv.org/html/2408.08952",
+      "initial_data": "modvar reference without pulse",
+      "measured_quantities": "all-field norm convergence",
+      "expected_result": "fourth order",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Physical experiment target; hybrid equations/gauge differ from the published control",
+      "additional_physics": false,
+      "missing_information": [
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "id": "wormhole-to-trumpet",
+      "paper": "user-required",
+      "section_figure": "User objective",
+      "evidence_url": "../objective.txt",
+      "initial_data": "isotropic interior with physical lapse psi^-2 and independently derived hyperboloidal Schwarzschild exterior",
+      "measured_quantities": "R_inner,proper distance,lapse collapse,AH and invariant mass",
+      "expected_result": "derive quantitative criteria before acceptance",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Mandatory extension beyond published experiments",
+      "additional_physics": false,
+      "missing_information": [
+        "equations: not yet extracted or not specified; consult source figures/supporting files",
+        "gauge_reference: not yet extracted or not specified; consult source figures/supporting files",
+        "damping: not yet extracted or not specified; consult source figures/supporting files",
+        "grid: not yet extracted or not specified; consult source figures/supporting files",
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "id": "fixed-scalar-oracle",
+      "paper": "user-required",
+      "section_figure": "User objective",
+      "evidence_url": "../objective.txt",
+      "initial_data": "analytic radial Minkowski scalar pulse or independent fixed-Schwarzschild solver",
+      "measured_quantities": "waveform and endpoint convergence",
+      "expected_result": "derive quantitative criteria before acceptance",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Mandatory extension beyond published experiments",
+      "additional_physics": false,
+      "missing_information": [
+        "equations: not yet extracted or not specified; consult source figures/supporting files",
+        "gauge_reference: not yet extracted or not specified; consult source figures/supporting files",
+        "damping: not yet extracted or not specified; consult source figures/supporting files",
+        "grid: not yet extracted or not specified; consult source figures/supporting files",
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "id": "compatible-violations",
+      "paper": "user-required",
+      "section_figure": "User objective",
+      "evidence_url": "../objective.txt",
+      "initial_data": "weighted compatible H/M/Theta/Z perturbations without projections",
+      "measured_quantities": "propagation,damping and weights",
+      "expected_result": "derive quantitative criteria before acceptance",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Mandatory extension beyond published experiments",
+      "additional_physics": false,
+      "missing_information": [
+        "equations: not yet extracted or not specified; consult source figures/supporting files",
+        "gauge_reference: not yet extracted or not specified; consult source figures/supporting files",
+        "damping: not yet extracted or not specified; consult source figures/supporting files",
+        "grid: not yet extracted or not specified; consult source figures/supporting files",
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    },
+    {
+      "id": "scri-pulse-sweep",
+      "paper": "user-required",
+      "section_figure": "User objective",
+      "evidence_url": "../objective.txt",
+      "initial_data": "vary amplitude,width,location approaching scri",
+      "measured_quantities": "clock,pole compatibility,bulk/endpoint error",
+      "expected_result": "derive quantitative criteria before acceptance",
+      "duration": null,
+      "status": "unrun",
+      "relationship": "Mandatory extension beyond published experiments",
+      "additional_physics": false,
+      "missing_information": [
+        "equations: not yet extracted or not specified; consult source figures/supporting files",
+        "gauge_reference: not yet extracted or not specified; consult source figures/supporting files",
+        "damping: not yet extracted or not specified; consult source figures/supporting files",
+        "grid: not yet extracted or not specified; consult source figures/supporting files",
+        "dissipation: not yet extracted or not specified; consult source figures/supporting files",
+        "resolution: not yet extracted or not specified; consult source figures/supporting files",
+        "CFL: not yet extracted or not specified; consult source figures/supporting files",
+        "dt: not yet extracted or not specified; consult source figures/supporting files",
+        "duration: not yet extracted or not specified; consult source figures/supporting files"
+      ]
+    }
+  ],
+  "followups": [
+    {
+      "arxiv": "2409.02994",
+      "url": "https://arxiv.org/abs/2409.02994",
+      "relevance": "Generalized harmonic dual-foliation spherical scalar, pure gauge, constraint violating/satisfying evolutions. Physical controls relevant; equations differ. Detailed test inventory still open."
+    },
+    {
+      "arxiv": "2505.17176",
+      "url": "https://arxiv.org/abs/2505.17176",
+      "relevance": "Einstein-Maxwell-charged-scalar regular pulses,BH perturbation,collapse. Neutral vacuum/massless limits relevant; charged cases require Maxwell and complex scalar physics."
+    },
+    {
+      "arxiv": "2506.15311",
+      "url": "https://arxiv.org/abs/2506.15311",
+      "relevance": "Nonlinear BH scalar QNM/tails. Explicit uncharged fundamental-mode control applicable; charged cases require additional physics. Detailed parameter extraction open."
+    },
+    {
+      "arxiv": "2506.05467",
+      "url": "https://arxiv.org/abs/2506.05467",
+      "relevance": "Neutron-star/BH constraint-solved initial data construction, not an evolution reproduction; hydrodynamic matter requires additional physics."
+    },
+    {
+      "arxiv": "2511.21406",
+      "url": "https://arxiv.org/abs/2511.21406",
+      "relevance": "Comment disputing charged-tail claims. Must inspect before interpreting charged extensions; not itself an evolution target."
+    }
+  ],
+  "accounting": "All rows unrun unless explicitly non-evolution; physical experiments shared between papers can share compatible trajectories, but different gauges/equations must remain labeled controls. Missing values are not invented."
+}

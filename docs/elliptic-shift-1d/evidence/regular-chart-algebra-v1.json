@@ -1,0 +1,18 @@
+{
+  "status": "spatial nonlinear compatibility chart derived and verified; time evolution and leading subsidiary corner relations not yet derived",
+  "assumptions": "g=1, S=a=1; x=Omega; K=p+2Theta; B=A_rr/r^2; chi=1+x C",
+  "P0": "C_x/2-C/2-C^2/8",
+  "E0": "4 C_x/3-5 C^2/6",
+  "P1": "(9*C(x)**3 + 18*C(x)**2 - 18*C(x)*Derivative(C(x), x) - 20*Derivative(C(x), x) + 4*Derivative(C(x), (x, 2)))/8",
+  "E1": "E1",
+  "chart_K": "-3-2x C+x^2 P0+x^3 P1+x^4 pfree",
+  "chart_Arr": "(1-2x)[2C/3+x E0+x^2 E1+x^3 afree]",
+  "factorization": "H=x^4 H_regular; M_r/r=x^3 M_regular; exact rational divisibility",
+  "H4": "-(192*E1*c0 + 627*c0**4 + 1688*c0**3 - 1368*c0**2*c1 + 240*c0**2 - 2592*c0*c1 + 256*c0*c2 + 480*c1**2 + 768*c2 + 384*pfree)/96",
+  "M3": "(18*E1*c0 + 60*E1 - 12*afree + 27*c0**4 + 54*c0**3 - 51*c0**2*c1 - 112*c0*c1 + 24*c1**2 + 64*c2 + 32*pfree)/12",
+  "constraint_amplitude_jacobian": "Matrix([[-4, 0], [8/3, -1]])",
+  "constraint_amplitude_jacobian_determinant": "4",
+  "free_constraints": "Nonzero pfree,afree give independent H4,M3. Theta=x^4 tau and Lambda=x^3 ell retain scalar and connection errors. No H/M/Theta/Z projection.",
+  "remaining": "Leading outgoing subsidiary corner amplitudes may be correlated; spatial weights alone are not a closed temporal phase. Derive full transformed RHS and endpoint equations before evolution.",
+  "sympy_version": "1.14.0"
+}
