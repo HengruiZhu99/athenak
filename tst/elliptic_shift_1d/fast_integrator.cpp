@@ -18,8 +18,13 @@ struct Engine {
   bool puncture=false,af=false,af_endpoint=false;
   Vec grid_jacobian;
   bool mapped_ko_local=false;
+  int ko_difference_order=3;
   double jac(int i)const{return grid_jacobian.empty()?1.:grid_jacobian[i];}
-  double ko_measure(int i)const{return mapped_ko_local?4/(1/jac(i)+1/jac(i+1)+1/jac(i+2)+1/jac(i+3)):1.;}
+  double ko_measure(int i)const{
+    if(!mapped_ko_local)return 1.;
+    if(ko_difference_order==4)return 5/(1/jac(i)+1/jac(i+1)+1/jac(i+2)+1/jac(i+3)+1/jac(i+4));
+    return 4/(1/jac(i)+1/jac(i+1)+1/jac(i+2)+1/jac(i+3));
+  }
   std::string error;
   std::array<double,22> diagnostics{};
   Vec ode_lu,ode_matrix;int ode_band=0,ode_skip=0,ode_refinements=0;double ode_scale=1;
@@ -392,7 +397,7 @@ struct Engine {
       }
       for(int i=0;i<n;i++)out[i*nf+1]=0;
     }
-    if(params[25]!=0) {
+    if(params[25]!=0 && ko_difference_order==3) {
       std::fill(z.begin(),z.end(),0);
       for(int i=af?1:0;i<n-3;i++) {
         double midpoint=(r[i]+r[i+3])/2,taper=std::pow(std::max(1-midpoint*midpoint/(params[26]*params[26]),0.),6);
@@ -408,6 +413,22 @@ struct Engine {
         }
       }
       for(int k=0;k<n*nf;k++)out[k]+=params[25]*z[k]/(64*h*jac(k/nf));
+    }
+    if(params[25]!=0 && ko_difference_order==4) {
+      std::fill(z.begin(),z.end(),0);
+      for(int i=af?1:0;i<n-4;i++) {
+        double midpoint=(r[i]+r[i+4])/2,taper=std::pow(std::max(1-midpoint*midpoint/(params[26]*params[26]),0.),6)*ko_measure(i);
+        if(params[28]!=0) {
+          double distance=midpoint-r[0],fraction=distance/(params[28]+distance);
+          double a=std::pow(fraction,6),b=std::pow(1-fraction,6);taper*=a/(a+b);
+        }
+        for(int f=0;f<nf;f++) {
+          double anchor=state[i*nf+f];
+          double fourth=-4*(state[(i+1)*nf+f]-anchor)+6*(state[(i+2)*nf+f]-anchor)-4*(state[(i+3)*nf+f]-anchor)+(state[(i+4)*nf+f]-anchor);
+          double value=taper*fourth;z[i*nf+f]-=value;z[(i+1)*nf+f]+=4*value;z[(i+2)*nf+f]-=6*value;z[(i+3)*nf+f]+=4*value;z[(i+4)*nf+f]-=value;
+        }
+      }
+      for(int k=0;k<n*nf;k++)out[k]+=params[25]*z[k]/(256*h*jac(k/nf));
     }
     if(ko!=0) {
       std::copy(state,state+n*nf,z.begin());
@@ -466,6 +487,10 @@ void spherical_fast_set_update_compensation(void* handle,const double* source){
 }
 void spherical_fast_get_update_compensation(void* handle,double* destination){
   auto& e=*static_cast<Engine*>(handle);std::copy(e.update_compensation.begin(),e.update_compensation.end(),destination);
+}
+int spherical_fast_set_ko_order(void* handle,int order){
+  auto& e=*static_cast<Engine*>(handle);if(!e.af_endpoint||(order!=6&&order!=8))return -1;
+  e.ko_difference_order=order/2;return 0;
 }
 void spherical_fast_set_lapse_source(void* handle,const double* source){
   auto& e=*static_cast<Engine*>(handle);std::copy(source,source+e.n,e.lapse_source.begin());

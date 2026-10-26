@@ -57,6 +57,9 @@ class FastEngine:
         if getattr(a,'mapped_ko','physical')=='local':
             self.lib.spherical_fast_set_mapped_ko.argtypes=[C.c_void_p,C.c_int]
             if self.lib.spherical_fast_set_mapped_ko(self.handle,1):raise ValueError('Local mapped KO requires the full AF chart')
+        if getattr(a,'ko_order',6)!=6:
+            self.lib.spherical_fast_set_ko_order.argtypes=[C.c_void_p,C.c_int]
+            if self.lib.spherical_fast_set_ko_order(self.handle,a.ko_order):raise ValueError('Higher-order KO requires the full AF chart')
         self.lib.spherical_fast_set_lapse_source(self.handle,np.ascontiguousarray(evolution.lapse_source,dtype=float))
         if self.trumpet_metric:self.lib.spherical_fast_set_metric_reference(self.handle,np.ascontiguousarray(evolution.metric_profile))
         if self.af:

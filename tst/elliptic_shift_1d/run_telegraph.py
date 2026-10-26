@@ -11,6 +11,8 @@ from time_lattice import FixedStepClock
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def main():
  p=argparse.ArgumentParser()
+ p.add_argument('--width',type=int,choices=[7,9],default=7)
+ p.add_argument('--ko-order',type=int,choices=[6,8],default=6)
  p.add_argument('--n',type=int,default=257);p.add_argument('--t',type=float,default=3.)
  p.add_argument('--kappa',type=float,default=.02);p.add_argument('--tau',type=float,default=.02)
  p.add_argument('--inner-profile',choices=['collar','af-regular'],default='collar')
@@ -43,7 +45,7 @@ def main():
   ray_scope='Alternating minus/plus seeds in .12:.4, held until ray_start. Each RK stage uses that stage geometry, linear radial speed interpolation and its derivative. Exits terminate the ray; no reinjection.',resource_authorization='User explicitly requested controlled local telegrapher evolutions.')
  mp=args.output/'manifest.json';mp.write_text(json.dumps(manifest,indent=2)+'\n')
  opts=options(args.n,args.library,args.nu,args.cfl)
- for key in ['quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map','mapped_ko']:setattr(opts,key,getattr(args,key))
+ for key in ['width','ko_order','quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map','mapped_ko']:setattr(opts,key,getattr(args,key))
  ev=PunctureChart(opts);support=window(ev.r,args.inner,args.outer,args.transition,args.inner_profile)
  ev.args.mass=args.mass
  initial=IsotropicWormhole(args.mass,ev.args.initial_quadrature_order)

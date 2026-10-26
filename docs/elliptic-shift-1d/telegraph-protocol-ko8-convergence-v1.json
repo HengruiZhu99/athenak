@@ -1,0 +1,18 @@
+{
+  "declared_before_launch": true,
+  "purpose": "Three-grid t=10 KO8 convergence after the single-grid factorial pilot; all continuum parameters fixed.",
+  "input": "inputs/elliptic_shift_1d/telegraph-ko8-convergence-v1.json",
+  "input_sha256": "fedc7725708b8f9cd242d5fe9e620f2740c9916d4dbd450094b5afbcc54dd53d",
+  "grids": [
+    513,
+    1025,
+    2049
+  ],
+  "duration": 10,
+  "coarse_parent": "output/elliptic-shift-1d/telegraph-high-order-pilot-v1/w7-ko8",
+  "coarse_continuation": "output/elliptic-shift-1d/telegraph-ko8-extension-v1/w7-ko8",
+  "fixed": "width7,KO8 amplitude .5,local mapped form,inner-exp b16,quadrature7,CFL .05,kappa .005,tau .02,nu1,M=1/3,AF-regular coupling,transition .24.",
+  "rejected_alternative": "width9 with either KO order develops scri pole residual around5590 on N513; not selected.",
+  "acceptance": "Original telegraph-protocol-v1.json unchanged. Require complete-time three-grid convergence; magnitude improvement on the coarse pilot cannot admit this variant.",
+  "execution": "Continue the completed coarse trajectory with exact frozen source first; then one worker runs the two finer grids from initial data. Existing fine KO6 and independent timestep experiments remain active."
+}

@@ -17,14 +17,21 @@ with tempfile.TemporaryDirectory() as tmp:
    normal=R*(K/3-O*q[:,2]/2);spatial=(1+r*r)/(2*O)-r*d[:,0]/(2*chi)
    m=R/2*(1+normal*normal-spatial*spatial)
    np.testing.assert_allclose(m,mass,atol=2e-12,rtol=2e-12)
- for case,profile in [('collar','collar'),('sinh','af-regular'),('local','af-regular')]:
+ for case,profile in [('collar','collar'),('sinh','af-regular'),('local','af-regular'),('high-order','af-regular')]:
   controls=['--inner-profile',profile]
   if case=='sinh':controls+=['--quadrature-width','9','--puncture-ko','.25','--grid-stretch','4']
   if case=='local':controls+=['--grid-stretch','14','--grid-map','inner-c7','--mapped-ko','local']
+  if case=='high-order':controls+=['--n','129','--width','9','--ko-order','8','--grid-stretch','16','--grid-map','inner-exp','--mapped-ko','local']
   whole=run(case+'-whole',*controls,'--t','.03125');first=run(case+'-first',*controls,'--t','.015625')
   split=run(case+'-split',*controls,'--t','.03125','--resume',str(first/'checkpoint.npz'))
   with np.load(whole/'checkpoint.npz') as x,np.load(split/'checkpoint.npz') as y:
    for key in ['q','B','rays','compensation','t','step']:assert np.array_equal(x[key],y[key]),key
+ # An unresolved N33 strong-map, wide-stencil evolution must stop on the
+ # coupled-speed guard, rather than silently taking unsafe stages.
+ unsafe=subprocess.run([*base,'--output',str(root/'underresolved'),'--inner-profile','af-regular','--width','9','--ko-order','8','--grid-stretch','16','--grid-map','inner-exp','--mapped-ko','local','--t','.03125'],capture_output=True,text=True)
+ assert unsafe.returncode!=0
+ failure=json.loads((root/'underresolved'/'manifest.json').read_text())['failure']
+ assert 'timestep guard' in failure['message']
  # A bad later parent must be rejected before dispatching the valid first one.
  rejected=root/'bad-batch'
  result=subprocess.run([sys.executable,str(Path(__file__).with_name('continue_telegraph_matrix.py')),'--parents',str(first),str(root/'missing-parent'),'--t','.03125','--output',str(rejected)],capture_output=True,text=True)

@@ -1,0 +1,31 @@
+{
+  "old_library": "output/elliptic-shift-1d/telegraph-exp-fine-v1/matrix-source/libspherical_telegraph.dylib",
+  "old_sha256": "6384429ae4d75998be6f0b06a877a8a6c0f42e13f047aa6f01f280b0902e6931",
+  "new_sha256": "60bd09904202fd8b59b594679c54a0d740b378f18f02deacacdb4e205a537ad8",
+  "n": 129,
+  "steps": 20,
+  "step_size": "0.002/128",
+  "kappa": 0.005,
+  "tau": 0.02,
+  "nonzero_B": ".001*r*(1-r)^8",
+  "maps": [
+    {
+      "kind": "inner-c7",
+      "strength": 6,
+      "ko": "physical"
+    },
+    {
+      "kind": "inner-exp",
+      "strength": 16,
+      "ko": "local"
+    }
+  ],
+  "bitwise": [
+    "geometry",
+    "B",
+    "rays",
+    "compensation",
+    "diagnostics"
+  ],
+  "scope": "Default width7/KO6 path only, nonzero auxiliary flux; not nonlinear convergence evidence."
+}

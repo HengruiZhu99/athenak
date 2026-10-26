@@ -77,3 +77,22 @@ The independent tests verify the full similarity-transformed dissipation matrix,
 The `inner-exp` map uses E(x)=.5 expm1(2 b x)/expm1(b), with fixed b=16 in the declared three-grid experiment. It equals E for x<=.3, blends as r=(1-S)E+S x through .3<x<.5 with the same C7 smoothstep, and equals x beyond .5. On the blending interval E<=x and S'>=0, so J=(1-S)E'+S+S'(x-E)>0. In the exponential region away from the first cell, dr/r is approximately 2 b dx. Both the map and its derivative are computed directly at each x, so nested grids share identical physical nodes. The map remains a discretization choice; all physical-r tensor equations and auxiliary coupling are unchanged.
 
 This control addresses an observed weakness of the stronger `inner-c7` maps: reducing their first cell can move the front into a poorly resolved transition at larger r. The exponential map is not accepted from its construction; its own transition and all boundary/constraint errors are included in the tests.
+
+## Higher-order numerical controls
+
+The optional `--width 9` changes the centered/one-sided physical-r first and second derivatives and the biased advection stencil from seven to nine nodes. Elliptic quadrature remains independently fixed by `--quadrature-width`; choosing a wider derivative stencil does not silently change it. The continuum equations, AF coefficient evolution, and scri limit equations are unchanged. Wider stencils can be poorly conditioned on a very coarse strongly mapped grid; the observed N33/b16 failure and its CFL rejection are preserved.
+
+`--ko-order 8` uses a fourth forward difference with coefficients (1,-4,6,-4,1), in place of the original third forward difference. For p=3 or 4, write
+
+  Q_(2p) = -epsilon/(2^(2p) dx) J^-1 Dp^T diag(W Jbar) Dp,
+  Jbar_i = (p+1) / sum_(j=0)^p (1/J_(i+j)).
+
+The physical-KO option retains Jbar=1. The local-KO option satisfies the exact dr-energy identity
+
+  u^T J Q_(2p) u = -epsilon/(2^(2p) dx) sum_i W_i Jbar_i (Dp u)_i^2 <= 0.
+
+Because Jbar_i<=(p+1)J_j for every stencil node and the absolute difference coefficients sum to 2^p, the magnitude of the dissipative spectrum is at most (p+1)epsilon/dx. The local-KO timestep guard is dt*epsilon/dx<=2/(p+1); the characteristic and relaxation guards also remain in force. This controls the isolated dissipative operator, not the full nonlinear coupled system.
+
+On a fixed smooth map, Q_(2p) has an interior truncation term of order dx^(2p-1). Thus KO6 and KO8 denote sixth/eighth derivative dissipation with fifth/seventh-order interior truncation respectively. Both exclude the AF coefficient column and taper to zero before scri. Geometry and auxiliary flux use the same order. Neither changes the Einstein constraints or projects their errors. The default width7/KO6 path retains the checked bitwise baseline behavior.
+
+The independent implementation checks cover the weighted energy identity and complete dissipative spectrum for both orders, nonzero-flux Python/compiled rates, free-constraint RK stages and rays, and exact restart. High-width b16 rate agreement is tested at N129; N33/65 transition stencils are too ill-conditioned for the original absolute rate tolerance. The underresolved N33 evolution is a negative CFL-guard test, not a claimed solution. The four-case pilot varies differentiation width and KO order separately before any combined candidate is selected.

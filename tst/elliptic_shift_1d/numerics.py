@@ -3,12 +3,30 @@ import math
 import numpy as np
 
 
-def puncture_dissipation(values,r,h,coefficient,radius=.8,include_first=False,inner_width=0.,measure=None):
+def puncture_dissipation(values,r,h,coefficient,radius=.8,include_first=False,inner_width=0.,measure=None,order=6):
     """-epsilon B^T W B/(64h), B the forward third difference.
 
     Column zero is excluded, retaining the exact asymptotic endpoint ODE.
     No ghost/parity values enter; W vanishes in the scri collar.
+    order=8 uses the fourth difference and normalization 256h instead.
     """
+    if order not in (6,8):raise ValueError('KO order must be 6 or 8')
+    if order==8:
+        k=0 if include_first else 1;anchor=values[k:-4]
+        fourth=-4*(values[k+1:-3]-anchor)+6*(values[k+2:-2]-anchor)-4*(values[k+3:-1]-anchor)+(values[k+4:]-anchor)
+        midpoint=(r[k:-4]+r[k+4:])/2
+        taper=np.maximum(1-(midpoint/radius)**2,0.)**6
+        if inner_width:
+            fraction=(midpoint-r[0])/(inner_width+midpoint-r[0])
+            a=fraction**6;b=(1-fraction)**6;taper*=a/(a+b)
+        if measure is not None:
+            measure=np.asarray(measure)
+            if measure.shape!=r.shape or np.any(~np.isfinite(measure)) or np.any(measure<=0):raise ValueError('Need positive finite nodal measure')
+            taper*=5/(1/measure[k:-4]+1/measure[k+1:-3]+1/measure[k+2:-2]+1/measure[k+3:-1]+1/measure[k+4:])
+        weighted=taper[:,None]*fourth;result=np.zeros_like(values)
+        result[k:-4]-=weighted;result[k+1:-3]+=4*weighted
+        result[k+2:-2]-=6*weighted;result[k+3:-1]+=4*weighted;result[k+4:]-=weighted
+        return coefficient*result/(256*h)
     k=0 if include_first else 1;anchor=values[k:-3]
     third=3*(values[k+1:-2]-anchor)-3*(values[k+2:-1]-anchor)+(values[k+3:]-anchor)
     midpoint=(r[k:-3]+r[k+3:])/2

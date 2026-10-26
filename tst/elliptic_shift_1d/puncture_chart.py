@@ -154,7 +154,7 @@ class PunctureChart(Evolution):
         if self.args.advection=='upwind':result+=beta[:,None]*(self.op.advection_derivative(state,np.ones(8),beta)-self.chart_first)
         if getattr(self.args,'puncture_ko',0.):
             measure=self.grid_jacobian if getattr(self.args,'mapped_ko','physical')=='local' else None
-            diss=puncture_dissipation(state,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius,inner_width=getattr(self.args,'puncture_ko_inner_width',0.),measure=measure)
+            diss=puncture_dissipation(state,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius,inner_width=getattr(self.args,'puncture_ko_inner_width',0.),measure=measure,order=getattr(self.args,'ko_order',6))
             diss/=self.grid_jacobian[:,None]
             if getattr(self.args,'radial_operator','fd')=='sbp63':diss/=self.op.norm[:,None]
             result+=diss

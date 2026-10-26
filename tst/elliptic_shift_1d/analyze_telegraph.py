@@ -8,13 +8,13 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 p=argparse.ArgumentParser();p.add_argument('--cases',type=Path,nargs='+',required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 records=[];groups={};profiles={}
-configuration_keys=['inner','outer','transition','cfl','inner_profile','quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map','mapped_ko']
+configuration_keys=['inner','outer','transition','cfl','inner_profile','quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map','mapped_ko','width','ko_order']
 from telegraph_analysis_io import trajectory,physical_lapse_gradient
 for folder in a.cases:
  m=json.loads((folder/'manifest.json').read_text());assert m['status']=='finished',str(folder)
  assert m.get('initial_data',{}).get('mass')==1/3,'Reject the misconfigured M=.1 pilots'
  args=m['arguments']
- for k,v in dict(inner_profile='collar',quadrature_width=7,puncture_ko=.5,puncture_ko_radius=.8,grid_stretch=0.,grid_map='sinh',mapped_ko='physical').items():args.setdefault(k,v)
+ for k,v in dict(inner_profile='collar',quadrature_width=7,puncture_ko=.5,puncture_ko_radius=.8,grid_stretch=0.,grid_map='sinh',mapped_ko='physical',width=7,ko_order=6).items():args.setdefault(k,v)
  for existing in records:
   if (existing['kappa'],existing['tau'],existing['nu'])==(args['kappa'],args['tau'],args['nu']):
    assert existing['configuration']==[args[x] for x in configuration_keys],'Analyze separate support/CFL/solver controls in separate invocations'

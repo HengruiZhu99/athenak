@@ -1,0 +1,32 @@
+{
+  "common": {
+    "mass": 0.3333333333333333,
+    "t": 10,
+    "tau": 0.02,
+    "kappa": 0.005,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "inner_profile": "af-regular",
+    "transition": 0.24,
+    "grid_map": "inner-exp",
+    "grid_stretch": 16,
+    "mapped_ko": "local",
+    "width": 7,
+    "ko_order": 8
+  },
+  "cases": [
+    {
+      "name": "n1025",
+      "arguments": {
+        "n": 1025
+      }
+    },
+    {
+      "name": "n2049",
+      "arguments": {
+        "n": 2049
+      }
+    }
+  ]
+}

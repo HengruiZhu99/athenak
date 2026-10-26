@@ -15,15 +15,21 @@ from radial_grid import mapped_grid
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args()
 errors=[]
 grid_cases=[(s,k,'physical') for s,k in product([0.,4.,6.],['sinh','inner-c7'])]+[(s,k,'local') for s,k in product([0.,6.,10.,14.,16.,20.],['inner-c7','inner-exp'])]
+grid_cases=[(*grid,7,6) for grid in grid_cases]+[(stretch,kind,'local',width,ko_order) for stretch,kind in [(0.,'inner-exp'),(6.,'inner-c7'),(16.,'inner-exp')] for width,ko_order in [(7,8),(9,6),(9,8)]]
 for n,inner_profile,grid in product([33,65,129],['collar','af-regular'],grid_cases):
- stretch,kind,ko_frame=grid
- opts=options(n,a.library);opts.grid_stretch=stretch;opts.grid_map=kind;opts.mapped_ko=ko_frame
+ stretch,kind,ko_frame,width,ko_order=grid
+ # Nine-node physical-r stencils on the b=16 transition need a resolved
+ # map: N33/65 have huge interpolation weights and are negative controls,
+ # not reliable floating-point rate-oracle grids. The N33 CFL rejection is
+ # covered by the driver test; all other maps still exercise N33/65.
+ if width==9 and stretch==16 and n<129:continue
+ opts=options(n,a.library);opts.grid_stretch=stretch;opts.grid_map=kind;opts.mapped_ko=ko_frame;opts.width=width;opts.ko_order=ko_order
  ev=PunctureChart(opts);q,*_=ev.initial_wormhole(IsotropicWormhole());r=ev.r
  support=window(r,inner_profile=inner_profile);w,wp=support;B=.001*r*(1-r)**8
  for j,amp in [(0,.001),(2,.001),(3,.002),(4,.003),(5,.004),(6,.0015)]:q[:,j]+=amp*(1-r)**6
  engine=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.,inner_profile=inner_profile)
  expected,eb,es=python_rhs(ev,q,B,.02,.03,support,True);got,gb,gs=engine.rhs(q,B)
- np.testing.assert_allclose(got,expected,rtol=2e-11,atol=2e-10)
+ np.testing.assert_allclose(got,expected,rtol=2e-11,atol=2e-10,err_msg=str((n,inner_profile,grid)))
  np.testing.assert_allclose(gb,eb,rtol=2e-11,atol=2e-11);np.testing.assert_allclose(gs,es,rtol=2e-13,atol=2e-13)
  errors.append(float(np.max(abs(got-expected))))
  for name in ['max_accepted_H_rms','max_accepted_M_rms','max_accepted_Theta_rms','max_accepted_Z_rms']:
@@ -128,14 +134,15 @@ for kind in ['sinh','inner-c7','inner-exp']:
  if kind=='inner-exp':assert np.array_equal(r[x>=.5],x[x>=.5]) and np.array_equal(J[x>=.5],np.ones(sum(x>=.5)))
 # Harmonic-mean Jacobian weights preserve the dr energy inequality without
 # a time-step bound proportional to the smallest J. Check the complete matrix.
-x=np.linspace(0,1,129);r,J=mapped_grid(x,14,'inner-c7');dx=x[1];epsilon=.5
-Q=puncture_dissipation(np.eye(len(x)),r,dx,epsilon,.8,measure=J)/J[:,None]
-weighted=np.sqrt(J)[:,None]*Q/np.sqrt(J)[None,:]
-np.testing.assert_allclose(weighted,weighted.T,rtol=3e-15,atol=1e-13)
-eigs=np.linalg.eigvalsh(weighted)
-assert eigs[-1]<1e-12 and -eigs[0]<=4*epsilon/dx*(1+1e-13)
-v=np.random.default_rng(271828).normal(size=len(x));third=np.diff(v[1:],n=3)
-Jbar=4/(1/J[1:-3]+1/J[2:-2]+1/J[3:-1]+1/J[4:]);mid=(r[1:-3]+r[4:])/2
-W=np.maximum(1-(mid/.8)**2,0)**6
-np.testing.assert_allclose(np.dot(J*v,Q@v),-epsilon*np.sum(W*Jbar*third**2)/(64*dx),rtol=3e-15)
+for order in [6,8]:
+ x=np.linspace(0,1,129);r,J=mapped_grid(x,14,'inner-c7');dx=x[1];epsilon=.5;p=order//2
+ Q=puncture_dissipation(np.eye(len(x)),r,dx,epsilon,.8,measure=J,order=order)/J[:,None]
+ weighted=np.sqrt(J)[:,None]*Q/np.sqrt(J)[None,:]
+ np.testing.assert_allclose(weighted,weighted.T,rtol=3e-15,atol=1e-13)
+ eigs=np.linalg.eigvalsh(weighted)
+ assert eigs[-1]<1e-12 and -eigs[0]<=(p+1)*epsilon/dx*(1+1e-13)
+ v=np.random.default_rng(271828).normal(size=len(x));difference=np.diff(v[1:],n=p)
+ Jbar=(p+1)/sum(1/J[1+j:len(x)-p+j] for j in range(p+1));mid=(r[1:-p]+r[1+p:])/2
+ W=np.maximum(1-(mid/.8)**2,0)**6
+ np.testing.assert_allclose(np.dot(J*v,Q@v),-epsilon*np.sum(W*Jbar*difference**2)/(2**(2*p)*dx),rtol=3e-15)
 print(json.dumps(dict(max_python_compiled_rate_difference=max(errors),resolutions=[33,65,129],nonzero_flux_RK=True,free_constraints=True,disabled_bitwise_equivalence=True,restart_bitwise=True,stage_characteristic_oracle=True,ray_activation=True,scope='Implementation validation only; nonlinear convergence remains unproven.')))
