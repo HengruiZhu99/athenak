@@ -126,3 +126,10 @@ add_test(NAME compiled_trumpet_metric_profiles_native_scalar_and_stage_audits
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_fast_trumpet_metric.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast>)
 add_test(NAME physical_trumpet_domain_transfer_native_and_strict_restart
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_domain_transfer.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_fast> --target-chart log-inner-trumpet)
+
+add_library(spherical_telegraph SHARED telegraph_integrator.cpp)
+target_compile_options(spherical_telegraph PRIVATE -Wall -Wextra -ffp-contract=off)
+add_test(NAME spherical_conformal_telegraph_rates_RK_and_restart
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)
+add_test(NAME telegraph_initial_invariant_mass_and_cli_restart
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_driver.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)

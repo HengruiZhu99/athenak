@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+"""Nonzero-flux cross-implementation, radial tensor, baseline and restart checks."""
+import argparse,json
+import numpy as np
+from puncture_chart import PunctureChart
+from wormhole_isotropic import IsotropicWormhole
+from fast import FastEngine
+from telegraph import TelegraphEngine,options,window,python_rhs
+from compensated_update import accumulate
+p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args()
+errors=[]
+for n in [33,65,129]:
+ ev=PunctureChart(options(n,a.library));q,*_=ev.initial_wormhole(IsotropicWormhole());r=ev.r
+ support=window(r);w,wp=support;B=.001*r*(1-r)**8
+ for j,amp in [(0,.001),(2,.001),(3,.002),(4,.003),(5,.004),(6,.0015)]:q[:,j]+=amp*(1-r)**6
+ engine=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.)
+ expected,eb,es=python_rhs(ev,q,B,.02,.03,support,True);got,gb,gs=engine.rhs(q,B)
+ np.testing.assert_allclose(got,expected,rtol=2e-11,atol=2e-10)
+ np.testing.assert_allclose(gb,eb,rtol=2e-11,atol=2e-11);np.testing.assert_allclose(gs,es,rtol=2e-13,atol=2e-13)
+ errors.append(float(np.max(abs(got-expected))))
+ # Independent Cartesian tensor derivative for B_i=x_i*r^2:
+ # delta^ij partial_i B_j=5*r^2, including two angular directions.
+ xx=np.array([.13,.21,.34]);radius=np.linalg.norm(xx);tensor=2*np.outer(xx,xx)+radius**2*np.eye(3)
+ assert abs(np.trace(tensor)-(3*radius**2+2*radius**2))<1e-15
+ # Actual implementation versus Cartesian radial tensor identity, B_i=x_i*r^2.
+ zero=np.zeros_like(B);base,_,_=engine.rhs(q,zero);withB,_,_=engine.rhs(q,r**3)
+ alpha=ev.total_alpha;chi=ev.total_chi;expected_delta=np.zeros(n)
+ expected_delta[1:]=chi[1:]*(5*w[1:]*r[1:]**2+wp[1:]*r[1:]**3)/alpha[1:]
+ np.testing.assert_allclose(withB[:,6]-base[:,6],expected_delta,rtol=3e-11,atol=3e-11)
+ # Nonzero flux, free-constraint RK stages against Python without any projection.
+ state=q.copy();flux=B.copy();qc=np.zeros_like(q);bc=np.zeros_like(B);dt=.002*ev.h
+ expected_rays=np.array([[.25,0.],[.25,0.]]);rc=np.zeros_like(expected_rays)
+ def ray_rate(y,speeds):
+  out=np.zeros_like(y)
+  for j in range(len(y)):
+   i=np.clip(np.searchsorted(r,y[j,0],side='right')-1,0,len(r)-2)
+   slope=(speeds[i+1,j]-speeds[i,j])/ev.h
+   out[j]=[speeds[i,j]+slope*(y[j,0]-r[i]),slope]
+  return out
+ for _ in range(4):
+  k1,b1,s1=python_rhs(ev,state,flux,.02,.03,support);j1=ray_rate(expected_rays,s1)
+  k2,b2,s2=python_rhs(ev,state+dt*k1/2,flux+dt*b1/2,.02,.03,support);j2=ray_rate(expected_rays+dt*j1/2,s2)
+  k3,b3,s3=python_rhs(ev,state+dt*k2/2,flux+dt*b2/2,.02,.03,support);j3=ray_rate(expected_rays+dt*j2/2,s3)
+  k4,b4,s4=python_rhs(ev,state+dt*k3,flux+dt*b3,.02,.03,support);j4=ray_rate(expected_rays+dt*j3,s4)
+  expected_rays,rc=accumulate(expected_rays,rc,dt*(j1+2*j2+2*j3+j4)/6)
+  state,qc=accumulate(state,qc,dt*(k1+2*k2+2*k3+k4)/6)
+  flux,bc=accumulate(flux,bc,dt*(b1+2*b2+2*b3+b4)/6)
+ cq=q.copy();cb=B.copy();rays=np.array([[.25,0.],[.25,0.]])
+ done,failure=engine.advance(cq,cb,rays,4,dt,0.);assert done==4 and failure is None,failure
+ np.testing.assert_allclose(cq,state,rtol=3e-12,atol=3e-12);np.testing.assert_allclose(cb,flux,rtol=3e-12,atol=3e-12)
+ np.testing.assert_allclose(rays,expected_rays,rtol=2e-12,atol=2e-12)
+ # Save/reconstruct all geometry, auxiliary and ray compensated state.
+ correction=engine.compensation();q2=cq.copy();B2=cb.copy();ray2=rays.copy()
+ restarted=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.);restarted.compensation(correction)
+ assert engine.advance(cq,cb,rays,5,dt,4*dt)[1] is None
+ assert restarted.advance(q2,B2,ray2,5,dt,4*dt)[1] is None
+ assert np.array_equal(cq,q2) and np.array_equal(cb,B2) and np.array_equal(rays,ray2)
+ assert np.array_equal(engine.compensation(),restarted.compensation())
+ restarted.close();engine.close()
+ # kappa=0, B=0 must reproduce the actual existing solver bitwise.
+ ref=FastEngine(ev,8,a.fast_library);new=TelegraphEngine(ev,a.fast_library,0.,.03)
+ cq=q.copy();rq=q.copy();cb=np.zeros(n);rays=np.zeros((0,2))
+ done,_,failed=ref.advance(rq,8,dt);assert not failed
+ done,failure=new.advance(cq,cb,rays,8,dt,0.);assert failure is None
+ assert np.array_equal(cq,rq) and np.array_equal(cb,np.zeros(n))
+ ref.close();new.close()
+ event=TelegraphEngine(ev,a.fast_library,0.,.03,nray=2,start=2*dt)
+ cq=q.copy();cb=np.zeros(n);ray=np.array([[.25,0.],[.25,0.]]);seed=ray.copy()
+ assert event.advance(cq,cb,ray,2,dt,0.)[1] is None
+ assert np.array_equal(ray,seed),'Last RK stage before injection must not advance rays early'
+ assert event.advance(cq,cb,ray,1,dt,2*dt)[1] is None
+ assert not np.array_equal(ray,seed)
+ event.close()
+# Differentiation of the support function uses an independent numerical oracle.
+r=np.linspace(.015,.79,1000);w,wp=window(r);eps=1e-6
+np.testing.assert_allclose(wp,(window(r+eps)[0]-window(r-eps)[0])/(2*eps),atol=2e-6,rtol=2e-6)
+# The new forcing vanishes on exact Minkowski u=0,B=0. Both endpoint
+# collars have identically zero coupling, including all support derivatives.
+w,wp=window(np.array([0.,.005,.9,1.]));assert np.array_equal(w,np.zeros(4)) and np.array_equal(wp,np.zeros(4))
+# Frozen coupled dispersion: independently computed roots must be damped.
+for k in [.01,1,100]:
+ cg2=.2;ct2=.3;tau=.03
+ roots=np.roots([1,1/tau,(cg2+ct2)*k*k,cg2*k*k/tau]);assert np.max(roots.real)<0
+print(json.dumps(dict(max_python_compiled_rate_difference=max(errors),resolutions=[33,65,129],nonzero_flux_RK=True,free_constraints=True,disabled_bitwise_equivalence=True,restart_bitwise=True,stage_characteristic_oracle=True,ray_activation=True,scope='Implementation validation only; nonlinear convergence remains unproven.')))

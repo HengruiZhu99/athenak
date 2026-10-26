@@ -1,0 +1,87 @@
+"""Spherical conformal relaxation flux and independent Python rate oracle.
+
+u=alpha-A; delta D_t alpha=chi*[w B'+(w'+2w/r)B],
+tau D_t B=kappa*w*u'-B. This is a disclosed coordinate gauge:
+flat-reference radial divergence, componentwise shift advection, no projection.
+"""
+import ctypes as C
+from types import SimpleNamespace
+import numpy as np
+from fast import FastEngine
+from gauge import lapse_coefficient
+from numerics import puncture_dissipation
+
+
+def window(r,inner=.01,outer=.8,width=.08):
+    if not 0<=inner<inner+width<outer-width<outer<1:raise ValueError('Invalid telegraph support')
+    def ramp(x):
+        y=np.clip(x,0,1);a=y**8;b=(1-y)**8
+        return a/(a+b),8*y**7*(1-y)**7/(a+b)**2
+    left,dl=ramp((r-inner)/width);right,dr=ramp((outer-r)/width)
+    return left*right,(dl*right-left*dr)/width
+
+
+def options(n,library,nu=1.,cfl=.05):
+    return SimpleNamespace(n=n,library=str(library),origin_grid=False,puncture=True,
+        puncture_chart=True,origin_variables=False,backend='spherical-g1',width=7,
+        quadrature_width=7,kappa1=4.,kappa2=-.99,theta='appendix-c',slicing=nu,
+        lapse_restoring=1.,lapse_restoring_form='multiplicative',endpoint='raw-lhopital',
+        scri_sat=4.,regularity_sat=8.,origin_ko=0.,origin_ko_radius=.4,advection='upwind',
+        eta=0.,gauge_corner_sat=0.,damping_form='constant',slicing_family='linear',
+        slicing_scale=.1,lapse_background_source='collapsed-inner',lapse_restoring_profile='physical-log',
+        puncture_ko=.5,puncture_ko_radius=.8,initial_data='wormhole',mass=1/3,
+        initial_quadrature_order=96,compensated_update=True,subtract_local=True,cfl=cfl)
+
+
+def python_rhs(ev,q,B,kappa,tau,support,accepted=False):
+    result=ev.rhs(q,accepted=accepted).copy();r=ev.r;w,wp=support
+    dB,_=ev.op.derivatives(B,-1)
+    # Reconstruct beta independently from the same metric freezing quadrature.
+    alpha=ev.total_alpha;chi=ev.total_chi;beta=ev.shift_deviation-r
+    angular=np.divide(2*w,r,out=np.zeros_like(r),where=r!=0)
+    correction=chi*(w*dB+(wp+angular)*B)
+    positive=r>0;result[positive,6]+=correction[positive]/alpha[positive]
+    adv=ev.op.advection_derivative(B[:,None],np.array([-1]),beta)[:,0]
+    rate=beta*adv+(kappa*w*ev.geometry_first[:,6]-B)/tau
+    rate+=puncture_dissipation(B[:,None],r,ev.h,ev.args.puncture_ko,ev.args.puncture_ko_radius)[:,0]
+    F=lapse_coefficient(r,alpha,ev.args.slicing)
+    c=np.sqrt(chi*(F+kappa*w*w/tau))
+    return result,rate,np.c_[-beta-c,-beta+c]
+
+
+class TelegraphEngine:
+    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.):
+        if not np.isfinite(kappa+tau) or kappa<0 or tau<=0:raise ValueError('Need kappa>=0,tau>0')
+        if not ev.args.puncture_chart or ev.r[0]!=0:raise ValueError('First telegraph implementation requires the full AF domain')
+        self.base=FastEngine(ev,8,library);lib=self.base.lib;self.n=len(ev.r);self.nray=nray;self.start=start
+        fp=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')
+        lib.telegraph_create.argtypes=[C.c_void_p,C.c_double,C.c_double,fp,fp,C.c_int,C.c_double];lib.telegraph_create.restype=C.c_void_p
+        lib.telegraph_destroy.argtypes=[C.c_void_p]
+        lib.telegraph_rhs.argtypes=[C.c_void_p,fp,fp,fp,fp,fp]
+        lib.telegraph_advance.argtypes=[C.c_void_p,fp,fp,fp,C.c_int,C.c_double,C.c_double]
+        lib.telegraph_stats.argtypes=[C.c_void_p,fp]
+        lib.telegraph_get_compensation.argtypes=[C.c_void_p,fp]
+        lib.telegraph_set_compensation.argtypes=[C.c_void_p,fp]
+        w,wp=window(ev.r,inner,outer,width)
+        self.handle=lib.telegraph_create(self.base.handle,kappa,tau,w,wp,nray,start)
+        if not self.handle:raise RuntimeError('Telegraph engine creation failed')
+    def close(self):
+        if self.handle:self.base.lib.telegraph_destroy(self.handle);self.handle=None
+        self.base.close()
+    def rhs(self,q,B):
+        out=np.empty_like(q);outB=np.empty_like(B);speeds=np.empty((self.n,2))
+        if self.base.lib.telegraph_rhs(self.handle,q,B,out,outB,speeds):raise FloatingPointError(self.base.lib.spherical_fast_last_error(self.base.handle).decode())
+        return out,outB,speeds
+    def advance(self,q,B,rays,steps,dt,t):
+        done=self.base.lib.telegraph_advance(self.handle,q,B,rays,steps,dt,t)
+        if done<0:return -done-1,self.base.lib.spherical_fast_last_error(self.base.handle).decode()
+        return done,None
+    def diagnostics(self):
+        extra=np.zeros(5);self.base.lib.telegraph_stats(self.handle,extra)
+        return dict(self.base.diagnostics(),**dict(zip(['max_gauge_speed','max_cfl','max_relaxation_dt','max_front_lapse_gradient','max_front_compression'],map(float,extra))))
+    def compensation(self,value=None):
+        if value is None:
+            value=np.zeros(self.n*9+self.nray*2);self.base.lib.telegraph_get_compensation(self.handle,value);return value
+        value=np.ascontiguousarray(value,dtype=float)
+        if value.shape!=(self.n*9+self.nray*2,):raise ValueError('Bad telegraph checkpoint compensation')
+        self.base.lib.telegraph_set_compensation(self.handle,value)
