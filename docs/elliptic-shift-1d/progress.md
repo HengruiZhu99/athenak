@@ -42,7 +42,13 @@ nonaffinity is checked against independent2D Christoffel calculations. Frozen
 source replay of the strong dispersal trajectories gives sampled maximum
 nonaffinity3.93e-7/7.26e-8/9.86e-10 at N512/1024/2048; the largest integrated
 finest defect is3.02e-11. These are sampled diagnostics, not all-stage bounds. ABI17 adds an independently
-checked all-stage nonaffinity monitor; a fresh matching scalar matrix is running.
+checked all-stage nonaffinity monitor; the matching three-resolution scalar
+matrix is complete and bitwise identical in state/time/flux to its earlier
+controls. Full-stage maxima are8.75e-7/7.41e-8/9.66e-9; the finest
+6*max|kappa|=5.80e-8 passes the predeclared1e-7 affinity bound. Coarser
+runs fail. The finest peak is almost ten times its sampled peak, confirming
+that sparse replay cannot certify stage maxima. Source bindings and
+instrumentation-equivalence checks are in `evidence/scalar-Bondi-allstage-v1`.
 Its conservative supplemental affinity gate was recorded before inspecting
 the new all-stage trajectory results (`affinity-acceptance-v1.json`).
 Coarse output quadrature of the sharply peaked scalar flux differs materially

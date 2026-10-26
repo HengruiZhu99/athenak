@@ -4,7 +4,9 @@ import argparse,hashlib,json
 from pathlib import Path
 import numpy as np
 p=argparse.ArgumentParser();p.add_argument('--input',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
-p.add_argument('--suite',choices=['general','noise','scalar'],default='general');a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
+p.add_argument('--suite',choices=['general','noise','scalar'],default='general')
+p.add_argument('--affinity-protocol',type=Path);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
+affinity=json.loads(a.affinity_protocol.read_text()) if a.affinity_protocol else None
 records=[]
 for path in sorted(a.input.glob('*/manifest.json')):
     m=json.loads(path.read_text());folder=path.parent
@@ -21,6 +23,11 @@ for path in sorted(a.input.glob('*/manifest.json')):
     for field in ['chi','alpha']:
         value=min(min(r['min_'+field] for r in rows),stages.get('min_'+field,float('inf')))
         gates['positive_'+field]=dict(minimum=value,pass_gate=value>0)
+    if affinity:
+        peak=stages.get('max_Bondi_nonaffinity');duration=rows[-1]['t']-rows[0]['t']
+        bound=None if peak is None else duration*peak
+        gates['Bondi_time_affinity']=dict(all_stage_peak=peak,duration=duration,log_affine_rate_error_bound=bound,
+            tolerance=affinity['threshold'],pass_gate=bound is not None and bound<=affinity['threshold'])
     record['gates']=gates;record['diagnostic_coverage']='all RK stages plus reports' if stages else 'report samples only'
     record['complete_component_gates']=m['status']=='finished' and all(g['pass_gate'] for g in gates.values())
     if a.suite=='noise':
@@ -38,6 +45,8 @@ for path in sorted(a.input.glob('*/manifest.json')):
         record['horizon_roots_max']=max(r.get('apparent_horizon_count',0) for r in rows)
     records.append(record)
 result=dict(scope='Component gates and experiment records only. Convergence, physical extraction, durations and remaining experiments require separate assessment.',suite=a.suite,records=records)
+result['analysis_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+if affinity:result['affinity_protocol']=dict(path=str(a.affinity_protocol),sha256=hashlib.sha256(a.affinity_protocol.read_bytes()).hexdigest(),contents=affinity)
 (a.output/'review.json').write_text(json.dumps(result,indent=2)+'\n')
 if a.suite=='scalar' and records:
     import matplotlib
