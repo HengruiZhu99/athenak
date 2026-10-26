@@ -7,22 +7,28 @@
 #include <stdexcept>
 #include <chrono>
 #include <limits>
+#include <string>
 using Vec=std::vector<double>;
 struct Engine {
   int n,nf,w,qw; double h; Vec r,d1,d2,qweights,params;
   std::vector<int> index,qindex;
+  std::vector<int> aleft,aright;Vec awleft,awright;
   Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage;
   long calls=0; double solve_seconds=0;
+  bool puncture=false;
+  std::string error;
   std::array<double,12> diagnostics{};
   Engine(int N,int F,int W,int QW,const double* rr,const int* ix,
       const double* D1,const double* D2,const int* qi,const double* qwt,
-      const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
-      d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+(rr[0]==0?N-1:N)*QW),
-      params(p,p+11),index(ix,ix+N*W),qindex(qi,qi+(rr[0]==0?N-1:N)*QW) {
+      const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
+      d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      params(p,p+15),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      aleft(al,al+N*W),aright(ar,ar+N*W),awleft(alw,alw+N*W),awright(arw,arw+N*W) {
     for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
     if(nf!=8&&nf!=10)throw std::runtime_error("invalid field count");
     diagnostics[3]=diagnostics[4]=std::numeric_limits<double>::infinity();
+    puncture=p[12]!=0;if(puncture)diagnostics[11]=-std::numeric_limits<double>::infinity();
   }
   int reflected(int k)const{return k<w?(r[0]==0?w-k:w-1-k):k-w;}
   int parity(int f)const{return f==5?-1:1;}
@@ -32,6 +38,7 @@ struct Engine {
       int k=index[i*w+j],ii=reflected(k);
       for(int f=0;f<nf;f++) {
         double val=q[ii*nf+f]*(k<w?parity(f):1);
+        if(puncture)val-=q[i*nf+f];
         d[i*nf+f]+=d1[i*w+j]*val;dd[i*nf+f]+=d2[i*w+j]*val;
       }
     }
@@ -41,7 +48,7 @@ struct Engine {
   }
   double endpoint_derivative(const Vec& a,int f)const {
     double sum=0;
-    for(int j=0;j<w;j++)sum+=d1[(n-1)*w+j]*a[reflected(index[(n-1)*w+j])*nf+f];
+    for(int j=0;j<w;j++)sum+=d1[(n-1)*w+j]*(a[reflected(index[(n-1)*w+j])*nf+f]-(puncture?a[(n-1)*nf+f]:0));
     return sum;
   }
   double ratio(double a,int i,double limit=0)const{return r[i]>0?a/r[i]:limit;}
@@ -58,14 +65,14 @@ struct Engine {
         throw std::runtime_error("g=1 gauge or positivity violation");
       z[i]=1.5*((1+r[i]*r[i])/2+q[i*nf+6])*ratio(q[i*nf+2],i);
     }
-    Vec integral(n,0);double sum=0;int intervals=(r[0]==0?n-1:n);
+    Vec integral(n,0);double sum=0;bool first_node=r[0]==0||puncture;int intervals=(first_node?n-1:n);
     for(int i=0;i<intervals;i++) {
       double increment=0;
       for(int j=0;j<qw;j++) {
-        int k=qindex[i*qw+j];double value=(r[0]==0?z[k]:(k==0?0:z[k-1]));
+        int k=qindex[i*qw+j];double value=(first_node?z[k]:(k==0?0:z[k-1]));
         increment+=qweights[i*qw+j]*value;
       }
-      sum+=increment;integral[r[0]==0?i+1:i]=sum;
+      sum+=increment;integral[first_node?i+1:i]=sum;
     }
     int e=(n-1)*nf;double cS=q[e],uS=q[e+6],alphaS=(1+r.back()*r.back())/2+uS;
     double outer=-(cS+(2*uS+uS*uS)*(1+cS))/(1+alphaS*std::sqrt(1+cS));
@@ -75,6 +82,12 @@ struct Engine {
       U[i]=alpha*(q[i*nf+3]+2*q[i*nf+4])/3-q[i*nf+6]-r[i]*v[i];
     }
     solve_seconds+=std::chrono::duration<double>(std::chrono::steady_clock::now()-solve_start).count();
+    if(puncture) {
+      double alpha=(1+r[0]*r[0])/2+q[6],chi=1+q[0],O=(1-r[0]*r[0])/2;
+      double F=alpha*alpha+4*slicing*O*O*alpha;
+      diagnostics[11]=std::max(diagnostics[11],std::max(-beta[0]+alpha*std::sqrt(chi),-beta[0]+std::sqrt(F*chi)));
+      if(params[14]!=0&&diagnostics[11]>0)throw std::runtime_error("puncture inner characteristic became incoming");
+    }
     double dU=0;for(int j=0;j<w;j++)dU+=d1[(n-1)*w+j]*U[reflected(index[(n-1)*w+j])];
     double analytic_dU=(1+d[e+6])*(q[e+3]+2*q[e+4])/3+alphaS*(d[e+3]+2*d[e+4])/3
         -d[e+6]-2*v.back()-1.5*alphaS*q[e+2];
@@ -104,6 +117,7 @@ struct Engine {
       double F=alpha*alpha+4*slicing*O*O*alpha;
       R[k+6]=b*up+vv*x;
       S[k+6]=-F*q[k+3]+x*(A0*vv-x*u+u*vv)-xi*(alpha+A0)*u;
+      if(params[13]!=0)S[k+6]-=xi*u*u;
       double H=2*dk*(K-3)/3-6*c+2*O*x*cp+O*O*(2*cpp+4*cr-2.5*cp*cp/chi-1.5*Ar*Ar);
       double M=O*(ap+3*ar-1.5*Ar*cp/chi)-2*(pp+2*Tp)/3+2*x*Ar;
       if(nf==10) {
@@ -130,6 +144,16 @@ struct Engine {
       normsum[2]+=x*x*T*T;normsum[3]+=x*x*lam*lam/4;volume+=x*x;
     }
     for(int f=0;f<4;f++)diagnostics[5+f]=std::max(diagnostics[5+f],std::sqrt(normsum[f]/volume));
+    if(params[11]!=0)for(int i=0;i<n;i++) {
+      const auto& ai=beta[i]<0?aleft:aright;const auto& aw=beta[i]<0?awleft:awright;
+      for(int f=0;f<nf;f++)if(f!=7) {
+        double adv=0;for(int j=0;j<w;j++) {
+          int k=ai[i*w+j],ii=reflected(k);double value=q[ii*nf+f]*(k<w?parity(f):1);
+          if(puncture)value-=q[i*nf+f];adv+=aw[i*w+j]*value;
+        }
+        R[i*nf+f]+=beta[i]*(adv-d[i*nf+f]);
+      }
+    }
     for(int i=0;i<n-1;i++)for(int f=0;f<nf;f++)out[i*nf+f]=R[i*nf+f]+S[i*nf+f]/((1-r[i]*r[i])/2);
     std::array<double,10> trace{};
     trace[0]=q[e];trace[2]=q[e+2]+2*d[e]/3;trace[3]=q[e+3];trace[4]=q[e+4];trace[5]=q[e+5];
@@ -163,6 +187,7 @@ struct Engine {
         -2./3*(alphap*(2*pp+Tp)+alpha*(2*dd[e+3]+dd[e+4]))+4*(alphap*Ar+alpha*ap+alpha*Ar);
       ds[6]=-2*alpha*alphap*q[e+3]-alpha*alpha*pp+(vv-u+u*vv)
         +(vv+vp-u-up+up*vv+u*vp)-xi*((alphap+1)*u+(alpha+1)*up);
+      if(params[13]!=0)ds[6]-=2*xi*u*up;
     }
     if(params[10]!=0) {
       double rawchi=R[e]-ds[0],rawclock=R[e+6]-ds[6];
@@ -200,9 +225,12 @@ struct Engine {
   }
 };
 extern "C" {
+int spherical_fast_abi(){return 15;}
+const char* spherical_fast_last_error(void* handle){return static_cast<Engine*>(handle)->error.c_str();}
 void* spherical_fast_create(int n,int nf,int w,int qw,const double* r,const int* ix,
-    const double* d1,const double* d2,const int* qi,const double* qwt,const double* p) {
-  try{return new Engine(n,nf,w,qw,r,ix,d1,d2,qi,qwt,p);}catch(...){return nullptr;}
+    const double* d1,const double* d2,const int* qi,const double* qwt,
+    const int* al,const double* alw,const int* ar,const double* arw,const double* p) {
+  try{return new Engine(n,nf,w,qw,r,ix,d1,d2,qi,qwt,al,alw,ar,arw,p);}catch(...){return nullptr;}
 }
 void spherical_fast_destroy(void* handle){delete static_cast<Engine*>(handle);}
 void spherical_fast_stats(void* handle,double* stats) {
@@ -210,7 +238,8 @@ void spherical_fast_stats(void* handle,double* stats) {
   for(int i=0;i<12;i++)stats[i+2]=e.diagnostics[i];
 }
 int spherical_fast_rhs(void* handle,const double* q,double* result,double* flux) {
-  try{*flux=static_cast<Engine*>(handle)->rhs(q,result);return 0;}catch(...){return -1;}
+  auto& engine=*static_cast<Engine*>(handle);
+  try{*flux=engine.rhs(q,result);return 0;}catch(const std::exception& failure){engine.error=failure.what();return -1;}
 }
 // q is committed only after a complete RK4 step, just as in the Python driver.
 int spherical_fast_advance(void* handle,double* q,int steps,double dt,double* energy) {
@@ -227,7 +256,7 @@ int spherical_fast_advance(void* handle,double* q,int steps,double dt,double* en
       for(int j=0;j<size;j++)q[j]+=dt*(e.k1[j]+2*e.k2[j]+2*e.k3[j]+e.k4[j])/6;
       *energy+=dt*(f1+2*f2+2*f3+f4)/6;
     }
-  }catch(...){return -done-1;}
+  }catch(const std::exception& failure){e.error=failure.what();return -done-1;}
   return done;
 }
 }

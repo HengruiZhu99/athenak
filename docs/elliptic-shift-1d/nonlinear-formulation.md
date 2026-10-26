@@ -2,7 +2,9 @@
 
 Status: nonlinear vacuum and coupled scalar regular-center kernels implemented;
 actual-scri finite-difference closure is an experimental candidate, not yet admitted.
-Scalar weak dispersal is a pilot; puncture evolution remains unimplemented.
+Scalar dispersal remains under assessment. The separate puncture outflow pilot
+halts when its finite inner cutoff becomes incoming; asymptotic continuation
+is unfinished. See `puncture-asymptotics.md`.
 The supplied linear theorem is not evidence of nonlinear stability.
 
 ## Variables and exact spherical restriction
@@ -115,7 +117,8 @@ it does not subtract a numerical equilibrium RHS. Its independent, nonlinear,
 off-constraint native-tensor comparison has maximum error 7.6e-14 over 24 cases,
 including both Theta sources and lapse restoring coefficients 0 and 1.
 Curvature, Khat, Theta and Lambda are independent evolved fields. This backend
-currently cannot initialize general g(r) or positive puncture chi/lapse variables.
+cannot initialize general g(r). Isotropic wormhole data are now available, but
+the positive logarithmic puncture chart remains to be implemented.
 
 Regular-center parity is even for chi, g, A_rr, Khat, Theta, alpha and odd for
 Lambda. Isotropy additionally requires g-1,A_rr=O(r^2), Lambda=O(r). Current
@@ -132,6 +135,38 @@ The optional actual-origin grid uses analytic limits f'/r=f''(0), Lambda/r=
 Lambda'(0), A_rr/r=0. Its scalar wave and geometric coefficient checks pass,
 but its N1025 lapse-pulse evolution fails positivity at t=2.256494. It is not a
 stability repair. The actual-scri endpoint is present in both origin-grid variants.
+
+## Scri clock, conformal affinity and scalar flux normalization
+
+For g=1 let `F=chi-beta^2/alpha^2`. At scri r=1, Omega'=-1,
+`beta=-alpha sqrt(chi)` and the boundary clock is alpha=1. The unphysical
+null normal n=grad(Omega) has `n^t=-beta/alpha^2` and n^r=0. The sphere-area
+normalization is `Omega_B=sqrt(chi_S) Omega`, which makes its conformal
+two-sphere unit radius. Consequently `n_B^t=n^t/sqrt(chi_S)=1/alpha_S=1`.
+On the regular Einstein-compatible phase the Bondi generator is affine,
+and this fixes u_B=t up to an additive constant. The radiative scalar is
+`lim R phi = f_S`, so the corresponding flux is `4pi (partial_t f_S)^2`.
+
+This inference requires compatibility; fixing the clock alone does not prove
+it numerically. For the actual boundary chi rate, direct differentiation gives
+
+    box_bar(Omega)=beta chi_t/(alpha^2 chi)-F_r,
+    F_r=chi_r-2beta beta_r/alpha^2+2beta^2 alpha_r/alpha^3.
+
+The nonaffinity of n_B is
+`-[F_r+beta chi_t/(alpha^2 chi)]/(2sqrt(chi))`. Thus the bracket is an
+independent numerical affinity defect. In the exact phase chi_S=1, chi_t=0,
+`A_rr=-2chi_r/3` and the elliptic shift gives beta_r=-1+3A_rr/2. The defect
+reduces to `-chi_r+2(delta-alpha)_r`. This identifies the first gauge corner
+condition `chi_r=2(delta-alpha)_r`. It is a necessary compatibility identity,
+not a new freely specifiable datum. A complete tail/flux assessment must
+measure the defect together with mass balance and waveform convergence.
+
+The tested normal-jet penalty uses the raw chi/alpha boundary rates G and a
+value-zero nodal lift to damp their directional derivative. Its isolated
+Jacobian test passes, but every nonzero tested strength destabilizes the
+coupled evolution. It is rejected. The implemented optional penalty does not
+constitute a proven energy-compatible boundary closure.
 
 ## Coupled scalar equation actually implemented
 

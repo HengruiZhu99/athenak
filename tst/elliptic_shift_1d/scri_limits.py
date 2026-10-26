@@ -5,7 +5,7 @@ These retain finite off-constraint traces. No field/constraint reset occurs.
 import numpy as np
 
 
-def derivatives(q,d,dd,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,slicing=1.,restoring=1.):
+def derivatives(q,d,dd,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,slicing=1.,restoring=1.,restoring_form='symmetric'):
     c=q[0];chi=1+c;Ar=q[2];p=q[3]-3;T=q[4];lam=q[5];u=q[6]
     cp=d[0];ap=d[2];pp=d[3];Tp=d[4];lp=d[5];up=d[6]
     alpha=1+u;alphap=1+up;K=p+2*T;dk=q[3]+2*T;Kp=pp+2*Tp
@@ -28,6 +28,7 @@ def derivatives(q,d,dd,beta_deviation,kappa1=4.,kappa2=-.99,appendix_c=True,slic
         +4*(alphap*Ar+alpha*ap+alpha*Ar))
     result[6]=(-2*alpha*alphap*q[3]-alpha*alpha*pp+(v-u+u*v)
         +(v+vp-u-up+up*v+u*vp)-restoring*((alphap+1)*u+(alpha+1)*up))
+    if restoring_form=='multiplicative':result[6]-=2*restoring*u*up
     return result,Up
 
 

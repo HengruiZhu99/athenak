@@ -1,0 +1,38 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "advection": "centered",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.1,
+    "report_dt": 0.02,
+    "n": 512,
+    "t": 1,
+    "cfl": 0.05,
+    "lapse_restoring_form": "multiplicative"
+  },
+  "cases": [
+    {
+      "name": "n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "n1024",
+      "arguments": {
+        "n": 1024
+      }
+    }
+  ],
+  "scope": "Quadratic lapse-restoring variant preserves alpha=0 at puncture and the original linearized Minkowski lapse; regular-center finite-pulse control."
+}

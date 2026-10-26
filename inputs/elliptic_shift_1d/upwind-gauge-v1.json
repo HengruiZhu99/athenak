@@ -1,0 +1,43 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "advection": "upwind",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.1,
+    "report_dt": 0.02,
+    "n": 512,
+    "t": 1,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "raw-n256",
+      "arguments": {
+        "n": 256
+      }
+    },
+    {
+      "name": "raw-n512",
+      "arguments": {
+        "n": 512
+      }
+    },
+    {
+      "name": "raw-n1024",
+      "arguments": {
+        "n": 1024
+      }
+    },
+    {
+      "name": "analytic-n512",
+      "arguments": {
+        "endpoint": "analytic-g1"
+      }
+    }
+  ],
+  "scope": "One-point upwind advection only; all other derivatives/elliptic/constraint equations unchanged"
+}

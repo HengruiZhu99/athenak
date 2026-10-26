@@ -1,0 +1,67 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "lapse_restoring": 1,
+    "origin_ko": 0.5,
+    "pulse": "published-gaussian",
+    "amplitude": 0.1,
+    "report_dt": 0.02,
+    "n": 512,
+    "t": 1,
+    "cfl": 0.05
+  },
+  "cases": [
+    {
+      "name": "k1-4-k2--0.99",
+      "arguments": {
+        "kappa1": 4,
+        "kappa2": -0.99
+      }
+    },
+    {
+      "name": "k1-1.5-k2-0",
+      "arguments": {
+        "kappa1": 1.5,
+        "kappa2": 0
+      }
+    },
+    {
+      "name": "k1-1.5-k2--1",
+      "arguments": {
+        "kappa1": 1.5,
+        "kappa2": -1
+      }
+    },
+    {
+      "name": "k1-4-k2-0",
+      "arguments": {
+        "kappa1": 4,
+        "kappa2": 0
+      }
+    },
+    {
+      "name": "k1-2-k2-0",
+      "arguments": {
+        "kappa1": 2,
+        "kappa2": 0
+      }
+    },
+    {
+      "name": "k1-3-k2--0.5",
+      "arguments": {
+        "kappa1": 3,
+        "kappa2": -0.5
+      }
+    },
+    {
+      "name": "k1-4-k2--0.5",
+      "arguments": {
+        "kappa1": 4,
+        "kappa2": -0.5
+      }
+    }
+  ],
+  "scope": "Published damping1.5,0 and candidate controls under the same elliptic shift/live lapse; physical experiment versus identical published gauge remains distinct"
+}

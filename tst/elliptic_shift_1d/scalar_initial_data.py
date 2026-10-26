@@ -104,6 +104,18 @@ def solve_data(n,amplitude=.058,tolerance=1e-11,grid=None,precision='float'):
         runtime_seconds=time.perf_counter()-start)
 
 
+def stationary_chi_lapse(initial):
+    """Initial lapse only: chi_t=0 for K=-3,A_rr=0,beta=-r.
+
+    It matches the stationary Schwarzschild exterior lapse to its compatible
+    mass jets. The lapse remains live during evolution.
+    """
+    r=initial['r'];O=initial['omega'];w=initial['w'];psi=initial['psi']
+    wp=np.einsum('ij,ij->i',initial['D1'],w[None,:]-w[:,None],optimize=False)
+    psip=-3*r*O**2*w+O**3*wp
+    return 2*O*r*psip/psi
+
+
 def main():
     p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--amplitude',type=float,default=.058);p.add_argument('--resolutions',type=int,nargs='+',default=[128,256,512]);p.add_argument('--tolerance',type=float,default=1e-11);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     records=[];kernel=Kernel(a.library)

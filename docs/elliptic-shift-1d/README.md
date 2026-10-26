@@ -17,13 +17,18 @@ stability is inferred. See `nonlinear-formulation.md` for new independent deriva
 
 See [the active scientific work record](progress.md) for passing component checks,
 resolved failures, source/checkpoint ancestry and the next derivation steps.
-Eight CTest groups pass. The scalar oracle and wormhole initial-data constraints
+Twelve CTest groups pass. The scalar oracle and wormhole initial-data constraints
 are verified. A revised lapse and analytically canceled g=1 backend improve
 actual-scri pulse behavior; stronger localized dissipation admits a small-pulse
 100-unit control. Finite-amplitude scri peaks still fail acceptance.
 The weak coupled-scalar pilot reaches t=3 with mass/flux discrepancy1.12e-8;
 principal resolution/time studies are outstanding. No trumpet evolution,
 wormhole-to-trumpet, long-duration or literature reproduction acceptance is complete.
+
+The new isotropic wormhole construction and separate inner-end analysis are in
+`puncture-asymptotics.md`. Outflow-only puncture pilots deliberately stop near
+t=.21 when an inner gauge characteristic becomes incoming; they are not a
+wormhole-to-trumpet success.
 
 ## Reproducible build and tests
 

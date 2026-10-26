@@ -2,6 +2,49 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Latest puncture and gauge preparation
+
+Twelve CTest groups pass (`evidence/ctest-v15.log`). Compiled/Python agreement
+now includes320 cases with one-sided puncture stencils and the multiplicative
+restoring gauge. An ABI check prevents mismatched wrapper/library layouts.
+
+The nonlinear scri gauge audit independently matches native tensor rates to
+7.4e-13. In the previous spatial chart, xi=1 requires C0=2L0, then
+C1=C0+11C0^2/4, with a further C2 relation saved in
+`evidence/nonlinear-gauge-corners-v1.json`. For a CMC Schwarzschild exterior,
+chi-1=-M Omega^3/2 implies delta-alpha=-3M Omega^3/4 at this order.
+A scalar initial-lapse control imposes initial chi_t=0 and matches the exterior
+stationary lapse to convergent accuracy. This necessary preparation **does not
+cure the transient scri gate failure**; its runs are retained separately.
+Published damping controls and the quadratic restoring variant also fail the
+finite-pulse scri gate, so none is relabeled as an accepted repair.
+
+`wormhole_isotropic.py` constructs a genuine two-ended wormhole with g=1,
+H=n(R)=s(R)R in the outer transition, a time-symmetric isotropic inner end,
+physical pre-collapsed lapse psi^-2, and a stationary hyperboloidal exterior
+lapse. The Minkowski evolution reference is unchanged. The512-point data
+have H/M below2.3e-13/3.9e-14 and bulk invariant mass error1.24e-11.
+The96/128 coordinate quadratures agree to9.4e-15. Analytic exterior geometric
+rates vanish to1.1e-15 without numerical RHS subtraction.
+
+The puncture driver uses one-sided stencils and difference-form derivatives,
+never reflected center values. The regular-center KO filter is forbidden there.
+Its first N1024 pilot reaches t=.1 with mass at r=.5 equal.1 to3e-14 and
+horizon mass.0999965. However N512/1024/2048 outflow-only continuations halt
+at t=.2042/.2132/.2156 when an inner gauge characteristic becomes incoming.
+These are inner-boundary validity failures, not a demonstrated trumpet.
+The stage monitor records the positive speed and preserves the last completed
+state. Initial geometry and source-bound failures remain archived.
+
+The next inner treatment is derived in `puncture-asymptotics.md`. For
+chi=r^4X,alpha=r^2A,A_rr=r^2B,Khat=r^2k,Theta=r^2tau,Lambda=L,
+beta=b1r+..., the native tensor equations independently verify the finite
+coefficient ODEs there with second-order limiting convergence. All six
+coefficients remain free. A true r=0 asymptotic coefficient endpoint can
+therefore replace the finite-cutoff outflow assumption without regular-center
+parity or invented incoming data. The logarithmic/weighted chart and its
+evolution are still to be implemented and tested.
+
 ## Latest audit: compiled integration and complete-stage diagnostics
 
 The compiled g=1 RK4 engine uses the supplied FD/quadrature weights and the
@@ -18,6 +61,12 @@ independent native-tensor check of the complete analytically differentiated
 scri limit. R/S decompositions are nonunique up to Omega multiples; comparing
 S derivatives alone is incorrect. The complete R-S' limit converges against
 native source differentiation with orders7.60 and7.82.
+
+The latest suite has nine passing groups (`evidence/ctest-v12.log`). Optional
+one-point biased advection passes polynomial/symbol checks and extends the
+compiled/Python comparison to128 cases. It does not repair the finite-pulse
+scri failure (N512 peak pole1.54e-5; N1024 peak1.02e-6), and is not silently
+adopted as a successful method. Centered transport remains the default.
 
 The `.058` initial-data solve at N1024 stalls in double precision near1.13e-10.
 A50-digit Decimal iterate/residual with double Newton corrections reaches
@@ -86,6 +135,11 @@ The compiled checkpoint continuation helper was tested with exact frozen
 Python sources and both matching libraries. An N256 small-pulse trajectory
 is now continuing from t=100 to1000 using its verified original source/binary,
 without changing its equations or timestep. Longer paper durations still remain.
+
+That N256 continuation has now finished t=1000, with finite positive fields
+and perturbations at subnormal roundoff. Its exact-source continuation to
+10,000 is running, as is N512 t100-to1000. Both are sampled-diagnostic long
+controls; all-stage short-run gates are assessed separately.
 
 ## Update: 2026-10-26, coupled scalar and central instability
 

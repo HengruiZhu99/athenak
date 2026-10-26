@@ -9,14 +9,14 @@ from fast import FastEngine
 
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True)
 p.add_argument('--output',type=Path);a=p.parse_args();cases=[]
-for origin in [False,True]:
+for origin,puncture in [(False,False),(True,False),(False,True)]:
  for scalar in [False,True]:
   for appendix in [False,True]:
-   for ko,endpoint,corner in [(k,e,g) for k in [0.,.5] for e in ['raw-lhopital','analytic-g1'] for g in [0.,4.]]:
-    opts=SimpleNamespace(n=65,origin_grid=origin,origin_variables=False,backend='spherical-g1',
+   for ko,endpoint,corner,advection,form in [(k,e,g,adv,f) for k in ([0.] if puncture else [0.,.5]) for e in ['raw-lhopital','analytic-g1'] for g in [0.,4.] for adv in ['centered','upwind'] for f in ['symmetric','multiplicative']]:
+    opts=SimpleNamespace(n=65,origin_grid=origin,puncture=puncture,origin_variables=False,backend='spherical-g1',
        width=7,quadrature_width=7,library=a.library,kappa1=4.,kappa2=-.99,eta=0.,
-       theta='appendix-c' if appendix else 'repository',slicing=1.,lapse_restoring=1.,
-       endpoint=endpoint,gauge_corner_sat=corner,scri_sat=4.,regularity_sat=8.,origin_ko=ko,origin_ko_radius=.4)
+       theta='appendix-c' if appendix else 'repository',slicing=1.,lapse_restoring=1.,lapse_restoring_form=form,
+       endpoint=endpoint,gauge_corner_sat=corner,advection=advection,scri_sat=4.,regularity_sat=8.,origin_ko=ko,origin_ko_radius=.4)
     ev=(CoupledEvolution if scalar else Evolution)(opts);r=ev.r;nf=10 if scalar else 8
     rng=np.random.default_rng(601);q=np.zeros((65,nf))
     for f,power in [(0,0),(2,2),(3,0),(4,0),(5,1),(6,0)]+([(8,0),(9,0)] if scalar else []):
@@ -53,7 +53,7 @@ for origin in [False,True]:
       np.testing.assert_allclose(stats[key],max(x[field] for x in observed),atol=2e-12,rtol=1e-8)
      for key in ['min_chi','min_alpha']:
       np.testing.assert_allclose(stats[key],min(x[key] for x in observed),atol=2e-13)
-    fast.close();cases.append(dict(origin=origin,scalar=scalar,appendix=appendix,ko=ko,endpoint=endpoint,corner=corner,rhs_error=error,step_error=step_error))
+    fast.close();cases.append(dict(origin=origin,puncture=puncture,scalar=scalar,appendix=appendix,ko=ko,endpoint=endpoint,corner=corner,advection=advection,restoring_form=form,rhs_error=error,step_error=step_error))
 record=dict(cases=cases,scope='Compiled/Python agreement; no new continuum equations or stability claim')
 if a.output:a.output.write_text(json.dumps(record,indent=2)+'\n')
 print(json.dumps(dict(cases=len(cases),max_rhs_error=max(x['rhs_error'] for x in cases),max_step_error=max(x['step_error'] for x in cases))))

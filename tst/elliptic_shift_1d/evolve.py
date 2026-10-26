@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Experimental actual-scri free-Z4c vacuum/scalar regular-center driver.
+"""Experimental actual-scri free-Z4c driver; every failed variant is retained.
 
-All failures are retained. Puncture evolution is not implemented here.
+Regular-center vacuum/scalar and a separately guarded vacuum puncture path.
 """
 import argparse,hashlib,json,os,platform,sys,time,shutil
 from pathlib import Path
@@ -17,7 +17,7 @@ def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 class Evolution:
     def __init__(self,args):
         self.args=args;self.r=np.linspace(0,1,args.n) if getattr(args,'origin_grid',False) else (np.arange(args.n)+.5)/(args.n-.5)
-        self.h=1/(args.n-1) if getattr(args,'origin_grid',False) else 1/(args.n-.5);self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width)
+        self.h=1/(args.n-1) if getattr(args,'origin_grid',False) else 1/(args.n-.5);self.op=RadialOperators(self.r,width=args.width,quadrature_width=args.quadrature_width,puncture=getattr(args,'puncture',False))
         self.kernel=Kernel(args.library);self.calls=0;self.solve_seconds=0.
         self.rhs_seconds=0.;self.elliptic_differential_residual=0.
         self.omega=(1-self.r*self.r)/2
@@ -58,6 +58,17 @@ class Evolution:
             R,S,diag=self.kernel.parts(self.r,q,d,dd,beta,db,ddb,self.args.kappa1,
                 self.args.kappa2,self.args.theta=='appendix-c',self.args.slicing,lapse_restoring=self.args.lapse_restoring)
         self.calls+=1
+        if getattr(self.args,'lapse_restoring_form','symmetric')=='multiplicative':
+            # -2xi alpha*(alpha-A) replaces -xi(alpha+A)*(alpha-A).
+            # Their difference is quadratic and preserves alpha=0 at the puncture.
+            S[:,6]-=self.args.lapse_restoring*q[:,6]**2
+        if getattr(self.args,'advection','centered')=='upwind':
+            adv=self.op.advection_derivative(q,PARITY,beta)
+            R[:,:7]+=beta[:,None]*(adv[:,:7]-d[:,:7])
+        if getattr(self.args,'initial_data',None)=='wormhole':
+            F=alpha[0]**2+4*self.args.slicing*self.omega[0]**2*alpha[0]
+            speed=max(-beta[0]+alpha[0]*np.sqrt(chi[0]),-beta[0]+np.sqrt(F*chi[0]))
+            if speed>0:raise FloatingPointError('Puncture inner boundary has an incoming gauge/light characteristic')
         # Independent sampled-shift residual; do not use the analytic derivatives
         # returned by solve() for this diagnostic.
         if getattr(self.args,'backend','native')=='spherical-g1':
@@ -90,6 +101,7 @@ class Evolution:
             import scri_limits
             derivative,_=scri_limits.derivatives(self.geometry_state[-1],self.geometry_first[-1],self.geometry_second[-1],
                 self.shift_deviation[-1],self.args.kappa1,self.args.kappa2,self.args.theta=='appendix-c',self.args.slicing,self.args.lapse_restoring)
+            if getattr(self.args,'lapse_restoring_form','symmetric')=='multiplicative':derivative[6]-=2*self.args.lapse_restoring*q[-1,6]*self.geometry_first[-1,6]
             result[-1]=R[-1];result[-1,:8]-=derivative
         elif self.args.endpoint in ('raw-lhopital','compatible-trace'):
             result[-1]=R[-1]-dS[-1] # Omega'(1)=-1; full combined numerator.
@@ -118,7 +130,8 @@ class Evolution:
             correction,_=scri_limits.corner_correction(self.geometry_state[-1],self.geometry_first[-1],
                 self.geometry_second[-1],R[-1,:8],self.shift_deviation[-1],self.h,self.args.gauge_corner_sat,
                 1/self.op.d1[-1,-2],kappa1=self.args.kappa1,kappa2=self.args.kappa2,
-                appendix_c=self.args.theta=='appendix-c',slicing=self.args.slicing,restoring=self.args.lapse_restoring)
+                appendix_c=self.args.theta=='appendix-c',slicing=self.args.slicing,restoring=self.args.lapse_restoring,
+                restoring_form=getattr(self.args,'lapse_restoring_form','symmetric'))
             result[-2,[0,3]]+=correction
         if self.args.origin_ko:
             # KO6 on regular spherical tensor coefficients, with a fixed
@@ -167,6 +180,15 @@ class Evolution:
             row[name+'_weighted_interior_max']=float(max(abs(c[:-1,i]/self.omega[:-1]**power)))
         for location in [.25,.5,.75,.9,.98]:
             row['mass_r'+str(location)]=float(np.interp(location,self.r[:-1],c[:-1,10]))
+        if getattr(self.args,'puncture',False):
+            radius=self.r[:-1]/(self.omega[:-1]*np.sqrt(c[:-1,8]));density=radius/self.r[:-1]
+            alpha=c[:,7];F=alpha*alpha+4*self.args.slicing*self.omega**2*alpha
+            row.update(inner_areal_radius=float(radius[0]),inner_proper_distance_density=float(density[0]),
+                inner_light_speed_max=float(-b[0]+alpha[0]*np.sqrt(c[0,8])),
+                inner_gauge_speed_max=float(-b[0]+np.sqrt(F[0]*c[0,8])),
+                inner_radius_log_slope=float(np.polyfit(np.log(self.r[:8]),np.log(radius[:8]),1)[0]),
+                inner_proper_distance_log_slope=float(np.polyfit(np.log(self.r[:8]),np.log(density[:8]),1)[0]),
+                inner_physical_lapse_log_slope=float(np.polyfit(np.log(self.r[:8]),np.log(alpha[:8]/self.omega[:8]),1)[0]))
         if getattr(self.args,'backend','native')=='spherical-g1':
             # Finite-mass expansion N=Omega^3 F gives m(S)=-N'''(S)/(12chi^1.5).
             # Expose lower jets: this limit is inadmissible if they do not vanish.
@@ -201,6 +223,9 @@ class CoupledEvolution(Evolution):
             analytic_endpoint=self.args.endpoint=='analytic-g1')
         self.scalar_info=info;self.scalar_phi=phi;self.scalar_phir=phir;self.scalar_normal=normal
         self.scalar_scri_rate=wave[-1,0]
+        if getattr(self.args,'advection','centered')=='upwind':
+            wave+=beta[:,None]*(self.op.advection_derivative(fields,np.ones(2),beta)-df)
+            self.scalar_scri_rate=wave[-1,0]
         self.regularity=np.r_[self.regularity,0.,0.]
         return np.c_[R,wave],np.c_[S,np.zeros_like(wave)],diag,beta
 
@@ -220,6 +245,11 @@ def main():
     p.add_argument('--origin-grid',action='store_true')
     p.add_argument('--fast-library',help='Optional audited compiled g=1 RK4 engine')
     p.add_argument('--gauge-corner-sat',type=float,default=0.)
+    p.add_argument('--advection',choices=['centered','upwind'],default='centered')
+    p.add_argument('--puncture',action='store_true')
+    p.add_argument('--initial-data',choices=['minkowski','wormhole'],default='minkowski')
+    p.add_argument('--mass',type=float,default=.1)
+    p.add_argument('--initial-quadrature-order',type=int,choices=[64,96,128,192],default=96)
     p.add_argument('--perturbation',choices=['none','constraint','noise','noise-balanced'],default='none')
     p.add_argument('--perturbation-amplitude',type=float,default=1e-8)
     p.add_argument('--seed',type=int,default=7419)
@@ -228,6 +258,7 @@ def main():
     p.add_argument('--scalar-amplitude',type=float,default=.01)
     p.add_argument('--initial-tolerance',type=float,default=1e-10)
     p.add_argument('--initial-precision',choices=['float','decimal'],default='float')
+    p.add_argument('--initial-lapse',choices=['reference','stationary-chi'],default='reference')
     p.add_argument('--origin-ko',type=float,default=0.)
     p.add_argument('--origin-ko-radius',type=float,default=.4)
     p.add_argument('--backend',choices=['native','spherical-g1'],default='native')
@@ -239,6 +270,7 @@ def main():
     p.add_argument('--center',type=float,default=.25);p.add_argument('--pulse-width',type=float,default=.1)
     p.add_argument('--kappa1',type=float,default=4.);p.add_argument('--kappa2',type=float,default=-.99)
     p.add_argument('--lapse-restoring',type=float,default=0.)
+    p.add_argument('--lapse-restoring-form',choices=['symmetric','multiplicative'],default='symmetric')
     p.add_argument('--eta',type=float,default=0.);p.add_argument('--slicing',type=float,default=1.)
     p.add_argument('--theta',choices=['appendix-c','repository'],default='appendix-c')
     p.add_argument('--width',type=int,choices=[5,7,9],default=7)
@@ -247,12 +279,16 @@ def main():
     p.add_argument('--scri-sat',type=float,default=0.)
     p.add_argument('--report-dt',type=float,default=.1);p.add_argument('--resume',type=Path)
     args=p.parse_args()
-    numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude,args.gauge_corner_sat]
+    numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude,args.gauge_corner_sat,args.mass]
     if not all(np.isfinite(x) for x in numeric):raise ValueError('Nonfinite input')
     if (args.n<16 or args.cfl<=0 or args.t<0 or args.pulse_width<=0 or not 0<=args.center<1
         or args.report_dt<=0 or args.origin_ko<0 or not 0<args.origin_ko_radius<=.75
         or args.kappa1<0 or args.eta<0 or args.slicing<0 or args.lapse_restoring<0
-        or args.initial_tolerance<=0 or args.gauge_corner_sat<0):raise ValueError('Invalid input')
+        or args.initial_tolerance<=0 or args.gauge_corner_sat<0 or args.mass<=0):raise ValueError('Invalid input')
+    if args.puncture and (args.backend!='spherical-g1' or args.origin_grid or args.origin_variables or args.origin_ko):
+        raise ValueError('Puncture uses unscaled g=1, excluded inner endpoint and no regular-center KO filter')
+    if args.initial_data=='wormhole' and (not args.puncture or args.scalar):raise ValueError('Wormhole initialization requires the vacuum puncture path')
+    if args.puncture and args.initial_data!='wormhole':raise ValueError('Only wormhole puncture initial data are currently implemented')
     if args.origin_grid and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Actual-origin grid uses the analytic g=1 limits with unscaled fields')
     if args.endpoint=='analytic-g1' and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Analytic endpoint requires unscaled g=1')
     if args.gauge_corner_sat and (args.backend!='spherical-g1' or args.origin_variables):raise ValueError('Gauge corner penalty requires unscaled g=1')
@@ -266,6 +302,7 @@ def main():
     if args.scalar:module_names+=['scalar_rhs.py','scalar_initial_data.py']
     if args.fast_library:module_names+=['fast.py','fast_integrator.cpp']
     if args.endpoint=='analytic-g1' or args.gauge_corner_sat:module_names+=['scri_limits.py']
+    if args.initial_data=='wormhole':module_names+=['wormhole_isotropic.py','wormhole_data.py']
     source=[*sorted((root/'src/z4c/hyperboloidal').glob('*.hpp')),
             *[Path(__file__).with_name(name) for name in module_names],
             Path(__file__).with_name('spherical_api.cpp')]
@@ -274,7 +311,7 @@ def main():
     if args.fast_library:binding['fast_executable_sha256']=sha(args.fast_library)
     manifest={'arguments':{k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()},
         'command':sys.argv,'platform':platform.platform(),'python':sys.version,'numpy':np.__version__,
-        'binding':binding,'checkpoint_parent':None,'status':'running','method':'actual-scri free-Z4c regular-center prototype; coupled scalar optional',
+        'binding':binding,'checkpoint_parent':None,'status':'running','method':'actual-scri free-Z4c prototype; inner endpoint specified in arguments',
         'resource_authorization':'2026-10-25 user: given the code will be run on 1 spatial dimension, just run the tests locally'}
     if args.scalar and args.backend!='spherical-g1':raise ValueError('Coupled scalar currently requires spherical-g1 backend')
     ev=CoupledEvolution(args) if args.scalar else Evolution(args)
@@ -295,6 +332,16 @@ def main():
     if args.pulse=='published-gaussian':
         q[:,6]=args.amplitude*np.exp(-(ev.r**2-args.center**2)**2/(4*args.pulse_width**4))
     if q[-1,6]!=0.:raise ValueError('Initial lapse pulse must vanish at scri for clock-compatible data')
+    if args.initial_data=='wormhole' and not args.resume:
+        from wormhole_isotropic import IsotropicWormhole
+        initial=IsotropicWormhole(args.mass,args.initial_quadrature_order)
+        iq,id1,id2,geometry=initial.data(ev.r);q[:,:8]+=iq
+        manifest['wormhole_initial_data']=dict(mass=args.mass,r0=initial.r0,isotropic_scale=initial.k,
+            height='H=n(R)=s(R)R; s=0 below4M, s=1 above8M; h_R=H/[F sqrt(F+H^2)]',
+            inner_lapse='physical psi_iso^-2, psi_iso=1+M/(2rho)',outer_lapse='physical sqrt(F+R^2)',
+            reference='Minkowski; no Schwarzschild RHS subtraction',inner_boundary='one-sided outflow, no regular-center parity')
+        np.savez(args.output/'wormhole-initial-data.npz',r=ev.r,q=q,d=id1,dd=id2,
+            chi_total=np.array([g['chi_total'] for g in geometry]),R_areal=np.array([g['R'] for g in geometry]))
     if args.scalar and not args.resume:
         from scalar_initial_data import solve_data
         initial_grid=ev.r if args.origin_grid else np.r_[0.,ev.r]
@@ -315,6 +362,9 @@ def main():
         phi=initial['phi'][use]
         q[:-1,8]=phi[:-1]/(O[:-1]*np.sqrt(1+q[:-1,0]));q[-1,8]=0.
         q[:-1,9]=q[:-1,8]/O[:-1];q[-1,9]=0.
+        if args.initial_lapse=='stationary-chi':
+            from scalar_initial_data import stationary_chi_lapse
+            q[:,6]+=stationary_chi_lapse(initial)[use]
     if args.perturbation!='none' and not args.resume:
         # Compact support strictly inside scri; independent free constraint
         # errors obey center tensor parity. No differential constraint solve.
@@ -329,9 +379,11 @@ def main():
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('n','cfl','kappa1','kappa2','eta','slicing','theta','width','endpoint','scri_sat','regularity_sat','lapse_restoring','backend','quadrature_width','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat'):
+            for key in ('n','cfl','kappa1','kappa2','eta','slicing','theta','width','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','backend','quadrature_width','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','initial_data','mass','initial_quadrature_order'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
+            for key in ['scalar_initial_data','wormhole_initial_data']:
+                if key in old:manifest[key]=old[key]
         manifest['checkpoint_parent']={'path':str(args.resume.resolve()),'sha256':sha(args.resume)}
     radiated_energy=float(old.get('radiated_energy',0.)) if args.resume else 0.
     manifest['status']='running'
@@ -362,7 +414,7 @@ def main():
                     done,radiated_energy,failed=compiled.advance(q,count,h,radiated_energy)
                     for _ in range(done):t+=h
                     step+=done
-                    if failed:raise FloatingPointError('Compiled stage rejected gauge/positivity/finiteness')
+                    if failed:raise FloatingPointError(compiled.failure_message)
                     continue
                 h=dt if args.t-t>=dt*(1-1e-12) else args.t-t
                 k1=ev.rhs(q);flux1=4*np.pi*ev.scalar_scri_rate**2 if args.scalar else 0.

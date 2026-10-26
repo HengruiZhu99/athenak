@@ -33,3 +33,11 @@ add_test(NAME initial_data_arithmetic_isolation
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_initial_precision.py)
 add_test(NAME analytic_scri_numerator_derivatives
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_scri_limits.py --library $<TARGET_FILE:spherical_z4c>)
+add_test(NAME biased_transport_consistency_and_symbol
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_advection.py)
+add_test(NAME initial_lapse_mass_jet_compatibility
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_initial_lapse.py)
+add_test(NAME isotropic_hyperboloidal_wormhole_geometry
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_wormhole_isotropic.py --library $<TARGET_FILE:spherical_z4c>)
+add_test(NAME puncture_asymptotic_coefficient_limits
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_puncture_limits.py --library $<TARGET_FILE:spherical_z4c>)
