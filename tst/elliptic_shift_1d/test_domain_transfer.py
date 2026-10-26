@@ -11,6 +11,7 @@ import numpy as np
 from puncture_chart import PunctureChart
 from fast import FastEngine
 from kernel import Kernel
+from numerics import puncture_dissipation
 from trajectory import read_trajectory
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);p.add_argument('--output',type=Path);a=p.parse_args();temporary=None
 if a.output is None:temporary=tempfile.TemporaryDirectory(prefix='elliptic-domain-transfer-');a.output=Path(temporary.name)/'runs'
@@ -23,7 +24,7 @@ def run(name,extra,expect=True):
  return json.loads((a.output/name/'manifest.json').read_text())
 run('parent',['--n','129','--puncture-ko','.5','--t','4'])
 source=a.output/'parent/profile-0003.npz';bad=a.output/'parent/profile-0002.npz';cut=4;dt=.05/128
-base=['--n','125','--inner-radius',str(4/128),'--transfer-af-profile',str(source)]
+base=['--n','125','--inner-radius',str(4/128),'--transfer-af-profile',str(source),'--puncture-ko','.5','--puncture-ko-inner-width','.03']
 full=run('full',base+['--t',str(4+40*dt)])
 run('first',base+['--t',str(4+20*dt)])
 run('resumed',base+['--t',str(4+40*dt),'--resume',str(a.output/'first/checkpoint.npz')])
@@ -37,7 +38,7 @@ with np.load(a.output/'full/checkpoint.npz',allow_pickle=False) as x,np.load(a.o
 opts=SimpleNamespace(**full['arguments']);ev=PunctureChart(opts);expected=ev.rhs(state,accepted=True)
 engine=FastEngine(ev,8,a.fast_library);got,_=engine.rhs(state);engine.close()
 np.testing.assert_allclose(got,expected,atol=2e-10,rtol=2e-11)
-filtered_opts=SimpleNamespace(**vars(opts));filtered_opts.puncture_ko=.5
+filtered_opts=SimpleNamespace(**vars(opts));filtered_opts.puncture_ko=.5;filtered_opts.puncture_ko_inner_width=.06
 filtered=PunctureChart(filtered_opts);filtered_rate=filtered.rhs(state)
 filtered_engine=FastEngine(filtered,8,a.fast_library);filtered_got,_=filtered_engine.rhs(state)
 np.testing.assert_allclose(filtered_got,filtered_rate,atol=2e-10,rtol=2e-11);filtered_engine.close()
@@ -48,7 +49,8 @@ xi=1-.25*(1-r*r)**4;O=(1-r*r)/2;A=(1+r*r)/2
 S[:,6]-=2*xi[:-1]*alpha[:-1]*geom[:-1,6];S[:,6]+=(1-r[:-1]**2)**4*r[:-1]**2*geom[:-1,6]/A[:-1]
 native=R+S/O[:-1,None]
 chart_d,_=ev.op.derivatives(state,np.ones(8));chart_adv=ev.op.advection_derivative(state,np.ones(8),beta)
-centered=expected-beta[:,None]*(chart_adv-chart_d);centered[-1,6]=0
+centered=expected-beta[:,None]*(chart_adv-chart_d)
+centered-=puncture_dissipation(state,r,ev.h,.5,inner_width=.03);centered[-1,6]=0
 physical=centered.copy();physical[:,0]*=chi;physical[:,6]*=alpha
 for field in [2,3,4]:physical[:,field]*=ev.refs['w'][:,0]
 error=float(max(abs(physical[:-1]-native).ravel()));assert error<2e-10,error

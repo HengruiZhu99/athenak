@@ -152,7 +152,7 @@ class PunctureChart(Evolution):
                 result[0,5]-=self.args.kappa1*state[0,5]
         if self.args.advection=='upwind':result+=beta[:,None]*(self.op.advection_derivative(state,np.ones(8),beta)-self.chart_first)
         if getattr(self.args,'puncture_ko',0.):
-            diss=puncture_dissipation(state,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius)
+            diss=puncture_dissipation(state,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius,inner_width=getattr(self.args,'puncture_ko_inner_width',0.))
             if getattr(self.args,'radial_operator','fd')=='sbp63':diss/=self.op.norm[:,None]
             result+=diss
         result[:,1]=0.;result[:,7]=0.;result[-1,6]=0.

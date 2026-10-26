@@ -417,6 +417,7 @@ def main():
     p.add_argument('--puncture-chart',action='store_true')
     p.add_argument('--puncture-ko',type=float,default=0.)
     p.add_argument('--puncture-ko-radius',type=float,default=.8)
+    p.add_argument('--puncture-ko-inner-width',type=float,default=0.)
     p.add_argument('--initial-data',choices=['minkowski','wormhole','trumpet'],default='minkowski')
     p.add_argument('--mass',type=float,default=.1)
     p.add_argument('--initial-quadrature-order',type=int,choices=[64,96,128,192],default=96)
@@ -466,13 +467,13 @@ def main():
     p.add_argument('--report-dt',type=float,default=.1);p.add_argument('--resume',type=Path)
     p.add_argument('--transfer-af-profile',type=Path)
     args=p.parse_args()
-    numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude,args.gauge_corner_sat,args.mass,args.puncture_ko,args.puncture_ko_radius,args.slicing_scale,args.puncture_lapse_power,args.inner_radius]
+    numeric=[args.cfl,args.t,args.amplitude,args.center,args.pulse_width,args.kappa1,args.kappa2,args.eta,args.slicing,args.report_dt,args.origin_ko,args.origin_ko_radius,args.lapse_restoring,args.scalar_amplitude,args.initial_tolerance,args.perturbation_amplitude,args.gauge_corner_sat,args.mass,args.puncture_ko,args.puncture_ko_radius,args.puncture_ko_inner_width,args.slicing_scale,args.puncture_lapse_power,args.inner_radius]
     if not all(np.isfinite(x) for x in numeric):raise ValueError('Nonfinite input')
     if (args.n<16 or args.cfl<=0 or args.t<0 or args.pulse_width<=0 or not 0<=args.center<1
         or args.report_dt<=0 or args.origin_ko<0 or not 0<args.origin_ko_radius<=.75
         or args.kappa1<0 or args.eta<0 or args.slicing<0 or args.lapse_restoring<0
         or args.initial_tolerance<=0 or args.gauge_corner_sat<0 or args.mass<=0 or args.puncture_ko<0
-        or not 0<args.puncture_ko_radius<.95 or args.slicing_scale<=0 or args.puncture_lapse_power<0 or not 0<=args.inner_radius<1):raise ValueError('Invalid input')
+        or not 0<=args.puncture_ko_inner_width<1 or not 0<args.puncture_ko_radius<.95 or args.slicing_scale<=0 or args.puncture_lapse_power<0 or not 0<=args.inner_radius<1):raise ValueError('Invalid input')
     if args.lapse_restoring_profile=='physical-local' and (args.slicing_family not in ('linear','rational') or args.lapse_reference!='minkowski'):
         raise ValueError('Local restoring requires linear/rational slicing with the Minkowski lapse reference')
     transfer_requested=args.transfer_af_profile is not None
@@ -498,6 +499,7 @@ def main():
         raise ValueError('The SBP prototype requires a Python puncture evolution and centered transport')
     if args.puncture_boundary=='gauge-robin' and (not args.puncture or args.puncture_chart or args.radial_operator!='sbp63'):
         raise ValueError('Incoming-gauge Robin SAT requires the finite-cutoff SBP puncture path')
+    if args.puncture_ko_inner_width and not (args.inner_radius>0 and args.puncture_chart):raise ValueError('Inner KO taper requires a positive-cutoff AF-reference chart')
     if args.puncture_ko and not (args.puncture_chart or (args.puncture and args.radial_operator=='sbp63')):
         raise ValueError('Puncture dissipation requires an AF chart or finite-cutoff SBP path')
     if args.puncture and (args.backend!='spherical-g1' or args.origin_grid or args.origin_variables or args.origin_ko):
@@ -647,7 +649,7 @@ def main():
         with np.load(args.resume,allow_pickle=False) as z:
             old=json.loads(str(z['metadata']))
             if old['binding']!=binding:raise ValueError('Checkpoint source/library binding mismatch')
-            for key in ('transfer_af_profile','compensated_update','subtract_local','n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','initial_data','mass','initial_quadrature_order'):
+            for key in ('transfer_af_profile','compensated_update','subtract_local','n','cfl','kappa1','kappa2','damping_form','eta','slicing','slicing_family','slicing_scale','lapse_background_source','lapse_reference','lapse_variable','metric_variable','inner_radius','theta','width','radial_operator','puncture_boundary','puncture_lapse_power','endpoint','scri_sat','regularity_sat','lapse_restoring','lapse_restoring_form','lapse_restoring_profile','backend','quadrature_width','elliptic_quadrature','elliptic_method','elliptic_refinements','elliptic_bias','origin_ko','origin_ko_radius','scalar','scalar_amplitude','initial_tolerance','initial_precision','initial_lapse','origin_variables','origin_grid','perturbation','perturbation_amplitude','seed','gauge_corner_sat','advection','puncture','puncture_chart','puncture_ko','puncture_ko_radius','puncture_ko_inner_width','initial_data','mass','initial_quadrature_order'):
                 if old['arguments'][key]!=manifest['arguments'][key]:raise ValueError('Checkpoint input mismatch: '+key)
             q=z['q'].copy();t=float(z['t']);step=int(z['step'])
             if args.compensated_update:

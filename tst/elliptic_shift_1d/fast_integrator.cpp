@@ -23,7 +23,7 @@ struct Engine {
       const double* D1,const double* D2,const int* qi,const double* qwt,
       const int* al,const double* alw,const int* ar,const double* arw,const double* p):n(N),nf(F),w(W),qw(QW),h(rr[1]-rr[0]),r(rr,rr+N),
       d1(D1,D1+N*W),d2(D2,D2+N*W),qweights(qwt,qwt+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
-      params(p,p+28),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
+      params(p,p+29),index(ix,ix+N*W),qindex(qi,qi+((rr[0]==0||p[12]!=0)?N-1:N)*QW),
       aleft(al,al+N*W),aright(ar,ar+N*W),awleft(alw,alw+N*W),awright(arw,arw+N*W) {
     for(Vec* a:{&d,&dd,&R,&S,&z,&k1,&k2,&k3,&k4,&stage})a->resize(n*nf);
     for(Vec* a:{&beta,&v,&phase,&U,&akr})a->resize(n);
@@ -360,6 +360,10 @@ struct Engine {
         std::fill(z.begin(),z.end(),0);
         for(int i=1;i<n-3;i++) {
           double midpoint=(r[i]+r[i+3])/2,taper=std::pow(std::max(1-midpoint*midpoint/(params[26]*params[26]),0.),6);
+          if(params[28]!=0) {
+            double distance=midpoint-r[0],fraction=distance/(params[28]+distance);
+            double a=std::pow(fraction,6),b=std::pow(1-fraction,6);taper*=a/(a+b);
+          }
           for(int f=0;f<nf;f++) {
             double anchor=state[i*nf+f];
             double third=3*(state[(i+1)*nf+f]-anchor)-3*(state[(i+2)*nf+f]-anchor)+(state[(i+3)*nf+f]-anchor);
@@ -401,7 +405,7 @@ struct Engine {
   }
 };
 extern "C" {
-int spherical_fast_abi(){return 30;}
+int spherical_fast_abi(){return 31;}
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;
   const int size=e.n*(2*bandwidth+1);e.ode_lu.assign(lu,lu+size);e.ode_matrix.assign(matrix,matrix+size);

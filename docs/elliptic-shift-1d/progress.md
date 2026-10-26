@@ -2,6 +2,21 @@
 
 This goal remains active and incomplete. No production merge is authorized.
 
+## Boundary consistency and variable-conditioning controls
+
+API31 and47 test groups pass. A fixed-width nonnegative inner KO weight
+raises its finite-cutoff first-active-row consistency from h2 to h8, with
+negative filter energy and native/compiled/restart checks retained. The pilot
+errors decrease but remain unaccepted. An independent exact CMC-data
+comparison shows that AF-scaled curvature variables have much larger cutoff
+constraint errors than physical curvature with a trumpet metric chart; this
+is a conditioning diagnosis, not an evolved or projected solution.
+
+The finest pulse arithmetic studies finish at N8192. Subtracted derivatives
+restore physical-field orders5.00 bulk and4.20 endpoint through1. Accepted
+constraints still encounter a finest floor, reduced substantially by Kahan
+updates. Independent time/solve controls and longer trajectories are active.
+
 ## Causal-domain implementation and current failed controls
 
 API30 and46 CTest groups pass. Exact retained AF fields, native finite-left

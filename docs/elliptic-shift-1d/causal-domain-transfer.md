@@ -40,3 +40,30 @@ runs keep all characteristics outward but develop constraint errors at the
 left closure. Their dissipation/boundary consistency still needs repair and
 independent cut-location/time/solve/convergence studies. No transferred
 trajectory is a successful wormhole-to-trumpet result.
+
+## Inner dissipation consistency (API31)
+
+At a finite cutoff, the truncated -B^T W B matrix has an h^2 first-active-row
+source even for a smooth cubic field. Its outer taper remains nonzero there.
+The new selectable fixed physical inner width L multiplies W by
+
+    d^6/(L^6+d^6), d=third-difference midpoint-r_min.
+
+It retains nonnegative weights and negative cell-energy contribution. It
+changes the first active-row consistency from h^2 to h^8, independently
+verified with orders1.97/1.99 versus7.97/7.99. It introduces no parity, new
+physical boundary data or field reset. The default L=0 preserves old runs.
+All47 tests pass (`evidence/ctest-v40.log`); the updated tapered-filter copy/
+native-rate/restart test and final-report analysis guards pass separately.
+Accepted final reports augment existing stage extrema without discarding
+failed-stage manifest peaks or promoting sparse sampled diagnostics.
+
+The L=.03 pilot and isolated no-KO/untapered controls remain unaccepted.
+The taper reduces constraint errors but does not by itself establish the
+required convergence. A separate exact CMC-data diagnostic isolates severe
+conditioning in the AF curvature scalings after a trumpet forms. At1009
+retained points, the same analytic physical data give cutoff H/M errors
+.00173/.00304 in the AF-scaled chart, versus1.28e-8/3.25e-12 with physical
+curvature variables and a positive trumpet metric chart. No evolution or
+constraint projection enters that comparison; it motivates a variable-change
+control, not a claimed cure.

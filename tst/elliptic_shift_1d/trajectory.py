@@ -27,15 +27,9 @@ def read_trajectory(folder,seen=None,allow_domain_transfer=False):
     if rows and local and local[0]['t']<rows[-1]['t']-1e-10:raise ValueError('Nonmonotonic continuation time')
     rows=rows+local
     for key,value in m.get('all_RK_stages',{}).items():stages[key]=(min if key.startswith('min_') else max)(stages.get(key,value),value)
-    # k1 samples every accepted step input, but the last updated state has no
-    # subsequent k1. Include its independent report (and any other reports).
-    # Never promote old, sparsely sampled histories to all-step coverage.
-    if 'max_accepted_H_rms' in m.get('all_RK_stages',{}):
-        for name in ['H','M','Theta','Z']:
-            for suffix,report_suffix in [('rms','rms'),('bulk','bulk_max'),('endpoint','endpoint_max')]:
-                key='max_accepted_'+name+'_'+suffix
-                if key not in stages:continue
-                stages[key]=max(stages[key],max(row[name+'_'+report_suffix] for row in local))
+    # Include accepted report states (notably the last state after the final
+    # k4) without discarding failed-stage extrema present only in the manifest.
+    merge_report_extrema(stages,local)
     segments.append(dict(folder=str(folder),status=m['status'],time=m.get('time'),
         scope='retained-domain-only; original full AF prefix required separately' if transition else 'full-trajectory',
         domain_transfer_parent=transition,
@@ -57,7 +51,13 @@ def prefix_stage_extrema(rows,until):
     for row in selected:
         for key,value in row.get('all_RK_stages',{}).items():result[key]=(min if key.startswith('min_') else max)(result.get(key,value),value)
     if 'max_accepted_H_rms' not in result:raise ValueError('Prefix lacks every-accepted-step constraint instrumentation')
-    for row in selected:
+    merge_report_extrema(result,selected)
+    return result
+
+
+def merge_report_extrema(result,rows):
+    """Augment only already instrumented keys; never upgrade sparse data."""
+    for row in rows:
         for name in ['H','M','Theta','Z']:
             for suffix,report_suffix in [('rms','rms'),('bulk','bulk_max'),('endpoint','endpoint_max')]:
                 key='max_accepted_'+name+'_'+suffix
@@ -65,5 +65,6 @@ def prefix_stage_extrema(rows,until):
         for key,field in [('max_scri_pole','scri_pole'),('max_lapse_pole','scri_lapse_pole'),
           ('max_regularity_trace','regularity_trace_max'),('max_scri_null','scri_null'),
           ('max_scri_clock','scri_clock'),('max_Bondi_nonaffinity','Bondi_frame_nonaffinity')]:
-            if field in row:result[key]=max(result.get(key,0),abs(row[field]))
-    return result
+            if key in result and field in row:result[key]=max(result[key],abs(row[field]))
+        for key in ['min_alpha','min_chi']:
+            if key in result and key in row:result[key]=min(result[key],row[key])

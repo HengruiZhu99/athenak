@@ -1,0 +1,9 @@
+{
+  "created_UTC": "2026-10-26T12:20:46.442588+00:00",
+  "scope": "Same causal exact-subset transfer pilot with fixed physical inner KO taper d^6/(L^6+d^6), L=.03. Preserves -B^T W B negative energy and raises first active-row boundary consistency from h2 to h8. Three grids plus isolated no-KO/untapered middle-grid controls; all old full-prefix, boundary, physical/convergence gates and failures retained. No inference of full Z4c stability from the filter test.",
+  "hypothesis": "Untapered truncated B^TWB filter produces h2 source at the first active finite-cutoff column. Two spatial derivatives in constraint diagnostics can expose poor boundary convergence. First pilot constraints peak at the cutoff. A fixed-width sixth-power weight may remove this consistency defect; it is not established as the sole cause of the nonlinear errors.",
+  "weight": "W_outer times d^6/(L^6+d^6), d=third-difference midpoint minus r_min. Same negative matrix form; first physical node remains unfiltered and is evolved by physical equations. No parity, AF ODE, field/constraint reset or Omega floor.",
+  "input": "inputs/elliptic_shift_1d/wormhole-causal-KO-inner-v1.json",
+  "checks": "Independent polynomial boundary orders~2 and~8; negative energy; compiled/Python cutoff rates including tapered filter, exact copy and strict restart; generic analysis requires explicit retained-only scope.",
+  "acceptance": "Existing thresholds unchanged. Original full AF prefix remains separately required, including the active fine N4097/8193 study. All pilot outcomes are unaccepted until full convergence/time/solve/cut/taper/isolation controls pass."
+}

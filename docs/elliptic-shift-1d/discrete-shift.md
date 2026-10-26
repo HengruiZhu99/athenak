@@ -121,3 +121,14 @@ the existing3.0 gate. No admission follows from the small finest pole or
 constraints. The earlier source's subtracted N1024/2048/4096 pulse matches
 the previous trajectory behavior; derivative subtraction alone has only
 slightly reduced the N4096 accepted constraint floor.
+
+## Completed finest arithmetic component checks
+
+Through t1 at N2048/4096/8192, constant-nullspace derivatives recover
+common-time physical field peak/RMS orders5.000/4.997 in the bulk and
+4.201/4.209 near scri. The compensated-update version agrees with the same
+orders. Accepted H/M RMS constraints still have a finest upturn: subtraction
+alone gives9.99e-10/7.63e-10 at8192; Kahan gives7.88e-11/5.68e-11, a
+substantial arithmetic reduction but still a constraint floor. Independent
+time/solve controls and longer trajectories remain required. No whole-result
+admission is made from recovered field convergence alone.

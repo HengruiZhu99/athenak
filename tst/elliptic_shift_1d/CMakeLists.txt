@@ -116,3 +116,6 @@ add_test(NAME causal_domain_transfer_exact_fields_native_and_strict_restart
 
 add_test(NAME prefix_stage_scope_and_missing_coverage_guards
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_trajectory_scope.py)
+
+add_test(NAME finite_cutoff_KO_boundary_consistency_and_negative_energy
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_ko_inner_consistency.py)

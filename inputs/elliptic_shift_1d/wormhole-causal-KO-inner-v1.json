@@ -1,0 +1,64 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": true,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 10,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 0.25,
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner",
+    "inner_radius": 0.015625,
+    "puncture_ko_inner_width": 0.03
+  },
+  "cases": [
+    {
+      "name": "parent-n513",
+      "arguments": {
+        "n": 505,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n513/profile-0033.npz"
+      }
+    },
+    {
+      "name": "parent-n1025",
+      "arguments": {
+        "n": 1009,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n1025/profile-0033.npz"
+      }
+    },
+    {
+      "name": "parent-n2049",
+      "arguments": {
+        "n": 2017,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n2049/profile-0033.npz"
+      }
+    },
+    {
+      "name": "no-ko-parent-n1025",
+      "arguments": {
+        "n": 1009,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n1025/profile-0033.npz",
+        "puncture_ko": 0.0
+      }
+    },
+    {
+      "name": "untapered-parent-n1025",
+      "arguments": {
+        "n": 1009,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n1025/profile-0033.npz",
+        "puncture_ko_inner_width": 0.0
+      }
+    }
+  ],
+  "scope": "Same causal exact-subset transfer pilot with fixed physical inner KO taper d^6/(L^6+d^6), L=.03. Preserves -B^T W B negative energy and raises first active-row boundary consistency from h2 to h8. Three grids plus isolated no-KO/untapered middle-grid controls; all old full-prefix, boundary, physical/convergence gates and failures retained. No inference of full Z4c stability from the filter test."
+}

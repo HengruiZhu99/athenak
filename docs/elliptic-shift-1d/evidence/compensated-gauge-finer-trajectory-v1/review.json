@@ -1,0 +1,586 @@
+{
+  "scope": "Physical fields on the explicitly recorded time window at common exact saved times; no temporal interpolation. Nested nodal grids use exact restriction; regular half-cell grids use degree8 spatial interpolation. AF node has zero radial norm weight and is not a physical metric sample. Field errors supplement all-stage safety and every-accepted-step constraints.",
+  "analysis_window": {
+    "start": 0.0,
+    "end": 1.0,
+    "retained_only": false,
+    "actual_trajectory_ends": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "stage_scope": "Entire completed trajectory"
+  },
+  "interval": 0.1,
+  "times": [
+    0.0,
+    0.1,
+    0.2,
+    0.30000000000000004,
+    0.4,
+    0.5,
+    0.6000000000000001,
+    0.7000000000000001,
+    0.8,
+    0.9,
+    1.0
+  ],
+  "h": [
+    0.0004884004884004884,
+    0.0002441704309608107,
+    0.00012207776353537203
+  ],
+  "regions": {
+    "bulk": {
+      "sampled_differences": [
+        [
+          3.898655975062653e-18,
+          4.2068456198946434e-11,
+          1.9902452198264336e-10,
+          3.482443697566627e-10,
+          3.451511792603219e-10,
+          2.809889724749837e-10,
+          2.2902627742530148e-10,
+          1.7258506204675114e-10,
+          1.1629001477860743e-10,
+          6.183969590046942e-11,
+          2.1467029631375793e-11
+        ],
+        [
+          3.994474121769334e-18,
+          1.2787483916634862e-12,
+          6.199744778580227e-12,
+          1.0872884848938007e-11,
+          1.081406125094897e-11,
+          8.805923332768242e-12,
+          7.176386467415529e-12,
+          5.408588142054682e-12,
+          3.640091381967211e-12,
+          1.934704824786105e-12,
+          6.674434561976417e-13
+        ]
+      ],
+      "maximum_differences": [
+        3.482443697566627e-10,
+        1.0872884848938007e-11
+      ],
+      "maximum_order": 5.000398369483584,
+      "time_RMS_differences": [
+        2.1460553749187744e-10,
+        6.713786569594456e-12
+      ],
+      "time_RMS_order": 4.997522323912481,
+      "sampled_orders": [
+        -0.03515114615282375,
+        5.039033041166174,
+        5.003698024696188,
+        5.000398369483584,
+        4.995353947617515,
+        4.995001350199676,
+        4.995217635773328,
+        4.995017675410304,
+        4.996714389013325,
+        4.997453364308688,
+        5.006437150643524
+      ]
+    },
+    "endpoint": {
+      "sampled_differences": [
+        [
+          0.0,
+          0.0,
+          2.6839771118436826e-82,
+          1.1879336956194675e-24,
+          2.536217206462483e-13,
+          2.208073859303463e-10,
+          2.3333022866727037e-11,
+          1.1326509225265538e-12,
+          1.4895547762343304e-13,
+          1.0271390441906384e-13,
+          1.1664384910300665e-11
+        ],
+        [
+          0.0,
+          0.0,
+          4.230286288056831e-84,
+          1.917394401975948e-26,
+          4.163790789083007e-15,
+          1.2003361662332968e-11,
+          2.67150884518041e-13,
+          1.8251934969748175e-14,
+          2.7428115323119267e-15,
+          6.927232320213189e-15,
+          3.387112324283728e-13
+        ]
+      ],
+      "maximum_differences": [
+        2.208073859303463e-10,
+        1.2003361662332968e-11
+      ],
+      "maximum_order": 4.200516860369504,
+      "time_RMS_differences": [
+        7.026360404585712e-11,
+        3.797496931153426e-12
+      ],
+      "time_RMS_order": 4.208894325991812,
+      "sampled_orders": [
+        null,
+        null,
+        5.986410349795559,
+        5.9521063578583195,
+        5.927584098296759,
+        4.200516860369504,
+        6.447432375655087,
+        5.954452645632173,
+        5.762057408694181,
+        3.8894987390834395,
+        5.104997935226665
+      ]
+    }
+  },
+  "missing_requested_ticks": {
+    "2048": [],
+    "4096": [],
+    "8192": []
+  },
+  "coverage_note": "Only common reported-time matches within1e-10 are compared. Older cumulative-clock frames can miss a requested tick by one RK step; none are shifted or interpolated in time. The integer-step clock repair is a separate source-bound change.",
+  "runs": [
+    {
+      "n": 2048,
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "372312867dad106370bb872c3cfa8353af783e0e4cc9ac9822406dd614871a27",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "c8cb14cc85c84f93558c01054cc76f67ba129da2dba834a7d2657060c6677ed7",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/compensated_update.py": "1fb049ca86c5f22a43a9138da751eaca60e0524106df5ec4fc56d0c39ca5cca1",
+          "tst/elliptic_shift_1d/shift_ode.py": "a5ea959841a42aef022dff441449c1623b9c1bf0b81d02ac781d4de5afb5073f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "8c21a006f00ac472a9106616d1e2b4d434408f4e737281d8939cac1c6ddffb10",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "eaa74fabaf701f2773615ec6ee3bf707368005fd69540b15c9b7785e00f3d6bb",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "5786b38219dd8f1e0ef51ea1c27db27526ed6f212f6a7733fc982f6c23b32489"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "62f2e988e0dc8d9eff584d7f99a87201be185f7e179ede194b31c10256e88f20",
+          "history_sha256": "e7290de5550edb0e587972994c85bb00c30510cabce8a3c233800c825b68776f"
+        }
+      ],
+      "all_stage_extrema": {
+        "max_scri_pole": 1.493888380360575e-08,
+        "max_lapse_pole": 1.2883615370741933e-12,
+        "max_regularity_trace": 2.4742445592362827e-09,
+        "min_chi": 0.9433125450761687,
+        "min_alpha": 0.2877635352076413,
+        "max_H_rms": 6.887756962587378e-08,
+        "max_M_rms": 5.272192668205286e-09,
+        "max_Theta_rms": 1.6395739639582995e-12,
+        "max_Z_rms": 2.7524913848429394e-11,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 5.38484545842266e-09,
+        "max_accepted_H_rms": 1.2343931491874163e-09,
+        "max_accepted_M_rms": 1.913512247516379e-09,
+        "max_accepted_Theta_rms": 9.278187654672013e-13,
+        "max_accepted_Z_rms": 2.75246419335895e-11,
+        "max_accepted_H_bulk": 1.3618873779819296e-06,
+        "max_accepted_M_bulk": 5.608386964951555e-07,
+        "max_accepted_H_endpoint": 1.7047142551731976e-11,
+        "max_accepted_M_endpoint": 1.6816561611981973e-08,
+        "max_elliptic_discrete_residual": 2.84147705365001e-12
+      },
+      "selected_profiles": [
+        {
+          "t": 0.0,
+          "step": 0,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0001.npz",
+          "sha256": "867fc985ce2f3208ba87d826671478f8d75c3c4419d870394843d18c2a1a43fa"
+        },
+        {
+          "t": 0.1,
+          "step": 4095,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0002.npz",
+          "sha256": "2148935b47a7243dcd3b6a577a714fd35610141067b4b04a64865637529e66ce"
+        },
+        {
+          "t": 0.2,
+          "step": 8190,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0003.npz",
+          "sha256": "47be920d70eb6837711a2c7b51f9eacf9f4cdf7a717f285f028fea17a7664ed5"
+        },
+        {
+          "t": 0.3,
+          "step": 12285,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0004.npz",
+          "sha256": "679d03679ca8be992ec27c9bf173de9e0ec325c21392834b196009d8ee41073f"
+        },
+        {
+          "t": 0.4,
+          "step": 16380,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0005.npz",
+          "sha256": "638846eb0a3794b04357282927f7e95cd7290756e5a5c47faa928e389d76fdea"
+        },
+        {
+          "t": 0.5,
+          "step": 20475,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0006.npz",
+          "sha256": "e3092908d1ddfc4a083a796175db9c921467870ebc419a3869624a0038ab2d37"
+        },
+        {
+          "t": 0.6,
+          "step": 24570,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0007.npz",
+          "sha256": "686146dd43e7144330b124d3e2ee509016d7e7762a7cd7a8e295272df7407670"
+        },
+        {
+          "t": 0.7,
+          "step": 28665,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0008.npz",
+          "sha256": "6323262f01a78c36ac7224309bc4d12b8bd0f7f8440000459797684cf00e7f00"
+        },
+        {
+          "t": 0.8,
+          "step": 32760,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0009.npz",
+          "sha256": "c900f48f47ccc259ae826af880f42109751673289de5dde6f5e8c3ef8606ea1a"
+        },
+        {
+          "t": 0.9,
+          "step": 36855,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0010.npz",
+          "sha256": "c34ea7f4afc480f160ba465d0d5a540bc0ec6d93b0dd103395248211594f7c8c"
+        },
+        {
+          "t": 1.0,
+          "step": 40950,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048/profile-0011.npz",
+          "sha256": "e643cc51ffbd954d95a66f688741f17084bbbafc62798d733e83221877db3042"
+        }
+      ]
+    },
+    {
+      "n": 4096,
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "372312867dad106370bb872c3cfa8353af783e0e4cc9ac9822406dd614871a27",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "c8cb14cc85c84f93558c01054cc76f67ba129da2dba834a7d2657060c6677ed7",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/compensated_update.py": "1fb049ca86c5f22a43a9138da751eaca60e0524106df5ec4fc56d0c39ca5cca1",
+          "tst/elliptic_shift_1d/shift_ode.py": "a5ea959841a42aef022dff441449c1623b9c1bf0b81d02ac781d4de5afb5073f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "8c21a006f00ac472a9106616d1e2b4d434408f4e737281d8939cac1c6ddffb10",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "eaa74fabaf701f2773615ec6ee3bf707368005fd69540b15c9b7785e00f3d6bb",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "5786b38219dd8f1e0ef51ea1c27db27526ed6f212f6a7733fc982f6c23b32489"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "59ab52101e7fe872fa60908e4ec383b8c13083048461d62962eee6f7a319ac15",
+          "history_sha256": "195912ea228d3a7b85be9b1d8713362ce266a57bb1a94fc40c14c07dbced53a0"
+        }
+      ],
+      "all_stage_extrema": {
+        "max_scri_pole": 3.1083387252994754e-10,
+        "max_lapse_pole": 1.1768367565087016e-14,
+        "max_regularity_trace": 4.793900693078612e-11,
+        "min_chi": 0.9433124674311733,
+        "min_alpha": 0.2877625787700263,
+        "max_H_rms": 1.7202943915251495e-08,
+        "max_M_rms": 1.3121895009463817e-09,
+        "max_Theta_rms": 1.9635626648322884e-13,
+        "max_Z_rms": 5.666452743843046e-13,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.0379519466141574e-10,
+        "max_accepted_H_rms": 4.093012073627574e-11,
+        "max_accepted_M_rms": 6.095969084892019e-11,
+        "max_accepted_Theta_rms": 2.8834647395475957e-14,
+        "max_accepted_Z_rms": 5.66607147490781e-13,
+        "max_accepted_H_bulk": 4.090385630206583e-08,
+        "max_accepted_M_bulk": 1.6596074775998993e-08,
+        "max_accepted_H_endpoint": 8.118210964580541e-13,
+        "max_accepted_M_endpoint": 3.3809942866225295e-10,
+        "max_elliptic_discrete_residual": 6.25201279635945e-12
+      },
+      "selected_profiles": [
+        {
+          "t": 0.0,
+          "step": 0,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0001.npz",
+          "sha256": "2a8d49a4e346b8c107910061c9fe27e0a4cbb463af19fdb86df7acbf594bc336"
+        },
+        {
+          "t": 0.1,
+          "step": 8191,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0002.npz",
+          "sha256": "d057b4e69345b311d56e338ed1b4a31acc7f48b4e4d0e1be4b285fe5fd1978e3"
+        },
+        {
+          "t": 0.2,
+          "step": 16382,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0003.npz",
+          "sha256": "f9fbf9d7b7a9ae9f8a79d1112fe40910dbe40eb767cba1b97d67eaa9f932374a"
+        },
+        {
+          "t": 0.3,
+          "step": 24573,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0004.npz",
+          "sha256": "d69e035219c8179fb82196f83343a6c1172e743e2fe4a09e1e423be680500472"
+        },
+        {
+          "t": 0.4,
+          "step": 32764,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0005.npz",
+          "sha256": "b20aa9942ae9e01c49c977b92745e65965c0d2ff842e37dd2153bb31624b3ee8"
+        },
+        {
+          "t": 0.5,
+          "step": 40955,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0006.npz",
+          "sha256": "e9a2365149d19d844b4ed4564ece763cd17b9939ed9f6146c671e3749421a263"
+        },
+        {
+          "t": 0.6,
+          "step": 49146,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0007.npz",
+          "sha256": "7833529aded79bdbcde40833e196720e62001c1666783ccbc84f3ee0af73ef53"
+        },
+        {
+          "t": 0.7000000000000001,
+          "step": 57337,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0008.npz",
+          "sha256": "3cdb11a5d6a6881de200a8864f2f9a805c2fecf2dfb16bcbf1ca0dbd6a234584"
+        },
+        {
+          "t": 0.8,
+          "step": 65528,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0009.npz",
+          "sha256": "c899e3a1b9409d079018a9214f0156854bccd7d0c8bc861af34e2f57ec822842"
+        },
+        {
+          "t": 0.9,
+          "step": 73719,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0010.npz",
+          "sha256": "28ddf8961d085d854e25e2eabb4aaad4a2fa310a38ac9698f8355749d816e011"
+        },
+        {
+          "t": 1.0,
+          "step": 81910,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096/profile-0011.npz",
+          "sha256": "f2d3c7eeca33b21dfe72927744361a2773607a8e22e8e1cf16c2209b86bb7e4d"
+        }
+      ]
+    },
+    {
+      "n": 8192,
+      "binding": {
+        "source_sha256": {
+          "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+          "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+          "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+          "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+          "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+          "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+          "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+          "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+          "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+          "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+          "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+          "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+          "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+          "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+          "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+          "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+          "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+          "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+          "tst/elliptic_shift_1d/evolve.py": "372312867dad106370bb872c3cfa8353af783e0e4cc9ac9822406dd614871a27",
+          "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+          "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+          "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+          "tst/elliptic_shift_1d/gauge.py": "c8cb14cc85c84f93558c01054cc76f67ba129da2dba834a7d2657060c6677ed7",
+          "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+          "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+          "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+          "tst/elliptic_shift_1d/compensated_update.py": "1fb049ca86c5f22a43a9138da751eaca60e0524106df5ec4fc56d0c39ca5cca1",
+          "tst/elliptic_shift_1d/shift_ode.py": "a5ea959841a42aef022dff441449c1623b9c1bf0b81d02ac781d4de5afb5073f",
+          "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+          "tst/elliptic_shift_1d/fast.py": "8c21a006f00ac472a9106616d1e2b4d434408f4e737281d8939cac1c6ddffb10",
+          "tst/elliptic_shift_1d/fast_integrator.cpp": "eaa74fabaf701f2773615ec6ee3bf707368005fd69540b15c9b7785e00f3d6bb",
+          "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+          "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+        },
+        "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+        "fast_executable_sha256": "5786b38219dd8f1e0ef51ea1c27db27526ed6f212f6a7733fc982f6c23b32489"
+      },
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "4c8d067ae70ba58fd1ce84364840ce7f5a68854a05c3ad148691ae740cc5790b",
+          "history_sha256": "a97f35767184923ebda60a2a5607da541f6f2bb45b94b81b0249cced085f1137"
+        }
+      ],
+      "all_stage_extrema": {
+        "max_scri_pole": 5.260070157220298e-12,
+        "max_lapse_pole": 9.530554461790258e-17,
+        "max_regularity_trace": 7.923566316958564e-13,
+        "min_chi": 0.9433124480058247,
+        "min_alpha": 0.28776233985260613,
+        "max_H_rms": 4.300686472088715e-09,
+        "max_M_rms": 3.3071579176300223e-10,
+        "max_Theta_rms": 2.4484413002061007e-14,
+        "max_Z_rms": 3.937036283385158e-14,
+        "max_scri_null": 0.0,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.7275070263167436e-12,
+        "max_accepted_H_rms": 7.884440980289379e-11,
+        "max_accepted_M_rms": 5.683976294837201e-11,
+        "max_accepted_Theta_rms": 6.062133244380773e-15,
+        "max_accepted_Z_rms": 3.921957434912167e-14,
+        "max_accepted_H_bulk": 1.8833381076888145e-08,
+        "max_accepted_M_bulk": 1.172953437377e-08,
+        "max_accepted_H_endpoint": 4.240589433421316e-12,
+        "max_accepted_M_endpoint": 1.4803019920961447e-11,
+        "max_elliptic_discrete_residual": 1.2504788871048333e-11
+      },
+      "selected_profiles": [
+        {
+          "t": 0.0,
+          "step": 0,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0001.npz",
+          "sha256": "8644cd611da3ea6346a5c9bf915d35be39bfd45ad8e6534328b59dedc3adf2c3"
+        },
+        {
+          "t": 0.1,
+          "step": 16383,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0002.npz",
+          "sha256": "158f13fef9845a25eb9c94ec68ad4abca472681ce475d951a3ba53562842be2f"
+        },
+        {
+          "t": 0.2,
+          "step": 32766,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0003.npz",
+          "sha256": "00bf0d0b585d250050069c49baeea3baba2e470995187f66c1f5b7f20239c3ce"
+        },
+        {
+          "t": 0.3,
+          "step": 49149,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0004.npz",
+          "sha256": "59f54c4f9de951afe35241b2166ef229d6dad969c73dbe6e6d6f0a6c9aa4eb8f"
+        },
+        {
+          "t": 0.4,
+          "step": 65532,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0005.npz",
+          "sha256": "236003046dd5ed5983fd3ca79251a16e62853c3214f40f324736ae45e36d724b"
+        },
+        {
+          "t": 0.5,
+          "step": 81915,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0006.npz",
+          "sha256": "764feb243ba1d599a251074122abc4c73b30be6a5268127b8e71ad82a1580806"
+        },
+        {
+          "t": 0.6,
+          "step": 98298,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0007.npz",
+          "sha256": "04912ead250d3b56707143a2e4cde33b0c9accb4657a8b8923562c073499c766"
+        },
+        {
+          "t": 0.7,
+          "step": 114681,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0008.npz",
+          "sha256": "4de1825aacb4edde9490994fe69e38aee39e0071a4d994b14affb3335759da7f"
+        },
+        {
+          "t": 0.8,
+          "step": 131064,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0009.npz",
+          "sha256": "dca27b51b368ab3603b772c7c65dadaed0d99fc174901c97bc53fd4b1223f268"
+        },
+        {
+          "t": 0.9,
+          "step": 147447,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0010.npz",
+          "sha256": "549fad951aae58b8458f08291ea1c4e7991af3ea87ccd4144a71b01dbcfe8914"
+        },
+        {
+          "t": 1.0,
+          "step": 163830,
+          "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192/profile-0011.npz",
+          "sha256": "685fa711ced99a7beddd021fa62104ff06fcb32280fd7d247fa93b7ebe0581d7"
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "analyze_trajectory_convergence.py": "9e10c235383899324f4a9508c43a521da7cc102334ebb3277b258cb1f2038beb",
+    "analyze_principal_controls.py": "4b43eac04887dc49b0fc5da49f3214553a138ae8ade3eaf73da20e961ec11223",
+    "trajectory.py": "79a6b836d335e1ff94b2f7699ca67947d04b09512c27643225c1a94ab17a3cf9"
+  }
+}
