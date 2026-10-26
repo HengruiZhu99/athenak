@@ -1,0 +1,127 @@
+% Independent final audit by the scri-linearization agent.
+\section{Independent audit of the final source and quotient-phase closure}
+\label{sec:independent-final-source-phase-audit}
+
+The files audited are the current assembled linear theorem, sourced CEFE
+reconstruction, phase-quotient audit, original-gauge ball reduction,
+subsidiary conormal-phase repair, and completion certificate.  The audit
+checks their interfaces and the source, compatibility, derivative-count,
+and kernel arguments.  It does not repeat the independently recorded
+rational common-energy computation.  The conclusion is limited to the
+explicit compatible finite quotient graph phase in those files.
+
+\paragraph{Traceful source and conformal identities.}
+The physical conservation normalization is correct.  If
+$\widetilde R_{ab}=\Omega^2r_{ab}$ and
+$\ell=(r-g\operatorname{tr}r/6)/2$, then
+$r-g\operatorname{tr}r/2=2\ell-2g\operatorname{tr}\ell$ and
+\[
+ \widetilde\nabla^a\bigl[\Omega^2(r_{ab}
+ -g_{ab}\operatorname{tr}r/2)\bigr]
+ =2\Omega^4(\nabla^a\ell_{ab}-\nabla_b\operatorname{tr}\ell)
+ -6\Omega^3\Sigma_b\operatorname{tr}\ell.
+\]
+Thus the displayed traceful conservation equation, including its factor
+three, is the physical contracted Bianchi identity.  It is essential that
+this follows from the closed subsidiary $H,M$ evolution; arbitrary smooth
+external $r$ would not suffice.  Its boundary trace restriction agrees with
+the leading subsidiary coefficient relation and is not an extra demand
+that the bulk differential constraints vanish.
+
+The sourced Hessian, scalar, curl, and divergence equations have the stated
+normalizations.  In particular, differentiating
+$2\Omega s-\Sigma^2=0$ and substituting the Hessian gives exactly
+$\nabla s=-L\Sigma+\Omega^2\ell\Sigma$.
+Tracing the Hessian gives
+$\Box\Omega=4s-R\Omega/6+\Omega^3\operatorname{tr}\ell$.
+The Cotton connection calculation gives the stated regular source $J$;
+no trace-free-matter hypothesis was silently used.
+
+\paragraph{Particular-metric construction and initial equivalence.}
+The mixed wave orders are consistent: $\delta L$ at $H^4$ needs its wave
+forcing at $H^3$; the second metric derivatives in that forcing have this
+order when $\delta g\in H^5$.  Metric forcing is $H^4$, scalar-$s$
+forcing is $H^4$, and the conformal-factor forcing is $H^5$ in the common
+contracted-Christoffel gauge.  This last gauge reduction is necessary for
+$\omega\in H^6$ and the subsequent bounded fixed-$\Omega$ adjustment.
+
+The interior comparison with conserved sourced physical Einstein is a
+legitimate way to prove the sourced CEFE zero quantities, provided the
+initial tuple has the full sourced curvature/Hessian/gauge compatibility
+listed in the phase.  Such compatibility fixes the Schouten and scalar
+normal jets; they are not arbitrary auxiliary Cauchy functions.  The four
+physical gauge values and four sourced Einstein constraints provide the
+zero Lorenz-gauge data.  Compatible initial Weyl data identify the genuine
+and independently evolved Bianchi fields.  The backward domain of an
+interior point does not reach scri in finite time because the outward
+backward glancing speed is $O(\Omega^2)$.  Hence this comparison does not
+import unspecified exterior data or an unproved traceful-matter CEFE
+subsidiary theorem.
+
+There is no requirement $H=M=0$ in this argument: the prescribed Einstein
+source has $G_{nn}=H/2$, $G_{ni}=-M_i$, and the specified spatial stress.
+Initial data compactly supported away from scri give a nontrivial
+infinite-dimensional off-constraint compatible class; the phase is not
+merely vacuum data renamed as a sourced system.
+
+\paragraph{Finite source and graph budgets.}
+The repaired phase includes conormal derivatives initially and cutoff
+Cartesian generators in the interior.  This removes both the earlier
+time-only normal-embedding circularity and the missing interior Sobolev
+orders.  Radial conormal commutation cancels the apparent
+$1/\Omega$ coefficient derivative as displayed in the repair; it does not
+assume cap estimates that would fail uniformly.
+
+The interfaces $128\to32\to20\to12$ are consistent with the supplied
+finite source estimates.  In particular the four-lift Hardy argument uses
+four ordinary normal derivatives of the complete pole numerator, hence
+only four ordinary normal derivatives of $S_P$, five of metric/lapse,
+and six of the displacement.  The additional time/angular trace
+derivatives are charged to the joint budget.  Reserving eight extra joint
+orders, rather than the earlier optimistic six, fits $12+8=20$.
+No ordinary seventh derivative of the fractional subsidiary branch is
+invoked.  The algebraic wave recovery uses at most $2p+m=11$ joint orders
+for $p\le3$, $m\le5$, with the supplied source weights
+$F_3/\Omega^2$.  These bounds control the asserted raw metric $H^4$,
+curvature $H^3$, and combined pole RHS $H^2$ classes.
+
+The particular pole and lapse residual estimates depend on actual
+compatible time jets.  Replacing them by uncoupled powers of the
+homogeneous gauge generator would be incorrect.  The current affine
+hierarchy explicitly avoids that replacement.
+
+\paragraph{Closed phase and kernel.}
+The quotient lemma is mathematically sufficient for a same-space result;
+a canonical bounded raw-to-CEFE inverse is not needed.  Each compatibility
+condition must be read in the declared extended norm: multiplication by
+$\Omega$, geometric differential identities, the finite trace jets, and
+the affine generator identities are continuous distributional/trace
+conditions there.  Completing the compatible core therefore preserves
+them as closed conditions.  The separately proved cascade estimates
+preserve this completed phase, not merely a weaker raw output norm.
+
+A zero raw initial state forces zero subsidiary and initial Weyl data by
+their geometric identification.  Their uniqueness makes the total
+reconstructed physical metric linearized-flat.  On the simply connected
+domain it is pure physical gauge.  Vanishing initial metric and extrinsic
+curvature give the stated hyperbolic KID equations.  The Hessian equation
+has four solutions, and the residual spatial Killing field has six; these
+are precisely the ten physically trivial Minkowski Killing generators.
+Subtracting that global Killing field leaves zero displacement and normal
+gauge Cauchy values.  Vanishing raw shift/lapse then gives zero initial
+time data.  The established homogeneous gauge uniqueness proves kernel
+invariance rather than assuming the desired raw uniqueness theorem.
+The conformal Korn estimate and the pole-free identity for $f$ place this
+extracted potential in the needed gauge uniqueness class.
+
+\paragraph{Conclusion of this audit.}
+No additional concrete source inconsistency, forbidden bulk constraint
+projection, contradictory boundary mode, or derivative-count obstruction
+was found in the repaired finite quotient-phase argument.  The earlier
+counterexamples concern different lapse closures or missing clock data
+and do not contradict this specified original-reference, clock-closed
+formulation.  The conclusion is a linear theorem on
+$\mathcal E/\ker\mathfrak R$, assuming the previously audited subsidiary,
+DN, and weak-wave lemmas recorded in the accompanying source files.
+It is not norm equivalence with arbitrary raw $H^4/H^3$ data, not a
+nonlinear theorem, and not numerical stability of an implementation.

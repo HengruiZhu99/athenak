@@ -1,0 +1,184 @@
+% Independent analytical audit.  This is an input fragment, not a main file.
+\section{Exact null-halfspace gauge counterexamples}
+\label{sec:gauge-counterexamples}
+
+These calculations concern the conformal-harmonic lapse candidate, including
+its constant Bona--Masso variant.  They do not establish an instability of the
+original reference lapse, whose pole coefficients are different.  They are
+exact for the null-halfspace Minkowski model specified below.  Transferring a
+boundary-model obstruction to the original CMC ball requires the localization
+argument described at the end of this section.
+
+\subsection{Exact flat background and a constraint-free scalar sector}
+
+Let $x>0$ be the inward normal coordinate and set
+\[
+ \bar g=dx^2+2\,dt\,dx+dy^2+dz^2,\qquad \Omega=x,
+ \qquad \alpha_*=1,\quad \beta_*^x=1.
+\]
+The inverse conformal metric has $\bar g^{tt}=-1$,
+$\bar g^{tx}=1$, and $\bar g^{xx}=0$.  The conformal gradient of $\Omega$
+is null and its Hessian vanishes.  The conformal transformation formula
+therefore shows that $g_{\rm phys}=x^{-2}\bar g$ is an exact flat vacuum metric.
+Its physical mean curvature is $K_*=-3$, whereas $\bar K_*=0$.
+
+Consider the physical infinitesimal diffeomorphism
+\[
+ \xi^t=-x\psi,\qquad \xi^x=x\psi,\qquad \xi^A=0.
+\]
+Keeping the coordinate conformal factor $\Omega=x$ fixed gives
+\[
+ \delta\bar g=-\mathcal L_\xi\bar g+2\psi\bar g.
+\]
+Write $D=\partial_t-\partial_x$, $G=dx$, and use the flat spatial metric
+for all spatial derivatives and trace-free projections.  Direct ADM
+decomposition gives
+\begin{align}
+ h_{ij}&=0,& c&=-2\psi,& u&=xD\psi,&
+ v_i&=-\partial_i(x\psi),\label{eq:halfspace-gauge-fields}\\
+ a_{ij}&=-\big[x\partial_i\partial_j\psi+
+ G_i\partial_j\psi+G_j\partial_i\psi\big]^{\rm TF},
+ & k&=-x^2\Delta\psi+x\psi_x+3\psi.
+ \label{eq:halfspace-gauge-curvature}
+\end{align}
+Here $h$ is the unit-determinant spatial metric perturbation,
+$c=\delta\chi$, $u=\delta\bar\alpha$, $v=\delta\beta$,
+$a=\delta\bar A$, and $k=\delta K_{\rm phys}$.  Set
+$\Theta=Z_i=0$, so the physical $\hat K$ perturbation $q$ equals $k$.
+
+These fields solve the linear vacuum Einstein equations because they are a
+physical diffeomorphism of an exact flat metric.  The Hamiltonian and momentum
+constraints and the spacetime Weyl perturbation vanish identically.  They also
+satisfy the metric-derived Dirac freezing condition: with
+\[
+ (L_{\rm conf}v)_{ij}=\partial_i v_j+\partial_j v_i
+ -\frac23\delta_{ij}\partial_kv^k,
+\]
+one has $L_{\rm conf}v=2a$, hence $\partial_t h=0$ and
+$V_i=\partial_jh_{ij}=0$.  The corresponding elliptic shift equation is
+$(\Delta v_i+\partial_i\operatorname{div}v/3)=2\partial^ja_{ij}$.
+
+For a regular $\psi$, the boundary values are
+\[
+ u|_{x=0}=0,\qquad v_A|_{x=0}=0,\qquad v_x|_{x=0}=-\psi.
+\]
+The inward-normal linear nullness relation is
+$v_x=u-(h_{xx}-c)/2$ and is satisfied.  Thus these are genuine coupled
+metric/lapse/elliptic-shift perturbations, not a prescribed shift trace treated
+in isolation.
+
+The normal conformal-factor perturbation and conformal trace are
+\[
+ \delta w=u-v_x=x\psi_t+\psi,\qquad
+ \delta\bar K_{\hat{}}=\frac{q-3\delta w}{x}
+ =-x\Delta\psi+\psi_x-3\psi_t.
+\]
+Consequently a lapse with constant conformal Bona--Masso coefficient $f>0$,
+\[
+ Du=-f\,\delta\bar K_{\hat{}},
+\]
+is equivalent in this sector to
+\begin{equation}
+ x\big(D^2\psi-f\Delta\psi\big)
+ -(1+3f)\psi_t+(1+f)\psi_x=0.
+ \label{eq:halfspace-general-f}
+\end{equation}
+Equivalently,
+$D^2\psi-f\Delta\psi=[(1+3f)D\psi+2f\psi_x]/x$.
+
+\subsection{Conformal-harmonic $f=1$: unbounded tangential-frequency growth}
+
+For $f=1$, take a tangential Fourier mode
+$\psi=e^{st+iky}F(kx)$, with $k>0$, $s=\sigma k$, and $X=kx$.
+Equation~\eqref{eq:halfspace-general-f} becomes
+\begin{equation}
+ (2\sigma X-2)F'(X)
+ +\big[4\sigma-(\sigma^2+1)X\big]F(X)=0.
+ \label{eq:harmonic-turning-ode}
+\end{equation}
+For any positive integer $m$, choose
+\[
+ \sigma=(2m+3)^{-1/2},\qquad
+ F(X)=\exp\!\left(\frac{\sigma^2+1}{2\sigma}X\right)
+ (1-\sigma X)_+^m.
+\]
+For $0<X<1/\sigma$ its logarithmic derivative is
+\[
+ \frac{F'}F=\frac{\sigma^2+1}{2\sigma}
+ -\frac{m\sigma}{1-\sigma X}.
+\]
+Substitution in~\eqref{eq:harmonic-turning-ode} leaves exactly
+$\sigma(2m+3)-1/\sigma=0$.  The function is zero for
+$X\geq1/\sigma$ and is $C^{m-1}$ across the turning point.  Its cutoff
+therefore introduces no distributional error in the first-order equation;
+choosing $m$ sufficiently large also makes all metric and curvature equations
+classical to any prescribed finite order.  In particular $F(0)=1$ and
+$F'(0)=2\sigma$.  Every boundary condition stated above is satisfied for all
+times.
+
+On a tangential torus, normalize the initial amplitude in any fixed finite
+Sobolev norm containing the required metric, lapse, and curvature fields.
+Choose $m$ once, larger than the derivative count required by that norm.
+The same state at time $t$ is multiplied by $e^{\sigma kt}$.  Thus no
+frequency-uniform estimate with a growth constant independent of $k$ can hold
+for this exact halfspace model in that finite Sobolev class.  Constraint or
+Weyl estimates cannot remove the example: all those fields are identically
+zero.  Requiring analyticity or imposing an additional gauge domain would
+change the problem; neither is part of the proposed free hybrid.
+
+\subsection{Strictly subluminal $f=1/3$: compatible data with singular outflow}
+
+Absence of a decaying growing normal mode for $0<f<1$ is not sufficient to
+prove preservation of regular scri.  At the particular subluminal value
+$f=1/3$, equation~\eqref{eq:halfspace-general-f} has the exact solutions
+\begin{equation}
+ \psi(t,x)=\frac{F(t+x/v)}{x},\qquad
+ v=1\pm\frac1{\sqrt3},
+ \label{eq:subluminal-singular-outflow}
+\end{equation}
+for arbitrary smooth $F$.  To check this, set
+$\lambda=1/v$ and substitute $x^{-1}F(t+\lambda x)$.
+The coefficients of $F/x^2$ and $F'/x$ cancel identically.  The coefficient
+of $F''$ is $1-2\lambda+(2/3)\lambda^2=0$.
+
+Choose $F\in C^\infty_c((T_0,T_1))$ with $T_0>0$.
+Both $\psi(0,x)$ and $\psi_t(0,x)$ are smooth and compactly supported in
+$[vT_0,vT_1]$, away from scri.  Every boundary compatibility jet initially
+vanishes.  The solution remains zero near scri until the outgoing front
+arrives.  At a later time for which $F(t)\ne0$,
+$\psi\sim F(t)/x$, so $c=-2\psi$ and the conformal lapse perturbation
+are unbounded.  The constraints and Weyl perturbation remain zero in the
+interior.
+
+This example is a regularity obstruction, not an all-time regular solution of
+the mixed boundary problem: the singular continuation has
+$\xi^x=x\psi\to F(t)$ and therefore ceases to be scri-fixing.
+In general nullness also fails once the front reaches the boundary.
+A proof of nonexistence for the complete elliptic boundary-coupled problem
+must address the possible $S\ne0$ spatial York response.  A bounded smooth
+York potential cannot cancel the $1/x$ metric trace; in the tangentially
+constant halfspace sector its normal component satisfies $S_x''=0$.
+The counterexample nonetheless rules out recommending subluminal slicing
+merely on a characteristic-count or decaying-normal-mode test.
+
+\subsection{Relation to the original CMC ball}
+
+The halfspace background is an exact flat physical geometry and is the leading
+normal model obtained by magnifying the compactified CMC ball near scri.
+It is not the exact global CMC reference, whose conformal lapse, shift, and
+factor vary with radius.  A full transfer requires tangential localization,
+rescaling $x=X/k$, preservation of the elliptic boundary conditions, and a
+uniform estimate on the coefficient and localization remainders.  One useful
+route is to start with physical diffeomorphisms of the actual Minkowski
+reference, preserving zero constraints and zero Weyl exactly, and correct the
+metric-derived connection by the elliptic York solve.  The correction must be
+estimated rather than assumed negligible.  Bounded reference-source terms
+such as those proportional to the reference conformal mean curvature are
+lower order in the magnified problem, but this observation alone is not the
+completed quasimode argument.
+
+The conclusions justified here are therefore: an exact frequency-uniform
+estimate fails for the conformal-harmonic null-halfspace model; the $f=1/3$
+model has exact singular outflow from compatible compact initial data; and
+neither counterexample is cured by subsidiary constraints or physical Weyl
+control.  An exact global CMC-ball instability theorem is not claimed.

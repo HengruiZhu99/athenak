@@ -1,0 +1,168 @@
+% Independent analytical audit; input fragment.
+\section{A finite graph hierarchy for the original reference potential wave}
+\label{sec:original-gauge-graph}
+
+This section concerns the original-reference pure-gauge normal model, not the
+conformal-harmonic counterexample operator.  It provides an a priori graph
+estimate and a strong-normal embedding for its homogeneous scalar sector.
+Existence by closure of a common invariant graph domain, the full $S\ne0$
+elliptic boundary coupling, and transfer to variable CMC coefficients remain
+separate tasks.
+
+\subsection{Exact forced scalar equation}
+
+In the null-halfspace notation of Section~\ref{sec:gauge-counterexamples},
+let $S_i$ be the spatial covariant York generator, satisfying
+$\Delta S_i+\partial_i\operatorname{div}S/3=0$, and write
+$\xi^t=S_x-x\psi$, $\xi^x=x\psi$.  Direct physical diffeomorphism gives
+\begin{align*}
+ h&=-L_{\rm conf}S,&
+ c&=\tfrac23\operatorname{div}S-2\psi,\\
+ u&=-D S_x+xD\psi,&
+ v&=-DS+\nabla(S_x-x\psi),\\
+ k&=x\Delta S_x-3\partial_xS_x-x^2\Delta\psi+x\psi_x+3\psi.
+\end{align*}
+For the original reference-lapse pole $(-q-v_x-u)/x$, with $q=k$ in
+the constraint-free sector, substitution gives the exact equation
+\[
+ P\psi=\frac{\mathcal L S_x}{x}+\frac{2\partial_tS_x}{x^2},\qquad
+ \mathcal L=\partial_t^2-2\partial_t\partial_x-\Delta_\perp,
+ \qquad P=\mathcal L+\frac2{x^2}.
+\]
+The singular source has an explicit regular lift.  Since
+$[\mathcal L,x]=-2\partial_t$, the substitution
+\[
+ \psi=\partial_t S_x+\frac{x}{2}\mathcal L S_x+\rho
+\]
+gives
+\begin{equation}
+ P\rho=-\frac{x}{2}\mathcal L^2 S_x.
+ \label{eq:original-reference-forced-lift}
+\end{equation}
+Thus smooth York data produce an $O(x)$ bulk source after the two displayed
+boundary jets are lifted.  Estimating the York generator through its coupled
+boundary evolution is still required; this identity does not assume that
+source is independently prescribed.
+
+\subsection{Null energy and spatial dilation}
+
+First consider $P\rho=0$.  On a finite normal collar, or with suitable decay at
+the inner end, define
+\[
+ E[\phi]=\int\left(|\phi_t|^2+|\nabla_\perp\phi|^2+
+ \frac{2|\phi|^2}{x^2}\right)\,dx\,dy\,dz.
+\]
+For smooth regular fields with justified traces, multiplication of
+$P\phi=F$ by $2\phi_t$ gives
+\[
+ \frac{d}{dt}E[\phi]
+ =-2\int_{x=0}|\phi_t|^2\,dy\,dz
+ +2\operatorname{Re}\int\overline{\phi_t}F,
+\]
+up to the separately controlled inner-boundary flux.  Consequently
+$d\sqrt E/dt\leq\|F\|_{L^2}$.  The energy is degenerate in the normal
+derivative; positive potential does not itself supply $\phi_x$.
+
+Use the spatial-time dilation
+\[
+ B=t\partial_t+x\partial_x.
+\]
+Its exact commutator is
+\[
+ [P,B]=2P+2\Delta_\perp.
+\]
+In particular $P(B\rho)=2\Delta_\perp\rho$.  More generally,
+\[
+ P B^j\rho=\Delta_\perp\big[(B+2)^j-B^j\big]\rho.
+\]
+Time and tangential derivatives commute with $P$.  The finite hierarchy
+\begin{equation}
+ \mathcal G_N(t)=
+ \sum_{j+p+|\alpha|\leq N}
+ E[B^j\partial_t^p\partial_\perp^\alpha\rho](t)
+ \label{eq:original-reference-graph-norm}
+\end{equation}
+therefore closes: every source contains at most $j-1$ dilation operators and
+two tangential derivatives, and its $L^2$ norm is controlled by an energy at
+the same index using that energy's tangential derivative.  A finite sum and
+Cauchy--Schwarz give
+\[
+ \mathcal G_N(t)\leq C_{N,T}\mathcal G_N(0),\qquad 0\leq t\leq T,
+\]
+for this a priori regular class.  The same argument permits independently
+bounded commuted sources.  It does not hide a normal derivative in the source.
+
+\subsection{Strong-normal embedding}
+
+The elementary identity
+\[
+ \phi_x=\frac{B\phi-t\phi_t}{x}
+\]
+implies
+\[
+ \|\phi_x\|_{L^2}\leq\frac1{\sqrt2}
+ \left(\sqrt{E[B\phi]}+|t|\sqrt{E[\phi_t]}\right).
+\]
+Thus the finite hierarchy controls a full, unweighted normal derivative, not
+merely a conormal derivative.
+
+For any commuted field $P\phi=F$, the equation also gives
+\[
+ \frac{2\phi}{x^2}=F-\phi_{tt}+2\phi_{tx}+\Delta_\perp\phi.
+\]
+Apply the previous normal estimate to $\phi_t$.  This controls
+$\|\phi/x^2\|_{L^2}$ by finitely many energies with two additional
+time/dilation/tangential indices and the known source.  No assertion that a
+Hardy inequality alone controls the inverse-square potential is needed.
+
+For example,
+\[
+ \frac{B^2\rho}{x^2}=
+ \rho_{xx}+\frac{\rho_x}{x}
+ +\frac{2t\rho_{tx}}x
+ +\frac{t^2\rho_{tt}}{x^2}+\frac{t\rho_t}{x^2},
+\]
+while
+\[
+ \frac{\rho_x}{x}=\frac{B\rho-t\rho_t}{x^2},\qquad
+ \frac{\rho_{tx}}x=\frac{B\rho_t-t\rho_{tt}}{x^2}.
+\]
+The inverse-square estimates applied to these finitely many commuted fields
+give an unweighted $\rho_{xx}$ bound from $\mathcal G_4$ on finite time
+intervals.  Similarly $B^3\rho/x^2$ controls $x\rho_{xxx}$ once the lower
+terms are estimated.  Thus $\mathcal G_5$ controls the basic pure-gauge
+geometric fields
+\[
+ c=-2\rho,\quad u=xD\rho,\quad v=-\nabla(x\rho),\quad
+ a=-[x\nabla\nabla\rho+G\otimes\nabla\rho+
+ \nabla\rho\otimes G]^{\rm TF},
+\]
+with $c$ in $H^2$, $u,v,a$ in $H^1$, and
+$k=-x^2\Delta\rho+x\rho_x+3\rho$ in $H^1$, on a bounded collar.
+These are finite graph estimates with explicitly stronger initial graph
+regularity; they are not estimates in an unchanged minimal NR Sobolev norm.
+The corresponding estimates for a general nonzero York lift require its
+commuted source in~\eqref{eq:original-reference-forced-lift} to be controlled.
+
+\subsection{Why powers of the time generator alone do not suffice}
+
+At a fixed interior point, suppress tangential frequencies and freeze the
+positive potential at $V_0$.  The first-order time generator on $(\rho,u)$
+has normal symbol
+\[
+ \begin{pmatrix}0&1\\-V_0&2i\xi\end{pmatrix},\qquad
+ s_\pm=i\xi\pm i\sqrt{\xi^2+V_0}.
+\]
+For positive large $\xi$, its slow branch is
+$s_-=V_0/(2i\xi)+O(\xi^{-3})$, an operator of order $-1$ rather than
+a normally elliptic operator.  Thus a claim that finitely many powers of the
+time generator automatically control normal Sobolev derivatives is not
+justified.  Microlocal slow-branch packets expose this obstruction.  The
+independent dilation commutations in~\eqref{eq:original-reference-graph-norm}
+are the constructive replacement.
+
+The estimates above are for smooth regular solutions, or limits for which
+the flux and commutator calculations are established.  Proving existence on
+a common invariant completed graph domain, handling its trace conditions,
+and closing the coupled elliptic York boundary dynamics are necessary before
+promoting this scalar a priori result to a full well-posedness theorem.

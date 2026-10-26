@@ -1,0 +1,132 @@
+Paste this as the goal-mode prompt:
+
+---
+
+Implement and comprehensively test the proposed elliptic-shift, live-lapse, free-Z4c hyperboloidal formulation in **1+1 dimensions under spherical symmetry**. Carry the work through implementation, reproducible numerical experiments, diagnosis, and a documented assessment. Do not stop at a plan or a few successful evolutions.
+
+**Repository and branch isolation**
+
+Work from `/Users/hz0693/research/hyperboloidal`. Read applicable repository instructions and inspect the actual current source before relying on historical summaries.
+
+Create a new experimental branch named `codex/hyperboloidal-elliptic-shift-1d`, using a unique suffix if necessary. Preserve the existing checkout, which contains substantial tracked and untracked work. Prefer an isolated worktree with a recorded baseline snapshot that includes every required source dependency. Do not reset, discard, or silently omit existing changes. Keep baseline preservation separate from new implementation commits, and exclude large generated outputs from Git.
+
+This task deliberately requests spherical symmetry. Older instructions for unrelated goals requiring native 3D evolution do not override this new scope. Do not divert into cubed-sphere or 3D development.
+
+**Formulation to implement**
+
+Start with the derivation and audits in:
+
+`/Users/hz0693/.codex/visualizations/2026/10/25/01a17545-8933-7e91-9183-7f4621ac4d93/hybrid-scri-closure/`
+
+Read `linear-closure-theorem.tex`, `main.tex`, and their supporting files. Copy the necessary specification into portable repository documentation with provenance.
+
+Treat these notes as a formulation requiring independent verification. The analysis concerns linear perturbations of hyperboloidal Minkowski; it does not establish nonlinear black-hole or Einstein–scalar stability.
+
+Implement the actual nonlinear spherical system:
+
+- Retain free Z4c evolution, including independently evolved curvature, \(\Theta\), and connection variables.
+- Use the reference-reduced \(\hat K=K_{\rm phys}-2\Theta_{\rm phys}\) lapse, with \(1+\log\)-like interior behavior and harmonic asymptotics at scri.
+- Replace the hyperbolic shift driver with the elliptic condition obtained from freezing or damping the **metric-derived** reference connection.
+- Include the boundary clock condition \(\delta\alpha|_{\mathscr I^+}=0\), null-normal shift condition, and analytically derived scri limits.
+- Audit the paper’s scalar-\(\Theta\) treatment against the repository equation and disclose every off-constraint source modification.
+- Start with \(a\kappa_1=4,\ \kappa_2=-0.99\) as the proposed candidate, while retaining published parameter choices as controls.
+
+Derive the nonlinear spherical equations, matter contributions, origin/puncture asymptotics, and scri compatibility explicitly. Do not turn the linearized formulas into a nonlinear implementation by substitution alone.
+
+Do not replace the method with CMC constrained evolution, algebraically slave the shift throughout an exterior layer, or project away Hamiltonian, momentum, \(\Theta\), or connection errors. Standard algebraic determinant/trace enforcement is permitted and must be documented. The auxiliary CEFE fields and large graph norms were proof tools; they are not a request to implement another production evolution system.
+
+**Literature reproduction**
+
+Read the primary papers and construct a test-by-test reproduction matrix:
+
+1. [Unconstrained hyperboloidal evolution of black holes in spherical symmetry with GBSSN and Z4c](https://arxiv.org/abs/1412.4801).
+2. [Spherical symmetry as a test case for unconstrained hyperboloidal evolution](https://arxiv.org/abs/1412.3827), especially its complete Appendix C equations.
+3. [Spherical symmetry as a test case for unconstrained hyperboloidal evolution II: gauge conditions](https://arxiv.org/abs/1705.06298).
+4. [Spherically symmetric black hole spacetimes on hyperboloidal slices](https://arxiv.org/abs/2304.05384).
+5. [Conformal diagrams for stationary and dynamical strong-field hyperboloidal slices](https://arxiv.org/abs/2311.04972).
+6. [Height-function-based 4D reference metrics for hyperboloidal evolution](https://arxiv.org/abs/2408.08952).
+
+Search for subsequent directly relevant spherical-symmetry studies. Consolidate duplicate experiments, but account explicitly for every applicable vacuum or massless-scalar evolution test. Distinguish evolution experiments from analytical initial-data constructions and identify tests requiring additional physics.
+
+For each case record its paper section/figure, equations, initial data, gauge/reference choice, damping, grid, dissipation, resolution, CFL, duration, measured quantities, and expected result. Extract parameters from the sources. Record missing information rather than inventing it.
+
+Maintain a published-formulation/gauge control where practical. When a follow-up uses GBSSN or different coordinates, distinguish reproducing the physical experiment from reproducing identical equations or coordinate profiles.
+
+**Required experiments**
+
+1. **Hyperboloidal Minkowski equilibrium and lapse pulses**
+   - Verify the unperturbed background and its discrete residual.
+   - Reproduce published lapse/gauge pulses, including small-amplitude linear checks and finite-amplitude nonlinear runs.
+   - Vary pulse amplitude, width, and location, including pulses approaching scri.
+   - Test origin reflection, outgoing propagation, long-term drift, and supported noise/robust-stability experiments.
+   - Include compatible constraint-violating perturbations. Measure their propagation and damping rather than projecting them out.
+   - Compare actual-scri and staggered-grid controls. The target method must evolve with a gridpoint at actual scri.
+
+2. **Schwarzschild trumpet controls**
+   - Reproduce the published already-trumpet evolutions, lapse perturbations, gauge relaxation, and relevant stationary-trumpet tests.
+   - Distinguish gauge-adapted stationary data from CMC trumpet data that relax under a different evolution gauge.
+   - Compare invariant mass and horizon quantities; coordinate profiles need not agree between gauges.
+
+3. **Isotropic wormhole with pre-collapsed lapse → trumpet**
+   - This is a mandatory additional experiment, not a substitute for the published trumpet tests.
+   - Construct constraint-satisfying Schwarzschild wormhole data with an isotropic puncture interior and a properly derived hyperboloidal exterior.
+   - Do not merely compactify ordinary time-symmetric isotropic data and assume the resulting slice is hyperboloidal.
+   - Define the pre-collapsed **physical** lapse precisely. Start with \(\tilde\alpha=\psi^{-2}\), \(\psi=1+M/(2\rho)\), in the isotropic interior, and derive a compatible transition to the hyperboloidal exterior. Document any alternative.
+   - Keep the hyperboloidal Minkowski reference for the main hybrid experiment. A black-hole reference may be a labeled control, but must not replace this target.
+   - Demonstrate genuine wormhole-to-trumpet evolution using lapse collapse, limiting areal radius, proper-distance behavior, settling profiles, apparent-horizon mass, and invariant Schwarzschild mass.
+   - Derive puncture inner-end conditions separately from regular-center parity conditions.
+   - Do not initialize an already-trumpet slice and label its survival a wormhole-to-trumpet result.
+
+4. **Massless scalar field**
+   - First validate radial scalar propagation against an analytic or independently verified fixed-background solution.
+   - Then implement the fully coupled Einstein–massless-scalar equations and constraint-solved initial data.
+   - Reproduce subcritical dispersal, scalar collapse and horizon formation, and scalar perturbations of a black hole.
+   - Resolve ringing and late-time tails at finite radius and scri, using the physical/rescaled extraction variables and Bondi-time convention appropriate to the source paper.
+   - Measure scalar flux, mass balance, horizon growth, and constraint convergence.
+   - Fixed-background scalar propagation is a preliminary control, not completion of the coupled tests.
+
+**Numerical implementation and diagnostics**
+
+Reuse trustworthy radial infrastructure after auditing it. Implement genuine spherical tensor equations, including reference-connection and \(1/r\) terms; do not obtain them by simply replacing Cartesian derivatives with radial derivatives.
+
+Solve the elliptic shift at every stage required by the time integrator. Verify boundary conditions, uniqueness, residuals, and temporal order. Demonstrate that elliptic tolerances lie below truncation error by tightening them independently.
+
+At scri, evaluate analytically canceled combinations and derived limiting equations. Do not hide singularities by clamping \(\Omega\), freezing all fields, or evaluating divergent terms separately. Preserve the independently evolved constraint variables.
+
+Use at least three systematically related resolutions for every principal result, with fixed-CFL spatial studies and independent timestep refinement. Measure bulk and endpoint convergence separately. Distinguish truncation error, elliptic error, dissipation effects, and roundoff.
+
+Record at least:
+
+- Hamiltonian, momentum, \(\Theta\), and connection constraints, including appropriate weighted scri diagnostics.
+- Elliptic shift residuals and solve cost.
+- Lapse, shift, metric positivity and algebraic constraints.
+- Scri nullness, lapse-clock compatibility, pole-cancellation residuals, and characteristic speeds.
+- Misner–Sharp/Hawking mass, apparent-horizon quantities, scalar signals, and flux balance.
+- Runtime, timestep restrictions, checkpoint consistency, and restart reproducibility.
+
+Choose and record quantitative acceptance criteria before the main runs. Use published durations and convergence studies as minimum reference targets. A few surviving timesteps, a small background residual, or a frozen-symbol test is insufficient evidence of nonlinear stability.
+
+Do not manufacture stationarity by subtracting the numerical Schwarzschild RHS. Preserve failed runs and explain every formulation or parameter change.
+
+**Execution resources**
+
+Follow the existing resource restriction: substantive builds, CPU/GPU evolutions, numerical analysis, and benchmarks run on Aurora in an allocation. Use `debug` under `CompactBinaryMerger`, one node at a time, bounded jobs, and one-GPU validation before scaling. Respect the documented walltime and concurrent-allocation limits.
+
+Local work is limited to lightweight coordination and editing. If authentication or allocation access is unavailable, report the precise blocker and continue independent preparation; do not silently move substantial computation onto the laptop.
+
+Continue completed trajectories from verified checkpoints. Track actual scheduler/job handles and preserve source hashes, executable hashes, inputs, commands, logs, and checkpoint ancestry.
+
+**Deliverables and completion**
+
+Produce:
+
+- The isolated branch and reviewable implementation commits.
+- A documented nonlinear spherical formulation and scri/inner-boundary treatment.
+- Automated tests, input files, launch recipes, and analysis scripts.
+- A literature reproduction matrix with evidence links for every row.
+- Convergence plots, physical diagnostics, stability summaries, and reproducibility manifests.
+- A final report distinguishing published controls, hybrid results, unresolved failures, and extensions beyond the papers.
+
+Work autonomously through diagnosis and repairs within this formulation. Do not silently substitute another method to obtain a passing plot. If a structural obstruction is found, provide a minimal reproducible case and a supported explanation.
+
+Completion requires that every required experiment has been executed and scientifically assessed. Unrun tests, unexplained instability, or incomplete wormhole-to-trumpet evolution remain unfinished work. Do not merge the experimental branch into the existing production branch.

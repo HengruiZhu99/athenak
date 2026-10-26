@@ -1,0 +1,261 @@
+% Independent analytical audit; input fragment.
+\section{Regular Weyl forcing from the subsidiary fields}
+\label{sec:weyl-source-energy}
+
+This section is conditional on propagation of the stated strong subsidiary
+weights.  It establishes an autonomous, regular, forced spin-two system for
+physical radiation.  It does not establish the remaining geometric/gauge
+reconstruction or the all-angular elliptic boundary estimate.
+
+\subsection{Physical Ricci source and its conformal order}
+
+Use the $C_{\rm Z4c}=0$ tensor equations with the stated Appendix-C
+$\Theta$ modification.  Let $n$ be the physical unit normal, $\bar n=n/\Omega$
+the conformal unit normal, and retain the physical spatial covector $Z_i=z_i$.
+The linearized physical Ricci projections are
+\begin{align}
+ R_{nn}&=H+2\Omega^2\partial_i z^i
+ -3\kappa_1(1+\kappa_2)T,\label{eq:weyl-ricci-nn}\\
+ R_{ni}&=-M_i,\label{eq:weyl-ricci-ni}\\
+ R_{ij}&=-2D^{\rm phys}_{(i}z_{j)}+
+ \gamma^{\rm phys}_{ij}
+ \left[\kappa_1(1+\kappa_2)T
+ -\frac23\Omega G^kz_k\right].
+ \label{eq:weyl-ricci-spatial}
+\end{align}
+The normal-normal expression follows from the physical Raychaudhuri equation
+and the $q+2T$ evolution.  The trace-free spatial expression follows from the
+$A_{ij}$ equation.  Its trace is fixed by the off-shell Gauss identity
+$R_{nn}+\gamma_{\rm phys}^{ij}R_{ij}=H$.
+In particular
+$D^i_{\rm phys}z_i=\Omega^2\partial_i z^i-\Omega G^iz_i$;
+replacing this by the conformal divergence would miss the displayed isotropic
+term.  The unmodified tensor $\Theta$ equation adds $-6w_*T$ to
+$R_{nn}$ and the compensating opposite spatial trace; this has the same
+conformal order but is a different source.
+
+Assume
+\[
+ H=\Omega^4h_4,\quad T=\Omega^4\tau_4,\quad
+ M_i=\Omega^3m_i,\quad z_i=\Omega^3\zeta_i.
+\]
+Then $R_{ab}^{\rm phys}=\Omega^2r_{ab}$ in a regular conformal frame.
+For $\kappa=\kappa_1(1+\kappa_2)$ the explicit frame components are
+\begin{align*}
+ r_{\bar n\bar n}&=h_4+6G\cdot\zeta+
+ 2\Omega\partial_i\zeta^i-3\kappa\tau_4,\\
+ r_{\bar n i}&=-m_i,\\
+ r_{ij}&=-2\Omega\partial_{(i}\zeta_{j)}
+ -5(G_i\zeta_j+G_j\zeta_i)
+ +\delta_{ij}\left[\frac43G\cdot\zeta+\kappa\tau_4\right].
+\end{align*}
+These expressions contain no inverse conformal factor.  To see the spatial
+formula directly,
+\[
+ D^{\rm phys}_iz_j=\Omega^2\left[
+ \Omega\partial_i\zeta_j+4G_i\zeta_j+G_j\zeta_i
+ -\delta_{ij}G\cdot\zeta\right].
+\]
+Coordinate components are regular too, because
+\[
+ R_{ti}=-\frac{A}{\Omega}M_i+B^jR_{ji},\qquad
+ R_{tt}=\frac{A^2}{\Omega^2}R_{nn}
+ -\frac{2A}{\Omega}B^iM_i+B^iB^jR_{ij}.
+\]
+
+\subsection{Exact conformal Cotton source}
+
+Set
+\[
+ \ell_{ab}=\frac12\left(r_{ab}
+ -\frac16\bar g_{ab}\operatorname{tr}_{\bar g}r\right).
+\]
+The physical Schouten tensor is $L^{\rm phys}_{ab}=\Omega^2\ell_{ab}$,
+because $R_{\rm phys}=\Omega^4\operatorname{tr}_{\bar g}r$.
+Define the physical Cotton tensor without an antisymmetrization convention
+ambiguity by
+\[
+ A^{\rm phys}_{bcd}=\nabla^{\rm phys}_c L^{\rm phys}_{db}
+ -\nabla^{\rm phys}_dL^{\rm phys}_{cb}.
+\]
+For $d^a{}_{bcd}=\Omega^{-1}\bar C^a{}_{bcd}$ the divergence law is
+\begin{equation}
+ \bar\nabla_a d^a{}_{bcd}=J_{bcd},\qquad
+ J_{bcd}=\Omega^{-1}A^{\rm phys}_{bcd}.
+ \label{eq:weyl-divergence-source}
+\end{equation}
+The exact linear source is
+\begin{align}
+ J_{bcd}={}&\Omega(\bar\nabla_c\ell_{db}
+ -\bar\nabla_d\ell_{cb})
+ +3(G_c\ell_{db}-G_d\ell_{cb})\notag\\
+ &-\bar g_{cb}G^e\ell_{de}
+ +\bar g_{db}G^e\ell_{ce}.
+ \label{eq:weyl-regular-cotton}
+\end{align}
+For verification, the physical/conformal connection difference gives
+\[
+ \nabla^{\rm phys}_c(\Omega^2\ell_{db})
+ =\Omega^2\bar\nabla_c\ell_{db}
+ +\Omega\big[4G_c\ell_{db}+G_d\ell_{cb}+G_b\ell_{dc}
+ -\bar g_{cd}G^e\ell_{eb}-\bar g_{cb}G^e\ell_{de}\big].
+\]
+Antisymmetrizing in $c,d$ proves~\eqref{eq:weyl-regular-cotton}.
+Every term is smooth at scri under the stated subsidiary regularity.
+The one conformal derivative of $r$ requires correspondingly commuted
+subsidiary estimates; the base energy alone is not claimed to provide it.
+
+\subsection{First-order electric/magnetic evolution and null flux}
+
+Decompose the Weyl-symmetry field $d$ into symmetric trace-free tensors
+$E_{ij}=d_{i\bar n j\bar n}$ and its magnetic dual $B_{ij}$.
+Choose the orientation of the magnetic dual so the flat equations read
+$\partial_tE-\operatorname{curl}B=\mathcal J_E$ and
+$\partial_tB+\operatorname{curl}E=\mathcal J_B$.
+Here
+\[
+ (\operatorname{curl}Q)_{ij}
+ =\epsilon_{kl(i}\partial^kQ_{j)}{}^l,
+ \qquad
+ (a\mathbin\times Q)_{ij}=\epsilon_{kl(i}a^kQ_{j)}{}^l.
+\]
+The exact sources can be specified invariantly as the STF projections of
+$J_{i j\bar n}$ and of the right-dual source
+$J^\star_{bcd}=\epsilon_{cd}{}^{ef}J_{bef}/2$, respectively, with the same
+orientation.  This definition fixes their signs independently of coordinate
+epsilon conventions.
+
+On the CMC conformal Minkowski background, the Cartesian spatial frame is
+Fermi-propagated along $\bar n$.  Its acceleration is
+$a_i=\partial_i\log A=-G_i/A$ and
+$\bar K_{ij}=-\delta_{ij}/(aA)$.  Consequently the evolution can be written
+\begin{align}
+ (\partial_t-B^k\partial_k)E
+ &=A\operatorname{curl}B-\frac3aE
+ +2A(a\mathbin\times B)+A\mathcal J_E,\\
+ (\partial_t-B^k\partial_k)B
+ &=-A\operatorname{curl}E-\frac3aB
+ -2A(a\mathbin\times E)+A\mathcal J_B.
+\end{align}
+Equivalently these are the STF evolution projections of
+\eqref{eq:weyl-divergence-source}; the latter remains the convention-independent
+exact definition.  All zeroth-order frame coefficients are bounded on the
+closed ball, since $A>0$ there.
+
+The identity on the ten electric/magnetic components is a common
+symmetrizer, using the Euclidean STF tensor inner product.  In direction $n$,
+the symmetric curl block has eigenvalue magnitudes $1$, $1/2$, and $0$;
+the vector/scalar components are retained, not projected away.  Hence its
+normal operator $\mathcal M_n$ has operator norm one.  At scri,
+$B^n=-A$, and therefore
+\[
+ B^n I+A\mathcal M_n=A(\mathcal M_n-I)\leq0.
+\]
+The boundary flux of the full electric/magnetic energy is nonpositive.
+There is no incoming Weyl mode and no physical radiation boundary value is
+freely prescribed.  The bounded connection terms and regular source give
+the usual finite-time forced energy estimate.
+
+\subsection{Divergence constraints and source integrability}
+
+The remaining projections of~\eqref{eq:weyl-divergence-source} are the
+electric and magnetic divergence constraints.  In the isotropic CMC
+background their leading expressions are
+\[
+ \mathcal C_{E,i}=\partial^jE_{ij}-J_{\bar n i\bar n},\qquad
+ \mathcal C_{B,i}=\partial^jB_{ij}-J^\star_{\bar n i\bar n},
+\]
+or, without frame convention dependence, the corresponding normal
+projections of $\bar\nabla_a d^a{}_{bcd}-J_{bcd}$.
+Their propagation has principal part
+\[
+ (\partial_t-B\cdot\nabla)\mathcal C_E
+ =\frac A2\operatorname{curl}\mathcal C_B+\text{bounded lower terms},
+\]
+with the opposite curl sign for $\mathcal C_B$.
+The source must satisfy its Cotton identities.  At linear order about the
+flat physical background, the contracted Ricci Bianchi identity implies
+$\nabla_{\rm phys}^bA^{\rm phys}_{bcd}=0$; commuting derivatives introduces
+no background physical curvature.  The cyclic and trace identities follow
+from the Schouten definition and the same contracted Bianchi identity.
+Their conformal versions are precisely the compatibility conditions needed
+for homogeneous divergence-constraint propagation.  They are consequences
+of the closed subsidiary evolution and compatible initial Ricci data, not
+conditions satisfied by arbitrary independently prescribed $r_{ab}$.
+
+The divergence modes have principal speeds of magnitude at most $A/2$
+relative to the normal flow, so they too are outflow at scri.  Initial Weyl
+Gauss/Codazzi compatibility is still necessary.  An independently evolved
+regular Bianchi field does not by itself prove that a metric reconstructed
+from it solves the chosen Z4c/gauge system.
+
+Finally, $\delta d$ is gauge invariant here because the background Weyl
+tensor vanishes.  The source depends only on the propagated subsidiary
+fields.  This yields the physical triangular estimate
+``subsidiary source $\longrightarrow$ rescaled Weyl radiation'', independent
+of lapse/shift perturbations at linear order.  The remaining geometric and
+gauge reconstruction must be supplied separately.
+
+\subsection{Exact York identity and the off-constraint electric correction}
+
+Here set the metric-derived Dirac field $\partial^jh_{ij}$ to zero;
+nonzero prescribed Dirac memory can first be separated by its own elliptic
+York potential.  Put $d_0=(aS)^{-1}$, avoiding confusion with the Weyl field.
+Define
+\begin{align*}
+ k_c&=\frac a2\Omega^2\Delta c-
+ \frac a2\Omega G\cdot\nabla c-\frac{3c}{2a},&
+ k_h&=\frac{3a}{2}h_{ij}G_iG_j,\\
+ (a_c)_{ij}&=\frac{a\Omega}{2}(\partial_i\partial_jc)^{\rm TF}
+ +\frac a2(G_i\partial_jc+G_j\partial_ic)^{\rm TF},\\
+ (a_h)_{ij}&=-a C_h^k{}_{ij}G_k+ad_0h_{ij}
+ -\frac{a\Omega}{2}\Delta h_{ij},
+ \qquad
+ C_h^k{}_{ij}=\tfrac12(\partial_i h_{jk}+\partial_jh_{ik}-\partial_kh_{ij}).
+\end{align*}
+The trace and momentum identities are
+\[
+ k=k_c+k_h-\frac a4H,\qquad
+ \Omega\partial^j(a_c+a_h)_{ij}
+ -2(a_c+a_h)_{ij}G^j=\frac23\partial_i(k_c+k_h).
+\]
+Consequently the residual $\mathcal R=a-a_c-a_h$ obeys
+\[
+ \partial^j(\Omega^{-2}\mathcal R_{ij})
+ =\Omega^{-3}\left(M_i-\frac a6\partial_iH\right).
+\]
+A flat York decomposition $\mathcal R=\Omega^2(L_{\rm conf}W+T_{\rm TT})$
+therefore gives
+\[
+ \Delta_LW=m-\frac a2G h_4-\frac a6\nabla(\Omega h_4),\qquad
+ \Delta_L=\Delta+\tfrac13\nabla\operatorname{div}.
+\]
+The gradient term introduces no necessary derivative loss: using
+$\Delta_L\nabla\phi=(4/3)\nabla\Delta\phi$, it has the particular
+potential $-(a/8)\nabla\Delta^{-1}(\Omega h_4)$, with the appropriate
+boundary lift.  Elliptic boundary conditions and kernel control still need
+to be specified.
+
+The free $T_{\rm TT}$ is physical information not bounded by $H,M$ alone.
+Its relation to the Weyl field has an important off-constraint correction.
+Let
+\[
+ Q_{ij}=[R^{(3)}_{ij}+K K_{ij}-K_{ik}K^k{}_j]^{\rm TF}.
+\]
+The Gauss decomposition gives
+$E^{\rm phys}_{ij}=Q_{ij}-(1/2)(R^{\rm phys}_{ij})^{\rm TF}$.
+Direct conformal spatial geometry gives
+$\mathcal R=-a\Omega Q$.  Therefore, using
+$(R^{\rm phys}_{ij})^{\rm TF}=-2(D^{\rm phys}_{(i}z_{j)})^{\rm TF}$,
+\[
+ \boxed{\quad
+ \frac{\mathcal R}{\Omega^2}
+ =-a E+\frac a\Omega
+ (D^{\rm phys}_{(i}z_{j)})^{\rm TF} .\quad}
+\]
+Here $E=E^{\rm phys}/\Omega$ is the regular electric component of the
+rescaled Weyl tensor used above.  The last term is $O(\Omega)$ under
+$z=\Omega^3\zeta$.  Thus Weyl energy controls the missing weighted TT
+curvature, with a known regular subsidiary correction.  Omitting that
+correction would silently identify Gauss electric curvature with Weyl
+curvature off the Einstein constraint surface.

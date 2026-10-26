@@ -1,0 +1,93 @@
+% Stronger explicit phase repairing a potential normal-bootstrap gap.
+\section{A subsidiary phase with explicit conormal control}
+\label{sec:subsidiary-conormal-phase-audit}
+
+The time/rotation-only graph norm in the earlier normal-bootstrap statement
+does not, without a further argument, supply conormal derivatives of the
+fast variable.  In particular commuting its fast equation produces
+$\Omega\partial_t(\mathcal D R_g)$, so applying a fixed-time inverse and
+then claiming an additional time derivative is not by itself a construction
+of $\mathcal D R_g$.  A direct finite strengthening of the initial phase
+removes this issue without changing the evolution equations.
+
+Let $\mathcal D=b(r)\partial_r$, $b=\Omega/\Omega_r$, in a collar, cut off
+smoothly away from the centre.  Let $\mathcal Z$ consist of $\mathcal D$,
+the three covariant rotations, and three cutoff Cartesian derivatives
+$\chi\partial_i$ supported away from scri and equal to $\partial_i$ near
+the centre.  Choose overlapping cutoffs so these span ordinary derivatives
+uniformly on compact interior regions.  Include all words in the norm
+\[
+ \sum_{p+|I|\le N}
+ \|\mathcal Z^I\partial_t^pU\|_{L^2_H}.
+\]
+This includes ordinary interior Sobolev norms through order $N$.
+Time jets are the actual compatible limiting-generator jets.  This is a
+stronger explicitly stated phase, not a claim that the old time graph norm
+automatically bounds the additional terms.
+
+To prove invariance write
+\[
+ \mathcal A=V^r\partial_r+V^A\partial_A+R,
+ \qquad R=\frac{A_*}{a\Omega}J_0(n)+R_b,
+\]
+where the principal coefficients, $R_b$, and $J_0$ are smooth on the collar.
+The exact identity is
+\[
+ [\mathcal A,\mathcal D]
+ =b'\mathcal A-(b'V^A+b\partial_rV^A)\partial_A
+  -(\partial_rV^r)\mathcal D-b'R-b\partial_rR.
+\]
+Crucially its last apparent pole is removable:
+\[
+ b'\frac{A_*J_0}{a\Omega}
+ +b\partial_r\frac{A_*J_0}{a\Omega}
+ =\left(\frac{(b'-1)A_*}{a\Omega}
+       +\frac{\partial_rA_*}{a\Omega_r}\right)J_0,
+ \qquad b'-1=-\frac{\Omega\Omega_{rr}}{\Omega_r^2}.
+\]
+It is smooth and bounded.  Radial differentiation leaves $n$ fixed.
+Rotations are the covariant rotations under which the entire tensor system
+is equivariant.
+
+Set $Y_j=\mathcal D^jU$.  Replace $\mathcal AU$ in the commutator by $U_t$.
+At each fixed total time/rotation/conormal order the equation for $Y_j$
+has the original generator plus bounded multiplication at level $j$;
+its forcing consists of time and rotation derivatives at strictly lower
+conormal order and the same total order.  Thus the hierarchy is triangular.
+Construct its $L^2$ solutions by the subsidiary semigroup and bounded
+perturbations, inducting on $j$.  On every compact interior domain the
+distribution $\mathcal D^jU$ satisfies exactly this equation with the same
+initial value.  Local hyperbolic uniqueness identifies it with the
+constructed $Y_j$.  The backward domains remain inside $\Omega>0$ at finite
+time, so this argument needs no boundary regularity of the unknown derivative.
+It follows that the strengthened finite joint phase is invariant and has
+the corresponding energy estimate.  Completion in this norm supplies a
+complete, strongly continuous phase.  It is not necessary to obtain uniform
+conormal commutator estimates for the capped approximants.
+
+The cutoff Cartesian commutators are supported where $\Omega$ is bounded
+below.  They have bounded first-order coefficients; the overlapping
+generator family expresses these as the ordinary same-order interior jet
+system, which closes by the standard differentiated symmetric-hyperbolic
+energy.  No additional unlisted interior regularity is used.
+
+The fast/slow weight improvement can now be applied simultaneously to the
+finite set $\mathcal D^j\partial_t^p\operatorname{Rot}^\alpha(v,R_g)$.
+Their starting weighted $L^2$ norms are available by construction.  For the
+fast operator, the commutator of $\mathcal D^j$ with
+$\Omega^3\partial_\Omega$ contributes $\Omega^2$ times the current
+$\mathcal D^jR_g$ and lower levels.  These are smooth small changes in its
+coercive zeroth-order matrix.  The term
+$\Omega\partial_t\mathcal D^jR_g$ on the right is now genuinely known at
+the previous weight from the joint hierarchy, rather than inferred
+circularly.  Each weight improvement still costs at most two additional
+time/rotation generators.  Reserving six conormal, six angular and two
+time orders together with the sixteen weight-improvement orders uses
+$6+6+2+16=30<40$.  Hence the normal $H^6$ embedding follows on this
+explicitly strengthened phase; using order $128$ in the coupled construction
+leaves ample finite joint budget for the subsequent sources.
+
+The compatible core should allow the actual fractional indicial branch;
+one may take interior-smooth conormal/polyhomogeneous data with the stated
+finite jets and fractional index, then complete.  Density of conformally
+$C^\infty$ boundary data in the same maximal high graph phase is not assumed.

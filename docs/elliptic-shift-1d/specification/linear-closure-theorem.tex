@@ -1,0 +1,287 @@
+% Assembled finite-phase linear theorem. Final audit is recorded separately.
+\section{Assembled linear scri closure and fixed-phase evolution}
+\label{sec:assembled-linear-closure}
+
+This section assembles the preceding calculations for the full
+\emph{linearized} problem selected by the user. It does not equate the
+nonlocal phase below with all raw $H^4/H^3$ data. Auxiliary conformal
+fields are used for the proof and the norm; they do not replace the
+freely evolved Z4c variables in the proposed scheme.
+
+\subsection{The formulation and boundary prescription}
+Use the exact conformal Minkowski background on the ball and retain
+the $C_{\rm Z4c}=0$ tensor evolution. Match the final Appendix-C scalar
+equation by the disclosed addition $3\alpha w\Theta_{\rm phys}/\Omega$.
+Choose
+\[
+ a\kappa_1=4,\qquad \kappa_2=-99/100
+\]
+globally, or retain these constants in the collar and account for any
+smooth interior changes in bounded coefficients. The formulae recorded
+here use the global constants. No mean-curvature constraint is imposed.
+
+Keep the original reference lapse, with zero additional restoring
+coefficient and the reference $1+\log$-like principal family:
+\[
+\boxed{
+u_t=B\cdot\nabla u-G\cdot v+
+\frac{-Fq-AG\cdot v+Aw_*u}{\Omega},\qquad
+F=A^2+\nu(r)\Omega^2,\quad \nu\geq0 .
+}
+\]
+The prescribed profile is smooth, radial, stationary and bounded with its
+needed derivatives. The fork's background-evaluated $1+\log$ variant
+is included by $\nu=\nu_{\rm input}(2aS)^2A$.
+The freely evolved trace is $q=\delta(K_{\rm phys}-2\Theta_{\rm phys})$,
+not a physical-$K$ lapse.
+
+Replace the shift evolution by metric-derived freezing
+$V_t=-\eta_D V$, with constant $\eta_D\geq0$:
+\[
+\boxed{
+Lv_i=-B\cdot\nabla V_i+(a^{-1}-\eta_D)V_i
+       +2A\partial^ja_{ij}-2a_{ij}G^j,\qquad
+L=\Delta+\tfrac13\nabla\operatorname{div}.
+}
+\]
+At scri prescribe
+\[
+\boxed{
+u=0,\qquad v_A=0,\qquad
+v_n=-u+\frac A2(h_{nn}-c).
+}
+\]
+The added $u=0$ is the boundary clock condition missing from nullness alone.
+The initial compatibility class below implies and preserves
+$h_{nn}-c=0$, hence the total shift boundary value is zero.
+These are gauge conditions, not incoming physical radiation data.
+Regularity at the center supplies the interior endpoint condition.
+
+\subsection{Explicit finite phase}
+Use a fixed finite generating family $\mathcal Z$ of spatial vector fields
+tangent to scri: collar dilation
+$\mathcal D_\Omega=\Omega\partial_\Omega$, the rotations with their tensor
+Lie action, and cutoff Cartesian derivatives in an overlapping interior
+region. The collar dilation is smoothly cut off before the center.
+This family spans all ordinary interior derivatives and all boundary
+tangential derivatives; it does not pretend to include the ordinary
+outer normal derivative at scri.
+
+The constraint phase $\mathcal C_{128}$ includes all actual time
+generator derivatives and all words in $\mathcal Z$, of total order
+at most $128$, in the twenty-component common $L^2$ energy.
+Conormal derivatives are part of the initial phase from the outset.
+The earlier assertion that time/rotation derivatives alone create this
+normal regularity is withdrawn. The direct first-order commutator
+argument in the repaired subsidiary sections proves invariance.
+
+Use the following finite compatible extended phase $\mathcal E$:
+\begin{enumerate}
+\item $\mathcal C_{128}$, together with the metric-connection memory
+$V$ in joint order $32$ at ordinary $H^4$.
+\item The compatible rescaled Weyl and sourced conformal particular
+Cauchy fields in joint time/$\mathcal Z$ order $32$ at the mixed
+$m=4$ phase: metric $H^5$ with velocity $H^4$,
+Schouten $H^4$ with velocity $H^3$, conformal-factor perturbation
+$H^6$ with velocity $H^5$, scalar $s$ in $H^5$ with velocity $H^4$,
+and rescaled Weyl in $H^4$.
+\item The elliptic displacement $\eta$ in joint order $20$ at $H^6$,
+equivalently its compatible Lam\'e source and affine boundary-DN
+Cauchy jets in $H^{11/2}$. The high-frequency inverse of the boundary
+generator supplies the one-derivative forcing lift described below.
+\item The lifted lapse-wave energy in affine joint order $12$.
+The lifts are the four \emph{derived} coefficients
+$f_0,f_1,f_2,f_3$, not independently supplied boundary data.
+\end{enumerate}
+Time jets throughout are those of the full triangular equations, including
+known source derivatives. They are not arbitrary additional functions.
+The generalized harmonic and scalar-curvature gauges of the auxiliary
+particular solution are fixed once.
+
+The compatibility conditions are: the determinant/trace algebraic Z4c
+conditions; the differential reduction identities; geometric identification
+of $H,M,T,z$ and the initial rescaled Weyl; the sourced Gauss--Codazzi and
+conformal curvature identities; elliptic memory/trace compatibility;
+and the finite affine time and lift corner identities.
+Initial regular rescaled Weyl and Schouten data are explicit peeling
+requirements. They do not follow from $H,M,T,z$ weights alone.
+The independent regular $s$ quotient is likewise included.
+
+Define $\mathcal E$ as the completion in this finite sum norm of compatible,
+interior-smooth conormally regular Cauchy tuples, allowing the natural
+$\Omega^{176/31}$ constraint branch. No conformal $C^\infty$ restriction
+or unproved infinite ordinary-normal regularity is imposed.
+The source jets are determined by the upstream tuple.
+The identities are closed distributional/trace conditions in the stated
+finite norm; the augmented evolution preserves them.
+
+Let $\mathfrak R$ be the explicit physical-plus-gauge reconstruction of
+all raw Z4c fields. Set
+\[
+ \boxed{
+ \mathcal X=\mathcal E/\ker\mathfrak R,\qquad
+ \|U\|_{\mathcal X}=
+   \inf_{\mathfrak Re=U}\|e\|_{\mathcal E}.
+ }
+\]
+This is an initial-state norm, using the stated finite Cauchy tuple and
+elliptic solves. It is not defined by a future solution supremum.
+A bounded projection onto the kernel is unnecessary.
+
+\subsection{Coupled linear theorem and proof}
+For every $U_0\in\mathcal X$ there is a unique reconstructed solution
+$U\in C([0,\infty);\mathcal X)$ of the full linearized formulation above,
+and for every finite $T$
+\[
+\boxed{
+ \sup_{0\leq t\leq T}\|U(t)\|_{\mathcal X}
+ \leq C_T\|U_0\|_{\mathcal X}.
+}
+\]
+The following proof specifies the reconstruction and the estimates that
+make the fixed-phase assertion meaningful.
+
+\paragraph{Subsidiary evolution and falloffs.}
+The common principal/residue energy, capped construction and homogeneous
+reduction-error transports give the subsidiary evolution.
+The repaired joint-conormal commutator and simultaneous weight bootstrap
+preserve
+\[
+ H,T=\Omega^4(\hbox{natural }H^6\hbox{ fields}),\qquad
+ M,z=\Omega^3(\hbox{natural }H^6\hbox{ fields}).
+\]
+The three outgoing leading amplitudes obey
+\[
+ H_4=-2T_4/(25a),\quad
+ M_{3n}=302T_4/(75a),\quad
+ Z_{3n}=-2T_4/75,\quad M_{3A}=-Z_{3A}/a.
+\]
+Constraint violations are retained. No Hamiltonian, momentum, scalar-Z4
+or connection projection is used.
+
+\paragraph{Physical curvature and a particular metric.}
+These fields produce the conserved Ricci source
+$\widetilde R_{ab}=\Omega^2r_{ab}$ and the regular Cotton source $J$.
+The full ten-component Bianchi energy has nonpositive scri flux.
+The traceful sourced conformal waves and the interior-equivalence argument
+construct a regular particular physical metric.
+The bounded coordinate/conformal adjustment puts its conformal factor
+back to the prescribed $\Omega$. The first-order conormal commutator
+also propagates its finite joint phase.
+Gauss/Codazzi and $\widetilde R_{ij}=-Q^{\rm phys}_{ij}/N$
+then identify its geometric constraints and ADM evolution with the
+required off-constraint Z4c source.
+
+\paragraph{Elliptic displacement and boundary clock.}
+Solve
+\[
+ L\eta=V_{\rm memory}-V(h_P).
+\]
+Its boundary generator is the exact spherical Lam\'e DN operator with
+the added clock forcing $u_P$ and tangential forcing $-(v_P)_A$.
+The polar high modes have a uniform positive symmetrizer; all
+$\ell\ge2$ modes decay, and the finite neutral modes have only polynomial
+growth. Write its high-frequency inverse as $K$. The substitution
+$b=\bar b+KF(P)$ changes the boundary forcing to
+$-KF_t(P)$, gaining its required derivative.
+The low modes are finite dimensional.
+Thus the order-$20$, $H^6$ elliptic phase is bounded by the order-$32$
+particular phase and its compatible initial data.
+
+\paragraph{Forced lapse and explicit pole cancellation.}
+For $H_\eta=\eta\cdot G$ and
+$f=(A\tau-aH_\eta)/\Omega$, the exact pure-gauge identity is
+\[
+ \mathcal L_u(U_g)
+ =\Omega\left[P_\nu\phi-\frac{2CAH_\eta}{a\Omega^3}\right],
+ \qquad \phi=A\tau/\Omega.
+\]
+If $\mathcal L_u(U_P)=R_P+S_P/\Omega$, the source for $f$ has only
+quadratic and linear poles. Its first lift is
+$f_0=f_{0,\rm hom}-a\mu_P/2$, which gives
+$\tau_n=\mu_P/(2A)$ and cancels the total normal metric residue.
+The next three lifts cancel successive known source coefficients.
+Writing $f_L=\sum_{j=0}^3\Omega^jEf_j$,
+\[
+ P_\nu(f-f_L)=F_3,\qquad F_3/\Omega^2\in L^2.
+\]
+This uses the anisotropic fourfold normal Hardy inequality on the full
+numerator, with its first four normal jets zero.
+The bulk normal requirements are only $S_P\in H^4$, $R_P\in H^4$,
+and $\eta\in H^6$. A safe \emph{eight} additional joint orders control
+boundary coefficient extensions, so $12+8=20$ fits the phase.
+There is no demand for ordinary $H^7$ constraint regularity.
+
+\paragraph{Lapse-wave existence and weighted embedding.}
+After rescaling by $A$, the positive potential wave has a paired skew
+$1/\Omega$ multiplier. Paired capping, weak compactness and the
+$O(\Omega^2)$ glancing cutoff give its unique weak energy evolution.
+The affine time/conormal hierarchy propagates the order-$12$ phase.
+From the compatible equations
+$R_t=c_0w/\Omega$ and the $w$ equation one recovers the successive weights
+$\Omega^{-p}R$ at a cost of $2p$ joint orders and source weights through
+$F_3/\Omega^{p-1}$. For $p\le3$ and five additional joint derivatives,
+order $11$ suffices. This proves bounded raw reconstruction into
+\[
+ h,c,u,v\in H^4,\qquad a,q\in H^3,\qquad q/\Omega\in H^2,
+\]
+with the retained constraint and connection fields in their stated
+regular classes. The extra order controls the needed time derivatives.
+
+\paragraph{One fixed raw-state space.}
+The compatible extended hierarchy is a bounded triangular evolution on
+the complete phase $\mathcal E$. Its reconstruction is continuous into
+distributions, hence its kernel is closed.
+A zero raw initial state has zero independent subsidiary and Weyl data.
+Their uniqueness makes the reconstructed physical metric flat to first
+order, hence pure physical gauge on the simply connected domain.
+The explicit hyperbolic KID equations
+\[
+ D^p_{(i}\eta_{j)}=-lF\gamma^p_{ij},\qquad
+ D^p_iD^p_jF=l^2F\gamma^p_{ij}
+\]
+give precisely the ten Minkowski Killing initial data.
+Subtracting that physically trivial Killing field gives zero lapse-wave
+and displacement Cauchy data. Homogeneous DN and positive-wave uniqueness
+then make the reconstructed raw solution zero.
+Thus $\ker\mathfrak R$ is invariant, without assuming the desired raw
+uniqueness theorem. The quotient carries the strongly continuous
+evolution and the displayed same-space estimate.
+
+\subsection{Actual scri closure and the limits of the theorem}
+The preceding estimates imply, for all times,
+\[
+ T|_{\scri}=z|_{\scri}=H|_{\scri}=M|_{\scri}=0,\qquad
+ u|_{\scri}=v|_{\scri}=0,\qquad
+ (h_{nn}-c)|_{\scri}=q|_{\scri}=0.
+\]
+For each combined pole numerator $S_U$, define its regular quotient
+by the reconstructed identity
+\[
+ Q_U=(U_t-R_U)=S_U/\Omega\quad(\Omega>0).
+\]
+The identity and weighted recovery give $Q_U\in H^2$.
+Its trace, rather than separate divergent summands, is the scri RHS.
+Since $\partial_n\Omega=-1/a$ at the reference sphere, the explicit
+boundary update for the geometric and Z4c fields is
+\[
+ \boxed{\quad U_t|_{\scri}=(R_U-a\partial_nS_U)|_{\scri}.\quad}
+\]
+The lapse uses $u_t|_{\scri}=0$ and the elliptic shift uses its stated
+Dirichlet values. The $S_U$ are the spatial pole numerators in the
+companion full linearization. They contain no unknown $U_t$.
+The derivative formula holds in the Sobolev trace sense, including the
+connection block; the proved quotient has the stronger $H^{3/2}$ trace.
+Thus the reconstruction identity proves regularity but is not needed
+to evaluate an unknown time derivative in the boundary update.
+This defines the unique regular limiting boundary equation and preserves
+its finite corner hierarchy. No incoming constraint or physical radiation
+function is supplied at scri.
+
+The conclusion is a full coupled \emph{linear} evolution in the explicit
+compatible nonlocal quotient graph phase. It is not an assertion that
+arbitrary raw $H^4/H^3$ data have a norm-equivalent estimate.
+It proves neither nonlinear binary-black-hole evolution nor stability
+of a particular discretization. Those statements are outside the
+linearized scope selected here.
+

@@ -1,0 +1,488 @@
+\section{Original reference lapse: clock repair and exact ball wave}
+\noindent\textbf{Scope.} These are linear pure-gauge identities and energy estimates. The condition $u|_{\scri}=0$ is an additional lapse/clock boundary gauge, not a consequence of nullness. No full physical-plus-gauge Z4c theorem is claimed. The transfer of the earlier odd estimate to the original damping branch remains conditional on an estimate for $z/\Omega^3$; a base estimate for $z/\Omega$ does not supply it.
+
+\subsection{Background, driver, and pure-gauge variables}
+Let
+\[
+ \Omega=\frac{S^2-r^2}{2aS},\quad A=\frac{S^2+r^2}{2aS},\quad
+ B=-x/a,\quad G=\nabla\Omega=-x/(aS),\quad d=1/(aS),\quad C=A+\Omega=S/a.
+\]
+Write $D=\partial_t-B\cdot\nabla$ and
+\[
+ w=-\frac{B\cdot G}{A}=-\frac{r^2}{a^2SA}.
+\]
+Useful exact relations are
+\[
+ \nabla A=-G,\quad \nabla G=-dI,\quad D\Omega=Aw,\quad DA=-Aw,
+ \quad DG=G/a,\quad A^2-|B|^2=\Omega^2,
+\]
+\[
+ w+1/a=\Omega/(aA),\qquad D^2\Omega=2Aw/a.
+\]
+The original reference driver used here has harmonic principal coefficient and zero extra restoring parameter:
+\begin{equation}
+ Du=-G\cdot v-\frac{A^2q}{\Omega}-\frac{AG\cdot v}{\Omega}
+       +\frac{Aw}{\Omega}u.\label{driver}
+\end{equation}
+Here $q=\delta\widehat K_{\rm phys}$; in the constraint-free pure-gauge sector it equals $\delta K_{\rm phys}$.
+
+Use the plus-Lie physical spacetime diffeomorphism $X=\tau\partial_t+\xi^i\partial_i$ and compensate the conformal factor to keep the coordinate function $\Omega$ fixed. Define
+\[
+ \eta=\xi+B\tau,\qquad \sigma=\frac{\xi\cdot G}{\Omega},\qquad
+ \phi=\frac{A\tau}{\Omega},\qquad H=\eta\cdot G,\qquad R=H/\Omega.
+\]
+The twice-conformal metric perturbation is
+\[
+ h_{ij}=2\partial_{(i}\eta_{j)}^{\TF},\qquad
+ V^i=(\Delta\eta^i+\tfrac13\partial^i\operatorname{div}\eta)=:(L\eta)^i.
+\]
+Thus metric-Dirac freezing is an elliptic equation for $\eta$, with its prescribed coordinate-time memory as source. Direct metric variation gives
+\begin{align}
+ q&=-\left(\Delta_{\Omega^{-2}\delta}-3/a^2\right)\phi,\\
+ u&=\Omega D\phi-CR,\\
+ v&=D\eta-\eta/a-A\Omega\nabla\phi-CG\phi.
+\end{align}
+The regular normal gauge variable is
+\[
+ f=\phi-aR=\frac{A\tau-a\eta\cdot G}{\Omega}.
+\]
+There is a completely regular reconstruction, not merely cancellation of leading residues. With $W_\eta=D\eta-\eta/a$,
+\begin{align}
+ \tau&=(\Omega f+aH)/A,\quad \xi=\eta-B\tau,\quad \sigma=H/A+wf,\\
+ v&=W_\eta-A\Omega\nabla f-CGf-aA\nabla H-aHG,\\
+ q&=-J_f f-a[\Omega\Delta H-3G\cdot\nabla H-3dH],
+ \quad J_f=\Omega^2\Delta-\Omega G\cdot\nabla-3/a^2,\\
+ (a_g)_{ij}&=-[\Omega\partial_i\partial_jf+G_i\partial_jf+G_j\partial_if]^{\TF}
+             -a(\partial_i\partial_jH)^{\TF}.
+\end{align}
+In the last identity, substituting $\phi=f+aH/\Omega$ into the physical normal-deformation curvature makes all inverse powers cancel; the remaining term proportional to $H\operatorname{Hess}\Omega/\Omega$ is pure trace. Thus the reconstructed metric, lapse, shift, physical trace and trace-free curvature have no hidden normal poles.
+In particular,
+\begin{equation}
+ c=-\tfrac23\operatorname{div}\eta-2f/a,
+ \qquad u=\Omega Df+aG\cdot(D\eta-\eta/a).\label{regularfields}
+\end{equation}
+
+\subsection{An extra boundary clock is necessary}
+The flat local model $\bar g=dx^2+2dt\,dx+dy^2+dz^2$, $\Omega=x>0$ is itself a conformal representation of physical Minkowski spacetime: $\bar g$ is flat, $\bar\nabla\bar\nabla\Omega=0$, and $|d\Omega|_{\bar g}^2=0$.
+
+In this paragraph use minus-Lie convention, $D=\partial_t-\partial_x$, and write $\tau=S_x-xf$, $\eta_x=S_x$. The pure-gauge fields include
+\[
+ u=xDf-DS_x,\quad c=\tfrac23\operatorname{div}\eta-2f,\quad
+ v=-D\eta+\nabla S_x-\nabla(xf),\quad h=-2\partial_{(i}\eta_{j)}^{\TF}.
+\]
+The original driver reduces to
+\begin{equation}
+ \left(\Box-2/x^2\right)f=\frac{\Box S_x}{x}-\frac{2(S_x)_t}{x^2},
+ \qquad \Box=-\partial_{tt}+2\partial_{tx}+\Delta_{\tan}.\label{flatforce}
+\end{equation}
+The regular boundary clock is $a=S_x|_{x=0}=\tau|_{x=0}$. Nullness alone does not set $a$ to zero.
+
+For any real $s>0$ and tangential frequency $k>0$, zero tangential shift allows
+\[
+ S_x=(a+bx)e^{-kx},\qquad b=\frac{k(s+2k)}{7s+8k}a,
+\]
+with the common factor $e^{st+iky}$. Equation \eqref{flatforce} becomes
+\[
+ 2s f'-(s^2+k^2+2/x^2)f=\mathcal R(x),
+\]
+\[
+ \mathcal R=e^{-kx}\left[-(s+k)^2b-\frac{(s+k)^2a}{x}-\frac{2sa}{x^2}\right].
+\]
+With $\mathcal H(x)=\exp((s^2+k^2)x/(2s)-1/(sx))$, the solution
+\[
+ f(x)=-\mathcal H(x)\int_x^\infty\frac{\mathcal R(y)}{2s\mathcal H(y)}\,dy
+\]
+decays at infinity and has a smooth endpoint expansion beginning $f=sa+O(x)$. It supplies regular pure-gauge positive-growth modes unless the clock is additionally closed. This is separate from all Einstein constraints.
+
+The implementable field condition $u|_{x=0}=0$ gives $a_t=(S_x)'|_{0}$. If $p=\eta_y|_0$ is the longitudinal tangential gauge trace, the coupled principal boundary system is
+\[
+ \partial_t\binom ap=\frac{k}{7}
+ \begin{pmatrix}-6&-i\\6i&-8\end{pmatrix}\binom ap.
+\]
+Its rates are $-k\pm k/\sqrt7$. The positive symmetrizer $\operatorname{diag}(6,1)$ makes the generator strictly negative for $k>0$. The transverse rate is $-k$.
+
+\subsection{Exact ball boundary system}
+Regularity of the fixed-$\Omega$ spacetime diffeomorphism gives
+\[
+ \eta_n=-A\tau\quad\hbox{at }r=S.
+\]
+The additional condition $u|_{\scri}=0$ and zero tangential shift give
+\begin{align}
+ (\eta_n)_t&=-A\partial_n\eta_n+\eta_n/a,\\
+ (\eta_A)_t&=-A\partial_n\eta_A+\eta_A/a-A\nabla_A\eta_n.
+\end{align}
+These equations couple to the elliptic Dirichlet-to-Neumann map of $L\eta=V_{\rm memory}$. The principal polar symbol is the stable matrix above. They are independent of the interior regular variable $f$.
+
+\subsection{Exact forced ball wave and cancellation of the cubic pole}
+Substitution in \eqref{driver} gives
+\begin{equation}
+ P\phi=\frac{2CA}{a\Omega^3}H,\qquad
+ P=D^2-A^2\Delta-AG\cdot\nabla+\frac{V_0}{\Omega^2},\label{Pphi}
+\end{equation}
+where
+\[
+ V_0=3A^2/a^2-C^2|G|^2
+ =\frac{3S^4+2S^2r^2+3r^4}{4a^4S^2}>0.
+\]
+For $f=\phi-aH/\Omega$ the exact source is
+\begin{equation}
+ Pf=S_f=\frac{J}{\Omega^2}-\frac{a\mathcal Q}{\Omega},\label{Sf}
+\end{equation}
+with
+\begin{align}
+ \mathcal Q&=D^2H-A^2\Delta H-AG\cdot\nabla H-2|G|^2H,\\
+ J&=2aA(wDH-AG\cdot\nabla H)
+ +\left[\frac{A(2A+\Omega)}S+\frac\Omega a\right]H.
+\end{align}
+In particular all $\Omega^{-3}$ terms cancel algebraically before imposing boundary conditions. A useful identity in this cancellation is
+\[
+ \frac{2CA}{a}-aV_0=\frac{\Omega(2A-\Omega)}a.
+\]
+
+\subsection{The first two boundary lifts}
+Let $E$ be a fixed smooth extension from the outer sphere into a collar, constant along the radial coordinate near $r=S$. Under the additional boundary clock system,
+\[
+ DH|_{\scri}=2H/a,\quad
+ J|_{\scri}=2A^2H_n-2AH/a,\quad
+ V_0|_{\scri}=2A^2/a^2.
+\]
+The required leading trace of $f$ is therefore
+\begin{equation}
+ f_0=\frac{J|_{\scri}}{V_0|_{\scri}}
+ =a^2H_n-\frac aA H=-a\partial_n\eta_n.\label{f0}
+\end{equation}
+This leading lift enforces the remaining original lapse pole condition. Indeed
+\[
+ \tau=\frac{\Omega f+aH}{A},\qquad
+ \tau_n|_{\scri}=\frac{-f/a+aH_n}{A}-\frac H{A^2}=0
+\]
+when $f|_{\scri}=f_0$. Thus $\tau_n=0$ is derived, not silently assumed from the parabolic clock equations.
+
+Write $\partial_\Omega=(\partial_n\Omega)^{-1}\partial_n$ near the outer sphere and choose
+\begin{equation}
+ f_1=\frac{\partial_\Omega[J-V_0E f_0]|_{\scri}-a\mathcal Q|_{\scri}}
+ {V_0|_{\scri}}.\label{f1}
+\end{equation}
+Because $\partial_\Omega E f_0=0$ there and
+\[
+ (V_0)_n|_{\scri}=4A/a^3,
+\]
+this can equivalently be written
+\[
+ f_1=\frac{-aJ_n+4Af_0/a^2-a\mathcal Q}{2A^2/a^2}\bigg|_{\scri}.
+\]
+Set $f_L=E f_0+\Omega E f_1$. Then
+\begin{equation}
+ P(f-f_L)=F_{\rm reg}:=
+ \frac{J-a\Omega\mathcal Q-V_0 f_L}{\Omega^2}
+ -(D^2-A^2\Delta-AG\cdot\nabla)f_L.\label{Freg}
+\end{equation}
+The numerator of the quotient and its first $\Omega$ derivative vanish at scri by \eqref{f0}--\eqref{f1}. Hence $F_{\rm reg}$ is smooth for smooth compatible $\eta$, with no hidden normal poles. This is a genuine finite-jet lift, not a further assumed falloff for $f$.
+
+For an explicit conservative regularity count on a compact collar, $\eta\in C_t^4H_x^{m+6}$ suffices to bound $F_{\rm reg}$ in $C_t^0H_x^m$: $J$ uses at most one derivative, $\mathcal Q$ two, $f_1$ two boundary derivatives, and applying the differential operator to the lifts costs two more derivatives. The spare derivatives cover traces, the fixed extension, and twice-divisible Hardy quotients. Commuting $j$ time derivatives requires the same count with $C_t^{j+4}H_x^{m+6}$. This deliberately generous count does not claim a sharp or equal-order Sobolev estimate.
+
+\subsection{Positive wave energy after the lift}
+For $f_h=f-f_L$, put $f_h=A\chi$. Direct calculation gives
+\[
+ \Box_{\bar g}\chi+\frac{3\Omega}{aA^3}D\chi-W\chi
+ =-F_{\rm reg}/A^3,
+\]
+\[
+ W=\frac{V_0/\Omega^2+S_A}{A^2},\qquad
+ S_A=\frac{D^2A-A^2\Delta A-AG\cdot\nabla A}{A}.
+\]
+The function $S_A$ is smooth and $W$ has positive leading coefficient $2/(a^2\Omega^2)$. The stationary Killing energy has density
+\[
+ \frac1{2A}\left[\chi_t^2+\Omega^2\chi_r^2
+ +A^2|\nabla_{\tan}\chi|^2+A^2W\chi^2\right].
+\]
+A bounded mass shift makes this positive globally if necessary. The extra first-order term is $O(\Omega)D\chi$, which is controlled by this energy, unlike an arbitrary coefficient times $D\chi$. The null outer flux is nonpositive. For compatible smooth solutions,
+\[
+ E_\chi(t)\le C_T\left[E_\chi(0)+\int_0^t\|F_{\rm reg}(s)\|_{L^2}^2ds\right].
+\]
+Stationarity permits the same estimate after commuting time derivatives. This yields a pure-gauge estimate in an explicit mixed high-$\eta$/lower-wave graph norm, provided the elliptic-DN boundary evolution is solved with its compatibility conditions. It is not yet an equal-order physical Sobolev theorem, nor does it include all physical Z4c forcing.
+\subsection{Weak energy evolution and conormal--graph domains}
+This section specifies the energy construction and the additional derivatives needed for regular geometric fields. It concerns the forced pure-gauge wave above, not the full physical evolution.
+
+Choose a bounded stationary mass shift $M$ so
+\[
+ c_0(r)^2=V_0+\Omega^2(S_A+MA^2)>0.
+\]
+The added mass term is moved to a bounded remainder in the equation. On a collar set
+\[
+ U=(w,Q,G_{\tan},R),\qquad
+ w=\chi_t,\quad Q=\Omega\chi_r,\quad
+ G_{\tan}=A\nabla_{\tan}\chi,\quad R=c_0\chi/\Omega.
+\]
+The first-order system has symmetrizer $A^{-1}I$. Its radial principal block on $(w,Q)$ is
+\[
+ \begin{pmatrix}2B_n&\Omega\\\Omega&0\end{pmatrix},
+\]
+with eigenvalues $B_n\pm A$; the tangential blocks couple $w$ symmetrically to $G_{\tan}$. The only unbounded multiplier is a skew block on $(w,R)$:
+\[
+ \frac1\Omega\begin{pmatrix}0&-c_0\\c_0&0\end{pmatrix}.
+\]
+All other coefficients are smooth and bounded on the collar. In particular, the coefficient of $\chi_r$ in the second-order equation is $O(\Omega)$, so it is a bounded coefficient of $Q$.
+
+For existence one may cap only this skew multiplier by $J/\max(\Omega,\varepsilon)$, keeping its two entries paired and leaving the principal matrices unchanged. Smooth approximations of the cap are equivalent. The capped symmetric systems have a common energy bound independent of the cap. One can first truncate at $\Omega=\delta$ and impose zero incoming energy there, then pass to $\delta\downarrow0$. Weak compactness gives a distributional solution on every interior compact subset and then on the full energy space. In the limit the equation $R_t=c_0w/\Omega$ recovers $\chi_t=w$ with $\chi=\Omega R/c_0$. The differences $Q-\Omega\chi_r$ and $G_{\tan}-A\nabla_{\tan}\chi$ have zero time derivative, hence compatible initial data remain compatible.
+
+Uniqueness and the energy bound do not require integrating $1/\Omega$. Localize the energy away from scri and then let the localization approach it. The singular multiplier cancels exactly in the localized quadratic form. The positive radial principal eigenvalue is $B_n+A=O(\Omega^2)$; its cutoff error is $O(\varepsilon)$, while the negative radial part has favorable sign and can be discarded. Interior Friedrichs approximation then gives the same estimate for weak solutions. This defines the unique strongly continuous energy evolution on the closure of compatible smooth data. The argument also provides the natural maximal dissipative generator after a bounded shift.
+
+Let $\mathcal A$ denote this stationary first-order generator and let
+\[
+ \mathcal D_0=\Omega\partial_\Omega=\frac{\Omega}{\Omega_r}\partial_r
+\]
+on the collar, extended by a smooth cutoff into the interior. Let $\mathcal R_\alpha$ be rotational derivatives, acting covariantly on the tangential components of $U$. Exact commutation of the scalar wave operator with rotations supplies the corresponding first-order commutations. On the collar,
+\begin{equation}
+ [\mathcal A,\mathcal D_0]
+ =\mathcal A+\sum_\alpha C_\alpha(r)\mathcal R_\alpha
+ +C_1(r)\mathcal D_0+C_0(r),\label{comm}
+\end{equation}
+where every $C$ is smooth and bounded. To see the singular cancellation directly,
+\[
+ [J/\Omega,\mathcal D_0]=J/\Omega-J_r/\Omega_r.
+\]
+For a smooth radial matrix $M_r$, the difference between
+$[M_r\partial_r,\mathcal D_0]$ and $M_r\partial_r$ is
+\[
+ \left[-(\Omega_{rr}/\Omega_r)M_r-(M_r)_r\right]\mathcal D_0.
+\]
+The angular commutators are bounded angular first-order terms. Cutoff commutators are supported where $\Omega$ is bounded away from zero and are handled by ordinary interior Sobolev estimates.
+
+Define the mixed hierarchy norm
+\[
+ \mathcal E_N(U)=
+ \sum_{j+p+|\alpha|\le N}
+ \|\mathcal D_0^j\partial_t^p\mathcal R^\alpha U\|_{L^2(A^{-1}dx)}^2
+ +\text{ordinary interior Sobolev terms of order at most }N.
+\]
+For forced evolution the initial time jets are the affine compatible jets
+\[
+ U_0=U(0),\qquad U_{p+1}=\mathcal A U_p+\partial_t^pF(0).
+\]
+They must be used instead of silently replacing them by $\mathcal A^pU_0$. For example a regular forced solution $\chi=O(\Omega^2)$ can have $\mathcal AU_0$ with a boundary trace canceled by $F(0)$; it need not belong to the second homogeneous generator domain.
+
+The joint domain is the completion of smooth compatible state/forcing pairs in the displayed finite hierarchy, including these affine jets. Equivalently, additional finite Taylor lifts can be computed recursively from the positive leading coefficient $V_0|_{\scri}$ so the final forcing vanishes to enough finite order and ordinary homogeneous graph domains can be used. Those are derived lifts, not an assumed disappearance of arbitrary constraint data.
+
+Apply the base weak evolution first to the time and rotational graph variables. Then construct the $j=1,2,\ldots$ conormal levels using \eqref{comm}. Every source replaces a conormal derivative by one time or angular derivative and therefore involves lower $j$ at the same total order, or bounded multiplication at the current level. The system is triangular in $j$ and closes by induction and Gronwall. Distributional commutation is validated on interior compact subsets and extended by the common energy estimate and uniqueness; no uniform conormal commutator bound for the capped multiplier is assumed. Consequently
+\[
+ \mathcal E_N(U(t))\le C_{N,T}\left[
+ \mathcal E_N(U(0))+
+ \int_0^t\sum_{j+p+|\alpha|\le N}
+ \|\mathcal D_0^j\partial_t^p\mathcal R^\alpha F(s)\|_{L^2}^2ds
+ \right].
+\]
+This is a well-defined mixed graph/conormal energy statement, not a claim that every component has identical ordinary Sobolev order.
+
+The independent conormal derivatives give the geometric normal derivatives needed here. Indeed
+\[
+ \chi_r=\frac{\Omega_r}{c_0}
+ \left[\mathcal D_0R+R-(\mathcal D_0c_0/c_0)R\right].
+\]
+Thus $\chi_r$ is controlled without dividing an energy variable by $\Omega$. Similarly $\Omega\chi_{rr}$ is a bounded combination of $\mathcal D_0^2R,\mathcal D_0R,R$. Two total conormal/time/angular orders control the gauge metric in $H^1$ and the curvature combinations $\Omega\operatorname{Hess}f+G\otimes\nabla f$ in $L^2$, together with the corresponding lapse derivatives. The already explicit higher-$\eta$ lift norms control the remaining spatial-diffeomorphism pieces. This yields the pure-gauge mixed-regularity estimate on the ball once the elliptic-DN boundary evolution for $\eta$ is supplied.
+
+\subsection{Exact bridge for a known regular physical particular solution}
+Let $U_P$ be a fixed-$\Omega$ regular particular solution of the sourced linearized Einstein system, and write its lapse, shift and metric perturbations as $u_P,v_P,h_P,c_P$. Define
+\[
+ \mathcal L_u(U)=Du+G\cdot v+
+ \frac{A^2q+AG\cdot v-Awu}{\Omega}.
+\]
+The pure-gauge identity, including normalization, is
+\[
+ \mathcal L_u(U_g)=\Omega\left[P\phi-\frac{2CAH}{a\Omega^3}\right].
+\]
+Write the known particular residual as
+\[
+ \mathcal L_u(U_P)=R_P+S_P/\Omega,
+ \qquad S_P=A^2q_P+AG\cdot v_P-Awu_P.
+\]
+The sign of $S_P$ is opposite to the pole numerator on the RHS of the lapse equation. To impose the original driver on $U_P+U_g$, the regular gauge wave becomes
+\[
+ Pf=\frac{J-S_P}{\Omega^2}-\frac{a\mathcal Q+R_P}{\Omega}.
+\]
+The same two finite Taylor lifts apply with $J$ replaced by $J-S_P$ and $a\mathcal Q$ replaced by $a\mathcal Q+R_P$. No new cubic pole appears.
+
+The total boundary gauge $u_P+u_g=0$ and zero total tangential shift give the forced elliptic-DN system
+\begin{align}
+ (\eta_n)_t&=-A\partial_n\eta_n+\eta_n/a+u_P,\\
+ (\eta_A)_t&=-A\partial_n\eta_A+\eta_A/a-A\nabla_A\eta_n-(v_P)_A.
+\end{align}
+In particular $DH|_{\scri}=2H/a-u_P/a$. Suppose the particular solution satisfies its regular null condition and $H_{\rm constraint}=T=0$ at scri. Put $\mu_P=(h_P)_{nn}-c_P$. Then
+\[
+ S_P|_{\scri}=A^2\mu_P/a+2Au_P/a,
+\]
+whereas the clock forcing changes $J|_{\scri}$ by $+2Au_P/a$. These terms cancel. The leading forced lift is
+\[
+ f_0=f_{0,\rm homogeneous}-\frac a2\mu_P.
+\]
+Therefore
+\[
+ \tau_n|_{\scri}=-\frac{f_0-f_{0,\rm homogeneous}}{aA}
+ =\frac{\mu_P}{2A}.
+\]
+The pure-gauge normal metric contribution is $\mu_g=-2A\tau_n$, so $\mu_P+\mu_g=0$ and total normal shift vanishes. This demonstrates the needed leading boundary compatibility rather than assuming it.
+
+This bridge reduces physical forcing to known boundary traces and finite jets of the particular solution. It does not construct that sourced particular solution or prove its regularity; those are separate required steps before a full physical-plus-gauge linear theorem can be asserted.
+\subsection{Reference $1+\log$-like principal coefficient}
+The harmonic-collar calculation extends to the original reference family
+\[
+ F=A^2+\nu\Omega^2,\qquad \nu\ge0,
+\]
+where $\nu$ is smooth, radial, bounded and stationary. This restriction includes the reference profiles and the fork's background-evaluated $1+\log$-like factor. In particular the latter has $\nu_{\rm eff}=\nu_{\rm input}(2aS)^2A$. Compact support in the interior is permitted but not needed for the collar estimates.
+
+The lapse residual changes by $\mathcal L_{u,\nu}=\mathcal L_{u,0}+\nu\Omega q$. Because the pure-gauge trace is $q=-J_f\phi$,
+\[
+ P_\nu=P-\nu J_f
+ =D^2-(A^2+\nu\Omega^2)\Delta
+ +(\nu\Omega-A)G\cdot\nabla+V+3\nu/a^2.
+\]
+The exact identity becomes
+\[
+ \mathcal L_{u,\nu}(U_g)
+ =\Omega\left[P_\nu\phi-\frac{2CAH}{a\Omega^3}\right].
+\]
+There is no new forcing pole when passing to $f=\phi-aH/\Omega$, since
+\[
+ J_f(H/\Omega)=\Omega\Delta H-3G\cdot\nabla H-3dH
+\]
+is smooth. Thus
+\[
+ P_\nu f=S_f+a\nu(\Omega\Delta H-3G\cdot\nabla H-3dH).
+\]
+The displayed $f_0$ and $f_1$ are unchanged; the additional term in $P_\nu f_L$ is smooth as well. A known physical particular solution adds $\nu\Omega q_P$ to its lapse residual and hence only the smooth term $-\nu q_P$ to the divided wave forcing.
+
+The new effective radial principal coercivity is
+\[
+ F-|B|^2=(1+\nu)\Omega^2.
+\]
+After the same rescaling $f_h=A\chi$, the change in the first derivative coefficient is
+\[
+ \nu\Omega(1+2\Omega/A)G\cdot\nabla\chi,
+\]
+along with the $-\nu\Omega^2\Delta\chi$ principal change and bounded zeroth-order terms. Rewriting relative to the stationary effective wave metric with lapse $\sqrt F$ and shift $B$ changes only bounded time coefficients and $O(\Omega)$ radial first-derivative coefficients. The inverse-square potential has the same positive leading coefficient at scri.
+
+The first-order energy variables can consequently use
+\[
+ Q_\nu=\sqrt{1+\nu}\,\Omega\chi_r,
+ \qquad G_{\tan,\nu}=\sqrt F\nabla_{\tan}\chi,
+\]
+with the same $w=\chi_t$ and an adjusted smooth positive $R=c_\nu\chi/\Omega$. The radial principal block is
+\[
+ \begin{pmatrix}2B_n&\sqrt{1+\nu}\,\Omega\\
+ \sqrt{1+\nu}\,\Omega&0\end{pmatrix},
+\]
+whose eigenvalues are $B_n\pm\sqrt F$. Its incoming eigenvalue vanishes as $O(\Omega^2)$, the singular $(w,R)$ multiplier remains skew, and the conormal--graph commutator argument remains valid. The boundary clock and its leading lifts are unchanged. Thus the pure-gauge result is compatible with a reference $1+\log$-like interior coefficient, rather than requiring harmonic slicing everywhere. This remains a linear statement in the stated mixed norms and does not assert the missing full physical coupling theorem.
+\subsection{Phase-norm audit: what the reconstruction estimates do not prove}
+The high-auxiliary-regularity to lower-raw-regularity estimates above do not by themselves prove Hadamard evolution on one fixed ordinary raw-state Sobolev phase. In particular, increasing the unweighted conormal order does not automatically increase ordinary normal regularity. For $\chi=\Omega R/c_0$,
+\[
+ \partial_n^k\chi
+ =G_n^k\Omega^{1-k}
+ \prod_{j=0}^{k-1}(\mathcal D_0+1-j)(R/c_0)
+ +\text{lower smooth-coefficient terms}.
+\]
+The estimate with two total conormal orders supplies raw metric $H^1$ and curvature $L^2$. A raw metric $H^k$/curvature $H^{k-1}$ estimate for $k\ge2$ additionally requires $\Omega^{1-k}$-weighted conormal controls (or a separately proved graph-to-weight coercivity). Such coercivity has not been established here. A branch $R\sim\Omega^\beta$ has the ordinary threshold $k<\beta+3/2$.
+
+For example the constraint-natural fractional amplitude exponent $\mu=176/31$ allows ordinary $H^s$ only for $s<\mu+1/2=383/62$, unless its coefficient is zero or the explicit fractional term is removed before differentiation. One cannot demand arbitrarily large ordinary $H^{m+6}$ merely by increasing $m$ in the conservative lift estimate.
+
+Two mathematically legitimate phase constructions remain available but require their own final proofs:
+\begin{enumerate}
+\item Let $X$ be the compatible auxiliary Banach phase, $\mathcal R:X\to\mathcal D'$ the continuous raw-state reconstruction, and $K=\ker\mathcal R$. If $K$ is closed and invariant under the auxiliary evolution, the quotient $X/K$ carries its strongly continuous evolution. The intrinsic raw norm can be defined by
+\[
+ \|U\|_{\rm quotient}=\inf_{\mathcal R x=U}\|x\|_X.
+\]
+No bounded projection onto $K$ is needed. Closedness follows from continuity into a Hausdorff distribution space, but invariance must be proved. A possible route is CEFE compatibility plus zero curvature/source implying pure-gauge rigidity, followed by the finite-dimensional Minkowski Killing-initial-data kernel and the pure-gauge uniqueness estimate. This lemma is not supplied here.
+\item A fixed polyhomogeneous conormal Fr\'echet phase can tolerate finite derivative loss between seminorms. It must include the actual fractional index set and any generated logarithms, with separate boundary coefficient seminorms and conormal remainders. Continuity of the evolution requires estimates at every seminorm; one finite $H^6$ constraint estimate and one lower geometric reconstruction estimate do not suffice. The finite normal jets used by the lifts can be controlled separately rather than demanding infinitely many ordinary normal derivatives of a fractional branch.
+\end{enumerate}
+Accordingly, the pure-gauge and reconstruction results in this note must not be promoted to a full same-phase raw-state well-posedness theorem without one of these closing arguments.
+\subsection{Finite weighted recovery resolving the phase audit at fixed order}
+The missing graph-to-weight estimate in the preceding audit can be supplied at any fixed finite order, provided additional \emph{derived} forcing jets are lifted. This does not assert arbitrary ordinary regularity of a fractional branch.
+
+Continue the Taylor lift through $f_3$. For $j=2,3$, after the lower lifts have been subtracted, choose $f_j$ to cancel the coefficient of $\Omega^{j-2}$ in the source, divided by $V_0|_{\scri}$. The mixed normal-time part contributes only at $\Omega^{j-1}$ and the pure normal principal coefficient is $O(\Omega^2)$, so the recursion is triangular with nonzero diagonal $V_0|_{\scri}$. With $f_L=\sum_{j=0}^3\Omega^jEf_j$, the final source satisfies
+\[
+ F_3=O(\Omega^2),\qquad F_3/\Omega^2\in L^2.
+\]
+This is a Hardy-four estimate on the full numerator. It uses at most four ordinary normal derivatives of the particular pole $S_P$, five of the particular metric/lapse, and six of $\eta$. Boundary $f_3$ needs only three normal derivatives of $S_P$; separate time/rotational seminorms provide the tangential regularity of its extension. Hence it does not require ordinary $H^7$ regularity across the fractional branch.
+
+The first-order equations now recover weights algebraically. From
+\[
+ R_t=c_0w/\Omega
+\]
+one obtains $w/\Omega$ and $(\mathcal D_0w)/\Omega$ from one and two joint graph orders. The $w$ equation then gives $R/\Omega$, since
+\[
+ w_r=\frac{\Omega_r}{\Omega}\mathcal D_0w,
+ \qquad \Omega Q_r=\Omega_r\mathcal D_0Q,
+\]
+and all other terms are angular derivatives, bounded coefficients, the source, or $w_t$. The exact gradient compatibilities give
+\[
+ Q=\Omega\,\text{(smooth linear combination of }\mathcal D_0R,R),
+ \qquad G_{\tan}=\Omega\,\text{(smooth angular first-order expression in }R).
+\]
+Inductively, $\Omega^{-p}R$ costs at most $2p$ joint graph orders and source weights through $F_3/\Omega^{p-1}$. The same statement holds after conormal, time and rotational derivatives. Thus $p\le3$ is controlled by the four-jet lift above. There is no unproved propagation of a new weighted norm: it is recovered at each time from the already propagated joint graph variables and the known weighted source.
+
+A conservative finite choice is:
+\begin{itemize}
+\item Known physical particular solution: joint time/rotation/conormal derivatives through order $32$, with metric/lapse/shift in ordinary $H^5$ and connection/curvature quantities in ordinary $H^4$.
+\item Spatial gauge: joint derivatives through order $20$ in ordinary $H^6$, with its affine elliptic-DN boundary time jets. The one-order elliptic gain in the boundary parabolic forcing uses one additional time derivative of the known particular traces, still below $32$.
+\item Gauge wave: affine joint graph/conormal energy through order $12$, after lifting $f_0,f_1,f_2,f_3$, and the corresponding source seminorms through order $12$, including $F_3/\Omega^2$.
+\end{itemize}
+A conservative anisotropic trace/Hardy audit reserves eight extra joint $\eta$ derivatives beyond the requested wave order, including the $f_1,f_2,f_3$ recursion, the two derivatives in $P$, and boundary time/angular trace margins. The order-$20$ budget therefore covers $12+8$. The Hardy-four estimate differentiates in the normal direction; separate joint norms control tangential derivatives of lift coefficients. It does not require an isotropic $H^4$ norm of every individual boundary lift. Ordinary normal requirements remain $H^5/H^4$ for the particular fields and $H^6$ for $\eta$.
+
+These orders give the raw gauge metric and lapse in $H^4$ and curvature in $H^3$. Indeed four ordinary derivatives require at worst $\Omega^{-3}\mathcal D_0^5R$, costing $6+5=11$ joint orders; order $12$ leaves a margin. The shift receives $H^4$ from its strongly elliptic Dirichlet solve with curvature $H^3$ and the known boundary traces. The total normal shift is zero after the leading lift compatibility already proved.
+
+The total physical trace satisfies $q|_{\scri}=0$: the weighted constraints give $H=T=0$ there, while the forced lift gives total $\mu=0$, and the chosen lapse and nullness give total normal shift zero. Consequently Hardy division gives
+\[
+ q/\Omega\in H^2.
+\]
+The regular geometric RHS has $H^2$ regularity, and the same lower-order time-graph estimates control curvature time derivatives in $H^2$. Their difference therefore defines the combined pole RHS in $H^2$, with its well-defined $H^{3/2}$ boundary trace and continuous representative. This concerns the analytically canceled pole combination, not separate numerical evaluation of divergent summands.
+
+All affine initial time-jet conditions are continuous linear conditions in this finite joint norm on the complete upstream-plus-gauge phase. Gradient compatibility, the boundary elliptic-DN conditions, and the four lift traces form a closed subspace. The augmented hierarchy propagates them by distributional commutation and uniqueness; the weighted recovery above then propagates the needed normal jet conditions. A continuous physical reconstruction into this raw class follows.
+
+To conclude a same-phase raw-state theorem one may now use the quotient construction described above, once its Killing-kernel invariance lemma and the upstream compatible particular-solution estimates are supplied. The finite orders in this section specify a concrete phase for that argument. They do not claim equivalence to every ordinary raw $H^4/H^3$ norm, nor admit arbitrary data violating the stated affine asymptotic compatibility.
+\subsection{Explicit weighted induction, including the reference $\nu$ profile}
+Here is the finite weighted-recovery argument in a form that does not hide a commuted weight. Work on a compact collar where $G_n=\Omega_r\ne0$, with smooth radial $\nu\ge0$. Put $\gamma=\sqrt{1+\nu}$ and use the positive first-order potential coefficient $c_0$ (adjusted by a bounded mass shift). Write $r_*=R/c_0=\chi/\Omega$. The compatible variables satisfy exactly
+\[
+ w=\Omega\partial_t r_*,\quad
+ Q=\gamma\Omega G_n(\mathcal D_0+1)r_*,\quad
+ G_{\tan}=\sqrt F\,\Omega\nabla_{\tan}r_*.
+\]
+Their $w$ equation can be written
+\begin{equation}
+ w_t=2B_n w_r+\gamma\Omega Q_r+
+ \mathcal T G_{\tan}-c_0^2 r_*/\Omega+
+ b_w w+b_QQ+b_GG_{\tan}+b_Rr_*+\mathcal F,\label{weightw}
+\end{equation}
+where $\mathcal T$ is angular first order, all $b$ are smooth bounded, and $\mathcal F=F_3/A$ up to an irrelevant sign convention. Thus
+\[
+ w_r=G_n(\mathcal D_0+1)\partial_t r_*.
+\]
+Also $Q_r$ is a smooth combination of $(\mathcal D_0+1)r_*$ and $\mathcal D_0(\mathcal D_0+1)r_*$; consequently $\gamma\Omega Q_r$ has an extra $\Omega$. The angular term and all lower terms except $b_Rr_*$ likewise have an extra $\Omega$ after substituting the compatible formulas.
+
+Let $\|\cdot\|_{\mathfrak H_m}$ denote the sum of $L^2$ norms after at most $m$ joint conormal, time and rotational derivatives. Multiply \eqref{weightw} by $\Omega^{1-p}$. The unknown is $c_0^2\Omega^{-p}r_*$. The advective term is controlled by $\Omega^{-(p-1)}r_*$ with two further joint derivatives. Every spatial term with an extra $\Omega$ requires at most the lower weight $p-2$ and two derivatives. The bounded $b_R$ term requires only the already known weight $p-1$. Since
+\[
+ \Omega^{-q}\mathcal D_0=(\mathcal D_0+q)\Omega^{-q},
+\]
+all commuted versions have the same structure. Derivatives of $c_0^{-2}$ and other coefficients are bounded. Hence, with $\Omega r_*$ interpreted as a harmless bounded multiple for the base case,
+\begin{equation}
+ \|\Omega^{-p}r_*\|_{\mathfrak H_m}
+ \le C_{p,m}\left[
+ \|\Omega^{-(p-1)}r_*\|_{\mathfrak H_{m+2}}
+ +\|\Omega^{1-p}\mathcal F\|_{\mathfrak H_m}\right].\label{induction}
+\end{equation}
+No current-level unknown is moved to the RHS: the zero-order $r_*$ term is strictly one weight lower than the target. Induction gives
+\begin{equation}
+ \|\Omega^{-p}r_*\|_{\mathfrak H_m}
+ \le C_{p,m}\left[
+ \mathcal E_{m+2p}(U)^{1/2}
+ +\sum_{j=1}^p
+ \|\Omega^{1-j}\mathcal F\|_{\mathfrak H_{m+2(p-j)}}
+ \right].\label{inductionfull}
+\end{equation}
+The same inequality holds with $R$ instead of $r_*$ by smooth multiplication. For $p\le3,m\le5$, the graph index is at most $11$. Every source norm in \eqref{inductionfull} follows from the joint norms of $F_3/\Omega^2$, since $\Omega^{1-j}F_3=\Omega^{3-j}(F_3/\Omega^2)$ and $3-j\ge0$.
+
+The first-order construction, skew multiplier, and this induction are unaffected by $\nu$: the radial coefficient is $\gamma\Omega$, the $R$ time equation remains $R_t=c_0w/\Omega$, and the compatible $Q,G$ retain their extra $\Omega$. Smooth radial profiles cover the stated reference $1+\log$-like family.
+
+For clarity on derivative counts, an ordinary derivative of total order at most four on the scalar metric contribution requires at worst $\Omega^{-3}\mathcal D_0^4r_*$. A curvature derivative of order at most three, or the corresponding lapse derivative, requires at worst $\Omega^{-3}\mathcal D_0^5r_*$. These are bounded by \eqref{inductionfull} at graph order $11$, so order $12$ permits one additional time derivative where required. The known lifts and particular fields are controlled by their separate joint norms. Therefore the total metric/lapse/shift are $H^4$, curvature is $H^3$, and the relevant lower-order time derivatives have the regularity used for the pole-RHS statement.
+
+The shift bound may either be read from its explicit reconstruction and \eqref{inductionfull}, or from its strongly elliptic Dirichlet equation. Its source has $H^2$ regularity from curvature $H^3$; the boundary values are the known compatible gauge traces (zero for the final total shift). Thus it is $H^4$ without an extra angular loss.
+
+Finally the total $q$ is $H^3$ and has zero boundary trace, so $q/\Omega\in H^2$. The total normal-factor perturbation also vanishes at scri because $u$ and $v_n$ do; its quotient has at least $H^2$ regularity. All combined conformal trace and pole expressions can consequently be evaluated through these canceled combinations. Subtracting the regular $H^2$ geometric RHS from the corresponding $H^2$ time derivative gives the full pole quotient in $H^2$. The assertion concerns this combined quotient and its trace; it never permits evaluating separate divergent summands at the boundary.

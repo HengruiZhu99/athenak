@@ -1,0 +1,301 @@
+\section{A weak realization of the linear subsidiary system}
+\label{sec:constraint-existence}
+
+This section concerns only the linear, first-order subsidiary system. It does
+not prove existence for the geometric evolution or for its elliptic gauge.
+The parameters are $a\kappa _1=4$, $\kappa _2=-99/100$, and the
+Appendix-C scalar correction $\epsilon=1$. We use nondimensional $a=1$
+when displaying its positive matrices. For general $a$, the value variables
+in the energy are $\widehat\tau=\tau/a$ and
+$\widehat\zeta=\zeta/a$; the wave variables already have the same dimensions.
+
+Let $\mathcal B=\{r<S\}$ and let $\Omega=(S^2-r^2)/(2aS)$.
+After the exact differential reduction, write the twenty-component equation as
+\begin{equation}
+ \partial_t U=\mathcal A U
+ =V^i(x)\partial_iU+
+ \frac{A(x)}{a\Omega(x)}J_0(n)U+R(x)U
+ \qquad\hbox{in a collar of }\partial\mathcal B .
+ \label{eq:subsidiary-abstract}
+\end{equation}
+Here $R$ is smooth and bounded up to the boundary. On the sixteen wave
+components $V^i=B^iI+AP_i$, where the $P_i$ are the constant first-order
+four-scalar-wave matrices; on the four value components $V^i=B^iI$.
+The exact reduction, not merely an indicial calculation, supplies this
+decomposition. The matrix $J_0$ is its boundary residue, with all bounded
+differences absorbed into $R$.
+
+The common metric is the identity on wave velocities and gradients, and on
+the values has quadratic form
+\begin{equation}
+ 4\widehat\tau^2+4\widehat\tau\widehat\zeta_n
+       +8|\widehat\zeta|^2 .
+ \label{eq:subsidiary-value-metric}
+\end{equation}
+Denote the resulting matrix by $H(n)$. The exact rational block calculation
+establishes constants $h_*,h^*,\sigma>0$, independent of $n$, such that
+\begin{equation}
+ h_*I\le H\le h^*I,\qquad HV^i=(HV^i)^T,
+ \qquad -\operatorname{sym}(HJ_0)\ge\sigma I .
+ \label{eq:subsidiary-common-metric}
+\end{equation}
+The uniformity follows also from rotational covariance. No asserted
+positivity of an uncomputed interior residue is needed.
+
+Choose a smooth radial cutoff $\chi$, equal to one in a smaller boundary
+collar and zero near the center. Extend $H$ smoothly and positively into the
+interior, retaining the identity on the wave sector and a positive metric on
+the value sector. This keeps $HV^i$ symmetric: value principal matrices are
+scalar multiples of the identity. Rewrite the global operator as
+\begin{equation}
+ \mathcal A=V^i\partial_i+
+       \chi\frac{A}{a\Omega}J_0+R_{\rm b},
+ \label{eq:subsidiary-global-decomposition}
+\end{equation}
+where $R_{\rm b}$ is bounded. The cutoff transition is a positive distance
+from scri, so this change introduces no additional singularity. One may
+interpolate the value metric rotationally covariantly; the resulting metric
+is smooth at the center and the global operator remains rotationally
+covariant.
+
+\paragraph{Proposition (linear weak subsidiary evolution).}
+Assume the exact coefficients and positive matrix identities above. For every
+$U_0\in L^2_H(\mathcal B)$ there is a unique
+$U\in C([0,\infty);L^2_H)$ solving
+\eqref{eq:subsidiary-abstract} distributionally on $\Omega>0$ with initial
+value $U_0$. It obeys, on every bounded time interval,
+\begin{equation}
+ \|U(t)\|_H^2+
+ c\int_0^t\!\int_{\mathcal B}
+      \frac{\chi A}{a\Omega}|U|^2\,dx\,ds
+ \le C_T\|U_0\|_H^2 .
+ \label{eq:subsidiary-weak-energy}
+\end{equation}
+The solution operators form a strongly continuous semigroup. Its generator
+is the maximal distributional realization
+\begin{equation}
+ D(\mathcal A)=\{U\in L^2_H:
+          \mathcal A_{\rm formal}U\in L^2_H
+          \text{ distributionally on }\Omega>0\}.
+ \label{eq:subsidiary-maximal-domain}
+\end{equation}
+In particular, no independently chosen incoming boundary trace is added at
+scri. This statement is about the first-order subsidiary extension; the
+reduction-compatible subspace is invariant as proved below.
+
+\paragraph{Proof: bounded approximants.}
+Replace only the explicitly certified singular multiplier in
+\eqref{eq:subsidiary-global-decomposition}, setting
+\[
+ q_N(\Omega)=\frac{1}{\sqrt{\Omega^2+N^{-2}}},\qquad
+ \mathcal A_N=V^i\partial_i+
+          \chi\frac Aa q_NJ_0+R_{\rm b}.
+\]
+For $\Omega>0$, $0\le q_N\le\Omega^{-1}$ and $q_N\uparrow\Omega^{-1}$.
+Every approximant preserves precisely the same pointwise dissipativity
+certificate. We do not cap an entire unverified-sign residue.
+
+For each finite $N$, extend the smooth bounded coefficients and a positive
+symmetrizer to a neighborhood of the closed ball, then to a bounded-coefficient
+whole-space symmetric hyperbolic system. Ordinary Friedrichs regularization
+and the bounded-coefficient energy estimate construct its $L^2$ Cauchy
+solution. Restriction to the ball is independent of the exterior extension.
+Indeed, at $r=S$ the wave normal coefficient $B_nI+AP_n$ has eigenvalues
+$0,-2A$, while the value coefficient is $-A$. Thus its energy boundary flux
+is nonpositive. A difference with zero data inside the ball has zero energy
+there. The same argument first for smooth solutions and then by $L^2$
+approximation justifies the restriction without prescribing extra boundary
+data. Coefficients may be cut off farther outside the ball to ensure all
+whole-space coefficients are bounded; this does not affect the restriction.
+
+Integration by parts and \eqref{eq:subsidiary-common-metric} give
+\begin{equation}
+ \|U_N(t)\|_H^2+
+ 2\sigma\int_0^t\!\int\chi\frac Aa q_N|U_N|^2
+ \le\|U_0\|_H^2+C\int_0^t\|U_N(s)\|_H^2\,ds .
+ \label{eq:subsidiary-cap-energy}
+\end{equation}
+Here $C$ depends on bounded $R_{\rm b}$ and derivatives of $HV^i$, and is
+independent of $N$. The potentially large derivatives of $q_N$ never enter
+this zeroth-order energy estimate.
+
+\paragraph{Proof: passage to the weak limit.}
+On every finite time interval the approximants are bounded in
+$L^\infty_tL^2_x$. On every compact subset of $\Omega>0$, their time
+derivatives are bounded in $L^\infty_tH^{-1}_x$, uniformly in $N$.
+A diagonal weak extraction therefore gives a limit, weakly continuous in
+$L^2$ and solving the original equation distributionally in the open ball.
+One may use a countable dense family of compactly supported smooth tests and
+their uniformly equicontinuous pairings to obtain convergence at every time.
+Density and the uniform $L^2$ bound give global weak continuity and the
+correct weak initial trace. No strong convergence of a product of unknowns
+is required: the equation is linear, and every coefficient is bounded on
+each compact subset of the open ball.
+
+For each fixed interior compact set, weak lower semicontinuity passes the
+weighted part of \eqref{eq:subsidiary-cap-energy} to the limit. Exhaustion
+by compact sets and monotone convergence then give the weighted integral in
+\eqref{eq:subsidiary-weak-energy}. The same lower semicontinuity gives the
+endpoint energy bound. This proves weak existence with the asserted energy.
+
+\paragraph{Proof: weak uniqueness without assuming boundary traces.}
+Let $\eta_\varepsilon(\Omega)$ vanish for $\Omega<\varepsilon$ and equal one
+for $\Omega>2\varepsilon$, with
+$0\le\eta_\varepsilon'\le C/\varepsilon$. Local Friedrichs mollification
+justifies the energy identity with multiplier $\eta_\varepsilon H$ for an
+$L^2$ weak solution: on its support all reaction coefficients are bounded,
+the principal coefficients are Lipschitz, and their Friedrichs commutators
+converge in $L^2$. This is a local statement; it does not differentiate the
+singular multiplier across scri.
+
+The only potentially positive cutoff error comes from the glancing normal
+subspace. Indeed,
+\[
+ V^i\partial_i\Omega=-\gamma(B_nI+AP_n),\qquad
+ \gamma=\frac r{aS},\qquad
+ B_n+A=\frac{(S-r)^2}{2aS}=O(\Omega^2).
+\]
+Every other wave/value eigenvalue of $V^i\partial_i\Omega$ is nonnegative
+in a sufficiently small collar. Hence the positive part of the cutoff error
+is at most
+\[
+ C\varepsilon\int_{\{\varepsilon<\Omega<2\varepsilon\}}|U|^2\,dx.
+\]
+Its time integral tends to zero for $L^\infty_tL^2_x$ solutions. All negative
+cutoff fluxes may be discarded. The certified reaction is dissipative and
+its nonnegative integral passes by Fatou. Letting $\varepsilon\downarrow0$
+therefore gives the same global energy inequality for a weak difference.
+Zero initial data imply zero solution. No pointwise trace, selected sequence
+of boundary spheres, or prior weighted trace estimate is required.
+
+The weak initial continuity and upper energy bound imply strong continuity
+at zero. Uniqueness and time independence give the semigroup property;
+boundedness on finite time intervals then gives strong continuity at every
+time. Thus the weak construction produces a $C_0$ semigroup, rather than
+assuming one in advance.
+
+\paragraph{Proof: identification of the maximal domain.}
+For $U\in D_{\max}$ as defined in \eqref{eq:subsidiary-maximal-domain}, the
+stationary local Friedrichs/cutoff argument gives
+\begin{equation}
+ \operatorname{Re}\langle\mathcal A_{\rm formal}U,U\rangle_H
+ \le C\|U\|_H^2-
+ \sigma\int\chi\frac A{a\Omega}|U|^2 .
+ \label{eq:subsidiary-stationary-domain-energy}
+\end{equation}
+In particular the weighted integral is finite; it need not be imposed as a
+separate domain assumption. The cutoff term has the same favorable sign
+and $O(\varepsilon)$ positive bound as above.
+
+The semigroup generator is contained in $D_{\max}$ by differentiating the
+distributional equation against compactly supported tests. Conversely,
+take $U\in D_{\max}$, choose real $\lambda>C$, and set
+$F=(\lambda-\mathcal A_{\rm formal})U$. The Bochner integral
+\[
+ V=\int_0^\infty e^{-\lambda t}S(t)F\,dt
+\]
+belongs to the semigroup generator domain and satisfies
+$(\lambda-\mathcal A_{\rm formal})V=F$. Therefore $W=U-V\in D_{\max}$
+satisfies $(\lambda-\mathcal A_{\rm formal})W=0$.
+Equation \eqref{eq:subsidiary-stationary-domain-energy} forces $W=0$.
+This proves equality of the generator and maximal distributional domains.
+It also makes the higher graph spaces precise: generator powers are the
+corresponding recursively defined formal powers in $L^2$.
+
+\paragraph{Reduction compatibility.}
+Return to the unscaled value variables and define, distributionally in the
+open ball,
+\[
+ E^Q_i=Q_i-2G_i\tau-\Omega\partial_i\tau
+       =Q_i-\frac{\partial_iT}{\Omega},\qquad
+ E^Z_{ij}=Z_{ij}-G_i\zeta_j-\Omega\partial_i\zeta_j
+       =Z_{ij}-\partial_i z_j .
+\]
+The exact first-order equations, with no use of a Hamiltonian or momentum
+projection, give
+\begin{align}
+ (\partial_t-B\cdot\partial)E^Q_i
+  &=-\left[l+\frac{A(w+d_\theta)}\Omega\right]E^Q_i,\\
+ (\partial_t-B\cdot\partial)E^Z_{ij}
+  &=\left[\frac{Ac}\Omega-3l\right]E^Z_{ij},
+ \qquad d_\theta=\kappa_1(2+\kappa_2),\quad c=2l-\kappa_1.
+ \label{eq:subsidiary-reduction-transport}
+\end{align}
+All forcing cancels exactly. Backward characteristics of these equations
+remain inside the ball: forward characteristics solve $\dot x=-B=x/a$.
+On every compact portion of a backward characteristic the coefficients are
+smooth and bounded. Local distributional uniqueness for transport thus
+preserves zero initial reduction errors, without any data at scri.
+The compatible subspace is closed in $L^2$ with its distributional
+interpretation and invariant under $S(t)$. Consequently
+$Z_{ij}=\partial_i z_j$ and
+$\partial_jZ_{ij}=\partial_iZ_{jj}$ hold for compatible limits even though
+the capped approximants need not preserve these identities.
+
+\paragraph{The explicit joint phase and its interior generators.}
+There is no need to assume that $\mathcal A_N^jU_0$ is bounded uniformly in
+$N$; capping can break cancellations.  Maximal-domain identification instead
+makes time-generator graph domains of the limiting semigroup invariant.
+For the normal embedding we use a \emph{stronger} joint phase from the outset,
+not just this time graph domain.  Set
+\[
+ \mathcal D=b(r)\partial_r,\qquad b=\Omega/\Omega_r
+\]
+on an outer collar, and cut it off smoothly away from the centre.  Let
+$\chi\partial_i$ be three Cartesian generators supported away from scri,
+with $\chi=1$ near the centre.  Choose overlapping cutoffs so that these
+and $\mathcal D$, together with the three covariant rotations, span the
+ordinary spatial derivatives uniformly on every compact interior region.
+Write $\mathcal Z$ for this finite family.  At order $N$ the phase norm is
+\[
+ \mathcal G_N(U)=\sum_{p+|I|\le N}
+  \|\mathcal Z^I\partial_t^pU\|_{L^2_H},
+\]
+where all words $I$ in the generators are included and time jets are the
+actual limiting-generator jets.  Thus the phase explicitly includes
+conormal and ordinary interior regularity.  For example $N=128$ controls
+ordinary interior derivatives through order $128$.  It does not assert that
+time/rotation graph regularity alone generates the conormal derivatives.
+
+\paragraph{Propagation of the joint phase without a capped commutator.}
+Write $\mathcal A=V^r\partial_r+V^A\partial_A+R$ in the collar, with
+$R=A_*J_0(n)/(a\Omega)+R_b$.  The exact identity is
+\[
+ [\mathcal A,\mathcal D]=b'\mathcal A
+ -(b'V^A+b\partial_rV^A)\partial_A
+ -(\partial_rV^r)\mathcal D-b'R-b\partial_rR.
+\]
+Its apparent pole is removable, since $J_0(n)$ is radially constant and
+\[
+ b'\frac{A_*J_0}{a\Omega}
+ +b\partial_r\frac{A_*J_0}{a\Omega}
+ =\left[\frac{(b'-1)A_*}{a\Omega}
+       +\frac{\partial_rA_*}{a\Omega_r}\right]J_0,
+ \qquad b'-1=-\frac{\Omega\Omega_{rr}}{\Omega_r^2}.
+\]
+All remaining coefficients are smooth and bounded.  Replacing
+$\mathcal AU$ by $U_t$ makes the conormal hierarchy triangular: a current
+conormal derivative has the original generator plus bounded multiplication,
+and its time/angular forcing has lower conormal order at the same total
+joint order.  Rotational covariance gives the exact rotational commutations.
+The interior Cartesian commutators have only bounded first-order
+coefficients, supported where $\Omega$ is bounded below; expressing them in
+the same overlapping generator family closes the ordinary interior jet
+energy at the same total order.
+
+Construct each conormal level using the limiting semigroup and bounded
+perturbations, with its prescribed joint initial value.  On interior domains
+the distributional derivative satisfies the same equation and initial data;
+local uniqueness identifies it with the constructed $L^2$ field.  Backward
+domains remain inside the ball at finite time, so no unknown derivative
+trace at scri is required.  The finite augmented energy and completion in
+$\mathcal G_N$ give an invariant strongly continuous joint phase.  This uses
+no uniform commutator bound for the capped multipliers.
+
+The previous unqualified claim that a time/rotation-only $\mathcal G_{40}$
+supplied the six conormal derivatives is withdrawn.  The normal embedding
+below uses the explicitly strengthened joint phase just defined.  It still
+requires the fast/slow weight estimates and finite indicial-jet recursion;
+no coupled geometric/gauge conclusion follows from the subsidiary
+semigroup alone.
+

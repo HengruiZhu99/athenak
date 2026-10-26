@@ -1,0 +1,369 @@
+% Independent linear reconstruction audit. Input fragment, not a standalone file.
+\section{A regular particular metric from the sourced conformal equations}
+\label{sec:sourced-cefe-reconstruction}
+
+This section concerns the \emph{linearized} problem only.  It supplies a
+particular physical metric, before imposing the final elliptic shift and
+lapse gauges.  It assumes the strong subsidiary closure and the compatible
+regular rescaled Weyl evolution established in the preceding sections.
+It does not infer regularity of the rescaled Weyl tensor from the subsidiary
+weights alone.  Initial Weyl peeling and curvature compatibility are explicit
+parts of the initial-data class.
+
+Write $g$ for the conformal metric in this section, $\widetilde g=\Omega^{-2}g$
+for the physical metric, $\Sigma_a=\nabla_a\Omega$, and $L_{ab}$ for the
+\emph{unphysical} Schouten tensor.  The prescribed first-order physical Ricci
+source is
+\[
+ \delta\widetilde R_{ab}=\Omega^2r_{ab},\qquad
+ \ell_{ab}=\tfrac12(r_{ab}-\tfrac16g_{ab}\operatorname{tr}_g r),
+ \qquad \delta\widetilde L_{ab}=\Omega^2\ell_{ab}.
+\]
+Every coefficient multiplying a first-order source in this section is evaluated
+on the fixed conformal Minkowski background.  Thus changes of coordinates or
+conformal gauge do not change $r,\ell,J,d$ at first order: the physical Ricci
+and Weyl background fields vanish.
+
+\subsection{The source conservation identity, including its trace}
+
+Put $S_{ab}=r_{ab}-\tfrac12g_{ab}\operatorname{tr}r$.  The connection-change
+formula gives, without using a field equation,
+\[
+ \widetilde\nabla^a(\Omega^2S_{ab})
+ =\Omega^4\nabla^aS_{ab}+\Omega^3\Sigma_b\operatorname{tr}S.
+\]
+Consequently the necessary and sufficient linear physical conservation law is
+\begin{equation}
+ \Omega\bigl(\nabla^a\ell_{ab}-\nabla_b\operatorname{tr}\ell\bigr)
+ =3\Sigma_b\operatorname{tr}\ell.
+ \label{eq:sourced-cefe-conservation}
+\end{equation}
+It is not legitimate to prescribe arbitrary smooth $r$ independently of the
+subsidiary system.  Here the $H,M$ evolution equations were obtained from the
+physical ADM contracted Bianchi identity with the stated $Q^{\rm phys}_{ij}$.
+Substituting their Ricci projections into that identity is precisely
+\eqref{eq:sourced-cefe-conservation}; it introduces no new condition on their
+solutions.  This explains why the source equations must be kept, rather than
+regarding $H,M,T,z$ as unrelated external functions.
+For a direct normalization check set $N=A/\Omega$ and
+$F_{ij}=Q^{\rm phys}_{ij}/N$.  The prescribed Einstein source has projections
+\[
+ \delta\widetilde G_{nn}=H/2,\qquad
+ \delta\widetilde G_{ni}=-M_i,\qquad
+ \delta\widetilde G_{ij}
+  =\gamma^{\rm phys}_{ij}(H/2+\operatorname{tr}_{\rm phys}F)-F_{ij}.
+\]
+Indeed $\widetilde R_{ij}=-F_{ij}$ and
+$\widetilde R_{nn}=H+\operatorname{tr}_{\rm phys}F$.
+Its normal and tangential divergence projections are exactly the displayed
+closed Hamiltonian and momentum subsidiary equations, including the
+covector Lie derivative on the latter.  This provides an explicit algebraic
+way to verify conservation rather than assuming a physical metric has
+already been reconstructed.
+
+The identity also has a nontrivial boundary consequence.  Since $d\Omega\ne0$
+at scri and the source is regular, $\operatorname{tr}\ell=O(\Omega)$.  For the
+explicit source in the Weyl section,
+\[
+ \operatorname{tr}r=-h_4-12G\cdot\zeta
+       -4\Omega\partial_i\zeta^i+6\kappa\tau_4.
+\]
+The root-two subsidiary coefficient relation makes this trace vanish at scri.
+This is consistent with the full identity, but checking this one leading
+coefficient alone would not prove conservation.
+
+The conformal Cotton tensor is the already established regular source
+\[
+ J_{bcd}=\Omega(\nabla_c\ell_{db}-\nabla_d\ell_{cb})
+ +3(\Sigma_c\ell_{db}-\Sigma_d\ell_{cb})
+ -g_{cb}\Sigma^e\ell_{de}+g_{db}\Sigma^e\ell_{ce}.
+\]
+For example its contracted trace vanishes exactly by
+\eqref{eq:sourced-cefe-conservation}.  Its remaining integrability identities
+follow by commuting the physical derivatives on the flat physical background.
+
+\subsection{Exact regular equations for a traceful source}
+
+The usual trace-free-matter conformal theorem cannot simply be cited for this
+source.  Introduce instead
+\[
+ s=\frac{\Sigma_a\Sigma^a}{2\Omega}
+   =s_F-\frac14\Omega^3\operatorname{tr}\ell,
+ \qquad s_F=\tfrac14\Box_g\Omega+\tfrac1{24}R[g]\Omega.
+\]
+The quotient is an identity on $\Omega>0$; in the reduced system $s$ is an
+independent regular field.  The exact sourced conformal equations are
+\begin{align}
+ H_{ab}:=\nabla_a\nabla_b\Omega
+  &=-\Omega L_{ab}+sg_{ab}+\Omega^3\ell_{ab},
+       \label{eq:sourced-cefe-hessian}\\
+ \nabla_as&=-L_{ab}\Sigma^b+\Omega^2\ell_{ab}\Sigma^b,
+       \label{eq:sourced-cefe-s}\\
+ \nabla_cL_{ab}-\nabla_aL_{cb}
+  &=\Sigma_ed^e{}_{bca}+\Omega J_{bca}=:F_{cab},
+       \label{eq:sourced-cefe-curl}\\
+ \nabla_ad^a{}_{bcd}&=J_{bcd},
+       \label{eq:sourced-cefe-bianchi}\\
+ R_{abcd}[g]&=\Omega d_{abcd}
+    +2\bigl(g_{a[c}L_{d]b}-g_{b[c}L_{d]a}\bigr),
+       \label{eq:sourced-cefe-curvature}\\
+ 2\Omega s-\Sigma^2&=0.
+       \label{eq:sourced-cefe-scalar}
+\end{align}
+Antisymmetrization in the curvature formula has weight $1/2$.
+The Schouten conformal transformation proves
+\eqref{eq:sourced-cefe-hessian}; differentiation of
+\eqref{eq:sourced-cefe-scalar} then proves
+\eqref{eq:sourced-cefe-s}.  The Weyl conformal transformation and the two
+contracted Bianchi identities prove the curl and divergence equations.
+In particular all new terms are $\Omega^3\ell$, $\Omega^2\ell\Sigma$,
+and $\Omega J$, with no inverse conformal factor.
+
+\subsection{An explicit regular wave reduction}
+
+Prescribe the smooth unphysical scalar curvature $\mathcal R(x)$ and smooth
+generalized harmonic coordinate sources.  Impose $R[g]=\mathcal R$ and use
+the usual reduced Ricci operator, so its principal part is
+$-\tfrac12g^{cd}\partial_c\partial_dg_{ab}$.
+The following equations define a regular reduced system.  In their right-hand
+sides replace every curvature by the algebraic expression
+\eqref{eq:sourced-cefe-curvature} and every Hessian of $\Omega$ by
+\eqref{eq:sourced-cefe-hessian}:
+\begin{align}
+ R^{\rm red}_{ab}[g]&=2L_{ab}+\tfrac16\mathcal R g_{ab},
+        \label{eq:sourced-reduced-metric}\\
+ \Box_g L_{ab}&=\tfrac16\nabla_a\nabla_b\mathcal R
+   +\nabla^cF_{c(ab)}
+   +[\nabla^c,\nabla_{(a}]L_{|c|b)},
+        \label{eq:sourced-reduced-L}\\
+ \Box_g\Omega&=4s-\tfrac16\mathcal R\Omega
+                    +\Omega^3\operatorname{tr}\ell,
+        \label{eq:sourced-reduced-Omega}\\
+ \Box_gs&=-\tfrac16\Sigma^a\nabla_a\mathcal R-L^{ab}H_{ab}
+              +\nabla^a(\Omega^2\ell_{ab}\Sigma^b).
+        \label{eq:sourced-reduced-s}
+\end{align}
+The symmetric $L$ equation follows by taking the divergence of its curl
+equation and using $\nabla^aL_{ab}=\nabla_b\mathcal R/6$.
+More explicitly,
+\[
+ \nabla^cF_{cab}
+ =H^c{}_e d^e{}_{bca}+\Sigma_e\nabla^cd^e{}_{bca}
+    +\Sigma^cJ_{bca}+\Omega\nabla^cJ_{bca}.
+\]
+Thus the largest source derivatives are first derivatives of $d,J,\ell$.
+This formula also specifies the reduction without concealing a second
+derivative of $\Omega$ in $\nabla F$.  All these statements concern the
+linearization of the displayed system about the fixed background; no
+quasilinear conclusion is needed here.
+
+In coordinates the scalar wave operators must be reduced using the same
+contracted-Christoffel gauge.  This matters for the mixed regularity below:
+$\delta\Box\Omega_*$ then contains only zeroth-order metric perturbations
+and prescribed gauge terms.  Leaving an uncontrolled contracted
+$\delta\Gamma^a\partial_a\Omega_*$ on the right would falsely remove the
+one extra derivative needed for the final conformal-factor gauge change.
+
+\subsection{Mixed estimate and the fixed-$\Omega$ particular metric}
+
+For integer $m\geq3$ use the phase norm
+\begin{align*}
+ \mathcal E_m={}&\|\delta g\|_{H^{m+1}}+
+ \|\partial_t\delta g\|_{H^m}
+ +\|\delta L\|_{H^m}+\|\partial_t\delta L\|_{H^{m-1}}\\
+ &+\|\omega\|_{H^{m+2}}+\|\partial_t\omega\|_{H^{m+1}}
+ +\|\delta s\|_{H^{m+1}}+\|\partial_t\delta s\|_{H^m},
+ \qquad\omega=\delta\Omega.
+\end{align*}
+One sufficient source norm is
+\begin{align*}
+ \mathcal S_m={}&\|d\|_{H^m}+\|\partial_td\|_{H^{m-1}}
+ +\|J\|_{H^m}+\|\partial_tJ\|_{H^{m-1}}\\
+ &+\|\ell\|_{H^{m+1}}+\|\partial_t\ell\|_{H^m}.
+\end{align*}
+The independent Bianchi evolution bounds the displayed time derivative of
+$d$ by its spatial derivatives and $J$.
+The ordinary energy estimate for the linear reduced waves gives
+\begin{equation}
+ \mathcal E_m(t)\leq C_{m,T}\left(
+ \mathcal E_m(0)+\int_0^t\mathcal S_m(t')\,dt'\right),\qquad 0\leq t\leq T.
+ \label{eq:sourced-cefe-mixed-energy}
+\end{equation}
+To verify the derivative count, the $L$ forcing belongs to $H^{m-1}$;
+even the tensor wave operator's second metric derivatives have this order
+when $g\in H^{m+1}$.  The metric forcing belongs to $H^m$, the $s$ forcing
+to $H^m$, and the $\Omega$ forcing to $H^{m+1}$.  The last assertion uses
+the contracted-Christoffel gauge just specified.  The background light cone
+is the common wave principal symbol.  At scri $B^n=-A$, so all reduced wave
+fluxes are nonpositive.  Standard extension from the ball, or the equivalent
+outflow energy construction, gives existence and uniqueness without an
+independent outer boundary value.  Commuting finitely many time derivatives
+and rotations gives the same estimate with the corresponding joint source
+norms.  No norm count is asserted for an infinite commutator hierarchy.
+
+Finite conormal commutations require a separate argument.  In a collar
+write each regular first-order wave reduction as
+$\mathcal A=V^r\partial_r+V^A\partial_A+R$ and set
+$\mathcal D=b(r)\partial_r$, $b=\Omega/\Omega_r$, extended by a cutoff
+away from the centre.  All matrices here are smooth and bounded.  The exact
+identity is
+\[
+ [\mathcal A,\mathcal D]=b'\mathcal A
+ -(b'V^A+b\partial_rV^A)\partial_A
+ -(\partial_rV^r)\mathcal D-b'R-b\partial_rR.
+\]
+On a solution replace $\mathcal AU$ by $U_t$ minus its known source.
+In the equation for $\mathcal D^jU$, the time and angular derivatives then
+have strictly smaller conormal order and the same total joint order; the
+term involving $\mathcal D(\mathcal D^{j-1}U)$ is bounded multiplication at
+the current level.  Rotations span the angular derivatives on the collar.
+Induction on conormal order at fixed total order and the same energy estimate
+therefore close the joint time/rotation/conormal hierarchy.  The first-order
+gradient compatibilities recover the stated ordinary Sobolev orders.
+The $\nabla d$ term in the $L$ equation remains an upstream source
+($d\in H^m$ gives $\nabla d\in H^{m-1}$); the other mixed-phase couplings
+have the bounded orders already checked above.  Cutoff commutators are
+supported in the interior and use ordinary interior derivatives.
+Include three cutoff Cartesian generators $\chi\partial_i$, equal to the
+Cartesian derivatives near the centre and supported away from scri, in the
+joint family $\mathcal Z$ along with $\mathcal D$ and rotations.  The cutoffs
+overlap so the family spans ordinary derivatives uniformly in the interior.
+Their commutators are supported where $\Omega$ is bounded below and are the
+ordinary bounded-coefficient differentiated wave system.  Thus the explicit
+joint phase is
+\[
+ \mathcal E_{4,32}
+   =\sum_{p+|I|\le32}\mathcal E_4
+           (\mathcal Z^I\partial_t^p(\delta g,\delta L,\omega,\delta s)).
+\]
+The compatible derivative fields and their velocities are interpreted as in
+the mixed phase above.  This norm includes all corresponding ordinary
+interior derivatives, in particular the metric/lapse interior orders needed
+by the gauge-wave source.  The source phase uses the same generator words.
+Consequently this finite joint hierarchy is controlled with its listed
+source and initial norms.  This trades
+conormal order for time/rotation order and does not assert extra ordinary
+normal differentiability across a fractional branch.
+
+To return to the original, fixed conformal factor, choose a smooth cutoff
+$\chi$ supported in a collar, equal to one near scri, and a smooth spatial
+vector $N$ on its support with $N(\Omega)=1$.  Set
+\[
+ \xi=-\chi\omega N,\qquad
+ \vartheta=-\frac{(1-\chi)\omega}{\Omega}.
+\]
+The quotient is supported where $\Omega$ is bounded away from zero.  The
+coordinate and conformal transformation
+\[
+ \omega'=\omega+\xi(\Omega)+\vartheta\Omega=0,\qquad
+ \delta g'=\delta g+\mathcal L_\xi g_*+2\vartheta g_*
+\]
+preserves the physical metric modulo a regular coordinate transformation.
+It is bounded from $\mathcal E_m$ to
+$\delta g'\in H^{m+1}$, $\partial_t\delta g'\in H^m$.
+The extra derivative of $\omega$ is precisely what controls the Lie
+derivative.  At $m=4$ this yields a fixed-$\Omega$ particular conformal metric
+$g_P\in H^5$, with its extrinsic-curvature perturbation in $H^4$.
+The map to $h_P,c_P,u_P,v_P,a_P,k_P$ is algebraic in $g_P$ and its first
+derivatives, hence has these same stated metric/curvature orders.  Finally
+$q_P=k_P-2T$ and $\Lambda_P=V(h_P)+2z$ reconstruct the independently evolved
+Z4c fields; those two fields must not be discarded during reconstruction.
+
+This reconstruction recovers the full off-constraint geometry, rather than
+projecting to vacuum constraints.  For any physical metric the contracted
+Gauss and Codazzi identities give
+\[
+ H_{\rm geom}=\widetilde R_{nn}
+       +\gamma_{\rm phys}^{ij}\widetilde R_{ij},\qquad
+ M_{{\rm geom},i}=-\widetilde R_{ni}.
+\]
+The prescribed source therefore makes these exactly the independently
+propagated $H,M$.  Since $\widetilde R_{ij}=-Q^{\rm phys}_{ij}/N$, its ADM
+extrinsic-curvature evolution is precisely the tensor $C_{\rm Z4c}=0$
+evolution with the stated sources.  The geometric metric evolution is the
+ADM kinematic identity.  The independent $T$ equation is unchanged, and
+the independent $z$ equation, with $\Lambda=V+2z$, is the connection-variable
+equation.  The scalar definition $q=K_{\rm phys}-2T$ recovers the trace
+equation including the disclosed Appendix-C scalar correction.  Thus these
+are the full linearized free Z4c equations in any subsequently chosen
+regular physical coordinate gauge.  At this background the gauge changes
+leave $H,M,T,z$ invariant, because their background values vanish.
+
+\subsection{Why the reduced solution satisfies the full sourced equations}
+
+Here is a linear proof that avoids assuming a traceful-matter extension of a
+published trace-free CEFE constraint theorem.  The initial phase is required
+to be a compatible sourced CEFE lift of the physical three-metric and
+extrinsic curvature, with the regular rescaled Weyl data.  The harmonic and
+scalar-curvature gauge data are chosen consistently.  On any compact subset
+of $\Omega>0$, solve the ordinary linear sourced physical Einstein equations
+in Lorenz gauge.  Since the physical background is flat, these are
+\[
+ \widetilde\Box\widehat h_{ab}=-2\Omega^2S_{ab}.
+\]
+The Lorenz constraint satisfies a homogeneous wave equation by physical
+source conservation.  Its initial value is fixed to zero by the four gauge
+choices; its initial normal derivative is zero by the sourced Hamiltonian
+and momentum equations.  Thus this solution is a genuine physical Ricci
+solution on the interior domain of dependence.
+
+Locally put that solution into the prescribed conformal scalar-curvature
+and generalized harmonic coordinate gauges.  Infinitesimal conformal changes
+obey $\delta_\vartheta R=-6\Box\vartheta-2R_*\vartheta$; infinitesimal
+coordinate gauge changes obey the usual vector wave operator
+$\Box\xi^a+R_*{}^a{}_b\xi^b$, with a regular first-derivative coupling to
+$\vartheta$.  These are ordinary coupled linear waves on each such interior
+domain.  Their Cauchy values and first derivatives can be chosen to match
+the reduced initial metric and conformal-factor data; the unused normal
+gauge derivatives enforce the prescribed gauge sources.  The resulting
+genuine rescaled Weyl field satisfies the same regular Bianchi equation with
+the same $J$ and the same initial $d$.  Bianchi uniqueness on the interior
+domain of dependence therefore identifies it with the independently evolved
+field $d$.  The genuine fields satisfy the exact traceful equations above and therefore
+the reduced equations with the same initial data.  Uniqueness for that
+regular reduced system makes them coincide with its solution.
+
+This interior argument covers every point with $\Omega>0$ at finite time.
+The backward background domain of dependence of such a point remains
+strictly inside the ball: the glancing radial speed is $O(\Omega^2)$ and
+cannot reach $\Omega=0$ in finite backward time.  Thus no unspecified exterior
+data enter the comparison.  All sourced CEFE zero quantities vanish in the
+interior.  Their regular Sobolev traces then vanish at scri as well.
+This proves equivalence for the compatible data class without invoking
+a nonexistent arbitrary-trace source theorem.
+
+\subsection{Initial compatibility and what is, and is not, gained}
+
+The mixed initial phase must include a regular curvature lift.  A simple
+sufficient way of obtaining $L(0)\in H^4$ is to start with the conformal
+three-metric in $H^6$, its conformal extrinsic curvature in $H^5$, and
+compatible $d(0)\in H^4$.  Alternatively one can include the compatible
+$L(0)\in H^4$ lift explicitly in the phase.  It is incorrect to infer this
+order from a bare three-metric in $H^5$, since the Gauss equation has two
+spatial derivatives.  The trace and normal derivatives of $L$ are then
+fixed by the prescribed scalar curvature, its curl/divergence equations,
+and the initial sourced curvature identities.
+
+There is no hidden division in constructing the initial $s$.  If
+$K_{\rm phys}=\Omega\bar K+3w$, the physical Hamiltonian identity gives
+\[
+ s=\frac{\bar\Delta\Omega+\bar K w}{3}
+ +\frac{\Omega}{12}
+ (R[\bar\gamma]+\bar K^2-\bar K_{ij}\bar K^{ij})
+ -\frac{H}{12\Omega}.
+\]
+The last term is $-\Omega^3h_4/12$ in the present data class.  Initial
+$L_{ij},L_{0i}$ can likewise be obtained from the unphysical Gauss--Codazzi
+curvature after subtracting $\Omega d$, and $L_{00}$ from its scalar trace;
+these operations use derivatives but no inverse conformal factor.
+
+The conclusion of this section is a bounded particular \emph{linear}
+physical metric reconstruction in the mixed phase above, including its
+constraint-generated Ricci source.  A choice of regular Weyl data is genuine
+physical information.  The section does not replace the remaining forced
+elliptic-shift/lapse mapping or its initial-data bijection.  The primary
+wave-CEFE references
+\url{https://arxiv.org/abs/1902.01816} and
+\url{https://arxiv.org/abs/2303.07385} explicitly treat trace-free matter;
+the traceful equations and the interior-equivalence argument here supply
+the additional step needed for this particular prescribed linear source.

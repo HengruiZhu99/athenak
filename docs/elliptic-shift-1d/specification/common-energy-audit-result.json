@@ -1,0 +1,94 @@
+{
+  "status": "passed exact common-energy block-coercivity checks",
+  "wave_target_metric": "I_4 repeated in wave velocity and all spatial-gradient blocks",
+  "value_metric": "4 tau^2+4 tau zeta_n+8 |zeta|^2",
+  "parameters_and_certificates": [
+    {
+      "x": "4",
+      "y": "-1",
+      "scalar_ldl_pivots": [
+        "4",
+        "23/16",
+        "60/23",
+        "457/540",
+        "181/457",
+        "118/181",
+        "346/59"
+      ],
+      "each_transverse_ldl_pivots": [
+        "2",
+        "23/8",
+        "2",
+        "38/69",
+        "213/38"
+      ],
+      "remaining_tensor_pivots": [
+        "2",
+        "2",
+        "2"
+      ],
+      "field_count": "7+2*5+3=20"
+    },
+    {
+      "x": "4",
+      "y": "-99/100",
+      "scalar_ldl_pivots": [
+        "4",
+        "23/16",
+        "38346/14375",
+        "7036/8217",
+        "59165/147756",
+        "37690637/73956250",
+        "211573056/37690637"
+      ],
+      "each_transverse_ldl_pivots": [
+        "2",
+        "1828/625",
+        "2",
+        "4577/8226",
+        "51555/9154"
+      ],
+      "remaining_tensor_pivots": [
+        "2",
+        "2",
+        "2"
+      ],
+      "field_count": "7+2*5+3=20"
+    }
+  ],
+  "compatible_indicial_audit": {
+    "roots": [
+      "2",
+      "238/31"
+    ],
+    "natural_fractional_exponent": "176/31",
+    "radial_symmetrizer": [
+      [
+        "40",
+        "180"
+      ],
+      [
+        "180",
+        "5650"
+      ]
+    ],
+    "modal_rows": [
+      [
+        "6",
+        "5"
+      ],
+      [
+        "2",
+        "75"
+      ]
+    ],
+    "pencil_determinant": "(8/15)(s-2)(31s-238)",
+    "all_exact_checks": "passed"
+  },
+  "outside_this_algebra_audit": [
+    "exact bounded-remainder firstorder PDE reduction",
+    "propagation of natural asymptotic jets",
+    "full geometric/lapse/elliptic boundary estimate",
+    "nonlinear well-posedness"
+  ]
+}

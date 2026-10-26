@@ -1,0 +1,267 @@
+{
+  "date": "2026-10-25",
+  "objective": "Derive a regular scri closure for the elliptic-shift, live-lapse free-Z4c hybrid; prove preserved constraint falloffs and full coupled boundary well-posedness while staying as close as possible to arXiv:1412.4801 apart from shift and potentially lapse conditions.",
+  "goal_status": "complete",
+  "completed": true,
+  "turn_classification": "progress",
+  "reference_paper": {
+    "arxiv": "1412.4801",
+    "equations_reference": "1412.3827 Appendix C",
+    "demonstration": "spherical stable numerical evolutions; staggered grid excludes scri",
+    "continuum_boundary_wellposedness_proof": false
+  },
+  "source_fingerprints": {
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14"
+  },
+  "requirements": [
+    {
+      "item": "explicit scheme and reference mapping",
+      "status": "proved_in_stated_linear_scope",
+      "evidence": [
+        "main.tex section 2",
+        "linear-closure-theorem.tex"
+      ]
+    },
+    {
+      "item": "retained constraint violations and preserved falloffs",
+      "status": "proved_in_stated_joint_phase",
+      "evidence": [
+        "constraint-existence.tex",
+        "constraint-wave-reduction.tex",
+        "constraint-normal-bootstrap.tex",
+        "subsidiary-conormal-phase-audit.tex"
+      ],
+      "falloffs": "H,T=Omega^4 naturalH6; M,z=Omega^3 naturalH6",
+      "repair": "conormal and interior derivatives included initially; former time/rotation-only inference withdrawn"
+    },
+    {
+      "item": "all angular and global boundary coupling",
+      "status": "proved_in_stated_linear_scope",
+      "evidence": [
+        "boundary-gauge-dn.tex",
+        "original-gauge-ball.tex"
+      ]
+    },
+    {
+      "item": "physical particular metric and full free-Z4c equivalence",
+      "status": "proved_in_stated_linear_scope",
+      "evidence": [
+        "weyl-source-energy.tex",
+        "sourced-cefe-reconstruction.tex"
+      ]
+    },
+    {
+      "item": "regular actual-scri limiting equations",
+      "status": "proved_in_stated_phase",
+      "evidence": [
+        "original-gauge-ball.tex four lifts and weighted induction",
+        "linear-closure-theorem.tex"
+      ],
+      "combined_pole_rhs": "H2 with trace"
+    },
+    {
+      "item": "full coupled same-phase wellposedness",
+      "status": "proved_in_explicit_quotient_graph_phase",
+      "evidence": [
+        "linear-phase-quotient-audit.tex",
+        "linear-closure-theorem.tex",
+        "linear-completion-certificate.tex",
+        "independent-final-source-phase-audit.tex"
+      ],
+      "estimate": "sup_{0<=t<=T}||U(t)||_X <= C_T||U(0)||_X",
+      "phase": "X=E/kerR; joint orders C128, CEFE/d32, eta20, affinewave12"
+    }
+  ],
+  "independent_small_arithmetic_checks": {
+    "odd_clifford": [
+      {
+        "r": 0.4,
+        "R_square_residual": 1.1102230246251565e-15,
+        "T_square_residual": 2.220446049250313e-16,
+        "anticommutator": 1.3322676295501878e-15,
+        "BC_residual": 2.220446049250313e-16
+      },
+      {
+        "r": 0.8,
+        "R_square_residual": 2.220446049250313e-16,
+        "T_square_residual": 1.1102230246251565e-16,
+        "anticommutator": 1.3322676295501878e-15,
+        "BC_residual": 2.220446049250313e-16
+      },
+      {
+        "r": 1,
+        "R_square_residual": 0,
+        "T_square_residual": 0,
+        "anticommutator": 0,
+        "BC_residual": 0
+      }
+    ],
+    "scalar_residue": {
+      "x": 10,
+      "y": -0.5,
+      "epsilon": 1,
+      "characteristic_coefficients": [
+        "1",
+        "26",
+        "589/3",
+        "1682/3",
+        "1232/3"
+      ],
+      "routh_minors": [
+        "4544",
+        "6810176/3"
+      ],
+      "interpretation": "value-variable residue is Hurwitz; not a full Fuchsian energy or classical falloff proof"
+    }
+  },
+  "additional_obstructions": [
+    "normalized half-space scalar constraint packet yields sqrt(m) amplification in ordinary volume norm; not a counterexample to an all-order compatible full conformal closure",
+    "standalone weighted-Theta derivative curvature repair has scalar Jordan blocks at light speed",
+    "constraint-free compact TT curvature has a nonzero elliptic normal shift derivative; disproves h-only lapse potential cancellation",
+    "conformal-harmonic f=1 exact constraint-free pure-gauge boundary-model modes grow exp(sigma*k*t) at any fixed finite Sobolev regularity",
+    "conformal BM f=1/3 exact singular outflow from smooth initial pure-gauge data compact away from scri; no general subluminal regularity claim",
+    "original reference lapse with only nullness and tangential shift leaves boundary clock free; decaying spatial positive-Laplace pure-gauge modes exist",
+    "time-generator-only graph norms for null homogeneous gauge model do not control normal derivatives; independent dilation/spatial commutators required"
+  ],
+  "production_equations_modified": false,
+  "numerical_evolutions_run": false,
+  "latex_compilation": "success: full assembled document including theorem and both completion audits",
+  "next_unfinished_work": [],
+  "paper_like_candidate": {
+    "status": "assembled full linear quotient graph-phase theorem",
+    "bulk": "original tensor curvature; Appendix-C scalar Theta correction epsilon=1; no finite odd curvature repair",
+    "outer_collar_parameters": {
+      "a_kappa1": "4",
+      "kappa2": "-99/100"
+    },
+    "base_weighted_fields": {
+      "H": "Omega^2 h_c",
+      "M": "Omega m",
+      "T": "Omega^2 tau",
+      "z": "Omega zeta"
+    },
+    "principal_and_residue_energy": "|pi|^2+|W|^2+|Q|^2+|Z|^2+a^-2(4 tau^2+4 tau zeta_n+8|zeta|^2)",
+    "dissipation": "strictly negative leading 1/Omega residue in same metric symmetrizing all wave directions",
+    "exact_audit": "common-energy-audit.mjs",
+    "exact_audit_result": "common-energy-audit-result.json",
+    "exact_audit_status": "passed all rational LDL, radial pencil and modal symmetrizer identities",
+    "natural_falloffs": {
+      "H": "Omega^4 H4",
+      "T": "Omega^4 T4",
+      "M": "Omega^3 M3",
+      "z": "Omega^3 Z3"
+    },
+    "leading_compatibility": [
+      "H4=-2 T4/(25a)",
+      "M3_n=302 T4/(75a)",
+      "Z3_n=-2 T4/75",
+      "M3_A=-Z3_A/a"
+    ],
+    "compatible_normal_roots": [
+      "2",
+      "238/31"
+    ],
+    "natural_fractional_exponent": "176/31",
+    "normal_bootstrap": "proved in explicit joint time/conormal/rotation/interior-generator phase; time/rotation-only version withdrawn",
+    "lapse_candidate": "original reference Khat driver, restoring rho=0, stationary smooth radial F=A^2+nu(r)Omega^2, nu>=0",
+    "lapse_regular_identity": "Y=u+3Ac/2 obeys pole-free equation except 2A^2 T/Omega",
+    "alternate_lapse_candidate": "weighted harmonic projection of a compatible finite gauge RHS; variable-coefficient gauge model energy only",
+    "conformal_harmonic_status": "rejected as stable candidate: exact pure-gauge growing modes in null-halfspace boundary model",
+    "new_proof_fragments": [
+      "constraint-existence.tex",
+      "constraint-wave-reduction.tex",
+      "constraint-normal-bootstrap.tex",
+      "gauge-counterexamples.tex",
+      "original-gauge-graph.tex",
+      "boundary-gauge-dn.tex",
+      "original-gauge-ball.tex"
+    ],
+    "additional_boundary_condition": "delta alpha|scri=0; original null-normal and tangential shift conditions retained",
+    "final_proof": "linear-closure-theorem.tex"
+  },
+  "paper_like_candidate_previous": {
+    "status": "formal finite-order constraint candidate, not a full closure",
+    "bulk": "original tensor curvature equation, Appendix-C scalar Theta correction; no finite odd-sector curvature addition",
+    "outer_collar_parameters": {
+      "a_kappa1": "10",
+      "kappa2": "-9/10"
+    },
+    "natural_falloffs": {
+      "H": "Omega^4 H4",
+      "Theta_physical": "Omega^4 T4",
+      "M_i": "Omega^3 M3_i",
+      "z_i": "Omega^3 Z3_i"
+    },
+    "leading_compatibility": [
+      "H4=22 T4/a",
+      "Z3_n=4 T4/3",
+      "M3_n=32 T4/(3a)",
+      "M3_A=5 Z3_A/a"
+    ],
+    "compatible_normal_indicial_roots": [
+      "2",
+      "133/16"
+    ],
+    "factored_natural_roots": [
+      "0 (multiplicity 3, kernel dimension 3)",
+      "101/16"
+    ],
+    "regularity_scope": "indicial powers permit finite normal Sobolev regularity; propagation, logarithmic compatibility with the full PDE, and tangential/time estimates remain unproved",
+    "exact_algebra_audit": "indicial-audit.mjs",
+    "exact_algebra_result": "indicial-audit-result.json",
+    "normalization_correction": "explicit (tau,zeta_n)-ordered reduced pencil determinant is +(16/3)(s-2)(16s-133)",
+    "published_energy_theorem_audit": "Chrusciel-Lengard Proposition 3.1 does not directly apply: bounded characteristic-tangent block hypothesis excludes the nonzero glancing 1/Omega residue",
+    "constraint_free_gauge_evidence": "normalized Fourier lapse and TT modes have a null factor cancelling the grazing time denominator; variable sphere reconstruction remains unproved"
+  },
+  "additional_positive_results": [
+    "twenty-component common dissipative subsidiary energy at a*kappa1=4,kappa2=-99/100",
+    "capped weak subsidiary construction, maximal distributional generator, exact homogeneous derivative-reduction transport",
+    "coefficient-audited slow/fast normal reduction and finite G40 natural H6 falloff embedding",
+    "original reference lapse plus extra u_scri=0 has stable global-ball homogeneous Lamé DN boundary semigroup",
+    "original reference lapse pure-time gauge has positive stationary inverse-square wave energy on actual CMC ball",
+    "explicit two-jet lift regularizes spatial gauge forcing; finite mixed-regularity pure-gauge route",
+    "physical Ricci scales Omega^2 in conformal coordinates; regular forced rescaled-Weyl Bianchi source derived"
+  ],
+  "scope": {
+    "selected_by_user": "Full linearized proof and scri closure",
+    "background": "hyperboloidal Minkowski",
+    "domain": "3D ball including regular center and actual future null infinity",
+    "not_asserted": [
+      "nonlinear BBH evolution",
+      "equivalence to arbitrary raw H4/H3 data",
+      "numerical discretization stability"
+    ]
+  },
+  "final_audits": {
+    "independent_reviews": [
+      "linear-completion-certificate.tex",
+      "independent-final-source-phase-audit.tex"
+    ],
+    "substantive_repairs": [
+      "explicit initial conormal subsidiary regularity",
+      "interior Cartesian generators in every joint norm",
+      "safe eight-order Hardy/lift source margin",
+      "radial stationary nu restriction",
+      "four derived source lifts",
+      "same-state quotient norm with KID kernel invariance"
+    ],
+    "source_hashes_revalidated": true
+  },
+  "exact_identity_audits": [
+    "common-energy-audit.mjs",
+    "boundary-algebra-audit.mjs"
+  ],
+  "completion_basis": {
+    "scope_selected": "full linearized hyperboloidal-Minkowski boundary problem",
+    "scheme": "free Z4c with stated Appendix-C scalar treatment, original reference lapse, elliptic metric-Dirac shift and extra scri clock",
+    "state_space": "explicit compatible quotient graph phase X=E/kerR",
+    "requirements_checked": 6,
+    "source_fingerprints": "revalidated and unchanged",
+    "exact_identity_audits": "both current programs rerun successfully",
+    "independent_proof_audits": "completed; substantive conormal defect repaired before completion",
+    "scri_update": "Ut|scri=(regular_RHS-a*normal_derivative(pole_numerator))|scri, with u_t=0 and elliptic shift conditions",
+    "production_implementation": "unchanged; theoretical derivation only"
+  }
+}

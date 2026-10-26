@@ -1,0 +1,983 @@
+\documentclass[11pt]{article}
+\usepackage[margin=.85in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,mathrsfs,hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\newcommand{\scri}{\mathscr I^+}
+\newcommand{\TF}{\mathrm{TF}}
+\newcommand{\dd}{\partial}
+\newcommand{\Tr}{\operatorname{tr}}
+\title{Regular scri closure audit for the elliptic-shift hyperboloidal Z4c hybrid}
+\author{Linear derivation, closure theorem and verification record}
+\date{25 October 2026}
+\begin{document}\maketitle
+\noindent\textbf{Current result.} Section~\ref{sec:assembled-linear-closure} gives the full coupled linear scri closure and fixed-phase evolution for the repaired formulation: original reference lapse, elliptic metric-Dirac shift, an added boundary clock $\delta\alpha|_{\scri}=0$, the disclosed Appendix-C scalar equation, and the stated damping parameters. The theorem uses an explicit compatible nonlocal quotient graph norm, with preserved constraint falloffs and regular pole traces. It is not an arbitrary-raw-Sobolev, nonlinear or discretization theorem. The user selected the full linearized scope. Earlier candidates, failed closures and superseded progress statements are retained as a research record; the assembled theorem and final certificates specify the final result.
+\tableofcontents
+
+\section{Objective and completion requirements}
+The objective is a regular actual-scri closure for free hyperboloidal Z4c with a metric-derived elliptic shift and a reference-reduced live lapse, preserving constraint falloffs and satisfying a full coupled boundary estimate. The target is to stay as close as possible to arXiv:1412.4801 apart from shift and possibly lapse conditions. Completion requires all of:
+\begin{enumerate}
+\item An explicit formulation and mapping to the target's final equations, with every bulk constraint addition disclosed.
+\item A state space and regular limiting equations including freely evolving differential constraint errors.
+\item Invariance of the asymptotic state space, not just vanishing pole numerators initially.
+\item All scalar, vector, tensor and angular sectors, including lapse and elliptic boundary reconstruction.
+\item A frequency-uniform coupled estimate in a stated norm; no-growing-mode tests alone do not suffice.
+\item An explicit statement whether the theorem is linearized or nonlinear. A linear theorem must not be described as nonlinear well-posedness.
+\end{enumerate}
+
+\section{What the reference paper establishes}
+The six-page black-hole paper \url{https://arxiv.org/html/1412.4801} uses the final equations in Appendix C of \url{https://arxiv.org/html/1412.3827}. It demonstrates stable spherical evolutions and convergence, using a staggered grid that excludes scri and extrapolates values there. Section 7 of the longer paper expressly says no rigorous continuum well-posedness or numerical stability proof is supplied. The requested coupled theorem is therefore stronger than the evidence established in the reference.
+
+The final lapse's $\Delta K$ maps to the physical $\hat K$ deviation:
+\[
+\Delta K=K_{\rm phys}-2\Theta_{\rm phys}-K_*=p-p_*.
+\]
+It must not be silently reinterpreted as a physical-$K$ driver, which has the interior harmonic-speed Jordan defect found in the preceding derivation.
+
+There is a specific difference between the repository tensor equation and Appendix C's scalar-constraint equation. Let
+\[
+T=\Theta_{\rm phys},\quad w=\bar n(\Omega),\quad
+d_\kappa=\kappa_1(2+\kappa_2),\quad z_i=(\Lambda_i-V_i)/2.
+\]
+At $C_{\rm Z4c}=0$, the repository equation is
+\[
+T_t=\beta^i\dd_iT+\frac{\alpha H}{2\Omega}
++\Omega\alpha\chi\widetilde D_i z^i
+-\frac{\alpha(3w+d_\kappa)}{\Omega}T .
+\]
+The corresponding Appendix C treatment has no $3w$ contribution:
+\[
+T_t=\beta^i\dd_iT+\frac{\alpha H}{2\Omega}
++\Omega\alpha\chi\widetilde D_i z^i
+-\frac{\alpha d_\kappa}{\Omega}T .
+\]
+Matching this term requires the explicit constraint addition
+\[
+\boxed{\Delta T_t=3\alpha wT/\Omega.}
+\]
+It vanishes at $T=0$ but changes the off-constraint system. The paper is not explicit about the intent behind this particular source-equation difference; it is not attributed here to an undocumented stabilization decision.
+
+\section{Background and exact first-jet obstruction}
+Use
+\[
+\Omega=\frac{S^2-r^2}{2aS},\quad
+A=\frac{S^2+r^2}{2aS},\quad B=-x/a,\quad
+G=\nabla\Omega=-x/(aS),\quad K_*=-3/a.
+\]
+The exact first variations and their pole split $U_t=R_U+S_U/\Omega$ are in the companion linearization note.
+
+Choose a smooth toroidal vector $\zeta=f(r)(e\times x)$, with $f$ nonzero at scri. Set every metric, curvature, lapse, shift, trace and scalar-constraint perturbation to zero initially, but choose
+\[
+z_i=\Omega\zeta_i,\qquad \delta\Lambda_i=2\Omega\zeta_i.
+\]
+Then $V=H=M=T=0$, the elliptic shift is zero, scri nullness holds, and every initial pole numerator vanishes. Let
+\[
+E_{ij}=G_i\zeta_j+G_j\zeta_i,\qquad \Tr E=0.
+\]
+Direct substitution gives at scri
+\[
+a_{ij,t}=3AE_{ij},\qquad
+z_{i,t}=A(3/a-\kappa_1)\zeta_i.
+\]
+The curvature pole's time derivative is
+\begin{equation}\boxed{
+(S_{a,ij})_t=-2A^2\kappa_1 E_{ij}.
+}\end{equation}
+For constant $\kappa_1>0$ this is nonzero. Thus initially residue-compatible smooth data do not define an invariant classical smooth state space. This rotational example is unaffected by the scalar-constraint correction above and by a lapse modification preserving the scalar-free invariant sector.
+
+This is an obstruction to a classical conformally smooth closure with those allowed initial jets. It is not a theorem excluding weaker weighted semigroup solutions with corner layers or a more restrictive domain.
+
+\section{Scaling damping alone still fails: exact rotational sector}
+Let $\mathcal R=e\times x$ and $\mathcal T_{ij}=x_i\mathcal R_j+x_j\mathcal R_i$. Consider
+\[
+h_{ij}=H(r)\mathcal T_{ij},\quad
+a_{ij}=P(r)\mathcal T_{ij},\quad z_i=Z(r)\mathcal R_i,\quad
+v_i=W(r)\mathcal R_i .
+\]
+All scalar perturbations vanish. One finds
+\[
+V_i=(rH'+5H)\mathcal R_i.
+\]
+With $V=0$ and regularity at the center, coordinate-time freezing implies $H=0$. The elliptic shift is reconstructed from
+\[
+W'=2ArP,\qquad W(S)=0.
+\]
+There is no lapse/Theta freedom to repair the remaining rotational subsystem.
+
+Set $\kappa_1=\Omega\bar\kappa$, where $\bar\kappa\geq0$ is smooth in a scri collar. The exact reduced equations are
+\begin{align}
+P_t={}&-\frac{rP'+2P}{a}+\frac A r Z'
++\frac A\Omega\left[-\frac{2Z}{aS}+(K_*-w_*)P\right],\\
+Z_t={}&-\frac{rZ'+3Z}{a}+A(rP'+5P)
++\frac A\Omega\left[\frac{2r^2P}{aS}+\frac{2Z}{a}\right]-A\bar\kappa Z .
+\end{align}
+The necessary scri relation is $C=P+Z/S=0$. Its exact evolution is
+\[
+C_t=-\frac{r\Omega}{S}C'
++\frac{r^2-5S^2}{2aS^2}C
++\frac{2aA\Omega}{rS}Z'
+-\frac A S(1/S+\bar\kappa)Z .
+\]
+Hence the relation is not invariant. In particular, $P=0$, $Z=\Omega f(r)$ satisfies $C=C_t=0$ at scri initially, but
+\[
+Z_t(S)=3Af(S)/a,\qquad
+C_{tt}(S)=-\frac{3A}{aS}(1/a+A\bar\kappa)f(S)\ne0.
+\]
+This shows why merely replacing each $1/\Omega$ quotient by its first limiting derivative is not a closure.
+
+\section{A concrete finite constraint addition repairs this sector}
+Keep $\kappa_1=\Omega\bar\kappa$ in the collar and add to the \emph{regular} trace-free curvature equation
+\begin{equation}\boxed{
+\Delta R_{a,ij}=-(1+aA\bar\kappa)
+(z_iG_j+z_jG_i)^{\TF}.
+}\end{equation}
+This is lower differential order in the interior and vanishes when the Z4 connection constraint vanishes. It is a bulk constraint addition beyond a gauge change and must be disclosed as such.
+
+In the rotational sector it changes the residual equation to
+\[
+C_t=-\frac{r\Omega}{S}C'
++\frac{r^2-5S^2}{2aS^2}C
++\frac{2aA\Omega}{rS}Z'
++\frac{\Omega}{S^2}Z.
+\]
+Now set $C=\Omega Y$. The exact system is
+\begin{align}
+Y_t={}&-\frac{r\Omega}{S}Y'
++\frac{2aA}{rS}Z'
++\frac{3r^2-5S^2}{2aS^2}Y+\frac{Z}{S^2},\\
+Z_t={}&Ar\Omega Y'
+-r\left(\frac1a+\frac AS\right)Z'
++\frac{A(5S^2-3r^2)}{2aS}Y
+-\left(\frac3a+\frac AS+A\bar\kappa\right)Z .
+\end{align}
+All coefficients are smooth to scri on an outer collar $r>0$. The principal matrix has
+\[
+\Tr M=-2r/a,\qquad\det M=-\Omega^2,\qquad
+\lambda_\pm=-r/a\pm A.
+\]
+The eigenvalue gap is $2A>0$, so a smooth uniformly positive symmetrizer exists. At scri the coordinate propagation speeds are $0,2A$; there is no incoming mode. The boundary equations are ordinary limits of the regular system:
+\begin{align}
+Y_t|_{\scri}&=\frac2S Z'-\frac Ya+\frac Z{S^2},\\
+Z_t|_{\scri}&=-2A Z'+A^2Y-(4/a+A\bar\kappa)Z .
+\end{align}
+This gives a regular variable-coefficient linear sector, rather than just a frozen symbol test. It preserves $C=O(\Omega)$ and the normal-jet compatibility hierarchy through the regular equations.
+
+The rotational Hamiltonian and scalar constraints stay zero. The momentum condition is not $M_i=0$ everywhere. Its coefficient satisfies
+\[
+M_i+\frac2a z_i=\Omega\,\mathcal N(r)\mathcal R_i,
+\]
+\[
+\mathcal N=\Omega rY'-\frac rS Z'
++\left[\frac{r^2}{aS}+5\Omega\right]Y-\frac ZS .
+\]
+Thus a regular combination of momentum and connection constraints is preserved while allowing independent constraint errors.
+
+\textbf{Scope:} no result for higher odd harmonics, scalar/even sectors, or the full coupled lapse/elliptic boundary estimate is inferred from this sector. The proposed tensor addition remains a candidate in those sectors.
+
+\section{Extension to every linear odd-parity harmonic}
+An independent audit reproduces the rotational repair and extends it to
+all odd harmonics on a collar. Let $L=\ell(\ell+1)$, $\Lambda=L-2$,
+$D^AX_A=0$, $X_{AB}=D_{(A}X_{B)}$ and
+$D^BX_{AB}=-\Lambda X_A/2$. Use spherical covariant components
+\[
+h_{rA}=fX_A,\ h_{AB}=gX_{AB},\
+a_{rA}=pX_A,\ a_{AB}=qX_{AB},\ z_A=zX_A .
+\]
+Define
+\[
+F=rf+g-rg'/2,\qquad
+Y_1=(p+rz/S)/\Omega,\qquad Y_2=(q-F/S)/\Omega .
+\]
+The metric connection memory satisfies
+$f'+2f/r-\Lambda g/(2r^2)=V$, with $V_t=-\eta V$.
+The exact repaired equations, independent of this prescribed memory, are
+\begin{align}
+(Y_1)_t={}&-\frac{r\Omega}{S}Y_1'+\frac{2aA}{S}z'
+-\frac{Y_1}{a}-\frac{2S^2+r^2}{rS^2}z
+-\frac{\Lambda A}{2rS}Y_2+\frac{\Lambda aA}{r^3S}F,\\
+z_t={}&A\Omega Y_1'-r(1/a+A/S)z'
++\frac{AS}{ar}Y_1-\frac{\Lambda A\Omega}{2r^2}Y_2
+-\frac{\Lambda A}{2r^2S}F+(-1/a+A/S-A\bar\kappa)z,\\
+F_t={}&-\frac{r\Omega}{S}F'+rA\Omega Y_2'
++F/a-(A^2+\Omega^2)Y_2-2Ar\Omega Y_1+2Ar^2z/S,\\
+(Y_2)_t={}&-r(1/a+A/S)Y_2'+\frac{2aA}{rS}F'
++(1/a-2A/S)Y_2+\frac{2Ar}{S}Y_1+\frac{4aA}{S}z-F/r^2 .
+\end{align}
+For $\ell=1$, $Y_1=r^3Y$, $z=r^2Z$, the first pair reproduces
+the rotational system above.
+
+Let $U=(Y_1,z)$, $W=(F,Y_2)$. Their radial matrices are
+\[
+M_U=\begin{pmatrix}-r\Omega/S&2aA/S\\ A\Omega&-r(1/a+A/S)\end{pmatrix},
+\quad
+M_W=\begin{pmatrix}-r\Omega/S&rA\Omega\\
+2aA/(rS)&-r(1/a+A/S)\end{pmatrix}.
+\]
+Angular couplings are $U_t=\Lambda BW+\cdots$, $W_t=CU+\cdots$:
+\[
+B=A\begin{pmatrix}a/(r^3S)&-1/(2rS)\\
+-1/(2r^2S)&-\Omega/(2r^2)\end{pmatrix},\quad
+C=A\begin{pmatrix}-2r\Omega&2r^2/S\\2r/S&4a/S\end{pmatrix}.
+\]
+They satisfy $BC=CB=-A^2I/r^2$ and
+$(M_U+rI/a)B+B(M_W+rI/a)=0$.
+After $\widehat W=i\sqrt{\Lambda}W$, define
+\[
+R=(\operatorname{diag}(M_U,M_W)+rI/a)/A,\qquad
+T=\frac rA\begin{pmatrix}0&-B\\ C&0\end{pmatrix}.
+\]
+Then $R^2=T^2=I$, $RT+TR=0$. The positive symmetrizer
+\[
+H=I+R^TR+T^TT+(RT)^T(RT)
+\]
+is smooth and uniformly bounded on a collar through scri. It symmetrizes
+all radial/angular principal directions. The eigenvalues are
+\[
+-\frac ra k_r\ \pm A\sqrt{k_r^2+k_{\rm ang}^2/r^2}
+\]
+with multiplicity two. All remaining coefficients are bounded uniformly
+in $\ell$ in the norm of
+$(Y_1,z,\sqrt\Lambda F,\sqrt\Lambda Y_2)$. The scri radial flux is
+nonpositive; inner-collar influx must be controlled by the interior.
+
+The odd shift is reconstructed from a homogeneous-Dirichlet vector
+Laplacian. Metric reconstruction satisfies
+\[
+g''-\frac{L}{r^2}g=2V-\frac{2F'}r-\frac{2F}{r^2}.
+\]
+The apparent boundary forcing $F(S)$ cancels after integrating this
+equation against $r^{\ell+1}$. The dynamic boundary trace obeys
+\[
+(g_B)_t+\frac{\ell-1}{a}g_B
+=-\frac2a S^{-\ell}
+\left[\int_0^S r^{\ell+1}V\,dr+
+(\ell-1)\int_0^S r^{\ell-1}F\,dr\right].
+\]
+The functionals have bounds $C\ell^{-1/2}\|V\|$ and
+$C\ell^{1/2}\|F\|$, and the boundary damping is $O(\ell)$.
+This avoids a pointwise $F$ trace loss in odd reconstruction.
+The $\ell=1$ rotation is neutral and determined by initial gauge data.
+This is a uniform odd-sector collar result; a full global
+origin-to-scri matching theorem and the even sector are not proved.
+
+\section{The same candidate fails the even scalar test}
+For spherical Dirac data $h=0$, put
+\[
+a_{ij}=P(n_in_j-\delta_{ij}/3),\quad z_i=Zn_i,\quad v_i=Vn_i .
+\]
+The shift obeys $V'-V/r=AP$ and nullness
+$V(S)=-u-Ac/2$. The radial curvature pole condition is
+\[
+E=P+c'+2Z=0\quad\hbox{at scri}.
+\]
+Use the Appendix-C scalar correction and the odd repair above.
+Choose smooth initial perturbations
+\[
+c=u=V=P=Z=0,\qquad T=\Omega^2\tau(r),\qquad q=-2T .
+\]
+Then physical $k=q+2T=0$, $H=M=0$, and all pole numerators vanish.
+The initial lapse RHS is regular, $u_t=2F_{\rm lapse}\Omega\tau$;
+$c_t=P_t=V_t=0$. But the exact connection constraint equation gives
+\[
+Z_t=A T'/\Omega\ \longrightarrow\ -2A\tau/a.
+\]
+Consequently
+\begin{equation}\boxed{E_t(S)=-4A\tau(S)/a\ne0.}\end{equation}
+The odd repair is therefore \emph{not} an all-sector closure. Its
+success must not be promoted to a full-system result.
+A repair must couple the weighted normal scalar-constraint jets to
+curvature/connection regularity. Merely increasing the initial power
+of $\Omega$ moves this obstruction to a later compatibility order.
+
+\section{Boundary symbol versus a full estimate}
+In a normalized constant half-space model $x<0$, take $A=1$, $B^x=-1$, $f=1$. Wave modes satisfy
+\[
+(s+\lambda)^2=\lambda^2-k^2,\qquad
+\lambda=-\frac{s^2+k^2}{2s}.
+\]
+For $\Re s>0$, these do not decay toward $x=-\infty$. The remaining decaying spatial gauge modes satisfy $L\xi=0$.
+
+For tangential frequency $k>0$ in the $y$ direction, their Dirichlet-to-Neumann relation is
+\[
+\xi_x'=\frac{k}{7}(6\xi_x-i\xi_y),\quad
+\xi_y'=\frac{k}{7}(8\xi_y-i\xi_x),\quad \xi_z'=k\xi_z .
+\]
+Null-normal shift data and zero tangential shift give boundary matrix
+\[
+\begin{pmatrix}
+s&0&0\\-ik/7&s+8k/7&0\\0&0&s+k
+\end{pmatrix},
+\qquad
+\det=s(s+8k/7)(s+k).
+\]
+There is no exponentially growing boundary eigenmode. The factor $s=0$ is normal boundary-displacement memory.
+
+However, grazing constraint waves can force this neutral displacement and violate an ordinary no-loss energy estimate. Take scalar constraint eigenvectors
+\[
+(Q,m,\theta,z)=(1,1/3,1,0),\quad p=\partial_nu=h=\Gamma=0.
+\]
+For wave vector $(K_x,k,0)$, let
+\[
+K=\sqrt{K_x^2+k^2},\quad \mu=K_x/K,\quad \omega=K-K_x.
+\]
+Then $c=1/(iK)$ and $v_{\rm wave}=n/(2iK)$ times the oscillatory phase. The normal gauge displacement satisfies
+\[
+q_t=-\frac{1+\mu}{2iK}e^{i\omega t}.
+\]
+For $k=m\to\infty$, $K_x=m^2\rho$, $1<\rho<2$, a smooth wavepacket has initial normalized volume norm $O(m^{-1})$. Its boundary displacement at fixed positive time is $O(m^{-2})$, but the elliptic extension has width $m^{-1}$ and metric-gradient amplitude $O(1)$. Its norm is therefore $O(m^{-1/2})$, an amplification of order $\sqrt m$.
+
+This construction concerns the \emph{normalized model}. Its data are not a solution satisfying the full conformal pole hierarchy. It does not disprove every regularized weighted closure. It does show that a no-growing-boundary-mode calculation cannot replace the requested coupled estimate and that the constraint/gauge trace interaction must be handled explicitly.
+
+\section{Closed subsidiary identities and further work}
+A useful exact linear constraint route uses the physical background metric $\gamma^p=\Omega^{-2}\delta$, lapse $N=A/\Omega$, mean curvature $K_*=-3/a$, and its covariant derivative $D^p$. Let $\epsilon=0$ denote the repository scalar equation and $\epsilon=1$ the Appendix-C scalar correction. Define
+\[
+d_K=6(1-\epsilon)w_*+3\kappa_1(1+\kappa_2),
+\]
+\[
+\mathcal Q_{ij}=2N D^p_{(i}z_{j)}+\frac{\gamma^p_{ij}}3 r_Q,
+\qquad
+r_Q=2A G\cdot z-Nd_KT .
+\]
+Then $\Tr\mathcal Q=2\Omega A\,\partial_i z_i-Nd_KT$.
+The linear physical ADM constraint identities give the closed candidate subsidiary system
+\begin{align}
+(\partial_t-\mathcal L_B)H={}&-2N D_p^iM_i-4M^iD_i^pN+2NK_*H
++\frac{4K_*}{3}\Tr\mathcal Q,\\
+(\partial_t-\mathcal L_B)M_i={}&-\frac N2 D_i^pH-H D_i^pN
++NK_*M_i+D_p^j\mathcal Q_{ij}-D_i^p\Tr\mathcal Q,\\
+T_t={}&B\cdot\nabla T+\frac{AH}{2\Omega}
++\Omega A\,\operatorname{div}z
+-\frac{A[3(1-\epsilon)w_*+\kappa_1(2+\kappa_2)]}{\Omega}T,\\
+z_{i,t}={}&B\cdot\nabla z_i-2z_i/a
++\frac A\Omega[M_i+\partial_iT+(2/a-\kappa_1)z_i].
+\end{align}
+The ADM derivation and trace matching have been checked analytically, but a direct independent substitution into every full tensor equation remains a verification item. The finite curvature addition of Section 5 changes $\mathcal Q$ and must be included before using these identities for the repaired candidate.
+
+The main unfinished work is an all-sector regular reduction or a suitable Fuchsian energy estimate, followed by the full elliptic/hyperbolic boundary estimate. Large singular damping can help a weighted estimate, but does not automatically supply a smooth finite-dimensional residue manifold. Scalar tuning alone is insufficient.
+
+\section{A directly audited singular-damping residue}
+For the unmodified tensor curvature equation and the Appendix-C scalar
+correction, consider
+\[
+H=\Omega^2h,\quad M_i=\Omega m_i,\quad
+T=\Omega^2\tau,\quad z_i=\Omega\zeta_i.
+\]
+Set $l=1/a$, $x=a\kappa_1$, $y=\kappa_2$. The leading value-variable
+residue in scalar variables $(h/l,m_n/l,\tau,\zeta_n)$ is
+\[
+J_s=l
+\begin{pmatrix}
+-4&-4&12x(1+y)&8\\
+0&-2&-2x(1+y)&-28/3\\
+1/2&0&2-x(2+y)&-1\\
+0&1&-2&3-x
+\end{pmatrix}.
+\]
+Each transverse block on $(m_A/l,\zeta_A)$ is
+\[
+J_A=l\begin{pmatrix}-2&-6\\1&3-x\end{pmatrix}.
+\]
+The $\tau,\zeta,m$ columns were directly checked against the original
+linearized tensor equations using respectively pure $T=\Omega^2\tau$,
+pure $z=\Omega\zeta$, and $a=\Omega C$ perturbations, in addition to the
+physical ADM subsidiary derivation.
+
+For $x=10$, $y=-1/2$ the dimensionless scalar characteristic polynomial is
+\[
+\lambda^4+26\lambda^3+\frac{589}{3}\lambda^2
++\frac{1682}{3}\lambda+\frac{1232}{3}.
+\]
+Its Routh minors are $4544$ and $6810176/3$, both positive, and all
+coefficients are positive. Thus this residue is Hurwitz; transverse
+eigenvalues are $-4/a,-5/a$. Small direct matrix arithmetic independently
+confirmed these polynomial coefficients and minors.
+
+This does not prove a Fuchsian estimate. The principal wave energy sees
+derivative variables. For instance, a physical orthonormal principal
+reduction on $(H,M_n,\partial_nT,\partial_nz_n)$ has matrix
+\[
+B_c=\begin{pmatrix}
+0&-2&0&0\\
+-1/2&0&0&0\\
+1/2&0&0&1\\
+0&1&1&0
+\end{pmatrix},\qquad B_c^2=I .
+\]
+Its positive symmetrizer is $I+B_c^TB_c$. In the weighted compactified
+variables the natural fields are
+\[
+h,\quad m_i,\quad 2G_i\tau+\Omega\partial_i\tau,\quad
+G_i\zeta_j+\Omega\partial_i\zeta_j .
+\]
+Their residues and reduction compatibilities differ from those of the
+value-variable $J$ above. A common energy, derivative commutators and
+boundary trace control remain to be established. Strong physical
+singular damping is kept as a separate route because it stays closer to
+the reference equations; the smooth-sector curvature repair is not
+silently combined with this residue calculation.
+
+\section{Earlier finite-order constraint candidate}
+The closest-to-reference route currently under study keeps the original
+tensor curvature equation (without the odd-sector finite addition), uses
+the Appendix-C scalar correction, and takes in an outer collar
+\[
+\boxed{a\kappa_1=10,\qquad\kappa_2=-9/10.}
+\]
+These physical damping coefficients retain the reference's singular
+$\kappa_1/\Omega$ mechanism. They can be smoothly blended to other
+interior damping parameters away from scri without changing the interior
+principal differential order. This is a candidate, not an adopted or
+proved full formulation.
+
+For a compatible common normal power $\Omega^s$ in
+$(h/l,m_n/l,\tau,\zeta_n)$, where $H=\Omega^2h$,
+$M=\Omega m$, $T=\Omega^2\tau$, $z=\Omega\zeta$, the scalar
+indicial equations at these parameters are
+\[
+I(s)\begin{pmatrix}h/l\\m_n/l\\\tau\\\zeta_n\end{pmatrix}=0,\qquad
+I(s)=
+\begin{pmatrix}
+1/2&0&s-9&-(s+1)\\
+0&1&-(s+2)&s-7\\
+s-4&2s-4&12&8(s+1)\\
+s/2&s-2&-2(s+1)&-(4s+28)/3
+\end{pmatrix}.
+\]
+For this explicitly ordered matrix,
+\[
+\det I(s)=\frac83(s-2)(16s-133).
+\]
+Eliminating the first two equations gives $(sL+K)(\tau,\zeta_n)^T=0$:
+\[
+L=\begin{pmatrix}26&20\\7&26/3\end{pmatrix},\qquad
+K=\begin{pmatrix}-68&-28\\-6&-70/3\end{pmatrix},
+\quad
+\det(sL+K)=\frac{16}{3}(s-2)(16s-133).
+\]
+The sign here is fixed by the displayed column ordering. An earlier
+opposite-order determinant was quoted with the opposite sign; the roots
+and subsequent Fuchsian matrix were unchanged.
+
+The root $s=2$ has scalar kernel
+$(22,32/3,1,4/3)$ and two transverse kernels
+$m_A=5l\zeta_A$. Thus the natural leading constraint traces are
+\[
+H=\Omega^4H_4,\quad T=\Omega^4T_4,\quad
+M=\Omega^3M_3,\quad z=\Omega^3Z_3,
+\]
+\[
+\boxed{
+H_4=22lT_4,\quad Z_{3n}=\tfrac43T_4,\quad
+M_{3n}=\tfrac{32}{3}lT_4,\quad M_{3A}=5lZ_{3A}.
+}
+\]
+These are three outgoing leading amplitudes, not freely supplied
+incoming boundary data. The second scalar branch has exponent $133/16$
+in the base weighted variables. Its raw powers are
+$z,M\sim\Omega^{149/16}$ and $H,T\sim\Omega^{165/16}$.
+These powers permit finite normal Sobolev regularity; they do not imply
+infinite conformal smoothness.
+
+The leading radial scalar matrix is
+\[
+F=-L^{-1}K=
+\begin{pmatrix}11/2&-21/8\\-15/4&77/16\end{pmatrix}.
+\]
+After factoring $\Omega^2$, $F_0=F-2I$ has eigenvalues
+$0,101/16$ and the exact symmetrizer
+\[
+S=\operatorname{diag}(10,7),\qquad
+SF_0=\begin{pmatrix}35&-105/4\\-105/4&315/16\end{pmatrix}\geq0 .
+\]
+The natural modal amplitudes
+\[
+A_0=(45T_4+42Z_{3n})/101,\qquad
+B_\mu=(56T_4-42Z_{3n})/101
+\]
+have leading radial equations
+$\Omega\partial_\Omega A_0=0$,
+$\Omega\partial_\Omega B_\mu=(101/16)B_\mu$.
+At integer radial recursion orders $j\geq1$,
+$I(2+j)$ is invertible. In particular there is no integer indicial
+resonance through order six. A normal Frobenius recursion is therefore
+consistent with log-free integer jets, conditional on the full
+regular-singular reduction. Uniform time/angular existence is not
+established by this observation.
+
+Subtracting the analytic natural-field jet through order six leaves a
+fractional exponent $101/16$, separated from weight six by $5/16$.
+This suggests a trace-compatible remainder estimate rather than an
+arbitrary positive weight admitting singular conformal traces.
+The required Hardy estimates, evolving outgoing jets and angular
+frequency uniformity remain open.
+
+The independent exact-arithmetic script \texttt{indicial-audit.mjs}
+checks both displayed determinants, the root kernel, the radial modal
+decomposition, the value-residue polynomial and Routh minors, and the
+strict glancing dissipation. Its saved JSON output explicitly excludes
+a PDE well-posedness claim.
+
+\subsection{Constraint-free normal gauge response}
+In the frozen normalized model, nullness forces a normal harmonic
+coordinate displacement $q_B$ through $(q_B)_t=F_B$.
+For a lapse mode with frequency
+$\omega=K(\epsilon-\mu)$, $\mu=K_x/K$,
+\[
+F_B=\omega p/(iK^2),\qquad F_B/(i\omega)=-p/K^2.
+\]
+For TT polarization amplitude $\mathcal H$,
+\[
+F_B=(1-\mu^2)\mathcal H/2
+=\omega(\epsilon+\mu)\mathcal H/(2K).
+\]
+Thus the apparent grazing denominator cancels on constraint-free modes.
+The resulting displacement is the trace of an order-minus-two potential
+of curvature/lapse momentum, or an order-minus-one potential of the
+metric. The ordinary $H^2$ bulk to $H^{3/2}$ trace estimate then controls
+the constant-coefficient harmonic extension without the earlier scalar
+constraint packet's loss. Low-frequency gauge normalization is needed.
+No variable-coefficient sphere reconstruction theorem is inferred from
+these Fourier identities.
+
+\subsection{Why a published weighted theorem cannot simply be cited}
+Chrusciel--Lengard, \emph{Radiation Fields},
+\url{https://numdam.org/item/10.24033/bsmf.2478.pdf},
+provide a useful weighted hyperboloidal framework, but their
+Proposition 3.1 hypotheses (3.17)--(3.18) do not cover the current
+nonzero glancing $1/\Omega$ residue. They require bounded characteristic
+tangent lower-order coefficients and weaker crossblock singularities.
+Their Theorem 3.4 also assumes already controlled space/time derivatives
+and a bounded tangent block. Jet subtraction changes forcing, not that
+homogeneous singular coefficient. A new dissipative Fuchsian estimate,
+or another applicable theorem with all hypotheses verified, is needed.
+
+\section{A common full subsidiary energy: improved candidate}
+This section supersedes the parameters of the preceding finite-order
+candidate. It retains the original tensor curvature equation and uses
+the Appendix-C scalar equation ($\epsilon=1$), but sets
+\[
+\boxed{a\kappa_1=4,\qquad \kappa_2=-99/100}
+\]
+on an outer collar. These are a mathematically checked candidate
+choice, not parameters adopted in production or validated by evolution.
+Unlike a Hurwitz test on values alone, the following calculation uses
+one energy for both the complete wave principal part and its singular
+residue, including constraint-violating perturbations.
+
+Write $l=1/a$, $d_0=1/(aS)$, $D_0=\partial_t-B\cdot\nabla$ and
+\[
+D_K=3\kappa_1(1+\kappa_2),\quad
+d_\theta=\kappa_1(2+\kappa_2),\quad C_K=2l-\kappa_1.
+\]
+The base weighted fields and compatible derivative fields are
+\[
+h_c=H/\Omega^2,\quad m=M/\Omega,\quad
+\tau=T/\Omega^2,\quad \zeta=z/\Omega,\quad
+Q_i=\partial_iT/\Omega,\quad Z_{ij}=\partial_i z_j,
+\]
+\[
+Q_i=2G_i\tau+\Omega\partial_i\tau,\qquad
+Z_{ij}=G_i\zeta_j+\Omega\partial_i\zeta_j,\qquad
+\pi=h_c/2+\Tr Z,\quad W=m+Q .
+\]
+The principal equations are four scalar waves and four advected values:
+\[
+D_0\pi\simeq A\partial_iQ_i,\quad
+D_0Q_i\simeq A\partial_i\pi,\quad
+D_0W_j\simeq A\partial_iZ_{ij},\quad
+D_0Z_{ij}\simeq A\partial_iW_j.
+\]
+The values $\tau,\zeta$ have no principal derivatives in this reduction.
+The equality of mixed derivatives of $z$ is used; if all derivative
+fields are independently evolved, this amounts to a reduction-curl
+constraint addition, and its compatibility must be preserved.
+
+For completeness, one explicit first-order form, before the
+$(\pi,W)$ change of variables, is the following. Put $g=G\cdot\zeta$,
+\[
+e_{ij}=Z_{ij}+Z_{ji}+2(G_i\zeta_j+G_j\zeta_i)
+-\frac43\delta_{ij}g-\frac{D_K}{3}\delta_{ij}\tau,\qquad
+e=2\Tr Z-D_K\tau .
+\]
+Then
+\begin{align}
+D_0h_c={}&-2A\operatorname{div}m+4G\cdot m
++\frac A\Omega[4G\cdot m-8l\Tr Z+4lD_K\tau
+-(6l+2w_*)h_c],\\
+D_0\tau={}&\frac A\Omega[h_c/2+\Tr Z-(d_\theta+2w_*)\tau],\\
+D_0\zeta_i={}&-2l\zeta_i+
+\frac A\Omega[m_i+Q_i+(C_K-w_*)\zeta_i],\\
+D_0Q_i={}&A\partial_i(h_c/2+\Tr Z)
++\frac A\Omega[-(w_*+d_\theta)Q_i
++G_i(h_c/2+\Tr Z+d_\theta\tau)]\notag\\
+&-lQ_i-G_i(h_c/2+\Tr Z-d_\theta\tau),\\
+D_0Z_{ij}={}&A\partial_i(m_j+Q_j)
++\frac A\Omega C_K(Z_{ij}-G_i\zeta_j)
+-3lZ_{ij}-G_i(m_j+Q_j+C_K\zeta_j),\\
+D_0m_i={}&-\frac A2\partial_i h_c
++A(\partial_jZ_{ji}-\partial_i\Tr Z)\notag\\
+&+\frac A\Omega[(P-w_*)m_i+2G_i\Tr Z-\tfrac{10}3G_jZ_{ij}
+-2G_i g-6G^2\zeta_i+\tfrac{2D_K}3Q_i-\tfrac{2D_K}3G_i\tau]\notag\\
+&+G_i h_c-lm_i-\tfrac{20}3Ad_0\zeta_i-G_je_{ij}+G_i e.
+\end{align}
+These formulas, together with
+\[
+w_*=-l+l\Omega/A,\quad G^2=l^2-2d_0\Omega,\quad
+G=-ln+\frac{2\Omega}{S+r}n,
+\]
+exhibit a bounded remainder: in consistently dimensioned variables
+$U=(\pi,W,Q,Z,\tau/a,\zeta/a)$,
+\[
+U_t=(B^iI+AP_i)\partial_iU+
+\frac{A}{a\Omega}J_0(n)U+J_{\rm reg}(x)U,
+\]
+where $J_{\rm reg}$ is smooth and bounded on a collar. There are no
+unaccounted $\Omega^{-2}$ coefficients in this reduction.
+
+The principal symmetrizer is the wave Euclidean metric, together with
+\[
+\boxed{
+\mathcal E(U)=|\pi|^2+|W|^2+|Q|^2+|Z|^2+
+a^{-2}(4\tau^2+4\tau\zeta_n+8|\zeta|^2).
+}
+\]
+It is uniformly positive. In a frame with $n$ as normal,
+the dimensionless scalar residue on
+$(\pi,W_n,Q_n,Z_{nn},Z_{11}+Z_{22},\tau/a,\zeta_n/a)$ is
+\[
+J_s=
+\begin{pmatrix}
+-4&-2&2&-2&-2&6/25&-2\\
+-1&-2&-24/25&4/3&-2&-99/25&-8\\
+-1&0&-76/25&0&0&-101/25&0\\
+0&0&0&-2&0&0&-2\\
+0&0&0&0&-2&0&0\\
+1&0&0&0&0&-51/25&0\\
+0&1&0&0&0&0&-1
+\end{pmatrix}.
+\]
+The scalar energy matrix is
+$\operatorname{diag}(1,1,1,1,1/2)\oplus
+\left(\begin{smallmatrix}4&2\\2&8\end{smallmatrix}\right)$.
+The exact $LDL^T$ pivots of $-\operatorname{sym}(H_sJ_s)$ are
+\[
+4,\quad\frac{23}{16},\quad\frac{38346}{14375},\quad
+\frac{7036}{8217},\quad\frac{59165}{147756},\quad
+\frac{37690637}{73956250},\quad\frac{211573056}{37690637}.
+\]
+Each of the two transverse five-dimensional blocks has energy
+$\operatorname{diag}(1,1,1,1,8)$ and dissipation pivots
+\[
+2,\quad\frac{1828}{625},\quad2,\quad
+\frac{4577}{8226},\quad\frac{51555}{9154}.
+\]
+The remaining three tangential $Z$ components have dissipation $2I$.
+This accounts for all twenty components. Every pivot is positive.
+The exact rational program \texttt{common-energy-audit.mjs} checks
+these identities and independently checks the compatible radial
+pencil below.
+
+Consequently, every sufficiently regular, reduction-compatible solution
+obeys on a collar
+\[
+\boxed{
+\frac{dE}{dt}\leq C E
+-c\int\frac{A}{a\Omega}|U|^2\,dx
++\hbox{controlled inner-interface flux}.
+}
+\]
+At scri the principal energy flux has wave eigenvalues $0,-2A$,
+and advected eigenvalues $-A$; it is nonpositive. No incoming
+constraint boundary data are prescribed there. The value metric can
+be smoothly patched to a nonsingular interior metric; the wave metric
+is unchanged, and all interior lower-order coefficients are bounded.
+Stationarity and rotational covariance give the same a priori
+estimate for any fixed finite collection of time derivatives and
+rotational Lie derivatives, using their tensor actions.
+
+This is an actual a priori subsidiary energy estimate, stronger than
+the earlier residue-eigenvalue tests. It does \emph{not} by itself
+prove existence of a closed-domain evolution, stronger normal
+falloffs, or any coupled geometric/lapse/elliptic estimate.
+
+\subsection{Compatible normal powers and a finite-graph-norm route}
+For the improved parameters the reduced scalar pencil is
+\[
+L=\begin{pmatrix}302/25&8\\49/25&8/3\end{pmatrix},\qquad
+K=\begin{pmatrix}-596/25&-4\\-102/25&-34/3\end{pmatrix},
+\]
+\[
+\det(sL+K)=\frac8{15}(s-2)(31s-238),\qquad
+F=-L^{-1}K=
+\begin{pmatrix}58/31&-150/31\\24/155&242/31\end{pmatrix}.
+\]
+Thus the two compatible scalar powers are $2$ and $238/31$.
+The root-two natural fields satisfy
+\[
+H=\Omega^4H_4,\quad T=\Omega^4T_4,\quad
+M=\Omega^3M_3,\quad z=\Omega^3Z_3,
+\]
+\[
+\boxed{
+H_4=-\frac{2}{25a}T_4,\quad
+M_{3n}=\frac{302}{75a}T_4,\quad
+Z_{3n}=-\frac2{75}T_4,\quad
+M_{3A}=-Z_{3A}/a.
+}
+\]
+The other scalar natural exponent is $\mu=176/31$.
+The modal rows $(6,5)$ and $(2,75)$ diagonalize $F-2I$,
+and
+\[
+S=\begin{pmatrix}40&180\\180&5650\end{pmatrix}>0,\qquad
+S(F-2I)=\frac{176}{31}
+\begin{pmatrix}4&150\\150&5625\end{pmatrix}\geq0 .
+\]
+There is no integer indicial resonance.
+
+A finite normal regularity theorem is given in the included proof sections.
+Let $\mathcal G_{40}$ include actual time jets and all words in the
+conormal dilation, covariant rotations and cutoff Cartesian interior
+derivatives through total order forty. Conormal regularity is present
+initially and propagated directly. The earlier time/rotation-only
+inference is withdrawn. Time jets must be the actual PDE-generator
+jets, not independently prescribed functions.
+
+The exact radial reduction is irregular singular in a fast block:
+the outgoing glancing coefficient vanishes quadratically. With
+$v=(\tau,\zeta)$, $N=\Omega\partial_\Omega v$ and
+$R_g=N-Fv$, its schematic but order-explicit form is
+\[
+\Omega\partial_\Omega v=Fv+R_g,\qquad
+\Omega^3\gamma^2\partial_\Omega R_g-L_g R_g
++q_g\Omega\partial_tR_g
+=\Omega\mathcal D_1 v+\Omega^2\mathcal D_2v+
+\Omega^2 C R_g ,
+\]
+where $\gamma=r/(aS)$, $-L_g$ is coercive, $q_g>0$,
+$\mathcal D_j$ has time/angular order at most $j$, and there
+are no angular derivatives of $N$ in the second-order normal equation.
+Ordinary Frobenius theory does not apply to this full fast block.
+
+At fixed time, a coercive radial Volterra inverse gains one
+$\Omega$ power at a cost of at most two additional time/angular
+generators. The slow Fuchsian equation then gains the same power
+modulo crossed indicial jets. Eight gains from base $b$-weight
+$-1/2$ to $15/2$, six reserved conormal levels, six angular derivatives
+and two time derivatives have conservative generator count
+$16+6+6+2=30<40$. The simultaneous-weight embedding is
+\[
+v=\sum_{m=2}^7\Omega^m a_m(t,\vartheta)+R,\qquad
+\Omega^{-15/2}R\in H_b^6.
+\]
+The root-two coefficient is in the three-dimensional outgoing kernel;
+higher integer jets are fixed recursively. Both algebraic branches
+remain allowed. After dividing $v$ by $\Omega^2$, the remainder
+weight is $11/2$, sufficient for ordinary normal $H^6$; its distance
+from $\mu$ is $11/62$.
+
+This paragraph records the route; the subsequently included sections
+give the weak construction, exact wave coefficient audit and finite
+graph-domain embedding argument for this linear subsidiary system.
+A spacetime fast-energy argument has an additional initial half-weight
+trace term; the fixed-time Volterra route avoids assuming that term.
+The capped construction and exact homogeneous reduction-error transport
+give a compatible limiting realization. Finite graph regularity remains
+a strong domain requirement rather than an arbitrary ordinary-$H^6$
+initial-data theorem. These subsidiary results do not supply the missing
+geometric/gauge boundary estimate.
+
+\section{A physical elliptic normal-trace obstruction}
+There is a separate obstruction to a simple all-angular extension of
+a scalar lapse correction. Constraint falloffs, even exact constraints,
+do not determine the elliptic shift's normal derivative.
+
+The scalar York pieces, with $\phi=\Omega c$, are
+\[
+a_c=\frac a2(\operatorname{Hess}\phi)^\TF,\quad
+k_c=\frac a2[\Omega\Delta\phi-3G\cdot\nabla\phi-3d_0\phi],
+\quad
+v_c=\frac a2[A\nabla\phi+\phi G].
+\]
+They satisfy exactly
+\[
+\Omega\operatorname{div}a_c-2a_cG=\frac23\nabla k_c,\qquad
+Lv_c=2A\operatorname{div}a_c-2a_cG .
+\]
+Under metric Dirac gauge the Hamiltonian identity is
+$k=k_c+(3a/2)hGG-aH/4$.
+A potential determined only by $h$ can reproduce this additional
+Hamiltonian term, but it cannot remove physical TT curvature from
+the shift normal derivative.
+
+Indeed choose initially
+\[
+h=c=u=k=T=z=0,\qquad a_{ij}=\Omega^2t_{ij},
+\]
+where $t$ is a smooth compactly supported Euclidean TT tensor.
+Then $H=M=0$, while
+\[
+Lv=2A\operatorname{div}a-2aG,\qquad v|_{\scri}=0.
+\]
+Generically $\partial_nv_n|_{\scri}\ne0$, so $v_n=O(\Omega)$
+rather than $O(\Omega^2)$. One exact demonstration takes $a=S=1$,
+an $\ell=2$ scalar harmonic $Y$, and a nonnegative nonzero radial
+$P$ compactly supported in $(0,1)$:
+\[
+t_{rr}=PY,\quad t_{rA}=QD_AY,\quad
+t_{AB}=r^2[-Pq_{AB}Y/2+RY_{AB}],
+\]
+\[
+Q=\frac{r^2}{6}(P'+3P/r),\qquad R=(2Q'+4Q/r-P)/4 .
+\]
+Use the origin-regular solution of $L\xi=0$ with $\xi|_{\scri}=nY$,
+\[
+\xi_r=(11r+6r^3)Y/17,\qquad
+\xi_A=(11/34)r^2(1-r^2)D_AY .
+\]
+Green's identity reduces the relevant volume pairing, with
+$\psi=A\Omega^2$, to a positive multiple of
+\[
+\int_0^1 r^2P(r)
+\underbrace{[\psi''\xi_A/Y_A+
+\psi'((\xi_A/Y_A)'-\xi_r/Y-(\xi_A/Y_A)/r)]}
+_{(3/34)r^4(1-r^2)(1+25r^2)>0}\,dr .
+\]
+Thus $\partial_nv_n$ is nonzero. This disproves a proposed lapse
+source $G\cdot(v_c-v+v_h)/\Omega^2$ with an $h$-only potential $v_h$:
+all its other scalar sources vanish on these physical data.
+
+A repair must include the TT volume response, its
+Dirichlet-to-Neumann functional, or a boundary gauge formulation that
+controls that response. This is a counterexample to that particular
+closure, not to every elliptic-shift hybrid.
+
+\section{Conformal-harmonic candidate: pole cancellation is insufficient}
+A reference reduction of a physical Bona--Masso condition does not
+automatically yield a reference reduction of a conformal harmonic
+condition. This distinction supplies a simpler candidate than the
+failed scalar-potential extension above.
+
+Let $\bar K=(K_{\rm phys}-3w)/\Omega$ be the trace of the
+Penrose spatial extrinsic curvature, and use
+$\bar{\hat K}=(K_{\rm phys}-2\Theta_{\rm phys}-3w)/\Omega$
+in a conformal harmonic lapse. Its background value is
+$\bar{\hat K}_*=-3/(aA)$. Adding a fixed reference source to
+$(\partial_t-\beta\cdot\nabla)\alpha=-\alpha^2\bar{\hat K}$
+makes the background stationary. Its exact first variation is
+\[
+\boxed{
+u_t=B\cdot\nabla u-G\cdot v+\frac6a u
+-\frac{A^2}{\Omega}(q-3\delta w),\qquad
+\delta w=-\frac{G\cdot v+w_*u}{A}.
+}
+\]
+The fixed reference source is
+$-Aw_*-3A/a$; it has zero variation.
+The pole numerator is therefore
+$-A^2q-3AG\cdot v-3Aw_*u$.
+Geometric chi regularity requires $k=3\delta w$ at scri, so
+this numerator reduces to $2A^2T$ there. Natural
+$T=O(\Omega^4)$ removes it, without a new algebraic condition
+relating $u_{\scri}$ to the metric trace.
+This changes gauge sources in addition to choosing the harmonic
+principal coefficient. It does not impose CMC.
+
+An exact identity is especially useful. For
+$Y=u+(3A/2)c$, the coupled lapse and chi equations give
+\[
+\boxed{
+Y_t=B\cdot\nabla Y-A\operatorname{div}v-G\cdot v
++\frac3a u-\frac{3Aw_*}{2}c+\frac{2A^2}{\Omega}T .
+}
+\]
+All other pole terms cancel. No Hamiltonian, momentum or connection
+constraint was set to zero in obtaining this identity.
+It is a regular equation for this combination under the scalar
+constraint falloff. It does not alone produce a closed regular
+evolution for $\bar{\hat K}$, since differentiating
+$\delta w$ introduces the time derivative of the elliptically
+reconstructed shift.
+
+At each fixed $\Omega>0$ the lapse has the usual $\hat K$ harmonic
+principal part, rather than the defective physical-$K$ driver.
+An interior $1+\log$-like modification can be blended with a coefficient
+$f-1=O(\Omega^2)$ in the collar. The absence of a new lapse residue is
+a useful necessary repair. It is not a proof of an all-angular
+elliptic/hyperbolic boundary estimate.
+
+A second, explicitly nonlocal, gauge option fixes $u|_{\scri}=0$.
+For example let
+\[
+D=cG^2-hGG,\qquad
+N_s=-A^2q-AG\cdot v+Aw_*u-aA^2D,
+\qquad F_s=B\cdot\nabla u+N_s/\Omega .
+\]
+On compatible data with $H=T=0$ at scri, nullness gives
+$N_s|_{\scri}=-2Au/a=0$. Its finite limiting RHS includes the
+normal derivative of the elliptic shift, including the TT volume
+response. A boundary projection can remove exactly that trace:
+\[
+u_t=P_AF_s,\qquad
+P_A=I-E_A\operatorname{Tr},\qquad
+\operatorname{div}(A^{-2}\nabla E_Ag)=0,\quad E_Ag|_{\scri}=g.
+\]
+This projects a gauge RHS, not the Einstein constraints. The
+existence and regularity of $\operatorname{Tr}F_s$ must be proved
+in the proposed full state space.
+
+There is a genuine model estimate supporting this option. For
+\[
+u_t=P_A(B\cdot\nabla u-A^2p),\qquad
+p_t=B\cdot\nabla p-\Delta u,\qquad u|_{\scri}=0,
+\]
+the energy
+$\int(A^{-2}|\nabla u|^2+p^2)\,dx$ satisfies an estimate
+without derivative loss. Indeed
+$\int A^{-2}\nabla u\cdot\nabla E_Ag=0$ by the zero trace
+of $u$, while the null boundary flux is
+\[
+-A(p+u_n/A)^2\leq0.
+\]
+Smooth coefficient gradients contribute bounded bulk terms.
+This estimate includes the elliptic gauge projection; it is more than
+an interior-symbol calculation. The full $F_s$ has configuration and
+shift terms whose gradient-energy pairing is not yet controlled.
+Their treatment requires a complete York-coupled estimate, rather
+than declaring their bounded $L^2$ sizes sufficient.
+
+The exact counterexamples below invalidate the proposed conformal-harmonic
+boundary-model stability claim despite its pole cancellation. A strictly
+subluminal coefficient alone also has an explicit singular-outflow problem.
+The projected fixed-trace choice remains a different candidate with only
+an isolated gauge-model energy argument. No full three-dimensional theorem
+is inferred from any of these partial calculations.
+
+\input{constraint-existence.tex}
+\input{constraint-wave-reduction.tex}
+\input{constraint-normal-bootstrap.tex}
+\input{gauge-counterexamples.tex}
+\input{original-gauge-graph.tex}
+\input{boundary-gauge-dn.tex}
+\input{original-gauge-ball-section.tex}
+\input{weyl-source-energy.tex}
+\input{subsidiary-conormal-phase-audit.tex}
+\input{sourced-cefe-reconstruction.tex}
+\input{linear-phase-quotient-audit.tex}
+\input{linear-closure-theorem.tex}
+\input{linear-completion-certificate.tex}
+\input{independent-final-source-phase-audit.tex}
+
+\section*{Final completion audit for the selected linear scope}
+\begin{center}
+\begin{tabular}{p{.65\linewidth}p{.23\linewidth}}
+Explicit formulation and mapping to the reference equations & established\\
+Free differential constraint modes and invariant falloffs & established in the joint phase\\
+All angular sectors and global ball elliptic boundary estimate & established\\
+Traceful sourced physical metric and full Z4c reconstruction & established\\
+Four derived lifts and regular actual-scri pole traces & established\\
+Existence, uniqueness and continuous dependence in one stated norm & quotient graph-phase theorem\\
+Independent source, derivative-count and phase audits & completed with repairs recorded
+\end{tabular}
+\end{center}
+The selected full linearized objective is covered in the stated compatible phase. No production evolution equations have been changed, and no numerical simulation has been used as evidence of the theorem. Nonlinear evolution, arbitrary raw Sobolev norm equivalence and discretization stability are not asserted.
+\end{document}

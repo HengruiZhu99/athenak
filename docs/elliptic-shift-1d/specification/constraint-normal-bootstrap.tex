@@ -1,0 +1,263 @@
+\section{Finite graph regularity at scri: a normal-bootstrap lemma}
+\label{sec:constraint-normal-bootstrap}
+
+This section records the precise normal-bootstrap argument separately from
+weak existence. It is a linear regularity statement, not a sharp
+$H^6\longrightarrow H^6$ geometric evolution theorem. The hypotheses below
+include the exact normal reduction; a formal indicial polynomial alone would
+not suffice.
+
+\paragraph{Normal variables and exact structure.}
+Work in a collar where $r$ is bounded away from zero. Put
+\[
+ v=(\tau,\zeta),\qquad N=\Omega\partial_\Omega v,
+ \qquad\gamma=-\partial_r\Omega=\frac r{aS}>0.
+\]
+The derivative-reduction identities recover $N$ without a new differentiability
+assumption:
+\[
+ N_\tau=Q_n/G_n-2\tau,\qquad
+ N_{\zeta_j}=Z_{nj}/G_n-\zeta_j .
+\]
+All angular differentiations below are rotation Lie derivatives on the
+appropriate scalar/vector/tensor fields; they span tangential differentiations
+uniformly on the collar. They commute with radial dilation and with the
+rotationally covariant equations.
+
+Eliminate $H,M$ using the exact equations
+\begin{align}
+ H[T,z]&=\frac{2\Omega}{A}D_0T-2\Omega^2\partial_i z_i
+             +2d_\theta T,\\
+ M_i[T,z]&=\frac\Omega A(D_0z_i+2lz_i)
+             -\partial_iT-cz_i,
+ \qquad D_0=\partial_t-B\cdot\partial .
+\end{align}
+Substituting these expressions in the exact Hamiltonian and momentum
+subsidiary equations gives four second-order equations with common principal
+part $D_0^2-A^2\Delta$. Its radial second-order coefficient is
+$B_r^2-A^2=-\Omega^2$ exactly. After $T=\Omega^2\tau$,
+$z=\Omega\zeta$, multiplication by $\Omega^2$, and introduction of $N$,
+the equations have the structural form
+\begin{equation}
+ -\gamma^2\Omega^3\partial_\Omega N+
+ L(\Omega,n)N+K(\Omega,n)v+
+ 2B_r\gamma\Omega\partial_tN
+ +\Omega\mathcal T_1v+\Omega^2\mathcal T_2v=0 .
+ \label{eq:normal-eight-structural}
+\end{equation}
+The matrix coefficients are smooth and bounded up to scri. The operators
+$\mathcal T_j$ involve only time and angular differentiations and have order
+at most $j$; zero-order terms can be included in them. There are no hidden
+negative powers or angular derivatives of $N$. This follows from the exact
+second-order equations, not from freezing their principal symbols. The
+unscaled vector equations contain $T/\Omega^3$, but the displayed balanced
+weights turn that term into a bounded coefficient of $v$ in
+\eqref{eq:normal-eight-structural}.
+
+At scri the normal matrix is
+\[
+ L_0=2A_{\scri}^2lJ_{gg},
+\]
+where the scalar/normal block of $J_{gg}$ is
+\[
+ \begin{pmatrix}
+ -l-d_\theta/2&-\kappa_1/2\\
+ l+\kappa_1\kappa_2/2&2l/3-\kappa_1/2
+ \end{pmatrix}
+\]
+and each transverse entry is $-\kappa_1/2$. The common wave metric makes
+$-L_0$ strictly coercive. Thus, in a smaller collar, $L$ is invertible and
+$-L$ remains coercive. Define
+\[
+ F=-L^{-1}K,
+ \qquad R_g=N-Fv .
+\]
+The exact slow equation is
+\begin{equation}
+ (\Omega\partial_\Omega-F_0)v=R_g+\Omega F_1v,
+ \qquad F=F_0+\Omega F_1 .
+ \label{eq:normal-slow}
+\end{equation}
+Equation \eqref{eq:normal-eight-structural} gives a fast equation with leading
+operator $\Omega^3\gamma^2\partial_\Omega-L$ on $R_g$. Its remaining terms
+are sums of $\Omega$ times time/angular operators of order at most one and
+$\Omega^2$ times operators of order at most two on $v,R_g$.
+For a fixed-time estimate, the $\Omega\partial_tR_g$ term is placed on the
+right. Differentiating $Fv$ produces $\Omega^2FN$ and smooth higher-order
+terms, because $\partial_\Omega v=N/\Omega$; these introduce no unrecorded
+normal derivative and no worse power.
+
+\paragraph{Indicial data.}
+For $a\kappa_1=4$, $\kappa_2=-99/100$, the scalar/normal block of $F_0$ is
+\[
+ \begin{pmatrix}58/31&-150/31\\24/155&242/31\end{pmatrix};
+\]
+its eigenvalues are $2,238/31$. The transverse blocks are $2I$.
+The root $2$ is semisimple with multiplicity three. Spectral projectors are
+smooth rotationally covariant functions of $n$. There is no integer
+resonance between the two roots. The leading root-two coefficients satisfy
+\[
+ (h/l,m_n/l,\tau,\zeta_n)
+   =(-2/25,302/75,1,-2/75)\tau,
+ \qquad m_A=-l\zeta_A.
+\]
+
+\paragraph{Two one-dimensional estimates used below.}
+First, the fast operator has a fixed-time inverse on every fixed power
+weight. For
+\[
+ \Omega^3a(\Omega)\partial_\Omega u+D(\Omega)u=f,
+ \qquad a>0,\quad\operatorname{sym}_HD\ge d_*H>0,
+\]
+integration by parts against $\Omega^p u^*H$ absorbs the coefficient-derivative
+error, bounded by $C_p\Omega_0^2\|u\|_p^2$, in a sufficiently small collar.
+The outer endpoint term is nonnegative. The inner growing homogeneous branch
+is excluded by membership in a power-weighted $L^2$ space. Hence the inverse
+is bounded in $L^2(\Omega^p d\Omega)$ for every fixed real $p$. The collar
+may be chosen once for the finite set of weights used below. For constant
+scalar $D$ the formula is
+\[
+ u(\Omega)=e^{D/(2\Omega^2)}
+ \int_0^\Omega e^{-D/(2s^2)}f(s)\,s^{-3}\,ds,
+\]
+whose kernel mass is $1/D$. This fixes the sign of the admissible inverse.
+
+Second, diagonalizing $F_0$ reduces
+$(\Omega\partial_\Omega-F_0)v=f$ to scalar Euler equations.
+Their Green operators are bounded between equal $b$-weights whenever the
+weight differs from an indicial root, with constants controlled by the
+inverse distance to that root. When improving a weight across an indicial
+root, the corresponding $\Omega^\lambda$ term is extracted. This is obtained
+directly by integrating
+$\partial_\Omega(\Omega^{-\lambda}v)=\Omega^{-\lambda-1}f$ and applying the
+one-dimensional weighted Hardy inequality, or equivalently Young's inequality
+after $s=-\log\Omega$. The outer-collar trace is controlled by the local
+$L^2$ norms of $v,N$ on a fixed overlap annulus. No independent data at scri
+are introduced.
+
+\paragraph{Finite normal-bootstrap statement.}
+Let a reduction-compatible linear subsidiary solution have finite, continuous
+$L^2$ \emph{joint} graph norms
+\[
+ \mathcal G_{40}(t)=
+ \sum_{p+|I|\le40}
+ \|\mathcal Z^I\partial_t^pU(t)\|_{L^2_H}.
+\]
+Here $\mathcal Z$ contains $\mathcal D=\Omega\partial_\Omega$ on the collar,
+the three covariant rotations, and cutoff Cartesian derivatives spanning
+the interior, with the overlapping cutoffs defined in the existence section.
+All words in these generators are included.  The initial phase therefore
+includes conormal regularity \emph{from the outset}; it is propagated by the
+first-order commutator proof in that section.  Time derivatives are actual
+generator derivatives, not freely prescribed corner jets.  This strengthens
+the initial domain.  The earlier assertion that time/rotation-only graph
+regularity supplies the conormal levels is withdrawn.
+Assuming the exact structural reduction
+\eqref{eq:normal-eight-structural}, it has an expansion
+\begin{equation}
+ v=\sum_{m=2}^7\Omega^m a_m(t,n)+R,
+ \qquad \Omega^{-15/2}R\in H_b^6
+ \label{eq:normal-finite-expansion}
+\end{equation}
+locally in the collar, with estimates by $C\mathcal G_{40}(t)$ and the fixed
+overlap-annulus norms. The coefficient $a_2$ lies in the root-two kernel;
+the integer coefficients $a_3,\ldots,a_7$ are fixed by recursion and the
+time/angular derivatives of lower coefficients. The second algebraic branch
+$\Omega^{238/31}$ is allowed in $R$.
+
+\paragraph{Proof and derivative bookkeeping.}
+Use $b$-measure $d\Omega/\Omega\,d\omega$, and let $\alpha$ denote the
+normal weight, so that a weighted norm is the norm of
+$\Omega^{-\alpha}u$. Ordinary collar $L^2$ is the starting $b$-weight
+$\alpha=-1/2$. Both $v$ and $N$, hence also $R_g$, are bounded linear
+functions of $U$ in this norm. The same holds after every finite joint
+time/rotation/conormal word in the available budget.  The cutoff Cartesian
+generators provide the corresponding ordinary estimates in the interior
+and on the overlap annulus.
+
+If the finite joint family of $v,R_g$ is controlled at weight $\alpha$ with
+two additional time/rotation generators,
+the fast right hand side is controlled at weight $\alpha+1$: its terms have
+at least one factor of $\Omega$, and at most two time/angular differentiations.
+The fixed-time fast estimate therefore controls $R_g$ at weight
+$\alpha+1$.  This is applied \emph{simultaneously} to the required conormal
+levels: the source $\Omega\partial_t\mathcal D^jR_g$ is known from the
+previous weight at the same conormal level and one higher time level.
+It is not used to construct an unknown conormal derivative.
+The commutator of $\mathcal D^j$ with $\Omega^3\partial_\Omega$ contributes
+$\Omega^2$ times the current $\mathcal D^jR_g$ and lower levels.  The current
+term is absorbed into a small smooth change of the coercive fast matrix.
+Thus the same fixed-time inverse applies at all these levels.
+Equation \eqref{eq:normal-slow} then controls $v$ at the same
+improved weight, modulo crossed indicial terms. It also controls $N=Fv+R_g$.
+The other fields are reconstructed by
+\begin{align}
+ Q&=G(2\tau+N_\tau)+\Omega\nabla_{\rm tan}\tau,\\
+ Z_{ij}&=G_i(\zeta_j+N_{\zeta_j})
+                 +\Omega\partial_{{\rm tan},i}\zeta_j,\\
+ h&=\frac{2\Omega}{A}\partial_t\tau+2wN_\tau
+                  +(4w+2d_\theta)\tau-2\operatorname{tr}Z,\\
+ m&=\frac\Omega A\partial_t\zeta+wN_\zeta
+                  +(w-c+2l\Omega/A)\zeta-Q.
+\end{align}
+Thus the weight improvement returns the full field, not only $v$.
+
+When a known polynomial is present, subtract its recursively determined
+fast and slow polynomials before applying this estimate. Smooth coefficients
+and time/angular differentiation preserve these finite expansions. At each
+new integer order $m\ne2$, $(mI-F_0)$ is invertible; at $m=2$ its kernel is
+the outgoing coefficient already identified. The coefficient is bounded by
+the Euler Green estimate from the preceding weight and forcing norm.
+There are no root-zero or root-one terms because neither is an indicial
+root and the initial weight improvements exclude them. Eight improvements
+\[
+ -\tfrac12\longrightarrow\tfrac12\longrightarrow\cdots
+ \longrightarrow\tfrac{15}{2}
+\]
+extract precisely the powers $\Omega^2,\ldots,\Omega^7$ and cost at most
+sixteen time/angular generators. Endpoints never hit an indicial root;
+$238/31-15/2=11/62>0$.
+
+Six conormal derivatives are reserved in the starting joint norm and are
+carried through the simultaneous weight induction.  The identity
+$\mathcal Dv=Fv+R_g$ is compatible with this hierarchy, but is not used to
+infer missing conormal norms.  Six angular differentiations and two spare
+time differentiations give the conservative budget
+$16+6+6+2=30<40$.  At each weight gain the remaining time/rotation budget
+decreases by at most two while the reserved conormal levels remain present.
+This removes the circular step that would result from putting
+$\Omega\partial_t\mathcal DR_g$ on the right before knowing
+$\mathcal DR_g$ at the preceding weight.  No infinite regularity or
+unrecorded negative-weight commutator is used.
+
+The use of fixed-time fast inversion is essential to this bookkeeping.
+If instead the $\Omega\partial_tR_g$ term were kept on the left in a
+space-time estimate, an initial half-weight trace would appear and would
+require a separate estimate. It is not silently included here.
+
+\paragraph{Ordinary finite regularity and scope.}
+After factoring $v=\Omega^2v_{\rm nat}$, the remainder in
+\eqref{eq:normal-finite-expansion} has $b$-weight $11/2$. For
+$V=\Omega^{-11/2}R_{\rm nat}$,
+\[
+ \partial_\Omega^6R_{\rm nat}
+ =\Omega^{-1/2}\prod_{j=0}^5
+       (\Omega\partial_\Omega+11/2-j)V.
+\]
+The squared ordinary measure $d\Omega$ is exactly the $b$-measure
+$d\Omega/\Omega$ on the right. Mixed derivatives are controlled with the
+remaining angular budget. Consequently the natural constraint fields
+$(H/\Omega^4,T/\Omega^4,M/\Omega^3,z/\Omega^3)$ have ordinary collar
+$H^6$ regularity and finite traces. Their leading trace relations are the
+root-two kernel relations above. The generic fractional natural exponent
+$176/31$ need not be $H^7$; no infinite smoothness is asserted.
+
+This is a nonsharp graph-domain embedding. If the subsidiary semigroup and
+its maximal graph domain have been established separately, its strengthened
+joint graph norms
+propagate without derivative loss in that chosen topology, and the embedding
+gives preservation of these natural falloffs. It does not imply an ordinary
+$H^6$-data estimate for arbitrary data, does not replace the exact normal
+reduction by its indicial polynomial, and does not establish the full
+geometric/elliptic-gauge evolution.
+

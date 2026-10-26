@@ -1,0 +1,165 @@
+% Scope audit and an abstract realization lemma; input fragment.
+\section{A same-space realization and the remaining norm audit}
+\label{sec:linear-phase-quotient-audit}
+
+A high-initial-norm estimate into a weaker norm is not, by itself, a
+Hadamard well-posedness theorem in either norm.  Nor does a regular auxiliary
+CEFE metric automatically give a bounded canonical inverse from every raw
+Z4c state to that auxiliary gauge.  There is a precise quotient-space route
+that avoids making that unsupported assertion.
+
+\paragraph{Realization lemma.}
+Let $\mathcal E$ be an invariant Banach phase of compatible extended Cauchy
+states, let $T(t)$ be its strongly continuous linear evolution, and let
+$\mathfrak R:\mathcal E\to\mathcal D'(B)$ be a bounded reconstruction map
+to the full raw Z4c Cauchy state.  Suppose:
+\begin{enumerate}
+\item reconstructed solutions satisfy the original linearized bulk equations,
+the chosen elliptic shift, and the chosen scri lapse/shift conditions;
+\item $\ker\mathfrak R$ is invariant under $T(t)$.
+\end{enumerate}
+Then $\mathcal X=\mathcal E/\ker\mathfrak R$ is a Banach space of raw states,
+with the explicit norm
+\[
+ \|U\|_{\mathcal X}
+ =\inf\{\|e\|_{\mathcal E}:\mathfrak R e=U\}.
+\]
+It supports the strongly continuous induced evolution
+$S(t)[e]=[T(t)e]$, and
+$\|S(t)\|\leq\|T(t)\|$.
+Indeed boundedness into distributions makes the kernel closed; invariance
+makes the definition independent of the representative.  Quotienting the
+strong-continuity estimate proves strong continuity.  This is a genuine
+same-space assertion in a nonlocal graph norm.  It asserts no equivalence to
+an unweighted raw $H^s$ norm.
+
+In the present problem kernel invariance can be proved without assuming the
+desired full raw uniqueness theorem.  A zero reconstructed initial state has
+zero subsidiary and physical Weyl data.  Their independent uniqueness gives
+zero subsidiary and Weyl solutions.  The total reconstructed physical metric
+is therefore a pure physical gauge perturbation.  It obeys the homogeneous
+final gauge problem and has zero raw initial Cauchy state.  The independent
+pure-gauge uniqueness theorem then makes its raw state zero for all times.
+This argument requires that the extended compatibility conditions identify
+the reconstructed $H,M,T,z,d$ with their geometric definitions initially;
+one may not allow unrelated extra curvature data in the kernel.
+
+Here is an explicit rigidity argument for the possible initial gauge kernel.
+The physical initial slice is hyperbolic three-space with
+$\gamma_p$ of sectional curvature $-l^2$ and $K_{ij}=-l\gamma_{p,ij}$.
+Decompose a pure physical gauge generator initially as
+$X=F n_p+\eta$, where $F=A\tau/\Omega$.  If its raw three-metric and
+extrinsic-curvature variations vanish, the initial-data variation formulae
+give
+\[
+ D^p_{(i}\eta_{j)}=-lF\gamma_{p,ij},\qquad
+ D^p_iD^p_jF=l^2F\gamma_{p,ij}.
+\]
+For verification, the normal extrinsic-curvature variation is
+$-D^p_iD^p_jF-l^2F\gamma_{p,ij}$; the tangential term
+$\mathcal L_\eta K=2l^2F\gamma_p$ supplies the other sign.  The trace is
+$\delta K=-(\Delta_p-3l^2)F$ once $\delta\gamma=0$.
+The Hessian equation has exactly four solutions, the restrictions of the
+ambient Minkowski Cartesian coordinates to the hyperboloid.  Indeed it
+determines $(F,DF)$ along every geodesic from its value at one point, and
+these four independent restrictions realize all such initial values.
+Therefore
+\[
+ \eta=-\frac1l\nabla_pF+\eta_K,
+\]
+where $\eta_K$ is one of the six hyperbolic Killing fields.  These ten data
+are exactly the restrictions of Minkowski Killing generators.  Subtract
+that global physical Killing field, which has identically zero raw metric
+variation.  The remaining generator has $\tau(0)=\eta(0)=0$.
+The vanishing raw shift then gives $\eta_t(0)=0$; the vanishing raw lapse,
+using $u=\Omega D_0f+aG\cdot(D_0\eta-l\eta)$, gives $f_t(0)=0$ in the
+interior, while $f(0)=0$.  The homogeneous DN and lapse-wave uniqueness
+results make the remaining raw perturbation identically zero.  This proves
+kernel invariance without assuming uniqueness of the full hybrid system.
+
+Applying the pure-gauge estimate also requires regularity of this extracted
+generator, not merely its existence on interior compact subsets.  The
+trace-free Korn inequality on the Euclidean ball gives
+\[
+ \|\eta-\Pi_{\rm CKV}\eta\|_{H^{s+1}}
+ \leq C_s\|2(\partial_{(i}\eta_{j)})^{\rm TF}\|_{H^s},
+\]
+with its finite-dimensional conformal-Killing kernel.  The basic estimate is
+proved in \url{https://arxiv.org/abs/gr-qc/0505022}; Cartesian differentiation
+and the same finite-kernel normalization give the displayed integer-order
+version.  It also applies to an interior distributional potential: exhaust
+the ball by concentric balls of radii bounded below, fix the kernel on one
+inner ball, and use their uniform scaled estimates.  Thus $h_P\in H^5$
+gives an $H^6$ spatial potential.  The remaining finite-dimensional gauge
+coefficients are fixed by the lapse and shift components.
+In the present variables the exact identity
+\[
+ c=-\tfrac23\operatorname{div}\eta-2lf
+\]
+recovers $f$ with no division by $\Omega$.  After homogeneous DN uniqueness
+has given $\eta=0$, the regular lift gives $f|_{\scri}=0$, and Hardy's
+inequality gives $f/\Omega\in L^2$.  The lapse identity then gives the
+required $f_t\in L^2$ from the zero-trace lapse and the available ordinary
+derivatives.  Thus the kernel solution lies in the wave energy class used
+for its uniqueness, rather than relying only on an interior gauge formula.
+
+\paragraph{How an invariant extended phase can be built.}
+The elementary cascade principle is useful: if $A$ generates a $C_0$
+semigroup on $P$, $B$ generates one on $F$, and
+$K:D(A^j)\to F$ is bounded in its graph norm, then
+\[
+ p_t=Ap,\qquad f_t=Bf+Kp
+\]
+is a bounded triangular perturbation on $D(A^j)\times F$ and hence has a
+$C_0$ semigroup there.  Its own graph powers are invariant and encode the
+forced corner compatibility.  It is generally wrong to replace those
+coupled graph powers by the uncoupled product $D(A^k)\times D(B^k)$:
+the forcing may cancel a singular term in $Bf$.
+
+For the DN boundary variable, one derivative of apparent forcing loss has an
+explicit removal.  Write
+\[
+ b_t=B_{\rm DN}b+F(p),\qquad F(p)\in H^{9/2}(S^2).
+\]
+Remove the finitely many low modes and let
+$K=(-B_{\rm DN})^{-1}$ on the remaining modes.  It maps
+$H^{9/2}\to H^{11/2}$.  Set $b=\bar b+KF(p)$.  Then
+\[
+ \bar b_t=B_{\rm DN}\bar b+P_{\rm low}F(p)-K F_t(p).
+\]
+The low-mode term is finite dimensional; if $p\in D(A_p)$, the other term
+is bounded in $H^{11/2}$.  Thus the lifted boundary variable has an invariant
+$H^{11/2}$ phase, and its regular Lam\'e extension has $H^6$ interior
+regularity.  Taking four graph powers of the resulting upstream generator
+provides its time jets without demanding four additional ordinary spatial
+derivatives of the particular metric.
+
+\paragraph{What must still be checked before applying the lemma.}
+The forced lapse two-jet lift must give a bounded map from the stated
+upstream graph phase into the regular lapse forcing space, including the
+physical source terms.  The raw reconstruction must be bounded in the chosen
+realization topology, including all curvature and scri-trace variables, not
+just the conformal metric.  A bounded map into distributions is enough for
+the abstract quotient result, but is not enough to advertise a classical
+regular-scri theorem.  If stronger traces are claimed, their embedding must
+be proved for the \emph{coupled} lapse graph domain.  Finally all initial
+algebraic, geometric and gauge compatibility conditions must form a closed
+invariant subspace of the extended phase.  These are concrete remaining
+checks; a formal triangular construction alone does not establish them.
+
+The subsidiary fractional branch also prevents replacing this audit by an
+unstated smooth-data theorem.  The allowed natural exponent
+$176/31$ gives ordinary $H^6$ regularity but generally not $H^7$.
+A Fr\'echet version would therefore need a conormal/polyhomogeneous scale and
+a finite-seminorm estimate for every output seminorm.  A single finite
+$G_{80}$ estimate does not establish that infinite family.
+
+For the finite repaired phase, ``joint generators'' always includes
+cutoff Cartesian derivatives in the interior, in addition to rotations and
+$\Omega\partial_\Omega$ on the collar.  Thus subsidiary order $128$ includes
+ordinary interior order $128$, the CEFE joint order $32$ includes its mixed
+ordinary interior orders, the elliptic spatial gauge joint order $20$ with
+base $H^6$ includes interior $H^{26}$, and wave joint order $12$ includes
+ordinary interior order $12$ on its first-order energy fields.  The source
+estimates must use these same generators.  Conormal collar control alone
+must not be substituted for these interior derivatives.

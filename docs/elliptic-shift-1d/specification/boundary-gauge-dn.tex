@@ -1,0 +1,166 @@
+\section{Exact ball Lam\'e Dirichlet-to-Neumann boundary subsystem}
+\label{sec:boundary-gauge-dn}
+
+This section retains the original reference lapse with boundary principal
+$f=1$ and restoring parameter $\rho=0$, and imposes the proposed additional
+$u_{\scri}=0$ condition. It proves its necessary homogeneous boundary
+subsystem. It does not, by itself, prove the interior lapse-wave
+initial-boundary value problem or its compatibility with all geometric pole
+conditions.
+
+Write $l=1/a$ and $A_{\scri}=S/a$. For the plus-Lie pure physical gauge,
+let $X=\tau\partial_t+\xi$, $\eta=\xi+B\tau$, and
+\[
+ \sigma=\frac{\eta\cdot G+Aw\tau}\Omega,
+ \qquad u=A D_0\tau-(A+\Omega)\sigma,
+ \qquad v=D_0\eta-l\eta-A^2\nabla\tau.
+\]
+Regularity of $\xi$ at the fixed sphere gives
+$\eta_n=-A_{\scri}\tau$ there. Direct differentiation of the numerator of
+$\sigma$ gives
+\[
+ \sigma_{\scri}=\partial_n\eta_n+l\tau+A_{\scri}\partial_n\tau.
+\]
+Here $\partial_nG_n=-1/(aS)$ and
+$\partial_n(Aw)=-2/a^2$ at $r=S$; both terms are needed.
+Consequently $u_{\scri}=0$ implies
+$\partial_t\tau=\partial_n\eta_n+l\tau$ and hence
+\begin{align}
+ \partial_t\eta_n&=-A_{\scri}\partial_n\eta_n+l\eta_n,\\
+ \partial_t\eta_A&=-A_{\scri}\partial_n\eta_A+l\eta_A
+                         -A_{\scri}\nabla_A\eta_n.
+ \label{eq:ball-boundary-eta}
+\end{align}
+The second equation also uses $v_A=0$ and
+$\nabla_A\tau=-\nabla_A\eta_n/A_{\scri}$.
+
+These conditions do not automatically imply the other pole compatibilities:
+they give
+\[
+ \mu_{\scri}=-2A_{\scri}\partial_n\tau,
+ \qquad v_{n,\scri}=-A_{\scri}^2\partial_n\tau.
+\]
+If the original lapse/geometric pole equations additionally require
+$\mu_{\scri}=v_{n,\scri}=0$, the further condition is
+$\partial_n\tau=0$. Its consistency with the interior time-wave equation
+is a separate question. The result below establishes only the
+Dirichlet-to-Neumann evolution \eqref{eq:ball-boundary-eta}.
+
+\paragraph{Regular Lam\'e extension.}
+Let $\eta$ solve
+\[
+ \mathcal L\eta=\Delta\eta+\tfrac13\nabla\nabla\cdot\eta=0
+ \quad\hbox{in }r<S,
+\]
+with regularity at the center. Normalize $Y_{\ell m}$ in $L^2(\mathbb S^2)$,
+put $L_\ell=\ell(\ell+1)$, and use the poloidal ansatz
+\[
+ \eta=U(r)Y_{\ell m}n+V(r)\nabla_{\mathbb S^2}Y_{\ell m}.
+\]
+Its divergence coefficient is
+$U'+2U/r-L_\ell V/r$. The vector Laplacian coefficients are
+\begin{align}
+ (\Delta\eta)_n&=U''+2U'/r-(L_\ell+2)U/r^2+2L_\ell V/r^2,\\
+ (\Delta\eta)_A&=V''+2V'/r-L_\ell V/r^2+2U/r^2.
+\end{align}
+For $(U,V)=r^k(U_0,V_0)$, the divergence is
+$r^{k-1}[(k+2)U_0-L_\ell V_0]$. Inserting its gradient yields the two
+regular branches, for $\ell\ge1$,
+\[
+ r^{\ell-1}(U_0,V_0)=r^{\ell-1}(\ell,1),\qquad
+ r^{\ell+1}(U_0,V_0)=
+ r^{\ell+1}((\ell+1)(\ell-6),\ell+9).
+\]
+The determinant of their two boundary vectors is $2(7\ell+3)$, so both
+Dirichlet components determine a unique regular extension. The factor
+$\ell-6$ causes no degeneracy of the extension.
+
+Use normalized tangential amplitude $b=\sqrt{L_\ell}\,V(S)$, so that the
+boundary $L^2$ norm is proportional to $|U(S)|^2+|b|^2$.
+The ordinary normal derivative has matrix
+\[
+ \mathcal D_\ell=\frac1{S(7\ell+3)}
+ \begin{pmatrix}
+ 6\ell^2+\ell+3&\sqrt{L_\ell}(\ell-6)\\
+ -\sqrt{L_\ell}(\ell+9)&8\ell^2+5\ell-3
+ \end{pmatrix}.
+\]
+In the boundary system the tangential component also contains
+$\nabla_A\eta_n$. Adding $\sqrt{L_\ell}/S$ to the lower-left entry gives
+\begin{equation}
+ \mathcal B_\ell=\frac1{S(7\ell+3)}
+ \begin{pmatrix}
+ 6\ell^2+\ell+3&\sqrt{L_\ell}(\ell-6)\\
+ 6\sqrt{L_\ell}(\ell-1)&8\ell^2+5\ell-3
+ \end{pmatrix}.
+ \label{eq:ball-poloidal-B}
+\end{equation}
+Thus $\partial_t(U,b)^T=G_\ell(U,b)^T$, with
+$G_\ell=a^{-1}I-A_{\scri}\mathcal B_\ell$.
+
+\paragraph{Spectrum, conditioning, and low modes.}
+The trace is $2\ell/S$ and the eigenvalues of $\mathcal B_\ell$ are
+\[
+ \frac1S(\ell\pm\delta_\ell),\qquad
+ \delta_\ell^2=
+ \frac{(\ell-1)(\ell^2-4\ell-3)}{7\ell+3}.
+\]
+For $\ell=2,3,4$, $\delta_\ell$ is purely imaginary and the generator
+has strictly negative real part $-(\ell-1)/a$. For $\ell=5$,
+$\delta_\ell^2=4/19$; for $\ell=6$, $\delta_\ell^2=1$.
+They too have strictly negative generator eigenvalues.
+
+For every $\ell\ge7$ the uniformly positive metric
+\[
+ H_\ell=\operatorname{diag}
+       \left(\frac{6(\ell-1)}{\ell-6},1\right),
+ \qquad I\le H_\ell\le36I,
+\]
+symmetrizes $\mathcal B_\ell$. Moreover
+$0\le\delta_\ell\le(\ell-1)/\sqrt7$. Therefore
+\begin{equation}
+ \|e^{tG_\ell}\|\le
+ 6\exp\left[-(1-1/\sqrt7)(\ell-1)t/a\right]
+ \qquad(\ell\ge7).
+ \label{eq:ball-high-modal-energy}
+\end{equation}
+This uniform estimate excludes a hidden high-frequency condition-number or
+Jordan growth. The finitely many diagonalizable stable modes $2\le\ell\le6$
+can be absorbed in a fixed constant; all $\ell\ge2$ consequently admit a
+uniform $Ce^{-t/a}$ bound.
+
+For $\ell=1$,
+\[
+ \mathcal B_1=\frac1S
+ \begin{pmatrix}1&-1/\sqrt2\\0&1\end{pmatrix},\qquad
+ G_1=\frac1a\begin{pmatrix}0&1/\sqrt2\\0&0\end{pmatrix}.
+\]
+This is a genuine neutral Jordan block, but it is a fixed finite-dimensional
+one: $\|e^{tG_1}\|\le1+t/(\sqrt2a)$. It causes no frequency-dependent
+ill-posedness. The $\ell=0$ radial regular solution is $\eta=C r n$ and has
+zero boundary generator.
+
+For axial modes $W(r)n\times\nabla_{\mathbb S^2}Y_{\ell m}$, the divergence
+vanishes and the regular branch is $W\propto r^\ell$. Their generator is
+$-(\ell-1)/a$, with neutral $\ell=1$ rotations and decay for $\ell\ge2$.
+
+\paragraph{Boundary semigroup.}
+The normalized vector spherical harmonics are orthogonal. The uniform modal
+bound, together with the explicit finite-dimensional neutral blocks, defines
+a strongly continuous semigroup on every $H^s$ boundary space and gives
+\[
+ \|\eta(t)\|_{H^s}\le C_s(1+t/a)\|\eta(0)\|_{H^s}.
+\]
+On the $\ell\ge2$ subspace it decays uniformly exponentially. The high-mode
+generator has size comparable to $\ell$ with a uniformly invertible negative
+spectrum, so its domain is $H^{s+1}$ and its stable high-mode part has the
+usual order-one analytic smoothing estimates. These claims concern the
+explicit boundary operator \eqref{eq:ball-poloidal-B}, not an inferred
+energy from the principal symbol alone.
+
+The result is a genuine global-ball Dirichlet-to-Neumann boundary estimate.
+It establishes that this necessary repaired homogeneous trace subsystem has
+no high-frequency growth. Establishing the interior time-wave problem,
+the additional $\partial_n\tau=0$ compatibility when required by the pole
+equations, and physical/constraint inhomogeneous forcing remains necessary
+before claiming a full gauge or geometric initial-boundary value theorem.

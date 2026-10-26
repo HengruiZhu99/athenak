@@ -1,0 +1,132 @@
+\section{Exact four-wave reduction and audit of normal powers}
+\label{sec:constraint-wave-reduction}
+
+This is a coefficient-level audit of the normal structure used in
+Section~\ref{sec:constraint-normal-bootstrap}. Put
+\[
+ l=1/a,\quad d_0=(aS)^{-1},\quad
+ d=\kappa_1(2+\kappa_2),\quad D=3\kappa_1(1+\kappa_2),
+ \quad c=2l-\kappa_1,\quad C=A+\Omega,
+ \quad D_0=\partial_t-B\cdot\partial,
+\]
+and write $\mathcal P=D_0^2-A^2\Delta$,
+$s_z=\partial_i z_i$, $g_z=G\cdot z$. All vector components in the following
+two equations are Cartesian. The exact corrected subsidiary equations give
+\begin{align}
+H&=(2\Omega/A)D_0T-2\Omega^2s_z+2dT,\\
+M_i&=(\Omega/A)(D_0z_i+2lz_i)-\partial_iT-cz_i.
+\end{align}
+Substitution into the exact Hamiltonian and momentum equations, using
+$[D_0,\partial_i]=-l\partial_i$, gives the scalar equation
+\begin{align}
+0={}&\mathcal P T+
+ \frac{wC+A(d+6l)}\Omega D_0T
+ -(2A+\Omega)G\cdot D_0z\\
+&+[-2A^2w+3lA\Omega-A^2(c+2l)]s_z
+ +\frac{A(3A+2\Omega)}\Omega G\cdot\partial T\\
+&+\left[-2l(2A+\Omega)+\frac{Ac(3A+2\Omega)}\Omega\right]g_z
+ -\frac{2lA^2(D-3d)}{\Omega^2}T .
+\label{eq:constraint-scalar-wave-exact}
+\end{align}
+For the vector equation define the scalar coefficient
+\[
+ Z_c=\frac{2lwC}{A}+2l^2(\Omega/A+3)
+ -lc(1+3A/\Omega)+2G^2+\frac{20}{3}Ad_0+
+ \frac{6AG^2}\Omega.
+\]
+Then the exact vector equations are
+\begin{align}
+0={}&\mathcal P z_i+
+ \left[\frac{wC}\Omega+3l+\frac{A(3l-c)}\Omega\right]D_0z_i
+ -\frac{CG_i}{\Omega^2}D_0T-\frac{2A^2G_i}\Omega s_z\\
+&+A G\cdot\partial z_i+
+ \frac{A(10A/3+\Omega)}\Omega G_j\partial_i z_j
+ +\frac A\Omega Z_c z_i\\
+&+\left[\frac{2A}{3\Omega}+\frac{2A^2}{\Omega^2}\right]G_i g_z
+ -\frac{A^2(3l-d+2D/3)}{\Omega^2}\partial_iT
+ -\frac{2\kappa_1AC}{\Omega^3}G_iT .
+\label{eq:constraint-vector-wave-exact}
+\end{align}
+The $\Omega^{-3}T$ term is real; it must not be omitted. It is balanced by
+the different powers in $T=\Omega^2\tau$ and $z=\Omega\zeta$.
+
+One derivation of the vector identity first uses
+\begin{align}
+ D_p^jQ^p_{ij}-D_i\operatorname{tr}_pQ^p
+ ={}&A\Omega(\Delta z_i-\partial_i s_z)
+ -\Omega G\cdot\partial z_i
+ -(10A/3+\Omega)G_j\partial_i z_j+2CG_is_z\\
+&-\left[2G^2+\tfrac{20}{3}Ad_0+
+                  \tfrac{6AG^2}\Omega\right]z_i
+ -\left[\tfrac23+\tfrac{2A}\Omega\right]G_i g_z\\
+&+\frac{2DA}{3\Omega}\partial_iT
+ -\frac{2DC}{3\Omega^2}G_iT .
+\end{align}
+The mixed terms $D_0\partial_iT$ and $\partial_iD_0T$ cancel, as do
+$\partial_i s_z$ from the Hamiltonian derivative and the tensor divergence.
+Likewise $D_0s_z$ cancels $\partial_iD_0z_i$ in the scalar equation. Thus no
+second-order cross principal operator survives.
+The commutator in $D_0M_i$ also contributes $+l\partial_iT$ on the left;
+it cancels the corresponding momentum-reaction contribution. There is
+therefore no extra $-Al\partial_iT/\Omega$ in
+\eqref{eq:constraint-vector-wave-exact}. A lightweight independent
+automatic-differentiation evaluation of the nested and expanded identities
+at a generic nonradial point detected and corrected precisely this term.
+
+\paragraph{Audit of the normal eight-system.}
+In spherical coordinates, with Cartesian dependent components,
+\[
+ \mathcal P=\partial_t^2-2B_r\partial_t\partial_r
+ -\Omega^2\partial_r^2+
+ (B_r\partial_rB_r-2A^2/r)\partial_r
+ -A^2r^{-2}\Delta_{\mathbb S^2}.
+\]
+Since $\partial_r=-\gamma\partial_\Omega$,
+$\gamma=r/(aS)$, substituting the balanced powers and multiplying the
+balanced equations by $\Omega^2$ has exactly the following consequences:
+\begin{itemize}
+\item The highest radial term is $-\gamma^2\Omega^3\partial_\Omega N$,
+where $N=\Omega\partial_\Omega(\tau,\zeta)$. The term obtained by
+differentiating $1/\Omega$ is a smooth $O(\Omega^2)N$ coefficient.
+\item The only derivative of $N$ in time/angular directions is
+$2B_r\gamma\Omega\partial_tN$. There is no angular derivative of $N$.
+\item All other first time/angular derivatives of $(\tau,\zeta)$ carry
+at least one power of $\Omega$. Second time/angular derivatives carry
+$\Omega^2$. Every zero-order and $N$ coefficient is smooth up to scri.
+\item Passing to normal/tangential vector components changes only smooth
+angular lower-order coefficients: the frame is constant along each radial
+ray. It does not introduce a mixed normal/angular principal term.
+\end{itemize}
+These statements follow term by term from
+\eqref{eq:constraint-scalar-wave-exact}--\eqref{eq:constraint-vector-wave-exact};
+there is no residual $\Omega^{-1}$ in a derivative coefficient of the
+eight-system after the displayed multiplication.
+
+At scri, in $a=1$ units and for $\kappa_1=4$, $\kappa_2=-99/100$, the
+scalar/normal $N$ and value matrices in
+$-\gamma^2\Omega^3N_\Omega+LN+Kv+\cdots=0$ are
+\[
+ L_0=A_{\scri}^2
+ \begin{pmatrix}-151/25&-4\\-49/25&-8/3\end{pmatrix},\qquad
+ K_0=A_{\scri}^2
+ \begin{pmatrix}298/25&2\\102/25&34/3\end{pmatrix}.
+\]
+Each transverse block is $L_0=-4A_{\scri}^2$,
+$K_0=8A_{\scri}^2$. Hence $-L_0$ has positive symmetric part and
+\[
+ -L_0^{-1}K_0=
+ \begin{pmatrix}58/31&-150/31\\24/155&242/31\end{pmatrix},
+\]
+with transverse entries $2$. Equivalently $L_0=2A_{\scri}^2lJ_{gg}$ with
+the appropriately dimensioned glancing matrix. The fast coercivity therefore
+uses the same wave metric as the previously certified energy, without an
+unverified change of sign or target metric.
+
+Finally, setting $F=-L^{-1}K$ and $R_g=N-Fv$ introduces only
+$\Omega^3F_\Omega v$ and $\Omega^2F(R_g+Fv)$ from the highest normal term.
+The first is higher order; the $R_g$ term can be absorbed into a smooth
+coercive fast zero-order matrix in a smaller collar. The mixed time term
+gives $\Omega\partial_tR_g$ and $\Omega F\partial_tv$. Thus the fast forcing
+order/power count required by the finite graph bootstrap is verified by the
+exact equations, not merely assumed from the indicial roots.
+
