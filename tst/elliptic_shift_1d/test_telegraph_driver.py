@@ -17,11 +17,16 @@ with tempfile.TemporaryDirectory() as tmp:
    normal=R*(K/3-O*q[:,2]/2);spatial=(1+r*r)/(2*O)-r*d[:,0]/(2*chi)
    m=R/2*(1+normal*normal-spatial*spatial)
    np.testing.assert_allclose(m,mass,atol=2e-12,rtol=2e-12)
- for profile in ['collar','af-regular']:
+ for case,profile in [('collar','collar'),('sinh','af-regular'),('local','af-regular')]:
   controls=['--inner-profile',profile]
-  if profile=='af-regular':controls+=['--quadrature-width','9','--puncture-ko','.25','--grid-stretch','4']
-  whole=run(profile+'-whole',*controls,'--t','.03125');first=run(profile+'-first',*controls,'--t','.015625')
-  split=run(profile+'-split',*controls,'--t','.03125','--resume',str(first/'checkpoint.npz'))
+  if case=='sinh':controls+=['--quadrature-width','9','--puncture-ko','.25','--grid-stretch','4']
+  if case=='local':controls+=['--grid-stretch','14','--grid-map','inner-c7','--mapped-ko','local']
+  whole=run(case+'-whole',*controls,'--t','.03125');first=run(case+'-first',*controls,'--t','.015625')
+  split=run(case+'-split',*controls,'--t','.03125','--resume',str(first/'checkpoint.npz'))
   with np.load(whole/'checkpoint.npz') as x,np.load(split/'checkpoint.npz') as y:
    for key in ['q','B','rays','compensation','t','step']:assert np.array_equal(x[key],y[key]),key
+ # A bad later parent must be rejected before dispatching the valid first one.
+ rejected=root/'bad-batch'
+ result=subprocess.run([sys.executable,str(Path(__file__).with_name('continue_telegraph_matrix.py')),'--parents',str(first),str(root/'missing-parent'),'--t','.03125','--output',str(rejected)],capture_output=True,text=True)
+ assert result.returncode!=0 and not rejected.exists(),'Continuation preflight dispatched a partial invalid batch'
  print(json.dumps(dict(initial_invariant_masses=[1/3,.2],cli_checkpoint_bitwise=True,inner_profiles=['collar','af-regular'],nondefault_quadrature_and_KO=True,auxiliary_and_stage_rays_included=True)))

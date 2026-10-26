@@ -14,8 +14,10 @@ from numerics import puncture_dissipation,RadialOperators
 from radial_grid import mapped_grid
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args()
 errors=[]
-for n,inner_profile,stretch,kind in product([33,65,129],['collar','af-regular'],[0.,4.,6.],['sinh','inner-c7']):
- opts=options(n,a.library);opts.grid_stretch=stretch;opts.grid_map=kind
+grid_cases=[(s,k,'physical') for s,k in product([0.,4.,6.],['sinh','inner-c7'])]+[(s,k,'local') for s,k in product([0.,6.,10.,14.,16.,20.],['inner-c7','inner-exp'])]
+for n,inner_profile,grid in product([33,65,129],['collar','af-regular'],grid_cases):
+ stretch,kind,ko_frame=grid
+ opts=options(n,a.library);opts.grid_stretch=stretch;opts.grid_map=kind;opts.mapped_ko=ko_frame
  ev=PunctureChart(opts);q,*_=ev.initial_wormhole(IsotropicWormhole());r=ev.r
  support=window(r,inner_profile=inner_profile);w,wp=support;B=.001*r*(1-r)**8
  for j,amp in [(0,.001),(2,.001),(3,.002),(4,.003),(5,.004),(6,.0015)]:q[:,j]+=amp*(1-r)**6
@@ -118,9 +120,22 @@ for n in [65,129,257]:
  df,_=op.derivatives(np.sin(2*r),1);de.append(max(abs(df-2*np.cos(2*r))))
  np.testing.assert_allclose(op.integral(r**4),r**5/5,rtol=3e-13,atol=3e-15)
 assert np.log2(de[-2]/de[-1])>5.,de
-for kind in ['sinh','inner-c7']:
+for kind in ['sinh','inner-c7','inner-exp']:
  x=np.linspace(.001,.999,1000);r,J=mapped_grid(x,6,kind);eps=1e-6
  np.testing.assert_allclose(J,(mapped_grid(x+eps,6,kind)[0]-mapped_grid(x-eps,6,kind)[0])/(2*eps),rtol=2e-8,atol=2e-9)
  assert min(J)>0 and np.all(np.diff(r)>0)
  if kind=='inner-c7':assert np.array_equal(r[x>=.4],x[x>=.4]) and np.array_equal(J[x>=.4],np.ones(sum(x>=.4)))
+ if kind=='inner-exp':assert np.array_equal(r[x>=.5],x[x>=.5]) and np.array_equal(J[x>=.5],np.ones(sum(x>=.5)))
+# Harmonic-mean Jacobian weights preserve the dr energy inequality without
+# a time-step bound proportional to the smallest J. Check the complete matrix.
+x=np.linspace(0,1,129);r,J=mapped_grid(x,14,'inner-c7');dx=x[1];epsilon=.5
+Q=puncture_dissipation(np.eye(len(x)),r,dx,epsilon,.8,measure=J)/J[:,None]
+weighted=np.sqrt(J)[:,None]*Q/np.sqrt(J)[None,:]
+np.testing.assert_allclose(weighted,weighted.T,rtol=3e-15,atol=1e-13)
+eigs=np.linalg.eigvalsh(weighted)
+assert eigs[-1]<1e-12 and -eigs[0]<=4*epsilon/dx*(1+1e-13)
+v=np.random.default_rng(271828).normal(size=len(x));third=np.diff(v[1:],n=3)
+Jbar=4/(1/J[1:-3]+1/J[2:-2]+1/J[3:-1]+1/J[4:]);mid=(r[1:-3]+r[4:])/2
+W=np.maximum(1-(mid/.8)**2,0)**6
+np.testing.assert_allclose(np.dot(J*v,Q@v),-epsilon*np.sum(W*Jbar*third**2)/(64*dx),rtol=3e-15)
 print(json.dumps(dict(max_python_compiled_rate_difference=max(errors),resolutions=[33,65,129],nonzero_flux_RK=True,free_constraints=True,disabled_bitwise_equivalence=True,restart_bitwise=True,stage_characteristic_oracle=True,ray_activation=True,scope='Implementation validation only; nonlinear convergence remains unproven.')))

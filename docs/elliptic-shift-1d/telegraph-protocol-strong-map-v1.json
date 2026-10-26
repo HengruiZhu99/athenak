@@ -1,0 +1,10 @@
+{
+  "parent": "telegraph-protocol-inner-k005-v1.json",
+  "status": "Declared before these nonlinear pilots.",
+  "reason": "The s=6 mapping still underresolves the late front. Stronger clustering with the original J-inverse KO requires a timestep proportional to min(J). Use a smooth physical-measure dissipative operator with a uniform bound instead.",
+  "operator": "Q=-epsilon/(64*dx) J^{-1} D3^T diag(W*Jbar) D3, where Jbar=4/sum[j=0..3](1/J_{i+j}). AF coefficient column remains excluded. The old physical mode uses Jbar=1.",
+  "energy": "sum J_i u_i Q_i = -epsilon/(64*dx) sum W_i Jbar_i (D3u)_i^2 <=0. Jbar<=4 J_j for every member of each stencil and |D3| coefficient sum=8 imply spectral radius <=4 epsilon/dx in the J inner product.",
+  "guard": "dt*epsilon/dx<=.5 (sufficient for dt*rho<=2), together with unchanged stage characteristic and relaxation guards. Fixed smooth maps and weights retain vanishing truncation error, not continuum damping of Einstein constraints.",
+  "design": "N513, same continuum gauge kappa=.005,tau=.02 and physical support. s=6 local-KO control isolates the dissipation change from the existing s=6 physical-KO case. s=10/14 then vary only the map.",
+  "acceptance": "All original gates retained. Pilots cannot pass the convergence objective. Full tests must verify weighted energy, matrix spectrum, nonzero-flux rates/stages, baseline equivalence and exact restart before evolution."
+}

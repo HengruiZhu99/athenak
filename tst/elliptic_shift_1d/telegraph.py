@@ -45,7 +45,8 @@ def python_rhs(ev,q,B,kappa,tau,support,accepted=False):
     positive=r>0;result[positive,6]+=correction[positive]/alpha[positive]
     adv=ev.op.advection_derivative(B[:,None],np.array([-1]),beta)[:,0]
     rate=beta*adv+(kappa*w*ev.geometry_first[:,6]-B)/tau
-    rate+=puncture_dissipation(B[:,None],r,ev.h,ev.args.puncture_ko,ev.args.puncture_ko_radius)[:,0]/ev.grid_jacobian
+    measure=ev.grid_jacobian if getattr(ev.args,'mapped_ko','physical')=='local' else None
+    rate+=puncture_dissipation(B[:,None],r,ev.h,ev.args.puncture_ko,ev.args.puncture_ko_radius,measure=measure)[:,0]/ev.grid_jacobian
     F=lapse_coefficient(r,alpha,ev.args.slicing)
     c=np.sqrt(chi*(F+kappa*w*w/tau))
     return result,rate,np.c_[-beta-c,-beta+c]

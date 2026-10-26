@@ -3,6 +3,18 @@
 import argparse,concurrent.futures,hashlib,json,subprocess,sys,threading,os
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--parents',type=Path,nargs='+',required=True);p.add_argument('--t',type=float,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,choices=[1,2],default=2);a=p.parse_args()
+# Validate the entire requested batch before starting any evolution. A bad
+# later path must not leave a partially dispatched batch marked as running.
+a.parents=[parent.resolve() for parent in a.parents]
+assert len({p.name for p in a.parents})==len(a.parents),'Parent output names collide'
+for parent in a.parents:
+ m=json.loads((parent/'manifest.json').read_text())
+ assert m['status']=='finished' and m['time']<a.t and m['initial_data']['mass']==m['arguments']['mass']
+ assert (parent/'checkpoint.npz').is_file(),'Missing parent checkpoint'
+ source=parent/'frozen-source';binding=m['binding']
+ for name,sha in binding['source_sha256'].items():assert hashlib.sha256((source/name).read_bytes()).hexdigest()==sha
+ for key,libkey in [('library','library_sha256'),('fast_library','fast_sha256')]:
+  assert hashlib.sha256((source/Path(m['arguments'][key]).name).read_bytes()).hexdigest()==binding[libkey]
 a.output.mkdir(parents=True,exist_ok=False);a.output=a.output.resolve();lock=threading.Lock()
 state=dict(status='running',pid=os.getpid(),target=a.t,cases=[])
 def save():

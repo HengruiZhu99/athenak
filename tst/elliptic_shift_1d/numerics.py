@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 
-def puncture_dissipation(values,r,h,coefficient,radius=.8,include_first=False,inner_width=0.):
+def puncture_dissipation(values,r,h,coefficient,radius=.8,include_first=False,inner_width=0.,measure=None):
     """-epsilon B^T W B/(64h), B the forward third difference.
 
     Column zero is excluded, retaining the exact asymptotic endpoint ODE.
@@ -16,6 +16,10 @@ def puncture_dissipation(values,r,h,coefficient,radius=.8,include_first=False,in
     if inner_width:
         fraction=(midpoint-r[0])/(inner_width+midpoint-r[0])
         a=fraction**6;b=(1-fraction)**6;taper*=a/(a+b)
+    if measure is not None:
+        measure=np.asarray(measure)
+        if measure.shape!=r.shape or np.any(measure<=0):raise ValueError('Need positive nodal measure')
+        taper*=4/(1/measure[k:-3]+1/measure[k+1:-2]+1/measure[k+2:-1]+1/measure[k+3:])
     weighted=taper[:,None]*third;result=np.zeros_like(values)
     result[k:-3]+=weighted;result[k+1:-2]-=3*weighted
     result[k+2:-1]+=3*weighted;result[k+3:]-=weighted

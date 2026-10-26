@@ -1,0 +1,21 @@
+{
+  "parent": "telegraph-protocol-exp-extension-v1.json",
+  "status": "Declared before the fine run.",
+  "reason": "N513/1025/2049 completed t=10. Their final physical lapse gradient peaks are 34211.6/35017.4/35136.5, but final full-domain H maxima remain 1.04816/.277343/.0231198. Test whether the next fixed-map refinement resolves the pointwise constraints.",
+  "configuration": "N4097, t=10 from analytic initial data; all continuum and discretization parameters unchanged from the completed three-grid exponential sequence.",
+  "binding_check": "The compiled library hash and all eleven listed numerical Python module hashes match the N2049 parent; only analysis/tests/launcher files changed.",
+  "numerical_modules": [
+    "evolve.py",
+    "puncture_chart.py",
+    "fast.py",
+    "telegraph.py",
+    "radial_grid.py",
+    "numerics.py",
+    "gauge.py",
+    "wormhole_isotropic.py",
+    "wormhole_data.py",
+    "run_telegraph.py",
+    "time_lattice.py"
+  ],
+  "acceptance": "Original thresholds unchanged. Independent time/elliptic/dissipation/parameter controls remain necessary even if spatial checks pass."
+}

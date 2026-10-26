@@ -54,6 +54,9 @@ class FastEngine:
             self.lib.spherical_fast_set_grid_jacobian.argtypes=[C.c_void_p,C.c_double,fp]
             if self.lib.spherical_fast_set_grid_jacobian(self.handle,evolution.h,np.ascontiguousarray(evolution.grid_jacobian)):
                 raise ValueError('Unsupported mapped-grid geometry configuration')
+        if getattr(a,'mapped_ko','physical')=='local':
+            self.lib.spherical_fast_set_mapped_ko.argtypes=[C.c_void_p,C.c_int]
+            if self.lib.spherical_fast_set_mapped_ko(self.handle,1):raise ValueError('Local mapped KO requires the full AF chart')
         self.lib.spherical_fast_set_lapse_source(self.handle,np.ascontiguousarray(evolution.lapse_source,dtype=float))
         if self.trumpet_metric:self.lib.spherical_fast_set_metric_reference(self.handle,np.ascontiguousarray(evolution.metric_profile))
         if self.af:

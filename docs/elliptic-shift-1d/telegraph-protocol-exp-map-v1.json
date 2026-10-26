@@ -1,0 +1,10 @@
+{
+  "parent": "telegraph-protocol-strong-map-v1.json",
+  "status": "Declared before nonlinear runs.",
+  "reason": "Making the original linear-inner C7 map stronger moves r~.001 into its steep transition and can coarsen the cells there. A map must resolve the entire inward front path, not just reduce its first cell.",
+  "map": "E(x)=.5*expm1(2*b*x)/expm1(b), b=16. r=E for x<=.3; blend r=(1-S)*E+S*x with C7 smoothstep on .3<x<.5; r=x for x>=.5. E<=x and Sprime>=0 guarantee J>0. In the exponential segment, relative dr/r is approximately 2*b*dx away from the first cell.",
+  "fixed": "Same continuum kappa=.005,tau=.02,nu=1,M=1/3, physical support width=.24. Same harmonic-mean local KO and stage guards. All resolutions use the identical map and coefficients.",
+  "design": "Three full initial-data runs, N513/1025/2049, through t=6. Compare fields on nested physical-r nodes with r^2 J measures; full unmasked point constraints and analytic AF lapse gradients retained.",
+  "validation": "Physical-coordinate Python/compiled rates, nonzero-flux RK, characteristic stages and derivative/outer-identity map tests include inner-exp and strengths through20. Full solver suite passed after local-KO implementation.",
+  "acceptance": "Original gates retained. t=10 extension and independent controls only after candidate assessment; do not infer completion from existence of a finer first cell."
+}

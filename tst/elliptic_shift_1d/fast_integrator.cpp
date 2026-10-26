@@ -17,7 +17,9 @@ struct Engine {
   long calls=0; double solve_seconds=0;
   bool puncture=false,af=false,af_endpoint=false;
   Vec grid_jacobian;
+  bool mapped_ko_local=false;
   double jac(int i)const{return grid_jacobian.empty()?1.:grid_jacobian[i];}
+  double ko_measure(int i)const{return mapped_ko_local?4/(1/jac(i)+1/jac(i+1)+1/jac(i+2)+1/jac(i+3)):1.;}
   std::string error;
   std::array<double,22> diagnostics{};
   Vec ode_lu,ode_matrix;int ode_band=0,ode_skip=0,ode_refinements=0;double ode_scale=1;
@@ -394,6 +396,7 @@ struct Engine {
       std::fill(z.begin(),z.end(),0);
       for(int i=af?1:0;i<n-3;i++) {
         double midpoint=(r[i]+r[i+3])/2,taper=std::pow(std::max(1-midpoint*midpoint/(params[26]*params[26]),0.),6);
+        taper*=ko_measure(i);
         if(params[28]!=0) {
           double distance=midpoint-r[0],fraction=distance/(params[28]+distance);
           double a=std::pow(fraction,6),b=std::pow(1-fraction,6);taper*=a/(a+b);
@@ -443,6 +446,10 @@ int spherical_fast_set_grid_jacobian(void* handle,double dx,const double* values
   if(!e.af_endpoint||dx<=0||!std::isfinite(dx)||e.params[6]!=0||e.params[10]!=0||e.ode_band)return -1;
   for(int i=0;i<e.n;i++)if(values[i]<=0||!std::isfinite(values[i]))return -1;
   e.grid_jacobian.assign(values,values+e.n);e.h=dx;return 0;
+}
+int spherical_fast_set_mapped_ko(void* handle,int local){
+  auto& e=*static_cast<Engine*>(handle);if(!e.af_endpoint)return -1;
+  e.mapped_ko_local=local!=0;return 0;
 }
 void spherical_fast_set_shift_ode(void* handle,int bandwidth,int skip,int refinements,double scale,const double* lu,const double* matrix){
   auto& e=*static_cast<Engine*>(handle);e.ode_band=bandwidth;e.ode_skip=skip;e.ode_refinements=refinements;e.ode_scale=scale;

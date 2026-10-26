@@ -48,3 +48,32 @@ For the original gauge the frozen lapse-trace speeds are c_±=-beta±sqrt(chi*F)
 This trend supports a nonlinear steepening diagnosis, but no characteristic intersection in a regularized finite-grid velocity field is a proof of continuum noncrossing. Conversely, tiny J is not an observed intersection. The source system also has elliptic shift feedback, radial geometry and conformal sources. The simple Bona–Masso condition 1-f-alpha*f'/2=0 applies to its specified one-dimensional model, not automatically to this full system; see [Alcubierre, Eqs. (21)–(24)](https://arxiv.org/html/gr-qc/0503030). For the local original coefficient f=F/alpha^2, the corresponding expression is -2 nu Omega^2/alpha, which is nonzero in the interior. This is a useful diagnostic comparison, not a shock theorem for our formulation.
 
 The telegrapher extension changes the principal speeds and damps the frozen three-field subsystem. Its damping does not guarantee nonlinear shock avoidance. Late AF coordinate compression remains a separate resolution challenge even after the initial steep front is smoothed.
+
+
+## Dissipation for stronger fixed maps
+
+The optional `mapped_ko=local` discretization replaces the unit coefficient inside the mapped KO quadratic form by a harmonic mean of the four nodal Jacobians:
+
+  Jbar_i = 4 / (1/J_i + 1/J_(i+1) + 1/J_(i+2) + 1/J_(i+3)),
+  Q = -epsilon/(64 dx) J^{-1} D3^T diag(W Jbar) D3.
+
+This is a numerical dissipation change, not a modification of the continuum equations. It equals the original operator on a uniform grid. All geometric and auxiliary fields use the same operator; the AF coefficient column remains excluded. The old mapped mode, `physical`, retains Jbar=1 and remains available as a control.
+
+For positive J and 0<=W<=1, the dr energy identity is
+
+  u^T J Q u = -epsilon/(64 dx) sum_i W_i Jbar_i (D3 u)_i^2 <= 0.
+
+Moreover Jbar_i<=4 J_j for every j in its four-point stencil. Applying the weighted Cauchy inequality to the third-difference coefficients, whose absolute values sum to 8, and summing the stencils gives
+
+  -u^T J Q u <= (4 epsilon/dx) u^T J u.
+
+Thus the dissipative spectrum lies in [-4 epsilon/dx,0] in this inner product, independently of min(J). The conservative guard dt*epsilon/dx<=.5 places this operator within the RK4 negative-real-axis interval. It is combined with the stage characteristic and relaxation guards; it is not a stability theorem for their sum or for the nonlinear Einstein system. For a fixed smooth positive map, the smooth harmonic weights preserve a vanishing fifth-order interior KO truncation term. The boundary stencil remains the explicitly documented puncture stencil.
+
+The independent tests verify the full similarity-transformed dissipation matrix, its weighted energy identity and spectral bound, as well as nonzero-flux Python/compiled rates, RK stages, rays, and restart on strongly clustered maps. These checks justify testing stronger maps without an artificial KO timestep restriction proportional to the smallest physical cell. Nonlinear convergence is still an experimental question.
+
+
+## Exponential inner resolution control
+
+The `inner-exp` map uses E(x)=.5 expm1(2 b x)/expm1(b), with fixed b=16 in the declared three-grid experiment. It equals E for x<=.3, blends as r=(1-S)E+S x through .3<x<.5 with the same C7 smoothstep, and equals x beyond .5. On the blending interval E<=x and S'>=0, so J=(1-S)E'+S+S'(x-E)>0. In the exponential region away from the first cell, dr/r is approximately 2 b dx. Both the map and its derivative are computed directly at each x, so nested grids share identical physical nodes. The map remains a discretization choice; all physical-r tensor equations and auxiliary coupling are unchanged.
+
+This control addresses an observed weakness of the stronger `inner-c7` maps: reducing their first cell can move the front into a poorly resolved transition at larger r. The exponential map is not accepted from its construction; its own transition and all boundary/constraint errors are included in the tests.

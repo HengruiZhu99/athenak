@@ -39,7 +39,7 @@ struct Telegraph {
       const double midpoint=(e.r[i]+e.r[i+3])/2;
       const double taper=std::pow(std::max(1-midpoint*midpoint/(e.params[26]*e.params[26]),0.),6);
       const double third=3*(B[i+1]-B[i])-3*(B[i+2]-B[i])+(B[i+3]-B[i]);
-      const double value=e.params[25]*taper*third/(64*e.h);
+      const double value=e.params[25]*taper*e.ko_measure(i)*third/(64*e.h);
       dB[i]+=value/e.jac(i);dB[i+1]-=3*value/e.jac(i+1);dB[i+2]+=3*value/e.jac(i+2);dB[i+3]-=value/e.jac(i+3);
     }
     for(int i=0;i<n-1;i++)if(e.r[i]>.03&&e.r[i]<.3)
@@ -61,7 +61,7 @@ struct Telegraph {
     double speed=0;for(int i=0;i<e.n;i++)for(int f=0;f<2;f++)speed=std::max(speed,std::abs(speeds[2*i+f])/e.jac(i));
     stats[1]=std::max(stats[1],dt*speed/e.h);stats[2]=std::max(stats[2],dt/tau);
     if(dt*speed/e.h>.4||dt/tau>.4)throw std::runtime_error("telegraph coupled-speed/relaxation timestep guard");
-    for(int i=0;i<e.n;i++)if(dt*e.params[25]/(e.h*e.jac(i))>2.)throw std::runtime_error("mapped-grid dissipation timestep guard");
+    for(int i=0;i<e.n;i++)if(dt*e.params[25]/(e.h*(e.mapped_ko_local?.25:e.jac(i)))>2.)throw std::runtime_error("mapped-grid dissipation timestep guard");
   }
   void update(double* q,const Vec& a,const Vec& b,const Vec& c,const Vec& d,int size,int offset,double dt) {
     for(int j=0;j<size;j++) {
