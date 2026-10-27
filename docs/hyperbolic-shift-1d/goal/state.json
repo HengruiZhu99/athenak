@@ -1,21 +1,66 @@
 {
-  "updated_utc": "2026-10-27T19:19:45.403083+00:00",
+  "updated_utc": "2026-10-27T19:35:21.253605+00:00",
   "goal_status": "active",
   "turn_classification": "progress",
   "target_t_over_M": 100,
   "target_coordinate_t": 33.333333333333336,
   "latest_user_direction": "Stay close to the moving-puncture Gamma driver in the bulk; adapt only as needed for exact algebraic scri closure.",
-  "completed": "Coefficient-four coarse N257 completed100.000195M with no guard failure, floor activation or speed coincidence. N513 and N1025 both complete9M. At29 exact common times0.6-9M, H/M exterior norms and AH mass errors decrease with resolution; exterior profile orders3.9005-4.8078. Independent N257 timestep controls complete9M; exterior orders3.918-3.983 at3/6/9M. Goal remains incomplete: finer-grid and temporal100M evidence are absent.",
+  "completed": "Coefficient-four N257 completed 100.000195M. Verified completed finer checkpoints: N513: 21M, N1025: 12.6M. Three-grid spatial evidence extends through 10.8M; seven exact samples from 9 to 10.8M give exterior profile orders 4.0380-4.8090, and H/M exterior norms and absolute AH mass error decrease with resolution at every sample. Independent timestep evidence remains through 9M. Two verified serial bounded continuation coordinators are active toward 100M.",
   "failure_diagnosis": "Historical coefficient-one and coefficient-two failures remain preserved. No new evolution failed this turn. Coarse interior Hamiltonian errors and extra expansion zeros persist inside the outer horizon and are secondary diagnostics. At100M the relative AH mass error is-2.56318e-5, far above the1.724e-10 spread of7/9/11-node extraction; extraction order alone does not explain the offset.",
   "next_steps": [
-    "Verify current process identities and terminal manifests; no evolution is active at this checkpoint.",
-    "Prioritize continuing gamma4-inner-damping-v1/n513-t3 from coordinate t3 to5 (15M) and n1025-t3 from t3 to3.6 (10.8M), each with declared wall limit420 seconds and unchanged frozen equations/dt. At most two single-process evolution trials.",
-    "Continue both finer trajectories in bounded segments toward the common aligned100M target t33.3333984375; collect exact-time multi-segment refinement throughout. Stop and diagnose any genuine new failure without restarting it.",
-    "Continue the completed gamma4-time-v1/double-dt and half-dt controls toward the same100M target as resources become available. They and the .025 baseline form the independent temporal comparison; short9M results do not establish100M time accuracy.",
-    "Retain full geometry validity and positive stage speed margin; judge exterior-normalized H/M and outermost AH mass as primary. Interior constraint peaks or extra interior expansion zeros alone are not rejection criteria.",
-    "Use goal/completion-audit-gamma4-long-v2.json for remaining requirements. Do not mark complete until all three grids and independent temporal evidence cover100M."
+    "Revalidate BOTH existing series coordinators and active child commands from fresh series.json before any new evolution. Do not launch duplicate trajectories. Session IDs 39235 (N513) and 71187 (N1025) are recorded as snapshot handles.",
+    "Monitor gamma4-duration-series-v1/n513 and n1025. Their frozen serial runners advance only completed verified parents; each child is bounded 420 seconds and no failed/bounded child is retried. At most two evolutions run simultaneously.",
+    "Assess exact common-time profiles as completed finer checkpoints extend. Current spatial evidence reaches 10.8M; do not infer 100M convergence from coarse survival.",
+    "When a slot frees, continue completed gamma4-time-v1/double-dt and half-dt controls toward 100M with frozen equations and timesteps, bounded children, and no more than two simultaneous evolutions.",
+    "Update the paper at the next substantial matched milestone or terminal assessment. The current compiled paper includes coarse 100M and 9M spatial/temporal evidence; the new 10.8M evidence is archived separately.",
+    "Retain positive full geometry and characteristic margin, exterior-normalized constraints, and outermost AH mass as primary. Interior errors remain disclosed secondary diagnostics. Goal stays active until 100M spatial and temporal qualification."
   ],
-  "active_processes": [],
+  "active_processes": [
+    {
+      "n": 513,
+      "series": "output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513",
+      "session_id": 39235,
+      "status": "running",
+      "coordinator_pid": 90875,
+      "coordinator_command_verified": true,
+      "child_pid": 91632,
+      "child_command_verified": true,
+      "child_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/segment-0002",
+      "last_completed_parent": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/segment-0001",
+      "completed_segments": 1,
+      "completed_t_over_M": 21.0,
+      "t_over_M": 22.05,
+      "current_target_t_over_M": 27.0,
+      "H_exterior_rms": 8.328021670749708e-05,
+      "M_exterior_rms": 0.00021500537012062126,
+      "AH_mass": 0.3333333337076081,
+      "g_min": 0.9325925858584985,
+      "minimum_stage_speed_margin": 0.7175244231955413,
+      "peak_completed_mass_drift": 1.2354489831167825e-07
+    },
+    {
+      "n": 1025,
+      "series": "output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025",
+      "session_id": 71187,
+      "status": "running",
+      "coordinator_pid": 90877,
+      "coordinator_command_verified": true,
+      "child_pid": 91700,
+      "child_command_verified": true,
+      "child_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025/segment-0002",
+      "last_completed_parent": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025/segment-0001",
+      "completed_segments": 1,
+      "completed_t_over_M": 12.600000000000001,
+      "t_over_M": 12.825000000000001,
+      "current_target_t_over_M": 14.400000000000002,
+      "H_exterior_rms": 2.5298283369270727e-06,
+      "M_exterior_rms": 9.918470606044621e-06,
+      "AH_mass": 0.33333333333341364,
+      "g_min": 1.0,
+      "minimum_stage_speed_margin": 0.7175244344902172,
+      "peak_completed_mass_drift": 3.559152972343327e-11
+    }
+  ],
   "do_not_repeat": [
     "Do not restart failed runs or relabel them as survivors.",
     "Do not resume paused elliptic monitor or historical experiments.",
@@ -871,6 +916,6 @@
     "shared_t_over_M": 9
   },
   "previous_turn_classification": "progress",
-  "current_turn_findings": "Coefficient-four coarse N257 completed100.000195M with no guard failure, floor activation or speed coincidence. N513 and N1025 both complete9M. At29 exact common times0.6-9M, H/M exterior norms and AH mass errors decrease with resolution; exterior profile orders3.9005-4.8078. Independent N257 timestep controls complete9M; exterior orders3.918-3.983 at3/6/9M. Goal remains incomplete: finer-grid and temporal100M evidence are absent. At100M, the relative spread from7/9/11-node horizon extraction is1.724e-10, well below the measured mass offset.",
+  "current_turn_findings": "N513 completes15M and N1025 completes10.8M. Verified serial continuation runner launched toward100M, with420-second per-segment caps and no retries. Two active children have command-verified process identities. Finest series also enforces the existing.001 peak AH mass-drift budget at segment boundaries.",
   "completion_audit": "goal/completion-audit-gamma4-long-v2.json"
 }

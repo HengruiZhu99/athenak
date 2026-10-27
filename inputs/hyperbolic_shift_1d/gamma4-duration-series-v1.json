@@ -1,0 +1,24 @@
+{
+  "objective": "Continue the existing coefficient-four fixed-CFL N513 and N1025 trajectories to the same aligned100M target without numerical changes.",
+  "target_t": 33.3333984375,
+  "max_simultaneous_evolutions": 2,
+  "per_segment_wall_seconds": 420,
+  "no_retry": true,
+  "terminal_policy": "A failed, bounded-stop, interrupted, integrity-failed, or budget-stopped segment halts its series. Existing run outcomes are preserved. A STOP file prevents launch after the current bounded segment.",
+  "series": [
+    {
+      "n": 513,
+      "parent": "gamma4-inner-damping-v1/n513-t5",
+      "output": "gamma4-duration-series-v1/n513",
+      "segment_duration": 2
+    },
+    {
+      "n": 1025,
+      "parent": "gamma4-inner-damping-v1/n1025-t36",
+      "output": "gamma4-duration-series-v1/n1025",
+      "segment_duration": 0.6,
+      "mass_drift_limit": 0.001
+    }
+  ],
+  "scope": "Serial execution plan only. Completion requires separate spatial and temporal assessments against the full100M goal protocol; coarse100M alone is insufficient."
+}
