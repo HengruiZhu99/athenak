@@ -1,0 +1,231 @@
+{
+  "scope": "Centered cross-face angular derivative diagnostic, no PDE/operator adoption",
+  "inputs": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/source.tar.gz",
+      "sha256": "c0416af19238b5825f9fa50b9b418d9507db5c76a9bf868400baeb3c6cc0d8c4"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/coupled.bin",
+      "sha256": "707775e24015e214be01d0667e5d2c11142eae4d9bd6d9098b2e35ad5c0481b8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/centered_surface_atlas.hpp",
+      "sha256": "d3c715fb898cefb0d2cb4bb15336b533e69df6d9e8355ca8a211b62088ef2152"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_centered_surface_atlas.cpp",
+      "sha256": "bf8abed5113e6ade55d33678ef5e21473b041bb6e7458e65f896f860884e7a0d"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/diagnose_scri_atlas.cpp",
+      "sha256": "9dc560efa1661ecde87f1631b842af79fffd5ac609ec14774b888369077b972c"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/diagnose_scri_pole.cpp",
+      "sha256": "34bd54f70f0354ffe7f7b8c3eac5eafa23960e5830d9dd63b9ce06d716907c70"
+    }
+  ],
+  "runs": {
+    "analytic-build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/source/tst/elliptic_shift_3d/test_centered_surface_atlas.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/analytic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.099412583
+    },
+    "analytic": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/analytic"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6906985000000001
+    },
+    "snapshot-build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/source/tst/elliptic_shift_3d/diagnose_scri_atlas.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/snapshot",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.9433267079999998
+    },
+    "snapshot": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/snapshot",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/coupled.bin",
+        "b79a95d2b4452b4ec64e32be753c54f78a4551b115f46ff4a133fb7bdbdb69f1",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-centered-atlas-20261027/atlas-poles.csv"
+      ],
+      "exit_code": 0,
+      "seconds": 1.5414580000000004
+    }
+  },
+  "inputs_unchanged": true,
+  "libraries": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+      "sha256": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "sha256": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+      "sha256": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a",
+      "sha256": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d"
+    }
+  ],
+  "analytic_results": [
+    {
+      "n": 6,
+      "constant_max": 0,
+      "first_ratio": 0,
+      "second_ratio": 0,
+      "bulk": {
+        "count": 24,
+        "value_max": 0,
+        "first_max": 0.012262506621842584,
+        "second_max": 0.0335295258735836
+      },
+      "edge_band": {
+        "count": 96,
+        "value_max": 1.1102230246251565e-16,
+        "first_max": 0.009521500986355957,
+        "second_max": 0.0454860797913887
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 2.220446049250313e-16,
+        "first_max": 0.008696293163514612,
+        "second_max": 0.10112417464746867
+      },
+      "exact_seams_and_corners": {
+        "count": 168,
+        "value_max": 0.02809189415888791,
+        "first_max": 0.06735096999260476,
+        "second_max": 2.7274103803297427
+      }
+    },
+    {
+      "n": 12,
+      "constant_max": 0,
+      "first_ratio": 41.75848645129486,
+      "second_ratio": 38.974265163402826,
+      "bulk": {
+        "count": 384,
+        "value_max": 2.220446049250313e-16,
+        "first_max": 0.0011069941321626975,
+        "second_max": 0.0031369070138160815
+      },
+      "edge_band": {
+        "count": 384,
+        "value_max": 2.220446049250313e-16,
+        "first_max": 0.0005799843446929742,
+        "second_max": 0.0017142088767336805
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 3.3306690738754696e-16,
+        "first_max": 0.000315731374816941,
+        "second_max": 0.007447693924332172
+      },
+      "exact_seams_and_corners": {
+        "count": 312,
+        "value_max": 0.0003697308822044887,
+        "first_max": 0.0016128690409112356,
+        "second_max": 0.06997977688340881
+      }
+    },
+    {
+      "n": 24,
+      "constant_max": 0,
+      "first_ratio": 21.017554012881334,
+      "second_ratio": 22.220312285897705,
+      "bulk": {
+        "count": 2400,
+        "value_max": 2.220446049250313e-16,
+        "first_max": 7.67391410019802e-05,
+        "second_max": 0.0002297141782663381
+      },
+      "edge_band": {
+        "count": 960,
+        "value_max": 2.220446049250313e-16,
+        "first_max": 3.082088862005339e-05,
+        "second_max": 8.844599162372013e-05
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 2.220446049250313e-16,
+        "first_max": 1.662974686628127e-05,
+        "second_max": 0.00027832086496376585
+      },
+      "exact_seams_and_corners": {
+        "count": 600,
+        "value_max": 3.995397989120519e-06,
+        "first_max": 3.8765525023548575e-05,
+        "second_max": 0.0031493606382760886
+      }
+    }
+  ],
+  "prototype_not_adopted": true,
+  "boundary_residual_gate_passed": false
+}

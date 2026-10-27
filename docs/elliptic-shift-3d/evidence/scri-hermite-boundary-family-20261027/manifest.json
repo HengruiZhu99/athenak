@@ -1,0 +1,419 @@
+{
+  "scope": "Centered cross-face angular derivative diagnostic, no PDE/operator adoption",
+  "inputs": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/source.tar.gz",
+      "sha256": "c0416af19238b5825f9fa50b9b418d9507db5c76a9bf868400baeb3c6cc0d8c4"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/coupled.bin",
+      "sha256": "707775e24015e214be01d0667e5d2c11142eae4d9bd6d9098b2e35ad5c0481b8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/centered_surface_atlas.hpp",
+      "sha256": "9247b06dd8b131b65dabdc83c32cbbca8b9a5125aab97f62bd6e40bffc459d5b"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_centered_surface_atlas.cpp",
+      "sha256": "bf8abed5113e6ade55d33678ef5e21473b041bb6e7458e65f896f860884e7a0d"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/diagnose_scri_atlas.cpp",
+      "sha256": "9dc560efa1661ecde87f1631b842af79fffd5ac609ec14774b888369077b972c"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/diagnose_scri_pole.cpp",
+      "sha256": "34bd54f70f0354ffe7f7b8c3eac5eafa23960e5830d9dd63b9ce06d716907c70"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/cross_face_boundary_probe.hpp",
+      "sha256": "10996a0f8079243fc39ff058e26e56bd0bd64aa0b1e45b4ef239bbb6a7a00540"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_cross_face_boundary_probe.cpp",
+      "sha256": "3f510ada9a0c6102d50680ba32aa676612a0eecf58e037f40df5c6bffead0b5f"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/volume_mls_probe.hpp",
+      "sha256": "e3a34983627047789c0cc604c1e778ebb9bac28e9d8e1f080d84f7040987dee8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/surface_mls_probe.hpp",
+      "sha256": "0df5c68435bc5a8c9f74d4f28786a17ea5c694207e372eb95a8d7481bb6998fa"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_volume_mls_probe.cpp",
+      "sha256": "a2b581da54f9a8b6c28ff15f9b9e6a60dfb20d38429588c214a90e35a5ee16e2"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/balanced_volume_mls_probe.hpp",
+      "sha256": "67d1751ca5cdc2ba93f7f95f7d225f2377324493d9105fd3829fe8278dfbc2f5"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_balanced_volume_mls_probe.cpp",
+      "sha256": "efb4e705174ab92021ab8dbcee49b08f456ced70a39fe6bd873b6d1bdbc82d39"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/ray_collar_probe.hpp",
+      "sha256": "75a658d95180b0888c38607c385b446cb06b061108362bb6efe43e1a6cc7d697"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_ray_collar_probe.cpp",
+      "sha256": "0374c33cdd98dbd8ff11b0b26be11f8d35b6e66de090d66d80709b42ae4117ee"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/geometry_collar_probe.hpp",
+      "sha256": "f4b1bea7f079e12a5fe502139a4b9153ce0180ffce298402d4b9e4393ae5a44c"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_geometry_collar_probe.cpp",
+      "sha256": "50adf6d9df30aab546216b9c9b3be1e46fb47e1d1a9f88b743442422e656a4b2"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/hermite_boundary_probe.hpp",
+      "sha256": "02e87a3c4091e3d8bf04e58d0c4435fe274fe1475c36ff7fbc9abaf7540a4305"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_hermite_boundary_probe.cpp",
+      "sha256": "eee3705256562fb4b75ce1c952ffe1f51419ce328fe36c46dc79df3165adfd46"
+    }
+  ],
+  "runs": {
+    "build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/source/tst/elliptic_shift_3d/test_hermite_boundary_probe.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.769225416
+    },
+    "mms-1-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "6",
+        "1",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.33048112500000015
+    },
+    "mms-1-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "6",
+        "1",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.21102345899999975
+    },
+    "mms-1-1-12-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "12",
+        "1",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.32128325
+    },
+    "mms-1-1-12-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "12",
+        "1",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3894170830000001
+    },
+    "mms-1-1-18-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "18",
+        "1",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5705756660000003
+    },
+    "mms-1-1-18-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "18",
+        "1",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6313468329999998
+    },
+    "mms-2-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "6",
+        "2",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.15113741600000008
+    },
+    "mms-2-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "6",
+        "2",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2107532910000005
+    },
+    "mms-2-1-10-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "10",
+        "2",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2614810419999998
+    },
+    "mms-2-1-10-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "10",
+        "2",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3244531249999998
+    },
+    "mms-2-1-14-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "14",
+        "2",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.44145654200000006
+    },
+    "mms-2-1-14-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "14",
+        "2",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.48835554199999986
+    },
+    "mms-7-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "6",
+        "7",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.20461979099999983
+    },
+    "mms-7-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "6",
+        "7",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.21086170799999948
+    },
+    "mms-7-1-8-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "8",
+        "7",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2684996249999996
+    },
+    "mms-7-1-8-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "8",
+        "7",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.32590283300000067
+    },
+    "mms-7-1-10-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "10",
+        "7",
+        "1",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.39124820899999957
+    },
+    "mms-7-1-10-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "10",
+        "7",
+        "1",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.39128762500000036
+    },
+    "mms-7-2-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "6",
+        "7",
+        "2",
+        "6",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6893755410000004
+    },
+    "mms-7-2-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-family-20261027/full-jet-mms",
+        "6",
+        "7",
+        "2",
+        "7",
+        "48",
+        "0",
+        "0",
+        "0"
+      ],
+      "exit_code": 0,
+      "seconds": 0.7516065839999992
+    }
+  },
+  "inputs_unchanged": true
+}

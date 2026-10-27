@@ -1,0 +1,4865 @@
+{
+  "scope": "Standalone interpolation and independent AD derivative MMS only; no engine/evolution adoption",
+  "prototype_not_adopted": true,
+  "physics_gate_tested": false,
+  "results": [
+    {
+      "method": "fixed_ring_Cartesian_P5_MLS56",
+      "n": 12,
+      "layers": 1,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 12096,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 2112,
+      "volume_MLS_rows": 12672,
+      "volume_MLS_max_l1": 2.7891152166829007,
+      "volume_MLS_QR_R_condition_infinity": 32735.98537230625,
+      "volume_MLS_max_poly_reproduction": 3.814032423221647e-13,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 3.5545062129622237e-12,
+      "all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804433,
+        "second_max": 0.034254768498252375,
+        "normal_tangent_hessian_max": 0.03125625566931608,
+        "fields": [
+          {
+            "first": 0.00110699413216242,
+            "second": 0.01758403645617762,
+            "mixed": 0.009455463893739252
+          },
+          {
+            "first": 0.00046459187654018796,
+            "second": 0.02411979032663658,
+            "mixed": 0.012445052080222842
+          },
+          {
+            "first": 0.012970649915804433,
+            "second": 0.034254768498252375,
+            "mixed": 0.03125625566931608
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.0052178481251803355,
+        "second_max": 0.02411979032663658,
+        "normal_tangent_hessian_max": 0.012445052080222842,
+        "fields": [
+          {
+            "first": 0.0005799843446929742,
+            "second": 0.01758403645617762,
+            "mixed": 0.009455463893739252
+          },
+          {
+            "first": 0.00046459187654018796,
+            "second": 0.02411979032663658,
+            "mixed": 0.012445052080222842
+          },
+          {
+            "first": 0.0052178481251803355,
+            "second": 0.019420248240253457,
+            "mixed": 0.012414243652123963
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.0024811957260402195,
+        "second_max": 0.013913659008197632,
+        "normal_tangent_hessian_max": 0.006797062196309284,
+        "fields": [
+          {
+            "first": 0.0003570324403395775,
+            "second": 0.01234650454053049,
+            "mixed": 0.006015017725431205
+          },
+          {
+            "first": 0.00044304935673139534,
+            "second": 0.013913659008197632,
+            "mixed": 0.006797062196309284
+          },
+          {
+            "first": 0.0024811957260402195,
+            "second": 0.012862287552569907,
+            "mixed": 0.006288939041850733
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 312,
+        "value_max": 9.995405978634554e-05,
+        "first_max": 0.0030248033169630872,
+        "second_max": 0.07290315162627625,
+        "normal_tangent_hessian_max": 0.00803606106215875,
+        "fields": [
+          {
+            "first": 0.001415695758868598,
+            "second": 0.050586649482059654,
+            "mixed": 0.00803606106215875
+          },
+          {
+            "first": 0.0020434914818838468,
+            "second": 0.07290315162627625,
+            "mixed": 0.007151806761358617
+          },
+          {
+            "first": 0.0030248033169630872,
+            "second": 0.0151150717749819,
+            "mixed": 0.007598298428345636
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804433,
+        "second_max": 0.07443852892316759,
+        "normal_tangent_hessian_max": 0.03125625566931608,
+        "fields": [
+          {
+            "first": 0.00110699413216242,
+            "second": 0.007447693925820009,
+            "mixed": 0.0011069941321578292
+          },
+          {
+            "first": 7.382983113757291e-15,
+            "second": 0.0014030017956291885,
+            "mixed": 0.001417560738831741
+          },
+          {
+            "first": 0.012970649915804433,
+            "second": 0.07443852892316759,
+            "mixed": 0.03125625566931608
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 312,
+        "value_max": 0.0031118637051983367,
+        "first_max": 0.01635700411647334,
+        "second_max": 0.5508673328741933,
+        "normal_tangent_hessian_max": 0.03503653940440801,
+        "fields": [
+          {
+            "first": 0.0016128690408757085,
+            "second": 0.06997977688268134,
+            "mixed": 0.0016128690418952816
+          },
+          {
+            "first": 0.0003409038359298844,
+            "second": 0.002185176590876192,
+            "mixed": 0.0017373449403291007
+          },
+          {
+            "first": 0.01635700411647334,
+            "second": 0.5508673328741933,
+            "mixed": 0.03503653940440801
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804877,
+        "second_max": 0.03425476849824438,
+        "normal_tangent_hessian_max": 0.03125625566935402,
+        "fields": [
+          {
+            "first": 0.00110699413216242,
+            "second": 0.0031369070138165256,
+            "mixed": 0.001106994132157813
+          },
+          {
+            "first": 7.382983113757291e-15,
+            "second": 0.0014030017956292995,
+            "mixed": 0.0014175607388324186
+          },
+          {
+            "first": 0.012970649915804877,
+            "second": 0.03425476849824438,
+            "mixed": 0.03125625566935402
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 312,
+        "value_max": 0,
+        "first_max": 0.003024803316902247,
+        "second_max": 0.015115070951566703,
+        "normal_tangent_hessian_max": 0.007598298421748614,
+        "fields": [
+          {
+            "first": 0.0003568671570519655,
+            "second": 0.0009867099766830423,
+            "mixed": 0.0003568671570634133
+          },
+          {
+            "first": 2.914335439641036e-15,
+            "second": 0.0005199125077542943,
+            "mixed": 0.00041990166037277657
+          },
+          {
+            "first": 0.003024803316902247,
+            "second": 0.015115070951566703,
+            "mixed": 0.007598298421748614
+          }
+        ]
+      }
+    },
+    {
+      "method": "fixed_ring_Cartesian_P5_MLS56",
+      "n": 12,
+      "layers": 1,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 12096,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 2112,
+      "volume_MLS_rows": 14784,
+      "volume_MLS_max_l1": 2.8254677999178326,
+      "volume_MLS_QR_R_condition_infinity": 43145.817869656494,
+      "volume_MLS_max_poly_reproduction": 5.019595850086489e-13,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 2.464076243919419e-12,
+      "all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804433,
+        "second_max": 0.03425476849839626,
+        "normal_tangent_hessian_max": 0.03125625566943617,
+        "fields": [
+          {
+            "first": 0.001106994132162309,
+            "second": 0.020433993268816897,
+            "mixed": 0.00897634831378724
+          },
+          {
+            "first": 0.0008180580065110243,
+            "second": 0.02777437206413691,
+            "mixed": 0.010911763330785
+          },
+          {
+            "first": 0.012970649915804433,
+            "second": 0.03425476849839626,
+            "mixed": 0.03125625566943617
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.005217848125181002,
+        "second_max": 0.02777437206413691,
+        "normal_tangent_hessian_max": 0.012414243652247333,
+        "fields": [
+          {
+            "first": 0.0005917746167641846,
+            "second": 0.020433993268816897,
+            "mixed": 0.00897634831378724
+          },
+          {
+            "first": 0.0008180580065110243,
+            "second": 0.02777437206413691,
+            "mixed": 0.010911763330785
+          },
+          {
+            "first": 0.005217848125181002,
+            "second": 0.019420248240277882,
+            "mixed": 0.012414243652247333
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.0024811957259762707,
+        "second_max": 0.013017534939439246,
+        "normal_tangent_hessian_max": 0.006288939033020323,
+        "fields": [
+          {
+            "first": 0.0004810280195216843,
+            "second": 0.011778144087698061,
+            "mixed": 0.004622322813767367
+          },
+          {
+            "first": 0.0007205705872623258,
+            "second": 0.013017534939439246,
+            "mixed": 0.004364087531688768
+          },
+          {
+            "first": 0.0024811957259762707,
+            "second": 0.01286228754126606,
+            "mixed": 0.006288939033020323
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 312,
+        "value_max": 0.0001765356508856494,
+        "first_max": 0.0030248033180537703,
+        "second_max": 0.0891228355738316,
+        "normal_tangent_hessian_max": 0.007742121671274223,
+        "fields": [
+          {
+            "first": 0.0013458342811012265,
+            "second": 0.058551041616466126,
+            "mixed": 0.006746069793600769
+          },
+          {
+            "first": 0.0018352642716803202,
+            "second": 0.0891228355738316,
+            "mixed": 0.007742121671274223
+          },
+          {
+            "first": 0.0030248033180537703,
+            "second": 0.015115070663990102,
+            "mixed": 0.007598298524397512
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804433,
+        "second_max": 0.07443852892324086,
+        "normal_tangent_hessian_max": 0.03125625566943617,
+        "fields": [
+          {
+            "first": 0.001106994132162309,
+            "second": 0.007447693925967447,
+            "mixed": 0.0011069941321360272
+          },
+          {
+            "first": 7.882583474838611e-15,
+            "second": 0.0014030017956336849,
+            "mixed": 0.0014175607388331153
+          },
+          {
+            "first": 0.012970649915804433,
+            "second": 0.07443852892324086,
+            "mixed": 0.03125625566943617
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 312,
+        "value_max": 0.0031118637051983367,
+        "first_max": 0.016357004116466234,
+        "second_max": 0.550867332874704,
+        "normal_tangent_hessian_max": 0.03503653940478013,
+        "fields": [
+          {
+            "first": 0.0016128690408185875,
+            "second": 0.06997977688247328,
+            "mixed": 0.0016128690419103576
+          },
+          {
+            "first": 0.00034090383593077256,
+            "second": 0.002185176594369398,
+            "mixed": 0.0017373449401675931
+          },
+          {
+            "first": 0.016357004116466234,
+            "second": 0.550867332874704,
+            "mixed": 0.03503653940478013
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804877,
+        "second_max": 0.03425476849838294,
+        "normal_tangent_hessian_max": 0.03125625566944131,
+        "fields": [
+          {
+            "first": 0.001106994132162309,
+            "second": 0.003136907013813861,
+            "mixed": 0.001106994132136011
+          },
+          {
+            "first": 7.882583474838611e-15,
+            "second": 0.001403001795634351,
+            "mixed": 0.0014175607388337871
+          },
+          {
+            "first": 0.012970649915804877,
+            "second": 0.03425476849838294,
+            "mixed": 0.03125625566944131
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 312,
+        "value_max": 0,
+        "first_max": 0.003024803316902247,
+        "second_max": 0.015115070951225643,
+        "normal_tangent_hessian_max": 0.007598298421778737,
+        "fields": [
+          {
+            "first": 0.0003568671570519655,
+            "second": 0.000986709976668776,
+            "mixed": 0.00035686715704590674
+          },
+          {
+            "first": 2.7478019859472624e-15,
+            "second": 0.0005199125077756106,
+            "mixed": 0.00041990166037109345
+          },
+          {
+            "first": 0.003024803316902247,
+            "second": 0.015115070951225643,
+            "mixed": 0.007598298421778737
+          }
+        ]
+      }
+    },
+    {
+      "method": "fixed_ring_Cartesian_P5_MLS56",
+      "n": 18,
+      "layers": 1,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 40824,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 3120,
+      "volume_MLS_rows": 18720,
+      "volume_MLS_max_l1": 2.5767843482885437,
+      "volume_MLS_QR_R_condition_infinity": 24250.585572184573,
+      "volume_MLS_max_poly_reproduction": 4.4395043197198447e-13,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 3.5633191414254915e-12,
+      "all_surface": {
+        "count": 1944,
+        "value_max": 0,
+        "first_max": 0.003017633356483529,
+        "second_max": 0.007874136601936144,
+        "normal_tangent_hessian_max": 0.0073461973415295,
+        "fields": [
+          {
+            "first": 0.00023152720619812328,
+            "second": 0.0030240443525915706,
+            "mixed": 0.001401263815491685
+          },
+          {
+            "first": 7.48450672518608e-05,
+            "second": 0.004158829075590065,
+            "mixed": 0.001664233896614001
+          },
+          {
+            "first": 0.003017633356483529,
+            "second": 0.007874136601936144,
+            "mixed": 0.0073461973415295
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 672,
+        "value_max": 0,
+        "first_max": 0.0009254387594901381,
+        "second_max": 0.004158829075590065,
+        "normal_tangent_hessian_max": 0.0021835229621294987,
+        "fields": [
+          {
+            "first": 0.00010356302663983019,
+            "second": 0.0030240443525915706,
+            "mixed": 0.001401263815491685
+          },
+          {
+            "first": 7.48450672518608e-05,
+            "second": 0.004158829075590065,
+            "mixed": 0.001664233896614001
+          },
+          {
+            "first": 0.0009254387594901381,
+            "second": 0.003505025958579952,
+            "mixed": 0.0021835229621294987
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.00041165738988246936,
+        "second_max": 0.002085622894298468,
+        "normal_tangent_hessian_max": 0.001156673002094483,
+        "fields": [
+          {
+            "first": 6.154967283672486e-05,
+            "second": 0.0013410769742035053,
+            "mixed": 0.0004900597020923081
+          },
+          {
+            "first": 4.707442487558722e-05,
+            "second": 0.0012796154631729006,
+            "mixed": 0.00041614925993785714
+          },
+          {
+            "first": 0.00041165738988246936,
+            "second": 0.002085622894298468,
+            "mixed": 0.001156673002094483
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 456,
+        "value_max": 9.358969528366215e-06,
+        "first_max": 0.0006227359586836734,
+        "second_max": 0.013477867991494419,
+        "normal_tangent_hessian_max": 0.0015008900558793465,
+        "fields": [
+          {
+            "first": 9.763354290700729e-05,
+            "second": 0.008623547887265826,
+            "mixed": 0.0010449772992257857
+          },
+          {
+            "first": 0.0001383435145624612,
+            "second": 0.013477867991494419,
+            "mixed": 0.0009210148662916378
+          },
+          {
+            "first": 0.0006227359586836734,
+            "second": 0.00299210689558062,
+            "mixed": 0.0015008900558793465
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 1944,
+        "value_max": 0,
+        "first_max": 0.003017633356483529,
+        "second_max": 0.012736926045058742,
+        "normal_tangent_hessian_max": 0.0073461973415295,
+        "fields": [
+          {
+            "first": 0.00023152720619812328,
+            "second": 0.0009264149830669477,
+            "mixed": 0.00023152720621614768
+          },
+          {
+            "first": 1.0769163338864018e-14,
+            "second": 0.00032309210808278976,
+            "mixed": 0.00032468186643254887
+          },
+          {
+            "first": 0.003017633356483529,
+            "second": 0.012736926045058742,
+            "mixed": 0.0073461973415295
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 456,
+        "value_max": 0.00038181408607718126,
+        "first_max": 0.001951872793731324,
+        "second_max": 0.1636837879622064,
+        "normal_tangent_hessian_max": 0.0036622951975115842,
+        "fields": [
+          {
+            "first": 0.0001625787774523768,
+            "second": 0.0121709171182392,
+            "mixed": 0.00016257878461321265
+          },
+          {
+            "first": 3.1825143231412056e-05,
+            "second": 0.0002356012799140661,
+            "mixed": 0.00019676492717031978
+          },
+          {
+            "first": 0.001951872793731324,
+            "second": 0.1636837879622064,
+            "mixed": 0.0036622951975115842
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 1944,
+        "value_max": 0,
+        "first_max": 0.003017633356483529,
+        "second_max": 0.007874136601899728,
+        "normal_tangent_hessian_max": 0.0073461973415295,
+        "fields": [
+          {
+            "first": 0.00023152720619812328,
+            "second": 0.0006847972340570663,
+            "mixed": 0.00023152720621366914
+          },
+          {
+            "first": 1.0769163338864018e-14,
+            "second": 0.00032309210808473265,
+            "mixed": 0.0003246818664339751
+          },
+          {
+            "first": 0.003017633356483529,
+            "second": 0.007874136601899728,
+            "mixed": 0.0073461973415295
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 456,
+        "value_max": 0,
+        "first_max": 0.0006227359588941717,
+        "second_max": 0.0029921045833136016,
+        "normal_tangent_hessian_max": 0.0015008900490713448,
+        "fields": [
+          {
+            "first": 7.3172406952704e-05,
+            "second": 0.0002045262627658473,
+            "mixed": 7.317240696124436e-05
+          },
+          {
+            "first": 7.771561172376096e-15,
+            "second": 0.00010286481876520259,
+            "mixed": 8.560822199601366e-05
+          },
+          {
+            "first": 0.0006227359588941717,
+            "second": 0.0029921045833136016,
+            "mixed": 0.0015008900490713448
+          }
+        ]
+      }
+    },
+    {
+      "method": "fixed_ring_Cartesian_P5_MLS56",
+      "n": 18,
+      "layers": 1,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 40824,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 3120,
+      "volume_MLS_rows": 21840,
+      "volume_MLS_max_l1": 2.6605459887848877,
+      "volume_MLS_QR_R_condition_infinity": 40683.6542195948,
+      "volume_MLS_max_poly_reproduction": 6.383435446899455e-13,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 7.40594868034109e-12,
+      "all_surface": {
+        "count": 1944,
+        "value_max": 0,
+        "first_max": 0.003017633356483529,
+        "second_max": 0.007874136601969894,
+        "normal_tangent_hessian_max": 0.007346197341575827,
+        "fields": [
+          {
+            "first": 0.00023152720619812328,
+            "second": 0.0027812721591204403,
+            "mixed": 0.0010740958094529502
+          },
+          {
+            "first": 0.00011599029104708558,
+            "second": 0.0036253884666763714,
+            "mixed": 0.0008919567009871407
+          },
+          {
+            "first": 0.003017633356483529,
+            "second": 0.007874136601969894,
+            "mixed": 0.007346197341575827
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 672,
+        "value_max": 0,
+        "first_max": 0.0009254387594901381,
+        "second_max": 0.0036253884666763714,
+        "normal_tangent_hessian_max": 0.0021835229621935885,
+        "fields": [
+          {
+            "first": 0.00010356302663960815,
+            "second": 0.0027812721591204403,
+            "mixed": 0.0010740958094529502
+          },
+          {
+            "first": 0.00011599029104708558,
+            "second": 0.0036253884666763714,
+            "mixed": 0.0008919567009871407
+          },
+          {
+            "first": 0.0009254387594901381,
+            "second": 0.003505025992480834,
+            "mixed": 0.0021835229621935885
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.00041165739123205647,
+        "second_max": 0.0020856233135440358,
+        "normal_tangent_hessian_max": 0.0011566733500518215,
+        "fields": [
+          {
+            "first": 6.402330322891059e-05,
+            "second": 0.001924756947851325,
+            "mixed": 0.0006183616085756328
+          },
+          {
+            "first": 7.156461389126734e-05,
+            "second": 0.0019119329123566398,
+            "mixed": 0.0006817688709128706
+          },
+          {
+            "first": 0.00041165739123205647,
+            "second": 0.0020856233135440358,
+            "mixed": 0.0011566733500518215
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 456,
+        "value_max": 1.4473450303792574e-05,
+        "first_max": 0.0006227359598445226,
+        "second_max": 0.011515170653687345,
+        "normal_tangent_hessian_max": 0.001500890086172603,
+        "fields": [
+          {
+            "first": 0.00010044142279719281,
+            "second": 0.007470517244839436,
+            "mixed": 0.0011470344279074555
+          },
+          {
+            "first": 5.9369803987935343e-05,
+            "second": 0.011515170653687345,
+            "mixed": 0.0010594832610067366
+          },
+          {
+            "first": 0.0006227359598445226,
+            "second": 0.0029921041649317894,
+            "mixed": 0.001500890086172603
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 1944,
+        "value_max": 0,
+        "first_max": 0.003017633356483529,
+        "second_max": 0.012736926044647072,
+        "normal_tangent_hessian_max": 0.007346197341575827,
+        "fields": [
+          {
+            "first": 0.00023152720619812328,
+            "second": 0.0009264149827755142,
+            "mixed": 0.00023152720621371983
+          },
+          {
+            "first": 1.1712852909795402e-14,
+            "second": 0.00032309210809211564,
+            "mixed": 0.00032468186644256836
+          },
+          {
+            "first": 0.003017633356483529,
+            "second": 0.012736926044647072,
+            "mixed": 0.007346197341575827
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 456,
+        "value_max": 0.00038181408607718126,
+        "first_max": 0.001951872793715781,
+        "second_max": 0.16368378795796357,
+        "normal_tangent_hessian_max": 0.0036622951929985185,
+        "fields": [
+          {
+            "first": 0.00016257877770706197,
+            "second": 0.012170917112809987,
+            "mixed": 0.00016257878729157937
+          },
+          {
+            "first": 3.182514323504804e-05,
+            "second": 0.00023560128673283387,
+            "mixed": 0.00019676492726778376
+          },
+          {
+            "first": 0.001951872793715781,
+            "second": 0.16368378795796357,
+            "mixed": 0.0036622951929985185
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 1944,
+        "value_max": 0,
+        "first_max": 0.003017633356483529,
+        "second_max": 0.007874136601876636,
+        "normal_tangent_hessian_max": 0.007346197341575827,
+        "fields": [
+          {
+            "first": 0.00023152720619812328,
+            "second": 0.0006847972340579545,
+            "mixed": 0.0002315272062160986
+          },
+          {
+            "first": 1.1712852909795402e-14,
+            "second": 0.0003230921080959459,
+            "mixed": 0.000324681866444858
+          },
+          {
+            "first": 0.003017633356483529,
+            "second": 0.007874136601876636,
+            "mixed": 0.007346197341575827
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 456,
+        "value_max": 0,
+        "first_max": 0.0006227359588941717,
+        "second_max": 0.0029921045819635704,
+        "normal_tangent_hessian_max": 0.0015008900490229347,
+        "fields": [
+          {
+            "first": 7.3172406952704e-05,
+            "second": 0.00020452626276928898,
+            "mixed": 7.317240696807427e-05
+          },
+          {
+            "first": 8.93729534823251e-15,
+            "second": 0.00010286481873722497,
+            "mixed": 8.56082219789077e-05
+          },
+          {
+            "first": 0.0006227359588941717,
+            "second": 0.0029921045819635704,
+            "mixed": 0.0015008900490229347
+          }
+        ]
+      }
+    },
+    {
+      "method": "fixed_ring_Cartesian_P5_MLS56",
+      "n": 6,
+      "layers": 1,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 1512,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 1104,
+      "volume_MLS_rows": 6624,
+      "volume_MLS_max_l1": 4.45709347721048,
+      "volume_MLS_QR_R_condition_infinity": 55372.19407328861,
+      "volume_MLS_max_poly_reproduction": 4.5435458741934196e-13,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 5.37872729525669e-13,
+      "all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233854,
+        "second_max": 0.3128035737157016,
+        "normal_tangent_hessian_max": 0.2666597381677608,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.1571898880994989,
+            "mixed": 0.09430385608491877
+          },
+          {
+            "first": 0.004235907085892943,
+            "second": 0.18671506893688017,
+            "mixed": 0.14098583926793645
+          },
+          {
+            "first": 0.11425661389233854,
+            "second": 0.3128035737157016,
+            "mixed": 0.2666597381677608
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.09784951903914418,
+        "second_max": 0.3128035737157016,
+        "normal_tangent_hessian_max": 0.24942666399271596,
+        "fields": [
+          {
+            "first": 0.009521500986355957,
+            "second": 0.12500992884053386,
+            "mixed": 0.09430385608491877
+          },
+          {
+            "first": 0.0015696286459987718,
+            "second": 0.1779871654046704,
+            "mixed": 0.14098583926793645
+          },
+          {
+            "first": 0.09784951903914418,
+            "second": 0.3128035737157016,
+            "mixed": 0.24942666399271596
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.06452171819589614,
+        "second_max": 0.2617955891315602,
+        "normal_tangent_hessian_max": 0.1606806151230648,
+        "fields": [
+          {
+            "first": 0.009402050011776075,
+            "second": 0.1571898880994989,
+            "mixed": 0.09257726442831979
+          },
+          {
+            "first": 0.004235907085892943,
+            "second": 0.18671506893688017,
+            "mixed": 0.12863154912915392
+          },
+          {
+            "first": 0.06452171819589614,
+            "second": 0.2617955891315602,
+            "mixed": 0.1606806151230648
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 168,
+        "value_max": 0.0019199386447144812,
+        "first_max": 0.05270574344656542,
+        "second_max": 0.5386742777152466,
+        "normal_tangent_hessian_max": 0.2231307018361631,
+        "fields": [
+          {
+            "first": 0.033509906758556474,
+            "second": 0.5386742777152466,
+            "mixed": 0.19593317404986166
+          },
+          {
+            "first": 0.05270574344656542,
+            "second": 0.49354969941200344,
+            "mixed": 0.2231307018361631
+          },
+          {
+            "first": 0.043130587169184165,
+            "second": 0.211763492410416,
+            "mixed": 0.11884856054958322
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233854,
+        "second_max": 0.993176049141711,
+        "normal_tangent_hessian_max": 0.2666597381677608,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.10112417464743613,
+            "mixed": 0.012262506621844986
+          },
+          {
+            "first": 4.274358644806853e-15,
+            "second": 0.016234647418500225,
+            "mixed": 0.011625622289641875
+          },
+          {
+            "first": 0.11425661389233854,
+            "second": 0.993176049141711,
+            "mixed": 0.2666597381677608
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 168,
+        "value_max": 0.27790165837379655,
+        "first_max": 1.014912946773126,
+        "second_max": 22.44920561134817,
+        "normal_tangent_hessian_max": 1.7498049937173819,
+        "fields": [
+          {
+            "first": 0.06735096999272366,
+            "second": 2.7274103803252236,
+            "mixed": 0.06735096999291593
+          },
+          {
+            "first": 0.025101189978326527,
+            "second": 0.1051234459397059,
+            "mixed": 0.0703700042887213
+          },
+          {
+            "first": 1.014912946773126,
+            "second": 22.44920561134817,
+            "mixed": 1.7498049937173819
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233854,
+        "second_max": 0.3128035737162175,
+        "normal_tangent_hessian_max": 0.2666597381677597,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.03352952587358543,
+            "mixed": 0.012262506621844966
+          },
+          {
+            "first": 4.274358644806853e-15,
+            "second": 0.011981613737739982,
+            "mixed": 0.011625622289642189
+          },
+          {
+            "first": 0.11425661389233854,
+            "second": 0.3128035737162175,
+            "mixed": 0.2666597381677597
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 168,
+        "value_max": 0,
+        "first_max": 0.04313058716761564,
+        "second_max": 0.21176349245610798,
+        "normal_tangent_hessian_max": 0.11884856054855403,
+        "fields": [
+          {
+            "first": 0.004736600448140282,
+            "second": 0.01315548335512684,
+            "mixed": 0.0047366004481468865
+          },
+          {
+            "first": 1.6930901125533637e-15,
+            "second": 0.00799633828024593,
+            "mixed": 0.005809205080316987
+          },
+          {
+            "first": 0.04313058716761564,
+            "second": 0.21176349245610798,
+            "mixed": 0.11884856054855403
+          }
+        ]
+      }
+    },
+    {
+      "method": "fixed_ring_Cartesian_P5_MLS56",
+      "n": 6,
+      "layers": 1,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 1512,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 1104,
+      "volume_MLS_rows": 7728,
+      "volume_MLS_max_l1": 4.471458591178695,
+      "volume_MLS_QR_R_condition_infinity": 87666.5887965146,
+      "volume_MLS_max_poly_reproduction": 1.0299515363343952e-12,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 5.128640133023972e-13,
+      "all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233854,
+        "second_max": 0.7556854980294365,
+        "normal_tangent_hessian_max": 0.5418557184502575,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.526580611446307,
+            "mixed": 0.37630643831854715
+          },
+          {
+            "first": 0.011876317950592102,
+            "second": 0.7556854980294365,
+            "mixed": 0.5418557184502575
+          },
+          {
+            "first": 0.11425661389233854,
+            "second": 0.3128035737132363,
+            "mixed": 0.26665973816777205
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.09784951903912464,
+        "second_max": 0.6185559117660643,
+        "normal_tangent_hessian_max": 0.4258946054843941,
+        "fields": [
+          {
+            "first": 0.009521500986355957,
+            "second": 0.40237654772253073,
+            "mixed": 0.28238777575204876
+          },
+          {
+            "first": 0.011876317950592102,
+            "second": 0.6185559117660643,
+            "mixed": 0.4258946054843941
+          },
+          {
+            "first": 0.09784951903912464,
+            "second": 0.3128035737132363,
+            "mixed": 0.24942666399217134
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.06452171819597208,
+        "second_max": 0.7556854980294365,
+        "normal_tangent_hessian_max": 0.5418557184502575,
+        "fields": [
+          {
+            "first": 0.011641929541046106,
+            "second": 0.526580611446307,
+            "mixed": 0.37630643831854715
+          },
+          {
+            "first": 0.008805029737232545,
+            "second": 0.7556854980294365,
+            "mixed": 0.5418557184502575
+          },
+          {
+            "first": 0.06452171819597208,
+            "second": 0.2617955891379258,
+            "mixed": 0.1606806151271186
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 168,
+        "value_max": 0.0037911294322410167,
+        "first_max": 0.15999079784238465,
+        "second_max": 2.287044349808043,
+        "normal_tangent_hessian_max": 0.3335038525863228,
+        "fields": [
+          {
+            "first": 0.10781851619757543,
+            "second": 1.392030033665579,
+            "mixed": 0.3335038525863228
+          },
+          {
+            "first": 0.15999079784238465,
+            "second": 2.287044349808043,
+            "mixed": 0.3253168622855945
+          },
+          {
+            "first": 0.04313058716427709,
+            "second": 0.211763492562637,
+            "mixed": 0.11884856056635311
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233854,
+        "second_max": 0.9931760491417154,
+        "normal_tangent_hessian_max": 0.26665973816777205,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.10112417464744868,
+            "mixed": 0.012262506621844478
+          },
+          {
+            "first": 5.467848396278896e-15,
+            "second": 0.016234647418488568,
+            "mixed": 0.011625622289640479
+          },
+          {
+            "first": 0.11425661389233854,
+            "second": 0.9931760491417154,
+            "mixed": 0.26665973816777205
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 168,
+        "value_max": 0.27790165837379655,
+        "first_max": 1.0149129467731917,
+        "second_max": 22.44920561134519,
+        "normal_tangent_hessian_max": 1.7498049937173383,
+        "fields": [
+          {
+            "first": 0.06735096999276544,
+            "second": 2.7274103803218024,
+            "mixed": 0.06735096999304063
+          },
+          {
+            "first": 0.025101189978325777,
+            "second": 0.10512344593835743,
+            "mixed": 0.07037000428869347
+          },
+          {
+            "first": 1.0149129467731917,
+            "second": 22.44920561134519,
+            "mixed": 1.7498049937173383
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233854,
+        "second_max": 0.31280357371624146,
+        "normal_tangent_hessian_max": 0.2666597381677682,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.033529525873585764,
+            "mixed": 0.012262506621844478
+          },
+          {
+            "first": 5.412337245047638e-15,
+            "second": 0.011981613737733765,
+            "mixed": 0.011625622289641159
+          },
+          {
+            "first": 0.11425661389233854,
+            "second": 0.31280357371624146,
+            "mixed": 0.2666597381677682
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 168,
+        "value_max": 0,
+        "first_max": 0.04313058716761742,
+        "second_max": 0.21176349245604936,
+        "normal_tangent_hessian_max": 0.11884856054856217,
+        "fields": [
+          {
+            "first": 0.004736600448140282,
+            "second": 0.01315548335512634,
+            "mixed": 0.004736600448146179
+          },
+          {
+            "first": 2.0816681711721685e-15,
+            "second": 0.007996338280248816,
+            "mixed": 0.00580920508031746
+          },
+          {
+            "first": 0.04313058716761742,
+            "second": 0.21176349245604936,
+            "mixed": 0.11884856054856217
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 10,
+      "layers": 2,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 13000,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 1776,
+      "volume_MLS_rows": 10656,
+      "volume_MLS_max_l1": 1.643668842990987,
+      "volume_MLS_QR_R_condition_infinity": 2894751.553448703,
+      "volume_MLS_max_poly_reproduction": 9.992007221626409e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 4.9576884170344865e-12,
+      "all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973512256,
+        "second_max": 0.15287185435788525,
+        "normal_tangent_hessian_max": 0.04638469186235525,
+        "fields": [
+          {
+            "first": 0.002201746543327776,
+            "second": 0.011212722171709877,
+            "mixed": 0.002201746543552156
+          },
+          {
+            "first": 1.6042722705833512e-14,
+            "second": 0.0021520299482021277,
+            "mixed": 0.0021833203486054963
+          },
+          {
+            "first": 0.023757135973512256,
+            "second": 0.15287185435788525,
+            "mixed": 0.04638469186235525
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 288,
+        "value_max": 0,
+        "first_max": 0.011266811844323765,
+        "second_max": 0.15287185435788525,
+        "normal_tangent_hessian_max": 0.020241462021424742,
+        "fields": [
+          {
+            "first": 0.001250527753679731,
+            "second": 0.011212722171709877,
+            "mixed": 0.001250527753631555
+          },
+          {
+            "first": 8.215650382226158e-15,
+            "second": 0.0016440037699978483,
+            "mixed": 0.0011534093309611092
+          },
+          {
+            "first": 0.011266811844323765,
+            "second": 0.15287185435788525,
+            "mixed": 0.020241462021424742
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.006763638721659415,
+        "second_max": 0.09572799263415448,
+        "normal_tangent_hessian_max": 0.011665577271201894,
+        "fields": [
+          {
+            "first": 0.0007858443100908375,
+            "second": 0.010857460499351046,
+            "mixed": 0.0007858443101883278
+          },
+          {
+            "first": 6.494804694057166e-15,
+            "second": 0.0009945564994444656,
+            "mixed": 0.0006997325216607135
+          },
+          {
+            "first": 0.006763638721659415,
+            "second": 0.09572799263415448,
+            "mixed": 0.011665577271201894
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 264,
+        "value_max": 0.0020264422495951395,
+        "first_max": 0.01016179398140249,
+        "second_max": 0.07948877961737837,
+        "normal_tangent_hessian_max": 0.017312792817695734,
+        "fields": [
+          {
+            "first": 0.0011304847639898585,
+            "second": 0.009717113098652086,
+            "mixed": 0.0011304847639708193
+          },
+          {
+            "first": 0.0001828882270915877,
+            "second": 0.0009618054987797775,
+            "mixed": 0.00100845995803478
+          },
+          {
+            "first": 0.01016179398140249,
+            "second": 0.07948877961737837,
+            "mixed": 0.017312792817695734
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973512256,
+        "second_max": 0.14147602021848993,
+        "normal_tangent_hessian_max": 0.04638469186235525,
+        "fields": [
+          {
+            "first": 0.002201746543327776,
+            "second": 0.016537414672304962,
+            "mixed": 0.002201746543552156
+          },
+          {
+            "first": 1.6042722705833512e-14,
+            "second": 0.0021520299482021277,
+            "mixed": 0.0021833203486054963
+          },
+          {
+            "first": 0.023757135973512256,
+            "second": 0.14147602021848993,
+            "mixed": 0.04638469186235525
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 264,
+        "value_max": 0.006984132579653912,
+        "first_max": 0.041480370396722144,
+        "second_max": 0.978380117040963,
+        "normal_tangent_hessian_max": 0.07107989543849348,
+        "fields": [
+          {
+            "first": 0.004990510793310199,
+            "second": 0.1750805587802765,
+            "mixed": 0.004990510792130662
+          },
+          {
+            "first": 0.0007689002844813997,
+            "second": 0.005612404460996145,
+            "mixed": 0.004534511396671742
+          },
+          {
+            "first": 0.041480370396722144,
+            "second": 0.978380117040963,
+            "mixed": 0.07107989543849348
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973513588,
+        "second_max": 0.05478291933443204,
+        "normal_tangent_hessian_max": 0.046384691862354895,
+        "fields": [
+          {
+            "first": 0.002201746543327776,
+            "second": 0.005812774474055649,
+            "mixed": 0.002201746543552156
+          },
+          {
+            "first": 1.6042722705833512e-14,
+            "second": 0.0021520299482028493,
+            "mixed": 0.0021833203486054807
+          },
+          {
+            "first": 0.023757135973513588,
+            "second": 0.05478291933443204,
+            "mixed": 0.046384691862354895
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 264,
+        "value_max": 0,
+        "first_max": 0.006074598476182302,
+        "second_max": 0.02479568500747299,
+        "normal_tangent_hessian_max": 0.010740877375669521,
+        "fields": [
+          {
+            "first": 0.0007189175698342765,
+            "second": 0.0019767275002423035,
+            "mixed": 0.000718917569874406
+          },
+          {
+            "first": 5.495603971894525e-15,
+            "second": 0.0007070880058342999,
+            "mixed": 0.0005736866402465748
+          },
+          {
+            "first": 0.006074598476182302,
+            "second": 0.02479568500747299,
+            "mixed": 0.010740877375669521
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 10,
+      "layers": 2,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 13000,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 1776,
+      "volume_MLS_rows": 12432,
+      "volume_MLS_max_l1": 1.6436688429909891,
+      "volume_MLS_QR_R_condition_infinity": 19917392.25829211,
+      "volume_MLS_max_poly_reproduction": 1.1102230246251565e-15,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 8.722801112861773e-12,
+      "all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973512256,
+        "second_max": 0.15287185435783684,
+        "normal_tangent_hessian_max": 0.04638469186269332,
+        "fields": [
+          {
+            "first": 0.0022017465433278316,
+            "second": 0.01121272217183944,
+            "mixed": 0.002201746543577095
+          },
+          {
+            "first": 1.587618925213974e-14,
+            "second": 0.002152029948193246,
+            "mixed": 0.002183320348603175
+          },
+          {
+            "first": 0.023757135973512256,
+            "second": 0.15287185435783684,
+            "mixed": 0.04638469186269332
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 288,
+        "value_max": 0,
+        "first_max": 0.011266811844324431,
+        "second_max": 0.15287185435783684,
+        "normal_tangent_hessian_max": 0.0202414620216477,
+        "fields": [
+          {
+            "first": 0.001250527753679731,
+            "second": 0.01121272217183944,
+            "mixed": 0.001250527753578722
+          },
+          {
+            "first": 8.104628079763643e-15,
+            "second": 0.001644003770100655,
+            "mixed": 0.001153409330965846
+          },
+          {
+            "first": 0.011266811844324431,
+            "second": 0.15287185435783684,
+            "mixed": 0.0202414620216477
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.006763638721653198,
+        "second_max": 0.09572799263326896,
+        "normal_tangent_hessian_max": 0.011665577271116234,
+        "fields": [
+          {
+            "first": 0.0007858443100906432,
+            "second": 0.01085746049926184,
+            "mixed": 0.0007858443101964234
+          },
+          {
+            "first": 6.217248937900877e-15,
+            "second": 0.0009945564995959,
+            "mixed": 0.0006997325216498619
+          },
+          {
+            "first": 0.006763638721653198,
+            "second": 0.09572799263326896,
+            "mixed": 0.011665577271116234
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 264,
+        "value_max": 0.0020264422495951395,
+        "first_max": 0.01016179398140249,
+        "second_max": 0.07948877961642524,
+        "normal_tangent_hessian_max": 0.017312792817398715,
+        "fields": [
+          {
+            "first": 0.0011304847639898585,
+            "second": 0.009717113098645314,
+            "mixed": 0.0011304847641411743
+          },
+          {
+            "first": 0.00018288822709122687,
+            "second": 0.0009618054986356706,
+            "mixed": 0.0010084599580489693
+          },
+          {
+            "first": 0.01016179398140249,
+            "second": 0.07948877961642524,
+            "mixed": 0.017312792817398715
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973512256,
+        "second_max": 0.14147602021800987,
+        "normal_tangent_hessian_max": 0.04638469186269332,
+        "fields": [
+          {
+            "first": 0.0022017465433278316,
+            "second": 0.016537414672160078,
+            "mixed": 0.002201746543577095
+          },
+          {
+            "first": 1.587618925213974e-14,
+            "second": 0.002152029948193246,
+            "mixed": 0.002183320348603175
+          },
+          {
+            "first": 0.023757135973512256,
+            "second": 0.14147602021800987,
+            "mixed": 0.04638469186269332
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 264,
+        "value_max": 0.006984132579653912,
+        "first_max": 0.04148037039632202,
+        "second_max": 0.9783801170418871,
+        "normal_tangent_hessian_max": 0.07107989543846491,
+        "fields": [
+          {
+            "first": 0.004990510793374092,
+            "second": 0.1750805587788784,
+            "mixed": 0.004990510791345336
+          },
+          {
+            "first": 0.0007689002844916693,
+            "second": 0.005612404464897358,
+            "mixed": 0.004534511396800911
+          },
+          {
+            "first": 0.04148037039632202,
+            "second": 0.9783801170418871,
+            "mixed": 0.07107989543846491
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973513588,
+        "second_max": 0.054782919334320036,
+        "normal_tangent_hessian_max": 0.04638469186269296,
+        "fields": [
+          {
+            "first": 0.0022017465433278316,
+            "second": 0.0058127744740477105,
+            "mixed": 0.002201746543577095
+          },
+          {
+            "first": 1.587618925213974e-14,
+            "second": 0.0021520299481946337,
+            "mixed": 0.0021833203486031814
+          },
+          {
+            "first": 0.023757135973513588,
+            "second": 0.054782919334320036,
+            "mixed": 0.04638469186269296
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 264,
+        "value_max": 0,
+        "first_max": 0.006074598476182302,
+        "second_max": 0.024795685006310363,
+        "normal_tangent_hessian_max": 0.010740877375602718,
+        "fields": [
+          {
+            "first": 0.0007189175698342765,
+            "second": 0.001976727500192843,
+            "mixed": 0.0007189175698044193
+          },
+          {
+            "first": 5.051514762044462e-15,
+            "second": 0.0007070880058624995,
+            "mixed": 0.0005736866402508471
+          },
+          {
+            "first": 0.006074598476182302,
+            "second": 0.024795685006310363,
+            "mixed": 0.010740877375602718
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 14,
+      "layers": 2,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 35672,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 2448,
+      "volume_MLS_rows": 14688,
+      "volume_MLS_max_l1": 1.6659158522917967,
+      "volume_MLS_QR_R_condition_infinity": 2864568.1987647577,
+      "volume_MLS_max_poly_reproduction": 9.295949426890715e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 1.6395808659987403e-11,
+      "all_surface": {
+        "count": 1176,
+        "value_max": 0,
+        "first_max": 0.007563378961959355,
+        "second_max": 0.029993701947019186,
+        "normal_tangent_hessian_max": 0.014891682164826368,
+        "fields": [
+          {
+            "first": 0.0006170869176506111,
+            "second": 0.0024191527222211517,
+            "mixed": 0.0006170869178084563
+          },
+          {
+            "first": 1.63202784619898e-14,
+            "second": 0.0006743602911233881,
+            "mixed": 0.0006797435959176732
+          },
+          {
+            "first": 0.007563378961959355,
+            "second": 0.029993701947019186,
+            "mixed": 0.014891682164826368
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 480,
+        "value_max": 0,
+        "first_max": 0.0027035038300735614,
+        "second_max": 0.029993701947019186,
+        "normal_tangent_hessian_max": 0.004618653196953206,
+        "fields": [
+          {
+            "first": 0.00030140365315362017,
+            "second": 0.0024191527222211517,
+            "mixed": 0.0003014036530014253
+          },
+          {
+            "first": 1.3100631690576847e-14,
+            "second": 0.00034770703408670833,
+            "mixed": 0.0002470821332124989
+          },
+          {
+            "first": 0.0027035038300735614,
+            "second": 0.029993701947019186,
+            "mixed": 0.004618653196953206
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.0012513296518035233,
+        "second_max": 0.015970880164949606,
+        "normal_tangent_hessian_max": 0.0020607055447541163,
+        "fields": [
+          {
+            "first": 0.00017638028528943472,
+            "second": 0.0017730730306566578,
+            "mixed": 0.0001763802856624025
+          },
+          {
+            "first": 5.773159728050814e-15,
+            "second": 0.00020738711378798236,
+            "mixed": 0.00015501038352362418
+          },
+          {
+            "first": 0.0012513296518035233,
+            "second": 0.015970880164949606,
+            "mixed": 0.0020607055447541163
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 360,
+        "value_max": 0.00020254133233077454,
+        "first_max": 0.0021334460350765916,
+        "second_max": 0.01510507190923028,
+        "normal_tangent_hessian_max": 0.003774538720628551,
+        "fields": [
+          {
+            "first": 0.00024047777953006833,
+            "second": 0.0018912689943170954,
+            "mixed": 0.0002404777800269216
+          },
+          {
+            "first": 1.9039161192557774e-05,
+            "second": 0.00019852985973389803,
+            "mixed": 0.00023065246351197105
+          },
+          {
+            "first": 0.0021334460350765916,
+            "second": 0.01510507190923028,
+            "mixed": 0.003774538720628551
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 1176,
+        "value_max": 0,
+        "first_max": 0.007563378961959355,
+        "second_max": 0.03979314903258571,
+        "normal_tangent_hessian_max": 0.014891682164826368,
+        "fields": [
+          {
+            "first": 0.0006170869176506111,
+            "second": 0.003371455994625433,
+            "mixed": 0.0006170869178084563
+          },
+          {
+            "first": 1.63202784619898e-14,
+            "second": 0.0006743602911233881,
+            "mixed": 0.0006797435959176732
+          },
+          {
+            "first": 0.007563378961959355,
+            "second": 0.03979314903258571,
+            "mixed": 0.014891682164826368
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 360,
+        "value_max": 0.0017223481321124723,
+        "first_max": 0.007035772653603001,
+        "second_max": 0.4307060313075173,
+        "normal_tangent_hessian_max": 0.010482379415518082,
+        "fields": [
+          {
+            "first": 0.0005669599082475107,
+            "second": 0.03940697073215767,
+            "mixed": 0.0005669599104532549
+          },
+          {
+            "first": 8.414485373842151e-05,
+            "second": 0.00047016819728074033,
+            "mixed": 0.0005489323034976173
+          },
+          {
+            "first": 0.007035772653603001,
+            "second": 0.4307060313075173,
+            "mixed": 0.010482379415518082
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 1176,
+        "value_max": 0,
+        "first_max": 0.007563378961959799,
+        "second_max": 0.016829165043221295,
+        "normal_tangent_hessian_max": 0.014891682164826368,
+        "fields": [
+          {
+            "first": 0.0006170869176506111,
+            "second": 0.001800876964946907,
+            "mixed": 0.0006170869178084259
+          },
+          {
+            "first": 1.63202784619898e-14,
+            "second": 0.000674360291122611,
+            "mixed": 0.0006797435959180035
+          },
+          {
+            "first": 0.007563378961959799,
+            "second": 0.016829165043221295,
+            "mixed": 0.014891682164826368
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 360,
+        "value_max": 0,
+        "first_max": 0.0016650725361837537,
+        "second_max": 0.006626049868565744,
+        "normal_tangent_hessian_max": 0.00288513523939263,
+        "fields": [
+          {
+            "first": 0.0001960684281369085,
+            "second": 0.0005446373550119787,
+            "mixed": 0.0001960684281564363
+          },
+          {
+            "first": 9.603429163007604e-15,
+            "second": 0.0001963072741799632,
+            "mixed": 0.00016972492254450002
+          },
+          {
+            "first": 0.0016650725361837537,
+            "second": 0.006626049868565744,
+            "mixed": 0.00288513523939263
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 14,
+      "layers": 2,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 35672,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 2448,
+      "volume_MLS_rows": 17136,
+      "volume_MLS_max_l1": 1.6659158522918114,
+      "volume_MLS_QR_R_condition_infinity": 19709715.12130563,
+      "volume_MLS_max_poly_reproduction": 9.248244531301353e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 9.854054222234728e-12,
+      "all_surface": {
+        "count": 1176,
+        "value_max": 0,
+        "first_max": 0.007563378961959355,
+        "second_max": 0.029993701946950797,
+        "normal_tangent_hessian_max": 0.014891682165237202,
+        "fields": [
+          {
+            "first": 0.0006170869176507221,
+            "second": 0.002419152722660245,
+            "mixed": 0.0006170869177941098
+          },
+          {
+            "first": 1.9817480989559044e-14,
+            "second": 0.00067436029112522,
+            "mixed": 0.0006797435959208798
+          },
+          {
+            "first": 0.007563378961959355,
+            "second": 0.029993701946950797,
+            "mixed": 0.014891682165237202
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 480,
+        "value_max": 0,
+        "first_max": 0.0027035038300735614,
+        "second_max": 0.029993701946950797,
+        "normal_tangent_hessian_max": 0.0046186531972251255,
+        "fields": [
+          {
+            "first": 0.00030140365315362017,
+            "second": 0.002419152722660245,
+            "mixed": 0.00030140365287730495
+          },
+          {
+            "first": 1.304512053934559e-14,
+            "second": 0.0003477070340691668,
+            "mixed": 0.00024708213321049757
+          },
+          {
+            "first": 0.0027035038300735614,
+            "second": 0.029993701946950797,
+            "mixed": 0.0046186531972251255
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.0012513296518044115,
+        "second_max": 0.015970880163752785,
+        "normal_tangent_hessian_max": 0.0020607055446945056,
+        "fields": [
+          {
+            "first": 0.00017638028528943472,
+            "second": 0.0017730730311228404,
+            "mixed": 0.00017638028571360267
+          },
+          {
+            "first": 7.327471962526033e-15,
+            "second": 0.00020738711396306453,
+            "mixed": 0.00015501038354461436
+          },
+          {
+            "first": 0.0012513296518044115,
+            "second": 0.015970880163752785,
+            "mixed": 0.0020607055446945056
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 360,
+        "value_max": 0.00020254133233077454,
+        "first_max": 0.0021334460350717066,
+        "second_max": 0.01510507190814093,
+        "normal_tangent_hessian_max": 0.003774538721941501,
+        "fields": [
+          {
+            "first": 0.00024047777953006833,
+            "second": 0.001891268993805116,
+            "mixed": 0.00024047777999465617
+          },
+          {
+            "first": 1.903916118869975e-05,
+            "second": 0.0001985298597696472,
+            "mixed": 0.00023065246353412694
+          },
+          {
+            "first": 0.0021334460350717066,
+            "second": 0.01510507190814093,
+            "mixed": 0.003774538721941501
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 1176,
+        "value_max": 0,
+        "first_max": 0.007563378961959355,
+        "second_max": 0.039793149032487124,
+        "normal_tangent_hessian_max": 0.014891682165237202,
+        "fields": [
+          {
+            "first": 0.0006170869176507221,
+            "second": 0.003371455994744893,
+            "mixed": 0.0006170869177941098
+          },
+          {
+            "first": 1.9817480989559044e-14,
+            "second": 0.00067436029112522,
+            "mixed": 0.0006797435959208798
+          },
+          {
+            "first": 0.007563378961959355,
+            "second": 0.039793149032487124,
+            "mixed": 0.014891682165237202
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 360,
+        "value_max": 0.0017223481321124723,
+        "first_max": 0.00703577265360833,
+        "second_max": 0.43070603132521335,
+        "normal_tangent_hessian_max": 0.010482379415166405,
+        "fields": [
+          {
+            "first": 0.0005669599083475418,
+            "second": 0.03940697073867684,
+            "mixed": 0.0005669599113922489
+          },
+          {
+            "first": 8.414485374749758e-05,
+            "second": 0.00047016819745260285,
+            "mixed": 0.0005489323034818537
+          },
+          {
+            "first": 0.00703577265360833,
+            "second": 0.43070603132521335,
+            "mixed": 0.010482379415166405
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 1176,
+        "value_max": 0,
+        "first_max": 0.007563378961959799,
+        "second_max": 0.016829165043517058,
+        "normal_tangent_hessian_max": 0.014891682165153646,
+        "fields": [
+          {
+            "first": 0.0006170869176507221,
+            "second": 0.0018008769649394685,
+            "mixed": 0.0006170869177940856
+          },
+          {
+            "first": 1.992850329202156e-14,
+            "second": 0.0006743602911227775,
+            "mixed": 0.0006797435959219859
+          },
+          {
+            "first": 0.007563378961959799,
+            "second": 0.016829165043517058,
+            "mixed": 0.014891682165153646
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 360,
+        "value_max": 0,
+        "first_max": 0.0016650725361837537,
+        "second_max": 0.006626049870332109,
+        "normal_tangent_hessian_max": 0.0028851352395910922,
+        "fields": [
+          {
+            "first": 0.0001960684281369085,
+            "second": 0.0005446373549777284,
+            "mixed": 0.00019606842810799896
+          },
+          {
+            "first": 1.0824674490095276e-14,
+            "second": 0.00019630727414576832,
+            "mixed": 0.0001697249225645787
+          },
+          {
+            "first": 0.0016650725361837537,
+            "second": 0.006626049870332109,
+            "mixed": 0.0028851352395910922
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 6,
+      "layers": 2,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 2808,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 1104,
+      "volume_MLS_rows": 6624,
+      "volume_MLS_max_l1": 1.5396372570932726,
+      "volume_MLS_QR_R_condition_infinity": 1254562.3696763178,
+      "volume_MLS_max_poly_reproduction": 9.992007221626409e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 1.27601612736627e-12,
+      "all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.1434710721239083,
+        "second_max": 1.5347920246857765,
+        "normal_tangent_hessian_max": 0.2185502675440111,
+        "fields": [
+          {
+            "first": 0.021140465208076924,
+            "second": 0.23567809999642153,
+            "mixed": 0.021140465208138386
+          },
+          {
+            "first": 1.0380585280245214e-14,
+            "second": 0.02352939308135149,
+            "mixed": 0.018183551238950203
+          },
+          {
+            "first": 0.1434710721239083,
+            "second": 1.5347920246857765,
+            "mixed": 0.2185502675440111
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.10615550635841986,
+        "second_max": 1.3844499624629187,
+        "normal_tangent_hessian_max": 0.20370843174603598,
+        "fields": [
+          {
+            "first": 0.00986838093548855,
+            "second": 0.09664674390087935,
+            "mixed": 0.009868380935519552
+          },
+          {
+            "first": 3.4139358007223564e-15,
+            "second": 0.013452592243443418,
+            "mixed": 0.01059258172510209
+          },
+          {
+            "first": 0.10615550635841986,
+            "second": 1.3844499624629187,
+            "mixed": 0.20370843174603598
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.1434710721239083,
+        "second_max": 1.5347920246857765,
+        "normal_tangent_hessian_max": 0.20623797625584883,
+        "fields": [
+          {
+            "first": 0.021140465208076924,
+            "second": 0.23567809999642153,
+            "mixed": 0.021140465208138386
+          },
+          {
+            "first": 1.970645868709653e-15,
+            "second": 0.02352939308135149,
+            "mixed": 0.018183551238950203
+          },
+          {
+            "first": 0.1434710721239083,
+            "second": 1.5347920246857765,
+            "mixed": 0.20623797625584883
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 168,
+        "value_max": 0.052483639923404546,
+        "first_max": 0.16837268880980139,
+        "second_max": 1.2285583771274964,
+        "normal_tangent_hessian_max": 0.2246866733084848,
+        "fields": [
+          {
+            "first": 0.01471839480261189,
+            "second": 0.22377468790168561,
+            "mixed": 0.01471839480266042
+          },
+          {
+            "first": 0.005341463073141373,
+            "second": 0.015508825152940497,
+            "mixed": 0.012515424073812372
+          },
+          {
+            "first": 0.16837268880980139,
+            "second": 1.2285583771274964,
+            "mixed": 0.2246866733084848
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233788,
+        "second_max": 0.9802412725461023,
+        "normal_tangent_hessian_max": 0.2185502675440111,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.10112417464786937,
+            "mixed": 0.012262506621860462
+          },
+          {
+            "first": 1.0380585280245214e-14,
+            "second": 0.012453434748707748,
+            "mixed": 0.009670747397619417
+          },
+          {
+            "first": 0.11425661389233788,
+            "second": 0.9802412725461023,
+            "mixed": 0.2185502675440111
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 168,
+        "value_max": 0.27790165837379655,
+        "first_max": 0.8426205346452176,
+        "second_max": 22.94824236495522,
+        "normal_tangent_hessian_max": 1.175547192084993,
+        "fields": [
+          {
+            "first": 0.06735096999312948,
+            "second": 2.7274103803445247,
+            "mixed": 0.06735096999318091
+          },
+          {
+            "first": 0.017892899409566898,
+            "second": 0.08509648900760947,
+            "mixed": 0.06059423985359537
+          },
+          {
+            "first": 0.8426205346452176,
+            "second": 22.94824236495522,
+            "mixed": 1.175547192084993
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233788,
+        "second_max": 0.26049437520598573,
+        "normal_tangent_hessian_max": 0.21855026754400309,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.03352952587358149,
+            "mixed": 0.012262506621865676
+          },
+          {
+            "first": 1.0380585280245214e-14,
+            "second": 0.00937923168378571,
+            "mixed": 0.009670747397618517
+          },
+          {
+            "first": 0.11425661389233788,
+            "second": 0.26049437520598573,
+            "mixed": 0.21855026754400309
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 168,
+        "value_max": 0,
+        "first_max": 0.04313058716763807,
+        "second_max": 0.1723855971833676,
+        "normal_tangent_hessian_max": 0.08044725220612077,
+        "fields": [
+          {
+            "first": 0.004736600448140282,
+            "second": 0.013155483355136,
+            "mixed": 0.004736600448159839
+          },
+          {
+            "first": 2.1094237467877974e-15,
+            "second": 0.005509273044307927,
+            "mixed": 0.004129784348953263
+          },
+          {
+            "first": 0.04313058716763807,
+            "second": 0.1723855971833676,
+            "mixed": 0.08044725220612077
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 6,
+      "layers": 2,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 2808,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 1104,
+      "volume_MLS_rows": 7728,
+      "volume_MLS_max_l1": 1.5396372570933607,
+      "volume_MLS_QR_R_condition_infinity": 10556751.465267437,
+      "volume_MLS_max_poly_reproduction": 9.992007221626409e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 3.3069299822023298e-12,
+      "all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.1434710721239043,
+        "second_max": 1.5347920246860438,
+        "normal_tangent_hessian_max": 0.21855026754399803,
+        "fields": [
+          {
+            "first": 0.02114046520807465,
+            "second": 0.23567809999643008,
+            "mixed": 0.02114046520815614
+          },
+          {
+            "first": 1.2823075934420558e-14,
+            "second": 0.02352939308140467,
+            "mixed": 0.018183551238961905
+          },
+          {
+            "first": 0.1434710721239043,
+            "second": 1.5347920246860438,
+            "mixed": 0.21855026754399803
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.10615550635841586,
+        "second_max": 1.3844499624628548,
+        "normal_tangent_hessian_max": 0.20370843174600708,
+        "fields": [
+          {
+            "first": 0.00986838093548855,
+            "second": 0.09664674390079142,
+            "mixed": 0.00986838093551076
+          },
+          {
+            "first": 4.218847493575595e-15,
+            "second": 0.013452592243408446,
+            "mixed": 0.010592581725106236
+          },
+          {
+            "first": 0.10615550635841586,
+            "second": 1.3844499624628548,
+            "mixed": 0.20370843174600708
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.1434710721239043,
+        "second_max": 1.5347920246860438,
+        "normal_tangent_hessian_max": 0.20623797625600437,
+        "fields": [
+          {
+            "first": 0.02114046520807465,
+            "second": 0.23567809999643008,
+            "mixed": 0.02114046520815614
+          },
+          {
+            "first": 3.219646771412954e-15,
+            "second": 0.02352939308140467,
+            "mixed": 0.018183551238961905
+          },
+          {
+            "first": 0.1434710721239043,
+            "second": 1.5347920246860438,
+            "mixed": 0.20623797625600437
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 168,
+        "value_max": 0.052483639923404546,
+        "first_max": 0.16837268880977074,
+        "second_max": 1.2285583771285458,
+        "normal_tangent_hessian_max": 0.22468667330832,
+        "fields": [
+          {
+            "first": 0.01471839480261189,
+            "second": 0.22377468790179753,
+            "mixed": 0.014718394802604055
+          },
+          {
+            "first": 0.0053414630731434265,
+            "second": 0.01550882515293428,
+            "mixed": 0.01251542407381257
+          },
+          {
+            "first": 0.16837268880977074,
+            "second": 1.2285583771285458,
+            "mixed": 0.22468667330832
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233766,
+        "second_max": 0.9802412725459904,
+        "normal_tangent_hessian_max": 0.21855026754399803,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.101124174647913,
+            "mixed": 0.0122625066218523
+          },
+          {
+            "first": 1.2823075934420558e-14,
+            "second": 0.01245343474868399,
+            "mixed": 0.009670747397618164
+          },
+          {
+            "first": 0.11425661389233766,
+            "second": 0.9802412725459904,
+            "mixed": 0.21855026754399803
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 168,
+        "value_max": 0.27790165837379655,
+        "first_max": 0.8426205346451305,
+        "second_max": 22.948242364965076,
+        "normal_tangent_hessian_max": 1.1755471920850935,
+        "fields": [
+          {
+            "first": 0.06735096999322543,
+            "second": 2.727410380348454,
+            "mixed": 0.06735096999337008
+          },
+          {
+            "first": 0.017892899409568702,
+            "second": 0.08509648900576716,
+            "mixed": 0.06059423985364091
+          },
+          {
+            "first": 0.8426205346451305,
+            "second": 22.948242364965076,
+            "mixed": 1.1755471920850935
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233766,
+        "second_max": 0.2604943752058019,
+        "normal_tangent_hessian_max": 0.21855026754400048,
+        "fields": [
+          {
+            "first": 0.012262506621842584,
+            "second": 0.033529525873580546,
+            "mixed": 0.012262506621852272
+          },
+          {
+            "first": 1.2823075934420558e-14,
+            "second": 0.009379231683784767,
+            "mixed": 0.009670747397616848
+          },
+          {
+            "first": 0.11425661389233766,
+            "second": 0.2604943752058019,
+            "mixed": 0.21855026754400048
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 168,
+        "value_max": 0,
+        "first_max": 0.0431305871676414,
+        "second_max": 0.17238559718327345,
+        "normal_tangent_hessian_max": 0.08044725220612813,
+        "fields": [
+          {
+            "first": 0.004736600448140282,
+            "second": 0.013155483355124897,
+            "mixed": 0.004736600448144139
+          },
+          {
+            "first": 2.3869795029440866e-15,
+            "second": 0.005509273044320806,
+            "mixed": 0.004129784348952478
+          },
+          {
+            "first": 0.0431305871676414,
+            "second": 0.17238559718327345,
+            "mixed": 0.08044725220612813
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 10,
+      "layers": 7,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 43000,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 1776,
+      "volume_MLS_rows": 10656,
+      "volume_MLS_max_l1": 1.6436688429909942,
+      "volume_MLS_QR_R_condition_infinity": 2894751.553448654,
+      "volume_MLS_max_poly_reproduction": 8.881784197001252e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 1.522013515192912e-11,
+      "all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973510923,
+        "second_max": 0.15287185435801137,
+        "normal_tangent_hessian_max": 0.04638469186207282,
+        "fields": [
+          {
+            "first": 0.0022017465433287198,
+            "second": 0.011212722173996936,
+            "mixed": 0.0022017465434002012
+          },
+          {
+            "first": 1.2490009027033011e-14,
+            "second": 0.002152029948206402,
+            "mixed": 0.002183320348602586
+          },
+          {
+            "first": 0.023757135973510923,
+            "second": 0.15287185435801137,
+            "mixed": 0.04638469186207282
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 288,
+        "value_max": 0,
+        "first_max": 0.01126681184432421,
+        "second_max": 0.15287185435801137,
+        "normal_tangent_hessian_max": 0.020241462021434495,
+        "fields": [
+          {
+            "first": 0.0012505277536802861,
+            "second": 0.011212722173996936,
+            "mixed": 0.0012505277537515733
+          },
+          {
+            "first": 9.159339953157541e-15,
+            "second": 0.0016440037698259857,
+            "mixed": 0.0011534093309409248
+          },
+          {
+            "first": 0.01126681184432421,
+            "second": 0.15287185435801137,
+            "mixed": 0.020241462021434495
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.006763638721649201,
+        "second_max": 0.09572799264196845,
+        "normal_tangent_hessian_max": 0.011665577270771447,
+        "fields": [
+          {
+            "first": 0.0007858443100799296,
+            "second": 0.010857460499455795,
+            "mixed": 0.0007858443102480649
+          },
+          {
+            "first": 6.161737786669619e-15,
+            "second": 0.0009945564984470412,
+            "mixed": 0.0006997325216245129
+          },
+          {
+            "first": 0.006763638721649201,
+            "second": 0.09572799264196845,
+            "mixed": 0.011665577270771447
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 264,
+        "value_max": 0.0020264422495951395,
+        "first_max": 0.01016179398140249,
+        "second_max": 0.07948877961975435,
+        "normal_tangent_hessian_max": 0.01731279281679978,
+        "fields": [
+          {
+            "first": 0.0011304847639898585,
+            "second": 0.009717113099166341,
+            "mixed": 0.0011304847641743032
+          },
+          {
+            "first": 0.0001828882270853427,
+            "second": 0.0009618054986799685,
+            "mixed": 0.0010084599579848674
+          },
+          {
+            "first": 0.01016179398140249,
+            "second": 0.07948877961975435,
+            "mixed": 0.01731279281679978
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973510923,
+        "second_max": 0.14147602021867955,
+        "normal_tangent_hessian_max": 0.04638469186207282,
+        "fields": [
+          {
+            "first": 0.0022017465433287198,
+            "second": 0.01653741467240366,
+            "mixed": 0.0022017465434002012
+          },
+          {
+            "first": 1.2490009027033011e-14,
+            "second": 0.002152029948206402,
+            "mixed": 0.002183320348602586
+          },
+          {
+            "first": 0.023757135973510923,
+            "second": 0.14147602021867955,
+            "mixed": 0.04638469186207282
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 264,
+        "value_max": 0.006984132579653912,
+        "first_max": 0.04148037039955055,
+        "second_max": 0.978380117031102,
+        "normal_tangent_hessian_max": 0.07107989543923646,
+        "fields": [
+          {
+            "first": 0.0049905107937361914,
+            "second": 0.17508055877911421,
+            "mixed": 0.004990510796728106
+          },
+          {
+            "first": 0.0007689002844623594,
+            "second": 0.00561240445937039,
+            "mixed": 0.004534511396292139
+          },
+          {
+            "first": 0.04148037039955055,
+            "second": 0.978380117031102,
+            "mixed": 0.07107989543923646
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.023757135973512256,
+        "second_max": 0.05478291933450931,
+        "normal_tangent_hessian_max": 0.04638469186207247,
+        "fields": [
+          {
+            "first": 0.0022017465433287198,
+            "second": 0.0058127744740124054,
+            "mixed": 0.0022017465434002012
+          },
+          {
+            "first": 1.2490009027033011e-14,
+            "second": 0.0021520299482082894,
+            "mixed": 0.0021833203486043575
+          },
+          {
+            "first": 0.023757135973512256,
+            "second": 0.05478291933450931,
+            "mixed": 0.04638469186207247
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 264,
+        "value_max": 0,
+        "first_max": 0.006074598476182302,
+        "second_max": 0.024795685009310852,
+        "normal_tangent_hessian_max": 0.010740877375508818,
+        "fields": [
+          {
+            "first": 0.0007189175698342765,
+            "second": 0.001976727500239528,
+            "mixed": 0.0007189175698704808
+          },
+          {
+            "first": 5.467848396278896e-15,
+            "second": 0.0007070880059039109,
+            "mixed": 0.0005736866402220818
+          },
+          {
+            "first": 0.006074598476182302,
+            "second": 0.024795685009310852,
+            "mixed": 0.010740877375508818
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 10,
+      "layers": 7,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 43000,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 1776,
+      "volume_MLS_rows": 12432,
+      "volume_MLS_max_l1": 1.643668842991007,
+      "volume_MLS_QR_R_condition_infinity": 19917392.25829274,
+      "volume_MLS_max_poly_reproduction": 7.771561172376096e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 2.6867554617062523e-11,
+      "all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.02375713597351048,
+        "second_max": 0.15287185435737632,
+        "normal_tangent_hessian_max": 0.046384691862545256,
+        "fields": [
+          {
+            "first": 0.0022017465433292194,
+            "second": 0.01121272217443492,
+            "mixed": 0.0022017465433634225
+          },
+          {
+            "first": 1.326716514427062e-14,
+            "second": 0.002152029948215506,
+            "mixed": 0.0021833203486036016
+          },
+          {
+            "first": 0.02375713597351048,
+            "second": 0.15287185435737632,
+            "mixed": 0.046384691862545256
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 288,
+        "value_max": 0,
+        "first_max": 0.011266811844323321,
+        "second_max": 0.15287185435737632,
+        "normal_tangent_hessian_max": 0.02024146202172919,
+        "fields": [
+          {
+            "first": 0.0012505277536802861,
+            "second": 0.01121272217443492,
+            "mixed": 0.0012505277536950276
+          },
+          {
+            "first": 9.603429163007604e-15,
+            "second": 0.001644003769628144,
+            "mixed": 0.0011534093309420138
+          },
+          {
+            "first": 0.011266811844323321,
+            "second": 0.15287185435737632,
+            "mixed": 0.02024146202172919
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.006763638721628773,
+        "second_max": 0.09572799264451419,
+        "normal_tangent_hessian_max": 0.011665577270532088,
+        "fields": [
+          {
+            "first": 0.0007858443100814006,
+            "second": 0.010857460499538174,
+            "mixed": 0.0007858443103013864
+          },
+          {
+            "first": 8.43769498715119e-15,
+            "second": 0.0009945564979425559,
+            "mixed": 0.0006997325216001011
+          },
+          {
+            "first": 0.006763638721628773,
+            "second": 0.09572799264451419,
+            "mixed": 0.011665577270532088
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 264,
+        "value_max": 0.0020264422495951395,
+        "first_max": 0.01016179398140249,
+        "second_max": 0.07948877961855709,
+        "normal_tangent_hessian_max": 0.017312792816992252,
+        "fields": [
+          {
+            "first": 0.0011304847639898585,
+            "second": 0.009717113099086405,
+            "mixed": 0.001130484764033623
+          },
+          {
+            "first": 0.0001828882270818455,
+            "second": 0.0009618054988212998,
+            "mixed": 0.0010084599579651
+          },
+          {
+            "first": 0.01016179398140249,
+            "second": 0.07948877961855709,
+            "mixed": 0.017312792816992252
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.02375713597351048,
+        "second_max": 0.14147602021890693,
+        "normal_tangent_hessian_max": 0.046384691862545256,
+        "fields": [
+          {
+            "first": 0.0022017465433292194,
+            "second": 0.016537414672180395,
+            "mixed": 0.0022017465433634225
+          },
+          {
+            "first": 1.326716514427062e-14,
+            "second": 0.002152029948215506,
+            "mixed": 0.0021833203486036016
+          },
+          {
+            "first": 0.02375713597351048,
+            "second": 0.14147602021890693,
+            "mixed": 0.046384691862545256
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 264,
+        "value_max": 0.006984132579653912,
+        "first_max": 0.04148037040005459,
+        "second_max": 0.9783801170269493,
+        "normal_tangent_hessian_max": 0.07107989543915857,
+        "fields": [
+          {
+            "first": 0.004990510794051384,
+            "second": 0.1750805587834644,
+            "mixed": 0.00499051079847766
+          },
+          {
+            "first": 0.0007689002844514514,
+            "second": 0.005612404453969766,
+            "mixed": 0.004534511396282299
+          },
+          {
+            "first": 0.04148037040005459,
+            "second": 0.9783801170269493,
+            "mixed": 0.07107989543915857
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 600,
+        "value_max": 0,
+        "first_max": 0.02375713597351181,
+        "second_max": 0.05478291933452876,
+        "normal_tangent_hessian_max": 0.04638469186254607,
+        "fields": [
+          {
+            "first": 0.0022017465433292194,
+            "second": 0.005812774473994475,
+            "mixed": 0.0022017465433634225
+          },
+          {
+            "first": 1.326716514427062e-14,
+            "second": 0.002152029948217782,
+            "mixed": 0.0021833203486044685
+          },
+          {
+            "first": 0.02375713597351181,
+            "second": 0.05478291933452876,
+            "mixed": 0.04638469186254607
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 264,
+        "value_max": 0,
+        "first_max": 0.006074598476182302,
+        "second_max": 0.02479568501039243,
+        "normal_tangent_hessian_max": 0.010740877375281259,
+        "fields": [
+          {
+            "first": 0.0007189175698342765,
+            "second": 0.00197672750017025,
+            "mixed": 0.0007189175697725071
+          },
+          {
+            "first": 7.355227538141662e-15,
+            "second": 0.0007070880059270035,
+            "mixed": 0.0005736866402052914
+          },
+          {
+            "first": 0.006074598476182302,
+            "second": 0.02479568501039243,
+            "mixed": 0.010740877375281259
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 6,
+      "layers": 7,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 9288,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 1104,
+      "volume_MLS_rows": 6624,
+      "volume_MLS_max_l1": 1.5396372570932901,
+      "volume_MLS_QR_R_condition_infinity": 1254562.3696763152,
+      "volume_MLS_max_poly_reproduction": 7.771561172376096e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 3.615325359291743e-12,
+      "all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.14347107212391141,
+        "second_max": 1.5347920246858622,
+        "normal_tangent_hessian_max": 0.21855026754397047,
+        "fields": [
+          {
+            "first": 0.02114046520807421,
+            "second": 0.23567809999648015,
+            "mixed": 0.021140465208092662
+          },
+          {
+            "first": 5.2735593669694936e-15,
+            "second": 0.02352939308142421,
+            "mixed": 0.018183551238954775
+          },
+          {
+            "first": 0.14347107212391141,
+            "second": 1.5347920246858622,
+            "mixed": 0.21855026754397047
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.10615550635842741,
+        "second_max": 1.3844499624623314,
+        "normal_tangent_hessian_max": 0.20370843174607123,
+        "fields": [
+          {
+            "first": 0.00986838093548855,
+            "second": 0.09664674390109917,
+            "mixed": 0.009868380935481716
+          },
+          {
+            "first": 5.2735593669694936e-15,
+            "second": 0.013452592243504924,
+            "mixed": 0.01059258172510938
+          },
+          {
+            "first": 0.10615550635842741,
+            "second": 1.3844499624623314,
+            "mixed": 0.20370843174607123
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.14347107212391141,
+        "second_max": 1.5347920246858622,
+        "normal_tangent_hessian_max": 0.20623797625616946,
+        "fields": [
+          {
+            "first": 0.02114046520807421,
+            "second": 0.23567809999648015,
+            "mixed": 0.021140465208092662
+          },
+          {
+            "first": 3.6637359812630166e-15,
+            "second": 0.02352939308142421,
+            "mixed": 0.018183551238954775
+          },
+          {
+            "first": 0.14347107212391141,
+            "second": 1.5347920246858622,
+            "mixed": 0.20623797625616946
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 168,
+        "value_max": 0.052483639923404546,
+        "first_max": 0.16837268880979916,
+        "second_max": 1.2285583771283615,
+        "normal_tangent_hessian_max": 0.22468667330859596,
+        "fields": [
+          {
+            "first": 0.01471839480261189,
+            "second": 0.2237746879019973,
+            "mixed": 0.014718394802639813
+          },
+          {
+            "first": 0.005341463073139624,
+            "second": 0.015508825152946715,
+            "mixed": 0.012515424073813576
+          },
+          {
+            "first": 0.16837268880979916,
+            "second": 1.2285583771283615,
+            "mixed": 0.22468667330859596
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233877,
+        "second_max": 0.9802412725470286,
+        "normal_tangent_hessian_max": 0.21855026754397047,
+        "fields": [
+          {
+            "first": 0.012262506621842917,
+            "second": 0.1011241746473875,
+            "mixed": 0.01226250662186776
+          },
+          {
+            "first": 5.2735593669694936e-15,
+            "second": 0.01245343474892624,
+            "mixed": 0.009670747397615923
+          },
+          {
+            "first": 0.11425661389233877,
+            "second": 0.9802412725470286,
+            "mixed": 0.21855026754397047
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 168,
+        "value_max": 0.27790165837379655,
+        "first_max": 0.8426205346470539,
+        "second_max": 22.948242364884397,
+        "normal_tangent_hessian_max": 1.1755471920840144,
+        "fields": [
+          {
+            "first": 0.06735096999253934,
+            "second": 2.7274103803378793,
+            "mixed": 0.06735096999275117
+          },
+          {
+            "first": 0.01789289940956698,
+            "second": 0.08509648901850331,
+            "mixed": 0.060594239853643005
+          },
+          {
+            "first": 0.8426205346470539,
+            "second": 22.948242364884397,
+            "mixed": 1.1755471920840144
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233877,
+        "second_max": 0.2604943752061003,
+        "normal_tangent_hessian_max": 0.21855026754397405,
+        "fields": [
+          {
+            "first": 0.012262506621842917,
+            "second": 0.03352952587360397,
+            "mixed": 0.012262506621863794
+          },
+          {
+            "first": 5.2735593669694936e-15,
+            "second": 0.009379231683792122,
+            "mixed": 0.009670747397615236
+          },
+          {
+            "first": 0.11425661389233877,
+            "second": 0.2604943752061003,
+            "mixed": 0.21855026754397405
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 168,
+        "value_max": 0,
+        "first_max": 0.04313058716762208,
+        "second_max": 0.1723855971819152,
+        "normal_tangent_hessian_max": 0.08044725220615254,
+        "fields": [
+          {
+            "first": 0.004736600448140282,
+            "second": 0.013155483355141606,
+            "mixed": 0.004736600448167767
+          },
+          {
+            "first": 2.1094237467877974e-15,
+            "second": 0.005509273044310592,
+            "mixed": 0.004129784348950296
+          },
+          {
+            "first": 0.04313058716762208,
+            "second": 0.1723855971819152,
+            "mixed": 0.08044725220615254
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 6,
+      "layers": 7,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 9288,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 1104,
+      "volume_MLS_rows": 7728,
+      "volume_MLS_max_l1": 1.539637257093401,
+      "volume_MLS_QR_R_condition_infinity": 10556751.46526555,
+      "volume_MLS_max_poly_reproduction": 7.771561172376096e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 6.003923583709229e-12,
+      "all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.14347107212391186,
+        "second_max": 1.5347920246857072,
+        "normal_tangent_hessian_max": 0.2185502675439958,
+        "fields": [
+          {
+            "first": 0.02114046520807421,
+            "second": 0.23567809999651435,
+            "mixed": 0.021140465208119043
+          },
+          {
+            "first": 6.5503158452884236e-15,
+            "second": 0.02352939308143487,
+            "mixed": 0.018183551238954928
+          },
+          {
+            "first": 0.14347107212391186,
+            "second": 1.5347920246857072,
+            "mixed": 0.2185502675439958
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.10615550635842341,
+        "second_max": 1.3844499624621907,
+        "normal_tangent_hessian_max": 0.2037084317461172,
+        "fields": [
+          {
+            "first": 0.00986838093548855,
+            "second": 0.09664674390112138,
+            "mixed": 0.009868380935481967
+          },
+          {
+            "first": 6.5503158452884236e-15,
+            "second": 0.013452592243512806,
+            "mixed": 0.010592581725110276
+          },
+          {
+            "first": 0.10615550635842341,
+            "second": 1.3844499624621907,
+            "mixed": 0.2037084317461172
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.14347107212391186,
+        "second_max": 1.5347920246857072,
+        "normal_tangent_hessian_max": 0.20623797625628576,
+        "fields": [
+          {
+            "first": 0.02114046520807421,
+            "second": 0.23567809999651435,
+            "mixed": 0.021140465208119043
+          },
+          {
+            "first": 6.439293542825908e-15,
+            "second": 0.02352939308143487,
+            "mixed": 0.018183551238954928
+          },
+          {
+            "first": 0.14347107212391186,
+            "second": 1.5347920246857072,
+            "mixed": 0.20623797625628576
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 168,
+        "value_max": 0.052483639923404546,
+        "first_max": 0.1683726888098076,
+        "second_max": 1.2285583771253497,
+        "normal_tangent_hessian_max": 0.22468667330876518,
+        "fields": [
+          {
+            "first": 0.01471839480261189,
+            "second": 0.22377468790285063,
+            "mixed": 0.01471839480273088
+          },
+          {
+            "first": 0.005341463073142233,
+            "second": 0.015508825152939387,
+            "mixed": 0.012515424073814443
+          },
+          {
+            "first": 0.1683726888098076,
+            "second": 1.2285583771253497,
+            "mixed": 0.22468667330876518
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233888,
+        "second_max": 0.980241272547208,
+        "normal_tangent_hessian_max": 0.2185502675439958,
+        "fields": [
+          {
+            "first": 0.012262506621843139,
+            "second": 0.10112417464743013,
+            "mixed": 0.01226250662185629
+          },
+          {
+            "first": 6.5503158452884236e-15,
+            "second": 0.01245343474912941,
+            "mixed": 0.00967074739761934
+          },
+          {
+            "first": 0.11425661389233888,
+            "second": 0.980241272547208,
+            "mixed": 0.2185502675439958
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 168,
+        "value_max": 0.27790165837379655,
+        "first_max": 0.8426205346474682,
+        "second_max": 22.948242364869422,
+        "normal_tangent_hessian_max": 1.1755471920838496,
+        "fields": [
+          {
+            "first": 0.06735096999256135,
+            "second": 2.7274103803370675,
+            "mixed": 0.06735096999287093
+          },
+          {
+            "first": 0.01789289940957009,
+            "second": 0.08509648902105704,
+            "mixed": 0.06059423985366981
+          },
+          {
+            "first": 0.8426205346474682,
+            "second": 22.948242364869422,
+            "mixed": 1.1755471920838496
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.11425661389233888,
+        "second_max": 0.2604943752059087,
+        "normal_tangent_hessian_max": 0.21855026754402856,
+        "fields": [
+          {
+            "first": 0.012262506621843139,
+            "second": 0.03352952587360036,
+            "mixed": 0.012262506621847826
+          },
+          {
+            "first": 6.5503158452884236e-15,
+            "second": 0.00937923168380897,
+            "mixed": 0.009670747397618334
+          },
+          {
+            "first": 0.11425661389233888,
+            "second": 0.2604943752059087,
+            "mixed": 0.21855026754402856
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 168,
+        "value_max": 0,
+        "first_max": 0.04313058716762275,
+        "second_max": 0.172385597181347,
+        "normal_tangent_hessian_max": 0.08044725220612661,
+        "fields": [
+          {
+            "first": 0.004736600448140282,
+            "second": 0.013155483355118958,
+            "mixed": 0.004736600448135737
+          },
+          {
+            "first": 2.220446049250313e-15,
+            "second": 0.005509273044314922,
+            "mixed": 0.004129784348949592
+          },
+          {
+            "first": 0.04313058716762275,
+            "second": 0.172385597181347,
+            "mixed": 0.08044725220612661
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 8,
+      "layers": 7,
+      "subdivisions": 1,
+      "radial_nodes": 6,
+      "cells": 22016,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 1440,
+      "volume_MLS_rows": 8640,
+      "volume_MLS_max_l1": 1.6044911258209984,
+      "volume_MLS_QR_R_condition_infinity": 2375431.169238305,
+      "volume_MLS_max_poly_reproduction": 6.661338147750939e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 8.86761455328407e-12,
+      "all_surface": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.04672905504278679,
+        "second_max": 0.3974169601495879,
+        "normal_tangent_hessian_max": 0.09044719073214225,
+        "fields": [
+          {
+            "first": 0.004881053497083232,
+            "second": 0.03877928482522303,
+            "mixed": 0.004881053497097403
+          },
+          {
+            "first": 9.2148511043888e-15,
+            "second": 0.0043184019989608025,
+            "mixed": 0.004408945672484267
+          },
+          {
+            "first": 0.04672905504278679,
+            "second": 0.3974169601495879,
+            "mixed": 0.09044719073214225
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 192,
+        "value_max": 0,
+        "first_max": 0.03273841017443635,
+        "second_max": 0.3974169601495879,
+        "normal_tangent_hessian_max": 0.06372453477850132,
+        "fields": [
+          {
+            "first": 0.00313574527581445,
+            "second": 0.0348335752022908,
+            "mixed": 0.0031357452758139105
+          },
+          {
+            "first": 7.93809462606987e-15,
+            "second": 0.004248760178413136,
+            "mixed": 0.003407388855489772
+          },
+          {
+            "first": 0.03273841017443635,
+            "second": 0.3974169601495879,
+            "mixed": 0.06372453477850132
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.02135622807514359,
+        "second_max": 0.28665835666480044,
+        "normal_tangent_hessian_max": 0.03720200659413664,
+        "fields": [
+          {
+            "first": 0.00236962095555604,
+            "second": 0.03877928482522303,
+            "mixed": 0.002369620955533541
+          },
+          {
+            "first": 9.2148511043888e-15,
+            "second": 0.0030361268371790207,
+            "mixed": 0.00227643074939876
+          },
+          {
+            "first": 0.02135622807514359,
+            "second": 0.28665835666480044,
+            "mixed": 0.03720200659413664
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 216,
+        "value_max": 0.007700811968926802,
+        "first_max": 0.028503223413288925,
+        "second_max": 0.20737413085346376,
+        "normal_tangent_hessian_max": 0.04968123419828023,
+        "fields": [
+          {
+            "first": 0.003174287064332093,
+            "second": 0.028617654312085516,
+            "mixed": 0.0031742870644889463
+          },
+          {
+            "first": 0.0007418615216705227,
+            "second": 0.0028840638088600823,
+            "mixed": 0.002802654349840261
+          },
+          {
+            "first": 0.028503223413288925,
+            "second": 0.20737413085346376,
+            "mixed": 0.04968123419828023
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.04672905504278679,
+        "second_max": 0.4005543135819407,
+        "normal_tangent_hessian_max": 0.09044719073214225,
+        "fields": [
+          {
+            "first": 0.004881053497083232,
+            "second": 0.04094012249274312,
+            "mixed": 0.004881053497097403
+          },
+          {
+            "first": 9.048317650695026e-15,
+            "second": 0.0043184019989608025,
+            "mixed": 0.004408945672484267
+          },
+          {
+            "first": 0.04672905504278679,
+            "second": 0.4005543135819407,
+            "mixed": 0.09044719073214225
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 216,
+        "value_max": 0.0685638078209867,
+        "first_max": 0.20122085174122173,
+        "second_max": 6.166591329932911,
+        "normal_tangent_hessian_max": 0.305111742699521,
+        "fields": [
+          {
+            "first": 0.018391922658148763,
+            "second": 0.5849632891695808,
+            "mixed": 0.018391922657842504
+          },
+          {
+            "first": 0.004796511627685546,
+            "second": 0.01995119789408134,
+            "mixed": 0.01605160897563974
+          },
+          {
+            "first": 0.20122085174122173,
+            "second": 6.166591329932911,
+            "mixed": 0.305111742699521
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.04672905504278679,
+        "second_max": 0.11794165508371376,
+        "normal_tangent_hessian_max": 0.09044719073214225,
+        "fields": [
+          {
+            "first": 0.004881053497083232,
+            "second": 0.013093095619946926,
+            "mixed": 0.004881053497097403
+          },
+          {
+            "first": 9.325873406851315e-15,
+            "second": 0.0043184019989608025,
+            "mixed": 0.004408945672484267
+          },
+          {
+            "first": 0.04672905504278679,
+            "second": 0.11794165508371376,
+            "mixed": 0.09044719073214225
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.014004769759056401,
+        "second_max": 0.06043549110816943,
+        "normal_tangent_hessian_max": 0.02599173669739066,
+        "fields": [
+          {
+            "first": 0.0016665816391603916,
+            "second": 0.004565164066340666,
+            "mixed": 0.0016665816391430441
+          },
+          {
+            "first": 5.329070518200751e-15,
+            "second": 0.0017856916103164977,
+            "mixed": 0.0014210373713920272
+          },
+          {
+            "first": 0.014004769759056401,
+            "second": 0.06043549110816943,
+            "mixed": 0.02599173669739066
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 8,
+      "layers": 7,
+      "subdivisions": 1,
+      "radial_nodes": 7,
+      "cells": 22016,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 1440,
+      "volume_MLS_rows": 10080,
+      "volume_MLS_max_l1": 1.6044911258210026,
+      "volume_MLS_QR_R_condition_infinity": 16344198.632151933,
+      "volume_MLS_max_poly_reproduction": 8.881784197001252e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 1.0438619410332262e-11,
+      "all_surface": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.04672905504278679,
+        "second_max": 0.39741696015025585,
+        "normal_tangent_hessian_max": 0.09044719073206396,
+        "fields": [
+          {
+            "first": 0.004881053497083232,
+            "second": 0.03877928482558008,
+            "mixed": 0.004881053497129867
+          },
+          {
+            "first": 1.1157741397482823e-14,
+            "second": 0.0043184019989522815,
+            "mixed": 0.0044089456724834
+          },
+          {
+            "first": 0.04672905504278679,
+            "second": 0.39741696015025585,
+            "mixed": 0.09044719073206396
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 192,
+        "value_max": 0,
+        "first_max": 0.032738410174438126,
+        "second_max": 0.39741696015025585,
+        "normal_tangent_hessian_max": 0.06372453477840087,
+        "fields": [
+          {
+            "first": 0.003135745275814783,
+            "second": 0.034833575202369405,
+            "mixed": 0.0031357452758296843
+          },
+          {
+            "first": 1.0158540675320182e-14,
+            "second": 0.004248760178882094,
+            "mixed": 0.0034073888554820952
+          },
+          {
+            "first": 0.032738410174438126,
+            "second": 0.39741696015025585,
+            "mixed": 0.06372453477840087
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 96,
+        "value_max": 0,
+        "first_max": 0.02135622807513471,
+        "second_max": 0.2866583566643035,
+        "normal_tangent_hessian_max": 0.03720200659423095,
+        "fields": [
+          {
+            "first": 0.00236962095555604,
+            "second": 0.03877928482558008,
+            "mixed": 0.0023696209554706867
+          },
+          {
+            "first": 1.1157741397482823e-14,
+            "second": 0.0030361268375618256,
+            "mixed": 0.0022764307494076803
+          },
+          {
+            "first": 0.02135622807513471,
+            "second": 0.2866583566643035,
+            "mixed": 0.03720200659423095
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 216,
+        "value_max": 0.007700811968926802,
+        "first_max": 0.02850322341329692,
+        "second_max": 0.20737413085597198,
+        "normal_tangent_hessian_max": 0.04968123419827787,
+        "fields": [
+          {
+            "first": 0.003174287064332093,
+            "second": 0.028617654310585605,
+            "mixed": 0.0031742870644135817
+          },
+          {
+            "first": 0.0007418615216684965,
+            "second": 0.002884063809063586,
+            "mixed": 0.002802654349823146
+          },
+          {
+            "first": 0.02850322341329692,
+            "second": 0.20737413085597198,
+            "mixed": 0.04968123419827787
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.04672905504278679,
+        "second_max": 0.4005543135809829,
+        "normal_tangent_hessian_max": 0.09044719073206396,
+        "fields": [
+          {
+            "first": 0.004881053497083232,
+            "second": 0.0409401224931131,
+            "mixed": 0.004881053497129867
+          },
+          {
+            "first": 1.1157741397482823e-14,
+            "second": 0.0043184019989522815,
+            "mixed": 0.0044089456724834
+          },
+          {
+            "first": 0.04672905504278679,
+            "second": 0.4005543135809829,
+            "mixed": 0.09044719073206396
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 216,
+        "value_max": 0.0685638078209867,
+        "first_max": 0.20122085174133852,
+        "second_max": 6.166591329927834,
+        "normal_tangent_hessian_max": 0.3051117426985656,
+        "fields": [
+          {
+            "first": 0.018391922658161197,
+            "second": 0.5849632891713032,
+            "mixed": 0.0183919226579167
+          },
+          {
+            "first": 0.004796511627683658,
+            "second": 0.019951197888815053,
+            "mixed": 0.016051608975675005
+          },
+          {
+            "first": 0.20122085174133852,
+            "second": 6.166591329927834,
+            "mixed": 0.3051117426985656
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.04672905504278679,
+        "second_max": 0.11794165508395446,
+        "normal_tangent_hessian_max": 0.09044719073206396,
+        "fields": [
+          {
+            "first": 0.004881053497083232,
+            "second": 0.013093095619960249,
+            "mixed": 0.004881053497129867
+          },
+          {
+            "first": 1.1213252548714081e-14,
+            "second": 0.0043184019989522815,
+            "mixed": 0.0044089456724834
+          },
+          {
+            "first": 0.04672905504278679,
+            "second": 0.11794165508395446,
+            "mixed": 0.09044719073206396
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 216,
+        "value_max": 0,
+        "first_max": 0.014004769759056401,
+        "second_max": 0.06043549110946928,
+        "normal_tangent_hessian_max": 0.02599173669738804,
+        "fields": [
+          {
+            "first": 0.0016665816391603916,
+            "second": 0.004565164066355931,
+            "mixed": 0.0016665816391614927
+          },
+          {
+            "first": 6.827871601444713e-15,
+            "second": 0.0017856916103089482,
+            "mixed": 0.0014210373713809256
+          },
+          {
+            "first": 0.014004769759056401,
+            "second": 0.06043549110946928,
+            "mixed": 0.02599173669738804
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 6,
+      "layers": 7,
+      "subdivisions": 2,
+      "radial_nodes": 6,
+      "cells": 36504,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 288,
+      "fixed_radial_angular_plan_count": 4416,
+      "volume_MLS_rows": 26496,
+      "volume_MLS_max_l1": 1.6574529619470817,
+      "volume_MLS_QR_R_condition_infinity": 2800743.3538084705,
+      "volume_MLS_max_poly_reproduction": 9.08995101411847e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 3.0721393115011122e-12,
+      "all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915803545,
+        "second_max": 0.054304429344781864,
+        "normal_tangent_hessian_max": 0.025453520143558735,
+        "fields": [
+          {
+            "first": 0.0011069941321634746,
+            "second": 0.004888423376307682,
+            "mixed": 0.0011069941322101842
+          },
+          {
+            "first": 8.132383655379272e-15,
+            "second": 0.0011630576749616095,
+            "mixed": 0.0011753397004660854
+          },
+          {
+            "first": 0.012970649915803545,
+            "second": 0.054304429344781864,
+            "mixed": 0.025453520143558735
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.009894539529510027,
+        "second_max": 0.039556687216471875,
+        "normal_tangent_hessian_max": 0.018116776495992238,
+        "fields": [
+          {
+            "first": 0.0009603967202906349,
+            "second": 0.004323545808809337,
+            "mixed": 0.0009603967204227879
+          },
+          {
+            "first": 8.132383655379272e-15,
+            "second": 0.0008627871195676651,
+            "mixed": 0.0008791937186713494
+          },
+          {
+            "first": 0.009894539529510027,
+            "second": 0.039556687216471875,
+            "mixed": 0.018116776495992238
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.012970649915803545,
+        "second_max": 0.054304429344781864,
+        "normal_tangent_hessian_max": 0.025453520143558735,
+        "fields": [
+          {
+            "first": 0.0011069941321634746,
+            "second": 0.004888423376307682,
+            "mixed": 0.0011069941322101842
+          },
+          {
+            "first": 5.828670879282072e-15,
+            "second": 0.0011630576749616095,
+            "mixed": 0.0011753397004660854
+          },
+          {
+            "first": 0.012970649915803545,
+            "second": 0.054304429344781864,
+            "mixed": 0.025453520143558735
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 672,
+        "value_max": 0.0022108971533805755,
+        "first_max": 0.02287374114782459,
+        "second_max": 0.06633336938457646,
+        "normal_tangent_hessian_max": 0.04574748229589609,
+        "fields": [
+          {
+            "first": 0.001643210867496081,
+            "second": 0.006946111794647547,
+            "mixed": 0.0016432108675988048
+          },
+          {
+            "first": 0.00023844113501475528,
+            "second": 0.001853635126583264,
+            "mixed": 0.001853635126583264
+          },
+          {
+            "first": 0.02287374114782459,
+            "second": 0.06633336938457646,
+            "mixed": 0.04574748229589609
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804433,
+        "second_max": 0.06732278757831511,
+        "normal_tangent_hessian_max": 0.025453520143550144,
+        "fields": [
+          {
+            "first": 0.0011069941321634746,
+            "second": 0.007447693924849064,
+            "mixed": 0.0011069941322531197
+          },
+          {
+            "first": 8.132383655379272e-15,
+            "second": 0.0011630576749645516,
+            "mixed": 0.0011753397004686061
+          },
+          {
+            "first": 0.012970649915804433,
+            "second": 0.06732278757831511,
+            "mixed": 0.025453520143550144
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 672,
+        "value_max": 0.007896585284900004,
+        "first_max": 0.04535696770330078,
+        "second_max": 0.7990960981539432,
+        "normal_tangent_hessian_max": 0.08857822172315687,
+        "fields": [
+          {
+            "first": 0.0044623640069670345,
+            "second": 0.06878070503235792,
+            "mixed": 0.004462363999952881
+          },
+          {
+            "first": 0.0007909306358204193,
+            "second": 0.0028993686403981367,
+            "mixed": 0.0029707240767591265
+          },
+          {
+            "first": 0.04535696770330078,
+            "second": 0.7990960981539432,
+            "mixed": 0.08857822172315687
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804433,
+        "second_max": 0.028877061730405273,
+        "normal_tangent_hessian_max": 0.025453520143607446,
+        "fields": [
+          {
+            "first": 0.0011069941321634746,
+            "second": 0.0031369070138168587,
+            "mixed": 0.0011069941322173163
+          },
+          {
+            "first": 8.132383655379272e-15,
+            "second": 0.0011630576749607768,
+            "mixed": 0.0011753397004656246
+          },
+          {
+            "first": 0.012970649915804433,
+            "second": 0.028877061730405273,
+            "mixed": 0.025453520143607446
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 672,
+        "value_max": 0,
+        "first_max": 0.014876453871713213,
+        "second_max": 0.03249538808179597,
+        "normal_tangent_hessian_max": 0.02975290774353745,
+        "fields": [
+          {
+            "first": 0.0011396078709236535,
+            "second": 0.0028792665224271485,
+            "mixed": 0.0011396078709461441
+          },
+          {
+            "first": 5.162537064506978e-15,
+            "second": 0.00135135135135811,
+            "mixed": 0.00135135135135811
+          },
+          {
+            "first": 0.014876453871713213,
+            "second": 0.03249538808179597,
+            "mixed": 0.02975290774353745
+          }
+        ]
+      }
+    },
+    {
+      "method": "physical_ray_Pn_times_angular_chart_P5",
+      "n": 6,
+      "layers": 7,
+      "subdivisions": 2,
+      "radial_nodes": 7,
+      "cells": 36504,
+      "physical_owner_J_scaling": 1,
+      "outer_active_pool_only": 1,
+      "unified_volume_boundary_MLS": 1,
+      "volume_MLS_donors": 336,
+      "fixed_radial_angular_plan_count": 4416,
+      "volume_MLS_rows": 30912,
+      "volume_MLS_max_l1": 1.6574529619470897,
+      "volume_MLS_QR_R_condition_infinity": 23567382.71352107,
+      "volume_MLS_max_poly_reproduction": 9.992007221626409e-16,
+      "surface_MLS_max_l1": 0,
+      "surface_MLS_QR_R_condition_infinity": 0,
+      "constant_max": 0,
+      "original_pure_normal_jet_difference_max": 7.988374051935308e-12,
+      "all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915803545,
+        "second_max": 0.05430442934488852,
+        "normal_tangent_hessian_max": 0.025453520143666197,
+        "fields": [
+          {
+            "first": 0.0011069941321635302,
+            "second": 0.004888423376309348,
+            "mixed": 0.0011069941321977122
+          },
+          {
+            "first": 1.0880185641326534e-14,
+            "second": 0.00116305767496927,
+            "mixed": 0.0011753397004686526
+          },
+          {
+            "first": 0.012970649915803545,
+            "second": 0.05430442934488852,
+            "mixed": 0.025453520143666197
+          }
+        ]
+      },
+      "edge_band": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.009894539529510027,
+        "second_max": 0.039556687216836466,
+        "normal_tangent_hessian_max": 0.01811677649615318,
+        "fields": [
+          {
+            "first": 0.000960396720290857,
+            "second": 0.004323545809026164,
+            "mixed": 0.0009603967204180773
+          },
+          {
+            "first": 1.0880185641326534e-14,
+            "second": 0.0008627871198432224,
+            "mixed": 0.0008791937186751507
+          },
+          {
+            "first": 0.009894539529510027,
+            "second": 0.039556687216836466,
+            "mixed": 0.01811677649615318
+          }
+        ]
+      },
+      "corner_band": {
+        "count": 384,
+        "value_max": 0,
+        "first_max": 0.012970649915803545,
+        "second_max": 0.05430442934488852,
+        "normal_tangent_hessian_max": 0.025453520143666197,
+        "fields": [
+          {
+            "first": 0.0011069941321635302,
+            "second": 0.004888423376309348,
+            "mixed": 0.0011069941321977122
+          },
+          {
+            "first": 6.38378239159465e-15,
+            "second": 0.00116305767496927,
+            "mixed": 0.0011753397004686526
+          },
+          {
+            "first": 0.012970649915803545,
+            "second": 0.05430442934488852,
+            "mixed": 0.025453520143666197
+          }
+        ]
+      },
+      "exact_patch_seams_and_corners": {
+        "count": 672,
+        "value_max": 0.0022108971533805755,
+        "first_max": 0.02287374114782459,
+        "second_max": 0.06633336938447609,
+        "normal_tangent_hessian_max": 0.045747482295810826,
+        "fields": [
+          {
+            "first": 0.001643210867496081,
+            "second": 0.0069461117947591244,
+            "mixed": 0.0016432108675681874
+          },
+          {
+            "first": 0.00023844113501581,
+            "second": 0.00185363512658282,
+            "mixed": 0.00185363512658282
+          },
+          {
+            "first": 0.02287374114782459,
+            "second": 0.06633336938447609,
+            "mixed": 0.045747482295810826
+          }
+        ]
+      },
+      "owner_all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804433,
+        "second_max": 0.06732278757841459,
+        "normal_tangent_hessian_max": 0.0254535201436355,
+        "fields": [
+          {
+            "first": 0.0011069941321635302,
+            "second": 0.007447693924923227,
+            "mixed": 0.0011069941322477505
+          },
+          {
+            "first": 1.0880185641326534e-14,
+            "second": 0.0011630576749711574,
+            "mixed": 0.0011753397004703907
+          },
+          {
+            "first": 0.012970649915804433,
+            "second": 0.06732278757841459,
+            "mixed": 0.0254535201436355
+          }
+        ]
+      },
+      "owner_exact_seams": {
+        "count": 672,
+        "value_max": 0.007896585284900004,
+        "first_max": 0.04535696770330255,
+        "second_max": 0.7990960981538802,
+        "normal_tangent_hessian_max": 0.08857822172237563,
+        "fields": [
+          {
+            "first": 0.004462364006970032,
+            "second": 0.068780705045181,
+            "mixed": 0.004462363998777804
+          },
+          {
+            "first": 0.0007909306357811174,
+            "second": 0.002899368639852379,
+            "mixed": 0.0029707240765900512
+          },
+          {
+            "first": 0.04535696770330255,
+            "second": 0.7990960981538802,
+            "mixed": 0.08857822172237563
+          }
+        ]
+      },
+      "analytic_pullback_all_surface": {
+        "count": 864,
+        "value_max": 0,
+        "first_max": 0.012970649915804433,
+        "second_max": 0.028877061730544717,
+        "normal_tangent_hessian_max": 0.02545352014365121,
+        "fields": [
+          {
+            "first": 0.0011069941321635302,
+            "second": 0.0031369070138151933,
+            "mixed": 0.0011069941322048504
+          },
+          {
+            "first": 1.0880185641326534e-14,
+            "second": 0.00116305767496655,
+            "mixed": 0.0011753397004674335
+          },
+          {
+            "first": 0.012970649915804433,
+            "second": 0.028877061730544717,
+            "mixed": 0.02545352014365121
+          }
+        ]
+      },
+      "analytic_pullback_exact_seams": {
+        "count": 672,
+        "value_max": 0,
+        "first_max": 0.014876453871713213,
+        "second_max": 0.03249538808193808,
+        "normal_tangent_hessian_max": 0.02975290774358008,
+        "fields": [
+          {
+            "first": 0.0011396078709236535,
+            "second": 0.002879266522426427,
+            "mixed": 0.0011396078709371414
+          },
+          {
+            "first": 6.772360450213455e-15,
+            "second": 0.0013513513513613296,
+            "mixed": 0.0013513513513613296
+          },
+          {
+            "first": 0.014876453871713213,
+            "second": 0.03249538808193808,
+            "mixed": 0.02975290774358008
+          }
+        ]
+      }
+    }
+  ],
+  "all_tests_exit_zero": true,
+  "all_constants_exact": true,
+  "maximum_normal_jet_change": 2.6867554617062523e-11,
+  "maximum_weight_l1": 4.471458591178695,
+  "maximum_polynomial_reproduction": 1.0299515363343952e-12,
+  "all_cells_under50000": true,
+  "condition_semantics": {
+    "fixed_ring_Cartesian_P5_MLS56": "Measured infinity condition of triangular QR factor R56; mandatory threshold1e8",
+    "physical_ray_Pn_times_angular_chart_P5": "Product of angular QR-R infinity condition and per-line scaled radial Vandermonde infinity condition. Field-independent factor indicator, not measured full tensor-design matrix condition; mandatory threshold1e8. Raw legacy field name volume_MLS_QR_R_condition_infinity contains this indicator."
+  },
+  "polynomial_semantics": {
+    "fixed_ring_Cartesian_P5_MLS56": "56 local Cartesian monomials of total degree<=5; affine target-owner-J scaling; fullrank56",
+    "physical_ray_Pn_times_angular_chart_P5": "21 query-centered gnomonic angular monomials times radial_nodes physical-radius monomials;126/147 product reproduction, angular rank21 and normal rank6/7; no claim of exact Cartesian-degree5 reproduction"
+  },
+  "observed_orders": [
+    {
+      "layers": 1,
+      "radial_nodes": 6,
+      "n_from": 6,
+      "n_to": 12,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.138955004847219,
+          "second_max": 3.1908802550390294,
+          "normal_tangent_hessian_max": 3.0927831481514474
+        },
+        "edge_band": {
+          "first_max": 4.229037901919377,
+          "second_max": 3.696967724174289,
+          "normal_tangent_hessian_max": 4.324971526290528
+        },
+        "corner_band": {
+          "first_max": 4.700677407547006,
+          "second_max": 4.233867015986338,
+          "normal_tangent_hessian_max": 4.563140755044298
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 4.123046942098096,
+          "second_max": 2.8853600873833876,
+          "normal_tangent_hessian_max": 4.795256699262677
+        },
+        "owner_all_surface": {
+          "first_max": 3.138955004847219,
+          "second_max": 3.737928020922798,
+          "normal_tangent_hessian_max": 3.0927831481514474
+        },
+        "owner_exact_seams": {
+          "first_max": 5.955303642433347,
+          "second_max": 5.348815672560557,
+          "normal_tangent_hessian_max": 5.642190054767983
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.1389550048471695,
+          "second_max": 3.1908802550417454,
+          "normal_tangent_hessian_max": 3.09278314814969
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.833798115083999,
+          "second_max": 3.8083942371864956,
+          "normal_tangent_hessian_max": 3.96730424505886
+        }
+      }
+    },
+    {
+      "layers": 1,
+      "radial_nodes": 6,
+      "n_from": 12,
+      "n_to": 18,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.5964037587917983,
+          "second_max": 3.6260635280105253,
+          "normal_tangent_hessian_max": 3.571297992764682
+        },
+        "edge_band": {
+          "first_max": 4.265650397793744,
+          "second_max": 4.335266047080575,
+          "normal_tangent_hessian_max": 4.292313877933759
+        },
+        "corner_band": {
+          "first_max": 4.430231872477889,
+          "second_max": 4.680559242343238,
+          "normal_tangent_hessian_max": 4.367682128180841
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 3.8979401949722137,
+          "second_max": 4.163324795157513,
+          "normal_tangent_hessian_max": 4.138163085374019
+        },
+        "owner_all_surface": {
+          "first_max": 3.5964037587917983,
+          "second_max": 4.354180660870501,
+          "normal_tangent_hessian_max": 3.571297992764682
+        },
+        "owner_exact_seams": {
+          "first_max": 5.243032829971597,
+          "second_max": 2.9930012133944133,
+          "normal_tangent_hessian_max": 5.5696566750875744
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.5964037587918822,
+          "second_max": 3.626063528021356,
+          "normal_tangent_hessian_max": 3.571297992767676
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.8979401940889424,
+          "second_max": 3.9947094734651123,
+          "normal_tangent_hessian_max": 4.00001381064142
+        }
+      }
+    },
+    {
+      "layers": 1,
+      "radial_nodes": 7,
+      "n_from": 6,
+      "n_to": 12,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.138955004847219,
+          "second_max": 4.46340919684575,
+          "normal_tangent_hessian_max": 4.115691885242862
+        },
+        "edge_band": {
+          "first_max": 4.229037901918906,
+          "second_max": 4.4770778074819,
+          "normal_tangent_hessian_max": 5.10042818442061
+        },
+        "corner_band": {
+          "first_max": 4.700677407585887,
+          "second_max": 5.859257752961565,
+          "normal_tangent_hessian_max": 6.4289482920363685
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 5.725003781080504,
+          "second_max": 4.68154539731854,
+          "normal_tangent_hessian_max": 5.428830636601829
+        },
+        "owner_all_surface": {
+          "first_max": 3.138955004847219,
+          "second_max": 3.737928020921384,
+          "normal_tangent_hessian_max": 3.092783148145965
+        },
+        "owner_exact_seams": {
+          "first_max": 5.9553036424340675,
+          "second_max": 5.348815672559028,
+          "normal_tangent_hessian_max": 5.642190054752625
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.1389550048471695,
+          "second_max": 3.1908802550360202,
+          "normal_tangent_hessian_max": 3.0927831481457075
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.833798115084058,
+          "second_max": 3.808394237218649,
+          "normal_tangent_hessian_max": 3.96730424505324
+        }
+      }
+    },
+    {
+      "layers": 1,
+      "radial_nodes": 7,
+      "n_from": 12,
+      "n_to": 18,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.5964037587917983,
+          "second_max": 3.6260635280103135,
+          "normal_tangent_hessian_max": 3.571297992758605
+        },
+        "edge_band": {
+          "first_max": 4.265650397794057,
+          "second_max": 5.021769421868352,
+          "normal_tangent_hessian_max": 4.286200834893079
+        },
+        "corner_band": {
+          "first_max": 4.430231864328738,
+          "second_max": 4.51636772574046,
+          "normal_tangent_hessian_max": 4.176054274492939
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 3.897940191264049,
+          "second_max": 5.046920681825365,
+          "normal_tangent_hessian_max": 4.04626048471982
+        },
+        "owner_all_surface": {
+          "first_max": 3.5964037587917983,
+          "second_max": 4.3541806609526414,
+          "normal_tangent_hessian_max": 3.571297992758605
+        },
+        "owner_exact_seams": {
+          "first_max": 5.243032829990166,
+          "second_max": 2.9930012134606288,
+          "normal_tangent_hessian_max": 5.569656678153008
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.5964037587918822,
+          "second_max": 3.6260635280385642,
+          "normal_tangent_hessian_max": 3.571297992759011
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.8979401940889424,
+          "second_max": 3.9947094745222533,
+          "normal_tangent_hessian_max": 4.000013810730747
+        }
+      }
+    },
+    {
+      "layers": 2,
+      "radial_nodes": 6,
+      "n_from": 6,
+      "n_to": 10,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.520282452239655,
+          "second_max": 4.515337597594953,
+          "normal_tangent_hessian_max": 3.0343946844728324
+        },
+        "edge_band": {
+          "first_max": 4.391016339999706,
+          "second_max": 4.3135232082679975,
+          "normal_tangent_hessian_max": 4.520048587702854
+        },
+        "corner_band": {
+          "first_max": 5.979677344098207,
+          "second_max": 5.431676237930393,
+          "normal_tangent_hessian_max": 5.6230310329590285
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 5.496092556902505,
+          "second_max": 5.359912869806616,
+          "normal_tangent_hessian_max": 5.017879001947142
+        },
+        "owner_all_surface": {
+          "first_max": 3.074559883615252,
+          "second_max": 3.78929406333824,
+          "normal_tangent_hessian_max": 3.0343946844728324
+        },
+        "owner_exact_seams": {
+          "first_max": 5.894959584787495,
+          "second_max": 6.176468481820135,
+          "normal_tangent_hessian_max": 5.492450556096181
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.074559883615142,
+          "second_max": 3.0523191119018205,
+          "normal_tangent_hessian_max": 3.0343946844727756
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.837153894968594,
+          "second_max": 3.79594146242275,
+          "normal_tangent_hessian_max": 3.9417461571960266
+        }
+      }
+    },
+    {
+      "layers": 2,
+      "radial_nodes": 6,
+      "n_from": 10,
+      "n_to": 14,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.401662246814463,
+          "second_max": 4.840258468464441,
+          "normal_tangent_hessian_max": 3.3767025961589807
+        },
+        "edge_band": {
+          "first_max": 4.241992644365831,
+          "second_max": 4.840258468464441,
+          "normal_tangent_hessian_max": 4.391535967796385
+        },
+        "corner_band": {
+          "first_max": 5.014839640889467,
+          "second_max": 5.322114250283278,
+          "normal_tangent_hessian_max": 5.15226453005343
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 4.639005244432025,
+          "second_max": 4.935281781447597,
+          "normal_tangent_hessian_max": 4.526874284587558
+        },
+        "owner_all_surface": {
+          "first_max": 3.401662246814463,
+          "second_max": 3.7698072340971605,
+          "normal_tangent_hessian_max": 3.3767025961589807
+        },
+        "owner_exact_seams": {
+          "first_max": 5.272984232492431,
+          "second_max": 2.438455175472942,
+          "normal_tangent_hessian_max": 5.688757131580328
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.4016622468144555,
+          "second_max": 3.507763583966006,
+          "normal_tangent_hessian_max": 3.3767025961589576
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.8465200511764825,
+          "second_max": 3.9220496454810707,
+          "normal_tangent_hessian_max": 3.9066670572214273
+        }
+      }
+    },
+    {
+      "layers": 2,
+      "radial_nodes": 7,
+      "n_from": 6,
+      "n_to": 10,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.5202824522396003,
+          "second_max": 4.515337597595913,
+          "normal_tangent_hessian_max": 3.034394684458448
+        },
+        "edge_band": {
+          "first_max": 4.391016339999517,
+          "second_max": 4.313523208268527,
+          "normal_tangent_hessian_max": 4.520048587681012
+        },
+        "corner_band": {
+          "first_max": 5.979677344099953,
+          "second_max": 5.431676237948843,
+          "normal_tangent_hessian_max": 5.623031032974879
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 5.496092556902149,
+          "second_max": 5.359912869831761,
+          "normal_tangent_hessian_max": 5.01787900197929
+        },
+        "owner_all_surface": {
+          "first_max": 3.0745598836152483,
+          "second_max": 3.7892940633446592,
+          "normal_tangent_hessian_max": 3.034394684458448
+        },
+        "owner_exact_seams": {
+          "first_max": 5.894959584806176,
+          "second_max": 6.176468481819127,
+          "normal_tangent_hessian_max": 5.492450556097135
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.0745598836151387,
+          "second_max": 3.052319111904441,
+          "normal_tangent_hessian_max": 3.0343946844584853
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.8371538949687456,
+          "second_max": 3.7959414625134698,
+          "normal_tangent_hessian_max": 3.9417461572083803
+        }
+      }
+    },
+    {
+      "layers": 2,
+      "radial_nodes": 7,
+      "n_from": 10,
+      "n_to": 14,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.401662246814463,
+          "second_max": 4.840258468470276,
+          "normal_tangent_hessian_max": 3.376702596098649
+        },
+        "edge_band": {
+          "first_max": 4.241992644366006,
+          "second_max": 4.840258468470276,
+          "normal_tangent_hessian_max": 4.391535967654146
+        },
+        "corner_band": {
+          "first_max": 5.0148396408846265,
+          "second_max": 5.322114250478501,
+          "normal_tangent_hessian_max": 5.152264530117579
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 4.63900524443883,
+          "second_max": 4.935281781626297,
+          "normal_tangent_hessian_max": 4.5268742835027735
+        },
+        "owner_all_surface": {
+          "first_max": 3.401662246814463,
+          "second_max": 3.769807234094439,
+          "normal_tangent_hessian_max": 3.376702596098649
+        },
+        "owner_exact_seams": {
+          "first_max": 5.272984232461511,
+          "second_max": 2.438455175353641,
+          "normal_tangent_hessian_max": 5.688757131678842
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.4016622468144555,
+          "second_max": 3.507763583907698,
+          "normal_tangent_hessian_max": 3.376702596115302
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.8465200511764825,
+          "second_max": 3.9220496445494426,
+          "normal_tangent_hessian_max": 3.906667056998504
+        }
+      }
+    },
+    {
+      "layers": 7,
+      "radial_nodes": 6,
+      "n_from": 6,
+      "n_to": 8,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.8993298486162735,
+          "second_max": 4.696726992877706,
+          "normal_tangent_hessian_max": 3.0667531188208503
+        },
+        "edge_band": {
+          "first_max": 4.089083614093602,
+          "second_max": 4.338373201712448,
+          "normal_tangent_hessian_max": 4.039598490277824
+        },
+        "corner_band": {
+          "first_max": 6.621163426701051,
+          "second_max": 5.83233788590849,
+          "normal_tangent_hessian_max": 5.953335956781897
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 6.174047308384813,
+          "second_max": 6.1841606513086775,
+          "normal_tangent_hessian_max": 5.245650434439897
+        },
+        "owner_all_surface": {
+          "first_max": 3.1078779962165477,
+          "second_max": 3.1108972431342234,
+          "normal_tangent_hessian_max": 3.0667531188208503
+        },
+        "owner_exact_seams": {
+          "first_max": 4.97811225384303,
+          "second_max": 4.5678728270841615,
+          "normal_tangent_hessian_max": 4.688547058403944
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.1078779962165477,
+          "second_max": 2.7543990077847473,
+          "normal_tangent_hessian_max": 3.066753118820907
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.909991492402232,
+          "second_max": 3.643457061049825,
+          "normal_tangent_hessian_max": 3.9273321404824046
+        }
+      }
+    },
+    {
+      "layers": 7,
+      "radial_nodes": 6,
+      "n_from": 8,
+      "n_to": 10,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.0316053656522324,
+          "second_max": 4.281485994673171,
+          "normal_tangent_hessian_max": 2.9926774069902256
+        },
+        "edge_band": {
+          "first_max": 4.780275325160369,
+          "second_max": 4.281485994673171,
+          "normal_tangent_hessian_max": 5.139456493163496
+        },
+        "corner_band": {
+          "first_max": 5.15265794513395,
+          "second_max": 4.915133534164099,
+          "normal_tangent_hessian_max": 5.197193923043471
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 4.622056866485693,
+          "second_max": 4.29727266071722,
+          "normal_tangent_hessian_max": 4.724230553194466
+        },
+        "owner_all_surface": {
+          "first_max": 3.0316053656522324,
+          "second_max": 4.66389967945925,
+          "normal_tangent_hessian_max": 2.9926774069902256
+        },
+        "owner_exact_seams": {
+          "first_max": 7.076981376000174,
+          "second_max": 8.250308971374531,
+          "normal_tangent_hessian_max": 6.52886242143574
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.031605365651981,
+          "second_max": 3.436404927833807,
+          "normal_tangent_hessian_max": 2.9926774069902597
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.7432498997194457,
+          "second_max": 3.9925280465414987,
+          "normal_tangent_hessian_max": 3.960329056820346
+        }
+      }
+    },
+    {
+      "layers": 7,
+      "radial_nodes": 7,
+      "n_from": 6,
+      "n_to": 8,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.8993298486162833,
+          "second_max": 4.696726992871513,
+          "normal_tangent_hessian_max": 3.066753118824262
+        },
+        "edge_band": {
+          "first_max": 4.0890836140932825,
+          "second_max": 4.3383732017062515,
+          "normal_tangent_hessian_max": 4.039598490284088
+        },
+        "corner_band": {
+          "first_max": 6.621163426702507,
+          "second_max": 5.832337885914164,
+          "normal_tangent_hessian_max": 5.953335956775046
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 6.174047308384012,
+          "second_max": 6.184160651258113,
+          "normal_tangent_hessian_max": 5.24565043444268
+        },
+        "owner_all_surface": {
+          "first_max": 3.107877996216551,
+          "second_max": 3.1108972431431714,
+          "normal_tangent_hessian_max": 3.066753118824262
+        },
+        "owner_exact_seams": {
+          "first_max": 4.978112253842722,
+          "second_max": 4.567872827084755,
+          "normal_tangent_hessian_max": 4.688547058414342
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.107877996216551,
+          "second_max": 2.754399007775096,
+          "normal_tangent_hessian_max": 3.066753118824783
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.909991492402286,
+          "second_max": 3.643457060963604,
+          "normal_tangent_hessian_max": 3.927332140481635
+        }
+      }
+    },
+    {
+      "layers": 7,
+      "radial_nodes": 7,
+      "n_from": 8,
+      "n_to": 10,
+      "orders": {
+        "all_surface": {
+          "first_max": 3.0316053656523163,
+          "second_max": 4.28148599469932,
+          "normal_tangent_hessian_max": 2.992677406940703
+        },
+        "edge_band": {
+          "first_max": 4.780275325160966,
+          "second_max": 4.28148599469932,
+          "normal_tangent_hessian_max": 5.1394564930911875
+        },
+        "corner_band": {
+          "first_max": 5.152657945145622,
+          "second_max": 4.915133534037152,
+          "normal_tangent_hessian_max": 5.197193923146785
+        },
+        "exact_patch_seams_and_corners": {
+          "first_max": 4.6220568664869495,
+          "second_max": 4.297272660838924,
+          "normal_tangent_hessian_max": 4.724230553144432
+        },
+        "owner_all_surface": {
+          "first_max": 3.0316053656523163,
+          "second_max": 4.663899679441333,
+          "normal_tangent_hessian_max": 2.992677406940703
+        },
+        "owner_exact_seams": {
+          "first_max": 7.0769813759483196,
+          "second_max": 8.250308971389863,
+          "normal_tangent_hessian_max": 6.528862421426618
+        },
+        "analytic_pullback_all_surface": {
+          "first_max": 3.0316053656520654,
+          "second_max": 3.4364049278413624,
+          "normal_tangent_hessian_max": 2.9926774069406243
+        },
+        "analytic_pullback_exact_seams": {
+          "first_max": 3.7432498997194457,
+          "second_max": 3.992528046442407,
+          "normal_tangent_hessian_max": 3.9603290569148397
+        }
+      }
+    }
+  ],
+  "retained_counterexamples": [
+    "CoarseN6 angular/field Hessian errors can be worse than original owner interpolation; resolution studies remain necessary.",
+    "Ray interpolation alone rejects one-shell7-node case at L1=11.764885 because constant-radius angular sampling crosses Cartesian core. Geometry specialization is fixed by map type, never field values or row failure."
+  ],
+  "analysis_script_sha256": "c97e19b704c8b2d07779465132d4b00434db80ca382b3aec4cf03a52ce7c030f",
+  "raw_manifest_sha256": "0b6ce4e7beab193ecc840b2c3eba3474cf09f20f25ba9dfc0965c1b925eebd48"
+}

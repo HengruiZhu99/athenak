@@ -1,0 +1,665 @@
+{
+  "scope": "Host immutable-stage Hermite sampler contract, qualified-family regression, local pole/Minkowski and timing; no evolution integration",
+  "inputs": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-hermite-boundary-qualified-20261027/compiled-source.tar.gz",
+      "sha256": "30c0f8732af563d40e328e1b54f29e117cb502dd19a1c073c6ef355487f12bc8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/coupled.bin",
+      "sha256": "707775e24015e214be01d0667e5d2c11142eae4d9bd6d9098b2e35ad5c0481b8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/surface_polynomial_weights.hpp",
+      "sha256": "4bb238c94984eb3dab3d6ed100ed6f3d01f7aace516976e6a704dd319130c350"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/hermite_boundary_sampler.hpp",
+      "sha256": "3bc1e21fc76a0147b598cc7ad1fb362dbb9cdb4a7c11908c78ebf2343e627136"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_hermite_sampler_contract.cpp",
+      "sha256": "ec984eb001edc7f543e52a53cfdcc19742ac86a1bcc0d81f4f8c2d0b698da3ce"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/scri_surface.hpp",
+      "sha256": "403041e42e711465f228d65d6bf6524801b0c4febf8b8fa6bd4ded1bdbd39703"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/composite_difference.hpp",
+      "sha256": "0634c9d141201ff724241dc61cc9baed2e705702693e9d895ba97536f80e2a2a"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/composite.hpp",
+      "sha256": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/map.hpp",
+      "sha256": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/athena.hpp",
+      "sha256": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/config.hpp",
+      "sha256": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/LICENSE",
+      "sha256": "faec2a93405aa8eedbafb60402173de7ad275ff1308cf050374a9ee43a8cc8fd"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/hermite_sampler_test_adapter.hpp",
+      "sha256": "41829dc03ddca363e7d2812bc67b05949314e4c08d00b4096ced1bd121e17dca"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_hermite_sampler_mms.cpp",
+      "sha256": "7894cd73317c58a7eadd875cbb0ddfac305e4ec04a5667965aaa8c44766f55f8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_hermite_sampler_pole.cpp",
+      "sha256": "cdc6452d68407af49946d0135a1fd4c15ce96c4e9395c8a6a24662877857ded6"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/benchmark_hermite_sampler.cpp",
+      "sha256": "1bf205d6e1e6ac3088fb526e06fa79d5ebb5bf951fd91e0be5132abcae586eef"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/run_hermite_sampler_validation.py",
+      "sha256": "2f3a364964fe7b361668a7b14a832178bcf5b183bd6526c4aecd5fc8349aef9d"
+    }
+  ],
+  "runtime_hashes_before": {
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/config.hpp": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/KokkosCore_Config_DeclareBackend.hpp": "259683468913b523025b07f976de2b00b1b7ad28214ed2deefda97e5157c3086",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/KokkosCore_Config_FwdBackend.hpp": "a155e6bb941a833c7dce5e8df24e19fa70d23bebb1a7ff11b9f5ccf4f4486036",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/KokkosCore_Config_SetupBackend.hpp": "3cde2dc1673dd911bbaac6024a7646eff22e0932ebbe5a7a4fed7261848c5029",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/KokkosCore_config.h": "e9c50e173f81b345c44926fa0e51928b81111ffddf8800da23203006f9e7d61f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/desul/atomics/Config.hpp": "8835ec26f17079d128243c0656762a4b8ccda09ee6e72a02b01d4bc01916d4f1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src/Kokkos_DualView.hpp": "336a2ea67f7ae34c6b3d5fcbe5867807095cb9c06071da103872488448421efb",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/KokkosExp_MDRangePolicy.hpp": "2ea86d48235e8307702370f3671dd301846928f2e23173596b73b49552917025",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Abort.hpp": "b04d4d4bb784e4efe97b700bc6bf01be89f30b2fe934efec983b17c36b451b04",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_AcquireUniqueTokenImpl.hpp": "9a48e85ad6504261032b24dc1328965903c4adaf4a985b6d024a9e8fd4917a2a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_AnonymousSpace.hpp": "f5a9aea55abb8d16132e19e553f356626bffe599641c37fc80757009e96373e6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Array.hpp": "b456f19bfbaacbde71eac0dca33c822f9d825c515b884d35890ae759fd649c2d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Assert.hpp": "716c5ef59fcca2e4e9edf50454cb9f967af3895f23a70bb023be3486e2111f63",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Atomic.hpp": "4a37c86c07a7f1ed5ca11a3c91f41d7d55688df2900a85e18f9a43cd6a57ab97",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Atomics_Desul_Wrapper.hpp": "85582ca6ee4a95894f591649630e8218162388a9c7dc997b4784bc70e9632ec2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_BitManipulation.hpp": "35325b9b9a887dafbf92effb0f2012ad6900679c01709ecbec5c3ab3e797f73b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Clamp.hpp": "89042894faa0c505297e3e3d0e7fccc8f945263ef2ef2cc73e50fa1dd103db72",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Complex.hpp": "d2059bb07f4ce26cc59dc9f80222f10420c25b6e3c19e8a7ff4aa44e660bfcbf",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Concepts.hpp": "779486767ad65e41a13e9253b95ecda2228db2720d47704ce39fb49647369b58",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_CopyViews.hpp": "ccc7a7ba1e5303a38699691d4c6bb48297684cb34d5b95332af945170dec1d8e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Core.hpp": "8495df3af73cbf0eb7f760f504a1e3279982c451d56cb64a473df45875a46c37",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Core_fwd.hpp": "5d7b3d94bec55f1beaec74c870819ff3371166a35813dcb60b1fc47406934aa9",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Crs.hpp": "e25691b5c3ffa1cdb5ef130bb5fc77d4480c9c36dcb92cd65e91d4802e34868b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_DetectionIdiom.hpp": "a52984686cd48fb99d800cf8657eefc6c19a07122837007c24ffa7af7c1a6036",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_ExecPolicy.hpp": "6fdb8a85b2d1b52725f2a04cdb256468c01ddd0a06fb72540aa1832f83d45686",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Extents.hpp": "6fdc7ee88eb49a56eddb40a683a2be36980350c88c44a218e838b89dd28fb718",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Future.hpp": "e070ab0fdac3bde10df5a4f61dfe3c7fb21e7530e547021378cc1138be9f8213",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Half.hpp": "6b349d94e39cda920dcd4926ebc3193e332b20a337988974c675041c674d6b6d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_HostSpace.hpp": "3c6ce24050c8de25a3fd15569596790e77746079b1ee5e102c15be41dce4c37e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Layout.hpp": "a562e7d85709b32cab92cea5ed9e431f31b74acf321fcfa778789e0515dfe659",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Macros.hpp": "92b786e668e577b454d254531a1e39523e1f2b7eebab43e848ef38a909c6aecf",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_MathematicalConstants.hpp": "adca290b02b58884315f6715d135aea3c51a9c6d56e431424516ee67d49ca01a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_MathematicalFunctions.hpp": "aebd6b1e3a127898bf0592959de1adf8463ef33880141d6a410d16b8f59daaad",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_MathematicalSpecialFunctions.hpp": "77785af4618adffc9a3df4db5678246debafb1c9f8cf6bf7cd2d3fb9c5e8fda1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_MemoryPool.hpp": "627a41e42a5a01acaa4ef54df192c89d07e543e68696fa5f081563f45cb0848f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_MemoryTraits.hpp": "58df7c4300b0033fc78befc4e406b117bb9fbae7e122ad46e2b49da123321c01",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_MinMax.hpp": "607817e9771f27f0204032ad488332fd784bde4dc31d284c76444078cfbebd86",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_NumericTraits.hpp": "acb9f6ccbac75dd96dd7410f35770cc2283b89c50e4eeef118b0cba6e801bacd",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Pair.hpp": "0f86e28b6a15704c7e65f82c28f0c30bfed1af1e40463c34f9ab6684cf507c42",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Parallel.hpp": "a12e7d3b4e29afe7948a6f6ef1d69cb12d29c668d4a82de8802b39ae93029107",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Parallel_Reduce.hpp": "c686e148a97fce3d659d9e47534082a8e2e17970c29718f5127279202343960a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_PointerOwnership.hpp": "78105799909ab48f7f388bc58d9f5b1a53764d3f838858ffe5744f49ad34af3e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Printf.hpp": "4ca18f47716666f0485d681a4d0c90579cd71ce9a3dbc8c46d6c7430f0463116",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Rank.hpp": "858991adccff826c6e956bd4109e268b600e948f76bc0a63b5eed797c08b2e0b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_ReductionIdentity.hpp": "adf0f291a7b4eea67f6d38086574e2a5bd87186d339fa82869a25e6e6f848b7a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_ScratchSpace.hpp": "070208b5af47fee9243591208752ee638fa1de0906062c9635f332978e800b85",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Swap.hpp": "dded76f83b034fcb56c3e26c169979e1b67d3fc14e2c176c4526ed6a0347bd50",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_TaskScheduler.hpp": "b2f369bf178bfb5289cddc8ec43033bed66fff6faa945feb058f53be6507eb79",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_TaskScheduler_fwd.hpp": "1f5d184b247f6abeaf198309ba3ea48f01b548faa71f306edd26682f0d670641",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Timer.hpp": "ccffd03e1c52db2d7c1713f25dd35127cf8728929085cdd65f13a63c30bf3549",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Tuners.hpp": "324dc9c21b6fd2ab31cfbae037bd5c3e96f1199e68fa3e50188e496ec8cebecf",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_TypeInfo.hpp": "419993d5205284b8c17a51b5dfd7b190aa0874c19ed691318badee9f8969dd73",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_UniqueToken.hpp": "3345e1885c8863a77b0694aba34ccf1fd28cc7cfc20c0c9b95ae31ee49c51a4a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_Vectorization.hpp": "768d81bcd63205ebe8a680595bd07be518d2615d621651316bc0d0cd44093b58",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_View.hpp": "0b6ae712a3541a7adbfbda28967122ae417bf22ca507445aeb1b2d48db110eca",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_WorkGraphPolicy.hpp": "d1d42baa0403e625f792ca34d7659279361071fee8c9d947e25809992dabb6a2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Kokkos_hwloc.hpp": "a202568000d793cfe6306c9a2c8428b3a56a6a0d922e16ac7e1ef86ce1b4fb16",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial.hpp": "a7ff7c6ff332cb48073b93d7b9b313b70c3478eaa2cf65ee0399279b444b1bd4",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial_MDRangePolicy.hpp": "3b83d9743810c4236d642d6e8fc13642ea99585e10163242ac1fdfcfa8096ba1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial_Parallel_MDRange.hpp": "f7ed2f95f76d0018b648c290f33b2bae2b0fb20fbc5e54f17fd0047b899b867c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial_Parallel_Range.hpp": "eab2d67fbe71a313a9e81ce3202465b889b59237eb4c4024bff71b96cf5f9fc2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial_Parallel_Team.hpp": "4f3894e193326aed376abd5d3af8a4bdb15a142fdc1497ea60e7ac4090c27d8f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial_Task.hpp": "72543797c63401ad642f97cf1f4dc47f6e8bfb407f1b83e9147c164799703687",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial_UniqueToken.hpp": "3b899a26a39db9616d418b1bd8d8310401c9cc5eb6fccfa95ade1780cae2822f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial_WorkGraphPolicy.hpp": "3da3e63038cc8302c08b924ac948cb94b2110570f8c45590180d9d1a9c5932e3",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/Serial/Kokkos_Serial_ZeroMemset.hpp": "9dae717c5bec3f64b6dbc8cc6ec8c5af24515ff6a592858571ed70333f9ae273",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Hooks/Kokkos_ViewHooks.hpp": "b4f7970398c91f33cc88ca63a5af484c47970831689bb9c3189fbfc72ddf8451",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_BasicView.hpp": "98f8d0400754e3bd19f6141e430ca079436b49fb6f66e70764a8e45fdce9b69d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewAccessPreconditionsCheck.hpp": "dd939ce23b9a9ffe93450dcbdfbd85673129ee149babd727679af817491f103a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewAlloc.hpp": "f7665bb2bf0f0a6bc3388477b46e358f28034d09dfbc2e12ec7a4111077f7a9e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewAtomic.hpp": "ce0f4e19ae7d976bbc9bc1284b954543fad9624903d03ff3390029cde9454535",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewCommonType.hpp": "3909199652489ffa3cd086af6e05159c225591492c53ea4de81fb217855d67b1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewCtor.hpp": "487f1b691f8854998da030738e617653e0994ab68838fe2331024bd5c3de8b31",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewDataAnalysis.hpp": "b383582edf996591554af2b42bf80da57cf00ba14474dc7de72c0993ad4f58e1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewLegacy.hpp": "6750044d192d635b926f4832b9ad1149c51c8586ee8d00c01822da9b9da3654c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewMapping.hpp": "1b4de572cda19dedbd9bc63528518d183609ca1c7264414183ba37cdb332680c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewTracker.hpp": "ee7aa425e77ba96e4fb8a87694d0fc00ffe2d16996357048184e73c41ca45b11",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewTraits.hpp": "aa798eec2753c82f118df63a13202cb12fa27bc78dd0b7af4bcfb9c46df4c2f4",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/Kokkos_ViewUniformType.hpp": "427c8bc1f1a975a1bda50aba7cdabf727f5a3b7f71d26dd10d84349fad29dd33",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Accessor.hpp": "69af6148043601c4f24e97a366c8a54a79b8f723965f51360332e099d1f412b3",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Extents.hpp": "2b251dbdbd771989575ccc432ab3a3ffb84f5f4558fb492a1a005fc62925b310",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Header.hpp": "6d29c398c02d36fa949f4b83f10bc1f44c8866c4277b7e6af82fcb3bae64c7e0",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/View/MDSpan/Kokkos_MDSpan_Layout.hpp": "d4f2314ea331ce4856d2f60fccd9c76a17a1f32d775905650c3cf00f48b93e6b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/decl/Kokkos_Declare_SERIAL.hpp": "7a7dcf349e159edf2ca872a6b92d7cbf502e212ea9b3cf81ca977ab24df07354",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/fwd/Kokkos_Fwd_SERIAL.hpp": "41792ad4f899744e7316093e1ba9c614988abbf7d61d9b1f35c414c1c65e893e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/KokkosExp_Host_IterateTile.hpp": "cfd687b7293a0f05b711653a33629478180d62e20d6494af68a7a8f373e62fe2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_AnalyzePolicy.hpp": "6d6c85fb5276a67deb3d211aab16e3c206aeb1c6bcf743e4a3ac308407ad0a83",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_ChaseLev.hpp": "640964f5f65a88166349507cb4417591959c84282ef9ac5a7e1272b875cb8dfd",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_ClockTic.hpp": "4c511582297cd5f396bd12b709768d0c67d6fab62e8b29084af9d76c65487409",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Combined_Reducer.hpp": "f173e0da6b487da5bc7b79cda558db4c3994056f24d3bc7733a2bad942c8ed36",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_ConcurrentBitset.hpp": "23818d06e06b727c7f1f474a64786067870d6beedda2dcace52242dba689f568",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_DesulAtomicsConfig.hpp": "96ddc3c14dbb9dba2853b0d94a8f3c2455f11bcb8696456add2b2ab4ae787263",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_EBO.hpp": "8b7114bd425940dc3e550cfa0da997ca618f6ed33d4586703c9d64581a8d4e43",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Error.hpp": "96424ecbae08b533bf9a8540577689717223a59c50131cf809537d109519a131",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_FunctorAnalysis.hpp": "c2466e8d19c2680b44be8ae7a7d8d3bf64f8d96ed15e38a2bdb809b925389226",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_GraphImpl_fwd.hpp": "c476458d61fcbc9d3104f5e7029f32e72bc67b5d402baf7b7572e09bcaa70a53",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Half_FloatingPointWrapper.hpp": "c64132473099d73489e69990ba6fe1cf4e48e08bf8af2125b57d382485c6a33b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Half_MathematicalFunctions.hpp": "6f393b65b0c7d1f9cbc238601ba733466a5a32c9cca49c9020daa146ed1d9efe",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Half_NumericTraits.hpp": "43bbfb9e943c7a8cf03c7af3d7dde75cbc86bd1edd8e0fd498d585df20cbd5aa",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_HostBarrier.hpp": "a4c8fa6b5525ab0a70bc375f089a44956bdbc55a1768d64c759e05ba390a6ea9",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_HostSharedPtr.hpp": "c4160aa157e65f335747479ca8cd0a7b1f82a49a0ac69fe4f2fb0afac1e32e77",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_HostSpace_ZeroMemset.hpp": "a0416d8965f754acc5a1790a17fe9e2640d3c727e181f87d5cb84750077c5ad9",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_HostSpace_deepcopy.hpp": "79a43bd17b48e11237a0be6ce70ef9631a58b4eedea9dad58a1c54e32bb069d4",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_HostThreadTeam.hpp": "9f86b68555943d8effb8e3781e0d1fc83963ebf18e45f03de96dab502076c008",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_InitializationSettings.hpp": "f4504fca2a3783229445630e685a53754e7e9bea7a340d1021190f9845b86d5f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_LIFO.hpp": "f3ddbbe44a365741805c6f7c14a4b00e9c69686d2383561a8f6384c36bcd002c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_LinkedListNode.hpp": "dd2d009c57b18e891d6b2ab0373d9bd8663e4a383ac9c88afadd55702d27a0c4",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_MultipleTaskQueue.hpp": "b9eac169440df837d760444b08952643301f1083ad9a5279ad3114e2533407c0",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_NvidiaGpuArchitectures.hpp": "7858fcb4f045f4f3f723a00b4a3daa3467fa969584bb207d2db4e33074860c31",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_OptionalRef.hpp": "465c7653dea6e9247791bca86ff614175dd687563b001f474f28c7c87fd3c8fd",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Profiling.hpp": "8f61b50bb024ba356c7f7d180940bce2e3387d0a557054f9fc15338b02570643",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Profiling_C_Interface.h": "5c7276a527609c2d62292fe6a602addb9e945f84ab828244a4e30c287235277d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Profiling_DeviceInfo.hpp": "cef0e6e7ecbd890a1880bf24fffc2eae531d2826b6442847f086345d77f60ed2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Profiling_Interface.hpp": "a606c6789f9ceae0a860501dc73a643185bfb4857f32930b23648b442ace73c2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_SharedAlloc.hpp": "860cb1b87271fbaeb7e2af3aa1e50de2c791f5619f66048381e801af7deae674",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_SimpleTaskScheduler.hpp": "4b23b8b11e5e7dbb0713c5c9bea3741ec5f65f5a03f24163a8de649a68c79b4f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_SingleTaskQueue.hpp": "5ae4381b5f7e2dc44bab8e92e0079575d276d4c25c8c664fdd1041822eda07ff",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_StringManipulation.hpp": "c7b89c7d14a059d9658cce3011f252ad0bff2dfbcb289b524fa23a379456883b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskBase.hpp": "e0b005a1ac5d716555ec78b6fa16ca8d0dcc84ae09a53a5c52ca04ac1dd74a8a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskNode.hpp": "e2391275340e00beb7a4e1a907dfa8bdc8215f262e1de18178eb1ad299601e17",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskPolicyData.hpp": "f17f374566f751b7bf8b6f91eabd045d18f4ff68336a1c741f6218561ca1f568",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskQueue.hpp": "8ba90a53d1894689c60ea33f07042fd0d1a7dfb49cc40131c6cb645db3da6568",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskQueueCommon.hpp": "b2d5617353f582df3d4d89d11b88e91bf8e8a47ca61a18d45b7e18c5bea93522",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskQueueMemoryManager.hpp": "53e40da6d69d7c7ea1d04a4741794f17d3c12fd01139ebd9b66777daa38b9ba6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskQueueMultiple.hpp": "d09621919402f51d0252a9d993f394f70faa147d31cc7042f12b89a5203457c7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskQueueMultiple_impl.hpp": "96a766de76962601521fb18ebbc49434c5e6bf04231cd894f1e1d6b27eba53fc",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskResult.hpp": "236d0f5e93c76c5819b3b5a49a5baedabc0805969ea2c506bfbe88df76bdea6b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TaskTeamMember.hpp": "79a9474163ae1162c7d6e9539c314d6172725501619262e996cf679244423341",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_TeamMDPolicy.hpp": "706e787852ce98c18152ab23da02de93b69d8c45892bfb937b0c538bd3bb9395",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Tools.hpp": "1f7959a81fd10599e32e87d20c58d516fd14e9b499cfd3e6d0ffee4834b71bdb",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Tools_Generic.hpp": "3c3e9c32abfef836deec15609e520409d6aaab9d87ac71f7f9a621ab317248af",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Traits.hpp": "c93277d6363576a48dda83ccba026e20cac2a2b283f3952ed531a34d90ce5baa",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Utilities.hpp": "73b365e23e601cefec68930b9c8de542fa28b8836527920a654349a9a1ae7eae",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_VLAEmulation.hpp": "5e473d8ccf510a5528fd2f52068e3fce92405b2bc7f475aec77cda7e8fd4419c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_Volatile_Load.hpp": "6c2e33f6bf4ad496508ac7d168484d57a14288c1b8a9ab4e353e4f5cad68472b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/impl/Kokkos_ZeroMemset_fwd.hpp": "d30eada2ea1bbb1e94649be39b679e3c9936f726c330518cff41a5f30fc43cdf",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_ExecutionSpaceTrait.hpp": "4892c2a57e766ca962ddead65dd3e567d95d52ebf0369660147cdf9364eb4050",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_GraphKernelTrait.hpp": "fd102158f39f553c2e3bb3f050bfeb071633701d14ae85e604916128290cc727",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_IndexTypeTrait.hpp": "e6abc88498cfddb8c5f0d113aebf5c5d334b40efe9a9a49ea28121d51beb100a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_IterationPatternTrait.hpp": "9d8dab7d1fa557514f6abb7623997578204a0cfee4f3df36caaac11b93b4e2b8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_LaunchBoundsTrait.hpp": "ad4b7317c6ee0643c93987e56477d271bd72992ea4438cb461a133adcd11490c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_OccupancyControlTrait.hpp": "7cf5340734fda24f3e56c98e8f09769db8addf9ce92eb7e19807696e416ba481",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_PolicyTraitAdaptor.hpp": "e483fadaee0b09b1be9c1ce4f0573df27f84f0d7ff21472504603ef63c4836b3",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_ScheduleTrait.hpp": "ef7be97363d9a4aab9d62e58b8a7dda4dc354c708f322d70cc4b8258c8f82a22",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_Traits_fwd.hpp": "a8c5eb59bc9b1b9a345d4f43f82e2b16376294110613dac52a6bf84be3622665",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_WorkItemPropertyTrait.hpp": "bd6f94946c4be87c8025d647cc5738c4eacde26b3316a8174fadf0f71d0e355b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src/traits/Kokkos_WorkTagTrait.hpp": "5618fc4e489965214a8dd4c2103f7ea5811d39955502b729bb6777031d2cc0c2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Adapt_GCC.hpp": "b0a0f62f58348695b6193ada64b482a696d60199821cb9fbefa524dfe6386625",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Atomic_Ref.hpp": "560a09f728c34b741d77424964892cdc098eaa396e78cc89c3490b26116586fa",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Common.hpp": "0f99de3e3db676beea8400e863a5ccf0ddcb2920db1f6222a191cda89f66cf58",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Compare_Exchange.hpp": "2c231e55d17a43d2bb9fe1b0a1435704c680e16643a3f147bd0dd2bb09b14f83",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Compare_Exchange_GCC.hpp": "70ce7a16bd501d4dd6aeebbf173ab6511859623b4cdd58a2c6735c6ff7983d2a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Compare_Exchange_ScopeCaller.hpp": "649641e9b2932ce53354ff0ee810feeddb1ac94e579a324b5ed5fd1b6b37074c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Fetch_Op.hpp": "3868eeac956dbe90ea72aba7312adf886b5132dab205c42fa8ab852b74538b96",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Fetch_Op_GCC.hpp": "4fa0f20d79020de21d5c6de6fb36869cc518eec3be335508ea2c994c6617d02a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Fetch_Op_Generic.hpp": "749089a5f99653f8fe0e6e0ebbfb0107d772069213954650078d90d967029480",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Fetch_Op_ScopeCaller.hpp": "92aa293acfda19751507f10d034bf07cce6118a5f547ae90916dc8bea70243db",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Generic.hpp": "fe5db8982a914fef5632e5e798de5bd4e4ffe284943235592e6a4c5c5f53bca8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Lock_Array.hpp": "ad1633f3b78b89dfbd663d406fa483bd2b3e4c5ef19564281af485d52fef1564",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Lock_Based_Fetch_Op.hpp": "5b6543b593f492f71733e3e899f303818d3f7f6799d52e61fda737a1eb308c1b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Lock_Based_Fetch_Op_Host.hpp": "47372d8e20a0a6886508f9e8bb6bbb955cd11fc7a36df5fbafc4f607385a78e7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Lock_Free_Fetch_Op.hpp": "d3d27735db14be608084393b1941e208b5359d504da440919afb22a1eee45c8b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Macros.hpp": "6742f0b7e582f5b1345a3b2425ad6487a89d6245627ed8dbb594da2e210a6297",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Operator_Function_Objects.hpp": "98d850e15e238305ca1fd35ba69b103a20c4fc4863102138c3ebb54d95c0c504",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Thread_Fence.hpp": "b9bba064c60eaef76122b5ec69be0ab88a168285c740a23b923e99d39300735f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Thread_Fence_GCC.hpp": "c5528adcaad8bdc9b6719a95fbbe98e08272b3aef2add9da7fbdab34d9f073f2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics/Thread_Fence_ScopeCaller.hpp": "f63facfde57fa0a58d8493795e758a8d40470f928c97f80e2ba357df74fa5206",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include/desul/atomics.hpp": "3b4464cd05d021e3139f8c3171183b472ab2212bf113bfe7679c9eaed9232ad6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/../__p2642_bits/../__p0009_bits/dynamic_extent.hpp": "44db5333096629fe2bf6c379d78254e273cbbddd96c6dc4b6e1fcd63bd4d816f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/../__p2642_bits/../__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/../__p2642_bits/layout_padded_fwd.hpp": "2f16852249f363913b384a1dcf87091906f205db4d4855a55895e2f07ae83030",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/compressed_pair.hpp": "b12157142839c5a18501d3c8b8390aa387fd2484a9725f3f8216436f3a458908",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/config.hpp": "00d00945c079dc425835ed8b6eabea5247113e4f5146ffd512364ea11837465a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/default_accessor.hpp": "c223542656806eab4e74ea167fc7ca12a425f48e8a165464886f5a4f3e05d5f8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/dynamic_extent.hpp": "44db5333096629fe2bf6c379d78254e273cbbddd96c6dc4b6e1fcd63bd4d816f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/extents.hpp": "5552a0f633d8846d3655b05859a97820a1e81c724d4e6ce0e60d63d2e7d06808",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/full_extent_t.hpp": "33f70b7fa2167ffad361f000f780b62bafac5a026a5c8f08ae9c8271405a2c41",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/layout_left.hpp": "fc6fc36b7bb53546dba651c90d27bc8e9d673f3c7d0d6166ca068382d493503c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/layout_right.hpp": "5a411b04a160fe8ebaa06bd572cd816bb46e69ec731932d815505cb5d1fff9dc",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/layout_stride.hpp": "553859d5511995159ce79159cbb8fa597991fa6b3897fe2428bfc0ec7a6dcbef",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/macros.hpp": "447c342dfcc74e66b74a5f4bbc3d0f8d2b76276f120fe765bd7ff947d24e97e2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/mdspan.hpp": "19bfb3af0e0da44dbafb357534920132d5684e3f538203ef42e22f261d156345",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/trait_backports.hpp": "fa5856564e40b42941a531ae87ee1496328c29c0dc07453d8baa6a59f12d19b5",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2389_bits/dims.hpp": "b7354bf2f10878bbe3c8dbdc808549a682d09ce04268f7b35edec2c86807d86a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/../__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/strided_slice.hpp": "2d903163fe0367dc0301c06bc3be6e8830f1e475ba16d67a60b2cfc4b991c148",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/submdspan.hpp": "fdb1097ecf664f51a1d93126648acf527df0b1bb3e5a91840bb50d932a1839c9",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/submdspan_extents.hpp": "d27a54b212bfe517e31e490af5ccb536f05661fbc74f68a2aa65e6433df12395",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2630_bits/submdspan_mapping.hpp": "a6da27289bd82a6a40b37ba86415e7ab309b813e5b0cc2febe7addc34737046f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/dynamic_extent.hpp": "44db5333096629fe2bf6c379d78254e273cbbddd96c6dc4b6e1fcd63bd4d816f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/extents.hpp": "5552a0f633d8846d3655b05859a97820a1e81c724d4e6ce0e60d63d2e7d06808",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/layout_left.hpp": "fc6fc36b7bb53546dba651c90d27bc8e9d673f3c7d0d6166ca068382d493503c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/layout_right.hpp": "5a411b04a160fe8ebaa06bd572cd816bb46e69ec731932d815505cb5d1fff9dc",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/layout_stride.hpp": "553859d5511995159ce79159cbb8fa597991fa6b3897fe2428bfc0ec7a6dcbef",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/mdspan.hpp": "19bfb3af0e0da44dbafb357534920132d5684e3f538203ef42e22f261d156345",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/../__p0009_bits/utility.hpp": "faf0f98124a7ec0d55fdb8a137244b25a891a8859ed54e73ed46d3d89884d770",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/layout_padded.hpp": "c09e43f07a3d3c969799986f88698cc0ef3b02dc776c4b3cb2893e35ebe5bd06",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/../experimental/__p2642_bits/layout_padded_fwd.hpp": "2f16852249f363913b384a1dcf87091906f205db4d4855a55895e2f07ae83030",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include/mdspan/mdspan.hpp": "abf0d6cd6ef0c359a59654861df5fc0084864d6d07696ba762423531d29d6bea"
+  },
+  "runs": {
+    "contract-build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/tst/elliptic_shift_3d/test_hermite_sampler_contract.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/contract",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.8409352090000002
+    },
+    "mms-build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/tst/elliptic_shift_3d/test_hermite_sampler_mms.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 2.231376625
+    },
+    "pole-build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/tst/elliptic_shift_3d/test_hermite_sampler_pole.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/pole",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 2.581408667
+    },
+    "benchmark-build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/source/tst/elliptic_shift_3d/benchmark_hermite_sampler.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/benchmark",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.8767066249999997
+    },
+    "contract": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/contract"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5620444160000009
+    },
+    "mms-1-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "6",
+        "1",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.630885790999999
+    },
+    "mms-1-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "6",
+        "1",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2105598749999995
+    },
+    "mms-1-1-12-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "12",
+        "1",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.39069416700000126
+    },
+    "mms-1-1-12-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "12",
+        "1",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.45063850000000016
+    },
+    "mms-1-1-18-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "18",
+        "1",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.7378245420000002
+    },
+    "mms-1-1-18-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "18",
+        "1",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.811228332999999
+    },
+    "mms-2-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "6",
+        "2",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.1964531659999995
+    },
+    "mms-2-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "6",
+        "2",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.21098950000000016
+    },
+    "mms-2-1-10-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "10",
+        "2",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3295125410000015
+    },
+    "mms-2-1-10-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "10",
+        "2",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3912357499999999
+    },
+    "mms-2-1-14-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "14",
+        "2",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5714803330000002
+    },
+    "mms-2-1-14-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "14",
+        "2",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5714229999999993
+    },
+    "mms-7-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "6",
+        "7",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2711515000000002
+    },
+    "mms-7-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "6",
+        "7",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.27144266600000044
+    },
+    "mms-7-1-8-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "8",
+        "7",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.372519166
+    },
+    "mms-7-1-8-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "8",
+        "7",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3913107079999989
+    },
+    "mms-7-1-10-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "10",
+        "7",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.45146058399999944
+    },
+    "mms-7-1-10-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "10",
+        "7",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5101300420000001
+    },
+    "mms-7-2-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "6",
+        "7",
+        "2",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8066669160000011
+    },
+    "mms-7-2-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/mms",
+        "6",
+        "7",
+        "2",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8781789579999995
+    },
+    "pole": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/pole",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/coupled.bin",
+        "b79a95d2b4452b4ec64e32be753c54f78a4551b115f46ff4a133fb7bdbdb69f1",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/sampler-poles.csv"
+      ],
+      "exit_code": 0,
+      "seconds": 1.5584584160000006
+    },
+    "benchmark": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/hermite-sampler-owned-frame-20261027/benchmark",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/coupled.bin",
+        "b79a95d2b4452b4ec64e32be753c54f78a4551b115f46ff4a133fb7bdbdb69f1"
+      ],
+      "exit_code": 0,
+      "seconds": 1.5179052499999983
+    }
+  },
+  "inputs_unchanged": true,
+  "runtime_unchanged": true
+}

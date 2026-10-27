@@ -1,0 +1,123 @@
+{
+  "scope": "Centered cross-face angular derivative diagnostic, no PDE/operator adoption",
+  "inputs": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/source.tar.gz",
+      "sha256": "c0416af19238b5825f9fa50b9b418d9507db5c76a9bf868400baeb3c6cc0d8c4"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/coupled.bin",
+      "sha256": "707775e24015e214be01d0667e5d2c11142eae4d9bd6d9098b2e35ad5c0481b8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/centered_surface_atlas.hpp",
+      "sha256": "9247b06dd8b131b65dabdc83c32cbbca8b9a5125aab97f62bd6e40bffc459d5b"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_centered_surface_atlas.cpp",
+      "sha256": "bf8abed5113e6ade55d33678ef5e21473b041bb6e7458e65f896f860884e7a0d"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/diagnose_scri_atlas.cpp",
+      "sha256": "9dc560efa1661ecde87f1631b842af79fffd5ac609ec14774b888369077b972c"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/diagnose_scri_pole.cpp",
+      "sha256": "34bd54f70f0354ffe7f7b8c3eac5eafa23960e5830d9dd63b9ce06d716907c70"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/cross_face_boundary_probe.hpp",
+      "sha256": "10996a0f8079243fc39ff058e26e56bd0bd64aa0b1e45b4ef239bbb6a7a00540"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_cross_face_boundary_probe.cpp",
+      "sha256": "3f510ada9a0c6102d50680ba32aa676612a0eecf58e037f40df5c6bffead0b5f"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/volume_mls_probe.hpp",
+      "sha256": "89f61b6e4d1232c42e574e10e6fbc9a1ed90af3f4845d321c5fe0b8415cf6e4d"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/surface_mls_probe.hpp",
+      "sha256": "0df5c68435bc5a8c9f74d4f28786a17ea5c694207e372eb95a8d7481bb6998fa"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_volume_mls_probe.cpp",
+      "sha256": "8346ddd3a5e4982ae0887121b50c1df369c8c0bef1acc40f352d0ab7678624b3"
+    }
+  ],
+  "runs": {
+    "build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-volume-mls-transition-family-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-volume-mls-transition-family-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-volume-mls-transition-family-20261027/source/tst/elliptic_shift_3d/test_volume_mls_probe.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-volume-mls-transition-family-20261027/full-jet-mms",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.8474083749999999
+    },
+    "mms-1-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-volume-mls-transition-family-20261027/full-jet-mms",
+        "6",
+        "1",
+        "1",
+        "6",
+        "512"
+      ],
+      "exit_code": 0,
+      "seconds": 16.067333958000003
+    },
+    "mms-1-1-12-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-volume-mls-transition-family-20261027/full-jet-mms",
+        "12",
+        "1",
+        "1",
+        "6",
+        "512"
+      ],
+      "exit_code": 0,
+      "seconds": 31.532914916000003
+    },
+    "mms-1-1-18-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-volume-mls-transition-family-20261027/full-jet-mms",
+        "18",
+        "1",
+        "1",
+        "6",
+        "512"
+      ],
+      "exit_code": 0,
+      "seconds": 51.22921320900001
+    }
+  },
+  "inputs_unchanged": true
+}

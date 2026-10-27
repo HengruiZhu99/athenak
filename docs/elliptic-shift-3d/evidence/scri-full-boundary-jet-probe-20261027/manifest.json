@@ -1,0 +1,229 @@
+{
+  "scope": "Centered cross-face angular derivative diagnostic, no PDE/operator adoption",
+  "inputs": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/source.tar.gz",
+      "sha256": "c0416af19238b5825f9fa50b9b418d9507db5c76a9bf868400baeb3c6cc0d8c4"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-log-halo-coupled-20261027/coupled.bin",
+      "sha256": "707775e24015e214be01d0667e5d2c11142eae4d9bd6d9098b2e35ad5c0481b8"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/centered_surface_atlas.hpp",
+      "sha256": "d3c715fb898cefb0d2cb4bb15336b533e69df6d9e8355ca8a211b62088ef2152"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_centered_surface_atlas.cpp",
+      "sha256": "bf8abed5113e6ade55d33678ef5e21473b041bb6e7458e65f896f860884e7a0d"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/diagnose_scri_atlas.cpp",
+      "sha256": "9dc560efa1661ecde87f1631b842af79fffd5ac609ec14774b888369077b972c"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/diagnose_scri_pole.cpp",
+      "sha256": "34bd54f70f0354ffe7f7b8c3eac5eafa23960e5830d9dd63b9ce06d716907c70"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/cross_face_boundary_probe.hpp",
+      "sha256": "0be05793f6e783d8e817a45282f3a40667bdb447ead2c34720c234670e1afdf0"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_cross_face_boundary_probe.cpp",
+      "sha256": "ad848be3e8a75bfa79b76870a2d96b8654e6b1808698f746cb10ed439a380028"
+    }
+  ],
+  "runs": {
+    "build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/source/tst/elliptic_shift_3d/test_cross_face_boundary_probe.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.3476287919999999
+    },
+    "mms-1-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "6",
+        "1",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.6143954589999998
+    },
+    "mms-1-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "6",
+        "1",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.145911833
+    },
+    "mms-1-1-12-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "12",
+        "1",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2106890840000002
+    },
+    "mms-1-1-18-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "18",
+        "1",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3790225839999999
+    },
+    "mms-2-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "6",
+        "2",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.15126474999999973
+    },
+    "mms-2-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "6",
+        "2",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.15074004100000016
+    },
+    "mms-2-1-10-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "10",
+        "2",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.21073308300000004
+    },
+    "mms-2-1-14-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "14",
+        "2",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3307526660000004
+    },
+    "mms-7-1-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "6",
+        "7",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.15174683300000025
+    },
+    "mms-7-1-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "6",
+        "7",
+        "1",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.20830333299999992
+    },
+    "mms-7-1-8-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "8",
+        "7",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.21155841699999955
+    },
+    "mms-7-1-10-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "10",
+        "7",
+        "1",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.3207530830000005
+    },
+    "mms-7-2-6-6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "6",
+        "7",
+        "2",
+        "6"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5063140000000006
+    },
+    "mms-7-2-6-7": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/scri-full-boundary-jet-probe-20261027/full-jet-mms",
+        "6",
+        "7",
+        "2",
+        "7"
+      ],
+      "exit_code": 0,
+      "seconds": 0.5711452919999997
+    }
+  },
+  "inputs_unchanged": true
+}
