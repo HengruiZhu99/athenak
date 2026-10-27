@@ -1,10 +1,10 @@
 # Elliptic-shift hyperboloidal evolution: PRD-style working manuscript
 
-Evidence snapshot: 26 October 2026, updated at the requested finest-grid stopping point. The original experiment and its failures are retained. A new section reports the separately authorized spherical conformal telegrapher follow-up. Completion of its fixed-parameter spatial study does not complete the unrun robustness controls or the broader research program.
+Evidence snapshot: 26 October 2026, with the completed spatial study and an explicitly interim long-duration continuation. The original experiment and its failures are retained. A new section reports the separately authorized spherical conformal telegrapher follow-up. Completion of its fixed-parameter spatial study does not complete the unrun robustness controls or the broader research program.
 
 ## Read and build
 
-- `main.pdf`: compiled 23-page manuscript with thirteen vector figures and four tables, including five new figures for the telegrapher follow-up.
+- `main.pdf`: compiled 24-page manuscript with fourteen vector figures and four tables, including the telegrapher follow-up and an interim long-duration diagnostic.
 - `main.tex`, `sections/`, `references.tex`: editable LaTeX source.
 - Requires REVTeX 4.2, AMS packages, graphicx, booktabs, hyperref, and standard T1 fonts. Tested with TeX Live 2026.
 
@@ -22,9 +22,10 @@ The bibliography is embedded in `references.tex`; no BibTeX step is needed. REVT
 ```sh
 python3 make_figures.py
 python3 make_telegraph_figures.py
+python3 make_long_puncture_figure.py
 ```
 
-Requires NumPy and Matplotlib; plotting uses only the included `data/` files. Together these regenerate thirteen PDF and PNG figures without the simulation repository or binaries. Existing figures can be used directly without Python. The input data are deterministic saved numerical results, not fitted or synthetic substitutes. Guide slopes are labeled in the figures.
+Requires NumPy and Matplotlib; plotting uses only the included `data/` files. Together these regenerate fourteen PDF and PNG figures without the simulation repository or binaries. Existing figures can be used directly without Python. The input data are deterministic saved numerical results, not fitted or synthetic substitutes. Guide slopes are labeled in the figures.
 
 `data/evidence.json` preserves the source review records and selected history columns. `data/manifests/` retains complete inputs and source/executable bindings for plotted histories. Compressed `.npz` files contain selected exact-time inner profiles. `data/support/` includes the saved implementation test log, formulation notes, and acceptance protocols. The progress log is chronological historical evidence, not a current acceptance certificate.
 
@@ -46,4 +47,14 @@ See `integrity-audit.md` for the document checks and evidence mapping.
 
 No inner excision or constraint masking is used in the new full-domain runs. The radial RMS downweights small radii, so unweighted Hamiltonian maxima are retained. A nonmonotone late lapse bump and strong characteristic compression remain visible. Ordered finite-grid rays are not proof of continuum shock avoidance. Independent quadrature, KO-amplitude and adjacent relaxation-parameter studies were not run at the requested stopping point. No robust-stability or completed wormhole-to-trumpet claim is made.
 
-Final status: the fixed candidate passes the declared spatial checks through t=10. The quarter-step control is paused at t=8.35, so full-duration temporal order remains unverified. Further experiments are paused at the user-requested stopping point.
+Current status: the fixed candidate passes the declared spatial checks through t=10. The quarter-step control remains paused at t=8.35, so full-duration temporal order remains unverified. A separately authorized N=1025 continuation targets t=500 using the identical frozen scheme and verified puncture checkpoint. It is still running at this manuscript snapshot; the new figure and discussion deliberately stop at t=20, with a nearly steady late exterior constraint budget and accurate apparent-horizon mass. Large interior errors are retained separately and excluded from this revised budget.
+
+## Appendix baseline and long-duration snapshot
+
+The original Figure 6 is now Figure 14 in Appendix A, explicitly labeled as the pre-telegrapher baseline. Its data, failure interpretation, mathematical content, and citations are retained. The introduction and main results now emphasize the completed three-grid telegrapher study.
+
+Figure 13 is a separate single-grid duration pilot, not an extension of the three-grid convergence claim. `data/long-puncture/` preserves an explicitly interim export through t=20, the running manifest snapshot, verified parent checkpoint hash, launch command, predeclared t=500 target, and raw profile extracts. `collect_long_puncture.py --through 20` documents that export from the numerical workspace; the output directory must not already exist. It checks frozen bindings, exact restart overlap, profile finiteness, and recomputed full-domain norms. `make_long_puncture_figure.py` redraws the figure using only bundled data.
+
+The t=500 attempt remains in `output/elliptic-shift-1d/telegraph-long-puncture-500-v1` in the original repository. The bundle is a fixed evidence snapshot and does not track subsequent progress automatically. Native survival and scientific accuracy are distinct. The revised long-run budget excludes the apparent-horizon interior, normalizes RMS norms over the exterior, and treats apparent-horizon mass conservation as the primary invariant. Puncture mass estimates are archived diagnostics, not acceptance quantities. The original full-domain three-grid assessment remains unchanged.
+
+The user-authorized budget amendment is preserved in `data/long-puncture/exterior-budget.json`. The optional `python3 make_long_puncture_figure.py --full-domain-control` produces a separately labeled full-domain diagnostic plot; it is not the primary long-run budget or the plot used in the paper.

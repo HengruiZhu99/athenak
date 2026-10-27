@@ -1,6 +1,6 @@
 \section{Numerical results}
 \label{sec:results}
-Table~\ref{tab:experiments} identifies the historical experiment families. All times are in compactification units, not automatically in units of the black-hole mass. The historical runs in this section were already available for the original manuscript. Section~\ref{sec:telegraph} reports the subsequently authorized telegrapher investigation separately.
+Table~\ref{tab:experiments} identifies the historical experiment families. All times are in compactification units, not automatically in units of the black-hole mass. The historical runs in this section were already available for the original manuscript. The principal new strong-field result is the full-domain telegrapher study in Sec.~\ref{sec:telegraph}; the historical trials below provide controls and document the failures that motivated it.
 
 \begin{table*}[tp]
 \caption{Principal historical evidence families. ``Completed'' means the integrator reached its target, not that the scientific acceptance criteria passed. All listed coupled evolutions use actual scri. Q denotes quadrature shift integration and B denotes the right-biased discrete shift equation. The independent scalar solver is a separate fixed-background control.}
@@ -106,13 +106,7 @@ The inner region remains the two-ended isotropic wormhole,
 \end{equation}
 An isotropic compactifying map gives $g=1$ and joins this interior to a hyperboloidal exterior. The second asymptotically flat end is excluded from the outer height transition. The construction is analytically vacuum; the recorded initial-data audit gives Hamiltonian and momentum errors below $2.3\times10^{-13}$ and $3.9\times10^{-14}$ at its tested points.
 
-For $M=1/3$ and $\nu=1$, the modified logarithmic source still produces a sharp inward-moving front. At $t=2.5$, the physical-lapse gradient near $r=0.119$ increases from $22.86$ to $40.65$ to $76.92$ as $N$ increases from $513$ to $1025$ to $2049$. The trace develops a narrow negative spike, and local Hamiltonian maxima increase from $0.409$ to $0.654$ to $0.974$ (Fig.~\ref{fig:front}). The front subsequently moves inward. These data rule out a smooth, resolved convergence interpretation of that trial. They support a gauge-steepening diagnosis, but do not prove a gauge-shock theorem for this spherical, nonlocal-shift system. Results for simpler slicing systems\cite{Alcubierre2005,BaumgarteHilditch2022} motivate this interpretation without establishing it here.
-
-\begin{figure*}[tp]
- \includegraphics[width=\textwidth]{wormhole_front}
- \caption{Failed $\nu=1$ wormhole trial with the modified logarithmic source, shown at the exact saved time $t=2.5$. The physical lapse steepens, $\Kh$ develops a narrow spike, and the local Hamiltonian error grows under refinement. The gradient diagnostic in (d) uses second-order differentiation of saved profiles; it is not the evolution stencil. This is evidence of unresolved steepening, not a proof of a continuum shock.}
- \label{fig:front}
-\end{figure*}
+The pre-telegrapher $\nu=1$ trial develops unresolved lapse steepening and Hamiltonian errors that grow under refinement. Appendix~\ref{app:pre-telegrapher} retains this failed baseline and its original profiles (Fig.~\ref{fig:front}). The current full-domain result is the fixed-parameter telegrapher study in Sec.~\ref{sec:telegraph}: its three-grid comparison resolves the finite-duration inward layer through $t=10$, while retaining a narrow nonmonotone lapse structure. The following source and retained-domain trials document the earlier attempts.
 
 Reducing the positive logarithmic coefficient to $\nu=0.25$ improves the early evolution. Full-domain prefixes on $N=2049,4097,8193$ through $t=3.2$ give peak physical-field self-convergence orders $5.50$ in the bulk and $5.86$ near scri. The peak accepted momentum RMS decreases as $2.77\times10^{-5}$, $1.47\times10^{-6}$, and $6.87\times10^{-8}$. The Hamiltonian RMS, however, is $1.01\times10^{-7}$, $3.00\times10^{-9}$, and $5.37\times10^{-9}$; the finest upturn remains visible. These are prefix results only. An existing exact-source continuation of $N=4097$ reaches $t=3.6$, but does not supply the missing full long-duration study.
 

@@ -54,3 +54,25 @@ The tracked rays retain their ordering in the sampled spatial comparison. At $t=
 
 \subsection{Independent timestep evidence at the stopping point}
 \input{data/telegraph/time-assessment}
+
+
+\subsection{Long-duration puncture pilot: interim exterior budget}
+\label{sec:tele-long}
+A separate low-resolution continuation targets $t=500$ on $N=1025$, starting from the verified $t=10$ checkpoint of the genuine wormhole trajectory. The frozen numerical source, binaries, map, CFL factor, relaxation parameters, and full-domain boundary treatment are unchanged. This is a single-grid survival pilot, not an additional convergence study. At this manuscript snapshot the evolution is still running; Fig.~\ref{fig:tele-long} reports validated saved states only through $t=20$. Reaching $t=500$ has not been demonstrated.
+
+For this long-duration pilot we assess an apparent-horizon-exterior error budget and take apparent-horizon mass conservation as the primary invariant check. At each saved time, let $E(t)=\{i:r_i\geq r_{\rm AH}(t)\}$, where the existing outgoing-expansion finder locates $r_{\rm AH}$. With the same mapped radial weights $w_i=r_i^2(\dd r/\dd x)_i$ used previously, define
+\begin{equation}
+ \|C\|_{r,E}^2=\frac{\sum_{i\in E(t)}w_i C_i^2}{\sum_{i\in E(t)}w_i},
+ \qquad C\in\{\HH,\MM,\Th,Z_r\}.
+\end{equation}
+The pointwise budget uses $\max_{i\in E(t)}|C_i|$. Interior errors and puncture-end mass estimates are excluded from this budget. The normalization uses only exterior weights, rather than filling the excluded interior with zeros. This is a diagnostic selection: the evolution still includes every puncture-interior node. The historical three-grid full-domain assessment through $t=10$ remains unchanged and is labeled separately.
+
+At $t=20$, the exterior RMS values for $(\HH,\MM,\Th,Z_r)$ are $(1.79\times10^{-7},2.44\times10^{-6},5.00\times10^{-8},5.21\times10^{-7})$. The exterior Hamiltonian maximum is $5.88\times10^{-6}$. These late values are nearly unchanged from $t=10$. The initial transient remains in the budget: the maximum sampled exterior Hamiltonian and momentum RMS values on $0\leq t\leq20$ are $1.84\times10^{-5}$ and $4.92\times10^{-5}$. The apparent-horizon mass error is $2.14\times10^{-8}$ at $t=20$, or $6.43\times10^{-8}$ relative to $M=1/3$; its peak sampled absolute error over the whole interval is $8.79\times10^{-7}$, corresponding to relative error $2.64\times10^{-6}$.
+
+For localization only, the full-grid Hamiltonian maximum grows from $8.12\times10^{-2}$ at $t=10$ to $1.18\times10^3$ at $t=20$, while its full-domain radial RMS remains near $5.40\times10^{-6}$. The maximum at $t=20$ lies at the fifth positive-radius node, $r=9.52\times10^{-9}$, well inside the apparent horizon near $r=0.10765$. The first positive node is at $r=1.79\times10^{-9}$. This interior growth is excluded from the exterior budget and does not by itself reject an otherwise accurate exterior solution. Puncture-end mass estimates are retained only in the archived diagnostics. The present evidence supports a nearly steady late exterior error budget and preserved horizon mass through $t=20$ on this grid; longer survival and exterior convergence remain to be assessed. Because the shift is determined elliptically, causal isolation of all interior numerical errors is not assumed from the horizon location alone.
+
+\begin{figure*}[tp]
+ \includegraphics[width=\textwidth]{telegraph_long_puncture}
+ \caption{Interim evidence through $t=20$ from the $N=1025$ puncture continuation targeting $t=500$, which is still running at this snapshot. The dotted line marks the verified restart at $t=10$. (a) Apparent-horizon-exterior radial RMS constraints, normalized over the exterior region. (b) Exterior Hamiltonian maximum, with the full-grid curve retained only to localize the interior growth. (c) Raw physical-lapse profiles near the puncture. (d) Relative apparent-horizon mass error, the primary invariant in the revised long-run budget. Puncture mass estimates do not enter this budget. Every full-domain RMS was checked against the history record before recomputing the exterior norms from saved fields. This single-grid interim result is not a completed long-time stability or convergence claim.}
+ \label{fig:tele-long}
+\end{figure*}
