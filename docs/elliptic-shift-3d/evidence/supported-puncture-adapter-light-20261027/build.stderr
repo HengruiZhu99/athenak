@@ -1,0 +1,13 @@
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/supported-puncture-adapter-light-20261027/source/tst/elliptic_shift_3d/test_supported_puncture_adapter.cpp:18:53: error: no member named 'PunctureLogPlans' in namespace 'z4c::hyperboloidal'
+   18 |   {const auto t=std::chrono::steady_clock::now();h::PunctureLogPlans reference(grid);
+      |                                                     ^~~~~~~~~~~~~~~~
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/supported-puncture-adapter-light-20261027/source/tst/elliptic_shift_3d/test_supported_puncture_adapter.cpp:20:8: error: use of undeclared identifier 'reference'
+   20 |     if(reference.rows.size()!=plans.Rows().size())throw std::runtime_error("query selection changed");
+      |        ^~~~~~~~~
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/supported-puncture-adapter-light-20261027/source/tst/elliptic_shift_3d/test_supported_puncture_adapter.cpp:21:22: error: use of undeclared identifier 'reference'
+   21 |     for(size_t i=0;i<reference.rows.size();++i){const auto &a=reference.rows[i];const auto &b=plans.Rows()[i];
+      |                      ^~~~~~~~~
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/supported-puncture-adapter-light-20261027/source/tst/elliptic_shift_3d/test_supported_puncture_adapter.cpp:21:63: error: use of undeclared identifier 'reference'
+   21 |     for(size_t i=0;i<reference.rows.size();++i){const auto &a=reference.rows[i];const auto &b=plans.Rows()[i];
+      |                                                               ^~~~~~~~~
+4 errors generated.

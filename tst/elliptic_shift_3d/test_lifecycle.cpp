@@ -62,14 +62,22 @@ int main(int argc, char **argv) {
             && loaded.mesh.blocks.size() == 63 && loaded.mesh.radii == snapshot.mesh.radii
             && loaded.mesh.revision == 1 && loaded.step == 2
             && loaded.telegraph_width==snapshot.telegraph_width
-            && loaded.log_halo_radius==snapshot.log_halo_radius, "checkpoint exact payload");
+            && loaded.log_halo_radius==snapshot.log_halo_radius
+            && loaded.puncture_derivative_scheme==0, "checkpoint exact payload");
     // Version13 fixed its optional halo support at .12. Removing only the new
     // trailing radius and rebuilding the receipt tests real backward decoding.
     std::ifstream raw_in(path,std::ios::binary);std::vector<char> raw((std::istreambuf_iterator<char>(raw_in)),{});
     auto seal=[](std::vector<char> &bytes){std::uint64_t sum=14695981039346656037ull;
       for(size_t i=0;i<bytes.size()-8;++i){sum^=static_cast<unsigned char>(bytes[i]);sum*=1099511628211ull;}
       std::memcpy(bytes.data()+bytes.size()-8,&sum,8);};
-    auto old=raw;old.erase(old.end()-16,old.end()-8);const std::uint32_t old_version=13;
+    auto version14=raw;version14.erase(version14.end()-12,version14.end()-8);const std::uint32_t v14=14;
+    std::memcpy(version14.data()+8,&v14,4);seal(version14);
+    const std::string v14_path=path+".v14";
+    {std::ofstream out(v14_path,std::ios::binary);out.write(version14.data(),version14.size());}
+    const auto radius_only=CompositeCheckpoint::Read(v14_path,snapshot.source_tag);
+    Require(radius_only.log_halo_radius==.24&&radius_only.puncture_derivative_scheme==0,"v14 baseline scheme backward decode");
+    std::filesystem::remove(v14_path);
+    auto old=version14;old.erase(old.end()-16,old.end()-8);const std::uint32_t old_version=13;
     std::memcpy(old.data()+8,&old_version,4);seal(old);
     const std::string old_path=path+".v13";
     {std::ofstream out(old_path,std::ios::binary);out.write(old.data(),old.size());}
@@ -77,9 +85,24 @@ int main(int argc, char **argv) {
     Require(legacy.fields==snapshot.fields&&legacy.log_halo_radius==.12,"v13 fixed-support backward decode");
     std::filesystem::remove(old_path);
     auto bad_radius=raw;const Real invalid_radius=std::numeric_limits<Real>::quiet_NaN();
-    std::memcpy(bad_radius.data()+bad_radius.size()-16,&invalid_radius,8);seal(bad_radius);
+    std::memcpy(bad_radius.data()+bad_radius.size()-20,&invalid_radius,8);seal(bad_radius);
     {std::ofstream out(old_path,std::ios::binary);out.write(bad_radius.data(),bad_radius.size());}
     Reject([&]{CompositeCheckpoint::Read(old_path,snapshot.source_tag);},"checksummed nonfinite halo radius accepted");
+    std::filesystem::remove(old_path);
+    auto bad_scheme=raw;const int unsupported_scheme=2;
+    std::memcpy(bad_scheme.data()+bad_scheme.size()-12,&unsupported_scheme,4);seal(bad_scheme);
+    {std::ofstream out(old_path,std::ios::binary);out.write(bad_scheme.data(),bad_scheme.size());}
+    Reject([&]{CompositeCheckpoint::Read(old_path,snapshot.source_tag);},"checksummed unsupported derivative scheme accepted");
+    std::filesystem::remove(old_path);
+    auto advanced=snapshot;advanced.wormhole_chart=true;advanced.boundary_scheme=1;
+    advanced.positive_storage=2;advanced.enriched_log_derivatives=true;advanced.puncture_derivative_scheme=1;
+    size_t boundary_points=0;for(const auto &b:advanced.mesh.blocks)
+      if(b.layer==int(advanced.mesh.radii.size())-1)boundary_points+=advanced.mesh.cells*advanced.mesh.cells;
+    advanced.boundary_fields.assign(boundary_points*advanced.components,0);
+    CompositeCheckpoint::Write(old_path,advanced);
+    Require(CompositeCheckpoint::Read(old_path,snapshot.source_tag).puncture_derivative_scheme==1,"supported derivative scheme roundtrip");
+    advanced.positive_storage=1;
+    Reject([&]{CompositeCheckpoint::Write(old_path,advanced);},"supported derivative with incompatible storage accepted");
     std::filesystem::remove(old_path);
     CompositeDifference restored(loaded.mesh,4,loaded.radial_interface_stencils);
     Require(restored.active == refined.active && restored.halos.size() == refined.halos.size(),

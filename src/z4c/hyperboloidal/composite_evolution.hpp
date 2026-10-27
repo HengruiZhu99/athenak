@@ -21,6 +21,7 @@
 #include "z4c/hyperboloidal/tensor_scri.hpp"
 #include "z4c/hyperboloidal/composite_state.hpp"
 #include "z4c/hyperboloidal/puncture_log_plans.hpp"
+#include "z4c/hyperboloidal/supported_puncture_log_plans.hpp"
 #include "z4c/hyperboloidal/puncture_log_value_plans.hpp"
 
 namespace z4c {
@@ -59,28 +60,40 @@ class CompositeTensorEvolution {
   Real pole_sat=4,regularity_sat=8;
   Real telegraph_width=.24;
   std::unique_ptr<PunctureLogPlans> log_plans;
+  std::unique_ptr<SupportedPunctureLogPlans> supported_log_plans;
+  int puncture_derivative_scheme=0;
   std::unique_ptr<PunctureLogValuePlans> log_halo_plans;
   double log_halo_setup_seconds=0;
   Real log_halo_radius=.12;
   Real boundary_pole=0,raw_clock_rate=0,boundary_regularity=0;
   CompositeTensorEvolution(int n, int shells, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
       : CompositeTensorEvolution(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order,regular_scri) {}
-  CompositeTensorEvolution(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false,bool log_halos=false,Real halo_radius=.12)
+  CompositeTensorEvolution(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false,bool log_halos=false,Real halo_radius=.12,int puncture_scheme=0)
       : shift(std::move(mesh), order,radial_stencils,radial_lines,topology),
         state(fields*shift.grid.active.size(), 0), beta_delta(3*shift.grid.active.size(), 0),
         elliptic_atol(tolerance), telegraph(flux),wormhole(puncture),isotropic_reference(matched),positive_storage(positive_mode),telegraph_width(taper_width),log_halo_radius(halo_radius) {
+    if(puncture_scheme<0||puncture_scheme>1||(puncture_scheme&&(!enriched||!regular_scri)))
+      throw std::invalid_argument("unsupported experimental puncture derivative scheme");
+    puncture_derivative_scheme=puncture_scheme;
     if(enriched){if(!wormhole||positive_storage!=2)throw std::invalid_argument("enrichment requires exponent-independent log storage");
-      log_plans=std::make_unique<PunctureLogPlans>(shift.grid);}
+      if(puncture_derivative_scheme) supported_log_plans=std::make_unique<SupportedPunctureLogPlans>(shift.grid);
+      else log_plans=std::make_unique<PunctureLogPlans>(shift.grid);}
     if(log_halos){
-      if(!log_plans||!regular_scri)throw std::invalid_argument("log halo enrichment requires enriched log-storage wormhole with tensor scri");
+      if((!log_plans&&!supported_log_plans)||!regular_scri)throw std::invalid_argument("log halo enrichment requires enriched log-storage wormhole with tensor scri");
       if(!(log_halo_radius>0&&log_halo_radius<=shift.grid.mesh.half_width)||!std::isfinite(log_halo_radius))
         throw std::invalid_argument("log halo radius must lie inside the Cartesian half width");
       const auto start=std::chrono::steady_clock::now();
-      log_halo_plans=std::make_unique<PunctureLogValuePlans>(shift.grid,log_plans->position,log_halo_radius,20000,8,175);
+      log_halo_plans=std::make_unique<PunctureLogValuePlans>(shift.grid,PositivePlanPosition(),log_halo_radius,20000,8,175);
       log_halo_setup_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
     }
     if(regular_scri)scri=std::make_unique<cubed_sphere::ScriSurface>(shift.grid,fields,surface_points);
   }
+  const PuncturePosition &PositivePlanPosition()const{
+    if(supported_log_plans)return supported_log_plans->position;
+    if(log_plans)return log_plans->position;
+    throw std::logic_error("no positive-field derivative plans");
+  }
+  size_t EnrichedCells()const{return supported_log_plans?supported_log_plans->Rows().size():(log_plans?log_plans->rows.size():0);}
   PositiveFieldChart<Real> PositiveChart(int f,const Real x[3])const{
     PositiveFieldChart<Real> chart;chart.mode=positive_storage==1?PositiveFieldMode::direct:
       (positive_storage==2?PositiveFieldMode::log_reference:PositiveFieldMode::square);
@@ -147,7 +160,7 @@ class CompositeTensorEvolution {
       if(log_halo_plans){
         V chi(padded.begin(),padded.begin()+grid.count);
         V lapse(padded.begin()+18*grid.count,padded.begin()+19*grid.count);
-        log_halo_plans->FillPositiveLogs(chi,lapse,log_plans->position);
+        log_halo_plans->FillPositiveLogs(chi,lapse,PositivePlanPosition());
         std::copy(chi.begin(),chi.end(),padded.begin());
         std::copy(lapse.begin(),lapse.end(),padded.begin()+18*grid.count);
       }
@@ -193,6 +206,11 @@ class CompositeTensorEvolution {
         auto &physical=field==0?jets[row.active].chi:jets[row.active].alpha;
         const auto status=PositiveChart(field,grid.geometry[row.active].x).Reconstruct(stored,physical);
         if(status!=PositiveFieldStatus::valid)throw std::runtime_error("enriched positive-field reconstruction failed");}}
+    if(supported_log_plans)for(const auto &row:supported_log_plans->Rows()){
+      for(int field:{0,18}){auto stored=supported_log_plans->Sample(row,input,fields,field);
+        auto &physical=field==0?jets[row.active].chi:jets[row.active].alpha;
+        if(PositiveChart(field,grid.geometry[row.active].x).Reconstruct(stored,physical)!=PositiveFieldStatus::valid)
+          throw std::runtime_error("supported positive-field reconstruction failed");}}
     shift.SetGeometry(metrics, chi);
   }
   CompositeShiftStage::Boundary Boundary(const V &padded) const {

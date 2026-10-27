@@ -1,0 +1,7 @@
+Matplotlib is building the font cache; this may take a moment.
+Traceback (most recent call last):
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/compare_supported_puncture.py", line 16, in <module>
+    comparison.main()
+  File "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/compare_coupled_family.py", line 199, in main
+    data,mesh=arrays['amr_core_n6'];q=summary['cases']['amr_core_n6']['maxima']['H'];z=q['xyz'][2];select=(abs(data['z']-z)<q['cartesian_h']*.51)&(np.max(np.column_stack([abs(data['x']),abs(data['y'])]),axis=1)<.13)
+KeyError: 'amr_core_n6'

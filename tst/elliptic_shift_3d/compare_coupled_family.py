@@ -196,12 +196,20 @@ def main():
         for (key,row),color in zip(summary['cases'].items(),colors):
             data,mesh=arrays[key];axes[0].scatter(data['r'],abs(data['H']),s=2,alpha=.17,color=color,rasterized=True,label=row['label']);q=row['maxima']['H'];axes[0].plot(q['radius'],q['absolute_value'],'x',ms=8,color=color)
         axes[0].set_xscale('log');axes[0].set_yscale('symlog',linthresh=1e-8);axes[0].set_ylim(bottom=0);axes[0].set(xlabel='compactified radius (every active cell)',ylabel='|H|');axes[0].legend(fontsize=7);axes[0].grid(alpha=.2)
-        data,mesh=arrays['amr_core_n6'];q=summary['cases']['amr_core_n6']['maxima']['H'];z=q['xyz'][2];select=(abs(data['z']-z)<q['cartesian_h']*.51)&(np.max(np.column_stack([abs(data['x']),abs(data['y'])]),axis=1)<.13)
+        # A wrapper may compare other families. Select the last case's maximum
+        # CARTESIAN H for this diagnostic slice; global maxima/norms above
+        # always retain every cell, including shell maxima.
+        slice_key=next(reversed(arrays));data,mesh=arrays[slice_key]
+        cartesian=np.flatnonzero(mesh['levels']>=0)
+        point=int(cartesian[np.argmax(abs(data['H'][cartesian]))])
+        q=dict(xyz=[float(data[a][point]) for a in ['x','y','z']],
+               cartesian_h=float(mesh['spacing'][point]),point=point)
+        z=q['xyz'][2];select=(abs(data['z']-z)<q['cartesian_h']*.51)&(np.max(np.column_stack([abs(data['x']),abs(data['y'])]),axis=1)<.13)
         plot=axes[1].scatter(data['x'][select],data['y'][select],c=abs(data['H'][select]),s=13,cmap='magma',rasterized=True)
         for b in mesh['blocks']:
             if b['cartesian'] and b['lo'][2]<=z<=b['hi'][2] and np.max(abs(b['lo'][:2]))<.14:
                 axes[1].add_patch(plt.Rectangle(b['lo'][:2],b['hi'][0]-b['lo'][0],b['hi'][1]-b['lo'][1],fill=False,color='cyan',lw=.5,alpha=.6))
-        axes[1].plot(q['xyz'][0],q['xyz'][1],'x',color='lime',ms=9);axes[1].set(xlim=(-.13,.13),ylim=(-.13,.13),xlabel='x',ylabel='y',title=f'AMR diagnostic slice z={z:.6g}; max H node{q["point"]}')
+        axes[1].plot(q['xyz'][0],q['xyz'][1],'x',color='lime',ms=9);axes[1].set(xlim=(-.13,.13),ylim=(-.13,.13),xlabel='x',ylabel='y',title=f'Cartesian diagnostic slice z={z:.6g}; core max H node{q["point"]}')
         fig.colorbar(plot,ax=axes[1],label='|H|');fig.suptitle('Localization only: slice selection does not exclude any cell from norms')
         fig.savefig(out/'hamiltonian-localization.png',dpi=155);plt.close(fig)
         summary['software']=dict(python=platform.python_version(),numpy=np.__version__,matplotlib=matplotlib.__version__)

@@ -1,0 +1,129 @@
+{
+  "head": "54c53a6dee8e147e87889abfde2cbe8a040bb0a1",
+  "source": [
+    {
+      "path": "build-shift-3d/CMakeFiles/elliptic_shift_3d_metric_divergence_tests.dir/flags.make",
+      "sha256": "6cb530283b4e1393f2f6a30d713d57a3540848c00750f77268910f0fb837da9a"
+    },
+    {
+      "path": "build-shift-3d/CMakeFiles/elliptic_shift_3d_metric_divergence_tests.dir/link.txt",
+      "sha256": "fdb5fb62f80d93027ec8f2605a55b87248d178b94cf5857b697c09fad4a2f11f"
+    },
+    {
+      "path": "build-shift-3d/config.hpp",
+      "sha256": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08"
+    },
+    {
+      "path": "src/athena.hpp",
+      "sha256": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/map.hpp",
+      "sha256": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/enriched_log_derivative.hpp",
+      "sha256": "df5389ff424ba8eeaab7b14c0e5c2ad5704870e926b493a05dc707f07fb319b9"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/odd_radial_log_derivative.hpp",
+      "sha256": "e87549e7fdfd2a690045656e891228438e0036ffb92f961baeaca2d159e7447d"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/puncture_position.hpp",
+      "sha256": "08bd3b1d98ed46ccf688cea58bf5ed51029e7bd70bf48c2641071fdd12513f71"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/rho_log_derivative.hpp",
+      "sha256": "2340f0d20021c8889e65bd2b7137e450a83db93d45bddf4542090974244c07a1"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/run_rho_log_diagnostic.py",
+      "sha256": "ea4fc4154e264fa5424163f9cf08892b7331102230afd301ae18a8fda265924e"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/test_odd_radial_log_derivative.cpp",
+      "sha256": "fbe5f53feb5e47a4f3bcd13c84af23946674167c958a7b7ff8ad39c62a18c6b6"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/test_rho_log_derivative.cpp",
+      "sha256": "b497b2980da02a50b1d1273d2cae3bdb9936253c207b4d89605bc41ebe50302f"
+    }
+  ],
+  "inputs": [],
+  "libraries": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+      "sha256": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "sha256": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+      "sha256": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a",
+      "sha256": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d"
+    }
+  ],
+  "maximum_active_cells": 50000,
+  "timeout_seconds_per_process": 180,
+  "compiled_from_frozen_archive": true,
+  "actual_mesh": false,
+  "basis": "degree5Cartesian+logrho+rho",
+  "guard_value_l1": 16,
+  "guard_gradient_l1": 32,
+  "guard_hessian_l1": 64,
+  "runs": {
+    "build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/rho-log-raw-falsifier-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/rho-log-raw-falsifier-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/rho-log-raw-falsifier-20261027/source/tst/elliptic_shift_3d/test_rho_log_derivative.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/rho-log-raw-falsifier-20261027/rho-log-diagnostic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.861370041
+    },
+    "diagnostic": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/rho-log-raw-falsifier-20261027/rho-log-diagnostic"
+      ],
+      "exit_code": 0,
+      "seconds": 0.9444882079999999
+    }
+  },
+  "production_adopted": false,
+  "binary_sha256": "0c98d1c3b0d59668df7009c01cc6f4e9c0951f0de3b7356c162bae98ec82b33f",
+  "source_unchanged": true,
+  "libraries_unchanged": true,
+  "inputs_unchanged": true
+}

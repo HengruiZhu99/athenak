@@ -6,6 +6,22 @@ AthenaK Driver/RK tasks now dispatch the shared tensor evolution and shift
 solver in a deliberately restricted experimental configuration. The selected
 wormhole evolution still fails the unchanged scientific accuracy gates.
 
+The frozen native accuracy phase is committed as
+`e6b35f7482b12f2efd200fdc5659a2ce1afd78db`; its executable is the qualified
+static-eight-block build from `dcd6bac9df1a2060b656201fd1ec367eccfa4d17`.
+At t=.0002, related N6/N8/N10 native runs give radial shift RMS errors
+.00102225/.000516874/.000238822 against the independent N2049 spherical
+solution. H RMS is .616059/.509059/.418473; tensor scri poles
+1.44116e-5/1.52533e-6/3.54611e-7 all fail the unchanged 1e-7 target.
+Timestep halving changes all stored/shift fields by at most 1.471e-11;
+tightening the elliptic tolerance changes them by 2.269e-14. The short-time
+error is therefore dominated by spatial/interface/closure effects. Every
+native full run, matched actual-RK control and initializer-hidden restart
+completed within its separate 180-second CPU limit, with bitwise matched
+states and restarts. [Commands, complete norms and limitations](native-accuracy-controls.md)
+retain all cells, angular scatter and changing quadrature; no uniform RMS
+order or late-collapse qualification is inferred.
+
 ## Implemented and checked
 
 - The exact metric-built connection, its full variable-metric Frechet operator,
