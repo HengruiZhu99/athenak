@@ -41,7 +41,7 @@ class PunctureLogValuePlans {
   explicit PunctureLogValuePlans(const cubed_sphere::CompositeDifference &grid,
       const PuncturePosition &position={},Real radius=.12,size_t maximum_rows=10000,Real maximum_l1=8,int maximum_donors=125)
       :grid_(&grid),descriptor_(grid.mesh),active_(grid.active),order_(grid.order),stamp_(position.Capture()){
-    if(maximum_rows>10000||maximum_rows<1)throw std::invalid_argument("value-plan row budget must lie in[1,10000]");
+    if(maximum_rows>20000||maximum_rows<1)throw std::invalid_argument("value-plan row budget must lie in[1,20000]");
     if(!(maximum_l1>=1&&maximum_l1<=16))throw std::invalid_argument("value weight L1 cap must lie in[1,16]");
     if(maximum_donors!=125&&maximum_donors!=150&&maximum_donors!=175&&maximum_donors!=256)throw std::invalid_argument("value support cap must be125,150,175,or256");
     const auto targets=SelectTargets(grid,position,radius);

@@ -19,11 +19,13 @@ class NativeCompositeFields {
   const cubed_sphere::CompositeDifference &grid;
   bool puncture;
   int reference;
+  int positive_mode;
   NativeCompositeFields(const cubed_sphere::CompositeDifference &g,bool chart=false,
-      int chart_reference=0,int chi_psi_power=-4)
-      :grid(g),puncture(chart),reference(chart_reference){
+      int chart_reference=0,int chi_psi_power=-4,int positive_storage=0)
+      :grid(g),puncture(chart),reference(chart_reference),positive_mode(positive_storage){
     static_assert(Z4c::nz4c==25,"native composite field contract changed");
-    if(chi_psi_power!=-4||reference<0||reference>2||(!puncture&&reference))
+    if(chi_psi_power!=-4||reference<0||reference>2||(!puncture&&reference)
+        ||positive_mode<0||positive_mode>3||(!puncture&&positive_mode))
       throw std::invalid_argument("native composite chart/chi convention");
   }
   static constexpr int scalar_native[22]={Z4c::I_Z4C_CHI,
@@ -45,10 +47,18 @@ class NativeCompositeFields {
       const size_t p=((block.composite*n+k)*n+j)*n+i;const auto &x=grid.geometry[p].x;
       Real q[22];for(int f=0;f<22;++f)q[f]=host(block.native,scalar_native[f],k+ng,j+ng,i+ng);
       if(!(q[0]>0&&q[18]>0))throw std::runtime_error("native stage nonpositive chi/lapse");
-      if(puncture){const auto c=WormholeChart::At(x,reference);
+      if(puncture&&positive_mode==0){const auto c=WormholeChart::At(x,reference);
         q[0]=std::log(q[0]/c.chi.f);q[18]=std::log(q[18]/c.alpha.f);
         q[13]=3+q[13]/c.weight.f;q[14]/=c.weight.f;
         for(int t=0;t<6;++t)q[7+t]/=c.weight.f;
+      }else if(puncture){
+        for(int field:{0,18}){ScalarJet<Real> physical{},stored{};physical.value=q[field];
+          const auto status=PositiveChart(field,x).Encode(physical,stored);
+          if(status!=PositiveFieldStatus::valid)throw std::runtime_error(std::string("native positive encode: ")+PositiveFieldStatusName(status));
+          q[field]=stored.value;}
+        // Exponent-independent modes store signed fields directly: only the
+        // same constant Khat offset as UnpackComposite remains.
+        q[13]+=3;
       }else{q[0]-=1;q[13]+=3;q[18]-=(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2;}
       for(int t=0;t<6;++t)if(kCompositeTensorI[t]==kCompositeTensorJ[t])q[1+t]-=1;
       for(int f=0;f<22;++f){if(!std::isfinite(q[f]))throw std::runtime_error("native stage nonfinite coefficient");coefficients[22*p+f]=q[f];}
@@ -70,11 +80,25 @@ class NativeCompositeFields {
     for(const auto &block:blocks)for(int k=0;k<n;++k)for(int j=0;j<n;++j)for(int i=0;i<n;++i){
       const size_t p=((block.composite*n+k)*n+j)*n+i;const auto &x=grid.geometry[p].x;
       Real q[22];for(int f=0;f<22;++f)q[f]=(coefficient_rate?*coefficient_rate:coefficients)[22*p+f];
-      if(puncture){const auto c=WormholeChart::At(x,reference);
+      if(puncture&&positive_mode==0){const auto c=WormholeChart::At(x,reference);
         if(coefficient_rate){q[0]*=c.chi.f*std::exp(coefficients[22*p]);q[18]*=c.alpha.f*std::exp(coefficients[22*p+18]);
           q[13]*=c.weight.f;q[14]*=c.weight.f;
         }else{q[0]=c.chi.f*std::exp(q[0]);q[18]=c.alpha.f*std::exp(q[18]);q[13]=c.weight.f*(q[13]-3);q[14]*=c.weight.f;}
         for(int t=0;t<6;++t)q[7+t]*=c.weight.f;
+      }else if(puncture){
+        for(int field:{0,18}){const auto chart=PositiveChart(field,x);
+          if(coefficient_rate){Real rate;
+            if(positive_mode==1&&!(coefficients[22*p+field]>0))
+              throw std::runtime_error("native positive rate requires positive active chi/lapse");
+            const auto status=chart.ReconstructRate(coefficients[22*p+field],q[field],rate);
+            if(status!=PositiveFieldStatus::valid)throw std::runtime_error(std::string("native positive rate: ")+PositiveFieldStatusName(status));
+            q[field]=rate;
+          }else{ScalarJet<Real> stored{},physical{};stored.value=q[field];
+            const auto status=chart.Reconstruct(stored,physical);
+            if(status!=PositiveFieldStatus::valid)throw std::runtime_error(std::string("native positive reconstruct: ")+PositiveFieldStatusName(status));
+            if(!(physical.value>0))throw std::runtime_error("native positive state requires positive active chi/lapse");
+            q[field]=physical.value;}}
+        if(!coefficient_rate)q[13]-=3;
       }else if(!coefficient_rate){q[0]+=1;q[13]-=3;q[18]+=(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2;}
       if(!coefficient_rate)for(int t=0;t<6;++t)if(kCompositeTensorI[t]==kCompositeTensorJ[t])q[1+t]+=1;
       for(int f=0;f<22;++f){if(!std::isfinite(q[f]))throw std::runtime_error("nonfinite native stage write");host(block.native,scalar_native[f],k+ng,j+ng,i+ng)=q[f];}
@@ -83,7 +107,17 @@ class NativeCompositeFields {
     Kokkos::deep_copy(native,host);
   }
  private:
+  PositiveFieldChart<Real> PositiveChart(int field,const Real x[3])const{
+    const auto mode=positive_mode==1?PositiveFieldMode::direct:
+      (positive_mode==2?PositiveFieldMode::log_reference:PositiveFieldMode::square);
+    auto ref=UnitPositiveFieldReference<Real>();
+    if(field==18){ref.value=(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2;
+      for(int a=0;a<3;++a){ref.d[a]=x[a];ref.dd[a][a]=1;}}
+    return PositiveFieldChart<Real>(mode,ref);
+  }
   void Validate(const DvceArray5D<Real> &native,const std::vector<Block> &blocks) const {
+    if(positive_mode<0||positive_mode>3||(!puncture&&positive_mode))
+      throw std::invalid_argument("native positive chart mode");
     if(native.extent(1)!=Z4c::nz4c)throw std::invalid_argument("native Z4c field count");
     for(int a=2;a<5;++a)if(native.extent(a)!=static_cast<size_t>(grid.n+2*grid.ng))
       throw std::invalid_argument("native/composite active shape or ghost contract");

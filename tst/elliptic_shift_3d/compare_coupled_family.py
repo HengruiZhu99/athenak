@@ -14,6 +14,7 @@ import time
 
 import numpy as np
 
+PROFILE_GRID_NOTE='different meshes'
 FIELDS=('alpha','chi','g_rr','A_rr','Khat','Theta','Lambda_r','beta_r')
 CASES=(
  ('three_shell_n8','N8:3 shells, enriched','enriched-buffered-pilot-20261027','three-shell.csv','three-shell.stdout','commands.json',[.62,.70,1]),
@@ -165,7 +166,7 @@ def main():
                 a=row['angular'][f];r=np.array(a['radii']);mean=np.array(a['mean']);scatter=np.array(a['raw_scatter'])
                 ax.plot(r,mean,'.-',ms=3,color=color,label=row['label']);ax.fill_between(r,mean-scatter,mean+scatter,color=color,alpha=.13)
             ax.set(xlabel='compactified radius',ylabel=f);ax.grid(alpha=.2)
-        axes[0,0].legend(fontsize=6.5);fig.suptitle('Coupled 3D/RK4 at t=0.0002: all scientific FAIL\nAngular means +/- raw scatter; different meshes, no convergence-order claim')
+        axes[0,0].legend(fontsize=6.5);fig.suptitle(f'Coupled 3D/RK4 at t=0.0002: all scientific FAIL\nAngular means +/- raw scatter; {PROFILE_GRID_NOTE}, no convergence-order claim')
         fig.savefig(out/'physical-profiles.png',dpi=155);plt.close(fig)
         fig,axes=plt.subplots(2,2,figsize=(12,8),layout='constrained');x=np.arange(len(FIELDS))
         for (key,row),color in zip(summary['cases'].items(),colors):

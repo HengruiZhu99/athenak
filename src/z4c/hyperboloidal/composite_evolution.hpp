@@ -61,19 +61,22 @@ class CompositeTensorEvolution {
   std::unique_ptr<PunctureLogPlans> log_plans;
   std::unique_ptr<PunctureLogValuePlans> log_halo_plans;
   double log_halo_setup_seconds=0;
+  Real log_halo_radius=.12;
   Real boundary_pole=0,raw_clock_rate=0,boundary_regularity=0;
   CompositeTensorEvolution(int n, int shells, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
       : CompositeTensorEvolution(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order,regular_scri) {}
-  CompositeTensorEvolution(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false,bool log_halos=false)
+  CompositeTensorEvolution(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false,bool log_halos=false,Real halo_radius=.12)
       : shift(std::move(mesh), order,radial_stencils,radial_lines,topology),
         state(fields*shift.grid.active.size(), 0), beta_delta(3*shift.grid.active.size(), 0),
-        elliptic_atol(tolerance), telegraph(flux),wormhole(puncture),isotropic_reference(matched),positive_storage(positive_mode),telegraph_width(taper_width) {
+        elliptic_atol(tolerance), telegraph(flux),wormhole(puncture),isotropic_reference(matched),positive_storage(positive_mode),telegraph_width(taper_width),log_halo_radius(halo_radius) {
     if(enriched){if(!wormhole||positive_storage!=2)throw std::invalid_argument("enrichment requires exponent-independent log storage");
       log_plans=std::make_unique<PunctureLogPlans>(shift.grid);}
     if(log_halos){
       if(!log_plans||!regular_scri)throw std::invalid_argument("log halo enrichment requires enriched log-storage wormhole with tensor scri");
+      if(!(log_halo_radius>0&&log_halo_radius<=shift.grid.mesh.half_width)||!std::isfinite(log_halo_radius))
+        throw std::invalid_argument("log halo radius must lie inside the Cartesian half width");
       const auto start=std::chrono::steady_clock::now();
-      log_halo_plans=std::make_unique<PunctureLogValuePlans>(shift.grid,log_plans->position,.12,10000,8,175);
+      log_halo_plans=std::make_unique<PunctureLogValuePlans>(shift.grid,log_plans->position,log_halo_radius,20000,8,175);
       log_halo_setup_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
     }
     if(regular_scri)scri=std::make_unique<cubed_sphere::ScriSurface>(shift.grid,fields,surface_points);

@@ -86,23 +86,31 @@ t=.0002 and restart bitwise; none establishes collapse/front convergence.
 | N8, 7 buffered shells, radial lines | 25600 | .50906 | .02839 | 1.57085 | 1.46e-6 |
 | N6, 7 shells, 3 Cartesian refinement levels | 47088 | .02981 | .03286 | .40613 | 1.44e-5 |
 | Same, value-only log halos within rho<.12 | 47088 | .02968 | .03286 | .19555 | 1.44e-5 |
+| Same, value-only log halos within rho<.24 | 47088 | .02962 | .03286 | .04783 | 1.44e-5 |
 
 Every case **fails** the unchanged 1e-7 pole target and remaining scientific
-criteria. Every active cell remains in the norms. The last run costs 127.55s,
+criteria. Every active cell remains in the norms. The .12 run costs 127.55s,
 including cache rebuild/restart, and has original vector RMS maximum 2.73e-11
 and point maximum 1.25e-9. The halo cache uses 9,616 plans for all 19,248 selected
 receivers; no exclusion or fallback hides a rejected fit. Its reduced maximum
 moves to the next Cartesian coarse/fine interface at r=.16949, outside .12.
-The expanded support and scri component localization are separate followups.
+The expanded .24 run now completes in155.12s, including bitwise restart, with
+18,560 plans covering all36,864 selected receivers. Maximum H moves inside the
+existing derivative enrichment at r=.01353; that nonanalytic radial-remainder
+defect and the shell/scri errors remain. All-cell beta error versus the matched
+N2049 radial pilot stays .000412883: the halo fix improves constraints without
+resolving the transition-profile error. Every cell and raw angular sample is
+retained in `evidence/halo-support-radial-comparison-final-20261027`.
 
 Step halving in the seven-shell N8 pilot changes fields/shift by 3.10e-11;
 tightening original vector RMS from 1e-10 to 1e-12 changes them by 3.06e-13.
 Thus converged elliptic tolerance does not fix these discretization defects.
 Earlier 180s timeout and auxiliary-norm stopping failures remain recorded.
-Current research checkpoint v13 binds the halo choice; older versions retain
-old defaults. Earlier .08-taper controls are explicitly not the selected .24
-benchmark. The integrated suite now passes 31/31 in 13.46s, including the new value-only
-halo and affine-remainder contracts (`evidence/integrated-continuation-20261027`).
+Current research checkpoint v14 binds both the halo choice and support radius;
+v13 retains its fixed .12 support on read. Backward decoding and checksummed
+nonfinite-radius rejection pass. Earlier .08-taper controls are explicitly not the selected .24
+benchmark. The integrated suite now passes 31/31 in 13.31s, including the new value-only
+halo and affine-remainder contracts (`evidence/expanded-radius-checkpoint-components-20261027`).
 The actual native task controls are separately executed and recorded above.
 
 Frozen true 1D collapse snapshots at t=1/5/10 have nine instantaneous full 3D
@@ -117,6 +125,12 @@ This is a geometry/memory estimate, not a request or a scalability result.
 Remaining work includes all-region radial accuracy and scri consistency,
 applicable constraint/scalar/collapse families, a validated changing-regularity
 puncture endpoint, and general native shell ownership/AMR/MPI/device paths.
+Independent scri localization finds initial radial log-chi derivative truncation,
+then a dominant evolved angular metric-connection defect near a face edge.
+A diagnostic centered cross-face atlas reduces the frozen midpoint pole but
+still fails; full mixed-jet MMS exposes coarse owner-face extrapolation error.
+No angular scheme has been adopted into evolution from that incomplete result.
+
 No mathematical incompatibility or new permission blocker has been established.
 Original 1D jobs/checkouts have never been modified or signaled by this task.
 

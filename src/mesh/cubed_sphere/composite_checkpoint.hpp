@@ -33,6 +33,7 @@ struct CompositeSnapshot {
   bool radial_line_smoothing=false;
   bool topology_coarsening=false;
   bool log_halo_enrichment=false;
+  Real log_halo_radius=.12; // v13 support was fixed at .12; v14 binds the radius
   Real telegraph_width=.08; // versions2..8 used the historical narrow default
 };
 
@@ -91,10 +92,12 @@ class CompositeCheckpoint {
         ||snapshot.positive_storage<0||snapshot.positive_storage>3||(!snapshot.wormhole_chart&&snapshot.positive_storage)
         ||!(snapshot.telegraph_width>0&&snapshot.telegraph_width<.395)
         ||(snapshot.enriched_log_derivatives&&snapshot.positive_storage!=2)
-        ||(snapshot.log_halo_enrichment&&(!snapshot.enriched_log_derivatives||snapshot.positive_storage!=2)))
+        ||(snapshot.log_halo_enrichment&&(!snapshot.enriched_log_derivatives||snapshot.positive_storage!=2))
+        ||!(snapshot.log_halo_radius>0)||!std::isfinite(snapshot.log_halo_radius)
+        ||(snapshot.log_halo_enrichment&&snapshot.log_halo_radius>mesh.half_width))
       throw std::invalid_argument("invalid composite checkpoint state");
     Buffer b;
-    b.Put<std::uint64_t>(0x4353484946543031ull); b.Put<std::uint32_t>(13); b.Put<std::uint32_t>(0x01020304);
+    b.Put<std::uint64_t>(0x4353484946543031ull); b.Put<std::uint32_t>(14); b.Put<std::uint32_t>(0x01020304);
     for (char c : snapshot.source_tag) b.Put<char>(c);
     b.Put(mesh.half_width); b.Put(mesh.face_subdivisions); b.Put(mesh.cells); b.Put(mesh.ghosts);
     b.Put<std::uint64_t>(mesh.revision); b.PutVector(mesh.radii);
@@ -111,7 +114,7 @@ class CompositeCheckpoint {
     b.Put<int>(snapshot.wormhole_chart?1:0);
     b.Put<int>(snapshot.isotropic_reference);
     b.Put(snapshot.scri_radial_points);b.Put<int>(snapshot.radial_interface_stencils?1:0);
-    b.Put(snapshot.positive_storage);b.Put(snapshot.telegraph_width);b.Put<int>(snapshot.enriched_log_derivatives?1:0);b.Put<int>(snapshot.radial_line_smoothing?1:0);b.Put<int>(snapshot.topology_coarsening?1:0);b.Put<int>(snapshot.log_halo_enrichment?1:0);
+    b.Put(snapshot.positive_storage);b.Put(snapshot.telegraph_width);b.Put<int>(snapshot.enriched_log_derivatives?1:0);b.Put<int>(snapshot.radial_line_smoothing?1:0);b.Put<int>(snapshot.topology_coarsening?1:0);b.Put<int>(snapshot.log_halo_enrichment?1:0);b.Put(snapshot.log_halo_radius);
     b.Put(Hash(b.bytes, b.bytes.size()));
     const std::string temporary = path+".tmp";
     {std::ofstream out(temporary, std::ios::binary|std::ios::trunc);
@@ -129,7 +132,7 @@ class CompositeCheckpoint {
     if (stored != Hash(b.bytes, b.bytes.size()-8)) throw std::runtime_error("composite checkpoint checksum mismatch");
     if (b.Get<std::uint64_t>() != 0x4353484946543031ull) throw std::runtime_error("checkpoint magic mismatch");
     const auto version=b.Get<std::uint32_t>();
-    if ((version<2||version>13)||b.Get<std::uint32_t>()!=0x01020304)
+    if ((version<2||version>14)||b.Get<std::uint32_t>()!=0x01020304)
       throw std::runtime_error("checkpoint format/endian mismatch");
     std::string tag;
     for (int i = 0; i < 64; ++i) tag += b.Get<char>();
@@ -197,6 +200,8 @@ class CompositeCheckpoint {
     if(version>=11){const int lines=b.Get<int>();if(lines!=0&&lines!=1)throw std::runtime_error("checkpoint smoother mismatch");out.radial_line_smoothing=lines;}
     if(version>=12){const int topology=b.Get<int>();if(topology!=0&&topology!=1)throw std::runtime_error("checkpoint hierarchy mismatch");out.topology_coarsening=topology;}
     if(version>=13){const int halos=b.Get<int>();if((halos!=0&&halos!=1)||(halos&&(!out.enriched_log_derivatives||out.positive_storage!=2)))throw std::runtime_error("checkpoint log halo mismatch");out.log_halo_enrichment=halos;}
+    if(version>=14){out.log_halo_radius=b.Get<Real>();if(!(out.log_halo_radius>0)||!std::isfinite(out.log_halo_radius)
+      ||(out.log_halo_enrichment&&out.log_halo_radius>out.mesh.half_width))throw std::runtime_error("checkpoint log halo radius mismatch");}
     if (b.cursor+8 != b.bytes.size()) throw std::runtime_error("checkpoint unexpected trailing payload");
     return out;
   }

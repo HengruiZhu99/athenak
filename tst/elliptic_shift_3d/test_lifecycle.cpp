@@ -52,6 +52,7 @@ int main(int argc, char **argv) {
     CompositeSnapshot snapshot{refined.mesh, std::string(64, 'a'), .0005, 1e-11, 2, 22};
     snapshot.radial_interface_stencils=radial_stencils;
     snapshot.telegraph_width=.24;
+    snapshot.log_halo_radius=.24;
     snapshot.fields.resize(22*refined.active.size()); snapshot.shift_warm_start.resize(3*refined.active.size());
     for (size_t p = 0; p < snapshot.fields.size(); ++p) snapshot.fields[p] = .01*(p%7419);
     for (size_t p = 0; p < snapshot.shift_warm_start.size(); ++p) snapshot.shift_warm_start[p] = -.001*(p%71);
@@ -60,7 +61,26 @@ int main(int argc, char **argv) {
     Require(loaded.fields == snapshot.fields && loaded.shift_warm_start == snapshot.shift_warm_start
             && loaded.mesh.blocks.size() == 63 && loaded.mesh.radii == snapshot.mesh.radii
             && loaded.mesh.revision == 1 && loaded.step == 2
-            && loaded.telegraph_width==snapshot.telegraph_width, "checkpoint exact payload");
+            && loaded.telegraph_width==snapshot.telegraph_width
+            && loaded.log_halo_radius==snapshot.log_halo_radius, "checkpoint exact payload");
+    // Version13 fixed its optional halo support at .12. Removing only the new
+    // trailing radius and rebuilding the receipt tests real backward decoding.
+    std::ifstream raw_in(path,std::ios::binary);std::vector<char> raw((std::istreambuf_iterator<char>(raw_in)),{});
+    auto seal=[](std::vector<char> &bytes){std::uint64_t sum=14695981039346656037ull;
+      for(size_t i=0;i<bytes.size()-8;++i){sum^=static_cast<unsigned char>(bytes[i]);sum*=1099511628211ull;}
+      std::memcpy(bytes.data()+bytes.size()-8,&sum,8);};
+    auto old=raw;old.erase(old.end()-16,old.end()-8);const std::uint32_t old_version=13;
+    std::memcpy(old.data()+8,&old_version,4);seal(old);
+    const std::string old_path=path+".v13";
+    {std::ofstream out(old_path,std::ios::binary);out.write(old.data(),old.size());}
+    const auto legacy=CompositeCheckpoint::Read(old_path,snapshot.source_tag);
+    Require(legacy.fields==snapshot.fields&&legacy.log_halo_radius==.12,"v13 fixed-support backward decode");
+    std::filesystem::remove(old_path);
+    auto bad_radius=raw;const Real invalid_radius=std::numeric_limits<Real>::quiet_NaN();
+    std::memcpy(bad_radius.data()+bad_radius.size()-16,&invalid_radius,8);seal(bad_radius);
+    {std::ofstream out(old_path,std::ios::binary);out.write(bad_radius.data(),bad_radius.size());}
+    Reject([&]{CompositeCheckpoint::Read(old_path,snapshot.source_tag);},"checksummed nonfinite halo radius accepted");
+    std::filesystem::remove(old_path);
     CompositeDifference restored(loaded.mesh,4,loaded.radial_interface_stencils);
     Require(restored.active == refined.active && restored.halos.size() == refined.halos.size(),
             "checkpoint rebuild geometry/connectivity");

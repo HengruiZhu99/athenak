@@ -1,0 +1,38 @@
+{
+  "source_head": "4d2acccebdd8a1d295fb45b31f7de6b64e46f538",
+  "source_sha256": {
+    "src/z4c/hyperboloidal/native_composite_fields.hpp": "090f95aac6e1f51f07872f13541550a39a3f73f9bf68121d86ce9755e556a3c0",
+    "tst/elliptic_shift_3d/test_native_fields.cpp": "f914274752405735bb5a69ede0f4a3245af972559dcaa00218e3a24cc4ae004b",
+    "src/z4c/hyperboloidal/positive_field_chart.hpp": "1f036e7f6e3e4fadb6f0901d56381dabf13ea7ae9cdbbb0fc04881043e62017a",
+    "src/z4c/hyperboloidal/composite_state.hpp": "131f1f15ed4722be657d721600a24fd4bc0439a0f43e04c3a676e3f8ed8d627c",
+    "src/z4c/z4c.hpp": "25651c1b461e5718c27b577dd593b511cf5ff4e49768d0060080bc868b1f660a"
+  },
+  "before_after_source_hashes_match": true,
+  "command": [
+    "ctest",
+    "--test-dir",
+    "build-shift-3d",
+    "-j2",
+    "--output-on-failure",
+    "-R",
+    "^elliptic_shift_3d_native_field_layout$",
+    "--output-junit",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-positive-field-adapter-20261027/ctest.xml"
+  ],
+  "return_code": 0,
+  "wall_seconds": 0.536051292,
+  "build_history": [
+    {
+      "command": "cmake --build build-shift-3d --target elliptic_shift_3d_native_fields_tests -j2",
+      "return_code": 2,
+      "diagnostic": "8 test-only namespace errors: use of undeclared identifier Z4c / no member I_Z4C_CHI or I_Z4C_ALPHA in namespace z4c",
+      "fix": "Qualified enum references as z4c::Z4c; no adapter/PDE arithmetic changed."
+    },
+    {
+      "command": "cmake --build build-shift-3d --target elliptic_shift_3d_native_fields_tests -j2",
+      "return_code": 0
+    }
+  ],
+  "qualification": "Actual Kokkos native layout/value/rate adapter tests only; native owner remains Minkowski-only until separately integrated.",
+  "legacy_mode0_block_text_unchanged": true
+}
