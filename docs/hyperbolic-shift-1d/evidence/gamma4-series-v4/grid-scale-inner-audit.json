@@ -1,0 +1,42 @@
+{
+  "t_over_M": 21.6,
+  "rows": [
+    {
+      "n": 257,
+      "inner_spacing": 0.00390625,
+      "metric_min_node": 6,
+      "metric_min_radius": 0.0234375,
+      "metric_min": 0.9271254237281142,
+      "metric_trough_amplitude": 0.07287457627188576,
+      "lapse_at_metric_trough": 0.046977502878814845,
+      "horizon_radius": 0.1165625655003408
+    },
+    {
+      "n": 513,
+      "inner_spacing": 0.001953125,
+      "metric_min_node": 6,
+      "metric_min_radius": 0.01171875,
+      "metric_min": 0.9382842944874186,
+      "metric_trough_amplitude": 0.06171570551258143,
+      "lapse_at_metric_trough": 0.027986561470224363,
+      "horizon_radius": 0.11655958101383498
+    },
+    {
+      "n": 1025,
+      "inner_spacing": 0.0009765625,
+      "metric_min_node": 7,
+      "metric_min_radius": 0.0068359375,
+      "metric_min": 0.9651766836777635,
+      "metric_trough_amplitude": 0.03482331632223645,
+      "lapse_at_metric_trough": 0.021558796087537947,
+      "horizon_radius": 0.11655969149558917
+    }
+  ],
+  "profile_sha256": "69c68e566f0f815df6d383f89637a007af1307ad5d7b19922c7aed4aec74d735",
+  "finding": "The largest inner metric trough occurs at radial nodes6,6,7 on N257,513,1025. Its coordinate radius contracts approximately with grid spacing and its amplitude decreases from coarse to fine.",
+  "interpretation": "Consistent with a grid-scale inner feature rather than a fixed-coordinate wave front. This does not identify its cause, prove asymptotic convergence, or justify excluding the affected cells.",
+  "radius_ratios": [
+    2.0,
+    1.7142857142857142
+  ]
+}
