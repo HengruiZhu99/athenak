@@ -1,0 +1,55 @@
+{
+  "scope": "Corrected dt-half restart from cycle2 at actual dt-output cadence. Original missing-cycle3 failure is retained.",
+  "command": [
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-accuracy-capsule-r2-20261027/athena-qualified",
+    "-r",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-accuracy-controls-20261027/dt_half/full/rst/native_wormhole.00001.rst",
+    "-d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-accuracy-controls-20261027/dt_half/restart-corrected"
+  ],
+  "binary_sha256": "6f4eee9dce9d94daaf57662500afcb975bd98fcdf6947024e6adb7c1edd1a627",
+  "checkpoint_sha256": "fd850ddfe85af7d1d8eb4d27a5fde50fe8231b0c3fb9edae62de0e53e9e4e0ea",
+  "maximum_seconds": 180,
+  "owned_process_group": 23114,
+  "exit_code": 0,
+  "seconds": 26.807671459,
+  "snapshots": {
+    ".csv": {
+      "bitwise_identical": true,
+      "full_sha256": "2e736212d445eaab2102367dc94d06513de376e119a219b1110694845a205ad5",
+      "restart_sha256": "2e736212d445eaab2102367dc94d06513de376e119a219b1110694845a205ad5"
+    },
+    ".scri.csv": {
+      "bitwise_identical": true,
+      "full_sha256": "61e9a4c5ee7797be76599bea5e36805c61693b675271f457b9d1944b5998e295",
+      "restart_sha256": "61e9a4c5ee7797be76599bea5e36805c61693b675271f457b9d1944b5998e295"
+    }
+  },
+  "groups": {
+    "values": {
+      "volume": true,
+      "scri": true,
+      "endpoints": true
+    },
+    "registers": {
+      "volume": true,
+      "scri": true,
+      "endpoints": true
+    },
+    "rk": {
+      "gam0": true,
+      "gam1": true,
+      "beta": true,
+      "delta": true
+    }
+  },
+  "vectors": {
+    "radii": true,
+    "chart_parameters": true,
+    "shift": true
+  },
+  "topology_equal": true,
+  "passed": true,
+  "binary_unchanged": true,
+  "checkpoint_unchanged": true
+}

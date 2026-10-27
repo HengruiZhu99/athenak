@@ -1,0 +1,27 @@
+{
+  "scientific_acceptance": false,
+  "failed_attempts": [
+    {
+      "action": "Initial capsule extraction setup",
+      "status": "failed before extraction or native execution",
+      "reason": "System Python lacks tarfile.extractall(filter=...)",
+      "evidence": "../native-accuracy-capsule-20261027/setup-failure.json",
+      "resolution": "Validated-member portable extraction into fresh r2 capsule"
+    },
+    {
+      "action": "dt-half restart using native_wormhole.00003.rst",
+      "status": "file-open failure before evolution",
+      "reason": "Native RST/BIN filenames use output counters, while diagnostic CSV filenames use cycles. RST output cadence .0001 produces indices0/1/2 at cycles0/2/4.",
+      "resolution": "Read sidecar completed_cycles/time, restart from output index1 at cycle2; corrected control passed26.81s",
+      "evidence": "restart-followup.json"
+    },
+    {
+      "action": "Read OS process information with ps -p22958 -o pid,etime,pcpu,comm",
+      "status": "denied by local sandbox; not retried",
+      "reason": "Operation not permitted",
+      "effect": "No control blocked. Owned Popen child process groups, timed wait and successful exit codes provide runtime/cleanup evidence; no CPU-utilization measurement claimed."
+    }
+  ],
+  "capsule": "../native-accuracy-capsule-r2-20261027",
+  "execution_policy": "Only newly created owned process groups; each180s cap; no GPU/MPI/remote allocations; existing jobs/worktrees untouched."
+}
