@@ -1,0 +1,371 @@
+{
+  "scope": "Exact final accepted N10 t=.0002; one IO-only rerun byte-identical to original evolution, no PDE/sampler/math changes",
+  "pole_semantics": "BoundaryRates resets boundary_pole everyRHS; driver freshfinalRHS means finalsurface maximum, not stagehistory maximum",
+  "capture_manifest_sha256": "aa95d7fb282d1ae8ac86f59683d8dec1d13583455b6424451f436b745466af71",
+  "certificate_manifest_sha256": "e67aa26dde4baa3d1d8fa21f17a95137d58e0d6896fd31eef06dc4cbd24e3258",
+  "component_maxima": {
+    "chi": {
+      "maximum": 6.444742616647572e-11,
+      "signed": -6.444742616647572e-11,
+      "row": 545,
+      "face": 5,
+      "j": 5,
+      "k": 4,
+      "xyz": [
+        0.09901475429766751,
+        -0.0990147542976674,
+        -0.9901475429766743
+      ]
+    },
+    "Khat": {
+      "maximum": 1.0396234658244782e-10,
+      "signed": -1.0396234658244782e-10,
+      "row": 544,
+      "face": 5,
+      "j": 4,
+      "k": 4,
+      "xyz": [
+        -0.0990147542976674,
+        -0.0990147542976674,
+        -0.9901475429766743
+      ]
+    },
+    "Theta": {
+      "maximum": 3.442341476795372e-10,
+      "signed": 3.442341476795372e-10,
+      "row": 555,
+      "face": 5,
+      "j": 5,
+      "k": 5,
+      "xyz": [
+        0.09901475429766751,
+        0.09901475429766751,
+        -0.9901475429766743
+      ]
+    },
+    "alpha": {
+      "maximum": 5.201646879508921e-09,
+      "signed": 5.201646879508921e-09,
+      "row": 544,
+      "face": 5,
+      "j": 4,
+      "k": 4,
+      "xyz": [
+        -0.0990147542976674,
+        -0.0990147542976674,
+        -0.9901475429766743
+      ]
+    },
+    "Axx": {
+      "maximum": 5.1620805197233955e-08,
+      "signed": 5.1620805197233955e-08,
+      "row": 144,
+      "face": 1,
+      "j": 4,
+      "k": 4,
+      "xyz": [
+        -0.9901475429766743,
+        -0.0990147542976674,
+        -0.0990147542976674
+      ]
+    },
+    "Axy": {
+      "maximum": 4.1006316647481486e-08,
+      "signed": 4.1006316647481486e-08,
+      "row": 304,
+      "face": 3,
+      "j": 4,
+      "k": 0,
+      "xyz": [
+        -0.667124384994991,
+        -0.7412493166611012,
+        -0.0741249316661101
+      ]
+    },
+    "Axz": {
+      "maximum": 4.099197282510983e-08,
+      "signed": 4.099197282510983e-08,
+      "row": 550,
+      "face": 5,
+      "j": 0,
+      "k": 5,
+      "xyz": [
+        -0.667124384994991,
+        0.07412493166611019,
+        -0.7412493166611012
+      ]
+    },
+    "Ayy": {
+      "maximum": 5.171195452003394e-08,
+      "signed": 5.171195452003394e-08,
+      "row": 344,
+      "face": 3,
+      "j": 4,
+      "k": 4,
+      "xyz": [
+        -0.0990147542976674,
+        -0.9901475429766743,
+        -0.0990147542976674
+      ]
+    },
+    "Ayz": {
+      "maximum": 4.099760401116192e-08,
+      "signed": 4.099760401116192e-08,
+      "row": 505,
+      "face": 5,
+      "j": 5,
+      "k": 0,
+      "xyz": [
+        0.07412493166611019,
+        -0.667124384994991,
+        -0.7412493166611012
+      ]
+    },
+    "Azz": {
+      "maximum": 5.176385272303786e-08,
+      "signed": 5.176385272303786e-08,
+      "row": 544,
+      "face": 5,
+      "j": 4,
+      "k": 4,
+      "xyz": [
+        -0.0990147542976674,
+        -0.0990147542976674,
+        -0.9901475429766743
+      ]
+    },
+    "LambdaX": {
+      "maximum": 1.3476938826044208e-07,
+      "signed": -1.3476938826044208e-07,
+      "row": 133,
+      "face": 1,
+      "j": 3,
+      "k": 3,
+      "xyz": [
+        -0.9205746178983233,
+        -0.276172385369497,
+        -0.276172385369497
+      ]
+    },
+    "LambdaY": {
+      "maximum": 1.3516560861976028e-07,
+      "signed": -1.3516560861976028e-07,
+      "row": 333,
+      "face": 3,
+      "j": 3,
+      "k": 3,
+      "xyz": [
+        -0.276172385369497,
+        -0.9205746178983233,
+        -0.276172385369497
+      ]
+    },
+    "LambdaZ": {
+      "maximum": 1.3540399227646587e-07,
+      "signed": -1.3540399227646587e-07,
+      "row": 533,
+      "face": 5,
+      "j": 3,
+      "k": 3,
+      "xyz": [
+        -0.276172385369497,
+        -0.276172385369497,
+        -0.9205746178983233
+      ]
+    }
+  },
+  "dominant_component": "LambdaZ",
+  "dominant_decomposition": {
+    "Lambda2_metric_normal": 1.1387344624700686e-06,
+    "Lambda2_metric_tangent": -1.1493502352397073e-06,
+    "Lambda2_independent_lambda": 2.727811789185819e-09,
+    "Lambda2_trace_normal": -6.67030822126775e-07,
+    "Lambda2_trace_tangent": -2.9017197644854505e-09,
+    "Lambda2_curvature": 5.424165105952475e-07,
+    "Lambda2_sum_error": 5.293955920339377e-23,
+    "Lambda2_Khat_normal": -6.726022964156557e-07,
+    "Lambda2_Theta_normal": 5.571474288880563e-09
+  },
+  "dominant_raw_trace": {
+    "Khat_normal": -5.479749280399373e-07,
+    "Theta_normal": 9.078256909901993e-09,
+    "Khat": -3.000000006443439,
+    "Theta": -3.1227676614221815e-11
+  },
+  "original_vector_certificate": {
+    "saved_beta_original_physical_rms": 2.942263626621665e-11,
+    "saved_beta_original_conformal_rms": 1.992784875041041e-11,
+    "saved_beta_original_point_max": 2.073367699750861e-09
+  },
+  "original_vector_pass": true,
+  "pole_gate": {
+    "value": 1.3540399227646587e-07,
+    "target": 1e-07,
+    "passes": false
+  },
+  "volume_and_sphere_CSV_bitwise": {
+    "Mink": {
+      "bitwise": true,
+      "sha256": "fcb60baa5a0d3db5d56a1c6ed7c837f810c45e2cf778e22ccca2e9dcf6ba2627"
+    },
+    "Mink.spheres.csv": {
+      "bitwise": true,
+      "sha256": "dcb196670cef6c8a4ae1ad4fb2d2215700170ea97fb9d6b4c4095b176e1f329d"
+    },
+    "Mink_certificate": {
+      "time": 0.0002,
+      "cells": 2808,
+      "saved_beta_role": "finalaccepted_fresh_solve_IO_capture",
+      "saved_beta_original_physical_rms": 1.1216782326250583e-13,
+      "saved_beta_original_conformal_rms": 1.1216782326250513e-13,
+      "saved_beta_original_point_max": 8.174087263110503e-13,
+      "same_beta_for_both_node_counts": true,
+      "methods": [
+        {
+          "nodes": 7,
+          "supported": true,
+          "pole_max": 1.8319524286047816e-15,
+          "row": 33,
+          "component": "LambdaX",
+          "face": 0,
+          "j": 3,
+          "k": 5,
+          "xyz": [
+            0.7620007620011431,
+            0.12700012700019056,
+            0.6350006350009525
+          ],
+          "clock": 2.220446049250313e-16,
+          "null": 3.3306690738754696e-16,
+          "tangent": 3.2714465065465947e-16,
+          "factor_condition": 8039492.53489426,
+          "value_l1": 1.519034234480774,
+          "reproduction": 1.2485090691723283e-14
+        }
+      ],
+      "helper_full_tensor_agreement": 6.661338147750939e-16,
+      "decomposition_error": 1.1102230246251565e-15,
+      "frozen_data_unchanged": 1,
+      "no_solve_or_evolution": true
+    },
+    "N10": {
+      "bitwise": true,
+      "baseline_gzip_sha256": "6cde83e6d22df92fedf4bb8304c5bc45ecd660780a527705104d3066de42316c",
+      "current_sha256": "458e8087c5280eb2879f27b55433f71c6b7d941b34da50f1d2f429780664891d"
+    },
+    "N10.spheres.csv": {
+      "bitwise": true,
+      "baseline_gzip_sha256": "b8214d5786af38a1da30836d41ba2e99512e763aa533bee7fb8d5ab2f65ff14f",
+      "current_sha256": "2e3dde9cd9e87fbc7b76196036c8484f9fea335e46ad039421e26d7e3f91be44"
+    },
+    "N10_midpoint_all_payload_except_source_tag_and_checksum": {
+      "bitwise": true,
+      "header_bitwise": true,
+      "scope": "All volume/scri/shift/parameters; only64byte source_tag and its dependent8bytechecksum differ"
+    }
+  },
+  "all_prior_certificate_columns_bitwise": {
+    "nodes": true,
+    "row": true,
+    "face": true,
+    "j": true,
+    "k": true,
+    "x": true,
+    "y": true,
+    "z": true,
+    "qchi_G": true,
+    "qchi_H": true,
+    "qalpha_G": true,
+    "qalpha_H": true,
+    "chi": true,
+    "Khat": true,
+    "Theta": true,
+    "alpha": true,
+    "Axx": true,
+    "Axy": true,
+    "Axz": true,
+    "Ayy": true,
+    "Ayz": true,
+    "Azz": true,
+    "LambdaX": true,
+    "LambdaY": true,
+    "LambdaZ": true,
+    "Axx_baseline": true,
+    "Axx_chi_normal": true,
+    "Axx_chi_tangent": true,
+    "Axx_metric_normal": true,
+    "Axx_metric_tangent": true,
+    "Axx_independent_lambda": true,
+    "Axx_curvature": true,
+    "Axx_sum_error": true,
+    "Axy_baseline": true,
+    "Axy_chi_normal": true,
+    "Axy_chi_tangent": true,
+    "Axy_metric_normal": true,
+    "Axy_metric_tangent": true,
+    "Axy_independent_lambda": true,
+    "Axy_curvature": true,
+    "Axy_sum_error": true,
+    "Axz_baseline": true,
+    "Axz_chi_normal": true,
+    "Axz_chi_tangent": true,
+    "Axz_metric_normal": true,
+    "Axz_metric_tangent": true,
+    "Axz_independent_lambda": true,
+    "Axz_curvature": true,
+    "Axz_sum_error": true,
+    "Ayy_baseline": true,
+    "Ayy_chi_normal": true,
+    "Ayy_chi_tangent": true,
+    "Ayy_metric_normal": true,
+    "Ayy_metric_tangent": true,
+    "Ayy_independent_lambda": true,
+    "Ayy_curvature": true,
+    "Ayy_sum_error": true,
+    "Ayz_baseline": true,
+    "Ayz_chi_normal": true,
+    "Ayz_chi_tangent": true,
+    "Ayz_metric_normal": true,
+    "Ayz_metric_tangent": true,
+    "Ayz_independent_lambda": true,
+    "Ayz_curvature": true,
+    "Ayz_sum_error": true,
+    "Azz_baseline": true,
+    "Azz_chi_normal": true,
+    "Azz_chi_tangent": true,
+    "Azz_metric_normal": true,
+    "Azz_metric_tangent": true,
+    "Azz_independent_lambda": true,
+    "Azz_curvature": true,
+    "Azz_sum_error": true,
+    "Lambda0_metric_normal": true,
+    "Lambda1_metric_normal": true,
+    "Lambda2_metric_normal": true,
+    "Lambda0_metric_tangent": true,
+    "Lambda1_metric_tangent": true,
+    "Lambda2_metric_tangent": true,
+    "Lambda0_independent_lambda": true,
+    "Lambda1_independent_lambda": true,
+    "Lambda2_independent_lambda": true,
+    "Lambda0_trace_normal": true,
+    "Lambda1_trace_normal": true,
+    "Lambda2_trace_normal": true,
+    "Lambda0_trace_tangent": true,
+    "Lambda1_trace_tangent": true,
+    "Lambda2_trace_tangent": true,
+    "Lambda0_curvature": true,
+    "Lambda1_curvature": true,
+    "Lambda2_curvature": true,
+    "Lambda0_sum_error": true,
+    "Lambda1_sum_error": true,
+    "Lambda2_sum_error": true
+  },
+  "all_surface_rows_retained": 600,
+  "scientific_acceptance": false,
+  "helper_full_tensor_agreement": 1.3322676295501878e-15,
+  "decomposition_error": 3.552713725122615e-15,
+  "no_further_coupled_case": true,
+  "visual_QA": {
+    "final-pole-localization.png": "All600 final nodes, unchanged target and exact LambdaZ split shown; no clipped content"
+  }
+}

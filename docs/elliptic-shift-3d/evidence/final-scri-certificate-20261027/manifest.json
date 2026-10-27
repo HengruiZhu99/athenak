@@ -1,0 +1,171 @@
+{
+  "scope": "Read-only final accepted scalar trace split; exactly the IO-captured state; no evolution/solve",
+  "capture_manifest_sha256": "aa95d7fb282d1ae8ac86f59683d8dec1d13583455b6424451f436b745466af71",
+  "capture_source_sha256": "49f115ce4a6d798923b3924e7136ca97ca282a99224a192ad33e2deff2bc76a2",
+  "driver_sha256": "ab18f56623905b005c6206784fdfe1bc9df2a3d6a5a5e2725496030fdfe8c680",
+  "runs": {
+    "build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/tst/elliptic_shift_3d/diagnose_final_scri_state.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/diagnostic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 4.471327167,
+      "maximum_seconds": 180
+    },
+    "dependencies": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-M",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/source/tst/elliptic_shift_3d/diagnose_final_scri_state.cpp"
+      ],
+      "exit_code": 0,
+      "seconds": 0.1504675829999993,
+      "maximum_seconds": 180
+    },
+    "mink": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/diagnostic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-io-capture-20261027/mink-io/coupled.checkpoint.final",
+        "f4c757cc314437899dbade85249d2cedef91e4d7b4f41712e9441245268814c4",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/mink.csv"
+      ],
+      "exit_code": 0,
+      "seconds": 0.9188222920000007,
+      "maximum_seconds": 180
+    },
+    "n10": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/diagnostic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-io-capture-20261027/n10/coupled.checkpoint.final",
+        "f4c757cc314437899dbade85249d2cedef91e4d7b4f41712e9441245268814c4",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/final-scri-certificate-20261027/n10.csv"
+      ],
+      "exit_code": 0,
+      "seconds": 5.983085917,
+      "maximum_seconds": 180
+    }
+  },
+  "live_project_dependencies": [],
+  "results": {
+    "mink": {
+      "time": 0.0002,
+      "cells": 2808,
+      "saved_beta_role": "finalaccepted_fresh_solve_IO_capture",
+      "saved_beta_original_physical_rms": 1.1216782326250583e-13,
+      "saved_beta_original_conformal_rms": 1.1216782326250513e-13,
+      "saved_beta_original_point_max": 8.174087263110503e-13,
+      "sampler_node_count": 7,
+      "methods": [
+        {
+          "nodes": 7,
+          "supported": true,
+          "pole_max": 1.8319524286047816e-15,
+          "row": 33,
+          "component": "LambdaX",
+          "face": 0,
+          "j": 3,
+          "k": 5,
+          "xyz": [
+            0.7620007620011431,
+            0.12700012700019056,
+            0.6350006350009525
+          ],
+          "clock": 2.220446049250313e-16,
+          "null": 3.3306690738754696e-16,
+          "tangent": 3.2714465065465947e-16,
+          "factor_condition": 8039492.53489426,
+          "value_l1": 1.519034234480774,
+          "reproduction": 1.2485090691723283e-14
+        }
+      ],
+      "helper_full_tensor_agreement": 6.661338147750939e-16,
+      "decomposition_error": 1.1102230246251565e-15,
+      "frozen_data_unchanged": 1,
+      "no_solve_or_evolution": true
+    },
+    "n10": {
+      "time": 0.0002,
+      "cells": 50000,
+      "saved_beta_role": "finalaccepted_fresh_solve_IO_capture",
+      "saved_beta_original_physical_rms": 2.942263626621665e-11,
+      "saved_beta_original_conformal_rms": 1.992784875041041e-11,
+      "saved_beta_original_point_max": 2.073367699750861e-09,
+      "sampler_node_count": 7,
+      "methods": [
+        {
+          "nodes": 7,
+          "supported": true,
+          "pole_max": 1.3540399227646587e-07,
+          "row": 533,
+          "component": "LambdaZ",
+          "face": 5,
+          "j": 3,
+          "k": 3,
+          "xyz": [
+            -0.276172385369497,
+            -0.276172385369497,
+            -0.9205746178983233
+          ],
+          "clock": 0,
+          "null": 4.440892098500626e-16,
+          "tangent": 4.1272216902897517e-16,
+          "factor_condition": 16492132.857851243,
+          "value_l1": 1.6436688429909672,
+          "reproduction": 4.97696324651535e-14
+        }
+      ],
+      "helper_full_tensor_agreement": 1.3322676295501878e-15,
+      "decomposition_error": 3.552713725122615e-15,
+      "frozen_data_unchanged": 1,
+      "no_solve_or_evolution": true
+    }
+  },
+  "prior_n10_pole_bitwise_same": true,
+  "compiled_source_sha256": "72a051406f136fadd74244b7ce00447ff545df76c63d5ed1a96de77c352c581e",
+  "capture_manifest_postprocessing": "Added independently checked complete midpoint payload and lossless binary capsules; no physical input or result changed"
+}

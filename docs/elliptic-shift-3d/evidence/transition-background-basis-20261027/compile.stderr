@@ -1,0 +1,14 @@
+In file included from /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/transition-background-basis-20261027/source/tst/elliptic_shift_3d/diagnose_transition_background.cpp:4:
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/transition-background-basis-20261027/source/tst/elliptic_shift_3d/diagnose_transition_p5.cpp:3:9: warning: 'main' macro redefined [-Wmacro-redefined]
+    3 | #define main transition_reference_not_invoked
+      |         ^
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/transition-background-basis-20261027/source/tst/elliptic_shift_3d/diagnose_transition_background.cpp:3:9: note: previous definition is here
+    3 | #define main transition_p5_reference_not_invoked
+      |         ^
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/transition-background-basis-20261027/source/tst/elliptic_shift_3d/diagnose_transition_background.cpp:13:5: error: redefinition of 'main'
+   13 | int main(int argc,char**argv){Kokkos::initialize(argc,argv);int code=0;try{if(argc!=3)throw std::runtime_error("initial.dat exact.dat");const auto start=std::chrono::steady_clock::now();const auto grid=MakeGrid();const auto initial=ReadInitial(argv[1],grid);const auto exact=ReadExact(argv[2]);h::PuncturePosition position;Engine engine(grid.mesh,true,1e-10,4,true,true,0,6,true,2,.24,true,true,true,true,.24,1);engine.Initialize(0,false);engine.InitializeWormhole(argv[1],0,false);const V padded=engine.Padded(engine.state);std::cout<<std::setprecision(17);
+      |     ^
+/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/transition-background-basis-20261027/source/tst/elliptic_shift_3d/diagnose_transition_p5.cpp:11:5: note: previous definition is here
+   11 | int main(int argc,char**argv){Kokkos::initialize(argc,argv);int code=0;try{if(argc!=3)throw std::runtime_error("initial.dat exact.dat");const auto start=std::chrono::steady_clock::now();const auto grid=MakeGrid();const auto initial=ReadInitial(argv[1],grid);const auto exact=ReadExact(argv[2]);h::PuncturePosition position;std::cout<<std::setprecision(17);std::vector<size_t>targets{126};for(int face=0;face<6;++face)for(int i:{0})for(int j:{0,2,3,5})for(int k:{0,3}){const size_t p=((face*6+k)*6+j)*6+i;if(std::find(targets.begin(),targets.end(),p)==targets.end())targets.push_back(p);}if(targets.size()>145)throw std::runtime_error("target budget");
+      |     ^
+1 warning and 1 error generated.

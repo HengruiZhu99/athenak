@@ -1,0 +1,22 @@
+--- frozen/coupled.cpp
++++ io-capture/coupled.cpp
+@@ -131,6 +131,19 @@
+       if (!restart_equal) throw std::runtime_error("coupled restart is not bitwise reproducible");
+     }
+     pilot.RHS(pilot.state, dt);  // accepted-state diagnostics, with a fresh stage solve
++    // IO ONLY: retain the exact accepted state AFTER its fresh shift solve.
++    if (!checkpoint.empty()) {
++        cubed_sphere::CompositeSnapshot snapshot{pilot.shift.grid.mesh, source_tag, dt, tolerance,
++            static_cast<std::uint64_t>(steps), fields, pilot.state, pilot.beta_delta};
++        snapshot.spatial_order = spatial_order;
++        if(pilot.scri){snapshot.boundary_scheme=1;snapshot.boundary_fields=pilot.scri->values;}
++        snapshot.boundary_pole_sat=pilot.pole_sat;snapshot.boundary_regularity_sat=pilot.regularity_sat;
++        snapshot.wormhole_chart=wormhole;
++        snapshot.isotropic_reference=isotropic_reference;
++        snapshot.scri_radial_points=surface_points;snapshot.radial_interface_stencils=radial_stencils;
++        snapshot.positive_storage=positive_storage;snapshot.telegraph_width=telegraph_width;snapshot.enriched_log_derivatives=enriched;snapshot.radial_line_smoothing=radial_lines;snapshot.topology_coarsening=topology;snapshot.log_halo_enrichment=log_halos;snapshot.log_halo_radius=halo_radius;snapshot.puncture_derivative_scheme=puncture_scheme;snapshot.boundary_derivative_scheme=boundary_derivatives;
++        cubed_sphere::CompositeCheckpoint::Write(checkpoint+".final", snapshot);
++    }
+     const auto &grid = pilot.shift.grid;
+     Real H2 = 0, M2 = 0, theta2 = 0, Z2 = 0, volume = 0;
+     Real maxH = 0, maxM = 0, drift = 0, min_alpha = 1, min_chi = 1;

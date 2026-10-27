@@ -1,5 +1,5 @@
 {
-  "scope": "Same actual N10 midpoint; node8 rejected, no new evolution/solve; local midpoint pole is distinct from final/stage maximum",
+  "scope": "Same actual N10 midpoint; node8 rejected, no new evolution/solve; local midpoint pole is distinct from final-accepted surface maximum",
   "manifest_sha256": "ab7a5ecec1979dcead6247faea83160384ed1edc48e44da6d7527722a91fa9fa",
   "result": {
     "time": 0.0001,
@@ -240,5 +240,6 @@
   },
   "visual_QA": {
     "midpoint-pole-localization.png": "All600rows shown;8nodeguard rejection explicitly labeled; no clipped plots"
-  }
+  },
+  "pole_diagnostic_semantics_correction": "BoundaryRates resets boundary_pole every RHS; driver calls final accepted RHS before printing, so reported scri_tensor_pole is final accepted surface max, not stage-history max. Numerical values unchanged."
 }

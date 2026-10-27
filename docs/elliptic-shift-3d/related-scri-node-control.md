@@ -10,8 +10,9 @@ The seven-node local midpoint maximum is `5.06665186395e-8`, LambdaZ at
 row 533, face 5, j3,k3:
 `x=(-.276172385369497,-.276172385369497,-.920574617898323)`.
 This local value is **not** the reported `1.35403992276e-7` maximum over the
-completed evolution's stage/accepted source evaluations. The saved midpoint does
-not contain the fields at every later maximum. It cannot identify the component
+FINAL accepted surface at t=.0002. `BoundaryRates` resets this diagnostic on
+every RHS, so it is not a stage-history maximum; earlier wording was incorrect.
+The saved midpoint does not contain the final accepted surface fields. It cannot identify the component
 and location of that later maximum by itself.
 
 Eight nodes are **unsupported by the existing guard**:
@@ -103,6 +104,6 @@ PYTHONDONTWRITEBYTECODE=1 python3 tst/elliptic_shift_3d/analyze_related_scri_nod
 
 There is no admissible eight-node improvement result, so no further coupled run
 is supported by this control. Localizing the later failed maximum requires its
-actual stage/surface data or explicit component/location diagnostics on a future
+actual final accepted surface data or explicit component/location diagnostics on a future
 authorized run. The completed three-resolution family remains scientifically
 failed; the below-target midpoint value does not override that result.

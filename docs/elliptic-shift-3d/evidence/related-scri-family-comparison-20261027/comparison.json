@@ -37644,5 +37644,6 @@
   ],
   "visual_QA": {
     "related-resolution-gates.png": "readable, no clipped labels; all failed scientific gates retained"
-  }
+  },
+  "pole_diagnostic_semantics_correction": "BoundaryRates resets boundary_pole every RHS; driver calls final accepted RHS before printing, so reported scri_tensor_pole is final accepted surface max, not stage-history max. Numerical values unchanged."
 }

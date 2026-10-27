@@ -58,11 +58,14 @@ failures after completed evolution/output/restart, not execution failures.
 | 8 | 25,600 | 49.71 | bitwise | 125 | 2.47959812e-7 | 0.09257602 | 0.28090495 |
 | 10 | 50,000 | 102.72 | bitwise | 148 | 1.35403992e-7 | 0.06142992 | 0.16473958 |
 
-The pole is the original tensor/gauge numerator maximum tracked through RK
-stages and accepted-state evaluation, using the requested Hermite source path.
+The pole is the original tensor/gauge numerator maximum over surface nodes at
+the FINAL accepted state, using the requested Hermite source path.
+`BoundaryRates` resets `boundary_pole` on every RHS call, and `coupled.cpp` calls
+a fresh `RHS(state,dt)` after evolution/restart checks before printing. It is not
+a maximum over RK stage history; earlier wording claiming that was incorrect.
 The unchanged target is `1e-7`; all three fail. The separate legacy-sampler final
 `scri_pole` diagnostic in stdout is retained but is not substituted for the
-Hermite stage/source maximum. The original spherical H RMS target is `1e-5`;
+Hermite final-accepted source maximum. The original spherical H RMS target is `1e-5`;
 all three fail by large factors. No near-pass description is justified.
 
 | N | M RMS | Theta RMS | Z RMS | Original vector RMS max | Original vector point max |
@@ -165,6 +168,6 @@ PYTHONDONTWRITEBYTECODE=1 python3 tst/elliptic_shift_3d/analyze_related_scri_fam
 No further coupled case is justified by the current result alone. The next
 bounded task is a same-data N10 midpoint comparison of Hermite 7/8 normal nodes,
 with component/location and metric-normal/angular decomposition. A midpoint
-local pole must not be mislabeled as the maximum over the completed evolution.
+local pole must not be mislabeled as the final accepted surface maximum.
 Any node-count change is a discretization control, not a fourth spatial grid or
 permission to weaken the original boundary/constraint targets.
