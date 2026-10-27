@@ -10,18 +10,21 @@
 namespace multigrid {
 struct KrylovReport {
   bool converged = false;
+  bool inner_norm_converged=false, external_acceptance=false;
   int iterations = 0, applications = 0;
   std::vector<double> residual;
 };
 using Vector = std::vector<double>;
 using Operator = std::function<void(const Vector &, Vector &)>;
 using InnerProduct = std::function<double(const Vector &, const Vector &)>;
+using ResidualAcceptance=std::function<bool(const Vector &,const Vector &)>;
 
 // Right-preconditioned flexible GMRES. An unpreconditioned residual of the
 // ORIGINAL equation is recomputed at every restart and before declaring success.
 inline KrylovReport FlexibleGMRES(const Operator &apply, const Operator &precondition,
     const InnerProduct &dot, const Vector &rhs, Vector &x, double atol,
-    double rtol, int max_iterations = 160, int restart = 24) {
+    double rtol, int max_iterations = 160, int restart = 24,
+    const ResidualAcceptance &accept={}) {
   if (rhs.empty() || x.size() != rhs.size() || atol < 0 || rtol < 0
       || !std::isfinite(atol+rtol) || max_iterations < 1 || restart < 1)
     throw std::invalid_argument("invalid FGMRES controls");
@@ -34,7 +37,10 @@ inline KrylovReport FlexibleGMRES(const Operator &apply, const Operator &precond
     const double beta = std::sqrt(dot(residual, residual));
     if (!std::isfinite(beta)) throw std::runtime_error("nonfinite original vector residual");
     report.residual.push_back(beta);
-    if (beta <= target) {report.converged = true; return report;}
+    report.inner_norm_converged=beta<=target;
+    report.external_acceptance=accept&&accept(x,residual);
+    if (accept?report.external_acceptance:report.inner_norm_converged) {report.converged = true; return report;}
+    if(beta==0)return report; // affine arithmetic can be exact while the independently checked physical equation is not
     const int width = std::min(restart, max_iterations-report.iterations);
     std::vector<Vector> v(width+1, Vector(rhs.size())), z(width, Vector(rhs.size()));
     std::vector<Vector> H(width+1, Vector(width, 0));
@@ -81,7 +87,9 @@ inline KrylovReport FlexibleGMRES(const Operator &apply, const Operator &precond
   apply(x, ax); ++report.applications;
   for (size_t p = 0; p < rhs.size(); ++p) residual[p] = rhs[p]-ax[p];
   report.residual.push_back(std::sqrt(dot(residual, residual)));
-  report.converged = std::isfinite(report.residual.back()) && report.residual.back() <= target;
+  report.inner_norm_converged=std::isfinite(report.residual.back())&&report.residual.back()<=target;
+  report.external_acceptance=accept&&accept(x,residual);
+  report.converged=accept?report.external_acceptance:report.inner_norm_converged;
   return report;
 }
 }  // namespace multigrid

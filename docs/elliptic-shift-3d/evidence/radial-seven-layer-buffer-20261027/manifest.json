@@ -1,0 +1,1576 @@
+{
+  "n": 8,
+  "radii": ".45,.55,.60,.65,.70,.75,1",
+  "timeout_per_process_seconds": 180,
+  "commands": [
+    {
+      "name": "build",
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_radial_metric_divergence.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/radial-metric-divergence",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.825801292
+    },
+    {
+      "name": "coordinates",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/radial-metric-divergence",
+        "8",
+        "--coordinates",
+        "1",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/coordinates.csv",
+        ".45,.55,.60,.65,.70,.75,1",
+        "4",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 1.2160433329999998,
+      "result": {
+        "coordinates": true,
+        "cells": 25600,
+        "blocks": 50,
+        "datum_ghosts": 2
+      }
+    },
+    {
+      "name": "generate-independent-data",
+      "command": [
+        "python3",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/wormhole_exact_jets.py",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/coordinates.csv",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/exact.dat"
+      ],
+      "exit_code": 0,
+      "seconds": 2.078231375,
+      "result": {
+        "points": 85056,
+        "unique_radii": 561,
+        "shift_ratio_4097_8193_max": 1.2434497875801753e-14
+      }
+    },
+    {
+      "name": "radial-interface-1",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/radial-metric-divergence",
+        "8",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/exact.dat",
+        "1",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/radial-interface-1.points.csv",
+        ".45,.55,.60,.65,.70,.75,1",
+        "2",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 2.067131958,
+      "result": {
+        "n": 8,
+        "shell_radii": [
+          0.45,
+          0.55,
+          0.6,
+          0.65,
+          0.7,
+          0.75,
+          1
+        ],
+        "blocks": 50,
+        "cells": 25600,
+        "ghosts": 2,
+        "radial_interface_stencils": 1,
+        "minimum_radius": 0.027063293868263706,
+        "analytic_L_beta_vs_exact_source_max": 1.4210854715202004e-13,
+        "cases": [
+          {
+            "name": "compact_operator_analytic_source",
+            "diagnostic": {
+              "residual": {
+                "cells": 25600,
+                "physical_rms": 0.4152546587258898,
+                "physical_l2": 1.1378172446444887,
+                "conformal_rms": 0.5432939938450753,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 4.313904687256762,
+                "worst_point": 17628,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  0.6677713385628801,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "operator_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 0.4152546587258898,
+                "physical_l2": 1.1378172446444887,
+                "conformal_rms": 0.5432939938450753,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 4.313904687256762,
+                "worst_point": 17628,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  0.6677713385628801,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "source_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 0,
+                "physical_l2": 0,
+                "conformal_rms": 0,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 0,
+                "worst_point": 0,
+                "worst_xyz": [
+                  -0.234375,
+                  -0.234375,
+                  -0.234375
+                ],
+                "worst_r": 0.4059494080239556
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 25600,
+                "physical_rms": 0.006005430621647336,
+                "physical_l2": 0.01645516162008176,
+                "conformal_rms": 0.007424443149207306,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 0.04531568356055396,
+                "worst_point": 18508,
+                "worst_xyz": [
+                  -0.31756112673941805,
+                  -0.31756112673941805,
+                  0.5080978027830689
+                ],
+                "worst_r": 0.6781249999999999
+              },
+              "face_metric_rate_max": 8.813770165197014e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 1.9008154663483408e-14,
+                    "physical_l2": 2.0761289420308043e-14,
+                    "conformal_rms": 3.360220358157552e-14,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 5.89077050551113e-14,
+                    "worst_point": 438,
+                    "worst_xyz": [
+                      -0.046875,
+                      -0.046875,
+                      -0.046875
+                    ],
+                    "worst_r": 0.08118988160479113
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.03997834036721241,
+                    "physical_l2": 0.041532193383107444,
+                    "conformal_rms": 0.04991307018815968,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.19346300035896807,
+                    "worst_point": 759,
+                    "worst_xyz": [
+                      0.234375,
+                      -0.046875,
+                      -0.140625
+                    ],
+                    "worst_r": 0.2773162398327945
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.15348808160423758,
+                    "physical_l2": 0.21741396661120996,
+                    "conformal_rms": 0.12627412165091303,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 3.9928500507056555,
+                    "worst_point": 6648,
+                    "worst_xyz": [
+                      0.22054608583845575,
+                      0.22054608583845575,
+                      0.2520526695296637
+                    ],
+                    "worst_r": 0.4010133416413435
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 1.6430970697542724,
+                    "physical_l2": 1.1160798924116249,
+                    "conformal_rms": 1.6580959420325698,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 4.313904687256762,
+                    "worst_point": 17628,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      0.6677713385628801,
+                      -0.08347141732036001
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 4.75515275073603e-12,
+                    "physical_l2": 6.18655787814397e-12,
+                    "conformal_rms": 4.742828169815975e-12,
+                    "physical_volume": 1.6926579906223485,
+                    "conformal_volume": 1.6872077336297664,
+                    "maximum": 2.7692577501937378e-11,
+                    "worst_point": 20678,
+                    "worst_xyz": [
+                      -0.0693658866702692,
+                      0.5549270933621536,
+                      -0.4855612066918844
+                    ],
+                    "worst_r": 0.7406249999999999
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 1.0111103813057698e-12,
+                    "physical_l2": 1.048421022015859e-12,
+                    "conformal_rms": 1.0111285240157168e-12,
+                    "physical_volume": 1.075162979338209,
+                    "conformal_volume": 1.0751076141560052,
+                    "maximum": 2.3914226964427605e-12,
+                    "worst_point": 22751,
+                    "worst_xyz": [
+                      0.9693454914622452,
+                      -0.12116818643278066,
+                      -0.12116818643278066
+                    ],
+                    "worst_r": 0.9843749999999999
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 22400,
+                "physical_rms": 0.3616327181969634,
+                "physical_l2": 0.9084235294250265,
+                "conformal_rms": 0.47924985420429617,
+                "physical_volume": 6.31017374834674,
+                "conformal_volume": 3.39485435812392,
+                "maximum": 4.313382069735094,
+                "worst_point": 16412,
+                "worst_xyz": [
+                  0.5080978027830689,
+                  -0.06351222534788362,
+                  -0.44458557743518534
+                ],
+                "worst_r": 0.678125
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 1.1809396290128739e-12,
+                "physical_l2": 1.0159534876017692e-12,
+                "conformal_rms": 1.1809431745373094e-12,
+                "physical_volume": 0.7401031590529495,
+                "conformal_volume": 0.740092879138812,
+                "maximum": 2.3914226964427605e-12,
+                "worst_point": 22751,
+                "worst_xyz": [
+                  0.9693454914622452,
+                  -0.12116818643278066,
+                  -0.12116818643278066
+                ],
+                "worst_r": 0.9843749999999999
+              }
+            }
+          },
+          {
+            "name": "compact_operator_sampled_product_rule_source",
+            "diagnostic": {
+              "residual": {
+                "cells": 25600,
+                "physical_rms": 0.657701478437317,
+                "physical_l2": 1.8021329039155647,
+                "conformal_rms": 0.8672184799962407,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 7.2386405364954856,
+                "worst_point": 18652,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  -0.08347141732036001,
+                  0.6677713385628801
+                ],
+                "worst_r": 0.678125
+              },
+              "operator_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 0.4152546587258898,
+                "physical_l2": 1.1378172446444887,
+                "conformal_rms": 0.5432939938450753,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 4.313904687256762,
+                "worst_point": 17628,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  0.6677713385628801,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "source_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 1.0557675199684933,
+                "physical_l2": 2.892852531122731,
+                "conformal_rms": 1.3979715189384878,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 11.552544999538569,
+                "worst_point": 16604,
+                "worst_xyz": [
+                  0.6677713385628801,
+                  -0.08347141732036001,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 25600,
+                "physical_rms": 0.006005430621647336,
+                "physical_l2": 0.01645516162008176,
+                "conformal_rms": 0.007424443149207306,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 0.04531568356055396,
+                "worst_point": 18508,
+                "worst_xyz": [
+                  -0.31756112673941805,
+                  -0.31756112673941805,
+                  0.5080978027830689
+                ],
+                "worst_r": 0.6781249999999999
+              },
+              "face_metric_rate_max": 8.813770165197014e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 1.9008154663483408e-14,
+                    "physical_l2": 2.0761289420308043e-14,
+                    "conformal_rms": 3.360220358157552e-14,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 5.89077050551113e-14,
+                    "worst_point": 438,
+                    "worst_xyz": [
+                      -0.046875,
+                      -0.046875,
+                      -0.046875
+                    ],
+                    "worst_r": 0.08118988160479113
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.05158110199573095,
+                    "physical_l2": 0.05358592386084743,
+                    "conformal_rms": 0.06284730686156698,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.26549283833600046,
+                    "worst_point": 360,
+                    "worst_xyz": [
+                      -0.234375,
+                      -0.078125,
+                      -0.078125
+                    ],
+                    "worst_r": 0.25911131174651564
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.16673078031588295,
+                    "physical_l2": 0.23617208532273143,
+                    "conformal_rms": 0.15460138815699073,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 3.5802147287613195,
+                    "worst_point": 6648,
+                    "worst_xyz": [
+                      0.22054608583845575,
+                      0.22054608583845575,
+                      0.2520526695296637
+                    ],
+                    "worst_r": 0.4010133416413435
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 2.6290420494967264,
+                    "physical_l2": 1.7857867448980125,
+                    "conformal_rms": 2.6530581494321814,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 7.2386405364954856,
+                    "worst_point": 18652,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      -0.08347141732036001,
+                      0.6677713385628801
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 4.755462125705064e-12,
+                    "physical_l2": 6.1869603817547495e-12,
+                    "conformal_rms": 4.743135998101741e-12,
+                    "physical_volume": 1.6926579906223485,
+                    "conformal_volume": 1.6872077336297664,
+                    "maximum": 2.7692577501937378e-11,
+                    "worst_point": 20678,
+                    "worst_xyz": [
+                      -0.0693658866702692,
+                      0.5549270933621536,
+                      -0.4855612066918844
+                    ],
+                    "worst_r": 0.7406249999999999
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 1.0111103813057698e-12,
+                    "physical_l2": 1.048421022015859e-12,
+                    "conformal_rms": 1.0111285240157168e-12,
+                    "physical_volume": 1.075162979338209,
+                    "conformal_volume": 1.0751076141560052,
+                    "maximum": 2.3914226964427605e-12,
+                    "worst_point": 22751,
+                    "worst_xyz": [
+                      0.9693454914622452,
+                      -0.12116818643278066,
+                      -0.12116818643278066
+                    ],
+                    "worst_r": 0.9843749999999999
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 22400,
+                "physical_rms": 0.5731494554307537,
+                "physical_l2": 1.4397548257977537,
+                "conformal_rms": 0.7688271819096568,
+                "physical_volume": 6.31017374834674,
+                "conformal_volume": 3.39485435812392,
+                "maximum": 7.2327548484107975,
+                "worst_point": 18188,
+                "worst_xyz": [
+                  0.07148065127672273,
+                  -0.5718452102137819,
+                  -0.3574032563836137
+                ],
+                "worst_r": 0.678125
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 1.1809396290128739e-12,
+                "physical_l2": 1.0159534876017692e-12,
+                "conformal_rms": 1.1809431745373094e-12,
+                "physical_volume": 0.7401031590529495,
+                "conformal_volume": 0.740092879138812,
+                "maximum": 2.3914226964427605e-12,
+                "worst_point": 22751,
+                "worst_xyz": [
+                  0.9693454914622452,
+                  -0.12116818643278066,
+                  -0.12116818643278066
+                ],
+                "worst_r": 0.9843749999999999
+              }
+            }
+          },
+          {
+            "name": "consistent_centered_checkerboard_control",
+            "diagnostic": {
+              "residual": {
+                "cells": 25600,
+                "physical_rms": 0.8017496418301592,
+                "physical_l2": 2.196831628959692,
+                "conformal_rms": 1.0588887185660234,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 6.414898620740136,
+                "worst_point": 18652,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  -0.08347141732036001,
+                  0.6677713385628801
+                ],
+                "worst_r": 0.678125
+              },
+              "operator_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 1.8256359336696864,
+                "physical_l2": 5.002328099449933,
+                "conformal_rms": 2.4168866199137122,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 18.044225092772447,
+                "worst_point": 16604,
+                "worst_xyz": [
+                  0.6677713385628801,
+                  -0.08347141732036001,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "source_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 1.088265569623984,
+                "physical_l2": 2.981898711673203,
+                "conformal_rms": 1.4411304796969677,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 11.629326568564414,
+                "worst_point": 16604,
+                "worst_xyz": [
+                  0.6677713385628801,
+                  -0.08347141732036001,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 25600,
+                "physical_rms": 0.006005430621647336,
+                "physical_l2": 0.01645516162008176,
+                "conformal_rms": 0.007424443149207306,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 0.04531568356055396,
+                "worst_point": 18508,
+                "worst_xyz": [
+                  -0.31756112673941805,
+                  -0.31756112673941805,
+                  0.5080978027830689
+                ],
+                "worst_r": 0.6781249999999999
+              },
+              "face_metric_rate_max": 8.813770165197014e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 5.19023680745654e-16,
+                    "physical_l2": 5.668935802934679e-16,
+                    "conformal_rms": 1.1578551313909199e-15,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 1.591319668629391e-15,
+                    "worst_point": 375,
+                    "worst_xyz": [
+                      -0.015625,
+                      -0.046875,
+                      -0.078125
+                    ],
+                    "worst_r": 0.0924387466109315
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.055970442549821774,
+                    "physical_l2": 0.05814586654587007,
+                    "conformal_rms": 0.07000128161190214,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.26514543710039096,
+                    "worst_point": 360,
+                    "worst_xyz": [
+                      -0.234375,
+                      -0.078125,
+                      -0.078125
+                    ],
+                    "worst_r": 0.25911131174651564
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.1588657251978049,
+                    "physical_l2": 0.2250313321582855,
+                    "conformal_rms": 0.13116338469088218,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 2.6488621908406054,
+                    "worst_point": 7105,
+                    "worst_xyz": [
+                      -0.2241382575153672,
+                      0.2241382575153672,
+                      -0.25615800858899107
+                    ],
+                    "worst_r": 0.40754489608916433
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 3.2160054317595415,
+                    "physical_l2": 2.1844838399049538,
+                    "conformal_rms": 3.2450755194871364,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 6.414898620740136,
+                    "worst_point": 18652,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      -0.08347141732036001,
+                      0.6677713385628801
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 0.006854017806409097,
+                    "physical_l2": 0.00891722728583554,
+                    "conformal_rms": 0.006827691933189879,
+                    "physical_volume": 1.6926579906223485,
+                    "conformal_volume": 1.6872077336297664,
+                    "maximum": 0.044921127626742184,
+                    "worst_point": 20568,
+                    "worst_xyz": [
+                      -0.370579413300982,
+                      0.5929270612815711,
+                      -0.07411588266019639
+                    ],
+                    "worst_r": 0.703125
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 1.0337305896729637e-12,
+                    "physical_l2": 1.0718759310080092e-12,
+                    "conformal_rms": 1.033748554474318e-12,
+                    "physical_volume": 1.075162979338209,
+                    "conformal_volume": 1.0751076141560052,
+                    "maximum": 2.29384335716184e-12,
+                    "worst_point": 22623,
+                    "worst_xyz": [
+                      0.8300978857941995,
+                      -0.10376223572427494,
+                      -0.5188111786213747
+                    ],
+                    "worst_r": 0.9843749999999999
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 22400,
+                "physical_rms": 0.7163806653337081,
+                "physical_l2": 1.7995524731803991,
+                "conformal_rms": 0.9639515676096316,
+                "physical_volume": 6.31017374834674,
+                "conformal_volume": 3.39485435812392,
+                "maximum": 6.4145856826323016,
+                "worst_point": 17500,
+                "worst_xyz": [
+                  -0.3574032563836137,
+                  0.5718452102137819,
+                  -0.07148065127672273
+                ],
+                "worst_r": 0.678125
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 1.235975084515228e-12,
+                "physical_l2": 1.0633000763567807e-12,
+                "conformal_rms": 1.235974503017397e-12,
+                "physical_volume": 0.7401031590529495,
+                "conformal_volume": 0.740092879138812,
+                "maximum": 2.29384335716184e-12,
+                "worst_point": 22623,
+                "worst_xyz": [
+                  0.8300978857941995,
+                  -0.10376223572427494,
+                  -0.5188111786213747
+                ],
+                "worst_r": 0.9843749999999999
+              }
+            }
+          },
+          {
+            "name": "compact_exact_internal_beta_ghosts_analytic_source",
+            "diagnostic": {
+              "residual": {
+                "cells": 25600,
+                "physical_rms": 0.4135319328895914,
+                "physical_l2": 1.1330968950393834,
+                "conformal_rms": 0.542726556805569,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 4.313904687256762,
+                "worst_point": 17628,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  0.6677713385628801,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "operator_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 0.4135319328895914,
+                "physical_l2": 1.1330968950393834,
+                "conformal_rms": 0.542726556805569,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 4.313904687256762,
+                "worst_point": 17628,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  0.6677713385628801,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "source_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 0,
+                "physical_l2": 0,
+                "conformal_rms": 0,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 0,
+                "worst_point": 0,
+                "worst_xyz": [
+                  -0.234375,
+                  -0.234375,
+                  -0.234375
+                ],
+                "worst_r": 0.4059494080239556
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 25600,
+                "physical_rms": 0.005983369865122636,
+                "physical_l2": 0.016394714112326583,
+                "conformal_rms": 0.007423728922677367,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 0.045315662265487715,
+                "worst_point": 18508,
+                "worst_xyz": [
+                  -0.31756112673941805,
+                  -0.31756112673941805,
+                  0.5080978027830689
+                ],
+                "worst_r": 0.6781249999999999
+              },
+              "face_metric_rate_max": 8.813770165197014e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 1.9008154663483408e-14,
+                    "physical_l2": 2.0761289420308043e-14,
+                    "conformal_rms": 3.360220358157552e-14,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 5.89077050551113e-14,
+                    "worst_point": 438,
+                    "worst_xyz": [
+                      -0.046875,
+                      -0.046875,
+                      -0.046875
+                    ],
+                    "worst_r": 0.08118988160479113
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.010718176765619092,
+                    "physical_l2": 0.011134764126154254,
+                    "conformal_rms": 0.013808751356867937,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.05123880085185669,
+                    "worst_point": 4456,
+                    "worst_xyz": [
+                      0.2592220933668405,
+                      0.09720828501256518,
+                      0.09720828501256518
+                    ],
+                    "worst_r": 0.2934194864688696
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.13794658878558452,
+                    "physical_l2": 0.19539963451814596,
+                    "conformal_rms": 0.11544936288360472,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 3.9682324952923134,
+                    "worst_point": 4096,
+                    "worst_xyz": [
+                      0.2520526695296637,
+                      -0.22054608583845575,
+                      -0.22054608583845575
+                    ],
+                    "worst_r": 0.4010133416413435
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 1.64307678683035,
+                    "physical_l2": 1.1160661151589197,
+                    "conformal_rms": 1.6580759619770713,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 4.313904687256762,
+                    "worst_point": 17628,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      0.6677713385628801,
+                      -0.08347141732036001
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 5.009768678199598e-12,
+                    "physical_l2": 6.5178187764835346e-12,
+                    "conformal_rms": 4.997328147589064e-12,
+                    "physical_volume": 1.6926579906223485,
+                    "conformal_volume": 1.6872077336297664,
+                    "maximum": 2.798543432726972e-11,
+                    "worst_point": 20678,
+                    "worst_xyz": [
+                      -0.0693658866702692,
+                      0.5549270933621536,
+                      -0.4855612066918844
+                    ],
+                    "worst_r": 0.7406249999999999
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 1.0126037807628806e-12,
+                    "physical_l2": 1.0499695288990343e-12,
+                    "conformal_rms": 1.012621885132524e-12,
+                    "physical_volume": 1.075162979338209,
+                    "conformal_volume": 1.0751076141560052,
+                    "maximum": 2.3914226964427605e-12,
+                    "worst_point": 22751,
+                    "worst_xyz": [
+                      0.9693454914622452,
+                      -0.12116818643278066,
+                      -0.12116818643278066
+                    ],
+                    "worst_r": 0.9843749999999999
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 22400,
+                "physical_rms": 0.3592762959943808,
+                "physical_l2": 0.9025041828991968,
+                "conformal_rms": 0.47845292971114856,
+                "physical_volume": 6.31017374834674,
+                "conformal_volume": 3.39485435812392,
+                "maximum": 4.313334828507008,
+                "worst_point": 18524,
+                "worst_xyz": [
+                  -0.07148065127672273,
+                  -0.3574032563836137,
+                  0.5718452102137819
+                ],
+                "worst_r": 0.678125
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 1.182224653575325e-12,
+                "physical_l2": 1.0170589845753676e-12,
+                "conformal_rms": 1.182228180092235e-12,
+                "physical_volume": 0.7401031590529495,
+                "conformal_volume": 0.740092879138812,
+                "maximum": 2.3914226964427605e-12,
+                "worst_point": 22751,
+                "worst_xyz": [
+                  0.9693454914622452,
+                  -0.12116818643278066,
+                  -0.12116818643278066
+                ],
+                "worst_r": 0.9843749999999999
+              }
+            }
+          },
+          {
+            "name": "consistent_centered_exact_internal_beta_ghosts",
+            "diagnostic": {
+              "residual": {
+                "cells": 25600,
+                "physical_rms": 0.8008099621992383,
+                "physical_l2": 2.1942568626902816,
+                "conformal_rms": 1.0586020942843675,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 6.414898584950734,
+                "worst_point": 18652,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  -0.08347141732036001,
+                  0.6677713385628801
+                ],
+                "worst_r": 0.678125
+              },
+              "operator_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 1.8252513097072294,
+                "physical_l2": 5.001274211749963,
+                "conformal_rms": 2.4167820875124453,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 18.044225056984416,
+                "worst_point": 18652,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  -0.08347141732036001,
+                  0.6677713385628801
+                ],
+                "worst_r": 0.678125
+              },
+              "source_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 1.088265569623984,
+                "physical_l2": 2.981898711673203,
+                "conformal_rms": 1.4411304796969677,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 11.629326568564414,
+                "worst_point": 16604,
+                "worst_xyz": [
+                  0.6677713385628801,
+                  -0.08347141732036001,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 25600,
+                "physical_rms": 0.005983369865122636,
+                "physical_l2": 0.016394714112326583,
+                "conformal_rms": 0.007423728922677367,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 0.045315662265487715,
+                "worst_point": 18508,
+                "worst_xyz": [
+                  -0.31756112673941805,
+                  -0.31756112673941805,
+                  0.5080978027830689
+                ],
+                "worst_r": 0.6781249999999999
+              },
+              "face_metric_rate_max": 8.813770165197014e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 1.7844493551956728e-14,
+                    "physical_l2": 1.9490303069908926e-14,
+                    "conformal_rms": 1.633703312198369e-14,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 2.4806218654347975e-14,
+                    "worst_point": 3584,
+                    "worst_xyz": [
+                      0.015625,
+                      0.015625,
+                      0.015625
+                    ],
+                    "worst_r": 0.027063293868263706
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.046082628379248786,
+                    "physical_l2": 0.047873739026407916,
+                    "conformal_rms": 0.05669676632448679,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.2378410679646073,
+                    "worst_point": 2541,
+                    "worst_xyz": [
+                      -0.078125,
+                      -0.078125,
+                      0.234375
+                    ],
+                    "worst_r": 0.25911131174651564
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.1419514955664083,
+                    "physical_l2": 0.2010725353715956,
+                    "conformal_rms": 0.12055800768898711,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 2.686343975729087,
+                    "worst_point": 7161,
+                    "worst_xyz": [
+                      0.2241382575153672,
+                      0.2241382575153672,
+                      -0.25615800858899107
+                    ],
+                    "worst_r": 0.40754489608916433
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 3.2160027213015794,
+                    "physical_l2": 2.1844819988161426,
+                    "conformal_rms": 3.2450723066268425,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 6.414898584950734,
+                    "worst_point": 18652,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      -0.08347141732036001,
+                      0.6677713385628801
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 0.0068540178064091855,
+                    "physical_l2": 0.008917227285835655,
+                    "conformal_rms": 0.006827691933189974,
+                    "physical_volume": 1.6926579906223485,
+                    "conformal_volume": 1.6872077336297664,
+                    "maximum": 0.04492112762674315,
+                    "worst_point": 20568,
+                    "worst_xyz": [
+                      -0.370579413300982,
+                      0.5929270612815711,
+                      -0.07411588266019639
+                    ],
+                    "worst_r": 0.703125
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 1.031943783824948e-12,
+                    "physical_l2": 1.0700231908443673e-12,
+                    "conformal_rms": 1.0319616695549487e-12,
+                    "physical_volume": 1.075162979338209,
+                    "conformal_volume": 1.0751076141560052,
+                    "maximum": 2.2877863208498787e-12,
+                    "worst_point": 22623,
+                    "worst_xyz": [
+                      0.8300978857941995,
+                      -0.10376223572427494,
+                      -0.5188111786213747
+                    ],
+                    "worst_r": 0.9843749999999999
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 22400,
+                "physical_rms": 0.7151324311257541,
+                "physical_l2": 1.796416901458924,
+                "conformal_rms": 0.9635638021898585,
+                "physical_volume": 6.31017374834674,
+                "conformal_volume": 3.39485435812392,
+                "maximum": 6.41456943415084,
+                "worst_point": 17500,
+                "worst_xyz": [
+                  -0.3574032563836137,
+                  0.5718452102137819,
+                  -0.07148065127672273
+                ],
+                "worst_r": 0.678125
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 1.233552894628417e-12,
+                "physical_l2": 1.061216284600892e-12,
+                "conformal_rms": 1.2335522901372897e-12,
+                "physical_volume": 0.7401031590529495,
+                "conformal_volume": 0.740092879138812,
+                "maximum": 2.2877863208498787e-12,
+                "worst_point": 22623,
+                "worst_xyz": [
+                  0.8300978857941995,
+                  -0.10376223572427494,
+                  -0.5188111786213747
+                ],
+                "worst_r": 0.9843749999999999
+              }
+            }
+          },
+          {
+            "name": "exact_beta_first_jets_centered_DV_oracle",
+            "diagnostic": {
+              "residual": {
+                "cells": 25600,
+                "physical_rms": 3.6163129318527233e-14,
+                "physical_l2": 9.90886707573104e-14,
+                "conformal_rms": 4.5520469103753746e-14,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 3.6951638172467334e-13,
+                "worst_point": 13533,
+                "worst_xyz": [
+                  0.6246893167201136,
+                  -0.0780861645900142,
+                  -0.0780861645900142
+                ],
+                "worst_r": 0.634375
+              },
+              "operator_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 1.0882655696239838,
+                "physical_l2": 2.9818987116732028,
+                "conformal_rms": 1.4411304796969664,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 11.629326568564526,
+                "worst_point": 16604,
+                "worst_xyz": [
+                  0.6677713385628801,
+                  -0.08347141732036001,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "source_vs_continuum": {
+                "cells": 25600,
+                "physical_rms": 1.088265569623984,
+                "physical_l2": 2.981898711673203,
+                "conformal_rms": 1.4411304796969677,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 11.629326568564414,
+                "worst_point": 16604,
+                "worst_xyz": [
+                  0.6677713385628801,
+                  -0.08347141732036001,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 25600,
+                "physical_rms": 4.518470273805246e-16,
+                "physical_l2": 1.2380820513184954e-15,
+                "conformal_rms": 5.625338805622652e-16,
+                "physical_volume": 7.507857070841652,
+                "conformal_volume": 4.2044902311387595,
+                "maximum": 3.5257229376473946e-15,
+                "worst_point": 14550,
+                "worst_xyz": [
+                  -0.07447114357025923,
+                  0.5957691485620739,
+                  -0.22341343071077768
+                ],
+                "worst_r": 0.6406250000000001
+              },
+              "face_metric_rate_max": 1.0886718211881311e-16,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 6.39702377269339e-16,
+                    "physical_l2": 6.987025533237096e-16,
+                    "conformal_rms": 9.429782103311085e-16,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 1.9697517818920594e-15,
+                    "worst_point": 438,
+                    "worst_xyz": [
+                      -0.046875,
+                      -0.046875,
+                      -0.046875
+                    ],
+                    "worst_r": 0.08118988160479113
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 5.217595244128782e-15,
+                    "physical_l2": 5.420389457979096e-15,
+                    "conformal_rms": 6.308635514204885e-15,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 4.270106231711837e-14,
+                    "worst_point": 45,
+                    "worst_xyz": [
+                      -0.078125,
+                      -0.078125,
+                      -0.234375
+                    ],
+                    "worst_r": 0.25911131174651564
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 4.2836772720051103e-14,
+                    "physical_l2": 6.067775801578625e-14,
+                    "conformal_rms": 5.709805389309086e-14,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 2.8757236726801325e-13,
+                    "worst_point": 15360,
+                    "worst_xyz": [
+                      -0.33170182686910615,
+                      -0.33170182686910615,
+                      0.3790878021361213
+                    ],
+                    "worst_r": 0.603125
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 1.137662672821629e-13,
+                    "physical_l2": 7.727616687146634e-14,
+                    "conformal_rms": 1.1291631350240535e-13,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 3.6951638172467334e-13,
+                    "worst_point": 13533,
+                    "worst_xyz": [
+                      0.6246893167201136,
+                      -0.0780861645900142,
+                      -0.0780861645900142
+                    ],
+                    "worst_r": 0.634375
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 7.563189269433697e-15,
+                    "physical_l2": 9.839874891814261e-15,
+                    "conformal_rms": 7.546964690829516e-15,
+                    "physical_volume": 1.6926579906223485,
+                    "conformal_volume": 1.6872077336297664,
+                    "maximum": 3.8506691700609913e-14,
+                    "worst_point": 20623,
+                    "worst_xyz": [
+                      -0.22633730451372971,
+                      0.6035661453699459,
+                      -0.3772288408562162
+                    ],
+                    "worst_r": 0.746875
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 5.9821914614170916e-15,
+                    "physical_l2": 6.202938276406422e-15,
+                    "conformal_rms": 5.9823132644496774e-15,
+                    "physical_volume": 1.075162979338209,
+                    "conformal_volume": 1.0751076141560052,
+                    "maximum": 2.0832402664878774e-14,
+                    "worst_point": 22783,
+                    "worst_xyz": [
+                      0.737561326620584,
+                      0.645366160793011,
+                      -0.092195165827573
+                    ],
+                    "worst_r": 0.9843750000000001
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 22400,
+                "physical_rms": 3.5784108411328275e-14,
+                "physical_l2": 8.988989221556439e-14,
+                "conformal_rms": 4.5962255360013516e-14,
+                "physical_volume": 6.31017374834674,
+                "conformal_volume": 3.39485435812392,
+                "maximum": 3.4172599772577567e-13,
+                "worst_point": 14221,
+                "worst_xyz": [
+                  -0.4753172993777097,
+                  -0.2970733121110686,
+                  0.2970733121110686
+                ],
+                "worst_r": 0.634375
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 7.057386989598466e-15,
+                "physical_l2": 6.071416988039572e-15,
+                "conformal_rms": 7.0574171121466246e-15,
+                "physical_volume": 0.7401031590529495,
+                "conformal_volume": 0.740092879138812,
+                "maximum": 2.0832402664878774e-14,
+                "worst_point": 22783,
+                "worst_xyz": [
+                  0.737561326620584,
+                  0.645366160793011,
+                  -0.092195165827573
+                ],
+                "worst_r": 0.9843750000000001
+              }
+            }
+          }
+        ],
+        "independent_direct_vector_boundary_max": 8.079083523710016e-30,
+        "source_policy": "actual sampled -2alpha A only; no source replacement or RHS subtraction",
+        "scope": "no solve, no evolution, prototype not admitted"
+      }
+    }
+  ],
+  "source_hashes": {
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/config.hpp": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/athena.hpp": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/composite.hpp": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/composite_difference.hpp": "0634c9d141201ff724241dc61cc9baed2e705702693e9d895ba97536f80e2a2a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/map.hpp": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/scri_surface.hpp": "403041e42e711465f228d65d6bf6524801b0c4febf8b8fa6bd4ded1bdbd39703",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/composite_metric_divergence.hpp": "670a60b1e46f80a64337fe00e552f81267869135989275561c0da80cd15859cc",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/conformal_constraints.hpp": "532204531be51088f93647105a3d8c0096c1eb192fa02310914d073d111b2fe7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/conformal_rhs.hpp": "ae56ecae2e6b3a1844b98367a33e0b1714f15936c3868f15db13d83fb9346c8c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/elliptic_shift.hpp": "efd759753921a8e241cf3802b25635107ea7fc692e633099b51fa1be9fce33a7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/regular_penrose.hpp": "dde09618a1b69ef1b6f36f0742fbcc6cfdb313a10c92334e501976868423ee65",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/stationary_omega_product.hpp": "d3f70e24f47cef079a750bbc4d340399f1e96434747bf921c870b1db74cd90b8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_arithmetic_controls.py": "3fa37bfb7fc0a30d55339b917682d1e70a337500f11180069341ee26685fdf55",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_controls.py": "cd83971ca74ebbc1655e4361d4498d153ac7fcf70a1f09168a085f7f74bac207",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_diagnostics.py": "d4438b602e9c2fae0c6e3b33c4d2fd920d0519479abcf08a88890480174d87c6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_principal_controls.py": "4b43eac04887dc49b0fc5da49f3214553a138ae8ade3eaf73da20e961ec11223",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_puncture_front.py": "b52f03d7005a63c5fa864fd7bd8d7f1933e04702fe56d454b087723de694c021",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_telegraph.py": "9061f1110f8afdf885bc61c78271715965aa6e4372bb5fee15405a66152a6fa9",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_telegraph_compression.py": "4b1b6a00fee63a2eefbedc9b4779db23b96d7f29cadd3d751cdcc92266110466",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_telegraph_constraint_location.py": "79ae69b8e5b5406b5abe7270b256ea562fb2078121cc27bdd7a41a1540ceb510",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_telegraph_control.py": "785854a9da6dbfcc2450b0d8356e367e217266caa00febd407976b018d1ca4cd",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_telegraph_pilot.py": "07e094ba61c9b4b329642fbdd25a4490c8d143a82fce02335cf2a627cad80519",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_telegraph_ray_convergence.py": "10f3e601bd2517ce38e1c4e23287913be60bce22540db81d5f7e78df14d57f67",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_telegraph_ray_pilot.py": "0bf1b64e06e67b3d8b00c4c54fbd32c0bb6a8a79d3bdf60671a3cf04fcba85d5",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_telegraph_time.py": "5cb4230854bf6a04eba741879be30982f475143f89dc85b3e9d007c3d9458cf7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/analyze_trajectory_convergence.py": "9e10c235383899324f4a9508c43a521da7cc102334ebb3277b258cb1f2038beb",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/assess_black_hole.py": "a8d9421e17e5c513607deac67821751de644f3367102b7c3985c317b863008b8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/assess_telegraph.py": "3ce79a387d85fc915d5b68c6d8fdad8a3fae1d2171b6dcd7c6fe0f31d6530133",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/audit_bondi_time.py": "fdb341c0617f2ec7dbefd3b9e07a18dd6f40f8778b5f9fff69f8321583ae80c6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/audit_matrix.py": "035a151a8b55218654b4bfd318c24e870cf7899148aaf3c7cef17b895eaf063b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/audit_puncture_compilation.py": "80b5f6b2faed41c08debf3b19ddbc58e52f222fda496324b23f5cb6ff49533fe",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/audit_telegraph_boundary_spectrum.py": "ab796d18ed0f43a9b5657e67b5227c124737cb19aac3f6ed868e1b9cbc8d2026",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/audit_telegraph_constraints.py": "800e38b9622a83c2803e05ab71c0ef01d9b4715af5015b53af5aa7b785f3aeaa",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/audit_telegraph_mass.py": "a961600c138e4ef99761718d879c80e5164ed2cb0f5a6f21ddabe82d3914c3c2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/compensated_update.py": "1fb049ca86c5f22a43a9138da751eaca60e0524106df5ec4fc56d0c39ca5cca1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/continue_telegraph_matrix.py": "28f4c2272c12fd00dcd9ab8f8d9ab54bef36abed05bde577c0cda4ec719cc832",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/continue_verified.py": "64ee61e145ef018b6c7133364f57fb426cd00fd021feeace52acc2823dbff6f6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/derive_gauge_corners.py": "cc5ad24e25461d3eecf4a8a5f9277af1a0ae05e4595b57eabaf24317f5adf4b5",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/derive_regular_chart.py": "93717350ee6c52d3aab8f30435144fc29b3d6ff5da7f48d72ebd576ab860673a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/diagnose_cutoff_variables.py": "687ec0af48c824d916b86731fc25a48ff2c7e75646636798d8a9eefa9ece9cd0",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/diagnose_elliptic_modes.py": "46bd5da5eef1507236a6e55b373e47fc62c09db35a481e445a6497a889d2e87b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/diagnose_linear.py": "509d0f0ed02e7784273c6faf17e51e4b800c01395fac3352f3657608dcd2c183",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/diagnose_puncture.py": "dfe8f5cb15afbff3023c2a37b9928325bb06e79df3455b1167e27129e9d5114d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/diagnose_retained_front.py": "bfc08b78b343ffcf241a292fe4584ce1003e692c30724fe7736b9abbe907294e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/diagnose_telegraph_characteristics.py": "77e2e01e7ed859221c1af1893d2465cf0600a523fd508bcaf8bb5127e12a5d2d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/domain_transfer.py": "8a2efb28bc37338f506dd7a46f0c23f9b67019f4796e42ff9833fda1d9fde2b8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/evolve.py": "a69291e981ac98542058a17f6bdec8738803ccb406544865ee12368a6e98a22d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/fast.py": "cd93348bb944992ee099412d85f610d609ec35c734e39e1e18338022d5482548",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/freeze_and_run.py": "46691fb91617589c18973155269867e30d151e728df24a2e6bb74d06ff1b368f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/gauge.py": "12a72a023c3ae3f2a802d6595f3a0cbc8f69b0be6484ba71763ec944c5554237",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/initial_operator_audit.py": "4d600c16da9eda9171e4cef7e7a74567fb65d5729a5248dac2779c02831fc820",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/literature_matrix.py": "d6cbba26401aa8c5fa2cf42a29a7b81a0fcfff954ba29f7ad552a511fdbf216f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/numerics.py": "c62ee8d579cf22758768a91348b3adc890b9955cb7e64f1a3e27e65d833fbb61",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/plot_elliptic_modes.py": "67455f75925c88550ea7321cfadc1faa7038db9dff24179c08188b749d94c5a0",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/plot_scalar_oracle.py": "15f9641fdfa9d82861ad1b4e8ba79a7b5c13d3d3cb26d05dc77a75f59931ee84",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/plot_telegraph_constraint_status.py": "ed9a543ccb15a8583d728b9625f9b927dfee7f44f7127fd9b2ceb3b67684df2f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/plot_telegraph_grids.py": "4377049ae3ceb834beba357a7138efaea387ecbb0d2bb38911abe7781d909afa",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/plot_telegraph_lapse_status.py": "82c8da78ae925dfe05022acc205975d790d7748bdd8eb72a875e47deb254cbb4",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/puncture_chart.py": "f5b6b1d0ab9a03ed50db686b311ba51d003f80a189d9f6c995a2e182e72bed03",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/radial_grid.py": "6a41e8b1e3ec8c57b437022b521fb5b8b842fea9499f55440353267f93cc174b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/run_control_pipeline.py": "30849dda477f7d38503d17272d2729401c763dda9d203752988723baa608af57",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/run_diagnostics.py": "10b6be4e546bb92ee223daa5cd0510fdae2ce1a8c5e1eaa37428d7c183884421",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/run_matrix.py": "12ec3aff46ef55d465b63f11e5fc563f5dc3fce57153bd2efb0ccfab9b188c81",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/run_puncture_modes.py": "b17c52699be574807b3f2f0bbe745329c4183e7eb2ecb849ef1d01cc4e67bffb",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/run_telegraph.py": "290f6fbb3480481a5a6185edd2ff23fa253a9b0f258f86c3f1e5e5c576c5659c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/run_telegraph_matrix.py": "f6165f7158278d4d0535910bcc47d44e7561c946b1e514290dd5a15a420ce021",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/sbp.py": "65175f0bfae7e8f268f24d3f0b3072cc0d00e84785f7739652b86e2df416dbc0",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/scalar_initial_data.py": "d802c1b9455299f1cc7db620ed10d6a17944e11cb9cdf0111a1f2b8c50008d05",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/scalar_oracle.py": "166b6733c147af9bfb559c08fd6b82183b0e74b5d5aa6dc9ee1e0b3eb3397b88",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/scalar_rhs.py": "173740fa1ff63261efcec423529a4c0497c51e3b3fd80e0522ad484b13520cfe",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/shift_ode.py": "a5ea959841a42aef022dff441449c1623b9c1bf0b81d02ac781d4de5afb5073f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/summarize_regular_center.py": "a4ce51ba3db8db9f108ec0c0d3b0ec760a47f8e09922b23dc98328b8b8668f6e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/summarize_wormhole_cases.py": "f6b20051f0a7af969e2e7815a1b699338b3c7e13bce5a489334a9549e9d412c5",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/telegraph.py": "23a4dbe49f3c8d500ac22e2597b63edd237f1460ed39577cdc152bfcaaafd185",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/telegraph_analysis_io.py": "017785fd4d4005cae5c21e356c59a065fe4dc66162518a6509a3c9b7589c3f24",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_advection.py": "80cfcb4abb04f7b5fcb068634a977afc0f74874388baee8309d695593de9ff3f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_bondi.py": "256f846726f9ecf5c5c0c38364637fbd703c08f40f8a2d282e7098c37a4cfa16",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_clock_evolution.py": "cd9512d0ba493414a3cf13d0e6b6aca8838f2afde421092b7b96cb71b021ee5e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_compensated_update.py": "300b658d5492828b5561fff5dd233c9825e94faf7740b23a0526a61183571002",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_domain_transfer.py": "c3351ef0e2057d58b888e7a5d79e33eb9ccc776b053c73385e27fb80493811e5",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_elliptic.py": "6b73752d122d14b30d34c34cf6bb0fb76f71eecc60126056685e692379ae6edf",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_evolution_restart.py": "bd7594e43d3cc449afae68c01a66155766df07b7a3ef7edbe56e82d784b92a04",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_fast.py": "03e0ed0b3213072ac6e658c4d018d7c223ef9421eb22c4a4cf1cda6887b52c57",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_fast_positive.py": "8b88e00a9c17ae827c35e330b8d72127fc6f94f2900f1c2da341e0f4f68e4953",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_fast_puncture.py": "300b2c85d333bb4990507e5f5c7ed654ca244ef93fa86cc0479f2c251b0a00ce",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_fast_trumpet_metric.py": "98df9b84ed81ebbc3f3390866da1dd01bdcad3588984ed777917cbdec62bc3b8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_g1_rhs.py": "d6a0e5a6b7a225846ebc8166a471cf544bdc4a5ea1e0465e91bf7bfb97767cae",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_gauge_boundary.py": "d90cf3b354c4e9faffcbd0dc883e67f50025ad8802040d5ab120233a858ff24e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_horizon.py": "7a9b8db841c8cd4d4ce3dab4e7d697a8e2cd3848f6e347047a26a26828ad6d70",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_initial_lapse.py": "6b36523fdf3693e94622964fcf65ab1a0cdcebe86649050e943bf7cc109c9f73",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_initial_precision.py": "19d4710a248cddc1aca4d090761637e807f213a5d1c6f22b7273610a45eabe38",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_ko_inner_consistency.py": "9b90af7dcbc7fb6cd9830b36e037600faed5035975f224e962fc2ba6c2fc7857",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_local_restoring.py": "82fad9c72f57c0972295931d5e1d1ba4e8258a5f26cafd56c2c61ce0231c753e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_local_subtraction.py": "4d3d8c03b9b91cd94bf870f2268110a0216a78ff01bda60e7bccd6474ff744f1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_origin_limits.py": "b60fa8655138a9d6d52fa963f4098f7aecb1aca7991064f9f76a977e957d5002",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_physical_adm.py": "a2f23ae62c1fedcca78444c3426a27b9cbdcf115fe0c4cc930976014dc7c717a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_physical_log_source.py": "655b34f3d845158d219d86dd6856d2a031e71e8984e95feefaf0251d86ff4e7d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_positive_regular.py": "b4871b6e323933035743b073c2c1abba8601ac0e2661348f621e64cd9d26e6f8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_puncture_chart.py": "39b423f3153f750298258550904e73fa2046b49605a531dc66d63c96fea2ca21",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_puncture_limits.py": "59a91f6e22f42cde9e1bfcb96257d38396e4d9b74434798148a188800f0b7466",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_sbp.py": "d8b8e3a41db675c9924be3bbb0abdda5d111199b333b5382d32308286e740f77",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_scalar_rhs.py": "85a6c7c4a78c719227ffac3e71e2f3b260bc394d3c40b4dfd3020e88887fbda8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_scri_limits.py": "f74985b82d74c6bc6e329955cb9764dbaecdb4ab1d89728d89c4b861101d4cf2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_shift_ode.py": "cfff92d001f6cd68c235c6d2c3a8a3dd58ae7bbd2421c5224f2ac6cdba9f85c2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_telegraph.py": "5b85eaa9de882eb1b29f6ce11e5b37a492637be38db6a6dca3b8b0c4830db770",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_telegraph_controls.py": "679cf7d762e43bfdfa2de432b28e0a28bd6c65cc181fc22f9853192bb82d0ce0",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_telegraph_driver.py": "9ccba983bac971ca1f2101fed565b7a0dacb30a5c99ee283d620269d08314913",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_telegraph_exit.py": "28eaab09a237fa60298f78ce8ed9989feacf037572d8c5d314956fc483e6e630",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_telegraph_rays.py": "84d17461708f7534448fcb64cd3d9d0a3e1535d5095379951b94f4d62c6f02c2",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_telegraph_time_analysis.py": "aeba7b1d0ce33838bd6b0744cfffa351bc5468afec8cc2dfc222a00c0cf12c2e",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_time_lattice.py": "168b2b8327018f9158b913f8b646b6e477e3c3fe90c51573e29f747915331e88",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_trajectory_scope.py": "3d6da4719b303f5bf8225babcdb893825a9d65be64052f18365f40cb6a46b4a1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_trumpet_data.py": "e2a01a5293d7187d9a1c714cfacde70b5727b36c1d774ab9ae8779ebf9750629",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_trumpet_lapse_chart.py": "a801e257621af74d86c35b8a9a7e75985a5cf7fe07128b4d5f39f8a83760b978",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_variable_profiles.py": "87ad50eb71b16f6f0e2d1778308954c332ea6d77a54b55c911b56507050422c1",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_wormhole_data.py": "81e10976fc2d2fb90bab5a1017c647fea6039245acfbd157b690bee78a3b6eec",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/test_wormhole_isotropic.py": "c1a1051afc56b3d5df5895bf25998e81be32145bf1e1251aedbc649c76d6dd65",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/trajectory.py": "3bcb0ffb08f7e4f5d1eb666c98c85de87fcd16f3db2d4020039da6e769e8a2e6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/trumpet_data.py": "35c27defb8b4066bd3981e11bc7f6579415cb7d21b82dcaa3eaaa5413f2a7184",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/variable_profiles.py": "562b5e3d252884c08f47e5897fc9f555672a2b990387928139424e2b963a475d",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/radial_reference.py": "8fc3058c067b5b06686dcdbaed1f7a07414d935f788f772dbe180e022dac5b8b",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/run_radial_metric_divergence.py": "362d4fab1acb6dc884416998e45fd581f9c90f1139c1f55e565575da5c3288c7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_radial_metric_divergence.cpp": "276eb3707b1ff563ecf33c17e1c27123b9b66649bd68139b6b21e759d9947f7c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/wormhole_exact_jets.py": "239c70e6bac820099aa05e49cc7617348a5000e3eee1ac2e577f819a15634886"
+  },
+  "library_hashes": {
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d"
+  },
+  "native_integration": false,
+  "source_policy": "actual sampled wormhole alpha*A, unchanged physical source",
+  "binary_sha256": "8bc94e8c51936d16a036c35333153614fc4cdc13e0512aaaa1c24c088eaae0e1",
+  "input_hashes": {
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/coordinates.csv": "30aa1a6ce7cbf052a48183256b4ae7948a0094fb1a7783f9ef518f3f5b698b80",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-seven-layer-buffer-20261027/exact.dat": "cf832682c35abe974fe5328d48a02744b041b7d95f26aa88d38b2c1b78668afc"
+  },
+  "sources_unchanged": true,
+  "binary_unchanged": true,
+  "libraries_unchanged": true,
+  "inputs_unchanged": true
+}

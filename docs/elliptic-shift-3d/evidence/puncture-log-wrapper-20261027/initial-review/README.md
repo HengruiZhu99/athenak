@@ -1,0 +1,1 @@
+Archived first read-only wrapper review, before the parent added radius, shape and mesh invalidation guards. Its manifest hashes describe that earlier source state. Current results are one directory above.

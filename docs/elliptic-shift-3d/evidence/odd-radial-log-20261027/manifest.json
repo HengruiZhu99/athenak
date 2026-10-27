@@ -1,0 +1,28 @@
+{
+  "return_code": 0,
+  "wall_seconds": 0.6916786670000001,
+  "source_head": "9cced4c72698e9e2a37c4726d139bbb51e877e6d",
+  "compile_command": "/usr/bin/c++ -DKOKKOS_DEPENDENCE -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src -isystem /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include -isystem /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include -O3 -DNDEBUG -std=c++17 /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_odd_radial_log_derivative.cpp -o /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/odd_radial_log_derivative_prototype /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+  "run_command": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/odd_radial_log_derivative_prototype /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/odd-radial-log-20261027/results.json",
+  "source_sha256": {
+    "tst/elliptic_shift_3d/test_odd_radial_log_derivative.cpp": "fbe5f53feb5e47a4f3bcd13c84af23946674167c958a7b7ff8ad39c62a18c6b6",
+    "src/z4c/hyperboloidal/odd_radial_log_derivative.hpp": "e87549e7fdfd2a690045656e891228438e0036ffb92f961baeaca2d159e7447d",
+    "src/z4c/hyperboloidal/enriched_log_derivative.hpp": "df5389ff424ba8eeaab7b14c0e5c2ad5704870e926b493a05dc707f07fb319b9",
+    "src/z4c/hyperboloidal/puncture_position.hpp": "08bd3b1d98ed46ccf688cea58bf5ed51029e7bd70bf48c2641071fdd12513f71",
+    "src/mesh/cubed_sphere/map.hpp": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8",
+    "docs/elliptic-shift-3d/evidence/odd-radial-log-20261027/reproduce.py": "d93cce8e14c3edcfbb36d54a8f28c356ab551400c7a7df1ec6bce991ef7cd2bb"
+  },
+  "verification_events": [
+    {
+      "action": "final source hash/whitespace read-only verification",
+      "outcome": "process_not_created",
+      "reason": "CreateProcess failed: exec-server transport disconnected",
+      "effect": "No final verification command or proposed cosmetic documentation edit executed; numerical test had already completed with exit0."
+    },
+    {
+      "action": "same final source hash/whitespace read-only verification after parent confirmed executor restored",
+      "outcome": "passed",
+      "effect": "All recorded source hashes match; whitespace check passes; no tests rerun."
+    }
+  ]
+}

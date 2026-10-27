@@ -1,0 +1,29 @@
+{
+  "scope": "Illustrative fixed-origin nested-octree geometry estimate, not a validated collapse grid or native performance forecast",
+  "radius_of_recorded_t10_flux_peak": 4.0394e-07,
+  "assumed_cells_across_peak_radius": 8,
+  "unresolved_feature_width": "Unknown; radius is not width. A narrower front or continuum endpoint can require more refinement.",
+  "cells_per_block_axis": 8,
+  "base_cartesian_blocks": 8,
+  "shell_layers": 7,
+  "base_cartesian_cell_spacing": 0.03125,
+  "additional_center_refinement_levels": 20,
+  "finest_spacing": 2.9802322387695312e-08,
+  "leaf_blocks": 1170,
+  "active_cells": 599040,
+  "proposed_pilot_budget_cells": 50000,
+  "cell_count_ratio_to_budget": 11.9808,
+  "minimum_bytes_for_one_22field_state": 105431040,
+  "minimum_bytes_for_49_threecomponent_krylov_vectors": 704471040,
+  "omitted_memory": "ghosts, interpolation rows, metric jets, multigrid levels, RK registers, communication, and other working arrays",
+  "current_dense_coarse_guard_cells": 1024,
+  "current_n2_per_leaf_coarse_cells": 9360,
+  "missing_algorithm": "Global AMR topology coarsening and transfers are needed; retaining all refined leaves exceeds the current bounded dense coarse solve.",
+  "conditional_cpu_cost": {
+    "measured_pilot_cells": 13312,
+    "measured_two_step_restart_seconds": 60.438802584,
+    "same_diagnostic_linear_per_cell_seconds": 2719.74611628,
+    "qualification": "Only arithmetic extrapolation for the same short diagnostic, with equal iteration counts assumed. No timing measurement at this size, no scaling claim, and no extrapolation to a validated t10 timestep."
+  },
+  "action": "No allocation, large grid, GPU job or remote run requested or started. Continue local source/derivative and hierarchy fixes first."
+}

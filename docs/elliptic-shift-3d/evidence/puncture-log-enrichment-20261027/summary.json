@@ -1,0 +1,196 @@
+{
+  "plans": 64,
+  "polynomial_checks": 384,
+  "maximum_scaled_derivative_error": 4.656612873077393e-14,
+  "maximum_condition": 248.5188214455435,
+  "maximum_reproduction_error": 7.764969223167384e-14,
+  "maximum_Q_orthogonality_error": 2.220446049250313e-15,
+  "implementation_checks_passed": true,
+  "rejections": [
+    "five_cubed:rank_deficient",
+    "query_endpoint:point_collocation",
+    "sample_endpoint:point_collocation",
+    "far_log:rank_deficient"
+  ],
+  "wall_seconds": 0.3202133330000001,
+  "user_seconds": 0.08671699999999993,
+  "system_seconds": 0.002618000000000009,
+  "source_head": "9cced4c72698e9e2a37c4726d139bbb51e877e6d",
+  "prototype_source_sha256": {
+    "src/z4c/hyperboloidal/enriched_log_derivative.hpp": "df5389ff424ba8eeaab7b14c0e5c2ad5704870e926b493a05dc707f07fb319b9",
+    "tst/elliptic_shift_3d/test_enriched_log_derivative.cpp": "b9ccf524725f2304d8a909461301f08d4bbe547da5a38ae68eb887e35901b23d",
+    "docs/elliptic-shift-3d/evidence/puncture-log-enrichment-20261027/reproduce.py": "4c7f2c9a9c87c69f64152282e6629f5611fe47b4b5de34c9f899b3bd6629ab8f"
+  },
+  "compile_command": "/usr/bin/c++ -DKOKKOS_DEPENDENCE -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src -I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src -isystem /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include -isystem /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include -O3 -DNDEBUG -std=c++17 /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_enriched_log_derivative.cpp -o /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/enriched_log_derivative_prototype /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+  "run_command": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/enriched_log_derivative_prototype /Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/puncture-log-enrichment-20261027/results.json",
+  "scope": "Local Cartesian derivative tests only, no coupled evolution, no production integration; all64 accepted query locations retained",
+  "time_varying_power_control": {
+    "law": "p(t)=2+0.4sin(t)",
+    "times": [
+      0.2,
+      0.8
+    ],
+    "interpretation": "independent instantaneous spatial solves; no temporal regularity claim"
+  },
+  "wormhole": [
+    {
+      "h": 0.04,
+      "query_count": 8,
+      "maximum_H_enriched_error": 2.0728070803178373,
+      "maximum_H_fd_error": 12.265586822972388,
+      "maximum_abs_H_exact": 6.212771809262139e-16
+    },
+    {
+      "h": 0.02,
+      "query_count": 8,
+      "maximum_H_enriched_error": 0.7789814904079492,
+      "maximum_H_fd_error": 8.182794701914895,
+      "maximum_abs_H_exact": 2.2833657562876536e-15
+    },
+    {
+      "h": 0.01,
+      "query_count": 8,
+      "maximum_H_enriched_error": 0.17799635889477014,
+      "maximum_H_fd_error": 3.6282607175109507,
+      "maximum_abs_H_exact": 3.526308718404399e-16
+    },
+    {
+      "h": 0.005,
+      "query_count": 8,
+      "maximum_H_enriched_error": 0.030267381525629675,
+      "maximum_H_fd_error": 1.2401168999822914,
+      "maximum_abs_H_exact": 1.8905456443781177e-16
+    }
+  ],
+  "angular": [
+    {
+      "s": 0.3,
+      "orders": [
+        0.3055504620306795,
+        0.304511181805253,
+        0.3033110338016155
+      ],
+      "fourth_order_gate_passed": false,
+      "cases": [
+        {
+          "family": "angular_fractional",
+          "h": 0.04,
+          "s": 0.3,
+          "scaled_derivative_error": 0.04519015173653916,
+          "H_enriched_error": 0.03707033831217321,
+          "H_fd_error": 1.1457689329845557
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.02,
+          "s": 0.3,
+          "scaled_derivative_error": 0.036705809039705675,
+          "H_enriched_error": 0.029994850056775046,
+          "H_fd_error": 1.1404791723913068
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.01,
+          "s": 0.3,
+          "scaled_derivative_error": 0.029814381352695457,
+          "H_enriched_error": 0.0242873256244166,
+          "H_fd_error": 1.1358764194028952
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.005,
+          "s": 0.3,
+          "scaled_derivative_error": 0.024216802699605612,
+          "H_enriched_error": 0.019682215216869636,
+          "H_fd_error": 1.1323913431033459
+        }
+      ]
+    },
+    {
+      "s": 1.1,
+      "orders": [
+        1.1026619387614867,
+        1.1019861054212419,
+        1.101151629886751
+      ],
+      "fourth_order_gate_passed": false,
+      "cases": [
+        {
+          "family": "angular_fractional",
+          "h": 0.04,
+          "s": 1.1,
+          "scaled_derivative_error": 0.0017624486592179892,
+          "H_enriched_error": 0.0016608507868143274,
+          "H_fd_error": 1.1260027264249466
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.02,
+          "s": 1.1,
+          "scaled_derivative_error": 0.0008222113724683368,
+          "H_enriched_error": 0.0007733859854204272,
+          "H_fd_error": 1.1239498098655938
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.01,
+          "s": 1.1,
+          "scaled_derivative_error": 0.0003835751682659975,
+          "H_enriched_error": 0.0003603009650745559,
+          "H_fd_error": 1.1222397289225507
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.005,
+          "s": 1.1,
+          "scaled_derivative_error": 0.00017894414336224146,
+          "H_enriched_error": 0.00016795222242949048,
+          "H_fd_error": 1.1212205044605426
+        }
+      ]
+    },
+    {
+      "s": 2.4,
+      "orders": [
+        2.4019031316869905,
+        2.4017019414180827,
+        2.401038742419547
+      ],
+      "fourth_order_gate_passed": false,
+      "cases": [
+        {
+          "family": "angular_fractional",
+          "h": 0.04,
+          "s": 2.4,
+          "scaled_derivative_error": 9.286204304407875e-06,
+          "H_enriched_error": 1.0798268061940064e-05,
+          "H_fd_error": 1.1245082778073665
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.02,
+          "s": 2.4,
+          "scaled_derivative_error": 1.7594067117897794e-06,
+          "H_enriched_error": 2.0431921676777876e-06,
+          "H_fd_error": 1.123249392406401
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.01,
+          "s": 2.4,
+          "scaled_derivative_error": 3.333452374135959e-07,
+          "H_enriched_error": 3.866561213428099e-07,
+          "H_fd_error": 1.1219125766820448
+        },
+        {
+          "family": "angular_fractional",
+          "h": 0.005,
+          "s": 2.4,
+          "scaled_derivative_error": 6.315711234492484e-08,
+          "H_enriched_error": 7.320490946760572e-08,
+          "H_fd_error": 1.1210678453647134
+        }
+      ]
+    }
+  ]
+}

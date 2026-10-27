@@ -5,6 +5,8 @@
 
 #include <memory>
 #include "mesh/cubed_sphere/composite_difference.hpp"
+#include "multigrid/composite_radial_line.hpp"
+#include "multigrid/composite_topology_transfer.hpp"
 
 namespace multigrid {
 
@@ -12,26 +14,42 @@ namespace multigrid {
 // restriction / 3:1 trilinear correction stencils follow AthenaK's Multigrid
 // Restrict/ProlongateAndCorrect, with mapped-volume restriction replacing the
 // equal-volume average. Every level has its own GLOBAL active-only donor plan.
+// The optional fourth constructor control instead uses general nested logical
+// transfers (including odd N) and complete Cartesian sibling coarsening. It is
+// a lower-order preconditioner; the fine operator is identical on both paths.
 // This backend is deliberately separate from the Cartesian-octree MG driver:
 // assigning shell blocks fictitious Cartesian neighbors would be incorrect.
 class CompositePoisson {
  public:
-  explicit CompositePoisson(cubed_sphere::CompositeMesh mesh,bool radial_stencils=false)
+  explicit CompositePoisson(cubed_sphere::CompositeMesh mesh,bool radial_stencils=false,bool radial_lines=false,bool topology=false)
       : grid_(mesh, 2,radial_stencils) {
-    for (const auto &point : grid_.geometry) {
-      Real diagonal = 0;
-      for (int A = 0; A < 3; ++A)
-      for (int a = 0; a < 3; ++a) diagonal += point.J[A][a]*point.J[A][a];
-      diagonal_.push_back(2*mesh.cells*mesh.cells*diagonal);
+    InitializeSmoother(radial_lines);
+    if(topology){
+      const auto plan=CompositeCoarseningPlan::Build(mesh);
+      if(!plan.dense_supported)throw std::runtime_error(plan.unsupported_reason);
+      topology_=true;
+      if(plan.levels.size()>1){
+        transfer_=std::make_unique<CompositeLevelTransfer>(mesh,plan.levels[1],grid_.volumes);
+        coarse_.reset(new CompositePoisson(plan,1,radial_stencils,radial_lines,transfer_->coarse_volume));
+      }else FactorCoarse();
+      return;
     }
     if (mesh.cells >= 4 && mesh.cells%2 == 0) {
       mesh.cells /= 2;
-      coarse_ = std::make_unique<CompositePoisson>(std::move(mesh),radial_stencils);
+      coarse_ = std::make_unique<CompositePoisson>(std::move(mesh),radial_stencils,radial_lines);
     } else FactorCoarse();
   }
   const cubed_sphere::CompositeDifference &Grid() const {return grid_;}
   int Levels() const {return coarse_ ? 1+coarse_->Levels() : 1;}
   size_t CoarseCells() const {return coarse_ ? coarse_->CoarseCells() : grid_.active.size();}
+  bool UsesRadialLines()const{return bool(line_);}
+  bool UsesTopologyCoarsening()const{return topology_;}
+  std::vector<size_t> HierarchyCells()const{auto cells=coarse_?coarse_->HierarchyCells():std::vector<size_t>{};cells.insert(cells.begin(),grid_.active.size());return cells;}
+  std::vector<size_t> HierarchyHaloRows()const{auto rows=coarse_?coarse_->HierarchyHaloRows():std::vector<size_t>{};rows.insert(rows.begin(),grid_.halos.size());return rows;}
+  CompositePoisson(const CompositePoisson&)=delete;
+  CompositePoisson& operator=(const CompositePoisson&)=delete;
+  CompositePoisson(CompositePoisson&&)=delete;
+  CompositePoisson& operator=(CompositePoisson&&)=delete;
 
   void Operator(const std::vector<Real> &u, std::vector<Real> &out) const {
     if (u.size() != grid_.active.size()) throw std::invalid_argument("Poisson active shape");
@@ -46,10 +64,17 @@ class CompositePoisson {
     }
   }
   std::vector<Real> Cycle(const std::vector<Real> &rhs) const {
+    if(rhs.size()!=grid_.active.size())throw std::invalid_argument("Poisson cycle rhs shape");
     if (!coarse_) return CoarseSolve(rhs);
     std::vector<Real> u(rhs.size(), 0), au;
     Smooth(rhs, u, 3);
     Operator(u, au);
+    if(transfer_){
+      std::vector<Real> residual(rhs.size());for(size_t p=0;p<rhs.size();++p)residual[p]=rhs[p]-au[p];
+      const auto correction=transfer_->Prolong(coarse_->Cycle(transfer_->Restrict(residual)));
+      for(size_t p=0;p<u.size();++p)u[p]+=correction[p];
+      Smooth(rhs,u,3);return u;
+    }
     const int nc = coarse_->grid_.n, nf = grid_.n;
     std::vector<Real> restricted(coarse_->grid_.active.size(), 0);
     for (size_t p = 0; p < restricted.size(); ++p) {
@@ -92,8 +117,31 @@ class CompositePoisson {
   std::vector<Real> diagonal_, lu_;
   std::vector<size_t> pivots_;
   std::unique_ptr<CompositePoisson> coarse_;
+  std::unique_ptr<CompositeRadialLine> line_;
+  std::unique_ptr<CompositeLevelTransfer> transfer_;
+  bool topology_=false;
+
+  CompositePoisson(const CompositeCoarseningPlan &plan,size_t level,bool radial_stencils,bool radial_lines,
+                   const std::vector<Real> &physical_volume)
+      :grid_(plan.levels.at(level),2,radial_stencils),topology_(true){
+    // Each descriptor constructs a fresh GLOBAL ghost plan. Transferring
+    // active corrections alone is not a substitute for coarse patch coupling.
+    InitializeSmoother(radial_lines);
+    if(level+1<plan.levels.size()){
+      transfer_=std::make_unique<CompositeLevelTransfer>(grid_.mesh,plan.levels[level+1],physical_volume);
+      coarse_.reset(new CompositePoisson(plan,level+1,radial_stencils,radial_lines,transfer_->coarse_volume));
+    }else FactorCoarse();
+  }
+  void InitializeSmoother(bool radial_lines){
+    if(radial_lines)line_=std::make_unique<CompositeRadialLine>(grid_);
+    for(const auto &point:grid_.geometry){Real diagonal=0;
+      for(int A=0;A<3;++A)for(int a=0;a<3;++a)diagonal+=point.J[A][a]*point.J[A][a];
+      diagonal_.push_back(2*grid_.n*grid_.n*diagonal);
+    }
+  }
 
   void Smooth(const std::vector<Real> &rhs, std::vector<Real> &u, int sweeps) const {
+    if(line_){line_->Smooth(rhs,u,sweeps,[this](const auto &a,auto &b){Operator(a,b);});return;}
     std::vector<Real> au;
     for (int sweep = 0; sweep < sweeps; ++sweep) {
       Operator(u, au);

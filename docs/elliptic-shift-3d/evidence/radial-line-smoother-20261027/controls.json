@@ -1,0 +1,114 @@
+{
+  "binary_sha256": "639263d112bc827fbc34514fd679089c9ef753e88ea67c94673c24da43fa7807",
+  "cases": [
+    {
+      "name": "line-cartesian-refined",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/test_radial_line_standalone",
+        "--mode",
+        "line",
+        "--n",
+        "8",
+        "--refine"
+      ],
+      "exit_code": 0,
+      "seconds": 1.5077957080000002,
+      "stderr": "setup complete: 29184 cells, original scalar operator retained\n",
+      "result": {
+        "mode": "line",
+        "source": "discrete",
+        "n": 8,
+        "cells": 29184,
+        "shells": 7,
+        "radii": [
+          0.45,
+          0.55,
+          0.6,
+          0.65,
+          0.7,
+          0.75,
+          1
+        ],
+        "angular_subdivisions": 1,
+        "cartesian_refined": 1,
+        "damping": 0.65,
+        "maximum_iterations": 120,
+        "restart": 24,
+        "iterations": 13,
+        "applications": 15,
+        "converged": 1,
+        "original_residual_rms": 2.7889574048793703e-10,
+        "original_residual_max": 2.451952241244726e-08,
+        "solution_error_rms": 7.057503040129501e-13,
+        "operator_difference": 0,
+        "maximum_block_audit_error": 2.1802452413522126e-16,
+        "setup_seconds": 0.782114792,
+        "solve_seconds": 0.648178708,
+        "residual_history": [
+          6.398462027949853,
+          2.7889574048793703e-10
+        ],
+        "levels": [
+          {
+            "n": 8,
+            "cells": 29184,
+            "lines": 384,
+            "maximum_line_length": 56,
+            "radial_ghost_rows": 5376,
+            "same_line_ghost_entries": 18572,
+            "lagged_ghost_entries": 28538,
+            "cross_layer_entries": 9716,
+            "nonadjacent_layer_entries": 0,
+            "minimum_relative_pivot": 0.016429849250442604,
+            "factor_residual": 1.0627440205646428e-16,
+            "assembly_residual": 2.1802452413522126e-16
+          },
+          {
+            "n": 4,
+            "cells": 3648,
+            "lines": 96,
+            "maximum_line_length": 28,
+            "radial_ghost_rows": 1344,
+            "same_line_ghost_entries": 4730,
+            "lagged_ghost_entries": 7156,
+            "cross_layer_entries": 2408,
+            "nonadjacent_layer_entries": 0,
+            "minimum_relative_pivot": 0.02811738221326074,
+            "factor_residual": 7.822907806842636e-17,
+            "assembly_residual": 1.4508953352707983e-16
+          },
+          {
+            "n": 2,
+            "cells": 456,
+            "lines": 24,
+            "maximum_line_length": 14,
+            "radial_ghost_rows": 336,
+            "same_line_ghost_entries": 688,
+            "lagged_ghost_entries": 192,
+            "cross_layer_entries": 432,
+            "nonadjacent_layer_entries": 24,
+            "minimum_relative_pivot": 0.03177890373843284,
+            "factor_residual": 6.805801199034787e-17,
+            "assembly_residual": 2.067037528705691e-16
+          }
+        ],
+        "scope": "CPU scalar preconditioner prototype only; unchanged full operator; no native/GPU/vector/evolution validation"
+      }
+    },
+    {
+      "name": "line-angular-subdivision",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/test_radial_line_standalone",
+        "--mode",
+        "line",
+        "--n",
+        "4",
+        "--subdivisions",
+        "2"
+      ],
+      "exit_code": 2,
+      "seconds": 0.5101919589999999,
+      "stderr": "bounded composite coarse solve exceeds 1024 cells\n"
+    }
+  ]
+}

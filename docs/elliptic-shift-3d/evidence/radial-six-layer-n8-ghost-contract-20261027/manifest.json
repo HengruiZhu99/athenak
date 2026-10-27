@@ -1,0 +1,1415 @@
+{
+  "n": 8,
+  "radii": ".45,.55,.60,.65,.70,1",
+  "timeout_per_process_seconds": 180,
+  "commands": [
+    {
+      "name": "build",
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_radial_metric_divergence.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-six-layer-n8-ghost-contract-20261027/radial-metric-divergence",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "exit_code": 0,
+      "seconds": 1.789706833
+    },
+    {
+      "name": "radial-interface-1",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-six-layer-n8-ghost-contract-20261027/radial-metric-divergence",
+        "8",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-six-layer-control-20261027/exact.dat",
+        "1",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-six-layer-n8-ghost-contract-20261027/radial-interface-1.points.csv",
+        ".45,.55,.60,.65,.70,1",
+        "4",
+        "1"
+      ],
+      "exit_code": 0,
+      "seconds": 2.319454083,
+      "result": {
+        "n": 8,
+        "shell_radii": [
+          0.45,
+          0.55,
+          0.6,
+          0.65,
+          0.7,
+          1
+        ],
+        "blocks": 44,
+        "cells": 22528,
+        "ghosts": 2,
+        "radial_interface_stencils": 1,
+        "minimum_radius": 0.027063293868263706,
+        "analytic_L_beta_vs_exact_source_max": 1.4210854715202004e-13,
+        "cases": [
+          {
+            "name": "compact_operator_analytic_source",
+            "diagnostic": {
+              "residual": {
+                "cells": 22528,
+                "physical_rms": 1.5349588980421554,
+                "physical_l2": 4.2058024718858755,
+                "conformal_rms": 2.0395111879358927,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 8.15456931690972,
+                "worst_point": 20696,
+                "worst_xyz": [
+                  -0.0884720091413954,
+                  0.7077760731311632,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "operator_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 1.5349588980421554,
+                "physical_l2": 4.2058024718858755,
+                "conformal_rms": 2.0395111879358927,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 8.15456931690972,
+                "worst_point": 20696,
+                "worst_xyz": [
+                  -0.0884720091413954,
+                  0.7077760731311632,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "source_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 0,
+                "physical_l2": 0,
+                "conformal_rms": 0,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 0,
+                "worst_point": 0,
+                "worst_xyz": [
+                  -0.234375,
+                  -0.234375,
+                  -0.234375
+                ],
+                "worst_r": 0.4059494080239556
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 22528,
+                "physical_rms": 0.0758131680112686,
+                "physical_l2": 0.20772882572295154,
+                "conformal_rms": 0.10081123466367717,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 0.4170101336542619,
+                "worst_point": 20608,
+                "worst_xyz": [
+                  -0.19521770240418057,
+                  0.5205805397444815,
+                  -0.4555079722764213
+                ],
+                "worst_r": 0.7187499999999999
+              },
+              "face_metric_rate_max": 4.636889372258938e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 1.9008154663483408e-14,
+                    "physical_l2": 2.0761289420308043e-14,
+                    "conformal_rms": 3.360220358157552e-14,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 5.89077050551113e-14,
+                    "worst_point": 438,
+                    "worst_xyz": [
+                      -0.046875,
+                      -0.046875,
+                      -0.046875
+                    ],
+                    "worst_r": 0.08118988160479113
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.03997834036721241,
+                    "physical_l2": 0.041532193383107444,
+                    "conformal_rms": 0.04991307018815968,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.19346300035896807,
+                    "worst_point": 759,
+                    "worst_xyz": [
+                      0.234375,
+                      -0.046875,
+                      -0.140625
+                    ],
+                    "worst_r": 0.2773162398327945
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.15348808160423758,
+                    "physical_l2": 0.21741396661120996,
+                    "conformal_rms": 0.12627412165091303,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 3.9928500507056555,
+                    "worst_point": 6648,
+                    "worst_xyz": [
+                      0.22054608583845575,
+                      0.22054608583845575,
+                      0.2520526695296637
+                    ],
+                    "worst_r": 0.4010133416413435
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 1.643099718739679,
+                    "physical_l2": 1.1160816917449705,
+                    "conformal_rms": 1.658098622384368,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 4.313904687256762,
+                    "worst_point": 17628,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      0.6677713385628801,
+                      -0.08347141732036001
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 1920,
+                    "physical_rms": 3.303541440697156,
+                    "physical_l2": 4.048968057901696,
+                    "conformal_rms": 3.294602495242475,
+                    "physical_volume": 1.5022049305496874,
+                    "conformal_volume": 1.4968315923967208,
+                    "maximum": 8.15456931690972,
+                    "worst_point": 20696,
+                    "worst_xyz": [
+                      -0.0884720091413954,
+                      0.7077760731311632,
+                      -0.0884720091413954
+                    ],
+                    "worst_r": 0.71875
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 5.960995111194135e-13,
+                    "physical_l2": 6.70555741129829e-13,
+                    "conformal_rms": 5.96106036847841e-13,
+                    "physical_volume": 1.2654128463639784,
+                    "conformal_volume": 1.2652989727716186,
+                    "maximum": 1.239700833089227e-12,
+                    "worst_point": 21654,
+                    "worst_xyz": [
+                      -0.3126592581994092,
+                      -0.3126592581994092,
+                      0.8337580218650913
+                    ],
+                    "worst_r": 0.9437499999999999
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 19712,
+                "physical_rms": 1.6516895084897365,
+                "physical_l2": 4.14962403828636,
+                "conformal_rms": 2.2390187013953757,
+                "physical_volume": 6.311908307566325,
+                "conformal_volume": 3.3964207800548225,
+                "maximum": 8.15456931690972,
+                "worst_point": 20696,
+                "worst_xyz": [
+                  -0.0884720091413954,
+                  0.7077760731311632,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 6.319010708345078e-13,
+                "physical_l2": 5.917019631106197e-13,
+                "conformal_rms": 6.319025008422911e-13,
+                "physical_volume": 0.8768147310886059,
+                "conformal_volume": 0.8767935196497052,
+                "maximum": 1.239700833089227e-12,
+                "worst_point": 21654,
+                "worst_xyz": [
+                  -0.3126592581994092,
+                  -0.3126592581994092,
+                  0.8337580218650913
+                ],
+                "worst_r": 0.9437499999999999
+              }
+            }
+          },
+          {
+            "name": "compact_operator_sampled_product_rule_source",
+            "diagnostic": {
+              "residual": {
+                "cells": 22528,
+                "physical_rms": 2.3977503801164817,
+                "physical_l2": 6.5698596154737166,
+                "conformal_rms": 3.18762355764552,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 12.723316734588456,
+                "worst_point": 20040,
+                "worst_xyz": [
+                  -0.538536841659474,
+                  -0.3365855260371713,
+                  -0.3365855260371713
+                ],
+                "worst_r": 0.71875
+              },
+              "operator_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 1.5349588980421554,
+                "physical_l2": 4.2058024718858755,
+                "conformal_rms": 2.0395111879358927,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 8.15456931690972,
+                "worst_point": 20696,
+                "worst_xyz": [
+                  -0.0884720091413954,
+                  0.7077760731311632,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "source_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 3.9280463433610593,
+                "physical_l2": 10.762885600169668,
+                "conformal_rms": 5.223741663341268,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 20.876747852419026,
+                "worst_point": 19600,
+                "worst_xyz": [
+                  0.6349812749303676,
+                  -0.23811797809888785,
+                  -0.23811797809888785
+                ],
+                "worst_r": 0.7187499999999999
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 22528,
+                "physical_rms": 0.0758131680112686,
+                "physical_l2": 0.20772882572295154,
+                "conformal_rms": 0.10081123466367717,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 0.4170101336542619,
+                "worst_point": 20608,
+                "worst_xyz": [
+                  -0.19521770240418057,
+                  0.5205805397444815,
+                  -0.4555079722764213
+                ],
+                "worst_r": 0.7187499999999999
+              },
+              "face_metric_rate_max": 4.636889372258938e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 1.9008154663483408e-14,
+                    "physical_l2": 2.0761289420308043e-14,
+                    "conformal_rms": 3.360220358157552e-14,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 5.89077050551113e-14,
+                    "worst_point": 438,
+                    "worst_xyz": [
+                      -0.046875,
+                      -0.046875,
+                      -0.046875
+                    ],
+                    "worst_r": 0.08118988160479113
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.05158110199573095,
+                    "physical_l2": 0.05358592386084743,
+                    "conformal_rms": 0.06284730686156698,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.26549283833600046,
+                    "worst_point": 360,
+                    "worst_xyz": [
+                      -0.234375,
+                      -0.078125,
+                      -0.078125
+                    ],
+                    "worst_r": 0.25911131174651564
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.16673078031588295,
+                    "physical_l2": 0.23617208532273143,
+                    "conformal_rms": 0.15460138815699073,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 3.5802147287613195,
+                    "worst_point": 6648,
+                    "worst_xyz": [
+                      0.22054608583845575,
+                      0.22054608583845575,
+                      0.2520526695296637
+                    ],
+                    "worst_r": 0.4010133416413435
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 2.628971089344027,
+                    "physical_l2": 1.7857385449461967,
+                    "conformal_rms": 2.652986352884375,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 7.2386405364954856,
+                    "worst_point": 18652,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      -0.08347141732036001,
+                      0.6677713385628801
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 1920,
+                    "physical_rms": 5.154736115466582,
+                    "physical_l2": 6.317874999634305,
+                    "conformal_rms": 5.140788110237786,
+                    "physical_volume": 1.5022049305496874,
+                    "conformal_volume": 1.4968315923967208,
+                    "maximum": 12.723316734588456,
+                    "worst_point": 20040,
+                    "worst_xyz": [
+                      -0.538536841659474,
+                      -0.3365855260371713,
+                      -0.3365855260371713
+                    ],
+                    "worst_r": 0.71875
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 5.960995111194135e-13,
+                    "physical_l2": 6.70555741129829e-13,
+                    "conformal_rms": 5.96106036847841e-13,
+                    "physical_volume": 1.2654128463639784,
+                    "conformal_volume": 1.2652989727716186,
+                    "maximum": 1.239700833089227e-12,
+                    "worst_point": 21654,
+                    "worst_xyz": [
+                      -0.3126592581994092,
+                      -0.3126592581994092,
+                      0.8337580218650913
+                    ],
+                    "worst_r": 0.9437499999999999
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 19712,
+                "physical_rms": 2.5791917498661796,
+                "physical_l2": 6.479835362265404,
+                "conformal_rms": 3.4982404608120654,
+                "physical_volume": 6.311908307566325,
+                "conformal_volume": 3.3964207800548225,
+                "maximum": 12.723316734588456,
+                "worst_point": 20040,
+                "worst_xyz": [
+                  -0.538536841659474,
+                  -0.3365855260371713,
+                  -0.3365855260371713
+                ],
+                "worst_r": 0.71875
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 6.319010708345078e-13,
+                "physical_l2": 5.917019631106197e-13,
+                "conformal_rms": 6.319025008422911e-13,
+                "physical_volume": 0.8768147310886059,
+                "conformal_volume": 0.8767935196497052,
+                "maximum": 1.239700833089227e-12,
+                "worst_point": 21654,
+                "worst_xyz": [
+                  -0.3126592581994092,
+                  -0.3126592581994092,
+                  0.8337580218650913
+                ],
+                "worst_r": 0.9437499999999999
+              }
+            }
+          },
+          {
+            "name": "consistent_centered_checkerboard_control",
+            "diagnostic": {
+              "residual": {
+                "cells": 22528,
+                "physical_rms": 1.4598263258184843,
+                "physical_l2": 3.999938485312352,
+                "conformal_rms": 1.9399309573838843,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 6.414906693316792,
+                "worst_point": 18652,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  -0.08347141732036001,
+                  0.6677713385628801
+                ],
+                "worst_r": 0.678125
+              },
+              "operator_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 3.590128255531849,
+                "physical_l2": 9.836986717209475,
+                "conformal_rms": 4.770854262032169,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 18.044233165349024,
+                "worst_point": 17628,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  0.6677713385628801,
+                  -0.08347141732036001
+                ],
+                "worst_r": 0.678125
+              },
+              "source_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 3.2945027837840715,
+                "physical_l2": 9.026970018120581,
+                "conformal_rms": 4.380513723411981,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 17.158087299575907,
+                "worst_point": 19600,
+                "worst_xyz": [
+                  0.6349812749303676,
+                  -0.23811797809888785,
+                  -0.23811797809888785
+                ],
+                "worst_r": 0.7187499999999999
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 22528,
+                "physical_rms": 0.0758131680112686,
+                "physical_l2": 0.20772882572295154,
+                "conformal_rms": 0.10081123466367717,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 0.4170101336542619,
+                "worst_point": 20608,
+                "worst_xyz": [
+                  -0.19521770240418057,
+                  0.5205805397444815,
+                  -0.4555079722764213
+                ],
+                "worst_r": 0.7187499999999999
+              },
+              "face_metric_rate_max": 4.636889372258938e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 5.19023680745654e-16,
+                    "physical_l2": 5.668935802934679e-16,
+                    "conformal_rms": 1.1578551313909199e-15,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 1.591319668629391e-15,
+                    "worst_point": 375,
+                    "worst_xyz": [
+                      -0.015625,
+                      -0.046875,
+                      -0.078125
+                    ],
+                    "worst_r": 0.0924387466109315
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.055970442549821774,
+                    "physical_l2": 0.05814586654587007,
+                    "conformal_rms": 0.07000128161190214,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.26514543710039096,
+                    "worst_point": 360,
+                    "worst_xyz": [
+                      -0.234375,
+                      -0.078125,
+                      -0.078125
+                    ],
+                    "worst_r": 0.25911131174651564
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.1588657251978049,
+                    "physical_l2": 0.2250313321582855,
+                    "conformal_rms": 0.13116338469088218,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 2.6488621908406054,
+                    "worst_point": 7105,
+                    "worst_xyz": [
+                      -0.2241382575153672,
+                      0.2241382575153672,
+                      -0.25615800858899107
+                    ],
+                    "worst_r": 0.40754489608916433
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 3.384113900958344,
+                    "physical_l2": 2.298672152738438,
+                    "conformal_rms": 3.415273578284549,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 6.414906693316792,
+                    "worst_point": 18652,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      -0.08347141732036001,
+                      0.6677713385628801
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 1920,
+                    "physical_rms": 2.664075215632885,
+                    "physical_l2": 3.265209668345726,
+                    "conformal_rms": 2.661413232744689,
+                    "physical_volume": 1.5022049305496874,
+                    "conformal_volume": 1.4968315923967208,
+                    "maximum": 6.056750084169167,
+                    "worst_point": 19521,
+                    "worst_xyz": [
+                      0.5150102011090429,
+                      -0.4506339259704126,
+                      -0.32188137569315184
+                    ],
+                    "worst_r": 0.7562500000000001
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 7.161366700475076e-13,
+                    "physical_l2": 8.055862260852557e-13,
+                    "conformal_rms": 7.161568197340786e-13,
+                    "physical_volume": 1.2654128463639784,
+                    "conformal_volume": 1.2652989727716186,
+                    "maximum": 2.4064028481332084e-12,
+                    "worst_point": 21135,
+                    "worst_xyz": [
+                      -0.29736365530255704,
+                      -0.7929697474734854,
+                      -0.4956060921709283
+                    ],
+                    "worst_r": 0.9812499999999998
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 19712,
+                "physical_rms": 1.5075606897204499,
+                "physical_l2": 3.787521834512165,
+                "conformal_rms": 2.0444400093163475,
+                "physical_volume": 6.311908307566325,
+                "conformal_volume": 3.3964207800548225,
+                "maximum": 6.41459375520897,
+                "worst_point": 17500,
+                "worst_xyz": [
+                  -0.3574032563836137,
+                  0.5718452102137819,
+                  -0.07148065127672273
+                ],
+                "worst_r": 0.678125
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 8.549253461009359e-13,
+                "physical_l2": 8.005382945987007e-13,
+                "conformal_rms": 8.549223799910861e-13,
+                "physical_volume": 0.8768147310886059,
+                "conformal_volume": 0.8767935196497052,
+                "maximum": 2.4064028481332084e-12,
+                "worst_point": 21135,
+                "worst_xyz": [
+                  -0.29736365530255704,
+                  -0.7929697474734854,
+                  -0.4956060921709283
+                ],
+                "worst_r": 0.9812499999999998
+              }
+            }
+          },
+          {
+            "name": "compact_exact_internal_beta_ghosts_analytic_source",
+            "diagnostic": {
+              "residual": {
+                "cells": 22528,
+                "physical_rms": 1.5244867857458617,
+                "physical_l2": 4.177108781235398,
+                "conformal_rms": 2.026034837829848,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 8.09724810318626,
+                "worst_point": 19672,
+                "worst_xyz": [
+                  0.7077760731311632,
+                  -0.0884720091413954,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "operator_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 1.5244867857458617,
+                "physical_l2": 4.177108781235398,
+                "conformal_rms": 2.026034837829848,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 8.09724810318626,
+                "worst_point": 19672,
+                "worst_xyz": [
+                  0.7077760731311632,
+                  -0.0884720091413954,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "source_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 0,
+                "physical_l2": 0,
+                "conformal_rms": 0,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 0,
+                "worst_point": 0,
+                "worst_xyz": [
+                  -0.234375,
+                  -0.234375,
+                  -0.234375
+                ],
+                "worst_r": 0.4059494080239556
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 22528,
+                "physical_rms": 0.07556107465386565,
+                "physical_l2": 0.207038087445162,
+                "conformal_rms": 0.1004780068706259,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 0.41562442713664505,
+                "worst_point": 20696,
+                "worst_xyz": [
+                  -0.0884720091413954,
+                  0.7077760731311632,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "face_metric_rate_max": 4.636889372258938e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 1.9008154663483408e-14,
+                    "physical_l2": 2.0761289420308043e-14,
+                    "conformal_rms": 3.360220358157552e-14,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 5.89077050551113e-14,
+                    "worst_point": 438,
+                    "worst_xyz": [
+                      -0.046875,
+                      -0.046875,
+                      -0.046875
+                    ],
+                    "worst_r": 0.08118988160479113
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.010718176765619092,
+                    "physical_l2": 0.011134764126154254,
+                    "conformal_rms": 0.013808751356867937,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.05123880085185669,
+                    "worst_point": 4456,
+                    "worst_xyz": [
+                      0.2592220933668405,
+                      0.09720828501256518,
+                      0.09720828501256518
+                    ],
+                    "worst_r": 0.2934194864688696
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.13794658878558452,
+                    "physical_l2": 0.19539963451814596,
+                    "conformal_rms": 0.11544936288360472,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 3.9682324952923134,
+                    "worst_point": 4096,
+                    "worst_xyz": [
+                      0.2520526695296637,
+                      -0.22054608583845575,
+                      -0.22054608583845575
+                    ],
+                    "worst_r": 0.4010133416413435
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 1.64307678683035,
+                    "physical_l2": 1.1160661151589197,
+                    "conformal_rms": 1.6580759619770713,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 4.313904687256762,
+                    "worst_point": 17628,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      0.6677713385628801,
+                      -0.08347141732036001
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 1920,
+                    "physical_rms": 3.2803051948714677,
+                    "physical_l2": 4.020488676358382,
+                    "conformal_rms": 3.2714291231543395,
+                    "physical_volume": 1.5022049305496874,
+                    "conformal_volume": 1.4968315923967208,
+                    "maximum": 8.09724810318626,
+                    "worst_point": 19672,
+                    "worst_xyz": [
+                      0.7077760731311632,
+                      -0.0884720091413954,
+                      -0.0884720091413954
+                    ],
+                    "worst_r": 0.71875
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 5.967057086071105e-13,
+                    "physical_l2": 6.712376561424254e-13,
+                    "conformal_rms": 5.967121485525557e-13,
+                    "physical_volume": 1.2654128463639784,
+                    "conformal_volume": 1.2652989727716186,
+                    "maximum": 1.239700833089227e-12,
+                    "worst_point": 21654,
+                    "worst_xyz": [
+                      -0.3126592581994092,
+                      -0.3126592581994092,
+                      0.8337580218650913
+                    ],
+                    "worst_r": 0.9437499999999999
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 19712,
+                "physical_rms": 1.640112753027137,
+                "physical_l2": 4.120539163371285,
+                "conformal_rms": 2.223821886827533,
+                "physical_volume": 6.311908307566325,
+                "conformal_volume": 3.3964207800548225,
+                "maximum": 8.09724810318626,
+                "worst_point": 19672,
+                "worst_xyz": [
+                  0.7077760731311632,
+                  -0.0884720091413954,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 6.319597881873387e-13,
+                "physical_l2": 5.91756945092044e-13,
+                "conformal_rms": 6.319612202058501e-13,
+                "physical_volume": 0.8768147310886059,
+                "conformal_volume": 0.8767935196497052,
+                "maximum": 1.239700833089227e-12,
+                "worst_point": 21654,
+                "worst_xyz": [
+                  -0.3126592581994092,
+                  -0.3126592581994092,
+                  0.8337580218650913
+                ],
+                "worst_r": 0.9437499999999999
+              }
+            }
+          },
+          {
+            "name": "consistent_centered_exact_internal_beta_ghosts",
+            "diagnostic": {
+              "residual": {
+                "cells": 22528,
+                "physical_rms": 1.4559088331099055,
+                "physical_l2": 3.9892045167752457,
+                "conformal_rms": 1.9352306213457138,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 6.414898584950734,
+                "worst_point": 18652,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  -0.08347141732036001,
+                  0.6677713385628801
+                ],
+                "worst_r": 0.678125
+              },
+              "operator_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 3.588897415389219,
+                "physical_l2": 9.83361420311742,
+                "conformal_rms": 4.769416556842804,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 18.044225056984416,
+                "worst_point": 18652,
+                "worst_xyz": [
+                  -0.08347141732036001,
+                  -0.08347141732036001,
+                  0.6677713385628801
+                ],
+                "worst_r": 0.678125
+              },
+              "source_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 3.2945027837840715,
+                "physical_l2": 9.026970018120581,
+                "conformal_rms": 4.380513723411981,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 17.158087299575907,
+                "worst_point": 19600,
+                "worst_xyz": [
+                  0.6349812749303676,
+                  -0.23811797809888785,
+                  -0.23811797809888785
+                ],
+                "worst_r": 0.7187499999999999
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 22528,
+                "physical_rms": 0.07556107465386565,
+                "physical_l2": 0.207038087445162,
+                "conformal_rms": 0.1004780068706259,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 0.41562442713664505,
+                "worst_point": 20696,
+                "worst_xyz": [
+                  -0.0884720091413954,
+                  0.7077760731311632,
+                  -0.0884720091413954
+                ],
+                "worst_r": 0.71875
+              },
+              "face_metric_rate_max": 4.636889372258938e-14,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 1.7844493551956728e-14,
+                    "physical_l2": 1.9490303069908926e-14,
+                    "conformal_rms": 1.633703312198369e-14,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 2.4806218654347975e-14,
+                    "worst_point": 3584,
+                    "worst_xyz": [
+                      0.015625,
+                      0.015625,
+                      0.015625
+                    ],
+                    "worst_r": 0.027063293868263706
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 0.046082628379248786,
+                    "physical_l2": 0.047873739026407916,
+                    "conformal_rms": 0.05669676632448679,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 0.2378410679646073,
+                    "worst_point": 2541,
+                    "worst_xyz": [
+                      -0.078125,
+                      -0.078125,
+                      0.234375
+                    ],
+                    "worst_r": 0.25911131174651564
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 0.1419514955664083,
+                    "physical_l2": 0.2010725353715956,
+                    "conformal_rms": 0.12055800768898711,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 2.686343975729087,
+                    "worst_point": 7161,
+                    "worst_xyz": [
+                      0.2241382575153672,
+                      0.2241382575153672,
+                      -0.25615800858899107
+                    ],
+                    "worst_r": 0.40754489608916433
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 3.383292216047847,
+                    "physical_l2": 2.2981140201585775,
+                    "conformal_rms": 3.4144411633462752,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 6.414898584950734,
+                    "worst_point": 18652,
+                    "worst_xyz": [
+                      -0.08347141732036001,
+                      -0.08347141732036001,
+                      0.6677713385628801
+                    ],
+                    "worst_r": 0.678125
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 1920,
+                    "physical_rms": 2.6550780331826367,
+                    "physical_l2": 3.2541823193609707,
+                    "conformal_rms": 2.652423889679337,
+                    "physical_volume": 1.5022049305496874,
+                    "conformal_volume": 1.4968315923967208,
+                    "maximum": 6.036074665717449,
+                    "worst_point": 20697,
+                    "worst_xyz": [
+                      -0.09308794005312038,
+                      0.744703520424963,
+                      -0.09308794005312038
+                    ],
+                    "worst_r": 0.75625
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 7.187545399681513e-13,
+                    "physical_l2": 8.08531082895358e-13,
+                    "conformal_rms": 7.187748517182946e-13,
+                    "physical_volume": 1.2654128463639784,
+                    "conformal_volume": 1.2652989727716186,
+                    "maximum": 2.403841157069663e-12,
+                    "worst_point": 20623,
+                    "worst_xyz": [
+                      -0.29736365530255704,
+                      0.7929697474734854,
+                      -0.4956060921709283
+                    ],
+                    "worst_r": 0.9812499999999998
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 19712,
+                "physical_rms": 1.5030952931337298,
+                "physical_l2": 3.776303190256394,
+                "conformal_rms": 2.038981874603604,
+                "physical_volume": 6.311908307566325,
+                "conformal_volume": 3.3964207800548225,
+                "maximum": 6.41456943415084,
+                "worst_point": 17500,
+                "worst_xyz": [
+                  -0.3574032563836137,
+                  0.5718452102137819,
+                  -0.07148065127672273
+                ],
+                "worst_r": 0.678125
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 8.581516000579273e-13,
+                "physical_l2": 8.035593067285333e-13,
+                "conformal_rms": 8.581487086660678e-13,
+                "physical_volume": 0.8768147310886059,
+                "conformal_volume": 0.8767935196497052,
+                "maximum": 2.403841157069663e-12,
+                "worst_point": 20623,
+                "worst_xyz": [
+                  -0.29736365530255704,
+                  0.7929697474734854,
+                  -0.4956060921709283
+                ],
+                "worst_r": 0.9812499999999998
+              }
+            }
+          },
+          {
+            "name": "exact_beta_first_jets_centered_DV_oracle",
+            "diagnostic": {
+              "residual": {
+                "cells": 22528,
+                "physical_rms": 3.6077984718262e-14,
+                "physical_l2": 9.885403283584202e-14,
+                "conformal_rms": 4.540094933617304e-14,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 3.6951638172467334e-13,
+                "worst_point": 13533,
+                "worst_xyz": [
+                  0.6246893167201136,
+                  -0.0780861645900142,
+                  -0.0780861645900142
+                ],
+                "worst_r": 0.634375
+              },
+              "operator_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 3.2945027837840706,
+                "physical_l2": 9.02697001812058,
+                "conformal_rms": 4.380513723411981,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 17.15808729957591,
+                "worst_point": 19600,
+                "worst_xyz": [
+                  0.6349812749303676,
+                  -0.23811797809888785,
+                  -0.23811797809888785
+                ],
+                "worst_r": 0.7187499999999999
+              },
+              "source_vs_continuum": {
+                "cells": 22528,
+                "physical_rms": 3.2945027837840715,
+                "physical_l2": 9.026970018120581,
+                "conformal_rms": 4.380513723411981,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 17.158087299575907,
+                "worst_point": 19600,
+                "worst_xyz": [
+                  0.6349812749303676,
+                  -0.23811797809888785,
+                  -0.23811797809888785
+                ],
+                "worst_r": 0.7187499999999999
+              },
+              "H_beta_minus_2alphaA": {
+                "cells": 22528,
+                "physical_rms": 4.637407919751408e-16,
+                "physical_l2": 1.2706543293707111e-15,
+                "conformal_rms": 5.795706463331447e-16,
+                "physical_volume": 7.507653877794709,
+                "conformal_volume": 4.204305448521363,
+                "maximum": 3.5257229376473946e-15,
+                "worst_point": 14550,
+                "worst_xyz": [
+                  -0.07447114357025923,
+                  0.5957691485620739,
+                  -0.22341343071077768
+                ],
+                "worst_r": 0.6406250000000001
+              },
+              "face_metric_rate_max": 1.0886718211881311e-16,
+              "regions": [
+                {
+                  "name": "r_lt_01",
+                  "norm": {
+                    "cells": 136,
+                    "physical_rms": 6.39702377269339e-16,
+                    "physical_l2": 6.987025533237096e-16,
+                    "conformal_rms": 9.429782103311085e-16,
+                    "physical_volume": 1.1929678269211281,
+                    "conformal_volume": 0.004150390625,
+                    "maximum": 1.9697517818920594e-15,
+                    "worst_point": 438,
+                    "worst_xyz": [
+                      -0.046875,
+                      -0.046875,
+                      -0.046875
+                    ],
+                    "worst_r": 0.08118988160479113
+                  }
+                },
+                {
+                  "name": "r_01_03",
+                  "norm": {
+                    "cells": 3248,
+                    "physical_rms": 5.217595244128782e-15,
+                    "physical_l2": 5.420389457979096e-15,
+                    "conformal_rms": 6.308635514204885e-15,
+                    "physical_volume": 1.0792454160293012,
+                    "conformal_volume": 0.10706018877571521,
+                    "maximum": 4.270106231711837e-14,
+                    "worst_point": 45,
+                    "worst_xyz": [
+                      -0.078125,
+                      -0.078125,
+                      -0.234375
+                    ],
+                    "worst_r": 0.25911131174651564
+                  }
+                },
+                {
+                  "name": "r_03_062",
+                  "norm": {
+                    "cells": 11080,
+                    "physical_rms": 4.2836772720051103e-14,
+                    "physical_l2": 6.067775801578625e-14,
+                    "conformal_rms": 5.709805389309086e-14,
+                    "physical_volume": 2.00643716287064,
+                    "conformal_volume": 0.8847905057169275,
+                    "maximum": 2.8757236726801325e-13,
+                    "worst_point": 15360,
+                    "worst_xyz": [
+                      -0.33170182686910615,
+                      -0.33170182686910615,
+                      0.3790878021361213
+                    ],
+                    "worst_r": 0.603125
+                  }
+                },
+                {
+                  "name": "r_062_070",
+                  "norm": {
+                    "cells": 4992,
+                    "physical_rms": 1.1395731560985636e-13,
+                    "physical_l2": 7.740593716985135e-14,
+                    "conformal_rms": 1.1311304041224566e-13,
+                    "physical_volume": 0.4613856950598137,
+                    "conformal_volume": 0.44617379823544295,
+                    "maximum": 3.6951638172467334e-13,
+                    "worst_point": 13533,
+                    "worst_xyz": [
+                      0.6246893167201136,
+                      -0.0780861645900142,
+                      -0.0780861645900142
+                    ],
+                    "worst_r": 0.634375
+                  }
+                },
+                {
+                  "name": "r_070_090",
+                  "norm": {
+                    "cells": 1920,
+                    "physical_rms": 3.71793724212165e-15,
+                    "physical_l2": 4.556870075604934e-15,
+                    "conformal_rms": 3.714066123225904e-15,
+                    "physical_volume": 1.5022049305496874,
+                    "conformal_volume": 1.4968315923967208,
+                    "maximum": 1.4210854715202004e-14,
+                    "worst_point": 21720,
+                    "worst_xyz": [
+                      -0.0884720091413954,
+                      -0.0884720091413954,
+                      0.7077760731311632
+                    ],
+                    "worst_r": 0.71875
+                  }
+                },
+                {
+                  "name": "r_ge_090",
+                  "norm": {
+                    "cells": 1152,
+                    "physical_rms": 6.159978141007218e-15,
+                    "physical_l2": 6.929394556841329e-15,
+                    "conformal_rms": 6.160208116565136e-15,
+                    "physical_volume": 1.2654128463639784,
+                    "conformal_volume": 1.2652989727716186,
+                    "maximum": 2.1191718090496267e-14,
+                    "worst_point": 21951,
+                    "worst_xyz": [
+                      0.5847068295649154,
+                      0.417647735403511,
+                      0.6682363766456176
+                    ],
+                    "worst_r": 0.98125
+                  }
+                }
+              ],
+              "all_block_interface_two_cell_band": {
+                "cells": 19712,
+                "physical_rms": 3.5709704058940225e-14,
+                "physical_l2": 8.971531610596965e-14,
+                "conformal_rms": 4.585194766112022e-14,
+                "physical_volume": 6.311908307566325,
+                "conformal_volume": 3.3964207800548225,
+                "maximum": 3.4172599772577567e-13,
+                "worst_point": 14221,
+                "worst_xyz": [
+                  -0.4753172993777097,
+                  -0.2970733121110686,
+                  0.2970733121110686
+                ],
+                "worst_r": 0.634375
+              },
+              "scri_two_cell_band": {
+                "cells": 768,
+                "physical_rms": 7.270301332169954e-15,
+                "physical_l2": 6.807792816317843e-15,
+                "conformal_rms": 7.270362791813362e-15,
+                "physical_volume": 0.8768147310886059,
+                "conformal_volume": 0.8767935196497052,
+                "maximum": 2.1191718090496267e-14,
+                "worst_point": 21951,
+                "worst_xyz": [
+                  0.5847068295649154,
+                  0.417647735403511,
+                  0.6682363766456176
+                ],
+                "worst_r": 0.98125
+              }
+            }
+          }
+        ],
+        "independent_direct_vector_boundary_max": 6.713791786133904e-30,
+        "source_policy": "actual sampled -2alpha A only; no source replacement or RHS subtraction",
+        "scope": "no solve, no evolution, prototype not admitted"
+      }
+    }
+  ],
+  "source_hashes": {
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/config.hpp": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/radial-six-layer-control-20261027/exact.dat": "4736afa9429631988d7c8cf56aa8658c9278231e9cedb6c2bcfd3343a49611a7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/athena.hpp": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/composite.hpp": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/composite_difference.hpp": "0634c9d141201ff724241dc61cc9baed2e705702693e9d895ba97536f80e2a2a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/map.hpp": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/mesh/cubed_sphere/scri_surface.hpp": "403041e42e711465f228d65d6bf6524801b0c4febf8b8fa6bd4ded1bdbd39703",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/composite_metric_divergence.hpp": "670a60b1e46f80a64337fe00e552f81267869135989275561c0da80cd15859cc",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/conformal_constraints.hpp": "532204531be51088f93647105a3d8c0096c1eb192fa02310914d073d111b2fe7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/conformal_rhs.hpp": "ae56ecae2e6b3a1844b98367a33e0b1714f15936c3868f15db13d83fb9346c8c",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/elliptic_shift.hpp": "efd759753921a8e241cf3802b25635107ea7fc692e633099b51fa1be9fce33a7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/regular_penrose.hpp": "dde09618a1b69ef1b6f36f0742fbcc6cfdb313a10c92334e501976868423ee65",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src/z4c/hyperboloidal/stationary_omega_product.hpp": "d3f70e24f47cef079a750bbc4d340399f1e96434747bf921c870b1db74cd90b8",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/run_radial_metric_divergence.py": "362d4fab1acb6dc884416998e45fd581f9c90f1139c1f55e565575da5c3288c7",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_radial_metric_divergence.cpp": "276eb3707b1ff563ecf33c17e1c27123b9b66649bd68139b6b21e759d9947f7c"
+  },
+  "library_hashes": {
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d"
+  },
+  "native_integration": false,
+  "source_policy": "actual sampled wormhole alpha*A, unchanged physical source",
+  "binary_sha256": "8bc94e8c51936d16a036c35333153614fc4cdc13e0512aaaa1c24c088eaae0e1",
+  "sources_unchanged": true,
+  "binary_unchanged": true,
+  "libraries_unchanged": true
+}

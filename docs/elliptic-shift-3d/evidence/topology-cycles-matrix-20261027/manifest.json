@@ -1,0 +1,790 @@
+{
+  "head": "9cced4c72698e9e2a37c4726d139bbb51e877e6d",
+  "source": [
+    {
+      "path": "build-shift-3d/CMakeFiles/elliptic_shift_3d_metric_divergence_tests.dir/flags.make",
+      "sha256": "6cb530283b4e1393f2f6a30d713d57a3540848c00750f77268910f0fb837da9a"
+    },
+    {
+      "path": "build-shift-3d/CMakeFiles/elliptic_shift_3d_metric_divergence_tests.dir/link.txt",
+      "sha256": "fdb5fb62f80d93027ec8f2605a55b87248d178b94cf5857b697c09fad4a2f11f"
+    },
+    {
+      "path": "build-shift-3d/config.hpp",
+      "sha256": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08"
+    },
+    {
+      "path": "src/athena.hpp",
+      "sha256": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/composite.hpp",
+      "sha256": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/composite_difference.hpp",
+      "sha256": "0634c9d141201ff724241dc61cc9baed2e705702693e9d895ba97536f80e2a2a"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/map.hpp",
+      "sha256": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8"
+    },
+    {
+      "path": "src/multigrid/composite_poisson.hpp",
+      "sha256": "93af9da5add516a358bc752a0bd3f088baffd0289b0debb310a2d01b5a6f7dfe"
+    },
+    {
+      "path": "src/multigrid/composite_radial_line.hpp",
+      "sha256": "485c2534a5cf4b529b448e21b23e01aa5a0bb45a1c255862377627fa58bc5c69"
+    },
+    {
+      "path": "src/multigrid/composite_topology_transfer.hpp",
+      "sha256": "27b31487c4d073983696bf10b69a9fced900a8cfe6b4dce0f4c9cf3a635e19e0"
+    },
+    {
+      "path": "src/multigrid/flexible_gmres.hpp",
+      "sha256": "26ef8f9659c0bd7961820cb0a38ca1463273d4b2aec2a82b3693dbb51d01f865"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/conformal_constraints.hpp",
+      "sha256": "532204531be51088f93647105a3d8c0096c1eb192fa02310914d073d111b2fe7"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/conformal_rhs.hpp",
+      "sha256": "ae56ecae2e6b3a1844b98367a33e0b1714f15936c3868f15db13d83fb9346c8c"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/elliptic_shift.hpp",
+      "sha256": "efd759753921a8e241cf3802b25635107ea7fc692e633099b51fa1be9fce33a7"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/regular_penrose.hpp",
+      "sha256": "dde09618a1b69ef1b6f36f0742fbcc6cfdb313a10c92334e501976868423ee65"
+    },
+    {
+      "path": "src/z4c/hyperboloidal/stationary_omega_product.hpp",
+      "sha256": "d3f70e24f47cef079a750bbc4d340399f1e96434747bf921c870b1db74cd90b8"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/manufactured.hpp",
+      "sha256": "05a08653ca9e2216eef855d96e1eb518dec5a72bfb81bc125d685648d3e4cfd1"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/run_topology_cycles.py",
+      "sha256": "af2dc67b18b31f1b8db6dde8efa43a5141e16b24801092723929a848d3201402"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/test_topology_cycles.cpp",
+      "sha256": "014ecd5963d5c4e55e217268670f6f66130b2b70466056c969527d2586ffc939"
+    }
+  ],
+  "libraries": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+      "sha256": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "sha256": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+      "sha256": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a",
+      "sha256": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d"
+    }
+  ],
+  "build_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/source/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/source/build-shift-3d",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/source/tst/elliptic_shift_3d/test_topology_cycles.cpp",
+    "-o",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "timeout_seconds_per_process": 180,
+  "maximum_active_cells": 50000,
+  "compiled_from_frozen_archive": true,
+  "production_integration": false,
+  "runs": {
+    "scalar_n6_s2": {
+      "exit_code": 0,
+      "seconds": 0.4541971659999997,
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+        "--equation",
+        "scalar",
+        "--n",
+        "6",
+        "--shells",
+        "2"
+      ],
+      "result": {
+        "equation": "scalar",
+        "source": "discrete_mms",
+        "n": 6,
+        "shells": 2,
+        "subdivisions": 1,
+        "mixed_amr": 0,
+        "curved_metric": 0,
+        "lines": 1,
+        "topology": 1,
+        "blocks": 20,
+        "cells": 4320,
+        "order": 2,
+        "setup_seconds": 0.185647584,
+        "solve_seconds": 0.100101041,
+        "iterations": 11,
+        "applications": 13,
+        "converged": 1,
+        "operator_difference_relative": 0,
+        "residual_rms": 9.98313987275131e-10,
+        "error_rms": 1.3573121909221858e-11,
+        "continuum_truncation_rms": 0.019767474853977045,
+        "coarse_cells": 160,
+        "hierarchy_cells": [
+          4320,
+          540,
+          160
+        ],
+        "hierarchy_halo_rows": [
+          15680,
+          6320,
+          4160
+        ],
+        "regions": {
+          "all": {
+            "cells": 4320,
+            "residual_rms": 9.98313987275131e-10,
+            "residual_max": 6.751783132585842e-09
+          },
+          "bulk": {
+            "cells": 1728,
+            "residual_rms": 2.115128603598778e-09,
+            "residual_max": 6.751783132585842e-09
+          },
+          "shell": {
+            "cells": 2592,
+            "residual_rms": 9.435869429683445e-10,
+            "residual_max": 6.368630955932986e-09
+          },
+          "interfaces_edges_corners": {
+            "cells": 4160,
+            "residual_rms": 1.0229639465798617e-09,
+            "residual_max": 6.751783132585842e-09
+          },
+          "outer_boundary_collar": {
+            "cells": 432,
+            "residual_rms": 1.0617228540736683e-09,
+            "residual_max": 4.302640022046944e-09
+          },
+          "refined": {
+            "cells": 0,
+            "residual_rms": 0,
+            "residual_max": 0
+          }
+        },
+        "residual_history": [
+          6.397946719949793,
+          9.98313987275131e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "maximum_residual_target": 1e-07,
+        "scope": "CPU global elliptic hierarchy qualification; no native evolution/GPU/MPI validation"
+      }
+    },
+    "scalar_n6_s7": {
+      "exit_code": 0,
+      "seconds": 1.2234038330000003,
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+        "--equation",
+        "scalar",
+        "--n",
+        "6",
+        "--shells",
+        "7"
+      ],
+      "result": {
+        "equation": "scalar",
+        "source": "discrete_mms",
+        "n": 6,
+        "shells": 7,
+        "subdivisions": 1,
+        "mixed_amr": 0,
+        "curved_metric": 0,
+        "lines": 1,
+        "topology": 1,
+        "blocks": 50,
+        "cells": 10800,
+        "order": 2,
+        "setup_seconds": 0.933962,
+        "solve_seconds": 0.260346792,
+        "iterations": 12,
+        "applications": 14,
+        "converged": 1,
+        "operator_difference_relative": 0,
+        "residual_rms": 1.651344969757959e-10,
+        "error_rms": 4.249057550730095e-13,
+        "continuum_truncation_rms": 0.024334291028543533,
+        "coarse_cells": 400,
+        "hierarchy_cells": [
+          10800,
+          1350,
+          400
+        ],
+        "hierarchy_halo_rows": [
+          39200,
+          15800,
+          10400
+        ],
+        "regions": {
+          "all": {
+            "cells": 10800,
+            "residual_rms": 1.651344969757959e-10,
+            "residual_max": 3.0647893112245583e-09
+          },
+          "bulk": {
+            "cells": 1728,
+            "residual_rms": 2.2032297983105786e-10,
+            "residual_max": 6.076419367673225e-10
+          },
+          "shell": {
+            "cells": 9072,
+            "residual_rms": 1.6315491118645201e-10,
+            "residual_max": 3.0647893112245583e-09
+          },
+          "interfaces_edges_corners": {
+            "cells": 10400,
+            "residual_rms": 1.7006103519112464e-10,
+            "residual_max": 3.0647893112245583e-09
+          },
+          "outer_boundary_collar": {
+            "cells": 432,
+            "residual_rms": 9.538322892471328e-11,
+            "residual_max": 4.356204286182219e-10
+          },
+          "refined": {
+            "cells": 0,
+            "residual_rms": 0,
+            "residual_max": 0
+          }
+        },
+        "residual_history": [
+          6.39849950662505,
+          1.651344969757959e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "maximum_residual_target": 1e-07,
+        "scope": "CPU global elliptic hierarchy qualification; no native evolution/GPU/MPI validation"
+      }
+    },
+    "scalar_n6_mixed": {
+      "exit_code": 0,
+      "seconds": 0.5489738750000006,
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+        "--equation",
+        "scalar",
+        "--n",
+        "6",
+        "--shells",
+        "2",
+        "--mixed",
+        "1"
+      ],
+      "result": {
+        "equation": "scalar",
+        "source": "discrete_mms",
+        "n": 6,
+        "shells": 2,
+        "subdivisions": 1,
+        "mixed_amr": 1,
+        "curved_metric": 0,
+        "lines": 1,
+        "topology": 1,
+        "blocks": 34,
+        "cells": 7344,
+        "order": 2,
+        "setup_seconds": 0.263073041,
+        "solve_seconds": 0.266840583,
+        "iterations": 18,
+        "applications": 20,
+        "converged": 1,
+        "operator_difference_relative": 0,
+        "residual_rms": 3.5152558850236383e-10,
+        "error_rms": 2.6696195542847243e-12,
+        "continuum_truncation_rms": 0.02296331953153801,
+        "coarse_cells": 160,
+        "hierarchy_cells": [
+          7344,
+          918,
+          272,
+          216,
+          160
+        ],
+        "hierarchy_halo_rows": [
+          26656,
+          10744,
+          7072,
+          5616,
+          4160
+        ],
+        "regions": {
+          "all": {
+            "cells": 7344,
+            "residual_rms": 3.5152558850236383e-10,
+            "residual_max": 3.3058995541068725e-08
+          },
+          "bulk": {
+            "cells": 4752,
+            "residual_rms": 1.5459646636368803e-09,
+            "residual_max": 3.3058995541068725e-08
+          },
+          "shell": {
+            "cells": 2592,
+            "residual_rms": 2.330222419618494e-10,
+            "residual_max": 1.5159251631757797e-09
+          },
+          "interfaces_edges_corners": {
+            "cells": 7072,
+            "residual_rms": 3.5968268730835205e-10,
+            "residual_max": 3.3058995541068725e-08
+          },
+          "outer_boundary_collar": {
+            "cells": 432,
+            "residual_rms": 1.4932235063850336e-10,
+            "residual_max": 8.282388108682426e-10
+          },
+          "refined": {
+            "cells": 3240,
+            "residual_rms": 3.9946918822959085e-09,
+            "residual_max": 3.3058995541068725e-08
+          }
+        },
+        "residual_history": [
+          6.397943608902927,
+          3.5152558850236383e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "maximum_residual_target": 1e-07,
+        "scope": "CPU global elliptic hierarchy qualification; no native evolution/GPU/MPI validation"
+      }
+    },
+    "scalar_n6_subdivided": {
+      "exit_code": 0,
+      "seconds": 0.8332701670000002,
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+        "--equation",
+        "scalar",
+        "--n",
+        "6",
+        "--shells",
+        "2",
+        "--subdivisions",
+        "2"
+      ],
+      "result": {
+        "equation": "scalar",
+        "source": "discrete_mms",
+        "n": 6,
+        "shells": 2,
+        "subdivisions": 2,
+        "mixed_amr": 0,
+        "curved_metric": 0,
+        "lines": 1,
+        "topology": 1,
+        "blocks": 56,
+        "cells": 12096,
+        "order": 2,
+        "setup_seconds": 0.558626208,
+        "solve_seconds": 0.241846291,
+        "iterations": 10,
+        "applications": 12,
+        "converged": 1,
+        "operator_difference_relative": 0,
+        "residual_rms": 3.4301672616789513e-10,
+        "error_rms": 2.899187186421277e-12,
+        "continuum_truncation_rms": 0.005031258092424628,
+        "coarse_cells": 448,
+        "hierarchy_cells": [
+          12096,
+          1512,
+          448
+        ],
+        "hierarchy_halo_rows": [
+          43904,
+          17696,
+          11648
+        ],
+        "regions": {
+          "all": {
+            "cells": 12096,
+            "residual_rms": 3.4301672616789513e-10,
+            "residual_max": 3.800352033067611e-09
+          },
+          "bulk": {
+            "cells": 1728,
+            "residual_rms": 1.0677860338978547e-09,
+            "residual_max": 3.800352033067611e-09
+          },
+          "shell": {
+            "cells": 10368,
+            "residual_rms": 2.9367433543299096e-10,
+            "residual_max": 3.216350741297447e-09
+          },
+          "interfaces_edges_corners": {
+            "cells": 11648,
+            "residual_rms": 3.4563081250695977e-10,
+            "residual_max": 3.800352033067611e-09
+          },
+          "outer_boundary_collar": {
+            "cells": 1728,
+            "residual_rms": 2.92504349539644e-10,
+            "residual_max": 1.261156512555317e-09
+          },
+          "refined": {
+            "cells": 0,
+            "residual_rms": 0,
+            "residual_max": 0
+          }
+        },
+        "residual_history": [
+          6.3985110786844785,
+          3.4301672616789513e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "maximum_residual_target": 1e-07,
+        "scope": "CPU global elliptic hierarchy qualification; no native evolution/GPU/MPI validation"
+      }
+    },
+    "scalar_n8_s1": {
+      "exit_code": 0,
+      "seconds": 0.38344891599999986,
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+        "--equation",
+        "scalar",
+        "--n",
+        "8",
+        "--shells",
+        "1"
+      ],
+      "result": {
+        "equation": "scalar",
+        "source": "discrete_mms",
+        "n": 8,
+        "shells": 1,
+        "subdivisions": 1,
+        "mixed_amr": 0,
+        "curved_metric": 0,
+        "lines": 1,
+        "topology": 1,
+        "blocks": 14,
+        "cells": 7168,
+        "order": 2,
+        "setup_seconds": 0.195021166,
+        "solve_seconds": 0.171796417,
+        "iterations": 12,
+        "applications": 14,
+        "converged": 1,
+        "operator_difference_relative": 0,
+        "residual_rms": 6.609685635391537e-10,
+        "error_rms": 5.817359726680246e-12,
+        "continuum_truncation_rms": 0.010641482169293594,
+        "coarse_cells": 112,
+        "hierarchy_cells": [
+          7168,
+          896,
+          112
+        ],
+        "hierarchy_halo_rows": [
+          17024,
+          6272,
+          2912
+        ],
+        "regions": {
+          "all": {
+            "cells": 7168,
+            "residual_rms": 6.609685635391537e-10,
+            "residual_max": 1.4855800145596731e-08
+          },
+          "bulk": {
+            "cells": 4096,
+            "residual_rms": 3.1862634940045345e-09,
+            "residual_max": 1.4855800145596731e-08
+          },
+          "shell": {
+            "cells": 3072,
+            "residual_rms": 3.725693874802032e-10,
+            "residual_max": 3.994926167649737e-09
+          },
+          "interfaces_edges_corners": {
+            "cells": 6272,
+            "residual_rms": 7.103826920465161e-10,
+            "residual_max": 1.4855800145596731e-08
+          },
+          "outer_boundary_collar": {
+            "cells": 768,
+            "residual_rms": 2.7803746798154753e-10,
+            "residual_max": 8.975789000942314e-10
+          },
+          "refined": {
+            "cells": 0,
+            "residual_rms": 0,
+            "residual_max": 0
+          }
+        },
+        "residual_history": [
+          6.39619985775352,
+          6.609685635391537e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "maximum_residual_target": 1e-07,
+        "scope": "CPU global elliptic hierarchy qualification; no native evolution/GPU/MPI validation"
+      }
+    },
+    "scalar_n8_s2": {
+      "exit_code": 0,
+      "seconds": 0.5806131250000002,
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+        "--equation",
+        "scalar",
+        "--n",
+        "8",
+        "--shells",
+        "2"
+      ],
+      "result": {
+        "equation": "scalar",
+        "source": "discrete_mms",
+        "n": 8,
+        "shells": 2,
+        "subdivisions": 1,
+        "mixed_amr": 0,
+        "curved_metric": 0,
+        "lines": 1,
+        "topology": 1,
+        "blocks": 20,
+        "cells": 10240,
+        "order": 2,
+        "setup_seconds": 0.336168541,
+        "solve_seconds": 0.223702375,
+        "iterations": 12,
+        "applications": 14,
+        "converged": 1,
+        "operator_difference_relative": 0,
+        "residual_rms": 6.179804517670169e-10,
+        "error_rms": 4.9985532465665645e-12,
+        "continuum_truncation_rms": 0.011053584748799505,
+        "coarse_cells": 160,
+        "hierarchy_cells": [
+          10240,
+          1280,
+          160
+        ],
+        "hierarchy_halo_rows": [
+          24320,
+          8960,
+          4160
+        ],
+        "regions": {
+          "all": {
+            "cells": 10240,
+            "residual_rms": 6.179804517670169e-10,
+            "residual_max": 1.1976453606621362e-08
+          },
+          "bulk": {
+            "cells": 4096,
+            "residual_rms": 2.4462223414958564e-09,
+            "residual_max": 1.1976453606621362e-08
+          },
+          "shell": {
+            "cells": 6144,
+            "residual_rms": 4.5847646206815223e-10,
+            "residual_max": 5.4406541494245175e-09
+          },
+          "interfaces_edges_corners": {
+            "cells": 8960,
+            "residual_rms": 6.520088162870105e-10,
+            "residual_max": 1.1976453606621362e-08
+          },
+          "outer_boundary_collar": {
+            "cells": 768,
+            "residual_rms": 3.9774527728926736e-10,
+            "residual_max": 1.6229257937538932e-09
+          },
+          "refined": {
+            "cells": 0,
+            "residual_rms": 0,
+            "residual_max": 0
+          }
+        },
+        "residual_history": [
+          6.398169067981308,
+          6.179804517670169e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "maximum_residual_target": 1e-07,
+        "scope": "CPU global elliptic hierarchy qualification; no native evolution/GPU/MPI validation"
+      }
+    },
+    "scalar_n8_mixed": {
+      "exit_code": 1,
+      "seconds": 1.0505468330000003,
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+        "--equation",
+        "scalar",
+        "--n",
+        "8",
+        "--shells",
+        "2",
+        "--mixed",
+        "1"
+      ],
+      "result": {
+        "equation": "scalar",
+        "source": "discrete_mms",
+        "n": 8,
+        "shells": 2,
+        "subdivisions": 1,
+        "mixed_amr": 1,
+        "curved_metric": 0,
+        "lines": 1,
+        "topology": 1,
+        "blocks": 34,
+        "cells": 17408,
+        "order": 2,
+        "setup_seconds": 0.432962833,
+        "solve_seconds": 0.585070875,
+        "iterations": 20,
+        "applications": 22,
+        "converged": 1,
+        "operator_difference_relative": 0,
+        "residual_rms": 6.579261023895637e-10,
+        "error_rms": 2.7099984562853758e-12,
+        "continuum_truncation_rms": 0.012263816806986105,
+        "coarse_cells": 160,
+        "hierarchy_cells": [
+          17408,
+          2176,
+          272,
+          216,
+          160
+        ],
+        "hierarchy_halo_rows": [
+          41344,
+          15232,
+          7072,
+          5616,
+          4160
+        ],
+        "regions": {
+          "all": {
+            "cells": 17408,
+            "residual_rms": 6.579261023895637e-10,
+            "residual_max": 1.264070306206122e-07
+          },
+          "bulk": {
+            "cells": 11264,
+            "residual_rms": 3.1046415274842234e-09,
+            "residual_max": 1.264070306206122e-07
+          },
+          "shell": {
+            "cells": 6144,
+            "residual_rms": 3.8821857507514475e-10,
+            "residual_max": 7.640226229455038e-09
+          },
+          "interfaces_edges_corners": {
+            "cells": 15232,
+            "residual_rms": 7.083478642499342e-10,
+            "residual_max": 1.264070306206122e-07
+          },
+          "outer_boundary_collar": {
+            "cells": 768,
+            "residual_rms": 2.383274584937342e-10,
+            "residual_max": 1.1703864544188036e-09
+          },
+          "refined": {
+            "cells": 7680,
+            "residual_rms": 8.435879164276031e-09,
+            "residual_max": 1.264070306206122e-07
+          }
+        },
+        "residual_history": [
+          6.398166747665233,
+          6.579261023895637e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "maximum_residual_target": 1e-07,
+        "scope": "CPU global elliptic hierarchy qualification; no native evolution/GPU/MPI validation"
+      }
+    }
+  },
+  "build": {
+    "exit_code": 0,
+    "seconds": 2.492010333,
+    "command": [
+      "/usr/bin/c++",
+      "-DKOKKOS_DEPENDENCE",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/source/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/source/build-shift-3d",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+      "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+      "-isystem",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+      "-isystem",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=c++17",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/source/tst/elliptic_shift_3d/test_topology_cycles.cpp",
+      "-o",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/topology-cycles-matrix-20261027/topology-cycles",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+      "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+    ]
+  },
+  "binary_sha256": "dcba17b52077ad108b932d0b19566d8daa298ccd4f25a311d4d86abeeaeb0a94",
+  "source_unchanged": true,
+  "libraries_unchanged": true
+}

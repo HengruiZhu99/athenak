@@ -1,0 +1,105 @@
+{
+  "head": "9cced4c72698e9e2a37c4726d139bbb51e877e6d",
+  "source": [
+    {
+      "path": "build-shift-3d/CMakeFiles/elliptic_shift_3d_metric_divergence_tests.dir/flags.make",
+      "sha256": "6cb530283b4e1393f2f6a30d713d57a3540848c00750f77268910f0fb837da9a"
+    },
+    {
+      "path": "build-shift-3d/CMakeFiles/elliptic_shift_3d_metric_divergence_tests.dir/link.txt",
+      "sha256": "fdb5fb62f80d93027ec8f2605a55b87248d178b94cf5857b697c09fad4a2f11f"
+    },
+    {
+      "path": "build-shift-3d/config.hpp",
+      "sha256": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08"
+    },
+    {
+      "path": "src/athena.hpp",
+      "sha256": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/composite.hpp",
+      "sha256": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/map.hpp",
+      "sha256": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8"
+    },
+    {
+      "path": "src/multigrid/composite_topology_transfer.hpp",
+      "sha256": "bcf8c5590cca32072e70d287f03d3ff30293b2e55bdca3b85df398621880dd35"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/run_composite_topology.py",
+      "sha256": "d020ac8aa94567d1c74b1693ad1d60b215ebcb55a4caf6b7e8b5d5e6e937a881"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/test_composite_topology.cpp",
+      "sha256": "6daaf825ae6f173273a5ca2060442ecfe5bf3520253e77ce7e2cdfc2f271857e"
+    }
+  ],
+  "libraries": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+      "sha256": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "sha256": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+      "sha256": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a",
+      "sha256": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d"
+    }
+  ],
+  "build_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_composite_topology.cpp",
+    "-o",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-topology-transfer-diagnostic-20261027/composite-topology",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "run_command": [
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-topology-transfer-diagnostic-20261027/composite-topology"
+  ],
+  "timeout_seconds_per_process": 180,
+  "maximum_active_cells": 33104,
+  "dense_matrix_allocated": false,
+  "production_integration": false,
+  "build": {
+    "exit_code": 0,
+    "seconds": 1.38499875
+  },
+  "test": {
+    "exit_code": 1,
+    "seconds": 0.938622625
+  },
+  "source_unchanged": true,
+  "libraries_unchanged": true
+}

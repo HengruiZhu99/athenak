@@ -11,11 +11,18 @@
 #include "mesh/cubed_sphere/scri_surface.hpp"
 #include "z4c/hyperboloidal/tensor_scri.hpp"
 #include "z4c/hyperboloidal/composite_state.hpp"
+#include "z4c/hyperboloidal/puncture_log_plans.hpp"
+#include "z4c/hyperboloidal/puncture_refinement.hpp"
 
 namespace h = z4c::hyperboloidal;
 using V = multigrid::Vector;
 constexpr int fields = 22;
 const int tensor_i[6] = {0,0,0,1,1,2}, tensor_j[6] = {0,1,2,1,2,2};
+
+cubed_sphere::CompositeMesh PilotMesh(int n,const V &radii,int bulk,int refinement=0){
+  auto mesh=cubed_sphere::CompositeMesh(.25,radii,1,n,2,bulk);
+  return h::RefinePunctureNeighborhood(std::move(mesh),h::PuncturePosition{},refinement,50000).mesh;
+}
 
 h::OmegaJet<Real> Omega(const Real x[3], const h::Z4cJet<Real> &u, bool boundary = false) {
   h::OmegaJet<Real> o{};
@@ -41,13 +48,16 @@ class Pilot {
   V boundary_rhs, beta_padded;
   Real pole_sat=4,regularity_sat=8;
   Real telegraph_width=.24;
+  std::unique_ptr<h::PunctureLogPlans> log_plans;
   Real boundary_pole=0,raw_clock_rate=0,boundary_regularity=0;
   Pilot(int n, int shells, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
       : Pilot(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order,regular_scri) {}
-  Pilot(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24)
-      : shift(std::move(mesh), order,radial_stencils),
+  Pilot(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false)
+      : shift(std::move(mesh), order,radial_stencils,radial_lines,topology),
         state(fields*shift.grid.active.size(), 0), beta_delta(3*shift.grid.active.size(), 0),
         elliptic_atol(tolerance), telegraph(flux),wormhole(puncture),isotropic_reference(matched),positive_storage(positive_mode),telegraph_width(taper_width) {
+    if(enriched){if(!wormhole||positive_storage!=2)throw std::invalid_argument("enrichment requires exponent-independent log storage");
+      log_plans=std::make_unique<h::PunctureLogPlans>(shift.grid);}
     if(regular_scri)scri=std::make_unique<cubed_sphere::ScriSurface>(shift.grid,fields,surface_points);
   }
   h::PositiveFieldChart<Real> PositiveChart(int f,const Real x[3])const{
@@ -150,6 +160,11 @@ class Pilot {
       metrics.push_back(jets[p].metric);
       chi.push_back(jets[p].chi.value);
     }
+    if(log_plans)for(const auto &row:log_plans->rows){
+      for(int field:{0,18}){auto stored=log_plans->Sample(row,input,fields,field);
+        auto &physical=field==0?jets[row.active].chi:jets[row.active].alpha;
+        const auto status=PositiveChart(field,grid.geometry[row.active].x).Reconstruct(stored,physical);
+        if(status!=h::PositiveFieldStatus::valid)throw std::runtime_error("enriched positive-field reconstruction failed");}}
     shift.SetGeometry(metrics, chi);
   }
   h::CompositeShiftStage::Boundary Boundary(const V &padded) const {
@@ -190,8 +205,20 @@ class Pilot {
     }
     const auto boundary = Boundary(padded);
     h::ShiftSolveControl controls;if(positive_storage){controls.conformal_norm_fraction=.5;controls.maximum_residual_tolerance=1e-7;}
-    const auto report = shift.Solve(source, boundary, beta_delta, elliptic_atol, 0., 120,controls);
-    if (!report.converged) throw std::runtime_error("coupled stage original shift equation did not converge");
+    controls.krylov_restart=48;
+    const auto solve_start=std::chrono::steady_clock::now();
+    const auto report = shift.Solve(source, boundary, beta_delta, elliptic_atol, 0., 240,controls);
+    if(wormhole)std::cerr<<std::setprecision(17)<<"shift_solve iterations="<<report.iterations
+      <<" seconds="<<std::chrono::duration<double>(std::chrono::steady_clock::now()-solve_start).count()
+      <<" physical_rms="<<report.physical_residual_rms<<" point_max="<<report.residual_max<<'\n';
+    if (!report.converged) {
+      std::cerr<<std::setprecision(17)<<"shift_failure iterations="<<report.iterations
+        <<" physical_rms="<<report.physical_residual_rms
+        <<" conformal_rms="<<report.conformal_residual_rms
+        <<" point_max="<<report.residual_max
+        <<" last_krylov="<<(report.residual.empty()?0:report.residual.back())<<'\n';
+      throw std::runtime_error("coupled stage original shift equation did not converge");
+    }
     elliptic_iterations += report.iterations;
     max_shift_residual = std::max(max_shift_residual, report.physical_residual_rms);
     max_shift_point_residual=std::max(max_shift_point_residual,report.residual_max);
@@ -357,6 +384,22 @@ int main(int argc, char **argv) {
   Kokkos::initialize(argc, argv);
   int status = 0;
   try {
+    if(argc>1&&std::string(argv[1])=="--coordinates"){
+      if(argc!=7)throw std::invalid_argument("coordinates: N radii bulk refinement output.csv");
+      const int n=std::stoi(argv[2]),bulk=std::stoi(argv[4]),refinement=std::stoi(argv[5]);
+      V radii;std::stringstream list(argv[3]);std::string part;
+      while(std::getline(list,part,','))radii.push_back(std::stod(part));
+      if(n<6||n>16||bulk<1||bulk>4||radii.empty()||radii.size()>16||radii.back()!=1)
+        throw std::invalid_argument("bounded coordinate descriptor");
+      const auto mesh=PilotMesh(n,radii,bulk,refinement);
+      std::ofstream out(argv[6]);out<<std::setprecision(17)<<"kind,id,x,y,z,r\n";size_t id=0;
+      for(size_t m=0;m<mesh.blocks.size();++m)for(int k=0;k<n;++k)for(int j=0;j<n;++j)for(int i=0;i<n;++i){
+        const Real q[3]={(i+.5)/n,(j+.5)/n,(k+.5)/n};Real x[3];mesh.Forward(m,q,x);
+        out<<0<<','<<id++<<','<<x[0]<<','<<x[1]<<','<<x[2]<<','<<std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2])<<'\n';}
+      if(!out)throw std::runtime_error("coordinate output failed");
+      std::cout<<"{\"cells\":"<<id<<",\"revision\":"<<mesh.revision<<"}\n";
+      Kokkos::finalize();return 0;
+    }
     const int n = argc > 1 ? std::stoi(argv[1]) : 6;
     const Real amplitude = argc > 2 ? std::stod(argv[2]) : 0.;
     const Real dt = argc > 3 ? std::stod(argv[3]) : .0005;
@@ -380,17 +423,22 @@ int main(int argc, char **argv) {
     const bool radial_stencils=argc>21?std::stoi(argv[21]):false;
     const int positive_storage=argc>22?std::stoi(argv[22]):0;
     const Real telegraph_width=argc>23?std::stod(argv[23]):.24;
+    const bool enriched=argc>24?std::stoi(argv[24]):false;
+    const bool radial_lines=argc>25?std::stoi(argv[25]):false;
+    const bool topology=argc>26?std::stoi(argv[26]):false;
+    const int refinement=argc>27?std::stoi(argv[27]):0;
     if (n < 6 || n > 16 || steps < 0 || steps > 200 || dt <= 0 || dt*steps > .1
         || std::abs(amplitude) > 1e-3 || shells<1||shells>16||radii.size()!=size_t(shells)||radii.back()!=1||bulk<1||bulk>4
         ||size_t(n)*n*n*(bulk*bulk*bulk+6*shells)>50000
         ||surface_points<6||surface_points>8||surface_points>n+1
+        ||refinement<0||refinement>30|| (refinement>0&&!topology)
         ||positive_storage<0||positive_storage>3||(!wormhole&&positive_storage)
-        ||!(telegraph_width>0&&telegraph_width<.395)
+        ||!(telegraph_width>0&&telegraph_width<.395)|| (enriched&&positive_storage!=2)
         ||isotropic_reference<0||isotropic_reference>2||(!wormhole&&isotropic_reference)
         ||(wormhole&&(!regular_scri||n%2||initial.empty())))
       throw std::invalid_argument("bounded coupled pilot budget");
     const auto start = std::chrono::steady_clock::now();
-    Pilot pilot(cubed_sphere::CompositeMesh(.25,radii,1,n,2,bulk),true,tolerance,spatial_order,regular_scri,wormhole,isotropic_reference,surface_points,radial_stencils,positive_storage,telegraph_width);
+    Pilot pilot(PilotMesh(n,radii,bulk,refinement),true,tolerance,spatial_order,regular_scri,wormhole,isotropic_reference,surface_points,radial_stencils,positive_storage,telegraph_width,enriched,radial_lines,topology);
     if(argc>13)pilot.pole_sat=std::stod(argv[13]);if(argc>14)pilot.regularity_sat=std::stod(argv[14]);
     if(pilot.pole_sat<0||pilot.regularity_sat<0)throw std::invalid_argument("negative scri weak-boundary coefficient");
     pilot.Initialize(amplitude, angular);
@@ -407,14 +455,14 @@ int main(int argc, char **argv) {
         snapshot.wormhole_chart=wormhole;
         snapshot.isotropic_reference=isotropic_reference;
         snapshot.scri_radial_points=surface_points;snapshot.radial_interface_stencils=radial_stencils;
-        snapshot.positive_storage=positive_storage;snapshot.telegraph_width=telegraph_width;
+        snapshot.positive_storage=positive_storage;snapshot.telegraph_width=telegraph_width;snapshot.enriched_log_derivatives=enriched;snapshot.radial_line_smoothing=radial_lines;snapshot.topology_coarsening=topology;
         cubed_sphere::CompositeCheckpoint::Write(checkpoint, snapshot);
       }
     }
     bool restart_equal = checkpoint.empty();
     if (!checkpoint.empty()) {
       const auto snapshot = cubed_sphere::CompositeCheckpoint::Read(checkpoint, source_tag);
-      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order,snapshot.boundary_scheme==1,snapshot.wormhole_chart,snapshot.isotropic_reference,snapshot.scri_radial_points,snapshot.radial_interface_stencils,snapshot.positive_storage,snapshot.telegraph_width);
+      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order,snapshot.boundary_scheme==1,snapshot.wormhole_chart,snapshot.isotropic_reference,snapshot.scri_radial_points,snapshot.radial_interface_stencils,snapshot.positive_storage,snapshot.telegraph_width,snapshot.enriched_log_derivatives,snapshot.radial_line_smoothing,snapshot.topology_coarsening);
       restarted.state = snapshot.fields; restarted.beta_delta = snapshot.shift_warm_start;
       restarted.pole_sat=snapshot.boundary_pole_sat;restarted.regularity_sat=snapshot.boundary_regularity_sat;
       if(restarted.scri)restarted.scri->values=snapshot.boundary_fields;
@@ -585,6 +633,11 @@ int main(int argc, char **argv) {
               << ",\"wormhole_chart\":"<<wormhole<<",\"bulk_subdivisions\":"<<bulk
               << ",\"isotropic_reference\":"<<isotropic_reference
               << ",\"scri_radial_points\":"<<surface_points<<",\"radial_interface_stencils\":"<<radial_stencils
+              << ",\"topology_coarsening\":"<<topology
+              << ",\"mesh_revision\":"<<grid.mesh.revision
+              << ",\"radial_line_smoothing\":"<<radial_lines
+              << ",\"enriched_log_derivatives\":"<<enriched
+              << ",\"enriched_cells\":"<<(pilot.log_plans?pilot.log_plans->rows.size():0)
               << ",\"telegraph_width\":"<<telegraph_width
               << ",\"positive_storage\":"<<positive_storage
               << ",\"regular_scri\":"<<regular_scri<<",\"scri_nodal_clock\":"<<scri_clock<<",\"scri_nodal_null\":"<<scri_null

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """All-cell and raw-angle comparison for the corrected selected taper pilot."""
-import argparse,json,hashlib
+import argparse,json,hashlib,os,tempfile
 from pathlib import Path
 import numpy as np
 from radial_reference import interpolate
@@ -22,4 +22,19 @@ for f in fields:
  out['angular'][f]=dict(radii=rs.tolist(),mean=q.mean(axis=1).tolist(),scatter=q.std(axis=1).tolist(),mean_error=(q.mean(axis=1)-interpolate(r['r'],r[f],rs)).tolist())
 out['input_hashes']={f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in [root/'log-n8.csv',root/'log-n8.csv.spheres.csv',root/'radial-n1025.npz',root/'radial-n2049.npz']}
 (root/'comparison.json').write_text(json.dumps(out,indent=2)+'\n')
+with tempfile.TemporaryDirectory(prefix='shift-selected-plot-') as config:
+ os.environ.setdefault('MPLCONFIGDIR',config)
+ import matplotlib
+ matplotlib.use('Agg')
+ import matplotlib.pyplot as plt
+ fig,axes=plt.subplots(2,2,figsize=(10,7),layout='constrained')
+ for ax,f in zip(axes.flat,['alpha','chi','A_rr','beta_r']):
+  q=out['angular'][f];rs=np.array(q['radii']);mean=np.array(q['mean']);sd=np.array(q['scatter'])
+  ax.plot(r['r'],r[f],color='k',label='Independent spherical N2049')
+  ax.plot(rs,mean,'o-',ms=3,label='3D N8 angular mean')
+  ax.fill_between(rs,mean-sd,mean+sd,alpha=.25,label='Raw angular scatter')
+  ax.set(xlabel='compact radius',ylabel=f);ax.grid(alpha=.2)
+ axes[0,0].legend(fontsize=8)
+ fig.suptitle('Selected taper .24, t=0.0002: coarse 3D pilot fails scientific gates')
+ fig.savefig(root/'comparison.png',dpi=160);plt.close(fig)
 print(json.dumps(out['field_errors']))

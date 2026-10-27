@@ -1,0 +1,25 @@
+[
+  {
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_coupled_pilot",
+      "--coordinates",
+      "6",
+      ".45,.55,.60,.65,.70,.75,1",
+      "2",
+      "3",
+      "docs/elliptic-shift-3d/evidence/amr-core-pilot-20261027/coordinates.csv"
+    ],
+    "exit": 0,
+    "seconds": 0.6220505829999999
+  },
+  {
+    "command": [
+      "/usr/bin/python3",
+      "tst/elliptic_shift_3d/wormhole_initial.py",
+      "docs/elliptic-shift-3d/evidence/amr-core-pilot-20261027/coordinates.csv",
+      "docs/elliptic-shift-3d/evidence/amr-core-pilot-20261027/initial.dat"
+    ],
+    "exit": 0,
+    "seconds": 0.35022025
+  }
+]

@@ -1,0 +1,318 @@
+{
+  "head": "9cced4c72698e9e2a37c4726d139bbb51e877e6d",
+  "source": [
+    {
+      "path": "build-shift-3d/CMakeFiles/elliptic_shift_3d_metric_divergence_tests.dir/flags.make",
+      "sha256": "6cb530283b4e1393f2f6a30d713d57a3540848c00750f77268910f0fb837da9a"
+    },
+    {
+      "path": "build-shift-3d/CMakeFiles/elliptic_shift_3d_metric_divergence_tests.dir/link.txt",
+      "sha256": "fdb5fb62f80d93027ec8f2605a55b87248d178b94cf5857b697c09fad4a2f11f"
+    },
+    {
+      "path": "build-shift-3d/config.hpp",
+      "sha256": "2c75d192b1cd6dfe32e8d53bacd60467d04a0562fe8142635619d61170907a08"
+    },
+    {
+      "path": "src/athena.hpp",
+      "sha256": "322dd4f67ac4a718edf2afebe0e20aa302546cf96dd13640784fbbe4ced8d3d6"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/composite.hpp",
+      "sha256": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05"
+    },
+    {
+      "path": "src/mesh/cubed_sphere/map.hpp",
+      "sha256": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8"
+    },
+    {
+      "path": "src/multigrid/composite_topology_transfer.hpp",
+      "sha256": "27b31487c4d073983696bf10b69a9fced900a8cfe6b4dce0f4c9cf3a635e19e0"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/run_composite_topology.py",
+      "sha256": "d020ac8aa94567d1c74b1693ad1d60b215ebcb55a4caf6b7e8b5d5e6e937a881"
+    },
+    {
+      "path": "tst/elliptic_shift_3d/test_composite_topology.cpp",
+      "sha256": "46857c65e11f667d3a97448897d046a146bfb0a9f0625ec7ccf73fb28b24448d"
+    }
+  ],
+  "libraries": [
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+      "sha256": "f4b400cb92b22e4ef324d6845825c320ca984a5a03792e2a9c367bd70ef28efb"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+      "sha256": "ed9158549e8bbfdf38d3ea96f2fe2c06f6958d26c6cc146c0a5d0b75f31b060f"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+      "sha256": "53fc7c058b9102fb5e1bdf74302a0ac0af62307d1ca5524ebd6fabdd890fb833"
+    },
+    {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a",
+      "sha256": "1959abedd19d4ecdf37b58888ff9d145d39f764d2f932b581966ae6ad824814d"
+    }
+  ],
+  "build_command": [
+    "/usr/bin/c++",
+    "-DKOKKOS_DEPENDENCE",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/core/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/containers/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/algorithms/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src",
+    "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/simd/src",
+    "-isystem",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/desul/include",
+    "-isystem",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/kokkos/tpls/mdspan/include",
+    "-O3",
+    "-DNDEBUG",
+    "-std=c++17",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/tst/elliptic_shift_3d/test_composite_topology.cpp",
+    "-o",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-topology-transfer-final-20261027/composite-topology",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+  ],
+  "run_command": [
+    "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/amr-topology-transfer-final-20261027/composite-topology"
+  ],
+  "timeout_seconds_per_process": 180,
+  "maximum_active_cells": 33104,
+  "dense_matrix_allocated": false,
+  "production_integration": false,
+  "build": {
+    "exit_code": 0,
+    "seconds": 1.419979833
+  },
+  "test": {
+    "exit_code": 0,
+    "seconds": 2.175423292
+  },
+  "binary_sha256": "74bd871b2c3c92847940d5877d7d0693af5d225f6d7180873e268a83a5363cc2",
+  "results": [
+    {
+      "case": "mixed_topology",
+      "stage": 0,
+      "fine_blocks": 34,
+      "coarse_blocks": 27,
+      "fine_n": 4,
+      "coarse_n": 4,
+      "fine_cells": 2176,
+      "coarse_cells": 1728,
+      "prolong_linear_max": 2.220446049250313e-16,
+      "prolong_quadratic_max": 3.3306690738754696e-16,
+      "restrict_linear_nodal_max": 2.220446049250313e-16,
+      "restrict_quadratic_cell_average_max": 2.220446049250313e-16,
+      "represented_mass_relative": 1.0139256613395038e-15,
+      "coverage_max": 0,
+      "quadratic_rows": 512,
+      "linear_fallback_rows": 0,
+      "identity_rows": 1664,
+      "cross_patch_rows": 178,
+      "maximum_prolongation_l1": 3.2873438237562542,
+      "maximum_moment_error": 7.993605777301127e-15,
+      "seconds": 0.01386425
+    },
+    {
+      "case": "mixed_topology",
+      "stage": 1,
+      "fine_blocks": 27,
+      "coarse_blocks": 20,
+      "fine_n": 4,
+      "coarse_n": 4,
+      "fine_cells": 1728,
+      "coarse_cells": 1280,
+      "prolong_linear_max": 2.220446049250313e-16,
+      "prolong_quadratic_max": 2.220446049250313e-16,
+      "restrict_linear_nodal_max": 2.220446049250313e-16,
+      "restrict_quadratic_cell_average_max": 2.220446049250313e-16,
+      "represented_mass_relative": 1.0139256656760787e-15,
+      "coverage_max": 0,
+      "quadratic_rows": 512,
+      "linear_fallback_rows": 0,
+      "identity_rows": 1216,
+      "cross_patch_rows": 294,
+      "maximum_prolongation_l1": 1.7581399735611878,
+      "maximum_moment_error": 4.6629367034256575e-15,
+      "seconds": 0.008711542
+    },
+    {
+      "case": "deep_topology",
+      "stage": 0,
+      "fine_blocks": 4138,
+      "coarse_blocks": 554,
+      "fine_n": 2,
+      "coarse_n": 2,
+      "fine_cells": 33104,
+      "coarse_cells": 4432,
+      "prolong_linear_max": 2.220446049250313e-16,
+      "prolong_quadratic_max": 3.3306690738754696e-16,
+      "restrict_linear_nodal_max": 2.220446049250313e-16,
+      "restrict_quadratic_cell_average_max": 2.220446049250313e-16,
+      "represented_mass_relative": 6.223933886425209e-15,
+      "coverage_max": 0,
+      "quadratic_rows": 32768,
+      "linear_fallback_rows": 0,
+      "identity_rows": 336,
+      "cross_patch_rows": 2117,
+      "maximum_prolongation_l1": 3.5209411445345364,
+      "maximum_moment_error": 9.992007221626409e-15,
+      "seconds": 0.247096834
+    },
+    {
+      "case": "deep_topology",
+      "stage": 1,
+      "fine_blocks": 554,
+      "coarse_blocks": 106,
+      "fine_n": 2,
+      "coarse_n": 2,
+      "fine_cells": 4432,
+      "coarse_cells": 848,
+      "prolong_linear_max": 3.3306690738754696e-16,
+      "prolong_quadratic_max": 3.3306690738754696e-16,
+      "restrict_linear_nodal_max": 2.220446049250313e-16,
+      "restrict_quadratic_cell_average_max": 3.3306690738754696e-16,
+      "represented_mass_relative": 1.5559838875455656e-15,
+      "coverage_max": 0,
+      "quadratic_rows": 4096,
+      "linear_fallback_rows": 0,
+      "identity_rows": 336,
+      "cross_patch_rows": 1824,
+      "maximum_prolongation_l1": 3.569645014547334,
+      "maximum_moment_error": 8.215650382226158e-15,
+      "seconds": 0.027310834
+    },
+    {
+      "case": "deep_topology",
+      "stage": 2,
+      "fine_blocks": 106,
+      "coarse_blocks": 50,
+      "fine_n": 2,
+      "coarse_n": 2,
+      "fine_cells": 848,
+      "coarse_cells": 400,
+      "prolong_linear_max": 2.220446049250313e-16,
+      "prolong_quadratic_max": 3.3306690738754696e-16,
+      "restrict_linear_nodal_max": 2.220446049250313e-16,
+      "restrict_quadratic_cell_average_max": 2.220446049250313e-16,
+      "represented_mass_relative": 9.901726235576471e-16,
+      "coverage_max": 0,
+      "quadratic_rows": 512,
+      "linear_fallback_rows": 0,
+      "identity_rows": 336,
+      "cross_patch_rows": 480,
+      "maximum_prolongation_l1": 1.9983708913071427,
+      "maximum_moment_error": 3.774758283725532e-15,
+      "seconds": 0.004075042
+    },
+    {
+      "case": "deep_measure_chain",
+      "propagated_scaled_metric_measure": true,
+      "initial_mass": 0.8197507949278964,
+      "mass_absolute_max": 5.218048215738236e-15,
+      "all_fine_rows": 38384,
+      "terminal_cells": 400
+    },
+    {
+      "case": "odd_logical",
+      "stage": 0,
+      "fine_blocks": 50,
+      "coarse_blocks": 50,
+      "fine_n": 6,
+      "coarse_n": 3,
+      "fine_cells": 10800,
+      "coarse_cells": 1350,
+      "prolong_linear_max": 1.8596235662471372e-13,
+      "prolong_quadratic_max": 2.596811654598241e-13,
+      "restrict_linear_nodal_max": 0.01612484017929483,
+      "restrict_quadratic_cell_average_max": -1,
+      "represented_mass_relative": 7.293571348263734e-16,
+      "coverage_max": 9.992007221626409e-16,
+      "quadratic_rows": 10800,
+      "linear_fallback_rows": 0,
+      "identity_rows": 0,
+      "cross_patch_rows": 10440,
+      "maximum_prolongation_l1": 15.961648860450694,
+      "maximum_moment_error": 1.7201795543542175e-12,
+      "seconds": 0.295398584
+    },
+    {
+      "case": "odd_logical",
+      "stage": 1,
+      "fine_blocks": 50,
+      "coarse_blocks": 50,
+      "fine_n": 3,
+      "coarse_n": 2,
+      "fine_cells": 1350,
+      "coarse_cells": 400,
+      "prolong_linear_max": 2.2937207688755734e-13,
+      "prolong_quadratic_max": 2.7622348852673895e-13,
+      "restrict_linear_nodal_max": 0.08342877566522422,
+      "restrict_quadratic_cell_average_max": -1,
+      "represented_mass_relative": 7.145881349613801e-16,
+      "coverage_max": 1.1102230246251565e-16,
+      "quadratic_rows": 1350,
+      "linear_fallback_rows": 0,
+      "identity_rows": 0,
+      "cross_patch_rows": 1342,
+      "maximum_prolongation_l1": 15.42523765193379,
+      "maximum_moment_error": 5.715428130770306e-13,
+      "seconds": 0.0195875
+    },
+    {
+      "case": "odd_measure_chain",
+      "propagated_scaled_metric_measure": true,
+      "initial_mass": 0.8048423601141669,
+      "mass_absolute_max": 8.881784197001252e-16,
+      "all_fine_rows": 12150,
+      "terminal_cells": 400
+    },
+    {
+      "case": "subdivided_two_shell_logical",
+      "stage": 0,
+      "fine_blocks": 56,
+      "coarse_blocks": 56,
+      "fine_n": 4,
+      "coarse_n": 2,
+      "fine_cells": 3584,
+      "coarse_cells": 448,
+      "prolong_linear_max": 1.5543122344752192e-15,
+      "prolong_quadratic_max": 2.6645352591003757e-15,
+      "restrict_linear_nodal_max": 0.009138202810269447,
+      "restrict_quadratic_cell_average_max": -1,
+      "represented_mass_relative": 7.324843980995981e-16,
+      "coverage_max": 0,
+      "quadratic_rows": 3584,
+      "linear_fallback_rows": 0,
+      "identity_rows": 0,
+      "cross_patch_rows": 3520,
+      "maximum_prolongation_l1": 3.1147165903805587,
+      "maximum_moment_error": 9.325873406851315e-15,
+      "seconds": 0.018683792
+    },
+    {
+      "status": "passed",
+      "deep_initial_cells": 33104,
+      "deep_terminal_cells": 400,
+      "odd_n6_cells": 10800,
+      "odd_n3_cells": 1350,
+      "odd_n2_cells": 400,
+      "unsupported_shell_floor": 1408,
+      "dense_matrix_allocated": false
+    }
+  ],
+  "source_unchanged": true,
+  "libraries_unchanged": true
+}

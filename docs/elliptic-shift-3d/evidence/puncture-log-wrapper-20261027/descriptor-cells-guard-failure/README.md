@@ -1,0 +1,1 @@
+Negative-contract test failed honestly with exit1: missing mesh rejection: descriptor cell shape. grid.mesh.cells changed without grid.n/revision; root was notified. The partial JSON stdout is retained unchanged; see stderr and manifest. This is a guard test failure, not an evolution run.

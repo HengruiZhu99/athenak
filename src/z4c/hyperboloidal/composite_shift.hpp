@@ -21,12 +21,14 @@ struct ShiftSolveControl {
   std::vector<Real> column_scale;
   Real conformal_norm_fraction=.5;
   Real maximum_residual_tolerance=1e-7;
+  int krylov_restart=24;
 };
 struct ShiftSolveReport : multigrid::KrylovReport {
   Real physical_residual_rms=0,conformal_residual_rms=0,residual_max=0;
   Real physical_residual_l2=0,physical_volume=0;
   Real physical_log_volume=0,physical_log_residual_l2=0;
   bool physical_integrals_representable=true;
+  Real original_residual_target=0,auxiliary_residual_target=0;
 };
 
 // Stage-owned frozen geometry: setting this does not modify evolved fields or
@@ -43,8 +45,8 @@ class CompositeShiftStage {
   std::vector<Real> conformal_volume;
   multigrid::CompositePoisson preconditioner;
 
-  explicit CompositeShiftStage(cubed_sphere::CompositeMesh mesh, int order = 4,bool radial_stencils=false)
-      : grid(mesh, order,radial_stencils), preconditioner(std::move(mesh),radial_stencils) {}
+  explicit CompositeShiftStage(cubed_sphere::CompositeMesh mesh, int order = 4,bool radial_stencils=false,bool radial_lines=false,bool topology=false)
+      : grid(mesh, order,radial_stencils), preconditioner(std::move(mesh),radial_stencils,radial_lines,topology) {}
 
   void SetGeometry(const std::vector<MetricJet<Real>> &g, const std::vector<Real> &chi = {}) {
     if (g.size() != grid.active.size()) throw std::invalid_argument("stage metric shape");
@@ -100,7 +102,7 @@ class CompositeShiftStage {
       double rtol = 1e-10, int max_iterations = 160,const ShiftSolveControl &control={}) const {
     const Real mix=control.conformal_norm_fraction;
     if(beta.size()!=source.size())throw std::invalid_argument("shift solution/source vector shape");
-    if(!(mix>=0&&mix<=1)||!std::isfinite(mix)||control.maximum_residual_tolerance<0
+    if(control.krylov_restart<1||control.krylov_restart>128||!(mix>=0&&mix<=1)||!std::isfinite(mix)||control.maximum_residual_tolerance<0
         ||!std::isfinite(control.maximum_residual_tolerance))throw std::invalid_argument("shift norm controls");
     const bool scaled=!control.column_scale.empty();
     if(scaled&&control.column_scale.size()!=grid.active.size())throw std::invalid_argument("shift column scale shape");
@@ -121,6 +123,16 @@ class CompositeShiftStage {
             -log_norm_volume[p]+log_physical_volume));
         lower_bound=std::min(lower_bound,(1-mix)+mix*ratio);}}
     if(!(lower_bound>0))throw std::runtime_error("shift solver norm loses physical residual control");
+    int verification_applications=0;
+    auto original_accept=[&](const auto &candidate,const auto &){
+      auto physical=candidate;
+      if(scaled)for(size_t p=0;p<grid.active.size();++p)for(int v=0;v<3;++v)physical[3*p+v]*=control.column_scale[p];
+      multigrid::Vector applied,residual(source.size());Apply(physical,applied,boundary);++verification_applications;
+      Real maximum=0;for(size_t i=0;i<source.size();++i){residual[i]=-source[i]-applied[i];maximum=std::max(maximum,std::abs(residual[i]));}
+      return std::sqrt(Dot(residual,residual))<=target
+          &&(mix==0||std::sqrt(conformal_dot(residual,residual))<=target)
+          &&(!(control.maximum_residual_tolerance>0)||maximum<=control.maximum_residual_tolerance);
+    };
     const auto krylov = multigrid::FlexibleGMRES(
         [&](const auto &a, auto &b) {if(!scaled){Apply(a,b);return;}auto physical=a;
           for(size_t p=0;p<grid.active.size();++p)for(int v=0;v<3;++v)physical[3*p+v]*=control.column_scale[p];Apply(physical,b);},
@@ -132,9 +144,11 @@ class CompositeShiftStage {
             const auto correction = preconditioner.Cycle(scalar);
             for (size_t p = 0; p < scalar.size(); ++p) b[3*p+v] = correction[p]/(scaled?control.column_scale[p]:1);
           }
-        }, solver_dot,rhs,y,target*std::sqrt(lower_bound),0.,max_iterations);
+        }, solver_dot,rhs,y,target*std::sqrt(lower_bound),0.,max_iterations,control.krylov_restart,original_accept);
     beta=y;if(scaled)for(size_t p=0;p<grid.active.size();++p)for(int v=0;v<3;++v)beta[3*p+v]*=control.column_scale[p];
     ShiftSolveReport report;static_cast<multigrid::KrylovReport&>(report)=krylov;
+    report.applications+=verification_applications;
+    report.original_residual_target=target;report.auxiliary_residual_target=target*std::sqrt(lower_bound);
     multigrid::Vector applied,residual(source.size());Apply(beta,applied,boundary);++report.applications;
     for(size_t p=0;p<source.size();++p){residual[p]=-source[p]-applied[p];report.residual_max=std::max(report.residual_max,std::abs(residual[p]));}
     report.physical_residual_rms=std::sqrt(Dot(residual,residual));report.conformal_residual_rms=std::sqrt(conformal_dot(residual,residual));
@@ -147,6 +161,7 @@ class CompositeShiftStage {
     report.physical_residual_l2=report.physical_log_residual_l2<=log_max?
         std::exp(report.physical_log_residual_l2):std::numeric_limits<Real>::infinity();
     report.converged=report.converged&&report.physical_residual_rms<=target
+      &&(mix==0||report.conformal_residual_rms<=target)
       &&(!(control.maximum_residual_tolerance>0)||report.residual_max<=control.maximum_residual_tolerance);
     return report;
   }
