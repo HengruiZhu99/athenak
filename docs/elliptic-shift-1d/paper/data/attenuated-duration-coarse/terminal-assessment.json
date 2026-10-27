@@ -1,0 +1,85 @@
+{
+  "status": "finished",
+  "target": 500,
+  "resolution": 513,
+  "duration_reached": true,
+  "saved_profiles_validated": 10001,
+  "runtime_seconds": 2488.075906875,
+  "accepted_steps": 5120000,
+  "relative_AH_mass_error_final": 0.0010900592081706795,
+  "relative_AH_mass_error_max": 0.0010900592081706795,
+  "exterior_RMS_final": {
+    "H": 9.644221587616807e-06,
+    "M": 0.00012684549093264685,
+    "Theta": 2.6093335409802626e-06,
+    "Z": 2.711172037351404e-05
+  },
+  "exterior_RMS_max": {
+    "H": 0.0005617609174093077,
+    "M": 0.0014882181074297293,
+    "Theta": 3.754903856786146e-06,
+    "Z": 3.3054952395682934e-05
+  },
+  "late_exterior_RMS_max": {
+    "H": 9.908516298482344e-06,
+    "M": 0.00012790808287722365,
+    "Theta": 2.6290932025440256e-06,
+    "Z": 2.727775547273357e-05
+  },
+  "AH_radius_range": [
+    0.06292447420449679,
+    0.10773346143447574
+  ],
+  "all_RK_stages": {
+    "max_scri_pole": 3.346968797861283e-05,
+    "max_lapse_pole": 1.0443805771469566e-08,
+    "max_regularity_trace": 1.0021042920260043e-05,
+    "min_chi": 5.883199170970723e-30,
+    "min_alpha": 4.9999999999980466e-11,
+    "max_H_rms": 0.0005904686580286582,
+    "max_M_rms": 0.0379097782743312,
+    "max_Theta_rms": 1.1153641568386421e-05,
+    "max_Z_rms": 3.0831996941126505,
+    "max_scri_null": 4.440892098500626e-16,
+    "max_scri_clock": 0.0,
+    "max_Bondi_nonaffinity": 1.4335938039788942e-05,
+    "max_accepted_H_rms": 0.0005904686083943429,
+    "max_accepted_M_rms": 0.03790977827420649,
+    "max_accepted_Theta_rms": 1.1153640445902244e-05,
+    "max_accepted_Z_rms": 3.083199694106996,
+    "max_accepted_H_bulk": 423.84565814761015,
+    "max_accepted_M_bulk": 4798723117.68008,
+    "max_accepted_H_endpoint": 6.700809336701065e-06,
+    "max_accepted_M_endpoint": 5.872199589760513e-05,
+    "max_gauge_speed": 2.000000002586586,
+    "max_cfl": 0.2000000002586586,
+    "max_relaxation_dt": 0.0048828125,
+    "max_front_lapse_gradient": 6.877372358083877,
+    "max_front_compression": 2.8864607732074976,
+    "max_lapse_floor_radius": 6.29212026640898e-07,
+    "max_lapse_floor_log_correction": 10.311155602864412,
+    "max_lapse_floor_clamps_per_call": 40.0,
+    "max_lapse_floor_conformal_correction": 1.052089455500158e-14,
+    "max_nonpositive_lapse_clamps_per_call": 0.0
+  },
+  "primary_accuracy_certificate": false,
+  "scope": "Exploratory N513 duration completion only. The predeclared principal accuracy gate applies to N1025, whose t500 outcome remains pending. No convergence or continuum stability claim. No positive-radius nodes excised; exterior radial weights are normalized outside the instantaneous apparent horizon.",
+  "inner_lapse_settling": {
+    "times": [
+      250,
+      500
+    ],
+    "region": "0<r<=1e-4",
+    "max_relative_change": 0.00213845279787305,
+    "min_physical_lapse_final": 5.961010842771066e-07,
+    "negative_neighbor_pairs_final": 4,
+    "largest_neighbor_fractional_drop": 0.32928463341985187
+  },
+  "export_sha256": {
+    "summary.json": "ae54601e50571d33f0adb230a93ac9013441616f3645d1158d9a29cb7036462d",
+    "manifest-long.json": "2e0354da703dcf6604d0bc9a0ae5301ed5190bc26d59df48c4164432b279f1c3",
+    "profiles.npz": "dbc340b05fe56d14a3647439a911ad8c38d99c8f47b549eaccaca4a05257ba5d",
+    "source-manifest.json": "b4d13e265262a42aa615775ead919dca5451c53aef8d38b490df2119157a973e",
+    "protocol.json": "7b0d784f3158fe79771b4646819659255a671a4d740f57d23e01579ab9082cab"
+  }
+}

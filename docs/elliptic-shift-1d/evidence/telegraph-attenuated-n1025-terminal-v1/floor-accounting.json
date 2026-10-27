@@ -1,0 +1,36 @@
+{
+  "scope": "Initial analytic-to-evolved lapse floor, distinct from later total-lapse RK clipping. The AF endpoint and scri are excluded and verified unchanged; all other initial fields are unchanged.",
+  "resolution": 1025,
+  "physical_lapse_floor": 1e-10,
+  "changed_nodes": 80,
+  "max_initial_conformal_lapse_correction": 4.9999597139831905e-11,
+  "max_initial_physical_lapse_correction": 9.999919427966381e-11,
+  "max_initial_floor_radius": 6.29212026640898e-07,
+  "max_initial_log_correction": 11.728944036103341,
+  "min_initial_physical_lapse_before": 8.057203385948978e-16,
+  "min_initial_physical_lapse_after": 1.0000000000000025e-10,
+  "later_total_update_counter": {
+    "through": 500.0,
+    "max_conformal_correction": 5.737688844047944e-15,
+    "max_nonpositive_clamps_per_call": 0.0,
+    "scope": "store_alpha counter: total-RK stages and accepted updates; excludes the initial logarithmic floor_lapse call"
+  },
+  "sources": [
+    {
+      "path": "output/elliptic-shift-1d/telegraph-attenuated-duration-v1/n1025/initial-data.npz",
+      "sha256": "44772f119cc48ce158027310d3bfbcd36b07a3b3c106cdf7d96ca09281c74342"
+    },
+    {
+      "path": "output/elliptic-shift-1d/telegraph-attenuated-duration-v1/n1025/profile-0001.npz",
+      "sha256": "d2b3613e75e1d8d48dfb6510f3c7865cb3d957ee820fb91ba80ef7a16336c519"
+    },
+    {
+      "path": "docs/elliptic-shift-1d/evidence/telegraph-attenuated-n1025-terminal-v1/manifest-long.json",
+      "sha256": "e9fbdc62307025724acbbc9af01769519227c8da9c6ae72401176ee6daeae2d0"
+    },
+    {
+      "path": "output/elliptic-shift-1d/telegraph-attenuated-duration-v1/n1025/frozen-source/telegraph_integrator.cpp",
+      "sha256": "1f5baf6024def99bf04ac6a287e5359a518415a300c68c4c73eb7e177fffe849"
+    }
+  ]
+}

@@ -353,3 +353,14 @@ Collector now sorts numeric report indices through10001 and masks the AF coeffic
 The same N1025 worker89529 is verified live at408.6. Independent collector exports through250,300,350,and400 pass every declared accuracy limit and saved-profile completeness check. The t400 export contains8001 states; its initial-transient maximum relativeAH error remains2.64272e-6. Late exterior RMS maxima remain(H,M,Theta,Z)=(1.79450e-7,2.44246e-6,4.99959e-8,5.21288e-7). Target500 is still pending. No source or parameter change, restart, or duplicate evolution was made.
 
 A read-only floor-counter audit distinguishes the initial physical-lapse clamp from later total-RK clipping. Initial flooring changes80 nodes with maximum conformal-lapse change4.99996e-11; the later absolute-correction counter5.73769e-15 excludes this initial operation. See evidence/telegraph-attenuated-floor-accounting-v1 and tst/elliptic_shift_1d/review_telegraph_floor.py. This reporting clarification will be included in the terminal manuscript revision.
+
+
+## 2026-10-27 UTC: principal trial completes500 and passes
+
+The N1025 attenuation trial finishes normally at500 after10,240,000 steps (9593.38s); worker89529 and dispatcher89526 have exited. Final checkpoint matches the last saved profile exactly. All10,001 saved profiles and their complete report cadence validate. The unchanged principal protocol passes every full/late exterior constraint, horizon-mass, boundary, CFL, relaxation, and positivity check. Final relativeAH error1.14804e-6, peak2.64272e-6 at2.65; final exteriorH RMS1.79430e-7. Terminal evidence: evidence/telegraph-attenuated-n1025-terminal-v1.
+
+The revised29-page paper reports the completed result and exploratory N513500 control, retains all failures, and distinguishes initial-floor changes from later stage corrections. It retains five inner lapse ripples, large interior pointwise errors, and subnormal-coordinate coalescence of passive inward diagnostic rays. These limits prevent convergence, arbitrary-data robustness, or continuum noncrossing claims. Figure16 is updated through500; the pre-telegrapher baseline remainsFigure17 in AppendixA.
+
+The eight assessment tests pass. A clean portable-source extraction compiles in two passes, reproduces all29 pages of text, the byte-identical figure PNG, and the byte-identical passing assessment using compressed histories. No undefined references, overfull boxes, or unresolved label reruns remain. Pre-existing nameref/REVTeX deferred-float warnings and underfull boxes are disclosed; all17 figures and6 tables are present and inspected. The main scientific equations, bibliography, citations, and previous failure data remain intact. No new numerical run was launched during terminal assessment.
+
+The30-minute automation check-long-puncture-evolution is now PAUSED after terminal assessment and manuscript/package verification. No useful numerical repair run remains active.

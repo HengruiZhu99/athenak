@@ -69,9 +69,9 @@ Figure15 uses `data/floored-long-puncture/` to report the separate fresh floored
 The floor remains confined to r<=6.29e-7, well inside r_AH~0.10765. Terminal mapped Courant number9.94e11 exceeds0.4, while dt/tau=0.0024414 remains within its bound. The derived shift at the offending node is3.93e7; a lower lapse bound does not constrain that shift. No post-failure parameter change or restart was made. The original floor-only monitoring assessment is complete. The monitor now follows the separately authorized attenuation trials; it does not restart either failed trajectory.
 
 
-## Attenuated duration candidate: interim, not terminal
+## Completed attenuated duration trials
 
-`sections/telegraph-repair.tex` describes total-lapse RK stages, positive-radius inner stencils, and the explicit gauge multiplier eta=(1+epsilon)*alpha/(alpha+epsilon*A). The existing chi weighting remains. Epsilon1e-4 is used in fresh N513/N1025 trials targeting coordinate t500 in compactification units. The N1025 predeclared exterior budget passes through the fixed t90 export; the duration verdict remains pending. The earlier spatial convergence result concerns a different, unattenuated candidate and is not silently transferred to this modification.
+`sections/telegraph-repair.tex` describes total-lapse RK stages, positive-radius inner stencils, and the explicit gauge multiplier eta=(1+epsilon)*alpha/(alpha+epsilon*A). The existing chi weighting remains. Epsilon1e-4 is used in fresh N513/N1025 trials that both complete coordinate t500 in compactification units. The principal N1025 run passes the predeclared exterior budget over all10001 saved states: final relativeAH error1.14804e-6, peak2.64272e-6. Its final checkpoint matches the last saved profile exactly. N513 remains an exploratory duration control, with0.109% final mass drift. The earlier spatial convergence result concerns a different, unattenuated candidate and is not silently transferred to this modification.
 
 Figure16 is regenerated with:
 
@@ -79,7 +79,7 @@ Figure16 is regenerated with:
 python3 make_repair_duration_figure.py --data data/attenuated-duration --output figures/telegraph_repair_duration
 ```
 
-`data/attenuated-duration/` includes all1801 validated saved-state diagnostic rows and profile receipts through90, selected raw lapse profiles, captured stage extrema through92.65, the protocol, and the pending assessment. The source arrays retain five negative neighboring lapse differences near the puncture. The maximum inner fractional profile change from25 to90 is3.05e-4; this is finite-grid settling evidence, not elimination of oscillations. No radial smoothing is applied to the plot. The failed controls and their ~7.2% coarse-grid AH errors at31.25 are preserved in `data/regularity-repair-controls/`; the nine targeted numerical test-group receipts are in `data/regularity-repair-tests/`.
+`data/attenuated-duration/` includes all10001 validated saved-state diagnostic rows and profile receipts through500, selected raw lapse profiles, terminal stage extrema, the protocol, and the passing assessment. The source arrays retain five negative neighboring lapse differences near the puncture. The maximum inner fractional profile change from25 to500 is3.07971e-4; this is finite-grid settling evidence, not elimination of oscillations. Initial flooring changes80 inner lapse nodes by at most4.99996e-11 in conformal lapse; the subsequent total-RK absolute-correction counter5.73769e-15 excludes initialization. At500 the passive inward ray coordinates coalesce at subnormal radius3.7233e-320, so their zero gaps cannot establish continuum crossing or noncrossing. The full coarse control is in `data/attenuated-duration-coarse/`, and the frozen-symbol comparison is in `data/attenuated-characteristics/`. The earlier t90 snapshot remains preserved in Git commit270d0aa39 and in the pre-edit source archive. No radial smoothing is applied to the plot. The failed controls and their ~7.2% coarse-grid AH errors at31.25 are preserved in `data/regularity-repair-controls/`; the nine targeted numerical test-group receipts are in `data/regularity-repair-tests/`.
 
 The source collector hashes and copies the same captured manifest bytes, avoiding a live-read receipt race. The portable assessment helper can check the supplied export without accessing running jobs:
 
@@ -95,6 +95,6 @@ byte-identical after decompression; a mismatch stops packaging without replacing
 the previous archive. This keeps full diagnostic histories without storing them
 twice.
 
-Use a new output filename. A healthy interim export always remains pending; only reaching the declared target with the full accuracy budget can pass the duration gate. The gate has seven separate tests, including negative controls for missing histories, missing horizons, nonfinite constraints, excessive mass/boundary error, and terminal failures with otherwise healthy exterior diagnostics.
+Use a new output filename. A healthy interim export always remains pending; only reaching the declared target with the full accuracy budget can pass the duration gate. The gate has eight separate tests, including negative controls for missing histories, missing horizons, nonfinite constraints, excessive mass/boundary error, and terminal failures with otherwise healthy exterior diagnostics.
 
 `python3 package_source.py` refreshes the sibling portable source ZIP and verifies its CRC and every listed SHA-256 digest. Generated TeX logs, auxiliary files, and QA images are excluded.

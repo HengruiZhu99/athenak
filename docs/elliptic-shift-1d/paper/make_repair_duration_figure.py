@@ -61,7 +61,11 @@ def main():
             d.plot(r[1:], alpha[1:], color=color, lw=1.4, label=f'$t={time:g}$')
     floor = summary['parameters']['lapse_floor']
     if floor > 0:
-        c.axhline(floor, color='.4', ls='--', lw=.9, label=f'Floor ${floor:.0e}$')
+        mantissa, exponent = f'{floor:.1e}'.split('e')
+        label = f'10^{{{int(exponent)}}}'
+        if float(mantissa) != 1:
+            label = mantissa+r'\times '+label
+        c.axhline(floor, color='.4', ls='--', lw=.9, label=f'Floor ${label}$')
     c.set(title='(c) Physical lapse near the puncture', xlabel='$r$',
           ylabel=r'$\widetilde\alpha=\alpha/\Omega$', xlim=(r[1], 1e-4))
     c.legend(ncol=2, fontsize=8, loc='lower right')

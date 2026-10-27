@@ -1,0 +1,67 @@
+{
+  "scope": "Terminal duration revision only; no full scientific verification of the wider unfinished research program.",
+  "baseline": "Exact181-file snapshot in tmp/paper-before-attenuation-terminal-v1; prior committed paper270d0aa39 with helper refreshes througha251bcf82",
+  "changed_sources": [
+    "main.tex",
+    "sections/telegraph-repair.tex",
+    "sections/discussion.tex",
+    "sections/reproducibility.tex",
+    "README.md",
+    "make_repair_duration_figure.py"
+  ],
+  "removed_protected_spans": [
+    {
+      "kind": "math",
+      "count": 2,
+      "sha256": "3bfac0543f714a2c3fa1497884f0d32bb01cdaee2bd128be32400bd24aef4b3b",
+      "preview": "$2.23\\times10^{-7}$"
+    },
+    {
+      "kind": "math",
+      "count": 1,
+      "sha256": "fdbc471daa381eca44151598b9ce58080e730f8836904767c6c1419745365b52",
+      "preview": "$3.05\\times10^{-4}$"
+    },
+    {
+      "kind": "math",
+      "count": 1,
+      "sha256": "5500321b77716a0d093de90d47d05e6162ceedacb6af84b0daf75d7f8b58a77e",
+      "preview": "$90$"
+    },
+    {
+      "kind": "math",
+      "count": 6,
+      "sha256": "d70d9591ba7eeb9ff4a496e7a9ed1dfeb957eb1ac6e3e601bf53e38c870c310e",
+      "preview": "$t=90$"
+    },
+    {
+      "kind": "math",
+      "count": 1,
+      "sha256": "717ca3a2a8a0cd784bde1a1e5174a57165b2af6fe017ea28d79e07db8e97083c",
+      "preview": "$t=92.65$"
+    }
+  ],
+  "removed_span_review": "All removals are explicitly superseded interim cutoff/error numbers. Original displayed equations, citations, labels, bibliography, and macro definitions are preserved. Added numerical values, table, scope statements, and frozen-symbol comparison were checked against terminal exports and the saved characteristic review.",
+  "bibliography_byte_identical": true,
+  "macros_byte_identical": true,
+  "peak_AH_error_time": 2.65,
+  "final_pdf_sha256": "96473c4be526d080dc08567ca0ca4520f22791529c16d2816dff1ad4f2714ee2",
+  "build": {
+    "pages": 29,
+    "figures": 17,
+    "tables": 6,
+    "undefined_references": false,
+    "overfull_boxes": false,
+    "label_rerun_required": false,
+    "preexisting_warnings": "nameref label redefinition, REVTeX deferred-float warnings, and underfull boxes. All floats are present and visually inspected.",
+    "repaired_build_invocation": "An initial terminal build was launched from the repository root and could not resolve relative inputs. Subsequent builds used the paper directory, matching the baseline configuration."
+  },
+  "visual_review": "All pages inspected as a contact sheet; changed pages20-24 and final26-29 inspected at larger scale. Terminal four-panel figure inspected separately. Removed a forced appendix page break that produced a nearly empty conclusion page.",
+  "limits": [
+    "Single-grid principal accuracy certificate, not convergence or continuum stability.",
+    "N513 completed with0.109% mass drift; exploratory only.",
+    "Residual inner lapse ripples and large interior pointwise constraints remain.",
+    "Passive inward rays lose floating-point separation at subnormal radii.",
+    "Initial-floor absolute changes are separate from the later total-RK clipping counter."
+  ]
+}
