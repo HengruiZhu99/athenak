@@ -1,0 +1,21 @@
+{
+  "after_series": "output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/series.json",
+  "jobs": [
+    {
+      "name": "double-dt",
+      "parent": "output/hyperbolic-shift-1d/gamma4-time-v1/double-dt",
+      "parent_manifest_sha256": "7a8705bac5212b1cb5b3592e473eb0739fb5767e1748b0de4dd5e33a7ac0cf69",
+      "t": 33.3333984375,
+      "segment_duration": 10
+    },
+    {
+      "name": "half-dt",
+      "parent": "output/hyperbolic-shift-1d/gamma4-time-v1/half-dt",
+      "parent_manifest_sha256": "7405b0d7f3e99106473666eb962de929c7ac167d6c35781b9b3b46c1c087824b",
+      "t": 33.3333984375,
+      "segment_duration": 3
+    }
+  ],
+  "resource_policy": "Wait for verified N513 completion; replace its evolution slot with one temporal series at a time. Alongside N1025 this is at most two evolutions. Each segment has420-second cap; unchanged equations and dt; no retries.",
+  "scope": "Temporal100M controls at N257, cfl.05 and.0125; compare with existing cfl.025 baseline and matched spatial differences. Queue completion alone is not accuracy qualification."
+}

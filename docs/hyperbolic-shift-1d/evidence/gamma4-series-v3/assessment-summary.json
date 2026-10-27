@@ -1,0 +1,61 @@
+{
+  "completion": "not_proven",
+  "shared_spatial_t_over_M": 18,
+  "shared_temporal_t_over_M": 9,
+  "spatial_samples": 19,
+  "interval": [
+    12.6,
+    18
+  ],
+  "decreasing_with_resolution": {
+    "H_exterior_rms": true,
+    "M_exterior_rms": true,
+    "AH_mass_error": true
+  },
+  "nine_field_orders": {
+    "minimum": {
+      "full": 0.7826036817920038,
+      "exterior": 4.239329503489949
+    },
+    "maximum": {
+      "full": 3.29290786827042,
+      "exterior": 4.696874427853661
+    }
+  },
+  "ten_field_minimum_orders": {
+    "full": [
+      0.816756640950354,
+      15.0
+    ],
+    "exterior": [
+      3.8389130799656472,
+      13.5
+    ],
+    "interior": [
+      0.749563315332144,
+      15.0
+    ],
+    "puncture": [
+      0.41190809533733763,
+      15.0
+    ],
+    "scri_collar": [
+      1.444369895425122,
+      16.799999999999997
+    ]
+  },
+  "temporal_queue": {
+    "parents_and_baseline_verified": true,
+    "physics_sources_library_identical": true,
+    "timestep_halvings_verified": true,
+    "target_t": 33.3333984375,
+    "max_evolutions_including_finest": 2
+  },
+  "limitations": [
+    "No100M finer-grid convergence evidence yet.",
+    "Temporal evidence remains9M; queued jobs have not started.",
+    "Puncture local order falls to0.412 at15M and full nine-field order to0.783. Interior error is retained; exterior success is not a regularity proof.",
+    "Scri collar order is about1.45. No uniform fourth-order claim."
+  ],
+  "paper": "Current paper reports12.6M spatial/regional and9M temporal results;18M evidence is separate until next substantive paper update."
+}
