@@ -1,0 +1,45 @@
+{
+  "created_utc": "2026-10-27T02:57:22.952202+00:00",
+  "scope": "Fresh N513 exploratory and N1025 primary duration trials with explicitly modified telegrapher gauge and inner closure.",
+  "method": "At 0<r<1, advance conformal lapse as a total in RK4 stages, apply the same physical lapse floor, and convert to log storage. Other evolved variables, endpoints, sources, shift solve, and constraints remain unchanged. Compensation accounts for log-storage roundoff; restart binds lapse_update.",
+  "historical_controls": [
+    "telegraph-long-puncture-500-v1",
+    "telegraph-lapse-floor-long-v1"
+  ],
+  "pilot": "Fresh N257 and N513 trials to500 are exploratory duration tests; no convergence claim.",
+  "principal_n1025": {
+    "target": 500,
+    "primary_invariant": "apparent-horizon mass; interior errors excluded from budget",
+    "max_relative_AH_error": 1e-05,
+    "max_full_trajectory_exterior_RMS": {
+      "H": 5e-05,
+      "M": 0.0001,
+      "Theta": 5e-07,
+      "Z": 5e-06
+    },
+    "max_late_exterior_RMS_after_t10": {
+      "H": 1e-06,
+      "M": 1e-05,
+      "Theta": 5e-07,
+      "Z": 5e-06
+    },
+    "scri_clock": 1e-12,
+    "scri_null": 1e-10,
+    "all_stage_scri_pole": 1e-05
+  },
+  "limits": "Passing one resolution is duration evidence only; retain floor activation, clipping, interior extrema, and all failures. No constraint projection, shift cap, or adaptive timestep silently added.",
+  "input": "inputs/elliptic_shift_1d/telegraph-attenuated-duration-v1.json",
+  "gauge_change": {
+    "epsilon": 0.0001,
+    "s": "(1+epsilon)*alpha/(alpha+epsilon*A), A=(1+r^2)/2",
+    "lapse_flux": "s*chi*[w*B_r+(w_r+2*w/r)*B]",
+    "flux_equation": "unchanged",
+    "log_lapse_flux": "(1+epsilon)*chi/[alpha+epsilon*A]*div(wB), bounded as alpha tends to zero",
+    "frozen_coupled_speed_squared": "chi*(F+s*kappa*w^2/tau)",
+    "scope": "Gauge modification; reference-background strength s=1, extra propagation attenuated near collapsed lapse. Not a continuum stability theorem."
+  },
+  "inner_closure": "positive-radius-only derivative and advection stencils; AF endpoint coefficients stay evolved but do not enter bulk finite differences; no excision of positive-radius nodes.",
+  "lapse_update": "total",
+  "inner_total_derivatives_radius": 0.0,
+  "failed_controls": "Total-lapse update alone, endpoint closure alone, and direct-total-field derivatives did not establish stability; N257 attenuation pilots have unacceptable exterior errors and are not evidence of a repair."
+}

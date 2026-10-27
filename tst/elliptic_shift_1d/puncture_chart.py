@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import numpy as np
 from evolve import Evolution
 from wormhole_data import Jet
-from numerics import puncture_dissipation
+from numerics import puncture_dissipation,weights
 from gauge import rational_correction,af_slicing_strength,collapsed_background_correction,blended_correction,restoring_coefficient
 import g1_rhs,scri_limits
 
@@ -16,26 +16,54 @@ import g1_rhs,scri_limits
 class PunctureChart(Evolution):
     def __init__(self,args):
         super().__init__(args)
+        self.positive_stencil=getattr(args,'puncture_stencil','coefficient')=='positive'
+        if self.positive_stencil:
+            if self.r[0]!=0 or getattr(args,'lapse_background_source','reference')!='collapsed-inner':raise ValueError('Positive-node closure requires the full AF chart and collapsed-inner source')
+            # The asymptotic coefficient is not a resolved nodal sample once the
+            # inward AF layer falls below the grid. Keep it out of bulk stencils.
+            op=self.op;offset=op.width
+            for i in range(1,len(self.r)):
+                start=max(int(op.index[i,0]),offset+1);idx=np.arange(start,start+op.width)
+                op.index[i]=idx;op.d1[i]=weights(op.ext[idx],self.r[i],1);op.d2[i]=weights(op.ext[idx],self.r[i],2)
+                for direction in range(2):
+                    start=max(int(op.aindex[direction,i,0]),offset+1);idx=np.arange(start,start+op.width)
+                    op.aindex[direction,i]=idx;op.ad1[direction,i]=weights(op.ext[idx],self.r[i],1)
+        self.inner_total_radius=getattr(args,'inner_total_derivatives_radius',0.)
+        if not 0<=self.inner_total_radius<1 or (self.inner_total_radius>0 and not self.positive_stencil):raise ValueError('Inner total derivatives require positive-node closure and radius in [0,1)')
         self.refs={key:[] for key in ['chi','w','alpha','c','u','gap']}
         for value in self.r:
             r=Jet(float(value),1);O=(1-r*r)/2;A=(1+r*r)/2
             chi=r**4/(r**4+O**4);w=r*r/(r*r+O**4);gap=O**4/(r*r+O**4)
             fields=dict(chi=chi,w=w,alpha=A*w,c=-O**4/(r**4+O**4),u=-A*gap,gap=gap)
             for key,z in fields.items():self.refs[key].append([z.v,z.d,z.dd])
+        self.positive_stencil=getattr(args,'puncture_stencil','coefficient')=='positive'
+        if self.positive_stencil:
+            if self.r[0]!=0 or getattr(args,'lapse_background_source','reference')!='collapsed-inner':raise ValueError('Positive-node closure requires the full AF chart and collapsed-inner source')
+            # The asymptotic coefficient is not a resolved nodal sample once the
+            # inward AF layer falls below the grid. Keep it out of bulk stencils.
+            op=self.op;offset=op.width
+            for i in range(1,len(self.r)):
+                start=max(int(op.index[i,0]),offset+1);idx=np.arange(start,start+op.width)
+                op.index[i]=idx;op.d1[i]=weights(op.ext[idx],self.r[i],1);op.d2[i]=weights(op.ext[idx],self.r[i],2)
+                for direction in range(2):
+                    start=max(int(op.aindex[direction,i,0]),offset+1);idx=np.arange(start,start+op.width)
+                    op.aindex[direction,i]=idx;op.ad1[direction,i]=weights(op.ext[idx],self.r[i],1)
         self.refs={key:np.asarray(value) for key,value in self.refs.items()}
         self.stage_metrics={};self.stage_calls=0
 
     def reconstruct(self,state,d=None,dd=None):
         with np.errstate(over='raise',invalid='raise'):
-            ex=np.exp(state[:,0]);ea=np.exp(state[:,6])
+            ex=np.zeros(len(state));ea=np.zeros(len(state));first=int(self.positive_stencil)
+            ex[first:]=np.exp(state[first:,0]);ea[first:]=np.exp(state[first:,6])
         if not np.all(np.isfinite(ex)) or not np.all(np.isfinite(ea)):raise FloatingPointError('Nonfinite puncture logarithm')
         cr=self.refs['chi'];ar=self.refs['alpha'];w=self.refs['w'];gap=self.refs['gap']
         chi=cr[:,0]*ex;alpha=ar[:,0]*ea;khat=w[:,0]*(state[:,3]-3)
         q=np.zeros_like(state)
-        q[:,0]=self.refs['c'][:,0]+cr[:,0]*np.expm1(state[:,0])
+        smc=np.empty(len(state));sma=np.empty(len(state));smc[:first]=-1;sma[:first]=-1;smc[first:]=np.expm1(state[first:,0]);sma[first:]=np.expm1(state[first:,6])
+        q[:,0]=self.refs['c'][:,0]+cr[:,0]*smc
         q[:,2]=w[:,0]*state[:,2];q[:,3]=3*gap[:,0]+w[:,0]*state[:,3]
         q[:,4]=w[:,0]*state[:,4];q[:,5]=state[:,5]
-        q[:,6]=self.refs['u'][:,0]+ar[:,0]*np.expm1(state[:,6])
+        q[:,6]=self.refs['u'][:,0]+ar[:,0]*sma
         if d is None:return q,chi,alpha,khat
         dp=np.zeros_like(state);ddp=np.zeros_like(state)
         for f,ref,exponential in [(0,cr,ex),(6,ar,ea)]:
@@ -43,7 +71,7 @@ class PunctureChart(Evolution):
             ddp[:,f]=exponential*(ref[:,2]+2*ref[:,1]*d[:,f]+ref[:,0]*(dd[:,f]+d[:,f]**2))
         # Differentiate the deviation directly: total-alpha minus A loses tiny
         # deviations in the regular scri collar.
-        small=np.expm1(state[:,6]);uref=self.refs['u']
+        small=sma;uref=self.refs['u']
         dp[:,6]=uref[:,1]+ar[:,1]*small+ar[:,0]*ea*d[:,6]
         ddp[:,6]=uref[:,2]+ar[:,2]*small+ea*(2*ar[:,1]*d[:,6]+ar[:,0]*(dd[:,6]+d[:,6]**2))
         for f in [2,3,4]:
@@ -51,6 +79,11 @@ class PunctureChart(Evolution):
             dp[:,f]=w[:,1]*value+w[:,0]*d[:,f]
             ddp[:,f]=w[:,2]*value+2*w[:,1]*d[:,f]+w[:,0]*dd[:,f]
         dp[:,5]=d[:,5];ddp[:,5]=dd[:,5]
+        if self.inner_total_radius>0:
+            totals=q.copy();totals[:,0]=chi;totals[:,3]=khat;totals[:,6]=alpha
+            direct,direct2=self.op.derivatives(totals,np.ones(8));direct[:,6]-=self.r;direct2[:,6]-=1
+            y=np.clip(2*(1-self.r/self.inner_total_radius),0,1);blend=(y**3*(10+y*(-15+6*y)))[:,None];blend[0]=0
+            fields=[0,2,3,4,6];dp[:,fields]=(1-blend)*dp[:,fields]+blend*direct[:,fields];ddp[:,fields]=(1-blend)*ddp[:,fields]+blend*direct2[:,fields]
         return q,chi,alpha,khat,dp,ddp
 
     def to_physical(self,state):return self.reconstruct(state)[0]
@@ -108,7 +141,10 @@ class PunctureChart(Evolution):
             R=np.vstack([np.zeros(8),R]);S=np.vstack([np.zeros(8),S]);diag=np.vstack([np.zeros(12),diag])
             beta=np.r_[0.,b];v=np.r_[0.,v];self.mass_numerator=np.r_[0.,self.mass_numerator]
             diag[0,7]=0.;diag[0,8]=0.;diag[0,9]=1.;diag[0,3]=state[0,5]/2
-            X0=16*np.exp(state[0,0]);diag[0,10]=-d[0,0]/np.sqrt(X0);diag[0,11]=0.
+            if self.positive_stencil:diag[0,10]=-.25*d[0,0]*np.exp(-state[0,0]/2)
+            else:
+                X0=16*np.exp(state[0,0]);diag[0,10]=-d[0,0]/np.sqrt(X0)
+            diag[0,11]=0.
         else:
             from gauge import lapse_coefficient
             F=lapse_coefficient(rr[0],alpha[0],self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1))
@@ -142,7 +178,7 @@ class PunctureChart(Evolution):
         for f in [2,3,4]:result[positive,f]=rate[positive,f]/w[positive]
         result[:,5]=rate[:,5]
         if first:
-            b1=self.b1;xi=float(self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[0]);nu=af_slicing_strength(self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1));A0=8*np.exp(state[0,6])
+            b1=self.b1;xi=float(self.restoring_strength if np.ndim(self.restoring_strength)==0 else self.restoring_strength[0]);nu=af_slicing_strength(self.args.slicing,getattr(self.args,'slicing_family','linear'),getattr(self.args,'slicing_scale',.1));A0=8*np.exp(state[0,6]) if not self.positive_stencil else None
             result[0,0]=2*b1;result[0,6]=2*b1-6*nu+2*xi
             if getattr(self.args,'lapse_background_source','reference')=='reference':result[0,6]+=2/A0
             result[0,2]=2*b1*state[0,2];result[0,3]=2*b1*(state[0,3]-3)
@@ -151,7 +187,15 @@ class PunctureChart(Evolution):
                 result[0,3]+=self.args.kappa1*(1-self.args.kappa2)*state[0,4]
                 result[0,4]-=self.args.kappa1*(2+self.args.kappa2)*state[0,4]
                 result[0,5]-=self.args.kappa1*state[0,5]
-        if self.args.advection=='upwind':result+=beta[:,None]*(self.op.advection_derivative(state,np.ones(8),beta)-self.chart_first)
+        if self.args.advection=='upwind':
+            correction=self.op.advection_derivative(state,np.ones(8),beta)-self.chart_first
+            if self.inner_total_radius>0:
+                totals=self.geometry_state.copy();totals[:,0]=self.total_chi;totals[:,3]=self.total_khat;totals[:,6]=self.total_alpha
+                direct,_=self.op.derivatives(totals,np.ones(8));direct=self.op.advection_derivative(totals,np.ones(8),beta)-direct
+                y=np.clip(2*(1-self.r/self.inner_total_radius),0,1);blend=y**3*(10+y*(-15+6*y));blend[0]=0
+                for f,scale in [(0,self.total_chi),(2,w),(3,w),(4,w),(6,self.total_alpha)]:
+                    correction[positive,f]=(1-blend[positive])*correction[positive,f]+blend[positive]*direct[positive,f]/scale[positive]
+            result+=beta[:,None]*correction
         if getattr(self.args,'puncture_ko',0.):
             measure=self.grid_jacobian if getattr(self.args,'mapped_ko','physical')=='local' else None
             diss=puncture_dissipation(state,self.r,self.h,self.args.puncture_ko,self.args.puncture_ko_radius,inner_width=getattr(self.args,'puncture_ko_inner_width',0.),measure=measure,order=getattr(self.args,'ko_order',6))

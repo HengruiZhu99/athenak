@@ -148,3 +148,7 @@ add_test(NAME telegraph_independent_control_evidence_guards
 
 add_test(NAME telegraph_configurable_physical_lapse_floor
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_lapse_floor.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)
+add_test(NAME telegraph_total_lapse_RK_oracle_and_restart
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_total_lapse.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)
+add_test(NAME telegraph_positive_node_closure_and_endpoint_isolation
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_positive_stencil.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)

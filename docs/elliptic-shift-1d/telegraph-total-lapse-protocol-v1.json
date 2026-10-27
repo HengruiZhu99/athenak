@@ -1,0 +1,31 @@
+{
+  "created_utc": "2026-10-27T02:39:28.782861+00:00",
+  "scope": "User-authorized repair of puncture long-time failure; controlled total-lapse RK update with unchanged continuum gauge source and chi weighting.",
+  "method": "At 0<r<1, advance conformal lapse as a total in RK4 stages, apply the same physical lapse floor, and convert to log storage. Other evolved variables, endpoints, sources, shift solve, and constraints remain unchanged. Compensation accounts for log-storage roundoff; restart binds lapse_update.",
+  "historical_controls": [
+    "telegraph-long-puncture-500-v1",
+    "telegraph-lapse-floor-long-v1"
+  ],
+  "pilot": "Fresh N257 and N513 trials to500 are exploratory duration tests; no convergence claim.",
+  "principal_n1025": {
+    "target": 500,
+    "primary_invariant": "apparent-horizon mass; interior errors excluded from budget",
+    "max_relative_AH_error": 1e-05,
+    "max_full_trajectory_exterior_RMS": {
+      "H": 5e-05,
+      "M": 0.0001,
+      "Theta": 5e-07,
+      "Z": 5e-06
+    },
+    "max_late_exterior_RMS_after_t10": {
+      "H": 1e-06,
+      "M": 1e-05,
+      "Theta": 5e-07,
+      "Z": 5e-06
+    },
+    "scri_clock": 1e-12,
+    "scri_null": 1e-10,
+    "all_stage_scri_pole": 1e-05
+  },
+  "limits": "Passing one resolution is duration evidence only; retain floor activation, clipping, interior extrema, and all failures. No constraint projection, shift cap, or adaptive timestep silently added."
+}

@@ -16,6 +16,8 @@ struct Engine {
   Vec d,dd,R,S,beta,v,phase,U,akr,z,k1,k2,k3,k4,stage,lapse_source,primitive,total_chi,total_alpha,af_reference,metric_reference,chart_d,total_khat,update_compensation,ell_values,ellp_values;
   long calls=0; double solve_seconds=0;
   bool puncture=false,af=false,af_endpoint=false;
+  bool af_decoupled=false;
+  double inner_total_derivatives_radius=0.;
   Vec grid_jacobian;
   bool mapped_ko_local=false;
   int ko_difference_order=3;
@@ -109,6 +111,13 @@ struct Engine {
       if(af_reference.size()!=static_cast<size_t>(n*18))throw std::runtime_error("AF reference not supplied");
       chart_d=d;std::copy(state,state+n*nf,primitive.begin());q=primitive.data();
       for(int i=0;i<n;i++) {
+        if(af_decoupled&&i==0) {
+          // This slot holds AF coefficients, not finite-radius field values.
+          for(int f=0;f<nf;f++){primitive[f]=0;d[f]=0;dd[f]=0;}
+          primitive[0]=-1;primitive[3]=3;primitive[6]=-.5;
+          total_chi[0]=0;total_alpha[0]=0;total_khat[0]=0;
+          continue;
+        }
         int k=i*nf;double ec=std::exp(state[k]),ea=std::exp(state[k+6]);
         primitive[k]=ref(i,3)+ref(i,0)*std::expm1(state[k]);
         primitive[k+6]=ref(i,4)+ref(i,2)*std::expm1(state[k+6]);
@@ -156,6 +165,21 @@ struct Engine {
     if(!af)for(int i=0;i<n;i++) {
       total_chi[i]=logchi?(trumpet?metric_ref(i,0):1)*std::exp(state[i*nf]):1+q[i*nf];
       total_alpha[i]=logalpha?(1+r[i]*r[i])/2*std::exp(state[i*nf+6]):(1+r[i]*r[i])/2+q[i*nf+6];
+    }
+    if(inner_total_derivatives_radius>0)for(int i=1;i<n-1;i++) {
+      const double y=std::max(0.,std::min(1.,2*(1-r[i]/inner_total_derivatives_radius)));
+      const double blend=y*y*y*(10+y*(-15+6*y));if(blend==0)continue;
+      for(int f:{0,2,3,4,6}) {
+        auto value=[&](int j){return f==0?total_chi[j]:(f==6?total_alpha[j]:(f==3?total_khat[j]:q[j*nf+f]));};
+        double first=0,second=0,local=value(i);
+        for(int j=0;j<w;j++) {
+          const double delta=value(reflected(index[i*w+j]))-local;
+          first+=d1[i*w+j]*delta;second+=d2[i*w+j]*delta;
+        }
+        if(f==6){first-=r[i];second-=1.;}
+        d[i*nf+f]=(1-blend)*d[i*nf+f]+blend*first;
+        dd[i*nf+f]=(1-blend)*dd[i*nf+f]+blend*second;
+      }
     }
     double kap=params[0],kap2=params[1],xi=params[3];
     double sat=params[4],tau=params[5],ko=params[6],radius=params[7];
@@ -392,7 +416,15 @@ struct Engine {
         const auto& ai=beta[i]<0?aleft:aright;const auto& aw=beta[i]<0?awleft:awright;
         for(int f=0;f<nf;f++) {
           double adv=0;for(int j=0;j<w;j++)adv+=aw[i*w+j]*(state[reflected(ai[i*w+j])*nf+f]-state[i*nf+f]);
-          out[i*nf+f]+=beta[i]*(adv-chart_d[i*nf+f]);
+          double correction=adv-chart_d[i*nf+f];
+          if(inner_total_derivatives_radius>0&&i>0&&r[i]<inner_total_derivatives_radius&&(f==0||f==2||f==3||f==4||f==6)) {
+            const double y=std::max(0.,std::min(1.,2*(1-r[i]/inner_total_derivatives_radius))),blend=y*y*y*(10+y*(-15+6*y));
+            auto value=[&](int j){return f==0?total_chi[j]:(f==6?total_alpha[j]:(f==3?total_khat[j]:q[j*nf+f]));};
+            double direct=0,local=value(i),scale=f==0?total_chi[i]:(f==6?total_alpha[i]:ref(i,1));
+            for(int j=0;j<w;j++)direct+=aw[i*w+j]*(value(reflected(ai[i*w+j]))-local)-d1[i*w+j]*(value(reflected(index[i*w+j]))-local);
+            correction=(1-blend)*correction+blend*direct/scale;
+          }
+          out[i*nf+f]+=beta[i]*correction;
         }
       }
       for(int i=0;i<n;i++)out[i*nf+1]=0;
@@ -462,6 +494,16 @@ struct Engine {
 };
 extern "C" {
 int spherical_fast_abi(){return 32;}
+int spherical_fast_set_af_decoupled(void* handle,int enabled) {
+ auto& e=*static_cast<Engine*>(handle);
+ if(!e.af_endpoint||e.params[21]==0)return -1;
+ e.af_decoupled=enabled!=0;return 0;
+}
+int spherical_fast_set_inner_total_derivatives(void* handle,double radius) {
+ auto& e=*static_cast<Engine*>(handle);
+ if(!e.af_decoupled||!std::isfinite(radius)||radius<0||radius>=1)return -1;
+ e.inner_total_derivatives_radius=radius;return 0;
+}
 int spherical_fast_set_grid_jacobian(void* handle,double dx,const double* values){
   auto& e=*static_cast<Engine*>(handle);
   if(!e.af_endpoint||dx<=0||!std::isfinite(dx)||e.params[6]!=0||e.params[10]!=0||e.ode_band)return -1;

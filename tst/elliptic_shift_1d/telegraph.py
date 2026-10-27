@@ -35,25 +35,28 @@ def options(n,library,nu=1.,cfl=.05):
         initial_quadrature_order=96,compensated_update=True,subtract_local=True,cfl=cfl)
 
 
-def python_rhs(ev,q,B,kappa,tau,support,accepted=False):
+def python_rhs(ev,q,B,kappa,tau,support,accepted=False,lapse_attenuation=0.):
     result=ev.rhs(q,accepted=accepted).copy();r=ev.r;w,wp=support
     dB,_=ev.op.derivatives(B,-1)
     # Reconstruct beta independently from the same metric freezing quadrature.
     alpha=ev.total_alpha;chi=ev.total_chi;beta=ev.shift_deviation-r
     angular=np.divide(2*w,r,out=np.zeros_like(r),where=r!=0)
-    correction=chi*(w*dB+(wp+angular)*B)
+    activation=(1+lapse_attenuation)*alpha/(alpha+lapse_attenuation*(1+r*r)/2) if lapse_attenuation>0 else np.ones_like(r)
+    correction=activation*chi*(w*dB+(wp+angular)*B)
     positive=r>0;result[positive,6]+=correction[positive]/alpha[positive]
     adv=ev.op.advection_derivative(B[:,None],np.array([-1]),beta)[:,0]
     rate=beta*adv+(kappa*w*ev.geometry_first[:,6]-B)/tau
     measure=ev.grid_jacobian if getattr(ev.args,'mapped_ko','physical')=='local' else None
     rate+=puncture_dissipation(B[:,None],r,ev.h,ev.args.puncture_ko,ev.args.puncture_ko_radius,measure=measure,order=getattr(ev.args,'ko_order',6))[:,0]/ev.grid_jacobian
     F=lapse_coefficient(r,alpha,ev.args.slicing)
-    c=np.sqrt(chi*(F+kappa*w*w/tau))
+    c=np.sqrt(chi*(F+activation*kappa*w*w/tau))
     return result,rate,np.c_[-beta-c,-beta+c]
 
 
 class TelegraphEngine:
-    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar",ray_interpolation="linear",ray_exit="legacy",lapse_floor=1e-10):
+    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar",ray_interpolation="linear",ray_exit="legacy",lapse_floor=1e-10,lapse_update="log",lapse_attenuation=0.):
+        if not np.isfinite(lapse_attenuation) or not 0<=lapse_attenuation<=1:raise ValueError('lapse_attenuation must lie in [0,1]')
+        if lapse_update not in ('log','total'):raise ValueError('Unknown lapse update variable')
         if ray_exit not in ('legacy','dense'):raise ValueError('Unknown ray exit treatment')
         if ray_interpolation not in ('linear','pchip'):raise ValueError('Unknown ray interpolation')
         if not np.isfinite(kappa+tau) or kappa<0 or tau<=0:raise ValueError('Need kappa>=0,tau>0')
@@ -81,6 +84,20 @@ class TelegraphEngine:
                 message=lib.spherical_fast_last_error(self.base.handle).decode();self.close();raise ValueError(message)
         elif lapse_floor!=0:
             self.close();raise ValueError('Frozen library lacks lapse_floor support; use lapse_floor=0 for an unfloored control')
+        self.lapse_update=lapse_update
+        self.has_total_lapse=hasattr(lib,'telegraph_set_lapse_update')
+        if self.has_total_lapse:
+            lib.telegraph_set_lapse_update.argtypes=[C.c_void_p,C.c_int]
+            lib.telegraph_total_lapse_stats.argtypes=[C.c_void_p,fp]
+            if lib.telegraph_set_lapse_update(self.handle,int(lapse_update=='total')):raise ValueError('Invalid lapse update mode')
+        elif lapse_update!='log':
+            self.close();raise ValueError('Frozen library lacks total-lapse update support')
+        self.lapse_attenuation=lapse_attenuation
+        if hasattr(lib,'telegraph_set_lapse_attenuation'):
+            lib.telegraph_set_lapse_attenuation.argtypes=[C.c_void_p,C.c_double]
+            if lib.telegraph_set_lapse_attenuation(self.handle,lapse_attenuation):raise ValueError('Invalid lapse attenuation')
+        elif lapse_attenuation!=0:
+            self.close();raise ValueError('Frozen library lacks lapse attenuation')
         # Old frozen libraries remain valid linear-mode controls.
         if ray_interpolation=='pchip':
             lib.telegraph_set_ray_interpolation.argtypes=[C.c_void_p,C.c_int]
@@ -108,6 +125,9 @@ class TelegraphEngine:
         if self.has_lapse_floor:
             floor=np.zeros(3);self.base.lib.telegraph_lapse_floor_stats(self.handle,floor)
             result.update(zip(['max_lapse_floor_radius','max_lapse_floor_log_correction','max_lapse_floor_clamps_per_call'],map(float,floor)))
+        if self.has_total_lapse:
+            total=np.zeros(2);self.base.lib.telegraph_total_lapse_stats(self.handle,total)
+            result.update(zip(['max_lapse_floor_conformal_correction','max_nonpositive_lapse_clamps_per_call'],map(float,total)))
         return result
     def compensation(self,value=None):
         if value is None:

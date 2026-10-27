@@ -69,6 +69,9 @@ struct Telegraph {
   Engine& e;double kappa,tau,start;int nr;Vec w,wp,comp;
   double lapse_floor=0.;Vec lapse_floor_log;
   std::array<double,3> floor_stats{};
+  bool total_lapse_update=false;
+  double lapse_attenuation=0.;
+  std::array<double,2> total_floor_stats{};
   bool cubic_rays=false,dense_exits=false;Vec speed_slopes;
   Vec q1,q2,q3,q4,qs,b1,b2,b3,b4,bs,j1,j2,j3,j4,js,speeds;
   std::array<double,5> stats{};
@@ -112,6 +115,37 @@ struct Telegraph {
     }
     floor_stats[2]=std::max(floor_stats[2],static_cast<double>(count));
   }
+  double alpha_value(const double* q,int i)const {return e.ref(i,2)*std::exp(q[8*i+6]);}
+  int store_alpha(double* q,int i,double value) {
+    if(!std::isfinite(value))throw std::runtime_error("nonfinite total-lapse RK update");
+    const double lower=lapse_floor>0?e.ref(i,2)*std::exp(lapse_floor_log[i]):0.;
+    int clipped=0;
+    if(value<lower) {
+      clipped=value<=0?2:1;
+      floor_stats[0]=std::max(floor_stats[0],e.r[i]);
+      if(value>0)floor_stats[1]=std::max(floor_stats[1],std::log(lower)-std::log(value));
+      total_floor_stats[0]=std::max(total_floor_stats[0],lower-value);
+      value=lower;
+    }
+    if(!(value>0))throw std::runtime_error("nonpositive total-lapse RK update without a floor");
+    q[8*i+6]=std::log(value)-std::log(e.ref(i,2));
+    if(lapse_floor>0)q[8*i+6]=std::max(q[8*i+6],lapse_floor_log[i]);
+    return clipped;
+  }
+  void total_rates(Vec& rate) {
+    if(total_lapse_update)for(int i=1;i<e.n-1;i++)rate[8*i+6]*=e.total_alpha[i];
+  }
+  void make_stage(const double* q,const Vec& rate,double factor) {
+    for(int j=0;j<8*e.n;j++)qs[j]=q[j]+factor*rate[j];
+    if(!total_lapse_update)return;
+    int clipped=0,nonpositive=0;
+    for(int i=1;i<e.n-1;i++) {
+      int result=store_alpha(qs.data(),i,alpha_value(q,i)+factor*rate[8*i+6]);
+      clipped+=result>0;nonpositive+=result==2;
+    }
+    floor_stats[2]=std::max(floor_stats[2],static_cast<double>(clipped));
+    total_floor_stats[1]=std::max(total_floor_stats[1],static_cast<double>(nonpositive));
+  }
   void rhs(const double* q,const double* B,double* dq,double* dB,bool accepted=false) {
     e.rhs(q,dq,accepted);const int n=e.n;
     for(int i=0;i<n;i++) {
@@ -123,10 +157,11 @@ struct Telegraph {
       }
       const double r=e.r[i],chi=e.total_chi[i],alpha=e.total_alpha[i];
       // Interior flat-reference radial contraction. Support is zero in both collars.
-      const double correction=chi*(w[i]*derivative+(wp[i]+(r>0?2*w[i]/r:0))*B[i]);
+      const double activation=lapse_attenuation>0?(1+lapse_attenuation)*alpha/(alpha+lapse_attenuation*(1+r*r)/2):1.;
+      const double correction=activation*chi*(w[i]*derivative+(wp[i]+(r>0?2*w[i]/r:0))*B[i]);
       if(i>0&&i<n-1)dq[8*i+6]+=correction/alpha;
       dB[i]=e.beta[i]*adv+(kappa*w[i]*e.d[8*i+6]-B[i])/tau;
-      const double c=std::sqrt(chi*(e.lapse_coefficient(r,alpha)+kappa*w[i]*w[i]/tau));
+      const double c=std::sqrt(chi*(e.lapse_coefficient(r,alpha)+activation*kappa*w[i]*w[i]/tau));
       speeds[2*i]=-e.beta[i]-c;speeds[2*i+1]=-e.beta[i]+c;
       stats[0]=std::max(stats[0],std::abs(e.beta[i])+c);
       if(r>.03&&r<.3) {
@@ -177,11 +212,22 @@ struct Telegraph {
     for(int i=0;i<e.n;i++)if(dt*e.params[25]/(e.h*(e.mapped_ko_local?1./(e.ko_difference_order+1):e.jac(i)))>2.)throw std::runtime_error("mapped-grid dissipation timestep guard");
   }
   void update(double* q,const Vec& a,const Vec& b,const Vec& c,const Vec& d,int size,int offset,double dt) {
+    int clipped=0,nonpositive=0;
     for(int j=0;j<size;j++) {
       double inc=dt*(a[j]+2*b[j]+2*c[j]+d[j])/6;
+      if(total_lapse_update&&offset==0&&j%8==6&&j/8>0&&j/8<e.n-1) {
+        const double old=alpha_value(q,j/8),v=e.params[27]!=0?inc-comp[j]:inc;
+        int result=store_alpha(q,j/8,old+v);
+        // Include log storage/reconstruction roundoff in the physical remainder.
+        comp[j]=(result||e.params[27]==0)?0.:(alpha_value(q,j/8)-old)-v;
+        clipped+=result>0;nonpositive+=result==2;
+        continue;
+      }
       if(e.params[27]!=0){double v=inc-comp[offset+j],next=q[j]+v;comp[offset+j]=(next-q[j])-v;q[j]=next;}
       else q[j]+=inc;
     }
+    floor_stats[2]=std::max(floor_stats[2],static_cast<double>(clipped));
+    total_floor_stats[1]=std::max(total_floor_stats[1],static_cast<double>(nonpositive));
   }
   void update_rays(double* state,double dt) {
     for(int j=0;j<nr;j++) {
@@ -233,6 +279,17 @@ int telegraph_apply_lapse_floor(void* handle,double* q) {
 void telegraph_lapse_floor_stats(void* handle,double* out) {
  auto& t=*static_cast<Telegraph*>(handle);std::copy(t.floor_stats.begin(),t.floor_stats.end(),out);
 }
+int telegraph_set_lapse_update(void* handle,int mode) {
+ if(mode!=0&&mode!=1)return -1;
+ static_cast<Telegraph*>(handle)->total_lapse_update=mode==1;return 0;
+}
+int telegraph_set_lapse_attenuation(void* handle,double scale) {
+ if(!std::isfinite(scale)||scale<0||scale>1)return -1;
+ static_cast<Telegraph*>(handle)->lapse_attenuation=scale;return 0;
+}
+void telegraph_total_lapse_stats(void* handle,double* out) {
+ auto& t=*static_cast<Telegraph*>(handle);std::copy(t.total_floor_stats.begin(),t.total_floor_stats.end(),out);
+}
 int telegraph_rhs(void* handle,const double* q,const double* B,double* dq,double* dB,double* speeds) {
  auto& t=*static_cast<Telegraph*>(handle);try{t.rhs(q,B,dq,dB,true);std::copy(t.speeds.begin(),t.speeds.end(),speeds);return 0;}catch(const std::exception& x){t.e.error=x.what();return -1;}
 }
@@ -243,18 +300,19 @@ int telegraph_advance(void* handle,double* q,double* B,double* rays,int count,do
    double now=time+done*dt;const bool active=now>=t.start-8*std::numeric_limits<double>::epsilon()*std::max(1.,t.start);
    t.floor_lapse(q,true);
    t.rhs(q,B,t.q1.data(),t.b1.data(),true);t.check_dt(dt);t.rays(rays,t.j1.data(),active,rays);
-   for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q1[i]/2;
+   t.total_rates(t.q1);t.make_stage(q,t.q1,dt/2);
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b1[i]/2;
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j1[i]/2;
    t.floor_lapse(t.qs.data(),false);t.rhs(t.qs.data(),t.bs.data(),t.q2.data(),t.b2.data());t.check_dt(dt);t.rays(t.js.data(),t.j2.data(),active,rays);
-   for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q2[i]/2;
+   t.total_rates(t.q2);t.make_stage(q,t.q2,dt/2);
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b2[i]/2;
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j2[i]/2;
    t.floor_lapse(t.qs.data(),false);t.rhs(t.qs.data(),t.bs.data(),t.q3.data(),t.b3.data());t.check_dt(dt);t.rays(t.js.data(),t.j3.data(),active,rays);
-   for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q3[i];
+   t.total_rates(t.q3);t.make_stage(q,t.q3,dt);
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b3[i];
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j3[i];
    t.floor_lapse(t.qs.data(),false);t.rhs(t.qs.data(),t.bs.data(),t.q4.data(),t.b4.data());t.check_dt(dt);t.rays(t.js.data(),t.j4.data(),active,rays);
+   t.total_rates(t.q4);
    t.update(q,t.q1,t.q2,t.q3,t.q4,nq,0,dt);t.update(B,t.b1,t.b2,t.b3,t.b4,n,nq,dt);
    t.floor_lapse(q,true);
    if(t.dense_exits)t.update_rays(rays,dt);

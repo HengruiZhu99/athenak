@@ -16,6 +16,10 @@ def main():
  p.add_argument('--n',type=int,default=257);p.add_argument('--t',type=float,default=3.)
  p.add_argument('--kappa',type=float,default=.02);p.add_argument('--tau',type=float,default=.02)
  p.add_argument('--lapse-floor',type=float,default=1e-10,help='Physical lapse alpha/O floor at positive-radius nodes (default 1e-10; 0 disables)')
+ p.add_argument('--inner-total-derivatives-radius',type=float,default=0.,help='Blend direct reconstructed-field derivatives inside this radius; requires positive-node closure')
+ p.add_argument('--puncture-stencil',choices=['coefficient','positive'],default='coefficient',help='Whether bulk derivative stencils sample the asymptotic coefficient endpoint')
+ p.add_argument('--lapse-attenuation',type=float,default=0.,help='Optional normalized lapse-dependent flux attenuation scale; 0 recovers original equations')
+ p.add_argument('--lapse-update',choices=['log','total'],default='log',help='RK variable for positive-radius lapse; total avoids exponential amplification of additive sources')
  p.add_argument('--inner-profile',choices=['collar','af-regular'],default='collar')
  p.add_argument('--mass',type=float,default=1/3);p.add_argument('--nu',type=float,default=1.);p.add_argument('--cfl',type=float,default=.05)
  p.add_argument('--quadrature-width',type=int,choices=[7,9,11],default=7)
@@ -45,12 +49,13 @@ def main():
  config={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()}
  manifest=dict(arguments=config,binding=binding,status='initializing',command=sys.argv,platform=platform.platform(),
   method='free-Z4c full AF chart, spherical conformal telegraph, RK4 stage rays; configurable physical-lapse floor, no constraint projection',
+  lapse_update_scope='log: historical logarithmic RK. total: RK evolves conformal lapse at ordinary nodes, with logarithmic storage and compensated physical increments; AF endpoint and scri remain in their original variables. Method choice is restart-bound.',
   lapse_floor_scope='Clamp alpha/O on 0<r<1 before initial reporting, at every RK stage and after every accepted step; AF coefficient endpoint and scri clock unchanged. Zero disables. initial-data.npz retains the analytic pre-floor construction; profile-0001.npz records the actual evolved initial state.',
   characteristic_scope='Coupled frozen lapse-trace-flux speeds; independent Z4/elliptic-shift nonlinear stability not assumed.',
   ray_scope=f'Alternating minus/plus seeds in .12:.4, held until ray_start. Each RK stage uses that stage geometry, {args.ray_interpolation} radial speed interpolation and its derivative. Exits use {args.ray_exit} treatment and terminate the ray; no reinjection.',resource_authorization='User explicitly requested controlled local telegrapher evolutions.')
  mp=args.output/'manifest.json';mp.write_text(json.dumps(manifest,indent=2)+'\n')
  opts=options(args.n,args.library,args.nu,args.cfl)
- for key in ['width','ko_order','quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map','mapped_ko']:setattr(opts,key,getattr(args,key))
+ for key in ['width','ko_order','quadrature_width','puncture_ko','puncture_ko_radius','grid_stretch','grid_map','mapped_ko','puncture_stencil','inner_total_derivatives_radius']:setattr(opts,key,getattr(args,key))
  ev=PunctureChart(opts);support=window(ev.r,args.inner,args.outer,args.transition,args.inner_profile)
  ev.args.mass=args.mass
  initial=IsotropicWormhole(args.mass,ev.args.initial_quadrature_order)
@@ -58,7 +63,7 @@ def main():
  manifest['initial_data']=dict(mass=initial.mass,quadrature_order=initial.nodes.size,radial_map_scale=initial.k)
  np.savez_compressed(args.output/'initial-data.npz',r=ev.r,q=q,q_physical=initial_q,d=initial_d,dd=initial_dd)
  rays=np.zeros((2*args.ray_seeds,2));rays[:,0]=np.repeat(np.linspace(.12,.4,args.ray_seeds),2)
- engine=TelegraphEngine(ev,args.fast_library,args.kappa,args.tau,args.inner,args.outer,args.transition,len(rays),args.ray_start,args.inner_profile,args.ray_interpolation,args.ray_exit,args.lapse_floor)
+ engine=TelegraphEngine(ev,args.fast_library,args.kappa,args.tau,args.inner,args.outer,args.transition,len(rays),args.ray_start,args.inner_profile,args.ray_interpolation,args.ray_exit,args.lapse_floor,args.lapse_update,args.lapse_attenuation)
  t=0.;step=0;previous={};lattice=None
  if args.resume:
   with np.load(args.resume,allow_pickle=False) as z:

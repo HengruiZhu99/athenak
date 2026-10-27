@@ -50,6 +50,12 @@ class FastEngine:
             np.asarray(op.qindex,dtype=np.int32),op.qweights,
             np.asarray(op.aindex[0],dtype=np.int32),op.ad1[0],np.asarray(op.aindex[1],dtype=np.int32),op.ad1[1],params)
         if not self.handle:raise RuntimeError('Compiled engine initialization failed')
+        if getattr(a,'puncture_stencil','coefficient')=='positive':
+            self.lib.spherical_fast_set_af_decoupled.argtypes=[C.c_void_p,C.c_int]
+            if self.lib.spherical_fast_set_af_decoupled(self.handle,1):raise ValueError('Unsupported positive-node AF closure')
+        if getattr(a,'inner_total_derivatives_radius',0.)>0:
+            self.lib.spherical_fast_set_inner_total_derivatives.argtypes=[C.c_void_p,C.c_double]
+            if self.lib.spherical_fast_set_inner_total_derivatives(self.handle,a.inner_total_derivatives_radius):raise ValueError('Invalid inner total-derivative radius')
         if getattr(a,'grid_stretch',0.) or getattr(a,'grid_map','sinh')=='inner-exp-scri':
             self.lib.spherical_fast_set_grid_jacobian.argtypes=[C.c_void_p,C.c_double,fp]
             if self.lib.spherical_fast_set_grid_jacobian(self.handle,evolution.h,np.ascontiguousarray(evolution.grid_jacobian)):

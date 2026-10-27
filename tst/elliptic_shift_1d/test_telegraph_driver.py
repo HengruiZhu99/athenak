@@ -34,12 +34,14 @@ with tempfile.TemporaryDirectory() as tmp:
  subprocess.run([base[0],base[1],*base[4:],'--output',str(default),'--t','0'],check=True,capture_output=True,text=True)
  assert json.loads((default/'manifest.json').read_text())['arguments']['lapse_floor']==1e-10
  old_controls=controls
- controls=['--n','129','--grid-stretch','4','--lapse-floor','.001','--report-dt','.000390625']
+ controls=['--n','129','--grid-stretch','4','--lapse-floor','.001','--report-dt','.000390625','--lapse-update','total','--puncture-stencil','positive','--lapse-attenuation','.0001']
  whole=run('floor-whole',*controls,'--t','.00078125');part=run('floor-part',*controls,'--t','.000390625');split=run('floor-split',*controls,'--t','.00078125','--resume',str(part/'checkpoint.npz'))
  with np.load(whole/'checkpoint.npz') as x,np.load(split/'checkpoint.npz') as y:
   for key in ['q','B','rays','compensation','t','step']:np.testing.assert_array_equal(x[key],y[key])
  bad=subprocess.run([*base,'--output',str(root/'bad-floor'),*controls,'--lapse-floor','.002','--t','.00078125','--resume',str(part/'checkpoint.npz')],capture_output=True,text=True)
  assert bad.returncode!=0 and 'Restart input mismatch: lapse_floor' in bad.stderr
+ bad_mode=subprocess.run([*base,'--output',str(root/'bad-lapse-update'),*controls,'--lapse-update','log','--t','.00078125','--resume',str(part/'checkpoint.npz')],capture_output=True,text=True)
+ assert bad_mode.returncode!=0 and 'Restart input mismatch: lapse_update' in bad_mode.stderr
  controls=old_controls
  # Exit modes are part of the restart binding.
  bad_mode=subprocess.run([*base,'--output',str(root/'bad-exit-mode'),*controls,'--ray-exit','legacy','--t','.03125','--resume',str(first/'checkpoint.npz')],capture_output=True,text=True)
