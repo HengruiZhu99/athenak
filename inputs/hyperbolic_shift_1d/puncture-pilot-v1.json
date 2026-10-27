@@ -1,0 +1,20 @@
+{
+  "scope": "Fresh short wormhole trials after source-4 pulse survival with decreasing constraints on N65/129/257; no long-run qualification",
+  "common": {
+    "restoring": 4,
+    "mass": 0.3333333333333333,
+    "lapse_floor": 1e-10,
+    "grid_stretch": 16,
+    "grid_map": "inner-exp-scri",
+    "cfl": 0.0125,
+    "t": 0.2
+  },
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "cfl": 0.4,
+    "horizon_mass_relative": 0.05,
+    "wall_seconds": 120
+  },
+  "continuation": "Do not launch long duration if short trial fails. Full node set evolved, interior errors retained, horizon-exterior RMS normalized over exterior weights."
+}

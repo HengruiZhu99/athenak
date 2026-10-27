@@ -1,0 +1,52 @@
+{
+  "reference": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal",
+  "reference_commit": "a9214bccff96ae44f6e13608b03945905da9677c",
+  "tracked_diff": "",
+  "hashes": {
+    "inputs/elliptic_shift_1d/telegraph-attenuated-duration-v1.json": "d77b0ae6e3dc44ce937827e1f7918e2740ceddcfa92247ff3f86364e42034f67",
+    "docs/elliptic-shift-1d/telegraph-attenuated-duration-protocol-v1.json": "7b0d784f3158fe79771b4646819659255a671a4d740f57d23e01579ab9082cab",
+    "tst/elliptic_shift_1d/telegraph_integrator.cpp": "1f5baf6024def99bf04ac6a287e5359a518415a300c68c4c73eb7e177fffe849",
+    "tst/elliptic_shift_1d/fast_integrator.cpp": "6f239719ec0f0541fc7949e96f712a42486709bdb5b561b07704f1c52869df1b",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4"
+  },
+  "parameters": {
+    "common": {
+      "mass": 0.3333333333333333,
+      "t": 500,
+      "tau": 0.02,
+      "kappa": 0.005,
+      "nu": 1,
+      "cfl": 0.05,
+      "report_dt": 0.05,
+      "inner_profile": "af-regular",
+      "transition": 0.24,
+      "grid_map": "inner-exp-scri",
+      "grid_stretch": 16,
+      "mapped_ko": "local",
+      "width": 7,
+      "ko_order": 8,
+      "ray_interpolation": "pchip",
+      "ray_exit": "dense",
+      "lapse_floor": 1e-10,
+      "lapse_update": "total",
+      "puncture_stencil": "positive",
+      "lapse_attenuation": 0.0001
+    },
+    "cases": [
+      {
+        "name": "n513",
+        "arguments": {
+          "n": 513
+        }
+      },
+      {
+        "name": "n1025",
+        "arguments": {
+          "n": 1025
+        }
+      }
+    ]
+  },
+  "status": "Reference unchanged; historical trajectories not restarted or overwritten",
+  "implementation": "New full tensor path; baseline optimized g=1 engine unchanged"
+}

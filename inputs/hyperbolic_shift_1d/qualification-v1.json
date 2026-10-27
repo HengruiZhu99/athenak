@@ -1,0 +1,116 @@
+{
+  "scope": "Regular-center prerequisite qualification, not a puncture trial",
+  "cases": [
+    {
+      "name": "hyperbolic-n65-short",
+      "n": 65,
+      "mode": "hyperbolic",
+      "t": 0.15
+    },
+    {
+      "name": "elliptic-n65-short",
+      "n": 65,
+      "mode": "elliptic",
+      "t": 0.15
+    },
+    {
+      "name": "hyperbolic-n129-short",
+      "n": 129,
+      "mode": "hyperbolic",
+      "t": 0.15
+    },
+    {
+      "name": "elliptic-n129-short",
+      "n": 129,
+      "mode": "elliptic",
+      "t": 0.15
+    },
+    {
+      "name": "hyperbolic-n257-short",
+      "n": 257,
+      "mode": "hyperbolic",
+      "t": 0.15
+    },
+    {
+      "name": "elliptic-n257-short",
+      "n": 257,
+      "mode": "elliptic",
+      "t": 0.15
+    },
+    {
+      "name": "time-0.0125",
+      "n": 65,
+      "t": 0.15,
+      "cfl": 0.0125
+    },
+    {
+      "name": "time-0.00625",
+      "n": 65,
+      "t": 0.15,
+      "cfl": 0.00625
+    },
+    {
+      "name": "scan-r1.5-d1-s0-k0.5",
+      "n": 65,
+      "t": 1,
+      "ratio": 1.5,
+      "damping": 1,
+      "restoring": 0,
+      "ko": 0.5
+    },
+    {
+      "name": "scan-r4-d1-s0-k0.5",
+      "n": 65,
+      "t": 1,
+      "ratio": 4,
+      "damping": 1,
+      "restoring": 0,
+      "ko": 0.5
+    },
+    {
+      "name": "scan-r2-d4-s0-k0.5",
+      "n": 65,
+      "t": 1,
+      "ratio": 2,
+      "damping": 4,
+      "restoring": 0,
+      "ko": 0.5
+    },
+    {
+      "name": "scan-r2-d1-s0-k0.25",
+      "n": 65,
+      "t": 1,
+      "ratio": 2,
+      "damping": 1,
+      "restoring": 0,
+      "ko": 0.25
+    },
+    {
+      "name": "scan-r2-d1-s1-k0.5",
+      "n": 65,
+      "t": 1,
+      "ratio": 2,
+      "damping": 1,
+      "restoring": 1,
+      "ko": 0.5
+    },
+    {
+      "name": "scan-r2-d1-s4-k0.5",
+      "n": 65,
+      "t": 1,
+      "ratio": 2,
+      "damping": 1,
+      "restoring": 4,
+      "ko": 0.5
+    }
+  ],
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "cfl": 0.4,
+    "wall_seconds": 180
+  },
+  "qualification": "Require equilibrium preservation and stable finite pulse through t=1 with decreasing constraint and self-difference errors at three grids before puncture evolution. Any failure retained; no guard changes within a run.",
+  "base_commit": "a9214bccff96ae44f6e13608b03945905da9677c",
+  "baseline": "inputs/elliptic_shift_1d/telegraph-attenuated-duration-v1.json"
+}

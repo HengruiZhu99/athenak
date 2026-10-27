@@ -1,0 +1,65 @@
+Hyperbolic shift exploration, 2026-10-27
+
+Read report/main.pdf and evidence/assessment.json before running anything.
+This is an experimental alternative, not a qualified puncture replacement.
+The historical elliptic t=500 evidence and failed runs have not been changed.
+
+From the repository root:
+
+  git submodule update --init kokkos
+  cmake -S tst/elliptic_shift_1d -B build-hyperbolic-shift -DCMAKE_BUILD_TYPE=Release -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_OPENMP=OFF
+  cmake --build build-hyperbolic-shift --target spherical_z4c -j 2
+  ctest --test-dir build-hyperbolic-shift -R 'hyperbolic_shift_|spherical_g1_tensor_agreement' --output-on-failure
+
+The library extension below is for macOS; use .so on Linux.
+
+  python3 tst/hyperbolic_shift_1d/run.py --library build-hyperbolic-shift/libspherical_z4c.dylib --output output/hyperbolic-shift-1d/new-pulse --n 65 --t 1 --restoring 4
+
+The matrix runner reads a frozen protocol and refuses an existing output path:
+
+  python3 tst/hyperbolic_shift_1d/matrix.py --protocol inputs/hyperbolic_shift_1d/strong-restoring-v1.json --library build-hyperbolic-shift/libspherical_z4c.dylib --output output/hyperbolic-shift-1d/new-strong-matrix
+
+For the exact symbolic audit, install SymPy in a local target directory:
+
+  python3 -m pip install --target build-hyperbolic-shift/symbolic sympy
+  PYTHONPATH=build-hyperbolic-shift/symbolic python3 tst/hyperbolic_shift_1d/exact_symbol.py build-hyperbolic-shift/exact-symbol.json
+
+Only short puncture trials were authorized by the qualification gates:
+
+  python3 tst/hyperbolic_shift_1d/run.py --library build-hyperbolic-shift/libspherical_z4c.dylib --output output/hyperbolic-shift-1d/new-puncture --n 257 --t .2 --cfl .0125 --restoring 4 --puncture --wall-seconds 120
+
+Do not promote this to a long run based on a single surviving grid. The N129
+trial failed its scri guard, the raw boundary-clock compatibility is imperfect,
+and large inner connection-rate discretization modifications remain.
+
+Each experiment preserves all imported radial Python sources, relevant tensor
+headers, the compiled native library, source hashes, its inputs, and actual
+failure/completion record under output/hyperbolic-shift-1d. These large original
+records are intentionally ignored by Git. Portable evidence contains original
+histories and all saved field profiles, plus provenance manifests.
+
+Historical regular-center runs preceded the compensated-acceptance update;
+the final timestep study and puncture trials use compensated RK increments.
+Per-run source hashes identify each version. No parameter or code changed
+inside an active process. The native total-value adapter adds an entry point
+without changing the legacy interface's equations.
+
+The initial pulse-stage experiments used a fixed exploratory scri numerator
+stop value 0.01. This is a diagnostic stop, not a physical accuracy tolerance.
+No failed run was restarted. The source-restoring scan is a different gauge
+candidate, not a relabeling of the un-restored failures.
+
+Analysis/plots use NumPy and Matplotlib. analyze.py exports the original local
+run directories into evidence/runs and generates report/figures. It requires
+the recorded original output directories and refuses any still-running case.
+The portable evidence/runs files can be inspected without those originals.
+Compile the report from its directory with pdflatex main.tex twice.
+
+Puncture history's original_equation_rate_difference initially recorded only
+the transport correction. evidence/puncture-residual-and-mass-audit.json
+explicitly recomputes the complete used-minus-original physical rate difference
+including KO. This diagnostic is not an independent continuum PDE residual.
+
+The source factorization proves the scalar polynomial, not full 3D strong
+hyperbolicity. The report records the singular-reduction and collapsed-limit
+limitations and the remaining AMR, shell-interface, and moving-puncture work.

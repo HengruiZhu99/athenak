@@ -1,0 +1,185 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.82in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,placeins,microtype,xcolor}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!45!black}
+\setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
+\newcommand{\scri}{\mathscr I^+}
+\newcommand{\dt}{\mathcal D_t}
+\newcommand{\A}{\mathcal A}
+\title{A local hyperbolic shift with exact scri nullness\\\large Spherical prototype, boundary closure, and qualification failures}
+\author{Numerical formulation note}
+\date{27 October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. It is not qualified for long puncture evolution: one of two short wormhole trials fails a scri-regularity guard. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
+\end{abstract}
+
+\section{Preserved baseline and proposed driver}
+The reference is commit \texttt{a9214bccf} of the isolated elliptic-shift checkout. Its tracked state, jobs, and historical evidence were left untouched. The new branch is \texttt{codex/hyperboloidal-hyperbolic-shift}. The reference $N=1025$ wormhole evolution reached coordinate $t=500$ with final relative apparent-horizon mass error $1.14804\times10^{-6}$; that single-grid result is a duration certificate, not a convergence proof.
+
+Use $\Omega=(1-r^2)/2$, $A=(1+r^2)/2$, $u=\alpha-A$, $p=K_{\rm phys}-2\Theta_{\rm phys}$, and $\dt=\partial_t-\beta\partial_r$. The twice-conformal spatial metric has components $(g,r^2g^{-1/2},r^2g^{-1/2})$. Both $g$ and the independent Z4 connection $\Lambda^r$ evolve. The metric-built connection is
+\begin{equation}
+ V^r=\frac{g'}{g^2}+\frac{2}{r}(\sqrt g-g^{-1}),\qquad Z_r=\frac g2(\Lambda^r-V^r).
+\end{equation}
+It is a diagnostic; $\Lambda^r$ is never replaced by $V^r$ in the bulk.
+
+The retained lapse and relaxation flux are
+\begin{align}
+ \dt\alpha={}&r^2+\frac{-F(p+3)+r(\alpha\beta+r)-2\xi\alpha u
+                       +16\Omega^4r^2u/A}{\Omega}
+       +\eta\chi\left[wB'+(w'+2w/r)B\right],\label{eq:lapse}\\
+ \tau\dt B={}&\kappa w u'-B,\qquad
+ F=\alpha^2+4\Omega^2\alpha,\quad
+ \eta=\frac{(1+\epsilon)\alpha}{\alpha+\epsilon A}.
+\end{align}
+Here $\kappa=0.005$, $\tau=0.02$, $\epsilon=10^{-4}$, and $\xi=1+2(1-r^2)^4$. The baseline window $w$ equals one at the puncture and vanishes for $r\geq0.8$, with transition width $0.24$. The attenuation multiplies the flux outside its divergence. The disclosed Appendix-C scalar-$\Theta$ source modification and constant Z4 damping $(\kappa_1,\kappa_2)=(4,-0.99)$ are retained.
+
+With a separate shift auxiliary $D$, the candidate is
+\begin{align}
+ \dt\beta&=-r+\mu D-\xi_\beta\frac{\beta+r}{\Omega},\label{eq:driver}\\
+ \dt D&=\dt\Lambda^r-\eta_D D,\qquad \eta_D=1,\\
+ \mu&=\frac34\lambda\chi\left(F+g\eta\kappa w^2/\tau\right),\qquad\lambda=2.
+\end{align}
+The analytic source $-r$ cancels the reference shift advection at Minkowski equilibrium. No numerical Einstein-equation RHS is subtracted. The first candidate used $\xi_\beta=0$; the stronger tested candidate uses $\xi_\beta=4$. This is a hyperboloidal adaptation of the auxiliary Gamma-driver family discussed in \href{https://arxiv.org/html/1705.06298v3}{Va\~n\'o-Vi\~nuales and Husa (2018)}, with a different speed choice and exact algebraic nullness closure.
+
+\section{Exact nullness and compatible boundary variables}
+Let $n_i=-\partial_i\Omega$ point outward, since $\Omega$ is positive inside the domain, and let $\bar\gamma_{ij}=\tilde\gamma_{ij}/\chi$ be the regular spatial metric. With $\partial_t\Omega=0$,
+\begin{equation}
+ \bar g^{ab}\Omega_a\Omega_b
+ =\bar\gamma^{ij}n_i n_j-\frac{(\beta^i n_i)^2}{\alpha^2}=0.
+\end{equation}
+Defining $s_i=n_i/(\bar\gamma^{jk}n_jn_k)^{1/2}$ gives the future branch $\beta^is_i=-\alpha$. A boundary representation is
+\begin{equation}
+ \beta^i=\beta_T^i-\alpha s^i,\qquad s_i\beta_T^i=0.
+\end{equation}
+Nullness determines one normal component. Tangential coordinate choices remain separate. For fixed $\Omega_i$, the moving-normal rate is
+\begin{equation}
+ \partial_t s_i=\frac12s_i s^ks^l\partial_t\bar\gamma_{kl},\qquad
+ s_i\partial_t\beta^i=-\partial_t\alpha-\beta^i\partial_t s_i.
+\end{equation}
+Thus evolving the metric cannot be omitted when differentiating the condition.
+
+In spherical symmetry the dependent shift endpoint is reconstructed directly:
+\begin{equation}
+ \beta_1=-\alpha_1\sqrt{\chi_1/g_1},\qquad
+ \dot\beta_1=\beta_1\left(\frac{\dot\alpha_1}{\alpha_1}
+          +\frac{\dot\chi_1}{2\chi_1}-\frac{\dot g_1}{2g_1}\right).\label{eq:normal}
+\end{equation}
+The lapse clock is $\alpha_1=1$, $\dot\alpha_1=0$. Every stage reconstructs $\beta_1$ before spatial derivatives, and every accepted state is reconstructed again. The differentiated relation alone would not enforce the discrete identity.
+
+Writing $v=\beta+r$, the regular limit of the restoring term is $+\xi_\beta v'_1$ when $v_1=0$. The same boundary datum determines the auxiliary trace through the first driver equation:
+\begin{equation}
+ D_1=\frac{\dot\beta_1-\beta_1\beta'_1+1-\xi_\beta v'_1}{\mu_1}.\label{eq:D}
+\end{equation}
+There is no second independently prescribed value for $D$. Its endpoint storage slot is eliminated. Interior $D$ and $\Lambda^r$ remain independent. This changes a gauge boundary closure; it does not project the Hamiltonian, momentum, or Z4 constraints. The derivative stencil in Eq.~\eqref{eq:D} is the same one used in the shift equation.
+
+All geometric equations are reevaluated using the unreduced tensor kernel, as $q_t=R_q+S_q/\Omega$. At actual scri the candidate uses $R_q-S'_q$, with $S'$ obtained from the complete variable-metric numerator. Neither the elliptic relation for $\beta'$ nor its $g=1$ endpoint equations are substituted. No floor is applied to $\Omega$.
+
+The retained weak regularity residuals are
+\begin{equation}
+ \mathcal C=\left(\chi-g,\ 0,\ A_{rr}-g'/6+2\chi'/3,\ p+3,\ \Theta,\ \Lambda^r-V^r,\ 0\right).
+\end{equation}
+They select the same clock-compatible asymptotic phase, allowing the endpoint value of $g$ to evolve. The endpoint rates receive $4S_q/h_{\rm end}-8\mathcal C_q/h_{\rm end}$. The restoring numerator $-\xi_\beta v$ is monitored separately. These traces do not enforce the entire derivative hierarchy: on this phase, for example, $S_\Lambda=0$ also requires $2p'+\Theta'=6A_{rr}/g$. Neither all numerators nor the raw lapse-clock rate are imposed exactly. The clock override and finite penalties therefore still require a stability and compatibility assessment.
+
+\section{Characteristic audit and its limits}
+An interior first-order normal reduction uses
+\begin{equation}
+ U=(\chi',g',A_{rr},\delta p/\Omega,\Theta/\Omega,
+      \Lambda^r,\alpha',\beta',B',D).
+\end{equation}
+For $\dt U=P\partial_rU$, exact symbolic factorization gives
+\begin{equation}
+ \det(zI-P)=z^2(z^2-c_P^2)^2(z^2-c_L^2)(z^2-c_S^2),\label{eq:poly}
+\end{equation}
+where
+\begin{equation}
+ c_P^2=\alpha^2\chi/g,\quad
+ c_L^2=F\chi/g+\eta\chi\kappa w^2/\tau,\quad
+ c_S^2=4\mu/(3g)=\lambda c_L^2.
+\end{equation}
+Coordinate speeds are $-\beta$, twice, together with $-\beta\pm c_P$, each twice, $-\beta\pm c_L$, and $-\beta\pm c_S$. Native tensor coefficient checks agree with this scalar symbol to $8.4\times10^{-12}$ or better.
+
+At normalized scri $(\alpha,\chi,g,\beta)=(1,1,1,-1)$ and $w=0$. For $\lambda=2$ the scalar reduction has one incoming mode, six outgoing modes, and three tangent modes. Exact eigenspaces are complete there. The incoming shift mode motivates one normal gauge datum. For $\lambda<1$ there is no incoming shift mode; adding an independent Dirichlet datum would require a different compatibility argument. For $\lambda=1$, the light-speed eigenvalues each have algebraic multiplicity four but geometric multiplicity three: this driver choice is defective and was not adopted.
+
+The real speeds in Eq.~\eqref{eq:poly} alone are not a proof of strong hyperbolicity. Numerical positive-geometry samples and exact normalized-scri eigenspaces support the scalar candidate, but a uniform symmetrizer for arbitrary geometry has not been constructed. The $p/\Omega$ reduction is itself singular at scri, so its finite limiting matrix does not prove well-posedness of the actual boundary equations. At the exact collapsed limit $\alpha=\chi=0$, the displayed matrix is nonzero and nilpotent of index two, hence defective. No uniform puncture estimate follows from a positive lapse floor. The full three-dimensional vector and tensor sectors, including a direction-independent telegrapher extension, remain to be qualified.
+
+\section{Numerical implementation and short-time evidence}
+The complete spherical tensor equations evolve $g$, $A_{rr}$, $p$, $\Theta$, and $\Lambda^r$ freely. Only determinant and trace-free algebraic identities are built into the spherical tensor representation. Seven-point finite differences, biased advection, KO8 strength $0.5$ with the baseline radial taper, and classical RK4 are used. Regular-center tests use half cells at the center and an actual scri node. Their KO8 acts on stored deviations; it is distinct from the historical regular-center KO6 filter on rescaled tensor coefficients. The matched elliptic controls use the same full tensor kernel and numerical settings. Their coordinate profiles need not match those of the hyperbolic gauge.
+
+The finite lapse pulse is a compact smooth bump of amplitude $0.01$, centered at $r=0.4$ with half-width $0.12$. With $\xi_\beta=4$, grids $N=65,129,257$ reach $t=1$. The mixed-field self-differences, interpolated with seven-point polynomials to the coarse grid, are $1.38688\times10^{-5}$ and $3.42764\times10^{-6}$, giving approximate order $2.02$. This is an observed short-test order, not sixth-order accuracy of the complete scheme. At fixed $N=65$ and $t=0.15$, halving the timestep twice gives differences $8.22131\times10^{-10}$ and $5.12329\times10^{-11}$, or order $4.00$. Boundary and bulk accuracy are not interchangeable.
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Gauge and resolution at $t=1$ & $\|H\|_{r^2dr}$ & $\|M_r\|_{r^2dr}$ & scri pole\\
+\midrule
+Hyperbolic, $N=65$ & $4.31\times10^{-4}$ & $7.08\times10^{-4}$ & $3.22\times10^{-5}$\\
+Hyperbolic, $N=129$ & $2.47\times10^{-4}$ & $3.54\times10^{-4}$ & $1.21\times10^{-5}$\\
+Hyperbolic, $N=257$ & $7.80\times10^{-5}$ & $9.23\times10^{-5}$ & $5.07\times10^{-6}$\\
+Elliptic, $N=129$ & $2.23\times10^{-5}$ & $3.51\times10^{-5}$ & $8.27\times10^{-8}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+The new gauge has larger constraint errors than the matched elliptic control. Radial-weighted constraint norms are useful consistency diagnostics, but their finite-error values are gauge dependent. Apparent-horizon mass supplies the invariant puncture comparison below.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/pulse-comparison.pdf}
+\caption{Finite pulse with $\xi_\beta=4$. Constraint errors decrease under refinement. The lower panels illustrate different coordinate responses, without interpreting their difference as physical error.}
+\end{figure}
+\FloatBarrier
+
+\section{Failures, puncture treatment, and qualification decision}
+Without restoring, the $N=65$ pulse violates the predeclared exploratory scri-numerator threshold $10^{-2}$ at $t=0.248062$. Varying the speed ratio, increasing auxiliary damping, or halving KO strength did not remove that failure. With $\xi_\beta=1$, $N=65$ and $257$ reach $t=1$, but $N=129$ fails at $t=0.249027$. This nonmonotonic behavior is preserved rather than called convergence. The stronger source succeeds in the regular-center refinement sequence above.
+
+Linearized method-of-lines spectra at Minkowski, $N=33,65$, have negative spectral abscissae for the three tested restoring strengths. Thus these spectra do not explain the nonlinear pulse failures as an already demonstrated exponentially growing linear eigenmode. Nonnormal amplification, nonlinear boundary compatibility, and finite-resolution coupling remain possible mechanisms. Exact nullness is maintained even in every failed trajectory.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/boundary-failures.pdf}
+\caption{Failed controls and a surviving regular-center candidate. Crosses mark actual stop states. The nullness diagnostic accumulates over all RK stages and accepted states; it does not imply cancellation of the other scri numerators.}
+\end{figure}
+
+The wormhole trials preserve $M=1/3$ and the baseline matched isotropic initial slice. They retain the radial map with stretch 16, positive-node stencils, reference-weighted positive variables, and physical lapse floor $10^{-10}$. All positive-radius nodes evolve; none are excised. The RK lapse variable is the total conformal lapse. Accepted increments use compensated accumulation. A separate total-value tensor adapter avoids subtracting small lapse, conformal factor, and physical trace from reference values. The initial shift is matched to the elliptic datum; subsequent stages use only the local driver.
+
+The coefficient endpoint is rederived for $g=1+g_1r+\cdots$ and $\beta=b_1r+b_2r^2+\cdots$. In particular,
+\begin{equation}
+ \partial_t\Lambda_0=2b_1\Lambda_0-4b_1g_1+\frac{16}{3}b_2,\qquad
+ \partial_t g_1=b_1g_1+\frac43b_2.
+\end{equation}
+The leading logarithmic $\chi$ and lapse rates remain $2b_1$ and $2b_1-6+2\xi(0)$. Independent tensor evaluations approaching $r=0$ converge to these coefficient limits. This checks the leading expansion, not a uniformly accurate puncture evolution.
+
+Fresh trials use $\xi_\beta=4$ and $\Delta t\leq0.0125h$. At $N=129$ the scri guard stops the evolution at $t=0.19423828125$; $N=257$ reaches its short target $t=0.2$. The final relative errors with respect to analytic $M$ are $7.7463\times10^{-4}$ and $3.9726\times10^{-6}$, respectively. Maximum mass changes relative to each numerical initial horizon mass are $1.1975\times10^{-3}$ and $1.2846\times10^{-5}$. Two unequal-duration grids do not establish puncture convergence or wormhole-to-trumpet relaxation.
+
+For exterior constraints, the mask uses the instantaneous apparent horizon and the RMS is normalized by the sum of exterior radial quadrature weights. The full interior diagnostics are retained separately. At the final saved states the interior maximum $|H|$ is $0.449$ and $0.00164$. The largest used-minus-original rate differences are in $\Lambda^r$ near $r=3.65\times10^{-8}$ and $1.60\times10^{-8}$, of order $4.64\times10^4$ and $2.01\times10^4$. These include the finite-difference advection and dissipation modifications, not an independent continuum residual. They prevent an accuracy claim near the puncture. The floor activates only inside $r\simeq6.29\times10^{-7}$.
+
+The independently evaluated raw lapse-clock rates at the final endpoints are $0.0276$ and $-0.00438$, despite the imposed $\alpha_t=0$. These compatibility defects, together with the scri numerators, are a reason to revisit the boundary closure. They do not identify a unique cause of failure. No longer-duration puncture run or expensive 3D run was launched after these short-test results.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/puncture-comparison.pdf}
+\caption{Short puncture tests. The dashed elliptic reference is $N=1025$, so this is not a matched-resolution superiority comparison. Mass errors include the initial discretization error; changes from the numerical initial mass are reported separately in the text.}
+\end{figure}
+\FloatBarrier
+
+\section{Implementation route and reproducibility}
+A genuine 3D implementation should evolve Cartesian shift and auxiliary vectors in the interior and transform them consistently to shell frames. The spherical code evolves the full radial component, not a globally slaved $\beta/r$ profile. Spherical symmetry necessarily fixes the central location; it is not a test of puncture motion. Constant and linear Cartesian shift modes must be included in the 3D driver tests. The reference source and restoring term can influence translations, so their effect on puncture tracking must be measured rather than assumed benign.
+
+At a cubed-sphere outer face, compute $s_i$ from the live regular metric and the analytic $\Omega_i$. Eliminate the normal shift component after every stage, ghost fill, prolongation, restriction, and synchronization. Derive the corresponding auxiliary compatibility trace in that frame. Specify tangential coordinates only after counting the vector-sector characteristics. A normal nullness identity alone supplies no tangential gauge condition.
+
+Before deployment, derive a direction-independent 3D version of the telegrapher coupling and speed coefficient, and audit all scalar, vector, and tensor eigenvectors for arbitrary positive metrics. The present radial $g$-dependent speed separation is not yet such a 3D prescription. AMR needs stage-consistent characteristic interface treatment, stable dissipation across refinement boundaries, and nullness reconstruction after interpolation; a boundary component should not be interpolated as an independent scalar. Shell interfaces additionally require tensor/connection transformation and reference-connection checks. Moving punctures require positive-variable interpolation, measured floor effects, and resolution studies of the near-puncture constraint and gauge fields.
+
+The implementation is under \path{tst/hyperbolic_shift_1d/}; frozen inputs are under \path{inputs/hyperbolic_shift_1d/}. Each run records its command, source hashes, library hash, input values, stop reason, histories, and profiles. Failed runs retain their actual outcomes. Portable exports are under \path{docs/hyperbolic-shift-1d/evidence/}; complete per-run source snapshots and libraries remain in the ignored local output tree. The original elliptic implementation is unchanged except for an additive native adapter with unchanged legacy entry points; all 24 independent $g=1$/tensor comparison cases still pass.
+
+\begin{center}
+\begin{tabular}{p{0.25\linewidth}p{0.65\linewidth}}
+\toprule
+Evidence category & Established scope\\
+\midrule
+Analytic identities & Nullness elimination, evolving-normal rate, scalar principal polynomial, selected exact eigenspaces, leading AF limits.\\
+Algebraic numerics & Every tested stage/state satisfies spherical nullness within one machine epsilon; general 3D boundary identities have separate randomized tests.\\
+Convergence evidence & Short regular-center spatial self-differences and independent timestep refinement; no puncture convergence certificate.\\
+Unresolved & Complete boundary well-posedness, uniform collapsed-lapse hyperbolicity, accurate puncture evolution, long-time robustness, and all 3D/AMR qualification.\\
+\bottomrule
+\end{tabular}
+\end{center}
+The practical outcome is a reproducible experimental alternative with a working exact-nullness mechanism. It is not a replacement for the successful elliptic configuration.
+\end{document}

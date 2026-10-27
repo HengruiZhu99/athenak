@@ -1,0 +1,53 @@
+{
+  "scope": "Follow-up of source-restored candidate after bounded pilot survival; same guards",
+  "cases": [
+    {
+      "name": "restored-n65",
+      "n": 65,
+      "t": 1,
+      "restoring": 1
+    },
+    {
+      "name": "restored-n129",
+      "n": 129,
+      "t": 1,
+      "restoring": 1
+    },
+    {
+      "name": "restored-n257",
+      "n": 257,
+      "t": 1,
+      "restoring": 1
+    },
+    {
+      "name": "restored-time-0.025",
+      "n": 65,
+      "t": 0.15,
+      "restoring": 1,
+      "cfl": 0.025
+    },
+    {
+      "name": "restored-time-0.0125",
+      "n": 65,
+      "t": 0.15,
+      "restoring": 1,
+      "cfl": 0.0125
+    },
+    {
+      "name": "restored-time-0.00625",
+      "n": 65,
+      "t": 0.15,
+      "restoring": 1,
+      "cfl": 0.00625
+    }
+  ],
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "cfl": 0.4,
+    "wall_seconds": 180
+  },
+  "qualification": "Require equilibrium preservation and stable finite pulse through t=1 with decreasing constraint and self-difference errors at three grids before puncture evolution. Any failure retained; no guard changes within a run.",
+  "base_commit": "a9214bccff96ae44f6e13608b03945905da9677c",
+  "baseline": "inputs/elliptic_shift_1d/telegraph-attenuated-duration-v1.json"
+}
