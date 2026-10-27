@@ -1,8 +1,10 @@
 # Composite 3D elliptic shift: current implementation and evidence
 
 **Takeover in progress:** [current spherical alignment and interface evidence](takeover-alignment-20261027.md).
-The [latest combined-grid and physical wormhole gauge tests](compatible-wormhole-gauge-20261027.md)
-pass the bulk solve but expose a large scri-rate failure. The candidate remains
+The [latest affine and endpoint diagnosis](compatible-affine-and-endpoint-20261027.md)
+identifies a dominant high radial mode and tests an enriched shift space.
+The [combined-grid and physical wormhole gauge tests](compatible-wormhole-gauge-20261027.md)
+pass the bulk solve but expose a large scri-rate failure. The candidates remain
 unadopted; stable 3D collapse is unverified. The preceding
 [compatible derivative prototype](compatible-gauge-prototype-20261027.md) retains its component evidence.
 The [dated handoff](TAKEOVER-20261027.md) preserves the previous paused state.

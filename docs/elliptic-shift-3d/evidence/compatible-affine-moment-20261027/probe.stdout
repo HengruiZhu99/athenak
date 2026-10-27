@@ -1,0 +1,262 @@
+{
+  "scope": "Qualify a derivative-coefficient update, without evolving or resetting fields.",
+  "rows": [
+    {
+      "n": 10,
+      "amr": false,
+      "cells": 13000,
+      "affine_derivative_max": 2.701083713414022e-13,
+      "adjoint_relative_max": 3.9246383920499284e-14,
+      "smooth_rms": {
+        "exponential": 0.0004937378541867942,
+        "quadratic": 0.005700891800235986,
+        "trigonometric": 0.014181051346652193
+      },
+      "trigonometric_correction_rms": 0.006613271605437522,
+      "high_mode_energy_min": 10.769091756392662,
+      "affine_metric_rate_max": 1.4854784069484595e-13,
+      "affine_connection_rate_max": 4.2985481745516516e-11,
+      "coefficient_diagnostics": {
+        "scope": "Unadopted global affine-moment correction of an existing SBP pair.\n\nThis changes derivative coefficients, not evolved fields, constraints or RHS\nvalues. The four physical affine modes are differentiated rather than removed.\nThe update is global and low rank; its nonlocality and refinement behavior must\nbe qualified before any evolution adoption. No boundary rows are replaced here.\n",
+        "global_affine_modes": 4,
+        "axes": [
+          {
+            "axis": 0,
+            "moment_compatibility_max": 7.055811371301145e-16,
+            "high_mode_symmetry_max": 6.115596019913446e-18,
+            "uncorrected_affine_rms": 0.004983579901370332
+          },
+          {
+            "axis": 1,
+            "moment_compatibility_max": 7.055811371301155e-16,
+            "high_mode_symmetry_max": 1.2758099929009547e-17,
+            "uncorrected_affine_rms": 0.004983579901370323
+          },
+          {
+            "axis": 2,
+            "moment_compatibility_max": 7.055811371301123e-16,
+            "high_mode_symmetry_max": 1.2794643359187764e-17,
+            "uncorrected_affine_rms": 0.004983579901370323
+          }
+        ]
+      },
+      "tensor": {
+        "constant_metric": {
+          "smooth": {
+            "energy": 11.243972987770166,
+            "strain": 11.243972987770178,
+            "energy_relative_defect": 1.1058811586728714e-15,
+            "symmetry_relative_defect": 3.420930205777495e-12,
+            "rayleigh": 27.624076234675268
+          },
+          "random": {
+            "energy": 58260.36557197489,
+            "strain": 58260.365571974915,
+            "energy_relative_defect": 3.746607599910114e-16,
+            "symmetry_relative_defect": 7.386212441008765e-15,
+            "rayleigh": 3744.8031099504137
+          }
+        },
+        "variable_metric_frechet": [
+          {
+            "epsilon": 0.001,
+            "scaled_rms": 5.389780321657677e-06,
+            "maximum": 0.033623617993498556
+          },
+          {
+            "epsilon": 0.0001,
+            "scaled_rms": 5.3897045511589954e-08,
+            "maximum": 0.00033622237424424384
+          },
+          {
+            "epsilon": 1e-05,
+            "scaled_rms": 5.395626375909618e-10,
+            "maximum": 3.3623631452428526e-06
+          }
+        ],
+        "variable_metric_det_min": 1.1886849271746909,
+        "variable_metric_det_max": 1.405917096807334
+      }
+    },
+    {
+      "n": 12,
+      "amr": false,
+      "cells": 22464,
+      "affine_derivative_max": 3.690151089555869e-13,
+      "adjoint_relative_max": 8.365309260977841e-15,
+      "smooth_rms": {
+        "exponential": 0.00011726052449588589,
+        "quadratic": 0.0013381687486975781,
+        "trigonometric": 0.009421772847469883
+      },
+      "trigonometric_correction_rms": 0.0014337510806271625,
+      "high_mode_energy_min": 10.039577972951609,
+      "affine_metric_rate_max": 3.0242475190789264e-13,
+      "affine_connection_rate_max": 9.762917791598135e-11,
+      "coefficient_diagnostics": {
+        "scope": "Unadopted global affine-moment correction of an existing SBP pair.\n\nThis changes derivative coefficients, not evolved fields, constraints or RHS\nvalues. The four physical affine modes are differentiated rather than removed.\nThe update is global and low rank; its nonlocality and refinement behavior must\nbe qualified before any evolution adoption. No boundary rows are replaced here.\n",
+        "global_affine_modes": 4,
+        "axes": [
+          {
+            "axis": 0,
+            "moment_compatibility_max": 7.361718021889381e-16,
+            "high_mode_symmetry_max": 3.133206980710039e-18,
+            "uncorrected_affine_rms": 0.0010796987021776633
+          },
+          {
+            "axis": 1,
+            "moment_compatibility_max": 7.361718021889419e-16,
+            "high_mode_symmetry_max": 2.9884316132650912e-18,
+            "uncorrected_affine_rms": 0.0010796987021776802
+          },
+          {
+            "axis": 2,
+            "moment_compatibility_max": 7.361718021889442e-16,
+            "high_mode_symmetry_max": 4.9234361488870254e-18,
+            "uncorrected_affine_rms": 0.0010796987021776624
+          }
+        ]
+      }
+    },
+    {
+      "n": 14,
+      "amr": false,
+      "cells": 35672,
+      "affine_derivative_max": 7.568955607699376e-13,
+      "adjoint_relative_max": 8.263499134352939e-14,
+      "smooth_rms": {
+        "exponential": 2.7569618059503757e-05,
+        "quadratic": 0.00030037483488852524,
+        "trigonometric": 0.0038217166373669224
+      },
+      "trigonometric_correction_rms": 0.0003008242113136359,
+      "high_mode_energy_min": 10.692191254923513,
+      "affine_metric_rate_max": 4.702904732312163e-13,
+      "affine_connection_rate_max": 1.9487316301791548e-10,
+      "coefficient_diagnostics": {
+        "scope": "Unadopted global affine-moment correction of an existing SBP pair.\n\nThis changes derivative coefficients, not evolved fields, constraints or RHS\nvalues. The four physical affine modes are differentiated rather than removed.\nThe update is global and low rank; its nonlocality and refinement behavior must\nbe qualified before any evolution adoption. No boundary rows are replaced here.\n",
+        "global_affine_modes": 4,
+        "axes": [
+          {
+            "axis": 0,
+            "moment_compatibility_max": 3.38009250712582e-16,
+            "high_mode_symmetry_max": 3.4668878786710636e-18,
+            "uncorrected_affine_rms": 0.00022585736328019343
+          },
+          {
+            "axis": 1,
+            "moment_compatibility_max": 3.488277672495231e-16,
+            "high_mode_symmetry_max": 1.822253233080436e-18,
+            "uncorrected_affine_rms": 0.0002258573632801934
+          },
+          {
+            "axis": 2,
+            "moment_compatibility_max": 3.4209018417207526e-16,
+            "high_mode_symmetry_max": 1.0390453759769718e-17,
+            "uncorrected_affine_rms": 0.00022585736328018836
+          }
+        ]
+      }
+    },
+    {
+      "n": 10,
+      "amr": true,
+      "cells": 27000,
+      "affine_derivative_max": 1.6417429545026425e-12,
+      "adjoint_relative_max": 2.2002844167792368e-14,
+      "smooth_rms": {
+        "exponential": 0.0004936333568383261,
+        "quadratic": 0.005700891800235986,
+        "trigonometric": 0.013633925489447717
+      },
+      "trigonometric_correction_rms": 0.00661327166793882,
+      "high_mode_energy_min": 12.296390819198013,
+      "affine_metric_rate_max": 7.251976796851523e-13,
+      "affine_connection_rate_max": 1.1519310989600418e-10,
+      "coefficient_diagnostics": {
+        "scope": "Unadopted global affine-moment correction of an existing SBP pair.\n\nThis changes derivative coefficients, not evolved fields, constraints or RHS\nvalues. The four physical affine modes are differentiated rather than removed.\nThe update is global and low rank; its nonlocality and refinement behavior must\nbe qualified before any evolution adoption. No boundary rows are replaced here.\n",
+        "global_affine_modes": 4,
+        "axes": [
+          {
+            "axis": 0,
+            "moment_compatibility_max": 9.004825725634736e-16,
+            "high_mode_symmetry_max": 2.0208118072642025e-17,
+            "uncorrected_affine_rms": 0.004983579901370336
+          },
+          {
+            "axis": 1,
+            "moment_compatibility_max": 9.004825725634738e-16,
+            "high_mode_symmetry_max": 9.850432034422208e-18,
+            "uncorrected_affine_rms": 0.004983579901370323
+          },
+          {
+            "axis": 2,
+            "moment_compatibility_max": 9.004825725634762e-16,
+            "high_mode_symmetry_max": 3.098577930847492e-17,
+            "uncorrected_affine_rms": 0.004983579901370325
+          }
+        ]
+      },
+      "tensor": {
+        "constant_metric": {
+          "smooth": {
+            "energy": 11.242803067755364,
+            "strain": 11.242803067755375,
+            "energy_relative_defect": 9.479967737733753e-16,
+            "symmetry_relative_defect": 9.595657601835228e-13,
+            "rayleigh": 27.620988605927163
+          },
+          "random": {
+            "energy": 70786.85885383908,
+            "strain": 70786.85885383908,
+            "energy_relative_defect": 0.0,
+            "symmetry_relative_defect": 3.05286050769148e-14,
+            "rayleigh": 4710.639412879525
+          }
+        },
+        "variable_metric_frechet": [
+          {
+            "epsilon": 0.001,
+            "scaled_rms": 4.5088795216748005e-06,
+            "maximum": 0.02207357152849454
+          },
+          {
+            "epsilon": 0.0001,
+            "scaled_rms": 4.5088389724967864e-08,
+            "maximum": 0.0002207286975135503
+          },
+          {
+            "epsilon": 1e-05,
+            "scaled_rms": 4.521011112823351e-10,
+            "maximum": 2.2056474335840903e-06
+          }
+        ],
+        "variable_metric_det_min": 1.1886849271746909,
+        "variable_metric_det_max": 1.405917096807334
+      }
+    }
+  ],
+  "orders": {
+    "exponential": [
+      7.885005907255639,
+      9.391355228672886
+    ],
+    "quadratic": [
+      7.949254988897352,
+      9.691985855273105
+    ],
+    "trigonometric": [
+      2.2426497295201773,
+      5.853516631089686
+    ]
+  },
+  "gates": {
+    "affine_exactness": true,
+    "paired_identity": true,
+    "unrelated_smooth_refinement": true,
+    "correction_decreases": true,
+    "tensor_energy": true,
+    "full_metric_variation": true
+  },
+  "seconds": 5.347155459
+}

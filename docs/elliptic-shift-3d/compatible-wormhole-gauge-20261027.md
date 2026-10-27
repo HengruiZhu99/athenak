@@ -8,6 +8,9 @@ profile. However, the raw connection rate at scri is large and does not improve
 between the two tested resolutions. The candidate is not adopted for evolution.
 
 This report continues the [compatible-operator component study](compatible-gauge-prototype-20261027.md).
+The subsequent [affine and endpoint diagnosis](compatible-affine-and-endpoint-20261027.md)
+repairs the affine control, confirms that the physical scri failure persists,
+and tests its high radial mode without filtering the source or solution.
 It changes neither the scientific objective nor the historical failed evidence.
 All work here is a standalone spatial/elliptic experiment. No new evolution,
 Hamiltonian-constraint trajectory, horizon-mass result or native integration

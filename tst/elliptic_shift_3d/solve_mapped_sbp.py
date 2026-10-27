@@ -21,6 +21,9 @@ def run(args):
         from amr_shell_sbp_probe import AMRShellGrid
         grid=AMRShellGrid(args.n)
     else:grid=ShellGrid(args.n,transfer_seed=args.mortar_seed)
+    if args.affine_correction:
+        from affine_sbp_probe import AffineConsistentGrid
+        grid=AffineConsistentGrid(grid)
     X=grid.coordinates;W=grid.weights
     metric=np.broadcast_to(np.array([[1.3,.13,-.07],[.13,.9,.08],[-.07,.08,1.1]]),W.shape+(3,3)).copy()
     amplitude=args.metric_amplitude
@@ -60,6 +63,7 @@ def run(args):
     error=solution-exact
     result.update({'scope':__doc__,'n':args.n,'cells':grid.cells,'amr_core':args.amr_core,
                    'mortar_seed':'zero' if args.amr_core else args.mortar_seed,'cached_coefficients':args.cached,
+                   'affine_coefficient_correction':args.affine_correction,
                    'metric_amplitude':amplitude,'metric_determinant_min':float(np.min(np.linalg.det(metric))),
                    'metric_determinant_max':float(np.max(np.linalg.det(metric))),
                    'preconditioner':pre.diagnostic,'setup_seconds':setup,
@@ -82,7 +86,7 @@ if __name__=='__main__':
     p.add_argument('--metric-amplitude',type=float,default=.08)
     p.add_argument('--coarse-degree',type=int,choices=[0,1,2],default=1)
     p.add_argument('--balanced',action='store_true');p.add_argument('--max-iterations',type=int,default=600)
-    p.add_argument('--restart',type=int,default=60);p.add_argument('--amr-core',action='store_true');p.add_argument('--mortar-seed',choices=['prolongation','zero'],default='prolongation');p.add_argument('--cached',action='store_true');args=p.parse_args()
+    p.add_argument('--restart',type=int,default=60);p.add_argument('--amr-core',action='store_true');p.add_argument('--mortar-seed',choices=['prolongation','zero'],default='prolongation');p.add_argument('--cached',action='store_true');p.add_argument('--affine-correction',action='store_true');args=p.parse_args()
     args.output.mkdir(parents=True,exist_ok=False);np.seterr(all='raise')
     result=run(args);(args.output/'assessment.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
     print(json.dumps(result,indent=2));raise SystemExit(0 if all(result['gates'].values()) else 1)

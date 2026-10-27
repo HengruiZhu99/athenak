@@ -28,8 +28,11 @@ def run(args):
     from wormhole_isotropic import IsotropicWormhole
     if args.amr_core:
         from amr_shell_sbp_probe import AMRShellGrid
-        grid=AMRShellGrid(args.n)
-    else:grid=ShellGrid(args.n,transfer_seed='zero')
+        grid=AMRShellGrid(args.n,radial=tuple(args.radial))
+    else:grid=ShellGrid(args.n,radial=tuple(args.radial),transfer_seed='zero')
+    if args.affine_correction:
+        from affine_sbp_probe import AffineConsistentGrid
+        grid=AffineConsistentGrid(grid)
     X=grid.coordinates;W=grid.weights;radius=np.linalg.norm(X,axis=-1)
     boundary=np.zeros(W.shape,dtype=bool)
     for b,a,s in grid.outer:
@@ -97,6 +100,8 @@ def run(args):
     clock=alpha[boundary];ch=chi[boundary];bn=np.sum(beta[boundary]*normal[boundary],axis=-1)
     null=bn**2-clock**2*ch
     result.update({'scope':__doc__,'n':args.n,'cells':grid.cells,'amr_core':args.amr_core,'cached_coefficients':args.cached,
+                   'radial_partition_s':args.radial,'affine_coefficient_correction':args.affine_correction,
+                   'affine_coefficient_diagnostics':grid.diagnostic if args.affine_correction else None,
                    'reference_source_hashes':hashes,'mass':1/3,'time':0.,
                    'constructor_warnings':constructor_warnings,
                    'setup_seconds':setup,'solve_seconds':time.monotonic()-solve_start,
@@ -106,6 +111,7 @@ def run(args):
                    'bulk_actual_metric_rate_rms':float(np.sqrt(np.sum(W[~boundary,None]*actual_rate[~boundary]**2)/np.sum(W[~boundary]))),
                    'bulk_actual_metric_rate_max':float(np.max(abs(actual_rate[~boundary]))),
                    'raw_scri_metric_rate_max':float(np.max(abs(actual_rate[boundary]))),
+                   'all_node_metric_rate_rms':float(np.sqrt(np.sum(W[...,None]*actual_rate**2)/np.sum(W))),
                    'radial_shift_reference_rms':rms(radial-reference_beta),
                    'radial_shift_reference_max':float(np.max(abs(radial-reference_beta))),
                    'reference_1025_2049_rms':rms(reference_values[0]-reference_values[1]),
@@ -126,6 +132,7 @@ def run(args):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--n',type=int,choices=[10,12,14],default=10)
-    p.add_argument('--amr-core',action='store_true');p.add_argument('--max-iterations',type=int,default=900);p.add_argument('--restart',type=int,default=100);p.add_argument('--cached',action='store_true');args=p.parse_args()
+    p.add_argument('--amr-core',action='store_true');p.add_argument('--max-iterations',type=int,default=900);p.add_argument('--restart',type=int,default=100);p.add_argument('--cached',action='store_true')
+    p.add_argument('--affine-correction',action='store_true');p.add_argument('--radial',type=float,nargs='+',default=[0.,.45,1.]);args=p.parse_args()
     args.output.mkdir(parents=True,exist_ok=False);np.seterr(all='raise')
     result=run(args);(args.output/'assessment.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n');print(json.dumps(result,indent=2));raise SystemExit(0 if all(result['gates'].values()) else 1)
