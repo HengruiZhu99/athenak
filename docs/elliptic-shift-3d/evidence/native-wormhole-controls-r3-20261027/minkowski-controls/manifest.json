@@ -1,0 +1,305 @@
+{
+  "scope": "Actual Serial native vacuum Driver RK/Task integration with canonical global host coefficients and verified native physical core mirror; engine-owned shells are NOT native MeshBlocks; no AMR/device/MPI/wormhole claim",
+  "binary_sha256": "9178adde985f360a071cd7f3e3a39a36d10e5013f718055eeca7cb3dce54ec45",
+  "input_sha256": "2fa795e5ffbf82b6202863d89096b3e38fc5cccb60e86670634990ca761e717e",
+  "cases": [
+    {
+      "name": "two-shell",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/two-shell"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 19802,
+      "exit_code": 0,
+      "seconds": 2.967767792,
+      "expectation_met": true
+    },
+    {
+      "name": "one-shell",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "z4c/composite_radii=1",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/one-shell"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 19805,
+      "exit_code": 0,
+      "seconds": 2.9510816249999996,
+      "expectation_met": true
+    },
+    {
+      "name": "restart",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/two-shell/rst/native_composite.00001.rst",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/restart"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 19833,
+      "exit_code": 0,
+      "seconds": 1.8828745419999997,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-adm-alias",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "adm/separate_z4c_gauge=false",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/reject-adm-alias"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 19835,
+      "exit_code": -6,
+      "seconds": 0.024291541000000194,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-native-amr",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "mesh_refinement/refinement=adaptive",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/reject-native-amr"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 19836,
+      "exit_code": 1,
+      "seconds": 0.012095958999999823,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-sidecar-corruption",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/two-shell/rst/native_composite.00001.rst",
+        "z4c/composite_restart_file=/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/corrupt-sidecar.composite",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/reject-sidecar-corruption"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 19837,
+      "exit_code": -6,
+      "seconds": 0.4502174589999992,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-native-mirror-edit",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/edited-native-core.rst",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/reject-native-mirror-edit"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 19838,
+      "exit_code": -6,
+      "seconds": 0.6905348750000009,
+      "expectation_met": true
+    },
+    {
+      "name": "reject-restart-rk-change",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/two-shell/rst/native_composite.00001.rst",
+        "time/integrator=rk3",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/reject-restart-rk-change"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 19840,
+      "exit_code": -6,
+      "seconds": 0.8651321249999988,
+      "expectation_met": true
+    },
+    {
+      "name": "radial-pulse",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "z4c/composite_initial_lapse_amplitude=1e-5",
+        "z4c/composite_initial_angular=false",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/radial-pulse"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 19841,
+      "exit_code": 0,
+      "seconds": 4.340587417,
+      "expectation_met": true
+    },
+    {
+      "name": "radial-pulse-restart",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/radial-pulse/rst/native_composite.00001.rst",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/radial-pulse-restart"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 19847,
+      "exit_code": 0,
+      "seconds": 2.624655582999999,
+      "expectation_met": true
+    },
+    {
+      "name": "radial-pulse-reject-changed-amplitude",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/radial-pulse/rst/native_composite.00001.rst",
+        "z4c/composite_initial_lapse_amplitude=2e-5",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/radial-pulse-reject-changed-amplitude"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 19848,
+      "exit_code": -6,
+      "seconds": 0.5010167079999981,
+      "expectation_met": true
+    },
+    {
+      "name": "angular-pulse",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "z4c/composite_initial_lapse_amplitude=1e-5",
+        "z4c/composite_initial_angular=true",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/angular-pulse"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 19850,
+      "exit_code": 0,
+      "seconds": 4.328946458000001,
+      "expectation_met": true
+    },
+    {
+      "name": "angular-pulse-restart",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/angular-pulse/rst/native_composite.00001.rst",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/angular-pulse-restart"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 19851,
+      "exit_code": 0,
+      "seconds": 2.611183957999998,
+      "expectation_met": true
+    },
+    {
+      "name": "angular-pulse-reject-changed-amplitude",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-r",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/angular-pulse/rst/native_composite.00001.rst",
+        "z4c/composite_initial_lapse_amplitude=2e-5",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/angular-pulse-reject-changed-amplitude"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": false,
+      "owned_group": 19852,
+      "exit_code": -6,
+      "seconds": 0.5110899169999996,
+      "expectation_met": true
+    },
+    {
+      "name": "extended-minkowski",
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/src/athena",
+        "-i",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/inputs/z4c/composite_minkowski.athinput",
+        "time/nlim=40",
+        "time/tlim=.02",
+        "z4c/composite_dt=.0005",
+        "z4c/composite_output_every=10",
+        "output1/dt=.005",
+        "output2/dt=.005",
+        "output3/dt=.005",
+        "-d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/native-wormhole-controls-r3-20261027/minkowski-controls/extended-minkowski"
+      ],
+      "maximum_seconds": 180,
+      "expected_success": true,
+      "owned_group": 19853,
+      "exit_code": 0,
+      "seconds": 42.919799792000006,
+      "expectation_met": true
+    }
+  ],
+  "accepted_restart_physical_state_comparison": {
+    ".csv": {
+      "identical": true,
+      "uninterrupted_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af",
+      "restart_sha256": "a04bd6273f6957d80bb0f615bcf57ecdc1141e3886f808016e050fe8c70ba0af"
+    },
+    ".scri.csv": {
+      "identical": true,
+      "uninterrupted_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a",
+      "restart_sha256": "9214057c6252452c3ca7c556c0d9a662d012856e3350c7397936f32bf0dbb30a"
+    }
+  },
+  "nonzero_pulse_restart_comparisons": {
+    "radial-pulse": {
+      ".csv": {
+        "identical": true,
+        "before_sha256": "34adcbcca77ea2d6a1920b0286ed70d621a43c4112945f2588a8197b5236d42b",
+        "after_sha256": "34adcbcca77ea2d6a1920b0286ed70d621a43c4112945f2588a8197b5236d42b"
+      },
+      ".scri.csv": {
+        "identical": true,
+        "before_sha256": "4229ad5e16268fef0c3de5b32aad53ee85dcbb1870ae55811e51fe6c38b0589c",
+        "after_sha256": "4229ad5e16268fef0c3de5b32aad53ee85dcbb1870ae55811e51fe6c38b0589c"
+      }
+    },
+    "angular-pulse": {
+      ".csv": {
+        "identical": true,
+        "before_sha256": "4a2462ad8bba7f8cc0e51b67cac2963057aead70d683e7f0d48541cb7962f298",
+        "after_sha256": "4a2462ad8bba7f8cc0e51b67cac2963057aead70d683e7f0d48541cb7962f298"
+      },
+      ".scri.csv": {
+        "identical": true,
+        "before_sha256": "e1ae3217443773e06b8f715a3f57b908e19ca6b29062b074ddfde2fce4c861fa",
+        "after_sha256": "e1ae3217443773e06b8f715a3f57b908e19ca6b29062b074ddfde2fce4c861fa"
+      }
+    }
+  },
+  "binary_unchanged": true,
+  "input_unchanged": true
+}

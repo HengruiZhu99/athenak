@@ -1,0 +1,40 @@
+[
+  {
+    "label": "configure",
+    "command": [
+      "cmake",
+      "-S",
+      ".",
+      "-B",
+      "build-shift-3d"
+    ],
+    "exit": 0,
+    "seconds": 1.201796833
+  },
+  {
+    "label": "build",
+    "command": [
+      "cmake",
+      "--build",
+      "build-shift-3d",
+      "--target",
+      "elliptic_shift_3d_native_core_map_tests",
+      "-j2"
+    ],
+    "exit": 0,
+    "seconds": 1.3875237089999999
+  },
+  {
+    "label": "ctest",
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build-shift-3d",
+      "-R",
+      "^elliptic_shift_3d_native_core_map$",
+      "--output-on-failure"
+    ],
+    "exit": 0,
+    "seconds": 0.5589825000000004
+  }
+]

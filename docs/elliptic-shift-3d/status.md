@@ -61,9 +61,9 @@ changed RK and changed pulse configuration are rejected. Evidence:
 `evidence/native-composite-task-qualified-20261027`.
 
 This is Serial/double/vacuum with one static cubic native Cartesian block,
-ng=3/order=4, and dedicated Minkowski initialization. Shells are engine-owned
-host blocks, not native MeshBlocks or device/rank-distributed storage. Native
-wormhole initialization, native AMR/regridding, matter, tracking, MPI/GPU and
+ng=3/order=4, and dedicated Minkowski or selected M=1/3 wormhole initialization.
+Shells are engine-owned host blocks, not native MeshBlocks or device/rank
+distributed storage. Native AMR/regridding, matter, tracking, MPI/GPU and
 midstage restart remain unsupported and guarded. Native restart is paired
 with a complete composite sidecar; this does not claim general shell output
 or native distributed multigrid support. Full-grid characteristic, scri penalty
@@ -72,6 +72,29 @@ selects4.861111e-6 from a requested ceiling .0005 and advances with that step;
 all34 default output CSVs remain bit-identical after this update. A .98,1
 thin-shell attempt fails the initial shift solve and is retained as unsupported
 by that tight-tolerance control, not counted as a runtime CFL pass.
+
+## Actual native wormhole integration, scientific failure retained
+
+The dedicated native wormhole owner now uses exponent-independent log storage,
+existing log derivative enrichment, global radial lines and qualified topology
+coarsening. Actual Driver RK4 runs two cycles to t=.0002 on9,288 cells/7 shells
+in26.78s. Its full canonical coefficients and physical beta are bit-identical
+to an independent stage driver using the exported **actual** native RK arrays
+at cycles0/1/2. Native RK4 is a low-storage method; the classical research Step
+method was not substituted. Initializer-hidden restart preserves all volume,
+scri, flux, registers and warm beta. Full-precision native restart data independently
+reconstruct every physical ADM core/ghost output bitwise after output quantization.
+All34 original Minkowski output CSVs remain bit-identical. Exact source receipts,
+negative controls and failed first attempts are in
+`evidence/native-wormhole-controls-r3-20261027` and
+[native-wormhole-integration.md](native-wormhole-integration.md).
+
+This remains **scientific FAIL**: all-cell H RMS7.3268/max87.0831, M RMS.075224,
+scri pole1.4151e-5. The original vector solve passes (RMS maximum6.96e-12, point
+3.01e-10), as do clock/null/tangential residuals. The uniform native core has
+spacing.08333 and is severely underresolved despite log enrichment. No late
+collapse, all-cell accuracy, native AMR/MPI/device support or generic puncture
+safety follows from these execution/restart checks.
 
 ## Selected wormhole: actual coupled failures retained
 
