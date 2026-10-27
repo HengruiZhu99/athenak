@@ -1,0 +1,244 @@
+{
+  "scope": "Same actual N10 midpoint; node8 rejected, no new evolution/solve; local midpoint pole is distinct from final/stage maximum",
+  "manifest_sha256": "ab7a5ecec1979dcead6247faea83160384ed1edc48e44da6d7527722a91fa9fa",
+  "result": {
+    "time": 0.0001,
+    "cells": 50000,
+    "saved_beta_role": "lastRK4stage_warmstart_not_accepted_solve",
+    "saved_beta_original_physical_rms": 6.512037439662591e-06,
+    "saved_beta_original_conformal_rms": 8.859824002239428e-06,
+    "saved_beta_original_point_max": 7.472561976840097e-05,
+    "same_beta_for_both_node_counts": true,
+    "methods": [
+      {
+        "nodes": 7,
+        "supported": true,
+        "pole_max": 5.066651863952438e-08,
+        "row": 533,
+        "component": "LambdaZ",
+        "face": 5,
+        "j": 3,
+        "k": 3,
+        "xyz": [
+          -0.276172385369497,
+          -0.276172385369497,
+          -0.9205746178983233
+        ],
+        "clock": 0,
+        "null": 4.440892098500626e-16,
+        "tangent": 3.61245718456871e-16,
+        "factor_condition": 16492132.857851243,
+        "value_l1": 1.6436688429909672,
+        "reproduction": 4.97696324651535e-14
+      },
+      {
+        "nodes": 8,
+        "supported": false,
+        "reason": "Hermite angular/radial factor-condition guard"
+      }
+    ],
+    "helper_full_tensor_agreement": 1.3322676295501878e-15,
+    "decomposition_error": 3.552713685417946e-15,
+    "frozen_data_unchanged": 1,
+    "no_solve_or_evolution": true
+  },
+  "condition": {
+    "method": "Direct infinity condition of scaled logical radial Vandermonde; angular weights unchanged",
+    "radial_conditions": {
+      "7": 70222.57407406907,
+      "8": 547207.6037039286
+    },
+    "ratio_8_to_7": 7.792474299315023,
+    "seven_sampler_max_factor": 16492132.857851243,
+    "predicted_max_factor_eight": 128514521.43569463,
+    "unchanged_guard": 100000000.0,
+    "no_guard_relaxation": true
+  },
+  "component_maxima": {
+    "7": {
+      "chi": {
+        "maximum": 2.0456527842800695e-11,
+        "signed": -2.0456527842800695e-11,
+        "row": 545,
+        "face": 5,
+        "j": 5,
+        "k": 4,
+        "xyz": [
+          0.09901475429766751,
+          -0.0990147542976674,
+          -0.9901475429766743
+        ]
+      },
+      "Khat": {
+        "maximum": 3.2408929475810344e-11,
+        "signed": -3.2408929475810344e-11,
+        "row": 544,
+        "face": 5,
+        "j": 4,
+        "k": 4,
+        "xyz": [
+          -0.0990147542976674,
+          -0.0990147542976674,
+          -0.9901475429766743
+        ]
+      },
+      "Theta": {
+        "maximum": 1.0896507603967709e-10,
+        "signed": 1.0896507603967709e-10,
+        "row": 554,
+        "face": 5,
+        "j": 4,
+        "k": 5,
+        "xyz": [
+          -0.0990147542976674,
+          0.09901475429766751,
+          -0.9901475429766743
+        ]
+      },
+      "alpha": {
+        "maximum": 1.3287551190335613e-09,
+        "signed": 1.3287551190335613e-09,
+        "row": 544,
+        "face": 5,
+        "j": 4,
+        "k": 4,
+        "xyz": [
+          -0.0990147542976674,
+          -0.0990147542976674,
+          -0.9901475429766743
+        ]
+      },
+      "Axx": {
+        "maximum": 3.151805069322391e-08,
+        "signed": 3.151805069322391e-08,
+        "row": 144,
+        "face": 1,
+        "j": 4,
+        "k": 4,
+        "xyz": [
+          -0.9901475429766743,
+          -0.0990147542976674,
+          -0.0990147542976674
+        ]
+      },
+      "Axy": {
+        "maximum": 2.679577554084937e-08,
+        "signed": 2.679577554084937e-08,
+        "row": 304,
+        "face": 3,
+        "j": 4,
+        "k": 0,
+        "xyz": [
+          -0.667124384994991,
+          -0.7412493166611012,
+          -0.0741249316661101
+        ]
+      },
+      "Axz": {
+        "maximum": 2.6789194632000258e-08,
+        "signed": 2.6789194632000258e-08,
+        "row": 550,
+        "face": 5,
+        "j": 0,
+        "k": 5,
+        "xyz": [
+          -0.667124384994991,
+          0.07412493166611019,
+          -0.7412493166611012
+        ]
+      },
+      "Ayy": {
+        "maximum": 3.152292791237099e-08,
+        "signed": 3.152292791237099e-08,
+        "row": 344,
+        "face": 3,
+        "j": 4,
+        "k": 4,
+        "xyz": [
+          -0.0990147542976674,
+          -0.9901475429766743,
+          -0.0990147542976674
+        ]
+      },
+      "Ayz": {
+        "maximum": 2.6787663070700123e-08,
+        "signed": 2.6787663070700123e-08,
+        "row": 350,
+        "face": 3,
+        "j": 0,
+        "k": 5,
+        "xyz": [
+          0.07412493166611019,
+          -0.7412493166611012,
+          -0.667124384994991
+        ]
+      },
+      "Azz": {
+        "maximum": 3.152104614112259e-08,
+        "signed": 3.152104614112259e-08,
+        "row": 544,
+        "face": 5,
+        "j": 4,
+        "k": 4,
+        "xyz": [
+          -0.0990147542976674,
+          -0.0990147542976674,
+          -0.9901475429766743
+        ]
+      },
+      "LambdaX": {
+        "maximum": 5.0480231995281134e-08,
+        "signed": -5.0480231995281134e-08,
+        "row": 133,
+        "face": 1,
+        "j": 3,
+        "k": 3,
+        "xyz": [
+          -0.9205746178983233,
+          -0.276172385369497,
+          -0.276172385369497
+        ]
+      },
+      "LambdaY": {
+        "maximum": 5.05953769351653e-08,
+        "signed": -5.05953769351653e-08,
+        "row": 333,
+        "face": 3,
+        "j": 3,
+        "k": 3,
+        "xyz": [
+          -0.276172385369497,
+          -0.9205746178983233,
+          -0.276172385369497
+        ]
+      },
+      "LambdaZ": {
+        "maximum": 5.066651863952438e-08,
+        "signed": -5.066651863952438e-08,
+        "row": 533,
+        "face": 5,
+        "j": 3,
+        "k": 3,
+        "xyz": [
+          -0.276172385369497,
+          -0.276172385369497,
+          -0.9205746178983233
+        ]
+      }
+    }
+  },
+  "all_rows_retained": true,
+  "scientific_milestone_complete": false,
+  "dominant_decomposition": {
+    "Lambda2_metric_normal": 5.69178175844454e-07,
+    "Lambda2_metric_tangent": -5.745966823321957e-07,
+    "Lambda2_independent_lambda": 5.852178466812239e-10,
+    "Lambda2_trace_normal": -1.8285217484754588e-07,
+    "Lambda2_trace_tangent": -7.403249632458128e-10,
+    "Lambda2_curvature": 1.3775926981232776e-07,
+    "Lambda2_sum_error": -1.1911400820763599e-22
+  },
+  "visual_QA": {
+    "midpoint-pole-localization.png": "All600rows shown;8nodeguard rejection explicitly labeled; no clipped plots"
+  }
+}

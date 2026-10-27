@@ -1,0 +1,257 @@
+{
+  "scope": "48-target geometry-only Cartesian P5 probe; full56columns retained; no production/evolution/all-domain acceptance",
+  "summary": {
+    "phase": "summary",
+    "targets": 48,
+    "plans_ready": 120,
+    "plans_rejected": 24,
+    "maximum_condition": 22362.310237213016,
+    "maximum_reproduction": 1.1832376874036351e-11,
+    "physical_constant_linear_quadratic_error_max": 5.343170356448938e-12,
+    "maximum_scaled_noise": 3.259352507708666e-12,
+    "all56columns_retained": true,
+    "guards_16_32_64": true,
+    "production_adopted": false,
+    "seconds": 1.85055625
+  },
+  "guards": {
+    "rank": 56,
+    "maximum_condition": 100000000.0,
+    "maximum_reproduction": 1e-10,
+    "value_l1": 16,
+    "scaled_gradient_l1": 32,
+    "scaled_hessian_l1": 64
+  },
+  "rejections": [
+    {
+      "donors": 125,
+      "status": "rank_deficient",
+      "count": 12
+    },
+    {
+      "donors": 175,
+      "status": "functional_or_reproduction_guard",
+      "count": 12
+    }
+  ],
+  "first_guard_accepted_support_counts": {
+    "125": 36,
+    "256": 12
+  },
+  "target126": [
+    {
+      "phase": "plan",
+      "point": 126,
+      "donors": 125,
+      "rank": 53,
+      "status": "rank_deficient",
+      "condition": 0,
+      "reproduction": 0,
+      "value_l1": 0,
+      "gradient_l1": 0,
+      "hessian_l1": 0
+    },
+    {
+      "phase": "plan",
+      "point": 126,
+      "donors": 175,
+      "rank": 56,
+      "status": "functional_or_reproduction_guard",
+      "condition": 3637.3973151816076,
+      "reproduction": 1.2649201029776208e-13,
+      "value_l1": 2.7261617480070313,
+      "gradient_l1": 32.05098383972077,
+      "hessian_l1": 62.780560107324135
+    },
+    {
+      "phase": "plan",
+      "point": 126,
+      "donors": 256,
+      "rank": 56,
+      "status": "ready",
+      "condition": 1131.4302916270315,
+      "reproduction": 1.108211632117877e-13,
+      "value_l1": 3.310855766434321,
+      "gradient_l1": 15.61367690960055,
+      "hessian_l1": 26.617250917560213
+    },
+    {
+      "phase": "scalar",
+      "point": 126,
+      "donors": 256,
+      "field": "chi",
+      "storage": "positive_log",
+      "angular": 0,
+      "gradient_error": 0.008533566319354063,
+      "hessian_error": 0.5410934764332123,
+      "H": -0.1998094052427288,
+      "H_error": -0.199809405242728,
+      "scaled_noise": 8.638342205901745e-13,
+      "active_value_changed": false
+    },
+    {
+      "phase": "scalar",
+      "point": 126,
+      "donors": 256,
+      "field": "chi",
+      "storage": "direct_physical",
+      "angular": 0,
+      "gradient_error": 0.0021265491072499365,
+      "hessian_error": 0.1259349961994355,
+      "H": -0.0602397504989703,
+      "H_error": -0.0602397504989695,
+      "scaled_noise": 8.640646918757727e-13,
+      "active_value_changed": false
+    },
+    {
+      "phase": "scalar",
+      "point": 126,
+      "donors": 256,
+      "field": "chi",
+      "storage": "positive_log",
+      "angular": 1,
+      "gradient_error": 0.008542165069970298,
+      "hessian_error": 0.5416622020967348,
+      "H": -0.2012787555660665,
+      "H_error": -0.19969705276271676,
+      "scaled_noise": 8.638753209344903e-13,
+      "active_value_changed": false
+    },
+    {
+      "phase": "scalar",
+      "point": 126,
+      "donors": 256,
+      "field": "chi",
+      "storage": "direct_physical",
+      "angular": 1,
+      "gradient_error": 0.0021273708121549995,
+      "hessian_error": 0.12597634316666406,
+      "H": -0.06180620668896819,
+      "H_error": -0.060224503885618466,
+      "scaled_noise": 8.640818722616357e-13,
+      "active_value_changed": false
+    },
+    {
+      "phase": "scalar",
+      "point": 126,
+      "donors": 256,
+      "field": "alpha",
+      "storage": "positive_log",
+      "angular": 0,
+      "gradient_error": 0.00449182815914316,
+      "hessian_error": 0.272125627002995,
+      "H": -7.979727989493313e-16,
+      "H_error": 0,
+      "scaled_noise": 8.640832533215926e-13,
+      "active_value_changed": false
+    },
+    {
+      "phase": "scalar",
+      "point": 126,
+      "donors": 256,
+      "field": "alpha",
+      "storage": "direct_physical",
+      "angular": 0,
+      "gradient_error": 0.0029217787026759173,
+      "hessian_error": 0.17425591141190938,
+      "H": -7.979727989493313e-16,
+      "H_error": 0,
+      "scaled_noise": 8.640594990903348e-13,
+      "active_value_changed": false
+    },
+    {
+      "phase": "scalar",
+      "point": 126,
+      "donors": 256,
+      "field": "alpha",
+      "storage": "positive_log",
+      "angular": 1,
+      "gradient_error": 0.004500170534163697,
+      "hessian_error": 0.27266276560767266,
+      "H": -7.979727989493313e-16,
+      "H_error": 0,
+      "scaled_noise": 8.641073390072399e-13,
+      "active_value_changed": false
+    },
+    {
+      "phase": "scalar",
+      "point": 126,
+      "donors": 256,
+      "field": "alpha",
+      "storage": "direct_physical",
+      "angular": 1,
+      "gradient_error": 0.0029257526605385026,
+      "hessian_error": 0.17449930986096573,
+      "H": -7.979727989493313e-16,
+      "H_error": 0,
+      "scaled_noise": 8.640698846612104e-13,
+      "active_value_changed": false
+    }
+  ],
+  "matched_first_guard_accepted_errors": {
+    "('positive_log', 'chi', 0)": {
+      "queries": 48,
+      "maximum_gradient_error": 0.008533566319354674,
+      "maximum_hessian_error": 0.5410934764332741,
+      "maximum_H_error": 0.1998094052427551,
+      "maximum_scaled_noise": 3.259352507708666e-12
+    },
+    "('positive_log', 'chi', 1)": {
+      "queries": 48,
+      "maximum_gradient_error": 0.008542165069971741,
+      "maximum_hessian_error": 0.5416622020968171,
+      "maximum_H_error": 0.19992172826767296,
+      "maximum_scaled_noise": 3.259245129938206e-12
+    },
+    "('positive_log', 'alpha', 0)": {
+      "queries": 48,
+      "maximum_gradient_error": 0.004563499078877681,
+      "maximum_hessian_error": 1.1522913051962704,
+      "maximum_H_error": 0,
+      "maximum_scaled_noise": 3.259182235909033e-12
+    },
+    "('positive_log', 'alpha', 1)": {
+      "queries": 48,
+      "maximum_gradient_error": 0.004565053995527792,
+      "maximum_hessian_error": 1.152684817352808,
+      "maximum_H_error": 0,
+      "maximum_scaled_noise": 3.2591832638946513e-12
+    },
+    "('direct_physical', 'chi', 0)": {
+      "queries": 48,
+      "maximum_gradient_error": 0.0021265491072504084,
+      "maximum_hessian_error": 0.1259349961995357,
+      "maximum_H_error": 0.060239750498971054,
+      "maximum_scaled_noise": 3.2588454304392875e-12
+    },
+    "('direct_physical', 'chi', 1)": {
+      "queries": 48,
+      "maximum_gradient_error": 0.0021273708121563317,
+      "maximum_hessian_error": 0.12597778403655935,
+      "maximum_H_error": 0.06025512479907656,
+      "maximum_scaled_noise": 3.258856130835038e-12
+    },
+    "('direct_physical', 'alpha', 0)": {
+      "queries": 48,
+      "maximum_gradient_error": 0.004417047081944354,
+      "maximum_hessian_error": 1.1167569523830063,
+      "maximum_H_error": 0,
+      "maximum_scaled_noise": 3.258824637093833e-12
+    },
+    "('direct_physical', 'alpha', 1)": {
+      "queries": 48,
+      "maximum_gradient_error": 0.004418514174887714,
+      "maximum_hessian_error": 1.1171272285136378,
+      "maximum_H_error": 0,
+      "maximum_scaled_noise": 3.258824567003904e-12
+    }
+  },
+  "scientific_acceptance": false,
+  "conclusion": "Exact Cartesian polynomial moments and bounded weights do not ensure good approximation of actual positive fields on a broad donor footprint. At point126 both log and direct-physical P5 are worse than original FD4; P5 is not adopted.",
+  "baseline_plot_source_hashes": {
+    "docs/elliptic-shift-3d/evidence/transition-jet-localization-20261027/diagnose.stdout": "8589ec44dcae454d3a31f791812b71cb33a12ac606fe2bf92ba432a63219d135",
+    "docs/elliptic-shift-3d/evidence/transition-order-study-r3-20261027/n6_amr3-diagnose.stdout": "bb2f384eb28370d5d4b383a939bb065e1bd2e17e1d637305692bdc15a53c591a"
+  },
+  "source_sha256": "8820f95df300d699fdecd9f58f40e04655bc85b16a96e034448730b299af5f05",
+  "script_sha256": "eacbcfd9908e6b14e7801547aebb19d402a47097546e5cfe098067fcd3babb31"
+}

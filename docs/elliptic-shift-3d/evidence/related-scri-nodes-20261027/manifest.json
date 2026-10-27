@@ -1,0 +1,147 @@
+{
+  "parent_manifest_sha256": "0f29605a0452153d71b0b0cd60aa2f8148bdef51ada6fcc2be2618a318b09138",
+  "parent_compiled_source_sha256": "b3583bc06031c92f7d4e7b14684d8c3c40fd16030ba204210f3359ca1c929895",
+  "checkpoint_sha256": "b25e254a6d9992b5aa2da16a389dbe1b78613f43acd47f32905c5b59d8bf873f",
+  "checkpoint_compressed_sha256": "979306d36383a199c048dd874274447da51e540670f40c7aaec9574cc6b1c509",
+  "checkpoint_source_tag": "296298c50efffaa8488dcdda12feb8bcd09c9f48bdb55f9ada42c72cf34e1edf",
+  "driver_sha256": "957addbfbb87fc149bc63000816e15b0f3ee46fd4c806affc570ad672a166ab5",
+  "scope": "Same saved N10midpoint fields and warmstart shift, Hermite7/8 sampling only; no shift solve or evolution",
+  "runs": {
+    "build": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/tst/elliptic_shift_3d/diagnose_related_scri_nodes.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/diagnostic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/simd/src/libkokkossimd.a"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 28434,
+      "exit_code": 0,
+      "seconds": 4.460157208
+    },
+    "dependencies": {
+      "command": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-M",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/source/tst/elliptic_shift_3d/diagnose_related_scri_nodes.cpp"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 28437,
+      "exit_code": 0,
+      "seconds": 0.150656208
+    },
+    "diagnostic": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/diagnostic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/frozen-midpoint.bin",
+        "296298c50efffaa8488dcdda12feb8bcd09c9f48bdb55f9ada42c72cf34e1edf",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/related-scri-nodes-20261027/poles.csv"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 28439,
+      "exit_code": 0,
+      "seconds": 6.411559042
+    }
+  },
+  "live_project_dependencies": [],
+  "result": {
+    "time": 0.0001,
+    "cells": 50000,
+    "saved_beta_role": "lastRK4stage_warmstart_not_accepted_solve",
+    "saved_beta_original_physical_rms": 6.512037439662591e-06,
+    "saved_beta_original_conformal_rms": 8.859824002239428e-06,
+    "saved_beta_original_point_max": 7.472561976840097e-05,
+    "same_beta_for_both_node_counts": true,
+    "methods": [
+      {
+        "nodes": 7,
+        "supported": true,
+        "pole_max": 5.066651863952438e-08,
+        "row": 533,
+        "component": "LambdaZ",
+        "face": 5,
+        "j": 3,
+        "k": 3,
+        "xyz": [
+          -0.276172385369497,
+          -0.276172385369497,
+          -0.9205746178983233
+        ],
+        "clock": 0,
+        "null": 4.440892098500626e-16,
+        "tangent": 3.61245718456871e-16,
+        "factor_condition": 16492132.857851243,
+        "value_l1": 1.6436688429909672,
+        "reproduction": 4.97696324651535e-14
+      },
+      {
+        "nodes": 8,
+        "supported": false,
+        "reason": "Hermite angular/radial factor-condition guard"
+      }
+    ],
+    "helper_full_tensor_agreement": 1.3322676295501878e-15,
+    "decomposition_error": 3.552713685417946e-15,
+    "frozen_data_unchanged": 1,
+    "no_solve_or_evolution": true
+  },
+  "lossless_csv": true,
+  "poles_csv_sha256": "08476785028041fc375d17640fccb201f7be0b8cc753d0e9fbe7034f371a4b09",
+  "compiled_source_sha256": "c0a47c94d0a79ca20e8d807b095d71515251654bb88a9fea6ceeecfb534d8a05",
+  "binary_sha256": "0f2f5018b89185aa26f8fe4a91b3ea1794a9f1b3f67704c601fa8578d1f3a2ff",
+  "independent_condition_diagnostic": {
+    "method": "Direct infinity condition of scaled logical radial Vandermonde; angular weights unchanged",
+    "radial_conditions": {
+      "7": 70222.57407406907,
+      "8": 547207.6037039286
+    },
+    "ratio_8_to_7": 7.792474299315023,
+    "seven_sampler_max_factor": 16492132.857851243,
+    "predicted_max_factor_eight": 128514521.43569463,
+    "unchanged_guard": 100000000.0,
+    "no_guard_relaxation": true
+  },
+  "external_dependencies_unchanged": true
+}
