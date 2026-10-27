@@ -1,6 +1,12 @@
 # Composite 3D elliptic shift: current implementation and evidence
 
-**Takeover in progress:** [current spherical alignment and interface evidence](takeover-alignment-20261027.md).
+**Paused at the user's request:** [current summary and pause handoff](PAUSE-20261027.md).
+Stable 3D wormhole-to-trumpet evolution remains unverified; no new experiment
+should be launched until the user resumes the work.
+The [latest local Hermite boundary study](compatible-local-hermite-20261027.md)
+retains completed failures and two explicitly user-interrupted runs.
+Earlier [spherical alignment and interface evidence](takeover-alignment-20261027.md)
+remains applicable within its stated scope.
 The [local endpoint shell study](compatible-local-endpoint-20261027.md)
 establishes physical initial-state refinement while retaining its scri failures.
 The [layer-local affine follow-up](compatible-layer-affine-20261027.md) tests
