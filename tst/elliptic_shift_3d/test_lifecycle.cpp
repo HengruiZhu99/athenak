@@ -63,14 +63,21 @@ int main(int argc, char **argv) {
             && loaded.mesh.revision == 1 && loaded.step == 2
             && loaded.telegraph_width==snapshot.telegraph_width
             && loaded.log_halo_radius==snapshot.log_halo_radius
-            && loaded.puncture_derivative_scheme==0, "checkpoint exact payload");
+            && loaded.puncture_derivative_scheme==0&&loaded.boundary_derivative_scheme==0, "checkpoint exact payload");
     // Version13 fixed its optional halo support at .12. Removing only the new
     // trailing radius and rebuilding the receipt tests real backward decoding.
     std::ifstream raw_in(path,std::ios::binary);std::vector<char> raw((std::istreambuf_iterator<char>(raw_in)),{});
     auto seal=[](std::vector<char> &bytes){std::uint64_t sum=14695981039346656037ull;
       for(size_t i=0;i<bytes.size()-8;++i){sum^=static_cast<unsigned char>(bytes[i]);sum*=1099511628211ull;}
       std::memcpy(bytes.data()+bytes.size()-8,&sum,8);};
-    auto version14=raw;version14.erase(version14.end()-12,version14.end()-8);const std::uint32_t v14=14;
+    auto version15=raw;version15.erase(version15.end()-12,version15.end()-8);const std::uint32_t v15=15;
+    std::memcpy(version15.data()+8,&v15,4);seal(version15);
+    const std::string v15_path=path+".v15";
+    {std::ofstream out(v15_path,std::ios::binary);out.write(version15.data(),version15.size());}
+    const auto supported_only=CompositeCheckpoint::Read(v15_path,snapshot.source_tag);
+    Require(supported_only.boundary_derivative_scheme==0&&supported_only.log_halo_radius==.24,"v15 boundary baseline backward decode");
+    std::filesystem::remove(v15_path);
+    auto version14=version15;version14.erase(version14.end()-12,version14.end()-8);const std::uint32_t v14=14;
     std::memcpy(version14.data()+8,&v14,4);seal(version14);
     const std::string v14_path=path+".v14";
     {std::ofstream out(v14_path,std::ios::binary);out.write(version14.data(),version14.size());}
@@ -85,22 +92,30 @@ int main(int argc, char **argv) {
     Require(legacy.fields==snapshot.fields&&legacy.log_halo_radius==.12,"v13 fixed-support backward decode");
     std::filesystem::remove(old_path);
     auto bad_radius=raw;const Real invalid_radius=std::numeric_limits<Real>::quiet_NaN();
-    std::memcpy(bad_radius.data()+bad_radius.size()-20,&invalid_radius,8);seal(bad_radius);
+    std::memcpy(bad_radius.data()+bad_radius.size()-24,&invalid_radius,8);seal(bad_radius);
     {std::ofstream out(old_path,std::ios::binary);out.write(bad_radius.data(),bad_radius.size());}
     Reject([&]{CompositeCheckpoint::Read(old_path,snapshot.source_tag);},"checksummed nonfinite halo radius accepted");
     std::filesystem::remove(old_path);
     auto bad_scheme=raw;const int unsupported_scheme=2;
-    std::memcpy(bad_scheme.data()+bad_scheme.size()-12,&unsupported_scheme,4);seal(bad_scheme);
+    std::memcpy(bad_scheme.data()+bad_scheme.size()-16,&unsupported_scheme,4);seal(bad_scheme);
     {std::ofstream out(old_path,std::ios::binary);out.write(bad_scheme.data(),bad_scheme.size());}
     Reject([&]{CompositeCheckpoint::Read(old_path,snapshot.source_tag);},"checksummed unsupported derivative scheme accepted");
     std::filesystem::remove(old_path);
+    auto bad_boundary=raw;
+    std::memcpy(bad_boundary.data()+bad_boundary.size()-12,&unsupported_scheme,4);seal(bad_boundary);
+    {std::ofstream out(old_path,std::ios::binary);out.write(bad_boundary.data(),bad_boundary.size());}
+    Reject([&]{CompositeCheckpoint::Read(old_path,snapshot.source_tag);},"checksummed unsupported boundary derivative scheme accepted");
+    std::filesystem::remove(old_path);
+    auto incompatible_boundary=snapshot;incompatible_boundary.boundary_derivative_scheme=1;
+    Reject([&]{CompositeCheckpoint::Write(old_path,incompatible_boundary);},"Hermite scheme without tensor scri accepted");
     auto advanced=snapshot;advanced.wormhole_chart=true;advanced.boundary_scheme=1;
-    advanced.positive_storage=2;advanced.enriched_log_derivatives=true;advanced.puncture_derivative_scheme=1;
+    advanced.positive_storage=2;advanced.enriched_log_derivatives=true;advanced.puncture_derivative_scheme=1;advanced.boundary_derivative_scheme=1;
     size_t boundary_points=0;for(const auto &b:advanced.mesh.blocks)
       if(b.layer==int(advanced.mesh.radii.size())-1)boundary_points+=advanced.mesh.cells*advanced.mesh.cells;
     advanced.boundary_fields.assign(boundary_points*advanced.components,0);
     CompositeCheckpoint::Write(old_path,advanced);
-    Require(CompositeCheckpoint::Read(old_path,snapshot.source_tag).puncture_derivative_scheme==1,"supported derivative scheme roundtrip");
+    const auto advanced_loaded=CompositeCheckpoint::Read(old_path,snapshot.source_tag);
+    Require(advanced_loaded.puncture_derivative_scheme==1&&advanced_loaded.boundary_derivative_scheme==1,"supported and boundary derivative scheme roundtrip");
     advanced.positive_storage=1;
     Reject([&]{CompositeCheckpoint::Write(old_path,advanced);},"supported derivative with incompatible storage accepted");
     std::filesystem::remove(old_path);

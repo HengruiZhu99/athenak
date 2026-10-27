@@ -1,6 +1,52 @@
 # Reusable host Hermite boundary sampler
 
-`src/mesh/cubed_sphere/hermite_boundary_sampler.hpp` turns the qualified boundary-jet prototype into a stage-safe host component. `surface_polynomial_weights.hpp` contains its field-independent angular weights. Neither header is wired into the shared evolution engine or checkpoint format in this change.
+`src/mesh/cubed_sphere/hermite_boundary_sampler.hpp` turns the qualified boundary-jet prototype into a stage-safe host component. `surface_polynomial_weights.hpp` contains its field-independent angular weights. The component qualification is committed in `94bb6520d8ef9c8273de249affb5c290c7f266d7`; the separate optional engine dispatch is described below.
+
+## Optional engine integration and coupled result
+
+The trailing `CompositeTensorEvolution` constructor argument
+`boundary_derivatives=1` selects this sampler for every surface RHS evaluation.
+It prepares independent22-field and3-shift snapshots at one newly incremented
+epoch per RHS. Default0 keeps the original arithmetic. There is no change to
+the operator, shift boundary data, penalties, selected lapse source, physical
+fields or gauge. CLIargv31 selects it. Checkpointv16 binds this choice; versions
+2..15 infer0. Epochs and geometry caches are rebuilt, not evolved or serialized.
+Invalid modes and a nonzero choice without tensor scri are rejected.
+
+The engine test gives Minkowski maximum rate8.35702e-13, then a nonzero angular
+pulse response with a fresh stage epoch and no active-value mutation. Version
+15/14/13, bad checksummed metadata and mixed-grid restart tests pass. All33
+elliptic/physics regression tests pass in15.42s. The prior full36-test suite,
+including inherited cubed-sphere evolution tests, passed before this optional
+dispatch; those longer inherited tests were not rerun because their dependencies
+did not change. Default volume and64-angle pulse CSVs remain bitwise identical
+to the earlier nonzero angular control; checkpoint bytes intentionally change.
+
+The actual47088-cell selected wormhole run at t=.0002 completes in159.07s under
+the180s bound, with bitwise state/shift/scri restart. Relative to the identical
+fixed-puncture-basis run, the tensor pole falls from1.44183e-5 to1.08459e-6,
+which **still fails** the unchanged1e-7 target. H/M RMS remain.002984706/.03285528;
+original vector RMSmax2.72401e-11 and pointmax1.24781e-9 pass. Radial shift RMS
+error versus independentN2049 remains.000412884; the maximum is.00431157.
+The bulk radial reproduction problem is not solved by this boundary change.
+Clock/null/tangential ghost residuals remain at roundoff; independently
+extrapolated active-face consistency errors remain recorded separately.
+
+Evidence: `evidence/hermite-engine-build-20261027`,
+`evidence/hermite-default-equivalence-20261027`,
+`evidence/hermite-supported-coupled-20261027` and
+`evidence/hermite-coupled-radial-comparison-20261027`. The run manifest freezes
+actual compiled dependencies, executable and initializer, and confirms them
+unchanged. The comparison retains every active cell, physical-volume RMS/L2,
+point maxima, regional diagnostics and raw angular rays.
+
+```sh
+python3 tst/elliptic_shift_3d/run_coupled_halo_support.py --output /tmp/new-hermite-pilot --radius .24 --puncture-scheme 1 --boundary-scheme 1
+```
+
+This is the full3D research engine's classical RK4 path. It is separate from
+actual AthenaK Driver integration and establishes no late-collapse, moving
+puncture, MPI or device qualification.
 
 ## Public interface
 

@@ -22,6 +22,21 @@ states and restarts. [Commands, complete norms and limitations](native-accuracy-
 retain all cells, angular scatter and changing quadrature; no uniform RMS
 order or late-collapse qualification is inferred.
 
+Two separately controlled optional changes now have coupled evidence on the
+same47088-cell N6/7-shell/AMR3 mesh at t=.0002. A fixed polynomial+log+rho
+positive-field basis reduces H RMS .02961997→.002984706; it preserves actual
+values and fits no evolving exponent, but five translated stencil footprints
+still fail its unchanged amplification guards. The stage-safe Hermite boundary
+sampler then reduces the tensor scri pole1.44183e-5→1.08459e-6; the1e-7 target
+still fails. Each run completes within159.1s/180s and restarts bitwise, with
+original vector RMSmax<2.73e-11. Radial beta error remains.000412884 against the
+matched N2049 solution, so neither change establishes scientific reproduction.
+[Puncture evidence and failures](supported-rho-wrapper-plan.md) and
+[boundary integration and controls](hermite-boundary-sampler.md) retain full
+norms and raw angular scatter. A separate exact-jet diagnostic identifies the
+current transition H maximum as mapped chi-Hessian truncation, with little
+contribution from halo interpolation; higher-order checks are ongoing.
+
 ## Implemented and checked
 
 - The exact metric-built connection, its full variable-metric Frechet operator,

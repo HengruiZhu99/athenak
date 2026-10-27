@@ -11,6 +11,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -18,6 +19,7 @@
 #include "z4c/hyperboloidal/composite_shift.hpp"
 #include "z4c/hyperboloidal/reference_gauge.hpp"
 #include "mesh/cubed_sphere/scri_surface.hpp"
+#include "mesh/cubed_sphere/hermite_boundary_sampler.hpp"
 #include "z4c/hyperboloidal/tensor_scri.hpp"
 #include "z4c/hyperboloidal/composite_state.hpp"
 #include "z4c/hyperboloidal/puncture_log_plans.hpp"
@@ -56,6 +58,9 @@ class CompositeTensorEvolution {
   int isotropic_reference=0;
   int positive_storage=0;
   std::unique_ptr<cubed_sphere::ScriSurface> scri;
+  std::unique_ptr<cubed_sphere::HermiteBoundarySampler> hermite_boundary;
+  int boundary_derivative_scheme=0;
+  std::uint64_t boundary_epoch=0;
   V boundary_rhs, beta_padded;
   Real pole_sat=4,regularity_sat=8;
   Real telegraph_width=.24;
@@ -68,13 +73,16 @@ class CompositeTensorEvolution {
   Real boundary_pole=0,raw_clock_rate=0,boundary_regularity=0;
   CompositeTensorEvolution(int n, int shells, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
       : CompositeTensorEvolution(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order,regular_scri) {}
-  CompositeTensorEvolution(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false,bool log_halos=false,Real halo_radius=.12,int puncture_scheme=0)
+  CompositeTensorEvolution(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false,bool puncture=false,int matched=0,int surface_points=6,bool radial_stencils=false,int positive_mode=0,Real taper_width=.24,bool enriched=false,bool radial_lines=false,bool topology=false,bool log_halos=false,Real halo_radius=.12,int puncture_scheme=0,int boundary_derivatives=0)
       : shift(std::move(mesh), order,radial_stencils,radial_lines,topology),
         state(fields*shift.grid.active.size(), 0), beta_delta(3*shift.grid.active.size(), 0),
         elliptic_atol(tolerance), telegraph(flux),wormhole(puncture),isotropic_reference(matched),positive_storage(positive_mode),telegraph_width(taper_width),log_halo_radius(halo_radius) {
     if(puncture_scheme<0||puncture_scheme>1||(puncture_scheme&&(!enriched||!regular_scri)))
       throw std::invalid_argument("unsupported experimental puncture derivative scheme");
     puncture_derivative_scheme=puncture_scheme;
+    if(boundary_derivatives<0||boundary_derivatives>1||(boundary_derivatives&&!regular_scri))
+      throw std::invalid_argument("unsupported boundary derivative scheme");
+    boundary_derivative_scheme=boundary_derivatives;
     if(enriched){if(!wormhole||positive_storage!=2)throw std::invalid_argument("enrichment requires exponent-independent log storage");
       if(puncture_derivative_scheme) supported_log_plans=std::make_unique<SupportedPunctureLogPlans>(shift.grid);
       else log_plans=std::make_unique<PunctureLogPlans>(shift.grid);}
@@ -87,6 +95,7 @@ class CompositeTensorEvolution {
       log_halo_setup_seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
     }
     if(regular_scri)scri=std::make_unique<cubed_sphere::ScriSurface>(shift.grid,fields,surface_points);
+    if(boundary_derivative_scheme)hermite_boundary=std::make_unique<cubed_sphere::HermiteBoundarySampler>(*scri);
   }
   const PuncturePosition &PositivePlanPosition()const{
     if(supported_log_plans)return supported_log_plans->position;
@@ -289,11 +298,19 @@ class CompositeTensorEvolution {
     if(!scri)return;
     const CMCReference<Real> reference{1,1};boundary_rhs.assign(scri->values.size(),0);
     boundary_pole=raw_clock_rate=boundary_regularity=0;
+    using Prepared=cubed_sphere::HermiteBoundarySampler::Prepared;
+    std::optional<Prepared> prepared_fields,prepared_beta;
+    if(hermite_boundary){
+      if(boundary_epoch==std::numeric_limits<std::uint64_t>::max())throw std::overflow_error("boundary epoch exhausted");
+      const auto epoch=++boundary_epoch;
+      prepared_fields.emplace(hermite_boundary->Prepare(padded,scri->values,fields,epoch));
+      prepared_beta.emplace(hermite_boundary->Prepare(beta_padded,scri->beta,3,epoch));
+    }
     for(size_t p=0;p<scri->rows.size();++p){
       const auto &row=scri->rows[p];const auto &x=row.geometry.x;
-      const auto sampled=scri->Sample(p,padded,scri->values,fields);
+      const auto sampled=hermite_boundary?hermite_boundary->Sample(p,*prepared_fields):scri->Sample(p,padded,scri->values,fields);
       auto u=UnpackComposite(x,sampled.value,sampled.d,sampled.dd,wormhole,isotropic_reference,positive_storage);
-      const auto shift_jet=scri->Sample(p,beta_padded,scri->beta,3);
+      const auto shift_jet=hermite_boundary?hermite_boundary->Sample(p,*prepared_beta):scri->Sample(p,beta_padded,scri->beta,3);
       for(int v=0;v<3;++v){u.beta.value[v]+=shift_jet.value[v];
         for(int a=0;a<3;++a){u.beta.d[a][v]+=shift_jet.d[v][a];for(int b=0;b<3;++b)u.beta.dd[a][b][v]+=shift_jet.dd[v][a][b];}}
       const auto geometry=Geometry(u.metric);
