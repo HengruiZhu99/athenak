@@ -1,0 +1,56 @@
+[
+  {
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_wormhole_diagnostic",
+      "8",
+      "coordinates",
+      "docs/elliptic-shift-3d/evidence/core-resolution-20261027/all-coordinates.csv",
+      "0",
+      "focused",
+      "radial",
+      "8",
+      "4"
+    ],
+    "exit": 0,
+    "seconds": 1.8026256250000001
+  },
+  {
+    "command": [
+      "/usr/bin/python3",
+      "tst/elliptic_shift_3d/wormhole_initial.py",
+      "docs/elliptic-shift-3d/evidence/core-resolution-20261027/active-coordinates.csv",
+      "docs/elliptic-shift-3d/evidence/core-resolution-20261027/initial.dat"
+    ],
+    "exit": 0,
+    "seconds": 0.315576541
+  },
+  {
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_coupled_pilot",
+      "8",
+      "0",
+      ".0001",
+      "0",
+      "0",
+      "3",
+      "1e-10",
+      "docs/elliptic-shift-3d/evidence/core-resolution-20261027/direct-bulk4.csv",
+      "",
+      "",
+      "4",
+      "1",
+      "4",
+      "8",
+      "1",
+      "docs/elliptic-shift-3d/evidence/core-resolution-20261027/initial.dat",
+      "4",
+      "0",
+      ".62,.70,1",
+      "8",
+      "1",
+      "1"
+    ],
+    "exit": 0,
+    "seconds": 19.530982040999998
+  }
+]

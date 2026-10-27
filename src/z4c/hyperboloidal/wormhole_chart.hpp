@@ -4,6 +4,7 @@
 
 #include "mesh/cubed_sphere/map.hpp"
 #include "z4c/hyperboloidal/conformal_rhs.hpp"
+#include "z4c/hyperboloidal/puncture_position.hpp"
 
 namespace z4c { namespace hyperboloidal {
 // Positive Cartesian coefficient chart. The puncture is a second AF infinity,
@@ -27,6 +28,8 @@ struct WormholeChart {
     alpha_t=(1+z.f)*.5*weight_t;
   }
   explicit WormholeChart(const Real x[3]) : WormholeChart(x,zero,zero) {}
+  WormholeChart(const Real x[3],const PuncturePosition &puncture)
+      :WormholeChart(x,CheckedPosition(puncture),puncture.velocity.data()) {}
   inline static constexpr Real zero[3]={0,0,0};
   // Factor the actual initial isotropic inner profile rather than asking a
   // Cartesian polynomial to resolve its radial cusp. The compact C7 blend
@@ -66,6 +69,9 @@ struct WormholeChart {
     return WormholeChart(x);
   }
  private:
+  static const Real *CheckedPosition(const PuncturePosition &puncture){
+    puncture.Validate();return puncture.position.data();
+  }
   static cubed_sphere::Jet ChartBlend(const cubed_sphere::Jet &a,const cubed_sphere::Jet &b,
       const cubed_sphere::Jet &w){return w*a+(cubed_sphere::Jet(1)-w)*b;}
 };

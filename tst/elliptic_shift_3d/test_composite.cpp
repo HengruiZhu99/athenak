@@ -46,13 +46,14 @@ int main(int argc, char **argv) {
     const bool refine = argc > 5 ? std::stoi(argv[5]) : false;
     const Real tolerance = argc > 6 ? std::stod(argv[6]) : 1e-9;
     const int spatial_order = argc > 7 ? std::stoi(argv[7]) : 4;
+    const bool radial_stencils=argc>8?std::stoi(argv[8]):false;
     if (n > 24 || (shells != 1 && shells != 2) || subdivisions > 2)
       throw std::invalid_argument("bounded test cell budget");
     std::vector<Real> radii = shells == 1 ? std::vector<Real>{1} : std::vector<Real>{.65, 1};
     cubed_sphere::CompositeMesh mesh(.25, radii, subdivisions, n, 2, refine ? 2 : 1);
     if (refine) mesh.RefineCartesian(0);
     const auto start = std::chrono::steady_clock::now();
-    h::CompositeShiftStage stage(mesh, spatial_order);
+    h::CompositeShiftStage stage(mesh, spatial_order,radial_stencils);
     const double setup = std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
     auto &grid = stage.grid;
     std::cerr << "built " << grid.active.size() << " cells, " << mesh.blocks.size()

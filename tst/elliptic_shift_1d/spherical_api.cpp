@@ -19,11 +19,10 @@ static int SphericalParts(int n, const double *r, const double *q,
     o.omega=(1-r[i]*r[i])/2; o.gradient[0]=-r[i];
     for(int j=0;j<3;++j)o.hessian[j][j]=-1;
     h::SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);
-    auto parts=h::ConformalRHS(u,o,kappa1,kappa2);
+    auto parts=h::ConformalRHS(u,o,kappa1,kappa2,appendix_c!=0);
     if(!parts.valid)return i+1;
     // The single disclosed off-constraint scalar source change. Other equations
     // remain the repository C_Z4c=0 equations; this does not claim full paper equivalence.
-    if(appendix_c)parts.pole.theta+=3*u.alpha.value*o.normal*u.theta.value;
     const auto gauge=h::UnfactoredReferenceGauge(ref,ref.At(r[i],0.,0.),u,
         h::GaugeParameters<double>{slicing,0,lapse_restoring,0},false,true);
     if(!gauge.valid)return i+1;

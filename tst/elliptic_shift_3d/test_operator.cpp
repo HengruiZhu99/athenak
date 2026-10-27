@@ -161,7 +161,11 @@ int main(int argc, char **argv) {
               << ",\"flat_error\":" << flat_error << ",\"metric_rhs_error\":" << rhs_error
               << ",\"radial_error\":" << radial_error << ",\"scri_null_error\":"
               << std::abs(normal*normal-norm) << ",\"scri_angular_error\":" << tangential
-              << ",\"cases\":32,\"status\":\"passed\"}\n";
+              << ",\"cases\":32,\"status\":\"passed\",\"selected_telegraph_support\":[";
+    for(int i=0;i<=100;++i){const double r=i/100.;const auto support=h::ReferenceTelegraphSupport(r);
+      Check(support.valid,"invalid selected support");if(i)std::cout<<',';
+      std::cout<<'['<<r<<','<<support.value<<','<<support.radial_derivative<<']';}
+    std::cout<<"]}\n";
   } catch (...) {
     Kokkos::finalize();
     throw;

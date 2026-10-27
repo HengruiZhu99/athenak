@@ -1,0 +1,42 @@
+[
+  {
+    "command": [
+      "/usr/bin/python3",
+      "tst/elliptic_shift_1d/test_g1_rhs.py",
+      "--library",
+      "build-shift-3d/libelliptic_shift_3d_radial_kernel.dylib"
+    ],
+    "exit": 0,
+    "seconds": 0.36839933399999997
+  },
+  {
+    "command": [
+      "/usr/bin/python3",
+      "tst/elliptic_shift_1d/test_wormhole_data.py",
+      "--library",
+      "build-shift-3d/libelliptic_shift_3d_radial_kernel.dylib"
+    ],
+    "exit": 0,
+    "seconds": 0.147260375
+  },
+  {
+    "command": [
+      "/usr/bin/python3",
+      "tst/elliptic_shift_1d/test_elliptic.py",
+      "--library",
+      "build-shift-3d/libelliptic_shift_3d_radial_kernel.dylib"
+    ],
+    "exit": 0,
+    "seconds": 0.21006020800000003
+  },
+  {
+    "command": [
+      "/usr/bin/python3",
+      "tst/elliptic_shift_1d/test_scri_limits.py",
+      "--library",
+      "build-shift-3d/libelliptic_shift_3d_radial_kernel.dylib"
+    ],
+    "exit": 0,
+    "seconds": 0.12377779200000005
+  }
+]

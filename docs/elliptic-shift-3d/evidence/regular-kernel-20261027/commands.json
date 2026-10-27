@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "command": [
+        "build-shift-3d/elliptic_shift_3d_regular_kernel_tests"
+      ],
+      "exit": 0,
+      "seconds": 0.005769708000000002
+    },
+    {
+      "command": [
+        "build-shift-3d/elliptic_shift_3d_regular_penrose_tests",
+        "--expect-regular-rhs"
+      ],
+      "exit": 0,
+      "seconds": 0.004466000000000001
+    },
+    {
+      "command": [
+        "build-shift-3d/elliptic_shift_3d_stationary_omega_product_tests"
+      ],
+      "exit": 0,
+      "seconds": 0.0038999160000000033
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "tst/elliptic_shift_3d/test_scri_radial.py",
+        "build-shift-3d/elliptic_shift_3d_tensor_scri_tests"
+      ],
+      "exit": 0,
+      "seconds": 0.534686917
+    }
+  ],
+  "prior_driver_error": "nonexistent /opt/homebrew/bin/python3; corrected to configured /usr/bin/python3; no scientific test executed by failed spawn"
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "name": "focused-n12-coordinates",
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_wormhole_diagnostic",
+      "12",
+      "coordinates",
+      "docs/elliptic-shift-3d/evidence/wormhole-localization-20261027/focused-n12-coordinates.csv",
+      "2",
+      "focused",
+      "radial",
+      "8"
+    ],
+    "exit_code": 0,
+    "seconds": 1.9077775000000001
+  },
+  {
+    "name": "focused-n12-reference",
+    "command": [
+      "python3",
+      "tst/elliptic_shift_3d/wormhole_exact_jets.py",
+      "docs/elliptic-shift-3d/evidence/wormhole-localization-20261027/focused-n12-coordinates.csv",
+      "docs/elliptic-shift-3d/evidence/wormhole-localization-20261027/focused-n12-exact.dat"
+    ],
+    "exit_code": 0,
+    "seconds": 2.7508388330000004
+  },
+  {
+    "name": "focused-n12-diagnostic",
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_wormhole_diagnostic",
+      "12",
+      "diagnose",
+      "docs/elliptic-shift-3d/evidence/wormhole-localization-20261027/focused-n12-exact.dat",
+      "2",
+      "focused",
+      "radial",
+      "8"
+    ],
+    "exit_code": 0,
+    "seconds": 80.67629050000001
+  },
+  {
+    "name": "focused-n12-coupled",
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_coupled_pilot",
+      "12",
+      "0",
+      ".0001",
+      "2",
+      "0",
+      "3",
+      "1e-10",
+      "",
+      "",
+      "",
+      "4",
+      "1",
+      "4",
+      "8",
+      "1",
+      "docs/elliptic-shift-3d/evidence/wormhole-localization-20261027/focused-n12-initial.dat",
+      "2",
+      "2",
+      ".62,.70,1",
+      "8",
+      "1"
+    ],
+    "exit_code": 1,
+    "seconds": 103.856092916
+  }
+]

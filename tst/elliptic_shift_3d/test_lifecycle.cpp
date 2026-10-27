@@ -20,15 +20,16 @@ int main(int argc, char **argv) {
   int status = 0;
   try {
     using namespace cubed_sphere;
+    const bool radial_stencils=argc>2?std::stoi(argv[2]):false;
     CompositeMesh mesh(.25, {.65, 1}, 2, 6, 2, 2);
     const auto parent = mesh.blocks[0];
-    CompositeDifference initial(mesh);
+    CompositeDifference initial(mesh,4,radial_stencils);
     std::vector<Real> field(initial.count, 0);
     for (size_t p = 0; p < initial.active.size(); ++p)
       field[initial.active[p]] = Polynomial(initial.geometry[p].x);
     mesh.RefineCartesian(0);
     Require(mesh.blocks.size() == 63 && mesh.revision == 1, "mixed-level leaf refinement");
-    CompositeDifference refined(mesh);
+    CompositeDifference refined(mesh,4,radial_stencils);
     Real transfer_error = 0;
     std::vector<Real> transferred(refined.count, 0);
     for (size_t p = 0; p < refined.active.size(); ++p) {
@@ -40,7 +41,7 @@ int main(int argc, char **argv) {
     }
     mesh.CoarsenCartesian(parent);
     Require(mesh.blocks.size() == 56 && mesh.revision == 2, "Cartesian coarsening revision");
-    CompositeDifference coarsened(mesh);
+    CompositeDifference coarsened(mesh,4,radial_stencils);
     for (const auto &point : coarsened.geometry) {
       Real value = 0;
       for (const auto &entry : refined.Interpolate(point.x, 6)) value += entry.weight*transferred[entry.point];
@@ -49,6 +50,8 @@ int main(int argc, char **argv) {
     Require(transfer_error < 2e-12, "polynomial refine/coarsen transfer");
     const std::string path = argc > 1 ? argv[1] : "composite-checkpoint-test.bin";
     CompositeSnapshot snapshot{refined.mesh, std::string(64, 'a'), .0005, 1e-11, 2, 22};
+    snapshot.radial_interface_stencils=radial_stencils;
+    snapshot.telegraph_width=.24;
     snapshot.fields.resize(22*refined.active.size()); snapshot.shift_warm_start.resize(3*refined.active.size());
     for (size_t p = 0; p < snapshot.fields.size(); ++p) snapshot.fields[p] = .01*(p%7419);
     for (size_t p = 0; p < snapshot.shift_warm_start.size(); ++p) snapshot.shift_warm_start[p] = -.001*(p%71);
@@ -56,8 +59,9 @@ int main(int argc, char **argv) {
     const auto loaded = CompositeCheckpoint::Read(path, snapshot.source_tag);
     Require(loaded.fields == snapshot.fields && loaded.shift_warm_start == snapshot.shift_warm_start
             && loaded.mesh.blocks.size() == 63 && loaded.mesh.radii == snapshot.mesh.radii
-            && loaded.mesh.revision == 1 && loaded.step == 2, "checkpoint exact payload");
-    CompositeDifference restored(loaded.mesh);
+            && loaded.mesh.revision == 1 && loaded.step == 2
+            && loaded.telegraph_width==snapshot.telegraph_width, "checkpoint exact payload");
+    CompositeDifference restored(loaded.mesh,4,loaded.radial_interface_stencils);
     Require(restored.active == refined.active && restored.halos.size() == refined.halos.size(),
             "checkpoint rebuild geometry/connectivity");
     ScriSurface boundary(refined,1);

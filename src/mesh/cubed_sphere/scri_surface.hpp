@@ -31,10 +31,13 @@ class ScriSurface {
   std::vector<int> base;
   std::vector<Real> values, beta;
   int components;
+  int radial_nodes;
 
-  explicit ScriSurface(const CompositeDifference &g,int fields)
-      :grid(g),base(g.mesh.blocks.size(),-1),components(fields) {
+  explicit ScriSurface(const CompositeDifference &g,int fields,int radial_points=6)
+      :grid(g),base(g.mesh.blocks.size(),-1),components(fields),radial_nodes(radial_points) {
     if(g.n<6)throw std::invalid_argument("regular tensor scri needs six nodes per block axis");
+    if(radial_nodes<6||radial_nodes>8||radial_nodes>g.n+1)
+      throw std::invalid_argument("scri radial reconstruction needs 6..8 points including endpoint");
     const int n=g.n;
     for(size_t m=0;m<g.mesh.blocks.size();++m){
       if(g.mesh.blocks[m].layer!=static_cast<int>(g.mesh.radii.size())-1)continue;
@@ -96,15 +99,16 @@ class ScriSurface {
 
  private:
   void Build(Row &row){
-    const int n=grid.n;int first[3]={n-5,std::clamp(row.j-2,0,n-6),std::clamp(row.k-2,0,n-6)};
-    const Real q[3]={1,(row.j+.5)/n,(row.k+.5)/n};Jet basis[3][6];
-    for(int a=0;a<3;++a)for(int i=0;i<6;++i){
-      const Real node=a==0&&i==5?1:Real(first[a]+i+.5)/n;basis[a][i]=Jet(1);
-      for(int j=0;j<6;++j)if(i!=j){const Real other=a==0&&j==5?1:Real(first[a]+j+.5)/n;
+    const int n=grid.n;int first[3]={n-(radial_nodes-1),std::clamp(row.j-2,0,n-6),std::clamp(row.k-2,0,n-6)};
+    const int width[3]={radial_nodes,6,6};
+    const Real q[3]={1,(row.j+.5)/n,(row.k+.5)/n};Jet basis[3][8];
+    for(int a=0;a<3;++a)for(int i=0;i<width[a];++i){
+      const Real node=a==0&&i==radial_nodes-1?1:Real(first[a]+i+.5)/n;basis[a][i]=Jet(1);
+      for(int j=0;j<width[a];++j)if(i!=j){const Real other=a==0&&j==radial_nodes-1?1:Real(first[a]+j+.5)/n;
         basis[a][i]=basis[a][i]*(Jet::Variable(q[a],a)-Jet(other))/Jet(node-other);}}
-    for(int k=0;k<6;++k)for(int j=0;j<6;++j)for(int i=0;i<6;++i){
+    for(int k=0;k<6;++k)for(int j=0;j<6;++j)for(int i=0;i<radial_nodes;++i){
       const Jet w=basis[0][i]*basis[1][j]*basis[2][k];Term term;
-      term.boundary=i==5;term.point=term.boundary?base[row.block]+first[1]+j+n*(first[2]+k)
+      term.boundary=i==radial_nodes-1;term.point=term.boundary?base[row.block]+first[1]+j+n*(first[2]+k)
         :grid.Index(row.block,first[0]+i,first[1]+j,first[2]+k);term.w=w.f;
       for(int a=0;a<3;++a)for(int A=0;A<3;++A){term.d[a]+=row.geometry.J[A][a]*w.d[A];
         for(int b=0;b<3;++b){term.dd[a][b]+=row.geometry.H[A][a][b]*w.d[A];

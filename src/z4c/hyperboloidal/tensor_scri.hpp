@@ -33,7 +33,8 @@ ScriDual<T> operator*(const ScriDual<T> &a, const ScriDual<T> &b) {
 }
 template <typename T> KOKKOS_INLINE_FUNCTION
 ScriDual<T> operator/(const ScriDual<T> &a, const ScriDual<T> &b) {
-  return {a.value/b.value, (a.derivative*b.value-a.value*b.derivative)/(b.value*b.value)};
+  const T ratio=a.value/b.value;
+  return {ratio,(a.derivative-ratio*b.derivative)/b.value};
 }
 
 template <typename T> struct TensorPole {
@@ -41,8 +42,10 @@ template <typename T> struct TensorPole {
   T lapse{};
 };
 
-// Algebraically identical to the COMPLETE combined pole terms in ConformalRHS
-// and UnfactoredReferenceGauge. Keeping this small first-jet evaluator allows AD
+// For stationary coordinate Omega, algebraically identical to the COMPLETE
+// combined pole terms in ConformalRHS and UnfactoredReferenceGauge. Independent
+// nonstationary normal data must not be passed as if this were that closure.
+// Keeping this small first-jet evaluator allows AD
 // through poles without differentiating unused Ricci/regular terms. Native value
 // and independent finite-difference derivative tests guard against divergence.
 template <typename T>
@@ -62,17 +65,20 @@ TensorPole<T> TensorPoleSources(const Z4cJet<T> &u, const OmegaJet<T> &o,
     inverse[j][i] = (g[p][r]*g[q][s]-g[p][s]*g[q][r])/det;
   }
   const T alpha = u.alpha.value, chi = u.chi.value;
-  T w{}, gradient2{}, contracted[3]{}, zup[3]{}, z[3]{}, aup[3][3]{};
-  for (int i = 0; i < 3; ++i) w -= u.beta.value[i]*o.gradient[i]/alpha;
+  const T lapse_normal=StationaryOmegaProductValue(u.beta.value,o.gradient);
+  T gradient2{}, contracted[3]{}, zup[3]{}, z[3]{}, aup[3][3]{},dlogchi[3]{};
+  for(int i=0;i<3;++i)dlogchi[i]=u.chi.d[i]/chi;
   for (int k = 0; k < 3; ++k)
   for (int i = 0; i < 3; ++i)
   for (int j = 0; j < 3; ++j) {
     for (int a = 0; a < 3; ++a) {
       const T dg = u.metric.dg[i][a][j]+u.metric.dg[j][a][i]-u.metric.dg[a][i][j];
       gamma[k][i][j] += T(.5)*inverse[k][a]*dg;
-      const T dbar = dg/chi-(g[a][j]*u.chi.d[i]+g[a][i]*u.chi.d[j]-g[i][j]*u.chi.d[a])/(chi*chi);
-      bar_gamma[k][i][j] += T(.5)*chi*inverse[k][a]*dbar;
     }
+    bar_gamma[k][i][j]=gamma[k][i][j]-T(.5)
+      *((k==i?dlogchi[j]:T(0))+(k==j?dlogchi[i]:T(0)));
+    for(int a=0;a<3;++a)
+      bar_gamma[k][i][j]+=T(.5)*g[i][j]*inverse[k][a]*dlogchi[a];
     contracted[k] += inverse[i][j]*gamma[k][i][j];
   }
   for (int i = 0; i < 3; ++i) zup[i] = (u.lambda.value[i]-contracted[i])/T(2);
@@ -85,10 +91,11 @@ TensorPole<T> TensorPoleSources(const Z4cJet<T> &u, const OmegaJet<T> &o,
   }
   const T K = u.trace.value+T(2)*u.theta.value;
   auto &s = out.geometry;
-  s.chi = T(2./3.)*alpha*chi*(K-T(3)*w);
+  s.chi = T(2./3.)*chi*(alpha*K-T(3)*lapse_normal);
   s.trace = alpha*(K*K/T(3)-T(3)*gradient2+kappa1*(T(1)-kappa2)*u.theta.value);
   s.theta = alpha*(K*K/T(3)-T(3)*gradient2
-      -(kappa1*(T(2)+kappa2)+(appendix_c ? T(0) : T(3)*w))*u.theta.value);
+      -kappa1*(T(2)+kappa2)*u.theta.value);
+  if(!appendix_c)s.theta-=T(3)*lapse_normal*u.theta.value;
   T tensor[3][3]{}, trace{};
   for (int i = 0; i < 3; ++i)
   for (int j = 0; j < 3; ++j) {
@@ -100,7 +107,7 @@ TensorPole<T> TensorPoleSources(const Z4cJet<T> &u, const OmegaJet<T> &o,
   for (int i = 0; i < 3; ++i) {
     s.lambda[i] = -alpha*(T(4./3.)*K+T(2)*kappa1)*zup[i];
     for (int j = 0; j < 3; ++j) {
-      s.a[i][j] = tensor[i][j]-g[i][j]*trace/T(3)+alpha*u.a.k[i][j]*(K-w);
+      s.a[i][j] = tensor[i][j]-g[i][j]*trace/T(3)+u.a.k[i][j]*(alpha*K-lapse_normal);
       s.lambda[i] -= T(2./3.)*alpha*inverse[i][j]*(T(2)*u.trace.d[j]+u.theta.d[j]);
       s.lambda[i] -= T(4)*alpha*aup[i][j]*o.gradient[j];
     }

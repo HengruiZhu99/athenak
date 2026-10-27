@@ -16,8 +16,8 @@ namespace multigrid {
 // assigning shell blocks fictitious Cartesian neighbors would be incorrect.
 class CompositePoisson {
  public:
-  explicit CompositePoisson(cubed_sphere::CompositeMesh mesh)
-      : grid_(mesh, 2) {
+  explicit CompositePoisson(cubed_sphere::CompositeMesh mesh,bool radial_stencils=false)
+      : grid_(mesh, 2,radial_stencils) {
     for (const auto &point : grid_.geometry) {
       Real diagonal = 0;
       for (int A = 0; A < 3; ++A)
@@ -26,7 +26,7 @@ class CompositePoisson {
     }
     if (mesh.cells >= 4 && mesh.cells%2 == 0) {
       mesh.cells /= 2;
-      coarse_ = std::make_unique<CompositePoisson>(std::move(mesh));
+      coarse_ = std::make_unique<CompositePoisson>(std::move(mesh),radial_stencils);
     } else FactorCoarse();
   }
   const cubed_sphere::CompositeDifference &Grid() const {return grid_;}

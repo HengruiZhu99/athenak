@@ -8,6 +8,21 @@
 namespace z4c {
 namespace hyperboloidal {
 
+// AF-regular support of the selected verified spherical telegrapher. The
+// coordinate radius is tied to the Minkowski reference, not a moving chart.
+template<typename T> struct TelegraphSupport {T value=T(1),radial_derivative=T(0);bool valid=true;};
+template<typename T> KOKKOS_INLINE_FUNCTION
+TelegraphSupport<T> ReferenceTelegraphSupport(T radius,T outer=T(.8),T width=T(.24)){
+  TelegraphSupport<T> out{};
+  out.valid=radius>=0&&outer>width&&width>0&&Kokkos::isfinite(radius+outer+width);
+  if(!out.valid)return out;
+  if(radius>=outer){out.value=0;return out;}
+  if(radius<=outer-width)return out;
+  const T y=(outer-radius)/width,a=Kokkos::pow(y,8),b=Kokkos::pow(1-y,8);
+  out.value=a/(a+b);out.radial_derivative=-8*Kokkos::pow(y*(1-y),7)/((a+b)*(a+b)*width);
+  return out;
+}
+
 // All components and derivatives are in the GLOBAL Cartesian reference chart.
 // A patch map transforms derivative directions before calling this interface.
 // The reference connection vanishes in this chart. Lambda never enters here.

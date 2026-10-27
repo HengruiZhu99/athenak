@@ -32,8 +32,7 @@ U Shift(const U &a,const double direction[3],double e) {
   }return b;
 }
 h::TensorPole<double> Native(const U &u,const double x[3],bool appendix) {
-  const auto o=Omega(x,u);auto parts=h::ConformalRHS(u,o,4.,-.99);
-  if(appendix)parts.pole.theta+=3*u.alpha.value*o.normal*u.theta.value;
+  const auto o=Omega(x,u);auto parts=h::ConformalRHS(u,o,4.,-.99,appendix);
   const h::CMCReference<double> ref{1,1};
   const auto gauge=h::UnfactoredReferenceGauge(ref,ref.At(x[0],x[1],x[2]),u,h::GaugeParameters<double>{1,0,1,0},false,true);
   if(!parts.valid||!gauge.valid)throw std::runtime_error("invalid native pole test");
@@ -82,7 +81,7 @@ int main(int argc,char **argv){
       auto u=h::SphericalJet(1.,q,d,dd,ref);const double beta=-std::sqrt(u.chi.value),v=beta+1;
       u.beta=h::RadialVector(beta,beta+1.5*u.alpha.value*q[2],1.5*((1+d[6])*q[2]+u.alpha.value*d[2]+u.alpha.value*q[2]),1.);
       const double x[3]={1,0,0},normal[3]={1,0,0};auto o=Omega(x,u);o.omega=0;
-      auto parts=h::ConformalRHS(u,o,4.,-.99);parts.pole.theta+=3*u.alpha.value*o.normal*u.theta.value;
+      auto parts=h::ConformalRHS(u,o,4.,-.99,true);
       auto pole=h::TensorPoleNormalJet(u,o,x,normal,4.,-.99,1.,1.);
       const auto limit=h::TensorScriLimit(parts.regular,pole,-1.);
       const auto gauge=h::UnfactoredReferenceGauge(ref,ref.At(1.,0.,0.),u,h::GaugeParameters<double>{1,0,1,0},false,true);

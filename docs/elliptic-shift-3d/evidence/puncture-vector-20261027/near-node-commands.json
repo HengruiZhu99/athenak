@@ -1,0 +1,77 @@
+[
+  {
+    "name": "near-node-physical-norm",
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_puncture_vector_tests",
+      "8",
+      "1.09",
+      "4",
+      "3",
+      "1",
+      "0",
+      "0"
+    ],
+    "exit_code": 1,
+    "seconds": 1.185784958
+  },
+  {
+    "name": "near-node-balanced-norm",
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_puncture_vector_tests",
+      "8",
+      "1.09",
+      "4",
+      "3",
+      "1",
+      "0",
+      ".5"
+    ],
+    "exit_code": 0,
+    "seconds": 2.693962458
+  },
+  {
+    "name": "aligned-continuous-source",
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_puncture_vector_tests",
+      "8",
+      "1.09",
+      "0",
+      "2",
+      "1",
+      "0",
+      ".5"
+    ],
+    "exit_code": 0,
+    "seconds": 2.65108225
+  },
+  {
+    "name": "aligned-weak-source-rejected",
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_puncture_vector_tests",
+      "8",
+      ".5",
+      "0",
+      "2",
+      "1",
+      "0",
+      ".5"
+    ],
+    "exit_code": 2,
+    "seconds": 0.39694762499999925
+  },
+  {
+    "name": "aligned-infinite-norm-rejected",
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_puncture_vector_tests",
+      "8",
+      "1.09",
+      "4",
+      "2",
+      "1",
+      "0",
+      ".5"
+    ],
+    "exit_code": 2,
+    "seconds": 0.3765298339999994
+  }
+]

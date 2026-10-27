@@ -4,6 +4,7 @@
 #define Z4C_HYPERBOLOIDAL_CONFORMAL_RHS_HPP_
 
 #include "z4c/hyperboloidal/conformal_constraints.hpp"
+#include "z4c/hyperboloidal/regular_penrose.hpp"
 
 namespace z4c {
 namespace hyperboloidal {
@@ -76,28 +77,31 @@ EvolvedConstraintResult<T> EvolvedConstraints(const Z4cJet<T> &u, const OmegaJet
   out.valid = u.chi.value > 0 && Kokkos::isfinite(u.chi.value);
   if (!out.valid) return out;
   const auto gt = Geometry(u.metric);
-  const auto b = PenroseMetric(u.metric, u.chi);
-  const auto gb = Geometry(b);
-  out.valid = gt.valid && gb.valid;
+  const auto penrose = RegularPenroseGeometry(u.metric, gt, u.chi);
+  ScalarJet<T> omega_jet{}; omega_jet.value = o.omega;
+  for (int i = 0; i < 3; ++i) {
+    omega_jet.d[i] = o.gradient[i];
+    for (int j = 0; j < 3; ++j) omega_jet.dd[i][j] = o.hessian[i][j];
+  }
+  const auto omega_derivatives = RegularPenroseHessian(u.metric, gt, u.chi, omega_jet);
+  out.valid = gt.valid && penrose.valid && omega_derivatives.valid;
   if (!out.valid) return out;
   out.z4 = Z4Constraints(u.metric, u.chi.value, u.a.k, u.lambda.value,
                          u.theta.value, o.omega);
   out.physical_trace = u.trace.value+2*u.theta.value;
-  T gradient2 = 0, lapomega = 0, norm_a = 0;
+  T gradient2 = 0, norm_a = 0;
   for (int i = 0; i < 3; ++i)
   for (int j = 0; j < 3; ++j) {
-    gradient2 += gb.inverse[i][j]*o.gradient[i]*o.gradient[j];
-    T hessian = o.hessian[i][j];
-    for (int k = 0; k < 3; ++k) hessian -= gb.connection[k][i][j]*o.gradient[k];
-    lapomega += gb.inverse[i][j]*hessian;
+    gradient2 += u.chi.value*gt.inverse[i][j]*o.gradient[i]*o.gradient[j];
     for (int k = 0; k < 3; ++k)
     for (int l = 0; l < 3; ++l) {
       norm_a += gt.inverse[i][k]*gt.inverse[j][l]*u.a.k[i][j]*u.a.k[k][l];
     }
   }
   out.null_residual = gradient2-o.normal*o.normal;
-  out.hamiltonian = o.omega*o.omega*(gb.scalar-norm_a)
-      +T(2./3.)*out.physical_trace*out.physical_trace+4*o.omega*lapomega-6*gradient2;
+  out.hamiltonian = o.omega*o.omega*(penrose.scalar-norm_a)
+      +T(2./3.)*out.physical_trace*out.physical_trace
+      +4*o.omega*omega_derivatives.laplacian-6*gradient2;
   for (int i = 0; i < 3; ++i) {
     T divergence = 0, contraction = 0;
     for (int j = 0; j < 3; ++j)
@@ -108,7 +112,7 @@ EvolvedConstraintResult<T> EvolvedConstraints(const Z4cJet<T> &u, const OmegaJet
                      +gt.connection[l][j][i]*u.a.k[k][l];
       }
       divergence += gt.inverse[j][k]*(derivative
-          -T(1.5)*u.a.k[k][i]*u.chi.d[j]/u.chi.value);
+          -T(1.5)*u.a.k[k][i]*penrose.gradient_ratio[j]);
       contraction += gt.inverse[j][k]*u.a.k[k][i]*o.gradient[j];
     }
     out.momentum[i] = o.omega*divergence-T(2./3.)*(u.trace.d[i]+2*u.theta.d[i])
@@ -117,7 +121,7 @@ EvolvedConstraintResult<T> EvolvedConstraints(const Z4cJet<T> &u, const OmegaJet
   }
   for (int i = 0; i < 3; ++i)
   for (int j = 0; j < 3; ++j) {
-    out.momentum_conformal_norm2 += gb.inverse[i][j]*out.momentum[i]*out.momentum[j];
+    out.momentum_conformal_norm2 += u.chi.value*gt.inverse[i][j]*out.momentum[i]*out.momentum[j];
   }
   out.momentum_physical_norm2 = o.omega*o.omega*out.momentum_conformal_norm2;
   out.valid = out.valid && out.z4.valid && Kokkos::isfinite(out.hamiltonian)
@@ -137,26 +141,37 @@ EvolvedConstraintResult<T> EvolvedConstraints(const Z4cJet<T> &u, const OmegaJet
 // can be imposed explicitly. Never replace Omega by a numerical floor.
 // The tensor-system Theta term -3*w*theta/Omega is retained (see derivation/test);
 // the later spherical stabilization in that paper makes a different choice.
+// appendix_c=true evaluates that already-disclosed selected Theta equation
+// directly; its callers must not add 3*alpha*w*theta afterward a second time.
 template <typename T>
 KOKKOS_INLINE_FUNCTION
 Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
-                          T kappa1, T kappa2) {
+                          T kappa1, T kappa2, bool appendix_c = false) {
   Z4cRHSParts<T> out{};
   out.valid = u.chi.value > 0 && u.alpha.value > 0
       && Kokkos::isfinite(u.chi.value) && Kokkos::isfinite(u.alpha.value);
   if (!out.valid) return out;
   const auto gt = Geometry(u.metric);
-  const auto b = PenroseMetric(u.metric, u.chi);
-  const auto gb = Geometry(b);
-  out.valid = gt.valid && gb.valid;
+  const auto penrose = RegularPenroseGeometry(u.metric, gt, u.chi);
+  ScalarJet<T> omega_jet{}; omega_jet.value = o.omega;
+  for (int i = 0; i < 3; ++i) {
+    omega_jet.d[i] = o.gradient[i];
+    for (int j = 0; j < 3; ++j) omega_jet.dd[i][j] = o.hessian[i][j];
+  }
+  const auto alpha_derivatives = RegularPenroseHessian(u.metric, gt, u.chi, u.alpha);
+  const auto omega_derivatives = RegularPenroseHessian(u.metric, gt, u.chi, omega_jet);
+  out.valid = gt.valid && penrose.valid && alpha_derivatives.valid && omega_derivatives.valid;
   if (!out.valid) return out;
   const T alpha = u.alpha.value, chi = u.chi.value, omega = o.omega;
-  const T p = u.trace.value, theta = u.theta.value, w = o.normal;
+  const T p = u.trace.value, theta = u.theta.value;
+  // A known stationary compactification can supply alpha*w directly without
+  // constructing an unrepresentable w. Explicit nonstationary normal data keep
+  // their original alpha*normal meaning. No normal or null diagnostic is reset.
+  const T alpha_w = LapseOmegaNormalProduct(alpha, o);
   const T physical_k = p+2*theta;
-  T divbeta = 0, lapalpha = 0, lapomega = 0, gradient2 = 0, cross = 0;
-  T hessalpha[3][3]{}, hessomega[3][3]{};
-  T z[3]{}, zup[3]{}, dz[3][3]{}, dzbar[3][3]{};
-  T aup[3][3]{}, aa[3][3]{}, norm_a = 0, divz = 0;
+  T divbeta = 0, gradient2 = 0, cross = 0;
+  T z[3]{}, zup[3]{}, dz[3][3]{};
+  T aup[3][3]{}, aa[3][3]{}, norm_a = 0, chi_divz = 0;
   for (int i = 0; i < 3; ++i) {
     divbeta += u.beta.d[i][i];
     zup[i] = T(0.5)*(u.lambda.value[i]-gt.contracted[i]);
@@ -171,15 +186,9 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
   }
   for (int i = 0; i < 3; ++i)
   for (int j = 0; j < 3; ++j) {
-    hessalpha[i][j] = u.alpha.dd[i][j];
-    hessomega[i][j] = o.hessian[i][j];
-    dzbar[i][j] = dz[i][j];
-    T dztilde = dz[i][j];
+    T chi_dztilde = chi*dz[i][j];
     for (int k = 0; k < 3; ++k) {
-      hessalpha[i][j] -= gb.connection[k][i][j]*u.alpha.d[k];
-      hessomega[i][j] -= gb.connection[k][i][j]*o.gradient[k];
-      dzbar[i][j] -= gb.connection[k][i][j]*z[k];
-      dztilde -= gt.connection[k][i][j]*z[k];
+      chi_dztilde -= gt.connection[k][i][j]*(chi*z[k]);
       for (int l = 0; l < 3; ++l) {
         aup[i][j] += gt.inverse[i][k]*gt.inverse[j][l]*u.a.k[k][l];
       }
@@ -187,22 +196,24 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
         aa[i][j] += gt.inverse[k][l]*u.a.k[i][k]*u.a.k[l][j];
       }
     }
-    divz += gt.inverse[i][j]*dztilde;
+    chi_divz += gt.inverse[i][j]*chi_dztilde;
     norm_a += gt.inverse[i][j]*aa[i][j];
-    lapalpha += gb.inverse[i][j]*hessalpha[i][j];
-    lapomega += gb.inverse[i][j]*hessomega[i][j];
-    gradient2 += gb.inverse[i][j]*o.gradient[i]*o.gradient[j];
-    cross += gb.inverse[i][j]*u.alpha.d[i]*o.gradient[j];
+    gradient2 += chi*gt.inverse[i][j]*o.gradient[i]*o.gradient[j];
+    cross += chi*gt.inverse[i][j]*u.alpha.d[i]*o.gradient[j];
   }
+  const auto z_derivatives = RegularPenroseCovectorDerivative(u.metric, gt, u.chi, z, dz);
+  if (!z_derivatives.valid) {out.valid = false; return out;}
   auto &r = out.regular;
   auto &s = out.pole;
   r.chi = -T(2./3.)*chi*divbeta;
-  s.chi = T(2./3.)*alpha*chi*(physical_k-3*w);
-  r.trace = omega*(alpha*norm_a-lapalpha)+3*cross+alpha*lapomega;
+  s.chi = T(2./3.)*chi*(alpha*physical_k-3*alpha_w);
+  r.trace = omega*(alpha*norm_a-alpha_derivatives.laplacian)
+      +3*cross+alpha*omega_derivatives.laplacian;
   s.trace = alpha*(physical_k*physical_k/3-3*gradient2+kappa1*(1-kappa2)*theta);
-  r.theta = omega*alpha*(gb.scalar-norm_a+2*chi*divz)/2+2*alpha*lapomega;
-  s.theta = alpha*(physical_k*physical_k/3-3*gradient2
-                  -(3*w+kappa1*(2+kappa2))*theta);
+  r.theta = omega*alpha*(penrose.scalar-norm_a+2*chi_divz)/2
+      +2*alpha*omega_derivatives.laplacian;
+  s.theta = alpha*(physical_k*physical_k/3-3*gradient2-kappa1*(2+kappa2)*theta)
+      -(appendix_c ? T(0) : 3*alpha_w*theta);
   for (int d = 0; d < 3; ++d) {
     r.chi += u.beta.value[d]*u.chi.d[d];
     r.trace += u.beta.value[d]*u.trace.d[d];
@@ -211,10 +222,11 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
   T tensor_regular[3][3]{}, tensor_pole[3][3]{}, tr = 0, ts = 0;
   for (int i = 0; i < 3; ++i)
   for (int j = 0; j < 3; ++j) {
-    tensor_regular[i][j] = chi*(-hessalpha[i][j]
-        +alpha*(gb.ricci[i][j]+dzbar[i][j]+dzbar[j][i]));
-    tensor_pole[i][j] = 2*alpha*chi*(hessomega[i][j]
-        +z[i]*o.gradient[j]+z[j]*o.gradient[i]);
+    tensor_regular[i][j] = -alpha_derivatives.chi_hessian[i][j]
+        +alpha*(penrose.chi_ricci[i][j]+z_derivatives.chi_derivative[i][j]
+                +z_derivatives.chi_derivative[j][i]);
+    tensor_pole[i][j] = 2*alpha*(omega_derivatives.chi_hessian[i][j]
+        +chi*(z[i]*o.gradient[j]+z[j]*o.gradient[i]));
     tr += gt.inverse[i][j]*tensor_regular[i][j];
     ts += gt.inverse[i][j]*tensor_pole[i][j];
   }
@@ -224,7 +236,7 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
     r.a[i][j] = tensor_regular[i][j]-u.metric.g[i][j]*tr/3
         -2*alpha*aa[i][j]-T(2./3.)*u.a.k[i][j]*divbeta;
     s.a[i][j] = tensor_pole[i][j]-u.metric.g[i][j]*ts/3
-        +alpha*u.a.k[i][j]*(physical_k-w);
+        +u.a.k[i][j]*(alpha*physical_k-alpha_w);
     for (int d = 0; d < 3; ++d) {
       r.metric[i][j] += u.beta.value[d]*u.metric.dg[d][i][j]
           +u.metric.g[d][j]*u.beta.d[i][d]+u.metric.g[i][d]*u.beta.d[j][d];
@@ -238,7 +250,7 @@ Z4cRHSParts<T> ConformalRHS(const Z4cJet<T> &u, const OmegaJet<T> &o,
     for (int j = 0; j < 3; ++j) {
       r.lambda[i] += u.beta.value[j]*u.lambda.d[j][i]
           -gt.contracted[j]*u.beta.d[j][i]
-          -2*aup[i][j]*u.alpha.d[j]-3*alpha*aup[i][j]*u.chi.d[j]/chi;
+          -2*aup[i][j]*u.alpha.d[j]-3*alpha*aup[i][j]*penrose.gradient_ratio[j];
       s.lambda[i] -= T(2./3.)*alpha*gt.inverse[i][j]
           *(2*u.trace.d[j]+u.theta.d[j])+4*alpha*aup[i][j]*o.gradient[j];
       for (int k = 0; k < 3; ++k) {

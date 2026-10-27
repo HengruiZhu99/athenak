@@ -34,8 +34,7 @@ Result Evaluate(long double pf,long double af1,long double ell0,long double gaug
   u.beta=h::RadialVector(beta,-r*Dx(beta),-Dx(beta)+r2*Dx(Dx(beta)),r);
   h::OmegaJet<T> o{};o.omega=x;o.gradient[0]=-r;for(int j=0;j<3;++j)o.hessian[j][j]=-1;
   h::SetStationaryOmegaNormal(u.alpha.value,u.beta.value,u.alpha.d,u.beta.d,o);
-  auto parts=h::ConformalRHS(u,o,T(4),T(-.99L));if(!parts.valid)throw std::runtime_error("Invalid series kernel");
-  parts.pole.theta+=3*alpha*o.normal*theta;
+  auto parts=h::ConformalRHS(u,o,T(4),T(-.99L),true);if(!parts.valid)throw std::runtime_error("Invalid series kernel");
   const auto con=h::EvolvedConstraints(u,o);if(!con.valid)throw std::runtime_error("Invalid series constraints");
   auto assemble=[](const T&R,const T&S){return R+DivX(S);};
   T chi_t=assemble(parts.regular.chi,parts.pole.chi);

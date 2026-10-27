@@ -9,8 +9,9 @@
 namespace z4c { namespace hyperboloidal {
 // Host adapter to the ACTUAL native Z4c field layout. This is deliberately
 // separate from the physics and mesh topology. It does not schedule tasks or
-// allocate a shell pack. The caller must reserve native B slots for the new
-// reference-vector flux, instead of simultaneously using a Gamma driver.
+// allocate a shell pack. Native B slots already hold the Cauchy telegraph lapse
+// covector. Composite mode reuses those slots for the selected reference-vector
+// flux and must bypass the Cauchy gauge RHS rather than run both formulations.
 // Mirrors preserve Kokkos view compatibility; the elliptic backend is host-only.
 class NativeCompositeFields {
  public:

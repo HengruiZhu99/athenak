@@ -5,6 +5,7 @@
 
 #include <limits>
 #include <Kokkos_Core.hpp>
+#include "z4c/hyperboloidal/stationary_omega_product.hpp"
 
 namespace z4c {
 namespace hyperboloidal {
@@ -24,7 +25,18 @@ template <typename T>
 struct OmegaJet {
   T omega, gradient[3], hessian[3][3];
   T normal, dnormal[3];  // w=n_bar(Omega), and its coordinate gradient
+  // Optional coordinate product N=alpha*w. Independent/nonstationary normal
+  // data keep the flag false unless their caller explicitly supplies N,D N.
+  // A finite product does not define the unit normal at alpha=0.
+  bool has_lapse_normal_product=false;
+  T lapse_normal_product{};
+  T d_lapse_normal_product[3]{};
 };
+template <typename T>
+KOKKOS_INLINE_FUNCTION
+T LapseOmegaNormalProduct(T alpha,const OmegaJet<T> &o) {
+  return o.has_lapse_normal_product?o.lapse_normal_product:alpha*o.normal;
+}
 template <typename T>
 struct SpatialGeometry {
   bool valid;
@@ -98,18 +110,18 @@ SpatialGeometry<T> Geometry(const MetricJet<T> &m) {
 
 // Complete the normal derivative for time-independent Omega. dbeta[d][i] is
 // partial_d beta^i. alpha must be positive. A time-dependent compactification
-// must supply normal and dnormal explicitly instead of using this helper.
+// must supply normal and dnormal explicitly instead of using this helper;
+// its optional product must also be supplied explicitly, never inferred.
 template <typename T>
 KOKKOS_INLINE_FUNCTION
 void SetStationaryOmegaNormal(T alpha, const T beta[3], const T dalpha[3],
                               const T dbeta[3][3], OmegaJet<T> &o) {
-  o.normal = 0;
-  for (int i = 0; i < 3; ++i) o.normal -= beta[i]*o.gradient[i]/alpha;
+  const auto product=StationaryOmegaProduct(beta,dbeta,o.gradient,o.hessian);
+  o.has_lapse_normal_product=true;o.lapse_normal_product=product.value;
+  for(int d=0;d<3;++d)o.d_lapse_normal_product[d]=product.d[d];
+  o.normal=product.value/alpha;
   for (int d = 0; d < 3; ++d) {
-    o.dnormal[d] = -o.normal*dalpha[d]/alpha;
-    for (int i = 0; i < 3; ++i) {
-      o.dnormal[d] -= (dbeta[d][i]*o.gradient[i]+beta[i]*o.hessian[d][i])/alpha;
-    }
+    o.dnormal[d]=(product.d[d]-o.normal*dalpha[d])/alpha;
   }
 }
 

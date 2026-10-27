@@ -27,11 +27,12 @@ class CompositeDifference {
   std::vector<Real> volumes;
   std::vector<Row> halos;
   std::vector<Row> extrapolated_halos;
+  bool radial_interface_stencils = false;
 
-  CompositeDifference(CompositeMesh descriptor, int derivative_order = 4)
+  CompositeDifference(CompositeMesh descriptor, int derivative_order = 4,bool radial_stencils=false)
       : mesh(std::move(descriptor)), n(mesh.cells), ng(mesh.ghosts),
         padded(n+2*ng), count(static_cast<int>(mesh.blocks.size())*padded*padded*padded),
-        order(derivative_order) {
+        order(derivative_order),radial_interface_stencils(radial_stencils) {
     if ((order != 2 && order != 4) || ng < order/2 || n < order)
       throw std::invalid_argument("composite derivative order/halo contract");
     for (int m = 0; m < static_cast<int>(mesh.blocks.size()); ++m)
@@ -55,6 +56,8 @@ class CompositeDifference {
     const int owner = mesh.Owner(x);
     if (owner < 0) throw std::runtime_error("interpolation outside scri");
     Real q[3]; mesh.Inverse(owner, x, q);
+    if(radial_interface_stencils&&mesh.blocks[owner].face>=0)
+      return InterpolateShellRadius(owner,x,q,width);
     std::vector<Entry> entries;
     int first[3];
     Real w[3][6]{};
@@ -75,6 +78,13 @@ class CompositeDifference {
         entries.push_back({Index(owner, first[0]+i, first[1]+j, first[2]+k),
                            w[0][i]*w[1][j]*w[2][k]});
     return entries;
+  }
+  // A radial shell seam is an interior interpolation point, not an artificial
+  // boundary of a one-sided donor stencil. Keep Cartesian field components and
+  // use physical radius along each angular donor line, including transition-map
+  // radius dependence. Every donor is an active cell; no ghost cycles enter.
+  void SetRadialInterfaceStencils(bool enabled){
+    if(enabled==radial_interface_stencils)return;radial_interface_stencils=enabled;BuildHalos();
   }
   void Fill(std::vector<Real> &field, int components,
       const std::function<Real(int, const std::array<Real, 3> &)> &boundary = {}) const {
@@ -191,7 +201,35 @@ class CompositeDifference {
   }
 
  private:
+  std::vector<Entry> InterpolateShellRadius(int owner,const Real x[3],const Real local[3],int width) const {
+    const auto &block=mesh.blocks[owner];width=std::min(width,n);
+    std::vector<int> chain;
+    for(size_t m=0;m<mesh.blocks.size();++m){const auto &b=mesh.blocks[m];
+      if(b.face==block.face&&b.lo[1]==block.lo[1]&&b.hi[1]==block.hi[1]&&b.lo[2]==block.lo[2]&&b.hi[2]==block.hi[2])chain.push_back(m);}
+    const Real radius=std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+    int first[2];Real weights[2][6]{};
+    for(int a=0;a<2;++a){Real t=n*local[a+1]-.5;first[a]=std::clamp(int(std::floor(t))-width/2+1,0,n-width);
+      for(int i=0;i<width;++i){weights[a][i]=1;for(int j=0;j<width;++j)if(i!=j)weights[a][i]*=(t-first[a]-j)/Real(i-j);}}
+    std::vector<Entry> out;
+    struct Node{Real radius;int point;};
+    for(int k=0;k<width;++k)for(int j=0;j<width;++j){
+      const Real u=block.lo[1]+(first[0]+j+.5)/n*(block.hi[1]-block.lo[1]);
+      const Real v=block.lo[2]+(first[1]+k+.5)/n*(block.hi[2]-block.lo[2]);
+      std::vector<Node> nodes;
+      for(int m:chain){const auto &b=mesh.blocks[m];const Real lower=b.layer==0?mesh.half_width*std::sqrt(1+u*u+v*v):mesh.radii[b.layer-1];
+        const Real upper=mesh.radii[b.layer];
+        for(int i=0;i<n;++i){const Real s=b.lo[0]+(i+.5)/n*(b.hi[0]-b.lo[0]);nodes.push_back({lower+s*(upper-lower),Index(m,i,first[0]+j,first[1]+k)});}}
+      std::sort(nodes.begin(),nodes.end(),[](const Node&a,const Node&b){return a.radius<b.radius;});
+      auto pos=std::lower_bound(nodes.begin(),nodes.end(),radius,[](const Node&a,Real r){return a.radius<r;});
+      const int begin=std::clamp(int(pos-nodes.begin())-width/2,0,int(nodes.size())-width);
+      for(int i=0;i<width;++i){Real weight=weights[0][j]*weights[1][k];for(int b=0;b<width;++b)if(i!=b)
+          weight*=(radius-nodes[begin+b].radius)/(nodes[begin+i].radius-nodes[begin+b].radius);
+        if(std::abs(weight)>1e-18)out.push_back({nodes[begin+i].point,weight});}
+    }
+    return out;
+  }
   void BuildHalos() {
+    halos.clear();extrapolated_halos.clear();
     for (int m = 0; m < static_cast<int>(mesh.blocks.size()); ++m)
     for (int k = -ng; k < n+ng; ++k)
     for (int j = -ng; j < n+ng; ++j)

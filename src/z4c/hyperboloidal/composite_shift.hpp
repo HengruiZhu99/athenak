@@ -4,12 +4,30 @@
 
 #include <array>
 #include <chrono>
+#include <limits>
 #include "multigrid/composite_poisson.hpp"
 #include "multigrid/flexible_gmres.hpp"
 #include "z4c/hyperboloidal/elliptic_shift.hpp"
+#include "z4c/hyperboloidal/log_volume_norm.hpp"
 
 namespace z4c {
 namespace hyperboloidal {
+
+// Optional algebraic controls, never changes to the physical operator or gauge.
+// A bounded column transform beta=S y is applied by reconstruction BEFORE the
+// original discrete stencil. This avoids separately differencing singular
+// continuum conjugation terms. Physical residuals are always recomputed.
+struct ShiftSolveControl {
+  std::vector<Real> column_scale;
+  Real conformal_norm_fraction=.5;
+  Real maximum_residual_tolerance=1e-7;
+};
+struct ShiftSolveReport : multigrid::KrylovReport {
+  Real physical_residual_rms=0,conformal_residual_rms=0,residual_max=0;
+  Real physical_residual_l2=0,physical_volume=0;
+  Real physical_log_volume=0,physical_log_residual_l2=0;
+  bool physical_integrals_representable=true;
+};
 
 // Stage-owned frozen geometry: setting this does not modify evolved fields or
 // project algebraic/differential constraints. Caller rebuilds after any regrid.
@@ -19,24 +37,31 @@ class CompositeShiftStage {
   cubed_sphere::CompositeDifference grid;
   std::vector<MetricJet<Real>> metric;
   std::vector<SpatialGeometry<Real>> geometry;
-  std::vector<Real> norm_volume;
+  // Normalized quadrature weights; the physical measure is retained in logs.
+  std::vector<Real> norm_volume,log_norm_volume;
+  Real log_physical_volume=0;
+  std::vector<Real> conformal_volume;
   multigrid::CompositePoisson preconditioner;
 
-  explicit CompositeShiftStage(cubed_sphere::CompositeMesh mesh, int order = 4)
-      : grid(mesh, order), preconditioner(std::move(mesh)) {}
+  explicit CompositeShiftStage(cubed_sphere::CompositeMesh mesh, int order = 4,bool radial_stencils=false)
+      : grid(mesh, order,radial_stencils), preconditioner(std::move(mesh),radial_stencils) {}
 
   void SetGeometry(const std::vector<MetricJet<Real>> &g, const std::vector<Real> &chi = {}) {
     if (g.size() != grid.active.size()) throw std::invalid_argument("stage metric shape");
     if (!chi.empty() && chi.size() != g.size()) throw std::invalid_argument("stage chi shape");
-    metric = g; geometry.resize(g.size()); norm_volume.resize(g.size());
+    metric = g; geometry.resize(g.size()); norm_volume.resize(g.size());conformal_volume.resize(g.size());
+    log_norm_volume.clear();
     for (size_t p = 0; p < g.size(); ++p) {
       geometry[p] = Geometry(g[p]);
       if (!geometry[p].valid) throw std::runtime_error("invalid frozen shift geometry");
       const Real conformal_chi = chi.empty() ? 1 : chi[p];
       if (!(conformal_chi > 0) || !std::isfinite(conformal_chi))
         throw std::runtime_error("invalid conformal-volume coefficient");
-      norm_volume[p] = grid.volumes[p]*std::sqrt(geometry[p].determinant)/std::pow(conformal_chi, 1.5);
+      conformal_volume[p]=grid.volumes[p]*std::sqrt(geometry[p].determinant);
+      log_norm_volume.push_back(std::log(conformal_volume[p])-1.5*std::log(conformal_chi));
     }
+    log_physical_volume=LogSumPositive(log_norm_volume);
+    for(size_t p=0;p<g.size();++p)norm_volume[p]=std::exp(log_norm_volume[p]-log_physical_volume);
   }
   void Apply(const multigrid::Vector &beta, multigrid::Vector &out,
               const Boundary &boundary = {}) const {
@@ -66,33 +91,63 @@ class CompositeShiftStage {
   double Dot(const multigrid::Vector &a, const multigrid::Vector &b) const {
     if (a.size() != 3*grid.active.size() || b.size() != a.size())
       throw std::invalid_argument("vector norm shape");
-    double result = 0, volume = 0;
-    for (size_t p = 0; p < grid.active.size(); ++p) {
-      for (int v = 0; v < 3; ++v) result += norm_volume[p]*a[3*p+v]*b[3*p+v];
-      volume += norm_volume[p];
-    }
-    return result/volume;
+    return LogWeightedDot(a,b,log_norm_volume,log_physical_volume);
   }
   // Source means the ORIGINAL equation L_g beta = source. Inhomogeneous vector
   // boundary data enter the affine ghost lift; no potential boundary is assumed.
-  multigrid::KrylovReport Solve(const multigrid::Vector &source,
+  ShiftSolveReport Solve(const multigrid::Vector &source,
       const Boundary &boundary, multigrid::Vector &beta, double atol = 1e-10,
-      double rtol = 1e-10, int max_iterations = 160) const {
+      double rtol = 1e-10, int max_iterations = 160,const ShiftSolveControl &control={}) const {
+    const Real mix=control.conformal_norm_fraction;
+    if(beta.size()!=source.size())throw std::invalid_argument("shift solution/source vector shape");
+    if(!(mix>=0&&mix<=1)||!std::isfinite(mix)||control.maximum_residual_tolerance<0
+        ||!std::isfinite(control.maximum_residual_tolerance))throw std::invalid_argument("shift norm controls");
+    const bool scaled=!control.column_scale.empty();
+    if(scaled&&control.column_scale.size()!=grid.active.size())throw std::invalid_argument("shift column scale shape");
+    for(Real s:control.column_scale)if(!std::isfinite(s)||s<Real(.25)||s>Real(4))
+      throw std::invalid_argument("shift equilibration must remain in [1/4,4]");
+    auto conformal_dot=[&](const auto &a,const auto &b){Real sum=0,volume=0;
+      for(size_t p=0;p<grid.active.size();++p){for(int v=0;v<3;++v)sum+=conformal_volume[p]*a[3*p+v]*b[3*p+v];volume+=conformal_volume[p];}return sum/volume;};
+    auto solver_dot=[&](const auto &a,const auto &b){return mix==0?Dot(a,b):(1-mix)*Dot(a,b)+mix*conformal_dot(a,b);};
     multigrid::Vector affine, zero(source.size(), 0), rhs(source.size());
     Apply(zero, affine, boundary);
     for (size_t p = 0; p < rhs.size(); ++p) rhs[p] = -source[p]-affine[p];
-    const auto report = multigrid::FlexibleGMRES(
-        [&](const auto &a, auto &b) {Apply(a, b);},
+    auto y=beta;if(scaled)for(size_t p=0;p<grid.active.size();++p)for(int v=0;v<3;++v)y[3*p+v]/=control.column_scale[p];
+    const Real target=std::max(atol,rtol*std::sqrt(Dot(source,source)));
+    Real lower_bound=1;
+    if(mix>0){Real vc=0;for(Real w:conformal_volume)vc+=w;
+      for(size_t p=0;p<norm_volume.size();++p){
+        const Real ratio=std::exp(std::min(Real(0),std::log(conformal_volume[p])-std::log(vc)
+            -log_norm_volume[p]+log_physical_volume));
+        lower_bound=std::min(lower_bound,(1-mix)+mix*ratio);}}
+    if(!(lower_bound>0))throw std::runtime_error("shift solver norm loses physical residual control");
+    const auto krylov = multigrid::FlexibleGMRES(
+        [&](const auto &a, auto &b) {if(!scaled){Apply(a,b);return;}auto physical=a;
+          for(size_t p=0;p<grid.active.size();++p)for(int v=0;v<3;++v)physical[3*p+v]*=control.column_scale[p];Apply(physical,b);},
         [&](const auto &a, auto &b) {
           b.resize(a.size());
           for (int v = 0; v < 3; ++v) {
             multigrid::Vector scalar(grid.active.size());
             for (size_t p = 0; p < scalar.size(); ++p) scalar[p] = a[3*p+v];
             const auto correction = preconditioner.Cycle(scalar);
-            for (size_t p = 0; p < scalar.size(); ++p) b[3*p+v] = correction[p];
+            for (size_t p = 0; p < scalar.size(); ++p) b[3*p+v] = correction[p]/(scaled?control.column_scale[p]:1);
           }
-        }, [&](const auto &a, const auto &b) {return Dot(a, b);},
-        rhs, beta, std::max(atol, rtol*std::sqrt(Dot(source, source))), 0., max_iterations);
+        }, solver_dot,rhs,y,target*std::sqrt(lower_bound),0.,max_iterations);
+    beta=y;if(scaled)for(size_t p=0;p<grid.active.size();++p)for(int v=0;v<3;++v)beta[3*p+v]*=control.column_scale[p];
+    ShiftSolveReport report;static_cast<multigrid::KrylovReport&>(report)=krylov;
+    multigrid::Vector applied,residual(source.size());Apply(beta,applied,boundary);++report.applications;
+    for(size_t p=0;p<source.size();++p){residual[p]=-source[p]-applied[p];report.residual_max=std::max(report.residual_max,std::abs(residual[p]));}
+    report.physical_residual_rms=std::sqrt(Dot(residual,residual));report.conformal_residual_rms=std::sqrt(conformal_dot(residual,residual));
+    report.physical_log_volume=log_physical_volume;
+    report.physical_log_residual_l2=report.physical_residual_rms>0?
+        std::log(report.physical_residual_rms)+.5*log_physical_volume:-std::numeric_limits<Real>::infinity();
+    const Real log_max=std::log(std::numeric_limits<Real>::max());
+    report.physical_integrals_representable=log_physical_volume<=log_max&&report.physical_log_residual_l2<=log_max;
+    report.physical_volume=log_physical_volume<=log_max?std::exp(log_physical_volume):std::numeric_limits<Real>::infinity();
+    report.physical_residual_l2=report.physical_log_residual_l2<=log_max?
+        std::exp(report.physical_log_residual_l2):std::numeric_limits<Real>::infinity();
+    report.converged=report.converged&&report.physical_residual_rms<=target
+      &&(!(control.maximum_residual_tolerance>0)||report.residual_max<=control.maximum_residual_tolerance);
     return report;
   }
 };

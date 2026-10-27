@@ -1,0 +1,50 @@
+[
+  {
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_log_volume_norm_tests"
+    ],
+    "exit": 0,
+    "seconds": 0.06454579199999999
+  },
+  {
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_puncture_vector_tests",
+      "8",
+      "1.09",
+      "4",
+      "3",
+      "1",
+      "0",
+      ".5"
+    ],
+    "exit": 0,
+    "seconds": 3.4852137499999998
+  },
+  {
+    "command": [
+      "build-shift-3d/elliptic_shift_3d_puncture_vector_tests",
+      "8",
+      "1.09",
+      "2",
+      "1",
+      "1",
+      "1",
+      ".5"
+    ],
+    "exit": 0,
+    "seconds": 3.0432026669999996
+  },
+  {
+    "command": [
+      "ctest",
+      "--test-dir",
+      "build-shift-3d",
+      "-R",
+      "elliptic_shift_3d",
+      "--output-on-failure",
+      "-j1"
+    ],
+    "exit": 0,
+    "seconds": 7.626904000000001
+  }
+]

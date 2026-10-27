@@ -1,3 +1,71 @@
+# Continuation checkpoint: radial-first puncture audit, 2026-10-27
+
+The first scientific milestone remains **incomplete**. The global CPU vector
+FGMRES/multigrid backend converges for the tested full variable-metric operators;
+the native AthenaK pack/task/shell evolution is not wired. The following
+supersedes older “current” paragraphs below; historical failure evidence remains.
+
+- The latest bounded component run passes **20/20 CTests**, including tensor
+  operator/scri/radial comparisons, mixed-grid lifecycle, stage-register adapter,
+  positive-chart arithmetic, puncture-position abstraction, log-volume norms,
+  and the selected telegrapher support. Four additional independent spherical
+  test drivers pass. This is component verification, not a collapse evolution.
+- Regular Penrose source combinations and cached `alpha*w` preserve the full
+  metric equations without fixed puncture powers.384 off-constraint cases agree
+  with frozen legacy equations below9e-16; tiny-lapse fixtures now remain finite.
+  See [the derivation](regular-source-arithmetic.md) and
+  [raw tests](evidence/regular-kernel-20261027/commands.json).
+- A physical-volume-only RMS stopping rule admitted a residual maximum40.56
+  near a grid-offset puncture. Balanced physical/conformal norms and independent
+  maximum checks now reject that false success. The repaired test converges
+  with maximum1.48e-9; its unnormalized L2~713 remains disclosed. Finite tiny chi
+  is handled in logarithmic measures, with no floor or removed cell. A zero-chi
+  collocated endpoint still needs an independent weak/measure treatment.
+- Direct Cartesian beta retains constant and anisotropic linear modes. Tested
+  noninteger-power translated cases converge in the original full equation;
+  bounded column scaling gave no iteration advantage. These are manufactured
+  elliptic checks, not moving-black-hole evolutions.
+- Three exponent-independent positive-storage N8 pilots through t=.0002 all
+  fail: H RMS3.353/direct,3.639/log,24.348/square. Full-cell shift profile RMS
+  differences from the matched short radial control are.03369,.03182,.03578.
+  Their checkpoints restart bitwise. The compared taper is the historical.08
+  control, not the verified long-run configuration. Raw angular scatter and
+  all point/region errors remain in
+  [the comparison](evidence/positive-radial-pilot-20261027/comparison-n2049/README.md).
+- Audit of the completed original n4097 run found the selected taper width is
+  **.24**, not the driver default.08 previously used here. Lapse sources and
+  tau=.02,kappa=.005,nu=1 agree. The shared 3D support now matches the independent
+  radial support; checkpointv9 stores the width and versions2..8 retain.08.
+  The corrected N8 log pilot still fails: H/M3.63880/.140161, pole3.93105e-6
+  versus unchanged1e-7. Shift residual maximum4.38e-10 and bitwise restart pass.
+  Full-field comparison and actual commands are under
+  `evidence/selected-taper-pilot-20261027/`.
+- Finer Cartesian core alone did not fix direct-field derivatives:41984cells
+  at t0 give H RMS7.01, with maximum14.27 at r=.01353. Its initial scri pole
+  7.29e-8 passes only that individual condition. Do not call this an accepted
+  nonlinear run.
+- A same-discrete-variation prototype is **not adopted**: on actual wormhole
+  data it worsened the original compact residual. Replacing only its sampled
+  first beta jets with independent exact jets reduces the defect to roundoff,
+  identifying transition first-derivative construction as a concrete cause.
+  No physical RHS or background residual is subtracted.
+
+The verified spherical snapshots at t1/5/10 are copied with read-only-original
+hash provenance. Their changing, radius-dependent slopes are diagnostics, not
+universal powers: at t10 the innermost sampled band is still near chi~r4 and
+alpha~r2, while another resolved band is near chi~r2, alpha~r^.70. The narrow
+flux feature at r~4e-7 is far below current3D cells. The original1D run's spatial
+acceptance passed, but its recorded overall goal remains incomplete pending
+other controls. Original paused and active jobs were never signaled or changed.
+
+Remaining work includes accurate all-region matched radial reproduction,
+endpoint/angular treatment compatible with evolving regularity, coupled collapse
+validation, and native task/shell/AMR/restart/distributed-device integration.
+These are unfinished numerical and engineering work, not a proven mathematical
+incompatibility. No remote allocation, GPU job, push or external PR was started.
+
+---
+
 # Implementation and validation status, 2026-10-27
 
 **Current wormhole continuation:** commit `62170e4bf` implements the selected
