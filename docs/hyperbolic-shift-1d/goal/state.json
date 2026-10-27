@@ -1,96 +1,340 @@
 {
-  "updated_utc": "2026-10-27T16:49:19.202996+00:00",
+  "updated_utc": "2026-10-27T17:30:56.737713+00:00",
   "goal_status": "active",
   "turn_classification": "progress",
   "target_t_over_M": 100,
   "target_coordinate_t": 33.333333333333336,
-  "completed": "Three grids N257/513/1025 through t=1; separate factor-four timestep check; diagnosed failed duration extensions; rejected b=.1 speed candidate; report updated",
-  "failure_diagnosis": "N513 original driver loses metric positivity near r=.09365 at t~2.727 despite bounded scri residues and small exterior mass error. A b=.1 Omega^2 sqrt(chi) speed addition does not cure the failure.",
-  "next_step": "Derive and test a lapse-adapted shift background source, motivated by the original leading AF slope equation b1_dot=b1^2-1-2 xi_beta (b1+1), which restores b1=-1 even for collapsed lapse. Recheck scri pole limit and compatible D trace; unchanged telegrapher lapse. Gate on regular-center tests before matched puncture comparisons.",
+  "latest_user_direction": "Stay close to the moving-puncture Gamma driver in the bulk; adapt only as needed for exact algebraic scri closure.",
+  "completed": "Implemented configurable constant bulk Gamma coefficient, removed bulk restoring force, retained prescribed Minkowski source and outer gauge collar. Identified and repaired fast shift-wave inner-stencil instability. Regular pulse spatial order 1.925 and temporal order 4.004. Three puncture grids complete 0.6M with mixed profile order 3.691. N257 completes 24M, N513 completes 9M.",
+  "failure_diagnosis": "Earlier inner-source and metric-connection controls fail before 18M. New unsuppressed Gamma wave fails with positive-only shift extrapolation at 0.4484M; halving dt leaves failure unchanged. Odd extension of beta,D removes that short-time instability. At 24M the corrected coarse run still has growing interior errors: g_min=.459 at first positive node, H_interior_max=111.57. Exterior mass/constraints remain much better controlled; no 100M certificate.",
+  "next_steps": [
+    "Keep the user-requested bulk Gamma-driver direction and unchanged telegrapher lapse. Do not switch to log-metric variables without a new diagnosed need.",
+    "Continue verified N513 t=3 parent in bounded segments toward t=8 for a matched 24M comparison; investigate whether the late interior metric deterioration decreases or moves with resolution.",
+    "Extend N1025 from its verified t=.2 checkpoint toward common t=1 (bounded segments if needed), then t=3. Three-grid long-duration spatial and separate puncture temporal studies remain required.",
+    "Only after these gates, extend surviving qualified trajectories toward coordinate 100/3 (100M), using aligned targets and immutable continuation inputs."
+  ],
   "active_processes": [],
   "do_not_repeat": [
-    "Do not relabel the failed duration trials as survivors",
-    "Do not mark 100M complete from the three-grid t=1 evidence",
-    "Do not resume elliptic historical jobs or its paused monitor"
+    "Do not restart failed runs or relabel them as survivors.",
+    "Do not resume paused elliptic monitor or historical experiments.",
+    "Do not claim 24M single-grid survival is 100M stability or convergence.",
+    "Do not compare unequal-time coordinate profiles as a refinement test."
   ],
   "runs": [
     {
-      "case": "duration-probe-v1/n1025-cfl05",
+      "case": "lapse-adapted-source-v1/equilibrium-n65",
       "status": "completed",
       "t": 1.0,
-      "sources_verified": true,
-      "error": null
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
     },
     {
-      "case": "duration-probe-v1/n257",
+      "case": "lapse-adapted-source-v1/pulse-n129",
       "status": "completed",
       "t": 1.0,
-      "sources_verified": true,
-      "error": null
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
     },
     {
-      "case": "duration-probe-v1/n257-cfl05",
+      "case": "lapse-adapted-source-v1/pulse-n257",
       "status": "completed",
       "t": 1.0,
-      "sources_verified": true,
-      "error": null
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
     },
     {
-      "case": "duration-probe-v1/n257-t3",
+      "case": "lapse-adapted-source-v1/pulse-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "lapse-adapted-source-v1/puncture-n257",
       "status": "failed",
-      "t": 2.825,
-      "sources_verified": true,
-      "error": "Scri numerator guard"
+      "t": 0.17500000000000002,
+      "error": "Scri numerator guard",
+      "continuation": false,
+      "sources_verified": true
     },
     {
-      "case": "duration-probe-v1/n513-cfl05",
+      "case": "lapse-inner-source-v1/equilibrium-n65",
       "status": "completed",
       "t": 1.0,
-      "sources_verified": true,
-      "error": null
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
     },
     {
-      "case": "duration-probe-v1/n513-t3",
+      "case": "lapse-inner-source-v1/n257-t10",
       "status": "failed",
-      "t": 2.726953125,
-      "sources_verified": true,
-      "error": "Invalid AF stage"
+      "t": 5.3609375,
+      "error": "Invalid AF stage: node 86, r=0.0033200524386059558, g=-0.00095879742788373967",
+      "continuation": true,
+      "sources_verified": true
     },
     {
-      "case": "inner-shift-v1/pulse-n129",
+      "case": "lapse-inner-source-v1/n257-t5",
       "status": "completed",
-      "t": 1.0,
-      "sources_verified": true,
-      "error": null
+      "t": 5.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
     },
     {
-      "case": "inner-shift-v1/pulse-n257",
-      "status": "completed",
-      "t": 1.0,
-      "sources_verified": true,
-      "error": null
-    },
-    {
-      "case": "inner-shift-v1/pulse-n65",
-      "status": "completed",
-      "t": 1.0,
-      "sources_verified": true,
-      "error": null
-    },
-    {
-      "case": "inner-shift-v1/puncture-n257",
+      "case": "lapse-inner-source-v1/n513-t10",
       "status": "failed",
-      "t": 2.8078125000000003,
-      "sources_verified": true,
-      "error": "Invalid AF stage: node 96, r=0.067154569629860245, g=-3.3901587491058649e-05"
+      "t": 5.6947265625000005,
+      "error": "Invalid AF stage: node 180, r=0.011556287627501473, g=-0.00016396038288912784",
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "lapse-inner-source-v1/n513-t5",
+      "status": "completed",
+      "t": 5.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "lapse-inner-source-v1/pulse-n129",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "lapse-inner-source-v1/pulse-n257",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "lapse-inner-source-v1/pulse-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "lapse-inner-source-v1/puncture-n257",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "lapse-inner-source-v1/puncture-n513",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "metric-driver-v1/equilibrium-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "metric-driver-v1/n257-t6",
+      "status": "failed",
+      "t": 5.487109375,
+      "error": "Invalid AF stage: node 86, r=0.0033200524386059558, g=-5.3091181200004556e-05",
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "metric-driver-v1/pulse-n129",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "metric-driver-v1/pulse-n257",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "metric-driver-v1/pulse-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "metric-driver-v1/puncture-n257",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-v1/equilibrium-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-v1/pulse-n129",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-v1/pulse-n257",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-v1/pulse-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-v1/puncture-n257",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-v1/puncture-n513",
+      "status": "failed",
+      "t": 0.149462890625,
+      "error": "Invalid AF stage: node 3, r=0.005859375, g=-0.17343350401714863",
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-v1/puncture-n513-half-dt",
+      "status": "failed",
+      "t": 0.14948730468750002,
+      "error": "Invalid AF stage: node 3, r=0.005859375, g=-0.02079000213417137",
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n257-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n257-t8",
+      "status": "completed",
+      "t": 8.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n513-t1",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n513-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/puncture-n1025",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/puncture-n257",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/puncture-n513",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-time-v1/base",
+      "status": "completed",
+      "t": 0.15,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-time-v1/half",
+      "status": "completed",
+      "t": 0.15,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-time-v1/quarter",
+      "status": "completed",
+      "t": 0.15,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
     }
   ],
   "checks": {
-    "ctest_groups_passed": 4,
-    "latex_pages": 10,
+    "ctest_groups_passed": 8,
+    "exact_scalar_corners_verified": true,
+    "restart_two_generations_bitwise": true,
+    "source_checkpoint_parent_hashes_verified": true,
+    "latex_pages": 16,
     "latex_warnings": 0,
-    "source_hashes_verified": true,
-    "visual_review": "All-page contact sheet; full pages 7,8,9 and both new plot PNGs"
+    "desktop_compile": "success",
+    "visual_review": "Source plots inspected; new Gamma plots checked and label sizes increased; changed PDF pages 12-16 rendered and inspected."
   },
-  "manuscript_changes": "Added measured duration probes and rejected candidate with explicit failure times, mass/exterior data, low self-convergence order, and next hypothesis. Existing equations retained; optional speed coefficient and AF slope equation newly derived. Scientific updates explicitly authorized by the research goal."
+  "manuscript_changes": "Added source-control failures, metric-driver control, verified continuation machinery, user-requested bulk Gamma formulation, scalar degeneracy and inner-stencil audits, short spatial/temporal refinement, and 24M/9M outcomes. Original physical equations retained. New equations/results are explicitly authorized research updates."
 }

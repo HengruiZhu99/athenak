@@ -22,6 +22,18 @@ add_test(NAME hyperbolic_shift_live_metric_AF_coefficients
 add_test(NAME hyperbolic_shift_inner_speed_and_diagnostic_invariance
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_inner_shift.py
     --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/hyperbolic-inner-shift-audit.json)
+add_test(NAME hyperbolic_shift_lapse_adapted_background_and_scri_limit
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_shift_source.py
+    --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/hyperbolic-shift-source-audit.json)
+add_test(NAME hyperbolic_shift_moving_puncture_bulk_and_boundary
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_gamma_driver.py
+    --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/gamma-driver-audit.json)
+add_test(NAME hyperbolic_shift_gamma_inner_vector_stencil
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_gamma_inner_stencil.py
+    --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/gamma-inner-stencil-audit.json)
+add_test(NAME hyperbolic_shift_metric_connection_driver
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_metric_driver.py
+    --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/hyperbolic-metric-driver-audit.json)
 add_test(NAME nonlinear_elliptic_shift
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_elliptic.py --library $<TARGET_FILE:spherical_z4c>)
 add_test(NAME hyperboloidal_wormhole_initial_data

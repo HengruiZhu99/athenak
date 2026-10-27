@@ -1,0 +1,48 @@
+{
+  "hypothesis": "Replace only the shift and auxiliary inner stencils by odd radial-vector extension. A reduced vector-wave audit shows growth proportional to resolution for the positive-only extrapolating closure.",
+  "equations": "Dt beta = mu D - r - xi C(r)(beta+r)/Omega; Dt D = Dt Lambda - eta D. mu=(1-C) mu_bulk + C mu_separated; C=0 for r<=.8, C=1 for r>=.9.",
+  "gamma_coefficient": 1.0,
+  "literal_075_rejected": "Retained lapse/telegraph causes defective lapse-shift speed coincidence at Minkowski center; audited before evolution.",
+  "boundary": "Exact null beta and compatible dependent D at scri unchanged; for the fixed spherical puncture beta(0)=0 implies D(0)=0. Lambda remains independent.",
+  "grid": "Puncture probes will explicitly use grid_stretch=0, retaining the original C7 scri collar and all positive nodes; original stretch16 would violate the gauge CFL by five orders of magnitude.",
+  "preserved": "Telegrapher lapse, physical floor1e-10, full variable metric, independent evolved Lambda, native Einstein equations, KO8=.5.",
+  "cases": [
+    {
+      "name": "puncture-n257",
+      "n": 257,
+      "t": 0.2,
+      "cfl": 0.025,
+      "gamma_coefficient": 1,
+      "grid_stretch": 0,
+      "shift_gauge": "moving-puncture",
+      "shift_inner_stencil": "odd",
+      "restoring": 4
+    },
+    {
+      "name": "puncture-n513",
+      "n": 513,
+      "t": 0.2,
+      "cfl": 0.025,
+      "gamma_coefficient": 1,
+      "grid_stretch": 0,
+      "shift_gauge": "moving-puncture",
+      "shift_inner_stencil": "odd",
+      "restoring": 4
+    }
+  ],
+  "gates": [
+    "scalar principal/boundary/native identity audit",
+    "regular-center equilibrium and three-grid pulse t=1",
+    "then puncture N257/513 short t=.2 before extension"
+  ],
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "CFL": 0.4,
+    "relative_horizon_mass": 0.05
+  },
+  "target": "100M remains unqualified",
+  "shift_inner_stencil": "odd",
+  "continuation_gate": "Both short puncture runs must complete with smaller exterior errors on the fine grid before continuation.",
+  "geometry_boundary": "No regular-center parity imposed on the AF geometry, lapse, curvature or independent Lambda. All those retain their original positive-node stencils. beta(0)=D(0)=0 is one compatible gauge boundary condition."
+}

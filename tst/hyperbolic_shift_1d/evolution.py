@@ -14,9 +14,12 @@ from gauge import lapse_coefficient, restoring_coefficient, collapsed_background
 from elliptic import solve, connection
 from boundary import normal_shift, normal_rate
 from principal import coefficient, speeds
+from shift_source import background
+from metric_driver import transport_rate
+from gamma_driver import parameters as gamma_parameters
 
 class Evolution:
-    def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,kind='separated',mode='hyperbolic',restoring=0.,inner_shift=0.,lapse_floor=1e-10):
+    def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,kind='separated',mode='hyperbolic',restoring=0.,inner_shift=0.,lapse_floor=1e-10,shift_source='reference',connection_driver='evolved',shift_gauge='separated',gamma_coefficient=1.):
         self.r=(np.arange(n)+.5)/(n-.5);self.h=1/(n-.5)
         self.O=(1-self.r**2)/2;self.A=(1+self.r**2)/2
         self.op=RadialOperators(self.r,width=7,subtract_local=True)
@@ -24,6 +27,14 @@ class Evolution:
         self.ko=ko;self.kind=kind;self.mode=mode
         self.restoring=restoring
         self.inner_shift=inner_shift
+        self.shift_source=shift_source
+        self.connection_driver=connection_driver
+        self.shift_gauge=shift_gauge;self.gamma_coefficient=gamma_coefficient
+        if shift_gauge not in ['separated','moving-puncture']:raise ValueError('Unknown shift gauge')
+        if shift_gauge=='moving-puncture':
+            if shift_source!='reference' or connection_driver!='evolved' or inner_shift!=0 or mode!='hyperbolic':
+                raise ValueError('Moving-puncture candidate requires the reference source and evolved connection')
+            gamma_parameters(self.r,np.ones(n),restoring,gamma_coefficient)
         if not np.isfinite(lapse_floor) or lapse_floor<0:raise ValueError('Invalid physical lapse floor')
         self.lapse_floor=lapse_floor
         self.w,self.wp=window(self.r,width=.24,inner_profile='af-regular')
@@ -69,11 +80,14 @@ class Evolution:
         rate[-1,:8]+=4/self.h*S[-1]-8/self.h*trace
         F=lapse_coefficient(r,alpha)
         mu=coefficient(alpha,chi,g,F,eta,self.w,.005,.02,self.ratio,self.kind,self.inner_shift,self.O)
+        xi_shift=self.restoring
+        if self.shift_gauge=='moving-puncture':mu,xi_shift=gamma_parameters(r,mu,self.restoring,self.gamma_coefficient)
         rate[:,8]=beta*d[:,8]+(.005*self.w*d[:,6]-q[:,8])/.02
+        source,target_correction,target_prime=background(r,alpha,q[:,6],d[:,6],self.shift_source,self.w,self.wp)
         if self.mode=='hyperbolic':
             # D is the auxiliary Gamma driver, not the independent Z4 connection.
-            rate[:,7]=beta*db-r+mu*q[:,9]
-            rate[:-1,7]-=self.restoring*q[:-1,7]/self.O[:-1]
+            rate[:,7]=beta*db+source+mu*q[:,9]
+            rate[:-1,7]-=np.broadcast_to(xi_shift,r.shape)[:-1]*(q[:-1,7]+target_correction[:-1])/self.O[:-1]
         adv=self.op.advection_derivative(q,self.parity,beta)
         rate[:,:9]+=beta[:,None]*(adv[:,:9]-d[:,:9])
         # Baseline KO8 coefficient and taper. No scri filtering.
@@ -86,13 +100,15 @@ class Evolution:
             # Do not prescribe D independently. Use the same beta derivative as
             # in the advective driver equation when solving its compatibility.
             db_driver=-1+adv[-1,7]
-            source_limit=self.restoring*d[-1,7]
-            q[-1,9]=(bt-beta[-1]*db_driver+1-source_limit)/mu[-1]
+            source_limit=float(np.broadcast_to(xi_shift,r.shape)[-1])*(d[-1,7]+target_prime[-1])
+            q[-1,9]=(bt-beta[-1]*db_driver-source[-1]-source_limit)/mu[-1]
             aD=self.op.advection_derivative(q[:,9,None],np.array([-1]),beta)[:,0]
-            rate[:,9]=beta*aD+rate[:,5]-beta*adv[:,5]-self.damping*q[:,9]
+            drive=rate[:,5]-beta*adv[:,5]
+            if self.connection_driver=='metric':drive=transport_rate(r,g,d[:,1],alpha,r+d[:,6],q[:,2],d[:,2],beta,db,ddb)
+            rate[:,9]=beta*aD+drive-self.damping*q[:,9]
             rate[:,9]+=puncture_dissipation(q[:,9,None],r,self.h,self.ko,.8,order=8,include_first=True)[:,0]
             rate[-1,9]=0. # eliminated storage slot; rematerialized at each stage
-            defect=abs(bt-(beta[-1]*db_driver-1+mu[-1]*q[-1,9]+source_limit))
+            defect=abs(bt-(beta[-1]*db_driver+source[-1]+mu[-1]*q[-1,9]+source_limit))
         else:rate[:,9]=0.;defect=0.
         rate[-1,7]=bt
         null=chi[-1]/g[-1]-(beta[-1]/alpha[-1])**2
@@ -105,7 +121,7 @@ class Evolution:
         for key,val in [('max_null',abs(null)),('max_relative_null',abs(null)/(chi[-1]/g[-1])),
                         ('max_driver_boundary_defect',defect),('max_pole',max(abs(S[-1]))),
                         ('max_trace',max(abs(trace))),('max_speed',maxspeed)]:st[key]=max(st[key],float(val))
-        st['max_shift_pole']=max(st.get('max_shift_pole',0.),abs(float(self.restoring*q[-1,7])))
+        st['max_shift_pole']=max(st.get('max_shift_pole',0.),abs(float(self.restoring*(q[-1,7]+target_correction[-1]))))
         if not np.isfinite(rate).all():raise FloatingPointError('Nonfinite RHS')
         return (rate,q) if return_state else rate
 

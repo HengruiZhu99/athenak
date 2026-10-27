@@ -1,0 +1,56 @@
+{
+  "hypothesis": "Suppress the forced inward reference shift in collapsed-lapse regions without changing the telegrapher lapse or bulk principal symbol.",
+  "driver": "D_t beta = beta_source + mu D - xi (beta + r sigma)/Omega, beta_source=-r sigma^2, sigma=alpha/A",
+  "boundary": "Exact beta=-alpha sqrt(chi/g); restoring limit xi[d_r(beta+r)+d_r(r(sigma-1))]; eliminate D from the same beta equation, no independent D datum.",
+  "AF_slope": "b1_dot=b1^2-2 xi b1 before floor corrections, compared with b1^2-1-2 xi(b1+1).",
+  "preserved": "Full live metric and independent Z4 connection, lapse/telegraph, physical floor, mu, KO8, radial map, dt and guards. inner_shift=0 (prior .1 candidate rejected).",
+  "cases": [
+    {
+      "name": "equilibrium-n65",
+      "n": 65,
+      "t": 1,
+      "amplitude": 0,
+      "restoring": 4,
+      "cfl": 0.05,
+      "shift_source": "lapse-adapted"
+    },
+    {
+      "name": "pulse-n65",
+      "n": 65,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "shift_source": "lapse-adapted"
+    },
+    {
+      "name": "pulse-n129",
+      "n": 129,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "shift_source": "lapse-adapted"
+    },
+    {
+      "name": "pulse-n257",
+      "n": 257,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "shift_source": "lapse-adapted"
+    }
+  ],
+  "gates": [
+    "Source/AF/scri-limit audit and roundoff exact nullness",
+    "Regular-center survival and decreasing constraints at three grids",
+    "Fresh N257 puncture t=3 comparison against original failed control",
+    "Only after this succeeds: N513 short refinement and incremental durations"
+  ],
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "cfl": 0.4,
+    "horizon_mass_relative": 0.05
+  },
+  "wall_seconds_per_probe": 420,
+  "target_goal": "100M = coordinate 100/3; short survivors are not goal completion"
+}

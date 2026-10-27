@@ -1,0 +1,64 @@
+{
+  "hypothesis": "An unsuppressed advective Gamma driver with no bulk restoring force may avoid the late inner metric collapse.",
+  "equations": "Dt beta = mu D - r - xi C(r)(beta+r)/Omega; Dt D = Dt Lambda - eta D. mu=(1-C) mu_bulk + C mu_separated; C=0 for r<=.8, C=1 for r>=.9.",
+  "gamma_coefficient": 1.0,
+  "literal_075_rejected": "Retained lapse/telegraph causes defective lapse-shift speed coincidence at Minkowski center; audited before evolution.",
+  "boundary": "Exact null beta and compatible dependent D at scri unchanged; for the fixed spherical puncture beta(0)=0 implies D(0)=0. Lambda remains independent.",
+  "grid": "Puncture probes will explicitly use grid_stretch=0, retaining the original C7 scri collar and all positive nodes; original stretch16 would violate the gauge CFL by five orders of magnitude.",
+  "preserved": "Telegrapher lapse, physical floor1e-10, full variable metric, independent evolved Lambda, native Einstein equations, KO8=.5.",
+  "cases": [
+    {
+      "name": "equilibrium-n65",
+      "n": 65,
+      "t": 1,
+      "amplitude": 0,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "wall_seconds": 240
+    },
+    {
+      "name": "pulse-n65",
+      "n": 65,
+      "t": 1,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "wall_seconds": 240
+    },
+    {
+      "name": "pulse-n129",
+      "n": 129,
+      "t": 1,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "wall_seconds": 240
+    },
+    {
+      "name": "pulse-n257",
+      "n": 257,
+      "t": 1,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "wall_seconds": 240
+    }
+  ],
+  "gates": [
+    "scalar principal/boundary/native identity audit",
+    "regular-center equilibrium and three-grid pulse t=1",
+    "then puncture N257/513 short t=.2 before extension"
+  ],
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "CFL": 0.4,
+    "relative_horizon_mass": 0.05
+  },
+  "target": "100M remains unqualified"
+}

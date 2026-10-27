@@ -15,18 +15,28 @@ p.add_argument('--root',type=Path,required=True)
 p.add_argument('--cases',nargs='+',required=True)
 p.add_argument('--output',type=Path,required=True)
 p.add_argument('--library',type=Path,required=True)
+p.add_argument('--compact-labels',action='store_true')
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
 plt.rcParams.update({'font.size':10,'axes.spines.top':False,'axes.spines.right':False,'savefig.bbox':'tight'})
 fig,axes=plt.subplots(2,2,figsize=(10,7),layout='constrained')
 profiles,axp=plt.subplots(1,2,figsize=(10,4),layout='constrained')
+failure_fig,axf=plt.subplots(1,2,figsize=(10,4),layout='constrained')
 records=[];fields=[]
 for name in a.cases:
  src=a.root/name;m=json.loads((src/'manifest.json').read_text());h=json.loads((src/'history.json').read_text())
  if m['status']=='running':raise ValueError('Only terminal immutable evidence is exported')
  dest=a.output/name;dest.mkdir(parents=True)
- for fn in ['manifest.json','history.json','profiles.npz']:shutil.copy2(src/fn,dest/fn)
+ for fn in ['manifest.json','history.json','profiles.npz','failed-stage.npz','continuation_harness.py']:
+  if (src/fn).exists():shutil.copy2(src/fn,dest/fn)
  z=np.load(src/'profiles.npz');n=len(z['r']);t=np.array([x['t'] for x in h]);mass=np.array([x['apparent_horizon_mass'] for x in h])
  label=f"N={n}, CFL={m['arguments']['cfl']:g}"
+ source=m['arguments'].get('shift_source','reference')
+ if source!='reference':label+=', '+('inner source' if source=='lapse-inner' else 'global source')
+ if m['arguments'].get('connection_driver')=='metric':label+=', metric driver'
+ if a.compact_labels:
+  label=f"N={n}, "+{'reference':'original','lapse-adapted':'global source','lapse-inner':'inner source'}[source]
+  if m['arguments'].get('connection_driver')=='metric':label+=' + V driver'
+ if m['arguments'].get('shift_gauge')=='moving-puncture':label=f'N={n}, bulk Gamma driver'
  if m['arguments'].get('inner_shift',0):label+=f", b={m['arguments']['inner_shift']:g}"
  if m['status']!='completed':label+=' (stopped)'
  color=None
@@ -34,8 +44,13 @@ for name in a.cases:
   line,=ax.semilogy(t*3,[max(x[key],1e-16) for x in h],label=label,color=color);color=line.get_color()
   if m['status']!='completed':ax.plot(t[-1]*3,h[-1][key],'x',color=color,ms=8)
  axes[1,0].plot(t*3,1e6*(mass/(1/3)-1),label=label,color=color)
- e=PunctureEvolution(n,a.library,ratio=m['arguments']['ratio'],damping=m['arguments']['damping'],ko=m['arguments']['ko'],restoring=m['arguments']['restoring'],inner_shift=m['arguments'].get('inner_shift',0.),lapse_floor=m['arguments'].get('lapse_floor',1e-10))
+ e=PunctureEvolution(n,a.library,ratio=m['arguments']['ratio'],damping=m['arguments']['damping'],ko=m['arguments']['ko'],restoring=m['arguments']['restoring'],inner_shift=m['arguments'].get('inner_shift',0.),lapse_floor=m['arguments'].get('lapse_floor',1e-10),shift_source=m['arguments'].get('shift_source','reference'),connection_driver=m['arguments'].get('connection_driver','evolved'),shift_gauge=m['arguments'].get('shift_gauge','separated'),gamma_coefficient=m['arguments'].get('gamma_coefficient',1.),grid_stretch=m['arguments'].get('grid_stretch',16.),shift_inner_stencil=m['arguments'].get('shift_inner_stencil','positive'))
  e.rhs(z['last']);v=e.last
+ axf[0].semilogy(t*3,[max(x['H_interior_max'],1e-16) for x in h],color=color,label=label)
+ axf[1].plot(t*3,[x['g_min'] for x in h],color=color,label=label)
+ axf[1].plot(3*m['t'],min(v['g']),'o',ms=3,color=color)
+ if (src/'failed-stage.npz').exists():
+  failed=np.load(src/'failed-stage.npz');axf[1].plot(3*m['attempted_step']*m['dt'],min(1+failed['q'][:,1]),'x',color=color,ms=7)
  snapshot_label=label+f", t/M={3*m['t']:g}"
  axp[0].plot(e.r[1:],v['alpha'][1:],color=color,label=snapshot_label)
  axp[1].plot(e.r[1:-1],v['alpha'][1:-1]/e.O[1:-1],color=color,label=snapshot_label)
@@ -57,7 +72,12 @@ axp[0].set(xlabel='Compact radius r',ylabel='Conformal lapse',title='Final lapse
 axp[1].set(xlabel='Compact radius r',ylabel='Physical lapse',title='Puncture and interior (all positive nodes)',xscale='log',yscale='log',xlim=(1e-9,.8),ylim=(1e-11,10))
 axp[1].axhline(1e-10,ls=':',color='black',lw=1)
 for ax in axp:ax.grid(alpha=.2);ax.legend(fontsize=8)
-for f,name in [(fig,'duration-constraints'),(profiles,'duration-lapse')]:
+axf[0].set(xlabel='Time / M',ylabel='Interior maximum |H|',title='Interior errors retained')
+axf[1].set(xlabel='Time / M',ylabel='Minimum radial metric g',title='Accepted states and failed-stage crosses')
+axf[1].axhline(0,color='black',ls=':',lw=1)
+for ax in axf:ax.grid(alpha=.2)
+axf[0].legend(fontsize=7)
+for f,name in [(fig,'duration-constraints'),(profiles,'duration-lapse'),(failure_fig,'duration-interior')]:
  f.savefig(a.output/(name+'.pdf'));f.savefig(a.output/(name+'.png'),dpi=170)
 comparisons=[]
 for (na,ea,za,qa,ma),(nb,eb,zb,qb,mb) in zip(fields,fields[1:]):

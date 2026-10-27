@@ -87,3 +87,44 @@ Rebuild duration plots from the original local records into a NEW directory:
   python3 tst/hyperbolic_shift_1d/assess_duration.py --root output/hyperbolic-shift-1d/duration-probe-v1 --cases n257-cfl05 n513-cfl05 n1025-cfl05 n257-t3 n513-t3 --output output/hyperbolic-shift-1d/new-duration-assessment --library build-hyperbolic-shift/libspherical_z4c.dylib
 
 --lapse-floor configures the physical floor (default 1e-10); existing trials all used the default.
+
+Source controls and continuation follow-up:
+  --shift-source reference|lapse-adapted|lapse-inner selects the algebraic background.
+  --connection-driver evolved|metric selects Dt Lambda or the analytic Dt V source.
+  The inner source reached 15M on two grids, then failed before 18M. The metric
+  driver also failed. See evidence/source-trials-v1 and source-comparison-v1.
+  continue_puncture.py --parent CASE --output NEW_CASE --t ALIGNED_TARGET
+  verifies a completed parent's hashes, imports its frozen code, and preserves dt
+  and RK compensation. Failed and bounded-stop runs cannot be continued.
+  Two-generation bitwise restart checks are in goal/continuation-audit-v3.json.
+
+Moving-puncture bulk candidate (user-requested direction):
+  --shift-gauge moving-puncture --gamma-coefficient 1 --restoring 4
+  retains the prescribed -r Minkowski source, uses constant mu in r<=.8,
+  removes interior restoring forces, and recovers the earlier scri gauge in r>=.9.
+  The actual evolving Z4 connection remains independent and drives D.
+  Literal coefficient .75 is defective at the retained Minkowski lapse center;
+  the exact corner and implementation audits are in goal/gamma-driver-*.json.
+  This does not prove strong hyperbolicity at an exactly collapsed puncture.
+
+  For punctures also specify --grid-stretch 0 --shift-inner-stencil odd.
+  The original stretch16 grid is not affordable for the unsuppressed gauge speed.
+  Odd extension applies ONLY to beta and D derivatives; the AF geometry keeps
+  its original positive-node closure. The old positive-only gauge closure has
+  a growing reduced wave mode and a preserved N513 early failure.
+
+  python3 tst/hyperbolic_shift_1d/run.py --library build-hyperbolic-shift/libspherical_z4c.dylib --output output/hyperbolic-shift-1d/new-gamma-puncture --n 257 --t .2 --cfl .025 --restoring 4 --shift-gauge moving-puncture --gamma-coefficient 1 --grid-stretch 0 --shift-inner-stencil odd --puncture --wall-seconds 240
+
+  python3 tst/hyperbolic_shift_1d/test_gamma_driver.py --library build-hyperbolic-shift/libspherical_z4c.dylib --output build-hyperbolic-shift/new-gamma-audit.json
+  python3 tst/hyperbolic_shift_1d/test_gamma_inner_stencil.py --library build-hyperbolic-shift/libspherical_z4c.dylib --output build-hyperbolic-shift/new-inner-stencil-audit.json
+
+All controls preserve the telegrapher lapse, eta*chi attenuation and configurable
+physical lapse floor, default 1e-10. Short survival is not 100M convergence.
+
+Exact new scalar corners (same general polynomial, new unsuppressed coefficient):
+  PYTHONPATH=build-hyperbolic-shift/symbolic python3 tst/hyperbolic_shift_1d/exact_gamma_driver.py build-hyperbolic-shift/new-gamma-exact.json
+
+The moving-puncture trials retain their terminal manifests and failed stages.
+assess_gamma.py verifies all source, library, checkpoint and continuation-parent
+hashes before exporting; it refuses to package any running trial.
+Use a fresh output directory to preserve previous evidence.

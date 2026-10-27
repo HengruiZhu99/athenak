@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 from puncture import PunctureEvolution
 p=argparse.ArgumentParser();p.add_argument('--case',type=Path,required=True);p.add_argument('--library',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--nodes',type=int,default=16);a=p.parse_args()
-z=np.load(a.case/'profiles.npz');m=json.loads((a.case/'manifest.json').read_text());n=len(z['r']);e=PunctureEvolution(n,a.library,restoring=m['arguments']['restoring'],inner_shift=m['arguments'].get('inner_shift',0.),lapse_floor=m['arguments'].get('lapse_floor',1e-10));rows=[]
+z=np.load(a.case/'profiles.npz');m=json.loads((a.case/'manifest.json').read_text());n=len(z['r']);e=PunctureEvolution(n,a.library,restoring=m['arguments']['restoring'],inner_shift=m['arguments'].get('inner_shift',0.),lapse_floor=m['arguments'].get('lapse_floor',1e-10),shift_source=m['arguments'].get('shift_source','reference'),connection_driver=m['arguments'].get('connection_driver','evolved'));rows=[]
 indices=np.arange((n-a.nodes)*10,n*10);indices=indices[~np.isin(indices,[(n-1)*10+6,(n-1)*10+7,(n-1)*10+9])]
 for i in [0,len(z['q'])//2,len(z['q'])-1]:
  base=z['q'][i];columns=[];eps=2e-6;start=time.monotonic()

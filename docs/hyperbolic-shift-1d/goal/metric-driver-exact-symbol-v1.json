@@ -1,0 +1,86 @@
+{
+  "driver": "metric-derived V; independent evolved Lambda retained",
+  "matrix": "Matrix([[0, 0, 0, 2*a*c/3, 4*a*c/3, 0, 0, -2*c/3, 0, 0], [0, 0, -2*a, 0, 0, 0, 0, 4*g/3, 0, 0], [a/3, -a*c/(2*g), 0, 0, 0, 2*a*c*g/3, -2*c/3, 0, 0, 0], [0, 0, 0, 0, 0, 0, -c/g, 0, 0, 0], [a/g, 0, 0, 0, 0, a*c/2, 0, 0, 0, 0], [0, 0, 0, -4*a/(3*g), -2*a/(3*g), 0, 0, 4/(3*g), 0, 0], [0, 0, 0, -F, 0, 0, 0, 0, E*c*w, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, m], [0, 0, 0, 0, 0, 0, k*w/t, 0, 0, 0], [0, 0, -2*a/g**2, 0, 0, 0, 0, 4/(3*g), 0, 0]])",
+  "characteristic_polynomial": "z**2*(-a**2*c + g*z**2)**2*(3*g*z**2 - 4*m)*(-E*c*g*k*w**2 - F*c*t + g*t*z**2)/(3*g**4*t)",
+  "identity_verified": true,
+  "exact_scri_eigenspaces": {
+    "1/2": [
+      {
+        "value": "-1",
+        "algebraic": 3,
+        "geometric": 3
+      },
+      {
+        "value": "0",
+        "algebraic": 2,
+        "geometric": 2
+      },
+      {
+        "value": "1",
+        "algebraic": 3,
+        "geometric": 3
+      },
+      {
+        "value": "-sqrt(2)/2",
+        "algebraic": 1,
+        "geometric": 1
+      },
+      {
+        "value": "sqrt(2)/2",
+        "algebraic": 1,
+        "geometric": 1
+      }
+    ],
+    "1": [
+      {
+        "value": "-1",
+        "algebraic": 4,
+        "geometric": 3
+      },
+      {
+        "value": "0",
+        "algebraic": 2,
+        "geometric": 2
+      },
+      {
+        "value": "1",
+        "algebraic": 4,
+        "geometric": 3
+      }
+    ],
+    "2": [
+      {
+        "value": "-1",
+        "algebraic": 3,
+        "geometric": 3
+      },
+      {
+        "value": "0",
+        "algebraic": 2,
+        "geometric": 2
+      },
+      {
+        "value": "1",
+        "algebraic": 3,
+        "geometric": 3
+      },
+      {
+        "value": "-sqrt(2)",
+        "algebraic": 1,
+        "geometric": 1
+      },
+      {
+        "value": "sqrt(2)",
+        "algebraic": 1,
+        "geometric": 1
+      }
+    ]
+  },
+  "exact_collapsed_limit": {
+    "rank": 2,
+    "square_zero": true,
+    "geometric_zero_multiplicity": 8,
+    "algebraic_zero_multiplicity": 10
+  },
+  "scope": "Exact scalar frozen principal symbol; no uniform puncture or endpoint well-posedness claim"
+}

@@ -10,7 +10,7 @@ import numpy as np
 NAMES = ['chi_r','g_r','Arr','p/Omega','Theta/Omega','Lambda',
          'alpha_r','beta_r','B_r','D']
 
-def symbol(alpha, chi, g, F, eta, w, kappa, tau, mu):
+def symbol(alpha, chi, g, F, eta, w, kappa, tau, mu,connection_driver='evolved'):
     P=np.zeros((10,10))
     P[0,[3,4,7]]=[2*alpha*chi/3,4*alpha*chi/3,-2*chi/3]
     P[1,[2,7]]=[-2*alpha,4*g/3]
@@ -22,6 +22,9 @@ def symbol(alpha, chi, g, F, eta, w, kappa, tau, mu):
     P[7,9]=mu
     P[8,6]=kappa*w/tau
     P[9]=P[5]
+    if connection_driver=='metric':
+        P[9]=0.;P[9,[2,7]]=[-2*alpha/g**2,4/(3*g)]
+    elif connection_driver!='evolved':raise ValueError('Unknown connection driver')
     return P
 
 def coefficient(alpha,chi,g,F,eta,w,kappa,tau,ratio=2.,kind='separated',inner_shift=0.,omega=0.):

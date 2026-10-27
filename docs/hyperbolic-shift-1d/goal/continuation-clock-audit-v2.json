@@ -1,0 +1,7 @@
+{
+  "result": "test found different timestep bit patterns, not a continuation state-loading error",
+  "old_full12_dt_hex": "0x1.9999999999999p-12",
+  "inherited_dt_hex": "0x1.999999999999ap-12",
+  "max_state_difference": 2.655503445251383e-13,
+  "repair": "Future fresh runs retain cfl*h when the requested target lies on that lattice, instead of recomputing t/steps. Continuations always retain parent dt exactly. Prior experiments preserved."
+}

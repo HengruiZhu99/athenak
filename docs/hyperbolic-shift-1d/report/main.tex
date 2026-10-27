@@ -12,7 +12,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but duration extensions fail near $8M$. It is not qualified for the persistent $100M$ target. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
+We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but the original duration extensions fail near $8M$. An interior-only source adaptation postpones failure to $16$--$17M$. A subsequent constant-strength bulk Gamma driver, with an independently audited inner gauge stencil, reaches $24M$ on one grid and $9M$ on a finer grid; three-grid short tests improve under refinement. Growing coarse-grid interior errors still prevent qualification for the persistent $100M$ target. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
 \end{abstract}
 
 \section{Preserved baseline and proposed driver}
@@ -199,13 +199,103 @@ A bounded candidate adds $b\Omega^2\sqrt\chi$ to $\mu$, with $b=0.1$. It leaves 
 \end{equation}
 Before lapse flooring changes the leading AF scaling, the shift speed changes from $O(r^3)$ to $O(r)$. This is a gauge-transport hypothesis, not a cure established by the symbol. Three regular-center grids pass the same short gate, but the fresh $N=257$ puncture trial fails at $t=2.8078125$ when a stage metric becomes negative near $r=0.0672$. This candidate therefore does not resolve the duration failure and is not the default.
 
-One remaining mechanism to test is the collapsed-region background forcing. For smooth AF data with $\beta=b_1r+O(r^2)$, the original driver gives, at continuum leading order,
+A mechanism tested next is the collapsed-region background forcing. For smooth AF data with $\beta=b_1r+O(r^2)$, the original driver gives, at continuum leading order,
 \begin{equation}
  \dot b_1=b_1^2-1-2\xi_\beta(b_1+1).
 \end{equation}
-At $\xi_\beta=4$ this has a stable fixed point $b_1=-1$. Thus the driver actively restores the inward reference shift even in the collapsed-lapse region. The added $b\Omega^2\sqrt\chi D=O(r^2)$ does not change this leading forcing. Its causal role in the observed compression remains a hypothesis; a lapse-adapted background source needs a separate derivation and controlled test.
+At $\xi_\beta=4$ this has a stable fixed point $b_1=-1$. Thus the driver actively restores the inward reference shift even in the collapsed-lapse region. The added $b\Omega^2\sqrt\chi D=O(r^2)$ does not change this leading forcing. This motivates the controlled source changes below; an increased survival time alone does not establish a unique cause of the original failure.
 
 The implementation now writes atomic progress records and bounds diagnostic spacing by $\Delta t_{\rm report}\leq0.025$. A diagnostic-only optimization omits constraint and horizon calculations during intermediate RHS evaluations while retaining them at reports; the native rate arrays agree bit for bit with diagnostics enabled. Full failed-stage arrays are preserved for newly instrumented failures. The original failed runs and elliptic reference remain unchanged.
+
+
+\subsection{Lapse-dependent shift sources and a metric-connection control}
+The telegrapher lapse, its $\eta\chi$ attenuation, and the physical lapse floor remain unchanged in every control here. We replace only the shift background terms by
+\begin{equation}
+ \dt\beta=-r\sigma^2+\mu D-\xi_\beta\frac{\beta+r\sigma}{\Omega}.
+\end{equation}
+The global choice is $\sigma=\alpha/A$. Its complete restoring limit is $\xi_\beta[\beta'+(r\sigma)']$; the $\sigma'$ term must be included when eliminating the dependent $D$ trace. Algebraic nullness still holds at each stage, but the $N=257$ global-source trial fails its scri guard at coordinate $t=0.175$. We retain that failure.
+
+The interior-only choice is $\sigma=1+w(\alpha/A-1)$, using the existing smooth window. It equals $\alpha/A$ near the puncture and exactly one for $r\geq0.8$. Hence the original source and boundary closure are unchanged throughout the outer collar. The change is algebraic in the evolved fields, so the interior principal matrix is unchanged. Before flooring alters the AF expansion, the leading slope equation becomes
+\begin{equation}
+ \dot b_1=b_1^2-2\xi_\beta b_1,
+\end{equation}
+whose stable fixed point is zero. Independent tests verify the leading AF rate and full scri limit, the unperturbed Minkowski equilibrium, and roundoff nullness for perturbed stage data.
+
+Three regular-center pulse grids pass their short gate with decreasing constraint errors. Fresh puncture grids $N=257,513$ both reach $t=3=9M$. Their exterior Hamiltonian RMS values are $9.91\times10^{-3}$ and $4.02\times10^{-4}$; their absolute relative horizon-mass errors are $1.81\times10^{-3}$ and $7.42\times10^{-5}$. These two-grid improvements do not establish convergence of the modified gauge through $100M$.
+
+Both trajectories continue from verified checkpoints through $t=5=15M$. The subsequent extensions fail at $t=5.3609375$ and $5.6947265625$, respectively. A stage metric becomes negative near $r=0.00332$ on the coarse grid and $r=0.01156$ on the finer grid. The fine trajectory's maximum sampled horizon-mass drift is only $2.03\times10^{-4}$, and its last sampled exterior Hamiltonian RMS is $1.51\times10^{-3}$. These exterior diagnostics do not make a state with invalid spatial geometry evolvable. Interior constraint magnitudes are diagnostic evidence; the stopping condition is loss of metric positivity, not an interior error budget.
+
+A separate gauge control sources $D$ from the metric-derived connection $V$, while continuing to evolve $\Lambda^r$ independently in the unchanged Z4 system:
+\begin{align}
+ \dt D&=\dt V-\eta_DD,\qquad
+ G=\dt g=-2\alpha A_{rr}+\frac{4g}{3}(\beta'-\beta/r),\\
+ \dt V&=\frac{G'+\beta'g'}{g^2}
+ +\left[-\frac{2g'}{g^3}+\frac{g^{-1/2}+2g^{-2}}{r}\right]G
+ +\frac{2\beta}{r^2}(\sqrt g-g^{-1}).
+\end{align}
+This is a local hyperbolic gauge source, not an elliptic solve or a replacement of $\Lambda^r$ by $V$ in the Einstein equations. The last principal-symbol row becomes $(-2\alpha/g^2)\partial_rA_{rr}+[4/(3g)]\partial_r^2\beta$. Exact factorization yields the same scalar polynomial as Eq.~\eqref{eq:poly}, with complete normalized-scri eigenspaces for $\lambda=2$ and the same degeneracy at $\lambda=1$. The full puncture and 3D well-posedness limitations remain.
+
+A complex-step chain-rule oracle checks the metric-connection rate to $2.1\times10^{-16}$, and the metric rate agrees with the native tensor kernel to $5.6\times10^{-17}$ in the tested states. The implementation evaluates this continuum rate with central derivatives and gives $D$ its own biased transport and KO terms. Unlike the evolved-$\Lambda$ control, it does not feed numerical dissipation of $\Lambda$ into $D$. It passes the regular-center gate and the $N=257$ puncture test through $9M$, but subsequently loses metric positivity at $t=5.487109375$ ($16.46M$). It is therefore not a duration repair.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/source-constraints.pdf}
+\caption{Failed source/driver controls, all retaining the telegrapher lapse. Each curve includes its verified continuation history. Crosses show the last saved diagnostics of a failed trajectory; exact last-accepted and failed-stage times are retained separately. The finer interior-source run has much smaller exterior errors but still fails before $18M$.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/source-interior.pdf}
+\caption{Interior errors and metric positivity. Filled dots add the last accepted metric minimum; crosses in the metric panel use the actual failed-stage array when available. The global-source trial stops on its scri guard before developing the later interior failure. No interior nodes are removed from the evolution.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/source-lapse.pdf}
+\caption{Final lapse snapshots for the same failed controls, at unequal times as labeled. The physical floor is retained. These profiles cannot serve as a common-time convergence test.}
+\end{figure}
+\FloatBarrier
+
+The continuation harness accepts completed parents only, verifies source, library, checkpoint, and parent-record hashes, loads the frozen parent equations, and inherits the exact timestep and RK compensation. Two-generation split/uninterrupted tests agree bit for bit. A test initially exposed a one-ulp difference caused by recomputing $\Delta t=t_{\rm end}/N_t$; fresh runs now preserve the nominal $\mathrm{CFL}\,h$ bit pattern when the target is on that lattice. Corrupt histories, changed sources, failed parents, and unaligned continuation targets are rejected. These short restart tests establish implementation consistency, not long-time physical accuracy.
+
+A possible later numerical control is to use $\log g$ and the mixed curvature $A_{rr}/g$ as evolution variables. That change would require a separate chain-rule/native-kernel audit, including loss of precision in the current deviation-based tensor adapter when $g$ becomes very small. No metric floor or logarithmic-metric evolution has been used. The requested next direction instead restores a moving-puncture-like shift in the bulk, as described below. The $100M$ objective remains unmet.
+
+
+\subsection{An unsuppressed bulk Gamma driver}
+The next candidate follows the fully advective two-variable Gamma-driver structure in Eqs.~(18) and (20) of \href{https://arxiv.org/html/gr-qc/0605030v2}{van Meter et al. (2006)}. Its shift coefficient does not vanish with the lapse or conformal factor. Let $C(r)$ be zero for $r\leq0.8$, one for $r\geq0.9$, and $x^8/[x^8+(1-x)^8]$ in between, where $x=(r-0.8)/0.1$. We use
+\begin{align}
+ \dt\beta&=\mu_\Gamma D-r-4C(r)\frac{\beta+r}{\Omega},\\
+ \dt D&=\dt\Lambda^r-D,\qquad
+ \mu_\Gamma=(1-C)\mu_{\rm bulk}+C\mu_{\rm separated}.
+\end{align}
+Here $\mu_{\rm separated}$ is the earlier coefficient with $\lambda=2$. Thus the bulk has a constant-strength advective Gamma driver and no reference-restoring force. The prescribed $-r$ source remains necessary to preserve the chosen hyperboloidal Minkowski equilibrium with $D=0$; this is a disclosed difference from the asymptotically flat gauge. No measured Einstein-equation residual is subtracted. The outer collar recovers the previous driver and its complete scri limit exactly. The algebraic normal shift and dependent auxiliary trace are imposed at every stage as before; no additional scri datum is supplied.
+
+The coefficient is configurable. The conventional $\mu_{\rm bulk}=3/4$ is not used for the first evolution: with the retained telegrapher lapse at the Minkowski center, $c_L^2=1=4\mu_{\rm bulk}/3$. Exact rational eigenspace calculations give algebraic multiplicity two but geometric multiplicity one for each of the speeds $\pm1$. Setting $\mu_{\rm bulk}=1$ separates those speeds and gives complete scalar eigenspaces at that state. The general polynomial remains Eq.~\eqref{eq:poly}, with the new $\mu_\Gamma$. At normalized scri there are still one incoming, six outgoing and three tangent scalar modes. At the exactly collapsed corner $\alpha=\chi=0$, the zero eigenvalue has algebraic multiplicity eight and geometric multiplicity seven even with this unsuppressed driver. No uniform collapsed-lapse or full 3D strong-hyperbolicity claim follows.
+
+For $N=257$, the original stretch-16 map would give a mapped gauge speed of $5.66\times10^5$ and a Courant number of $2.83\times10^4$ at $\Delta t/h=0.05$. The new puncture controls therefore explicitly set the map strength to zero, retain the C7 outer grid collar, and use $\Delta t/h=0.025$. The first positive radius is then $1/256$, rather than $7.49\times10^{-9}$. This is a different grid family; improved duration on it cannot isolate the gauge change from the mesh change.
+
+The implementation audits confirm an exact bulk shift-rate identity, unchanged native Einstein and telegrapher-lapse rates at identical states, independent evolution of $\Lambda^r$, and stage nullness below $2.3\times10^{-16}$. The regular-center Minkowski residual is $1.47\times10^{-13}$. Three finite-pulse grids complete through $t=1$, with mixed-field self-differences $2.374\times10^{-3}$ and $6.252\times10^{-4}$, corresponding to an approximate order of $1.925$. An independent fixed-grid pulse test at $t=0.15$ uses $\Delta t=0.0015,0.00075,0.000375$ and gives temporal order $4.004$. This is a short regular-center result, not long puncture temporal convergence.
+
+The first puncture implementation retained positive-node extrapolation for shift derivatives. Its coarse $N=257$ run reached $t=0.2$, but $N=513$ lost metric positivity at $t=0.149462890625$, at the third positive node. Halving the timestep gives a failure at $t=0.1494873046875$, again at the third positive node. The near-identical failure time and reversal under spatial refinement reject that implementation as a stable candidate. A separate reduced radial-vector wave test isolates the leading gauge equation,
+\begin{equation}
+ \partial_t^2\beta+\partial_t\beta=\frac{4\mu_{\rm bulk}}3
+ \left(\beta''+\frac{2\beta'}r-\frac{2\beta}{r^2}\right),
+\end{equation}
+about the collapsed, zero-shift leading state, with the same KO8 coefficient and four fixed outer nodes. This isolates the singular inner spatial closure; background advection and the complete coupled geometry are omitted. Positive-node extrapolation gives maximum growth rates $26.16$ and $52.68$ on $N=65,129$. An odd radial-vector extension gives maximum real eigenvalues approximately $-0.5$ on both grids. This reduced spectral test identifies a closure instability; it is not a stability proof for the complete Einstein system.
+
+The resulting control uses odd extension only for shift and auxiliary derivatives. At the fixed spherical puncture, $\beta(0)=0$ implies $D(0)=0$ through the unsuppressed shift equation; the auxiliary value is dependent, not an extra independent gauge datum. The AF geometry, lapse, curvature, and independent connection retain their positive-node stencils and are not assigned regular-center parity. All positive-radius nodes remain evolved. With that closure, all three puncture grids $N=257,513,1025$ reach $t=0.2=0.6M$. The horizon-exterior Hamiltonian RMS values are $1.623\times10^{-3}$, $2.767\times10^{-4}$, and $1.299\times10^{-5}$; the interior maxima are $7.508\times10^{-4}$, $5.665\times10^{-5}$, and $2.706\times10^{-6}$. Full-domain mixed-profile self-differences give an approximate order of $3.69$ at this short common time. The lapse floor does not activate in these resolved-grid tests. This does not assess the very small radii sampled by the earlier stretch-16 grid, nor establish convergence through $100M$.
+
+
+Verified continuations reach $t=3=9M$ on both $N=257,513$. At this common time, exterior Hamiltonian RMS decreases from $6.822\times10^{-3}$ to $5.865\times10^{-4}$ and momentum RMS from $1.362\times10^{-2}$ to $1.154\times10^{-3}$. The fine-grid final relative horizon-mass error is $-8.66\times10^{-10}$, with maximum sampled drift $4.21\times10^{-8}$. No third grid has yet reached this duration, so these improvements are not a long-time convergence certificate.
+
+The coarse trajectory continues to $t=8=24M$, beyond the earlier source-control failures. Its final relative horizon-mass error is $-2.98\times10^{-6}$, maximum sampled mass drift $6.42\times10^{-6}$, and exterior Hamiltonian RMS $5.40\times10^{-3}$. However, the minimum metric has fallen to $0.459$ at the first positive node, and the interior Hamiltonian maximum is $1.12\times10^2$ near $r=0.0156$, inside the horizon at $r\simeq0.154$. These are unresolved signs of interior deterioration. They are retained as diagnostics rather than used as an interior constraint budget. The physical geometry remains valid at the terminal checkpoint, and no floor activation occurred.
+
+All these runs maintain relative nullness within $2.23\times10^{-16}$. The sampled quantity $g(c_S^2-c_L^2)$ remains positive, with minima about $0.260$ and $0.267$ in the coarse and fine continuations. This excludes a sampled lapse/shift speed crossing along those trajectories; it does not prove uniform eigenvector bounds. The next priority is longer matched refinement with this bulk driver, including whether the late inner degradation moves or decreases with resolution. The $100M$ stability and convergence goal remains open.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/gamma-inner-closure.pdf}
+\caption{The fast Gamma wave exposes an unstable positive-only inner gauge stencil. Halving the timestep leaves the early failure nearly unchanged. Odd extension of the shift variables removes this short-time failure on three grids; puncture geometry retains its positive-node stencils. Crosses show actual failed-stage metric minima.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.94\linewidth]{figures/gamma-progress.pdf}
+\caption{Unsuppressed bulk Gamma-driver continuations with the revised inner gauge closure. Exterior constraints are normalized over apparent-horizon-exterior radial weights. The coarse run survives to $24M$, but its metric minimum deteriorates after about $15M$. Final inner shift and lapse snapshots are at unequal times, as labeled, and are not a convergence comparison. The outward interior shift is now allowed to develop.}
+\end{figure}
+\FloatBarrier
 
 \section{Implementation route and reproducibility}
 A genuine 3D implementation should evolve Cartesian shift and auxiliary vectors in the interior and transform them consistently to shell frames. The spherical code evolves the full radial component, not a globally slaved $\beta/r$ profile. Spherical symmetry necessarily fixes the central location; it is not a test of puncture motion. Constant and linear Cartesian shift modes must be included in the 3D driver tests. The reference source and restoring term can influence translations, so their effect on puncture tracking must be measured rather than assumed benign.
@@ -223,7 +313,7 @@ Evidence category & Established scope\\
 \midrule
 Analytic identities & Nullness elimination, evolving-normal rate, scalar principal polynomial, selected exact eigenspaces, leading AF limits.\\
 Algebraic numerics & Every tested stage/state satisfies spherical nullness within one machine epsilon; general 3D boundary identities have separate randomized tests.\\
-Convergence evidence & Short regular-center refinement and three-grid puncture evidence through $3M$; no $100M$ convergence certificate.\\
+Convergence evidence & Short regular-center refinement; three-grid new-gauge puncture evidence through $0.6M$ and earlier-gauge evidence through $3M$; no $100M$ convergence certificate.\\
 Unresolved & Complete boundary well-posedness, uniform collapsed-lapse hyperbolicity, accurate puncture evolution, long-time robustness, and all 3D/AMR qualification.\\
 \bottomrule
 \end{tabular}

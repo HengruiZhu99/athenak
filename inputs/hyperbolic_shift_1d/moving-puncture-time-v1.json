@@ -1,0 +1,36 @@
+{
+  "hypothesis": "Independent fixed-grid temporal refinement for the new bulk driver. Targets exactly aligned for timestep ratios two.",
+  "cases": [
+    {
+      "name": "base",
+      "n": 65,
+      "t": 0.15,
+      "cfl": 0.09675,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "wall_seconds": 120
+    },
+    {
+      "name": "half",
+      "n": 65,
+      "t": 0.15,
+      "cfl": 0.048375,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "wall_seconds": 120
+    },
+    {
+      "name": "quarter",
+      "n": 65,
+      "t": 0.15,
+      "cfl": 0.0241875,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "wall_seconds": 120
+    }
+  ],
+  "scope": "Regular-center pulse through t=.15; not long puncture temporal convergence."
+}

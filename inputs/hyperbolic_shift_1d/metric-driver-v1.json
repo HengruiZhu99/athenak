@@ -1,0 +1,61 @@
+{
+  "hypothesis": "Test whether sourcing the local shift auxiliary from the metric-derived connection V, while freely evolving Lambda, reduces constraint feedback into the gauge. Full variable metric and all Z4 equations retained.",
+  "driver": "D_t D = D_t V - eta_D D; D_t V obtained analytically from metric evolution. Beta equation retains the lapse-inner background source. No elliptic solve and no bulk projection.",
+  "boundary": "Original source and limiting auxiliary trace exactly in the outer collar; exact nullness retained.",
+  "AF_slope": "b1_dot=b1^2-2 xi b1 before floor corrections, compared with b1^2-1-2 xi(b1+1).",
+  "preserved": "Full live metric and independent Z4 connection, lapse/telegraph, physical floor, mu, KO8, radial map, dt and guards. inner_shift=0 (prior .1 candidate rejected).",
+  "cases": [
+    {
+      "name": "equilibrium-n65",
+      "n": 65,
+      "t": 1,
+      "amplitude": 0,
+      "restoring": 4,
+      "cfl": 0.05,
+      "shift_source": "lapse-inner",
+      "connection_driver": "metric"
+    },
+    {
+      "name": "pulse-n65",
+      "n": 65,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "shift_source": "lapse-inner",
+      "connection_driver": "metric"
+    },
+    {
+      "name": "pulse-n129",
+      "n": 129,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "shift_source": "lapse-inner",
+      "connection_driver": "metric"
+    },
+    {
+      "name": "pulse-n257",
+      "n": 257,
+      "t": 1,
+      "restoring": 4,
+      "cfl": 0.05,
+      "shift_source": "lapse-inner",
+      "connection_driver": "metric"
+    }
+  ],
+  "gates": [
+    "Independent complex-step metric-connection rate and native metric-rate audit; exact scalar symbol",
+    "Regular-center equilibrium and three-grid pulse gate",
+    "Fresh N257 puncture through t=3 before any extension"
+  ],
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "cfl": 0.4,
+    "horizon_mass_relative": 0.05
+  },
+  "wall_seconds_per_probe": 420,
+  "target_goal": "100M = coordinate 100/3; short survivors are not goal completion",
+  "principal": "Only row D changes to -2 alpha/g^2 d_r Arr + 4/(3g) d_rr beta. Exact scalar characteristic polynomial and scri mode count are unchanged; normalized-scri eigenspaces complete for ratio=2. Collapsed endpoint uniform estimate unresolved.",
+  "discretization": "Analytic continuum metric-connection rate uses the same central metric/curvature/shift derivatives; D has its own biased transport and KO. Unlike the evolved-Lambda source, this does not feed numerical Lambda dissipation into D."
+}

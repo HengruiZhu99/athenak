@@ -12,6 +12,12 @@ def main():
  p.add_argument('--restoring',type=float,default=0.)
  p.add_argument('--inner-shift',type=float,default=0.,help='Coefficient of Omega^2 sqrt(chi) in the shift driver')
  p.add_argument('--lapse-floor',type=float,default=1e-10,help='Minimum physical lapse on positive-radius nodes')
+ p.add_argument('--shift-source',choices=['reference','lapse-adapted','lapse-inner'],default='reference')
+ p.add_argument('--connection-driver',choices=['evolved','metric'],default='evolved')
+ p.add_argument('--shift-gauge',choices=['separated','moving-puncture'],default='separated')
+ p.add_argument('--gamma-coefficient',type=float,default=1.)
+ p.add_argument('--shift-inner-stencil',choices=['positive','odd'],default='positive')
+ p.add_argument('--grid-stretch',type=float,default=16.)
  p.add_argument('--report-dt',type=float,default=.025,
                 help='Maximum coordinate-time spacing of guard checks and saved diagnostics')
  p.add_argument('--puncture',action='store_true')
@@ -34,15 +40,21 @@ def main():
  if a.puncture:
   if a.mode!='hyperbolic':raise ValueError('Use the preserved elliptic puncture reference')
   from puncture import PunctureEvolution
-  e=PunctureEvolution(a.n,a.library,a.ratio,a.damping,a.ko,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor);q=e.initial()
+  e=PunctureEvolution(a.n,a.library,a.ratio,a.damping,a.ko,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor,shift_source=a.shift_source,connection_driver=a.connection_driver,shift_gauge=a.shift_gauge,gamma_coefficient=a.gamma_coefficient,grid_stretch=a.grid_stretch,shift_inner_stencil=a.shift_inner_stencil);q=e.initial()
   manifest['scope']='Fresh matched full-domain wormhole trial; no convergence claim'
  else:
-  e=Evolution(a.n,a.library,a.ratio,a.damping,a.ko,mode=a.mode,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor);q=np.zeros((a.n,10))
+  e=Evolution(a.n,a.library,a.ratio,a.damping,a.ko,mode=a.mode,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor,shift_source=a.shift_source,connection_driver=a.connection_driver,shift_gauge=a.shift_gauge,gamma_coefficient=a.gamma_coefficient);q=np.zeros((a.n,10))
  r=e.r
  # Compact C-infinity pulse, even at the center and identically zero at scri.
  z=(r-.4)/.12;use=abs(z)<1
  if not a.puncture:q[use,6]=a.amplitude*np.exp(1-1/(1-z[use]**2))
- steps=int(np.ceil(a.t/(a.cfl*e.h)));dt=a.t/steps;t=0.;start=time.monotonic();history=[];profiles=[];times=[]
+ nominal_dt=a.cfl*e.h;count=a.t/nominal_dt;nearest=int(round(count))
+ # Preserve one timestep bit pattern for aligned split/uninterrupted runs.
+ # Recomputing t/steps can otherwise shift dt by one ulp at a later target.
+ if nearest>0 and abs(count-nearest)<=8*np.finfo(float).eps*max(1,abs(count)):
+  steps=nearest;dt=nominal_dt
+ else:steps=int(np.ceil(count));dt=a.t/steps
+ t=0.;start=time.monotonic();history=[];profiles=[];times=[]
  report_steps=max(1,min(steps//40,int(a.report_dt/dt)))
  def save_progress():
   # Replace atomically so a monitor never sees a partially written history.
@@ -55,6 +67,7 @@ def main():
  try:
   history.append(e.report(q,0.));profiles.append(q.copy());times.append(0.)
   save_progress()
+  if history[-1]['max_speed']*dt/e.h>.4:raise FloatingPointError('Initial CFL guard: choose an appropriate fixed timestep or grid before launch')
   for step in range(1,steps+1):
    q=e.step(q,dt);t=step*dt
    if step%report_steps==0 or step==steps:
@@ -74,7 +87,9 @@ def main():
                      compensation=getattr(e,'compensation',np.zeros_like(q)))
  if hasattr(e,'failure_state'):
   np.savez_compressed(a.output/'failed-stage.npz',r=r,q=e.failure_state,last_accepted_time=t,attempted_step=step)
- (a.output/'history.json').write_text(json.dumps(history,indent=2)+'\n');mp.write_text(json.dumps(manifest,indent=2)+'\n')
+ (a.output/'history.json').write_text(json.dumps(history,indent=2)+'\n')
+ manifest['checkpoint_hashes']={name:hashlib.sha256((a.output/name).read_bytes()).hexdigest() for name in ['profiles.npz','history.json']}
+ mp.write_text(json.dumps(manifest,indent=2)+'\n')
  print(json.dumps({k:manifest[k] for k in ['status','t','error','wall_seconds','stage_stats']}),flush=True)
 
 if __name__=='__main__':main()
