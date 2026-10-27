@@ -51,7 +51,7 @@ For a regular center we optionally evolve
 \begin{equation}
  \chi=e^U,\qquad \alpha=Ae^V,
 \end{equation}
-using the exact chain rules $U_t=\chi_t/\chi$ and $V_t=\alpha_t/\alpha$. Deviations are evaluated with \code{expm1} and \code{log1p}, and positive totals are passed directly to the geometric and matter kernels. This avoids recovering a small positive total by adding it to an order-one negative deviation. Overflow, underflow, or invalid totals terminate the run; no positivity floor is imposed. Dissipation acts on stored variables, so changing variables also changes the finite-grid filter.
+using the exact chain rules $U_t=\chi_t/\chi$ and $V_t=\alpha_t/\alpha$. Deviations are evaluated with \code{expm1} and \code{log1p}, and positive totals are passed directly to the geometric and matter kernels. This avoids recovering a small positive total by adding it to an order-one negative deviation. The historical experiments, including the completed three-grid telegrapher study and the original long-duration attempt, terminate on overflow, underflow, or invalid totals without a positivity floor. The separate configurable-floor extension is described in Sec.~\ref{sec:lapse-floor}. Dissipation acts on stored variables, so changing variables also changes the finite-grid filter.
 
 The wormhole's other end is not a regular center. Its asymptotic phase is
 \begin{align}

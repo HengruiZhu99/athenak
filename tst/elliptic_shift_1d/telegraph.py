@@ -53,10 +53,11 @@ def python_rhs(ev,q,B,kappa,tau,support,accepted=False):
 
 
 class TelegraphEngine:
-    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar",ray_interpolation="linear",ray_exit="legacy"):
+    def __init__(self,ev,library,kappa,tau,inner=.01,outer=.8,width=.08,nray=0,start=1.,inner_profile="collar",ray_interpolation="linear",ray_exit="legacy",lapse_floor=1e-10):
         if ray_exit not in ('legacy','dense'):raise ValueError('Unknown ray exit treatment')
         if ray_interpolation not in ('linear','pchip'):raise ValueError('Unknown ray interpolation')
         if not np.isfinite(kappa+tau) or kappa<0 or tau<=0:raise ValueError('Need kappa>=0,tau>0')
+        if not np.isfinite(lapse_floor) or lapse_floor<0:raise ValueError('lapse_floor must be finite and nonnegative')
         if not ev.args.puncture_chart or ev.r[0]!=0:raise ValueError('First telegraph implementation requires the full AF domain')
         self.base=FastEngine(ev,8,library);lib=self.base.lib;self.n=len(ev.r);self.nray=nray;self.start=start
         fp=np.ctypeslib.ndpointer(dtype=np.float64,flags='C_CONTIGUOUS')
@@ -70,6 +71,16 @@ class TelegraphEngine:
         w,wp=window(ev.r,inner,outer,width,inner_profile)
         self.handle=lib.telegraph_create(self.base.handle,kappa,tau,w,wp,nray,start)
         if not self.handle:raise RuntimeError('Telegraph engine creation failed')
+        self.lapse_floor=lapse_floor
+        self.has_lapse_floor=hasattr(lib,'telegraph_set_lapse_floor')
+        if self.has_lapse_floor:
+            lib.telegraph_set_lapse_floor.argtypes=[C.c_void_p,C.c_double]
+            lib.telegraph_apply_lapse_floor.argtypes=[C.c_void_p,fp]
+            lib.telegraph_lapse_floor_stats.argtypes=[C.c_void_p,fp]
+            if lib.telegraph_set_lapse_floor(self.handle,lapse_floor):
+                message=lib.spherical_fast_last_error(self.base.handle).decode();self.close();raise ValueError(message)
+        elif lapse_floor!=0:
+            self.close();raise ValueError('Frozen library lacks lapse_floor support; use lapse_floor=0 for an unfloored control')
         # Old frozen libraries remain valid linear-mode controls.
         if ray_interpolation=='pchip':
             lib.telegraph_set_ray_interpolation.argtypes=[C.c_void_p,C.c_int]
@@ -84,13 +95,20 @@ class TelegraphEngine:
         out=np.empty_like(q);outB=np.empty_like(B);speeds=np.empty((self.n,2))
         if self.base.lib.telegraph_rhs(self.handle,q,B,out,outB,speeds):raise FloatingPointError(self.base.lib.spherical_fast_last_error(self.base.handle).decode())
         return out,outB,speeds
+    def apply_lapse_floor(self,q):
+        """Clamp physical alpha/O on positive-radius nodes; retain AF/scri slots."""
+        if self.has_lapse_floor:self.base.lib.telegraph_apply_lapse_floor(self.handle,q)
     def advance(self,q,B,rays,steps,dt,t):
         done=self.base.lib.telegraph_advance(self.handle,q,B,rays,steps,dt,t)
         if done<0:return -done-1,self.base.lib.spherical_fast_last_error(self.base.handle).decode()
         return done,None
     def diagnostics(self):
         extra=np.zeros(5);self.base.lib.telegraph_stats(self.handle,extra)
-        return dict(self.base.diagnostics(),**dict(zip(['max_gauge_speed','max_cfl','max_relaxation_dt','max_front_lapse_gradient','max_front_compression'],map(float,extra))))
+        result=dict(self.base.diagnostics(),**dict(zip(['max_gauge_speed','max_cfl','max_relaxation_dt','max_front_lapse_gradient','max_front_compression'],map(float,extra))))
+        if self.has_lapse_floor:
+            floor=np.zeros(3);self.base.lib.telegraph_lapse_floor_stats(self.handle,floor)
+            result.update(zip(['max_lapse_floor_radius','max_lapse_floor_log_correction','max_lapse_floor_clamps_per_call'],map(float,floor)))
+        return result
     def compensation(self,value=None):
         if value is None:
             value=np.zeros(self.n*9+self.nray*2);self.base.lib.telegraph_get_compensation(self.handle,value);return value

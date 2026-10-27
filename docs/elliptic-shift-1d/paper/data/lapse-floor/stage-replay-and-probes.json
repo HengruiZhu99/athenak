@@ -1,0 +1,138 @@
+{
+  "case": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-long-puncture-500-v1/n1025",
+  "checkpoint_sha256": "2b8294e20554260f25f273829349cbda4680b9e21a2de110978add2bfaad422e",
+  "time": 43.836474609375,
+  "dt": 4.8828125e-05,
+  "stages": [
+    {
+      "stage": 1,
+      "min_log_alpha": -23.795580848895682,
+      "alpha_min_node": 1,
+      "alpha_min_r": 1.7861251555499861e-09,
+      "min_log_chi": -43.00061066253842,
+      "chi_min_node": 1,
+      "chi_min_r": 1.7861251555499861e-09,
+      "max_metric_deviation": 0.0,
+      "q_finite": true,
+      "node2_base_log_lapse_rate": 227.71250287148553,
+      "node2_telegraph_log_lapse_rate": -58672.057786435675,
+      "max_abs_log_lapse_rate": 58444.34528356419,
+      "max_rate_node": 2,
+      "max_rate_r": 3.6289480097569938e-09
+    },
+    {
+      "stage": 2,
+      "min_log_alpha": -25.107279616413464,
+      "alpha_min_node": 2,
+      "alpha_min_r": 3.6289480097569938e-09,
+      "min_log_chi": -43.000615591496576,
+      "chi_min_node": 1,
+      "chi_min_r": 1.7861251555499861e-09,
+      "max_metric_deviation": 0.0,
+      "q_finite": true,
+      "node2_base_log_lapse_rate": 279.1209075845436,
+      "node2_telegraph_log_lapse_rate": -243639.1522170953,
+      "max_abs_log_lapse_rate": 243360.03130951076,
+      "max_rate_node": 2,
+      "max_rate_r": 3.6289480097569938e-09
+    },
+    {
+      "stage": 3,
+      "min_log_alpha": -29.6218227322813,
+      "alpha_min_node": 2,
+      "alpha_min_r": 3.6289480097569938e-09,
+      "min_log_chi": -43.00061559150118,
+      "chi_min_node": 1,
+      "chi_min_r": 1.7861251555499861e-09,
+      "max_metric_deviation": 0.0,
+      "q_finite": true,
+      "node2_base_log_lapse_rate": 443.73669272205757,
+      "node2_telegraph_log_lapse_rate": -22234058.447968047,
+      "max_abs_log_lapse_rate": 22233614.711275324,
+      "max_rate_node": 2,
+      "max_rate_r": 3.6289480097569938e-09
+    },
+    {
+      "stage": 4,
+      "min_log_alpha": -1109.3061340418794,
+      "alpha_min_node": 2,
+      "alpha_min_r": 3.6289480097569938e-09,
+      "min_log_chi": -43.00062052046606,
+      "chi_min_node": 1,
+      "chi_min_r": 1.7861251555499861e-09,
+      "max_metric_deviation": 0.0,
+      "q_finite": true,
+      "error": "g=1 gauge or positivity violation"
+    }
+  ],
+  "native_one_step_replay": {
+    "completed_steps": 0,
+    "error": "g=1 gauge or positivity violation"
+  },
+  "scope": "Original failed trajectory and checkpoint unchanged. Offline unfloored RK replay plus the explicitly labeled short floor probes below; no production continuation.",
+  "floor_probes": [
+    {
+      "physical_lapse_floor": 1e-10,
+      "duration_completed": 1.0,
+      "steps": 20480,
+      "error": null,
+      "clamped_stage_node_count": 84586,
+      "clamped_nodes": [
+        1,
+        2
+      ],
+      "outermost_clamped_radius": 3.6289480097569938e-09,
+      "max_log_lapse_adjustment": 2.9386449766021308,
+      "final_relative_AH_mass_error": 1.2034525026516363e-07,
+      "final_exterior_RMS": {
+        "H": 1.7943227931072085e-07,
+        "M": 2.4368109342317857e-06,
+        "Theta": 4.999266720586484e-08,
+        "Z": 5.211500511155428e-07
+      }
+    },
+    {
+      "physical_lapse_floor": 1e-08,
+      "duration_completed": 1.0,
+      "steps": 20480,
+      "error": null,
+      "clamped_stage_node_count": 86451,
+      "clamped_nodes": [
+        1,
+        2
+      ],
+      "outermost_clamped_radius": 3.6289480097569938e-09,
+      "max_log_lapse_adjustment": 4.681752924383369,
+      "final_relative_AH_mass_error": 1.2034525026516363e-07,
+      "final_exterior_RMS": {
+        "H": 1.7943227561297025e-07,
+        "M": 2.4368109340646936e-06,
+        "Theta": 4.99926672059941e-08,
+        "Z": 5.211500511156253e-07
+      }
+    },
+    {
+      "physical_lapse_floor": 1e-06,
+      "duration_completed": 1.0,
+      "steps": 20480,
+      "error": null,
+      "clamped_stage_node_count": 240039,
+      "clamped_nodes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "outermost_clamped_radius": 7.491943057844307e-09,
+      "max_log_lapse_adjustment": 9.28692311037146,
+      "final_relative_AH_mass_error": 1.2034525026516363e-07,
+      "final_exterior_RMS": {
+        "H": 1.794322622023635e-07,
+        "M": 2.4368109352112408e-06,
+        "Theta": 4.999266720583048e-08,
+        "Z": 5.211500511158622e-07
+      }
+    }
+  ],
+  "floor_scope": "Isolated short controls with a physical-lapse floor on 0<r<0.01 at every RK stage and accepted state, compensated increments with compensation reset at clamped lapse nodes. AF endpoint unchanged. Same frozen RHS kernels and timestep. Passive rays omitted because they do not feed back. This finite-grid projection changes the method and is not a validated production repair or an asymptotically consistent AF-end prescription."
+}

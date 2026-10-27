@@ -15,6 +15,7 @@ def main():
  p.add_argument('--ko-order',type=int,choices=[6,8],default=6)
  p.add_argument('--n',type=int,default=257);p.add_argument('--t',type=float,default=3.)
  p.add_argument('--kappa',type=float,default=.02);p.add_argument('--tau',type=float,default=.02)
+ p.add_argument('--lapse-floor',type=float,default=1e-10,help='Physical lapse alpha/O floor at positive-radius nodes (default 1e-10; 0 disables)')
  p.add_argument('--inner-profile',choices=['collar','af-regular'],default='collar')
  p.add_argument('--mass',type=float,default=1/3);p.add_argument('--nu',type=float,default=1.);p.add_argument('--cfl',type=float,default=.05)
  p.add_argument('--quadrature-width',type=int,choices=[7,9,11],default=7)
@@ -31,6 +32,7 @@ def main():
  p.add_argument('--output',type=Path,required=True);args=p.parse_args()
  if args.n<17 or args.ray_seeds<2 or not all(np.isfinite(x) for x in [args.t,args.kappa,args.tau,args.nu,args.cfl,args.report_dt,args.ray_start,args.mass]):raise ValueError('Invalid finite inputs')
  if args.t<0 or args.nu<0 or args.kappa<0 or min(args.tau,args.cfl,args.report_dt,args.mass)<=0 or args.ray_start<0:raise ValueError('Invalid positive inputs')
+ if not np.isfinite(args.lapse_floor) or args.lapse_floor<0:raise ValueError('lapse_floor must be finite and nonnegative')
  if not np.isfinite(args.puncture_ko) or args.puncture_ko<0 or not 0<args.puncture_ko_radius<=1:raise ValueError('Invalid dissipation control')
  if not 0<=args.grid_stretch<=20:raise ValueError('Grid stretch must lie in [0,20]')
  args.output.mkdir(parents=True,exist_ok=False);here=Path(__file__).resolve().parent
@@ -42,7 +44,8 @@ def main():
  for f in [args.library,args.fast_library]:shutil.copy2(f,frozen/f.name)
  config={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()}
  manifest=dict(arguments=config,binding=binding,status='initializing',command=sys.argv,platform=platform.platform(),
-  method='free-Z4c full AF chart, spherical conformal telegraph, RK4 stage rays; no projection',
+  method='free-Z4c full AF chart, spherical conformal telegraph, RK4 stage rays; configurable physical-lapse floor, no constraint projection',
+  lapse_floor_scope='Clamp alpha/O on 0<r<1 before initial reporting, at every RK stage and after every accepted step; AF coefficient endpoint and scri clock unchanged. Zero disables. initial-data.npz retains the analytic pre-floor construction; profile-0001.npz records the actual evolved initial state.',
   characteristic_scope='Coupled frozen lapse-trace-flux speeds; independent Z4/elliptic-shift nonlinear stability not assumed.',
   ray_scope=f'Alternating minus/plus seeds in .12:.4, held until ray_start. Each RK stage uses that stage geometry, {args.ray_interpolation} radial speed interpolation and its derivative. Exits use {args.ray_exit} treatment and terminate the ray; no reinjection.',resource_authorization='User explicitly requested controlled local telegrapher evolutions.')
  mp=args.output/'manifest.json';mp.write_text(json.dumps(manifest,indent=2)+'\n')
@@ -55,7 +58,7 @@ def main():
  manifest['initial_data']=dict(mass=initial.mass,quadrature_order=initial.nodes.size,radial_map_scale=initial.k)
  np.savez_compressed(args.output/'initial-data.npz',r=ev.r,q=q,q_physical=initial_q,d=initial_d,dd=initial_dd)
  rays=np.zeros((2*args.ray_seeds,2));rays[:,0]=np.repeat(np.linspace(.12,.4,args.ray_seeds),2)
- engine=TelegraphEngine(ev,args.fast_library,args.kappa,args.tau,args.inner,args.outer,args.transition,len(rays),args.ray_start,args.inner_profile,args.ray_interpolation,args.ray_exit)
+ engine=TelegraphEngine(ev,args.fast_library,args.kappa,args.tau,args.inner,args.outer,args.transition,len(rays),args.ray_start,args.inner_profile,args.ray_interpolation,args.ray_exit,args.lapse_floor)
  t=0.;step=0;previous={};lattice=None
  if args.resume:
   with np.load(args.resume,allow_pickle=False) as z:
@@ -65,6 +68,7 @@ def main():
    q=z['q'].copy();B=z['B'].copy();rays=z['rays'].copy();engine.compensation(z['compensation'])
    t=float(z['t']);step=int(z['step']);lattice=old['time_lattice'];previous=old.get('all_RK_stages',{})
   manifest['checkpoint_parent']=dict(path=str(args.resume.resolve()),sha256=sha(args.resume))
+ engine.apply_lapse_floor(q)
  dt=args.cfl*ev.h;clock=FixedStepClock(dt,t,step,args.t,lattice)
  # Activate the ray packet on an exact time-lattice point, not a partial RK step.
  if abs(args.ray_start/dt-round(args.ray_start/dt))>1e-8:raise ValueError('Ray start must lie on fixed time lattice')

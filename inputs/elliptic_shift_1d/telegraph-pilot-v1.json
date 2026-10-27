@@ -1,11 +1,51 @@
 {
-  "common": {"n":257,"t":3,"tau":0.02,"nu":1,"cfl":0.05,"report_dt":0.05},
+  "common": {
+    "n": 257,
+    "t": 3,
+    "tau": 0.02,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "lapse_floor": 0.0
+  },
   "cases": [
-    {"name":"nu1-k0", "arguments":{"kappa":0}},
-    {"name":"nu1-k005", "arguments":{"kappa":0.005}},
-    {"name":"nu1-k02", "arguments":{"kappa":0.02}},
-    {"name":"nu1-k08", "arguments":{"kappa":0.08}},
-    {"name":"nu025-k0", "arguments":{"nu":0.25,"kappa":0}},
-    {"name":"nu025-k02", "arguments":{"nu":0.25,"kappa":0.02}}
+    {
+      "name": "nu1-k0",
+      "arguments": {
+        "kappa": 0
+      }
+    },
+    {
+      "name": "nu1-k005",
+      "arguments": {
+        "kappa": 0.005
+      }
+    },
+    {
+      "name": "nu1-k02",
+      "arguments": {
+        "kappa": 0.02
+      }
+    },
+    {
+      "name": "nu1-k08",
+      "arguments": {
+        "kappa": 0.08
+      }
+    },
+    {
+      "name": "nu025-k0",
+      "arguments": {
+        "nu": 0.25,
+        "kappa": 0
+      }
+    },
+    {
+      "name": "nu025-k02",
+      "arguments": {
+        "nu": 0.25,
+        "kappa": 0.02
+      }
+    }
   ]
 }

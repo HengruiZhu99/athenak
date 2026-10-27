@@ -67,6 +67,8 @@ double ray_increment(const double* state,const double* k,double dt,double lo,dou
 }
 struct Telegraph {
   Engine& e;double kappa,tau,start;int nr;Vec w,wp,comp;
+  double lapse_floor=0.;Vec lapse_floor_log;
+  std::array<double,3> floor_stats{};
   bool cubic_rays=false,dense_exits=false;Vec speed_slopes;
   Vec q1,q2,q3,q4,qs,b1,b2,b3,b4,bs,j1,j2,j3,j4,js,speeds;
   std::array<double,5> stats{};
@@ -78,6 +80,37 @@ struct Telegraph {
     for(Vec* v:{&j1,&j2,&j3,&j4,&js})v->resize(2*nr);
     speeds.resize(e.n*2);
     speed_slopes.resize(e.n*2);
+  }
+  void set_lapse_floor(double value) {
+    if(!std::isfinite(value)||value<0)throw std::runtime_error("lapse_floor must be finite and nonnegative");
+    Vec limits(e.n,0.);
+    if(value>0)for(int i=1;i<e.n-1;i++) {
+      const double O=(1-e.r[i]*e.r[i])/2,reference=e.ref(i,2);
+      const double ratio=value*O/reference;
+      if(!(ratio>0)||!std::isfinite(ratio))
+        throw std::runtime_error("lapse_floor is not representable in the AF lapse chart");
+      double lower=std::log(ratio);
+      // Correct in log space with a relative-roundoff margin, including when
+      // log(ratio) is close to zero and one log-ULP would be too small.
+      const double margin=4*std::numeric_limits<double>::epsilon()*std::max(1.,std::abs(lower));
+      for(int round=0;round<8&&reference*std::exp(lower)/O<value;round++)lower+=margin;
+      lower+=margin;
+      if(reference*std::exp(lower)/O<value||!std::isfinite(std::exp(lower)))
+        throw std::runtime_error("lapse_floor cannot be reconstructed at this node");
+      limits[i]=lower;
+    }
+    lapse_floor=value;lapse_floor_log=std::move(limits);
+  }
+  void floor_lapse(double* q,bool accepted) {
+    if(lapse_floor==0)return;
+    int count=0;
+    // r=0 stores an AF coefficient; scri has its own clock condition.
+    for(int i=1;i<e.n-1;i++)if(std::isfinite(q[8*i+6])&&q[8*i+6]<lapse_floor_log[i]) {
+      floor_stats[0]=std::max(floor_stats[0],e.r[i]);
+      floor_stats[1]=std::max(floor_stats[1],lapse_floor_log[i]-q[8*i+6]);
+      q[8*i+6]=lapse_floor_log[i];if(accepted)comp[8*i+6]=0.;count++;
+    }
+    floor_stats[2]=std::max(floor_stats[2],static_cast<double>(count));
   }
   void rhs(const double* q,const double* B,double* dq,double* dB,bool accepted=false) {
     e.rhs(q,dq,accepted);const int n=e.n;
@@ -190,6 +223,16 @@ void telegraph_ray_rates(void* handle,const double* speeds,const double* state,d
 void telegraph_stats(void* handle,double* out){auto& t=*static_cast<Telegraph*>(handle);std::copy(t.stats.begin(),t.stats.end(),out);}
 void telegraph_get_compensation(void* handle,double* out){auto& t=*static_cast<Telegraph*>(handle);std::copy(t.comp.begin(),t.comp.end(),out);}
 void telegraph_set_compensation(void* handle,const double* in){auto& t=*static_cast<Telegraph*>(handle);std::copy(in,in+t.comp.size(),t.comp.begin());}
+int telegraph_set_lapse_floor(void* handle,double value) {
+ auto& t=*static_cast<Telegraph*>(handle);try{t.set_lapse_floor(value);return 0;}
+ catch(const std::exception& x){t.e.error=x.what();return -1;}
+}
+int telegraph_apply_lapse_floor(void* handle,double* q) {
+ auto& t=*static_cast<Telegraph*>(handle);t.floor_lapse(q,true);return 0;
+}
+void telegraph_lapse_floor_stats(void* handle,double* out) {
+ auto& t=*static_cast<Telegraph*>(handle);std::copy(t.floor_stats.begin(),t.floor_stats.end(),out);
+}
 int telegraph_rhs(void* handle,const double* q,const double* B,double* dq,double* dB,double* speeds) {
  auto& t=*static_cast<Telegraph*>(handle);try{t.rhs(q,B,dq,dB,true);std::copy(t.speeds.begin(),t.speeds.end(),speeds);return 0;}catch(const std::exception& x){t.e.error=x.what();return -1;}
 }
@@ -198,20 +241,22 @@ int telegraph_advance(void* handle,double* q,double* B,double* rays,int count,do
  try {
   for(;done<count;done++) {
    double now=time+done*dt;const bool active=now>=t.start-8*std::numeric_limits<double>::epsilon()*std::max(1.,t.start);
+   t.floor_lapse(q,true);
    t.rhs(q,B,t.q1.data(),t.b1.data(),true);t.check_dt(dt);t.rays(rays,t.j1.data(),active,rays);
    for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q1[i]/2;
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b1[i]/2;
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j1[i]/2;
-   t.rhs(t.qs.data(),t.bs.data(),t.q2.data(),t.b2.data());t.check_dt(dt);t.rays(t.js.data(),t.j2.data(),active,rays);
+   t.floor_lapse(t.qs.data(),false);t.rhs(t.qs.data(),t.bs.data(),t.q2.data(),t.b2.data());t.check_dt(dt);t.rays(t.js.data(),t.j2.data(),active,rays);
    for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q2[i]/2;
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b2[i]/2;
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j2[i]/2;
-   t.rhs(t.qs.data(),t.bs.data(),t.q3.data(),t.b3.data());t.check_dt(dt);t.rays(t.js.data(),t.j3.data(),active,rays);
+   t.floor_lapse(t.qs.data(),false);t.rhs(t.qs.data(),t.bs.data(),t.q3.data(),t.b3.data());t.check_dt(dt);t.rays(t.js.data(),t.j3.data(),active,rays);
    for(int i=0;i<nq;i++)t.qs[i]=q[i]+dt*t.q3[i];
    for(int i=0;i<n;i++)t.bs[i]=B[i]+dt*t.b3[i];
    for(int i=0;i<nj;i++)t.js[i]=rays[i]+dt*t.j3[i];
-   t.rhs(t.qs.data(),t.bs.data(),t.q4.data(),t.b4.data());t.check_dt(dt);t.rays(t.js.data(),t.j4.data(),active,rays);
+   t.floor_lapse(t.qs.data(),false);t.rhs(t.qs.data(),t.bs.data(),t.q4.data(),t.b4.data());t.check_dt(dt);t.rays(t.js.data(),t.j4.data(),active,rays);
    t.update(q,t.q1,t.q2,t.q3,t.q4,nq,0,dt);t.update(B,t.b1,t.b2,t.b3,t.b4,n,nq,dt);
+   t.floor_lapse(q,true);
    if(t.dense_exits)t.update_rays(rays,dt);
    else t.update(rays,t.j1,t.j2,t.j3,t.j4,nj,nq+n,dt);
    // Exited rays are terminal records, never reinjected or interpreted as crossing.

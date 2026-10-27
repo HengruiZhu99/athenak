@@ -148,7 +148,7 @@
     "library_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
     "fast_sha256": "463b8cc44e8fe1c6c598ea030eb876bbcd633930a329eb2914438ce68dd79f67"
   },
-  "status": "running",
+  "status": "failed",
   "command": [
     "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-convergence-v1/n1025/frozen-source/run_telegraph.py",
     "--t",
@@ -222,8 +222,8 @@
     "path": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-convergence-v1/n1025/checkpoint.npz",
     "sha256": "8c9569af1623ca374d6d344e7db02be6cbaf396696c1dabb765b09c6dc895612"
   },
-  "time": 35.85,
-  "steps": 734208,
+  "time": 43.836474609375,
+  "steps": 897771,
   "time_lattice": {
     "origin_time": 0.0,
     "origin_step": 0,
@@ -235,20 +235,20 @@
     "max_lapse_pole": 3.781794172361815e-10,
     "max_regularity_trace": 7.797306271466881e-07,
     "min_chi": 3.4527025887445737e-31,
-    "min_alpha": 3.7578802131292536e-16,
+    "min_alpha": 0.0,
     "max_H_rms": 5.400557078503097e-05,
-    "max_M_rms": 0.06877892668866331,
+    "max_M_rms": 0.08937477008001612,
     "max_Theta_rms": 3.7590511564930147e-07,
-    "max_Z_rms": 0.15094485997931031,
+    "max_Z_rms": 0.16243237994742374,
     "max_scri_null": 4.440892098500626e-16,
     "max_scri_clock": 0.0,
     "max_Bondi_nonaffinity": 9.388675905608324e-07,
     "max_accepted_H_rms": 5.40055702872454e-05,
-    "max_accepted_M_rms": 0.068778926672239,
+    "max_accepted_M_rms": 0.08937477002221177,
     "max_accepted_Theta_rms": 3.7590508935841464e-07,
-    "max_accepted_Z_rms": 0.15094485991798126,
-    "max_accepted_H_bulk": 4454.559957184528,
-    "max_accepted_M_bulk": 44630748595.831505,
+    "max_accepted_Z_rms": 0.16243237985615586,
+    "max_accepted_H_bulk": 14867.363181633107,
+    "max_accepted_M_bulk": 88277969524.36958,
     "max_accepted_H_endpoint": 3.2465763049206037e-07,
     "max_accepted_M_endpoint": 4.615802699416832e-06,
     "max_gauge_speed": 2.000000000082463,
@@ -257,5 +257,11 @@
     "max_front_lapse_gradient": 6.941232616907869,
     "max_front_compression": 2.890770020606835
   },
-  "runtime_seconds": 468.052760333
+  "runtime_seconds": 613.483211917,
+  "failure": {
+    "type": "FloatingPointError",
+    "message": "g=1 gauge or positivity violation",
+    "time": 43.836474609375,
+    "step": 897771
+  }
 }

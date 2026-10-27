@@ -28,7 +28,7 @@ for n,inner_profile,grid in product([33,65,129],['collar','af-regular'],grid_cas
  ev=PunctureChart(opts);q,*_=ev.initial_wormhole(IsotropicWormhole());r=ev.r
  support=window(r,inner_profile=inner_profile);w,wp=support;B=.001*r*(1-r)**8
  for j,amp in [(0,.001),(2,.001),(3,.002),(4,.003),(5,.004),(6,.0015)]:q[:,j]+=amp*(1-r)**6
- engine=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.,inner_profile=inner_profile)
+ engine=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.,inner_profile=inner_profile,lapse_floor=0.)
  expected,eb,es=python_rhs(ev,q,B,.02,.03,support,True);got,gb,gs=engine.rhs(q,B)
  np.testing.assert_allclose(got,expected,rtol=2e-11,atol=2e-10,err_msg=str((n,inner_profile,grid)))
  np.testing.assert_allclose(gb,eb,rtol=2e-11,atol=2e-11);np.testing.assert_allclose(gs,es,rtol=2e-13,atol=2e-13)
@@ -68,20 +68,20 @@ for n,inner_profile,grid in product([33,65,129],['collar','af-regular'],grid_cas
  np.testing.assert_allclose(rays,expected_rays,rtol=2e-12,atol=2e-12)
  # Save/reconstruct all geometry, auxiliary and ray compensated state.
  correction=engine.compensation();q2=cq.copy();B2=cb.copy();ray2=rays.copy()
- restarted=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.,inner_profile=inner_profile);restarted.compensation(correction)
+ restarted=TelegraphEngine(ev,a.fast_library,.02,.03,nray=2,start=0.,inner_profile=inner_profile,lapse_floor=0.);restarted.compensation(correction)
  assert engine.advance(cq,cb,rays,5,dt,4*dt)[1] is None
  assert restarted.advance(q2,B2,ray2,5,dt,4*dt)[1] is None
  assert np.array_equal(cq,q2) and np.array_equal(cb,B2) and np.array_equal(rays,ray2)
  assert np.array_equal(engine.compensation(),restarted.compensation())
  restarted.close();engine.close()
  # kappa=0, B=0 must reproduce the actual existing solver bitwise.
- ref=FastEngine(ev,8,a.fast_library);new=TelegraphEngine(ev,a.fast_library,0.,.03,inner_profile=inner_profile)
+ ref=FastEngine(ev,8,a.fast_library);new=TelegraphEngine(ev,a.fast_library,0.,.03,inner_profile=inner_profile,lapse_floor=0.)
  cq=q.copy();rq=q.copy();cb=np.zeros(n);rays=np.zeros((0,2))
  done,_,failed=ref.advance(rq,8,dt);assert not failed
  done,failure=new.advance(cq,cb,rays,8,dt,0.);assert failure is None
  assert np.array_equal(cq,rq) and np.array_equal(cb,np.zeros(n))
  ref.close();new.close()
- event=TelegraphEngine(ev,a.fast_library,0.,.03,nray=2,start=2*dt,inner_profile=inner_profile)
+ event=TelegraphEngine(ev,a.fast_library,0.,.03,nray=2,start=2*dt,inner_profile=inner_profile,lapse_floor=0.)
  cq=q.copy();cb=np.zeros(n);ray=np.array([[.25,0.],[.25,0.]]);seed=ray.copy()
  assert event.advance(cq,cb,ray,2,dt,0.)[1] is None
  assert np.array_equal(ray,seed),'Last RK stage before injection must not advance rays early'

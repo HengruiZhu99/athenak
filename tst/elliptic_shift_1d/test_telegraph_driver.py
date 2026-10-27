@@ -4,7 +4,7 @@ import argparse,json,subprocess,sys,tempfile
 from pathlib import Path
 import numpy as np
 p=argparse.ArgumentParser();p.add_argument('--library',required=True);p.add_argument('--fast-library',required=True);a=p.parse_args()
-base=[sys.executable,str(Path(__file__).with_name('run_telegraph.py')),'--n','33','--ray-start','0','--report-dt','.015625','--library',a.library,'--fast-library',a.fast_library]
+base=[sys.executable,str(Path(__file__).with_name('run_telegraph.py')),'--lapse-floor','0','--n','33','--ray-start','0','--report-dt','.015625','--library',a.library,'--fast-library',a.fast_library]
 with tempfile.TemporaryDirectory() as tmp:
  root=Path(tmp)
  def run(name,*args):
@@ -29,6 +29,18 @@ with tempfile.TemporaryDirectory() as tmp:
   split=run(case+'-split',*controls,'--t','.03125','--resume',str(first/'checkpoint.npz'))
   with np.load(whole/'checkpoint.npz') as x,np.load(split/'checkpoint.npz') as y:
    for key in ['q','B','rays','compensation','t','step']:assert np.array_equal(x[key],y[key]),key
+ # The user default and nondefault floors are recorded and restart-bound.
+ default=root/'floor-default'
+ subprocess.run([base[0],base[1],*base[4:],'--output',str(default),'--t','0'],check=True,capture_output=True,text=True)
+ assert json.loads((default/'manifest.json').read_text())['arguments']['lapse_floor']==1e-10
+ old_controls=controls
+ controls=['--n','129','--grid-stretch','4','--lapse-floor','.001','--report-dt','.000390625']
+ whole=run('floor-whole',*controls,'--t','.00078125');part=run('floor-part',*controls,'--t','.000390625');split=run('floor-split',*controls,'--t','.00078125','--resume',str(part/'checkpoint.npz'))
+ with np.load(whole/'checkpoint.npz') as x,np.load(split/'checkpoint.npz') as y:
+  for key in ['q','B','rays','compensation','t','step']:np.testing.assert_array_equal(x[key],y[key])
+ bad=subprocess.run([*base,'--output',str(root/'bad-floor'),*controls,'--lapse-floor','.002','--t','.00078125','--resume',str(part/'checkpoint.npz')],capture_output=True,text=True)
+ assert bad.returncode!=0 and 'Restart input mismatch: lapse_floor' in bad.stderr
+ controls=old_controls
  # Exit modes are part of the restart binding.
  bad_mode=subprocess.run([*base,'--output',str(root/'bad-exit-mode'),*controls,'--ray-exit','legacy','--t','.03125','--resume',str(first/'checkpoint.npz')],capture_output=True,text=True)
  assert bad_mode.returncode!=0 and 'Restart input mismatch: ray_exit' in bad_mode.stderr

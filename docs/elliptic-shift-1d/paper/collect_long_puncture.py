@@ -13,12 +13,12 @@ from analyze_telegraph_time import numerical_binding
 from telegraph_analysis_io import validate_telegraph_profile
 from horizon import apparent_horizons
 case=ROOT/'output/elliptic-shift-1d/telegraph-long-puncture-500-v1/n1025'
-parser=argparse.ArgumentParser();parser.add_argument('--through',type=float,help='Explicit saved-time cutoff for a running pilot');a=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--through',type=float,help='Explicit saved-time cutoff for a running pilot');parser.add_argument('--output',type=Path,help='New export directory; defaults to the paper data directory');parser.add_argument('--case',type=Path,default=case);parser.add_argument('--protocol',type=Path);a=parser.parse_args();case=a.case.resolve()
 m=json.loads((case/'manifest.json').read_text())
 assert m['status'] in ['finished','failed'] or a.through is not None,'Running exports require an explicit cutoff'
-assert a.through is None or 10<a.through<=m['time']
+assert a.through is None or 0<=a.through<=m['time']
 cutoff=m['time'] if a.through is None else a.through
-D=P/'data/long-puncture';D.mkdir(exist_ok=False)
+D=a.output if a.output is not None else P/'data/long-puncture';D.mkdir(parents=True,exist_ok=False)
 receipts=[];folders=[]
 def receipt(path):
  receipts.append(dict(path=str(path.relative_to(ROOT)),sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
@@ -70,9 +70,9 @@ for t,values in profiles.items():
  for k,v in zip(['r','alpha','physical','H'],values):arrays[f't{round(t*100):06d}_{k}']=v
 np.savez_compressed(D/'profiles.npz',**arrays)
 assert a.through is None or abs(last_t-a.through)<1e-9,'Missing requested snapshot'
-result=dict(target=500,interim=m['status']=='running',status=m['status'],failure=m.get('failure'),integrator_time=m['time'],last_saved_time=last_t,resolution=m['arguments']['n'],parameters=m['arguments'],parent_checkpoint=m['checkpoint_parent'],profile_times=sorted(profiles),rows=list(rows.values()),scope='Single-resolution survival pilot; interim when marked running. Both full-domain diagnostics and a separately labeled apparent-horizon-exterior budget; exterior RMS is normalized by the exterior r^2 dr/dx weight sum. No evolution points are excised; saved states are validated independently. Failed attempted stages are not plotted. Survival does not establish accuracy, convergence, or continuum stability.')
+result=dict(target=500,interim=m['status']=='running',status=m['status'],failure=m.get('failure'),integrator_time=m['time'],last_saved_time=last_t,resolution=m['arguments']['n'],parameters=m['arguments'],parent_checkpoint=m.get('checkpoint_parent'),profile_times=sorted(profiles),rows=list(rows.values()),scope='Single-resolution survival pilot; interim when marked running. Both full-domain diagnostics and a separately labeled apparent-horizon-exterior budget; exterior RMS is normalized by the exterior r^2 dr/dx weight sum. No evolution points are excised; saved states are validated independently. Failed attempted stages are not plotted. Survival does not establish accuracy, convergence, or continuum stability.')
 (D/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
-protocol=ROOT/'docs/elliptic-shift-1d/telegraph-long-puncture-500-v1.json';receipt(protocol);shutil.copy2(protocol,D/'protocol.json')
+protocol=a.protocol.resolve() if a.protocol else ROOT/'docs/elliptic-shift-1d/telegraph-long-puncture-500-v1.json';receipt(protocol);shutil.copy2(protocol,D/'protocol.json')
 receipt(case.parent/'launch.json');shutil.copy2(case.parent/'launch.json',D/'launch.json')
 amendment=ROOT/'docs/elliptic-shift-1d/telegraph-long-puncture-exterior-budget-v1.json';receipt(amendment);shutil.copy2(amendment,D/'exterior-budget.json')
 (D/'source-manifest.json').write_text(json.dumps(receipts,indent=2)+'\n')

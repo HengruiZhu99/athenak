@@ -145,3 +145,6 @@ add_test(NAME telegraph_dense_exit_exact_flows_and_restart
 
 add_test(NAME telegraph_independent_control_evidence_guards
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_controls.py)
+
+add_test(NAME telegraph_configurable_physical_lapse_floor
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_telegraph_lapse_floor.py --library $<TARGET_FILE:spherical_z4c> --fast-library $<TARGET_FILE:spherical_telegraph>)

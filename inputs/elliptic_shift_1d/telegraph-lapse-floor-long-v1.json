@@ -1,0 +1,29 @@
+{
+  "common": {
+    "mass": 0.3333333333333333,
+    "t": 500,
+    "tau": 0.02,
+    "kappa": 0.005,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "inner_profile": "af-regular",
+    "transition": 0.24,
+    "grid_map": "inner-exp-scri",
+    "grid_stretch": 16,
+    "mapped_ko": "local",
+    "width": 7,
+    "ko_order": 8,
+    "ray_interpolation": "pchip",
+    "ray_exit": "dense",
+    "lapse_floor": 1e-10
+  },
+  "cases": [
+    {
+      "name": "n1025",
+      "arguments": {
+        "n": 1025
+      }
+    }
+  ]
+}
