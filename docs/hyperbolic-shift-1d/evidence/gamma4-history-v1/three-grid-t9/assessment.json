@@ -1,0 +1,227 @@
+{
+  "t_start": 0.0,
+  "t_end": 9.0,
+  "t_end_over_M": 27.0,
+  "exact_common_samples": 394,
+  "metrics": {
+    "H_exterior_rms": {
+      "peak": [
+        0.007481191800700769,
+        0.0006142577971558997,
+        1.6130569410637198e-05
+      ],
+      "time_rms": [
+        0.0033221245563957577,
+        0.00023816277733294347,
+        5.951680240278487e-06
+      ],
+      "peak_decreases": true,
+      "time_rms_decreases": true,
+      "pointwise_exceptions": [
+        {
+          "coarse_n": 257,
+          "fine_n": 513,
+          "count": 0,
+          "samples": []
+        },
+        {
+          "coarse_n": 513,
+          "fine_n": 1025,
+          "count": 0,
+          "samples": []
+        }
+      ]
+    },
+    "M_exterior_rms": {
+      "peak": [
+        0.015291785399157076,
+        0.0012517985774636452,
+        3.771774737577095e-05
+      ],
+      "time_rms": [
+        0.007026175533309819,
+        0.0005042523594560799,
+        1.7467060764394758e-05
+      ],
+      "peak_decreases": true,
+      "time_rms_decreases": true,
+      "pointwise_exceptions": [
+        {
+          "coarse_n": 257,
+          "fine_n": 513,
+          "count": 0,
+          "samples": []
+        },
+        {
+          "coarse_n": 513,
+          "fine_n": 1025,
+          "count": 0,
+          "samples": []
+        }
+      ]
+    },
+    "Theta_exterior_rms": {
+      "peak": [
+        7.745379878372755e-05,
+        4.203530791447279e-06,
+        1.2404661097236128e-07
+      ],
+      "time_rms": [
+        3.6852426858168304e-05,
+        1.2916569390805088e-06,
+        2.4998650150148222e-08
+      ],
+      "peak_decreases": true,
+      "time_rms_decreases": true,
+      "pointwise_exceptions": [
+        {
+          "coarse_n": 257,
+          "fine_n": 513,
+          "count": 1,
+          "samples": [
+            {
+              "t": 0.0,
+              "t_over_M": 0.0,
+              "coarse": 0.0,
+              "fine": 0.0
+            }
+          ]
+        },
+        {
+          "coarse_n": 513,
+          "fine_n": 1025,
+          "count": 1,
+          "samples": [
+            {
+              "t": 0.0,
+              "t_over_M": 0.0,
+              "coarse": 0.0,
+              "fine": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    "Z_exterior_rms": {
+      "peak": [
+        0.00044352226505631654,
+        1.8648937164914453e-05,
+        3.335089401484568e-06
+      ],
+      "time_rms": [
+        0.0002247140893295459,
+        8.595066758281024e-06,
+        1.1032739013574676e-06
+      ],
+      "peak_decreases": true,
+      "time_rms_decreases": true,
+      "pointwise_exceptions": [
+        {
+          "coarse_n": 257,
+          "fine_n": 513,
+          "count": 1,
+          "samples": [
+            {
+              "t": 0.0,
+              "t_over_M": 0.0,
+              "coarse": 0.0,
+              "fine": 0.0
+            }
+          ]
+        },
+        {
+          "coarse_n": 513,
+          "fine_n": 1025,
+          "count": 1,
+          "samples": [
+            {
+              "t": 0.0,
+              "t_over_M": 0.0,
+              "coarse": 0.0,
+              "fine": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    "absolute_relative_AH_mass_error": {
+      "peak": [
+        8.46363580572218e-05,
+        1.235514692776718e-07,
+        5.6349265253885505e-09
+      ],
+      "time_rms": [
+        2.0480945309981016e-05,
+        2.2080863259193564e-08,
+        7.589727765402266e-10
+      ],
+      "peak_decreases": true,
+      "time_rms_decreases": true,
+      "pointwise_exceptions": [
+        {
+          "coarse_n": 257,
+          "fine_n": 513,
+          "count": 0,
+          "samples": []
+        },
+        {
+          "coarse_n": 513,
+          "fine_n": 1025,
+          "count": 2,
+          "samples": [
+            {
+              "t": 6.125,
+              "t_over_M": 18.375,
+              "coarse": 1.4134884374072954e-09,
+              "fine": 1.6884766917968363e-09
+            },
+            {
+              "t": 7.65,
+              "t_over_M": 22.950000000000003,
+              "coarse": 9.795475541807264e-11,
+              "fine": 1.2647860536674216e-10
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "peak_relative_AH_mass_drift": [
+    8.463676839298717e-05,
+    1.2354489831167825e-07,
+    5.635005462245601e-09
+  ],
+  "runs": [
+    {
+      "case": "output/hyperbolic-shift-1d/gamma4-inner-damping-v1/n257-t100M",
+      "n": 257,
+      "dt": 9.765625e-05,
+      "hashes": {
+        "manifest.json": "65f2fe29d928529f79b50a85c84b5816358c63afa961659b4c11096e791d46f7",
+        "history.json": "7e6305b0a9ce149e593f1978fe324f6571930f1db20e59a40bc394a801594618",
+        "profiles.npz": "00e945712fb7474e20dec43a389c0ed4cce45a6b09eefd1d36ae7e98dfc4800c"
+      }
+    },
+    {
+      "case": "output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/segment-0009",
+      "n": 513,
+      "dt": 4.8828125e-05,
+      "hashes": {
+        "manifest.json": "08c6474bed45cb3e8fbb5519280563e99032f2e9214142579ae24ac9d921709e",
+        "history.json": "a147de336bd6f3a5a9e312aa158da6c8fab95adb7f5f7bafa324f15e0284c88b",
+        "profiles.npz": "591a898060e49b3e2de77e4f8219a39efee52d5ed09c318f4a64e574f8b38da1"
+      }
+    },
+    {
+      "case": "output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025/segment-0009",
+      "n": 1025,
+      "dt": 2.44140625e-05,
+      "hashes": {
+        "manifest.json": "c13db3e2f3acad6352d3c7256755baf82fd8b8c45396694b3e6d73f70f9facf8",
+        "history.json": "0fb7c4cc67f680495117bf4f715f141ea6d3c2abaa3e6c31d33d656a0ebf590e",
+        "profiles.npz": "746c5c016038c8384d011f30a9e6eb8b3498555baf7aa8e7a94c862a237de62f"
+      }
+    }
+  ],
+  "scope": "Matched history diagnostics, not field self-convergence. All shared samples retained, including zero crossings of mass error. Horizon-exterior spatial norms come from the unchanged run diagnostic; time RMS uses trapezoidal time weights. Two-grid results do not establish a three-grid convergence order."
+}

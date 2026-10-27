@@ -1,11 +1,11 @@
 {
-  "updated_utc": "2026-10-27T22:18:32.408246+00:00",
+  "updated_utc": "2026-10-27T22:26:20.369483+00:00",
   "goal_status": "active",
   "turn_classification": "progress",
   "target_t_over_M": 100,
   "target_coordinate_t": 33.333333333333336,
   "latest_user_direction": "Stay close to the moving-puncture Gamma driver in the bulk; adapt only as needed for exact algebraic scri closure.",
-  "completed": "N257 completes100M; latest finer completed checkpoints: N513 69M, N1025 27M. Matched spatial evidence remains21.6M and temporal9M. New manufactured derivative audit verifies h-independent first-node errors for powers mismatched to the wormhole reference: chi=r^2 has4.8346% first-derivative and11.2561% second-derivative errors, while fixed-positive-radius convergence is sixth order. No evolution changes.",
+  "completed": "N257 completes100M; finer completed checkpoints: N513 75M, N1025 28.8M. Field refinement remains21.6M and temporal9M. New matched history diagnostics extend to27M on three grids and69M on two grids; these do not replace field convergence or long-time temporal qualification.",
   "failure_diagnosis": "No new evolution failure. The fixed wormhole chart yields logarithmically singular residuals for changed inner powers; manufactured tests quantify loss of uniform fixed-index derivative accuracy. This is a candidate contributor to the grid-scale inner feature, not a proved unique cause. Historical elliptic direct-total-derivative controls failed and remain disabled; their actual manifests are copied as counterevidence.",
   "next_steps": [
     "Revalidate BOTH existing series coordinators and active child commands from fresh series.json before any new evolution. Do not launch duplicate trajectories. Session IDs 39235 (N513) and 71187 (N1025) are recorded as snapshot handles.",
@@ -25,21 +25,23 @@
       "status": "running",
       "coordinator_pid": 90875,
       "coordinator_command_verified": true,
-      "child_pid": 99845,
+      "child_pid": 1049,
       "child_command_verified": true,
-      "child_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/segment-0010",
-      "last_completed_parent": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/segment-0009",
-      "completed_segments": 9,
-      "completed_t_over_M": 69.0,
-      "t_over_M": 71.325,
-      "current_target_t_over_M": 75.0,
-      "H_exterior_rms": 6.64775402204717e-05,
-      "M_exterior_rms": 0.0001422737394319456,
-      "AH_mass": 0.33333333267563653,
-      "g_min": 0.8020681123185899,
+      "child_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/segment-0011",
+      "last_completed_parent": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/segment-0010",
+      "completed_segments": 10,
+      "completed_t_over_M": 75.0,
+      "t_over_M": 81.0,
+      "current_target_t_over_M": 81.0,
+      "H_exterior_rms": 6.447193248014751e-05,
+      "M_exterior_rms": 0.00014238993395934837,
+      "AH_mass": 0.3333333325723977,
+      "g_min": 0.7854622918958853,
       "minimum_stage_speed_margin": 0.7175244231955413,
       "peak_completed_mass_drift": 1.2354489831167825e-07,
-      "floor_calls": 0
+      "floor_calls": 0,
+      "max_relative_null": 2.2204460492503126e-16,
+      "max_stage_pole": 0.000994936722469927
     },
     {
       "n": 1025,
@@ -48,21 +50,23 @@
       "status": "running",
       "coordinator_pid": 90877,
       "coordinator_command_verified": true,
-      "child_pid": 251,
+      "child_pid": 1380,
       "child_command_verified": true,
-      "child_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025/segment-0010",
-      "last_completed_parent": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025/segment-0009",
-      "completed_segments": 9,
-      "completed_t_over_M": 27.0,
-      "t_over_M": 27.0,
-      "current_target_t_over_M": 28.800000000000004,
-      "H_exterior_rms": 1.779519277057395e-06,
-      "M_exterior_rms": 1.1912601104008586e-05,
-      "AH_mass": 0.3333333332658836,
-      "g_min": 0.8942301672924329,
+      "child_path": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025/segment-0011",
+      "last_completed_parent": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n1025/segment-0010",
+      "completed_segments": 10,
+      "completed_t_over_M": 28.800000000000004,
+      "t_over_M": 29.625,
+      "current_target_t_over_M": 30.6,
+      "H_exterior_rms": 1.816608791211508e-06,
+      "M_exterior_rms": 1.211275508710729e-05,
+      "AH_mass": 0.3333333331695013,
+      "g_min": 0.8920838512437566,
       "minimum_stage_speed_margin": 0.7175244344902172,
       "peak_completed_mass_drift": 5.635005462245601e-09,
-      "floor_calls": 0
+      "floor_calls": 0,
+      "max_relative_null": 2.2204460492503126e-16,
+      "max_stage_pole": 0.0006324413454207817
     }
   ],
   "do_not_repeat": [
@@ -920,7 +924,7 @@
     "shared_t_over_M": 9
   },
   "previous_turn_classification": "progress",
-  "current_turn_findings": "N513 completes15M and N1025 completes10.8M. Verified serial continuation runner launched toward100M, with420-second per-segment caps and no retries. Two active children have command-verified process identities. Finest series also enforces the existing.001 peak AH mass-drift budget at segment boundaries.",
+  "current_turn_findings": "Matched diagnostic histories assessed without time interpolation: three grids through27M, two through69M. H/M exterior RMS decrease at every common sample. Peak and time-RMS mass errors decrease; two medium/fine pointwise mass exceptions remain explicitly recorded. No numerical changes.",
   "completion_audit": "goal/completion-audit-gamma4-long-v2.json",
   "temporal_queue": {
     "path": "output/hyperbolic-shift-1d/gamma4-time-100M-queue-v1",
@@ -932,5 +936,6 @@
     "gate": "/Users/hz0693/.codex/worktrees/hyperboloidal-hyperbolic-shift/hyperboloidal/output/hyperbolic-shift-1d/gamma4-duration-series-v1/n513/series.json"
   },
   "driver_time_evidence": "docs/hyperbolic-shift-1d/evidence/gamma4-driver-time-v1/summary.json",
-  "inner_derivative_audit": "docs/hyperbolic-shift-1d/evidence/inner-power-derivatives-v2/assessment-summary.json"
+  "inner_derivative_audit": "docs/hyperbolic-shift-1d/evidence/inner-power-derivatives-v2/assessment-summary.json",
+  "history_refinement_evidence": "docs/hyperbolic-shift-1d/evidence/gamma4-history-v1"
 }
