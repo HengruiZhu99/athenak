@@ -12,7 +12,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but the original duration extensions fail near $8M$. An interior-only source adaptation postpones failure to $16$--$17M$. A subsequent constant-strength bulk Gamma driver, with an independently audited inner gauge stencil, reaches $24M$ on one grid and $9M$ on a finer grid; three-grid short tests improve under refinement. Growing coarse-grid interior errors still prevent qualification for the persistent $100M$ target. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
+We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but the original duration extensions fail near $8M$. An interior-only source adaptation postpones failure to $16$--$17M$. A subsequent constant-strength bulk Gamma driver, with an independently audited inner gauge stencil, reaches $24M$ on two grids; three-grid tests through $3M$ improve under refinement. A compact lapse-adjusted Z4 damping control subsequently reaches $30M$ on the coarse grid with positive metric and small horizon-mass drift, but substantial interior errors remain. None of these results qualifies the persistent $100M$ target. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
 \end{abstract}
 
 \section{Preserved baseline and proposed driver}
@@ -33,7 +33,7 @@ The retained lapse and relaxation flux are
  F=\alpha^2+4\Omega^2\alpha,\quad
  \eta=\frac{(1+\epsilon)\alpha}{\alpha+\epsilon A}.
 \end{align}
-Here $\kappa=0.005$, $\tau=0.02$, $\epsilon=10^{-4}$, and $\xi=1+2(1-r^2)^4$. The baseline window $w$ equals one at the puncture and vanishes for $r\geq0.8$, with transition width $0.24$. The attenuation multiplies the flux outside its divergence. The disclosed Appendix-C scalar-$\Theta$ source modification and constant Z4 damping $(\kappa_1,\kappa_2)=(4,-0.99)$ are retained.
+Here $\kappa=0.005$, $\tau=0.02$, $\epsilon=10^{-4}$, and $\xi=1+2(1-r^2)^4$. The baseline window $w$ equals one at the puncture and vanishes for $r\geq0.8$, with transition width $0.24$. The attenuation multiplies the flux outside its divergence. The disclosed Appendix-C scalar-$\Theta$ source modification and baseline Z4 damping $(\kappa_1,\kappa_2)=(4,-0.99)$ are retained, except in the explicitly labelled interior-damping control below.
 
 With a separate shift auxiliary $D$, the candidate is
 \begin{align}
@@ -297,6 +297,58 @@ All these runs maintain relative nullness within $2.23\times10^{-16}$. The sampl
 \end{figure}
 \FloatBarrier
 
+
+\subsection{Late inner deterioration and lapse-adjusted Z4 damping}
+The finest Gamma-driver grid now reaches coordinate $t=1=3M$. At this common time, the exterior Hamiltonian RMS values on $N=257,513,1025$ are $4.1685\times10^{-3}$, $3.6323\times10^{-4}$, and $1.4329\times10^{-5}$. Momentum RMS decreases from $1.0183\times10^{-2}$ to $1.0776\times10^{-3}$ to $5.3229\times10^{-5}$. Full-domain radial-weighted mixed-profile self-differences are $2.4497\times10^{-3}$ and $1.8103\times10^{-4}$, giving an approximate order of $3.758$. This extends the three-grid evidence to $3M$, not to the duration target.
+
+The unmodified-damping $N=513$ continuation also reaches $24M$. Its exterior Hamiltonian and momentum RMS values are $3.9834\times10^{-4}$ and $9.8699\times10^{-4}$, and its maximum sampled horizon-mass drift is $3.13\times10^{-7}$. At this same time, however, $g_{\min}=0.504$ and the interior Hamiltonian maximum is $268.1$, compared with $0.459$ and $111.6$ on $N=257$. The late interior error does not decrease in this maximum norm. Good exterior diagnostics therefore coexist with unresolved inner deterioration on both grids.
+
+To diagnose the later coarse-grid deterioration, we decompose the implemented metric rate as
+\begin{equation}
+ \partial_t g=\beta\,\partial_r^{\rm up}g-2\alpha A_{rr}
+       +\frac{4g}{3}(\beta'-\beta/r)+\mathrm{KO}_g.
+\end{equation}
+At the first positive node at $24M$, the transport, curvature, shift-shear, and dissipation terms are respectively $0.0335$, $0.0430$, $-0.5064$, and $-0.0218$, giving $\partial_tg=-0.4517$. The metric-derived connection is $V^r=-756.04$, whereas the independent connection is $\Lambda^r=0.996$. The decomposition agrees with the computed rate within $1.2\times10^{-15}$ in the inspected snapshots. Thus large connection-constraint errors accompany a shift-shear contribution that drives the metric downward. This correlation does not establish a unique nonlinear cause.
+
+A restricted Jacobian on the inner twelve positive nodes at this snapshot, holding the exterior fixed, has maximum eigenvalue real part $-0.0516$ with the current closure. Adding even metric parity instead gives $+0.4691$; imposing odd connection parity alone gives $-0.0516$. Two perturbation sizes agree. We therefore do not adopt additional geometry parity. The artificial interface, omitted exterior response, and possible nonnormal growth prevent this restricted calculation from proving full-domain stability.
+
+A separate asymptotic calculation identifies a constraint-growth mechanism in the retained equations. Before flooring changes the AF expansion, write $g=1+g_1r+\cdots$, $\beta=b_1r+b_2r^2+\cdots$, and $\Lambda^r=\Lambda_0+\cdots$. Then
+\begin{align}
+ V^r_0&=4g_1,\qquad \dot g_1=b_1g_1+\frac43b_2,\\
+ \dot\Lambda_0&=2b_1\Lambda_0-4b_1g_1+\frac{16}3b_2,\\
+ \delta&=\Lambda_0-4g_1,\qquad \dot\delta=2b_1\delta.
+\end{align}
+The native damping vanishes with the collapsed lapse, while outward shift can amplify this leading constraint error. The coarse $24M$ estimate is $b_1=3.736$. The expansion motivates a control; it is not a quantitative fit to the finite first node or a late trumpet asymptotic proof.
+
+Lapse-adjusted damping is motivated by the black-hole tests in Sec.~III F, Eq.~(27), of \href{https://arxiv.org/html/1307.7391}{Alic, Kastaun, and Rezzolla (2013)}. Our additional compact window and reference-lapse factor adapt that idea to the present hyperboloidal equations. The optional control replaces the damping product by
+\begin{align}
+ \alpha\kappa_1&\longmapsto(1-w)4\alpha+w\kappa_{\rm in}A,
+       \qquad\kappa_{\rm in}=8,\\
+ d_\kappa&=w(\kappa_{\rm in}A-4\alpha),\\
+ \Delta S_p&=d_\kappa(1-\kappa_2)\Theta,\qquad
+ \Delta S_\Theta=-d_\kappa(2+\kappa_2)\Theta,\\
+ \Delta S_\Lambda&=-d_\kappa(\Lambda^r-V^r).
+\end{align}
+Here $S$ is the native pole numerator: the added rates are $\Delta S/\Omega$. The value $\kappa_2=-0.99$ is unchanged. The implementation evaluates these finite products without dividing by the lapse. Its leading AF constraint equation is $\dot\delta=(2b_1-\kappa_{\rm in})\delta$. The coefficient eight exceeds the measured coarse leading growth estimate $2b_1\simeq7.47$; this local criterion does not guarantee nonlinear stability. The correction vanishes identically for $r\geq0.8$. It changes no principal coefficient or boundary datum, and does not project any constraint. The bulk Gamma driver and telegrapher lapse retain their equations.
+
+An independent native-kernel evaluation with the corresponding spatially varying $\kappa_1$ agrees with the added numerator within $2.8\times10^{-14}$. The AF rate limit, exact equilibrium, independent connection, and stage nullness pass their checks; nine relevant CTest groups pass. At identical states the lapse, relaxation flux, direct shift rate, and entire outer-collar rate are unchanged. New trials start from fresh wormhole data; all earlier trajectories continue with their original frozen damping. The input parameter defaults to zero, which preserves that original damping.
+
+Fresh adjusted-damping puncture runs on $N=257,513$ both pass $0.6M$. At that common time, exterior Hamiltonian RMS decreases from $1.170\times10^{-3}$ to $1.947\times10^{-4}$. The coarse continuation reaches $24M$ with $g_{\min}=0.912$, compared with $0.459$ under original damping. Its exterior Hamiltonian RMS is $3.961\times10^{-3}$ and its relative horizon-mass error is $-2.177\times10^{-6}$. However, its interior Hamiltonian maximum is $259.8$, larger than the original coarse value $111.6$. A positive leading AF damping margin, $\kappa_{\rm in}-2b_1=3.87$, therefore does not prevent finite-radius constraint growth. The outcome is mixed: improved metric positivity at this time, without a demonstrated repair of the inner constraint error.
+
+Both adjusted-damping grids also reach the common time $9M$. Exterior Hamiltonian RMS decreases from $4.791\times10^{-3}$ on $N=257$ to $3.619\times10^{-4}$ on $N=513$, and momentum RMS from $9.813\times10^{-3}$ to $7.411\times10^{-4}$. The fine-grid maximum sampled horizon-mass drift is $4.21\times10^{-8}$, with final relative error $-1.21\times10^{-9}$. A third grid and an independent puncture timestep study for this modified damping remain outstanding.
+
+The adjusted coarse trajectory subsequently completes $30M$. Its final $g_{\min}=0.885$, exterior Hamiltonian RMS is $5.824\times10^{-3}$, exterior momentum RMS is $1.161\times10^{-2}$, and maximum sampled relative horizon-mass drift is $7.08\times10^{-6}$. Its interior Hamiltonian maximum reaches $537.5$. Relative nullness remains within $2.23\times10^{-16}$ and the lapse floor never activates. Interior magnitudes alone are not rejection criteria, but no claim of long-time convergence follows from this single surviving grid.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.94\linewidth]{figures/damping-histories.pdf}
+\caption{Original and lapse-adjusted Z4 damping with the same bulk Gamma driver. Dashed curves retain original damping; solid curves use the compact adjusted product. Exterior norms use only apparent-horizon-exterior radial weights. The interior maximum is shown separately and is not included in that budget. Improved metric positivity on the adjusted coarse trajectory does not imply reduced interior Hamiltonian error or long-time convergence.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=0.87\linewidth]{figures/damping-profiles.pdf}
+\caption{Terminal inner lapse, shift, and metric profiles for the same controls. Snapshot times are stated in the legend; unequal-time profiles are not a convergence test. All positive-radius nodes are retained, and no metric projection or floor has been applied. The configurable physical lapse floor remains $10^{-10}$ but has not activated in these runs.}
+\end{figure}
+\FloatBarrier
+
 \section{Implementation route and reproducibility}
 A genuine 3D implementation should evolve Cartesian shift and auxiliary vectors in the interior and transform them consistently to shell frames. The spherical code evolves the full radial component, not a globally slaved $\beta/r$ profile. Spherical symmetry necessarily fixes the central location; it is not a test of puncture motion. Constant and linear Cartesian shift modes must be included in the 3D driver tests. The reference source and restoring term can influence translations, so their effect on puncture tracking must be measured rather than assumed benign.
 
@@ -313,7 +365,7 @@ Evidence category & Established scope\\
 \midrule
 Analytic identities & Nullness elimination, evolving-normal rate, scalar principal polynomial, selected exact eigenspaces, leading AF limits.\\
 Algebraic numerics & Every tested stage/state satisfies spherical nullness within one machine epsilon; general 3D boundary identities have separate randomized tests.\\
-Convergence evidence & Short regular-center refinement; three-grid new-gauge puncture evidence through $0.6M$ and earlier-gauge evidence through $3M$; no $100M$ convergence certificate.\\
+Convergence evidence & Short regular-center refinement; three-grid new-gauge puncture evidence through $3M$ and earlier-gauge evidence through $3M$; no $100M$ convergence certificate.\\
 Unresolved & Complete boundary well-posedness, uniform collapsed-lapse hyperbolicity, accurate puncture evolution, long-time robustness, and all 3D/AMR qualification.\\
 \bottomrule
 \end{tabular}

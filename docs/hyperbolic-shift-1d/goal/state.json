@@ -1,17 +1,18 @@
 {
-  "updated_utc": "2026-10-27T17:30:56.737713+00:00",
+  "updated_utc": "2026-10-27T17:58:49.237507+00:00",
   "goal_status": "active",
   "turn_classification": "progress",
   "target_t_over_M": 100,
   "target_coordinate_t": 33.333333333333336,
   "latest_user_direction": "Stay close to the moving-puncture Gamma driver in the bulk; adapt only as needed for exact algebraic scri closure.",
-  "completed": "Implemented configurable constant bulk Gamma coefficient, removed bulk restoring force, retained prescribed Minkowski source and outer gauge collar. Identified and repaired fast shift-wave inner-stencil instability. Regular pulse spatial order 1.925 and temporal order 4.004. Three puncture grids complete 0.6M with mixed profile order 3.691. N257 completes 24M, N513 completes 9M.",
-  "failure_diagnosis": "Earlier inner-source and metric-connection controls fail before 18M. New unsuppressed Gamma wave fails with positive-only shift extrapolation at 0.4484M; halving dt leaves failure unchanged. Odd extension of beta,D removes that short-time instability. At 24M the corrected coarse run still has growing interior errors: g_min=.459 at first positive node, H_interior_max=111.57. Exterior mass/constraints remain much better controlled; no 100M certificate.",
+  "completed": "Bulk moving-puncture Gamma driver retained. Three-grid original-damping evidence extends to3M with mixed profile order3.758; N257 andN513 both complete24M. Optional compact lapse-adjusted Z4 damping passes native/AF/boundary audits; fresh N257 completes30M andN513 completes9M.",
+  "failure_diagnosis": "Original damping shows late interior growth on both grids at24M; fine H_interior_max268 exceeds coarse111.6. Coarse metric rate is dominated by shift shear with large connection mismatch. Restricted inner Jacobian does not show current closure modal growth; extra metric parity worsens that diagnostic. Formal AF constraint error grows as2*b1*delta when alpha*kappa1 vanishes. Adjusted damping retains gmin.885 through30M, but H_interior_max537 remains; not a full repair or100M qualification.",
   "next_steps": [
-    "Keep the user-requested bulk Gamma-driver direction and unchanged telegrapher lapse. Do not switch to log-metric variables without a new diagnosed need.",
-    "Continue verified N513 t=3 parent in bounded segments toward t=8 for a matched 24M comparison; investigate whether the late interior metric deterioration decreases or moves with resolution.",
-    "Extend N1025 from its verified t=.2 checkpoint toward common t=1 (bounded segments if needed), then t=3. Three-grid long-duration spatial and separate puncture temporal studies remain required.",
-    "Only after these gates, extend surviving qualified trajectories toward coordinate 100/3 (100M), using aligned targets and immutable continuation inputs."
+    "Keep bulk advective Gamma driver, exact algebraic scri closure, telegrapher lapse and configurable floor. No log-metric or geometry parity change without new diagnosis.",
+    "Continue adjusted-damping N513 from verified t3 toward t8 in segments <=2 coordinate units and <=420 seconds; obtain matched24M comparison. Use at most two single-process trials.",
+    "Add fresh adjusted-damping N1025 short qualification (.2 then bounded segments to common t1/t3), and independent fixed-grid puncture timestep refinement. Do not mix original and adjusted damping as a convergence sequence.",
+    "If exterior constraints, horizon mass, boundary health and positive full geometry remain acceptable, extend verified adjusted N257 t10 parent toward100M in bounded segments. Interior errors are diagnostics, not an exterior rejection budget. Investigate their finite-radius growth and possible outgoing contamination.",
+    "100M requires three grids plus separate time refinement; no claim from single-grid30M survival."
   ],
   "active_processes": [],
   "do_not_repeat": [
@@ -258,7 +259,6 @@
       "status": "completed",
       "t": 8.0,
       "error": null,
-      "continuation": true,
       "sources_verified": true
     },
     {
@@ -324,17 +324,122 @@
       "error": null,
       "continuation": false,
       "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n513-t8",
+      "status": "completed",
+      "t": 8.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/n257-t10",
+      "status": "completed",
+      "t": 10.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/n513-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n513-t5",
+      "status": "completed",
+      "t": 5.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n513-t7",
+      "status": "completed",
+      "t": 7.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n1025-t08",
+      "status": "completed",
+      "t": 0.8,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "moving-puncture-odd-v1/n1025-t1",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/puncture-n257",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/puncture-n513",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/n257-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/n257-t8",
+      "status": "completed",
+      "t": 8.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/equilibrium-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/pulse-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/pulse-n129",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/pulse-n257",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "sources_verified": true
     }
   ],
   "checks": {
-    "ctest_groups_passed": 8,
+    "ctest_groups_passed": 9,
     "exact_scalar_corners_verified": true,
     "restart_two_generations_bitwise": true,
     "source_checkpoint_parent_hashes_verified": true,
-    "latex_pages": 16,
+    "latex_pages": 20,
     "latex_warnings": 0,
     "desktop_compile": "success",
-    "visual_review": "Source plots inspected; new Gamma plots checked and label sizes increased; changed PDF pages 12-16 rendered and inspected."
+    "visual_review": "New plots inspected; changed pages16-20 rendered and inspected. Abstract and clarified numerator prose reviewed on final render."
   },
-  "manuscript_changes": "Added source-control failures, metric-driver control, verified continuation machinery, user-requested bulk Gamma formulation, scalar degeneracy and inner-stencil audits, short spatial/temporal refinement, and 24M/9M outcomes. Original physical equations retained. New equations/results are explicitly authorized research updates."
+  "manuscript_changes": "Added common3M refinement, matched24M original-damping results, inner metric-rate and restricted-spectrum diagnosis, formal AF constraint-growth derivation, optional lapse-adjusted damping equations and native oracle, fresh30M/9M outcomes, and two figures. No historical outcomes relabelled."
 }

@@ -12,6 +12,7 @@ from principal import coefficient
 from shift_source import background
 from metric_driver import transport_rate
 from gamma_driver import parameters as gamma_parameters
+from constraint_damping import correction as damping_correction
 from puncture_chart import PunctureChart
 from telegraph import options,window
 from wormhole_isotropic import IsotropicWormhole
@@ -20,8 +21,8 @@ from numerics import puncture_dissipation,RadialOperators
 from elliptic import connection,solve
 
 class PunctureEvolution(Evolution):
- def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,restoring=4.,inner_shift=0.,lapse_floor=1e-10,shift_source='reference',connection_driver='evolved',shift_gauge='separated',gamma_coefficient=1.,grid_stretch=16.,shift_inner_stencil='positive'):
-  super().__init__(n,library,ratio,damping,ko,restoring=restoring,inner_shift=inner_shift,lapse_floor=lapse_floor,shift_source=shift_source,connection_driver=connection_driver,shift_gauge=shift_gauge,gamma_coefficient=gamma_coefficient)
+ def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,restoring=4.,inner_shift=0.,lapse_floor=1e-10,shift_source='reference',connection_driver='evolved',shift_gauge='separated',gamma_coefficient=1.,grid_stretch=16.,shift_inner_stencil='positive',inner_z4_damping=0.):
+  super().__init__(n,library,ratio,damping,ko,restoring=restoring,inner_shift=inner_shift,lapse_floor=lapse_floor,shift_source=shift_source,connection_driver=connection_driver,shift_gauge=shift_gauge,gamma_coefficient=gamma_coefficient,inner_z4_damping=inner_z4_damping)
   opts=options(n,library);opts.grid_map='inner-exp-scri';opts.grid_stretch=grid_stretch
   opts.puncture_stencil='positive';opts.mapped_ko='local';opts.ko_order=8
   self.chart=PunctureChart(opts);self.r=self.chart.r;self.h=self.chart.h;self.op=self.chart.op
@@ -88,6 +89,8 @@ class PunctureEvolution(Evolution):
   bad=self.function(n-1,rr,*arrays,4.,-.99,1,1.,R1,S1,diag1.ctypes.data if diagnostics else None)
   if bad:raise FloatingPointError(f'Native AF tensor failed at node {bad}')
   R[1:]=R1;S[1:]=S1;diag[1:]=diag1
+  if self.inner_z4_damping:
+   S[1:]+=damping_correction(r[1:],alpha[1:],q[1:,4],q[1:,5]-connection(r[1:],g[1:],dp[1:,1]),self.w[1:],self.inner_z4_damping)
   S[:,6]-=2*self.xi*alpha*q[:,6];S[:,6]+=collapsed_background_correction(r,q[:,6])
   dB,_=self.op.derivatives(s[:,8],np.ones(1));eta=np.zeros(n)
   eta[1:]=1.0001*alpha[1:]/(alpha[1:]+1e-4*self.A[1:])
@@ -133,6 +136,10 @@ class PunctureEvolution(Evolution):
   rate[0,0]=2*b1;rate[0,1]=0.;rate[0,6]=2*b1-6+2*self.xi[0]
   rate[0,2]=2*b1*s[0,2];rate[0,3]=2*b1*(s[0,3]-3);rate[0,4]=2*b1*s[0,4]
   rate[0,5]=2*b1*s[0,5]-4*b1*g1+16*b2/3
+  if self.inner_z4_damping:
+   rate[0,3]+=self.inner_z4_damping*1.99*s[0,4]
+   rate[0,4]-=self.inner_z4_damping*1.01*s[0,4]
+   rate[0,5]-=self.inner_z4_damping*(s[0,5]-4*g1)
   rate[0,7]=0.;rate[0,8]=-s[0,8]/.02;rate[0,9]=rate[0,5]-self.damping*s[0,9]
   if self.connection_driver=='metric':rate[0,9]=4*b1*g1+16*b2/3-self.damping*s[0,9]
   if self.shift_gauge=='moving-puncture':rate[0,9]=0. # beta(0)=0 implies D(0)=0, not a second independent datum
@@ -149,7 +156,7 @@ class PunctureEvolution(Evolution):
   for field in [2,3,4]:used[:,field]*=weight[1:-1]
   self.last=dict(diag=diag,alpha=alpha,chi=chi,g=g,beta=beta,pole=S[-1],trace=trace,
                   light_speed=np.r_[0.,alpha[1:]*np.sqrt(chi[1:]/g[1:])],lapse_speed=np.r_[0.,light],shift_speed=np.r_[0.,shift],
-                  shift_mu=mu,shift_restoring=xi_shift,
+                  inner_beta_slope=float(db[0]),shift_mu=mu,shift_restoring=xi_shift,
                   shift_lapse_gap_times_g=4*mu/3-chi*(F+g*eta*.25*self.w**2),
                   physical=q,physical_first=dp,raw_clock_rate=float(R[-1,6]-self.op.endpoint_first(S)[6]),
                   rate_difference=used-raw[1:-1,:7],original_equation_rate_difference=float(np.max(abs(used-raw[1:-1,:7]))))
@@ -167,6 +174,8 @@ class PunctureEvolution(Evolution):
    norms[key+'_interior_max']=float(max(abs(x['diag'][1:][~exterior[1:],i]))) if np.any(~exterior[1:]) else 0.
    norms[key+'_exterior_rms']=float(np.sqrt(sum(weight[exterior]*x['diag'][exterior,i]**2)/sum(weight[exterior]))) if np.any(exterior) else None
   return dict(t=t,**horizon,**norms,**self.stats,pole=float(max(abs(x['pole']))),trace=float(max(abs(x['trace']))),
+              inner_beta_slope=x['inner_beta_slope'],
+              AF_connection_damping_margin=self.inner_z4_damping-2*x['inner_beta_slope'],
               shift_lapse_gap_times_g_min=float(min(x['shift_lapse_gap_times_g'][1:])),
               beta_inner=float(x['beta'][1]),beta_min=float(min(x['beta'])),beta_max=float(max(x['beta'])),
               inner_gauge_outgoing_max=float(max(-x['beta'][1]+x['lapse_speed'][1],-x['beta'][1]+x['shift_speed'][1])),

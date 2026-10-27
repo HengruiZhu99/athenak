@@ -1,0 +1,70 @@
+{
+  "hypothesis": "Test a lapse-adjusted Z4 damping product in the puncture interior, motivated by delta_dot=2*b1*delta for delta=Lambda0-4*g1 when original alpha*kappa1 damping vanishes. With the new coefficient the leading rate is (2*b1-kappa_inner)*delta.",
+  "equations": "Dt beta = mu D - r - xi C(r)(beta+r)/Omega; Dt D = Dt Lambda - eta D. mu=(1-C) mu_bulk + C mu_separated; C=0 for r<=.8, C=1 for r>=.9.",
+  "gamma_coefficient": 1.0,
+  "literal_075_rejected": "Retained lapse/telegraph causes defective lapse-shift speed coincidence at Minkowski center; audited before evolution.",
+  "boundary": "Exact null beta and compatible dependent D at scri unchanged; for the fixed spherical puncture beta(0)=0 implies D(0)=0. Lambda remains independent.",
+  "grid": "Puncture probes will explicitly use grid_stretch=0, retaining the original C7 scri collar and all positive nodes; original stretch16 would violate the gauge CFL by five orders of magnitude.",
+  "preserved": "Moving-puncture bulk Gamma driver, inner odd shift stencil, full live geometry, independently evolved connection, telegrapher lapse and floor, KO8, fixed dt. No constraint projection. Existing completed trajectories continue with their frozen original damping.",
+  "cases": [
+    {
+      "name": "equilibrium-n65",
+      "n": 65,
+      "t": 1,
+      "amplitude": 0,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "cfl": 0.05,
+      "wall_seconds": 240
+    },
+    {
+      "name": "pulse-n65",
+      "n": 65,
+      "t": 1,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "cfl": 0.05,
+      "wall_seconds": 240
+    },
+    {
+      "name": "pulse-n129",
+      "n": 129,
+      "t": 1,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "cfl": 0.05,
+      "wall_seconds": 240
+    },
+    {
+      "name": "pulse-n257",
+      "n": 257,
+      "t": 1,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "inner_z4_damping": 8,
+      "restoring": 4,
+      "cfl": 0.05,
+      "wall_seconds": 240
+    }
+  ],
+  "gates": [
+    "Independent native-kappa oracle, AF constraint rate and perturbed stage nullness",
+    "Regular-center equilibrium and three-grid finite pulse",
+    "Fresh puncture N257/513 t=.2, then bounded duration comparisons with archived controls"
+  ],
+  "guards": {
+    "relative_null": 5e-14,
+    "scri_pole": 0.01,
+    "CFL": 0.4,
+    "relative_horizon_mass": 0.05
+  },
+  "target": "100M remains unqualified",
+  "damping": "alpha*kappa1 -> (1-w)*4*alpha + w*8*A; implement exact native pole-numerator differences without dividing by alpha. kappa2=-.99 retained. The compact window w vanishes for r>=.8, leaving scri equations unchanged.",
+  "reference": "Alic, Kastaun and Rezzolla, arXiv:1307.7391, Sec.III F, Eq.(27), motivates lapse-adjusted damping. Our compact support and reference-lapse factor are additional hyperboloidal adaptations, not a reproduction of that paper."
+}

@@ -17,6 +17,7 @@ def main():
  p.add_argument('--shift-gauge',choices=['separated','moving-puncture'],default='separated')
  p.add_argument('--gamma-coefficient',type=float,default=1.)
  p.add_argument('--shift-inner-stencil',choices=['positive','odd'],default='positive')
+ p.add_argument('--inner-z4-damping',type=float,default=0.,help='Interior lapse-adjusted kappa1 coefficient; zero preserves native damping')
  p.add_argument('--grid-stretch',type=float,default=16.)
  p.add_argument('--report-dt',type=float,default=.025,
                 help='Maximum coordinate-time spacing of guard checks and saved diagnostics')
@@ -40,10 +41,10 @@ def main():
  if a.puncture:
   if a.mode!='hyperbolic':raise ValueError('Use the preserved elliptic puncture reference')
   from puncture import PunctureEvolution
-  e=PunctureEvolution(a.n,a.library,a.ratio,a.damping,a.ko,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor,shift_source=a.shift_source,connection_driver=a.connection_driver,shift_gauge=a.shift_gauge,gamma_coefficient=a.gamma_coefficient,grid_stretch=a.grid_stretch,shift_inner_stencil=a.shift_inner_stencil);q=e.initial()
+  e=PunctureEvolution(a.n,a.library,a.ratio,a.damping,a.ko,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor,shift_source=a.shift_source,connection_driver=a.connection_driver,shift_gauge=a.shift_gauge,gamma_coefficient=a.gamma_coefficient,grid_stretch=a.grid_stretch,shift_inner_stencil=a.shift_inner_stencil,inner_z4_damping=a.inner_z4_damping);q=e.initial()
   manifest['scope']='Fresh matched full-domain wormhole trial; no convergence claim'
  else:
-  e=Evolution(a.n,a.library,a.ratio,a.damping,a.ko,mode=a.mode,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor,shift_source=a.shift_source,connection_driver=a.connection_driver,shift_gauge=a.shift_gauge,gamma_coefficient=a.gamma_coefficient);q=np.zeros((a.n,10))
+  e=Evolution(a.n,a.library,a.ratio,a.damping,a.ko,mode=a.mode,restoring=a.restoring,inner_shift=a.inner_shift,lapse_floor=a.lapse_floor,shift_source=a.shift_source,connection_driver=a.connection_driver,shift_gauge=a.shift_gauge,gamma_coefficient=a.gamma_coefficient,inner_z4_damping=a.inner_z4_damping);q=np.zeros((a.n,10))
  r=e.r
  # Compact C-infinity pulse, even at the center and identically zero at scri.
  z=(r-.4)/.12;use=abs(z)<1

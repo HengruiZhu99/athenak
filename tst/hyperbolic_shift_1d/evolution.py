@@ -17,9 +17,10 @@ from principal import coefficient, speeds
 from shift_source import background
 from metric_driver import transport_rate
 from gamma_driver import parameters as gamma_parameters
+from constraint_damping import correction as damping_correction
 
 class Evolution:
-    def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,kind='separated',mode='hyperbolic',restoring=0.,inner_shift=0.,lapse_floor=1e-10,shift_source='reference',connection_driver='evolved',shift_gauge='separated',gamma_coefficient=1.):
+    def __init__(self,n,library,ratio=2.,damping=1.,ko=.5,kind='separated',mode='hyperbolic',restoring=0.,inner_shift=0.,lapse_floor=1e-10,shift_source='reference',connection_driver='evolved',shift_gauge='separated',gamma_coefficient=1.,inner_z4_damping=0.):
         self.r=(np.arange(n)+.5)/(n-.5);self.h=1/(n-.5)
         self.O=(1-self.r**2)/2;self.A=(1+self.r**2)/2
         self.op=RadialOperators(self.r,width=7,subtract_local=True)
@@ -29,6 +30,8 @@ class Evolution:
         self.inner_shift=inner_shift
         self.shift_source=shift_source
         self.connection_driver=connection_driver
+        if not np.isfinite(inner_z4_damping) or inner_z4_damping<0:raise ValueError('Invalid inner Z4 damping')
+        self.inner_z4_damping=inner_z4_damping
         self.shift_gauge=shift_gauge;self.gamma_coefficient=gamma_coefficient
         if shift_gauge not in ['separated','moving-puncture']:raise ValueError('Unknown shift gauge')
         if shift_gauge=='moving-puncture':
@@ -64,6 +67,8 @@ class Evolution:
             q[:,7]=beta+r
         else:beta=-r+q[:,7];db=-1+d[:,7];ddb=dd[:,7]
         R,S,diag=self.kernel.parts(r,q[:,:8],d[:,:8],dd[:,:8],beta,db,ddb)
+        if self.inner_z4_damping:
+            S+=damping_correction(r,alpha,q[:,4],q[:,5]-connection(r,g,d[:,1]),self.w,self.inner_z4_damping)
         # Identical lapse sources to the successful baseline; no reference-RHS subtraction.
         S[:,6]-=2*self.xi*alpha*q[:,6]
         S[:,6]+=collapsed_background_correction(r,q[:,6])

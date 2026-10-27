@@ -31,6 +31,9 @@ add_test(NAME hyperbolic_shift_moving_puncture_bulk_and_boundary
 add_test(NAME hyperbolic_shift_gamma_inner_vector_stencil
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_gamma_inner_stencil.py
     --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/gamma-inner-stencil-audit.json)
+add_test(NAME hyperbolic_shift_inner_lapse_adjusted_Z4_damping
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_constraint_damping.py
+    --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/gamma-inner-damping-audit.json)
 add_test(NAME hyperbolic_shift_metric_connection_driver
   COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../hyperbolic_shift_1d/test_metric_driver.py
     --library $<TARGET_FILE:spherical_z4c> --output ${CMAKE_CURRENT_BINARY_DIR}/hyperbolic-metric-driver-audit.json)

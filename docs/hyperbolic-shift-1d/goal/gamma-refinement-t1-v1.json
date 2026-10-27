@@ -1,0 +1,100 @@
+{
+  "t": 1,
+  "t_over_M": 3,
+  "rows": [
+    {
+      "n": 257,
+      "H_exterior_rms": 0.00416849468728202,
+      "M_exterior_rms": 0.010183404102184358,
+      "apparent_horizon_mass": 0.3333341586479481,
+      "H_interior_max": 0.017747709168362047,
+      "g_min": 0.9789340938726254
+    },
+    {
+      "n": 513,
+      "H_exterior_rms": 0.0003632342187297217,
+      "M_exterior_rms": 0.0010775626920013293,
+      "apparent_horizon_mass": 0.3333333318682637,
+      "H_interior_max": 0.0013795182577710377,
+      "g_min": 0.9789272624285236
+    },
+    {
+      "n": 1025,
+      "H_exterior_rms": 1.4328951633648006e-05,
+      "M_exterior_rms": 5.322936398793034e-05,
+      "apparent_horizon_mass": 0.33333333332939297,
+      "H_interior_max": 4.9304800167408855e-05,
+      "g_min": 0.9789260065628298
+    }
+  ],
+  "differences": [
+    {
+      "field_rms": [
+        3.3571053100766734e-06,
+        1.7185218392957922e-05,
+        0.000551741165216115,
+        0.00018623095717987465,
+        4.590403944179249e-05,
+        0.0023789466757773345,
+        2.15042039891439e-06,
+        1.4411725237591002e-05,
+        2.6411941233873784e-07
+      ],
+      "combined_rms": 0.0024497170741973103
+    },
+    {
+      "field_rms": [
+        1.1707956518080581e-07,
+        8.905924403720452e-07,
+        3.290055463504493e-05,
+        6.1541520282945095e-06,
+        2.0206490873050814e-06,
+        0.00017789807021752928,
+        5.739681659639099e-08,
+        7.482527556319814e-07,
+        9.309103711800649e-09
+      ],
+      "combined_rms": 0.00018103451775309496
+    }
+  ],
+  "order": 3.758278430772193,
+  "scope": "Unmodified Gamma-driver control, nested grids257/513/1025 at common t=1; no claim beyond this interval.",
+  "provenance": [
+    {
+      "case": "output/hyperbolic-shift-1d/moving-puncture-odd-v1/n257-t3",
+      "hashes": {
+        "manifest.json": "2026b06041917738ae5f11557df6bb6f914039de03a80d30817c580ef9f2af3c",
+        "profiles.npz": "27f2d253adc78c22e8b1306f88fcbcc1161d3625ce890d9b3aeb490109144d49",
+        "history.json": "c7748163128e377f20f7546fa91a9d626a883bb88468ccfda2b37b177d629fbc"
+      }
+    },
+    {
+      "case": "output/hyperbolic-shift-1d/moving-puncture-odd-v1/n513-t1",
+      "hashes": {
+        "manifest.json": "4fb2b541585e209cba2b9682f48c8994dbaeff342466f58115222865031207d0",
+        "profiles.npz": "b3c1c96828e726dc3f32d3f6398a990f4e46978d1aa11f9dfe679fa993543f9b",
+        "history.json": "1da47fe876e768b33942480b5b3ba0cc0923259752e9aa7998ec31f04cadb0ce"
+      }
+    },
+    {
+      "case": "output/hyperbolic-shift-1d/moving-puncture-odd-v1/n1025-t1",
+      "hashes": {
+        "manifest.json": "f6c752b3061663ffebf26ce848d55facb4ba30b1686a46e5ae73ec4b1fba0ebd",
+        "profiles.npz": "e1c01794411dfbc1b653dbe8d1e25f70505a81699d759e96e0c864af03f095e5",
+        "history.json": "96557ae31cae605a510a8bfc40b426ca98dc1d1fe07e60ee80d2e9c6ff293289"
+      }
+    }
+  ],
+  "field_order": [
+    "chi",
+    "g",
+    "Arr",
+    "p+3",
+    "Theta",
+    "Lambda",
+    "alpha",
+    "beta",
+    "B"
+  ],
+  "norm": "RMS with r^2 times radial Jacobian and trapezoidal endpoint weights; mixed norm is Euclidean norm of nine field RMS differences on exactly nested grids."
+}
