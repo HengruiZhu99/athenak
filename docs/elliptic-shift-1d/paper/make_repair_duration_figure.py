@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Plot a validated duration export; explicitly distinguish interim evidence."""
 import argparse
+import gzip
 import json
 from pathlib import Path
 import numpy as np
@@ -14,7 +15,9 @@ def main():
     parser.add_argument('--data', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
-    summary = json.loads((args.data/'summary.json').read_text())
+    summary_path = args.data/'summary.json'
+    summary = json.loads(summary_path.read_bytes() if summary_path.exists() else
+                         gzip.decompress((args.data/'summary.json.gz').read_bytes()))
     rows = summary['rows']; times = np.array([row['t'] for row in rows])
     plt.rcParams.update({'font.family':'serif', 'font.serif':['STIXGeneral'],
         'mathtext.fontset':'stix', 'font.size':10, 'axes.labelsize':11,
@@ -35,9 +38,13 @@ def main():
     mass_error = np.array([row['AH_mass_error']/summary['parameters']['mass'] for row in rows])
     assert np.isfinite(mass_error).all()
     b.semilogy(times, np.ma.masked_less_equal(mass_error, 0), color='#0072B2', lw=1.5)
-    b.axhline(1e-5, color='.4', ls='--', lw=.9, label='Declared primary limit')
+    if summary['resolution'] == 1025:
+        protocol = json.loads((args.data/'protocol.json').read_text())
+        limit = protocol['principal_n1025']['max_relative_AH_error']
+        b.axhline(limit, color='.4', ls='--', lw=.9, label='Declared primary limit')
     b.set(title='(b) Apparent-horizon mass conservation', ylabel=r'$|M_{\rm AH}-M|/M$')
-    b.legend(loc='lower right')
+    if summary['resolution'] == 1025:
+        b.legend(loc='lower right')
     with np.load(args.data/'profiles.npz', allow_pickle=False) as profiles:
         available = summary['profile_times']
         selected = sorted(set([min(available, key=lambda x:abs(x-t))
@@ -67,7 +74,8 @@ def main():
     for ax in axes.flat:
         ax.grid(alpha=.18)
     state = 'Interim' if summary['interim'] else summary['status'].capitalize()
-    fig.suptitle(f'{state} attenuation trial: $N={summary["resolution"]}$, saved evidence through $t={times[-1]:g}$', fontsize=12)
+    role = 'attenuation trial' if summary['resolution'] == 1025 else 'exploratory attenuation control'
+    fig.suptitle(f'{state} {role}: $N={summary["resolution"]}$, saved evidence through $t={times[-1]:g}$', fontsize=12)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     for extension in ['png', 'pdf']:
         fig.savefig(args.output.with_suffix('.'+extension), dpi=210, bbox_inches='tight')

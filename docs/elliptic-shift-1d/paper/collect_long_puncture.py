@@ -35,7 +35,7 @@ rows={};profiles={};prev=None;last_t=None;last_path=None
 for folder in folders:
  raw_history=(folder/'history.jsonl').read_bytes()
  history={round(h['t'],9):h for h in map(json.loads,raw_history.splitlines())};receipt(folder/'history.jsonl',raw_history)
- for path in sorted(folder.glob('profile-*.npz')):
+ for path in sorted(folder.glob('profile-*.npz'),key=lambda p:int(p.stem.rsplit('-',1)[1])):
   # Filename indices are report numbers; check the time before loading full arrays.
   with np.load(path,allow_pickle=False) as z:
    if float(z['t'])>cutoff+1e-10:continue
@@ -52,7 +52,12 @@ for folder in folders:
    else:np.testing.assert_allclose(ah_check[key],h[key],rtol=2e-13,atol=1e-15)
   i=int(np.argmax(abs(C[:,0])));ah=h['apparent_horizon_r'];outside=r>=ah if ah is not None else np.zeros_like(r,dtype=bool)
   rr=d['rays'][::2];active=(rr[:,0]>0)&(rr[:,0]<1);gaps=np.diff(rr[active,0]);O=(1-r*r)/2
-  row=dict(t=t,**{k+'_rms':float(v) for k,v in zip(['H','M','Theta','Z'],norms)},H_max=float(abs(C[i,0])),H_peak_r=float(r[i]),H_outside_AH=float(max(abs(C[outside,0]))) if outside.any() else None,AH_r=ah,AH_mass_error=abs(h['apparent_horizon_mass']-1/3) if h['apparent_horizon_mass'] is not None else None,AF_mass_error=abs(h['AF_inner_mass']-1/3),MS_mass_error=float(max(abs(diag[r<1,10]-1/3))),scri_pole=h['scri_pole'],scri_null=h['scri_null'],scri_clock=h['scri_clock'],ray_min_logJ=h['ray_minus_min_logJ'],ray_min_gap=float(min(gaps)) if len(gaps) else None,min_alpha_positive_nodes=float(min(diag[r>0,7])),min_chi_positive_nodes=float(min((r**4/(r**4+O**4)*np.exp(d['q'][:,0]))[r>0])))
+  # The r=0 logarithm is an AF coefficient, not a positive-radius sample.
+  # Mask before exponentiation: its growth can otherwise overflow an
+  # unused temporary even when every physical sample remains well represented.
+  positive=r>0;rp=r[positive];Op=O[positive]
+  chi_positive=rp**4/(rp**4+Op**4)*np.exp(d['q'][positive,0])
+  row=dict(t=t,**{k+'_rms':float(v) for k,v in zip(['H','M','Theta','Z'],norms)},H_max=float(abs(C[i,0])),H_peak_r=float(r[i]),H_outside_AH=float(max(abs(C[outside,0]))) if outside.any() else None,AH_r=ah,AH_mass_error=abs(h['apparent_horizon_mass']-1/3) if h['apparent_horizon_mass'] is not None else None,AF_mass_error=abs(h['AF_inner_mass']-1/3),MS_mass_error=float(max(abs(diag[r<1,10]-1/3))),scri_pole=h['scri_pole'],scri_null=h['scri_null'],scri_clock=h['scri_clock'],ray_min_logJ=h['ray_minus_min_logJ'],ray_min_gap=float(min(gaps)) if len(gaps) else None,min_alpha_positive_nodes=float(min(diag[positive,7])),min_chi_positive_nodes=float(min(chi_positive)))
   if outside.any():
    exterior_norms=np.sqrt(np.sum(w[outside,None]*C[outside]*C[outside],axis=0)/sum(w[outside]))
    row.update({k+'_exterior_rms':float(v) for k,v in zip(['H','M','Theta','Z'],exterior_norms)})

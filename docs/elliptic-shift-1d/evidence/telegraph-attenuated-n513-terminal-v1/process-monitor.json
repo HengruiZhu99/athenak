@@ -1,0 +1,63 @@
+{
+  "checked_utc": "2026-10-27T03:40:58.293136+00:00",
+  "records": [
+    {
+      "case": "n513",
+      "pid": 89528,
+      "process": null,
+      "status": "finished",
+      "last_checked_saved_time": 500.0,
+      "relative_AH_mass_error": 0.001090059208170624,
+      "exterior_RMS": {
+        "H": 9.644221587616804e-06,
+        "M": 0.00012684549093264683,
+        "Theta": 2.609333540980262e-06,
+        "Z": 2.711172037351403e-05
+      },
+      "floor": {
+        "max_lapse_floor_radius": 6.29212026640898e-07,
+        "max_lapse_floor_log_correction": 10.311155602864412,
+        "max_lapse_floor_clamps_per_call": 40.0,
+        "max_lapse_floor_conformal_correction": 1.052089455500158e-14,
+        "max_nonpositive_lapse_clamps_per_call": 0.0
+      },
+      "max_cfl": 0.2000000002586586,
+      "scri": {
+        "scri_clock": 0.0,
+        "scri_null": -1.1102230246251565e-16,
+        "scri_pole": 1.2901901769168944e-12
+      },
+      "profile_sha256": "c10b4f9b104f1d96e0301e46097e437be1062821388904d47637c9ff4bdccf6d"
+    },
+    {
+      "case": "n1025",
+      "pid": 89529,
+      "process": "89529 R    43:35  43:30.01 /Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-attenuated-duration-v1/matrix-source/run_telegraph.py --library /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-attenuated-duration-v1/matrix-source/libspherical_z4c.dylib --fast-library /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-attenuated-duration-v1/matrix-source/libspherical_telegraph.dylib --output /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-attenuated-duration-v1/n1025 --mass 0.3333333333333333 --t 500 --tau 0.02 --kappa 0.005 --nu 1 --cfl 0.05 --report-dt 0.05 --inner-profile af-regular --transition 0.24 --grid-map inner-exp-scri --grid-stretch 16 --mapped-ko local --width 7 --ko-order 8 --ray-interpolation pchip --ray-exit dense --lapse-floor 1e-10 --lapse-update total --puncture-stencil positive --lapse-attenuation 0.0001 --n 1025",
+      "status": "running",
+      "last_checked_saved_time": 134.15,
+      "relative_AH_mass_error": 3.2218468959399615e-07,
+      "exterior_RMS": {
+        "H": 1.7943068250863235e-07,
+        "M": 2.436787951629239e-06,
+        "Theta": 4.999231603629916e-08,
+        "Z": 5.21146104764459e-07
+      },
+      "floor": {
+        "max_lapse_floor_radius": 6.29212026640898e-07,
+        "max_lapse_floor_log_correction": 11.728944036103341,
+        "max_lapse_floor_clamps_per_call": 80.0,
+        "max_lapse_floor_conformal_correction": 5.737688844047944e-15,
+        "max_nonpositive_lapse_clamps_per_call": 0.0
+      },
+      "max_cfl": 0.2000000000082463,
+      "scri": {
+        "scri_clock": 0.0,
+        "scri_null": 0.0,
+        "scri_pole": 3.587130592563881e-13
+      },
+      "profile_sha256": "7d0a53e7df5f94ab72770890cda5d02cee9bdf08b6489f73ea2c23ff3cdce75c"
+    }
+  ],
+  "coarse_terminal_assessment": "docs/elliptic-shift-1d/evidence/telegraph-attenuated-n513-terminal-v1/terminal-assessment.json",
+  "scope": "N513 completed500 and all10001 saved states validated. It is exploratory duration evidence with0.109% AH drift. Principal N1025 target500 remains live and pending; no duplicate launch or parameter change."
+}
