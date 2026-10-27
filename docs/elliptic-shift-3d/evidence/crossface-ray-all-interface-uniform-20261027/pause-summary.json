@@ -1,0 +1,103 @@
+{
+  "completed_commands": [
+    {
+      "name": "compile",
+      "argv": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-MMD",
+        "-MF",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/diagnostic.d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/tst/elliptic_shift_3d/qualify_crossface_ray_halos.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/diagnostic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos/simd/src/libkokkossimd.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/source/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 36365,
+      "exit_code": 0,
+      "seconds": 4.798854042
+    },
+    {
+      "name": "probe",
+      "argv": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/crossface-ray-all-interface-uniform-20261027/diagnostic",
+        "6",
+        "0",
+        "1",
+        "0"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 36371,
+      "exit_code": 0,
+      "seconds": 8.048656916999999
+    }
+  ],
+  "phase_summaries": [
+    {
+      "phase": "catalog",
+      "N": 6,
+      "AMR": false,
+      "all_interface": true,
+      "active_cells": 10800,
+      "interface_target_count": 3888
+    },
+    {
+      "phase": "plan_cost",
+      "seconds": 2.85004625,
+      "entry_count": 2366832,
+      "compact_entry_payload_bytes": 37869312
+    },
+    {
+      "phase": "Fill_cost",
+      "one_scalar_seconds": 0.026953541666666667,
+      "repeats": 3,
+      "unsupported_rows_omitted_from_cost_only": 0
+    },
+    {
+      "phase": "coverage",
+      "active_cells": 10800,
+      "unique_interface_halos": 3888,
+      "ready": 3888,
+      "unsupported": 0
+    },
+    {
+      "phase": "summary",
+      "N": 6,
+      "AMR": false,
+      "all_interface": true,
+      "active_cells": 10800,
+      "queries_qualified": 1648,
+      "mapped_J_H_derivatives_unchanged": true,
+      "crossface_angular_P5_not_exact_Cartesian_P5": true,
+      "no_caps_changed": true,
+      "no_evolution_or_solve": true,
+      "production_adopted": false
+    }
+  ],
+  "failed_value_plans": [],
+  "no_new_experiments_after_user_pause": true,
+  "scientific_acceptance": false,
+  "production_adopted": false
+}

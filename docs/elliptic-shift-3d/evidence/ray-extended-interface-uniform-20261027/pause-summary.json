@@ -1,0 +1,77 @@
+{
+  "completed_commands": [
+    {
+      "name": "compile",
+      "argv": [
+        "/usr/bin/c++",
+        "-DKOKKOS_DEPENDENCE",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/kokkos/core/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/kokkos/containers/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/kokkos/algorithms/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos/simd/src",
+        "-I/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/kokkos/simd/src",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/kokkos/tpls/desul/include",
+        "-isystem",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/kokkos/tpls/mdspan/include",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-MMD",
+        "-MF",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/diagnostic.d",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/tst/elliptic_shift_3d/probe_ray_extended_halos.cpp",
+        "-o",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/diagnostic",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos/core/src/libkokkoscore.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos/algorithms/src/libkokkosalgorithms.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos/simd/src/libkokkossimd.a",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/source/build-shift-3d/kokkos/containers/src/libkokkoscontainers.a"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 35227,
+      "exit_code": 0,
+      "seconds": 4.634466958
+    },
+    {
+      "name": "probe",
+      "argv": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/ray-extended-interface-uniform-20261027/diagnostic"
+      ],
+      "maximum_seconds": 180,
+      "owned_process_group": 35230,
+      "exit_code": 0,
+      "seconds": 1.461598875
+    }
+  ],
+  "phase_summaries": [
+    {
+      "phase": "coverage",
+      "active_cells": 10800,
+      "unique_interface_halos": 70,
+      "ready": 70,
+      "unsupported": 0
+    },
+    {
+      "phase": "summary",
+      "uniform_bulk2_N6": true,
+      "active_cells": 10800,
+      "queries_qualified": 5,
+      "mapped_J_H_derivatives_unchanged": true,
+      "angular_rule_unchanged_not_exact_Cartesian_P5": true,
+      "no_caps_changed": true,
+      "no_evolution_or_solve": true,
+      "production_adopted": false
+    }
+  ],
+  "failed_value_plans": [],
+  "no_new_experiments_after_user_pause": true,
+  "scientific_acceptance": false,
+  "production_adopted": false
+}

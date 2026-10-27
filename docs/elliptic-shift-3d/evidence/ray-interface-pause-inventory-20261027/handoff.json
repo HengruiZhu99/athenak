@@ -1,0 +1,89 @@
+{
+  "user_pause": true,
+  "active_owned_experiment_processes": 0,
+  "latest_process": {
+    "phase": "fullAMR",
+    "exit_code": 0,
+    "seconds": 87.706,
+    "outcome": "completed;24halo failures and240unsupportedactivecells retained"
+  },
+  "unexecuted": [
+    "N8/N10 controls",
+    "formal3-resolution accuracy rates",
+    "furtherAMRfailureinvestigation",
+    "coupled evolution/productionadoption",
+    "signedK/Aproof"
+  ],
+  "owned_files_sha256": {
+    "tst/elliptic_shift_3d/probe_mixed_interface_halos.cpp": "96a16d22379302bf606a449fccf9b1d98a91887acceea1a722ab493adc89991f",
+    "tst/elliptic_shift_3d/run_mixed_interface_halos.py": "31a65f1fa7915d2480a43b0827d7ff5e9afaa04fd5a59cc1e0d52bc9fc7b6364",
+    "tst/elliptic_shift_3d/mixed_interface_polynomial_jet.hpp": "648f811de4e64a8288d6d4ceedc473092b2fa85c580cc85b3df55061025a5f61",
+    "tst/elliptic_shift_3d/probe_balanced_interface_halos.cpp": "499333bcae8b0a34244a821c6fc06494c15939a81c7e62adf9098482feb0a80c",
+    "tst/elliptic_shift_3d/run_balanced_interface_halos.py": "30a629d4f50dcb736ea1e7222941c07113d7cc7dbe306c55797bd621c010d31a",
+    "docs/elliptic-shift-3d/mixed-interface-halo-prototype.md": "7af2efc9583861d5f8676ee7e92da0ee37d74f10a67ae936649b0a772ddac635",
+    "tst/elliptic_shift_3d/ray_extended_interface_value.hpp": "ea4316a6109adf11a527aae5469674ab48f0c11e415bc9d563bf2b8564ffeb32",
+    "tst/elliptic_shift_3d/probe_ray_extended_halos.cpp": "4a973197298063d7971f32f4b9883cb5222b5fc9782757f69b1cccfa9563caa1",
+    "tst/elliptic_shift_3d/run_ray_extended_halos.py": "791c03eabe1217800f96a2b2c50839b8bec1a8083048471133ec14aa7a61d44f",
+    "tst/elliptic_shift_3d/qualify_ray_extended_halos.cpp": "17e0617483101bb1ff9a7b20326e429a68338a18d6fc62cb7597f4976234fde4",
+    "tst/elliptic_shift_3d/run_ray_interface_qualification.py": "c7fb19e9eb3a271354a8e827722790c9ff0a241e5d34385e739f5b35f3e631a3",
+    "tst/elliptic_shift_3d/interface_angular_weights.hpp": "930ae0245199ca9e419c733bd898c322de56ee9e7a367cb786350f20ec257ab8",
+    "tst/elliptic_shift_3d/crossface_ray_interface_value.hpp": "500f186703bd834bad30cfbbbad63cde2c8d63430426168f5663a14db8329f87",
+    "tst/elliptic_shift_3d/qualify_crossface_ray_halos.cpp": "c2336601c8c9eeffcfe4358029ccdf288d168747aec79077ff3a636a3f8361f3",
+    "tst/elliptic_shift_3d/run_crossface_ray_qualification.py": "3f35ab57922ef84fa7f6883c6e651d014002dd55a006d54c77152f9eeaa6f623",
+    "docs/elliptic-shift-3d/ray-interface-qualification.md": "a4b8cc9f33d2cfbc442a0e94724287340270090253c50c2f3510aca13d07e15b"
+  },
+  "evidence": {
+    "ray-extended-interface-uniform-20261027": {
+      "archive_sha256": "34a440bc67fc2f0b65b831409b711dfaef16261945eee9cda96467e472dade84",
+      "compiled_source_files_verified": 363,
+      "raw_stdout_sha256": "6b28fb60016f3994e6eecb669d4dd1065e6c0eaccc5c80e275cd9b95cc71fbca",
+      "compressed_stdout_sha256": "83aca8433093b783d162a6212d32e618fd2828d15a15a27a33757e4736f6d284",
+      "lossless": true,
+      "failed_value_plans": 0,
+      "commands_complete": true
+    },
+    "ray-extended-all-interface-catalog-20261027": {
+      "archive_sha256": "20e2cef896a7b26b39a35bdeb83a490ee0eef7988c5d3b723802435b57960600",
+      "compiled_source_files_verified": 363,
+      "raw_stdout_sha256": "9e97a441341cde9c67ac08ef66be614d66e2f201f2293388996cf549c2605a19",
+      "compressed_stdout_sha256": "01f0223c9b6293a98eb41afde7a311d83054b913d59de24c0754f06029a5bc67",
+      "lossless": true,
+      "failed_value_plans": 0,
+      "commands_complete": true
+    },
+    "ray-extended-all-interface-uniform-20261027": {
+      "archive_sha256": "318c0b8eb97ddf5c06b9e887badfc838450a5239ffc83872a576b038b570dea4",
+      "compiled_source_files_verified": 363,
+      "raw_stdout_sha256": "d1dd839c6c0c0fe95c126ab7a7ac2d12a35e7733e9e65feb3d4d2443a0a8c01f",
+      "compressed_stdout_sha256": "0aeca3549c2835e2db1368fac1f8a90621fc2e05f2168fb79c5c4c95fb41df1d",
+      "lossless": true,
+      "failed_value_plans": 288,
+      "commands_complete": true
+    },
+    "crossface-ray-all-interface-uniform-20261027": {
+      "archive_sha256": "740f4da530e34673517288c25aee1180aee7c2442ccc10be7be1c83d4d2029e7",
+      "compiled_source_files_verified": 364,
+      "raw_stdout_sha256": "2901de4d76f84f76610ab51250234d3d221ad9962699ef47bc6a6181a1da2dbc",
+      "compressed_stdout_sha256": "a0e34665f3e2fc1974e769d30229ead8258e5aa7e85cb96d48e4d36d714f2c0c",
+      "lossless": true,
+      "failed_value_plans": 0,
+      "commands_complete": true
+    },
+    "crossface-ray-all-interface-AMR-20261027": {
+      "archive_sha256": "81eee34f2442134b1b5cb21d38d5cfba33aa17ea7d37189b4bbe410f59950e0f",
+      "compiled_source_files_verified": 364,
+      "raw_stdout_sha256": "c20d2e921f2fee86489060a6be8137df056dcbad6f7ab64b67743076c1b13c8c",
+      "compressed_stdout_sha256": "223917a84f62feb0386ee662ef269b626e3910b1bb14040a7147208b4cacbf25",
+      "lossless": true,
+      "failed_value_plans": 24,
+      "commands_complete": true
+    }
+  },
+  "additional_evidence_dirs": [
+    "mixed-interface-halos-20261027",
+    "balanced-interface-halos-20261027"
+  ],
+  "whitespace_inspection_passed": true,
+  "no_algorithm_edits_after_pause": true,
+  "no_binaries_or_unpacked_source_trees_for_commit": true
+}
