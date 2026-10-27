@@ -368,6 +368,46 @@ if (Athena_ENABLE_HYPERBOLOIDAL_TESTS)
 endif()
 
 option(Athena_ENABLE_CUBED_SPHERE_TESTS "Build cubed sphere mapped-grid tests" OFF)
+option(Athena_ENABLE_ELLIPTIC_SHIFT_3D_TESTS "Build exact metric-connection shift tests" OFF)
+if(Athena_ENABLE_ELLIPTIC_SHIFT_3D_TESTS)
+  enable_testing()
+  add_executable(elliptic_shift_3d_operator_tests tst/elliptic_shift_3d/test_operator.cpp)
+  target_include_directories(elliptic_shift_3d_operator_tests PRIVATE
+      ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(elliptic_shift_3d_operator_tests PRIVATE Kokkos::kokkos)
+  add_test(NAME elliptic_shift_3d_exact_operator COMMAND elliptic_shift_3d_operator_tests)
+  set_tests_properties(elliptic_shift_3d_exact_operator PROPERTIES TIMEOUT 30)
+  add_executable(elliptic_shift_3d_composite_tests tst/elliptic_shift_3d/test_composite.cpp)
+  target_include_directories(elliptic_shift_3d_composite_tests PRIVATE
+      ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(elliptic_shift_3d_composite_tests PRIVATE Kokkos::kokkos)
+  add_test(NAME elliptic_shift_3d_global_composite
+      COMMAND elliptic_shift_3d_composite_tests 6 1 1 1 0)
+  set_tests_properties(elliptic_shift_3d_global_composite PROPERTIES TIMEOUT 180)
+  add_executable(elliptic_shift_3d_coupled_pilot tst/elliptic_shift_3d/coupled.cpp)
+  target_include_directories(elliptic_shift_3d_coupled_pilot PRIVATE
+      ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(elliptic_shift_3d_coupled_pilot PRIVATE Kokkos::kokkos)
+  add_test(NAME elliptic_shift_3d_coupled_minkowski
+      COMMAND elliptic_shift_3d_coupled_pilot 6 0 0.0005 2 0 1)
+  set_tests_properties(elliptic_shift_3d_coupled_minkowski PROPERTIES TIMEOUT 120)
+  add_executable(elliptic_shift_3d_lifecycle_tests tst/elliptic_shift_3d/test_lifecycle.cpp)
+  target_include_directories(elliptic_shift_3d_lifecycle_tests PRIVATE
+      ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(elliptic_shift_3d_lifecycle_tests PRIVATE Kokkos::kokkos)
+  add_test(NAME elliptic_shift_3d_regrid_restart
+      COMMAND elliptic_shift_3d_lifecycle_tests ${CMAKE_BINARY_DIR}/composite-checkpoint-test.bin)
+  set_tests_properties(elliptic_shift_3d_regrid_restart PROPERTIES TIMEOUT 60)
+  if(Athena_ENABLE_MPI)
+    add_executable(elliptic_shift_3d_mpi_tests tst/elliptic_shift_3d/test_mpi.cpp)
+    target_include_directories(elliptic_shift_3d_mpi_tests PRIVATE
+        ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+    target_link_libraries(elliptic_shift_3d_mpi_tests PRIVATE Kokkos::kokkos MPI::MPI_CXX)
+    add_test(NAME elliptic_shift_3d_mpi_reference
+        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2 $<TARGET_FILE:elliptic_shift_3d_mpi_tests>)
+    set_tests_properties(elliptic_shift_3d_mpi_reference PROPERTIES TIMEOUT 120 PROCESSORS 2)
+  endif()
+endif()
 if(Athena_ENABLE_CUBED_SPHERE_TESTS)
   enable_testing()
   add_executable(cubed_sphere_map_tests tst/cubed_sphere/test_map.cpp)

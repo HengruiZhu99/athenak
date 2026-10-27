@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "declared_before_final_matrix": true,
+  "base": "8bef4966e253e92d85761f46d8885e7cc80dc2ed",
+  "execution": {
+    "location": "local Mac CPU",
+    "maximum_build_jobs": 2,
+    "maximum_concurrent_test_workers": 1,
+    "maximum_local_MPI_ranks": 2,
+    "maximum_case_wall_seconds": 180,
+    "maximum_pilot_active_cells": 32256,
+    "coupled_pilot_time": 0.002,
+    "remote_allocations": false,
+    "GPU_jobs": false
+  },
+  "elliptic": {
+    "resolutions": [8, 12, 16],
+    "minimum_solution_RMS_order": 3.5,
+    "original_vector_residual_RMS_maximum": 1e-9,
+    "original_vector_residual_point_maximum": 1e-7,
+    "constant_preservation": "exact",
+    "shell_layers": [1, 2],
+    "face_subdivision_control": 2,
+    "mixed_Cartesian_AMR": "refine one of eight leaves touching the shell, rebuild; independently coarsen siblings",
+    "metric_control": "determinant-one nondiagonal 3D metric; nonzero Cotton tensor checked by two independent derivative step sizes",
+    "discretization_control": "second-order final operator vs fourth-order final operator; both retain full vector coupling",
+    "preconditioner": "second-order mapped scalar Poisson V-cycle; global per-level interfaces and pivoted global coarse solve",
+    "norm": "finite Penrose-spatial proper volume; physical proper volume diverges at scri and cannot be normalized as a finite-domain RMS"
+  },
+  "coupled": {
+    "resolutions": [6, 8, 12],
+    "integrator": "RK4; fresh linear elliptic solve at every stage; no differential/algebraic projection",
+    "tests": ["Minkowski equilibrium", "small radial lapse pulse", "small nonspherical lapse pulse"],
+    "time_controls": [0.0005, 0.00025, 0.000125],
+    "elliptic_tolerance_controls": [1e-11, 1e-13],
+    "spatial_controls": [4, 2],
+    "independent_1D_reference": "existing g1_rhs.py, spherical quadrature shift and reference telegrapher; actual origin/scri; N257/N513 and half timestep",
+    "angular_comparison": "64 fixed equal-area directions at each of 19 identical radii; means and RMS angular scatter",
+    "original_clock_reference_target": 1e-13,
+    "original_null_reference_target": 1e-12,
+    "original_scri_pole_reference_target": 1e-7,
+    "equilibrium_drift_target": 1e-9,
+    "gate_interpretation": "Face clock and vector Dirichlet data are prescribed exactly. Independently extrapolated active-only defects measure consistency and may fail the original nodal 1D reference targets. Such cases remain provisional/underresolved, never relabeled accepted.",
+    "stop_extension": "Do not extend duration or claim the first scientific milestone from these short pilots. A general regular scri closure, native stage integration, selected wormhole lapse/puncture chart, scalar propagation, late fronts and production MPI/GPU remain required."
+  },
+  "restart": "Save all bulk/shell geometry and new vector flux, exact time-lattice step and shift warm start; reject corruption/source mismatch; rebuild geometry/halo/MG hierarchy and compare continuation bitwise."
+}

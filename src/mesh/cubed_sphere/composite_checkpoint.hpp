@@ -1,0 +1,145 @@
+// Copyright(C) 2026 AthenaK contributors. BSD-3-Clause; see LICENSE.
+#ifndef MESH_CUBED_SPHERE_COMPOSITE_CHECKPOINT_HPP_
+#define MESH_CUBED_SPHERE_COMPOSITE_CHECKPOINT_HPP_
+
+#include <cstdint>
+#include <cstring>
+#include <filesystem>
+#include <fstream>
+#include <iterator>
+#include <string>
+#include <type_traits>
+#include "mesh/cubed_sphere/composite.hpp"
+
+namespace cubed_sphere {
+struct CompositeSnapshot {
+  CompositeMesh mesh;
+  std::string source_tag;
+  double dt = 0, tolerance = 0;
+  std::uint64_t step = 0;
+  int components = 0;
+  std::vector<double> fields, shift_warm_start;
+  int spatial_order = 4;
+  bool telegraph = true;
+};
+
+// Explicit version/endian/layout contract; shell, bulk and new flux fields all
+// live in the same active-state payload. Hierarchies/halos are NEVER serialized:
+// the reader rebuilds them from the checked leaf descriptor before stage use.
+class CompositeCheckpoint {
+  struct Buffer {
+    std::vector<char> bytes;
+    size_t cursor = 0;
+    template <typename T> void Put(const T &value) {
+      static_assert(std::is_arithmetic_v<T>);
+      const auto *data = reinterpret_cast<const char *>(&value);
+      bytes.insert(bytes.end(), data, data+sizeof(T));
+    }
+    template <typename T> T Get() {
+      if (cursor+sizeof(T) > bytes.size()) throw std::runtime_error("truncated composite checkpoint");
+      T value; std::memcpy(&value, bytes.data()+cursor, sizeof(T)); cursor += sizeof(T);
+      return value;
+    }
+    void PutVector(const std::vector<double> &v) {
+      Put<std::uint64_t>(v.size()); for (double value : v) Put(value);
+    }
+    std::vector<double> GetVector(size_t expected) {
+      if (Get<std::uint64_t>() != expected) throw std::runtime_error("checkpoint field layout mismatch");
+      std::vector<double> v(expected);
+      for (auto &value : v) {
+        value = Get<double>();
+        if (!std::isfinite(value)) throw std::runtime_error("checkpoint nonfinite field");
+      }
+      return v;
+    }
+  };
+  static std::uint64_t Hash(const std::vector<char> &bytes, size_t length) {
+    std::uint64_t hash = 14695981039346656037ull;
+    for (size_t i = 0; i < length; ++i) {hash ^= static_cast<unsigned char>(bytes[i]); hash *= 1099511628211ull;}
+    return hash;
+  }
+ public:
+  static void Write(const std::string &path, const CompositeSnapshot &snapshot) {
+    const auto &mesh = snapshot.mesh;
+    const size_t count = mesh.blocks.size()*mesh.cells*mesh.cells*mesh.cells;
+    if (snapshot.source_tag.size() != 64 || snapshot.components < 1
+        || snapshot.fields.size() != count*snapshot.components || snapshot.shift_warm_start.size() != 3*count
+        || !(snapshot.dt > 0 && snapshot.tolerance > 0))
+      throw std::invalid_argument("invalid composite checkpoint state");
+    Buffer b;
+    b.Put<std::uint64_t>(0x4353484946543031ull); b.Put<std::uint32_t>(2); b.Put<std::uint32_t>(0x01020304);
+    for (char c : snapshot.source_tag) b.Put<char>(c);
+    b.Put(mesh.half_width); b.Put(mesh.face_subdivisions); b.Put(mesh.cells); b.Put(mesh.ghosts);
+    b.Put<std::uint64_t>(mesh.revision); b.PutVector(mesh.radii);
+    b.Put<std::uint64_t>(mesh.blocks.size());
+    for (const auto &block : mesh.blocks) {
+      b.Put(block.face); b.Put(block.layer); b.Put(block.refinement);
+      for (int a = 0; a < 3; ++a) {b.Put(block.lo[a]); b.Put(block.hi[a]);}
+    }
+    b.Put(snapshot.dt); b.Put(snapshot.tolerance); b.Put(snapshot.step); b.Put(snapshot.components);
+    b.Put(snapshot.spatial_order); b.Put<int>(snapshot.telegraph ? 1 : 0);
+    b.PutVector(snapshot.fields); b.PutVector(snapshot.shift_warm_start);
+    b.Put(Hash(b.bytes, b.bytes.size()));
+    const std::string temporary = path+".tmp";
+    {std::ofstream out(temporary, std::ios::binary|std::ios::trunc);
+      out.write(b.bytes.data(), b.bytes.size());
+      out.close(); if (!out) throw std::runtime_error("composite checkpoint write failed");}
+    std::filesystem::rename(temporary, path);
+  }
+  static CompositeSnapshot Read(const std::string &path, const std::string &source_tag) {
+    std::ifstream in(path, std::ios::binary);
+    if (!in) throw std::runtime_error("missing composite checkpoint");
+    Buffer b; b.bytes.assign(std::istreambuf_iterator<char>(in), {});
+    if (b.bytes.size() < 128 || b.bytes.size() > 512ull*1024*1024)
+      throw std::runtime_error("checkpoint length outside bounded contract");
+    std::uint64_t stored; std::memcpy(&stored, b.bytes.data()+b.bytes.size()-8, 8);
+    if (stored != Hash(b.bytes, b.bytes.size()-8)) throw std::runtime_error("composite checkpoint checksum mismatch");
+    if (b.Get<std::uint64_t>() != 0x4353484946543031ull || b.Get<std::uint32_t>() != 2
+        || b.Get<std::uint32_t>() != 0x01020304) throw std::runtime_error("checkpoint format/endian mismatch");
+    std::string tag;
+    for (int i = 0; i < 64; ++i) tag += b.Get<char>();
+    if (tag != source_tag) throw std::runtime_error("checkpoint executable/source binding mismatch");
+    const double half_width = b.Get<double>();
+    const int subdivisions = b.Get<int>(), cells = b.Get<int>(), ghosts = b.Get<int>();
+    const auto revision = b.Get<std::uint64_t>();
+    const auto shell_count = b.Get<std::uint64_t>();
+    if (shell_count == 0 || shell_count > 64) throw std::runtime_error("checkpoint shell-count bound");
+    std::vector<Real> radii;
+    for (size_t i = 0; i < shell_count; ++i) radii.push_back(b.Get<double>());
+    if (cells < 2 || cells > 64 || ghosts < 1 || ghosts > 8 || subdivisions < 1 || subdivisions > 16)
+      throw std::runtime_error("checkpoint cell/halo/subdivision bound");
+    CompositeMesh mesh(half_width, radii, subdivisions, cells, ghosts);
+    const auto blocks = b.Get<std::uint64_t>();
+    if (blocks == 0 || blocks > 4096) throw std::runtime_error("checkpoint block-count bound");
+    mesh.blocks.clear(); mesh.revision = revision;
+    for (size_t m = 0; m < blocks; ++m) {
+      CompositeBlock block;
+      block.face = b.Get<int>(); block.layer = b.Get<int>(); block.refinement = b.Get<int>();
+      for (int a = 0; a < 3; ++a) {
+        block.lo[a] = b.Get<double>(); block.hi[a] = b.Get<double>();
+        if (!std::isfinite(block.lo[a]) || !std::isfinite(block.hi[a]) || !(block.hi[a] > block.lo[a]))
+          throw std::runtime_error("checkpoint invalid leaf bounds");
+      }
+      if (block.face < -1 || block.face > 5 || block.layer < -1
+          || block.layer >= static_cast<int>(radii.size()) || (block.face < 0) != (block.layer < 0))
+        throw std::runtime_error("checkpoint invalid patch identity");
+      mesh.blocks.push_back(block);
+    }
+    CompositeSnapshot out{std::move(mesh), tag};
+    out.dt = b.Get<double>(); out.tolerance = b.Get<double>();
+    out.step = b.Get<std::uint64_t>(); out.components = b.Get<int>();
+    out.spatial_order = b.Get<int>();
+    const int telegraph = b.Get<int>(); out.telegraph = telegraph == 1;
+    if ((out.spatial_order != 2 && out.spatial_order != 4) || (telegraph != 0 && telegraph != 1))
+      throw std::runtime_error("checkpoint operator/gauge configuration mismatch");
+    const size_t count = blocks*cells*cells*cells;
+    if (out.components < 1 || out.components > 64 || count*out.components > 32000000
+        || !(out.dt > 0 && out.tolerance > 0) || !std::isfinite(out.dt+out.tolerance))
+      throw std::runtime_error("checkpoint state/epoch bound");
+    out.fields = b.GetVector(count*out.components); out.shift_warm_start = b.GetVector(3*count);
+    if (b.cursor+8 != b.bytes.size()) throw std::runtime_error("checkpoint unexpected trailing payload");
+    return out;
+  }
+};
+}  // namespace cubed_sphere
+#endif  // MESH_CUBED_SPHERE_COMPOSITE_CHECKPOINT_HPP_

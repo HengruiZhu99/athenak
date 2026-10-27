@@ -1,0 +1,443 @@
+// Copyright(C) 2026 AthenaK contributors. BSD-3-Clause; see LICENSE.
+// Experimental bounded CPU composite evolution. No production guards relaxed.
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <map>
+#include "z4c/hyperboloidal/composite_shift.hpp"
+#include "z4c/hyperboloidal/reference_gauge.hpp"
+#include "mesh/cubed_sphere/composite_checkpoint.hpp"
+
+namespace h = z4c::hyperboloidal;
+using V = multigrid::Vector;
+constexpr int fields = 22;
+const int tensor_i[6] = {0,0,0,1,1,2}, tensor_j[6] = {0,1,2,1,2,2};
+
+h::Z4cJet<Real> Unpack(const Real x[3], const V &values,
+    const std::vector<std::array<Real, 3>> &d,
+    const std::vector<std::array<std::array<Real, 3>, 3>> &dd) {
+  h::Z4cJet<Real> u{};
+  auto scalar = [&](int f) {
+    h::ScalarJet<Real> out{}; out.value = values[f];
+    for (int a = 0; a < 3; ++a) {
+      out.d[a] = d[f][a];
+      for (int b = 0; b < 3; ++b) out.dd[a][b] = dd[f][a][b];
+    }
+    return out;
+  };
+  u.chi = scalar(0); u.trace = scalar(13); u.theta = scalar(14); u.alpha = scalar(18);
+  u.chi.value += 1; u.trace.value -= 3;
+  u.alpha.value += (1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2;
+  for (int a = 0; a < 3; ++a) {
+    u.alpha.d[a] += x[a]; u.alpha.dd[a][a] += 1;
+    u.lambda.value[a] = values[15+a]; u.beta.value[a] = -x[a]; u.beta.d[a][a] = -1;
+    for (int b = 0; b < 3; ++b) {
+      u.lambda.d[b][a] = d[15+a][b];
+      for (int c = 0; c < 3; ++c) u.lambda.dd[b][c][a] = dd[15+a][b][c];
+    }
+  }
+  for (int t = 0; t < 6; ++t) {
+    const int i = tensor_i[t], j = tensor_j[t];
+    u.metric.g[i][j] = u.metric.g[j][i] = values[1+t]+(i == j ? 1 : 0);
+    u.a.k[i][j] = u.a.k[j][i] = values[7+t];
+    for (int a = 0; a < 3; ++a) {
+      u.metric.dg[a][i][j] = u.metric.dg[a][j][i] = d[1+t][a];
+      u.a.dk[a][i][j] = u.a.dk[a][j][i] = d[7+t][a];
+      for (int b = 0; b < 3; ++b)
+        u.metric.ddg[a][b][i][j] = u.metric.ddg[a][b][j][i] = dd[1+t][a][b];
+    }
+  }
+  return u;
+}
+h::OmegaJet<Real> Omega(const Real x[3], const h::Z4cJet<Real> &u, bool boundary = false) {
+  h::OmegaJet<Real> o{};
+  o.omega = boundary ? 0 : (1-x[0]*x[0]-x[1]*x[1]-x[2]*x[2])/2;
+  for (int a = 0; a < 3; ++a) {o.gradient[a] = -x[a]; o.hessian[a][a] = -1;}
+  h::SetStationaryOmegaNormal(u.alpha.value, u.beta.value, u.alpha.d, u.beta.d, o);
+  return o;
+}
+
+class Pilot {
+ public:
+  h::CompositeShiftStage shift;
+  V state, beta_delta;
+  std::vector<h::Z4cJet<Real>> jets;
+  double max_shift_residual = 0;
+  int elliptic_iterations = 0;
+  double elliptic_atol;
+  bool telegraph;
+  Pilot(int n, int shells, bool flux, Real tolerance, int order = 4)
+      : Pilot(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order) {}
+  Pilot(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4)
+      : shift(std::move(mesh), order),
+        state(fields*shift.grid.active.size(), 0), beta_delta(3*shift.grid.active.size(), 0),
+        elliptic_atol(tolerance), telegraph(flux) {}
+
+  void Initialize(Real amplitude, bool angular) {
+    for (size_t p = 0; p < shift.grid.active.size(); ++p) {
+      const auto &x = shift.grid.geometry[p].x;
+      const Real r2 = x[0]*x[0]+x[1]*x[1]+x[2]*x[2];
+      state[p*fields+18] = amplitude*std::pow(1-r2, 4)*std::exp(-r2/.09)
+          *(angular ? 1+.8*x[0]*x[1]+.3*x[2] : 1);
+    }
+  }
+  V Padded(const V &input) const {
+    const auto &grid = shift.grid;
+    V padded(fields*grid.count, 0);
+    for (size_t p = 0; p < grid.active.size(); ++p)
+    for (int v = 0; v < fields; ++v) padded[v*grid.count+grid.active[p]] = input[p*fields+v];
+    grid.FillExtrapolated(padded, fields);
+    // The prescribed lapse clock supplies one gauge boundary datum. All geometric
+    // fields use the disclosed candidate outflow extrapolation, without projection.
+    for (const auto &row : grid.halos) if (row.boundary_weight) {
+      const int base = 18*grid.count;
+      const Real anchor = padded[base+row.entries[0].point];
+      Real value = anchor;
+      for (const auto &entry : row.entries) value += entry.weight*(padded[base+entry.point]-anchor);
+      padded[base+row.target] = value-row.boundary_weight*anchor;
+    }
+    return padded;
+  }
+  void GeometryJets(const V &input, const V &padded) {
+    const auto &grid = shift.grid;
+    jets.resize(grid.active.size());
+    V values(fields);
+    std::vector<std::array<Real, 3>> d(fields);
+    std::vector<std::array<std::array<Real, 3>, 3>> dd(fields);
+    std::vector<h::MetricJet<Real>> metrics;
+    std::vector<Real> chi;
+    for (size_t p = 0; p < jets.size(); ++p) {
+      for (int v = 0; v < fields; ++v) {
+        values[v] = input[p*fields+v];
+        Real first[3], second[3][3]; grid.Derivatives(padded, v, p, first, second);
+        for (int a = 0; a < 3; ++a) {
+          d[v][a] = first[a];
+          for (int b = 0; b < 3; ++b) dd[v][a][b] = second[a][b];
+        }
+      }
+      jets[p] = Unpack(grid.geometry[p].x, values, d, dd);
+      if (!(jets[p].alpha.value > 0 && jets[p].chi.value > 0))
+        throw std::runtime_error("coupled stage lost lapse/chi positivity");
+      metrics.push_back(jets[p].metric);
+      chi.push_back(jets[p].chi.value);
+    }
+    shift.SetGeometry(metrics, chi);
+  }
+  h::CompositeShiftStage::Boundary Boundary(const V &padded) const {
+    return [this, &padded, cache = std::map<std::array<Real, 3>, std::array<Real, 3>>{}]
+        (const std::array<Real, 3> &x) mutable {
+      const auto found = cache.find(x);
+      if (found != cache.end()) return found->second;
+      const auto &grid = shift.grid;
+      Real chi = 1;
+      h::MetricJet<Real> metric{};
+      for (int i = 0; i < 3; ++i) metric.g[i][i] = 1;
+      for (const auto &entry : grid.Interpolate(x.data(), std::min(grid.n, 6))) {
+        chi += entry.weight*padded[entry.point];
+        for (int t = 0; t < 6; ++t) {
+          const int i = tensor_i[t], j = tensor_j[t];
+          metric.g[i][j] += entry.weight*padded[(1+t)*grid.count+entry.point];
+          if (i != j) metric.g[j][i] = metric.g[i][j];
+        }
+      }
+      Real beta[3];
+      if (!h::FixedAngleScriShift(h::Geometry(metric), 1., chi, x.data(), beta))
+        throw std::runtime_error("invalid null scri shift data at coupled stage");
+      std::array<Real, 3> delta{beta[0]+x[0], beta[1]+x[1], beta[2]+x[2]};
+      cache.emplace(x, delta);
+      return delta;
+    };
+  }
+  void SolveShift(const V &padded) {
+    const auto &grid = shift.grid;
+    V source(3*jets.size());
+    for (size_t p = 0; p < jets.size(); ++p) {
+      Real rhs[3], reference_rate[3];
+      h::EllipticShiftSource(jets[p], shift.geometry[p], 0., rhs);
+      h::ApplyEllipticShift(jets[p].metric, shift.geometry[p], jets[p].beta, reference_rate);
+      for (int v = 0; v < 3; ++v) source[3*p+v] = rhs[v]-reference_rate[v];
+    }
+    const auto boundary = Boundary(padded);
+    const auto report = shift.Solve(source, boundary, beta_delta, elliptic_atol, 0., 120);
+    if (!report.converged) throw std::runtime_error("coupled stage original shift equation did not converge");
+    elliptic_iterations += report.iterations;
+    max_shift_residual = std::max(max_shift_residual, report.residual.back());
+    V delta(3*grid.count, 0);
+    for (size_t p = 0; p < jets.size(); ++p)
+    for (int v = 0; v < 3; ++v) delta[v*grid.count+grid.active[p]] = beta_delta[3*p+v];
+    grid.Fill(delta, 3, [&](int v, const auto &x) {return boundary(x)[v];});
+    for (size_t p = 0; p < jets.size(); ++p)
+    for (int v = 0; v < 3; ++v) {
+      jets[p].beta.value[v] += beta_delta[3*p+v];
+      Real d[3], dd[3][3]; grid.Derivatives(delta, v, p, d, dd);
+      for (int a = 0; a < 3; ++a) {
+        jets[p].beta.d[a][v] += d[a];
+        for (int b = 0; b < 3; ++b) jets[p].beta.dd[a][b][v] += dd[a][b];
+      }
+    }
+  }
+  V RHS(const V &input, Real dt) {
+    const auto &grid = shift.grid;
+    const V padded = Padded(input);
+    GeometryJets(input, padded); SolveShift(padded);
+    V rhs(input.size(), 0);
+    const h::CMCReference<Real> reference{1, 1};
+    for (size_t p = 0; p < jets.size(); ++p) {
+      const auto &u = jets[p]; const auto &x = grid.geometry[p].x;
+      const auto omega = Omega(x, u);
+      if (!(omega.omega > 0)) throw std::runtime_error("active coupled cell not inside scri");
+      auto parts = h::ConformalRHS(u, omega, 4., -.99);
+      // Same disclosed Appendix-C Theta source as the verified 1D adapter.
+      parts.pole.theta += 3*u.alpha.value*omega.normal*u.theta.value;
+      h::Z4cRHS<Real> rate{};
+      if (!h::AssembleInterior(parts, omega.omega, rate)) throw std::runtime_error("invalid tensor evolution rate");
+      const auto gauge = h::UnfactoredReferenceGauge(reference, reference.At(x[0], x[1], x[2]),
+          u, h::GaugeParameters<Real>{1, 0, 1, 0}, false, true);
+      h::GaugeRHS<Real> lapse{};
+      if (!h::AssembleGaugeInterior(gauge, omega.omega, lapse)) throw std::runtime_error("invalid lapse rate");
+      rhs[p*fields] = rate.chi; rhs[p*fields+13] = rate.trace; rhs[p*fields+14] = rate.theta;
+      rhs[p*fields+18] = lapse.alpha;
+      for (int t = 0; t < 6; ++t) {
+        rhs[p*fields+1+t] = rate.metric[tensor_i[t]][tensor_j[t]];
+        rhs[p*fields+7+t] = rate.a[tensor_i[t]][tensor_j[t]];
+      }
+      for (int i = 0; i < 3; ++i) rhs[p*fields+15+i] = rate.lambda[i];
+      const Real radius = std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+      Real window = 1, window_r = 0;
+      if (radius >= .8) window = 0;
+      else if (radius > .72) {
+        const Real y = (.8-radius)/.08, a = std::pow(y, 8), b = std::pow(1-y, 8);
+        window = a/(a+b); window_r = -8*std::pow(y*(1-y), 7)/((a+b)*(a+b)*.08);
+      }
+      if (telegraph) {
+        h::VectorJet<Real> flux{};
+        for (int v = 0; v < 3; ++v) {
+          flux.value[v] = input[p*fields+19+v];
+          Real d[3], dd[3][3]; grid.Derivatives(padded, 19+v, p, d, dd);
+          for (int a = 0; a < 3; ++a) flux.d[a][v] = d[a];
+        }
+        const Real reference_gradient[3] = {x[0], x[1], x[2]};
+        const Real radial_gradient = radius > 0 ? window_r/radius : 0;
+        const Real window_gradient[3] = {radial_gradient*x[0], radial_gradient*x[1], radial_gradient*x[2]};
+        const auto addition = h::ReferenceTelegraph(u, flux, reference_gradient, window, window_gradient, .02, .005);
+        rhs[p*fields+18] += addition.lapse;
+        for (int i = 0; i < 3; ++i) rhs[p*fields+19+i] = addition.flux[i];
+      }
+      // Conservative stage guard for transport/lapse/telegrapher speeds.
+      Real speed = 0;
+      const Real F = u.alpha.value*u.alpha.value+4*omega.omega*omega.omega*u.alpha.value;
+      for (int A = 0; A < 3; ++A) {
+        Real transport = 0, norm = 0;
+        for (int i = 0; i < 3; ++i) {
+          transport += grid.geometry[p].J[A][i]*u.beta.value[i];
+          for (int j = 0; j < 3; ++j)
+            norm += u.chi.value*shift.geometry[p].inverse[i][j]
+                *grid.geometry[p].J[A][i]*grid.geometry[p].J[A][j];
+        }
+        speed += std::abs(transport)+std::sqrt(norm*(F+(telegraph ? .25*window*window : 0)));
+      }
+      if (dt*grid.n*speed > .5 || (telegraph && dt/.02 > .25))
+        throw std::runtime_error("bounded coupled stage CFL/relaxation guard");
+    }
+    for (Real value : rhs) if (!std::isfinite(value)) throw std::runtime_error("nonfinite coupled stage");
+    return rhs;
+  }
+  void Step(Real dt) {
+    V temporary(state.size());
+    const auto k1 = RHS(state, dt);
+    for (size_t i = 0; i < state.size(); ++i) temporary[i] = state[i]+dt*k1[i]/2;
+    const auto k2 = RHS(temporary, dt);
+    for (size_t i = 0; i < state.size(); ++i) temporary[i] = state[i]+dt*k2[i]/2;
+    const auto k3 = RHS(temporary, dt);
+    for (size_t i = 0; i < state.size(); ++i) temporary[i] = state[i]+dt*k3[i];
+    const auto k4 = RHS(temporary, dt);
+    for (size_t i = 0; i < state.size(); ++i) state[i] += dt*(k1[i]+2*k2[i]+2*k3[i]+k4[i])/6;
+  }
+};
+
+int main(int argc, char **argv) {
+  Kokkos::initialize(argc, argv);
+  int status = 0;
+  try {
+    const int n = argc > 1 ? std::stoi(argv[1]) : 6;
+    const Real amplitude = argc > 2 ? std::stod(argv[2]) : 0.;
+    const Real dt = argc > 3 ? std::stod(argv[3]) : .0005;
+    const int steps = argc > 4 ? std::stoi(argv[4]) : 2;
+    const bool angular = argc > 5 ? std::stoi(argv[5]) : false;
+    const int shells = argc > 6 ? std::stoi(argv[6]) : 1;
+    const Real tolerance = argc > 7 ? std::stod(argv[7]) : 1e-11;
+    const std::string profile = argc > 8 ? argv[8] : "";
+    const std::string checkpoint = argc > 9 ? argv[9] : "";
+    const std::string source_tag = argc > 10 ? argv[10] : "";
+    const int spatial_order = argc > 11 ? std::stoi(argv[11]) : 4;
+    if (n < 6 || n > 16 || steps < 0 || steps > 200 || dt <= 0 || dt*steps > .1
+        || std::abs(amplitude) > 1e-3 || (shells != 1 && shells != 2))
+      throw std::invalid_argument("bounded coupled pilot budget");
+    const auto start = std::chrono::steady_clock::now();
+    Pilot pilot(n, shells, true, tolerance, spatial_order);
+    pilot.Initialize(amplitude, angular);
+    const int saved_step = steps/2;
+    for (int i = 0; i < steps; ++i) {
+      pilot.Step(dt);
+      if (!checkpoint.empty() && i+1 == saved_step) {
+        cubed_sphere::CompositeSnapshot snapshot{pilot.shift.grid.mesh, source_tag, dt, tolerance,
+            static_cast<std::uint64_t>(i+1), fields, pilot.state, pilot.beta_delta};
+        snapshot.spatial_order = spatial_order;
+        cubed_sphere::CompositeCheckpoint::Write(checkpoint, snapshot);
+      }
+    }
+    bool restart_equal = checkpoint.empty();
+    if (!checkpoint.empty()) {
+      const auto snapshot = cubed_sphere::CompositeCheckpoint::Read(checkpoint, source_tag);
+      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order);
+      restarted.state = snapshot.fields; restarted.beta_delta = snapshot.shift_warm_start;
+      for (std::uint64_t i = snapshot.step; i < static_cast<std::uint64_t>(steps); ++i)
+        restarted.Step(snapshot.dt);
+      restart_equal = restarted.state == pilot.state && restarted.beta_delta == pilot.beta_delta;
+      if (!restart_equal) throw std::runtime_error("coupled restart is not bitwise reproducible");
+    }
+    pilot.RHS(pilot.state, dt);  // accepted-state diagnostics, with a fresh stage solve
+    const auto &grid = pilot.shift.grid;
+    Real H2 = 0, M2 = 0, theta2 = 0, Z2 = 0, volume = 0;
+    Real maxH = 0, maxM = 0, drift = 0, min_alpha = 1, min_chi = 1;
+    std::ofstream profiles;
+    if (!profile.empty()) {
+      profiles.open(profile); profiles << std::setprecision(17)
+          << "x,y,z,r,weight,alpha,chi,g_rr,A_rr,Khat,Theta,Lambda_r,beta_r,H,M_norm,det_error";
+      for (int v = 0; v < fields; ++v) profiles << ",state_" << v;
+      profiles << ",delta_beta_x,delta_beta_y,delta_beta_z\n";
+    }
+    for (size_t p = 0; p < grid.active.size(); ++p) {
+      const auto &u = pilot.jets[p];
+      const auto c = h::EvolvedConstraints(u, Omega(grid.geometry[p].x, u));
+      if (!c.valid) throw std::runtime_error("invalid coupled constraint diagnostic");
+      const Real weight = grid.volumes[p]*std::sqrt(pilot.shift.geometry[p].determinant)/std::pow(u.chi.value, 1.5);
+      volume += weight; H2 += weight*c.hamiltonian*c.hamiltonian;
+      M2 += weight*c.momentum_conformal_norm2; theta2 += weight*u.theta.value*u.theta.value;
+      Z2 += weight*c.z4.z_conformal_norm2;
+      maxH = std::max(maxH, std::abs(c.hamiltonian));
+      maxM = std::max(maxM, std::sqrt(c.momentum_conformal_norm2));
+      min_alpha = std::min(min_alpha, u.alpha.value); min_chi = std::min(min_chi, u.chi.value);
+      for (int v = 0; v < fields; ++v) drift = std::max(drift, std::abs(pilot.state[p*fields+v]));
+      if (profiles) {
+        const auto &x = grid.geometry[p].x;
+        const Real r = std::sqrt(x[0]*x[0]+x[1]*x[1]+x[2]*x[2]);
+        Real grr = 0, arr = 0, lambda = 0, beta_r = 0;
+        if (r > 0) for (int a = 0; a < 3; ++a) {
+          lambda += u.lambda.value[a]*x[a]/r; beta_r += u.beta.value[a]*x[a]/r;
+          for (int b = 0; b < 3; ++b) {
+            grr += u.metric.g[a][b]*x[a]*x[b]/(r*r);
+            arr += u.a.k[a][b]*x[a]*x[b]/(r*r);
+          }
+        }
+        profiles << x[0] << ',' << x[1] << ',' << x[2] << ',' << r << ',' << weight << ','
+                 << u.alpha.value << ',' << u.chi.value << ',' << grr << ',' << arr << ','
+                 << u.trace.value << ',' << u.theta.value << ',' << lambda << ',' << beta_r << ','
+                 << c.hamiltonian << ',' << std::sqrt(c.momentum_conformal_norm2) << ','
+                 << c.z4.determinant_residual;
+        for (int v = 0; v < fields; ++v) profiles << ',' << pilot.state[p*fields+v];
+        for (int v = 0; v < 3; ++v) profiles << ',' << pilot.beta_delta[3*p+v];
+        profiles << '\n';
+      }
+    }
+    const V padded = pilot.Padded(pilot.state);
+    if (!profile.empty()) {
+      std::ofstream spheres(profile+".spheres.csv");
+      spheres << std::setprecision(17) << "r,direction,alpha,chi,g_rr,A_rr,Khat,Theta,Lambda_r,beta_r\n";
+      constexpr int directions = 64;
+      for (int radial = 1; radial < 20; ++radial)
+      for (int direction = 0; direction < directions; ++direction) {
+        const Real radius = radial/20.;
+        const Real z = 1-2*(direction+.5)/directions;
+        const Real phi = direction*2.39996322972865332;
+        const Real normal[3] = {std::sqrt(1-z*z)*std::cos(phi), std::sqrt(1-z*z)*std::sin(phi), z};
+        const Real x[3] = {radius*normal[0], radius*normal[1], radius*normal[2]};
+        V value(fields, 0); Real delta[3]{};
+        for (const auto &entry : grid.Interpolate(x, std::min(n, 6))) {
+          for (int v = 0; v < fields; ++v) value[v] += entry.weight*padded[v*grid.count+entry.point];
+          // Convert the padded donor index back to its active lexicographic ID.
+          const int i = entry.point%grid.padded-grid.ng;
+          const int j = entry.point/grid.padded%grid.padded-grid.ng;
+          const int k = entry.point/(grid.padded*grid.padded)%grid.padded-grid.ng;
+          const int m = entry.point/(grid.padded*grid.padded*grid.padded);
+          const size_t active = ((m*n+k)*n+j)*n+i;
+          for (int v = 0; v < 3; ++v) delta[v] += entry.weight*pilot.beta_delta[3*active+v];
+        }
+        Real grr = 1, arr = 0, lambda = 0, beta_r = -radius;
+        for (int t = 0; t < 6; ++t) {
+          const int i = tensor_i[t], j = tensor_j[t];
+          const Real weight = normal[i]*normal[j]*(i == j ? 1 : 2);
+          grr += weight*value[1+t]; arr += weight*value[7+t];
+        }
+        for (int v = 0; v < 3; ++v) {lambda += value[15+v]*normal[v]; beta_r += delta[v]*normal[v];}
+        spheres << radius << ',' << direction << ',' << (1+radius*radius)/2+value[18] << ','
+                << 1+value[0] << ',' << grr << ',' << arr << ',' << value[13]-3 << ','
+                << value[14] << ',' << lambda << ',' << beta_r << '\n';
+      }
+    }
+    V beta(3*grid.count, 0);
+    for (size_t p = 0; p < grid.active.size(); ++p)
+      for (int v = 0; v < 3; ++v) beta[v*grid.count+grid.active[p]] = pilot.beta_delta[3*p+v];
+    Real pole = 0, clock = 0, null = 0, tangential = 0;
+    const h::CMCReference<Real> reference{1, 1};
+    for (size_t m = 0; m < grid.mesh.blocks.size(); ++m) {
+      if (grid.mesh.blocks[m].layer != shells-1) continue;
+      for (int k = 0; k < n; ++k) for (int j = 0; j < n; ++j) {
+        const Real q[3] = {1, (j+.5)/n, (k+.5)/n};
+        Real x[3]; grid.mesh.Forward(m, q, x);
+        V values; std::vector<std::array<Real, 3>> d;
+        std::vector<std::array<std::array<Real, 3>, 3>> dd;
+        grid.SampleJets(padded, fields, x, values, d, dd);
+        auto u = Unpack(x, values, d, dd);
+        grid.SampleJets(beta, 3, x, values, d, dd);
+        for (int v = 0; v < 3; ++v) {
+          u.beta.value[v] += values[v];
+          for (int a = 0; a < 3; ++a) {
+            u.beta.d[a][v] += d[v][a];
+            for (int b = 0; b < 3; ++b) u.beta.dd[a][b][v] += dd[v][a][b];
+          }
+        }
+        const auto omega = Omega(x, u, true);
+        auto parts = h::ConformalRHS(u, omega, 4., -.99);
+        parts.pole.theta += 3*u.alpha.value*omega.normal*u.theta.value;
+        const auto gauge = h::UnfactoredReferenceGauge(reference, reference.At(x[0], x[1], x[2]),
+            u, h::GaugeParameters<Real>{1, 0, 1, 0}, false, true);
+        pole = std::max({pole, std::abs(parts.pole.chi), std::abs(parts.pole.trace),
+                        std::abs(parts.pole.theta), std::abs(gauge.pole.alpha)});
+        for (int a = 0; a < 3; ++a) {
+          pole = std::max(pole, std::abs(parts.pole.lambda[a]));
+          for (int b = 0; b < 3; ++b) pole = std::max(pole, std::abs(parts.pole.a[a][b]));
+        }
+        const auto geometry = h::Geometry(u.metric);
+        Real bn = 0, norm = 0;
+        for (int a = 0; a < 3; ++a) {
+          bn += u.beta.value[a]*x[a];
+          for (int b = 0; b < 3; ++b) norm += u.chi.value*geometry.inverse[a][b]*x[a]*x[b];
+        }
+        null = std::max(null, std::abs(bn+u.alpha.value*std::sqrt(norm)));
+        clock = std::max(clock, std::abs(u.alpha.value-1));
+        for (int a = 0; a < 3; ++a) tangential = std::max(tangential, std::abs(u.beta.value[a]-bn*x[a]));
+      }
+    }
+    std::cout << std::setprecision(17) << "{\"n\":" << n << ",\"shells\":" << shells
+              << ",\"cells\":" << grid.active.size() << ",\"amplitude\":" << amplitude
+              << ",\"angular\":" << angular << ",\"dt\":" << dt << ",\"steps\":" << steps
+              << ",\"time\":" << dt*steps << ",\"seconds\":"
+              << std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count()
+              << ",\"elliptic_iterations\":" << pilot.elliptic_iterations
+              << ",\"shift_residual_max\":" << pilot.max_shift_residual
+              << ",\"H_rms\":" << std::sqrt(H2/volume) << ",\"M_rms\":" << std::sqrt(M2/volume)
+              << ",\"Theta_rms\":" << std::sqrt(theta2/volume) << ",\"Z_rms\":" << std::sqrt(Z2/volume)
+              << ",\"H_max\":" << maxH << ",\"M_max\":" << maxM << ",\"max_deviation\":" << drift
+              << ",\"min_alpha\":" << min_alpha << ",\"min_chi\":" << min_chi
+              << ",\"scri_pole\":" << pole << ",\"scri_clock_extrapolation\":" << clock
+              << ",\"scri_null_extrapolation\":" << null << ",\"scri_tangent_extrapolation\":" << tangential
+              << ",\"restart_checked\":" << !checkpoint.empty() << ",\"restart_equal\":" << restart_equal
+              << ",\"spatial_order\":" << spatial_order
+              << ",\"closure\":\"experimental_active_only_extrapolation\"}\n";
+    // Report original scientific gates without weakening them for a coarse grid.
+    if (pole > 1e-7 || clock > 1e-13 || null > 1e-12 || (amplitude == 0 && drift > 1e-9)) status = 1;
+  } catch (const std::exception &error) {std::cerr << error.what() << "\n"; status = 2;}
+  Kokkos::finalize();
+  return status;
+}

@@ -1,0 +1,67 @@
+{
+  "records": [
+    {
+      "original": "build-shift-3d/pilot-matrix/8-1-1-0-0.log",
+      "preserved_log": "pilot-matrix--8-1-1-0-0.log",
+      "sha256": "5b09e05fb1f7a5b9767a65ff2466def36bdf0f42af7e5a47efdfb91ba73b0092",
+      "observed_exitcode": 2,
+      "source_binding": "Development attempt before frozen final matrix; exact source hash was not captured. Diagnostic record only."
+    },
+    {
+      "original": "build-shift-3d/pilot-matrix/16-1-1-0-0.log",
+      "preserved_log": "pilot-matrix--16-1-1-0-0.log",
+      "sha256": "5b09e05fb1f7a5b9767a65ff2466def36bdf0f42af7e5a47efdfb91ba73b0092",
+      "observed_exitcode": 2,
+      "source_binding": "Development attempt before frozen final matrix; exact source hash was not captured. Diagnostic record only."
+    },
+    {
+      "original": "build-shift-3d/pilot-matrix/8-2-1-1-0.log",
+      "preserved_log": "pilot-matrix--8-2-1-1-0.log",
+      "sha256": "5b09e05fb1f7a5b9767a65ff2466def36bdf0f42af7e5a47efdfb91ba73b0092",
+      "observed_exitcode": 2,
+      "source_binding": "Development attempt before frozen final matrix; exact source hash was not captured. Diagnostic record only."
+    },
+    {
+      "original": "build-shift-3d/coupled-pilot-v1/6-0-0.0005-2-0-1.log",
+      "preserved_log": "coupled-pilot-v1--6-0-0.0005-2-0-1.log",
+      "sha256": "fdbd75240731218e10f874a3c8d86f37efbfc615ceaf2488cc2f4263dc2d8eb1",
+      "observed_exitcode": 2,
+      "source_binding": "Development attempt before frozen final matrix; exact source hash was not captured. Diagnostic record only."
+    },
+    {
+      "original": "build-shift-3d/coupled-pilot-v1/6-1e-06-0.0005-2-0-1.log",
+      "preserved_log": "coupled-pilot-v1--6-1e-06-0.0005-2-0-1.log",
+      "sha256": "fdbd75240731218e10f874a3c8d86f37efbfc615ceaf2488cc2f4263dc2d8eb1",
+      "observed_exitcode": 2,
+      "source_binding": "Development attempt before frozen final matrix; exact source hash was not captured. Diagnostic record only."
+    },
+    {
+      "original": "build-shift-3d/coupled-pilot-v1/6-1e-06-0.0005-2-1-2.log",
+      "preserved_log": "coupled-pilot-v1--6-1e-06-0.0005-2-1-2.log",
+      "sha256": "fdbd75240731218e10f874a3c8d86f37efbfc615ceaf2488cc2f4263dc2d8eb1",
+      "observed_exitcode": 2,
+      "source_binding": "Development attempt before frozen final matrix; exact source hash was not captured. Diagnostic record only."
+    },
+    {
+      "original": "build-shift-3d/coupled-refinement-v1/1-9-0-0.0005-4-0-1.log",
+      "preserved_log": "coupled-refinement-v1--1-9-0-0.0005-4-0-1.log",
+      "sha256": "179faa66df1a4c84114fc246e22b350975df7fbb723fdd1014c14420f1c36226",
+      "observed_exitcode": 2,
+      "source_binding": "Development attempt before frozen final matrix; exact source hash was not captured. Diagnostic record only."
+    },
+    {
+      "original": "build-shift-3d/coupled-refinement-v1/4-9-1e-06-0.0005-4-0-1.log",
+      "preserved_log": "coupled-refinement-v1--4-9-1e-06-0.0005-4-0-1.log",
+      "sha256": "179faa66df1a4c84114fc246e22b350975df7fbb723fdd1014c14420f1c36226",
+      "observed_exitcode": 2,
+      "source_binding": "Development attempt before frozen final matrix; exact source hash was not captured. Diagnostic record only."
+    }
+  ],
+  "repairs": [
+    "Classify coarse Cartesian corner halos by physical location, including those beyond the entire transition layer.",
+    "Clamp only shell-owner classification at the exact outer radius within roundoff tolerance; no Omega/field floor is used."
+  ],
+  "unsupported": [
+    "Odd noncoarsenable block size 9 exceeds the deliberately bounded 1024-unknown dense coarse solve; use a supported coarsenable size."
+  ]
+}

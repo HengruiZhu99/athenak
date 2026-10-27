@@ -1,0 +1,4348 @@
+{
+  "started_utc": "2026-10-27T02:16:11.632247+00:00",
+  "base_commit": "8bef4966e253e92d85761f46d8885e7cc80dc2ed",
+  "checkout_head": "8bef4966e253e92d85761f46d8885e7cc80dc2ed",
+  "machine": "arm64",
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "source_hashes": {
+    "CMakeLists.txt": "deed2545850450aec3425c69653c627170cba4fd64f98948a5d68cedb56e81c3",
+    "src/mesh/cubed_sphere/composite.hpp": "1850e39ba00f37563dbb708c2c708e87b4fc3032e286605c2e41653680d2fb05",
+    "src/mesh/cubed_sphere/composite_checkpoint.hpp": "d09c610296cc769d053454ace17810e7d0b203b71065418726c3b9c68ad39849",
+    "src/mesh/cubed_sphere/composite_difference.hpp": "911bd6b662dd20267ee89b674050a2e10a7a96340ffd202a420bc49001020b16",
+    "src/mesh/cubed_sphere/conformal_bridge.hpp": "aa39ba0b9d06c9a58a20e3156bb9591383721c690bb52a03b9de8033f99a28cf",
+    "src/mesh/cubed_sphere/conformal_probe.cpp": "de71c564dcc47ee43ea9e0a8b97c57621f60c0f5ac48cf0bb5c5d099f4a11e10",
+    "src/mesh/cubed_sphere/derivatives.hpp": "a760f1cfcd2d0ff00062cc2a26e5ceee14c54b49f8793d30ff235791cb0793e7",
+    "src/mesh/cubed_sphere/diagnostics.cpp": "02ddd700065d3ef6a0096280e477c9c6c89e9c7576d2eb2e1a18b32696ed2d09",
+    "src/mesh/cubed_sphere/extension.cpp": "abf7cd516ebb653e8fa9a2b082f9d444fea7dc57f1fcd6bf6a58230e81c441ae",
+    "src/mesh/cubed_sphere/extension.hpp": "5cddb2a8e21e1ee17852b8f1d612d66f83f61c525f96dfd7e71712f3ccf48231",
+    "src/mesh/cubed_sphere/interior_radial.hpp": "74da4ed1270bea32883ee1fe85ec026250ea01f4993323ce578d02ace207ed2d",
+    "src/mesh/cubed_sphere/map.hpp": "3c0dbf467a00eeb0a28c2fc005e7a140b49c91219edb0d6532fa837fa06d2ee8",
+    "src/mesh/cubed_sphere/probe_surfaces.hpp": "1eee64d074b6ad4090fb1ea926707d9af6b8a83d8affbf50ddcc5afae8453ec4",
+    "src/mesh/cubed_sphere/reference_wave_map.hpp": "56d61c56bf37bf33591bec74c029c686c7d39f7abbe62dd090becda8e7176e28",
+    "src/mesh/cubed_sphere/scalar_probe.cpp": "43d6ee786f314bcb49f9703274e7192b4cd6a8fde3d6d485a7c97e17426f13d7",
+    "src/mesh/cubed_sphere/test_state.hpp": "e2ff17e065e5f2b8ca8258774f3abbb70ad6d9ceb1694b7bcc1f33cc1acc5cc8",
+    "src/multigrid/composite_poisson.hpp": "bd2f360abc98a11d3ab7f5e41f852290b5e010daf8bcf51186739d182c717a77",
+    "src/multigrid/flexible_gmres.hpp": "26ef8f9659c0bd7961820cb0a38ca1463273d4b2aec2a82b3693dbb51d01f865",
+    "src/multigrid/multigrid.cpp": "34350865c47abb4156791de062464bb8abd910b96feb32133a14328e9ba4a8e8",
+    "src/multigrid/multigrid.hpp": "f1c4b1be267547f3398c71aaa486e05640cbb828f0bf1f498e48251f02bddec9",
+    "src/multigrid/multigrid_bvals.cpp": "bfc702b101022ef901e220951c827be381399acc4e8da023fe5d66a416a8a544",
+    "src/multigrid/multigrid_driver.cpp": "868666f73dc5684b3c4d944e26af031cd82383cce963d78080381740b3f04853",
+    "src/multigrid/multigrid_tasks.cpp": "bc8f2a885a896aca6ccd8ab1ffea9679c50161c9dc742791d4ca4204a79b13f3",
+    "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+    "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+    "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+    "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+    "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+    "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+    "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+    "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+    "src/z4c/hyperboloidal/composite_shift.hpp": "a81f5640acc96ef3cd6b7b789920088e20e7624e0f4b05376117ce781058b67a",
+    "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+    "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+    "src/z4c/hyperboloidal/elliptic_shift.hpp": "f0bfcaea9f9e428bcb0f1be5a80514aa340b82a036e9f63889e3cd2b87d46d58",
+    "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+    "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+    "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+    "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+    "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+    "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+    "src/z4c/hyperboloidal/spherical_driver.cpp": "70d504dbeeabe2186cb075ab46e49e3cca314bccd7cb176332ebe813a35800e3",
+    "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+    "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+    "tst/elliptic_shift_1d/analyze_arithmetic_controls.py": "3fa37bfb7fc0a30d55339b917682d1e70a337500f11180069341ee26685fdf55",
+    "tst/elliptic_shift_1d/analyze_controls.py": "cd83971ca74ebbc1655e4361d4498d153ac7fcf70a1f09168a085f7f74bac207",
+    "tst/elliptic_shift_1d/analyze_diagnostics.py": "d4438b602e9c2fae0c6e3b33c4d2fd920d0519479abcf08a88890480174d87c6",
+    "tst/elliptic_shift_1d/analyze_principal_controls.py": "4b43eac04887dc49b0fc5da49f3214553a138ae8ade3eaf73da20e961ec11223",
+    "tst/elliptic_shift_1d/analyze_puncture_front.py": "b52f03d7005a63c5fa864fd7bd8d7f1933e04702fe56d454b087723de694c021",
+    "tst/elliptic_shift_1d/analyze_telegraph.py": "9061f1110f8afdf885bc61c78271715965aa6e4372bb5fee15405a66152a6fa9",
+    "tst/elliptic_shift_1d/analyze_telegraph_compression.py": "4b1b6a00fee63a2eefbedc9b4779db23b96d7f29cadd3d751cdcc92266110466",
+    "tst/elliptic_shift_1d/analyze_telegraph_constraint_location.py": "79ae69b8e5b5406b5abe7270b256ea562fb2078121cc27bdd7a41a1540ceb510",
+    "tst/elliptic_shift_1d/analyze_telegraph_control.py": "785854a9da6dbfcc2450b0d8356e367e217266caa00febd407976b018d1ca4cd",
+    "tst/elliptic_shift_1d/analyze_telegraph_pilot.py": "07e094ba61c9b4b329642fbdd25a4490c8d143a82fce02335cf2a627cad80519",
+    "tst/elliptic_shift_1d/analyze_telegraph_ray_convergence.py": "10f3e601bd2517ce38e1c4e23287913be60bce22540db81d5f7e78df14d57f67",
+    "tst/elliptic_shift_1d/analyze_telegraph_ray_pilot.py": "0bf1b64e06e67b3d8b00c4c54fbd32c0bb6a8a79d3bdf60671a3cf04fcba85d5",
+    "tst/elliptic_shift_1d/analyze_telegraph_time.py": "5cb4230854bf6a04eba741879be30982f475143f89dc85b3e9d007c3d9458cf7",
+    "tst/elliptic_shift_1d/analyze_trajectory_convergence.py": "9e10c235383899324f4a9508c43a521da7cc102334ebb3277b258cb1f2038beb",
+    "tst/elliptic_shift_1d/assess_black_hole.py": "a8d9421e17e5c513607deac67821751de644f3367102b7c3985c317b863008b8",
+    "tst/elliptic_shift_1d/assess_telegraph.py": "3ce79a387d85fc915d5b68c6d8fdad8a3fae1d2171b6dcd7c6fe0f31d6530133",
+    "tst/elliptic_shift_1d/audit_bondi_time.py": "fdb341c0617f2ec7dbefd3b9e07a18dd6f40f8778b5f9fff69f8321583ae80c6",
+    "tst/elliptic_shift_1d/audit_matrix.py": "035a151a8b55218654b4bfd318c24e870cf7899148aaf3c7cef17b895eaf063b",
+    "tst/elliptic_shift_1d/audit_puncture_compilation.py": "80b5f6b2faed41c08debf3b19ddbc58e52f222fda496324b23f5cb6ff49533fe",
+    "tst/elliptic_shift_1d/audit_telegraph_boundary_spectrum.py": "ab796d18ed0f43a9b5657e67b5227c124737cb19aac3f6ed868e1b9cbc8d2026",
+    "tst/elliptic_shift_1d/audit_telegraph_constraints.py": "800e38b9622a83c2803e05ab71c0ef01d9b4715af5015b53af5aa7b785f3aeaa",
+    "tst/elliptic_shift_1d/audit_telegraph_mass.py": "a961600c138e4ef99761718d879c80e5164ed2cb0f5a6f21ddabe82d3914c3c2",
+    "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+    "tst/elliptic_shift_1d/compensated_update.py": "1fb049ca86c5f22a43a9138da751eaca60e0524106df5ec4fc56d0c39ca5cca1",
+    "tst/elliptic_shift_1d/continue_telegraph_matrix.py": "28f4c2272c12fd00dcd9ab8f8d9ab54bef36abed05bde577c0cda4ec719cc832",
+    "tst/elliptic_shift_1d/continue_verified.py": "64ee61e145ef018b6c7133364f57fb426cd00fd021feeace52acc2823dbff6f6",
+    "tst/elliptic_shift_1d/derive_gauge_corners.py": "cc5ad24e25461d3eecf4a8a5f9277af1a0ae05e4595b57eabaf24317f5adf4b5",
+    "tst/elliptic_shift_1d/derive_regular_chart.py": "93717350ee6c52d3aab8f30435144fc29b3d6ff5da7f48d72ebd576ab860673a",
+    "tst/elliptic_shift_1d/diagnose_cutoff_variables.py": "687ec0af48c824d916b86731fc25a48ff2c7e75646636798d8a9eefa9ece9cd0",
+    "tst/elliptic_shift_1d/diagnose_elliptic_modes.py": "46bd5da5eef1507236a6e55b373e47fc62c09db35a481e445a6497a889d2e87b",
+    "tst/elliptic_shift_1d/diagnose_linear.py": "509d0f0ed02e7784273c6faf17e51e4b800c01395fac3352f3657608dcd2c183",
+    "tst/elliptic_shift_1d/diagnose_puncture.py": "dfe8f5cb15afbff3023c2a37b9928325bb06e79df3455b1167e27129e9d5114d",
+    "tst/elliptic_shift_1d/diagnose_retained_front.py": "bfc08b78b343ffcf241a292fe4584ce1003e692c30724fe7736b9abbe907294e",
+    "tst/elliptic_shift_1d/diagnose_telegraph_characteristics.py": "77e2e01e7ed859221c1af1893d2465cf0600a523fd508bcaf8bb5127e12a5d2d",
+    "tst/elliptic_shift_1d/domain_transfer.py": "8a2efb28bc37338f506dd7a46f0c23f9b67019f4796e42ff9833fda1d9fde2b8",
+    "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+    "tst/elliptic_shift_1d/evolve.py": "a69291e981ac98542058a17f6bdec8738803ccb406544865ee12368a6e98a22d",
+    "tst/elliptic_shift_1d/fast.py": "cd93348bb944992ee099412d85f610d609ec35c734e39e1e18338022d5482548",
+    "tst/elliptic_shift_1d/fast_integrator.cpp": "19599774eb9a9c39f1f9d31553250d7fbf6e93f42904e9142ed43c6e063aa246",
+    "tst/elliptic_shift_1d/freeze_and_run.py": "46691fb91617589c18973155269867e30d151e728df24a2e6bb74d06ff1b368f",
+    "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+    "tst/elliptic_shift_1d/gauge.py": "12a72a023c3ae3f2a802d6595f3a0cbc8f69b0be6484ba71763ec944c5554237",
+    "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+    "tst/elliptic_shift_1d/initial_operator_audit.py": "4d600c16da9eda9171e4cef7e7a74567fb65d5729a5248dac2779c02831fc820",
+    "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+    "tst/elliptic_shift_1d/literature_matrix.py": "d6cbba26401aa8c5fa2cf42a29a7b81a0fcfff954ba29f7ad552a511fdbf216f",
+    "tst/elliptic_shift_1d/numerics.py": "c62ee8d579cf22758768a91348b3adc890b9955cb7e64f1a3e27e65d833fbb61",
+    "tst/elliptic_shift_1d/plot_elliptic_modes.py": "67455f75925c88550ea7321cfadc1faa7038db9dff24179c08188b749d94c5a0",
+    "tst/elliptic_shift_1d/plot_scalar_oracle.py": "15f9641fdfa9d82861ad1b4e8ba79a7b5c13d3d3cb26d05dc77a75f59931ee84",
+    "tst/elliptic_shift_1d/plot_telegraph_constraint_status.py": "ed9a543ccb15a8583d728b9625f9b927dfee7f44f7127fd9b2ceb3b67684df2f",
+    "tst/elliptic_shift_1d/plot_telegraph_grids.py": "4377049ae3ceb834beba357a7138efaea387ecbb0d2bb38911abe7781d909afa",
+    "tst/elliptic_shift_1d/plot_telegraph_lapse_status.py": "82c8da78ae925dfe05022acc205975d790d7748bdd8eb72a875e47deb254cbb4",
+    "tst/elliptic_shift_1d/puncture_chart.py": "f5b6b1d0ab9a03ed50db686b311ba51d003f80a189d9f6c995a2e182e72bed03",
+    "tst/elliptic_shift_1d/radial_grid.py": "6a41e8b1e3ec8c57b437022b521fb5b8b842fea9499f55440353267f93cc174b",
+    "tst/elliptic_shift_1d/run_control_pipeline.py": "30849dda477f7d38503d17272d2729401c763dda9d203752988723baa608af57",
+    "tst/elliptic_shift_1d/run_diagnostics.py": "10b6be4e546bb92ee223daa5cd0510fdae2ce1a8c5e1eaa37428d7c183884421",
+    "tst/elliptic_shift_1d/run_matrix.py": "12ec3aff46ef55d465b63f11e5fc563f5dc3fce57153bd2efb0ccfab9b188c81",
+    "tst/elliptic_shift_1d/run_puncture_modes.py": "b17c52699be574807b3f2f0bbe745329c4183e7eb2ecb849ef1d01cc4e67bffb",
+    "tst/elliptic_shift_1d/run_telegraph.py": "290f6fbb3480481a5a6185edd2ff23fa253a9b0f258f86c3f1e5e5c576c5659c",
+    "tst/elliptic_shift_1d/run_telegraph_matrix.py": "f6165f7158278d4d0535910bcc47d44e7561c946b1e514290dd5a15a420ce021",
+    "tst/elliptic_shift_1d/sbp.py": "65175f0bfae7e8f268f24d3f0b3072cc0d00e84785f7739652b86e2df416dbc0",
+    "tst/elliptic_shift_1d/scalar_initial_data.py": "d802c1b9455299f1cc7db620ed10d6a17944e11cb9cdf0111a1f2b8c50008d05",
+    "tst/elliptic_shift_1d/scalar_oracle.py": "166b6733c147af9bfb559c08fd6b82183b0e74b5d5aa6dc9ee1e0b3eb3397b88",
+    "tst/elliptic_shift_1d/scalar_rhs.py": "173740fa1ff63261efcec423529a4c0497c51e3b3fd80e0522ad484b13520cfe",
+    "tst/elliptic_shift_1d/scri_chart_probe.cpp": "d35a55af5d353af8a127ac563f4be92205687171567222ed1a1bd18d502c11d0",
+    "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+    "tst/elliptic_shift_1d/shift_ode.py": "a5ea959841a42aef022dff441449c1623b9c1bf0b81d02ac781d4de5afb5073f",
+    "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45",
+    "tst/elliptic_shift_1d/summarize_regular_center.py": "a4ce51ba3db8db9f108ec0c0d3b0ec760a47f8e09922b23dc98328b8b8668f6e",
+    "tst/elliptic_shift_1d/summarize_wormhole_cases.py": "f6b20051f0a7af969e2e7815a1b699338b3c7e13bce5a489334a9549e9d412c5",
+    "tst/elliptic_shift_1d/taylor.hpp": "298f405ba3196f8161c6a8ad7c9064c5f09a43f309fc7390ec7a818b22f0a80f",
+    "tst/elliptic_shift_1d/telegraph.py": "23a4dbe49f3c8d500ac22e2597b63edd237f1460ed39577cdc152bfcaaafd185",
+    "tst/elliptic_shift_1d/telegraph_analysis_io.py": "017785fd4d4005cae5c21e356c59a065fe4dc66162518a6509a3c9b7589c3f24",
+    "tst/elliptic_shift_1d/telegraph_integrator.cpp": "63ebf7dedb9b4ccad62cd9891652d5e1c129a14f7210e9d1fdd205b8214af435",
+    "tst/elliptic_shift_1d/test_advection.py": "80cfcb4abb04f7b5fcb068634a977afc0f74874388baee8309d695593de9ff3f",
+    "tst/elliptic_shift_1d/test_bondi.py": "256f846726f9ecf5c5c0c38364637fbd703c08f40f8a2d282e7098c37a4cfa16",
+    "tst/elliptic_shift_1d/test_clock_evolution.py": "cd9512d0ba493414a3cf13d0e6b6aca8838f2afde421092b7b96cb71b021ee5e",
+    "tst/elliptic_shift_1d/test_compensated_update.py": "300b658d5492828b5561fff5dd233c9825e94faf7740b23a0526a61183571002",
+    "tst/elliptic_shift_1d/test_domain_transfer.py": "c3351ef0e2057d58b888e7a5d79e33eb9ccc776b053c73385e27fb80493811e5",
+    "tst/elliptic_shift_1d/test_elliptic.py": "6b73752d122d14b30d34c34cf6bb0fb76f71eecc60126056685e692379ae6edf",
+    "tst/elliptic_shift_1d/test_evolution_restart.py": "bd7594e43d3cc449afae68c01a66155766df07b7a3ef7edbe56e82d784b92a04",
+    "tst/elliptic_shift_1d/test_fast.py": "03e0ed0b3213072ac6e658c4d018d7c223ef9421eb22c4a4cf1cda6887b52c57",
+    "tst/elliptic_shift_1d/test_fast_positive.py": "8b88e00a9c17ae827c35e330b8d72127fc6f94f2900f1c2da341e0f4f68e4953",
+    "tst/elliptic_shift_1d/test_fast_puncture.py": "300b2c85d333bb4990507e5f5c7ed654ca244ef93fa86cc0479f2c251b0a00ce",
+    "tst/elliptic_shift_1d/test_fast_trumpet_metric.py": "98df9b84ed81ebbc3f3390866da1dd01bdcad3588984ed777917cbdec62bc3b8",
+    "tst/elliptic_shift_1d/test_g1_rhs.py": "d6a0e5a6b7a225846ebc8166a471cf544bdc4a5ea1e0465e91bf7bfb97767cae",
+    "tst/elliptic_shift_1d/test_gauge_boundary.py": "d90cf3b354c4e9faffcbd0dc883e67f50025ad8802040d5ab120233a858ff24e",
+    "tst/elliptic_shift_1d/test_horizon.py": "7a9b8db841c8cd4d4ce3dab4e7d697a8e2cd3848f6e347047a26a26828ad6d70",
+    "tst/elliptic_shift_1d/test_initial_lapse.py": "6b36523fdf3693e94622964fcf65ab1a0cdcebe86649050e943bf7cc109c9f73",
+    "tst/elliptic_shift_1d/test_initial_precision.py": "19d4710a248cddc1aca4d090761637e807f213a5d1c6f22b7273610a45eabe38",
+    "tst/elliptic_shift_1d/test_ko_inner_consistency.py": "9b90af7dcbc7fb6cd9830b36e037600faed5035975f224e962fc2ba6c2fc7857",
+    "tst/elliptic_shift_1d/test_local_restoring.py": "82fad9c72f57c0972295931d5e1d1ba4e8258a5f26cafd56c2c61ce0231c753e",
+    "tst/elliptic_shift_1d/test_local_subtraction.py": "4d3d8c03b9b91cd94bf870f2268110a0216a78ff01bda60e7bccd6474ff744f1",
+    "tst/elliptic_shift_1d/test_origin_limits.py": "b60fa8655138a9d6d52fa963f4098f7aecb1aca7991064f9f76a977e957d5002",
+    "tst/elliptic_shift_1d/test_physical_adm.py": "a2f23ae62c1fedcca78444c3426a27b9cbdcf115fe0c4cc930976014dc7c717a",
+    "tst/elliptic_shift_1d/test_physical_log_source.py": "655b34f3d845158d219d86dd6856d2a031e71e8984e95feefaf0251d86ff4e7d",
+    "tst/elliptic_shift_1d/test_positive_regular.py": "b4871b6e323933035743b073c2c1abba8601ac0e2661348f621e64cd9d26e6f8",
+    "tst/elliptic_shift_1d/test_puncture_chart.py": "39b423f3153f750298258550904e73fa2046b49605a531dc66d63c96fea2ca21",
+    "tst/elliptic_shift_1d/test_puncture_limits.py": "59a91f6e22f42cde9e1bfcb96257d38396e4d9b74434798148a188800f0b7466",
+    "tst/elliptic_shift_1d/test_sbp.py": "d8b8e3a41db675c9924be3bbb0abdda5d111199b333b5382d32308286e740f77",
+    "tst/elliptic_shift_1d/test_scalar_rhs.py": "85a6c7c4a78c719227ffac3e71e2f3b260bc394d3c40b4dfd3020e88887fbda8",
+    "tst/elliptic_shift_1d/test_scri_limits.py": "f74985b82d74c6bc6e329955cb9764dbaecdb4ab1d89728d89c4b861101d4cf2",
+    "tst/elliptic_shift_1d/test_shift_ode.py": "cfff92d001f6cd68c235c6d2c3a8a3dd58ae7bbd2421c5224f2ac6cdba9f85c2",
+    "tst/elliptic_shift_1d/test_telegraph.py": "5b85eaa9de882eb1b29f6ce11e5b37a492637be38db6a6dca3b8b0c4830db770",
+    "tst/elliptic_shift_1d/test_telegraph_controls.py": "679cf7d762e43bfdfa2de432b28e0a28bd6c65cc181fc22f9853192bb82d0ce0",
+    "tst/elliptic_shift_1d/test_telegraph_driver.py": "9ccba983bac971ca1f2101fed565b7a0dacb30a5c99ee283d620269d08314913",
+    "tst/elliptic_shift_1d/test_telegraph_exit.py": "28eaab09a237fa60298f78ce8ed9989feacf037572d8c5d314956fc483e6e630",
+    "tst/elliptic_shift_1d/test_telegraph_rays.py": "84d17461708f7534448fcb64cd3d9d0a3e1535d5095379951b94f4d62c6f02c2",
+    "tst/elliptic_shift_1d/test_telegraph_time_analysis.py": "aeba7b1d0ce33838bd6b0744cfffa351bc5468afec8cc2dfc222a00c0cf12c2e",
+    "tst/elliptic_shift_1d/test_time_lattice.py": "168b2b8327018f9158b913f8b646b6e477e3c3fe90c51573e29f747915331e88",
+    "tst/elliptic_shift_1d/test_trajectory_scope.py": "3d6da4719b303f5bf8225babcdb893825a9d65be64052f18365f40cb6a46b4a1",
+    "tst/elliptic_shift_1d/test_trumpet_data.py": "e2a01a5293d7187d9a1c714cfacde70b5727b36c1d774ab9ae8779ebf9750629",
+    "tst/elliptic_shift_1d/test_trumpet_lapse_chart.py": "a801e257621af74d86c35b8a9a7e75985a5cf7fe07128b4d5f39f8a83760b978",
+    "tst/elliptic_shift_1d/test_variable_profiles.py": "87ad50eb71b16f6f0e2d1778308954c332ea6d77a54b55c911b56507050422c1",
+    "tst/elliptic_shift_1d/test_wormhole_data.py": "81e10976fc2d2fb90bab5a1017c647fea6039245acfbd157b690bee78a3b6eec",
+    "tst/elliptic_shift_1d/test_wormhole_isotropic.py": "c1a1051afc56b3d5df5895bf25998e81be32145bf1e1251aedbc649c76d6dd65",
+    "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+    "tst/elliptic_shift_1d/trajectory.py": "3bcb0ffb08f7e4f5d1eb666c98c85de87fcd16f3db2d4020039da6e769e8a2e6",
+    "tst/elliptic_shift_1d/trumpet_data.py": "35c27defb8b4066bd3981e11bc7f6579415cb7d21b82dcaa3eaaa5413f2a7184",
+    "tst/elliptic_shift_1d/variable_profiles.py": "562b5e3d252884c08f47e5897fc9f555672a2b990387928139424e2b963a475d",
+    "tst/elliptic_shift_1d/wormhole_data.py": "b7e8125715c6658a0574feb4c262b741dda03e825d8376c37a1d6cb181875969",
+    "tst/elliptic_shift_1d/wormhole_isotropic.py": "5103cd3480a113df2f2bf42d98914f0dec823ef58730eeacabd2d633d3b5b4b9",
+    "tst/elliptic_shift_3d/coupled.cpp": "408d57eba91a406e9a1b74ca28c7260ca2d7b9f74a5112735d7c2133bb306e52",
+    "tst/elliptic_shift_3d/manufactured.hpp": "05a08653ca9e2216eef855d96e1eb518dec5a72bfb81bc125d685648d3e4cfd1",
+    "tst/elliptic_shift_3d/plot_validation.py": "19492f8ec91f59973ad87794304a88f79a22ec120f5c33c7726d90c4d096029b",
+    "tst/elliptic_shift_3d/radial_reference.py": "8fc3058c067b5b06686dcdbaed1f7a07414d935f788f772dbe180e022dac5b8b",
+    "tst/elliptic_shift_3d/test_composite.cpp": "b9aebc13fa4470a021782191c384505c6378b0a2ba6c41dbcd253021f03b3d74",
+    "tst/elliptic_shift_3d/test_lifecycle.cpp": "3566b873e06a9a5ff4027700615289badb9dff8fe9686c058ccd3bc56ebd07c2",
+    "tst/elliptic_shift_3d/test_mpi.cpp": "99a87dbef9edd772cf03c7c321cda1b7181b5bacc7bd31419bf269b15e60fdba",
+    "tst/elliptic_shift_3d/test_operator.cpp": "bfabb19f6e44c0682aec636c8a7f9396470be5aab7c9f7a74bb67db1f4cedc36",
+    "tst/elliptic_shift_3d/validate.py": "6c9d6f0cbde80dfd99dba0162b12dc0d843e920ed830c0abc7e06a660a5613ee"
+  },
+  "source_tag": "9f62432762edabbdd49e0c9e646a3cf3f2e01fee1436f14158f7e5fb903a03de",
+  "executables": {
+    "elliptic_shift_3d_operator_tests": {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_operator_tests",
+      "sha256": "84b4610f14e127d707492a24f4f25e1f458f808ecfd1039f7fe3ac0f63348ae2"
+    },
+    "elliptic_shift_3d_composite_tests": {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+      "sha256": "34f77f03a40ff6bbc93d38e20cb139d2c25ea9b94c0ef7057847e8cde0988b2b"
+    },
+    "elliptic_shift_3d_lifecycle_tests": {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_lifecycle_tests",
+      "sha256": "7b326723728d44fe125fa41965d189a1ac267f15e7b29c334c94df96a8930969"
+    },
+    "elliptic_shift_3d_coupled_pilot": {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+      "sha256": "d3d1f523c565bd1e8e94d34cb344b4c211e4ff3dc9a48fcbb2833e2c205d97eb"
+    },
+    "mpi": {
+      "path": "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d-mpi/elliptic_shift_3d_mpi_tests",
+      "sha256": "1c720d25a90979c41abdd2b5037d4c0b5994bc1069f43503d1f8ffe3f456d7fe"
+    }
+  },
+  "worker_limit": 1,
+  "tests": {
+    "kernel": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_operator_tests"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 0.006050374999999997,
+      "stdout": "kernel.stdout",
+      "stderr": "kernel.stderr",
+      "stdout_sha256": "d1e1ca6dc887c897f7d562c09d53c314a87134b172d069bab84a76afbbf2dbfc",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "variation_error": 5.686104365132394e-12,
+        "flat_error": 5.551115123125783e-17,
+        "metric_rhs_error": 5.551115123125783e-17,
+        "radial_error": 2.6461471902550215e-14,
+        "scri_null_error": 2.0644816989874987e-16,
+        "scri_angular_error": 8.188261334550083e-17,
+        "cases": 32,
+        "status": "passed"
+      }
+    },
+    "lifecycle": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_lifecycle_tests",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/lifecycle.bin"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 1.047561667,
+      "stdout": "lifecycle.stdout",
+      "stderr": "lifecycle.stderr",
+      "stdout_sha256": "0ded689ed9d5650cb0530f86896c23d2642f49f0aab6a89be91bc1c3ebbadfcd",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "mixed_leaf_blocks": 63,
+        "layers": 2,
+        "face_subdivisions": 2,
+        "transfer_error": 8.21565e-15,
+        "checkpoint_exact": true,
+        "corruption_and_source_mismatch_rejected": true,
+        "status": "passed"
+      }
+    },
+    "mms-curve0-n8": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "8",
+        "1",
+        "1",
+        "0",
+        "0"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 0.7360899170000001,
+      "stdout": "mms-curve0-n8.stdout",
+      "stderr": "mms-curve0-n8.stderr",
+      "stdout_sha256": "309f230390d2a4804d5ff33874cfcec755b4929ec8dff348f086c5edcf301dde",
+      "stderr_sha256": "ee16d2ae012e09a0fa67f9a5cd0ed6a9e9c952549ca284648ce8c9eb1e73a716",
+      "result": {
+        "n": 8,
+        "shells": 1,
+        "subdivisions": 1,
+        "curved": 0,
+        "refined": 0,
+        "blocks": 7,
+        "cells": 3584,
+        "mg_levels": 3,
+        "coarse_cells": 56,
+        "setup_seconds": 0.0370885,
+        "solve_seconds": 0.640664667,
+        "iterations": 20,
+        "applications": 22,
+        "converged": 1,
+        "map_error": 1.1102230246251565e-16,
+        "constant_error": 0,
+        "derivative_error": 0.002210750511023655,
+        "hessian_error": 0.01787275566118309,
+        "volume": 4.1992723738737485,
+        "curvature_max": 0,
+        "truncation_rms": 0.017729519497008135,
+        "error_rms": 0.0001210981598031425,
+        "error_max": 0.00020150987304459744,
+        "bulk_error": 3.4262504505194746e-05,
+        "interface_error": 0.00015495715961733048,
+        "scri_collar_error": 0.00015495715961733048,
+        "residual_rms": 6.797511227563887e-10,
+        "residual_max": 4.143057896754954e-09,
+        "residual_history": [
+          297.5598201517851,
+          6.797544217694411e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 4,
+        "cotton_max": 0,
+        "cotton_difference": 0
+      }
+    },
+    "mms-curve0-n12": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "12",
+        "1",
+        "1",
+        "0",
+        "0"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 1.833474208,
+      "stdout": "mms-curve0-n12.stdout",
+      "stderr": "mms-curve0-n12.stderr",
+      "stdout_sha256": "d89a3c40d7dc90a5bf28097c0c37957da86a6e5e132db9fc3a94db0939ffa581",
+      "stderr_sha256": "b2a5ee9f115dcfbc887eeea48466844f9c0549d443e583dccf4434072bc30815",
+      "result": {
+        "n": 12,
+        "shells": 1,
+        "subdivisions": 1,
+        "curved": 0,
+        "refined": 0,
+        "blocks": 7,
+        "cells": 12096,
+        "mg_levels": 3,
+        "coarse_cells": 189,
+        "setup_seconds": 0.076636167,
+        "solve_seconds": 1.656367917,
+        "iterations": 21,
+        "applications": 23,
+        "converged": 1,
+        "map_error": 2.220446049250313e-16,
+        "constant_error": 0,
+        "derivative_error": 0.0005021064454484394,
+        "hessian_error": 0.0038350009989103575,
+        "volume": 4.193454348147653,
+        "curvature_max": 0,
+        "truncation_rms": 0.0029060841992633564,
+        "error_rms": 2.4045507261870056e-05,
+        "error_max": 3.663026026623495e-05,
+        "bulk_error": 2.1049980016951686e-05,
+        "interface_error": 2.9396234616840822e-05,
+        "scri_collar_error": 2.3948809406065807e-05,
+        "residual_rms": 4.378800257189797e-10,
+        "residual_max": 4.04894207051143e-09,
+        "residual_history": [
+          551.2356678386457,
+          4.3787981073580427e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 4,
+        "cotton_max": 0,
+        "cotton_difference": 0
+      }
+    },
+    "mms-curve0-n16": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "16",
+        "1",
+        "1",
+        "0",
+        "0"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 3.5717275409999996,
+      "stdout": "mms-curve0-n16.stdout",
+      "stderr": "mms-curve0-n16.stderr",
+      "stdout_sha256": "78aa3fa5bef75219a8e93570d5bd602c907becfd9b0e007f6b3334652c775f85",
+      "stderr_sha256": "ae3a4a81af000f2b2e6687b6d6ea7e7d729ea052ce732370edb939a1f9bb6608",
+      "result": {
+        "n": 16,
+        "shells": 1,
+        "subdivisions": 1,
+        "curved": 0,
+        "refined": 0,
+        "blocks": 7,
+        "cells": 28672,
+        "mg_levels": 4,
+        "coarse_cells": 56,
+        "setup_seconds": 0.10861175,
+        "solve_seconds": 3.262775958,
+        "iterations": 22,
+        "applications": 24,
+        "converged": 1,
+        "map_error": 2.220446049250313e-16,
+        "constant_error": 0,
+        "derivative_error": 0.00016422858689298193,
+        "hessian_error": 0.0009945377802275032,
+        "volume": 4.191414784700665,
+        "curvature_max": 0,
+        "truncation_rms": 0.0008653049892432417,
+        "error_rms": 7.623197791010685e-06,
+        "error_max": 1.289779264540547e-05,
+        "bulk_error": 6.7377130973378385e-06,
+        "interface_error": 8.932844454412336e-06,
+        "scri_collar_error": 6.806393298974811e-06,
+        "residual_rms": 4.262798596750178e-10,
+        "residual_max": 3.991775188172397e-09,
+        "residual_history": [
+          852.1411310096975,
+          4.2628118158305896e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 4,
+        "cotton_max": 0,
+        "cotton_difference": 0
+      }
+    },
+    "mms-curve1-n8": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "8",
+        "1",
+        "1",
+        "1",
+        "0"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 0.7897506249999999,
+      "stdout": "mms-curve1-n8.stdout",
+      "stderr": "mms-curve1-n8.stderr",
+      "stdout_sha256": "656a572092f7bc975cc900d1fd1d036e104413c123689a323491ca564de25d31",
+      "stderr_sha256": "5109a49ef9fdd60270caf02ebff040c9502515dd4ad961d07b348c525018b14c",
+      "result": {
+        "n": 8,
+        "shells": 1,
+        "subdivisions": 1,
+        "curved": 1,
+        "refined": 0,
+        "blocks": 7,
+        "cells": 3584,
+        "mg_levels": 3,
+        "coarse_cells": 56,
+        "setup_seconds": 0.03746125,
+        "solve_seconds": 0.681834209,
+        "iterations": 20,
+        "applications": 22,
+        "converged": 1,
+        "map_error": 1.1102230246251565e-16,
+        "constant_error": 0,
+        "derivative_error": 0.002210750511023655,
+        "hessian_error": 0.01787275566118309,
+        "volume": 4.1992723738737485,
+        "curvature_max": 0.7635045148085922,
+        "truncation_rms": 0.017740926601347837,
+        "error_rms": 0.00012116917029851279,
+        "error_max": 0.00020567252962094829,
+        "bulk_error": 3.643144178832464e-05,
+        "interface_error": 0.00015772302346223066,
+        "scri_collar_error": 0.00015772302346223066,
+        "residual_rms": 9.811764698475797e-10,
+        "residual_max": 7.675876823043382e-09,
+        "residual_history": [
+          297.58163348183933,
+          9.811769520927462e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 4,
+        "cotton_max": 0.5148025508700855,
+        "cotton_difference": 8.841583021279575e-11
+      }
+    },
+    "mms-curve1-n12": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "12",
+        "1",
+        "1",
+        "1",
+        "0"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 1.8266232920000007,
+      "stdout": "mms-curve1-n12.stdout",
+      "stderr": "mms-curve1-n12.stderr",
+      "stdout_sha256": "19a4bebe8d28785bc8d7085e36cc488facb9e2bd0ef8df446500115bcab6bcd0",
+      "stderr_sha256": "4d16ca82eec0ceca36a629dcc05c1bef7c019abb0db61da37f9ff36074d23875",
+      "result": {
+        "n": 12,
+        "shells": 1,
+        "subdivisions": 1,
+        "curved": 1,
+        "refined": 0,
+        "blocks": 7,
+        "cells": 12096,
+        "mg_levels": 3,
+        "coarse_cells": 189,
+        "setup_seconds": 0.0761915,
+        "solve_seconds": 1.629720583,
+        "iterations": 21,
+        "applications": 23,
+        "converged": 1,
+        "map_error": 2.220446049250313e-16,
+        "constant_error": 0,
+        "derivative_error": 0.0005021064454484394,
+        "hessian_error": 0.0038350009989103575,
+        "volume": 4.193454348147653,
+        "curvature_max": 0.8027352006722519,
+        "truncation_rms": 0.002908409992557894,
+        "error_rms": 2.4063039118372214e-05,
+        "error_max": 3.7611024504530244e-05,
+        "bulk_error": 2.099070998101693e-05,
+        "interface_error": 2.9333370054229757e-05,
+        "scri_collar_error": 2.4444088622815885e-05,
+        "residual_rms": 6.563338455491925e-10,
+        "residual_max": 6.956167308835859e-09,
+        "residual_history": [
+          551.2569157613445,
+          6.563335934460202e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 4,
+        "cotton_max": 0.5148025508700855,
+        "cotton_difference": 8.841583021279575e-11
+      }
+    },
+    "mms-curve1-n16": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "16",
+        "1",
+        "1",
+        "1",
+        "0"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 3.6329829580000013,
+      "stdout": "mms-curve1-n16.stdout",
+      "stderr": "mms-curve1-n16.stderr",
+      "stdout_sha256": "7a49127810be076e50b322e27b4f84eb497463030b6e98441d2b5172134d4eef",
+      "stderr_sha256": "a508c6b38e7bbaad861a66ef8f83ccc0ca1b0a4c3937e0cc5c2227949347d4b3",
+      "result": {
+        "n": 16,
+        "shells": 1,
+        "subdivisions": 1,
+        "curved": 1,
+        "refined": 0,
+        "blocks": 7,
+        "cells": 28672,
+        "mg_levels": 4,
+        "coarse_cells": 56,
+        "setup_seconds": 0.109999959,
+        "solve_seconds": 3.305722333,
+        "iterations": 22,
+        "applications": 24,
+        "converged": 1,
+        "map_error": 2.220446049250313e-16,
+        "constant_error": 0,
+        "derivative_error": 0.00016422858689298193,
+        "hessian_error": 0.0009945377802275032,
+        "volume": 4.191414784700665,
+        "curvature_max": 0.8214297484227573,
+        "truncation_rms": 0.0008659982589380472,
+        "error_rms": 7.627920599856954e-06,
+        "error_max": 1.3173728914794847e-05,
+        "bulk_error": 6.711622347110868e-06,
+        "interface_error": 8.8648936103497e-06,
+        "scri_collar_error": 6.904362520765428e-06,
+        "residual_rms": 6.204433638108675e-10,
+        "residual_max": 5.280823001108104e-09,
+        "residual_history": [
+          852.1611180306877,
+          6.204421076292459e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 4,
+        "cotton_max": 0.5148025508700855,
+        "cotton_difference": 8.841583021279575e-11
+      }
+    },
+    "mms-two-shell": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "8",
+        "2",
+        "1",
+        "1",
+        "0"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 1.820681167,
+      "stdout": "mms-two-shell.stdout",
+      "stderr": "mms-two-shell.stderr",
+      "stdout_sha256": "17a7a95b5d46d32eeeef5dbc4e4d81873ab8afd3b2f60968aad548bbf504d5df",
+      "stderr_sha256": "fe7a93a22a96d43906c928e2494b2a8d708fee09f6aab1485b59b06a9aa5ac6b",
+      "result": {
+        "n": 8,
+        "shells": 2,
+        "subdivisions": 1,
+        "curved": 1,
+        "refined": 0,
+        "blocks": 13,
+        "cells": 6656,
+        "mg_levels": 3,
+        "coarse_cells": 104,
+        "setup_seconds": 0.056838417,
+        "solve_seconds": 1.655484625,
+        "iterations": 30,
+        "applications": 33,
+        "converged": 1,
+        "map_error": 1.1102230246251565e-16,
+        "constant_error": 0,
+        "derivative_error": 0.0022769029186472316,
+        "hessian_error": 0.025483630220370694,
+        "volume": 4.203429604407127,
+        "curvature_max": 0.8113088477876144,
+        "truncation_rms": 0.02030182568467908,
+        "error_rms": 0.00016294874557106856,
+        "error_max": 0.0002520308648455427,
+        "bulk_error": 6.180102041336566e-05,
+        "interface_error": 0.0002520308648455427,
+        "scri_collar_error": 0.000100161105006491,
+        "residual_rms": 6.798763869565306e-10,
+        "residual_max": 6.576638345023866e-09,
+        "residual_history": [
+          834.4512288119193,
+          6.219763373387209e-08,
+          6.798734237911014e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 4,
+        "cotton_max": 0.5148025508700855,
+        "cotton_difference": 8.841583021279575e-11
+      }
+    },
+    "mms-amr-interface": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "8",
+        "2",
+        "2",
+        "1",
+        "1"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 5.254473415999998,
+      "stdout": "mms-amr-interface.stdout",
+      "stderr": "mms-amr-interface.stderr",
+      "stdout_sha256": "675187c90ff4af156d9891ecd54b181a3d1fd221824f32e7955fc415470ce594",
+      "stderr_sha256": "afa1fe65a57b00c5d2be8b60b006c66595bc3c2aa1984748cbe8b50b7e4e5574",
+      "result": {
+        "n": 8,
+        "shells": 2,
+        "subdivisions": 2,
+        "curved": 1,
+        "refined": 1,
+        "blocks": 63,
+        "cells": 32256,
+        "mg_levels": 3,
+        "coarse_cells": 504,
+        "setup_seconds": 0.272977042,
+        "solve_seconds": 4.693072,
+        "iterations": 23,
+        "applications": 25,
+        "converged": 1,
+        "map_error": 1.1102230246251565e-16,
+        "constant_error": 0,
+        "derivative_error": 0.00016586911014846809,
+        "hessian_error": 0.001336455346213509,
+        "volume": 4.191402699484812,
+        "curvature_max": 0.8171451160014729,
+        "truncation_rms": 0.0009788519109058108,
+        "error_rms": 8.26327535268354e-06,
+        "error_max": 1.5313290507135147e-05,
+        "bulk_error": 6.788588735262557e-06,
+        "interface_error": 1.5313290507135147e-05,
+        "scri_collar_error": 7.067730536325367e-06,
+        "residual_rms": 7.601846476932553e-10,
+        "residual_max": 3.36586687410545e-08,
+        "residual_history": [
+          834.4523249557127,
+          7.601859243154174e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 4,
+        "cotton_max": 0.5148025508700855,
+        "cotton_difference": 8.841583021279575e-11
+      }
+    },
+    "mms-tight-tolerance": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "12",
+        "1",
+        "1",
+        "1",
+        "0",
+        "1e-11"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 2.0427980829999974,
+      "stdout": "mms-tight-tolerance.stdout",
+      "stderr": "mms-tight-tolerance.stderr",
+      "stdout_sha256": "0c6d804ccd193b4f2683086ceebe950848caa264ecc2f7eed06362f8e1bb823b",
+      "stderr_sha256": "5435a91808fc8f5a3d90a34c8ea0dc77386af2c6b55646538c515330b92263e2",
+      "result": {
+        "n": 12,
+        "shells": 1,
+        "subdivisions": 1,
+        "curved": 1,
+        "refined": 0,
+        "blocks": 7,
+        "cells": 12096,
+        "mg_levels": 3,
+        "coarse_cells": 189,
+        "setup_seconds": 0.0768265,
+        "solve_seconds": 1.843555584,
+        "iterations": 25,
+        "applications": 28,
+        "converged": 1,
+        "map_error": 2.220446049250313e-16,
+        "constant_error": 0,
+        "derivative_error": 0.0005021064454484394,
+        "hessian_error": 0.0038350009989103575,
+        "volume": 4.193454348147653,
+        "curvature_max": 0.8027352006722519,
+        "truncation_rms": 0.002908409992557894,
+        "error_rms": 2.4063039336537455e-05,
+        "error_max": 3.7611023870537386e-05,
+        "bulk_error": 2.099071428551813e-05,
+        "interface_error": 2.9333375052453814e-05,
+        "scri_collar_error": 2.4444087773800582e-05,
+        "residual_rms": 6.914275062950412e-12,
+        "residual_max": 6.679051756108834e-11,
+        "residual_history": [
+          551.2569157613445,
+          1.7547130244260697e-11,
+          6.912249392260587e-12
+        ],
+        "elliptic_atol": 1e-11,
+        "spatial_order": 4,
+        "cotton_max": 0.5148025508700855,
+        "cotton_difference": 8.841583021279575e-11
+      }
+    },
+    "mms-second-order-control": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_composite_tests",
+        "12",
+        "1",
+        "1",
+        "1",
+        "0",
+        "1e-09",
+        "2"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 1.2147898329999975,
+      "stdout": "mms-second-order-control.stdout",
+      "stderr": "mms-second-order-control.stderr",
+      "stdout_sha256": "acc3afbf4549dfee799804560805eefc4a6289c11bc494de6dfe3f690ccb9de8",
+      "stderr_sha256": "451833e0d2491defca71a6bf1da0ff64929b8f9de9f164c564cad4cd10382af1",
+      "result": {
+        "n": 12,
+        "shells": 1,
+        "subdivisions": 1,
+        "curved": 1,
+        "refined": 0,
+        "blocks": 7,
+        "cells": 12096,
+        "mg_levels": 3,
+        "coarse_cells": 189,
+        "setup_seconds": 0.053132333,
+        "solve_seconds": 1.091138958,
+        "iterations": 18,
+        "applications": 20,
+        "converged": 1,
+        "map_error": 2.220446049250313e-16,
+        "constant_error": 0,
+        "derivative_error": 0.005823154527205053,
+        "hessian_error": 0.035293314815992814,
+        "volume": 4.193454348147653,
+        "curvature_max": 0.8027352006722519,
+        "truncation_rms": 0.04385752444662917,
+        "error_rms": 0.0006014884540853172,
+        "error_max": 0.0012125436571694403,
+        "bulk_error": 0.0007515365261733936,
+        "interface_error": 0.0009245514021846701,
+        "scri_collar_error": 0.0005757927008281372,
+        "residual_rms": 2.4865116717888424e-10,
+        "residual_max": 2.2678953714994066e-09,
+        "residual_history": [
+          629.136322535945,
+          2.4864963355327465e-10
+        ],
+        "elliptic_atol": 1e-09,
+        "spatial_order": 2,
+        "cotton_max": 0.5148025508700855,
+        "cotton_difference": 8.841583021279575e-11
+      }
+    },
+    "minkowski-n6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "6",
+        "0",
+        "0.0005",
+        "4",
+        "0",
+        "1",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/minkowski-n6.csv",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/minkowski-n6-restart.bin",
+        "9f62432762edabbdd49e0c9e646a3cf3f2e01fee1436f14158f7e5fb903a03de"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 2.2956668329999985,
+      "stdout": "minkowski-n6.stdout",
+      "stderr": "minkowski-n6.stderr",
+      "stdout_sha256": "1619b262dee9ed5f7733800cf28859d6e61fdb32f049953737d5174380e8ea61",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 6,
+        "shells": 1,
+        "cells": 1512,
+        "amplitude": 0,
+        "angular": 0,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 1.737600084,
+        "elliptic_iterations": 0,
+        "shift_residual_max": 3.1131889541018924e-14,
+        "H_rms": 4.461787892198173e-16,
+        "M_rms": 2.3605930985905847e-16,
+        "Theta_rms": 3.981758409267519e-18,
+        "Z_rms": 1.8177762565138405e-17,
+        "H_max": 1.5543122344752192e-15,
+        "M_max": 9.382063684112509e-16,
+        "max_deviation": 2.581456332192749e-16,
+        "min_alpha": 0.5026041666666667,
+        "min_chi": 1,
+        "scri_pole": 5.016384418867988e-15,
+        "scri_clock_extrapolation": 2.220446049250313e-16,
+        "scri_null_extrapolation": 3.3306690738754696e-16,
+        "scri_tangent_extrapolation": 2.161223481921438e-16,
+        "restart_checked": 1,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "minkowski-n6.csv.gz",
+      "profile_sha256": "7bf517e61f8d0c9f6c88999c64fef26ef5f322b7b6c836d5ecc374c84b2047b6",
+      "spheres": "minkowski-n6.csv.spheres.csv.gz",
+      "spheres_sha256": "f5c012886aef9f4cb6a3746f2fe169e4eac251fea6d64d0b178b3d6e4d93062d",
+      "profile_uncompressed_sha256": "b00018797d15937ac3a8cc222d507d8777342c5f52c9b1a3155839053a5178ea",
+      "spheres_uncompressed_sha256": "04f26798d3ce500ec65faaaedb606401caa19b705468a662eca9a6f58357a27d"
+    },
+    "minkowski-n8": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "8",
+        "0",
+        "0.0005",
+        "4",
+        "0",
+        "1",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/minkowski-n8.csv"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 1.919091458999997,
+      "stdout": "minkowski-n8.stdout",
+      "stderr": "minkowski-n8.stderr",
+      "stdout_sha256": "18d0c8ca88a84569c4027a92b5802ff6da25614c3b00fd9eb8e3b02d4f376d55",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 8,
+        "shells": 1,
+        "cells": 3584,
+        "amplitude": 0,
+        "angular": 0,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 1.887881667,
+        "elliptic_iterations": 0,
+        "shift_residual_max": 5.5019243400043033e-14,
+        "H_rms": 4.643501486822748e-16,
+        "M_rms": 3.3626675110123383e-16,
+        "Theta_rms": 3.90346709333476e-18,
+        "Z_rms": 3.282601411517573e-17,
+        "H_max": 1.7763568394002505e-15,
+        "M_max": 1.7218240111477679e-15,
+        "max_deviation": 4.808975424397491e-16,
+        "min_alpha": 0.50146484375,
+        "min_chi": 1,
+        "scri_pole": 8.162423939120713e-15,
+        "scri_clock_extrapolation": 2.220446049250313e-16,
+        "scri_null_extrapolation": 2.220446049250313e-16,
+        "scri_tangent_extrapolation": 1.9616579662846074e-16,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "minkowski-n8.csv.gz",
+      "profile_sha256": "b30a23fb050a712d06fb96b3b68da45abbdddd45f0f11ce5f7379195b8c5f8ab",
+      "spheres": "minkowski-n8.csv.spheres.csv.gz",
+      "spheres_sha256": "a50ffb4e3d455a73c9c55c28e1317274813bee16e76ae5443e2f02e6ee19e4ad",
+      "profile_uncompressed_sha256": "04bd308f8a496d3e70ce5626d1d6a045f777fc5c42cfd2a9ac37a2d1ac9016dd",
+      "spheres_uncompressed_sha256": "86d17e0d8884da067279fc5db809f967ce51591f0e88041e1e968fb3cf35e84c"
+    },
+    "minkowski-two-shell-n12": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "12",
+        "0",
+        "0.0005",
+        "4",
+        "0",
+        "2",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/minkowski-two-shell-n12.csv"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 7.272333416999999,
+      "stdout": "minkowski-two-shell-n12.stdout",
+      "stderr": "minkowski-two-shell-n12.stderr",
+      "stdout_sha256": "c28516058ef89688d9d4054f41a975c9da4eb927ac4a866543147f156f60e396",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 12,
+        "shells": 2,
+        "cells": 22464,
+        "amplitude": 0,
+        "angular": 0,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 7.232795375,
+        "elliptic_iterations": 0,
+        "shift_residual_max": 3.3185902678507737e-13,
+        "H_rms": 1.0367948385626865e-15,
+        "M_rms": 1.5549053687780244e-15,
+        "Theta_rms": 6.197935773136792e-18,
+        "Z_rms": 1.455932952173369e-16,
+        "H_max": 1.5432100042289676e-14,
+        "M_max": 1.492928703261954e-14,
+        "max_deviation": 6.117825760642624e-15,
+        "min_alpha": 0.5006510416666665,
+        "min_chi": 0.9999999999999999,
+        "scri_pole": 5.769954298564054e-14,
+        "scri_clock_extrapolation": 4.440892098500626e-16,
+        "scri_null_extrapolation": 5.551115123125783e-16,
+        "scri_tangent_extrapolation": 3.065407882919017e-16,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "minkowski-two-shell-n12.csv.gz",
+      "profile_sha256": "f56fb68250a6cff699b6d63d33ac4884a99ede19b130977c01ce953e1bab8119",
+      "spheres": "minkowski-two-shell-n12.csv.spheres.csv.gz",
+      "spheres_sha256": "6d12e6fc390eb3e06562af53c8c983b8a28cd71b0bbb3b3e37d81f0dab8ad45e",
+      "profile_uncompressed_sha256": "7e0e1a3864cbe64532ca0412a9e9f4222582fd92bf897e2caf8df2c4220c17b5",
+      "spheres_uncompressed_sha256": "b077303dbc46a36cb8db63dbb07d9618547fc6185a7d40234806d17ddc52b85a"
+    },
+    "radial-n6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "6",
+        "1e-06",
+        "0.0005",
+        "4",
+        "0",
+        "1",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/radial-n6.csv",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/radial-n6-restart.bin",
+        "9f62432762edabbdd49e0c9e646a3cf3f2e01fee1436f14158f7e5fb903a03de"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 2.901528667000001,
+      "stdout": "radial-n6.stdout",
+      "stderr": "radial-n6.stderr",
+      "stdout_sha256": "9c1c445c53912b3c6f89ab19b57e1d9dc5d7956bc7b0cb069a33870fe5063ca1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 6,
+        "shells": 1,
+        "cells": 1512,
+        "amplitude": 1e-06,
+        "angular": 0,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 2.858379125,
+        "elliptic_iterations": 44,
+        "shift_residual_max": 4.079876037408648e-12,
+        "H_rms": 1.552308050014655e-10,
+        "M_rms": 2.5516823378483123e-09,
+        "Theta_rms": 2.4822868392336215e-13,
+        "Z_rms": 2.958366392382943e-11,
+        "H_max": 9.953876611845658e-10,
+        "M_max": 8.91409718447982e-09,
+        "max_deviation": 9.206360091306634e-07,
+        "min_alpha": 0.5026050873026758,
+        "min_chi": 0.9999999925816709,
+        "scri_pole": 5.07016190621834e-08,
+        "scri_clock_extrapolation": 2.811965771343239e-09,
+        "scri_null_extrapolation": 2.621680761384557e-09,
+        "scri_tangent_extrapolation": 3.3623755171957445e-11,
+        "restart_checked": 1,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "radial-n6.csv.gz",
+      "profile_sha256": "1f1372b3ccf367179a284407cdc75e818412f13749bcd06354d02bbb3b948944",
+      "spheres": "radial-n6.csv.spheres.csv.gz",
+      "spheres_sha256": "0c409b533199e2c4321248907020c27c7247dbf408844609ed79ca598f59e418",
+      "profile_uncompressed_sha256": "054335fc0face86ba89980ff9742bb9dfc66d6bb15f9490e3ac31125494268d5",
+      "spheres_uncompressed_sha256": "3181a989227973bdc06e47c49bfbbe8b8bd559a909351ebec3eeb9cfbb71206d"
+    },
+    "radial-n8": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "8",
+        "1e-06",
+        "0.0005",
+        "4",
+        "0",
+        "1",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/radial-n8.csv"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 3.2940029160000037,
+      "stdout": "radial-n8.stdout",
+      "stderr": "radial-n8.stderr",
+      "stdout_sha256": "2bb8df0253bf124133de096767570e2101d4952399b6185d54b7d9b4d84b898a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 8,
+        "shells": 1,
+        "cells": 3584,
+        "amplitude": 1e-06,
+        "angular": 0,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 3.27615525,
+        "elliptic_iterations": 44,
+        "shift_residual_max": 8.787601222034075e-12,
+        "H_rms": 5.7670407950054766e-11,
+        "M_rms": 6.872839313798703e-10,
+        "Theta_rms": 1.4396444163893869e-13,
+        "Z_rms": 2.3898468052182097e-12,
+        "H_max": 4.4666539911197845e-10,
+        "M_max": 3.714037605604699e-09,
+        "max_deviation": 9.528183861891967e-07,
+        "min_alpha": 0.5014657965683862,
+        "min_chi": 0.9999999923393662,
+        "scri_pole": 3.700945711734758e-09,
+        "scri_clock_extrapolation": 1.05986919241019e-09,
+        "scri_null_extrapolation": 1.0579855880307443e-09,
+        "scri_tangent_extrapolation": 7.954030152806558e-13,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "radial-n8.csv.gz",
+      "profile_sha256": "ee005d5b86753f84d2e4d1b2c3899e9b13b75aa78e1680de4e3b497782f45768",
+      "spheres": "radial-n8.csv.spheres.csv.gz",
+      "spheres_sha256": "4021ea4669a0b4c8b6f33f51bbcbb722177c00506ec611b12b2aed11dc03d084",
+      "profile_uncompressed_sha256": "f953efaafbadbe4c1e793bbbc22e9bc9fb71bc2dcb31e4e1d86d5277b1447365",
+      "spheres_uncompressed_sha256": "1f6c81070e0bba5a747953355d8943ae60cbbce2bfb44ba74f290a5d7f18688b"
+    },
+    "radial-n12": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "12",
+        "1e-06",
+        "0.0005",
+        "4",
+        "0",
+        "1",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/radial-n12.csv"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 7.956094082999996,
+      "stdout": "radial-n12.stdout",
+      "stderr": "radial-n12.stderr",
+      "stdout_sha256": "9b946ec1d21dcf1db5634b1d27f7aaeaa01b5739fadbfd7832e62c06face3f4e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 12,
+        "shells": 1,
+        "cells": 12096,
+        "amplitude": 1e-06,
+        "angular": 0,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 7.912301167,
+        "elliptic_iterations": 44,
+        "shift_residual_max": 8.9950269442784e-12,
+        "H_rms": 1.4059723310884713e-11,
+        "M_rms": 1.8005508079329948e-10,
+        "Theta_rms": 1.3565939131513966e-14,
+        "Z_rms": 4.76070970929976e-13,
+        "H_max": 1.8549760338881782e-10,
+        "M_max": 1.388159313830066e-09,
+        "max_deviation": 9.764779936864903e-07,
+        "min_alpha": 0.5006520181446602,
+        "min_chi": 0.9999999921614775,
+        "scri_pole": 2.1372407423711111e-10,
+        "scri_clock_extrapolation": 3.889799593537191e-11,
+        "scri_null_extrapolation": 3.999156561463567e-11,
+        "scri_tangent_extrapolation": 6.045147051348153e-15,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "radial-n12.csv.gz",
+      "profile_sha256": "621aa53bdef93061bc4674badaaf5c973baebdba5720b9bfd3db5a553ddff89a",
+      "spheres": "radial-n12.csv.spheres.csv.gz",
+      "spheres_sha256": "f77da572636dc7199c53fa67e26c527ce88cef7e4b76968b33be06984f141407",
+      "profile_uncompressed_sha256": "3db297ee06e8365ee04e77f8c270b4182790b9cccc974b2ceff6ad154b6c0700",
+      "spheres_uncompressed_sha256": "fe8309ccb9d1310803dbdf4e95f757137abbc5b12ccd0e4dfce090f65c4ad7eb"
+    },
+    "radial-half-dt": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "8",
+        "1e-06",
+        "0.00025",
+        "8",
+        "0",
+        "1",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/radial-half-dt.csv"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 6.122861457999996,
+      "stdout": "radial-half-dt.stdout",
+      "stderr": "radial-half-dt.stderr",
+      "stdout_sha256": "092ec7c537d59a1b2c224a288af91f76ac6c533685cb42cecbc753ceb14f6155",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 8,
+        "shells": 1,
+        "cells": 3584,
+        "amplitude": 1e-06,
+        "angular": 0,
+        "dt": 0.00025,
+        "steps": 8,
+        "time": 0.002,
+        "seconds": 6.106783208,
+        "elliptic_iterations": 80,
+        "shift_residual_max": 5.2686920835521576e-12,
+        "H_rms": 5.767052753940566e-11,
+        "M_rms": 6.872839236426935e-10,
+        "Theta_rms": 1.4396411573562259e-13,
+        "Z_rms": 2.3898426863193695e-12,
+        "H_max": 4.466608610753653e-10,
+        "M_max": 3.7140376294579127e-09,
+        "max_deviation": 9.528183861973077e-07,
+        "min_alpha": 0.5014657965683862,
+        "min_chi": 0.9999999923393644,
+        "scri_pole": 3.700938617508274e-09,
+        "scri_clock_extrapolation": 1.0598690813878875e-09,
+        "scri_null_extrapolation": 1.0579899179005404e-09,
+        "scri_tangent_extrapolation": 7.967454662689815e-13,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "radial-half-dt.csv.gz",
+      "profile_sha256": "dfe3705598cbaba01d28a267e26f9ce506c7f92c013483e1024dc8afedfea240",
+      "spheres": "radial-half-dt.csv.spheres.csv.gz",
+      "spheres_sha256": "1166bb8503a4894ec4180ee352840509524aa8d22abbca7419cb0afd79bb6f56",
+      "profile_uncompressed_sha256": "e7693841472805e700157a0e9d3480150da81cf7e9d46069a9a287eec61bf2ef",
+      "spheres_uncompressed_sha256": "09aa26ff4817d41b28f384c9f88e8fb4bdaa6f09b4454cb10fb2d9cbf939d521"
+    },
+    "radial-quarter-dt": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "8",
+        "1e-06",
+        "0.000125",
+        "16",
+        "0",
+        "1",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/radial-quarter-dt.csv"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 11.027304083000004,
+      "stdout": "radial-quarter-dt.stdout",
+      "stderr": "radial-quarter-dt.stderr",
+      "stdout_sha256": "0d927963383d41fe43a52526f58cfad13fb7c99bfea4914f4c43eba6cd4191bd",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 8,
+        "shells": 1,
+        "cells": 3584,
+        "amplitude": 1e-06,
+        "angular": 0,
+        "dt": 0.000125,
+        "steps": 16,
+        "time": 0.002,
+        "seconds": 10.984507084,
+        "elliptic_iterations": 128,
+        "shift_residual_max": 7.63609618787071e-12,
+        "H_rms": 5.7666813230713535e-11,
+        "M_rms": 6.872838390460712e-10,
+        "Theta_rms": 1.4396476462725645e-13,
+        "Z_rms": 2.3897837283094067e-12,
+        "H_max": 4.465028208278099e-10,
+        "M_max": 3.7140375322472356e-09,
+        "max_deviation": 9.528183861947163e-07,
+        "min_alpha": 0.5014657965683862,
+        "min_chi": 0.999999992339367,
+        "scri_pole": 3.7009413218413106e-09,
+        "scri_clock_extrapolation": 1.0598700805886097e-09,
+        "scri_null_extrapolation": 1.0579882525660034e-09,
+        "scri_tangent_extrapolation": 7.97599637002396e-13,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "radial-quarter-dt.csv.gz",
+      "profile_sha256": "b1293f18a8c08834e6cb4ab3700a7335dca1c58dc0eb87d9292d10d19645ab9a",
+      "spheres": "radial-quarter-dt.csv.spheres.csv.gz",
+      "spheres_sha256": "c54ed94a32043d6b8250de104fa809acf8596bdb22e1c5e16ca0965e613d971f",
+      "profile_uncompressed_sha256": "57a8d869da3e6929145fbe640e289e33f3e9de9a14c5b5fbccacfb874c32718b",
+      "spheres_uncompressed_sha256": "70f0b2b0370211f423ae8ec34433441c1a662029ba67f6126484c90ddf287dd9"
+    },
+    "radial-tight-tolerance": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "8",
+        "1e-06",
+        "0.0005",
+        "4",
+        "0",
+        "1",
+        "1e-13",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/radial-tight-tolerance.csv"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 4.95759395799999,
+      "stdout": "radial-tight-tolerance.stdout",
+      "stderr": "radial-tight-tolerance.stderr",
+      "stdout_sha256": "e858fdf7d88321766d405ec409b820e7a72b5945e66634784d0d6e04b8e8dcc1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 8,
+        "shells": 1,
+        "cells": 3584,
+        "amplitude": 1e-06,
+        "angular": 0,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 4.894278625,
+        "elliptic_iterations": 89,
+        "shift_residual_max": 9.744170869501908e-14,
+        "H_rms": 5.7666552760120233e-11,
+        "M_rms": 6.872839243616412e-10,
+        "Theta_rms": 1.4396645581689311e-13,
+        "Z_rms": 2.3897948903824337e-12,
+        "H_max": 4.4659062559126994e-10,
+        "M_max": 3.714037645134941e-09,
+        "max_deviation": 9.528183861916623e-07,
+        "min_alpha": 0.5014657965683862,
+        "min_chi": 0.9999999923393657,
+        "scri_pole": 3.7009261377756445e-09,
+        "scri_clock_extrapolation": 1.0598690813878875e-09,
+        "scri_null_extrapolation": 1.0579941367480342e-09,
+        "scri_tangent_extrapolation": 7.979695297806678e-13,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "radial-tight-tolerance.csv.gz",
+      "profile_sha256": "88131a91e7178ffc335821a2d81ac400b4add0dc06c6f8150683b43a11803515",
+      "spheres": "radial-tight-tolerance.csv.spheres.csv.gz",
+      "spheres_sha256": "9164bc13f03cb30e6c304d18448c14e871ffde98f99ca1e765d2d086bfcc66f4",
+      "profile_uncompressed_sha256": "71983a45ba0b882af46a64f197005ef3f1048b2cfa86af63e61aca8ad460528d",
+      "spheres_uncompressed_sha256": "73a2266e5276a89078d8dbb935aa8143140defd5c42f5d3c4a1133cb7444acb2"
+    },
+    "radial-second-order-control": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "8",
+        "1e-06",
+        "0.0005",
+        "4",
+        "0",
+        "1",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/radial-second-order-control.csv",
+        "",
+        "",
+        "2"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 1.5963257089999985,
+      "stdout": "radial-second-order-control.stdout",
+      "stderr": "radial-second-order-control.stderr",
+      "stdout_sha256": "c999c840752d73a6268d3e30fcf65604b3f6790fef3e234c4ad1475ce2c7a068",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 8,
+        "shells": 1,
+        "cells": 3584,
+        "amplitude": 1e-06,
+        "angular": 0,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 1.554021167,
+        "elliptic_iterations": 36,
+        "shift_residual_max": 9.152632676843037e-12,
+        "H_rms": 2.0981249387349922e-10,
+        "M_rms": 2.9037177174669047e-09,
+        "Theta_rms": 1.7390422690147387e-13,
+        "Z_rms": 5.2596953235826745e-12,
+        "H_max": 1.0137200020382542e-09,
+        "M_max": 1.7740775868715403e-08,
+        "max_deviation": 9.528170272590295e-07,
+        "min_alpha": 0.5014657965670273,
+        "min_chi": 0.9999999923447127,
+        "scri_pole": 4.354294642635496e-09,
+        "scri_clock_extrapolation": 1.0679988005080077e-09,
+        "scri_null_extrapolation": 1.0697271957169038e-09,
+        "scri_tangent_extrapolation": 5.487472553082418e-13,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 2,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "radial-second-order-control.csv.gz",
+      "profile_sha256": "1f56767b423cc583b215b5d500f62fc0e2f3b6483448b2fc5bf72ed34fb078aa",
+      "spheres": "radial-second-order-control.csv.spheres.csv.gz",
+      "spheres_sha256": "657dbb2ed5db23208c54ae845d724f30aa5f2a3960731933f388389bdfbb8fbc",
+      "profile_uncompressed_sha256": "f7e727b7cf55ed227f8111ae9bfc2fa081bd21b7cf0af0d740c57dfc5bf7e1f9",
+      "spheres_uncompressed_sha256": "6c8034734133da5741fe6ab4a8e35e8dccd66635b20addb3c9224b1b31d8314b"
+    },
+    "angular-two-shell-n6": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "6",
+        "1e-06",
+        "0.0005",
+        "4",
+        "1",
+        "2",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/angular-two-shell-n6.csv"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 3.2855768329999933,
+      "stdout": "angular-two-shell-n6.stdout",
+      "stderr": "angular-two-shell-n6.stderr",
+      "stdout_sha256": "277974208ece6c2a3d285e998960984d8191280f89010f011624b40851f28643",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 6,
+        "shells": 2,
+        "cells": 2808,
+        "amplitude": 1e-06,
+        "angular": 1,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 3.257283083,
+        "elliptic_iterations": 52,
+        "shift_residual_max": 9.73400008838843e-12,
+        "H_rms": 2.0847599098349543e-10,
+        "M_rms": 1.7652496686035835e-09,
+        "Theta_rms": 1.7171188513679428e-13,
+        "Z_rms": 3.4380105616916593e-12,
+        "H_max": 2.7985968542587614e-09,
+        "M_max": 1.5274700824545394e-08,
+        "max_deviation": 9.333935389693114e-07,
+        "min_alpha": 0.502605074545297,
+        "min_chi": 0.9999999924798477,
+        "scri_pole": 2.966603047320314e-10,
+        "scri_clock_extrapolation": 2.563482759398994e-11,
+        "scri_null_extrapolation": 2.7229885013473968e-11,
+        "scri_tangent_extrapolation": 1.9003309945397666e-13,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "angular-two-shell-n6.csv.gz",
+      "profile_sha256": "3e0f4cfefb900a44249a0894eaa7aede3e3517299a4ff91f4316d066463d5c52",
+      "spheres": "angular-two-shell-n6.csv.spheres.csv.gz",
+      "spheres_sha256": "2821cb911062841c1ed03f5dab508d9baaa08021ee57afce43b475d43f64842c",
+      "profile_uncompressed_sha256": "ff28937171a09a1aab2fbba27355360234271a45f25d15a52040c09ba51e99dd",
+      "spheres_uncompressed_sha256": "2f476c6a18dd8b0b727ecca4a45203df1ff691bdae6c3b95f5d8dc55bf9dd23c"
+    },
+    "angular-two-shell-n8": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "8",
+        "1e-06",
+        "0.0005",
+        "4",
+        "1",
+        "2",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/angular-two-shell-n8.csv"
+      ],
+      "returncode": 1,
+      "timeout": false,
+      "wall_seconds": 6.298943666999989,
+      "stdout": "angular-two-shell-n8.stdout",
+      "stderr": "angular-two-shell-n8.stderr",
+      "stdout_sha256": "60fe1ed19c2b4dc2309f14a65d090ff34e411a4b55622ebb5269fc882f20f880",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 8,
+        "shells": 2,
+        "cells": 6656,
+        "amplitude": 1e-06,
+        "angular": 1,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 6.269780959,
+        "elliptic_iterations": 60,
+        "shift_residual_max": 6.14649006018769e-12,
+        "H_rms": 2.6161833863256898e-11,
+        "M_rms": 4.145553116348676e-10,
+        "Theta_rms": 2.337757739214413e-14,
+        "Z_rms": 7.301484475625653e-13,
+        "H_max": 6.295864385386096e-10,
+        "M_max": 4.343316884416081e-09,
+        "max_deviation": 9.624735879211154e-07,
+        "min_alpha": 0.5014657869131753,
+        "min_chi": 0.9999999922618246,
+        "scri_pole": 2.8558816705039477e-11,
+        "scri_clock_extrapolation": 2.156941292241754e-12,
+        "scri_null_extrapolation": 2.2373214392246466e-12,
+        "scri_tangent_extrapolation": 2.146916347445928e-15,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "angular-two-shell-n8.csv.gz",
+      "profile_sha256": "ad428d27758d26e0f2e677398c097e2d1e58de3feac51cec87037a43485a1cdf",
+      "spheres": "angular-two-shell-n8.csv.spheres.csv.gz",
+      "spheres_sha256": "000e4c98c0b98369647afbaae806a96426e3051337f18ddd78e88a866cb12ed0",
+      "profile_uncompressed_sha256": "d15f233d9a72d5a669c91d1b73cd2639870c05c0e745ddcc397d41f53142327a",
+      "spheres_uncompressed_sha256": "b6e1a9997afb88f76af2668bcce0d1927de549671028def154e1152e8088e575"
+    },
+    "angular-two-shell-n12": {
+      "command": [
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d/elliptic_shift_3d_coupled_pilot",
+        "12",
+        "1e-06",
+        "0.0005",
+        "4",
+        "1",
+        "2",
+        "1e-11",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/docs/elliptic-shift-3d/evidence/validated-20261027/angular-two-shell-n12.csv"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 14.82379275000001,
+      "stdout": "angular-two-shell-n12.stdout",
+      "stderr": "angular-two-shell-n12.stderr",
+      "stdout_sha256": "a7fb9856e1c70946e893d5b554cf711bb6a5398a50ffd06b0bc01b8c0ba6b043",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "n": 12,
+        "shells": 2,
+        "cells": 22464,
+        "amplitude": 1e-06,
+        "angular": 1,
+        "dt": 0.0005,
+        "steps": 4,
+        "time": 0.002,
+        "seconds": 14.779074834,
+        "elliptic_iterations": 60,
+        "shift_residual_max": 6.273083694161839e-12,
+        "H_rms": 7.684350699377345e-12,
+        "M_rms": 7.188922702126722e-11,
+        "Theta_rms": 1.009537359170627e-14,
+        "Z_rms": 2.0259580487253197e-13,
+        "H_max": 2.497235751519611e-10,
+        "M_max": 1.4722787977676058e-09,
+        "max_deviation": 9.829057444069701e-07,
+        "min_alpha": 0.5006520117169095,
+        "min_chi": 0.9999999921098515,
+        "scri_pole": 1.977268258018586e-12,
+        "scri_clock_extrapolation": 7.427392034742297e-14,
+        "scri_null_extrapolation": 7.827072323607357e-14,
+        "scri_tangent_extrapolation": 3.519284120374645e-16,
+        "restart_checked": 0,
+        "restart_equal": 1,
+        "spatial_order": 4,
+        "closure": "experimental_active_only_extrapolation"
+      },
+      "profile": "angular-two-shell-n12.csv.gz",
+      "profile_sha256": "f29ee8e21ade3504f1322c7053c66f737ac0a789a8bb025c451cd640fdcd1e57",
+      "spheres": "angular-two-shell-n12.csv.spheres.csv.gz",
+      "spheres_sha256": "271bee1f68a3f2bf1430596c464f92efd9686cdb997da7045ce2e1b7f852be3e",
+      "profile_uncompressed_sha256": "de58254a16abfff5cad9a589d069915fa2f9da91109dc375af010ae1f236e38e",
+      "spheres_uncompressed_sha256": "c24f896d551a1aefc505e87d09cf78f0318bcbeb03fa14e4f6a848e6cd859ecb"
+    },
+    "mpi-ranks1": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "1",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d-mpi/elliptic_shift_3d_mpi_tests"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 0.938211042000006,
+      "stdout": "mpi-ranks1.stdout",
+      "stderr": "mpi-ranks1.stderr",
+      "stdout_sha256": "d599a30875c943a6b60f762433b115de6ca1e2a7835b558d15f760023f5c5731",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "ranks": 1,
+        "points": 2808,
+        "shells": 2,
+        "n": 6,
+        "iterations": 27,
+        "original_residual": 4.0194954863552857e-10,
+        "residual_max": 3.871974074698414e-09,
+        "solution_error": 0.0013071623112517442,
+        "allgathers_per_rank": 58,
+        "allreductions_per_rank": 643,
+        "seconds": 0.782087583,
+        "backend": "distributed_vectors_replicated_MG_correctness_oracle",
+        "converged": 1
+      }
+    },
+    "mpi-ranks2": {
+      "command": [
+        "mpiexec",
+        "-n",
+        "2",
+        "/Users/hz0693/Documents/Codex/2026-10-26/task/hyperboloidal-3d/build-shift-3d-mpi/elliptic_shift_3d_mpi_tests"
+      ],
+      "returncode": 0,
+      "timeout": false,
+      "wall_seconds": 0.9520096250000023,
+      "stdout": "mpi-ranks2.stdout",
+      "stderr": "mpi-ranks2.stderr",
+      "stdout_sha256": "7bac5a95fad44e4ca25fbc6d4a0d06ef0201c10c8e26fb2a7b2d6b52b818fdf3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "ranks": 2,
+        "points": 2808,
+        "shells": 2,
+        "n": 6,
+        "iterations": 27,
+        "original_residual": 4.0195220721576534e-10,
+        "residual_max": 3.874465415165673e-09,
+        "solution_error": 0.0013071623112517227,
+        "allgathers_per_rank": 58,
+        "allreductions_per_rank": 643,
+        "seconds": 0.815199166,
+        "backend": "distributed_vectors_replicated_MG_correctness_oracle",
+        "converged": 1
+      }
+    }
+  },
+  "radial_reference": {
+    "n": 513,
+    "dt": 0.000125,
+    "time": 0.002,
+    "max_coarse_fine_alpha": 2.7755575615628914e-15,
+    "max_half_time_alpha": 0.0,
+    "sha256": "628c148fbab4deef28edc293ebe173e55d67a618698b639e93d3af7b4d4fd5f8",
+    "origin": "existing independent g1_rhs.py and 1D quadrature shift",
+    "scope": "regular-center symmetric-restoring lapse pilot; not the selected wormhole source"
+  },
+  "radial_comparisons": {
+    "6": {
+      "alpha": {
+        "rms": 1.2103561330846494e-11,
+        "maximum": 4.457600955021235e-11
+      },
+      "chi": {
+        "rms": 1.1686469183961213e-12,
+        "maximum": 2.9639624088417804e-12
+      },
+      "g_rr": {
+        "rms": 7.490487029127991e-13,
+        "maximum": 1.8198775819655566e-12
+      },
+      "A_rr": {
+        "rms": 1.413492112289107e-10,
+        "maximum": 9.250028319366569e-10
+      },
+      "Khat": {
+        "rms": 8.590125887855089e-11,
+        "maximum": 7.088676312605457e-10
+      },
+      "Theta": {
+        "rms": 2.482286837831561e-13,
+        "maximum": 6.453905928155785e-13
+      },
+      "Lambda_r": {
+        "rms": 5.6664670334337766e-11,
+        "maximum": 1.4676180473666356e-10
+      },
+      "beta_r": {
+        "rms": 3.384071788948142e-11,
+        "maximum": 7.378420097126082e-11
+      }
+    },
+    "8": {
+      "alpha": {
+        "rms": 4.3284242212264896e-12,
+        "maximum": 1.9397705663948273e-11
+      },
+      "chi": {
+        "rms": 1.0564772020492634e-13,
+        "maximum": 6.542544284116047e-13
+      },
+      "g_rr": {
+        "rms": 1.1810117425686593e-13,
+        "maximum": 8.963940700823514e-13
+      },
+      "A_rr": {
+        "rms": 5.184032438595893e-11,
+        "maximum": 5.255305077068898e-10
+      },
+      "Khat": {
+        "rms": 3.980529059733658e-11,
+        "maximum": 5.615574671935519e-10
+      },
+      "Theta": {
+        "rms": 1.4396445710492067e-13,
+        "maximum": 3.6752948832428675e-13
+      },
+      "Lambda_r": {
+        "rms": 3.4185794115817037e-12,
+        "maximum": 1.1729490029305769e-11
+      },
+      "beta_r": {
+        "rms": 1.1598724363140017e-11,
+        "maximum": 3.023914452171539e-11
+      }
+    },
+    "12": {
+      "alpha": {
+        "rms": 8.596558549003211e-13,
+        "maximum": 3.988032126756025e-12
+      },
+      "chi": {
+        "rms": 2.363275381515952e-14,
+        "maximum": 1.6719958750854857e-13
+      },
+      "g_rr": {
+        "rms": 2.731856646481164e-14,
+        "maximum": 1.8485213360008856e-13
+      },
+      "A_rr": {
+        "rms": 1.1126707885928277e-11,
+        "maximum": 1.5136132219109543e-10
+      },
+      "Khat": {
+        "rms": 8.956804458012615e-12,
+        "maximum": 1.3415668576044482e-10
+      },
+      "Theta": {
+        "rms": 1.3565933952978983e-14,
+        "maximum": 1.1030891015196024e-13
+      },
+      "Lambda_r": {
+        "rms": 5.549928601068325e-13,
+        "maximum": 3.3988267342278057e-12
+      },
+      "beta_r": {
+        "rms": 3.0949275746324073e-12,
+        "maximum": 7.776557175986909e-12
+      }
+    }
+  },
+  "numerical_controls": {
+    "radial-half-dt": {
+      "state_0": 1.7389423237483154e-15,
+      "state_1": 1.1224617404012724e-15,
+      "state_2": 6.2642250918279845e-16,
+      "state_3": 6.232961902981795e-16,
+      "state_4": 1.1079882428988213e-15,
+      "state_5": 6.218309414527188e-16,
+      "state_6": 1.0924687080897106e-15,
+      "state_7": 2.6211724169396294e-17,
+      "state_8": 3.896543708881528e-17,
+      "state_9": 4.2827380276919786e-17,
+      "state_10": 2.7621760294011538e-17,
+      "state_11": 3.455764092919684e-17,
+      "state_12": 2.2712268242192598e-17,
+      "state_13": 2.079817799443888e-17,
+      "state_14": 1.1805371495162521e-17,
+      "state_15": 2.0012142736326367e-14,
+      "state_16": 1.9789931671571327e-14,
+      "state_17": 1.9579652737785673e-14,
+      "state_18": 2.351599955487747e-16,
+      "state_19": 4.4442542816338276e-18,
+      "state_20": 4.441242310228369e-18,
+      "state_21": 4.442622047490107e-18,
+      "delta_beta_x": 6.46570329338513e-14,
+      "delta_beta_y": 5.942885050058243e-14,
+      "delta_beta_z": 5.3482775840610056e-14
+    },
+    "radial-quarter-dt": {
+      "state_0": 2.082944926929186e-15,
+      "state_1": 2.6880712168198075e-15,
+      "state_2": 1.896025825441887e-15,
+      "state_3": 1.8953163289466112e-15,
+      "state_4": 2.7150216472852064e-15,
+      "state_5": 1.889442292446797e-15,
+      "state_6": 2.7443417908538493e-15,
+      "state_7": 3.545448670594456e-16,
+      "state_8": 1.649811086536136e-16,
+      "state_9": 1.6847033183965212e-16,
+      "state_10": 3.620769603047554e-16,
+      "state_11": 1.7732911277247554e-16,
+      "state_12": 2.9207110003867374e-16,
+      "state_13": 3.532359590068913e-17,
+      "state_14": 1.7195504279737871e-16,
+      "state_15": 8.039132682952902e-14,
+      "state_16": 8.180747354696455e-14,
+      "state_17": 8.176366807181019e-14,
+      "state_18": 8.583203290785979e-16,
+      "state_19": 4.87461670880562e-18,
+      "state_20": 4.8693364013653875e-18,
+      "state_21": 4.868939561466515e-18,
+      "delta_beta_x": 2.0666963187960072e-13,
+      "delta_beta_y": 2.0422153878821202e-13,
+      "delta_beta_z": 2.0098210160483845e-13
+    },
+    "radial-tight-tolerance": {
+      "state_0": 1.7642554084305826e-15,
+      "state_1": 1.7604198780235472e-15,
+      "state_2": 1.2508922978758008e-15,
+      "state_3": 1.2222678935213524e-15,
+      "state_4": 1.6820815080359111e-15,
+      "state_5": 1.2087935625389692e-15,
+      "state_6": 1.5820863138079226e-15,
+      "state_7": 2.8638180100278046e-16,
+      "state_8": 1.3743326887521348e-16,
+      "state_9": 1.341402503843072e-16,
+      "state_10": 2.9252969145181497e-16,
+      "state_11": 1.3281184808143855e-16,
+      "state_12": 2.4825616334811236e-16,
+      "state_13": 4.344672769777112e-17,
+      "state_14": 9.447997939561334e-17,
+      "state_15": 4.095977093497086e-14,
+      "state_16": 4.091765311775727e-14,
+      "state_17": 3.999913635425523e-14,
+      "state_18": 7.445275103631465e-16,
+      "state_19": 8.064219653774871e-19,
+      "state_20": 8.108003892736307e-19,
+      "state_21": 8.114374040723888e-19,
+      "delta_beta_x": 1.2933045967079803e-13,
+      "delta_beta_y": 1.1897153673334567e-13,
+      "delta_beta_z": 1.0756682580015537e-13
+    },
+    "radial-second-order-control": {
+      "state_0": 5.346514601417307e-12,
+      "state_1": 2.81002777108472e-12,
+      "state_2": 1.2047517812186444e-12,
+      "state_3": 1.2036196290661253e-12,
+      "state_4": 2.8118411735239945e-12,
+      "state_5": 1.2024854642653172e-12,
+      "state_6": 2.813554352461741e-12,
+      "state_7": 1.49683483879582e-09,
+      "state_8": 1.9115013639480468e-09,
+      "state_9": 1.9115013592022833e-09,
+      "state_10": 1.496834840135343e-09,
+      "state_11": 1.911501361534504e-09,
+      "state_12": 1.4968348420619856e-09,
+      "state_13": 2.1659464683650653e-09,
+      "state_14": 5.291570885172329e-13,
+      "state_15": 3.286532200532903e-11,
+      "state_16": 3.2866047532228335e-11,
+      "state_17": 3.286686580794707e-11,
+      "state_18": 6.674065615865819e-11,
+      "state_19": 6.137174934507117e-11,
+      "state_20": 6.13717495524712e-11,
+      "state_21": 6.137174974923121e-11,
+      "delta_beta_x": 2.2731908637441059e-10,
+      "delta_beta_y": 2.2698040519163585e-10,
+      "delta_beta_z": 2.2665301015074644e-10
+    }
+  },
+  "matched_sphere_comparisons": {
+    "6": [
+      {
+        "r": 0.05,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5012509582491909,
+          "angular_scatter": 2.3397310517483628e-11,
+          "reference": 0.5012509590094382
+        },
+        "chi": {
+          "mean": 0.9999999922986369,
+          "angular_scatter": 1.5807863895831668e-13,
+          "reference": 0.9999999922922662
+        },
+        "g_rr": {
+          "mean": 1.0000000000000495,
+          "angular_scatter": 4.950928760162605e-15,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -2.703560253148582e-09,
+          "angular_scatter": 3.494099801343969e-11,
+          "reference": -2.8581675261102045e-09
+        },
+        "Khat": {
+          "mean": -2.999999909995565,
+          "angular_scatter": 5.98395986195318e-12,
+          "reference": -2.9999999092659375
+        },
+        "Theta": {
+          "mean": 1.5657985665706302e-13,
+          "angular_scatter": 5.450859436491127e-18,
+          "reference": 5.408107756932086e-23
+        },
+        "Lambda_r": {
+          "mean": 3.227752065631935e-12,
+          "angular_scatter": 9.783803579097784e-14,
+          "reference": 1.1107607999520742e-21
+        },
+        "beta_r": {
+          "mean": -0.04999999847916116,
+          "angular_scatter": 2.1502872723069663e-13,
+          "reference": -0.04999999845212647
+        }
+      },
+      {
+        "r": 0.1,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5050008568580613,
+          "angular_scatter": 3.0205731806566176e-10,
+          "reference": 0.5050008564133296
+        },
+        "chi": {
+          "mean": 0.9999999930625998,
+          "angular_scatter": 2.0419221397308583e-12,
+          "reference": 0.9999999930645467
+        },
+        "g_rr": {
+          "mean": 1.0000000000002167,
+          "angular_scatter": 3.196180773525994e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -9.845180822032013e-09,
+          "angular_scatter": 4.866418413717991e-11,
+          "reference": -1.0248814531191383e-08
+        },
+        "Khat": {
+          "mean": -2.999999924155005,
+          "angular_scatter": 7.932855958895311e-11,
+          "reference": -2.9999999239318185
+        },
+        "Theta": {
+          "mean": 1.1703349753570689e-13,
+          "angular_scatter": 2.3111659134313003e-16,
+          "reference": -1.995306095959465e-23
+        },
+        "Lambda_r": {
+          "mean": 5.264324250003834e-12,
+          "angular_scatter": 7.078928887326588e-13,
+          "reference": -8.565733994400215e-22
+        },
+        "beta_r": {
+          "mean": -0.0999999972478463,
+          "angular_scatter": 6.636902687209945e-13,
+          "reference": -0.0999999972107336
+        }
+      },
+      {
+        "r": 0.15,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5112507089914055,
+          "angular_scatter": 9.485779855457583e-10,
+          "reference": 0.5112507088633466
+        },
+        "chi": {
+          "mean": 0.9999999941853901,
+          "angular_scatter": 6.418389085486514e-12,
+          "reference": 0.9999999941858093
+        },
+        "g_rr": {
+          "mean": 1.0000000000005431,
+          "angular_scatter": 1.1344690130933819e-13,
+          "reference": 0.9999999999999998
+        },
+        "A_rr": {
+          "mean": -1.8834306561948987e-08,
+          "angular_scatter": 1.1020058311325426e-10,
+          "reference": -1.9211415691550692e-08
+        },
+        "Khat": {
+          "mean": -2.999999943934602,
+          "angular_scatter": 2.7043042716467505e-10,
+          "reference": -2.9999999437917513
+        },
+        "Theta": {
+          "mean": 7.514311134001813e-14,
+          "angular_scatter": 2.3385918064790433e-15,
+          "reference": -3.993426204202992e-23
+        },
+        "Lambda_r": {
+          "mean": 7.722991482674017e-12,
+          "angular_scatter": 1.4328063853350607e-12,
+          "reference": -2.8206862799232957e-22
+        },
+        "beta_r": {
+          "mean": -0.1499999965162332,
+          "angular_scatter": 1.3969881547972915e-12,
+          "reference": -0.14999999648536685
+        }
+      },
+      {
+        "r": 0.2,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5200005422400933,
+          "angular_scatter": 7.074018595726995e-10,
+          "reference": 0.5200005433947904
+        },
+        "chi": {
+          "mean": 0.999999995468946,
+          "angular_scatter": 4.798674518879643e-12,
+          "reference": 0.9999999954615006
+        },
+        "g_rr": {
+          "mean": 1.0000000000009792,
+          "angular_scatter": 3.2511563605977343e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.6256632934079694e-08,
+          "angular_scatter": 3.16135823136352e-10,
+          "reference": -2.6427046336228395e-08
+        },
+        "Khat": {
+          "mean": -2.999999964511541,
+          "angular_scatter": 3.260592355332284e-10,
+          "reference": -2.9999999640212938
+        },
+        "Theta": {
+          "mean": 5.865056241832835e-14,
+          "angular_scatter": 1.3007360905787423e-14,
+          "reference": 3.1174596598503335e-23
+        },
+        "Lambda_r": {
+          "mean": 1.0879790332991964e-11,
+          "angular_scatter": 2.4147802579706385e-12,
+          "reference": -4.157385512380166e-24
+        },
+        "beta_r": {
+          "mean": -0.19999999635121574,
+          "angular_scatter": 7.462569714284183e-12,
+          "reference": -0.19999999633291957
+        }
+      },
+      {
+        "r": 0.25,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5312503879559595,
+          "angular_scatter": 5.6177073188430565e-09,
+          "reference": 0.531250385331251
+        },
+        "chi": {
+          "mean": 0.9999999966854525,
+          "angular_scatter": 3.8236564125509086e-11,
+          "reference": 0.9999999967041754
+        },
+        "g_rr": {
+          "mean": 1.0000000000011475,
+          "angular_scatter": 8.639589883425292e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.8874953855695633e-08,
+          "angular_scatter": 1.7528118346504058e-10,
+          "reference": -2.9647952485934315e-08
+        },
+        "Khat": {
+          "mean": -2.9999999807109163,
+          "angular_scatter": 7.778856991349777e-10,
+          "reference": -2.9999999807983833
+        },
+        "Theta": {
+          "mean": 8.225176692661452e-14,
+          "angular_scatter": 5.5447812106138044e-14,
+          "reference": 1.2317632666174275e-23
+        },
+        "Lambda_r": {
+          "mean": 5.1287871672921505e-12,
+          "angular_scatter": 1.91433381511085e-11,
+          "reference": 2.968523743784364e-23
+        },
+        "beta_r": {
+          "mean": -0.24999999664304878,
+          "angular_scatter": 6.838608857883812e-12,
+          "reference": -0.24999999666267944
+        }
+      },
+      {
+        "r": 0.3,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5450002567518328,
+          "angular_scatter": 3.61687619597972e-09,
+          "reference": 0.5450002523588591
+        },
+        "chi": {
+          "mean": 0.9999999977393809,
+          "angular_scatter": 2.9467131711651793e-11,
+          "reference": 0.9999999977760688
+        },
+        "g_rr": {
+          "mean": 1.0000000000008131,
+          "angular_scatter": 1.0544555499096335e-12,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.7826915817458674e-08,
+          "angular_scatter": 7.541892787105109e-10,
+          "reference": -2.8409080740122373e-08
+        },
+        "Khat": {
+          "mean": -2.9999999919811313,
+          "angular_scatter": 6.573783126171762e-10,
+          "reference": -2.999999992306711
+        },
+        "Theta": {
+          "mean": -6.874260216174945e-14,
+          "angular_scatter": 1.1816977733573294e-13,
+          "reference": -3.587178589705102e-23
+        },
+        "Lambda_r": {
+          "mean": -1.5943050682377258e-11,
+          "angular_scatter": 2.3499702158653324e-11,
+          "reference": 1.3765722034259071e-22
+        },
+        "beta_r": {
+          "mean": -0.29999999719898673,
+          "angular_scatter": 5.363081536901836e-11,
+          "reference": -0.2999999972917508
+        }
+      },
+      {
+        "r": 0.35,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5612501530811363,
+          "angular_scatter": 2.332111784471331e-09,
+          "reference": 0.5612501523116321
+        },
+        "chi": {
+          "mean": 0.9999999986005985,
+          "angular_scatter": 1.9516950708269417e-11,
+          "reference": 0.9999999986078532
+        },
+        "g_rr": {
+          "mean": 1.0000000000003357,
+          "angular_scatter": 1.299593692552383e-12,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": -2.3929267710037866e-08,
+          "angular_scatter": 1.275804319979787e-09,
+          "reference": -2.3807194889379772e-08
+        },
+        "Khat": {
+          "mean": -2.999999998518366,
+          "angular_scatter": 6.749806732607717e-10,
+          "reference": -2.9999999986935815
+        },
+        "Theta": {
+          "mean": -2.870757231591631e-13,
+          "angular_scatter": 9.771009607705085e-14,
+          "reference": -1.2152581422013433e-23
+        },
+        "Lambda_r": {
+          "mean": 5.078695303545735e-12,
+          "angular_scatter": 2.1964898532952108e-11,
+          "reference": 2.957716869096093e-22
+        },
+        "beta_r": {
+          "mean": -0.34999999794723385,
+          "angular_scatter": 6.922562033619349e-11,
+          "reference": -0.34999999801963794
+        }
+      },
+      {
+        "r": 0.4,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5800000842836812,
+          "angular_scatter": 1.4399159052935155e-09,
+          "reference": 0.5800000844781588
+        },
+        "chi": {
+          "mean": 0.999999999196065,
+          "angular_scatter": 1.2064791986921557e-11,
+          "reference": 0.9999999991932594
+        },
+        "g_rr": {
+          "mean": 0.9999999999991891,
+          "angular_scatter": 4.08959630517824e-13,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -1.7647532973423812e-08,
+          "angular_scatter": 2.499008040337924e-10,
+          "reference": -1.767547008991953e-08
+        },
+        "Khat": {
+          "mean": -3.0000000010446404,
+          "angular_scatter": 1.17422351183627e-10,
+          "reference": -3.000000001302282
+        },
+        "Theta": {
+          "mean": -3.789794057289292e-13,
+          "angular_scatter": 1.4439159824423013e-13,
+          "reference": -5.327370192506287e-24
+        },
+        "Lambda_r": {
+          "mean": 5.236665554133831e-12,
+          "angular_scatter": 1.0184295386842555e-11,
+          "reference": 1.3584649735995504e-22
+        },
+        "beta_r": {
+          "mean": -0.39999999865257846,
+          "angular_scatter": 4.9965934148892344e-11,
+          "reference": -0.3999999986888981
+        }
+      },
+      {
+        "r": 0.45,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6012500430706025,
+          "angular_scatter": 8.73776071999107e-10,
+          "reference": 0.6012500428971782
+        },
+        "chi": {
+          "mean": 0.999999999568302,
+          "angular_scatter": 6.880593813924543e-12,
+          "reference": 0.999999999568427
+        },
+        "g_rr": {
+          "mean": 0.9999999999990472,
+          "angular_scatter": 2.599295882310807e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -1.1969455073023709e-08,
+          "angular_scatter": 2.795312268725414e-10,
+          "reference": -1.1707311999271286e-08
+        },
+        "Khat": {
+          "mean": -3.0000000015825394,
+          "angular_scatter": 1.4122221215753165e-10,
+          "reference": -3.0000000017562933
+        },
+        "Theta": {
+          "mean": -2.4997628233292996e-13,
+          "angular_scatter": 1.0006815420424355e-13,
+          "reference": 4.076576893502838e-24
+        },
+        "Lambda_r": {
+          "mean": 3.442195941654735e-12,
+          "angular_scatter": 2.6222510117209116e-12,
+          "reference": 8.39157333455595e-24
+        },
+        "beta_r": {
+          "mean": -0.4499999992019206,
+          "angular_scatter": 2.819828858937031e-11,
+          "reference": -0.4499999992130786
+        }
+      },
+      {
+        "r": 0.5,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6250000200842136,
+          "angular_scatter": 4.987927759649286e-10,
+          "reference": 0.6250000198441493
+        },
+        "chi": {
+          "mean": 0.9999999997860156,
+          "angular_scatter": 4.0262762340842844e-12,
+          "reference": 0.9999999997876566
+        },
+        "g_rr": {
+          "mean": 0.9999999999992846,
+          "angular_scatter": 2.0871305413074275e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -7.304910465707688e-09,
+          "angular_scatter": 3.1671434653558487e-10,
+          "reference": -6.9384132517866035e-09
+        },
+        "Khat": {
+          "mean": -3.0000000013335333,
+          "angular_scatter": 1.0584798997235935e-10,
+          "reference": -3.0000000013370345
+        },
+        "Theta": {
+          "mean": -8.090690663850741e-14,
+          "angular_scatter": 6.281866433654705e-14,
+          "reference": 7.466616885043794e-24
+        },
+        "Lambda_r": {
+          "mean": 8.836966284386469e-13,
+          "angular_scatter": 1.8535006989171702e-12,
+          "reference": -6.247443565843366e-23
+        },
+        "beta_r": {
+          "mean": -0.4999999995816201,
+          "angular_scatter": 2.1234472373254608e-11,
+          "reference": -0.49999999957236285
+        }
+      },
+      {
+        "r": 0.55,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6512500083910087,
+          "angular_scatter": 2.4537795600931955e-10,
+          "reference": 0.6512500083072773
+        },
+        "chi": {
+          "mean": 0.9999999999037497,
+          "angular_scatter": 2.1377663011025372e-12,
+          "reference": 0.9999999999043854
+        },
+        "g_rr": {
+          "mean": 0.9999999999996183,
+          "angular_scatter": 1.2928153246385252e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -3.915387205743372e-09,
+          "angular_scatter": 2.493547305543379e-10,
+          "reference": -3.678975015945399e-09
+        },
+        "Khat": {
+          "mean": -3.0000000008450045,
+          "angular_scatter": 3.778919030727629e-11,
+          "reference": -3.0000000007810597
+        },
+        "Theta": {
+          "mean": 5.849427582592614e-14,
+          "angular_scatter": 3.457079800667047e-14,
+          "reference": 8.352906780543335e-25
+        },
+        "Lambda_r": {
+          "mean": 3.1120878190460193e-13,
+          "angular_scatter": 1.4795338700793904e-12,
+          "reference": -6.311076535965976e-23
+        },
+        "beta_r": {
+          "mean": -0.5499999998186289,
+          "angular_scatter": 1.8356453115865262e-11,
+          "reference": -0.5499999997903577
+        }
+      },
+      {
+        "r": 0.6,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6800000031054316,
+          "angular_scatter": 1.0696982989073621e-10,
+          "reference": 0.6800000031183482
+        },
+        "chi": {
+          "mean": 0.9999999999613002,
+          "angular_scatter": 1.1969418956339988e-12,
+          "reference": 0.9999999999608675
+        },
+        "g_rr": {
+          "mean": 0.9999999999999082,
+          "angular_scatter": 7.397571550763734e-14,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": -1.7743826751021877e-09,
+          "angular_scatter": 1.5469960545002378e-10,
+          "reference": -1.739904160303375e-09
+        },
+        "Khat": {
+          "mean": -3.000000000418021,
+          "angular_scatter": 7.544424820690176e-12,
+          "reference": -3.000000000374519
+        },
+        "Theta": {
+          "mean": 1.3792131478421532e-13,
+          "angular_scatter": 1.8136517972115403e-14,
+          "reference": 1.3875819318513136e-24
+        },
+        "Lambda_r": {
+          "mean": 1.1207013073383617e-12,
+          "angular_scatter": 9.407713602529237e-13,
+          "reference": -3.706711201769017e-23
+        },
+        "beta_r": {
+          "mean": -0.5999999999458393,
+          "angular_scatter": 1.5098779400673052e-11,
+          "reference": -0.599999999907873
+        }
+      },
+      {
+        "r": 0.65,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7112500010320162,
+          "angular_scatter": 5.1999405862410235e-11,
+          "reference": 0.7112500010360687
+        },
+        "chi": {
+          "mean": 0.9999999999860385,
+          "angular_scatter": 6.697932461382154e-13,
+          "reference": 0.9999999999855828
+        },
+        "g_rr": {
+          "mean": 1.000000000000118,
+          "angular_scatter": 7.900714305591966e-14,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -6.562695036963587e-10,
+          "angular_scatter": 6.905073085622637e-11,
+          "reference": -7.292136617977076e-10
+        },
+        "Khat": {
+          "mean": -3.0000000001665246,
+          "angular_scatter": 1.0678478590798916e-11,
+          "reference": -3.000000000149991
+        },
+        "Theta": {
+          "mean": 1.5616111456630409e-13,
+          "angular_scatter": 1.2837077442895132e-14,
+          "reference": 2.680738662804988e-25
+        },
+        "Lambda_r": {
+          "mean": 1.1298019007312606e-12,
+          "angular_scatter": 9.456662543741709e-13,
+          "reference": -6.372401792876239e-24
+        },
+        "beta_r": {
+          "mean": -0.6499999999981222,
+          "angular_scatter": 9.834110649581668e-12,
+          "reference": -0.6499999999640658
+        }
+      },
+      {
+        "r": 0.7,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7450000003075242,
+          "angular_scatter": 1.9718999386775817e-11,
+          "reference": 0.7450000002989041
+        },
+        "chi": {
+          "mean": 0.9999999999952348,
+          "angular_scatter": 1.704293891729489e-13,
+          "reference": 0.9999999999952865
+        },
+        "g_rr": {
+          "mean": 1.0000000000002756,
+          "angular_scatter": 1.370268705978996e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.2516148961595345e-10,
+          "angular_scatter": 2.023766075130998e-11,
+          "reference": -2.678704409119673e-10
+        },
+        "Khat": {
+          "mean": -3.000000000076528,
+          "angular_scatter": 1.3096860414386155e-11,
+          "reference": -3.000000000049945
+        },
+        "Theta": {
+          "mean": 1.3075779346207572e-13,
+          "angular_scatter": 1.6913540059700088e-14,
+          "reference": -7.5055108834712565e-25
+        },
+        "Lambda_r": {
+          "mean": -1.6464718983809557e-12,
+          "angular_scatter": 1.0004336334684296e-12,
+          "reference": 1.0119425257484408e-23
+        },
+        "beta_r": {
+          "mean": -0.7000000000083633,
+          "angular_scatter": 4.114423602785544e-12,
+          "reference": -0.6999999999877465
+        }
+      },
+      {
+        "r": 0.75,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7812500000430853,
+          "angular_scatter": 2.747616791600384e-11,
+          "reference": 0.7812500000726891
+        },
+        "chi": {
+          "mean": 0.9999999999983796,
+          "angular_scatter": 4.3325795380689444e-13,
+          "reference": 0.9999999999986625
+        },
+        "g_rr": {
+          "mean": 1.0000000000004348,
+          "angular_scatter": 2.2285302708806005e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -1.2377951936588225e-10,
+          "angular_scatter": 2.8042009248873922e-11,
+          "reference": -8.524629127359499e-11
+        },
+        "Khat": {
+          "mean": -3.000000000065303,
+          "angular_scatter": 2.5686657896065118e-11,
+          "reference": -3.000000000013712
+        },
+        "Theta": {
+          "mean": 8.767704307519423e-14,
+          "angular_scatter": 3.1263618627062715e-14,
+          "reference": 5.740689236899815e-19
+        },
+        "Lambda_r": {
+          "mean": -7.219981654079305e-12,
+          "angular_scatter": 3.5510110338030576e-12,
+          "reference": -1.9356489274068445e-17
+        },
+        "beta_r": {
+          "mean": -0.7500000000035009,
+          "angular_scatter": 1.8007121395659156e-12,
+          "reference": -0.7499999999964352
+        }
+      },
+      {
+        "r": 0.8,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.8199999999663352,
+          "angular_scatter": 2.666141682265536e-11,
+          "reference": 0.8200000000141594
+        },
+        "chi": {
+          "mean": 0.9999999999995082,
+          "angular_scatter": 3.729382963026017e-13,
+          "reference": 0.9999999999996827
+        },
+        "g_rr": {
+          "mean": 1.000000000000635,
+          "angular_scatter": 3.055901164850139e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -6.231748810292559e-11,
+          "angular_scatter": 7.523551807522488e-12,
+          "reference": -2.2347958269989768e-11
+        },
+        "Khat": {
+          "mean": -3.0000000000405724,
+          "angular_scatter": 1.165086820240528e-11,
+          "reference": -3.000000000002841
+        },
+        "Theta": {
+          "mean": 5.0970487676945515e-14,
+          "angular_scatter": 6.130214540873615e-14,
+          "reference": -1.0323374795352192e-24
+        },
+        "Lambda_r": {
+          "mean": -1.1853736981222689e-11,
+          "angular_scatter": 5.342865860541345e-12,
+          "reference": 9.217288774383114e-24
+        },
+        "beta_r": {
+          "mean": -0.8000000000005631,
+          "angular_scatter": 1.6576698549885593e-12,
+          "reference": -0.7999999999991487
+        }
+      },
+      {
+        "r": 0.85,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.8612500000635548,
+          "angular_scatter": 2.8942964886136335e-11,
+          "reference": 0.861250000002014
+        },
+        "chi": {
+          "mean": 0.999999999999522,
+          "angular_scatter": 2.6850368212337734e-13,
+          "reference": 0.9999999999999412
+        },
+        "g_rr": {
+          "mean": 1.0000000000008638,
+          "angular_scatter": 3.568246999458386e-13,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": 9.269178012725141e-11,
+          "angular_scatter": 5.1937148201823396e-11,
+          "reference": -4.651709695237278e-12
+        },
+        "Khat": {
+          "mean": -2.9999999999597047,
+          "angular_scatter": 2.8741100615599965e-11,
+          "reference": -3.000000000000422
+        },
+        "Theta": {
+          "mean": 3.244004356007827e-14,
+          "angular_scatter": 1.1918801850316798e-13,
+          "reference": -7.916076544766245e-25
+        },
+        "Lambda_r": {
+          "mean": -6.286164492609084e-12,
+          "angular_scatter": 2.065105262362054e-12,
+          "reference": 3.7447405609275985e-24
+        },
+        "beta_r": {
+          "mean": -0.850000000002705,
+          "angular_scatter": 8.836651473322353e-13,
+          "reference": -0.8499999999998452
+        }
+      },
+      {
+        "r": 0.9,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.9050000002218097,
+          "angular_scatter": 6.729021767140675e-11,
+          "reference": 0.9050000000001694
+        },
+        "chi": {
+          "mean": 0.9999999999985127,
+          "angular_scatter": 5.521367056093792e-13,
+          "reference": 0.9999999999999926
+        },
+        "g_rr": {
+          "mean": 1.0000000000010159,
+          "angular_scatter": 3.6168838407608803e-13,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": 2.295106121530809e-10,
+          "angular_scatter": 7.366397657109731e-11,
+          "reference": -6.763320199058255e-13
+        },
+        "Khat": {
+          "mean": -2.9999999998889044,
+          "angular_scatter": 4.745702613316421e-11,
+          "reference": -3.0000000000000355
+        },
+        "Theta": {
+          "mean": 2.1302278392644905e-14,
+          "angular_scatter": 2.260265873421833e-13,
+          "reference": -5.462787594670193e-25
+        },
+        "Lambda_r": {
+          "mean": 2.604462325386334e-11,
+          "angular_scatter": 1.6422035859917234e-11,
+          "reference": -3.8116591619230384e-26
+        },
+        "beta_r": {
+          "mean": -0.8999999999952457,
+          "angular_scatter": 4.579014041760772e-12,
+          "reference": -0.8999999999999818
+        }
+      },
+      {
+        "r": 0.95,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.9512499998710884,
+          "angular_scatter": 4.8565641115264533e-11,
+          "reference": 0.9512500000000041
+        },
+        "chi": {
+          "mean": 0.9999999999980845,
+          "angular_scatter": 1.290021707415099e-12,
+          "reference": 0.9999999999999996
+        },
+        "g_rr": {
+          "mean": 1.0000000000008549,
+          "angular_scatter": 3.3958463336603544e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -9.766943455992658e-11,
+          "angular_scatter": 7.52497321818274e-11,
+          "reference": -4.780632492945834e-14
+        },
+        "Khat": {
+          "mean": -3.0000000000624043,
+          "angular_scatter": 6.590519966182826e-11,
+          "reference": -3.0000000000000013
+        },
+        "Theta": {
+          "mean": -2.614722942815696e-14,
+          "angular_scatter": 4.162749618868462e-13,
+          "reference": -3.912532340834038e-25
+        },
+        "Lambda_r": {
+          "mean": 1.1077655880803479e-10,
+          "angular_scatter": 5.897493393693732e-11,
+          "reference": -2.12809302672821e-24
+        },
+        "beta_r": {
+          "mean": -0.9499999999417055,
+          "angular_scatter": 2.9911303622318586e-11,
+          "reference": -0.9499999999999992
+        }
+      }
+    ],
+    "8": [
+      {
+        "r": 0.05,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5012509588577889,
+          "angular_scatter": 5.313188506663807e-11,
+          "reference": 0.5012509590094382
+        },
+        "chi": {
+          "mean": 0.9999999922939381,
+          "angular_scatter": 3.515478218502418e-13,
+          "reference": 0.9999999922922662
+        },
+        "g_rr": {
+          "mean": 1.0000000000000684,
+          "angular_scatter": 2.915074173002011e-14,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -2.8296603583764573e-09,
+          "angular_scatter": 6.15084879110104e-12,
+          "reference": -2.8581675261102045e-09
+        },
+        "Khat": {
+          "mean": -2.9999999094750684,
+          "angular_scatter": 1.5045630533802807e-11,
+          "reference": -2.9999999092659375
+        },
+        "Theta": {
+          "mean": 3.6971291705883296e-14,
+          "angular_scatter": 1.3128835722916718e-15,
+          "reference": 5.408107756932086e-23
+        },
+        "Lambda_r": {
+          "mean": 1.766815120781088e-12,
+          "angular_scatter": 8.867106258136615e-14,
+          "reference": 1.1107607999520742e-21
+        },
+        "beta_r": {
+          "mean": -0.049999998464957784,
+          "angular_scatter": 3.272821838993339e-13,
+          "reference": -0.04999999845212647
+        }
+      },
+      {
+        "r": 0.1,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5050008562879174,
+          "angular_scatter": 3.854858257668475e-11,
+          "reference": 0.5050008564133296
+        },
+        "chi": {
+          "mean": 0.9999999930658143,
+          "angular_scatter": 2.524857341435322e-13,
+          "reference": 0.9999999930645467
+        },
+        "g_rr": {
+          "mean": 1.0000000000001728,
+          "angular_scatter": 6.919333068883771e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -1.0148568717442473e-08,
+          "angular_scatter": 1.551990073370955e-11,
+          "reference": -1.0248814531191383e-08
+        },
+        "Khat": {
+          "mean": -2.9999999240951434,
+          "angular_scatter": 1.4018955202097741e-11,
+          "reference": -2.9999999239318185
+        },
+        "Theta": {
+          "mean": 5.296516856346154e-14,
+          "angular_scatter": 7.25294765043552e-15,
+          "reference": -1.995306095959465e-23
+        },
+        "Lambda_r": {
+          "mean": 2.149535209953832e-12,
+          "angular_scatter": 5.826662817120701e-13,
+          "reference": -8.565733994400215e-22
+        },
+        "beta_r": {
+          "mean": -0.09999999723140685,
+          "angular_scatter": 6.926617700354391e-13,
+          "reference": -0.0999999972107336
+        }
+      },
+      {
+        "r": 0.15,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5112507088453293,
+          "angular_scatter": 2.96608359220382e-11,
+          "reference": 0.5112507088633466
+        },
+        "chi": {
+          "mean": 0.9999999941861759,
+          "angular_scatter": 2.2198251048951896e-13,
+          "reference": 0.9999999941858093
+        },
+        "g_rr": {
+          "mean": 1.0000000000001834,
+          "angular_scatter": 4.2711980266542297e-14,
+          "reference": 0.9999999999999998
+        },
+        "A_rr": {
+          "mean": -1.9034747330363403e-08,
+          "angular_scatter": 1.2605695441842916e-11,
+          "reference": -1.9211415691550692e-08
+        },
+        "Khat": {
+          "mean": -2.9999999438472087,
+          "angular_scatter": 1.3843118527368147e-11,
+          "reference": -2.9999999437917513
+        },
+        "Theta": {
+          "mean": 2.2701416490241665e-14,
+          "angular_scatter": 1.9161382840229764e-14,
+          "reference": -3.993426204202992e-23
+        },
+        "Lambda_r": {
+          "mean": 2.039346973745793e-12,
+          "angular_scatter": 9.959716601098283e-13,
+          "reference": -2.8206862799232957e-22
+        },
+        "beta_r": {
+          "mean": -0.14999999650424178,
+          "angular_scatter": 1.1445926221652593e-12,
+          "reference": -0.14999999648536685
+        }
+      },
+      {
+        "r": 0.2,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5200005433076957,
+          "angular_scatter": 1.2551911868273132e-10,
+          "reference": 0.5200005433947904
+        },
+        "chi": {
+          "mean": 0.9999999954622099,
+          "angular_scatter": 9.294676124277317e-13,
+          "reference": 0.9999999954615006
+        },
+        "g_rr": {
+          "mean": 1.0000000000002296,
+          "angular_scatter": 6.71765324502283e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.6304687651346955e-08,
+          "angular_scatter": 9.656991946253639e-11,
+          "reference": -2.6427046336228395e-08
+        },
+        "Khat": {
+          "mean": -2.999999964085614,
+          "angular_scatter": 9.185943988190503e-11,
+          "reference": -2.9999999640212938
+        },
+        "Theta": {
+          "mean": 1.2009330638722302e-14,
+          "angular_scatter": 2.0135804222327002e-14,
+          "reference": 3.1174596598503335e-23
+        },
+        "Lambda_r": {
+          "mean": 3.0014164045247816e-12,
+          "angular_scatter": 1.1257110562503597e-12,
+          "reference": -4.157385512380166e-24
+        },
+        "beta_r": {
+          "mean": -0.19999999634945936,
+          "angular_scatter": 2.8920349364094546e-12,
+          "reference": -0.19999999633291957
+        }
+      },
+      {
+        "r": 0.25,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5312503854635371,
+          "angular_scatter": 3.927049823641842e-10,
+          "reference": 0.531250385331251
+        },
+        "chi": {
+          "mean": 0.9999999967028648,
+          "angular_scatter": 3.2167842481292373e-12,
+          "reference": 0.9999999967041754
+        },
+        "g_rr": {
+          "mean": 1.0000000000006397,
+          "angular_scatter": 7.023948004968152e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.9781983422008424e-08,
+          "angular_scatter": 5.42890908573245e-10,
+          "reference": -2.9647952485934315e-08
+        },
+        "Khat": {
+          "mean": -2.9999999811418294,
+          "angular_scatter": 4.054429900711128e-10,
+          "reference": -2.9999999807983833
+        },
+        "Theta": {
+          "mean": 1.8825185810097696e-13,
+          "angular_scatter": 2.5512493369233754e-13,
+          "reference": 1.2317632666174275e-23
+        },
+        "Lambda_r": {
+          "mean": 2.169761486483529e-12,
+          "angular_scatter": 3.2092069347680087e-12,
+          "reference": 2.968523743784364e-23
+        },
+        "beta_r": {
+          "mean": -0.24999999667445633,
+          "angular_scatter": 2.246705698533289e-12,
+          "reference": -0.24999999666267944
+        }
+      },
+      {
+        "r": 0.3,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5450002534067434,
+          "angular_scatter": 1.4435175048329392e-09,
+          "reference": 0.5450002523588591
+        },
+        "chi": {
+          "mean": 0.9999999977680547,
+          "angular_scatter": 1.0896123323244147e-11,
+          "reference": 0.9999999977760688
+        },
+        "g_rr": {
+          "mean": 1.000000000000227,
+          "angular_scatter": 1.7664225481352504e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.8101988079738595e-08,
+          "angular_scatter": 1.0670387320835251e-10,
+          "reference": -2.8409080740122373e-08
+        },
+        "Khat": {
+          "mean": -2.999999992243168,
+          "angular_scatter": 2.0045493262210777e-10,
+          "reference": -2.999999992306711
+        },
+        "Theta": {
+          "mean": 2.0024091231249287e-14,
+          "angular_scatter": 8.711393384199989e-14,
+          "reference": -3.587178589705102e-23
+        },
+        "Lambda_r": {
+          "mean": -6.061402688075727e-13,
+          "angular_scatter": 1.0460553538462737e-11,
+          "reference": 1.3765722034259071e-22
+        },
+        "beta_r": {
+          "mean": -0.2999999972905072,
+          "angular_scatter": 1.1724365066470113e-11,
+          "reference": -0.2999999972917508
+        }
+      },
+      {
+        "r": 0.35,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5612501522930615,
+          "angular_scatter": 7.666174036213607e-10,
+          "reference": 0.5612501523116321
+        },
+        "chi": {
+          "mean": 0.9999999986077142,
+          "angular_scatter": 6.33788505605562e-12,
+          "reference": 0.9999999986078532
+        },
+        "g_rr": {
+          "mean": 1.0000000000000357,
+          "angular_scatter": 1.8784302128248323e-13,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": -2.3755415409861012e-08,
+          "angular_scatter": 1.8199041483596533e-10,
+          "reference": -2.3807194889379772e-08
+        },
+        "Khat": {
+          "mean": -2.999999998714065,
+          "angular_scatter": 1.8524010507382378e-10,
+          "reference": -2.9999999986935815
+        },
+        "Theta": {
+          "mean": -5.731791565379178e-14,
+          "angular_scatter": 1.0904276278044444e-13,
+          "reference": -1.2152581422013433e-23
+        },
+        "Lambda_r": {
+          "mean": 8.389052443033188e-13,
+          "angular_scatter": 6.9348753775215605e-12,
+          "reference": 2.957716869096093e-22
+        },
+        "beta_r": {
+          "mean": -0.3499999980166102,
+          "angular_scatter": 1.5845144050584408e-11,
+          "reference": -0.34999999801963794
+        }
+      },
+      {
+        "r": 0.4,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5800000843718525,
+          "angular_scatter": 1.9698386081184968e-10,
+          "reference": 0.5800000844781588
+        },
+        "chi": {
+          "mean": 0.9999999991942927,
+          "angular_scatter": 1.8000280188713084e-12,
+          "reference": 0.9999999991932594
+        },
+        "g_rr": {
+          "mean": 0.9999999999998185,
+          "angular_scatter": 1.581361230298598e-13,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -1.7735023431486832e-08,
+          "angular_scatter": 8.231106255213682e-11,
+          "reference": -1.767547008991953e-08
+        },
+        "Khat": {
+          "mean": -3.0000000012707586,
+          "angular_scatter": 9.126833362972304e-11,
+          "reference": -3.000000001302282
+        },
+        "Theta": {
+          "mean": -1.0902706370870623e-13,
+          "angular_scatter": 4.1300597126662585e-14,
+          "reference": -5.327370192506287e-24
+        },
+        "Lambda_r": {
+          "mean": -2.5262620543577037e-13,
+          "angular_scatter": 4.797225275801541e-12,
+          "reference": 1.3584649735995504e-22
+        },
+        "beta_r": {
+          "mean": -0.3999999986936094,
+          "angular_scatter": 1.0438036624953904e-11,
+          "reference": -0.3999999986888981
+        }
+      },
+      {
+        "r": 0.45,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6012500429804939,
+          "angular_scatter": 1.043445308588677e-10,
+          "reference": 0.6012500428971782
+        },
+        "chi": {
+          "mean": 0.9999999995681221,
+          "angular_scatter": 8.567736164234687e-13,
+          "reference": 0.999999999568427
+        },
+        "g_rr": {
+          "mean": 0.9999999999997617,
+          "angular_scatter": 3.111595312178914e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -1.1832996823968382e-08,
+          "angular_scatter": 8.471200908956518e-11,
+          "reference": -1.1707311999271286e-08
+        },
+        "Khat": {
+          "mean": -3.000000001709381,
+          "angular_scatter": 3.015138015049521e-11,
+          "reference": -3.0000000017562933
+        },
+        "Theta": {
+          "mean": -8.400889581392248e-14,
+          "angular_scatter": 3.8639989127650583e-14,
+          "reference": 4.076576893502838e-24
+        },
+        "Lambda_r": {
+          "mean": 1.2507320494798472e-12,
+          "angular_scatter": 1.4548468992223689e-12,
+          "reference": 8.39157333455595e-24
+        },
+        "beta_r": {
+          "mean": -0.4499999992267586,
+          "angular_scatter": 4.8287459913973605e-12,
+          "reference": -0.4499999992130786
+        }
+      },
+      {
+        "r": 0.5,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6250000198633667,
+          "angular_scatter": 4.2286367644216417e-11,
+          "reference": 0.6250000198441493
+        },
+        "chi": {
+          "mean": 0.9999999997877526,
+          "angular_scatter": 3.878076059356081e-13,
+          "reference": 0.9999999997876566
+        },
+        "g_rr": {
+          "mean": 0.999999999999835,
+          "angular_scatter": 2.829029848611561e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -7.0417162921083065e-09,
+          "angular_scatter": 9.223180392493725e-11,
+          "reference": -6.9384132517866035e-09
+        },
+        "Khat": {
+          "mean": -3.00000000133148,
+          "angular_scatter": 2.515270209041343e-11,
+          "reference": -3.0000000013370345
+        },
+        "Theta": {
+          "mean": -2.1743627943487886e-14,
+          "angular_scatter": 2.7956878169777248e-14,
+          "reference": 7.466616885043794e-24
+        },
+        "Lambda_r": {
+          "mean": 1.6642135341918859e-12,
+          "angular_scatter": 1.2842832939251235e-12,
+          "reference": -6.247443565843366e-23
+        },
+        "beta_r": {
+          "mean": -0.4999999995938811,
+          "angular_scatter": 5.06729147345132e-12,
+          "reference": -0.49999999957236285
+        }
+      },
+      {
+        "r": 0.55,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6512500082471918,
+          "angular_scatter": 4.487492147987493e-11,
+          "reference": 0.6512500083072773
+        },
+        "chi": {
+          "mean": 0.9999999999050604,
+          "angular_scatter": 4.153812985429495e-13,
+          "reference": 0.9999999999043854
+        },
+        "g_rr": {
+          "mean": 0.9999999999999758,
+          "angular_scatter": 2.7017814646169218e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -3.718596783501611e-09,
+          "angular_scatter": 5.647692591376637e-11,
+          "reference": -3.678975015945399e-09
+        },
+        "Khat": {
+          "mean": -3.000000000795968,
+          "angular_scatter": 1.0420038761106904e-11,
+          "reference": -3.0000000007810597
+        },
+        "Theta": {
+          "mean": 2.9645206841734835e-14,
+          "angular_scatter": 1.1443332081799836e-14,
+          "reference": 8.352906780543335e-25
+        },
+        "Lambda_r": {
+          "mean": 9.743187409824103e-13,
+          "angular_scatter": 8.245101379297037e-13,
+          "reference": -6.311076535965976e-23
+        },
+        "beta_r": {
+          "mean": -0.549999999815559,
+          "angular_scatter": 4.177808324391284e-12,
+          "reference": -0.5499999997903577
+        }
+      },
+      {
+        "r": 0.6,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6800000031043834,
+          "angular_scatter": 8.15420575004648e-12,
+          "reference": 0.6800000031183482
+        },
+        "chi": {
+          "mean": 0.9999999999611009,
+          "angular_scatter": 6.558498482220548e-14,
+          "reference": 0.9999999999608675
+        },
+        "g_rr": {
+          "mean": 1.0000000000001048,
+          "angular_scatter": 3.1402462485052865e-14,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": -1.7392374304751505e-09,
+          "angular_scatter": 2.509224338557408e-11,
+          "reference": -1.739904160303375e-09
+        },
+        "Khat": {
+          "mean": -3.000000000390878,
+          "angular_scatter": 3.0916570694885066e-12,
+          "reference": -3.000000000374519
+        },
+        "Theta": {
+          "mean": 5.3137502440113725e-14,
+          "angular_scatter": 6.696243356113488e-15,
+          "reference": 1.3875819318513136e-24
+        },
+        "Lambda_r": {
+          "mean": -1.3418363408349892e-13,
+          "angular_scatter": 3.1194329713473185e-13,
+          "reference": -3.706711201769017e-23
+        },
+        "beta_r": {
+          "mean": -0.5999999999303371,
+          "angular_scatter": 2.909473779499936e-12,
+          "reference": -0.599999999907873
+        }
+      },
+      {
+        "r": 0.65,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7112500010383325,
+          "angular_scatter": 4.809428124775889e-12,
+          "reference": 0.7112500010360687
+        },
+        "chi": {
+          "mean": 0.9999999999856654,
+          "angular_scatter": 6.266040193035953e-14,
+          "reference": 0.9999999999855828
+        },
+        "g_rr": {
+          "mean": 1.000000000000159,
+          "angular_scatter": 2.7709463054861746e-14,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -7.092333252098074e-10,
+          "angular_scatter": 1.4930791332355414e-11,
+          "reference": -7.292136617977076e-10
+        },
+        "Khat": {
+          "mean": -3.0000000001584506,
+          "angular_scatter": 1.6632386287173768e-12,
+          "reference": -3.000000000149991
+        },
+        "Theta": {
+          "mean": 5.299620308872708e-14,
+          "angular_scatter": 6.853284692324442e-15,
+          "reference": 2.680738662804988e-25
+        },
+        "Lambda_r": {
+          "mean": -7.338642397217729e-13,
+          "angular_scatter": 9.151804266360528e-14,
+          "reference": -6.372401792876239e-24
+        },
+        "beta_r": {
+          "mean": -0.6499999999819521,
+          "angular_scatter": 2.389256978475509e-12,
+          "reference": -0.6499999999640658
+        }
+      },
+      {
+        "r": 0.7,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7450000003057153,
+          "angular_scatter": 6.536272158900289e-12,
+          "reference": 0.7450000002989041
+        },
+        "chi": {
+          "mean": 0.9999999999952647,
+          "angular_scatter": 3.857219715313314e-14,
+          "reference": 0.9999999999952865
+        },
+        "g_rr": {
+          "mean": 1.0000000000001497,
+          "angular_scatter": 2.2782103794793854e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.5251106667131184e-10,
+          "angular_scatter": 4.911272113493004e-12,
+          "reference": -2.678704409119673e-10
+        },
+        "Khat": {
+          "mean": -3.0000000000574656,
+          "angular_scatter": 9.408176744842207e-13,
+          "reference": -3.000000000049945
+        },
+        "Theta": {
+          "mean": 4.400151950128257e-14,
+          "angular_scatter": 6.783981674681275e-15,
+          "reference": -7.5055108834712565e-25
+        },
+        "Lambda_r": {
+          "mean": -6.34520549927671e-13,
+          "angular_scatter": 2.161765350313299e-13,
+          "reference": 1.0119425257484408e-23
+        },
+        "beta_r": {
+          "mean": -0.700000000000307,
+          "angular_scatter": 1.510123162970732e-12,
+          "reference": -0.6999999999877465
+        }
+      },
+      {
+        "r": 0.75,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7812500000856923,
+          "angular_scatter": 3.248979680960888e-12,
+          "reference": 0.7812500000726891
+        },
+        "chi": {
+          "mean": 0.9999999999985898,
+          "angular_scatter": 1.910270308351251e-14,
+          "reference": 0.9999999999986625
+        },
+        "g_rr": {
+          "mean": 1.0000000000001132,
+          "angular_scatter": 1.5258651360751077e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -7.315069592930223e-11,
+          "angular_scatter": 2.9267394139136607e-12,
+          "reference": -8.524629127359499e-11
+        },
+        "Khat": {
+          "mean": -3.0000000000168816,
+          "angular_scatter": 3.2203603456122054e-13,
+          "reference": -3.000000000013712
+        },
+        "Theta": {
+          "mean": 3.204930596119762e-14,
+          "angular_scatter": 5.357592125280509e-15,
+          "reference": 5.740689236899815e-19
+        },
+        "Lambda_r": {
+          "mean": -3.308345849453077e-13,
+          "angular_scatter": 1.9848481346091675e-13,
+          "reference": -1.9356489274068445e-17
+        },
+        "beta_r": {
+          "mean": -0.7500000000051041,
+          "angular_scatter": 1.099031905130645e-12,
+          "reference": -0.7499999999964352
+        }
+      },
+      {
+        "r": 0.8,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.8199999999989773,
+          "angular_scatter": 1.1044148657235939e-11,
+          "reference": 0.8200000000141594
+        },
+        "chi": {
+          "mean": 0.9999999999998208,
+          "angular_scatter": 7.978162421451722e-14,
+          "reference": 0.9999999999996827
+        },
+        "g_rr": {
+          "mean": 1.0000000000000755,
+          "angular_scatter": 9.792802728475656e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -1.850472362182689e-11,
+          "angular_scatter": 8.400693781088942e-13,
+          "reference": -2.2347958269989768e-11
+        },
+        "Khat": {
+          "mean": -3.0000000000065916,
+          "angular_scatter": 1.8927209317442876e-12,
+          "reference": -3.000000000002841
+        },
+        "Theta": {
+          "mean": 1.2390351755729238e-14,
+          "angular_scatter": 1.2795239058814746e-15,
+          "reference": -1.0323374795352192e-24
+        },
+        "Lambda_r": {
+          "mean": -5.84770849116266e-13,
+          "angular_scatter": 3.09318686760251e-13,
+          "reference": 9.217288774383114e-24
+        },
+        "beta_r": {
+          "mean": -0.8000000000052969,
+          "angular_scatter": 7.569011995176444e-13,
+          "reference": -0.7999999999991487
+        }
+      },
+      {
+        "r": 0.85,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.8612499999847756,
+          "angular_scatter": 2.862714041567155e-12,
+          "reference": 0.861250000002014
+        },
+        "chi": {
+          "mean": 1.00000000000012,
+          "angular_scatter": 2.1919560575662278e-14,
+          "reference": 0.9999999999999412
+        },
+        "g_rr": {
+          "mean": 1.0000000000000522,
+          "angular_scatter": 1.2665851783106997e-14,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": -2.2906271640357463e-12,
+          "angular_scatter": 3.0169206718318333e-13,
+          "reference": -4.651709695237278e-12
+        },
+        "Khat": {
+          "mean": -3.000000000002286,
+          "angular_scatter": 7.165930878781698e-13,
+          "reference": -3.000000000000422
+        },
+        "Theta": {
+          "mean": -2.6069243694300808e-14,
+          "angular_scatter": 1.4008623628758404e-14,
+          "reference": -7.916076544766245e-25
+        },
+        "Lambda_r": {
+          "mean": -1.3143900187976544e-12,
+          "angular_scatter": 8.383198694825505e-13,
+          "reference": 3.7447405609275985e-24
+        },
+        "beta_r": {
+          "mean": -0.8500000000044292,
+          "angular_scatter": 5.621043656052307e-13,
+          "reference": -0.8499999999998452
+        }
+      },
+      {
+        "r": 0.9,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.9050000000517764,
+          "angular_scatter": 2.6144198639810448e-11,
+          "reference": 0.9050000000001694
+        },
+        "chi": {
+          "mean": 0.9999999999996874,
+          "angular_scatter": 1.7516958714383017e-13,
+          "reference": 0.9999999999999926
+        },
+        "g_rr": {
+          "mean": 1.0000000000000426,
+          "angular_scatter": 2.0563004374804765e-14,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": 7.164857111150532e-12,
+          "angular_scatter": 4.747983687307019e-12,
+          "reference": -6.763320199058255e-13
+        },
+        "Khat": {
+          "mean": -2.9999999999940172,
+          "angular_scatter": 4.127326704753602e-12,
+          "reference": -3.0000000000000355
+        },
+        "Theta": {
+          "mean": -1.0230093706259541e-13,
+          "angular_scatter": 3.793105819605902e-14,
+          "reference": -5.462787594670193e-25
+        },
+        "Lambda_r": {
+          "mean": -1.1221307220137223e-12,
+          "angular_scatter": 3.6305054480371164e-13,
+          "reference": -3.8116591619230384e-26
+        },
+        "beta_r": {
+          "mean": -0.9000000000031426,
+          "angular_scatter": 4.478069880454675e-13,
+          "reference": -0.8999999999999818
+        }
+      },
+      {
+        "r": 0.95,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.9512500000310811,
+          "angular_scatter": 3.758176420121691e-12,
+          "reference": 0.9512500000000041
+        },
+        "chi": {
+          "mean": 0.9999999999998532,
+          "angular_scatter": 2.4089876998601177e-14,
+          "reference": 0.9999999999999996
+        },
+        "g_rr": {
+          "mean": 1.0000000000000209,
+          "angular_scatter": 1.4773503177434672e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": 7.276646447621341e-12,
+          "angular_scatter": 3.252129955044313e-12,
+          "reference": -4.780632492945834e-14
+        },
+        "Khat": {
+          "mean": -2.999999999990015,
+          "angular_scatter": 3.998323740533144e-12,
+          "reference": -3.0000000000000013
+        },
+        "Theta": {
+          "mean": -2.434437495627282e-13,
+          "angular_scatter": 7.368282264827375e-14,
+          "reference": -3.912532340834038e-25
+        },
+        "Lambda_r": {
+          "mean": 3.3431957063419983e-12,
+          "angular_scatter": 3.929128484853543e-12,
+          "reference": -2.12809302672821e-24
+        },
+        "beta_r": {
+          "mean": -0.9500000000021542,
+          "angular_scatter": 1.8330280744574132e-13,
+          "reference": -0.9499999999999992
+        }
+      }
+    ],
+    "12": [
+      {
+        "r": 0.05,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5012509589921648,
+          "angular_scatter": 3.833946072636493e-12,
+          "reference": 0.5012509590094382
+        },
+        "chi": {
+          "mean": 0.9999999922925409,
+          "angular_scatter": 2.533166175053662e-14,
+          "reference": 0.9999999922922662
+        },
+        "g_rr": {
+          "mean": 1.0000000000000089,
+          "angular_scatter": 2.2832229793577697e-15,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -2.852722757009497e-09,
+          "angular_scatter": 8.880959068124795e-13,
+          "reference": -2.8581675261102045e-09
+        },
+        "Khat": {
+          "mean": -2.999999909304708,
+          "angular_scatter": 1.0168217878106123e-12,
+          "reference": -2.9999999092659375
+        },
+        "Theta": {
+          "mean": 8.913232136817055e-15,
+          "angular_scatter": 6.299012527138176e-17,
+          "reference": 5.408107756932086e-23
+        },
+        "Lambda_r": {
+          "mean": 3.236760598348767e-13,
+          "angular_scatter": 1.4567904177630313e-15,
+          "reference": 1.1107607999520742e-21
+        },
+        "beta_r": {
+          "mean": -0.049999998455276855,
+          "angular_scatter": 1.0670551737204315e-14,
+          "reference": -0.04999999845212647
+        }
+      },
+      {
+        "r": 0.1,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5050008564010875,
+          "angular_scatter": 3.5081949208715232e-12,
+          "reference": 0.5050008564133296
+        },
+        "chi": {
+          "mean": 0.9999999930647511,
+          "angular_scatter": 2.3723667278170614e-14,
+          "reference": 0.9999999930645467
+        },
+        "g_rr": {
+          "mean": 1.0000000000000293,
+          "angular_scatter": 6.908351061859368e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -1.0229550178488786e-08,
+          "angular_scatter": 3.0971195190919446e-12,
+          "reference": -1.0248814531191383e-08
+        },
+        "Khat": {
+          "mean": -2.9999999239599773,
+          "angular_scatter": 8.701244632603537e-13,
+          "reference": -2.9999999239318185
+        },
+        "Theta": {
+          "mean": 6.684097397424583e-15,
+          "angular_scatter": 6.412871314927594e-16,
+          "reference": -1.995306095959465e-23
+        },
+        "Lambda_r": {
+          "mean": 5.169813464770855e-13,
+          "angular_scatter": 6.184803897872218e-14,
+          "reference": -8.565733994400215e-22
+        },
+        "beta_r": {
+          "mean": -0.09999999721603824,
+          "angular_scatter": 3.015396259050411e-14,
+          "reference": -0.0999999972107336
+        }
+      },
+      {
+        "r": 0.15,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5112507088563547,
+          "angular_scatter": 2.0962716838014264e-12,
+          "reference": 0.5112507088633466
+        },
+        "chi": {
+          "mean": 0.999999994185925,
+          "angular_scatter": 1.4153962520657492e-14,
+          "reference": 0.9999999941858093
+        },
+        "g_rr": {
+          "mean": 1.0000000000000593,
+          "angular_scatter": 1.8660418415274704e-14,
+          "reference": 0.9999999999999998
+        },
+        "A_rr": {
+          "mean": -1.9179638235316063e-08,
+          "angular_scatter": 5.7687879984763904e-12,
+          "reference": -1.9211415691550692e-08
+        },
+        "Khat": {
+          "mean": -2.9999999438085707,
+          "angular_scatter": 9.844909447384638e-13,
+          "reference": -2.9999999437917513
+        },
+        "Theta": {
+          "mean": 9.581454466325013e-15,
+          "angular_scatter": 3.2150161230825756e-15,
+          "reference": -3.993426204202992e-23
+        },
+        "Lambda_r": {
+          "mean": 5.155176492600017e-13,
+          "angular_scatter": 1.1928226064562123e-13,
+          "reference": -2.8206862799232957e-22
+        },
+        "beta_r": {
+          "mean": -0.14999999649137463,
+          "angular_scatter": 5.2226542266359017e-14,
+          "reference": -0.14999999648536685
+        }
+      },
+      {
+        "r": 0.2,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5200005433899838,
+          "angular_scatter": 2.3915711185552484e-12,
+          "reference": 0.5200005433947904
+        },
+        "chi": {
+          "mean": 0.999999995461572,
+          "angular_scatter": 3.0265428513105175e-14,
+          "reference": 0.9999999954615006
+        },
+        "g_rr": {
+          "mean": 1.0000000000000466,
+          "angular_scatter": 8.004921657185306e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.6387401410540758e-08,
+          "angular_scatter": 5.8125055512372054e-12,
+          "reference": -2.6427046336228395e-08
+        },
+        "Khat": {
+          "mean": -2.9999999640238135,
+          "angular_scatter": 2.7051284727339397e-12,
+          "reference": -2.9999999640212938
+        },
+        "Theta": {
+          "mean": -1.6868773932101984e-15,
+          "angular_scatter": 9.859918719629081e-15,
+          "reference": 3.1174596598503335e-23
+        },
+        "Lambda_r": {
+          "mean": 3.771429957035988e-13,
+          "angular_scatter": 3.4760997372413106e-13,
+          "reference": -4.157385512380166e-24
+        },
+        "beta_r": {
+          "mean": -0.199999996338099,
+          "angular_scatter": 1.5645263350185463e-13,
+          "reference": -0.19999999633291957
+        }
+      },
+      {
+        "r": 0.25,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.53125038531876,
+          "angular_scatter": 2.980835436976762e-11,
+          "reference": 0.531250385331251
+        },
+        "chi": {
+          "mean": 0.9999999967042222,
+          "angular_scatter": 1.0656894492407858e-13,
+          "reference": 0.9999999967041754
+        },
+        "g_rr": {
+          "mean": 1.000000000000118,
+          "angular_scatter": 1.478924742761417e-13,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.9692510294380596e-08,
+          "angular_scatter": 1.4306510145400207e-10,
+          "reference": -2.9647952485934315e-08
+        },
+        "Khat": {
+          "mean": -2.9999999808684388,
+          "angular_scatter": 1.1559794740060192e-10,
+          "reference": -2.9999999807983833
+        },
+        "Theta": {
+          "mean": 6.038811076530431e-14,
+          "angular_scatter": 1.0645647171175366e-13,
+          "reference": 1.2317632666174275e-23
+        },
+        "Lambda_r": {
+          "mean": 2.74692938881571e-13,
+          "angular_scatter": 2.498234357717344e-13,
+          "reference": 2.968523743784364e-23
+        },
+        "beta_r": {
+          "mean": -0.24999999666773387,
+          "angular_scatter": 1.590458591092057e-12,
+          "reference": -0.24999999666267944
+        }
+      },
+      {
+        "r": 0.3,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5450002524214449,
+          "angular_scatter": 1.9822904815586018e-10,
+          "reference": 0.5450002523588591
+        },
+        "chi": {
+          "mean": 0.9999999977756331,
+          "angular_scatter": 1.2639888350655942e-12,
+          "reference": 0.9999999977760688
+        },
+        "g_rr": {
+          "mean": 1.000000000000071,
+          "angular_scatter": 4.677490624186089e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.836297384504276e-08,
+          "angular_scatter": 5.172381746259156e-11,
+          "reference": -2.8409080740122373e-08
+        },
+        "Khat": {
+          "mean": -2.999999992306856,
+          "angular_scatter": 6.25360285088385e-11,
+          "reference": -2.999999992306711
+        },
+        "Theta": {
+          "mean": 1.4411220046794547e-14,
+          "angular_scatter": 3.528389888463819e-14,
+          "reference": -3.587178589705102e-23
+        },
+        "Lambda_r": {
+          "mean": -3.604978740100113e-13,
+          "angular_scatter": 1.889511382451284e-12,
+          "reference": 1.3765722034259071e-22
+        },
+        "beta_r": {
+          "mean": -0.2999999972954296,
+          "angular_scatter": 1.070802608592463e-12,
+          "reference": -0.2999999972917508
+        }
+      },
+      {
+        "r": 0.35,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5612501523152045,
+          "angular_scatter": 1.0046680338501608e-10,
+          "reference": 0.5612501523116321
+        },
+        "chi": {
+          "mean": 0.999999998607821,
+          "angular_scatter": 7.189575666425721e-13,
+          "reference": 0.9999999986078532
+        },
+        "g_rr": {
+          "mean": 1.0000000000000107,
+          "angular_scatter": 5.125876041463528e-14,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": -2.379124741348009e-08,
+          "angular_scatter": 5.340025964404253e-11,
+          "reference": -2.3807194889379772e-08
+        },
+        "Khat": {
+          "mean": -2.9999999986961736,
+          "angular_scatter": 4.315923319213286e-11,
+          "reference": -2.9999999986935815
+        },
+        "Theta": {
+          "mean": -6.154058620317132e-15,
+          "angular_scatter": 5.558663659291058e-14,
+          "reference": -1.2152581422013433e-23
+        },
+        "Lambda_r": {
+          "mean": 7.102959579595607e-13,
+          "angular_scatter": 2.782091917260836e-12,
+          "reference": 2.957716869096093e-22
+        },
+        "beta_r": {
+          "mean": -0.3499999980222691,
+          "angular_scatter": 8.843258484536521e-13,
+          "reference": -0.34999999801963794
+        }
+      },
+      {
+        "r": 0.4,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.5800000844863593,
+          "angular_scatter": 2.6517855320562804e-11,
+          "reference": 0.5800000844781588
+        },
+        "chi": {
+          "mean": 0.9999999991932651,
+          "angular_scatter": 1.9956040469823158e-13,
+          "reference": 0.9999999991932594
+        },
+        "g_rr": {
+          "mean": 0.999999999999968,
+          "angular_scatter": 4.165289182981834e-14,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -1.7689000579757865e-08,
+          "angular_scatter": 3.54381266774598e-11,
+          "reference": -1.767547008991953e-08
+        },
+        "Khat": {
+          "mean": -3.0000000012925137,
+          "angular_scatter": 4.207682747378155e-11,
+          "reference": -3.000000001302282
+        },
+        "Theta": {
+          "mean": -1.7817049240826838e-14,
+          "angular_scatter": 5.6024107231742724e-14,
+          "reference": -5.327370192506287e-24
+        },
+        "Lambda_r": {
+          "mean": -2.4085544161372604e-13,
+          "angular_scatter": 2.897263716549611e-12,
+          "reference": 1.3584649735995504e-22
+        },
+        "beta_r": {
+          "mean": -0.39999999869261305,
+          "angular_scatter": 1.1753552814221308e-12,
+          "reference": -0.3999999986888981
+        }
+      },
+      {
+        "r": 0.45,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6012500428914065,
+          "angular_scatter": 1.6732778576934034e-11,
+          "reference": 0.6012500428971782
+        },
+        "chi": {
+          "mean": 0.9999999995685411,
+          "angular_scatter": 1.3181610794317955e-13,
+          "reference": 0.999999999568427
+        },
+        "g_rr": {
+          "mean": 0.9999999999999631,
+          "angular_scatter": 1.0923855516905793e-14,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -1.173555232022805e-08,
+          "angular_scatter": 6.992824067366297e-12,
+          "reference": -1.1707311999271286e-08
+        },
+        "Khat": {
+          "mean": -3.0000000017478827,
+          "angular_scatter": 1.1766024145840914e-11,
+          "reference": -3.0000000017562933
+        },
+        "Theta": {
+          "mean": -1.839740397138763e-14,
+          "angular_scatter": 1.469489732275503e-14,
+          "reference": 4.076576893502838e-24
+        },
+        "Lambda_r": {
+          "mean": 4.854808088311756e-13,
+          "angular_scatter": 6.701958294479874e-13,
+          "reference": 8.39157333455595e-24
+        },
+        "beta_r": {
+          "mean": -0.44999999921853917,
+          "angular_scatter": 7.494712434633534e-13,
+          "reference": -0.4499999992130786
+        }
+      },
+      {
+        "r": 0.5,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6250000198357117,
+          "angular_scatter": 7.802136895076531e-12,
+          "reference": 0.6250000198441493
+        },
+        "chi": {
+          "mean": 0.9999999997877784,
+          "angular_scatter": 6.235920908874264e-14,
+          "reference": 0.9999999997876566
+        },
+        "g_rr": {
+          "mean": 0.9999999999999852,
+          "angular_scatter": 5.7783782199547195e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -6.955075261533053e-09,
+          "angular_scatter": 1.7471390422376923e-12,
+          "reference": -6.9384132517866035e-09
+        },
+        "Khat": {
+          "mean": -3.000000001337381,
+          "angular_scatter": 5.108063111045929e-12,
+          "reference": -3.0000000013370345
+        },
+        "Theta": {
+          "mean": -1.6866983609698125e-15,
+          "angular_scatter": 4.648199876188583e-15,
+          "reference": 7.466616885043794e-24
+        },
+        "Lambda_r": {
+          "mean": 4.2963238824222574e-13,
+          "angular_scatter": 4.4901084219561636e-13,
+          "reference": -6.247443565843366e-23
+        },
+        "beta_r": {
+          "mean": -0.49999999957893837,
+          "angular_scatter": 6.336300616413487e-13,
+          "reference": -0.49999999957236285
+        }
+      },
+      {
+        "r": 0.55,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6512500083028493,
+          "angular_scatter": 3.972752203048664e-12,
+          "reference": 0.6512500083072773
+        },
+        "chi": {
+          "mean": 0.9999999999044586,
+          "angular_scatter": 3.3462396961363134e-14,
+          "reference": 0.9999999999043854
+        },
+        "g_rr": {
+          "mean": 1.0000000000000173,
+          "angular_scatter": 6.2530792496919005e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -3.6846825787160913e-09,
+          "angular_scatter": 9.168247989683772e-13,
+          "reference": -3.678975015945399e-09
+        },
+        "Khat": {
+          "mean": -3.000000000784318,
+          "angular_scatter": 2.397881066760239e-12,
+          "reference": -3.0000000007810597
+        },
+        "Theta": {
+          "mean": 7.352292681946084e-15,
+          "angular_scatter": 3.2155256680177756e-15,
+          "reference": 8.352906780543335e-25
+        },
+        "Lambda_r": {
+          "mean": 1.0837906858963189e-13,
+          "angular_scatter": 2.275012220380435e-13,
+          "reference": -6.311076535965976e-23
+        },
+        "beta_r": {
+          "mean": -0.5499999997968559,
+          "angular_scatter": 4.848641740209966e-13,
+          "reference": -0.5499999997903577
+        }
+      },
+      {
+        "r": 0.6,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.6800000031164704,
+          "angular_scatter": 1.635887848838446e-12,
+          "reference": 0.6800000031183482
+        },
+        "chi": {
+          "mean": 0.999999999960903,
+          "angular_scatter": 1.5690850683908054e-14,
+          "reference": 0.9999999999608675
+        },
+        "g_rr": {
+          "mean": 1.0000000000000377,
+          "angular_scatter": 6.234263120025668e-15,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": -1.7388973009092297e-09,
+          "angular_scatter": 5.953418488615544e-13,
+          "reference": -1.739904160303375e-09
+        },
+        "Khat": {
+          "mean": -3.0000000003780665,
+          "angular_scatter": 1.0589194853196428e-12,
+          "reference": -3.000000000374519
+        },
+        "Theta": {
+          "mean": 1.129938975872266e-14,
+          "angular_scatter": 1.8653576510194296e-15,
+          "reference": 1.3875819318513136e-24
+        },
+        "Lambda_r": {
+          "mean": -7.768185818954286e-14,
+          "angular_scatter": 6.760891642468286e-14,
+          "reference": -3.706711201769017e-23
+        },
+        "beta_r": {
+          "mean": -0.5999999999133865,
+          "angular_scatter": 3.1274534017116763e-13,
+          "reference": -0.599999999907873
+        }
+      },
+      {
+        "r": 0.65,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7112500010360843,
+          "angular_scatter": 7.200787359411033e-13,
+          "reference": 0.7112500010360687
+        },
+        "chi": {
+          "mean": 0.9999999999855942,
+          "angular_scatter": 6.637602428648228e-15,
+          "reference": 0.9999999999855828
+        },
+        "g_rr": {
+          "mean": 1.0000000000000426,
+          "angular_scatter": 5.6950356131861725e-15,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -7.255670910594325e-10,
+          "angular_scatter": 7.266828667312462e-13,
+          "reference": -7.292136617977076e-10
+        },
+        "Khat": {
+          "mean": -3.000000000152448,
+          "angular_scatter": 2.9896608513949603e-13,
+          "reference": -3.000000000149991
+        },
+        "Theta": {
+          "mean": 1.0846325482534425e-14,
+          "angular_scatter": 1.4279471186873437e-15,
+          "reference": 2.680738662804988e-25
+        },
+        "Lambda_r": {
+          "mean": -1.5329894848687973e-13,
+          "angular_scatter": 4.1517135130878443e-14,
+          "reference": -6.372401792876239e-24
+        },
+        "beta_r": {
+          "mean": -0.6499999999682473,
+          "angular_scatter": 2.2331678674019956e-13,
+          "reference": -0.6499999999640658
+        }
+      },
+      {
+        "r": 0.7,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7450000002999374,
+          "angular_scatter": 8.088607682482761e-13,
+          "reference": 0.7450000002989041
+        },
+        "chi": {
+          "mean": 0.9999999999952844,
+          "angular_scatter": 4.261384851504591e-15,
+          "reference": 0.9999999999952865
+        },
+        "g_rr": {
+          "mean": 1.0000000000000369,
+          "angular_scatter": 4.51913278520141e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.6460318177760886e-10,
+          "angular_scatter": 6.447819010908106e-13,
+          "reference": -2.678704409119673e-10
+        },
+        "Khat": {
+          "mean": -3.0000000000514238,
+          "angular_scatter": 8.73176469211132e-14,
+          "reference": -3.000000000049945
+        },
+        "Theta": {
+          "mean": 8.259191760900404e-15,
+          "angular_scatter": 1.187821327952217e-15,
+          "reference": -7.5055108834712565e-25
+        },
+        "Lambda_r": {
+          "mean": -1.3625671813939206e-13,
+          "angular_scatter": 5.16804223725898e-14,
+          "reference": 1.0119425257484408e-23
+        },
+        "beta_r": {
+          "mean": -0.6999999999906636,
+          "angular_scatter": 1.293119995608244e-13,
+          "reference": -0.6999999999877465
+        }
+      },
+      {
+        "r": 0.75,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.7812500000734452,
+          "angular_scatter": 6.631795516886859e-13,
+          "reference": 0.7812500000726891
+        },
+        "chi": {
+          "mean": 0.9999999999986602,
+          "angular_scatter": 5.037445816507784e-15,
+          "reference": 0.9999999999986625
+        },
+        "g_rr": {
+          "mean": 1.000000000000027,
+          "angular_scatter": 2.926732994425127e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -8.269123018035893e-11,
+          "angular_scatter": 3.1841870704093944e-13,
+          "reference": -8.524629127359499e-11
+        },
+        "Khat": {
+          "mean": -3.000000000014364,
+          "angular_scatter": 1.0135477366820463e-13,
+          "reference": -3.000000000013712
+        },
+        "Theta": {
+          "mean": 5.379348706208225e-15,
+          "angular_scatter": 8.456725054678559e-16,
+          "reference": 5.740689236899815e-19
+        },
+        "Lambda_r": {
+          "mean": -8.716311114376613e-14,
+          "angular_scatter": 3.0718582236401586e-14,
+          "reference": -1.9356489274068445e-17
+        },
+        "beta_r": {
+          "mean": -0.7499999999983782,
+          "angular_scatter": 5.5314550349548496e-14,
+          "reference": -0.7499999999964352
+        }
+      },
+      {
+        "r": 0.8,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.8200000000144128,
+          "angular_scatter": 2.5453298892780763e-13,
+          "reference": 0.8200000000141594
+        },
+        "chi": {
+          "mean": 0.9999999999996851,
+          "angular_scatter": 2.3852441486594896e-15,
+          "reference": 0.9999999999996827
+        },
+        "g_rr": {
+          "mean": 1.0000000000000184,
+          "angular_scatter": 1.5587665693871347e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -2.1340061669301396e-11,
+          "angular_scatter": 1.48686767628869e-13,
+          "reference": -2.2347958269989768e-11
+        },
+        "Khat": {
+          "mean": -3.0000000000032543,
+          "angular_scatter": 8.080273038562229e-14,
+          "reference": -3.000000000002841
+        },
+        "Theta": {
+          "mean": 3.2363859129700653e-15,
+          "angular_scatter": 6.703712804102502e-16,
+          "reference": -1.0323374795352192e-24
+        },
+        "Lambda_r": {
+          "mean": -5.192942400887472e-14,
+          "angular_scatter": 1.5955893834584205e-14,
+          "reference": 9.217288774383114e-24
+        },
+        "beta_r": {
+          "mean": -0.8000000000004284,
+          "angular_scatter": 2.369292410721894e-14,
+          "reference": -0.7999999999991487
+        }
+      },
+      {
+        "r": 0.85,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.861250000002009,
+          "angular_scatter": 2.1146032341908296e-13,
+          "reference": 0.861250000002014
+        },
+        "chi": {
+          "mean": 0.9999999999999472,
+          "angular_scatter": 2.0270123194879032e-15,
+          "reference": 0.9999999999999412
+        },
+        "g_rr": {
+          "mean": 1.0000000000000124,
+          "angular_scatter": 4.863169719131264e-16,
+          "reference": 1.0000000000000002
+        },
+        "A_rr": {
+          "mean": -4.193976972376697e-12,
+          "angular_scatter": 1.5136329670711975e-13,
+          "reference": -4.651709695237278e-12
+        },
+        "Khat": {
+          "mean": -3.0000000000005826,
+          "angular_scatter": 1.976836194275289e-14,
+          "reference": -3.000000000000422
+        },
+        "Theta": {
+          "mean": 1.8771048127990512e-15,
+          "angular_scatter": 3.470344259937593e-16,
+          "reference": -7.916076544766245e-25
+        },
+        "Lambda_r": {
+          "mean": -2.287030732762359e-14,
+          "angular_scatter": 9.875951629444665e-15,
+          "reference": 3.7447405609275985e-24
+        },
+        "beta_r": {
+          "mean": -0.8500000000006832,
+          "angular_scatter": 1.0981171753732803e-14,
+          "reference": -0.8499999999998452
+        }
+      },
+      {
+        "r": 0.9,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.9049999999995746,
+          "angular_scatter": 1.2246221471145632e-13,
+          "reference": 0.9050000000001694
+        },
+        "chi": {
+          "mean": 1.000000000000007,
+          "angular_scatter": 1.9578996300393833e-15,
+          "reference": 0.9999999999999926
+        },
+        "g_rr": {
+          "mean": 1.0000000000000067,
+          "angular_scatter": 1.0411116043446717e-15,
+          "reference": 0.9999999999999999
+        },
+        "A_rr": {
+          "mean": -2.405544430451388e-13,
+          "angular_scatter": 1.0472696596095594e-13,
+          "reference": -6.763320199058255e-13
+        },
+        "Khat": {
+          "mean": -3.0000000000000107,
+          "angular_scatter": 8.28195866998772e-15,
+          "reference": -3.0000000000000355
+        },
+        "Theta": {
+          "mean": -1.7459799755399655e-15,
+          "angular_scatter": 1.214805777778067e-15,
+          "reference": -5.462787594670193e-25
+        },
+        "Lambda_r": {
+          "mean": 7.326925506227416e-14,
+          "angular_scatter": 1.4672870301545186e-14,
+          "reference": -3.8116591619230384e-26
+        },
+        "beta_r": {
+          "mean": -0.9000000000005214,
+          "angular_scatter": 8.343967264474092e-15,
+          "reference": -0.8999999999999818
+        }
+      },
+      {
+        "r": 0.95,
+        "samples": 64,
+        "alpha": {
+          "mean": 0.9512500000026098,
+          "angular_scatter": 1.1279148424205184e-12,
+          "reference": 0.9512500000000041
+        },
+        "chi": {
+          "mean": 0.9999999999999893,
+          "angular_scatter": 7.280047277360843e-15,
+          "reference": 0.9999999999999996
+        },
+        "g_rr": {
+          "mean": 1.0000000000000013,
+          "angular_scatter": 2.1263379640695584e-15,
+          "reference": 1.0
+        },
+        "A_rr": {
+          "mean": -3.4854761094571556e-13,
+          "angular_scatter": 1.0379268575071386e-13,
+          "reference": -4.780632492945834e-14
+        },
+        "Khat": {
+          "mean": -2.999999999999976,
+          "angular_scatter": 4.999977245791386e-14,
+          "reference": -3.0000000000000013
+        },
+        "Theta": {
+          "mean": -1.2337205439347854e-14,
+          "angular_scatter": 5.076778158601116e-15,
+          "reference": -3.912532340834038e-25
+        },
+        "Lambda_r": {
+          "mean": -3.472497799827886e-13,
+          "angular_scatter": 1.4804827359869816e-13,
+          "reference": -2.12809302672821e-24
+        },
+        "beta_r": {
+          "mean": -0.9500000000002775,
+          "angular_scatter": 1.6974996681543828e-14,
+          "reference": -0.9499999999999992
+        }
+      }
+    ]
+  },
+  "source_hashes_unchanged": true,
+  "binary_hashes_unchanged": true,
+  "finished_utc": "2026-10-27T02:17:59.258775+00:00",
+  "scope_status": "partial research backend; coupled scri consistency failures retained; production/puncture/scalar milestones incomplete"
+}
