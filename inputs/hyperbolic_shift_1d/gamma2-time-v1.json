@@ -1,0 +1,48 @@
+{
+  "hypothesis": "Independent puncture time refinement for the coefficient-two candidate. Use three timesteps inside the initial outer-boundary RK4 stability bound diagnosed on the coefficient-one control.",
+  "cases": [
+    {
+      "n": 257,
+      "t": 0.9,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 2,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "inner_z4_damping": 8,
+      "puncture": true,
+      "wall_seconds": 180,
+      "name": "base",
+      "cfl": 0.0375
+    },
+    {
+      "n": 257,
+      "t": 0.9,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 2,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "inner_z4_damping": 8,
+      "puncture": true,
+      "wall_seconds": 180,
+      "name": "half",
+      "cfl": 0.01875
+    },
+    {
+      "n": 257,
+      "t": 0.9,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 2,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "inner_z4_damping": 8,
+      "puncture": true,
+      "wall_seconds": 180,
+      "name": "quarter",
+      "cfl": 0.009375
+    }
+  ],
+  "scope": "Three fresh fixed-grid runs to coordinate t=.9; no inference of time convergence at100M."
+}

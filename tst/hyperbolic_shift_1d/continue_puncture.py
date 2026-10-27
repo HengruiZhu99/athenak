@@ -17,6 +17,7 @@ def main():
  p.add_argument('--report-dt',type=float,default=.025);p.add_argument('--profile-dt',type=float,default=.1);a=p.parse_args()
  parent=a.parent.resolve();mp=parent/'manifest.json';m=json.loads(mp.read_text())
  if m['status']!='completed' or not m['arguments'].get('puncture'):raise ValueError('Need a completed puncture parent')
+ if m.get('stage_stats',{}).get('min_stage_shift_lapse_gap_times_g',1.)<=0:raise ValueError('Parent has lapse-shift speed coincidence evidence')
  for name in ['profiles.npz','history.json']:
   if m.get('checkpoint_hashes',{}).get(name)!=digest(parent/name):raise ValueError('Missing or mismatched checkpoint hash: '+name)
  if 'continuation_harness_sha256' in m and digest(parent/'continuation_harness.py')!=m['continuation_harness_sha256']:raise ValueError('Parent continuation harness mismatch')
@@ -61,6 +62,8 @@ def main():
      if row['max_relative_null']>5e-14:raise FloatingPointError('Nullness guard')
      if row['pole']>1e-2:raise FloatingPointError('Scri numerator guard')
      if row['max_speed']*dt/e.h>.4:raise FloatingPointError('CFL guard')
+     if row.get('min_stage_shift_lapse_gap_times_g',row.get('shift_lapse_gap_times_g_min',1.))<=0:
+      raise FloatingPointError('Lapse-shift speed coincidence guard')
      if abs(row.get('apparent_horizon_mass',0)/(1/3)-1)>.05:raise FloatingPointError('Exploratory 5 percent horizon-mass guard')
      if time.monotonic()-begin>a.wall_seconds:raise TimeoutError('Bounded walltime')
    status='completed'
@@ -68,10 +71,12 @@ def main():
    status='bounded_stop' if isinstance(ex,TimeoutError) else 'failed';error=str(ex)
  np.savez_compressed(a.output/'profiles.npz',r=e.r,t=np.array(times),q=np.array(profiles),last=q,last_time=t,compensation=e.compensation)
  if hasattr(e,'failure_state'):np.savez_compressed(a.output/'failed-stage.npz',r=e.r,q=e.failure_state,last_accepted_time=t,attempted_step=step)
+ if hasattr(e,'speed_crossing_state'):np.savez_compressed(a.output/'speed-crossing-state.npz',**e.speed_crossing_state)
  record.update(status=status,t=t,last_accepted_step=int(round(t/dt)),attempted_step=step,steps_requested=steps,
                error=error,wall_seconds=time.monotonic()-begin,stage_stats=e.stats,profile_scope='Current segment only; histories include verified parent history')
  atomic(a.output/'history.json',history)
  record['checkpoint_hashes']={name:digest(a.output/name) for name in ['profiles.npz','history.json']}
+ if (a.output/'speed-crossing-state.npz').exists():record['checkpoint_hashes']['speed-crossing-state.npz']=digest(a.output/'speed-crossing-state.npz')
  atomic(a.output/'manifest.json',record)
  print(json.dumps({k:record[k] for k in ['status','t','error','wall_seconds','stage_stats']}),flush=True)
 

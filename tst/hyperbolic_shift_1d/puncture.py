@@ -152,12 +152,20 @@ class PunctureEvolution(Evolution):
                     ('max_shift_pole',abs(self.restoring*(s[-1,7]+target_correction[-1]))),
                     ('max_driver_boundary_defect',abs(bt-(beta[-1]*db_driver[-1]+source[-1]+mu[-1]*s[-1,9]+source_limit)))]:
    st[key]=max(st.get(key,0),float(value))
+  gap=4*mu/3-chi*(F+g*eta*.25*self.w**2)
+  gap_node=1+int(np.argmin(gap[1:]))
+  if gap[gap_node]<st.get('min_stage_shift_lapse_gap_times_g',np.inf):
+   st['min_stage_shift_lapse_gap_times_g']=float(gap[gap_node])
+   st['min_stage_gap_radius']=float(r[gap_node])
+  if gap[gap_node]<=0 and not hasattr(self,'speed_crossing_state'):
+   self.speed_crossing_state=dict(q=s.copy(),r=r.copy(),rhs_call=st['calls'],
+                                  minimum_gap=float(gap[gap_node]),radius=float(r[gap_node]))
   used=rate[1:-1,:7].copy();used[:,0]*=chi[1:-1]
   for field in [2,3,4]:used[:,field]*=weight[1:-1]
   self.last=dict(diag=diag,alpha=alpha,chi=chi,g=g,beta=beta,pole=S[-1],trace=trace,
                   light_speed=np.r_[0.,alpha[1:]*np.sqrt(chi[1:]/g[1:])],lapse_speed=np.r_[0.,light],shift_speed=np.r_[0.,shift],
                   inner_beta_slope=float(db[0]),shift_mu=mu,shift_restoring=xi_shift,
-                  shift_lapse_gap_times_g=4*mu/3-chi*(F+g*eta*.25*self.w**2),
+                  shift_lapse_gap_times_g=gap,
                   physical=q,physical_first=dp,raw_clock_rate=float(R[-1,6]-self.op.endpoint_first(S)[6]),
                   rate_difference=used-raw[1:-1,:7],original_equation_rate_difference=float(np.max(abs(used-raw[1:-1,:7]))))
   return (rate,s) if return_state else rate

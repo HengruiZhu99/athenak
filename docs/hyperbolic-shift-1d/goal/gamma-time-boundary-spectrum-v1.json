@@ -1,0 +1,41 @@
+{
+  "source_case": "output/hyperbolic-shift-1d/gamma-inner-damping-time-v1/base",
+  "scope": "Only outer collar perturbed; interior held fixed. Artificial inner interface and nonnormal effects prevent a full-domain stability claim.",
+  "rows": [
+    {
+      "t": 0.0,
+      "nodes": 16,
+      "r_min": 0.9432357405668622,
+      "spectral_abscissa": -0.7906426032041541,
+      "imaginary_part": 0.0,
+      "max_abs": 11604.062666172333,
+      "RK4": [
+        {
+          "dt": 0.00029296875,
+          "max_RK4_amplification": 2.39621990351509,
+          "eigenvalue_real": -11604.062666172333,
+          "eigenvalue_imag": 0.0
+        },
+        {
+          "dt": 0.000146484375,
+          "max_RK4_amplification": 0.9998841899189265,
+          "eigenvalue_real": -0.7906426032041541,
+          "eigenvalue_imag": 0.0
+        },
+        {
+          "dt": 9.765625e-05,
+          "max_RK4_amplification": 0.9999227917889882,
+          "eigenvalue_real": -0.7906426032041541,
+          "eigenvalue_imag": 0.0
+        },
+        {
+          "dt": 7.32421875e-05,
+          "max_RK4_amplification": 0.9999420932828692,
+          "eigenvalue_real": -0.7906426032041541,
+          "eigenvalue_imag": 0.0
+        }
+      ],
+      "wall_seconds": 0.28133637499999997
+    }
+  ]
+}

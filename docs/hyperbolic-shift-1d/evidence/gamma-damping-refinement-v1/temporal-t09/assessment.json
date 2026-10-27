@@ -1,0 +1,140 @@
+{
+  "kind": "temporal",
+  "t": 0.9,
+  "t_over_M": 2.7,
+  "fields": [
+    "chi",
+    "g",
+    "Arr",
+    "p+3",
+    "Theta",
+    "Lambda",
+    "alpha",
+    "beta",
+    "B"
+  ],
+  "runs": [
+    {
+      "case": "output/hyperbolic-shift-1d/gamma-inner-damping-time-v1/half",
+      "n": 257,
+      "dt": 0.000146484375,
+      "hashes": {
+        "manifest.json": "99c45d33e3c47f824a6aa5248a6352328eae93d6da785310822bafd4fd9c185d",
+        "history.json": "3f97768a079247bdaa15b3080a0d150e53696ad2d8ad3febb4069e651bb97bde",
+        "profiles.npz": "dca742b2ad080c9de80331a8946cccadafee64be53d6611d35f4e298a5eec4a1"
+      },
+      "diagnostics": {
+        "H_exterior_rms": 0.0030402982494255907,
+        "M_exterior_rms": 0.007942326710896772,
+        "apparent_horizon_mass": 0.3333349579970381,
+        "apparent_horizon_r": 0.07593735395368933,
+        "H_interior_max": 0.01737470240846298,
+        "g_min": 0.9467548025523197
+      }
+    },
+    {
+      "case": "output/hyperbolic-shift-1d/gamma-inner-damping-time-v1/quarter",
+      "n": 257,
+      "dt": 7.32421875e-05,
+      "hashes": {
+        "manifest.json": "4e62035ed683ee5c4ac1b6d3ba5bd1e38fd1355bce35d0ce3fcb363dcfc7f470",
+        "history.json": "3118d9daf95b6433d522054fb409aaced983a55e62bce22f8697dc62dc4b012e",
+        "profiles.npz": "70392a5b167961c6a2550b8627e903d5e1cf9971e3b682ede854c140dd4fa9a5"
+      },
+      "diagnostics": {
+        "H_exterior_rms": 0.0030402982485826673,
+        "M_exterior_rms": 0.00794232675830631,
+        "apparent_horizon_mass": 0.3333349579898053,
+        "apparent_horizon_r": 0.07593735393775841,
+        "H_interior_max": 0.01737470378699471,
+        "g_min": 0.9467548025523785
+      }
+    },
+    {
+      "case": "output/hyperbolic-shift-1d/gamma-inner-damping-time-v1/eighth",
+      "n": 257,
+      "dt": 3.662109375e-05,
+      "hashes": {
+        "manifest.json": "059d0c84ff6573b31b3c7ec264044333482d5dedb71a88e8b795a3bdcd390b94",
+        "history.json": "254243e210927d09a284d19cf8176d86e406028bfdea42fa913e7a94dbdba866",
+        "profiles.npz": "31b52734e3019afbb1ae5186c61407ab9f6a78f6ccc4a920fdbb49f215d5c575"
+      },
+      "diagnostics": {
+        "H_exterior_rms": 0.0030402982485868355,
+        "M_exterior_rms": 0.00794232675995194,
+        "apparent_horizon_mass": 0.33333495798912166,
+        "apparent_horizon_r": 0.07593735393751636,
+        "H_interior_max": 0.017374710319580607,
+        "g_min": 0.9467548025523821
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "full": {
+        "field_rms": [
+          4.216387127729995e-11,
+          1.8421840085443029e-10,
+          2.1142233410886485e-10,
+          1.1371931881825988e-11,
+          3.8762602103699045e-12,
+          1.7505260566644717e-08,
+          2.631459702420713e-12,
+          1.3190456525722525e-10,
+          4.907198594091635e-13
+        ],
+        "mixed_rms": 1.75080584716493e-08
+      },
+      "exterior": {
+        "field_rms": [
+          4.2172729649679285e-11,
+          1.7770318883158263e-10,
+          2.0467829077066783e-10,
+          3.374442900771002e-12,
+          3.372412945654091e-12,
+          1.5594795685888336e-08,
+          2.573666270677005e-12,
+          1.3193369771478053e-10,
+          4.579016274947806e-13
+        ],
+        "mixed_rms": 1.5597767107628576e-08
+      }
+    },
+    {
+      "full": {
+        "field_rms": [
+          2.9769196294191975e-12,
+          1.90622395674538e-11,
+          1.6280017031004404e-11,
+          1.8174923346364177e-12,
+          5.97772508667354e-13,
+          5.731003442835998e-09,
+          2.0554594992985048e-13,
+          9.43825027077321e-12,
+          1.0973503251561952e-13
+        ],
+        "mixed_rms": 5.731067136864638e-09
+      },
+      "exterior": {
+        "field_rms": [
+          2.9769919425828517e-12,
+          1.2671486692421315e-11,
+          1.4899020923309667e-11,
+          3.656211533371533e-13,
+          1.3473751739948843e-13,
+          1.0302941302493912e-09,
+          1.8919979223270698e-13,
+          9.440297966898299e-12,
+          3.3419704320233964e-14
+        ],
+        "mixed_rms": 1.0305273954044177e-09
+      }
+    }
+  ],
+  "orders": {
+    "full": 1.6111434052785996,
+    "exterior": 3.919884752498933
+  },
+  "norm": "Radial r^2 times Jacobian trapezoidal weights; exterior mask begins at the larger interpolated AH radius in each pair.",
+  "scope": "Exact saved common-time profiles, verified identical equation sources; no convergence claim beyond the sampled time."
+}

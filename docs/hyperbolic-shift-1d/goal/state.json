@@ -1,25 +1,27 @@
 {
-  "updated_utc": "2026-10-27T17:58:49.237507+00:00",
+  "updated_utc": "2026-10-27T18:48:22.994711+00:00",
   "goal_status": "active",
   "turn_classification": "progress",
   "target_t_over_M": 100,
   "target_coordinate_t": 33.333333333333336,
   "latest_user_direction": "Stay close to the moving-puncture Gamma driver in the bulk; adapt only as needed for exact algebraic scri closure.",
-  "completed": "Bulk moving-puncture Gamma driver retained. Three-grid original-damping evidence extends to3M with mixed profile order3.758; N257 andN513 both complete24M. Optional compact lapse-adjusted Z4 damping passes native/AF/boundary audits; fresh N257 completes30M andN513 completes9M.",
-  "failure_diagnosis": "Original damping shows late interior growth on both grids at24M; fine H_interior_max268 exceeds coarse111.6. Coarse metric rate is dominated by shift shear with large connection mismatch. Restricted inner Jacobian does not show current closure modal growth; extra metric parity worsens that diagnostic. Formal AF constraint error grows as2*b1*delta when alpha*kappa1 vanishes. Adjusted damping retains gmin.885 through30M, but H_interior_max537 remains; not a full repair or100M qualification.",
+  "completed": "Coefficient-one adjusted-damping trajectory failed at45.525M after a defective scalar speed coincidence. Coefficient-two passed three-grid3M and independent2.7M temporal refinement, but failed at74.7M after a transient stage coincidence. New coefficient-four family completes30M on N257 and3M on N513/N1025. Nine common-time three-grid comparisons have positive orders3.9005-4.7963 and decreasing exterior H and AH mass errors. None is a100M certificate.",
+  "failure_diagnosis": "Exact9x9 collision minor proves a defective interior scalar symbol at lapse/shift speed equality under stated positivity conditions. This does not establish ray crossing or unique nonlinear causation. Coefficient-two transient negative stage gap is hidden by its positive terminal instantaneous gap. New trials preserve the first finite affected state and stop at the next diagnostic check. Large-step boundary failure is consistent with restricted RK4 gain2.396. Coefficient-four has no observed crossing through30M, but interior Hmax1030 and coarse AH mass drift1.390e-4 require longer matched-resolution assessment.",
   "next_steps": [
-    "Keep bulk advective Gamma driver, exact algebraic scri closure, telegrapher lapse and configurable floor. No log-metric or geometry parity change without new diagnosis.",
-    "Continue adjusted-damping N513 from verified t3 toward t8 in segments <=2 coordinate units and <=420 seconds; obtain matched24M comparison. Use at most two single-process trials.",
-    "Add fresh adjusted-damping N1025 short qualification (.2 then bounded segments to common t1/t3), and independent fixed-grid puncture timestep refinement. Do not mix original and adjusted damping as a convergence sequence.",
-    "If exterior constraints, horizon mass, boundary health and positive full geometry remain acceptable, extend verified adjusted N257 t10 parent toward100M in bounded segments. Interior errors are diagnostics, not an exterior rejection budget. Investigate their finite-radius growth and possible outgoing contamination.",
-    "100M requires three grids plus separate time refinement; no claim from single-grid30M survival."
+    "Verify process identities and manifests before starting. No evolution is active at this checkpoint.",
+    "Continue completed gamma4-inner-damping-v1/n257-t10 toward100M in segments of at most420 seconds, keeping frozen equations and dt. Inspect exterior H/M, AH mass, stage speed gap, boundary numerator, metric positivity and floor activation at each segment.",
+    "Continue completed gamma4-inner-damping-v1/n513-t1 and n1025-t1 to longer exact common times in bounded segments; do not transfer coefficient-two temporal evidence to coefficient four.",
+    "Run independent fixed-grid timestep refinement for coefficient four and compare time errors with spatial differences, including at longer duration.",
+    "If new failures appear with positive gauge-speed margin, diagnose the distinct mechanism before changing parameters; do not restart or relabel failures.",
+    "Retain the100M three-grid stability/convergence goal as active until every criterion is met."
   ],
   "active_processes": [],
   "do_not_repeat": [
     "Do not restart failed runs or relabel them as survivors.",
     "Do not resume paused elliptic monitor or historical experiments.",
-    "Do not claim 24M single-grid survival is 100M stability or convergence.",
-    "Do not compare unequal-time coordinate profiles as a refinement test."
+    "Do not claim Short or single-grid survival is 100M stability or convergence.",
+    "Do not compare unequal-time coordinate profiles as a refinement test.",
+    "Do not continue the coefficient-one n257-t16 or coefficient-two n257-t26 failures. Their positive terminal speed margin, where present, does not erase earlier stage coincidences."
   ],
   "runs": [
     {
@@ -337,6 +339,7 @@
       "status": "completed",
       "t": 10.0,
       "error": null,
+      "continuation": true,
       "sources_verified": true
     },
     {
@@ -344,6 +347,7 @@
       "status": "completed",
       "t": 3.0,
       "error": null,
+      "continuation": true,
       "sources_verified": true
     },
     {
@@ -379,6 +383,7 @@
       "status": "completed",
       "t": 0.2,
       "error": null,
+      "continuation": false,
       "sources_verified": true
     },
     {
@@ -386,6 +391,7 @@
       "status": "completed",
       "t": 0.2,
       "error": null,
+      "continuation": false,
       "sources_verified": true
     },
     {
@@ -393,6 +399,7 @@
       "status": "completed",
       "t": 3.0,
       "error": null,
+      "continuation": true,
       "sources_verified": true
     },
     {
@@ -400,6 +407,7 @@
       "status": "completed",
       "t": 8.0,
       "error": null,
+      "continuation": true,
       "sources_verified": true
     },
     {
@@ -407,6 +415,7 @@
       "status": "completed",
       "t": 1.0,
       "error": null,
+      "continuation": false,
       "sources_verified": true
     },
     {
@@ -414,6 +423,7 @@
       "status": "completed",
       "t": 1.0,
       "error": null,
+      "continuation": false,
       "sources_verified": true
     },
     {
@@ -421,6 +431,7 @@
       "status": "completed",
       "t": 1.0,
       "error": null,
+      "continuation": false,
       "sources_verified": true
     },
     {
@@ -428,6 +439,303 @@
       "status": "completed",
       "t": 1.0,
       "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-time-v1/base",
+      "status": "failed",
+      "t": 0.014062499999999999,
+      "error": "Invalid AF stage: node 255, r=0.99776176552452167, g=-0.073329517706966385",
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-time-v1/eighth",
+      "status": "completed",
+      "t": 0.8999999999999999,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-time-v1/half",
+      "status": "completed",
+      "t": 0.8999999999999999,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-time-v1/quarter",
+      "status": "completed",
+      "t": 0.8999999999999999,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/n257-t16",
+      "status": "failed",
+      "t": 15.175,
+      "error": "Scri numerator guard",
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma-inner-damping-v1/puncture-n1025",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/equilibrium-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n1025-t08",
+      "status": "completed",
+      "t": 0.8,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n1025-t1",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n257-t10",
+      "status": "completed",
+      "t": 10.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n257-t17",
+      "status": "completed",
+      "t": 17.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n257-t24",
+      "status": "completed",
+      "t": 24.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n257-t26",
+      "status": "failed",
+      "t": 24.900000000000002,
+      "error": "Scri numerator guard",
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n257-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n513-t1",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/n513-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/pulse-n129",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/pulse-n257",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/pulse-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/puncture-n1025",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/puncture-n257",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-inner-damping-v1/puncture-n513",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-time-v1/base",
+      "status": "completed",
+      "t": 0.8999999999999999,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-time-v1/half",
+      "status": "completed",
+      "t": 0.8999999999999999,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma2-time-v1/quarter",
+      "status": "completed",
+      "t": 0.8999999999999999,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/equilibrium-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n1025-t08",
+      "status": "completed",
+      "t": 0.8,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n1025-t1",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n257-t10",
+      "status": "completed",
+      "t": 10.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n257-t3",
+      "status": "completed",
+      "t": 3.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/n513-t1",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": true,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/pulse-n129",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/pulse-n257",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/pulse-n65",
+      "status": "completed",
+      "t": 1.0,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/puncture-n1025",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/puncture-n257",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
+      "sources_verified": true
+    },
+    {
+      "case": "gamma4-inner-damping-v1/puncture-n513",
+      "status": "completed",
+      "t": 0.2,
+      "error": null,
+      "continuation": false,
       "sources_verified": true
     }
   ],
@@ -436,10 +744,38 @@
     "exact_scalar_corners_verified": true,
     "restart_two_generations_bitwise": true,
     "source_checkpoint_parent_hashes_verified": true,
-    "latex_pages": 20,
+    "latex_pages": 27,
     "latex_warnings": 0,
     "desktop_compile": "success",
-    "visual_review": "New plots inspected; changed pages16-20 rendered and inspected. Abstract and clarified numerator prose reviewed on final render."
+    "visual_review": "Final abstract and pages21-27 inspected; separate coefficient-four refinement plot inspected.",
+    "source_bundle_files": 17,
+    "source_bundle_bytewise_verified": true,
+    "new_family_source_checkpoint_verifications": 47
   },
-  "manuscript_changes": "Added common3M refinement, matched24M original-damping results, inner metric-rate and restricted-spectrum diagnosis, formal AF constraint-growth derivation, optional lapse-adjusted damping equations and native oracle, fresh30M/9M outcomes, and two figures. No historical outcomes relabelled."
+  "manuscript_changes": "Added exact scalar collision proof, late failures, boundary timestep restriction, coefficient-two spatial/time refinement, coefficient-four short refinement and30M coarse result, and four new figures; rebuilt and inspected27-page paper and refreshed17-file portable bundle.",
+  "current_candidate": {
+    "gamma_coefficient": 4,
+    "inner_z4_damping": 8,
+    "shift_gauge": "moving-puncture",
+    "shift_inner_stencil": "odd",
+    "grid_stretch": 0,
+    "cfl": 0.025,
+    "lapse_floor": 1e-10,
+    "coarse_checkpoint": "gamma4-inner-damping-v1/n257-t10",
+    "medium_checkpoint": "gamma4-inner-damping-v1/n513-t1",
+    "fine_checkpoint": "gamma4-inner-damping-v1/n1025-t1",
+    "short_spatial_orders": {
+      "minimum": {
+        "full": 3.900854436130875,
+        "exterior": 3.900489665754456
+      },
+      "maximum": {
+        "full": 4.796182469051096,
+        "exterior": 4.7962646094083246
+      }
+    },
+    "temporal_qualification": "outstanding",
+    "coarse_peak_AH_mass_drift": 0.0001390228085729195,
+    "coarse_H_interior_max": 1030.35793337442
+  }
 }

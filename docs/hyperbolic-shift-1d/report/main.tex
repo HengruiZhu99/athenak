@@ -12,7 +12,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but the original duration extensions fail near $8M$. An interior-only source adaptation postpones failure to $16$--$17M$. A subsequent constant-strength bulk Gamma driver, with an independently audited inner gauge stencil, reaches $24M$ on two grids; three-grid tests through $3M$ improve under refinement. A compact lapse-adjusted Z4 damping control subsequently reaches $30M$ on the coarse grid with positive metric and small horizon-mass drift, but substantial interior errors remain. None of these results qualifies the persistent $100M$ target. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
+We replace the elliptic shift by an auxiliary Gamma driver while retaining the full variable-metric spherical Z4c equations. Algebraic elimination enforces the normal nullness relation at every Runge--Kutta stage and accepted state. Across the initial 31 bounded runs the maximum relative nullness error is one binary64 machine epsilon. A source-restored candidate exhibits approximately second-order spatial self-convergence and fourth-order timestep convergence in short regular-center tests. Subsequent three-grid puncture tests reach $3M$ with decreasing errors, but the original duration extensions fail near $8M$. An interior-only source adaptation postpones failure to $16$--$17M$. A subsequent constant-strength bulk Gamma driver, with an independently audited inner gauge stencil, reaches $24M$ on two grids; three-grid tests through $3M$ improve under refinement. A compact lapse-adjusted Z4 damping control subsequently reaches $30M$ on the coarse grid with positive metric and small horizon-mass drift, but a later extension fails at $45.525M$ after exterior lapse/shift speed coincidences develop. Doubling the constant coefficient delays the coarse failure to $74.7M$ and gives positive short spatial and temporal refinement, but a transient speed coincidence recurs. A fresh coefficient-four control reaches $30M$ on the coarse grid and gives positive three-grid spatial refinement through $3M$. None of these results qualifies the persistent $100M$ target. Exact nullness therefore succeeds as a discrete gauge identity without establishing full boundary compatibility, puncture regularity, or improved robustness over the elliptic formulation.
 \end{abstract}
 
 \section{Preserved baseline and proposed driver}
@@ -285,7 +285,7 @@ Verified continuations reach $t=3=9M$ on both $N=257,513$. At this common time, 
 
 The coarse trajectory continues to $t=8=24M$, beyond the earlier source-control failures. Its final relative horizon-mass error is $-2.98\times10^{-6}$, maximum sampled mass drift $6.42\times10^{-6}$, and exterior Hamiltonian RMS $5.40\times10^{-3}$. However, the minimum metric has fallen to $0.459$ at the first positive node, and the interior Hamiltonian maximum is $1.12\times10^2$ near $r=0.0156$, inside the horizon at $r\simeq0.154$. These are unresolved signs of interior deterioration. They are retained as diagnostics rather than used as an interior constraint budget. The physical geometry remains valid at the terminal checkpoint, and no floor activation occurred.
 
-All these runs maintain relative nullness within $2.23\times10^{-16}$. The sampled quantity $g(c_S^2-c_L^2)$ remains positive, with minima about $0.260$ and $0.267$ in the coarse and fine continuations. This excludes a sampled lapse/shift speed crossing along those trajectories; it does not prove uniform eigenvector bounds. The next priority is longer matched refinement with this bulk driver, including whether the late inner degradation moves or decreases with resolution. The $100M$ stability and convergence goal remains open.
+All these runs maintain relative nullness within $2.23\times10^{-16}$. The sampled quantity $g(c_S^2-c_L^2)$ remains positive, with minima about $0.260$ and $0.267$ in the coarse and fine continuations. This excludes a sampled lapse/shift speed crossing along those trajectories; it does not prove uniform eigenvector bounds. At this stage, longer matched refinement was needed to determine whether the late inner degradation moves or decreases with resolution. The $100M$ stability and convergence goal remains open.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\linewidth]{figures/gamma-inner-closure.pdf}
@@ -349,6 +349,77 @@ The adjusted coarse trajectory subsequently completes $30M$. Its final $g_{\min}
 \end{figure}
 \FloatBarrier
 
+
+\subsection{A later exterior speed coincidence and timestep restriction}
+The coefficient-one adjusted-damping trajectory was continued beyond the preceding $30M$ checkpoint without changing its frozen equations or timestep. It stops at coordinate $t=15.175=45.525M$ on the scri-numerator guard. Its relative nullness still remains within $2.23\times10^{-16}$. Thus the earlier $30M$ result remains a valid duration milestone, but this longer trial fails qualification.
+
+A distinct defect precedes the terminal failure. Define the scalar gauge-speed margin
+\begin{equation}
+ G(r)=g(c_S^2-c_L^2)=\frac{4\mu_\Gamma}{3}
+       -\chi\left(F+g\eta\kappa w^2/\tau\right).
+\end{equation}
+The first nonpositive sampled minimum occurs at coordinate $t=10.325=30.975M$. At the terminal checkpoint, $t=15.175$, the minimum is $-1.290$ near $r=0.652$. Linear interpolation of adjacent physical states gives speed coincidences near $r=0.467$ and $0.847$, both outside the apparent horizon. At each interpolated root, the positive repeated speed has algebraic multiplicity two but geometric multiplicity one. The next-smallest singular values are $0.0856$ and $0.0159$, while the smallest are below $2\times10^{-16}$. This is evidence of a defective scalar symbol on the interpolated trajectory, not a demonstration that crossing characteristic rays caused a lapse shock. It also does not isolate the sole cause of the later nonlinear failure.
+
+An exact minor confirms the interior degeneracy independently of the numerical rank tolerance. On $c_S^2=c_L^2=z^2$, delete the $p/\Omega$ row and $\chi_r$ column from $P-zI$. The resulting minor simplifies to
+\begin{equation}
+ \mathfrak m=\frac{2\alpha\chi^2Fz^2}{3g^3}
+                 (gz^2-\alpha^2\chi)^2>0
+\end{equation}
+for positive interior data with $c_L^2>\alpha^2\chi/g$. Meanwhile the determinant vanishes. Hence the rank is nine, and each repeated nonzero gauge speed has geometric multiplicity one. The retained slicing has $F>\alpha^2$ wherever $\Omega,\alpha>0$, so this condition applies to the diagnosed exterior coincidences. This scalar result does not settle the singular puncture limit or the 3D system.
+
+The next controlled change retains a constant bulk Gamma coefficient and sets $\mu_{\rm bulk}=2$. To motivate that value, write $\mathcal L=\chi(F+g\eta\kappa w^2/\tau)$ and use $\mu_{\rm separated}=3\mathcal L/2$. Where $C<1/2$, positive margin requires
+\begin{equation}
+ \mu_{\rm bulk}>\frac34\frac{1-2C}{1-C}\mathcal L.
+\end{equation}
+The largest right-hand side on the saved failed trajectory is $1.9675$. Two would therefore separate the speeds on those saved states. This counterfactual check does not predict the changed trajectory, which must be tested independently. The bulk remains an advective Gamma driver, and the outer algebraic closure, compact Z4 damping, telegrapher lapse, and physical lapse floor remain unchanged. The exact Minkowski scalar eigenspaces are complete for coefficient two. The previously stated collapsed-corner and 3D limitations still apply.
+
+New puncture trials record the minimum margin over every evaluated RK stage, together with its location. Adding this diagnostic leaves a replayed RHS and RK step bitwise unchanged. It does not project, filter, or alter the evolving fields.
+
+The coefficient-one adjusted-damping family also supplies a separate short puncture timestep study. At $N=257$ and common coordinate $t=0.9=2.7M$, $\Delta t/h=0.0375,\allowbreak 0.01875,\allowbreak 0.009375$ gives exterior mixed-profile differences $1.560\times10^{-8}$ and $1.031\times10^{-9}$, corresponding to order $3.920$. The matched two-grid spatial difference at this time is $2.632\times10^{-3}$, much larger than either temporal difference. The full-domain temporal order is only $1.611$, with differences $1.751\times10^{-8}$ and $5.731\times10^{-9}$; we do not claim fourth-order temporal convergence at the puncture. The three-grid short spatial test at $0.6M$ has order $3.696$ with the same damping. Neither short test extends the duration qualification.
+
+The initially attempted $\Delta t/h=0.075$ run instead loses metric positivity at coordinate $t=0.0140625$, near $r=0.99776$. It is retained as a failed control. A restricted linearization of the outer sixteen nodes at the initial state gives a negative eigenvalue about $-11604.1$. RK4 amplifies that mode by $2.396$ at the failed timestep, while the smaller tested timesteps lie inside RK4's stability region for this restricted operator. Thus the characteristic-speed CFL check alone does not ensure stability of the complete boundary discretization. This frozen, restricted spectrum is an explanation consistent with the observed failure, not a full-domain nonlinear stability proof. All duration trials retain $\Delta t/h=0.025$.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/gamma-speed-crossing.pdf}
+\caption{The failed coefficient-one trajectory. The gauge-speed margin becomes negative in the exterior, with two defective speed coincidences at the terminal checkpoint. Hamiltonian error is shown only for $r\geq0.2$ to display the outer-region structure. Coexistence of the symbol defect and increasing error does not establish a unique nonlinear cause.}
+\end{figure}
+
+\subsection{Coefficient-two refinement and later failure}
+The new coefficient-two family passes the regular-center gate and the three puncture grids through $0.6M$. All three grids subsequently reach $3M$. At nine exact saved times between $0.6M$ and $3M$, full-domain mixed-profile spatial orders range from $3.862$ to $4.660$; the corresponding exterior orders are nearly identical. At $3M$, the exterior Hamiltonian RMS values on $N=257,513,1025$ are $4.189\times10^{-3}$, $2.565\times10^{-4}$, and $6.487\times10^{-6}$. The exterior mixed-profile differences are $1.055\times10^{-3}$ and $4.456\times10^{-5}$, giving an instantaneous order of $4.565$. These are measured orders over a short trajectory, not a universal formal order or a long-time convergence certificate.
+
+An independent coefficient-two puncture timestep study at $N=257$, $t=0.9$, and $\Delta t/h=0.0375,\allowbreak 0.01875,\allowbreak 0.009375$ gives exterior mixed-profile differences $2.192\times10^{-9}$ and $1.362\times10^{-10}$, corresponding to order $4.009$. Full-domain differences are $2.196\times10^{-9}$ and $1.423\times10^{-10}$, with order $3.948$. These temporal differences are much smaller than the measured spatial differences on the same short trajectory. Independent temporal accuracy at the eventual duration target remains to be established.
+
+The $N=513$ coefficient-two trajectory reaches $9M$, with exterior Hamiltonian RMS $3.726\times10^{-4}$ and maximum sampled relative horizon-mass drift $2.42\times10^{-9}$. At the same time the coarse Hamiltonian RMS is $3.985\times10^{-3}$. No third grid has yet reached this duration.
+
+The coarse trajectory completes $72M$ but fails the subsequent extension at $t=24.9=74.7M$ on the scri-numerator guard. At the stop, exterior Hamiltonian RMS is $0.3206$, the numerator is $0.01153$, and $g_{\min}=0.1455$ remains positive. Maximum sampled horizon-mass drift is $1.08\times10^{-4}$, showing that mass conservation alone would not expose this failure. The first report retaining a nonpositive stage speed margin is at $72.225M$; the recorded minimum is eventually $-0.0855$. The final instantaneous margin has returned to $+0.499$, so inspecting only the terminal profile would miss the transient coincidence. The coefficient-two control therefore delays, but does not remove, this qualification failure.
+
+Future trials stop on a nonpositive recorded speed margin and preserve the first affected finite state with its RHS-call index, location, and hash. An integration check rejects a deliberately defective initial state before advancing time. Offline replay also captures the actual coefficient-two counterexample at coordinate $t=24.1$. These are stop conditions, not field corrections; no failed trajectory is restarted.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/gamma2-progress.pdf}
+\caption{Constant-coefficient controls with the same compact Z4 damping. Crosses mark failed trajectories' last reported states. The plotted speed margin is instantaneous; the coefficient-two run's final positive value does not erase its earlier negative stage margin. Both coarse runs fail before $100M$, while the finer coefficient-two run shown here reaches $9M$.}
+\end{figure}
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/gamma2-short-convergence.pdf}
+\caption{Coefficient-two three-grid refinement at nine exact common times. Full and exterior mixed-field differences are nearly coincident on this short trajectory. The exterior mask for each pair begins at the larger of its two interpolated horizon radii; radial weights are normalized over the retained region. The field set is $(\chi,g,A_{rr},p+3,\Theta,\Lambda^r,\alpha,\beta,B)$.}
+\end{figure}
+\FloatBarrier
+
+\subsection{A fresh coefficient-four control}
+The coefficient-two failure motivates a fresh trial with constant $\mu_{\rm bulk}=4$. The largest coefficient required to keep the margin positive on its saved final segment was $2.05482$. Four supplies a larger counterfactual margin, while retaining the advective bulk Gamma-driver equations; it is not a guarantee about the new trajectory. The exact Minkowski scalar eigenspaces remain complete. The compact damping, telegrapher lapse, physical lapse floor, outer collar, and algebraic boundary traces are unchanged.
+
+All four regular-center controls complete their prescribed coordinate interval $t=1$. The three fresh puncture grids reach $t=0.2=0.6M$. Their exterior Hamiltonian RMS values are $1.251\times10^{-3}$, $1.918\times10^{-4}$, and $8.898\times10^{-6}$ on $N=257,513,1025$. Exterior mixed-profile differences are $4.690\times10^{-4}$ and $2.983\times10^{-5}$, giving order $3.975$ at this common time; the full-domain order agrees to five decimal places. No lapse-floor activation occurs. These results qualify a short test of coefficient four only; the coefficient-two temporal results cannot be transferred to this changed system.
+
+All three coefficient-four grids subsequently reach $3M$. At nine exact common times from $0.6M$ to $3M$, the full and exterior mixed-profile orders range from approximately $3.90$ to $4.80$, and both exterior Hamiltonian norms and absolute relative horizon-mass errors decrease with refinement at every sampled time. At $3M$, the Hamiltonian RMS values are $2.158\times10^{-3}$, $2.049\times10^{-4}$, and $5.265\times10^{-6}$, with exterior profile order $4.135$. Independent timestep refinement for this coefficient-four family remains outstanding.
+
+The coarse coefficient-four trajectory reaches $30M$. At that checkpoint its exterior Hamiltonian RMS is $4.611\times10^{-3}$, the radial metric minimum is $0.8716$, and the minimum speed margin over all evaluated stages remains $0.7189$. Maximum sampled relative horizon-mass drift is $1.390\times10^{-4}$. The interior Hamiltonian maximum has nevertheless grown to $1.030\times10^3$. We retain this as a secondary diagnostic rather than an exterior rejection criterion, but neither interior accuracy nor long-time convergence follows from this single-grid survival. A larger bulk coefficient therefore cannot yet be regarded as a complete cure.
+
+\begin{figure}[htbp]
+\centering\includegraphics[width=\linewidth]{figures/gamma4-progress.pdf}
+\caption{The fresh coefficient-four control. The coarse trajectory completes $30M$; the two finer trajectories shown stop at their completed $3M$ checkpoints. All evaluated stage speed margins remain positive, and the lapse floor has not activated. Unequal-duration histories do not demonstrate long-time convergence; the larger coarse horizon-mass drift remains to be tested at matched finer resolution.}
+\end{figure}
+\FloatBarrier
+
 \section{Implementation route and reproducibility}
 A genuine 3D implementation should evolve Cartesian shift and auxiliary vectors in the interior and transform them consistently to shell frames. The spherical code evolves the full radial component, not a globally slaved $\beta/r$ profile. Spherical symmetry necessarily fixes the central location; it is not a test of puncture motion. Constant and linear Cartesian shift modes must be included in the 3D driver tests. The reference source and restoring term can influence translations, so their effect on puncture tracking must be measured rather than assumed benign.
 
@@ -365,7 +436,7 @@ Evidence category & Established scope\\
 \midrule
 Analytic identities & Nullness elimination, evolving-normal rate, scalar principal polynomial, selected exact eigenspaces, leading AF limits.\\
 Algebraic numerics & Every tested stage/state satisfies spherical nullness within one machine epsilon; general 3D boundary identities have separate randomized tests.\\
-Convergence evidence & Short regular-center refinement; three-grid new-gauge puncture evidence through $3M$ and earlier-gauge evidence through $3M$; no $100M$ convergence certificate.\\
+Convergence evidence & Short regular-center refinement; three-grid coefficient-two and coefficient-four puncture evidence through $3M$; coefficient-two temporal refinement at $2.7M$; no $100M$ convergence certificate.\\
 Unresolved & Complete boundary well-posedness, uniform collapsed-lapse hyperbolicity, accurate puncture evolution, long-time robustness, and all 3D/AMR qualification.\\
 \bottomrule
 \end{tabular}

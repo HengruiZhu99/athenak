@@ -7,7 +7,11 @@ protocol=json.loads(a.protocol.read_text());(a.output/'protocol.json').write_tex
 for case in protocol['cases']:
  command=[sys.executable,str(Path(__file__).with_name('run.py')),'--library',a.library,'--output',str(a.output/case['name'])]
  for key,value in case.items():
-  if key!='name':command += ['--'+key.replace('_','-'),str(value)]
+  if key=='name':continue
+  flag='--'+key.replace('_','-')
+  if isinstance(value,bool):
+   if value:command.append(flag)
+  else:command += [flag,str(value)]
  with (a.output/(case['name']+'.log')).open('w') as log:
   result=subprocess.run(command,stdout=log,stderr=subprocess.STDOUT)
  print(case['name'],result.returncode,flush=True)

@@ -69,6 +69,8 @@ def main():
   history.append(e.report(q,0.));profiles.append(q.copy());times.append(0.)
   save_progress()
   if history[-1]['max_speed']*dt/e.h>.4:raise FloatingPointError('Initial CFL guard: choose an appropriate fixed timestep or grid before launch')
+  if history[-1].get('min_stage_shift_lapse_gap_times_g',history[-1].get('shift_lapse_gap_times_g_min',1.))<=0:
+   raise FloatingPointError('Initial lapse-shift speed coincidence guard')
   for step in range(1,steps+1):
    q=e.step(q,dt);t=step*dt
    if step%report_steps==0 or step==steps:
@@ -77,6 +79,8 @@ def main():
     if history[-1]['max_relative_null']>5e-14:raise FloatingPointError('Nullness guard')
     if history[-1]['pole']>1e-2:raise FloatingPointError('Scri numerator guard')
     if history[-1]['max_speed']*dt/e.h>.4:raise FloatingPointError('CFL guard')
+    if history[-1].get('min_stage_shift_lapse_gap_times_g',history[-1].get('shift_lapse_gap_times_g_min',1.))<=0:
+     raise FloatingPointError('Lapse-shift speed coincidence guard')
     if a.puncture and abs(history[-1].get('apparent_horizon_mass',0)/(1/3)-1)>.05:raise FloatingPointError('Exploratory 5 percent horizon-mass guard')
     if time.monotonic()-start>a.wall_seconds:raise TimeoutError('Bounded walltime')
   manifest['status']='completed'
@@ -88,8 +92,12 @@ def main():
                      compensation=getattr(e,'compensation',np.zeros_like(q)))
  if hasattr(e,'failure_state'):
   np.savez_compressed(a.output/'failed-stage.npz',r=r,q=e.failure_state,last_accepted_time=t,attempted_step=step)
+ if hasattr(e,'speed_crossing_state'):
+  np.savez_compressed(a.output/'speed-crossing-state.npz',**e.speed_crossing_state)
  (a.output/'history.json').write_text(json.dumps(history,indent=2)+'\n')
  manifest['checkpoint_hashes']={name:hashlib.sha256((a.output/name).read_bytes()).hexdigest() for name in ['profiles.npz','history.json']}
+ if (a.output/'speed-crossing-state.npz').exists():
+  manifest['checkpoint_hashes']['speed-crossing-state.npz']=hashlib.sha256((a.output/'speed-crossing-state.npz').read_bytes()).hexdigest()
  mp.write_text(json.dumps(manifest,indent=2)+'\n')
  print(json.dumps({k:manifest[k] for k in ['status','t','error','wall_seconds','stage_stats']}),flush=True)
 

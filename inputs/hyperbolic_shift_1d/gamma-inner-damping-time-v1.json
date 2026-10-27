@@ -1,0 +1,56 @@
+{
+  "hypothesis": "Independent fixed-grid puncture timestep refinement for the compact adjusted damping, using exactly halved timesteps and a target on all three nominal time lattices.",
+  "cases": [
+    {
+      "n": 257,
+      "t": 0.9,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "inner_z4_damping": 8,
+      "puncture": true,
+      "wall_seconds": 120,
+      "name": "base",
+      "cfl": 0.075
+    },
+    {
+      "n": 257,
+      "t": 0.9,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "inner_z4_damping": 8,
+      "puncture": true,
+      "wall_seconds": 120,
+      "name": "half",
+      "cfl": 0.0375
+    },
+    {
+      "n": 257,
+      "t": 0.9,
+      "restoring": 4,
+      "shift_gauge": "moving-puncture",
+      "gamma_coefficient": 1,
+      "grid_stretch": 0,
+      "shift_inner_stencil": "odd",
+      "inner_z4_damping": 8,
+      "puncture": true,
+      "wall_seconds": 120,
+      "name": "quarter",
+      "cfl": 0.01875
+    }
+  ],
+  "scope": "Short puncture temporal convergence at2.7M; compare errors with a separately measured spatial difference. No extrapolation to100M.",
+  "guards": "Unchanged nullness, scri, metric positivity, mass and gauge-CFL guards. Fresh runs; no parameter changes or restarts.",
+  "extension": {
+    "name": "eighth",
+    "cfl": 0.009375,
+    "t": 0.9,
+    "wall_seconds": 180,
+    "reason": "Largest cfl=.075 trial failed near the outer boundary; preserve that result and add one fresh smaller-step run to assess a surviving temporal triple."
+  }
+}

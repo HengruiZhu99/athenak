@@ -47,7 +47,7 @@ def main():
         dest = a.output/name
         dest.mkdir(parents=True)
         for fn in ['manifest.json', 'history.json', 'profiles.npz',
-                   'failed-stage.npz', 'continuation_harness.py']:
+                   'failed-stage.npz', 'speed-crossing-state.npz', 'continuation_harness.py']:
             if (src/fn).exists():
                 shutil.copy2(src/fn, dest/fn)
         h = json.loads((src/'history.json').read_text())
@@ -63,7 +63,7 @@ def main():
         t = 3*np.array([x['t'] for x in h])
         n = m['arguments']['n']
         adjusted = m['arguments'].get('inner_z4_damping', 0) != 0
-        label = f'N={n}, '+('adjusted damping' if adjusted else 'original damping')
+        label = f'N={n}, mu={m["arguments"].get("gamma_coefficient",1):g}, '+('adjusted damping' if adjusted else 'original damping')
         ls = '-' if adjusted else '--'
         color = {257: 'tab:blue', 513: 'tab:orange', 1025: 'tab:green'}[n]
         for ax, key in zip([axes[0,0], axes[0,1], axes[2,0]],
