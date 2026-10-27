@@ -3,6 +3,7 @@
 #include <iostream>
 #include "mesh/cubed_sphere/composite_checkpoint.hpp"
 #include "mesh/cubed_sphere/composite_difference.hpp"
+#include "mesh/cubed_sphere/scri_surface.hpp"
 #include "multigrid/flexible_gmres.hpp"
 
 void Require(bool okay, const char *message) {if (!okay) throw std::runtime_error(message);}
@@ -59,6 +60,27 @@ int main(int argc, char **argv) {
     CompositeDifference restored(loaded.mesh);
     Require(restored.active == refined.active && restored.halos.size() == refined.halos.size(),
             "checkpoint rebuild geometry/connectivity");
+    ScriSurface boundary(refined,1);
+    std::fill(boundary.values.begin(),boundary.values.end(),1.);
+    std::vector<Real> radial(refined.count,0);
+    for(size_t p=0;p<refined.active.size();++p)radial[refined.active[p]]=(p%refined.n+.5)/refined.n;
+    refined.Fill(radial,1,[&](int,const auto &x){return boundary.Interpolate(boundary.values,1,x.data())[0];});
+    Real surface_error=0;
+    for(size_t p=0;p<boundary.rows.size();++p){const auto jet=boundary.Sample(p,radial,boundary.values,1);
+      surface_error=std::max(surface_error,std::abs(jet.value[0]-1));
+      surface_error=std::max(surface_error,std::abs(boundary.ReconstructFromGhost(p,radial,0)-1));
+      for(int a=0;a<3;++a){surface_error=std::max(surface_error,std::abs(jet.d[0][a]-boundary.rows[p].geometry.J[0][a]));
+        for(int b=0;b<3;++b)surface_error=std::max(surface_error,std::abs(jet.dd[0][a][b]-boundary.rows[p].geometry.H[0][a][b]));}}
+    Require(surface_error<3e-10,"boundary first/second chain rule or independent ghost reconstruction");
+    for(size_t p=0;p<refined.active.size();++p)radial[refined.active[p]]=std::pow((p%refined.n+.5)/refined.n,6);
+    refined.Fill(radial,1,[&](int,const auto &){return 1.;});
+    Real active_only_error=0,ghost_boundary_error=0;
+    for(size_t p=0;p<boundary.rows.size();++p){const auto &row=boundary.rows[p];Real trace=0;
+      for(int i=0;i<6;++i){Real weight=1;for(int j=0;j<6;++j)if(i!=j)weight*=(refined.n-.5-(refined.n-6+j))/Real(i-j);
+        trace+=weight*radial[refined.Index(row.block,refined.n-6+i,row.j,row.k)];}
+      active_only_error=std::max(active_only_error,std::abs(trace-1));
+      ghost_boundary_error=std::max(ghost_boundary_error,std::abs(boundary.ReconstructFromGhost(p,radial,0)-1));}
+    Require(active_only_error>1e-5&&ghost_boundary_error<1e-12,"independent actual boundary residual vs extrapolation audit");
     Reject([&] {CompositeCheckpoint::Read(path, std::string(64, 'b'));}, "source mismatch accepted");
     {std::fstream corrupted(path, std::ios::binary|std::ios::in|std::ios::out);
       corrupted.seekp(180); const char byte = 0x55; corrupted.write(&byte, 1);}
@@ -84,7 +106,8 @@ int main(int argc, char **argv) {
     const auto failed = multigrid::FlexibleGMRES(apply, changing, dot, rhs, solution, 1e-14, 0, 1, 1);
     Require(!failed.converged, "Krylov failure falsely reported convergence");
     std::cout << "{\"mixed_leaf_blocks\":63,\"layers\":2,\"face_subdivisions\":2,"
-              << "\"transfer_error\":" << transfer_error << ",\"checkpoint_exact\":true,"
+              << "\"transfer_error\":" << transfer_error << ",\"surface_jet_error\":"<<surface_error
+              << ",\"active_only_trace_error\":"<<active_only_error<<",\"ghost_boundary_residual\":"<<ghost_boundary_error<<",\"checkpoint_exact\":true,"
               << "\"corruption_and_source_mismatch_rejected\":true,\"status\":\"passed\"}\n";
   } catch (const std::exception &error) {std::cerr << error.what() << '\n'; status = 1;}
   Kokkos::finalize();

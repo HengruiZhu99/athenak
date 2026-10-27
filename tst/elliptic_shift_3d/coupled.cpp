@@ -7,6 +7,8 @@
 #include "z4c/hyperboloidal/composite_shift.hpp"
 #include "z4c/hyperboloidal/reference_gauge.hpp"
 #include "mesh/cubed_sphere/composite_checkpoint.hpp"
+#include "mesh/cubed_sphere/scri_surface.hpp"
+#include "z4c/hyperboloidal/tensor_scri.hpp"
 
 namespace h = z4c::hyperboloidal;
 using V = multigrid::Vector;
@@ -66,12 +68,18 @@ class Pilot {
   int elliptic_iterations = 0;
   double elliptic_atol;
   bool telegraph;
-  Pilot(int n, int shells, bool flux, Real tolerance, int order = 4)
-      : Pilot(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order) {}
-  Pilot(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4)
+  std::unique_ptr<cubed_sphere::ScriSurface> scri;
+  V boundary_rhs, beta_padded;
+  Real pole_sat=4,regularity_sat=8;
+  Real boundary_pole=0,raw_clock_rate=0,boundary_regularity=0;
+  Pilot(int n, int shells, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
+      : Pilot(cubed_sphere::CompositeMesh(.25, shells == 1 ? V{1} : V{.65, 1}, 1, n), flux, tolerance, order,regular_scri) {}
+  Pilot(cubed_sphere::CompositeMesh mesh, bool flux, Real tolerance, int order = 4,bool regular_scri=false)
       : shift(std::move(mesh), order),
         state(fields*shift.grid.active.size(), 0), beta_delta(3*shift.grid.active.size(), 0),
-        elliptic_atol(tolerance), telegraph(flux) {}
+        elliptic_atol(tolerance), telegraph(flux) {
+    if(regular_scri)scri=std::make_unique<cubed_sphere::ScriSurface>(shift.grid,fields);
+  }
 
   void Initialize(Real amplitude, bool angular) {
     for (size_t p = 0; p < shift.grid.active.size(); ++p) {
@@ -80,12 +88,22 @@ class Pilot {
       state[p*fields+18] = amplitude*std::pow(1-r2, 4)*std::exp(-r2/.09)
           *(angular ? 1+.8*x[0]*x[1]+.3*x[2] : 1);
     }
+    // The analytic pulse vanishes at the actual endpoint. Geometric reference
+    // deviations and flux start at zero; no evolved constraint is reset later.
+    if(scri)std::fill(scri->values.begin(),scri->values.end(),0.);
   }
   V Padded(const V &input) const {
     const auto &grid = shift.grid;
     V padded(fields*grid.count, 0);
     for (size_t p = 0; p < grid.active.size(); ++p)
     for (int v = 0; v < fields; ++v) padded[v*grid.count+grid.active[p]] = input[p*fields+v];
+    if(scri){
+      std::map<std::array<Real,3>,V> cache;
+      grid.Fill(padded,fields,[&](int f,const auto &x){auto found=cache.find(x);
+        if(found==cache.end())found=cache.emplace(x,scri->Interpolate(scri->values,fields,x.data())).first;
+        return found->second[f];});
+      return padded;
+    }
     grid.FillExtrapolated(padded, fields);
     // The prescribed lapse clock supplies one gauge boundary datum. All geometric
     // fields use the disclosed candidate outflow extrapolation, without projection.
@@ -132,7 +150,9 @@ class Pilot {
       Real chi = 1;
       h::MetricJet<Real> metric{};
       for (int i = 0; i < 3; ++i) metric.g[i][i] = 1;
-      for (const auto &entry : grid.Interpolate(x.data(), std::min(grid.n, 6))) {
+      if(scri){const auto value=scri->Interpolate(scri->values,fields,x.data());chi+=value[0];
+        for(int t=0;t<6;++t){int i=tensor_i[t],j=tensor_j[t];metric.g[i][j]+=value[1+t];if(i!=j)metric.g[j][i]=metric.g[i][j];}}
+      else for (const auto &entry : grid.Interpolate(x.data(), std::min(grid.n, 6))) {
         chi += entry.weight*padded[entry.point];
         for (int t = 0; t < 6; ++t) {
           const int i = tensor_i[t], j = tensor_j[t];
@@ -166,6 +186,9 @@ class Pilot {
     for (size_t p = 0; p < jets.size(); ++p)
     for (int v = 0; v < 3; ++v) delta[v*grid.count+grid.active[p]] = beta_delta[3*p+v];
     grid.Fill(delta, 3, [&](int v, const auto &x) {return boundary(x)[v];});
+    if(scri){beta_padded=delta;
+      for(size_t p=0;p<scri->rows.size();++p){const auto &x=scri->rows[p].geometry.x;
+        const auto datum=boundary({x[0],x[1],x[2]});for(int v=0;v<3;++v)scri->beta[3*p+v]=datum[v];}}
     for (size_t p = 0; p < jets.size(); ++p)
     for (int v = 0; v < 3; ++v) {
       jets[p].beta.value[v] += beta_delta[3*p+v];
@@ -175,6 +198,53 @@ class Pilot {
         for (int b = 0; b < 3; ++b) jets[p].beta.dd[a][b][v] += dd[a][b];
       }
     }
+  }
+  void BoundaryRates(const V &padded,Real dt){
+    if(!scri)return;
+    const h::CMCReference<Real> reference{1,1};boundary_rhs.assign(scri->values.size(),0);
+    boundary_pole=raw_clock_rate=boundary_regularity=0;
+    for(size_t p=0;p<scri->rows.size();++p){
+      const auto &row=scri->rows[p];const auto &x=row.geometry.x;
+      const auto sampled=scri->Sample(p,padded,scri->values,fields);
+      auto u=Unpack(x,sampled.value,sampled.d,sampled.dd);
+      const auto shift_jet=scri->Sample(p,beta_padded,scri->beta,3);
+      for(int v=0;v<3;++v){u.beta.value[v]+=shift_jet.value[v];
+        for(int a=0;a<3;++a){u.beta.d[a][v]+=shift_jet.d[v][a];for(int b=0;b<3;++b)u.beta.dd[a][b][v]+=shift_jet.dd[v][a][b];}}
+      const auto geometry=h::Geometry(u.metric);
+      if(!geometry.valid||!(u.alpha.value>0&&u.chi.value>0))throw std::runtime_error("invalid evolved scri state");
+      const auto omega=Omega(x,u,true);
+      auto parts=h::ConformalRHS(u,omega,4.,-.99);parts.pole.theta+=3*u.alpha.value*omega.normal*u.theta.value;
+      const Real normal[3]={x[0],x[1],x[2]};
+      const auto pole=h::TensorPoleNormalJet(u,omega,x,normal,4.,-.99,1.,1.);
+      auto rate=h::TensorScriLimit(parts.regular,pole,-1.);
+      const auto gauge=h::UnfactoredReferenceGauge(reference,reference.At(x[0],x[1],x[2]),
+          u,h::GaugeParameters<Real>{1,0,1,0},false,true);
+      if(!parts.valid||!gauge.valid)throw std::runtime_error("invalid complete scri source");
+      raw_clock_rate=std::max(raw_clock_rate,std::abs(gauge.regular.alpha-pole.lapse.derivative));
+      const Real h=row.radial_spacing;
+      if(dt*(pole_sat+regularity_sat)/h>.5)throw std::runtime_error("scri weak-boundary explicit-step guard");
+      rate.chi+=pole_sat/h*parts.pole.chi;rate.trace+=pole_sat/h*parts.pole.trace;
+      rate.theta+=pole_sat/h*parts.pole.theta;
+      Real inverse_normal=0;for(int i=0;i<3;++i)for(int j=0;j<3;++j)inverse_normal+=geometry.inverse[i][j]*normal[i]*normal[j];
+      // Necessary regularity traces follow from S_chi=S_Theta=S_alpha=0,
+      // future nullness and alpha_scri=1. No conformal-flatness or Lambda=V
+      // assumption enters. These are weak rate penalties, never field resets.
+      const Real c=u.chi.value-1/inverse_normal,pk=u.trace.value+3;
+      rate.chi-=regularity_sat/h*c;rate.trace-=regularity_sat/h*pk;rate.theta-=regularity_sat/h*u.theta.value;
+      boundary_regularity=std::max({boundary_regularity,std::abs(c),std::abs(pk),std::abs(u.theta.value)});
+      boundary_pole=std::max({boundary_pole,std::abs(parts.pole.chi),std::abs(parts.pole.trace),std::abs(parts.pole.theta),std::abs(gauge.pole.alpha)});
+      boundary_rhs[p*fields]=rate.chi;boundary_rhs[p*fields+13]=rate.trace;boundary_rhs[p*fields+14]=rate.theta;
+      for(int t=0;t<6;++t){const int i=tensor_i[t],j=tensor_j[t];
+        rate.a[i][j]+=pole_sat/h*parts.pole.a[i][j];
+        boundary_rhs[p*fields+1+t]=rate.metric[i][j];boundary_rhs[p*fields+7+t]=rate.a[i][j];
+        boundary_pole=std::max(boundary_pole,std::abs(parts.pole.a[i][j]));}
+      for(int v=0;v<3;++v){rate.lambda[v]+=pole_sat/h*parts.pole.lambda[v];
+        boundary_rhs[p*fields+15+v]=rate.lambda[v];boundary_pole=std::max(boundary_pole,std::abs(parts.pole.lambda[v]));
+        if(telegraph){Real flux=-sampled.value[19+v]/.02;
+          for(int a=0;a<3;++a)flux+=u.beta.value[a]*sampled.d[19+v][a];boundary_rhs[p*fields+19+v]=flux;}}
+      boundary_rhs[p*fields+18]=0; // prescribed incoming lapse clock, not a geometry projection
+    }
+    for(Real value:boundary_rhs)if(!std::isfinite(value))throw std::runtime_error("nonfinite regular tensor scri rate");
   }
   V RHS(const V &input, Real dt) {
     const auto &grid = shift.grid;
@@ -240,17 +310,27 @@ class Pilot {
         throw std::runtime_error("bounded coupled stage CFL/relaxation guard");
     }
     for (Real value : rhs) if (!std::isfinite(value)) throw std::runtime_error("nonfinite coupled stage");
+    BoundaryRates(padded,dt);
     return rhs;
   }
   void Step(Real dt) {
     V temporary(state.size());
+    V start_boundary=scri?scri->values:V{};
     const auto k1 = RHS(state, dt);
+    const auto b1=boundary_rhs;
+    if(scri)for(size_t i=0;i<b1.size();++i)scri->values[i]=start_boundary[i]+dt*b1[i]/2;
     for (size_t i = 0; i < state.size(); ++i) temporary[i] = state[i]+dt*k1[i]/2;
     const auto k2 = RHS(temporary, dt);
+    const auto b2=boundary_rhs;
+    if(scri)for(size_t i=0;i<b2.size();++i)scri->values[i]=start_boundary[i]+dt*b2[i]/2;
     for (size_t i = 0; i < state.size(); ++i) temporary[i] = state[i]+dt*k2[i]/2;
     const auto k3 = RHS(temporary, dt);
+    const auto b3=boundary_rhs;
+    if(scri)for(size_t i=0;i<b3.size();++i)scri->values[i]=start_boundary[i]+dt*b3[i];
     for (size_t i = 0; i < state.size(); ++i) temporary[i] = state[i]+dt*k3[i];
     const auto k4 = RHS(temporary, dt);
+    const auto b4=boundary_rhs;
+    if(scri)for(size_t i=0;i<b4.size();++i)scri->values[i]=start_boundary[i]+dt*(b1[i]+2*b2[i]+2*b3[i]+b4[i])/6;
     for (size_t i = 0; i < state.size(); ++i) state[i] += dt*(k1[i]+2*k2[i]+2*k3[i]+k4[i])/6;
   }
 };
@@ -270,11 +350,14 @@ int main(int argc, char **argv) {
     const std::string checkpoint = argc > 9 ? argv[9] : "";
     const std::string source_tag = argc > 10 ? argv[10] : "";
     const int spatial_order = argc > 11 ? std::stoi(argv[11]) : 4;
+    const bool regular_scri = argc > 12 ? std::stoi(argv[12]) : false;
     if (n < 6 || n > 16 || steps < 0 || steps > 200 || dt <= 0 || dt*steps > .1
         || std::abs(amplitude) > 1e-3 || (shells != 1 && shells != 2))
       throw std::invalid_argument("bounded coupled pilot budget");
     const auto start = std::chrono::steady_clock::now();
-    Pilot pilot(n, shells, true, tolerance, spatial_order);
+    Pilot pilot(n, shells, true, tolerance, spatial_order,regular_scri);
+    if(argc>13)pilot.pole_sat=std::stod(argv[13]);if(argc>14)pilot.regularity_sat=std::stod(argv[14]);
+    if(pilot.pole_sat<0||pilot.regularity_sat<0)throw std::invalid_argument("negative scri weak-boundary coefficient");
     pilot.Initialize(amplitude, angular);
     const int saved_step = steps/2;
     for (int i = 0; i < steps; ++i) {
@@ -283,17 +366,22 @@ int main(int argc, char **argv) {
         cubed_sphere::CompositeSnapshot snapshot{pilot.shift.grid.mesh, source_tag, dt, tolerance,
             static_cast<std::uint64_t>(i+1), fields, pilot.state, pilot.beta_delta};
         snapshot.spatial_order = spatial_order;
+        if(pilot.scri){snapshot.boundary_scheme=1;snapshot.boundary_fields=pilot.scri->values;}
+        snapshot.boundary_pole_sat=pilot.pole_sat;snapshot.boundary_regularity_sat=pilot.regularity_sat;
         cubed_sphere::CompositeCheckpoint::Write(checkpoint, snapshot);
       }
     }
     bool restart_equal = checkpoint.empty();
     if (!checkpoint.empty()) {
       const auto snapshot = cubed_sphere::CompositeCheckpoint::Read(checkpoint, source_tag);
-      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order);
+      Pilot restarted(snapshot.mesh, snapshot.telegraph, snapshot.tolerance, snapshot.spatial_order,snapshot.boundary_scheme==1);
       restarted.state = snapshot.fields; restarted.beta_delta = snapshot.shift_warm_start;
+      restarted.pole_sat=snapshot.boundary_pole_sat;restarted.regularity_sat=snapshot.boundary_regularity_sat;
+      if(restarted.scri)restarted.scri->values=snapshot.boundary_fields;
       for (std::uint64_t i = snapshot.step; i < static_cast<std::uint64_t>(steps); ++i)
         restarted.Step(snapshot.dt);
       restart_equal = restarted.state == pilot.state && restarted.beta_delta == pilot.beta_delta;
+      if(pilot.scri)restart_equal=restart_equal&&restarted.scri->values==pilot.scri->values;
       if (!restart_equal) throw std::runtime_error("coupled restart is not bitwise reproducible");
     }
     pilot.RHS(pilot.state, dt);  // accepted-state diagnostics, with a fresh stage solve
@@ -341,6 +429,23 @@ int main(int argc, char **argv) {
       }
     }
     const V padded = pilot.Padded(pilot.state);
+    Real scri_clock=0,scri_null=0,scri_tangent=0,ghost_clock=0,ghost_null=0,ghost_tangent=0;
+    if(pilot.scri)for(size_t p=0;p<pilot.scri->rows.size();++p){
+      const auto &x=pilot.scri->rows[p].geometry.x;
+      const auto sample=pilot.scri->Sample(p,padded,pilot.scri->values,fields);
+      const auto u=Unpack(x,sample.value,sample.d,sample.dd);const auto geometry=h::Geometry(u.metric);
+      if(!geometry.valid)throw std::runtime_error("invalid accepted scri metric");
+      Real bn=0,bghost=0,norm=0,ghost[3];
+      for(int i=0;i<3;++i){bn+=(-x[i]+pilot.scri->beta[3*p+i])*x[i];
+        ghost[i]=-x[i]+pilot.scri->ReconstructFromGhost(p,pilot.beta_padded,i);bghost+=ghost[i]*x[i];
+        for(int j=0;j<3;++j)norm+=u.chi.value*geometry.inverse[i][j]*x[i]*x[j];}
+      const Real alpha_ghost=(1+x[0]*x[0]+x[1]*x[1]+x[2]*x[2])/2+pilot.scri->ReconstructFromGhost(p,padded,18);
+      scri_clock=std::max(scri_clock,std::abs(u.alpha.value-1));ghost_clock=std::max(ghost_clock,std::abs(alpha_ghost-1));
+      scri_null=std::max(scri_null,std::abs(bn+u.alpha.value*std::sqrt(norm)));
+      ghost_null=std::max(ghost_null,std::abs(bghost+alpha_ghost*std::sqrt(norm)));
+      for(int i=0;i<3;++i){scri_tangent=std::max(scri_tangent,std::abs(-x[i]+pilot.scri->beta[3*p+i]-bn*x[i]));
+        ghost_tangent=std::max(ghost_tangent,std::abs(ghost[i]-bghost*x[i]));}
+    }
     if (!profile.empty()) {
       std::ofstream spheres(profile+".spheres.csv");
       spheres << std::setprecision(17) << "r,direction,alpha,chi,g_rr,A_rr,Khat,Theta,Lambda_r,beta_r\n";
@@ -434,9 +539,15 @@ int main(int argc, char **argv) {
               << ",\"scri_null_extrapolation\":" << null << ",\"scri_tangent_extrapolation\":" << tangential
               << ",\"restart_checked\":" << !checkpoint.empty() << ",\"restart_equal\":" << restart_equal
               << ",\"spatial_order\":" << spatial_order
-              << ",\"closure\":\"experimental_active_only_extrapolation\"}\n";
+              << ",\"regular_scri\":"<<regular_scri<<",\"scri_nodal_clock\":"<<scri_clock<<",\"scri_nodal_null\":"<<scri_null
+              << ",\"scri_nodal_tangent\":"<<scri_tangent<<",\"scri_ghost_clock\":"<<ghost_clock<<",\"scri_ghost_null\":"<<ghost_null
+              << ",\"scri_ghost_tangent\":"<<ghost_tangent<<",\"scri_tensor_pole\":"<<pilot.boundary_pole
+              << ",\"scri_raw_clock_rate\":"<<pilot.raw_clock_rate<<",\"scri_regularity\":"<<pilot.boundary_regularity
+              << ",\"closure\":\""<<(regular_scri?"evolved_tensor_limit":"experimental_active_only_extrapolation")<<"\"}\n";
     // Report original scientific gates without weakening them for a coarse grid.
-    if (pole > 1e-7 || clock > 1e-13 || null > 1e-12 || (amplitude == 0 && drift > 1e-9)) status = 1;
+    if(regular_scri){if(pilot.boundary_pole>1e-7||ghost_clock>1e-13||ghost_null>1e-12||ghost_tangent>1e-12
+        ||(amplitude==0&&drift>1e-9))status=1;}
+    else if (pole > 1e-7 || clock > 1e-13 || null > 1e-12 || (amplitude == 0 && drift > 1e-9)) status = 1;
   } catch (const std::exception &error) {std::cerr << error.what() << "\n"; status = 2;}
   Kokkos::finalize();
   return status;

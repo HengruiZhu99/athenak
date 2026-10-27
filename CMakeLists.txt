@@ -377,6 +377,15 @@ if(Athena_ENABLE_ELLIPTIC_SHIFT_3D_TESTS)
   target_link_libraries(elliptic_shift_3d_operator_tests PRIVATE Kokkos::kokkos)
   add_test(NAME elliptic_shift_3d_exact_operator COMMAND elliptic_shift_3d_operator_tests)
   set_tests_properties(elliptic_shift_3d_exact_operator PROPERTIES TIMEOUT 30)
+  add_executable(elliptic_shift_3d_tensor_scri_tests tst/elliptic_shift_3d/test_tensor_scri.cpp)
+  target_include_directories(elliptic_shift_3d_tensor_scri_tests PRIVATE
+      ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
+  target_link_libraries(elliptic_shift_3d_tensor_scri_tests PRIVATE Kokkos::kokkos)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  add_test(NAME elliptic_shift_3d_tensor_scri_radial
+      COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tst/elliptic_shift_3d/test_scri_radial.py
+      $<TARGET_FILE:elliptic_shift_3d_tensor_scri_tests>)
+  set_tests_properties(elliptic_shift_3d_tensor_scri_radial PROPERTIES TIMEOUT 30)
   add_executable(elliptic_shift_3d_composite_tests tst/elliptic_shift_3d/test_composite.cpp)
   target_include_directories(elliptic_shift_3d_composite_tests PRIVATE
       ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
@@ -391,6 +400,9 @@ if(Athena_ENABLE_ELLIPTIC_SHIFT_3D_TESTS)
   add_test(NAME elliptic_shift_3d_coupled_minkowski
       COMMAND elliptic_shift_3d_coupled_pilot 6 0 0.0005 2 0 1)
   set_tests_properties(elliptic_shift_3d_coupled_minkowski PROPERTIES TIMEOUT 120)
+  add_test(NAME elliptic_shift_3d_coupled_tensor_scri
+      COMMAND elliptic_shift_3d_coupled_pilot 6 0 0.0005 2 0 1 1e-11 "" "" "" 4 1)
+  set_tests_properties(elliptic_shift_3d_coupled_tensor_scri PROPERTIES TIMEOUT 120)
   add_executable(elliptic_shift_3d_lifecycle_tests tst/elliptic_shift_3d/test_lifecycle.cpp)
   target_include_directories(elliptic_shift_3d_lifecycle_tests PRIVATE
       ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})

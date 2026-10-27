@@ -1,5 +1,19 @@
 # Implementation and validation status, 2026-10-27
 
+**Continuation update:** the full tensor finite limiting source and evolved scri
+surface are now implemented and independently checked. See
+[tensor-scri-closure.md](tensor-scri-closure.md) and
+[the continuation matrix](evidence/tensor-scri-20261027/manifest.json).
+All15 continuation cases pass their stated component/boundary checks, including
+the nonzero-pulse boundary-state restart and a t=.02 radial extension. The old
+nine active-only extrapolation failures remain preserved; an initial-time and
+degree-six manufactured audit shows why that extrapolation is a different
+quantity from the actual discrete face boundary residual. Raw tensor poles and
+raw clock-rate corner defects remain separately monitored. The historical
+sections below describe the first frozen backend; they are not overwritten or
+retrospectively marked accepted. Native integration, selected wormhole/chart,
+scalar and late-time scientific coverage remain work in progress.
+
 **Partial implementation; the requested first scientific milestone is not
 complete.** There is a working global composite-grid CPU elliptic backend and
 short genuine 3D coupled tensor evolution. Production AthenaK task integration,
