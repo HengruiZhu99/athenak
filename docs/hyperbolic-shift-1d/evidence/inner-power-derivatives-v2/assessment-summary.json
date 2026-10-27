@@ -1,0 +1,54 @@
+{
+  "finding": "The reference chart is accurate for its r^4 chi and r^2 lapse powers but has nonvanishing scaled derivative errors at a fixed inner grid index for mismatched powers.",
+  "chi_r2_node1_relative_first_errors": [
+    0.04834584091529659,
+    0.04834584091531258,
+    0.04834584091531324
+  ],
+  "chi_r2_node1_relative_second_errors": [
+    0.11256122953220782,
+    0.11256122953221015,
+    0.11256122953221204
+  ],
+  "chi_r2_fixed_radius_orders": [
+    [
+      6.08413866214405,
+      6.020598775824555
+    ],
+    [
+      6.082262114773139,
+      6.020691845533723
+    ]
+  ],
+  "historical_direct_total_counterevidence": [
+    {
+      "n": 257,
+      "status": "failed",
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "g=1 gauge or positivity violation",
+        "time": 4.74140625,
+        "step": 24276
+      },
+      "original_manifest": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/docs/elliptic-shift-1d/paper/data/regularity-repair-controls/telegraph-total-derivatives-pilot-v1-n257-manifest.json",
+      "sha256": "eb65b67f9bf7fe049a4453e0d8c58b1bc34fe918859a7d3d337018d5e6418639",
+      "inner_total_derivatives_radius": 0.001
+    },
+    {
+      "n": 513,
+      "status": "failed",
+      "failure": {
+        "type": "FloatingPointError",
+        "message": "g=1 gauge or positivity violation",
+        "time": 5.67431640625,
+        "step": 58105
+      },
+      "original_manifest": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/docs/elliptic-shift-1d/paper/data/regularity-repair-controls/telegraph-total-derivatives-pilot-v1-n513-manifest.json",
+      "sha256": "57ab1f4dc653f6bb1e95328f2c6bfb4eb5e29a66e06337b6e88388de42acda19",
+      "inner_total_derivatives_radius": 0.001
+    }
+  ],
+  "interpretation": "A concrete local discretization limitation consistent with the grid-scale oscillation diagnosis, not proof of its unique nonlinear cause. Convergence at fixed positive radius and loss of uniform fixed-index accuracy are distinct statements.",
+  "mitigation_scope": "Consider separately tested regularity-aware reconstruction or derivative stencils after existing frozen qualification runs. Do not enable the historical direct-total option as an assumed fix, alter live parameters, or restart failed historical controls.",
+  "numerical_evolution_changes": false
+}
