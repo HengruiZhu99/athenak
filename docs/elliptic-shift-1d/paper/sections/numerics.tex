@@ -1,0 +1,113 @@
+\section{Regularization and numerical implementation}
+\label{sec:numerics}
+\subsection{Actual scri and the boundary clock}
+Each geometric equation is assembled as $\partial_tq=R_q+S_q/\Omega$, combining its entire numerator before division. For a regular compatible solution, $S_q(1)=0$ and
+\begin{equation}
+ \partial_tq(1)=R_q(1)-\partial_rS_q(1),
+\label{eq:limit}
+\end{equation}
+because $\Omega_r(1)=-1$. Both differentiation of the combined numerator and analytic product-rule evaluation have been tested. No floor is applied to $\Omega$.
+
+The lapse clock and null boundary condition are
+\begin{equation}
+ \alpha(1)=1,\quad \partial_t\alpha(1)=0,\quad
+ \beta(1)=-\alpha(1)\sqrt{\chi(1)/g(1)}.
+\end{equation}
+Only the lapse rate is set by the clock. The other endpoint fields evolve. Naive use of Eq.~\eqref{eq:limit} on unrestricted nodal data is unstable in the tested system. The candidate therefore adds weak endpoint terms
+\begin{equation}
+ (\partial_tq)_1\longmapsto(\partial_tq)_1+
+ \frac{\sigma S_q(1)}{h}-\frac{\tau\mathcal C_q(1)}{h},
+ \qquad (\sigma,\tau)=(4,8).
+\label{eq:penalty}
+\end{equation}
+For the $g=1$ field order used above,
+\begin{equation}
+ \mathcal C=(\chi-1,0,\Ar+2\chi_r/3,p+3,\Th,\Lambda^r,0).
+\end{equation}
+These traces vanish in the intended regular boundary phase. The terms are additional numerical boundary penalties, not a projection of bulk constraints and not a proven nonlinear energy closure. Their residues and convergence are measured explicitly.
+
+The clock alone does not establish Bondi-time affinity. In the unit-sphere conformal frame $g_B=\chi\bar g$, the scri generator has nonaffinity
+\begin{equation}
+ \kappa_B=\frac{\chi_t}{2\alpha\chi}
+ -\frac{\chi_r}{2\sqrt\chi}
+ -\frac{\sqrt\chi\,\alpha_r}{\alpha}-\frac{\beta_r}{\alpha}.
+\label{eq:affinity}
+\end{equation}
+The actual numerical endpoint rate enters this expression. With $\alpha(1)=1$, a normalized affine parameter satisfies $\dd\lambda/\dd t=\exp(\int_0^t\kappa_B\dd s)$. We monitor $\kappa_B$ independently of clock and nullness errors.
+
+\subsection{Spatial operators, stage solves, and arithmetic}
+Regular-center runs normally use the half-cell grid $r_i=(i+1/2)/(N-1/2)$, $i=0,\ldots,N-1$, with actual scri. Seven-point polynomial finite differences are sixth order in the centered interior; one-sided closures have their own consistency orders. Reflected tensor parity supplies the center. $\Ar=O(r^2)$ and $\Lambda^r=O(r)$ are stronger requirements than even and odd parity alone. The usual time step is $\Delta t=C_{\rm CFL}h$ with $C_{\rm CFL}=0.05$, and integration uses classical RK4.
+
+Two shift discretizations are available. Local interpolatory interval quadrature integrates Eq.~\eqref{eq:W} in $O(N)$ work. Summing tails from scri avoids subtraction of two large prefix integrals. Alternatively, a banded discrete derivative equation for $W$ is factored once and solved at every RK stage. A one-point right-biased derivative in this \emph{shift solve} removes an unstable finite-grid mode found with the centered matrix. This bias is distinct from optional biased transport in the evolution equations. The banded solve costs $O(Ns)$ per stage after $O(Ns^2)$ setup, where $s$ is the fixed stencil width. Residual corrections with zero, two, and four passes provide an arithmetic control. On this host, \code{long double} has the same 53-bit significand as binary64; the corrections are not an extended-precision evolution.
+
+The small banded-system residual and the residual obtained by independently differentiating sampled $\beta$ measure different errors. The latter includes interpolation and discrete product-rule errors. Neither is silently substituted for the other. Changing quadrature degree also changes a spatial discretization and is assessed separately from correcting a fixed linear system.
+
+The regular-center Kreiss--Oliger filter uses sixth differences with a fixed taper that vanishes outside $r<0.4$. Applying it to $\Ar/r^2$ and $\Lambda^r/r$ respects their center scaling. Its strength is usually $\epsilon=0.5$; its $h^5$ contribution can limit the observed spatial order. At a puncture the filter instead has the form $-\epsilon B^TWB/(64h)$, where $B$ is a third forward difference and $W\geq0$. It uses no center parity. At a finite cutoff, multiplying the weight by $d^6/(L^6+d^6)$, with $d$ the stencil-midpoint distance from the cutoff, improves the first-active-row consistency. A negative filter energy contribution alone does not imply stability of the coupled equations.
+
+Two arithmetic repairs are useful. Difference-form differentiation, $\sum_jD_{ij}(q_j-q_i)$, removes floating-point derivative row sums acting on constants. Compensated accumulation of accepted RK increments reduces loss in repeated additions. The correction is explicit checkpoint state. Stage evaluations remain binary64; neither repair produces a higher-precision solution. An integer-step clock records $t=t_0+(n-n_0)\Delta t$ and prevents cumulative timestamp drift. Older frozen trajectories retain their original clock limitations.
+
+\subsection{Positive variables and inner ends}
+For a regular center we optionally evolve
+\begin{equation}
+ \chi=e^U,\qquad \alpha=Ae^V,
+\end{equation}
+using the exact chain rules $U_t=\chi_t/\chi$ and $V_t=\alpha_t/\alpha$. Deviations are evaluated with \code{expm1} and \code{log1p}, and positive totals are passed directly to the geometric and matter kernels. This avoids recovering a small positive total by adding it to an order-one negative deviation. Overflow, underflow, or invalid totals terminate the run; no positivity floor is imposed. Dissipation acts on stored variables, so changing variables also changes the finite-grid filter.
+
+The wormhole's other end is not a regular center. Its asymptotic phase is
+\begin{align}
+ \chi&=r^4X,\quad \alpha=r^2a_2,\quad\Lambda^r=\ell_0,\nonumber\\
+ (\Ar,p,\Th)&=r^2(b_2,k_2,\theta_2).
+\end{align}
+Odd powers in the coefficient expansions are allowed. A reference-scaled positive chart evolves an actual $r=0$ coefficient node. For multiplicative restoring, before Eq.~\eqref{eq:physical-log}, the leading lapse coefficient obeys
+\begin{equation}
+ \dot a_2=(2b_1-6\nu+2\xi)a_2+2,
+ \qquad \beta=b_1r+\cdots.
+\end{equation}
+The modified source in Eq.~\eqref{eq:physical-log} gives $\dot a_2=2b_1a_2$ for the linear slicing family. The other leading free coefficients have rates $2b_1$ times the coefficient for constant damping. Independent tensor limits check these equations. The coefficient node represents spatial infinity; positivity of the physical metric is tested at $r>0$.
+
+For finite retained domains, physical curvature variables can be better conditioned than the asymptotically flat scalings. We tested
+\begin{equation}
+ \chi=p_\chi(r)e^U,\qquad p_\chi=\frac{r^2}{A^2},\qquad
+ \alpha=Ae^V,
+\label{eq:trumpet-chart}
+\end{equation}
+while retaining physical $\Ar,p,\Th,\Lambda^r$. A compact alternative equals this profile below $r=0.1$ and becomes exactly one beyond $r=0.3$. Both are coordinate-only variable profiles, independent of black-hole mass and of the lapse gauge source. Writing $X=\chi/r^2$ and $\ell=(\log X)_r$ cancels the leading inner powers analytically. In particular,
+\begin{equation}
+ \MM=\Omega(\Ar_r-\tfrac32\Ar\ell)-\tfrac23K_r+2r\Ar
+\end{equation}
+in vacuum. No constraint is used to obtain this identity.
+
+A domain transfer is allowed only from an exact saved subset of a completed full-domain trajectory. It records the original profile, equation parameters, time lattice, and source hashes. Every subsequent stage requires the maximum physical and gauge speeds at the left boundary,
+\begin{equation}
+ -\beta+\alpha\sqrt\chi,\qquad -\beta+\sqrt{F\chi},
+\end{equation}
+to remain negative. Transfer to Eq.~\eqref{eq:trumpet-chart} preserves curvature and Z4 fields bitwise and measures the logarithmic reconstruction error. A retained-domain result cannot certify the discarded region or replace assessment of the entire preceding trajectory.
+
+\subsection{Coupled massless scalar}
+Let $R=r/(\Omega\sqrt\chi)$ be the areal radius for $g=1$. The stored scalar fields are
+\begin{equation}
+ f=\frac{R\phi}{r}=\frac{\phi}{\Omega\sqrt\chi},\qquad
+ P=\frac{\bar n(R\phi)}{r}.
+\end{equation}
+With $k=K/3-\Omega\Ar/2$, the conformal normal derivative is
+\begin{equation}
+ \Pi\equiv\bar n(\phi)=\sqrt\chi(\Omega P+kf).
+\end{equation}
+The physical normal derivative is $\Omega\Pi$. Matter contributions are included in both the evolution and constraint diagnostics. The radius-weighted wave equation retains the angular Ricci contribution produced by the free Z4c geometry; setting it to its on-constraint value would change the off-constraint scalar equation. Explicit formulas are collected in Appendix~\ref{app:matter}.
+
+Scalar initial data solve the Hamiltonian equation for $\psi=1+\Omega^3w$ and $\chi=\psi^{-4}$, with $K=-3$, $\Ar=\Th=\Lambda^r=0$, and $\Pi=0$. The regular outer condition is $w_r(1)=-3w(1)$ and the initial Bondi mass is $8w(1)$. High-precision residual evaluation was introduced when a requested Newton tolerance met the binary64 residual floor. This is an initialization solve, never an evolution projection. Radiation energy is accumulated with RK-stage fluxes $4\pi(\partial_tf|_{\Iplus})^2$; coordinate-time and Bondi-time interpretations are distinguished using Eq.~\eqref{eq:affinity}.
+
+\section{Verification and assessment protocol}
+\label{sec:protocol}
+The historical implementation snapshot used for the results in Sec.~\ref{sec:results} contains 50 passing test groups; the later telegrapher checks are reported separately in Sec.~\ref{sec:telegraph}. It includes tensor and radial comparisons, manufactured shift solutions, selected independent ADM and scalar identities, scri and inner-end limits, and bitwise restart checks. The 128-case physical-trumpet-chart audit covers vacuum and scalar rates, transport, damping, endpoints, and short steps. Its maximum native-tensor, compiled/Python, and short-step discrepancies are $3.91\times10^{-14}$, $2.84\times10^{-14}$, and $8.89\times10^{-16}$, respectively. These are implementation checks rather than physical evolution results.
+
+Our physical-field comparison uses an $r^2$-weighted nodal RMS,
+\begin{equation}
+ \normr{e}=\left[\frac{\sum_{i\in\mathcal R}r_i^2
+ \sum_a e_{ia}^2}{\sum_{i\in\mathcal R}r_i^2}\right]^{1/2}.
+\end{equation}
+The compared geometric fields are the physical deviations and free curvature/Z4 fields, excluding the unused shift placeholder. Bulk and endpoint regions are $r<0.8$ and $r>0.9$. These are diagnostic norms, not invariant energy norms. Nested grids use exact restriction; half-cell comparisons use degree-eight spatial interpolation. No temporal interpolation or relabeling of old frames is used. Orders are fitted with the actual grid spacings, rather than assuming an exact factor of two for half-cell grids.
+
+Predeclared preliminary requirements include strict metric/lapse positivity, clock error below $10^{-13}$, nullness error below $10^{-12}$, geometric and lapse pole residues below $10^{-7}$, bulk gauge-pulse constraint order at least $3.5$, endpoint field order at least $3$, and independently estimated time/elliptic errors below $10\%$ of the spatial error. These criteria are necessary checks, not substitutes for physical invariants, long durations, or independent parameter controls.
+
+Every RK stage is checked for safety and compatibility. Accuracy of constraints is also monitored at accepted states: an intermediate RK trial state is not a fourth-order approximation to the exact intermediate solution. We do not infer accepted-step coverage for older records that contain only sampled reports. Cumulative maxima include earlier transients and the last accepted state; a quiet endpoint cannot erase a previous failure.

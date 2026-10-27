@@ -1,0 +1,56 @@
+\subsection{Completed spatial experiment and measured limitations}
+\input{data/telegraph/numbers}
+The three related grids $N=1025,2049,4097$ reach $t=10$ with identical continuum parameters, numerical map, CFL factor, derivative width, and dissipation amplitude. This includes the complete initial transient and late inward compression. The comparison uses exact common physical nodes and 201 saved times; the constraint and boundary maxima in Table~\ref{tab:telegraph} are accumulated over every accepted state or every checked stage, as appropriate, rather than inferred only from those snapshots.
+
+\begin{table}[tbp]
+\caption{Full-duration telegrapher results on $0\leq t\leq10$. The Hamiltonian columns are maxima over accepted states; the pole column is the maximum checked scri residue. The pointwise Hamiltonian column includes $0\leq r<0.8$, retaining the puncture neighborhood.}
+\label{tab:telegraph}
+\begin{ruledtabular}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rccc}
+$N$ & $\max_t\normr{\HH}$ & $\max_{t,r<0.8}|\HH|$ & Scri pole\\
+\hline
+\input{data/telegraph/table}
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The peak-in-time field-difference orders are \TeleBulkOrder\ in the bulk and \TeleEndpointOrder\ near scri. The finest-pair orders of the accepted-state RMS maxima for $(\HH,\MM,\Th,Z_r)$ are $(\TeleHOrder,\TeleMOrder,\TeleThetaOrder,\TeleZOrder)$. The maximum matched lapse-gradient discrepancy, normalized separately at each time by the fine-grid peak on common nodes, is \TeleGradientPercent\ percent. The original thresholds are unchanged: bulk field and constraint order at least $3.5$, endpoint field order at least $3$, finest Hamiltonian RMS below $10^{-5}$, pointwise Hamiltonian below $10^{-3}$ on $r<0.8$, and matched gradient discrepancy below $10\%$. \TeleSpatialAssessment
+
+Figures~\ref{fig:tele-lapse} and \ref{fig:tele-resolution} show that an inward-moving nonmonotone lapse structure remains. Its survival as a profile feature is not itself a convergence failure: the relevant questions are whether its amplitude, width, derivatives, and associated constraints stabilize under refinement. Conversely, close agreement of two lapse curves alone is insufficient. By $t=10$ the physical-lapse structure occupies radii of order $10^{-6}$, which motivates the fixed exponential grid. A large coordinate derivative in this shrinking region is not, by itself, proof of a continuum discontinuity.
+
+\begin{figure*}[tp]
+ \includegraphics[width=\textwidth]{telegraph_lapse_evolution}
+ \caption{Telegrapher lapse evolution on the finest completed grid, $N=4097$. The global panel uses conformal $\alpha$, which remains finite at scri. The inner panel uses physical $\widetilde\alpha=\alpha/\Omega$ and logarithmic radius to expose the late nonmonotone structure. Curves use saved profiles without smoothing or temporal interpolation. The remaining bump is not declared eliminated.}
+ \label{fig:tele-lapse}
+\end{figure*}
+\begin{figure*}[tp]
+ \includegraphics[width=\textwidth]{telegraph_lapse_resolution}
+ \caption{Three-grid physical-lapse comparison at $t=2.5$ and $t=10$. The lower panels show raw consecutive-grid differences at matching physical nodes. The late panel retains the near-puncture structure instead of cutting it out. These are profile comparisons; whole-trajectory derivative and constraint checks are reported separately.}
+ \label{fig:tele-resolution}
+\end{figure*}
+
+Figure~\ref{fig:tele-constraints} presents all four constraint histories. The radial RMS can be small while a sharply localized inner error is appreciable. At $t=10$ on $N=2049$, for example, $\normr{\HH}=9.67\times10^{-8}$ but $\max_r|\HH|=2.24\times10^{-3}$. That peak lies at $r=1.46\times10^{-6}$, well inside the apparent horizon at $r=0.10765$; the exterior maximum is $1.05\times10^{-7}$. This is a localization diagnostic, not an exterior-only acceptance rule. On the finest grid, the corresponding final full-grid maximum is \TeleFinalHMax\ at $r=\TeleFinalHRadius$, and the peak sampled apparent-horizon mass error over the full run is \TeleAHMassError. The maximum sampled finite-node Misner--Sharp mass discrepancy over the same trajectory is \TeleMSMassError, including the near-scri and inner nodes; the maximum sampled AF-end coefficient-mass discrepancy is \TeleAFMassError. The actual scri mass slot is undefined in this diagnostic and is not included in that finite-node maximum. Neither small exterior error nor accurate horizon mass overrides an inner constraint failure. Figure~\ref{fig:tele-inner} makes the pointwise error, growing lapse gradient, error location, and mass diagnostic visible together.
+
+\begin{figure*}[tp]
+ \includegraphics[width=\textwidth]{telegraph_constraints}
+ \caption{Full-domain radial RMS constraints for the completed telegrapher sequence, using Eq.~\eqref{eq:telegraph-norm}. Every plotted value was recomputed from saved fields and checked against the recorded history. These curves sample every $0.05$ time units; the accepted-state maxima in Table~\ref{tab:telegraph} can be slightly larger. No interior mask is applied. The radial weighting suppresses small-radius contributions, so Fig.~\ref{fig:tele-inner} also reports the full-grid pointwise Hamiltonian error.}
+ \label{fig:tele-constraints}
+\end{figure*}
+\begin{figure*}[tp]
+ \includegraphics[width=\textwidth]{telegraph_inner_errors}
+ \caption{Diagnostics that prevent a small radial RMS from hiding the inward layer. (a) Unweighted full-grid Hamiltonian maximum. (b) Physical-lapse gradient over $0\leq r<0.3$, evaluated with analytic AF factors and seven-point chart derivatives. (c) Position of the finest-grid Hamiltonian peak compared with the apparent horizon. (d) Independent apparent-horizon mass error. The horizon is identified from the outgoing expansion; this does not locate the event horizon. Mass errors near floating-point precision do not establish an asymptotic order.}
+ \label{fig:tele-inner}
+\end{figure*}
+
+The tracked rays retain their ordering in the sampled spatial comparison. At $t=10$, all 81 inward rays remain active and all 81 outward rays have exited at scri. The finest minimum active inward $\log\mathcal J_-$ is \TeleMinLogJ, and the minimum active neighboring-ray separation is \TeleRayGap. The maximum middle-to-fine differences over the full trajectory are \TeleRayPositionError\ in ray position and \TeleRayLogError\ in $\log\mathcal J$, including terminal states. The observed peak-difference orders are \TeleRayPositionOrder\ and \TeleRayLogOrder, respectively. Figure~\ref{fig:tele-rays} shows the ray fans, compression, and refinement differences. These measurements describe strongly compressed finite-grid characteristics; they do not establish a continuum intersection or its absence.
+
+\begin{figure*}[tp]
+ \includegraphics[width=\textwidth]{telegraph_characteristics}
+ \caption{RK-stage characteristic tracking with matched dense exit events. The upper panels show nine representative seeds from each of the 81-ray families on $N=4097$. The outward panel zooms to the exit interval. Paths end at the last saved active point; no precise event time is fabricated from the plotting cadence. The lower-left panel shows inward compression across resolutions. The lower-right comparison includes all rays, including their frozen terminal compression. Positive finite-grid Jacobians and ordered rays are not a continuum shock-avoidance proof.}
+ \label{fig:tele-rays}
+\end{figure*}
+
+\subsection{Independent timestep evidence at the stopping point}
+\input{data/telegraph/time-assessment}

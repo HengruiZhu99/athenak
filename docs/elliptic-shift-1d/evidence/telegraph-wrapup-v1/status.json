@@ -1,0 +1,56 @@
+{
+  "pid": 73329,
+  "status": "spatial_assessment_finished",
+  "reason": "User requested wrap-up after the finest grid finishes and an updated LaTeX manuscript.",
+  "actions": [
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/analyze_telegraph.py",
+        "--cases",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-convergence-v1/n1025",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-convergence-v1/n2049",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-convergence-v1/n4097",
+        "--output",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/docs/elliptic-shift-1d/evidence/telegraph-scri-pchip-convergence-v1"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/assess_telegraph.py",
+        "--review",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/docs/elliptic-shift-1d/evidence/telegraph-scri-pchip-convergence-v1/review.json",
+        "--output",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/docs/elliptic-shift-1d/evidence/telegraph-scri-pchip-convergence-v1/acceptance.json"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/Library/Developer/CommandLineTools/usr/bin/python3",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/tst/elliptic_shift_1d/analyze_telegraph_ray_convergence.py",
+        "--cases",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-convergence-v1/n1025",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-convergence-v1/n2049",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-convergence-v1/n4097",
+        "--output",
+        "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/docs/elliptic-shift-1d/evidence/telegraph-scri-pchip-rays-v1"
+      ],
+      "returncode": 0
+    }
+  ],
+  "finest_time": 10.0,
+  "quarter_control": {
+    "status": "paused_by_user_stopping_scope",
+    "pid": 70889,
+    "dispatcher_pid": 69515,
+    "manifest_time": 8.35,
+    "checkpoint_time": 8.35,
+    "checkpoint_step": 1368064,
+    "checkpoint_sha256": "5ad81949cf334ea8b51a80245ebf6588c6aa144af090bf28dc07e367d75a1e6c",
+    "manifest_sha256": "a71f7a4dea728daf87508d1b37a14a82d04ff1c6ed46d00e579e9dac6d9a8446",
+    "ps": "  PID STAT COMMAND\n69515 Ts   /Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python tst/elliptic_shift_1d/run_telegraph_matrix.py --workers 1 --input inputs/elliptic_shift_1d/telegraph-scri-pchip-time-v1.json --output output/elliptic-shift-1d/telegraph-scri-pchip-time-v1 --library build-elliptic-shift-1d/libspherical_z4c.dylib --fast-library build-elliptic-shift-1d/libspherical_telegraph.dylib\n70889 T    /Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-time-v1/matrix-source/run_telegraph.py --library /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-time-v1/matrix-source/libspherical_z4c.dylib --fast-library /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-time-v1/matrix-source/libspherical_telegraph.dylib --output /Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/telegraph-scri-pchip-time-v1/dt-quarter --mass 0.3333333333333333 --t 10 --tau 0.02 --kappa 0.005 --nu 1 --cfl 0.0125 --report-dt 0.05 --inner-profile af-regular --transition 0.24 --grid-map inner-exp-scri --grid-stretch 16 --mapped-ko local --width 7 --ko-order 8 --ray-interpolation pchip --n 2049 --ray-exit dense\n"
+  }
+}

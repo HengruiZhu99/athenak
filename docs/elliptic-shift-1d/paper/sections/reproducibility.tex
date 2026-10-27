@@ -1,0 +1,19 @@
+\section{Evidence provenance and reproducibility}
+\label{app:repro}
+The experiment is isolated on branch \code{codex/hyperboloidal-elliptic-shift-1d}. Its preserved baseline is \code{f5d99045e016}, and the original manuscript used numerical implementation \code{a0c1d6aa3} (compiled API 32). The telegrapher follow-up uses its separately frozen geometry and relaxation libraries; complete inputs and executable/source digests are exported in \code{data/telegraph/}. Older experiments use their own frozen source trees and libraries; a later API number does not retroactively validate them. The manuscript and newest analysis artifacts are separate from that numerical implementation commit.
+
+Each evolution records inputs, command, source hashes, native/compiled library hashes, diagnostics, and checkpoint ancestry. Continuation requires the exact saved source and executable binding. The domain-transfer event is separately recorded and is not a relaxed restart. Paused runs are excluded from completed-result plots. No production branch was merged. The original paused trajectories were not resumed; the telegrapher follow-up consists of separately authorized local runs. At the user-requested finest-grid stopping point, further numerical experiments were stopped and any incomplete controls are labeled explicitly.
+
+The accompanying \code{data/evidence.json} contains the existing review records and selected history columns used here. \code{data/manifests/} retains the plotted runs' complete bindings and inputs. Selected inner profiles are supplied as compressed NumPy arrays. \code{source-manifest.json} maps the original export to repository-relative paths and SHA-256 digests; \code{data/telegraph/source-manifest.json} does the same for the follow-up. The \code{make_figures.py} script regenerates the eight original figures using only this portable bundle; \code{make_telegraph_figures.py} regenerates the five follow-up figures from the exported data. It performs plotting, not evolution. The separate \code{collect_evidence.py} script documents how the bundle was assembled from the original archive. The failure inventory includes explicitly failed/rejected manifests and identifies their paths and hashes; completed-but-unaccepted experiments remain visible in the manuscript.
+
+The principal evidence associations are:
+\begin{itemize}
+ \item Figs.~\ref{fig:gauge}--\ref{fig:arithmetic}: the compensated finite-pulse trajectory review, local-subtraction trajectory review, and independent arithmetic controls.
+ \item Fig.~\ref{fig:endpoint}: the coupled elliptic-mode diagnosis and original pulse trajectory review.
+ \item Fig.~\ref{fig:cmc}: the symmetric CMC-source/reference-damping assessment and saved histories.
+ \item Fig.~\ref{fig:front}: exact $t=2.5$ profiles from the $\nu=1$ physical-log wormhole family.
+ \item Fig.~\ref{fig:domain}: the completed global-profile retained-domain matrix and same-grid compact-profile control.
+ \item Figs.~\ref{fig:tele-lapse}--\ref{fig:tele-rays}: completed three-grid telegrapher trajectories, spatial acceptance review, stage-ray convergence review, and independently reconstructed constraint/horizon histories in \code{data/telegraph/}.
+ \item Fig.~\ref{fig:scalar}: the fixed-background scalar oracle, all-stage Bondi dispersal assessment, and failed positive-upwind collapse histories.
+\end{itemize}
+No statistical error bars are inferred from deterministic resolution sequences. Reference power-law guides in the figures are explicitly labeled; reported self-convergence orders refer to the stated grids, norms, and time windows. The completed telegrapher spatial assessment covers only the stated $t=10$ interval and fixed parameters. The absent independent robustness controls, incomplete physical scenarios, and lack of a demonstrated late-time trumpet limit remain part of the result.

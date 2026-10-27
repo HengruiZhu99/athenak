@@ -1,0 +1,47 @@
+{
+  "objective": "Spherical conformal telegrapher lapse with stage characteristic tracking; robust convergence of the lapse front and unprojected Hamiltonian errors.",
+  "equations": {
+    "u": "alpha-(1+r^2)/2",
+    "lapse_addition": "chi*(w*B_r+(w_r+2*w/r)*B)",
+    "auxiliary": "B_t=beta*B_r+(kappa*w*u_r-B)/tau",
+    "interpretation": "Flat-reference spherical contraction and componentwise advection. This is an explicit conformal coordinate gauge, not a literal coordinate transform of the Cartesian physical telegrapher equation.",
+    "support": "Fixed C7 flat-top window, inner=.01, outer=.8, transition=.08. Coupling and forcing vanish identically in endpoint collars.",
+    "characteristics": "-beta +/- sqrt(chi*(F+kappa*w^2/tau)), with F=alpha^2+4 nu Omega^2 alpha. Auxiliary advected mode=-beta. Frozen lapse-trace-flux calculation only; free Z4c remains independent.",
+    "chart": "Full AF logarithmic coefficient chart; added physical conformal lapse rate divided by total alpha in the stored log lapse; no differential constraint projection or lapse floor. Auxiliary B remains unscaled."
+  },
+  "verification_before_pilots": [
+    "Independent Python/compiled nonzero-flux rates and RK stages with independently nonzero constraints",
+    "Cartesian radial tensor contraction identity, including both angular terms",
+    "Zero-kappa, zero-B bitwise agreement with original geometry integrator",
+    "Checkpoint preservation of geometry, B, rays and all compensated low parts",
+    "Reference equilibrium and exact-zero endpoint coupling",
+    "Characteristic activation, integration accuracy and restart checks"
+  ],
+  "pilots": {
+    "duration": 3,
+    "grids": [257,513,1025],
+    "nu": [1,0.25],
+    "tau": [0.02],
+    "kappa": [0,0.005,0.02,0.08],
+    "purpose": "Reject unstable/ineffective cases and select candidates; pilots cannot complete the objective."
+  },
+  "acceptance": {
+    "main_duration": 6,
+    "extension_duration": 10,
+    "resolutions": "At least three related grids, initially 513/1025/2049; refine farther if asymptotic convergence is unresolved.",
+    "bulk_field_and_accepted_constraint_order_min": 3.5,
+    "endpoint_field_order_min": 3,
+    "finest_accepted_H_rms_max": 1e-5,
+    "finest_accepted_H_bulk_max": 1e-3,
+    "front": "Compare physical lapse and its gradient over the complete transient. Gradient peak must stabilize with refinement, not grow like 1/h. Inter-grid finest gradient discrepancy below 10% after matched spatial comparison.",
+    "constraints": "Full-domain H,M,Theta,Z over all accepted states, plus RK-stage safety/compatibility. No inner masking or endpoint-only acceptance.",
+    "independent_controls": "Middle-grid dt,dt/2,dt/4; time error below 10% spatial error. Independent shift quadrature and KO variations. Adjacent fixed continuum tau/kappa values must retain convergence; never tune damping with h to manufacture a pass.",
+    "scri_clock": 1e-13,
+    "scri_nullness": 1e-12,
+    "scri_pole": 1e-7,
+    "positivity": "alpha,chi>0 at every physical node and RK stage",
+    "invariant_mass": "Track Misner-Sharp and horizon mass independently; small mass drift cannot override failed constraints.",
+    "characteristics": "Advance both gauge families and log ray-map Jacobians with RK-stage geometry. Compare across spatial/time refinement; terminal boundary exits are not crossings. A finite-grid interpolant cannot prove continuum crossing."
+  },
+  "status": "Declared before nonlinear telegrapher pilots. Original failures and paused historical jobs remain preserved."
+}

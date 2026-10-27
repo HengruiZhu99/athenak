@@ -1,0 +1,85 @@
+\section{Canceled spherical equations for the metric-freezing sector}
+\label{app:equations}
+For reproducibility, we give the baseline constant-damping, Appendix-C-style vacuum equations for $g=1$. Let primes denote $\partial_r$, $p=\Kh$, $K=p+2\Th$, $d=K+3$, $c=\chi-1$, $u=\alpha-A$, $v=\beta+r$, and $w=\beta r/\alpha$. For each field $q$, write $q_t=R_q+S_q/\Omega$. All the following expressions retain off-constraint fields. They are algebraic rearrangements of the spherical tensor equations, not numerical background subtraction.
+
+\begin{widetext}
+\begin{align}
+R_\chi &= \beta c'-2\chi v/r-\alpha\chi\Ar,
+\quad S_\chi=\frac{2\chi}{3}(\alpha d-3u-3rv),\label{eq:fullchi}\\
+R_{\Ar}&=\beta\Ar'-\frac{2\chi}{3}(u''-u'/r)-\frac23c'\alpha'
+ +\frac\alpha3(c''-c'/r)-\frac{\alpha(c')^2}{6\chi}
+ +\frac{2\alpha\chi}{3}(\Lambda'-\Lambda/r)+\frac{2\alpha c'\Lambda}{3},
+\\ S_{\Ar}&=-\frac{4\alpha r}{3}(c'+\chi\Lambda)+\alpha\Ar(K-w),\label{eq:fullA}\\
+R_p&=\beta p'+\frac32\Omega\alpha\Ar^2-\Omega\chi(u''+2u'/r)
+ +\frac\Omega2c'\alpha'-3\chi r u'-6Ac+3u-3cu+\frac\alpha2r c',
+\\ S_p&=\alpha\left[\frac{d(K-3)}3-3cr^2+\kappa_1(1-\kappa_2)\Th\right],\label{eq:fullp}\\
+R_\Th&=\beta\Th'+\alpha rc'+\frac{\Omega\alpha}{2}
+ \left[2c''+4c'/r-\frac{5(c')^2}{2\chi}-\frac32\Ar^2+\chi(\Lambda'+2\Lambda/r)\right],
+\\ S_\Th&=\alpha\left[\frac{d(K-3)}3-3c-\kappa_1(2+\kappa_2)\Th\right],\label{eq:fullT}\\
+R_\Lambda&=\beta\Lambda'+\frac23\Lambda\,\mathrm{div}\beta
+ +2\alpha\left[\Ar'+3\Ar/r-\frac{3\Ar c'}{2\chi}\right],
+\\ S_\Lambda&=-\alpha(2K/3+\kappa_1)\Lambda-\frac{2\alpha}{3}(2p'+\Th')+4\alpha\Ar r.
+\label{eq:fullL}
+\end{align}
+\end{widetext}
+Here $\Lambda=\Lambda^r$, $\mathrm{div}\beta=\beta'+2\beta/r$, and $g_t=0$ follows from the gauge equation. Equation~\eqref{eq:lapse} supplies the lapse, and Eq.~\eqref{eq:W} supplies the shift. Its analytic derivatives are
+\begin{align}
+ \beta'&=-1+v/r+\tfrac32\alpha\Ar,\\
+ \beta''&=\tfrac32(\alpha'\Ar+\alpha\Ar'+\alpha\Ar/r).
+\end{align}
+The vacuum constraints used in diagnostics are
+\begin{align}
+ \HH={}&\tfrac23d(K-3)-6c+2\Omega r c'\nonumber\\
+ &+\Omega^2\left[2c''+4c'/r-\frac{5(c')^2}{2\chi}-\frac32\Ar^2\right],\\
+ \MM={}&\Omega\left(\Ar'+3\Ar/r-\frac{3\Ar c'}{2\chi}\right)
+ -\tfrac23K'+2r\Ar.
+\end{align}
+The remaining Z4 diagnostics are $\Th$ and $Z_r=\Lambda/2$. Regular-center ratios use parity and isotropy limits; the puncture path instead uses its independently derived coefficient equations. Equivalent canceled expressions in $X=\chi/r^2$ and $\ell=(\log X)'$ are used for Eq.~\eqref{eq:trumpet-chart}. Their curvature combination is
+\begin{equation}
+ 2X+2rX\ell+2\chi\ell'-\frac12\chi\ell^2.
+\end{equation}
+The repository-$\Th$ control subtracts $3\alpha w\Th$ from $S_\Th$. For reference-lapse damping, define $D=-\kappa_1(\alpha-A)$ and add $D(1-\kappa_2)\Th$, $-D(2+\kappa_2)\Th$, and $-D\Lambda$ to $S_p,S_\Th,S_\Lambda$, respectively. The lapse variants were specified in Sec.~\ref{sec:formulation}; none is implicit in Eqs.~\eqref{eq:fullchi}--\eqref{eq:fullL}.
+
+\section{Matter sources and radius-weighted wave equation}
+\label{app:matter}
+For $\Pi=\bar n(\phi)$ and $g=1$, the additional regular geometric rates are
+\begin{align}
+ \Delta R_{\Ar}&=-\frac{16\pi}{3}\alpha\chi(\phi')^2,&
+ \Delta R_p&=8\pi\alpha\Omega\Pi^2,\\
+ \Delta R_\Th&=-4\pi\alpha\Omega[\Pi^2+\chi(\phi')^2],&
+ \Delta R_\Lambda&=16\pi\alpha\Pi\phi'.
+\end{align}
+The constraints receive $\Delta\HH=-8\pi\Omega^2[\Pi^2+\chi(\phi')^2]$ and $\Delta\MM=8\pi\Omega\Pi\phi'$. The scalar variables give
+\begin{equation}
+ \phi'=\sqrt\chi\left[\Omega f'+\left(-r+\frac{\Omega\chi'}{2\chi}\right)f\right].
+\end{equation}
+The radius-weighted equation has potential
+\begin{equation}
+ \mathcal V=\frac{2m}{\Omega^2R^3}-\frac{\mathcal R_\perp}{\Omega^2},
+\end{equation}
+where $m$ is the Misner--Sharp mass and $\mathcal R_\perp$ is the physical spacetime angular Ricci eigenvalue implied by the evolved geometry. For the candidate off-constraint system,
+\begin{align}
+ \mathcal R_\perp={}&-\Omega^2\chi\Lambda/r+\Omega^2\chi'\Lambda/3
+ -2\Omega r\chi\Lambda/3\nonumber\\
+ &+\kappa_1(1+\kappa_2)\Th.
+\end{align}
+The repository-$\Th$ control adds $2w\Th$, and the reference-lapse damping control changes the corresponding damping product. Retaining these terms avoids substituting an Einstein constraint into the scalar evolution.
+
+Define $U_0=\alpha(K+3)/3-u-rv$ and $\alpha\bar K_R=-1+\alpha\Ar+U_0/\Omega$. The stored wave system is
+\begin{align}
+ f_t={}&\beta f'+(\beta/r)f+\alpha P,\\
+ P_t={}&\beta P'+(\beta/r+\alpha\bar K_R)P
+ +\alpha\chi(f''+2f'/r)\nonumber\\
+ &+(\alpha\chi'/2+\chi\alpha')f'
+ +\left[\frac{\alpha\chi'/2+\chi\alpha'}r-\alpha\mathcal V\right]f.
+\end{align}
+The scri closure uses $U_0/\Omega=-U_0'$ and $\mathcal V=0$ in the finite-mass compatible phase, monitoring the unfactored residues separately. These limits have assumptions; fixing a clock does not enforce the entire compatibility hierarchy.
+
+The initial Hamiltonian solve uses
+\begin{align}
+0={}&\Omega w''+(5\Omega'+2\Omega/r)w'-15w
+ -\tfrac{15}{2}\Omega^2w^2-\tfrac{15}{2}\Omega^5w^3\nonumber\\
+ &-\tfrac{15}{4}\Omega^8w^4-\tfrac34\Omega^{11}w^5
+ +\pi(1+\Omega^3w)\frac{(\phi')^2}{\Omega^2}.
+\end{align}
+Evenness and $w'(1)=-3w(1)$ select the regular branch. For the Gaussian input the outer matter term is below binary64 resolution at the endpoint; the numerical datum there is zero. Residual precision and the subsequent conversion to binary64 are reported separately.

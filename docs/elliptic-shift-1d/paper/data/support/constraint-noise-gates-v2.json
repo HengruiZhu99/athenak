@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "original_v1_gate_retained_as_failed": true,
+  "declared_before_balanced_runs": true,
+  "explanation": "Fixed nodal amplitudes give H~k^2 delta_chi whereas Theta_t contains alpha H/(2Omega). Over wave time1/k, Theta gains O(k delta_chi); its ratio to an unrelated tiny initial Theta is not a uniform energy bound. The v1 finest per-component100 gate fails and remains recorded. A distinct derivative-balanced dataset uses chi noise proportional h^2 and curvature/Khat/Theta/Lambda noise proportional h; all five fields remain independently seeded. This bounds the second-order metric and first-order curvature/constraint derivative data across resolutions; it does not project constraints.",
+  "amplitude": 1e-05,
+  "seed": 7419,
+  "n": [
+    128,
+    256,
+    512,
+    1024
+  ],
+  "t": 6,
+  "candidate": "same xi1,sigma4,tau8,KO.5,radius.4,FD7,quadrature7,CFL.05",
+  "gates": {
+    "max_per_component_RMS_over_initial": 100,
+    "final_per_component_RMS_over_initial": 1,
+    "all_stage_boundary_positivity_gates": "acceptance.json"
+  },
+  "scope": "Additional meaningful mixed-order noise control, not a relabeling of the failed unscaled test"
+}

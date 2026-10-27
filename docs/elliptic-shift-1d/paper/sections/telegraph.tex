@@ -1,0 +1,95 @@
+\section{Spherical conformal telegrapher follow-up}
+\label{sec:telegraph}
+The unresolved front in Fig.~\ref{fig:front} motivates a separate modification of the lapse gauge. This follow-up retains the full two-ended wormhole chart, the metric-derived elliptic shift, and independently evolved Z4c fields. It does not use the retained-domain transfer of the preceding section. In particular, neither the region inside the apparent horizon nor a neighborhood of the puncture is excised. The new numerical evidence is reported separately from the historical source and boundary trials.
+
+\subsection{Relaxation equation and spherical coupling}
+Set $D=\partial_t-\beta\partial_r$ and retain $u=\alpha-A$. We introduce a radial auxiliary component $B$ and a fixed taper $\varpi(r)$, with additions
+\begin{align}
+ \Delta(D\alpha)&=\chi\left[\varpi B_r+
+ \left(\varpi_r+\frac{2\varpi}{r}\right)B\right],
+ \label{eq:telegraph-alpha}\\
+ \tau_T DB&=\kappa_T\varpi u_r-B.
+ \label{eq:telegraph-B}
+\end{align}
+Here $B$ is unrelated to a shift-driver variable, and $\tau_T$ is unrelated to the endpoint penalty coefficient in Eq.~\eqref{eq:penalty}. The lapse addition equals $\chi r^{-2}\partial_r(r^2\varpi B)$. Its two angular terms follow from the flat-reference contraction of $B_i=B(r)x_i/r$. We retain componentwise advection of $B$ and divide Eq.~\eqref{eq:telegraph-alpha} by the total positive $\alpha$ when updating the logarithmic lapse variable. This is an explicit conformal coordinate gauge inspired by a telegrapher relaxation mechanism; it is not a covariant transformation of the Cartesian physical-lapse implementation. No Hamiltonian, momentum, or Z4 constraint is substituted into these equations.
+
+The initial data have $B=0$. The selected taper is one for $r\leq0.56$, decreases smoothly to zero over $0.56<r<0.8$, and is zero for $r\geq0.8$. The transition uses the $C^7$ rational ramp $R_7(z)=z^8/[z^8+(1-z)^8]$, with $z=(0.8-r)/0.24$ clipped to $[0,1]$. This differs from the polynomial smoothstep used for the numerical grid map below. Consequently the direct addition vanishes near scri, preserving the existing clock and compatibility equations. An earlier version also set the coupling to zero in an inner collar; it lost effectiveness when the front entered that collar and is not the selected prescription.
+
+Keeping $\varpi=1$ near the asymptotically flat end is regular. With $\chi=X_0r^4+O(r^5)$, $\alpha=a_2r^2+O(r^3)$, $\beta=b_1r+O(r^2)$, and $B=b_Br+O(r^2)$, Eq.~\eqref{eq:telegraph-B} gives
+\begin{equation}
+ \dot b_B=b_1b_B+\frac{\kappa_T(2a_2-1)-b_B}{\tau_T}.
+\end{equation}
+The added lapse rate is $3X_0b_Br^4+O(r^5)$, and the added logarithmic rate is $(3X_0b_B/a_2)r^2+O(r^3)$. Thus the leading AF lapse coefficient equation is unchanged. The endpoint condition $B(0)=0$ is preserved by its evolution; this argument uses AF asymptotics, not regular-center reflection parity.
+
+\subsection{Characteristic speeds and the meaning of compression}
+The frozen radial lapse--trace--flux subsystem has speeds
+\begin{equation}
+ c_0=-\beta,\qquad
+ c_\pm=-\beta\pm\sqrt{\chi\left(F+\frac{\kappa_T\varpi^2}{\tau_T}\right)}.
+\label{eq:telegraph-speeds}
+\end{equation}
+The shift and metric factors are essential. Using the isolated telegrapher speed alone would underestimate the coupled propagation speed. Define $c_g^2=\chi F$ and $c_T^2=\chi\kappa_T\varpi^2/\tau_T$. In the locally advected frame, the frozen Fourier dispersion polynomial is
+\begin{equation}
+ s^3+\frac{s^2}{\tau_T}+(c_g^2+c_T^2)k^2s
+ +\frac{c_g^2k^2}{\tau_T}=0.
+\label{eq:telegraph-dispersion}
+\end{equation}
+For nonzero $k$, positive $c_g^2,c_T^2$, and $\tau_T>0$, the Routh--Hurwitz inequality is strict. The high-frequency propagating pair has damping rate
+\begin{equation}
+ \gamma_\infty=\frac{c_T^2}{2\tau_T(c_g^2+c_T^2)}.
+\end{equation}
+These frozen-subsystem statements motivate the mechanism; they do not prove stability or shock avoidance for the nonlinear free-Z4c system with elliptic shift feedback.
+
+For each family we evolve a ray position and a ray-map Jacobian $\mathcal J_\pm$,
+\begin{equation}
+ \dot r_\pm=c_\pm(t,r_\pm),\qquad
+ \frac{\dd}{\dd t}\log\mathcal J_\pm=\partial_r c_\pm(t,r_\pm).
+\label{eq:telegraph-rays}
+\end{equation}
+There are 81 matched seeds per family, uniformly spanning $0.12\leq r\leq0.4$, activated exactly at $t=1$. The stage geometry and stage elliptic shift supply the speed at every RK evaluation. A shape-preserving $C^1$ piecewise cubic Hermite interpolant supplies both the speed and its analytic derivative\cite{PCHIP}; it is applied only to passive diagnostics and cannot smooth the evolved lapse. Boundary exits are located using a continuous RK4 extension\cite{RK4Dense}; the terminal position and compression are evaluated at the same exit event and then frozen. The implementation also checks for an exit followed by a return within a step. Intermediate ray stages may continue the endpoint speed polynomial by at most one boundary-cell width; the geometry and elliptic equations are never evaluated outside the domain. Terminal coincidences at scri are not characteristic crossings.
+
+For a regular Lipschitz finite-grid velocity, $\mathcal J=\exp(\int\partial_rc\,\dd t)$ stays positive. Finite-grid ray ordering therefore cannot prove continuum noncrossing. Conversely, a very small positive $\mathcal J$ is compression, not an observed intersection. The relevant evidence is joint spatial and temporal convergence of the lapse, its gradient, the constraints, and the ray diagnostics. The original unmodified gauge gave inward $\min\mathcal J$ at $t=3$ of $1.26\times10^{-5}$ and $1.22\times10^{-8}$ at $N=513$ and $1025$, respectively. This resolution-dependent compression supports the unresolved-steepening diagnosis, without importing a shock theorem from a simpler slicing system\cite{Alcubierre2005}.
+
+\subsection{Mapped discretization and implementation checks}
+The baseline is the modified logarithmic source of Eq.~\eqref{eq:physical-log}, with constant constraint damping. The selected parameters are $M=1/3$, $\nu=1$, $\kappa_T=0.005$, $\tau_T=0.02$, and $\Delta t=0.05\Delta x$, with $x_i=i/(N-1)$. All continuum equations remain expressed in $r$. A fixed numerical map resolves the shrinking inner layer:
+\begin{equation}
+ E(x)=\frac{\operatorname{expm1}(32x)}{2\operatorname{expm1}(16)}.
+\end{equation}
+It is used through $x=0.3$, joined to $r=x$ over $0.3<x<0.5$ by $r=(1-S)E+Sx$, and followed by the identity through $x=0.8$. For the inner join, $S=S_7((x-0.3)/0.2)$, where
+\begin{equation}
+ S_7(z)=\sum_{j=8}^{15}\binom{15}{j}z^j(1-z)^{15-j},
+ \qquad 0\leq z\leq1.
+\end{equation}
+For $x>0.8$, let $L=0.2$ and $y=(x-0.8)/L$ and use
+\begin{equation}
+ r=x+\tfrac12Ly^8(1-y),\qquad
+ J_x\equiv\frac{\dd r}{\dd x}=1+\tfrac12y^7(8-9y).
+\end{equation}
+This join is $C^7$, monotone, fixes actual scri, and gives $J_x(1)=1/2$. It refines the outer endpoint without changing the inner map. Derivative and interval-quadrature weights are constructed on the actual $r_i$; the endpoint penalty spacing is $\Delta xJ_x(1)$. The map is fixed across resolution, and no physical nodes are removed.
+
+The selected implementation retains seven-point derivative stencils and seven-point shift quadrature. It replaces sixth-difference dissipation by eighth-difference dissipation. Writing $D_p$ for the unscaled $p$th forward difference, the mapped filter is
+\begin{align}
+ Q_{2p}&=-\frac{\epsilon}{2^{2p}\Delta x}
+ J_x^{-1}D_p^T\operatorname{diag}(W\overline J)D_p,\\
+ \overline J_i&=\frac{p+1}{\sum_{j=0}^{p}1/J_{x,i+j}},\qquad p=4,
+\end{align}
+with $\epsilon=0.5$ and the existing nonnegative physical-radius taper $W$. The AF coefficient column is excluded from this filter, while its continuum endpoint ODE is still evolved. Geometry and $B$ use the same filter. Its discrete $J_x$-weighted energy contribution is nonpositive and its smooth interior truncation contribution is $O(\Delta x^7)$. The isolated-filter guard is $\Delta t\epsilon/\Delta x\leq2/(p+1)$; characteristic and relaxation guards are also enforced. These properties do not provide a stability estimate for the combined nonlinear operator.
+
+On this map, the full-grid constraint RMS is
+\begin{equation}
+ \normr{C}=\left[\frac{\sum_i r_i^2J_{x,i}C_i^2}
+ {\sum_i r_i^2J_{x,i}}\right]^{1/2}.
+\label{eq:telegraph-norm}
+\end{equation}
+It uses the implemented conformal constraint quantities and is not a proper-volume norm. It downweights the near-puncture region and gives zero weight to the endpoint $r=0$, so we also retain unweighted pointwise maxima on the full grid and on $0\leq r<0.8$. The latter cutoff removes the outer region toward scri, not the black-hole interior. No differential constraint is projected, reset, or masked in the acceptance assessment.
+
+The implementation checks include independent nonzero-flux Python/compiled rates, spherical angular contractions, free-constraint RK stages, exact zero-flux regression, mapped differentiation/quadrature, filter energy identities, stage rays, and compensated-state restart. The complete 55-group suite passed after the dense-exit implementation. A subsequent analysis-only change passed its two targeted CTest groups; it is not described as a rerun of the expanded 56-group suite. Pure exit-event oracles showed approximately fourth-order errors, whereas the actual $C^1$ interpolated speed requires its own measured timestep study.
+
+\input{sections/telegraph-results}
+
+\subsection{Unsuccessful repairs and limits of the follow-up}
+The refinement strategy was selected through documented failures. The inner-collar coupling lost influence after the front entered the collar; retaining the AF-regular coupling addressed that mechanism. Uniform and insufficiently clustered grids then underresolved the shrinking layer. A global clustering map improved inner resolution while degrading scri, motivating a map that preserves outer resolution. Increasing the differentiation width from seven to nine points produced a severe scri failure: the $N=513$, $t=6$ pilots had pole residues of order $5.6\times10^3$ and Hamiltonian RMS of order $0.20$, despite reaching their target time. A restricted outer-block spectrum supported a discrete-boundary explanation, but did not prove stability of the full system. Width seven was retained.
+
+The previous KO6 exponential-map sequence met the inner spatial constraint magnitude and convergence gates through $t=10$ but missed the scri pole threshold: its finest residue was $1.0504\times10^{-7}$ against $10^{-7}$. Its old linear-ray/terminal-exit treatment also failed the independent compression accuracy criterion, with a timestep-to-spatial difference ratio of $0.2544$. Replacing only the speed interpolant by PCHIP did not cure terminal-event error. In the subsequent short pilot, adding matched dense exit events reduced the all-ray compression difference from $1.49\times10^{-4}$ to $9.89\times10^{-7}$ and its timestep-to-spatial ratio to $0.00168$. The saved geometry and auxiliary-flux histories were byte-identical across this diagnostic change. These were repairs to characteristic measurement, not an additional lapse-smoothing mechanism.
+
+The current study ends at the requested finest-grid milestone. Independent shift-quadrature refinements, KO-amplitude variations, and adjacent fixed $\kappa_T,\tau_T$ three-grid controls were prepared but not executed. Their absence prevents a claim of robust parameter-independent convergence. Neither the telegrapher modification nor a successful finite-duration convergence check establishes a stationary trumpet limit, nonlinear shock avoidance for arbitrary data, or the missing scalar-collapse and radiation results.

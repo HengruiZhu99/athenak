@@ -1,0 +1,352 @@
+--- before/main.tex
++++ after/main.tex
+@@ -1,4 +1,4 @@
+-\documentclass[aps,prd,reprint,nofootinbib,longbibliography]{revtex4-2}
++\documentclass[aps,prd,reprint,floatfix,nofootinbib,longbibliography]{revtex4-2}
+ \usepackage[T1]{fontenc}
+ \usepackage{amsmath,amssymb,bm,graphicx,booktabs}
+ \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+@@ -19,12 +19,13 @@
+ formulation, numerical verification, and strong-field limitations}
+ \date{Working manuscript; evidence snapshot of 26 October 2026}
+ \begin{abstract}
+-We investigate a spherical free-evolution formulation of the conformally compactified Einstein equations in which a live hyperboloidal lapse is coupled to an elliptic shift derived from the conformal metric connection. The shift condition does not constrain the independently evolved Z4 connection variable. We describe nonlinear spherical equations, actual-null-infinity boundary treatment, positive field variables, a separate asymptotically flat puncture chart, and coupled massless-scalar evolution. Independent tensor comparisons, stage-by-stage shift solves, and restart tests support implementation consistency. A finite-amplitude Minkowski lapse pulse exhibits observed orders of $5.00$ in the bulk and $4.20$ near null infinity over $0\leq t\leq1$, although the finest constraint measurements encounter an arithmetic floor. A coupled subcritical scalar experiment gives a final mass--flux discrepancy of $8.19\times10^{-9}$ on the finest tested grid. Strong-field results remain incomplete: wormhole data develop steep gauge fronts, several source and boundary variants fail, and the latest causal retained-domain evolutions have insufficient constraint convergence despite reaching $t=10$. An already-trumpet control with a separate analytic lapse source reaches $t=100$ with small invariant errors, but does not establish wormhole-to-trumpet evolution in the main gauge. We retain negative results and distinguish algebraic verification, short-time convergence, and unresolved nonlinear stability. No successful coupled collapse, quasinormal-mode extraction, or late-time-tail result is claimed.
++We investigate a spherical free-evolution formulation of the conformally compactified Einstein equations in which a live hyperboloidal lapse is coupled to an elliptic shift derived from the conformal metric connection. The shift condition does not constrain the independently evolved Z4 connection variable. We describe nonlinear spherical equations, actual-null-infinity boundary treatment, positive field variables, a separate asymptotically flat puncture chart, and coupled massless-scalar evolution. Independent tensor comparisons, stage-by-stage shift solves, and restart tests support implementation consistency. A finite-amplitude Minkowski lapse pulse exhibits observed orders of $5.00$ in the bulk and $4.20$ near null infinity over $0\leq t\leq1$, although the finest constraint measurements encounter an arithmetic floor. A coupled subcritical scalar experiment gives a final mass--flux discrepancy of $8.19\times10^{-9}$ on the finest tested grid. Historical wormhole trials develop unresolved steep gauge fronts, and causal retained-domain evolutions have insufficient constraint convergence despite reaching $t=10$. A subsequent spherical conformal telegrapher lapse adds a relaxation flux and tracks the coupled gauge characteristics at every Runge--Kutta stage. We report a full-domain, three-resolution follow-up through $t=10$, with bulk field order $5.89$ and finest peak accepted Hamiltonian RMS $1.53\times10^{-8}$. The fixed candidate passes the stated spatial checks, while retaining a narrow nonmonotone inner lapse structure and strong finite-grid characteristic compression. Independent quadrature, dissipation-amplitude, and adjacent relaxation-parameter controls remain unrun; robust nonlinear stability is therefore not established. An already-trumpet control with a separate analytic lapse source reaches $t=100$ with small invariant errors, but does not establish wormhole-to-trumpet evolution in the main gauge. We retain negative results and distinguish algebraic verification, short-time convergence, and unresolved nonlinear stability. No successful coupled collapse, quasinormal-mode extraction, or late-time-tail result is claimed.
+ \end{abstract}
+ \maketitle
+ \input{sections/formulation}
+ \input{sections/numerics}
+ \input{sections/results}
++\input{sections/telegraph}
+ \input{sections/discussion}
+ \clearpage
+ \appendix
+--- before/references.tex
++++ after/references.tex
+@@ -42,4 +42,12 @@
+ J. D. \'Alvares and A. Va\~n\'o-Vi\~nuales,
+ ``Charged Scalar Field at Future Null Infinity via Nonlinear Hyperboloidal Evolution,''
+ \href{https://arxiv.org/abs/2506.15311v4}{arXiv:2506.15311v4} (2026).
++\bibitem{PCHIP}
++SciPy developers, ``PchipInterpolator,'' SciPy documentation,
++\href{https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.PchipInterpolator.html}{online algorithm documentation}
++(accessed 26 October 2026).
++\bibitem{RK4Dense}
++Hipparchus developers, ``ClassicalRungeKuttaStateInterpolator,'' version 4.0.3 API documentation,
++\href{https://hipparchus.org/apidocs-4.0.3/org/hipparchus/ode/nonstiff/interpolators/ClassicalRungeKuttaStateInterpolator.html}{online interpolation formula}
++(accessed 26 October 2026).
+ \end{thebibliography}
+--- before/sections/discussion.tex
++++ after/sections/discussion.tex
+@@ -11,7 +11,7 @@
+ \end{equation}
+ changes the principal lapse coefficient without imposing a lapse floor. A local restoring variant uses $\nu_{\rm eff}=\nu(A+\delta)/(\alpha+\delta)$ in Eq.~\eqref{eq:physical-log}. The $\delta=10^{-3}$ runs fail near $t=1.0015$, $1.0155$, and $1.0753$ on $N=513,1025,2049$, with nonfinite AF logarithms. Halving the middle-grid timestep changes its failure time by only about $2.4\times10^{-5}$. These observations do not support a time-step-only explanation, and the variant is not adopted as a cure. Local shock-avoidance indicators from simpler systems cannot replace a derivation and convergence study for the full formulation.
+ 
+-\begin{table*}[t]
++\begin{table*}[tp]
+ \caption{Principal failures and their implications. This table retains unsuccessful numerical and gauge variants rather than presenting only the latest surviving runs. The supplement contains the explicit failed-manifest inventory; several additional rows here concern scientifically failed completed runs.}
+ \label{tab:failures}
+ \begin{ruledtabular}
+@@ -46,6 +46,6 @@
+ The literature inventory contains 91 test/control rows spanning the requested sources and relevant follow-ups. None is marked as a completed reproduction: parameter extraction, identical-gauge comparisons, long durations, and several physical experiments remain unfinished. In particular, a stable already-trumpet control is not a wormhole-to-trumpet demonstration, and fixed-background scalar propagation is not coupled collapse. We do not report quasinormal frequencies or tail exponents from failed trajectories.
+ 
+ \section{Conclusions}
+-The metric-derived elliptic shift provides a concrete spherical gauge construction that preserves independently evolved Z4 fields. Its $g=1$ reduction admits efficient stage solves, while analytic cancellation, positive-variable charts, and explicit inner-end limits make difficult regularity and conditioning issues accessible to independent tests. The strongest evolution evidence is short-time finite-pulse field convergence and coupled subcritical mass--flux convergence. The specialized CMC-source control supplies a useful long-lived geometric check.
++The metric-derived elliptic shift provides a concrete spherical gauge construction that preserves independently evolved Z4 fields. Its $g=1$ reduction admits efficient stage solves, while analytic cancellation, positive-variable charts, and explicit inner-end limits make difficult regularity and conditioning issues accessible to independent tests. The historical positive evidence comprises short-time finite-pulse field convergence and coupled subcritical mass--flux convergence. The telegrapher follow-up adds a full-domain three-grid study of the inward lapse layer and stage-integrated gauge characteristics through $t=10$, passing the declared spatial, boundary, positivity, and lapse-gradient checks for the fixed candidate. The finest peak Hamiltonian RMS and interior pointwise error are $1.53\times10^{-8}$ and $2.29\times10^{-5}$, respectively, with a maximum matched gradient discrepancy of $0.103\%$. These results support spatial resolution of the finite-duration front in this gauge; the narrow inner lapse bump is still present. The specialized CMC-source control supplies a useful long-lived geometric check.
+ 
+-The same evidence prevents a stronger stability claim. Fine-grid constraints encounter arithmetic limits; coarse endpoint convergence can fail transiently; and the main strong-field and collapse experiments remain unacceptable. The next scientific requirements are convergent strong-field fronts and inner treatment, independent cut/timestep/elliptic/dissipation studies, a demonstrated wormhole-to-trumpet limit, and successful coupled collapse followed by radiation extraction over the required durations. The present formulation is an experimentally characterized candidate with preserved failures, rather than a completed nonlinear hyperboloidal black-hole scheme.
++The same evidence prevents a stronger stability claim. Fine-grid constraints encounter arithmetic limits; coarse endpoint convergence can fail transiently; and the historical strong-field and collapse experiments remain unacceptable. The telegrapher follow-up addresses a different gauge prescription, but the unrun independent quadrature, dissipation-amplitude, and adjacent-parameter controls prevent its promotion to a robustly validated scheme. The remaining scientific requirements include completing the independent time/elliptic/dissipation and adjacent-parameter studies for the selected full-domain gauge, establishing longer-duration strong-field behavior, a demonstrated wormhole-to-trumpet limit, and successful coupled collapse followed by radiation extraction over the required durations. The present formulation is an experimentally characterized candidate with preserved failures, rather than a completed nonlinear hyperboloidal black-hole scheme.
+--- before/sections/formulation.tex
++++ after/sections/formulation.tex
+@@ -108,7 +108,7 @@
+ 
+ A separate reference-lapse damping control replaces products $\alpha\kappa_1$ by $A\kappa_1$. The implementation evaluates those products directly, avoiding division by a collapsed lapse. This changes damping away from the constraint surface. We do not combine results from this control with constant-damping experiments as if they used identical equations.
+ 
+-\begin{figure*}[t]
++\begin{figure*}[tp]
+  \includegraphics[width=\textwidth]{scheme}
+  \caption{Stage structure of the method. The elliptic equation controls the metric connection, while $\Lambda^r$, $\Th$, curvature, and the trace remain evolved fields. The diagram describes the algorithm, not a stability theorem. Scalar sources and radiation flux, when present, are evaluated at the same RK stages.}
+  \label{fig:scheme}
+--- before/sections/numerics.tex
++++ after/sections/numerics.tex
+@@ -99,7 +99,7 @@
+ 
+ \section{Verification and assessment protocol}
+ \label{sec:protocol}
+-The latest existing suite contains 50 passing test groups. It includes tensor and radial comparisons, manufactured shift solutions, selected independent ADM and scalar identities, scri and inner-end limits, and bitwise restart checks. The 128-case physical-trumpet-chart audit covers vacuum and scalar rates, transport, damping, endpoints, and short steps. Its maximum native-tensor, compiled/Python, and short-step discrepancies are $3.91\times10^{-14}$, $2.84\times10^{-14}$, and $8.89\times10^{-16}$, respectively. These are implementation checks rather than physical evolution results.
++The historical implementation snapshot used for the results in Sec.~\ref{sec:results} contains 50 passing test groups; the later telegrapher checks are reported separately in Sec.~\ref{sec:telegraph}. It includes tensor and radial comparisons, manufactured shift solutions, selected independent ADM and scalar identities, scri and inner-end limits, and bitwise restart checks. The 128-case physical-trumpet-chart audit covers vacuum and scalar rates, transport, damping, endpoints, and short steps. Its maximum native-tensor, compiled/Python, and short-step discrepancies are $3.91\times10^{-14}$, $2.84\times10^{-14}$, and $8.89\times10^{-16}$, respectively. These are implementation checks rather than physical evolution results.
+ 
+ Our physical-field comparison uses an $r^2$-weighted nodal RMS,
+ \begin{equation}
+--- before/sections/reproducibility.tex
++++ after/sections/reproducibility.tex
+@@ -1,10 +1,10 @@
+ \section{Evidence provenance and reproducibility}
+ \label{app:repro}
+-The experiment is isolated on branch \code{codex/hyperboloidal-elliptic-shift-1d}. Its preserved baseline is \code{f5d99045e016}, and the latest committed numerical implementation at this snapshot is \code{a0c1d6aa3} (compiled API 32). Older experiments use their own frozen source trees and libraries; a later API number does not retroactively validate them. The manuscript and newest analysis artifacts are separate from that numerical implementation commit.
++The experiment is isolated on branch \code{codex/hyperboloidal-elliptic-shift-1d}. Its preserved baseline is \code{f5d99045e016}, and the original manuscript used numerical implementation \code{a0c1d6aa3} (compiled API 32). The telegrapher follow-up uses its separately frozen geometry and relaxation libraries; complete inputs and executable/source digests are exported in \code{data/telegraph/}. Older experiments use their own frozen source trees and libraries; a later API number does not retroactively validate them. The manuscript and newest analysis artifacts are separate from that numerical implementation commit.
+ 
+-Each evolution records inputs, command, source hashes, native/compiled library hashes, diagnostics, and checkpoint ancestry. Continuation requires the exact saved source and executable binding. The domain-transfer event is separately recorded and is not a relaxed restart. Paused runs are excluded from completed-result plots. No production branch was merged, and the writing process did not resume the paused numerical goal.
++Each evolution records inputs, command, source hashes, native/compiled library hashes, diagnostics, and checkpoint ancestry. Continuation requires the exact saved source and executable binding. The domain-transfer event is separately recorded and is not a relaxed restart. Paused runs are excluded from completed-result plots. No production branch was merged. The original paused trajectories were not resumed; the telegrapher follow-up consists of separately authorized local runs. At the user-requested finest-grid stopping point, further numerical experiments were stopped and any incomplete controls are labeled explicitly.
+ 
+-The accompanying \code{data/evidence.json} contains the existing review records and selected history columns used here. \code{data/manifests/} retains the plotted runs' complete bindings and inputs. Selected inner profiles are supplied as compressed NumPy arrays. \code{source-manifest.json} maps all exported sources to their original repository-relative paths and SHA-256 digests. The \code{make_figures.py} script regenerates all eight figures using only this portable bundle. It performs plotting, not evolution. The separate \code{collect_evidence.py} script documents how the bundle was assembled from the original archive. The failure inventory includes explicitly failed/rejected manifests and identifies their paths and hashes; completed-but-unaccepted experiments remain visible in the manuscript.
++The accompanying \code{data/evidence.json} contains the existing review records and selected history columns used here. \code{data/manifests/} retains the plotted runs' complete bindings and inputs. Selected inner profiles are supplied as compressed NumPy arrays. \code{source-manifest.json} maps the original export to repository-relative paths and SHA-256 digests; \code{data/telegraph/source-manifest.json} does the same for the follow-up. The \code{make_figures.py} script regenerates the eight original figures using only this portable bundle; \code{make_telegraph_figures.py} regenerates the five follow-up figures from the exported data. It performs plotting, not evolution. The separate \code{collect_evidence.py} script documents how the bundle was assembled from the original archive. The failure inventory includes explicitly failed/rejected manifests and identifies their paths and hashes; completed-but-unaccepted experiments remain visible in the manuscript.
+ 
+ The principal evidence associations are:
+ \begin{itemize}
+@@ -13,6 +13,7 @@
+  \item Fig.~\ref{fig:cmc}: the symmetric CMC-source/reference-damping assessment and saved histories.
+  \item Fig.~\ref{fig:front}: exact $t=2.5$ profiles from the $\nu=1$ physical-log wormhole family.
+  \item Fig.~\ref{fig:domain}: the completed global-profile retained-domain matrix and same-grid compact-profile control.
++ \item Figs.~\ref{fig:tele-lapse}--\ref{fig:tele-rays}: completed three-grid telegrapher trajectories, spatial acceptance review, stage-ray convergence review, and independently reconstructed constraint/horizon histories in \code{data/telegraph/}.
+  \item Fig.~\ref{fig:scalar}: the fixed-background scalar oracle, all-stage Bondi dispersal assessment, and failed positive-upwind collapse histories.
+ \end{itemize}
+-No statistical error bars are inferred from deterministic resolution sequences. Reference power-law guides in the figures are explicitly labeled; reported self-convergence orders refer to the stated grids, norms, and time windows. The absence of a complete long-duration, three-resolution physical assessment remains part of the result.
++No statistical error bars are inferred from deterministic resolution sequences. Reference power-law guides in the figures are explicitly labeled; reported self-convergence orders refer to the stated grids, norms, and time windows. The completed telegrapher spatial assessment covers only the stated $t=10$ interval and fixed parameters. The absent independent robustness controls, incomplete physical scenarios, and lack of a demonstrated late-time trumpet limit remain part of the result.
+--- before/sections/results.tex
++++ after/sections/results.tex
+@@ -1,9 +1,9 @@
+ \section{Numerical results}
+ \label{sec:results}
+-Table~\ref{tab:experiments} identifies the main experiment families. All times are in compactification units, not automatically in units of the black-hole mass. The completed runs shown in the figures were already available before manuscript preparation. No evolution was launched or resumed to produce this paper.
++Table~\ref{tab:experiments} identifies the historical experiment families. All times are in compactification units, not automatically in units of the black-hole mass. The historical runs in this section were already available for the original manuscript. Section~\ref{sec:telegraph} reports the subsequently authorized telegrapher investigation separately.
+ 
+-\begin{table*}[t]
+-\caption{Principal evidence families. ``Completed'' means the integrator reached its target, not that the scientific acceptance criteria passed. All listed coupled evolutions use actual scri. Q denotes quadrature shift integration and B denotes the right-biased discrete shift equation. The independent scalar solver is a separate fixed-background control.}
++\begin{table*}[tp]
++\caption{Principal historical evidence families. ``Completed'' means the integrator reached its target, not that the scientific acceptance criteria passed. All listed coupled evolutions use actual scri. Q denotes quadrature shift integration and B denotes the right-biased discrete shift equation. The independent scalar solver is a separate fixed-background control.}
+ \label{tab:experiments}
+ \begin{ruledtabular}
+ \begin{tabular}{p{2.9cm}p{5.2cm}p{3.0cm}p{4.8cm}}
+@@ -33,7 +33,7 @@
+ \end{equation}
+ and unperturbed geometric data. This is the published-form pulse used as a physical test, not a claim of identical published gauge evolution. On $N=2048,4096,8192$ at fixed CFL, the peak-in-time physical-field difference has observed order $5.0004$ in the bulk and $4.2005$ near scri. Time-RMS orders are $4.9975$ and $4.2089$. Figure~\ref{fig:gauge} shows the underlying differences, including the pulse's passage through the outer region. The approximately fifth-order bulk behavior is consistent with the filter contribution; it should not be described as a uniform sixth-order evolution.
+ 
+-\begin{figure*}[t]
++\begin{figure*}[tp]
+  \includegraphics[width=\textwidth]{gauge_convergence}
+  \caption{Finite-amplitude lapse pulse with local derivative subtraction and compensated accepted updates. Curves are differences between consecutive resolutions in physical variables at exact common saved times. The peak-difference orders are $5.00$ in the bulk and $4.20$ near scri. Values below the plotted range at early times reflect the initially negligible outer signal, not measured asymptotic convergence. This experiment ends at $t=1$.}
+  \label{fig:gauge}
+@@ -41,7 +41,7 @@
+ 
+ The constraint results are more restrictive. Figure~\ref{fig:arithmetic} compares local derivative subtraction with and without compensated accepted increments. At $N=8192$, the peak accepted-state Hamiltonian RMS decreases from $9.99\times10^{-10}$ to $7.88\times10^{-11}$, and the momentum RMS decreases from $7.63\times10^{-10}$ to $5.68\times10^{-11}$. Compensation substantially reduces the arithmetic contamination, but the finest Hamiltonian error still increases relative to $N=4096$. A field-convergence plot alone would miss this limitation.
+ 
+-\begin{figure*}[t]
++\begin{figure*}[tp]
+  \includegraphics[width=\textwidth]{arithmetic_floor}
+  \caption{Peak constraints over all accepted states of the finite pulse on $0\leq t\leq1$. The dotted lines are fifth-order reference slopes, not fits. Compensated updates reduce the finest errors, but do not remove the constraint floor. Intermediate RK trial-state constraints are not substituted for accepted-state accuracy.}
+  \label{fig:arithmetic}
+@@ -61,7 +61,7 @@
+ 
+ Finally, a successful final-time convergence check can be misleading. The original right-biased $512/1024/2048$ study gives endpoint order $4.82$ at $t=1$, but only about $1.28$ at $t=0.5$ [Fig.~\ref{fig:endpoint}(b)]. The fixed-grid timestep difference at that transient is $5.76\times10^{-14}$, far below the spatial discrepancy. Refinement and arithmetic controls, rather than a new time integrator, were therefore the relevant next tests. The finer result in Fig.~\ref{fig:gauge} improves this behavior, without retroactively making the coarse experiment acceptable.
+ 
+-\begin{figure*}[t]
++\begin{figure*}[tp]
+  \includegraphics[width=\textwidth]{endpoint_failures}
+  \caption{Two distinct endpoint-related failures. (a) Dominant real eigenvalue of the coupled finite-grid Jacobian; the vertical scale is symmetric logarithmic. An accurately solved centered shift matrix can still destabilize evolution. (b) Endpoint self-convergence order of the original finite-pulse grids at exact common snapshots. The transient falls below the predeclared order-three threshold despite good final-time convergence. The panels use different diagnostics and do not establish a nonlinear energy estimate.}
+  \label{fig:endpoint}
+@@ -83,7 +83,7 @@
+ 
+ The evolved control uses a finite cutoff $r_{\min}=0.03$, an analytic \emph{lapse-only} source adapted to this CMC geometry, symmetric restoring, and reference-lapse damping. No numerical Schwarzschild RHS is subtracted. All three grids reach $t=100$. At $N=1024$, the peak Hamiltonian and momentum RMS values are $1.11\times10^{-9}$ and $1.69\times10^{-9}$, with relative horizon-mass drift $1.37\times10^{-12}$. Figure~\ref{fig:cmc} also shows that the finest constraints are not uniformly smaller than the middle-grid values. Earlier multiplicative-source excision controls halted when the gauge characteristic became incoming; constant damping also allowed greater late-time growth. The successful duration of this specialized control does not validate the main Minkowski-reference wormhole experiment.
+ 
+-\begin{figure*}[t]
++\begin{figure*}[tp]
+  \includegraphics[width=\textwidth]{cmc_control}
+  \caption{Already-trumpet CMC control, $M=1/3$, with an analytic CMC lapse source and reference-lapse damping. Sampled Hamiltonian RMS and relative apparent-horizon mass error remain small through $t=100$, but the finest Hamiltonian curve shows a floor/upturn. Isolated zero mass errors are omitted on the logarithmic axis. These data are neither wormhole-to-trumpet evolution nor the main Minkowski-reference gauge.}
+  \label{fig:cmc}
+@@ -108,7 +108,7 @@
+ 
+ For $M=1/3$ and $\nu=1$, the modified logarithmic source still produces a sharp inward-moving front. At $t=2.5$, the physical-lapse gradient near $r=0.119$ increases from $22.86$ to $40.65$ to $76.92$ as $N$ increases from $513$ to $1025$ to $2049$. The trace develops a narrow negative spike, and local Hamiltonian maxima increase from $0.409$ to $0.654$ to $0.974$ (Fig.~\ref{fig:front}). The front subsequently moves inward. These data rule out a smooth, resolved convergence interpretation of that trial. They support a gauge-steepening diagnosis, but do not prove a gauge-shock theorem for this spherical, nonlocal-shift system. Results for simpler slicing systems\cite{Alcubierre2005,BaumgarteHilditch2022} motivate this interpretation without establishing it here.
+ 
+-\begin{figure*}[t]
++\begin{figure*}[tp]
+  \includegraphics[width=\textwidth]{wormhole_front}
+  \caption{Failed $\nu=1$ wormhole trial with the modified logarithmic source, shown at the exact saved time $t=2.5$. The physical lapse steepens, $\Kh$ develops a narrow spike, and the local Hamiltonian error grows under refinement. The gradient diagnostic in (d) uses second-order differentiation of saved profiles; it is not the evolution stencil. This is evidence of unresolved steepening, not a proof of a continuum shock.}
+  \label{fig:front}
+@@ -117,9 +117,9 @@
+ Reducing the positive logarithmic coefficient to $\nu=0.25$ improves the early evolution. Full-domain prefixes on $N=2049,4097,8193$ through $t=3.2$ give peak physical-field self-convergence orders $5.50$ in the bulk and $5.86$ near scri. The peak accepted momentum RMS decreases as $2.77\times10^{-5}$, $1.47\times10^{-6}$, and $6.87\times10^{-8}$. The Hamiltonian RMS, however, is $1.01\times10^{-7}$, $3.00\times10^{-9}$, and $5.37\times10^{-9}$; the finest upturn remains visible. These are prefix results only. An existing exact-source continuation of $N=4097$ reaches $t=3.6$, but does not supply the missing full long-duration study.
+ 
+ \subsection{Causal retained domains: improvement without acceptance}
+-The latest completed comparison transfers the saved $t=3.2$ wormhole states to $r\geq1/64$, using the global profile in Eq.~\eqref{eq:trumpet-chart}. It retains $1009$, $2017$, and $4033$ points from full grids of $1025$, $2049$, and $4097$, respectively. The main gauge remains Minkowski-referenced, with $\nu=0.25$, the modified logarithmic source, and constant damping. All runs reach $t=10$ and remain outward-characteristic at the cutoff. Their transient constraint accuracy is insufficient (Table~\ref{tab:domain}).
++The retained-domain comparison transfers the saved $t=3.2$ wormhole states to $r\geq1/64$, using the global profile in Eq.~\eqref{eq:trumpet-chart}. It retains $1009$, $2017$, and $4033$ points from full grids of $1025$, $2049$, and $4097$, respectively. The main gauge remains Minkowski-referenced, with $\nu=0.25$, the modified logarithmic source, and constant damping. All runs reach $t=10$ and remain outward-characteristic at the cutoff. Their transient constraint accuracy is insufficient (Table~\ref{tab:domain}).
+ 
+-\begin{table}[t]
++\begin{table}[tbp]
+ \caption{Retained-domain peak accepted-state constraints on $3.2\leq t\leq10$. These maxima include the early transient.}
+ \label{tab:domain}
+ \begin{ruledtabular}
+@@ -137,7 +137,7 @@
+ 
+ The earlier finite-cutoff and asymptotic-chart failures also limit interpretation. An outward physical light cone alone was insufficient because the gauge cone could be incoming. A gauge-only Robin treatment later halted when a physical characteristic entered. Stronger dissipation, SBP6/3 differentiation, and a tapered cutoff filter did not produce an accepted full wormhole evolution. For finite time the full continuum wormhole retains an asymptotically flat inner core; a trumpet limit must be established outside that shrinking core using lapse collapse, limiting areal radius, proper-distance behavior, and invariant convergence. That demonstration remains unfinished.
+ 
+-\begin{figure*}[t]
++\begin{figure*}[tp]
+  \includegraphics[width=\textwidth]{retained_domain}
+  \caption{Completed retained-domain experiments with the global metric profile and $\nu=0.25$. Panels (a,b) show saved-time RMS constraints, whereas (c) uses maxima over every accepted state; narrow peaks can exceed the saved-time curves. The measured orders remain inadequate. Panel (d) isolates the late compact-profile artifact using two $N=1009$ runs with identical physical initial fields and gauge sources. These plots exclude the excised region and cannot replace assessment of the full preceding wormhole trajectory.}
+  \label{fig:domain}
+@@ -157,7 +157,7 @@
+ 
+ The collapse attempts are unsuccessful. The latest positive-variable, upwind, $A_\phi=0.07$ trial reaches $t=3$ at all three resolutions, but its all-stage Hamiltonian RMS peaks are $3.71\times10^8$, $3.05\times10^{10}$, and $1.94\times10^{10}$. Sampled histories are shown in Fig.~\ref{fig:scalar}(d). Numerical survival and any apparent-horizon crossing in such a trajectory cannot be interpreted as reliable black-hole formation. Earlier source and transport variants also failed. No coupled black-hole scalar perturbation, quasinormal frequency, or late-time decay exponent is extracted from these data. Those physical tests, including neutral limits of later scalar studies\cite{Alvares2026}, remain future work.
+ 
+-\begin{figure*}[t]
++\begin{figure*}[tp]
+  \includegraphics[width=\textwidth]{scalar_results}
+  \caption{Scalar evidence with its scope kept explicit. (a) Independent second-order fixed-background oracle. (b) Coupled subcritical mass--flux discrepancy at $t=6$; the dotted slope is a guide. (c) Sampled coupled dispersal constraints. (d) A different, failed $A_\phi=0.07$ collapse family with enormous constraints. Panels (c,d) use different lapse-source/variable choices, so their contrast is not a controlled amplitude-only comparison. Reaching the target time in (d) is not evidence of accurate collapse.}
+  \label{fig:scalar}
+--- before/sections/telegraph-results.tex
++++ after/sections/telegraph-results.tex
+@@ -0,0 +1,56 @@
++\subsection{Completed spatial experiment and measured limitations}
++\input{data/telegraph/numbers}
++The three related grids $N=1025,2049,4097$ reach $t=10$ with identical continuum parameters, numerical map, CFL factor, derivative width, and dissipation amplitude. This includes the complete initial transient and late inward compression. The comparison uses exact common physical nodes and 201 saved times; the constraint and boundary maxima in Table~\ref{tab:telegraph} are accumulated over every accepted state or every checked stage, as appropriate, rather than inferred only from those snapshots.
++
++\begin{table}[tbp]
++\caption{Full-duration telegrapher results on $0\leq t\leq10$. The Hamiltonian columns are maxima over accepted states; the pole column is the maximum checked scri residue. The pointwise Hamiltonian column includes $0\leq r<0.8$, retaining the puncture neighborhood.}
++\label{tab:telegraph}
++\begin{ruledtabular}
++\small
++\setlength{\tabcolsep}{3pt}
++\begin{tabular}{rccc}
++$N$ & $\max_t\normr{\HH}$ & $\max_{t,r<0.8}|\HH|$ & Scri pole\\
++\hline
++\input{data/telegraph/table}
++\end{tabular}
++\end{ruledtabular}
++\end{table}
++
++The peak-in-time field-difference orders are \TeleBulkOrder\ in the bulk and \TeleEndpointOrder\ near scri. The finest-pair orders of the accepted-state RMS maxima for $(\HH,\MM,\Th,Z_r)$ are $(\TeleHOrder,\TeleMOrder,\TeleThetaOrder,\TeleZOrder)$. The maximum matched lapse-gradient discrepancy, normalized separately at each time by the fine-grid peak on common nodes, is \TeleGradientPercent\ percent. The original thresholds are unchanged: bulk field and constraint order at least $3.5$, endpoint field order at least $3$, finest Hamiltonian RMS below $10^{-5}$, pointwise Hamiltonian below $10^{-3}$ on $r<0.8$, and matched gradient discrepancy below $10\%$. \TeleSpatialAssessment
++
++Figures~\ref{fig:tele-lapse} and \ref{fig:tele-resolution} show that an inward-moving nonmonotone lapse structure remains. Its survival as a profile feature is not itself a convergence failure: the relevant questions are whether its amplitude, width, derivatives, and associated constraints stabilize under refinement. Conversely, close agreement of two lapse curves alone is insufficient. By $t=10$ the physical-lapse structure occupies radii of order $10^{-6}$, which motivates the fixed exponential grid. A large coordinate derivative in this shrinking region is not, by itself, proof of a continuum discontinuity.
++
++\begin{figure*}[tp]
++ \includegraphics[width=\textwidth]{telegraph_lapse_evolution}
++ \caption{Telegrapher lapse evolution on the finest completed grid, $N=4097$. The global panel uses conformal $\alpha$, which remains finite at scri. The inner panel uses physical $\widetilde\alpha=\alpha/\Omega$ and logarithmic radius to expose the late nonmonotone structure. Curves use saved profiles without smoothing or temporal interpolation. The remaining bump is not declared eliminated.}
++ \label{fig:tele-lapse}
++\end{figure*}
++\begin{figure*}[tp]
++ \includegraphics[width=\textwidth]{telegraph_lapse_resolution}
++ \caption{Three-grid physical-lapse comparison at $t=2.5$ and $t=10$. The lower panels show raw consecutive-grid differences at matching physical nodes. The late panel retains the near-puncture structure instead of cutting it out. These are profile comparisons; whole-trajectory derivative and constraint checks are reported separately.}
++ \label{fig:tele-resolution}
++\end{figure*}
++
++Figure~\ref{fig:tele-constraints} presents all four constraint histories. The radial RMS can be small while a sharply localized inner error is appreciable. At $t=10$ on $N=2049$, for example, $\normr{\HH}=9.67\times10^{-8}$ but $\max_r|\HH|=2.24\times10^{-3}$. That peak lies at $r=1.46\times10^{-6}$, well inside the apparent horizon at $r=0.10765$; the exterior maximum is $1.05\times10^{-7}$. This is a localization diagnostic, not an exterior-only acceptance rule. On the finest grid, the corresponding final full-grid maximum is \TeleFinalHMax\ at $r=\TeleFinalHRadius$, and the peak sampled apparent-horizon mass error over the full run is \TeleAHMassError. The maximum sampled finite-node Misner--Sharp mass discrepancy over the same trajectory is \TeleMSMassError, including the near-scri and inner nodes; the maximum sampled AF-end coefficient-mass discrepancy is \TeleAFMassError. The actual scri mass slot is undefined in this diagnostic and is not included in that finite-node maximum. Neither small exterior error nor accurate horizon mass overrides an inner constraint failure. Figure~\ref{fig:tele-inner} makes the pointwise error, growing lapse gradient, error location, and mass diagnostic visible together.
++
++\begin{figure*}[tp]
++ \includegraphics[width=\textwidth]{telegraph_constraints}
++ \caption{Full-domain radial RMS constraints for the completed telegrapher sequence, using Eq.~\eqref{eq:telegraph-norm}. Every plotted value was recomputed from saved fields and checked against the recorded history. These curves sample every $0.05$ time units; the accepted-state maxima in Table~\ref{tab:telegraph} can be slightly larger. No interior mask is applied. The radial weighting suppresses small-radius contributions, so Fig.~\ref{fig:tele-inner} also reports the full-grid pointwise Hamiltonian error.}
++ \label{fig:tele-constraints}
++\end{figure*}
++\begin{figure*}[tp]
++ \includegraphics[width=\textwidth]{telegraph_inner_errors}
++ \caption{Diagnostics that prevent a small radial RMS from hiding the inward layer. (a) Unweighted full-grid Hamiltonian maximum. (b) Physical-lapse gradient over $0\leq r<0.3$, evaluated with analytic AF factors and seven-point chart derivatives. (c) Position of the finest-grid Hamiltonian peak compared with the apparent horizon. (d) Independent apparent-horizon mass error. The horizon is identified from the outgoing expansion; this does not locate the event horizon. Mass errors near floating-point precision do not establish an asymptotic order.}
++ \label{fig:tele-inner}
++\end{figure*}
++
++The tracked rays retain their ordering in the sampled spatial comparison. At $t=10$, all 81 inward rays remain active and all 81 outward rays have exited at scri. The finest minimum active inward $\log\mathcal J_-$ is \TeleMinLogJ, and the minimum active neighboring-ray separation is \TeleRayGap. The maximum middle-to-fine differences over the full trajectory are \TeleRayPositionError\ in ray position and \TeleRayLogError\ in $\log\mathcal J$, including terminal states. The observed peak-difference orders are \TeleRayPositionOrder\ and \TeleRayLogOrder, respectively. Figure~\ref{fig:tele-rays} shows the ray fans, compression, and refinement differences. These measurements describe strongly compressed finite-grid characteristics; they do not establish a continuum intersection or its absence.
++
++\begin{figure*}[tp]
++ \includegraphics[width=\textwidth]{telegraph_characteristics}
++ \caption{RK-stage characteristic tracking with matched dense exit events. The upper panels show nine representative seeds from each of the 81-ray families on $N=4097$. The outward panel zooms to the exit interval. Paths end at the last saved active point; no precise event time is fabricated from the plotting cadence. The lower-left panel shows inward compression across resolutions. The lower-right comparison includes all rays, including their frozen terminal compression. Positive finite-grid Jacobians and ordered rays are not a continuum shock-avoidance proof.}
++ \label{fig:tele-rays}
++\end{figure*}
++
++\subsection{Independent timestep evidence at the stopping point}
++\input{data/telegraph/time-assessment}
+--- before/sections/telegraph.tex
++++ after/sections/telegraph.tex
+@@ -0,0 +1,95 @@
++\section{Spherical conformal telegrapher follow-up}
++\label{sec:telegraph}
++The unresolved front in Fig.~\ref{fig:front} motivates a separate modification of the lapse gauge. This follow-up retains the full two-ended wormhole chart, the metric-derived elliptic shift, and independently evolved Z4c fields. It does not use the retained-domain transfer of the preceding section. In particular, neither the region inside the apparent horizon nor a neighborhood of the puncture is excised. The new numerical evidence is reported separately from the historical source and boundary trials.
++
++\subsection{Relaxation equation and spherical coupling}
++Set $D=\partial_t-\beta\partial_r$ and retain $u=\alpha-A$. We introduce a radial auxiliary component $B$ and a fixed taper $\varpi(r)$, with additions
++\begin{align}
++ \Delta(D\alpha)&=\chi\left[\varpi B_r+
++ \left(\varpi_r+\frac{2\varpi}{r}\right)B\right],
++ \label{eq:telegraph-alpha}\\
++ \tau_T DB&=\kappa_T\varpi u_r-B.
++ \label{eq:telegraph-B}
++\end{align}
++Here $B$ is unrelated to a shift-driver variable, and $\tau_T$ is unrelated to the endpoint penalty coefficient in Eq.~\eqref{eq:penalty}. The lapse addition equals $\chi r^{-2}\partial_r(r^2\varpi B)$. Its two angular terms follow from the flat-reference contraction of $B_i=B(r)x_i/r$. We retain componentwise advection of $B$ and divide Eq.~\eqref{eq:telegraph-alpha} by the total positive $\alpha$ when updating the logarithmic lapse variable. This is an explicit conformal coordinate gauge inspired by a telegrapher relaxation mechanism; it is not a covariant transformation of the Cartesian physical-lapse implementation. No Hamiltonian, momentum, or Z4 constraint is substituted into these equations.
++
++The initial data have $B=0$. The selected taper is one for $r\leq0.56$, decreases smoothly to zero over $0.56<r<0.8$, and is zero for $r\geq0.8$. The transition uses the $C^7$ rational ramp $R_7(z)=z^8/[z^8+(1-z)^8]$, with $z=(0.8-r)/0.24$ clipped to $[0,1]$. This differs from the polynomial smoothstep used for the numerical grid map below. Consequently the direct addition vanishes near scri, preserving the existing clock and compatibility equations. An earlier version also set the coupling to zero in an inner collar; it lost effectiveness when the front entered that collar and is not the selected prescription.
++
++Keeping $\varpi=1$ near the asymptotically flat end is regular. With $\chi=X_0r^4+O(r^5)$, $\alpha=a_2r^2+O(r^3)$, $\beta=b_1r+O(r^2)$, and $B=b_Br+O(r^2)$, Eq.~\eqref{eq:telegraph-B} gives
++\begin{equation}
++ \dot b_B=b_1b_B+\frac{\kappa_T(2a_2-1)-b_B}{\tau_T}.
++\end{equation}
++The added lapse rate is $3X_0b_Br^4+O(r^5)$, and the added logarithmic rate is $(3X_0b_B/a_2)r^2+O(r^3)$. Thus the leading AF lapse coefficient equation is unchanged. The endpoint condition $B(0)=0$ is preserved by its evolution; this argument uses AF asymptotics, not regular-center reflection parity.
++
++\subsection{Characteristic speeds and the meaning of compression}
++The frozen radial lapse--trace--flux subsystem has speeds
++\begin{equation}
++ c_0=-\beta,\qquad
++ c_\pm=-\beta\pm\sqrt{\chi\left(F+\frac{\kappa_T\varpi^2}{\tau_T}\right)}.
++\label{eq:telegraph-speeds}
++\end{equation}
++The shift and metric factors are essential. Using the isolated telegrapher speed alone would underestimate the coupled propagation speed. Define $c_g^2=\chi F$ and $c_T^2=\chi\kappa_T\varpi^2/\tau_T$. In the locally advected frame, the frozen Fourier dispersion polynomial is
++\begin{equation}
++ s^3+\frac{s^2}{\tau_T}+(c_g^2+c_T^2)k^2s
++ +\frac{c_g^2k^2}{\tau_T}=0.
++\label{eq:telegraph-dispersion}
++\end{equation}
++For nonzero $k$, positive $c_g^2,c_T^2$, and $\tau_T>0$, the Routh--Hurwitz inequality is strict. The high-frequency propagating pair has damping rate
++\begin{equation}
++ \gamma_\infty=\frac{c_T^2}{2\tau_T(c_g^2+c_T^2)}.
++\end{equation}
++These frozen-subsystem statements motivate the mechanism; they do not prove stability or shock avoidance for the nonlinear free-Z4c system with elliptic shift feedback.
++
++For each family we evolve a ray position and a ray-map Jacobian $\mathcal J_\pm$,
++\begin{equation}
++ \dot r_\pm=c_\pm(t,r_\pm),\qquad
++ \frac{\dd}{\dd t}\log\mathcal J_\pm=\partial_r c_\pm(t,r_\pm).
++\label{eq:telegraph-rays}
++\end{equation}
++There are 81 matched seeds per family, uniformly spanning $0.12\leq r\leq0.4$, activated exactly at $t=1$. The stage geometry and stage elliptic shift supply the speed at every RK evaluation. A shape-preserving $C^1$ piecewise cubic Hermite interpolant supplies both the speed and its analytic derivative\cite{PCHIP}; it is applied only to passive diagnostics and cannot smooth the evolved lapse. Boundary exits are located using a continuous RK4 extension\cite{RK4Dense}; the terminal position and compression are evaluated at the same exit event and then frozen. The implementation also checks for an exit followed by a return within a step. Intermediate ray stages may continue the endpoint speed polynomial by at most one boundary-cell width; the geometry and elliptic equations are never evaluated outside the domain. Terminal coincidences at scri are not characteristic crossings.
++
++For a regular Lipschitz finite-grid velocity, $\mathcal J=\exp(\int\partial_rc\,\dd t)$ stays positive. Finite-grid ray ordering therefore cannot prove continuum noncrossing. Conversely, a very small positive $\mathcal J$ is compression, not an observed intersection. The relevant evidence is joint spatial and temporal convergence of the lapse, its gradient, the constraints, and the ray diagnostics. The original unmodified gauge gave inward $\min\mathcal J$ at $t=3$ of $1.26\times10^{-5}$ and $1.22\times10^{-8}$ at $N=513$ and $1025$, respectively. This resolution-dependent compression supports the unresolved-steepening diagnosis, without importing a shock theorem from a simpler slicing system\cite{Alcubierre2005}.
++
++\subsection{Mapped discretization and implementation checks}
++The baseline is the modified logarithmic source of Eq.~\eqref{eq:physical-log}, with constant constraint damping. The selected parameters are $M=1/3$, $\nu=1$, $\kappa_T=0.005$, $\tau_T=0.02$, and $\Delta t=0.05\Delta x$, with $x_i=i/(N-1)$. All continuum equations remain expressed in $r$. A fixed numerical map resolves the shrinking inner layer:
++\begin{equation}
++ E(x)=\frac{\operatorname{expm1}(32x)}{2\operatorname{expm1}(16)}.
++\end{equation}
++It is used through $x=0.3$, joined to $r=x$ over $0.3<x<0.5$ by $r=(1-S)E+Sx$, and followed by the identity through $x=0.8$. For the inner join, $S=S_7((x-0.3)/0.2)$, where
++\begin{equation}
++ S_7(z)=\sum_{j=8}^{15}\binom{15}{j}z^j(1-z)^{15-j},
++ \qquad 0\leq z\leq1.
++\end{equation}
++For $x>0.8$, let $L=0.2$ and $y=(x-0.8)/L$ and use
++\begin{equation}
++ r=x+\tfrac12Ly^8(1-y),\qquad
++ J_x\equiv\frac{\dd r}{\dd x}=1+\tfrac12y^7(8-9y).
++\end{equation}
++This join is $C^7$, monotone, fixes actual scri, and gives $J_x(1)=1/2$. It refines the outer endpoint without changing the inner map. Derivative and interval-quadrature weights are constructed on the actual $r_i$; the endpoint penalty spacing is $\Delta xJ_x(1)$. The map is fixed across resolution, and no physical nodes are removed.
++
++The selected implementation retains seven-point derivative stencils and seven-point shift quadrature. It replaces sixth-difference dissipation by eighth-difference dissipation. Writing $D_p$ for the unscaled $p$th forward difference, the mapped filter is
++\begin{align}
++ Q_{2p}&=-\frac{\epsilon}{2^{2p}\Delta x}
++ J_x^{-1}D_p^T\operatorname{diag}(W\overline J)D_p,\\
++ \overline J_i&=\frac{p+1}{\sum_{j=0}^{p}1/J_{x,i+j}},\qquad p=4,
++\end{align}
++with $\epsilon=0.5$ and the existing nonnegative physical-radius taper $W$. The AF coefficient column is excluded from this filter, while its continuum endpoint ODE is still evolved. Geometry and $B$ use the same filter. Its discrete $J_x$-weighted energy contribution is nonpositive and its smooth interior truncation contribution is $O(\Delta x^7)$. The isolated-filter guard is $\Delta t\epsilon/\Delta x\leq2/(p+1)$; characteristic and relaxation guards are also enforced. These properties do not provide a stability estimate for the combined nonlinear operator.
++
++On this map, the full-grid constraint RMS is
++\begin{equation}
++ \normr{C}=\left[\frac{\sum_i r_i^2J_{x,i}C_i^2}
++ {\sum_i r_i^2J_{x,i}}\right]^{1/2}.
++\label{eq:telegraph-norm}
++\end{equation}
++It uses the implemented conformal constraint quantities and is not a proper-volume norm. It downweights the near-puncture region and gives zero weight to the endpoint $r=0$, so we also retain unweighted pointwise maxima on the full grid and on $0\leq r<0.8$. The latter cutoff removes the outer region toward scri, not the black-hole interior. No differential constraint is projected, reset, or masked in the acceptance assessment.
++
++The implementation checks include independent nonzero-flux Python/compiled rates, spherical angular contractions, free-constraint RK stages, exact zero-flux regression, mapped differentiation/quadrature, filter energy identities, stage rays, and compensated-state restart. The complete 55-group suite passed after the dense-exit implementation. A subsequent analysis-only change passed its two targeted CTest groups; it is not described as a rerun of the expanded 56-group suite. Pure exit-event oracles showed approximately fourth-order errors, whereas the actual $C^1$ interpolated speed requires its own measured timestep study.
++
++\input{sections/telegraph-results}
++
++\subsection{Unsuccessful repairs and limits of the follow-up}
++The refinement strategy was selected through documented failures. The inner-collar coupling lost influence after the front entered the collar; retaining the AF-regular coupling addressed that mechanism. Uniform and insufficiently clustered grids then underresolved the shrinking layer. A global clustering map improved inner resolution while degrading scri, motivating a map that preserves outer resolution. Increasing the differentiation width from seven to nine points produced a severe scri failure: the $N=513$, $t=6$ pilots had pole residues of order $5.6\times10^3$ and Hamiltonian RMS of order $0.20$, despite reaching their target time. A restricted outer-block spectrum supported a discrete-boundary explanation, but did not prove stability of the full system. Width seven was retained.
++
++The previous KO6 exponential-map sequence met the inner spatial constraint magnitude and convergence gates through $t=10$ but missed the scri pole threshold: its finest residue was $1.0504\times10^{-7}$ against $10^{-7}$. Its old linear-ray/terminal-exit treatment also failed the independent compression accuracy criterion, with a timestep-to-spatial difference ratio of $0.2544$. Replacing only the speed interpolant by PCHIP did not cure terminal-event error. In the subsequent short pilot, adding matched dense exit events reduced the all-ray compression difference from $1.49\times10^{-4}$ to $9.89\times10^{-7}$ and its timestep-to-spatial ratio to $0.00168$. The saved geometry and auxiliary-flux histories were byte-identical across this diagnostic change. These were repairs to characteristic measurement, not an additional lapse-smoothing mechanism.
++
++The current study ends at the requested finest-grid milestone. Independent shift-quadrature refinements, KO-amplitude variations, and adjacent fixed $\kappa_T,\tau_T$ three-grid controls were prepared but not executed. Their absence prevents a claim of robust parameter-independent convergence. Neither the telegrapher modification nor a successful finite-duration convergence check establishes a stationary trumpet limit, nonlinear shock avoidance for arbitrary data, or the missing scalar-collapse and radiation results.

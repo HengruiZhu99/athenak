@@ -1,0 +1,39 @@
+{
+  "declared_before_launch": true,
+  "purpose": "Full-duration three-grid validation after the KO8, refined-scri and diagnostic interpolation pilots.",
+  "gating": "Launch only after the repeated short pilot passes all-ray logJ time-to-space accuracy with dense exits.",
+  "inputs": {
+    "inputs/elliptic_shift_1d/telegraph-scri-pchip-convergence-v1.json": "0e4ef87a141b631cb1f166aa7816184d86e8311dded912bca794d5d0f0fa9fc2",
+    "inputs/elliptic_shift_1d/telegraph-scri-pchip-time-v1.json": "2934a04d638125d544e441d4df4e2c0a168ba69b7c25f788a4d7980ae152395e"
+  },
+  "duration": 10,
+  "grids": [
+    1025,
+    2049,
+    4097
+  ],
+  "fixed": {
+    "mass": 0.3333333333333333,
+    "t": 10,
+    "tau": 0.02,
+    "kappa": 0.005,
+    "nu": 1,
+    "cfl": 0.05,
+    "report_dt": 0.05,
+    "inner_profile": "af-regular",
+    "transition": 0.24,
+    "grid_map": "inner-exp-scri",
+    "grid_stretch": 16,
+    "mapped_ko": "local",
+    "width": 7,
+    "ko_order": 8,
+    "ray_interpolation": "pchip",
+    "ray_exit": "dense"
+  },
+  "independent_time": "N2049 baseline CFL .05, half .025, quarter .0125 from initial data with identical frozen numerical dependencies.",
+  "acceptance": "All original telegraph-protocol-v1.json thresholds unchanged; a pilot improvement or completed trajectory cannot admit a candidate.",
+  "remaining_controls": "Independent shift quadrature and KO-amplitude variations, plus adjacent fixed kappa/tau spatial convergence, remain required. This matrix alone cannot complete the goal.",
+  "execution": "At most two concurrent evolution workers: one for the spatial matrix and one for the independent time controls. Original KO6 quarter-step run is finished.",
+  "status": "Selected for t10 three-grid and independent time validation; no nonlinear admission.",
+  "selection_evidence": "Completed dense-exit pilot: all measured time/space ratios below .1, ray logJ ratio .00167714, complete geometry/flux/diagnostics bytewise equal to all seven legacy-exit trajectories. All55 implementation tests pass."
+}

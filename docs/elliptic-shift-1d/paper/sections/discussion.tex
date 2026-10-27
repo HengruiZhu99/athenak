@@ -1,0 +1,51 @@
+\section{Failure analysis and limitations}
+\label{sec:failures}
+The negative results have changed both the implementation and the interpretation of apparently successful runs. Table~\ref{tab:failures} groups the principal failure mechanisms and unsuccessful repairs. A machine-readable supplement inventories 85 saved manifests with explicit failure status, including historical prototypes and deliberately rejected implementation fixtures. That count is not a count of independent physical experiments. Scientifically unsuccessful runs that nevertheless reached their requested time are discussed separately in the text and figures.
+
+Several lessons are supported directly by the data. First, analytic cancellation of a singular numerator is necessary but does not determine a stable nodal boundary closure. Second, a small elliptic algebraic residual does not guarantee a stable coupled evolution: the centered shift matrix is a concrete counterexample. Third, final-time errors, exterior mass agreement, and positive lapse can coexist with unacceptable earlier or interior constraint errors. Fourth, arithmetic and variable conditioning become measurable components of the error budget on fine grids and near collapsed inner ends.
+
+The physical-logarithmic and rational-source variants illustrate a further distinction. The rational family
+\begin{equation}
+ F=\alpha^2+4\nu\Omega^2\alpha\frac{A+\delta}{\alpha+\delta},
+ \qquad\delta>0,
+\end{equation}
+changes the principal lapse coefficient without imposing a lapse floor. A local restoring variant uses $\nu_{\rm eff}=\nu(A+\delta)/(\alpha+\delta)$ in Eq.~\eqref{eq:physical-log}. The $\delta=10^{-3}$ runs fail near $t=1.0015$, $1.0155$, and $1.0753$ on $N=513,1025,2049$, with nonfinite AF logarithms. Halving the middle-grid timestep changes its failure time by only about $2.4\times10^{-5}$. These observations do not support a time-step-only explanation, and the variant is not adopted as a cure. Local shock-avoidance indicators from simpler systems cannot replace a derivation and convergence study for the full formulation.
+
+\begin{table*}[tp]
+\caption{Principal failures and their implications. This table retains unsuccessful numerical and gauge variants rather than presenting only the latest surviving runs. The supplement contains the explicit failed-manifest inventory; several additional rows here concern scientifically failed completed runs.}
+\label{tab:failures}
+\begin{ruledtabular}
+\begin{tabular}{p{3.5cm}p{6.0cm}p{6.5cm}}
+\tcell{Variant or assumption} & \tcell{Observation} & \tcell{Consequence / present status}\\
+\hline
+\tcell{Raw scri limit} & \tcell{Endpoint-localized growth; model and full rates near $232$ at $N=24$} & \tcell{Regular continuum traces do not automatically define a stable unrestricted nodal phase.}\\
+\tcell{Quotient extrapolation} & \tcell{Reduced growth, but a recorded $N=64$ pulse loses positivity near $t=1.012$} & \tcell{Not an accepted boundary repair.}\\
+\tcell{Un-restored lapse source} & \tcell{Scri compatibility is lost in resolved pulse trials} & \tcell{Symmetric restoring was introduced and must be disclosed as a gauge change.}\\
+\tcell{Normal-jet corner penalty} & \tcell{Isolated algebraic test passes; tested nonzero strengths destabilize coupled evolution} & \tcell{Rejected as a practical closure; no energy-compatible claim.}\\
+\tcell{Weak center dissipation / origin-variable trial} & \tcell{Fine-grid central growth after a successful short convergence test; a scaled-origin formulation also fails} & \tcell{Center parity, isotropy, and dissipation require joint tests.}\\
+\tcell{Actual-origin layout} & \tcell{A recorded $N=1025$ pulse loses positivity near $t=2.2565$} & \tcell{Including the origin point alone does not cure the instability.}\\
+\tcell{Quadrature shift isolation} & \tcell{Changing quadrature degree exceeds the endpoint error-isolation criterion} & \tcell{Small quadrature residuals and inward summation are insufficient.}\\
+\tcell{Centered shift ODE} & \tcell{Failure time decreases strongly with refinement; coupled spectrum becomes unstable} & \tcell{Right bias improves the tested spectrum; nonlinear checks remain necessary.}\\
+\tcell{Final-time-only convergence} & \tcell{Endpoint order $4.82$ at $t=1$ hides order $1.28$ at $t=0.5$} & \tcell{Whole-trajectory comparisons supersede the apparent final-time success.}\\
+\tcell{Fixed-amplitude nodal noise} & \tcell{Finest-grid $\Th$ amplification $129.5$ exceeds the declared $100$ limit} & \tcell{Retained as failed; derivative-balanced noise is a separate passing control.}\\
+\tcell{Fine binary64 arithmetic} & \tcell{Constraint errors turn upward at high resolution; old timestamps accumulate drift} & \tcell{Local subtraction, compensated increments, and an integer clock help, but do not remove every floor.}\\
+\tcell{Untapered symmetric Minkowski source at a puncture} & \tcell{Conditional nonzero collapsed-lapse rate, Eq.~\eqref{eq:obstruction}} & \tcell{Incompatible with the assumed regular stationary collapsed endpoint.}\\
+\tcell{Finite-cutoff outflow assumption} & \tcell{Gauge, and subsequently physical, characteristics become incoming in early wormhole controls} & \tcell{Runs halt; gauge-only boundary data do not resolve physical inflow.}\\
+\tcell{AF scaling, SBP6/3, and stronger KO} & \tcell{Completed runs retain large or nonconvergent constraints} & \tcell{Algebraic operator identities and survival do not establish a wormhole solution.}\\
+\tcell{Modified source with $\nu=1$} & \tcell{Lapse gradients and local constraint errors grow under refinement} & \tcell{Unresolved steepening; a gauge-shock interpretation remains a hypothesis.}\\
+\tcell{Local rational source} & \tcell{Nonfinite AF logarithms near $t\simeq1$; timestep halving gives nearly the same event} & \tcell{Failed alternative, retained with its parameter controls.}\\
+\tcell{Compact trumpet variable profile} & \tcell{Late constraint structure tracks the profile transition near $r\simeq0.112$} & \tcell{Global profile removes much of that artifact, but the earlier transient remains.}\\
+\tcell{Coupled scalar collapse} & \tcell{Huge nonconvergent constraints despite reaching $t=3$} & \tcell{No reliable horizon-formation, ringing, or tail conclusion.}\\
+\tcell{Strict scalar Newton tolerance} & \tcell{Binary64 residual reaches a floor before the requested tolerance} & \tcell{Higher-precision residual/iterate evaluation is confined to initialization; rounding errors remain reported.}
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+The strong-field obstacle is therefore not reducible to a single demonstrated boundary bug. The data identify front steepening, representation errors, incoming-characteristic episodes, and inadequate transient convergence in different variants. A causal cutoff prevents one class of ill-posed boundary use, but does not certify the discrete solution or the discarded interior. Conversely, the compact-profile artifact does not explain every earlier failure because the same transient persists with the global profile.
+
+The literature inventory contains 91 test/control rows spanning the requested sources and relevant follow-ups. None is marked as a completed reproduction: parameter extraction, identical-gauge comparisons, long durations, and several physical experiments remain unfinished. In particular, a stable already-trumpet control is not a wormhole-to-trumpet demonstration, and fixed-background scalar propagation is not coupled collapse. We do not report quasinormal frequencies or tail exponents from failed trajectories.
+
+\section{Conclusions}
+The metric-derived elliptic shift provides a concrete spherical gauge construction that preserves independently evolved Z4 fields. Its $g=1$ reduction admits efficient stage solves, while analytic cancellation, positive-variable charts, and explicit inner-end limits make difficult regularity and conditioning issues accessible to independent tests. The historical positive evidence comprises short-time finite-pulse field convergence and coupled subcritical mass--flux convergence. The telegrapher follow-up adds a full-domain three-grid study of the inward lapse layer and stage-integrated gauge characteristics through $t=10$, passing the declared spatial, boundary, positivity, and lapse-gradient checks for the fixed candidate. The finest peak Hamiltonian RMS and interior pointwise error are $1.53\times10^{-8}$ and $2.29\times10^{-5}$, respectively, with a maximum matched gradient discrepancy of $0.103\%$. These results support spatial resolution of the finite-duration front in this gauge; the narrow inner lapse bump is still present. The specialized CMC-source control supplies a useful long-lived geometric check.
+
+The same evidence prevents a stronger stability claim. Fine-grid constraints encounter arithmetic limits; coarse endpoint convergence can fail transiently; and the historical strong-field and collapse experiments remain unacceptable. The telegrapher follow-up addresses a different gauge prescription, but the unrun independent quadrature, dissipation-amplitude, and adjacent-parameter controls prevent its promotion to a robustly validated scheme. The remaining scientific requirements include completing the independent time/elliptic/dissipation and adjacent-parameter studies for the selected full-domain gauge, establishing longer-duration strong-field behavior, a demonstrated wormhole-to-trumpet limit, and successful coupled collapse followed by radiation extraction over the required durations. The present formulation is an experimentally characterized candidate with preserved failures, rather than a completed nonlinear hyperboloidal black-hole scheme.
