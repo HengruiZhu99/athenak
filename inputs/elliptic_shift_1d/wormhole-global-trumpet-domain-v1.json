@@ -1,0 +1,66 @@
+{
+  "common": {
+    "backend": "spherical-g1",
+    "puncture": true,
+    "puncture_chart": false,
+    "initial_data": "wormhole",
+    "advection": "upwind",
+    "lapse_restoring": 1,
+    "lapse_restoring_form": "multiplicative",
+    "scri_sat": 4,
+    "regularity_sat": 8,
+    "puncture_ko": 0.5,
+    "report_dt": 0.1,
+    "t": 10,
+    "cfl": 0.05,
+    "n": 257,
+    "mass": 0.3333333333333333,
+    "slicing": 0.25,
+    "lapse_restoring_profile": "physical-log",
+    "lapse_background_source": "collapsed-inner",
+    "inner_radius": 0.015625,
+    "puncture_ko_inner_width": 0.03,
+    "metric_variable": "log-trumpet",
+    "lapse_variable": "log-reference"
+  },
+  "cases": [
+    {
+      "name": "n1009",
+      "arguments": {
+        "n": 1009,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n1025/profile-0033.npz"
+      }
+    },
+    {
+      "name": "n2017",
+      "arguments": {
+        "n": 2017,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n2049/profile-0033.npz"
+      }
+    },
+    {
+      "name": "n4033",
+      "arguments": {
+        "n": 4033,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-nu025-prefix-v1/n4097/profile-0033.npz"
+      }
+    },
+    {
+      "name": "no-ko-n2017",
+      "arguments": {
+        "n": 2017,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n2049/profile-0033.npz",
+        "puncture_ko": 0.0
+      }
+    },
+    {
+      "name": "narrow-taper-n2017",
+      "arguments": {
+        "n": 2017,
+        "transfer_af_profile": "output/elliptic-shift-1d/wormhole-slicing-front-controls-v1/nu025-n2049/profile-0033.npz",
+        "puncture_ko_inner_width": 0.015
+      }
+    }
+  ],
+  "scope": "Global analytic metric profile p=r^2/A^2 with physical curvature fields, same causal AF transfer at3.2 and inner radius1/64, three nested grids through10 plus independent KO controls. Separate full original prefixes required. Tests whether removal of compact-profile truncation and finer front resolution yield robust convergence; all prior acceptance criteria retained."
+}

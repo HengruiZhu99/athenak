@@ -1,0 +1,745 @@
+{
+  "spatial": {
+    "h": [
+      0.0004884004884004884,
+      0.0002441704309608107,
+      0.00012207776353537203
+    ],
+    "regions": {
+      "bulk": {
+        "differences": [
+          2.1467029631375793e-11,
+          6.674434561976417e-13
+        ],
+        "order": 5.006437150643524,
+        "per_field_differences": [
+          [
+            1.3598733505887946e-13,
+            0.0,
+            1.9002946550277925e-11,
+            8.73794731799954e-12,
+            4.5128108963931776e-13,
+            4.799349047422336e-12,
+            3.372859519091862e-13,
+            0.0
+          ],
+          [
+            5.26865453659571e-15,
+            0.0,
+            5.901661983828381e-13,
+            2.7095518292325727e-13,
+            1.5429807040980513e-14,
+            1.5291752782462485e-13,
+            1.0876873286168018e-14,
+            0.0
+          ]
+        ],
+        "per_field_orders": [
+          4.689051308458433,
+          null,
+          5.008061760108541,
+          5.010271612472579,
+          4.869361512831819,
+          4.971123015917755,
+          4.953749325300786,
+          null
+        ]
+      },
+      "endpoint": {
+        "differences": [
+          1.1664384910300665e-11,
+          3.387112324283728e-13
+        ],
+        "order": 5.104997935226665,
+        "per_field_differences": [
+          [
+            1.3347928088172226e-13,
+            0.0,
+            1.1567647019006357e-11,
+            1.437399953069004e-12,
+            5.203317112062006e-16,
+            3.4888527381415535e-13,
+            2.0435564779640452e-13,
+            0.0
+          ],
+          [
+            4.628219509956355e-15,
+            0.0,
+            3.353582035087408e-13,
+            4.6048141084744913e-14,
+            6.061008048982468e-17,
+            8.913883807762606e-15,
+            6.2339073801333e-15,
+            0.0
+          ]
+        ],
+        "per_field_orders": [
+          4.849145233428169,
+          null,
+          5.107335679022961,
+          4.963286100137255,
+          3.1012196961728975,
+          5.28961079479283,
+          5.033900947976811,
+          null
+        ]
+      }
+    }
+  },
+  "constraints": {
+    "H_rms": {
+      "maxima": [
+        1.2343931491874163e-09,
+        4.093012073627574e-11,
+        7.884440980289379e-11
+      ],
+      "pair_orders": [
+        4.913629728509085,
+        -0.9457622599107643
+      ]
+    },
+    "H_bulk": {
+      "maxima": [
+        1.3618873779819296e-06,
+        4.090385630206583e-08,
+        1.8833381076888145e-08
+      ],
+      "pair_orders": [
+        5.056336095125024,
+        1.1188463095855714
+      ]
+    },
+    "H_endpoint": {
+      "maxima": [
+        1.7047142551731976e-11,
+        8.118210964580541e-13,
+        4.240589433421316e-12
+      ],
+      "pair_orders": [
+        4.391450771916681,
+        -2.384821059163645
+      ]
+    },
+    "M_rms": {
+      "maxima": [
+        1.913512247516379e-09,
+        6.095969084892019e-11,
+        5.683976294837201e-11
+      ],
+      "pair_orders": [
+        4.971348072862781,
+        0.10094615892584806
+      ]
+    },
+    "M_bulk": {
+      "maxima": [
+        5.608386964951555e-07,
+        1.6596074775998993e-08,
+        1.172953437377e-08
+      ],
+      "pair_orders": [
+        5.077777515122838,
+        0.5006522296064465
+      ]
+    },
+    "M_endpoint": {
+      "maxima": [
+        1.6816561611981973e-08,
+        3.3809942866225295e-10,
+        1.4803019920961447e-11
+      ],
+      "pair_orders": [
+        5.635298751925621,
+        4.513086710523108
+      ]
+    },
+    "Theta_rms": {
+      "maxima": [
+        9.278187654672013e-13,
+        2.8834647395475957e-14,
+        6.062133244380773e-15
+      ],
+      "pair_orders": [
+        5.007085779346429,
+        2.2497077963736354
+      ]
+    },
+    "Z_rms": {
+      "maxima": [
+        2.75246419335895e-11,
+        5.66607147490781e-13,
+        3.921957434912167e-14
+      ],
+      "pair_orders": [
+        5.601244567832177,
+        3.8523637662406816
+      ]
+    }
+  },
+  "controls": {
+    "half-dt-n4096": {
+      "changed_input": "cfl",
+      "old": 0.05,
+      "new": 0.025,
+      "regions": {
+        "bulk": {
+          "sampled_differences": [
+            0.0,
+            1.2797019633812235e-14,
+            1.623172052875218e-14,
+            1.5128039508484812e-14,
+            8.550448246848545e-15,
+            7.935117916624899e-15,
+            9.270826011820075e-15,
+            1.1477504916548637e-14,
+            1.0708920849377614e-14,
+            9.210039985570497e-15,
+            8.074462768464965e-15
+          ],
+          "maximum_difference": 1.623172052875218e-14,
+          "final_difference": 8.074462768464965e-15,
+          "raw_middle_to_finest_spatial_difference": 6.674434561976417e-13,
+          "Richardson_middle_spatial_error": 6.888682013751154e-13,
+          "final_error_fraction": 0.011721346336420756
+        },
+        "endpoint": {
+          "sampled_differences": [
+            0.0,
+            0.0,
+            2.8662540284061526e-87,
+            9.641718221559407e-29,
+            6.210580347212234e-16,
+            5.836098513736498e-16,
+            4.308315269014221e-16,
+            2.0906718116399964e-16,
+            1.2437312384441464e-16,
+            1.4036215262970196e-16,
+            2.4375885401487943e-16
+          ],
+          "maximum_difference": 6.210580347212234e-16,
+          "final_difference": 2.4375885401487943e-16,
+          "raw_middle_to_finest_spatial_difference": 3.387112324283728e-13,
+          "Richardson_middle_spatial_error": 3.4884424843994134e-13,
+          "final_error_fraction": 0.000698761281302438
+        }
+      },
+      "stages": {
+        "max_scri_pole": 3.1083315782387544e-10,
+        "max_lapse_pole": 1.1768366139405842e-14,
+        "max_regularity_trace": 4.793900346133917e-11,
+        "min_chi": 0.943312467478455,
+        "min_alpha": 0.2877625791993688,
+        "max_H_rms": 4.302518779265984e-09,
+        "max_M_rms": 3.283153234587892e-10,
+        "max_Theta_rms": 2.8826755458242155e-14,
+        "max_Z_rms": 5.666115476645187e-13,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.0379519466141574e-10,
+        "max_accepted_H_rms": 4.019173762709039e-11,
+        "max_accepted_M_rms": 6.071296403093787e-11,
+        "max_accepted_Theta_rms": 2.882411057536995e-14,
+        "max_accepted_Z_rms": 5.666068456247511e-13,
+        "max_accepted_H_bulk": 4.099242723043517e-08,
+        "max_accepted_M_bulk": 1.6575960288557883e-08,
+        "max_accepted_H_endpoint": 5.655532465953517e-13,
+        "max_accepted_M_endpoint": 3.380992898843749e-10,
+        "max_elliptic_discrete_residual": 5.939412156541478e-12
+      },
+      "checkpoint_sha256": "7663b04681a3d2b47b0ea6561abe1a25ad034cf74260616a4ab4ff1b0a51925f",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/half-dt-n4096",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "70c26d3cea67aa05913ffd653e3a116810736980ff2d2da039aa2110a5a0e341",
+          "history_sha256": "dee1f31384ce5ee4f6b4521a1cf701193b051808ad3e3baee676951d280caf22"
+        }
+      ],
+      "verified_inactive_source": [],
+      "profile_hashes": {
+        "0": "77e514f43b103b27217747b52d9b89a5aff4ec5c381bd8a1444708f6a7f16f3f",
+        "1": "bd095f1c264112f3319d3dcee37ad3cb675d17cca9f8ca2baa9e004f6dd3b911",
+        "2": "e7d11f9ab75ede07017af410642149de0eb79e209c830dc40dae6ee5f006b981",
+        "3": "b062fa1960d6a26a5ca3f5edf23efa236c6a45cf7caa97aa05d23048ab5922de",
+        "4": "096c5458356928461466c13e9fc50688597eba2c70ca693524875b7e3f114389",
+        "5": "f6765775de25ba584584f89a7c3b134343d2a752b6592eea85194f35ce7a208d",
+        "6": "5b3d0dcec7350659ee7bc47fb8f5d55e5fcf16dda97701c7df3390f8f7ce8cf3",
+        "7": "fc5265573a0e24b7e206310eaeadb87ba8c942cd1a243628e2bb48f8c155dcd6",
+        "8": "2134eb0f8b752c5d8f99543ae5a928cfe3fd7953614d1d2442f9a1a43569aebe",
+        "9": "295fea2876cd555826a766e125c6d66accfd2d7e1a0b69492da8e1405673494a",
+        "10": "51f215ee1a7974d00407a0a9866c751d5b4288ad5b8e352ed449dfced659a6e1"
+      }
+    },
+    "solve0-n4096": {
+      "changed_input": "elliptic_refinements",
+      "old": 2,
+      "new": 0,
+      "regions": {
+        "bulk": {
+          "sampled_differences": [
+            0.0,
+            9.602716143649212e-15,
+            1.0651724205890981e-14,
+            9.728281729464714e-15,
+            8.740768645656951e-15,
+            8.434974693862735e-15,
+            9.368703876963801e-15,
+            1.2458608918348887e-14,
+            1.2171665647913135e-14,
+            1.0369301901583855e-14,
+            8.957992801609494e-15
+          ],
+          "maximum_difference": 1.2458608918348887e-14,
+          "final_difference": 8.957992801609494e-15,
+          "raw_middle_to_finest_spatial_difference": 6.674434561976417e-13,
+          "Richardson_middle_spatial_error": 6.888682013751154e-13,
+          "final_error_fraction": 0.013003928449197672
+        },
+        "endpoint": {
+          "sampled_differences": [
+            0.0,
+            0.0,
+            5.620790908477878e-97,
+            9.024938347722425e-36,
+            5.217677370075899e-18,
+            5.611158767311433e-16,
+            5.940135887893966e-16,
+            4.49580330522843e-16,
+            3.9013841255031784e-16,
+            2.657523750189229e-16,
+            2.0848752052358171e-16
+          ],
+          "maximum_difference": 5.940135887893966e-16,
+          "final_difference": 2.0848752052358171e-16,
+          "raw_middle_to_finest_spatial_difference": 3.387112324283728e-13,
+          "Richardson_middle_spatial_error": 3.4884424843994134e-13,
+          "final_error_fraction": 0.0005976521655608603
+        }
+      },
+      "stages": {
+        "max_scri_pole": 3.108338239576902e-10,
+        "max_lapse_pole": 1.1768366427418516e-14,
+        "max_regularity_trace": 4.7938967032146174e-11,
+        "min_chi": 0.943312467431173,
+        "min_alpha": 0.28776257877002775,
+        "max_H_rms": 1.7202943186689427e-08,
+        "max_M_rms": 1.3121946404174648e-09,
+        "max_Theta_rms": 1.9630204269892125e-13,
+        "max_Z_rms": 5.666535866641838e-13,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.0379519466141574e-10,
+        "max_accepted_H_rms": 4.095871027030804e-11,
+        "max_accepted_M_rms": 6.09404912465604e-11,
+        "max_accepted_Theta_rms": 2.882640549159615e-14,
+        "max_accepted_Z_rms": 5.666151933605637e-13,
+        "max_accepted_H_bulk": 4.065442915646145e-08,
+        "max_accepted_M_bulk": 1.658263749235102e-08,
+        "max_accepted_H_endpoint": 8.855889112313609e-13,
+        "max_accepted_M_endpoint": 3.3809922569960627e-10,
+        "max_elliptic_discrete_residual": 9.832711034274409e-12
+      },
+      "checkpoint_sha256": "9a8202998bf435daf0813f2a426f9f262b082f5ccdf638739a10bf703820814c",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/solve0-n4096",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "eb9aa72d868ab13067cfb5c3567be553df1f53de907c1343fbedd1b5a5bba7d3",
+          "history_sha256": "ad91eda4041aeb05f5e853f638513b6d36a8d9d0999124b57a5be26cfe7a2b8c"
+        }
+      ],
+      "verified_inactive_source": [],
+      "profile_hashes": {
+        "0": "2a8d49a4e346b8c107910061c9fe27e0a4cbb463af19fdb86df7acbf594bc336",
+        "1": "646b16fbdc77997470f679fded12a7cbd97bde49079efa9ad89a39b7f03fabe2",
+        "2": "23c3a6c73ca6d937bb8f999990945497ce9f7c494d9debb566825073d7b9f529",
+        "3": "3114beb64eb1243b4f3cccf2533f290887960bbde30e1fd1ed95c89c8f6d3894",
+        "4": "c9ecf8a8dcce266a3205bedb9ee6570963f1a4219e2e67e61b7f12055cc7ad3c",
+        "5": "54efee7538b860363b86c1441a804afd76c802ef10813439de136b3e6028bfa4",
+        "6": "87009370b6e939334af11db91abeb01923d068993a9326d92ee0691d58cd9bb3",
+        "7": "5b50a6a71be224a9bb18c20cd1fbfcc1017337e8c62351a63fb3a1ac2c321cc7",
+        "8": "53e1dfa6a5ab68693df9140e17d60ef57cbc8906a6f0b8a9ac604ef2e1a14011",
+        "9": "34544b73fffd094950b0eb6b58ba97ca3824ea44d8f35073116ff47fde176ae6",
+        "10": "89c85dc3670ee6f531376939ec0260399ad91940750d2c58d901410d1c3ac2b1"
+      }
+    },
+    "solve4-n4096": {
+      "changed_input": "elliptic_refinements",
+      "old": 2,
+      "new": 4,
+      "regions": {
+        "bulk": {
+          "sampled_differences": [
+            0.0,
+            1.062191264070195e-14,
+            1.1752699975247337e-14,
+            9.999363765524684e-15,
+            8.474995768363692e-15,
+            8.05418429832212e-15,
+            9.503728835639784e-15,
+            1.2081136174421136e-14,
+            1.2166009032100324e-14,
+            1.008598263361497e-14,
+            8.756477270413633e-15
+          ],
+          "maximum_difference": 1.2166009032100324e-14,
+          "final_difference": 8.756477270413633e-15,
+          "raw_middle_to_finest_spatial_difference": 6.674434561976417e-13,
+          "Richardson_middle_spatial_error": 6.888682013751154e-13,
+          "final_error_fraction": 0.012711397119120893
+        },
+        "endpoint": {
+          "sampled_differences": [
+            0.0,
+            0.0,
+            7.728458836513163e-97,
+            8.937203494154332e-36,
+            4.704048579230635e-18,
+            5.455868388401522e-16,
+            4.579932436459441e-16,
+            2.421013623722057e-16,
+            1.4452567788226853e-16,
+            1.5113507914912955e-16,
+            2.2607175950667333e-16
+          ],
+          "maximum_difference": 5.455868388401522e-16,
+          "final_difference": 2.2607175950667333e-16,
+          "raw_middle_to_finest_spatial_difference": 3.387112324283728e-13,
+          "Richardson_middle_spatial_error": 3.4884424843994134e-13,
+          "final_error_fraction": 0.000648059300153819
+        }
+      },
+      "stages": {
+        "max_scri_pole": 3.108339488577805e-10,
+        "max_lapse_pole": 1.176836721432186e-14,
+        "max_regularity_trace": 4.7939005196062645e-11,
+        "min_chi": 0.9433124674311733,
+        "min_alpha": 0.28776257877002703,
+        "max_H_rms": 1.7202943574796628e-08,
+        "max_M_rms": 1.3121919047337513e-09,
+        "max_Theta_rms": 1.963566522603238e-13,
+        "max_Z_rms": 5.666451239590514e-13,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.0379519466141574e-10,
+        "max_accepted_H_rms": 4.100061162720089e-11,
+        "max_accepted_M_rms": 6.099294714830092e-11,
+        "max_accepted_Theta_rms": 2.8836365424288293e-14,
+        "max_accepted_Z_rms": 5.666069849615042e-13,
+        "max_accepted_H_bulk": 4.204026105014691e-08,
+        "max_accepted_M_bulk": 1.6575193455549658e-08,
+        "max_accepted_H_endpoint": 9.182626447418185e-13,
+        "max_accepted_M_endpoint": 3.38099425192806e-10,
+        "max_elliptic_discrete_residual": 6.10992159644219e-12
+      },
+      "checkpoint_sha256": "b5ebbf2b124e7ff31b39483c5e70d30368fbaea4f332fb282bc8875d38cb9877",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/solve4-n4096",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "9d1e99e9b2506404530c45ca0a4349c7799c69e53c5ba2c13a0df9123574f5ca",
+          "history_sha256": "8e62e961419da5771458d386557f220d22060a84541de22823d4a6a8e9769380"
+        }
+      ],
+      "verified_inactive_source": [],
+      "profile_hashes": {
+        "0": "2a8d49a4e346b8c107910061c9fe27e0a4cbb463af19fdb86df7acbf594bc336",
+        "1": "0d2549a321afbd6364eabf356caf97bb27c65377138e3b0a18930a8068c19015",
+        "2": "6443f06a3fb82da82a7e55af3ed1c89f18362996e45d6183d49dda625cc79688",
+        "3": "71af0441542114b2ad1df0ff5dbdee5266c4c5ebfdcf88b4cc3cfe9cb01caee4",
+        "4": "603cbccb01d008504bc0490811e83ae52dab47f27cd7ca707fd32234d5592060",
+        "5": "1a04a963ad58e1cd7a59b4235101de1c288f4b0e0176ae17cd18d22d96b8611f",
+        "6": "5a17685fa034297361df8b717ac4a8ebb9cf3ecaed9315bcf9c645dbd7dc7d8c",
+        "7": "d53ee90e9b1a9445e958aa316ad9b7c98b13668277e77a062093918e428c1ee9",
+        "8": "ee0a8b7238c6595f36a512bacd1b888932135305c9cb648cd3a21073880d4f67",
+        "9": "3e649da346991999e46e5a3d4cabe41693287dca739aa3c49f929111e001837a",
+        "10": "351b74a15da62a14d35a1fc60c8237e62f18d3df7a4cd499f36a11f39278b4b4"
+      }
+    },
+    "uncompensated-n4096": {
+      "changed_input": "compensated_update",
+      "old": true,
+      "new": false,
+      "regions": {
+        "bulk": {
+          "sampled_differences": [
+            0.0,
+            8.31279182318828e-14,
+            9.621226699993162e-14,
+            8.84886469472908e-14,
+            8.204169713594516e-14,
+            8.176341388492228e-14,
+            9.031245803237781e-14,
+            1.0640093366036127e-13,
+            1.0386412839945316e-13,
+            9.216085531614421e-14,
+            8.077293692170568e-14
+          ],
+          "maximum_difference": 1.0640093366036127e-13,
+          "final_difference": 8.077293692170568e-14,
+          "raw_middle_to_finest_spatial_difference": 6.674434561976417e-13,
+          "Richardson_middle_spatial_error": 6.888682013751154e-13,
+          "final_error_fraction": 0.11725455865210084
+        },
+        "endpoint": {
+          "sampled_differences": [
+            0.0,
+            0.0,
+            2.7607858213854905e-96,
+            9.04991298451175e-35,
+            3.166245357779221e-17,
+            3.42827467767297e-15,
+            3.25484345161527e-15,
+            1.845736931456084e-15,
+            1.1087198069616743e-15,
+            9.944464245152872e-16,
+            1.779697203075647e-15
+          ],
+          "maximum_difference": 3.42827467767297e-15,
+          "final_difference": 1.779697203075647e-15,
+          "raw_middle_to_finest_spatial_difference": 3.387112324283728e-13,
+          "Richardson_middle_spatial_error": 3.4884424843994134e-13,
+          "final_error_fraction": 0.005101695702407569
+        }
+      },
+      "stages": {
+        "max_scri_pole": 3.108337441604103e-10,
+        "max_lapse_pole": 1.1768364855419032e-14,
+        "max_regularity_trace": 4.7939096269045134e-11,
+        "min_chi": 0.9433124674311792,
+        "min_alpha": 0.28776257877003014,
+        "max_H_rms": 1.7203573961605826e-08,
+        "max_M_rms": 1.3170855444537137e-09,
+        "max_Theta_rms": 1.976597417138567e-13,
+        "max_Z_rms": 5.66652797769706e-13,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.0379519466141574e-10,
+        "max_accepted_H_rms": 1.8330121447552012e-10,
+        "max_accepted_M_rms": 1.4330077056115967e-10,
+        "max_accepted_Theta_rms": 3.379877043065019e-14,
+        "max_accepted_Z_rms": 5.666146312930005e-13,
+        "max_accepted_H_bulk": 7.423050618626803e-08,
+        "max_accepted_M_bulk": 3.106238189402557e-08,
+        "max_accepted_H_endpoint": 5.755346720037746e-12,
+        "max_accepted_M_endpoint": 3.3809944427476424e-10,
+        "max_elliptic_discrete_residual": 6.053085116475286e-12
+      },
+      "checkpoint_sha256": "71c7ffc24c47cfa26d445a50ce5ec51b2ab965fb63375fdcf96d4f60a659dee9",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/uncompensated-n4096",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "0772c9a4adb12d2d98a0c49b2105d7fa6b8226556a1dd2bfa77f97c36158d32a",
+          "history_sha256": "94a2ac1703c121f1a43fc4169b22de8771359ed8d9ef43c7d1feb0d3cb1f5208"
+        }
+      ],
+      "verified_inactive_source": [
+        {
+          "path": "tst/elliptic_shift_1d/compensated_update.py",
+          "sha256": "1fb049ca86c5f22a43a9138da751eaca60e0524106df5ec4fc56d0c39ca5cca1",
+          "reason": "Inactive in uncompensated run"
+        }
+      ],
+      "profile_hashes": {
+        "0": "2a8d49a4e346b8c107910061c9fe27e0a4cbb463af19fdb86df7acbf594bc336",
+        "1": "dd8966ffd2c648d2c30c2aab811569db2bc05518030d659fa368497644eba787",
+        "2": "7716735e7e2ea79be18fe0514b197c0d23fc4c1d69ef554447a31cc1124d0b92",
+        "3": "aaa575923aee46cbc09965cf106c0a9879b7716d7c2ae980e1e19ffb609f44e6",
+        "4": "94347411ceac40c8e5c28b3171b9a7b4ce75c8aea83a0daffca6dbb12cc6f3d6",
+        "5": "363359014d04a180f7472d491c841bfa4f395c5eb1dd5f5d689388d4945f2da8",
+        "6": "aa89635a04c65234e3bb52738b496cfdc9bbbe30ab3e631f742370802cfb556b",
+        "7": "7509ae8943f3f03e008f9b2e47176af4327579754706601b53a266ce89f82d2f",
+        "8": "27e63c4e31f48f989162955508d0c0307d42877753301c8c0a4bcf6e9d68feee",
+        "9": "628630a4367ad0796dde86e1543c15e3e190d6231162f0e2535f72b3da157cf6",
+        "10": "c02278c6bab246dd20fa93fbb810462a41055db34dd21300e99801939f4a15cb"
+      }
+    }
+  },
+  "runs": [
+    {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048",
+      "checkpoint_sha256": "8d67fd5079f78dbf20f4337f02456cf1f2f1ae951028f24181d229870b496955",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n2048",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "62f2e988e0dc8d9eff584d7f99a87201be185f7e179ede194b31c10256e88f20",
+          "history_sha256": "e7290de5550edb0e587972994c85bb00c30510cabce8a3c233800c825b68776f"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 1.493888380360575e-08,
+        "max_lapse_pole": 1.2883615370741933e-12,
+        "max_regularity_trace": 2.4742445592362827e-09,
+        "min_chi": 0.9433125450761687,
+        "min_alpha": 0.2877635352076413,
+        "max_H_rms": 6.887756962587378e-08,
+        "max_M_rms": 5.272192668205286e-09,
+        "max_Theta_rms": 1.6395739639582995e-12,
+        "max_Z_rms": 2.7524913848429394e-11,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 5.38484545842266e-09,
+        "max_accepted_H_rms": 1.2343931491874163e-09,
+        "max_accepted_M_rms": 1.913512247516379e-09,
+        "max_accepted_Theta_rms": 9.278187654672013e-13,
+        "max_accepted_Z_rms": 2.75246419335895e-11,
+        "max_accepted_H_bulk": 1.3618873779819296e-06,
+        "max_accepted_M_bulk": 5.608386964951555e-07,
+        "max_accepted_H_endpoint": 1.7047142551731976e-11,
+        "max_accepted_M_endpoint": 1.6816561611981973e-08,
+        "max_elliptic_discrete_residual": 2.84147705365001e-12
+      }
+    },
+    {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096",
+      "checkpoint_sha256": "4104a42ee7c68e406500406e2c09bb531fb5a90db09b8b491cae47edabd6fd1e",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n4096",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "59ab52101e7fe872fa60908e4ec383b8c13083048461d62962eee6f7a319ac15",
+          "history_sha256": "195912ea228d3a7b85be9b1d8713362ce266a57bb1a94fc40c14c07dbced53a0"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 3.1083387252994754e-10,
+        "max_lapse_pole": 1.1768367565087016e-14,
+        "max_regularity_trace": 4.793900693078612e-11,
+        "min_chi": 0.9433124674311733,
+        "min_alpha": 0.2877625787700263,
+        "max_H_rms": 1.7202943915251495e-08,
+        "max_M_rms": 1.3121895009463817e-09,
+        "max_Theta_rms": 1.9635626648322884e-13,
+        "max_Z_rms": 5.666452743843046e-13,
+        "max_scri_null": 2.220446049250313e-16,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.0379519466141574e-10,
+        "max_accepted_H_rms": 4.093012073627574e-11,
+        "max_accepted_M_rms": 6.095969084892019e-11,
+        "max_accepted_Theta_rms": 2.8834647395475957e-14,
+        "max_accepted_Z_rms": 5.66607147490781e-13,
+        "max_accepted_H_bulk": 4.090385630206583e-08,
+        "max_accepted_M_bulk": 1.6596074775998993e-08,
+        "max_accepted_H_endpoint": 8.118210964580541e-13,
+        "max_accepted_M_endpoint": 3.3809942866225295e-10,
+        "max_elliptic_discrete_residual": 6.25201279635945e-12
+      }
+    },
+    {
+      "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192",
+      "checkpoint_sha256": "7cdb289705409a2bbcf33d0fe190694ca17d6f3f03f6599b80c02ccd22f30b26",
+      "segments": [
+        {
+          "folder": "/Users/hz0693/.codex/worktrees/hyperboloidal-elliptic-shift-1d/hyperboloidal/output/elliptic-shift-1d/gauge-compensated-update-v1/spatial-n8192",
+          "status": "finished",
+          "time": 1.0,
+          "scope": "full-trajectory",
+          "domain_transfer_parent": null,
+          "manifest_sha256": "4c8d067ae70ba58fd1ce84364840ce7f5a68854a05c3ad148691ae740cc5790b",
+          "history_sha256": "a97f35767184923ebda60a2a5607da541f6f2bb45b94b81b0249cced085f1137"
+        }
+      ],
+      "stages": {
+        "max_scri_pole": 5.260070157220298e-12,
+        "max_lapse_pole": 9.530554461790258e-17,
+        "max_regularity_trace": 7.923566316958564e-13,
+        "min_chi": 0.9433124480058247,
+        "min_alpha": 0.28776233985260613,
+        "max_H_rms": 4.300686472088715e-09,
+        "max_M_rms": 3.3071579176300223e-10,
+        "max_Theta_rms": 2.4484413002061007e-14,
+        "max_Z_rms": 3.937036283385158e-14,
+        "max_scri_null": 0.0,
+        "max_scri_clock": 0.0,
+        "max_Bondi_nonaffinity": 1.7275070263167436e-12,
+        "max_accepted_H_rms": 7.884440980289379e-11,
+        "max_accepted_M_rms": 5.683976294837201e-11,
+        "max_accepted_Theta_rms": 6.062133244380773e-15,
+        "max_accepted_Z_rms": 3.921957434912167e-14,
+        "max_accepted_H_bulk": 1.8833381076888145e-08,
+        "max_accepted_M_bulk": 1.172953437377e-08,
+        "max_accepted_H_endpoint": 4.240589433421316e-12,
+        "max_accepted_M_endpoint": 1.4803019920961447e-11,
+        "max_elliptic_discrete_residual": 1.2504788871048333e-11
+      }
+    }
+  ],
+  "binding": {
+    "source_sha256": {
+      "src/z4c/hyperboloidal/athenak_bridge.hpp": "d9665f1ad38d542d791b6f80c1110a0d67d7e0c1eded148a8023ef766758c761",
+      "src/z4c/hyperboloidal/cartesian_hawking.hpp": "af8e7e64669c5ef4b882e223a64920af389af587151444fa52ca83a7a88cd9c4",
+      "src/z4c/hyperboloidal/cartesian_patch.hpp": "fecbebdbb8f82cf5aef72e2bf083a0e25314978a840f103771d1530c1f369280",
+      "src/z4c/hyperboloidal/cartesian_radial.hpp": "f84da8c757d69da7f6bc382793ee5e5d6a553411ec60b9ddde7385f3ecb172a6",
+      "src/z4c/hyperboloidal/cartesian_trumpet.hpp": "e107aaa4c59d5f028af38f70aa3e9139032fa37921f28ae30314055272780f35",
+      "src/z4c/hyperboloidal/cartesian_wormhole.hpp": "370dd57ba06fb10be309cfc39cc850ea51c0fb2e69810f56ae20f3f1bf8b3fcc",
+      "src/z4c/hyperboloidal/cmc_reference.hpp": "8f36ddc8354df5e32470785cf0207e6059bd001ca7cefb999013805d084f5c14",
+      "src/z4c/hyperboloidal/cmc_trumpet.hpp": "292a7e7ada83add2b488dadb0ed08ebfc9572283a25855a1ffb328e154d03a63",
+      "src/z4c/hyperboloidal/conformal_constraints.hpp": "0d34b989a5df37d1105381a3f8375e80eedc80ca8de6ff66646f85752dead6a9",
+      "src/z4c/hyperboloidal/conformal_rhs.hpp": "c80fc35bf985c10ee62cb5025dedc23a39afdf1247048e93c3c9910a0b18b2f4",
+      "src/z4c/hyperboloidal/interior_dissipation.hpp": "ec16b2e85c7cb73b9dfd94ccae6365a377801efdbbf6f0b2aa0350a55ceb4eb4",
+      "src/z4c/hyperboloidal/layer_gauge.hpp": "c7a0aa54d342901e8e5c6f697d51ef5983b19a35dc57be2409b92d34960ef504",
+      "src/z4c/hyperboloidal/layer_reference.hpp": "524c3a3502b6ded369a36fa69e1d51dc6295164aad00da750c032c3d8b4d8405",
+      "src/z4c/hyperboloidal/layer_wormhole.hpp": "84e67d71fd57f3141f6e94d8ffb538f970a131ffa081ae89072c0cfde3983f45",
+      "src/z4c/hyperboloidal/radial_sbp.hpp": "fe4a0829ccc19a3308544cab11fee790b7053cfcad02b7175323d5484c642b0e",
+      "src/z4c/hyperboloidal/reference_gauge.hpp": "4514b407df8fb9adad89eb28a35be69a82b4b65e7d73253e9cde2dc94ddcf761",
+      "src/z4c/hyperboloidal/spherical_ghosts.hpp": "c38392e83c0f761dc15eb56f74f677271da5e3ae081ac0511a78b00df209d226",
+      "src/z4c/hyperboloidal/spherical_tensor.hpp": "30f8c0ab0f6e42ce89862d0c328c2e06dfb3e1b3ab9c12e71276dd9071727ee7",
+      "tst/elliptic_shift_1d/evolve.py": "372312867dad106370bb872c3cfa8353af783e0e4cc9ac9822406dd614871a27",
+      "tst/elliptic_shift_1d/numerics.py": "04c2d5f81755499ea4acd7bb5f534df9b10507a67e7272b5b41672bdd114645f",
+      "tst/elliptic_shift_1d/elliptic.py": "7ad89763e49cd7e1b4b3a0ec974c0867e77e69feeb1b5eb5718cd783550bc714",
+      "tst/elliptic_shift_1d/kernel.py": "6f6b05b1bc9c678635d1aa157cda7b35e015c9bd143582aafdc9a235ed779dc1",
+      "tst/elliptic_shift_1d/gauge.py": "c8cb14cc85c84f93558c01054cc76f67ba129da2dba834a7d2657060c6677ed7",
+      "tst/elliptic_shift_1d/bondi.py": "fb956afb00489eec9db4d14fe4afef71159a927faa48343531a024178219a55c",
+      "tst/elliptic_shift_1d/horizon.py": "70a1f334ca3e377b8eaaedf2b996f79b5e4a70722c0fc16cf6c7a5c17626f1eb",
+      "tst/elliptic_shift_1d/time_lattice.py": "94214ed7e50e92cf32477215d9932492b34f3497649194afdd83809dfe7aad4f",
+      "tst/elliptic_shift_1d/compensated_update.py": "1fb049ca86c5f22a43a9138da751eaca60e0524106df5ec4fc56d0c39ca5cca1",
+      "tst/elliptic_shift_1d/shift_ode.py": "a5ea959841a42aef022dff441449c1623b9c1bf0b81d02ac781d4de5afb5073f",
+      "tst/elliptic_shift_1d/g1_rhs.py": "6a3fcf7716cdbaaefb13f477b0d60348956f9a971cac68584b0cbb9074e6540c",
+      "tst/elliptic_shift_1d/fast.py": "8c21a006f00ac472a9106616d1e2b4d434408f4e737281d8939cac1c6ddffb10",
+      "tst/elliptic_shift_1d/fast_integrator.cpp": "eaa74fabaf701f2773615ec6ee3bf707368005fd69540b15c9b7785e00f3d6bb",
+      "tst/elliptic_shift_1d/scri_limits.py": "33c82da68e486c54e6eff4932936cc8de1b3ac512b06e20344ebd714e6c696bc",
+      "tst/elliptic_shift_1d/spherical_api.cpp": "a304569080ca72a12a1c98b6a888fb0359bfff3709e33c919cc333a53f278b45"
+    },
+    "executable_sha256": "c7b9c6960fa59c136dc365a01a6e569feef72f3d007d3675fc1f8a3f909b2231",
+    "fast_executable_sha256": "5786b38219dd8f1e0ef51ea1c27db27526ed6f212f6a7733fc982f6c23b32489"
+  },
+  "baseline_profile_hashes": {
+    "0": "2a8d49a4e346b8c107910061c9fe27e0a4cbb463af19fdb86df7acbf594bc336",
+    "1": "d057b4e69345b311d56e338ed1b4a31acc7f48b4e4d0e1be4b285fe5fd1978e3",
+    "2": "f9fbf9d7b7a9ae9f8a79d1112fe40910dbe40eb767cba1b97d67eaa9f932374a",
+    "3": "d69e035219c8179fb82196f83343a6c1172e743e2fe4a09e1e423be680500472",
+    "4": "b20aa9942ae9e01c49c977b92745e65965c0d2ff842e37dd2153bb31624b3ee8",
+    "5": "e9a2365149d19d844b4ed4564ece763cd17b9939ed9f6146c671e3749421a263",
+    "6": "7833529aded79bdbcde40833e196720e62001c1666783ccbc84f3ee0af73ef53",
+    "7": "3cdb11a5d6a6881de200a8864f2f9a805c2fecf2dfb16bcbf1ca0dbd6a234584",
+    "8": "c899e3a1b9409d079018a9214f0156854bccd7d0c8bc861af34e2f57ec822842",
+    "9": "28ddf8961d085d854e25e2eabb4aaad4a2fa310a38ac9698f8355749d816e011",
+    "10": "f2d3c7eeca33b21dfe72927744361a2773607a8e22e8e1cf16c2209b86bb7e4d"
+  },
+  "source_sha256": {
+    "analyze_arithmetic_controls.py": "3fa37bfb7fc0a30d55339b917682d1e70a337500f11180069341ee26685fdf55",
+    "analyze_principal_controls.py": "4b43eac04887dc49b0fc5da49f3214553a138ae8ade3eaf73da20e961ec11223",
+    "trajectory.py": "3bcb0ffb08f7e4f5d1eb666c98c85de87fcd16f3db2d4020039da6e769e8a2e6"
+  },
+  "scope": "Finite A=.1 pulse through1, full exact saved-time comparison and every-step/stage extrema. One timestep halving isolates a difference but cannot establish temporal order. Richardson estimates require the observed spatial regime and are reported alongside raw differences. Finest constraint floors and all failed gates remain visible; no long-duration or principal admission."
+}

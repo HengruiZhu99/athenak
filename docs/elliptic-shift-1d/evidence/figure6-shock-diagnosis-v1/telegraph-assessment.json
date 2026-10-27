@@ -1,0 +1,47 @@
+{
+  "branch": "project/telegrapher_lapse",
+  "commit": "b99e27ffd47c2a0c13e126e0c2c7560e3fc9944a",
+  "source": "/Users/hz0693/research/gauge_exploration/athenak-telegrapher/src/z4c/z4c_calcrhs.cpp",
+  "source_sha256": "8724d5467b97c7e75af822299b5484cafd550b0a8a0ced0c6c4484efef0ef35d",
+  "source_lines": [
+    703,
+    717
+  ],
+  "existing_equations": [
+    "D_t alpha = -alpha^2 f Khat + gamma^{ij} partial_i B_j",
+    "tau D_t B_i = kappa partial_i alpha - B_i"
+  ],
+  "frozen_hyperboloidal_model": [
+    "D_t a = -(F/Omega) p + G partial_r b",
+    "D_t p = -Omega chi partial_r^2 a",
+    "tau D_t b = kappa partial_r a - b"
+  ],
+  "definitions": {
+    "c_g_squared": "F chi",
+    "c_T_squared": "G kappa/tau",
+    "G": "coefficient multiplying radial auxiliary-flux derivative; conformal extension must specify it"
+  },
+  "dispersion": "s^3+s^2/tau+(c_g^2+c_T^2) k^2 s+c_g^2 k^2/tau=0",
+  "routh_hurwitz": "For k>0, tau>0,c_g^2>0,c_T^2>0: a*b-c=c_T^2*k^2/tau>0. This frozen three-field model is damped.",
+  "high_frequency": {
+    "speed_relative_shift": "sqrt(c_g^2+c_T^2)",
+    "wave_damping": "c_T^2/[2 tau (c_g^2+c_T^2)]",
+    "third_root": "-c_g^2/[tau(c_g^2+c_T^2)]"
+  },
+  "low_frequency_wave_damping": "G kappa k^2/2 + O(k^4)",
+  "limitations": [
+    "This is a frozen lapse-trace-flux model, not a full elliptic-shift/free-Z4c stability proof.",
+    "No telegrapher PDE evolution was run and no efficacy claim is made.",
+    "Reference subtraction, spherical angular derivatives, conformal normalization, boundary characteristics, and auxiliary endpoint regularity must be derived before integration.",
+    "The source branch uses Cartesian partial derivatives and componentwise advection, not physical covariant divergence."
+  ],
+  "recommendations": [
+    "Use lapse deviation from the Minkowski reference as the trial forcing so B=0 preserves equilibrium.",
+    "For a first causal-domain control, use a smooth fixed-coordinate compact-support coupling away from both endpoints; this is a disclosed modified gauge, not the original Cartesian prescription.",
+    "Retain full unmodified Hamiltonian and momentum diagnostics, test accepted states through the entire transient, and compare the original and nu=0.25 gauge independently.",
+    "Record gauge rays and their Jacobians during stages or with much finer profile cadence near t=1.5 to2.2. Do not infer crossing by extending frozen straight rays.",
+    "Use combined gauge speeds for CFL and incoming-boundary guards; assess the relaxation timestep restriction.",
+    "Compare fixed continuum tau,kappa across at least three spatial grids before varying damping parameters."
+  ],
+  "scope": "Read-only postprocessing and analytical assessment; original evolutions remain paused."
+}
